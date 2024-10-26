@@ -1,0 +1,8 @@
+0.3.14
+add compat for legendarysurvivaloverhaul (1.20,1.16 plan)
+fix the sound in the rain and water (1.20-1.21, 1.19-1.16 plan)
+
+0.3.15
+add a config for crop humidity (1.20, 1.21 and 1.19-1.16 plan)
+add a config for crop season growth chance (1.20, 1.21 and 1.19-1.16 plan)
+fix #3 for use EclipticTagClientTool in server method

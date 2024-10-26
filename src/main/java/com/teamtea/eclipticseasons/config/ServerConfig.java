@@ -39,6 +39,8 @@ public class ServerConfig {
 
     public static class Season {
         public static ForgeConfigSpec.BooleanValue enableCrop;
+        public static ForgeConfigSpec.DoubleValue cropGrowChanceInWrongSeason;
+        public static ForgeConfigSpec.BooleanValue enableCropHumidityControl;
         public static ForgeConfigSpec.BooleanValue enableInform;
         public static ForgeConfigSpec.IntValue lastingDaysOfEachTerm;
         public static ForgeConfigSpec.IntValue initialSolarTermIndex;
@@ -51,8 +53,12 @@ public class ServerConfig {
             initialSolarTermIndex = builder.comment("The index of the initial solar term.")
                     .defineInRange("InitialSolarTermIndex", 1, 1, 24);
 
-            enableCrop = builder.comment("Enable seasonal crop.")
+            enableCrop = builder.comment("Enable crop season control.")
                     .define("EnableSeasonalCrop", true);
+            cropGrowChanceInWrongSeason= builder.comment("How much chance can crop grow in wrong season.")
+                    .defineInRange("CropGrowChanceInWrongSeason", 0.25,0,1);
+            enableCropHumidityControl = builder.comment("Enable crop humidity control.")
+                    .define("EnableCropHumidityControl", true);
 
             enableInform = builder.comment("Enable solar term change inform.")
                     .define("EnableInform", true);

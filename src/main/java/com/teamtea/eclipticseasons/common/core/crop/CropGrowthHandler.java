@@ -24,7 +24,8 @@ public final class CropGrowthHandler {
                 Humidity env = Humidity.getHumid(world.getBiome(pos).get().getModifiedClimateSettings().downfall(), world.getBiome(pos).get().getTemperature(pos));
                 CropHumidityInfo humidityInfo = CropInfoManager.getHumidityInfo(block);
                 checkHumidity(event, world, humidityInfo, env);
-            } else if (world.getRandom().nextInt(100) < 25) {
+            } else if (ServerConfig.Season.cropGrowChanceInWrongSeason.get() > 0
+                    && world.getRandom().nextInt(100) < ServerConfig.Season.cropGrowChanceInWrongSeason.get() * 100) {
                 Humidity env = Humidity.getHumid(world.getBiome(pos).get().getModifiedClimateSettings().downfall(), world.getBiome(pos).get().getTemperature(pos));
                 CropHumidityInfo humidityInfo = CropInfoManager.getHumidityInfo(block);
                 checkHumidity(event, world, humidityInfo, env);
@@ -39,7 +40,7 @@ public final class CropGrowthHandler {
     }
 
     public static void checkHumidity(BlockEvent.CropGrowEvent.Pre event, LevelAccessor world, CropHumidityInfo humidityInfo, Humidity env) {
-        if (humidityInfo != null) {
+        if (humidityInfo != null && ServerConfig.Season.enableCropHumidityControl.get()) {
             float f = humidityInfo.getGrowChance(env);
             if (f == 0) {
                 event.setResult(Event.Result.DENY);

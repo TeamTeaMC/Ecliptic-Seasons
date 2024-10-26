@@ -6,7 +6,7 @@ import com.teamtea.eclipticseasons.api.constant.climate.FlatRain;
 import com.teamtea.eclipticseasons.api.constant.climate.SnowTerm;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.constant.tag.SeasonTypeBiomeTags;
-import com.teamtea.eclipticseasons.api.util.EclipticTagClientTool;
+import com.teamtea.eclipticseasons.api.util.EclipticTagTool;
 import com.teamtea.eclipticseasons.api.util.SimpleUtil;
 import com.teamtea.eclipticseasons.common.AllListener;
 import com.teamtea.eclipticseasons.common.handler.SolarUtil;
@@ -212,7 +212,7 @@ public class WeatherManager {
         var provider = SolarUtil.getProvider(level);
         var weathers = getBiomeList(level);
 
-        if (EclipticTagClientTool.getTag(biome).equals(SeasonTypeBiomeTags.RAINLESS)){
+        if (EclipticTagTool.getTag(biome).equals(SeasonTypeBiomeTags.RAINLESS)){
             return Biome.Precipitation.NONE;
         }
 
