@@ -52,25 +52,5 @@ public abstract class MixinRenderTooltipFrame {
             render(forgeGui, guiGraphics, width, height, LSO_ESUtil.seasonTooltip(ENTITY_LOOKED_AT.blockPosition(), ENTITY_LOOKED_AT.level()));
         }
     }
-    // @Inject(
-    //         remap = false,
-    //         method = "lambda$static$0",
-    //         at = @At(value = "TAIL"
-    //         )
-    // )
-    // private static void ecliptic$lambda$static$0_1(ForgeGui forgeGui,
-    //                                                GuiGraphics guiGraphics,
-    //                                                float partialTicks,
-    //                                                int width,
-    //                                                int height,
-    //                                                CallbackInfo ci
-    // ) {
-    //     if (ENTITY_LOOKED_AT instanceof ItemFrame && !((ItemFrame) ENTITY_LOOKED_AT).getItem().isEmpty()) {
-    //         Item itemInFrame = ((ItemFrame) ENTITY_LOOKED_AT).getItem().getItem();
-    //         if ((itemInFrame == ItemRegistry.SEASONAL_CALENDAR.get())) {
-    //             render(forgeGui, guiGraphics, width, height, LSO_ESUtil.seasonTooltip(ENTITY_LOOKED_AT.blockPosition(), ENTITY_LOOKED_AT.level()));
-    //         }
-    //     }
-    // }
 
 }

@@ -40,7 +40,6 @@ public abstract class MixinWeatherModifier {
     }
 
     @WrapOperation(
-            remap = false,
             method = "getWorldInfluence",
             at = @At(value = "INVOKE",
                     target = "Lnet/minecraft/world/level/Level;isRaining()Z"

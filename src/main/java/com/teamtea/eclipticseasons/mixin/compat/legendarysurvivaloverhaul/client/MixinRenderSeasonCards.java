@@ -23,7 +23,6 @@ public abstract class MixinRenderSeasonCards {
             method = "use",
             at = @At(value = "HEAD")
     )
-
     private void ecliptic$updateSeasonCardFading(Level level, Player player, InteractionHand hand, CallbackInfoReturnable<InteractionResultHolder<ItemStack>> cir) {
         if (level.isClientSide()) {
             player.displayClientMessage(LSO_ESUtil.seasonTooltip(player.blockPosition(), player.level()), true);
@@ -34,7 +33,6 @@ public abstract class MixinRenderSeasonCards {
             method = "use",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;displayClientMessage(Lnet/minecraft/network/chat/Component;Z)V")
     )
-
     private void ecliptic$updateSeasonCardFading(Player instance, Component pChatComponent, boolean pActionBar, Operation<Void> original) {
     }
 }
