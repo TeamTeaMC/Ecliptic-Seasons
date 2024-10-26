@@ -3,6 +3,8 @@ package com.teamtea.eclipticseasons.mixin.client;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.llamalad7.mixinextras.sugar.Local;
+import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import com.teamtea.eclipticseasons.client.core.ClientWeatherChecker;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import net.minecraft.client.Minecraft;
@@ -54,13 +56,16 @@ public abstract class MixinLevelRender {
     // }
 
 
+    @Shadow public abstract void needsUpdate();
+
     // ModifyExpressionValue may cost much time than it
     @WrapOperation(
             method = "renderSnowAndRain",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/biome/Biome;getPrecipitationAt(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/biome/Biome$Precipitation;")
     )
     private Biome.Precipitation ecliptic$renderSnowAndRain_getPrecipitationAt(Biome biome, BlockPos pos, Operation<Biome.Precipitation> original) {
-        return WeatherManager.getPrecipitationAt(level,biome,pos);
+       return level!=null&&WeatherManager.isRainingAt(level,pos)?
+               WeatherManager.getPrecipitationAt(level,biome,pos):Biome.Precipitation.NONE;
     }
 
     @WrapOperation(
@@ -68,8 +73,10 @@ public abstract class MixinLevelRender {
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/biome/Biome;getPrecipitationAt(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/biome/Biome$Precipitation;")
     )
     private Biome.Precipitation ecliptic$tickRain_getPrecipitationAt(Biome biome, BlockPos pos, Operation<Biome.Precipitation> original) {
-        return WeatherManager.getPrecipitationAt(level,biome,pos);
+        return level!=null&&WeatherManager.isRainingAt(level,pos)?
+                WeatherManager.getPrecipitationAt(level,biome,pos):Biome.Precipitation.NONE;
     }
+
 
     //
     // @Redirect(method = "renderSnowAndRain", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/LevelRenderer;getLightColor(Lnet/minecraft/world/level/BlockAndTintGetter;Lnet/minecraft/core/BlockPos;)I"))

@@ -10,3 +10,6 @@ fix #3 for use EclipticTagClientTool in server method
 0.3.16
 add compat for cold_sweat (1.20, 1.21 and 1.19-1.16 plan)
 fix compat for embeddium
+* fix desert tag (1.20-1.21, 1.19-1.16 need check)
+* add small biome check
+* fix biome of bound rain and snow (1.20-1.21, 1.19-1.16 need check)

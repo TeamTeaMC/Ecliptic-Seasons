@@ -9,6 +9,7 @@ import com.teamtea.eclipticseasons.api.constant.tag.SeasonTypeBiomeTags;
 import com.teamtea.eclipticseasons.api.util.EclipticTagTool;
 import com.teamtea.eclipticseasons.api.util.SimpleUtil;
 import com.teamtea.eclipticseasons.common.AllListener;
+import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.handler.SolarUtil;
 import com.teamtea.eclipticseasons.common.network.BiomeWeatherMessage;
 import com.teamtea.eclipticseasons.common.network.EmptyMessage;
@@ -74,7 +75,7 @@ public class WeatherManager {
         return 0.0f;
     }
 
-    public static Boolean isRainingEverywhere(ServerLevel level) {
+    public static boolean isRainingEverywhere(ServerLevel level) {
         if (!level.dimensionType().natural()) return false;
         var ws = getBiomeList(level);
         if (ws != null) {
@@ -112,7 +113,7 @@ public class WeatherManager {
         return 0.0f;
     }
 
-    public static Boolean isThunderEverywhere(ServerLevel level) {
+    public static boolean isThunderEverywhere(ServerLevel level) {
         if (!level.dimensionType().natural()) return false;
         var ws = getBiomeList(level);
         if (ws != null) {
@@ -127,7 +128,7 @@ public class WeatherManager {
         return true;
     }
 
-    public static Boolean isThunderAtBiome(ServerLevel serverLevel, Biome biome) {
+    public static boolean isThunderAtBiome(ServerLevel serverLevel, Biome biome) {
         var ws = getBiomeList(serverLevel);
         if (ws != null)
             for (BiomeWeather biomeWeather : ws) {
@@ -138,7 +139,7 @@ public class WeatherManager {
         return false;
     }
 
-    public static Boolean isThunderAt(ServerLevel serverLevel, BlockPos pos) {
+    public static boolean isThunderAt(ServerLevel serverLevel, BlockPos pos) {
         if (!serverLevel.dimensionType().natural()) {
             return false;
         }
@@ -150,11 +151,11 @@ public class WeatherManager {
         } else if (serverLevel.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, pos).getY() > pos.getY()) {
             return false;
         }
-        var biome = serverLevel.getBiome(pos);
+        var biome = MapChecker.getSurfaceBiome(serverLevel,pos);
         return isThunderAtBiome(serverLevel, biome.get());
     }
 
-    public static Boolean isRainingAt(ServerLevel serverLevel, BlockPos pos) {
+    public static boolean isRainingAt(Level serverLevel, BlockPos pos) {
         if (!serverLevel.dimensionType().natural()) {
             return false;
         }
@@ -166,11 +167,11 @@ public class WeatherManager {
         } else if (serverLevel.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, pos).getY() > pos.getY()) {
             return false;
         }
-        var biome = serverLevel.getBiome(pos);
+        var biome = MapChecker.getSurfaceBiome(serverLevel,pos);
         return isRainingAtBiome(serverLevel, biome.get());
     }
 
-    public static Boolean isRainingAtBiome(Level serverLevel, Biome biome) {
+    public static boolean isRainingAtBiome(Level serverLevel, Biome biome) {
         var ws = getBiomeList(serverLevel);
         if (ws != null)
             for (BiomeWeather biomeWeather : ws) {
@@ -476,7 +477,7 @@ public class WeatherManager {
         }
     }
 
-    public static Boolean onCheckWarmEnoughToRain(BlockPos p198905) {
+    public static boolean onCheckWarmEnoughToRain(BlockPos p198905) {
         // return SolarTerm.get(AllListener.provider.resolve().get().worldSolarTime.getSolarTermIndex()).getSeason() != Season.WINTER;
         return true;
     }
