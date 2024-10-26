@@ -230,7 +230,10 @@ dependencies {
 
     onlyMainRuntimeOnly fg.deobf("curse.maven:farmers-delight-398521:5051242")
     onlyMainRuntimeOnly fg.deobf("curse.maven:modular-routers-250294:5056687")
-    implementation fg.deobf("curse.maven:legendary-survival-overhaul-840254:5825918")
+
+    compileOnly fg.deobf("curse.maven:legendary-survival-overhaul-840254:5825918")
+
+    implementation fg.deobf("curse.maven:cold-sweat-506194:5843683")
 
     // Examples using mod jars from ./libs
     compileOnly "libs:OptiFine:1.20.1_HD_U_I6"

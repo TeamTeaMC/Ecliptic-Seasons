@@ -23,6 +23,10 @@
     "common.entity.player.MixinServerPlayer",
     "common.entity.projectile.MixinThrownTrident",
     "common.loot.MixinWeatherCheck",
+    "compat.cold_sweat.MixinConfigSettings",
+    "compat.cold_sweat.MixinEntityTempManager",
+    "compat.cold_sweat.MixinTempModifierInit",
+    "compat.cold_sweat.MixinWorldSettingsConfig",
     "compat.legendarysurvivaloverhaul.MixinModCore",
     "compat.legendarysurvivaloverhaul.MixinTemperatureModifierRegistry",
     "compat.legendarysurvivaloverhaul.MixinWeatherModifier"

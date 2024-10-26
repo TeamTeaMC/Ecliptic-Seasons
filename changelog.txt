@@ -6,3 +6,7 @@ fix the sound in the rain and water (1.20-1.21, 1.19-1.16 plan)
 add a config for crop humidity (1.20, 1.21 and 1.19-1.16 plan)
 add a config for crop season growth chance (1.20, 1.21 and 1.19-1.16 plan)
 fix #3 for use EclipticTagClientTool in server method
+
+0.3.16
+add compat for cold_sweat (1.20, 1.21 and 1.19-1.16 plan)
+fix compat for embeddium

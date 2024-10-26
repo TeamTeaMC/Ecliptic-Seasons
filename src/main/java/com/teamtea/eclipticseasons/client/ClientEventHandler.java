@@ -113,7 +113,7 @@ public final class ClientEventHandler {
         if (ClientConfig.Renderer.forceChunkRenderUpdate.get()) {
             if (event.phase.equals(TickEvent.Phase.END)
                     && event.level.isClientSide()
-                    && ((ClientLevel) event.level).getGameTime() >> 8 == 0) {
+                    && event.level.getGameTime() %100 == 0) {
                 var lr = Minecraft.getInstance().levelRenderer;
                 if (lr != null) {
                     //
