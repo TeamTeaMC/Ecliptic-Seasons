@@ -13,6 +13,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import sfiomn.legendarysurvivaloverhaul.common.integration.sereneseasons.SereneSeasonsUtil;
 
 
 public class LSO_SeasonalCalendarTimeProperty implements ClampedItemPropertyFunction {
@@ -37,10 +38,29 @@ public class LSO_SeasonalCalendarTimeProperty implements ClampedItemPropertyFunc
         {
             try
             {
-                double d0;
+                double d0=0;
 
-                int seasonCycleTicks = SimpleUtil.getNowSolarDay(level);
-                d0 = (double)((float)seasonCycleTicks / (float) (24* ServerConfig.Season.lastingDaysOfEachTerm.get()));
+                SereneSeasonsUtil.SeasonType seasonType = LSO_ESUtil.getSeasonType(level.getBiome(holder.blockPosition()));
+                if(  seasonType== SereneSeasonsUtil.SeasonType.NORMAL_SEASON) {
+                    int seasonCycleTicks = SimpleUtil.getNowSolarDay(level);
+                    d0 = (double) ((float) seasonCycleTicks / (float) (24 * ServerConfig.Season.lastingDaysOfEachTerm.get()));
+                }else if(seasonType== SereneSeasonsUtil.SeasonType.TROPICAL_SEASON){
+                    int seasonCycleTicks = SimpleUtil.getNowSolarTerm(level).ordinal()+1+6;
+                    seasonCycleTicks=seasonCycleTicks>24?seasonCycleTicks-24:seasonCycleTicks;
+                    if(seasonCycleTicks<5){
+                        d0=0.25f;
+                    }else  if(seasonCycleTicks<9){
+                        d0=0.5f;
+                    }else  if(seasonCycleTicks<13){
+                        d0=2/3f;
+                    }else  if(seasonCycleTicks<17){
+                        d0=0.75f;
+                    }else  if(seasonCycleTicks<21){
+                        d0=0;
+                    }else {
+                        d0=1/6f;
+                    }
+                }
 
                 return Mth.positiveModulo((float)d0, 1.0F);
             }
