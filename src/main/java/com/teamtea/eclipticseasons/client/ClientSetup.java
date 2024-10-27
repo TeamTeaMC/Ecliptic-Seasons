@@ -97,10 +97,10 @@ public class ClientSetup {
         Map<ResourceLocation, BakedModel> modelRegistry = event.getModels();
         ModelManager.models = modelRegistry;
         // snowModel.resolve();
-        ModelManager.snowySlabBottom.resolve();
-        ModelManager.snowOverlayLeaves.resolve();
-        var test = ModelManager.snowOverlayBlock.resolve().get();
-        EclipticSeasons.logger(test);
+        // ModelManager.snowySlabBottom.resolve();
+        // ModelManager.snowOverlayLeaves.resolve();
+        // var test = ModelManager.snowOverlayBlock.resolve().get();
+        // EclipticSeasons.logger(test);
 
         ModelManager.quadMap.clear();
         ModelManager.quadMap_1.clear();

@@ -56,12 +56,12 @@ public final class ClientEventHandler {
 
     @SubscribeEvent
     public static void onFogEvent(ViewportEvent.ComputeFogColor event) {
-        ClientRenderer.renderFogColors(event.getCamera(), (float) event.getPartialTick(), event);
+        // ClientRenderer.renderFogColors(event.getCamera(), (float) event.getPartialTick(), event);
     }
 
     @SubscribeEvent
     public static void onFogEvent(ViewportEvent.RenderFog event) {
-        ClientRenderer.renderFogDensity(event.getCamera(), event);
+        // ClientRenderer.renderFogDensity(event.getCamera(), event);
     }
 
     @SubscribeEvent

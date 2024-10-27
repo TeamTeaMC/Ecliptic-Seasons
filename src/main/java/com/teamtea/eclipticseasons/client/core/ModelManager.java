@@ -339,6 +339,7 @@ public class ModelManager {
                     var useMap = isFlowerAbove ? quadMap_1 : quadMap;
                     List<BakedQuad> cc =
                             EclipticSeasonsMixinPlugin.isOptLoad() ? null : useMap.getOrDefault(list, null);
+                    // cc=null;
                     if (cc != null) {
                         return cc;
                     } else {
