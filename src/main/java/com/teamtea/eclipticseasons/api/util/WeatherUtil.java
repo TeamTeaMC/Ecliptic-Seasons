@@ -1,6 +1,7 @@
 package com.teamtea.eclipticseasons.api.util;
 
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
+import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
@@ -19,13 +20,17 @@ public class WeatherUtil {
     }
 
     public static boolean isEntityInRain(LivingEntity entity) {
-        // return WeatherManager.isRainingAt((ServerLevel) entity.level(), entity.blockPosition());
         BlockPos blockpos = entity.blockPosition();
         return entity.level().isRainingAt(blockpos)
                 || entity.level().isRainingAt(BlockPos.containing(blockpos.getX(), entity.getBoundingBox().maxY, blockpos.getZ()));
-        // return entity.isInWaterOrRain();
     }
 
+    public static boolean isEntityInRainOrSnow(LivingEntity entity) {
+        BlockPos blockPos = entity.blockPosition();
+        var pos2 = BlockPos.containing(blockPos.getX(), entity.getBoundingBox().maxY, blockPos.getZ());
+        return WeatherManager.isRainingOrSnowAt(entity.level(), blockPos)
+                || WeatherManager.isRainingOrSnowAt(entity.level(), pos2);
+    }
 
     public static float getTempAt(Level level, BlockPos pos) {
         var biome = level.getBiome(pos);

@@ -13,11 +13,14 @@ public class ServerConfig {
 
     public static class Debug {
         public static ForgeConfigSpec.BooleanValue debugMode;
+        public static ForgeConfigSpec.BooleanValue notSnowyUnderLight;
 
         private static void load(ForgeConfigSpec.Builder builder) {
             builder.push("Debug");
             debugMode = builder.comment("Enable debug option to detect illegal use of functions.")
                     .define("Debug", false);
+            notSnowyUnderLight = builder.comment("Without snowy block under the light blocks which level is 0.")
+                    .define("NotSnowyUnderLight", true);
             builder.pop();
         }
     }

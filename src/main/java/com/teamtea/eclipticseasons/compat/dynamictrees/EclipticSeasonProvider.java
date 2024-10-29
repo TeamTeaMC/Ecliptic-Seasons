@@ -1,6 +1,6 @@
 package com.teamtea.eclipticseasons.compat.dynamictrees;
 
-import com.teamtea.eclipticseasons.common.AllListener;
+import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.config.ServerConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
@@ -16,7 +16,7 @@ public class EclipticSeasonProvider implements com.ferreusveritas.dynamictrees.c
 
     @Override
     public void updateTick(Level level, long dayTime) {
-        var solarDataManager = AllListener.getSaveDataLazy(level);
+        var solarDataManager = SolarHolders.getSaveDataLazy(level);
         if (solarDataManager.resolve().isPresent()) {
             seasonValue = solarDataManager.resolve().get().getSolarTermsDay() / (6f * ServerConfig.Season.lastingDaysOfEachTerm.get());
         }

@@ -1,6 +1,9 @@
 package com.teamtea.eclipticseasons;
 
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
+import com.teamtea.eclipticseasons.client.particle.ColorParticleOptions;
 import com.teamtea.eclipticseasons.client.particle.FireflyParticle;
 import com.teamtea.eclipticseasons.common.misc.HeatStrokeEffect;
 import com.teamtea.eclipticseasons.compat.CompatModule;
@@ -8,7 +11,12 @@ import com.teamtea.eclipticseasons.config.ClientConfig;
 import com.teamtea.eclipticseasons.common.network.SimpleNetworkHandler;
 import com.teamtea.eclipticseasons.config.ServerConfig;
 import com.teamtea.eclipticseasons.data.start;
+import net.minecraft.core.Registry;
+import net.minecraft.core.particles.DustParticleOptions;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.particles.SimpleParticleType;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
@@ -38,6 +46,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.List;
+import java.util.function.Function;
 // import xueluoanping.fluiddrawerslegacy.handler.ControllerFluidCapabilityHandler;
 
 // The value here should match an entry in the META-INF/mods.toml file
@@ -170,16 +179,25 @@ public class EclipticSeasons {
     public static final class ParticleRegistry {
         public static final SimpleParticleType FIREFLY = new SimpleParticleType(false);
         public static final SimpleParticleType WILD_GOOSE = new SimpleParticleType(false);
+        public static final SimpleParticleType BUTTERFLY = new SimpleParticleType(false);
+        public static final ParticleType<ColorParticleOptions> FALLEN_LEAVES = create(false, ColorParticleOptions.DESERIALIZER, (p_123819_) -> ColorParticleOptions.CODEC);
 
         @SubscribeEvent
         public static void blockRegister(RegisterEvent event) {
             event.register(Registries.PARTICLE_TYPE, particleTypeRegisterHelper -> {
                 particleTypeRegisterHelper.register(rl("firefly"), FIREFLY);
                 particleTypeRegisterHelper.register(rl("wild_goose"), WILD_GOOSE);
+                particleTypeRegisterHelper.register(rl("butterfly"), BUTTERFLY);
+                particleTypeRegisterHelper.register(rl("fallen_leaves"), FALLEN_LEAVES);
             });
         }
 
-
-
+        private static <T extends ParticleOptions> ParticleType<T> create(boolean pOverrideLimiter, ParticleOptions.Deserializer<T> pDeserializer, final Function<ParticleType<T>, Codec<T>> pCodecFactory) {
+            return new ParticleType<T>(pOverrideLimiter, pDeserializer) {
+                public Codec<T> codec() {
+                    return pCodecFactory.apply(this);
+                }
+            };
+        }
     }
 }

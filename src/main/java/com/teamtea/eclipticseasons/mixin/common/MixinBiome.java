@@ -20,38 +20,12 @@ public abstract class MixinBiome {
     @Deprecated
     public abstract float getTemperature(BlockPos p_47506_);
 
-    // 阻止非寒冷群系结冰
-    @Inject(at = {@At("HEAD")}, method = {"shouldFreeze(Lnet/minecraft/world/level/LevelReader;Lnet/minecraft/core/BlockPos;)Z"}, cancellable = true)
-    public void ecliptic$shouldFreeze(LevelReader p_47520_, BlockPos p_47521_, CallbackInfoReturnable<Boolean> cir) {
-        // if (p_47520_ instanceof ServerLevel level) {
-        //     // 目前设置为不生成雪，根据香草判断一下了
-        //     if ((this.getTemperature(p_47521_) >= 0.15F))
-        //         cir.setReturnValue(false);
-        // }
-    }
-
     // TODO：这里需要走一下判断是在客户端还是服务器
     @Inject(at = {@At("HEAD")}, method = {"getPrecipitationAt"}, cancellable = true)
     public void ecliptic$getPrecipitationAt(BlockPos p_198905_, CallbackInfoReturnable<Biome.Precipitation> cir) {
-        if (FMLLoader.getDist() == Dist.DEDICATED_SERVER)
-            cir.setReturnValue(WeatherManager.getPrecipitationAt((Biome) (Object) this, p_198905_));
+        cir.setReturnValue(WeatherManager.getPrecipitationAt((Biome) (Object) this, p_198905_));
     }
 
-    @Inject(at = {@At("HEAD")}, method = {"warmEnoughToRain"}, cancellable = true)
-    public void ecliptic$warmEnoughToRain(BlockPos p_198905_, CallbackInfoReturnable<Boolean> cir) {
-        // cir.setReturnValue(WeatherManager.onCheckWarmEnoughToRain(p_198905_));
-    }
-
-    @Inject(at = {@At("HEAD")}, method = {"shouldSnow"}, cancellable = true)
-    public void ecliptic$shouldSnow(LevelReader p_47520_, BlockPos p_47521_, CallbackInfoReturnable<Boolean> cir) {
-        // if (p_47520_ instanceof ServerLevel level) {
-        //     // cir.setReturnValue(WeatherHandler.onShouldSnow(level,((Biome) (Object) this),p_47521_));
-        //     // cir.setReturnValue(true);
-        //     // 目前设置为不生成雪，根据香草判断一下了
-        //     if ((this.getTemperature(p_47521_) >= 0.15F))
-        //         cir.setReturnValue(false);
-        // }
-    }
 
     @Inject(at = {@At("HEAD")}, method = {"getBaseTemperature"}, cancellable = true)
     public void ecliptic$getBaseTemperature(CallbackInfoReturnable<Float> cir) {
@@ -60,7 +34,7 @@ public abstract class MixinBiome {
 
     @Inject(at = {@At("HEAD")}, method = {"hasPrecipitation"}, cancellable = true)
     public void ecliptic$hasPrecipitation(CallbackInfoReturnable<Boolean> cir) {
-        if (FMLLoader.getDist() == Dist.DEDICATED_SERVER)
-            cir.setReturnValue(BiomeClimateManager.agent$hasPrecipitation((Biome) (Object) this));
+
+        cir.setReturnValue(BiomeClimateManager.agent$hasPrecipitation((Biome) (Object) this));
     }
 }

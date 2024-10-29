@@ -24,8 +24,6 @@
     "common.entity.projectile.MixinThrownTrident",
     "common.loot.MixinWeatherCheck",
     "compat.cold_sweat.MixinConfigSettings",
-    "compat.cold_sweat.MixinEntityTempManager",
-    "compat.cold_sweat.MixinTempModifierInit",
     "compat.cold_sweat.MixinWorldSettingsConfig",
     "compat.legendarysurvivaloverhaul.MixinModCore",
     "compat.legendarysurvivaloverhaul.MixinTemperatureModifierRegistry",
@@ -39,7 +37,6 @@
     "client.MixinClientLevelChunk",
     "client.MixinClientPanda",
     "client.MixinGameRenderer",
-    "client.MixinItemBlockRenderTypes",
     "client.MixinLevelRender",
     "client.MixinLocalPlayer",
     "client.block.MixinLeavesBlock",
@@ -53,7 +50,9 @@
     "compat.legendarysurvivaloverhaul.client.MixinRenderSeasonCards",
     "compat.legendarysurvivaloverhaul.client.MixinRenderTooltipFrame",
     "compat.optifine.MixinBlockModelCustomizer",
-    "compat.rubidium.MixinBlockRender2"
+    "compat.optifine.MixinItemBlockRenderTypes",
+    "compat.rubidium.MixinBlockRender2",
+    "compat.rubidium.MixinBlockRenderTask"
   ],
   "injectors": {
     "defaultRequire": 1

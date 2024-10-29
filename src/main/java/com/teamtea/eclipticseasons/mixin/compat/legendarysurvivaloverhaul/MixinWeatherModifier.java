@@ -36,7 +36,7 @@ public abstract class MixinWeatherModifier {
                     target = "Lsfiomn/legendarysurvivaloverhaul/util/WorldUtil;isRainingOrSnowingAt(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;)Z")
     )
     private boolean ecliptic$getWorldInfluence_isRainingOrSnowingAt(Level world, BlockPos pos, Operation<Boolean> original) {
-        return WeatherManager.isRainingAtBiome(world, world.getBiome(pos).value());
+        return WeatherManager.isRainingOrSnowAtBiome(world, world.getBiome(pos).value());
     }
 
     @WrapOperation(
@@ -46,6 +46,6 @@ public abstract class MixinWeatherModifier {
             )
     )
     private boolean ecliptic$getWorldInfluence_isRaining(Level world, Operation<Boolean> original, @Local(argsOnly = true) BlockPos blockPos) {
-        return WeatherManager.isRainingAtBiome(world, world.getBiome(blockPos).value());
+        return WeatherManager.isRainingOrSnowAtBiome(world, world.getBiome(blockPos).value());
     }
 }

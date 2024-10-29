@@ -1,6 +1,7 @@
 package com.teamtea.eclipticseasons.mixin.client;
 
 
+import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
@@ -13,7 +14,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
-import com.teamtea.eclipticseasons.client.core.ModelManager;
 
 @Mixin({LevelChunk.class})
 public abstract class MixinClientLevelChunk {
@@ -26,7 +26,7 @@ public abstract class MixinClientLevelChunk {
     )
     public void ecliptic$setBlockState(BlockPos p_62865_, BlockState p_62866_, boolean p_62867_, CallbackInfoReturnable<BlockState> cir) {
         if (level instanceof ClientLevel clientLevel ){
-            ModelManager.getHeightOrUpdate(p_62865_,true);
+            MapChecker.getHeightOrUpdate(clientLevel,p_62865_,true);
         }
     }
 }

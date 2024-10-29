@@ -1,6 +1,8 @@
 {
   "values": [
     "minecraft:bamboo",
+    "minecraft:brown_mushroom",
+    "minecraft:red_mushroom",
     {
       "id": "farmersdelight:rice",
       "required": false

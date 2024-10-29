@@ -20,34 +20,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin({ConfigSettings.class})
 public abstract class MixinConfigSettings {
 
-    // @Shadow(remap = false)
-    // @Final
-    // public static DynamicHolder<Double[]> WINTER_TEMPS;
-    //
-    // @Shadow(remap = false)
-    // @Final
-    // public static DynamicHolder<Double[]> SUMMER_TEMPS;
-    //
-    // @Shadow(remap = false)
-    // @Final
-    // public static DynamicHolder<Double[]> SPRING_TEMPS;
-    //
-    // @Shadow(remap = false)
-    // @Final
-    // public static DynamicHolder<Double[]> AUTUMN_TEMPS;
-    //
-    // @Inject(
-    //         remap = false,
-    //         method = "<clinit>",
-    //         at = @At(value = "RETURN")
-    // )
-    // private static void ecliptic$clinit(CallbackInfo ci) {
-    //     SPRING_TEMPS.set(WorldSettingsConfig.getInstance().getSpringTemps());
-    //     SUMMER_TEMPS.set(WorldSettingsConfig.getInstance().getSummerTemps());
-    //     AUTUMN_TEMPS.set(WorldSettingsConfig.getInstance().getAutumnTemps());
-    //     WINTER_TEMPS.set(WorldSettingsConfig.getInstance().getWinterTemps());
-    // }
-
     @WrapOperation(
             remap = false,
             method = "<clinit>",

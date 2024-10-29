@@ -1,7 +1,7 @@
 package com.teamtea.eclipticseasons.common.network;
 
 import com.teamtea.eclipticseasons.client.color.season.BiomeColorsHandler;
-import com.teamtea.eclipticseasons.common.AllListener;
+import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import net.minecraft.client.Minecraft;
@@ -22,7 +22,7 @@ public class NetworkdUtil {
         {
             if (context.get().getDirection() == NetworkDirection.PLAY_TO_CLIENT) {
 
-                AllListener.getSaveDataLazy(NetworkdUtil.getClient()).ifPresent(data ->
+                SolarHolders.getSaveDataLazy(NetworkdUtil.getClient()).ifPresent(data ->
                         {
                             data.setSolarTermsDay(solarTermsMessage.solarDay);
                             BiomeClimateManager.updateTemperature(NetworkdUtil.getClient(),data.getSolarTermIndex());

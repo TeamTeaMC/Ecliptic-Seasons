@@ -1,12 +1,15 @@
 package com.teamtea.eclipticseasons.client;
 
 import com.teamtea.eclipticseasons.client.color.season.BiomeColorsHandler;
+import com.teamtea.eclipticseasons.client.particle.ButterflyParticle;
+import com.teamtea.eclipticseasons.client.particle.FallenLeavesParticle;
 import com.teamtea.eclipticseasons.client.particle.FireflyParticle;
 import com.teamtea.eclipticseasons.client.particle.WildGooseParticle;
 import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.client.resources.model.SimpleBakedModel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.GrassColor;
@@ -27,11 +30,6 @@ import java.util.Map;
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class ClientSetup {
 
-    // does the Glass Lantern render in the given layer (RenderType) - used as Predicate<RenderType> lambda for setRenderLayer
-    public static boolean isGlassLanternValidLayer(RenderType layerToCheck) {
-        return layerToCheck == RenderType.cutoutMipped() || layerToCheck == RenderType.translucent();
-    }
-
     @SubscribeEvent
     public static void blockRegister(RegisterParticleProvidersEvent event) {
         event.registerSpriteSet(EclipticSeasons.ParticleRegistry.FIREFLY, (p_277215_) ->
@@ -39,7 +37,16 @@ public class ClientSetup {
                         new FireflyParticle(level, x, y, z, p_277215_));
         event.registerSpriteSet(EclipticSeasons.ParticleRegistry.WILD_GOOSE, (p_277215_) ->
                 (particleType, level, x, y, z, p_277222_, p_277223_, p_277224_) ->
-                        new WildGooseParticle(level, x, y, z,0.01,0.01,0.01, p_277215_));
+                        new WildGooseParticle(level, x, y, z, 0.01, 0.01, 0.01, p_277215_));
+
+        event.registerSpriteSet(EclipticSeasons.ParticleRegistry.BUTTERFLY, (p_277215_) ->
+                (particleType, level, x, y, z, p_277222_, p_277223_, p_277224_) ->
+                        new ButterflyParticle(level, x, y, z, p_277215_));
+        event.registerSpriteSet(EclipticSeasons.ParticleRegistry.FALLEN_LEAVES, (p_277215_) ->
+                (particleType, level, x, y, z, p_277222_, p_277223_, p_277224_) ->
+                        new FallenLeavesParticle(level, x, y, z, p_277222_, p_277223_, p_277224_, particleType, p_277215_));
+
+
     }
 
     @SubscribeEvent
@@ -60,18 +67,16 @@ public class ClientSetup {
         event.register(ModelManager.butterfly1);
         event.register(ModelManager.butterfly2);
         event.register(ModelManager.butterfly3);
+
+        ModelManager.flower_on_grass.forEach(event::register);
+
     }
 
     @SubscribeEvent
     public static void onClientEvent(FMLClientSetupEvent event) {
         EclipticSeasons.logger("Register Client");
         event.enqueueWork(() -> {
-            // ItemBlockRenderTypes.setRenderLayer(ModContents.fluiddrawer.get(), ClientSetup::isGlassLanternValidLayer);
-            // MenuScreens.register(ModContents.containerType.get(), Screen.Slot1::new);
-            //
-            ItemBlockRenderTypes.setRenderLayer(Blocks.BAMBOO_BLOCK, RenderType.cutoutMipped());
-            // ItemBlockRenderTypes.setRenderLayer(ModContents.RiceSeedlingBlock.get(),RenderType.cutout());
-            // fix json file instead
+
             BiomeColors.GRASS_COLOR_RESOLVER = BiomeColorsHandler.GRASS_COLOR;
             BiomeColors.FOLIAGE_COLOR_RESOLVER = BiomeColorsHandler.FOLIAGE_COLOR;
 
@@ -132,6 +137,10 @@ public class ClientSetup {
                 return -1;
             }
         }, Blocks.DANDELION);
+
+        event.register(BiomeColorsHandler::getSpruceColor, Blocks.SPRUCE_LEAVES);
+        event.register(BiomeColorsHandler::getBirchColor, Blocks.BIRCH_LEAVES);
+        event.register(BiomeColorsHandler::getMangroveColor, Blocks.MANGROVE_LEAVES);
     }
 
     @SubscribeEvent

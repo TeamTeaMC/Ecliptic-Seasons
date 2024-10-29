@@ -1,6 +1,11 @@
 package com.teamtea.eclipticseasons.data;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
+import com.teamtea.eclipticseasons.data.model.BlockStatesDataProvider;
+import com.teamtea.eclipticseasons.data.model.ESBlockModelProvider;
+import com.teamtea.eclipticseasons.data.model.ESItemModelProvider;
+import com.teamtea.eclipticseasons.data.tag.ESBlockTagProvider;
+import com.teamtea.eclipticseasons.data.tag.ESItemTagProvider;
 import com.teamtea.eclipticseasons.data.tag.TagsDataProvider;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
@@ -23,10 +28,15 @@ public class start {
         if (event.includeServer()) {
             EclipticSeasons.logger("Generate We Data!!!");
 
-            generator.addProvider(event.includeServer(),new TagsDataProvider(packOutput,lookupProvider,MODID,helper));
-
+            generator.addProvider(event.includeServer(), new TagsDataProvider(packOutput, lookupProvider, MODID, helper));
+            var esb = new ESBlockTagProvider(packOutput, lookupProvider, MODID, helper);
+            generator.addProvider(event.includeServer(), esb);
+            generator.addProvider(event.includeServer(),new ESItemTagProvider(packOutput,lookupProvider,esb.contentsGetter()));
         }
         if (event.includeClient()) {
+            generator.addProvider(event.includeClient(), new BlockStatesDataProvider(packOutput, helper));
+            generator.addProvider(event.includeClient(), new ESItemModelProvider(packOutput, MODID, helper));
+            generator.addProvider(event.includeClient(), new ESBlockModelProvider(packOutput, MODID, helper));
 
         }
 

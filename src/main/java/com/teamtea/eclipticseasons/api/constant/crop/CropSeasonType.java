@@ -1,8 +1,12 @@
 package com.teamtea.eclipticseasons.api.constant.crop;
 
 
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import com.teamtea.eclipticseasons.EclipticSeasons;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
 
 public enum CropSeasonType
 {
@@ -39,5 +43,14 @@ public enum CropSeasonType
     public ResourceLocation getRes()
     {
         return res;
+    }
+
+
+    public TagKey<Item> getTag() {
+        return TagKey.create(Registries.ITEM, res);
+    }
+
+    public TagKey<Block> getBlockTag() {
+        return TagKey.create(Registries.BLOCK, res);
     }
 }

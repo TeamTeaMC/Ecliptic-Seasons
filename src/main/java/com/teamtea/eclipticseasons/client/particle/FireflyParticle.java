@@ -81,6 +81,22 @@ public class FireflyParticle extends TextureSheetParticle {
         int light1 = combinedLightIn & '\uffff';
         int light2 = combinedLightIn >> 16 & '\uffff';
 
+        boolean revex = true;
+        if (Minecraft.getInstance().getCameraEntity() != null) {
+            var viewVec = Minecraft.getInstance().getCameraEntity().getLookAngle();
+            double vx = viewVec.x;
+            double vz = viewVec.z;
+            double crossY = vx * zd - vz * xd;
+
+            // 浮点数要防抖
+            if (crossY < 0.01f) {
+                float ut = f7;
+                f7 = f6;
+                f6 = ut;
+                revex = false;
+            }
+        }
+
         vertexConsumer.vertex(avector3f[0].x(), avector3f[0].y(), avector3f[0].z()).uv(f7, f5).color(this.rCol, this.gCol, this.bCol, this.alpha).uv2(j).endVertex();
         vertexConsumer.vertex(avector3f[1].x(), avector3f[1].y(), avector3f[1].z()).uv(f7, f4).color(this.rCol, this.gCol, this.bCol, this.alpha).uv2(j).endVertex();
         vertexConsumer.vertex(avector3f[2].x(), avector3f[2].y(), avector3f[2].z()).uv(f6, f4).color(this.rCol, this.gCol, this.bCol, this.alpha).uv2(j).endVertex();
@@ -91,6 +107,11 @@ public class FireflyParticle extends TextureSheetParticle {
             f7 = spriteSet.get(1, 1).getU1();
             f4 = spriteSet.get(1, 1).getV0();
             f5 = spriteSet.get(1, 1).getV1();
+            if(!revex){
+                float ut = f7;
+                f7 = f6;
+                f6 = ut;
+            }
             vertexConsumer.vertex(avector3f[0].x(), avector3f[0].y(), avector3f[0].z()).uv(f7, f5).color(this.rCol, this.gCol, this.bCol, 0.5f).uv2(j).endVertex();
             vertexConsumer.vertex(avector3f[1].x(), avector3f[1].y(), avector3f[1].z()).uv(f7, f4).color(this.rCol, this.gCol, this.bCol, 0.5f).uv2(j).endVertex();
             vertexConsumer.vertex(avector3f[2].x(), avector3f[2].y(), avector3f[2].z()).uv(f6, f4).color(this.rCol, this.gCol, this.bCol, 0.5f).uv2(j).endVertex();
