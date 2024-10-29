@@ -24,62 +24,27 @@ import java.util.Set;
 @Mixin(targets = "net.minecraft.client.renderer.chunk.ChunkRenderDispatcher$RenderChunk$RebuildTask")
 public class MixinChunkRenderDispatcher {
 
-    // @Inject(
-    //         remap = false,
-    //         method = "compile",
-    //         at = @At(value = "INVOKE",
-    //                 // shift = At.Shift.AFTER,
-    //                 target = "Lnet/minecraft/client/resources/model/BakedModel;getRenderTypes(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/util/RandomSource;Lnet/minecraftforge/client/model/data/ModelData;)Lnet/minecraftforge/client/ChunkRenderTypeSet;")
-    // )
-    // private void mixin_compile_extraSnowyModel(float pX, float pY, float pZ, ChunkBufferBuilderPack pChunkBufferBuilderPack, CallbackInfoReturnable cir){}
     //
-    // @Dynamic
-    // @Shadow @Final ChunkRenderDispatcher.RenderChunk this$0;
-
-    // @Inject(
+    // @ModifyExpressionValue(
     //         remap = false,
     //         method = "compile",
     //         at = @At(value = "INVOKE",
     //                 // shift = At.Shift.AFTER,
     //                 target = "Lnet/minecraft/client/resources/model/BakedModel;getRenderTypes(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/util/RandomSource;Lnet/minecraftforge/client/model/data/ModelData;)Lnet/minecraftforge/client/ChunkRenderTypeSet;")
     // )
-    // private void mixin_compile_extraSnowyModel(
-    //         float pX,
-    //         float pY,
-    //         float pZ,
-    //         ChunkBufferBuilderPack pChunkBufferBuilderPack,
-    //         CallbackInfoReturnable cir,
+    // private ChunkRenderTypeSet mixin_compile_extraSnowyModel2(
+    //         ChunkRenderTypeSet original,
+    //         @Local(argsOnly = true) ChunkBufferBuilderPack pChunkBufferBuilderPack,
     //         @Local(ordinal = 2) BlockPos blockpos2,
     //         @Local(ordinal = 1) BlockState blockstate,
     //         @Local PoseStack posestack,
     //         @Local RenderChunkRegion renderchunkregion,
     //         @Local RandomSource randomsource,
     //         @Local Set<RenderType> renderTypeSet
-    //         ) {
+    // ) {
     //
-    //     ModelManager.appendModel(pChunkBufferBuilderPack,blockpos2,blockstate,posestack,renderchunkregion,randomsource,renderTypeSet);
+    //     boolean replace = ModelManager.appendModel(pChunkBufferBuilderPack, blockpos2, blockstate, posestack, renderchunkregion, randomsource, renderTypeSet);
     //
+    //     return replace ? ChunkRenderTypeSet.none() : original;
     // }
-    @ModifyExpressionValue(
-            remap = false,
-            method = "compile",
-            at = @At(value = "INVOKE",
-                    // shift = At.Shift.AFTER,
-                    target = "Lnet/minecraft/client/resources/model/BakedModel;getRenderTypes(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/util/RandomSource;Lnet/minecraftforge/client/model/data/ModelData;)Lnet/minecraftforge/client/ChunkRenderTypeSet;")
-    )
-    private ChunkRenderTypeSet mixin_compile_extraSnowyModel2(
-            ChunkRenderTypeSet original,
-            @Local(argsOnly = true) ChunkBufferBuilderPack pChunkBufferBuilderPack,
-            @Local(ordinal = 2) BlockPos blockpos2,
-            @Local(ordinal = 1) BlockState blockstate,
-            @Local PoseStack posestack,
-            @Local RenderChunkRegion renderchunkregion,
-            @Local RandomSource randomsource,
-            @Local Set<RenderType> renderTypeSet
-    ) {
-
-        boolean replace = ModelManager.appendModel(pChunkBufferBuilderPack, blockpos2, blockstate, posestack, renderchunkregion, randomsource, renderTypeSet);
-
-        return replace ? ChunkRenderTypeSet.none() : original;
-    }
 }

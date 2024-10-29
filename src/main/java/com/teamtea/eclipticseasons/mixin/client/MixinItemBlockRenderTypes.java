@@ -1,4 +1,4 @@
-package com.teamtea.eclipticseasons.mixin.compat.optifine;
+package com.teamtea.eclipticseasons.mixin.client;
 
 
 import com.teamtea.eclipticseasons.client.core.ModelManager;

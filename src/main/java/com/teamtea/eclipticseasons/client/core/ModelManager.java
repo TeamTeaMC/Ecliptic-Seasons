@@ -36,7 +36,6 @@ import net.minecraftforge.common.util.LazyOptional;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 
 import java.util.*;
-import java.util.stream.Stream;
 
 // https://github.com/DoubleNegation/CompactOres/blob/1.18/src/main/java/doublenegation/mods/compactores/CompactOresResourcePack.java#L164
 // 未来可以基于RepositorySource实现动态纹理生成（看情况，因为目前不需要，对内存消耗比较大）
@@ -71,7 +70,7 @@ public class ModelManager {
     public static ResourceLocation butterfly2 = EclipticSeasons.rl("block/butterfly_magenta");
     public static ResourceLocation butterfly3 = EclipticSeasons.rl("block/butterfly_red");
 
-    public static List<ResourceLocation> flower_on_grass = Stream.of(1, 2, 3, 4, 5, 6).map(
+    public static List<ResourceLocation> flower_on_grass = List.of(1, 2, 3, 4, 5, 6).stream().map(
             i ->  EclipticSeasons.rl("block/flower_%s".formatted(i))
     ).toList();
 
