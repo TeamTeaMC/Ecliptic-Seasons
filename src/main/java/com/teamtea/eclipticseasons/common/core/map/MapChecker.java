@@ -40,7 +40,7 @@ public class MapChecker {
     public static final int FLAG_GRASS = 5;
     public static final int FLAG_GRASS_LARGE = 501;
     public static final int FLAG_FARMLAND = 6;
-    public static final List<Block> LowerPlant = List.of(Blocks.GRASS, Blocks.FERN, Blocks.DANDELION);
+    public static final List<Block> LowerPlant = List.of(Blocks.GRASS, Blocks.FERN);
     public static final List<Block> LARGE_GRASS = List.of(Blocks.TALL_GRASS, Blocks.LARGE_FERN);
 
 
@@ -272,9 +272,9 @@ public class MapChecker {
         if (onBlock instanceof LeavesBlock) {
             flag = MapChecker.FLAG_LEAVES;
         } else if ((
-                 state.isSolidRender(level, pos)
+                 // state.isSolidRender(level, pos)
                 // &&
-                // state.isCollisionShapeFullBlock(level, pos)
+                state.isCollisionShapeFullBlock(level, pos)
                         // state.isSolid()
                         || onBlock instanceof LeavesBlock
                         || (onBlock instanceof SlabBlock && state.getValue(SlabBlock.TYPE) == SlabType.TOP)

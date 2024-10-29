@@ -130,14 +130,6 @@ public class ClientSetup {
         // BlockColors blockColors = event.getBlockColors();
 
 
-        event.register((state, blockAndTintGetter, pos, i) -> {
-            if (i == 1) {
-                return blockAndTintGetter != null && pos != null ? BiomeColors.getAverageGrassColor(blockAndTintGetter, pos) : GrassColor.getDefaultColor();
-            } else {
-                return -1;
-            }
-        }, Blocks.DANDELION);
-
         event.register(BiomeColorsHandler::getSpruceColor, Blocks.SPRUCE_LEAVES);
         event.register(BiomeColorsHandler::getBirchColor, Blocks.BIRCH_LEAVES);
         event.register(BiomeColorsHandler::getMangroveColor, Blocks.MANGROVE_LEAVES);

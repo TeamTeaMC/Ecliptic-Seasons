@@ -158,7 +158,7 @@ public class ParticleUtil {
                                 d5 = 0.42f;
                             }
 
-                            level.addParticle(new DustParticleOptions( new Vector3f(FastColor.ARGB32.red(finalColor) / 255.0f,FastColor.ARGB32.green(finalColor) / 255.0f,FastColor.ARGB32.blue(finalColor) / 255.0f),1.0f),
+                            level.addParticle(new ColorParticleOptions( new Vector3f(FastColor.ARGB32.red(finalColor) / 255.0f,FastColor.ARGB32.green(finalColor) / 255.0f,FastColor.ARGB32.blue(finalColor) / 255.0f),1.0f),
                                     (double) pos.getX() + d7,
                                     (double) pos.getY() + d8,
                                     (double) pos.getZ() + d9,
