@@ -76,7 +76,7 @@ public class WeatherManager {
     }
 
     public static boolean isRainingEverywhere(ServerLevel level) {
-        if (!level.dimensionType().natural()) return false;
+        if (!MapChecker.isValidDimension(level)) return false;
         var ws = getBiomeList(level);
         if (ws != null) {
             var solarTerm = SolarHolders.getSaveData(level).getSolarTerm();
@@ -114,7 +114,7 @@ public class WeatherManager {
     }
 
     public static boolean isThunderEverywhere(ServerLevel level) {
-        if (!level.dimensionType().natural()) return false;
+        if (!MapChecker.isValidDimension(level)) return false;
         var ws = getBiomeList(level);
         if (ws != null) {
             var solarTerm = SolarHolders.getSaveData(level).getSolarTerm();
@@ -140,7 +140,7 @@ public class WeatherManager {
     }
 
     public static boolean isThunderAt(ServerLevel serverLevel, BlockPos pos) {
-        if (!serverLevel.dimensionType().natural()) {
+        if (!MapChecker.isValidDimension(serverLevel)) {
             return false;
         }
         // if (!isThunderAnywhere(serverLevel)) {
@@ -156,22 +156,6 @@ public class WeatherManager {
     }
 
     public static boolean isRainingAt(Level serverLevel, BlockPos pos) {
-        if (!serverLevel.dimensionType().natural()) {
-            return false;
-        }
-        // if (!isRainingAnywhere(serverLevel)) {
-        //     return false;
-        // }
-        if (!serverLevel.canSeeSky(pos)) {
-            return false;
-        } else if (serverLevel.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, pos).getY() > pos.getY()) {
-            return false;
-        }
-        var biome = MapChecker.getSurfaceBiome(serverLevel,pos);
-        return isRainingOrSnowAtBiome(serverLevel, biome.get());
-    }
-
-    public static Boolean isRainingOrSnowAt(Level serverLevel, BlockPos pos) {
         if (!MapChecker.isValidDimension(serverLevel)) {
             return false;
         }
@@ -183,8 +167,21 @@ public class WeatherManager {
         } else if (serverLevel.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, pos).getY() > pos.getY()) {
             return false;
         }
-        // Thread.currentThread().getStackTrace()
-        // var biome = serverLevel.getBiome(pos);
+        var biome = MapChecker.getSurfaceBiome(serverLevel,pos);
+        return isRainingOrSnowAtBiome(serverLevel, biome.get())
+                && getPrecipitationAt(serverLevel,biome.value(),pos)== Biome.Precipitation.RAIN;
+    }
+
+    public static Boolean isRainingOrSnowAt(Level serverLevel, BlockPos pos) {
+        if (!MapChecker.isValidDimension(serverLevel)) {
+            return false;
+        }
+
+        if (!serverLevel.canSeeSky(pos)) {
+            return false;
+        } else if (serverLevel.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, pos).getY() > pos.getY()) {
+            return false;
+        }
         var biome = MapChecker.getSurfaceBiome(serverLevel, pos);
         return isRainingOrSnowAtBiome(serverLevel, biome.value());
     }
@@ -236,6 +233,7 @@ public class WeatherManager {
         }
 
         if (provider != null && weathers != null) {
+           // biome= MapChecker.getSurfaceBiome(level,p198905).value();
             var solarTerm = provider.getSolarTerm();
             var snowTerm = SolarTerm.getSnowTerm(biome);
             boolean flag_cold = solarTerm.isInTerms(snowTerm.getStart(), snowTerm.getEnd());
@@ -507,7 +505,7 @@ public class WeatherManager {
 
     public static boolean agentAdvanceWeatherCycle(ServerLevel level, ServerLevelData serverLevelData, WritableLevelData levelData, RandomSource random) {
 
-        if (!level.dimensionType().natural()) {
+        if (!MapChecker.isValidDimension(level)) {
             return true;
         }
         int pos = NEXT_CHECK_BIOME_MAP.getOrDefault(level, -1);

@@ -1,5 +1,7 @@
 package com.teamtea.eclipticseasons.client.core;
 
+import com.mojang.datafixers.util.Pair;
+import com.teamtea.eclipticseasons.api.util.SimplePair;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.config.ClientConfig;
@@ -14,10 +16,14 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.levelgen.Heightmap;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 // TODO:全局雨量控制表
 public class ClientWeatherChecker {
+
+    public static List<SimplePair<Biome, Long>> lastRainyBiome = new ArrayList<>();
 
     public static float lastBiomeRainLevel = -1;
     public static float lastBiomeRThunderLevel = -1;
@@ -29,7 +35,10 @@ public class ClientWeatherChecker {
 
     public static boolean updateForPlayerLogin = false;
 
-    public static boolean isNear(float a, float b, float interval) {
+    public static float rate = 0.008f;
+
+
+    private static boolean isNear(float a, float b, float interval) {
         return Math.abs(a - b) < interval;
     }
 
@@ -113,7 +122,7 @@ public class ClientWeatherChecker {
                 if (lastBiomeRainLevel >= 0 && !isNear(rainLevel, lastBiomeRainLevel, 0.01f)) {
                     // rainLevel = rainLevel + (lastBiomeRainLevel - rainLevel) * 0.99f;
                     // rainLevel = rainLevel + (lastBiomeRainLevel - rainLevel) * 0.99f;
-                    float add = 0.008f * ((rainLevel - lastBiomeRainLevel) > 0 ? 1 : -1);
+                    float add = rate * ((rainLevel - lastBiomeRainLevel) > 0 ? 1 : -1);
                     lastBiomeRainLevel += add;
                     rainLevel = lastBiomeRainLevel;
                 }
@@ -192,7 +201,7 @@ public class ClientWeatherChecker {
             if (changeTime_thunder > 0) {
                 changeTime_thunder--;
                 if (lastBiomeRThunderLevel >= 0 && !isNear(thunderLevel, lastBiomeRThunderLevel, 0.01f)) {
-                    float add = 0.008f * ((thunderLevel - lastBiomeRThunderLevel) > 0 ? 1 : -1);
+                    float add = rate * ((thunderLevel - lastBiomeRThunderLevel) > 0 ? 1 : -1);
                     lastBiomeRThunderLevel += add;
                     thunderLevel = lastBiomeRThunderLevel;
                 }
@@ -254,7 +263,35 @@ public class ClientWeatherChecker {
         lastBiomeRThunderLevel = -1;
         lastBiomeRainLevel = -1;
         updateForPlayerLogin = true;
+        lastRainyBiome.clear();
     }
+
+    public static void tickAllCheck(ClientLevel clientLevel) {
+        updateRainLevel(clientLevel);
+        updateThunderLevel(clientLevel);
+        tickLastRainyBiome(clientLevel);
+    }
+
+    public static void addLastRainyBiome(Biome biome, long gameTime) {
+        lastRainyBiome.removeIf(biomeLongSimplePair -> biomeLongSimplePair.getKey() == biome);
+        lastRainyBiome.add(SimplePair.of(biome, gameTime));
+    }
+
+    public static boolean isBiomeRainyLast(Biome biome) {
+        return lastRainyBiome.stream().anyMatch(biomeLongEntry -> biomeLongEntry.getKey() == biome);
+    }
+
+    public static void tickLastRainyBiome(ClientLevel clientLevel) {
+        for (int i = 0; i < lastRainyBiome.size(); i++) {
+            SimplePair<Biome, Long> biomeLongSimplePair = lastRainyBiome.get(i);
+            biomeLongSimplePair.setValue(biomeLongSimplePair.getValue() - 1);
+            if (biomeLongSimplePair.getValue() <= 0) {
+                lastRainyBiome.remove(i);
+                i--;
+            }
+        }
+    }
+
 
     // public static Boolean hasPrecipitation(Biome biome) {
     //     return !EclipticTagClientTool.getTag(biome).equals(SeasonTypeBiomeTags.RAINLESS);

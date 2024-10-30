@@ -106,8 +106,7 @@ public final class ClientEventHandler {
     @SubscribeEvent
     public static void onWorldTick(TickEvent.LevelTickEvent event) {
         if (event.level instanceof ClientLevel clientLevel) {
-            ClientWeatherChecker.updateRainLevel(clientLevel);
-            ClientWeatherChecker.updateThunderLevel(clientLevel);
+            ClientWeatherChecker.tickAllCheck(clientLevel);
         }
         if (ClientConfig.Renderer.forceChunkRenderUpdate.get()) {
             if (event.phase.equals(TickEvent.Phase.END)

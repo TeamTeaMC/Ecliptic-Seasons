@@ -2,6 +2,7 @@ package com.teamtea.eclipticseasons.compat.legendarysurvivaloverhaul;
 
 import com.teamtea.eclipticseasons.api.constant.tag.SeasonTypeBiomeTags;
 import com.teamtea.eclipticseasons.api.util.SimpleUtil;
+import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.config.ServerConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -60,7 +61,7 @@ public class LSO_ESUtil {
 
 
     public static boolean hasSeasons(Level level) {
-        return level.dimensionType().natural();
+        return MapChecker.isValidDimension(level);
     }
 
     public static void initAverageTemperatures() {
