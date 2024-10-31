@@ -165,7 +165,7 @@ public class ModelManager {
         if (level == null) return list;
 
         if (direction != Direction.DOWN
-            // && !list.isEmpty()
+            && !list.isEmpty()
         ) {
 
             var onBlock = state.getBlock();
@@ -205,7 +205,7 @@ public class ModelManager {
                     var useMap = isFlowerAbove ? quadMap_1 : quadMap;
                     List<BakedQuad> cc =
                             EclipticSeasonsMixinPlugin.isOptLoad()
-                                    || list.isEmpty()? null : useMap.getOrDefault(list, null);
+                                    || list.isEmpty() ? null : useMap.getOrDefault(list, null);
                     // if ((list.isEmpty()))
                     //     cc = null;
                     if (cc != null) {
@@ -236,10 +236,9 @@ public class ModelManager {
                                     for (Direction direction1 : List.of(Direction.EAST, Direction.SOUTH, Direction.WEST, Direction.NORTH, Direction.UP)) {
                                         newList.addAll(layerBlock.getQuads(layerState, direction1, random));
                                     }
-                                }
-                                else {
+                                } else {
                                     newList = new ArrayList<BakedQuad>(size + snowList.size());
-                                    newList.addAll(list);
+                                    // newList.addAll(list);
                                     newList.addAll(snowList);
                                 }
                                 // else newList = new ArrayList<>(snowList);
@@ -378,9 +377,13 @@ public class ModelManager {
         }
         return replace;
     }
-
+    public static RenderType getRenderType() {
+        return RenderType.cutoutMipped();
+        // return Minecraft.useFancyGraphics() ?
+        //         RenderType.cutoutMipped() : RenderType.solid();
+    }
     public static boolean isModelReplaced(BlockState state, BakedModel bakedModel) {
-        return !state.blocksMotion();
+        return !state.blocksMotion() && bakedModel != null;
     }
 
     public static boolean appendModel(ChunkBufferBuilderPack pChunkBufferBuilderPack, BlockPos pos, BlockState state, PoseStack posestack, RenderChunkRegion renderchunkregion, RandomSource random, Set<RenderType> renderTypeSet) {
@@ -393,9 +396,11 @@ public class ModelManager {
         return replace;
     }
 
+
+
     private static void renderModel(BakedModel bakedModel, ChunkBufferBuilderPack pChunkBufferBuilderPack, BlockPos pos, BlockState state, PoseStack posestack, RenderChunkRegion renderchunkregion, RandomSource random, Set<RenderType> renderTypeSet, PoseStack posestack1) {
-        RenderType renderType = RenderType.cutoutMipped();
-        BufferBuilder bufferbuilder2 = pChunkBufferBuilderPack.builder(RenderType.cutoutMipped());
+        RenderType renderType =  getRenderType();
+        BufferBuilder bufferbuilder2 = pChunkBufferBuilderPack.builder(renderType);
         // this$0.beginLayer(bufferbuilder2);
         if (renderTypeSet.add(renderType))
             bufferbuilder2.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.BLOCK);

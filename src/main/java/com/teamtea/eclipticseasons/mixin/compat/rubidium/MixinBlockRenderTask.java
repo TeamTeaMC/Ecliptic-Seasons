@@ -13,7 +13,6 @@ import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.client.ChunkRenderTypeSet;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -29,7 +28,7 @@ public abstract class MixinBlockRenderTask {
     //                 // shift = At.Shift.AFTER,
     //                 target = "Lnet/minecraft/client/resources/model/BakedModel;getRenderTypes(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/util/RandomSource;Lnet/minecraftforge/client/model/data/ModelData;)Lnet/minecraftforge/client/ChunkRenderTypeSet;")
     // )
-    // private ChunkRenderTypeSet mixin_tesselateWithAO_getQuads(
+    // private ChunkRenderTypeSet eclipticseasons$tesselateWithAO_getQuads(
     //         ChunkRenderTypeSet original,
     //         @Local BlockRenderContext ctx,
     //         @Local ChunkBuildBuffers buffers,
@@ -59,39 +58,74 @@ public abstract class MixinBlockRenderTask {
     @Final
     private RandomSource random;
 
+    // @ModifyExpressionValue(
+    //         remap = false,
+    //         method = "execute(Lme/jellysquid/mods/sodium/client/render/chunk/compile/ChunkBuildContext;Lme/jellysquid/mods/sodium/client/util/task/CancellationToken;)Lme/jellysquid/mods/sodium/client/render/chunk/compile/ChunkBuildOutput;",
+    //         at = @At(value = "INVOKE",
+    //                 // shift = At.Shift.AFTER,
+    //                 target = "Lnet/minecraft/client/resources/model/BakedModel;getRenderTypes(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/util/RandomSource;Lnet/minecraftforge/client/model/data/ModelData;)Lnet/minecraftforge/client/ChunkRenderTypeSet;")
+    // )
+    // private ChunkRenderTypeSet eclipticseasons$tesselateWithAO_getQuads(
+    //         ChunkRenderTypeSet original,
+    //         @Local BlockRenderContext ctx,
+    //         @Local ChunkBuildBuffers buffers,
+    //         @Local BlockRenderCache cache,
+    //         @Local(ordinal = 0) BlockPos.MutableBlockPos mutableBlockPos,
+    //         @Local(ordinal = 1) BlockPos.MutableBlockPos mutableBlockPos2,
+    //         @Local(ordinal = 0) BlockState state
+    // ) {
+    //
+    //     BakedModel snowModel = ModelManager.findModel(ctx.world(), mutableBlockPos, state, random);
+    //     if (snowModel != null) {
+    //         // ctx.update(mutableBlockPos,
+    //         //         mutableBlockPos2,
+    //         //         state,
+    //         //         snowModel,
+    //         //         state.getSeed(mutableBlockPos),
+    //         //         null,
+    //         //         RenderType.cutoutMipped());
+    //         // cache.getBlockRenderer().renderModel(ctx, buffers);
+    //         // if (ModelManager.isModelReplaced(state, snowModel))
+    //         //     return ChunkRenderTypeSet.none();
+    //         if (!original.contains(RenderType.cutoutMipped())){
+    //            return ChunkRenderTypeSet.union(original,ChunkRenderTypeSet.of(RenderType.cutoutMipped()));
+    //
+    //            // return ChunkRenderTypeSet.union(original,ChunkRenderTypeSet.of(ModelManager.CUTOUT_MIPPED));
+    //         }
+    //     }
+    //     return original;
+    // }
+
     @ModifyExpressionValue(
             remap = false,
             method = "execute(Lme/jellysquid/mods/sodium/client/render/chunk/compile/ChunkBuildContext;Lme/jellysquid/mods/sodium/client/util/task/CancellationToken;)Lme/jellysquid/mods/sodium/client/render/chunk/compile/ChunkBuildOutput;",
             at = @At(value = "INVOKE",
                     // shift = At.Shift.AFTER,
-                    target = "Lnet/minecraft/client/resources/model/BakedModel;getRenderTypes(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/util/RandomSource;Lnet/minecraftforge/client/model/data/ModelData;)Lnet/minecraftforge/client/ChunkRenderTypeSet;")
+                    target = "Ljava/util/Iterator;hasNext()Z")
     )
-    private ChunkRenderTypeSet mixin_tesselateWithAO_getQuads(
-            ChunkRenderTypeSet original,
-            @Local BlockRenderContext ctx,
-            @Local ChunkBuildBuffers buffers,
-            @Local BlockRenderCache cache,
-            @Local(ordinal = 0) BlockPos.MutableBlockPos mutableBlockPos,
-            @Local(ordinal = 1) BlockPos.MutableBlockPos mutableBlockPos2,
-            @Local(ordinal = 0) BlockState state
+    private boolean eclipticseasons$tesselateWithAO_getQuads(
+            boolean original, @Local BlockRenderContext ctx, @Local ChunkBuildBuffers buffers, @Local BlockRenderCache cache, @Local(ordinal = 0) BlockPos.MutableBlockPos mutableBlockPos, @Local(ordinal = 1) BlockPos.MutableBlockPos mutableBlockPos2, @Local(ordinal = 0) BlockState state
     ) {
 
-        BakedModel snowModel = ModelManager.findModel(ctx.world(), mutableBlockPos, state, random);
-        if (snowModel != null) {
-            // ctx.update(mutableBlockPos,
-            //         mutableBlockPos2,
-            //         state,
-            //         snowModel,
-            //         state.getSeed(mutableBlockPos),
-            //         null,
-            //         RenderType.cutoutMipped());
-            // cache.getBlockRenderer().renderModel(ctx, buffers);
-            // if (ModelManager.isModelReplaced(state, snowModel))
-            //     return ChunkRenderTypeSet.none();
-            if (!original.contains(RenderType.cutoutMipped())){
-               return ChunkRenderTypeSet.union(original,ChunkRenderTypeSet.of(RenderType.cutoutMipped()));
-               // return ChunkRenderTypeSet.union(original,ChunkRenderTypeSet.of(ModelManager.CUTOUT_MIPPED));
+        BakedModel snowModel;
+        if (!original) {
+            snowModel = ModelManager.findModel(ctx.world(), mutableBlockPos, state, random);
+        } else {
+            snowModel = ModelManager.findModel(ctx.world(), mutableBlockPos, state, random);
+            if (ModelManager.isModelReplaced(state, snowModel)) {
+                original = false;
             }
+        }
+
+        if (snowModel != null) {
+            ctx.update(mutableBlockPos,
+                    mutableBlockPos2,
+                    state,
+                    snowModel,
+                    state.getSeed(mutableBlockPos),
+                    null,
+                    ModelManager.getRenderType());
+            cache.getBlockRenderer().renderModel(ctx, buffers);
         }
         return original;
     }

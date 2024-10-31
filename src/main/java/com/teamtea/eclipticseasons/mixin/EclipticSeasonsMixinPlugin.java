@@ -55,7 +55,7 @@ public class EclipticSeasonsMixinPlugin implements IMixinConfigPlugin {
             return FMLLoader.getLoadingModList().getModFileById(modid) != null
                     || (Objects.equals(modid, "optifine") && isOptLoad == 1);
         }
-        if (targetClassName.endsWith("ModelBlockRenderer")
+        if ((targetClassName.endsWith("ModelBlockRenderer")||targetClassName.endsWith("ChunkRenderDispatcher$RenderChunk$RebuildTask"))
                 && isOptLoad == 1
         ) {
 

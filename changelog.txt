@@ -25,3 +25,7 @@ update render method
 add sapling grow control
 * update weather transition
 * fix level check
+
+0.5
+more snowy block with more compatibility(such as glass and more)
+fix birch leaves color
