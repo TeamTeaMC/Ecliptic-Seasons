@@ -1,6 +1,6 @@
 package com.teamtea.eclipticseasons.api.constant.tag;
 
-import com.teamtea.eclipticseasons.EclipticSeasonsMod;
+import com.teamtea.eclipticseasons.EclipticSeasons;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.biome.Biome;
@@ -21,6 +21,6 @@ public class ClimateTypeBiomeTags {
     public static final TagKey<Biome> IS_SMALL = ClimateTypeBiomeTags.create("is_small");
 
     public static TagKey<Biome> create(String s) {
-        return TagKey.create(Registries.BIOME, EclipticSeasonsMod.rl(s));
+        return TagKey.create(Registries.BIOME, EclipticSeasons.rl(s));
     }
 }

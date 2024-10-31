@@ -1,7 +1,7 @@
 package com.teamtea.eclipticseasons.compat.teacon;
 
 
-import com.teamtea.eclipticseasons.EclipticSeasonsMod;
+import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
@@ -18,7 +18,7 @@ public final class TeaconNetworkHandler {
 
     @SubscribeEvent
     public static void register(final RegisterPayloadHandlersEvent event) {
-        final PayloadRegistrar registrar = event.registrar(EclipticSeasonsMod.NETWORK_VERSION);
+        final PayloadRegistrar registrar = event.registrar(EclipticSeasons.NETWORK_VERSION);
         registrar.playToClient(
                 TeaconMessage.TYPE,
                 TeaconMessage.STREAM_CODEC,

@@ -1,7 +1,7 @@
 package com.teamtea.eclipticseasons.common.network;
 
 
-import com.teamtea.eclipticseasons.EclipticSeasonsMod;
+import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
@@ -19,7 +19,7 @@ public final class SimpleNetworkHandler {
     @SubscribeEvent
     public static void register(final RegisterPayloadHandlersEvent event) {
         // Sets the current network version
-        final PayloadRegistrar registrar = event.registrar(EclipticSeasonsMod.NETWORK_VERSION);
+        final PayloadRegistrar registrar = event.registrar(EclipticSeasons.NETWORK_VERSION);
 
         registrar.playToClient(
                 SolarTermsMessage.TYPE,

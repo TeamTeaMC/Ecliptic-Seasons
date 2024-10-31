@@ -1,8 +1,7 @@
 package com.teamtea.eclipticseasons.data.lang;
 
-import com.teamtea.eclipticseasons.EclipticSeasonsMod;
+import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
-import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import net.minecraft.data.PackOutput;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
@@ -25,13 +24,13 @@ public class Lang_EN extends LangHelper {
 
         add("itemGroup." + EclipticSeasonsApi.MODID + ".core", "Ecliptic Seasons");
 
-        add(EclipticSeasonsMod.ModContents.calendar.get(), "calendar");
-        add(EclipticSeasonsMod.ModContents.wind_chimes.get(), "Wind Chimes");
-        add(EclipticSeasonsMod.ModContents.paper_wind_chimes.get(), "Paper Wind Chimes");
-        add(EclipticSeasonsMod.ModContents.bamboo_wind_chimes.get(), "Bamboo Wind Chimes");
-        add(EclipticSeasonsMod.ModContents.paper_wind_mill.get(), "paper Wind Mill");
-        add(EclipticSeasonsMod.ModContents.snowy_maker_item.get(), "Ice Wand");
-        add(EclipticSeasonsMod.ModContents.broom_item.get(), "Broom");
+        add(EclipticSeasons.ModContents.calendar.get(), "calendar");
+        add(EclipticSeasons.ModContents.wind_chimes.get(), "Wind Chimes");
+        add(EclipticSeasons.ModContents.paper_wind_chimes.get(), "Paper Wind Chimes");
+        add(EclipticSeasons.ModContents.bamboo_wind_chimes.get(), "Bamboo Wind Chimes");
+        add(EclipticSeasons.ModContents.paper_wind_mill.get(), "paper Wind Mill");
+        add(EclipticSeasons.ModContents.snowy_maker_item.get(), "Ice Wand");
+        add(EclipticSeasons.ModContents.broom_item.get(), "Broom");
 
         add("info.eclipticseasons.environment.temperature.under_freezing","Under Freezing");
         add("info.eclipticseasons.environment.temperature.freezing","Freezing");

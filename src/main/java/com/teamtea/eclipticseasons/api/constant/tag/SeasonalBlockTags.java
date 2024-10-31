@@ -1,6 +1,6 @@
 package com.teamtea.eclipticseasons.api.constant.tag;
 
-import com.teamtea.eclipticseasons.EclipticSeasonsMod;
+import com.teamtea.eclipticseasons.EclipticSeasons;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
@@ -11,6 +11,6 @@ public class SeasonalBlockTags {
     public static final TagKey<Block> HABITAT_BUTTERFLY = create("habitat/butterfly");
     public static final TagKey<Block> HABITAT_FIREFLY = create("habitat/firefly");
     public static TagKey<Block> create(String s) {
-        return TagKey.create(Registries.BLOCK, EclipticSeasonsMod.rl(s));
+        return TagKey.create(Registries.BLOCK, EclipticSeasons.rl(s));
     }
 }

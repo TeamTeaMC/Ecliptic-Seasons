@@ -1,6 +1,6 @@
 package com.teamtea.eclipticseasons.client.render;
 
-import com.teamtea.eclipticseasons.EclipticSeasonsMod;
+import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.client.ClientEventHandler;
 import com.teamtea.eclipticseasons.config.ServerConfig;
 import net.minecraft.Util;
@@ -48,7 +48,7 @@ public class WorldRenderer {
         }
 
         if (ServerConfig.Temperature.heatStroke.get()) {
-            var holder = BuiltInRegistries.MOB_EFFECT.getHolder(EclipticSeasonsMod.EffectRegistry.Effects.HEAT_STROKE).get();
+            var holder = BuiltInRegistries.MOB_EFFECT.getHolder(EclipticSeasons.EffectRegistry.Effects.HEAT_STROKE).get();
 
             int blurStatus = player.hasEffect(holder) ? ON_BLUR : NONE_BLUR;
             if (blurStatus != oldBlurStatus) {

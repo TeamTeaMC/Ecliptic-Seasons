@@ -1,27 +1,22 @@
 package com.teamtea.eclipticseasons.common.network;
 
-import com.teamtea.eclipticseasons.EclipticSeasonsMod;
+import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.client.color.season.BiomeColorsHandler;
+import com.teamtea.eclipticseasons.client.core.ClientWeatherChecker;
 import com.teamtea.eclipticseasons.client.core.map.ClientMapFixer;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.core.map.SnowyRemover;
-import com.teamtea.eclipticseasons.config.ClientConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.SectionPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class NetworkdUtil {
 
@@ -63,6 +58,10 @@ public class NetworkdUtil {
                     var lists = WeatherManager.getBiomeList(context.player().level());
                     if (lists != null) {
                         for (WeatherManager.BiomeWeather biomeWeather : lists) {
+                            if(biomeWeatherMessage.rain[biomeWeather.id]==0
+                                    && biomeWeather.rainTime>0){
+                                ClientWeatherChecker.addLastRainyBiome(biomeWeather.biomeHolder.value(), (long) (1/ClientWeatherChecker.rate));
+                            }
                             biomeWeather.rainTime = biomeWeatherMessage.rain[biomeWeather.id] * 10000;
                             biomeWeather.clearTime = biomeWeatherMessage.clear[biomeWeather.id] * 10000;
                             biomeWeather.thunderTime = biomeWeatherMessage.thuder[biomeWeather.id] * 10000;
@@ -88,7 +87,7 @@ public class NetworkdUtil {
             if(context.player().level() instanceof ClientLevel clientLevel) {
                 if (clientLevel.getChunk(chunkUpdateMessage.x, chunkUpdateMessage.z) instanceof LevelChunk levelChunk) {
                     var snow= new SnowyRemover(blocks);
-                    levelChunk.setData(EclipticSeasonsMod.ModContents.SNOWY_REMOVER, new SnowyRemover(blocks));
+                    levelChunk.setData(EclipticSeasons.ModContents.SNOWY_REMOVER, new SnowyRemover(blocks));
 
                     for (BlockPos blockPos : chunkUpdateMessage.blockPosList) {
                         ClientMapFixer.clearBlockPos(blockPos);

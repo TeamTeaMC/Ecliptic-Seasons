@@ -1,6 +1,6 @@
 package com.teamtea.eclipticseasons.data.model;
 
-import com.teamtea.eclipticseasons.EclipticSeasonsMod;
+import com.teamtea.eclipticseasons.EclipticSeasons;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
@@ -26,16 +26,16 @@ public class ESItemModelProvider extends ItemModelProvider {
 
     @Override
     protected void registerModels() {
-        addSimple(EclipticSeasonsMod.ModContents.calendar_item.value());
-        addSimple(EclipticSeasonsMod.ModContents.wind_chimes_item.value());
-        addSimple(EclipticSeasonsMod.ModContents.paper_wind_chimes_item.value());
-        addSimple(EclipticSeasonsMod.ModContents.bamboo_wind_chimes_item.value());
+        addSimple(EclipticSeasons.ModContents.calendar_item.value());
+        addSimple(EclipticSeasons.ModContents.wind_chimes_item.value());
+        addSimple(EclipticSeasons.ModContents.paper_wind_chimes_item.value());
+        addSimple(EclipticSeasons.ModContents.bamboo_wind_chimes_item.value());
 
-        withExistingParent(itemName(EclipticSeasonsMod.ModContents.paper_wind_mill_item.value()), ResourceLocation.withDefaultNamespace(GENERATED))
+        withExistingParent(itemName(EclipticSeasons.ModContents.paper_wind_mill_item.value()), ResourceLocation.withDefaultNamespace(GENERATED))
                 .texture("layer0", ResourceLocation.withDefaultNamespace("item/"+itemName(Items.STICK)));
-        withExistingParent(itemName(EclipticSeasonsMod.ModContents.broom_item.value()), ResourceLocation.withDefaultNamespace(GENERATED))
+        withExistingParent(itemName(EclipticSeasons.ModContents.broom_item.value()), ResourceLocation.withDefaultNamespace(GENERATED))
                 .texture("layer0", ResourceLocation.withDefaultNamespace("item/"+itemName(Items.STICK)));
-        withExistingParent(itemName(EclipticSeasonsMod.ModContents.snowy_maker_item.value()), ResourceLocation.withDefaultNamespace(GENERATED))
+        withExistingParent(itemName(EclipticSeasons.ModContents.snowy_maker_item.value()), ResourceLocation.withDefaultNamespace(GENERATED))
                 .texture("layer0", ResourceLocation.withDefaultNamespace("item/"+itemName(Items.STICK)));
     }
 
@@ -49,7 +49,7 @@ public class ESItemModelProvider extends ItemModelProvider {
     }
 
     public ResourceLocation resourceItem(String path) {
-        return EclipticSeasonsMod.rl("item/" + path);
+        return EclipticSeasons.rl("item/" + path);
     }
 
 

@@ -1,7 +1,7 @@
 package com.teamtea.eclipticseasons.data.lang;
 
 
-import com.teamtea.eclipticseasons.EclipticSeasonsMod;
+import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import net.minecraft.data.PackOutput;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
@@ -23,13 +23,13 @@ public class Lang_ZH extends LangHelper {
         add("info.eclipticseasons.environment.solar_term.hint", "今日节气:");
         add("itemGroup." + EclipticSeasonsApi.MODID + ".core", "节气");
 
-        add(EclipticSeasonsMod.ModContents.calendar.get(), "日历");
-        add(EclipticSeasonsMod.ModContents.wind_chimes.get(), "风铃");
-        add(EclipticSeasonsMod.ModContents.paper_wind_chimes.get(), "纸风铃");
-        add(EclipticSeasonsMod.ModContents.bamboo_wind_chimes.get(), "竹风铃");
-        add(EclipticSeasonsMod.ModContents.paper_wind_mill.get(), "纸风车");
-        add(EclipticSeasonsMod.ModContents.snowy_maker_item.get(), "冰晶法杖");
-        add(EclipticSeasonsMod.ModContents.broom_item.get(), "扫帚");
+        add(EclipticSeasons.ModContents.calendar.get(), "日历");
+        add(EclipticSeasons.ModContents.wind_chimes.get(), "风铃");
+        add(EclipticSeasons.ModContents.paper_wind_chimes.get(), "纸风铃");
+        add(EclipticSeasons.ModContents.bamboo_wind_chimes.get(), "竹风铃");
+        add(EclipticSeasons.ModContents.paper_wind_mill.get(), "纸风车");
+        add(EclipticSeasons.ModContents.snowy_maker_item.get(), "冰晶法杖");
+        add(EclipticSeasons.ModContents.broom_item.get(), "扫帚");
 
 
         add("info.eclipticseasons.environment.temperature.under_freezing","严寒");

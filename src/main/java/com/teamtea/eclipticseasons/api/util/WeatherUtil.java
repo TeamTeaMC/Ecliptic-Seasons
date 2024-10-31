@@ -15,7 +15,7 @@ public class WeatherUtil {
             // if (WeatherManager.isRainingAt((ServerLevel) level, pos))
             // if (WeatherManager.getPrecipitationAt(level, MapChecker.getSurfaceBiome(level, pos).value(), pos) != Biome.Precipitation.NONE)
             //     return true;
-            if (WeatherManager.isRainingOrSnowAtBiome(level, MapChecker.getSurfaceBiome(level, pos)))
+            if (WeatherManager.isRainingOrSnowAtBiome(level, MapChecker.getSurfaceBiome(level, pos).value()))
                 return true;
         }
         return false;
@@ -32,8 +32,8 @@ public class WeatherUtil {
         // return pre != Biome.Precipitation.NONE ||
         //         after != Biome.Precipitation.NONE;
         // return entity.isInWaterOrRain();
-        return WeatherManager.isRainingOrSnowAtBiome(entity.level(), MapChecker.getSurfaceBiome(entity.level(), blockPos))
-                ||WeatherManager.isRainingOrSnowAtBiome(entity.level(), MapChecker.getSurfaceBiome(entity.level(), pos2));
+        return WeatherManager.isRainingOrSnowAt(entity.level(), blockPos)
+                ||WeatherManager.isRainingOrSnowAt(entity.level(), pos2);
     }
 
 

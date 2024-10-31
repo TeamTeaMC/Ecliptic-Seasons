@@ -2,7 +2,7 @@ package com.teamtea.eclipticseasons.client;
 
 
 import com.mojang.blaze3d.vertex.*;
-import com.teamtea.eclipticseasons.EclipticSeasonsMod;
+import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
@@ -60,13 +60,14 @@ public final class ClientEventHandler {
 
     @SubscribeEvent
     public static void addTooltips(ItemTooltipEvent event) {
-
-        if (ServerConfig.Season.enableCrop.get()) {
-            if (event.getItemStack().getItem() instanceof BlockItem) {
+        if (event.getItemStack().getItem() instanceof BlockItem) {
+            if (ServerConfig.Season.enableCropHumidityControl.get()) {
                 if (CropInfoManager.getHumidityCrops().contains(((BlockItem) event.getItemStack().getItem()).getBlock())) {
                     CropHumidityInfo info = CropInfoManager.getHumidityInfo(((BlockItem) event.getItemStack().getItem()).getBlock());
                     if (info != null) event.getToolTip().addAll(info.getTooltip());
                 }
+            }
+            if (ServerConfig.Season.enableCrop.get()) {
                 if (CropInfoManager.getSeasonCrops().contains(((BlockItem) event.getItemStack().getItem()).getBlock())) {
                     CropSeasonInfo info = CropInfoManager.getSeasonInfo(((BlockItem) event.getItemStack().getItem()).getBlock());
                     if (info != null) event.getToolTip().addAll(info.getTooltip());
@@ -116,8 +117,7 @@ public final class ClientEventHandler {
     public static void onLevelTick(LevelTickEvent.Post event) {
         if (event.getLevel() instanceof ClientLevel clientLevel) {
             // ClientWeatherChecker.updateRainLevel(clientLevel);
-            ClientWeatherChecker.updateRainLevel(clientLevel);
-            ClientWeatherChecker.updateThunderLevel(clientLevel);
+            ClientWeatherChecker.tickAllCheck(clientLevel);
             ClientMapFixer.tick(clientLevel);
             if (ClientConfig.Renderer.forceChunkRenderUpdate.get()) {
                 if (clientLevel.getGameTime() - lastFreshTime > 80
@@ -234,7 +234,7 @@ public final class ClientEventHandler {
 
             var pos = event.getSectionOrigin();
             TextureAtlasSprite still = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(IClientFluidTypeExtensions.of(Fluids.WATER).getStillTexture());
-            still = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(EclipticSeasonsMod.rl("block/snow_overlay_2"));
+            still = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(EclipticSeasons.rl("block/snow_overlay_2"));
             int color = IClientFluidTypeExtensions.of(Fluids.WATER).getTintColor();
             color = Color.WHITE.getRGB();
 
@@ -269,7 +269,7 @@ public final class ClientEventHandler {
                         poseStack.last(),
                         buffer,
                         null,
-                        Minecraft.getInstance().getModelManager().getModel(BlockModelShaper.stateToModelLocation(EclipticSeasonsMod.ModContents.snowyLeaves.get().defaultBlockState())),
+                        Minecraft.getInstance().getModelManager().getModel(BlockModelShaper.stateToModelLocation(EclipticSeasons.ModContents.snowyLeaves.get().defaultBlockState())),
                         1, 1, 1,
                         light, 0, ModelData.EMPTY, RenderType.cutoutMipped()
                 );

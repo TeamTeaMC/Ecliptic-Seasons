@@ -1,7 +1,7 @@
 package com.teamtea.eclipticseasons.common.block;
 
 import com.mojang.serialization.MapCodec;
-import com.teamtea.eclipticseasons.EclipticSeasonsMod;
+import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.common.block.base.SimpleHorizontalEntityBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.BaseEntityBlock;
@@ -21,6 +21,6 @@ public class PaperWindmillBlock extends SimpleHorizontalEntityBlock {
 
     @Override
     public @Nullable BlockEntity newBlockEntity(BlockPos pPos, BlockState pState) {
-        return EclipticSeasonsMod.ModContents.paper_wind_mill_entity_type.get().create(pPos, pState);
+        return EclipticSeasons.ModContents.paper_wind_mill_entity_type.get().create(pPos, pState);
     }
 }

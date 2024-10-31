@@ -1,7 +1,7 @@
 package com.teamtea.eclipticseasons.mixin.compat.iris;
 
 
-import com.teamtea.eclipticseasons.EclipticSeasonsMod;
+import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import net.irisshaders.iris.gl.uniform.UniformHolder;
@@ -43,6 +43,6 @@ public abstract class MixinBiomeUniforms {
             }
             return var10000;
         }));
-        EclipticSeasonsMod.LOGGER.warn("Allow Iris to use the biome_precipitation agent from %s ".formatted(EclipticSeasonsApi.MODID));
+        EclipticSeasons.LOGGER.warn("Allow Iris to use the biome_precipitation agent from %s ".formatted(EclipticSeasonsApi.MODID));
     }
 }

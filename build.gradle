@@ -160,7 +160,7 @@ dependencies {
 
 
     onlyMainRuntimeOnly ("curse.maven:spark-361579:5434153")
-    onlyMainRuntimeOnly ("curse.maven:ore-excavation-250898:5443379")
+//    onlyMainRuntimeOnly ("curse.maven:ore-excavation-250898:5443379")
     onlyMainRuntimeOnly ("curse.maven:minemenu-222378:5447274")
 
     // Example optional mod dependency with JEI

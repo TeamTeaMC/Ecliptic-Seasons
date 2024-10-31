@@ -53,17 +53,17 @@ public class ClientMapFixer {
     }
 
     public static boolean isHereSunny(Level level, BlockPos pos) {
-        return WeatherManager.isRainingOrSnowAtBiome(level, MapChecker.getSurfaceBiome(level, pos))
+        return WeatherManager.isRainingOrSnowAtBiome(level, MapChecker.getSurfaceBiome(level, pos).value())
                 && WeatherManager.getPrecipitationAt(level, MapChecker.getSurfaceBiome(level, pos).value(), pos) == Biome.Precipitation.NONE;
     }
 
     public static boolean isHereRainy(Level level, BlockPos pos) {
-        return WeatherManager.isRainingOrSnowAtBiome(level, MapChecker.getSurfaceBiome(level, pos))
+        return WeatherManager.isRainingOrSnowAtBiome(level, MapChecker.getSurfaceBiome(level, pos).value())
                 && WeatherManager.getPrecipitationAt(level, MapChecker.getSurfaceBiome(level, pos).value(), pos) == Biome.Precipitation.RAIN;
     }
 
     public static boolean isHereSnowy(Level level, BlockPos pos) {
-        return WeatherManager.isRainingOrSnowAtBiome(level, MapChecker.getSurfaceBiome(level, pos))
+        return WeatherManager.isRainingOrSnowAtBiome(level, MapChecker.getSurfaceBiome(level, pos).value())
                 && WeatherManager.getPrecipitationAt(level, MapChecker.getSurfaceBiome(level, pos).value(), pos) == Biome.Precipitation.SNOW;
     }
 

@@ -1,6 +1,6 @@
 package com.teamtea.eclipticseasons.api.constant.tag;
 
-import com.teamtea.eclipticseasons.EclipticSeasonsMod;
+import com.teamtea.eclipticseasons.EclipticSeasons;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
@@ -11,6 +11,6 @@ public class AnimalBehaviorTag {
     public static final TagKey<EntityType<?>> ALL_TIME = create("habit/all_time");
 
     public static TagKey<EntityType<?>> create(String s) {
-        return TagKey.create(Registries.ENTITY_TYPE, EclipticSeasonsMod.rl(s));
+        return TagKey.create(Registries.ENTITY_TYPE, EclipticSeasons.rl(s));
     }
 }

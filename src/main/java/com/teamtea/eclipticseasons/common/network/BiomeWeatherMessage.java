@@ -2,7 +2,7 @@ package com.teamtea.eclipticseasons.common.network;
 
 
 
-import com.teamtea.eclipticseasons.EclipticSeasonsMod;
+import com.teamtea.eclipticseasons.EclipticSeasons;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -38,7 +38,7 @@ public class BiomeWeatherMessage  implements CustomPacketPayload {
         buf.writeByteArray(snowDepth);
     }
 
-    public static final CustomPacketPayload.Type<BiomeWeatherMessage> TYPE = new CustomPacketPayload.Type<>(EclipticSeasonsMod.rl("biomes_weather"));
+    public static final Type<BiomeWeatherMessage> TYPE = new Type<>(EclipticSeasons.rl("biomes_weather"));
 
     // Each pair of elements defines the stream codec of the element to encode/decode and the getter for the element to encode
     // 'name' will be encoded and decoded as a string
@@ -57,7 +57,7 @@ public class BiomeWeatherMessage  implements CustomPacketPayload {
     );
 
     @Override
-    public CustomPacketPayload.Type<? extends CustomPacketPayload> type() {
+    public Type<? extends CustomPacketPayload> type() {
         return TYPE;
     }
 }

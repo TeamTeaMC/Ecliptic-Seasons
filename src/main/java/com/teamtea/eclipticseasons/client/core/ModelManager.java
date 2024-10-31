@@ -1,6 +1,6 @@
 package com.teamtea.eclipticseasons.client.core;
 
-import com.teamtea.eclipticseasons.EclipticSeasonsMod;
+import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
@@ -11,7 +11,6 @@ import com.teamtea.eclipticseasons.config.ClientConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.BlockModelShaper;
 import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.chunk.RenderChunkRegion;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.core.BlockPos;
@@ -32,13 +31,13 @@ public class ModelManager {
     public static Map<ModelResourceLocation, BakedModel> models;
     public static
     LazyGet<BakedModel> snowOverlayLeaves =
-            LazyGet.of(() -> models.get(new ModelResourceLocation(EclipticSeasonsMod.ModContents.snowyLeaves.getId(), "")));
+            LazyGet.of(() -> models.get(new ModelResourceLocation(EclipticSeasons.ModContents.snowyLeaves.getId(), "")));
     public static
     LazyGet<BakedModel> snowySlabBottom =
-            LazyGet.of(() -> models.get(new ModelResourceLocation(EclipticSeasonsMod.ModContents.snowySlab.getId(), "type=bottom,waterlogged=false")));
+            LazyGet.of(() -> models.get(new ModelResourceLocation(EclipticSeasons.ModContents.snowySlab.getId(), "type=bottom,waterlogged=false")));
     public static
     LazyGet<BakedModel> snowOverlayBlock =
-            LazyGet.of(() -> models.get(new ModelResourceLocation(EclipticSeasonsMod.ModContents.snowyBlock.getId(), "")));
+            LazyGet.of(() -> models.get(new ModelResourceLocation(EclipticSeasons.ModContents.snowyBlock.getId(), "")));
     public static
     LazyGet<BakedModel> snowModel =
             LazyGet.of(() -> models.get(new ModelResourceLocation(ResourceLocation.parse("minecraft:snow_block"), "")));
@@ -60,7 +59,7 @@ public class ModelManager {
     ).toList();
 
     public static ModelResourceLocation mrl(String s) {
-        return ModelResourceLocation.standalone(EclipticSeasonsMod.rl(s));
+        return ModelResourceLocation.standalone(EclipticSeasons.rl(s));
     }
 
 
@@ -83,7 +82,38 @@ public class ModelManager {
     public static Map<List<BakedQuad>, List<BakedQuad>> quadMap_1 = new IdentityHashMap<>(1024);
     public static Map<List<BakedQuad>, List<BakedQuad>> quadMap_GRASS = new IdentityHashMap<>(128);
 
-
+    public static BakedModel getSnowyModel(BlockState state ,BlockState snowState,int flag,int offset){
+        Block onBlock=state.getBlock();
+        BakedModel snowModel = null;
+        if ( flag ==  MapChecker.FLAG_BLOCK) {
+            snowModel = snowOverlayBlock.get();
+        } else if ( flag ==  MapChecker.FLAG_LEAVES) {
+            snowModel = snowOverlayLeaves.get();
+        } else if ( flag ==  MapChecker.FLAG_SLAB) {
+            snowModel = snowySlabBottom.get();
+        } else if ( flag ==  MapChecker.FLAG_STAIRS) {
+            if (snowState != null)
+                snowModel = models.get(BlockModelShaper.stateToModelLocation(snowState));
+        } else if (flag ==  MapChecker.FLAG_GRASS) {
+            if (onBlock == Blocks.SHORT_GRASS) {
+                snowModel = models.get(snowy_grass);
+            } else if (onBlock == Blocks.FERN) {
+                snowModel = models.get(snowy_fern);
+            } else if (onBlock == Blocks.DANDELION) {
+                snowModel = models.get(snowy_dandelion);
+            } else snowModel = models.get(snowy_grass);
+        } else if (flag == MapChecker. FLAG_GRASS_LARGE) {
+            if (onBlock == Blocks.TALL_GRASS) {
+                snowModel = models.get(offset == 1 ? snowy_tall_grass_bottom : snowy_tall_grass_top);
+            } else if (onBlock == Blocks.LARGE_FERN) {
+                snowModel = models.get(offset == 1 ? snowy_large_fern_bottom : snowy_large_fern_top);
+            } else snowModel = models.get(offset == 1 ? snowy_tall_grass_bottom : snowy_tall_grass_top);
+        } else if (flag ==  MapChecker.FLAG_FARMLAND) {
+            snowModel = models.get(snow_height2_top);
+            // snowModel = snowOverlayBlock.get();
+        }
+        return snowModel;
+    }
     // 实际上这里之所以太慢还有个问题就是会一个方块访问七次
     public static List<BakedQuad> appendOverlay(BlockAndTintGetter blockAndTintGetter, BlockState state, BlockPos pos, Direction direction, RandomSource random, long seed, List<BakedQuad> list) {
         // Minecraft.getInstance().level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING,pos);
@@ -96,7 +126,7 @@ public class ModelManager {
 
         var level = Minecraft.getInstance().level;
         if (level == null) {
-            EclipticSeasonsMod.logger("NULLLLLLLL");
+            EclipticSeasons.logger("NULLLLLLLL");
         }
         // if (level != null)return list;
         if (level != null
@@ -148,45 +178,14 @@ public class ModelManager {
                     if (cc != null) {
                         return cc;
                     } else {
-                        BakedModel snowModel = null;
                         BlockState snowState = null;
-                        if (flag == MapChecker.FLAG_BLOCK) {
-                            // snowModel = !isFlowerAbove ? snowOverlayBlock.get() : models.get(overlay_2);
-                            // snowModel = snowOverlayBlock.get();
-                            snowModel = models.get(BlockModelShaper.stateToModelLocation(EclipticSeasonsMod.ModContents.snowyBlock.get().defaultBlockState()));
-                        } else if (flag == MapChecker.FLAG_LEAVES) {
-                            // snowModel = snowOverlayLeaves.get();
-                            snowModel = models.get(BlockModelShaper.stateToModelLocation(EclipticSeasonsMod.ModContents.snowyLeaves.get().defaultBlockState()));
-
-                        } else if (flag == MapChecker.FLAG_SLAB) {
-                            // snowModel = snowySlabBottom.get();
-                            snowModel = models.get(BlockModelShaper.stateToModelLocation(EclipticSeasonsMod.ModContents.snowySlab.get().defaultBlockState()));
-
-                        } else if (flag == MapChecker.FLAG_STAIRS) {
-                            snowState = EclipticSeasonsMod.ModContents.snowyStairs.get().defaultBlockState()
+                        if ( flag == MapChecker.FLAG_STAIRS) {
+                            snowState = EclipticSeasons.ModContents.snowyStairs.get().defaultBlockState()
                                     .setValue(StairBlock.FACING, state.getValue(StairBlock.FACING))
                                     .setValue(StairBlock.HALF, state.getValue(StairBlock.HALF))
                                     .setValue(StairBlock.SHAPE, state.getValue(StairBlock.SHAPE));
-                            // 楼梯的方向是无
-                            snowModel = models.get(BlockModelShaper.stateToModelLocation(snowState));
-                        } else if (flag == MapChecker.FLAG_GRASS) {
-                            if (onBlock == Blocks.SHORT_GRASS) {
-                                snowModel = models.get(snowy_grass);
-                            } else if (onBlock == Blocks.FERN) {
-                                snowModel = models.get(snowy_fern);
-                            } else if (onBlock == Blocks.DANDELION) {
-                                snowModel = models.get(snowy_dandelion);
-                            } else snowModel = models.get(snowy_grass);
-                        } else if (flag == MapChecker.FLAG_GRASS_LARGE) {
-                            if (onBlock == Blocks.TALL_GRASS) {
-                                snowModel = models.get(offset == 1 ? snowy_tall_grass_bottom : snowy_tall_grass_top);
-                            } else if (onBlock == Blocks.LARGE_FERN) {
-                                snowModel = models.get(offset == 1 ? snowy_large_fern_bottom : snowy_large_fern_top);
-                            } else snowModel = models.get(offset == 1 ? snowy_tall_grass_bottom : snowy_tall_grass_top);
-                        } else if (flag == MapChecker.FLAG_FARMLAND) {
-                            snowModel = models.get(snow_height2_top);
-                            // snowModel = snowOverlayBlock.get();
                         }
+                        BakedModel snowModel = getSnowyModel(state, snowState, flag, offset);
 
                         if (snowModel != null) {
                             int size = list.size();

@@ -1,6 +1,6 @@
 package com.teamtea.eclipticseasons.data.advancement;
 
-import com.teamtea.eclipticseasons.EclipticSeasonsMod;
+import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.common.advancement.SolarTermsCriterion;
 import net.minecraft.advancements.*;
@@ -17,7 +17,7 @@ public class ESAdvancementGenerator implements AdvancementProvider.AdvancementGe
     @Override
     public void generate(HolderLookup.Provider registries, Consumer<AdvancementHolder> consumer, ExistingFileHelper existingFileHelper) {
         AdvancementHolder seasons = Advancement.Builder.advancement()
-                .display(EclipticSeasonsMod.ModContents.calendar_item.get(),
+                .display(EclipticSeasons.ModContents.calendar_item.get(),
                         Component.translatable("advancement.eclipticseasons.root"),
                         Component.translatable("advancement.eclipticseasons.root.desc"),
                         ResourceLocation.parse("minecraft:textures/block/bricks.png"),

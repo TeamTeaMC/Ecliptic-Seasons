@@ -9,6 +9,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.teamtea.eclipticseasons.client.core.ClientWeatherChecker;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
+import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.config.ServerConfig;
 import com.teamtea.eclipticseasons.compat.vanilla.VanillaWeather;
 import net.minecraft.client.Minecraft;
@@ -16,9 +17,12 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -40,47 +44,37 @@ public abstract class MixinLevelRender {
     @Nullable
     public ClientLevel level;
 
-    @Shadow
-    @Final
-    public Minecraft minecraft;
 
+    @WrapOperation(
+            method = {"tickRain"},
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/LevelReader;getBiome(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/core/Holder;")
+    )
+    private Holder<Biome> ecliptic$tickRain_getBiome(LevelReader instance, BlockPos pPos, Operation<Holder<Biome>> original) {
+        return ServerConfig.Debug.useSolarWeather.get() && instance instanceof Level clevel ?
+                MapChecker.getSurfaceBiome(clevel, pPos) :
+                original.call(instance, pPos);
+    }
 
-    // 我不确定目前是否还需要mixin，但是由于我们已经代理了Level的判断，因此这可能是不需要的
-    // @WrapOperation(
-    //         method = "renderSnowAndRain",
-    //         at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/ClientLevel;getRainLevel(F)F")
-    // )
-    // private float ecliptic$renderSnowAndRainCheckRain(ClientLevel clientLevel, float pDelta, Operation<Float> original) {
-    //     // var anyRain = WeatherManager.getBiomeList(Minecraft.getInstance().level).stream().anyMatch(WeatherManager.BiomeWeather::shouldRain);
-    //     // return WeatherManager.getMaximumRainLevel(clientLevel,pDelta);
-    //     if (ServerConfig.Debug.useSolarWeather.get())
-    //         return ClientWeatherChecker.getRainLevel(level, 1.0f);
-    //     else return original.call(clientLevel, pDelta);
-    // }
-
-
-    @Shadow
-    protected static void renderShape(PoseStack pPoseStack, VertexConsumer pConsumer, VoxelShape pShape, double pX, double pY, double pZ, float pRed, float pGreen, float pBlue, float pAlpha) {
+    @WrapOperation(
+            method = {"renderSnowAndRain"},
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;getBiome(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/core/Holder;")
+    )
+    private Holder<Biome> ecliptic$tickRain_getBiome(Level instance, BlockPos pPos, Operation<Holder<Biome>> original) {
+        return ServerConfig.Debug.useSolarWeather.get() && instance instanceof Level clevel ?
+                MapChecker.getSurfaceBiome(clevel, pPos) :
+                original.call(instance, pPos);
     }
 
     // ModifyExpressionValue may cost much time than it
     @WrapOperation(
-            method = "renderSnowAndRain",
+            method = {"tickRain", "renderSnowAndRain"},
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/biome/Biome;getPrecipitationAt(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/biome/Biome$Precipitation;")
     )
-    private Biome.Precipitation ecliptic$renderSnowAndRain_getPrecipitationAt(Biome biome, BlockPos pos, Operation<Biome.Precipitation> original) {
+    private Biome.Precipitation ecliptic$renderSnowAndRain_tickRain_getPrecipitationAt(Biome biome, BlockPos pos, Operation<Biome.Precipitation> original) {
         if (ServerConfig.Debug.useSolarWeather.get())
-            return WeatherManager.getPrecipitationAt(level, biome, pos);
-        else return VanillaWeather.replacePrecipitationIfNeed(level, biome, original.call(biome, pos));
-    }
-
-    @WrapOperation(
-            method = "tickRain",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/biome/Biome;getPrecipitationAt(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/biome/Biome$Precipitation;")
-    )
-    private Biome.Precipitation ecliptic$tickRain_getPrecipitationAt(Biome biome, BlockPos pos, Operation<Biome.Precipitation> original) {
-        if (ServerConfig.Debug.useSolarWeather.get())
-            return WeatherManager.getPrecipitationAt(level, biome, pos);
+            return level != null && (WeatherManager.isRainingOrSnowAt(level, pos)
+                    || ClientWeatherChecker.isBiomeRainyLast(biome)) ?
+                    WeatherManager.getPrecipitationAt(level, biome, pos) : Biome.Precipitation.NONE;
         else return VanillaWeather.replacePrecipitationIfNeed(level, biome, original.call(biome, pos));
     }
 
@@ -113,7 +107,7 @@ public abstract class MixinLevelRender {
     )
     private void ecliptic$renderSnowAndRain_ModifySnowAmount(LightTexture pLightTexture, float pPartialTick, double pCamX, double pCamY, double pCamZ, CallbackInfo ci, @Local(ordinal = 3) LocalIntRef integerLocalRef) {
         if (ServerConfig.Debug.useSolarWeather.get())
-            integerLocalRef.set(ClientWeatherChecker.ModifySnowAmount(integerLocalRef.get(),pPartialTick, level));
+            integerLocalRef.set(ClientWeatherChecker.ModifySnowAmount(integerLocalRef.get(), pPartialTick, level));
     }
 
     @WrapOperation(
@@ -135,7 +129,7 @@ public abstract class MixinLevelRender {
     )
     private int ecliptic$tickRain_modifyAmount(int originalNum) {
         if (ServerConfig.Debug.useSolarWeather.get()) {
-            return  ClientWeatherChecker.modifyRainAmount(originalNum, level);
+            return ClientWeatherChecker.modifyRainAmount(originalNum, level);
         } else return originalNum;
     }
 

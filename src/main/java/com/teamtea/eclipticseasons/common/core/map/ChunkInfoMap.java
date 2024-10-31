@@ -1,6 +1,6 @@
 package com.teamtea.eclipticseasons.common.core.map;
 
-import com.teamtea.eclipticseasons.EclipticSeasonsMod;
+import com.teamtea.eclipticseasons.EclipticSeasons;
 import net.minecraft.core.BlockPos;
 
 public class ChunkInfoMap {
@@ -18,7 +18,7 @@ public class ChunkInfoMap {
         this.minY = (short) minY;
         this.x = x;
         this.z = z;
-        EclipticSeasonsMod.logger(String.format("Create new Height Map with [%s, %s]", x, z));
+        EclipticSeasons.logger(String.format("Create new Height Map with [%s, %s]", x, z));
         for (int i = 0; i < MapChecker.ChunkSize; i++) {
             for (int j = 0; j < MapChecker.ChunkSize; j++) {
                 biomes[i][j] = -1;
@@ -26,7 +26,7 @@ public class ChunkInfoMap {
                 lockArray[i][j] = new Object();
             }
         }
-        EclipticSeasonsMod.logger(String.format("End create [%s, %s]", x, z));
+        EclipticSeasons.logger(String.format("End create [%s, %s]", x, z));
     }
 
     public int getHeight(int x, int z) {

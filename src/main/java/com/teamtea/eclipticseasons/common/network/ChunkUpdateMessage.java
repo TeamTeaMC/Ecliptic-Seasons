@@ -1,18 +1,14 @@
 package com.teamtea.eclipticseasons.common.network;
 
 
-import com.teamtea.eclipticseasons.EclipticSeasonsMod;
+import com.teamtea.eclipticseasons.EclipticSeasons;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.IdMapper;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.VarInt;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class ChunkUpdateMessage implements CustomPacketPayload {
@@ -30,7 +26,7 @@ public class ChunkUpdateMessage implements CustomPacketPayload {
         this.blockPosList = blockPosList;
     }
 
-    public static final Type<ChunkUpdateMessage> TYPE = new Type<>(EclipticSeasonsMod.rl("chunk_snow"));
+    public static final Type<ChunkUpdateMessage> TYPE = new Type<>(EclipticSeasons.rl("chunk_snow"));
 
     // Each pair of elements defines the stream codec of the element to encode/decode and the getter for the element to encode
     // 'name' will be encoded and decoded as a string

@@ -1,6 +1,6 @@
 package com.teamtea.eclipticseasons.client;
 
-import com.teamtea.eclipticseasons.EclipticSeasonsMod;
+import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.client.color.season.BiomeColorsHandler;
 import com.teamtea.eclipticseasons.client.particle.ButterflyParticle;
 import com.teamtea.eclipticseasons.client.particle.FallenLeavesParticle;
@@ -9,14 +9,11 @@ import com.teamtea.eclipticseasons.client.particle.WildGooseParticle;
 import com.teamtea.eclipticseasons.client.render.ber.CalendarBlockEntityRenderer;
 import com.teamtea.eclipticseasons.client.render.ber.PaperWindmillBlockEntityRenderer;
 import com.teamtea.eclipticseasons.client.render.ber.WindChimesBlockEntityRenderer;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelResourceLocation;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.PackType;
 import net.minecraft.world.level.GrassColor;
 import net.minecraft.world.level.block.*;
 
@@ -27,33 +24,26 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.*;
 
-import java.awt.*;
 import java.util.Map;
 
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class ClientSetup {
 
-    // does the Glass Lantern render in the given layer (RenderType) - used as Predicate<RenderType> lambda for setRenderLayer
-    public static boolean isGlassLanternValidLayer(RenderType layerToCheck) {
-        return layerToCheck == RenderType.cutoutMipped() || layerToCheck == RenderType.translucent();
-    }
 
     @SubscribeEvent
     public static void blockRegister(RegisterParticleProvidersEvent event) {
-        event.registerSpriteSet(EclipticSeasonsMod.ParticleRegistry.FIREFLY, (p_277215_) ->
+        event.registerSpriteSet(EclipticSeasons.ParticleRegistry.FIREFLY, (p_277215_) ->
                 (particleType, level, x, y, z, p_277222_, p_277223_, p_277224_) ->
                         new FireflyParticle(level, x, y, z, p_277215_));
-        event.registerSpriteSet(EclipticSeasonsMod.ParticleRegistry.WILD_GOOSE, (p_277215_) ->
+        event.registerSpriteSet(EclipticSeasons.ParticleRegistry.WILD_GOOSE, (p_277215_) ->
                 (particleType, level, x, y, z, p_277222_, p_277223_, p_277224_) ->
                         new WildGooseParticle(level, x, y, z,0.01,0.01,0.01, p_277215_));
-        event.registerSpriteSet(EclipticSeasonsMod.ParticleRegistry.BUTTERFLY, (p_277215_) ->
+        event.registerSpriteSet(EclipticSeasons.ParticleRegistry.BUTTERFLY, (p_277215_) ->
                 (particleType, level, x, y, z, p_277222_, p_277223_, p_277224_) ->
                         new ButterflyParticle(level, x, y, z, p_277215_));
-        event.registerSpriteSet(EclipticSeasonsMod.ParticleRegistry.FALLEN_LEAVES, (p_277215_) ->
+        event.registerSpriteSet(EclipticSeasons.ParticleRegistry.FALLEN_LEAVES, (p_277215_) ->
                 (particleType, level, x, y, z, p_277222_, p_277223_, p_277224_) ->
                         new FallenLeavesParticle(level, x, y, z, p_277222_, p_277223_, p_277224_,particleType, p_277215_));
-
-
 
     }
 
@@ -81,24 +71,21 @@ public class ClientSetup {
 
     @SubscribeEvent
     public static void onClientEvent(FMLClientSetupEvent event) {
-        EclipticSeasonsMod.logger("Register Client");
+        EclipticSeasons.logger("Register Client");
         event.enqueueWork(() -> {
-            // ItemBlockRenderTypes.setRenderLayer(ModContents.fluiddrawer.get(), ClientSetup::isGlassLanternValidLayer);
-            // MenuScreens.register(ModContents.containerType.get(), Screen.Slot1::new);
-            //
-            ItemBlockRenderTypes.setRenderLayer(Blocks.BAMBOO_BLOCK, RenderType.cutoutMipped());
-            // ItemBlockRenderTypes.setRenderLayer(ModContents.RiceSeedlingBlock.get(),RenderType.cutout());
-            // fix json file instead
             BiomeColors.GRASS_COLOR_RESOLVER = BiomeColorsHandler.GRASS_COLOR;
             BiomeColors.FOLIAGE_COLOR_RESOLVER = BiomeColorsHandler.FOLIAGE_COLOR;
+
+            ItemBlockRenderTypes.setRenderLayer(EclipticSeasons.ModContents.snowyBlock.get(), RenderType.cutoutMipped());
+
         });
     }
 
     @SubscribeEvent
     public static void onRegisterRenderers(EntityRenderersEvent.RegisterRenderers event) {
-        event.registerBlockEntityRenderer(EclipticSeasonsMod.ModContents.calendar_entity_type.get(), CalendarBlockEntityRenderer::new);
-        event.registerBlockEntityRenderer(EclipticSeasonsMod.ModContents.paper_wind_mill_entity_type.get(), PaperWindmillBlockEntityRenderer::new);
-        event.registerBlockEntityRenderer(EclipticSeasonsMod.ModContents.wind_chimes_entity_type.get(), WindChimesBlockEntityRenderer::new);
+        event.registerBlockEntityRenderer(EclipticSeasons.ModContents.calendar_entity_type.get(), CalendarBlockEntityRenderer::new);
+        event.registerBlockEntityRenderer(EclipticSeasons.ModContents.paper_wind_mill_entity_type.get(), PaperWindmillBlockEntityRenderer::new);
+        event.registerBlockEntityRenderer(EclipticSeasons.ModContents.wind_chimes_entity_type.get(), WindChimesBlockEntityRenderer::new);
     }
 
     // public static Map<ResourceLocation, BakedModel> BakedSnowModels=new HashMap<>();

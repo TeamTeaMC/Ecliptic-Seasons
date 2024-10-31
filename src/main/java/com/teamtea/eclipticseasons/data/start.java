@@ -1,6 +1,6 @@
 package com.teamtea.eclipticseasons.data;
 
-import com.teamtea.eclipticseasons.EclipticSeasonsMod;
+import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.data.advancement.Advancements;
 import com.teamtea.eclipticseasons.data.lang.Lang_EN;
@@ -33,7 +33,7 @@ public class start {
         PackOutput packOutput = generator.getPackOutput();
         CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
         if (event.includeServer()) {
-            EclipticSeasonsMod.logger("Generate We Data!!!");
+            EclipticSeasons.logger("Generate We Data!!!");
 
             generator.addProvider(event.includeServer(),new TagsDataProvider(packOutput,lookupProvider,MODID,helper));
             var esb=new ESBlockTagProvider(packOutput,lookupProvider,MODID,helper);

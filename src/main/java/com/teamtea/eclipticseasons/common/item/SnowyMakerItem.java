@@ -1,6 +1,6 @@
 package com.teamtea.eclipticseasons.common.item;
 
-import com.teamtea.eclipticseasons.EclipticSeasonsMod;
+import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.core.map.SnowyRemover;
 import net.minecraft.client.Minecraft;
@@ -12,7 +12,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.item.BrushItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.ChunkPos;
@@ -42,10 +41,10 @@ public class SnowyMakerItem extends Item {
             ) {
                 if (level instanceof ServerLevel serverLevel) {
                     var chunk = serverLevel.getChunkAt(pContext.getClickedPos());
-                    if (!chunk.hasData(EclipticSeasonsMod.ModContents.SNOWY_REMOVER)) {
-                        chunk.setData(EclipticSeasonsMod.ModContents.SNOWY_REMOVER, new SnowyRemover(new int[16][16]));
+                    if (!chunk.hasData(EclipticSeasons.ModContents.SNOWY_REMOVER)) {
+                        chunk.setData(EclipticSeasons.ModContents.SNOWY_REMOVER, new SnowyRemover(new int[16][16]));
                     }
-                    var data = chunk.getData(EclipticSeasonsMod.ModContents.SNOWY_REMOVER);
+                    var data = chunk.getData(EclipticSeasons.ModContents.SNOWY_REMOVER);
                     data.setChunkPos(clickedPos,
                             data.notSnowyAt(clickedPos) ?
                                     SnowyRemover.SNOWY :
@@ -67,7 +66,7 @@ public class SnowyMakerItem extends Item {
                     }
 
                     if (data.allSnowAble()) {
-                        chunk.removeData(EclipticSeasonsMod.ModContents.SNOWY_REMOVER);
+                        chunk.removeData(EclipticSeasons.ModContents.SNOWY_REMOVER);
                     }
 
                     chunk.setUnsaved(true);
@@ -83,7 +82,7 @@ public class SnowyMakerItem extends Item {
 
                 } else {
 
-                    var data = level.getChunkAt(pContext.getClickedPos()).getData(EclipticSeasonsMod.ModContents.SNOWY_REMOVER);
+                    var data = level.getChunkAt(pContext.getClickedPos()).getData(EclipticSeasons.ModContents.SNOWY_REMOVER);
 
                     var type = data.notSnowyAt(clickedPos) ? ParticleTypes.SMOKE : ParticleTypes.SNOWFLAKE;
                     for (int i = 0; i < 10; i++) {

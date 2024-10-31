@@ -1,6 +1,6 @@
 package com.teamtea.eclipticseasons.api.util;
 
-import com.teamtea.eclipticseasons.EclipticSeasonsMod;
+import com.teamtea.eclipticseasons.EclipticSeasons;
 import net.neoforged.fml.loading.FMLLoader;
 
 import java.io.File;
@@ -20,7 +20,7 @@ public class SimpleUtil {
         for (int i = 0; i < 100000 * 100; i++) {
             runnable.run();
         }
-        EclipticSeasonsMod.logger(System.currentTimeMillis() - time);
+        EclipticSeasons.logger(System.currentTimeMillis() - time);
     }
 
 

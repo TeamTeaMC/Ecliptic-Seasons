@@ -1,23 +1,13 @@
 package com.teamtea.eclipticseasons.client.particle;
 
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.teamtea.eclipticseasons.EclipticSeasonsMod;
-import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.ParticleRenderType;
 import net.minecraft.client.particle.SpriteSet;
-import net.minecraft.client.particle.TextureSheetParticle;
-import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.level.NaturalSpawner;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Quaternionf;
-import org.joml.Vector3f;
-
-import java.util.List;
 
 public class ButterflyParticle extends FireflyParticle {
 

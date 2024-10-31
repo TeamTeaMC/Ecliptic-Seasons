@@ -1,6 +1,6 @@
 package com.teamtea.eclipticseasons.common.core.map;
 
-import com.teamtea.eclipticseasons.EclipticSeasonsMod;
+import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.network.ChunkUpdateMessage;
@@ -9,7 +9,6 @@ import com.teamtea.eclipticseasons.config.ServerConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
-import net.minecraft.core.SectionPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
@@ -28,7 +27,6 @@ import net.minecraft.world.level.levelgen.Heightmap;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 public class MapChecker {
@@ -123,8 +121,8 @@ public class MapChecker {
 
     private static int getHeightWithCheck(Level level, BlockPos pos) {
         if (level.getChunkAt(pos) instanceof LevelChunk levelChunk) {
-            if (levelChunk.hasData(EclipticSeasonsMod.ModContents.SNOWY_REMOVER)
-                    && levelChunk.getData(EclipticSeasonsMod.ModContents.SNOWY_REMOVER) instanceof SnowyRemover snowyRemover) {
+            if (levelChunk.hasData(EclipticSeasons.ModContents.SNOWY_REMOVER)
+                    && levelChunk.getData(EclipticSeasons.ModContents.SNOWY_REMOVER) instanceof SnowyRemover snowyRemover) {
                 if (snowyRemover.notSnowyAt(pos)) {
                     return level.getMaxBuildHeight() + 1;
                 }
@@ -191,16 +189,24 @@ public class MapChecker {
         return value;
     }
 
+
     public static boolean checkCancelAndAbove(Level level, BlockPos pos, int times) {
         var abovePos = pos.above();
         if (level.isLoaded(abovePos)) {
-            var stateAbove = level.getBlockState(abovePos);
+            BlockState stateAbove = null;
+            // TODO: add this for I'm not know if we will crash for logic world change but not render section change
+            try {
+                stateAbove = level.getBlockState(abovePos);
+            } catch (Exception e) {
+                EclipticSeasons.LOGGER.error("Logic thread change the block in render thread with {}", pos);
+                return false;
+            }
             if (stateAbove.getBlock() instanceof LightBlock) {
                 if (stateAbove.getValue(LightBlock.LEVEL) == 0)
                     return true;
             } else if (!stateAbove.isAir() && !stateAbove.blocksMotion()) {
                 if (times > 0)
-                    return checkCancelAndAbove(level, pos, (times - 1));
+                    return checkCancelAndAbove(level, abovePos, (times - 1));
             }
         }
         return false;
@@ -359,8 +365,8 @@ public class MapChecker {
         // var section_y = new HashSet<Integer>(chunk.getSectionsCount());
         // var section_y=new HashSet<Integer>();
 
-        if (chunk.hasData(EclipticSeasonsMod.ModContents.SNOWY_REMOVER)
-                && chunk.getData(EclipticSeasonsMod.ModContents.SNOWY_REMOVER) instanceof SnowyRemover snowyRemover) {
+        if (chunk.hasData(EclipticSeasons.ModContents.SNOWY_REMOVER)
+                && chunk.getData(EclipticSeasons.ModContents.SNOWY_REMOVER) instanceof SnowyRemover snowyRemover) {
             BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos(chunkPos.getMinBlockX(), 64, chunkPos.getMinBlockZ());
             for (int i = 0; i < 16; i++) {
                 for (int j = 0; j < 16; j++) {

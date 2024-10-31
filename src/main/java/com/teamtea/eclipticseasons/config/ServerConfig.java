@@ -45,6 +45,8 @@ public class ServerConfig {
 
     public static class Season {
         public static ModConfigSpec.BooleanValue enableCrop;
+        public static ModConfigSpec.DoubleValue cropGrowChanceInWrongSeason;
+        public static ModConfigSpec.BooleanValue enableCropHumidityControl;
         public static ModConfigSpec.BooleanValue enableInform;
         public static ModConfigSpec.IntValue lastingDaysOfEachTerm;
         public static ModConfigSpec.IntValue initialSolarTermIndex;
@@ -64,6 +66,10 @@ public class ServerConfig {
 
             enableCrop = builder.comment("Enable seasonal crop.")
                     .define("EnableSeasonalCrop", true);
+            cropGrowChanceInWrongSeason= builder.comment("How much chance can crop grow in wrong season.")
+                    .defineInRange("CropGrowChanceInWrongSeason", 0.25,0,1);
+            enableCropHumidityControl = builder.comment("Enable crop humidity control.")
+                    .define("EnableCropHumidityControl", true);
 
             enableInform = builder.comment("Enable solar term change inform.")
                     .define("EnableInform", true);

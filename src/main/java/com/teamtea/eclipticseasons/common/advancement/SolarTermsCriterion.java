@@ -2,7 +2,7 @@ package com.teamtea.eclipticseasons.common.advancement;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import com.teamtea.eclipticseasons.EclipticSeasonsMod;
+import com.teamtea.eclipticseasons.EclipticSeasons;
 import net.minecraft.advancements.Criterion;
 import net.minecraft.advancements.critereon.ContextAwarePredicate;
 import net.minecraft.advancements.critereon.EntityPredicate;
@@ -15,7 +15,7 @@ public class SolarTermsCriterion extends SimpleCriterionTrigger<SolarTermsCriter
 
     @Override
     public Codec<TriggerInstance> codec() {
-        return SolarTermsCriterion.TriggerInstance.CODEC;
+        return TriggerInstance.CODEC;
     }
 
     public void trigger(ServerPlayer player) {
@@ -24,22 +24,22 @@ public class SolarTermsCriterion extends SimpleCriterionTrigger<SolarTermsCriter
 
 
     public record TriggerInstance(
-            Optional<ContextAwarePredicate> player) implements SimpleCriterionTrigger.SimpleInstance {
+            Optional<ContextAwarePredicate> player) implements SimpleInstance {
         public static final Codec<TriggerInstance> CODEC = RecordCodecBuilder.create(
                 builder -> builder.group(
-                                EntityPredicate.ADVANCEMENT_CODEC.optionalFieldOf("player").forGetter(SolarTermsCriterion.TriggerInstance::player))
-                        .apply(builder, SolarTermsCriterion.TriggerInstance::new)
+                                EntityPredicate.ADVANCEMENT_CODEC.optionalFieldOf("player").forGetter(TriggerInstance::player))
+                        .apply(builder, TriggerInstance::new)
         );
 
         public static Criterion<TriggerInstance> simple() {
-            return EclipticSeasonsMod.ModContents.SOLAR_TERMS.get().createCriterion(
-                    new SolarTermsCriterion.TriggerInstance(Optional.empty())
+            return EclipticSeasons.ModContents.SOLAR_TERMS.get().createCriterion(
+                    new TriggerInstance(Optional.empty())
             );
         }
 
         public static Criterion<TriggerInstance> simple2() {
-            return EclipticSeasonsMod.ModContents.heatStroke.get().createCriterion(
-                    new SolarTermsCriterion.TriggerInstance(Optional.empty())
+            return EclipticSeasons.ModContents.heatStroke.get().createCriterion(
+                    new TriggerInstance(Optional.empty())
             );
         }
 

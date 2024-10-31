@@ -27,7 +27,6 @@ import net.minecraft.core.particles.ColorParticleOption;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.particles.SimpleParticleType;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -69,12 +68,12 @@ import java.util.function.Supplier;
 
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod(EclipticSeasonsApi.MODID)
-public class EclipticSeasonsMod {
+public class EclipticSeasons {
     // Directly reference a log4j logger.
     public static final Logger LOGGER = LogManager.getLogger(EclipticSeasonsApi.MODID);
     public static final String NETWORK_VERSION = "1.0";
 
-    public EclipticSeasonsMod(IEventBus modEventBus, ModContainer modContainer) {
+    public EclipticSeasons(IEventBus modEventBus, ModContainer modContainer) {
         modEventBus.addListener(this::FMLCommonSetup);
         modEventBus.addListener(this::FMLCommonSetup);
         modEventBus.addListener(this::gatherData);
@@ -282,7 +281,7 @@ public class EclipticSeasonsMod {
         public static void blockRegister(RegisterEvent event) {
             if (event.getRegistryKey() == Registries.CREATIVE_MODE_TAB)
                 event.register(Registries.CREATIVE_MODE_TAB, helper -> {
-                    helper.register(EclipticSeasonsMod.rl(EclipticSeasonsApi.MODID),
+                    helper.register(EclipticSeasons.rl(EclipticSeasonsApi.MODID),
                             CreativeModeTab.builder().icon(() -> new ItemStack(ModContents.calendar_item.get()))
                                     .title(Component.translatable("itemGroup." + EclipticSeasonsApi.MODID + ".core"))
                                     .displayItems((params, output) -> {

@@ -1,6 +1,6 @@
 package com.teamtea.eclipticseasons.client.sound;
 
-import com.teamtea.eclipticseasons.EclipticSeasonsMod;
+import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.client.core.ClientWeatherChecker;
@@ -9,6 +9,7 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.resources.sounds.*;
 import net.minecraft.client.sounds.SoundManager;
+import net.minecraft.core.Holder;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BiomeTags;
@@ -55,13 +56,13 @@ public class SeasonalBiomeAmbientSoundsHandler implements AmbientSoundHandler {
         boolean indoor = (player.level().getLightEngine().getLayerListener(LightLayer.SKY).getLightValue(player.blockPosition())) < 11;
         // EclipticSeasons.logger((player.level().getLightEngine().getLayerListener(LightLayer.SKY).getLightValue(player.blockPosition())));
 
-        var biome = this.biomeManager.getNoiseBiomeAtPosition(this.player.getX(), this.player.getY(), this.player.getZ());
+        Holder<Biome> biome = this.biomeManager.getNoiseBiomeAtPosition(this.player.getX(), this.player.getY(), this.player.getZ());
         if (biome.value() != this.previousBiome) {
             this.previousBiome = biome.value();
         }
 
         {
-            var season = EclipticUtil.getNowSolarTerm(player.level()).getSeason();
+            Season season = EclipticUtil.getNowSolarTerm(player.level()).getSeason();
             boolean isDayNow = EclipticUtil.isDay(player.level());
             if (season != this.previousSeason || isDayNow != this.previousIsDay) {
                 this.loopSounds.values().forEach(LoopSoundInstance::fadeOut);
@@ -75,45 +76,45 @@ public class SeasonalBiomeAmbientSoundsHandler implements AmbientSoundHandler {
             SoundEvent soundEvent = null;
             switch (season) {
                 case SPRING -> {
-                    if (player.isInWaterOrRain()) {
+                    if (!player.isInWaterOrRain()) {
                         if ((biome.is(Biomes.CHERRY_GROVE) || biome.is(BiomeTags.IS_FOREST) || biome.is(Tags.Biomes.IS_PLAINS)) && !biome.is(Tags.Biomes.IS_COLD)) {
-                            soundEvent = EclipticSeasonsMod.SoundEventsRegistry.spring_forest;
+                            soundEvent = EclipticSeasons.SoundEventsRegistry.spring_forest;
                         }
                     }
                 }
                 case SUMMER -> {
                     // if (player.level().isNight())
                     // 客户端不计算是否为夜晚
-                    if (player.isInWaterOrRain()) {
+                    if (!player.isInWaterOrRain()) {
                         if (!isDayNow) {
                             if (!(biome.is(BiomeTags.IS_SAVANNA)
                                     && !biome.is(Tags.Biomes.IS_CAVE)
                                     && !biome.is(Tags.Biomes.IS_DESERT)
                                     && !biome.is(BiomeTags.IS_BADLANDS)
                                     && !biome.is(Tags.Biomes.IS_MOUNTAIN_PEAK))) {
-                                soundEvent = EclipticSeasonsMod.SoundEventsRegistry.night_river;
+                                soundEvent = EclipticSeasons.SoundEventsRegistry.night_river;
                             }
                         } else {
                             if ((biome.is(Biomes.CHERRY_GROVE) || biome.is(BiomeTags.IS_FOREST) || biome.is(Tags.Biomes.IS_PLAINS) || biome.is(BiomeTags.IS_RIVER))) {
-                                soundEvent = EclipticSeasonsMod.SoundEventsRegistry.garden_wind;
+                                soundEvent = EclipticSeasons.SoundEventsRegistry.garden_wind;
                             }
                         }
                     }
 
                 }
                 case AUTUMN -> {
-                    if (player.isInWater()) {
+                    if (!player.isInWater()) {
                         if ((biome.is(Biomes.CHERRY_GROVE) || biome.is(BiomeTags.IS_FOREST))) {
-                            soundEvent = EclipticSeasonsMod.SoundEventsRegistry.windy_leave;
+                            soundEvent = EclipticSeasons.SoundEventsRegistry.windy_leave;
                         }
                     }
                 }
                 case WINTER -> {
-                    if (player.isInWater()) {
+                    if (!player.isInWater()) {
                         if (!biome.is(Tags.Biomes.IS_CAVE)) {
                             if ((biome.is(Biomes.CHERRY_GROVE) || biome.is(BiomeTags.IS_FOREST) && ClientWeatherChecker.isRain((ClientLevel) player.level()))) {
-                                soundEvent = EclipticSeasonsMod.SoundEventsRegistry.winter_forest;
-                            } else soundEvent = EclipticSeasonsMod.SoundEventsRegistry.winter_cold;
+                                soundEvent = EclipticSeasons.SoundEventsRegistry.winter_forest;
+                            } else soundEvent = EclipticSeasons.SoundEventsRegistry.winter_cold;
                         }
                     }
                 }

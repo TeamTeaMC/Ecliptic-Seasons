@@ -1,7 +1,7 @@
 package com.teamtea.eclipticseasons.compat.teacon;
 
 
-import com.teamtea.eclipticseasons.EclipticSeasonsMod;
+import com.teamtea.eclipticseasons.EclipticSeasons;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -15,7 +15,7 @@ public class TeaconMessage implements CustomPacketPayload {
     }
 
 
-    public static final Type<TeaconMessage> TYPE = new Type<>(EclipticSeasonsMod.rl("teacon"));
+    public static final Type<TeaconMessage> TYPE = new Type<>(EclipticSeasons.rl("teacon"));
 
     public static final StreamCodec<ByteBuf, TeaconMessage> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.BOOL,

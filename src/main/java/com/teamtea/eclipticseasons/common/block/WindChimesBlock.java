@@ -1,9 +1,8 @@
 package com.teamtea.eclipticseasons.common.block;
 
 import com.mojang.serialization.MapCodec;
-import com.teamtea.eclipticseasons.EclipticSeasonsMod;
+import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.common.block.base.SimpleEntityBlock;
-import com.teamtea.eclipticseasons.common.block.base.SimpleHorizontalEntityBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.LevelAccessor;
@@ -41,6 +40,6 @@ public class WindChimesBlock extends SimpleEntityBlock {
 
     @Override
     public @Nullable BlockEntity newBlockEntity(BlockPos pPos, BlockState pState) {
-        return EclipticSeasonsMod.ModContents.wind_chimes_entity_type.get().create(pPos, pState);
+        return EclipticSeasons.ModContents.wind_chimes_entity_type.get().create(pPos, pState);
     }
 }
