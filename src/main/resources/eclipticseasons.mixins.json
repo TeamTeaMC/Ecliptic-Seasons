@@ -48,7 +48,7 @@
     "compat.legendarysurvivaloverhaul.client.MixinRenderSeasonCards",
     "compat.legendarysurvivaloverhaul.client.MixinRenderTooltipFrame",
     "compat.optifine.MixinBlockModelCustomizer",
-    "client.MixinItemBlockRenderTypes",
+    "compat.optifine.MixinItemBlockRenderTypes",
     "compat.rubidium.MixinBlockRender2",
     "compat.rubidium.MixinBlockRenderTask"
   ],

@@ -16,7 +16,6 @@ import org.spongepowered.asm.mixin.injection.At;
 @Mixin(Fox.SeekShelterGoal.class)
 public class MixinFox_SeekShelterGoal {
 
-    // @Shadow @Final private Bee this$0;
 
     @Dynamic
     @Shadow

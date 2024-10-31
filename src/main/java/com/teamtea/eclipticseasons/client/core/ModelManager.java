@@ -14,6 +14,7 @@ import com.teamtea.eclipticseasons.config.ClientConfig;
 import com.teamtea.eclipticseasons.mixin.EclipticSeasonsMixinPlugin;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ChunkBufferBuilderPack;
+import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.BlockModelShaper;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -21,6 +22,7 @@ import net.minecraft.client.renderer.chunk.RenderChunkRegion;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.client.resources.model.SimpleBakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
@@ -40,6 +42,8 @@ import java.util.*;
 // https://github.com/DoubleNegation/CompactOres/blob/1.18/src/main/java/doublenegation/mods/compactores/CompactOresResourcePack.java#L164
 // 未来可以基于RepositorySource实现动态纹理生成（看情况，因为目前不需要，对内存消耗比较大）
 public class ModelManager {
+    public static final RenderType CUTOUT_MIPPED = null;
+
     public static Map<ResourceLocation, BakedModel> models;
     public static
     LazyOptional<BakedModel> snowOverlayLeaves =
@@ -71,7 +75,7 @@ public class ModelManager {
     public static ResourceLocation butterfly3 = EclipticSeasons.rl("block/butterfly_red");
 
     public static List<ResourceLocation> flower_on_grass = List.of(1, 2, 3, 4, 5, 6).stream().map(
-            i ->  EclipticSeasons.rl("block/flower_%s".formatted(i))
+            i -> EclipticSeasons.rl("block/flower_%s".formatted(i))
     ).toList();
 
     public static ResourceLocation mrl(String s) {
@@ -141,6 +145,19 @@ public class ModelManager {
         return snowModel;
     }
 
+    public static List<BakedQuad> appendOverlay(BlockAndTintGetter blockAndTintGetter, BlockState state, BlockPos pos, Direction direction, RandomSource random, long seed, List<BakedQuad> list, BakedModel bakedModel, RenderType renderType) {
+        if (renderType == RenderType.cutoutMipped()) {
+            if (bakedModel.getClass() == SimpleBakedModel.class) {
+                if (!ItemBlockRenderTypes.getRenderLayers(state).asList().contains(RenderType.cutoutMipped())) {
+                    list = new ArrayList<>();
+                }
+            }
+            return ModelManager.appendOverlay(blockAndTintGetter, state, pos, direction, random, seed, list);
+
+        }
+        return list;
+
+    }
 
     // 实际上这里之所以太慢还有个问题就是会一个方块访问七次
     public static List<BakedQuad> appendOverlay(BlockAndTintGetter blockAndTintGetter, BlockState state, BlockPos pos, Direction direction, RandomSource random, long seed, List<BakedQuad> list) {
@@ -148,7 +165,8 @@ public class ModelManager {
         if (level == null) return list;
 
         if (direction != Direction.DOWN
-                && !list.isEmpty()) {
+            // && !list.isEmpty()
+        ) {
 
             var onBlock = state.getBlock();
             int flag = MapChecker.getBlockType(state, level, pos);
@@ -186,8 +204,10 @@ public class ModelManager {
                     // isFlowerAbove=false;
                     var useMap = isFlowerAbove ? quadMap_1 : quadMap;
                     List<BakedQuad> cc =
-                            EclipticSeasonsMixinPlugin.isOptLoad() ? null : useMap.getOrDefault(list, null);
-                    // cc=null;
+                            EclipticSeasonsMixinPlugin.isOptLoad()
+                                    || list.isEmpty()? null : useMap.getOrDefault(list, null);
+                    // if ((list.isEmpty()))
+                    //     cc = null;
                     if (cc != null) {
                         return cc;
                     } else {
@@ -216,7 +236,13 @@ public class ModelManager {
                                     for (Direction direction1 : List.of(Direction.EAST, Direction.SOUTH, Direction.WEST, Direction.NORTH, Direction.UP)) {
                                         newList.addAll(layerBlock.getQuads(layerState, direction1, random));
                                     }
-                                } else newList = new ArrayList<>(snowList);
+                                }
+                                else {
+                                    newList = new ArrayList<BakedQuad>(size + snowList.size());
+                                    newList.addAll(list);
+                                    newList.addAll(snowList);
+                                }
+                                // else newList = new ArrayList<>(snowList);
                             } else {
                                 newList = new ArrayList<BakedQuad>(size + snowList.size());
                                 newList.addAll(list);
@@ -353,16 +379,17 @@ public class ModelManager {
         return replace;
     }
 
-    public static boolean isModelReplaced(BlockState state,BakedModel bakedModel){
+    public static boolean isModelReplaced(BlockState state, BakedModel bakedModel) {
         return !state.blocksMotion();
     }
+
     public static boolean appendModel(ChunkBufferBuilderPack pChunkBufferBuilderPack, BlockPos pos, BlockState state, PoseStack posestack, RenderChunkRegion renderchunkregion, RandomSource random, Set<RenderType> renderTypeSet) {
         BakedModel snowModel = findModel(renderchunkregion, pos, state, random);
         boolean replace = false;
         if (snowModel == null) return replace;
 
         renderModel(snowModel, pChunkBufferBuilderPack, pos, state, posestack, renderchunkregion, random, renderTypeSet, posestack);
-        replace= isModelReplaced(state,snowModel);
+        replace = isModelReplaced(state, snowModel);
         return replace;
     }
 
