@@ -31,6 +31,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.item.*;
@@ -136,7 +137,7 @@ public class WeatherManager {
         return true;
     }
 
-    public static Boolean isThunderAtBiome(ServerLevel serverLevel, Holder<Biome> biome) {
+    public static Boolean isThunderAtBiome(Level serverLevel, Holder<Biome> biome) {
         var ws = getBiomeList(serverLevel);
         if (ws != null)
             for (BiomeWeather biomeWeather : ws) {
@@ -147,7 +148,7 @@ public class WeatherManager {
         return false;
     }
 
-    public static Boolean isThunderAt(ServerLevel serverLevel, BlockPos pos) {
+    public static Boolean isThunderAt(Level serverLevel, BlockPos pos) {
         if (!MapChecker.isValidDimension(serverLevel)) {
             return false;
         }
@@ -407,7 +408,7 @@ public class WeatherManager {
         boolean isEcliptic = VanillaWeather.canRunSpecialWeather();
 
 
-        size = (int) (size * (Math.clamp(7f / ServerConfig.Season.lastingDaysOfEachTerm.get(), 0.8f, 3f)));
+        size = (int) (size * (Mth.clamp(7f / ServerConfig.Season.lastingDaysOfEachTerm.get(), 0.8f, 3f)));
 
         if (isEcliptic) {
             if (biomeWeather.shouldClear()) {
@@ -418,7 +419,7 @@ public class WeatherManager {
                     if (!biomeWeather.shouldThunder()) {
                         BiomeRain biomeRain = SolarHolders.getSaveData(level).getSolarTerm().getBiomeRain(biomeWeather.biomeHolder);
                         float weight = biomeRain.getThunderChance()
-                                * ((ServerConfig.Season.thunderChanceMultiplier.get() * 1f) / 100f);
+                                * ((ServerConfig.Weather.thunderChanceMultiplier.get() * 1f) / 100f);
                         if (level.getRandom().nextInt(1000) / 1000.f < weight) {
                             biomeWeather.thunderTime = ServerLevel.THUNDER_DURATION.sample(random) / size;
                         }
@@ -431,7 +432,7 @@ public class WeatherManager {
                     }
                     float weight = biomeRain.getRainChane()
                             * Math.max(0.01f, downfall)
-                            * ((ServerConfig.Season.rainChanceMultiplier.get() * 1f) / 100f);
+                            * ((ServerConfig.Weather.rainChanceMultiplier.get() * 1f) / 100f);
                     if (level.getRandom().nextInt(1000) / 1000.f < weight) {
                         biomeWeather.rainTime = ServerLevel.RAIN_DURATION.sample(random) / size;
                     } else {

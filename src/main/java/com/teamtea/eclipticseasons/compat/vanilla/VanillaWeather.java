@@ -4,13 +4,16 @@ package com.teamtea.eclipticseasons.compat.vanilla;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
+import com.teamtea.eclipticseasons.api.constant.tag.ClimateTypeBiomeTags;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
+import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.handler.SolarUtil;
 import com.teamtea.eclipticseasons.config.ServerConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
@@ -55,55 +58,60 @@ public class VanillaWeather {
         }
         return status;
     }
-
-    public static Biome.Precipitation replacePrecipitationIfNeed(Level level, Biome biome, Biome.Precipitation pre) {
-        if (!ServerConfig.Debug.useSolarWeather.get()) {
-            var solarTerm = EclipticSeasonsApi.getInstance().getSolarTerm(level);
-            var snowTerm = SolarTerm.getSnowTerm(biome);
-            boolean flag_cold = solarTerm.isInTerms(snowTerm.getStart(), snowTerm.getEnd());
-            if (pre == Biome.Precipitation.RAIN) {
-                if (flag_cold) {
-                    pre = Biome.Precipitation.SNOW;
-                }
-            } else {
-                if (!flag_cold) {
-                    pre = Biome.Precipitation.RAIN;
-                }
-            }
-        }
-        return pre;
-    }
-
-    public static Biome.Precipitation handlePrecipitationat(Biome biome, BlockPos pos) {
-        var pre = Biome.Precipitation.NONE;
+    public static Biome.Precipitation handlePrecipitationAt(Biome biome, BlockPos pos) {
         var level = getValidLevel(biome);
+        return handlePrecipitationAt(level, biome, pos);
+    }
 
-        if (biome.hasPrecipitation()) {
-            pre = biome.coldEnoughToSnow(pos) ? Biome.Precipitation.SNOW : Biome.Precipitation.RAIN;
-            var solarTerm = EclipticSeasonsApi.getInstance().getSolarTerm(level);
+    public static boolean hasMonsoonalPrecipitation(Biome biome){
+        var level = getValidLevel(biome);
+        return hasPrecipitation(level,biome);
+    }
+
+    public static boolean hasPrecipitation(Level level,Biome biome){
+        var solarTerm = EclipticSeasonsApi.getInstance().getSolarTerm(level);
+        boolean hasPrecipitation =biome.getModifiedClimateSettings().hasPrecipitation();
+        TagKey<Biome> tag = BiomeClimateManager.getTag(biome);
+        if (tag.equals(ClimateTypeBiomeTags.MONSOONAL)) {
+            Season season = solarTerm.getSeason();
+            if (season == Season.SUMMER || season == Season.AUTUMN) {
+                hasPrecipitation = true;
+            }else {
+                hasPrecipitation=false;
+            }
+        }
+        return hasPrecipitation;
+    }
+
+    public static Biome.Precipitation handlePrecipitationAt(Level level, Biome biome, BlockPos pos) {
+        var resultPrecipitation = Biome.Precipitation.NONE;
+        var solarTerm = EclipticSeasonsApi.getInstance().getSolarTerm(level);
+
+        biome= MapChecker.getSurfaceBiome(level,pos).value();
+        boolean hasPrecipitation =hasPrecipitation(level,biome);
+
+        if (hasPrecipitation) {
+            resultPrecipitation = biome.coldEnoughToSnow(pos) ?
+                    Biome.Precipitation.SNOW :
+                    Biome.Precipitation.RAIN;
+
             var snowTerm = SolarTerm.getSnowTerm(biome);
             boolean flag_cold = solarTerm.isInTerms(snowTerm.getStart(), snowTerm.getEnd());
-            if (pre == Biome.Precipitation.RAIN) {
-                if (flag_cold)
-                // if (isInWinter(level))
-                {
-                    pre = Biome.Precipitation.SNOW;
+            if (resultPrecipitation == Biome.Precipitation.RAIN) {
+                if (flag_cold) {
+                    resultPrecipitation = Biome.Precipitation.SNOW;
                 }
             } else {
-                // if (isInSummer(level))
                 if (!flag_cold) {
-                    pre = Biome.Precipitation.RAIN;
+                    resultPrecipitation = Biome.Precipitation.RAIN;
                 }
             }
-        } else {
-            // TODO: 稀疏草原，未来在做，需要考虑
-            // if (isInSummer(level)) {
-            //     pre = Biome.Precipitation.RAIN;
-            // }
         }
 
-        return pre;
+
+        return resultPrecipitation;
     }
+
 
     public static Level getValidLevel(Biome biome) {
         boolean isOnServer = isOnServerThread(biome);
@@ -169,6 +177,6 @@ public class VanillaWeather {
     }
 
     public static boolean canRunSpecialWeather() {
-        return ServerConfig.Debug.useSolarWeather.get();
+        return ServerConfig.Weather.useSolarWeather.get();
     }
 }

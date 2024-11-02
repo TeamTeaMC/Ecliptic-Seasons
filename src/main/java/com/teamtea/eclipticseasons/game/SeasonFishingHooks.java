@@ -14,7 +14,7 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 public class SeasonFishingHooks {
     public static ObjectArrayList<ItemStack> modify(LootParams pParams, ObjectArrayList<ItemStack> original) {
 
-        if(ServerConfig.Season.enableFishing.get())
+        if(ServerConfig.Animal.enableFishing.get())
         {
             boolean badWeather = WeatherManager.isThunderAt(pParams.getLevel(), pParams.getParameter(LootContextParams.THIS_ENTITY).getOnPos().above());
 

@@ -21,7 +21,7 @@ public class MixinLightningRodBlock {
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;isThundering()Z")
     )
     private boolean ecliptic$onProjectileHit_isThundering(Level instance, Operation<Boolean> original, @Local(ordinal = 0) BlockPos blockPos) {
-        if (ServerConfig.Debug.useSolarWeather.get())
+        if (ServerConfig.Weather.useSolarWeather.get())
             return ClientWeatherChecker.isThunderAt((ClientLevel) instance, blockPos);
         else return original.call(instance);
     }

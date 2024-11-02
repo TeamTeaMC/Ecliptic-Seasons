@@ -12,6 +12,7 @@ public class ClientConfig {
         Renderer.load(builder);
         Sound.load(builder);
         Particle.load(builder);
+        Weather.load(builder);
     }
 
     public static class GUI {
@@ -36,7 +37,6 @@ public class ClientConfig {
 
         public static ModConfigSpec.BooleanValue flowerOnGrass;
         public static ModConfigSpec.BooleanValue deeperSnow;
-        public static ModConfigSpec.IntValue weatherBufferDistance;
         public static ModConfigSpec.BooleanValue seasonalGrassColorChange;
 
         private static void load(ModConfigSpec.Builder builder) {
@@ -46,8 +46,7 @@ public class ClientConfig {
             enhancementChunkRenderUpdate = builder.comment("Enhanced reload, which will refresh all sections periodically.")
                     .define("EnhancementChunkRenderUpdate", false);
 
-            weatherBufferDistance = builder.comment("Modify the buffer distance for local weather changes.")
-                    .defineInRange("WeatherBufferDistance", 16, 1, 80);
+
 
             useVanillaCheck = builder.comment("Determines whether snow is falling based on vanilla lighting checks.")
                     .define("UseVanillaCheck", false);
@@ -114,6 +113,17 @@ public class ClientConfig {
             wildGooseSpawnWeight = builder.comment("The difficulty multiplier of wild geese particles, the value should be between 1-10000, the default is 10.")
                     .defineInRange("WildGooseSpawnWeight", 10, 1, 10000);
 
+            builder.pop();
+        }
+    }
+
+    public static class Weather {
+        public static ModConfigSpec.IntValue weatherBufferDistance;
+
+        private static void load(ModConfigSpec.Builder builder) {
+            builder.push("Weather");
+            weatherBufferDistance = builder.comment("Modify the buffer distance for local weather changes.")
+                    .defineInRange("WeatherBufferDistance", 16, 1, 80);
             builder.pop();
         }
     }

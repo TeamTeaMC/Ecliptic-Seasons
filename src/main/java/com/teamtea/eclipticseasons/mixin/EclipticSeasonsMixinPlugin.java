@@ -1,5 +1,6 @@
 package com.teamtea.eclipticseasons.mixin;
 
+import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.neoforged.fml.loading.FMLLoader;
 import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
@@ -16,6 +17,10 @@ import java.util.Set;
 public class EclipticSeasonsMixinPlugin implements IMixinConfigPlugin {
 
     public static final String MIXIN_COMPAT_PACKAGE = "mixin.compat.";
+
+    public static boolean isOptLoad() {
+        return false;
+    }
 
     @Override
     public void onLoad(String mixinPackage) {

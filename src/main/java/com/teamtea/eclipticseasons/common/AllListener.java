@@ -49,12 +49,6 @@ public class AllListener {
     }
 
 
-    // @SubscribeEvent
-    // public static void onServerStartedEvent(ServerStartedEvent event) {
-    //     BiomeClimateManager.resetBiomeTemps(event.getServer().registryAccess());
-    //     WeatherManager.informUpdateBiomes(event.getServer().registryAccess());
-    // }
-
     @SubscribeEvent
     public static void onSleepFinishedTimeEvent(SleepFinishedTimeEvent event) {
         if (event.getLevel() instanceof ServerLevel level) {

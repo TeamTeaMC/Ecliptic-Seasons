@@ -12,7 +12,7 @@ import net.minecraft.world.level.Level;
 
 public class AnimalHooks {
     public static boolean cancelBreed(Animal animal) {
-        if(!ServerConfig.Season.enableBreed.get())return false;
+        if(!ServerConfig.Animal.enableBreed.get())return false;
 
         Season season = EclipticSeasonsApi.getInstance().getSolarTerm(animal.level()).getSeason();
 
@@ -79,14 +79,14 @@ public class AnimalHooks {
     }
 
     public static boolean cancelBeePollinate(Bee bee) {
-        if(!ServerConfig.Season.enableBee.get())return false;
+        if(!ServerConfig.Animal.enableBee.get())return false;
 
         Season season = EclipticSeasonsApi.getInstance().getSolarTerm(bee.level()).getSeason();
         return season != Season.SPRING;
     }
 
     public static boolean cancelBeeOut(Level level, BlockPos blockPos) {
-        if(!ServerConfig.Season.enableBee.get())return false;
+        if(!ServerConfig.Animal.enableBee.get())return false;
 
         Season season = EclipticSeasonsApi.getInstance().getSolarTerm(level).getSeason();
         if (season == Season.WINTER) {

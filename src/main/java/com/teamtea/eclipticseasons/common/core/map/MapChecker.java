@@ -12,6 +12,8 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
@@ -294,12 +296,14 @@ public class MapChecker {
     }
 
 
-    public static int getBlockType(BlockState state, Level level, BlockPos pos) {
+    public static int getBlockType(BlockState state, BlockGetter level, BlockPos pos) {
         int flag = FLAG_NONE_TYPE;
         var onBlock = state.getBlock();
         if (onBlock instanceof LeavesBlock) {
             flag = MapChecker.FLAG_LEAVES;
-        } else if ((state.isSolidRender(level, pos)
+        } else if ((
+                // state.isSolidRender(level, pos)
+                Block.isShapeFullBlock(state.getCollisionShape(level,pos))
                 // state.isSolid()
                 || onBlock instanceof LeavesBlock
                 || (onBlock instanceof SlabBlock && state.getValue(SlabBlock.TYPE) == SlabType.TOP)

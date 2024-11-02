@@ -87,7 +87,7 @@ public class ClientWeatherChecker {
             // Ecliptic.logger(clientLevel.getNoiseBiome((int) player.getX(), (int) player.getY(), (int) player.getZ()));
             // TODO：根据群系过渡计算雨量（也许需要维护一个群系位置）,目前设置为时间平滑
             var pos = player.getOnPos();
-            int offset = ClientConfig.Renderer.weatherBufferDistance.getAsInt();
+            int offset = ClientConfig.Weather.weatherBufferDistance.getAsInt();
 
             rainLevel = getStandardRainLevel(1f, clientLevel, MapChecker.getSurfaceBiome(clientLevel, pos));
 
@@ -178,7 +178,7 @@ public class ClientWeatherChecker {
         float thunderLevel = getStandardThunderLevel(1f, clientLevel, null);
         if (Minecraft.getInstance().cameraEntity instanceof Player player) {
             var pos = player.getOnPos();
-            int offset = ClientConfig.Renderer.weatherBufferDistance.getAsInt();
+            int offset = ClientConfig.Weather.weatherBufferDistance.getAsInt();
             thunderLevel = getStandardThunderLevel(1f, clientLevel, MapChecker.getSurfaceBiome(clientLevel, pos));
             var lookAt = Minecraft.getInstance().hitResult.getLocation();
             var crs = lookAt.subtract(Minecraft.getInstance().getCameraEntity().position());

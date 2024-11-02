@@ -93,11 +93,7 @@ public class ClientSetup {
     @SubscribeEvent
     public static void onModelBaked(ModelEvent.ModifyBakingResult event) {
         Map<ModelResourceLocation, BakedModel> modelRegistry = event.getModels();
-        ModelManager.models = modelRegistry;
-        // snowModel.resolve();
-
-        ModelManager.quadMap.clear();
-        ModelManager.quadMap_1.clear();
+        ModelManager.clearForRebaked(modelRegistry);
     }
 
     @SubscribeEvent

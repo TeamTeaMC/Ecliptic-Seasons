@@ -21,7 +21,7 @@ public class MixinMonster {
             at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;isThundering()Z")
     )
     private static boolean ecliptic$isDarkEnoughToSpawn_isThundering(ServerLevel serverLevel, Operation<Boolean> original, @Local(ordinal = 0) BlockPos blockPos) {
-        if (ServerConfig.Debug.useSolarWeather.get())
+        if (ServerConfig.Weather.useSolarWeather.get())
             return WeatherManager.isThunderAt(serverLevel, blockPos);
         else return original.call(serverLevel);
     }

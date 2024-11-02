@@ -8,17 +8,22 @@ import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.misc.LazyGet;
 import com.teamtea.eclipticseasons.config.ClientConfig;
 
+import com.teamtea.eclipticseasons.mixin.EclipticSeasonsMixinPlugin;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.ItemBlockRenderTypes;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.BlockModelShaper;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.client.resources.model.SimpleBakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.EmptyBlockGetter;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
@@ -82,19 +87,21 @@ public class ModelManager {
     public static Map<List<BakedQuad>, List<BakedQuad>> quadMap_1 = new IdentityHashMap<>(1024);
     public static Map<List<BakedQuad>, List<BakedQuad>> quadMap_GRASS = new IdentityHashMap<>(128);
 
-    public static BakedModel getSnowyModel(BlockState state ,BlockState snowState,int flag,int offset){
-        Block onBlock=state.getBlock();
+    public static Map<BakedModel, Integer> snowyModelsCache = new IdentityHashMap<>();
+
+    public static BakedModel getSnowyModel(BlockState state, BlockState snowState, int flag, int offset) {
+        Block onBlock = state.getBlock();
         BakedModel snowModel = null;
-        if ( flag ==  MapChecker.FLAG_BLOCK) {
+        if (flag == MapChecker.FLAG_BLOCK) {
             snowModel = snowOverlayBlock.get();
-        } else if ( flag ==  MapChecker.FLAG_LEAVES) {
+        } else if (flag == MapChecker.FLAG_LEAVES) {
             snowModel = snowOverlayLeaves.get();
-        } else if ( flag ==  MapChecker.FLAG_SLAB) {
+        } else if (flag == MapChecker.FLAG_SLAB) {
             snowModel = snowySlabBottom.get();
-        } else if ( flag ==  MapChecker.FLAG_STAIRS) {
+        } else if (models != null && flag == MapChecker.FLAG_STAIRS) {
             if (snowState != null)
                 snowModel = models.get(BlockModelShaper.stateToModelLocation(snowState));
-        } else if (flag ==  MapChecker.FLAG_GRASS) {
+        } else if (flag == MapChecker.FLAG_GRASS) {
             if (onBlock == Blocks.SHORT_GRASS) {
                 snowModel = models.get(snowy_grass);
             } else if (onBlock == Blocks.FERN) {
@@ -102,63 +109,102 @@ public class ModelManager {
             } else if (onBlock == Blocks.DANDELION) {
                 snowModel = models.get(snowy_dandelion);
             } else snowModel = models.get(snowy_grass);
-        } else if (flag == MapChecker. FLAG_GRASS_LARGE) {
+        } else if (flag == MapChecker.FLAG_GRASS_LARGE) {
             if (onBlock == Blocks.TALL_GRASS) {
                 snowModel = models.get(offset == 1 ? snowy_tall_grass_bottom : snowy_tall_grass_top);
             } else if (onBlock == Blocks.LARGE_FERN) {
                 snowModel = models.get(offset == 1 ? snowy_large_fern_bottom : snowy_large_fern_top);
             } else snowModel = models.get(offset == 1 ? snowy_tall_grass_bottom : snowy_tall_grass_top);
-        } else if (flag ==  MapChecker.FLAG_FARMLAND) {
+        } else if (flag == MapChecker.FLAG_FARMLAND) {
             snowModel = models.get(snow_height2_top);
-            // snowModel = snowOverlayBlock.get();
+            // snowModel = snowOverlayBlock.resolve().get();
+        }
+        if (snowModel != null) {
+            snowyModelsCache.putIfAbsent(snowModel, flag);
         }
         return snowModel;
     }
-    // 实际上这里之所以太慢还有个问题就是会一个方块访问七次
-    public static List<BakedQuad> appendOverlay(BlockAndTintGetter blockAndTintGetter, BlockState state, BlockPos pos, Direction direction, RandomSource random, long seed, List<BakedQuad> list) {
-        // Minecraft.getInstance().level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING,pos);
-        // 不处理空列表，这代表着不处理这个方向
-        // if (state.is(BlockTags.LEAVES) && !list.isEmpty()) {
-        //     return List.of(new BakedQuadRetextured(list.get(0),
-        //             ClientSetup.snowOverlayBlock.get().getQuads(null, Direction.UP, null).get(0).getSprite()));
-        // }
-        // if (true)return list;
 
-        var level = Minecraft.getInstance().level;
-        if (level == null) {
-            EclipticSeasons.logger("NULLLLLLLL");
+    public static List<BakedQuad> appendOverlay(BlockAndTintGetter blockAndTintGetter, BlockState state, BlockPos pos, Direction direction, RandomSource random, long seed, List<BakedQuad> list, BakedModel bakedModel, RenderType renderType) {
+        if (renderType == RenderType.cutoutMipped()) {
+            if (bakedModel.getClass() == SimpleBakedModel.class) {
+                if (!ItemBlockRenderTypes.getRenderLayers(state).asList().contains(RenderType.cutoutMipped())) {
+                    list = new ArrayList<>();
+                }
+            }
+            return ModelManager.appendOverlay(blockAndTintGetter, state, pos, direction, random, seed, list);
+
         }
-        // if (level != null)return list;
-        if (level != null
-                && direction != Direction.DOWN
+        return list;
+
+    }
+
+    private final static List<BakedQuad> EMPTY = List.of();
+
+    public static List<BakedQuad> cancelTop(BakedModel bakedModel, BlockAndTintGetter blockAndTintGetter, BlockState state, BlockPos pos, Direction direction, RandomSource random, long seed, List<BakedQuad> original) {
+        if (!original.isEmpty()
+                && (direction == Direction.UP || direction == null)
+                && snowyModelsCache.getOrDefault(bakedModel, -1) == -1
+        ) {
+            BakedModel snowModel = ModelManager.findModel(blockAndTintGetter, pos, state, random);
+            if (snowModel != null
+                    && snowyModelsCache.getOrDefault(snowModel, -1) > MapChecker.FLAG_NONE_TYPE
+                    && bakedModel != null
+                    && bakedModel != snowModel) {
+                int blockType = MapChecker.getBlockType(state, blockAndTintGetter, pos);
+                if (direction == Direction.UP) {
+                    if (blockType == MapChecker.FLAG_BLOCK)
+                        return EMPTY;
+                }
+
+                if (original.size() == 1) {
+                    if (original.getFirst().getDirection() == Direction.UP)
+                        return EMPTY;
+                } else {
+                    original = new ArrayList<>(original);
+                    for (int i = 0; i < original.size(); i++) {
+                        BakedQuad bakedQuad = original.get(i);
+                        if (bakedQuad.getDirection() == Direction.UP) {
+                            original.remove(i);
+                            i--;
+                        }
+                    }
+                }
+
+            }
+        }
+        return original;
+    }
+
+
+    public static List<BakedQuad> appendOverlay(BlockAndTintGetter blockAndTintGetter, BlockState state, BlockPos pos, Direction direction, RandomSource random, long seed, List<BakedQuad> list) {
+        Level level = Minecraft.getInstance().level;
+        if (level == null) return list;
+
+        if (direction != Direction.DOWN
                 && !list.isEmpty()
-                && MapChecker.isValidDimension(level)
         ) {
 
             var onBlock = state.getBlock();
-
             int flag = MapChecker.getBlockType(state, level, pos);
             if (flag == 0)
                 return list;
-
             int offset = MapChecker.getSnowOffset(state, flag);
-
 
             boolean isLight = false;
 
-            isLight = ClientConfig.Renderer.useVanillaCheck.get() && level != null ?
-                    level.getLightEngine().getLayerListener(LightLayer.SKY).getLightValue(pos.above()) >= 15
+            isLight = ClientConfig.Renderer.useVanillaCheck.get() && Minecraft.getInstance().level != null ?
+                    Minecraft.getInstance().level.getLightEngine().getLayerListener(LightLayer.SKY).getLightValue(pos.above()) >= 15
                     : MapChecker.getHeightOrUpdate(level, pos, false) == pos.getY() - offset;
 
 
             // SimpleUtil.testTime(()->{getHeightOrUpdate(pos, false);});
 
             if (isLight) {
-                if (ClientConfig.Renderer.snowyWinter.get() &&
-                        onBlock != Blocks.SNOW_BLOCK
+                if (ClientConfig.Renderer.snowyWinter.get()
+                        && onBlock != Blocks.SNOW_BLOCK
                         && MapChecker.shouldSnowAt(level, pos.below(offset), state, random, seed)) {
                     // DynamicLeavesBlock
-
                     boolean isFlowerAbove = false;
                     if ((flag == MapChecker.FLAG_BLOCK) && ClientConfig.Renderer.deeperSnow.get()) {
                         var bl = blockAndTintGetter.getBlockState(pos.above()).getBlock();
@@ -174,12 +220,16 @@ public class ModelManager {
                     }
                     // isFlowerAbove=false;
                     var useMap = isFlowerAbove ? quadMap_1 : quadMap;
-                    var cc = useMap.getOrDefault(list, null);
+                    List<BakedQuad> cc =
+                            EclipticSeasonsMixinPlugin.isOptLoad()
+                                    || list.isEmpty() ? null : useMap.getOrDefault(list, null);
+                    // if ((list.isEmpty()))
+                    //     cc = null;
                     if (cc != null) {
                         return cc;
                     } else {
                         BlockState snowState = null;
-                        if ( flag == MapChecker.FLAG_STAIRS) {
+                        if (models != null && flag == MapChecker.FLAG_STAIRS) {
                             snowState = EclipticSeasons.ModContents.snowyStairs.get().defaultBlockState()
                                     .setValue(StairBlock.FACING, state.getValue(StairBlock.FACING))
                                     .setValue(StairBlock.HALF, state.getValue(StairBlock.HALF))
@@ -189,9 +239,8 @@ public class ModelManager {
 
                         if (snowModel != null) {
                             int size = list.size();
-                            var snowList = snowModel.getQuads(snowState, direction, random);
+                            var snowList = snowModel.getQuads(snowState, direction, null);
                             ArrayList<BakedQuad> newList;
-
                             if (flag == MapChecker.FLAG_GRASS) {
                                 newList = new ArrayList<>(snowList);
                             } else if (direction == Direction.UP) {
@@ -204,7 +253,12 @@ public class ModelManager {
                                     for (Direction direction1 : List.of(Direction.EAST, Direction.SOUTH, Direction.WEST, Direction.NORTH, Direction.UP)) {
                                         newList.addAll(layerBlock.getQuads(layerState, direction1, random));
                                     }
-                                } else newList = new ArrayList<>(snowList);
+                                } else {
+                                    newList = new ArrayList<BakedQuad>(size + snowList.size());
+                                    // newList.addAll(list);
+                                    newList.addAll(snowList);
+                                }
+                                // else newList = new ArrayList<>(snowList);
                             } else {
                                 newList = new ArrayList<BakedQuad>(size + snowList.size());
                                 newList.addAll(list);
@@ -222,7 +276,9 @@ public class ModelManager {
                                 }
                             }
 
-                            useMap.putIfAbsent(list, newList);
+                            if (!EclipticSeasonsMixinPlugin.isOptLoad())
+                                useMap.putIfAbsent(list, newList);
+
                             list = newList;
 
 
@@ -230,17 +286,14 @@ public class ModelManager {
                     }
                 } else if (
                         ClientConfig.Renderer.flowerOnGrass.get()
-                        &&direction == Direction.UP
-                        && state.getBlock() instanceof GrassBlock
-                        && random.nextInt(15) == 0
+                                && direction == Direction.UP
+                                && state.getBlock() instanceof GrassBlock
+                                && random.nextInt(15) == 0
                 ) {
-                    // var level = Minecraft.getInstance().level;
                     var solarTerm = SolarTerm.NONE;
                     int weight = 100;
-                    if (level != null) {
-                        solarTerm = EclipticUtil.getNowSolarTerm(level);
-                        weight = Math.abs(solarTerm.ordinal() - 3) + 1;
-                    }
+                    solarTerm = EclipticUtil.getNowSolarTerm(level);
+                    weight = Math.abs(solarTerm.ordinal() - 3) + 1;
                     if (solarTerm.getSeason() == Season.SPRING
                             && random.nextInt(weight * 4) == 0
                             && blockAndTintGetter.getBlockState(pos.above()).isAir()) {
@@ -270,4 +323,94 @@ public class ModelManager {
         return list;
     }
 
+    public static BakedModel findModel(BlockAndTintGetter blockAndTintGetter, BlockPos pos, BlockState state, RandomSource random) {
+        Level level = Minecraft.getInstance().level;
+        BakedModel replace = null;
+        if (level == null) return replace;
+
+        var onBlock = state.getBlock();
+        int flag = MapChecker.getBlockType(state, level, pos);
+        if (flag == 0)
+            return replace;
+        int offset = MapChecker.getSnowOffset(state, flag);
+
+        boolean isLight = false;
+
+        isLight = ClientConfig.Renderer.useVanillaCheck.get() && Minecraft.getInstance().level != null ?
+                Minecraft.getInstance().level.getLightEngine().getLayerListener(LightLayer.SKY).getLightValue(pos.above()) >= 15
+                : MapChecker.getHeightOrUpdate(level, pos, false) == pos.getY() - offset;
+
+
+        if (isLight) {
+            if (ClientConfig.Renderer.snowyWinter.get()
+                    && onBlock != Blocks.SNOW_BLOCK
+                    && MapChecker.shouldSnowAt(level, pos.below(offset), state, random, state.getSeed(pos))) {
+                // DynamicLeavesBlock
+                boolean isFlowerAbove = false;
+                if ((flag == MapChecker.FLAG_BLOCK) && ClientConfig.Renderer.deeperSnow.get()) {
+                    var bl = level.getBlockState(pos.above()).getBlock();
+                    isFlowerAbove = bl instanceof FlowerBlock
+                            || bl instanceof PinkPetalsBlock
+                            || bl instanceof DoublePlantBlock
+                            || bl instanceof SaplingBlock;
+
+                    if (!isFlowerAbove) {
+                        isFlowerAbove = random.nextInt(12) > 0;
+                        // isFlowerAbove=true;
+                    }
+                }
+                {
+                    BlockState snowState = null;
+                    if (models != null && flag == MapChecker.FLAG_STAIRS) {
+                        snowState = EclipticSeasons.ModContents.snowyStairs.get().defaultBlockState()
+                                .setValue(StairBlock.FACING, state.getValue(StairBlock.FACING))
+                                .setValue(StairBlock.HALF, state.getValue(StairBlock.HALF))
+                                .setValue(StairBlock.SHAPE, state.getValue(StairBlock.SHAPE));
+                    }
+                    BakedModel snowModel = getSnowyModel(state, snowState, flag, offset);
+
+                    if (snowModel != null) {
+                        replace = snowModel;
+                    }
+                }
+            } else if (
+                    ClientConfig.Renderer.flowerOnGrass.get()
+                            && state.getBlock() instanceof GrassBlock
+                            && random.nextInt(15) == 0
+            ) {
+                var solarTerm = SolarTerm.NONE;
+                int weight = 100;
+                solarTerm = EclipticUtil.getNowSolarTerm(level);
+                weight = Math.abs(solarTerm.ordinal() - 3) + 1;
+                if (solarTerm.getSeason() == Season.SPRING
+                        && random.nextInt(weight * 4) == 0
+                        && level.getBlockState(pos.above()).isAir()) {
+                    {
+                        BakedModel snowModel = models.get(flower_on_grass.get(random.nextInt(flower_on_grass.size())));
+                        replace = snowModel;
+                    }
+                }
+            }
+        }
+        return replace;
+    }
+
+    public static RenderType getRenderType() {
+        return RenderType.cutoutMipped();
+        // return Minecraft.useFancyGraphics() ?
+        //         RenderType.cutoutMipped() : RenderType.solid();
+    }
+
+
+    public static boolean isModelReplaced(BlockState state) {
+        return !state.blocksMotion()
+                && MapChecker.getBlockType(state, EmptyBlockGetter.INSTANCE, BlockPos.ZERO) != MapChecker.FLAG_NONE_TYPE;
+    }
+
+    public static void clearForRebaked(Map<ModelResourceLocation, BakedModel> modelRegistry) {
+        ModelManager.models = modelRegistry;
+        quadMap.clear();
+        quadMap_1.clear();
+        snowyModelsCache.clear();
+    }
 }

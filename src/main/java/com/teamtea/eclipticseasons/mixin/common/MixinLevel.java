@@ -21,7 +21,7 @@ public class MixinLevel {
 
     @Inject(at = {@At("HEAD")}, method = {"isRaining"}, cancellable = true)
     private void ecliptic$isRaining(CallbackInfoReturnable<Boolean> cir) {
-        if (ServerConfig.Debug.useSolarWeather.get()) {
+        if (ServerConfig.Weather.useSolarWeather.get()) {
             if ((Object) this instanceof ServerLevel serverLevel) {
                 if (ServerConfig.Debug.debugMode.get()) {
                     throw new IllegalCallerException("Use isRainAt to check if rain");
@@ -33,7 +33,7 @@ public class MixinLevel {
 
     @Inject(at = {@At("HEAD")}, method = {"getRainLevel"}, cancellable = true)
     private void ecliptic$getRainLevel(float p_46723_, CallbackInfoReturnable<Float> cir) {
-        if (ServerConfig.Debug.useSolarWeather.get()) {
+        if (ServerConfig.Weather.useSolarWeather.get()) {
             if ((Object) this instanceof ServerLevel serverLevel) {
                 if (ServerConfig.Debug.debugMode.get()) {
                     throw new IllegalCallerException("Shouldn't call getRainLevel now");
@@ -45,7 +45,7 @@ public class MixinLevel {
 
     @Inject(at = {@At("HEAD")}, method = {"isRainingAt"}, cancellable = true)
     private void ecliptic$isRainingAt(BlockPos p_46759_, CallbackInfoReturnable<Boolean> cir) {
-        if (ServerConfig.Debug.useSolarWeather.get()) {
+        if (ServerConfig.Weather.useSolarWeather.get()) {
             if ((Object) this instanceof ServerLevel serverLevel) {
                 cir.setReturnValue(WeatherManager.isRainingAt(serverLevel, p_46759_));
             }
@@ -60,12 +60,12 @@ public class MixinLevel {
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/biome/Biome;getPrecipitationAt(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/biome/Biome$Precipitation;")
     )
     private Biome.Precipitation ecliptic$isRainingAt_getPrecipitationAt(Biome biome, BlockPos pos, Operation<Biome.Precipitation> original) {
-        return VanillaWeather.replacePrecipitationIfNeed((Level) (Object) this, biome, original.call(biome, pos));
+        return VanillaWeather.handlePrecipitationAt((Level) (Object) this, biome, pos);
     }
 
     @Inject(at = {@At("HEAD")}, method = {"isThundering"}, cancellable = true)
     private void ecliptic$isThundering(CallbackInfoReturnable<Boolean> cir) {
-        if (ServerConfig.Debug.useSolarWeather.get()) {
+        if (ServerConfig.Weather.useSolarWeather.get()) {
             if ((Object) this instanceof ServerLevel serverLevel) {
                 if (ServerConfig.Debug.debugMode.get()) {
                     throw new IllegalCallerException("Use isThunderingAt to check if rain");
@@ -77,7 +77,7 @@ public class MixinLevel {
 
     @Inject(at = {@At("HEAD")}, method = {"getThunderLevel"}, cancellable = true)
     private void ecliptic$getThunderLevel(float p_46723_, CallbackInfoReturnable<Float> cir) {
-        if (ServerConfig.Debug.useSolarWeather.get()) {
+        if (ServerConfig.Weather.useSolarWeather.get()) {
             if ((Object) this instanceof ServerLevel serverLevel) {
                 if (ServerConfig.Debug.debugMode.get()) {
                     throw new IllegalCallerException("Shouldn't call getThunderLevel now");
