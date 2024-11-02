@@ -41,7 +41,7 @@ public abstract class MixinBiome {
             cir.setReturnValue(BiomeClimateManager.agent$hasPrecipitation((Biome) (Object) this));
         else {
             if (BiomeClimateManager.getTag((Biome) (Object) this).equals(ClimateTypeBiomeTags.MONSOONAL)) {
-                cir.setReturnValue(BiomeClimateManager.agent$hasPrecipitation((Biome) (Object) this));
+                cir.setReturnValue(VanillaWeather.hasMonsoonalPrecipitation((Biome) (Object) this));
             }
         }
     }

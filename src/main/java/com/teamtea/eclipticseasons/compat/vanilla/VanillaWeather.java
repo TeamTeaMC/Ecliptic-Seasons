@@ -70,11 +70,13 @@ public class VanillaWeather {
         return handlePrecipitationAt(level, biome, pos);
     }
 
-    public static Biome.Precipitation handlePrecipitationAt(Level level, Biome biome, BlockPos pos) {
-        var resultPrecipitation = Biome.Precipitation.NONE;
-        var solarTerm = EclipticSeasonsApi.getInstance().getSolarTerm(level);
+    public static boolean hasMonsoonalPrecipitation(Biome biome){
+        var level = getValidLevel(biome);
+        return hasPrecipitation(level,biome);
+    }
 
-        biome= MapChecker.getSurfaceBiome(level,pos).value();
+    public static boolean hasPrecipitation(Level level,Biome biome){
+        var solarTerm = EclipticSeasonsApi.getInstance().getSolarTerm(level);
         boolean hasPrecipitation =biome.getModifiedClimateSettings().hasPrecipitation();
         TagKey<Biome> tag = BiomeClimateManager.getTag(biome);
         if (tag.equals(ClimateTypeBiomeTags.MONSOONAL)) {
@@ -85,6 +87,15 @@ public class VanillaWeather {
                 hasPrecipitation=false;
             }
         }
+        return hasPrecipitation;
+    }
+
+    public static Biome.Precipitation handlePrecipitationAt(Level level, Biome biome, BlockPos pos) {
+        var resultPrecipitation = Biome.Precipitation.NONE;
+        var solarTerm = EclipticSeasonsApi.getInstance().getSolarTerm(level);
+
+        biome= MapChecker.getSurfaceBiome(level,pos).value();
+        boolean hasPrecipitation =hasPrecipitation(level,biome);
 
         if (hasPrecipitation) {
             resultPrecipitation = biome.coldEnoughToSnow(pos) ?

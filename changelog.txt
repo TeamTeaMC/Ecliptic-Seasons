@@ -42,3 +42,4 @@ use vanilla weather as default
 fix mixin crash
 update config
 update api package
+* fix compatibility with Simple Cloud
