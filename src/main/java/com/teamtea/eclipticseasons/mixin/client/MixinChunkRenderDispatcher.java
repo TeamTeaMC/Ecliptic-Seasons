@@ -79,11 +79,11 @@ public class MixinChunkRenderDispatcher {
         } else {
             if (ModelManager.isModelReplaced(blockstate)) {
                 snowModel = ModelManager.findModel(renderchunkregion, blockpos2, blockstate, randomsource);
-                original = false;
             }
         }
 
         if (snowModel != null) {
+            original = false;
             ecliptic$renderModel(snowModel,pChunkBufferBuilderPack, blockpos2, blockstate, posestack, renderchunkregion, randomsource, renderTypeSet);
         }
 

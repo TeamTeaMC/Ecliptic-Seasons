@@ -34,4 +34,4 @@ fix birch leaves color
 fix offset of snowy grass
 
 0.5.2
-fix snow block rendering anomaly
+fix snowy block renderer

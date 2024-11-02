@@ -24,9 +24,9 @@ import java.util.List;
 public abstract class MixinBlockRender2 {
 
 
-    // @Shadow(remap = false)
-    // @Final
-    // private RandomSource random;
+    @Shadow(remap = false)
+    @Final
+    private RandomSource random;
     //
     // @ModifyExpressionValue(
     //         remap = false,
@@ -36,6 +36,16 @@ public abstract class MixinBlockRender2 {
     // private List<BakedQuad> eclipticseasons$tesselateWithAO_getQuads(List<BakedQuad> original, @Local(ordinal = 0, argsOnly = true) BlockRenderContext ctx, @Local(ordinal = 0, argsOnly = true) Direction face) {
     //   return   ModelManager.appendOverlay(ctx.world(), ctx.state(), ctx.pos(), face, random, ctx.seed(), original,ctx.model(),ctx.renderLayer());
     // }
+
+
+    @ModifyExpressionValue(
+            remap = false,
+            method = "getGeometry",
+            at = @At(value = "INVOKE", ordinal = 0, target = "Lnet/minecraft/client/resources/model/BakedModel;getQuads(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/Direction;Lnet/minecraft/util/RandomSource;Lnet/minecraftforge/client/model/data/ModelData;Lnet/minecraft/client/renderer/RenderType;)Ljava/util/List;")
+    )
+    private List<BakedQuad> eclipticseasons$getGeometry_getQuads(List<BakedQuad> original, @Local(ordinal = 0, argsOnly = true) BlockRenderContext ctx, @Local(ordinal = 0, argsOnly = true) Direction face) {
+        return ModelManager.cancelTop(ctx.model(), ctx.world(), ctx.state(), ctx.pos(), face, random, ctx.seed(), original);
+    }
 
     // @WrapOperation(
     //         remap = false,

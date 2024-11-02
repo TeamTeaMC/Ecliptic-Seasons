@@ -113,11 +113,11 @@ public abstract class MixinBlockRenderTask {
         } else {
             if (ModelManager.isModelReplaced(state)) {
                 snowModel = ModelManager.findModel(ctx.world(), mutableBlockPos, state, random);
-                original = false;
             }
         }
 
         if (snowModel != null) {
+            original = false;
             ctx.update(mutableBlockPos,
                     mutableBlockPos2,
                     state,

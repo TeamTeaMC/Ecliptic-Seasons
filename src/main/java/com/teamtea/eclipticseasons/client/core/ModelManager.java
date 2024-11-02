@@ -160,7 +160,39 @@ public class ModelManager {
         return list;
 
     }
+    private final static List<BakedQuad> EMPTY = List.of();
 
+    public static List<BakedQuad> cancelTop(BakedModel bakedModel, BlockAndTintGetter blockAndTintGetter, BlockState state, BlockPos pos, Direction direction, RandomSource random, long seed, List<BakedQuad> original) {
+        if (!original.isEmpty()&& (direction == Direction.UP||direction==null)) {
+            BakedModel snowModel = ModelManager.findModel(blockAndTintGetter, pos, state, random);
+            if (snowModel != null
+                    && bakedModel != null
+                    && bakedModel != snowModel) {
+                int blockType = MapChecker.getBlockType(state, blockAndTintGetter, pos);
+                if(direction == Direction.UP){
+                    if (blockType == MapChecker.FLAG_BLOCK )
+                        return EMPTY;
+                }
+
+                if(original.size()==1){
+                    if(original.get(0).getDirection()==Direction.UP)
+                        return EMPTY;
+                }else {
+                    original=new ArrayList<>(original);
+                    for (int i = 0; i < original.size(); i++) {
+                        BakedQuad bakedQuad = original.get(i);
+                        if(bakedQuad.getDirection()==Direction.UP)
+                        {
+                            original.remove(i);
+                            i--;
+                        }
+                    }
+                }
+
+            }
+        }
+        return original;
+    }
     // 实际上这里之所以太慢还有个问题就是会一个方块访问七次
     public static List<BakedQuad> appendOverlay(BlockAndTintGetter blockAndTintGetter, BlockState state, BlockPos pos, Direction direction, RandomSource random, long seed, List<BakedQuad> list) {
         Level level = Minecraft.getInstance().level;
@@ -389,5 +421,5 @@ public class ModelManager {
         return !state.blocksMotion()
                 && MapChecker.getBlockType(state, EmptyBlockGetter.INSTANCE, BlockPos.ZERO) != MapChecker.FLAG_NONE_TYPE;
     }
-    
+
 }
