@@ -1,7 +1,7 @@
 package com.teamtea.eclipticseasons.compat.legendarysurvivaloverhaul;
 
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
-import com.teamtea.eclipticseasons.api.util.SimpleUtil;
+import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.config.ServerConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
@@ -33,7 +33,7 @@ public class LSO_ESModifier extends ModifierBase {
     }
 
     public float getUncaughtWorldInfluence(Level level, BlockPos pos) {
-        SolarTerm nowSolarTerm = SimpleUtil.getNowSolarTerm(level);
+        SolarTerm nowSolarTerm = EclipticUtil.getNowSolarTerm(level);
         if (nowSolarTerm != SolarTerm.NONE && LSO_ESUtil.hasSeasons(level)) {
             Vec3i[] posOffsets;
             if (Config.Baked.tropicalSeasonsEnabled) {

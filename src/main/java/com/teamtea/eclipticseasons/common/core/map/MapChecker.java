@@ -204,7 +204,10 @@ public class MapChecker {
         return level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, pos).getY() - 1;
     }
 
-    public static int getSurfaceOrUpdate(@Nonnull Level level, BlockPos pos, boolean forceUpdate, int type) {
+    public static int getSurfaceOrUpdate( Level level, BlockPos pos, boolean forceUpdate, int type) {
+        if(level==null)
+            return 0;
+
         int x = blockToSectionCoord(pos.getX());
         int z = blockToSectionCoord(pos.getZ());
         ChunkInfoMap map = getChunkMap(x, z);

@@ -6,9 +6,7 @@ import com.teamtea.eclipticseasons.api.constant.climate.FlatRain;
 import com.teamtea.eclipticseasons.api.constant.climate.SnowTerm;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.constant.tag.ClimateTypeBiomeTags;
-import com.teamtea.eclipticseasons.api.util.EclipticTagTool;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
-import com.teamtea.eclipticseasons.api.util.SimpleUtil;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.handler.SolarUtil;
@@ -229,13 +227,15 @@ public class WeatherManager {
 
     public static Biome.Precipitation getPrecipitationAt(Level levelNull, Biome biome, BlockPos p198905) {
 
+        if (BiomeClimateManager.getTag(biome).equals(ClimateTypeBiomeTags.RAINLESS)) {
+            return Biome.Precipitation.NONE;
+        }
+
         var level = levelNull != null ? levelNull : getMainServerLevel();
         var provider = SolarUtil.getProvider(level);
         var weathers = getBiomeList(level);
 
-        if (EclipticTagTool.getTag(biome).equals(ClimateTypeBiomeTags.RAINLESS)) {
-            return Biome.Precipitation.NONE;
-        }
+
 
         if (provider != null && weathers != null) {
             // biome= MapChecker.getSurfaceBiome(level,p198905).value();
@@ -321,12 +321,12 @@ public class WeatherManager {
         if (ServerConfig.Temperature.heatStroke.get()
                 && level.getRandom().nextInt(150) == 0)
             SolarHolders.getSaveDataLazy(level).ifPresent(solarDataManager -> {
-                if (SimpleUtil.getNowSolarTerm(level).isInTerms(SolarTerm.BEGINNING_OF_SUMMER, SolarTerm.BEGINNING_OF_AUTUMN)) {
+                if (EclipticUtil.getNowSolarTerm(level).isInTerms(SolarTerm.BEGINNING_OF_SUMMER, SolarTerm.BEGINNING_OF_AUTUMN)) {
                     var b = level.getBiome(player.blockPosition()).value();
                     if (b.getTemperature(player.blockPosition()) > 0.5f) {
 
                         if (!player.isInWaterOrRain()
-                                && ((SimpleUtil.isNoon(level) && (level.canSeeSky(player.blockPosition()))))
+                                && ((EclipticUtil.isNoon(level) && (level.canSeeSky(player.blockPosition()))))
                         ) {
                             boolean isColdHe = false;
                             for (ItemStack itemstack : player.getArmorSlots()) {

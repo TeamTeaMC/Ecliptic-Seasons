@@ -2,7 +2,7 @@ package com.teamtea.eclipticseasons.client;
 
 
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
-import com.teamtea.eclipticseasons.api.util.SimpleUtil;
+import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.client.core.ClientWeatherChecker;
 import com.teamtea.eclipticseasons.client.render.ClientRenderer;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
@@ -132,9 +132,9 @@ public final class ClientEventHandler {
         var level = Minecraft.getInstance().level;
         if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_CUTOUT_BLOCKS
                 && level != null
-                && SimpleUtil.getNowSolarTerm(level).getSeason() == Season.SPRING
-                && SimpleUtil.isDay(level)) {
-            var multiBufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
+                && EclipticUtil.getNowSolarTerm(level).getSeason() == Season.SPRING
+                && EclipticUtil.isDay(level)) {
+            // var multiBufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
             // var itr = Minecraft.getInstance().getItemRenderer();
             // var mds = itr.getItemModelShaper();
             // var stack = Items.ACACIA_BOAT.getDefaultInstance();
@@ -197,51 +197,10 @@ public final class ClientEventHandler {
             //                             Minecraft.getInstance().getModelManager().getModel(rs),
             //                             1f, 1f, 1f, ii, OverlayTexture.NO_OVERLAY
             //                     );
-            //
-            //
-            //                     // var panda = EntityType.PANDA.create(event.getLevelRenderer().level);
-            //                     // panda.moveTo(new BlockPos(-365,-60,-435),0f,0f);
-            //                     // var livingEntityRenderer = ((LivingEntityRenderer) Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(panda));
-            //                     // PandaModel<Panda> livingEntityRendererModel = (PandaModel<Panda>) livingEntityRenderer.getModel();
-            //                     // // livingEntityRendererModel.setupAnim();
-            //                     // var renderType = livingEntityRendererModel.renderType(livingEntityRenderer.getTextureLocation(panda));
-            //                     // livingEntityRendererModel.setupAnim(panda, event.getPartialTick(), 0.0F, -0.1F, 0.0F, 0.0F);
-            //                     //
-            //                     // livingEntityRendererModel.renderToBuffer(event.getPoseStack(), multiBufferSource.getBuffer(renderType), 15728880, OverlayTexture.NO_OVERLAY, 1f, 1f, 1f, 1f);
-            //                     // // look LivingEntityRenderer
-            //
             //                     poseStack.popPose();
             //                 }
             //             }
             //         }
-            // var blockpos4=new BlockPos(-365,-60,-435);
-            // // Vec3 vec3c = new Vec3(cameraEntity.xo - 0.5f, cameraEntity.yOld , cameraEntity.zo - 0.5f);
-            //
-            // Vec3   vec3c=blockpos4.getCenter().add(0.5f,-0.5f,0.5f);
-            //
-            // var state = Blocks.CAMPFIRE.defaultBlockState();
-            // var model=Minecraft.getInstance().getBlockRenderer().getBlockModel(state);
-            // Vec3 vec3 = event.getCamera().getPosition();
-            // double d0 = vec3.x();
-            // double d1 = vec3.y();
-            // double d2 = vec3.z();
-            //
-            // var poseStack = event.getPoseStack();
-            // poseStack.pushPose();
-            // // poseStack.scale(0.25f, 0.25f, 0.25f);
-            // poseStack.translate((double) vec3c.x() - d0, (double) vec3c.y() - d1, (double) vec3c.z() - d2);
-            // // poseStack.scale(0.25f, 0.25f, 0.25f);
-            // // poseStack.translate(2f, (double) vec3c.y() - d1, 2f);
-            //
-            // Minecraft.getInstance().getBlockRenderer().getModelRenderer().renderModel(
-            //         event.getPoseStack().last(),
-            //         multiBufferSource.getBuffer(RenderType.solid()), null,
-            //         Minecraft.getInstance().getModelManager().getModel(ModelManager.butterfly),
-            //         1f, 1f, 1f, event.getRenderTick(), OverlayTexture.NO_OVERLAY
-            // );
-            //
-            //
-            // poseStack.popPose();
         }
     }
 }

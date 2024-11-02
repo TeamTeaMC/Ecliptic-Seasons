@@ -65,7 +65,7 @@ public abstract class MixinLevelRender {
             return level != null && (WeatherManager.isRainingOrSnowAt(level, pos)
                     || ClientWeatherChecker.isBiomeRainyLast(biome)) ?
                     WeatherManager.getPrecipitationAt(level, biome, pos) : Biome.Precipitation.NONE;
-        else return VanillaWeather.replacePrecipitationIfNeed(level, biome, original.call(biome, pos));
+        else return VanillaWeather.handlePrecipitationAt(level, biome, pos);
 
     }
 

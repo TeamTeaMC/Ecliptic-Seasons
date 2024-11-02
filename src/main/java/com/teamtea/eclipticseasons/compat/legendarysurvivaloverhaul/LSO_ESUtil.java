@@ -1,7 +1,7 @@
 package com.teamtea.eclipticseasons.compat.legendarysurvivaloverhaul;
 
 import com.teamtea.eclipticseasons.api.constant.tag.ClimateTypeBiomeTags;
-import com.teamtea.eclipticseasons.api.util.SimpleUtil;
+import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.config.ServerConfig;
 import net.minecraft.core.BlockPos;
@@ -26,7 +26,7 @@ public class LSO_ESUtil {
             return Component.translatable("message.legendarysurvivaloverhaul.sereneseasons.no_season_dimension");
         } else {
             SereneSeasonsUtil.SeasonType seasonType = getSeasonType(level.getBiome(blockPos));
-            var season = SimpleUtil.getNowSolarTerm(level);
+            var season = EclipticUtil.getNowSolarTerm(level);
 
             // int subSeasonDuration = (int) ((double) season.getSubSeasonDuration() / (double) season.getDayDuration());
             int subSeasonDuration = 12;
@@ -45,8 +45,8 @@ public class LSO_ESUtil {
 
 
     public static int getTimeInSolarTerm(Level level) {
-        return SimpleUtil.getNowSolarDay(level) -
-                ServerConfig.Season.lastingDaysOfEachTerm.get() * SimpleUtil.getNowSolarTerm(level).ordinal()+1;
+        return EclipticUtil.getNowSolarDay(level) -
+                ServerConfig.Season.lastingDaysOfEachTerm.get() * EclipticUtil.getNowSolarTerm(level).ordinal()+1;
     }
 
     public static SereneSeasonsUtil.SeasonType getSeasonType(Holder<Biome> biome) {

@@ -39,5 +39,6 @@ fix snowy block renderer
 
 0.6
 use vanilla weather as default
-update config
 fix mixin crash
+update config
+update api package

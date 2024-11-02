@@ -118,7 +118,7 @@ public class BiomeClimateManager {
                     // 我们按照降雨量进行分配，如果无预测则无雨
                     int size = ClimateTypeBiomeTags.COMMON_BIOME_TYPES.size();
                     int index = Mth.clamp(Mth.floor(holder.value().getModifiedClimateSettings().downfall() * size), 0, size - 1);
-                    if (!holder.value().hasPrecipitation()) {
+                    if (!agent$hasPrecipitation(holder.value())) {
                         index = 0;
                     }
                     useMap.put(holder.value(), ClimateTypeBiomeTags.COMMON_BIOME_TYPES.get(index));

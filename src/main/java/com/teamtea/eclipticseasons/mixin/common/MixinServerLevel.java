@@ -85,7 +85,7 @@ public abstract class MixinServerLevel extends Level {
     private Biome.Precipitation ecliptic$tickChunk_getPrecipitationAt(Biome biome, BlockPos pos, Operation<Biome.Precipitation> original) {
         if (EclipticUtil.useSolarWeather())
             return WeatherManager.getPrecipitationAt(this, biome, pos);
-        return original.call(biome, pos);
+        return VanillaWeather.handlePrecipitationAt(this,biome,pos);
     }
 
 

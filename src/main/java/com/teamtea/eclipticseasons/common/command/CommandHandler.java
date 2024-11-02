@@ -4,7 +4,7 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.datafixers.util.Either;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
-import com.teamtea.eclipticseasons.api.util.SimpleUtil;
+import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
@@ -41,7 +41,7 @@ public class CommandHandler {
         dispatcher.register(Commands.literal("time").requires((sourceStack) -> sourceStack.hasPermission(2))
                 .then(Commands.literal("set")
                 .then(Commands.literal("night")
-                        .executes((source) -> TimeCommand.setTime(source.getSource(),  SimpleUtil.getNightTime(source.getSource().getLevel()))))));
+                        .executes((source) -> TimeCommand.setTime(source.getSource(),  EclipticUtil.getNightTime(source.getSource().getLevel()))))));
 
 
         dispatcher.register(Commands.literal(EclipticSeasons.SMODID).

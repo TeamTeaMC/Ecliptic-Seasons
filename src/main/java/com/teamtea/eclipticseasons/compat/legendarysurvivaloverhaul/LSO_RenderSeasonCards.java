@@ -4,7 +4,7 @@ package com.teamtea.eclipticseasons.compat.legendarysurvivaloverhaul;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.tag.ClimateTypeBiomeTags;
-import com.teamtea.eclipticseasons.api.util.SimpleUtil;
+import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -67,7 +67,7 @@ public abstract class LSO_RenderSeasonCards {
                 } else {
                     if (seasonCard == null) {
                         boolean isTropical = level.getBiome(player.blockPosition()).is(ClimateTypeBiomeTags.MONSOONAL);
-                        Season currentSeason = SimpleUtil.getNowSolarTerm(level).getSeason();
+                        Season currentSeason = EclipticUtil.getNowSolarTerm(level).getSeason();
                         if (!isTropical) {
                             if (currentSeason != ecliptic$lastSeason) {
                                 ecliptic$lastSeason = currentSeason;

@@ -4,8 +4,7 @@ import com.momosoftworks.coldsweat.api.temperature.modifier.TempModifier;
 import com.momosoftworks.coldsweat.api.util.Temperature;
 import com.momosoftworks.coldsweat.config.ConfigSettings;
 import com.momosoftworks.coldsweat.util.math.CSMath;
-import com.teamtea.eclipticseasons.EclipticSeasons;
-import com.teamtea.eclipticseasons.api.util.SimpleUtil;
+import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.config.ServerConfig;
 import net.minecraft.world.entity.LivingEntity;
@@ -19,7 +18,7 @@ public class ESTempModifier extends TempModifier {
 
     public Function<Double, Double> calculate(LivingEntity entity, Temperature.Trait trait) {
         if (MapChecker.isValidDimension(entity.level())) {
-            var season = SimpleUtil.getNowSolarTerm(entity.level());
+            var season = EclipticUtil.getNowSolarTerm(entity.level());
             double startValue;
             double endValue;
             switch (season.ordinal()) {
@@ -96,8 +95,8 @@ public class ESTempModifier extends TempModifier {
     }
 
     public static int getTimeInSolarTerm(Level level) {
-        return SimpleUtil.getNowSolarDay(level) -
-                ServerConfig.Season.lastingDaysOfEachTerm.get() * SimpleUtil.getNowSolarTerm(level).ordinal() ;
+        return EclipticUtil.getNowSolarDay(level) -
+                ServerConfig.Season.lastingDaysOfEachTerm.get() * EclipticUtil.getNowSolarTerm(level).ordinal() ;
     }
 
 

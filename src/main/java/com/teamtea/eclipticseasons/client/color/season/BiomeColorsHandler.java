@@ -5,13 +5,13 @@ import com.teamtea.eclipticseasons.api.constant.solar.color.leaves.BirchLeavesCo
 import com.teamtea.eclipticseasons.api.constant.solar.color.leaves.LeaveColor;
 import com.teamtea.eclipticseasons.api.constant.solar.color.leaves.MangroveLeavesColor;
 import com.teamtea.eclipticseasons.api.constant.solar.color.leaves.SpruceLeavesColor;
-import com.teamtea.eclipticseasons.api.util.EclipticTagClientTool;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.constant.solar.color.SolarTermColor;
 import com.teamtea.eclipticseasons.api.constant.tag.ClimateTypeBiomeTags;
-import com.teamtea.eclipticseasons.api.util.SimpleUtil;
+import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.client.core.ColorHelper;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
+import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.config.ClientConfig;
 import net.minecraft.client.Minecraft;
@@ -49,14 +49,14 @@ public class BiomeColorsHandler {
                     reloadColors();
                 }
                 // 由于基本温度被更改
-                double temperature = Mth.clamp(biome.getModifiedClimateSettings().temperature()+ SimpleUtil.getNowSolarTerm(clientLevel).getTemperatureChange(), 0.0F, 1.0F);
+                double temperature = Mth.clamp(biome.getModifiedClimateSettings().temperature()+ EclipticUtil.getNowSolarTerm(clientLevel).getTemperatureChange(), 0.0F, 1.0F);
                 double humidity = Mth.clamp(biome.getModifiedClimateSettings().downfall(), 0.0F, 1.0F);
                 humidity = humidity * temperature;
                 int i = (int) ((1.0D - temperature) * 255.0D);
                 int j = (int) ((1.0D - humidity) * 255.0D);
                 int k = j << 8 | i;
 
-                int[] newGrassBuffer = newGrassBufferMap.getOrDefault(EclipticTagClientTool.getTag(biome), GrassColor.pixels);
+                int[] newGrassBuffer = newGrassBufferMap.getOrDefault(BiomeClimateManager.getTag(biome), GrassColor.pixels);
                 return k > newGrassBuffer.length ? -65281 : newGrassBuffer[k];
             }).orElse(originColor);
         } else return -1;
@@ -73,14 +73,14 @@ public class BiomeColorsHandler {
                 if (needRefresh) {
                     reloadColors();
                 }
-                double temperature = Mth.clamp(biome.getModifiedClimateSettings().temperature()+ SimpleUtil.getNowSolarTerm(clientLevel).getTemperatureChange(), 0.0F, 1.0F);
+                double temperature = Mth.clamp(biome.getModifiedClimateSettings().temperature()+ EclipticUtil.getNowSolarTerm(clientLevel).getTemperatureChange(), 0.0F, 1.0F);
                 double humidity = Mth.clamp(biome.getModifiedClimateSettings().downfall(), 0.0F, 1.0F);
                 humidity = humidity * temperature;
                 int i = (int) ((1.0D - temperature) * 255.0D);
                 int j = (int) ((1.0D - humidity) * 255.0D);
                 int k = j << 8 | i;
                 
-                int[] newFoliageBuffer = newFoliageBufferMap.getOrDefault(EclipticTagClientTool.getTag(biome), FoliageColor.pixels);
+                int[] newFoliageBuffer = newFoliageBufferMap.getOrDefault(BiomeClimateManager.getTag(biome), FoliageColor.pixels);
                 return k > newFoliageBuffer.length ? originColor : newFoliageBuffer[k];
             }).orElse(originColor);
         } else return biome.getFoliageColor();

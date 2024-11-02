@@ -2,7 +2,7 @@ package com.teamtea.eclipticseasons.client.sound;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
-import com.teamtea.eclipticseasons.api.util.SimpleUtil;
+import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.client.core.ClientWeatherChecker;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -61,8 +61,8 @@ public class SeasonalBiomeAmbientSoundsHandler implements AmbientSoundHandler {
         }
 
         {
-            var season = SimpleUtil.getNowSolarTerm(player.level()).getSeason();
-            boolean isDayNow = SimpleUtil.isDay(player.level());
+            var season = EclipticUtil.getNowSolarTerm(player.level()).getSeason();
+            boolean isDayNow = EclipticUtil.isDay(player.level());
             if (season != this.previousSeason || isDayNow != this.previousIsDay) {
                 this.loopSounds.values().forEach(SeasonalBiomeAmbientSoundsHandler.LoopSoundInstance::fadeOut);
                 {

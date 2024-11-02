@@ -2,7 +2,6 @@ package com.teamtea.eclipticseasons.common;
 
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
-import com.teamtea.eclipticseasons.api.util.EclipticTagTool;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
@@ -31,13 +30,10 @@ public class AllListener {
 
 
     // TagsUpdatedEvent invoke before ServerAboutToStartEvent
-    // TODO：优化这个问题，理论上来说，更新数据的时候不能发送群系包，话说回来，既然是群系天气，实际上与level关系不大，不应该一个level一个
-    // 但是这也说不准啊，谁知道谁无聊就搞这个呢
     @SubscribeEvent
     public static void onTagsUpdatedEvent(TagsUpdatedEvent tagsUpdatedEvent) {
         BiomeClimateManager.resetBiomeTemps(tagsUpdatedEvent.getRegistryAccess(), tagsUpdatedEvent.getUpdateCause() == TagsUpdatedEvent.UpdateCause.SERVER_DATA_LOAD);
         WeatherManager.informUpdateBiomes(tagsUpdatedEvent.getRegistryAccess());
-        EclipticTagTool.BIOME_TAG_KEY_MAP.clear();
     }
 
 
@@ -46,7 +42,6 @@ public class AllListener {
         WeatherManager.BIOME_WEATHER_LIST.clear();
         WeatherManager.NEXT_CHECK_BIOME_MAP.clear();
     }
-
 
 
     @SubscribeEvent
@@ -72,7 +67,7 @@ public class AllListener {
             WeatherManager.createLevelBiomeWeatherList(serverLevel);
             // 这里需要恢复一下数据
             // 客户端登录时同步天气数据，此处先放入
-          SolarHolders.createSaveData(serverLevel, SolarDataManager.get(serverLevel));
+            SolarHolders.createSaveData(serverLevel, SolarDataManager.get(serverLevel));
         }
     }
 
@@ -116,14 +111,14 @@ public class AllListener {
     @SubscribeEvent
     public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
         if (event.getEntity() instanceof ServerPlayer serverPlayer && !(event.getEntity() instanceof FakePlayer)) {
-            WeatherManager.onLoggedIn(serverPlayer,true);
+            WeatherManager.onLoggedIn(serverPlayer, true);
         }
     }
 
     @SubscribeEvent
     public static void onPlayerChangedDimension(PlayerEvent.PlayerChangedDimensionEvent event) {
         if (event.getEntity() instanceof ServerPlayer serverPlayer) {
-            WeatherManager.onLoggedIn(serverPlayer,false);
+            WeatherManager.onLoggedIn(serverPlayer, false);
         }
     }
 

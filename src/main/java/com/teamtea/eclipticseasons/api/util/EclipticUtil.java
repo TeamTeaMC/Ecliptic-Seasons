@@ -166,8 +166,17 @@ public class EclipticUtil {
             public Biome.Precipitation getPrecipitationAt(Level level, BlockPos pos) {
                 if (useSolarWeather())
                     return WeatherManager.getPrecipitationAt(level, MapChecker.getSurfaceBiome(level, pos).value(), pos);
-                return VanillaWeather.handlePrecipitationat(level, MapChecker.getSurfaceBiome(level, pos).value(), pos);
+                return VanillaWeather.handlePrecipitationAt(level, MapChecker.getSurfaceBiome(level, pos).value(), pos);
             }
         };
     }
+
+
+    public static int getNowSolarDay(Level level) {
+        var sd = SolarHolders.getSaveData(level);
+        if (sd != null) return sd.getSolarTermsDay();
+        return 0;
+    }
+
+
 }

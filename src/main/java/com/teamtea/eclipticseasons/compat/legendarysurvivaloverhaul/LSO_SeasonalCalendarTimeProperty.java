@@ -1,6 +1,6 @@
 package com.teamtea.eclipticseasons.compat.legendarysurvivaloverhaul;
 
-import com.teamtea.eclipticseasons.api.util.SimpleUtil;
+import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.config.ServerConfig;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.item.ClampedItemPropertyFunction;
@@ -42,10 +42,10 @@ public class LSO_SeasonalCalendarTimeProperty implements ClampedItemPropertyFunc
 
                 SereneSeasonsUtil.SeasonType seasonType = LSO_ESUtil.getSeasonType(level.getBiome(holder.blockPosition()));
                 if(  seasonType== SereneSeasonsUtil.SeasonType.NORMAL_SEASON) {
-                    int seasonCycleTicks = SimpleUtil.getNowSolarDay(level);
+                    int seasonCycleTicks = EclipticUtil.getNowSolarDay(level);
                     d0 = (double) ((float) seasonCycleTicks / (float) (24 * ServerConfig.Season.lastingDaysOfEachTerm.get()));
                 }else if(seasonType== SereneSeasonsUtil.SeasonType.TROPICAL_SEASON){
-                    int seasonCycleTicks = SimpleUtil.getNowSolarTerm(level).ordinal()+1+6;
+                    int seasonCycleTicks = EclipticUtil.getNowSolarTerm(level).ordinal()+1+6;
                     seasonCycleTicks=seasonCycleTicks>24?seasonCycleTicks-24:seasonCycleTicks;
                     if(seasonCycleTicks<5){
                         d0=0.25f;
