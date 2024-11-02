@@ -1,5 +1,7 @@
 package com.teamtea.eclipticseasons.client.core;
 
+import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -382,44 +384,10 @@ public class ModelManager {
         // return Minecraft.useFancyGraphics() ?
         //         RenderType.cutoutMipped() : RenderType.solid();
     }
-    public static boolean isModelReplaced(BlockState state, BakedModel bakedModel) {
-        return !state.blocksMotion() && bakedModel != null;
+
+    public static boolean isModelReplaced(BlockState state) {
+        return !state.blocksMotion()
+                && MapChecker.getBlockType(state, EmptyBlockGetter.INSTANCE, BlockPos.ZERO) != MapChecker.FLAG_NONE_TYPE;
     }
-
-    public static boolean appendModel(ChunkBufferBuilderPack pChunkBufferBuilderPack, BlockPos pos, BlockState state, PoseStack posestack, RenderChunkRegion renderchunkregion, RandomSource random, Set<RenderType> renderTypeSet) {
-        BakedModel snowModel = findModel(renderchunkregion, pos, state, random);
-        boolean replace = false;
-        if (snowModel == null) return replace;
-
-        renderModel(snowModel, pChunkBufferBuilderPack, pos, state, posestack, renderchunkregion, random, renderTypeSet, posestack);
-        replace = isModelReplaced(state, snowModel);
-        return replace;
-    }
-
-
-
-    private static void renderModel(BakedModel bakedModel, ChunkBufferBuilderPack pChunkBufferBuilderPack, BlockPos pos, BlockState state, PoseStack posestack, RenderChunkRegion renderchunkregion, RandomSource random, Set<RenderType> renderTypeSet, PoseStack posestack1) {
-        RenderType renderType =  getRenderType();
-        BufferBuilder bufferbuilder2 = pChunkBufferBuilderPack.builder(renderType);
-        // this$0.beginLayer(bufferbuilder2);
-        if (renderTypeSet.add(renderType))
-            bufferbuilder2.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.BLOCK);
-        long seed = state.getSeed(pos);
-        posestack.pushPose();
-        posestack.translate((float) (pos.getX() & 15), (float) (pos.getY() & 15), (float) (pos.getZ() & 15));
-        Minecraft.getInstance().getBlockRenderer().getModelRenderer()
-                .tesselateBlock(renderchunkregion,
-                        bakedModel,
-                        EclipticSeasons.ModContents.snowyBlock.get().defaultBlockState(),
-                        pos,
-                        posestack,
-                        bufferbuilder2,
-                        true,
-                        random,
-                        seed,
-                        OverlayTexture.NO_OVERLAY,
-                        ModelData.EMPTY,
-                        renderType);
-        posestack.popPose();
-    }
+    
 }

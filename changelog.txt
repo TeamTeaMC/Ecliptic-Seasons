@@ -29,3 +29,9 @@ add sapling grow control
 0.5
 more snowy block with more compatibility(such as glass and more)
 fix birch leaves color
+
+0.5.1
+fix offset of snowy grass
+
+0.5.2
+fix snow block rendering anomaly

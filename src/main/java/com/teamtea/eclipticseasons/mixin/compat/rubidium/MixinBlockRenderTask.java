@@ -107,12 +107,12 @@ public abstract class MixinBlockRenderTask {
             boolean original, @Local BlockRenderContext ctx, @Local ChunkBuildBuffers buffers, @Local BlockRenderCache cache, @Local(ordinal = 0) BlockPos.MutableBlockPos mutableBlockPos, @Local(ordinal = 1) BlockPos.MutableBlockPos mutableBlockPos2, @Local(ordinal = 0) BlockState state
     ) {
 
-        BakedModel snowModel;
+        BakedModel snowModel = null;
         if (!original) {
             snowModel = ModelManager.findModel(ctx.world(), mutableBlockPos, state, random);
         } else {
-            snowModel = ModelManager.findModel(ctx.world(), mutableBlockPos, state, random);
-            if (ModelManager.isModelReplaced(state, snowModel)) {
+            if (ModelManager.isModelReplaced(state)) {
+                snowModel = ModelManager.findModel(ctx.world(), mutableBlockPos, state, random);
                 original = false;
             }
         }
