@@ -18,7 +18,7 @@ public class EmptyMessage implements CustomPacketPayload {
 
     }
 
-    public static final CustomPacketPayload.Type<EmptyMessage> TYPE = new CustomPacketPayload.Type<>(EclipticSeasons.rl("empty"));
+    public static final Type<EmptyMessage> TYPE = new Type<>(EclipticSeasons.rl("empty"));
 
     // Each pair of elements defines the stream codec of the element to encode/decode and the getter for the element to encode
     // 'name' will be encoded and decoded as a string
@@ -28,7 +28,7 @@ public class EmptyMessage implements CustomPacketPayload {
             StreamCodec.unit(new EmptyMessage());
 
     @Override
-    public CustomPacketPayload.Type<? extends CustomPacketPayload> type() {
+    public Type<? extends CustomPacketPayload> type() {
         return TYPE;
     }
 
