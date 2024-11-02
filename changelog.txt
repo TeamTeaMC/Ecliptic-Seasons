@@ -35,3 +35,8 @@ fix offset of snowy grass
 
 0.5.2
 fix snowy block renderer
+** fix the render of flower on grass block
+
+0.6
+use vanilla weather as default
+update config

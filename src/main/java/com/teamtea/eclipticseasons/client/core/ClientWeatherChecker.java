@@ -1,6 +1,6 @@
 package com.teamtea.eclipticseasons.client.core;
 
-import com.mojang.datafixers.util.Pair;
+import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.api.util.SimplePair;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
@@ -18,7 +18,6 @@ import net.minecraft.world.level.levelgen.Heightmap;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 // TODO:全局雨量控制表
 public class ClientWeatherChecker {
@@ -44,6 +43,8 @@ public class ClientWeatherChecker {
 
 
     public static Boolean isRain(ClientLevel clientLevel) {
+        if (EclipticUtil.isSolarWeatherClosed())
+            return clientLevel.isRaining();
         return (double) getRainLevel(clientLevel, 1.0F) > 0.2D;
     }
 
@@ -66,6 +67,8 @@ public class ClientWeatherChecker {
 
     //   TODO：net.minecraft.client.renderer.LevelRenderer.renderSnowAndRain 可以参考平滑方式
     public static float getRainLevel(ClientLevel clientLevel, float p46723) {
+        if (EclipticUtil.isSolarWeatherClosed())
+            return clientLevel.getRainLevel(p46723);
         // 初始小于0会导致出现暗角
         if (updateForPlayerLogin) {
             if (Minecraft.getInstance().cameraEntity instanceof Player) {
@@ -92,7 +95,7 @@ public class ClientWeatherChecker {
             // Ecliptic.logger(clientLevel.getNoiseBiome((int) player.getX(), (int) player.getY(), (int) player.getZ()));
             // TODO：根据群系过渡计算雨量（也许需要维护一个群系位置）,目前设置为时间平滑
             var pos = player.getOnPos();
-            int offset = ClientConfig.Renderer.weatherBufferDistance.get();
+            int offset = ClientConfig.Weather.weatherBufferDistance.get();
 
             rainLevel = getStandardRainLevel(1f, clientLevel, MapChecker.getSurfaceBiome(clientLevel, pos));
 
@@ -157,12 +160,16 @@ public class ClientWeatherChecker {
     }
 
     public static Boolean isThundering(ClientLevel clientLevel) {
+        if (EclipticUtil.isSolarWeatherClosed())
+            return clientLevel.isThundering();
         return (double) getThunderLevel(clientLevel, 1.0F) > 0.2D;
     }
 
 
     //   TODO：net.minecraft.client.renderer.LevelRenderer.renderSnowAndRain 可以参考平滑方式
     public static float getThunderLevel(ClientLevel clientLevel, float p46723) {
+        if (EclipticUtil.isSolarWeatherClosed())
+            return clientLevel.getThunderLevel(p46723);
         if (updateForPlayerLogin) {
             if (Minecraft.getInstance().cameraEntity instanceof Player) {
                 lastBiomeRainLevel = -1;
@@ -183,7 +190,7 @@ public class ClientWeatherChecker {
         float thunderLevel = getStandardThunderLevel(1f, clientLevel, null);
         if (Minecraft.getInstance().cameraEntity instanceof Player player) {
             var pos = player.getOnPos();
-            int offset = ClientConfig.Renderer.weatherBufferDistance.get();
+            int offset = ClientConfig.Weather.weatherBufferDistance.get();
             thunderLevel = getStandardThunderLevel(1f, clientLevel, MapChecker.getSurfaceBiome(clientLevel, pos));
             var lookAt = Minecraft.getInstance().hitResult.getLocation();
             var crs = lookAt.subtract(Minecraft.getInstance().getCameraEntity().position());
@@ -218,6 +225,8 @@ public class ClientWeatherChecker {
 
 
     public static Boolean isRainingAt(ClientLevel clientLevel, BlockPos blockPos) {
+        if (EclipticUtil.isSolarWeatherClosed())
+            return clientLevel.isRainingAt(blockPos);
         if (!clientLevel.canSeeSky(blockPos)) {
             return false;
         } else if (clientLevel.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, blockPos).getY() > blockPos.getY()) {
@@ -234,6 +243,8 @@ public class ClientWeatherChecker {
         } else if (clientLevel.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, blockPos).getY() > blockPos.getY()) {
             return false;
         }
+        if (EclipticUtil.isSolarWeatherClosed())
+            return clientLevel.isThundering();
         return getStandardThunderLevel(1.0f, clientLevel, MapChecker.getSurfaceBiome(clientLevel, blockPos)) > 0.9f;
     }
 
@@ -267,9 +278,11 @@ public class ClientWeatherChecker {
     }
 
     public static void tickAllCheck(ClientLevel clientLevel) {
-        updateRainLevel(clientLevel);
-        updateThunderLevel(clientLevel);
-        tickLastRainyBiome(clientLevel);
+        if (!EclipticUtil.isSolarWeatherClosed()) {
+            updateRainLevel(clientLevel);
+            updateThunderLevel(clientLevel);
+            tickLastRainyBiome(clientLevel);
+        }
     }
 
     public static void addLastRainyBiome(Biome biome, long gameTime) {

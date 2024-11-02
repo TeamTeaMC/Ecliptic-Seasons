@@ -114,44 +114,40 @@ public class ModelManager {
     public static Map<List<BakedQuad>, List<BakedQuad>> quadMap_GRASS = new HashMap<>(128);
 
     public static Map<BakedModel, Integer> snowyModelsCache = new IdentityHashMap<>();
-    public static Map<Integer, BakedModel> snowyModelsCacheInt = new IdentityHashMap<>();
 
 
     public static BakedModel getSnowyModel(BlockState state, BlockState snowState, int flag, int offset) {
         Block onBlock = state.getBlock();
-        BakedModel snowModel = snowyModelsCacheInt.getOrDefault(flag, null);
-        if (snowModel == null) {
-            if (snowOverlayBlock.resolve().isPresent() && flag == MapChecker.FLAG_BLOCK) {
-                snowModel = snowOverlayBlock.resolve().get();
-            } else if (snowOverlayLeaves.resolve().isPresent() && flag == MapChecker.FLAG_LEAVES) {
-                snowModel = snowOverlayLeaves.resolve().get();
-            } else if (snowySlabBottom.resolve().isPresent() && flag == MapChecker.FLAG_SLAB) {
-                snowModel = snowySlabBottom.resolve().get();
-            } else if (models != null && flag == MapChecker.FLAG_STAIRS) {
-                if (snowState != null)
-                    snowModel = models.get(BlockModelShaper.stateToModelLocation(snowState));
-            } else if (flag == MapChecker.FLAG_GRASS) {
-                if (onBlock == Blocks.GRASS) {
-                    snowModel = models.get(snowy_grass);
-                } else if (onBlock == Blocks.FERN) {
-                    snowModel = models.get(snowy_fern);
-                } else if (onBlock == Blocks.DANDELION) {
-                    snowModel = models.get(snowy_dandelion);
-                } else snowModel = models.get(snowy_grass);
-            } else if (flag == MapChecker.FLAG_GRASS_LARGE) {
-                if (onBlock == Blocks.TALL_GRASS) {
-                    snowModel = models.get(offset == 1 ? snowy_tall_grass_bottom : snowy_tall_grass_top);
-                } else if (onBlock == Blocks.LARGE_FERN) {
-                    snowModel = models.get(offset == 1 ? snowy_large_fern_bottom : snowy_large_fern_top);
-                } else snowModel = models.get(offset == 1 ? snowy_tall_grass_bottom : snowy_tall_grass_top);
-            } else if (flag == MapChecker.FLAG_FARMLAND) {
-                snowModel = models.get(snow_height2_top);
-                // snowModel = snowOverlayBlock.resolve().get();
-            }
-            if (snowModel != null) {
-                snowyModelsCache.putIfAbsent(snowModel, flag);
-                snowyModelsCacheInt.putIfAbsent(flag, snowModel);
-            }
+        BakedModel snowModel = null;
+        if (snowOverlayBlock.resolve().isPresent() && flag == MapChecker.FLAG_BLOCK) {
+            snowModel = snowOverlayBlock.resolve().get();
+        } else if (snowOverlayLeaves.resolve().isPresent() && flag == MapChecker.FLAG_LEAVES) {
+            snowModel = snowOverlayLeaves.resolve().get();
+        } else if (snowySlabBottom.resolve().isPresent() && flag == MapChecker.FLAG_SLAB) {
+            snowModel = snowySlabBottom.resolve().get();
+        } else if (models != null && flag == MapChecker.FLAG_STAIRS) {
+            if (snowState != null)
+                snowModel = models.get(BlockModelShaper.stateToModelLocation(snowState));
+        } else if (flag == MapChecker.FLAG_GRASS) {
+            if (onBlock == Blocks.GRASS) {
+                snowModel = models.get(snowy_grass);
+            } else if (onBlock == Blocks.FERN) {
+                snowModel = models.get(snowy_fern);
+            } else if (onBlock == Blocks.DANDELION) {
+                snowModel = models.get(snowy_dandelion);
+            } else snowModel = models.get(snowy_grass);
+        } else if (flag == MapChecker.FLAG_GRASS_LARGE) {
+            if (onBlock == Blocks.TALL_GRASS) {
+                snowModel = models.get(offset == 1 ? snowy_tall_grass_bottom : snowy_tall_grass_top);
+            } else if (onBlock == Blocks.LARGE_FERN) {
+                snowModel = models.get(offset == 1 ? snowy_large_fern_bottom : snowy_large_fern_top);
+            } else snowModel = models.get(offset == 1 ? snowy_tall_grass_bottom : snowy_tall_grass_top);
+        } else if (flag == MapChecker.FLAG_FARMLAND) {
+            snowModel = models.get(snow_height2_top);
+            // snowModel = snowOverlayBlock.resolve().get();
+        }
+        if (snowModel != null) {
+            snowyModelsCache.putIfAbsent(snowModel, flag);
         }
         return snowModel;
     }
@@ -173,9 +169,13 @@ public class ModelManager {
     private final static List<BakedQuad> EMPTY = List.of();
 
     public static List<BakedQuad> cancelTop(BakedModel bakedModel, BlockAndTintGetter blockAndTintGetter, BlockState state, BlockPos pos, Direction direction, RandomSource random, long seed, List<BakedQuad> original) {
-        if (!original.isEmpty() && (direction == Direction.UP || direction == null)) {
+        if (!original.isEmpty()
+                && (direction == Direction.UP || direction == null)
+                && snowyModelsCache.getOrDefault(bakedModel, -1) == -1
+        ) {
             BakedModel snowModel = ModelManager.findModel(blockAndTintGetter, pos, state, random);
-            if (snowyModelsCache.getOrDefault(snowModel,-1)>MapChecker.FLAG_NONE_TYPE
+            if (snowModel != null
+                    && snowyModelsCache.getOrDefault(snowModel, -1) > MapChecker.FLAG_NONE_TYPE
                     && bakedModel != null
                     && bakedModel != snowModel) {
                 int blockType = MapChecker.getBlockType(state, blockAndTintGetter, pos);
@@ -183,7 +183,6 @@ public class ModelManager {
                     if (blockType == MapChecker.FLAG_BLOCK)
                         return EMPTY;
                 }
-
                 if (original.size() == 1) {
                     if (original.get(0).getDirection() == Direction.UP)
                         return EMPTY;
@@ -438,6 +437,5 @@ public class ModelManager {
         quadMap.clear();
         quadMap_1.clear();
         snowyModelsCache.clear();
-        snowyModelsCacheInt.clear();
     }
 }

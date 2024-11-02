@@ -1,7 +1,8 @@
 {
 	"render_type": "cutout",
 	"textures": {
-		"1": "block/pink_petals"
+		"1": "block/pink_petals",
+		"particle": "#1"
 	},
 	"elements": [
 		{

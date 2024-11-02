@@ -3,6 +3,7 @@ package com.teamtea.eclipticseasons.mixin.client;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.client.core.ClientWeatherChecker;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.world.entity.animal.Panda;
@@ -19,7 +20,8 @@ public class MixinClientPanda {
     )
     private boolean ecliptic$tick(Level instance, Operation<Boolean> original) {
         if (instance instanceof ClientLevel clientLevel)
-            return ClientWeatherChecker.isThunderAt(clientLevel, ((Panda) (Object) this).blockPosition());
+            if (EclipticUtil.useSolarWeather())
+                return ClientWeatherChecker.isThunderAt(clientLevel, ((Panda) (Object) this).blockPosition());
         return original.call(instance);
     }
 
@@ -29,7 +31,8 @@ public class MixinClientPanda {
     )
     private boolean ecliptic$isScared(Level instance, Operation<Boolean> original) {
         if (instance instanceof ClientLevel clientLevel)
-            return ClientWeatherChecker.isThunderAt(clientLevel, ((Panda) (Object) this).blockPosition());
+            if (EclipticUtil.useSolarWeather())
+                return ClientWeatherChecker.isThunderAt(clientLevel, ((Panda) (Object) this).blockPosition());
         return original.call(instance);
     }
 }

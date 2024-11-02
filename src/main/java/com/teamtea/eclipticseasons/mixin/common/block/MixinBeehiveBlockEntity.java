@@ -4,6 +4,7 @@ package com.teamtea.eclipticseasons.mixin.common.block;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
+import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.api.util.WeatherUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
@@ -18,8 +19,10 @@ public class MixinBeehiveBlockEntity {
             method = "releaseOccupant",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;isRaining()Z")
     )
-    private static boolean mixin$releaseOccupantCheckRain(Level level, Operation<Boolean> original,  @Local(ordinal = 0) BlockPos blockPos  ) {
-        return WeatherUtil.isBlockInRain(level,blockPos);
+    private static boolean mixin$releaseOccupantCheckRain(Level level, Operation<Boolean> original, @Local(ordinal = 0) BlockPos blockPos) {
+        if (EclipticUtil.useSolarWeather())
+            return WeatherUtil.isBlockInRain(level, blockPos);
+        return level.isRaining();
     }
 
 

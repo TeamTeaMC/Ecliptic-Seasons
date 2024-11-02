@@ -61,13 +61,13 @@ public final class ClientEventHandler {
     @SubscribeEvent
     public static void addTooltips(ItemTooltipEvent event) {
         if (event.getItemStack().getItem() instanceof BlockItem) {
-            if (ServerConfig.Season.enableCropHumidityControl.get()) {
+            if (ServerConfig.Crop.enableCropHumidityControl.get()) {
                 if (CropInfoManager.getHumidityCrops().contains(((BlockItem) event.getItemStack().getItem()).getBlock())) {
                     CropHumidityInfo info = CropInfoManager.getHumidityInfo(((BlockItem) event.getItemStack().getItem()).getBlock());
                     if (info != null) event.getToolTip().addAll(info.getTooltip());
                 }
             }
-            if (ServerConfig.Season.enableCrop.get()) {
+            if (ServerConfig.Crop.enableCrop.get()) {
                 if (CropInfoManager.getSeasonCrops().contains(((BlockItem) event.getItemStack().getItem()).getBlock())) {
                     CropSeasonInfo info = CropInfoManager.getSeasonInfo(((BlockItem) event.getItemStack().getItem()).getBlock());
                     if (info != null) event.getToolTip().addAll(info.getTooltip());

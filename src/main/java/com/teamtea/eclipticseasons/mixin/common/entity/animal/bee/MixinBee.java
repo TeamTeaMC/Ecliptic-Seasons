@@ -3,6 +3,7 @@ package com.teamtea.eclipticseasons.mixin.common.entity.animal.bee;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.api.util.WeatherUtil;
 import net.minecraft.world.entity.animal.Bee;
 import net.minecraft.world.level.Level;
@@ -17,7 +18,9 @@ public class MixinBee {
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;isRaining()Z")
     )
     private boolean ecliptic$wantsToEnterHiveCheckRain(Level instance, Operation<Boolean> original) {
-        return WeatherUtil.isEntityInRainOrSnow((Bee)(Object)this);
+        if (EclipticUtil.useSolarWeather())
+            return WeatherUtil.isEntityInRainOrSnow((Bee) (Object) this);
+        return instance.isRaining();
     }
 
 }

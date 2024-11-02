@@ -11,7 +11,6 @@
     "common.MixinServerLevel",
     "common.block.MixinBeehiveBlockEntity",
     "common.block.MixinFireBlock",
-    "common.block.MixinGrassBlock",
     "common.block.MixinLightningRodBlock",
     "common.command.MixinWeatherCommand",
     "common.entity.animal.bee.MixinBee",
