@@ -84,7 +84,7 @@ public class ServerConfig {
         private static void load(ForgeConfigSpec.Builder builder) {
             builder.push("Weather");
             useSolarWeather = builder.comment("Enable solar term weather system with biome.")
-                    .define("UseSolarWeather", false);
+                    .define("UseSolarWeather", true);
             rainChanceMultiplier = builder.comment("Set the percentage multiplier of the probability of rain, the range should be between 0 and 1000.")
                     .defineInRange("RainChancePercentMultiplier", 60, 0, 1000);
             thunderChanceMultiplier = builder.comment("Set the percentage multiplier of the probability of thunder in the rain, the range should be between 0 and 1000.")
