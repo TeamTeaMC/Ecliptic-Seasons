@@ -8,7 +8,7 @@ import com.teamtea.eclipticseasons.api.constant.solar.color.leaves.SpruceLeavesC
 import com.teamtea.eclipticseasons.api.util.EclipticTagClientTool;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.constant.solar.color.SolarTermColor;
-import com.teamtea.eclipticseasons.api.constant.tag.SeasonTypeBiomeTags;
+import com.teamtea.eclipticseasons.api.constant.tag.ClimateTypeBiomeTags;
 import com.teamtea.eclipticseasons.api.util.SimpleUtil;
 import com.teamtea.eclipticseasons.client.core.ColorHelper;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
@@ -92,7 +92,7 @@ public class BiomeColorsHandler {
             if (clientLevel != null) {
                 SolarHolders.getSaveDataLazy(clientLevel).ifPresent(data ->
                 {
-                    for (TagKey<Biome> biomeTagKey : SeasonTypeBiomeTags.BIOMES) {
+                    for (TagKey<Biome> biomeTagKey : ClimateTypeBiomeTags.BIOME_TYPES) {
                         int[] newFoliageBuffer = new int[65536];
                         int[] newGrassBuffer = new int[65536];
                         int[] foliageBuffer = FoliageColor.pixels;

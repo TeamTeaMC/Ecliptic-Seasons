@@ -7,7 +7,7 @@ import net.minecraft.world.level.biome.Biome;
 
 import java.util.List;
 
-public class SeasonTypeBiomeTags {
+public class ClimateTypeBiomeTags {
     public static final TagKey<Biome> SEASONAL = create("seasonal");
     public static final TagKey<Biome> MONSOONAL = create("monsoonal");
     public static final TagKey<Biome> RAINLESS = create("rainless");
@@ -15,7 +15,10 @@ public class SeasonTypeBiomeTags {
     public static final TagKey<Biome> DROUGHTY = create("droughty");
     public static final TagKey<Biome> SOFT = create("soft");
     public static final TagKey<Biome> RAINY = create("rainy");
-    public static final List<TagKey<Biome>> BIOMES = List.of(SEASONAL, MONSOONAL, RAINLESS, ARID, DROUGHTY, SOFT, RAINY);
+    public static final List<TagKey<Biome>> BIOME_TYPES = List.of(SEASONAL, MONSOONAL, RAINLESS, ARID, DROUGHTY, SOFT, RAINY);
+    public static final List<TagKey<Biome>> COMMON_BIOME_TYPES = List.of(RAINLESS, ARID, DROUGHTY, SOFT, RAINY);
+
+    public static final TagKey<Biome> IS_SMALL =create("is_small");
 
     private static TagKey<Biome> create(String s) {
         return TagKey.create(Registries.BIOME, EclipticSeasons.rl(s));

@@ -3,13 +3,12 @@ package com.teamtea.eclipticseasons.client.particle;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
-import com.teamtea.eclipticseasons.api.constant.tag.SeasonalBlockTags;
+import com.teamtea.eclipticseasons.api.constant.tag.EclipticBlockTags;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.config.ClientConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.util.FastColor;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -47,7 +46,7 @@ public class ParticleUtil {
         BlockState blockstate = clientLevel.getBlockState(blockpos$mutableblockpos);
         if (ClientConfig.Particle.fallenLeaves.get()
                 && blockstate.getBlock() instanceof LeavesBlock) {
-            if (!blockstate.is(SeasonalBlockTags.NONE_FALLEN_LEAVES)) {
+            if (!blockstate.is(EclipticBlockTags.NONE_FALLEN_LEAVES)) {
                 var sd = EclipticSeasonsApi.getInstance().getSolarTerm(clientLevel).getSeason();
                 int chanceW = 19;
                 switch (sd) {
@@ -67,7 +66,7 @@ public class ParticleUtil {
                 && EclipticSeasonsApi.getInstance().getSolarTerm(clientLevel).getSeason() == Season.SPRING
                 && EclipticSeasonsApi.getInstance().isDay(clientLevel)
         ) {
-            if (blockstate.is(SeasonalBlockTags.HABITAT_BUTTERFLY)
+            if (blockstate.is(EclipticBlockTags.HABITAT_BUTTERFLY)
                     && !clientLevel.isRainingAt(blockpos$mutableblockpos)
                     && clientLevel.canSeeSky(blockpos$mutableblockpos)
                     && random.nextInt(1024 * (int) (ClientConfig.Particle.butterflySpawnWeight.get() * 0.1f)) == 0
@@ -79,7 +78,7 @@ public class ParticleUtil {
                 && EclipticSeasonsApi.getInstance().getSolarTerm(clientLevel).getSeason() == Season.SUMMER
                 && EclipticSeasonsApi.getInstance().isEvening(clientLevel)
         ) {
-            if (blockstate.is(SeasonalBlockTags.HABITAT_FIREFLY)
+            if (blockstate.is(EclipticBlockTags.HABITAT_FIREFLY)
                     && !clientLevel.isRainingAt(blockpos$mutableblockpos)
                     && clientLevel.canSeeSky(blockpos$mutableblockpos)
                     && random.nextInt(160 * (int) (ClientConfig.Particle.fireflySpawnWeight.get() * 0.1f)) == 0

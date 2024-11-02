@@ -3,11 +3,15 @@ package com.teamtea.eclipticseasons.api.util;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
+import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.core.solar.SolarAngelHelper;
+import com.teamtea.eclipticseasons.compat.vanilla.VanillaWeather;
 import com.teamtea.eclipticseasons.config.ServerConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.levelgen.Heightmap;
 
 public class EclipticUtil {
     public static SolarTerm getNowSolarTerm(Level level) {
@@ -47,11 +51,11 @@ public class EclipticUtil {
         return 6000 + (termTime * 2 / 5) < dayTime && dayTime < 6000 + (termTime / 2) + (24000 - termTime) * 3 / 4;
     }
 
-    public static boolean useSolarWeather(){
+    public static boolean useSolarWeather() {
         return ServerConfig.Weather.useSolarWeather.get();
     }
 
-    public static boolean isSolarWeatherClosed(){
+    public static boolean isSolarWeatherClosed() {
         return !ServerConfig.Weather.useSolarWeather.get();
     }
 
@@ -94,6 +98,75 @@ public class EclipticUtil {
             public boolean isSnowySurfaceAt(Level level, BlockPos pos) {
                 long seed = level.getBlockState(pos).getSeed(pos);
                 return MapChecker.shouldSnowAt(level, pos, level.getBlockState(pos), level.getRandom(), seed);
+            }
+
+            @Override
+            public boolean isRainOrSnowAt(Level level, BlockPos pos) {
+                if (useSolarWeather())
+                    return WeatherManager.isRainingOrSnowAt(level, pos);
+
+                // use this to check if underground
+                if (!level.isRaining()) {
+                    return false;
+                }
+                if (!level.canSeeSky(pos)) {
+                    return false;
+                } else return level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, pos).getY() <= pos.getY();
+
+            }
+
+            @Override
+            public boolean isRainAt(Level level, BlockPos pos) {
+                if (useSolarWeather())
+                    return WeatherManager.isRainingAt(level, pos);
+
+                // use this to check if underground
+                if (!level.isRaining()) {
+                    return false;
+                } else if (!level.canSeeSky(pos)) {
+                    return false;
+                } else if (level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, pos).getY() > pos.getY()) {
+                    return false;
+                } else {
+                    return this.getPrecipitationAt(level, pos) == Biome.Precipitation.RAIN;
+                }
+            }
+
+            @Override
+            public boolean isSnowAt(Level level, BlockPos pos) {
+                if (useSolarWeather())
+                    return WeatherManager.isRainingOrSnowAt(level, pos)
+                            && this.getPrecipitationAt(level, pos) == Biome.Precipitation.SNOW;
+                if (!level.isRaining()) {
+                    return false;
+                } else if (!level.canSeeSky(pos)) {
+                    return false;
+                } else if (level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, pos).getY() > pos.getY()) {
+                    return false;
+                } else {
+                    return this.getPrecipitationAt(level, pos) == Biome.Precipitation.SNOW;
+                }
+            }
+
+            @Override
+            public boolean isThunderAt(Level level, BlockPos pos) {
+                if (useSolarWeather())
+                    return WeatherManager.isThunderAt(level, pos);
+
+                // use this to check if underground
+                if (!level.isThundering()) {
+                    return false;
+                }
+                if (!level.canSeeSky(pos)) {
+                    return false;
+                } else return level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, pos).getY() <= pos.getY();
+            }
+
+            @Override
+            public Biome.Precipitation getPrecipitationAt(Level level, BlockPos pos) {
+                if (useSolarWeather())
+                    return WeatherManager.getPrecipitationAt(level, MapChecker.getSurfaceBiome(level, pos).value(), pos);
+                return VanillaWeather.handlePrecipitationat(level, MapChecker.getSurfaceBiome(level, pos).value(), pos);
             }
         };
     }

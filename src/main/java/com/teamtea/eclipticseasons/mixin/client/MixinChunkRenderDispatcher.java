@@ -62,7 +62,6 @@ public class MixinChunkRenderDispatcher {
 
 
     @ModifyExpressionValue(
-            remap = false,
             method = "compile",
             at = @At(value = "INVOKE",
                     // shift = At.Shift.AFTER,

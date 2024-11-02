@@ -35,7 +35,7 @@ public class AllListener {
     // 但是这也说不准啊，谁知道谁无聊就搞这个呢
     @SubscribeEvent
     public static void onTagsUpdatedEvent(TagsUpdatedEvent tagsUpdatedEvent) {
-        BiomeClimateManager.resetBiomeTemps(tagsUpdatedEvent.getRegistryAccess());
+        BiomeClimateManager.resetBiomeTemps(tagsUpdatedEvent.getRegistryAccess(), tagsUpdatedEvent.getUpdateCause() == TagsUpdatedEvent.UpdateCause.SERVER_DATA_LOAD);
         WeatherManager.informUpdateBiomes(tagsUpdatedEvent.getRegistryAccess());
         EclipticTagTool.BIOME_TAG_KEY_MAP.clear();
     }
@@ -48,11 +48,6 @@ public class AllListener {
     }
 
 
-    // @SubscribeEvent
-    // public static void onServerStartedEvent(ServerStartedEvent event) {
-    //     BiomeClimateManager.resetBiomeTemps(event.getServer().registryAccess());
-    //     WeatherManager.informUpdateBiomes(event.getServer().registryAccess());
-    // }
 
     @SubscribeEvent
     public static void onSleepFinishedTimeEvent(SleepFinishedTimeEvent event) {

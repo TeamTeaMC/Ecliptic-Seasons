@@ -5,7 +5,7 @@ import com.teamtea.eclipticseasons.api.constant.climate.BiomeRain;
 import com.teamtea.eclipticseasons.api.constant.climate.FlatRain;
 import com.teamtea.eclipticseasons.api.constant.climate.SnowTerm;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
-import com.teamtea.eclipticseasons.api.constant.tag.SeasonTypeBiomeTags;
+import com.teamtea.eclipticseasons.api.constant.tag.ClimateTypeBiomeTags;
 import com.teamtea.eclipticseasons.api.util.EclipticTagTool;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.api.util.SimpleUtil;
@@ -43,7 +43,6 @@ import net.minecraft.world.level.storage.ServerLevelData;
 import net.minecraft.world.level.storage.WritableLevelData;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
-import net.minecraft.world.level.storage.loot.predicates.WeatherCheck;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.INBTSerializable;
 
@@ -234,7 +233,7 @@ public class WeatherManager {
         var provider = SolarUtil.getProvider(level);
         var weathers = getBiomeList(level);
 
-        if (EclipticTagTool.getTag(biome).equals(SeasonTypeBiomeTags.RAINLESS)) {
+        if (EclipticTagTool.getTag(biome).equals(ClimateTypeBiomeTags.RAINLESS)) {
             return Biome.Precipitation.NONE;
         }
 
@@ -251,7 +250,7 @@ public class WeatherManager {
                     //     return Biome.Precipitation.NONE;
 
                     return flag_cold
-                            || BiomeClimateManager.getDefaultTemperature(biome) <= BiomeClimateManager.SNOW_LEVEL ?
+                            || BiomeClimateManager.getDefaultTemperature(biome, levelNull instanceof ServerLevel) <= BiomeClimateManager.SNOW_LEVEL ?
                             Biome.Precipitation.SNOW : Biome.Precipitation.RAIN;
                 }
             }

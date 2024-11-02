@@ -1,6 +1,6 @@
 package com.teamtea.eclipticseasons.api.util;
 
-import com.teamtea.eclipticseasons.api.constant.tag.SeasonTypeBiomeTags;
+import com.teamtea.eclipticseasons.api.constant.tag.ClimateTypeBiomeTags;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
@@ -31,7 +31,7 @@ public class EclipticTagTool {
                     if (resourceKeyBiomeEntry.getValue() == biome) {
                         var holder = biomes.get().getHolder(resourceKeyBiomeEntry.getKey());
                         if (holder.isPresent()) {
-                            var tag = holder.get().tags().filter(SeasonTypeBiomeTags.BIOMES::contains).findFirst();
+                            var tag = holder.get().tags().filter(ClimateTypeBiomeTags.BIOME_TYPES::contains).findFirst();
                             if (tag.isPresent()) {
                                 bt = tag.get();
                             }
@@ -41,7 +41,7 @@ public class EclipticTagTool {
             }
         }
         if (bt == null)
-            bt = SeasonTypeBiomeTags.RAINLESS;
+            bt = ClimateTypeBiomeTags.RAINLESS;
         BIOME_TAG_KEY_MAP.put(biome, bt);
         return bt;
     }

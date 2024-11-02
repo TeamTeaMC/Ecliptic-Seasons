@@ -4,6 +4,7 @@ package com.teamtea.eclipticseasons.mixin.compat.legendarysurvivaloverhaul;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
+import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.compat.legendarysurvivaloverhaul.LSO_ESUtil;
 import net.minecraft.core.BlockPos;
@@ -36,7 +37,7 @@ public abstract class MixinWeatherModifier {
                     target = "Lsfiomn/legendarysurvivaloverhaul/util/WorldUtil;isRainingOrSnowingAt(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;)Z")
     )
     private boolean ecliptic$getWorldInfluence_isRainingOrSnowingAt(Level world, BlockPos pos, Operation<Boolean> original) {
-        return WeatherManager.isRainingOrSnowAtBiome(world, world.getBiome(pos).value());
+        return EclipticSeasonsApi.getInstance().isRainOrSnowAt(world, pos);
     }
 
     @WrapOperation(
@@ -46,6 +47,6 @@ public abstract class MixinWeatherModifier {
             )
     )
     private boolean ecliptic$getWorldInfluence_isRaining(Level world, Operation<Boolean> original, @Local(argsOnly = true) BlockPos blockPos) {
-        return WeatherManager.isRainingOrSnowAtBiome(world, world.getBiome(blockPos).value());
+        return EclipticSeasonsApi.getInstance().isRainAt(world, blockPos);
     }
 }

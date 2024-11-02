@@ -1,16 +1,15 @@
 package com.teamtea.eclipticseasons.common.core.map;
 
+import com.teamtea.eclipticseasons.api.constant.tag.ClimateTypeBiomeTags;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.config.ServerConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.tags.BiomeTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.ChunkPos;
-import net.minecraft.world.level.EmptyBlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.*;
@@ -49,8 +48,7 @@ public class MapChecker {
 
 
     public static boolean isSmallBiome(Holder<Biome> biomeHolder) {
-        return biomeHolder.is(BiomeTags.IS_RIVER)
-                || biomeHolder.is(BiomeTags.IS_BEACH)
+        return biomeHolder.is(ClimateTypeBiomeTags.IS_SMALL)
                 ;
     }
 

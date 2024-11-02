@@ -62,4 +62,14 @@ public interface EclipticSeasonsApi {
      * but will not be miscalculated if the surface is fully snow covered or not covered.
      */
     boolean isSnowySurfaceAt(Level level, BlockPos pos);
+
+    boolean isRainOrSnowAt(Level level,BlockPos pos);
+
+    boolean isRainAt(Level level,BlockPos pos);
+
+    boolean isSnowAt(Level level,BlockPos pos);
+
+    boolean isThunderAt(Level level,BlockPos pos);
+
+    Biome.Precipitation getPrecipitationAt(Level level, BlockPos pos);
 }

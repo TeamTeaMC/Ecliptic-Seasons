@@ -47,7 +47,9 @@ public class VanillaWeather {
         var provider = SolarUtil.getProvider(level);
         var status = WeatherManager.SnowRenderStatus.NONE;
         if (biome.value().hasPrecipitation() && provider != null) {
-            boolean flag_cold = isInWinter(level);
+            var solarTerm = provider.getSolarTerm();
+            var snowTerm = SolarTerm.getSnowTerm(biome.value());
+            boolean flag_cold = solarTerm.isInTerms(snowTerm.getStart(), snowTerm.getEnd());
             if (flag_cold) {
                 if (level.isRaining())
                     status = WeatherManager.SnowRenderStatus.SNOW;
@@ -78,9 +80,13 @@ public class VanillaWeather {
     }
 
     public static Biome.Precipitation handlePrecipitationat(Biome biome, BlockPos pos) {
-        var pre = Biome.Precipitation.NONE;
         var level = getValidLevel(biome);
 
+        return handlePrecipitationat(level,biome,pos);
+    }
+
+    public static Biome.Precipitation handlePrecipitationat(Level level,Biome biome, BlockPos pos) {
+        var pre = Biome.Precipitation.NONE;
         if (biome.hasPrecipitation()) {
             pre = biome.coldEnoughToSnow(pos) ? Biome.Precipitation.SNOW : Biome.Precipitation.RAIN;
             var solarTerm = EclipticSeasonsApi.getInstance().getSolarTerm(level);

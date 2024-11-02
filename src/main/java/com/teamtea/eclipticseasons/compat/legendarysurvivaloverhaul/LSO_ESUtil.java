@@ -1,6 +1,6 @@
 package com.teamtea.eclipticseasons.compat.legendarysurvivaloverhaul;
 
-import com.teamtea.eclipticseasons.api.constant.tag.SeasonTypeBiomeTags;
+import com.teamtea.eclipticseasons.api.constant.tag.ClimateTypeBiomeTags;
 import com.teamtea.eclipticseasons.api.util.SimpleUtil;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.config.ServerConfig;
@@ -50,11 +50,11 @@ public class LSO_ESUtil {
     }
 
     public static SereneSeasonsUtil.SeasonType getSeasonType(Holder<Biome> biome) {
-        if (Config.Baked.tropicalSeasonsEnabled && biome.is(SeasonTypeBiomeTags.MONSOONAL)) {
+        if (Config.Baked.tropicalSeasonsEnabled && biome.is(ClimateTypeBiomeTags.MONSOONAL)) {
             return SereneSeasonsUtil.SeasonType.TROPICAL_SEASON;
         } else {
             return !Config.Baked.defaultSeasonEnabled &&
-                    biome.is(SeasonTypeBiomeTags.RAINLESS) ?
+                    biome.is(ClimateTypeBiomeTags.RAINLESS) ?
                     SereneSeasonsUtil.SeasonType.NO_SEASON : SereneSeasonsUtil.SeasonType.NORMAL_SEASON;
         }
     }

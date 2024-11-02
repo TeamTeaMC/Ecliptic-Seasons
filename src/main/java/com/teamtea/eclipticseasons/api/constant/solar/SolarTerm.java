@@ -2,7 +2,7 @@ package com.teamtea.eclipticseasons.api.constant.solar;
 
 import com.teamtea.eclipticseasons.api.constant.climate.*;
 import com.teamtea.eclipticseasons.api.constant.solar.color.*;
-import com.teamtea.eclipticseasons.api.constant.tag.SeasonTypeBiomeTags;
+import com.teamtea.eclipticseasons.api.constant.tag.ClimateTypeBiomeTags;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
@@ -75,19 +75,19 @@ public enum SolarTerm {
     }
 
     public SolarTermColor getSolarTermColor(TagKey<Biome> biomeTagKey) {
-        if (biomeTagKey.equals(SeasonTypeBiomeTags.RAINLESS)) {
+        if (biomeTagKey.equals(ClimateTypeBiomeTags.RAINLESS)) {
             return NoneSolarTermColors.get(this.ordinal());
-        } else if (biomeTagKey.equals(SeasonTypeBiomeTags.ARID)) {
+        } else if (biomeTagKey.equals(ClimateTypeBiomeTags.ARID)) {
             return NoneSolarTermColors.get(this.ordinal());
-        } else if (biomeTagKey.equals(SeasonTypeBiomeTags.DROUGHTY)) {
+        } else if (biomeTagKey.equals(ClimateTypeBiomeTags.DROUGHTY)) {
             return SlightlySolarTermColors.get(this.ordinal());
-        } else if (biomeTagKey.equals(SeasonTypeBiomeTags.SOFT)) {
+        } else if (biomeTagKey.equals(ClimateTypeBiomeTags.SOFT)) {
             return SlightlySolarTermColors.get(this.ordinal());
-        } else if (biomeTagKey.equals(SeasonTypeBiomeTags.RAINY)) {
+        } else if (biomeTagKey.equals(ClimateTypeBiomeTags.RAINY)) {
             return SlightlySolarTermColors.get(this.ordinal());
-        } else if (biomeTagKey.equals(SeasonTypeBiomeTags.MONSOONAL)) {
+        } else if (biomeTagKey.equals(ClimateTypeBiomeTags.MONSOONAL)) {
             return RainySolarTermColors.values()[this.ordinal()];
-        } else if (biomeTagKey.equals(SeasonTypeBiomeTags.SEASONAL)) {
+        } else if (biomeTagKey.equals(ClimateTypeBiomeTags.SEASONAL)) {
             return TemperateSolarTermColors.values()[this.ordinal()];
         } else {
             return NoneSolarTermColors.get(this.ordinal());
@@ -108,17 +108,17 @@ public enum SolarTerm {
 
 
     public BiomeRain getBiomeRain(Holder<Biome> biomeHolder) {
-        if (!biomeHolder.is(BiomeTags.IS_OVERWORLD) || biomeHolder.is(SeasonTypeBiomeTags.RAINLESS)) {
+        if (!biomeHolder.is(BiomeTags.IS_OVERWORLD) || biomeHolder.is(ClimateTypeBiomeTags.RAINLESS)) {
             return FlatRain.RAINLESS;
-        } else if (biomeHolder.is(SeasonTypeBiomeTags.ARID)) {
+        } else if (biomeHolder.is(ClimateTypeBiomeTags.ARID)) {
             return FlatRain.ARID;
-        } else if (biomeHolder.is(SeasonTypeBiomeTags.DROUGHTY)) {
+        } else if (biomeHolder.is(ClimateTypeBiomeTags.DROUGHTY)) {
             return FlatRain.DROUGHTY;
-        } else if (biomeHolder.is(SeasonTypeBiomeTags.SOFT)) {
+        } else if (biomeHolder.is(ClimateTypeBiomeTags.SOFT)) {
             return FlatRain.SOFT;
-        } else if (biomeHolder.is(SeasonTypeBiomeTags.RAINY)) {
+        } else if (biomeHolder.is(ClimateTypeBiomeTags.RAINY)) {
             return FlatRain.RAINY;
-        } else if (biomeHolder.is(SeasonTypeBiomeTags.MONSOONAL)) {
+        } else if (biomeHolder.is(ClimateTypeBiomeTags.MONSOONAL)) {
             return MonsoonRain.values()[this.ordinal()];
         } else {
             return TemperateRain.values()[this.ordinal()];
@@ -127,27 +127,60 @@ public enum SolarTerm {
 
     public static SnowTerm getSnowTerm(Biome biome) {
         if (biome == null) return SnowTerm.T05;
-        else if (BiomeClimateManager.getDefaultTemperature(biome) > 1 + 0.001f) {
+        // float t = BiomeClimateManager.agent$GetBaseTemperature(biome);
+        float t = biome.getModifiedClimateSettings().temperature();
+        if (t > 1 + 0.001f) {
             return SnowTerm.T1;
-        } else if (BiomeClimateManager.getDefaultTemperature(biome) > 0.8 + 0.001f) {
+        } else if (t > 0.8 + 0.001f) {
             return SnowTerm.T08;
-        } else if (BiomeClimateManager.getDefaultTemperature(biome) > 0.6 + 0.001f) {
+        } else if (t > 0.6 + 0.001f) {
             return SnowTerm.T06;
-        } else if (BiomeClimateManager.getDefaultTemperature(biome) > 0.5 + 0.001f) {
+        } else if (t > 0.5 + 0.001f) {
             return SnowTerm.T05;
-        } else if (BiomeClimateManager.getDefaultTemperature(biome) > 0.4 + 0.001f) {
+        } else if (t > 0.4 + 0.001f) {
             return SnowTerm.T04;
-        } else if (BiomeClimateManager.getDefaultTemperature(biome) > 0.3 + 0.001f) {
+        } else if (t > 0.3 + 0.001f) {
             return SnowTerm.T03;
-        } else if (BiomeClimateManager.getDefaultTemperature(biome) > 0.2 + 0.001f) {
+        } else if (t > 0.2 + 0.001f) {
             return SnowTerm.T02;
-        } else if (BiomeClimateManager.getDefaultTemperature(biome) > 0.15 + 0.001f) {
+        } else if (t > 0.15 + 0.001f) {
             return SnowTerm.T015;
-        } else if (BiomeClimateManager.getDefaultTemperature(biome) > 0.1 + 0.001f) {
+        } else if (t > 0.1 + 0.001f) {
             return SnowTerm.T01;
-        } else if (BiomeClimateManager.getDefaultTemperature(biome) > 0.05 + 0.001f) {
+        } else if (t > 0.05 + 0.001f) {
             return SnowTerm.T05;
-        } else if (BiomeClimateManager.getDefaultTemperature(biome) > 0.01 + 0.001f) {
+        } else if (t > 0.01 + 0.001f) {
+            return SnowTerm.T001;
+        }
+        return SnowTerm.T0;
+    }
+
+    @Deprecated
+    public static SnowTerm getSnowTerm(Biome biome, boolean isServer) {
+        if (biome == null) return SnowTerm.T05;
+        // float t = BiomeClimateManager.getDefaultTemperature(biome, isServer);
+        float t =biome.getModifiedClimateSettings().temperature();
+        if (t > 1 + 0.001f) {
+            return SnowTerm.T1;
+        } else if (t > 0.8 + 0.001f) {
+            return SnowTerm.T08;
+        } else if (t > 0.6 + 0.001f) {
+            return SnowTerm.T06;
+        } else if (t > 0.5 + 0.001f) {
+            return SnowTerm.T05;
+        } else if (t > 0.4 + 0.001f) {
+            return SnowTerm.T04;
+        } else if (t > 0.3 + 0.001f) {
+            return SnowTerm.T03;
+        } else if (t > 0.2 + 0.001f) {
+            return SnowTerm.T02;
+        } else if (t > 0.15 + 0.001f) {
+            return SnowTerm.T015;
+        } else if (t > 0.1 + 0.001f) {
+            return SnowTerm.T01;
+        } else if (t > 0.05 + 0.001f) {
+            return SnowTerm.T05;
+        } else if (t > 0.01 + 0.001f) {
             return SnowTerm.T001;
         }
         return SnowTerm.T0;

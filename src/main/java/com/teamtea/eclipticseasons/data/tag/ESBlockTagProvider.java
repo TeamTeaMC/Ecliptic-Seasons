@@ -3,7 +3,7 @@ package com.teamtea.eclipticseasons.data.tag;
 
 import com.teamtea.eclipticseasons.api.constant.crop.CropHumidityType;
 import com.teamtea.eclipticseasons.api.constant.crop.CropSeasonType;
-import com.teamtea.eclipticseasons.api.constant.tag.SeasonalBlockTags;
+import com.teamtea.eclipticseasons.api.constant.tag.EclipticBlockTags;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
@@ -24,9 +24,9 @@ public final class ESBlockTagProvider extends BlockTagsProvider {
 
     @Override
     protected void addTags(HolderLookup.Provider pProvider) {
-        tag(SeasonalBlockTags.NONE_FALLEN_LEAVES).add(Blocks.CHERRY_LEAVES);
-        tag(SeasonalBlockTags.HABITAT_BUTTERFLY).addTag(BlockTags.FLOWERS);
-        tag(SeasonalBlockTags.HABITAT_FIREFLY).addTag(BlockTags.SMALL_FLOWERS).add(Blocks.GRASS, Blocks.TALL_GRASS);
+        tag(EclipticBlockTags.NONE_FALLEN_LEAVES).add(Blocks.CHERRY_LEAVES);
+        tag(EclipticBlockTags.HABITAT_BUTTERFLY).addTag(BlockTags.FLOWERS);
+        tag(EclipticBlockTags.HABITAT_FIREFLY).addTag(BlockTags.SMALL_FLOWERS).add(Blocks.GRASS, Blocks.TALL_GRASS);
 
         tag(CropSeasonType.SUMMER.getBlockTag()).addOptional(fd_rl("tomatoes"));
         tag(CropHumidityType.AVERAGE_MOIST.getBlockTag()).addOptional(fd_rl("tomatoes"));

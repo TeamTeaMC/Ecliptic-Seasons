@@ -91,7 +91,7 @@ public class SolarDataManager extends SavedData {
             solarTermsDay++;
             solarTermsDay %= 24 * ServerConfig.Season.lastingDaysOfEachTerm.get();
 
-            BiomeClimateManager.updateTemperature(world, getSolarTermIndex());
+            BiomeClimateManager.updateTemperature(world, getSolarTerm());
             sendUpdateMessage(world);
         }
         solarTermsTicks = dayTime;
