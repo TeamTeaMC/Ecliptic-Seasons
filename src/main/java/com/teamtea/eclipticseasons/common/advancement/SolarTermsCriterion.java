@@ -15,7 +15,7 @@ public class SolarTermsCriterion extends SimpleCriterionTrigger<SolarTermsCriter
 
     @Override
     public Codec<TriggerInstance> codec() {
-        return TriggerInstance.CODEC;
+        return SolarTermsCriterion.TriggerInstance.CODEC;
     }
 
     public void trigger(ServerPlayer player) {
@@ -24,22 +24,22 @@ public class SolarTermsCriterion extends SimpleCriterionTrigger<SolarTermsCriter
 
 
     public record TriggerInstance(
-            Optional<ContextAwarePredicate> player) implements SimpleInstance {
+            Optional<ContextAwarePredicate> player) implements SimpleCriterionTrigger.SimpleInstance {
         public static final Codec<TriggerInstance> CODEC = RecordCodecBuilder.create(
                 builder -> builder.group(
-                                EntityPredicate.ADVANCEMENT_CODEC.optionalFieldOf("player").forGetter(TriggerInstance::player))
-                        .apply(builder, TriggerInstance::new)
+                                EntityPredicate.ADVANCEMENT_CODEC.optionalFieldOf("player").forGetter(SolarTermsCriterion.TriggerInstance::player))
+                        .apply(builder, SolarTermsCriterion.TriggerInstance::new)
         );
 
         public static Criterion<TriggerInstance> simple() {
             return EclipticSeasons.ModContents.SOLAR_TERMS.get().createCriterion(
-                    new TriggerInstance(Optional.empty())
+                    new SolarTermsCriterion.TriggerInstance(Optional.empty())
             );
         }
 
         public static Criterion<TriggerInstance> simple2() {
             return EclipticSeasons.ModContents.heatStroke.get().createCriterion(
-                    new TriggerInstance(Optional.empty())
+                    new SolarTermsCriterion.TriggerInstance(Optional.empty())
             );
         }
 

@@ -12,7 +12,6 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
@@ -218,7 +217,7 @@ public class MapChecker {
     public static boolean shouldSnowAt(Level level, BlockPos pos, BlockState state, RandomSource random, long seed) {
         var biomeHolder = getSurfaceBiome(level, pos);
         if (WeatherManager.getSnowDepthAtBiome(level, biomeHolder.value()) > Math.abs(seed % 100)) {
-            if (ServerConfig.Debug.notSnowyUnderLight.get()) {
+            if (ServerConfig.Debug.notSnowyUnderLight0.get()) {
                 // 这里检查三次
                 if (checkCancelAndAbove(level, pos, 4)) {
                     return false;

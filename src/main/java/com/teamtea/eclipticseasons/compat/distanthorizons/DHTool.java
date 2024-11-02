@@ -104,7 +104,7 @@ public class DHTool {
                                 int bottomY = FullDataPointUtil.getBottomY(fullData);
                                 int blockHeight = FullDataPointUtil.getHeight(fullData);
                                 int topY = bottomY + blockHeight;
-                                if (ServerConfig.Debug.notSnowyUnderLight.get()
+                                if (ServerConfig.Debug.notSnowyUnderLight0.get()
                                         && iBlockStateWrapper_NowQuery instanceof BlockStateWrapper blockStateWrapper_NowQuery) {
                                     if (blockStateWrapper_NowQuery.blockState != null &&
                                             blockStateWrapper_NowQuery.blockState.getBlock() instanceof LightBlock) {
