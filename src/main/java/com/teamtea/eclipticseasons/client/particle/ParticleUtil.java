@@ -124,7 +124,7 @@ public class ParticleUtil {
             int color = Minecraft.getInstance().getBlockColors().getColor(state, level, pos, 2);
             if (new Color(color).equals(Color.WHITE)) {
                 color = Minecraft.getInstance().getBlockColors().getColor(state, level, pos);
-                color = Color.PINK.getRGB();
+                // color = Color.PINK.getRGB();
             }
             VoxelShape voxelshape = state.getShape(level, pos);
             double d0 = 0.25D;
