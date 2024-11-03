@@ -1,14 +1,18 @@
 package com.teamtea.eclipticseasons.client.debug;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.teamtea.eclipticseasons.api.constant.biome.Humidity;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
+import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.Holder;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
@@ -22,7 +26,7 @@ public final class DebugInfoRenderer {
         this.mc = mc;
     }
 
-    public void renderStatusBar(GuiGraphics matrixStack, int screenWidth, int screenHeight,ClientLevel clientLevel, LocalPlayer player, SolarTerm solar, long dayTime, double env, int solarTime) {
+    public void renderStatusBar(GuiGraphics matrixStack, int screenWidth, int screenHeight, LocalPlayer player, Holder<Biome> standBiome, SolarTerm solar, long dayTime, double env, double d, Humidity h, int solarTime) {
 
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         // RenderSystem.enableAlphaTest();
@@ -32,19 +36,24 @@ public final class DebugInfoRenderer {
         String solarS = "Solar Terms Day: " + solar;
         String dayS = "Day Time: " + dayTime;
         String envS = "Env Temp: " + env;
+        String dS = "Downfall: " + d;
+        String jS = "Humidity: " + h;
         String solarTimeS = "Solar Time: " + solarTime;
 
         int index = 0;
+        String biomesS = "Biome: " + Component.translatable(Util.makeDescriptionId("biome", standBiome.unwrapKey().get().location())).getString();
 
         drawInfo(matrixStack, screenWidth, screenHeight, solarS, index++);
         drawInfo(matrixStack, screenWidth, screenHeight, dayS, index++);
+        drawInfo(matrixStack, screenWidth, screenHeight, biomesS, index++);
         drawInfo(matrixStack, screenWidth, screenHeight, envS, index++);
+        drawInfo(matrixStack, screenWidth, screenHeight, dS, index++);
+        drawInfo(matrixStack, screenWidth, screenHeight, jS, index++);
         drawInfo(matrixStack, screenWidth, screenHeight, solarTimeS, index++);
 
         for (Level level : WeatherManager.BIOME_WEATHER_LIST.keySet()) {
             if (level.dimension() == Level.OVERWORLD && level instanceof ServerLevel) {
                 {
-                    var standBiome = level.getBiome(player.getOnPos());
                     for (WeatherManager.BiomeWeather biomeWeather : WeatherManager.getBiomeList(level)) {
                         if (((Holder.Reference<Biome>) biomeWeather.biomeHolder).key().location().equals(((Holder.Reference<Biome>) standBiome).key().location())) {
                             var solarTerm = SolarHolders.getSaveData(level).getSolarTerm();

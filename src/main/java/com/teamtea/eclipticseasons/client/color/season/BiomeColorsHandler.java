@@ -26,6 +26,7 @@ import net.minecraft.world.level.GrassColor;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.state.BlockState;
 
+import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -49,7 +50,7 @@ public class BiomeColorsHandler {
                     reloadColors();
                 }
                 // 由于基本温度被更改
-                double temperature = Mth.clamp(biome.getModifiedClimateSettings().temperature()+ EclipticUtil.getNowSolarTerm(clientLevel).getTemperatureChange(), 0.0F, 1.0F);
+                double temperature = Mth.clamp(biome.getModifiedClimateSettings().temperature() + EclipticUtil.getNowSolarTerm(clientLevel).getTemperatureChange(), 0.0F, 1.0F);
                 double humidity = Mth.clamp(biome.getModifiedClimateSettings().downfall(), 0.0F, 1.0F);
                 humidity = humidity * temperature;
                 int i = (int) ((1.0D - temperature) * 255.0D);
@@ -73,13 +74,13 @@ public class BiomeColorsHandler {
                 if (needRefresh) {
                     reloadColors();
                 }
-                double temperature = Mth.clamp(biome.getModifiedClimateSettings().temperature()+ EclipticUtil.getNowSolarTerm(clientLevel).getTemperatureChange(), 0.0F, 1.0F);
+                double temperature = Mth.clamp(biome.getModifiedClimateSettings().temperature() + EclipticUtil.getNowSolarTerm(clientLevel).getTemperatureChange(), 0.0F, 1.0F);
                 double humidity = Mth.clamp(biome.getModifiedClimateSettings().downfall(), 0.0F, 1.0F);
                 humidity = humidity * temperature;
                 int i = (int) ((1.0D - temperature) * 255.0D);
                 int j = (int) ((1.0D - humidity) * 255.0D);
                 int k = j << 8 | i;
-                
+
                 int[] newFoliageBuffer = newFoliageBufferMap.getOrDefault(BiomeClimateManager.getTag(biome), FoliageColor.pixels);
                 return k > newFoliageBuffer.length ? originColor : newFoliageBuffer[k];
             }).orElse(originColor);
@@ -135,6 +136,8 @@ public class BiomeColorsHandler {
 
     // 白桦在秋季通常会变色。它的叶子从绿色变成黄色或金色，有时甚至带有橙色的色调
     public static int getBirchColor(BlockState state, BlockAndTintGetter blockAndTintGetter, BlockPos pos, int tintIndex) {
+        // if (pos==null)return FoliageColor.getBirchColor();
+
         return getLeavesColor(FoliageColor.getBirchColor(), BirchLeavesColor.values(), pos);
     }
 
@@ -148,10 +151,28 @@ public class BiomeColorsHandler {
         if (ClientConfig.Renderer.seasonalGrassColorChange.get()) {
             if (pos != null &&
                     Minecraft.getInstance().level instanceof ClientLevel
-                    && MapChecker.isValidDimension( Minecraft.getInstance().level)) {
-                SolarTerm solarTerm = EclipticSeasonsApi.getInstance().getSolarTerm( Minecraft.getInstance().level);
+                    && MapChecker.isValidDimension(Minecraft.getInstance().level)) {
+
+                SolarTerm solarTerm = EclipticSeasonsApi.getInstance().getSolarTerm(Minecraft.getInstance().level);
                 LeaveColor leaveColor = values[solarTerm.ordinal()];
-                return ColorHelper.simplyMixColor(leaveColor.getColor(), leaveColor.getMix(),
+
+                int color = leaveColor.getColor();
+
+                if (values instanceof BirchLeavesColor[]
+                        && solarTerm.isInTerms(SolarTerm.END_OF_HEAT, SolarTerm.LIGHT_SNOW)) {
+                    float saturation = 1.0f;
+                    float brightness = 1.0f;
+                    float xChange = (float) ((Math.sin((float) pos.getX() / 16) + 1) / 2);
+                    float yChange = (float) ((Math.sin((float) pos.getY() / 128) + 1) / 2);
+                    float zChange = (float) ((Math.sin((float) pos.getZ() / 32) + 1) / 2);
+
+                    float change = (xChange + yChange + zChange) / 3;
+                    float hue = 0.025f + change * 0.14f;
+                    Color foliage = Color.getHSBColor(hue, saturation, brightness);
+                    color = foliage.getRGB();
+                }
+
+                return ColorHelper.simplyMixColor(color, leaveColor.getMix(),
                         base, 1 - leaveColor.getMix());
             }
         }
