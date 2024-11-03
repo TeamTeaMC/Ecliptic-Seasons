@@ -145,11 +145,30 @@ public class BiomeColorsHandler {
 
     public static int getLeavesColor(int base, LeaveColor[] values, BlockPos pos) {
         if (ClientConfig.Renderer.seasonalGrassColorChange.get()) {
-            if (pos != null && Minecraft.getInstance().level instanceof ClientLevel clientLevel
-                    && MapChecker.isValidDimension(clientLevel)) {
-                SolarTerm solarTerm = EclipticSeasonsApi.getInstance().getSolarTerm(clientLevel);
+            if (pos != null &&
+                    Minecraft.getInstance().level instanceof ClientLevel
+                    && MapChecker.isValidDimension(Minecraft.getInstance().level)) {
+
+                SolarTerm solarTerm = EclipticSeasonsApi.getInstance().getSolarTerm(Minecraft.getInstance().level);
                 LeaveColor leaveColor = values[solarTerm.ordinal()];
-                return ColorHelper.simplyMixColor(leaveColor.getColor(), leaveColor.getMix(),
+
+                int color = leaveColor.getColor();
+
+                if (values instanceof BirchLeavesColor[]
+                        && solarTerm.isInTerms(SolarTerm.END_OF_HEAT, SolarTerm.LIGHT_SNOW)) {
+                    float saturation = 1.0f;
+                    float brightness = 1.0f;
+                    float xChange = (float) ((Math.sin((float) pos.getX() / 16) + 1) / 2);
+                    float yChange = (float) ((Math.sin((float) pos.getY() / 128) + 1) / 2);
+                    float zChange = (float) ((Math.sin((float) pos.getZ() / 32) + 1) / 2);
+
+                    float change = (xChange + yChange + zChange) / 3;
+                    float hue = 0.025f + change * 0.14f;
+                    Color foliage = Color.getHSBColor(hue, saturation, brightness);
+                    color = foliage.getRGB();
+                }
+
+                return ColorHelper.simplyMixColor(color, leaveColor.getMix(),
                         base, 1 - leaveColor.getMix());
             }
         }
