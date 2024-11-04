@@ -38,13 +38,16 @@ fix snowy block renderer
 ** fix the render of flower on grass block
 
 0.6
-use vanilla weather as default
 fix mixin crash
 update config
 update api package
-* fix compatibility with Simple Cloud
+* fix crash with Simple Cloud
 
 0.6.1
 you can use vanilla weather by close Solar Weather
 fix the color of fallen leaves
 fix debug info
+
+0.7.0
+snowy blocks can now be interacted with (client-side effect only, not saveable)
+when you break the snowy block, the thin snow layer will disappear until it starts to fall again

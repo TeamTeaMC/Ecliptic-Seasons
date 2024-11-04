@@ -72,9 +72,7 @@ public class ModelManager {
     public static ResourceLocation snow_height2 = EclipticSeasons.rl("block/snow_height2");
     public static ResourceLocation snow_height2_top = EclipticSeasons.rl("block/snow_height2_top");
     public static ResourceLocation grass_flower = EclipticSeasons.rl("block/grass_flower");
-    public static ResourceLocation butterfly1 = EclipticSeasons.rl("block/butterfly_blue");
-    public static ResourceLocation butterfly2 = EclipticSeasons.rl("block/butterfly_magenta");
-    public static ResourceLocation butterfly3 = EclipticSeasons.rl("block/butterfly_red");
+
 
     public static List<ResourceLocation> flower_on_grass = List.of(1, 2, 3, 4, 5, 6).stream().map(
             i -> EclipticSeasons.rl("block/flower_%s".formatted(i))

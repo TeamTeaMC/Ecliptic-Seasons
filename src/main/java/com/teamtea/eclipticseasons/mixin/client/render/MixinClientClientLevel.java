@@ -1,4 +1,4 @@
-package com.teamtea.eclipticseasons.mixin.client;
+package com.teamtea.eclipticseasons.mixin.client.render;
 
 
 import com.teamtea.eclipticseasons.client.particle.ParticleUtil;

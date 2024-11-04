@@ -318,6 +318,12 @@ public class MapChecker {
         }
         return offset;
     }
-
+    public static void updatePosForce(BlockPos setPos, int y) {
+        int x = MapChecker.blockToSectionCoord(setPos.getX());
+        int z = MapChecker.blockToSectionCoord(setPos.getZ());
+        ChunkInfoMap map = MapChecker.getChunkMap(x, z);
+        if (map != null)
+            map.updateHeight(setPos, y);
+    }
 
 }

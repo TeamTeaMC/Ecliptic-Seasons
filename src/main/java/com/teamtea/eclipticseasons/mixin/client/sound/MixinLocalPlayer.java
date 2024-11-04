@@ -1,4 +1,4 @@
-package com.teamtea.eclipticseasons.mixin.client;
+package com.teamtea.eclipticseasons.mixin.client.sound;
 
 
 import com.llamalad7.mixinextras.sugar.Local;

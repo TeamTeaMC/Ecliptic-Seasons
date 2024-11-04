@@ -64,9 +64,6 @@ public class ClientSetup {
         event.register(ModelManager.snow_height2);
         event.register(ModelManager.snow_height2_top);
         event.register(ModelManager.grass_flower);
-        event.register(ModelManager.butterfly1);
-        event.register(ModelManager.butterfly2);
-        event.register(ModelManager.butterfly3);
 
         ModelManager.flower_on_grass.forEach(event::register);
 

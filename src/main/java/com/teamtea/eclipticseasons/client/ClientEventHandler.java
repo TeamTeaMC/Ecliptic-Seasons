@@ -4,6 +4,7 @@ package com.teamtea.eclipticseasons.client;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.client.core.ClientWeatherChecker;
+import com.teamtea.eclipticseasons.client.core.map.ClientMapFixer;
 import com.teamtea.eclipticseasons.client.render.ClientRenderer;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
@@ -25,6 +26,7 @@ import net.minecraftforge.client.event.RenderLevelStageEvent;
 import net.minecraftforge.client.event.ViewportEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
+import net.minecraftforge.event.level.ChunkEvent;
 import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -75,13 +77,19 @@ public final class ClientEventHandler {
             }
         }
     }
-
+    @SubscribeEvent
+    public static void onChunkUnloadEvent(ChunkEvent.Unload event) {
+        if (event.getLevel() instanceof ClientLevel clientLevel) {
+            ClientMapFixer.clearChunk(event.getChunk().getPos());
+        }
+    }
 
     @SubscribeEvent
     public static void onLevelUnloadEvent(LevelEvent.Unload event) {
         if (event.getLevel() instanceof ClientLevel clientLevel) {
             MapChecker.clearHeightMap();
             ClientWeatherChecker.unloadLevel(clientLevel);
+            ClientMapFixer.clearAll();
         }
     }
 
@@ -107,6 +115,7 @@ public final class ClientEventHandler {
     public static void onWorldTick(TickEvent.LevelTickEvent event) {
         if (event.level instanceof ClientLevel clientLevel) {
             ClientWeatherChecker.tickAllCheck(clientLevel);
+            ClientMapFixer.tick(clientLevel);
         }
         if (ClientConfig.Renderer.forceChunkRenderUpdate.get()) {
             if (event.phase.equals(TickEvent.Phase.END)

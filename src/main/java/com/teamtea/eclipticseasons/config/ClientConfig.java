@@ -32,6 +32,7 @@ public class ClientConfig {
 
         public static ForgeConfigSpec.BooleanValue snowyWinter;
         public static ForgeConfigSpec.BooleanValue deeperSnow;
+        public static ForgeConfigSpec.BooleanValue realisticSnowyChange;
 
         public static ForgeConfigSpec.BooleanValue seasonalGrassColorChange;
         public static ForgeConfigSpec.BooleanValue flowerOnGrass;
@@ -45,6 +46,8 @@ public class ClientConfig {
                     .define("UseVanillaCheck", false);
             snowyWinter = builder.comment("If snow falls during cold weather, it will gradually cover all solid blocks and grass.")
                     .define("SnowyWinter", true);
+            realisticSnowyChange = builder.comment("When the block is updated, the snow cover will not refresh immediately, but will be updated after a delay. Please note that this will consume more performance..")
+                    .define("RealisticSnowyChange", true);
             deeperSnow = builder.comment("Occasionally a thicker layer of snow will cover the flowers and grass, especially.")
                     .define("DeeperSnow", false);
 
