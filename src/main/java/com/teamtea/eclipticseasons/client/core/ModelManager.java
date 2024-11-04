@@ -145,6 +145,8 @@ public class ModelManager {
     private final static List<BakedQuad> EMPTY = List.of();
 
     public static List<BakedQuad> cancelTop(BakedModel bakedModel, BlockAndTintGetter blockAndTintGetter, BlockState state, BlockPos pos, Direction direction, RandomSource random, long seed, List<BakedQuad> original) {
+        if (true)
+            return original;
         if (!original.isEmpty()
                 && (direction == Direction.UP || direction == null)
                 && snowyModelsCache.getOrDefault(bakedModel, -1) == -1
