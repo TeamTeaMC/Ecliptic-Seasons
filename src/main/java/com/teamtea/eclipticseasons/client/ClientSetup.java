@@ -76,7 +76,9 @@ public class ClientSetup {
             BiomeColors.GRASS_COLOR_RESOLVER = BiomeColorsHandler.GRASS_COLOR;
             BiomeColors.FOLIAGE_COLOR_RESOLVER = BiomeColorsHandler.FOLIAGE_COLOR;
 
-            ItemBlockRenderTypes.setRenderLayer(EclipticSeasons.ModContents.snowyBlock.get(), RenderType.cutoutMipped());
+            ItemBlockRenderTypes.setRenderLayer(EclipticSeasons.ModContents.bamboo_wind_chimes.get(), RenderType.cutoutMipped());
+            ItemBlockRenderTypes.setRenderLayer(EclipticSeasons.ModContents.paper_wind_chimes.get(), RenderType.cutoutMipped());
+            ItemBlockRenderTypes.setRenderLayer(EclipticSeasons.ModContents.wind_chimes.get(), RenderType.cutoutMipped());
 
         });
     }
