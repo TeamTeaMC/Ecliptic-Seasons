@@ -1,6 +1,5 @@
 {
-	"credit": "Made by Snownee",
-	"render_type": "cutout",
+	"credit": "Made by Joe Vettek",
 	"textures": {
 		"0": "eclipticseasons:block/snow_overlay",
 		"1": "block/snow",
@@ -8,8 +7,8 @@
 	},
 	"elements": [
 		{
-			"from": [-0.05, 0, -0.05],
-			"to": [16.05, 16.1, 16.05],
+			"from": [ 0, 0, 0 ],
+			"to": [ 16, 16, 16 ],
 			"faces": {
 				"north": {"uv": [0, 0, 16, 16], "texture": "#0", "cullface": "north"},
 				"east": {"uv": [0, 0, 16, 16], "texture": "#0", "cullface": "east"},

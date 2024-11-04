@@ -76,7 +76,7 @@ public abstract class MixinChunkRenderDispatcher {
 
     @Unique
     private void eclipticSeasons$renderModel(BakedModel bakedModel, SectionBufferBuilderPack pChunkBufferBuilderPack, BlockPos pos, BlockState state, PoseStack posestack, RenderChunkRegion renderchunkregion, RandomSource random, Map<RenderType, BufferBuilder> renderTypeSet) {
-        RenderType renderType = ModelManager.getRenderType();
+        RenderType renderType = ModelManager.getRenderType(state);
         BufferBuilder bufferbuilder2 = getOrBeginLayer(renderTypeSet, pChunkBufferBuilderPack, renderType);
         SnowRenderer.renderSnowyBlock(bakedModel, bufferbuilder2, pos, state, posestack, renderchunkregion, random, renderType);
     }

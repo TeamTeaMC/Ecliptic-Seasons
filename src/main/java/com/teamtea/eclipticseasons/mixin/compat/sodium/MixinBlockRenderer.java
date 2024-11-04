@@ -35,7 +35,7 @@ public abstract class MixinBlockRenderer extends AbstractBlockRenderContext {
 
         if (snowModel != null) {
             original = false;
-            this.type = RenderType.cutoutMipped();
+            this.type = ModelManager.getRenderType(state);
             ((FabricBakedModel)snowModel).emitBlockQuads(this.level, state, pos, this.randomSupplier, this);
         }
         return original;

@@ -1,32 +1,34 @@
 {
-	"credit": "Made by Snownee",
+	"credit": "Made by Joe Vettek",
 	"parent": "block/block",
 	"render_type": "cutout_mipped",
 	"textures": {
 		"1": "block/snow",
 		"2": "eclipticseasons:block/snow_overlay",
+		"3": "eclipticseasons:block/snow_overlay_half_left",
+		"4": "eclipticseasons:block/snow_overlay_half_right",
 		"particle": "block/snow"
 	},
 	"elements": [
 		{
-			"from": [-0.05, 3.1, -0.05],
-			"to": [8.05, 8.1, 16.05],
+			"from": [0, 0, 0],
+			"to": [16, 8, 16],
 			"faces": {
-				"north": {"uv": [8, 2, 16, 7], "texture": "#2"},
-				"south": {"uv": [0, 2, 8, 7], "texture": "#2"},
-				"west": {"uv": [0, 2, 16, 7], "texture": "#2"},
-				"up": {"uv": [0, 0, 7.99, 16], "texture": "#1"}
+				"north": {"uv": [0, 0, 16, 8], "texture": "#4"},
+				"south": {"uv": [0, 0, 16, 8], "texture": "#3"},
+				"west": {"uv": [0, 0, 16, 8], "texture": "#2"},
+				"up": {"uv": [0, 0, 16, 16], "texture": "#1"}
 			}
 		},
 		{
-			"from": [7.95, 8.1, -0.05],
-			"to": [16.05, 16.1, 16.05],
+			"from": [8, 8, 0],
+			"to": [16, 16, 16],
 			"faces": {
 				"north": {"uv": [0, 0, 8.01, 8], "texture": "#2"},
 				"east": {"uv": [0, 0, 16, 8], "texture": "#2"},
 				"south": {"uv": [8, 0, 16, 8], "texture": "#2"},
 				"west": {"uv": [0, 0, 16, 8], "texture": "#2"},
-				"up": {"uv": [0, 0, 7.99, 16], "texture": "#1"}
+				"up": {"uv": [0, 0, 8, 16], "texture": "#1"}
 			}
 		}
 	]

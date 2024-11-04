@@ -58,7 +58,7 @@ public abstract class MixinBlockRenderTask {
                     snowModel,
                     state.getSeed(mutableBlockPos),
                     null,
-                    ModelManager.getRenderType());
+                    ModelManager.getRenderType(state));
             cache.getBlockRenderer().renderModel(ctx, buffers);
         }
         return original;

@@ -40,6 +40,7 @@ public class MapChecker {
     public static final int FLAG_BLOCK = 1;
     public static final int FLAG_SLAB = 2;
     public static final int FLAG_STAIRS = 3;
+    public static final int FLAG_STAIRS_TOP = 301;
     public static final int FLAG_LEAVES = 4;
     public static final int FLAG_GRASS = 5;
     public static final int FLAG_GRASS_LARGE = 501;
@@ -302,16 +303,18 @@ public class MapChecker {
             flag = MapChecker.FLAG_LEAVES;
         } else if ((
                 // state.isSolidRender(level, pos)
-                Block.isShapeFullBlock(state.getCollisionShape(level,pos))
-                // state.isSolid()
-                || onBlock instanceof LeavesBlock
-                || (onBlock instanceof SlabBlock && state.getValue(SlabBlock.TYPE) == SlabType.TOP)
-                || (onBlock instanceof StairBlock && state.getValue(StairBlock.HALF) == Half.TOP))) {
+                Block.isShapeFullBlock(state.getCollisionShape(level, pos))
+                        // state.isSolid()
+                        || onBlock instanceof LeavesBlock
+                        || (onBlock instanceof SlabBlock && state.getValue(SlabBlock.TYPE) == SlabType.TOP)
+        )) {
             flag = MapChecker.FLAG_BLOCK;
         } else if (onBlock instanceof SlabBlock) {
             flag = MapChecker.FLAG_SLAB;
         } else if (onBlock instanceof StairBlock) {
-            flag = MapChecker.FLAG_STAIRS;
+            if (state.getValue(StairBlock.HALF) == Half.TOP)
+                flag = MapChecker.FLAG_STAIRS_TOP;
+            else flag = MapChecker.FLAG_STAIRS;
         } else if (MapChecker.LowerPlant.contains(onBlock)) {
             flag = MapChecker.FLAG_GRASS;
         } else if (MapChecker.LARGE_GRASS.contains(onBlock)) {

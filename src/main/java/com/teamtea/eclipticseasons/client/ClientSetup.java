@@ -51,6 +51,7 @@ public class ClientSetup {
     public static void registerExtraModels(ModelEvent.RegisterAdditional event) {
         // Minecraft.getInstance().getResourceManager().listPacks().toList().get(0).getResource(PackType.CLIENT_RESOURCES, ResourceLocation.withDefaultNamespace("textures/block/snow.png")).get()
         // IOUtils.toString(Minecraft.getInstance().getResourceManager().listPacks().toList().get(0).getResource(PackType.SERVER_DATA, ResourceLocation.withDefaultNamespace("recipe/yellow_terracotta.json")).get(), StandardCharsets.UTF_8)        event.register(ModelManager.snowy_fern);
+        event.register(ModelManager.stairs_top);
         event.register(ModelManager.snowy_fern);
         event.register(ModelManager.snowy_grass);
         event.register(ModelManager.snowy_tall_grass_top);

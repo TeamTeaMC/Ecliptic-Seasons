@@ -47,6 +47,7 @@ public class ModelManager {
     LazyGet<BakedModel> snowModel =
             LazyGet.of(() -> models.get(new ModelResourceLocation(ResourceLocation.parse("minecraft:snow_block"), "")));
 
+    public static ModelResourceLocation stairs_top = mrl("block/stairs_top");
     public static ModelResourceLocation snowy_fern = mrl("block/snowy_fern");
     public static ModelResourceLocation snowy_grass = mrl("block/snowy_grass");
     public static ModelResourceLocation snowy_large_fern_bottom = mrl("block/snowy_large_fern_bottom");
@@ -98,6 +99,8 @@ public class ModelManager {
             snowModel = snowOverlayLeaves.get();
         } else if (flag == MapChecker.FLAG_SLAB) {
             snowModel = snowySlabBottom.get();
+        }else if (flag == MapChecker.FLAG_STAIRS_TOP) {
+            snowModel =  models.get(stairs_top);
         } else if (models != null && flag == MapChecker.FLAG_STAIRS) {
             if (snowState != null)
                 snowModel = models.get(BlockModelShaper.stateToModelLocation(snowState));
@@ -395,7 +398,9 @@ public class ModelManager {
         return replace;
     }
 
-    public static RenderType getRenderType() {
+    public static RenderType getRenderType(BlockState state) {
+        if(ItemBlockRenderTypes.getChunkRenderType(state)==RenderType.translucent())
+            return RenderType.translucent();
         return RenderType.cutoutMipped();
         // return Minecraft.useFancyGraphics() ?
         //         RenderType.cutoutMipped() : RenderType.solid();
