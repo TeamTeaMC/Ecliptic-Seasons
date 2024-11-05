@@ -37,25 +37,25 @@ public abstract class MixinLevelRender {
     public ClientLevel level;
 
 
-    @WrapOperation(
-            method = {"tickRain"},
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/LevelReader;getBiome(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/core/Holder;")
-    )
-    private Holder<Biome> ecliptic$tickRain_getBiome(LevelReader instance, BlockPos pPos, Operation<Holder<Biome>> original) {
-        return ServerConfig.Weather.useSolarWeather.get() && instance instanceof Level clevel ?
-                MapChecker.getSurfaceBiome(clevel, pPos) :
-                original.call(instance, pPos);
-    }
-
-    @WrapOperation(
-            method = {"renderSnowAndRain"},
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;getBiome(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/core/Holder;")
-    )
-    private Holder<Biome> ecliptic$tickRain_getBiome(Level instance, BlockPos pPos, Operation<Holder<Biome>> original) {
-        return ServerConfig.Weather.useSolarWeather.get() && instance instanceof Level clevel ?
-                MapChecker.getSurfaceBiome(clevel, pPos) :
-                original.call(instance, pPos);
-    }
+    // @WrapOperation(
+    //         method = {"tickRain"},
+    //         at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/LevelReader;getBiome(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/core/Holder;")
+    // )
+    // private Holder<Biome> ecliptic$tickRain_getBiome(LevelReader instance, BlockPos pPos, Operation<Holder<Biome>> original) {
+    //     return ServerConfig.Weather.useSolarWeather.get() && instance instanceof Level clevel ?
+    //             MapChecker.getSurfaceBiome(clevel, pPos) :
+    //             original.call(instance, pPos);
+    // }
+    //
+    // @WrapOperation(
+    //         method = {"renderSnowAndRain"},
+    //         at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;getBiome(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/core/Holder;")
+    // )
+    // private Holder<Biome> ecliptic$tickRain_getBiome(Level instance, BlockPos pPos, Operation<Holder<Biome>> original) {
+    //     return ServerConfig.Weather.useSolarWeather.get() && instance instanceof Level clevel ?
+    //             MapChecker.getSurfaceBiome(clevel, pPos) :
+    //             original.call(instance, pPos);
+    // }
 
     // ModifyExpressionValue may cost much time than it
     @WrapOperation(
@@ -63,11 +63,14 @@ public abstract class MixinLevelRender {
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/biome/Biome;getPrecipitationAt(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/biome/Biome$Precipitation;")
     )
     private Biome.Precipitation ecliptic$renderSnowAndRain_tickRain_getPrecipitationAt(Biome biome, BlockPos pos, Operation<Biome.Precipitation> original) {
-        if (ServerConfig.Weather.useSolarWeather.get())
-            return level != null && (WeatherManager.isRainingOrSnowAt(level, pos)
-                    || ClientWeatherChecker.isBiomeRainyLast(biome)) ?
-                    WeatherManager.getPrecipitationAt(level, biome, pos) : Biome.Precipitation.NONE;
-        else return VanillaWeather.handlePrecipitationAt(level, biome, pos);
+        if (ServerConfig.Weather.useSolarWeather.get()) {
+            if (level == null)
+                return original.call(biome, pos);
+            if (ClientWeatherChecker.isBiomeRainyLast(biome))
+                return WeatherManager.getPrecipitationAt(level, biome, pos);
+            return WeatherManager.getRainOrSnow(level, biome, pos);
+        }
+         return VanillaWeather.handlePrecipitationAt(level, biome, pos);
     }
 
 

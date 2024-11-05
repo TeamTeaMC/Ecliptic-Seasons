@@ -81,8 +81,8 @@ public class BiomeClimateManager {
     }
 
     public static Boolean agent$hasPrecipitation(Biome biome) {
-        // return !getTag(biome).equals(ClimateTypeBiomeTags.RAINLESS);
-        return WeatherManager.getPrecipitationAt(biome, BlockPos.ZERO)!= Biome.Precipitation.NONE;
+        return !getTag(biome).equals(ClimateTypeBiomeTags.RAINLESS);
+        // return WeatherManager.getPrecipitationAt(biome, BlockPos.ZERO)!= Biome.Precipitation.NONE;
     }
 
 

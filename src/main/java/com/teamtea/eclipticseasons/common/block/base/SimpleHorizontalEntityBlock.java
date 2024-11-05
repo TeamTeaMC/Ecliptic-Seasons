@@ -12,7 +12,7 @@ public abstract class SimpleHorizontalEntityBlock extends SimpleEntityBlock {
 
 	public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
 
-	public SimpleHorizontalEntityBlock(BlockBehaviour.Properties properties) {
+	public SimpleHorizontalEntityBlock(Properties properties) {
 		super(properties);
 	}
 

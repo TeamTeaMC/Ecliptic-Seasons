@@ -217,16 +217,13 @@ public class MapChecker {
 
     public static boolean shouldSnowAt(Level level, BlockPos pos, BlockState state, RandomSource random, long seed) {
         var biomeHolder = getSurfaceBiome(level, pos);
+        boolean isSnowy = false;
         if (WeatherManager.getSnowDepthAtBiome(level, biomeHolder.value()) > Math.abs(seed % 100)) {
             if (ServerConfig.Debug.notSnowyUnderLight0.get()) {
-                // 这里检查三次
-                if (checkCancelAndAbove(level, pos, 4)) {
-                    return false;
-                }
-            }
-            return true;
+                isSnowy = checkCancelAndAbove(level, pos, 4);
+            } else isSnowy = true;
         }
-        return false;
+        return isSnowy;
     }
 
     public static boolean shouldSnowAtBiome(Level level, Biome biome, BlockState state, RandomSource random, long seed) {

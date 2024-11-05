@@ -180,8 +180,7 @@ public class WeatherManager {
         // Thread.currentThread().getStackTrace()
         // var biome = serverLevel.getBiome(pos);
         var biome = MapChecker.getSurfaceBiome(serverLevel, pos);
-        return isRainingOrSnowAtBiome(serverLevel, biome.value())
-                && getPrecipitationAt(serverLevel,biome.value(),pos)== Biome.Precipitation.RAIN;
+        return getRainOrSnow(serverLevel,biome.value(),pos)== Biome.Precipitation.RAIN;
     }
 
     public static Boolean isRainingOrSnowAt(Level serverLevel, BlockPos pos) {
@@ -213,6 +212,25 @@ public class WeatherManager {
             }
         // EclipticSeasons.logger(ws,Thread.currentThread().getStackTrace());
         return false;
+    }
+
+    public static Biome.Precipitation getRainOrSnow(Level level, Biome biome, BlockPos pos) {
+        if (!MapChecker.isValidDimension(level)) {
+            return Biome.Precipitation.NONE;
+        }
+        var ws = getBiomeList(level);
+        if (ws != null)
+            for (BiomeWeather biomeWeather : ws) {
+                if (biome == biomeWeather.biomeHolder.value()) {
+                    var solarTerm = EclipticUtil.getNowSolarTerm(level);
+                    var snowTerm = SolarTerm.getSnowTerm(biome);
+                    boolean flag_cold = solarTerm.isInTerms(snowTerm.getStart(), snowTerm.getEnd());
+                    return flag_cold
+                            || BiomeClimateManager.getDefaultTemperature(biome, level instanceof ServerLevel) <= BiomeClimateManager.SNOW_LEVEL ?
+                            Biome.Precipitation.SNOW : Biome.Precipitation.RAIN;
+                }
+            }
+        return Biome.Precipitation.NONE;
     }
 
 
