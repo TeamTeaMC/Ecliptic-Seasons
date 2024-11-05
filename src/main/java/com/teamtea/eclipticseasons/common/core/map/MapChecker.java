@@ -45,7 +45,7 @@ public class MapChecker {
     public static final int FLAG_GRASS = 5;
     public static final int FLAG_GRASS_LARGE = 501;
     public static final int FLAG_FARMLAND = 6;
-    public static final List<Block> LowerPlant = List.of(Blocks.SHORT_GRASS, Blocks.FERN, Blocks.DANDELION);
+    public static final List<Block> LowerPlant = List.of(Blocks.SHORT_GRASS, Blocks.FERN);
     public static final List<Block> LARGE_GRASS = List.of(Blocks.TALL_GRASS, Blocks.LARGE_FERN);
     private static boolean updateLock;
 

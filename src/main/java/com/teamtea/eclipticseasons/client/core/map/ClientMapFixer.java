@@ -100,7 +100,9 @@ public class ClientMapFixer {
                 (chunkPos, xzPosList) -> {
                     for (int i = 0; i < xzPosList.size(); i++) {
                         XZPos xzPos = xzPosList.get(i);
+                        // 这里需要限制，一次不能刷新太多，不然会超载
                         if (tick - xzPos.startTick() > 160
+                                &&updateSectionsList.size()<12
                         ) {
                             var updatePos = new BlockPos.MutableBlockPos(xzPos.x(), xzPos.startY(), xzPos.z());
                             if (

@@ -1,4 +1,4 @@
-package com.teamtea.eclipticseasons.compat.dynamictrees;// package com.teamtea.eclipticseasons.compat.dynamictrees;
+// package com.teamtea.eclipticseasons.compat.dynamictrees;
 //
 // import com.ferreusveritas.dynamictrees.compat.CompatHandler;
 // import com.ferreusveritas.dynamictrees.compat.season.ActiveSeasonGrowthCalculator;

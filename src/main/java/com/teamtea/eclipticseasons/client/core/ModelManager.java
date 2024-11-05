@@ -54,8 +54,6 @@ public class ModelManager {
     public static ModelResourceLocation snowy_large_fern_top = mrl("block/snowy_large_fern_top");
     public static ModelResourceLocation snowy_tall_grass_bottom = mrl("block/snowy_tall_grass_bottom");
     public static ModelResourceLocation snowy_tall_grass_top = mrl("block/snowy_tall_grass_top");
-    public static ModelResourceLocation snowy_dandelion = mrl("block/snowy_dandelion");
-    public static ModelResourceLocation dandelion_top = mrl("block/dandelion_top");
     public static ModelResourceLocation overlay_2 = mrl("block/overlay_2");
     public static ModelResourceLocation snow_height2 = mrl("block/snow_height2");
     public static ModelResourceLocation snow_height2_top = mrl("block/snow_height2_top");
@@ -99,8 +97,8 @@ public class ModelManager {
             snowModel = snowOverlayLeaves.get();
         } else if (flag == MapChecker.FLAG_SLAB) {
             snowModel = snowySlabBottom.get();
-        }else if (flag == MapChecker.FLAG_STAIRS_TOP) {
-            snowModel =  models.get(stairs_top);
+        } else if (flag == MapChecker.FLAG_STAIRS_TOP) {
+            snowModel = models.get(stairs_top);
         } else if (models != null && flag == MapChecker.FLAG_STAIRS) {
             if (snowState != null)
                 snowModel = models.get(BlockModelShaper.stateToModelLocation(snowState));
@@ -109,8 +107,6 @@ public class ModelManager {
                 snowModel = models.get(snowy_grass);
             } else if (onBlock == Blocks.FERN) {
                 snowModel = models.get(snowy_fern);
-            } else if (onBlock == Blocks.DANDELION) {
-                snowModel = models.get(snowy_dandelion);
             } else snowModel = models.get(snowy_grass);
         } else if (flag == MapChecker.FLAG_GRASS_LARGE) {
             if (onBlock == Blocks.TALL_GRASS) {
@@ -145,8 +141,9 @@ public class ModelManager {
     private final static List<BakedQuad> EMPTY = List.of();
 
     public static List<BakedQuad> cancelTop(BakedModel bakedModel, BlockAndTintGetter blockAndTintGetter, BlockState state, BlockPos pos, Direction direction, RandomSource random, long seed, List<BakedQuad> original) {
-        if (true)
-            return original;
+
+        // if (true)
+        //     return original;
         if (!original.isEmpty()
                 && (direction == Direction.UP || direction == null)
                 && snowyModelsCache.getOrDefault(bakedModel, -1) == -1
@@ -270,9 +267,6 @@ public class ModelManager {
                                 newList.addAll(snowList);
                             }
 
-                            if (onBlock == Blocks.DANDELION) {
-                                newList.addAll(models.get(dandelion_top).getQuads(null, null, null));
-                            }
 
                             if (flag == MapChecker.FLAG_FARMLAND) {
 
@@ -401,7 +395,9 @@ public class ModelManager {
     }
 
     public static RenderType getRenderType(BlockState state) {
-        if(ItemBlockRenderTypes.getChunkRenderType(state)==RenderType.translucent())
+        if (!Minecraft.useFancyGraphics())
+            return RenderType.solid();
+        if (ItemBlockRenderTypes.getChunkRenderType(state) == RenderType.translucent())
             return RenderType.translucent();
         return RenderType.cutoutMipped();
         // return Minecraft.useFancyGraphics() ?
