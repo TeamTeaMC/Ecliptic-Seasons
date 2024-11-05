@@ -19,7 +19,6 @@ import net.minecraft.world.level.block.state.properties.Half;
 import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraft.world.level.levelgen.Heightmap;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +33,7 @@ public class MapChecker {
     public static final int FLAG_BLOCK = 1;
     public static final int FLAG_SLAB = 2;
     public static final int FLAG_STAIRS = 3;
+    public static final int FLAG_STAIRS_TOP = 301;
     public static final int FLAG_LEAVES = 4;
     public static final int FLAG_GRASS = 5;
     public static final int FLAG_GRASS_LARGE = 501;
@@ -55,7 +55,7 @@ public class MapChecker {
 
     public static Holder<Biome> getSurfaceBiome(Level level, BlockPos pos) {
         // fix the pos to surface
-        int y = getHeightOrUpdate(level,pos);
+        int y = getHeightOrUpdate(level, pos);
         if (y != pos.getY()) {
             pos = new BlockPos(pos.getX(), y, pos.getZ());
         }
@@ -204,8 +204,8 @@ public class MapChecker {
         return level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, pos).getY() - 1;
     }
 
-    public static int getSurfaceOrUpdate( Level level, BlockPos pos, boolean forceUpdate, int type) {
-        if(level==null)
+    public static int getSurfaceOrUpdate(Level level, BlockPos pos, boolean forceUpdate, int type) {
+        if (level == null)
             return 0;
 
         int x = blockToSectionCoord(pos.getX());
@@ -272,18 +272,23 @@ public class MapChecker {
         if (onBlock instanceof LeavesBlock) {
             flag = MapChecker.FLAG_LEAVES;
         } else if ((
-                 // state.isSolidRender(level, pos)
+                // state.isSolidRender(level, pos)
                 // &&
                 state.isCollisionShapeFullBlock(level, pos)
                         // state.isSolid()
                         || onBlock instanceof LeavesBlock
                         || (onBlock instanceof SlabBlock && state.getValue(SlabBlock.TYPE) == SlabType.TOP)
-                        || (onBlock instanceof StairBlock && state.getValue(StairBlock.HALF) == Half.TOP))) {
+                // || (onBlock instanceof StairBlock && state.getValue(StairBlock.HALF) == Half.TOP)
+        )
+        ) {
             flag = MapChecker.FLAG_BLOCK;
         } else if (onBlock instanceof SlabBlock) {
             flag = MapChecker.FLAG_SLAB;
         } else if (onBlock instanceof StairBlock) {
-            flag = MapChecker.FLAG_STAIRS;
+            if (state.getValue(StairBlock.HALF) == Half.TOP)
+                flag = MapChecker.FLAG_STAIRS_TOP;
+            else
+                flag = MapChecker.FLAG_STAIRS;
         } else if (MapChecker.LowerPlant.contains(onBlock)) {
             flag = MapChecker.FLAG_GRASS;
         } else if (MapChecker.LARGE_GRASS.contains(onBlock)) {
@@ -296,7 +301,7 @@ public class MapChecker {
         return flag;
     }
 
-    public static boolean isReplacedType(BlockState state,int flag) {
+    public static boolean isReplacedType(BlockState state, int flag) {
         return flag == FLAG_GRASS
                 || flag == FLAG_GRASS_LARGE;
     }
@@ -318,6 +323,7 @@ public class MapChecker {
         }
         return offset;
     }
+
     public static void updatePosForce(BlockPos setPos, int y) {
         int x = MapChecker.blockToSectionCoord(setPos.getX());
         int z = MapChecker.blockToSectionCoord(setPos.getZ());

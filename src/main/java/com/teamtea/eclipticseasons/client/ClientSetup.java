@@ -51,6 +51,7 @@ public class ClientSetup {
 
     @SubscribeEvent
     public static void registerExtraModels(ModelEvent.RegisterAdditional event) {
+        event.register(ModelManager.stairs_top);
         event.register(ModelManager.snowy_fern);
         event.register(ModelManager.snowy_grass);
         event.register(ModelManager.snowy_tall_grass_top);

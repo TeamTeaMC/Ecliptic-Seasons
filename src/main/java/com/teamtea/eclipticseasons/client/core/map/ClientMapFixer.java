@@ -101,6 +101,7 @@ public class ClientMapFixer {
                     for (int i = 0; i < xzPosList.size(); i++) {
                         XZPos xzPos = xzPosList.get(i);
                         if (tick - xzPos.startTick() > 160
+                                &&updateSectionsList.size()<12
                         ) {
                             var updatePos = new BlockPos.MutableBlockPos(xzPos.x(), xzPos.startY(), xzPos.z());
                             if (

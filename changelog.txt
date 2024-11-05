@@ -51,3 +51,4 @@ fix debug info
 0.7.0
 snowy blocks can now be interacted with (client-side effect only, not saveable)
 when you break the snowy block, the thin snow layer will disappear until it starts to fall again
+fix an issue with snowy blocks flickering at long distances

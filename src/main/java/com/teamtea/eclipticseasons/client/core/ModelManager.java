@@ -1,41 +1,32 @@
 package com.teamtea.eclipticseasons.client.core;
 
-import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexFormat;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
-import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.config.ClientConfig;
 
 import com.teamtea.eclipticseasons.mixin.EclipticSeasonsMixinPlugin;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.ChunkBufferBuilderPack;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.BlockModelShaper;
 import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.chunk.RenderChunkRegion;
-import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.client.renderer.texture.SpriteContents;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.client.resources.model.SimpleBakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.level.*;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
-import net.minecraft.world.level.block.state.properties.Half;
-import net.minecraft.world.level.block.state.properties.SlabType;
-import net.minecraftforge.client.model.data.ModelData;
+import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.util.LazyOptional;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 
@@ -60,6 +51,7 @@ public class ModelManager {
     LazyOptional<BakedModel> snowModel =
             LazyOptional.of(() -> models.get(new ModelResourceLocation(new ResourceLocation("minecraft:snow_block"), "")));
 
+    public static ResourceLocation stairs_top = EclipticSeasons.rl("block/stairs_top");
     public static ResourceLocation snowy_fern = EclipticSeasons.rl("block/snowy_fern");
     public static ResourceLocation snowy_grass = EclipticSeasons.rl("block/snowy_grass");
     public static ResourceLocation snowy_large_fern_bottom = EclipticSeasons.rl("block/snowy_large_fern_bottom");
@@ -90,6 +82,8 @@ public class ModelManager {
         return new ModelResourceLocation(new ResourceLocation(s), s2);
     }
 
+
+    public static HashMap<ResourceLocation, SpriteContents> blocksCache = new HashMap<>();
 
     public static boolean shouldCutoutMipped(BlockState state) {
         if (ClientConfig.Renderer.snowyWinter.get()) {
@@ -123,6 +117,8 @@ public class ModelManager {
             snowModel = snowOverlayLeaves.resolve().get();
         } else if (snowySlabBottom.resolve().isPresent() && flag == MapChecker.FLAG_SLAB) {
             snowModel = snowySlabBottom.resolve().get();
+        }  else if (flag == MapChecker.FLAG_STAIRS_TOP) {
+            snowModel =  models.get(stairs_top);
         } else if (models != null && flag == MapChecker.FLAG_STAIRS) {
             if (snowState != null)
                 snowModel = models.get(BlockModelShaper.stateToModelLocation(snowState));
@@ -166,7 +162,18 @@ public class ModelManager {
 
     private final static List<BakedQuad> EMPTY = List.of();
 
+    public static TextureAtlasSprite getBlockSprite(ResourceLocation sprite) {
+        return Minecraft.getInstance().getModelManager().getAtlas(InventoryMenu.BLOCK_ATLAS).getSprite(sprite);
+    }
+
+    public static BakedQuadRetextured newBakedQuadRetextured(BakedQuad bakedQuad, TextureAtlasSprite n) {
+        return new BakedQuadRetextured(bakedQuad, n);
+    }
+
     public static List<BakedQuad> cancelTop(BakedModel bakedModel, BlockAndTintGetter blockAndTintGetter, BlockState state, BlockPos pos, Direction direction, RandomSource random, long seed, List<BakedQuad> original) {
+        if (true)
+            return original;
+
         if (!original.isEmpty()
                 && (direction == Direction.UP || direction == null)
                 && snowyModelsCache.getOrDefault(bakedModel, -1) == -1
@@ -195,6 +202,31 @@ public class ModelManager {
                     }
                 }
 
+            }
+        }
+
+        if (!original.isEmpty()
+                && (direction != Direction.UP && direction != null && direction != Direction.DOWN)
+                && snowyModelsCache.getOrDefault(bakedModel, -1) == -1
+        ) {
+            BakedModel snowModel = ModelManager.findModel(blockAndTintGetter, pos, state, random);
+            if (snowModel != null
+                    && snowyModelsCache.getOrDefault(snowModel, -1) > MapChecker.FLAG_NONE_TYPE
+                    && bakedModel != null
+                    && bakedModel != snowModel) {
+                int blockType = MapChecker.getBlockType(state, blockAndTintGetter, pos);
+                if (blockType == MapChecker.FLAG_BLOCK) {
+                    if (state.getBlock() == Blocks.GRASS_BLOCK) {
+                        return original;
+                    }
+                    if (original.size() == 1) {
+                        BakedQuad bakedQuad = original.get(0);
+                        TextureAtlasSprite blockSprite = getBlockSprite(bakedQuad.getSprite().contents().name().withSuffix(".snowy"));
+                        // if (blockSprite != null) {
+                        //     return List.of(newBakedQuadRetextured(bakedQuad, blockSprite));
+                        // }
+                    }
+                }
             }
         }
         return original;
@@ -419,8 +451,10 @@ public class ModelManager {
         return replace;
     }
 
-    public static RenderType getRenderType() {
-        return RenderType.cutoutMipped();
+    public static RenderType getRenderType(BlockState state) {
+        if(ItemBlockRenderTypes.getChunkRenderType(state)==RenderType.translucent())
+            return RenderType.translucent();
+       return RenderType.cutoutMipped();
         // return Minecraft.useFancyGraphics() ?
         //         RenderType.cutoutMipped() : RenderType.solid();
     }

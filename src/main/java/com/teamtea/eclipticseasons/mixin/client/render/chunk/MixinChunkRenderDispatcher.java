@@ -91,7 +91,7 @@ public class MixinChunkRenderDispatcher {
 
     @Unique
     private static void ecliptic$renderModel(BakedModel bakedModel, ChunkBufferBuilderPack pChunkBufferBuilderPack, BlockPos pos, BlockState state, PoseStack posestack, RenderChunkRegion renderchunkregion, RandomSource random, Set<RenderType> renderTypeSet) {
-        RenderType renderType =  ModelManager.getRenderType();
+        RenderType renderType =  ModelManager.getRenderType(state);
         BufferBuilder bufferbuilder2 = pChunkBufferBuilderPack.builder(renderType);
         // this$0.beginLayer(bufferbuilder2);
         if (renderTypeSet.add(renderType))
