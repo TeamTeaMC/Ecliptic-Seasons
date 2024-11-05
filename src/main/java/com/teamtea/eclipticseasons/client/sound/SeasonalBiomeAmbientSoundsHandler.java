@@ -21,6 +21,7 @@ import net.minecraft.world.level.biome.Biomes;
 import net.minecraftforge.common.Tags;
 
 import javax.annotation.Nullable;
+import java.util.HashMap;
 import java.util.Map;
 
 public class SeasonalBiomeAmbientSoundsHandler implements AmbientSoundHandler {
@@ -30,7 +31,7 @@ public class SeasonalBiomeAmbientSoundsHandler implements AmbientSoundHandler {
     private final SoundManager soundManager;
     private final BiomeManager biomeManager;
     private final RandomSource random;
-    private final Object2ObjectArrayMap<Biome, LoopSoundInstance> loopSounds = new Object2ObjectArrayMap<>();
+    private final Map<Biome, LoopSoundInstance> loopSounds = new HashMap<>();
     private float moodiness;
     @Nullable
     private Biome previousBiome;
@@ -122,12 +123,12 @@ public class SeasonalBiomeAmbientSoundsHandler implements AmbientSoundHandler {
                 this.loopSounds.compute(biome.get(), (biome1, loopSoundInstance) -> {
                     if (loopSoundInstance == null) {
                         loopSoundInstance = new LoopSoundInstance(finalSoundEvent);
-                        this.soundManager.play(loopSoundInstance);
+                        this.soundManager.queueTickingSound(loopSoundInstance);
                     } else {
                         if (!this.soundManager.isActive(loopSoundInstance)
                                 && !indoor
                         ) {
-                            this.soundManager.play(loopSoundInstance);
+                            this.soundManager.queueTickingSound(loopSoundInstance);
                         }
                     }
 
