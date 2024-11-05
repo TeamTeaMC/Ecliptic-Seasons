@@ -55,4 +55,4 @@ fix an issue with snowy blocks flickering at long distances
 
 0.7.1
 optimized performance consumption when rain
-* fix a simple render with some special mods
+* fix a simple render with some special mods slabs
