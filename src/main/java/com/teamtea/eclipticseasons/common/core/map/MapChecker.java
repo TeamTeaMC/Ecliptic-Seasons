@@ -299,15 +299,19 @@ public class MapChecker {
         if (onBlock instanceof LeavesBlock) {
             flag = MapChecker.FLAG_LEAVES;
         } else if ((
-                // state.isSolidRender(level, pos)
-                Block.isShapeFullBlock(state.getCollisionShape(level, pos))
+                state.isSolidRender(level, pos)
+                // Block.isShapeFullBlock(state.getCollisionShape(level, pos))
                         // state.isSolid()
                         || onBlock instanceof LeavesBlock
-                        || (onBlock instanceof SlabBlock && state.getValue(SlabBlock.TYPE) == SlabType.TOP)
         )) {
             flag = MapChecker.FLAG_BLOCK;
         } else if (onBlock instanceof SlabBlock) {
-            flag = MapChecker.FLAG_SLAB;
+            SlabType value = state.getValue(SlabBlock.TYPE);
+            if (value == SlabType.TOP){
+                flag = MapChecker.FLAG_STAIRS_TOP;
+            } else if (value==SlabType.BOTTOM) {
+                flag = MapChecker.FLAG_SLAB;
+            }else flag = MapChecker.FLAG_BLOCK;
         } else if (onBlock instanceof StairBlock) {
             if (state.getValue(StairBlock.HALF) == Half.TOP)
                 flag = MapChecker.FLAG_STAIRS_TOP;

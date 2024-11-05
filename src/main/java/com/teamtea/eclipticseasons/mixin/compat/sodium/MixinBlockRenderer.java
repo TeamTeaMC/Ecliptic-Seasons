@@ -24,7 +24,7 @@ public abstract class MixinBlockRenderer extends AbstractBlockRenderContext {
     private boolean eclipticseasons$renderModel(
             boolean original
     ) {
-        BakedModel snowModel=null;
+        BakedModel snowModel = null;
         if (!original) {
             snowModel = ModelManager.findModel(slice, pos, state, random);
         } else {
@@ -36,7 +36,7 @@ public abstract class MixinBlockRenderer extends AbstractBlockRenderContext {
         if (snowModel != null) {
             original = false;
             this.type = ModelManager.getRenderType(state);
-            ((FabricBakedModel)snowModel).emitBlockQuads(this.level, state, pos, this.randomSupplier, this);
+            ((FabricBakedModel) snowModel).emitBlockQuads(this.level, state, pos, this.randomSupplier, this);
         }
         return original;
     }
