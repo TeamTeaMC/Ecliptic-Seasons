@@ -222,6 +222,7 @@ public class WeatherManager {
         if (ws != null)
             for (BiomeWeather biomeWeather : ws) {
                 if (biome == biomeWeather.biomeHolder.value()) {
+                    if (biomeWeather.shouldClear()) return Biome.Precipitation.NONE;
                     var solarTerm = EclipticUtil.getNowSolarTerm(level);
                     var snowTerm = SolarTerm.getSnowTerm(biome);
                     boolean flag_cold = solarTerm.isInTerms(snowTerm.getStart(), snowTerm.getEnd());
