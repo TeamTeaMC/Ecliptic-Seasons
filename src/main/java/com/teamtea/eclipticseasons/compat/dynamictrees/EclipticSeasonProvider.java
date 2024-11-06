@@ -1,4 +1,4 @@
-package com.teamtea.eclipticseasons.compat.dynamictrees;// package com.teamtea.eclipticseasons.compat.dynamictrees;
+// package com.teamtea.eclipticseasons.compat.dynamictrees;
 //
 // import com.teamtea.eclipticseasons.common.AllListener;
 // import com.teamtea.eclipticseasons.config.ServerConfig;

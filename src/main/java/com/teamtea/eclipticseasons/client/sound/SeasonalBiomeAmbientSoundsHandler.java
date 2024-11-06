@@ -127,14 +127,14 @@ public class SeasonalBiomeAmbientSoundsHandler implements AmbientSoundHandler {
                 this.loopSounds.compute(biome.value(), (biome1, loopSoundInstance) -> {
                     if (loopSoundInstance == null) {
                         loopSoundInstance = new LoopSoundInstance(finalSoundEvent);
-                        this.soundManager.queueTickingSound(loopSoundInstance);
+                        this.soundManager.play(loopSoundInstance);
                     }
                     else {
                         if (!this.soundManager.isActive(loopSoundInstance)
                                 && !indoor
                         )
                         {
-                            this.soundManager.queueTickingSound(loopSoundInstance);
+                            this.soundManager.play(loopSoundInstance);
                         }
                     }
 

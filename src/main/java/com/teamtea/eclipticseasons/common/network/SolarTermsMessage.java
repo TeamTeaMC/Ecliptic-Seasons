@@ -25,7 +25,7 @@ public class SolarTermsMessage implements CustomPacketPayload {
     }
 
 
-    public static final Type<SolarTermsMessage> TYPE = new Type<>(EclipticSeasons.rl("solar_terms"));
+    public static final CustomPacketPayload.Type<SolarTermsMessage> TYPE = new CustomPacketPayload.Type<>(EclipticSeasons.rl("solar_terms"));
 
     // Each pair of elements defines the stream codec of the element to encode/decode and the getter for the element to encode
     // 'name' will be encoded and decoded as a string
@@ -38,7 +38,7 @@ public class SolarTermsMessage implements CustomPacketPayload {
     );
 
     @Override
-    public Type<? extends CustomPacketPayload> type() {
+    public CustomPacketPayload.Type<? extends CustomPacketPayload> type() {
         return TYPE;
     }
 }

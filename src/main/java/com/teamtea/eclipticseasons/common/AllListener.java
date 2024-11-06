@@ -13,10 +13,8 @@ import com.teamtea.eclipticseasons.config.ServerConfig;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
-import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.fml.loading.FMLLoader;
 import net.neoforged.neoforge.event.TagsUpdatedEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.level.*;
@@ -80,21 +78,19 @@ public class AllListener {
     public static void onLevelUnloadEvent(LevelEvent.Unload event) {
         if (event.getLevel() instanceof Level level) {
             WeatherManager.BIOME_WEATHER_LIST.remove(level);
-            // if (level instanceof ServerLevel serverLevel)
-            {
-                SolarHolders.DATA_MANAGER_MAP.remove(level);
-            }
+            SolarHolders.DATA_MANAGER_MAP.remove(level);
+            MapChecker.unloadLevel(level);
         }
-
     }
 
     // 如果是客户端，即使是混合型客户端，我们也只应该清理一次，单人世界时只看一次client会更好
     @SubscribeEvent
     public static void onChunkUnloadEvent(ChunkEvent.Unload event) {
-        if ((FMLLoader.getDist() == Dist.CLIENT) == event.getLevel().isClientSide()
-        ) {
-            MapChecker.clearChunk(event.getChunk().getPos());
-        }
+        // if ((FMLLoader.getDist() == Dist.CLIENT) == event.getLevel().isClientSide()
+        // ) {
+        //     MapChecker.clearChunk(event.getChunk().getLevel(),event.getChunk().getPos());
+        // }
+        MapChecker.unloadChunk(event.getChunk().getLevel(), event.getChunk().getPos());
     }
 
 

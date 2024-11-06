@@ -150,7 +150,7 @@ public class ModelManager {
         ) {
             BakedModel snowModel = ModelManager.findModel(blockAndTintGetter, pos, state, random);
             if (snowModel != null
-                    && snowyModelsCache.getOrDefault(snowModel, -1) > MapChecker.FLAG_NONE_TYPE
+                    && snowyModelsCache.getOrDefault(snowModel, -1) > MapChecker.FLAG_NONE
                     && bakedModel != null
                     && bakedModel != snowModel) {
                 int blockType = MapChecker.getBlockType(state, blockAndTintGetter, pos);
@@ -407,7 +407,7 @@ public class ModelManager {
 
     public static boolean isModelReplaced(BlockState state) {
         return !state.blocksMotion()
-                && MapChecker.getBlockType(state, EmptyBlockGetter.INSTANCE, BlockPos.ZERO) != MapChecker.FLAG_NONE_TYPE;
+                && MapChecker.getBlockType(state, EmptyBlockGetter.INSTANCE, BlockPos.ZERO) != MapChecker.FLAG_NONE;
     }
 
     public static void clearForRebaked(Map<ModelResourceLocation, BakedModel> modelRegistry) {

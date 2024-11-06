@@ -20,22 +20,10 @@ import java.util.HashSet;
 
 public class MapExporter {
     public static int exportMap(CommandSourceStack source, BlockPos pos) {
-        ChunkInfoMap map = null;
         int x = MapChecker.blockToSectionCoord(pos.getX());
         int z = MapChecker.blockToSectionCoord(pos.getZ());
-        while (MapChecker.isUpdateLock()) {
-            try {
-                Thread.sleep(1);
-            } catch (InterruptedException e) {
-            }
-        }
-        for (int i = 0; i < MapChecker.RegionList.size(); i++) {
-            var chunkHeightMap = MapChecker.RegionList.get(i);
-            if (chunkHeightMap.getX() == x && chunkHeightMap.getZ() == z) {
-                map = chunkHeightMap;
-                break;
-            }
-        }
+        ChunkInfoMap map = MapChecker.getChunkMap(source.getLevel(),x,z);
+
         if (map == null) return 0;
         
         int size=MapChecker.ChunkSize;
@@ -82,8 +70,8 @@ public class MapExporter {
             }
         }
         graphics2D.setColor(Color.PINK);
-        graphics2D.fillRect(MapChecker.getChunkValue(source.getPlayer().getBlockX()) - 5,
-                MapChecker.getChunkValue(source.getPlayer().getBlockZ()) - 5,
+        graphics2D.fillRect(ChunkInfoMap.getChunkValue(source.getPlayer().getBlockX()) - 5,
+                ChunkInfoMap.getChunkValue(source.getPlayer().getBlockZ()) - 5,
                 10, 10);
 
         graphics2D.dispose();

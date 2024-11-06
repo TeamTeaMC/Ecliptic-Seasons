@@ -14,6 +14,7 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
@@ -84,17 +85,18 @@ public class NetworkdUtil {
             }
         }
         context.enqueueWork(() -> {
-            if(context.player().level() instanceof ClientLevel clientLevel) {
-                if (clientLevel.getChunk(chunkUpdateMessage.x, chunkUpdateMessage.z) instanceof LevelChunk levelChunk) {
+            if(context.player().level() instanceof Level level
+            &&level.isClientSide()) {
+                if (level.getChunk(chunkUpdateMessage.x, chunkUpdateMessage.z) instanceof LevelChunk levelChunk) {
                     var snow= new SnowyRemover(blocks);
                     levelChunk.setData(EclipticSeasons.ModContents.SNOWY_REMOVER, new SnowyRemover(blocks));
 
                     for (BlockPos blockPos : chunkUpdateMessage.blockPosList) {
                         ClientMapFixer.clearBlockPos(blockPos);
-                        MapChecker.updatePosForce(blockPos,
+                        MapChecker.updatePosForce(level,blockPos,
                                 snow.notSnowyAt(blockPos)?
-                                clientLevel.getMaxBuildHeight() + 1:
-                                clientLevel.getHeight(Heightmap.Types.MOTION_BLOCKING,blockPos.getX(),blockPos.getZ())-1
+                                level.getMaxBuildHeight() + 1:
+                                level.getHeight(Heightmap.Types.MOTION_BLOCKING,blockPos.getX(),blockPos.getZ())-1
                                 )
                         ;
 

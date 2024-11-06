@@ -3,7 +3,6 @@ package com.teamtea.eclipticseasons.common.item;
 import com.teamtea.eclipticseasons.client.core.map.ClientMapFixer;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.SectionPos;
@@ -74,7 +73,7 @@ public class BroomItem extends Item {
                             : player.getMainArm().getOpposite();
 
                    boolean shouldSet= MapChecker.shouldSnowAt(pLevel,blockpos,blockstate,pLevel.getRandom(),blockstate.getSeed(blockpos))
-                           &&MapChecker.getHeightOrUpdate(pLevel,blockpos)==blockpos.getY();
+                           &&MapChecker.getHeight(pLevel,blockpos)==blockpos.getY();
                     if ( blockstate.shouldSpawnTerrainParticles()
                             && blockstate.getRenderShape() != RenderShape.INVISIBLE) {
                         this.spawnDustParticles(pLevel, blockhitresult, shouldSet?Blocks.SNOW_BLOCK.defaultBlockState():blockstate,
@@ -90,12 +89,12 @@ public class BroomItem extends Item {
 
                     pLevel.playSound(player, blockpos, soundevent, SoundSource.BLOCKS);
 
-                    if(shouldSet&&pLevel instanceof ClientLevel clientLevel){
-                        int startY=clientLevel.getMaxBuildHeight() + 1;
-                        MapChecker.updatePosForce(blockpos, clientLevel.getMaxBuildHeight() + 1);
+                    if(shouldSet&&pLevel.isClientSide()){
+                        int startY=pLevel.getMaxBuildHeight() + 1;
+                        MapChecker.updatePosForce(pLevel,blockpos, pLevel.getMaxBuildHeight() + 1);
                         SectionPos sectionPos = SectionPos.of(blockpos);
                         Minecraft.getInstance().levelRenderer.setSectionDirty(sectionPos.x(),sectionPos.y(),sectionPos.z());
-                        ClientMapFixer.addPlanner(clientLevel,blockstate,blockpos,pLevel.getGameTime()+160, startY);
+                        ClientMapFixer.addPlanner(pLevel,blockstate,blockpos,pLevel.getGameTime()+160, startY);
                     }
                 }
 

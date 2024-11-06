@@ -6,6 +6,7 @@
     "common.MixinBiome",
     "common.MixinDimensionType",
     "common.MixinLevel",
+    "common.MixinLevelChunk",
     "common.MixinLevelTimeAccess",
     "common.MixinServerLevel",
     "common.block.MixinBeehiveBlockEntity",
@@ -41,7 +42,6 @@
     "client.MixinClientLevelChunk",
     "client.MixinClientPanda",
     "client.MixinGameRenderer",
-    "compat.optifine.MixinItemBlockRenderTypes",
     "client.MixinLevelRender",
     "client.MixinLocalPlayer",
     "client.block.MixinBlockColors",
@@ -57,10 +57,11 @@
     "compat.embeddium.MixinBlockRender2",
     "compat.embeddium.MixinBlockRenderTask",
     "compat.iris.MixinBiomeUniforms",
+    "compat.optifine.MixinItemBlockRenderTypes",
     "compat.sodium.MixinAbstractBlockRenderContext",
-    "compat.sodium.MixinNeoForgeModelAccess",
     "compat.sodium.MixinBlockRenderer",
-    "compat.sodium.MixinBlockRenderTask"
+    "compat.sodium.MixinBlockRenderTask",
+    "compat.sodium.MixinNeoForgeModelAccess"
   ],
   "injectors": {
     "defaultRequire": 1

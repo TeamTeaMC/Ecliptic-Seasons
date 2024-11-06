@@ -1,10 +1,11 @@
-package com.teamtea.eclipticseasons.mixin.client;
+package com.teamtea.eclipticseasons.mixin.common;
 
 
 import com.teamtea.eclipticseasons.client.core.map.ClientMapFixer;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
@@ -17,7 +18,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin({LevelChunk.class})
-public abstract class MixinClientLevelChunk {
+public abstract class MixinLevelChunk {
     @Shadow
     @Final
     Level level;
@@ -27,9 +28,10 @@ public abstract class MixinClientLevelChunk {
             method = "setBlockState"
     )
     public void ecliptic$Client_setBlockState(BlockPos pos, BlockState state, boolean p_62867_, CallbackInfoReturnable<BlockState> cir) {
-        if (level instanceof ClientLevel clientLevel) {
-            // MapChecker.getHeightOrUpdate(clientLevel, pos, true);
-            ClientMapFixer.addPlanner(clientLevel, state, pos, clientLevel.getGameTime(), MapChecker.getHeight(clientLevel, pos));
+        if (level instanceof ServerLevel) {
+            int j = pos.getX() & 15;
+            int l = pos.getZ() & 15;
+            MapChecker.updatePosForce(level, pos, level.getHeight(Heightmap.Types.MOTION_BLOCKING, j, l));
         }
     }
 }

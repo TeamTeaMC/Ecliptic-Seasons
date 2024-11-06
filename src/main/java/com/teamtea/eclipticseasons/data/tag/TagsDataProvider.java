@@ -1,12 +1,10 @@
 package com.teamtea.eclipticseasons.data.tag;
 
 import com.teamtea.eclipticseasons.api.constant.tag.ClimateTypeBiomeTags;
-import com.teamtea.eclipticseasons.api.constant.tag.SeasonalBlockTags;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.TagsProvider;
-import net.minecraft.tags.BiomeTags;
 import net.minecraft.world.level.biome.Biome;
 
 import net.neoforged.neoforge.common.Tags;
