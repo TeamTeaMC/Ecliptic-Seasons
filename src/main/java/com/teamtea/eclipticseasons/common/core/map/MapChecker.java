@@ -22,6 +22,8 @@ import net.minecraft.world.level.levelgen.Heightmap;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class MapChecker {
 
@@ -29,7 +31,7 @@ public class MapChecker {
     public static final int ChunkSizeLoc = ChunkSize - 1;
     public static final int ChunkSizeAxis = 4 + 5;
 
-    public static final int FLAG_NONE_TYPE = 0;
+    public static final int FLAG_NONE = 0;
     public static final int FLAG_BLOCK = 1;
     public static final int FLAG_SLAB = 2;
     public static final int FLAG_STAIRS = 3;
@@ -38,8 +40,9 @@ public class MapChecker {
     public static final int FLAG_GRASS = 5;
     public static final int FLAG_GRASS_LARGE = 501;
     public static final int FLAG_FARMLAND = 6;
-    public static final List<Block> LowerPlant = List.of(Blocks.GRASS, Blocks.FERN);
-    public static final List<Block> LARGE_GRASS = List.of(Blocks.TALL_GRASS, Blocks.LARGE_FERN);
+
+    public static List<Block> LowerPlant = Stream.of(Blocks.GRASS, Blocks.FERN).collect(Collectors.toList());
+    public static List<Block> LARGE_GRASS = Stream.of(Blocks.TALL_GRASS, Blocks.LARGE_FERN).collect(Collectors.toList());
 
 
     public static final ArrayList<ChunkInfoMap> RegionList = new ArrayList<>(4);
@@ -55,7 +58,7 @@ public class MapChecker {
 
     public static Holder<Biome> getSurfaceBiome(Level level, BlockPos pos) {
         // fix the pos to surface
-        int y = getHeightOrUpdate(level, pos);
+        int y = getHeight(level, pos);
         if (y != pos.getY()) {
             pos = new BlockPos(pos.getX(), y, pos.getZ());
         }
@@ -84,7 +87,7 @@ public class MapChecker {
                 && !level.dimensionType().hasFixedTime();
     }
 
-    public static boolean checkCancelAndAbove(Level level, BlockPos pos, int times) {
+    public static boolean checkLightAbove(Level level, BlockPos pos, int times) {
         var abovePos = pos.above();
         if (level.isLoaded(abovePos)) {
             var stateAbove = level.getBlockState(abovePos);
@@ -93,7 +96,7 @@ public class MapChecker {
                     return true;
             } else if (!stateAbove.isAir() && !stateAbove.blocksMotion()) {
                 if (times > 0)
-                    return checkCancelAndAbove(level, pos, (times - 1));
+                    return checkLightAbove(level, pos, (times - 1));
             }
         }
         return false;
@@ -104,7 +107,7 @@ public class MapChecker {
         if (WeatherManager.getSnowDepthAtBiome(level, biomeHolder.value()) > Math.abs(seed % 100)) {
             if (ServerConfig.Debug.notSnowyUnderLight.get()) {
                 // 这里检查三次
-                if (checkCancelAndAbove(level, pos, 4)) {
+                if (checkLightAbove(level, pos, 4)) {
                     return false;
                 }
             }
@@ -120,7 +123,7 @@ public class MapChecker {
         return false;
     }
 
-    public static void clearHeightMap() {
+    public static void unloadLevel(Level level) {
         updateLock = true;
         synchronized (RegionList) {
             RegionList.clear();
@@ -128,17 +131,12 @@ public class MapChecker {
         updateLock = false;
     }
 
-    // 获取chunk内部位置
-    public static int getChunkValue(int i) {
-        return i & (ChunkSizeLoc);
-    }
-
     // 获取chunk位置
     public static int blockToSectionCoord(int i) {
         return i >> ChunkSizeAxis;
     }
 
-    public static int getHeightOrUpdate(Level levelNull, BlockPos pos) {
+    public static int getHeight(Level levelNull, BlockPos pos) {
         return getHeightOrUpdate(levelNull, pos, false);
     }
 
@@ -146,7 +144,7 @@ public class MapChecker {
         return getSurfaceOrUpdate(levelNull, pos, forceUpdate, ChunkInfoMap.TYPE_HEIGHT);
     }
 
-    public static boolean clearChunk(ChunkPos chunkPos) {
+    public static boolean unloadChunk(ChunkPos chunkPos) {
         int x0 = chunkPos.getMinBlockX();
         int x1 = chunkPos.getMaxBlockX();
         int z0 = chunkPos.getMinBlockZ();
@@ -267,7 +265,7 @@ public class MapChecker {
     }
 
     public static int getBlockType(BlockState state, BlockGetter level, BlockPos pos) {
-        int flag = FLAG_NONE_TYPE;
+        int flag = FLAG_NONE;
         var onBlock = state.getBlock();
         if (onBlock instanceof LeavesBlock) {
             flag = MapChecker.FLAG_LEAVES;

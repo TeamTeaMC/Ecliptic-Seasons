@@ -20,13 +20,11 @@ import net.minecraft.client.resources.model.SimpleBakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.level.*;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.util.LazyOptional;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 
@@ -178,7 +176,7 @@ public class ModelManager {
         ) {
             BakedModel snowModel = ModelManager.findModel(blockAndTintGetter, pos, state, random);
             if (snowModel != null
-                    && snowyModelsCache.getOrDefault(snowModel, -1) > MapChecker.FLAG_NONE_TYPE
+                    && snowyModelsCache.getOrDefault(snowModel, -1) > MapChecker.FLAG_NONE
                     && bakedModel != null
                     && bakedModel != snowModel) {
                 int blockType = MapChecker.getBlockType(state, blockAndTintGetter, pos);
@@ -209,7 +207,7 @@ public class ModelManager {
         ) {
             BakedModel snowModel = ModelManager.findModel(blockAndTintGetter, pos, state, random);
             if (snowModel != null
-                    && snowyModelsCache.getOrDefault(snowModel, -1) > MapChecker.FLAG_NONE_TYPE
+                    && snowyModelsCache.getOrDefault(snowModel, -1) > MapChecker.FLAG_NONE
                     && bakedModel != null
                     && bakedModel != snowModel) {
                 int blockType = MapChecker.getBlockType(state, blockAndTintGetter, pos);
@@ -459,7 +457,7 @@ public class ModelManager {
 
     public static boolean isModelReplaced(BlockState state) {
         return !state.blocksMotion()
-                && MapChecker.getBlockType(state, EmptyBlockGetter.INSTANCE, BlockPos.ZERO) != MapChecker.FLAG_NONE_TYPE;
+                && MapChecker.getBlockType(state, EmptyBlockGetter.INSTANCE, BlockPos.ZERO) != MapChecker.FLAG_NONE;
     }
 
     public static void clearForRebaked(Map<ResourceLocation, BakedModel> modelRegistry) {

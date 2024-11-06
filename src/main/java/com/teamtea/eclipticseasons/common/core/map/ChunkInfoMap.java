@@ -29,15 +29,20 @@ public class ChunkInfoMap {
         EclipticSeasons.logger(String.format("End create [%s, %s]", x, z));
     }
 
+    // 获取chunk内部位置
+    public static int getChunkValue(int i) {
+        return i & (MapChecker.ChunkSizeLoc);
+    }
+
     public int getHeight(int x, int z) {
-        x = MapChecker.getChunkValue(x);
-        z = MapChecker.getChunkValue(z);
+        x = getChunkValue(x);
+        z = getChunkValue(z);
         return matrix[x][z];
     }
 
     public int getBiome(int x, int z) {
-        x = MapChecker.getChunkValue(x);
-        z = MapChecker.getChunkValue(z);
+        x = getChunkValue(x);
+        z = getChunkValue(z);
         return biomes[x][z];
     }
 
@@ -50,8 +55,8 @@ public class ChunkInfoMap {
     }
 
     public int updateHeight(int x, int z, int y) {
-        x = MapChecker.getChunkValue(x);
-        z = MapChecker.getChunkValue(z);
+        x = getChunkValue(x);
+        z = getChunkValue(z);
         int old;
         synchronized (lockArray[x][z]) {
             old = matrix[x][z];
@@ -61,8 +66,8 @@ public class ChunkInfoMap {
     }
 
     public int updateBiome(int x, int z, int id) {
-        x = MapChecker.getChunkValue(x);
-        z = MapChecker.getChunkValue(z);
+        x = getChunkValue(x);
+        z = getChunkValue(z);
         int old;
         synchronized (lockArray[x][z]) {
             old = biomes[x][z];

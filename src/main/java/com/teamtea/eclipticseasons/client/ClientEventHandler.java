@@ -87,7 +87,7 @@ public final class ClientEventHandler {
     @SubscribeEvent
     public static void onLevelUnloadEvent(LevelEvent.Unload event) {
         if (event.getLevel() instanceof ClientLevel clientLevel) {
-            MapChecker.clearHeightMap();
+            MapChecker.unloadLevel(clientLevel);
             ClientWeatherChecker.unloadLevel(clientLevel);
             ClientMapFixer.clearAll();
         }

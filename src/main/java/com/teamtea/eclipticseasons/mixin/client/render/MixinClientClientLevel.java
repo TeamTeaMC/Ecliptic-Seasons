@@ -1,10 +1,13 @@
 package com.teamtea.eclipticseasons.mixin.client.render;
 
 
+import com.llamalad7.mixinextras.sugar.Local;
 import com.teamtea.eclipticseasons.client.particle.ParticleUtil;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -23,9 +26,26 @@ public abstract class MixinClientClientLevel {
     @Shadow
     public abstract void addDestroyBlockEffect(BlockPos p_171667_, BlockState p_171668_);
 
-    @Inject(at = {@At("RETURN")}, method = {"animateTick"})
-    private void ecliptic$animateTick(int x, int y, int z, CallbackInfo ci) {
-        ParticleUtil.createParticle((ClientLevel)(Object)this,x,y,z);
+    // @Inject(at = {@At("RETURN")}, method = {"animateTick"})
+    // private void ecliptic$animateTick(int x, int y, int z, CallbackInfo ci) {
+    //     ParticleUtil.createParticle((ClientLevel)(Object)this,x,y,z);
+    // }
 
+    @Inject(at = {@At("RETURN")}, method = {"doAnimateTick"})
+    private void ecliptic$doAnimateTick(int pPosX,
+                                      int pPosY,
+                                      int pPosZ,
+                                      int pRange,
+                                      RandomSource pRandom,
+                                      Block pBlock,
+                                      BlockPos.MutableBlockPos pBlockPos,
+                                      CallbackInfo ci,
+                                      @Local BlockState blockState) {
+        ParticleUtil.doAnimateTick((ClientLevel) (Object) this,
+                pPosX,pPosY,pPosZ,
+                pRange,
+                pRandom,
+                pBlockPos,
+                blockState);
     }
 }

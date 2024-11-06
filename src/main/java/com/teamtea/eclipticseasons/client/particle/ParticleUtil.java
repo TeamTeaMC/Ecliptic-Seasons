@@ -4,16 +4,20 @@ import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.tag.EclipticBlockTags;
+import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.config.ClientConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.util.FastColor;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.joml.Vector3f;
 
@@ -37,17 +41,26 @@ public class ParticleUtil {
     }
 
     // can refer TerrainParticle
-    private static void doAnimateTick(ClientLevel clientLevel, int x, int y, int z, int b, RandomSource random, BlockPos.MutableBlockPos blockpos$mutableblockpos) {
+    public static void doAnimateTick(ClientLevel clientLevel, int x, int y, int z, int b, RandomSource random, BlockPos.MutableBlockPos blockpos$mutableblockpos) {
         int i = x + random.nextInt(b) - random.nextInt(b);
         int j = y + random.nextInt(b) - random.nextInt(b);
         int k = z + random.nextInt(b) - random.nextInt(b);
 
         blockpos$mutableblockpos.set(i, j, k);
         BlockState blockstate = clientLevel.getBlockState(blockpos$mutableblockpos);
+        doAnimateTick(clientLevel, x, y, z, b, random, blockpos$mutableblockpos, blockstate);
+    }
+
+    // can refer TerrainParticle
+    public static void doAnimateTick(ClientLevel clientLevel, int x, int y, int z, int b, RandomSource random, BlockPos.MutableBlockPos blockpos$mutableblockpos, BlockState blockstate) {
+        if (!ClientConfig.Particle.seasonParticle.get()) return;
+        int i = blockpos$mutableblockpos.getX();
+        int j = blockpos$mutableblockpos.getY();
+        int k = blockpos$mutableblockpos.getZ();
         if (ClientConfig.Particle.fallenLeaves.get()
                 && blockstate.getBlock() instanceof LeavesBlock) {
             if (!blockstate.is(EclipticBlockTags.NONE_FALLEN_LEAVES)) {
-                var sd = EclipticSeasonsApi.getInstance().getSolarTerm(clientLevel).getSeason();
+                var sd = EclipticUtil.getNowSolarTerm(clientLevel).getSeason();
                 int chanceW = 19;
                 switch (sd) {
                     case SPRING -> chanceW = 17;
@@ -63,8 +76,8 @@ public class ParticleUtil {
             }
         }
         if (ClientConfig.Particle.butterfly.get()
-                && EclipticSeasonsApi.getInstance().getSolarTerm(clientLevel).getSeason() == Season.SPRING
-                && EclipticSeasonsApi.getInstance().isDay(clientLevel)
+                && EclipticUtil.getNowSolarTerm(clientLevel).getSeason() == Season.SPRING
+                && EclipticUtil.isDay(clientLevel)
         ) {
             if (blockstate.is(EclipticBlockTags.HABITAT_BUTTERFLY)
                     && !clientLevel.isRainingAt(blockpos$mutableblockpos)
@@ -75,8 +88,8 @@ public class ParticleUtil {
             }
         }
         if (ClientConfig.Particle.firefly.get()
-                && EclipticSeasonsApi.getInstance().getSolarTerm(clientLevel).getSeason() == Season.SUMMER
-                && EclipticSeasonsApi.getInstance().isEvening(clientLevel)
+                && EclipticUtil.getNowSolarTerm(clientLevel).getSeason() == Season.SUMMER
+                && EclipticUtil.isEvening(clientLevel)
         ) {
             if (blockstate.is(EclipticBlockTags.HABITAT_FIREFLY)
                     && !clientLevel.isRainingAt(blockpos$mutableblockpos)
@@ -88,8 +101,8 @@ public class ParticleUtil {
         }
 
         if (ClientConfig.Particle.wildGoose.get()
-                && EclipticSeasonsApi.getInstance().getSolarTerm(clientLevel).getSeason() == Season.AUTUMN
-                && EclipticSeasonsApi.getInstance().isNoon(clientLevel)
+                && EclipticUtil.getNowSolarTerm(clientLevel).getSeason() == Season.AUTUMN
+                && EclipticUtil.isNoon(clientLevel)
                 && clientLevel.canSeeSky(blockpos$mutableblockpos)
                 && clientLevel.isEmptyBlock(blockpos$mutableblockpos)
                 && !clientLevel.isRainingAt(blockpos$mutableblockpos)
@@ -98,23 +111,6 @@ public class ParticleUtil {
             clientLevel.addParticle(EclipticSeasons.ParticleRegistry.WILD_GOOSE, false, x + random.nextInt(16, 16 * 2) * (random.nextBoolean() ? -1 : 1), y + random.nextInt(15, 16 * 2), z + random.nextInt(16, 16 * 2) * (random.nextBoolean() ? -1 : 1), 0.0D, 5.0E-4D, 0.0D);
         }
 
-        // if ( random.nextInt(b)==0&&
-        // Minecraft.getInstance().player != null
-        //         && Minecraft.getInstance().player.getItemInHand(InteractionHand.MAIN_HAND).getItem() == EclipticSeasons.ModContents.snowy_maker_item.get()) {
-        //     var data = clientLevel.getChunkAt(blockpos$mutableblockpos).getData(EclipticSeasons.ModContents.SNOWY_REMOVER);
-        //
-        //     if (data.notSnowyAt(blockpos$mutableblockpos)) {
-        //         j = clientLevel.getHeight(Heightmap.Types.MOTION_BLOCKING,i,k);
-        //         clientLevel.addParticle(random.nextInt(3)>0?ParticleTypes.SMOKE:ParticleTypes.CLOUD,
-        //                 false, i + 0.5, j + 0.3, k + 0.5, 0.0D, -0.0001, 0.0D);
-        //
-        //         // clientLevel.addParticle(ParticleTypes.SMOKE, false, i + 0.5, j + 0.1, k + 0.5, 0.0D, -0.0001, 0.0D);
-        //         // clientLevel.addParticle(ParticleTypes.CLOUD, false, i + 0.5, j + 0.5, k + 0.5, 0.0D, 5.0E-4D, 0.0D);
-        //         // clientLevel.addParticle(new BlockParticleOption(ParticleTypes.BLOCK_MARKER, Blocks.LIGHT.defaultBlockState().setValue(LightBlock.LEVEL,0)), (double) i + 0.5, (double) j + 0.5, (double) k + 0.5, 0.0, 0.0, 0.0);
-        //         // Minecraft.getInstance().particleEngine.add(new SnowCleaner(clientLevel,(double) i + 0.5, (double) j + 0.5, (double) k + 0.5, Items.SNOWBALL.getDefaultInstance()));
-        //
-        //     }
-        // }
     }
 
     public static void fallenLeaves(ClientLevel level, BlockPos pos, BlockState state) {
@@ -156,7 +152,7 @@ public class ParticleUtil {
                                 d5 = 0.42f;
                             }
 
-                            level.addParticle(new ColorParticleOptions( new Vector3f(FastColor.ARGB32.red(finalColor) / 255.0f,FastColor.ARGB32.green(finalColor) / 255.0f,FastColor.ARGB32.blue(finalColor) / 255.0f),1.0f),
+                            level.addParticle(new ColorParticleOptions(new Vector3f(FastColor.ARGB32.red(finalColor) / 255.0f, FastColor.ARGB32.green(finalColor) / 255.0f, FastColor.ARGB32.blue(finalColor) / 255.0f), 1.0f),
                                     (double) pos.getX() + d7,
                                     (double) pos.getY() + d8,
                                     (double) pos.getZ() + d9,

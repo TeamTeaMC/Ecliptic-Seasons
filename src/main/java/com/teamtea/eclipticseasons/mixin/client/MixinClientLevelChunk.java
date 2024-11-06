@@ -14,7 +14,6 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin({LevelChunk.class})
 public abstract class MixinClientLevelChunk {
@@ -28,7 +27,7 @@ public abstract class MixinClientLevelChunk {
     public void ecliptic$setBlockState(BlockPos pos, BlockState state, boolean p_62867_, CallbackInfoReturnable<BlockState> cir) {
         if (level instanceof ClientLevel clientLevel ){
             // MapChecker.getHeightOrUpdate(clientLevel,pos,true);
-            ClientMapFixer.addPlanner(clientLevel,state,pos,clientLevel.getGameTime(),MapChecker.getHeightOrUpdate(clientLevel, pos));
+            ClientMapFixer.addPlanner(clientLevel,state,pos,clientLevel.getGameTime(),MapChecker.getHeight(clientLevel, pos));
         }
     }
 }
