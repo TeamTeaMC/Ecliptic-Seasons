@@ -1,4 +1,4 @@
-package com.teamtea.eclipticseasons.api.util;
+package com.teamtea.eclipticseasons.client.core;
 
 public class SimplePair<K,V> {
 

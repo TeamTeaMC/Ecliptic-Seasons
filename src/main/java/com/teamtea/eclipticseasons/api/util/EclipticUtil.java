@@ -135,8 +135,7 @@ public class EclipticUtil {
             @Override
             public boolean isSnowAt(Level level, BlockPos pos) {
                 if (useSolarWeather())
-                    return WeatherManager.isRainingOrSnowAt(level, pos)
-                            && this.getPrecipitationAt(level, pos) == Biome.Precipitation.SNOW;
+                    return isHereSnowy(level, pos);
                 if (!level.isRaining()) {
                     return false;
                 } else if (!level.canSeeSky(pos)) {
