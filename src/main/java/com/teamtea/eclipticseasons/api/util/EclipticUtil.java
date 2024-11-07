@@ -179,4 +179,19 @@ public class EclipticUtil {
     }
 
 
+    public static boolean isHereWithSnow(Level level, BlockPos pos) {
+        return WeatherManager.getSnowDepthAtBiome(level, MapChecker.getSurfaceBiome(level, pos).value()) > 0;
+    }
+
+    public static boolean isHereSunny(Level level, BlockPos pos) {
+        return WeatherManager.getRainOrSnow(level, MapChecker.getSurfaceBiome(level, pos).value(), pos) == Biome.Precipitation.NONE;
+    }
+
+    public static boolean isHereRainy(Level level, BlockPos pos) {
+        return WeatherManager.getRainOrSnow(level, MapChecker.getSurfaceBiome(level, pos).value(), pos) == Biome.Precipitation.RAIN;
+    }
+
+    public static boolean isHereSnowy(Level level, BlockPos pos) {
+        return WeatherManager.getRainOrSnow(level, MapChecker.getSurfaceBiome(level, pos).value(), pos) == Biome.Precipitation.SNOW;
+    }
 }

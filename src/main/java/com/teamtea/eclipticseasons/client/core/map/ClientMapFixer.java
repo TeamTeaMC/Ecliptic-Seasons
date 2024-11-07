@@ -1,6 +1,6 @@
 package com.teamtea.eclipticseasons.client.core.map;
 
-import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
+import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.config.ClientConfig;
 import net.minecraft.client.Minecraft;
@@ -9,7 +9,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
@@ -48,25 +47,6 @@ public class ClientMapFixer {
 
     }
 
-    public static boolean isHereWithSnow(Level level, BlockPos pos) {
-        return WeatherManager.getSnowDepthAtBiome(level, MapChecker.getSurfaceBiome(level, pos).value()) > 0;
-    }
-
-    public static boolean isHereSunny(Level level, BlockPos pos) {
-        return WeatherManager.isRainingOrSnowAtBiome(level, MapChecker.getSurfaceBiome(level, pos).value())
-                && WeatherManager.getPrecipitationAt(level, MapChecker.getSurfaceBiome(level, pos).value(), pos) == Biome.Precipitation.NONE;
-    }
-
-    public static boolean isHereRainy(Level level, BlockPos pos) {
-        return WeatherManager.isRainingOrSnowAtBiome(level, MapChecker.getSurfaceBiome(level, pos).value())
-                && WeatherManager.getPrecipitationAt(level, MapChecker.getSurfaceBiome(level, pos).value(), pos) == Biome.Precipitation.RAIN;
-    }
-
-    public static boolean isHereSnowy(Level level, BlockPos pos) {
-        return WeatherManager.isRainingOrSnowAtBiome(level, MapChecker.getSurfaceBiome(level, pos).value())
-                && WeatherManager.getPrecipitationAt(level, MapChecker.getSurfaceBiome(level, pos).value(), pos) == Biome.Precipitation.SNOW;
-    }
-
 
     public static void addPlanner(ClientLevel level, BlockState state, BlockPos pos, long startTick, int startY) {
         boolean isNotOldHeight = startY != level.getHeight(Heightmap.Types.MOTION_BLOCKING, pos.getX(), pos.getZ()) - 1;
@@ -75,7 +55,7 @@ public class ClientMapFixer {
                 || state.getBlock() == Blocks.AIR
         )
                 && isNotOldHeight
-                && isHereWithSnow(level, pos)
+                && EclipticUtil.isHereWithSnow(level, pos)
         ) {
             // TODO：如果这里不下雪的话，那么直接更新就好了.以及未来可以考虑合并同一个点的
             ChunkPos chunkPos = new ChunkPos(pos);
@@ -105,10 +85,10 @@ public class ClientMapFixer {
                         ) {
                             var updatePos = new BlockPos.MutableBlockPos(xzPos.x(), xzPos.startY(), xzPos.z());
                             if (
-                                    !isHereSnowy(level, updatePos)
+                                    !EclipticUtil.isHereSnowy(level, updatePos)
                                             // (isHereSunny(level, updatePos))
                                             // || isHereRainy(level, updatePos)
-                                            && isHereWithSnow(level, updatePos)
+                                            && EclipticUtil.isHereWithSnow(level, updatePos)
                             ) {
                                 xzPos = new XZPos(xzPos.x(), xzPos.z(), level.getGameTime() - 50, level.getMaxBuildHeight() + 1);
                                 xzPosList.set(i, xzPos);
