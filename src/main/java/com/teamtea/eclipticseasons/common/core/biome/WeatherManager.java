@@ -228,6 +228,7 @@ public class WeatherManager {
         if (ws != null)
             for (BiomeWeather biomeWeather : ws) {
                 if (biome == biomeWeather.biomeHolder.value()) {
+                    if (biomeWeather.shouldClear()) return Biome.Precipitation.NONE;
                     var solarTerm = EclipticUtil.getNowSolarTerm(level);
                     var snowTerm = SolarTerm.getSnowTerm(biome);
                     boolean flag_cold = solarTerm.isInTerms(snowTerm.getStart(), snowTerm.getEnd());
@@ -252,7 +253,6 @@ public class WeatherManager {
         var level = levelNull != null ? levelNull : getMainServerLevel();
         var provider = SolarUtil.getProvider(level);
         var weathers = getBiomeList(level);
-
 
 
         if (provider != null && weathers != null) {
@@ -450,7 +450,7 @@ public class WeatherManager {
                 if (isLogged
 
                         && t.getSolarTermsDay() % ServerConfig.Season.lastingDaysOfEachTerm.get() == 0) {
-                    serverPlayer.sendSystemMessage(Component.translatable("info.teastory.environment.solar_term.message", SolarTerm.get(t.getSolarTermIndex()).getAlternationText()), false);
+                    serverPlayer.sendSystemMessage(Component.translatable("info.eclipticseasons.environment.solar_term.message", SolarTerm.get(t.getSolarTermIndex()).getAlternationText()), false);
                 }
             });
 

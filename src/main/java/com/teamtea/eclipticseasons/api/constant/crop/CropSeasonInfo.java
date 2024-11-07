@@ -69,7 +69,7 @@ public class CropSeasonInfo
     public List<Component> getTooltip()
     {
         List<Component> list = new ArrayList<>();
-        list.add(Component.translatable("info.teastory.environment.season").withStyle(ChatFormatting.GRAY));
+        list.add(Component.translatable("info.eclipticseasons.environment.season").withStyle(ChatFormatting.GRAY));
         boolean spring = (season & 1) == 1;
         boolean summer = (season & 2) == 2;
         boolean autumn = (season & 4) == 4;
