@@ -1,7 +1,7 @@
 package com.teamtea.eclipticseasons.mixin.game;
 
 
-import com.teamtea.eclipticseasons.game.AnimalHooks;
+import com.teamtea.eclipticseasons.common.game.AnimalHooks;
 import net.minecraft.world.entity.ai.goal.BreedGoal;
 import net.minecraft.world.entity.animal.Animal;
 import org.spongepowered.asm.mixin.Final;

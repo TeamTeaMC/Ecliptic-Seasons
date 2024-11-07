@@ -1,0 +1,55 @@
+package com.teamtea.eclipticseasons.common.network.message;
+
+import io.netty.buffer.ByteBuf;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.codec.StreamCodec;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class MessageCodec {
+   public static final StreamCodec<ByteBuf, List<Integer>> intlistStreamCodec = new StreamCodec<>() {
+        @Override
+        public void encode(ByteBuf pBuffer, List<Integer> pValue) {
+            pBuffer.writeInt(pValue.size());
+            for (Integer i : pValue) {
+                pBuffer.writeInt(i);
+            }
+        }
+
+        @Override
+        public @NotNull List<Integer> decode(ByteBuf pBuffer) {
+            int size = pBuffer.readInt();
+            ArrayList<Integer> list = new ArrayList<>(size);
+            for (int i = 0; i < size; i++) {
+                list.add(pBuffer.readInt());
+            }
+            return list;
+        }
+    };
+
+    public static final StreamCodec<ByteBuf, List<BlockPos>> poslistStreamCodec = new StreamCodec<>() {
+        @Override
+        public void encode(ByteBuf pBuffer, List<BlockPos> pValue) {
+            pBuffer.writeInt(pValue.size());
+            for (BlockPos i : pValue) {
+                BlockPos.STREAM_CODEC.encode(pBuffer, i);
+            }
+        }
+
+        @Override
+        public @NotNull List<BlockPos> decode(ByteBuf pBuffer) {
+            int size = pBuffer.readInt();
+            ArrayList<BlockPos> list = new ArrayList<>(size);
+            for (int i = 0; i < size; i++) {
+                list.add(BlockPos.STREAM_CODEC.decode(pBuffer));
+            }
+            return list;
+        }
+    };
+
+    static {
+
+    }
+}

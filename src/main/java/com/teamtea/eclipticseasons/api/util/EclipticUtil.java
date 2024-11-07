@@ -6,11 +6,13 @@ import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.core.solar.SolarAngelHelper;
+import com.teamtea.eclipticseasons.common.misc.MapColorReplacer;
 import com.teamtea.eclipticseasons.compat.vanilla.VanillaWeather;
 import com.teamtea.eclipticseasons.config.ServerConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
 
 public class EclipticUtil {
@@ -93,11 +95,18 @@ public class EclipticUtil {
                 return EclipticUtil.isEvening(level);
             }
 
+            @Deprecated
             @Override
             public boolean isSnowySurfaceAt(Level level, BlockPos pos) {
                 long seed = level.getBlockState(pos).getSeed(pos);
                 return MapChecker.shouldSnowAt(level, pos, level.getBlockState(pos), level.getRandom(), seed);
             }
+
+            @Override
+            public boolean isSnowyBlock(Level level, BlockState state, BlockPos pos) {
+                return MapColorReplacer.getTopSnowColor(level, state, pos) != null;
+            }
+
             @Override
             public boolean isRainOrSnowAt(Level level, BlockPos pos) {
                 if (useSolarWeather())
@@ -133,8 +142,7 @@ public class EclipticUtil {
             @Override
             public boolean isSnowAt(Level level, BlockPos pos) {
                 if (useSolarWeather())
-                    return WeatherManager.isRainingOrSnowAt(level, pos)
-                            && this.getPrecipitationAt(level, pos) == Biome.Precipitation.SNOW;
+                    return isHereSnowy(level, pos);
                 if (!level.isRaining()) {
                     return false;
                 } else if (!level.canSeeSky(pos)) {
@@ -167,5 +175,21 @@ public class EclipticUtil {
                 return VanillaWeather.handlePrecipitationAt(level, MapChecker.getSurfaceBiome(level, pos).value(), pos);
             }
         };
+    }
+
+    public static boolean isHereWithSnow(Level level, BlockPos pos) {
+        return WeatherManager.getSnowDepthAtBiome(level, MapChecker.getSurfaceBiome(level, pos).value()) > 0;
+    }
+
+    public static boolean isHereSunny(Level level, BlockPos pos) {
+        return WeatherManager.getRainOrSnow(level, MapChecker.getSurfaceBiome(level, pos).value(), pos) == Biome.Precipitation.NONE;
+    }
+
+    public static boolean isHereRainy(Level level, BlockPos pos) {
+        return WeatherManager.getRainOrSnow(level, MapChecker.getSurfaceBiome(level, pos).value(), pos) == Biome.Precipitation.RAIN;
+    }
+
+    public static boolean isHereSnowy(Level level, BlockPos pos) {
+        return WeatherManager.getRainOrSnow(level, MapChecker.getSurfaceBiome(level, pos).value(), pos) == Biome.Precipitation.SNOW;
     }
 }

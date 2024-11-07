@@ -1,4 +1,4 @@
-package com.teamtea.eclipticseasons.common.network;
+package com.teamtea.eclipticseasons.common.network.message;
 
 
 
@@ -8,6 +8,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import org.jetbrains.annotations.NotNull;
 
 public class BiomeWeatherMessage  implements CustomPacketPayload {
     public final byte[] rain;
@@ -15,27 +16,11 @@ public class BiomeWeatherMessage  implements CustomPacketPayload {
     public final byte[] clear;
     public final byte[] snowDepth;
 
-    public BiomeWeatherMessage(FriendlyByteBuf buf) {
-        rain = buf.readByteArray();
-        thuder = buf.readByteArray();
-        clear = buf.readByteArray();
-        snowDepth = buf.readByteArray();
-    }
-
     public BiomeWeatherMessage(byte[] rain, byte[] thuder, byte[] clear, byte[] snowDepth) {
         this.rain = rain;
         this.thuder = thuder;
         this.clear = clear;
         this.snowDepth = snowDepth;
-    }
-
-
-
-    public void toBytes(FriendlyByteBuf buf) {
-        buf.writeByteArray(rain);
-        buf.writeByteArray(thuder);
-        buf.writeByteArray(clear);
-        buf.writeByteArray(snowDepth);
     }
 
     public static final Type<BiomeWeatherMessage> TYPE = new Type<>(EclipticSeasons.rl("biomes_weather"));
@@ -57,7 +42,7 @@ public class BiomeWeatherMessage  implements CustomPacketPayload {
     );
 
     @Override
-    public Type<? extends CustomPacketPayload> type() {
+    public @NotNull Type<? extends CustomPacketPayload> type() {
         return TYPE;
     }
 }

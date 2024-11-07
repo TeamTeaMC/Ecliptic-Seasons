@@ -11,7 +11,6 @@ import com.teamtea.eclipticseasons.client.core.ClientWeatherChecker;
 import com.teamtea.eclipticseasons.client.render.WorldRenderer;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
-import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.core.solar.ClientSolarDataManager;
 import com.teamtea.eclipticseasons.config.ClientConfig;
 import com.teamtea.eclipticseasons.config.ServerConfig;
@@ -78,7 +77,7 @@ public final class ClientEventHandler {
 
     @SubscribeEvent
     public static void onChunkUnloadEvent(ChunkEvent.Unload event) {
-        if (event.getLevel() instanceof ClientLevel clientLevel) {
+        if (event.getLevel().isClientSide()) {
             ClientMapFixer.clearChunk(event.getChunk().getPos());
         }
     }
@@ -110,50 +109,28 @@ public final class ClientEventHandler {
     }
 
     private static long lastFreshTime = -1;
-
-    // 强制区块渲染
     @SubscribeEvent
     public static void onLevelTick(LevelTickEvent.Post event) {
         if (event.getLevel() instanceof ClientLevel clientLevel) {
-            // ClientWeatherChecker.updateRainLevel(clientLevel);
             ClientWeatherChecker.tickAllCheck(clientLevel);
             ClientMapFixer.tick(clientLevel);
+
             if (ClientConfig.Renderer.forceChunkRenderUpdate.get()) {
                 if (clientLevel.getGameTime() - lastFreshTime > 80
                         || clientLevel.getGameTime() < lastFreshTime - 1) {
                     lastFreshTime = clientLevel.getGameTime();
-                    var lr = Minecraft.getInstance().levelRenderer;
-                    if (lr != null && lr.viewArea != null) {
-                        // if (lr.visibleSections.size() < lr.viewArea.sections.length)
-                        //     for (int i = 0; i < lr.viewArea.sections.length; i++) {
-                        //         lr.viewArea.sections[i].setDirty(true);
-                        //         lr.visibleSections.add(lr.viewArea.sections[i]);
-                        //     }
-
-                        //
-                        // ((ClientChunkCache) event.level.getChunkSource()).storage.
-                        if (Minecraft.getInstance().cameraEntity instanceof Player player) {
-                            BlockPos pos = player.getOnPos();
-                            SectionPos sectionPos = SectionPos.of(pos);
-                            if (!ClientConfig.Renderer.enhancementChunkRenderUpdate.get()) {
-                                lr.setSectionDirtyWithNeighbors(sectionPos.x(), sectionPos.y(), sectionPos.z());
-                            } else {
-                                if (event.getLevel().getRandom().nextInt(2) == 0) {
-                                    int pSectionX = sectionPos.x();
-                                    int pSectionY = sectionPos.y();
-                                    int pSectionZ = sectionPos.z();
-                                    int d = (int) lr.getLastViewDistance();
-                                    for (int j = pSectionZ - d; j <= pSectionZ + d; j++) {
-                                        for (int i = pSectionX - d; i <= pSectionX + d; i++) {
-                                            for (int k = pSectionY - 3; k <= pSectionY + 1; k++) {
-                                                lr.setSectionDirty(i, k, j);
-                                            }
-                                        }
-                                    }
-                                }
+                    if (Minecraft.getInstance().cameraEntity instanceof Player player) {
+                        BlockPos pos = player.getOnPos();
+                        SectionPos sectionPos = SectionPos.of(pos);
+                        if (!ClientConfig.Renderer.enhancementChunkRenderUpdate.get()) {
+                            WorldRenderer.setSectionDirtyWithNeighbors(sectionPos);
+                        } else {
+                            if (event.getLevel().getRandom().nextInt(2) == 0) {
+                                WorldRenderer.setAllDirty(sectionPos);
                             }
                         }
                     }
+
                 }
             }
         }

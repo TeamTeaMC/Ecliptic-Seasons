@@ -1,4 +1,4 @@
-package com.teamtea.eclipticseasons.client.core.map;
+package com.teamtea.eclipticseasons.common.core.map;
 
 import java.util.Objects;
 

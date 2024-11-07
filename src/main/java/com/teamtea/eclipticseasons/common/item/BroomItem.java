@@ -1,11 +1,11 @@
 package com.teamtea.eclipticseasons.common.item;
 
-import com.teamtea.eclipticseasons.client.core.map.ClientMapFixer;
+import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
-import net.minecraft.client.Minecraft;
+import com.teamtea.eclipticseasons.common.core.map.ServerMapFixer;
+import com.teamtea.eclipticseasons.common.misc.MapColorReplacer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.SectionPos;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvent;
@@ -15,6 +15,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.Item;
@@ -60,23 +61,24 @@ public class BroomItem extends Item {
     }
 
     @Override
-    public void onUseTick(Level pLevel, LivingEntity pLivingEntity, ItemStack pStack, int pRemainingUseDuration) {
-        if (pRemainingUseDuration >= 0 && pLivingEntity instanceof Player player) {
-            HitResult hitresult = this.calculateHitResult(player);
+    public void onUseTick(Level level, LivingEntity pLivingEntity, ItemStack pStack, int pRemainingUseDuration) {
+        if (pRemainingUseDuration >= 0 ) {
+            HitResult hitresult = this.calculateHitResult(pLivingEntity);
             if (hitresult instanceof BlockHitResult blockhitresult && hitresult.getType() == HitResult.Type.BLOCK) {
                 int remainTicks = this.getUseDuration(pStack, pLivingEntity) - pRemainingUseDuration + 1;
                 if (remainTicks % ANIMATION_DURATION == 5) {
                     BlockPos blockpos = blockhitresult.getBlockPos();
-                    BlockState blockstate = pLevel.getBlockState(blockpos);
+                    BlockState blockstate = level.getBlockState(blockpos);
                     HumanoidArm humanoidarm = pLivingEntity.getUsedItemHand() == InteractionHand.MAIN_HAND
-                            ? player.getMainArm()
-                            : player.getMainArm().getOpposite();
+                            ? pLivingEntity.getMainArm()
+                            : pLivingEntity.getMainArm().getOpposite();
 
-                   boolean shouldSet= MapChecker.shouldSnowAt(pLevel,blockpos,blockstate,pLevel.getRandom(),blockstate.getSeed(blockpos))
-                           &&MapChecker.getHeight(pLevel,blockpos)==blockpos.getY();
+                   // boolean shouldSet= MapChecker.shouldSnowAt(level,blockpos,blockstate,level.getRandom(),blockstate.getSeed(blockpos))
+                   //         &&MapChecker.getHeight(level,blockpos)==blockpos.getY();
+                   boolean shouldSet= EclipticSeasonsApi.getInstance().isSnowyBlock(level, blockstate, blockpos);
                     if ( blockstate.shouldSpawnTerrainParticles()
                             && blockstate.getRenderShape() != RenderShape.INVISIBLE) {
-                        this.spawnDustParticles(pLevel, blockhitresult, shouldSet?Blocks.SNOW_BLOCK.defaultBlockState():blockstate,
+                        this.spawnDustParticles(level, blockhitresult, shouldSet?Blocks.SNOW_BLOCK.defaultBlockState():blockstate,
                                 pLivingEntity.getViewVector(0.0F), humanoidarm);
                     }
 
@@ -87,14 +89,22 @@ public class BroomItem extends Item {
                         soundevent = SoundEvents.BRUSH_GENERIC;
                     }
 
-                    pLevel.playSound(player, blockpos, soundevent, SoundSource.BLOCKS);
 
-                    if(shouldSet&&pLevel.isClientSide()){
-                        int startY=pLevel.getMaxBuildHeight() + 1;
-                        MapChecker.updatePosForce(pLevel,blockpos, pLevel.getMaxBuildHeight() + 1);
-                        SectionPos sectionPos = SectionPos.of(blockpos);
-                        Minecraft.getInstance().levelRenderer.setSectionDirty(sectionPos.x(),sectionPos.y(),sectionPos.z());
-                        ClientMapFixer.addPlanner(pLevel,blockstate,blockpos,pLevel.getGameTime()+160, startY);
+                    level.playSound(pLivingEntity, blockpos, soundevent, SoundSource.BLOCKS,1f,1f);
+
+                    // if(shouldSet&&level.isClientSide()){
+                    //     int startY=level.getMaxBuildHeight() + 1;
+                    //     MapChecker.updatePosForce(level,blockpos, level.getMaxBuildHeight() + 1);
+                    //     SectionPos sectionPos = SectionPos.of(blockpos);
+                    //     Minecraft.getInstance().levelRenderer.setSectionDirty(sectionPos.x(),sectionPos.y(),sectionPos.z());
+                    //     ClientMapFixer.addPlanner(level,blockstate,blockpos,level.getGameTime()+160, startY);
+                    // }
+                    if(shouldSet&& !level .isClientSide()){
+                        ServerMapFixer.addPlanner(level,
+                                blockstate,
+                                blockstate, blockpos,
+                                level.getGameTime()+160,
+                                MapChecker.getHeight(level,blockpos),true);
                     }
                 }
 
@@ -107,9 +117,11 @@ public class BroomItem extends Item {
         }
     }
 
-    private HitResult calculateHitResult(Player player) {
+    private HitResult calculateHitResult(LivingEntity livingEntity) {
         return ProjectileUtil.getHitResultOnViewVector(
-                player, entity -> !entity.isSpectator() && entity.isPickable(), player.blockInteractionRange()
+                livingEntity, entity -> !entity.isSpectator() && entity.isPickable(),
+                livingEntity  instanceof  Player player?
+                        player.blockInteractionRange():4.5f
         );
     }
 

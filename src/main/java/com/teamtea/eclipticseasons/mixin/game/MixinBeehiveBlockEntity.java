@@ -1,12 +1,8 @@
 package com.teamtea.eclipticseasons.mixin.game;
 
 
-import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
-import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
-import com.teamtea.eclipticseasons.api.util.WeatherUtil;
-import com.teamtea.eclipticseasons.config.ServerConfig;
-import com.teamtea.eclipticseasons.game.AnimalHooks;
+import com.teamtea.eclipticseasons.common.game.AnimalHooks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BeehiveBlockEntity;

@@ -3,7 +3,7 @@ package com.teamtea.eclipticseasons.common.core.map;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
-import com.teamtea.eclipticseasons.common.network.ChunkUpdateMessage;
+import com.teamtea.eclipticseasons.common.network.message.ChunkUpdateMessage;
 import com.teamtea.eclipticseasons.common.network.SimpleNetworkHandler;
 import com.teamtea.eclipticseasons.config.ServerConfig;
 import net.minecraft.core.BlockPos;
@@ -131,7 +131,7 @@ public class MapChecker {
         return map;
     }
 
-    private static int getVanillaHeightWithCheck(Level level, BlockPos pos) {
+    public static int getMCHeightWithCheck(Level level, BlockPos pos) {
         if (level.getChunkAt(pos) instanceof LevelChunk levelChunk) {
             if (levelChunk.hasData(EclipticSeasons.ModContents.SNOWY_REMOVER)
                     && levelChunk.getData(EclipticSeasons.ModContents.SNOWY_REMOVER) instanceof SnowyRemover snowyRemover) {
@@ -176,7 +176,7 @@ public class MapChecker {
             if (type == ChunkInfoMap.TYPE_HEIGHT) {
                 value = map.getHeight(pos);
                 if (value <= map.minY || forceUpdate) {
-                    var rh = getVanillaHeightWithCheck(level, pos);
+                    var rh = getMCHeightWithCheck(level, pos);
                     map.updateHeight(pos, rh);
                     value = rh;
                 }
@@ -212,7 +212,7 @@ public class MapChecker {
             // updateLock = false;
 
             if (type == ChunkInfoMap.TYPE_HEIGHT) {
-                value = getVanillaHeightWithCheck(level, pos);
+                value = getMCHeightWithCheck(level, pos);
                 map.updateHeight(pos, value);
             } else if (type == ChunkInfoMap.TYPE_BIOME) {
                 if (level.isLoaded(pos)) {

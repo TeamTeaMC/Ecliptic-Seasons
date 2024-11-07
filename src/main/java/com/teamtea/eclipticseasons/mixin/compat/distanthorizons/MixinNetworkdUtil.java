@@ -1,7 +1,7 @@
 package com.teamtea.eclipticseasons.mixin.compat.distanthorizons;
 
 
-import com.teamtea.eclipticseasons.common.network.EmptyMessage;
+import com.teamtea.eclipticseasons.common.network.message.EmptyMessage;
 import com.teamtea.eclipticseasons.common.network.NetworkdUtil;
 import com.teamtea.eclipticseasons.compat.distanthorizons.DHTool;
 import com.teamtea.eclipticseasons.config.ClientConfig;

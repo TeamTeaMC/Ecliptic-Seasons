@@ -13,10 +13,10 @@ import com.teamtea.eclipticseasons.common.advancement.SolarTermsRecord;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.handler.SolarUtil;
-import com.teamtea.eclipticseasons.common.network.BiomeWeatherMessage;
-import com.teamtea.eclipticseasons.common.network.EmptyMessage;
+import com.teamtea.eclipticseasons.common.network.message.BiomeWeatherMessage;
+import com.teamtea.eclipticseasons.common.network.message.EmptyMessage;
 import com.teamtea.eclipticseasons.common.network.SimpleNetworkHandler;
-import com.teamtea.eclipticseasons.common.network.SolarTermsMessage;
+import com.teamtea.eclipticseasons.common.network.message.SolarTermsMessage;
 import com.teamtea.eclipticseasons.config.ServerConfig;
 import com.teamtea.eclipticseasons.compat.vanilla.VanillaWeather;
 import net.minecraft.core.BlockPos;
@@ -180,7 +180,7 @@ public class WeatherManager {
         // Thread.currentThread().getStackTrace()
         // var biome = serverLevel.getBiome(pos);
         var biome = MapChecker.getSurfaceBiome(serverLevel, pos);
-        return getRainOrSnow(serverLevel,biome.value(),pos)== Biome.Precipitation.RAIN;
+        return getRainOrSnow(serverLevel, biome.value(), pos) == Biome.Precipitation.RAIN;
     }
 
     public static Boolean isRainingOrSnowAt(Level serverLevel, BlockPos pos) {
@@ -272,7 +272,7 @@ public class WeatherManager {
         }
 
         // check if it has predication
-        if (BiomeClimateManager.getTag(biome).equals(ClimateTypeBiomeTags.RAINLESS)){
+        if (BiomeClimateManager.getTag(biome).equals(ClimateTypeBiomeTags.RAINLESS)) {
             return Biome.Precipitation.NONE;
         }
 
@@ -281,8 +281,8 @@ public class WeatherManager {
 
         // Not add 'has' check because we have checked it
         if (
-                // biome.hasPrecipitation() &&
-                        provider != null && weathers != null) {
+            // biome.hasPrecipitation() &&
+                provider != null && weathers != null) {
             var solarTerm = provider.getSolarTerm();
             var snowTerm = SolarTerm.getSnowTerm(biome, levelNull instanceof ServerLevel);
             boolean flag_cold = solarTerm.isInTerms(snowTerm.getStart(), snowTerm.getEnd());

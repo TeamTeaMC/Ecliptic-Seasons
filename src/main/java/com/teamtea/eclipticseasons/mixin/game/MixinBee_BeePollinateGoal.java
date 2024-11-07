@@ -1,13 +1,8 @@
 package com.teamtea.eclipticseasons.mixin.game;
 
 
-import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
-import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-import com.teamtea.eclipticseasons.api.util.WeatherUtil;
-import com.teamtea.eclipticseasons.config.ServerConfig;
-import com.teamtea.eclipticseasons.game.AnimalHooks;
+import com.teamtea.eclipticseasons.common.game.AnimalHooks;
 import net.minecraft.world.entity.animal.Bee;
-import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;

@@ -1,4 +1,4 @@
-package com.teamtea.eclipticseasons.common.network;
+package com.teamtea.eclipticseasons.common.network.message;
 
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
@@ -13,15 +13,6 @@ public class SolarTermsMessage implements CustomPacketPayload {
 
     public SolarTermsMessage(int solarDay) {
         this.solarDay = solarDay;
-    }
-
-    public SolarTermsMessage(FriendlyByteBuf buf) {
-        solarDay = buf.readInt();
-    }
-
-
-    public void toBytes(FriendlyByteBuf buf) {
-        buf.writeInt(solarDay);
     }
 
 

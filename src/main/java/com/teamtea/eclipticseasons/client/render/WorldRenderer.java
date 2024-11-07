@@ -8,11 +8,16 @@ import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.PostPass;
+import net.minecraft.client.renderer.ViewArea;
+import net.minecraft.client.renderer.chunk.SectionRenderDispatcher;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.SectionPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
@@ -57,7 +62,7 @@ public class WorldRenderer {
 
                         // 我们写的shader好像有问题？
                         // gameRenderer.loadEffect(EclipticSeasonsMod.rl("shaders/post/fade_in_blur.json"));
-                        gameRenderer.loadEffect( ResourceLocation.withDefaultNamespace("shaders/post/blur.json"));
+                        gameRenderer.loadEffect(ResourceLocation.withDefaultNamespace("shaders/post/blur.json"));
                     }
                 }
 
@@ -70,7 +75,7 @@ public class WorldRenderer {
                 {
                     // prevProgress = progress;
                     // 用于mc原版blur
-                    progress*=10f;
+                    progress *= 10f;
 
                     updateUniform("RadiusMultiplier", progress);
                 }
@@ -80,7 +85,7 @@ public class WorldRenderer {
                     if (oldBlurStatus == NONE_BLUR) {
                         gameRenderer.shutdownEffect();
                     }
-                    reMainTick=0;
+                    reMainTick = 0;
                 }
             }
         }
@@ -159,6 +164,44 @@ public class WorldRenderer {
                 event.scaleNearPlaneDistance(nearPlaneScale);
                 event.scaleFarPlaneDistance(farPlaneScale);
                 event.setCanceled(true);
+            }
+        }
+    }
+
+    public static boolean isSectionLoad(SectionPos sectionPos) {
+        return isSectionLoad(sectionPos, 1);
+    }
+
+    public static boolean isSectionLoad(SectionPos sectionPos, int range) {
+        if (Minecraft.getInstance().level instanceof Level level) {
+            return level.isAreaLoaded(sectionPos.center(), range);
+        }
+        return false;
+    }
+
+    public static void setSectionDirty(SectionPos sectionPos) {
+        if (isSectionLoad(sectionPos)) {
+            Minecraft.getInstance().levelRenderer.setSectionDirty(sectionPos.x(), sectionPos.y(), sectionPos.z());
+        }
+    }
+
+    public static void setSectionDirtyWithNeighbors(SectionPos sectionPos) {
+        if (isSectionLoad(sectionPos, 2)) {
+            Minecraft.getInstance().levelRenderer.setSectionDirtyWithNeighbors(sectionPos.x(), sectionPos.y(), sectionPos.z());
+        }
+    }
+
+
+    public static void setAllDirty(SectionPos centerPos) {
+        int pSectionX = centerPos.x();
+        int pSectionY = centerPos.y();
+        int pSectionZ = centerPos.z();
+        int d = (int) Minecraft.getInstance().levelRenderer.getLastViewDistance();
+        for (int j = pSectionZ - d; j <= pSectionZ + d; j++) {
+            for (int i = pSectionX - d; i <= pSectionX + d; i++) {
+                for (int k = pSectionY - 3; k <= pSectionY + 1; k++) {
+                    setSectionDirty(SectionPos.of(i, k, j));
+                }
             }
         }
     }

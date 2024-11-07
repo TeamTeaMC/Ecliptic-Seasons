@@ -1,4 +1,4 @@
-package com.teamtea.eclipticseasons.game;
+package com.teamtea.eclipticseasons.common.game;
 
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;

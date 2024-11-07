@@ -2,11 +2,13 @@ package com.teamtea.eclipticseasons.common;
 
 
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
+import com.teamtea.eclipticseasons.client.core.map.ClientMapFixer;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
+import com.teamtea.eclipticseasons.common.core.map.ServerMapFixer;
 import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
 import com.teamtea.eclipticseasons.common.handler.CustomRandomTickHandler;
 import com.teamtea.eclipticseasons.config.ServerConfig;
@@ -27,7 +29,6 @@ import java.util.List;
 
 @EventBusSubscriber(modid = EclipticSeasonsApi.MODID)
 public class AllListener {
-    // public static LazyOptional<SolarProvider> provider = LazyOptional.empty();
 
 
     // TagsUpdatedEvent invoke before ServerAboutToStartEvent
@@ -80,6 +81,9 @@ public class AllListener {
             WeatherManager.BIOME_WEATHER_LIST.remove(level);
             SolarHolders.DATA_MANAGER_MAP.remove(level);
             MapChecker.unloadLevel(level);
+            if(!level.isClientSide()) {
+                ServerMapFixer.unloadLevel(level);
+            }
         }
     }
 
@@ -91,6 +95,7 @@ public class AllListener {
         //     MapChecker.clearChunk(event.getChunk().getLevel(),event.getChunk().getPos());
         // }
         MapChecker.unloadChunk(event.getChunk().getLevel(), event.getChunk().getPos());
+        ServerMapFixer.unloadChunk(event.getChunk().getLevel(),event.getChunk().getPos());
     }
 
 
@@ -105,8 +110,8 @@ public class AllListener {
                     data.updateTicks((ServerLevel) event.getLevel());
                 }
             });
+            ServerMapFixer.tick(event.getLevel());
         }
-
         CustomRandomTickHandler.onWorldTick(event);
 
     }
@@ -149,4 +154,6 @@ public class AllListener {
     public static void onChunkUpdate(ChunkWatchEvent.Sent event) {
         MapChecker.updateChunk(event.getChunk(), event.getPos(), event.getPlayer(), List.of(), List.of());
     }
+
+
 }
