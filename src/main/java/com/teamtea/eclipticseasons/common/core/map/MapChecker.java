@@ -402,7 +402,7 @@ public class MapChecker {
                 && !level.dimensionType().hasFixedTime();
     }
 
-    public static void updateChunk(LevelChunk chunk, ChunkPos chunkPos, ServerPlayer player, List<Integer> section_y, List<BlockPos> clickedPos) {
+    public static void sendChunkInfo(LevelChunk chunk, ChunkPos chunkPos, ServerPlayer player, List<Integer> section_y, List<BlockPos> clickedPos) {
         byte[] bytes = new byte[256];
         // var section_y = new HashSet<Integer>(chunk.getSectionsCount());
         // var section_y=new HashSet<Integer>();

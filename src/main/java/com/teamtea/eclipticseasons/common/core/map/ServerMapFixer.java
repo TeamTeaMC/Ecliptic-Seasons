@@ -14,6 +14,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * <p>如今迁移到服务器上，那么设计也需要更新。
@@ -26,6 +27,13 @@ public class ServerMapFixer {
 
 
     private static final Map<Level, Map<ChunkPos, List<XZPos>>> CHUNK_POS_XZ_POS_MAP = new IdentityHashMap<>();
+
+    public static long tickBlocksCount = 0;
+    public static long lastTick;
+
+    private static final long MIN_TICK_CHECK_INTERVAL = 10;
+    private static final long MAX_TICK_BLOCK_RESET = 10 * 10000;
+    private static final long MAX_COUNT_PER_TICK = 100 * 10000;
 
     public static Map<ChunkPos, List<XZPos>> getMap(Level level) {
         return CHUNK_POS_XZ_POS_MAP.computeIfAbsent(level, level1 -> new HashMap<>());
@@ -57,20 +65,19 @@ public class ServerMapFixer {
 
         boolean informClientImmediately = false;
         int newy = level.getMinBuildHeight();
+        boolean addToList = false;
         if (!forceClearSnow) {
             int mcHeight = MapChecker.getMCHeightWithCheck(level, pos);
             // boolean stateChange = state != oldState;
             boolean isNotOldHeight =
                     startY != mcHeight;
             if (isNotOldHeight
-                            && (Heightmap.Types.MOTION_BLOCKING.isOpaque().test(state)
-                            || state.getBlock() == Blocks.AIR
-                    )
-                            && EclipticUtil.isHereWithSnow(level, pos)
+                    && (Heightmap.Types.MOTION_BLOCKING.isOpaque().test(state)
+                    || state.getBlock() == Blocks.AIR
+            )
+                    && EclipticUtil.isHereWithSnow(level, pos)
             ) {
-                ChunkPos chunkPos = new ChunkPos(pos);
-                List<XZPos> xzPosList = getMap(level).computeIfAbsent(chunkPos, k -> new ArrayList<>());
-                xzPosList.add(new XZPos(pos.getX(), pos.getZ(), startTick, startY));
+                addToList = true;
                 if (state.getBlock() == Blocks.AIR) {
                     newy = level.getMaxBuildHeight() + 1;
                     informClientImmediately = true;
@@ -80,14 +87,34 @@ public class ServerMapFixer {
                 if (isNotOldHeight) {
                     newy = mcHeight;
                     informClientImmediately = true;
+                    addToList = true;
                 }
             }
         } else {
-            ChunkPos chunkPos = new ChunkPos(pos);
-            List<XZPos> xzPosList = getMap(level).computeIfAbsent(chunkPos, k -> new ArrayList<>());
-            xzPosList.add(new XZPos(pos.getX(), pos.getZ(), startTick, startY));
             newy = level.getMaxBuildHeight() + 1;
             informClientImmediately = true;
+            addToList = true;
+        }
+
+        if (addToList) {
+            if (lastTick <= 0) {
+                lastTick = level.getGameTime();
+            }
+            tickBlocksCount++;
+            if (tickBlocksCount > MAX_TICK_BLOCK_RESET) {
+                long nowTick = level.getGameTime();
+                if (nowTick - lastTick < MIN_TICK_CHECK_INTERVAL) {
+                    addToList = false;
+                } else {
+                    lastTick = nowTick;
+                    tickBlocksCount = 0;
+                }
+            }
+            if (addToList) {
+                ChunkPos chunkPos = new ChunkPos(pos);
+                List<XZPos> xzPosList = getMap(level).computeIfAbsent(chunkPos, k -> new ArrayList<>());
+                xzPosList.add(new XZPos(pos.getX(), pos.getZ(), startTick, startY));
+            }
         }
 
         if (informClientImmediately && level instanceof ServerLevel serverLevel) {
@@ -101,15 +128,18 @@ public class ServerMapFixer {
         if (!MapChecker.isValidDimension(level)) return;
 
         Map<ChunkPos, List<XZPos>> chunkPosListMap = getMap(level);
-
         long tick = level.getGameTime();
         List<ChunkPos> removeNeedChunkPosList = new ArrayList<>();
         Set<SectionPos> updateSectionsList = new HashSet<>();
         List<BlockPos> updatePosList = new ArrayList<>();
         List<Integer> oldYs = new ArrayList<>();
+
+        AtomicLong countPerTick = new AtomicLong();
         chunkPosListMap.forEach(
                 (chunkPos, xzPosList) -> {
-                    for (int i = 0; i < xzPosList.size(); i++) {
+                    for (int i = 0; i < xzPosList.size()
+                            && countPerTick.get() < MAX_COUNT_PER_TICK; i++) {
+                        countPerTick.getAndIncrement();
                         XZPos xzPos = xzPosList.get(i);
                         // 这里需要限制，一次不能刷新太多，不然会超载
                         if (tick - xzPos.startTick() > 160

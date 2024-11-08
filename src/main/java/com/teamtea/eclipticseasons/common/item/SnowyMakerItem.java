@@ -62,7 +62,7 @@ public class SnowyMakerItem extends Item {
                             }
                     );
                     for (ServerPlayer player : players) {
-                        MapChecker.updateChunk(chunk, chunkPos, player, List.of(sectionPos.y()), List.of(clickedPos));
+                        MapChecker.sendChunkInfo(chunk, chunkPos, player, List.of(sectionPos.y()), List.of(clickedPos));
                     }
 
                     if (data.allSnowAble()) {

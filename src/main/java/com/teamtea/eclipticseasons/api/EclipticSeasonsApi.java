@@ -65,6 +65,9 @@ public interface EclipticSeasonsApi {
     @Deprecated
     boolean isSnowySurfaceAt(Level level, BlockPos pos);
 
+    /**
+     * Checks if the block at the pos should be snowy.
+     */
     boolean isSnowyBlock(Level level, BlockState state, BlockPos pos);
 
     boolean isRainOrSnowAt(Level level,BlockPos pos);

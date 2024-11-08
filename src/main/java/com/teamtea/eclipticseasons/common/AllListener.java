@@ -2,7 +2,6 @@ package com.teamtea.eclipticseasons.common;
 
 
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
-import com.teamtea.eclipticseasons.client.core.map.ClientMapFixer;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
@@ -52,7 +51,8 @@ public class AllListener {
     public static void onSleepFinishedTimeEvent(SleepFinishedTimeEvent event) {
         if (event.getLevel() instanceof ServerLevel level) {
 
-            long newTime = event.getNewTime(), oldDayTime = ((Level) event.getLevel()).getDayTime();
+            long newTime = event.getNewTime(),
+                    oldDayTime = ((Level) event.getLevel()).getDayTime();
             WeatherManager.updateAfterSleep(level, newTime, oldDayTime);
             // // TODO: 根据季节更新概率
             // if (!serverLevel.isRaining() && serverLevel.getRandom().nextFloat() > 0.8) {
@@ -81,7 +81,7 @@ public class AllListener {
             WeatherManager.BIOME_WEATHER_LIST.remove(level);
             SolarHolders.DATA_MANAGER_MAP.remove(level);
             MapChecker.unloadLevel(level);
-            if(!level.isClientSide()) {
+            if (!level.isClientSide()) {
                 ServerMapFixer.unloadLevel(level);
             }
         }
@@ -95,7 +95,7 @@ public class AllListener {
         //     MapChecker.clearChunk(event.getChunk().getLevel(),event.getChunk().getPos());
         // }
         MapChecker.unloadChunk(event.getChunk().getLevel(), event.getChunk().getPos());
-        ServerMapFixer.unloadChunk(event.getChunk().getLevel(),event.getChunk().getPos());
+        ServerMapFixer.unloadChunk(event.getChunk().getLevel(), event.getChunk().getPos());
     }
 
 
@@ -151,8 +151,8 @@ public class AllListener {
     }
 
     @SubscribeEvent
-    public static void onChunkUpdate(ChunkWatchEvent.Sent event) {
-        MapChecker.updateChunk(event.getChunk(), event.getPos(), event.getPlayer(), List.of(), List.of());
+    public static void onChunkWatch(ChunkWatchEvent.Sent event) {
+        MapChecker.sendChunkInfo(event.getChunk(), event.getPos(), event.getPlayer(), List.of(), List.of());
     }
 
 
