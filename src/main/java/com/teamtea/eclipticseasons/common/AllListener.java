@@ -122,7 +122,12 @@ public class AllListener {
         }
     }
 
-
+    @SubscribeEvent
+    public static void onPlayerChangedDimension(PlayerEvent.Clone event) {
+        if (event.getEntity() instanceof ServerPlayer serverPlayer) {
+            WeatherManager.onLoggedIn(serverPlayer, false);
+        }
+    }
     @SubscribeEvent
     public static void onCropGrowUp(BlockEvent.CropGrowEvent.Pre event) {
         CropGrowthHandler.beforeCropGrowUp(event);
