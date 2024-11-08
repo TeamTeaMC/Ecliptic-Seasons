@@ -182,7 +182,7 @@ public class ServerMapFixer {
         if (level instanceof ServerLevel serverLevel
                 && !updatePosList.isEmpty()) {
             sendToAll(serverLevel, updatePosList, oldYs);
-            EclipticSeasons.logger(level.getGameTime(), updatePosList);
+            // EclipticSeasons.logger(level.getGameTime(), updatePosList);
         }
 
         // for (SectionPos sectionPos : updateSectionsList) {
