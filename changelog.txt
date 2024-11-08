@@ -1,19 +1,19 @@
 0.3.14
-add compat for legendarysurvivaloverhaul (1.20,1.16 plan)
+add compat for legendarysurvivaloverhaul
 fix the sound in the rain and water (1.20-1.21, 1.19-1.16 plan)
 
 0.3.15
 add a config for crop humidity (1.20-1.21, and 1.19-1.16 plan)
-add a config for crop season growth chance (1.20, and 1.19-1.16 plan)
+add a config for crop season growth chance
 fix #3 for use EclipticTagClientTool in server method
 
 0.3.16
-add compat for cold_sweat (1.20, 1.21 and 1.19-1.16 plan)
+add compat for cold_sweat
 fix compat for embeddium
 * fix desert tag (1.20-1.21, 1.19-1.16 need check)
 * add small biome check
-* fix biome of bound rain and snow (1.20-1.21, 1.19-1.16 need check)
-** fix model cache problem with ModernFix (1.20, 1.21 and 1.19-1.16 need check)
+* fix biome of bound rain and snow
+** fix model cache problem with ModernFix (1.20-1.21, 1.19-1.16 need check)
 ** close fog weather which is used for test (1.20-1.21, 1.19-1.16 need check)
 
 0.4
@@ -57,3 +57,4 @@ fix an issue with snowy blocks flickering at long distances
 optimized performance consumption when rain
 * fix a simple render with some special mods slabs
 ** fix some codes
+** fix sync problem if player die in other dimension (1.20-1.21, 1.19-1.16 plan)
