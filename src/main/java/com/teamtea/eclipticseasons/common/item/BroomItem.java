@@ -34,8 +34,9 @@ import net.minecraft.world.phys.Vec3;
 public class BroomItem extends Item {
     public BroomItem(Properties pProperties) {
         super(pProperties);
-        
+
     }
+
     public static final int ANIMATION_DURATION = 10;
     private static final int USE_DURATION = 200;
 
@@ -62,7 +63,7 @@ public class BroomItem extends Item {
 
     @Override
     public void onUseTick(Level level, LivingEntity pLivingEntity, ItemStack pStack, int pRemainingUseDuration) {
-        if (pRemainingUseDuration >= 0 ) {
+        if (pRemainingUseDuration >= 0) {
             HitResult hitresult = this.calculateHitResult(pLivingEntity);
             if (hitresult instanceof BlockHitResult blockhitresult && hitresult.getType() == HitResult.Type.BLOCK) {
                 int remainTicks = this.getUseDuration(pStack, pLivingEntity) - pRemainingUseDuration + 1;
@@ -73,12 +74,12 @@ public class BroomItem extends Item {
                             ? pLivingEntity.getMainArm()
                             : pLivingEntity.getMainArm().getOpposite();
 
-                   // boolean shouldSet= MapChecker.shouldSnowAt(level,blockpos,blockstate,level.getRandom(),blockstate.getSeed(blockpos))
-                   //         &&MapChecker.getHeight(level,blockpos)==blockpos.getY();
-                   boolean shouldSet= EclipticSeasonsApi.getInstance().isSnowyBlock(level, blockstate, blockpos);
-                    if ( blockstate.shouldSpawnTerrainParticles()
+                    // boolean shouldSet= MapChecker.shouldSnowAt(level,blockpos,blockstate,level.getRandom(),blockstate.getSeed(blockpos))
+                    //         &&MapChecker.getHeight(level,blockpos)==blockpos.getY();
+                    boolean shouldSet = EclipticSeasonsApi.getInstance().isSnowyBlock(level, blockstate, blockpos);
+                    if (blockstate.shouldSpawnTerrainParticles()
                             && blockstate.getRenderShape() != RenderShape.INVISIBLE) {
-                        this.spawnDustParticles(level, blockhitresult, shouldSet?Blocks.SNOW_BLOCK.defaultBlockState():blockstate,
+                        this.spawnDustParticles(level, blockhitresult, shouldSet ? Blocks.SNOW_BLOCK.defaultBlockState() : blockstate,
                                 pLivingEntity.getViewVector(0.0F), humanoidarm);
                     }
 
@@ -90,7 +91,7 @@ public class BroomItem extends Item {
                     }
 
 
-                    level.playSound(pLivingEntity, blockpos, soundevent, SoundSource.BLOCKS,1f,1f);
+                    level.playSound(pLivingEntity, blockpos, soundevent, SoundSource.BLOCKS, 1f, 1f);
 
                     // if(shouldSet&&level.isClientSide()){
                     //     int startY=level.getMaxBuildHeight() + 1;
@@ -99,12 +100,12 @@ public class BroomItem extends Item {
                     //     Minecraft.getInstance().levelRenderer.setSectionDirty(sectionPos.x(),sectionPos.y(),sectionPos.z());
                     //     ClientMapFixer.addPlanner(level,blockstate,blockpos,level.getGameTime()+160, startY);
                     // }
-                    if(shouldSet&& !level .isClientSide()){
+                    if (shouldSet && !level.isClientSide()) {
                         ServerMapFixer.addPlanner(level,
                                 blockstate,
                                 blockstate, blockpos,
-                                level.getGameTime()+160,
-                                MapChecker.getHeight(level,blockpos),true);
+                                level.getGameTime() + 160,
+                                MapChecker.getHeight(level, blockpos), true);
                     }
                 }
 
@@ -120,8 +121,8 @@ public class BroomItem extends Item {
     private HitResult calculateHitResult(LivingEntity livingEntity) {
         return ProjectileUtil.getHitResultOnViewVector(
                 livingEntity, entity -> !entity.isSpectator() && entity.isPickable(),
-                livingEntity  instanceof  Player player?
-                        player.blockInteractionRange():4.5f
+                livingEntity instanceof Player player ?
+                        player.blockInteractionRange() : 4.5f
         );
     }
 
@@ -137,12 +138,12 @@ public class BroomItem extends Item {
         for (int k = 0; k < count; k++) {
             pLevel.addParticle(
                     blockparticleoption,
-                    vec3.x - (double)(direction == Direction.WEST ? 1.0E-6F : 0.0F),
+                    vec3.x - (double) (direction == Direction.WEST ? 1.0E-6F : 0.0F),
                     vec3.y,
-                    vec3.z - (double)(direction == Direction.NORTH ? 1.0E-6F : 0.0F),
-                    brushitem$dustparticlesdelta.xd() * (double)right * speed * pLevel.getRandom().nextDouble(),
+                    vec3.z - (double) (direction == Direction.NORTH ? 1.0E-6F : 0.0F),
+                    brushitem$dustparticlesdelta.xd() * (double) right * speed * pLevel.getRandom().nextDouble(),
                     0.0,
-                    brushitem$dustparticlesdelta.zd() * (double)right * speed * pLevel.getRandom().nextDouble()
+                    brushitem$dustparticlesdelta.zd() * (double) right * speed * pLevel.getRandom().nextDouble()
             );
         }
     }

@@ -292,18 +292,18 @@ public class MapChecker {
         if (y != pos.getY()) {
             pos = new BlockPos(pos.getX(), y, pos.getZ());
         }
-        int bid=getSurfaceOrUpdate(level, pos, false, ChunkInfoMap.TYPE_BIOME);
+        int bid = getSurfaceOrUpdate(level, pos, false, ChunkInfoMap.TYPE_BIOME);
         var biome = idToBiome(level, bid);
         int i = 0;
         while (isSmallBiome(biome)) {
             i += 1;
             for (Direction direction : Direction.Plane.HORIZONTAL) {
-                bid= getSurfaceOrUpdate(level, pos.relative(direction, i), false, ChunkInfoMap.TYPE_BIOME);
-                biome = idToBiome(level,bid);
+                bid = getSurfaceOrUpdate(level, pos.relative(direction, i), false, ChunkInfoMap.TYPE_BIOME);
+                biome = idToBiome(level, bid);
                 if (!isSmallBiome(biome)) {
                     ChunkInfoMap chunkMap = getChunkMap(level, pos);
-                    if(chunkMap!=null){
-                        chunkMap.updateBiome(pos,bid);
+                    if (chunkMap != null) {
+                        chunkMap.updateBiome(pos, bid);
                     }
                     break;
                 }

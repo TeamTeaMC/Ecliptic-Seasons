@@ -227,7 +227,7 @@ public class WeatherManager {
                     var snowTerm = SolarTerm.getSnowTerm(biome);
                     boolean flag_cold = solarTerm.isInTerms(snowTerm.getStart(), snowTerm.getEnd());
                     return flag_cold
-                            || BiomeClimateManager.getDefaultTemperature(biome, level instanceof ServerLevel) <= BiomeClimateManager.SNOW_LEVEL ?
+                            || BiomeClimateManager.getDefaultTemperature(biome, !level.isClientSide()) <= BiomeClimateManager.SNOW_LEVEL ?
                             Biome.Precipitation.SNOW : Biome.Precipitation.RAIN;
                 }
             }
@@ -248,7 +248,9 @@ public class WeatherManager {
 
     public static ServerLevel getMainServerLevel() {
         for (Level level : WeatherManager.BIOME_WEATHER_LIST.keySet()) {
-            if (level.dimension() == Level.OVERWORLD && level instanceof ServerLevel serverLevel) {
+            if (level.dimension() == Level.OVERWORLD
+                    && !level.isClientSide()
+                    && level instanceof ServerLevel serverLevel) {
                 return serverLevel;
             }
         }
@@ -686,7 +688,7 @@ public class WeatherManager {
         var status = SnowRenderStatus.NONE;
         if (biome.value().hasPrecipitation() && provider != null) {
             var solarTerm = provider.getSolarTerm();
-            var snowTerm = SolarTerm.getSnowTerm(biome.value(), level instanceof ServerLevel);
+            var snowTerm = SolarTerm.getSnowTerm(biome.value(), !level.isClientSide());
             boolean flag_cold = solarTerm.isInTerms(snowTerm.getStart(), snowTerm.getEnd());
             if (flag_cold) {
                 if (isRainingOrSnowAtBiome(level, biome.value())) {

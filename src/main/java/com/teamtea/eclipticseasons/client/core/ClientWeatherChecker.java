@@ -217,9 +217,8 @@ public class ClientWeatherChecker {
         } else if (clientLevel.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, blockPos).getY() > blockPos.getY()) {
             return false;
         }
-        return WeatherManager.getPrecipitationAt(clientLevel, MapChecker.getSurfaceBiome(clientLevel, blockPos).value(), blockPos)
-                == Biome.Precipitation.RAIN
-                && WeatherManager.isRainingOrSnowAtBiome(clientLevel, MapChecker.getSurfaceBiome(clientLevel, blockPos).value());
+        return WeatherManager.getRainOrSnow(clientLevel, MapChecker.getSurfaceBiome(clientLevel, blockPos).value(), blockPos)
+                == Biome.Precipitation.RAIN;
     }
 
     public static boolean isThunderAt(ClientLevel clientLevel, BlockPos blockPos) {

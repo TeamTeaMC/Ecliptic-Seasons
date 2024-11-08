@@ -128,7 +128,7 @@ public class VanillaWeather {
 
     public static Level getUsingClientLevel() {
         for (Level level : WeatherManager.BIOME_WEATHER_LIST.keySet()) {
-            if (!(level instanceof ServerLevel)) {
+            if (level.isClientSide()) {
                 return level;
             }
         }

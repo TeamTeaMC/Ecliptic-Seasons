@@ -4,6 +4,7 @@ import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.client.core.ClientWeatherChecker;
+import com.teamtea.eclipticseasons.client.core.SimplePair;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.resources.sounds.*;
@@ -19,24 +20,27 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeManager;
 import net.minecraft.world.level.biome.Biomes;
 import net.neoforged.neoforge.common.Tags;
+import org.checkerframework.checker.units.qual.A;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class SeasonalBiomeAmbientSoundsHandler implements AmbientSoundHandler {
-    private static final int LOOP_SOUND_CROSS_FADE_TIME = 40;
-    private static final float SKY_MOOD_RECOVERY_RATE = 0.001F;
     private final LocalPlayer player;
     private final SoundManager soundManager;
     private final BiomeManager biomeManager;
     private final RandomSource random;
-    private final Map<Biome, LoopSoundInstance> loopSounds = new HashMap<>();
-    private float moodiness;
+    // private final Map<Biome, LoopSoundInstance> loopSounds = new HashMap<>();
+
     @Nullable
     private Biome previousBiome;
     private Season previousSeason;
     private boolean previousIsDay;
+
+    private final List<SimplePair<Biome, LoopSoundInstance>> loopSoundList = new ArrayList<>();
 
     public SeasonalBiomeAmbientSoundsHandler(LocalPlayer localPlayer, SoundManager soundManager, BiomeManager biomeManager) {
         this.random = localPlayer.level().getRandom();
@@ -45,34 +49,28 @@ public class SeasonalBiomeAmbientSoundsHandler implements AmbientSoundHandler {
         this.biomeManager = biomeManager;
     }
 
-    public float getMoodiness() {
-        return this.moodiness;
-    }
-
     public void tick() {
-        this.loopSounds.values().removeIf(AbstractTickableSoundInstance::isStopped);
 
-        // boolean indoor = (player.level().getLightEngine().getLayerListener(LightLayer.SKY).getLightValue(player.blockPosition()) < 12);
-        boolean indoor = (player.level().getLightEngine().getLayerListener(LightLayer.SKY).getLightValue(player.blockPosition())) < 11;
+        // this.loopSounds.values().removeIf(AbstractTickableSoundInstance::isStopped);
+
+        loopSoundList.removeIf(pair -> pair.getValue().isStopped());
+
+        boolean indoor =
+                !player.isSpectator() &&
+                        (player.level().getLightEngine().getLayerListener(LightLayer.SKY).getLightValue(player.blockPosition())) < 11;
         // EclipticSeasons.logger((player.level().getLightEngine().getLayerListener(LightLayer.SKY).getLightValue(player.blockPosition())));
 
         Holder<Biome> biome = this.biomeManager.getNoiseBiomeAtPosition(this.player.getX(), this.player.getY(), this.player.getZ());
+        Season season = EclipticUtil.getNowSolarTerm(player.level()).getSeason();
+        boolean isDayNow = EclipticUtil.isDay(player.level());
         if (biome.value() != this.previousBiome) {
             this.previousBiome = biome.value();
         }
-
+        if (season != this.previousSeason || isDayNow != this.previousIsDay) {
+            this.previousSeason = season;
+            this.previousIsDay = isDayNow;
+        }
         {
-            Season season = EclipticUtil.getNowSolarTerm(player.level()).getSeason();
-            boolean isDayNow = EclipticUtil.isDay(player.level());
-            if (season != this.previousSeason || isDayNow != this.previousIsDay) {
-                this.loopSounds.values().forEach(LoopSoundInstance::fadeOut);
-                {
-                    this.previousSeason = season;
-                    this.previousIsDay = isDayNow;
-                    this.loopSounds.clear();
-                }
-            }
-
             SoundEvent soundEvent = null;
             switch (season) {
                 case SPRING -> {
@@ -122,34 +120,28 @@ public class SeasonalBiomeAmbientSoundsHandler implements AmbientSoundHandler {
                 }
             }
             if (soundEvent != null) {
-                SoundEvent finalSoundEvent = soundEvent;
-                this.loopSounds.compute(biome.value(), (biome1, loopSoundInstance) -> {
-                    if (loopSoundInstance == null) {
-                        loopSoundInstance = new LoopSoundInstance(finalSoundEvent);
-                        this.soundManager.play(loopSoundInstance);
+                boolean needAdd = true;
+                for (SimplePair<Biome, LoopSoundInstance> pair : this.loopSoundList) {
+                    boolean isTargetSound = pair.getValue().getLocation().compareTo(soundEvent.getLocation()) == 0;
+                    if (indoor || !isTargetSound) {
+                        pair.getValue().fadeOut();
+                    } else {
+                        pair.getValue().fadeIn();
                     }
-                    else {
-                        if (!this.soundManager.isActive(loopSoundInstance)
-                                && !indoor
-                        )
-                        {
-                            this.soundManager.play(loopSoundInstance);
-                        }
+                    if (isTargetSound) {
+                        needAdd = false;
                     }
-
-                    return loopSoundInstance;
-                });
-
-                for (Map.Entry<Biome, LoopSoundInstance> entry : this.loopSounds.entrySet()) {
-                    var loopSoundInstance = entry.getValue();
-                    if (indoor || entry.getKey() != biome.value())
-                        loopSoundInstance.fadeOut();
-                    else
-                        loopSoundInstance.fadeIn();
                 }
-            }else {
-                for (Map.Entry<Biome, LoopSoundInstance> entry : this.loopSounds.entrySet()) {
-                    entry.getValue().fadeOut();
+
+                if (needAdd && !indoor) {
+                    // EclipticSeasons.logger(needAdd, soundEvent.getLocation());
+                    LoopSoundInstance loopSoundInstance = new LoopSoundInstance(soundEvent);
+                    this.loopSoundList.add(SimplePair.of(biome.value(), loopSoundInstance));
+                    this.soundManager.play(loopSoundInstance);
+                }
+            } else {
+                for (SimplePair<Biome, LoopSoundInstance> pair : this.loopSoundList) {
+                    pair.getValue().fadeOut();
                 }
             }
         }
@@ -162,7 +154,8 @@ public class SeasonalBiomeAmbientSoundsHandler implements AmbientSoundHandler {
         public LoopSoundInstance(SoundEvent soundEvent) {
             super(soundEvent, SoundSource.AMBIENT, SoundInstance.createUnseededRandom());
             this.looping = true;
-            this.delay = 0;
+            // loop need delay bigger than 0
+            this.delay = 1;
             this.volume = 0.5F;
             this.relative = true;
             // this.fade=40;
@@ -191,5 +184,6 @@ public class SeasonalBiomeAmbientSoundsHandler implements AmbientSoundHandler {
                 this.fadeDirection = 1;
             else this.fadeDirection = 0;
         }
+
     }
 }

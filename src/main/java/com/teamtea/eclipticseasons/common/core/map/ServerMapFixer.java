@@ -60,13 +60,13 @@ public class ServerMapFixer {
     }
 
     // 这里指的是先前Y高度
-    public static void addPlanner(Level level, BlockState state, BlockState oldState, BlockPos pos, long startTick, int startY, boolean forceClearSnow) {
+    public static void addPlanner(Level level, BlockState state, BlockState oldState, BlockPos pos, long startTick, int startY, boolean broomUse) {
         if (!MapChecker.isValidDimension(level)) return;
 
-        boolean informClientImmediately = false;
+        boolean updateAndInformClientImmediately = false;
         int newy = level.getMinBuildHeight();
         boolean addToList = false;
-        if (!forceClearSnow) {
+        if (!broomUse) {
             int mcHeight = MapChecker.getMCHeightWithCheck(level, pos);
             // boolean stateChange = state != oldState;
             boolean isNotOldHeight =
@@ -80,19 +80,18 @@ public class ServerMapFixer {
                 addToList = true;
                 if (state.getBlock() == Blocks.AIR) {
                     newy = level.getMaxBuildHeight() + 1;
-                    informClientImmediately = true;
+                    updateAndInformClientImmediately = true;
                 }
             } else {
                 // 延迟一会再更新覆雪状态
+                // TODO: 客户端自行更新，假如不下雪的话，不通知客户端了
                 if (isNotOldHeight) {
-                    newy = mcHeight;
-                    informClientImmediately = true;
-                    addToList = true;
+                    MapChecker.updatePosForce(level, pos, mcHeight);
                 }
             }
         } else {
             newy = level.getMaxBuildHeight() + 1;
-            informClientImmediately = true;
+            updateAndInformClientImmediately = true;
             addToList = true;
         }
 
@@ -117,7 +116,7 @@ public class ServerMapFixer {
             }
         }
 
-        if (informClientImmediately && level instanceof ServerLevel serverLevel) {
+        if (updateAndInformClientImmediately && level instanceof ServerLevel serverLevel) {
             MapChecker.updatePosForce(level, pos, newy);
             BlockPos nextPos = new BlockPos(pos.getX(), newy, pos.getZ());
             SimpleNetworkHandler.send(serverLevel.players(), new MapFixerMessage(List.of(nextPos), List.of(startY)));

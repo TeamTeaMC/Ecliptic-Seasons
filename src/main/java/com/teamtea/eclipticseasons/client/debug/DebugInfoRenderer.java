@@ -48,12 +48,8 @@ public final class DebugInfoRenderer {
         drawInfo(matrixStack, screenWidth, screenHeight, envS, index++);
         drawInfo(matrixStack, screenWidth, screenHeight, solarTimeS, index++);
 
-        Level level1 = null;
-        for (Level level : WeatherManager.BIOME_WEATHER_LIST.keySet()) {
-            if (level.dimension() == Level.OVERWORLD && level instanceof ServerLevel) {
-                level1 = level;
-            }
-        }
+        Level level1 = WeatherManager.getMainServerLevel();
+
         level1 = level1 != null ? level1 : Minecraft.getInstance().level;
         {
             var standBiome =

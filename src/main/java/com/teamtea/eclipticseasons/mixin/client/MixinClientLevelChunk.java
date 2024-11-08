@@ -1,6 +1,7 @@
 package com.teamtea.eclipticseasons.mixin.client;
 
 
+import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.client.core.map.ClientMapFixer;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -27,9 +28,16 @@ public abstract class MixinClientLevelChunk {
             method = "setBlockState"
     )
     public void ecliptic$Client_setBlockState(BlockPos pos, BlockState state, boolean p_62867_, CallbackInfoReturnable<BlockState> cir) {
-        if (level instanceof ClientLevel clientLevel) {
+        if (level != null && level.isClientSide()) {
             // MapChecker.getHeightOrUpdate(clientLevel, pos, true);
             // ClientMapFixer.addPlanner(clientLevel, state, pos, clientLevel.getGameTime(), MapChecker.getHeight(clientLevel, pos));
+            if (!EclipticUtil.isHereWithSnow(level, pos)) {
+                boolean isNotOldHeight = MapChecker.getHeight(level, pos)
+                        != level.getHeight(Heightmap.Types.MOTION_BLOCKING, pos.getX(), pos.getZ()) - 1;
+                if (isNotOldHeight) {
+                    MapChecker.getHeightOrUpdate(level, pos, true);
+                }
+            }
         }
     }
 }

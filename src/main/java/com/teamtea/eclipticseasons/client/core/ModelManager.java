@@ -325,7 +325,9 @@ public class ModelManager {
     public static BakedModel findModel(BlockAndTintGetter blockAndTintGetter, BlockPos pos, BlockState state, RandomSource random) {
         Level level = Minecraft.getInstance().level;
         BakedModel replace = null;
+        // 这里不需要担心，是因为我们给不符合要求的level默认返回一个0或者最低值-1
         if (level == null) return replace;
+
 
         var onBlock = state.getBlock();
         int flag = MapChecker.getBlockType(state, level, pos);

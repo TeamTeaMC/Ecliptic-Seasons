@@ -48,7 +48,7 @@ public class BiomeClimateManager {
     public static final float FROZEN_OCEAN_MELT_LEVEL = 0.1F;
 
     public static void updateTemperature(Level level, SolarTerm solarTermIndex) {
-        boolean isServer = level instanceof ServerLevel;
+        boolean isServer = !level.isClientSide();
         level.registryAccess().registry(Registries.BIOME).ifPresent(biomeRegistry -> biomeRegistry.forEach(biome ->
         {
             var temperature = biome.getModifiedClimateSettings().temperature() > SNOW_LEVEL ?
