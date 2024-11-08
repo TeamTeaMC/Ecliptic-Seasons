@@ -16,6 +16,7 @@ import org.spongepowered.asm.mixin.injection.At;
 @Mixin(Bee.BeePollinateGoal.class)
 public class MixinBee_BeePollinateGoal {
 
+    @Shadow
     @Dynamic
     @Final
     private Bee this$0;
