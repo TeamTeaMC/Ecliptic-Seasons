@@ -7,22 +7,24 @@ import com.mojang.blaze3d.vertex.*;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.client.core.ModelManager;
 import com.teamtea.eclipticseasons.client.render.SnowRenderer;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.SectionBufferBuilderPack;
 import net.minecraft.client.renderer.chunk.RenderChunkRegion;
 import net.minecraft.client.renderer.chunk.SectionCompiler;
-import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.SectionPos;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.client.model.data.ModelData;
+import net.neoforged.neoforge.client.event.AddSectionGeometryEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.util.List;
 import java.util.Map;
 
 @Mixin(SectionCompiler.class)
@@ -57,12 +59,14 @@ public abstract class MixinChunkRenderDispatcher {
             @Local Map<RenderType, BufferBuilder> renderTypeBufferBuilderMap
     ) {
 
-        BakedModel snowModel=null;
+        BakedModel snowModel = null;
         if (!original) {
             snowModel = ModelManager.findModel(renderchunkregion, blockpos2, blockstate, randomsource);
+            eclipticSeasons$countModel++;
         } else {
             if (ModelManager.isModelReplaced(blockstate)) {
                 snowModel = ModelManager.findModel(renderchunkregion, blockpos2, blockstate, randomsource);
+                eclipticSeasons$countModel++;
             }
         }
         if (snowModel != null) {
@@ -82,4 +86,31 @@ public abstract class MixinChunkRenderDispatcher {
     }
 
 
+    @Unique
+    private long eclipticSeasons$time = 0;
+    @Unique
+    private long eclipticSeasons$countModel = 0;
+
+    @Inject(
+            method = "compile(Lnet/minecraft/core/SectionPos;Lnet/minecraft/client/renderer/chunk/RenderChunkRegion;Lcom/mojang/blaze3d/vertex/VertexSorting;Lnet/minecraft/client/renderer/SectionBufferBuilderPack;Ljava/util/List;)Lnet/minecraft/client/renderer/chunk/SectionCompiler$Results;",
+            at = @At(value = "RETURN")
+    )
+    private void eclipticseasons$compile_checkb(SectionPos pSectionPos, RenderChunkRegion pRegion, VertexSorting pVertexSorting, SectionBufferBuilderPack pSectionBufferBuilderPack, List<AddSectionGeometryEvent.AdditionalSectionRenderer> additionalRenderers, CallbackInfoReturnable<SectionCompiler.Results> cir) {
+        long l = System.currentTimeMillis() - eclipticSeasons$time;
+        if (l > 100)
+            EclipticSeasons.logger("WARNING",
+                    Thread.currentThread().toString(),
+                    pSectionPos,
+                    "Rebuild time: " + l,
+                    "Model check count: " + eclipticSeasons$countModel);
+    }
+
+    @Inject(
+            method = "compile(Lnet/minecraft/core/SectionPos;Lnet/minecraft/client/renderer/chunk/RenderChunkRegion;Lcom/mojang/blaze3d/vertex/VertexSorting;Lnet/minecraft/client/renderer/SectionBufferBuilderPack;Ljava/util/List;)Lnet/minecraft/client/renderer/chunk/SectionCompiler$Results;",
+            at = @At(value = "HEAD")
+    )
+    private void eclipticseasons$compile_check(SectionPos pSectionPos, RenderChunkRegion pRegion, VertexSorting pVertexSorting, SectionBufferBuilderPack pSectionBufferBuilderPack, List<AddSectionGeometryEvent.AdditionalSectionRenderer> additionalRenderers, CallbackInfoReturnable<SectionCompiler.Results> cir) {
+        eclipticSeasons$time = System.currentTimeMillis();
+        eclipticSeasons$countModel = 0;
+    }
 }
