@@ -63,3 +63,5 @@ optimized performance consumption when rain
 0.7.2
 optimize particle spawn
 optimize chunk renderer query efficiency
+* fix snowy simple glass renderer
+* fix cache problem with simple snowy block when reload resource

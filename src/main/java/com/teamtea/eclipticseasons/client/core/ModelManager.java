@@ -25,6 +25,7 @@ import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.level.*;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.util.LazyOptional;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 
@@ -119,8 +120,8 @@ public class ModelManager {
             snowModel = models.get(snowOverlayLeaves);
         } else if (flag == MapChecker.FLAG_SLAB) {
             snowModel = models.get(snowySlabBottom);
-        }  else if (flag == MapChecker.FLAG_STAIRS_TOP) {
-            snowModel =  models.get(stairs_top);
+        } else if (flag == MapChecker.FLAG_STAIRS_TOP) {
+            snowModel = models.get(stairs_top);
         } else if (models != null && flag == MapChecker.FLAG_STAIRS) {
             if (snowState != null)
                 snowModel = models.get(BlockModelShaper.stateToModelLocation(snowState));
@@ -452,9 +453,14 @@ public class ModelManager {
     }
 
     public static RenderType getRenderType(BlockState state) {
-        if(ItemBlockRenderTypes.getChunkRenderType(state)==RenderType.translucent())
+        if (!Minecraft.useFancyGraphics())
+            return RenderType.solid();
+        RenderType chunkRenderType = ItemBlockRenderTypes.getChunkRenderType(state);
+        if (chunkRenderType == RenderType.translucent())
             return RenderType.translucent();
-       return RenderType.cutoutMipped();
+        else if (chunkRenderType == RenderType.cutout())
+            return RenderType.cutout();
+        return RenderType.cutoutMipped();
         // return Minecraft.useFancyGraphics() ?
         //         RenderType.cutoutMipped() : RenderType.solid();
     }
