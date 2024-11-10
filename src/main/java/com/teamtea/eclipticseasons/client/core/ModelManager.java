@@ -1,6 +1,7 @@
 package com.teamtea.eclipticseasons.client.core;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
+import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
@@ -14,11 +15,14 @@ import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.BlockModelShaper;
 import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.client.resources.model.SimpleBakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Vec3i;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockAndTintGetter;
@@ -27,8 +31,14 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.SlabType;
+import net.neoforged.neoforge.client.ChunkRenderTypeSet;
+import net.neoforged.neoforge.client.model.data.ModelData;
+import org.joml.Vector3f;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 // https://github.com/DoubleNegation/CompactOres/blob/1.18/src/main/java/doublenegation/mods/compactores/CompactOresResourcePack.java#L164
 // 未来可以基于RepositorySource实现动态纹理生成（看情况，因为目前不需要，对内存消耗比较大）
@@ -179,6 +189,52 @@ public class ModelManager {
                     }
                 }
 
+            }
+        }
+
+        if (
+                snowyModelsCache.getOrDefault(bakedModel, -1) != -1
+                        && BuiltInRegistries.BLOCK.getKey(state.getBlock()).getNamespace().startsWith("yuushya")
+                        // && state.toString().contains("slab_a_green_blindwall")
+                        // && state.getValue(BlockStateProperties.SLAB_TYPE) == SlabType.TOP
+                         ) {
+            int blockType = MapChecker.getBlockType(state, blockAndTintGetter, pos);
+
+            // if(blockType==MapChecker.FLAG_STAIRS)
+            {
+                if (blockType == MapChecker.FLAG_STAIRS || (direction != null && direction.ordinal() > 1)) {
+
+                    BakedModel bakedModelCTM = models.get(BlockModelShaper.stateToModelLocation(state));
+                    if(bakedModelCTM!=null) {
+                        ModelData modelDataCTM = bakedModelCTM.getModelData(blockAndTintGetter, pos, state, ModelData.EMPTY);
+                        ChunkRenderTypeSet renderTypes = bakedModelCTM.getRenderTypes(state, random, modelDataCTM);
+                        List<BakedQuad> quadsCTM = new ArrayList<>();
+                        for (RenderType renderType : renderTypes.asList()) {
+                            quadsCTM.addAll(bakedModelCTM.getQuads(state, direction, random, modelDataCTM, renderType));
+                        }
+                        if (quadsCTM.isEmpty())
+                            return original;
+                        TextureAtlasSprite sprite = original.getFirst().getSprite();
+                        TextureAtlasSprite se_sprite = null;
+                        if (blockType == MapChecker.FLAG_STAIRS) {
+                            se_sprite = models.get(snowOverlayBlock).getParticleIcon();
+                        }
+
+                        boolean isSlabDown = blockType == MapChecker.FLAG_SLAB || blockType == MapChecker.FLAG_STAIRS;
+                        original = new ArrayList<>(quadsCTM.size());
+                        for (BakedQuad bakedQuad : quadsCTM) {
+                            if (bakedQuad.getDirection() != Direction.DOWN) {
+                                BakedQuadRetexturedAndReUV retexturedAndReUV = new BakedQuadRetexturedAndReUV(bakedQuad,
+                                        se_sprite != null && blockType == MapChecker.FLAG_STAIRS && bakedQuad.getDirection() != Direction.UP ?
+                                                se_sprite :
+                                                sprite, isSlabDown);
+                                if (retexturedAndReUV.getDirection() != Direction.DOWN) {
+                                    original.add(retexturedAndReUV);
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
         return original;

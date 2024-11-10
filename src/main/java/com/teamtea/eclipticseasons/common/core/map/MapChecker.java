@@ -330,6 +330,7 @@ public class MapChecker {
     // 注意这个写法可能会导致重复
     public static Map<BlockState, Integer> blockTypeCache = new IdentityHashMap<>();
 
+    // TODO: 注意全部加上缓存
     public static int getBlockType(BlockState state, BlockGetter level, BlockPos pos) {
         int flag = FLAG_NONE;
         // 不知道为啥这里会有null
