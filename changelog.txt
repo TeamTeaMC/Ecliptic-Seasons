@@ -59,3 +59,7 @@ optimized performance consumption when rain
 ** fix some codes
 ** fix sync problem if player die in other dimension (1.20-1.21, 1.19-1.16 plan)
 ** fix bee
+
+0.7.2
+optimize particle spawn
+optimize chunk renderer query efficiency

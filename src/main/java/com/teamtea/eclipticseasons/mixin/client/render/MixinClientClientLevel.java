@@ -26,10 +26,10 @@ public abstract class MixinClientClientLevel {
     @Shadow
     public abstract void addDestroyBlockEffect(BlockPos p_171667_, BlockState p_171668_);
 
-    // @Inject(at = {@At("RETURN")}, method = {"animateTick"})
-    // private void ecliptic$animateTick(int x, int y, int z, CallbackInfo ci) {
-    //     ParticleUtil.createParticle((ClientLevel)(Object)this,x,y,z);
-    // }
+    @Inject(at = {@At("RETURN")}, method = {"animateTick"})
+    private void ecliptic$animateTick(int x, int y, int z, CallbackInfo ci) {
+        ParticleUtil.createParticle((ClientLevel)(Object)this,x,y,z);
+    }
 
     @Inject(at = {@At("RETURN")}, method = {"doAnimateTick"})
     private void ecliptic$doAnimateTick(int pPosX,

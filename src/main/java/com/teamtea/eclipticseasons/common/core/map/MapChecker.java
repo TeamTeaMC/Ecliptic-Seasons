@@ -1,5 +1,6 @@
 package com.teamtea.eclipticseasons.common.core.map;
 
+import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.constant.tag.ClimateTypeBiomeTags;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.config.ServerConfig;
@@ -21,7 +22,9 @@ import net.minecraft.world.level.levelgen.Heightmap;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.IdentityHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -264,38 +267,56 @@ public class MapChecker {
         return value;
     }
 
+
+    // 注意这个写法可能会导致重复
+    public static Map<BlockState, Integer> blockTypeCache = new IdentityHashMap<>();
+
     public static int getBlockType(BlockState state, BlockGetter level, BlockPos pos) {
         int flag = FLAG_NONE;
-        var onBlock = state.getBlock();
-        if (onBlock instanceof LeavesBlock) {
-            flag = MapChecker.FLAG_LEAVES;
-        } else if ((
-                // state.isSolidRender(level, pos)
-                        Block.isShapeFullBlock(state.getCollisionShape(level, pos))
-                        // state.isSolid()
-                        || onBlock instanceof LeavesBlock
-        )) {
-            flag = MapChecker.FLAG_BLOCK;
-        } else if (onBlock instanceof SlabBlock) {
-            SlabType value = state.getValue(SlabBlock.TYPE);
-            if (value == SlabType.TOP){
-                flag = MapChecker.FLAG_STAIRS_TOP;
-            } else if (value==SlabType.BOTTOM) {
-                flag = MapChecker.FLAG_SLAB;
-            }else flag = MapChecker.FLAG_BLOCK;
-        } else if (onBlock instanceof StairBlock) {
-            if (state.getValue(StairBlock.HALF) == Half.TOP)
-                flag = MapChecker.FLAG_STAIRS_TOP;
-            else
-                flag = MapChecker.FLAG_STAIRS;
-        } else if (MapChecker.LowerPlant.contains(onBlock)) {
-            flag = MapChecker.FLAG_GRASS;
-        } else if (MapChecker.LARGE_GRASS.contains(onBlock)) {
-            flag = MapChecker.FLAG_GRASS_LARGE;
-        } else if ((
-                onBlock instanceof FarmBlock ||
-                        onBlock instanceof DirtPathBlock)) {
-            flag = MapChecker.FLAG_FARMLAND;
+        Integer realFlag = blockTypeCache.getOrDefault(state, FLAG_NONE);
+        if (realFlag == null) {
+            EclipticSeasons.logger("Null number get from %s".formatted(state));
+            blockTypeCache.remove(state);
+        } else {
+            flag = realFlag;
+        }
+        if (flag == FLAG_NONE) {
+            var onBlock = state.getBlock();
+            if (onBlock instanceof LeavesBlock) {
+                flag = FLAG_LEAVES;
+            } else if ((
+                    // state.isSolidRender(level, pos)
+                    Block.isShapeFullBlock(state.getCollisionShape(level, pos))
+                            // state.isSolid()
+                            || onBlock instanceof LeavesBlock
+            )) {
+                flag = FLAG_BLOCK;
+            } else if (onBlock instanceof SlabBlock) {
+                SlabType value = state.getValue(SlabBlock.TYPE);
+                if (value == SlabType.TOP) {
+                    flag = FLAG_STAIRS_TOP;
+                } else if (value == SlabType.BOTTOM) {
+                    flag = FLAG_SLAB;
+                } else flag = FLAG_BLOCK;
+            } else if (onBlock instanceof StairBlock) {
+                if (state.getValue(StairBlock.HALF) == Half.TOP)
+                    flag = FLAG_STAIRS_TOP;
+                else flag = FLAG_STAIRS;
+            } else if (LowerPlant.contains(onBlock)) {
+                flag = FLAG_GRASS;
+            } else if (LARGE_GRASS.contains(onBlock)) {
+                flag = FLAG_GRASS_LARGE;
+            } else if ((
+                    onBlock instanceof FarmBlock ||
+                            onBlock instanceof DirtPathBlock)) {
+                flag = FLAG_FARMLAND;
+            }
+            if (flag != FLAG_NONE) {
+                Integer putIfAbsent = blockTypeCache.putIfAbsent(state, flag);
+                if (putIfAbsent != null && putIfAbsent != flag) {
+                    EclipticSeasons.logger("WARNING state %s expected %s but found %s".formatted(state, flag, putIfAbsent));
+                }
+            }
         }
         return flag;
     }

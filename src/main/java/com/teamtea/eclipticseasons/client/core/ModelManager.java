@@ -36,15 +36,19 @@ public class ModelManager {
     public static final RenderType CUTOUT_MIPPED = null;
 
     public static Map<ResourceLocation, BakedModel> models;
-    public static
-    LazyOptional<BakedModel> snowOverlayLeaves =
-            LazyOptional.of(() -> models.get(new ModelResourceLocation(EclipticSeasons.ModContents.snowyLeaves.getId(), "")));
-    public static
-    LazyOptional<BakedModel> snowySlabBottom =
-            LazyOptional.of(() -> models.get(new ModelResourceLocation(EclipticSeasons.ModContents.snowySlab.getId(), "type=bottom,waterlogged=false")));
-    public static
-    LazyOptional<BakedModel> snowOverlayBlock =
-            LazyOptional.of(() -> models.get(new ModelResourceLocation(EclipticSeasons.ModContents.snowyBlock.getId(), "")));
+    public static ModelResourceLocation snowOverlayLeaves = new ModelResourceLocation(EclipticSeasons.ModContents.snowyLeaves.getId(), "");
+    public static ModelResourceLocation snowySlabBottom = new ModelResourceLocation(EclipticSeasons.ModContents.snowySlab.getId(), "type=bottom,waterlogged=false");
+    public static ModelResourceLocation snowOverlayBlock = new ModelResourceLocation(EclipticSeasons.ModContents.snowyBlock.getId(), "");
+
+    // public static
+    // LazyOptional<BakedModel> snowOverlayLeaves =
+    //         LazyOptional.of(() -> models.get(new ModelResourceLocation(EclipticSeasons.ModContents.snowyLeaves.getId(), "")));
+    // public static
+    // LazyOptional<BakedModel> snowySlabBottom =
+    //         LazyOptional.of(() -> models.get(new ModelResourceLocation(EclipticSeasons.ModContents.snowySlab.getId(), "type=bottom,waterlogged=false")));
+    // public static
+    // LazyOptional<BakedModel> snowOverlayBlock =
+    //         LazyOptional.of(() -> models.get(new ModelResourceLocation(EclipticSeasons.ModContents.snowyBlock.getId(), "")));
     public static
     LazyOptional<BakedModel> snowModel =
             LazyOptional.of(() -> models.get(new ModelResourceLocation(new ResourceLocation("minecraft:snow_block"), "")));
@@ -109,12 +113,12 @@ public class ModelManager {
     public static BakedModel getSnowyModel(BlockState state, BlockState snowState, int flag, int offset) {
         Block onBlock = state.getBlock();
         BakedModel snowModel = null;
-        if (snowOverlayBlock.resolve().isPresent() && flag == MapChecker.FLAG_BLOCK) {
-            snowModel = snowOverlayBlock.resolve().get();
-        } else if (snowOverlayLeaves.resolve().isPresent() && flag == MapChecker.FLAG_LEAVES) {
-            snowModel = snowOverlayLeaves.resolve().get();
-        } else if (snowySlabBottom.resolve().isPresent() && flag == MapChecker.FLAG_SLAB) {
-            snowModel = snowySlabBottom.resolve().get();
+        if (flag == MapChecker.FLAG_BLOCK) {
+            snowModel = models.get(snowOverlayBlock);
+        } else if (flag == MapChecker.FLAG_LEAVES) {
+            snowModel = models.get(snowOverlayLeaves);
+        } else if (flag == MapChecker.FLAG_SLAB) {
+            snowModel = models.get(snowySlabBottom);
         }  else if (flag == MapChecker.FLAG_STAIRS_TOP) {
             snowModel =  models.get(stairs_top);
         } else if (models != null && flag == MapChecker.FLAG_STAIRS) {
