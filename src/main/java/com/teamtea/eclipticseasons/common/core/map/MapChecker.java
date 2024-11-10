@@ -225,7 +225,7 @@ public class MapChecker {
     }
 
 
-    public static boolean checkLightAbove(Level level, BlockPos pos, int times) {
+    public static boolean notLightAbove(Level level, BlockPos pos, int times) {
         var abovePos = pos.above();
         if (level.isLoaded(abovePos)) {
             BlockState stateAbove = null;
@@ -234,17 +234,17 @@ public class MapChecker {
                 stateAbove = level.getBlockState(abovePos);
             } catch (Exception e) {
                 EclipticSeasons.LOGGER.error("Logic thread change the block in render thread with {}", pos);
-                return false;
+                return true;
             }
             if (stateAbove.getBlock() instanceof LightBlock) {
                 if (stateAbove.getValue(LightBlock.LEVEL) == 0)
-                    return true;
+                    return false;
             } else if (!stateAbove.isAir() && !stateAbove.blocksMotion()) {
                 if (times > 0)
-                    return checkLightAbove(level, abovePos, (times - 1));
+                    return notLightAbove(level, abovePos, (times - 1));
             }
         }
-        return false;
+        return true;
     }
 
 
@@ -253,7 +253,7 @@ public class MapChecker {
         boolean isSnowy = false;
         if (WeatherManager.getSnowDepthAtBiome(level, biomeHolder.value()) > Math.abs(seed % 100)) {
             if (ServerConfig.Debug.notSnowyUnderLight0.get()) {
-                isSnowy = checkLightAbove(level, pos, 4);
+                isSnowy = notLightAbove(level, pos, 4);
             } else isSnowy = true;
         }
         return isSnowy;
