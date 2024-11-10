@@ -34,15 +34,21 @@ import java.util.*;
 // 未来可以基于RepositorySource实现动态纹理生成（看情况，因为目前不需要，对内存消耗比较大）
 public class ModelManager {
     public static Map<ModelResourceLocation, BakedModel> models;
-    public static
-    LazyGet<BakedModel> snowOverlayLeaves =
-            LazyGet.of(() -> models.get(new ModelResourceLocation(EclipticSeasons.ModContents.snowyLeaves.getId(), "")));
-    public static
-    LazyGet<BakedModel> snowySlabBottom =
-            LazyGet.of(() -> models.get(new ModelResourceLocation(EclipticSeasons.ModContents.snowySlab.getId(), "type=bottom,waterlogged=false")));
-    public static
-    LazyGet<BakedModel> snowOverlayBlock =
-            LazyGet.of(() -> models.get(new ModelResourceLocation(EclipticSeasons.ModContents.snowyBlock.getId(), "")));
+
+    public static ModelResourceLocation snowOverlayLeaves = new ModelResourceLocation(EclipticSeasons.ModContents.snowyLeaves.getId(), "");
+    public static ModelResourceLocation snowySlabBottom = new ModelResourceLocation(EclipticSeasons.ModContents.snowySlab.getId(), "type=bottom,waterlogged=false");
+    public static ModelResourceLocation snowOverlayBlock = new ModelResourceLocation(EclipticSeasons.ModContents.snowyBlock.getId(), "");
+
+    // public static
+    // LazyGet<BakedModel> snowOverlayLeaves =
+    //         LazyGet.of(() -> models.get(new ModelResourceLocation(EclipticSeasons.ModContents.snowyLeaves.getId(), "")));
+    // public static
+    // LazyGet<BakedModel> snowySlabBottom =
+    //         LazyGet.of(() -> models.get(new ModelResourceLocation(EclipticSeasons.ModContents.snowySlab.getId(), "type=bottom,waterlogged=false")));
+    // public static
+    // LazyGet<BakedModel> snowOverlayBlock =
+    //         LazyGet.of(() -> models.get(new ModelResourceLocation(EclipticSeasons.ModContents.snowyBlock.getId(), "")));
+
     public static
     LazyGet<BakedModel> snowModel =
             LazyGet.of(() -> models.get(new ModelResourceLocation(ResourceLocation.parse("minecraft:snow_block"), "")));
@@ -92,11 +98,11 @@ public class ModelManager {
         Block onBlock = state.getBlock();
         BakedModel snowModel = null;
         if (flag == MapChecker.FLAG_BLOCK) {
-            snowModel = snowOverlayBlock.get();
+            snowModel = models.get(snowOverlayBlock);
         } else if (flag == MapChecker.FLAG_LEAVES) {
-            snowModel = snowOverlayLeaves.get();
+            snowModel = models.get(snowOverlayLeaves);
         } else if (flag == MapChecker.FLAG_SLAB) {
-            snowModel = snowySlabBottom.get();
+            snowModel = models.get(snowySlabBottom);
         } else if (flag == MapChecker.FLAG_STAIRS_TOP) {
             snowModel = models.get(stairs_top);
         } else if (models != null && flag == MapChecker.FLAG_STAIRS) {
@@ -399,13 +405,15 @@ public class ModelManager {
     public static RenderType getRenderType(BlockState state) {
         if (!Minecraft.useFancyGraphics())
             return RenderType.solid();
-        if (ItemBlockRenderTypes.getChunkRenderType(state) == RenderType.translucent())
+        RenderType chunkRenderType = ItemBlockRenderTypes.getChunkRenderType(state);
+        if (chunkRenderType == RenderType.translucent())
             return RenderType.translucent();
+        else if (chunkRenderType == RenderType.cutout())
+            return RenderType.cutout();
         return RenderType.cutoutMipped();
         // return Minecraft.useFancyGraphics() ?
         //         RenderType.cutoutMipped() : RenderType.solid();
     }
-
 
     public static boolean isModelReplaced(BlockState state) {
         return !state.blocksMotion()
