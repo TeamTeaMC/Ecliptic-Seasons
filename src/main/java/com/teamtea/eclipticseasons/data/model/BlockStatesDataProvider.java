@@ -11,6 +11,9 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.neoforged.neoforge.client.model.generators.BlockStateProvider;
 import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
+import net.neoforged.neoforge.registries.DeferredHolder;
+
+import java.util.List;
 
 public class BlockStatesDataProvider extends BlockStateProvider {
 
@@ -24,14 +27,19 @@ public class BlockStatesDataProvider extends BlockStateProvider {
 
     @Override
     protected void registerStatesAndModels() {
-        getVariantBuilder(EclipticSeasons.ModContents.calendar.get()).forAllStatesExcept(state -> ConfiguredModel.builder()
-                .modelFile(models().getExistingFile(resourceBlock("calendar")))
-                .rotationY(getRotateYByFacing(state.getValue(BlockStateProperties.HORIZONTAL_FACING)))
-                .build());
+
+        for (DeferredHolder<Block, Block> holder : List.of(EclipticSeasons.ModContents.calendar, EclipticSeasons.ModContents.pinwheel_blue, EclipticSeasons.ModContents.pinwheel_orange, EclipticSeasons.ModContents.pinwheel_lime)) {
+            getVariantBuilder(holder.get()).forAllStatesExcept(state -> ConfiguredModel.builder()
+                    .modelFile(models().getExistingFile(resourceBlock(holder.getId().getPath())))
+                    .rotationY(getRotateYByFacing(state.getValue(BlockStateProperties.HORIZONTAL_FACING)))
+                    .build());
+        }
+
 
         addSimple(EclipticSeasons.ModContents.wind_chimes.value());
         addSimple(EclipticSeasons.ModContents.paper_wind_chimes.value());
         addSimple(EclipticSeasons.ModContents.bamboo_wind_chimes.value());
+
 
     }
 

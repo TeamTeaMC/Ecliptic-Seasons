@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "eclipticseasons:block/pinwheel_lime",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "eclipticseasons:block/pinwheel_lime"
+    },
+    "facing=south": {
+      "model": "eclipticseasons:block/pinwheel_lime",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "eclipticseasons:block/pinwheel_lime",
+      "y": 270
+    }
+  }
+}

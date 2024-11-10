@@ -8,10 +8,10 @@ import com.teamtea.eclipticseasons.common.advancement.SolarTermsRecord;
 import com.teamtea.eclipticseasons.common.advancement.SolarTermsCriterion;
 import com.teamtea.eclipticseasons.common.block.CalendarBlock;
 import com.teamtea.eclipticseasons.common.block.CalendarBlockItem;
-import com.teamtea.eclipticseasons.common.block.PaperWindmillBlock;
+import com.teamtea.eclipticseasons.common.block.PinWheelBlock;
 import com.teamtea.eclipticseasons.common.block.WindChimesBlock;
 import com.teamtea.eclipticseasons.common.block.blockentity.CalendarBlockEntity;
-import com.teamtea.eclipticseasons.common.block.blockentity.PaperWindmillBlockEntity;
+import com.teamtea.eclipticseasons.common.block.blockentity.PinWheelBlockEntity;
 import com.teamtea.eclipticseasons.common.block.blockentity.WindChimesBlockEntity;
 import com.teamtea.eclipticseasons.common.core.map.SnowyRemover;
 import com.teamtea.eclipticseasons.common.item.BroomItem;
@@ -246,9 +246,14 @@ public class EclipticSeasons {
         public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CalendarBlockEntity>> calendar_entity_type = BLOCK_ENTITY_TYPE_DEFERRED_REGISTER.register("calendar", () -> BlockEntityType.Builder.of(CalendarBlockEntity::new, ModContents.calendar.get()).build(null));
 
         // paper_wind_mill 纸风车
-        public static final DeferredHolder<Block, Block> paper_wind_mill = BLOCK_DEFERRED_REGISTER.register("paper_wind_mill", () -> new PaperWindmillBlock(BlockBehaviour.Properties.of().strength(0.5f).sound(SoundType.WOOD).noOcclusion().pushReaction(PushReaction.DESTROY)));
-        public static final DeferredHolder<Item, BlockItem> paper_wind_mill_item = ITEM_DEFERRED_REGISTER.register("paper_wind_mill", () -> new BlockItem(paper_wind_mill.get(), (new Item.Properties())));
-        public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PaperWindmillBlockEntity>> paper_wind_mill_entity_type = BLOCK_ENTITY_TYPE_DEFERRED_REGISTER.register("paper_wind_mill", () -> BlockEntityType.Builder.of(PaperWindmillBlockEntity::new, ModContents.paper_wind_mill.get()).build(null));
+        public static final DeferredHolder<Block, Block> pinwheel_blue = BLOCK_DEFERRED_REGISTER.register("pinwheel_blue", () -> new PinWheelBlock(BlockBehaviour.Properties.of().strength(0.5f).sound(SoundType.WOOD).noOcclusion().pushReaction(PushReaction.DESTROY)));
+        public static final DeferredHolder<Item, BlockItem> pinwheel_blue_item = ITEM_DEFERRED_REGISTER.register("pinwheel_blue", () -> new BlockItem(pinwheel_blue.get(), (new Item.Properties())));
+        public static final DeferredHolder<Block, Block> pinwheel_lime = BLOCK_DEFERRED_REGISTER.register("pinwheel_lime", () -> new PinWheelBlock(BlockBehaviour.Properties.of().strength(0.5f).sound(SoundType.WOOD).noOcclusion().pushReaction(PushReaction.DESTROY)));
+        public static final DeferredHolder<Item, BlockItem> pinwheel_lime_item = ITEM_DEFERRED_REGISTER.register("pinwheel_lime", () -> new BlockItem(pinwheel_lime.get(), (new Item.Properties())));
+        public static final DeferredHolder<Block, Block> pinwheel_orange = BLOCK_DEFERRED_REGISTER.register("pinwheel_orange", () -> new PinWheelBlock(BlockBehaviour.Properties.of().strength(0.5f).sound(SoundType.WOOD).noOcclusion().pushReaction(PushReaction.DESTROY)));
+        public static final DeferredHolder<Item, BlockItem> pinwheel_orange_item = ITEM_DEFERRED_REGISTER.register("pinwheel_orange", () -> new BlockItem(pinwheel_orange.get(), (new Item.Properties())));
+
+        public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PinWheelBlockEntity>> pinwheel_entity_type = BLOCK_ENTITY_TYPE_DEFERRED_REGISTER.register("paper_wind_mill", () -> BlockEntityType.Builder.of(PinWheelBlockEntity::new, ModContents.pinwheel_blue.get(), ModContents.pinwheel_lime.get(), ModContents.pinwheel_orange.get()).build(null));
 
         // wind_chimes 风铃
         public static final DeferredHolder<Block, Block> wind_chimes = BLOCK_DEFERRED_REGISTER.register("wind_chimes", () -> new WindChimesBlock(BlockBehaviour.Properties.of().strength(0.5f).sound(SoundType.WOOD).noOcclusion().pushReaction(PushReaction.DESTROY)));

@@ -1,24 +1,24 @@
 {
   "type": "minecraft:crafting_shaped",
   "category": "misc",
-  "group": "calendar",
+  "group": "pinwheel",
   "key": {
     "x": {
       "item": "minecraft:paper"
     },
     "y": {
-      "item": "minecraft:book"
+      "item": "minecraft:lime_dye"
     },
     "z": {
-      "item": "minecraft:feather"
+      "item": "minecraft:stick"
     }
   },
   "pattern": [
-    "xx",
-    "yz"
+    "xy",
+    "z "
   ],
   "result": {
     "count": 1,
-    "id": "eclipticseasons:calendar"
+    "id": "eclipticseasons:pinwheel_lime"
   }
 }

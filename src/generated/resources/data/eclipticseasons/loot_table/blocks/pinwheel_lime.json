@@ -11,11 +11,11 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "eclipticseasons:paper_wind_mill"
+          "name": "eclipticseasons:pinwheel_lime"
         }
       ],
       "rolls": 1.0
     }
   ],
-  "random_sequence": "eclipticseasons:blocks/paper_wind_mill"
+  "random_sequence": "eclipticseasons:blocks/pinwheel_lime"
 }

@@ -7,7 +7,7 @@ import com.teamtea.eclipticseasons.client.particle.FallenLeavesParticle;
 import com.teamtea.eclipticseasons.client.particle.FireflyParticle;
 import com.teamtea.eclipticseasons.client.particle.WildGooseParticle;
 import com.teamtea.eclipticseasons.client.render.ber.CalendarBlockEntityRenderer;
-import com.teamtea.eclipticseasons.client.render.ber.PaperWindmillBlockEntityRenderer;
+import com.teamtea.eclipticseasons.client.render.ber.PinWheelBlockEntityRenderer;
 import com.teamtea.eclipticseasons.client.render.ber.WindChimesBlockEntityRenderer;
 import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
@@ -79,13 +79,17 @@ public class ClientSetup {
             ItemBlockRenderTypes.setRenderLayer(EclipticSeasons.ModContents.paper_wind_chimes.get(), RenderType.cutoutMipped());
             ItemBlockRenderTypes.setRenderLayer(EclipticSeasons.ModContents.wind_chimes.get(), RenderType.cutoutMipped());
 
+            ItemBlockRenderTypes.setRenderLayer(EclipticSeasons.ModContents.pinwheel_blue.get(), RenderType.cutoutMipped());
+            ItemBlockRenderTypes.setRenderLayer(EclipticSeasons.ModContents.pinwheel_lime.get(), RenderType.cutoutMipped());
+            ItemBlockRenderTypes.setRenderLayer(EclipticSeasons.ModContents.pinwheel_orange.get(), RenderType.cutoutMipped());
+
         });
     }
 
     @SubscribeEvent
     public static void onRegisterRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerBlockEntityRenderer(EclipticSeasons.ModContents.calendar_entity_type.get(), CalendarBlockEntityRenderer::new);
-        event.registerBlockEntityRenderer(EclipticSeasons.ModContents.paper_wind_mill_entity_type.get(), PaperWindmillBlockEntityRenderer::new);
+        event.registerBlockEntityRenderer(EclipticSeasons.ModContents.pinwheel_entity_type.get(), PinWheelBlockEntityRenderer::new);
         event.registerBlockEntityRenderer(EclipticSeasons.ModContents.wind_chimes_entity_type.get(), WindChimesBlockEntityRenderer::new);
     }
 

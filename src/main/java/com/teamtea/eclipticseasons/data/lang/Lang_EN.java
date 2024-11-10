@@ -28,7 +28,9 @@ public class Lang_EN extends LangHelper {
         add(EclipticSeasons.ModContents.wind_chimes.get(), "Wind Chimes");
         add(EclipticSeasons.ModContents.paper_wind_chimes.get(), "Paper Wind Chimes");
         add(EclipticSeasons.ModContents.bamboo_wind_chimes.get(), "Bamboo Wind Chimes");
-        add(EclipticSeasons.ModContents.paper_wind_mill.get(), "paper Wind Mill");
+        add(EclipticSeasons.ModContents.pinwheel_blue.get(), "Blue Pinwheel");
+        add(EclipticSeasons.ModContents.pinwheel_lime.get(), "Lime Pinwheel");
+        add(EclipticSeasons.ModContents.pinwheel_orange.get(), "Orange Pinwheel");
         add(EclipticSeasons.ModContents.snowy_maker_item.get(), "Ice Wand");
         add(EclipticSeasons.ModContents.broom_item.get(), "Broom");
 

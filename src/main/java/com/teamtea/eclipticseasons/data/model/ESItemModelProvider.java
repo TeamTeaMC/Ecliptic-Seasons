@@ -7,6 +7,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.ItemLike;
 import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
@@ -31,12 +32,14 @@ public class ESItemModelProvider extends ItemModelProvider {
         addSimple(EclipticSeasons.ModContents.paper_wind_chimes_item.value());
         addSimple(EclipticSeasons.ModContents.bamboo_wind_chimes_item.value());
 
-        withExistingParent(itemName(EclipticSeasons.ModContents.paper_wind_mill_item.value()), ResourceLocation.withDefaultNamespace(GENERATED))
-                .texture("layer0", ResourceLocation.withDefaultNamespace("item/"+itemName(Items.STICK)));
+        addSimple(EclipticSeasons.ModContents.pinwheel_blue_item.value(), "pinwheel_blue_item");
+        addSimple(EclipticSeasons.ModContents.pinwheel_lime_item.value(), "pinwheel_lime_item");
+        addSimple(EclipticSeasons.ModContents.pinwheel_orange_item.value(), "pinwheel_orange_item");
+
         withExistingParent(itemName(EclipticSeasons.ModContents.broom_item.value()), ResourceLocation.withDefaultNamespace(GENERATED))
-                .texture("layer0", ResourceLocation.withDefaultNamespace("item/"+itemName(Items.STICK)));
+                .texture("layer0", ResourceLocation.withDefaultNamespace("item/" + itemName(Items.STICK)));
         withExistingParent(itemName(EclipticSeasons.ModContents.snowy_maker_item.value()), ResourceLocation.withDefaultNamespace(GENERATED))
-                .texture("layer0", ResourceLocation.withDefaultNamespace("item/"+itemName(Items.STICK)));
+                .texture("layer0", ResourceLocation.withDefaultNamespace("item/" + itemName(Items.STICK)));
     }
 
     public void addSimple(Item item) {
@@ -44,8 +47,13 @@ public class ESItemModelProvider extends ItemModelProvider {
                 .texture("layer0", resourceItem(itemName(item)));
     }
 
-    private String itemName(Item item) {
-        return BuiltInRegistries.ITEM.getKey(item).getPath();
+    public void addSimple(ItemLike item, String texture) {
+        withExistingParent(itemName(item), ResourceLocation.withDefaultNamespace(GENERATED))
+                .texture("layer0", resourceItem(texture));
+    }
+
+    private String itemName(ItemLike item) {
+        return BuiltInRegistries.ITEM.getKey(item.asItem()).getPath();
     }
 
     public ResourceLocation resourceItem(String path) {
