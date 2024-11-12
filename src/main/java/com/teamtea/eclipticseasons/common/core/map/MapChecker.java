@@ -273,14 +273,16 @@ public class MapChecker {
 
     public static int getBlockType(BlockState state, BlockGetter level, BlockPos pos) {
         int flag = FLAG_NONE;
-        Integer realFlag = blockTypeCache.getOrDefault(state, FLAG_NONE);
+        // 不知道为啥这里会有null
+        Integer realFlag = blockTypeCache.getOrDefault(state, FLAG_NONE - 1);
         if (realFlag == null) {
             EclipticSeasons.logger("Null number get from %s".formatted(state));
             blockTypeCache.remove(state);
         } else {
             flag = realFlag;
         }
-        if (flag == FLAG_NONE) {
+        if (flag < FLAG_NONE) {
+            flag = FLAG_NONE;
             var onBlock = state.getBlock();
             if (onBlock instanceof LeavesBlock) {
                 flag = FLAG_LEAVES;
@@ -311,15 +313,14 @@ public class MapChecker {
                             onBlock instanceof DirtPathBlock)) {
                 flag = FLAG_FARMLAND;
             }
-            if (flag != FLAG_NONE) {
-                Integer putIfAbsent = blockTypeCache.putIfAbsent(state, flag);
-                if (putIfAbsent != null && putIfAbsent != flag) {
-                    EclipticSeasons.logger("WARNING state %s expected %s but found %s".formatted(state, flag, putIfAbsent));
-                }
+            Integer otherFlag = blockTypeCache.putIfAbsent(state, flag);
+            if (otherFlag != null && otherFlag != flag) {
+                EclipticSeasons.logger("WARNING state %s expected %s but found %s".formatted(state, flag, otherFlag));
             }
         }
         return flag;
     }
+
 
     public static boolean isReplacedType(BlockState state, int flag) {
         return flag == FLAG_GRASS
