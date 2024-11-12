@@ -6,7 +6,6 @@ import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.client.core.ClientWeatherChecker;
 import com.teamtea.eclipticseasons.client.core.SimplePair;
-import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.resources.sounds.*;
@@ -112,12 +111,10 @@ public class SeasonalBiomeAmbientSoundsHandler implements AmbientSoundHandler {
                 }
                 case WINTER -> {
                     if (!player.isInWater()) {
-                        if (WeatherManager.isRainingOrSnowAtBiome(player.level(), biome.value())) {
-                            if (!biome.is(Tags.Biomes.IS_CAVE)) {
-                                if ((biome.is(Biomes.CHERRY_GROVE) || biome.is(BiomeTags.IS_FOREST) && ClientWeatherChecker.isRain((ClientLevel) player.level()))) {
-                                    soundEvent = EclipticSeasons.SoundEventsRegistry.winter_forest;
-                                } else soundEvent = EclipticSeasons.SoundEventsRegistry.winter_cold;
-                            }
+                        if (!biome.is(Tags.Biomes.IS_CAVE)) {
+                            if ((biome.is(Biomes.CHERRY_GROVE) || biome.is(BiomeTags.IS_FOREST) && ClientWeatherChecker.isRain((ClientLevel) player.level()))) {
+                                soundEvent = EclipticSeasons.SoundEventsRegistry.winter_forest;
+                            } else soundEvent = EclipticSeasons.SoundEventsRegistry.winter_cold;
                         }
                     }
                 }
@@ -136,7 +133,7 @@ public class SeasonalBiomeAmbientSoundsHandler implements AmbientSoundHandler {
                     if (isTargetSound) {
                         needAdd = false;
                         if (System.currentTimeMillis() % 200 <= 5
-                                && !soundManager.isActive(pair.getValue())) {
+                                &&!soundManager.isActive(pair.getValue())) {
                             needAdd = true;
                             loopSoundList.remove(pair);
                         }
