@@ -13,6 +13,8 @@ public class ServerConfig {
         Crop.load(builder);
         Animal.load(builder);
         Debug.load(builder);
+        Map.load(builder);
+
     }
 
     public static class Debug {
@@ -118,6 +120,17 @@ public class ServerConfig {
                     .defineInRange("RainChancePercentMultiplier", 40, 0, 1000);
             thunderChanceMultiplier = builder.comment("Set the percentage multiplier of the probability of thunder in the rain, the range should be between 0 and 1000.")
                     .defineInRange("ThunderChancePercentMultiplier", 80, 0, 1000);
+            builder.pop();
+        }
+    }
+
+    public static class Map {
+        public static ModConfigSpec.BooleanValue delayedUpdates;
+
+        private static void load(ModConfigSpec.Builder builder) {
+            builder.push("Map");
+            delayedUpdates = builder.comment("When snow falls, the top block does not immediately become snowy if the height map change.")
+                    .define("RealisticSnowyChange", true);
             builder.pop();
         }
     }

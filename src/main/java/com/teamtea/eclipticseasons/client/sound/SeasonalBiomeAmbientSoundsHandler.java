@@ -1,6 +1,7 @@
 package com.teamtea.eclipticseasons.client.sound;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
+import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.client.core.ClientWeatherChecker;
@@ -11,6 +12,7 @@ import net.minecraft.client.resources.sounds.*;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.core.Holder;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.util.Mth;
@@ -130,8 +132,15 @@ public class SeasonalBiomeAmbientSoundsHandler implements AmbientSoundHandler {
                     }
                     if (isTargetSound) {
                         needAdd = false;
+                        if (System.currentTimeMillis() % 200 <= 5
+                                &&!soundManager.isActive(pair.getValue())) {
+                            needAdd = true;
+                            loopSoundList.remove(pair);
+                        }
+                        break;
                     }
                 }
+
 
                 if (needAdd && !indoor) {
                     // EclipticSeasons.logger(needAdd, soundEvent.getLocation());
@@ -155,7 +164,7 @@ public class SeasonalBiomeAmbientSoundsHandler implements AmbientSoundHandler {
             super(soundEvent, SoundSource.AMBIENT, SoundInstance.createUnseededRandom());
             this.looping = true;
             // loop need delay bigger than 0
-            this.delay = 1;
+            this.delay = 0;
             this.volume = 0.5F;
             this.relative = true;
             // this.fade=40;

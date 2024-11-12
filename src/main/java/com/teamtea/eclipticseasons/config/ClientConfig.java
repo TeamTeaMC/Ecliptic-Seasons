@@ -36,7 +36,7 @@ public class ClientConfig {
 
 
         public static ModConfigSpec.BooleanValue flowerOnGrass;
-        public static ModConfigSpec.BooleanValue deeperSnow;
+        public static ModConfigSpec.BooleanValue betterSnow;
         public static ModConfigSpec.BooleanValue seasonalGrassColorChange;
 
         private static void load(ModConfigSpec.Builder builder) {
@@ -52,10 +52,10 @@ public class ClientConfig {
                     .define("UseVanillaCheck", false);
             snowyWinter = builder.comment("If snow falls during cold weather in warm biomes, it will gradually cover all solid blocks and grass.")
                     .define("SnowyWinter", true);
-            realisticSnowyChange = builder.comment("When the block is updated, the snow cover will not refresh immediately, but will be updated after a delay. Please note that this will consume more performance..")
-                    .define("RealisticSnowyChange", true);
-            deeperSnow = builder.comment("Occasionally a thicker layer of snow will cover the flowers and grass, especially.")
-                    .define("DeeperSnow", false);
+            realisticSnowyChange = builder.comment("When the block is updated, the snow cover will not refresh immediately, but will be updated after a delay. Please note that this will consume more performance and should not be open when 'RealisticSnowyChange' of common config is true.")
+                    .define("ClientRealisticSnowyChange", false);
+            betterSnow = builder.comment("Occasionally a thin layer of snow will cover the ground under some block, especially.")
+                    .define("BetterSnow", false);
 
             seasonalGrassColorChange = builder.comment("The colors of the grass and leaves change with the time of year.")
                     .define("SeasonalGrassColorChange", true);

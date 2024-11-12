@@ -4,6 +4,7 @@ package com.teamtea.eclipticseasons.mixin.client;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.client.core.map.ClientMapFixer;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
+import com.teamtea.eclipticseasons.config.ServerConfig;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
@@ -31,12 +32,16 @@ public abstract class MixinClientLevelChunk {
         if (level != null && level.isClientSide()) {
             // MapChecker.getHeightOrUpdate(clientLevel, pos, true);
             // ClientMapFixer.addPlanner(clientLevel, state, pos, clientLevel.getGameTime(), MapChecker.getHeight(clientLevel, pos));
-            if (!EclipticUtil.isHereWithSnow(level, pos)) {
-                boolean isNotOldHeight = MapChecker.getHeight(level, pos)
-                        != level.getHeight(Heightmap.Types.MOTION_BLOCKING, pos.getX(), pos.getZ()) - 1;
-                if (isNotOldHeight) {
-                    MapChecker.getHeightOrUpdate(level, pos, true);
+            if (ServerConfig.Map.delayedUpdates.get()) {
+                if (!EclipticUtil.isHereWithSnow(level, pos)) {
+                    boolean isNotOldHeight = MapChecker.getHeight(level, pos)
+                            != level.getHeight(Heightmap.Types.MOTION_BLOCKING, pos.getX(), pos.getZ()) - 1;
+                    if (isNotOldHeight) {
+                        MapChecker.getHeightOrUpdate(level, pos, true);
+                    }
                 }
+            } else {
+                ClientMapFixer.addPlanner(level, state, pos, level.getGameTime(), MapChecker.getHeight(level, pos));
             }
         }
     }

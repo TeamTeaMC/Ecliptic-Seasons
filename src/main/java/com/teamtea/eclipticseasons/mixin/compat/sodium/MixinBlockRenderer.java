@@ -3,16 +3,21 @@ package com.teamtea.eclipticseasons.mixin.compat.sodium;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.teamtea.eclipticseasons.client.core.ModelManager;
+import com.teamtea.eclipticseasons.compat.sodium.SodiumBoard;
+import com.teamtea.eclipticseasons.compat.sodium.SodiumStatus;
 import net.caffeinemc.mods.sodium.client.render.chunk.compile.pipeline.BlockRenderer;
 import net.caffeinemc.mods.sodium.client.render.frapi.render.AbstractBlockRenderContext;
 import net.fabricmc.fabric.api.renderer.v1.model.FabricBakedModel;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.resources.model.BakedModel;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 
 @Mixin({BlockRenderer.class})
-public abstract class MixinBlockRenderer extends AbstractBlockRenderContext {
+public abstract class MixinBlockRenderer extends AbstractBlockRenderContext implements SodiumStatus {
+
+    @Unique
+    public SodiumBoard eclipticSeasons$chunkBuilderMeshingTask;
 
     @ModifyExpressionValue(
             remap = false,
@@ -27,9 +32,13 @@ public abstract class MixinBlockRenderer extends AbstractBlockRenderContext {
         BakedModel snowModel = null;
         if (!original) {
             snowModel = ModelManager.findModel(slice, pos, state, random);
+            if (eclipticSeasons$chunkBuilderMeshingTask != null)
+                eclipticSeasons$chunkBuilderMeshingTask.eclipticSeasons$addCount();
         } else {
             if (ModelManager.isModelReplaced(state)) {
                 snowModel = ModelManager.findModel(slice, pos, state, random);
+                if (eclipticSeasons$chunkBuilderMeshingTask != null)
+                    eclipticSeasons$chunkBuilderMeshingTask.eclipticSeasons$addCount();
             }
         }
 
@@ -41,4 +50,8 @@ public abstract class MixinBlockRenderer extends AbstractBlockRenderContext {
         return original;
     }
 
+    @Override
+    public void eclipticSeasons$bindCounter(SodiumBoard sodiumBoard) {
+        this.eclipticSeasons$chunkBuilderMeshingTask = sodiumBoard;
+    }
 }

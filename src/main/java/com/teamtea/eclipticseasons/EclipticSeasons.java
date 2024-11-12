@@ -61,6 +61,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -129,15 +130,36 @@ public class EclipticSeasons {
             for (Object i : x) {
                 if (i == null) output.append(", ").append("null");
                 else if (i.getClass().isArray()) {
-                    ;
                     output.append(", [");
-                    for (Object c : Arrays.stream((Object[]) i).toList()) {
-                        output.append(c).append(",");
+                    if (i instanceof Object[] objects) {
+                        for (Object c : objects) {
+                            output.append(c).append(",");
+                        }
+                    } else if (i instanceof float[] objects) {
+                        for (float c : objects) {
+                            output.append(c).append(",");
+                        }
+                    }else if (i instanceof int[] objects) {
+                        for (int c : objects) {
+                            output.append(c).append(",");
+                        }
+                    }else if (i instanceof double[] objects) {
+                        for (double c : objects) {
+                            output.append(c).append(",");
+                        }
+                    }else if (i instanceof long[] objects) {
+                        for (long c : objects) {
+                            output.append(c).append(",");
+                        }
+                    }else if (i instanceof boolean[] objects) {
+                        for (boolean c : objects) {
+                            output.append(c).append(",");
+                        }
                     }
                     output.append("]");
-                } else if (i instanceof List) {
+                } else if (i instanceof List list) {
                     output.append(", [");
-                    for (Object c : (List) i) {
+                    for (Object c : list) {
                         output.append(c);
                     }
                     output.append("]");

@@ -1,6 +1,7 @@
 package com.teamtea.eclipticseasons.common.core.map;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
+import com.teamtea.eclipticseasons.common.block.CalendarBlock;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.network.message.ChunkUpdateMessage;
@@ -9,7 +10,9 @@ import com.teamtea.eclipticseasons.config.ServerConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockGetter;
@@ -47,6 +50,7 @@ public class MapChecker {
     public static final int FLAG_GRASS = 5;
     public static final int FLAG_GRASS_LARGE = 501;
     public static final int FLAG_FARMLAND = 6;
+    public static final int FLAG_CUSTOM = 999;
 
     public static List<Block> LowerPlant = Stream.of(Blocks.SHORT_GRASS, Blocks.FERN).collect(Collectors.toList());
     public static List<Block> LARGE_GRASS = Stream.of(Blocks.TALL_GRASS, Blocks.LARGE_FERN).collect(Collectors.toList());
@@ -333,15 +337,17 @@ public class MapChecker {
     // TODO: 注意全部加上缓存
     public static int getBlockType(BlockState state, BlockGetter level, BlockPos pos) {
         int flag = FLAG_NONE;
+
         // 不知道为啥这里会有null
-        Integer realFlag = blockTypeCache.getOrDefault(state, FLAG_NONE);
+        Integer realFlag = blockTypeCache.getOrDefault(state, FLAG_NONE-1);
         if (realFlag == null) {
             EclipticSeasons.logger("Null number get from %s".formatted(state));
             blockTypeCache.remove(state);
         } else {
             flag = realFlag;
         }
-        if (flag == FLAG_NONE) {
+        if (flag < FLAG_NONE) {
+            flag = FLAG_NONE;
             var onBlock = state.getBlock();
             if (onBlock instanceof LeavesBlock) {
                 flag = FLAG_LEAVES;
@@ -371,12 +377,41 @@ public class MapChecker {
                     onBlock instanceof FarmBlock ||
                             onBlock instanceof DirtPathBlock)) {
                 flag = FLAG_FARMLAND;
-            }
-            if (flag != FLAG_NONE) {
-                Integer putIfAbsent = blockTypeCache.putIfAbsent(state, flag);
-                if (putIfAbsent != null && putIfAbsent != flag) {
-                    EclipticSeasons.logger("WARNING state %s expected %s but found %s".formatted(state, flag, putIfAbsent));
+            }else {
+                ResourceLocation blockName = BuiltInRegistries.BLOCK.getKey(onBlock);
+                if ((
+                        onBlock instanceof TrapDoorBlock ||
+                                (onBlock instanceof DoorBlock && state.getValue(DoorBlock.HALF) == DoubleBlockHalf.UPPER) ||
+                                onBlock instanceof FenceBlock ||
+                                onBlock instanceof FenceGateBlock ||
+                                onBlock instanceof WallBlock||
+                                onBlock instanceof BellBlock||
+                                // onBlock instanceof DaylightDetectorBlock||
+                                // onBlock instanceof AnvilBlock||
+                                // onBlock instanceof BasePressurePlateBlock||
+                                onBlock instanceof HoneyBlock||
+                                onBlock instanceof SlimeBlock
+                                // ||
+                                // onBlock instanceof LanternBlock||
+                                // onBlock instanceof CactusBlock
+                                || blockName.getPath().endsWith("wall")
+                                || blockName.getPath().endsWith("table")
+                                || blockName.getPath().endsWith("aqueduct")
+                                || blockName.getPath().endsWith("field")
+                                || blockName.getPath().endsWith("lattice")
+                                // || blockName.getPath().endsWith("_trellis")
+                                || blockName.getPath().endsWith("_vine")
+                                || blockName.getPath().endsWith("fence")
+                )
+                )
+                {
+                    flag = FLAG_CUSTOM;
                 }
+            }
+
+            Integer otherFlag = blockTypeCache.putIfAbsent(state, flag);
+            if (otherFlag != null && otherFlag != flag) {
+                EclipticSeasons.logger("WARNING state %s expected %s but found %s".formatted(state, flag, otherFlag));
             }
         }
         return flag;

@@ -8,6 +8,8 @@ import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.FaceBakery;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.Direction;
+import net.minecraft.util.Mth;
+import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
 
 import java.util.ArrayList;
@@ -19,11 +21,18 @@ public class BakedQuadRetexturedAndReUV extends BakedQuad {
     public static int uvIndex = DefaultVertexFormat.BLOCK.getOffset(VertexFormatElement.UV0) / 4;
     public static int verticeSpace = DefaultVertexFormat.BLOCK.getVertexSize() / 4;
     private final boolean isSlabDown;
+    private final float offset;
 
-    public BakedQuadRetexturedAndReUV(BakedQuad quad, TextureAtlasSprite textureIn,boolean isSlabDown) {
+
+    public BakedQuadRetexturedAndReUV(BakedQuad quad, TextureAtlasSprite textureIn, boolean isSlabDown) {
+        this(quad, textureIn, isSlabDown, 0.5f);
+    }
+
+    public BakedQuadRetexturedAndReUV(BakedQuad quad, TextureAtlasSprite textureIn, boolean isSlabDown, float offset) {
         super(Arrays.copyOf(quad.getVertices(), quad.getVertices().length), quad.getTintIndex(), FaceBakery.calculateFacing(quad.getVertices()), quad.getSprite(), quad.isShade());
         this.texture = textureIn;
-        this.isSlabDown=isSlabDown;
+        this.isSlabDown = isSlabDown;
+        this.offset = offset;
         this.remapQuad();
     }
 
@@ -37,24 +46,24 @@ public class BakedQuadRetexturedAndReUV extends BakedQuad {
 
             switch (direction1) {
                 case NORTH -> {
-                    oldU = 1-Float.intBitsToFloat(this.vertices[j + 0]);
-                    oldV = 1-Float.intBitsToFloat(this.vertices[j + 1]);
+                    oldU = 1 - Float.intBitsToFloat(this.vertices[j]);
+                    oldV = 1 - Float.intBitsToFloat(this.vertices[j + 1]);
                 }
                 case WEST -> {
                     oldU = Float.intBitsToFloat(this.vertices[j + 2]);
-                    oldV = 1-Float.intBitsToFloat(this.vertices[j + 1]);
+                    oldV = 1 - Float.intBitsToFloat(this.vertices[j + 1]);
                 }
                 case SOUTH -> {
-                    oldU =  Float.intBitsToFloat(this.vertices[j + 0]);
-                    oldV = 1-Float.intBitsToFloat(this.vertices[j + 1]);
+                    oldU = Float.intBitsToFloat(this.vertices[j]);
+                    oldV = 1 - Float.intBitsToFloat(this.vertices[j + 1]);
                 }
                 case EAST -> {
                     oldU = 1 - Float.intBitsToFloat(this.vertices[j + 2]);
-                    oldV = 1-Float.intBitsToFloat(this.vertices[j + 1]);
+                    oldV = 1 - Float.intBitsToFloat(this.vertices[j + 1]);
                 }
                 case UP -> {
-                    oldU =Float.intBitsToFloat(this.vertices[j + 2]);
-                    oldV = Float.intBitsToFloat(this.vertices[j + 0]);
+                    oldU = Float.intBitsToFloat(this.vertices[j + 2]);
+                    oldV = Float.intBitsToFloat(this.vertices[j]);
                 }
                 case DOWN -> {
                     oldU = 0;
@@ -62,17 +71,21 @@ public class BakedQuadRetexturedAndReUV extends BakedQuad {
                 }
             }
 
-            if(direction1.ordinal()>1&&isSlabDown){
-                oldV-=0.5f;
+            if (direction1.ordinal() > 1 && isSlabDown) {
+                oldV -= offset;
             }
+
+            oldU= Mth.clamp(oldU,0,1);
+            oldV= Mth.clamp(oldV,0,1);
 
             this.vertices[j + uvIndex] = Float.floatToRawIntBits(this.texture.getU(oldU));
             this.vertices[j + uvIndex + 1] = Float.floatToRawIntBits(this.texture.getV(oldV));
+            // this.vertices[j + 3] = -1;
         }
     }
 
     @Override
-    public TextureAtlasSprite getSprite() {
+    public @NotNull TextureAtlasSprite getSprite() {
         return super.getSprite();
     }
 
@@ -87,4 +100,8 @@ public class BakedQuadRetexturedAndReUV extends BakedQuad {
         return (v - sprite.getV0()) / f;
     }
 
+    @Override
+    public int getTintIndex() {
+        return -1;
+    }
 }
