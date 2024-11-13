@@ -49,6 +49,8 @@
     "compat.embeddium.MixinBlockRender2",
     "compat.embeddium.MixinBlockRenderTask",
     "compat.iris.MixinBiomeUniforms",
+    "compat.iris_test.MixinDefaultFluidRenderer",
+    "compat.iris_test.MixinBlockRenderTask",
     "compat.optifine.MixinItemBlockRenderTypes",
     "compat.sodium.MixinAbstractBlockRenderContext",
     "compat.sodium.MixinBlockRenderer",
