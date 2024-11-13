@@ -230,14 +230,6 @@ public class ModelManager {
                             TextureAtlasSprite snow_overlay_sprite = getSprite(snow_overlay);
                             TextureAtlasSprite snow_overlay_tiny_sprite = getSprite(snow_overlay_tiny);
                             TextureAtlasSprite snow_sprite = getSprite(snow);
-                            TextureAtlasSprite snow_overlay_half_left_sprite = null;
-                            TextureAtlasSprite snow_overlay_half_right_sprite = null;
-                            if (blockType == MapChecker.FLAG_STAIRS) {
-                                // snow_overlay_half_left_sprite = models.get(snowOverlayBlock).getParticleIcon();
-                                snow_overlay_half_left_sprite = getSprite(snow_overlay_half_left);
-                                snow_overlay_half_right_sprite = getSprite(snow_overlay_half_right);
-                                // EclipticSeasons.logger(direction,quadsCTM.size());
-                            }
                             float offset = 0.5f;
                             boolean isSlabDown = blockType == MapChecker.FLAG_SLAB;
                             original = new ArrayList<>(quadsCTM.size());

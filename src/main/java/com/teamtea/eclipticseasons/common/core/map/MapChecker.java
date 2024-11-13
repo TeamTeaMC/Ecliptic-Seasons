@@ -6,6 +6,7 @@ import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.network.message.ChunkUpdateMessage;
 import com.teamtea.eclipticseasons.common.network.SimpleNetworkHandler;
+import com.teamtea.eclipticseasons.compat.CompatModule;
 import com.teamtea.eclipticseasons.config.ServerConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -339,7 +340,7 @@ public class MapChecker {
         int flag = FLAG_NONE;
 
         // 不知道为啥这里会有null
-        Integer realFlag = blockTypeCache.getOrDefault(state, FLAG_NONE-1);
+        Integer realFlag = blockTypeCache.getOrDefault(state, FLAG_NONE - 1);
         if (realFlag == null) {
             EclipticSeasons.logger("Null number get from %s".formatted(state));
             blockTypeCache.remove(state);
@@ -349,6 +350,7 @@ public class MapChecker {
         if (flag < FLAG_NONE) {
             flag = FLAG_NONE;
             var onBlock = state.getBlock();
+            ResourceLocation blockName = BuiltInRegistries.BLOCK.getKey(onBlock);
             if (onBlock instanceof LeavesBlock) {
                 flag = FLAG_LEAVES;
             } else if ((
@@ -377,20 +379,23 @@ public class MapChecker {
                     onBlock instanceof FarmBlock ||
                             onBlock instanceof DirtPathBlock)) {
                 flag = FLAG_FARMLAND;
-            }else {
-                ResourceLocation blockName = BuiltInRegistries.BLOCK.getKey(onBlock);
+            } else {
+
                 if ((
                         onBlock instanceof TrapDoorBlock ||
                                 (onBlock instanceof DoorBlock && state.getValue(DoorBlock.HALF) == DoubleBlockHalf.UPPER) ||
                                 onBlock instanceof FenceBlock ||
                                 onBlock instanceof FenceGateBlock ||
-                                onBlock instanceof WallBlock||
-                                onBlock instanceof BellBlock||
+                                onBlock instanceof WallBlock ||
+                                onBlock instanceof BellBlock ||
+                                onBlock instanceof ComposterBlock ||
+                                // onBlock instanceof CauldronBlock ||
                                 // onBlock instanceof DaylightDetectorBlock||
                                 // onBlock instanceof AnvilBlock||
                                 // onBlock instanceof BasePressurePlateBlock||
-                                onBlock instanceof HoneyBlock||
-                                onBlock instanceof SlimeBlock
+                                onBlock instanceof HoneyBlock ||
+                                onBlock instanceof SlimeBlock||
+                                onBlock instanceof AzaleaBlock
                                 // ||
                                 // onBlock instanceof LanternBlock||
                                 // onBlock instanceof CactusBlock
@@ -403,11 +408,13 @@ public class MapChecker {
                                 || blockName.getPath().endsWith("_vine")
                                 || blockName.getPath().endsWith("fence")
                 )
-                )
-                {
+                ) {
                     flag = FLAG_CUSTOM;
                 }
             }
+
+            if(blockName.toString().equals("xkdeco:dirt_path_slab"))
+                flag=FLAG_CUSTOM;
 
             Integer otherFlag = blockTypeCache.putIfAbsent(state, flag);
             if (otherFlag != null && otherFlag != flag) {
@@ -431,6 +438,9 @@ public class MapChecker {
                     offset = 2;
                 }
             }
+        } else if (flag == FLAG_CUSTOM) {
+            if (state.getBlock() instanceof AzaleaBlock)
+                offset = 1;
         }
         return offset;
     }
