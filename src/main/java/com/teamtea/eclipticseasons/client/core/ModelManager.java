@@ -218,7 +218,11 @@ public class ModelManager {
                                 quadsCTM.addAll(bakedModelCTM.getQuads(state, direction, random, modelDataCTM, renderType));
                             }
 
-                            quadsCTM = fixQuadCTM(quadsCTM);
+                            boolean tooTiny = false;
+                            tooTiny |= state.getBlock() instanceof FenceBlock;
+                            tooTiny |= state.getBlock() instanceof FenceGateBlock;
+                            if (!tooTiny)
+                                quadsCTM = fixQuadCTM(quadsCTM);
 
 
                             // if (quadsCTM.isEmpty())
@@ -346,10 +350,12 @@ public class ModelManager {
                                         }
                                     }
 
-
                                     if (bakedQuadDirection == Direction.UP) spriteUse = snow_sprite;
                                     else {
-                                        spriteUse = getMaxY(bakedQuad) - getMinY(bakedQuad) > 0.4002f ? snow_overlay_sprite : snow_overlay_tiny_sprite;
+                                        if (tooTiny)
+                                            spriteUse = snow_overlay_tiny_sprite;
+                                        else
+                                            spriteUse = getMaxY(bakedQuad) - getMinY(bakedQuad) > 0.4002f ? snow_overlay_sprite : snow_overlay_tiny_sprite;
                                     }
                                     BakedQuadRetexturedAndReUV retexturedAndReUV = new BakedQuadRetexturedAndReUV(bakedQuad, spriteUse, isSlabDown, offset);
                                     original.add(retexturedAndReUV);
