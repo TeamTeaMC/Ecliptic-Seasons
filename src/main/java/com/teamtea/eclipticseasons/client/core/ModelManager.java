@@ -158,6 +158,7 @@ public class ModelManager {
         // if (true)
         //     return original;
         if (!original.isEmpty() && (direction == Direction.UP || direction == null) && snowyModelsCache.getOrDefault(bakedModel, -1) == -1) {
+            random.setSeed(seed);
             BakedModel snowModel = ModelManager.findModel(blockAndTintGetter, pos, state, random);
             if (snowModel != null && snowyModelsCache.getOrDefault(snowModel, -1) > MapChecker.FLAG_NONE && bakedModel != null && bakedModel != snowModel) {
                 int blockType = MapChecker.getBlockType(state, blockAndTintGetter, pos);
@@ -212,15 +213,18 @@ public class ModelManager {
                         BakedModel bakedModelCTM = models.get(BlockModelShaper.stateToModelLocation(state));
                         if (bakedModelCTM != null) {
                             ModelData modelDataCTM = bakedModelCTM.getModelData(blockAndTintGetter, pos, state, ModelData.EMPTY);
+                            random.setSeed(seed);
                             ChunkRenderTypeSet renderTypes = bakedModelCTM.getRenderTypes(state, random, modelDataCTM);
                             ArrayList<BakedQuad> quadsCTM = new ArrayList<>();
                             for (RenderType renderType : renderTypes.asList()) {
+                                random.setSeed(seed);
                                 quadsCTM.addAll(bakedModelCTM.getQuads(state, direction, random, modelDataCTM, renderType));
                             }
 
                             boolean tooTiny = false;
                             tooTiny |= state.getBlock() instanceof FenceBlock;
                             tooTiny |= state.getBlock() instanceof FenceGateBlock;
+                            tooTiny |= state.getBlock() instanceof IronBarsBlock;
                             if (!tooTiny)
                                 quadsCTM = fixQuadCTM(quadsCTM);
 
@@ -617,25 +621,29 @@ public class ModelManager {
 
         boolean isLight = false;
 
-        int cacheHeight = MapChecker.getHeightOrUpdate(level, pos, false);
-        if (ClientConfig.Renderer.betterSnow.get()) {
-            if (flag == MapChecker.FLAG_BLOCK && pos.getY() == cacheHeight - 1) {
-                if (MapChecker.getBlockType(blockAndTintGetter.getBlockState(pos.above()), blockAndTintGetter, pos.above()) == MapChecker.FLAG_CUSTOM) {
-                    cacheHeight--;
-                } else {
-                    for (Direction direction : Direction.Plane.HORIZONTAL) {
-                        int neighbourHeight = MapChecker.getHeight(level, pos.relative(direction));
-                        if (neighbourHeight == pos.getY() && MapChecker.getBlockType(blockAndTintGetter.getBlockState(pos.above()), blockAndTintGetter, pos.above()) != MapChecker.FLAG_BLOCK) {
-                            cacheHeight = neighbourHeight;
-                            break;
+        if (ClientConfig.Renderer.useVanillaCheck.get()) {
+            isLight = level.getLightEngine().getLayerListener(LightLayer.SKY).getLightValue(pos.above()) >= 15;
+            if (isLight && level.getLightEngine().getLayerListener(LightLayer.BLOCK).getLightValue(pos.above()) >= 11)
+                isLight = false;
+        } else {
+            int cacheHeight = MapChecker.getHeightOrUpdate(level, pos, false);
+            if (ClientConfig.Renderer.betterSnow.get()) {
+                if (flag == MapChecker.FLAG_BLOCK && pos.getY() == cacheHeight - 1) {
+                    if (MapChecker.getBlockType(blockAndTintGetter.getBlockState(pos.above()), blockAndTintGetter, pos.above()) == MapChecker.FLAG_CUSTOM) {
+                        cacheHeight--;
+                    } else {
+                        for (Direction direction : Direction.Plane.HORIZONTAL) {
+                            int neighbourHeight = MapChecker.getHeight(level, pos.relative(direction));
+                            if (neighbourHeight == pos.getY() && MapChecker.getBlockType(blockAndTintGetter.getBlockState(pos.above()), blockAndTintGetter, pos.above()) != MapChecker.FLAG_BLOCK) {
+                                cacheHeight = neighbourHeight;
+                                break;
+                            }
                         }
                     }
                 }
             }
+            isLight = cacheHeight == pos.getY() - offset;
         }
-        isLight = ClientConfig.Renderer.useVanillaCheck.get() && Minecraft.getInstance().level != null ? Minecraft.getInstance().level.getLightEngine().getLayerListener(LightLayer.SKY).getLightValue(pos.above()) >= 15 : cacheHeight == pos.getY() - offset;
-
-
         if (isLight) {
             if (ClientConfig.Renderer.snowyWinter.get() && onBlock != Blocks.SNOW_BLOCK && MapChecker.shouldSnowAt(level, pos.below(offset), state, random, state.getSeed(pos))) {
                 // DynamicLeavesBlock

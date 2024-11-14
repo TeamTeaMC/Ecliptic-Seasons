@@ -338,7 +338,6 @@ public class MapChecker {
     // TODO: 注意全部加上缓存
     public static int getBlockType(BlockState state, BlockGetter level, BlockPos pos) {
         int flag = FLAG_NONE;
-
         // 不知道为啥这里会有null
         Integer realFlag = blockTypeCache.getOrDefault(state, FLAG_NONE - 1);
         if (realFlag == null) {
@@ -389,12 +388,16 @@ public class MapChecker {
                                 onBlock instanceof WallBlock ||
                                 onBlock instanceof BellBlock ||
                                 onBlock instanceof ComposterBlock ||
+                                (onBlock instanceof CampfireBlock && !state.getValue(CampfireBlock.LIT)) ||
                                 // onBlock instanceof CauldronBlock ||
                                 // onBlock instanceof DaylightDetectorBlock||
                                 // onBlock instanceof AnvilBlock||
                                 // onBlock instanceof BasePressurePlateBlock||
                                 onBlock instanceof HoneyBlock ||
-                                onBlock instanceof SlimeBlock||
+                                onBlock instanceof IronBarsBlock ||
+                                onBlock instanceof LightningRodBlock ||
+                                // onBlock instanceof LecternBlock ||
+                                onBlock instanceof SlimeBlock ||
                                 onBlock instanceof AzaleaBlock
                                 // ||
                                 // onBlock instanceof LanternBlock||
@@ -413,8 +416,8 @@ public class MapChecker {
                 }
             }
 
-            if(blockName.toString().equals("xkdeco:dirt_path_slab"))
-                flag=FLAG_CUSTOM;
+            if (blockName.toString().equals("xkdeco:dirt_path_slab"))
+                flag = FLAG_CUSTOM;
 
             Integer otherFlag = blockTypeCache.putIfAbsent(state, flag);
             if (otherFlag != null && otherFlag != flag) {
