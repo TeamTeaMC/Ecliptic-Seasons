@@ -22,6 +22,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.chunk.status.ChunkStatus;
 import net.minecraft.world.level.material.FogType;
 import net.neoforged.neoforge.client.event.ViewportEvent;
 
@@ -172,11 +173,20 @@ public class WorldRenderer {
         return isSectionLoad(sectionPos, 1);
     }
 
-    public static boolean isSectionLoad(SectionPos sectionPos, int range) {
+    public static boolean isSectionLoad(SectionPos pPos, int range) {
+        boolean load = true;
         if (Minecraft.getInstance().level instanceof Level level) {
-            return level.isAreaLoaded(sectionPos.center(), range);
+            for (int i = -range + 1; i < range; i++) {
+                for (int j = -range + 1; j < range; j++) {
+                    load &= level.getChunk(pPos.getX() + i, pPos.getZ() + j,
+                            ChunkStatus.FULL, false) != null;
+                    if (!load) break;
+                }
+            }
         }
-        return false;
+        // if(!load)
+        //     EclipticSeasons.logger(pPos);
+        return load;
     }
 
     public static void setSectionDirty(SectionPos sectionPos) {

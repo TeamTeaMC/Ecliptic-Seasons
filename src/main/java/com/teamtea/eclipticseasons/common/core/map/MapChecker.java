@@ -8,6 +8,7 @@ import com.teamtea.eclipticseasons.common.network.message.ChunkUpdateMessage;
 import com.teamtea.eclipticseasons.common.network.SimpleNetworkHandler;
 import com.teamtea.eclipticseasons.compat.CompatModule;
 import com.teamtea.eclipticseasons.config.ServerConfig;
+import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
@@ -333,7 +334,7 @@ public class MapChecker {
     }
 
     // 注意这个写法可能会导致重复
-    public static Map<BlockState, Integer> blockTypeCache = new IdentityHashMap<>();
+    public static Map<BlockState, Integer> blockTypeCache = new Object2ObjectArrayMap<>(4096);
 
     // TODO: 注意全部加上缓存
     public static int getBlockType(BlockState state, BlockGetter level, BlockPos pos) {

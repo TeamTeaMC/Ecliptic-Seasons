@@ -5,17 +5,30 @@ import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.teamtea.eclipticseasons.client.core.ModelManager;
 import com.teamtea.eclipticseasons.compat.sodium.SodiumBoard;
 import com.teamtea.eclipticseasons.compat.sodium.SodiumStatus;
+import net.caffeinemc.mods.sodium.client.model.color.ColorProvider;
 import net.caffeinemc.mods.sodium.client.render.chunk.compile.pipeline.BlockRenderer;
+import net.caffeinemc.mods.sodium.client.render.frapi.helper.ColorHelper;
+import net.caffeinemc.mods.sodium.client.render.frapi.mesh.MutableQuadViewImpl;
 import net.caffeinemc.mods.sodium.client.render.frapi.render.AbstractBlockRenderContext;
 import net.fabricmc.fabric.api.renderer.v1.model.FabricBakedModel;
 import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.world.level.block.state.BlockState;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import java.awt.*;
 
 @Mixin({BlockRenderer.class})
 public abstract class MixinBlockRenderer extends AbstractBlockRenderContext implements SodiumStatus {
 
+    @Shadow
+    @Final
+    private int[] vertexColors;
     @Unique
     public SodiumBoard eclipticSeasons$chunkBuilderMeshingTask;
 
@@ -54,4 +67,22 @@ public abstract class MixinBlockRenderer extends AbstractBlockRenderContext impl
     public void eclipticSeasons$bindCounter(SodiumBoard sodiumBoard) {
         this.eclipticSeasons$chunkBuilderMeshingTask = sodiumBoard;
     }
+
+    // @Inject(
+    //         remap = false,
+    //         method = "colorizeQuad",
+    //         at = @At(value = "TAIL")
+    // )
+    // private void eclipticseasons$colorizeQuad(
+    //         MutableQuadViewImpl quad, int colorIndex, CallbackInfo ci
+    // ) {
+    //     int[] vertexColors = this.vertexColors;
+    //     for (int i = 0; i < vertexColors.length; i++) {
+    //         vertexColors[i] = Color.decode("#fffef9").getRGB();
+    //     }
+    //
+    //     for (int i = 0; i < 4; ++i) {
+    //         quad.color(i, ColorHelper.multiplyColor(vertexColors[i], quad.color(i)));
+    //     }
+    // }
 }
