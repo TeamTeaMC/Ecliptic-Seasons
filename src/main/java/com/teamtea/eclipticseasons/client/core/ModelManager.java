@@ -7,6 +7,7 @@ import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.api.util.SimpleUtil;
+import com.teamtea.eclipticseasons.common.core.map.ChunkInfoMap;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.misc.LazyGet;
 import com.teamtea.eclipticseasons.compat.CompatModule;
@@ -631,6 +632,7 @@ public class ModelManager {
         if (ClientConfig.Renderer.useVanillaCheck.get()) {
             isLight = level.getLightEngine().getLayerListener(LightLayer.SKY).getLightValue(pos.above()) >= 15;
         } else {
+            // ChunkInfoMap chunkMap = MapChecker.getChunkMap(level, pos);
             int cacheHeight = MapChecker.getHeightOrUpdate(level, pos, false);
             if (ClientConfig.Renderer.betterSnow.get()) {
                 if (flag == MapChecker.FLAG_BLOCK && pos.getY() == cacheHeight - 1) {
@@ -660,12 +662,17 @@ public class ModelManager {
         }
 
         if (isLight) {
-            if (ClientConfig.Renderer.snowyWinter.get() && onBlock != Blocks.SNOW_BLOCK && MapChecker.shouldSnowAt(level, pos.below(offset), state, random, state.getSeed(pos))) {
+            if (ClientConfig.Renderer.snowyWinter.get()
+                    && onBlock != Blocks.SNOW_BLOCK
+                    && MapChecker.shouldSnowAt(level, pos.below(offset), state, random, state.getSeed(pos))) {
                 // DynamicLeavesBlock
                 boolean isFlowerAbove = false;
                 if ((flag == MapChecker.FLAG_BLOCK) && ClientConfig.Renderer.betterSnow.get()) {
                     var bl = level.getBlockState(pos.above()).getBlock();
-                    isFlowerAbove = bl instanceof FlowerBlock || bl instanceof PinkPetalsBlock || bl instanceof DoublePlantBlock || bl instanceof SaplingBlock;
+                    isFlowerAbove = bl instanceof FlowerBlock
+                            || bl instanceof PinkPetalsBlock
+                            || bl instanceof DoublePlantBlock
+                            || bl instanceof SaplingBlock;
 
                     if (!isFlowerAbove) {
                         isFlowerAbove = random.nextInt(12) > 0;
@@ -711,10 +718,14 @@ public class ModelManager {
 
     // TODO: Note some block may be not motion for some state
     public static boolean isModelReplaced(BlockState state) {
-        if (MapChecker.LARGE_GRASS.contains(state.getBlock()) || MapChecker.LowerPlant.contains(state.getBlock()))
-            return true;
-        return false;
-        // return !state.blocksMotion()
+        Block block = state.getBlock();
+        return block == Blocks.SHORT_GRASS ||
+                block == Blocks.FERN ||
+                block == Blocks.TALL_GRASS ||
+                block == Blocks.LARGE_FERN;
+        // if (MapChecker.LARGE_GRASS.contains(block) || MapChecker.LowerPlant.contains(block))
+        //     return true;
+// return !state.blocksMotion()
         //         && MapChecker.getBlockType(state, EmptyBlockGetter.INSTANCE, BlockPos.ZERO) != MapChecker.FLAG_NONE;
     }
 

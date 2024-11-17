@@ -344,6 +344,11 @@ public class MapChecker {
         Block onBlock = state.getBlock();
         if (onBlock instanceof LeavesBlock) {
             flag = FLAG_LEAVES;
+        } else if (onBlock == Blocks.GRASS_BLOCK ||
+                onBlock == Blocks.DIRT ||
+                onBlock == Blocks.STONE ||
+                onBlock == Blocks.SAND) {
+            flag = FLAG_BLOCK;
         } else if (onBlock instanceof SlabBlock) {
             SlabType value = state.getValue(SlabBlock.TYPE);
             if (value == SlabType.TOP) {
@@ -355,9 +360,9 @@ public class MapChecker {
             if (state.getValue(StairBlock.HALF) == Half.TOP)
                 flag = FLAG_STAIRS_TOP;
             else flag = FLAG_STAIRS;
-        } else if (LowerPlant.contains(onBlock)) {
+        } else if (onBlock == Blocks.SHORT_GRASS ||onBlock == Blocks.FERN) {
             flag = FLAG_GRASS;
-        } else if (LARGE_GRASS.contains(onBlock)) {
+        } else if (onBlock == Blocks.TALL_GRASS ||onBlock == Blocks.LARGE_FERN) {
             flag = FLAG_GRASS_LARGE;
         } else if ((
                 onBlock instanceof FarmBlock ||
@@ -382,7 +387,7 @@ public class MapChecker {
                 onBlock instanceof SlimeBlock ||
                 onBlock instanceof AzaleaBlock) {
             flag = FLAG_CUSTOM;
-        }else {
+        } else {
             Integer realFlag = blockTypeCache.getOrDefault(state, FLAG_NONE - 1);
             if (realFlag == null) {
                 EclipticSeasons.logger("Null number get from %s".formatted(state));

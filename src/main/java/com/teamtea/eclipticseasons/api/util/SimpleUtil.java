@@ -15,36 +15,39 @@ import java.util.Optional;
 
 // for other mod use
 public class SimpleUtil {
-    public static void testTime(Runnable runnable) {
+    public static long testTime(Runnable runnable) {
         long time = System.currentTimeMillis();
         for (int i = 0; i < 100000 * 100; i++) {
             runnable.run();
         }
-        EclipticSeasons.logger(System.currentTimeMillis() - time);
+        long l = System.currentTimeMillis() - time;
+        EclipticSeasons.logger(l);
+        return l;
     }
 
 
-    public static String getModUse(int offset){
-        try{
-           return Optional.of(Class.forName(Thread.currentThread().getStackTrace()[offset].getClassName()))
+    public static String getModUse(int offset) {
+        try {
+            return Optional.of(Class.forName(Thread.currentThread().getStackTrace()[offset].getClassName()))
                     .map(Class::getProtectionDomain)
                     .map(ProtectionDomain::getCodeSource)
                     .map(CodeSource::getLocation)
                     .map(URL::getFile)
-                    .map(it->new File(it.split("%23")[0]).getAbsolutePath())
-                   .map(i->FMLLoader.getLoadingModList().getModFiles()
-                           .stream()
-                           .filter(modFileInfo ->
-                                   new File(modFileInfo.getFile().getFilePath().toString()).getAbsolutePath().equals(i)).findFirst().get())
-                   .map(modFileInfo -> modFileInfo.getFile().getModFileInfo().moduleName())
-                   .get();
+                    .map(it -> new File(it.split("%23")[0]).getAbsolutePath())
+                    .map(i -> FMLLoader.getLoadingModList().getModFiles()
+                            .stream()
+                            .filter(modFileInfo ->
+                                    new File(modFileInfo.getFile().getFilePath().toString()).getAbsolutePath().equals(i)).findFirst().get())
+                    .map(modFileInfo -> modFileInfo.getFile().getModFileInfo().moduleName())
+                    .get();
         } catch (Exception e) {
         }
         return "";
     }
-    public static List<String> getModsUse(int offset){
-        ArrayList<String> strings=new ArrayList<>();
-        for (int i = 2; i <10 ; i++) {
+
+    public static List<String> getModsUse(int offset) {
+        ArrayList<String> strings = new ArrayList<>();
+        for (int i = 2; i < 10; i++) {
             strings.add(getModUse(i));
         }
         return new ArrayList<>(new HashSet<>(strings));
