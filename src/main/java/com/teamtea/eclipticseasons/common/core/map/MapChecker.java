@@ -340,89 +340,90 @@ public class MapChecker {
     public static int getBlockType(BlockState state, BlockGetter level, BlockPos pos) {
         int flag = FLAG_NONE;
         // 不知道为啥这里会有null
-        Integer realFlag = blockTypeCache.getOrDefault(state, FLAG_NONE - 1);
-        if (realFlag == null) {
-            EclipticSeasons.logger("Null number get from %s".formatted(state));
-            blockTypeCache.remove(state);
-        } else {
-            flag = realFlag;
-        }
-        if (flag < FLAG_NONE) {
-            flag = FLAG_NONE;
-            var onBlock = state.getBlock();
-            ResourceLocation blockName = BuiltInRegistries.BLOCK.getKey(onBlock);
-            if (onBlock instanceof LeavesBlock) {
-                flag = FLAG_LEAVES;
-            } else if ((
-                    // state.isSolidRender(level, pos)
-                    Block.isShapeFullBlock(state.getCollisionShape(level, pos))
-                            // state.isSolid()
-                            || onBlock instanceof LeavesBlock
-            )) {
-                flag = FLAG_BLOCK;
-            } else if (onBlock instanceof SlabBlock) {
-                SlabType value = state.getValue(SlabBlock.TYPE);
-                if (value == SlabType.TOP) {
-                    flag = FLAG_STAIRS_TOP;
-                } else if (value == SlabType.BOTTOM) {
-                    flag = FLAG_SLAB;
-                } else flag = FLAG_BLOCK;
-            } else if (onBlock instanceof StairBlock) {
-                if (state.getValue(StairBlock.HALF) == Half.TOP)
-                    flag = FLAG_STAIRS_TOP;
-                else flag = FLAG_STAIRS;
-            } else if (LowerPlant.contains(onBlock)) {
-                flag = FLAG_GRASS;
-            } else if (LARGE_GRASS.contains(onBlock)) {
-                flag = FLAG_GRASS_LARGE;
-            } else if ((
-                    onBlock instanceof FarmBlock ||
-                            onBlock instanceof DirtPathBlock)) {
-                flag = FLAG_FARMLAND;
+
+        Block onBlock = state.getBlock();
+        if (onBlock instanceof LeavesBlock) {
+            flag = FLAG_LEAVES;
+        } else if (onBlock instanceof SlabBlock) {
+            SlabType value = state.getValue(SlabBlock.TYPE);
+            if (value == SlabType.TOP) {
+                flag = FLAG_STAIRS_TOP;
+            } else if (value == SlabType.BOTTOM) {
+                flag = FLAG_SLAB;
+            } else flag = FLAG_BLOCK;
+        } else if (onBlock instanceof StairBlock) {
+            if (state.getValue(StairBlock.HALF) == Half.TOP)
+                flag = FLAG_STAIRS_TOP;
+            else flag = FLAG_STAIRS;
+        } else if (LowerPlant.contains(onBlock)) {
+            flag = FLAG_GRASS;
+        } else if (LARGE_GRASS.contains(onBlock)) {
+            flag = FLAG_GRASS_LARGE;
+        } else if ((
+                onBlock instanceof FarmBlock ||
+                        onBlock instanceof DirtPathBlock)) {
+            flag = FLAG_FARMLAND;
+        } else if (onBlock instanceof TrapDoorBlock ||
+                (onBlock instanceof DoorBlock && state.getValue(DoorBlock.HALF) == DoubleBlockHalf.UPPER) ||
+                onBlock instanceof FenceBlock ||
+                onBlock instanceof FenceGateBlock ||
+                onBlock instanceof WallBlock ||
+                onBlock instanceof BellBlock ||
+                onBlock instanceof ComposterBlock ||
+                (onBlock instanceof CampfireBlock && !state.getValue(CampfireBlock.LIT)) ||
+                // onBlock instanceof CauldronBlock ||
+                // onBlock instanceof DaylightDetectorBlock||
+                // onBlock instanceof AnvilBlock||
+                // onBlock instanceof BasePressurePlateBlock||
+                onBlock instanceof HoneyBlock ||
+                onBlock instanceof IronBarsBlock ||
+                onBlock instanceof LightningRodBlock ||
+                // onBlock instanceof LecternBlock ||
+                onBlock instanceof SlimeBlock ||
+                onBlock instanceof AzaleaBlock) {
+            flag = FLAG_CUSTOM;
+        }else {
+            Integer realFlag = blockTypeCache.getOrDefault(state, FLAG_NONE - 1);
+            if (realFlag == null) {
+                EclipticSeasons.logger("Null number get from %s".formatted(state));
+                blockTypeCache.remove(state);
             } else {
-
-                if ((
-                        onBlock instanceof TrapDoorBlock ||
-                                (onBlock instanceof DoorBlock && state.getValue(DoorBlock.HALF) == DoubleBlockHalf.UPPER) ||
-                                onBlock instanceof FenceBlock ||
-                                onBlock instanceof FenceGateBlock ||
-                                onBlock instanceof WallBlock ||
-                                onBlock instanceof BellBlock ||
-                                onBlock instanceof ComposterBlock ||
-                                (onBlock instanceof CampfireBlock && !state.getValue(CampfireBlock.LIT)) ||
-                                // onBlock instanceof CauldronBlock ||
-                                // onBlock instanceof DaylightDetectorBlock||
-                                // onBlock instanceof AnvilBlock||
-                                // onBlock instanceof BasePressurePlateBlock||
-                                onBlock instanceof HoneyBlock ||
-                                onBlock instanceof IronBarsBlock ||
-                                onBlock instanceof LightningRodBlock ||
-                                // onBlock instanceof LecternBlock ||
-                                onBlock instanceof SlimeBlock ||
-                                onBlock instanceof AzaleaBlock
-                                // ||
-                                // onBlock instanceof LanternBlock||
-                                // onBlock instanceof CactusBlock
-                                || blockName.getPath().endsWith("wall")
-                                || blockName.getPath().endsWith("table")
-                                || blockName.getPath().endsWith("aqueduct")
-                                || blockName.getPath().endsWith("field")
-                                || blockName.getPath().endsWith("lattice")
-                                // || blockName.getPath().endsWith("_trellis")
-                                || blockName.getPath().endsWith("_vine")
-                                || blockName.getPath().endsWith("fence")
-                )
-                ) {
-                    flag = FLAG_CUSTOM;
-                }
+                flag = realFlag;
             }
+            if (flag < FLAG_NONE) {
+                flag = FLAG_NONE;
 
-            if (blockName.toString().equals("xkdeco:dirt_path_slab"))
-                flag = FLAG_CUSTOM;
+                ResourceLocation blockName = BuiltInRegistries.BLOCK.getKey(onBlock);
+                if ((
+                        // state.isSolidRender(level, pos)
+                        Block.isShapeFullBlock(state.getCollisionShape(level, pos))
+                                // state.isSolid()
+                                || onBlock instanceof LeavesBlock
+                )) {
+                    flag = FLAG_BLOCK;
+                } else {
+                    if ((
+                            blockName.getPath().endsWith("wall")
+                                    || blockName.getPath().endsWith("table")
+                                    || blockName.getPath().endsWith("aqueduct")
+                                    || blockName.getPath().endsWith("field")
+                                    || blockName.getPath().endsWith("lattice")
+                                    // || blockName.getPath().endsWith("_trellis")
+                                    || blockName.getPath().endsWith("_vine")
+                                    || blockName.getPath().endsWith("fence")
+                    )
+                    ) {
+                        flag = FLAG_CUSTOM;
+                    }
+                }
 
-            Integer otherFlag = blockTypeCache.putIfAbsent(state, flag);
-            if (otherFlag != null && otherFlag != flag) {
-                EclipticSeasons.logger("WARNING state %s expected %s but found %s".formatted(state, flag, otherFlag));
+                if (blockName.toString().equals("xkdeco:dirt_path_slab"))
+                    flag = FLAG_CUSTOM;
+
+                Integer otherFlag = blockTypeCache.putIfAbsent(state, flag);
+                if (otherFlag != null && otherFlag != flag) {
+                    EclipticSeasons.logger("WARNING state %s expected %s but found %s".formatted(state, flag, otherFlag));
+                }
             }
         }
         return flag;
