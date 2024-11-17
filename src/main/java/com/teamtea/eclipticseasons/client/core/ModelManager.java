@@ -623,8 +623,6 @@ public class ModelManager {
 
         if (ClientConfig.Renderer.useVanillaCheck.get()) {
             isLight = level.getLightEngine().getLayerListener(LightLayer.SKY).getLightValue(pos.above()) >= 15;
-            if (isLight && level.getLightEngine().getLayerListener(LightLayer.BLOCK).getLightValue(pos.above()) >= 11)
-                isLight = false;
         } else {
             int cacheHeight = MapChecker.getHeightOrUpdate(level, pos, false);
             if (ClientConfig.Renderer.betterSnow.get()) {
@@ -644,6 +642,16 @@ public class ModelManager {
             }
             isLight = cacheHeight == pos.getY() - offset;
         }
+
+        if (ClientConfig.Renderer.notSnowyNearGlowingBlock.get()) {
+            if (isLight) {
+                BlockPos above = pos.offset(0, 1 - offset, 0);
+                if (level.getLightEngine().getLayerListener(LightLayer.BLOCK).getLightValue(above) >=
+                        ClientConfig.Renderer.notSnowyNearGlowingBlockLevel.getAsInt())
+                    isLight = false;
+            }
+        }
+
         if (isLight) {
             if (ClientConfig.Renderer.snowyWinter.get() && onBlock != Blocks.SNOW_BLOCK && MapChecker.shouldSnowAt(level, pos.below(offset), state, random, state.getSeed(pos))) {
                 // DynamicLeavesBlock

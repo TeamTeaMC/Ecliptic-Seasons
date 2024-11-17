@@ -2,6 +2,7 @@ package com.teamtea.eclipticseasons.common.item;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
+import com.teamtea.eclipticseasons.common.core.map.ServerMapFixer;
 import com.teamtea.eclipticseasons.common.core.map.SnowyRemover;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
@@ -111,6 +112,7 @@ public class SnowyMakerItem extends Item {
     }
 
     private InteractionResult modifySnowyBlocks(Level level, Player contextPlayer, ChunkPos chunkPos) {
+        ServerMapFixer.unloadChunk(level, chunkPos);
         BlockPos worldPosition = chunkPos.getMiddleBlockPosition(MapChecker.getMCHeightWithCheck(level,new BlockPos(chunkPos.getMiddleBlockX(),0,chunkPos.getMiddleBlockZ())));
         if (level.isLoaded(chunkPos.getWorldPosition())
                 && (contextPlayer == null
