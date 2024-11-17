@@ -334,7 +334,7 @@ public class MapChecker {
     }
 
     // 注意这个写法可能会导致重复
-    public static Map<BlockState, Integer> blockTypeCache = new Object2ObjectArrayMap<>(4096);
+    public static Map<BlockState, Integer> blockTypeCache = new IdentityHashMap<>(4096);
 
     // TODO: 注意全部加上缓存
     public static int getBlockType(BlockState state, BlockGetter level, BlockPos pos) {
