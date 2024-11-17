@@ -685,7 +685,7 @@ public class ModelManager {
     }
 
     public static RenderType getRenderType(BlockState state) {
-        if (!Minecraft.useFancyGraphics()) return RenderType.solid();
+        // if (!Minecraft.useFancyGraphics()) return RenderType.solid();
         RenderType chunkRenderType = ItemBlockRenderTypes.getChunkRenderType(state);
         if (chunkRenderType == RenderType.translucent()) return RenderType.translucent();
         else if (chunkRenderType == RenderType.cutout()) return RenderType.cutout();
