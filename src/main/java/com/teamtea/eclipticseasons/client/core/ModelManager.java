@@ -6,6 +6,7 @@ import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
+import com.teamtea.eclipticseasons.api.util.SimpleUtil;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.misc.LazyGet;
 import com.teamtea.eclipticseasons.compat.CompatModule;
@@ -112,40 +113,46 @@ public class ModelManager {
     public static Map<List<BakedQuad>, List<BakedQuad>> quadMap_GRASS = new IdentityHashMap<>(128);
 
     public static Map<BakedModel, Integer> snowyModelsCache = new IdentityHashMap<>();
+    public static Map<BlockState, BakedModel> stateModelsCache = new IdentityHashMap<>();
 
     public static BakedModel getSnowyModel(BlockState state, BlockState snowState, int flag, int offset) {
         Block onBlock = state.getBlock();
-        BakedModel snowModel = null;
-        if (flag == MapChecker.FLAG_BLOCK) {
-            snowModel = models.get(snowOverlayBlock);
-        } else if (flag == MapChecker.FLAG_LEAVES) {
-            snowModel = models.get(snowOverlayLeaves);
-        } else if (flag == MapChecker.FLAG_SLAB) {
-            snowModel = models.get(snowySlabBottom);
-        } else if (flag == MapChecker.FLAG_STAIRS_TOP) {
-            snowModel = models.get(stairs_top);
-        } else if (flag == MapChecker.FLAG_STAIRS) {
-            if (snowState != null) snowModel = models.get(BlockModelShaper.stateToModelLocation(snowState));
-        } else if (flag == MapChecker.FLAG_GRASS) {
-            if (onBlock == Blocks.SHORT_GRASS) {
-                snowModel = models.get(snowy_grass);
-            } else if (onBlock == Blocks.FERN) {
-                snowModel = models.get(snowy_fern);
-            } else snowModel = models.get(snowy_grass);
-        } else if (flag == MapChecker.FLAG_GRASS_LARGE) {
-            if (onBlock == Blocks.TALL_GRASS) {
-                snowModel = models.get(offset == 1 ? snowy_tall_grass_bottom : snowy_tall_grass_top);
-            } else if (onBlock == Blocks.LARGE_FERN) {
-                snowModel = models.get(offset == 1 ? snowy_large_fern_bottom : snowy_large_fern_top);
-            } else snowModel = models.get(offset == 1 ? snowy_tall_grass_bottom : snowy_tall_grass_top);
-        } else if (flag == MapChecker.FLAG_FARMLAND) {
-            snowModel = models.get(snow_height2_top);
-            // snowModel = snowOverlayBlock.resolve().get();
-        } else if (flag == MapChecker.FLAG_CUSTOM) {
-            snowModel = models.get(snowOverlayBlock);
-        }
-        if (snowModel != null) {
-            snowyModelsCache.putIfAbsent(snowModel, flag);
+        BakedModel snowModel = stateModelsCache.getOrDefault(state, null);
+        if (snowModel == null) {
+            if (flag == MapChecker.FLAG_BLOCK) {
+                snowModel = models.get(snowOverlayBlock);
+            } else if (flag == MapChecker.FLAG_LEAVES) {
+                snowModel = models.get(snowOverlayLeaves);
+            } else if (flag == MapChecker.FLAG_SLAB) {
+                snowModel = models.get(snowySlabBottom);
+            } else if (flag == MapChecker.FLAG_STAIRS_TOP) {
+                snowModel = models.get(stairs_top);
+            } else if (flag == MapChecker.FLAG_STAIRS) {
+                if (snowState != null) snowModel = models.get(BlockModelShaper.stateToModelLocation(snowState));
+            } else if (flag == MapChecker.FLAG_GRASS) {
+                if (onBlock == Blocks.SHORT_GRASS) {
+                    snowModel = models.get(snowy_grass);
+                } else if (onBlock == Blocks.FERN) {
+                    snowModel = models.get(snowy_fern);
+                } else snowModel = models.get(snowy_grass);
+            } else if (flag == MapChecker.FLAG_GRASS_LARGE) {
+                if (onBlock == Blocks.TALL_GRASS) {
+                    snowModel = models.get(offset == 1 ? snowy_tall_grass_bottom : snowy_tall_grass_top);
+                } else if (onBlock == Blocks.LARGE_FERN) {
+                    snowModel = models.get(offset == 1 ? snowy_large_fern_bottom : snowy_large_fern_top);
+                } else snowModel = models.get(offset == 1 ? snowy_tall_grass_bottom : snowy_tall_grass_top);
+            } else if (flag == MapChecker.FLAG_FARMLAND) {
+                snowModel = models.get(snow_height2_top);
+                // snowModel = snowOverlayBlock.resolve().get();
+            } else if (flag == MapChecker.FLAG_CUSTOM) {
+                snowModel = models.get(snowOverlayBlock);
+            }
+            if (snowModel != null) {
+                stateModelsCache.putIfAbsent(snowState, snowModel);
+            }
+            if (snowModel != null) {
+                snowyModelsCache.putIfAbsent(snowModel, flag);
+            }
         }
 
         return snowModel;
@@ -716,5 +723,6 @@ public class ModelManager {
         quadMap.clear();
         quadMap_1.clear();
         snowyModelsCache.clear();
+        stateModelsCache.clear();
     }
 }

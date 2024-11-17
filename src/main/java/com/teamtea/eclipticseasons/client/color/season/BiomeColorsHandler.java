@@ -13,6 +13,7 @@ import com.teamtea.eclipticseasons.client.render.ColorHelper;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.config.ClientConfig;
+import it.unimi.dsi.fastutil.objects.Reference2ObjectArrayMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
@@ -31,8 +32,8 @@ import java.util.Map;
 public class BiomeColorsHandler {
     // public static int[] newFoliageBuffer = new int[65536];
     // public static int[] newGrassBuffer = new int[65536];
-    public static Map<TagKey<Biome>, int[]> newFoliageBufferMap = new HashMap<>();
-    public static Map<TagKey<Biome>, int[]> newGrassBufferMap = new HashMap<>();
+    public static Map<TagKey<Biome>, int[]> newFoliageBufferMap = new Reference2ObjectArrayMap<>();
+    public static Map<TagKey<Biome>, int[]> newGrassBufferMap = new Reference2ObjectArrayMap<>();
 
     public static boolean needRefresh = false;
 
