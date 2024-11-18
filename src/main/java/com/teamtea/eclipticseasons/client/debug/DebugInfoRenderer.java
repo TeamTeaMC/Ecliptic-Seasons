@@ -40,6 +40,7 @@ public final class DebugInfoRenderer {
         String dayS = "Day Time: " + dayTime;
         String envS = "Env Temp: " + env;
         String solarTimeS = "Solar Time: " + solarTime;
+        String ys = "y: " + MapChecker.getHeight(clientLevel,player.blockPosition());
 
         int index = 0;
 
@@ -47,6 +48,7 @@ public final class DebugInfoRenderer {
         drawInfo(matrixStack, screenWidth, screenHeight, dayS, index++);
         drawInfo(matrixStack, screenWidth, screenHeight, envS, index++);
         drawInfo(matrixStack, screenWidth, screenHeight, solarTimeS, index++);
+        drawInfo(matrixStack, screenWidth, screenHeight, ys, index++);
 
         Level level1 = WeatherManager.getMainServerLevel();
 

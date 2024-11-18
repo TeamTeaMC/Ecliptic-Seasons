@@ -34,6 +34,7 @@ public class ClientConfig {
         public static ModConfigSpec.BooleanValue snowyWinter;
         public static ModConfigSpec.BooleanValue notSnowyNearGlowingBlock;
         public static ModConfigSpec.IntValue notSnowyNearGlowingBlockLevel;
+        public static ModConfigSpec.BooleanValue notSnowOverlayGlowingBlock;
         public static ModConfigSpec.BooleanValue realisticSnowyChange;
 
 
@@ -56,12 +57,14 @@ public class ClientConfig {
 
             realisticSnowyChange = builder.comment("When the block is updated, the snow cover will not refresh immediately, but will be updated after a delay. Please note that this will consume more performance and should not be open when 'RealisticSnowyChange' of common config is true.")
                     .define("ClientRealisticSnowyChange", false);
-            betterSnow = builder.comment("Occasionally a thin layer of snow will cover the ground under some block, especially.")
-                    .define("BetterSnow", false);
+            betterSnow = builder.comment("Blocks underneath fences etc. may also be covered with snow.")
+                    .define("SnowUnderFence", true);
             notSnowyNearGlowingBlock = builder.comment("Snow will not appear in overly bright areas, here define restriction levels.")
                     .define("NotSnowyNearGlowingBlock", true);
             notSnowyNearGlowingBlockLevel = builder.comment("Snow will not appear in overly bright areas.")
                     .defineInRange("NotSnowyNearGlowingBlockLevel", 10, 1, 15);
+            notSnowOverlayGlowingBlock = builder.comment("Snow will not cover the block which would lights.")
+                    .define("NotSnowOverlayGlowingBlock", true);
             seasonalGrassColorChange = builder.comment("The colors of the grass and leaves change with the time of year.")
                     .define("SeasonalGrassColorChange", true);
             flowerOnGrass = builder.comment("In spring, grass blocks will occasionally have small flowers on them.")

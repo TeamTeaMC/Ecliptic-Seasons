@@ -1,14 +1,13 @@
 package com.teamtea.eclipticseasons.common.core.map;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
-import com.teamtea.eclipticseasons.common.block.CalendarBlock;
+import com.teamtea.eclipticseasons.api.util.SimpleUtil;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.network.message.ChunkUpdateMessage;
 import com.teamtea.eclipticseasons.common.network.SimpleNetworkHandler;
-import com.teamtea.eclipticseasons.compat.CompatModule;
+import com.teamtea.eclipticseasons.config.ClientConfig;
 import com.teamtea.eclipticseasons.config.ServerConfig;
-import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
@@ -258,7 +257,7 @@ public class MapChecker {
         var biomeHolder = getSurfaceBiome(level, pos);
         boolean isSnowy = false;
         if (WeatherManager.getSnowDepthAtBiome(level, biomeHolder.value()) > Math.abs(seed % 100)) {
-            if (ServerConfig.Debug.notSnowyUnderLight0.get()) {
+            if (ServerConfig.Debug.notLightAbove.get()) {
                 isSnowy = notLightAbove(level, pos, 4);
             } else isSnowy = true;
         }
@@ -342,7 +341,10 @@ public class MapChecker {
         // 不知道为啥这里会有null
 
         Block onBlock = state.getBlock();
-        if (onBlock instanceof LeavesBlock) {
+        if (ClientConfig.Renderer.notSnowOverlayGlowingBlock.getAsBoolean()
+         &&state.getLightEmission(level, pos) > 0) {
+            flag = FLAG_NONE;
+        } else if (onBlock instanceof LeavesBlock) {
             flag = FLAG_LEAVES;
         } else if (onBlock == Blocks.GRASS_BLOCK ||
                 onBlock == Blocks.DIRT ||
@@ -360,9 +362,9 @@ public class MapChecker {
             if (state.getValue(StairBlock.HALF) == Half.TOP)
                 flag = FLAG_STAIRS_TOP;
             else flag = FLAG_STAIRS;
-        } else if (onBlock == Blocks.SHORT_GRASS ||onBlock == Blocks.FERN) {
+        } else if (onBlock == Blocks.SHORT_GRASS || onBlock == Blocks.FERN) {
             flag = FLAG_GRASS;
-        } else if (onBlock == Blocks.TALL_GRASS ||onBlock == Blocks.LARGE_FERN) {
+        } else if (onBlock == Blocks.TALL_GRASS || onBlock == Blocks.LARGE_FERN) {
             flag = FLAG_GRASS_LARGE;
         } else if ((
                 onBlock instanceof FarmBlock ||

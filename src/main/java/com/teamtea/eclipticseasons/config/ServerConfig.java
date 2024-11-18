@@ -19,13 +19,13 @@ public class ServerConfig {
 
     public static class Debug {
         public static ModConfigSpec.BooleanValue debugMode;
-        public static ModConfigSpec.BooleanValue notSnowyUnderLight0;
+        public static ModConfigSpec.BooleanValue notLightAbove;
 
         private static void load(ModConfigSpec.Builder builder) {
             builder.push("Debug");
             debugMode = builder.comment("Enable debug option to detect illegal use of functions.")
                     .define("Debug", false);
-            notSnowyUnderLight0 = builder.comment("Without snowy block under the light blocks which level is 0.")
+            notLightAbove = builder.comment("Without snowy block under the light blocks which level is 0.")
                     .define("NotSnowyUnderLight0", false);
             builder.pop();
         }

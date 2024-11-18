@@ -38,6 +38,7 @@
     "client.MixinGameRenderer",
     "client.MixinLevelRender",
     "client.MixinLocalPlayer",
+    "client.MixinRenderChunkRegion",
     "client.block.MixinBlockColors",
     "client.block.MixinLeavesBlock",
     "client.block.MixinLightningRodBlock",
@@ -49,12 +50,13 @@
     "compat.embeddium.MixinBlockRender2",
     "compat.embeddium.MixinBlockRenderTask",
     "compat.iris.MixinBiomeUniforms",
-    "compat.iris_test.MixinDefaultFluidRenderer",
     "compat.iris_test.MixinBlockRenderTask",
+    "compat.iris_test.MixinDefaultFluidRenderer",
     "compat.optifine.MixinItemBlockRenderTypes",
     "compat.sodium.MixinAbstractBlockRenderContext",
     "compat.sodium.MixinBlockRenderer",
     "compat.sodium.MixinBlockRenderTask",
+    "compat.sodium.MixinLevelSlice",
     "compat.sodium.MixinNeoForgeModelAccess"
   ],
   "injectors": {

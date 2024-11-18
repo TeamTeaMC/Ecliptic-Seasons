@@ -43,10 +43,10 @@ public abstract class MixinBlockRenderTask {
 
         BakedModel snowModel=null;
         if (!original) {
-            snowModel = ModelManager.findModel(ctx.world(), mutableBlockPos, state, random);
+            snowModel = ModelManager.findModel(ctx.world(), mutableBlockPos, state, random,ctx.seed());
         } else {
             if (ModelManager.isModelReplaced(state)) {
-                snowModel = ModelManager.findModel(ctx.world(), mutableBlockPos, state, random);
+                snowModel = ModelManager.findModel(ctx.world(), mutableBlockPos, state, random,ctx.seed());
             }
         }
 

@@ -61,11 +61,11 @@ public abstract class MixinChunkRenderDispatcher {
 
         BakedModel snowModel = null;
         if (!original) {
-            snowModel = ModelManager.findModel(renderchunkregion, blockpos2, blockstate, randomsource);
+            snowModel = ModelManager.findModel(renderchunkregion, blockpos2, blockstate, randomsource,blockstate.getSeed(blockpos2));
             eclipticSeasons$countModel++;
         } else {
             if (ModelManager.isModelReplaced(blockstate)) {
-                snowModel = ModelManager.findModel(renderchunkregion, blockpos2, blockstate, randomsource);
+                snowModel = ModelManager.findModel(renderchunkregion, blockpos2, blockstate, randomsource,blockstate.getSeed(blockpos2));
                 eclipticSeasons$countModel++;
             }
         }

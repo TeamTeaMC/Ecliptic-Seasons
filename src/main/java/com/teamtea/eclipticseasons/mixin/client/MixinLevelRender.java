@@ -74,6 +74,8 @@ public abstract class MixinLevelRender {
     }
 
 
+
+
     // @WrapOperation(
     //         method = "renderSnowAndRain",
     //         at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/LevelRenderer;getLightColor(Lnet/minecraft/world/level/BlockAndTintGetter;Lnet/minecraft/core/BlockPos;)I")

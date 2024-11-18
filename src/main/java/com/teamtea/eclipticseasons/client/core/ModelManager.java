@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.VertexFormatElement;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
+import com.teamtea.eclipticseasons.api.misc.IMapSlice;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.api.util.SimpleUtil;
 import com.teamtea.eclipticseasons.common.core.map.ChunkInfoMap;
@@ -26,6 +27,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.level.BlockAndTintGetter;
@@ -167,7 +169,7 @@ public class ModelManager {
         //     return original;
         if (!original.isEmpty() && (direction == Direction.UP || direction == null) && snowyModelsCache.getOrDefault(bakedModel, -1) == -1) {
             random.setSeed(seed);
-            BakedModel snowModel = ModelManager.findModel(blockAndTintGetter, pos, state, random);
+            BakedModel snowModel = ModelManager.findModel(blockAndTintGetter, pos, state, random,seed);
             if (snowModel != null && snowyModelsCache.getOrDefault(snowModel, -1) > MapChecker.FLAG_NONE && bakedModel != null && bakedModel != snowModel) {
                 int blockType = MapChecker.getBlockType(state, blockAndTintGetter, pos);
                 if (blockType == MapChecker.FLAG_CUSTOM)
@@ -615,25 +617,37 @@ public class ModelManager {
         return list;
     }
 
-    public static BakedModel findModel(BlockAndTintGetter blockAndTintGetter, BlockPos pos, BlockState state, RandomSource random) {
+    // TODO: 这里需要给Map做切片
+    public static BakedModel findModel(BlockAndTintGetter blockAndTintGetter, BlockPos pos, BlockState state, RandomSource random,long seed) {
         Level level = Minecraft.getInstance().level;
         BakedModel replace = null;
         // 这里不需要担心，是因为我们给不符合要求的level默认返回一个0或者最低值-1
+
+        if (blockAndTintGetter instanceof IMapSlice mapSlice) {
+            int cut = mapSlice.getBlockHeight(pos) - pos.getY();
+            if (cut > 1 || cut < -3)
+                return replace;
+        }
+
         if (level == null) return replace;
 
 
         var onBlock = state.getBlock();
-        int flag = MapChecker.getBlockType(state, level, pos);
+        int flag = MapChecker.getBlockType(state, blockAndTintGetter, pos);
         if (flag == 0) return replace;
         int offset = MapChecker.getSnowOffset(state, flag);
 
         boolean isLight = false;
 
         if (ClientConfig.Renderer.useVanillaCheck.get()) {
-            isLight = level.getLightEngine().getLayerListener(LightLayer.SKY).getLightValue(pos.above()) >= 15;
+            isLight = blockAndTintGetter.getBrightness(LightLayer.BLOCK,pos.above()) >= 15;
         } else {
             // ChunkInfoMap chunkMap = MapChecker.getChunkMap(level, pos);
-            int cacheHeight = MapChecker.getHeightOrUpdate(level, pos, false);
+
+            int cacheHeight = blockAndTintGetter instanceof IMapSlice mapSlice ?
+                    mapSlice.getBlockHeight(pos)
+                    : MapChecker.getHeightOrUpdate(level, pos, false);
+
             if (ClientConfig.Renderer.betterSnow.get()) {
                 if (flag == MapChecker.FLAG_BLOCK && pos.getY() == cacheHeight - 1) {
                     if (MapChecker.getBlockType(blockAndTintGetter.getBlockState(pos.above()), blockAndTintGetter, pos.above()) == MapChecker.FLAG_CUSTOM) {
@@ -641,7 +655,8 @@ public class ModelManager {
                     } else {
                         for (Direction direction : Direction.Plane.HORIZONTAL) {
                             int neighbourHeight = MapChecker.getHeight(level, pos.relative(direction));
-                            if (neighbourHeight == pos.getY() && MapChecker.getBlockType(blockAndTintGetter.getBlockState(pos.above()), blockAndTintGetter, pos.above()) != MapChecker.FLAG_BLOCK) {
+                            if (neighbourHeight == pos.getY() &&
+                                    MapChecker.getBlockType(blockAndTintGetter.getBlockState(pos.above()), blockAndTintGetter, pos.above()) != MapChecker.FLAG_BLOCK) {
                                 cacheHeight = neighbourHeight;
                                 break;
                             }
@@ -655,7 +670,7 @@ public class ModelManager {
         if (ClientConfig.Renderer.notSnowyNearGlowingBlock.get()) {
             if (isLight) {
                 BlockPos above = pos.offset(0, 1 - offset, 0);
-                if (level.getLightEngine().getLayerListener(LightLayer.BLOCK).getLightValue(above) >=
+                if (blockAndTintGetter.getBrightness(LightLayer.BLOCK,above) >=
                         ClientConfig.Renderer.notSnowyNearGlowingBlockLevel.getAsInt())
                     isLight = false;
             }
@@ -664,11 +679,11 @@ public class ModelManager {
         if (isLight) {
             if (ClientConfig.Renderer.snowyWinter.get()
                     && onBlock != Blocks.SNOW_BLOCK
-                    && MapChecker.shouldSnowAt(level, pos.below(offset), state, random, state.getSeed(pos))) {
+                    && MapChecker.shouldSnowAt(level, pos.below(offset), state, random, seed)) {
                 // DynamicLeavesBlock
                 boolean isFlowerAbove = false;
                 if ((flag == MapChecker.FLAG_BLOCK) && ClientConfig.Renderer.betterSnow.get()) {
-                    var bl = level.getBlockState(pos.above()).getBlock();
+                    var bl = blockAndTintGetter.getBlockState(pos.above()).getBlock();
                     isFlowerAbove = bl instanceof FlowerBlock
                             || bl instanceof PinkPetalsBlock
                             || bl instanceof DoublePlantBlock

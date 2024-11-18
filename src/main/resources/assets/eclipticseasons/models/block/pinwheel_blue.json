@@ -1,6 +1,6 @@
 {
 	"credit": "Made by YunFei with Blockbench",
-	"parent": "block",
+	"parent": "block/block",
 	"textures": {
 		"0": "eclipticseasons:block/pinwheel_blue",
 		"particle": "eclipticseasons:block/pinwheel_blue"

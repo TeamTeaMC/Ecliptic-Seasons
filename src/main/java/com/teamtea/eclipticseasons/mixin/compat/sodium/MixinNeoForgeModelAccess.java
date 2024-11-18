@@ -33,20 +33,14 @@ public abstract class MixinNeoForgeModelAccess {
     // }
 
 
-    @ModifyExpressionValue(
-            remap = false,
-            method = "getQuads",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/resources/model/BakedModel;getQuads(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/Direction;Lnet/minecraft/util/RandomSource;Lnet/neoforged/neoforge/client/model/data/ModelData;Lnet/minecraft/client/renderer/RenderType;)Ljava/util/List;")
-    )
-    private List<BakedQuad> ecliptic$getQuads_getQuads(List<BakedQuad> original, @Local BakedModel bakedModel, @Local BlockAndTintGetter blockAndTintGetter, @Local BlockPos pos, @Local BlockState state, @Local Direction side, @Local RandomSource rand) {
-        return ModelManager.cancelTop(bakedModel, blockAndTintGetter, state, pos, side, rand, state.getSeed(pos), original);
-    }
-    // @WrapOperation(
+    // @ModifyExpressionValue(
     //         remap = false,
-    //         method = "renderModel",
-    //         at = @At(value = "INVOKE", target = "Lme/jellysquid/mods/sodium/client/render/chunk/compile/pipeline/BlockRenderer;isFaceVisible(Lme/jellysquid/mods/sodium/client/render/chunk/compile/pipeline/BlockRenderContext;Lnet/minecraft/core/Direction;)Z")
+    //         method = "getQuads",
+    //         at = @At(value = "INVOKE", target = "Lnet/minecraft/client/resources/model/BakedModel;getQuads(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/Direction;Lnet/minecraft/util/RandomSource;Lnet/neoforged/neoforge/client/model/data/ModelData;Lnet/minecraft/client/renderer/RenderType;)Ljava/util/List;")
     // )
-    // private boolean mixin$renderModel_isFaceVisible(BlockRenderer blockRenderer, BlockRenderContext ctx, Direction face, Operation<Boolean> original) {
-    //     return ModelManager.shouldisFaceVisible(blockRenderer,ctx,face,original);
+    // private List<BakedQuad> ecliptic$getQuads_getQuads(List<BakedQuad> original, @Local BakedModel bakedModel, @Local BlockAndTintGetter blockAndTintGetter, @Local BlockPos pos, @Local BlockState state, @Local Direction side, @Local RandomSource rand) {
+    //     return ModelManager.cancelTop(bakedModel, blockAndTintGetter, state, pos, side, rand, state.getSeed(pos), original);
     // }
+
+
 }

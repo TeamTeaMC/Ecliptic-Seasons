@@ -3,7 +3,7 @@ plugins {
     id 'eclipse'
     id 'idea'
     id 'maven-publish'
-    id 'net.neoforged.gradle.userdev' version '7.0.145'
+    id 'net.neoforged.gradle.userdev' version '7.0.165'
 }
 
 
@@ -142,11 +142,12 @@ dependencies {
     compileOnly("curse.maven:embeddium-908741:5556146")
 
     compileOnly "org.sinytra.forgified-fabric-api:fabric-renderer-api-v1:3.4.0+acb05a39d1"
-    compileOnly "maven.modrinth:sodium:mc1.21-0.6.0-beta.2-neoforge"
-    compileOnly("curse.maven:irisshaders-455508:5726475")
 
-    onlyMainRuntimeOnly("curse.maven:irisshaders-455508:5726475")
-    onlyMainRuntimeOnly "maven.modrinth:sodium:mc1.21-0.6.0-beta.2-neoforge"
+    compileOnly "maven.modrinth:sodium:mc1.21.1-0.6.0-neoforge"
+    compileOnly("curse.maven:irisshaders-455508:5910090")
+
+    onlyMainRuntimeOnly("curse.maven:irisshaders-455508:5910090")
+    onlyMainRuntimeOnly "maven.modrinth:sodium:mc1.21.1-0.6.0-neoforge"
 
     onlyMainRuntimeOnly("curse.maven:journeymap-32274:5541925")
 
@@ -154,13 +155,19 @@ dependencies {
     compileOnly("curse.maven:distant-horizons-508933:5689286")
 //    onlyMainRuntimeOnly ("curse.maven:distant-horizons-508933:5689286")
 
-
     onlyMainRuntimeOnly("curse.maven:spark-361579:5434153")
-    onlyMainRuntimeOnly("curse.maven:ore-excavation-250898:5443379")
-    onlyMainRuntimeOnly("curse.maven:minemenu-222378:5447274")
-
-
     onlyMainRuntimeOnly("curse.maven:farmers-delight-398521:5772720")
+
+    println("----Scan onlyMainRuntimeOnly libs begin----")
+    fileTree(dir: 'libs', include: ['*.jar']).each { File file ->
+        def fileName = file.name
+        println(fileName.substring(0, fileName.indexOf("-")) + "," + fileName.substring(fileName.indexOf("-") + 1, fileName.indexOf(".jar")))
+        onlyMainRuntimeOnly (name: fileName.substring(0, fileName.indexOf(".jar")),
+                group: 'libs',
+                version: fileName.substring(0, fileName.indexOf(".jar")))
+    }
+    println("----Scan onlyMainRuntimeOnly libs end----")
+
 
 //    onlyMainRuntimeOnly("curse.maven:architectury-api-419699:5786327")
 //    onlyMainRuntimeOnly("curse.maven:do-api-864599:5730908")
