@@ -1,18 +1,17 @@
 package com.teamtea.eclipticseasons.client.sound;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
-import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.client.core.ClientWeatherChecker;
-import com.teamtea.eclipticseasons.client.core.SimplePair;
+import com.teamtea.eclipticseasons.client.util.ClientCon;
+import com.teamtea.eclipticseasons.client.util.SimplePair;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.resources.sounds.*;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.core.Holder;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.util.Mth;
@@ -22,13 +21,10 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeManager;
 import net.minecraft.world.level.biome.Biomes;
 import net.neoforged.neoforge.common.Tags;
-import org.checkerframework.checker.units.qual.A;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class SeasonalBiomeAmbientSoundsHandler implements AmbientSoundHandler {
     private final LocalPlayer player;
@@ -63,8 +59,8 @@ public class SeasonalBiomeAmbientSoundsHandler implements AmbientSoundHandler {
         // EclipticSeasons.logger((player.level().getLightEngine().getLayerListener(LightLayer.SKY).getLightValue(player.blockPosition())));
 
         Holder<Biome> biome = this.biomeManager.getNoiseBiomeAtPosition(this.player.getX(), this.player.getY(), this.player.getZ());
-        Season season = EclipticUtil.getNowSolarTerm(player.level()).getSeason();
-        boolean isDayNow = EclipticUtil.isDay(player.level());
+        Season season = ClientCon.nowSolarTerm.getSeason();
+        boolean isDayNow = ClientCon.isDay;
         if (biome.value() != this.previousBiome) {
             this.previousBiome = biome.value();
         }

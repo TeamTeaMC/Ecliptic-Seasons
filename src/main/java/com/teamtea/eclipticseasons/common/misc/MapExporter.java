@@ -1,7 +1,7 @@
 package com.teamtea.eclipticseasons.common.misc;
 
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
-import com.teamtea.eclipticseasons.client.render.ColorHelper;
+import com.teamtea.eclipticseasons.client.util.ColorHelper;
 import com.teamtea.eclipticseasons.common.core.map.ChunkInfoMap;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import net.minecraft.commands.CommandSourceStack;

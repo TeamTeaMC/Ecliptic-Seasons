@@ -1,7 +1,6 @@
 package com.teamtea.eclipticseasons.common.core.map;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
-import com.teamtea.eclipticseasons.api.util.SimpleUtil;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.network.message.ChunkUpdateMessage;
@@ -32,16 +31,15 @@ import net.minecraft.world.level.levelgen.Heightmap;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 public class MapChecker {
     public static final int ChunkSize = 16 * 32;
     public static final int ChunkSizeLoc = ChunkSize - 1;
     public static final int ChunkSizeAxis = 4 + 5;
 
-    public static final Map<Level, List<ChunkInfoMap>> SERVER_REGION_LIST = new IdentityHashMap<>();
-    // public static final List<ChunkInfoMap> RegionList = new ArrayList<>(4);
+    public static final Map<Level, List<ChunkInfoMap>> REGION_LIST_COLLECTOR = new IdentityHashMap<>();
+    public static List<ChunkInfoMap> CLIENT_REGION_LIST = new ArrayList<>();
     public static final int FLAG_NONE = 0;
     public static final int FLAG_BLOCK = 1;
     public static final int FLAG_SLAB = 2;
@@ -53,15 +51,8 @@ public class MapChecker {
     public static final int FLAG_FARMLAND = 6;
     public static final int FLAG_CUSTOM = 999;
 
-    public static List<Block> LowerPlant = Stream.of(Blocks.SHORT_GRASS, Blocks.FERN).collect(Collectors.toList());
-    public static List<Block> LARGE_GRASS = Stream.of(Blocks.TALL_GRASS, Blocks.LARGE_FERN).collect(Collectors.toList());
-    // private static boolean updateLock;
 
-
-    // public static boolean isUpdateLock() {
-    //     return updateLock;
-    // }
-
+    public static Set<ChunkPos> dirtyList = new HashSet<>();
 
     //  unload some
     public static void unloadLevel(Level level) {
@@ -70,7 +61,9 @@ public class MapChecker {
         synchronized (orDefault) {
             orDefault.clear();
         }
-        SERVER_REGION_LIST.remove(level);
+        REGION_LIST_COLLECTOR.remove(level);
+
+        dirtyList.clear();
         // updateLock = false;
     }
 
@@ -90,8 +83,11 @@ public class MapChecker {
                     map.updateHeight(i, j, map.minY);
                 }
             }
+            dirtyList.remove(chunkPos);
             return true;
         }
+
+
         return false;
     }
 
@@ -101,9 +97,23 @@ public class MapChecker {
         return i >> ChunkSizeAxis;
     }
 
+    public static void addDirtyChunk(ChunkPos chunkPos) {
+        dirtyList.add(chunkPos);
+    }
+
+    public static boolean isChunkDirty(ChunkPos chunkPos) {
+        return dirtyList.contains(chunkPos);
+    }
+
+    public static boolean removeDirtyChunk(ChunkPos chunkPos) {
+        return dirtyList.remove(chunkPos);
+    }
+
 
     public static List<ChunkInfoMap> getMapsList(Level level) {
-        return SERVER_REGION_LIST.computeIfAbsent(level, level1 -> new CopyOnWriteArrayList<>());
+        List<ChunkInfoMap> chunkInfoMaps = REGION_LIST_COLLECTOR.computeIfAbsent(level, level1 -> new ArrayList<>());
+        if (level.isClientSide()) CLIENT_REGION_LIST = chunkInfoMaps;
+        return chunkInfoMaps;
     }
 
     public static ChunkInfoMap getChunkMap(Level level, BlockPos pos) {
@@ -114,7 +124,9 @@ public class MapChecker {
 
 
     public static ChunkInfoMap getChunkMap(Level level, int regionX, int regionZ) {
-        return getChunkMap(getMapsList(level), regionX, regionZ);
+        return getChunkMap(
+                level.isClientSide ? CLIENT_REGION_LIST :
+                        getMapsList(level), regionX, regionZ);
     }
 
     public static ChunkInfoMap getChunkMap(List<ChunkInfoMap> orDefault, int regionX, int regionZ) {
@@ -174,7 +186,7 @@ public class MapChecker {
         int x = blockToSectionCoord(pos.getX());
         int z = blockToSectionCoord(pos.getZ());
         List<ChunkInfoMap> mapsList = getMapsList(level);
-        ChunkInfoMap map = getChunkMap(level, x, z);
+        ChunkInfoMap map = getChunkMap(mapsList, x, z);
 
         int value = 0;
         if (map != null) {
@@ -210,7 +222,7 @@ public class MapChecker {
                 }
                 if (!hasBuild) {
                     // level.registryAccess().registry(Registries.BIOME).get().getId(Biomes.THE_VOID)
-                    map = new ChunkInfoMap(x, z, level.getMinBuildHeight() - 1);
+                    map = new ChunkInfoMap(x, z, level.getMinBuildHeight() - 1, level.isClientSide);
                     mapsList.add(map);
                 }
             }
@@ -227,6 +239,12 @@ public class MapChecker {
             }
         }
         return value;
+    }
+
+    public static void updatePosForce(Level level, BlockPos setPos, int y) {
+        ChunkInfoMap map = getChunkMap(level, setPos);
+        if (map != null)
+            map.updateHeight(setPos, y);
     }
 
 
@@ -257,6 +275,17 @@ public class MapChecker {
         var biomeHolder = getSurfaceBiome(level, pos);
         boolean isSnowy = false;
         if (WeatherManager.getSnowDepthAtBiome(level, biomeHolder.value()) > Math.abs(seed % 100)) {
+            if (ServerConfig.Debug.notLightAbove.get()) {
+                isSnowy = notLightAbove(level, pos, 4);
+            } else isSnowy = true;
+        }
+        return isSnowy;
+    }
+
+
+    public static boolean shouldSnowAt(Level level, BlockPos pos, int biomeId, BlockState state, RandomSource random, long seed) {
+        boolean isSnowy = false;
+        if (WeatherManager.getBiomeList(level).get(biomeId).snowDepth > Math.abs(seed % 100)) {
             if (ServerConfig.Debug.notLightAbove.get()) {
                 isSnowy = notLightAbove(level, pos, 4);
             } else isSnowy = true;
@@ -342,7 +371,7 @@ public class MapChecker {
 
         Block onBlock = state.getBlock();
         if (ClientConfig.Renderer.notSnowOverlayGlowingBlock.getAsBoolean()
-         &&state.getLightEmission(level, pos) > 0) {
+                && state.getLightEmission(level, pos) > 0) {
             flag = FLAG_NONE;
         } else if (onBlock instanceof LeavesBlock) {
             flag = FLAG_LEAVES;
@@ -498,12 +527,6 @@ public class MapChecker {
             }
         }
         SimpleNetworkHandler.send(player, new ChunkUpdateMessage(bytes, chunk.getPos().x, chunk.getPos().z, section_y, clickedPos));
-    }
-
-    public static void updatePosForce(Level level, BlockPos setPos, int y) {
-        ChunkInfoMap map = getChunkMap(level, setPos);
-        if (map != null)
-            map.updateHeight(setPos, y);
     }
 
 

@@ -2,6 +2,7 @@ package com.teamtea.eclipticseasons.api.constant.solar;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 
 
 public enum Season
@@ -24,7 +25,7 @@ public enum Season
         return this.toString().toLowerCase();
     }
 
-    public Component getTranslation()
+    public MutableComponent getTranslation()
     {
         return Component.translatable("info.eclipticseasons.environment.season." + getName()).withStyle(color);
     }

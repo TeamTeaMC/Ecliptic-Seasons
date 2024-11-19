@@ -1,4 +1,4 @@
-package com.teamtea.eclipticseasons.client.core;
+package com.teamtea.eclipticseasons.client.model;
 
 
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;

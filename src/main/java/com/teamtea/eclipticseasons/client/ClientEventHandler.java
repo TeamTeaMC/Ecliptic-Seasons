@@ -6,9 +6,11 @@ import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
-import com.teamtea.eclipticseasons.client.core.map.ClientMapFixer;
+import com.teamtea.eclipticseasons.client.map.ClientMapFixer;
 import com.teamtea.eclipticseasons.client.core.ClientWeatherChecker;
 import com.teamtea.eclipticseasons.client.render.WorldRenderer;
+import com.teamtea.eclipticseasons.client.render.chunk.CompilerCollector;
+import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.core.solar.ClientSolarDataManager;
@@ -60,16 +62,18 @@ public final class ClientEventHandler {
     @SubscribeEvent
     public static void addTooltips(ItemTooltipEvent event) {
         if (event.getItemStack().getItem() instanceof BlockItem) {
-            if (ServerConfig.Crop.enableCropHumidityControl.get()) {
-                if (CropInfoManager.getHumidityCrops().contains(((BlockItem) event.getItemStack().getItem()).getBlock())) {
-                    CropHumidityInfo info = CropInfoManager.getHumidityInfo(((BlockItem) event.getItemStack().getItem()).getBlock());
-                    if (info != null) event.getToolTip().addAll(info.getTooltip());
+            if (ClientConfig.GUI.agriculturalInformation.getAsBoolean()) {
+                if (ServerConfig.Crop.enableCropHumidityControl.get()) {
+                    if (CropInfoManager.getHumidityCrops().contains(((BlockItem) event.getItemStack().getItem()).getBlock())) {
+                        CropHumidityInfo info = CropInfoManager.getHumidityInfo(((BlockItem) event.getItemStack().getItem()).getBlock());
+                        if (info != null) event.getToolTip().addAll(info.getTooltip());
+                    }
                 }
-            }
-            if (ServerConfig.Crop.enableCrop.get()) {
-                if (CropInfoManager.getSeasonCrops().contains(((BlockItem) event.getItemStack().getItem()).getBlock())) {
-                    CropSeasonInfo info = CropInfoManager.getSeasonInfo(((BlockItem) event.getItemStack().getItem()).getBlock());
-                    if (info != null) event.getToolTip().addAll(info.getTooltip());
+                if (ServerConfig.Crop.enableCrop.get()) {
+                    if (CropInfoManager.getSeasonCrops().contains(((BlockItem) event.getItemStack().getItem()).getBlock())) {
+                        CropSeasonInfo info = CropInfoManager.getSeasonInfo(((BlockItem) event.getItemStack().getItem()).getBlock());
+                        if (info != null) event.getToolTip().addAll(info.getTooltip());
+                    }
                 }
             }
         }
@@ -79,6 +83,7 @@ public final class ClientEventHandler {
     public static void onChunkUnloadEvent(ChunkEvent.Unload event) {
         if (event.getLevel().isClientSide()) {
             ClientMapFixer.clearChunk(event.getChunk().getPos());
+            CompilerCollector.clearChunk(event.getChunk().getPos());
         }
     }
 
@@ -88,6 +93,7 @@ public final class ClientEventHandler {
             ClientCon.useLevel = null;
             ClientWeatherChecker.unloadLevel(clientLevel);
             ClientMapFixer.clearAll();
+            CompilerCollector.clearAll();
         }
     }
 
@@ -114,6 +120,7 @@ public final class ClientEventHandler {
         if (event.getLevel() instanceof ClientLevel clientLevel) {
             ClientWeatherChecker.tickAllCheck(clientLevel);
             ClientMapFixer.tick(clientLevel);
+            ClientCon.tick(clientLevel);
 
             if (ClientConfig.Renderer.forceChunkRenderUpdate.get()) {
                 if (clientLevel.getGameTime() - lastFreshTime > 80
@@ -164,8 +171,8 @@ public final class ClientEventHandler {
         var level = Minecraft.getInstance().level;
         if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_CUTOUT_BLOCKS
                 && level != null
-                && EclipticUtil.getNowSolarTerm(level).getSeason() == Season.SPRING
-                && EclipticUtil.isDay(level)) {
+                && ClientCon.nowSolarTerm.getSeason() == Season.SPRING
+                && ClientCon.isDay) {
             var multiBufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
             var blockpos4 = new BlockPos(141, -59, 220);
 

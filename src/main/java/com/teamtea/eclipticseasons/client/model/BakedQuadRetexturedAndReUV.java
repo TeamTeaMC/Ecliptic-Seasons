@@ -1,20 +1,16 @@
-package com.teamtea.eclipticseasons.client.core;
+package com.teamtea.eclipticseasons.client.model;
 
 
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormatElement;
-import com.teamtea.eclipticseasons.EclipticSeasons;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.FaceBakery;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.NotNull;
-import org.joml.Vector3f;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 public class BakedQuadRetexturedAndReUV extends BakedQuad {
     private final TextureAtlasSprite texture;

@@ -2,6 +2,7 @@ package com.teamtea.eclipticseasons.mixin.client;
 
 
 import com.teamtea.eclipticseasons.api.misc.IMapSlice;
+import com.teamtea.eclipticseasons.common.core.map.ChunkInfoMap;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import net.minecraft.client.renderer.chunk.RenderChunkRegion;
 import net.minecraft.core.BlockPos;
@@ -14,7 +15,9 @@ import org.spongepowered.asm.mixin.Unique;
 @Mixin({RenderChunkRegion.class})
 public abstract class MixinRenderChunkRegion implements IMapSlice {
 
-    @Shadow @Final protected Level level;
+    @Shadow
+    @Final
+    protected Level level;
     @Unique
     private static final int MAP_BLOCK_COUNT = 16 * 16;
 
@@ -64,7 +67,6 @@ public abstract class MixinRenderChunkRegion implements IMapSlice {
     // }
 
 
-
     @Override
     public int getBlockHeight(BlockPos pos) {
         // return 0;
@@ -80,11 +82,11 @@ public abstract class MixinRenderChunkRegion implements IMapSlice {
         //     int localBlockZ = relBlockZ & 15;
         //     return lightArrays[localBlockX*16+localBlockZ];
         // }
-        return MapChecker.getHeight(level,pos);
+        return MapChecker.getHeight(level, pos);
     }
 
     @Override
     public int getSurfaceFaceBiomeId(BlockPos blockPos) {
-        return 0;
+        return MapChecker.getSurfaceOrUpdate(level, blockPos, false, ChunkInfoMap.TYPE_BIOME);
     }
 }

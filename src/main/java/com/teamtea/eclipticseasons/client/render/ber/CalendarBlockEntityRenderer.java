@@ -3,6 +3,7 @@ package com.teamtea.eclipticseasons.client.render.ber;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
+import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.common.block.base.SimpleHorizontalEntityBlock;
 import com.teamtea.eclipticseasons.common.block.blockentity.CalendarBlockEntity;
 import net.minecraft.client.Minecraft;
@@ -33,7 +34,7 @@ public class CalendarBlockEntityRenderer implements BlockEntityRenderer<Calendar
     public void render(CalendarBlockEntity blockEntity, float partialTicks, PoseStack poseStack, MultiBufferSource bufferIn, int combinedLight, int combinedOverlay) {
 
         var facing = blockEntity.getBlockState().getValue(SimpleHorizontalEntityBlock.FACING).ordinal() * 90;
-        var st = EclipticSeasonsApi.getInstance().getSolarTerm(blockEntity.getLevel());
+        var st = ClientCon.nowSolarTerm;
         var label = st.getAlternationText().getString();
 
         drawText(2, Component.translatable("info.eclipticseasons.environment.solar_term.hint").getString(), Color.GRAY.getRGB(), blockEntity, poseStack, bufferIn, combinedLight);

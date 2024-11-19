@@ -17,11 +17,13 @@ public class ClientConfig {
 
     public static class GUI {
         public static ModConfigSpec.BooleanValue debugInfo;
-
+        public static ModConfigSpec.BooleanValue agriculturalInformation;
         private static void load(ModConfigSpec.Builder builder) {
             builder.push("GUI");
             debugInfo = builder.comment("Info used for development.")
                     .define("DebugInfo", false);
+            agriculturalInformation = builder.comment("Displays the season and humidity levels suitable for growing crops.")
+                    .define("AgriculturalInformation", true);
             builder.pop();
         }
     }
@@ -37,7 +39,6 @@ public class ClientConfig {
         public static ModConfigSpec.BooleanValue notSnowOverlayGlowingBlock;
         public static ModConfigSpec.BooleanValue realisticSnowyChange;
 
-
         public static ModConfigSpec.BooleanValue flowerOnGrass;
         public static ModConfigSpec.BooleanValue betterSnow;
         public static ModConfigSpec.BooleanValue seasonalGrassColorChange;
@@ -50,13 +51,14 @@ public class ClientConfig {
                     .define("EnhancementChunkRenderUpdate", false);
 
 
-            useVanillaCheck = builder.comment("Determines whether snow is falling based on vanilla lighting checks.")
-                    .define("UseVanillaCheck", false);
             snowyWinter = builder.comment("If snow falls during cold weather in warm biomes, it will gradually cover all solid blocks and grass.")
                     .define("SnowyWinter", true);
+            useVanillaCheck = builder.comment("Determines whether snow is falling based on vanilla lighting checks.")
+                    .define("UseVanillaCheck", false);
+
 
             realisticSnowyChange = builder.comment("When the block is updated, the snow cover will not refresh immediately, but will be updated after a delay. Please note that this will consume more performance and should not be open when 'RealisticSnowyChange' of common config is true.")
-                    .define("ClientRealisticSnowyChange", false);
+                    .define("RealisticSnowyChange", true);
             betterSnow = builder.comment("Blocks underneath fences etc. may also be covered with snow.")
                     .define("SnowUnderFence", true);
             notSnowyNearGlowingBlock = builder.comment("Snow will not appear in overly bright areas, here define restriction levels.")
@@ -65,6 +67,7 @@ public class ClientConfig {
                     .defineInRange("NotSnowyNearGlowingBlockLevel", 10, 1, 15);
             notSnowOverlayGlowingBlock = builder.comment("Snow will not cover the block which would lights.")
                     .define("NotSnowOverlayGlowingBlock", true);
+
             seasonalGrassColorChange = builder.comment("The colors of the grass and leaves change with the time of year.")
                     .define("SeasonalGrassColorChange", true);
             flowerOnGrass = builder.comment("In spring, grass blocks will occasionally have small flowers on them.")

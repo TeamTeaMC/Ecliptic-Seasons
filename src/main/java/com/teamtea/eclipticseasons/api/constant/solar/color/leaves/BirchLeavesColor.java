@@ -1,7 +1,7 @@
 package com.teamtea.eclipticseasons.api.constant.solar.color.leaves;
 
 
-import com.teamtea.eclipticseasons.client.render.ColorHelper;
+import com.teamtea.eclipticseasons.client.util.ColorHelper;
 
 public enum BirchLeavesColor implements LeaveColor {
     // Spring Solar Terms

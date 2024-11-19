@@ -7,8 +7,8 @@ import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.misc.IMapSlice;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
-import com.teamtea.eclipticseasons.api.util.SimpleUtil;
-import com.teamtea.eclipticseasons.common.core.map.ChunkInfoMap;
+import com.teamtea.eclipticseasons.client.model.BakedQuadRetexturedAndReUV;
+import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.misc.LazyGet;
 import com.teamtea.eclipticseasons.compat.CompatModule;
@@ -27,7 +27,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.level.BlockAndTintGetter;
@@ -516,7 +515,9 @@ public class ModelManager {
             // SimpleUtil.testTime(()->{getHeightOrUpdate(pos, false);});
 
             if (isLight) {
-                if (ClientConfig.Renderer.snowyWinter.get() && onBlock != Blocks.SNOW_BLOCK && MapChecker.shouldSnowAt(level, pos.below(offset), state, random, seed)) {
+                if (ClientConfig.Renderer.snowyWinter.get()
+                        && onBlock != Blocks.SNOW_BLOCK
+                        && MapChecker.shouldSnowAt(level, pos.below(offset), state, random, seed)) {
                     // DynamicLeavesBlock
                     boolean isFlowerAbove = false;
                     if ((flag == MapChecker.FLAG_BLOCK) && ClientConfig.Renderer.betterSnow.get()) {
@@ -588,7 +589,7 @@ public class ModelManager {
                 } else if (ClientConfig.Renderer.flowerOnGrass.get() && direction == Direction.UP && state.getBlock() instanceof GrassBlock && random.nextInt(15) == 0) {
                     var solarTerm = SolarTerm.NONE;
                     int weight = 100;
-                    solarTerm = EclipticUtil.getNowSolarTerm(level);
+                    solarTerm = ClientCon.nowSolarTerm;
                     weight = Math.abs(solarTerm.ordinal() - 3) + 1;
                     if (solarTerm.getSeason() == Season.SPRING && random.nextInt(weight * 4) == 0 && blockAndTintGetter.getBlockState(pos.above()).isAir()) {
                         var cc = quadMap_GRASS.getOrDefault(list, null);
@@ -654,7 +655,8 @@ public class ModelManager {
                         cacheHeight--;
                     } else {
                         for (Direction direction : Direction.Plane.HORIZONTAL) {
-                            int neighbourHeight = MapChecker.getHeight(level, pos.relative(direction));
+                            int neighbourHeight = blockAndTintGetter instanceof IMapSlice mapSlice ?
+                                    mapSlice.getBlockHeight(pos.relative(direction)): MapChecker.getHeightOrUpdate(level, pos.relative(direction), false);
                             if (neighbourHeight == pos.getY() &&
                                     MapChecker.getBlockType(blockAndTintGetter.getBlockState(pos.above()), blockAndTintGetter, pos.above()) != MapChecker.FLAG_BLOCK) {
                                 cacheHeight = neighbourHeight;
@@ -679,7 +681,11 @@ public class ModelManager {
         if (isLight) {
             if (ClientConfig.Renderer.snowyWinter.get()
                     && onBlock != Blocks.SNOW_BLOCK
-                    && MapChecker.shouldSnowAt(level, pos.below(offset), state, random, seed)) {
+                    &&  MapChecker.shouldSnowAt(level, pos.below(offset), state, random, seed)
+                    // && (blockAndTintGetter instanceof IMapSlice mapSlice ?
+                    // MapChecker.shouldSnowAt(level, pos.below(offset),mapSlice.getSurfaceFaceBiomeId(pos), state, random, seed):
+                    //  MapChecker.shouldSnowAt(level, pos.below(offset), state, random, seed))
+            ) {
                 // DynamicLeavesBlock
                 boolean isFlowerAbove = false;
                 if ((flag == MapChecker.FLAG_BLOCK) && ClientConfig.Renderer.betterSnow.get()) {
@@ -708,7 +714,7 @@ public class ModelManager {
             } else if (ClientConfig.Renderer.flowerOnGrass.get() && state.getBlock() instanceof GrassBlock && random.nextInt(15) == 0) {
                 var solarTerm = SolarTerm.NONE;
                 int weight = 100;
-                solarTerm = EclipticUtil.getNowSolarTerm(level);
+                solarTerm =  ClientCon.nowSolarTerm;
                 weight = Math.abs(solarTerm.ordinal() - 3) + 1;
                 if (solarTerm.getSeason() == Season.SPRING && random.nextInt(weight * 4) == 0 && level.getBlockState(pos.above()).isAir()) {
                     {

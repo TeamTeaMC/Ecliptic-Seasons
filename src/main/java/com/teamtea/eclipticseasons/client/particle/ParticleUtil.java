@@ -5,6 +5,7 @@ import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.constant.tag.EclipticBlockTags;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
+import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.config.ClientConfig;
 import net.minecraft.client.Minecraft;
@@ -26,36 +27,19 @@ import java.awt.*;
 
 public class ParticleUtil {
 
-    private static SolarTerm nowSolarTerm = SolarTerm.NONE;
-    private static boolean isDay = false;
-    private static boolean isEvening = false;
-    private static boolean isNoon = false;
     private static Holder<Biome> nowBiome = null;
 
     public static void createParticle(ClientLevel clientLevel, int x, int y, int z) {
         if (!ClientConfig.Particle.seasonParticle.get()) return;
 
-        if (MapChecker.isValidDimension(clientLevel)) {
-
-            nowSolarTerm = EclipticUtil.getNowSolarTerm(clientLevel);
-            isDay = EclipticUtil.isDay(clientLevel);
-            isEvening = EclipticUtil.isEvening(clientLevel);
-            isNoon = EclipticUtil.isNoon(clientLevel);
-            // BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos();
-            // for (int j = 0; j < 667; ++j) {
-            //     // if (clientLevel.getRandom().nextInt(chanceW) == 0)
-            //     {
-            //         doAnimateTick(clientLevel, x, y, z, 16, clientLevel.getRandom(), blockpos$mutableblockpos);
-            //         doAnimateTick(clientLevel, x, y, z, 32, clientLevel.getRandom(), blockpos$mutableblockpos);
-            //     }
-            // }
-        } else {
-            nowSolarTerm = SolarTerm.NONE;
-            isDay = false;
-            isEvening = false;
-            isNoon = false;
-            nowBiome=null;
-        }
+        // BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos();
+        // for (int j = 0; j < 667; ++j) {
+        //     // if (clientLevel.getRandom().nextInt(chanceW) == 0)
+        //     {
+        //         doAnimateTick(clientLevel, x, y, z, 16, clientLevel.getRandom(), blockpos$mutableblockpos);
+        //         doAnimateTick(clientLevel, x, y, z, 32, clientLevel.getRandom(), blockpos$mutableblockpos);
+        //     }
+        // }
     }
 
     public static void doAnimateTick(ClientLevel clientLevel, int x, int y, int z, int b, RandomSource random, BlockPos.MutableBlockPos blockpos$mutableblockpos) {
@@ -77,7 +61,7 @@ public class ParticleUtil {
         if (ClientConfig.Particle.fallenLeaves.get()
                 && blockstate.getBlock() instanceof LeavesBlock) {
             if (!blockstate.is(EclipticBlockTags.NONE_FALLEN_LEAVES)) {
-                var sd = nowSolarTerm.getSeason();
+                var sd = ClientCon.nowSolarTerm.getSeason();
                 if (sd != Season.NONE) {
                     int chanceW = 19;
                     switch (sd) {
@@ -95,8 +79,8 @@ public class ParticleUtil {
             }
         }
         if (ClientConfig.Particle.butterfly.get()
-                && nowSolarTerm.getSeason() == Season.SPRING
-                && isDay
+                && ClientCon.nowSolarTerm.getSeason() == Season.SPRING
+                && ClientCon.isDay
         ) {
             if (blockstate.is(EclipticBlockTags.HABITAT_BUTTERFLY)
                     && !clientLevel.isRainingAt(blockpos$mutableblockpos)
@@ -107,8 +91,8 @@ public class ParticleUtil {
             }
         }
         if (ClientConfig.Particle.firefly.get()
-                && nowSolarTerm.getSeason() == Season.SUMMER
-                && isEvening
+                && ClientCon.nowSolarTerm.getSeason() == Season.SUMMER
+                && ClientCon.isEvening
         ) {
             if (blockstate.is(EclipticBlockTags.HABITAT_FIREFLY)
                     && !clientLevel.isRainingAt(blockpos$mutableblockpos)
@@ -120,8 +104,8 @@ public class ParticleUtil {
         }
 
         if (ClientConfig.Particle.wildGoose.get()
-                && nowSolarTerm.getSeason() == Season.AUTUMN
-                && isNoon
+                && ClientCon.nowSolarTerm.getSeason() == Season.AUTUMN
+                && ClientCon.isNoon
                 && clientLevel.canSeeSky(blockpos$mutableblockpos)
                 && clientLevel.isEmptyBlock(blockpos$mutableblockpos)
                 && !clientLevel.isRainingAt(blockpos$mutableblockpos)

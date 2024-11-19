@@ -2,6 +2,8 @@ package com.teamtea.eclipticseasons.common.core.map;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.SectionPos;
+import net.minecraft.world.level.ChunkPos;
 
 public class ChunkInfoMap {
     public static final int TYPE_BIOME = 1;
@@ -13,9 +15,11 @@ public class ChunkInfoMap {
     final int x;
     final int z;
     final short minY;
+    final boolean isClient;
 
-    public ChunkInfoMap(int x, int z, int minY) {
+    public ChunkInfoMap(int x, int z, int minY, boolean isClient) {
         this.minY = (short) minY;
+        this.isClient = isClient;
         this.x = x;
         this.z = z;
         EclipticSeasons.logger(String.format("Create new Height Map with [%s, %s]", x, z));
@@ -62,6 +66,17 @@ public class ChunkInfoMap {
             old = matrix[x][z];
             matrix[x][z] = (short) y;
         }
+
+        if (true) return old;
+
+        if (isClient) {
+
+            ChunkPos chunkPos = new ChunkPos(
+                    SectionPos.blockToSectionCoord(x),
+                    SectionPos.blockToSectionCoord(z));
+            MapChecker.addDirtyChunk(chunkPos);
+        }
+
         return old;
     }
 

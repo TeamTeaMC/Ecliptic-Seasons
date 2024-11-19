@@ -9,7 +9,8 @@ import com.teamtea.eclipticseasons.api.constant.solar.color.leaves.LeaveColor;
 import com.teamtea.eclipticseasons.api.constant.solar.color.leaves.MangroveLeavesColor;
 import com.teamtea.eclipticseasons.api.constant.solar.color.leaves.SpruceLeavesColor;
 import com.teamtea.eclipticseasons.api.constant.tag.ClimateTypeBiomeTags;
-import com.teamtea.eclipticseasons.client.render.ColorHelper;
+import com.teamtea.eclipticseasons.client.util.ClientCon;
+import com.teamtea.eclipticseasons.client.util.ColorHelper;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.config.ClientConfig;
@@ -19,14 +20,11 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.*;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.block.state.BlockState;
 
 import java.awt.*;
-import java.util.HashMap;
 import java.util.Map;
 
 public class BiomeColorsHandler {
@@ -95,7 +93,7 @@ public class BiomeColorsHandler {
                     int[] foliageBuffer = FoliageColor.pixels;
                     int[] grassBuffer = GrassColor.pixels;
 
-                    SolarTerm solar = EclipticSeasonsApi.getInstance().getSolarTerm(Minecraft.getInstance().level);
+                    SolarTerm solar = ClientCon.nowSolarTerm;
                     SolarTermColor colorInfo =
                             solar == SolarTerm.NONE ?
                                     NoneSolarTermColors.BEGINNING_OF_SPRING :
@@ -150,7 +148,7 @@ public class BiomeColorsHandler {
                     Minecraft.getInstance().level instanceof ClientLevel
                     && MapChecker.isValidDimension(Minecraft.getInstance().level)) {
 
-                SolarTerm solarTerm = EclipticSeasonsApi.getInstance().getSolarTerm(Minecraft.getInstance().level);
+                SolarTerm solarTerm = ClientCon.nowSolarTerm;
                 LeaveColor leaveColor = values[solarTerm.ordinal()];
 
                 int color = leaveColor.getColor();

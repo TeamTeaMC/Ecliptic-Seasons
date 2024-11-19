@@ -14,31 +14,30 @@ public class ServerConfig {
         Animal.load(builder);
         Debug.load(builder);
         Map.load(builder);
-
     }
 
     public static class Debug {
         public static ModConfigSpec.BooleanValue debugMode;
         public static ModConfigSpec.BooleanValue notLightAbove;
+        public static ModConfigSpec.BooleanValue iceMelt;
 
         private static void load(ModConfigSpec.Builder builder) {
             builder.push("Debug");
             debugMode = builder.comment("Enable debug option to detect illegal use of functions.")
                     .define("Debug", false);
             notLightAbove = builder.comment("Without snowy block under the light blocks which level is 0.")
-                    .define("NotSnowyUnderLight0", false);
+                    .define("NoSnowyUnderLight0", false);
+            iceMelt = builder.comment("Enables legacy mode for snow and ice, where snow accumulates when it's cold in snowy day and melts when it's hot.")
+                    .define("LegacyIceAndSnowAccumulationMelt", false);
             builder.pop();
         }
     }
 
     public static class Temperature {
-        public static ModConfigSpec.BooleanValue iceMelt;
         public static ModConfigSpec.BooleanValue heatStroke;
 
         private static void load(ModConfigSpec.Builder builder) {
             builder.push("Temperature");
-            iceMelt = builder.comment("Ice or snow layer will melt in warm place.")
-                    .define("IceAndSnowMelt", false);
             heatStroke = builder.comment("Add heat stroke effect in summer noon while in hot biome.")
                     .define("HeatStroke", true);
             builder.pop();
@@ -130,7 +129,7 @@ public class ServerConfig {
         private static void load(ModConfigSpec.Builder builder) {
             builder.push("Map");
             delayedUpdates = builder.comment("When snow falls, the top block does not immediately become snowy if the height map change.")
-                    .define("RealisticSnowyChange", true);
+                    .define("ServerRealisticSnowyChange", false);
             builder.pop();
         }
     }
