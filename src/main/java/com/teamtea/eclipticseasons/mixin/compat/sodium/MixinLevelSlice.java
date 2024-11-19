@@ -62,6 +62,8 @@ public abstract class MixinLevelSlice implements IMapSlice {
     private BoundingBox volume;
 
 
+    @Shadow @Final private static int NEIGHBOR_CHUNK_RADIUS;
+
     @Inject(
             remap = false,
             method = "<clinit>",
@@ -90,6 +92,8 @@ public abstract class MixinLevelSlice implements IMapSlice {
     private void eclipticseasons$copySectionData(ChunkRenderContext context,
                                                  CallbackInfo ci) {
 
+        int c_x=context.getOrigin().getX() - NEIGHBOR_CHUNK_RADIUS;
+        int c_z=context.getOrigin().getZ() - NEIGHBOR_CHUNK_RADIUS;
         BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos();
         for (int sectionX = 0; sectionX < SECTION_ARRAY_LENGTH; ++sectionX) {
             for (int sectionZ = 0; sectionZ < SECTION_ARRAY_LENGTH; ++sectionZ) {
@@ -100,8 +104,8 @@ public abstract class MixinLevelSlice implements IMapSlice {
                 int startZ = originBlockZ + sectionZ * 16;
                 // If we have compiled the chunk
                 ChunkPos chunkPos = new ChunkPos(
-                        context.getOrigin().x(),
-                        context.getOrigin().z());
+                        c_x+sectionX,
+                        c_z+sectionZ);
                 List<int[]> ints = CompilerCollector.get(chunkPos);
                 if (ints != null) {
                     // System.arraycopy(ints, 0, heights, 0, heights.length);

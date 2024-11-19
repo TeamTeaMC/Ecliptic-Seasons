@@ -1,7 +1,6 @@
 {
 	"credit": "Made by Joe Vettek",
 	"parent": "block/block",
-	"render_type": "cutout_mipped",
 	"textures": {
 		"1": "block/snow",
 		"2": "eclipticseasons:block/snow_overlay",
@@ -24,7 +23,7 @@
 			"from": [8, 8, 0],
 			"to": [16, 16, 16],
 			"faces": {
-				"north": {"uv": [0, 0, 8.01, 8], "texture": "#2"},
+				"north": {"uv": [0, 0, 8, 8], "texture": "#2"},
 				"east": {"uv": [0, 0, 16, 8], "texture": "#2"},
 				"south": {"uv": [8, 0, 16, 8], "texture": "#2"},
 				"west": {"uv": [0, 0, 16, 8], "texture": "#2"},

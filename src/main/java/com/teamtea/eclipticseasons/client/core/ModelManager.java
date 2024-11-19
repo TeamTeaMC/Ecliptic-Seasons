@@ -114,6 +114,7 @@ public class ModelManager {
     public static Map<List<BakedQuad>, List<BakedQuad>> quadMap_1 = new IdentityHashMap<>(1024);
     public static Map<List<BakedQuad>, List<BakedQuad>> quadMap_GRASS = new IdentityHashMap<>(128);
 
+    // TODO：这里看能不能直接给model上标记，map还是耗时
     public static Map<BakedModel, Integer> snowyModelsCache = new IdentityHashMap<>();
     public static Map<BlockState, BakedModel> stateModelsCache = new IdentityHashMap<>();
 
@@ -618,7 +619,7 @@ public class ModelManager {
         return list;
     }
 
-    // TODO: 这里需要给Map做切片
+    // TODO: 这里需要给Map做切片，生物群系要缓冲，看怎么切
     public static BakedModel findModel(BlockAndTintGetter blockAndTintGetter, BlockPos pos, BlockState state, RandomSource random,long seed) {
         Level level = Minecraft.getInstance().level;
         BakedModel replace = null;

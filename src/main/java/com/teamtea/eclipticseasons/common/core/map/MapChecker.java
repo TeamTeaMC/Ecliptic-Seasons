@@ -380,18 +380,7 @@ public class MapChecker {
                 onBlock == Blocks.STONE ||
                 onBlock == Blocks.SAND) {
             flag = FLAG_BLOCK;
-        } else if (onBlock instanceof SlabBlock) {
-            SlabType value = state.getValue(SlabBlock.TYPE);
-            if (value == SlabType.TOP) {
-                flag = FLAG_STAIRS_TOP;
-            } else if (value == SlabType.BOTTOM) {
-                flag = FLAG_SLAB;
-            } else flag = FLAG_BLOCK;
-        } else if (onBlock instanceof StairBlock) {
-            if (state.getValue(StairBlock.HALF) == Half.TOP)
-                flag = FLAG_STAIRS_TOP;
-            else flag = FLAG_STAIRS;
-        } else if (onBlock == Blocks.SHORT_GRASS || onBlock == Blocks.FERN) {
+        }  else if (onBlock == Blocks.SHORT_GRASS || onBlock == Blocks.FERN) {
             flag = FLAG_GRASS;
         } else if (onBlock == Blocks.TALL_GRASS || onBlock == Blocks.LARGE_FERN) {
             flag = FLAG_GRASS_LARGE;
@@ -437,6 +426,19 @@ public class MapChecker {
                                 || onBlock instanceof LeavesBlock
                 )) {
                     flag = FLAG_BLOCK;
+                } else if (onBlock instanceof SlabBlock) {
+                    SlabType value = state.getValue(SlabBlock.TYPE);
+                    if (value == SlabType.TOP) {
+                        flag = FLAG_STAIRS_TOP;
+                    } else if (value == SlabType.BOTTOM) {
+                        flag = FLAG_SLAB;
+                    } else flag = FLAG_BLOCK;
+                    // flag = FLAG_CUSTOM;
+                } else if (onBlock instanceof StairBlock) {
+                    if (state.getValue(StairBlock.HALF) == Half.TOP)
+                        flag = FLAG_STAIRS_TOP;
+                    else flag = FLAG_STAIRS;
+                    // flag = FLAG_CUSTOM;
                 } else {
                     if ((
                             blockName.getPath().endsWith("wall")

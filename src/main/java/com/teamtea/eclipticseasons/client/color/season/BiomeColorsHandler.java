@@ -9,6 +9,7 @@ import com.teamtea.eclipticseasons.api.constant.solar.color.leaves.LeaveColor;
 import com.teamtea.eclipticseasons.api.constant.solar.color.leaves.MangroveLeavesColor;
 import com.teamtea.eclipticseasons.api.constant.solar.color.leaves.SpruceLeavesColor;
 import com.teamtea.eclipticseasons.api.constant.tag.ClimateTypeBiomeTags;
+import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.client.util.ColorHelper;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
@@ -43,9 +44,9 @@ public class BiomeColorsHandler {
         // }
         int originColor = biome.getGrassColor(posX, posZ);
         if (ClientConfig.Renderer.seasonalGrassColorChange.get()) {
-            if (needRefresh) {
-                reloadColors();
-            }
+            // if (needRefresh) {
+            //     reloadColors();
+            // }
             // 由于基本温度被更改
             // double temperature = Mth.clamp(biome.getModifiedClimateSettings().temperature() + EclipticUtil.getNowSolarTerm(clientLevel).getTemperatureChange(), 0.0F, 1.0F);
 
@@ -67,9 +68,9 @@ public class BiomeColorsHandler {
     {
         int originColor = biome.getFoliageColor();
         if (ClientConfig.Renderer.seasonalGrassColorChange.get()) {
-            if (needRefresh) {
-                reloadColors();
-            }
+            // if (needRefresh) {
+            //     reloadColors();
+            // }
             double temperature = Mth.clamp(biome.getModifiedClimateSettings().temperature(), 0.0F, 1.0F);
             double humidity = Mth.clamp(biome.getModifiedClimateSettings().downfall(), 0.0F, 1.0F);
             humidity = humidity * temperature;
@@ -145,8 +146,8 @@ public class BiomeColorsHandler {
     public static int getLeavesColor(int base, LeaveColor[] values, BlockPos pos) {
         if (ClientConfig.Renderer.seasonalGrassColorChange.get()) {
             if (pos != null &&
-                    Minecraft.getInstance().level instanceof ClientLevel
-                    && MapChecker.isValidDimension(Minecraft.getInstance().level)) {
+                    Minecraft.getInstance().level instanceof ClientLevel level
+                    && MapChecker.isValidDimension(level)) {
 
                 SolarTerm solarTerm = ClientCon.nowSolarTerm;
                 LeaveColor leaveColor = values[solarTerm.ordinal()];

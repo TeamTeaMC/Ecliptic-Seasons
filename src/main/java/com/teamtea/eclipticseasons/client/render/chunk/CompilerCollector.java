@@ -17,11 +17,11 @@ public class CompilerCollector {
 
     public static List<int[]> get(ChunkPos pos) {
         if(true)return null;
-        if (MapChecker.isChunkDirty(pos)) {
-            sectionCompiler.remove(pos);
-            MapChecker.removeDirtyChunk(pos);
-            return null;
-        }
+        // if (MapChecker.isChunkDirty(pos)) {
+        //     sectionCompiler.remove(pos);
+        //     MapChecker.removeDirtyChunk(pos);
+        //     return null;
+        // }
         return sectionCompiler.getOrDefault(pos,null);
     }
 

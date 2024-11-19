@@ -6,6 +6,7 @@ import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
+import com.teamtea.eclipticseasons.client.color.season.BiomeColorsHandler;
 import com.teamtea.eclipticseasons.client.map.ClientMapFixer;
 import com.teamtea.eclipticseasons.client.core.ClientWeatherChecker;
 import com.teamtea.eclipticseasons.client.render.WorldRenderer;
@@ -57,6 +58,9 @@ public final class ClientEventHandler {
         if (Minecraft.getInstance().player != null) {
             WorldRenderer.applyEffect(Minecraft.getInstance().gameRenderer, Minecraft.getInstance().player);
         }
+        if(BiomeColorsHandler.needRefresh){
+            BiomeColorsHandler.reloadColors();
+        }
     }
 
     @SubscribeEvent
@@ -102,6 +106,8 @@ public final class ClientEventHandler {
         if (event.getLevel() instanceof ClientLevel clientLevel) {
 
             ClientCon.useLevel = clientLevel;
+            ClientCon.tick(clientLevel);
+            BiomeColorsHandler.reloadColors();
 
             // ModelManager.quadMap.clear();
             // ModelManager.quadMap_1.clear();
@@ -110,6 +116,7 @@ public final class ClientEventHandler {
             // 这里需要恢复一下数据
             // 客户端登录时同步天气数据，此处先放入
             SolarHolders.createSaveData(clientLevel, ClientSolarDataManager.get(clientLevel));
+
 
         }
     }
@@ -121,6 +128,8 @@ public final class ClientEventHandler {
             ClientWeatherChecker.tickAllCheck(clientLevel);
             ClientMapFixer.tick(clientLevel);
             ClientCon.tick(clientLevel);
+
+
 
             if (ClientConfig.Renderer.forceChunkRenderUpdate.get()) {
                 if (clientLevel.getGameTime() - lastFreshTime > 80
