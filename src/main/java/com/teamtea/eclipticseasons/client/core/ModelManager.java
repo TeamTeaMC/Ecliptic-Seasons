@@ -165,7 +165,7 @@ public class ModelManager {
             }
             if (snowModel != null) {
                 // stateModelsCache.putIfAbsent(snowState, snowModel);
-                snowyBlockState.setSnowyModel(snowModel,loadVersion);
+                snowyBlockState.setSnowyModel(snowModel, loadVersion);
             }
 
             // if (snowModel != null) {
@@ -680,9 +680,9 @@ public class ModelManager {
             if (ClientConfig.Renderer.betterSnow.get()) {
                 if (flag == MapChecker.FLAG_BLOCK && pos.getY() == cacheHeight - 1) {
                     if (
-                            // MapChecker.getBlockType(blockAndTintGetter.getBlockState(pos.above()), blockAndTintGetter, pos.above())
-                    ((IBlockStateFlagger) blockAndTintGetter.getBlockState(pos.above())).getBlockTypeFlag(blockAndTintGetter, pos.above())
-                            == MapChecker.FLAG_CUSTOM) {
+                        // MapChecker.getBlockType(blockAndTintGetter.getBlockState(pos.above()), blockAndTintGetter, pos.above())
+                            ((IBlockStateFlagger) blockAndTintGetter.getBlockState(pos.above())).getBlockTypeFlag(blockAndTintGetter, pos.above())
+                                    == MapChecker.FLAG_CUSTOM) {
                         cacheHeight--;
                     } else {
                         for (Direction direction : Direction.Plane.HORIZONTAL) {
@@ -744,15 +744,19 @@ public class ModelManager {
                         replace = snowModel;
                     }
                 }
-            } else if (ClientConfig.Renderer.flowerOnGrass.get() && state.getBlock() instanceof GrassBlock && random.nextInt(15) == 0) {
-                var solarTerm = SolarTerm.NONE;
-                int weight = 100;
-                solarTerm = ClientCon.nowSolarTerm;
-                weight = Math.abs(solarTerm.ordinal() - 3) + 1;
-                if (solarTerm.getSeason() == Season.SPRING && random.nextInt(weight * 4) == 0 && level.getBlockState(pos.above()).isAir()) {
+            } else if (ClientConfig.Renderer.flowerOnGrass.get() && state.getBlock() instanceof GrassBlock
+                    && (seed % 14) == 0)
+            // && random.nextInt(15) == 0)
+            {
+                var solarTerm = ClientCon.nowSolarTerm;
+                int weight = Math.abs(solarTerm.ordinal() - 3) + 1;
+                if (solarTerm.getSeason() == Season.SPRING
+                        && (seed % (weight * 4)) == 0
+                        && blockAndTintGetter.getBlockState(pos.above()).isAir()) {
                     {
-                        BakedModel snowModel = models.get(flower_on_grass.get(random.nextInt(flower_on_grass.size())));
-                        replace = snowModel;
+                        int index = Math.abs(((int) (seed +pos.getX())) % flower_on_grass.size());
+                        // index=random.nextInt(flower_on_grass.size());
+                        replace = models.get(flower_on_grass.get(index));
                     }
                 }
             }
