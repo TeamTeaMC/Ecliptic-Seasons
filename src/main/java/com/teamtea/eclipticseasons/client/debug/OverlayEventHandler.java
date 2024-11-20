@@ -9,16 +9,11 @@ import com.teamtea.eclipticseasons.api.constant.biome.Humidity;
 import net.minecraft.client.Minecraft;
 
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.client.event.RenderGuiEvent;
-import org.joml.Matrix4f;
-
-import java.awt.*;
 
 @EventBusSubscriber(value = Dist.CLIENT, modid = EclipticSeasonsApi.MODID)
 public final class OverlayEventHandler {
@@ -45,7 +40,7 @@ public final class OverlayEventHandler {
             // if (event.getType() == RenderGameOverlayEvent.ElementType.ALL)
             // if(event.getOverlay().id().getPath().equals("all"))
             {
-                if ((ClientConfig.GUI.debugInfo.get()
+                if ((ClientConfig.Debug.debugInfo.get()
                         // || !FMLEnvironment.production
                 )
                         && !Minecraft.getInstance().options.hideGui

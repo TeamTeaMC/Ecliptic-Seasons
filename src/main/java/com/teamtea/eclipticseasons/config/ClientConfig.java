@@ -8,20 +8,33 @@ public class ClientConfig {
     public static final ModConfigSpec CLIENT_CONFIG = new ModConfigSpec.Builder().configure(ClientConfig::new).getRight();
 
     protected ClientConfig(ModConfigSpec.Builder builder) {
+        Debug.load(builder);
         GUI.load(builder);
         Renderer.load(builder);
         Sound.load(builder);
         Particle.load(builder);
         Weather.load(builder);
     }
+    public static class Debug {
 
-    public static class GUI {
         public static ModConfigSpec.BooleanValue debugInfo;
+        public static ModConfigSpec.IntValue minChunkCompileWaringTime;
+
+        private static void load(ModConfigSpec.Builder builder) {
+            builder.push("Debug");
+
+            debugInfo = builder.comment("Info used for development shown in GUI.")
+                    .define("DebugInfo", false);
+            minChunkCompileWaringTime= builder.comment("If a render chunk compilation takes longer than expected, a warning will be emitted in the log.")
+                    .defineInRange("MinChunkCompileWaringTime", 100,5,2000);
+            builder.pop();
+        }
+    }
+    public static class GUI {
         public static ModConfigSpec.BooleanValue agriculturalInformation;
         private static void load(ModConfigSpec.Builder builder) {
             builder.push("GUI");
-            debugInfo = builder.comment("Info used for development.")
-                    .define("DebugInfo", false);
+
             agriculturalInformation = builder.comment("Displays the season and humidity levels suitable for growing crops.")
                     .define("AgriculturalInformation", true);
             builder.pop();

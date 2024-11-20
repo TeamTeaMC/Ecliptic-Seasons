@@ -6,6 +6,7 @@ import com.teamtea.eclipticseasons.EclipticSeasons;
 
 import com.teamtea.eclipticseasons.compat.sodium.SodiumBoard;
 import com.teamtea.eclipticseasons.compat.sodium.SodiumStatus;
+import com.teamtea.eclipticseasons.config.ClientConfig;
 import net.caffeinemc.mods.sodium.client.render.chunk.RenderSection;
 import net.caffeinemc.mods.sodium.client.render.chunk.compile.ChunkBuildContext;
 import net.caffeinemc.mods.sodium.client.render.chunk.compile.ChunkBuildOutput;
@@ -59,7 +60,7 @@ public abstract class MixinBlockRenderTask extends ChunkBuilderTask<ChunkBuildOu
     )
     private void eclipticseasons$compile_checkb(ChunkBuildContext buildContext, CancellationToken cancellationToken, CallbackInfoReturnable<ChunkBuildOutput> cir) {
         long l = System.currentTimeMillis() - eclipticSeasons$time;
-        if (l > 100)
+        if (l > ClientConfig.Debug.minChunkCompileWaringTime.getAsInt())
             EclipticSeasons.logger("WARNING",
                     Thread.currentThread().toString(),
                     render.getPosition(),

@@ -8,6 +8,7 @@ import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.misc.IBlockStateFlagger;
 import com.teamtea.eclipticseasons.client.core.ModelManager;
 import com.teamtea.eclipticseasons.client.render.SnowRenderer;
+import com.teamtea.eclipticseasons.config.ClientConfig;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.SectionBufferBuilderPack;
 import net.minecraft.client.renderer.chunk.RenderChunkRegion;
@@ -100,7 +101,7 @@ public abstract class MixinChunkRenderDispatcher {
     )
     private void eclipticseasons$compile_checkb(SectionPos pSectionPos, RenderChunkRegion pRegion, VertexSorting pVertexSorting, SectionBufferBuilderPack pSectionBufferBuilderPack, List<AddSectionGeometryEvent.AdditionalSectionRenderer> additionalRenderers, CallbackInfoReturnable<SectionCompiler.Results> cir) {
         long l = System.currentTimeMillis() - eclipticSeasons$time;
-        if (l > 100)
+        if (l > ClientConfig.Debug.minChunkCompileWaringTime.getAsInt())
             EclipticSeasons.logger("WARNING",
                     Thread.currentThread().toString(),
                     pSectionPos,
