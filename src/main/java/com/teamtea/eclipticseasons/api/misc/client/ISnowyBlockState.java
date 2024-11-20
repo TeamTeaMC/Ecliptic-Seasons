@@ -5,5 +5,5 @@ import net.minecraft.client.resources.model.BakedModel;
 public interface ISnowyBlockState {
     BakedModel getSnowyModel(int loadVersion);
 
-    void setSnowyModel(BakedModel bakedModel);
+    void setSnowyModel(BakedModel bakedModel,int loadVersion);
 }

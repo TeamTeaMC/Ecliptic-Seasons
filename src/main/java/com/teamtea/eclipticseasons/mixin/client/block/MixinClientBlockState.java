@@ -31,7 +31,9 @@ public abstract class MixinClientBlockState  implements ISnowyBlockState {
         return eclipticSeasons$cacheSnowyBakedModel;
     }
 
-    public void setSnowyModel(BakedModel bakedModel) {
+    @Override
+    public void setSnowyModel(BakedModel bakedModel,int loadVersion) {
         this.eclipticSeasons$cacheSnowyBakedModel = bakedModel;
+        this.eclipticSeasons$loadVersion=loadVersion;
     }
 }

@@ -165,7 +165,7 @@ public class ModelManager {
             }
             if (snowModel != null) {
                 // stateModelsCache.putIfAbsent(snowState, snowModel);
-                snowyBlockState.setSnowyModel(snowModel);
+                snowyBlockState.setSnowyModel(snowModel,loadVersion);
             }
 
             // if (snowModel != null) {
