@@ -12,6 +12,7 @@ import com.teamtea.eclipticseasons.client.render.ber.WindChimesBlockEntityRender
 import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.block.BlockModelShaper;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.world.level.GrassColor;
@@ -23,8 +24,12 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.*;
+import net.neoforged.neoforge.client.model.BakedModelWrapper;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class ClientSetup {
@@ -37,13 +42,13 @@ public class ClientSetup {
                         new FireflyParticle(level, x, y, z, p_277215_));
         event.registerSpriteSet(EclipticSeasons.ParticleRegistry.WILD_GOOSE, (p_277215_) ->
                 (particleType, level, x, y, z, p_277222_, p_277223_, p_277224_) ->
-                        new WildGooseParticle(level, x, y, z,0.01,0.01,0.01, p_277215_));
+                        new WildGooseParticle(level, x, y, z, 0.01, 0.01, 0.01, p_277215_));
         event.registerSpriteSet(EclipticSeasons.ParticleRegistry.BUTTERFLY, (p_277215_) ->
                 (particleType, level, x, y, z, p_277222_, p_277223_, p_277224_) ->
                         new ButterflyParticle(level, x, y, z, p_277215_));
         event.registerSpriteSet(EclipticSeasons.ParticleRegistry.FALLEN_LEAVES, (p_277215_) ->
                 (particleType, level, x, y, z, p_277222_, p_277223_, p_277224_) ->
-                        new FallenLeavesParticle(level, x, y, z, p_277222_, p_277223_, p_277224_,particleType, p_277215_));
+                        new FallenLeavesParticle(level, x, y, z, p_277222_, p_277223_, p_277224_, particleType, p_277215_));
 
     }
 
@@ -99,6 +104,33 @@ public class ClientSetup {
     public static void onModelBaked(ModelEvent.ModifyBakingResult event) {
         Map<ModelResourceLocation, BakedModel> modelRegistry = event.getModels();
         ModelManager.clearForRebaked(modelRegistry);
+
+        List<ModelResourceLocation> bakedModels =
+                new ArrayList<>(List.of(
+                        ModelManager.stairs_top,
+                        ModelManager.snowy_fern,
+                        ModelManager.snowy_grass,
+                        ModelManager.snowy_tall_grass_top,
+                        ModelManager.snowy_tall_grass_bottom,
+                        ModelManager.snowy_large_fern_top,
+                        ModelManager.snowy_large_fern_bottom,
+                        ModelManager.overlay_2,
+                        ModelManager.snow_height2,
+                        ModelManager.snow_height2_top,
+                        ModelManager.snowOverlayLeaves,
+                        ModelManager.snowySlabBottom,
+                        ModelManager.snowOverlayBlock
+                ));
+        bakedModels.addAll(EclipticSeasons.ModContents.snowyStairs.get().getStateDefinition().getPossibleStates().stream()
+                .map(BlockModelShaper::stateToModelLocation).toList());
+        for (ModelResourceLocation modelResourceLocation : bakedModels) {
+            BakedModel bakedModel1 = modelRegistry.get(modelResourceLocation);
+            if (bakedModel1 != null) {
+                modelRegistry.put(modelResourceLocation, new ModelManager.SnowyBakedModelWrapper<>(bakedModel1));
+            } else {
+                EclipticSeasons.logger("Missing Model", modelResourceLocation);
+            }
+        }
     }
 
     @SubscribeEvent

@@ -5,6 +5,7 @@ import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.vertex.*;
 import com.teamtea.eclipticseasons.EclipticSeasons;
+import com.teamtea.eclipticseasons.api.misc.IBlockStateFlagger;
 import com.teamtea.eclipticseasons.client.core.ModelManager;
 import com.teamtea.eclipticseasons.client.render.SnowRenderer;
 import net.minecraft.client.renderer.RenderType;
@@ -64,7 +65,9 @@ public abstract class MixinChunkRenderDispatcher {
             snowModel = ModelManager.findModel(renderchunkregion, blockpos2, blockstate, randomsource,blockstate.getSeed(blockpos2));
             eclipticSeasons$countModel++;
         } else {
-            if (ModelManager.isModelReplaced(blockstate)) {
+            // if (ModelManager.isModelReplaceable(blockstate))
+            if (ModelManager.isModelReplaceable(((IBlockStateFlagger) blockstate).getBlockTypeFlag(renderchunkregion,blockpos2)))
+            {
                 snowModel = ModelManager.findModel(renderchunkregion, blockpos2, blockstate, randomsource,blockstate.getSeed(blockpos2));
                 eclipticSeasons$countModel++;
             }

@@ -1,7 +1,7 @@
 package com.teamtea.eclipticseasons.mixin.client;
 
 
-import com.teamtea.eclipticseasons.api.misc.IMapSlice;
+import com.teamtea.eclipticseasons.api.misc.client.IMapSlice;
 import com.teamtea.eclipticseasons.common.core.map.ChunkInfoMap;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import net.minecraft.client.renderer.chunk.RenderChunkRegion;

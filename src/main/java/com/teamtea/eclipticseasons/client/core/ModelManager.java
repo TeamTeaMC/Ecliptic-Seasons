@@ -5,8 +5,9 @@ import com.mojang.blaze3d.vertex.VertexFormatElement;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
-import com.teamtea.eclipticseasons.api.misc.IMapSlice;
-import com.teamtea.eclipticseasons.api.util.EclipticUtil;
+import com.teamtea.eclipticseasons.api.misc.IBlockStateFlagger;
+import com.teamtea.eclipticseasons.api.misc.client.IMapSlice;
+import com.teamtea.eclipticseasons.api.misc.client.ISnowyBlockState;
 import com.teamtea.eclipticseasons.client.model.BakedQuadRetexturedAndReUV;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
@@ -36,6 +37,7 @@ import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.client.ChunkRenderTypeSet;
+import net.neoforged.neoforge.client.model.BakedModelWrapper;
 import net.neoforged.neoforge.client.model.data.ModelData;
 
 import java.util.*;
@@ -44,6 +46,15 @@ import java.util.*;
 
 // 未来可以基于RepositorySource实现动态纹理生成（看情况，因为目前不需要，对内存消耗比较大）
 public class ModelManager {
+
+    public static class SnowyBakedModelWrapper<T extends BakedModel> extends BakedModelWrapper<T> {
+        public SnowyBakedModelWrapper(T originalModel) {
+            super(originalModel);
+        }
+    }
+
+    public static int loadVersion = 0;
+
     public static Map<ModelResourceLocation, BakedModel> models;
 
     public static ModelResourceLocation snowOverlayLeaves = new ModelResourceLocation(EclipticSeasons.ModContents.snowyLeaves.getId(), "");
@@ -115,13 +126,15 @@ public class ModelManager {
     public static Map<List<BakedQuad>, List<BakedQuad>> quadMap_GRASS = new IdentityHashMap<>(128);
 
     // TODO：这里看能不能直接给model上标记，map还是耗时
-    public static Map<BakedModel, Integer> snowyModelsCache = new IdentityHashMap<>();
-    public static Map<BlockState, BakedModel> stateModelsCache = new IdentityHashMap<>();
+    // public static Map<BakedModel, Integer> snowyModelsCache = new IdentityHashMap<>();
+    // public static Map<BlockState, BakedModel> stateModelsCache = new IdentityHashMap<>();
 
     public static BakedModel getSnowyModel(BlockState state, BlockState snowState, int flag, int offset) {
-        Block onBlock = state.getBlock();
-        BakedModel snowModel = stateModelsCache.getOrDefault(state, null);
+        ISnowyBlockState snowyBlockState = (ISnowyBlockState) state;
+        // BakedModel snowModel = stateModelsCache.getOrDefault(state, null);
+        BakedModel snowModel = snowyBlockState.getSnowyModel(loadVersion);
         if (snowModel == null) {
+            Block onBlock = state.getBlock();
             if (flag == MapChecker.FLAG_BLOCK) {
                 snowModel = models.get(snowOverlayBlock);
             } else if (flag == MapChecker.FLAG_LEAVES) {
@@ -151,11 +164,13 @@ public class ModelManager {
                 snowModel = models.get(snowOverlayBlock);
             }
             if (snowModel != null) {
-                stateModelsCache.putIfAbsent(snowState, snowModel);
+                // stateModelsCache.putIfAbsent(snowState, snowModel);
+                snowyBlockState.setSnowyModel(snowModel);
             }
-            if (snowModel != null) {
-                snowyModelsCache.putIfAbsent(snowModel, flag);
-            }
+
+            // if (snowModel != null) {
+            //     snowyModelsCache.putIfAbsent(snowModel, flag);
+            // }
         }
 
         return snowModel;
@@ -167,11 +182,19 @@ public class ModelManager {
 
         // if (true)
         //     return original;
-        if (!original.isEmpty() && (direction == Direction.UP || direction == null) && snowyModelsCache.getOrDefault(bakedModel, -1) == -1) {
+        if (bakedModel != null && !original.isEmpty() && (direction == Direction.UP || direction == null)
+                && !(bakedModel instanceof SnowyBakedModelWrapper)
+            // && snowyModelsCache.getOrDefault(bakedModel, -1) == -1
+        ) {
             random.setSeed(seed);
-            BakedModel snowModel = ModelManager.findModel(blockAndTintGetter, pos, state, random,seed);
-            if (snowModel != null && snowyModelsCache.getOrDefault(snowModel, -1) > MapChecker.FLAG_NONE && bakedModel != null && bakedModel != snowModel) {
-                int blockType = MapChecker.getBlockType(state, blockAndTintGetter, pos);
+            BakedModel snowModel = ModelManager.findModel(blockAndTintGetter, pos, state, random, seed);
+            if (snowModel instanceof SnowyBakedModelWrapper)
+            // snowModel != null
+            // &&  snowyModelsCache.getOrDefault(snowModel, -1) > MapChecker.FLAG_NONE
+            // && bakedModel != snowModel)
+            {
+                // int blockType = MapChecker.getBlockType(state, blockAndTintGetter, pos);
+                int blockType = ((IBlockStateFlagger) state).getBlockTypeFlag(blockAndTintGetter, pos);
                 if (blockType == MapChecker.FLAG_CUSTOM)
                     return original;
                 if (direction == Direction.UP) {
@@ -196,7 +219,8 @@ public class ModelManager {
 
 
         // if (CompatModule.isCTMLoad())
-        if (snowyModelsCache.getOrDefault(bakedModel, -1) != -1) {
+        // if (snowyModelsCache.getOrDefault(bakedModel, -1) != -1)
+        if (bakedModel instanceof SnowyBakedModelWrapper) {
             // if (true) {
             //     if (original.size() == 1) {
             //         BakedQuad first = original.getFirst();
@@ -204,7 +228,8 @@ public class ModelManager {
             //         return List.of(first);
             //     }
             // }
-            int blockType = MapChecker.getBlockType(state, blockAndTintGetter, pos);
+            // int blockType = MapChecker.getBlockType(state, blockAndTintGetter, pos);
+            int blockType = ((IBlockStateFlagger) state).getBlockTypeFlag(blockAndTintGetter, pos);
             if (blockType == MapChecker.FLAG_CUSTOM) {
                 original = new ArrayList<>();
             }
@@ -504,7 +529,8 @@ public class ModelManager {
         if (direction != Direction.DOWN && !list.isEmpty()) {
 
             var onBlock = state.getBlock();
-            int flag = MapChecker.getBlockType(state, level, pos);
+            // int flag = MapChecker.getBlockType(state, level, pos);
+            int flag = ((IBlockStateFlagger) state).getBlockTypeFlag(blockAndTintGetter, pos);
             if (flag == 0) return list;
             int offset = MapChecker.getSnowOffset(state, flag);
 
@@ -620,7 +646,7 @@ public class ModelManager {
     }
 
     // TODO: 这里需要给Map做切片，生物群系要缓冲，看怎么切
-    public static BakedModel findModel(BlockAndTintGetter blockAndTintGetter, BlockPos pos, BlockState state, RandomSource random,long seed) {
+    public static BakedModel findModel(BlockAndTintGetter blockAndTintGetter, BlockPos pos, BlockState state, RandomSource random, long seed) {
         Level level = Minecraft.getInstance().level;
         BakedModel replace = null;
         // 这里不需要担心，是因为我们给不符合要求的level默认返回一个0或者最低值-1
@@ -635,14 +661,15 @@ public class ModelManager {
 
 
         var onBlock = state.getBlock();
-        int flag = MapChecker.getBlockType(state, blockAndTintGetter, pos);
+        // int flag = MapChecker.getBlockType(state, blockAndTintGetter, pos);
+        int flag = ((IBlockStateFlagger) state).getBlockTypeFlag(blockAndTintGetter, pos);
         if (flag == 0) return replace;
         int offset = MapChecker.getSnowOffset(state, flag);
 
         boolean isLight = false;
 
         if (ClientConfig.Renderer.useVanillaCheck.get()) {
-            isLight = blockAndTintGetter.getBrightness(LightLayer.BLOCK,pos.above()) >= 15;
+            isLight = blockAndTintGetter.getBrightness(LightLayer.BLOCK, pos.above()) >= 15;
         } else {
             // ChunkInfoMap chunkMap = MapChecker.getChunkMap(level, pos);
 
@@ -652,14 +679,19 @@ public class ModelManager {
 
             if (ClientConfig.Renderer.betterSnow.get()) {
                 if (flag == MapChecker.FLAG_BLOCK && pos.getY() == cacheHeight - 1) {
-                    if (MapChecker.getBlockType(blockAndTintGetter.getBlockState(pos.above()), blockAndTintGetter, pos.above()) == MapChecker.FLAG_CUSTOM) {
+                    if (
+                            // MapChecker.getBlockType(blockAndTintGetter.getBlockState(pos.above()), blockAndTintGetter, pos.above())
+                    ((IBlockStateFlagger) blockAndTintGetter.getBlockState(pos.above())).getBlockTypeFlag(blockAndTintGetter, pos.above())
+                            == MapChecker.FLAG_CUSTOM) {
                         cacheHeight--;
                     } else {
                         for (Direction direction : Direction.Plane.HORIZONTAL) {
                             int neighbourHeight = blockAndTintGetter instanceof IMapSlice mapSlice ?
-                                    mapSlice.getBlockHeight(pos.relative(direction)): MapChecker.getHeightOrUpdate(level, pos.relative(direction), false);
+                                    mapSlice.getBlockHeight(pos.relative(direction)) : MapChecker.getHeightOrUpdate(level, pos.relative(direction), false);
                             if (neighbourHeight == pos.getY() &&
-                                    MapChecker.getBlockType(blockAndTintGetter.getBlockState(pos.above()), blockAndTintGetter, pos.above()) != MapChecker.FLAG_BLOCK) {
+                                    // MapChecker.getBlockType(blockAndTintGetter.getBlockState(pos.above()), blockAndTintGetter, pos.above())
+                                    ((IBlockStateFlagger) blockAndTintGetter.getBlockState(pos.above())).getBlockTypeFlag(blockAndTintGetter, pos.above())
+                                            != MapChecker.FLAG_BLOCK) {
                                 cacheHeight = neighbourHeight;
                                 break;
                             }
@@ -673,7 +705,7 @@ public class ModelManager {
         if (ClientConfig.Renderer.notSnowyNearGlowingBlock.get()) {
             if (isLight) {
                 BlockPos above = pos.offset(0, 1 - offset, 0);
-                if (blockAndTintGetter.getBrightness(LightLayer.BLOCK,above) >=
+                if (blockAndTintGetter.getBrightness(LightLayer.BLOCK, above) >=
                         ClientConfig.Renderer.notSnowyNearGlowingBlockLevel.getAsInt())
                     isLight = false;
             }
@@ -682,10 +714,10 @@ public class ModelManager {
         if (isLight) {
             if (ClientConfig.Renderer.snowyWinter.get()
                     && onBlock != Blocks.SNOW_BLOCK
-                    &&  MapChecker.shouldSnowAt(level, pos.below(offset), state, random, seed)
-                    // && (blockAndTintGetter instanceof IMapSlice mapSlice ?
-                    // MapChecker.shouldSnowAt(level, pos.below(offset),mapSlice.getSurfaceFaceBiomeId(pos), state, random, seed):
-                    //  MapChecker.shouldSnowAt(level, pos.below(offset), state, random, seed))
+                    && MapChecker.shouldSnowAt(level, pos.below(offset), state, random, seed)
+                // && (blockAndTintGetter instanceof IMapSlice mapSlice ?
+                // MapChecker.shouldSnowAt(level, pos.below(offset),mapSlice.getSurfaceFaceBiomeId(pos), state, random, seed):
+                //  MapChecker.shouldSnowAt(level, pos.below(offset), state, random, seed))
             ) {
                 // DynamicLeavesBlock
                 boolean isFlowerAbove = false;
@@ -715,7 +747,7 @@ public class ModelManager {
             } else if (ClientConfig.Renderer.flowerOnGrass.get() && state.getBlock() instanceof GrassBlock && random.nextInt(15) == 0) {
                 var solarTerm = SolarTerm.NONE;
                 int weight = 100;
-                solarTerm =  ClientCon.nowSolarTerm;
+                solarTerm = ClientCon.nowSolarTerm;
                 weight = Math.abs(solarTerm.ordinal() - 3) + 1;
                 if (solarTerm.getSeason() == Season.SPRING && random.nextInt(weight * 4) == 0 && level.getBlockState(pos.above()).isAir()) {
                     {
@@ -739,7 +771,7 @@ public class ModelManager {
     }
 
     // TODO: Note some block may be not motion for some state
-    public static boolean isModelReplaced(BlockState state) {
+    public static boolean isModelReplaceable(BlockState state) {
         Block block = state.getBlock();
         return block == Blocks.SHORT_GRASS ||
                 block == Blocks.FERN ||
@@ -751,11 +783,17 @@ public class ModelManager {
         //         && MapChecker.getBlockType(state, EmptyBlockGetter.INSTANCE, BlockPos.ZERO) != MapChecker.FLAG_NONE;
     }
 
+    public static boolean isModelReplaceable(int flag) {
+        return flag == MapChecker.FLAG_GRASS
+                || flag == MapChecker.FLAG_GRASS_LARGE;
+    }
+
     public static void clearForRebaked(Map<ModelResourceLocation, BakedModel> modelRegistry) {
         ModelManager.models = modelRegistry;
         quadMap.clear();
         quadMap_1.clear();
-        snowyModelsCache.clear();
-        stateModelsCache.clear();
+        loadVersion++;
+        // snowyModelsCache.clear();
+        // stateModelsCache.clear();
     }
 }

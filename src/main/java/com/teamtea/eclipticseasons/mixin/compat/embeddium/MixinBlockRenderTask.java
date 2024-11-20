@@ -3,6 +3,7 @@ package com.teamtea.eclipticseasons.mixin.compat.embeddium;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;
+import com.teamtea.eclipticseasons.api.misc.IBlockStateFlagger;
 import com.teamtea.eclipticseasons.client.core.ModelManager;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
@@ -45,7 +46,9 @@ public abstract class MixinBlockRenderTask {
         if (!original) {
             snowModel = ModelManager.findModel(ctx.world(), mutableBlockPos, state, random,ctx.seed());
         } else {
-            if (ModelManager.isModelReplaced(state)) {
+            // if (ModelManager.isModelReplaceable(state))
+            if (ModelManager.isModelReplaceable(((IBlockStateFlagger) state).getBlockTypeFlag(ctx.world(),ctx.pos())))
+            {
                 snowModel = ModelManager.findModel(ctx.world(), mutableBlockPos, state, random,ctx.seed());
             }
         }
