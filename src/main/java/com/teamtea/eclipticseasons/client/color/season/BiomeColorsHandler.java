@@ -26,13 +26,14 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.state.BlockState;
 
 import java.awt.*;
+import java.util.HashMap;
 import java.util.Map;
 
 public class BiomeColorsHandler {
     // public static int[] newFoliageBuffer = new int[65536];
     // public static int[] newGrassBuffer = new int[65536];
-    public static Map<TagKey<Biome>, int[]> newFoliageBufferMap = new Reference2ObjectArrayMap<>();
-    public static Map<TagKey<Biome>, int[]> newGrassBufferMap = new Reference2ObjectArrayMap<>();
+    public static Map<TagKey<Biome>, int[]> newFoliageBufferMap = new HashMap<>();
+    public static Map<TagKey<Biome>, int[]> newGrassBufferMap = new HashMap<>();
 
     public static boolean needRefresh = false;
 
