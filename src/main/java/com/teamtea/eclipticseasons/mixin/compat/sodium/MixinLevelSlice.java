@@ -125,6 +125,8 @@ public abstract class MixinLevelSlice implements IMapSlice {
                         int y = chunkMap.getHeight(mutableBlockPos);
                         heights[index] = y > chunkMap.getMinY() ? y :
                                 MapChecker.getHeight(level, mutableBlockPos);
+                        // we need to get new biome
+                        mutableBlockPos.setY(heights[index]+1);
                         int biomeId=chunkMap.getBiome(mutableBlockPos);
                         biomes[index] = biomeId > -1 ? biomeId :
                                 MapChecker.getSurfaceOrUpdate(level, mutableBlockPos, false, ChunkInfoMap.TYPE_BIOME);
