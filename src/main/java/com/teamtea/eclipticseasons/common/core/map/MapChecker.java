@@ -321,6 +321,9 @@ public class MapChecker {
     public static Holder<Biome> getSurfaceBiome(Level level, BlockPos pos) {
         // fix the pos to surface
         int y = getHeight(level, pos) + 1;
+        if (y > level.getMaxBuildHeight()) {
+            y = (level.getHeight(Heightmap.Types.MOTION_BLOCKING, pos.getX(), pos.getZ()));
+        }
         if (y != pos.getY()) {
             pos = new BlockPos(pos.getX(), y, pos.getZ());
         }
