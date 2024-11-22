@@ -63,7 +63,7 @@ public class ModelManager {
     public static ModelResourceLocation snowySlabBottom = new ModelResourceLocation(EclipticSeasons.ModContents.snowySlab.getId(), "type=bottom,waterlogged=false");
     public static ModelResourceLocation snowOverlayBlock = new ModelResourceLocation(EclipticSeasons.ModContents.snowyBlock.getId(), "");
 
-    public static BlockState LIGHT_0=Blocks.LIGHT.defaultBlockState().setValue(LightBlock.LEVEL,0);
+    public static BlockState LIGHT_0;
     // public static
     // LazyGet<BakedModel> snowOverlayLeaves =
     //         LazyGet.of(() -> models.get(new ModelResourceLocation(EclipticSeasons.ModContents.snowyLeaves.getId(), "")));
@@ -829,5 +829,6 @@ public class ModelManager {
         loadVersion++;
         // snowyModelsCache.clear();
         // stateModelsCache.clear();
+        LIGHT_0=Blocks.LIGHT.defaultBlockState().setValue(LightBlock.LEVEL,0);
     }
 }

@@ -10,6 +10,7 @@ import net.caffeinemc.mods.sodium.client.world.cloned.ChunkRenderContext;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -57,7 +58,9 @@ public abstract class MixinLevelSlice implements IMapSlice {
     private BoundingBox volume;
 
 
-    @Shadow @Final private static int NEIGHBOR_CHUNK_RADIUS;
+    @Shadow
+    @Final
+    private static int NEIGHBOR_CHUNK_RADIUS;
 
     @Inject(
             remap = false,
@@ -79,6 +82,7 @@ public abstract class MixinLevelSlice implements IMapSlice {
     }
 
 
+    // 这里群系查询还有奇怪的零星错误
     @Inject(
             remap = false,
             method = "copyData",
@@ -87,8 +91,8 @@ public abstract class MixinLevelSlice implements IMapSlice {
     private void eclipticseasons$copySectionData(ChunkRenderContext context,
                                                  CallbackInfo ci) {
 
-        int c_x=context.getOrigin().getX() - NEIGHBOR_CHUNK_RADIUS;
-        int c_z=context.getOrigin().getZ() - NEIGHBOR_CHUNK_RADIUS;
+        int c_x = context.getOrigin().getX() - NEIGHBOR_CHUNK_RADIUS;
+        int c_z = context.getOrigin().getZ() - NEIGHBOR_CHUNK_RADIUS;
         BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos();
         for (int sectionX = 0; sectionX < SECTION_ARRAY_LENGTH; ++sectionX) {
             for (int sectionZ = 0; sectionZ < SECTION_ARRAY_LENGTH; ++sectionZ) {
@@ -99,8 +103,8 @@ public abstract class MixinLevelSlice implements IMapSlice {
                 int startZ = originBlockZ + sectionZ * 16;
                 // If we have compiled the chunk
                 ChunkPos chunkPos = new ChunkPos(
-                        c_x+sectionX,
-                        c_z+sectionZ);
+                        c_x + sectionX,
+                        c_z + sectionZ);
                 List<int[]> ints = CompilerCollector.get(chunkPos);
                 if (ints != null) {
                     // System.arraycopy(ints, 0, heights, 0, heights.length);
@@ -126,13 +130,16 @@ public abstract class MixinLevelSlice implements IMapSlice {
                         heights[index] = y > chunkMap.getMinY() ? y :
                                 MapChecker.getHeight(level, mutableBlockPos);
                         // we need to get new biome
-                        mutableBlockPos.setY(heights[index]+1);
-                        int biomeId=chunkMap.getBiome(mutableBlockPos);
+                        mutableBlockPos.setY(heights[index] + 1);
+                        if (mutableBlockPos.getY() > level.getMaxBuildHeight()) {
+                            mutableBlockPos.setY(level.getHeight(Heightmap.Types.MOTION_BLOCKING, mutableBlockPos.getX(), mutableBlockPos.getZ()));
+                        }
+                        int biomeId = chunkMap.getBiome(mutableBlockPos);
                         biomes[index] = biomeId > -1 ? biomeId :
                                 MapChecker.getSurfaceOrUpdate(level, mutableBlockPos, false, ChunkInfoMap.TYPE_BIOME);
                     }
                 }
-                CompilerCollector.add(chunkPos, List.of(heights,biomes));
+                CompilerCollector.add(chunkPos, List.of(heights, biomes));
             }
         }
     }
