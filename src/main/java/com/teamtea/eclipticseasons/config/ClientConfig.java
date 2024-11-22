@@ -18,6 +18,7 @@ public class ClientConfig {
     public static class Debug {
 
         public static ModConfigSpec.BooleanValue debugInfo;
+        public static ModConfigSpec.BooleanValue disableLight0AboveCancelLightCheck;
         public static ModConfigSpec.IntValue minChunkCompileWaringTime;
 
         private static void load(ModConfigSpec.Builder builder) {
@@ -25,6 +26,8 @@ public class ClientConfig {
 
             debugInfo = builder.comment("Info used for development shown in GUI.")
                     .define("DebugInfo", false);
+            disableLight0AboveCancelLightCheck = builder.comment("A light block with a light level of 0 will not prevent the final lighting check for snow-covered blocks below it.")
+                    .define("DisableLight0AboveCancelLightCheck", false);
             minChunkCompileWaringTime= builder.comment("If a render chunk compilation takes longer than expected, a warning will be emitted in the log.")
                     .defineInRange("MinChunkCompileWaringTime", 100,5,2000);
             builder.pop();

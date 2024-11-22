@@ -1,5 +1,7 @@
 package com.teamtea.eclipticseasons.client.util;
 
+import java.util.Objects;
+
 public class SimplePair<K,V> {
 
     private K key;
@@ -29,5 +31,19 @@ public class SimplePair<K,V> {
 
     public static <K,V> SimplePair<K,V> of(K k, V v){
         return new SimplePair<>(k,v);
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SimplePair<?, ?> that = (SimplePair<?, ?>) o;
+        return Objects.equals(key, that.key) && Objects.equals(value, that.value);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(key, value);
     }
 }

@@ -71,8 +71,8 @@ public class BakedQuadRetexturedAndReUV extends BakedQuad {
                 oldV -= offset;
             }
 
-            oldU= Mth.clamp(oldU,0,1);
-            oldV= Mth.clamp(oldV,0,1);
+            oldU= Mth.clamp(oldU,0f,1.0f);
+            oldV= Mth.clamp(oldV,0f,1.0f);
 
             this.vertices[j + uvIndex] = Float.floatToRawIntBits(this.texture.getU(oldU));
             this.vertices[j + uvIndex + 1] = Float.floatToRawIntBits(this.texture.getV(oldV));

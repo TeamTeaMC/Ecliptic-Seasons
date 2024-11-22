@@ -63,6 +63,7 @@ public class ModelManager {
     public static ModelResourceLocation snowySlabBottom = new ModelResourceLocation(EclipticSeasons.ModContents.snowySlab.getId(), "type=bottom,waterlogged=false");
     public static ModelResourceLocation snowOverlayBlock = new ModelResourceLocation(EclipticSeasons.ModContents.snowyBlock.getId(), "");
 
+    public static BlockState LIGHT_0=Blocks.LIGHT.defaultBlockState().setValue(LightBlock.LEVEL,0);
     // public static
     // LazyGet<BakedModel> snowOverlayLeaves =
     //         LazyGet.of(() -> models.get(new ModelResourceLocation(EclipticSeasons.ModContents.snowyLeaves.getId(), "")));
@@ -230,12 +231,14 @@ public class ModelManager {
             //     }
             // }
             // int blockType = MapChecker.getBlockType(state, blockAndTintGetter, pos);
+
             int blockType = ((IBlockStateFlagger) state).getBlockTypeFlag(blockAndTintGetter, pos);
             if (blockType == MapChecker.FLAG_CUSTOM) {
                 original = new ArrayList<>();
             }
 
             boolean yuushyaBlock = CompatModule.isCTMLoad() && BuiltInRegistries.BLOCK.getKey(state.getBlock()).getNamespace().startsWith("yuushya");
+
             if ((blockType == MapChecker.FLAG_CUSTOM || yuushyaBlock)
                 // && state.toString().contains("stairs_a_cherry_blindwall")
                 // &&(state.hasProperty(StairBlock.SHAPE)&& state.getValue(StairBlock.SHAPE) == StairsShape.OUTER_RIGHT)
@@ -390,9 +393,9 @@ public class ModelManager {
                                             spriteUse = getMaxY(bakedQuad) - getMinY(bakedQuad) > 0.4002f ? snow_overlay_sprite : snow_overlay_tiny_sprite;
                                     }
                                     BakedQuad bakedQuad1;
-                                    if(RectangularPrismChecker.isRectangularPrism(bakedQuad)){
+                                    if (RectangularPrismChecker.isRectangularPrism(bakedQuad)) {
                                         bakedQuad1 = new BakedQuadRetexturedAndReUV(bakedQuad, spriteUse, isSlabDown, offset);
-                                    }else {
+                                    } else {
                                         bakedQuad1 = new BakedQuadRetextured(bakedQuad, spriteUse);
                                     }
                                     original.add(bakedQuad1);
@@ -651,6 +654,20 @@ public class ModelManager {
         return list;
     }
 
+    public static boolean isLight0Above(BlockAndTintGetter level, BlockPos.MutableBlockPos pos, int times) {
+        pos.setY(pos.getY() + 1);
+        {
+            BlockState stateAbove = level.getBlockState(pos);
+            if (stateAbove.getBlock() instanceof LightBlock) {
+                return stateAbove.getValue(LightBlock.LEVEL) == 0;
+            } else if (!stateAbove.isAir() && !stateAbove.blocksMotion()) {
+                if (times > 0)
+                    return isLight0Above(level, pos, (times - 1));
+            }
+        }
+        return false;
+    }
+
     // TODO: 这里需要给Map做切片，生物群系要缓冲，看怎么切
     public static BakedModel findModel(BlockAndTintGetter blockAndTintGetter, BlockPos pos, BlockState state, RandomSource random, long seed) {
         Level level = Minecraft.getInstance().level;
@@ -712,8 +729,15 @@ public class ModelManager {
             if (isLight) {
                 BlockPos above = pos.offset(0, 1 - offset, 0);
                 if (blockAndTintGetter.getBrightness(LightLayer.BLOCK, above) >=
-                        ClientConfig.Renderer.notSnowyNearGlowingBlockLevel.getAsInt())
+                        ClientConfig.Renderer.notSnowyNearGlowingBlockLevel.getAsInt()) {
                     isLight = false;
+                    if(!ClientConfig.Debug.disableLight0AboveCancelLightCheck.getAsBoolean()) {
+                        BlockState aboveState = blockAndTintGetter.getBlockState(pos.above());
+                        if (aboveState == LIGHT_0) {
+                            isLight = true;
+                        }
+                    }
+                }
             }
         }
 

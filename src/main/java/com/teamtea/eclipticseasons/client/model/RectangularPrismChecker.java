@@ -13,15 +13,32 @@ public class RectangularPrismChecker {
     public static int verticeSpace = DefaultVertexFormat.BLOCK.getVertexSize() / 4;
 
     public static boolean isRectangularPrism(BakedQuad bakedQuad) {
-        if(bakedQuad==null)return false;
+        if (bakedQuad == null) return false;
         HashSet<Integer> projections = new HashSet<>();
 
         for (int i = 0; i < 4; i++) {
             int j = verticeSpace * i;
-            projections.add(bakedQuad.getVertices()[j+xyzIndex + 1]);
+            projections.add(bakedQuad.getVertices()[j + xyzIndex + 1]);
         }
 
-        return projections.size() <= 2;
+        // 斜面的y小于情况
+        if (projections.size() > 2)
+            return false;
+
+
+        HashSet<Integer> projectionsx = new HashSet<>();
+        for (int i = 0; i < 4; i++) {
+            int j = verticeSpace * i;
+            projectionsx.add(bakedQuad.getVertices()[j + xyzIndex]);
+        }
+        HashSet<Integer> projectionsz = new HashSet<>();
+        for (int i = 0; i < 4; i++) {
+            int j = verticeSpace * i;
+            projectionsz.add(bakedQuad.getVertices()[j + xyzIndex+2]);
+        }
+
+        // 没有平行任何一个轴
+        return projections.size() != 2 || projectionsz.size() != 2 || projectionsx.size() != 2;
     }
 
 
