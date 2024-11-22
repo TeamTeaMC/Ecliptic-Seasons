@@ -21,7 +21,7 @@ public class RectangularPrismChecker {
             projections.add(bakedQuad.getVertices()[j+xyzIndex + 1]);
         }
 
-        return projections.size() > 2;
+        return projections.size() <= 2;
     }
 
 
