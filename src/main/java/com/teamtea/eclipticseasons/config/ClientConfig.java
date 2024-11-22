@@ -49,7 +49,6 @@ public class ClientConfig {
         public static ModConfigSpec.BooleanValue snowyWinter;
         public static ModConfigSpec.BooleanValue notSnowyNearGlowingBlock;
         public static ModConfigSpec.IntValue notSnowyNearGlowingBlockLevel;
-        public static ModConfigSpec.BooleanValue notSnowOverlayGlowingBlock;
         public static ModConfigSpec.BooleanValue realisticSnowyChange;
 
         public static ModConfigSpec.BooleanValue flowerOnGrass;
@@ -78,8 +77,7 @@ public class ClientConfig {
                     .define("NotSnowyNearGlowingBlock", true);
             notSnowyNearGlowingBlockLevel = builder.comment("Snow will not appear in overly bright areas.")
                     .defineInRange("NotSnowyNearGlowingBlockLevel", 10, 1, 15);
-            notSnowOverlayGlowingBlock = builder.comment("Snow will not cover the block which would lights.")
-                    .define("NotSnowOverlayGlowingBlock", true);
+
 
             seasonalGrassColorChange = builder.comment("The colors of the grass and leaves change with the time of year.")
                     .define("SeasonalGrassColorChange", true);

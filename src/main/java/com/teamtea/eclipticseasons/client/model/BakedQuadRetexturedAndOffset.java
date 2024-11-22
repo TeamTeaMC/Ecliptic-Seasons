@@ -18,7 +18,7 @@ public class BakedQuadRetexturedAndOffset extends BakedQuad {
     private final float y2;
 
     public BakedQuadRetexturedAndOffset(BakedQuad quad,  float y1, float y2) {
-        super(Arrays.copyOf(quad.getVertices(), quad.getVertices().length), quad.getTintIndex(), FaceBakery.calculateFacing(quad.getVertices()), quad.getSprite(), quad.isShade());
+        super(Arrays.copyOf(quad.getVertices(), quad.getVertices().length), quad.getTintIndex(), FaceBakery.calculateFacing(quad.getVertices()), quad.getSprite(), quad.isShade(), quad.hasAmbientOcclusion());
         this.y1 = y1;
         this.y2 = y2;
 
@@ -42,5 +42,10 @@ public class BakedQuadRetexturedAndOffset extends BakedQuad {
     @Override
     public int getTintIndex() {
         return -1;
+    }
+
+    @Override
+    public boolean isTinted() {
+        return false;
     }
 }

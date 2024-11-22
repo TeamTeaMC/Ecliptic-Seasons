@@ -1,11 +1,11 @@
 package com.teamtea.eclipticseasons.common.core.map;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
+import com.teamtea.eclipticseasons.api.constant.tag.EclipticBlockTags;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.network.message.ChunkUpdateMessage;
 import com.teamtea.eclipticseasons.common.network.SimpleNetworkHandler;
-import com.teamtea.eclipticseasons.config.ClientConfig;
 import com.teamtea.eclipticseasons.config.ServerConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -30,8 +30,6 @@ import net.minecraft.world.level.levelgen.Heightmap;
 
 import javax.annotation.Nullable;
 import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.CopyOnWriteArraySet;
 
 public class MapChecker {
     public static final int ChunkSize = 16 * 32;
@@ -370,7 +368,7 @@ public class MapChecker {
         // 不知道为啥这里会有null
 
         Block onBlock = state.getBlock();
-        if (ClientConfig.Renderer.notSnowOverlayGlowingBlock.getAsBoolean()
+        if (!ServerConfig.Debug.snowOverlayGlowingBlock.getAsBoolean()
                 && state.getLightEmission(level, pos) > 0) {
             flag = FLAG_NONE;
         } else if (onBlock instanceof LeavesBlock) {
@@ -380,7 +378,7 @@ public class MapChecker {
                 onBlock == Blocks.STONE ||
                 onBlock == Blocks.SAND) {
             flag = FLAG_BLOCK;
-        }  else if (onBlock == Blocks.SHORT_GRASS || onBlock == Blocks.FERN) {
+        } else if (onBlock == Blocks.SHORT_GRASS || onBlock == Blocks.FERN) {
             flag = FLAG_GRASS;
         } else if (onBlock == Blocks.TALL_GRASS || onBlock == Blocks.LARGE_FERN) {
             flag = FLAG_GRASS_LARGE;
@@ -419,9 +417,13 @@ public class MapChecker {
                 flag = FLAG_NONE;
 
                 ResourceLocation blockName = BuiltInRegistries.BLOCK.getKey(onBlock);
-                if ((
-                        // state.isSolidRender(level, pos)
-                        Block.isShapeFullBlock(state.getCollisionShape(level, pos))
+                if (!ServerConfig.Debug.disableSnowOverlayControlTag.getAsBoolean()
+                        && state.is(EclipticBlockTags.SNOW_OVERLAY_CANNOT_SURVIVE_ON)) {
+                    flag = FLAG_NONE;
+                } else if ((
+                        (ServerConfig.Debug.snowyFullCollisionShape.getAsBoolean() ?
+                                Block.isShapeFullBlock(state.getCollisionShape(level, pos)) :
+                                state.isSolidRender(level, pos))
                                 // state.isSolid()
                                 || onBlock instanceof LeavesBlock
                 )) {
@@ -449,6 +451,7 @@ public class MapChecker {
                                     // || blockName.getPath().endsWith("_trellis")
                                     || blockName.getPath().endsWith("_vine")
                                     || blockName.getPath().endsWith("fence")
+                                    || blockName.getPath().startsWith("ramp")
                     )
                     ) {
                         flag = FLAG_CUSTOM;

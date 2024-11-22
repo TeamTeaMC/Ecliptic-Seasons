@@ -8,6 +8,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.BaseEntityBlock;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -24,10 +25,12 @@ public class WindChimesBlock extends SimpleEntityBlock {
     protected MapCodec<? extends BaseEntityBlock> codec() {
         return simpleCodec(WindChimesBlock::new);
     }
+
+
     @Override
-    protected boolean canSurvive(BlockState pState, LevelReader pLevel, BlockPos pPos) {
-        var facePos = pPos.above();
-        return pLevel.getBlockState(facePos).isFaceSturdy(pLevel, facePos, Direction.DOWN);
+    protected boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
+        Direction direction = Direction.UP;
+        return Block.canSupportCenter(level, pos.relative(direction), direction.getOpposite());
     }
 
     @Override

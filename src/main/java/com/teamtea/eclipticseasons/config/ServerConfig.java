@@ -17,18 +17,27 @@ public class ServerConfig {
     }
 
     public static class Debug {
-        public static ModConfigSpec.BooleanValue debugMode;
+        public static ModConfigSpec.BooleanValue logIllegalUse;
         public static ModConfigSpec.BooleanValue notLightAbove;
         public static ModConfigSpec.BooleanValue iceMelt;
+        public static ModConfigSpec.BooleanValue snowyFullCollisionShape;
+        public static ModConfigSpec.BooleanValue snowOverlayGlowingBlock;
+        public static ModConfigSpec.BooleanValue disableSnowOverlayControlTag;
 
         private static void load(ModConfigSpec.Builder builder) {
             builder.push("Debug");
-            debugMode = builder.comment("Enable debug option to detect illegal use of functions.")
-                    .define("Debug", false);
+            logIllegalUse = builder.comment("Enable debug option to detect illegal use of functions.")
+                    .define("LogIllegalUse", false);
             notLightAbove = builder.comment("Without snowy block under the light blocks which level is 0.")
                     .define("NoSnowyUnderLight0", false);
             iceMelt = builder.comment("Enables legacy mode for snow and ice, where snow accumulates when it's cold in snowy day and melts when it's hot.")
                     .define("LegacyIceAndSnowAccumulationMelt", false);
+            snowyFullCollisionShape = builder.comment("Snow overlay block if has full collision shape not just full render shape.")
+                    .define("SnowyFullCollisionShape", false);
+            snowOverlayGlowingBlock = builder.comment("Snow can cover the block which would lights.")
+                    .define("NotSnowOverlayGlowingBlock", false);
+            disableSnowOverlayControlTag = builder.comment("Set to false to disable tag which stops block from snowy is tagged with \"eclipticseasons:snow_overlay_cannot_survive_on\".")
+                    .define("DisableSnowOverlayControlTag", false);
             builder.pop();
         }
     }

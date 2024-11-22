@@ -23,7 +23,7 @@ public class MixinLevel {
     private void ecliptic$isRaining(CallbackInfoReturnable<Boolean> cir) {
         if (ServerConfig.Weather.useSolarWeather.get()) {
             if ((Object) this instanceof ServerLevel serverLevel) {
-                if (ServerConfig.Debug.debugMode.get()) {
+                if (ServerConfig.Debug.logIllegalUse.get()) {
                     throw new IllegalCallerException("Use isRainAt to check if rain");
                 }
                 cir.setReturnValue(WeatherManager.isRainingEverywhere(serverLevel));
@@ -35,7 +35,7 @@ public class MixinLevel {
     private void ecliptic$getRainLevel(float p_46723_, CallbackInfoReturnable<Float> cir) {
         if (ServerConfig.Weather.useSolarWeather.get()) {
             if ((Object) this instanceof ServerLevel serverLevel) {
-                if (ServerConfig.Debug.debugMode.get()) {
+                if (ServerConfig.Debug.logIllegalUse.get()) {
                     throw new IllegalCallerException("Shouldn't call getRainLevel now");
                 }
                 cir.setReturnValue(WeatherManager.getMinRainLevel(serverLevel, p_46723_));
@@ -67,7 +67,7 @@ public class MixinLevel {
     private void ecliptic$isThundering(CallbackInfoReturnable<Boolean> cir) {
         if (ServerConfig.Weather.useSolarWeather.get()) {
             if ((Object) this instanceof ServerLevel serverLevel) {
-                if (ServerConfig.Debug.debugMode.get()) {
+                if (ServerConfig.Debug.logIllegalUse.get()) {
                     throw new IllegalCallerException("Use isThunderingAt to check if rain");
                 }
                 cir.setReturnValue(WeatherManager.isThunderEverywhere(serverLevel));
@@ -79,7 +79,7 @@ public class MixinLevel {
     private void ecliptic$getThunderLevel(float p_46723_, CallbackInfoReturnable<Float> cir) {
         if (ServerConfig.Weather.useSolarWeather.get()) {
             if ((Object) this instanceof ServerLevel serverLevel) {
-                if (ServerConfig.Debug.debugMode.get()) {
+                if (ServerConfig.Debug.logIllegalUse.get()) {
                     throw new IllegalCallerException("Shouldn't call getThunderLevel now");
                 }
                 cir.setReturnValue(WeatherManager.getMinThunderLevel(serverLevel, p_46723_));

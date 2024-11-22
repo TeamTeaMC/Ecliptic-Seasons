@@ -8,7 +8,9 @@ import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.misc.IBlockStateFlagger;
 import com.teamtea.eclipticseasons.api.misc.client.IMapSlice;
 import com.teamtea.eclipticseasons.api.misc.client.ISnowyBlockState;
+import com.teamtea.eclipticseasons.client.model.BakedQuadRetextured;
 import com.teamtea.eclipticseasons.client.model.BakedQuadRetexturedAndReUV;
+import com.teamtea.eclipticseasons.client.model.RectangularPrismChecker;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.misc.LazyGet;
@@ -179,7 +181,6 @@ public class ModelManager {
     private final static List<BakedQuad> EMPTY = List.of();
 
     public static List<BakedQuad> cancelTop(BakedModel bakedModel, BlockAndTintGetter blockAndTintGetter, BlockState state, BlockPos pos, Direction direction, RandomSource random, long seed, List<BakedQuad> original) {
-
         // if (true)
         //     return original;
         if (bakedModel != null && !original.isEmpty() && (direction == Direction.UP || direction == null)
@@ -388,8 +389,13 @@ public class ModelManager {
                                         else
                                             spriteUse = getMaxY(bakedQuad) - getMinY(bakedQuad) > 0.4002f ? snow_overlay_sprite : snow_overlay_tiny_sprite;
                                     }
-                                    BakedQuadRetexturedAndReUV retexturedAndReUV = new BakedQuadRetexturedAndReUV(bakedQuad, spriteUse, isSlabDown, offset);
-                                    original.add(retexturedAndReUV);
+                                    BakedQuad bakedQuad1;
+                                    if(RectangularPrismChecker.isRectangularPrism(bakedQuad)){
+                                        bakedQuad1 = new BakedQuadRetexturedAndReUV(bakedQuad, spriteUse, isSlabDown, offset);
+                                    }else {
+                                        bakedQuad1 = new BakedQuadRetextured(bakedQuad, spriteUse);
+                                    }
+                                    original.add(bakedQuad1);
                                 }
                             }
 
@@ -754,7 +760,7 @@ public class ModelManager {
                         && (seed % (weight * 4)) == 0
                         && blockAndTintGetter.getBlockState(pos.above()).isAir()) {
                     {
-                        int index = Math.abs(((int) (seed +pos.getX())) % flower_on_grass.size());
+                        int index = Math.abs(((int) (seed + pos.getX())) % flower_on_grass.size());
                         // index=random.nextInt(flower_on_grass.size());
                         replace = models.get(flower_on_grass.get(index));
                     }

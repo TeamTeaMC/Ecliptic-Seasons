@@ -9,7 +9,9 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.BaseEntityBlock;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LanternBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -27,9 +29,9 @@ public class PinWheelBlock extends SimpleHorizontalEntityBlock {
     }
 
     @Override
-    protected boolean canSurvive(@NotNull BlockState pState, LevelReader pLevel, BlockPos pPos) {
-        BlockPos below = pPos.below();
-        return pLevel.getBlockState(below).isFaceSturdy(pLevel, below, Direction.UP);
+    protected boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
+        Direction direction = Direction.DOWN;
+        return Block.canSupportCenter(level, pos.relative(direction), direction.getOpposite());
     }
 
     @Override

@@ -25,7 +25,7 @@ public class BakedQuadRetexturedAndReUV extends BakedQuad {
     }
 
     public BakedQuadRetexturedAndReUV(BakedQuad quad, TextureAtlasSprite textureIn, boolean isSlabDown, float offset) {
-        super(Arrays.copyOf(quad.getVertices(), quad.getVertices().length), quad.getTintIndex(), FaceBakery.calculateFacing(quad.getVertices()), quad.getSprite(), quad.isShade());
+        super(Arrays.copyOf(quad.getVertices(), quad.getVertices().length), quad.getTintIndex(), FaceBakery.calculateFacing(quad.getVertices()), quad.getSprite(), quad.isShade(), quad.hasAmbientOcclusion());
         this.texture = textureIn;
         this.isSlabDown = isSlabDown;
         this.offset = offset;
@@ -99,5 +99,10 @@ public class BakedQuadRetexturedAndReUV extends BakedQuad {
     @Override
     public int getTintIndex() {
         return -1;
+    }
+
+    @Override
+    public boolean isTinted() {
+        return false;
     }
 }

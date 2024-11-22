@@ -15,7 +15,7 @@ public class BakedQuadRetextured extends BakedQuad {
     public static int verticeSpace = DefaultVertexFormat.BLOCK.getVertexSize() / 4;
 
     public BakedQuadRetextured(BakedQuad quad, TextureAtlasSprite textureIn) {
-        super(Arrays.copyOf(quad.getVertices(), quad.getVertices().length), quad.getTintIndex(), FaceBakery.calculateFacing(quad.getVertices()), quad.getSprite(), quad.isShade());
+        super(Arrays.copyOf(quad.getVertices(), quad.getVertices().length), quad.getTintIndex(), FaceBakery.calculateFacing(quad.getVertices()), quad.getSprite(), quad.isShade(), quad.hasAmbientOcclusion());
         this.texture = textureIn;
         this.remapQuad();
     }
@@ -44,4 +44,8 @@ public class BakedQuadRetextured extends BakedQuad {
         return (v - sprite.getV0()) / f;
     }
 
+    @Override
+    public boolean isTinted() {
+        return false;
+    }
 }
