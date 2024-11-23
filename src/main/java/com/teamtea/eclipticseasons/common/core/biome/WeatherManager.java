@@ -509,17 +509,17 @@ public class WeatherManager {
 
     public static void onLoggedIn(ServerPlayer serverPlayer, boolean isLogged) {
         if ((serverPlayer instanceof FakePlayer)) return;
-        if (ServerConfig.Season.enableInform.get()) {
-            SolarHolders.getSaveDataLazy(serverPlayer.level()).ifPresent(t ->
-            {
-                SimpleNetworkHandler.send(serverPlayer, new SolarTermsMessage(t.getSolarTermsDay()));
-                if (isLogged
-                        && t.getSolarTermsDay() % ServerConfig.Season.lastingDaysOfEachTerm.get() == 0) {
-                    serverPlayer.sendSystemMessage(Component.translatable("info.eclipticseasons.environment.solar_term.message", SolarTerm.get(t.getSolarTermIndex()).getAlternationText()), false);
-                }
-            });
-
-        }
+        SolarHolders.getSaveDataLazy(serverPlayer.level()).ifPresent(t ->
+        {
+            SimpleNetworkHandler.send(serverPlayer, new SolarTermsMessage(t.getSolarTermsDay()));
+            if ((ServerConfig.Season.enableInform.get())
+                    && isLogged
+                    && MapChecker.isValidDimension(serverPlayer.level())
+                    && t.getSolarTermsDay()
+                    % ServerConfig.Season.lastingDaysOfEachTerm.get() == 0) {
+                serverPlayer.sendSystemMessage(Component.translatable("info.eclipticseasons.environment.solar_term.message", SolarTerm.get(t.getSolarTermIndex()).getAlternationText()), false);
+            }
+        });
         WeatherManager.sendBiomePacket(WeatherManager.getBiomeList(serverPlayer.level()), List.of(serverPlayer));
     }
 

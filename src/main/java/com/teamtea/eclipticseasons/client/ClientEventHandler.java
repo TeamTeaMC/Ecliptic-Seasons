@@ -107,8 +107,9 @@ public final class ClientEventHandler {
 
             ClientCon.useLevel = clientLevel;
             ClientCon.tick(clientLevel);
-            BiomeColorsHandler.reloadColors();
-
+            // BiomeColorsHandler.reloadColors();
+            // BiomeColorsHandler.needRefresh=true;
+            // t.start();
             // ModelManager.quadMap.clear();
             // ModelManager.quadMap_1.clear();
 

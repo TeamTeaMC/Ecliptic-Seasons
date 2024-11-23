@@ -5,6 +5,7 @@ import com.teamtea.eclipticseasons.client.color.season.BiomeColorsHandler;
 import com.teamtea.eclipticseasons.client.core.ClientWeatherChecker;
 import com.teamtea.eclipticseasons.client.map.ClientMapFixer;
 import com.teamtea.eclipticseasons.client.render.WorldRenderer;
+import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
@@ -34,6 +35,8 @@ public class NetworkdUtil {
                 data.setSolarTermsDay(solarTermsMessage.solarDay);
                 BiomeClimateManager.updateTemperature(context.player().level(), data.getSolarTerm());
                 BiomeColorsHandler.needRefresh = true;
+                ClientCon.tick(context.player().level());
+                BiomeColorsHandler.reloadColors();
             });
         }).exceptionally(e -> {
             // Handle exception

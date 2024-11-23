@@ -52,7 +52,8 @@ public final class DebugInfoRenderer {
 
         Level level1 = WeatherManager.getMainServerLevel();
 
-        level1 = level1 != null ? level1 : Minecraft.getInstance().level;
+        // level1 = level1 != null ? level1 : Minecraft.getInstance().level;
+        level1 = Minecraft.getInstance().level;
         {
             var standBiome =
                     biomeHolder == null || delay == 0 ?

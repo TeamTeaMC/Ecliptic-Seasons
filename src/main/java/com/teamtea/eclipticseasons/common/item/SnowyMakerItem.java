@@ -125,7 +125,7 @@ public class SnowyMakerItem extends Item {
                 );
             } else {
                 int half = (range - 1) / 2;
-                for (int i = -half; i < half; i++) {
+                for (int i = -half; i <= half; i++) {
                     for (int j = -half; j <= half; j++) {
                         modifySnowyBlocks(level, contextPlayer, clickedPos.offset(
                                 i,0,j

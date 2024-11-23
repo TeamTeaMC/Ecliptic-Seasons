@@ -318,6 +318,7 @@ public class MapChecker {
                                 .orElse(null);
     }
 
+    // TODO：检查污染情况
     public static Holder<Biome> getSurfaceBiome(Level level, BlockPos pos) {
         // fix the pos to surface
         int y = getHeight(level, pos) + 1;

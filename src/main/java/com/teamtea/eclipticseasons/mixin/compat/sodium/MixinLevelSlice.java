@@ -1,6 +1,7 @@
 package com.teamtea.eclipticseasons.mixin.compat.sodium;
 
 
+import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.misc.client.IMapSlice;
 import com.teamtea.eclipticseasons.client.render.chunk.CompilerCollector;
 import com.teamtea.eclipticseasons.common.core.map.ChunkInfoMap;
@@ -90,56 +91,60 @@ public abstract class MixinLevelSlice implements IMapSlice {
     )
     private void eclipticseasons$copySectionData(ChunkRenderContext context,
                                                  CallbackInfo ci) {
-
-        int c_x = context.getOrigin().getX() - NEIGHBOR_CHUNK_RADIUS;
-        int c_z = context.getOrigin().getZ() - NEIGHBOR_CHUNK_RADIUS;
-        BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos();
-        for (int sectionX = 0; sectionX < SECTION_ARRAY_LENGTH; ++sectionX) {
-            for (int sectionZ = 0; sectionZ < SECTION_ARRAY_LENGTH; ++sectionZ) {
-                int localSectionIndex = eclipticSeasons$getLocalSectionIndex(sectionX, sectionZ);
-                int[] heights = HEIGHT_MAP[localSectionIndex];
-                int[] biomes = BIOME_MAP[localSectionIndex];
-                int startX = originBlockX + sectionX * 16;
-                int startZ = originBlockZ + sectionZ * 16;
-                // If we have compiled the chunk
-                ChunkPos chunkPos = new ChunkPos(
-                        c_x + sectionX,
-                        c_z + sectionZ);
-                List<int[]> ints = CompilerCollector.get(chunkPos);
-                if (ints != null) {
-                    // System.arraycopy(ints, 0, heights, 0, heights.length);
-                    HEIGHT_MAP[localSectionIndex] = ints.getFirst();
-                    BIOME_MAP[localSectionIndex] = ints.get(1);
-                    continue;
-                }
+        if (MapChecker.isValidDimension(level)) {
+            BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos();
+            for (int sectionX = 0; sectionX < SECTION_ARRAY_LENGTH; ++sectionX) {
+                for (int sectionZ = 0; sectionZ < SECTION_ARRAY_LENGTH; ++sectionZ) {
+                    int localSectionIndex = eclipticSeasons$getLocalSectionIndex(sectionX, sectionZ);
+                    int[] heights = HEIGHT_MAP[localSectionIndex];
+                    int[] biomes = BIOME_MAP[localSectionIndex];
+                    int startX = originBlockX + sectionX * 16;
+                    int startZ = originBlockZ + sectionZ * 16;
+                    // If we have compiled the chunk
+                    // ChunkPos chunkPos = new ChunkPos(
+                    //         c_x + sectionX,
+                    //         c_z + sectionZ);
+                    // List<int[]> ints = CompilerCollector.get(chunkPos);
+                    // if (ints != null) {
+                    //     // System.arraycopy(ints, 0, heights, 0, heights.length);
+                    //     HEIGHT_MAP[localSectionIndex] = ints.getFirst();
+                    //     BIOME_MAP[localSectionIndex] = ints.get(1);
+                    //     continue;
+                    // }
 
 
-                mutableBlockPos.setX(startX);
-                mutableBlockPos.setZ(startZ);
-                ChunkInfoMap chunkMap = MapChecker.getChunkMap(level, mutableBlockPos);
-                if (chunkMap == null) {
-                    MapChecker.getHeight(level, mutableBlockPos);
-                    chunkMap = MapChecker.getChunkMap(level, mutableBlockPos);
-                }
-                for (int x = 0; x < 16; x++) {
-                    for (int z = 0; z < 16; z++) {
-                        int index = x * 16 + z;
-                        mutableBlockPos.setX(startX + x);
-                        mutableBlockPos.setZ(startZ + z);
-                        int y = chunkMap.getHeight(mutableBlockPos);
-                        heights[index] = y > chunkMap.getMinY() ? y :
-                                MapChecker.getHeight(level, mutableBlockPos);
-                        // we need to get new biome
-                        mutableBlockPos.setY(heights[index] + 1);
-                        if (mutableBlockPos.getY() > level.getMaxBuildHeight()) {
-                            mutableBlockPos.setY(level.getHeight(Heightmap.Types.MOTION_BLOCKING, mutableBlockPos.getX(), mutableBlockPos.getZ()));
-                        }
-                        int biomeId = chunkMap.getBiome(mutableBlockPos);
-                        biomes[index] = biomeId > -1 ? biomeId :
-                                MapChecker.getSurfaceOrUpdate(level, mutableBlockPos, false, ChunkInfoMap.TYPE_BIOME);
+                    mutableBlockPos.setX(startX);
+                    mutableBlockPos.setZ(startZ);
+                    ChunkInfoMap chunkMap = MapChecker.getChunkMap(level, mutableBlockPos);
+                    if (chunkMap == null) {
+                        MapChecker.getHeight(level, mutableBlockPos);
+                        chunkMap = MapChecker.getChunkMap(level, mutableBlockPos);
                     }
+                    // 注意这里有个问题是，假如到不同的维度，可能会无法创建新map
+                    if (chunkMap != null) {
+                        for (int x = 0; x < 16; x++) {
+                            for (int z = 0; z < 16; z++) {
+                                int index = x * 16 + z;
+                                mutableBlockPos.setX(startX + x);
+                                mutableBlockPos.setZ(startZ + z);
+                                int y = chunkMap.getHeight(mutableBlockPos);
+                                heights[index] = y > chunkMap.getMinY() ? y :
+                                        MapChecker.getHeight(level, mutableBlockPos);
+                                // we need to get new biome
+                                mutableBlockPos.setY(heights[index] + 1);
+                                if (mutableBlockPos.getY() > level.getMaxBuildHeight()) {
+                                    mutableBlockPos.setY(level.getHeight(Heightmap.Types.MOTION_BLOCKING, mutableBlockPos.getX(), mutableBlockPos.getZ()));
+                                }
+                                int biomeId = chunkMap.getBiome(mutableBlockPos);
+                                biomes[index] = biomeId > -1 ? biomeId :
+                                        MapChecker.getSurfaceOrUpdate(level, mutableBlockPos, false, ChunkInfoMap.TYPE_BIOME);
+                            }
+                        }
+                    } else {
+                        EclipticSeasons.logger("Warning, now try create slice for invalid level", level, context.getOrigin());
+                    }
+                    // CompilerCollector.add(chunkPos, List.of(heights, biomes));
                 }
-                CompilerCollector.add(chunkPos, List.of(heights, biomes));
             }
         }
     }
