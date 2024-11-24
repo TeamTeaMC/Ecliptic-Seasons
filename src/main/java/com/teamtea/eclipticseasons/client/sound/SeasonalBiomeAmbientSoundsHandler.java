@@ -6,6 +6,7 @@ import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.client.core.ClientWeatherChecker;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.client.util.SimplePair;
+import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.resources.sounds.*;
@@ -70,51 +71,53 @@ public class SeasonalBiomeAmbientSoundsHandler implements AmbientSoundHandler {
         }
         {
             SoundEvent soundEvent = null;
-            switch (season) {
-                case SPRING -> {
-                    if (!player.isInWaterOrRain()) {
-                        if ((biome.is(Biomes.CHERRY_GROVE) || biome.is(BiomeTags.IS_FOREST) || biome.is(Tags.Biomes.IS_PLAINS)) && !biome.is(Tags.Biomes.IS_COLD)) {
-                            soundEvent = EclipticSeasons.SoundEventsRegistry.spring_forest;
-                        }
-                    }
-                }
-                case SUMMER -> {
-                    // if (player.level().isNight())
-                    // 客户端不计算是否为夜晚
-                    if (!player.isInWaterOrRain()) {
-                        if (!isDayNow) {
-                            if (!(biome.is(BiomeTags.IS_SAVANNA)
-                                    && !biome.is(Tags.Biomes.IS_CAVE)
-                                    && !biome.is(Tags.Biomes.IS_DESERT)
-                                    && !biome.is(BiomeTags.IS_BADLANDS)
-                                    && !biome.is(Tags.Biomes.IS_MOUNTAIN_PEAK))) {
-                                soundEvent = EclipticSeasons.SoundEventsRegistry.night_river;
-                            }
-                        } else {
-                            if ((biome.is(Biomes.CHERRY_GROVE) || biome.is(BiomeTags.IS_FOREST) || biome.is(Tags.Biomes.IS_PLAINS) || biome.is(BiomeTags.IS_RIVER))) {
-                                soundEvent = EclipticSeasons.SoundEventsRegistry.garden_wind;
+            if(MapChecker.isValidDimension(player.level())) {
+                switch (season) {
+                    case SPRING -> {
+                        if (!player.isInWaterOrRain()) {
+                            if ((biome.is(Biomes.CHERRY_GROVE) || biome.is(BiomeTags.IS_FOREST) || biome.is(Tags.Biomes.IS_PLAINS)) && !biome.is(Tags.Biomes.IS_COLD)) {
+                                soundEvent = EclipticSeasons.SoundEventsRegistry.spring_forest;
                             }
                         }
                     }
+                    case SUMMER -> {
+                        // if (player.level().isNight())
+                        // 客户端不计算是否为夜晚
+                        if (!player.isInWaterOrRain()) {
+                            if (!isDayNow) {
+                                if (!(biome.is(BiomeTags.IS_SAVANNA)
+                                        && !biome.is(Tags.Biomes.IS_CAVE)
+                                        && !biome.is(Tags.Biomes.IS_DESERT)
+                                        && !biome.is(BiomeTags.IS_BADLANDS)
+                                        && !biome.is(Tags.Biomes.IS_MOUNTAIN_PEAK))) {
+                                    soundEvent = EclipticSeasons.SoundEventsRegistry.night_river;
+                                }
+                            } else {
+                                if ((biome.is(Biomes.CHERRY_GROVE) || biome.is(BiomeTags.IS_FOREST) || biome.is(Tags.Biomes.IS_PLAINS) || biome.is(BiomeTags.IS_RIVER))) {
+                                    soundEvent = EclipticSeasons.SoundEventsRegistry.garden_wind;
+                                }
+                            }
+                        }
 
-                }
-                case AUTUMN -> {
-                    if (!player.isInWater()) {
-                        if ((biome.is(Biomes.CHERRY_GROVE) || biome.is(BiomeTags.IS_FOREST))) {
-                            soundEvent = EclipticSeasons.SoundEventsRegistry.windy_leave;
+                    }
+                    case AUTUMN -> {
+                        if (!player.isInWater()) {
+                            if ((biome.is(Biomes.CHERRY_GROVE) || biome.is(BiomeTags.IS_FOREST))) {
+                                soundEvent = EclipticSeasons.SoundEventsRegistry.windy_leave;
+                            }
                         }
                     }
-                }
-                case WINTER -> {
-                    if (!player.isInWater()) {
-                        if (!biome.is(Tags.Biomes.IS_CAVE)) {
-                            if ((biome.is(Biomes.CHERRY_GROVE) || biome.is(BiomeTags.IS_FOREST) && ClientWeatherChecker.isRain((ClientLevel) player.level()))) {
-                                soundEvent = EclipticSeasons.SoundEventsRegistry.winter_forest;
-                            } else soundEvent = EclipticSeasons.SoundEventsRegistry.winter_cold;
+                    case WINTER -> {
+                        if (!player.isInWater()) {
+                            if (!biome.is(Tags.Biomes.IS_CAVE)) {
+                                if ((biome.is(Biomes.CHERRY_GROVE) || biome.is(BiomeTags.IS_FOREST) && ClientWeatherChecker.isRain((ClientLevel) player.level()))) {
+                                    soundEvent = EclipticSeasons.SoundEventsRegistry.winter_forest;
+                                } else soundEvent = EclipticSeasons.SoundEventsRegistry.winter_cold;
+                            }
                         }
                     }
-                }
-                case NONE -> {
+                    case NONE -> {
+                    }
                 }
             }
             if (soundEvent != null) {
