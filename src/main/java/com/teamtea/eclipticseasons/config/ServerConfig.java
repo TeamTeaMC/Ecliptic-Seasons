@@ -1,7 +1,12 @@
 package com.teamtea.eclipticseasons.config;
 
 
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.common.ModConfigSpec;
+
+import java.util.List;
+import java.util.Objects;
 
 public class ServerConfig {
     public static final ModConfigSpec SERVER_CONFIG = new ModConfigSpec.Builder().configure(ServerConfig::new).getRight();
@@ -57,6 +62,7 @@ public class ServerConfig {
         public static ModConfigSpec.BooleanValue enableInform;
         public static ModConfigSpec.IntValue lastingDaysOfEachTerm;
         public static ModConfigSpec.IntValue initialSolarTermIndex;
+        public static ModConfigSpec.ConfigValue<List<? extends String>> validDimensions;
 
 
         private static void load(ModConfigSpec.Builder builder) {
@@ -69,7 +75,11 @@ public class ServerConfig {
             enableInform = builder.comment("Enable solar term change inform.")
                     .define("EnableInform", true);
 
-
+            validDimensions=builder.comment("Which dimensions will have season effects? Note that it must be natrual and have time lapse.")
+                    .defineListAllowEmpty("ValidDimensions",
+                    () -> List.of(Level.OVERWORLD.location().toString()),
+                    () -> Level.OVERWORLD.location().toString(),
+                    o -> o instanceof String s && ResourceLocation.tryParse(s) != null);
             builder.pop();
         }
     }

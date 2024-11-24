@@ -513,7 +513,8 @@ public class MapChecker {
     public static boolean isValidDimension(@Nullable Level level) {
         return level != null
                 && level.dimensionType().natural()
-                && !level.dimensionType().hasFixedTime();
+                && !level.dimensionType().hasFixedTime()
+                && ServerConfig.Season.validDimensions.get().contains(level.dimension().location().toString());
     }
 
     public static void sendChunkInfo(LevelChunk chunk, ChunkPos chunkPos, ServerPlayer player, List<Integer> section_y, List<BlockPos> clickedPos) {
