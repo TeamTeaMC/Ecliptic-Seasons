@@ -12,6 +12,7 @@ import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.core.map.SnowyRemover;
 import com.teamtea.eclipticseasons.common.network.message.*;
+import com.teamtea.eclipticseasons.config.ServerConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
@@ -132,5 +133,14 @@ public class NetworkdUtil {
             context.disconnect(Component.translatable("eclipticseasons.networking.failed", e.getMessage()));
             return null;
         });
+    }
+
+
+    public static void handleConfigMessage(ConfigMessage configMessage, IPayloadContext iPayloadContext) {
+    iPayloadContext.enqueueWork(()->{
+        ServerConfig.Season.validDimensions.set(configMessage.SeasonalDimensions().stream().map(
+                k->k.location().toString()
+        ).toList());
+    });
     }
 }

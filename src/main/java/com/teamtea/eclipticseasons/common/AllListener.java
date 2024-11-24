@@ -137,10 +137,10 @@ public class AllListener {
             // WeatherManager.onLoggedIn(serverPlayer, false);
             // 不知道为什么要多线程来避免问题
             Thread t=new Thread(()-> {
-                // try {
-                //     Thread.sleep(100);
-                // } catch (InterruptedException ignored) {
-                // }
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException ignored) {
+                }
                 WeatherManager.onLoggedIn(serverPlayer, false);
             });
             t.start();

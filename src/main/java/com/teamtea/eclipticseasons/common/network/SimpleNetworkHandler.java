@@ -4,17 +4,24 @@ package com.teamtea.eclipticseasons.common.network;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.common.network.message.*;
+import com.teamtea.eclipticseasons.config.ServerConfig;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.neoforged.api.distmarker.Dist;
+import net.minecraft.server.network.ConfigurationTask;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.fml.loading.FMLLoader;
 import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.network.configuration.ICustomConfigurationTask;
+import net.neoforged.neoforge.network.event.RegisterConfigurationTasksEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 @EventBusSubscriber(modid = EclipticSeasonsApi.MODID, bus = EventBusSubscriber.Bus.MOD)
 public final class SimpleNetworkHandler {
@@ -23,6 +30,12 @@ public final class SimpleNetworkHandler {
     public static void register(final RegisterPayloadHandlersEvent event) {
         // Sets the current network version
         final PayloadRegistrar registrar = event.registrar(EclipticSeasons.NETWORK_VERSION);
+
+        registrar
+                .configurationToClient(
+                        ConfigMessage.TYPE,
+                        ConfigMessage.STREAM_CODEC,
+                        NetworkdUtil::handleConfigMessage);
 
         registrar.playToClient(
                 SolarTermsMessage.TYPE,
@@ -54,6 +67,27 @@ public final class SimpleNetworkHandler {
                 MapFixerMessage.STREAM_CODEC,
                 NetworkdUtil::processMapFixerMessage
         );
+    }
+
+    @SubscribeEvent
+    public static void onRegisterConfigurationTasksEvent(RegisterConfigurationTasksEvent event){
+        event.register(new ICustomConfigurationTask() {
+
+            @Override
+            public void run(@NotNull Consumer<CustomPacketPayload> sender) {
+                sender.accept(new ConfigMessage(
+                        ServerConfig.Season.validDimensions.get().stream()
+                                .map(s -> ResourceKey.create(Registries.DIMENSION, ResourceLocation.parse(s)))
+                                .toList()
+                ));
+                event.getListener().finishCurrentTask(type());
+            }
+
+            @Override
+            public @NotNull Type type() {
+                return new Type(EclipticSeasons.rl("config_task"));
+            }
+        });
     }
 
 
