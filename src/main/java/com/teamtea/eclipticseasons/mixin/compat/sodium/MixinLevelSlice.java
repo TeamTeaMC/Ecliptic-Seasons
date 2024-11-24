@@ -91,6 +91,7 @@ public abstract class MixinLevelSlice implements IMapSlice {
     )
     private void eclipticseasons$copySectionData(ChunkRenderContext context,
                                                  CallbackInfo ci) {
+        // 注意别切到没有的维度了
         if (MapChecker.isValidDimension(level)) {
             BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos();
             for (int sectionX = 0; sectionX < SECTION_ARRAY_LENGTH; ++sectionX) {

@@ -135,6 +135,7 @@ public class AllListener {
     public static void onPlayerChangedDimension(PlayerEvent.Clone event) {
         if (event.getEntity() instanceof ServerPlayer serverPlayer) {
             // WeatherManager.onLoggedIn(serverPlayer, false);
+            // 不知道为什么要多线程来避免问题
             Thread t=new Thread(()-> {
                 // try {
                 //     Thread.sleep(100);
