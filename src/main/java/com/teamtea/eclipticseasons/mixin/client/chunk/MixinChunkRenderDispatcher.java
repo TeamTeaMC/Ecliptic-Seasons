@@ -1,4 +1,4 @@
-package com.teamtea.eclipticseasons.mixin.client;
+package com.teamtea.eclipticseasons.mixin.client.chunk;
 
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
@@ -6,6 +6,7 @@ import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.vertex.*;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.misc.IBlockStateFlagger;
+import com.teamtea.eclipticseasons.api.misc.client.ISeedProvider;
 import com.teamtea.eclipticseasons.client.core.ModelManager;
 import com.teamtea.eclipticseasons.client.render.SnowRenderer;
 import com.teamtea.eclipticseasons.config.ClientConfig;
@@ -43,6 +44,18 @@ public abstract class MixinChunkRenderDispatcher {
         return bufferbuilder;
     }
 
+
+    @ModifyExpressionValue(
+            method = "compile(Lnet/minecraft/core/SectionPos;Lnet/minecraft/client/renderer/chunk/RenderChunkRegion;Lcom/mojang/blaze3d/vertex/VertexSorting;Lnet/minecraft/client/renderer/SectionBufferBuilderPack;Ljava/util/List;)Lnet/minecraft/client/renderer/chunk/SectionCompiler$Results;",
+            at = @At(value = "INVOKE",
+                    target = "Lnet/minecraft/world/level/block/state/BlockState;getSeed(Lnet/minecraft/core/BlockPos;)J")
+    )
+    private long eclipticseasons$compile_cache_getSeeds(long original,
+                                                        @Local SectionCompiler.Results results) {
+        ((ISeedProvider)(Object)results).setCacheSeed(original);
+        return original;
+    }
+
     @ModifyExpressionValue(
             method = "compile(Lnet/minecraft/core/SectionPos;Lnet/minecraft/client/renderer/chunk/RenderChunkRegion;Lcom/mojang/blaze3d/vertex/VertexSorting;Lnet/minecraft/client/renderer/SectionBufferBuilderPack;Ljava/util/List;)Lnet/minecraft/client/renderer/chunk/SectionCompiler$Results;",
             at = @At(value = "INVOKE",
@@ -58,24 +71,24 @@ public abstract class MixinChunkRenderDispatcher {
             @Local PoseStack posestack,
             @Local(argsOnly = true) RenderChunkRegion renderchunkregion,
             @Local RandomSource randomsource,
-            @Local Map<RenderType, BufferBuilder> renderTypeBufferBuilderMap
+            @Local Map<RenderType, BufferBuilder> renderTypeBufferBuilderMap,
+            @Local SectionCompiler.Results results
     ) {
 
         BakedModel snowModel = null;
         if (!original) {
-            snowModel = ModelManager.findModel(renderchunkregion, blockpos2, blockstate, randomsource,blockstate.getSeed(blockpos2));
+            snowModel = ModelManager.findModel(renderchunkregion, blockpos2, blockstate, randomsource,  ((ISeedProvider)(Object)results).getCacheSeed());
             eclipticSeasons$countModel++;
         } else {
             // if (ModelManager.isModelReplaceable(blockstate))
-            if (ModelManager.isModelReplaceable(((IBlockStateFlagger) blockstate).getBlockTypeFlag(renderchunkregion,blockpos2)))
-            {
-                snowModel = ModelManager.findModel(renderchunkregion, blockpos2, blockstate, randomsource,blockstate.getSeed(blockpos2));
+            if (ModelManager.isModelReplaceable(((IBlockStateFlagger) blockstate).getBlockTypeFlag(renderchunkregion, blockpos2))) {
+                snowModel = ModelManager.findModel(renderchunkregion, blockpos2, blockstate, randomsource, ((ISeedProvider)(Object)results).getCacheSeed());
                 eclipticSeasons$countModel++;
             }
         }
         if (snowModel != null) {
             original = false;
-            eclipticSeasons$renderModel(snowModel, pChunkBufferBuilderPack, blockpos2, blockstate, posestack, renderchunkregion, randomsource, renderTypeBufferBuilderMap);
+            eclipticSeasons$renderModel(snowModel, pChunkBufferBuilderPack, blockpos2, blockstate, posestack, renderchunkregion, randomsource, ((ISeedProvider)(Object)results).getCacheSeed(), renderTypeBufferBuilderMap);
         }
 
         return original;
@@ -83,10 +96,10 @@ public abstract class MixinChunkRenderDispatcher {
 
 
     @Unique
-    private void eclipticSeasons$renderModel(BakedModel bakedModel, SectionBufferBuilderPack pChunkBufferBuilderPack, BlockPos pos, BlockState state, PoseStack posestack, RenderChunkRegion renderchunkregion, RandomSource random, Map<RenderType, BufferBuilder> renderTypeSet) {
+    private void eclipticSeasons$renderModel(BakedModel bakedModel, SectionBufferBuilderPack pChunkBufferBuilderPack, BlockPos pos, BlockState state, PoseStack posestack, RenderChunkRegion renderchunkregion, RandomSource random, long seed, Map<RenderType, BufferBuilder> renderTypeSet) {
         RenderType renderType = ModelManager.getRenderType(state);
         BufferBuilder bufferbuilder2 = getOrBeginLayer(renderTypeSet, pChunkBufferBuilderPack, renderType);
-        SnowRenderer.renderSnowyBlock(bakedModel, bufferbuilder2, pos, state, posestack, renderchunkregion, random, renderType);
+        SnowRenderer.renderSnowyBlock(bakedModel, bufferbuilder2, pos, state, posestack, renderchunkregion, random, seed, renderType);
     }
 
 

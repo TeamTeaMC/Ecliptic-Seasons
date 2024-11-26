@@ -1,4 +1,4 @@
-package com.teamtea.eclipticseasons.mixin.client;
+package com.teamtea.eclipticseasons.mixin.client.chunk;
 
 
 import com.teamtea.eclipticseasons.api.misc.client.IMapSlice;

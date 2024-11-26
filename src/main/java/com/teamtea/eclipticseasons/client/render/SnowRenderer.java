@@ -14,8 +14,8 @@ import net.neoforged.neoforge.client.model.data.ModelData;
 
 public class SnowRenderer {
 
-    public static void renderSnowyBlock(BakedModel bakedModel, VertexConsumer bufferbuilder2, BlockPos pos, BlockState state, PoseStack posestack, RenderChunkRegion renderchunkregion, RandomSource random, RenderType renderType) {
-        long seed = state.getSeed(pos);
+    public static void renderSnowyBlock(BakedModel bakedModel, VertexConsumer bufferbuilder2, BlockPos pos, BlockState state, PoseStack posestack, RenderChunkRegion renderchunkregion, RandomSource random, long seed, RenderType renderType) {
+        // long seed = state.getSeed(pos);
         posestack.pushPose();
 
         posestack.translate((float) (pos.getX() & 15), (float) (pos.getY() & 15), (float) (pos.getZ() & 15));

@@ -39,7 +39,8 @@ public abstract class MixinBlockRenderTask {
             @Local BlockRenderCache cache,
             @Local(ordinal = 0) BlockPos.MutableBlockPos mutableBlockPos,
             @Local(ordinal = 1) BlockPos.MutableBlockPos mutableBlockPos2,
-            @Local(ordinal = 0) BlockState state
+            @Local(ordinal = 0) BlockState state,
+            @Local long seed
     ) {
 
         BakedModel snowModel=null;
@@ -59,7 +60,7 @@ public abstract class MixinBlockRenderTask {
                     mutableBlockPos2,
                     state,
                     snowModel,
-                    state.getSeed(mutableBlockPos),
+                    seed,
                     null,
                     ModelManager.getRenderType(state));
             cache.getBlockRenderer().renderModel(ctx, buffers);
