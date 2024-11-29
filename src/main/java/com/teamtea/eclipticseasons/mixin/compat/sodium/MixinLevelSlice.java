@@ -3,9 +3,11 @@ package com.teamtea.eclipticseasons.mixin.compat.sodium;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.misc.client.IMapSlice;
+import com.teamtea.eclipticseasons.api.misc.client.ISnowyGetter;
 import com.teamtea.eclipticseasons.client.render.chunk.CompilerCollector;
 import com.teamtea.eclipticseasons.common.core.map.ChunkInfoMap;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
+import com.teamtea.eclipticseasons.common.core.map.SnowyRemover;
 import net.caffeinemc.mods.sodium.client.world.LevelSlice;
 import net.caffeinemc.mods.sodium.client.world.cloned.ChunkRenderContext;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -37,6 +39,9 @@ public abstract class MixinLevelSlice implements IMapSlice {
 
     @Unique
     private int[][] BIOME_MAP;
+
+    @Unique
+    private int[][] SNOWY_MAP;
     // @Shadow
     // @Final
     // private static int SECTION_ARRAY_SIZE;
@@ -63,6 +68,11 @@ public abstract class MixinLevelSlice implements IMapSlice {
     @Final
     private static int NEIGHBOR_CHUNK_RADIUS;
 
+    @Shadow
+    public static int getLocalSectionIndex(int sectionX, int sectionY, int sectionZ) {
+        return 0;
+    }
+
     @Inject(
             remap = false,
             method = "<clinit>",
@@ -80,6 +90,7 @@ public abstract class MixinLevelSlice implements IMapSlice {
     private void eclipticseasons$init(ClientLevel level, CallbackInfo ci) {
         HEIGHT_MAP = new int[MAP_ARRAY_SIZE][MAP_BLOCK_COUNT];
         BIOME_MAP = new int[MAP_ARRAY_SIZE][MAP_BLOCK_COUNT];
+        SNOWY_MAP = new int[MAP_ARRAY_SIZE][MAP_BLOCK_COUNT];
     }
 
 
@@ -94,11 +105,15 @@ public abstract class MixinLevelSlice implements IMapSlice {
         // 注意别切到没有的维度了
         if (MapChecker.isValidDimension(level)) {
             BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos();
+            // SnowyRemover snowyRemover = level.getChunk(context.getOrigin().x(), context.getOrigin().z()).getData(EclipticSeasons.ModContents.SNOWY_REMOVER.get());
+
             for (int sectionX = 0; sectionX < SECTION_ARRAY_LENGTH; ++sectionX) {
                 for (int sectionZ = 0; sectionZ < SECTION_ARRAY_LENGTH; ++sectionZ) {
+                    SnowyRemover snowyRemover=((ISnowyGetter)context.getSections()[getLocalSectionIndex(sectionX,0,sectionZ)]).getSnowyRemover();
                     int localSectionIndex = eclipticSeasons$getLocalSectionIndex(sectionX, sectionZ);
                     int[] heights = HEIGHT_MAP[localSectionIndex];
                     int[] biomes = BIOME_MAP[localSectionIndex];
+                    int[] snowys = SNOWY_MAP[localSectionIndex];
                     int startX = originBlockX + sectionX * 16;
                     int startZ = originBlockZ + sectionZ * 16;
                     // If we have compiled the chunk
@@ -139,6 +154,8 @@ public abstract class MixinLevelSlice implements IMapSlice {
                                 int biomeId = chunkMap.getBiome(mutableBlockPos);
                                 biomes[index] = biomeId > -1 ? biomeId :
                                         MapChecker.getSurfaceOrUpdate(level, mutableBlockPos, false, ChunkInfoMap.TYPE_BIOME);
+
+                                snowys[index]=snowyRemover.blockWatcher()[x][z];
                             }
                         }
                     } else {
@@ -175,11 +192,27 @@ public abstract class MixinLevelSlice implements IMapSlice {
     @Override
     public int getSurfaceFaceBiomeId(BlockPos pos) {
         if (!this.volume.isInside(pos.getX(), pos.getY(), pos.getZ())) {
-            return level.getMaxBuildHeight() + 1;
+            return 0;
         } else {
             int relBlockX = pos.getX() - this.originBlockX;
             int relBlockZ = pos.getZ() - this.originBlockZ;
             int[] lightArrays = this.BIOME_MAP[eclipticSeasons$getLocalSectionIndex(
+                    relBlockX >> 4,
+                    relBlockZ >> 4)];
+            int localBlockX = relBlockX & 15;
+            int localBlockZ = relBlockZ & 15;
+            return lightArrays[localBlockX * 16 + localBlockZ];
+        }
+    }
+
+    @Override
+    public int getSnowyStatus(BlockPos pos) {
+        if (!this.volume.isInside(pos.getX(), pos.getY(), pos.getZ())) {
+            return SnowyRemover.SNOWY;
+        } else {
+            int relBlockX = pos.getX() - this.originBlockX;
+            int relBlockZ = pos.getZ() - this.originBlockZ;
+            int[] lightArrays = this.SNOWY_MAP[eclipticSeasons$getLocalSectionIndex(
                     relBlockX >> 4,
                     relBlockZ >> 4)];
             int localBlockX = relBlockX & 15;

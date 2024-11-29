@@ -13,6 +13,7 @@ import com.teamtea.eclipticseasons.client.model.BakedQuadRetexturedAndReUV;
 import com.teamtea.eclipticseasons.client.model.RectangularPrismChecker;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
+import com.teamtea.eclipticseasons.common.core.map.SnowyRemover;
 import com.teamtea.eclipticseasons.common.misc.LazyGet;
 import com.teamtea.eclipticseasons.compat.CompatModule;
 import com.teamtea.eclipticseasons.config.ClientConfig;
@@ -673,8 +674,9 @@ public class ModelManager {
         Level level = Minecraft.getInstance().level;
         BakedModel replace = null;
         // 这里不需要担心，是因为我们给不符合要求的level默认返回一个0或者最低值-1
-
-        if (blockAndTintGetter instanceof IMapSlice mapSlice) {
+        IMapSlice mapSlice = null;
+        if (blockAndTintGetter instanceof IMapSlice cmapSlice) {
+            mapSlice = cmapSlice;
             int cut = mapSlice.getBlockHeight(pos) - pos.getY();
             if (cut > 1 || cut < -3)
                 return replace;
@@ -696,7 +698,7 @@ public class ModelManager {
         } else {
             // ChunkInfoMap chunkMap = MapChecker.getChunkMap(level, pos);
 
-            int cacheHeight = blockAndTintGetter instanceof IMapSlice mapSlice ?
+            int cacheHeight = mapSlice!=null?
                     mapSlice.getBlockHeight(pos)
                     : MapChecker.getHeightOrUpdate(level, pos, false);
 
@@ -709,7 +711,7 @@ public class ModelManager {
                         cacheHeight--;
                     } else {
                         for (Direction direction : Direction.Plane.HORIZONTAL) {
-                            int neighbourHeight = blockAndTintGetter instanceof IMapSlice mapSlice ?
+                            int neighbourHeight = mapSlice!=null?
                                     mapSlice.getBlockHeight(pos.relative(direction)) : MapChecker.getHeightOrUpdate(level, pos.relative(direction), false);
                             if (neighbourHeight == pos.getY() &&
                                     // MapChecker.getBlockType(blockAndTintGetter.getBlockState(pos.above()), blockAndTintGetter, pos.above())
@@ -725,53 +727,60 @@ public class ModelManager {
             isLight = cacheHeight == pos.getY() - offset;
         }
 
-        if (ClientConfig.Renderer.notSnowyNearGlowingBlock.get()) {
-            if (isLight) {
-                BlockPos above = pos.offset(0, 1 - offset, 0);
-                if (blockAndTintGetter.getBrightness(LightLayer.BLOCK, above) >=
-                        ClientConfig.Renderer.notSnowyNearGlowingBlockLevel.getAsInt()) {
-                    isLight = false;
-                    if(!ClientConfig.Debug.disableLight0AboveCancelLightCheck.getAsBoolean()) {
-                        BlockState aboveState = blockAndTintGetter.getBlockState(pos.above());
-                        if (aboveState == LIGHT_0) {
-                            isLight = true;
-                        }
-                    }
-                }
-            }
-        }
 
         if (isLight) {
             if (ClientConfig.Renderer.snowyWinter.get()
                     && onBlock != Blocks.SNOW_BLOCK
-                    && MapChecker.shouldSnowAt(level, pos.below(offset), state, random, seed)
-                // && (blockAndTintGetter instanceof IMapSlice mapSlice ?
+                    && (MapChecker.shouldSnowAt(level, pos.below(offset), state, random, seed)
+                    || (mapSlice!=null
+                    && mapSlice.getSnowyStatus(pos) == SnowyRemover.SnowyFlag.SNOWY_ALWAYS.ordinal()))
+                // && (mapSlice!=null?
                 // MapChecker.shouldSnowAt(level, pos.below(offset),mapSlice.getSurfaceFaceBiomeId(pos), state, random, seed):
                 //  MapChecker.shouldSnowAt(level, pos.below(offset), state, random, seed))
             ) {
-                // DynamicLeavesBlock
-                boolean isFlowerAbove = false;
-                if ((flag == MapChecker.FLAG_BLOCK) && ClientConfig.Renderer.betterSnow.get()) {
-                    var bl = blockAndTintGetter.getBlockState(pos.above()).getBlock();
-                    isFlowerAbove = bl instanceof FlowerBlock
-                            || bl instanceof PinkPetalsBlock
-                            || bl instanceof DoublePlantBlock
-                            || bl instanceof SaplingBlock;
+                boolean isSnowy = true;
 
-                    if (!isFlowerAbove) {
-                        isFlowerAbove = random.nextInt(12) > 0;
-                        // isFlowerAbove=true;
+                if (ClientConfig.Renderer.notSnowyNearGlowingBlock.get()) {
+                    if (mapSlice!=null
+                            && mapSlice.getSnowyStatus(pos)==SnowyRemover.SNOWY) {
+                        BlockPos above = pos.offset(0, 1 - offset, 0);
+                        if (blockAndTintGetter.getBrightness(LightLayer.BLOCK, above) >=
+                                ClientConfig.Renderer.notSnowyNearGlowingBlockLevel.getAsInt()) {
+                            isSnowy = false;
+                            if (!ClientConfig.Debug.disableLight0AboveCancelLightCheck.getAsBoolean()) {
+                                BlockState aboveState = blockAndTintGetter.getBlockState(pos.above());
+                                if (aboveState == LIGHT_0) {
+                                    isSnowy = true;
+                                }
+                            }
+                        }
                     }
                 }
-                {
-                    BlockState snowState = null;
-                    if (models != null && flag == MapChecker.FLAG_STAIRS) {
-                        snowState = EclipticSeasons.ModContents.snowyStairs.get().defaultBlockState().setValue(StairBlock.FACING, state.getValue(StairBlock.FACING)).setValue(StairBlock.HALF, state.getValue(StairBlock.HALF)).setValue(StairBlock.SHAPE, state.getValue(StairBlock.SHAPE));
-                    }
-                    BakedModel snowModel = getSnowyModel(state, snowState, flag, offset);
 
-                    if (snowModel != null) {
-                        replace = snowModel;
+                if (isSnowy) {
+                    boolean isFlowerAbove = false;
+                    if ((flag == MapChecker.FLAG_BLOCK) && ClientConfig.Renderer.betterSnow.get()) {
+                        var bl = blockAndTintGetter.getBlockState(pos.above()).getBlock();
+                        isFlowerAbove = bl instanceof FlowerBlock
+                                || bl instanceof PinkPetalsBlock
+                                || bl instanceof DoublePlantBlock
+                                || bl instanceof SaplingBlock;
+
+                        if (!isFlowerAbove) {
+                            isFlowerAbove = random.nextInt(12) > 0;
+                            // isFlowerAbove=true;
+                        }
+                    }
+                    {
+                        BlockState snowState = null;
+                        if (models != null && flag == MapChecker.FLAG_STAIRS) {
+                            snowState = EclipticSeasons.ModContents.snowyStairs.get().defaultBlockState().setValue(StairBlock.FACING, state.getValue(StairBlock.FACING)).setValue(StairBlock.HALF, state.getValue(StairBlock.HALF)).setValue(StairBlock.SHAPE, state.getValue(StairBlock.SHAPE));
+                        }
+                        BakedModel snowModel = getSnowyModel(state, snowState, flag, offset);
+
+                        if (snowModel != null) {
+                            replace = snowModel;
+                        }
                     }
                 }
             } else if (ClientConfig.Renderer.flowerOnGrass.get() && state.getBlock() instanceof GrassBlock
@@ -829,6 +838,6 @@ public class ModelManager {
         loadVersion++;
         // snowyModelsCache.clear();
         // stateModelsCache.clear();
-        LIGHT_0=Blocks.LIGHT.defaultBlockState().setValue(LightBlock.LEVEL,0);
+        LIGHT_0 = Blocks.LIGHT.defaultBlockState().setValue(LightBlock.LEVEL, 0);
     }
 }

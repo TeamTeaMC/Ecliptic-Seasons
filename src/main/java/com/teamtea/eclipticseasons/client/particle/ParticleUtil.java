@@ -7,12 +7,14 @@ import com.teamtea.eclipticseasons.api.constant.tag.EclipticBlockTags;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
+import com.teamtea.eclipticseasons.common.core.map.SnowyRemover;
 import com.teamtea.eclipticseasons.config.ClientConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ColorParticleOption;
+import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -118,10 +120,11 @@ public class ParticleUtil {
                 Minecraft.getInstance().player != null
                 && Minecraft.getInstance().player.getItemInHand(InteractionHand.MAIN_HAND).getItem() == EclipticSeasons.ModContents.snowy_maker_item.get()) {
             var data = clientLevel.getChunkAt(blockpos$mutableblockpos).getData(EclipticSeasons.ModContents.SNOWY_REMOVER);
-
-            if (data.notSnowyAt(blockpos$mutableblockpos)) {
+            SnowyRemover.SnowyFlag snowyFlag = data.getSnowyFlag(blockpos$mutableblockpos);
+            ParticleOptions indicatorParticleOptions = snowyFlag.getIndicatorParticleOptions(random);
+            if (indicatorParticleOptions!=null) {
                 j = clientLevel.getHeight(Heightmap.Types.MOTION_BLOCKING, i, k);
-                clientLevel.addParticle(random.nextInt(3) > 0 ? ParticleTypes.SMOKE : ParticleTypes.CLOUD,
+                clientLevel.addParticle(indicatorParticleOptions,
                         false, i + 0.5, j + 0.3, k + 0.5, 0.0D, -0.0001, 0.0D);
 
                 // clientLevel.addParticle(ParticleTypes.SMOKE, false, i + 0.5, j + 0.1, k + 0.5, 0.0D, -0.0001, 0.0D);

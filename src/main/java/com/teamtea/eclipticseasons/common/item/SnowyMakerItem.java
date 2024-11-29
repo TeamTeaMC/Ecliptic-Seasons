@@ -29,10 +29,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Stream;
 
 public class SnowyMakerItem extends Item {
@@ -51,6 +48,23 @@ public class SnowyMakerItem extends Item {
                     SimplePair.of(MakerMode.CHUNK, 5),
                     SimplePair.of(MakerMode.CHUNK, 7));
 
+    SimplePair<MakerMode, Integer> tryParse(String makerModeString) {
+        String[] split = makerModeString.split("-");
+
+        MakerMode makerMode = MakerMode.BLOCK;
+        int range = 1;
+
+        try {
+            if (split.length == 2) {
+                makerMode = MakerMode.valueOf(split[0].toUpperCase());
+                range = Integer.parseInt(split[1]);
+            }
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        }
+
+        return SimplePair.of(makerMode, range);
+    }
 
     @Override
     public boolean canAttackBlock(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer) {
@@ -59,23 +73,14 @@ public class SnowyMakerItem extends Item {
             CustomData customData = itemInHand.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY);
             CompoundTag unsafe = customData.getUnsafe();
 
-            String makerModeString = unsafe.getString("range");
-            String[] split = makerModeString.split("-");
-
-            MakerMode makerMode = MakerMode.BLOCK;
-            int range = 1;
-            if (split.length == 2) {
-                makerMode = MakerMode.valueOf(split[0]);
-                range = Integer.parseInt(split[1]);
-            }
-            SimplePair<MakerMode, Integer> simplePair = SimplePair.of(makerMode, range);
+            SimplePair<MakerMode, Integer> simplePair = tryParse(unsafe.getString("range"));
             int mode = unsafe.getInt("mode");
             if (!pPlayer.isShiftKeyDown()) {
                 int index = preModels.indexOf(simplePair);
                 int nextIndex = index > -1 && index < preModels.size() - 1 ? (index + 1) : 0;
                 simplePair = preModels.get(nextIndex);
             } else {
-                mode = Mth.abs(mode - 1);
+                mode = SnowyRemover.SnowyFlag.cycle(mode).ordinal();
             }
 
             CompoundTag compoundTag = new CompoundTag();
@@ -83,9 +88,9 @@ public class SnowyMakerItem extends Item {
             compoundTag.putString("range", "%s-%s".formatted(simplePair.getKey(), simplePair.getValue()));
             itemInHand.set(DataComponents.CUSTOM_DATA, CustomData.of(compoundTag));
 
-            MutableComponent mutableComponent = Component.literal("%s %sx%s, ".formatted(simplePair.getKey(),
+            MutableComponent mutableComponent = Component.literal("%s %sx%s, ".formatted(simplePair.getKey().toString().toLowerCase(Locale.ROOT),
                     simplePair.getValue(), simplePair.getValue()));
-            mutableComponent.append(mode == 0 ? "None" : "Snowy");
+            mutableComponent.append(SnowyRemover.SnowyFlag.values()[mode].toString().toLowerCase(Locale.ROOT));
 
             if (pPlayer instanceof ServerPlayer serverPlayer) {
                 serverPlayer.sendSystemMessage(mutableComponent, true);
@@ -107,17 +112,12 @@ public class SnowyMakerItem extends Item {
 
             CustomData customData = itemInHand.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY);
             CompoundTag unsafe = customData.getUnsafe();
-            int type = unsafe.getInt("mode") == 0 ?
-                    SnowyRemover.NONE_SNOWY : SnowyRemover.SNOWY;
-            String makerModeString = unsafe.getString("range");
-            String[] split = makerModeString.split("-");
+            SnowyRemover.SnowyFlag type = SnowyRemover.SnowyFlag.values()[unsafe.getInt("mode")];
+            SimplePair<MakerMode, Integer> simplePair = tryParse(unsafe.getString("range"));
+            MakerMode makerMode = simplePair.getKey();
+            int range = simplePair.getValue();
 
-            MakerMode makerMode = MakerMode.BLOCK;
-            int range = 1;
-            if (split.length == 2) {
-                makerMode = MakerMode.valueOf(split[0]);
-                range = Integer.parseInt(split[1]);
-            }
+
             if (makerMode == MakerMode.CHUNK) {
                 Stream<ChunkPos> chunkPosStream = ChunkPos.rangeClosed(new ChunkPos(clickedPos), (range - 1) / 2);
                 chunkPosStream.forEach(
@@ -128,7 +128,7 @@ public class SnowyMakerItem extends Item {
                 for (int i = -half; i <= half; i++) {
                     for (int j = -half; j <= half; j++) {
                         modifySnowyBlocks(level, contextPlayer, clickedPos.offset(
-                                i,0,j
+                                i, 0, j
                         ), type);
                     }
                 }
@@ -140,7 +140,7 @@ public class SnowyMakerItem extends Item {
         return super.useOn(pContext);
     }
 
-    private InteractionResult modifySnowyBlocks(Level level, Player contextPlayer, ChunkPos chunkPos, int type) {
+    private InteractionResult modifySnowyBlocks(Level level, Player contextPlayer, ChunkPos chunkPos, SnowyRemover.SnowyFlag type) {
         ServerMapFixer.unloadChunk(level, chunkPos);
         BlockPos worldPosition = chunkPos.getMiddleBlockPosition(MapChecker.getMCHeightWithCheck(level, new BlockPos(chunkPos.getMiddleBlockX(), 0, chunkPos.getMiddleBlockZ())));
         if (level.isLoaded(chunkPos.getWorldPosition())
@@ -161,7 +161,7 @@ public class SnowyMakerItem extends Item {
 
                 int[][] ints1 = new int[16][16];
                 for (int[] ints : ints1) {
-                    Arrays.fill(ints, type);
+                    Arrays.fill(ints, type.ordinal());
                 }
                 data = new SnowyRemover(ints1);
                 chunk.setData(EclipticSeasons.ModContents.SNOWY_REMOVER, data);
@@ -204,11 +204,9 @@ public class SnowyMakerItem extends Item {
                 var data = level.getChunk(chunkPos.x, chunkPos.z).getData(EclipticSeasons.ModContents.SNOWY_REMOVER);
                 for (int i = chunkPos.getMinBlockX(); i <= chunkPos.getMaxBlockX(); i++) {
                     for (int j = chunkPos.getMinBlockZ(); j <= chunkPos.getMaxBlockZ(); j++) {
-                        boolean snowy = type == SnowyRemover.NONE_SNOWY;
-                        boolean notSnowyAtBefore = data.notSnowyAt(new BlockPos(i, 64, j));
-                        if (snowy != notSnowyAtBefore) {
-                            var particleType = !snowy
-                                    ? ParticleTypes.SMOKE : ParticleTypes.SNOWFLAKE;
+                        var notSnowyAtBefore = data.getSnowyFlag(new BlockPos(i, 64, j));
+                        if (type != notSnowyAtBefore) {
+                            var particleType = notSnowyAtBefore.getNextParticleOptions();
                             for (int k = 0; k < 10; k++) {
                                 level.addParticle(
                                         particleType,
@@ -231,7 +229,7 @@ public class SnowyMakerItem extends Item {
         return null;
     }
 
-    private InteractionResult modifySnowyBlocks(Level level, Player contextPlayer, BlockPos clickedPos, int type) {
+    private InteractionResult modifySnowyBlocks(Level level, Player contextPlayer, BlockPos clickedPos, SnowyRemover.SnowyFlag type) {
         var chunkPos = new ChunkPos(clickedPos);
         var sectionPos = SectionPos.of(clickedPos);
         if (level.isLoaded(clickedPos)
@@ -248,7 +246,7 @@ public class SnowyMakerItem extends Item {
                     chunk.setData(EclipticSeasons.ModContents.SNOWY_REMOVER, new SnowyRemover(new int[16][16]));
                 }
                 var data = chunk.getData(EclipticSeasons.ModContents.SNOWY_REMOVER);
-                data.setChunkPos(clickedPos, type);
+                data.setChunkPos(clickedPos, type.ordinal());
 
                 var distance =
                         (serverLevel.getServer() instanceof DedicatedServer dedicatedServer ?
@@ -261,8 +259,14 @@ public class SnowyMakerItem extends Item {
                             return onPos.distToCenterSqr(clickedPos.getCenter()) < distance;
                         }
                 );
+
+                int y = level.getHeight(Heightmap.Types.MOTION_BLOCKING, clickedPos.getX(), clickedPos.getZ()) - 1;
+                BlockPos newPos = new BlockPos(clickedPos.getX(), y, clickedPos.getZ());
+                int sk = SectionPos.of(newPos).y();
+
+                // just set one chunk dirty would not re compile chunk render cache
                 for (ServerPlayer player : players) {
-                    MapChecker.sendChunkInfo(chunk, chunkPos, player, List.of(sectionPos.y()), List.of(clickedPos));
+                    MapChecker.sendChunkInfo(chunk, chunkPos, player, List.of( sk), List.of(newPos));
                 }
 
                 if (data.allSnowAble()) {
@@ -283,11 +287,9 @@ public class SnowyMakerItem extends Item {
             } else {
 
                 var data = level.getChunkAt(clickedPos).getData(EclipticSeasons.ModContents.SNOWY_REMOVER);
-                boolean snowy = type == SnowyRemover.NONE_SNOWY;
-                boolean notSnowyAtBefore = data.notSnowyAt(clickedPos);
-                if (snowy != notSnowyAtBefore) {
-                    var particleType = !snowy
-                            ? ParticleTypes.SMOKE : ParticleTypes.SNOWFLAKE;
+                var notSnowyAtBefore = data.getSnowyFlag(new BlockPos(clickedPos));
+                if (type != notSnowyAtBefore) {
+                    var particleType = type.getNextParticleOptions();
                     for (int i = 0; i < 10; i++) {
                         level.addParticle(
                                 particleType,

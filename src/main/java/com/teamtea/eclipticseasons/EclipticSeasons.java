@@ -78,7 +78,6 @@ public class EclipticSeasons {
         modEventBus.addListener(this::FMLCommonSetup);
         modEventBus.addListener(this::FMLCommonSetup);
         modEventBus.addListener(this::gatherData);
-
         ModContents.BLOCK_DEFERRED_REGISTER.register(modEventBus);
         ModContents.ITEM_DEFERRED_REGISTER.register(modEventBus);
         ModContents.BLOCK_ENTITY_TYPE_DEFERRED_REGISTER.register(modEventBus);

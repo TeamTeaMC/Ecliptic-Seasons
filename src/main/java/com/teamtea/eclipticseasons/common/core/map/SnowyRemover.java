@@ -3,8 +3,12 @@ package com.teamtea.eclipticseasons.common.core.map;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.util.RandomSource;
 
 import java.util.Arrays;
+import java.util.function.Function;
 import java.util.stream.IntStream;
 
 public record SnowyRemover(
@@ -32,6 +36,7 @@ public record SnowyRemover(
 
     public static final int SNOWY = 0;
     public static final int NONE_SNOWY = 1;
+    public static final int SNOWY_EVEN_LIGHT = 2;
 
     public static int getChunkPos(int golobalPos) {
         return golobalPos & 15;
@@ -49,9 +54,51 @@ public record SnowyRemover(
         return notSnowyAt(getChunkPos(blockPos.getX()), getChunkPos(blockPos.getZ()));
     }
 
+    public SnowyFlag getSnowyFlag(BlockPos blockPos) {
+        return SnowyFlag.values()[blockWatcher[getChunkPos(blockPos.getX())][getChunkPos(blockPos.getZ())]];
+    }
+
     public boolean allSnowAble() {
         return Arrays.stream(blockWatcher())
                 .flatMapToInt(Arrays::stream)
-                .noneMatch(c->c>0);
+                .noneMatch(c -> c > 0);
     }
+
+    public enum SnowyFlag {
+        SNOWY(ParticleTypes.SNOWFLAKE, (r) -> null),
+        NONE_SNOWY(ParticleTypes.SMOKE, (r) -> r.nextInt(3) > 0 ? ParticleTypes.SMOKE : ParticleTypes.CLOUD),
+        SNOWY_EVEN_LIGHT(ParticleTypes.GLOW_SQUID_INK, (r) -> r.nextInt(3) > 0 ? ParticleTypes.GLOW_SQUID_INK : null),
+        SNOWY_ALWAYS(ParticleTypes.ITEM_SNOWBALL, (r) -> r.nextInt(3) > 0 ? ParticleTypes.ITEM_SNOWBALL : null);
+
+        final ParticleOptions particleOptions;
+        final Function<RandomSource, ParticleOptions> randomSourceConsumer;
+
+        SnowyFlag(ParticleOptions particleOptions, Function<RandomSource, ParticleOptions> randomSourceConsumer) {
+            this.particleOptions = particleOptions;
+            this.randomSourceConsumer = randomSourceConsumer;
+        }
+
+        public ParticleOptions getNextParticleOptions() {
+            return particleOptions;
+        }
+
+        public ParticleOptions getIndicatorParticleOptions(RandomSource r) {
+            return randomSourceConsumer.apply(r);
+        }
+
+        public SnowyFlag cycle() {
+            SnowyFlag[] snowyFlags = values();
+            int index = ordinal();
+            index = index < snowyFlags.length - 1 ? index + 1 : 0;
+            return snowyFlags[index];
+        }
+
+        public static SnowyFlag cycle(int index) {
+            SnowyFlag[] snowyFlags = values();
+            index = index < snowyFlags.length - 1 ? index + 1 : 0;
+            return snowyFlags[index];
+        }
+
+    }
+
 }

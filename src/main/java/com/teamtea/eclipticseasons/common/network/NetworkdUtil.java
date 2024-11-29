@@ -94,7 +94,13 @@ public class NetworkdUtil {
                         ClientMapFixer.clearBlockPos(blockPos);
                         MapChecker.updatePosForce(level, blockPos, snow.notSnowyAt(blockPos) ? level.getMaxBuildHeight() + 1 : level.getHeight(Heightmap.Types.MOTION_BLOCKING, blockPos.getX(), blockPos.getZ()) - 1);
                     }
-                    for (Integer ySection : chunkUpdateMessage.y) {
+                    // if too less chunk need re compile render, it would not work
+                    List<Integer> y = chunkUpdateMessage.y;
+                    if (y.size() == 1) {
+                        y = new ArrayList<>(y);
+                        y.add(y.getFirst() - 1);
+                    }
+                    for (Integer ySection : y) {
                         WorldRenderer.setSectionDirty(SectionPos.of(chunkUpdateMessage.x, ySection, chunkUpdateMessage.z));
                     }
                 }
@@ -137,10 +143,10 @@ public class NetworkdUtil {
 
 
     public static void handleConfigMessage(ConfigMessage configMessage, IPayloadContext iPayloadContext) {
-    iPayloadContext.enqueueWork(()->{
-        ServerConfig.Season.validDimensions.set(configMessage.SeasonalDimensions().stream().map(
-                k->k.location().toString()
-        ).toList());
-    });
+        iPayloadContext.enqueueWork(() -> {
+            ServerConfig.Season.validDimensions.set(configMessage.SeasonalDimensions().stream().map(
+                    k -> k.location().toString()
+            ).toList());
+        });
     }
 }

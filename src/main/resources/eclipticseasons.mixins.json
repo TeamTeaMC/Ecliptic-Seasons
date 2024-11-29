@@ -59,6 +59,7 @@
     "compat.sodium.MixinAbstractBlockRenderContext",
     "compat.sodium.MixinBlockRenderer",
     "compat.sodium.MixinBlockRenderTask",
+    "compat.sodium.MixinClonedChunkSection",
     "compat.sodium.MixinLevelSlice",
     "compat.sodium.MixinNeoForgeModelAccess"
   ],
