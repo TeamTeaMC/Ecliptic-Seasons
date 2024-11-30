@@ -39,6 +39,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.ChunkAccess;
 import net.neoforged.neoforge.client.ChunkRenderTypeSet;
 import net.neoforged.neoforge.client.model.BakedModelWrapper;
 import net.neoforged.neoforge.client.model.data.ModelData;
@@ -698,7 +699,7 @@ public class ModelManager {
         } else {
             // ChunkInfoMap chunkMap = MapChecker.getChunkMap(level, pos);
 
-            int cacheHeight = mapSlice!=null?
+            int cacheHeight = mapSlice != null ?
                     mapSlice.getBlockHeight(pos)
                     : MapChecker.getHeightOrUpdate(level, pos, false);
 
@@ -711,13 +712,18 @@ public class ModelManager {
                         cacheHeight--;
                     } else {
                         for (Direction direction : Direction.Plane.HORIZONTAL) {
-                            int neighbourHeight = mapSlice!=null?
+                            int neighbourHeight = mapSlice != null ?
                                     mapSlice.getBlockHeight(pos.relative(direction)) : MapChecker.getHeightOrUpdate(level, pos.relative(direction), false);
-                            if (neighbourHeight == pos.getY() &&
-                                    // MapChecker.getBlockType(blockAndTintGetter.getBlockState(pos.above()), blockAndTintGetter, pos.above())
-                                    ((IBlockStateFlagger) blockAndTintGetter.getBlockState(pos.above())).getBlockTypeFlag(blockAndTintGetter, pos.above())
-                                            != MapChecker.FLAG_BLOCK) {
-                                cacheHeight = neighbourHeight;
+                            if (neighbourHeight == pos.getY()) {
+                                BlockPos above = pos.above();
+                                BlockState neighbourState = blockAndTintGetter.getBlockState(above);
+                                // 函数调用也是耗时
+                                int blockTypeFlag = ((IBlockStateFlagger) neighbourState).getBlockTypeFlag(blockAndTintGetter,above);
+                                if (blockTypeFlag != MapChecker.FLAG_BLOCK
+                                        && ! (neighbourState.getBlock() instanceof SlabBlock)
+                                        && ! (neighbourState.getBlock() instanceof StairBlock)) {
+                                    cacheHeight = neighbourHeight;
+                                }
                                 break;
                             }
                         }
@@ -732,7 +738,7 @@ public class ModelManager {
             if (ClientConfig.Renderer.snowyWinter.get()
                     && onBlock != Blocks.SNOW_BLOCK
                     && (MapChecker.shouldSnowAt(level, pos.below(offset), state, random, seed)
-                    || (mapSlice!=null
+                    || (mapSlice != null
                     && mapSlice.getSnowyStatus(pos) == SnowyRemover.SnowyFlag.SNOWY_ALWAYS.ordinal()))
                 // && (mapSlice!=null?
                 // MapChecker.shouldSnowAt(level, pos.below(offset),mapSlice.getSurfaceFaceBiomeId(pos), state, random, seed):
@@ -741,8 +747,8 @@ public class ModelManager {
                 boolean isSnowy = true;
 
                 if (ClientConfig.Renderer.notSnowyNearGlowingBlock.get()) {
-                    if (mapSlice!=null
-                            && mapSlice.getSnowyStatus(pos)==SnowyRemover.SNOWY) {
+                    if (mapSlice != null
+                            && mapSlice.getSnowyStatus(pos) == SnowyRemover.SNOWY) {
                         BlockPos above = pos.offset(0, 1 - offset, 0);
                         if (blockAndTintGetter.getBrightness(LightLayer.BLOCK, above) >=
                                 ClientConfig.Renderer.notSnowyNearGlowingBlockLevel.getAsInt()) {
