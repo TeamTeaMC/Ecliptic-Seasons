@@ -12,6 +12,7 @@ import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.common.advancement.SolarTermsRecord;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
+import com.teamtea.eclipticseasons.common.core.map.SnowyRemover;
 import com.teamtea.eclipticseasons.common.handler.SolarUtil;
 import com.teamtea.eclipticseasons.common.network.message.BiomeWeatherMessage;
 import com.teamtea.eclipticseasons.common.network.message.EmptyMessage;
@@ -223,6 +224,17 @@ public class WeatherManager {
             for (BiomeWeather biomeWeather : ws) {
                 if (biome == biomeWeather.biomeHolder.value()) {
                     if (biomeWeather.shouldClear()) return Biome.Precipitation.NONE;
+
+                    // check attach
+                    // SnowyRemover snowyRemover = level.getChunk(pos).getData(EclipticSeasons.ModContents.SNOWY_REMOVER);
+                    // if (snowyRemover != null) {
+                    //     SnowyRemover.SnowyFlag snowyFlag = snowyRemover.getSnowyFlag(pos);
+                    //     if (snowyFlag == SnowyRemover.SnowyFlag.NONE_SNOWY)
+                    //         return Biome.Precipitation.RAIN;
+                    //     else if (snowyFlag == SnowyRemover.SnowyFlag.SNOWY_ALWAYS)
+                    //         return Biome.Precipitation.SNOW;
+                    // }
+
                     var solarTerm = EclipticUtil.getNowSolarTerm(level);
                     var snowTerm = SolarTerm.getSnowTerm(biome);
                     boolean flag_cold = solarTerm.isInTerms(snowTerm.getStart(), snowTerm.getEnd());

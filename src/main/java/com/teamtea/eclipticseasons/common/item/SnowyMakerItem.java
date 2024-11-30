@@ -166,17 +166,18 @@ public class SnowyMakerItem extends Item {
                 data = new SnowyRemover(ints1);
                 chunk.setData(EclipticSeasons.ModContents.SNOWY_REMOVER, data);
 
-                // var distance =
-                //         (serverLevel.getServer() instanceof DedicatedServer dedicatedServer ?
-                //                 dedicatedServer.getProperties().viewDistance :
-                //                 Minecraft.getInstance().options.renderDistance().get())
-                //                 * 16;
-                // var players = serverLevel.getPlayers(
-                //         serverPlayer -> {
-                //             var onPos = serverPlayer.getOnPos();
-                //             return onPos.distToCenterSqr(worldPosition.getCenter()) < distance;
-                //         }
-                // );
+                var distance =
+                        (serverLevel.getServer() instanceof DedicatedServer dedicatedServer ?
+                                dedicatedServer.getProperties().viewDistance :
+                                Minecraft.getInstance().options.renderDistance().get())
+                                * 16;
+                var players = serverLevel.getPlayers(
+                        serverPlayer -> {
+                            var onPos = new ChunkPos(serverPlayer.getOnPos());
+                            return Mth.sqrt(Mth.square(chunkPos.x - onPos.x) + Mth.square(chunkPos.z - onPos.z))
+                                    < distance + 0.1f;
+                        }
+                );
 
                 List<Integer> ys = new ArrayList<>();
                 List<BlockPos> blockPoss = new ArrayList<>();
@@ -190,7 +191,7 @@ public class SnowyMakerItem extends Item {
                     }
                 }
 
-                for (ServerPlayer player : serverLevel.players()) {
+                for (ServerPlayer player : players) {
                     MapChecker.sendChunkInfo(chunk, chunkPos, player, ys, blockPoss);
                 }
 
@@ -266,7 +267,7 @@ public class SnowyMakerItem extends Item {
 
                 // just set one chunk dirty would not re compile chunk render cache
                 for (ServerPlayer player : players) {
-                    MapChecker.sendChunkInfo(chunk, chunkPos, player, List.of( sk), List.of(newPos));
+                    MapChecker.sendChunkInfo(chunk, chunkPos, player, List.of(sk), List.of(newPos));
                 }
 
                 if (data.allSnowAble()) {
