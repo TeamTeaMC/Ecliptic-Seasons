@@ -15,7 +15,7 @@ public class ClimateTypeBiomeTags {
     public static final TagKey<Biome> DROUGHTY = create("droughty");
     public static final TagKey<Biome> SOFT = create("soft");
     public static final TagKey<Biome> RAINY = create("rainy");
-    public static final List<TagKey<Biome>> BIOME_TYPES = List.of(SEASONAL, MONSOONAL, RAINLESS, ARID, DROUGHTY, SOFT, RAINY);
+    public static final List<TagKey<Biome>> BIOME_TYPES = List.of(RAINLESS, ARID, DROUGHTY, SOFT, RAINY, MONSOONAL, SEASONAL);
     public static final List<TagKey<Biome>> COMMON_BIOME_TYPES = List.of(RAINLESS, ARID, DROUGHTY, SOFT, RAINY);
 
     public static final TagKey<Biome> IS_SMALL = ClimateTypeBiomeTags.create("is_small");

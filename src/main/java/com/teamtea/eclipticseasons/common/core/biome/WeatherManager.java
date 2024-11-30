@@ -215,8 +215,13 @@ public class WeatherManager {
         return false;
     }
 
+    // TODO：这里好像没法解决黑名单群系，得想办法那里不代理
     public static Biome.Precipitation getRainOrSnow(Level level, Biome biome, BlockPos pos) {
         if (!MapChecker.isValidDimension(level)) {
+            // return Biome.Precipitation.NONE;
+            return Biome.Precipitation.NONE;
+        }
+        if (!biome.hasPrecipitation()) {
             return Biome.Precipitation.NONE;
         }
         var ws = getBiomeList(level);

@@ -318,13 +318,14 @@ public class MapChecker {
                                 .orElse(null);
     }
 
-    // TODO：检查污染情况
+    // TODO：检查污染情况，这里使用生成时内容
     public static Holder<Biome> getSurfaceBiome(Level level, BlockPos pos) {
         // fix the pos to surface
-        int y = getHeight(level, pos) + 1;
-        if (y > level.getMaxBuildHeight()) {
-            y = (level.getHeight(Heightmap.Types.MOTION_BLOCKING, pos.getX(), pos.getZ()));
-        }
+        // int y = getHeight(level, pos) + 1;
+        // if (y > level.getMaxBuildHeight()) {
+        //     y = (level.getHeight(Heightmap.Types.WORLD_SURFACE_WG, pos.getX(), pos.getZ()));
+        // }
+        int y=  (level.getHeight(Heightmap.Types.WORLD_SURFACE_WG, pos.getX(), pos.getZ()));
         if (y != pos.getY()) {
             pos = new BlockPos(pos.getX(), y, pos.getZ());
         }
