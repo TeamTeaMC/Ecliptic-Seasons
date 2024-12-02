@@ -67,3 +67,9 @@ optimize chunk renderer query efficiency
 * fix cache problem with simple snowy block when reload resource
 
 0.7.3
+add a config to hide crop planting info
+fix where incorrectly tagged biomes were marked as impossible to rain.
+fix grass flower model
+fix snowy block render when not in fancy render
+fix rain drop in biome which would never rain if using command
+fix snow term in hot biomes if close to the baseline
