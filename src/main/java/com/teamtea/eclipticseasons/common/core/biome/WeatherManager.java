@@ -450,7 +450,7 @@ public class WeatherManager {
             SolarHolders.getSaveDataLazy(serverPlayer.level()).ifPresent(t ->
             {
                 SimpleNetworkHandler.send(serverPlayer, new SolarTermsMessage(t.getSolarTermsDay()));
-                if (isLogged&& MapChecker.isValidDimension(serverPlayer.level())
+                if (isLogged && MapChecker.isValidDimension(serverPlayer.level())
                         && t.getSolarTermsDay() % ServerConfig.Season.lastingDaysOfEachTerm.get() == 0) {
                     serverPlayer.sendSystemMessage(Component.translatable("info.eclipticseasons.environment.solar_term.message", SolarTerm.get(t.getSolarTermIndex()).getAlternationText()), false);
                 }
@@ -589,7 +589,8 @@ public class WeatherManager {
             var snowTerm = SolarTerm.getSnowTerm(biome);
             boolean flag_cold = solarTerm.isInTerms(snowTerm.getStart(), snowTerm.getEnd());
             if (flag_cold) {
-                if (isRainingOrSnowAtBiome(level, biome)) {
+                // 为了呼应之前的修改，这里设置为有预测
+                if (biome.hasPrecipitation() && isRainingOrSnowAtBiome(level, biome)) {
                     status = SnowRenderStatus.SNOW;
                 }
             } else {
