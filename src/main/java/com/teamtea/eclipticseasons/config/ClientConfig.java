@@ -7,21 +7,31 @@ public class ClientConfig {
     public static final ForgeConfigSpec CLIENT_CONFIG = new ForgeConfigSpec.Builder().configure(ClientConfig::new).getRight();
 
     protected ClientConfig(ForgeConfigSpec.Builder builder) {
+        Debug.load(builder);
         GUI.load(builder);
         Renderer.load(builder);
         Sound.load(builder);
         Particle.load(builder);
         Weather.load(builder);
     }
-
-    public static class GUI {
+    public static class Debug {
 
         public static ForgeConfigSpec.BooleanValue debugInfo;
 
         private static void load(ForgeConfigSpec.Builder builder) {
-            builder.push("GUI");
+            builder.push("Debug");
             debugInfo = builder.comment("Info used for development.")
                     .define("DebugInfo", false);
+            builder.pop();
+        }
+    }
+    public static class GUI {
+
+        public static ForgeConfigSpec.BooleanValue agriculturalInformation;
+        private static void load(ForgeConfigSpec.Builder builder) {
+            builder.push("GUI");
+            agriculturalInformation = builder.comment("Displays the season and humidity levels suitable for growing crops.")
+                    .define("AgriculturalInformation", true);
             builder.pop();
         }
     }

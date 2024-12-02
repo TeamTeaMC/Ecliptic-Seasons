@@ -30,7 +30,7 @@ public final class OverlayEventHandler {
             // if (event.getType() == RenderGameOverlayEvent.ElementType.ALL)
             // if(event.getOverlay().id().getPath().equals("all"))
             {
-                if (ClientConfig.GUI.debugInfo.get()
+                if (ClientConfig.Debug.debugInfo.get()
                         // || !FMLEnvironment.production
                 )
                 {

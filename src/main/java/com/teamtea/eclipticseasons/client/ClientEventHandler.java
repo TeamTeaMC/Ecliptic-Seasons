@@ -62,7 +62,8 @@ public final class ClientEventHandler {
 
     @SubscribeEvent
     public static void addTooltips(ItemTooltipEvent event) {
-        if (event.getItemStack().getItem() instanceof BlockItem) {
+        if (ClientConfig.GUI.agriculturalInformation.get()
+                && event.getItemStack().getItem() instanceof BlockItem) {
             if (ServerConfig.Crop.enableCropHumidityControl.get()) {
                 if (CropInfoManager.getHumidityCrops().contains(((BlockItem) event.getItemStack().getItem()).getBlock())) {
                     CropHumidityInfo info = CropInfoManager.getHumidityInfo(((BlockItem) event.getItemStack().getItem()).getBlock());
@@ -77,6 +78,7 @@ public final class ClientEventHandler {
             }
         }
     }
+
     @SubscribeEvent
     public static void onChunkUnloadEvent(ChunkEvent.Unload event) {
         if (event.getLevel() instanceof ClientLevel clientLevel) {

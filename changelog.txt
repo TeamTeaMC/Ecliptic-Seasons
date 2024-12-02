@@ -65,3 +65,5 @@ optimize particle spawn
 optimize chunk renderer query efficiency
 * fix snowy simple glass renderer
 * fix cache problem with simple snowy block when reload resource
+
+0.7.3
