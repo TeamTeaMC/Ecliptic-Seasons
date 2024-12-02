@@ -125,9 +125,19 @@ public class AllListener {
     @SubscribeEvent
     public static void onPlayerChangedDimension(PlayerEvent.Clone event) {
         if (event.getEntity() instanceof ServerPlayer serverPlayer) {
-            WeatherManager.onLoggedIn(serverPlayer, false);
+            // WeatherManager.onLoggedIn(serverPlayer, false);
+            Thread t=new Thread(()-> {
+                // try {
+                //     Thread.sleep(100);
+                // } catch (InterruptedException ignored) {
+                // }
+                WeatherManager.onLoggedIn(serverPlayer, false);
+            });
+            t.start();
+
         }
     }
+
     @SubscribeEvent
     public static void onCropGrowUp(BlockEvent.CropGrowEvent.Pre event) {
         CropGrowthHandler.beforeCropGrowUp(event);

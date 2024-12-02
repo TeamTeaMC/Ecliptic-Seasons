@@ -224,6 +224,9 @@ public class WeatherManager {
         if (!MapChecker.isValidDimension(level)) {
             return Biome.Precipitation.NONE;
         }
+        if (!biome.hasPrecipitation()) {
+            return Biome.Precipitation.NONE;
+        }
         var ws = getBiomeList(level);
         if (ws != null)
             for (BiomeWeather biomeWeather : ws) {
@@ -447,8 +450,7 @@ public class WeatherManager {
             SolarHolders.getSaveDataLazy(serverPlayer.level()).ifPresent(t ->
             {
                 SimpleNetworkHandler.send(serverPlayer, new SolarTermsMessage(t.getSolarTermsDay()));
-                if (isLogged
-
+                if (isLogged&& MapChecker.isValidDimension(serverPlayer.level())
                         && t.getSolarTermsDay() % ServerConfig.Season.lastingDaysOfEachTerm.get() == 0) {
                     serverPlayer.sendSystemMessage(Component.translatable("info.eclipticseasons.environment.solar_term.message", SolarTerm.get(t.getSolarTermIndex()).getAlternationText()), false);
                 }
