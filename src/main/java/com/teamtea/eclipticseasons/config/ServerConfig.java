@@ -10,7 +10,19 @@ public class ServerConfig {
         Weather.load(builder);
         Temperature.load(builder);
         Crop.load(builder);
+        Compat.load(builder);
         Debug.load(builder);
+    }
+
+    public static class Compat {
+        public static ForgeConfigSpec.BooleanValue sereneSeasons;
+
+        private static void load(ForgeConfigSpec.Builder builder) {
+            builder.push("Compat");
+            sereneSeasons = builder.comment("Compatible with mods using SereneSeasons' CropTag.")
+                    .define("SereneSeasonsCropTag", true);
+            builder.pop();
+        }
     }
 
     public static class Debug {
@@ -63,6 +75,7 @@ public class ServerConfig {
         public static ForgeConfigSpec.BooleanValue enableCrop;
         public static ForgeConfigSpec.DoubleValue cropGrowChanceInWrongSeason;
         public static ForgeConfigSpec.BooleanValue enableCropHumidityControl;
+        public static ForgeConfigSpec.BooleanValue useDefaultValue;
 
         private static void load(ForgeConfigSpec.Builder builder) {
             builder.push("Crop");
@@ -72,6 +85,8 @@ public class ServerConfig {
                     .defineInRange("CropGrowChanceInWrongSeason", 0.25, 0, 1);
             enableCropHumidityControl = builder.comment("Enable crop humidity control.")
                     .define("EnableCropHumidityControl", true);
+            useDefaultValue = builder.comment("If a crop is not registered for a season or humid type, default values will be used.")
+                    .define("UseDefaultValue", false);
             builder.pop();
         }
     }

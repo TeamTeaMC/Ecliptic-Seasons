@@ -28,9 +28,8 @@ public final class ESBlockTagProvider extends BlockTagsProvider {
         tag(EclipticBlockTags.HABITAT_BUTTERFLY).addTag(BlockTags.FLOWERS);
         tag(EclipticBlockTags.HABITAT_FIREFLY).addTag(BlockTags.SMALL_FLOWERS).add(Blocks.GRASS, Blocks.TALL_GRASS);
 
-        tag(CropSeasonType.SUMMER.getBlockTag()).addOptional(fd_rl("tomatoes"));
-        tag(CropHumidityType.AVERAGE_MOIST.getBlockTag()).addOptional(fd_rl("tomatoes"));
 
+        tag(CropHumidityType.AVERAGE_MOIST.getBlockTag()).addOptional(fd_rl("tomatoes"));
     }
 
 

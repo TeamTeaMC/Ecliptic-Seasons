@@ -1,9 +1,5 @@
 {
   "values": [
-    "minecraft:sweet_berries",
-    {
-      "id": "croptopia:sweetpotato_seed",
-      "required": false
-    }
+    "minecraft:sweet_berries"
   ]
 }

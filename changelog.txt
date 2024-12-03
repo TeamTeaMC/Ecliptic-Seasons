@@ -73,3 +73,6 @@ fix grass flower model
 fix snowy block render when not in fancy render
 fix rain drop in biome which would never rain if using command
 fix snow term in hot biomes if close to the baseline
+
+0.7.4
+support season crop tag for Serene Seasons
