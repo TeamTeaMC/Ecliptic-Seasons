@@ -17,8 +17,22 @@ public class ServerConfig {
         Temperature.load(builder);
         Crop.load(builder);
         Animal.load(builder);
-        Debug.load(builder);
         Map.load(builder);
+
+        Compat.load(builder);
+        Debug.load(builder);
+
+    }
+
+    public static class Compat {
+        public static ModConfigSpec.BooleanValue sereneSeasons;
+
+        private static void load(ModConfigSpec.Builder builder) {
+            builder.push("Compat");
+            sereneSeasons = builder.comment("Compatible with mods using SereneSeasons' CropTag.")
+                    .define("SereneSeasonsCropTag", true);
+            builder.pop();
+        }
     }
 
     public static class Debug {
@@ -75,11 +89,11 @@ public class ServerConfig {
             enableInform = builder.comment("Enable solar term change inform.")
                     .define("EnableInform", true);
 
-            validDimensions=builder.comment("Which dimensions will have season effects? Note that it must be natrual and have time lapse.")
+            validDimensions = builder.comment("Which dimensions will have season effects? Note that it must be natrual and have time lapse.")
                     .defineListAllowEmpty("ValidDimensions",
-                    () -> List.of(Level.OVERWORLD.location().toString()),
-                    () -> Level.OVERWORLD.location().toString(),
-                    o -> o instanceof String s && ResourceLocation.tryParse(s) != null);
+                            () -> List.of(Level.OVERWORLD.location().toString()),
+                            () -> Level.OVERWORLD.location().toString(),
+                            o -> o instanceof String s && ResourceLocation.tryParse(s) != null);
             builder.pop();
         }
     }
@@ -90,6 +104,8 @@ public class ServerConfig {
         public static ModConfigSpec.BooleanValue enableCrop;
         public static ModConfigSpec.DoubleValue cropGrowChanceInWrongSeason;
         public static ModConfigSpec.BooleanValue enableCropHumidityControl;
+        public static ModConfigSpec.BooleanValue useDefaultValue;
+
 
         private static void load(ModConfigSpec.Builder builder) {
             builder.push("Crop");
@@ -99,6 +115,8 @@ public class ServerConfig {
                     .defineInRange("CropGrowChanceInWrongSeason", 0.25, 0, 1);
             enableCropHumidityControl = builder.comment("Enable crop humidity control.")
                     .define("EnableCropHumidityControl", true);
+            useDefaultValue = builder.comment("If a crop is not registered for a season or humid type, default values will be used.")
+                    .define("UseDefaultValue", false);
             builder.pop();
         }
     }

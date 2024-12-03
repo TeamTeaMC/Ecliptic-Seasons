@@ -28,6 +28,7 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.BlockItem;
@@ -61,6 +62,7 @@ public final class ClientEventHandler {
         if(BiomeColorsHandler.needRefresh){
             BiomeColorsHandler.reloadColors();
         }
+
     }
 
     @SubscribeEvent

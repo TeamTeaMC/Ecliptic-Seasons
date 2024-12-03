@@ -1,49 +1,5 @@
 {
   "values": [
-    "minecraft:bamboo",
-    {
-      "id": "croptopia:cauliflower_seed",
-      "required": false
-    },
-    {
-      "id": "croptopia:broccoli_seed",
-      "required": false
-    },
-    {
-      "id": "croptopia:corn_seed",
-      "required": false
-    },
-    {
-      "id": "croptopia:cucumber_seed",
-      "required": false
-    },
-    {
-      "id": "croptopia:currant_seed",
-      "required": false
-    },
-    {
-      "id": "croptopia:eggplant_seed",
-      "required": false
-    },
-    {
-      "id": "croptopia:grape_seed",
-      "required": false
-    },
-    {
-      "id": "croptopia:hops_seed",
-      "required": false
-    },
-    {
-      "id": "croptopia:kale_seed",
-      "required": false
-    },
-    {
-      "id": "croptopia:olive_seed",
-      "required": false
-    },
-    {
-      "id": "croptopia:peanut_seed",
-      "required": false
-    }
+    "minecraft:bamboo"
   ]
 }

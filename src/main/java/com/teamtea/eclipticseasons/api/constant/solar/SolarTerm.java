@@ -129,7 +129,7 @@ public enum SolarTerm {
         if (biome == null) return SnowTerm.T05;
         // float t = BiomeClimateManager.agent$GetBaseTemperature(biome);
         float t = biome.getModifiedClimateSettings().temperature();
-        if (t > 1 + 0.001f) {
+        if (t > 0.95 + 0.001f) {
             return SnowTerm.T1;
         } else if (t > 0.8 + 0.001f) {
             return SnowTerm.T08;
@@ -160,7 +160,7 @@ public enum SolarTerm {
         if (biome == null) return SnowTerm.T05;
         // float t = BiomeClimateManager.getDefaultTemperature(biome, isServer);
         float t =biome.getModifiedClimateSettings().temperature();
-        if (t > 1 + 0.001f) {
+        if (t > 0.95 + 0.001f) {
             return SnowTerm.T1;
         } else if (t > 0.8 + 0.001f) {
             return SnowTerm.T08;

@@ -34,7 +34,6 @@ public final class ESBlockTagProvider extends BlockTagsProvider {
                 .addTag(BlockTags.SNOW_LAYER_CANNOT_SURVIVE_ON);
 
 
-        tag(CropSeasonType.SUMMER.getBlockTag()).addOptional(fd_rl("tomatoes"));
         tag(CropHumidityType.AVERAGE_MOIST.getBlockTag()).addOptional(fd_rl("tomatoes"));
 
     }

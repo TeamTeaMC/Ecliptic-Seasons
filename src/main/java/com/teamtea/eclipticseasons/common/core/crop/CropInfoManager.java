@@ -6,13 +6,19 @@ import com.teamtea.eclipticseasons.api.constant.crop.CropHumidityInfo;
 import com.teamtea.eclipticseasons.api.constant.crop.CropHumidityType;
 import com.teamtea.eclipticseasons.api.constant.crop.CropSeasonInfo;
 import com.teamtea.eclipticseasons.api.constant.crop.CropSeasonType;
+import com.teamtea.eclipticseasons.config.ServerConfig;
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
@@ -23,14 +29,37 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.TagsUpdatedEvent;
 
 import javax.annotation.Nullable;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @EventBusSubscriber(modid = EclipticSeasonsApi.MODID)
 public final class CropInfoManager {
     private final static Map<Block, CropHumidityInfo> CROP_HUMIDITY_INFO = new HashMap<>();
     private final static Map<Block, CropSeasonInfo> CROP_SEASON_INFO = new HashMap<>();
+
+    private static final TagKey<Block> ss1 = createBlockTag("sereneseasons", "spring_crops");
+    private static final TagKey<Block> ss2 = createBlockTag("sereneseasons", "summer_crops");
+    private static final TagKey<Block> ss3 = createBlockTag("sereneseasons", "autumn_crops");
+    private static final TagKey<Block> ss4 = createBlockTag("sereneseasons", "winter_crops");
+
+    private static final TagKey<Block> SERENE_SEASONS_UNBREAKABLE_FERTILE_CROPS = createBlockTag("sereneseasons", "unbreakable_infertile_crops");
+
+    private static final TagKey<Item> ssi1 = createItemTag("sereneseasons", "spring_crops");
+    private static final TagKey<Item> ssi2 = createItemTag("sereneseasons", "summer_crops");
+    private static final TagKey<Item> ssi3 = createItemTag("sereneseasons", "autumn_crops");
+    private static final TagKey<Item> ssi4 = createItemTag("sereneseasons", "winter_crops");
+
+    private static final List<Integer> seasonInfoList = List.of(1, 2, 4, 8);
+    private static final List<TagKey<Block>> ss_blockList = List.of(ss1, ss2, ss3, ss4);
+    private static final List<TagKey<Item>> ss_itemList = List.of(ssi1, ssi2, ssi3, ssi4);
+
+
+    private static TagKey<Item> createItemTag(String modId, String path) {
+        return ItemTags.create(ResourceLocation.fromNamespaceAndPath(modId, path));
+    }
+
+    private static TagKey<Block> createBlockTag(String modId, String path) {
+        return BlockTags.create(ResourceLocation.fromNamespaceAndPath(modId, path));
+    }
 
 
     @SubscribeEvent
@@ -38,7 +67,9 @@ public final class CropInfoManager {
         CROP_HUMIDITY_INFO.clear();
         CROP_SEASON_INFO.clear();
 
-        var items = event.getRegistryAccess().registry(Registries.ITEM);
+        Optional<Registry<Item>> items = event.getRegistryAccess().registry(Registries.ITEM);
+        Optional<Registry<Block>> blocks = event.getRegistryAccess().registry(Registries.BLOCK);
+
         if (items.isPresent()) {
             for (CropHumidityType cropHumidityType : CropHumidityType.values()) {
                 var tagItems = items.get().getTag(ItemTags.create(cropHumidityType.getRes()));
@@ -54,7 +85,6 @@ public final class CropInfoManager {
             }
         }
 
-        var blocks = event.getRegistryAccess().registry(Registries.BLOCK);
         if (blocks.isPresent()) {
             for (CropHumidityType cropHumidityType : CropHumidityType.values()) {
                 var tagBlocks = blocks.get().getTag(BlockTags.create(cropHumidityType.getRes()));
@@ -71,11 +101,69 @@ public final class CropInfoManager {
         }
         // event.getRegistryAccess().registry(Registries.BLOCK).get().getTagNames().toList();
 
+        if (ServerConfig.Compat.sereneSeasons.getAsBoolean()) {
+            registerForSS(blocks, Registries.BLOCK);
+            registerForSS(items, Registries.ITEM);
+        }
 
-        BuiltInRegistries.BLOCK.forEach(block ->
-        {
-            registerCropHumidityInfo(block, CropHumidityType.AVERAGE_MOIST, false);
-            registerCropSeasonInfo(block, CropSeasonType.SP_SU_AU, false);
+        if (ServerConfig.Crop.useDefaultValue.getAsBoolean()) {
+            BuiltInRegistries.BLOCK.forEach(block ->
+            {
+                registerCropHumidityInfo(block, CropHumidityType.AVERAGE_MOIST, false);
+                registerCropSeasonInfo(block, CropSeasonType.SP_SU_AU, false);
+            });
+        }
+
+    }
+
+    public static <T> void registerForSS(Optional<Registry<T>> blocks, ResourceKey<Registry<T>> registryResourceKey) {
+        blocks.ifPresent(blocks1 -> {
+            List<List<T>> nameBlockList = new ArrayList<>();
+
+            List<TagKey<T>> useTag = registryResourceKey.equals(Registries.BLOCK) ?
+                    (List) ss_blockList : (List) ss_itemList;
+            for (TagKey<T> blockTagKey : useTag) {
+                Optional<HolderSet.Named<T>> tag = Optional.empty();
+                tag = blocks1.getTag(blockTagKey);
+                tag.ifPresent(holders -> nameBlockList.add(holders.stream().map(Holder::value).toList()));
+            }
+
+            List<T> nameBlockSet = new ArrayList<>(new HashSet<>(nameBlockList.stream()
+                    .flatMap(Collection::stream)
+                    .toList()));
+
+            for (T t : nameBlockSet) {
+                int season = 0;
+                for (int i = 0; i < nameBlockList.size(); i++) {
+                    if (nameBlockList.get(i).contains(t)) {
+                        season += seasonInfoList.get(i);
+                    }
+                }
+                Block block = null;
+                if (t instanceof Block) {
+                    block = (Block) t;
+                } else if (t instanceof BlockItem) {
+                    block = ((BlockItem) t).getBlock();
+                }
+
+                if (block != null && !CROP_SEASON_INFO.containsKey(block)) {
+                    CROP_SEASON_INFO.put(block, new CropSeasonInfo(season));
+                }
+
+                if(ServerConfig.Crop.useDefaultValue.getAsBoolean()) {
+                    if (block != null && !CROP_HUMIDITY_INFO.containsKey(block)) {
+                        CropHumidityType humid;
+                        if (season == 1) {
+                            humid = CropHumidityType.AVERAGE_HUMID;
+                        } else if (season == 5) {
+                            humid = CropHumidityType.AVERAGE_MOIST;
+                        } else humid = CropHumidityType.DRY_HUMID;
+
+                        CROP_HUMIDITY_INFO.put(block, humid.getInfo());
+                    }
+                }
+            }
+
         });
     }
 

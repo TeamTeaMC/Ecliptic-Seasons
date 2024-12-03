@@ -2,18 +2,6 @@
   "values": [
     "minecraft:potato",
     "minecraft:beetroot_seeds",
-    "minecraft:carrot",
-    {
-      "id": "farmersdelight:cabbage_seeds",
-      "required": false
-    },
-    {
-      "id": "farmersdelight:onion",
-      "required": false
-    },
-    {
-      "id": "croptopia:chile_pepper_seed",
-      "required": false
-    }
+    "minecraft:carrot"
   ]
 }

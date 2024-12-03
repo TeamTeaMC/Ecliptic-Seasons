@@ -31,5 +31,6 @@ public class TagsDataProvider extends TagsProvider<Biome> {
         tag(ClimateTypeBiomeTags.RAINY).addTags(Tags.Biomes.IS_JUNGLE);
         tag(ClimateTypeBiomeTags.IS_SMALL).addTags(Tags.Biomes.IS_RIVER);
 
+
     }
 }
