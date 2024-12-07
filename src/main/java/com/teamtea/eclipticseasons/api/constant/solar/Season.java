@@ -2,10 +2,10 @@ package com.teamtea.eclipticseasons.api.constant.solar;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 
 
-public enum Season
-{
+public enum Season {
     SPRING(ChatFormatting.DARK_GREEN),
     SUMMER(ChatFormatting.RED),
     AUTUMN(ChatFormatting.GOLD),
@@ -14,23 +14,29 @@ public enum Season
 
     private final ChatFormatting color;
 
-    Season(ChatFormatting color)
-    {
+    Season(ChatFormatting color) {
         this.color = color;
     }
 
-    public String getName()
-    {
+    public String getName() {
         return this.toString().toLowerCase();
     }
 
-    public Component getTranslation()
-    {
+    public MutableComponent getTranslation() {
         return Component.translatable("info.eclipticseasons.environment.season." + getName()).withStyle(color);
     }
 
-    public ChatFormatting getColor()
-    {
+    public ChatFormatting getColor() {
         return color;
+    }
+
+    @Override
+    public String toString() {
+        return super.toString();
+    }
+
+    private static final Season[] seasons = Season.values();
+    public static Season[] collectValues() {
+        return seasons;
     }
 }

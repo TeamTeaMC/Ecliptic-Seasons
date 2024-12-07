@@ -1,6 +1,6 @@
-package com.teamtea.eclipticseasons.api.constant.solar.color;
+package com.teamtea.eclipticseasons.api.constant.solar.color.base;
 
-import com.teamtea.eclipticseasons.client.core.ColorHelper;
+import com.teamtea.eclipticseasons.client.util.ColorHelper;
 import net.minecraft.world.level.FoliageColor;
 
 
@@ -47,7 +47,7 @@ public enum TemperateSolarTermColors  implements SolarTermColor
     {
         this.temperateColor = temperateColorIn;
         this.temperateMix = temperateMixIn;
-        this.birchColor = ColorHelper.simplyMixColor(birchColorIn, birchAlphaIn, FoliageColor.getBirchColor(), 1.0F - birchAlphaIn);
+        this.birchColor = ColorHelper.simplyMixColor(birchColorIn, birchAlphaIn, FoliageColor.getDefaultColor(), 1.0F - birchAlphaIn);
     }
     
 
@@ -55,7 +55,8 @@ public enum TemperateSolarTermColors  implements SolarTermColor
     {
         this.temperateColor = temperateColorIn;
         this.temperateMix = temperateMix;
-        this.birchColor = FoliageColor.getBirchColor();
+        // this.birchColor = FoliageColor.getBirchColor();
+        this.birchColor = FoliageColor.getDefaultColor();
     }
     
     
@@ -65,7 +66,7 @@ public enum TemperateSolarTermColors  implements SolarTermColor
     }
    
     @Override
-    public int getColor() {
+    public int getGrassColor() {
         return temperateColor;
     }
 
@@ -75,8 +76,13 @@ public enum TemperateSolarTermColors  implements SolarTermColor
     }
 
     @Override
-    public int getBirchColor()
+    public int getLeaveColor()
     {
         return birchColor;
+    }
+
+    private static final TemperateSolarTermColors[] values = TemperateSolarTermColors.values();
+    public static TemperateSolarTermColors[] collectValues() {
+        return values;
     }
 }

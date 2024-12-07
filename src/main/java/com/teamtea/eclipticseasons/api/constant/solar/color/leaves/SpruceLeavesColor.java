@@ -55,4 +55,9 @@ public enum SpruceLeavesColor implements LeaveColor {
     public float getMix() {
         return mix*1.2f;
     }
+
+    private static final SpruceLeavesColor[] values = SpruceLeavesColor.values();
+    public static SpruceLeavesColor[] collectValues() {
+        return values;
+    }
 }

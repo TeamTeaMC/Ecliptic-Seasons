@@ -1,7 +1,7 @@
-package com.teamtea.eclipticseasons.api.constant.solar.color;
+package com.teamtea.eclipticseasons.api.constant.solar.color.base;
 
 
-public enum NoneSolarTermColors implements SolarTermColor {
+public enum SlightlySolarTermColors implements SolarTermColor {
     // Spring Solar Terms
     BEGINNING_OF_SPRING(),
     RAIN_WATER(),
@@ -38,22 +38,27 @@ public enum NoneSolarTermColors implements SolarTermColor {
     private final float ratio;
 
 
-    NoneSolarTermColors(float ratio) {
+    SlightlySolarTermColors(float ratio) {
         this.ratio = ratio;
     }
 
-    NoneSolarTermColors() {
-        this.ratio = 0;
+    SlightlySolarTermColors() {
+        this.ratio = 0.1f;
     }
 
+    private static final SlightlySolarTermColors[] values = SlightlySolarTermColors.values();
 
-    public static NoneSolarTermColors get(int index) {
-        return values()[index];
+    public static SlightlySolarTermColors[] collectValues() {
+        return values;
+    }
+
+    public static SlightlySolarTermColors get(int index) {
+        return collectValues()[index];
     }
 
     @Override
-    public int getColor() {
-        return TemperateSolarTermColors.get(this.ordinal()).getColor();
+    public int getGrassColor() {
+        return TemperateSolarTermColors.get(this.ordinal()).getGrassColor();
     }
 
     @Override
@@ -62,7 +67,7 @@ public enum NoneSolarTermColors implements SolarTermColor {
     }
 
     @Override
-    public int getBirchColor() {
-        return TemperateSolarTermColors.get(this.ordinal()).getBirchColor();
+    public int getLeaveColor() {
+        return TemperateSolarTermColors.get(this.ordinal()).getLeaveColor();
     }
 }

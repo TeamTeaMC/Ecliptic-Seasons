@@ -76,3 +76,7 @@ fix snow term in hot biomes if close to the baseline
 
 0.7.4
 support season crop tag for Serene Seasons
+
+0.7.5
+adjust the growth rate of crops in unsuitable humidity levels so that when the humidity is too far from the required, the growth will slow down instead of stopping.
+add enum values cache for some class

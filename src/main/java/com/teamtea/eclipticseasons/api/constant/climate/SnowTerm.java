@@ -33,4 +33,8 @@ public enum SnowTerm {
     public SolarTerm getEnd() {
         return end;
     }
+
+    public boolean maySnow(SolarTerm solarTerm) {
+        return solarTerm.isInTerms(getStart(),getEnd());
+    }
 }

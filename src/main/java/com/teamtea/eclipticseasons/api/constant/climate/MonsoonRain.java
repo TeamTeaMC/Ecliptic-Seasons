@@ -69,10 +69,15 @@ public enum MonsoonRain implements BiomeRain {
 
     @Override
     public SolarTerm getSolarTerm() {
-        return SolarTerm.values()[this.ordinal()];
+        return SolarTerm.collectValues()[this.ordinal()];
     }
     @Override
     public Season getSeason() {
-        return Season.values()[this.ordinal() / 6];
+        return Season.collectValues()[this.ordinal() / 6];
+    }
+
+    private static final MonsoonRain[] values = MonsoonRain.values();
+    public static MonsoonRain[] collectValues() {
+        return values;
     }
 }

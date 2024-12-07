@@ -1,6 +1,6 @@
-package com.teamtea.eclipticseasons.api.constant.solar.color;
+package com.teamtea.eclipticseasons.api.constant.solar.color.base;
 
-import com.teamtea.eclipticseasons.client.core.ColorHelper;
+import com.teamtea.eclipticseasons.client.util.ColorHelper;
 import net.minecraft.world.level.FoliageColor;
 
 
@@ -45,29 +45,35 @@ public enum RainySolarTermColors implements SolarTermColor {
     RainySolarTermColors(int rainyColorIn, float rainyMixIn, int birchColorIn, float birchAlphaIn) {
         this.rainyColor = rainyColorIn;
         this.rainyMix = rainyMixIn;
-        this.birchColor = ColorHelper.simplyMixColor(birchColorIn, birchAlphaIn, FoliageColor.getBirchColor(), 1.0F - birchAlphaIn);
+        this.birchColor = ColorHelper.simplyMixColor(birchColorIn, birchAlphaIn, FoliageColor.getDefaultColor(), 1.0F - birchAlphaIn);
     }
 
     RainySolarTermColors(int rainyColorIn, float rainyMixIn) {
         this.rainyColor = rainyColorIn;
         this.rainyMix = rainyMixIn;
-        this.birchColor = FoliageColor.getBirchColor();
+        this.birchColor = FoliageColor.getDefaultColor();
     }
 
     RainySolarTermColors() {
 
         this.rainyColor = 0;
         this.rainyMix = 0;
-        this.birchColor = FoliageColor.getBirchColor();
+        this.birchColor = FoliageColor.getDefaultColor();
     }
 
 
+    private static final RainySolarTermColors[] values = RainySolarTermColors.values();
+
+    public static RainySolarTermColors[] collectValues() {
+        return values;
+    }
+
     public static RainySolarTermColors get(int index) {
-        return values()[index];
+        return collectValues()[index];
     }
 
     @Override
-    public int getColor() {
+    public int getGrassColor() {
         return rainyColor;
     }
 
@@ -77,7 +83,9 @@ public enum RainySolarTermColors implements SolarTermColor {
     }
 
     @Override
-    public int getBirchColor() {
+    public int getLeaveColor() {
         return birchColor;
     }
+
+
 }

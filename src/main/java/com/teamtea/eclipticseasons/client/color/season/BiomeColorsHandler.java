@@ -6,10 +6,10 @@ import com.teamtea.eclipticseasons.api.constant.solar.color.leaves.LeaveColor;
 import com.teamtea.eclipticseasons.api.constant.solar.color.leaves.MangroveLeavesColor;
 import com.teamtea.eclipticseasons.api.constant.solar.color.leaves.SpruceLeavesColor;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
-import com.teamtea.eclipticseasons.api.constant.solar.color.SolarTermColor;
+import com.teamtea.eclipticseasons.api.constant.solar.color.base.SolarTermColor;
 import com.teamtea.eclipticseasons.api.constant.tag.ClimateTypeBiomeTags;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
-import com.teamtea.eclipticseasons.client.core.ColorHelper;
+import com.teamtea.eclipticseasons.client.util.ColorHelper;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
@@ -107,7 +107,7 @@ public class BiomeColorsHandler {
                             if (colorInfo.getMix() == 0.0F) {
                                 newFoliageBuffer[i] = originColor;
                             } else {
-                                newFoliageBuffer[i] = ColorHelper.simplyMixColor(colorInfo.getBirchColor(), colorInfo.getMix(), originColor, 1.0F - colorInfo.getMix());
+                                newFoliageBuffer[i] = ColorHelper.simplyMixColor(colorInfo.getLeaveColor(), colorInfo.getMix(), originColor, 1.0F - colorInfo.getMix());
                             }
                         }
 
@@ -116,7 +116,7 @@ public class BiomeColorsHandler {
                             if (colorInfo.getMix() == 0.0F) {
                                 newGrassBuffer[i] = originColor;
                             } else {
-                                newGrassBuffer[i] = ColorHelper.simplyMixColor(colorInfo.getColor(), colorInfo.getMix(), originColor, 1.0F - colorInfo.getMix());
+                                newGrassBuffer[i] = ColorHelper.simplyMixColor(colorInfo.getGrassColor(), colorInfo.getMix(), originColor, 1.0F - colorInfo.getMix());
                             }
                         }
                         newFoliageBufferMap.put(biomeTagKey, newFoliageBuffer);
@@ -131,19 +131,19 @@ public class BiomeColorsHandler {
 
     // 当天气变得寒冷时，云杉可能会显得稍微暗淡一些。
     public static int getSpruceColor(BlockState state, BlockAndTintGetter blockAndTintGetter, BlockPos pos, int tintIndex) {
-        return getLeavesColor(FoliageColor.getEvergreenColor(), SpruceLeavesColor.values(), pos);
+        return getLeavesColor(FoliageColor.getEvergreenColor(), SpruceLeavesColor.collectValues(), pos);
     }
 
     // 白桦在秋季通常会变色。它的叶子从绿色变成黄色或金色，有时甚至带有橙色的色调
     public static int getBirchColor(BlockState state, BlockAndTintGetter blockAndTintGetter, BlockPos pos, int tintIndex) {
         // if (pos==null)return FoliageColor.getBirchColor();
 
-        return getLeavesColor(FoliageColor.getBirchColor(), BirchLeavesColor.values(), pos);
+        return getLeavesColor(FoliageColor.getBirchColor(), BirchLeavesColor.collectValues(), pos);
     }
 
     // 通常不会经历明显的季节性颜色变化，但是红树很难接受低温，这里因此可以改一下颜色,暗绿色或带棕色调
     public static int getMangroveColor(BlockState state, BlockAndTintGetter blockAndTintGetter, BlockPos pos, int tintIndex) {
-        return getLeavesColor(FoliageColor.getMangroveColor(), MangroveLeavesColor.values(), pos);
+        return getLeavesColor(FoliageColor.getMangroveColor(), MangroveLeavesColor.collectValues(), pos);
     }
 
 
