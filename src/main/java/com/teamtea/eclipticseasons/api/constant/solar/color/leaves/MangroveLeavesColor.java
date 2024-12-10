@@ -55,4 +55,9 @@ public enum MangroveLeavesColor implements LeaveColor {
     public float getMix() {
         return mix;
     }
+
+    private static final MangroveLeavesColor[] values = MangroveLeavesColor.values();
+    public static MangroveLeavesColor[] collectValues() {
+        return values;
+    }
 }

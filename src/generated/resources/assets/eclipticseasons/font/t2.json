@@ -1,0 +1,14 @@
+{
+  "providers": [
+    {
+      "type": "bitmap",
+      "ascent": 8,
+      "chars": [
+        "abcd",
+        "efg\u0000"
+      ],
+      "file": "eclipticseasons:font/t2.png",
+      "height": 9
+    }
+  ]
+}

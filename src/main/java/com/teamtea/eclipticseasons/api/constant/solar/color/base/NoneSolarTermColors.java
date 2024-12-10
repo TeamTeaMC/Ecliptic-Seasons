@@ -47,8 +47,14 @@ public enum NoneSolarTermColors implements SolarTermColor {
     }
 
 
+    private static final NoneSolarTermColors[] values = NoneSolarTermColors.values();
+
+    public static NoneSolarTermColors[] collectValues() {
+        return values;
+    }
+
     public static NoneSolarTermColors get(int index) {
-        return values()[index];
+        return collectValues()[index];
     }
 
     @Override

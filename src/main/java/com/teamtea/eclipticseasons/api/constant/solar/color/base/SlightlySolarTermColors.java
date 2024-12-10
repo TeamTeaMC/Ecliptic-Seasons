@@ -46,9 +46,14 @@ public enum SlightlySolarTermColors implements SolarTermColor {
         this.ratio = 0.1f;
     }
 
+    private static final SlightlySolarTermColors[] values = SlightlySolarTermColors.values();
+
+    public static SlightlySolarTermColors[] collectValues() {
+        return values;
+    }
 
     public static SlightlySolarTermColors get(int index) {
-        return values()[index];
+        return collectValues()[index];
     }
 
     @Override

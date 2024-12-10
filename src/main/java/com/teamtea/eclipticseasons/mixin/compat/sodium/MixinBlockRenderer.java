@@ -24,7 +24,7 @@ public abstract class MixinBlockRenderer extends AbstractBlockRenderContext impl
     public SodiumBoard eclipticSeasons$chunkBuilderMeshingTask;
 
     @Unique
-    private static final Iterator<Object> EMPTY_ITER= Collections.emptyIterator();
+    private static final Iterator<Object> EMPTY_ITER = Collections.emptyIterator();
 
     @ModifyExpressionValue(
             remap = false,
@@ -38,15 +38,14 @@ public abstract class MixinBlockRenderer extends AbstractBlockRenderContext impl
     ) {
         BakedModel snowModel = null;
         if (!original) {
-            snowModel = ModelManager.findModel(slice, pos, state, random,randomSeed);
+            snowModel = ModelManager.findModel(slice, pos, state, random, randomSeed);
             if (eclipticSeasons$chunkBuilderMeshingTask != null)
                 eclipticSeasons$chunkBuilderMeshingTask.eclipticSeasons$addCount();
         } else {
             // if (ModelManager.isModelReplaceable(state))
-            if (ModelManager.isModelReplaceable(((IBlockStateFlagger) state).getBlockTypeFlag(level,pos)))
-            {
+            if (ModelManager.isModelReplaceable(((IBlockStateFlagger) state).getBlockTypeFlag(level, pos))) {
 
-                snowModel = ModelManager.findModel(slice, pos, state, random,randomSeed);
+                snowModel = ModelManager.findModel(slice, pos, state, random, randomSeed);
                 if (eclipticSeasons$chunkBuilderMeshingTask != null)
                     eclipticSeasons$chunkBuilderMeshingTask.eclipticSeasons$addCount();
             }

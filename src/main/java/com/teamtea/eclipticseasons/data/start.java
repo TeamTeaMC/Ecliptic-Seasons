@@ -3,6 +3,7 @@ package com.teamtea.eclipticseasons.data;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.data.advancement.Advancements;
+import com.teamtea.eclipticseasons.data.font.ESFontProvider;
 import com.teamtea.eclipticseasons.data.lang.Lang_EN;
 import com.teamtea.eclipticseasons.data.lang.Lang_ZH;
 import com.teamtea.eclipticseasons.data.loot.EclipticSeasonsLootTableProvider;
@@ -52,6 +53,7 @@ public class start {
             generator.addProvider(event.includeClient(), new BlockStatesDataProvider(packOutput, helper));
             generator.addProvider(event.includeClient(), new ESItemModelProvider(packOutput, MODID, helper));
             generator.addProvider(event.includeClient(), new ESBlockModelProvider(packOutput, MODID, helper));
+            generator.addProvider(event.includeClient(), new ESFontProvider(packOutput, MODID, helper));
 
         }
 

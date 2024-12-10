@@ -1,6 +1,7 @@
 package com.teamtea.eclipticseasons.api.constant.solar.color.leaves;
 
 
+import com.teamtea.eclipticseasons.api.constant.solar.color.base.TemperateSolarTermColors;
 import com.teamtea.eclipticseasons.client.util.ColorHelper;
 
 public enum BirchLeavesColor implements LeaveColor {
@@ -59,5 +60,10 @@ public enum BirchLeavesColor implements LeaveColor {
     public float getMix() {
         return mix;
         // return 1;
+    }
+
+    private static final BirchLeavesColor[] values = BirchLeavesColor.values();
+    public static BirchLeavesColor[] collectValues() {
+        return values;
     }
 }

@@ -1,6 +1,11 @@
 package com.teamtea.eclipticseasons.api.util;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
+import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
+import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.fml.loading.FMLLoader;
 
 import java.io.File;
@@ -16,11 +21,11 @@ import java.util.Optional;
 // for other mod use
 public class SimpleUtil {
     public static long testTime(Runnable runnable) {
-        long time = System.currentTimeMillis();
-        for (int i = 0; i < 100000 * 100; i++) {
+        long time = System.nanoTime();
+        for (int zzz = 0; zzz < 100000 * 100; zzz++) {
             runnable.run();
         }
-        long l = System.currentTimeMillis() - time;
+        long l = (System.nanoTime() - time)/1000000;
         EclipticSeasons.logger(l);
         return l;
     }
@@ -51,6 +56,24 @@ public class SimpleUtil {
             strings.add(getModUse(i));
         }
         return new ArrayList<>(new HashSet<>(strings));
+    }
+
+
+    public static MutableComponent addSolarIconBefore(SolarTerm solarTerm, MutableComponent mutableComponent) {
+        // we need do a backup
+        if(FMLEnvironment.production)
+            return mutableComponent;
+
+        Style noBitstyle = mutableComponent.getStyle()
+                .withFont(mutableComponent.getStyle().getFont());
+        return Component.literal("\uE010")
+                .withStyle(Style.EMPTY.withFont(EclipticSeasons.rl("test")))
+                .append(Component.literal(" ")
+                        .withStyle(noBitstyle)
+                        .append(mutableComponent))
+                // .append(mutableComponent.withStyle(noBitstyle))
+                ;
+
     }
 
 }

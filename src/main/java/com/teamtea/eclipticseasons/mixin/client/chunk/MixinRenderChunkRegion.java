@@ -1,12 +1,15 @@
 package com.teamtea.eclipticseasons.mixin.client.chunk;
 
 
+import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.misc.client.IMapSlice;
 import com.teamtea.eclipticseasons.common.core.map.ChunkInfoMap;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
+import com.teamtea.eclipticseasons.common.core.map.SnowyRemover;
 import net.minecraft.client.renderer.chunk.RenderChunkRegion;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.chunk.ChunkAccess;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -88,5 +91,11 @@ public abstract class MixinRenderChunkRegion implements IMapSlice {
     @Override
     public int getSurfaceFaceBiomeId(BlockPos blockPos) {
         return MapChecker.getSurfaceOrUpdate(level, blockPos, false, ChunkInfoMap.TYPE_BIOME);
+    }
+
+    @Override
+    public int getSnowyStatus(BlockPos blockPos) {
+        return level.getChunk(blockPos) instanceof ChunkAccess chunkAccess
+                ?  chunkAccess.getData(EclipticSeasons.ModContents.SNOWY_REMOVER).getSnowyFlag(blockPos).ordinal():SnowyRemover.SNOWY ;
     }
 }

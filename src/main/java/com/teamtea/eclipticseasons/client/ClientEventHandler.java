@@ -2,9 +2,11 @@ package com.teamtea.eclipticseasons.client;
 
 
 import com.mojang.blaze3d.vertex.*;
+import com.mojang.datafixers.util.Either;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
+import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.client.color.season.BiomeColorsHandler;
 import com.teamtea.eclipticseasons.client.map.ClientMapFixer;
@@ -20,7 +22,14 @@ import com.teamtea.eclipticseasons.config.ServerConfig;
 import com.teamtea.eclipticseasons.common.core.crop.CropInfoManager;
 import com.teamtea.eclipticseasons.api.constant.crop.CropSeasonInfo;
 import com.teamtea.eclipticseasons.api.constant.crop.CropHumidityInfo;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.GuiMessageTag;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.font.providers.BitmapProvider;
+import net.minecraft.client.gui.screens.ChatScreen;
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.block.BlockModelShaper;
@@ -29,19 +38,20 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.FormattedText;
+import net.minecraft.network.chat.Style;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.InventoryMenu;
+import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.client.event.AddSectionGeometryEvent;
-import net.neoforged.neoforge.client.event.ClientTickEvent;
-import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
-import net.neoforged.neoforge.client.event.ViewportEvent;
+import net.neoforged.neoforge.client.event.*;
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.neoforged.neoforge.client.model.data.ModelData;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
@@ -59,7 +69,7 @@ public final class ClientEventHandler {
         if (Minecraft.getInstance().player != null) {
             WorldRenderer.applyEffect(Minecraft.getInstance().gameRenderer, Minecraft.getInstance().player);
         }
-        if(BiomeColorsHandler.needRefresh){
+        if (BiomeColorsHandler.needRefresh) {
             BiomeColorsHandler.reloadColors();
         }
 
@@ -67,6 +77,7 @@ public final class ClientEventHandler {
 
     @SubscribeEvent
     public static void addTooltips(ItemTooltipEvent event) {
+
         if (event.getItemStack().getItem() instanceof BlockItem) {
             if (ClientConfig.GUI.agriculturalInformation.getAsBoolean()) {
                 if (ServerConfig.Crop.enableCropHumidityControl.get()) {
@@ -85,11 +96,69 @@ public final class ClientEventHandler {
         }
     }
 
+    public static class ccc implements ClientTooltipComponent {
+
+        public ccc(mccc ccc) {
+        }
+
+        @Override
+        public int getHeight() {
+            return 18;
+        }
+
+        @Override
+        public int getWidth(Font font) {
+            return 16;
+        }
+
+        @Override
+        public void renderImage(Font font, int x, int y, GuiGraphics guiGraphics) {
+            guiGraphics.renderItem(Items.APPLE.getDefaultInstance(), x+0, y+1, 0);
+        }
+    }
+
+
+    public static class mccc implements TooltipComponent {
+        public mccc() {
+
+        }
+    }
+    
+    @SubscribeEvent
+    public static void addTooltips(RenderTooltipEvent.GatherComponents event) {
+
+        // https://codepen.io/devbobcorn/full/YzZMZvV
+        // TODO:试试自定义bitmap font
+        if (event.getItemStack().getItem() instanceof BlockItem) {
+            if (ClientConfig.GUI.agriculturalInformation.getAsBoolean()) {
+                if (ServerConfig.Crop.enableCropHumidityControl.get()) {
+                    if (CropInfoManager.getHumidityCrops().contains(((BlockItem) event.getItemStack().getItem()).getBlock())) {
+                        CropHumidityInfo info = CropInfoManager.getHumidityInfo(((BlockItem) event.getItemStack().getItem()).getBlock());
+                        if (info != null) {
+
+                            // event.getTooltipElements().add(event.getTooltipElements().size()-1,Either.right(new mccc()));
+
+                        }
+                    }
+                }
+                if (ServerConfig.Crop.enableCrop.get()) {
+                    if (CropInfoManager.getSeasonCrops().contains(((BlockItem) event.getItemStack().getItem()).getBlock())) {
+                        CropSeasonInfo info = CropInfoManager.getSeasonInfo(((BlockItem) event.getItemStack().getItem()).getBlock());
+                        if (info != null) {
+
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     @SubscribeEvent
     public static void onChunkUnloadEvent(ChunkEvent.Unload event) {
         if (event.getLevel().isClientSide()) {
             ClientMapFixer.clearChunk(event.getChunk().getPos());
             CompilerCollector.clearChunk(event.getChunk().getPos());
+
         }
     }
 
@@ -125,6 +194,7 @@ public final class ClientEventHandler {
     }
 
     private static long lastFreshTime = -1;
+
     @SubscribeEvent
     public static void onLevelTick(LevelTickEvent.Post event) {
         if (event.getLevel() instanceof ClientLevel clientLevel) {
@@ -132,7 +202,15 @@ public final class ClientEventHandler {
             ClientMapFixer.tick(clientLevel);
             ClientCon.tick(clientLevel);
 
-
+            // Minecraft.getInstance().player.sendSystemMessage(
+            //         SolarTerm.BEGINNING_OF_AUTUMN.getAlternationText().withStyle(Style.EMPTY)
+            //                 .append(Component.literal("\uE010")
+            //                         .withStyle(ChatFormatting.WHITE)
+            //                                .withStyle(Style.EMPTY.withFont(EclipticSeasons.rl("test")))
+            //                         .append(  SolarTerm.BEGINNING_OF_AUTUMN.getTranslation()
+            //                                 .withStyle(SolarTerm.BEGINNING_OF_AUTUMN.getSeason().getColor())
+            //                                 .withStyle(Style.EMPTY.withFont(Style.DEFAULT_FONT))))
+            // );
 
             if (ClientConfig.Renderer.forceChunkRenderUpdate.get()) {
                 if (clientLevel.getGameTime() - lastFreshTime > 80

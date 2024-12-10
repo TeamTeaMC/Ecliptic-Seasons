@@ -1,5 +1,6 @@
 package com.teamtea.eclipticseasons.common.core.biome;
 
+import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.constant.tag.ClimateTypeBiomeTags;
 import net.minecraft.core.BlockPos;
@@ -96,7 +97,9 @@ public class BiomeClimateManager {
 
     public static TagKey<Biome> getTag(Biome biome) {
         // return getTag(WeatherManager.getMainServerLevel(), biome);
-        return BIOME_TAG_KEY_MAP.getOrDefault(biome, CLIENT_BIOME_TAG_KEY_MAP.getOrDefault(biome, ClimateTypeBiomeTags.RAINLESS));
+        TagKey<Biome> biomeTagKey = CLIENT_BIOME_TAG_KEY_MAP.getOrDefault(biome, null);
+        if (biomeTagKey != null) return biomeTagKey;
+        return BIOME_TAG_KEY_MAP.getOrDefault(biome, ClimateTypeBiomeTags.RAINLESS);
     }
 
     // Clear it on client exit a level

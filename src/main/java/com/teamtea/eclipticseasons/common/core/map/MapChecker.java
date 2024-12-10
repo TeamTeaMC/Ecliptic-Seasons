@@ -36,6 +36,7 @@ public class MapChecker {
     public static final int ChunkSizeLoc = ChunkSize - 1;
     public static final int ChunkSizeAxis = 4 + 5;
 
+    public static final List<Level> validDimension = new ArrayList<>();
     public static final Map<Level, List<ChunkInfoMap>> REGION_LIST_COLLECTOR = new IdentityHashMap<>();
     public static List<ChunkInfoMap> CLIENT_REGION_LIST = new ArrayList<>();
     public static final int FLAG_NONE = 0;
@@ -63,6 +64,7 @@ public class MapChecker {
 
         dirtyList.clear();
         // updateLock = false;
+        validDimension.removeIf(level1 -> level1 == level);
     }
 
     public static boolean unloadChunk(Level level, ChunkPos chunkPos) {
@@ -199,9 +201,11 @@ public class MapChecker {
                 value = map.getBiome(pos);
                 if (value == -1 || forceUpdate) {
                     if (level.isLoaded(pos)) {
-                        var rh = level.registryAccess().registryOrThrow(Registries.BIOME).getId(level.getBiome(pos).value());
-                        map.updateBiome(pos, rh);
-                        value = rh;
+                        var biomeHolder = level.getBiome(pos);
+                        // TODO: 调查清楚两者区别
+                        // var biomeHolder = level.getChunk(pos).getNoiseBiome(pos.getX(),pos.getY(),pos.getZ());
+                        value = level.registryAccess().registryOrThrow(Registries.BIOME).getId(biomeHolder.value());
+                        map.updateBiome(pos, value);
                     } else {
                         value = level.registryAccess().registry(Registries.BIOME).get().getId(Biomes.THE_VOID);
                     }
@@ -231,7 +235,8 @@ public class MapChecker {
                 map.updateHeight(pos, value);
             } else if (type == ChunkInfoMap.TYPE_BIOME) {
                 if (level.isLoaded(pos)) {
-                    value = level.registryAccess().registryOrThrow(Registries.BIOME).getId(level.getBiome(pos).value());
+                    var biomeHolder = level.getBiome(pos);
+                    value = level.registryAccess().registryOrThrow(Registries.BIOME).getId(biomeHolder.value());
                     map.updateBiome(pos, value);
                 }
             }
@@ -321,18 +326,43 @@ public class MapChecker {
     // TODO：检查污染情况，这里使用生成时内容
     public static Holder<Biome> getSurfaceBiome(Level level, BlockPos pos) {
         // fix the pos to surface
-        int y = getHeight(level, pos) + 1;
-        if (y > level.getMaxBuildHeight()) {
-            y = (level.getHeight(Heightmap.Types.MOTION_BLOCKING, pos.getX(), pos.getZ()));
+
+        ChunkInfoMap chunkMap1 = getChunkMap(level, pos);
+
+        Holder<Biome> biome = null;
+        int bid = 0;
+        if (chunkMap1 != null) {
+            int y = chunkMap1.getHeight(pos);
+            if (y <= chunkMap1.getMinY()) {
+                y = getHeight(level, pos) + 1;
+            }
+            if (y > level.getMaxBuildHeight()) {
+                y = (level.getHeight(Heightmap.Types.MOTION_BLOCKING, pos.getX(), pos.getZ()));
+                pos = new BlockPos(pos.getX(), y, pos.getZ());
+            }
+            bid = chunkMap1.getBiome(pos);
+            if (bid > -1) {
+                biome = idToBiome(level, bid);
+            }
         }
 
-        // int y=  (level.getHeight(Heightmap.Types.WORLD_SURFACE_WG, pos.getX(), pos.getZ()))-1;
-        // if (y != pos.getY()) {
-        //     pos = new BlockPos(pos.getX(), y, pos.getZ());
+        if (biome == null) {
+            int y = getHeight(level, pos) + 1;
+            if (y > level.getMaxBuildHeight()) {
+                y = (level.getHeight(Heightmap.Types.MOTION_BLOCKING, pos.getX(), pos.getZ()));
+                pos = new BlockPos(pos.getX(), y, pos.getZ());
+            }
+            bid = getSurfaceOrUpdate(level, pos, false, ChunkInfoMap.TYPE_BIOME);
+            biome = idToBiome(level, bid);
+        }
+
+        // TODO：这个情况真的很离谱，暂时难以确定为啥会返回平原，只能怀疑是缺省值，这里做一个二次确认。
+        // if (biome.is(Biomes.PLAINS)) {
+        //     // EclipticSeasons.logger(level.getBiome(pos));
+        //     bid = getSurfaceOrUpdate(level, pos, true, ChunkInfoMap.TYPE_BIOME);
+        //     biome = idToBiome(level, bid);
         // }
 
-        int bid = getSurfaceOrUpdate(level, pos, false, ChunkInfoMap.TYPE_BIOME);
-        var biome = idToBiome(level, bid);
         int i = 0;
         while (isSmallBiome(biome)) {
             i += 1;
@@ -362,6 +392,10 @@ public class MapChecker {
         //             }
         //         }
         //     }
+        // }
+
+        // if(biome.is(Biomes.PLAINS)){
+        //     EclipticSeasons.logger(level.getBiome(pos));
         // }
         return biome;
     }
@@ -514,10 +548,18 @@ public class MapChecker {
 
 
     public static boolean isValidDimension(@Nullable Level level) {
-        return level != null
+        boolean result = level != null
                 && level.dimensionType().natural()
-                && !level.dimensionType().hasFixedTime()
-                && ServerConfig.Season.validDimensions.get().contains(level.dimension().location().toString());
+                && !level.dimensionType().hasFixedTime();
+        if (result) {
+            for (int i = 0; i < validDimension.size(); i++) {
+                if (validDimension.get(i) == level) return true;
+            }
+            // for (Level value : validDimension) {
+            //     if (value == level) return true;
+            // }
+        }
+        return false;
     }
 
     public static void sendChunkInfo(LevelChunk chunk, ChunkPos chunkPos, ServerPlayer player, List<Integer> section_y, List<BlockPos> clickedPos) {

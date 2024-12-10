@@ -1,5 +1,6 @@
 package com.teamtea.eclipticseasons.api.constant.solar.color.base;
 
+import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.client.util.ColorHelper;
 import net.minecraft.world.level.FoliageColor;
 
@@ -79,5 +80,10 @@ public enum TemperateSolarTermColors  implements SolarTermColor
     public int getLeaveColor()
     {
         return birchColor;
+    }
+
+    private static final TemperateSolarTermColors[] values = TemperateSolarTermColors.values();
+    public static TemperateSolarTermColors[] collectValues() {
+        return values;
     }
 }

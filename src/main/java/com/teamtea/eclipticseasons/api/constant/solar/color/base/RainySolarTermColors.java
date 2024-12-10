@@ -62,8 +62,14 @@ public enum RainySolarTermColors implements SolarTermColor {
     }
 
 
+    private static final RainySolarTermColors[] values = RainySolarTermColors.values();
+
+    public static RainySolarTermColors[] collectValues() {
+        return values;
+    }
+
     public static RainySolarTermColors get(int index) {
-        return values()[index];
+        return collectValues()[index];
     }
 
     @Override
@@ -80,4 +86,6 @@ public enum RainySolarTermColors implements SolarTermColor {
     public int getLeaveColor() {
         return birchColor;
     }
+
+
 }

@@ -69,7 +69,7 @@ public class CommandHandler {
                                                 // e.printStackTrace();
                                             }
                                             String finalPre = pre;
-                                            Arrays.stream(SolarTerm.values())
+                                            Arrays.stream(SolarTerm.collectValues())
                                                     .filter(solarTerm -> solarTerm != SolarTerm.NONE)
                                                     .map(Enum::toString)
                                                     .filter(s -> s.contains(finalPre)).forEach(builder::suggest);

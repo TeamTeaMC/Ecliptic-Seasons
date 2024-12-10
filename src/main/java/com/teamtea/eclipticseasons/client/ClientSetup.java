@@ -34,6 +34,10 @@ import java.util.stream.Collectors;
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class ClientSetup {
 
+    @SubscribeEvent
+    public static void addTooltips(RegisterClientTooltipComponentFactoriesEvent event) {
+        event.register(ClientEventHandler.mccc.class, ClientEventHandler.ccc::new);
+    }
 
     @SubscribeEvent
     public static void blockRegister(RegisterParticleProvidersEvent event) {

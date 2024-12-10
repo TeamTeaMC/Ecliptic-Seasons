@@ -2,6 +2,7 @@ package com.teamtea.eclipticseasons.client.render.ber;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.common.block.base.SimpleHorizontalEntityBlock;
@@ -10,8 +11,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -72,14 +75,22 @@ public class CalendarBlockEntityRenderer implements BlockEntityRenderer<Calendar
 
         float extraHeight = 0f;
 
+        matrixStackIn.translate(0, -0.125f/2f, 0);
         matrixStackIn.translate(x, y, z + 0.74f);
+        matrixStackIn.pushPose();
         matrixStackIn.scale(scale_x, scale_y, scale_z);
         fontRenderer.drawInBatch(label
                 , (float) (-textWidth) / 2.0F, -18F - lh * 1.2f * line - 1.2f * extraHeight, color, false, matrixStackIn.last().pose(), txtBuffer, Font.DisplayMode.NORMAL, 0, combinedLightIn);
         // txtBuffer.endBatch();
+        matrixStackIn.popPose();
 
+        VertexConsumer builder = txtBuffer.getBuffer(RenderType.entitySmoothCutout(EclipticSeasons.rl("textures/font/t2.png")));
+        // matrixStackIn.scale(20, 20, 20);
+        matrixStackIn.scale(0.2f, 0.2f, 0.2f);
+        blitRect(matrixStackIn, builder, combinedLightIn, OverlayTexture.NO_OVERLAY, 5.5f, -10, 0, 0, 10, 10, 10, 10, false);
         matrixStackIn.popPose();
     }
+
 
 
     private void handleMatrixAngle(PoseStack matrixStackIn, LocalPlayer player, BlockPos pos, Direction d) {

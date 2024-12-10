@@ -104,6 +104,7 @@ public final class CropInfoManager {
         if (ServerConfig.Compat.sereneSeasons.getAsBoolean()) {
             registerForSS(blocks, Registries.BLOCK);
             registerForSS(items, Registries.ITEM);
+
         }
 
         if (ServerConfig.Crop.useDefaultValue.getAsBoolean()) {

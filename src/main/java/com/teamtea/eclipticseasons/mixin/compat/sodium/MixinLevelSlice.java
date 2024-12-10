@@ -104,6 +104,7 @@ public abstract class MixinLevelSlice implements IMapSlice {
                                                  CallbackInfo ci) {
         // 注意别切到没有的维度了
         if (MapChecker.isValidDimension(level)) {
+            int maxH=level.getMaxBuildHeight();
             BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos();
             // SnowyRemover snowyRemover = level.getChunk(context.getOrigin().x(), context.getOrigin().z()).getData(EclipticSeasons.ModContents.SNOWY_REMOVER.get());
 
@@ -148,12 +149,14 @@ public abstract class MixinLevelSlice implements IMapSlice {
                                         MapChecker.getHeight(level, mutableBlockPos);
                                 // we need to get new biome
                                 mutableBlockPos.setY(heights[index] + 1);
-                                if (mutableBlockPos.getY() > level.getMaxBuildHeight()) {
+                                if (mutableBlockPos.getY() > maxH) {
                                     mutableBlockPos.setY(level.getHeight(Heightmap.Types.MOTION_BLOCKING, mutableBlockPos.getX(), mutableBlockPos.getZ()));
                                 }
-                                int biomeId = chunkMap.getBiome(mutableBlockPos);
-                                biomes[index] = biomeId > -1 ? biomeId :
-                                        MapChecker.getSurfaceOrUpdate(level, mutableBlockPos, false, ChunkInfoMap.TYPE_BIOME);
+
+                                // TODO：需要检查为啥这里总存在查询问题。有时候会查到一个默认值平原
+                                // int biomeId = chunkMap.getBiome(mutableBlockPos);
+                                // biomes[index] = biomeId > -1 ? biomeId :
+                                //         MapChecker.getSurfaceOrUpdate(level, mutableBlockPos, false, ChunkInfoMap.TYPE_BIOME);
 
                                 snowys[index]=snowyRemover.blockWatcher()[x][z];
                             }
@@ -189,20 +192,26 @@ public abstract class MixinLevelSlice implements IMapSlice {
         }
     }
 
+    // TODO：存在缓存问题
+    // @Override
+    // public int getSurfaceFaceBiomeId(BlockPos pos) {
+    //     if (!this.volume.isInside(pos.getX(), pos.getY(), pos.getZ())) {
+    //         return 0;
+    //     } else {
+    //         int relBlockX = pos.getX() - this.originBlockX;
+    //         int relBlockZ = pos.getZ() - this.originBlockZ;
+    //         int[] lightArrays = this.BIOME_MAP[eclipticSeasons$getLocalSectionIndex(
+    //                 relBlockX >> 4,
+    //                 relBlockZ >> 4)];
+    //         int localBlockX = relBlockX & 15;
+    //         int localBlockZ = relBlockZ & 15;
+    //         return lightArrays[localBlockX * 16 + localBlockZ];
+    //     }
+    // }
+
     @Override
-    public int getSurfaceFaceBiomeId(BlockPos pos) {
-        if (!this.volume.isInside(pos.getX(), pos.getY(), pos.getZ())) {
-            return 0;
-        } else {
-            int relBlockX = pos.getX() - this.originBlockX;
-            int relBlockZ = pos.getZ() - this.originBlockZ;
-            int[] lightArrays = this.BIOME_MAP[eclipticSeasons$getLocalSectionIndex(
-                    relBlockX >> 4,
-                    relBlockZ >> 4)];
-            int localBlockX = relBlockX & 15;
-            int localBlockZ = relBlockZ & 15;
-            return lightArrays[localBlockX * 16 + localBlockZ];
-        }
+    public int getSurfaceFaceBiomeId(BlockPos blockPos) {
+        return MapChecker.getSurfaceOrUpdate(level, blockPos, false, ChunkInfoMap.TYPE_BIOME);
     }
 
     @Override

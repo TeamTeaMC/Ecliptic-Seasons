@@ -10,7 +10,7 @@ import net.minecraft.network.codec.StreamCodec;
 import java.util.ArrayList;
 
 public record SolarTermsRecord(ArrayList<SolarTerm> solarTerm) {
-    public static final int size = SolarTerm.values().length - 1;
+    public static final int size = SolarTerm.collectValues().length - 1;
     public static final Codec<SolarTermsRecord> CODEC = Codec.lazyInitialized(
             () -> RecordCodecBuilder.create(
                     solarHolderInstance ->
@@ -24,7 +24,7 @@ public record SolarTermsRecord(ArrayList<SolarTerm> solarTerm) {
 
                                     )
                                     .apply(solarHolderInstance, ss ->
-                                            new SolarTermsRecord(new ArrayList<>(ss.stream().map(i -> SolarTerm.values()[i])
+                                            new SolarTermsRecord(new ArrayList<>(ss.stream().map(i -> SolarTerm.collectValues()[i])
                                                     .toList()))
                                     )
             )
@@ -32,7 +32,7 @@ public record SolarTermsRecord(ArrayList<SolarTerm> solarTerm) {
     public static final StreamCodec<RegistryFriendlyByteBuf, SolarTermsRecord> STREAM_CODEC = new StreamCodec<>() {
         public SolarTermsRecord decode(RegistryFriendlyByteBuf byteBuf) {
             var intlist = byteBuf.readIntIdList();
-            return new SolarTermsRecord(new ArrayList<>(intlist.stream().map(i -> SolarTerm.values()[i])
+            return new SolarTermsRecord(new ArrayList<>(intlist.stream().map(i -> SolarTerm.collectValues()[i])
                     .toList()));
         }
 

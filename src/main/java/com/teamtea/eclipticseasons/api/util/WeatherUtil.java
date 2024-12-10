@@ -15,7 +15,7 @@ public class WeatherUtil {
             // if (WeatherManager.isRainingAt((ServerLevel) level, pos))
             // if (WeatherManager.getPrecipitationAt(level, MapChecker.getSurfaceBiome(level, pos).value(), pos) != Biome.Precipitation.NONE)
             //     return true;
-            if (WeatherManager.isRainingOrSnowAtBiome(level, MapChecker.getSurfaceBiome(level, pos).value()))
+            if (WeatherManager.isRainingOrSnowAtBiome(level, MapChecker.getSurfaceBiome(level, pos)))
                 return true;
         }
         return false;

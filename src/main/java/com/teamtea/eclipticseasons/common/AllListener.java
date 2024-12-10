@@ -43,6 +43,7 @@ public class AllListener {
     @SubscribeEvent
     public static void onServerAboutToStartEvent(ServerAboutToStartEvent event) {
         WeatherManager.BIOME_WEATHER_LIST.clear();
+        WeatherManager.BIOME_WEATHER_QUERY_LIST.clear();
         WeatherManager.NEXT_CHECK_BIOME_MAP.clear();
     }
 
@@ -73,12 +74,17 @@ public class AllListener {
             // 客户端登录时同步天气数据，此处先放入
             SolarHolders.createSaveData(serverLevel, SolarDataManager.get(serverLevel));
         }
+        if (event.getLevel() instanceof Level level) {
+            if (ServerConfig.Season.validDimensions.get().contains(level.dimension().location().toString()))
+                MapChecker.validDimension.add(level);
+        }
     }
 
     @SubscribeEvent
     public static void onLevelUnloadEvent(LevelEvent.Unload event) {
         if (event.getLevel() instanceof Level level) {
             WeatherManager.BIOME_WEATHER_LIST.remove(level);
+            WeatherManager.BIOME_WEATHER_QUERY_LIST.remove(level);
             SolarHolders.DATA_MANAGER_MAP.remove(level);
             MapChecker.unloadLevel(level);
             if (!level.isClientSide()) {
@@ -136,7 +142,7 @@ public class AllListener {
         if (event.getEntity() instanceof ServerPlayer serverPlayer) {
             // WeatherManager.onLoggedIn(serverPlayer, false);
             // 不知道为什么要多线程来避免问题
-            Thread t=new Thread(()-> {
+            Thread t = new Thread(() -> {
                 try {
                     Thread.sleep(100);
                 } catch (InterruptedException ignored) {

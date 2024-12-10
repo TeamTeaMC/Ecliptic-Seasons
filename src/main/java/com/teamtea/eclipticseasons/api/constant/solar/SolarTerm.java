@@ -65,13 +65,18 @@ public enum SolarTerm {
         return Component.translatable("info.eclipticseasons.environment.solar_term.alternation." + getName()).withStyle(getSeason().getColor());
     }
 
+    private static final SolarTerm[] solarTerms = SolarTerm.values();
+    public static SolarTerm[] collectValues() {
+        return solarTerms;
+    }
+
     public static SolarTerm get(int index) {
-        return values()[index];
+        return collectValues()[index];
     }
 
 
     public RainySolarTermColors getColorInfo() {
-        return RainySolarTermColors.values()[this.ordinal()];
+        return RainySolarTermColors.collectValues()[this.ordinal()];
     }
 
     public SolarTermColor getSolarTermColor(TagKey<Biome> biomeTagKey) {
@@ -86,9 +91,9 @@ public enum SolarTerm {
         } else if (biomeTagKey.equals(ClimateTypeBiomeTags.RAINY)) {
             return SlightlySolarTermColors.get(this.ordinal());
         } else if (biomeTagKey.equals(ClimateTypeBiomeTags.MONSOONAL)) {
-            return RainySolarTermColors.values()[this.ordinal()];
+            return RainySolarTermColors.collectValues()[this.ordinal()];
         } else if (biomeTagKey.equals(ClimateTypeBiomeTags.SEASONAL)) {
-            return TemperateSolarTermColors.values()[this.ordinal()];
+            return TemperateSolarTermColors.collectValues()[this.ordinal()];
         } else {
             return NoneSolarTermColors.get(this.ordinal());
         }
@@ -103,7 +108,7 @@ public enum SolarTerm {
     }
 
     public Season getSeason() {
-        return Season.values()[this.ordinal() / 6];
+        return Season.collectValues()[this.ordinal() / 6];
     }
 
 
@@ -119,9 +124,9 @@ public enum SolarTerm {
         } else if (biomeHolder.is(ClimateTypeBiomeTags.RAINY)) {
             return FlatRain.RAINY;
         } else if (biomeHolder.is(ClimateTypeBiomeTags.MONSOONAL)) {
-            return MonsoonRain.values()[this.ordinal()];
+            return MonsoonRain.collectValues()[this.ordinal()];
         } else {
-            return TemperateRain.values()[this.ordinal()];
+            return TemperateRain.collectValues()[this.ordinal()];
         }
     }
 
