@@ -8,15 +8,16 @@ import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.misc.IBlockStateFlagger;
 import com.teamtea.eclipticseasons.api.misc.client.IMapSlice;
 import com.teamtea.eclipticseasons.api.misc.client.ISnowyBlockState;
-import com.teamtea.eclipticseasons.api.util.SimpleUtil;
 import com.teamtea.eclipticseasons.client.model.BakedQuadRetextured;
 import com.teamtea.eclipticseasons.client.model.BakedQuadRetexturedAndReUV;
 import com.teamtea.eclipticseasons.client.model.RectangularPrismChecker;
+import com.teamtea.eclipticseasons.client.model.SnowyBakedModelWrapper;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.core.map.SnowyRemover;
 import com.teamtea.eclipticseasons.common.misc.LazyGet;
 import com.teamtea.eclipticseasons.compat.CompatModule;
+import com.teamtea.eclipticseasons.compat.yuushya.YuushyaChecker;
 import com.teamtea.eclipticseasons.config.ClientConfig;
 
 import com.teamtea.eclipticseasons.mixin.EclipticSeasonsMixinPlugin;
@@ -40,9 +41,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.chunk.ChunkAccess;
 import net.neoforged.neoforge.client.ChunkRenderTypeSet;
-import net.neoforged.neoforge.client.model.BakedModelWrapper;
 import net.neoforged.neoforge.client.model.data.ModelData;
 
 import java.util.*;
@@ -52,12 +51,7 @@ import java.util.*;
 // 未来可以基于RepositorySource实现动态纹理生成（看情况，因为目前不需要，对内存消耗比较大）
 public class ModelManager {
 
-    public static class SnowyBakedModelWrapper<T extends BakedModel> extends BakedModelWrapper<T> {
-        public SnowyBakedModelWrapper(T originalModel) {
-            super(originalModel);
-        }
-    }
-
+    public static List<BakedQuad> EMPTY_BAKED_QUAD_LIST = List.of();
     public static int loadVersion = 0;
 
     public static Map<ModelResourceLocation, BakedModel> models;
@@ -185,14 +179,29 @@ public class ModelManager {
     private final static List<BakedQuad> EMPTY = List.of();
 
     public static List<BakedQuad> cancelTop(BakedModel bakedModel, BlockAndTintGetter blockAndTintGetter, BlockState state, BlockPos pos, Direction direction, RandomSource random, long seed, List<BakedQuad> original) {
-        // if (true)
-        //     return original;
+        return cancelTop(bakedModel, blockAndTintGetter, state, pos, direction, random, seed, original, EMPTY_BAKED_QUAD_LIST);
+    }
+
+    public static List<BakedQuad> cancelTop(BakedModel bakedModel, BlockAndTintGetter blockAndTintGetter, BlockState state, BlockPos pos, Direction direction, RandomSource random, long seed, List<BakedQuad> original, List<BakedQuad> cache) {
+        if (YuushyaChecker.isyuushyaBlock(state)) {
+            // if (!(bakedModel instanceof SnowyBakedModelWrapper)) {
+            //     // return EMPTY;
+            //     int b=0;
+            // }
+            // else {
+            //     int a=0;
+            // }
+        }
+
         if (bakedModel != null && !original.isEmpty() && (direction == Direction.UP || direction == null)
                 && !(bakedModel instanceof SnowyBakedModelWrapper)
             // && snowyModelsCache.getOrDefault(bakedModel, -1) == -1
         ) {
             random.setSeed(seed);
+            // blockAndTintGetter 现在优化以后可以用来处理了
             BakedModel snowModel = ModelManager.findModel(blockAndTintGetter, pos, state, random, seed);
+
+            // TODO：neocontinuity 会把所有model给warp一层
             if (snowModel instanceof SnowyBakedModelWrapper)
             // snowModel != null
             // &&  snowyModelsCache.getOrDefault(snowModel, -1) > MapChecker.FLAG_NONE
@@ -204,6 +213,14 @@ public class ModelManager {
                     return original;
                 if (direction == Direction.UP) {
                     if (blockType == MapChecker.FLAG_BLOCK) return EMPTY;
+                }
+
+                // fabric 连接纹理用到了后处理，此处如果不返回给它就会停止渲染
+
+                if (YuushyaChecker.isyuushyaBlock(state)) {
+                    if (blockType == MapChecker.FLAG_STAIRS
+                            || blockType == MapChecker.FLAG_SLAB)
+                        return original;
                 }
 
                 if (original.size() == 1) {
@@ -240,7 +257,7 @@ public class ModelManager {
                 original = new ArrayList<>();
             }
 
-            boolean yuushyaBlock = CompatModule.isCTMLoad() && BuiltInRegistries.BLOCK.getKey(state.getBlock()).getNamespace().startsWith("yuushya");
+            boolean yuushyaBlock = YuushyaChecker.isyuushyaBlock(state);
 
             if ((blockType == MapChecker.FLAG_CUSTOM || yuushyaBlock)
                 // && state.toString().contains("stairs_a_cherry_blindwall")
@@ -249,19 +266,49 @@ public class ModelManager {
                 // 也许我们不需要这个，但是这样比较合适
                 if (yuushyaBlock && blockType == MapChecker.FLAG_STAIRS_TOP && state.getBlock() instanceof StairBlock)
                     return original;
+                // continuity裁剪面不一样
+                if (yuushyaBlock
+                        && blockType == MapChecker.FLAG_STAIRS
+                        && state.getBlock() instanceof StairBlock
+                ) {
+                    if (direction != Direction.UP) {
+                        return original;
+                    } else {
+                        if (!cache.isEmpty()) {
+                            cache = new ArrayList<>(cache);
+                            cache.removeIf(bakedQuad -> bakedQuad.getDirection() != Direction.UP);
+                        }
+                    }
+                }
                 // if(blockType==MapChecker.FLAG_STAIRS)
                 {
-                    if (blockType == MapChecker.FLAG_CUSTOM || blockType == MapChecker.FLAG_STAIRS || (direction != null && direction.ordinal() > 1)) {
-                        BakedModel bakedModelCTM = models.get(BlockModelShaper.stateToModelLocation(state));
-                        if (bakedModelCTM != null) {
-                            ModelData modelDataCTM = bakedModelCTM.getModelData(blockAndTintGetter, pos, state, ModelData.EMPTY);
-                            random.setSeed(seed);
-                            ChunkRenderTypeSet renderTypes = bakedModelCTM.getRenderTypes(state, random, modelDataCTM);
-                            ArrayList<BakedQuad> quadsCTM = new ArrayList<>();
-                            for (RenderType renderType : renderTypes.asList()) {
+                    if (blockType == MapChecker.FLAG_CUSTOM
+                            || blockType == MapChecker.FLAG_STAIRS
+                            || (yuushyaBlock && blockType == MapChecker.FLAG_SLAB)
+                            || (direction != null && direction.ordinal() > 1)) {
+                        ArrayList<BakedQuad> quadsCTM = null;
+
+                        if (cache.isEmpty()) {
+                            BakedModel bakedModelCTM = models.get(BlockModelShaper.stateToModelLocation(state));
+                            if (bakedModelCTM != null) {
+                                ModelData modelDataCTM = bakedModelCTM.getModelData(blockAndTintGetter, pos, state, ModelData.EMPTY);
                                 random.setSeed(seed);
-                                quadsCTM.addAll(bakedModelCTM.getQuads(state, direction, random, modelDataCTM, renderType));
+                                ChunkRenderTypeSet renderTypes = bakedModelCTM.getRenderTypes(state, random, modelDataCTM);
+                                quadsCTM = new ArrayList<>();
+                                for (RenderType renderType : renderTypes.asList()) {
+                                    random.setSeed(seed);
+                                    quadsCTM.addAll(bakedModelCTM.getQuads(state, direction, random, modelDataCTM, renderType));
+                                }
                             }
+                        } else {
+                            if (direction != null) {
+                                original = EMPTY;
+                            } else {
+                                quadsCTM = new ArrayList<>(cache);
+                            }
+                        }
+
+                        if (quadsCTM != null) {
 
                             boolean tooTiny = false;
                             tooTiny |= state.getBlock() instanceof FenceBlock;
@@ -719,10 +766,10 @@ public class ModelManager {
                                 BlockPos above = pos.above();
                                 BlockState neighbourState = blockAndTintGetter.getBlockState(above);
                                 // 函数调用也是耗时
-                                int blockTypeFlag = ((IBlockStateFlagger) neighbourState).getBlockTypeFlag(blockAndTintGetter,above);
+                                int blockTypeFlag = ((IBlockStateFlagger) neighbourState).getBlockTypeFlag(blockAndTintGetter, above);
                                 if (blockTypeFlag != MapChecker.FLAG_BLOCK
-                                        && ! (neighbourState.getBlock() instanceof SlabBlock)
-                                        && ! (neighbourState.getBlock() instanceof StairBlock)) {
+                                        && !(neighbourState.getBlock() instanceof SlabBlock)
+                                        && !(neighbourState.getBlock() instanceof StairBlock)) {
                                     cacheHeight = neighbourHeight;
                                 }
                                 break;
@@ -815,7 +862,11 @@ public class ModelManager {
         RenderType chunkRenderType = ItemBlockRenderTypes.getChunkRenderType(state);
         if (chunkRenderType == RenderType.translucent()) return RenderType.translucent();
         else if (chunkRenderType == RenderType.cutout()) return RenderType.cutout();
-        return RenderType.cutoutMipped();
+        return
+                // CompatModule.isCTMLoad()?
+                // RenderType.cutout():
+                RenderType.cutoutMipped();
+
         // return Minecraft.useFancyGraphics() ?
         //         RenderType.cutoutMipped() : RenderType.solid();
     }

@@ -3,12 +3,17 @@ package com.teamtea.eclipticseasons.mixin.compat.sodium;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;
+import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.client.core.ModelManager;
+import com.teamtea.eclipticseasons.compat.sodium.SodiumStatus;
+import net.caffeinemc.mods.sodium.client.model.quad.BakedQuadView;
 import net.caffeinemc.mods.sodium.client.render.frapi.render.AbstractBlockRenderContext;
+import net.fabricmc.fabric.api.renderer.v1.mesh.QuadEmitter;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
@@ -17,18 +22,25 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
 @Mixin({AbstractBlockRenderContext.class})
 public abstract class MixinAbstractBlockRenderContext {
-    @Shadow protected long randomSeed;
-    @Shadow @Final protected Supplier<RandomSource> randomSupplier;
-    @Shadow protected RandomSource random;
+    @Shadow
+    protected long randomSeed;
+    @Shadow
+    @Final
+    protected Supplier<RandomSource> randomSupplier;
+    @Shadow
+    protected RandomSource random;
 
-    @Shadow protected BlockAndTintGetter level;
+    @Shadow
+    protected BlockAndTintGetter level;
 
-    @Shadow protected BlockPos pos;
+    @Shadow
+    protected BlockPos pos;
 
     @ModifyExpressionValue(
             remap = false,
@@ -41,8 +53,25 @@ public abstract class MixinAbstractBlockRenderContext {
             @Local(argsOnly = true) BlockState state,
             @Local Direction side,
             @Local RandomSource rand) {
+        // if (BuiltInRegistries.BLOCK.getKey(state.getBlock()).getNamespace().startsWith("yuushya")) {
+        //     EclipticSeasons.logger(BuiltInRegistries.BLOCK.getKey(state.getBlock()), side, original.size());
+        //     if (!original.isEmpty()&& bakedModel instanceof ModelManager.SnowyBakedModelWrapper<?>) {
+        //         // for (int i = 0; i < 4; i++) {
+        //         //     EclipticSeasons.logger(
+        //         //             ((BakedQuadView) original.getFirst()).getSprite(),
+        //         //             ((BakedQuadView) original.getFirst()).getX(i),
+        //         //             ((BakedQuadView) original.getFirst()).getY(i),
+        //         //             ((BakedQuadView) original.getFirst()).getZ(i));
+        //         // }
+        //         return new ArrayList<>();
+        //     }
+        // }
+        if (this instanceof SodiumStatus sodiumStatus)
+            return ModelManager.cancelTop(bakedModel, level, state, pos, side, rand, randomSeed, original, sodiumStatus.getCacheBakeQuad());
         return ModelManager.cancelTop(bakedModel, level, state, pos, side, rand, randomSeed, original);
     }
+
+
     // @WrapOperation(
     //         remap = false,
     //         method = "renderModel",
@@ -51,7 +80,6 @@ public abstract class MixinAbstractBlockRenderContext {
     // private boolean mixin$renderModel_isFaceVisible(BlockRenderer blockRenderer, BlockRenderContext ctx, Direction face, Operation<Boolean> original) {
     //     return ModelManager.shouldisFaceVisible(blockRenderer,ctx,face,original);
     // }
-
 
 
 }

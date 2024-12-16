@@ -90,6 +90,8 @@ public class EclipticSeasons {
         modContainer.registerConfig(ModConfig.Type.CLIENT, ClientConfig.CLIENT_CONFIG);
         if (FMLLoader.getDist() == Dist.CLIENT)
             modContainer.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
+
+        CompatModule.init();
     }
 
 
@@ -100,7 +102,7 @@ public class EclipticSeasons {
 
     public void FMLCommonSetup(final FMLCommonSetupEvent event) {
         // SimpleNetworkHandler.init();
-        CompatModule.register();
+        // CompatModule.init();
     }
 
 

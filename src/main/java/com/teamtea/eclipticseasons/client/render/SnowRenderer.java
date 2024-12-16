@@ -2,6 +2,9 @@ package com.teamtea.eclipticseasons.client.render;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.teamtea.eclipticseasons.compat.CompatModule;
+import com.teamtea.eclipticseasons.compat.fabric_renderer_indigo.FabricRender;
+import net.fabricmc.fabric.impl.client.indigo.renderer.accessor.AccessChunkRendererRegion;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.chunk.RenderChunkRegion;
@@ -19,19 +22,24 @@ public class SnowRenderer {
         posestack.pushPose();
 
         posestack.translate((float) (pos.getX() & 15), (float) (pos.getY() & 15), (float) (pos.getZ() & 15));
-        Minecraft.getInstance().getBlockRenderer().getModelRenderer()
-                .tesselateBlock(renderchunkregion,
-                        bakedModel,
-                        state,
-                        pos,
-                        posestack,
-                        bufferbuilder2,
-                        true,
-                        random,
-                        seed,
-                        OverlayTexture.NO_OVERLAY,
-                        ModelData.EMPTY,
-                        renderType);
+        if (!CompatModule.isFabric_renderer_indigoLoad()) {
+            Minecraft.getInstance().getBlockRenderer().getModelRenderer()
+                    .tesselateBlock(renderchunkregion,
+                            bakedModel,
+                            state,
+                            pos,
+                            posestack,
+                            bufferbuilder2,
+                            true,
+                            random,
+                            seed,
+                            OverlayTexture.RED_OVERLAY_V,
+                            ModelData.EMPTY,
+                            renderType);
+        } else {
+            FabricRender.render(renderchunkregion, state, pos, bakedModel, posestack, ModelData.EMPTY, renderType);
+        }
+
         posestack.popPose();
 
     }

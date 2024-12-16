@@ -12,6 +12,8 @@ import java.util.Arrays;
 public class BakedQuadRetextured extends BakedQuad {
     private final TextureAtlasSprite texture;
     public static int uvIndex = DefaultVertexFormat.BLOCK.getOffset(VertexFormatElement.UV0) / 4;
+    public static int uv2Index = DefaultVertexFormat.BLOCK.getOffset(VertexFormatElement.UV1) / 4;
+    public static int normalIndex = DefaultVertexFormat.BLOCK.getOffset(VertexFormatElement.NORMAL) / 4;
     public static int verticeSpace = DefaultVertexFormat.BLOCK.getVertexSize() / 4;
 
     public BakedQuadRetextured(BakedQuad quad, TextureAtlasSprite textureIn) {

@@ -2,6 +2,7 @@ package com.teamtea.eclipticseasons.client;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.client.color.season.BiomeColorsHandler;
+import com.teamtea.eclipticseasons.client.model.SnowyBakedModelWrapper;
 import com.teamtea.eclipticseasons.client.particle.ButterflyParticle;
 import com.teamtea.eclipticseasons.client.particle.FallenLeavesParticle;
 import com.teamtea.eclipticseasons.client.particle.FireflyParticle;
@@ -24,12 +25,10 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.*;
-import net.neoforged.neoforge.client.model.BakedModelWrapper;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class ClientSetup {
@@ -130,7 +129,7 @@ public class ClientSetup {
         for (ModelResourceLocation modelResourceLocation : bakedModels) {
             BakedModel bakedModel1 = modelRegistry.get(modelResourceLocation);
             if (bakedModel1 != null) {
-                modelRegistry.put(modelResourceLocation, new ModelManager.SnowyBakedModelWrapper<>(bakedModel1));
+                modelRegistry.put(modelResourceLocation, new SnowyBakedModelWrapper<>(bakedModel1));
             } else {
                 EclipticSeasons.logger("Missing Model", modelResourceLocation);
             }
