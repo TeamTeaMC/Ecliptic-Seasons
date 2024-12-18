@@ -34,7 +34,7 @@ public abstract class MixinSlabBlock {
 
     @Inject(at = {@At(value = "RETURN")},
             method = {"getShape"},
-            cancellable = true, remap = false)
+            cancellable = true)
     private void ecliptic$getShape(BlockState state,
                                    BlockGetter level,
                                    BlockPos pos,

@@ -25,6 +25,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.List;
 
+
+// TODO:有空的时候要做假如搞完的话清理reset
 @Mixin({LevelSlice.class})
 public abstract class MixinLevelSlice implements IMapSlice {
 
