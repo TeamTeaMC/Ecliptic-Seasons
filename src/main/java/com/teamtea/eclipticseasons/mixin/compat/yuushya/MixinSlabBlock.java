@@ -32,15 +32,15 @@ public abstract class MixinSlabBlock {
     private boolean eclipticSeasons$isHalfSlab = false;
 
 
-    @Inject(at = {@At(value = "RETURN")},
+    @Inject(at = {@At(value = "INVOKE",
+            target = "Lnet/minecraft/world/level/block/state/BlockState;getValue(Lnet/minecraft/world/level/block/state/properties/Property;)Ljava/lang/Comparable;")},
             method = {"getShape"},
-            cancellable = true)
+            cancellable = true, remap = false)
     private void ecliptic$getShape(BlockState state,
                                    BlockGetter level,
                                    BlockPos pos,
                                    CollisionContext context,
-                                   CallbackInfoReturnable<VoxelShape> cir,
-                                   @Local SlabType slabtype) {
+                                   CallbackInfoReturnable<VoxelShape> cir) {
         if (!eclipticSeasons$hasCheckHalfSlab) {
             Optional<ResourceKey<Block>> resourceKey = BuiltInRegistries.BLOCK.getResourceKey(state.getBlock());
             if(resourceKey.isPresent()){
@@ -51,7 +51,7 @@ public abstract class MixinSlabBlock {
             eclipticSeasons$hasCheckHalfSlab = true;
         }
         if (eclipticSeasons$isHalfSlab) {
-            // SlabType slabtype = state.getValue(SlabBlock.TYPE);
+            SlabType slabtype = state.getValue(SlabBlock.TYPE);
             if (slabtype == SlabType.BOTTOM) {
                 {
                     cir.setReturnValue(HalfSlabBlock.BOTTOM_AABB);
