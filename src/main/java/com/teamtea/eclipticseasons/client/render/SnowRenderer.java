@@ -2,6 +2,8 @@ package com.teamtea.eclipticseasons.client.render;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.teamtea.eclipticseasons.EclipticSeasons;
+import com.teamtea.eclipticseasons.client.core.ModelManager;
 import com.teamtea.eclipticseasons.compat.CompatModule;
 import com.teamtea.eclipticseasons.compat.fabric_renderer_indigo.FabricRender;
 import net.fabricmc.fabric.impl.client.indigo.renderer.accessor.AccessChunkRendererRegion;
@@ -20,7 +22,6 @@ public class SnowRenderer {
     public static void renderSnowyBlock(BakedModel bakedModel, VertexConsumer bufferbuilder2, BlockPos pos, BlockState state, PoseStack posestack, RenderChunkRegion renderchunkregion, RandomSource random, long seed, RenderType renderType) {
         // long seed = state.getSeed(pos);
         posestack.pushPose();
-
         posestack.translate((float) (pos.getX() & 15), (float) (pos.getY() & 15), (float) (pos.getZ() & 15));
         if (!CompatModule.isFabric_renderer_indigoLoad()) {
             Minecraft.getInstance().getBlockRenderer().getModelRenderer()

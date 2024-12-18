@@ -2,22 +2,23 @@ package com.teamtea.eclipticseasons.mixin.compat.sodium;
 
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
-import com.llamalad7.mixinextras.sugar.Local;
+import com.teamtea.eclipticseasons.EclipticSeasons;
+import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.misc.IBlockStateFlagger;
 import com.teamtea.eclipticseasons.client.core.ModelManager;
-import com.teamtea.eclipticseasons.compat.CompatModule;
+import com.teamtea.eclipticseasons.client.model.QuadFixer;
 import com.teamtea.eclipticseasons.compat.sodium.SodiumBoard;
 import com.teamtea.eclipticseasons.compat.sodium.SodiumStatus;
 import com.teamtea.eclipticseasons.compat.yuushya.YuushyaChecker;
-import net.caffeinemc.mods.sodium.client.model.light.LightMode;
 import net.caffeinemc.mods.sodium.client.render.chunk.compile.pipeline.BlockRenderer;
 import net.caffeinemc.mods.sodium.client.render.frapi.mesh.MutableQuadViewImpl;
 import net.caffeinemc.mods.sodium.client.render.frapi.render.AbstractBlockRenderContext;
+import net.caffeinemc.mods.sodium.client.render.texture.SpriteFinderCache;
 import net.fabricmc.fabric.api.renderer.v1.model.FabricBakedModel;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -97,14 +98,13 @@ public abstract class MixinBlockRenderer extends AbstractBlockRenderContext impl
     private void eclipticseasons$renderModel_start(BakedModel model, BlockState state, BlockPos pos, BlockPos origin, CallbackInfo ci) {
         BakedModel snowModel = ModelManager.findModel(slice, pos, state, random, randomSeed);
         if (snowModel != null) {
-            eclipticSeasons$snowModel=snowModel;
+            eclipticSeasons$snowModel = snowModel;
             eclipticSeasons$shouldReplaceOriginalGrassModel = ModelManager.isModelReplaceable(((IBlockStateFlagger) state).getBlockTypeFlag(level, pos));
             if (!eclipticSeasons$shouldReplaceOriginalGrassModel) {
-                boolean yuushyaBlock = YuushyaChecker.isyuushyaBlock(state);
+                boolean yuushyaBlock = YuushyaChecker.isyuushyaContinuityBlock(state);
                 if (yuushyaBlock) {
                     eclipticSeasons$shouldCollectBakeQuads = true;
                 }
-                // eclipticSeasons$shouldCollectBakeQuads = true;
             }
         }
 
@@ -121,7 +121,7 @@ public abstract class MixinBlockRenderer extends AbstractBlockRenderContext impl
         if (!eclipticSeasons$bakedQuads.isEmpty()) {
             eclipticSeasons$bakedQuads.clear();
         }
-        eclipticSeasons$shouldReplaceOriginalGrassModel=false;
+        eclipticSeasons$shouldReplaceOriginalGrassModel = false;
         eclipticSeasons$shouldCollectBakeQuads = false;
         eclipticSeasons$snowModel = null;
     }
@@ -129,10 +129,9 @@ public abstract class MixinBlockRenderer extends AbstractBlockRenderContext impl
     // TODO:这里缓存xyz顶点和光照信息，然后交给下一级构建，或者想办法还原bakequad。
     @Inject(
             method = "processQuad",
-            at = @At(value = "TAIL")
+            at = @At(value = "HEAD")
     )
-    private void eclipticseasons$cache_if(MutableQuadViewImpl quad, CallbackInfo ci,
-                                          @Local LightMode lightMode) {
+    private void eclipticseasons$cache_(MutableQuadViewImpl quad, CallbackInfo ci) {
         // int posCount = 4;
         // int[] vs = new int[4 * BakedQuadRetextured.verticeSpace];
         // for (int i = 0; i < posCount; i++) {
@@ -153,8 +152,31 @@ public abstract class MixinBlockRenderer extends AbstractBlockRenderContext impl
         // boolean shade = quad.hasShade();
         // Direction direction = quad.lightFace();
         // boolean ambientOcclusion = lightMode == LightMode.SMOOTH;
-        if (eclipticSeasons$shouldCollectBakeQuads)
-            eclipticSeasons$bakedQuads.add(quad.toBakedQuad(ModelManager.getSprite(ModelManager.snow)));
+        if (eclipticSeasons$shouldCollectBakeQuads) {
+            eclipticSeasons$bakedQuads.add(quad.toBakedQuad(quad.sprite(SpriteFinderCache.forBlockAtlas())));
+            // EclipticSeasons.logger(eclipticSeasons$bakedQuads.stream().map(BakedQuad::getDirection).toList());
+        }
+    }
+
+
+    @Inject(
+            method = "processQuad",
+            at = @At(value = "HEAD"),
+            cancellable = true
+    )
+    private void eclipticseasons$cache_if(MutableQuadViewImpl quad, CallbackInfo ci) {
+        // if (YuushyaChecker.isyuushyaContinuityBlock(state)) {
+        //     // EclipticSeasons.logger(ModelManager.getBakeQuadInfo(quad.toBakedQuad(quad.sprite(SpriteFinderCache.forBlockAtlas()))));
+        //     if (quad.lightFace() == Direction.EAST) {
+        //         if (!quad.toBakedQuad(quad.sprite(SpriteFinderCache.forBlockAtlas())).getSprite().contents().name().getNamespace().equals(EclipticSeasonsApi.MODID)) {
+        //             // ci.cancel();
+        //             int c=0;
+        //         } else {
+        //             EclipticSeasons.logger(QuadFixer.getBakeQuadInfo(quad.toBakedQuad(quad.sprite(SpriteFinderCache.forBlockAtlas()))));
+        //         }
+        //     }
+        //     // else ci.cancel();
+        // }
     }
 
     @Override

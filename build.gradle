@@ -87,7 +87,7 @@ runs {
         // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
         systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
         modSource project.sourceSets.onlyMain
-//        jvmArguments = ['-Dmixin.debug.export=true']
+        jvmArguments = ['-Dmixin.debug.export=true']
 
     }
 
@@ -142,12 +142,13 @@ dependencies {
     compileOnly("curse.maven:embeddium-908741:5556146")
 
     compileOnly "org.sinytra.forgified-fabric-api:fabric-renderer-api-v1:3.4.0+acb05a39d1"
+    compileOnly "org.sinytra.forgified-fabric-api:fabric-renderer-indigo:1.7.0+acb05a39d1"
 
     compileOnly "maven.modrinth:sodium:mc1.21.1-0.6.0-neoforge"
     compileOnly("curse.maven:irisshaders-455508:5910090")
 
-    onlyMainRuntimeOnly("curse.maven:irisshaders-455508:5910090")
-    onlyMainRuntimeOnly "maven.modrinth:sodium:mc1.21.1-0.6.0-neoforge"
+//    onlyMainRuntimeOnly("curse.maven:irisshaders-455508:5910090")
+//    onlyMainRuntimeOnly "maven.modrinth:sodium:mc1.21.1-0.6.0-neoforge"
 
     onlyMainRuntimeOnly("curse.maven:journeymap-32274:5541925")
 
@@ -168,6 +169,8 @@ dependencies {
     }
     println("----Scan onlyMainRuntimeOnly libs end----")
 
+//    onlyMainRuntimeOnly("curse.maven:immersive-portals-for-forge-355440:5828143")
+//    onlyMainRuntimeOnly("curse.maven:cloth-config-348521:5729127")
 
 //    onlyMainRuntimeOnly("curse.maven:architectury-api-419699:5786327")
 //    onlyMainRuntimeOnly("curse.maven:do-api-864599:5730908")

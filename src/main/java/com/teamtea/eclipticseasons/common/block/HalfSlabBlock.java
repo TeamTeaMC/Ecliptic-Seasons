@@ -13,7 +13,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 public class HalfSlabBlock extends SlabBlock {
 
     public static final VoxelShape BOTTOM_AABB = Block.box(0.0, 0.0, 0.0, 16.0, 4.0, 16.0);
-    public static final VoxelShape TOP_AABB = Block.box(0.0, 8.0, 0.0, 16.0, 16.0, 16.0);
+    public static final VoxelShape TOP_AABB = Block.box(0.0, 12.0, 0.0, 16.0, 16.0, 16.0);
 
     public HalfSlabBlock(Properties properties) {
         super(properties);

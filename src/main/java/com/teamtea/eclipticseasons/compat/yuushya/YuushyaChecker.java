@@ -6,8 +6,9 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public class YuushyaChecker {
 
-    public static boolean isyuushyaBlock(BlockState state) {
-        return CompatModule.isYuuWithCTMLoad()
+    public static boolean isyuushyaContinuityBlock(BlockState state) {
+        return (CompatModule.isContinuityLoad()||CompatModule.isCTMLoad())
+                && CompatModule.isYuuLoad()
                 && BuiltInRegistries.BLOCK.getKey(state.getBlock()).getNamespace().startsWith("yuushya");
     }
 

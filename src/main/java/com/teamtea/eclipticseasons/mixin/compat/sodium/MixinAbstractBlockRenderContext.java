@@ -6,14 +6,14 @@ import com.llamalad7.mixinextras.sugar.Local;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.client.core.ModelManager;
 import com.teamtea.eclipticseasons.compat.sodium.SodiumStatus;
-import net.caffeinemc.mods.sodium.client.model.quad.BakedQuadView;
+import com.teamtea.eclipticseasons.compat.yuushya.YuushyaChecker;
+import net.caffeinemc.mods.sodium.client.render.frapi.mesh.MutableQuadViewImpl;
 import net.caffeinemc.mods.sodium.client.render.frapi.render.AbstractBlockRenderContext;
-import net.fabricmc.fabric.api.renderer.v1.mesh.QuadEmitter;
+import net.caffeinemc.mods.sodium.client.render.texture.SpriteFinderCache;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
@@ -22,7 +22,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -41,6 +40,8 @@ public abstract class MixinAbstractBlockRenderContext {
 
     @Shadow
     protected BlockPos pos;
+
+    @Shadow protected BlockState state;
 
     @ModifyExpressionValue(
             remap = false,
@@ -70,6 +71,19 @@ public abstract class MixinAbstractBlockRenderContext {
             return ModelManager.cancelTop(bakedModel, level, state, pos, side, rand, randomSeed, original, sodiumStatus.getCacheBakeQuad());
         return ModelManager.cancelTop(bakedModel, level, state, pos, side, rand, randomSeed, original);
     }
+
+    // @ModifyExpressionValue(
+    //         remap = false,
+    //         method = "renderQuad",
+    //         at = @At(value = "INVOKE", target = "Lnet/caffeinemc/mods/sodium/client/render/frapi/render/AbstractBlockRenderContext;transform(Lnet/fabricmc/fabric/api/renderer/v1/mesh/MutableQuadView;)Z")
+    // )
+    // private boolean ecliptic$renderQuad(boolean original,@Local(argsOnly = true) MutableQuadViewImpl quad){
+    //     if (YuushyaChecker.isyuushyaBlock(state)) {
+    //         EclipticSeasons.logger(original,ModelManager.getBakeQuadInfo(
+    //                 quad.toBakedQuad(quad.sprite(SpriteFinderCache.forBlockAtlas()))));
+    //     }
+    //     return original;
+    // }
 
 
     // @WrapOperation(

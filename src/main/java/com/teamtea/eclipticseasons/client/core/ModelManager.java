@@ -1,26 +1,18 @@
 package com.teamtea.eclipticseasons.client.core;
 
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.VertexFormatElement;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
-import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.misc.IBlockStateFlagger;
 import com.teamtea.eclipticseasons.api.misc.client.IMapSlice;
 import com.teamtea.eclipticseasons.api.misc.client.ISnowyBlockState;
-import com.teamtea.eclipticseasons.client.model.BakedQuadRetextured;
-import com.teamtea.eclipticseasons.client.model.BakedQuadRetexturedAndReUV;
-import com.teamtea.eclipticseasons.client.model.RectangularPrismChecker;
-import com.teamtea.eclipticseasons.client.model.SnowyBakedModelWrapper;
+import com.teamtea.eclipticseasons.client.model.*;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.core.map.SnowyRemover;
-import com.teamtea.eclipticseasons.common.misc.LazyGet;
 import com.teamtea.eclipticseasons.compat.CompatModule;
 import com.teamtea.eclipticseasons.compat.yuushya.YuushyaChecker;
 import com.teamtea.eclipticseasons.config.ClientConfig;
 
-import com.teamtea.eclipticseasons.mixin.EclipticSeasonsMixinPlugin;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
@@ -31,7 +23,6 @@ import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.inventory.InventoryMenu;
@@ -41,6 +32,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.Half;
+import net.minecraft.world.level.block.state.properties.StairsShape;
 import net.neoforged.neoforge.client.ChunkRenderTypeSet;
 import net.neoforged.neoforge.client.model.data.ModelData;
 
@@ -61,18 +54,8 @@ public class ModelManager {
     public static ModelResourceLocation snowOverlayBlock = new ModelResourceLocation(EclipticSeasons.ModContents.snowyBlock.getId(), "");
 
     public static BlockState LIGHT_0;
-    // public static
-    // LazyGet<BakedModel> snowOverlayLeaves =
-    //         LazyGet.of(() -> models.get(new ModelResourceLocation(EclipticSeasons.ModContents.snowyLeaves.getId(), "")));
-    // public static
-    // LazyGet<BakedModel> snowySlabBottom =
-    //         LazyGet.of(() -> models.get(new ModelResourceLocation(EclipticSeasons.ModContents.snowySlab.getId(), "type=bottom,waterlogged=false")));
-    // public static
-    // LazyGet<BakedModel> snowOverlayBlock =
-    //         LazyGet.of(() -> models.get(new ModelResourceLocation(EclipticSeasons.ModContents.snowyBlock.getId(), "")));
 
-    public static LazyGet<BakedModel> snowModel = LazyGet.of(() -> models.get(new ModelResourceLocation(ResourceLocation.parse("minecraft:snow_block"), "")));
-
+    public static ModelResourceLocation snowy_custom = mrl("block/snowy_custom");
     public static ModelResourceLocation stairs_top = mrl("block/stairs_top");
     public static ModelResourceLocation snowy_fern = mrl("block/snowy_fern");
     public static ModelResourceLocation snowy_grass = mrl("block/snowy_grass");
@@ -121,10 +104,6 @@ public class ModelManager {
         return false;
     }
 
-    public static Map<List<BakedQuad>, List<BakedQuad>> quadMap = new IdentityHashMap<>(1024);
-    public static Map<List<BakedQuad>, List<BakedQuad>> quadMap_1 = new IdentityHashMap<>(1024);
-    public static Map<List<BakedQuad>, List<BakedQuad>> quadMap_GRASS = new IdentityHashMap<>(128);
-
     // TODO：这里看能不能直接给model上标记，map还是耗时
     // public static Map<BakedModel, Integer> snowyModelsCache = new IdentityHashMap<>();
     // public static Map<BlockState, BakedModel> stateModelsCache = new IdentityHashMap<>();
@@ -161,11 +140,21 @@ public class ModelManager {
                 snowModel = models.get(snow_height2_top);
                 // snowModel = snowOverlayBlock.resolve().get();
             } else if (flag == MapChecker.FLAG_CUSTOM) {
-                snowModel = models.get(snowOverlayBlock);
+                snowModel = models.get(snowy_custom);
+            }
+            if (YuushyaChecker.isyuushyaContinuityBlock(state)) {
+                snowModel = models.get(snowy_custom);
             }
             if (snowModel != null) {
                 // stateModelsCache.putIfAbsent(snowState, snowModel);
-                snowyBlockState.setSnowyModel(snowModel, loadVersion);
+                SnowyBakedModelWrapper<?> bakedModel =
+                        snowModel instanceof SnowyBakedModelWrapper<?> ?
+                                (SnowyBakedModelWrapper<?>) snowModel :
+                                new SnowyBakedModelWrapper<>(snowModel);
+                if (SnowyBakedModelWrapper.isInvalid(bakedModel))
+                    bakedModel.updateBlockType(flag);
+                snowyBlockState.setSnowyModel(
+                        bakedModel, loadVersion);
             }
 
             // if (snowModel != null) {
@@ -183,31 +172,17 @@ public class ModelManager {
     }
 
     public static List<BakedQuad> cancelTop(BakedModel bakedModel, BlockAndTintGetter blockAndTintGetter, BlockState state, BlockPos pos, Direction direction, RandomSource random, long seed, List<BakedQuad> original, List<BakedQuad> cache) {
-        if (YuushyaChecker.isyuushyaBlock(state)) {
-            // if (!(bakedModel instanceof SnowyBakedModelWrapper)) {
-            //     // return EMPTY;
-            //     int b=0;
-            // }
-            // else {
-            //     int a=0;
-            // }
-        }
 
-        if (bakedModel != null && !original.isEmpty() && (direction == Direction.UP || direction == null)
+        if (bakedModel != null
+                && !original.isEmpty()
+                && (direction == Direction.UP || direction == null)
                 && !(bakedModel instanceof SnowyBakedModelWrapper)
-            // && snowyModelsCache.getOrDefault(bakedModel, -1) == -1
         ) {
             random.setSeed(seed);
             // blockAndTintGetter 现在优化以后可以用来处理了
             BakedModel snowModel = ModelManager.findModel(blockAndTintGetter, pos, state, random, seed);
 
-            // TODO：neocontinuity 会把所有model给warp一层
-            if (snowModel instanceof SnowyBakedModelWrapper)
-            // snowModel != null
-            // &&  snowyModelsCache.getOrDefault(snowModel, -1) > MapChecker.FLAG_NONE
-            // && bakedModel != snowModel)
-            {
-                // int blockType = MapChecker.getBlockType(state, blockAndTintGetter, pos);
+            if (snowModel instanceof SnowyBakedModelWrapper) {
                 int blockType = ((IBlockStateFlagger) state).getBlockTypeFlag(blockAndTintGetter, pos);
                 if (blockType == MapChecker.FLAG_CUSTOM)
                     return original;
@@ -215,9 +190,9 @@ public class ModelManager {
                     if (blockType == MapChecker.FLAG_BLOCK) return EMPTY;
                 }
 
-                // fabric 连接纹理用到了后处理，此处如果不返回给它就会停止渲染
 
-                if (YuushyaChecker.isyuushyaBlock(state)) {
+                // fabric 连接纹理用到了后处理，此处如果不返回给它就会停止渲染
+                if (YuushyaChecker.isyuushyaContinuityBlock(state)) {
                     if (blockType == MapChecker.FLAG_STAIRS
                             || blockType == MapChecker.FLAG_SLAB)
                         return original;
@@ -240,39 +215,30 @@ public class ModelManager {
         }
 
 
-        // if (CompatModule.isCTMLoad())
-        // if (snowyModelsCache.getOrDefault(bakedModel, -1) != -1)
         if (bakedModel instanceof SnowyBakedModelWrapper) {
-            // if (true) {
-            //     if (original.size() == 1) {
-            //         BakedQuad first = original.getFirst();
-            //         first=new BakedQuadRetexturedAndOffset(first,13/16f,4/16f);
-            //         return List.of(first);
-            //     }
-            // }
-            // int blockType = MapChecker.getBlockType(state, blockAndTintGetter, pos);
 
             int blockType = ((IBlockStateFlagger) state).getBlockTypeFlag(blockAndTintGetter, pos);
             if (blockType == MapChecker.FLAG_CUSTOM) {
                 original = new ArrayList<>();
             }
 
-            boolean yuushyaBlock = YuushyaChecker.isyuushyaBlock(state);
-
+            boolean yuushyaBlock = YuushyaChecker.isyuushyaContinuityBlock(state);
             if ((blockType == MapChecker.FLAG_CUSTOM || yuushyaBlock)
                 // && state.toString().contains("stairs_a_cherry_blindwall")
                 // &&(state.hasProperty(StairBlock.SHAPE)&& state.getValue(StairBlock.SHAPE) == StairsShape.OUTER_RIGHT)
             ) {
                 // 也许我们不需要这个，但是这样比较合适
-                if (yuushyaBlock && blockType == MapChecker.FLAG_STAIRS_TOP && state.getBlock() instanceof StairBlock)
-                    return original;
+                // if (yuushyaBlock
+                //         && blockType == MapChecker.FLAG_STAIRS_TOP
+                //         && state.getBlock() instanceof StairBlock)
+                //     return original;
                 // continuity裁剪面不一样
                 if (yuushyaBlock
                         && blockType == MapChecker.FLAG_STAIRS
                         && state.getBlock() instanceof StairBlock
                 ) {
                     if (direction != Direction.UP) {
-                        return original;
+                        // return original;
                     } else {
                         if (!cache.isEmpty()) {
                             cache = new ArrayList<>(cache);
@@ -283,12 +249,14 @@ public class ModelManager {
                 // if(blockType==MapChecker.FLAG_STAIRS)
                 {
                     if (blockType == MapChecker.FLAG_CUSTOM
-                            || blockType == MapChecker.FLAG_STAIRS
-                            || (yuushyaBlock && blockType == MapChecker.FLAG_SLAB)
-                            || (direction != null && direction.ordinal() > 1)) {
+                            || (yuushyaBlock && (blockType == MapChecker.FLAG_STAIRS
+                            || blockType == MapChecker.FLAG_STAIRS_TOP && direction != Direction.UP
+                            || blockType == MapChecker.FLAG_SLAB
+                            || blockType == MapChecker.FLAG_BLOCK && direction != Direction.UP))
+                            || direction != null && direction.ordinal() > 1) {
                         ArrayList<BakedQuad> quadsCTM = null;
 
-                        if (cache.isEmpty()) {
+                        if (cache.isEmpty() || cache == null) {
                             BakedModel bakedModelCTM = models.get(BlockModelShaper.stateToModelLocation(state));
                             if (bakedModelCTM != null) {
                                 ModelData modelDataCTM = bakedModelCTM.getModelData(blockAndTintGetter, pos, state, ModelData.EMPTY);
@@ -302,9 +270,25 @@ public class ModelManager {
                             }
                         } else {
                             if (direction != null) {
-                                original = EMPTY;
+                                // if(direction!=Direction.UP)
+                                // quadsCTM = new ArrayList<>(EMPTY);
+                                // else {
+                                //     quadsCTM = new ArrayList<>(cache);
+                                //     for (int i = 0; i < quadsCTM.size(); i++) {
+                                //         BakedQuad bakedQuad = quadsCTM.get(i);
+                                //         BakedQuadRetextured bakedQuadRetextured = new BakedQuadRetextured(bakedQuad, getSprite(snow_overlay));
+                                //         quadsCTM.set(i, bakedQuadRetextured);
+                                //     }
+                                // }
+                                quadsCTM = new ArrayList<>(EMPTY);
                             } else {
                                 quadsCTM = new ArrayList<>(cache);
+                                // for (int i = 0; i < quadsCTM.size(); i++) {
+                                //     BakedQuad bakedQuad = quadsCTM.get(i);
+                                //     BakedQuadRetextured bakedQuadRetextured = new BakedQuadRetextured(bakedQuad, getSprite(snow_overlay));
+                                //     quadsCTM.set(i, bakedQuadRetextured);
+                                // }
+                                // return quadsCTM;
                             }
                         }
 
@@ -314,8 +298,9 @@ public class ModelManager {
                             tooTiny |= state.getBlock() instanceof FenceBlock;
                             tooTiny |= state.getBlock() instanceof FenceGateBlock;
                             tooTiny |= state.getBlock() instanceof IronBarsBlock;
+                            tooTiny |= state.getBlock() instanceof StairBlock;
                             if (!tooTiny)
-                                quadsCTM = fixQuadCTM(quadsCTM);
+                                quadsCTM = QuadFixer.fixQuadCTM(quadsCTM);
 
 
                             // if (quadsCTM.isEmpty())
@@ -331,101 +316,11 @@ public class ModelManager {
                                 Direction bakedQuadDirection = bakedQuad.getDirection();
                                 if (bakedQuadDirection != Direction.DOWN) {
                                     TextureAtlasSprite spriteUse = snow_overlay_sprite;
-                                    // float[] ys = new float[4];
-                                    // float[] zs = new float[4];
-                                    // float[] xs = new float[4];
-                                    // float[] posx = new float[12];
-                                    // boolean isTop = false;
-                                    // for (int i = 0; i < 4; i++) {
-                                    //     int j = BakedQuadRetexturedAndReUV.verticeSpace * i;
-                                    //     xs[i] = Float.intBitsToFloat(bakedQuad.getVertices()[j]);
-                                    //     ys[i] = Float.intBitsToFloat(bakedQuad.getVertices()[j + 1]);
-                                    //     zs[i] = Float.intBitsToFloat(bakedQuad.getVertices()[j + 2]);
-                                    //     posx[3 * i] = xs[i];
-                                    //     posx[3 * i + 1] = ys[i];
-                                    //     posx[3 * i + 2] = zs[i];
-                                    //     if (ys[i] > 0.5f) {
-                                    //         isTop = true;
-                                    //         break;
-                                    //     }
-                                    // }
-                                    //
-                                    // if (!isTop) {
-                                    //     // isSlabDown = true;
-                                    // }
-                                    // if (blockType == MapChecker.FLAG_STAIRS) {
-                                    //     {
-                                    //         if (bakedQuadDirection != Direction.UP) {
-                                    //             float maxY = 0;
-                                    //             for (float y : ys) {
-                                    //                 maxY = Math.max(maxY, y);
-                                    //             }
-                                    //             float maxZ = 0;
-                                    //             for (float z : zs) {
-                                    //                 maxZ = Math.max(maxZ, z);
-                                    //             }
-                                    //             float maxX = 0;
-                                    //             for (float x : xs) {
-                                    //                 maxX = Math.max(maxX, x);
-                                    //             }
-                                    //             Direction face = state.getValue(StairBlock.FACING);
-                                    //
-                                    //             if (state.getValue(StairBlock.SHAPE) == StairsShape.STRAIGHT) {
-                                    //                 if (bakedQuadDirection.getOpposite() == face) {
-                                    //                     if (maxY < 0.50001f) {
-                                    //                         isSlabDown = true;
-                                    //                     } else {
-                                    //                         offset = 0;
-                                    //                     }
-                                    //                 } else if (bakedQuadDirection == face) {
-                                    //                     if (maxY < 0.50001f) {
-                                    //                         continue;
-                                    //                     } else {
-                                    //                         offset = 0;
-                                    //                     }
-                                    //                 } else if (bakedQuadDirection.getClockWise() == face || bakedQuadDirection.getCounterClockWise() == face) {
-                                    //                     if (maxY < 0.50001f) {
-                                    //                         switch (face) {
-                                    //                             case WEST -> {
-                                    //                                 if (maxX > 0.50001f) isSlabDown = true;
-                                    //                                 else continue;
-                                    //                             }
-                                    //                             case EAST -> {
-                                    //                                 if (maxX < 0.50001f) isSlabDown = true;
-                                    //                                 else continue;
-                                    //                             }
-                                    //                             case NORTH -> {
-                                    //                                 if (maxZ > 0.50001f) isSlabDown = true;
-                                    //                                 else continue;
-                                    //                             }
-                                    //                             case SOUTH -> {
-                                    //                                 if (maxZ < 0.50001f) isSlabDown = true;
-                                    //                                 else continue;
-                                    //                             }
-                                    //                         }
-                                    //                     } else {
-                                    //                         offset = 0;
-                                    //                     }
-                                    //                 } else {
-                                    //                     continue;
-                                    //                 }
-                                    //             } else {
-                                    //                 if (maxY < 0.50001f) {
-                                    //                     isSlabDown = true;
-                                    //                 } else {
-                                    //                     offset = 0;
-                                    //                     spriteUse = snow_sprite;
-                                    //                 }
-                                    //             }
-                                    //
-                                    //         }
-                                    //     }
-                                    // }
                                     // if (blockType == MapChecker.FLAG_CUSTOM)
                                     {
                                         if (bakedQuadDirection != Direction.UP) {
                                             isSlabDown = true;
-                                            float maxY = getMaxY(bakedQuad);
+                                            float maxY = QuadFixer.getMaxY(bakedQuad);
                                             offset = 1 - maxY;
                                             if (offset < 0.00001f) {
                                                 offset = 0;
@@ -437,18 +332,87 @@ public class ModelManager {
 
                                     if (bakedQuadDirection == Direction.UP) spriteUse = snow_sprite;
                                     else {
-                                        if (tooTiny)
+                                        if (state.getBlock() instanceof StairBlock
+                                                && state.getValue(StairBlock.SHAPE) instanceof StairsShape stairsShape
+                                                && state.getValue(StairBlock.HALF) instanceof Half half
+                                                && state.getValue(StairBlock.FACING) instanceof Direction stairFaceDirection
+                                        ) {
+                                            spriteUse = QuadFixer.getMaxY(bakedQuad) - QuadFixer.getMinY(bakedQuad) > 0.4002f ? snow_overlay_sprite : snow_overlay_tiny_sprite;
+                                            if (half == Half.TOP) {
+                                                if (QuadFixer.getMaxY(bakedQuad) < 0.500001f) {
+                                                    continue;
+                                                }
+                                            } else if (stairsShape == StairsShape.STRAIGHT) {
+                                                if (bakedQuadDirection == stairFaceDirection) {
+                                                    if (QuadFixer.getMaxY(bakedQuad) < 0.500001f) {
+                                                        continue;
+                                                    }
+                                                } else if (QuadFixer.getMaxY(bakedQuad) < 0.500001f) {
+                                                    if (bakedQuadDirection == stairFaceDirection.getClockWise()) {
+                                                        spriteUse = getSprite(snow_overlay_half_left);
+                                                    } else if (bakedQuadDirection == stairFaceDirection.getCounterClockWise()) {
+                                                        spriteUse = getSprite(snow_overlay_half_right);
+                                                    }
+                                                }
+                                            } else if (stairsShape == StairsShape.INNER_LEFT) {
+                                                if (bakedQuadDirection == stairFaceDirection
+                                                        || bakedQuadDirection == stairFaceDirection.getCounterClockWise()) {
+                                                    if (QuadFixer.getMaxY(bakedQuad) < 0.500001f) {
+                                                        continue;
+                                                    }
+                                                }else if (QuadFixer.getMaxY(bakedQuad) < 0.500001f) {
+                                                    if (bakedQuadDirection == stairFaceDirection.getClockWise()) {
+                                                        spriteUse = getSprite(snow_overlay_half_left);
+                                                    } else if (bakedQuadDirection == stairFaceDirection.getOpposite()) {
+                                                        spriteUse = getSprite(snow_overlay_half_right);
+                                                    }
+                                                }
+                                            } else if (stairsShape == StairsShape.INNER_RIGHT) {
+                                                if (bakedQuadDirection == stairFaceDirection
+                                                        || bakedQuadDirection == stairFaceDirection.getClockWise()) {
+                                                    if (QuadFixer.getMaxY(bakedQuad) < 0.500001f) {
+                                                        continue;
+                                                    }
+                                                }else if (QuadFixer.getMaxY(bakedQuad) < 0.500001f) {
+                                                    if (bakedQuadDirection == stairFaceDirection.getCounterClockWise()) {
+                                                        spriteUse = getSprite(snow_overlay_half_right);
+                                                    } else if (bakedQuadDirection == stairFaceDirection.getOpposite()) {
+                                                        spriteUse = getSprite(snow_overlay_half_left);
+                                                    }
+                                                }
+                                            } else if (stairsShape == StairsShape.OUTER_LEFT) {
+                                                if (QuadFixer.getMaxY(bakedQuad) < 0.500001f) {
+                                                    if (bakedQuadDirection == stairFaceDirection.getCounterClockWise()) {
+                                                        spriteUse = getSprite(snow_overlay_half_right);
+                                                    } else if (bakedQuadDirection == stairFaceDirection) {
+                                                        spriteUse = getSprite(snow_overlay_half_left);
+                                                    }
+                                                }
+                                            }else if (stairsShape == StairsShape.OUTER_RIGHT) {
+                                                if (QuadFixer.getMaxY(bakedQuad) < 0.500001f) {
+                                                    if (bakedQuadDirection == stairFaceDirection.getClockWise()) {
+                                                        spriteUse = getSprite(snow_overlay_half_left);
+                                                    } else if (bakedQuadDirection == stairFaceDirection) {
+                                                        spriteUse = getSprite(snow_overlay_half_right);
+                                                    }
+                                                }
+                                            }
+                                        } else if (tooTiny)
                                             spriteUse = snow_overlay_tiny_sprite;
                                         else
-                                            spriteUse = getMaxY(bakedQuad) - getMinY(bakedQuad) > 0.4002f ? snow_overlay_sprite : snow_overlay_tiny_sprite;
+                                            spriteUse = QuadFixer.getMaxY(bakedQuad) - QuadFixer.getMinY(bakedQuad) > 0.4002f ? snow_overlay_sprite : snow_overlay_tiny_sprite;
+
                                     }
-                                    BakedQuad bakedQuad1;
+
+                                    BakedQuad retexturedBakedQuad;
                                     if (RectangularPrismChecker.isRectangularPrism(bakedQuad)) {
-                                        bakedQuad1 = new BakedQuadRetexturedAndReUV(bakedQuad, spriteUse, isSlabDown, offset);
+                                        retexturedBakedQuad = new BakedQuadRetexturedAndReUV(bakedQuad, spriteUse, isSlabDown, offset);
                                     } else {
-                                        bakedQuad1 = new BakedQuadRetextured(bakedQuad, spriteUse);
+                                        retexturedBakedQuad = new BakedQuadRetextured(bakedQuad, spriteUse);
                                     }
-                                    original.add(bakedQuad1);
+
+
+                                    original.add(retexturedBakedQuad);
                                 }
                             }
 
@@ -458,264 +422,6 @@ public class ModelManager {
             }
         }
         return original;
-    }
-
-    public static int posIndex = DefaultVertexFormat.BLOCK.getOffset(VertexFormatElement.POSITION) / 4;
-    public static int vertice_Space = DefaultVertexFormat.BLOCK.getVertexSize() / 4;
-
-    public static float getMinValue(int[] vertices, int index) {
-        float minV = 1;
-        for (int i = 0; i < 4; i++) {
-            int j = vertice_Space * i;
-            float v = Float.intBitsToFloat(vertices[j + posIndex + index]);
-            if (v < minV) minV = v;
-        }
-        float epsilon = 1e-7f;
-        return Math.abs(minV) < epsilon ? 0.0f : minV;
-    }
-
-    public static float getMaxValue(int[] vertices, int index) {
-        float maxV = -1;
-        for (int i = 0; i < 4; i++) {
-            int j = vertice_Space * i;
-            float v = Float.intBitsToFloat(vertices[j + posIndex + index]);
-            if (v > maxV) maxV = v;
-        }
-        return maxV;
-    }
-
-    public static float getMaxX(BakedQuad bakedQuad) {
-        return getMaxValue(bakedQuad.getVertices(), 0);
-    }
-
-    public static float getMaxY(BakedQuad bakedQuad) {
-        return getMaxValue(bakedQuad.getVertices(), 1);
-    }
-
-    public static float getMaxZ(BakedQuad bakedQuad) {
-        return getMaxValue(bakedQuad.getVertices(), 2);
-    }
-
-    public static float getMinX(BakedQuad bakedQuad) {
-        return getMinValue(bakedQuad.getVertices(), 0);
-    }
-
-    public static float getMinY(BakedQuad bakedQuad) {
-        return getMinValue(bakedQuad.getVertices(), 1);
-    }
-
-    public static float getMinZ(BakedQuad bakedQuad) {
-        return getMinValue(bakedQuad.getVertices(), 2);
-    }
-
-    public static boolean cover(BakedQuad bakedQuad, BakedQuad testQuad) {
-
-
-        float x0 = getMinX(bakedQuad);
-        float x1 = getMaxX(bakedQuad);
-        float x2 = getMinX(testQuad);
-        float x3 = getMaxX(testQuad);
-
-        float y0 = getMinY(bakedQuad);
-        float y1 = getMaxY(bakedQuad);
-        float y2 = getMinY(testQuad);
-        float y3 = getMaxY(testQuad);
-
-        float z0 = getMinZ(bakedQuad);
-        float z1 = getMaxZ(bakedQuad);
-        float z2 = getMinZ(testQuad);
-        float z3 = getMaxZ(testQuad);
-
-        // TODO: CTM would bring some invalid quad
-        boolean result = (x0 == x1 ? 1 : 0) + (y0 == y1 ? 1 : 0) + (z0 == z1 ? 1 : 0) >= 2;
-        if (result) return false;
-
-        if (bakedQuad.getDirection() == Direction.UP) {
-            if (y0 > y3)
-                if ((getMaxX(bakedQuad) >= getMaxX(testQuad) && getMinX(bakedQuad) <= getMinX(testQuad))
-                        && getMaxZ(bakedQuad) >= getMaxZ(testQuad) && getMinZ(bakedQuad) <= getMinZ(testQuad))
-                    return true;
-        } else if (bakedQuad.getDirection() == testQuad.getDirection()) {
-            // 平行x轴
-
-            if (x0 == x1 && x2 == x3 && x0 == x2) {
-                if (z0 <= z2 && z1 >= z3)
-                    return y1 > y3;
-
-            } else if (z0 == z1 && z2 == z3 && z0 == z2) {
-                if (x0 <= x2 && x1 >= x3)
-                    return y1 > y3;
-            }
-
-
-        }
-
-
-        return false;
-    }
-
-    public static ArrayList<BakedQuad> fixQuadCTM(ArrayList<BakedQuad> quadsCTM) {
-        quadsCTM.removeIf(bakedQuad -> bakedQuad.getDirection() == Direction.DOWN);
-        quadsCTM.removeIf(bakedQuad -> bakedQuad.getSprite().contents().name().getPath().contains("grape_small_leaves"));
-        quadsCTM.removeIf(bakedQuad -> bakedQuad.getSprite().contents().name().getPath().contains("grape_stage"));
-
-        quadsCTM.sort(Comparator.comparingDouble(b -> getMaxY(((BakedQuad) b))).reversed());
-
-        ArrayList<BakedQuad> visibleFaces = new ArrayList<>();
-        for (int i = 0; i < quadsCTM.size(); i++) {
-            BakedQuad faceA = quadsCTM.get(i);
-            boolean isCovered = false;
-
-            for (int j = 0; j < i; j++) {
-                BakedQuad faceB = quadsCTM.get(j);
-                if (cover(faceB, faceA)) {
-                    isCovered = true;
-                    break;
-                }
-            }
-            if (!isCovered) {
-                visibleFaces.add(faceA);
-            }
-        }
-        return visibleFaces;
-    }
-
-
-    public static List<BakedQuad> appendOverlay(BlockAndTintGetter blockAndTintGetter, BlockState state, BlockPos pos, Direction direction, RandomSource random, long seed, List<BakedQuad> list) {
-        Level level = Minecraft.getInstance().level;
-        if (level == null) return list;
-
-        if (direction != Direction.DOWN && !list.isEmpty()) {
-
-            var onBlock = state.getBlock();
-            // int flag = MapChecker.getBlockType(state, level, pos);
-            int flag = ((IBlockStateFlagger) state).getBlockTypeFlag(blockAndTintGetter, pos);
-            if (flag == 0) return list;
-            int offset = MapChecker.getSnowOffset(state, flag);
-
-            boolean isLight = false;
-
-            isLight = ClientConfig.Renderer.useVanillaCheck.get() && Minecraft.getInstance().level != null ? Minecraft.getInstance().level.getLightEngine().getLayerListener(LightLayer.SKY).getLightValue(pos.above()) >= 15 : MapChecker.getHeightOrUpdate(level, pos, false) == pos.getY() - offset;
-
-
-            // SimpleUtil.testTime(()->{getHeightOrUpdate(pos, false);});
-
-            if (isLight) {
-                if (ClientConfig.Renderer.snowyWinter.get()
-                        && onBlock != Blocks.SNOW_BLOCK
-                        && MapChecker.shouldSnowAt(level, pos.below(offset), state, random, seed)) {
-                    // DynamicLeavesBlock
-                    boolean isFlowerAbove = false;
-                    if ((flag == MapChecker.FLAG_BLOCK) && ClientConfig.Renderer.betterSnow.get()) {
-                        var bl = blockAndTintGetter.getBlockState(pos.above()).getBlock();
-                        isFlowerAbove = bl instanceof FlowerBlock || bl instanceof PinkPetalsBlock || bl instanceof DoublePlantBlock || bl instanceof SaplingBlock;
-
-                        if (!isFlowerAbove) {
-                            isFlowerAbove = random.nextInt(12) > 0;
-                            // isFlowerAbove=true;
-                        }
-                    }
-                    // isFlowerAbove=false;
-                    var useMap = isFlowerAbove ? quadMap_1 : quadMap;
-                    List<BakedQuad> cc = EclipticSeasonsMixinPlugin.isOptLoad() || list.isEmpty() ? null : useMap.getOrDefault(list, null);
-                    // if ((list.isEmpty()))
-                    //     cc = null;
-                    if (cc != null) {
-                        return cc;
-                    } else {
-                        BlockState snowState = null;
-                        if (models != null && flag == MapChecker.FLAG_STAIRS) {
-                            snowState = EclipticSeasons.ModContents.snowyStairs.get().defaultBlockState().setValue(StairBlock.FACING, state.getValue(StairBlock.FACING)).setValue(StairBlock.HALF, state.getValue(StairBlock.HALF)).setValue(StairBlock.SHAPE, state.getValue(StairBlock.SHAPE));
-                        }
-                        BakedModel snowModel = getSnowyModel(state, snowState, flag, offset);
-
-                        if (snowModel != null) {
-                            int size = list.size();
-                            var snowList = snowModel.getQuads(snowState, direction, null);
-                            ArrayList<BakedQuad> newList;
-                            if (flag == MapChecker.FLAG_GRASS) {
-                                newList = new ArrayList<>(snowList);
-                            } else if (direction == Direction.UP) {
-                                if (isFlowerAbove) {
-                                    newList = new ArrayList<>();
-                                    var layerState = Blocks.SNOW.defaultBlockState().setValue(SnowLayerBlock.LAYERS, 1);
-                                    var layerBlock = models.get(BlockModelShaper.stateToModelLocation(layerState));
-                                    layerBlock = models.get(snow_height2);
-
-                                    for (Direction direction1 : List.of(Direction.EAST, Direction.SOUTH, Direction.WEST, Direction.NORTH, Direction.UP)) {
-                                        newList.addAll(layerBlock.getQuads(layerState, direction1, random));
-                                    }
-                                } else {
-                                    newList = new ArrayList<BakedQuad>(size + snowList.size());
-                                    // newList.addAll(list);
-                                    newList.addAll(snowList);
-                                }
-                                // else newList = new ArrayList<>(snowList);
-                            } else {
-                                newList = new ArrayList<BakedQuad>(size + snowList.size());
-                                newList.addAll(list);
-                                newList.addAll(snowList);
-                            }
-
-
-                            if (flag == MapChecker.FLAG_FARMLAND) {
-
-                                for (Direction direction1 : List.of(Direction.EAST, Direction.WEST, Direction.SOUTH, Direction.NORTH, Direction.UP)) {
-                                    newList.addAll(snowModel.getQuads(null, direction1, random));
-                                }
-                            }
-
-                            if (!EclipticSeasonsMixinPlugin.isOptLoad()) useMap.putIfAbsent(list, newList);
-
-                            list = newList;
-
-
-                        }
-                    }
-                } else if (ClientConfig.Renderer.flowerOnGrass.get() && direction == Direction.UP && state.getBlock() instanceof GrassBlock && random.nextInt(15) == 0) {
-                    var solarTerm = SolarTerm.NONE;
-                    int weight = 100;
-                    solarTerm = ClientCon.nowSolarTerm;
-                    weight = Math.abs(solarTerm.ordinal() - 3) + 1;
-                    if (solarTerm.getSeason() == Season.SPRING && random.nextInt(weight * 4) == 0 && blockAndTintGetter.getBlockState(pos.above()).isAir()) {
-                        var cc = quadMap_GRASS.getOrDefault(list, null);
-                        if (cc != null) {
-                            return cc;
-                        } else {
-                            // BakedModel snowModel = models.get(grass_flower);
-                            BakedModel snowModel = models.get(flower_on_grass.get(random.nextInt(flower_on_grass.size())));
-                            if (snowModel != null) {
-                                int size = list.size();
-                                var snowList = snowModel.getQuads(null, direction, null);
-                                ArrayList<BakedQuad> newList;
-                                newList = new ArrayList<>(size + snowList.size());
-                                newList.addAll(list);
-                                newList.addAll(snowList);
-                                quadMap_GRASS.putIfAbsent(list, newList);
-                                list = newList;
-                            }
-                        }
-                    }
-                }
-            }
-
-
-        }
-        return list;
-    }
-
-    public static boolean isLight0Above(BlockAndTintGetter level, BlockPos.MutableBlockPos pos, int times) {
-        pos.setY(pos.getY() + 1);
-        {
-            BlockState stateAbove = level.getBlockState(pos);
-            if (stateAbove.getBlock() instanceof LightBlock) {
-                return stateAbove.getValue(LightBlock.LEVEL) == 0;
-            } else if (!stateAbove.isAir() && !stateAbove.blocksMotion()) {
-                if (times > 0)
-                    return isLight0Above(level, pos, (times - 1));
-            }
-        }
-        return false;
     }
 
     // TODO: 这里需要给Map做切片，生物群系要缓冲，看怎么切
@@ -859,12 +565,19 @@ public class ModelManager {
 
     public static RenderType getRenderType(BlockState state) {
         // if (!Minecraft.useFancyGraphics()) return RenderType.solid();
-        RenderType chunkRenderType = ItemBlockRenderTypes.getChunkRenderType(state);
-        if (chunkRenderType == RenderType.translucent()) return RenderType.translucent();
-        else if (chunkRenderType == RenderType.cutout()) return RenderType.cutout();
+        //
+        // if (YuushyaChecker.isyuushyaContinuityBlock(state)) {
+        //     EclipticSeasons.logger(ItemBlockRenderTypes.getChunkRenderType(state));
+        // }
+        // RenderType chunkRenderType = ItemBlockRenderTypes.getChunkRenderType(state);
+        ChunkRenderTypeSet chunkRenderTypeSet = ItemBlockRenderTypes.getRenderLayers(state);
+        if (chunkRenderTypeSet.contains(RenderType.translucent())) return RenderType.translucent();
+        else if (chunkRenderTypeSet.contains(RenderType.cutout())) return RenderType.cutout();
         return
-                // CompatModule.isCTMLoad()?
-                // RenderType.cutout():
+                // ( CompatModule.isContinuityLoad()||CompatModule.isCTMLoad())
+                //         && !CompatModule.isSodiumLoad() ?
+                //          RenderType.cutout() :
+                // TODO:我也是服了这个渲染顺序
                 RenderType.cutoutMipped();
 
         // return Minecraft.useFancyGraphics() ?
@@ -891,8 +604,6 @@ public class ModelManager {
 
     public static void clearForRebaked(Map<ModelResourceLocation, BakedModel> modelRegistry) {
         ModelManager.models = modelRegistry;
-        quadMap.clear();
-        quadMap_1.clear();
         loadVersion++;
         // snowyModelsCache.clear();
         // stateModelsCache.clear();

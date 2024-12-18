@@ -63,7 +63,7 @@ public abstract class MixinChunkRenderDispatcher {
             extendBlockView.setSnowModel(ModelManager.findModel(renderChunkRegion, blockpos2, blockstate, randomsource, original));
             if (extendBlockView.getSnowModel() != null) {
                 extendBlockView.setCurrentModelReplaceable(ModelManager.isModelReplaceable(((IBlockStateFlagger) blockstate).getBlockTypeFlag(renderChunkRegion, blockpos2)));
-                extendBlockView.setShouldCollectBakeQuads(YuushyaChecker.isyuushyaBlock(blockstate));
+                extendBlockView.setShouldCollectBakeQuads(YuushyaChecker.isyuushyaContinuityBlock(blockstate));
             } else {
                 extendBlockView.setCurrentModelReplaceable(false);
                 extendBlockView.setShouldCollectBakeQuads(false);

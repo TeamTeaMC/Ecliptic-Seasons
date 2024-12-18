@@ -32,7 +32,7 @@ public class BakedQuadRetextured extends BakedQuad {
 
     @Override
     public TextureAtlasSprite getSprite() {
-        return super.getSprite();
+        return texture;
     }
 
     // We need not to mul it to 16f because internal changes

@@ -21,6 +21,7 @@ import net.minecraft.world.level.block.*;
 
 import com.teamtea.eclipticseasons.client.core.ModelManager;
 import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
@@ -59,6 +60,7 @@ public class ClientSetup {
     public static void registerExtraModels(ModelEvent.RegisterAdditional event) {
         // Minecraft.getInstance().getResourceManager().listPacks().toList().get(0).getResource(PackType.CLIENT_RESOURCES, ResourceLocation.withDefaultNamespace("textures/block/snow.png")).get()
         // IOUtils.toString(Minecraft.getInstance().getResourceManager().listPacks().toList().get(0).getResource(PackType.SERVER_DATA, ResourceLocation.withDefaultNamespace("recipe/yellow_terracotta.json")).get(), StandardCharsets.UTF_8)        event.register(ModelManager.snowy_fern);
+        event.register(ModelManager.snowy_custom);
         event.register(ModelManager.stairs_top);
         event.register(ModelManager.snowy_fern);
         event.register(ModelManager.snowy_grass);
@@ -103,13 +105,15 @@ public class ClientSetup {
 
     // public static Map<ResourceLocation, BakedModel> BakedSnowModels=new HashMap<>();
 
-    @SubscribeEvent
+    // TODO：neocontinuity 会把所有model给warp一层
+    @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onModelBaked(ModelEvent.ModifyBakingResult event) {
         Map<ModelResourceLocation, BakedModel> modelRegistry = event.getModels();
         ModelManager.clearForRebaked(modelRegistry);
 
         List<ModelResourceLocation> bakedModels =
                 new ArrayList<>(List.of(
+                        ModelManager.snowy_custom,
                         ModelManager.stairs_top,
                         ModelManager.snowy_fern,
                         ModelManager.snowy_grass,
@@ -126,6 +130,7 @@ public class ClientSetup {
                 ));
         bakedModels.addAll(EclipticSeasons.ModContents.snowyStairs.get().getStateDefinition().getPossibleStates().stream()
                 .map(BlockModelShaper::stateToModelLocation).toList());
+
         for (ModelResourceLocation modelResourceLocation : bakedModels) {
             BakedModel bakedModel1 = modelRegistry.get(modelResourceLocation);
             if (bakedModel1 != null) {

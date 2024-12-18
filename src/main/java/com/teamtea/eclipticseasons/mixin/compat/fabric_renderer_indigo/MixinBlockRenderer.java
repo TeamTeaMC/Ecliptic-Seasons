@@ -43,9 +43,7 @@ public abstract class MixinBlockRenderer extends AbstractBlockRenderContext impl
     )
     private void eclipticseasons$tessellateBlock(
             BlockState blockState, BlockPos blockPos, BakedModel model, PoseStack matrixStack, ModelData modelData, RenderType renderType, CallbackInfo ci) {
-        if(model instanceof SnowyBakedModelWrapper<?>){
-            int a=0;
-        }
+
     }
 
 

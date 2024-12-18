@@ -13,5 +13,6 @@ public class PinWheelBlockEntityRenderer implements BlockEntityRenderer<PinWheel
 
     @Override
     public void render(PinWheelBlockEntity blockEntity, float partialTicks, PoseStack poseStack, MultiBufferSource bufferIn, int combinedLight, int combinedOverlay) {
+
     }
 }
