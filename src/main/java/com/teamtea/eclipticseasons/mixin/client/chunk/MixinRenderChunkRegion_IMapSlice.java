@@ -71,6 +71,11 @@ public abstract class MixinRenderChunkRegion_IMapSlice implements IMapSlice {
         BIOME_MAP = new int[SIZE * SIZE][MAP_BLOCK_COUNT];
         SNOWY_MAP = new int[SIZE * SIZE][MAP_BLOCK_COUNT];
 
+
+    }
+
+    @Override
+    public void forceUpdate() {
         if (MapChecker.isValidDimension(level)) {
             int maxH = level.getMaxBuildHeight();
             BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos();
@@ -126,7 +131,6 @@ public abstract class MixinRenderChunkRegion_IMapSlice implements IMapSlice {
             }
         }
     }
-
 
     @Override
     public int getBlockHeight(BlockPos pos) {

@@ -10,4 +10,6 @@ public interface IMapSlice extends BlockAndTintGetter {
     int getSurfaceFaceBiomeId(BlockPos blockPos);
 
     default int getSnowyStatus(BlockPos blockPos){return SnowyRemover.SNOWY;};
+
+    default void forceUpdate(){}
 }
