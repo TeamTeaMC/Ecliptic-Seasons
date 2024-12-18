@@ -91,14 +91,14 @@ public abstract class MixinBlockRenderer extends AbstractBlockRenderContext impl
     }
 
     // TODO: 如果以后使用shouldCollectBakeQuads去渲染的话，可能需要
+    // 不要写太前面了，这里还得初始化
     @Inject(
             method = "renderModel",
-            at = @At(value = "HEAD")
+            at = @At(value = "INVOKE", target = "Ljava/lang/Iterable;iterator()Ljava/util/Iterator;")
     )
     private void eclipticseasons$renderModel_start(BakedModel model, BlockState state, BlockPos pos, BlockPos origin, CallbackInfo ci) {
-        BakedModel snowModel = ModelManager.findModel(slice, pos, state, random, randomSeed);
-        if (snowModel != null) {
-            eclipticSeasons$snowModel = snowModel;
+        eclipticSeasons$snowModel = ModelManager.findModel(slice, pos, state, random, randomSeed);
+        if (eclipticSeasons$snowModel != null) {
             eclipticSeasons$shouldReplaceOriginalGrassModel = ModelManager.isModelReplaceable(((IBlockStateFlagger) state).getBlockTypeFlag(level, pos));
             if (!eclipticSeasons$shouldReplaceOriginalGrassModel) {
                 boolean yuushyaBlock = YuushyaChecker.isyuushyaContinuityBlock(state);
@@ -106,6 +106,9 @@ public abstract class MixinBlockRenderer extends AbstractBlockRenderContext impl
                     eclipticSeasons$shouldCollectBakeQuads = true;
                 }
             }
+        }else {
+            eclipticSeasons$shouldReplaceOriginalGrassModel=false;
+            eclipticSeasons$shouldCollectBakeQuads = false;
         }
 
 
@@ -131,7 +134,7 @@ public abstract class MixinBlockRenderer extends AbstractBlockRenderContext impl
             method = "processQuad",
             at = @At(value = "HEAD")
     )
-    private void eclipticseasons$cache_(MutableQuadViewImpl quad, CallbackInfo ci) {
+    private void eclipticseasons$processQuad_cacheQuad(MutableQuadViewImpl quad, CallbackInfo ci) {
         // int posCount = 4;
         // int[] vs = new int[4 * BakedQuadRetextured.verticeSpace];
         // for (int i = 0; i < posCount; i++) {
@@ -158,25 +161,9 @@ public abstract class MixinBlockRenderer extends AbstractBlockRenderContext impl
         }
     }
 
-
-    @Inject(
-            method = "processQuad",
-            at = @At(value = "HEAD"),
-            cancellable = true
-    )
-    private void eclipticseasons$cache_if(MutableQuadViewImpl quad, CallbackInfo ci) {
-        // if (YuushyaChecker.isyuushyaContinuityBlock(state)) {
-        //     // EclipticSeasons.logger(ModelManager.getBakeQuadInfo(quad.toBakedQuad(quad.sprite(SpriteFinderCache.forBlockAtlas()))));
-        //     if (quad.lightFace() == Direction.EAST) {
-        //         if (!quad.toBakedQuad(quad.sprite(SpriteFinderCache.forBlockAtlas())).getSprite().contents().name().getNamespace().equals(EclipticSeasonsApi.MODID)) {
-        //             // ci.cancel();
-        //             int c=0;
-        //         } else {
-        //             EclipticSeasons.logger(QuadFixer.getBakeQuadInfo(quad.toBakedQuad(quad.sprite(SpriteFinderCache.forBlockAtlas()))));
-        //         }
-        //     }
-        //     // else ci.cancel();
-        // }
+    @Override
+    public BakedModel getSnowModel() {
+        return eclipticSeasons$snowModel;
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.teamtea.eclipticseasons.mixin.compat.yuushya;
 
 
+import com.llamalad7.mixinextras.sugar.Local;
 import com.teamtea.eclipticseasons.common.block.HalfSlabBlock;
 import com.teamtea.eclipticseasons.compat.yuushya.YuushyaChecker;
 import net.minecraft.core.BlockPos;
@@ -31,16 +32,15 @@ public abstract class MixinSlabBlock {
     private boolean eclipticSeasons$isHalfSlab = false;
 
 
-    @Inject(at = {@At(value = "INVOKE",
-            shift = At.Shift.AFTER,
-            target = "Lnet/minecraft/world/level/block/state/BlockState;getValue(Lnet/minecraft/world/level/block/state/properties/Property;)Ljava/lang/Comparable;")},
+    @Inject(at = {@At(value = "RETURN")},
             method = {"getShape"},
             cancellable = true, remap = false)
     private void ecliptic$getShape(BlockState state,
                                    BlockGetter level,
                                    BlockPos pos,
                                    CollisionContext context,
-                                   CallbackInfoReturnable<VoxelShape> cir) {
+                                   CallbackInfoReturnable<VoxelShape> cir,
+                                   @Local SlabType slabtype) {
         if (!eclipticSeasons$hasCheckHalfSlab) {
             Optional<ResourceKey<Block>> resourceKey = BuiltInRegistries.BLOCK.getResourceKey(state.getBlock());
             if(resourceKey.isPresent()){
@@ -51,7 +51,7 @@ public abstract class MixinSlabBlock {
             eclipticSeasons$hasCheckHalfSlab = true;
         }
         if (eclipticSeasons$isHalfSlab) {
-            SlabType slabtype = state.getValue(SlabBlock.TYPE);
+            // SlabType slabtype = state.getValue(SlabBlock.TYPE);
             if (slabtype == SlabType.BOTTOM) {
                 {
                     cir.setReturnValue(HalfSlabBlock.BOTTOM_AABB);

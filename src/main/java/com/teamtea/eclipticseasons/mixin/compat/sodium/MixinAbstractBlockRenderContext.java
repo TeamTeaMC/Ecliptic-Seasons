@@ -3,7 +3,9 @@ package com.teamtea.eclipticseasons.mixin.compat.sodium;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;
+import com.llamalad7.mixinextras.sugar.Share;
 import com.teamtea.eclipticseasons.EclipticSeasons;
+import com.teamtea.eclipticseasons.api.util.SimpleUtil;
 import com.teamtea.eclipticseasons.client.core.ModelManager;
 import com.teamtea.eclipticseasons.compat.sodium.SodiumStatus;
 import com.teamtea.eclipticseasons.compat.yuushya.YuushyaChecker;
@@ -48,7 +50,7 @@ public abstract class MixinAbstractBlockRenderContext {
             method = "bufferDefaultModel",
             at = @At(value = "INVOKE", target = "Lnet/caffeinemc/mods/sodium/client/services/PlatformModelAccess;getQuads(Lnet/minecraft/world/level/BlockAndTintGetter;Lnet/minecraft/core/BlockPos;Lnet/minecraft/client/resources/model/BakedModel;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/Direction;Lnet/minecraft/util/RandomSource;Lnet/minecraft/client/renderer/RenderType;Lnet/caffeinemc/mods/sodium/client/services/SodiumModelData;)Ljava/util/List;")
     )
-    private List<BakedQuad> ecliptic$getQuads_getQuads(
+    private List<BakedQuad> ecliptic$bufferDefaultModel_getQuads(
             List<BakedQuad> original,
             @Local(argsOnly = true) BakedModel bakedModel,
             @Local(argsOnly = true) BlockState state,
@@ -68,7 +70,7 @@ public abstract class MixinAbstractBlockRenderContext {
         //     }
         // }
         if (this instanceof SodiumStatus sodiumStatus)
-            return ModelManager.cancelTop(bakedModel, level, state, pos, side, rand, randomSeed, original, sodiumStatus.getCacheBakeQuad());
+            return ModelManager.cancelTop(bakedModel, level, state, pos, side, rand, randomSeed, original, sodiumStatus.getCacheBakeQuad(),sodiumStatus.getSnowModel());
         return ModelManager.cancelTop(bakedModel, level, state, pos, side, rand, randomSeed, original);
     }
 

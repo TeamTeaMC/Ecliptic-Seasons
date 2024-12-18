@@ -1,17 +1,13 @@
 package com.teamtea.eclipticseasons.mixin.compat.fabric_renderer_indigo;
 
 
-import com.teamtea.eclipticseasons.EclipticSeasons;
-import com.teamtea.eclipticseasons.client.model.QuadFixer;
 import com.teamtea.eclipticseasons.compat.vanilla.ExtendBlockView;
-import com.teamtea.eclipticseasons.compat.yuushya.YuushyaChecker;
 import net.fabricmc.fabric.api.renderer.v1.model.SpriteFinder;
 import net.fabricmc.fabric.impl.client.indigo.renderer.mesh.MutableQuadViewImpl;
 import net.fabricmc.fabric.impl.client.indigo.renderer.render.AbstractBlockRenderContext;
 import net.fabricmc.fabric.impl.client.indigo.renderer.render.BlockRenderInfo;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureAtlas;
-import net.minecraft.core.Direction;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -33,7 +29,7 @@ public abstract class MixinAbstractBlockRenderer {
                     // shift = At.Shift.AFTER,
                     target = "Lnet/fabricmc/fabric/impl/client/indigo/renderer/mesh/MutableQuadViewImpl;material()Lnet/fabricmc/fabric/impl/client/indigo/renderer/material/RenderMaterialImpl;"),
             cancellable = true)
-    private void eclipticseasons$renderQuad(
+    private void eclipticseasons$renderQuad_cache(
             MutableQuadViewImpl quad, CallbackInfo ci) {
         if (blockInfo.blockView instanceof ExtendBlockView extendBlockView) {
             if(extendBlockView.getShouldCollectBakeQuads()) {

@@ -45,7 +45,7 @@ public abstract class MixinFabricVanillaModelEncoder {
                 if (blockAndTintGetter instanceof ExtendBlockView extendBlockView) {
                     List<BakedQuad> cacheBakeQuad = extendBlockView.getCacheBakeQuad();
                     if (cacheBakeQuad != null)
-                        return ModelManager.cancelTop(bakedModel, blockAndTintGetter, state, terrainRenderContextLevelGetter.eclipticSeasons$getPos(), direction, randomSourceSupplier.get(), seedProvider.getCacheSeed(), original, cacheBakeQuad);
+                        return ModelManager.cancelTop(bakedModel, blockAndTintGetter, state, terrainRenderContextLevelGetter.eclipticSeasons$getPos(), direction, randomSourceSupplier.get(), seedProvider.getCacheSeed(), original, cacheBakeQuad,extendBlockView.getSnowModel());
                 }
 
                 return ModelManager.cancelTop(bakedModel, blockAndTintGetter, state, terrainRenderContextLevelGetter.eclipticSeasons$getPos(), direction, randomSourceSupplier.get(), seedProvider.getCacheSeed(), original);

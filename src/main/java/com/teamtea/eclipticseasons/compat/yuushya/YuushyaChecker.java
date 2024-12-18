@@ -1,5 +1,6 @@
 package com.teamtea.eclipticseasons.compat.yuushya;
 
+import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.compat.CompatModule;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.block.state.BlockState;

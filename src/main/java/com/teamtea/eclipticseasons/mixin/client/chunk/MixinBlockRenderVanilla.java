@@ -67,7 +67,7 @@ public abstract class MixinBlockRenderVanilla {
         if (blockAndTintGetter instanceof ExtendBlockView extendBlockView) {
             List<BakedQuad> cacheBakeQuad = extendBlockView.getCacheBakeQuad();
             if (cacheBakeQuad != null)
-                return ModelManager.cancelTop(bakedModel, blockAndTintGetter, state, pos, direction, randomSource, seed, original, cacheBakeQuad);
+                return ModelManager.cancelTop(bakedModel, blockAndTintGetter, state, pos, direction, randomSource, seed, original, cacheBakeQuad,extendBlockView.getSnowModel());
         }return ModelManager.cancelTop(bakedModel, blockAndTintGetter, state, pos, direction, randomSource, seed, original);
     }
 
@@ -80,7 +80,7 @@ public abstract class MixinBlockRenderVanilla {
         if (blockAndTintGetter instanceof ExtendBlockView extendBlockView) {
             List<BakedQuad> cacheBakeQuad = extendBlockView.getCacheBakeQuad();
             if (cacheBakeQuad != null)
-                return ModelManager.cancelTop(bakedModel, blockAndTintGetter, state, pos, direction, randomSource, seed, original, cacheBakeQuad);
+                return ModelManager.cancelTop(bakedModel, blockAndTintGetter, state, pos, direction, randomSource, seed, original, cacheBakeQuad,extendBlockView.getSnowModel());
         }
         return ModelManager.cancelTop(bakedModel, blockAndTintGetter, state, pos, direction, randomSource, seed, original);
     }
@@ -94,7 +94,7 @@ public abstract class MixinBlockRenderVanilla {
         if (blockAndTintGetter instanceof ExtendBlockView extendBlockView) {
             List<BakedQuad> cacheBakeQuad = extendBlockView.getCacheBakeQuad();
             if (cacheBakeQuad != null)
-                return ModelManager.cancelTop(bakedModel, blockAndTintGetter, state, pos, (Direction) null, randomSource, seed, original, cacheBakeQuad);
+                return ModelManager.cancelTop(bakedModel, blockAndTintGetter, state, pos, (Direction) null, randomSource, seed, original, cacheBakeQuad,extendBlockView.getSnowModel());
         }
         return ModelManager.cancelTop(bakedModel, blockAndTintGetter, state, pos, (Direction) null, randomSource, seed, original);
     }
@@ -108,7 +108,7 @@ public abstract class MixinBlockRenderVanilla {
         if (blockAndTintGetter instanceof ExtendBlockView extendBlockView) {
             List<BakedQuad> cacheBakeQuad = extendBlockView.getCacheBakeQuad();
             if (cacheBakeQuad != null)
-                return ModelManager.cancelTop(bakedModel, blockAndTintGetter, state, pos, (Direction) null, randomSource, seed, original, cacheBakeQuad);
+                return ModelManager.cancelTop(bakedModel, blockAndTintGetter, state, pos, (Direction) null, randomSource, seed, original, cacheBakeQuad,extendBlockView.getSnowModel());
         }
         return ModelManager.cancelTop(bakedModel, blockAndTintGetter, state, pos, (Direction) null, randomSource, seed, original);
     }
