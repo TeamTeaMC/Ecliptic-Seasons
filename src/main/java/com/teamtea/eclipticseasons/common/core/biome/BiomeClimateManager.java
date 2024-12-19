@@ -3,6 +3,8 @@ package com.teamtea.eclipticseasons.common.core.biome;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.constant.tag.ClimateTypeBiomeTags;
+import com.teamtea.eclipticseasons.api.misc.IBiomeTagHolder;
+import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.RegistryAccess;
@@ -13,6 +15,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 
+import java.util.ArrayList;
 import java.util.IdentityHashMap;
 import java.util.Map;
 
@@ -82,7 +85,7 @@ public class BiomeClimateManager {
     }
 
     public static Boolean agent$hasPrecipitation(Biome biome) {
-        return !getTag(biome).equals(ClimateTypeBiomeTags.RAINLESS);
+        return !((IBiomeTagHolder) (Object) biome).eclipticSeasons$getBindTag().equals(ClimateTypeBiomeTags.RAINLESS);
         // return WeatherManager.getPrecipitationAt(biome, BlockPos.ZERO)!= Biome.Precipitation.NONE;
     }
 
@@ -117,6 +120,7 @@ public class BiomeClimateManager {
                 // var tag = holder.get().tags().filter(ClimateTypeBiomeTags.BIOME_TYPES::contains).findFirst();
                 if (tag.isPresent()) {
                     useMap.put(holder.value(), tag.get());
+                    ((IBiomeTagHolder) (Object) holder.value()).eclipticSeasons$setTag(tag.get());
                 } else {
                     // 我们按照降雨量进行分配，如果无预测则无雨
                     int size = ClimateTypeBiomeTags.COMMON_BIOME_TYPES.size();
@@ -124,13 +128,17 @@ public class BiomeClimateManager {
                     if (!holder.value().getModifiedClimateSettings().hasPrecipitation()) {
                         index = 0;
                     }
-                    useMap.put(holder.value(), ClimateTypeBiomeTags.COMMON_BIOME_TYPES.get(index));
+                    TagKey<Biome> biomeTagKey = ClimateTypeBiomeTags.COMMON_BIOME_TYPES.get(index);
+                    useMap.put(holder.value(), biomeTagKey);
+                    ((IBiomeTagHolder) (Object) holder.value()).eclipticSeasons$setTag(biomeTagKey);
                 }
 
                 if (holder.is(ClimateTypeBiomeTags.IS_SMALL)) {
                     SMALL_BIOME_MAP.put(holder.value(), isServer);
+                    ((IBiomeTagHolder) (Object) holder.value()).eclipticSeasons$setSmall(true);
                 }
             }
         }
+
     }
 }

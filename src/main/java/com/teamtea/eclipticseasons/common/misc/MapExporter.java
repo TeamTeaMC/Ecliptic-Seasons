@@ -2,12 +2,16 @@ package com.teamtea.eclipticseasons.common.misc;
 
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.client.util.ColorHelper;
+import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.map.ChunkInfoMap;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
+import net.minecraft.Util;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biomes;
 
@@ -16,7 +20,9 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
 public class MapExporter {
     public static int exportMap(CommandSourceStack source, BlockPos pos) {
@@ -32,8 +38,8 @@ public class MapExporter {
         
         BufferedImage image = new BufferedImage(size, size, BufferedImage.TYPE_INT_RGB);
         Graphics2D graphics2D = image.createGraphics();
-        HashSet<Holder<Biome>> hashSet = new HashSet<>();
-        HashSet<Color> hashSetColor = new HashSet<>();
+        HashMap<Holder<Biome>,Color> hashSet = new HashMap<>();
+        // HashSet<Color> hashSetColor = new HashSet<>();
         for (int i = 0; i < size; i++) {
             for (int j =0; j < size; j++) {
                 int id = map.getBiome(i, j);
@@ -51,28 +57,47 @@ public class MapExporter {
                 var biomePos = new BlockPos((x << ax) + i, pos.getY(), (z << ax) + j);
                 biome = MapChecker.getSurfaceBiome(source.getLevel(),
                         biomePos);
-                hashSet.add(biome);
 
+                Color color=null;
                 if (biome != null) {
-                    var color=new Color(ColorHelper.simplyMixColor(biome.value().getGrassColor(biomePos.getX(), biomePos.getZ()), 0.85f,
+                     color=new Color(ColorHelper.simplyMixColor(biome.value().getGrassColor(biomePos.getX(), biomePos.getZ()), 0.85f,
                             biome.value().getWaterColor(), 0.15f));
+                    color=new Color(RandomSource.create(biome.getRegisteredName().hashCode()).nextInt(256*256*256));
+
                     graphics2D.setColor(color);
-                    hashSetColor.add(color);
                     id=0;
                 }
 
                 if (biome == null
                         || biome.is(Biomes.THE_VOID)
                         || id == -1) {
-                    graphics2D.setColor(Color.ORANGE);
+                    color=Color.BLACK;
+                    graphics2D.setColor(color);
+                }
+                if (biome != null && biome.is(Biomes.PLAINS)) {
+                    color=Color.RED;
+                    graphics2D.setColor(color);
                 }
                 graphics2D.fillRect(i, j, 1, 1);
+
+                hashSet.put(biome,color);
             }
         }
-        graphics2D.setColor(Color.PINK);
-        graphics2D.fillRect(ChunkInfoMap.getChunkValue(source.getPlayer().getBlockX()) - 5,
-                ChunkInfoMap.getChunkValue(source.getPlayer().getBlockZ()) - 5,
-                10, 10);
+        graphics2D.setColor(Color.CYAN);
+        Font monospaced = new Font("Monospaced", 0, 12);
+        graphics2D.setFont(monospaced);
+
+        graphics2D.drawString("⭐",ChunkInfoMap.getChunkValue(source.getPlayer().getBlockX()) - 5,
+                ChunkInfoMap.getChunkValue(source.getPlayer().getBlockZ()) - 5);
+        int i =0;
+        for (Map.Entry<Holder<Biome>, Color> holderColorEntry : hashSet.entrySet()) {
+            graphics2D.setColor(holderColorEntry.getValue());
+            graphics2D.drawString( holderColorEntry.getKey().getRegisteredName()+","+ Component.translatable(Util.makeDescriptionId("biome", holderColorEntry.getKey().getKey().location())).getString(),5,
+                    20*(++i));
+        }
+        // graphics2D.fillArc(ChunkInfoMap.getChunkValue(source.getPlayer().getBlockX()) - 5,
+        //         ChunkInfoMap.getChunkValue(source.getPlayer().getBlockZ()) - 5,
+        //         10, 10,0,360);
 
         graphics2D.dispose();
         try {

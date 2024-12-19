@@ -3,6 +3,7 @@ package com.teamtea.eclipticseasons.client.model;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormatElement;
 import com.teamtea.eclipticseasons.EclipticSeasons;
+import it.unimi.dsi.fastutil.ints.IntArraySet;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 
 import java.util.HashSet;
@@ -14,8 +15,7 @@ public class RectangularPrismChecker {
 
     public static boolean isRectangularPrism(BakedQuad bakedQuad) {
         if (bakedQuad == null) return false;
-        HashSet<Integer> projections = new HashSet<>();
-
+        IntArraySet projections = new IntArraySet(4);
         for (int i = 0; i < 4; i++) {
             int j = verticeSpace * i;
             projections.add(bakedQuad.getVertices()[j + xyzIndex + 1]);
@@ -26,12 +26,12 @@ public class RectangularPrismChecker {
             return false;
 
 
-        HashSet<Integer> projectionsx = new HashSet<>();
+        IntArraySet projectionsx = new IntArraySet(4);
         for (int i = 0; i < 4; i++) {
             int j = verticeSpace * i;
             projectionsx.add(bakedQuad.getVertices()[j + xyzIndex]);
         }
-        HashSet<Integer> projectionsz = new HashSet<>();
+        IntArraySet projectionsz = new IntArraySet(4);
         for (int i = 0; i < 4; i++) {
             int j = verticeSpace * i;
             projectionsz.add(bakedQuad.getVertices()[j + xyzIndex+2]);

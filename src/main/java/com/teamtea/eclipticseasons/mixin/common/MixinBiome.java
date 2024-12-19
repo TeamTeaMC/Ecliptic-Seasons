@@ -2,20 +2,23 @@ package com.teamtea.eclipticseasons.mixin.common;
 
 
 import com.teamtea.eclipticseasons.api.constant.tag.ClimateTypeBiomeTags;
+import com.teamtea.eclipticseasons.api.misc.IBiomeTagHolder;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.config.ServerConfig;
 import com.teamtea.eclipticseasons.compat.vanilla.VanillaWeather;
 import net.minecraft.core.BlockPos;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.biome.Biome;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin({Biome.class})
-public abstract class MixinBiome {
+public abstract class MixinBiome implements IBiomeTagHolder {
 
     @Inject(at = {@At("HEAD")}, method = {"getPrecipitationAt"}, cancellable = true)
     public void ecliptic$getPrecipitationAt(BlockPos pos, CallbackInfoReturnable<Biome.Precipitation> cir) {
@@ -55,4 +58,30 @@ public abstract class MixinBiome {
     // @Inject(at = {@At("HEAD")}, method = {"shouldSnow"}, cancellable = true)
     // public void ecliptic$shouldSnow(LevelReader p_47520_, BlockPos p_47521_, CallbackInfoReturnable<Boolean> cir) {
     // }
+
+    @Unique
+    private boolean eclipticSeasons$small = false;
+
+    @Unique
+    private TagKey<Biome> eclipticSeasons$biomeTagKey = ClimateTypeBiomeTags.RAINLESS;
+
+    @Override
+    public TagKey<Biome> eclipticSeasons$getBindTag() {
+        return eclipticSeasons$biomeTagKey;
+    }
+
+    @Override
+    public void eclipticSeasons$setTag(TagKey<Biome> tag) {
+        this.eclipticSeasons$biomeTagKey = tag;
+    }
+
+    @Override
+    public boolean eclipticSeasons$isSmallBiome() {
+        return eclipticSeasons$small;
+    }
+
+    @Override
+    public void eclipticSeasons$setSmall(boolean isSmall) {
+        this.eclipticSeasons$small = isSmall;
+    }
 }

@@ -8,6 +8,7 @@ import com.teamtea.eclipticseasons.api.constant.solar.color.leaves.LeaveColor;
 import com.teamtea.eclipticseasons.api.constant.solar.color.leaves.MangroveLeavesColor;
 import com.teamtea.eclipticseasons.api.constant.solar.color.leaves.SpruceLeavesColor;
 import com.teamtea.eclipticseasons.api.constant.tag.ClimateTypeBiomeTags;
+import com.teamtea.eclipticseasons.api.misc.IBiomeTagHolder;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.client.util.ColorHelper;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
@@ -52,7 +53,7 @@ public class BiomeColorsHandler {
             int i = (int) ((1.0D - temperature) * 255.0D);
             int j = (int) ((1.0D - humidity) * 255.0D);
             int k = j << 8 | i;
-            TagKey<Biome> biomeTagKey = BiomeClimateManager.getTag(biome);
+            TagKey<Biome> biomeTagKey = ((IBiomeTagHolder) (Object) biome).eclipticSeasons$getBindTag();
             int[] newGrassBuffer = newGrassBufferMap.getOrDefault(biomeTagKey, GrassColor.pixels);
 
             int color = k > newGrassBuffer.length ? originColor : newGrassBuffer[k];
@@ -80,7 +81,7 @@ public class BiomeColorsHandler {
             int j = (int) ((1.0D - humidity) * 255.0D);
             int k = j << 8 | i;
 
-            TagKey<Biome> biomeTagKey = BiomeClimateManager.getTag(biome);
+            TagKey<Biome> biomeTagKey = ((IBiomeTagHolder) (Object) biome).eclipticSeasons$getBindTag();
             int[] newFoliageBuffer = newFoliageBufferMap.getOrDefault(biomeTagKey, FoliageColor.pixels);
             int color = k > newFoliageBuffer.length ? originColor : newFoliageBuffer[k];
             if (biomeTagKey != ClimateTypeBiomeTags.SEASONAL

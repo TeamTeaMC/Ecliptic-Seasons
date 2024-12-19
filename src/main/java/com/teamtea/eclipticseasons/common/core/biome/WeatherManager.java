@@ -7,6 +7,7 @@ import com.teamtea.eclipticseasons.api.constant.climate.FlatRain;
 import com.teamtea.eclipticseasons.api.constant.climate.SnowTerm;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.constant.tag.ClimateTypeBiomeTags;
+import com.teamtea.eclipticseasons.api.misc.IBiomeTagHolder;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.api.util.SimpleUtil;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
@@ -300,7 +301,7 @@ public class WeatherManager {
         }
 
         // check if it has predication
-        if (BiomeClimateManager.getTag(biome).equals(ClimateTypeBiomeTags.RAINLESS)) {
+        if (((IBiomeTagHolder) (Object) biome).eclipticSeasons$getBindTag().equals(ClimateTypeBiomeTags.RAINLESS)) {
             return Biome.Precipitation.NONE;
         }
 

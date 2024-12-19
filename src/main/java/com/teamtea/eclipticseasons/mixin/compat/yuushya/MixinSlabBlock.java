@@ -25,43 +25,43 @@ import java.util.Optional;
 @Mixin({SlabBlock.class})
 public abstract class MixinSlabBlock {
 
-    @Unique
-    private boolean eclipticSeasons$hasCheckHalfSlab = false;
-
-    @Unique
-    private boolean eclipticSeasons$isHalfSlab = false;
-
-
-    @Inject(at = {@At(value = "INVOKE",
-            target = "Lnet/minecraft/world/level/block/state/BlockState;getValue(Lnet/minecraft/world/level/block/state/properties/Property;)Ljava/lang/Comparable;")},
-            method = {"getShape"},
-            cancellable = true, remap = false)
-    private void ecliptic$getShape(BlockState state,
-                                   BlockGetter level,
-                                   BlockPos pos,
-                                   CollisionContext context,
-                                   CallbackInfoReturnable<VoxelShape> cir) {
-        if (!eclipticSeasons$hasCheckHalfSlab) {
-            Optional<ResourceKey<Block>> resourceKey = BuiltInRegistries.BLOCK.getResourceKey(state.getBlock());
-            if(resourceKey.isPresent()){
-                this.eclipticSeasons$isHalfSlab =
-                        YuushyaChecker.isyuushyaRBlock(state)
-                                && resourceKey.get().location().getPath().startsWith("half_slab");
-            }
-            eclipticSeasons$hasCheckHalfSlab = true;
-        }
-        if (eclipticSeasons$isHalfSlab) {
-            SlabType slabtype = state.getValue(SlabBlock.TYPE);
-            if (slabtype == SlabType.BOTTOM) {
-                {
-                    cir.setReturnValue(HalfSlabBlock.BOTTOM_AABB);
-                }
-            }else if (slabtype == SlabType.TOP) {
-                {
-                    cir.setReturnValue(HalfSlabBlock.TOP_AABB);
-                }
-            }
-        }
-    }
+    // @Unique
+    // private boolean eclipticSeasons$hasCheckHalfSlab = false;
+    //
+    // @Unique
+    // private boolean eclipticSeasons$isHalfSlab = false;
+    //
+    //
+    // @Inject(at = {@At(value = "INVOKE",
+    //         target = "Lnet/minecraft/world/level/block/state/BlockState;getValue(Lnet/minecraft/world/level/block/state/properties/Property;)Ljava/lang/Comparable;")},
+    //         method = {"getShape"},
+    //         cancellable = true, remap = false)
+    // private void ecliptic$getShape(BlockState state,
+    //                                BlockGetter level,
+    //                                BlockPos pos,
+    //                                CollisionContext context,
+    //                                CallbackInfoReturnable<VoxelShape> cir) {
+    //     if (!eclipticSeasons$hasCheckHalfSlab) {
+    //         Optional<ResourceKey<Block>> resourceKey = BuiltInRegistries.BLOCK.getResourceKey(state.getBlock());
+    //         if(resourceKey.isPresent()){
+    //             this.eclipticSeasons$isHalfSlab =
+    //                     YuushyaChecker.isyuushyaRBlock(state)
+    //                             && resourceKey.get().location().getPath().startsWith("half_slab");
+    //         }
+    //         eclipticSeasons$hasCheckHalfSlab = true;
+    //     }
+    //     if (eclipticSeasons$isHalfSlab) {
+    //         SlabType slabtype = state.getValue(SlabBlock.TYPE);
+    //         if (slabtype == SlabType.BOTTOM) {
+    //             {
+    //                 cir.setReturnValue(HalfSlabBlock.BOTTOM_AABB);
+    //             }
+    //         }else if (slabtype == SlabType.TOP) {
+    //             {
+    //                 cir.setReturnValue(HalfSlabBlock.TOP_AABB);
+    //             }
+    //         }
+    //     }
+    // }
 
 }

@@ -2,6 +2,7 @@ package com.teamtea.eclipticseasons.common.core.map;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.constant.tag.EclipticBlockTags;
+import com.teamtea.eclipticseasons.api.misc.IBiomeTagHolder;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.network.message.ChunkUpdateMessage;
@@ -288,6 +289,7 @@ public class MapChecker {
 
     public static boolean shouldSnowAt(Level level, BlockPos pos, int biomeId, BlockState state, RandomSource random, long seed) {
         boolean isSnowy = false;
+
         if (WeatherManager.getBiomeList(level).get(biomeId).snowDepth > Math.abs(seed % 100)) {
             if (ServerConfig.Debug.notLightAbove.get()) {
                 isSnowy = notLightAbove(level, pos, 4);
@@ -304,11 +306,8 @@ public class MapChecker {
     }
 
     public static boolean isSmallBiome(Holder<Biome> biomeHolder) {
-        // return biomeHolder.is(Tags.Biomes.IS_RIVER)
-        //         || biomeHolder.is(Tags.Biomes.IS_BEACH)
-        // || biomeHolder.is(Tags.Biomes.IS_OCEAN)
-        ;
-        return BiomeClimateManager.SMALL_BIOME_MAP.containsKey(biomeHolder.value());
+        // return BiomeClimateManager.SMALL_BIOME_MAP.containsKey(biomeHolder.value());
+        return ((IBiomeTagHolder) (Object) biomeHolder.value()).eclipticSeasons$isSmallBiome();
     }
 
     public static Holder<Biome> idToBiome(Level level, int id) {
