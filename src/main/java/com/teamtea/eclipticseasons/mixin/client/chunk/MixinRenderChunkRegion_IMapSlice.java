@@ -75,7 +75,7 @@ public abstract class MixinRenderChunkRegion_IMapSlice implements IMapSlice {
     }
 
     @Override
-    public void forceUpdate() {
+    public void forceMapSliceUpdate() {
         if (MapChecker.isValidDimension(level)) {
             int maxH = level.getMaxBuildHeight();
             BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos();

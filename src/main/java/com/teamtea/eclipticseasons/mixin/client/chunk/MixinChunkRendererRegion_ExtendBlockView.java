@@ -4,6 +4,7 @@ import com.teamtea.eclipticseasons.compat.vanilla.ExtendBlockView;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.chunk.RenderChunkRegion;
 import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.core.BlockPos;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
@@ -25,6 +26,9 @@ public abstract class MixinChunkRendererRegion_ExtendBlockView implements Extend
 
     @Unique
     private boolean eclipticSeasons$shouldReplaceOriginalGrassModel = false;
+
+    @Unique
+    private BlockPos.MutableBlockPos eclipticSeasons$mutableBlockPos =new BlockPos.MutableBlockPos();
 
     @Override
     public List<BakedQuad> getCacheBakeQuad() {
@@ -88,5 +92,10 @@ public abstract class MixinChunkRendererRegion_ExtendBlockView implements Extend
     @Override
     public boolean getShouldCollectBakeQuads() {
         return this.eclipticSeasons$shouldCollectBakeQuads;
+    }
+
+    @Override
+    public BlockPos.MutableBlockPos getModelCheckPos() {
+        return eclipticSeasons$mutableBlockPos;
     }
 }

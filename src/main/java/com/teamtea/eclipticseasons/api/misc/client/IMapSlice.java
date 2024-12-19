@@ -11,5 +11,5 @@ public interface IMapSlice extends BlockAndTintGetter {
 
     default int getSnowyStatus(BlockPos blockPos){return SnowyRemover.SNOWY;};
 
-    default void forceUpdate(){}
+    default void forceMapSliceUpdate(){}
 }

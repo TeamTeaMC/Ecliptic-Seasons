@@ -3,15 +3,9 @@ package com.teamtea.eclipticseasons.mixin.compat.sodium;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;
-import com.llamalad7.mixinextras.sugar.Share;
-import com.teamtea.eclipticseasons.EclipticSeasons;
-import com.teamtea.eclipticseasons.api.util.SimpleUtil;
 import com.teamtea.eclipticseasons.client.core.ModelManager;
 import com.teamtea.eclipticseasons.compat.sodium.SodiumStatus;
-import com.teamtea.eclipticseasons.compat.yuushya.YuushyaChecker;
-import net.caffeinemc.mods.sodium.client.render.frapi.mesh.MutableQuadViewImpl;
 import net.caffeinemc.mods.sodium.client.render.frapi.render.AbstractBlockRenderContext;
-import net.caffeinemc.mods.sodium.client.render.texture.SpriteFinderCache;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
@@ -43,7 +37,8 @@ public abstract class MixinAbstractBlockRenderContext {
     @Shadow
     protected BlockPos pos;
 
-    @Shadow protected BlockState state;
+    @Shadow
+    protected BlockState state;
 
     @ModifyExpressionValue(
             remap = false,
@@ -69,9 +64,9 @@ public abstract class MixinAbstractBlockRenderContext {
         //         return new ArrayList<>();
         //     }
         // }
-        if (this instanceof SodiumStatus sodiumStatus)
-            return ModelManager.cancelTop(bakedModel, level, state, pos, side, rand, randomSeed, original, sodiumStatus.getCacheBakeQuad(),sodiumStatus.getSnowModel());
-        return ModelManager.cancelTop(bakedModel, level, state, pos, side, rand, randomSeed, original);
+        if (this instanceof SodiumStatus sodiumStatus && sodiumStatus.getSnowModel() != null)
+            return ModelManager.cancelTop(bakedModel, level, state, pos, side, rand, randomSeed, original, sodiumStatus.getCacheBakeQuad(), sodiumStatus.getSnowModel());
+        return original;
     }
 
     // @ModifyExpressionValue(

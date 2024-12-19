@@ -4,6 +4,7 @@ package com.teamtea.eclipticseasons.mixin.compat.sodium;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 
+import com.teamtea.eclipticseasons.client.core.ModelManager;
 import com.teamtea.eclipticseasons.compat.sodium.SodiumBoard;
 import com.teamtea.eclipticseasons.compat.sodium.SodiumStatus;
 import com.teamtea.eclipticseasons.config.ClientConfig;
@@ -13,8 +14,10 @@ import net.caffeinemc.mods.sodium.client.render.chunk.compile.ChunkBuildOutput;
 import net.caffeinemc.mods.sodium.client.render.chunk.compile.tasks.ChunkBuilderMeshingTask;
 import net.caffeinemc.mods.sodium.client.render.chunk.compile.tasks.ChunkBuilderTask;
 import net.caffeinemc.mods.sodium.client.util.task.CancellationToken;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import org.joml.Vector3dc;
@@ -89,5 +92,28 @@ public abstract class MixinBlockRenderTask extends ChunkBuilderTask<ChunkBuildOu
         eclipticSeasons$countModel++;
     }
 
-
+    // @Inject(
+    //         method = "execute(Lnet/caffeinemc/mods/sodium/client/render/chunk/compile/ChunkBuildContext;Lnet/caffeinemc/mods/sodium/client/util/task/CancellationToken;)Lnet/caffeinemc/mods/sodium/client/render/chunk/compile/ChunkBuildOutput;",
+    //         at = @At(value = "INVOKE", target = "Lnet/caffeinemc/mods/sodium/client/render/chunk/compile/pipeline/BlockRenderer;renderModel(Lnet/minecraft/client/resources/model/BakedModel;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/BlockPos;Lnet/minecraft/core/BlockPos;)V")
+    // )
+    // private void eclipticseasons$compile_tess(ChunkBuildContext buildContext,
+    //                                           CancellationToken cancellationToken,
+    //                                           CallbackInfoReturnable<ChunkBuildOutput> cir,
+    //                                           @Local(ordinal = 0) BlockPos.MutableBlockPos pos,
+    //                                           @Local BlockState state) {
+    //     BlockPos.MutableBlockPos mutableBlockPos = ModelManager.posToMutable(pos);
+    //     RandomSource random = RandomSource.create();
+    //     long seed = state.getSeed(pos);
+    //     BakedModel model = null;
+    //     for (int zzz = 0; zzz < 100; zzz++) {
+    //          model = ModelManager.findModel(buildContext.cache.getWorldSlice(),
+    //                 pos, state, random, seed, mutableBlockPos);
+    //     }
+    //     try {
+    //         TextureAtlasSprite particleIcon = model.getParticleIcon();
+    //     } catch (Exception e) {
+    //     } finally {
+    //     }
+    //
+    // }
 }

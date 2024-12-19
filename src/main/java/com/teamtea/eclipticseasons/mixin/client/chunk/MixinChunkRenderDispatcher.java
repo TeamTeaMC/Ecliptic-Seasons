@@ -52,7 +52,7 @@ public abstract class MixinChunkRenderDispatcher {
             )
     )
     private void eclipticseasons$compile_init_chunk(SectionPos sectionPos, RenderChunkRegion region, VertexSorting vertexSorting, SectionBufferBuilderPack sectionBufferBuilderPack, List<AddSectionGeometryEvent.AdditionalSectionRenderer> additionalRenderers, CallbackInfoReturnable<SectionCompiler.Results> cir){
-        ((IMapSlice)region).forceUpdate();
+        ((IMapSlice)region).forceMapSliceUpdate();
     }
 
     @ModifyExpressionValue(
@@ -68,7 +68,7 @@ public abstract class MixinChunkRenderDispatcher {
         ((ISeedProvider) renderChunkRegion).setCacheSeed(original);
         if (renderChunkRegion instanceof ExtendBlockView extendBlockView) {
             randomsource.setSeed(original);
-            extendBlockView.setSnowModel(ModelManager.findModel(renderChunkRegion, blockpos2, blockstate, randomsource, original));
+            extendBlockView.setSnowModel(ModelManager. findModel(renderChunkRegion, blockpos2, blockstate, randomsource, original,extendBlockView.getModelCheckPos()));
             if (extendBlockView.getSnowModel() != null) {
                 extendBlockView.setCurrentModelReplaceable(ModelManager.isModelReplaceable(((IBlockStateFlagger) blockstate).getBlockTypeFlag(renderChunkRegion, blockpos2)));
                 extendBlockView.setShouldCollectBakeQuads(YuushyaChecker.isyuushyaContinuityBlock(blockstate));
