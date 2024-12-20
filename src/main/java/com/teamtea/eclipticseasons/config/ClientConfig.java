@@ -38,11 +38,14 @@ public class ClientConfig {
 
     public static class Renderer {
         public static ForgeConfigSpec.BooleanValue forceChunkRenderUpdate;
+        public static ForgeConfigSpec.BooleanValue enhancementChunkRenderUpdate;
         public static ForgeConfigSpec.BooleanValue useVanillaCheck;
 
         public static ForgeConfigSpec.BooleanValue snowyWinter;
-        public static ForgeConfigSpec.BooleanValue deeperSnow;
+        public static ForgeConfigSpec.BooleanValue betterSnow;
         public static ForgeConfigSpec.BooleanValue realisticSnowyChange;
+        public static ForgeConfigSpec.BooleanValue notSnowyNearGlowingBlock;
+        public static ForgeConfigSpec.IntValue notSnowyNearGlowingBlockLevel;
 
         public static ForgeConfigSpec.BooleanValue seasonalGrassColorChange;
         public static ForgeConfigSpec.BooleanValue flowerOnGrass;
@@ -51,6 +54,8 @@ public class ClientConfig {
             builder.push("Renderer");
             forceChunkRenderUpdate = builder.comment("Force to update chunk rendering.")
                     .define("ForceChunkRenderUpdate", true);
+            enhancementChunkRenderUpdate = builder.comment("Enhanced reload, which will refresh all sections periodically.")
+                    .define("EnhancementChunkRenderUpdate", false);
 
             useVanillaCheck = builder.comment("Determines whether snow is falling based on vanilla lighting checks.")
                     .define("UseVanillaCheck", false);
@@ -58,8 +63,12 @@ public class ClientConfig {
                     .define("SnowyWinter", true);
             realisticSnowyChange = builder.comment("When the block is updated, the snow cover will not refresh immediately, but will be updated after a delay. Please note that this will consume more performance..")
                     .define("RealisticSnowyChange", true);
-            deeperSnow = builder.comment("Occasionally a thicker layer of snow will cover the flowers and grass, especially.")
-                    .define("DeeperSnow", false);
+            betterSnow = builder.comment("Blocks underneath fences etc. may also be covered with snow.")
+                    .define("SnowUnderFence", true);
+            notSnowyNearGlowingBlock = builder.comment("Snow will not appear in overly bright areas, here define restriction levels.")
+                    .define("NotSnowyNearGlowingBlock", true);
+            notSnowyNearGlowingBlockLevel = builder.comment("Snow will not appear in overly bright areas.")
+                    .defineInRange("NotSnowyNearGlowingBlockLevel", 10, 1, 15);
 
             seasonalGrassColorChange = builder.comment("The colors of the grass and leaves change with the time of year.")
                     .define("SeasonalGrassColorChange", true);

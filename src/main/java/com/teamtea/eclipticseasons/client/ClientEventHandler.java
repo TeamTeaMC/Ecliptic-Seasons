@@ -5,7 +5,8 @@ import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.client.core.ClientWeatherChecker;
 import com.teamtea.eclipticseasons.client.core.map.ClientMapFixer;
-import com.teamtea.eclipticseasons.client.render.ClientRenderer;
+import com.teamtea.eclipticseasons.client.render.WorldRenderer;
+import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
@@ -38,7 +39,7 @@ public final class ClientEventHandler {
     @SubscribeEvent
     public static void onRenderTick(TickEvent.RenderTickEvent event) {
         if (event.phase == TickEvent.Phase.END && Minecraft.getInstance().player != null) {
-            ClientRenderer.applyEffect(Minecraft.getInstance().gameRenderer, Minecraft.getInstance().player);
+            WorldRenderer.applyEffect(Minecraft.getInstance().gameRenderer, Minecraft.getInstance().player);
         }
     }
 
@@ -92,18 +93,15 @@ public final class ClientEventHandler {
             MapChecker.unloadLevel(clientLevel);
             ClientWeatherChecker.unloadLevel(clientLevel);
             ClientMapFixer.clearAll();
+            ClientCon.useLevel = null;
         }
     }
 
     @SubscribeEvent
     public static void onLevelEventLoad(LevelEvent.Load event) {
         if (event.getLevel() instanceof ClientLevel clientLevel) {
-            // synchronized (ModelManager.RegionList) {
-            //     ModelManager.RegionList.clear();
-            // }
-
-            // ModelManager.quadMap.clear();
-            // ModelManager.quadMap_1.clear();
+            ClientCon.useLevel = clientLevel;
+            ClientCon.tick(clientLevel);
 
             WeatherManager.createLevelBiomeWeatherList(clientLevel);
             // 这里需要恢复一下数据
@@ -112,28 +110,36 @@ public final class ClientEventHandler {
         }
     }
 
-    // 强制区块渲染
+    private static long lastFreshTime = -1;
+
     @SubscribeEvent
-    public static void onWorldTick(TickEvent.LevelTickEvent event) {
-        if (event.level instanceof ClientLevel clientLevel) {
+    public static void onLevelTick(TickEvent.LevelTickEvent event) {
+        if (event.level instanceof ClientLevel clientLevel
+                && event.phase.equals(TickEvent.Phase.END)) {
             ClientWeatherChecker.tickAllCheck(clientLevel);
             ClientMapFixer.tick(clientLevel);
-        }
-        if (ClientConfig.Renderer.forceChunkRenderUpdate.get()) {
-            if (event.phase.equals(TickEvent.Phase.END)
-                    && event.level.isClientSide()
-                    && event.level.getGameTime() % 100 == 0) {
-                var lr = Minecraft.getInstance().levelRenderer;
-                if (lr != null) {
-                    //
+            ClientCon.tick(clientLevel);
+
+            if (ClientConfig.Renderer.forceChunkRenderUpdate.get()) {
+                if (clientLevel.getGameTime() - lastFreshTime > 80
+                        || clientLevel.getGameTime() < lastFreshTime - 1) {
+                    lastFreshTime = clientLevel.getGameTime();
                     if (Minecraft.getInstance().cameraEntity instanceof Player player) {
                         BlockPos pos = player.getOnPos();
                         SectionPos sectionPos = SectionPos.of(pos);
-                        lr.setSectionDirtyWithNeighbors(sectionPos.x(), sectionPos.y(), sectionPos.z());
+                        if (!ClientConfig.Renderer.enhancementChunkRenderUpdate.get()) {
+                            WorldRenderer.setSectionDirtyWithNeighbors(sectionPos);
+                        } else {
+                            if (clientLevel.getRandom().nextInt(2) == 0) {
+                                WorldRenderer.setAllDirty(sectionPos);
+                            }
+                        }
                     }
+
                 }
             }
         }
+
     }
 
 

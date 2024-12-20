@@ -78,5 +78,11 @@ fix snow term in hot biomes if close to the baseline
 support season crop tag for Serene Seasons
 
 0.7.5
-adjust the growth rate of crops in unsuitable humidity levels so that when the humidity is too far from the required, the growth will slow down instead of stopping.
+reduce the limitation of humidity on crop growth
 add enum values cache for some class
+allow config not use dynamic daylight duration change
+allow config use enhanced seasonal color rendering refresh
+optimize some solar term calculation performance
+improved snow-covered effect support for more models, such as fences, walls and more
+allow use config to set whether the light controls the snow cover
+fix an issue with biome grass colors

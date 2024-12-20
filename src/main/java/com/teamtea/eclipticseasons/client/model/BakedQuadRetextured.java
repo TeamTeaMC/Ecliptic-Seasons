@@ -14,13 +14,10 @@ import java.util.Arrays;
 // From dynamictrees, thanks DT team
 public class BakedQuadRetextured extends BakedQuad {
     private final TextureAtlasSprite texture;
-    // ModelBakery
-    public static final Material FIRE_0 = new Material(TextureAtlas.LOCATION_BLOCKS, EclipticSeasons.rl("block/snow_overlay"));
 
     public BakedQuadRetextured(BakedQuad quad, TextureAtlasSprite textureIn) {
         super(Arrays.copyOf(quad.getVertices(), quad.getVertices().length), quad.getTintIndex(), FaceBakery.calculateFacing(quad.getVertices()), quad.getSprite(), quad.isShade());
-        // this.texture = textureIn;
-        this.texture=FIRE_0.sprite();
+        this.texture = textureIn;
         this.remapQuad();
     }
 
@@ -35,7 +32,17 @@ public class BakedQuadRetextured extends BakedQuad {
 
     @Override
     public TextureAtlasSprite getSprite() {
-        return super.getSprite();
+        return texture;
+    }
+
+    @Override
+    public boolean isTinted() {
+        return false;
+    }
+
+    @Override
+    public int getTintIndex() {
+        return -1;
     }
 
     private static float getUnInterpolatedU(TextureAtlasSprite sprite, float u) {
@@ -47,5 +54,6 @@ public class BakedQuadRetextured extends BakedQuad {
         float f = sprite.getV1() - sprite.getV0();
         return (v - sprite.getV0()) / f * 16.0F;
     }
+
 
 }

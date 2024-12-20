@@ -27,64 +27,71 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.state.BlockState;
 
 import java.awt.*;
-import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.Map;
 
 public class BiomeColorsHandler {
     // public static int[] newFoliageBuffer = new int[65536];
     // public static int[] newGrassBuffer = new int[65536];
-    public static Map<TagKey<Biome>, int[]> newFoliageBufferMap = new HashMap<>();
-    public static Map<TagKey<Biome>, int[]> newGrassBufferMap = new HashMap<>();
+    public static Map<TagKey<Biome>, int[]> newFoliageBufferMap = new IdentityHashMap<>();
+    public static Map<TagKey<Biome>, int[]> newGrassBufferMap = new IdentityHashMap<>();
 
     public static boolean needRefresh = false;
 
     public static final ColorResolver GRASS_COLOR = (biome, posX, posZ) ->
     {
-        // if(true)return 9680335;
-        var clientLevel = Minecraft.getInstance().level;
-        if (clientLevel != null) {
-            int originColor = biome.getGrassColor(posX, posZ);
-            return SolarHolders.getSaveDataLazy(clientLevel).map(data ->
-            {
-                if (needRefresh) {
-                    reloadColors();
-                }
-                // 由于基本温度被更改
-                double temperature = Mth.clamp(biome.getModifiedClimateSettings().temperature() + EclipticUtil.getNowSolarTerm(clientLevel).getTemperatureChange(), 0.0F, 1.0F);
-                double humidity = Mth.clamp(biome.getModifiedClimateSettings().downfall(), 0.0F, 1.0F);
-                humidity = humidity * temperature;
-                int i = (int) ((1.0D - temperature) * 255.0D);
-                int j = (int) ((1.0D - humidity) * 255.0D);
-                int k = j << 8 | i;
 
-                int[] newGrassBuffer = newGrassBufferMap.getOrDefault(BiomeClimateManager.getTag(biome), GrassColor.pixels);
-                return k > newGrassBuffer.length ? -65281 : newGrassBuffer[k];
-            }).orElse(originColor);
-        } else return -1;
+        int originColor = biome.getGrassColor(posX, posZ);
+        if (ClientConfig.Renderer.seasonalGrassColorChange.get()) {
+            if (needRefresh) {
+                reloadColors();
+            }
+            // 由于基本温度被更改
+            // double temperature = Mth.clamp(biome.getModifiedClimateSettings().temperature() + EclipticUtil.getNowSolarTerm(clientLevel).getTemperatureChange(), 0.0F, 1.0F);
+
+            double temperature = Mth.clamp(biome.getModifiedClimateSettings().temperature(), 0.0F, 1.0F);
+            double humidity = Mth.clamp(biome.getModifiedClimateSettings().downfall(), 0.0F, 1.0F);
+            humidity = humidity * temperature;
+            int i = (int) ((1.0D - temperature) * 255.0D);
+            int j = (int) ((1.0D - humidity) * 255.0D);
+            int k = j << 8 | i;
+            TagKey<Biome> biomeTagKey = BiomeClimateManager.getTag(biome);
+            int[] newGrassBuffer = newGrassBufferMap.getOrDefault(biomeTagKey, GrassColor.pixels);
+
+            int color = k > newGrassBuffer.length ? originColor : newGrassBuffer[k];
+            if (biomeTagKey != ClimateTypeBiomeTags.SEASONAL
+                    && biomeTagKey != ClimateTypeBiomeTags.MONSOONAL) {
+                color = ColorHelper.simplyMixColor(color, 0.1f, originColor, 0.9f);
+            }
+            // 注意大概率会DH
+            return color;
+        }
+        return originColor;
     };
 
     public static final ColorResolver FOLIAGE_COLOR = (biome, posX, posZ) ->
     {
-        var clientLevel = Minecraft.getInstance().level;
-
-        if (clientLevel != null) {
-            int originColor = biome.getFoliageColor();
-            return SolarHolders.getSaveDataLazy(clientLevel).map(data ->
-            {
-                if (needRefresh) {
-                    reloadColors();
-                }
-                double temperature = Mth.clamp(biome.getModifiedClimateSettings().temperature() + EclipticUtil.getNowSolarTerm(clientLevel).getTemperatureChange(), 0.0F, 1.0F);
-                double humidity = Mth.clamp(biome.getModifiedClimateSettings().downfall(), 0.0F, 1.0F);
-                humidity = humidity * temperature;
-                int i = (int) ((1.0D - temperature) * 255.0D);
-                int j = (int) ((1.0D - humidity) * 255.0D);
-                int k = j << 8 | i;
-
-                int[] newFoliageBuffer = newFoliageBufferMap.getOrDefault(BiomeClimateManager.getTag(biome), FoliageColor.pixels);
-                return k > newFoliageBuffer.length ? originColor : newFoliageBuffer[k];
-            }).orElse(originColor);
-        } else return biome.getFoliageColor();
+        int originColor = biome.getFoliageColor();
+        if (ClientConfig.Renderer.seasonalGrassColorChange.get()) {
+            if (needRefresh) {
+                reloadColors();
+            }
+            double temperature = Mth.clamp(biome.getModifiedClimateSettings().temperature(), 0.0F, 1.0F);
+            double humidity = Mth.clamp(biome.getModifiedClimateSettings().downfall(), 0.0F, 1.0F);
+            humidity = humidity * temperature;
+            int i = (int) ((1.0D - temperature) * 255.0D);
+            int j = (int) ((1.0D - humidity) * 255.0D);
+            int k = j << 8 | i;
+            TagKey<Biome> biomeTagKey = BiomeClimateManager.getTag(biome);
+            int[] newFoliageBuffer = newFoliageBufferMap.getOrDefault(biomeTagKey, FoliageColor.pixels);
+            int color = k > newFoliageBuffer.length ? originColor : newFoliageBuffer[k];
+            if (biomeTagKey != ClimateTypeBiomeTags.SEASONAL
+                    && biomeTagKey != ClimateTypeBiomeTags.MONSOONAL) {
+                color = ColorHelper.simplyMixColor(color, 0.1f, originColor, 0.9f);
+            }
+            return color;
+        }
+        return originColor;
     };
 
     public static void reloadColors() {

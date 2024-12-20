@@ -2,25 +2,26 @@ package com.teamtea.eclipticseasons.client.render;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.client.ClientEventHandler;
-import com.teamtea.eclipticseasons.config.ClientConfig;
 import com.teamtea.eclipticseasons.config.ServerConfig;
 import net.minecraft.Util;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.client.renderer.PostChain;
 import net.minecraft.client.renderer.PostPass;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.SectionPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.chunk.ChunkStatus;
 import net.minecraft.world.level.material.FogType;
 import net.minecraftforge.client.event.ViewportEvent;
 
-public class ClientRenderer {
+public class WorldRenderer {
     public static long reMainTick = 0;
 
     private static float getProgress(boolean fadeIn) {
@@ -39,9 +40,9 @@ public class ClientRenderer {
 
 
         int blurStatus =
-                ServerConfig.Temperature.heatStroke.get()&&
-                player.hasEffect(EclipticSeasons.EffectRegistry.HEAT_STROKE)
-                ? ON_BLUR : NONE_BLUR;
+                ServerConfig.Temperature.heatStroke.get() &&
+                        player.hasEffect(EclipticSeasons.EffectRegistry.HEAT_STROKE)
+                        ? ON_BLUR : NONE_BLUR;
         if (blurStatus != oldBlurStatus) {
             if (blurStatus == ON_BLUR) {
                 {
@@ -144,6 +145,53 @@ public class ClientRenderer {
                 event.scaleNearPlaneDistance(nearPlaneScale);
                 event.scaleFarPlaneDistance(farPlaneScale);
                 event.setCanceled(true);
+            }
+        }
+    }
+
+
+    public static boolean isSectionLoad(SectionPos sectionPos) {
+        return isSectionLoad(sectionPos, 1);
+    }
+
+    public static boolean isSectionLoad(SectionPos pPos, int range) {
+        boolean load = true;
+        ClientLevel level = Minecraft.getInstance().level;
+        if (level != null) {
+            for (int i = -range + 1; i < range; i++) {
+                for (int j = -range + 1; j < range; j++) {
+                    load &= level.getChunk(pPos.getX() + i, pPos.getZ() + j,
+                            ChunkStatus.FULL, false) != null;
+                    if (!load) break;
+                }
+            }
+        }
+        return load;
+    }
+
+    public static void setSectionDirty(SectionPos sectionPos) {
+        if (isSectionLoad(sectionPos)) {
+            Minecraft.getInstance().levelRenderer.setSectionDirty(sectionPos.x(), sectionPos.y(), sectionPos.z());
+        }
+    }
+
+    public static void setSectionDirtyWithNeighbors(SectionPos sectionPos) {
+        if (isSectionLoad(sectionPos, 2)) {
+            Minecraft.getInstance().levelRenderer.setSectionDirtyWithNeighbors(sectionPos.x(), sectionPos.y(), sectionPos.z());
+        }
+    }
+
+
+    public static void setAllDirty(SectionPos centerPos) {
+        int pSectionX = centerPos.x();
+        int pSectionY = centerPos.y();
+        int pSectionZ = centerPos.z();
+        int d = (int) Minecraft.getInstance().levelRenderer.getLastViewDistance();
+        for (int j = pSectionZ - d; j <= pSectionZ + d; j++) {
+            for (int i = pSectionX - d; i <= pSectionX + d; i++) {
+                for (int k = pSectionY - 3; k <= pSectionY + 1; k++) {
+                    setSectionDirty(SectionPos.of(i, k, j));
+                }
             }
         }
     }

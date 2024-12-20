@@ -43,6 +43,7 @@ public class MapChecker {
     public static final int FLAG_GRASS = 5;
     public static final int FLAG_GRASS_LARGE = 501;
     public static final int FLAG_FARMLAND = 6;
+    public static final int FLAG_CUSTOM = 999;
 
     public static List<Block> LowerPlant = Stream.of(Blocks.GRASS, Blocks.FERN).collect(Collectors.toList());
     public static List<Block> LARGE_GRASS = Stream.of(Blocks.TALL_GRASS, Blocks.LARGE_FERN).collect(Collectors.toList());
@@ -284,11 +285,15 @@ public class MapChecker {
         if (flag < FLAG_NONE) {
             flag = FLAG_NONE;
             var onBlock = state.getBlock();
-            if (onBlock instanceof LeavesBlock) {
+            if (!ServerConfig.Debug.snowOverlayGlowingBlock.get()
+                    && state.getLightEmission(level, pos) > 0) {
+                flag = FLAG_NONE;
+            } else if (onBlock instanceof LeavesBlock) {
                 flag = FLAG_LEAVES;
             } else if ((
-                    // state.isSolidRender(level, pos)
-                    Block.isShapeFullBlock(state.getCollisionShape(level, pos))
+                    (ServerConfig.Debug.snowyFullCollisionShape.get() ?
+                            Block.isShapeFullBlock(state.getCollisionShape(level, pos)) :
+                            state.isSolidRender(level, pos))
                             // state.isSolid()
                             || onBlock instanceof LeavesBlock
             )) {
@@ -312,6 +317,19 @@ public class MapChecker {
                     onBlock instanceof FarmBlock ||
                             onBlock instanceof DirtPathBlock)) {
                 flag = FLAG_FARMLAND;
+            } else if (onBlock instanceof TrapDoorBlock ||
+                    (onBlock instanceof DoorBlock && state.getValue(DoorBlock.HALF) == DoubleBlockHalf.UPPER) ||
+                    onBlock instanceof FenceBlock ||
+                    onBlock instanceof FenceGateBlock ||
+                    onBlock instanceof WallBlock ||
+                    onBlock instanceof BellBlock ||
+                    onBlock instanceof ComposterBlock ||
+                    (onBlock instanceof CampfireBlock && !state.getValue(CampfireBlock.LIT)) ||
+                    onBlock instanceof HoneyBlock ||
+                    onBlock instanceof IronBarsBlock ||
+                    onBlock instanceof LightningRodBlock ||
+                    onBlock instanceof SlimeBlock) {
+                flag = FLAG_CUSTOM;
             }
             Integer otherFlag = blockTypeCache.putIfAbsent(state, flag);
             if (otherFlag != null && otherFlag != flag) {

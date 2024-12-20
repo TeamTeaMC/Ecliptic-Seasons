@@ -1,6 +1,7 @@
 package com.teamtea.eclipticseasons.client;
 
 import com.teamtea.eclipticseasons.client.color.season.BiomeColorsHandler;
+import com.teamtea.eclipticseasons.client.model.SnowyBakedModelWrapper;
 import com.teamtea.eclipticseasons.client.particle.ButterflyParticle;
 import com.teamtea.eclipticseasons.client.particle.FallenLeavesParticle;
 import com.teamtea.eclipticseasons.client.particle.FireflyParticle;
@@ -8,6 +9,7 @@ import com.teamtea.eclipticseasons.client.particle.WildGooseParticle;
 import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.block.BlockModelShaper;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.client.resources.model.SimpleBakedModel;
@@ -19,12 +21,15 @@ import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.ModelEvent;
 import net.minecraftforge.client.event.RegisterColorHandlersEvent;
 import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.client.core.ModelManager;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
@@ -52,6 +57,7 @@ public class ClientSetup {
     @SubscribeEvent
     public static void registerExtraModels(ModelEvent.RegisterAdditional event) {
         event.register(ModelManager.stairs_top);
+        event.register(ModelManager.snowy_custom);
         event.register(ModelManager.snowy_fern);
         event.register(ModelManager.snowy_grass);
         event.register(ModelManager.snowy_tall_grass_top);
@@ -95,24 +101,39 @@ public class ClientSetup {
 
     // public static Map<ResourceLocation, BakedModel> BakedSnowModels=new HashMap<>();
 
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onModelBaked(ModelEvent.ModifyBakingResult event) {
         Map<ResourceLocation, BakedModel> modelRegistry = event.getModels();
-
         ModelManager.clearForRebaked(modelRegistry);
-        // net.minecraft.client.resources.model.ModelManager.reload
-        // p_251134_.listPacks().toList().get(0).getResource(PackType.CLIENT_RESOURCES, completablefuture.get().entrySet().stream().toList().get(0).getKey()).get().readAllBytes()
-        // p_251134_.listPacks().toList().get(1).getResource(PackType.CLIENT_RESOURCES, Ecliptic.rl("textures/block/icon.png")).get().readAllBytes()
 
-        // for (Map.Entry<ResourceKey<Block>, Block> resourceKeyBlockEntry : BuiltInRegistries.BLOCK.entrySet()) {
-        //     Block block = resourceKeyBlockEntry.getValue();
-        //     for (BlockState state : block.getStateDefinition().getPossibleStates()) {
-        //         for (Direction direction : List.of(Direction.UP, Direction.NORTH, Direction.WEST, Direction.SOUTH, Direction.EAST, Direction.DOWN)) {
-        //     }
-        // }
+        List<ResourceLocation> bakedModels =
+                new ArrayList<>(List.of(
+                        ModelManager.snowy_custom,
+                        ModelManager.stairs_top,
+                        ModelManager.snowy_fern,
+                        ModelManager.snowy_grass,
+                        ModelManager.snowy_tall_grass_top,
+                        ModelManager.snowy_tall_grass_bottom,
+                        ModelManager.snowy_large_fern_top,
+                        ModelManager.snowy_large_fern_bottom,
+                        ModelManager.overlay_2,
+                        ModelManager.snow_height2,
+                        ModelManager.snow_height2_top,
+                        ModelManager.snowOverlayLeaves,
+                        ModelManager.snowySlabBottom,
+                        ModelManager.snowOverlayBlock
+                ));
+        bakedModels.addAll(EclipticSeasons.ModContents.snowyStairs.get().getStateDefinition().getPossibleStates().stream()
+                .map(BlockModelShaper::stateToModelLocation).toList());
 
-        // models.entrySet().stream().filter(e->e.getKey().namespace.equals(Ecliptic.MODID)&&e.getKey().toString().contains("slab")).toList();
-
+        for (ResourceLocation modelResourceLocation : bakedModels) {
+            BakedModel bakedModel1 = modelRegistry.get(modelResourceLocation);
+            if (bakedModel1 != null) {
+                modelRegistry.put(modelResourceLocation, new SnowyBakedModelWrapper<>(bakedModel1));
+            } else {
+                EclipticSeasons.logger("Missing Model", modelResourceLocation);
+            }
+        }
     }
 
     @SubscribeEvent

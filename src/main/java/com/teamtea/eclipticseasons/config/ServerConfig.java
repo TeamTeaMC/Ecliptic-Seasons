@@ -29,12 +29,21 @@ public class ServerConfig {
         public static ForgeConfigSpec.BooleanValue debugMode;
         public static ForgeConfigSpec.BooleanValue notSnowyUnderLight;
 
+        public static ForgeConfigSpec.BooleanValue snowyFullCollisionShape;
+        public static ForgeConfigSpec.BooleanValue snowOverlayGlowingBlock;
+
         private static void load(ForgeConfigSpec.Builder builder) {
             builder.push("Debug");
             debugMode = builder.comment("Enable debug option to detect illegal use of functions.")
                     .define("Debug", false);
             notSnowyUnderLight = builder.comment("Without snowy block under the light blocks which level is 0.")
                     .define("NotSnowyUnderLight0", false);
+
+            snowyFullCollisionShape = builder.comment("Snow overlay block if has full collision shape not just full render shape.")
+                    .define("SnowyFullCollisionShape", false);
+            snowOverlayGlowingBlock = builder.comment("Snow can cover the block which would lights.")
+                    .define("NotSnowOverlayGlowingBlock", false);
+
             builder.pop();
         }
     }
@@ -57,6 +66,7 @@ public class ServerConfig {
         public static ForgeConfigSpec.BooleanValue enableInform;
         public static ForgeConfigSpec.IntValue lastingDaysOfEachTerm;
         public static ForgeConfigSpec.IntValue initialSolarTermIndex;
+        public static ForgeConfigSpec.BooleanValue daylightChange;
 
         private static void load(ForgeConfigSpec.Builder builder) {
             builder.push("Season");
@@ -66,6 +76,8 @@ public class ServerConfig {
                     .defineInRange("InitialSolarTermIndex", 1, 1, 24);
             enableInform = builder.comment("Enable solar term change inform.")
                     .define("EnableInform", true);
+            daylightChange=builder.comment("In summer, the days are long and the nights are short, while in winter, the days are short and the nights are long.")
+                    .define("DynamicDaylightDuration", true);
             builder.pop();
         }
     }
