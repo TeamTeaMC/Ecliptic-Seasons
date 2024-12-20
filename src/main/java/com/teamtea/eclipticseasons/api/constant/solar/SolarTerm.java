@@ -1,11 +1,14 @@
 package com.teamtea.eclipticseasons.api.constant.solar;
 
+import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.constant.climate.*;
 import com.teamtea.eclipticseasons.api.constant.solar.color.base.*;
 import com.teamtea.eclipticseasons.api.constant.tag.ClimateTypeBiomeTags;
+import net.minecraft.client.gui.Font;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.biome.Biome;
@@ -65,7 +68,22 @@ public enum SolarTerm {
         return Component.translatable("info.eclipticseasons.environment.solar_term.alternation." + getName()).withStyle(getSeason().getColor());
     }
 
+    public static ResourceLocation getFont() {
+        return EclipticSeasons.rl("solar_icons");
+    }
+
+    public String getFontLabel() {
+        // return new String(new byte[]{(byte) (ordinal() + 97)});
+        return String.valueOf((char)(ordinal() + 97));
+    }
+
+    public ResourceLocation getIcon() {
+        // return EclipticSeasons.rl("font/" + getName());
+        return EclipticSeasons.rl("font/" + "t2");
+    }
+
     private static final SolarTerm[] solarTerms = SolarTerm.values();
+
     public static SolarTerm[] collectValues() {
         return solarTerms;
     }
@@ -164,7 +182,7 @@ public enum SolarTerm {
     public static SnowTerm getSnowTerm(Biome biome, boolean isServer) {
         if (biome == null) return SnowTerm.T05;
         // float t = BiomeClimateManager.getDefaultTemperature(biome, isServer);
-        float t =biome.getModifiedClimateSettings().temperature();
+        float t = biome.getModifiedClimateSettings().temperature();
         if (t > 0.95 + 0.001f) {
             return SnowTerm.T1;
         } else if (t > 0.8 + 0.001f) {

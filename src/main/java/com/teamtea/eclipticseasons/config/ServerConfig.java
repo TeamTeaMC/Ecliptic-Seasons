@@ -77,7 +77,7 @@ public class ServerConfig {
         public static ModConfigSpec.IntValue lastingDaysOfEachTerm;
         public static ModConfigSpec.IntValue initialSolarTermIndex;
         public static ModConfigSpec.ConfigValue<List<? extends String>> validDimensions;
-
+        public static ModConfigSpec.BooleanValue daylightChange;
 
         private static void load(ModConfigSpec.Builder builder) {
             builder.push("Season");
@@ -88,6 +88,8 @@ public class ServerConfig {
 
             enableInform = builder.comment("Enable solar term change inform.")
                     .define("EnableInform", true);
+            daylightChange=builder.comment("In summer, the days are long and the nights are short, while in winter, the days are short and the nights are long.")
+                    .define("DynamicDaylightDuration", true);
 
             validDimensions = builder.comment("Which dimensions will have season effects? Note that it must be natrual and have time lapse.")
                     .defineListAllowEmpty("ValidDimensions",

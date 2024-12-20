@@ -490,12 +490,10 @@ public class ModelManager {
                                 BlockState neighbourState = blockAndTintGetter.getBlockState(checkPos);
                                 // 函数调用也是耗时
                                 int blockTypeFlag = ((IBlockStateFlagger) neighbourState).getBlockTypeFlag(blockAndTintGetter, checkPos);
-                                if (blockTypeFlag != MapChecker.FLAG_BLOCK
-                                        && !(neighbourState.getBlock() instanceof SlabBlock)
-                                        && !(neighbourState.getBlock() instanceof StairBlock)) {
+                                if (blockTypeFlag == MapChecker.FLAG_CUSTOM) {
                                     cacheHeight = neighbourHeight;
+                                    break;
                                 }
-                                break;
                             }
                         }
                     }

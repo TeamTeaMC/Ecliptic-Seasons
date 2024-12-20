@@ -66,8 +66,8 @@ public class SimpleUtil {
 
         Style noBitstyle = mutableComponent.getStyle()
                 .withFont(mutableComponent.getStyle().getFont());
-        return Component.literal("\uE010")
-                .withStyle(Style.EMPTY.withFont(EclipticSeasons.rl("test")))
+        return Component.literal(solarTerm.getFontLabel())
+                .withStyle(Style.EMPTY.withFont(SolarTerm.getFont()))
                 .append(Component.literal(" ")
                         .withStyle(noBitstyle)
                         .append(mutableComponent))

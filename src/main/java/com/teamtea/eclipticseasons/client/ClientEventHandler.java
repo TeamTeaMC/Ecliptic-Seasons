@@ -180,9 +180,6 @@ public final class ClientEventHandler {
             ClientCon.tick(clientLevel);
             // BiomeColorsHandler.reloadColors();
             // BiomeColorsHandler.needRefresh=true;
-            // t.start();
-            // ModelManager.quadMap.clear();
-            // ModelManager.quadMap_1.clear();
 
             WeatherManager.createLevelBiomeWeatherList(clientLevel);
             // 这里需要恢复一下数据
@@ -202,16 +199,6 @@ public final class ClientEventHandler {
             ClientMapFixer.tick(clientLevel);
             ClientCon.tick(clientLevel);
 
-            // Minecraft.getInstance().player.sendSystemMessage(
-            //         SolarTerm.BEGINNING_OF_AUTUMN.getAlternationText().withStyle(Style.EMPTY)
-            //                 .append(Component.literal("\uE010")
-            //                         .withStyle(ChatFormatting.WHITE)
-            //                                .withStyle(Style.EMPTY.withFont(EclipticSeasons.rl("test")))
-            //                         .append(  SolarTerm.BEGINNING_OF_AUTUMN.getTranslation()
-            //                                 .withStyle(SolarTerm.BEGINNING_OF_AUTUMN.getSeason().getColor())
-            //                                 .withStyle(Style.EMPTY.withFont(Style.DEFAULT_FONT))))
-            // );
-
             if (ClientConfig.Renderer.forceChunkRenderUpdate.get()) {
                 if (clientLevel.getGameTime() - lastFreshTime > 80
                         || clientLevel.getGameTime() < lastFreshTime - 1) {
@@ -222,7 +209,7 @@ public final class ClientEventHandler {
                         if (!ClientConfig.Renderer.enhancementChunkRenderUpdate.get()) {
                             WorldRenderer.setSectionDirtyWithNeighbors(sectionPos);
                         } else {
-                            if (event.getLevel().getRandom().nextInt(2) == 0) {
+                            if (clientLevel.getRandom().nextInt(2) == 0) {
                                 WorldRenderer.setAllDirty(sectionPos);
                             }
                         }

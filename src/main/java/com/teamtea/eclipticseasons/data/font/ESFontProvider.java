@@ -7,6 +7,7 @@ import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.RecordBuilder;
 import com.teamtea.eclipticseasons.EclipticSeasons;
+import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import net.minecraft.client.gui.font.FontManager;
 import net.minecraft.client.gui.font.FontOption;
 import net.minecraft.client.gui.font.providers.BitmapProvider;
@@ -20,6 +21,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,28 +57,36 @@ public class ESFontProvider implements DataProvider {
         gather();
         Path path = this.output.getOutputFolder(PackOutput.Target.RESOURCE_PACK).resolve(modid).resolve("font");
 
-        RecordBuilder<JsonElement> jsonElementRecordBuilder = JsonOps.INSTANCE.mapBuilder();
+        RecordBuilder<JsonElement> builder = JsonOps.INSTANCE.mapBuilder();
 
-        int[][] ints = toInts(List.of("abcd", "efg\u0000"));
-        BitmapProvider.Definition definition = new BitmapProvider.Definition(
-                EclipticSeasons.rl("t2").withPrefix("font/").withSuffix(".png"),
-                9,
-                8,
-                ints
-        );
 
-        jsonElementRecordBuilder = BitmapProvider.Definition.CODEC.encode(
-                definition, JsonOps.INSTANCE, jsonElementRecordBuilder
-        );
+        List<GlyphProviderDefinition.Conditional> conditionals=new ArrayList<>();
+        for (SolarTerm solarTerm : SolarTerm.collectValues()) {
+            // int[][] ints = toInts(List.of("abcd", "efg\u0000"));
+            int[][] ints = toInts(List.of(solarTerm.getFontLabel()));
+            BitmapProvider.Definition definition = new BitmapProvider.Definition(
+                    solarTerm.getIcon().withSuffix(".png"),
+                    9,
+                    8,
+                    ints
+            );
 
-        // JsonObject j = jsonElementRecordBuilder.build(new JsonObject()).result().orElse(null);
-        JsonElement j= FontManager.FontDefinitionFile.CODEC.encode(new FontManager.FontDefinitionFile(List.of(new GlyphProviderDefinition.Conditional(definition, FontOption.Filter.ALWAYS_PASS))),
-                jsonElementRecordBuilder.ops(), new JsonObject()).result().orElse(new JsonObject());
+            builder = BitmapProvider.Definition.CODEC.encode(definition, JsonOps.INSTANCE, builder);
+
+            GlyphProviderDefinition.Conditional conditional =
+                    new GlyphProviderDefinition.Conditional(definition, FontOption.Filter.ALWAYS_PASS);
+            conditionals.add(conditional);
+        }
+
+        // JsonObject j = builder.build(new JsonObject()).result().orElse(null);
+        JsonElement j= FontManager.FontDefinitionFile.CODEC
+                .encode(new FontManager.FontDefinitionFile(conditionals),
+                builder.ops(), new JsonObject()).result().orElse(new JsonObject());
         // JsonObject outs = new JsonObject();
         // JsonArray jsonArray = new JsonArray();
         // outs.add("providers", jsonArray);
         // jsonArray.add(j);
-        return DataProvider.saveStable(output, j, path.resolve(EclipticSeasons.rl("t2").withSuffix(".json").getPath()));
+        return DataProvider.saveStable(output, j, path.resolve(SolarTerm.getFont().withSuffix(".json").getPath()));
     }
 
 

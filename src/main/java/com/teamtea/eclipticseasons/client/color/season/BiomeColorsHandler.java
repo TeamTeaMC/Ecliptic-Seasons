@@ -80,7 +80,6 @@ public class BiomeColorsHandler {
             int i = (int) ((1.0D - temperature) * 255.0D);
             int j = (int) ((1.0D - humidity) * 255.0D);
             int k = j << 8 | i;
-
             TagKey<Biome> biomeTagKey = ((IBiomeTagHolder) (Object) biome).eclipticSeasons$getBindTag();
             int[] newFoliageBuffer = newFoliageBufferMap.getOrDefault(biomeTagKey, FoliageColor.pixels);
             int color = k > newFoliageBuffer.length ? originColor : newFoliageBuffer[k];

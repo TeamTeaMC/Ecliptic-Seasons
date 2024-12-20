@@ -84,7 +84,7 @@ public class CalendarBlockEntityRenderer implements BlockEntityRenderer<Calendar
         // txtBuffer.endBatch();
         matrixStackIn.popPose();
 
-        VertexConsumer builder = txtBuffer.getBuffer(RenderType.entitySmoothCutout(EclipticSeasons.rl("textures/font/t2.png")));
+        VertexConsumer builder = txtBuffer.getBuffer(RenderType.entitySmoothCutout(ClientCon.nowSolarTerm.getIcon().withPrefix("textures/").withSuffix(".png")));
         // matrixStackIn.scale(20, 20, 20);
         matrixStackIn.scale(0.2f, 0.2f, 0.2f);
         blitRect(matrixStackIn, builder, combinedLightIn, OverlayTexture.NO_OVERLAY, 5.5f, -10, 0, 0, 10, 10, 10, 10, false);
