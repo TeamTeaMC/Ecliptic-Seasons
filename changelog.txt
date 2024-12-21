@@ -78,11 +78,11 @@ fix snow term in hot biomes if close to the baseline
 support season crop tag for Serene Seasons
 
 0.7.5
-reduce the limitation of humidity on crop growth
-add enum values cache for some class
-allow config not use dynamic daylight duration change
-allow config use enhanced seasonal color rendering refresh
-optimize some solar term calculation performance
 improved snow-covered effect support for more models, such as fences, walls and more
+reduce the limitation of humidity on crop growth
+allow config not use dynamic daylight duration change
 allow use config to set whether the light controls the snow cover
+add enum values cache for some class
+allow config use enhanced seasonal rendering refresh
+optimize some solar term calculation performance
 fix an issue with biome grass colors
