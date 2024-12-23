@@ -156,10 +156,12 @@ public abstract class MixinLevelSlice implements IMapSlice {
                                 }
 
                                 // TODO：需要检查为啥这里总存在查询问题。有时候会查到一个默认值平原
-                                // int biomeId = chunkMap.getBiome(mutableBlockPos);
-                                // biomes[index] = biomeId > -1 ? biomeId :
-                                //         MapChecker.getSurfaceOrUpdate(level, mutableBlockPos, false, ChunkInfoMap.TYPE_BIOME);
-
+                                // if(sectionZ==1&&sectionX==1)
+                                // {
+                                    int biomeId = chunkMap.getBiome(mutableBlockPos);
+                                    biomes[index] = biomeId > -1 ? biomeId :
+                                            MapChecker.getSurfaceOrUpdate(level, mutableBlockPos, false, ChunkInfoMap.TYPE_BIOME);
+                                // }
                                 snowys[index]=snowyRemover.blockWatcher()[x][z];
                             }
                         }

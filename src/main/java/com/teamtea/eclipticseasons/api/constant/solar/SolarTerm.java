@@ -12,6 +12,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.biome.Biome;
+import net.neoforged.neoforge.common.Tags;
 
 public enum SolarTerm {
     // Spring Solar Terms
@@ -148,6 +149,13 @@ public enum SolarTerm {
         }
     }
 
+    // TODO：为海洋设置特别属性，一个难点在于设定冻洋0，冷水海洋0.5，暖水海洋0.5
+    // 一般来说，暖水海洋应该温度高以适应珊瑚生活
+    // 普通海洋可以冬季小雪
+    // 冷水海洋可以多下一些
+    // 冻洋全年下雪
+    // 这里注意的一个地方是海水的比热容比陆地大，应该设定一个调整后的雪期
+    // 此外Mojang设定是，所有海洋都是0.5的温度，除了深海冻洋
     public static SnowTerm getSnowTerm(Biome biome) {
         if (biome == null) return SnowTerm.T05;
         // float t = BiomeClimateManager.agent$GetBaseTemperature(biome);

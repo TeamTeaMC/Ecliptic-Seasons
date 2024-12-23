@@ -3,7 +3,6 @@ package com.teamtea.eclipticseasons.common.core.map;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.constant.tag.EclipticBlockTags;
 import com.teamtea.eclipticseasons.api.misc.IBiomeTagHolder;
-import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.network.message.ChunkUpdateMessage;
 import com.teamtea.eclipticseasons.common.network.SimpleNetworkHandler;
@@ -11,6 +10,7 @@ import com.teamtea.eclipticseasons.config.ServerConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
+import net.minecraft.core.SectionPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
@@ -20,12 +20,12 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.level.block.state.properties.Half;
 import net.minecraft.world.level.block.state.properties.SlabType;
+import net.minecraft.world.level.chunk.ChunkSource;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.levelgen.Heightmap;
 
@@ -201,14 +201,17 @@ public class MapChecker {
             } else if (type == ChunkInfoMap.TYPE_BIOME) {
                 value = map.getBiome(pos);
                 if (value == -1 || forceUpdate) {
-                    if (level.isLoaded(pos)) {
+                    if (isLoadNearBy(level, pos)) {
+                        // TODO:这里是因为客户端level.getUncachedNoiseBiome的获取问题
                         var biomeHolder = level.getBiome(pos);
                         // TODO: 调查清楚两者区别
                         // var biomeHolder = level.getChunk(pos).getNoiseBiome(pos.getX(),pos.getY(),pos.getZ());
                         value = level.registryAccess().registryOrThrow(Registries.BIOME).getId(biomeHolder.value());
                         map.updateBiome(pos, value);
                     } else {
-                        value = level.registryAccess().registry(Registries.BIOME).get().getId(Biomes.THE_VOID);
+                        // value = level.registryAccess().registry(Registries.BIOME).get().getId(Biomes.THE_VOID);
+                        var biomeHolder = level.getBiome(pos);
+                        value = level.registryAccess().registryOrThrow(Registries.BIOME).getId(biomeHolder.value());
                     }
                 }
             }
@@ -235,14 +238,57 @@ public class MapChecker {
                 value = getMCHeightWithCheck(level, pos);
                 map.updateHeight(pos, value);
             } else if (type == ChunkInfoMap.TYPE_BIOME) {
-                if (level.isLoaded(pos)) {
+                if (isLoadNearBy(level, pos)) {
                     var biomeHolder = level.getBiome(pos);
                     value = level.registryAccess().registryOrThrow(Registries.BIOME).getId(biomeHolder.value());
                     map.updateBiome(pos, value);
+                }else {
+                    // value = level.registryAccess().registry(Registries.BIOME).get().getId(Biomes.THE_VOID);
+                    var biomeHolder = level.getBiome(pos);
+                    value = level.registryAccess().registryOrThrow(Registries.BIOME).getId(biomeHolder.value());
                 }
             }
         }
+        // if (type == ChunkInfoMap.TYPE_BIOME && idToBiome(level, value).is(Biomes.PLAINS)) {
+        //     // return 0;
+        //     EclipticSeasons.logger(pos, isLoadNearBy(level, pos), WorldRenderer.isSectionLoad(SectionPos.of(pos), 2));
+        // }
+
         return value;
+    }
+
+    public static boolean isLoadNearBy(Level level, BlockPos pos) {
+        int chunkX = SectionPos.blockToSectionCoord(pos.getX());
+        int chunkZ = SectionPos.blockToSectionCoord(pos.getZ());
+        if (level.isOutsideBuildHeight(pos))
+            return false;
+        // for (int i = -1; i < 2; i++) {
+        //     for (int j = -1; j < 2; j++) {
+        //         if (!level.getChunkSource()
+        //                 .hasChunk(chunkX, chunkZ))
+        //             return false;
+        //     }
+        // }
+
+        // TODO:似乎都是+1，那么就是+1两个方向查询即可
+        int i1 = (pos.getX() & 15) - 2;
+        int l1 = (pos.getZ() & 15) - 2;
+        int xe = ((i1) >> 2) > 2 ? 1 : 0;
+        int ze = ((l1) >> 2) > 2 ? 1 : 0;
+        int xs = i1 < 2 ? -1 : 0;
+        int zs = l1 < 2 ? -1 : 0;
+        ChunkSource chunkSource = level.getChunkSource();
+        for (int i = xs; i <= xe; i++) {
+            for (int j = zs; j <= ze; j++) {
+                if (!chunkSource
+                        .hasChunk(chunkX + i, chunkZ + j))
+                    return false;
+            }
+        }
+        // if(level.getBiome(pos).is(Biomes.PLAINS)){
+        //     EclipticSeasons.logger(pos);
+        // }
+        return true;
     }
 
     public static void updatePosForce(Level level, BlockPos setPos, int y) {

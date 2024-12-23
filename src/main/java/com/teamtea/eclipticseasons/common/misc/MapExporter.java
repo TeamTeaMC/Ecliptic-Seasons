@@ -11,9 +11,11 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biomes;
+import net.neoforged.neoforge.server.ServerLifecycleHooks;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -91,6 +93,9 @@ public class MapExporter {
                 ChunkInfoMap.getChunkValue(source.getPlayer().getBlockZ()) - 5);
         int i =0;
         for (Map.Entry<Holder<Biome>, Color> holderColorEntry : hashSet.entrySet()) {
+            graphics2D.setColor(Color.WHITE);
+            graphics2D.drawString( holderColorEntry.getKey().getRegisteredName()+","+ Component.translatable(Util.makeDescriptionId("biome", holderColorEntry.getKey().getKey().location())).getString(),4,
+                    20*(++i)-1);
             graphics2D.setColor(holderColorEntry.getValue());
             graphics2D.drawString( holderColorEntry.getKey().getRegisteredName()+","+ Component.translatable(Util.makeDescriptionId("biome", holderColorEntry.getKey().getKey().location())).getString(),5,
                     20*(++i));
@@ -104,7 +109,14 @@ public class MapExporter {
             if (!new File(EclipticSeasonsApi.MODID).exists()) {
                 new File(EclipticSeasonsApi.MODID).mkdir();
             }
-            ImageIO.write(image, "png", new File("%s/%s_%s.png".formatted(EclipticSeasonsApi.MODID, x, z)));
+            String s = source.getLevel() instanceof ServerLevel serverLevel ?
+                    serverLevel.toString().split("\\[")[1].split("]")[0] : "client";
+            if (!new File(EclipticSeasonsApi.MODID+"/"+s).exists()) {
+                new File(EclipticSeasonsApi.MODID+"/"+s).mkdir();
+            }
+            ImageIO.write(image, "png", new File("%s/%s/%s_%s.png".formatted(EclipticSeasonsApi.MODID,
+                   s ,
+                    x, z)));
             source.sendSystemMessage(Component.literal("export ok"));
         } catch (IOException e) {
             source.sendSystemMessage(Component.literal("export fail \n%s".formatted(e.getMessage())));
