@@ -2,6 +2,9 @@ package com.teamtea.eclipticseasons.client;
 
 
 import com.mojang.blaze3d.vertex.*;
+import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.arguments.IntegerArgumentType;
+import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.datafixers.util.Either;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
@@ -17,6 +20,7 @@ import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.core.solar.ClientSolarDataManager;
+import com.teamtea.eclipticseasons.common.misc.MapExporter;
 import com.teamtea.eclipticseasons.config.ClientConfig;
 import com.teamtea.eclipticseasons.config.ServerConfig;
 import com.teamtea.eclipticseasons.common.core.crop.CropInfoManager;
@@ -35,11 +39,17 @@ import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.block.BlockModelShaper;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
+import net.minecraft.commands.arguments.ResourceOrTagArgument;
+import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.Style;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
@@ -54,12 +64,14 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.*;
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.neoforged.neoforge.client.model.data.ModelData;
+import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 import net.neoforged.neoforge.event.level.ChunkEvent;
 import net.neoforged.neoforge.event.level.LevelEvent;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 
 import java.awt.*;
+import java.util.Arrays;
 
 @EventBusSubscriber(modid = EclipticSeasonsApi.MODID, value = Dist.CLIENT)
 public final class ClientEventHandler {
@@ -113,7 +125,7 @@ public final class ClientEventHandler {
 
         @Override
         public void renderImage(Font font, int x, int y, GuiGraphics guiGraphics) {
-            guiGraphics.renderItem(Items.APPLE.getDefaultInstance(), x+0, y+1, 0);
+            guiGraphics.renderItem(Items.APPLE.getDefaultInstance(), x + 0, y + 1, 0);
         }
     }
 
@@ -123,7 +135,7 @@ public final class ClientEventHandler {
 
         }
     }
-    
+
     @SubscribeEvent
     public static void addTooltips(RenderTooltipEvent.GatherComponents event) {
 
@@ -338,5 +350,25 @@ public final class ClientEventHandler {
 
 
         });
+    }
+
+    @SubscribeEvent
+    public static void onRegisterClientCommandsEvent(RegisterClientCommandsEvent event) {
+        CommandDispatcher<CommandSourceStack> dispatcher = event.getDispatcher();
+        dispatcher.register(Commands.literal(EclipticSeasonsApi.SMODID)
+                .then(Commands.literal("c_export")
+                        .requires((source) -> source.hasPermission(2))
+                        .then(Commands.argument("pos", BlockPosArgument.blockPos()).executes((stackCommandContext) ->
+                                MapExporter.exportMap(stackCommandContext.getSource(), BlockPosArgument.getBlockPos(stackCommandContext, "pos"))))
+                )
+        );
+    }
+
+    @SubscribeEvent
+    public static void onRegisterClientCommandsEvent(ClientPlayerNetworkEvent.LoggingIn event) {
+        ClientCon.ServerName=
+                event.getPlayer().connection.getServerData()==null?"Client":
+                event.getPlayer().connection.getServerData().name;
+        // ClientCon.ServerName=event.getPlayer().connection.getConnection().getRemoteAddress().toString();
     }
 }

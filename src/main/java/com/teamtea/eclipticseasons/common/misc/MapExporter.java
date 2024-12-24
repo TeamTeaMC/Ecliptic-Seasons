@@ -1,8 +1,7 @@
 package com.teamtea.eclipticseasons.common.misc;
 
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
-import com.teamtea.eclipticseasons.client.util.ColorHelper;
-import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
+import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.common.core.map.ChunkInfoMap;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import net.minecraft.Util;
@@ -10,9 +9,9 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biomes;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
@@ -23,14 +22,14 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 
 public class MapExporter {
     public static int exportMap(CommandSourceStack source, BlockPos pos) {
         int x = MapChecker.blockToSectionCoord(pos.getX());
         int z = MapChecker.blockToSectionCoord(pos.getZ());
-        ChunkInfoMap map = MapChecker.getChunkMap(source.getLevel(), x, z);
+        Level level = source.getUnsidedLevel();
+        ChunkInfoMap map = MapChecker.getChunkMap(level, x, z);
 
         if (map == null) return 0;
 
@@ -49,11 +48,13 @@ public class MapExporter {
             for (int j = 0; j < size; j++) {
 
                 var biomePos = new BlockPos((x << ax) + i, pos.getY(), (z << ax) + j);
-                Holder<Biome> biome = MapChecker.getSurfaceBiome(source.getLevel(),
+                Holder<Biome> biome = MapChecker.getSurfaceBiome(level,
                         biomePos);
                 Color color;
-                if (biome.is(Biomes.THE_VOID)) {
+                if (biome.is(Biomes.THE_VOID) || !MapChecker.isLoadNearBy(level, biomePos)) {
                     color = Color.BLACK;
+                    biome=biome.is(Biomes.THE_VOID)?biome:
+                            level.registryAccess().holderOrThrow(Biomes.THE_VOID);
                 } else if (biome.is(Biomes.PLAINS)) {
                     color = Color.RED;
                 } else {
@@ -69,12 +70,12 @@ public class MapExporter {
             }
         }
 
-        int xp = ChunkInfoMap.getChunkValue(source.getPlayer().getBlockX()) - 5;
-        int zp = ChunkInfoMap.getChunkValue(source.getPlayer().getBlockZ()) - 5;
+        int xp = ChunkInfoMap.getChunkValue(pos.getX()) - 5;
+        int zp = ChunkInfoMap.getChunkValue(pos.getZ()) - 5;
 
         graphics2D.setColor(Color.WHITE);
         graphics2D.drawLine(offset, zp, size + offset, zp);
-        graphics2D.drawLine(xp+ offset, 0, xp + offset, size);
+        graphics2D.drawLine(xp + offset, 0, xp + offset, size);
 
         graphics2D.setColor(Color.YELLOW);
         Font monospaced = new Font("Monospaced", 0, 12);
@@ -99,8 +100,11 @@ public class MapExporter {
             if (!new File(EclipticSeasonsApi.MODID).exists()) {
                 new File(EclipticSeasonsApi.MODID).mkdir();
             }
-            String s = source.getLevel() instanceof ServerLevel serverLevel ?
-                    serverLevel.toString().split("\\[")[1].split("]")[0] : "client";
+            String s = level instanceof ServerLevel serverLevel ?
+                    serverLevel.toString().split("\\[")[1].split("]")[0] :
+                    ServerLifecycleHooks.getCurrentServer() == null ? ClientCon.ServerName :
+                            ServerLifecycleHooks.getCurrentServer().getMotd();
+            s+="~"+level.dimension().location().toString().replace(":","_");
             if (!new File(EclipticSeasonsApi.MODID + "/" + s).exists()) {
                 new File(EclipticSeasonsApi.MODID + "/" + s).mkdir();
             }

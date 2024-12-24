@@ -14,7 +14,10 @@ public class ClientCon {
     public static boolean isEvening = false;
     public static boolean isNoon = false;
 
-    public static void tick(Level clientLevel){
+    // Use for export
+    public static String ServerName = "client";
+
+    public static void tick(Level clientLevel) {
         if (MapChecker.isValidDimension(clientLevel)) {
             ClientCon.nowSolarTerm = EclipticUtil.getNowSolarTerm(clientLevel);
             ClientCon.isDay = EclipticUtil.isDay(clientLevel);
