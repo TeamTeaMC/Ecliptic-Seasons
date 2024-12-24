@@ -3,7 +3,7 @@ package com.teamtea.eclipticseasons.common.core.map;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.teamtea.eclipticseasons.EclipticSeasons;
-import com.teamtea.eclipticseasons.client.util.SimplePair;
+import com.teamtea.eclipticseasons.common.misc.SimplePair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ChunkPos;

@@ -291,6 +291,7 @@ public class WeatherManager {
 
     public static Biome.Precipitation getPrecipitationAt(Level levelNull, Biome biome, BlockPos pos) {
 
+        // TODO：这里要判断biome是客户端还是服务器的
         var level = levelNull != null ? levelNull : getMainServerLevel();
         if (level == null) {
             level = ClientCon.useLevel;

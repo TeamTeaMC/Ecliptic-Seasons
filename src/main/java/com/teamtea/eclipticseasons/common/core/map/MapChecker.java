@@ -3,6 +3,7 @@ package com.teamtea.eclipticseasons.common.core.map;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.constant.tag.EclipticBlockTags;
 import com.teamtea.eclipticseasons.api.misc.IBiomeTagHolder;
+import com.teamtea.eclipticseasons.common.misc.SimplePair;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.network.message.ChunkBiomeUpdateMessage;
 import com.teamtea.eclipticseasons.common.network.message.ChunkUpdateMessage;
@@ -17,11 +18,13 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
@@ -31,6 +34,7 @@ import net.minecraft.world.level.chunk.ChunkSource;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.levelgen.Heightmap;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 
@@ -261,7 +265,7 @@ public class MapChecker {
 
     /**
      * 由于Minecraft区块由噪声确定QuartPos里的每个BlockPos的准确群系，因此需要判断临近区块是否加载。
-     * */
+     */
     public static boolean isLoadNearBy(Level level, BlockPos pos) {
         int chunkX = SectionPos.blockToSectionCoord(pos.getX());
         int chunkZ = SectionPos.blockToSectionCoord(pos.getZ());
@@ -356,7 +360,7 @@ public class MapChecker {
         return false;
     }
 
-    public static boolean isSmallBiome(Holder<Biome> biomeHolder) {
+    public static boolean isSmallBiome(@Nonnull Holder<Biome> biomeHolder) {
         // return BiomeClimateManager.SMALL_BIOME_MAP.containsKey(biomeHolder.value());
         return ((IBiomeTagHolder) (Object) biomeHolder.value()).eclipticSeasons$isSmallBiome();
     }
@@ -377,64 +381,112 @@ public class MapChecker {
         return level.registryAccess().registryOrThrow(Registries.BIOME).getId(b);
     }
 
+    public static final SimplePair<Direction, Direction>[] SMALL_OFFSET_DIRECTIONS = new SimplePair[]{
+            SimplePair.of(Direction.NORTH, null),
+            SimplePair.of(Direction.NORTH, Direction.EAST),
+            SimplePair.of(Direction.EAST, null),
+            SimplePair.of(Direction.EAST, Direction.SOUTH),
+            SimplePair.of(Direction.SOUTH, null),
+            SimplePair.of(Direction.SOUTH, Direction.WEST),
+            SimplePair.of(Direction.WEST, null),
+            SimplePair.of(Direction.WEST, Direction.NORTH)
+    };
+
     // TODO：检查污染情况，这里使用生成时内容
     public static Holder<Biome> getSurfaceBiome(Level level, BlockPos pos) {
         // fix the pos to surface
-
         ChunkInfoMap chunkMap1 = getChunkMap(level, pos);
 
         Holder<Biome> biome = null;
         int bid = 0;
+        int y = 0;
         if (chunkMap1 != null) {
             bid = chunkMap1.getBiome(pos);
             if (bid > -1) {
                 biome = idToBiome(level, bid);
                 if (isSmallBiome(biome)) {
-                    int y = getHeight(level, pos) + 1;
+                    y = getHeight(level, pos) + 1;
                     if (y > level.getMaxBuildHeight()) {
                         y = (level.getHeight(Heightmap.Types.MOTION_BLOCKING, pos.getX(), pos.getZ()));
-                        pos = new BlockPos(pos.getX(), y, pos.getZ());
                     }
                 }
             }
         }
 
         if (biome == null) {
-            int y = getHeight(level, pos) + 1;
+            y = getHeight(level, pos) + 1;
             if (y > level.getMaxBuildHeight()) {
                 y = (level.getHeight(Heightmap.Types.MOTION_BLOCKING, pos.getX(), pos.getZ()));
-                pos = new BlockPos(pos.getX(), y, pos.getZ());
             }
+            pos = new BlockPos(pos.getX(), y, pos.getZ());
             bid = getSurfaceOrUpdate(level, pos, false, ChunkInfoMap.TYPE_BIOME);
             biome = idToBiome(level, bid);
         }
 
+        if (biome == null)
+            biome = level.registryAccess().holderOrThrow(Biomes.THE_VOID);
+
+        BlockPos.MutableBlockPos relative = null;
+
         int i = 0;
+        int last_ii = 0;
         boolean shouldBreak = false;
         while (isSmallBiome(biome)) {
+            // if(true)break;
+            if (relative == null) {
+                relative = new BlockPos.MutableBlockPos(
+                        pos.getX(), y, pos.getZ()
+                );
+            }
             i += 1;
-            for (Direction direction : Direction.Plane.HORIZONTAL) {
-                BlockPos relative = pos.relative(direction, i);
+            for (SimplePair<Direction, Direction> pair : SMALL_OFFSET_DIRECTIONS) {
+                // BlockPos relative = pos.relative(pair.getKey(), i);
+
+                if (pair.getValue() != null) {
+                    // relative = relative.relative(pair.getValue(), i);
+                    // 这里需要是1，否则锯齿
+                    int ii = (int) Mth.sqrt(i) + 1;
+                    if (
+                        // i == 1 ||
+                            ii == last_ii)
+                        continue;
+                    relative.move(pair.getKey(), ii);
+                    relative.move(pair.getValue(), ii);
+                    last_ii = ii;
+                } else {
+                    relative.move(pair.getKey(), i);
+                }
                 if (chunkMap1 != null) {
                     int x = blockToSectionCoord(relative.getX());
                     int z = blockToSectionCoord(relative.getZ());
                     if (chunkMap1.getX() == x && chunkMap1.getZ() == z)
                         bid = chunkMap1.getBiome(relative);
                 }
-                bid = bid > -1 ? bid :
-                        getSurfaceOrUpdate(level, relative, false, ChunkInfoMap.TYPE_BIOME);
+                if (bid < 0) {
+                    y = getHeight(level, relative) + 1;
+                    if (y > level.getMaxBuildHeight()) {
+                        y = (level.getHeight(Heightmap.Types.MOTION_BLOCKING, relative.getX(), relative.getZ()));
+                    }
+                    relative.setY(y);
+                    bid = getSurfaceOrUpdate(level, relative, false, ChunkInfoMap.TYPE_BIOME);
+                }
                 biome = idToBiome(level, bid);
                 if (!isSmallBiome(biome)) {
-                    ChunkInfoMap chunkMap = getChunkMap(level, pos);
-                    if (chunkMap != null) {
-                        if (isLoadNearBy(level, relative))
-                            chunkMap.updateBiome(pos, bid);
-                    }
+                    // 不再保存，避免累进。
+                    // ChunkInfoMap chunkMap = getChunkMap(level, pos);
+                    // if (chunkMap != null) {
+                    //     if (isLoadNearBy(level, relative))
+                    //         chunkMap.updateBiome(pos, bid);
+                    // }
                     shouldBreak = true;
                     break;
+                } else {
+                    relative.setX(pos.getX());
+                    relative.setZ(pos.getZ());
                 }
             }
-            if (shouldBreak) break;
+
+            if (shouldBreak || i > 128) break;
         }
 
         // var biome = level.getBiome(pos);
@@ -455,6 +507,9 @@ public class MapChecker {
         // if(biome.is(Biomes.PLAINS)){
         //     EclipticSeasons.logger(level.getBiome(pos));
         // }
+
+        if (biome.is(Biomes.LUSH_CAVES))
+            EclipticSeasons.logger(pos, relative,isLoadNearBy(level, pos));
         return biome;
     }
 

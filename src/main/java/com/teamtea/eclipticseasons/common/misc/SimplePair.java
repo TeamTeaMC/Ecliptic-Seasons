@@ -1,4 +1,4 @@
-package com.teamtea.eclipticseasons.client.util;
+package com.teamtea.eclipticseasons.common.misc;
 
 import java.util.Objects;
 
