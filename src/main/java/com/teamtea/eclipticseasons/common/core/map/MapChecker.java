@@ -508,8 +508,7 @@ public class MapChecker {
         //     EclipticSeasons.logger(level.getBiome(pos));
         // }
 
-        if (biome.is(Biomes.LUSH_CAVES))
-            EclipticSeasons.logger(pos, relative,isLoadNearBy(level, pos));
+
         return biome;
     }
 
