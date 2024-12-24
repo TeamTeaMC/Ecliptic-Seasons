@@ -1,11 +1,13 @@
 package com.teamtea.eclipticseasons.common;
 
 
+import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
+import com.teamtea.eclipticseasons.common.core.map.BiomeHolder;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.core.map.ServerMapFixer;
 import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
@@ -23,8 +25,6 @@ import net.neoforged.neoforge.event.level.block.CropGrowEvent;
 import net.neoforged.neoforge.event.server.ServerAboutToStartEvent;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
-
-import java.util.List;
 
 @EventBusSubscriber(modid = EclipticSeasonsApi.MODID)
 public class AllListener {
@@ -175,7 +175,17 @@ public class AllListener {
 
     @SubscribeEvent
     public static void onChunkWatch(ChunkWatchEvent.Sent event) {
-        MapChecker.sendChunkInfo(event.getChunk(), event.getPos(), event.getPlayer(), List.of(), List.of());
+        MapChecker.sendChunkLoginInfo(event.getLevel(), event.getChunk(), event.getPos(), event.getPlayer());
+    }
+
+    @SubscribeEvent
+    public static void onChunkLoad(ChunkEvent.Load event) {
+        // event.isNewChunk()
+        // if(event.getLevel() instanceof ServerLevel serverLevel) {
+        //     // int[] biomeHolder = event.getChunk().getData(EclipticSeasons.ModContents.BIOME_HOLDER)
+        //     //         .prepareBiomes(serverLevel, event.getChunk().getPos());
+        //     // event.getChunk().setData(EclipticSeasons.ModContents.BIOME_HOLDER,new BiomeHolder(biomeHolder,false));
+        // }
     }
 
 

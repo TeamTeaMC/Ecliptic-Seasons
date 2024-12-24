@@ -14,6 +14,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.levelgen.Heightmap;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +39,7 @@ public class ClientWeatherChecker {
     }
 
 
-    public static Boolean isRain(ClientLevel clientLevel) {
+    public static boolean isRain(ClientLevel clientLevel) {
         return (double) getRainLevel(clientLevel, 1.0F) > 0.2D;
     }
 
@@ -151,7 +152,7 @@ public class ClientWeatherChecker {
         return 0.0f;
     }
 
-    public static Boolean isThundering(ClientLevel clientLevel) {
+    public static boolean isThundering(ClientLevel clientLevel) {
         return (double) getThunderLevel(clientLevel, 1.0F) > 0.2D;
     }
 
@@ -212,7 +213,7 @@ public class ClientWeatherChecker {
     }
 
 
-    public static Boolean isRainingAt(ClientLevel clientLevel, BlockPos blockPos) {
+    public static @NotNull boolean isRainingAt(@NotNull ClientLevel clientLevel, BlockPos blockPos) {
         if (!clientLevel.canSeeSky(blockPos)) {
             return false;
         } else if (clientLevel.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, blockPos).getY() > blockPos.getY()) {
@@ -286,7 +287,7 @@ public class ClientWeatherChecker {
         }
     }
 
-    // public static Boolean hasPrecipitation(Biome biome) {
+    // public static boolean hasPrecipitation(Biome biome) {
     //     return !EclipticTagClientTool.getTag(biome).equals(SeasonTypeBiomeTags.RAINLESS);
     // }
 }

@@ -93,9 +93,9 @@ public class MapExporter {
                 ChunkInfoMap.getChunkValue(source.getPlayer().getBlockZ()) - 5);
         int i =0;
         for (Map.Entry<Holder<Biome>, Color> holderColorEntry : hashSet.entrySet()) {
-            graphics2D.setColor(Color.WHITE);
-            graphics2D.drawString( holderColorEntry.getKey().getRegisteredName()+","+ Component.translatable(Util.makeDescriptionId("biome", holderColorEntry.getKey().getKey().location())).getString(),4,
-                    20*(++i)-1);
+            // graphics2D.setColor(Color.WHITE);
+            // graphics2D.drawString( holderColorEntry.getKey().getRegisteredName()+","+ Component.translatable(Util.makeDescriptionId("biome", holderColorEntry.getKey().getKey().location())).getString(),4,
+            //         20*(++i)-1);
             graphics2D.setColor(holderColorEntry.getValue());
             graphics2D.drawString( holderColorEntry.getKey().getRegisteredName()+","+ Component.translatable(Util.makeDescriptionId("biome", holderColorEntry.getKey().getKey().location())).getString(),5,
                     20*(++i));
@@ -114,10 +114,11 @@ public class MapExporter {
             if (!new File(EclipticSeasonsApi.MODID+"/"+s).exists()) {
                 new File(EclipticSeasonsApi.MODID+"/"+s).mkdir();
             }
-            ImageIO.write(image, "png", new File("%s/%s/%s_%s.png".formatted(EclipticSeasonsApi.MODID,
-                   s ,
-                    x, z)));
-            source.sendSystemMessage(Component.literal("export ok"));
+            String s1 = "%s/%s/%s_%s.png".formatted(EclipticSeasonsApi.MODID,
+                    s,
+                    x, z);
+            ImageIO.write(image, "png", new File(s1));
+            source.sendSystemMessage(Component.literal("export ok for "+s1));
         } catch (IOException e) {
             source.sendSystemMessage(Component.literal("export fail \n%s".formatted(e.getMessage())));
         }

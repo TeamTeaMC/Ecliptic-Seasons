@@ -63,6 +63,12 @@ public final class SimpleNetworkHandler {
         );
 
         registrar.playToClient(
+                ChunkBiomeUpdateMessage.TYPE,
+                ChunkBiomeUpdateMessage.STREAM_CODEC,
+                NetworkdUtil::processChunkBiomeUpdateMessage
+        );
+
+        registrar.playToClient(
                 MapFixerMessage.TYPE,
                 MapFixerMessage.STREAM_CODEC,
                 NetworkdUtil::processMapFixerMessage

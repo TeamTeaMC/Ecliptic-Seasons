@@ -4,6 +4,7 @@ import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.constant.tag.EclipticBlockTags;
 import com.teamtea.eclipticseasons.api.misc.IBiomeTagHolder;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
+import com.teamtea.eclipticseasons.common.network.message.ChunkBiomeUpdateMessage;
 import com.teamtea.eclipticseasons.common.network.message.ChunkUpdateMessage;
 import com.teamtea.eclipticseasons.common.network.SimpleNetworkHandler;
 import com.teamtea.eclipticseasons.config.ServerConfig;
@@ -14,6 +15,7 @@ import net.minecraft.core.SectionPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockGetter;
@@ -242,7 +244,7 @@ public class MapChecker {
                     var biomeHolder = level.getBiome(pos);
                     value = level.registryAccess().registryOrThrow(Registries.BIOME).getId(biomeHolder.value());
                     map.updateBiome(pos, value);
-                }else {
+                } else {
                     // value = level.registryAccess().registry(Registries.BIOME).get().getId(Biomes.THE_VOID);
                     var biomeHolder = level.getBiome(pos);
                     value = level.registryAccess().registryOrThrow(Registries.BIOME).getId(biomeHolder.value());
@@ -257,6 +259,9 @@ public class MapChecker {
         return value;
     }
 
+    /**
+     * 由于Minecraft区块由噪声确定QuartPos里的每个BlockPos的准确群系，因此需要判断临近区块是否加载。
+     * */
     public static boolean isLoadNearBy(Level level, BlockPos pos) {
         int chunkX = SectionPos.blockToSectionCoord(pos.getX());
         int chunkZ = SectionPos.blockToSectionCoord(pos.getZ());
@@ -368,6 +373,10 @@ public class MapChecker {
                                 .orElse(null);
     }
 
+    public static int biomeToId(Level level, Biome b) {
+        return level.registryAccess().registryOrThrow(Registries.BIOME).getId(b);
+    }
+
     // TODO：检查污染情况，这里使用生成时内容
     public static Holder<Biome> getSurfaceBiome(Level level, BlockPos pos) {
         // fix the pos to surface
@@ -377,17 +386,16 @@ public class MapChecker {
         Holder<Biome> biome = null;
         int bid = 0;
         if (chunkMap1 != null) {
-            int y = chunkMap1.getHeight(pos);
-            if (y <= chunkMap1.getMinY()) {
-                y = getHeight(level, pos) + 1;
-            }
-            if (y > level.getMaxBuildHeight()) {
-                y = (level.getHeight(Heightmap.Types.MOTION_BLOCKING, pos.getX(), pos.getZ()));
-                pos = new BlockPos(pos.getX(), y, pos.getZ());
-            }
             bid = chunkMap1.getBiome(pos);
             if (bid > -1) {
                 biome = idToBiome(level, bid);
+                if (isSmallBiome(biome)) {
+                    int y = getHeight(level, pos) + 1;
+                    if (y > level.getMaxBuildHeight()) {
+                        y = (level.getHeight(Heightmap.Types.MOTION_BLOCKING, pos.getX(), pos.getZ()));
+                        pos = new BlockPos(pos.getX(), y, pos.getZ());
+                    }
+                }
             }
         }
 
@@ -401,27 +409,32 @@ public class MapChecker {
             biome = idToBiome(level, bid);
         }
 
-        // TODO：这个情况真的很离谱，暂时难以确定为啥会返回平原，只能怀疑是缺省值，这里做一个二次确认。
-        // if (biome.is(Biomes.PLAINS)) {
-        //     // EclipticSeasons.logger(level.getBiome(pos));
-        //     bid = getSurfaceOrUpdate(level, pos, true, ChunkInfoMap.TYPE_BIOME);
-        //     biome = idToBiome(level, bid);
-        // }
-
         int i = 0;
+        boolean shouldBreak = false;
         while (isSmallBiome(biome)) {
             i += 1;
             for (Direction direction : Direction.Plane.HORIZONTAL) {
-                bid = getSurfaceOrUpdate(level, pos.relative(direction, i), false, ChunkInfoMap.TYPE_BIOME);
+                BlockPos relative = pos.relative(direction, i);
+                if (chunkMap1 != null) {
+                    int x = blockToSectionCoord(relative.getX());
+                    int z = blockToSectionCoord(relative.getZ());
+                    if (chunkMap1.getX() == x && chunkMap1.getZ() == z)
+                        bid = chunkMap1.getBiome(relative);
+                }
+                bid = bid > -1 ? bid :
+                        getSurfaceOrUpdate(level, relative, false, ChunkInfoMap.TYPE_BIOME);
                 biome = idToBiome(level, bid);
                 if (!isSmallBiome(biome)) {
                     ChunkInfoMap chunkMap = getChunkMap(level, pos);
                     if (chunkMap != null) {
-                        chunkMap.updateBiome(pos, bid);
+                        if (isLoadNearBy(level, relative))
+                            chunkMap.updateBiome(pos, bid);
                     }
+                    shouldBreak = true;
                     break;
                 }
             }
+            if (shouldBreak) break;
         }
 
         // var biome = level.getBiome(pos);
@@ -629,5 +642,17 @@ public class MapChecker {
         SimpleNetworkHandler.send(player, new ChunkUpdateMessage(bytes, chunk.getPos().x, chunk.getPos().z, section_y, clickedPos));
     }
 
+    public static void sendChunkLoginInfo(ServerLevel serverLevel, LevelChunk chunk, ChunkPos chunkPos, ServerPlayer player) {
+        int[] bytes = new int[256];
+        // if (chunk.hasData(EclipticSeasons.ModContents.BIOME_HOLDER)
+        //         && chunk.getData(EclipticSeasons.ModContents.BIOME_HOLDER) instanceof BiomeHolder biomeHolder) {
+        //     biomeHolder.fillArray(bytes, serverLevel, chunkPos);
+        // }
+        boolean filled = new BiomeHolder(bytes, false).fillArray(bytes, serverLevel, chunkPos);
+        if (filled)
+            SimpleNetworkHandler.send(player, new ChunkBiomeUpdateMessage(bytes, chunk.getPos().x, chunk.getPos().z));
 
+        // send others
+        sendChunkInfo(chunk, chunkPos, player, List.of(), List.of());
+    }
 }

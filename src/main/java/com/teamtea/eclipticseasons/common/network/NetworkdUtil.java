@@ -149,4 +149,7 @@ public class NetworkdUtil {
             ).toList());
         });
     }
+
+    public static void processChunkBiomeUpdateMessage(ChunkBiomeUpdateMessage chunkBiomeUpdateMessage, IPayloadContext iPayloadContext) {
+    }
 }

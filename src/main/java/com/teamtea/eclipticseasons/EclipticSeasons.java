@@ -13,6 +13,7 @@ import com.teamtea.eclipticseasons.common.block.WindChimesBlock;
 import com.teamtea.eclipticseasons.common.block.blockentity.CalendarBlockEntity;
 import com.teamtea.eclipticseasons.common.block.blockentity.PinWheelBlockEntity;
 import com.teamtea.eclipticseasons.common.block.blockentity.WindChimesBlockEntity;
+import com.teamtea.eclipticseasons.common.core.map.BiomeHolder;
 import com.teamtea.eclipticseasons.common.core.map.SnowyRemover;
 import com.teamtea.eclipticseasons.common.item.BroomItem;
 import com.teamtea.eclipticseasons.common.item.SnowyMakerItem;
@@ -140,19 +141,19 @@ public class EclipticSeasons {
                         for (float c : objects) {
                             output.append(c).append(",");
                         }
-                    }else if (i instanceof int[] objects) {
+                    } else if (i instanceof int[] objects) {
                         for (int c : objects) {
                             output.append(c).append(",");
                         }
-                    }else if (i instanceof double[] objects) {
+                    } else if (i instanceof double[] objects) {
                         for (double c : objects) {
                             output.append(c).append(",");
                         }
-                    }else if (i instanceof long[] objects) {
+                    } else if (i instanceof long[] objects) {
                         for (long c : objects) {
                             output.append(c).append(",");
                         }
-                    }else if (i instanceof boolean[] objects) {
+                    } else if (i instanceof boolean[] objects) {
                         for (boolean c : objects) {
                             output.append(c).append(",");
                         }
@@ -304,6 +305,9 @@ public class EclipticSeasons {
         public static final Supplier<AttachmentType<SnowyRemover>> SNOWY_REMOVER = ATTACHMENT_TYPES.register(
                 "snowy_remover",
                 () -> AttachmentType.builder(() -> new SnowyRemover(new int[16][16])).serialize(SnowyRemover.CODEC).build());
+        public static final Supplier<AttachmentType<BiomeHolder>> BIOME_HOLDER = ATTACHMENT_TYPES.register(
+                "biome_holder",
+                () -> AttachmentType.builder(() -> new BiomeHolder(new int[256],false)).serialize(BiomeHolder.CODEC).build());
 
         @SubscribeEvent
         public static void blockRegister(RegisterEvent event) {

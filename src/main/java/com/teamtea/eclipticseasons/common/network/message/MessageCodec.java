@@ -1,9 +1,11 @@
 package com.teamtea.eclipticseasons.common.network.message;
 
+import com.mojang.serialization.Codec;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;
@@ -68,6 +70,27 @@ public class MessageCodec {
             ArrayList< ResourceKey<Level>> list = new ArrayList<>(size);
             for (int i = 0; i < size; i++) {
                 list.add( ResourceKey.streamCodec(Registries.DIMENSION).decode(pBuffer));
+            }
+            return list;
+        }
+    };
+
+    public static final StreamCodec<ByteBuf, int[]> intArrayStreamCodec = new StreamCodec<>() {
+        @Override
+        public void encode(ByteBuf pBuffer, int[] pValue) {
+            pBuffer.writeInt(pValue.length);
+            for (int i : pValue) {
+                ByteBufCodecs.VAR_INT.encode(pBuffer, i);
+            }
+        }
+
+        @Override
+        public int @NotNull [] decode(ByteBuf pBuffer) {
+            int size = pBuffer.readInt();
+            int[] list = new int[size];
+            for (int i = 0; i < size; i++) {
+                // ByteBufCodecs.VAR_INT.apply(ByteBufCodecs.list())
+                list[i]=ByteBufCodecs.VAR_INT.decode(pBuffer);
             }
             return list;
         }
