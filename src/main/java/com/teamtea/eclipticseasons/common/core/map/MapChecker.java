@@ -507,8 +507,6 @@ public class MapChecker {
         // if(biome.is(Biomes.PLAINS)){
         //     EclipticSeasons.logger(level.getBiome(pos));
         // }
-
-
         return biome;
     }
 

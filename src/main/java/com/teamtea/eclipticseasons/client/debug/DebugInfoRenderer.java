@@ -50,7 +50,7 @@ public final class DebugInfoRenderer {
         drawInfo(matrixStack, screenWidth, screenHeight, solarTimeS, index++);
         drawInfo(matrixStack, screenWidth, screenHeight, ys, index++);
 
-        Level level1 = WeatherManager.getMainServerLevel();
+        Level level1;
 
         // level1 = level1 != null ? level1 : Minecraft.getInstance().level;
         level1 = Minecraft.getInstance().level;

@@ -48,6 +48,8 @@ import net.minecraft.world.level.storage.WritableLevelData;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.WeatherCheck;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.fml.loading.FMLLoader;
 import net.neoforged.neoforge.common.util.FakePlayer;
 
 import java.util.*;
@@ -292,12 +294,15 @@ public class WeatherManager {
     public static Biome.Precipitation getPrecipitationAt(Level levelNull, Biome biome, BlockPos pos) {
 
         // TODO：这里要判断biome是客户端还是服务器的
-        var level = levelNull != null ? levelNull : getMainServerLevel();
+        var level = levelNull;
         if (level == null) {
-            level = ClientCon.useLevel;
+            boolean containsKey =
+                    FMLLoader.getDist() == Dist.CLIENT
+                            && BiomeClimateManager.CLIENT_BIOME_DEFAULT_TEMPERATURE_MAP.containsKey(biome);
+            level = containsKey ? ClientCon.useLevel : getMainServerLevel();
         }
+
         if (level != null) {
-            var oldBiome = biome;
             biome = MapChecker.getSurfaceBiome(level, pos).value();
         }
 
