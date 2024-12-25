@@ -445,7 +445,10 @@ public class MapChecker {
                 if (pair.getValue() != null) {
                     // relative = relative.relative(pair.getValue(), i);
                     // 这里需要是1，否则锯齿
-                    int ii = (int) Mth.sqrt(i) + 1;
+                    int ii;
+                    // ii = (int) Mth.sqrt(i) + 1;
+                    // ii=i*3/4;
+                    ii=i-1;
                     if (
                         // i == 1 ||
                             ii == last_ii)

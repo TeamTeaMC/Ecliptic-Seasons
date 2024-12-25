@@ -21,7 +21,9 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class MapExporter {
@@ -51,10 +53,14 @@ public class MapExporter {
                 Holder<Biome> biome = MapChecker.getSurfaceBiome(level,
                         biomePos);
                 Color color;
-                if (biome.is(Biomes.THE_VOID) || !MapChecker.isLoadNearBy(level, biomePos)) {
+                if (biome.is(Biomes.THE_VOID) ) {
                     color = Color.BLACK;
-                    biome=biome.is(Biomes.THE_VOID)?biome:
-                            level.registryAccess().holderOrThrow(Biomes.THE_VOID);
+                    // biome=biome.is(Biomes.THE_VOID)?biome:
+                    //         level.registryAccess().holderOrThrow(Biomes.THE_VOID);
+                }else if ( !MapChecker.isLoadNearBy(level, biomePos)
+                        &&biome==level.getUncachedNoiseBiome(pos.getX()>>2,pos.getY()>>2,pos.getZ()>>2)) {
+                    color = Color.LIGHT_GRAY;
+                    biome=null;
                 } else if (biome.is(Biomes.PLAINS)) {
                     color = Color.RED;
                 } else {
@@ -88,7 +94,10 @@ public class MapExporter {
             // graphics2D.drawString( holderColorEntry.getKey().getRegisteredName()+","+ Component.translatable(Util.makeDescriptionId("biome", holderColorEntry.getKey().getKey().location())).getString(),4,
             //         20*(++i)-1);
             graphics2D.setColor(holderColorEntry.getValue());
-            graphics2D.drawString(holderColorEntry.getKey().getRegisteredName() + "," + Component.translatable(Util.makeDescriptionId("biome", holderColorEntry.getKey().getKey().location())).getString(), 5,
+            // List<String> sss= new ArrayList<>();
+            // sss.add("s");
+            graphics2D.drawString(
+                    holderColorEntry.getKey()==null?"not load":holderColorEntry.getKey().getRegisteredName() + "," + Component.translatable(Util.makeDescriptionId("biome", holderColorEntry.getKey().getKey().location())).getString(), 5,
                     20 * (++i));
         }
         // graphics2D.fillArc(ChunkInfoMap.getChunkValue(source.getPlayer().getBlockX()) - 5,
