@@ -10,6 +10,7 @@ import com.teamtea.eclipticseasons.client.model.*;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.core.map.SnowyRemover;
+import com.teamtea.eclipticseasons.compat.CompatModule;
 import com.teamtea.eclipticseasons.compat.yuushya.YuushyaChecker;
 import com.teamtea.eclipticseasons.config.ClientConfig;
 
@@ -224,7 +225,10 @@ public class ModelManager {
             }
 
             boolean yuushyaBlock = YuushyaChecker.isyuushyaContinuityBlock(state);
-            if ((blockType == MapChecker.FLAG_CUSTOM || yuushyaBlock)
+            if ((blockType == MapChecker.FLAG_CUSTOM
+                    || yuushyaBlock
+                    || ((blockType == MapChecker.FLAG_STAIRS || blockType == MapChecker.FLAG_STAIRS_TOP) && state.getBlock() instanceof StairBlock
+                    && CompatModule.isSodiumLoad()))
                 // && state.toString().contains("stairs_a_cherry_blindwall")
                 // &&(state.hasProperty(StairBlock.SHAPE)&& state.getValue(StairBlock.SHAPE) == StairsShape.OUTER_RIGHT)
             ) {
