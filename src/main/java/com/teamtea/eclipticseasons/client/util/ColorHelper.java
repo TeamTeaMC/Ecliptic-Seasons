@@ -1,5 +1,7 @@
 package com.teamtea.eclipticseasons.client.util;
 
+import java.awt.*;
+
 public final class ColorHelper
 {
     public static int getRed(int color)

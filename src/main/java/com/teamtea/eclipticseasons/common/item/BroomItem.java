@@ -1,11 +1,13 @@
 package com.teamtea.eclipticseasons.common.item;
 
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
+import com.teamtea.eclipticseasons.client.map.ClientMapFixer;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.core.map.ServerMapFixer;
-import com.teamtea.eclipticseasons.common.misc.MapColorReplacer;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.SectionPos;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvent;
@@ -15,7 +17,6 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.Item;
@@ -100,12 +101,20 @@ public class BroomItem extends Item {
                     //     Minecraft.getInstance().levelRenderer.setSectionDirty(sectionPos.x(),sectionPos.y(),sectionPos.z());
                     //     ClientMapFixer.addPlanner(level,blockstate,blockpos,level.getGameTime()+160, startY);
                     // }
-                    if (shouldSet && !level.isClientSide()) {
-                        ServerMapFixer.addPlanner(level,
-                                blockstate,
-                                blockstate, blockpos,
-                                level.getGameTime() + 160,
-                                MapChecker.getHeight(level, blockpos), true);
+                    if (shouldSet) {
+                        if (!level.isClientSide()) {
+                            ServerMapFixer.addPlanner(level,
+                                    blockstate,
+                                    blockstate, blockpos,
+                                    level.getGameTime() + 160,
+                                    MapChecker.getHeight(level, blockpos), true);
+                        } else if (level.isClientSide()) {
+                            int startY = level.getMaxBuildHeight() + 1;
+                            MapChecker.updatePosForce(level, blockpos, level.getMaxBuildHeight() + 1);
+                            SectionPos sectionPos = SectionPos.of(blockpos);
+                            Minecraft.getInstance().levelRenderer.setSectionDirty(sectionPos.x(), sectionPos.y(), sectionPos.z());
+                            ClientMapFixer.addPlanner(level, blockstate, blockpos, level.getGameTime() + 160, startY);
+                        }
                     }
                 }
 

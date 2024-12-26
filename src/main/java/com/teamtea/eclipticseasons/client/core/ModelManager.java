@@ -225,10 +225,11 @@ public class ModelManager {
             }
 
             boolean yuushyaBlock = YuushyaChecker.isyuushyaContinuityBlock(state);
-            if ((blockType == MapChecker.FLAG_CUSTOM
+            boolean sodiumStairs= ((blockType == MapChecker.FLAG_STAIRS || blockType == MapChecker.FLAG_STAIRS_TOP)
+                    && CompatModule.isSodiumLoad() && state.getBlock() instanceof StairBlock);
+            if (blockType == MapChecker.FLAG_CUSTOM
                     || yuushyaBlock
-                    || ((blockType == MapChecker.FLAG_STAIRS || blockType == MapChecker.FLAG_STAIRS_TOP) && state.getBlock() instanceof StairBlock
-                    && CompatModule.isSodiumLoad()))
+                    || sodiumStairs
                 // && state.toString().contains("stairs_a_cherry_blindwall")
                 // &&(state.hasProperty(StairBlock.SHAPE)&& state.getValue(StairBlock.SHAPE) == StairsShape.OUTER_RIGHT)
             ) {
@@ -255,6 +256,7 @@ public class ModelManager {
                 // if(blockType==MapChecker.FLAG_STAIRS)
                 {
                     if (blockType == MapChecker.FLAG_CUSTOM
+                            ||sodiumStairs
                             || (yuushyaBlock && (blockType == MapChecker.FLAG_STAIRS
                             || blockType == MapChecker.FLAG_STAIRS_TOP && direction != Direction.UP
                             || blockType == MapChecker.FLAG_SLAB

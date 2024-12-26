@@ -4,9 +4,11 @@ package com.teamtea.eclipticseasons.mixin.compat.sodium;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.teamtea.eclipticseasons.api.misc.IBlockStateFlagger;
 import com.teamtea.eclipticseasons.client.core.ModelManager;
+import com.teamtea.eclipticseasons.client.util.ColorHelper;
 import com.teamtea.eclipticseasons.compat.sodium.SodiumBoard;
 import com.teamtea.eclipticseasons.compat.sodium.SodiumStatus;
 import com.teamtea.eclipticseasons.compat.yuushya.YuushyaChecker;
+import net.caffeinemc.mods.sodium.client.model.color.ColorProvider;
 import net.caffeinemc.mods.sodium.client.render.chunk.compile.pipeline.BlockRenderer;
 import net.caffeinemc.mods.sodium.client.render.frapi.mesh.MutableQuadViewImpl;
 import net.caffeinemc.mods.sodium.client.render.frapi.render.AbstractBlockRenderContext;
@@ -16,12 +18,15 @@ import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.state.BlockState;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,7 +49,7 @@ public abstract class MixinBlockRenderer extends AbstractBlockRenderContext impl
     private boolean eclipticSeasons$shouldReplaceOriginalGrassModel = false;
 
     @Unique
-    private BlockPos.MutableBlockPos eclipticSeasons$mutableBlockPos =new BlockPos.MutableBlockPos();
+    private BlockPos.MutableBlockPos eclipticSeasons$mutableBlockPos = new BlockPos.MutableBlockPos();
 
     @ModifyExpressionValue(
             remap = false,
@@ -100,8 +105,8 @@ public abstract class MixinBlockRenderer extends AbstractBlockRenderContext impl
                     eclipticSeasons$shouldCollectBakeQuads = true;
                 }
             }
-        }else {
-            eclipticSeasons$shouldReplaceOriginalGrassModel=false;
+        } else {
+            eclipticSeasons$shouldReplaceOriginalGrassModel = false;
             eclipticSeasons$shouldCollectBakeQuads = false;
         }
 
@@ -149,5 +154,4 @@ public abstract class MixinBlockRenderer extends AbstractBlockRenderContext impl
     public void eclipticSeasons$bindCounter(SodiumBoard sodiumBoard) {
         this.eclipticSeasons$chunkBuilderMeshingTask = sodiumBoard;
     }
-
 }
