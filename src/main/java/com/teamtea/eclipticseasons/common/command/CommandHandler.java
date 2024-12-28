@@ -11,6 +11,8 @@ import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.teamtea.eclipticseasons.common.misc.MapExporter;
+import com.teamtea.eclipticseasons.config.ServerConfig;
+import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.ResourceOrTagArgument;
@@ -20,6 +22,7 @@ import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.commands.TimeCommand;
@@ -43,8 +46,8 @@ public class CommandHandler {
         // Reset time command
         dispatcher.register(Commands.literal("time").requires((sourceStack) -> sourceStack.hasPermission(2))
                 .then(Commands.literal("set")
-                .then(Commands.literal("night")
-                        .executes((source) -> TimeCommand.setTime(source.getSource(),  EclipticUtil.getNightTime(source.getSource().getLevel()))))));
+                        .then(Commands.literal("night")
+                                .executes((source) -> TimeCommand.setTime(source.getSource(), EclipticUtil.getNightTime(source.getSource().getLevel()))))));
 
 
         dispatcher.register(Commands.literal(EclipticSeasonsApi.SMODID).
@@ -61,23 +64,40 @@ public class CommandHandler {
                                 })
                         )
                         .then(Commands.literal("setTerm")
-                                .then(Commands.argument("term", StringArgumentType.word()).suggests((context, builder) -> {
+                                .then(Commands.argument("term", StringArgumentType.greedyString()).suggests((context, builder) -> {
                                             String pre = "";
                                             try {
-                                                pre = context.getArgument("term", ResourceLocation.class).getPath();
+                                                pre = context.getArgument("term", String.class);
                                             } catch (IllegalArgumentException e) {
                                                 // e.printStackTrace();
                                             }
                                             String finalPre = pre;
-                                            Arrays.stream(SolarTerm.collectValues())
-                                                    .filter(solarTerm -> solarTerm != SolarTerm.NONE)
-                                                    .map(Enum::toString)
-                                                    .filter(s -> s.contains(finalPre)).forEach(builder::suggest);
+                                            for (SolarTerm solarTerm : SolarTerm.collectValues()) {
+                                                if (solarTerm != SolarTerm.NONE) {
+                                                    MutableComponent translation = solarTerm.getTranslation();
+                                                    String s = solarTerm.getName();
+                                                    if (s.toLowerCase().contains(finalPre.toLowerCase())) {
+                                                        builder.suggest(s, Component.translatable("%s%s%s%s",
+                                                                Component.literal("[").withStyle(ChatFormatting.WHITE),
+                                                                translation.withStyle(solarTerm.getSeason().getColor()).withStyle(ChatFormatting.WHITE),
+                                                                Component.literal("] ").withStyle(ChatFormatting.WHITE)
+                                                                , solarTerm.getAlternationText()));
+                                                    }
+                                                }
+                                            }
+
                                             return builder.buildFuture();
                                         })
                                         .executes(commandContext -> {
                                             String s = StringArgumentType.getString(commandContext, "term");
-                                            int day = SolarTerm.valueOf(s).ordinal() * 7;
+                                            SolarTerm ss = null;
+                                            for (SolarTerm solarTerm : SolarTerm.collectValues()) {
+                                                if (solarTerm.getTranslation().getString().equals(s)) {
+                                                    ss = solarTerm;
+                                                    break;
+                                                }
+                                            }
+                                            int day = ss.ordinal() * ServerConfig.Season.lastingDaysOfEachTerm.get();
                                             return setDay(commandContext.getSource(), day);
                                         })))
                         .then(Commands.literal("getTerm")

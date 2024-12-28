@@ -71,6 +71,7 @@ public class SimpleUtil {
                 .append(Component.literal(" ")
                         .withStyle(noBitstyle)
                         .append(mutableComponent))
+
                 // .append(mutableComponent.withStyle(noBitstyle))
                 ;
 

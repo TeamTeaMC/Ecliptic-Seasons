@@ -4,6 +4,7 @@ import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.constant.climate.*;
 import com.teamtea.eclipticseasons.api.constant.solar.color.base.*;
 import com.teamtea.eclipticseasons.api.constant.tag.ClimateTypeBiomeTags;
+import com.teamtea.eclipticseasons.common.misc.SimplePair;
 import net.minecraft.client.gui.Font;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
@@ -75,12 +76,19 @@ public enum SolarTerm {
 
     public String getFontLabel() {
         // return new String(new byte[]{(byte) (ordinal() + 97)});
-        return String.valueOf((char)(ordinal() + 97));
+        return String.valueOf((char) (ordinal() + 97));
     }
 
-    public ResourceLocation getIcon() {
-        // return EclipticSeasons.rl("font/" + getName());
-        return EclipticSeasons.rl("font/" + "t2");
+    public static ResourceLocation getFullIcon() {
+        return EclipticSeasons.rl("font/" + "seasons_icons");
+    }
+
+    public static ResourceLocation getFontIcon() {
+        return EclipticSeasons.rl("font/" + "seasons_icons_font");
+    }
+
+    public SimplePair<Integer, Integer> getIconPosition() {
+        return SimplePair.of( this.ordinal() % 6,this.ordinal() / 6);
     }
 
     private static final SolarTerm[] solarTerms = SolarTerm.values();

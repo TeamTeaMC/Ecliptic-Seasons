@@ -3,6 +3,7 @@ package com.teamtea.eclipticseasons.common.core.solar;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
+import com.teamtea.eclipticseasons.api.util.SimpleUtil;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.network.SimpleNetworkHandler;
@@ -136,7 +137,7 @@ public class SolarDataManager extends SavedData {
         for (ServerPlayer player : world.players()) {
             SimpleNetworkHandler.send(player, new SolarTermsMessage(this.getSolarTermsDay()));
             if (getSolarTermsDay() % ServerConfig.Season.lastingDaysOfEachTerm.get() == 0) {
-                player.sendSystemMessage(Component.translatable("info.eclipticseasons.environment.solar_term.message", SolarTerm.get(getSolarTermIndex()).getAlternationText()), false);
+                player.sendSystemMessage(Component.translatable("info.eclipticseasons.environment.solar_term.message", SimpleUtil.addSolarIconBefore(getSolarTerm(),getSolarTerm().getAlternationText())), false);
             }
             WeatherManager.tickPlayerForSeasonCheck(player);
         }

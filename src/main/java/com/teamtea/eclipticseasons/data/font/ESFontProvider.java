@@ -61,22 +61,48 @@ public class ESFontProvider implements DataProvider {
 
 
         List<GlyphProviderDefinition.Conditional> conditionals=new ArrayList<>();
-        for (SolarTerm solarTerm : SolarTerm.collectValues()) {
-            // int[][] ints = toInts(List.of("abcd", "efg\u0000"));
-            int[][] ints = toInts(List.of(solarTerm.getFontLabel()));
-            BitmapProvider.Definition definition = new BitmapProvider.Definition(
-                    solarTerm.getIcon().withSuffix(".png"),
-                    9,
-                    8,
-                    ints
-            );
+        // for (SolarTerm solarTerm : SolarTerm.collectValues()) {
+        //     // int[][] ints = toInts(List.of("abcd", "efg\u0000"));
+        //     int[][] ints = toInts(List.of(solarTerm.getFontLabel()));
+        //     BitmapProvider.Definition definition = new BitmapProvider.Definition(
+        //             solarTerm.getIcon().withSuffix(".png"),
+        //             9,
+        //             8,
+        //             ints
+        //     );
+        //
+        //     builder = BitmapProvider.Definition.CODEC.encode(definition, JsonOps.INSTANCE, builder);
+        //
+        //     GlyphProviderDefinition.Conditional conditional =
+        //             new GlyphProviderDefinition.Conditional(definition, FontOption.Filter.ALWAYS_PASS);
+        //     conditionals.add(conditional);
+        // }
+        List<String> strings=new ArrayList<>();
 
-            builder = BitmapProvider.Definition.CODEC.encode(definition, JsonOps.INSTANCE, builder);
-
-            GlyphProviderDefinition.Conditional conditional =
-                    new GlyphProviderDefinition.Conditional(definition, FontOption.Filter.ALWAYS_PASS);
-            conditionals.add(conditional);
+        for (int i = 0; i < 4; i++) {
+            StringBuilder stringBuilder=new StringBuilder();
+            for (int j = 0; j < 6; j++) {
+                stringBuilder.append(SolarTerm.collectValues()[i*6+j].getFontLabel());
+            }
+            strings.add(stringBuilder.toString());
         }
+
+        int[][] ints = toInts(strings);
+        BitmapProvider.Definition definition = new BitmapProvider.Definition(
+                SolarTerm.getFontIcon().withSuffix(".png"),
+                9,
+                7,
+              // 16,15,
+                ints
+        );
+
+
+        builder = BitmapProvider.Definition.CODEC.encode(definition, JsonOps.INSTANCE, builder);
+
+        GlyphProviderDefinition.Conditional conditional =
+                new GlyphProviderDefinition.Conditional(definition, FontOption.Filter.ALWAYS_PASS);
+        conditionals.add(conditional);
+
 
         // JsonObject j = builder.build(new JsonObject()).result().orElse(null);
         JsonElement j= FontManager.FontDefinitionFile.CODEC

@@ -4,12 +4,14 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
+import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.common.block.base.SimpleHorizontalEntityBlock;
 import com.teamtea.eclipticseasons.common.block.blockentity.CalendarBlockEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
@@ -80,14 +82,24 @@ public class CalendarBlockEntityRenderer implements BlockEntityRenderer<Calendar
         matrixStackIn.pushPose();
         matrixStackIn.scale(scale_x, scale_y, scale_z);
         fontRenderer.drawInBatch(label
-                , (float) (-textWidth) / 2.0F, -18F - lh * 1.2f * line - 1.2f * extraHeight, color, false, matrixStackIn.last().pose(), txtBuffer, Font.DisplayMode.NORMAL, 0, combinedLightIn);
+                , (float) (-textWidth) / 2.0F, -18F - lh * 1.2f * line - 1.2f * extraHeight, color, false, matrixStackIn.last().pose(), txtBuffer, Font.DisplayMode.NORMAL, 0,  LightTexture.FULL_SKY);
         // txtBuffer.endBatch();
         matrixStackIn.popPose();
 
-        VertexConsumer builder = txtBuffer.getBuffer(RenderType.entitySmoothCutout(ClientCon.nowSolarTerm.getIcon().withPrefix("textures/").withSuffix(".png")));
+        VertexConsumer builder = txtBuffer.getBuffer(RenderType.entitySmoothCutout(SolarTerm.getFullIcon().withPrefix("textures/").withSuffix(".png")));
         // matrixStackIn.scale(20, 20, 20);
         matrixStackIn.scale(0.2f, 0.2f, 0.2f);
-        blitRect(matrixStackIn, builder, combinedLightIn, OverlayTexture.NO_OVERLAY, 5.5f, -10, 0, 0, 10, 10, 10, 10, false);
+        int size=16;
+        blitRect(matrixStackIn, builder, combinedLightIn, OverlayTexture.NO_OVERLAY,
+                size/2f,
+                (float) -size*0.6f,
+                size*ClientCon.nowSolarTerm.getIconPosition().getKey(),
+                size*ClientCon.nowSolarTerm.getIconPosition().getValue(),
+                size,
+                size,
+                (int)(180/(30f/size)),
+                (int)(120/(30f/size)),
+                false);
         matrixStackIn.popPose();
     }
 
@@ -143,6 +155,7 @@ public class CalendarBlockEntityRenderer implements BlockEntityRenderer<Calendar
      **/
     protected static void blitRect(PoseStack matrixStack, VertexConsumer builder, int packedLight, int overlay, float x0, float y0, float xt, float yt, float width, float height, int tWidth, int tHeight, boolean mirrored) {
 
+        packedLight= LightTexture.FULL_SKY;
         float pixelScale = 0.0625f;
 
         x0 = x0 * pixelScale;
