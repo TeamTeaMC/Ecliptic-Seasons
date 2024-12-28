@@ -23,8 +23,11 @@ eclipse
 run
 runs
 
+
 # Files from Forge MDK
 forge*changelog.txt
 
 .cache
 libs/OptiFine-*.jar
+
+mods

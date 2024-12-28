@@ -19,7 +19,7 @@ public class LSO_ESModifier extends ModifierBase {
     }
 
     public float getWorldInfluence(Player player, Level level, BlockPos pos) {
-         if (!Config.Baked.seasonTemperatureEffects) {
+        if (!Config.Baked.seasonTemperatureEffects) {
             return 0.0F;
         } else {
             try {
@@ -60,41 +60,53 @@ public class LSO_ESModifier extends ModifierBase {
                         timeInSubSeason += nowSolarTerm.ordinal() % 2 == 0 ? 0 : ServerConfig.Season.lastingDaysOfEachTerm.get();
                         targetUndergroundTemperature = LSO_ESUtil.averageSeasonTemperature;
                         switch (nowSolarTerm.ordinal()) {
+                            case 0:
                             case 1:
-                                value += this.getSeasonModifier(Config.Baked.lateWinterModifier, Config.Baked.earlySpringModifier, Config.Baked.midSpringModifier, timeInSubSeason, ServerConfig.Season.lastingDaysOfEachTerm.get() * 2);
+                                value += this.getSeasonModifier(Config.Baked.lateWinterModifier, Config.Baked.earlySpringModifier, Config.Baked.midSpringModifier, timeInSubSeason, ServerConfig.Season.lastingDaysOfEachTerm.get());
                                 break;
+                            case 2:
                             case 3:
-                                value += this.getSeasonModifier(Config.Baked.earlySpringModifier, Config.Baked.midSpringModifier, Config.Baked.lateSpringModifier, timeInSubSeason, ServerConfig.Season.lastingDaysOfEachTerm.get() * 2);
+                                value += this.getSeasonModifier(Config.Baked.earlySpringModifier, Config.Baked.midSpringModifier, Config.Baked.lateSpringModifier, timeInSubSeason, ServerConfig.Season.lastingDaysOfEachTerm.get());
                                 break;
+                            case 4:
                             case 5:
-                                value += this.getSeasonModifier(Config.Baked.midSpringModifier, Config.Baked.lateSpringModifier, Config.Baked.earlySummerModifier, timeInSubSeason, ServerConfig.Season.lastingDaysOfEachTerm.get() * 2);
+                                value += this.getSeasonModifier(Config.Baked.midSpringModifier, Config.Baked.lateSpringModifier, Config.Baked.earlySummerModifier, timeInSubSeason, ServerConfig.Season.lastingDaysOfEachTerm.get());
                                 break;
+                            case 6:
                             case 7:
-                                value += this.getSeasonModifier(Config.Baked.lateSpringModifier, Config.Baked.earlySummerModifier, Config.Baked.midSummerModifier, timeInSubSeason, ServerConfig.Season.lastingDaysOfEachTerm.get() * 2);
+                                value += this.getSeasonModifier(Config.Baked.lateSpringModifier, Config.Baked.earlySummerModifier, Config.Baked.midSummerModifier, timeInSubSeason, ServerConfig.Season.lastingDaysOfEachTerm.get());
                                 break;
+                            case 8:
                             case 9:
-                                value += this.getSeasonModifier(Config.Baked.earlySummerModifier, Config.Baked.midSummerModifier, Config.Baked.lateSummerModifier, timeInSubSeason, ServerConfig.Season.lastingDaysOfEachTerm.get() * 2);
+                                value += this.getSeasonModifier(Config.Baked.earlySummerModifier, Config.Baked.midSummerModifier, Config.Baked.lateSummerModifier, timeInSubSeason, ServerConfig.Season.lastingDaysOfEachTerm.get());
                                 break;
+                            case 10:
                             case 11:
-                                value += this.getSeasonModifier(Config.Baked.midSummerModifier, Config.Baked.lateSummerModifier, Config.Baked.earlyAutumnModifier, timeInSubSeason, ServerConfig.Season.lastingDaysOfEachTerm.get() * 2);
+                                value += this.getSeasonModifier(Config.Baked.midSummerModifier, Config.Baked.lateSummerModifier, Config.Baked.earlyAutumnModifier, timeInSubSeason, ServerConfig.Season.lastingDaysOfEachTerm.get());
                                 break;
+                            case 12:
                             case 13:
-                                value += this.getSeasonModifier(Config.Baked.lateSummerModifier, Config.Baked.earlyAutumnModifier, Config.Baked.midAutumnModifier, timeInSubSeason, ServerConfig.Season.lastingDaysOfEachTerm.get() * 2);
+                                value += this.getSeasonModifier(Config.Baked.lateSummerModifier, Config.Baked.earlyAutumnModifier, Config.Baked.midAutumnModifier, timeInSubSeason, ServerConfig.Season.lastingDaysOfEachTerm.get());
                                 break;
+                            case 14:
                             case 15:
-                                value += this.getSeasonModifier(Config.Baked.earlyAutumnModifier, Config.Baked.midAutumnModifier, Config.Baked.lateAutumnModifier, timeInSubSeason, ServerConfig.Season.lastingDaysOfEachTerm.get() * 2);
+                                value += this.getSeasonModifier(Config.Baked.earlyAutumnModifier, Config.Baked.midAutumnModifier, Config.Baked.lateAutumnModifier, timeInSubSeason, ServerConfig.Season.lastingDaysOfEachTerm.get());
                                 break;
+                            case 16:
                             case 17:
-                                value += this.getSeasonModifier(Config.Baked.midAutumnModifier, Config.Baked.lateAutumnModifier, Config.Baked.earlyWinterModifier, timeInSubSeason, ServerConfig.Season.lastingDaysOfEachTerm.get() * 2);
+                                value += this.getSeasonModifier(Config.Baked.midAutumnModifier, Config.Baked.lateAutumnModifier, Config.Baked.earlyWinterModifier, timeInSubSeason, ServerConfig.Season.lastingDaysOfEachTerm.get());
                                 break;
+                            case 18:
                             case 19:
-                                value += this.getSeasonModifier(Config.Baked.lateAutumnModifier, Config.Baked.earlyWinterModifier, Config.Baked.midWinterModifier, timeInSubSeason, ServerConfig.Season.lastingDaysOfEachTerm.get() * 2);
+                                value += this.getSeasonModifier(Config.Baked.lateAutumnModifier, Config.Baked.earlyWinterModifier, Config.Baked.midWinterModifier, timeInSubSeason, ServerConfig.Season.lastingDaysOfEachTerm.get());
                                 break;
+                            case 20:
                             case 21:
-                                value += this.getSeasonModifier(Config.Baked.earlyWinterModifier, Config.Baked.midWinterModifier, Config.Baked.lateWinterModifier, timeInSubSeason, ServerConfig.Season.lastingDaysOfEachTerm.get() * 2);
+                                value += this.getSeasonModifier(Config.Baked.earlyWinterModifier, Config.Baked.midWinterModifier, Config.Baked.lateWinterModifier, timeInSubSeason, ServerConfig.Season.lastingDaysOfEachTerm.get());
                                 break;
+                            case 22:
                             case 23:
-                                value += this.getSeasonModifier(Config.Baked.midWinterModifier, Config.Baked.lateWinterModifier, Config.Baked.earlySpringModifier, timeInSubSeason, ServerConfig.Season.lastingDaysOfEachTerm.get() * 2);
+                                value += this.getSeasonModifier(Config.Baked.midWinterModifier, Config.Baked.lateWinterModifier, Config.Baked.earlySpringModifier, timeInSubSeason, ServerConfig.Season.lastingDaysOfEachTerm.get());
                         }
                     } else {
                         timeInSubSeason = LSO_ESUtil.getTimeInSolarTerm(level);
@@ -103,23 +115,41 @@ public class LSO_ESModifier extends ModifierBase {
                         int ordinal = nowSolarTerm.ordinal() + 6;
                         ordinal -= ordinal > 23 ? 24 : 0;
                         switch (ordinal) {
+                            case 0:
+                            case 1:
+                            case 2:
                             case 3:
-                                value += this.getSeasonModifier(Config.Baked.lateWetSeasonModifier, Config.Baked.earlyDrySeasonModifier, Config.Baked.midDrySeasonModifier, timeInSubSeason, ServerConfig.Season.lastingDaysOfEachTerm.get() * 2 * 2);
+                                value += this.getSeasonModifier(Config.Baked.lateWetSeasonModifier, Config.Baked.earlyDrySeasonModifier, Config.Baked.midDrySeasonModifier, timeInSubSeason, ServerConfig.Season.lastingDaysOfEachTerm.get());
                                 break;
+                            case 4:
+                            case 5:
+                            case 6:
                             case 7:
-                                value += this.getSeasonModifier(Config.Baked.earlyDrySeasonModifier, Config.Baked.midDrySeasonModifier, Config.Baked.lateDrySeasonModifier, timeInSubSeason, ServerConfig.Season.lastingDaysOfEachTerm.get() * 2 * 2);
+                                value += this.getSeasonModifier(Config.Baked.earlyDrySeasonModifier, Config.Baked.midDrySeasonModifier, Config.Baked.lateDrySeasonModifier, timeInSubSeason, ServerConfig.Season.lastingDaysOfEachTerm.get());
                                 break;
+                            case 8:
+                            case 9:
+                            case 10:
                             case 11:
-                                value += this.getSeasonModifier(Config.Baked.midDrySeasonModifier, Config.Baked.lateDrySeasonModifier, Config.Baked.earlyWetSeasonModifier, timeInSubSeason, ServerConfig.Season.lastingDaysOfEachTerm.get() * 2 * 2);
+                                value += this.getSeasonModifier(Config.Baked.midDrySeasonModifier, Config.Baked.lateDrySeasonModifier, Config.Baked.earlyWetSeasonModifier, timeInSubSeason, ServerConfig.Season.lastingDaysOfEachTerm.get());
                                 break;
+                            case 12:
+                            case 13:
+                            case 14:
                             case 15:
-                                value += this.getSeasonModifier(Config.Baked.lateDrySeasonModifier, Config.Baked.earlyWetSeasonModifier, Config.Baked.midWetSeasonModifier, timeInSubSeason, ServerConfig.Season.lastingDaysOfEachTerm.get() * 2 * 2);
+                                value += this.getSeasonModifier(Config.Baked.lateDrySeasonModifier, Config.Baked.earlyWetSeasonModifier, Config.Baked.midWetSeasonModifier, timeInSubSeason, ServerConfig.Season.lastingDaysOfEachTerm.get());
                                 break;
+                            case 16:
+                            case 17:
+                            case 18:
                             case 19:
-                                value += this.getSeasonModifier(Config.Baked.earlyWetSeasonModifier, Config.Baked.midWetSeasonModifier, Config.Baked.lateWetSeasonModifier, timeInSubSeason, ServerConfig.Season.lastingDaysOfEachTerm.get() * 2 * 2);
+                                value += this.getSeasonModifier(Config.Baked.earlyWetSeasonModifier, Config.Baked.midWetSeasonModifier, Config.Baked.lateWetSeasonModifier, timeInSubSeason, ServerConfig.Season.lastingDaysOfEachTerm.get());
                                 break;
+                            case 20:
+                            case 21:
+                            case 22:
                             case 23:
-                                value += this.getSeasonModifier(Config.Baked.midWetSeasonModifier, Config.Baked.lateWetSeasonModifier, Config.Baked.earlyDrySeasonModifier, timeInSubSeason, ServerConfig.Season.lastingDaysOfEachTerm.get() * 2 * 2);
+                                value += this.getSeasonModifier(Config.Baked.midWetSeasonModifier, Config.Baked.lateWetSeasonModifier, Config.Baked.earlyDrySeasonModifier, timeInSubSeason, ServerConfig.Season.lastingDaysOfEachTerm.get());
                         }
                     }
                 }

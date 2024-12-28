@@ -70,8 +70,8 @@ public class ServerConfig {
 
         private static void load(ForgeConfigSpec.Builder builder) {
             builder.push("Season");
-            lastingDaysOfEachTerm = builder.comment("The lasting days of each term (24 in total).")
-                    .defineInRange("LastingDaysOfEachTerm", 7, 1, 30);
+            lastingDaysOfEachTerm = builder.comment("The lasting days of each term, while 4 seasons in 1 year, 6 terms in 1 season.")
+                    .defineInRange("LastingDaysOfEachTerm", 7, 1, 5000);
             initialSolarTermIndex = builder.comment("The index of the initial solar term.")
                     .defineInRange("InitialSolarTermIndex", 1, 1, 24);
             enableInform = builder.comment("Enable solar term change inform.")

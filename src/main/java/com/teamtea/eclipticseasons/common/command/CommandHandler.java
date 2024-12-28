@@ -1,5 +1,8 @@
 package com.teamtea.eclipticseasons.common.command;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.datafixers.util.Either;
@@ -9,6 +12,9 @@ import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
+import com.teamtea.eclipticseasons.config.ServerConfig;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.screens.inventory.CommandBlockEditScreen;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.ResourceOrTagArgument;
@@ -17,19 +23,31 @@ import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.protocol.game.ServerboundSetCommandMinecartPacket;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.commands.TimeCommand;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.packs.resources.Resource;
+import net.minecraft.util.GsonHelper;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import com.teamtea.eclipticseasons.EclipticSeasons;
+import net.minecraftforge.fml.loading.FMLLoader;
+import net.minecraftforge.server.ServerLifecycleHooks;
+import org.apache.commons.io.IOUtils;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 @Mod.EventBusSubscriber(modid = EclipticSeasons.MODID)
 public class CommandHandler {
@@ -40,12 +58,12 @@ public class CommandHandler {
         // Reset time command
         dispatcher.register(Commands.literal("time").requires((sourceStack) -> sourceStack.hasPermission(2))
                 .then(Commands.literal("set")
-                .then(Commands.literal("night")
-                        .executes((source) -> TimeCommand.setTime(source.getSource(),  EclipticUtil.getNightTime(source.getSource().getLevel()))))));
+                        .then(Commands.literal("night")
+                                .executes((source) -> TimeCommand.setTime(source.getSource(), EclipticUtil.getNightTime(source.getSource().getLevel()))))));
 
 
-        dispatcher.register(Commands.literal(EclipticSeasons.SMODID).
-                then(Commands.literal("solar")
+        dispatcher.register(Commands.literal(EclipticSeasons.SMODID)
+                . then(Commands.literal("solar")
                         .requires((source) -> source.hasPermission(2))
                         .then(Commands.literal("set")
                                 .then(Commands.argument("day", IntegerArgumentType.integer())
@@ -58,23 +76,46 @@ public class CommandHandler {
                                 })
                         )
                         .then(Commands.literal("setTerm")
-                                .then(Commands.argument("term", StringArgumentType.word()).suggests((context, builder) -> {
+                                .then(Commands.argument("term", StringArgumentType.greedyString()).suggests((context, builder) -> {
                                             String pre = "";
                                             try {
-                                                pre = context.getArgument("term", ResourceLocation.class).getPath();
+                                                pre = context.getArgument("term", String.class);
                                             } catch (IllegalArgumentException e) {
                                                 // e.printStackTrace();
                                             }
                                             String finalPre = pre;
-                                            Arrays.stream(SolarTerm.collectValues())
-                                                    .filter(solarTerm -> solarTerm != SolarTerm.NONE)
-                                                    .map(Enum::toString)
-                                                    .filter(s -> s.contains(finalPre)).forEach(builder::suggest);
+                                            for (SolarTerm solarTerm : SolarTerm.collectValues()) {
+                                                if (solarTerm != SolarTerm.NONE) {
+                                                    MutableComponent translation = solarTerm.getTranslation();
+                                                    String s = solarTerm.getName();
+                                                    if (s.toLowerCase().contains(finalPre.toLowerCase())) {
+                                                       //  if (FMLLoader.getDist() == Dist.DEDICATED_SERVER)
+                                                       //      builder.suggest(s, Component.translatable("%s%s%s",
+                                                       //              translation.withStyle(solarTerm.getSeason().getColor()),
+                                                       //              Component.literal(": ").withStyle(ChatFormatting.GRAY)
+                                                       //              ,solarTerm.getAlternationText()));
+                                                       // else builder.suggest(s, solarTerm.getAlternationText());
+                                                        builder.suggest(s, Component.translatable("%s%s%s%s",
+                                                                Component.literal("[").withStyle(ChatFormatting.WHITE),
+                                                                translation.withStyle(solarTerm.getSeason().getColor()).withStyle(ChatFormatting.WHITE),
+                                                                Component.literal("] ").withStyle(ChatFormatting.WHITE)
+                                                                ,solarTerm.getAlternationText()));
+                                                    }
+                                                }
+                                            }
+
                                             return builder.buildFuture();
                                         })
                                         .executes(commandContext -> {
                                             String s = StringArgumentType.getString(commandContext, "term");
-                                            int day = SolarTerm.valueOf(s).ordinal() * 7;
+                                            SolarTerm ss = null;
+                                            for (SolarTerm solarTerm : SolarTerm.collectValues()) {
+                                                if (solarTerm.getTranslation().getString().equals(s)) {
+                                                    ss = solarTerm;
+                                                    break;
+                                                }
+                                            }
+                                            int day = ss.ordinal() * ServerConfig.Season.lastingDaysOfEachTerm.get();
                                             return setDay(commandContext.getSource(), day);
                                         })))
                         .then(Commands.literal("getTerm")
@@ -174,4 +215,29 @@ public class CommandHandler {
             return null;
         }
     };
+
+
+    // InputStream inputStream;
+    // try {
+    //      inputStream = ServerLifecycleHooks.getCurrentServer().getResourceManager().getResourceStack(EclipticSeasons.rl("lang/zh_cn.json")).get(0).open();
+    // } catch (IOException e) {
+    //     throw new RuntimeException(e);
+    // }
+    // try
+    // {
+    //     Pattern PATTERN = Pattern.compile("%(\\d+\\$)?[\\d\\.]*[df]");
+    //     Gson GSON = new Gson();
+    //     JsonElement jsonelement = GSON.fromJson(new InputStreamReader(inputStream, StandardCharsets.UTF_8), JsonElement.class);
+    //     JsonObject jsonobject = GsonHelper.convertToJsonObject(jsonelement, "strings");
+    //     Map<String, String> modTable=new HashMap<>();
+    //     for (Map.Entry<String, JsonElement> entry : jsonobject.entrySet()) {
+    //         String s = PATTERN.matcher(GsonHelper.convertToString(entry.getValue(), entry.getKey())).replaceAll("%$1s");
+    //         modTable.put(entry.getKey(), s);
+    //         builder.suggest(s);
+    //     }
+    //
+    // } finally
+    // {
+    //     IOUtils.closeQuietly(inputStream);
+    // }
 }

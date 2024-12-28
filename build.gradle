@@ -180,6 +180,10 @@ repositories {
          dir 'libs'
      }
 
+    flatDir {
+        dir 'mods'
+    }
+
     maven {
         url "https://cursemaven.com"
         content {
@@ -212,11 +216,11 @@ dependencies {
 
 //        implementation fg.deobf("curse.maven:selene-499980:5478857-deobf-sources-api")
 //    implementation fg.deobf("curse.maven:create-328085:4835191-deobf-sources-api")
-    compileOnly fg.deobf("curse.maven:embeddium-908741:4949986")
-    compileOnly fg.deobf("curse.maven:oculus-581495:4952626")
+    compileOnly fg.deobf("curse.maven:embeddium-908741:5681725")
+    compileOnly fg.deobf("curse.maven:oculus-581495:5299671")
 
-    onlyMainRuntimeOnly fg.deobf("curse.maven:embeddium-908741:4949986")
-    onlyMainRuntimeOnly fg.deobf("curse.maven:oculus-581495:4952626")
+    onlyMainRuntimeOnly fg.deobf("curse.maven:embeddium-908741:5681725")
+    onlyMainRuntimeOnly fg.deobf("curse.maven:oculus-581495:5299671")
 
     compileOnly fg.deobf("curse.maven:simple-clouds-1121215:5812030")
 
@@ -230,8 +234,8 @@ dependencies {
     // Real mod deobf dependency examples - these get remapped to your current mappings
     // implementation fg.deobf("com.tterrag.registrate:Registrate:MC${mc_version}-${registrate_version}") // Adds registrate as a dependency
 
-    onlyMainRuntimeOnly fg.deobf("curse.maven:farmers-delight-398521:5051242")
-    onlyMainRuntimeOnly fg.deobf("curse.maven:modular-routers-250294:5056687")
+    runtimeOnly fg.deobf("curse.maven:farmers-delight-398521:5051242")
+    runtimeOnly fg.deobf("curse.maven:modular-routers-250294:5056687")
 
     compileOnly fg.deobf("curse.maven:legendary-survival-overhaul-840254:5825918")
 
@@ -239,6 +243,16 @@ dependencies {
 
     // Examples using mod jars from ./libs
     compileOnly "libs:OptiFine:1.20.1_HD_U_I6"
+
+    println("----Scan onlymain libs begin----")
+    fileTree(dir: 'mods', include: ['*.jar']).each { File file ->
+        def fileName = file.name
+        println(fileName.substring(0, fileName.indexOf("-")) + "," + fileName.substring(fileName.indexOf("-") + 1, fileName.indexOf(".jar")))
+        onlyMainRuntimeOnly fg.deobf(name: fileName.substring(0, fileName.indexOf(".jar")),
+                group: 'mods',
+                version: fileName.substring(0, fileName.indexOf(".jar")))
+    }
+    println("----Scan onlymain libs end----")
 
     // For more info...
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html

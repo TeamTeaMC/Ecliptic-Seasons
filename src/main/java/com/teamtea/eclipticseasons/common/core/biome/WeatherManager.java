@@ -7,6 +7,7 @@ import com.teamtea.eclipticseasons.api.constant.climate.SnowTerm;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.constant.tag.ClimateTypeBiomeTags;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
+import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.handler.SolarUtil;
@@ -253,7 +254,11 @@ public class WeatherManager {
             return Biome.Precipitation.NONE;
         }
 
+        // TODO:Replay会加载一个本地level
         var level = levelNull != null ? levelNull : getMainServerLevel();
+        if (level == null && ClientCon.useLevel != null) {
+            level = ClientCon.useLevel;
+        }
         var provider = SolarUtil.getProvider(level);
         var weathers = getBiomeList(level);
 

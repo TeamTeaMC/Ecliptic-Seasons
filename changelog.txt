@@ -86,3 +86,9 @@ add enum values cache for some class
 allow config use enhanced seasonal rendering refresh
 optimize some solar term calculation performance
 fix an issue with biome grass colors
+
+0.7.6
+fix using ReplayMod would not rain in replay
+fix /setTerm command setting error term if the config "LastingDaysOfEachTerm" is not 7
+fix temperature mapping error for Legendary Survival Overhaul compatibility layers
+add a suggestion tooltip for /setTerm command
