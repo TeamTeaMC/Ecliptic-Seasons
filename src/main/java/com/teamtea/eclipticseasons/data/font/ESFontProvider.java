@@ -93,6 +93,7 @@ public class ESFontProvider implements DataProvider {
                 9,
                 7,
               // 16,15,
+              //   12,11,
                 ints
         );
 

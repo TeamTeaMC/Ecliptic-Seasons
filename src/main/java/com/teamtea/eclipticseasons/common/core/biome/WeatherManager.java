@@ -557,7 +557,7 @@ public class WeatherManager {
                     && t.getSolarTermsDay()
                     % ServerConfig.Season.lastingDaysOfEachTerm.get() == 0) {
                 SolarTerm solarTerm = t.getSolarTerm();
-                serverPlayer.sendSystemMessage(Component.translatable("info.eclipticseasons.environment.solar_term.message", SimpleUtil.addSolarIconBefore(solarTerm, solarTerm.getAlternationText()), false));
+                serverPlayer.sendSystemMessage(SimpleUtil.getSolarTermMessage(solarTerm), false);
             }
         });
         WeatherManager.sendBiomePacket(WeatherManager.getBiomeList(serverPlayer.level()), List.of(serverPlayer));

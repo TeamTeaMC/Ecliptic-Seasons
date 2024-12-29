@@ -137,7 +137,7 @@ public class SolarDataManager extends SavedData {
         for (ServerPlayer player : world.players()) {
             SimpleNetworkHandler.send(player, new SolarTermsMessage(this.getSolarTermsDay()));
             if (getSolarTermsDay() % ServerConfig.Season.lastingDaysOfEachTerm.get() == 0) {
-                player.sendSystemMessage(Component.translatable("info.eclipticseasons.environment.solar_term.message", SimpleUtil.addSolarIconBefore(getSolarTerm(),getSolarTerm().getAlternationText())), false);
+                player.sendSystemMessage(SimpleUtil.getSolarTermMessage(getSolarTerm()), false);
             }
             WeatherManager.tickPlayerForSeasonCheck(player);
         }

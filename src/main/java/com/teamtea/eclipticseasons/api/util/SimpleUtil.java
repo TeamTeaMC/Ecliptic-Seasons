@@ -77,4 +77,10 @@ public class SimpleUtil {
 
     }
 
+    public static MutableComponent getSolarTermMessage(SolarTerm solarTerm) {
+        return Component
+                .empty()
+                // .literal("\n")
+                .append(Component.translatable("info.eclipticseasons.environment.solar_term.message", SimpleUtil.addSolarIconBefore(solarTerm, solarTerm.getAlternationText())));
+    }
 }
