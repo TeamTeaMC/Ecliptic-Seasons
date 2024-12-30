@@ -54,7 +54,7 @@ public class ServerConfig {
             snowyFullCollisionShape = builder.comment("Snow overlay block if has full collision shape not just full render shape.")
                     .define("SnowyFullCollisionShape", false);
             snowOverlayGlowingBlock = builder.comment("Snow can cover the block which would lights.")
-                    .define("NotSnowOverlayGlowingBlock", false);
+                    .define("SnowOverlayGlowingBlock", false);
             disableSnowOverlayControlTag = builder.comment("Set to false to disable tag which stops block from snowy is tagged with \"eclipticseasons:snow_overlay_cannot_survive_on\".")
                     .define("DisableSnowOverlayControlTag", false);
             builder.pop();
@@ -74,6 +74,7 @@ public class ServerConfig {
 
     public static class Season {
         public static ModConfigSpec.BooleanValue enableInform;
+        public static ModConfigSpec.BooleanValue enableInformIcon;
         public static ModConfigSpec.IntValue lastingDaysOfEachTerm;
         public static ModConfigSpec.IntValue initialSolarTermIndex;
         public static ModConfigSpec.ConfigValue<List<? extends String>> validDimensions;
@@ -88,6 +89,8 @@ public class ServerConfig {
 
             enableInform = builder.comment("Enable solar term change inform.")
                     .define("EnableInform", true);
+            enableInformIcon = builder.comment("Whether send inform with icon.")
+                    .define("EnableInformIcon", true);
             daylightChange=builder.comment("In summer, the days are long and the nights are short, while in winter, the days are short and the nights are long.")
                     .define("DynamicDaylightDuration", true);
 

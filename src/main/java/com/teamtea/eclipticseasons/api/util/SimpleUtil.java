@@ -2,6 +2,7 @@ package com.teamtea.eclipticseasons.api.util;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
+import com.teamtea.eclipticseasons.config.ServerConfig;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
@@ -25,7 +26,7 @@ public class SimpleUtil {
         for (int zzz = 0; zzz < 100000 * 100; zzz++) {
             runnable.run();
         }
-        long l = (System.nanoTime() - time)/1000000;
+        long l = (System.nanoTime() - time) / 1000000;
         EclipticSeasons.logger(l);
         return l;
     }
@@ -61,7 +62,7 @@ public class SimpleUtil {
 
     public static MutableComponent addSolarIconBefore(SolarTerm solarTerm, MutableComponent mutableComponent) {
         // we need do a backup
-        if(FMLEnvironment.production)
+        if (FMLEnvironment.production)
             return mutableComponent;
 
         Style noBitstyle = mutableComponent.getStyle()
@@ -81,6 +82,10 @@ public class SimpleUtil {
         return Component
                 .empty()
                 // .literal("\n")
-                .append(Component.translatable("info.eclipticseasons.environment.solar_term.message", SimpleUtil.addSolarIconBefore(solarTerm, solarTerm.getAlternationText())));
+                .append(Component.translatable("info.eclipticseasons.environment.solar_term.message",
+                        ServerConfig.Season.enableInformIcon.getAsBoolean() ?
+                                SimpleUtil.addSolarIconBefore(solarTerm, solarTerm.getAlternationText()) :
+                                solarTerm.getAlternationText()
+                ));
     }
 }
