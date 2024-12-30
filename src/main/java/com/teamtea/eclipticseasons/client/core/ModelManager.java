@@ -225,7 +225,7 @@ public class ModelManager {
             }
 
             boolean yuushyaBlock = YuushyaChecker.isyuushyaContinuityBlock(state);
-            boolean sodiumStairs= ((blockType == MapChecker.FLAG_STAIRS || blockType == MapChecker.FLAG_STAIRS_TOP)
+            boolean sodiumStairs = ((blockType == MapChecker.FLAG_STAIRS || blockType == MapChecker.FLAG_STAIRS_TOP)
                     && CompatModule.isSodiumLoad() && state.getBlock() instanceof StairBlock);
             if (blockType == MapChecker.FLAG_CUSTOM
                     || yuushyaBlock
@@ -256,7 +256,7 @@ public class ModelManager {
                 // if(blockType==MapChecker.FLAG_STAIRS)
                 {
                     if (blockType == MapChecker.FLAG_CUSTOM
-                            ||sodiumStairs
+                            || sodiumStairs
                             || (yuushyaBlock && (blockType == MapChecker.FLAG_STAIRS
                             || blockType == MapChecker.FLAG_STAIRS_TOP && direction != Direction.UP
                             || blockType == MapChecker.FLAG_SLAB
@@ -477,11 +477,14 @@ public class ModelManager {
             if (ClientConfig.Renderer.betterSnow.get()) {
                 if (flag == MapChecker.FLAG_BLOCK && pos.getY() == cacheHeight - 1) {
                     checkPos.setY(pos.getY() + 1);
+                    BlockState aboveState = blockAndTintGetter.getBlockState(checkPos);
                     if (
                         // MapChecker.getBlockType(blockAndTintGetter.getBlockState(pos.above()), blockAndTintGetter, pos.above())
-                            ((IBlockStateFlagger) blockAndTintGetter.getBlockState(checkPos))
+                            ((IBlockStateFlagger) aboveState)
                                     .getBlockTypeFlag(blockAndTintGetter, checkPos)
-                                    == MapChecker.FLAG_CUSTOM) {
+                                    == MapChecker.FLAG_CUSTOM
+                                    && !(aboveState.getBlock() instanceof SlabBlock)
+                                    && !(aboveState.getBlock() instanceof StairBlock)) {
                         cacheHeight--;
                     } else {
                         for (int i = 0; i < HORIZONTAL_DIRECTIONS.size(); i++) {
@@ -496,7 +499,10 @@ public class ModelManager {
                                 BlockState neighbourState = blockAndTintGetter.getBlockState(checkPos);
                                 // 函数调用也是耗时
                                 int blockTypeFlag = ((IBlockStateFlagger) neighbourState).getBlockTypeFlag(blockAndTintGetter, checkPos);
-                                if (blockTypeFlag == MapChecker.FLAG_CUSTOM) {
+                                if (blockTypeFlag == MapChecker.FLAG_CUSTOM
+                                        && !(neighbourState.getBlock() instanceof SlabBlock)
+                                        && !(neighbourState.getBlock() instanceof StairBlock)
+                                ) {
                                     cacheHeight = neighbourHeight;
                                     break;
                                 }
