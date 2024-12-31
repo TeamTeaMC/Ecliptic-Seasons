@@ -429,8 +429,12 @@ public class WeatherManager {
                                 Item item = itemstack.getItem();
                                 if (item instanceof ArmorItem armorItem) {
                                     if (armorItem.getType() == ArmorItem.Type.HELMET) {
-                                        if (itemstack.getEnchantmentLevel(level.registryAccess().holderOrThrow(Enchantments.FIRE_PROTECTION)) > 0
-                                                || itemstack.getEnchantmentLevel(level.registryAccess().holderOrThrow(Enchantments.FROST_WALKER)) > 0) {
+                                        if (itemstack.getEnchantmentLevel(level.registryAccess().holderOrThrow(Enchantments.FIRE_PROTECTION)) > 0) {
+                                            isColdHe = true;
+                                            break;
+                                        }
+                                    }else if (armorItem.getType() == ArmorItem.Type.BOOTS) {
+                                        if (itemstack.getEnchantmentLevel(level.registryAccess().holderOrThrow(Enchantments.FROST_WALKER)) > 0) {
                                             isColdHe = true;
                                             break;
                                         }

@@ -92,7 +92,7 @@ public class CommandHandler {
                                             String s = StringArgumentType.getString(commandContext, "term");
                                             SolarTerm ss = null;
                                             for (SolarTerm solarTerm : SolarTerm.collectValues()) {
-                                                if (solarTerm.getTranslation().getString().equals(s)) {
+                                                if (solarTerm.getName().equals(s)) {
                                                     ss = solarTerm;
                                                     break;
                                                 }
