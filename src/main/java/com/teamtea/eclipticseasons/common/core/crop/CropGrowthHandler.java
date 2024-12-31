@@ -13,6 +13,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.event.level.SaplingGrowTreeEvent;
+import net.minecraftforge.eventbus.api.Event;
 
 
 public final class CropGrowthHandler {
@@ -38,8 +39,8 @@ public final class CropGrowthHandler {
                 Humidity env = Humidity.getHumid(world.getBiome(pos).value().getModifiedClimateSettings().downfall(), world.getBiome(pos).value().getTemperature(pos));
                 CropHumidityInfo humidityInfo = CropInfoManager.getHumidityInfo(block);
                 checkHumidity(event, world, humidityInfo, env);
-            } else if (ServerConfig.Crop.cropGrowChanceInWrongSeason.get()>0
-            &&world.getRandom().nextInt(100) < ServerConfig.Crop.cropGrowChanceInWrongSeason.get()*100) {
+            } else if (ServerConfig.Crop.cropGrowChanceInWrongSeason.get() > 0
+                    && world.getRandom().nextInt(100) < ServerConfig.Crop.cropGrowChanceInWrongSeason.get() * 100) {
                 Humidity env = Humidity.getHumid(world.getBiome(pos).value().getModifiedClimateSettings().downfall(), world.getBiome(pos).value().getTemperature(pos));
                 CropHumidityInfo humidityInfo = CropInfoManager.getHumidityInfo(block);
                 checkHumidity(event, world, humidityInfo, env);
@@ -77,19 +78,21 @@ public final class CropGrowthHandler {
 
 
     public static void setResult(net.minecraftforge.eventbus.api.Event event, int flag) {
-        if (flag == CANCEL) {
-            if (event instanceof BlockEvent.CropGrowEvent.Pre cropGrowEvent) {
-                cropGrowEvent.setResult(BlockEvent.CropGrowEvent.Pre.Result.DENY);
-            } else if (event instanceof SaplingGrowTreeEvent blockGrowFeatureEvent) {
-                blockGrowFeatureEvent.setCanceled(true);
-            }
-        } else if (flag == PASS) {
-            if (event instanceof BlockEvent.CropGrowEvent.Pre cropGrowEvent) {
-                cropGrowEvent.setResult(BlockEvent.CropGrowEvent.Pre.Result.DEFAULT);
-            }
-        } else if (flag == GROW) {
-            if (event instanceof BlockEvent.CropGrowEvent.Pre cropGrowEvent) {
-                cropGrowEvent.setResult(BlockEvent.CropGrowEvent.Pre.Result.ALLOW);
+        if (event.hasResult()) {
+            if (flag == CANCEL) {
+                if (event instanceof BlockEvent.CropGrowEvent.Pre cropGrowEvent) {
+                    cropGrowEvent.setResult(BlockEvent.CropGrowEvent.Pre.Result.DENY);
+                } else if (event instanceof SaplingGrowTreeEvent blockGrowFeatureEvent) {
+                    blockGrowFeatureEvent.setResult(Event.Result.DENY);
+                }
+            } else if (flag == PASS) {
+                if (event instanceof BlockEvent.CropGrowEvent.Pre cropGrowEvent) {
+                    cropGrowEvent.setResult(BlockEvent.CropGrowEvent.Pre.Result.DEFAULT);
+                }
+            } else if (flag == GROW) {
+                if (event instanceof BlockEvent.CropGrowEvent.Pre cropGrowEvent) {
+                    cropGrowEvent.setResult(BlockEvent.CropGrowEvent.Pre.Result.ALLOW);
+                }
             }
         }
 

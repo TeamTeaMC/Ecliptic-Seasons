@@ -28,12 +28,11 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BiomeTags;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.item.ArmorItem;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.*;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
@@ -362,6 +361,23 @@ public class WeatherManager {
                                         if (armorItem.getEnchantmentLevel(itemstack, Enchantments.FIRE_PROTECTION) > 0) {
                                             isColdHe = true;
                                         }
+                                    }else if (armorItem.getType() == ArmorItem.Type.BOOTS) {
+                                        if (armorItem.getEnchantmentLevel(itemstack, Enchantments.FROST_WALKER) > 0) {
+                                            isColdHe = true;
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                            if (!isColdHe) {
+                                for (ItemStack itemstack : player.getInventory().items) {
+                                    var item = itemstack.getItem();
+                                    if (item == Items.SNOWBALL ||
+                                            (item instanceof BlockItem blockItem &&
+                                                    (blockItem.getBlock().defaultBlockState().is(BlockTags.SNOW)
+                                                            || blockItem.getBlock().defaultBlockState().is(BlockTags.ICE)))) {
+                                        isColdHe = true;
+                                        break;
                                     }
                                 }
                             }
