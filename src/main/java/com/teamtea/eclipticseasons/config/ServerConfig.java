@@ -72,7 +72,7 @@ public class ServerConfig {
             builder.push("Season");
             lastingDaysOfEachTerm = builder.comment("The lasting days of each term, while 4 seasons in 1 year, 6 terms in 1 season.")
                     .defineInRange("LastingDaysOfEachTerm", 7, 1, 5000);
-            initialSolarTermIndex = builder.comment("The index of the initial solar term.")
+            initialSolarTermIndex = builder.comment("The index of the initial solar term, and note it only can be used to first start the world with the mod.")
                     .defineInRange("InitialSolarTermIndex", 1, 1, 24);
             enableInform = builder.comment("Enable solar term change inform.")
                     .define("EnableInform", true);

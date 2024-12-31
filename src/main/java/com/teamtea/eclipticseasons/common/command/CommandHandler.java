@@ -63,7 +63,7 @@ public class CommandHandler {
 
 
         dispatcher.register(Commands.literal(EclipticSeasons.SMODID)
-                . then(Commands.literal("solar")
+                .then(Commands.literal("solar")
                         .requires((source) -> source.hasPermission(2))
                         .then(Commands.literal("set")
                                 .then(Commands.argument("day", IntegerArgumentType.integer())
@@ -79,7 +79,7 @@ public class CommandHandler {
                                 .then(Commands.argument("term", StringArgumentType.greedyString()).suggests((context, builder) -> {
                                             String pre = "";
                                             try {
-                                                pre = context.getArgument("term", String.class);
+
                                             } catch (IllegalArgumentException e) {
                                                 // e.printStackTrace();
                                             }
@@ -89,17 +89,17 @@ public class CommandHandler {
                                                     MutableComponent translation = solarTerm.getTranslation();
                                                     String s = solarTerm.getName();
                                                     if (s.toLowerCase().contains(finalPre.toLowerCase())) {
-                                                       //  if (FMLLoader.getDist() == Dist.DEDICATED_SERVER)
-                                                       //      builder.suggest(s, Component.translatable("%s%s%s",
-                                                       //              translation.withStyle(solarTerm.getSeason().getColor()),
-                                                       //              Component.literal(": ").withStyle(ChatFormatting.GRAY)
-                                                       //              ,solarTerm.getAlternationText()));
-                                                       // else builder.suggest(s, solarTerm.getAlternationText());
+                                                        //  if (FMLLoader.getDist() == Dist.DEDICATED_SERVER)
+                                                        //      builder.suggest(s, Component.translatable("%s%s%s",
+                                                        //              translation.withStyle(solarTerm.getSeason().getColor()),
+                                                        //              Component.literal(": ").withStyle(ChatFormatting.GRAY)
+                                                        //              ,solarTerm.getAlternationText()));
+                                                        // else builder.suggest(s, solarTerm.getAlternationText());
                                                         builder.suggest(s, Component.translatable("%s%s%s%s",
                                                                 Component.literal("[").withStyle(ChatFormatting.WHITE),
                                                                 translation.withStyle(solarTerm.getSeason().getColor()).withStyle(ChatFormatting.WHITE),
                                                                 Component.literal("] ").withStyle(ChatFormatting.WHITE)
-                                                                ,solarTerm.getAlternationText()));
+                                                                , solarTerm.getAlternationText()));
                                                     }
                                                 }
                                             }
@@ -110,7 +110,7 @@ public class CommandHandler {
                                             String s = StringArgumentType.getString(commandContext, "term");
                                             SolarTerm ss = null;
                                             for (SolarTerm solarTerm : SolarTerm.collectValues()) {
-                                                if (solarTerm.getTranslation().getString().equals(s)) {
+                                                if (solarTerm.getName().equals(s)) {
                                                     ss = solarTerm;
                                                     break;
                                                 }
