@@ -79,7 +79,7 @@ public class CommandHandler {
                                 .then(Commands.argument("term", StringArgumentType.greedyString()).suggests((context, builder) -> {
                                             String pre = "";
                                             try {
-
+                                                pre = context.getArgument("term", String.class);
                                             } catch (IllegalArgumentException e) {
                                                 // e.printStackTrace();
                                             }
