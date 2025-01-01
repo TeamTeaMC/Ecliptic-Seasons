@@ -38,8 +38,8 @@ public final class CropGrowthHandler {
                 Humidity env = Humidity.getHumid(world.getBiome(pos).value().getModifiedClimateSettings().downfall(), world.getBiome(pos).value().getTemperature(pos));
                 CropHumidityInfo humidityInfo = CropInfoManager.getHumidityInfo(block);
                 checkHumidity(event, world, humidityInfo, env);
-            } else if (ServerConfig.Crop.cropGrowChanceInWrongSeason.get()>0
-                    &&world.getRandom().nextInt(100) < ServerConfig.Crop.cropGrowChanceInWrongSeason.get()*100){
+            } else if (ServerConfig.Crop.cropGrowChanceInWrongSeason.get() > 0
+                    && world.getRandom().nextInt(100) < ServerConfig.Crop.cropGrowChanceInWrongSeason.get() * 100) {
                 Humidity env = Humidity.getHumid(world.getBiome(pos).value().getModifiedClimateSettings().downfall(), world.getBiome(pos).value().getTemperature(pos));
                 CropHumidityInfo humidityInfo = CropInfoManager.getHumidityInfo(block);
                 checkHumidity(event, world, humidityInfo, env);
@@ -77,23 +77,20 @@ public final class CropGrowthHandler {
 
 
     public static void setResult(net.neoforged.bus.api.Event event, int flag) {
-        {
-            if (flag == CANCEL) {
-                if (event instanceof CropGrowEvent.Pre cropGrowEvent) {
-                    cropGrowEvent.setResult(CropGrowEvent.Pre.Result.DO_NOT_GROW);
-                } else if (event instanceof BlockGrowFeatureEvent blockGrowFeatureEvent) {
-                    blockGrowFeatureEvent.setCanceled(true);
-                }
-            } else if (flag == PASS) {
-                if (event instanceof CropGrowEvent.Pre cropGrowEvent) {
-                    cropGrowEvent.setResult(CropGrowEvent.Pre.Result.DEFAULT);
-                }
-            } else if (flag == GROW) {
-                if (event instanceof CropGrowEvent.Pre cropGrowEvent) {
-                    cropGrowEvent.setResult(CropGrowEvent.Pre.Result.GROW);
-                }
+        if (flag == CANCEL) {
+            if (event instanceof CropGrowEvent.Pre cropGrowEvent) {
+                cropGrowEvent.setResult(CropGrowEvent.Pre.Result.DO_NOT_GROW);
+            } else if (event instanceof BlockGrowFeatureEvent blockGrowFeatureEvent) {
+                blockGrowFeatureEvent.setCanceled(true);
+            }
+        } else if (flag == PASS) {
+            if (event instanceof CropGrowEvent.Pre cropGrowEvent) {
+                cropGrowEvent.setResult(CropGrowEvent.Pre.Result.DEFAULT);
+            }
+        } else if (flag == GROW) {
+            if (event instanceof CropGrowEvent.Pre cropGrowEvent) {
+                cropGrowEvent.setResult(CropGrowEvent.Pre.Result.GROW);
             }
         }
-
     }
 }

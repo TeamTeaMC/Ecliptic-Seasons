@@ -61,9 +61,6 @@ public class SimpleUtil {
 
 
     public static MutableComponent addSolarIconBefore(SolarTerm solarTerm, MutableComponent mutableComponent) {
-        // we need do a backup
-        if (FMLEnvironment.production)
-            return mutableComponent;
 
         Style noBitstyle = mutableComponent.getStyle()
                 .withFont(mutableComponent.getStyle().getFont());
