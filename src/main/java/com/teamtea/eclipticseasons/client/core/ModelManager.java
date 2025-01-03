@@ -371,18 +371,22 @@ public class ModelManager {
 
             if (ClientConfig.Renderer.betterSnow.get()) {
                 if (flag == MapChecker.FLAG_BLOCK && pos.getY() == cacheHeight - 1) {
-                    if (
-                            MapChecker.getBlockType(blockAndTintGetter.getBlockState(pos.above()), blockAndTintGetter, pos.above()) == MapChecker.FLAG_CUSTOM) {
+                    BlockPos above = pos.above();
+                    BlockState aboveState = blockAndTintGetter.getBlockState(above);
+                    if ( MapChecker.getBlockType(aboveState, blockAndTintGetter, above) == MapChecker.FLAG_CUSTOM
+                                    && !(aboveState.getBlock() instanceof SlabBlock)
+                                    && !(aboveState.getBlock() instanceof StairBlock)) {
                         cacheHeight--;
                     } else {
                         for (Direction direction : Direction.Plane.HORIZONTAL) {
-                            int neighbourHeight = MapChecker.getHeightOrUpdate(level, pos.relative(direction), false);
+                            above = pos.relative(direction);
+                            int neighbourHeight = MapChecker.getHeightOrUpdate(level, above, false);
                             if (neighbourHeight == pos.getY()) {
-                                BlockPos above = pos.above();
                                 BlockState neighbourState = blockAndTintGetter.getBlockState(above);
-                                // 函数调用也是耗时
                                 int blockTypeFlag = MapChecker.getBlockType(neighbourState, blockAndTintGetter, above);
-                                if (blockTypeFlag == MapChecker.FLAG_CUSTOM) {
+                                if (blockTypeFlag == MapChecker.FLAG_CUSTOM
+                                        && !(aboveState.getBlock() instanceof SlabBlock)
+                                        && !(aboveState.getBlock() instanceof StairBlock)) {
                                     cacheHeight = neighbourHeight;
                                     break;
                                 }

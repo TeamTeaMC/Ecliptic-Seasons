@@ -6,6 +6,7 @@ import com.teamtea.eclipticseasons.client.particle.ButterflyParticle;
 import com.teamtea.eclipticseasons.client.particle.FallenLeavesParticle;
 import com.teamtea.eclipticseasons.client.particle.FireflyParticle;
 import com.teamtea.eclipticseasons.client.particle.WildGooseParticle;
+import com.teamtea.eclipticseasons.client.render.ber.CalendarBlockEntityRenderer;
 import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
@@ -92,11 +93,8 @@ public class ClientSetup {
     //    注意static是单次，比如启动类，没有比如右击事件
     @SubscribeEvent
     public static void onRegisterRenderers(EntityRenderersEvent.RegisterRenderers event) {
-        // FluidDrawersLegacyMod.logger("Register Renderer");
-        // ModContents.DRBlockEntities.getEntries().forEach((reg) -> {
-        //     event.registerBlockEntityRenderer((BlockEntityType<BlockEntityFluidDrawer>)reg.get(),
-        //             TESRFluidDrawer::new);
-        // });
+        event.registerBlockEntityRenderer(EclipticSeasons.ModContents.calendar_entity_type.get(), CalendarBlockEntityRenderer::new);
+
     }
 
     // public static Map<ResourceLocation, BakedModel> BakedSnowModels=new HashMap<>();

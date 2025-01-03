@@ -9,7 +9,10 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
+import net.minecraftforge.client.model.generators.ConfiguredModel;
 import net.minecraftforge.common.data.ExistingFileHelper;
+
+import java.util.List;
 
 
 public class BlockStatesDataProvider extends BlockStateProvider {
@@ -24,14 +27,12 @@ public class BlockStatesDataProvider extends BlockStateProvider {
 
     @Override
     protected void registerStatesAndModels() {
-        // getVariantBuilder(EclipticSeasons.ModContents.calendar.get()).forAllStatesExcept(state -> ConfiguredModel.builder()
-        //         .modelFile(models().getExistingFile(resourceBlock("calendar")))
-        //         .rotationY(getRotateYByFacing(state.getValue(BlockStateProperties.HORIZONTAL_FACING)))
-        //         .build());
-        //
-        // addSimple(EclipticSeasons.ModContents.wind_chimes.value());
-        // addSimple(EclipticSeasons.ModContents.paper_wind_chimes.value());
-        // addSimple(EclipticSeasons.ModContents.bamboo_wind_chimes.value());
+        for (var holder : List.of(EclipticSeasons.ModContents.calendar)) {
+            getVariantBuilder(holder.get()).forAllStatesExcept(state -> ConfiguredModel.builder()
+                    .modelFile(models().getExistingFile(resourceBlock(holder.getId().getPath())))
+                    .rotationY(getRotateYByFacing(state.getValue(BlockStateProperties.HORIZONTAL_FACING)))
+                    .build());
+        }
 
     }
 

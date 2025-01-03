@@ -26,7 +26,7 @@ public class ESItemModelProvider extends ItemModelProvider {
 
     @Override
     protected void registerModels() {
-        // addSimple(EclipticSeasons.ModContents.calendar_item.value());
+        addSimple(EclipticSeasons.ModContents.calendar_item.get());
         // addSimple(EclipticSeasons.ModContents.wind_chimes_item.value());
         // addSimple(EclipticSeasons.ModContents.paper_wind_chimes_item.value());
         // addSimple(EclipticSeasons.ModContents.bamboo_wind_chimes_item.value());

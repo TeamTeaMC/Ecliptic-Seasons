@@ -94,3 +94,7 @@ fix temperature mapping error for Legendary Survival Overhaul compatibility laye
 add a suggestion tooltip for /setTerm command
 *** expand means of resisting heat stroke with some special enchantments, and also ice and snow
 *** fix the crash if a tree sapling tried to grow in wrong season and was denied by Ecliptic Seasons
+
+0.8
+add solar term icons
+add calendar

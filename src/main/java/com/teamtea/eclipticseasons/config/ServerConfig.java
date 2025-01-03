@@ -64,6 +64,8 @@ public class ServerConfig {
 
     public static class Season {
         public static ForgeConfigSpec.BooleanValue enableInform;
+        public static ForgeConfigSpec.BooleanValue enableInformIcon;
+
         public static ForgeConfigSpec.IntValue lastingDaysOfEachTerm;
         public static ForgeConfigSpec.IntValue initialSolarTermIndex;
         public static ForgeConfigSpec.BooleanValue daylightChange;
@@ -76,6 +78,8 @@ public class ServerConfig {
                     .defineInRange("InitialSolarTermIndex", 1, 1, 24);
             enableInform = builder.comment("Enable solar term change inform.")
                     .define("EnableInform", true);
+            enableInformIcon = builder.comment("Whether send inform with icon.")
+                    .define("EnableInformIcon", true);
             daylightChange=builder.comment("In summer, the days are long and the nights are short, while in winter, the days are short and the nights are long.")
                     .define("DynamicDaylightDuration", true);
             builder.pop();

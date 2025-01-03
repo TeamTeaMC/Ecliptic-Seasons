@@ -1,9 +1,14 @@
 package com.teamtea.eclipticseasons.data;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
+import com.teamtea.eclipticseasons.data.font.ESFontProvider;
+import com.teamtea.eclipticseasons.data.lang.Lang_EN;
+import com.teamtea.eclipticseasons.data.lang.Lang_ZH;
+import com.teamtea.eclipticseasons.data.loot.EclipticSeasonsLootTableProvider;
 import com.teamtea.eclipticseasons.data.model.BlockStatesDataProvider;
 import com.teamtea.eclipticseasons.data.model.ESBlockModelProvider;
 import com.teamtea.eclipticseasons.data.model.ESItemModelProvider;
+import com.teamtea.eclipticseasons.data.recipe.ESRecipeProvider;
 import com.teamtea.eclipticseasons.data.tag.ESBlockTagProvider;
 import com.teamtea.eclipticseasons.data.tag.ESItemTagProvider;
 import com.teamtea.eclipticseasons.data.tag.TagsDataProvider;
@@ -32,11 +37,19 @@ public class start {
             var esb = new ESBlockTagProvider(packOutput, lookupProvider, MODID, helper);
             generator.addProvider(event.includeServer(), esb);
             generator.addProvider(event.includeServer(),new ESItemTagProvider(packOutput,lookupProvider,esb.contentsGetter()));
+
+            generator.addProvider(event.includeServer(),new ESRecipeProvider(packOutput));
+            generator.addProvider(event.includeServer(),new EclipticSeasonsLootTableProvider(packOutput));
+
         }
         if (event.includeClient()) {
+            generator.addProvider(event.includeClient(),new Lang_EN(packOutput,helper));
+            generator.addProvider(event.includeClient(),new Lang_ZH(packOutput,helper));
+
             generator.addProvider(event.includeClient(), new BlockStatesDataProvider(packOutput, helper));
             generator.addProvider(event.includeClient(), new ESItemModelProvider(packOutput, MODID, helper));
             generator.addProvider(event.includeClient(), new ESBlockModelProvider(packOutput, MODID, helper));
+            generator.addProvider(event.includeClient(), new ESFontProvider(packOutput, MODID, helper));
 
         }
 
