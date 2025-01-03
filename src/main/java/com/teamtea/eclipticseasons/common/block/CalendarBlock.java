@@ -5,6 +5,7 @@ import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.common.block.base.SimpleHorizontalEntityBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
@@ -29,12 +30,12 @@ public class CalendarBlock extends SimpleHorizontalEntityBlock {
     };
 
     public CalendarBlock(Properties properties) {
-        super(properties.lightLevel(b->1));
+        super(properties);
     }
 
     @Override
     public int getLightEmission(BlockState state, BlockGetter level, BlockPos pos) {
-        return super.getLightEmission(state, level, pos);
+        return 0;
     }
 
     @Override

@@ -86,7 +86,7 @@ public class CalendarBlockEntityRenderer implements BlockEntityRenderer<Calendar
         matrixStackIn.pushPose();
         matrixStackIn.scale(scale_x, scale_y, scale_z);
         fontRenderer.drawInBatch(label
-                , (float) (-textWidth) / 2.0F, -18F - lh * 1.2f * line - 1.2f * extraHeight, color, false, matrixStackIn.last().pose(), txtBuffer, Font.DisplayMode.NORMAL, 0, LightTexture.FULL_SKY);
+                , (float) (-textWidth) / 2.0F, -18F - lh * 1.2f * line - 1.2f * extraHeight, color, false, matrixStackIn.last().pose(), txtBuffer, Font.DisplayMode.NORMAL, 0, combinedLightIn);
 
         // txtBuffer.endBatch();
         matrixStackIn.popPose();
@@ -96,12 +96,16 @@ public class CalendarBlockEntityRenderer implements BlockEntityRenderer<Calendar
 
 
         if (line == 1) {
-            Lighting.setupForFlatItems();
-            GlStateManager._disableCull();
+            // Lighting.setupForFlatItems();
+            // GlStateManager._disableCull();
             VertexConsumer builder = txtBuffer.getBuffer(RenderType.entitySmoothCutout(SolarTerm.getFullIcon().withPrefix("textures/").withSuffix(".png")));
             // builder = txtBuffer.getBuffer(net.minecraftforge.client.RenderTypeHelper.getEntityRenderType(null, false));
-
-            blitRect(matrixStackIn, builder, combinedLightIn, OverlayTexture.NO_OVERLAY,
+            matrixStackIn.pushPose();
+            matrixStackIn.translate(0,0,-0.5);
+            Lighting.setupLevel(matrixStackIn.last().pose());
+            matrixStackIn.popPose();
+            // LightTexture.pack(14,15)
+            blitRect(matrixStackIn, builder,combinedLightIn, OverlayTexture.NO_OVERLAY,
                     size / 2f,
                     (float) -size * 0.6f,
                     size * ClientCon.nowSolarTerm.getIconPosition().getKey(),
@@ -111,7 +115,7 @@ public class CalendarBlockEntityRenderer implements BlockEntityRenderer<Calendar
                     (int) (180 / (30f / size)),
                     (int) (120 / (30f / size)),
                     false);
-            Lighting.setupFor3DItems();
+            // Lighting.setupFor3DItems();
         } else {
             // matrixStackIn.translate(0, 5f, -4f);
             // matrixStackIn.scale(4f, 4f, 4f);
