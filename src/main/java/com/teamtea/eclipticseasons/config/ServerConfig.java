@@ -6,7 +6,6 @@ import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
 import java.util.List;
-import java.util.Objects;
 
 public class ServerConfig {
     public static final ModConfigSpec SERVER_CONFIG = new ModConfigSpec.Builder().configure(ServerConfig::new).getRight();
@@ -50,7 +49,7 @@ public class ServerConfig {
             notLightAbove = builder.comment("Without snowy block under the light blocks which level is 0.")
                     .define("NoSnowyUnderLight0", false);
             iceMelt = builder.comment("Enables legacy mode for snow and ice, where snow accumulates when it's cold in snowy day and melts when it's hot.")
-                    .define("LegacyIceAndSnowAccumulationMelt", false);
+                    .define("LegacySnowAndMelt", false);
             snowyFullCollisionShape = builder.comment("Snow overlay block if has full collision shape not just full render shape.")
                     .define("SnowyFullCollisionShape", false);
             snowOverlayGlowingBlock = builder.comment("Snow can cover the block which would lights.")
@@ -109,7 +108,7 @@ public class ServerConfig {
         public static ModConfigSpec.BooleanValue enableCrop;
         public static ModConfigSpec.DoubleValue cropGrowChanceInWrongSeason;
         public static ModConfigSpec.BooleanValue enableCropHumidityControl;
-        public static ModConfigSpec.BooleanValue useDefaultValue;
+        public static ModConfigSpec.BooleanValue registerCropDefaultValue;
 
 
         private static void load(ModConfigSpec.Builder builder) {
@@ -120,8 +119,8 @@ public class ServerConfig {
                     .defineInRange("CropGrowChanceInWrongSeason", 0.25, 0, 1);
             enableCropHumidityControl = builder.comment("Enable crop humidity control.")
                     .define("EnableCropHumidityControl", true);
-            useDefaultValue = builder.comment("If a crop is not registered for a season or humid type, default values will be used.")
-                    .define("UseDefaultValue", false);
+            registerCropDefaultValue = builder.comment("If a crop is not registered for a season or humid type, default values will be used.")
+                    .define("RegisterCropDefaultValue", false);
             builder.pop();
         }
     }

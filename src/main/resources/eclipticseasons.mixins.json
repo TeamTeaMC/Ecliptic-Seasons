@@ -50,7 +50,7 @@
     "client.sound.MixinMusicManager",
     "compat.distanthorizons.MixinClientLevel",
     "compat.distanthorizons.MixinFullDataToRenderDataTransformer",
-    "compat.distanthorizons.MixinNetworkdUtil",
+    "compat.distanthorizons.MixinNetworkUtil",
     "compat.distanthorizons.MixinTintWithoutLevelOverrider",
     "compat.embeddium.MixinBlockRender2",
     "compat.embeddium.MixinBlockRenderTask",

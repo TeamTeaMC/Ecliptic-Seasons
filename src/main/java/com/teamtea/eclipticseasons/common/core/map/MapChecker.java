@@ -207,17 +207,9 @@ public class MapChecker {
             } else if (type == ChunkInfoMap.TYPE_BIOME) {
                 value = map.getBiome(pos);
                 if (value == -1 || forceUpdate) {
+                    value = biomeToId(level,level.getBiome(pos).value());
                     if (isLoadNearBy(level, pos)) {
-                        // TODO:这里是因为客户端level.getUncachedNoiseBiome的获取问题
-                        var biomeHolder = level.getBiome(pos);
-                        // TODO: 调查清楚两者区别
-                        // var biomeHolder = level.getChunk(pos).getNoiseBiome(pos.getX(),pos.getY(),pos.getZ());
-                        value = level.registryAccess().registryOrThrow(Registries.BIOME).getId(biomeHolder.value());
                         map.updateBiome(pos, value);
-                    } else {
-                        // value = level.registryAccess().registry(Registries.BIOME).get().getId(Biomes.THE_VOID);
-                        var biomeHolder = level.getBiome(pos);
-                        value = level.registryAccess().registryOrThrow(Registries.BIOME).getId(biomeHolder.value());
                     }
                 }
             }
@@ -244,14 +236,9 @@ public class MapChecker {
                 value = getMCHeightWithCheck(level, pos);
                 map.updateHeight(pos, value);
             } else if (type == ChunkInfoMap.TYPE_BIOME) {
+                value = biomeToId(level,level.getBiome(pos).value());
                 if (isLoadNearBy(level, pos)) {
-                    var biomeHolder = level.getBiome(pos);
-                    value = level.registryAccess().registryOrThrow(Registries.BIOME).getId(biomeHolder.value());
                     map.updateBiome(pos, value);
-                } else {
-                    // value = level.registryAccess().registry(Registries.BIOME).get().getId(Biomes.THE_VOID);
-                    var biomeHolder = level.getBiome(pos);
-                    value = level.registryAccess().registryOrThrow(Registries.BIOME).getId(biomeHolder.value());
                 }
             }
         }
@@ -392,7 +379,7 @@ public class MapChecker {
             SimplePair.of(Direction.WEST, Direction.NORTH)
     };
 
-    // TODO：检查污染情况，这里使用生成时内容
+
     public static Holder<Biome> getSurfaceBiome(Level level, BlockPos pos) {
         // fix the pos to surface
         ChunkInfoMap chunkMap1 = getChunkMap(level, pos);
@@ -665,6 +652,7 @@ public class MapChecker {
                 && level.dimensionType().natural()
                 && !level.dimensionType().hasFixedTime();
         if (result) {
+            // fori faster than enhanced for
             for (int i = 0; i < validDimension.size(); i++) {
                 if (validDimension.get(i) == level) return true;
             }

@@ -10,7 +10,6 @@ import com.teamtea.eclipticseasons.config.ServerConfig;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
@@ -18,7 +17,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
@@ -107,7 +105,7 @@ public final class CropInfoManager {
 
         }
 
-        if (ServerConfig.Crop.useDefaultValue.getAsBoolean()) {
+        if (ServerConfig.Crop.registerCropDefaultValue.getAsBoolean()) {
             BuiltInRegistries.BLOCK.forEach(block ->
             {
                 registerCropHumidityInfo(block, CropHumidityType.AVERAGE_MOIST, false);
@@ -151,7 +149,7 @@ public final class CropInfoManager {
                     CROP_SEASON_INFO.put(block, new CropSeasonInfo(season));
                 }
 
-                if(ServerConfig.Crop.useDefaultValue.getAsBoolean()) {
+                if(ServerConfig.Crop.registerCropDefaultValue.getAsBoolean()) {
                     if (block != null && !CROP_HUMIDITY_INFO.containsKey(block)) {
                         CropHumidityType humid;
                         if (season == 1) {

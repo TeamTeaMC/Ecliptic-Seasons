@@ -1,13 +1,11 @@
 package com.teamtea.eclipticseasons.common;
 
 
-import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
-import com.teamtea.eclipticseasons.common.core.map.BiomeHolder;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.core.map.ServerMapFixer;
 import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
@@ -67,7 +65,7 @@ public class AllListener {
 
 
     @SubscribeEvent
-    public static void onLevelEventLoad(LevelEvent.Load event) {
+    public static void onLevelLoad(LevelEvent.Load event) {
         if (event.getLevel() instanceof ServerLevel serverLevel) {
             WeatherManager.createLevelBiomeWeatherList(serverLevel);
             // 这里需要恢复一下数据

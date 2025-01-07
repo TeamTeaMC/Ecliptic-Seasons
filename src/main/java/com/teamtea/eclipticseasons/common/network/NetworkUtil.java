@@ -27,7 +27,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class NetworkdUtil {
+public class NetworkUtil {
 
 
     public static void processSolarTermsMessage2(SolarTermsMessage solarTermsMessage, IPayloadContext context) {
@@ -46,7 +46,7 @@ public class NetworkdUtil {
         });
     }
 
-    public static void processEmptyMessage2(EmptyMessage emptyMessage, IPayloadContext context) {
+    public static void processEmptyMessage(EmptyMessage emptyMessage, IPayloadContext context) {
         context.enqueueWork(() -> {
             Minecraft.getInstance().levelRenderer.allChanged();
         }).exceptionally(e -> {
@@ -56,7 +56,7 @@ public class NetworkdUtil {
         });
     }
 
-    public static void processBiomeWeatherMessage2(BiomeWeatherMessage biomeWeatherMessage, IPayloadContext context) {
+    public static void processBiomeWeatherMessage(BiomeWeatherMessage biomeWeatherMessage, IPayloadContext context) {
         context.enqueueWork(() -> {
             var lists = WeatherManager.getBiomeList(context.player().level());
             if (lists != null) {

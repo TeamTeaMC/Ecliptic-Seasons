@@ -35,43 +35,43 @@ public final class SimpleNetworkHandler {
                 .configurationToClient(
                         ConfigMessage.TYPE,
                         ConfigMessage.STREAM_CODEC,
-                        NetworkdUtil::handleConfigMessage);
+                        NetworkUtil::handleConfigMessage);
 
         registrar.playToClient(
                 SolarTermsMessage.TYPE,
                 SolarTermsMessage.STREAM_CODEC,
-                NetworkdUtil::processSolarTermsMessage2
+                NetworkUtil::processSolarTermsMessage2
         );
 
 
         registrar.playToClient(
                 EmptyMessage.TYPE,
                 EmptyMessage.STREAM_CODEC,
-                NetworkdUtil::processEmptyMessage2
+                NetworkUtil::processEmptyMessage
         );
 
         registrar.playToClient(
                 BiomeWeatherMessage.TYPE,
                 BiomeWeatherMessage.STREAM_CODEC,
-                NetworkdUtil::processBiomeWeatherMessage2
+                NetworkUtil::processBiomeWeatherMessage
         );
 
         registrar.playToClient(
                 ChunkUpdateMessage.TYPE,
                 ChunkUpdateMessage.STREAM_CODEC,
-                NetworkdUtil::processChunkUpdateMessage
+                NetworkUtil::processChunkUpdateMessage
         );
 
         registrar.playToClient(
                 ChunkBiomeUpdateMessage.TYPE,
                 ChunkBiomeUpdateMessage.STREAM_CODEC,
-                NetworkdUtil::processChunkBiomeUpdateMessage
+                NetworkUtil::processChunkBiomeUpdateMessage
         );
 
         registrar.playToClient(
                 MapFixerMessage.TYPE,
                 MapFixerMessage.STREAM_CODEC,
-                NetworkdUtil::processMapFixerMessage
+                NetworkUtil::processMapFixerMessage
         );
     }
 

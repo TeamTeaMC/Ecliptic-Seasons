@@ -1,5 +1,6 @@
 package com.teamtea.eclipticseasons.client.render.ber;
 
+import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.teamtea.eclipticseasons.EclipticSeasons;
@@ -20,6 +21,8 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.monster.Guardian;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.joml.Matrix4f;
 import org.joml.Vector3d;
@@ -40,7 +43,6 @@ public class CalendarBlockEntityRenderer implements BlockEntityRenderer<Calendar
 
         var facing = blockEntity.getBlockState().getValue(SimpleHorizontalEntityBlock.FACING).ordinal() * 90;
         var st = ClientCon.nowSolarTerm;
-        var label = st.getAlternationText().getString();
 
         drawText(2, Component.translatable("info.eclipticseasons.environment.solar_term.hint").getString(), Color.GRAY.getRGB(), blockEntity, poseStack, bufferIn, combinedLight);
 
@@ -54,7 +56,6 @@ public class CalendarBlockEntityRenderer implements BlockEntityRenderer<Calendar
     }
 
     private void drawText(int line, String label, int color, BlockEntity tile, PoseStack matrixStackIn, MultiBufferSource txtBuffer, int combinedLightIn) {
-
 
         matrixStackIn.pushPose();
 
@@ -86,21 +87,26 @@ public class CalendarBlockEntityRenderer implements BlockEntityRenderer<Calendar
         // txtBuffer.endBatch();
         matrixStackIn.popPose();
 
-        VertexConsumer builder = txtBuffer.getBuffer(RenderType.entitySmoothCutout(SolarTerm.getFullIcon().withPrefix("textures/").withSuffix(".png")));
-        // matrixStackIn.scale(20, 20, 20);
-        matrixStackIn.scale(0.2f, 0.2f, 0.2f);
-        int size=16;
-        blitRect(matrixStackIn, builder, combinedLightIn, OverlayTexture.NO_OVERLAY,
-                size/2f,
-                (float) -size*0.6f,
-                size*ClientCon.nowSolarTerm.getIconPosition().getKey(),
-                size*ClientCon.nowSolarTerm.getIconPosition().getValue(),
-                size,
-                size,
-                (int)(180/(30f/size)),
-                (int)(120/(30f/size)),
-                false);
-        matrixStackIn.popPose();
+        if(line==1)
+        {
+            // 也许需要用renderModel的手段
+            VertexConsumer builder = txtBuffer.getBuffer(RenderType.entitySmoothCutout(SolarTerm.getFullIcon().withPrefix("textures/").withSuffix(".png")));
+            // matrixStackIn.scale(20, 20, 20);
+            matrixStackIn.scale(0.2f, 0.2f, 0.2f);
+            int size = 16;
+            Lighting.setupLevel();
+            blitRect(matrixStackIn, builder, LightTexture.FULL_SKY, OverlayTexture.NO_OVERLAY,
+                    size / 2f,
+                    (float) -size * 0.6f,
+                    size * ClientCon.nowSolarTerm.getIconPosition().getKey(),
+                    size * ClientCon.nowSolarTerm.getIconPosition().getValue(),
+                    size,
+                    size,
+                    (int) (180 / (30f / size)),
+                    (int) (120 / (30f / size)),
+                    false);
+            matrixStackIn.popPose();
+        }
     }
 
 
