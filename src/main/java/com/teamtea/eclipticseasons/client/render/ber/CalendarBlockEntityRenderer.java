@@ -105,11 +105,6 @@ public class CalendarBlockEntityRenderer implements BlockEntityRenderer<Calendar
             // GlStateManager._disableCull();
             VertexConsumer builder = txtBuffer.getBuffer(RenderType.entitySmoothCutout(SolarTerm.getFullIcon().withPrefix("textures/").withSuffix(".png")));
             // builder = txtBuffer.getBuffer(net.minecraftforge.client.RenderTypeHelper.getEntityRenderType(null, false));
-            matrixStackIn.pushPose();
-            matrixStackIn.translate(0,0,-0.5);
-            Lighting.setupLevel(matrixStackIn.last().pose());
-            matrixStackIn.popPose();
-            // LightTexture.pack(14,15)
             blitRect(matrixStackIn, builder,combinedLightIn, OverlayTexture.NO_OVERLAY,
                     size / 2f,
                     (float) -size * 0.6f,

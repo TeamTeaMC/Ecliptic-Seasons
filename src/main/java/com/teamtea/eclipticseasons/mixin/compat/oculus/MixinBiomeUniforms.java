@@ -21,7 +21,7 @@ import java.util.function.ToIntFunction;
 @Mixin({BiomeUniforms.class})
 public abstract class MixinBiomeUniforms {
 
-    @Shadow
+    @Shadow(remap = false)
     static IntSupplier playerI(ToIntFunction<LocalPlayer> function) {
         return null;
     }
