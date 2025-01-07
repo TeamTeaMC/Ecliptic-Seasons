@@ -1,21 +1,12 @@
 package com.teamtea.eclipticseasons.compat.legendarysurvivaloverhaul;
 
-import com.teamtea.eclipticseasons.api.constant.tag.ClimateTypeBiomeTags;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
-import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.compat.CompatModule;
 import com.teamtea.eclipticseasons.config.CommonConfig;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Holder;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.biome.Biome;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.registries.RegistryObject;
 import sfiomn.legendarysurvivaloverhaul.api.temperature.ModifierBase;
-import sfiomn.legendarysurvivaloverhaul.common.integration.sereneseasons.SereneSeasonsUtil;
-import sfiomn.legendarysurvivaloverhaul.config.Config;
 
 import java.util.List;
 
@@ -53,22 +44,7 @@ public class LSO_ESUtil {
                 CommonConfig.Season.lastingDaysOfEachTerm.get() * EclipticUtil.getNowSolarTerm(level).ordinal() + 1;
     }
 
-    public static SereneSeasonsUtil.SeasonType getSeasonType(Holder<Biome> biome) {
-        // if (Config.Baked.tropicalSeasonsEnabled && biome.is(ClimateTypeBiomeTags.MONSOONAL)) {
-        //     return SereneSeasonsUtil.SeasonType.TROPICAL_SEASON;
-        // } else
-        {
-            return
-                    // !Config.Baked.defaultSeasonEnabled &&
-                    biome.is(ClimateTypeBiomeTags.RAINLESS) ?
-                            SereneSeasonsUtil.SeasonType.NO_SEASON : SereneSeasonsUtil.SeasonType.NORMAL_SEASON;
-        }
-    }
 
-
-    public static boolean hasSeasons(Level level) {
-        return MapChecker.isValidDimension(level);
-    }
 
     public static void initAverageTemperatures() {
         averageSeasonTemperature = 0;
@@ -82,14 +58,6 @@ public class LSO_ESUtil {
             }
         }
         averageSeasonTemperature /= 24.0;
-
-        // averageTropicalSeasonTemperature += Config.Baked.earlyWetSeasonModifier;
-        // averageTropicalSeasonTemperature += Config.Baked.earlyDrySeasonModifier;
-        // averageTropicalSeasonTemperature += Config.Baked.midWetSeasonModifier;
-        // averageTropicalSeasonTemperature += Config.Baked.midDrySeasonModifier;
-        // averageTropicalSeasonTemperature += Config.Baked.lateWetSeasonModifier;
-        // averageTropicalSeasonTemperature += Config.Baked.lateDrySeasonModifier;
-        // averageTropicalSeasonTemperature /= 6.0;
     }
 
 }
