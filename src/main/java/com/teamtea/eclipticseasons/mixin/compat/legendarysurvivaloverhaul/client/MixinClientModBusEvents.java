@@ -13,12 +13,12 @@ import sfiomn.legendarysurvivaloverhaul.client.events.ClientModBusEvents;
 @Mixin({ClientModBusEvents.class})
 public abstract class MixinClientModBusEvents {
 
-    @Inject(
-            remap = false,
-            method = "registerGuiOverlays",
-            at = @At(value = "HEAD")
-    )
-    private static void ecliptic$registerGuiOverlays(RegisterGuiOverlaysEvent event, CallbackInfo ci) {
-        event.registerAbove(VanillaGuiOverlay.ITEM_NAME.id(), "season_card_patch", LSO_RenderSeasonCards.SEASON_CARD_GUI);
-    }
+    // @Inject(
+    //         remap = false,
+    //         method = "registerGuiOverlays",
+    //         at = @At(value = "HEAD")
+    // )
+    // private static void ecliptic$registerGuiOverlays(RegisterGuiOverlaysEvent event, CallbackInfo ci) {
+    //     event.registerAbove(VanillaGuiOverlay.ITEM_NAME.id(), "season_card_patch", LSO_RenderSeasonCards.SEASON_CARD_GUI);
+    // }
 }

@@ -5,7 +5,8 @@ import com.teamtea.eclipticseasons.api.constant.crop.CropHumidityInfo;
 import com.teamtea.eclipticseasons.api.constant.crop.CropHumidityType;
 import com.teamtea.eclipticseasons.api.constant.crop.CropSeasonInfo;
 import com.teamtea.eclipticseasons.api.constant.crop.CropSeasonType;
-import com.teamtea.eclipticseasons.config.ServerConfig;
+import com.teamtea.eclipticseasons.compat.CompatModule;
+import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;
@@ -23,7 +24,6 @@ import net.minecraft.world.level.block.CropBlock;
 import net.minecraftforge.event.TagsUpdatedEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.registries.ForgeRegistries;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 
 import javax.annotation.Nullable;
@@ -98,12 +98,12 @@ public final class CropInfoManager
         }
         // event.getRegistryAccess().registry(Registries.BLOCK).get().getTagNames().toList();
 
-        if (ServerConfig.Compat.sereneSeasons.get()) {
+        if (CompatModule.CommonConfig.sereneSeasons.get()) {
             registerForSS(blocks, Registries.BLOCK);
             registerForSS(items, Registries.ITEM);
         }
 
-        if (ServerConfig.Crop.useDefaultValue.get()) {
+        if (CommonConfig.Crop.useDefaultValue.get()) {
             BuiltInRegistries.BLOCK.forEach(block ->
             {
                 registerCropHumidityInfo(block, CropHumidityType.AVERAGE_MOIST, false);
@@ -146,7 +146,7 @@ public final class CropInfoManager
                     CROP_SEASON_INFO.put(block, new CropSeasonInfo(season));
                 }
 
-                if (ServerConfig.Crop.useDefaultValue.get()) {
+                if (CommonConfig.Crop.useDefaultValue.get()) {
                     if (block != null && !CROP_HUMIDITY_INFO.containsKey(block)) {
                         CropHumidityType humid;
                         if (season == 1) {

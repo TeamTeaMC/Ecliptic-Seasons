@@ -15,31 +15,31 @@ import sfiomn.legendarysurvivaloverhaul.config.Config;
 
 @Mixin({ClientForgeEvents.class})
 public abstract class MixinClientForgeEvents {
-
-    @Inject(
-            remap = false,
-            method = "onClientTick",
-            at = @At(value = "HEAD")
-    )
-    private static void ecliptic$lambda$static$0(TickEvent.ClientTickEvent event, CallbackInfo ci) {
-        if (event.phase == TickEvent.Phase.END) {
-            Player player = Minecraft.getInstance().player;
-            if (!Minecraft.getInstance().isPaused() && player != null) {
-                if (Config.Baked.seasonCardsEnabled) {
-                    LSO_RenderSeasonCards.updateSeasonCardFading(player);
-                }
-            }
-        }
-    }
-
-    @Inject(
-            remap = false,
-            method = "onPlayerJoinWorld",
-            at = @At(value = "HEAD")
-    )
-    private static void ecliptic$onPlayerJoinWorld(EntityJoinLevelEvent event, CallbackInfo ci) {
-        if (event.getLevel().isClientSide && event.getEntity() instanceof Player) {
-            LSO_RenderSeasonCards.init();
-        }
-    }
+    //
+    // @Inject(
+    //         remap = false,
+    //         method = "onClientTick",
+    //         at = @At(value = "HEAD")
+    // )
+    // private static void ecliptic$lambda$static$0(TickEvent.ClientTickEvent event, CallbackInfo ci) {
+    //     if (event.phase == TickEvent.Phase.END) {
+    //         Player player = Minecraft.getInstance().player;
+    //         if (!Minecraft.getInstance().isPaused() && player != null) {
+    //             if (Config.Baked.seasonCardsEnabled) {
+    //                 LSO_RenderSeasonCards.updateSeasonCardFading(player);
+    //             }
+    //         }
+    //     }
+    // }
+    //
+    // @Inject(
+    //         remap = false,
+    //         method = "onPlayerJoinWorld",
+    //         at = @At(value = "HEAD")
+    // )
+    // private static void ecliptic$onPlayerJoinWorld(EntityJoinLevelEvent event, CallbackInfo ci) {
+    //     if (event.getLevel().isClientSide && event.getEntity() instanceof Player) {
+    //         LSO_RenderSeasonCards.init();
+    //     }
+    // }
 }

@@ -1,44 +1,52 @@
 package com.teamtea.eclipticseasons.config;
 
+import com.teamtea.eclipticseasons.compat.CompatModule;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.ForgeConfigSpec;
 
-public class ServerConfig {
-    public static final ForgeConfigSpec SERVER_CONFIG = new ForgeConfigSpec.Builder().configure(ServerConfig::new).getRight();
+import java.util.List;
 
-    protected ServerConfig(ForgeConfigSpec.Builder builder) {
+public class CommonConfig {
+    public static final ForgeConfigSpec COMMON_CONFIG = new ForgeConfigSpec.Builder().configure(com.teamtea.eclipticseasons.config.CommonConfig::new).getRight();
+
+    protected CommonConfig(ForgeConfigSpec.Builder builder) {
         Season.load(builder);
         Weather.load(builder);
         Temperature.load(builder);
         Crop.load(builder);
-        Compat.load(builder);
+        CompatModule.CommonConfig.load(builder);
         Debug.load(builder);
     }
 
-    public static class Compat {
-        public static ForgeConfigSpec.BooleanValue sereneSeasons;
-
-        private static void load(ForgeConfigSpec.Builder builder) {
-            builder.push("Compat");
-            sereneSeasons = builder.comment("Compatible with mods using SereneSeasons' CropTag.")
-                    .define("SereneSeasonsCropTag", true);
-            builder.pop();
-        }
-    }
+    // public static class Compat {
+    //     public static ForgeConfigSpec.BooleanValue sereneSeasons;
+    //
+    //     private static void load(ForgeConfigSpec.Builder builder) {
+    //         builder.push("Compat");
+    //         CompatModule.CommonConfig.load(builder);
+    //         sereneSeasons = builder.comment("Compatible with mods using SereneSeasons' CropTag.")
+    //                 .define("SereneSeasonsCropTag", true);
+    //         builder.pop();
+    //     }
+    // }
 
     public static class Debug {
-        public static ForgeConfigSpec.BooleanValue debugMode;
-        public static ForgeConfigSpec.BooleanValue notSnowyUnderLight;
+        public static ForgeConfigSpec.BooleanValue logIllegalUse;
+        public static ForgeConfigSpec.BooleanValue notLightAbove;
 
         public static ForgeConfigSpec.BooleanValue snowyFullCollisionShape;
         public static ForgeConfigSpec.BooleanValue snowOverlayGlowingBlock;
+        public static ForgeConfigSpec.BooleanValue iceMelt;
 
         private static void load(ForgeConfigSpec.Builder builder) {
             builder.push("Debug");
-            debugMode = builder.comment("Enable debug option to detect illegal use of functions.")
-                    .define("Debug", false);
-            notSnowyUnderLight = builder.comment("Without snowy block under the light blocks which level is 0.")
+            logIllegalUse = builder.comment("Enable debug option to detect illegal use of functions.")
+                    .define("LogIllegalUse", false);
+            notLightAbove = builder.comment("Without snowy block under the light blocks which level is 0.")
                     .define("NotSnowyUnderLight0", false);
-
+            iceMelt = builder.comment("Enables legacy mode for snow and ice, where snow accumulates when it's cold in snowy day and melts when it's hot.")
+                    .define("LegacySnowAndMelt", false);
             snowyFullCollisionShape = builder.comment("Snow overlay block if has full collision shape not just full render shape.")
                     .define("SnowyFullCollisionShape", false);
             snowOverlayGlowingBlock = builder.comment("Snow can cover the block which would lights.")
@@ -49,13 +57,11 @@ public class ServerConfig {
     }
 
     public static class Temperature {
-        public static ForgeConfigSpec.BooleanValue iceMelt;
         public static ForgeConfigSpec.BooleanValue heatStroke;
 
         private static void load(ForgeConfigSpec.Builder builder) {
             builder.push("Temperature");
-            iceMelt = builder.comment("Ice or snow layer will melt in warm place..")
-                    .define("IceAndSnowMelt", false);
+
             heatStroke = builder.comment("Add heat stroke effect in summer noon while in hot biome.")
                     .define("HeatStroke", true);
             builder.pop();
@@ -69,6 +75,8 @@ public class ServerConfig {
         public static ForgeConfigSpec.IntValue lastingDaysOfEachTerm;
         public static ForgeConfigSpec.IntValue initialSolarTermIndex;
         public static ForgeConfigSpec.BooleanValue daylightChange;
+        public static ForgeConfigSpec.ConfigValue<List<? extends String>> validDimensions;
+
 
         private static void load(ForgeConfigSpec.Builder builder) {
             builder.push("Season");
@@ -82,6 +90,10 @@ public class ServerConfig {
                     .define("EnableInformIcon", true);
             daylightChange=builder.comment("In summer, the days are long and the nights are short, while in winter, the days are short and the nights are long.")
                     .define("DynamicDaylightDuration", true);
+            validDimensions = builder.comment("Which dimensions will have season effects? Note that it must be natrual and have time lapse.")
+                    .defineListAllowEmpty("ValidDimensions",
+                            () -> List.of(Level.OVERWORLD.location().toString()),
+                            o -> o instanceof String s && ResourceLocation.tryParse(s) != null);
             builder.pop();
         }
     }
@@ -102,7 +114,7 @@ public class ServerConfig {
             enableCropHumidityControl = builder.comment("Enable crop humidity control.")
                     .define("EnableCropHumidityControl", true);
             useDefaultValue = builder.comment("If a crop is not registered for a season or humid type, default values will be used.")
-                    .define("UseDefaultValue", false);
+                    .define("RegisterCropDefaultValue", false);
             builder.pop();
         }
     }

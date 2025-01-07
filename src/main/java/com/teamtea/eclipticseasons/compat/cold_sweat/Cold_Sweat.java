@@ -5,14 +5,17 @@ import com.momosoftworks.coldsweat.api.event.core.registry.TempModifierRegisterE
 import com.momosoftworks.coldsweat.api.temperature.modifier.UndergroundTempModifier;
 import com.momosoftworks.coldsweat.api.util.Placement;
 import com.teamtea.eclipticseasons.EclipticSeasons;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 public class Cold_Sweat {
     public static final Cold_Sweat INSTANCE = new Cold_Sweat();
 
+    @SubscribeEvent
     public void registerTempModifiers(TempModifierRegisterEvent event) {
         event.register(EclipticSeasons.rl("season"), ESTempModifier::new);
     }
 
+    @SubscribeEvent
     public void defineDefaultModifiers(GatherDefaultTempModifiersEvent event) {
         event.addModifierById(EclipticSeasons.rl( "season"),
                 mod -> mod.tickRate(60),

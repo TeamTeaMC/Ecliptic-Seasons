@@ -18,21 +18,21 @@ import sfiomn.legendarysurvivaloverhaul.common.items.SeasonalCalendarItem;
 
 @Mixin({SeasonalCalendarItem.class})
 public abstract class MixinRenderSeasonCards {
-
-    @Inject(
-            method = "use",
-            at = @At(value = "HEAD")
-    )
-    private void ecliptic$updateSeasonCardFading(Level level, Player player, InteractionHand hand, CallbackInfoReturnable<InteractionResultHolder<ItemStack>> cir) {
-        if (level.isClientSide()) {
-            player.displayClientMessage(LSO_ESUtil.seasonTooltip(player.blockPosition(), player.level()), true);
-        }
-    }
-
-    @WrapOperation(
-            method = "use",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;displayClientMessage(Lnet/minecraft/network/chat/Component;Z)V")
-    )
-    private void ecliptic$updateSeasonCardFading(Player instance, Component pChatComponent, boolean pActionBar, Operation<Void> original) {
-    }
+    //
+    // @Inject(
+    //         method = "use",
+    //         at = @At(value = "HEAD")
+    // )
+    // private void ecliptic$updateSeasonCardFading(Level level, Player player, InteractionHand hand, CallbackInfoReturnable<InteractionResultHolder<ItemStack>> cir) {
+    //     if (level.isClientSide()) {
+    //         player.displayClientMessage(LSO_ESUtil.seasonTooltip(player.blockPosition(), player.level()), true);
+    //     }
+    // }
+    //
+    // @WrapOperation(
+    //         method = "use",
+    //         at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;displayClientMessage(Lnet/minecraft/network/chat/Component;Z)V")
+    // )
+    // private void ecliptic$updateSeasonCardFading(Player instance, Component pChatComponent, boolean pActionBar, Operation<Void> original) {
+    // }
 }

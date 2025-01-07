@@ -13,7 +13,7 @@ import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-public class NetworkdUtil {
+public class NetworkUtil {
 
     public static ClientLevel getClient() {
         return Minecraft.getInstance().level;
@@ -24,10 +24,10 @@ public class NetworkdUtil {
         {
             if (context.get().getDirection() == NetworkDirection.PLAY_TO_CLIENT) {
 
-                SolarHolders.getSaveDataLazy(NetworkdUtil.getClient()).ifPresent(data ->
+                SolarHolders.getSaveDataLazy(NetworkUtil.getClient()).ifPresent(data ->
                         {
                             data.setSolarTermsDay(solarTermsMessage.solarDay);
-                            BiomeClimateManager.updateTemperature(NetworkdUtil.getClient(),data.getSolarTerm());
+                            BiomeClimateManager.updateTemperature(NetworkUtil.getClient(),data.getSolarTerm());
                             BiomeColorsHandler.needRefresh = true;
                             ClientCon.tick(getClient());
                         }
@@ -51,7 +51,7 @@ public class NetworkdUtil {
         {
 
             if (context.get().getDirection() == NetworkDirection.PLAY_TO_CLIENT) {
-                var lists = WeatherManager.getBiomeList(NetworkdUtil.getClient());
+                var lists = WeatherManager.getBiomeList(NetworkUtil.getClient());
                 if (lists != null) {
                     for (WeatherManager.BiomeWeather biomeWeather : lists) {
                         if(biomeWeatherMessage.rain[biomeWeather.id]==0

@@ -5,7 +5,7 @@ import com.teamtea.eclipticseasons.api.constant.biome.Humidity;
 import com.teamtea.eclipticseasons.api.constant.crop.CropHumidityInfo;
 import com.teamtea.eclipticseasons.api.constant.crop.CropSeasonInfo;
 import com.teamtea.eclipticseasons.common.handler.SolarUtil;
-import com.teamtea.eclipticseasons.config.ServerConfig;
+import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
@@ -34,13 +34,13 @@ public final class CropGrowthHandler {
     public static void beforeCropGrowUp(net.minecraftforge.eventbus.api.Event event, LevelAccessor world, BlockPos pos, BlockState blockState) {
         Block block = blockState.getBlock();
         CropSeasonInfo seasonInfo = CropInfoManager.getSeasonInfo(block);
-        if (seasonInfo != null && ServerConfig.Crop.enableCrop.get()) {
+        if (seasonInfo != null && CommonConfig.Crop.enableCrop.get()) {
             if (seasonInfo.isSuitable(SolarUtil.getSeason((Level) world))) {
                 Humidity env = Humidity.getHumid(world.getBiome(pos).value().getModifiedClimateSettings().downfall(), world.getBiome(pos).value().getTemperature(pos));
                 CropHumidityInfo humidityInfo = CropInfoManager.getHumidityInfo(block);
                 checkHumidity(event, world, humidityInfo, env);
-            } else if (ServerConfig.Crop.cropGrowChanceInWrongSeason.get() > 0
-                    && world.getRandom().nextInt(100) < ServerConfig.Crop.cropGrowChanceInWrongSeason.get() * 100) {
+            } else if (CommonConfig.Crop.cropGrowChanceInWrongSeason.get() > 0
+                    && world.getRandom().nextInt(100) < CommonConfig.Crop.cropGrowChanceInWrongSeason.get() * 100) {
                 Humidity env = Humidity.getHumid(world.getBiome(pos).value().getModifiedClimateSettings().downfall(), world.getBiome(pos).value().getTemperature(pos));
                 CropHumidityInfo humidityInfo = CropInfoManager.getHumidityInfo(block);
                 checkHumidity(event, world, humidityInfo, env);
@@ -56,7 +56,7 @@ public final class CropGrowthHandler {
 
 
     public static void checkHumidity(net.minecraftforge.eventbus.api.Event event, LevelAccessor world, CropHumidityInfo humidityInfo, Humidity env) {
-        if (humidityInfo != null && ServerConfig.Crop.enableCropHumidityControl.get()) {
+        if (humidityInfo != null && CommonConfig.Crop.enableCropHumidityControl.get()) {
             float f = humidityInfo.getGrowChance(env);
             if (f == 0) {
                 setResult(event, CANCEL);

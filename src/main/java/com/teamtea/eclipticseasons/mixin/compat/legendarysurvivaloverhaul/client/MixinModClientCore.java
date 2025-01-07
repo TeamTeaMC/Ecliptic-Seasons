@@ -16,15 +16,15 @@ import sfiomn.legendarysurvivaloverhaul.registry.ItemRegistry;
 @Mixin({LegendarySurvivalOverhaul.ClientModEvents.class})
 public abstract class MixinModClientCore {
 
-    @Inject(
-            remap = false,
-            method = "onClientSetup",
-            at = @At(value = "HEAD")
-    )
-    private static void ecliptic$registerGuiOverlays(FMLClientSetupEvent event, CallbackInfo ci) {
-        ItemProperties.register(ItemRegistry.SEASONAL_CALENDAR.get(), new ResourceLocation("legendarysurvivaloverhaul", "time"), new LSO_SeasonalCalendarTimeProperty());
-        ItemProperties.register(ItemRegistry.SEASONAL_CALENDAR.get(), new ResourceLocation("legendarysurvivaloverhaul", "seasontype"), new LSO_SeasonalCalendarSeasonTypeProperty());
-    }
+    // @Inject(
+    //         remap = false,
+    //         method = "onClientSetup",
+    //         at = @At(value = "HEAD")
+    // )
+    // private static void ecliptic$registerGuiOverlays(FMLClientSetupEvent event, CallbackInfo ci) {
+    //     ItemProperties.register(ItemRegistry.SEASONAL_CALENDAR.get(), new ResourceLocation("legendarysurvivaloverhaul", "time"), new LSO_SeasonalCalendarTimeProperty());
+    //     ItemProperties.register(ItemRegistry.SEASONAL_CALENDAR.get(), new ResourceLocation("legendarysurvivaloverhaul", "seasontype"), new LSO_SeasonalCalendarSeasonTypeProperty());
+    // }
 
 
 }

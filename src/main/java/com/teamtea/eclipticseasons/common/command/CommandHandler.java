@@ -1,8 +1,5 @@
 package com.teamtea.eclipticseasons.common.command;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.datafixers.util.Either;
@@ -12,9 +9,8 @@ import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
-import com.teamtea.eclipticseasons.config.ServerConfig;
+import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.screens.inventory.CommandBlockEditScreen;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.ResourceOrTagArgument;
@@ -24,30 +20,16 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.protocol.game.ServerboundSetCommandMinecartPacket;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.commands.TimeCommand;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.packs.resources.Resource;
-import net.minecraft.util.GsonHelper;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import com.teamtea.eclipticseasons.EclipticSeasons;
-import net.minecraftforge.fml.loading.FMLLoader;
-import net.minecraftforge.server.ServerLifecycleHooks;
-import org.apache.commons.io.IOUtils;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.regex.Pattern;
-import java.util.stream.Stream;
 
 @Mod.EventBusSubscriber(modid = EclipticSeasons.MODID)
 public class CommandHandler {
@@ -115,7 +97,7 @@ public class CommandHandler {
                                                     break;
                                                 }
                                             }
-                                            int day = ss.ordinal() * ServerConfig.Season.lastingDaysOfEachTerm.get();
+                                            int day = ss.ordinal() * CommonConfig.Season.lastingDaysOfEachTerm.get();
                                             return setDay(commandContext.getSource(), day);
                                         })))
                         .then(Commands.literal("getTerm")

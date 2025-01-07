@@ -43,6 +43,10 @@
     "client.render.chunk.MixinChunkRenderDispatcher",
     "client.sound.MixinLocalPlayer",
     "client.sound.MixinMusicManager",
+    "compat.distanthorizons.MixinClientLevel",
+    "compat.distanthorizons.MixinFullDataToRenderDataTransformer",
+    "compat.distanthorizons.MixinNetworkUtil",
+    "compat.distanthorizons.MixinTintWithoutLevelOverrider",
     "compat.legendarysurvivaloverhaul.client.MixinClientForgeEvents",
     "compat.legendarysurvivaloverhaul.client.MixinClientModBusEvents",
     "compat.legendarysurvivaloverhaul.client.MixinModClientCore",
@@ -52,6 +56,7 @@
     "compat.optifine.MixinItemBlockRenderTypes",
     "compat.rubidium.MixinBlockRender2",
     "compat.rubidium.MixinBlockRenderTask",
+    "compat.oculus.MixinBiomeUniforms",
     "compat.simpleclouds.MixinWorldEffects"
   ],
   "injectors": {

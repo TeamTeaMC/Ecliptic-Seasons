@@ -85,6 +85,11 @@ public class CalendarBlockEntityRenderer implements BlockEntityRenderer<Calendar
         matrixStackIn.translate(x, y, z + 0.74f);
         matrixStackIn.pushPose();
         matrixStackIn.scale(scale_x, scale_y, scale_z);
+        if(textWidth>80){
+            float re=80f/textWidth;
+            matrixStackIn.scale(re, re, re);
+            matrixStackIn.translate(0, -4f, 0);
+        }
         fontRenderer.drawInBatch(label
                 , (float) (-textWidth) / 2.0F, -18F - lh * 1.2f * line - 1.2f * extraHeight, color, false, matrixStackIn.last().pose(), txtBuffer, Font.DisplayMode.NORMAL, 0, combinedLightIn);
 

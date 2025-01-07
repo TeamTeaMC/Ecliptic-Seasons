@@ -10,12 +10,12 @@ import org.spongepowered.asm.mixin.injection.At;
 @Mixin({WorldSettingsConfig.class})
 public abstract class MixinWorldSettingsConfig {
 
-    @WrapOperation(
-            remap = false,
-            method = "<clinit>",
-            at = @At(value = "INVOKE", target = "Lcom/momosoftworks/coldsweat/util/compat/CompatManager;isSereneSeasonsLoaded()Z")
-    )
-    private static boolean ecliptic$clinit(Operation<Boolean> original) {
-        return true;
-    }
+    // @WrapOperation(
+    //         remap = false,
+    //         method = "<clinit>",
+    //         at = @At(value = "INVOKE", target = "Lcom/momosoftworks/coldsweat/util/compat/CompatManager;isSereneSeasonsLoaded()Z")
+    // )
+    // private static boolean ecliptic$clinit(Operation<Boolean> original) {
+    //     return true;
+    // }
 }

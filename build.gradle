@@ -210,17 +210,17 @@ dependencies {
     implementation fg.deobf("curse.maven:jei-238222:4644453")
 //    implementation fg.deobf("curse.maven:jade-324717:4654448")
     implementation fg.deobf("curse.maven:jade-324717:5072729-deobf-sources-api")
-    implementation fg.deobf("com.ferreusveritas.dynamictrees:DynamicTrees-1.20.1:1.3.0-BETA10")
+    implementation fg.deobf("com.ferreusveritas.dynamictrees:DynamicTrees-1.20.1:1.3.6")
 
 //    implementation fg.deobf("curse.maven:distant-horizons-508933:5474790")
 
 //        implementation fg.deobf("curse.maven:selene-499980:5478857-deobf-sources-api")
 //    implementation fg.deobf("curse.maven:create-328085:4835191-deobf-sources-api")
     compileOnly fg.deobf("curse.maven:embeddium-908741:5681725")
-    compileOnly fg.deobf("curse.maven:oculus-581495:5299671")
+    compileOnly fg.deobf("curse.maven:oculus-581495:6020952")
 
     onlyMainRuntimeOnly fg.deobf("curse.maven:embeddium-908741:5681725")
-    onlyMainRuntimeOnly fg.deobf("curse.maven:oculus-581495:5299671")
+    onlyMainRuntimeOnly fg.deobf("curse.maven:oculus-581495:6020952")
 
     compileOnly fg.deobf("curse.maven:simple-clouds-1121215:5812030")
 
@@ -237,9 +237,14 @@ dependencies {
     runtimeOnly fg.deobf("curse.maven:farmers-delight-398521:5051242")
     runtimeOnly fg.deobf("curse.maven:modular-routers-250294:5056687")
 
+    compileOnly fg.deobf("curse.maven:distant-horizons-508933:5689279")
+    onlyMainRuntimeOnly fg.deobf("curse.maven:distant-horizons-508933:5689279")
+
     compileOnly fg.deobf("curse.maven:legendary-survival-overhaul-840254:5825918")
+//    runtimeOnly fg.deobf("curse.maven:legendary-survival-overhaul-840254:5825918")
 
     compileOnly fg.deobf("curse.maven:cold-sweat-506194:5843683")
+    runtimeOnly fg.deobf("curse.maven:cold-sweat-506194:5843683")
 
     // Examples using mod jars from ./libs
     compileOnly "libs:OptiFine:1.20.1_HD_U_I6"

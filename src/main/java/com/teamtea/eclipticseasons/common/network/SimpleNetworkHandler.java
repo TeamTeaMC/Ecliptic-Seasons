@@ -27,14 +27,14 @@ public final class SimpleNetworkHandler {
                 .encoder(SolarTermsMessage::toBytes)
                 .decoder(SolarTermsMessage::new);
         if (FMLLoader.getDist() == Dist.CLIENT)
-            a.consumerNetworkThread(NetworkdUtil::processSolarTermsMessage);
+            a.consumerNetworkThread(NetworkUtil::processSolarTermsMessage);
         a.add();
         
         var c = CHANNEL.messageBuilder(BiomeWeatherMessage.class, id++)
                 .encoder(BiomeWeatherMessage::toBytes)
                 .decoder(BiomeWeatherMessage::new);
         if (FMLLoader.getDist() == Dist.CLIENT)
-            c.consumerNetworkThread(NetworkdUtil::processBiomeWeatherMessage);
+            c.consumerNetworkThread(NetworkUtil::processBiomeWeatherMessage);
         c.add();
 
 
@@ -42,7 +42,7 @@ public final class SimpleNetworkHandler {
                 .encoder(EmptyMessage::toBytes)
                 .decoder(EmptyMessage::new);
         if (FMLLoader.getDist() == Dist.CLIENT)
-            d.consumerNetworkThread(NetworkdUtil::processEmptyMessage);
+            d.consumerNetworkThread(NetworkUtil::processEmptyMessage);
         d.add();
     }
 

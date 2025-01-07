@@ -25,32 +25,32 @@ import sfiomn.legendarysurvivaloverhaul.registry.ItemRegistry;
 
 @Mixin({RenderTooltipFrame.class})
 public abstract class MixinRenderTooltipFrame {
-
-    @Shadow(remap = false)
-    public static void render(ForgeGui forgeGui, GuiGraphics guiGraphics, int width, int height, Component text) {
-    }
-
-    @Shadow(remap = false)
-    private static Entity ENTITY_LOOKED_AT;
-
-    @Inject(
-            remap = false,
-            method = "lambda$static$0",
-            at = @At(value = "FIELD",
-                    target="Lsfiomn/legendarysurvivaloverhaul/LegendarySurvivalOverhaul;sereneSeasonsLoaded:Z"
-            )
-    )
-    private static void ecliptic$lambda$static$0(ForgeGui forgeGui,
-                                                 GuiGraphics guiGraphics,
-                                                 float partialTicks,
-                                                 int width,
-                                                 int height,
-                                                 CallbackInfo ci,
-                                                 @Local Item itemInFrame
-    ) {
-        if ((itemInFrame == ItemRegistry.SEASONAL_CALENDAR.get())) {
-            render(forgeGui, guiGraphics, width, height, LSO_ESUtil.seasonTooltip(ENTITY_LOOKED_AT.blockPosition(), ENTITY_LOOKED_AT.level()));
-        }
-    }
+    //
+    // @Shadow(remap = false)
+    // public static void render(ForgeGui forgeGui, GuiGraphics guiGraphics, int width, int height, Component text) {
+    // }
+    //
+    // @Shadow(remap = false)
+    // private static Entity ENTITY_LOOKED_AT;
+    //
+    // @Inject(
+    //         remap = false,
+    //         method = "lambda$static$0",
+    //         at = @At(value = "FIELD",
+    //                 target="Lsfiomn/legendarysurvivaloverhaul/LegendarySurvivalOverhaul;sereneSeasonsLoaded:Z"
+    //         )
+    // )
+    // private static void ecliptic$lambda$static$0(ForgeGui forgeGui,
+    //                                              GuiGraphics guiGraphics,
+    //                                              float partialTicks,
+    //                                              int width,
+    //                                              int height,
+    //                                              CallbackInfo ci,
+    //                                              @Local Item itemInFrame
+    // ) {
+    //     if ((itemInFrame == ItemRegistry.SEASONAL_CALENDAR.get())) {
+    //         render(forgeGui, guiGraphics, width, height, LSO_ESUtil.seasonTooltip(ENTITY_LOOKED_AT.blockPosition(), ENTITY_LOOKED_AT.level()));
+    //     }
+    // }
 
 }

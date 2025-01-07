@@ -62,7 +62,7 @@ public class ClientMapFixer {
             List<XZPos> xzPosList = CHUNK_POS_XZ_POS_MAP.computeIfAbsent(chunkPos, k -> new ArrayList<>());
             xzPosList.add(new XZPos(pos.getX(), pos.getZ(), startTick, startY));
             if (state.getBlock() == Blocks.AIR) {
-                MapChecker.updatePosForce(pos, level.getMaxBuildHeight() + 1);
+                MapChecker.updatePosForce(level,pos, level.getMaxBuildHeight() + 1);
             }
         } else {
             if (isNotOldHeight) {
@@ -92,7 +92,7 @@ public class ClientMapFixer {
                             ) {
                                 xzPos = new XZPos(xzPos.x(), xzPos.z(), level.getGameTime() - 50, level.getMaxBuildHeight() + 1);
                                 xzPosList.set(i, xzPos);
-                                MapChecker.updatePosForce(updatePos, xzPos.startY());
+                                MapChecker.updatePosForce(level, updatePos, xzPos.startY());
                                 var sectionPos = SectionPos.of(updatePos);
                                 updateSectionsList.add(sectionPos);
                             } else {

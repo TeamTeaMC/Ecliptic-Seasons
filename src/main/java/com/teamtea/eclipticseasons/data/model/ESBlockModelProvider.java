@@ -1,6 +1,7 @@
 package com.teamtea.eclipticseasons.data.model;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
+import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.client.core.ModelManager;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.data.PackOutput;
@@ -30,6 +31,10 @@ public class ESBlockModelProvider extends BlockModelProvider {
                     // .end()
                     .texture("1",flowerOnGrass.getPath());
         }
+
+        // for (SolarTerm solarTerm : SolarTerm.collectValues()) {
+        //     getBuilder(soa)
+        // }
 
     }
 

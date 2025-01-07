@@ -11,7 +11,7 @@ import com.teamtea.eclipticseasons.common.misc.HeatStrokeEffect;
 import com.teamtea.eclipticseasons.compat.CompatModule;
 import com.teamtea.eclipticseasons.config.ClientConfig;
 import com.teamtea.eclipticseasons.common.network.SimpleNetworkHandler;
-import com.teamtea.eclipticseasons.config.ServerConfig;
+import com.teamtea.eclipticseasons.config.CommonConfig;
 import com.teamtea.eclipticseasons.data.start;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
@@ -112,9 +112,13 @@ public class EclipticSeasons {
         modEventBus.addListener(this::gatherData);
         modEventBus.addListener(this::FMLCommonSetup);
 
-        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ServerConfig.SERVER_CONFIG);
+        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, CommonConfig.COMMON_CONFIG);
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ClientConfig.CLIENT_CONFIG);
 
+
+        // CompatModule.init();
+
+        CompatModule.register(MinecraftForge.EVENT_BUS, modEventBus);
 
     }
 
@@ -124,8 +128,8 @@ public class EclipticSeasons {
     }
 
     public void FMLCommonSetup(final FMLCommonSetupEvent event) {
-        SimpleNetworkHandler.init();
-        CompatModule.register();
+        event.enqueueWork(SimpleNetworkHandler::init);
+        event.enqueueWork(CompatModule::setup);
     }
 
     public void gatherData(final GatherDataEvent event) {

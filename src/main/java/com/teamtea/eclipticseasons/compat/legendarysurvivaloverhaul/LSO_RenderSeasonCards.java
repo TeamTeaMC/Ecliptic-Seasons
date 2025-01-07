@@ -66,9 +66,9 @@ public abstract class LSO_RenderSeasonCards {
                     --delayTimer;
                 } else {
                     if (seasonCard == null) {
-                        boolean isTropical = level.getBiome(player.blockPosition()).is(ClimateTypeBiomeTags.MONSOONAL);
+                        // boolean isTropical = level.getBiome(player.blockPosition()).is(ClimateTypeBiomeTags.MONSOONAL);
                         Season currentSeason = EclipticUtil.getNowSolarTerm(level).getSeason();
-                        if (!isTropical) {
+                        // if (!isTropical) {
                             if (currentSeason != ecliptic$lastSeason) {
                                 ecliptic$lastSeason = currentSeason;
                                 fadeIn = true;
@@ -83,23 +83,24 @@ public abstract class LSO_RenderSeasonCards {
                                     seasonCard = WINTER_CARD;
                                 }
                             }
-                        } else {
-                            if (currentSeason != ecliptic$lastSeason) {
-                                ecliptic$lastSeason = currentSeason;
-                                boolean currentTropicalSeasonDry = currentSeason == Season.SPRING || currentSeason == Season.WINTER;
-                                if (currentTropicalSeasonDry != ecliptic$lastTropicalSeasonDry) {
-                                    ecliptic$lastTropicalSeasonDry = currentTropicalSeasonDry;
-                                    fadeIn = true;
-                                    cardTimer = 0;
-                                    if (currentTropicalSeasonDry) {
-                                        seasonCard = DRY_CARD;
-                                    } else {
-                                        seasonCard = WET_CARD;
-                                    }
-                                }
-                            }
                         }
-                    }
+                    // else {
+                    //         if (currentSeason != ecliptic$lastSeason) {
+                    //             ecliptic$lastSeason = currentSeason;
+                    //             boolean currentTropicalSeasonDry = currentSeason == Season.SPRING || currentSeason == Season.WINTER;
+                    //             if (currentTropicalSeasonDry != ecliptic$lastTropicalSeasonDry) {
+                    //                 ecliptic$lastTropicalSeasonDry = currentTropicalSeasonDry;
+                    //                 fadeIn = true;
+                    //                 cardTimer = 0;
+                    //                 if (currentTropicalSeasonDry) {
+                    //                     seasonCard = DRY_CARD;
+                    //                 } else {
+                    //                     seasonCard = WET_CARD;
+                    //                 }
+                    //             }
+                    //         }
+                    //     }
+                    // }
 
                     if (seasonCard != null) {
                         float targetFadeLevel = 0.0F;

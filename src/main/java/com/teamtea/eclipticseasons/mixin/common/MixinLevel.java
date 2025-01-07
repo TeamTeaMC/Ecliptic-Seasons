@@ -3,7 +3,7 @@ package com.teamtea.eclipticseasons.mixin.common;
 
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
-import com.teamtea.eclipticseasons.config.ServerConfig;
+import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
@@ -20,7 +20,7 @@ public class MixinLevel {
     private void ecliptic$isRaining(CallbackInfoReturnable<Boolean> cir) {
         if ((Object) this instanceof ServerLevel serverLevel) {
             if (EclipticUtil.useSolarWeather()) {
-                if (ServerConfig.Debug.debugMode.get()) {
+                if (CommonConfig.Debug.logIllegalUse.get()) {
                     throw new IllegalCallerException("Use isRainAt to check if rain");
                 }
                 cir.setReturnValue(WeatherManager.isRainingEverywhere(serverLevel));
@@ -32,7 +32,7 @@ public class MixinLevel {
     private void ecliptic$getRainLevel(float p_46723_, CallbackInfoReturnable<Float> cir) {
         if ((Object) this instanceof ServerLevel serverLevel) {
             if (EclipticUtil.useSolarWeather()) {
-                if (ServerConfig.Debug.debugMode.get()) {
+                if (CommonConfig.Debug.logIllegalUse.get()) {
                     throw new IllegalCallerException("Shouldn't call getRainLevel now");
                 }
                 cir.setReturnValue(WeatherManager.getMinRainLevel(serverLevel, p_46723_));
@@ -54,7 +54,7 @@ public class MixinLevel {
     private void ecliptic$isThundering(CallbackInfoReturnable<Boolean> cir) {
         if ((Object) this instanceof ServerLevel serverLevel) {
             if (EclipticUtil.useSolarWeather()) {
-                if (ServerConfig.Debug.debugMode.get()) {
+                if (CommonConfig.Debug.logIllegalUse.get()) {
                     throw new IllegalCallerException("Use isThunderingAt to check if rain");
                 }
                 cir.setReturnValue(WeatherManager.isThunderEverywhere(serverLevel));
@@ -66,7 +66,7 @@ public class MixinLevel {
     private void ecliptic$getThunderLevel(float p_46723_, CallbackInfoReturnable<Float> cir) {
         if ((Object) this instanceof ServerLevel serverLevel) {
             if (EclipticUtil.useSolarWeather()) {
-                if (ServerConfig.Debug.debugMode.get()) {
+                if (CommonConfig.Debug.logIllegalUse.get()) {
                     throw new IllegalCallerException("Shouldn't call getThunderLevel now");
                 }
                 cir.setReturnValue(WeatherManager.getMinThunderLevel(serverLevel, p_46723_));
