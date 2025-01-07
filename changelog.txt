@@ -112,3 +112,4 @@ Temperature.IceAndSnowMelt -> Debug.LegacySnowAndMelt
 Crop.UseDefaultValue -> Crop.RegisterCropDefaultValue
 ```
 * fix the light problem of other block entities when use calendar
+** fix remap problem with Oculus

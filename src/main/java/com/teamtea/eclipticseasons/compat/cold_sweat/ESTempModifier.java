@@ -109,7 +109,7 @@ public class ESTempModifier extends TempModifier {
 
     public static double getSeasonModifier(int index) {
         index = (index + 24) % 24;
-        ForgeConfigSpec.ConfigValue<List<? extends Float>> listConfigValue = switch (
+        ForgeConfigSpec.ConfigValue<List<? extends Double>> listConfigValue = switch (
                 index / 6) {
             case 0 -> CompatModule.CommonConfig.cold_sweat_springs;
             case 1 -> CompatModule.CommonConfig.cold_sweat_summers;

@@ -178,7 +178,7 @@ public class LSO_ESModifier extends ModifierBase {
 
     public static double getSeasonModifier(int index) {
         index = (index + 24) % 24 ;
-        ForgeConfigSpec.ConfigValue<List<? extends Float>> listConfigValue = switch (
+        ForgeConfigSpec.ConfigValue<List<? extends Double>> listConfigValue = switch (
                 index / 6) {
             case 0 -> CompatModule.CommonConfig.legendarysurvivaloverhaul_springs;
             case 1 -> CompatModule.CommonConfig.legendarysurvivaloverhaul_summers;

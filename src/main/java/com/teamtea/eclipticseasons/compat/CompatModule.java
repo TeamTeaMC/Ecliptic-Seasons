@@ -47,15 +47,15 @@ public class CompatModule {
 
     public static class CommonConfig {
         public static ForgeConfigSpec.BooleanValue sereneSeasons;
-        public static ForgeConfigSpec.ConfigValue<List<? extends Float>> cold_sweat_springs;
-        public static ForgeConfigSpec.ConfigValue<List<? extends Float>> cold_sweat_summers;
-        public static ForgeConfigSpec.ConfigValue<List<? extends Float>> cold_sweat_autumns;
-        public static ForgeConfigSpec.ConfigValue<List<? extends Float>> cold_sweat_winters;
+        public static ForgeConfigSpec.ConfigValue<List<? extends Double>> cold_sweat_springs;
+        public static ForgeConfigSpec.ConfigValue<List<? extends Double>> cold_sweat_summers;
+        public static ForgeConfigSpec.ConfigValue<List<? extends Double>> cold_sweat_autumns;
+        public static ForgeConfigSpec.ConfigValue<List<? extends Double>> cold_sweat_winters;
 
-        public static ForgeConfigSpec.ConfigValue<List<? extends Float>> legendarysurvivaloverhaul_springs;
-        public static ForgeConfigSpec.ConfigValue<List<? extends Float>> legendarysurvivaloverhaul_summers;
-        public static ForgeConfigSpec.ConfigValue<List<? extends Float>> legendarysurvivaloverhaul_autumns;
-        public static ForgeConfigSpec.ConfigValue<List<? extends Float>> legendarysurvivaloverhaul_winters;
+        public static ForgeConfigSpec.ConfigValue<List<? extends Double>> legendarysurvivaloverhaul_springs;
+        public static ForgeConfigSpec.ConfigValue<List<? extends Double>> legendarysurvivaloverhaul_summers;
+        public static ForgeConfigSpec.ConfigValue<List<? extends Double>> legendarysurvivaloverhaul_autumns;
+        public static ForgeConfigSpec.ConfigValue<List<? extends Double>> legendarysurvivaloverhaul_winters;
 
         public static void load(ForgeConfigSpec.Builder builder) {
             builder.push("Compat");
@@ -65,40 +65,40 @@ public class CompatModule {
                 builder.push("ColdSweat");
                 cold_sweat_springs = builder.comment("Spring Temperatures, divided into six periods according to the solar term table.")
                         .defineListAllowEmpty("SpringTemps",
-                                () -> List.of(-0.25f, -0.15f, -0.1f, 0f, 0f, 0.05f),
-                                o -> o instanceof Float);
+                                () -> List.of(-0.25d, -0.15d, -0.1d, 0d, 0d, 0.05d),
+                                o -> o instanceof Double);
                 cold_sweat_summers = builder.comment("Summer Temperatures divided into six periods according to the solar term table.")
                         .defineListAllowEmpty("SummerTemps",
-                                () -> List.of(0.1f, 0.15f, 0.15f, 0.2f, 0.2f, 0.25f),
-                                o -> o instanceof Float);
+                                () -> List.of(0.1d, 0.15d, 0.15d, 0.2d, 0.2d, 0.25d),
+                                o -> o instanceof Double);
                 cold_sweat_autumns = builder.comment("Autumn Temperatures divided into six periods according to the solar term table.")
                         .defineListAllowEmpty("AutumnTemps",
-                                () -> List.of(0.15f, 0.1f, 0.05f, 0f, -0.1f, -0.2f),
-                                o -> o instanceof Float);
+                                () -> List.of(0.15d, 0.1d, 0.05d, 0d, -0.1d, -0.2d),
+                                o -> o instanceof Double);
                 cold_sweat_winters = builder.comment("Winter Temperatures divided into six periods according to the solar term table.")
                         .defineListAllowEmpty("WinterTemps",
-                                () -> List.of(-0.3f, -0.35f, -0.35f, -0.5f, -0.45f, -0.4f),
-                                o -> o instanceof Float);
+                                () -> List.of(-0.3d, -0.35d, -0.35d, -0.5d, -0.45d, -0.4d),
+                                o -> o instanceof Double);
                 builder.pop();
             }
             if (isLegendarysurvivaloverhaul()) {
                 builder.push("LegendarySurvivalOverhaul");
                 legendarysurvivaloverhaul_springs = builder.comment("Spring Temperatures divided into six periods according to the solar term table.")
                         .defineListAllowEmpty("SpringTemps",
-                                () -> List.of(-2.5f, -1.5f, -1f, 0f, 0f, 0.5f),
-                                o -> o instanceof Float);
+                                () -> List.of(-2.5d, -1.5d, -1d, 0d, 0d, 0.5d),
+                                o -> o instanceof Double);
                 legendarysurvivaloverhaul_summers = builder.comment("Summer Temperatures divided into six periods according to the solar term table.")
                         .defineListAllowEmpty("SummerTemps",
-                                () -> List.of(1f, 1.5f, 1.5f, 2f, 2f, 2.5f),
-                                o -> o instanceof Float);
+                                () -> List.of(1d, 1.5d, 1.5d, 2d, 2d, 2.5d),
+                                o -> o instanceof Double);
                 legendarysurvivaloverhaul_autumns = builder.comment("Autumn Temperatures divided into six periods according to the solar term table.")
                         .defineListAllowEmpty("AutumnTemps",
-                                () -> List.of(1.5f, 1f, 0.5f, 0f, -1f, -2f),
-                                o -> o instanceof Float);
+                                () -> List.of(1.5d, 1d, 0.5d, 0d, -1d, -2d),
+                                o -> o instanceof Double);
                 legendarysurvivaloverhaul_winters = builder.comment("Winter Temperatures divided into six periods according to the solar term table.")
                         .defineListAllowEmpty("WinterTemps",
-                                () -> List.of(-3f, -3.5f, -3.5f, -4f, -4.5f, -4f),
-                                o -> o instanceof Float);
+                                () -> List.of(-3d, -3.5d, -3.5d, -4d, -4.5d, -4d),
+                                o -> o instanceof Double);
                 builder.pop();
             }
             builder.pop();
