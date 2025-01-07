@@ -3,14 +3,9 @@ package com.teamtea.eclipticseasons.client;
 
 import com.mojang.blaze3d.vertex.*;
 import com.mojang.brigadier.CommandDispatcher;
-import com.mojang.brigadier.arguments.IntegerArgumentType;
-import com.mojang.brigadier.arguments.StringArgumentType;
-import com.mojang.datafixers.util.Either;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
-import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
-import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.client.color.season.BiomeColorsHandler;
 import com.teamtea.eclipticseasons.client.map.ClientMapFixer;
 import com.teamtea.eclipticseasons.client.core.ClientWeatherChecker;
@@ -22,17 +17,13 @@ import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.core.solar.ClientSolarDataManager;
 import com.teamtea.eclipticseasons.common.misc.MapExporter;
 import com.teamtea.eclipticseasons.config.ClientConfig;
-import com.teamtea.eclipticseasons.config.ServerConfig;
+import com.teamtea.eclipticseasons.config.CommonConfig;
 import com.teamtea.eclipticseasons.common.core.crop.CropInfoManager;
 import com.teamtea.eclipticseasons.api.constant.crop.CropSeasonInfo;
 import com.teamtea.eclipticseasons.api.constant.crop.CropHumidityInfo;
-import net.minecraft.ChatFormatting;
-import net.minecraft.client.GuiMessageTag;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.font.providers.BitmapProvider;
-import net.minecraft.client.gui.screens.ChatScreen;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.*;
@@ -41,15 +32,9 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.commands.arguments.ResourceOrTagArgument;
 import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.FormattedText;
-import net.minecraft.network.chat.Style;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
@@ -64,14 +49,12 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.*;
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.neoforged.neoforge.client.model.data.ModelData;
-import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 import net.neoforged.neoforge.event.level.ChunkEvent;
 import net.neoforged.neoforge.event.level.LevelEvent;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 
 import java.awt.*;
-import java.util.Arrays;
 
 @EventBusSubscriber(modid = EclipticSeasonsApi.MODID, value = Dist.CLIENT)
 public final class ClientEventHandler {
@@ -92,13 +75,13 @@ public final class ClientEventHandler {
 
         if (event.getItemStack().getItem() instanceof BlockItem) {
             if (ClientConfig.GUI.agriculturalInformation.getAsBoolean()) {
-                if (ServerConfig.Crop.enableCropHumidityControl.get()) {
+                if (CommonConfig.Crop.enableCropHumidityControl.get()) {
                     if (CropInfoManager.getHumidityCrops().contains(((BlockItem) event.getItemStack().getItem()).getBlock())) {
                         CropHumidityInfo info = CropInfoManager.getHumidityInfo(((BlockItem) event.getItemStack().getItem()).getBlock());
                         if (info != null) event.getToolTip().addAll(info.getTooltip());
                     }
                 }
-                if (ServerConfig.Crop.enableCrop.get()) {
+                if (CommonConfig.Crop.enableCrop.get()) {
                     if (CropInfoManager.getSeasonCrops().contains(((BlockItem) event.getItemStack().getItem()).getBlock())) {
                         CropSeasonInfo info = CropInfoManager.getSeasonInfo(((BlockItem) event.getItemStack().getItem()).getBlock());
                         if (info != null) event.getToolTip().addAll(info.getTooltip());
@@ -143,7 +126,7 @@ public final class ClientEventHandler {
         // TODO:试试自定义bitmap font
         if (event.getItemStack().getItem() instanceof BlockItem) {
             if (ClientConfig.GUI.agriculturalInformation.getAsBoolean()) {
-                if (ServerConfig.Crop.enableCropHumidityControl.get()) {
+                if (CommonConfig.Crop.enableCropHumidityControl.get()) {
                     if (CropInfoManager.getHumidityCrops().contains(((BlockItem) event.getItemStack().getItem()).getBlock())) {
                         CropHumidityInfo info = CropInfoManager.getHumidityInfo(((BlockItem) event.getItemStack().getItem()).getBlock());
                         if (info != null) {
@@ -153,7 +136,7 @@ public final class ClientEventHandler {
                         }
                     }
                 }
-                if (ServerConfig.Crop.enableCrop.get()) {
+                if (CommonConfig.Crop.enableCrop.get()) {
                     if (CropInfoManager.getSeasonCrops().contains(((BlockItem) event.getItemStack().getItem()).getBlock())) {
                         CropSeasonInfo info = CropInfoManager.getSeasonInfo(((BlockItem) event.getItemStack().getItem()).getBlock());
                         if (info != null) {

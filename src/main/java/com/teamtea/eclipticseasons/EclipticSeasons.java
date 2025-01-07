@@ -20,7 +20,7 @@ import com.teamtea.eclipticseasons.common.item.SnowyMakerItem;
 import com.teamtea.eclipticseasons.common.misc.HeatStrokeEffect;
 import com.teamtea.eclipticseasons.compat.CompatModule;
 import com.teamtea.eclipticseasons.config.ClientConfig;
-import com.teamtea.eclipticseasons.config.ServerConfig;
+import com.teamtea.eclipticseasons.config.CommonConfig;
 import com.teamtea.eclipticseasons.data.start;
 import net.minecraft.advancements.CriterionTrigger;
 import net.minecraft.core.Registry;
@@ -61,8 +61,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -76,6 +74,7 @@ public class EclipticSeasons {
     public static final String NETWORK_VERSION = "1.0";
 
     public EclipticSeasons(IEventBus modEventBus, ModContainer modContainer) {
+
         modEventBus.addListener(this::FMLCommonSetup);
         modEventBus.addListener(this::FMLCommonSetup);
         modEventBus.addListener(this::gatherData);
@@ -87,12 +86,14 @@ public class EclipticSeasons {
 
         TestContents.weathers.register(modEventBus);
 
-        modContainer.registerConfig(ModConfig.Type.COMMON, ServerConfig.SERVER_CONFIG);
+        modContainer.registerConfig(ModConfig.Type.COMMON, CommonConfig.COMMON_CONFIG);
         modContainer.registerConfig(ModConfig.Type.CLIENT, ClientConfig.CLIENT_CONFIG);
+
+
         if (FMLLoader.getDist() == Dist.CLIENT)
             modContainer.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
 
-        CompatModule.init();
+        CompatModule.register(modEventBus, modContainer.getEventBus());
     }
 
 
@@ -104,6 +105,7 @@ public class EclipticSeasons {
     public void FMLCommonSetup(final FMLCommonSetupEvent event) {
         // SimpleNetworkHandler.init();
         // CompatModule.init();
+        event.enqueueWork(CompatModule::setup);
     }
 
 
@@ -307,7 +309,7 @@ public class EclipticSeasons {
                 () -> AttachmentType.builder(() -> new SnowyRemover(new int[16][16])).serialize(SnowyRemover.CODEC).build());
         public static final Supplier<AttachmentType<BiomeHolder>> BIOME_HOLDER = ATTACHMENT_TYPES.register(
                 "biome_holder",
-                () -> AttachmentType.builder(() -> new BiomeHolder(new int[256],false)).serialize(BiomeHolder.CODEC).build());
+                () -> AttachmentType.builder(() -> new BiomeHolder(new int[256], false)).serialize(BiomeHolder.CODEC).build());
 
         @SubscribeEvent
         public static void blockRegister(RegisterEvent event) {

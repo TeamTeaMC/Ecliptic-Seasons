@@ -14,13 +14,13 @@ import net.minecraft.world.level.material.MapColor;
 
 public class MapColorReplacer {
     public static MapColor getTopSnowColor(BlockGetter blockGetter, BlockState state, BlockPos pos) {
-        if (!(blockGetter instanceof Level level))
+        if (!(blockGetter instanceof Level level) || pos == null)
             return null;
 
         boolean isLight = false;
 
         int flag = MapChecker.getBlockType(state, level, pos);
-        int offset = MapChecker.getSnowOffset(state,flag);
+        int offset = MapChecker.getSnowOffset(state, flag);
 
         // isLight = ClientConfig.Renderer.useVanillaCheck.get() ?
         //         level.getLightEngine().getLayerListener(LightLayer.SKY).getLightValue(pos.above()) >= 15

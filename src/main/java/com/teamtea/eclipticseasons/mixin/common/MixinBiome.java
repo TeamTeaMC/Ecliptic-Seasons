@@ -6,7 +6,7 @@ import com.teamtea.eclipticseasons.api.misc.IBiomeTagHolder;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
-import com.teamtea.eclipticseasons.config.ServerConfig;
+import com.teamtea.eclipticseasons.config.CommonConfig;
 import com.teamtea.eclipticseasons.compat.vanilla.VanillaWeather;
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.TagKey;
@@ -22,7 +22,7 @@ public abstract class MixinBiome implements IBiomeTagHolder {
 
     @Inject(at = {@At("HEAD")}, method = {"getPrecipitationAt"}, cancellable = true)
     public void ecliptic$getPrecipitationAt(BlockPos pos, CallbackInfoReturnable<Biome.Precipitation> cir) {
-        if (ServerConfig.Weather.useSolarWeather.get())
+        if (CommonConfig.Weather.useSolarWeather.get())
             cir.setReturnValue(WeatherManager.getPrecipitationAt((Biome) (Object) this, pos));
         else {
             cir.setReturnValue(VanillaWeather.handlePrecipitationAt((Biome) (Object) this, pos));

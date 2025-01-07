@@ -2,11 +2,10 @@ package com.teamtea.eclipticseasons.api.util;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
-import com.teamtea.eclipticseasons.config.ServerConfig;
+import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
-import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.fml.loading.FMLLoader;
 
 import java.io.File;
@@ -80,7 +79,7 @@ public class SimpleUtil {
                 .empty()
                 // .literal("\n")
                 .append(Component.translatable("info.eclipticseasons.environment.solar_term.message",
-                        ServerConfig.Season.enableInformIcon.getAsBoolean() ?
+                        CommonConfig.Season.enableInformIcon.getAsBoolean() ?
                                 SimpleUtil.addSolarIconBefore(solarTerm, solarTerm.getAlternationText()) :
                                 solarTerm.getAlternationText()
                 ));

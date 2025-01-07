@@ -1,10 +1,9 @@
 package com.teamtea.eclipticseasons.common.core.map;
 
-import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.common.network.SimpleNetworkHandler;
 import com.teamtea.eclipticseasons.common.network.message.MapFixerMessage;
-import com.teamtea.eclipticseasons.config.ServerConfig;
+import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
 import net.minecraft.server.level.ServerLevel;
@@ -63,7 +62,7 @@ public class ServerMapFixer {
     // 这里指的是先前Y高度
     public static void addPlanner(Level level, BlockState state, BlockState oldState, BlockPos pos, long startTick, int startY, boolean broomUse) {
         if (!MapChecker.isValidDimension(level)) return;
-        if (!ServerConfig.Map.delayedUpdates.get()) {
+        if (!CommonConfig.Map.delayedUpdates.get()) {
             MapChecker.getHeightOrUpdate(level, pos, true);
             return;
         }

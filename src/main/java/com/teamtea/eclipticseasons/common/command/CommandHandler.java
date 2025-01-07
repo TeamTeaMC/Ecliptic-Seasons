@@ -11,7 +11,7 @@ import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.teamtea.eclipticseasons.common.misc.MapExporter;
-import com.teamtea.eclipticseasons.config.ServerConfig;
+import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -24,7 +24,6 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.commands.TimeCommand;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.biome.Biome;
@@ -33,7 +32,6 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -97,7 +95,7 @@ public class CommandHandler {
                                                     break;
                                                 }
                                             }
-                                            int day = ss.ordinal() * ServerConfig.Season.lastingDaysOfEachTerm.get();
+                                            int day = ss.ordinal() * CommonConfig.Season.lastingDaysOfEachTerm.get();
                                             return setDay(commandContext.getSource(), day);
                                         })))
                         .then(Commands.literal("getTerm")

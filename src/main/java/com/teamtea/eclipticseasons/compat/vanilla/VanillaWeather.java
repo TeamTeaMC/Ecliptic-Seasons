@@ -10,7 +10,7 @@ import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.handler.SolarUtil;
-import com.teamtea.eclipticseasons.config.ServerConfig;
+import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerLevel;
@@ -179,6 +179,6 @@ public class VanillaWeather {
     }
 
     public static boolean canRunSpecialWeather() {
-        return ServerConfig.Weather.useSolarWeather.get();
+        return CommonConfig.Weather.useSolarWeather.get();
     }
 }

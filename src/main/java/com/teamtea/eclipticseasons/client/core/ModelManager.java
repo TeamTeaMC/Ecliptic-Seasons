@@ -5,7 +5,6 @@ import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.misc.IBlockStateFlagger;
 import com.teamtea.eclipticseasons.api.misc.client.IMapSlice;
 import com.teamtea.eclipticseasons.api.misc.client.ISnowyBlockState;
-import com.teamtea.eclipticseasons.api.util.SimpleUtil;
 import com.teamtea.eclipticseasons.client.model.*;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
@@ -35,7 +34,6 @@ import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Half;
 import net.minecraft.world.level.block.state.properties.StairsShape;
-import net.minecraft.world.level.chunk.ChunkAccess;
 import net.neoforged.neoforge.client.ChunkRenderTypeSet;
 import net.neoforged.neoforge.client.model.data.ModelData;
 
@@ -226,7 +224,7 @@ public class ModelManager {
 
             boolean yuushyaBlock = YuushyaChecker.isyuushyaContinuityBlock(state);
             boolean sodiumStairs = ((blockType == MapChecker.FLAG_STAIRS || blockType == MapChecker.FLAG_STAIRS_TOP)
-                    && CompatModule.isSodiumLoad() && state.getBlock() instanceof StairBlock);
+                    && CompatModule.isSodium() && state.getBlock() instanceof StairBlock);
             if (blockType == MapChecker.FLAG_CUSTOM
                     || yuushyaBlock
                     || sodiumStairs

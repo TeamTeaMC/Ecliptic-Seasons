@@ -8,7 +8,7 @@ import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.network.message.ChunkBiomeUpdateMessage;
 import com.teamtea.eclipticseasons.common.network.message.ChunkUpdateMessage;
 import com.teamtea.eclipticseasons.common.network.SimpleNetworkHandler;
-import com.teamtea.eclipticseasons.config.ServerConfig;
+import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
@@ -18,7 +18,6 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.ChunkPos;
@@ -321,7 +320,7 @@ public class MapChecker {
         var biomeHolder = getSurfaceBiome(level, pos);
         boolean isSnowy = false;
         if (WeatherManager.getSnowDepthAtBiome(level, biomeHolder.value()) > Math.abs(seed % 100)) {
-            if (ServerConfig.Debug.notLightAbove.get()) {
+            if (CommonConfig.Debug.notLightAbove.get()) {
                 isSnowy = notLightAbove(level, pos, 4);
             } else isSnowy = true;
         }
@@ -333,7 +332,7 @@ public class MapChecker {
         boolean isSnowy = false;
 
         if (WeatherManager.getBiomeList(level).get(biomeId).snowDepth > Math.abs(seed % 100)) {
-            if (ServerConfig.Debug.notLightAbove.get()) {
+            if (CommonConfig.Debug.notLightAbove.get()) {
                 isSnowy = notLightAbove(level, pos, 4);
             } else isSnowy = true;
         }
@@ -509,7 +508,7 @@ public class MapChecker {
         // 不知道为啥这里会有null
 
         Block onBlock = state.getBlock();
-        if (!ServerConfig.Debug.snowOverlayGlowingBlock.getAsBoolean()
+        if (!CommonConfig.Debug.snowOverlayGlowingBlock.getAsBoolean()
                 && state.getLightEmission(level, pos) > 0) {
             flag = FLAG_NONE;
         } else if (onBlock instanceof LeavesBlock) {
@@ -558,11 +557,11 @@ public class MapChecker {
                 flag = FLAG_NONE;
 
                 ResourceLocation blockName = BuiltInRegistries.BLOCK.getKey(onBlock);
-                if (!ServerConfig.Debug.disableSnowOverlayControlTag.getAsBoolean()
+                if (!CommonConfig.Debug.disableSnowOverlayControlTag.getAsBoolean()
                         && state.is(EclipticBlockTags.SNOW_OVERLAY_CANNOT_SURVIVE_ON)) {
                     flag = FLAG_NONE;
                 } else if ((
-                        (ServerConfig.Debug.snowyFullCollisionShape.getAsBoolean() ?
+                        (CommonConfig.Debug.snowyFullCollisionShape.getAsBoolean() ?
                                 Block.isShapeFullBlock(state.getCollisionShape(level, pos)) :
                                 state.isSolidRender(level, pos))
                                 // state.isSolid()

@@ -78,24 +78,31 @@ public class CalendarBlockEntityRenderer implements BlockEntityRenderer<Calendar
 
         float extraHeight = 0f;
 
-        matrixStackIn.translate(0, -0.125f/2f, 0);
+        matrixStackIn.translate(0, -0.125f / 2f, 0);
         matrixStackIn.translate(x, y, z + 0.74f);
         matrixStackIn.pushPose();
         matrixStackIn.scale(scale_x, scale_y, scale_z);
+        if (textWidth > 80) {
+            float re = 80f / textWidth;
+            matrixStackIn.scale(re, re, re);
+            matrixStackIn.translate(0, -4f, 0);
+        }
         fontRenderer.drawInBatch(label
-                , (float) (-textWidth) / 2.0F, -18F - lh * 1.2f * line - 1.2f * extraHeight, color, false, matrixStackIn.last().pose(), txtBuffer, Font.DisplayMode.NORMAL, 0,  LightTexture.FULL_SKY);
+                , (float) (-textWidth) / 2.0F, -18F - lh * 1.2f * line - 1.2f * extraHeight, color, false, matrixStackIn.last().pose(), txtBuffer, Font.DisplayMode.NORMAL, 0, LightTexture.FULL_SKY);
         // txtBuffer.endBatch();
         matrixStackIn.popPose();
 
-        if(line==1)
-        {
-            // 也许需要用renderModel的手段
-            VertexConsumer builder = txtBuffer.getBuffer(RenderType.entitySmoothCutout(SolarTerm.getFullIcon().withPrefix("textures/").withSuffix(".png")));
+
+
+        if (line == 1) {
             // matrixStackIn.scale(20, 20, 20);
             matrixStackIn.scale(0.2f, 0.2f, 0.2f);
             int size = 16;
-            Lighting.setupLevel();
-            blitRect(matrixStackIn, builder, LightTexture.FULL_SKY, OverlayTexture.NO_OVERLAY,
+            // Lighting.setupForFlatItems();
+            // GlStateManager._disableCull();
+            VertexConsumer builder = txtBuffer.getBuffer(RenderType.entitySmoothCutout(SolarTerm.getFullIcon().withPrefix("textures/").withSuffix(".png")));
+            // builder = txtBuffer.getBuffer(net.minecraftforge.client.RenderTypeHelper.getEntityRenderType(null, false));
+            blitRect(matrixStackIn, builder,combinedLightIn, OverlayTexture.NO_OVERLAY,
                     size / 2f,
                     (float) -size * 0.6f,
                     size * ClientCon.nowSolarTerm.getIconPosition().getKey(),
@@ -105,10 +112,15 @@ public class CalendarBlockEntityRenderer implements BlockEntityRenderer<Calendar
                     (int) (180 / (30f / size)),
                     (int) (120 / (30f / size)),
                     false);
-            matrixStackIn.popPose();
+            // Lighting.setupFor3DItems();
+        } else {
+            // matrixStackIn.translate(0, 5f, -4f);
+            // matrixStackIn.scale(4f, 4f, 4f);
+            //
+            // Minecraft.getInstance().getBlockRenderer().renderSingleBlock(EclipticSeasons.ModContents.calendar.get().defaultBlockState(),matrixStackIn,txtBuffer,combinedLightIn,OverlayTexture.NO_OVERLAY);
         }
+        matrixStackIn.popPose();
     }
-
 
 
     private void handleMatrixAngle(PoseStack matrixStackIn, LocalPlayer player, BlockPos pos, Direction d) {
@@ -161,7 +173,7 @@ public class CalendarBlockEntityRenderer implements BlockEntityRenderer<Calendar
      **/
     protected static void blitRect(PoseStack matrixStack, VertexConsumer builder, int packedLight, int overlay, float x0, float y0, float xt, float yt, float width, float height, int tWidth, int tHeight, boolean mirrored) {
 
-        packedLight= LightTexture.FULL_SKY;
+        packedLight = LightTexture.FULL_SKY;
         float pixelScale = 0.0625f;
 
         x0 = x0 * pixelScale;

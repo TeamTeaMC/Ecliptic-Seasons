@@ -17,7 +17,7 @@ import java.util.List;
 
 public record ConfigMessage(List<ResourceKey<Level>> SeasonalDimensions) implements CustomPacketPayload {
 
-    public static final Type<ConfigMessage> TYPE = new Type<>(EclipticSeasons.rl("config"));
+    public static final CustomPacketPayload.Type<ConfigMessage> TYPE = new CustomPacketPayload.Type<>(EclipticSeasons.rl("config"));
     public static final StreamCodec<ByteBuf, ConfigMessage> STREAM_CODEC =
             StreamCodec.composite(
                     MessageCodec.dimensionKeysStreamCodec,

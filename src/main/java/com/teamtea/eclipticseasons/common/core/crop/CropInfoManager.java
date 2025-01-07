@@ -6,7 +6,7 @@ import com.teamtea.eclipticseasons.api.constant.crop.CropHumidityInfo;
 import com.teamtea.eclipticseasons.api.constant.crop.CropHumidityType;
 import com.teamtea.eclipticseasons.api.constant.crop.CropSeasonInfo;
 import com.teamtea.eclipticseasons.api.constant.crop.CropSeasonType;
-import com.teamtea.eclipticseasons.config.ServerConfig;
+import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;
@@ -99,13 +99,13 @@ public final class CropInfoManager {
         }
         // event.getRegistryAccess().registry(Registries.BLOCK).get().getTagNames().toList();
 
-        if (ServerConfig.Compat.sereneSeasons.getAsBoolean()) {
+        if (CommonConfig.Compat.sereneSeasons.getAsBoolean()) {
             registerForSS(blocks, Registries.BLOCK);
             registerForSS(items, Registries.ITEM);
 
         }
 
-        if (ServerConfig.Crop.registerCropDefaultValue.getAsBoolean()) {
+        if (CommonConfig.Crop.registerCropDefaultValue.getAsBoolean()) {
             BuiltInRegistries.BLOCK.forEach(block ->
             {
                 registerCropHumidityInfo(block, CropHumidityType.AVERAGE_MOIST, false);
@@ -149,7 +149,7 @@ public final class CropInfoManager {
                     CROP_SEASON_INFO.put(block, new CropSeasonInfo(season));
                 }
 
-                if(ServerConfig.Crop.registerCropDefaultValue.getAsBoolean()) {
+                if(CommonConfig.Crop.registerCropDefaultValue.getAsBoolean()) {
                     if (block != null && !CROP_HUMIDITY_INFO.containsKey(block)) {
                         CropHumidityType humid;
                         if (season == 1) {

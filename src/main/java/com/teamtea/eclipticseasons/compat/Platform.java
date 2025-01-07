@@ -3,6 +3,7 @@ package com.teamtea.eclipticseasons.compat;
 import net.minecraft.server.MinecraftServer;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.loading.FMLEnvironment;
+import net.neoforged.fml.loading.FMLLoader;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import net.neoforged.neoforgespi.locating.IModFile;
 
@@ -11,7 +12,7 @@ import java.util.List;
 public class Platform {
 
     public static boolean isModLoaded(String id) {
-        return ModList.get().isLoaded(id);
+        return FMLLoader.getLoadingModList().getModFileById(id) != null;
     }
 
     public static boolean isModsLoaded(List<String> ids) {

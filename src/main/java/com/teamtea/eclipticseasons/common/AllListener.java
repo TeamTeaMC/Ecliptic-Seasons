@@ -10,7 +10,7 @@ import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.core.map.ServerMapFixer;
 import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
 import com.teamtea.eclipticseasons.common.handler.CustomRandomTickHandler;
-import com.teamtea.eclipticseasons.config.ServerConfig;
+import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
@@ -73,7 +73,7 @@ public class AllListener {
             SolarHolders.createSaveData(serverLevel, SolarDataManager.get(serverLevel));
         }
         if (event.getLevel() instanceof Level level) {
-            if (ServerConfig.Season.validDimensions.get().contains(level.dimension().location().toString()))
+            if (CommonConfig.Season.validDimensions.get().contains(level.dimension().location().toString()))
                 MapChecker.validDimension.add(level);
         }
     }
@@ -105,7 +105,7 @@ public class AllListener {
 
     @SubscribeEvent
     public static void onWorldTick(LevelTickEvent.Post event) {
-        if (ServerConfig.Season.enableInform.get()
+        if (CommonConfig.Season.enableInform.get()
                 && !event.getLevel().isClientSide()
                 && MapChecker.isValidDimension(event.getLevel())) {
             SolarHolders.getSaveDataLazy(event.getLevel()).ifPresent(data ->

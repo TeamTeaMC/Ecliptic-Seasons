@@ -4,7 +4,7 @@ package com.teamtea.eclipticseasons.mixin.common.entity.animal.fox;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
-import com.teamtea.eclipticseasons.config.ServerConfig;
+import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.animal.Fox;
 import net.minecraft.world.level.Level;
@@ -19,7 +19,7 @@ public class MixinFox {
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;isThundering()Z")
     )
     private boolean ecliptic$tick(Level level, Operation<Boolean> original) {
-        if (ServerConfig.Weather.useSolarWeather.get() && level instanceof ServerLevel serverLevel)
+        if (CommonConfig.Weather.useSolarWeather.get() && level instanceof ServerLevel serverLevel)
             return WeatherManager.isThunderAt(serverLevel, ((Fox) (Object) this).blockPosition());
         else return original.call(level);
     }

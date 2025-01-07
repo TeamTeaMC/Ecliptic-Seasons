@@ -66,7 +66,7 @@ public abstract class MixinRenderChunkRegion_IMapSlice implements IMapSlice {
             method = "<init>(Lnet/minecraft/world/level/Level;II[Lnet/minecraft/client/renderer/chunk/RenderChunk;Lit/unimi/dsi/fastutil/longs/Long2ObjectFunction;)V",
             at = @At(value = "TAIL")
     )
-    private void eclipticseasons$init(Level level, int minChunkX, int minChunkZ, RenderChunk[] chunks, Long2ObjectFunction<net.neoforged.neoforge.client.model.data.ModelData> modelDataSnapshot, CallbackInfo ci) {
+    private void eclipticseasons$init(Level level, int minChunkX, int minChunkZ, RenderChunk[] chunks, it.unimi.dsi.fastutil.longs.Long2ObjectFunction<net.neoforged.neoforge.client.model.data.ModelData> modelDataSnapshot, CallbackInfo ci) {
         HEIGHT_MAP = new int[SIZE * SIZE][MAP_BLOCK_COUNT];
         BIOME_MAP = new int[SIZE * SIZE][MAP_BLOCK_COUNT];
         SNOWY_MAP = new int[SIZE * SIZE][MAP_BLOCK_COUNT];

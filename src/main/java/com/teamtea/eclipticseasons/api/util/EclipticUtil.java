@@ -8,7 +8,7 @@ import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.core.solar.SolarAngelHelper;
 import com.teamtea.eclipticseasons.common.misc.MapColorReplacer;
 import com.teamtea.eclipticseasons.compat.vanilla.VanillaWeather;
-import com.teamtea.eclipticseasons.config.ServerConfig;
+import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
@@ -54,11 +54,11 @@ public class EclipticUtil {
     }
 
     public static boolean useSolarWeather() {
-        return ServerConfig.Weather.useSolarWeather.get();
+        return CommonConfig.Weather.useSolarWeather.get();
     }
 
     public static boolean isSolarWeatherClosed() {
-        return !ServerConfig.Weather.useSolarWeather.get();
+        return !CommonConfig.Weather.useSolarWeather.get();
     }
 
     public static EclipticSeasonsApi INSTANCE;

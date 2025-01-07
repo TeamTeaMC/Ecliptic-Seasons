@@ -4,7 +4,7 @@ package com.teamtea.eclipticseasons.common.network;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.common.network.message.*;
-import com.teamtea.eclipticseasons.config.ServerConfig;
+import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceKey;
@@ -82,7 +82,7 @@ public final class SimpleNetworkHandler {
             @Override
             public void run(@NotNull Consumer<CustomPacketPayload> sender) {
                 sender.accept(new ConfigMessage(
-                        ServerConfig.Season.validDimensions.get().stream()
+                        CommonConfig.Season.validDimensions.get().stream()
                                 .map(s -> ResourceKey.create(Registries.DIMENSION, ResourceLocation.parse(s)))
                                 .toList()
                 ));
@@ -91,7 +91,7 @@ public final class SimpleNetworkHandler {
 
             @Override
             public @NotNull Type type() {
-                return new Type(EclipticSeasons.rl("config_task"));
+                return new ConfigurationTask.Type(EclipticSeasons.rl("config_task"));
             }
         });
     }

@@ -17,7 +17,7 @@ import com.seibel.distanthorizons.core.wrapperInterfaces.world.IBiomeWrapper;
 import com.seibel.distanthorizons.core.wrapperInterfaces.world.IClientLevelWrapper;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.config.ClientConfig;
-import com.teamtea.eclipticseasons.config.ServerConfig;
+import com.teamtea.eclipticseasons.config.CommonConfig;
 import it.unimi.dsi.fastutil.longs.LongArrayList;
 import loaderCommon.neoforge.com.seibel.distanthorizons.common.wrappers.McObjectConverter;
 import loaderCommon.neoforge.com.seibel.distanthorizons.common.wrappers.block.BiomeWrapper;
@@ -104,7 +104,7 @@ public class DHTool {
                                 int bottomY = FullDataPointUtil.getBottomY(fullData);
                                 int blockHeight = FullDataPointUtil.getHeight(fullData);
                                 int topY = bottomY + blockHeight;
-                                if (ServerConfig.Debug.notLightAbove.get()
+                                if (CommonConfig.Debug.notLightAbove.get()
                                         && iBlockStateWrapper_NowQuery instanceof BlockStateWrapper blockStateWrapper_NowQuery) {
                                     if (blockStateWrapper_NowQuery.blockState != null &&
                                             blockStateWrapper_NowQuery.blockState.getBlock() instanceof LightBlock) {

@@ -5,7 +5,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
-import com.teamtea.eclipticseasons.config.ServerConfig;
+import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.monster.Monster;
@@ -21,7 +21,7 @@ public class MixinMonster {
             at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;isThundering()Z")
     )
     private static boolean ecliptic$isDarkEnoughToSpawn_isThundering(ServerLevel serverLevel, Operation<Boolean> original, @Local(ordinal = 0) BlockPos blockPos) {
-        if (ServerConfig.Weather.useSolarWeather.get())
+        if (CommonConfig.Weather.useSolarWeather.get())
             return WeatherManager.isThunderAt(serverLevel, blockPos);
         else return original.call(serverLevel);
     }

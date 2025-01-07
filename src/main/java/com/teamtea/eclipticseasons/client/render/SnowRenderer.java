@@ -20,7 +20,7 @@ public class SnowRenderer {
         // long seed = state.getSeed(pos);
         posestack.pushPose();
         posestack.translate((float) (pos.getX() & 15), (float) (pos.getY() & 15), (float) (pos.getZ() & 15));
-        if (!CompatModule.isFabric_renderer_indigoLoad()) {
+        if (!CompatModule.isFabric_renderer_indigo()) {
             Minecraft.getInstance().getBlockRenderer().getModelRenderer()
                     .tesselateBlock(renderchunkregion,
                             bakedModel,

@@ -1,43 +1,69 @@
 package com.teamtea.eclipticseasons.compat;
 
 
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.common.NeoForge;
+
 public class CompatModule {
 
-    private static boolean CTMLoad = false;
-    private static boolean continuityLoad = false;
-    private static boolean yuushyaLoad = false;
-    private static boolean fabric_renderer_indigoLoad = false;
-    private static boolean sodiumLoad = false;
+    private static boolean ctm = false;
+    private static boolean continuity = false;
+    private static boolean yuushya = false;
+    private static boolean fabric_renderer_indigo = false;
+    private static boolean sodium = false;
+    private static boolean dynamictrees = false;
 
+    /**
+     * Used for mod init detect.
+     **/
     public static void init() {
-        CTMLoad = Platform.isModLoaded("ctm");
-        continuityLoad = Platform.isModLoaded("continuity");
-        yuushyaLoad = Platform.isModLoaded("yuushya");
-        fabric_renderer_indigoLoad = Platform.isModLoaded("fabric_renderer_indigo");
-        sodiumLoad = Platform.isModLoaded("sodium");
-        // if (ModList.get().isLoaded(DynamicTrees.MOD_ID)) {
+        ctm = Platform.isModLoaded("ctm");
+        continuity = Platform.isModLoaded("continuity");
+        yuushya = Platform.isModLoaded("yuushya");
+        fabric_renderer_indigo = Platform.isModLoaded("fabric_renderer_indigo");
+        sodium = Platform.isModLoaded("sodium");
+        dynamictrees = Platform.isModLoaded("dynamictrees");
+    }
+
+    /**
+     * Used for mod init event register.
+     **/
+    public static void register(IEventBus gameBus, IEventBus modBus) {
+
+    }
+
+
+    /**
+     * Used for mod setup.
+     **/
+    public static void setup() {
+        // if (isDynamictrees()) {
         //     DynamicTreeMod.init();
         // }
     }
 
-    public static boolean isCTMLoad() {
-        return CTMLoad;
+    public static boolean isCtm() {
+        return ctm;
     }
 
 
-    public static boolean isFabric_renderer_indigoLoad() {
-        return fabric_renderer_indigoLoad;
+    public static boolean isFabric_renderer_indigo() {
+        return fabric_renderer_indigo;
     }
 
     public static boolean isYuuLoad() {
-        return yuushyaLoad;
+        return yuushya;
     }
 
-    public static boolean isContinuityLoad() {
-        return continuityLoad;
+    public static boolean isContinuity() {
+        return continuity;
     }
 
-    public static boolean isSodiumLoad() {
-        return sodiumLoad;
+    public static boolean isSodium() {
+        return sodium;
+    }
+
+    public static boolean isDynamictrees() {
+        return dynamictrees;
     }
 }

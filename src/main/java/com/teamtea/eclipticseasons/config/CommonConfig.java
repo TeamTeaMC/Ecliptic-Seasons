@@ -7,10 +7,10 @@ import net.neoforged.neoforge.common.ModConfigSpec;
 
 import java.util.List;
 
-public class ServerConfig {
-    public static final ModConfigSpec SERVER_CONFIG = new ModConfigSpec.Builder().configure(ServerConfig::new).getRight();
+public class CommonConfig {
+    public static final ModConfigSpec COMMON_CONFIG = new ModConfigSpec.Builder().configure(CommonConfig::new).getRight();
 
-    protected ServerConfig(ModConfigSpec.Builder builder) {
+    protected CommonConfig(ModConfigSpec.Builder builder) {
         Season.load(builder);
         Weather.load(builder);
         Temperature.load(builder);
