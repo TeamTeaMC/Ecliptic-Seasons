@@ -25,6 +25,7 @@ public class Lang_ZH extends LangHelper {
 
 
         add(EclipticSeasons.ModContents.calendar.get(), "日历");
+        add("item.eclipticseasons.calendar.pop_hint", "%1$s，%2$s/%3$s");
         // add(EclipticSeasons.ModContents.wind_chimes.get(), "风铃");
         // add(EclipticSeasons.ModContents.paper_wind_chimes.get(), "纸风铃");
         // add(EclipticSeasons.ModContents.bamboo_wind_chimes.get(), "竹风铃");

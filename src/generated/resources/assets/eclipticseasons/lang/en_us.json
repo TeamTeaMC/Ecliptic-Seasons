@@ -3,7 +3,7 @@
   "advancement.eclipticseasons.heat_stroke.desc": "Do not walk directly under the sun in hot communities during the summer afternoon. If necessary, bring heat-resistant gear or take ice and snow to cool down.",
   "advancement.eclipticseasons.root": "Spring After Autumn",
   "advancement.eclipticseasons.root.desc": "Span a year with twenty-four solar terms.",
-  "block.eclipticseasons.calendar": "calendar",
+  "block.eclipticseasons.calendar": "Calendar",
   "commands.eclipticseasons.solar.set": "Set the solar day to %s",
   "effect.eclipticseasons.heat_stroke": "Heat Stroke",
   "info.eclipticseasons.environment.humidity": "Suitable Humidity:",
@@ -76,5 +76,6 @@
   "info.eclipticseasons.environment.temperature.over_heat": "Over Heat",
   "info.eclipticseasons.environment.temperature.under_freezing": "Under Freezing",
   "info.eclipticseasons.environment.temperature.warm": "Warm",
+  "item.eclipticseasons.calendar.pop_hint": "%1$s, %2$s/%3$s",
   "itemGroup.eclipticseasons.core": "Ecliptic Seasons"
 }

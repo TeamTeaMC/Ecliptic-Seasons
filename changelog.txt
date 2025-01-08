@@ -115,6 +115,6 @@ Crop.UseDefaultValue -> Crop.RegisterCropDefaultValue
 ** fix remap problem with Oculus
 
 0.8.1
-support journeymap
+add support for journeymap
 add two advancements
-add a message when use the calendar
+show a message when use the calendar (need open in config)

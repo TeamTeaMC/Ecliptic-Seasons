@@ -76,5 +76,6 @@
   "info.eclipticseasons.environment.temperature.over_heat": "酷暑",
   "info.eclipticseasons.environment.temperature.under_freezing": "严寒",
   "info.eclipticseasons.environment.temperature.warm": "温暖",
+  "item.eclipticseasons.calendar.pop_hint": "%1$s，%2$s/%3$s",
   "itemGroup.eclipticseasons.core": "节气"
 }

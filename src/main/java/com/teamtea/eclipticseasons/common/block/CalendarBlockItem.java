@@ -10,27 +10,20 @@ import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
 
 public class CalendarBlockItem extends BlockItem {
     public CalendarBlockItem(Block pBlock, Properties pProperties) {
         super(pBlock, pProperties);
     }
 
+
     @Override
-    public void appendHoverText(ItemStack pStack, @Nullable Level pLevel, List<Component> pTooltip, TooltipFlag pFlag) {
-        super.appendHoverText(pStack, pLevel, pTooltip, pFlag);
-        // var sd = EclipticSeasonsApi.getInstance().getSolarTerm(pContext.level());
-        // pTooltipComponents.add(Component.translatable("info.eclipticseasons.environment.solar_term.hint")
-        //         .withStyle(ChatFormatting.GRAY));
-        // pTooltipComponents.add(sd.getTranslation().withStyle(sd.getSeason().getColor()));
+    public String getDescriptionId(ItemStack pStack) {
+        return super.getDescriptionId(pStack);
     }
 
     @Override
@@ -55,10 +48,12 @@ public class CalendarBlockItem extends BlockItem {
         if (MapChecker.isValidDimension(level)|| CommonConfig.Season.calendarItemHint.get()) {
             var season = EclipticUtil.getNowSolarTerm(level);
             player.displayClientMessage(
-                    season.getTranslation().append(", %s/%s".formatted(
-                            EclipticUtil.getTimeInSolarTerm(level),
+                    Component.translatable(
+                            "item.eclipticseasons.calendar.pop_hint",
+                            season.getTranslation(),
+                            EclipticUtil.getTimeInSolarTerm(level)+1,
                             CommonConfig.Season.lastingDaysOfEachTerm.get()
-                    )), true);
+                    ), true);
             return true;
         }
         return false;
