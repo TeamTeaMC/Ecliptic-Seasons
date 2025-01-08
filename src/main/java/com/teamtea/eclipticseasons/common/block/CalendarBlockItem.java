@@ -45,13 +45,13 @@ public class CalendarBlockItem extends BlockItem {
     }
 
     public boolean showHint(Level level, Player player) {
-        if (MapChecker.isValidDimension(level)|| CommonConfig.Season.calendarItemHint.get()) {
+        if (CommonConfig.Season.calendarItemHint.get() && MapChecker.isValidDimension(level)) {
             var season = EclipticUtil.getNowSolarTerm(level);
             player.displayClientMessage(
                     Component.translatable(
                             "item.eclipticseasons.calendar.pop_hint",
                             season.getTranslation(),
-                            EclipticUtil.getTimeInSolarTerm(level)+1,
+                            EclipticUtil.getTimeInSolarTerm(level) + 1,
                             CommonConfig.Season.lastingDaysOfEachTerm.get()
                     ), true);
             return true;

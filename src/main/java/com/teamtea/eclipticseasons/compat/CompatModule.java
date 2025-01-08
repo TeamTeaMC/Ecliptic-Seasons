@@ -2,8 +2,6 @@ package com.teamtea.eclipticseasons.compat;
 
 import com.teamtea.eclipticseasons.compat.cold_sweat.Cold_Sweat;
 import com.teamtea.eclipticseasons.compat.dynamictrees.DynamicTreeMod;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.Level;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.eventbus.api.IEventBus;
 
@@ -14,6 +12,7 @@ public class CompatModule {
     private static boolean dynamictrees = false;
     private static boolean cold_sweat = false;
     private static boolean legendarysurvivaloverhaul = false;
+    private static boolean journeymap = false;
 
     /**
      * Used for mod init detect.
@@ -22,6 +21,7 @@ public class CompatModule {
         dynamictrees = Platform.isModLoaded("dynamictrees");
         cold_sweat = Platform.isModLoaded("cold_sweat");
         legendarysurvivaloverhaul = Platform.isModLoaded("legendarysurvivaloverhaul");
+        journeymap = Platform.isModLoaded("journeymap");
     }
 
     /**
@@ -47,6 +47,7 @@ public class CompatModule {
 
     public static class CommonConfig {
         public static ForgeConfigSpec.BooleanValue sereneSeasons;
+
         public static ForgeConfigSpec.ConfigValue<List<? extends Double>> cold_sweat_springs;
         public static ForgeConfigSpec.ConfigValue<List<? extends Double>> cold_sweat_summers;
         public static ForgeConfigSpec.ConfigValue<List<? extends Double>> cold_sweat_autumns;
@@ -101,16 +102,23 @@ public class CompatModule {
                                 o -> o instanceof Double);
                 builder.pop();
             }
+
+
             builder.pop();
         }
     }
 
     public static class ClientConfig {
-        public static ForgeConfigSpec.BooleanValue sereneSeasons;
+        public static ForgeConfigSpec.BooleanValue journeyMapSupport;
 
         public static void load(ForgeConfigSpec.Builder builder) {
             builder.push("Compat");
-
+            if (isJourneymap()) {
+                builder.push("JourneyMap");
+                journeyMapSupport = builder.comment("Shows snow-covered blocks on the map.")
+                        .define("ShowSnowyBlock", true);
+                builder.pop();
+            }
             builder.pop();
         }
     }
@@ -125,5 +133,9 @@ public class CompatModule {
 
     public static boolean isLegendarysurvivaloverhaul() {
         return legendarysurvivaloverhaul;
+    }
+
+    public static boolean isJourneymap() {
+        return journeymap;
     }
 }

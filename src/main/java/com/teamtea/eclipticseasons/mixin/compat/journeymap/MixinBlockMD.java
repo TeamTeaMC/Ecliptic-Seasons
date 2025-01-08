@@ -2,7 +2,7 @@ package com.teamtea.eclipticseasons.mixin.compat.journeymap;
 
 
 import com.teamtea.eclipticseasons.common.misc.MapColorReplacer;
-import journeymap.client.JourneymapClient;
+import com.teamtea.eclipticseasons.compat.CompatModule;
 import journeymap.client.model.BlockMD;
 import journeymap.client.model.ChunkMD;
 import net.minecraft.core.BlockPos;
@@ -28,7 +28,8 @@ public abstract class MixinBlockMD {
             cancellable = true,
             remap = false)
     private void ecliptic$getBlockColor(ChunkMD chunkMD, BlockPos blockPos, CallbackInfoReturnable<Integer> cir) {
-        if (MapColorReplacer.getTopSnowColor(chunkMD.getWorld(), blockState, blockPos)
+        if (CompatModule.ClientConfig.journeyMapSupport.get()
+                && MapColorReplacer.getTopSnowColor(chunkMD.getWorld(), blockState, blockPos)
                 == MapColor.SNOW) {
             cir.setReturnValue(MapColor.SNOW.col);
 

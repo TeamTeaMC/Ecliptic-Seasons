@@ -1,5 +1,6 @@
 package com.teamtea.eclipticseasons.config;
 
+import com.teamtea.eclipticseasons.compat.CompatModule;
 import net.minecraftforge.common.ForgeConfigSpec;
 
 public class ClientConfig {
@@ -13,6 +14,7 @@ public class ClientConfig {
         Sound.load(builder);
         Particle.load(builder);
         Weather.load(builder);
+        CompatModule.ClientConfig.load(builder);
     }
     public static class Debug {
 
