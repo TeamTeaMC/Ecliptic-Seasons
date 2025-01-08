@@ -5,13 +5,16 @@ import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -31,16 +34,33 @@ public class CalendarBlockItem extends BlockItem {
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player pPlayer, InteractionHand pUsedHand) {
-        if (MapChecker.isValidDimension(level)) {
+    public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level level, @NotNull Player pPlayer, @NotNull InteractionHand pUsedHand) {
+        if (showHint(level, pPlayer)) {
+            return InteractionResultHolder.sidedSuccess(pPlayer.getItemInHand(pUsedHand), level.isClientSide());
+        }
+        return super.use(level, pPlayer, pUsedHand);
+    }
+
+    @Override
+    public @NotNull InteractionResult place(@NotNull BlockPlaceContext context) {
+        InteractionResult interactionResult = super.place(context);
+        if (interactionResult == InteractionResult.FAIL) {
+            if (showHint(context.getLevel(), context.getPlayer()))
+                return InteractionResult.sidedSuccess(context.getLevel().isClientSide());
+        }
+        return interactionResult;
+    }
+
+    public boolean showHint(Level level, Player player) {
+        if (MapChecker.isValidDimension(level)|| CommonConfig.Season.calendarItemHint.get()) {
             var season = EclipticUtil.getNowSolarTerm(level);
-            pPlayer.sendSystemMessage(
+            player.displayClientMessage(
                     season.getTranslation().append(", %s/%s".formatted(
                             EclipticUtil.getTimeInSolarTerm(level),
                             CommonConfig.Season.lastingDaysOfEachTerm.get()
-            )));
-            return InteractionResultHolder.consume(pPlayer.getItemInHand(pUsedHand));
+                    )), true);
+            return true;
         }
-        return super.use(level, pPlayer, pUsedHand);
+        return false;
     }
 }

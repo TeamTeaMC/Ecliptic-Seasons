@@ -71,6 +71,7 @@ public class CommonConfig {
     public static class Season {
         public static ForgeConfigSpec.BooleanValue enableInform;
         public static ForgeConfigSpec.BooleanValue enableInformIcon;
+        public static ForgeConfigSpec.BooleanValue calendarItemHint;
 
         public static ForgeConfigSpec.IntValue lastingDaysOfEachTerm;
         public static ForgeConfigSpec.IntValue initialSolarTermIndex;
@@ -88,6 +89,8 @@ public class CommonConfig {
                     .define("EnableInform", true);
             enableInformIcon = builder.comment("Whether send inform with icon.")
                     .define("EnableInformIcon", true);
+            calendarItemHint = builder.comment("Whether to pop up the solar term reminder when the calendar item cannot be placed.")
+                    .define("CalendarItemHint", true);
             daylightChange=builder.comment("In summer, the days are long and the nights are short, while in winter, the days are short and the nights are long.")
                     .define("DynamicDaylightDuration", true);
             validDimensions = builder.comment("Which dimensions will have season effects? Note that it must be natrual and have time lapse.")
