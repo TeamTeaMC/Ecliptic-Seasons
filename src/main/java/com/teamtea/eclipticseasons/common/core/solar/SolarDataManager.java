@@ -144,6 +144,7 @@ public class SolarDataManager extends SavedData {
             if (getSolarTermsDay() % CommonConfig.Season.lastingDaysOfEachTerm.get() == 0) {
                 player.sendSystemMessage(SimpleUtil.getSolarTermMessage(getSolarTerm()), false);
             }
+            WeatherManager.tickPlayerForSeasonCheck(player);
         }
     }
 

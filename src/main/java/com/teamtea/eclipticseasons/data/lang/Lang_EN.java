@@ -14,8 +14,8 @@ public class Lang_EN extends LangHelper {
 
     @Override
     protected void addTranslations() {
-        add("advancement.eclipticseasons.root", "Ecliptic Seasons : Spring After Autumn");
-        add("advancement.eclipticseasons.root.desc", "Span a year with 24 solar terms.");
+        add("advancement.eclipticseasons.root", "Spring After Autumn");
+        add("advancement.eclipticseasons.root.desc", "Span a year with twenty-four solar terms.");
 
         add("advancement.eclipticseasons.heat_stroke", "First Heat Stroke");
         add("advancement.eclipticseasons.heat_stroke.desc", "Do not walk directly under the sun in hot communities during the summer afternoon. If necessary, bring heat-resistant gear or take ice and snow to cool down.");

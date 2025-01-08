@@ -4,6 +4,8 @@ package com.teamtea.eclipticseasons;
 import com.mojang.serialization.Codec;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.client.particle.ColorParticleOptions;
+import com.teamtea.eclipticseasons.common.advancement.SolarTermsCriterion;
+import com.teamtea.eclipticseasons.common.advancement.SolarTermsRecordCa;
 import com.teamtea.eclipticseasons.common.block.CalendarBlock;
 import com.teamtea.eclipticseasons.common.block.CalendarBlockItem;
 import com.teamtea.eclipticseasons.common.block.blockentity.CalendarBlockEntity;
@@ -13,6 +15,7 @@ import com.teamtea.eclipticseasons.config.ClientConfig;
 import com.teamtea.eclipticseasons.common.network.SimpleNetworkHandler;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import com.teamtea.eclipticseasons.data.start;
+import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.particles.SimpleParticleType;
@@ -22,6 +25,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
@@ -32,6 +37,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.data.event.GatherDataEvent;
+import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -120,6 +126,7 @@ public class EclipticSeasons {
 
         CompatModule.register(MinecraftForge.EVENT_BUS, modEventBus);
 
+        ModContents.register();
     }
 
 
@@ -152,6 +159,14 @@ public class EclipticSeasons {
         public static final RegistryObject<BlockItem> calendar_item = ITEM_DEFERRED_REGISTER.register("calendar", () -> new CalendarBlockItem(calendar.get(), (new Item.Properties())));
         public static final RegistryObject<BlockEntityType<CalendarBlockEntity>> calendar_entity_type = BLOCK_ENTITY_TYPE_DEFERRED_REGISTER.register("calendar", () -> BlockEntityType.Builder.of(CalendarBlockEntity::new, ModContents.calendar.get()).build(null));
 
+        public static SolarTermsCriterion solarTermsCriterion = new SolarTermsCriterion(rl("solar_terms"));
+        public static SolarTermsCriterion heatStrokeCriterion = new SolarTermsCriterion(rl("heat_stroke"));
+
+        public static void register() {
+            CriteriaTriggers.register(solarTermsCriterion);
+            CriteriaTriggers.register(heatStrokeCriterion);
+        }
+
         @SubscribeEvent
         public static void blockRegister(RegisterEvent event) {
             if (event.getRegistryKey() == Registries.CREATIVE_MODE_TAB)
@@ -168,6 +183,8 @@ public class EclipticSeasons {
                                     .build());
                 });
         }
+
+
     }
 
     @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)

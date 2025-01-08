@@ -6,11 +6,13 @@ import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.core.solar.SolarAngelHelper;
+import com.teamtea.eclipticseasons.common.misc.MapColorReplacer;
 import com.teamtea.eclipticseasons.compat.vanilla.VanillaWeather;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
 
 public class EclipticUtil {
@@ -101,6 +103,11 @@ public class EclipticUtil {
             }
 
             @Override
+            public boolean isSnowyBlock(Level level, BlockState state, BlockPos pos) {
+                return MapColorReplacer.getTopSnowColor(level, state, pos) != null;
+            }
+
+            @Override
             public boolean isRainOrSnowAt(Level level, BlockPos pos) {
                 if (useSolarWeather())
                     return WeatherManager.isRainingOrSnowAt(level, pos);
@@ -177,6 +184,10 @@ public class EclipticUtil {
         return 0;
     }
 
+    public static int getTimeInSolarTerm(Level level) {
+        return EclipticUtil.getNowSolarDay(level) -
+                CommonConfig.Season.lastingDaysOfEachTerm.get() * EclipticUtil.getNowSolarTerm(level).ordinal();
+    }
 
     public static boolean isHereWithSnow(Level level, BlockPos pos) {
         return WeatherManager.getSnowDepthAtBiome(level, MapChecker.getSurfaceBiome(level, pos).value()) > 0;

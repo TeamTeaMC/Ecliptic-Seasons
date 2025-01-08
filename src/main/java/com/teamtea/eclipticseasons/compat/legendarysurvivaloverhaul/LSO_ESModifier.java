@@ -36,7 +36,7 @@ public class LSO_ESModifier extends ModifierBase {
     public float getUncaughtWorldInfluence(Level level, BlockPos pos) {
         SolarTerm nowSolarTerm = EclipticUtil.getNowSolarTerm(level);
         if (nowSolarTerm != SolarTerm.NONE && MapChecker.isValidDimension(level)) {
-            int timeInSubSeason = LSO_ESUtil.getTimeInSolarTerm(level);
+            int timeInSubSeason = EclipticUtil.getTimeInSolarTerm(level);
             double targetUndergroundTemperature = LSO_ESUtil.averageSeasonTemperature;
             int ordinal = nowSolarTerm.ordinal();
             float value = this.getSeasonModifier(getSeasonModifier(ordinal - 1), getSeasonModifier(ordinal), getSeasonModifier(ordinal + 1), timeInSubSeason, CommonConfig.Season.lastingDaysOfEachTerm.get());

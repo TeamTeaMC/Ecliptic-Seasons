@@ -1,0 +1,30 @@
+{
+  "criteria": {
+    "solar_terms": {
+      "conditions": {},
+      "trigger": "eclipticseasons:solar_terms"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "background": "minecraft:textures/block/bricks.png",
+    "description": {
+      "translate": "advancement.eclipticseasons.root.desc"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "eclipticseasons:calendar"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancement.eclipticseasons.root"
+    }
+  },
+  "requirements": [
+    [
+      "solar_terms"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

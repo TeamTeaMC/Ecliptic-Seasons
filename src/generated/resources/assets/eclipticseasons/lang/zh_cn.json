@@ -1,7 +1,7 @@
 {
   "advancement.eclipticseasons.heat_stroke": "第一次中暑",
   "advancement.eclipticseasons.heat_stroke.desc": "夏季中午请勿在炎热的群系直面太阳行走，如有必要，带上能抵抗炎热的装备或者冰雪降温。",
-  "advancement.eclipticseasons.root": "节气 - 春去秋来",
+  "advancement.eclipticseasons.root": "春去秋来",
   "advancement.eclipticseasons.root.desc": "度过一年二十四个节气",
   "block.eclipticseasons.calendar": "日历",
   "commands.eclipticseasons.solar.set": "已将节气天数设置为第%s天",

@@ -228,6 +228,7 @@ dependencies {
 //    implementation fg.deobf("curse.maven:snow-real-magic-308663:5139853")
 
 //    onlyMainRuntimeOnly fg.deobf("curse.maven:terralith-513688:5512076")
+    compileOnly fg.deobf("curse.maven:journeymap-32274:4873863")
     onlyMainRuntimeOnly fg.deobf("curse.maven:journeymap-32274:4873863")
 
     onlyMainRuntimeOnly fg.deobf("curse.maven:spark-361579:4587309")
@@ -241,7 +242,7 @@ dependencies {
     onlyMainRuntimeOnly fg.deobf("curse.maven:distant-horizons-508933:5689279")
 
     compileOnly fg.deobf("curse.maven:legendary-survival-overhaul-840254:5825918")
-    runtimeOnly fg.deobf("curse.maven:legendary-survival-overhaul-840254:5825918")
+//    runtimeOnly fg.deobf("curse.maven:legendary-survival-overhaul-840254:5825918")
 
     compileOnly fg.deobf("curse.maven:cold-sweat-506194:5874633")
 //    runtimeOnly fg.deobf("curse.maven:cold-sweat-506194:5874633")

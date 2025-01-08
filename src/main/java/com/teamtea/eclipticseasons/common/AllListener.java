@@ -2,6 +2,7 @@ package com.teamtea.eclipticseasons.common;
 
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
+import com.teamtea.eclipticseasons.common.advancement.SolarTermsRecordCa;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
@@ -12,8 +13,11 @@ import com.teamtea.eclipticseasons.common.handler.CustomRandomTickHandler;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.util.FakePlayer;
+import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TagsUpdatedEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -151,5 +155,12 @@ public class AllListener {
     @SubscribeEvent
     public static void onSaplingGrowTree(SaplingGrowTreeEvent event) {
         CropGrowthHandler.beforeCropGrowUp(event);
+    }
+
+    @SubscribeEvent
+    public static void onAttachCapabilitiesEvent(AttachCapabilitiesEvent<Entity> event) {
+        if(event.getObject() instanceof Player){
+            event.addCapability(EclipticSeasons.rl("solar_term_holder"),new SolarTermsRecordCa());
+        }
     }
 }

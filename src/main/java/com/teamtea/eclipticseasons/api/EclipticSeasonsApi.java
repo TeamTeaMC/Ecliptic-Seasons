@@ -6,6 +6,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.dimension.DimensionType;
 
 /**
@@ -61,7 +62,13 @@ public interface EclipticSeasonsApi {
      * Note that the position may be off {@linkplain tip if the snow cover is not high enough},
      * but will not be miscalculated if the surface is fully snow covered or not covered.
      */
+    @Deprecated
     boolean isSnowySurfaceAt(Level level, BlockPos pos);
+
+    /**
+     * Checks if the block at the pos should be snowy.
+     */
+    boolean isSnowyBlock(Level level, BlockState state, BlockPos pos);
 
     boolean isRainOrSnowAt(Level level,BlockPos pos);
 

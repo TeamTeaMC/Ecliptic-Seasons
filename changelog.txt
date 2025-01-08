@@ -113,3 +113,8 @@ Crop.UseDefaultValue -> Crop.RegisterCropDefaultValue
 ```
 * fix the light problem of other block entities when use calendar
 ** fix remap problem with Oculus
+
+0.8.1
+support journeymap
+add two advancements
+add a message when use the calendar

@@ -1,6 +1,7 @@
 package com.teamtea.eclipticseasons.data;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
+import com.teamtea.eclipticseasons.data.advancement.Advancements;
 import com.teamtea.eclipticseasons.data.font.ESFontProvider;
 import com.teamtea.eclipticseasons.data.lang.Lang_EN;
 import com.teamtea.eclipticseasons.data.lang.Lang_ZH;
@@ -37,6 +38,8 @@ public class start {
             var esb = new ESBlockTagProvider(packOutput, lookupProvider, MODID, helper);
             generator.addProvider(event.includeServer(), esb);
             generator.addProvider(event.includeServer(),new ESItemTagProvider(packOutput,lookupProvider,esb.contentsGetter()));
+
+            generator.addProvider(event.includeServer(),new Advancements(packOutput,lookupProvider,helper));
 
             generator.addProvider(event.includeServer(),new ESRecipeProvider(packOutput));
             generator.addProvider(event.includeServer(),new EclipticSeasonsLootTableProvider(packOutput));

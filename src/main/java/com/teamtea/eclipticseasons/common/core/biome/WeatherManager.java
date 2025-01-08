@@ -1,6 +1,7 @@
 package com.teamtea.eclipticseasons.common.core.biome;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
+import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.climate.BiomeRain;
 import com.teamtea.eclipticseasons.api.constant.climate.FlatRain;
 import com.teamtea.eclipticseasons.api.constant.climate.SnowTerm;
@@ -9,6 +10,7 @@ import com.teamtea.eclipticseasons.api.constant.tag.ClimateTypeBiomeTags;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.api.util.SimpleUtil;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
+import com.teamtea.eclipticseasons.common.advancement.SolarTermsRecordCa;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.handler.SolarUtil;
@@ -383,6 +385,7 @@ public class WeatherManager {
                             }
                             if (!player.hasEffect(EclipticSeasons.EffectRegistry.HEAT_STROKE) && !isColdHe) {
                                 player.addEffect(new MobEffectInstance(EclipticSeasons.EffectRegistry.HEAT_STROKE, 600));
+                                EclipticSeasons.ModContents.heatStrokeCriterion.trigger(player);
                             }
                         }
                     }
@@ -479,6 +482,23 @@ public class WeatherManager {
 
         }
         WeatherManager.sendBiomePacket(WeatherManager.getBiomeList(serverPlayer.level()), List.of(serverPlayer));
+    }
+
+    public static void tickPlayerForSeasonCheck(ServerPlayer serverPlayer) {
+        var level = serverPlayer.level();
+        // if (level.getGameTime() % 12000 == 0)
+        {
+            var holder = serverPlayer.getCapability(SolarTermsRecordCa.SolarTermsRecordCa_CAPABILITY);
+            holder.ifPresent(
+                    solarTermsRecordCa ->
+                    {
+                        var st = EclipticSeasonsApi.getInstance().getSolarTerm(level);
+                        if (solarTermsRecordCa.addSolarTerm(st)) {
+                        } else EclipticSeasons.ModContents.solarTermsCriterion.trigger(serverPlayer);
+                    }
+            );
+
+        }
     }
 
 
