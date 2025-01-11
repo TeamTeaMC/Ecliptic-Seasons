@@ -47,7 +47,7 @@ public class SolarTermsRecordCa implements ICapabilitySerializable<CompoundTag> 
             solarTerms.add(st);
             return true;
         }
-        return false;
+        return solarTerms.size()>=24;
     }
 
     @Override

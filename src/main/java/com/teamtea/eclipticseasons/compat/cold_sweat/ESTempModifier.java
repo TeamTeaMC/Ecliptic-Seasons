@@ -23,8 +23,11 @@ public class ESTempModifier extends TempModifier {
     public Function<Double, Double> calculate(LivingEntity entity, Temperature.Trait trait) {
         if (MapChecker.isValidDimension(entity.level())) {
             SolarTerm solarTerm = EclipticUtil.getNowSolarTerm(entity.level());
-            double startValue = getSeasonModifier(solarTerm.ordinal());
-            double endValue = getSeasonModifier(solarTerm.ordinal() + 1);
+            int ordinal = solarTerm.ordinal();
+            // TODO:关闭群系温度
+            double startValue = getSeasonModifier(ordinal) - solarTerm.getTemperatureChange();
+            SolarTerm next = SolarTerm.collectValues()[(ordinal + 24) % 24];
+            double endValue = getSeasonModifier(ordinal + 1) - (next).getTemperatureChange();
 
             return (temp) ->
                     temp + (double) ((float) CSMath.blend(startValue, endValue, EclipticUtil.getTimeInSolarTerm(entity.level()), 0.0, CommonConfig.Season.lastingDaysOfEachTerm.get()));

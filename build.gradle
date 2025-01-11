@@ -244,8 +244,8 @@ dependencies {
     compileOnly fg.deobf("curse.maven:legendary-survival-overhaul-840254:5825918")
 //    runtimeOnly fg.deobf("curse.maven:legendary-survival-overhaul-840254:5825918")
 
-    compileOnly fg.deobf("curse.maven:cold-sweat-506194:5874633")
-//    runtimeOnly fg.deobf("curse.maven:cold-sweat-506194:5874633")
+    compileOnly fg.deobf("curse.maven:cold-sweat-506194:6071049")
+    runtimeOnly fg.deobf("curse.maven:cold-sweat-506194:6071049")
 
     // Examples using mod jars from ./libs
     compileOnly "libs:OptiFine:1.20.1_HD_U_I6"

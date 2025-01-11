@@ -486,7 +486,7 @@ public class WeatherManager {
 
     public static void tickPlayerForSeasonCheck(ServerPlayer serverPlayer) {
         var level = serverPlayer.level();
-        // if (level.getGameTime() % 12000 == 0)
+        if (level.getGameTime() % 200 == 0)
         {
             var holder = serverPlayer.getCapability(SolarTermsRecordCa.SolarTermsRecordCa_CAPABILITY);
             holder.ifPresent(

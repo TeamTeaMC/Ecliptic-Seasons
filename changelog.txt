@@ -118,3 +118,6 @@ Crop.UseDefaultValue -> Crop.RegisterCropDefaultValue
 add support for journeymap
 add two advancements
 show a message when use the calendar (need open in config)
+* support latest version of Cold Sweat
+** fix advancements problem
+** adjust the way seasonal temperatures are calculated when the Cold Sweat mod is enabled
