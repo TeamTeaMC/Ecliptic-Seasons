@@ -78,7 +78,7 @@ public class CompatModule {
                                 o -> o instanceof Double);
                 cold_sweat_winters = builder.comment("Winter Temperatures divided into six periods according to the solar term table.")
                         .defineListAllowEmpty("WinterTemps",
-                                () -> List.of(-0.3d, -0.35d, -0.35d, -0.5d, -0.45d, -0.4d),
+                                () -> List.of(-0.3d, -0.35d, -0.35d, -0.4d, -0.45d, -0.4d),
                                 o -> o instanceof Double);
                 builder.pop();
             }
