@@ -25,9 +25,9 @@ public class ESTempModifier extends TempModifier {
             SolarTerm solarTerm = EclipticUtil.getNowSolarTerm(entity.level());
             int ordinal = solarTerm.ordinal();
             // TODO:关闭群系温度
-            double startValue = getSeasonModifier(ordinal) - solarTerm.getTemperatureChange()/2d;
-            SolarTerm next = SolarTerm.collectValues()[(ordinal + 24) % 24];
-            double endValue = getSeasonModifier(ordinal + 1) - (next).getTemperatureChange()/2d;
+            double startValue = getSeasonModifier(ordinal) ;
+            // SolarTerm next = SolarTerm.collectValues()[(ordinal + 24) % 24];
+            double endValue = getSeasonModifier(ordinal + 1);
 
             return (temp) ->
                     temp + (double) ((float) CSMath.blend(startValue, endValue, EclipticUtil.getTimeInSolarTerm(entity.level()), 0.0, CommonConfig.Season.lastingDaysOfEachTerm.get()));

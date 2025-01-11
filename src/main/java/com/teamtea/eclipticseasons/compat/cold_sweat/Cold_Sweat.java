@@ -4,6 +4,7 @@ import com.momosoftworks.coldsweat.api.event.core.init.GatherDefaultTempModifier
 import com.momosoftworks.coldsweat.api.event.core.registry.TempModifierRegisterEvent;
 import com.momosoftworks.coldsweat.api.temperature.modifier.ElevationTempModifier;
 import com.momosoftworks.coldsweat.api.util.Placement;
+import com.momosoftworks.coldsweat.api.util.Temperature;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
@@ -17,9 +18,8 @@ public class Cold_Sweat {
 
     @SubscribeEvent
     public void defineDefaultModifiers(GatherDefaultTempModifiersEvent event) {
-        event.addModifierById(EclipticSeasons.rl( "season"),
-                mod -> mod.tickRate(60),
-                Placement.Duplicates.BY_CLASS,
-                Placement.of(Placement.Mode.BEFORE, Placement.Order.FIRST, mod2 -> mod2 instanceof ElevationTempModifier));
+        if (event.getTrait() == Temperature.Trait.WORLD) {
+            event.addModifierById(EclipticSeasons.rl("season"), mod -> mod.tickRate(60), Placement.Duplicates.BY_CLASS, Placement.of(Placement.Mode.BEFORE, Placement.Order.FIRST, mod2 -> mod2 instanceof ElevationTempModifier));
+        }
     }
 }

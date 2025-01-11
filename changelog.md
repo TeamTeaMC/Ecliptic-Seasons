@@ -95,7 +95,8 @@ add a suggestion tooltip for /setTerm command
 *** expand means of resisting heat stroke with some special enchantments, and also ice and snow
 *** fix the crash if a tree sapling tried to grow in wrong season and was denied by Ecliptic Seasons
 
-0.8
+## 0.8
+
 add solar term icons
 add calendar
 add a config to set valid dimensions
@@ -105,6 +106,7 @@ repair an issue from outbound biome query due to biome noise
 ✨ stop supporting season-related prompts from Legendary Survival Overhaul (due to over-coupled code)
 ✨ stop using built-in temperature settings from Cold Sweat and Legendary Survival Overhaul
 ✨ provide dedicated temperature modification configurations for Cold Sweat and Legendary Survival Overhaul
+
 - fix the names of some configuration items
 ```
 Debug.Debug -> Debug.LogIllegalUse
@@ -118,6 +120,17 @@ Crop.UseDefaultValue -> Crop.RegisterCropDefaultValue
 add support for journeymap
 add two advancements
 show a message when use the calendar (need open in config)
+
 * support latest version of Cold Sweat
 ** fix advancements problem
 ** adjust the way seasonal temperatures are calculated when the Cold Sweat mod is enabled
+
+## 0.8.2
+
+### Changes:
+
+- **Optimize the rendering performance and rendering performance when using SolarWeather and raining**
+  This will greatly reduce the rendering performance at this stage in most cases, but it will increase in some cases, such as near large river areas, in order to avoid treating biomes such as rivers as an independent climate distribution.
+
+
+
