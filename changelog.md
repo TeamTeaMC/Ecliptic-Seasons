@@ -130,7 +130,8 @@ show a message when use the calendar (need open in config)
 ### Changes:
 
 - **Optimize the rendering performance and rendering performance when using SolarWeather and raining**
-  This will greatly reduce the rendering performance at this stage in most cases, but it will increase in some cases, such as near large river areas, in order to avoid treating biomes such as rivers as an independent climate distribution.
+  This will greatly reduce the rendering performance at this stage in most cases, but it will increase in some cases, such as near large river areas, in order to avoid treating biomes such as rivers as an independent climate distribution. 
+- Fixed a bug that caused abnormal temperature in Cold Sweat.
 
 
 
