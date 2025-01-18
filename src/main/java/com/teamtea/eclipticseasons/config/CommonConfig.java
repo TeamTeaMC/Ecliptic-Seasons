@@ -105,6 +105,7 @@ public class CommonConfig {
 
         public static ForgeConfigSpec.BooleanValue enableCrop;
         public static ForgeConfigSpec.DoubleValue cropGrowChanceInWrongSeason;
+        public static ForgeConfigSpec.DoubleValue cropGrowChanceInWrongHumidity;
         public static ForgeConfigSpec.BooleanValue enableCropHumidityControl;
         public static ForgeConfigSpec.BooleanValue useDefaultValue;
 
@@ -116,6 +117,8 @@ public class CommonConfig {
                     .defineInRange("CropGrowChanceInWrongSeason", 0.25, 0, 1);
             enableCropHumidityControl = builder.comment("Enable crop humidity control.")
                     .define("EnableCropHumidityControl", true);
+            cropGrowChanceInWrongHumidity = builder.comment("How much base chance can crop grow in wrong humidity.")
+                    .defineInRange("CropGrowChanceInWrongHumidity", 0.25, 0.0001, 0.9999);
             useDefaultValue = builder.comment("If a crop is not registered for a season or humid type, default values will be used.")
                     .define("RegisterCropDefaultValue", false);
             builder.pop();

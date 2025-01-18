@@ -133,5 +133,9 @@ show a message when use the calendar (need open in config)
   This will greatly reduce the rendering performance at this stage in most cases, but it will increase in some cases, such as near large river areas, in order to avoid treating biomes such as rivers as an independent climate distribution. 
 - Fixed a bug that caused abnormal temperature in Cold Sweat.
 
+0.8.3
+fix the issue that crops would grow faster when the humidity level was not suitable
+add config to adjust the base probability of when humidity level is not suitable
+
 
 

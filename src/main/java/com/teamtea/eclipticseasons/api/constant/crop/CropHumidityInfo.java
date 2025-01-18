@@ -2,6 +2,7 @@ package com.teamtea.eclipticseasons.api.constant.crop;
 
 
 import com.teamtea.eclipticseasons.api.constant.biome.Humidity;
+import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -28,12 +29,13 @@ public class CropHumidityInfo {
     }
 
     public float getGrowChance(Humidity env) {
+        float mul = 1 / (CommonConfig.Crop.cropGrowChanceInWrongHumidity.get().floatValue());
         if (isSuitable(env)) {
             return 1.0F;
         } else if (env.getId() < min.getId()) {
-            return Math.max(0, 1.0F / 2f * (min.getId() - env.getId()) * (min.getId() - env.getId()));
+            return Math.max(0, 1.0F / (mul * (min.getId() - env.getId()) * (min.getId() - env.getId())));
         } else {
-            return Math.max(0, 1.0F / 2f * (env.getId() - max.getId()) * (env.getId() - max.getId()));
+            return Math.max(0, 1.0F / (mul * (env.getId() - max.getId()) * (env.getId() - max.getId())));
         }
     }
 
