@@ -104,6 +104,7 @@ public class EclipticSeasons {
     }
 
 
+    @SuppressWarnings("removal")
     public EclipticSeasons() {
 
         // Register ourselves for server and other game events we are interested in
