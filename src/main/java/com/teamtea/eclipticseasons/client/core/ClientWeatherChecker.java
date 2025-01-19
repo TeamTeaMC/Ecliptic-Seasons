@@ -32,7 +32,7 @@ public class ClientWeatherChecker {
     public static int changeTime_thunder = 0;
     public static int MAX_CHANGE_TIME = 200;
 
-    public static boolean updateForPlayerLogin = false;
+    public static boolean updateForPlayerLogin = true;
 
     public static float rate = 0.008f;
 

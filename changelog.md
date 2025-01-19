@@ -137,5 +137,9 @@ show a message when use the calendar (need open in config)
 fix the issue that crops would grow faster when the humidity level was not suitable
 add config to adjust the base probability of when humidity level is not suitable
 
+0.8.4
+Fixed an issue with weather rendering errors when switching dimensions
+Fixed an issue where starting a world for the first time would trigger weather transition effects
+
 
 

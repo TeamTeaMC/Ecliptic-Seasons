@@ -93,14 +93,14 @@ public final class ClientEventHandler {
             MapChecker.unloadLevel(clientLevel);
             ClientWeatherChecker.unloadLevel(clientLevel);
             ClientMapFixer.clearAll();
-            ClientCon.useLevel = null;
+            ClientCon.setUseLevel(null);
         }
     }
 
     @SubscribeEvent
     public static void onLevelEventLoad(LevelEvent.Load event) {
         if (event.getLevel() instanceof ClientLevel clientLevel) {
-            ClientCon.useLevel = clientLevel;
+            ClientCon.setUseLevel(clientLevel);
             ClientCon.tick(clientLevel);
 
             WeatherManager.createLevelBiomeWeatherList(clientLevel);

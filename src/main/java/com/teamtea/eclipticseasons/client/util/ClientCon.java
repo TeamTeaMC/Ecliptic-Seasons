@@ -7,7 +7,8 @@ import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import net.minecraft.world.level.Level;
 
 public class ClientCon {
-    public static Level useLevel;
+    private static Level useLevel;
+    private static Level nextLevel;
 
     public static SolarTerm nowSolarTerm = SolarTerm.NONE;
     public static boolean isDay = false;
@@ -15,19 +16,32 @@ public class ClientCon {
     public static boolean isNoon = false;
 
     public static void tick(Level clientLevel) {
-        // if (useLevel == null) {
-        //     useLevel = clientLevel;
-        // }
         if (MapChecker.isValidDimension(clientLevel)) {
-            ClientCon.nowSolarTerm = EclipticUtil.getNowSolarTerm(clientLevel);
-            ClientCon.isDay = EclipticUtil.isDay(clientLevel);
-            ClientCon.isEvening = EclipticUtil.isEvening(clientLevel);
-            ClientCon.isNoon = EclipticUtil.isNoon(clientLevel);
+            nowSolarTerm = EclipticUtil.getNowSolarTerm(clientLevel);
+            isDay = EclipticUtil.isDay(clientLevel);
+            isEvening = EclipticUtil.isEvening(clientLevel);
+            isNoon = EclipticUtil.isNoon(clientLevel);
         } else {
-            ClientCon.nowSolarTerm = SolarTerm.NONE;
-            ClientCon.isDay = false;
-            ClientCon.isEvening = false;
-            ClientCon.isNoon = false;
+            nowSolarTerm = SolarTerm.NONE;
+            isDay = false;
+            isEvening = false;
+            isNoon = false;
+        }
+    }
+
+    public static Level getUseLevel() {
+        return useLevel;
+    }
+
+    public static void setUseLevel(Level level) {
+        if (level == null) {
+            useLevel = null;
+            if (nextLevel != null) {
+                useLevel = nextLevel;
+                nextLevel = null;
+            }
+        } else {
+            nextLevel = level;
         }
     }
 }
