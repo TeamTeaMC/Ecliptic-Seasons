@@ -355,7 +355,7 @@ public class ModelManager {
         if (level == null) return replace;
 
         var onBlock = state.getBlock();
-        int flag = MapChecker.getBlockType(state, level, pos);
+        int flag = MapChecker.getBlockType(state, blockAndTintGetter, pos);
         if (flag == 0)
             return replace;
         int offset = MapChecker.getSnowOffset(state, flag);
@@ -441,7 +441,7 @@ public class ModelManager {
                 weight = Math.abs(solarTerm.ordinal() - 3) + 1;
                 if (solarTerm.getSeason() == Season.SPRING
                         && random.nextInt(weight * 4) == 0
-                        && level.getBlockState(pos.above()).isAir()) {
+                        && blockAndTintGetter.getBlockState(pos.above()).isAir()) {
                     {
                         BakedModel snowModel = models.get(flower_on_grass.get(random.nextInt(flower_on_grass.size())));
                         replace = snowModel;

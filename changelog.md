@@ -141,5 +141,9 @@ add config to adjust the base probability of when humidity level is not suitable
 Fixed an issue with weather rendering errors when switching dimensions
 Fixed an issue where starting a world for the first time would trigger weather transition effects
 
+0.8.4.1
+fix a very small probability of occasional crash
+make spruce trees no longer drop leaves particles
+
 
 

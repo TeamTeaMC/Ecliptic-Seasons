@@ -48,12 +48,11 @@ public class SolarDataManager extends SavedData {
         setSolarTermsTicks(nbt.getInt("SolarTermsTicks"));
         var listTag = nbt.getList("biomes", Tag.TAG_COMPOUND);
         if (levelWeakReference.get() != null) {
-            var biomeWeathers =WeatherManager.getBiomeList(levelWeakReference.get());
+            var biomeWeathers = WeatherManager.getBiomeList(levelWeakReference.get());
             for (int i = 0; i < listTag.size(); i++) {
                 var location = listTag.getCompound(i).getString("biome");
                 for (WeatherManager.BiomeWeather biomeWeather : biomeWeathers) {
-                    if (location.equals(biomeWeather.location.toString()))
-                    {
+                    if (location.equals(biomeWeather.location.toString())) {
                         biomeWeather.deserializeNBT(listTag.getCompound(i));
                         break;
                     }
@@ -76,7 +75,7 @@ public class SolarDataManager extends SavedData {
         compound.put("biomes", listTag);
         return compound;
     }
-    
+
     public static SolarDataManager get(ServerLevel serverLevel) {
         DimensionDataStorage storage = serverLevel.getDataStorage();
         return storage.computeIfAbsent((compoundTag) -> new SolarDataManager(serverLevel, compoundTag),
@@ -87,7 +86,10 @@ public class SolarDataManager extends SavedData {
     public void updateTicks(ServerLevel world) {
         solarTermsTicks++;
         int dayTime = Math.toIntExact(world.getDayTime() % 24000);
-        if (solarTermsTicks > dayTime + 100) {
+        // 这里是当累计计数，dayTime会重置接近0，但是solarTermsTicks不会，因此有所差异
+        if (solarTermsTicks > dayTime + 100)
+        // if (dayTime % 100 == 0)
+        {
             solarTermsDay++;
             solarTermsDay %= 24 * CommonConfig.Season.lastingDaysOfEachTerm.get();
 
@@ -152,7 +154,7 @@ public class SolarDataManager extends SavedData {
     public void resendBiomesForChunks(ServerLevel serverLevel, ChunkMap chunkMap, List<ChunkAccess> chunkAccessList) {
         Map<ServerPlayer, List<LevelChunk>> map = new HashMap<>();
 
-        for(ChunkAccess chunkaccess : chunkAccessList) {
+        for (ChunkAccess chunkaccess : chunkAccessList) {
             ChunkPos chunkpos = chunkaccess.getPos();
             LevelChunk levelchunk;
             if (chunkaccess instanceof LevelChunk levelchunk1) {
@@ -161,7 +163,7 @@ public class SolarDataManager extends SavedData {
                 levelchunk = serverLevel.getChunk(chunkpos.x, chunkpos.z);
             }
 
-            for(ServerPlayer serverplayer : chunkMap.getPlayers(chunkpos, false)) {
+            for (ServerPlayer serverplayer : chunkMap.getPlayers(chunkpos, false)) {
                 map.computeIfAbsent(serverplayer, (p_274834_) -> new ArrayList<>()).add(levelchunk);
             }
         }
