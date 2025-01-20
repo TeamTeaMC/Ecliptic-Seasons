@@ -106,7 +106,7 @@ public class ClientWeatherChecker {
             rainLevel += getStandardRainLevel(1f, clientLevel, MapChecker.getSurfaceBiome(clientLevel, lookPos)) * 2;
 
 
-            for (BlockPos blockPos : List.of(pos.east(offset), pos.north(offset), pos.south(offset), pos.west(offset))) {
+            for (BlockPos blockPos :  new BlockPos[]{pos.east(offset), pos.north(offset), pos.south(offset), pos.west(offset)}) {
                 // var standBiome = clientLevel.getBiome(blockPos);
                 var standBiome = MapChecker.getSurfaceBiome(clientLevel, blockPos);
 
@@ -153,7 +153,7 @@ public class ClientWeatherChecker {
         if (lists != null)
             for (WeatherManager.BiomeWeather biomeWeather : lists) {
                 if (biomeWeather.biomeHolder == biomeHolder) {
-                    return biomeWeather.rainTime > 0 ? 1.0f : 0.0f;
+                    return biomeWeather.thunderTime > 0 ? 1.0f : 0.0f;
                 }
             }
         return 0.0f;
@@ -198,7 +198,7 @@ public class ClientWeatherChecker {
             var lookPos = BlockPos.containing(lookAt);
             thunderLevel += getStandardThunderLevel(1f, clientLevel, MapChecker.getSurfaceBiome(clientLevel, lookPos)) * 2;
 
-            for (BlockPos blockPos : List.of(pos.east(offset), pos.north(offset), pos.south(offset), pos.west(offset))) {
+            for (BlockPos blockPos :  new BlockPos[]{pos.east(offset), pos.north(offset), pos.south(offset), pos.west(offset)}) {
                 var standBiome = MapChecker.getSurfaceBiome(clientLevel, blockPos);
                 float othunderLevel = getStandardThunderLevel(1f, clientLevel, standBiome);
                 thunderLevel += othunderLevel;

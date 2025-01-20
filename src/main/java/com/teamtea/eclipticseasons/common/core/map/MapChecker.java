@@ -160,8 +160,8 @@ public class MapChecker {
                     relative.move(pair.getKey(), i);
                 }
                 if (chunkMap1 != null) {
-                    int x = blockToSectionCoord(relative.getX());
-                    int z = blockToSectionCoord(relative.getZ());
+                    int x = blockToRegionCoord(relative.getX());
+                    int z = blockToRegionCoord(relative.getZ());
                     if (chunkMap1.getX() == x && chunkMap1.getZ() == z)
                         bid = chunkMap1.getBiome(relative);
                 }
@@ -312,7 +312,7 @@ public class MapChecker {
     }
 
     // 获取chunk位置
-    public static int blockToSectionCoord(int i) {
+    public static int blockToRegionCoord(int i) {
         return i >> ChunkSizeAxis;
     }
 
@@ -330,8 +330,8 @@ public class MapChecker {
         int z0 = chunkPos.getMinBlockZ();
         int z1 = chunkPos.getMaxBlockZ();
 
-        int x = blockToSectionCoord(x0);
-        int z = blockToSectionCoord(z0);
+        int x = blockToRegionCoord(x0);
+        int z = blockToRegionCoord(z0);
         ChunkInfoMap map = getChunkMap(level, x, z);
 
         if (map != null) {
@@ -347,8 +347,8 @@ public class MapChecker {
     }
 
     public static ChunkInfoMap getChunkMap(Level level, BlockPos pos) {
-        int x = blockToSectionCoord(pos.getX());
-        int z = blockToSectionCoord(pos.getZ());
+        int x = blockToRegionCoord(pos.getX());
+        int z = blockToRegionCoord(pos.getZ());
         return getChunkMap(level, x, z);
     }
 
@@ -392,8 +392,8 @@ public class MapChecker {
         if (level == null)
             return 0;
 
-        int x = blockToSectionCoord(pos.getX());
-        int z = blockToSectionCoord(pos.getZ());
+        int x = blockToRegionCoord(pos.getX());
+        int z = blockToRegionCoord(pos.getZ());
         ChunkInfoMap map = getChunkMap(level,x, z);
 
         int value = 0;
@@ -542,8 +542,8 @@ public class MapChecker {
     }
 
     public static void updatePosForce(Level level, BlockPos setPos, int y) {
-        int x = MapChecker.blockToSectionCoord(setPos.getX());
-        int z = MapChecker.blockToSectionCoord(setPos.getZ());
+        int x = MapChecker.blockToRegionCoord(setPos.getX());
+        int z = MapChecker.blockToRegionCoord(setPos.getZ());
         ChunkInfoMap map = MapChecker.getChunkMap(level,x, z);
         if (map != null)
             map.updateHeight(setPos, y);
