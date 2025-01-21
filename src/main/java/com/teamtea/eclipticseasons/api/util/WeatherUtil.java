@@ -12,7 +12,7 @@ import java.util.List;
 public class WeatherUtil {
     public static boolean isBlockInRain(Level level, BlockPos blockPos) {
         for (BlockPos pos : List.of(blockPos.above(), blockPos.north(), blockPos.south(), blockPos.east(), blockPos.west())) {
-            if (WeatherManager.isRainingAt((ServerLevel) level, pos))
+            if (level.isRainingAt( pos))
                 return true;
         }
         return false;

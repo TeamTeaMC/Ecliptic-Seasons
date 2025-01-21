@@ -62,7 +62,7 @@ public enum TemperateSolarTermColors  implements SolarTermColor
     
     public static TemperateSolarTermColors get(int index)
     {
-        return values()[index];
+        return collectValues()[index];
     }
    
     @Override

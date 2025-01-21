@@ -155,7 +155,7 @@ public class CommandHandler {
             SolarHolders.getSaveDataLazy(ServerLevel).ifPresent(data ->
             {
                 data.setSolarTermsDay(day);
-                data.sendUpdateMessage(ServerLevel);
+                data.sendAndUpdate(ServerLevel);
             });
         }
 
@@ -168,7 +168,7 @@ public class CommandHandler {
             SolarHolders.getSaveDataLazy(ServerLevel).ifPresent(data ->
             {
                 data.setSolarTermsDay(data.getSolarTermsDay() + add);
-                data.sendUpdateMessage(ServerLevel);
+                data.sendAndUpdate(ServerLevel);
                 source.sendSuccess(() -> Component.translatable("commands.eclipticseasons.solar.set", data.getSolarTermsDay()), true);
             });
         }

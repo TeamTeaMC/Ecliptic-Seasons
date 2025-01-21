@@ -54,11 +54,11 @@ public class EclipticUtil {
     }
 
     public static boolean useSolarWeather() {
-        return CommonConfig.Weather.useSolarWeather.get();
+        return CommonConfig.isUseSolarWeather();
     }
 
     public static boolean isSolarWeatherClosed() {
-        return !CommonConfig.Weather.useSolarWeather.get();
+        return !useSolarWeather();
     }
 
 
@@ -124,19 +124,20 @@ public class EclipticUtil {
 
             @Override
             public boolean isRainAt(Level level, BlockPos pos) {
-                if (useSolarWeather())
-                    return WeatherManager.isRainingAt(level, pos);
+                // if (useSolarWeather())
+                // use mc method we have fixed it
+                return level.isRainingAt(pos);
 
                 // use this to check if underground
-                if (!level.isRaining()) {
-                    return false;
-                } else if (!level.canSeeSky(pos)) {
-                    return false;
-                } else if (level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, pos).getY() > pos.getY()) {
-                    return false;
-                } else {
-                    return this.getPrecipitationAt(level, pos) == Biome.Precipitation.RAIN;
-                }
+                // if (!level.isRaining()) {
+                //     return false;
+                // } else if (!level.canSeeSky(pos)) {
+                //     return false;
+                // } else if (level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, pos).getY() > pos.getY()) {
+                //     return false;
+                // } else {
+                //     return this.getPrecipitationAt(level, pos) == Biome.Precipitation.RAIN;
+                // }
             }
 
             @Override

@@ -2,6 +2,7 @@ package com.teamtea.eclipticseasons.common.core.solar;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
+import com.teamtea.eclipticseasons.api.event.SolarTermChangeEvent;
 import com.teamtea.eclipticseasons.api.util.SimpleUtil;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
@@ -21,6 +22,7 @@ import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.storage.DimensionDataStorage;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
@@ -93,8 +95,7 @@ public class SolarDataManager extends SavedData {
             solarTermsDay++;
             solarTermsDay %= 24 * CommonConfig.Season.lastingDaysOfEachTerm.get();
 
-            BiomeClimateManager.updateTemperature(world, getSolarTerm());
-            sendUpdateMessage(world);
+            sendAndUpdate(world);
         }
         solarTermsTicks = dayTime;
 
@@ -140,10 +141,19 @@ public class SolarDataManager extends SavedData {
         setDirty();
     }
 
-    public void sendUpdateMessage(ServerLevel world) {
+    public void sendAndUpdate(ServerLevel world) {
+        boolean changeSolarTerm = getSolarTermsDay() % CommonConfig.Season.lastingDaysOfEachTerm.get() == 0;
+
+        if (changeSolarTerm) {
+            BiomeClimateManager.updateTemperature(world, getSolarTerm());
+            SolarTerm old = SolarTerm.collectValues()[(getSolarTermIndex() + 24) % 24];
+
+            MinecraftForge.EVENT_BUS.post(new SolarTermChangeEvent(old, getSolarTerm(), world, solarTermsDay));
+        }
+
         for (ServerPlayer player : world.players()) {
-            SimpleNetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), new SolarTermsMessage(this.getSolarTermsDay()));
-            if (getSolarTermsDay() % CommonConfig.Season.lastingDaysOfEachTerm.get() == 0) {
+            SimpleNetworkHandler.send(player, new SolarTermsMessage(this.getSolarTermsDay()));
+            if (changeSolarTerm) {
                 player.sendSystemMessage(SimpleUtil.getSolarTermMessage(getSolarTerm()), false);
             }
             WeatherManager.tickPlayerForSeasonCheck(player);

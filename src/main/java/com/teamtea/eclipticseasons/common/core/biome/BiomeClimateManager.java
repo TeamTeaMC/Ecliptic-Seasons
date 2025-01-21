@@ -16,14 +16,13 @@ import java.util.IdentityHashMap;
 import java.util.Map;
 
 public class BiomeClimateManager {
+    // 由于在1.20时代，客户端与单人服务器端对象未分离，因此这里不能作为评判依据
     public final static Map<Biome, Float> BIOME_DEFAULT_TEMPERATURE_MAP = new IdentityHashMap<>();
-    public final static Map<Biome, Float> CLIENT_BIOME_DEFAULT_TEMPERATURE_MAP = new IdentityHashMap<>();
     public static final Map<Biome, TagKey<Biome>> BIOME_TAG_KEY_MAP = new IdentityHashMap<>(128);
-    public static final Map<Biome, TagKey<Biome>> CLIENT_BIOME_TAG_KEY_MAP = new IdentityHashMap<>(128);
     public static final Map<Biome, Boolean> SMALL_BIOME_MAP = new IdentityHashMap<>(16);
 
     public static void resetBiomeTemps(RegistryAccess registryAccess, boolean isServer) {
-        resetBiomeTempsMap(registryAccess, isServer ? BIOME_DEFAULT_TEMPERATURE_MAP : CLIENT_BIOME_DEFAULT_TEMPERATURE_MAP);
+        resetBiomeTempsMap(registryAccess, BIOME_DEFAULT_TEMPERATURE_MAP);
         putTag(registryAccess, isServer);
     }
 
@@ -39,26 +38,21 @@ public class BiomeClimateManager {
     public static final float DEFAULT_TEMPERATURE = 0.598F;
 
     public static float getDefaultTemperature(Biome biome, boolean isServer) {
-        return isServer ?
-                BIOME_DEFAULT_TEMPERATURE_MAP.getOrDefault(biome, DEFAULT_TEMPERATURE) :
-                CLIENT_BIOME_DEFAULT_TEMPERATURE_MAP.getOrDefault(biome, DEFAULT_TEMPERATURE);
+        return  BIOME_DEFAULT_TEMPERATURE_MAP.getOrDefault(biome, DEFAULT_TEMPERATURE);
     }
 
     public static final float SNOW_LEVEL = 0.15F;
     public static final float FROZEN_OCEAN_MELT_LEVEL = 0.1F;
 
     public static void updateTemperature(Level level, SolarTerm solarTermIndex) {
-        boolean isServer = level instanceof ServerLevel;
+        // boolean isServer = level instanceof ServerLevel;
         level.registryAccess().registry(Registries.BIOME).ifPresent(biomeRegistry -> biomeRegistry.forEach(biome ->
         {
             var temperature = biome.getModifiedClimateSettings().temperature() > SNOW_LEVEL ?
                     Math.max(SNOW_LEVEL + 0.001F, biome.getModifiedClimateSettings().temperature() + solarTermIndex.getTemperatureChange()) :
                     Math.min(SNOW_LEVEL, biome.getModifiedClimateSettings().temperature() + solarTermIndex.getTemperatureChange());
-            if (isServer) {
-                BIOME_DEFAULT_TEMPERATURE_MAP.put(biome, temperature);
-            } else {
-                CLIENT_BIOME_DEFAULT_TEMPERATURE_MAP.put(biome, temperature);
-            }
+
+            BIOME_DEFAULT_TEMPERATURE_MAP.put(biome, temperature);
 
             // clean temperature change
             // var oldClimateSettings = biome.climateSettings;
@@ -72,17 +66,16 @@ public class BiomeClimateManager {
 
     // it's hard to check the
     public static Float agent$GetBaseTemperature(Biome biome) {
-        float f = getDefaultTemperature(biome, true);
-        if (f == DEFAULT_TEMPERATURE) {
-            float f2 = getDefaultTemperature(biome, false);
-            f = f2 != f ? f2 : f;
-        }
-        return f;
+        // if (f == DEFAULT_TEMPERATURE) {
+        //     float f2 = getDefaultTemperature(biome, false);
+        //     f = f2 != f ? f2 : f;
+        // }
+        return getDefaultTemperature(biome, true);
     }
 
     public static Boolean agent$hasPrecipitation(Biome biome) {
         // return !getTag(biome).equals(ClimateTypeBiomeTags.RAINLESS);
-        return WeatherManager.getPrecipitationAt(biome, BlockPos.ZERO)!= Biome.Precipitation.NONE;
+        return getTag(biome) != ClimateTypeBiomeTags.RAINLESS;
     }
 
 
@@ -96,16 +89,14 @@ public class BiomeClimateManager {
 
     public static TagKey<Biome> getTag(Biome biome) {
         // return getTag(WeatherManager.getMainServerLevel(), biome);
-        return BIOME_TAG_KEY_MAP.getOrDefault(biome, CLIENT_BIOME_TAG_KEY_MAP.getOrDefault(biome, ClimateTypeBiomeTags.RAINLESS));
+        return BIOME_TAG_KEY_MAP.getOrDefault(biome, ClimateTypeBiomeTags.RAINLESS);
     }
 
-    // Clear it on client exit a level
+    // TODO：Clear it on client exit a level
     public static void putTag(RegistryAccess registryAccess, boolean isServer) {
-        var useMap = isServer ? BIOME_TAG_KEY_MAP : CLIENT_BIOME_TAG_KEY_MAP;
+        var useMap = BIOME_TAG_KEY_MAP;
         useMap.clear();
-        for (Biome biome : SMALL_BIOME_MAP.entrySet().stream().filter(biomeBooleanEntry -> biomeBooleanEntry.getValue() == isServer).map(Map.Entry::getKey).toList()) {
-            SMALL_BIOME_MAP.remove(biome);
-        }
+        SMALL_BIOME_MAP.clear();
 
         var biomeRegistry = registryAccess.registry(Registries.BIOME);
         if (biomeRegistry.isPresent()) {

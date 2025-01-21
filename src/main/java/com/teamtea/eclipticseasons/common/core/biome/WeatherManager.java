@@ -50,8 +50,8 @@ import java.util.*;
 
 public class WeatherManager {
 
-    public static Map<Level, ArrayList<BiomeWeather>> BIOME_WEATHER_LIST = new LinkedHashMap<>();
-    public static Map<Level, Integer> NEXT_CHECK_BIOME_MAP = new HashMap<>();
+    public static Map<Level, ArrayList<BiomeWeather>> BIOME_WEATHER_LIST = new IdentityHashMap<>();
+    public static Map<Level, Integer> NEXT_CHECK_BIOME_MAP = new IdentityHashMap<>();
 
     public static ArrayList<BiomeWeather> getBiomeList(Level level) {
         if (level == null) {
@@ -165,13 +165,18 @@ public class WeatherManager {
         return isThunderAtBiome(serverLevel, biome.get());
     }
 
+    public static boolean isRainingUnderSky(Level serverLevel, BlockPos pos) {
+        if (!MapChecker.isValidDimension(serverLevel)) {
+            return false;
+        }
+        var biome = MapChecker.getSurfaceBiome(serverLevel, pos);
+        return getRainOrSnow(serverLevel, biome.value(), pos) == Biome.Precipitation.RAIN;
+    }
+
     public static boolean isRainingAt(Level serverLevel, BlockPos pos) {
         if (!MapChecker.isValidDimension(serverLevel)) {
             return false;
         }
-        // if (!isRainingAnywhere(serverLevel)) {
-        //     return false;
-        // }
         if (!serverLevel.canSeeSky(pos)) {
             return false;
         } else if (serverLevel.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, pos).getY() > pos.getY()) {
@@ -229,7 +234,11 @@ public class WeatherManager {
 
     public static Biome.Precipitation getRainOrSnow(Level level, Biome biome, BlockPos pos) {
         if (!MapChecker.isValidDimension(level)) {
-            return Biome.Precipitation.NONE;
+            if (!biome.hasPrecipitation()) {
+                return Biome.Precipitation.NONE;
+            } else {
+                return biome.coldEnoughToSnow(pos) ? Biome.Precipitation.SNOW : Biome.Precipitation.RAIN;
+            }
         }
         if (!biome.hasPrecipitation()) {
             return Biome.Precipitation.NONE;
@@ -666,7 +675,7 @@ public class WeatherManager {
         if (needRain) {
             var pos = pContext.getParamOrNull(LootContextParams.ORIGIN);
             if (pos != null) {
-                boolean isRainingAt = isRainingAt(pContext.getLevel(), new BlockPos((int) pos.x, (int) pos.y + 1, (int) pos.z));
+                boolean isRainingAt = pContext.getLevel().isRainingAt( new BlockPos((int) pos.x, (int) pos.y + 1, (int) pos.z));
                 if (weatherCheck.isRaining().get() != isRainingAt) {
                     return false;
                 }

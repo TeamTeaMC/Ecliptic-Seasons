@@ -79,7 +79,7 @@ public abstract class MixinServerLevel extends Level {
     private Biome.Precipitation ecliptic$tickChunk_getPrecipitationAt(Biome biome, BlockPos pos, Operation<Biome.Precipitation> original) {
         if (EclipticUtil.useSolarWeather())
             return WeatherManager.getPrecipitationAt(this, biome, pos);
-        return VanillaWeather.handlePrecipitationAt(this,biome,pos);
+        return VanillaWeather.handlePrecipitationAt(this, biome, pos);
     }
 
 
@@ -93,7 +93,7 @@ public abstract class MixinServerLevel extends Level {
             int i = chunkpos.getMiddleBlockX();
             int j = chunkpos.getMiddleBlockZ();
             BlockPos blockpos1 = this.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, new BlockPos(i, 0, j));
-            return WeatherManager.isRainingAt(this, blockpos1);
+            return isRainingAt(blockpos1);
         }
         return original.call(serverLevel);
     }
@@ -107,7 +107,7 @@ public abstract class MixinServerLevel extends Level {
             var chunkpos = levelChunk.getPos();
             int i = chunkpos.getMiddleBlockX();
             int j = chunkpos.getMiddleBlockZ();
-            BlockPos blockpos1 =this.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, new BlockPos(i, 0, j));
+            BlockPos blockpos1 = this.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, new BlockPos(i, 0, j));
             return WeatherManager.isThunderAt(this, blockpos1);
         }
         return original.call(serverLevel);

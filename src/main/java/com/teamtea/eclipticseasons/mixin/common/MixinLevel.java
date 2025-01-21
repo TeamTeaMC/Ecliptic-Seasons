@@ -1,6 +1,8 @@
 package com.teamtea.eclipticseasons.mixin.common;
 
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.config.CommonConfig;
@@ -40,11 +42,16 @@ public class MixinLevel {
         }
     }
 
-    @Inject(at = {@At("HEAD")}, method = {"isRainingAt"}, cancellable = true)
-    private void ecliptic$isRainingAt(BlockPos p_46759_, CallbackInfoReturnable<Boolean> cir) {
-        if ((Object) this instanceof ServerLevel serverLevel) {
+    @WrapOperation(at = {@At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;isRaining()Z")}, method = {"isRainingAt"})
+    private boolean ecliptic$isRainingAt_skipRainCheck(Level instance, Operation<Boolean> original) {
+        return EclipticUtil.useSolarWeather() || original.call(instance);
+    }
+
+    @Inject(at = {@At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;getBiome(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/core/Holder;")}, method = {"isRainingAt"}, cancellable = true)
+    private void ecliptic$isRainingAt_endBiomeCheck(BlockPos p_46759_, CallbackInfoReturnable<Boolean> cir) {
+        if ((Object) this instanceof Level level) {
             if (EclipticUtil.useSolarWeather()) {
-                cir.setReturnValue(WeatherManager.isRainingAt(serverLevel, p_46759_));
+                cir.setReturnValue(WeatherManager.isRainingUnderSky(level, p_46759_));
             }
         }
     }

@@ -47,6 +47,6 @@ public abstract class MixinWeatherModifier {
             )
     )
     private boolean ecliptic$getWorldInfluence_isRaining(Level world, Operation<Boolean> original, @Local(argsOnly = true) BlockPos blockPos) {
-        return EclipticSeasonsApi.getInstance().isRainAt(world, blockPos);
+        return world.isRainingAt(blockPos);
     }
 }

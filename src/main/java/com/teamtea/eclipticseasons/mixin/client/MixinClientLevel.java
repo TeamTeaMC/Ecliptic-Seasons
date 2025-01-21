@@ -31,13 +31,13 @@ public class MixinClientLevel {
         }
     }
 
-    @Inject(at = {@At("HEAD")}, method = {"isRainingAt"}, cancellable = true)
-    private void ecliptic$isRainingAt(BlockPos p_46759_, CallbackInfoReturnable<Boolean> cir) {
-        if ((Object) this instanceof ClientLevel clientLevel) {
-            if (EclipticUtil.useSolarWeather())
-                cir.setReturnValue(ClientWeatherChecker.isRainingAt(clientLevel, p_46759_));
-        }
-    }
+    // @Inject(at = {@At("HEAD")}, method = {"isRainingAt"}, cancellable = true)
+    // private void ecliptic$isRainingAt(BlockPos p_46759_, CallbackInfoReturnable<Boolean> cir) {
+    //     if ((Object) this instanceof ClientLevel clientLevel) {
+    //         if (EclipticUtil.useSolarWeather())
+    //             cir.setReturnValue(ClientWeatherChecker.isRainingAt(clientLevel, p_46759_));
+    //     }
+    // }
 
     @Inject(at = {@At("HEAD")}, method = {"isThundering"}, cancellable = true)
     private void ecliptic$isThundering(CallbackInfoReturnable<Boolean> cir) {

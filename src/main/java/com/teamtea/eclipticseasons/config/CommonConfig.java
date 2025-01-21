@@ -4,6 +4,7 @@ import com.teamtea.eclipticseasons.compat.CompatModule;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.ForgeConfigSpec;
+import net.minecraftforge.fml.event.config.ModConfigEvent;
 
 import java.util.List;
 
@@ -91,7 +92,7 @@ public class CommonConfig {
                     .define("EnableInformIcon", true);
             calendarItemHint = builder.comment("Whether to pop up the solar term reminder when the calendar item cannot be placed.")
                     .define("CalendarItemHint", false);
-            daylightChange=builder.comment("In summer, the days are long and the nights are short, while in winter, the days are short and the nights are long.")
+            daylightChange = builder.comment("In summer, the days are long and the nights are short, while in winter, the days are short and the nights are long.")
                     .define("DynamicDaylightDuration", true);
             validDimensions = builder.comment("Which dimensions will have season effects? Note that it must be natrual and have time lapse.")
                     .defineListAllowEmpty("ValidDimensions",
@@ -141,5 +142,19 @@ public class CommonConfig {
             builder.pop();
         }
     }
+
+    private static boolean useSolarWeather = true;
+
+    public static boolean isUseSolarWeather() {
+        return useSolarWeather;
+    }
+
+    public static void UpdateConfig(ModConfigEvent modConfigEvent) {
+        if (!(modConfigEvent instanceof ModConfigEvent.Unloading)
+                && modConfigEvent.getConfig().getSpec() == COMMON_CONFIG) {
+            useSolarWeather = Weather.useSolarWeather.get();
+        }
+    }
+
 }
 

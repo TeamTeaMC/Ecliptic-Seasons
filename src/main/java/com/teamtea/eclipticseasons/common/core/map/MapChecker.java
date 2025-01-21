@@ -2,6 +2,7 @@ package com.teamtea.eclipticseasons.common.core.map;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.constant.tag.ClimateTypeBiomeTags;
+import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.misc.SimplePair;
 import com.teamtea.eclipticseasons.config.CommonConfig;
@@ -61,8 +62,7 @@ public class MapChecker {
 
 
     public static boolean isSmallBiome(Holder<Biome> biomeHolder) {
-        return biomeHolder.is(ClimateTypeBiomeTags.IS_SMALL)
-                ;
+        return BiomeClimateManager.SMALL_BIOME_MAP.containsKey(biomeHolder.value());
     }
 
     public static Holder<Biome> idToBiome(Level level, int id) {

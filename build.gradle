@@ -239,13 +239,13 @@ dependencies {
     runtimeOnly fg.deobf("curse.maven:modular-routers-250294:5056687")
 
     compileOnly fg.deobf("curse.maven:distant-horizons-508933:5689279")
-    onlyMainRuntimeOnly fg.deobf("curse.maven:distant-horizons-508933:5689279")
+//    onlyMainRuntimeOnly fg.deobf("curse.maven:distant-horizons-508933:5689279")
 
     compileOnly fg.deobf("curse.maven:legendary-survival-overhaul-840254:5825918")
 //    runtimeOnly fg.deobf("curse.maven:legendary-survival-overhaul-840254:5825918")
 
     compileOnly fg.deobf("curse.maven:cold-sweat-506194:6071049")
-    runtimeOnly fg.deobf("curse.maven:cold-sweat-506194:6071049")
+//    runtimeOnly fg.deobf("curse.maven:cold-sweat-506194:6071049")
 
     // Examples using mod jars from ./libs
     compileOnly "libs:OptiFine:1.20.1_HD_U_I6"

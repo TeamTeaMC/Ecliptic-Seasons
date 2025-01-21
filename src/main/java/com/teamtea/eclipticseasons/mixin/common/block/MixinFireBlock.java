@@ -21,7 +21,7 @@ public class MixinFireBlock {
     )
     private boolean mixin$Tick_isRaining(ServerLevel level, Operation<Boolean> original, @Local(ordinal = 0) BlockPos blockPos) {
         if (EclipticUtil.useSolarWeather())
-            return WeatherManager.isRainingAt(level, blockPos);
+            return level.isRainingAt(blockPos);
         return level.isRaining();
     }
 
@@ -31,7 +31,7 @@ public class MixinFireBlock {
     )
     private boolean mixin$Tick_isRaining2(ServerLevel level, Operation<Boolean> original, @Local(ordinal = 0) BlockPos.MutableBlockPos blockPos) {
         if (EclipticUtil.useSolarWeather())
-            return WeatherManager.isRainingAt(level, blockPos);
+            return level.isRainingAt(blockPos);
         return level.isRaining();
     }
 
