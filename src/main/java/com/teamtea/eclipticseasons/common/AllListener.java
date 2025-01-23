@@ -88,6 +88,8 @@ public class AllListener {
             {
                 SolarHolders.DATA_MANAGER_MAP.remove(level);
             }
+
+            MapChecker.validDimension.removeIf(l->l.equals(level));
         }
 
     }
@@ -136,10 +138,11 @@ public class AllListener {
         if (event.getEntity() instanceof ServerPlayer serverPlayer) {
             // WeatherManager.onLoggedIn(serverPlayer, false);
             Thread t=new Thread(()-> {
-                // try {
-                //     Thread.sleep(100);
-                // } catch (InterruptedException ignored) {
-                // }
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException ignored) {
+                }
+                // TODO：修复这里
                 WeatherManager.onLoggedIn(serverPlayer, false);
             });
             t.start();

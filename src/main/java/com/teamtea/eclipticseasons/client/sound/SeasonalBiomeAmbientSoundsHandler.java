@@ -72,7 +72,7 @@ public class SeasonalBiomeAmbientSoundsHandler implements AmbientSoundHandler {
         }
         {
             SoundEvent soundEvent = null;
-            if(MapChecker.isValidDimension(player.level())) {
+            if (MapChecker.isValidDimension(player.level())) {
                 switch (season) {
                     case SPRING -> {
                         if (!player.isInWaterOrRain()) {
@@ -87,10 +87,10 @@ public class SeasonalBiomeAmbientSoundsHandler implements AmbientSoundHandler {
                         if (!player.isInWaterOrRain()) {
                             if (!isDayNow) {
                                 if (!(biome.is(BiomeTags.IS_SAVANNA)
-                                        && !biome.is(Tags.Biomes.IS_CAVE)
-                                        && !biome.is(Tags.Biomes.IS_DESERT)
-                                        && !biome.is(BiomeTags.IS_BADLANDS)
-                                        && !biome.is(Tags.Biomes.IS_PEAK))) {
+                                        || biome.is(Tags.Biomes.IS_CAVE)
+                                        || biome.is(Tags.Biomes.IS_DESERT)
+                                        || biome.is(BiomeTags.IS_BADLANDS)
+                                        || biome.is(Tags.Biomes.IS_PEAK))) {
                                     soundEvent = EclipticSeasons.SoundEventsRegistry.night_river;
                                 }
                             } else {
@@ -133,7 +133,7 @@ public class SeasonalBiomeAmbientSoundsHandler implements AmbientSoundHandler {
                     if (isTargetSound) {
                         needAdd = false;
                         if (System.currentTimeMillis() % 200 <= 5
-                                &&!soundManager.isActive(pair.getValue())) {
+                                && !soundManager.isActive(pair.getValue())) {
                             needAdd = true;
                             loopSoundList.remove(pair);
                         }

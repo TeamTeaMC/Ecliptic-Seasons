@@ -7,8 +7,10 @@ import com.teamtea.eclipticseasons.api.constant.crop.CropSeasonInfo;
 import com.teamtea.eclipticseasons.common.handler.SolarUtil;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.event.level.BlockEvent;
@@ -33,22 +35,21 @@ public final class CropGrowthHandler {
 
     public static void beforeCropGrowUp(net.minecraftforge.eventbus.api.Event event, LevelAccessor world, BlockPos pos, BlockState blockState) {
         Block block = blockState.getBlock();
+        Holder<Biome> biome = world.getBiome(pos);
         CropSeasonInfo seasonInfo = CropInfoManager.getSeasonInfo(block);
+        boolean notCancel = false;
         if (seasonInfo != null && CommonConfig.Crop.enableCrop.get()) {
-            if (seasonInfo.isSuitable(SolarUtil.getSeason((Level) world))) {
-                Humidity env = Humidity.getHumid(world.getBiome(pos).value().getModifiedClimateSettings().downfall(), world.getBiome(pos).value().getTemperature(pos));
-                CropHumidityInfo humidityInfo = CropInfoManager.getHumidityInfo(block);
-                checkHumidity(event, world, humidityInfo, env);
-            } else if (CommonConfig.Crop.cropGrowChanceInWrongSeason.get() > 0
-                    && world.getRandom().nextInt(100) < CommonConfig.Crop.cropGrowChanceInWrongSeason.get() * 100) {
-                Humidity env = Humidity.getHumid(world.getBiome(pos).value().getModifiedClimateSettings().downfall(), world.getBiome(pos).value().getTemperature(pos));
-                CropHumidityInfo humidityInfo = CropInfoManager.getHumidityInfo(block);
-                checkHumidity(event, world, humidityInfo, env);
-            } else {
-                setResult(event, CANCEL);
-            }
+            notCancel |= seasonInfo.isSuitable(SolarUtil.getSeason((Level) world));
+            notCancel |= CommonConfig.Crop.cropGrowChanceInWrongSeason.get() > 0
+                    && world.getRandom().nextInt(100) < CommonConfig.Crop.cropGrowChanceInWrongSeason.get() * 100;
+            // notCancel |= isInRoom(world, pos, blockState);
         } else {
-            Humidity env = Humidity.getHumid(world.getBiome(pos).value().getModifiedClimateSettings().downfall(), world.getBiome(pos).value().getTemperature(pos));
+            notCancel = true;
+        }
+        if (!notCancel) {
+            setResult(event, CANCEL);
+        } else {
+            Humidity env = Humidity.getHumid(biome.value().getModifiedClimateSettings().downfall(), biome.value().getTemperature(pos));
             CropHumidityInfo humidityInfo = CropInfoManager.getHumidityInfo(block);
             checkHumidity(event, world, humidityInfo, env);
         }
