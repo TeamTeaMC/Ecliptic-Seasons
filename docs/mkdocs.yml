@@ -11,7 +11,11 @@ theme:
 
 
 nav:
-  - ...
+  - Home:
+      - English: 
+          - English: 'en/index.md'
+          - Crop : 'en/crop.md'
+      - 中文: 'zh/index.md'
 
 markdown_extensions:
   - toc:
@@ -29,7 +33,7 @@ extra:
   static_path: ['_static']
   alternate:
     - name: English
-      link: /en/latest/
+      link: /en/latest/en
       lang: en
     - name: 中文
       link: /en/latest/zh/
