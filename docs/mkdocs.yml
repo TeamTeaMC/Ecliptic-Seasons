@@ -13,6 +13,7 @@ theme:
 nav:
   - Home:
       - en: 'en/index.md'
+      - ...
       - zh: 'zh/index.md'
 
 markdown_extensions:
@@ -38,5 +39,6 @@ extra:
       lang: zh
 plugins:
   - search
-  - automatic-nav
+  - awesome-pages
+
 
