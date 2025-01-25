@@ -16,8 +16,8 @@ nav:
           - Index: 'en/index.md'
           - Crop : 'en/crop.md'
       - 中文:
-          - 首页: 'en/index.md'
-          - 作物: 'en/crop.md'
+          - 首页: 'zh/index.md'
+          - 作物: 'zh/crop.md'
 
 
 markdown_extensions:
