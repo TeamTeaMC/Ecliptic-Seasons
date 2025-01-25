@@ -32,6 +32,12 @@ docs_dir: 'source'
 
 extra:
   static_path: ['_static']
-
+  alternate:
+    - name: English
+      link: /en/
+      lang: en
+    - name: 中文
+      link: /zh/
+      lang: zh
 plugins:
   - search
