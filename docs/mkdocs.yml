@@ -11,7 +11,9 @@ theme:
 
 
 nav:
-  - Home: 'en/index.md'
+  - Home:
+      - en: 'en/index.md'
+      - zh: 'zh/index.md'
 
 i18n:
   languages:
