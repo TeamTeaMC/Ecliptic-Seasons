@@ -145,5 +145,12 @@ Fixed an issue where starting a world for the first time would trigger weather t
 fix a very small probability of occasional crash
 make spruce trees no longer drop leaves particles
 
-
+0.9
+fix thunder level in client check
+add event
+add config cache
+clean necessary biome cache (not need for 1.20)
+faster the weather query time
+faster the small biome check time
+fix sound in desert summer
 
