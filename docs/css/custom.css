@@ -1,0 +1,12 @@
+nav {
+  background-color: #28a745;
+}
+
+nav a {
+  color: #fff;
+}
+
+nav a:hover {
+  background-color: #218838;
+  border-radius: 4px;
+}
