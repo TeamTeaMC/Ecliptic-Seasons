@@ -13,9 +13,12 @@ theme:
 nav:
   - Home:
       - English:
-          - English: 'en/index.md'
+          - Index: 'en/index.md'
           - Crop : 'en/crop.md'
-      - 中文: 'zh/index.md'
+      - 中文:
+          - 首页: 'en/index.md'
+          - 作物: 'en/crop.md'
+
 
 markdown_extensions:
   - toc:
