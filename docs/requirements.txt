@@ -5,3 +5,4 @@
 #    pip-compile docs.in
 #
 myst-parser
+sphinx-material

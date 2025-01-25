@@ -17,7 +17,7 @@ extensions = [
 
 
 language = 'en'
-html_theme = 'alabaster'
+html_theme = 'sphinx_material'
 
 html_static_path = ['_static']
 
