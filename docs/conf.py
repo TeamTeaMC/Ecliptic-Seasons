@@ -20,7 +20,7 @@ language = 'en'
 html_theme = 'sphinx_material'
 
 html_theme_options = {
-    'repo_url': 'https://github.com/your-username/your-repo',
+    'repo_url': 'https://github.com/joe-vettek/Ecliptic-Seasons',
     'repo_name': 'Ecliptic Seasons'
 }
 
