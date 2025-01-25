@@ -4,3 +4,4 @@
 #
 #    pip-compile docs.in
 #
+myst-parser
