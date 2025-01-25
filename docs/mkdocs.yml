@@ -36,10 +36,10 @@ extra:
   static_path: ['_static']
   alternate:
     - name: English
-      link: /en/latest/
+      link: /en/latest/en/
       lang: en
     - name: 中文
-      link: /zh/latest/
+      link: /en/latest/zh/
       lang: zh
 plugins:
   - search
