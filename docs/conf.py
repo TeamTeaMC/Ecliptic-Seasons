@@ -9,6 +9,7 @@ version = '1.0'
 release = '1.0.0'
 
 extensions = [
+    'myst_parser',
     'sphinx.ext.autodoc',
     'sphinx.ext.viewcode',
     'sphinx.ext.napoleon',
@@ -17,6 +18,11 @@ extensions = [
 language = 'en'
 html_theme = 'alabaster'
 
-html_static_path = ['docs']
+html_static_path = ['source']
 
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
+
+source_suffix = {
+    '.rst': 'restructuredtext',
+    '.md': 'markdown',
+}
