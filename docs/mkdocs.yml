@@ -11,12 +11,7 @@ theme:
 
 
 nav:
-  - Home: 'index.md'
-  - About: 'about.md'
-  - Features: 'features.md'
-  - Docs:
-      - 'Installation': 'installation.md'
-      - 'Usage': 'usage.md'
+  - Home: 'docs/source/en/index.md'
 
 i18n:
   languages:
