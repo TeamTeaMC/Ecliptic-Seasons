@@ -7,3 +7,4 @@
 myst-parser
 sphinx-material
 mkdocs-material
+mkdocs-i18n

@@ -30,11 +30,6 @@ extra_javascript:
 
 docs_dir: 'source'
 
-exclude:
-  - '_build'
-  - 'Thumbs.db'
-  - '.DS_Store'
-
 extra:
   static_path: ['_static']
 
