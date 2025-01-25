@@ -38,3 +38,5 @@ extra:
       lang: zh
 plugins:
   - search
+  - automatic-nav
+

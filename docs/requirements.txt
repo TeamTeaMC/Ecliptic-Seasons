@@ -8,3 +8,4 @@ myst-parser
 sphinx-material
 mkdocs-material
 mkdocs-i18n
+mkdocs-automatic-nav-plugin
