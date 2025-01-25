@@ -19,6 +19,12 @@ extensions = [
 language = 'en'
 html_theme = 'sphinx_material'
 
+html_theme_options = {
+    'repo_url': 'https://github.com/your-username/your-repo'
+    'repo_name': 'Ecliptic Seasons'
+}
+
+
 html_static_path = ['_static']
 
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
