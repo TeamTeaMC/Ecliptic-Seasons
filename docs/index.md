@@ -1,5 +1,3 @@
-# [Ecliptic Seasons](https://legacy.curseforge.com/minecraft/mc-mods/ecliptic-seasons)
-
 ![Ecliptic Seasons](https://github.com/user-attachments/assets/549d6626-d78e-4901-8b96-f420a6c2d3ea)
 
 “节气”是Minecraft的一个中国风模组，关于四季。
