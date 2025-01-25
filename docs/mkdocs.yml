@@ -12,7 +12,7 @@ theme:
 
 nav:
   - Home:
-      - English: 
+      - English:
           - English: 'en/index.md'
           - Crop : 'en/crop.md'
       - 中文: 'zh/index.md'
@@ -40,6 +40,5 @@ extra:
       lang: zh
 plugins:
   - search
-  - awesome-pages
 
 
