@@ -15,11 +15,6 @@ nav:
       - en: 'en/index.md'
       - zh: 'zh/index.md'
 
-i18n:
-  languages:
-    - en
-    - zh
-
 markdown_extensions:
   - toc:
       permalink: true
