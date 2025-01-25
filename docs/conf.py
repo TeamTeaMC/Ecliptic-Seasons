@@ -17,7 +17,7 @@ extensions = [
 language = 'en'
 html_theme = 'alabaster'
 
-html_static_path = ['source']
+html_static_path = ['_static']
 
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
