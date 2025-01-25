@@ -11,9 +11,7 @@ theme:
 
 
 nav:
-  - Home:
-      - en: 'en/index.md'
-      - ...
+  - ...
 
 markdown_extensions:
   - toc:
