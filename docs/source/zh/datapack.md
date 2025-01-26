@@ -99,3 +99,56 @@ Tag平台运行，目前主要分为三种。四季型地区，干湿季地区�
 | 温和 | SOFT     | 0.3F     | 0.005F   |
 | 多雨 | RAINY    | 0.9F     | 0.01F    |
 
+## 季节性作物与湿度条件
+
+这个地方在农业一章有具体的描述，因此不再阐述。
+默认状态下，不会为未注册的作物提供控制标签，可以看做`eclipticseasons:crops/all_seasons`和`eclipticseasons:crops/arid_humid`。
+如果打开相关配置`Crop.RegisterCropDefaultValue`，则默认为所有无标记的CropBlock的子类设置为`春+夏+秋`以及`平均-潮湿`的生长条件。
+
+### 1. 季节类型
+
+默认状态下，错误季节的相对生长概率为0.25F。
+
+| 类型名称                                         | 适用季节         |
+|:---------------------------------------------|:-------------|
+| `eclipticseasons:crops/spring`               | 春季           |
+| `eclipticseasons:crops/summer`               | 夏季           |
+| `eclipticseasons:crops/autumn`               | 秋季           |
+| `eclipticseasons:crops/winter`               | 冬季           |
+| `eclipticseasons:crops/spring_summer`        | 春季 + 夏季      |
+| `eclipticseasons:crops/spring_autumn`        | 春季 + 秋季      |
+| `eclipticseasons:crops/spring_winter`        | 春季 + 冬季      |
+| `eclipticseasons:crops/summer_autumn`        | 夏季 + 秋季      |
+| `eclipticseasons:crops/summer_winter`        | 夏季 + 冬季      |
+| `eclipticseasons:crops/autumn_winter`        | 秋季 + 冬季      |
+| `eclipticseasons:crops/spring_summer_autumn` | 春季 + 夏季 + 秋季 |
+| `eclipticseasons:crops/spring_summer_winter` | 春季 + 夏季 + 冬季 |
+| `eclipticseasons:crops/spring_autumn_winter` | 春季 + 秋季 + 冬季 |
+| `eclipticseasons:crops/summer_autumn_winter` | 夏季 + 秋季 + 冬季 |
+| `eclipticseasons:crops/all_seasons`          | 所有季节（全年）     |
+
+------
+
+### 2. 湿度类型
+
+默认状态下，错误湿度的相对基础生长概率为0.25F，每差一级将缩小四倍。
+如一个适用于`平均-湿润`湿度条件的小麦作物，生长在沙漠中，那么其实际生长概率为0.0625F。
+
+| 类型名称                                    | 最低湿度 | 最高湿度 |
+|:----------------------------------------|:-----|:-----|
+| `eclipticseasons:crops/arid_arid`       | 干旱   | 干旱   |
+| `eclipticseasons:crops/arid_dry`        | 干旱   | 干燥   |
+| `eclipticseasons:crops/arid_average`    | 干旱   | 平均   |
+| `eclipticseasons:crops/arid_moist`      | 干旱   | 湿润   |
+| `eclipticseasons:crops/arid_humid`      | 干旱   | 潮湿   |
+| `eclipticseasons:crops/dry_dry`         | 干燥   | 干燥   |
+| `eclipticseasons:crops/dry_average`     | 干燥   | 平均   |
+| `eclipticseasons:crops/dry_moist`       | 干燥   | 湿润   |
+| `eclipticseasons:crops/dry_humid`       | 干燥   | 潮湿   |
+| `eclipticseasons:crops/average_average` | 平均   | 平均   |
+| `eclipticseasons:crops/average_moist`   | 平均   | 湿润   |
+| `eclipticseasons:crops/average_humid`   | 平均   | 潮湿   |
+| `eclipticseasons:crops/moist_moist`     | 湿润   | 湿润   |
+| `eclipticseasons:crops/moist_humid`     | 湿润   | 潮湿   |
+| `eclipticseasons:crops/humid_humid`     | 潮湿   | 潮湿   |
+
