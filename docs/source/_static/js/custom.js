@@ -1,9 +1,17 @@
-document.addEventListener("DOMContentLoaded", function () {
-    var spans = document.querySelectorAll("span");
+function addDel(){
+ var spans = document.querySelectorAll("span");
 
     spans.forEach(function(span) {
-        if (span.textContent.endsWith("（规划）")) {
+        if (span.textContent.indexOf("（规划）")>0) {
             span.style.textDecoration = "line-through";
         }
     });
+}
+
+if (document.readyState === "loading"){
+document.addEventListener("DOMContentLoaded", function () {
+   addDel();
 });
+}else if (document.readyState === "complete"){
+ addDel();
+}
