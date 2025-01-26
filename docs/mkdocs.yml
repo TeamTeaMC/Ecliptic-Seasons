@@ -27,9 +27,9 @@ markdown_extensions:
   - admonition
 
 extra_css:
-  - 'css/custom.css'
+  - _static/css/custom.css
 extra_javascript:
-  - 'js/custom.js'
+  - _static/js/custom.js
 
 docs_dir: 'source'
 
