@@ -14,10 +14,11 @@ nav:
   - Home:
       - English:
           - Index: 'en/index.md'
-          - Crop : 'en/crop.md'
+          - Crop: 'en/crop.md'
       - 中文:
           - 首页: 'zh/index.md'
           - 作物: 'zh/crop.md'
+          - 数据包: 'zh/datapack.md'
 
 
 markdown_extensions:
@@ -33,7 +34,7 @@ extra_javascript:
 docs_dir: 'source'
 
 extra:
-  static_path: ['_static']
+  static_path: [ '[_static]' ]
   alternate:
     - name: English
       link: /en/latest/en/
