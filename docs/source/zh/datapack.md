@@ -99,11 +99,11 @@ Tag平台运行，目前主要分为三种。四季型地区，干湿季地区�
 | 温和 | SOFT     | 0.3F     | 0.005F   |
 | 多雨 | RAINY    | 0.9F     | 0.01F    |
 
-### ~~<font color="gray">特定气候状态（规划）</font>~~
+### <del><font color="gray">特定气候状态（规划）</font><del>
 
-~~<font color="gray">
+<del><font color="gray">
 如果你需要定义某群系的降雨概率和雷击概率，则可以自定义数据包。
-</font>~~
+</font><del>
 
 ```json
 {
@@ -117,7 +117,7 @@ Tag平台运行，目前主要分为三种。四季型地区，干湿季地区�
 }
 ```
 
-### ~~<font color="gray">附加群系设定（规划）</font>~~
+### <del><font color="gray">附加群系设定（规划）</font><del>
 
 ```json
 {
@@ -216,12 +216,12 @@ Tag平台运行，目前主要分为三种。四季型地区，干湿季地区�
 | COLD     | RARE     | ARID    |
 | FREEZING | RARE     | ARID    |
 
-### ~~<font color="gray">群系颜色（规划）</font>~~
+### <del><font color="gray">群系颜色（规划）</font><del>
 
 节气将影响群系的实际草木颜色表现，主要是影响四季群系和干湿季群系。
 此外，也会对桦树、云杉、红树林的颜色做一些调整，但由于机制不同，这些方块对群系过渡支持有限。
 
-~~<font color="gray">目前仅规划提供群系草地和树木颜色的选择。</font>~~
+<del><font color="gray">目前仅规划提供群系草地和树木颜色的选择。</font><del>
 
 ```json
 {
