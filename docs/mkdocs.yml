@@ -17,7 +17,9 @@ nav:
           - Crop: 'en/crop.md'
       - 中文:
           - 首页: 'zh/index.md'
+          - 气候: 'zh/climate.md'
           - 作物: 'zh/crop.md'
+          - 兼容性: 'zh/compat.md'
           - 数据包: 'zh/datapack.md'
 
 
