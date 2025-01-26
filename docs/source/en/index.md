@@ -1,8 +1,8 @@
 ![Ecliptic Seasons](https://github.com/user-attachments/assets/549d6626-d78e-4901-8b96-f420a6c2d3ea)
 
-“节气”是一个试图用中国传统文化视角阐述Minecraft四季变化的mod。
+“节气”是Minecraft的一个中国风模组，关于四季。
 
-Experience Minecraft's seasons like never before with the 'Ecliptic Seasons' mod, inspired by the rich traditions of Chinese culture.
+Ecliptic Seasons is a Chinese mod about seasons and weather.
 
 ### LICENSE
 *   For code: BSD-3
