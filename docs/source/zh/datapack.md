@@ -1,4 +1,4 @@
-## 数据包
+数据包
 
 支持数据包是Minecraft模组的基础性工作，对于节气，这也不例外。受到开发时间的限制，目前支持的数据包有限。
 
@@ -99,13 +99,150 @@ Tag平台运行，目前主要分为三种。四季型地区，干湿季地区�
 | 温和 | SOFT     | 0.3F     | 0.005F   |
 | 多雨 | RAINY    | 0.9F     | 0.01F    |
 
+### ~~<font color="gray">特定气候状态（规划）</font>~~
+
+~~<font color="gray">
+如果你需要定义某群系的降雨概率和雷击概率，则可以自定义数据包。
+</font>~~
+
+```json
+{
+  "reference": "eclipticseasons:seasonal",
+  "override": {
+    "beginning_of_winter": {
+      "rain": 0.9,
+      "thunder": 0
+    }
+  }
+}
+```
+
+### ~~<font color="gray">附加群系设定（规划）</font>~~
+
+```json
+{
+  "override": {
+    "beginning_of_winter": {
+      "temperature": 0.5,
+      "downfall": 0.2
+    }
+  }
+}
+```
+
+节气中设计下雪时间的长度与群系基础温度息息相关。一般来说，满足下表。
+
+| 温度名称 | 最低界限   | 最高界限   | 下雪开始时期 | 下雪结束时期 |
+|:-----|:-------|:-------|:-------|:-------|
+| T1   | > 0.95 | -      | 无      | 无      |
+| T08  | > 0.8  | ≤ 0.95 | 冬至     | 小寒     |
+| T06  | > 0.6  | ≤ 0.8  | 小雪     | 大寒     |
+| T05  | > 0.5  | ≤ 0.6  | 立冬     | 大寒     |
+| T04  | > 0.4  | ≤ 0.5  | 霜降     | 大寒     |
+| T03  | > 0.3  | ≤ 0.4  | 寒露     | 次年立春   |
+| T02  | > 0.2  | ≤ 0.3  | 秋分     | 次年雨水   |
+| T015 | > 0.15 | ≤ 0.2  | 白露     | 次年惊蛰   |
+| T01  | > 0.1  | ≤ 0.15 | 立秋     | 次年清明   |
+| T005 | > 0.05 | ≤ 0.1  | 大暑     | 次年谷雨   |
+| T001 | > 0.01 | ≤ 0.05 | 小暑     | 次年立夏   |
+| T0   | -      | ≤ 0    | 全年     |        |
+
+此外，群系湿润度则取决于群系实时温度与基础降雨量。
+
+温度类型计算表如下所示：
+
+| 类型 | 英文名称     | 最低界限  | 最高界限  |
+|----|:---------|:------|:------|
+| 冰冻 | FREEZING | -     | 0.15F |
+| 寒冷 | COLD     | 0.15F | 0.4F  |
+| 凉爽 | COOL     | 0.4F  | 0.65F |
+| 温暖 | WARM     | 0.65F | 0.9F  |
+| 炎热 | HOT      | 0.9F  | 1.25F |
+| 炙热 | HEAT     | 1.25F | -     |
+
+降雨类型计算表如下：
+
+| 类型 | 英文名称     | 最低界限 | 最高界限 |
+|:---|:---------|:-----|:-----|
+| 罕见 | RARE     | -    | 0.1F |
+| 稀少 | SCARCE   | 0.1F | 0.3F |
+| 适中 | MODERATE | 0.3F | 0.6F |
+| 充足 | ADEQUATE | 0.6F | 0.8F |
+| 丰富 | ABUNDANT | 0.8F | -    |
+
+湿度有如下计算公式：
+```湿度等级 = max(0, 降雨量等级 - |降雨量等级 - 温度等级| / 2)```
+
+| 类型 | 英文名称    |
+|:---|:--------|
+| 干旱 | ARID    |
+| 干燥 | DRY     |
+| 一般 | AVERAGE |
+| 湿润 | MOIST   |
+| 潮湿 | HUMID   |
+
+由此得到枚举表格：
+
+| 温度等级     | 降水量等级    | 湿润度等级   |
+|----------|----------|---------|
+| HEAT     | ABUNDANT | HUMID   |
+| HOT      | ABUNDANT | HUMID   |
+| WARM     | ABUNDANT | HUMID   |
+| HOT      | ADEQUATE | MOIST   |
+| WARM     | ADEQUATE | MOIST   |
+| COOL     | ADEQUATE | MOIST   |
+| COOL     | ABUNDANT | MOIST   |
+| COLD     | ABUNDANT | MOIST   |
+| HEAT     | ADEQUATE | AVERAGE |
+| WARM     | MODERATE | AVERAGE |
+| COOL     | MODERATE | AVERAGE |
+| COLD     | MODERATE | AVERAGE |
+| COLD     | ADEQUATE | AVERAGE |
+| FREEZING | ADEQUATE | AVERAGE |
+| FREEZING | ABUNDANT | AVERAGE |
+| HEAT     | MODERATE | DRY     |
+| HOT      | MODERATE | DRY     |
+| COOL     | SCARCE   | DRY     |
+| COLD     | SCARCE   | DRY     |
+| FREEZING | SCARCE   | DRY     |
+| FREEZING | MODERATE | DRY     |
+| HEAT     | RARE     | ARID    |
+| HEAT     | SCARCE   | ARID    |
+| HOT      | RARE     | ARID    |
+| HOT      | SCARCE   | ARID    |
+| WARM     | RARE     | ARID    |
+| WARM     | SCARCE   | ARID    |
+| COOL     | RARE     | ARID    |
+| COLD     | RARE     | ARID    |
+| FREEZING | RARE     | ARID    |
+
+### ~~<font color="gray">群系颜色（规划）</font>~~
+
+节气将影响群系的实际草木颜色表现，主要是影响四季群系和干湿季群系。
+此外，也会对桦树、云杉、红树林的颜色做一些调整，但由于机制不同，这些方块对群系过渡支持有限。
+
+~~<font color="gray">目前仅规划提供群系草地和树木颜色的选择。</font>~~
+
+```json
+{
+  "reference": "eclipticseasons:seasonal",
+  "override": {
+    "beginning_of_winter": {
+      "grass_color": 0xc1a173,
+      "folige_color": 0xc1a173
+    }
+  }
+}
+```
+
 ## 季节性作物与湿度条件
 
 这个地方在农业一章有具体的描述，因此不再阐述。
-默认状态下，不会为未注册的作物提供控制标签，可以看做`eclipticseasons:crops/all_seasons`和`eclipticseasons:crops/arid_humid`。
-如果打开相关配置`Crop.RegisterCropDefaultValue`，则默认为所有无标记的CropBlock的子类设置为`春+夏+秋`以及`平均-潮湿`的生长条件。
+默认状态下，不会为未注册的作物提供控制标签，可以看做`eclipticseasons:crops/all_seasons`和
+`eclipticseasons:crops/arid_humid`。
+如果打开相关配置`Crop.RegisterCropDefaultValue`，则默认为所有无标记的CropBlock的子类设置为`春+夏+秋`以及`中等-潮湿`的生长条件。
 
-### 1. 季节类型
+### 季节类型
 
 默认状态下，错误季节的相对生长概率为0.25F。
 
@@ -129,10 +266,10 @@ Tag平台运行，目前主要分为三种。四季型地区，干湿季地区�
 
 ------
 
-### 2. 湿度类型
+### 湿度类型
 
 默认状态下，错误湿度的相对基础生长概率为0.25F，每差一级将缩小四倍。
-如一个适用于`平均-湿润`湿度条件的小麦作物，生长在沙漠中，那么其实际生长概率为0.0625F。
+如一个适用于`中等-湿润`湿度条件的小麦作物，生长在沙漠中，那么其实际生长概率为0.0625F。
 
 | 类型名称                                    | 最低湿度 | 最高湿度 |
 |:----------------------------------------|:-----|:-----|
