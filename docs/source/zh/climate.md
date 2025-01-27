@@ -169,6 +169,62 @@
 | COLD     | RARE     | ARID    |
 | FREEZING | RARE     | ARID    |
 
+| 群系      | id                                 | 湿润度等级 | 中文      |
+|---------|------------------------------------|-------|---------|
+| 竹林      | minecraft:bamboo_jungle            | 潮湿    | HUMID   |
+| 丛林      | minecraft:jungle                   | 潮湿    | HUMID   |
+| 红树林沼泽   | minecraft:mangrove_swamp           | 潮湿    | HUMID   |
+| 蘑菇岛     | minecraft:mushroom_fields          | 潮湿    | HUMID   |
+| 沼泽      | minecraft:swamp                    | 潮湿    | HUMID   |
+| 樱花树林    | minecraft:cherry_grove             | 湿润    | MOIST   |
+| 黑森林     | minecraft:dark_forest              | 湿润    | MOIST   |
+| 繁花森林    | minecraft:flower_forest            | 湿润    | MOIST   |
+| 森林      | minecraft:forest                   | 湿润    | MOIST   |
+| 草甸      | minecraft:meadow                   | 湿润    | MOIST   |
+| 稀疏丛林    | minecraft:sparse_jungle            | 湿润    | MOIST   |
+| 沙滩      | minecraft:beach                    | 一般    | AVERAGE |
+| 桦木森林    | minecraft:birch_forest             | 一般    | AVERAGE |
+| 冷水海洋    | minecraft:cold_ocean               | 一般    | AVERAGE |
+| 冷水深海    | minecraft:deep_cold_ocean          | 一般    | AVERAGE |
+| 深暗之域    | minecraft:deep_dark                | 一般    | AVERAGE |
+| 冰冻深海    | minecraft:deep_frozen_ocean        | 一般    | AVERAGE |
+| 温水深海    | minecraft:deep_lukewarm_ocean      | 一般    | AVERAGE |
+| 深海      | minecraft:deep_ocean               | 一般    | AVERAGE |
+| 溶洞      | minecraft:dripstone_caves          | 一般    | AVERAGE |
+| 冰封山峰    | minecraft:frozen_peaks             | 一般    | AVERAGE |
+| 雪林      | minecraft:grove                    | 一般    | AVERAGE |
+| 尖峭山峰    | minecraft:jagged_peaks             | 一般    | AVERAGE |
+| 温水海洋    | minecraft:lukewarm_ocean           | 一般    | AVERAGE |
+| 繁茂洞穴    | minecraft:lush_caves               | 一般    | AVERAGE |
+| 海洋      | minecraft:ocean                    | 一般    | AVERAGE |
+| 原始桦木森林  | minecraft:old_growth_birch_forest  | 一般    | AVERAGE |
+| 原始松木针叶林 | minecraft:old_growth_pine_taiga    | 一般    | AVERAGE |
+| 原始云杉针叶林 | minecraft:old_growth_spruce_taiga  | 一般    | AVERAGE |
+| 平原      | minecraft:plains                   | 一般    | AVERAGE |
+| 河流      | minecraft:river                    | 一般    | AVERAGE |
+| 积雪山坡    | minecraft:snowy_slopes             | 一般    | AVERAGE |
+| 向日葵平原   | minecraft:sunflower_plains         | 一般    | AVERAGE |
+| 针叶林     | minecraft:taiga                    | 一般    | AVERAGE |
+| 暖水海洋    | minecraft:warm_ocean               | 一般    | AVERAGE |
+| 冻洋      | minecraft:frozen_ocean             | 干燥    | DRY     |
+| 冻河      | minecraft:frozen_river             | 干燥    | DRY     |
+| 冰刺之地    | minecraft:ice_spikes               | 干燥    | DRY     |
+| 积雪沙滩    | minecraft:snowy_beach              | 干燥    | DRY     |
+| 雪原      | minecraft:snowy_plains             | 干燥    | DRY     |
+| 积雪针叶林   | minecraft:snowy_taiga              | 干燥    | DRY     |
+| 石岸      | minecraft:stony_shore              | 干燥    | DRY     |
+| 风袭森林    | minecraft:windswept_forest         | 干燥    | DRY     |
+| 风袭沙砾丘陵  | minecraft:windswept_gravelly_hills | 干燥    | DRY     |
+| 风袭丘陵    | minecraft:windswept_hills          | 干燥    | DRY     |
+| 恶地      | minecraft:badlands                 | 干旱    | ARID    |
+| 沙漠      | minecraft:desert                   | 干旱    | ARID    |
+| 风蚀恶地    | minecraft:eroded_badlands          | 干旱    | ARID    |
+| 热带草原    | minecraft:savanna                  | 干旱    | ARID    |
+| 热带高原    | minecraft:savanna_plateau          | 干旱    | ARID    |
+| 裸岩山峰    | minecraft:stony_peaks              | 干旱    | ARID    |
+| 风袭热带草原  | minecraft:windswept_savanna        | 干旱    | ARID    |
+| 疏林恶地    | minecraft:wooded_badlands          | 干旱    | ARID    |
+
 ### 群系颜色
 
 节气将影响群系的实际草木颜色表现，主要是影响四季群系和干湿季群系。
