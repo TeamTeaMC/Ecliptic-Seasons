@@ -134,41 +134,9 @@
 | 湿润 | MOIST   |
 | 潮湿 | HUMID   |
 
-由此得到枚举表格：
+群系初始状态可以参考如下表格：
 
-| 温度等级     | 降水量等级    | 湿润度等级   |
-|----------|----------|---------|
-| HEAT     | ABUNDANT | HUMID   |
-| HOT      | ABUNDANT | HUMID   |
-| WARM     | ABUNDANT | HUMID   |
-| HOT      | ADEQUATE | MOIST   |
-| WARM     | ADEQUATE | MOIST   |
-| COOL     | ADEQUATE | MOIST   |
-| COOL     | ABUNDANT | MOIST   |
-| COLD     | ABUNDANT | MOIST   |
-| HEAT     | ADEQUATE | AVERAGE |
-| WARM     | MODERATE | AVERAGE |
-| COOL     | MODERATE | AVERAGE |
-| COLD     | MODERATE | AVERAGE |
-| COLD     | ADEQUATE | AVERAGE |
-| FREEZING | ADEQUATE | AVERAGE |
-| FREEZING | ABUNDANT | AVERAGE |
-| HEAT     | MODERATE | DRY     |
-| HOT      | MODERATE | DRY     |
-| COOL     | SCARCE   | DRY     |
-| COLD     | SCARCE   | DRY     |
-| FREEZING | SCARCE   | DRY     |
-| FREEZING | MODERATE | DRY     |
-| HEAT     | RARE     | ARID    |
-| HEAT     | SCARCE   | ARID    |
-| HOT      | RARE     | ARID    |
-| HOT      | SCARCE   | ARID    |
-| WARM     | RARE     | ARID    |
-| WARM     | SCARCE   | ARID    |
-| COOL     | RARE     | ARID    |
-| COLD     | RARE     | ARID    |
-| FREEZING | RARE     | ARID    |
-
+#### Minecraft群系湿润度
 | 群系      | id                                 | 湿润度等级 | 英文名称    |
 |---------|------------------------------------|-------|---------|
 | 竹林      | minecraft:bamboo_jungle            | 潮湿    | HUMID   |
@@ -224,6 +192,128 @@
 | 裸岩山峰    | minecraft:stony_peaks              | 干旱    | ARID    |
 | 风袭热带草原  | minecraft:windswept_savanna        | 干旱    | ARID    |
 | 疏林恶地    | minecraft:wooded_badlands          | 干旱    | ARID    |
+
+#### BOP群系湿润度
+| 群系                   | id                                    | 湿润度等级 | 英文名称    |
+|----------------------|---------------------------------------|-------|---------|
+| 长沼                   | biomesoplenty:bayou                   | 潮湿    | HUMID   |
+| 泛滥平原                 | biomesoplenty:floodplain              | 潮湿    | HUMID   |
+| 真菌丛林                 | biomesoplenty:fungal_jungle           | 潮湿    | HUMID   |
+| 玉石悬崖                 | biomesoplenty:jade_cliffs             | 潮湿    | HUMID   |
+| 雨林                   | biomesoplenty:rainforest              | 潮湿    | HUMID   |
+| 裸岩雨林                 | biomesoplenty:rocky_rainforest        | 潮湿    | HUMID   |
+| 热带地区                 | biomesoplenty:tropics                 | 潮湿    | HUMID   |
+| 草原                   | biomesoplenty:grassland               | 湿润    | MOIST   |
+| Jacaranda Glade      | biomesoplenty:jacaranda_glade         | 湿润    | MOIST   |
+| 薰衣草花田                | biomesoplenty:lavender_field          | 湿润    | MOIST   |
+| 草沼                   | biomesoplenty:marsh                   | 湿润    | MOIST   |
+| 神秘森林                 | biomesoplenty:mystic_grove            | 湿润    | MOIST   |
+| Overgrown Greens     | biomesoplenty:overgrown_greens        | 湿润    | MOIST   |
+| 湿地                   | biomesoplenty:wetland                 | 湿润    | MOIST   |
+| Aspen Glade          | biomesoplenty:aspen_glade             | 一般    | AVERAGE |
+| 泥潭                   | biomesoplenty:bog                     | 一般    | AVERAGE |
+| 冷杉针叶林                | biomesoplenty:coniferous_forest       | 一般    | AVERAGE |
+| 峭壁                   | biomesoplenty:crag                    | 一般    | AVERAGE |
+| 沙丘海滩                 | biomesoplenty:dune_beach              | 一般    | AVERAGE |
+| 原野                   | biomesoplenty:field                   | 一般    | AVERAGE |
+| 冷杉林空地                | biomesoplenty:fir_clearing            | 一般    | AVERAGE |
+| 原野森林                 | biomesoplenty:forested_field          | 一般    | AVERAGE |
+| 夜光石窟                 | biomesoplenty:glowing_grotto          | 一般    | AVERAGE |
+| Gravel Beach         | biomesoplenty:gravel_beach            | 一般    | AVERAGE |
+| 高地                   | biomesoplenty:highland                | 一般    | AVERAGE |
+| Hot Springs          | biomesoplenty:hot_springs             | 一般    | AVERAGE |
+| 繁茂沙漠                 | biomesoplenty:lush_desert             | 一般    | AVERAGE |
+| 繁茂的热带草原              | biomesoplenty:lush_savanna            | 一般    | AVERAGE |
+| 枫树林                  | biomesoplenty:maple_woods             | 一般    | AVERAGE |
+| Moor                 | biomesoplenty:moor                    | 一般    | AVERAGE |
+| 原始林地                 | biomesoplenty:old_growth_woodland     | 一般    | AVERAGE |
+| 不祥树林                 | biomesoplenty:ominous_woods           | 一般    | AVERAGE |
+| 果园                   | biomesoplenty:orchard                 | 一般    | AVERAGE |
+| 根源山谷                 | biomesoplenty:origin_valley           | 一般    | AVERAGE |
+| 南瓜园                  | biomesoplenty:pumpkin_patch           | 一般    | AVERAGE |
+| 红木森林                 | biomesoplenty:redwood_forest          | 一般    | AVERAGE |
+| 季节性森林                | biomesoplenty:seasonal_forest         | 一般    | AVERAGE |
+| Snowblossom Grove    | biomesoplenty:snowblossom_grove       | 一般    | AVERAGE |
+| 蜘蛛巢穴                 | biomesoplenty:spider_nest             | 一般    | AVERAGE |
+| 苔原                   | biomesoplenty:tundra                  | 一般    | AVERAGE |
+| 林地                   | biomesoplenty:woodland                | 一般    | AVERAGE |
+| 极光花园                 | biomesoplenty:auroral_garden          | 干燥    | DRY     |
+| 死寂森林                 | biomesoplenty:dead_forest             | 干燥    | DRY     |
+| 苔沼                   | biomesoplenty:muskeg                  | 干燥    | DRY     |
+| 原始死寂森林               | biomesoplenty:old_growth_dead_forest  | 干燥    | DRY     |
+| 积雪的冷杉针叶林             | biomesoplenty:snowy_coniferous_forest | 干燥    | DRY     |
+| 积雪的冷杉林空地             | biomesoplenty:snowy_fir_clearing      | 干燥    | DRY     |
+| 积雪的枫树林               | biomesoplenty:snowy_maple_woods       | 干燥    | DRY     |
+| Wintry Origin Valley | biomesoplenty:wintry_origin_valley    | 干燥    | DRY     |
+| 寒漠                   | biomesoplenty:cold_desert             | 干旱    | ARID    |
+| 旱地                   | biomesoplenty:dryland                 | 干旱    | ARID    |
+| 地中海森林                | biomesoplenty:mediterranean_forest    | 干旱    | ARID    |
+| 牧场                   | biomesoplenty:pasture                 | 干旱    | ARID    |
+| 北美草原                 | biomesoplenty:prairie                 | 干旱    | ARID    |
+| 裸岩灌丛地                | biomesoplenty:rocky_shrubland         | 干旱    | ARID    |
+| 灌木丛林地                | biomesoplenty:scrubland               | 干旱    | ARID    |
+| 灌丛                   | biomesoplenty:shrubland               | 干旱    | ARID    |
+| 火山平原                 | biomesoplenty:volcanic_plains         | 干旱    | ARID    |
+| 火山                   | biomesoplenty:volcano                 | 干旱    | ARID    |
+| 荒地                   | biomesoplenty:wasteland               | 干旱    | ARID    |
+| Wasteland Steppe     | biomesoplenty:wasteland_steppe        | 干旱    | ARID    |
+
+#### BWG群系湿润度
+| 群系        | id                                       | 湿润度等级 | 英文名称    |
+|-----------|------------------------------------------|-------|---------|
+| 长沼        | biomeswevegone:bayou                     | 潮湿    | HUMID   |
+| 峭壁花园      | biomeswevegone:crag_gardens              | 潮湿    | HUMID   |
+| 柏木沼泽      | biomeswevegone:cypress_swamplands        | 潮湿    | HUMID   |
+| 繁茂林地      | biomeswevegone:overgrowth_woodlands      | 潮湿    | HUMID   |
+| 苍白沼泽      | biomeswevegone:pale_bog                  | 潮湿    | HUMID   |
+| 红杉木丛      | biomeswevegone:redwood_thicket           | 潮湿    | HUMID   |
+| 热带雨林      | biomeswevegone:tropical_rainforest       | 潮湿    | HUMID   |
+| 白色红树林沼泽   | biomeswevegone:white_mangrove_marshes    | 潮湿    | HUMID   |
+| 玄武岩岩障     | biomeswevegone:basalt_barrera            | 湿润    | MOIST   |
+| 黑森林       | biomeswevegone:black_forest              | 湿润    | MOIST   |
+| 可可尼诺草甸    | biomeswevegone:coconino_meadow           | 湿润    | MOIST   |
+| 乌木森林      | biomeswevegone:ebony_woods               | 湿润    | MOIST   |
+| 封魔缠怨之境    | biomeswevegone:enchanted_tangle          | 湿润    | MOIST   |
+| 遗忘之森      | biomeswevegone:forgotten_forest          | 湿润    | MOIST   |
+| 繁茂交错带     | biomeswevegone:lush_stacks               | 湿润    | MOIST   |
+| 果园        | biomeswevegone:orchard                   | 湿润    | MOIST   |
+| 彩虹海岸      | biomeswevegone:rainbow_beach             | 湿润    | MOIST   |
+| 樱花树林      | biomeswevegone:sakura_grove              | 湿润    | MOIST   |
+| 温带树林      | biomeswevegone:temperate_grove           | 湿润    | MOIST   |
+| 绒球葱灌丛     | biomeswevegone:allium_shrubland          | 一般    | AVERAGE |
+| 苋菜花原野     | biomeswevegone:amaranth_grassland        | 一般    | AVERAGE |
+| 北境白杨森林    | biomeswevegone:aspen_boreal              | 一般    | AVERAGE |
+| 加拿大地盾     | biomeswevegone:canadian_shield           | 一般    | AVERAGE |
+| 锡卡灌丛      | biomeswevegone:cika_woods                | 一般    | AVERAGE |
+| 针叶树林      | biomeswevegone:coniferous_forest         | 一般    | AVERAGE |
+| 安英岩山岭     | biomeswevegone:dacite_ridges             | 一般    | AVERAGE |
+| 安英岩海滨     | biomeswevegone:dacite_shore              | 一般    | AVERAGE |
+| 破碎的雨林     | biomeswevegone:fragment_jungle           | 一般    | AVERAGE |
+| 寒霜针叶林     | biomeswevegone:frosted_coniferous_forest | 一般    | AVERAGE |
+| 覆雪的针叶林    | biomeswevegone:frosted_taiga             | 一般    | AVERAGE |
+| 呼啸山巅      | biomeswevegone:howling_peaks             | 一般    | AVERAGE |
+| 枫叶针叶林     | biomeswevegone:maple_taiga               | 一般    | AVERAGE |
+| 南瓜山谷      | biomeswevegone:pumpkin_valley            | 一般    | AVERAGE |
+| 玫瑰原野      | biomeswevegone:rose_fields               | 一般    | AVERAGE |
+| 破碎的冰川     | biomeswevegone:shattered_glacier         | 一般    | AVERAGE |
+| 天际山谷      | biomeswevegone:skyrise_vale              | 一般    | AVERAGE |
+| 巫术垂柳之森    | biomeswevegone:weeping_witch_forest      | 一般    | AVERAGE |
+| 榉木森林      | biomeswevegone:zelkova_forest            | 一般    | AVERAGE |
+| 被侵蚀的北境    | biomeswevegone:eroded_borealis           | 干燥    | DRY     |
+| 鸟尾花常绿灌木群落 | biomeswevegone:firecracker_chaparral     | 干燥    | DRY     |
+| 蓝花楹丛林     | biomeswevegone:jacaranda_jungle          | 干燥    | DRY     |
+| 热带南洋杉疏林草原 | biomeswevegone:araucaria_savanna         | 干旱    | ARID    |
+| 阿塔卡玛旱地    | biomeswevegone:atacama_outback           | 干旱    | ARID    |
+| 猴面包疏林草原   | biomeswevegone:baobab_savanna            | 干旱    | ARID    |
+| 绯红苔原      | biomeswevegone:crimson_tundra            | 干旱    | ARID    |
+| 死海        | biomeswevegone:dead_sea                  | 干旱    | ARID    |
+| 铁色木蘑菇石交错带 | biomeswevegone:ironwood_gour             | 干旱    | ARID    |
+| 莫哈韦沙漠     | biomeswevegone:mojave_desert             | 干旱    | ARID    |
+| 原野        | biomeswevegone:prairie                   | 干旱    | ARID    |
+| 红岩山谷      | biomeswevegone:red_rock_valley           | 干旱    | ARID    |
+| 崎岖恶地      | biomeswevegone:rugged_badlands           | 干旱    | ARID    |
+| 锯齿恶地      | biomeswevegone:sierra_badlands           | 干旱    | ARID    |
+| 风袭沙漠      | biomeswevegone:windswept_desert          | 干旱    | ARID    |
 
 ### 群系颜色
 
