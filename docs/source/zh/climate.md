@@ -169,7 +169,7 @@
 | COLD     | RARE     | ARID    |
 | FREEZING | RARE     | ARID    |
 
-| 群系      | id                                 | 湿润度等级 | 中文      |
+| 群系      | id                                 | 湿润度等级 | 英文名称    |
 |---------|------------------------------------|-------|---------|
 | 竹林      | minecraft:bamboo_jungle            | 潮湿    | HUMID   |
 | 丛林      | minecraft:jungle                   | 潮湿    | HUMID   |
