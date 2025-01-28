@@ -21,10 +21,7 @@ import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TagsUpdatedEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.event.level.BlockEvent;
-import net.minecraftforge.event.level.LevelEvent;
-import net.minecraftforge.event.level.SaplingGrowTreeEvent;
-import net.minecraftforge.event.level.SleepFinishedTimeEvent;
+import net.minecraftforge.event.level.*;
 import net.minecraftforge.event.server.ServerAboutToStartEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -94,6 +91,10 @@ public class AllListener {
 
     }
 
+    @SubscribeEvent
+    public static void onChunkUnloadEvent(ChunkEvent.Unload event) {
+        CropGrowthHandler.unloadChunk((Level) event.getLevel(), event.getChunk().getPos());
+    }
 
     @SubscribeEvent
     public static void onWorldTick(TickEvent.LevelTickEvent event) {

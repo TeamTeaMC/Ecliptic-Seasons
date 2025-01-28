@@ -6,6 +6,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
+import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
 import com.teamtea.eclipticseasons.compat.vanilla.VanillaWeather;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -17,6 +18,7 @@ import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.util.valueproviders.IntProvider;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.levelgen.Heightmap;
@@ -71,6 +73,21 @@ public abstract class MixinServerLevel extends Level {
         return original.call(intProvider, randomSource);
     }
 
+    @Inject(
+            method = "tickChunk",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/material/FluidState;isRandomlyTicking()Z")
+    )
+    private void ecliptic$tickChunk_handleRandomTick(LevelChunk chunk, int randomTickSpeed, CallbackInfo ci, @Local BlockState blockState, @Local BlockPos blockPos) {
+        CropGrowthHandler.handleRandomTick(this,chunk,blockPos,blockState);
+    }
+
+    @Inject(
+            method = "tickChunk",
+            at = @At(value = "HEAD")
+    )
+    private void ecliptic$tickChunk_handleRandomTick_clear(LevelChunk chunk, int randomTickSpeed, CallbackInfo ci) {
+        CropGrowthHandler.handleRandomTick2(this,chunk);
+    }
 
     @WrapOperation(
             method = "tickChunk",

@@ -9,6 +9,8 @@ import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.network.SimpleNetworkHandler;
 import com.teamtea.eclipticseasons.common.network.SolarTermsMessage;
 import com.teamtea.eclipticseasons.config.CommonConfig;
+import it.unimi.dsi.fastutil.Pair;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -16,12 +18,15 @@ import net.minecraft.network.protocol.game.ClientboundChunksBiomesPacket;
 import net.minecraft.server.level.ChunkMap;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.storage.DimensionDataStorage;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
@@ -39,9 +44,11 @@ public class SolarDataManager extends SavedData {
     protected int solarTermsTicks = 0;
 
     protected WeakReference<Level> levelWeakReference;
+    private final Map<ChunkPos, List<Pair<BlockPos, BlockState>>> serverLevelMapMap;
 
     public SolarDataManager(Level level) {
         levelWeakReference = new WeakReference<>(level);
+        serverLevelMapMap=new HashMap<>();
     }
 
     public SolarDataManager(Level level, CompoundTag nbt) {
@@ -139,6 +146,75 @@ public class SolarDataManager extends SavedData {
     public void setSolarTermsTicks(int solarTermsTicks) {
         this.solarTermsTicks = solarTermsTicks;
         setDirty();
+    }
+
+    public void addMap(BlockPos pos, BlockState state) {
+        ChunkPos chunkPos = new ChunkPos(pos);
+        List<Pair<BlockPos, BlockState>> blockPosBlockStateMap = this.serverLevelMapMap.get(chunkPos);
+        if (blockPosBlockStateMap == null) {
+            blockPosBlockStateMap = new ArrayList<Pair<BlockPos, BlockState>>();
+            this.serverLevelMapMap.put(chunkPos, blockPosBlockStateMap);
+        }
+
+        for (int i = 0; i < blockPosBlockStateMap.size(); i++) {
+            Pair<BlockPos, BlockState> p = blockPosBlockStateMap.get(i);
+            if (p.first().equals(pos)) {
+                if (p.second() != state) {
+                    blockPosBlockStateMap.set(i, Pair.of(pos, state));
+                }
+                return;
+            }
+        }
+        blockPosBlockStateMap.add(Pair.of(pos, state));
+    }
+
+    public void unloadChunk(ChunkPos chunkPos) {
+        this.serverLevelMapMap.remove(chunkPos);
+    }
+
+    public BlockState findNearPos(BlockPos blockPos) {
+        ChunkPos chunkPos = new ChunkPos(blockPos);
+        Vec3 center = blockPos.getCenter();
+
+        int localX = blockPos.getX() & 15;
+        int localZ = blockPos.getZ() & 15;
+
+        boolean isLeftBorder = localX <= 3;
+        boolean isRightBorder = localX >= 12;
+        boolean isFrontBorder = localZ <= 3;
+        boolean isBackBorder = localZ >= 12;
+
+        for (int dx = isLeftBorder ? -1 : 0; dx <= (isRightBorder ? 1 : 0); dx++) {
+            for (int dz = isFrontBorder ? -1 : 0; dz <= (isBackBorder ? 1 : 0); dz++) {
+                ChunkPos currentChunkPos = new ChunkPos(chunkPos.x + dx, chunkPos.z + dz);
+                List<Pair<BlockPos, BlockState>> lis = this.serverLevelMapMap.getOrDefault(currentChunkPos, null);
+
+                if (lis != null) {
+                    for (Pair<BlockPos, BlockState> p : lis) {
+                        if (p.first().getY() < blockPos.getY()
+                                && p.first().getCenter().distanceToSqr(center) < 16.1) {
+                            return p.second();
+                        }
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
+
+    public void randomClearSome(ChunkPos pos, RandomSource randomSource) {
+        if (this.serverLevelMapMap.isEmpty()) return;
+        List<Pair<BlockPos, BlockState>> list = this.serverLevelMapMap.get(pos);
+        if (list != null) {
+            for (int i = 0; i < list.size(); i++) {
+                if (randomSource.nextInt(5) == 0) {
+                    list.remove(i);
+                    i--;
+                }
+            }
+            if (list.isEmpty()) this.serverLevelMapMap.remove(pos);
+        }
     }
 
     public void sendAndUpdate(ServerLevel world) {

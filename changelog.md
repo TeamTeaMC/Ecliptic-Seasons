@@ -146,11 +146,32 @@ fix a very small probability of occasional crash
 make spruce trees no longer drop leaves particles
 
 0.9
-fix thunder level in client check
-add event
+### Things changes:
+
+*Please proceed with this update carefully, as it requires feedback from players. 
+Especially for the greenhouse mechanism, it is currently only a test version, and further mechanism optimization and content expansion may occur in the future.*
+
+**Add two event.**
+
+Now, when the solar term changes, the Game Bus will be notified, please check it in the API package.
+
+At the same time, you can use events to modify and register crop information.
+
+**Add greenhouse and humidity raising mechanism.**
+
+You can now build greenhouses to protect against seasonal and humidity changes. You can build glass greenhouses or other enclosed greenhouses, each suitable for different seasons. With convenience comes challenges. Winters in cold biomes are now slightly longer for crops, while summers in hot biomes are similarly changed.
+
+In addition, in a greenhouse, bubble columns exposed to air will slightly increase the humidity of the surrounding area if activated by magma blocks below. Rain has a similar effect for open air environments.
+
+### Performance Optimization：
 add config cache
-clean necessary biome cache (not need for 1.20)
+
 faster the weather query time
+
 faster the small biome check time
+### Bug Fixes:
+fix thunder level in client check
+
 fix sound in desert summer
 
+clean necessary biome cache (not need for 1.20)
