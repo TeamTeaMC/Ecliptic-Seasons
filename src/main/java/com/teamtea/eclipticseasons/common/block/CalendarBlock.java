@@ -1,15 +1,12 @@
 package com.teamtea.eclipticseasons.common.block;
 
-import com.mojang.serialization.MapCodec;
-import com.teamtea.eclipticseasons.EclipticSeasons;
+import com.teamtea.eclipticseasons.common.registry.ModContents;
 import com.teamtea.eclipticseasons.common.block.base.SimpleHorizontalEntityBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -67,6 +64,6 @@ public class CalendarBlock extends SimpleHorizontalEntityBlock {
 
     @Override
     public @Nullable BlockEntity newBlockEntity(BlockPos pPos, BlockState pState) {
-        return EclipticSeasons.ModContents.calendar_entity_type.get().create(pPos, pState);
+        return ModContents.calendar_entity_type.get().create(pPos, pState);
     }
 }

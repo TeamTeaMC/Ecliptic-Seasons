@@ -1,5 +1,6 @@
 package com.teamtea.eclipticseasons.client.core;
 
+import com.teamtea.eclipticseasons.common.registry.ModContents;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
@@ -7,7 +8,6 @@ import com.teamtea.eclipticseasons.client.model.*;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.config.ClientConfig;
 
-import com.teamtea.eclipticseasons.mixin.EclipticSeasonsMixinPlugin;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
@@ -17,7 +17,6 @@ import net.minecraft.client.renderer.texture.SpriteContents;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelResourceLocation;
-import net.minecraft.client.resources.model.SimpleBakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
@@ -26,12 +25,8 @@ import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.level.*;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.Half;
-import net.minecraft.world.level.block.state.properties.StairsShape;
 import net.minecraftforge.client.ChunkRenderTypeSet;
 import net.minecraftforge.client.model.data.ModelData;
-import net.minecraftforge.common.Tags;
-import net.minecraftforge.common.util.LazyOptional;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 
 import java.util.*;
@@ -42,9 +37,9 @@ public class ModelManager {
     public static final RenderType CUTOUT_MIPPED = null;
 
     public static Map<ResourceLocation, BakedModel> models;
-    public static ModelResourceLocation snowOverlayLeaves = new ModelResourceLocation(EclipticSeasons.ModContents.snowyLeaves.getId(), "");
-    public static ModelResourceLocation snowySlabBottom = new ModelResourceLocation(EclipticSeasons.ModContents.snowySlab.getId(), "type=bottom,waterlogged=false");
-    public static ModelResourceLocation snowOverlayBlock = new ModelResourceLocation(EclipticSeasons.ModContents.snowyBlock.getId(), "");
+    public static ModelResourceLocation snowOverlayLeaves = new ModelResourceLocation(ModContents.snowyLeaves.getId(), "");
+    public static ModelResourceLocation snowySlabBottom = new ModelResourceLocation(ModContents.snowySlab.getId(), "type=bottom,waterlogged=false");
+    public static ModelResourceLocation snowOverlayBlock = new ModelResourceLocation(ModContents.snowyBlock.getId(), "");
 
 
     public static ResourceLocation snowy_custom = EclipticSeasons.rl("block/snowy_custom");
@@ -306,7 +301,7 @@ public class ModelManager {
             if (snowyModelsCache.getOrDefault(snowModel, -1) > -1) {
                 BlockState snowState = null;
                 if (models != null && flag == MapChecker.FLAG_STAIRS) {
-                    snowState = EclipticSeasons.ModContents.snowyStairs.get().defaultBlockState()
+                    snowState = ModContents.snowyStairs.get().defaultBlockState()
                             .setValue(StairBlock.FACING, state.getValue(StairBlock.FACING))
                             .setValue(StairBlock.HALF, state.getValue(StairBlock.HALF))
                             .setValue(StairBlock.SHAPE, state.getValue(StairBlock.SHAPE));
@@ -418,7 +413,7 @@ public class ModelManager {
                 if (isSnowy) {
                     BlockState snowState = null;
                     if (models != null && flag == MapChecker.FLAG_STAIRS) {
-                        snowState = EclipticSeasons.ModContents.snowyStairs.get().defaultBlockState()
+                        snowState = ModContents.snowyStairs.get().defaultBlockState()
                                 .setValue(StairBlock.FACING, state.getValue(StairBlock.FACING))
                                 .setValue(StairBlock.HALF, state.getValue(StairBlock.HALF))
                                 .setValue(StairBlock.SHAPE, state.getValue(StairBlock.SHAPE));

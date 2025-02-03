@@ -1,6 +1,7 @@
 package com.teamtea.eclipticseasons.data.model;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
+import com.teamtea.eclipticseasons.common.registry.ModContents;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -27,7 +28,7 @@ public class BlockStatesDataProvider extends BlockStateProvider {
 
     @Override
     protected void registerStatesAndModels() {
-        for (var holder : List.of(EclipticSeasons.ModContents.calendar)) {
+        for (var holder : List.of(ModContents.calendar)) {
             getVariantBuilder(holder.get()).forAllStatesExcept(state -> ConfiguredModel.builder()
                     .modelFile(models().getExistingFile(resourceBlock(holder.getId().getPath())))
                     .rotationY(getRotateYByFacing(state.getValue(BlockStateProperties.HORIZONTAL_FACING)))

@@ -1,5 +1,7 @@
 package com.teamtea.eclipticseasons.client;
 
+import com.teamtea.eclipticseasons.common.registry.ModContents;
+import com.teamtea.eclipticseasons.common.registry.ParticleRegistry;
 import com.teamtea.eclipticseasons.client.color.season.BiomeColorsHandler;
 import com.teamtea.eclipticseasons.client.model.SnowyBakedModelWrapper;
 import com.teamtea.eclipticseasons.client.particle.ButterflyParticle;
@@ -12,10 +14,7 @@ import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.BlockModelShaper;
 import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.client.resources.model.ModelResourceLocation;
-import net.minecraft.client.resources.model.SimpleBakedModel;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.GrassColor;
 import net.minecraft.world.level.block.*;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
@@ -38,17 +37,17 @@ public class ClientSetup {
 
     @SubscribeEvent
     public static void blockRegister(RegisterParticleProvidersEvent event) {
-        event.registerSpriteSet(EclipticSeasons.ParticleRegistry.FIREFLY, (p_277215_) ->
+        event.registerSpriteSet(ParticleRegistry.FIREFLY, (p_277215_) ->
                 (particleType, level, x, y, z, p_277222_, p_277223_, p_277224_) ->
                         new FireflyParticle(level, x, y, z, p_277215_));
-        event.registerSpriteSet(EclipticSeasons.ParticleRegistry.WILD_GOOSE, (p_277215_) ->
+        event.registerSpriteSet(ParticleRegistry.WILD_GOOSE, (p_277215_) ->
                 (particleType, level, x, y, z, p_277222_, p_277223_, p_277224_) ->
                         new WildGooseParticle(level, x, y, z, 0.01, 0.01, 0.01, p_277215_));
 
-        event.registerSpriteSet(EclipticSeasons.ParticleRegistry.BUTTERFLY, (p_277215_) ->
+        event.registerSpriteSet(ParticleRegistry.BUTTERFLY, (p_277215_) ->
                 (particleType, level, x, y, z, p_277222_, p_277223_, p_277224_) ->
                         new ButterflyParticle(level, x, y, z, p_277215_));
-        event.registerSpriteSet(EclipticSeasons.ParticleRegistry.FALLEN_LEAVES, (p_277215_) ->
+        event.registerSpriteSet(ParticleRegistry.FALLEN_LEAVES, (p_277215_) ->
                 (particleType, level, x, y, z, p_277222_, p_277223_, p_277224_) ->
                         new FallenLeavesParticle(level, x, y, z, p_277222_, p_277223_, p_277224_, particleType, p_277215_));
 
@@ -85,7 +84,7 @@ public class ClientSetup {
             BiomeColors.GRASS_COLOR_RESOLVER = BiomeColorsHandler.GRASS_COLOR;
             BiomeColors.FOLIAGE_COLOR_RESOLVER = BiomeColorsHandler.FOLIAGE_COLOR;
 
-            ItemBlockRenderTypes.setRenderLayer(EclipticSeasons.ModContents.snowyBlock.get(), RenderType.cutoutMipped());
+            ItemBlockRenderTypes.setRenderLayer(ModContents.snowyBlock.get(), RenderType.cutoutMipped());
 
         });
     }
@@ -93,7 +92,7 @@ public class ClientSetup {
     //    注意static是单次，比如启动类，没有比如右击事件
     @SubscribeEvent
     public static void onRegisterRenderers(EntityRenderersEvent.RegisterRenderers event) {
-        event.registerBlockEntityRenderer(EclipticSeasons.ModContents.calendar_entity_type.get(), CalendarBlockEntityRenderer::new);
+        event.registerBlockEntityRenderer(ModContents.calendar_entity_type.get(), CalendarBlockEntityRenderer::new);
 
     }
 
@@ -121,7 +120,7 @@ public class ClientSetup {
                         ModelManager.snowySlabBottom,
                         ModelManager.snowOverlayBlock
                 ));
-        bakedModels.addAll(EclipticSeasons.ModContents.snowyStairs.get().getStateDefinition().getPossibleStates().stream()
+        bakedModels.addAll(ModContents.snowyStairs.get().getStateDefinition().getPossibleStates().stream()
                 .map(BlockModelShaper::stateToModelLocation).toList());
 
         for (ResourceLocation modelResourceLocation : bakedModels) {

@@ -1,8 +1,7 @@
 package com.teamtea.eclipticseasons.data.recipe;
 
 
-import com.teamtea.eclipticseasons.EclipticSeasons;
-import net.minecraft.core.HolderLookup;
+import com.teamtea.eclipticseasons.common.registry.ModContents;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.data.recipes.RecipeCategory;
@@ -10,7 +9,6 @@ import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.world.item.Items;
 
-import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 public final class ESRecipeProvider extends RecipeProvider {
@@ -22,7 +20,7 @@ public final class ESRecipeProvider extends RecipeProvider {
 
     @Override
     protected void buildRecipes(Consumer<FinishedRecipe> consumer) {
-        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, EclipticSeasons.ModContents.calendar_item.get())
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, ModContents.calendar_item.get())
                 .define('x', Items.PAPER)
                 .define('y', Items.BOOK)
                 .define('z', Items.FEATHER)

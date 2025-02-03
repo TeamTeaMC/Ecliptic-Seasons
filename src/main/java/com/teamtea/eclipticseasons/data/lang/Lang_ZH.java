@@ -1,7 +1,7 @@
 package com.teamtea.eclipticseasons.data.lang;
 
 
-import com.teamtea.eclipticseasons.EclipticSeasons;
+import com.teamtea.eclipticseasons.common.registry.ModContents;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import net.minecraft.data.PackOutput;
 import net.minecraftforge.common.data.ExistingFileHelper;
@@ -24,7 +24,7 @@ public class Lang_ZH extends LangHelper {
         add("itemGroup." + EclipticSeasonsApi.MODID + ".core", "节气");
 
 
-        add(EclipticSeasons.ModContents.calendar.get(), "日历");
+        add(ModContents.calendar.get(), "日历");
         add("item.eclipticseasons.calendar.pop_hint", "%1$s，%2$s/%3$s");
         // add(EclipticSeasons.ModContents.wind_chimes.get(), "风铃");
         // add(EclipticSeasons.ModContents.paper_wind_chimes.get(), "纸风铃");

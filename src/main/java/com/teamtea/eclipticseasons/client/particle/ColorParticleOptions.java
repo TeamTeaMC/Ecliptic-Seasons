@@ -4,7 +4,7 @@ import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import com.teamtea.eclipticseasons.EclipticSeasons;
+import com.teamtea.eclipticseasons.common.registry.ParticleRegistry;
 import net.minecraft.core.particles.DustParticleOptionsBase;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
@@ -34,6 +34,6 @@ public class ColorParticleOptions extends DustParticleOptionsBase {
 
     @Override
     public ParticleType<ColorParticleOptions> getType() {
-        return EclipticSeasons.ParticleRegistry.FALLEN_LEAVES;
+        return ParticleRegistry.FALLEN_LEAVES;
     }
 }
