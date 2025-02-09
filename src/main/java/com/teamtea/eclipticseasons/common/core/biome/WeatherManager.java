@@ -1,7 +1,7 @@
 package com.teamtea.eclipticseasons.common.core.biome;
 
 import com.teamtea.eclipticseasons.common.registry.EffectRegistry;
-import com.teamtea.eclipticseasons.common.registry.ModContents;
+import com.teamtea.eclipticseasons.common.registry.ModAdvancements;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.climate.BiomeRain;
 import com.teamtea.eclipticseasons.api.constant.climate.FlatRain;
@@ -400,7 +400,7 @@ public class WeatherManager {
                             }
                             if (!player.hasEffect(EffectRegistry.HEAT_STROKE) && !isColdHe) {
                                 player.addEffect(new MobEffectInstance(EffectRegistry.HEAT_STROKE, 600));
-                                ModContents.heatStrokeCriterion.trigger(player);
+                                ModAdvancements.heatStrokeCriterion.trigger(player);
                             }
                         }
                     }
@@ -509,7 +509,7 @@ public class WeatherManager {
                     {
                         var st = EclipticSeasonsApi.getInstance().getSolarTerm(level);
                         if (solarTermsRecordCa.addSolarTerm(st)) {
-                        } else ModContents.solarTermsCriterion.trigger(serverPlayer);
+                        } else ModAdvancements.solarTermsCriterion.trigger(serverPlayer);
                     }
             );
 

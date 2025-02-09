@@ -41,7 +41,9 @@ public class ClientCon {
                 nextLevel = null;
             }
         } else {
-            nextLevel = level;
+            if (useLevel == null)
+                useLevel = level;
+            else nextLevel = level;
         }
     }
 }

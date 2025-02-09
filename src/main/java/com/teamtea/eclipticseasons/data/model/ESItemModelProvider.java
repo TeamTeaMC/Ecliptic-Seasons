@@ -1,7 +1,7 @@
 package com.teamtea.eclipticseasons.data.model;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
-import com.teamtea.eclipticseasons.common.registry.ModContents;
+import com.teamtea.eclipticseasons.common.registry.ItemRegistry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
@@ -26,7 +26,7 @@ public class ESItemModelProvider extends ItemModelProvider {
 
     @Override
     protected void registerModels() {
-        addSimple(ModContents.calendar_item.get());
+        addSimple(ItemRegistry.calendar_item.get());
         // addSimple(EclipticSeasons.ModContents.wind_chimes_item.value());
         // addSimple(EclipticSeasons.ModContents.paper_wind_chimes_item.value());
         // addSimple(EclipticSeasons.ModContents.bamboo_wind_chimes_item.value());

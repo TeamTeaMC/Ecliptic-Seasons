@@ -1,7 +1,7 @@
 package com.teamtea.eclipticseasons;
 
 
-import com.teamtea.eclipticseasons.common.registry.ModContents;
+import com.teamtea.eclipticseasons.common.registry.*;
 import com.teamtea.eclipticseasons.compat.CompatModule;
 import com.teamtea.eclipticseasons.config.ClientConfig;
 import com.teamtea.eclipticseasons.common.network.SimpleNetworkHandler;
@@ -78,9 +78,9 @@ public class EclipticSeasons {
 
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
-        ModContents.BLOCK_DEFERRED_REGISTER.register(modEventBus);
-        ModContents.ITEM_DEFERRED_REGISTER.register(modEventBus);
-        ModContents.BLOCK_ENTITY_TYPE_DEFERRED_REGISTER.register(modEventBus);
+        BlockRegistry.BLOCK_DEFERRED_REGISTER.register(modEventBus);
+        ItemRegistry.ITEM_DEFERRED_REGISTER.register(modEventBus);
+        BlockEntityRegistry.BLOCK_ENTITY_TYPE_DEFERRED_REGISTER.register(modEventBus);
 
         modEventBus.addListener(this::gatherData);
         modEventBus.addListener(this::FMLCommonSetup);
@@ -94,7 +94,7 @@ public class EclipticSeasons {
 
         CompatModule.register(MinecraftForge.EVENT_BUS, modEventBus);
 
-        ModContents.register();
+        ModAdvancements.register();
     }
 
 

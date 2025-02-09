@@ -175,3 +175,18 @@ fix thunder level in client check
 fix sound in desert summer
 
 clean necessary biome cache (not need for 1.20)
+
+0.10
+
+### Critical Fixes
+Fixed an issue where certain mods could not obtain correct rainfall prediction information when using biome queries, due to the lack of Level input and no interaction with the mod. These mods will now receive query results related to the Overworld.
+
+### Improvements
+Due to the increasing amount of registration information, the registration-related code has been refactored and organized.
+
+When players walk on snow-covered blocks, the sound will now resemble footsteps on snow.
+
+### Minor Updates
+Added translation support for "Rainfall."
+
+Optimized the display method for some non-critical warning messages.

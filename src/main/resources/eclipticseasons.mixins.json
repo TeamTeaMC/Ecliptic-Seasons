@@ -14,6 +14,7 @@
     "common.block.MixinIBlockExtension",
     "common.block.MixinLightningRodBlock",
     "common.command.MixinWeatherCommand",
+    "common.entity.MixinEntity",
     "common.entity.animal.bee.MixinBee",
     "common.entity.animal.bee.MixinBee_BeePollinateGoal",
     "common.entity.animal.fox.MixinFox",

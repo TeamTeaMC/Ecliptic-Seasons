@@ -1,6 +1,6 @@
 package com.teamtea.eclipticseasons.client.core;
 
-import com.teamtea.eclipticseasons.common.registry.ModContents;
+import com.teamtea.eclipticseasons.common.registry.BlockRegistry;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
@@ -37,9 +37,9 @@ public class ModelManager {
     public static final RenderType CUTOUT_MIPPED = null;
 
     public static Map<ResourceLocation, BakedModel> models;
-    public static ModelResourceLocation snowOverlayLeaves = new ModelResourceLocation(ModContents.snowyLeaves.getId(), "");
-    public static ModelResourceLocation snowySlabBottom = new ModelResourceLocation(ModContents.snowySlab.getId(), "type=bottom,waterlogged=false");
-    public static ModelResourceLocation snowOverlayBlock = new ModelResourceLocation(ModContents.snowyBlock.getId(), "");
+    public static ModelResourceLocation snowOverlayLeaves = new ModelResourceLocation(BlockRegistry.snowyLeaves.getId(), "");
+    public static ModelResourceLocation snowySlabBottom = new ModelResourceLocation(BlockRegistry.snowySlab.getId(), "type=bottom,waterlogged=false");
+    public static ModelResourceLocation snowOverlayBlock = new ModelResourceLocation(BlockRegistry.snowyBlock.getId(), "");
 
 
     public static ResourceLocation snowy_custom = EclipticSeasons.rl("block/snowy_custom");
@@ -301,7 +301,7 @@ public class ModelManager {
             if (snowyModelsCache.getOrDefault(snowModel, -1) > -1) {
                 BlockState snowState = null;
                 if (models != null && flag == MapChecker.FLAG_STAIRS) {
-                    snowState = ModContents.snowyStairs.get().defaultBlockState()
+                    snowState = BlockRegistry.snowyStairs.get().defaultBlockState()
                             .setValue(StairBlock.FACING, state.getValue(StairBlock.FACING))
                             .setValue(StairBlock.HALF, state.getValue(StairBlock.HALF))
                             .setValue(StairBlock.SHAPE, state.getValue(StairBlock.SHAPE));
@@ -413,7 +413,7 @@ public class ModelManager {
                 if (isSnowy) {
                     BlockState snowState = null;
                     if (models != null && flag == MapChecker.FLAG_STAIRS) {
-                        snowState = ModContents.snowyStairs.get().defaultBlockState()
+                        snowState = BlockRegistry.snowyStairs.get().defaultBlockState()
                                 .setValue(StairBlock.FACING, state.getValue(StairBlock.FACING))
                                 .setValue(StairBlock.HALF, state.getValue(StairBlock.HALF))
                                 .setValue(StairBlock.SHAPE, state.getValue(StairBlock.SHAPE));

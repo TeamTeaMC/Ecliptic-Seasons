@@ -1,6 +1,6 @@
 package com.teamtea.eclipticseasons.data.lang;
 
-import com.teamtea.eclipticseasons.common.registry.ModContents;
+import com.teamtea.eclipticseasons.common.registry.BlockRegistry;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import net.minecraft.data.PackOutput;
 import net.minecraftforge.common.data.ExistingFileHelper;
@@ -25,7 +25,7 @@ public class Lang_EN extends LangHelper {
 
         add("itemGroup." + EclipticSeasonsApi.MODID + ".core", "Ecliptic Seasons");
 
-        add(ModContents.calendar.get(), "Calendar");
+        add(BlockRegistry.calendar.get(), "Calendar");
         add("item.eclipticseasons.calendar.pop_hint", "%1$s, %2$s/%3$s");
         // add(EclipticSeasons.ModContents.wind_chimes.get(), "Wind Chimes");
         // add(EclipticSeasons.ModContents.paper_wind_chimes.get(), "Paper Wind Chimes");
@@ -44,6 +44,11 @@ public class Lang_EN extends LangHelper {
         add("info.eclipticseasons.environment.temperature.hot", "Hot");
         add("info.eclipticseasons.environment.temperature.heat", "Heat");
         add("info.eclipticseasons.environment.temperature.over_heat", "Over Heat");
+        add("info.eclipticseasons.environment.rainfall.rare","RARE");
+        add("info.eclipticseasons.environment.rainfall.scarce","SCARCE");
+        add("info.eclipticseasons.environment.rainfall.moderate","MODERATE");
+        add("info.eclipticseasons.environment.rainfall.adequate","ADEQUATE");
+        add("info.eclipticseasons.environment.rainfall.abundant","ABUNDANT");
         add("info.eclipticseasons.environment.humidity.arid", "Arid");
         add("info.eclipticseasons.environment.humidity.dry", "Dry");
         add("info.eclipticseasons.environment.humidity.average", "Average");

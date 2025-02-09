@@ -455,7 +455,8 @@ public class MapChecker {
         // 不知道为啥这里会有null
         Integer realFlag = blockTypeCache.getOrDefault(state, FLAG_NONE - 1);
         if (realFlag == null) {
-            EclipticSeasons.logger("Null number get from %s".formatted(state));
+            if(CommonConfig.Debug.logIllegalUse.get())
+                EclipticSeasons.logger("Null number get from %s".formatted(state));
             blockTypeCache.remove(state);
         } else {
             flag = realFlag;

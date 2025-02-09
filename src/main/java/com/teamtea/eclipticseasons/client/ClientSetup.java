@@ -1,6 +1,7 @@
 package com.teamtea.eclipticseasons.client;
 
-import com.teamtea.eclipticseasons.common.registry.ModContents;
+import com.teamtea.eclipticseasons.common.registry.BlockEntityRegistry;
+import com.teamtea.eclipticseasons.common.registry.BlockRegistry;
 import com.teamtea.eclipticseasons.common.registry.ParticleRegistry;
 import com.teamtea.eclipticseasons.client.color.season.BiomeColorsHandler;
 import com.teamtea.eclipticseasons.client.model.SnowyBakedModelWrapper;
@@ -84,7 +85,7 @@ public class ClientSetup {
             BiomeColors.GRASS_COLOR_RESOLVER = BiomeColorsHandler.GRASS_COLOR;
             BiomeColors.FOLIAGE_COLOR_RESOLVER = BiomeColorsHandler.FOLIAGE_COLOR;
 
-            ItemBlockRenderTypes.setRenderLayer(ModContents.snowyBlock.get(), RenderType.cutoutMipped());
+            ItemBlockRenderTypes.setRenderLayer(BlockRegistry.snowyBlock.get(), RenderType.cutoutMipped());
 
         });
     }
@@ -92,7 +93,7 @@ public class ClientSetup {
     //    注意static是单次，比如启动类，没有比如右击事件
     @SubscribeEvent
     public static void onRegisterRenderers(EntityRenderersEvent.RegisterRenderers event) {
-        event.registerBlockEntityRenderer(ModContents.calendar_entity_type.get(), CalendarBlockEntityRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntityRegistry.calendar_entity_type.get(), CalendarBlockEntityRenderer::new);
 
     }
 
@@ -120,7 +121,7 @@ public class ClientSetup {
                         ModelManager.snowySlabBottom,
                         ModelManager.snowOverlayBlock
                 ));
-        bakedModels.addAll(ModContents.snowyStairs.get().getStateDefinition().getPossibleStates().stream()
+        bakedModels.addAll(BlockRegistry.snowyStairs.get().getStateDefinition().getPossibleStates().stream()
                 .map(BlockModelShaper::stateToModelLocation).toList());
 
         for (ResourceLocation modelResourceLocation : bakedModels) {

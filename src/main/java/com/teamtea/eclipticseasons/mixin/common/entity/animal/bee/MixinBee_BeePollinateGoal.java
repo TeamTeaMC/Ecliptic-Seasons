@@ -28,7 +28,7 @@ public class MixinBee_BeePollinateGoal {
     private boolean ecliptic$canBeeUse_checkRain(Level instance, Operation<Boolean> original) {
         if (EclipticUtil.useSolarWeather())
             return WeatherUtil.isEntityInRainOrSnow(this$0);
-        return instance.isRaining();
+        return original.call(instance);
     }
 
 

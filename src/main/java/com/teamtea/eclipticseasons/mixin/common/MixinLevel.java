@@ -23,7 +23,11 @@ public class MixinLevel {
         if ((Object) this instanceof ServerLevel serverLevel) {
             if (EclipticUtil.useSolarWeather()) {
                 if (CommonConfig.Debug.logIllegalUse.get()) {
-                    throw new IllegalCallerException("Use isRainAt to check if rain");
+                    try {
+                        throw new IllegalCallerException("Use isRainAt to check if rain");
+                    } catch (IllegalCallerException e) {
+                        e.printStackTrace();
+                    }
                 }
                 cir.setReturnValue(WeatherManager.isRainingEverywhere(serverLevel));
             }
@@ -35,7 +39,11 @@ public class MixinLevel {
         if ((Object) this instanceof ServerLevel serverLevel) {
             if (EclipticUtil.useSolarWeather()) {
                 if (CommonConfig.Debug.logIllegalUse.get()) {
-                    throw new IllegalCallerException("Shouldn't call getRainLevel now");
+                    try {
+                        throw new IllegalCallerException("Shouldn't call getRainLevel now");
+                    } catch (IllegalCallerException e) {
+                        e.printStackTrace();
+                    }
                 }
                 cir.setReturnValue(WeatherManager.getMinRainLevel(serverLevel, p_46723_));
             }
@@ -62,7 +70,11 @@ public class MixinLevel {
         if ((Object) this instanceof ServerLevel serverLevel) {
             if (EclipticUtil.useSolarWeather()) {
                 if (CommonConfig.Debug.logIllegalUse.get()) {
-                    throw new IllegalCallerException("Use isThunderingAt to check if rain");
+                    try {
+                        throw new IllegalCallerException("Use isThunderingAt to check if rain");
+                    } catch (IllegalCallerException e) {
+                        e.printStackTrace();
+                    }
                 }
                 cir.setReturnValue(WeatherManager.isThunderEverywhere(serverLevel));
             }
@@ -74,7 +86,11 @@ public class MixinLevel {
         if ((Object) this instanceof ServerLevel serverLevel) {
             if (EclipticUtil.useSolarWeather()) {
                 if (CommonConfig.Debug.logIllegalUse.get()) {
-                    throw new IllegalCallerException("Shouldn't call getThunderLevel now");
+                    try {
+                        throw new IllegalCallerException("Shouldn't call getThunderLevel now");
+                    } catch (IllegalCallerException e) {
+                        e.printStackTrace();
+                    }
                 }
                 cir.setReturnValue(WeatherManager.getMinThunderLevel(serverLevel, p_46723_));
             }

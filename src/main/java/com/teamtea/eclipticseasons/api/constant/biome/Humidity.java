@@ -12,9 +12,9 @@ import net.minecraft.world.level.biome.Biome;
 public enum Humidity {
     ARID(ChatFormatting.RED, 0.9F),
     DRY(ChatFormatting.GOLD, 0.95F),
-    AVERAGE(ChatFormatting.WHITE, 1.0F),
+    AVERAGE(ChatFormatting.GREEN, 1.0F),
     MOIST(ChatFormatting.BLUE, 1.1F),
-    HUMID(ChatFormatting.DARK_GREEN, 1.2F);
+    HUMID(ChatFormatting.DARK_BLUE, 1.2F);
 
     private final ChatFormatting color;
     private final float tempCoefficient;

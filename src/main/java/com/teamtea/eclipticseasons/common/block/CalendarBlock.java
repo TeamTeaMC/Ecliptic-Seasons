@@ -1,6 +1,6 @@
 package com.teamtea.eclipticseasons.common.block;
 
-import com.teamtea.eclipticseasons.common.registry.ModContents;
+import com.teamtea.eclipticseasons.common.registry.BlockEntityRegistry;
 import com.teamtea.eclipticseasons.common.block.base.SimpleHorizontalEntityBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -64,6 +64,6 @@ public class CalendarBlock extends SimpleHorizontalEntityBlock {
 
     @Override
     public @Nullable BlockEntity newBlockEntity(BlockPos pPos, BlockState pState) {
-        return ModContents.calendar_entity_type.get().create(pPos, pState);
+        return BlockEntityRegistry.calendar_entity_type.get().create(pPos, pState);
     }
 }

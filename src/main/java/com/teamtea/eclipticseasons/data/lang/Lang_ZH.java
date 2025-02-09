@@ -1,7 +1,7 @@
 package com.teamtea.eclipticseasons.data.lang;
 
 
-import com.teamtea.eclipticseasons.common.registry.ModContents;
+import com.teamtea.eclipticseasons.common.registry.BlockRegistry;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import net.minecraft.data.PackOutput;
 import net.minecraftforge.common.data.ExistingFileHelper;
@@ -24,7 +24,7 @@ public class Lang_ZH extends LangHelper {
         add("itemGroup." + EclipticSeasonsApi.MODID + ".core", "节气");
 
 
-        add(ModContents.calendar.get(), "日历");
+        add(BlockRegistry.calendar.get(), "日历");
         add("item.eclipticseasons.calendar.pop_hint", "%1$s，%2$s/%3$s");
         // add(EclipticSeasons.ModContents.wind_chimes.get(), "风铃");
         // add(EclipticSeasons.ModContents.paper_wind_chimes.get(), "纸风铃");
@@ -44,6 +44,11 @@ public class Lang_ZH extends LangHelper {
         add("info.eclipticseasons.environment.temperature.hot","炎热");
         add("info.eclipticseasons.environment.temperature.heat","炙烤");
         add("info.eclipticseasons.environment.temperature.over_heat","酷暑");
+        add("info.eclipticseasons.environment.rainfall.rare","罕见");
+        add("info.eclipticseasons.environment.rainfall.scarce","稀少");
+        add("info.eclipticseasons.environment.rainfall.moderate","中等");
+        add("info.eclipticseasons.environment.rainfall.adequate","足量");
+        add("info.eclipticseasons.environment.rainfall.abundant","丰富");
         add("info.eclipticseasons.environment.humidity.arid","干旱");
         add("info.eclipticseasons.environment.humidity.dry","干燥");
         add("info.eclipticseasons.environment.humidity.average","一般");
