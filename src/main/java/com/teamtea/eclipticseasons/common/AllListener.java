@@ -6,9 +6,9 @@ import com.teamtea.eclipticseasons.api.util.EclipticTagTool;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
+import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
 import com.teamtea.eclipticseasons.common.handler.CustomRandomTickHandler;
-import com.teamtea.eclipticseasons.config.ServerConfig;
 import net.minecraft.entity.player.ServerPlayerEntity;
 
 import net.minecraft.world.World;
@@ -25,7 +25,6 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Mod.EventBusSubscriber(modid = EclipticSeasons.MODID)
@@ -66,10 +65,10 @@ public class AllListener {
 
     @SubscribeEvent
     public static void onSleepFinishedTimeEvent(SleepFinishedTimeEvent event) {
-        if (event.getWorld() instanceof ServerWorld ) {
+        if (event.getWorld() instanceof ServerWorld) {
 
-            long newTime = event.getNewTime(), oldDayTime = ((ServerWorld)event.getWorld()).getDayTime();
-            WeatherManager.updateAfterSleep( ((ServerWorld)event.getWorld()), newTime, oldDayTime);
+            long newTime = event.getNewTime(), oldDayTime = ((ServerWorld) event.getWorld()).getDayTime();
+            WeatherManager.updateAfterSleep(((ServerWorld) event.getWorld()), newTime, oldDayTime);
             // // TODO: 根据季节更新概率
             // if (!serverLevel.isRaining() && serverLevel.getRandom().nextFloat() > 0.8) {
             //     serverLevel.setWeatherParameters(0,
@@ -83,17 +82,17 @@ public class AllListener {
 
     @SubscribeEvent
     public static void onLevelEventLoad(WorldEvent.Load event) {
-        if (event.getWorld() instanceof ServerWorld ) {
-            WeatherManager.createLevelBiomeWeatherList( ((ServerWorld)event.getWorld()));
+        if (event.getWorld() instanceof ServerWorld) {
+            WeatherManager.createLevelBiomeWeatherList(((ServerWorld) event.getWorld()));
             // 这里需要恢复一下数据
             // 客户端登录时同步天气数据，此处先放入
-            createSaveData( ((ServerWorld)event.getWorld()), SolarDataManager.get( ((ServerWorld)event.getWorld())));
+            createSaveData(((ServerWorld) event.getWorld()), SolarDataManager.get(((ServerWorld) event.getWorld())));
         }
     }
 
     @SubscribeEvent
     public static void onLevelUnloadEvent(WorldEvent.Unload event) {
-        if (event.getWorld() instanceof World ) {
+        if (event.getWorld() instanceof World) {
             WeatherManager.BIOME_WEATHER_LIST.remove((World) event.getWorld());
             // if (level instanceof ServerLevel serverLevel)
             {
@@ -106,13 +105,14 @@ public class AllListener {
 
     @SubscribeEvent
     public static void onWorldTick(TickEvent.WorldTickEvent event) {
-        if (event.phase.equals(TickEvent.Phase.END) && ServerConfig.Season.enableInform.get() && !event.world.isClientSide() && event.world.dimension() == World.OVERWORLD) {
-            getSaveDataLazy(event.world).ifPresent(data ->
-            {
-                if (!event.world.players().isEmpty()) {
-                    data.updateTicks((ServerWorld) event.world);
-                }
-            });
+        if (event.phase.equals(TickEvent.Phase.END)
+                && !event.world.isClientSide()
+                // TODO: fix the level resource key
+                && MapChecker.isValidDimension(event.world)) {
+            SolarDataManager data = getSaveData(event.world);
+            if (data != null) {
+                data.updateTicks((ServerWorld) event.world);
+            }
         }
 
         CustomRandomTickHandler.onWorldTick(event);
@@ -130,18 +130,34 @@ public class AllListener {
 
     @SubscribeEvent
     public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
-        if (event.getEntity() instanceof ServerPlayerEntity  && !(event.getEntity() instanceof FakePlayer)) {
-            WeatherManager.onLoggedIn((ServerPlayerEntity)event.getEntity(), true);
+        if (event.getEntity() instanceof ServerPlayerEntity && !(event.getEntity() instanceof FakePlayer)) {
+            WeatherManager.onLoggedIn((ServerPlayerEntity) event.getEntity(), true);
         }
     }
 
     @SubscribeEvent
     public static void onPlayerChangedDimension(PlayerEvent.PlayerChangedDimensionEvent event) {
-        if (event.getEntity() instanceof ServerPlayerEntity ) {
-            WeatherManager.onLoggedIn((ServerPlayerEntity)event.getEntity(), false);
+        if (event.getEntity() instanceof ServerPlayerEntity) {
+            WeatherManager.onLoggedIn((ServerPlayerEntity) event.getEntity(), false);
         }
     }
 
+    @SubscribeEvent
+    public static void onPlayerChangedDimension(PlayerEvent.Clone event) {
+        if (event.getEntity() instanceof ServerPlayerEntity) {
+            // WeatherManager.onLoggedIn(serverPlayer, false);
+            Thread t = new Thread(() -> {
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException ignored) {
+                }
+                // TODO：修复这里
+                WeatherManager.onLoggedIn((ServerPlayerEntity) event.getEntity(), false);
+            });
+            t.start();
+
+        }
+    }
 
     @SubscribeEvent
     public static void onCropGrowUp(BlockEvent.CropGrowEvent.Pre event) {

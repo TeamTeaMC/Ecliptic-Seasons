@@ -10,7 +10,7 @@ import com.teamtea.eclipticseasons.common.AllListener;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.core.solar.ClientSolarDataManager;
 import com.teamtea.eclipticseasons.config.ClientConfig;
-import com.teamtea.eclipticseasons.config.ServerConfig;
+import com.teamtea.eclipticseasons.config.CommonConfig;
 import com.teamtea.eclipticseasons.common.core.crop.CropInfoManager;
 import com.teamtea.eclipticseasons.api.constant.crop.CropSeasonInfo;
 import com.teamtea.eclipticseasons.api.constant.crop.CropHumidityInfo;
@@ -23,7 +23,6 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItem;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.ResourceLocation;
@@ -40,8 +39,6 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 
-import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
 @Mod.EventBusSubscriber(modid = EclipticSeasons.MODID, value = Dist.CLIENT)
@@ -54,37 +51,21 @@ public final class ClientEventHandler {
         }
     }
 
-
-    public static float prevFogDensity = -1f;
-    public static long prevFogTick = -1L;
-
-    public static float r = 0.0f;
-    public static float g = 0.0f;
-    public static float b = 0.0f;
-
-    // @SubscribeEvent
-    // public static void onFogEvent(ViewportEvent.ComputeFogColor event) {
-    //     ClientRenderer.renderFogColors(event.getCamera(), (float) event.getPartialTick(), event);
-    // }
-    //
-    // @SubscribeEvent
-    // public static void onFogEvent(ViewportEvent.RenderFog event) {
-    //     ClientRenderer.renderFogDensity(event.getCamera(), event);
-    // }
-
     @SubscribeEvent
     public static void addTooltips(ItemTooltipEvent event) {
-
-        if (ServerConfig.Season.enableCrop.get()) {
-            if (event.getItemStack().getItem() instanceof BlockItem) {
+        if (event.getItemStack().getItem() instanceof BlockItem) {
+            if (CommonConfig.Season.enableCropHumidityControl.get()) {
                 if (CropInfoManager.getHumidityCrops().contains(((BlockItem) event.getItemStack().getItem()).getBlock())) {
                     CropHumidityInfo info = CropInfoManager.getHumidityInfo(((BlockItem) event.getItemStack().getItem()).getBlock());
                     if (info != null) event.getToolTip().addAll(info.getTooltip());
                 }
+            }
+            if (CommonConfig.Season.enableCrop.get()) {
                 if (CropInfoManager.getSeasonCrops().contains(((BlockItem) event.getItemStack().getItem()).getBlock())) {
                     CropSeasonInfo info = CropInfoManager.getSeasonInfo(((BlockItem) event.getItemStack().getItem()).getBlock());
                     if (info != null) event.getToolTip().addAll(info.getTooltip());
                 }
+
             }
         }
     }
@@ -92,21 +73,21 @@ public final class ClientEventHandler {
 
     @SubscribeEvent
     public static void onLevelUnloadEvent(WorldEvent.Unload event) {
-        if (event.getWorld() instanceof ClientWorld ) {
+        if (event.getWorld() instanceof ClientWorld) {
             ModelManager.clearHeightMap();
         }
     }
 
     @SubscribeEvent
     public static void onLevelEventLoad(WorldEvent.Load event) {
-        if (event.getWorld() instanceof ClientWorld ) {
+        if (event.getWorld() instanceof ClientWorld) {
             // synchronized (ModelManager.RegionList) {
             //     ModelManager.RegionList.clear();
             // }
 
             // ModelManager.quadMap.clear();
             // ModelManager.quadMap_1.clear();
-            ClientWorld clientLevel=(ClientWorld)event.getWorld();
+            ClientWorld clientLevel = (ClientWorld) event.getWorld();
             WeatherManager.createLevelBiomeWeatherList(clientLevel);
             // 这里需要恢复一下数据
             // 客户端登录时同步天气数据，此处先放入
@@ -120,7 +101,7 @@ public final class ClientEventHandler {
         if (ClientConfig.Renderer.forceChunkRenderUpdate.get()) {
             if (event.phase.equals(TickEvent.Phase.END)
                     && event.world.isClientSide()
-                    && event.world.getGameTime() %100  == 0) {
+                    && event.world.getGameTime() % 100 == 0) {
                 WorldRenderer lr = Minecraft.getInstance().levelRenderer;
                 if (lr != null) {
                     //
@@ -151,11 +132,11 @@ public final class ClientEventHandler {
     public static void onRenderLevelStageEvent(RenderWorldLastEvent event) {
         ClientWorld level = Minecraft.getInstance().level;
         if (
-                // event.getStage() == RenderWorldLastEvent.Stage.AFTER_CUTOUT_BLOCKS
-                Minecraft.getInstance().getEntityRenderDispatcher().camera!=null
-                && level != null
-                && SimpleUtil.getNowSolarTerm(level).getSeason() == Season.SPRING
-                && SimpleUtil.isDay(level)) {
+            // event.getStage() == RenderWorldLastEvent.Stage.AFTER_CUTOUT_BLOCKS
+                Minecraft.getInstance().getEntityRenderDispatcher().camera != null
+                        && level != null
+                        && SimpleUtil.getNowSolarTerm(level).getSeason() == Season.SPRING
+                        && SimpleUtil.isDay(level)) {
             IRenderTypeBuffer.Impl multiBufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
             // var itr = Minecraft.getInstance().getItemRenderer();
             // var mds = itr.getItemModelShaper();
@@ -166,7 +147,7 @@ public final class ClientEventHandler {
             BlockPos.Mutable blockpos$mutableblockpos = new BlockPos.Mutable();
             Random random = level.getRandom();
             int b = 32;
-            random=new Random();
+            random = new Random();
             for (int i = 0; i < 20; ++i)
                 for (int j = 0; j < 20; ++j)
                     for (int k = 0; k < 20; ++k)

@@ -4,6 +4,7 @@ import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.util.SimpleUtil;
 import com.teamtea.eclipticseasons.client.core.ClientWeatherChecker;
+import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import net.minecraft.client.audio.*;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
@@ -66,7 +67,7 @@ public class SeasonalBiomeAmbientSoundsHandler implements IAmbientSoundHandler {
                 .getResourceKey(biome);
 
         if (reskey.isPresent()) {
-            Set<BiomeDictionary.Type> sets= BiomeDictionary.getTypes(reskey.get());
+            Set<BiomeDictionary.Type> sets = BiomeDictionary.getTypes(reskey.get());
             Season season = SimpleUtil.getNowSolarTerm(player.level).getSeason();
             boolean isDayNow = SimpleUtil.isDay(player.level);
             if (season != this.previousSeason || isDayNow != this.previousIsDay) {
@@ -79,48 +80,56 @@ public class SeasonalBiomeAmbientSoundsHandler implements IAmbientSoundHandler {
             }
 
             SoundEvent soundEvent = null;
-            switch (season) {
-                case SPRING :{
-                    if ((sets.contains(BiomeDictionary.Type.FOREST) || sets.contains(BiomeDictionary.Type.PLAINS)) && !sets.contains(BiomeDictionary.Type.COLD)) {
-                        soundEvent = EclipticSeasons.SoundEventsRegistry.spring_forest;
-                    }
-                    break;
-                }
-                case SUMMER : {
-                    // if (player.level.isNight())
-                    // 客户端不计算是否为夜晚
-                    if (!isDayNow) {
-                        if (!(sets.contains(BiomeDictionary.Type.SAVANNA)
-                                && !sets.contains(BiomeDictionary.Type.MESA)
-                                && !sets.contains(BiomeDictionary.Type.DEAD)
-                                && !sets.contains(BiomeDictionary.Type.SANDY)
-                                && !sets.contains(BiomeDictionary.Type.MOUNTAIN))) {
-                            soundEvent = EclipticSeasons.SoundEventsRegistry.night_river;
+            if (MapChecker.isValidDimension(player.level)) {
+                switch (season) {
+                    case SPRING: {
+                        if (!player.isInWaterOrRain()) {
+                            if ((sets.contains(BiomeDictionary.Type.FOREST) || sets.contains(BiomeDictionary.Type.PLAINS)) && !sets.contains(BiomeDictionary.Type.COLD)) {
+                                soundEvent = EclipticSeasons.SoundEventsRegistry.spring_forest;
+                            }
                         }
-                    } else {
-                        if ((sets.contains(BiomeDictionary.Type.FOREST) || sets.contains(BiomeDictionary.Type.PLAINS) || sets.contains(BiomeDictionary.Type.RIVER))) {
-                            soundEvent = EclipticSeasons.SoundEventsRegistry.garden_wind;
+                        break;
+                    }
+                    case SUMMER: {
+                        if (!player.isInWaterOrRain())
+                        {
+                            if (!isDayNow) {
+                                if (!(sets.contains(BiomeDictionary.Type.SAVANNA)
+                                        && !sets.contains(BiomeDictionary.Type.MESA)
+                                        && !sets.contains(BiomeDictionary.Type.DEAD)
+                                        && !sets.contains(BiomeDictionary.Type.SANDY)
+                                        && !sets.contains(BiomeDictionary.Type.MOUNTAIN))) {
+                                    soundEvent = EclipticSeasons.SoundEventsRegistry.night_river;
+                                }
+                            } else {
+                                if ((sets.contains(BiomeDictionary.Type.FOREST) || sets.contains(BiomeDictionary.Type.PLAINS) || sets.contains(BiomeDictionary.Type.RIVER))) {
+                                    soundEvent = EclipticSeasons.SoundEventsRegistry.garden_wind;
+                                }
+                            }
                         }
+                        break;
                     }
-                    break;
-                }
-                case AUTUMN : {
-                    if ((sets.contains(BiomeDictionary.Type.FOREST))) {
-                        soundEvent = EclipticSeasons.SoundEventsRegistry.windy_leave;
+                    case AUTUMN: {
+                        if (!player.isInWater()) {
+                            if ((sets.contains(BiomeDictionary.Type.FOREST))) {
+                                soundEvent = EclipticSeasons.SoundEventsRegistry.windy_leave;
+                            }
+                        }
+                        break;
                     }
-                    break;
-                }
-                case WINTER : {
-                    // if (!sets.contains(BiomeDictionary.Type.IS_CAVE))
-                    {
-                        if ((sets.contains(BiomeDictionary.Type.FOREST) && ClientWeatherChecker.isRain((ClientWorld) player.level))) {
-                            soundEvent = EclipticSeasons.SoundEventsRegistry.winter_forest;
-                        } else soundEvent = EclipticSeasons.SoundEventsRegistry.winter_cold;
+                    case WINTER: {
+                        if (!player.isInWater()) {
+                            {
+                                if ((sets.contains(BiomeDictionary.Type.FOREST) && ClientWeatherChecker.isRain((ClientWorld) player.level))) {
+                                    soundEvent = EclipticSeasons.SoundEventsRegistry.winter_forest;
+                                } else soundEvent = EclipticSeasons.SoundEventsRegistry.winter_cold;
+                            }
+                        }
+                        break;
                     }
-                    break;
-                }
-                case NONE : {
-                    break;
+                    case NONE: {
+                        break;
+                    }
                 }
             }
             if (soundEvent != null) {

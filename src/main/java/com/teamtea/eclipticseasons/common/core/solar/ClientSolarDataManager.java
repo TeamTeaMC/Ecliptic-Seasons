@@ -3,7 +3,7 @@ package com.teamtea.eclipticseasons.common.core.solar;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
-import com.teamtea.eclipticseasons.config.ServerConfig;
+import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -62,7 +62,7 @@ public class ClientSolarDataManager extends SolarDataManager {
 
 
     public int getSolarTermIndex() {
-        return solarTermsDay / ServerConfig.Season.lastingDaysOfEachTerm.get();
+        return solarTermsDay / CommonConfig.Season.lastingDaysOfEachTerm.get();
     }
 
     public SolarTerm getSolarTerm() {
@@ -78,7 +78,7 @@ public class ClientSolarDataManager extends SolarDataManager {
     }
 
     public void setSolarTermsDay(int solarTermsDay) {
-        this.solarTermsDay = Math.max(solarTermsDay, 0) % (24 * ServerConfig.Season.lastingDaysOfEachTerm.get());
+        this.solarTermsDay = Math.max(solarTermsDay, 0) % (24 * CommonConfig.Season.lastingDaysOfEachTerm.get());
         setDirty();
     }
 

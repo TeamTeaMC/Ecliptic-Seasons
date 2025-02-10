@@ -13,7 +13,7 @@ import com.teamtea.eclipticseasons.common.network.BiomeWeatherMessage;
 import com.teamtea.eclipticseasons.common.network.EmptyMessage;
 import com.teamtea.eclipticseasons.common.network.SimpleNetworkHandler;
 import com.teamtea.eclipticseasons.common.network.SolarTermsMessage;
-import com.teamtea.eclipticseasons.config.ServerConfig;
+import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -27,7 +27,6 @@ import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.registry.MutableRegistry;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.WorldGenRegistries;
@@ -37,7 +36,6 @@ import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.Heightmap;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.BiomeDictionary;
-import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.INBTSerializable;
 
@@ -301,7 +299,7 @@ public class WeatherManager {
 
     public static void tickPlayerSeasonEffecct(ServerPlayerEntity player) {
         World level = player.level;
-        if (ServerConfig.Temperature.heatStroke.get()
+        if (CommonConfig.Temperature.heatStroke.get()
                 && level.getRandom().nextInt(150) == 0)
             AllListener.getSaveDataLazy(level).ifPresent(solarDataManager -> {
                 if (SimpleUtil.getNowSolarTerm(level).isInTerms(SolarTerm.BEGINNING_OF_SUMMER, SolarTerm.BEGINNING_OF_AUTUMN)) {
@@ -357,7 +355,7 @@ public class WeatherManager {
                 }
                 float weight = biomeRain.getRainChane()
                         * Math.max(0.01f, downfall)
-                        * ((ServerConfig.Season.rainChanceMultiplier.get() * 1f) / 100f);
+                        * ((CommonConfig.Season.rainChanceMultiplier.get() * 1f) / 100f);
                 if (level.getRandom().nextInt(1000) / 1000.f < weight) {
                     biomeWeather.rainTime = (random.nextInt(12000)+12000) / size;
                 } else {
@@ -411,13 +409,13 @@ public class WeatherManager {
 
     public static void onLoggedIn(ServerPlayerEntity serverPlayer, boolean isLogged) {
         if ((serverPlayer instanceof FakePlayer)) return;
-        if (ServerConfig.Season.enableInform.get()) {
+        if (CommonConfig.Season.enableInform.get()) {
             AllListener.getSaveDataLazy(serverPlayer.level).ifPresent(t ->
             {
                 SimpleNetworkHandler.send(serverPlayer, new SolarTermsMessage(t.getSolarTermsDay()));
                 if (isLogged
 
-                        && t.getSolarTermsDay() % ServerConfig.Season.lastingDaysOfEachTerm.get() == 0) {
+                        && t.getSolarTermsDay() % CommonConfig.Season.lastingDaysOfEachTerm.get() == 0) {
                     serverPlayer.sendMessage(new TranslationTextComponent("info.teastory.environment.solar_term.message", SolarTerm.get(t.getSolarTermIndex()).getAlternationText()), Util.NIL_UUID);
                 }
             });
