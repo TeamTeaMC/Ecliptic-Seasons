@@ -28,3 +28,6 @@ forge*changelog.txt
 
 .cache
 libs/OptiFine-*.jar
+
+mods
+libs

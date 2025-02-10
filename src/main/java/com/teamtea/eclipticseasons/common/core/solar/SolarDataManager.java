@@ -6,33 +6,25 @@ import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.network.SimpleNetworkHandler;
 import com.teamtea.eclipticseasons.common.network.SolarTermsMessage;
-import com.teamtea.eclipticseasons.config.ServerConfig;
+import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ChunkMap;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.chunk.ChunkAccess;
-import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.storage.DimensionDataStorage;
 import net.minecraftforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 
 public class SolarDataManager extends SavedData {
 
-    protected int solarTermsDay = (ServerConfig.Season.initialSolarTermIndex.get() - 1) * ServerConfig.Season.lastingDaysOfEachTerm.get();
+    protected int solarTermsDay = (CommonConfig.Season.initialSolarTermIndex.get() - 1) * CommonConfig.Season.lastingDaysOfEachTerm.get();
     protected int solarTermsTicks = 0;
 
     protected WeakReference<Level> levelWeakReference;
@@ -88,7 +80,7 @@ public class SolarDataManager extends SavedData {
         int dayTime = Math.toIntExact(world.getDayTime() % 24000);
         if (solarTermsTicks > dayTime + 100) {
             solarTermsDay++;
-            solarTermsDay %= 24 * ServerConfig.Season.lastingDaysOfEachTerm.get();
+            solarTermsDay %= 24 * CommonConfig.Season.lastingDaysOfEachTerm.get();
 
             BiomeClimateManager.updateTemperature(world, getSolarTermIndex());
             sendUpdateMessage(world);
@@ -112,7 +104,7 @@ public class SolarDataManager extends SavedData {
     }
 
     public int getSolarTermIndex() {
-        return solarTermsDay / ServerConfig.Season.lastingDaysOfEachTerm.get();
+        return solarTermsDay / CommonConfig.Season.lastingDaysOfEachTerm.get();
     }
 
     public SolarTerm getSolarTerm() {
@@ -128,7 +120,7 @@ public class SolarDataManager extends SavedData {
     }
 
     public void setSolarTermsDay(int solarTermsDay) {
-        this.solarTermsDay = Math.max(solarTermsDay, 0) % (24 * ServerConfig.Season.lastingDaysOfEachTerm.get());
+        this.solarTermsDay = Math.max(solarTermsDay, 0) % (24 * CommonConfig.Season.lastingDaysOfEachTerm.get());
         setDirty();
     }
 
@@ -140,7 +132,8 @@ public class SolarDataManager extends SavedData {
     public void sendUpdateMessage(ServerLevel world) {
         for (ServerPlayer player : world.players()) {
             SimpleNetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), new SolarTermsMessage(this.getSolarTermsDay()));
-            if (getSolarTermsDay() % ServerConfig.Season.lastingDaysOfEachTerm.get() == 0) {
+            if (CommonConfig.Season.enableInform.get()
+                    &&getSolarTermsDay() % CommonConfig.Season.lastingDaysOfEachTerm.get() == 0) {
                 player.sendSystemMessage(Component.translatable("info.teastory.environment.solar_term.message", SolarTerm.get(getSolarTermIndex()).getAlternationText()), false);
             }
         }

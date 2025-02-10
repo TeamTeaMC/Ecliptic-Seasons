@@ -6,9 +6,9 @@ import com.teamtea.eclipticseasons.api.util.EclipticTagTool;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
+import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
 import com.teamtea.eclipticseasons.common.handler.CustomRandomTickHandler;
-import com.teamtea.eclipticseasons.config.ServerConfig;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
@@ -25,7 +25,6 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Mod.EventBusSubscriber(modid = EclipticSeasons.MODID)
@@ -113,13 +112,14 @@ public class AllListener {
 
     @SubscribeEvent
     public static void onWorldTick(TickEvent.LevelTickEvent event) {
-        if (event.phase.equals(TickEvent.Phase.END) && ServerConfig.Season.enableInform.get() && !event.level.isClientSide() && event.level.dimension() == Level.OVERWORLD) {
-            getSaveDataLazy(event.level).ifPresent(data ->
-            {
-                if (!event.level.players().isEmpty()) {
-                    data.updateTicks((ServerLevel) event.level);
-                }
-            });
+        if (event.phase.equals(TickEvent.Phase.END)
+                && !event.level.isClientSide()
+                // TODO: fix the level resource key
+                && MapChecker.isValidDimension(event.level)) {
+            SolarDataManager data = getSaveData(event.level);
+            if (data!=null) {
+                data.updateTicks((ServerLevel) event.level);
+            }
         }
 
         CustomRandomTickHandler.onWorldTick(event);
@@ -149,6 +149,22 @@ public class AllListener {
         }
     }
 
+    @SubscribeEvent
+    public static void onPlayerChangedDimension(PlayerEvent.Clone event) {
+        if (event.getEntity() instanceof ServerPlayer serverPlayer) {
+            // WeatherManager.onLoggedIn(serverPlayer, false);
+            Thread t = new Thread(() -> {
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException ignored) {
+                }
+                // TODO：修复这里
+                WeatherManager.onLoggedIn(serverPlayer, false);
+            });
+            t.start();
+
+        }
+    }
 
     @SubscribeEvent
     public static void onCropGrowUp(BlockEvent.CropGrowEvent.Pre event) {

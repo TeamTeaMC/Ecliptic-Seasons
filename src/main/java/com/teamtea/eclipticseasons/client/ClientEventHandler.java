@@ -1,7 +1,6 @@
 package com.teamtea.eclipticseasons.client;
 
 
-import com.mojang.blaze3d.shaders.Shader;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.util.SimpleUtil;
 import com.teamtea.eclipticseasons.client.core.ModelManager;
@@ -10,7 +9,7 @@ import com.teamtea.eclipticseasons.common.AllListener;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.core.solar.ClientSolarDataManager;
 import com.teamtea.eclipticseasons.config.ClientConfig;
-import com.teamtea.eclipticseasons.config.ServerConfig;
+import com.teamtea.eclipticseasons.config.CommonConfig;
 import com.teamtea.eclipticseasons.common.core.crop.CropInfoManager;
 import com.teamtea.eclipticseasons.api.constant.crop.CropSeasonInfo;
 import com.teamtea.eclipticseasons.api.constant.crop.CropHumidityInfo;
@@ -29,17 +28,12 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
-import net.minecraftforge.client.event.ViewportEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import com.teamtea.eclipticseasons.EclipticSeasons;
-
-import java.util.List;
-import java.util.Map;
 
 @Mod.EventBusSubscriber(modid = EclipticSeasons.MODID, value = Dist.CLIENT)
 public final class ClientEventHandler {
@@ -51,37 +45,21 @@ public final class ClientEventHandler {
         }
     }
 
-
-    public static float prevFogDensity = -1f;
-    public static long prevFogTick = -1L;
-
-    public static float r = 0.0f;
-    public static float g = 0.0f;
-    public static float b = 0.0f;
-
-    @SubscribeEvent
-    public static void onFogEvent(ViewportEvent.ComputeFogColor event) {
-        ClientRenderer.renderFogColors(event.getCamera(), (float) event.getPartialTick(), event);
-    }
-
-    @SubscribeEvent
-    public static void onFogEvent(ViewportEvent.RenderFog event) {
-        ClientRenderer.renderFogDensity(event.getCamera(), event);
-    }
-
     @SubscribeEvent
     public static void addTooltips(ItemTooltipEvent event) {
-
-        if (ServerConfig.Season.enableCrop.get()) {
-            if (event.getItemStack().getItem() instanceof BlockItem) {
+        if (event.getItemStack().getItem() instanceof BlockItem) {
+            if (CommonConfig.Season.enableCropHumidityControl.get()) {
                 if (CropInfoManager.getHumidityCrops().contains(((BlockItem) event.getItemStack().getItem()).getBlock())) {
                     CropHumidityInfo info = CropInfoManager.getHumidityInfo(((BlockItem) event.getItemStack().getItem()).getBlock());
                     if (info != null) event.getToolTip().addAll(info.getTooltip());
                 }
+            }
+            if (CommonConfig.Season.enableCrop.get()) {
                 if (CropInfoManager.getSeasonCrops().contains(((BlockItem) event.getItemStack().getItem()).getBlock())) {
                     CropSeasonInfo info = CropInfoManager.getSeasonInfo(((BlockItem) event.getItemStack().getItem()).getBlock());
                     if (info != null) event.getToolTip().addAll(info.getTooltip());
                 }
+
             }
         }
     }
@@ -117,7 +95,7 @@ public final class ClientEventHandler {
         if (ClientConfig.Renderer.forceChunkRenderUpdate.get()) {
             if (event.phase.equals(TickEvent.Phase.END)
                     && event.level.isClientSide()
-                    && event.level.getGameTime() %100  == 0) {
+                    && event.level.getGameTime() % 100 == 0) {
                 var lr = Minecraft.getInstance().levelRenderer;
                 if (lr != null) {
                     //

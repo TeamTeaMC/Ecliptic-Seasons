@@ -2,10 +2,10 @@ package com.teamtea.eclipticseasons.config;
 
 import net.minecraftforge.common.ForgeConfigSpec;
 
-public class ServerConfig {
-    public static final ForgeConfigSpec SERVER_CONFIG = new ForgeConfigSpec.Builder().configure(ServerConfig::new).getRight();
+public class CommonConfig {
+    public static final ForgeConfigSpec SERVER_CONFIG = new ForgeConfigSpec.Builder().configure(CommonConfig::new).getRight();
 
-    protected ServerConfig(ForgeConfigSpec.Builder builder) {
+    protected CommonConfig(ForgeConfigSpec.Builder builder) {
         Temperature.load(builder);
         Season.load(builder);
         Debug.load(builder);
@@ -39,6 +39,7 @@ public class ServerConfig {
 
     public static class Season {
         public static ForgeConfigSpec.BooleanValue enableCrop;
+        public static ForgeConfigSpec.BooleanValue enableCropHumidityControl;
         public static ForgeConfigSpec.BooleanValue enableInform;
         public static ForgeConfigSpec.IntValue lastingDaysOfEachTerm;
         public static ForgeConfigSpec.IntValue initialSolarTermIndex;
@@ -53,6 +54,8 @@ public class ServerConfig {
 
             enableCrop = builder.comment("Enable seasonal crop.")
                     .define("EnableSeasonalCrop", true);
+            enableCropHumidityControl = builder.comment("Enable crop humidity control.")
+                    .define("EnableCropHumidityControl", true);
 
             enableInform = builder.comment("Enable solar term change inform.")
                     .define("EnableInform", true);

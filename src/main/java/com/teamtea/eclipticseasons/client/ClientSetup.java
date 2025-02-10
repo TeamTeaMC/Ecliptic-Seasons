@@ -93,27 +93,9 @@ public class ClientSetup {
     public static void onModelBaked(ModelEvent.BakingCompleted event) {
         Map<ResourceLocation, BakedModel> modelRegistry = event.getModels();
         ModelManager.models = modelRegistry;
-        // snowModel.resolve();
-        ModelManager.snowySlabBottom.resolve();
-        ModelManager.snowOverlayLeaves.resolve();
-        var test = ModelManager.snowOverlayBlock.resolve().get();
-        EclipticSeasons.logger(test);
 
         ModelManager.quadMap.clear();
         ModelManager.quadMap_1.clear();
-        // net.minecraft.client.resources.model.ModelManager.reload
-        // p_251134_.listPacks().toList().get(0).getResource(PackType.CLIENT_RESOURCES, completablefuture.get().entrySet().stream().toList().get(0).getKey()).get().readAllBytes()
-        // p_251134_.listPacks().toList().get(1).getResource(PackType.CLIENT_RESOURCES, Ecliptic.rl("textures/block/icon.png")).get().readAllBytes()
-
-        // for (Map.Entry<ResourceKey<Block>, Block> resourceKeyBlockEntry : BuiltInRegistries.BLOCK.entrySet()) {
-        //     Block block = resourceKeyBlockEntry.getValue();
-        //     for (BlockState state : block.getStateDefinition().getPossibleStates()) {
-        //         for (Direction direction : List.of(Direction.UP, Direction.NORTH, Direction.WEST, Direction.SOUTH, Direction.EAST, Direction.DOWN)) {
-        //     }
-        // }
-
-        // models.entrySet().stream().filter(e->e.getKey().namespace.equals(Ecliptic.MODID)&&e.getKey().toString().contains("slab")).toList();
-
     }
 
     @SubscribeEvent
