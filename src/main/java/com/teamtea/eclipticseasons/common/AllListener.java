@@ -52,12 +52,6 @@ public class AllListener {
 
             long newTime = event.getNewTime(), oldDayTime = ((Level) event.getLevel()).getDayTime();
             WeatherManager.updateAfterSleep(level, newTime, oldDayTime);
-            // // TODO: 根据季节更新概率
-            // if (!serverLevel.isRaining() && serverLevel.getRandom().nextFloat() > 0.8) {
-            //     serverLevel.setWeatherParameters(0,
-            //             ServerLevel.RAIN_DURATION.sample(serverLevel.getRandom()),
-            //             true, false);
-            // }
         }
 
     }
@@ -101,12 +95,10 @@ public class AllListener {
         if (event.phase.equals(TickEvent.Phase.END)
                 && !event.level.isClientSide()
                 && MapChecker.isValidDimension(event.level)) {
-            SolarHolders.getSaveDataLazy(event.level).ifPresent(data ->
-            {
-                if (!event.level.players().isEmpty()) {
-                    data.updateTicks((ServerLevel) event.level);
-                }
-            });
+            SolarDataManager data = SolarHolders.getSaveData(event.level);
+            if (data!=null) {
+                data.updateTicks((ServerLevel) event.level);
+            }
         }
 
         CustomRandomTickHandler.onWorldTick(event);

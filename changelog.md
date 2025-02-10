@@ -1,20 +1,20 @@
 0.3.14
 add compat for legendarysurvivaloverhaul
-fix the sound in the rain and water (1.20-1.21, 1.19-1.16 plan)
+fix the sound in the rain and water
 
 0.3.15
-add a config for crop humidity (1.20-1.21, and 1.19-1.16 plan)
+add a config for crop humidity
 add a config for crop season growth chance
 fix #3 for use EclipticTagClientTool in server method
 
 0.3.16
 add compat for cold_sweat
 fix compat for embeddium
-* fix desert tag (1.20-1.21, 1.19-1.16 need check)
+* fix desert tag
 * add small biome check
 * fix biome of bound rain and snow
-** fix model cache problem with ModernFix (1.20-1.21, 1.19-1.16 need check)
-** close fog weather which is used for test (1.20-1.21, 1.19-1.16 need check)
+** fix model cache problem with ModernFix
+** close fog weather which is used for test
 
 0.4
 update textures
@@ -57,7 +57,7 @@ fix an issue with snowy blocks flickering at long distances
 optimized performance consumption when rain
 * fix a simple render with some special mods slabs
 ** fix some codes
-** fix sync problem if player die in other dimension (1.20-1.21, 1.19-1.16 plan)
+** fix sync problem if player die in other dimension
 ** fix bee
 
 0.7.2
@@ -181,6 +181,7 @@ clean necessary biome cache (not need for 1.20)
 ### Critical Fixes
 Fixed an issue where certain mods could not obtain correct rainfall prediction information when using biome queries, due to the lack of Level input and no interaction with the mod. These mods will now receive query results related to the Overworld.
 
+Fixed an issue about the run of solar terms sys when informs are disabled.
 ### Improvements
 Due to the increasing amount of registration information, the registration-related code has been refactored and organized.
 
