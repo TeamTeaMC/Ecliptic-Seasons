@@ -48,7 +48,7 @@ public class SolarDataManager extends SavedData {
 
     public SolarDataManager(Level level) {
         levelWeakReference = new WeakReference<>(level);
-        serverLevelMapMap=new HashMap<>();
+        serverLevelMapMap = new HashMap<>();
     }
 
     public SolarDataManager(Level level, CompoundTag nbt) {
@@ -229,7 +229,7 @@ public class SolarDataManager extends SavedData {
 
         for (ServerPlayer player : world.players()) {
             SimpleNetworkHandler.send(player, new SolarTermsMessage(this.getSolarTermsDay()));
-            if (changeSolarTerm) {
+            if (changeSolarTerm && CommonConfig.Season.enableInform.get()) {
                 player.sendSystemMessage(SimpleUtil.getSolarTermMessage(getSolarTerm()), false);
             }
             WeatherManager.tickPlayerForSeasonCheck(player);
