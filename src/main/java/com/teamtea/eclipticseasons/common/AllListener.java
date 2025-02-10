@@ -86,7 +86,7 @@ public class AllListener {
                 SolarHolders.DATA_MANAGER_MAP.remove(level);
             }
 
-            MapChecker.validDimension.removeIf(l->l.equals(level));
+            MapChecker.validDimension.removeIf(l -> l.equals(level));
         }
 
     }
@@ -98,7 +98,9 @@ public class AllListener {
 
     @SubscribeEvent
     public static void onWorldTick(TickEvent.LevelTickEvent event) {
-        if (event.phase.equals(TickEvent.Phase.END) && CommonConfig.Season.enableInform.get() && !event.level.isClientSide() && event.level.dimension() == Level.OVERWORLD) {
+        if (event.phase.equals(TickEvent.Phase.END)
+                && !event.level.isClientSide()
+                && MapChecker.isValidDimension(event.level)) {
             SolarHolders.getSaveDataLazy(event.level).ifPresent(data ->
             {
                 if (!event.level.players().isEmpty()) {
@@ -138,7 +140,7 @@ public class AllListener {
     public static void onPlayerChangedDimension(PlayerEvent.Clone event) {
         if (event.getEntity() instanceof ServerPlayer serverPlayer) {
             // WeatherManager.onLoggedIn(serverPlayer, false);
-            Thread t=new Thread(()-> {
+            Thread t = new Thread(() -> {
                 try {
                     Thread.sleep(100);
                 } catch (InterruptedException ignored) {
@@ -163,8 +165,8 @@ public class AllListener {
 
     @SubscribeEvent
     public static void onAttachCapabilitiesEvent(AttachCapabilitiesEvent<Entity> event) {
-        if(event.getObject() instanceof Player){
-            event.addCapability(EclipticSeasons.rl("solar_term_holder"),new SolarTermsRecordCa());
+        if (event.getObject() instanceof Player) {
+            event.addCapability(EclipticSeasons.rl("solar_term_holder"), new SolarTermsRecordCa());
         }
     }
 }
