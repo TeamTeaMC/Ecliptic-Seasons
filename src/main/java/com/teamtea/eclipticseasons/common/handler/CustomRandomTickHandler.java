@@ -3,7 +3,7 @@ package com.teamtea.eclipticseasons.common.handler;
 
 import com.teamtea.eclipticseasons.api.CustomRandomTick;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
-import com.teamtea.eclipticseasons.config.ServerConfig;
+import com.teamtea.eclipticseasons.config.CommonConfig;
 import com.google.common.collect.Lists;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ChunkHolder;
@@ -38,7 +38,7 @@ public final class CustomRandomTickHandler {
     };
 
     public static void onWorldTick(TickEvent.WorldTickEvent event) {
-        if (event.phase.equals(TickEvent.Phase.END) && ServerConfig.Temperature.iceMelt.get() && !event.world.isClientSide()) {
+        if (event.phase.equals(TickEvent.Phase.END) && CommonConfig.Temperature.iceMelt.get() && !event.world.isClientSide()) {
             ServerLevel level = (ServerLevel) event.world;
             int randomTickSpeed = level.getGameRules().getInt(GameRules.RULE_RANDOMTICKING);
             if (randomTickSpeed > 0) {
@@ -77,7 +77,7 @@ public final class CustomRandomTickHandler {
     }
 
     private static void doCustomRandomTick(ServerLevel world, int x, int y, int z) {
-        if (ServerConfig.Temperature.iceMelt.get()) {
+        if (CommonConfig.Temperature.iceMelt.get()) {
             SNOW_MELT.tick(null, world, new BlockPos(x, y, z));
         }
     }

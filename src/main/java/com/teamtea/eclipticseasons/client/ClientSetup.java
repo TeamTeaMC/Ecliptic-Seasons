@@ -78,25 +78,8 @@ public class ClientSetup {
             // fix json file instead
             BiomeColors.GRASS_COLOR_RESOLVER = BiomeColorsHandler.GRASS_COLOR;
             BiomeColors.FOLIAGE_COLOR_RESOLVER = BiomeColorsHandler.FOLIAGE_COLOR;
-            Minecraft.getInstance().getBlockColors().register((state, blockAndTintGetter, pos, i) -> {
-                if (i == 1) {
 
-                    return blockAndTintGetter != null && pos != null ? BiomeColors.getAverageGrassColor(blockAndTintGetter, pos) : GrassColor.get(0.5D, 1.0D);
-                } else {
-                    return -1;
-                }
-            }, Blocks.DANDELION);
 
-            // Map<ResourceLocation, BakedModel> modelRegistry =Minecraft.getInstance().getModelManager().;
-            // ModelManager.models = modelRegistry;
-            // snowModel.resolve();
-            // ModelManager.snowySlabBottom.resolve();
-            // ModelManager.snowOverlayLeaves.resolve();
-            // var test = ModelManager.snowOverlayBlock.resolve().get();
-            // EclipticSeasons.logger(test);
-
-            ModelManager.quadMap.clear();
-            ModelManager.quadMap_1.clear();
         });
     }
 
@@ -110,25 +93,13 @@ public class ClientSetup {
         // });
     }
 
-    // public static Map<ResourceLocation, BakedModel> BakedSnowModels=new HashMap<>();
 
     @SubscribeEvent
     public static void onModelBaked(ModelBakeEvent event) {
         ModelManager.models=event.getModelRegistry();
 
-        // net.minecraft.client.resources.model.ModelManager.reload
-        // p_251134_.listPacks().toList().get(0).getResource(PackType.CLIENT_RESOURCES, completablefuture.get().entrySet().stream().toList().get(0).getKey()).get().readAllBytes()
-        // p_251134_.listPacks().toList().get(1).getResource(PackType.CLIENT_RESOURCES, Ecliptic.rl("textures/block/icon.png")).get().readAllBytes()
-
-        // for (Map.Entry<ResourceKey<Block>, Block> resourceKeyBlockEntry : BuiltInRegistries.BLOCK.entrySet()) {
-        //     Block block = resourceKeyBlockEntry.getValue();
-        //     for (BlockState state : block.getStateDefinition().getPossibleStates()) {
-        //         for (Direction direction : List.of(Direction.UP, Direction.NORTH, Direction.WEST, Direction.SOUTH, Direction.EAST, Direction.DOWN)) {
-        //     }
-        // }
-
-        // models.entrySet().stream().filter(e->e.getKey().namespace.equals(Ecliptic.MODID)&&e.getKey().toString().contains("slab")).toList();
-
+        ModelManager.quadMap.clear();
+        ModelManager.quadMap_1.clear();
     }
 
 }
