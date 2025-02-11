@@ -127,7 +127,7 @@ public enum SolarTerm {
 
     public static SnowTerm getSnowTerm(Biome biome) {
         if (biome == null) return SnowTerm.T05;
-        else if (BiomeClimateManager.getDefaultTemperature(biome) > 1 + 0.001f) {
+        else if (BiomeClimateManager.getDefaultTemperature(biome) > 0.95 + 0.001f) {
             return SnowTerm.T1;
         } else if (BiomeClimateManager.getDefaultTemperature(biome) > 0.8 + 0.001f) {
             return SnowTerm.T08;

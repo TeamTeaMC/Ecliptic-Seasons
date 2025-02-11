@@ -1,6 +1,5 @@
 package com.teamtea.eclipticseasons.common.core.biome;
 
-import com.mojang.serialization.Codec;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.constant.climate.BiomeRain;
 import com.teamtea.eclipticseasons.api.constant.climate.FlatRain;
@@ -36,9 +35,11 @@ import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.Heightmap;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.INBTSerializable;
+import net.minecraftforge.fml.loading.FMLLoader;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -50,12 +51,14 @@ public class WeatherManager {
     public static Map<World, ArrayList<BiomeWeather>> BIOME_WEATHER_LIST = new LinkedHashMap<>();
     public static Map<World, Integer> NEXT_CHECK_BIOME_MAP = new HashMap<>();
 
-    public static ArrayList<BiomeWeather> getBiomeList(World level) {
-        if (level == null) {
-            Optional<Map.Entry<World, ArrayList<BiomeWeather>>> first = BIOME_WEATHER_LIST.entrySet().stream().findFirst();
-            return first.map(Map.Entry::getValue).orElse(null);
+    public static ArrayList<BiomeWeather> getBiomeList(World world) {
+        if (world == null) {
+            for (ArrayList<BiomeWeather> value : BIOME_WEATHER_LIST.values()) {
+                return value;
+            }
+            return null;
         }
-        return BIOME_WEATHER_LIST.get(level);
+        return BIOME_WEATHER_LIST.getOrDefault(world, null);
     }
 
     public static Float getMinRainLevel(World level, float p46723) {
@@ -208,13 +211,26 @@ public class WeatherManager {
         return null;
     }
 
+    public static World getMainClientWorld() {
+        for (World level : WeatherManager.BIOME_WEATHER_LIST.keySet()) {
+            if (level.isClientSide) {
+                return level;
+            }
+        }
+        return null;
+    }
+
+    public static World fetchWorldIfNull(World world) {
+        world = world != null || FMLLoader.getDist() != Dist.CLIENT ? world : getMainClientWorld();
+        return world != null ? world : getMainServerWorld();
+    }
+
     public static Biome.RainType getPrecipitationAt(Biome biome, BlockPos pos) {
         return getPrecipitationAt(null, biome, pos);
     }
 
     public static Biome.RainType getPrecipitationAt(World levelNull, Biome biome, BlockPos p198905) {
-
-        World level = levelNull != null ? levelNull : getMainServerWorld();
+        World level = fetchWorldIfNull(levelNull);
         SolarDataManager provider = SolarUtil.getProvider(level);
         ArrayList<BiomeWeather> weathers = getBiomeList(level);
         if (provider != null && weathers != null) {
@@ -239,10 +255,10 @@ public class WeatherManager {
     }
 
     public static void createLevelBiomeWeatherList(World level) {
-        ArrayList<BiomeWeather>  list = new ArrayList<BiomeWeather>();
+        ArrayList<BiomeWeather> list = new ArrayList<BiomeWeather>();
         WeatherManager.BIOME_WEATHER_LIST.put(level, list);
         {
-           Optional< MutableRegistry<Biome>> biomes = level.registryAccess().registry(WorldGenRegistries.BIOME.key());
+            Optional<MutableRegistry<Biome>> biomes = level.registryAccess().registry(WorldGenRegistries.BIOME.key());
             if (biomes.isPresent()) {
                 for (Biome biome : biomes.get()) {
                     ResourceLocation loc = biomes.get().getKey(biome);
@@ -272,7 +288,7 @@ public class WeatherManager {
                     .ifPresent(biomeHolder -> {
                         WeatherManager.BIOME_WEATHER_LIST.entrySet().stream().forEach(levelArrayListEntry ->
                         {
-                            ArrayList<BiomeWeather>  biomeWeathers = levelArrayListEntry.getValue();
+                            ArrayList<BiomeWeather> biomeWeathers = levelArrayListEntry.getValue();
 
                             boolean inList = false;
 
@@ -313,8 +329,8 @@ public class WeatherManager {
                             boolean isColdHe = false;
                             for (ItemStack itemstack : player.getArmorSlots()) {
                                 Item item = itemstack.getItem();
-                                if (item instanceof ArmorItem ) {
-                                    if (((ArmorItem)item).getSlot() == EquipmentSlotType.HEAD) {
+                                if (item instanceof ArmorItem) {
+                                    if (((ArmorItem) item).getSlot() == EquipmentSlotType.HEAD) {
 
                                         if (EnchantmentHelper.getItemEnchantmentLevel(Enchantments.FIRE_PROTECTION, itemstack) > 0) {
                                             isColdHe = true;
@@ -343,7 +359,7 @@ public class WeatherManager {
                     float weight = biomeRain.getThunderChance();
                     if (level.getRandom().nextInt(1000) / 1000.f < weight) {
 
-                        biomeWeather.thunderTime = (random.nextInt(12000)+3600) / size;
+                        biomeWeather.thunderTime = (random.nextInt(12000) + 3600) / size;
                     }
                 }
             } else {
@@ -358,10 +374,10 @@ public class WeatherManager {
                         * Math.max(0.01f, downfall)
                         * ((CommonConfig.Season.rainChanceMultiplier.get() * 1f) / 100f);
                 if (level.getRandom().nextInt(1000) / 1000.f < weight) {
-                    biomeWeather.rainTime = (random.nextInt(12000)+12000) / size;
+                    biomeWeather.rainTime = (random.nextInt(12000) + 12000) / size;
                 } else {
                     // biomeWeather.clearTime = 10 / (size / 30);
-                    biomeWeather.clearTime =(random.nextInt(12000)+12000) / size;
+                    biomeWeather.clearTime = (random.nextInt(12000) + 12000) / size;
                 }
             }
         }
@@ -413,7 +429,7 @@ public class WeatherManager {
         AllListener.getSaveDataLazy(serverPlayer.level).ifPresent(t ->
         {
             SimpleNetworkHandler.send(serverPlayer, new SolarTermsMessage(t.getSolarTermsDay()));
-            if (isLogged &&CommonConfig.Season.enableInform.get()
+            if (isLogged && CommonConfig.Season.enableInform.get()
                     && t.getSolarTermsDay() % CommonConfig.Season.lastingDaysOfEachTerm.get() == 0) {
                 serverPlayer.sendMessage(new TranslationTextComponent("info.teastory.environment.solar_term.message", SolarTerm.get(t.getSolarTermIndex()).getAlternationText()), Util.NIL_UUID);
             }
@@ -529,15 +545,15 @@ public class WeatherManager {
         byte[] snows = new byte[levelBiomeWeather.size()];
         int[] ids = new int[levelBiomeWeather.size()];
         for (int i = 0; i < levelBiomeWeather.size(); i++) {
-            BiomeWeather biomeWeather =levelBiomeWeather.get(i);
+            BiomeWeather biomeWeather = levelBiomeWeather.get(i);
             rains[i] = (byte) (biomeWeather.shouldRain() ? 1 : 0);
             thunders[i] = (byte) (biomeWeather.shouldThunder() ? 1 : 0);
             clears[i] = (byte) (biomeWeather.shouldClear() ? 1 : 0);
             snows[i] = biomeWeather.snowDepth;
-            ids[i]=  biomeWeather.id;
+            ids[i] = biomeWeather.id;
         }
 
-        BiomeWeatherMessage msg = new BiomeWeatherMessage(rains, thunders, clears, snows,ids);
+        BiomeWeatherMessage msg = new BiomeWeatherMessage(rains, thunders, clears, snows, ids);
         SimpleNetworkHandler.send(players, msg);
     }
 

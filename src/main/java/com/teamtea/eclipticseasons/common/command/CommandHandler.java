@@ -10,6 +10,7 @@ import com.teamtea.eclipticseasons.common.AllListener;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
+import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.command.arguments.ResourceLocationArgument;
@@ -74,7 +75,7 @@ public class CommandHandler {
                                         })
                                         .executes(commandContext -> {
                                             String s = StringArgumentType.getString(commandContext, "term");
-                                            int day = SolarTerm.valueOf(s).ordinal() * 7;
+                                            int day = SolarTerm.valueOf(s).ordinal() * CommonConfig.Season.lastingDaysOfEachTerm.get();
                                             return setDay(commandContext.getSource(), day);
                                         })))
                         .then(Commands.literal("getTerm")
