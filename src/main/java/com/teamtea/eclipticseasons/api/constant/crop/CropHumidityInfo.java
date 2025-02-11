@@ -53,7 +53,7 @@ public class CropHumidityInfo
     public List<Component> getTooltip()
     {
         List<Component> list = new ArrayList<>();
-        list.add(new TranslatableComponent("info.teastory.environment.humidity").withStyle(ChatFormatting.GRAY));
+        list.add(new TranslatableComponent("info.eclipticseasons.environment.humidity").withStyle(ChatFormatting.GRAY));
         if (min != max)
         {
             list.add(((MutableComponent) min.getTranslation()).append(new TextComponent(" - ").withStyle(ChatFormatting.GRAY)).append(max.getTranslation()));

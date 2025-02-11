@@ -141,7 +141,7 @@ public class CommandHandler {
             });
         }
 
-        source.sendSuccess(new TranslatableComponent("commands.teastory.solar.set", day), true);
+        source.sendSuccess(new TranslatableComponent("commands.eclipticseasons.solar.set", day), true);
         return getDay(source.getLevel());
     }
 
@@ -151,7 +151,7 @@ public class CommandHandler {
             {
                 data.setSolarTermsDay(data.getSolarTermsDay() + add);
                 data.sendUpdateMessage(ServerLevel);
-                source.sendSuccess( new TranslatableComponent("commands.teastory.solar.set", data.getSolarTermsDay()), true);
+                source.sendSuccess( new TranslatableComponent("commands.eclipticseasons.solar.set", data.getSolarTermsDay()), true);
             });
         }
         return getDay(source.getLevel());

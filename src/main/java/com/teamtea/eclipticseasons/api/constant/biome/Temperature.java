@@ -53,7 +53,7 @@ public enum Temperature
 
     public Component getTranslation()
     {
-        return new TranslatableComponent("info.silveroak.environment.temperature." + getName());
+        return new TranslatableComponent("info.eclipticseasons.environment.temperature." + getName());
     }
 
     public static Temperature getTemperatureLevel(float temp)
