@@ -88,14 +88,10 @@ public class ClientSetup {
         });
     }
 
-    //    注意static是单次，比如启动类，没有比如右击事件
     @SubscribeEvent
     public static void onRegisterRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerBlockEntityRenderer(BlockEntityRegistry.calendar_entity_type.get(), CalendarBlockEntityRenderer::new);
-
     }
-
-    // public static Map<ResourceLocation, BakedModel> BakedSnowModels=new HashMap<>();
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onModelBaked(ModelEvent.ModifyBakingResult event) {
