@@ -3,6 +3,7 @@ package com.teamtea.eclipticseasons.common;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.util.EclipticTagTool;
+import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
@@ -13,7 +14,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.util.FakePlayer;
-import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.TagsUpdatedEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -24,31 +24,9 @@ import net.minecraftforge.event.server.ServerAboutToStartEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
-import java.util.HashMap;
-import java.util.Map;
-
 @Mod.EventBusSubscriber(modid = EclipticSeasons.MODID)
 public class AllListener {
-    // public static LazyOptional<SolarProvider> provider = LazyOptional.empty();
 
-    public static final Map<Level, SolarDataManager> DATA_MANAGER_MAP = new HashMap<>();
-
-
-    public static SolarDataManager getSaveData(Level level) {
-        return DATA_MANAGER_MAP.getOrDefault(level, null);
-    }
-
-    public static LazyOptional<SolarDataManager> getSaveDataLazy(Level level) {
-        return LazyOptional.of(() -> DATA_MANAGER_MAP.getOrDefault(level, new SolarDataManager(level)));
-    }
-
-    public static void createSaveData(Level level,SolarDataManager solarDataManager) {
-        DATA_MANAGER_MAP.put(level, solarDataManager);
-    }
-
-    // TagsUpdatedEvent invoke before ServerAboutToStartEvent
-    // TODO：优化这个问题，理论上来说，更新数据的时候不能发送群系包，话说回来，既然是群系天气，实际上与level关系不大，不应该一个level一个
-    // 但是这也说不准啊，谁知道谁无聊就搞这个呢
     @SubscribeEvent
     public static void onTagsUpdatedEvent(TagsUpdatedEvent tagsUpdatedEvent) {
         BiomeClimateManager.resetBiomeTemps(tagsUpdatedEvent.getRegistryAccess());
@@ -64,24 +42,13 @@ public class AllListener {
     }
 
 
-    // @SubscribeEvent
-    // public static void onServerStartedEvent(ServerStartedEvent event) {
-    //     BiomeClimateManager.resetBiomeTemps(event.getServer().registryAccess());
-    //     WeatherManager.informUpdateBiomes(event.getServer().registryAccess());
-    // }
-
     @SubscribeEvent
     public static void onSleepFinishedTimeEvent(SleepFinishedTimeEvent event) {
         if (event.getLevel() instanceof ServerLevel level) {
 
             long newTime = event.getNewTime(), oldDayTime = ((Level) event.getLevel()).getDayTime();
             WeatherManager.updateAfterSleep(level, newTime, oldDayTime);
-            // // TODO: 根据季节更新概率
-            // if (!serverLevel.isRaining() && serverLevel.getRandom().nextFloat() > 0.8) {
-            //     serverLevel.setWeatherParameters(0,
-            //             ServerLevel.RAIN_DURATION.sample(serverLevel.getRandom()),
-            //             true, false);
-            // }
+
         }
 
     }
@@ -93,7 +60,7 @@ public class AllListener {
             WeatherManager.createLevelBiomeWeatherList(serverLevel);
             // 这里需要恢复一下数据
             // 客户端登录时同步天气数据，此处先放入
-          createSaveData(serverLevel, SolarDataManager.get(serverLevel));
+            SolarHolders.createSaveData(serverLevel, SolarDataManager.get(serverLevel));
         }
     }
 
@@ -103,7 +70,7 @@ public class AllListener {
             WeatherManager.BIOME_WEATHER_LIST.remove(level);
             // if (level instanceof ServerLevel serverLevel)
             {
-                DATA_MANAGER_MAP.remove(level);
+                SolarHolders.DATA_MANAGER_MAP.remove(level);
             }
         }
 
@@ -116,8 +83,8 @@ public class AllListener {
                 && !event.level.isClientSide()
                 // TODO: fix the level resource key
                 && MapChecker.isValidDimension(event.level)) {
-            SolarDataManager data = getSaveData(event.level);
-            if (data!=null) {
+            SolarDataManager data = SolarHolders.getSaveData(event.level);
+            if (data != null) {
                 data.updateTicks((ServerLevel) event.level);
             }
         }
@@ -138,14 +105,14 @@ public class AllListener {
     @SubscribeEvent
     public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
         if (event.getEntity() instanceof ServerPlayer serverPlayer && !(event.getEntity() instanceof FakePlayer)) {
-            WeatherManager.onLoggedIn(serverPlayer,true);
+            WeatherManager.onLoggedIn(serverPlayer, true);
         }
     }
 
     @SubscribeEvent
     public static void onPlayerChangedDimension(PlayerEvent.PlayerChangedDimensionEvent event) {
         if (event.getEntity() instanceof ServerPlayer serverPlayer) {
-            WeatherManager.onLoggedIn(serverPlayer,false);
+            WeatherManager.onLoggedIn(serverPlayer, false);
         }
     }
 

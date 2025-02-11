@@ -1,0 +1,21 @@
+{
+	"credit": "Made with Blockbench",
+	"textures": {
+		"0": "eclipticseasons:block/calendar",
+		"particle": "eclipticseasons:block/calendar"
+	},
+	"elements": [
+		{
+			"from": [3, 0, 12],
+			"to": [13, 14, 16],
+			"faces": {
+				"north": {"uv": [0, 2, 10, 16], "texture": "#0"},
+				"east": {"uv": [14, 2, 10, 16], "texture": "#0"},
+				"south": {"uv": [0, 2, 10, 16], "texture": "#0"},
+				"west": {"uv": [10, 2, 14, 16], "texture": "#0"},
+				"up": {"uv": [0, 0, 10, 2], "texture": "#0"},
+				"down": {"uv": [0, 0, 10, 2], "texture": "#0"}
+			}
+		}
+	]
+}

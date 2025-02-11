@@ -1,10 +1,10 @@
 package com.teamtea.eclipticseasons.client.core;
 
-import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.util.SimpleUtil;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
+import com.teamtea.eclipticseasons.common.registry.BlockRegistry;
 import com.teamtea.eclipticseasons.config.ClientConfig;
 
 import com.teamtea.eclipticseasons.mixin.EclipticSeasonsMixinPlugin;
@@ -16,7 +16,6 @@ import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.ChunkPos;
@@ -27,10 +26,6 @@ import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.level.block.state.properties.Half;
 import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraft.world.level.levelgen.Heightmap;
-import net.minecraft.world.level.levelgen.LegacyRandomSource;
-import net.minecraftforge.common.Tags;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fml.loading.FMLLoader;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 
 import java.util.*;
@@ -39,9 +34,9 @@ import java.util.*;
 // 未来可以基于RepositorySource实现动态纹理生成（看情况，因为目前不需要，对内存消耗比较大）
 public class ModelManager {
     public static Map<ResourceLocation, BakedModel> models;
-    public static ModelResourceLocation snowOverlayLeaves = new ModelResourceLocation(EclipticSeasons.ModContents.snowyLeaves.getId(), "");
-    public static ModelResourceLocation snowySlabBottom = new ModelResourceLocation(EclipticSeasons.ModContents.snowySlab.getId(), "type=bottom,waterlogged=false");
-    public static ModelResourceLocation snowOverlayBlock = new ModelResourceLocation(EclipticSeasons.ModContents.snowyBlock.getId(), "");
+    public static ModelResourceLocation snowOverlayLeaves = new ModelResourceLocation(BlockRegistry.snowyLeaves.getId(), "");
+    public static ModelResourceLocation snowySlabBottom = new ModelResourceLocation(BlockRegistry.snowySlab.getId(), "type=bottom,waterlogged=false");
+    public static ModelResourceLocation snowOverlayBlock = new ModelResourceLocation(BlockRegistry.snowyBlock.getId(), "");
 
     public static ResourceLocation snowy_fern = EclipticSeasons.rl("block/snowy_fern");
     public static ResourceLocation snowy_grass = EclipticSeasons.rl("block/snowy_grass");
@@ -49,8 +44,6 @@ public class ModelManager {
     public static ResourceLocation snowy_large_fern_top = EclipticSeasons.rl("block/snowy_large_fern_top");
     public static ResourceLocation snowy_tall_grass_bottom = EclipticSeasons.rl("block/snowy_tall_grass_bottom");
     public static ResourceLocation snowy_tall_grass_top = EclipticSeasons.rl("block/snowy_tall_grass_top");
-    public static ResourceLocation snowy_dandelion = EclipticSeasons.rl("block/snowy_dandelion");
-    public static ResourceLocation dandelion_top = EclipticSeasons.rl("block/dandelion_top");
     public static ResourceLocation overlay_2 = EclipticSeasons.rl("block/overlay_2");
     public static ResourceLocation snow_height2 = EclipticSeasons.rl("block/snow_height2");
     public static ResourceLocation snow_height2_top = EclipticSeasons.rl("block/snow_height2_top");
@@ -241,7 +234,7 @@ public class ModelManager {
     public static final int FLAG_GRASS = 5;
     public static final int FLAG_GRASS_LARGE = 501;
     public static final int FLAG_FARMLAND = 6;
-    public static final List<Block> LowerPlant = List.of(Blocks.GRASS, Blocks.FERN, Blocks.DANDELION);
+    public static final List<Block> LowerPlant = List.of(Blocks.GRASS, Blocks.FERN);
     public static final List<Block> LARGE_GRASS = List.of(Blocks.TALL_GRASS, Blocks.LARGE_FERN);
 
     // 实际上这里之所以太慢还有个问题就是会一个方块访问七次
@@ -339,7 +332,7 @@ public class ModelManager {
                         } else if (flag == FLAG_SLAB) {
                             snowModel = models.get(snowySlabBottom);
                         } else if (models != null && flag == FLAG_STAIRS) {
-                            snowState = EclipticSeasons.ModContents.snowyStairs.get().defaultBlockState()
+                            snowState = BlockRegistry.snowyStairs.get().defaultBlockState()
                                     .setValue(StairBlock.FACING, state.getValue(StairBlock.FACING))
                                     .setValue(StairBlock.HALF, state.getValue(StairBlock.HALF))
                                     .setValue(StairBlock.SHAPE, state.getValue(StairBlock.SHAPE));
@@ -350,9 +343,7 @@ public class ModelManager {
                                 snowModel = models.get(snowy_grass);
                             } else if (onBlock == Blocks.FERN) {
                                 snowModel = models.get(snowy_fern);
-                            } else if (onBlock == Blocks.DANDELION) {
-                                snowModel = models.get(snowy_dandelion);
-                            } else snowModel = models.get(snowy_grass);
+                            }  else snowModel = models.get(snowy_grass);
                         } else if (flag == FLAG_GRASS_LARGE) {
                             if (onBlock == Blocks.TALL_GRASS) {
                                 snowModel = models.get(offset == 1 ? snowy_tall_grass_bottom : snowy_tall_grass_top);
@@ -387,9 +378,6 @@ public class ModelManager {
                                 newList.addAll(snowList);
                             }
 
-                            if (onBlock == Blocks.DANDELION) {
-                                newList.addAll(models.get(dandelion_top).getQuads(null, null, null));
-                            }
 
                             if (flag == FLAG_FARMLAND) {
 

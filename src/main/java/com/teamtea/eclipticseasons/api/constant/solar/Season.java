@@ -26,7 +26,7 @@ public enum Season
 
     public Component getTranslation()
     {
-        return Component.translatable("info.teastory.environment.season." + getName()).withStyle(color);
+        return Component.translatable("info.eclipticseasons.environment.season." + getName()).withStyle(color);
     }
 
     public ChatFormatting getColor()

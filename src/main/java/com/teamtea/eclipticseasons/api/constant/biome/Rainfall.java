@@ -46,7 +46,7 @@ public enum Rainfall
 
     public Component getTranslation()
     {
-        return Component.translatable("info.silveroak.environment.rainfall." + getName());
+        return Component.translatable("info.eclipticseasons.environment.rainfall." + getName());
     }
 
     public static Rainfall getRainfallLevel(float rainfall)

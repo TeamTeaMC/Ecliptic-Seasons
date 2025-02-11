@@ -28,7 +28,7 @@ public enum Humidity {
     }
 
     public Component getTranslation() {
-        return Component.translatable("info.silveroak.environment.humidity." + getName()).withStyle(color);
+        return Component.translatable("info.eclipticseasons.environment.humidity." + getName()).withStyle(color);
     }
 
     public float getCoefficient() {
