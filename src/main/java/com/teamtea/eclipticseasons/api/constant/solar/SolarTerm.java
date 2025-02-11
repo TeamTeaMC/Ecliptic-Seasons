@@ -58,11 +58,11 @@ public enum SolarTerm {
     }
 
     public ITextComponent getTranslation() {
-        return new TranslationTextComponent("info.teastory.environment.solar_term." + getName());
+        return new TranslationTextComponent("info.eclipticseasons.environment.solar_term." + getName());
     }
 
     public ITextComponent getAlternationText() {
-        return new TranslationTextComponent("info.teastory.environment.solar_term.alternation." + getName()).withStyle(getSeason().getColor());
+        return new TranslationTextComponent("info.eclipticseasons.environment.solar_term.alternation." + getName()).withStyle(getSeason().getColor());
     }
 
     public static SolarTerm get(int index) {

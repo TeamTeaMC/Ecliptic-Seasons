@@ -20,7 +20,7 @@ public interface MixinLevelTimeAccess extends IDayTimeReader {
 
     @Override
     default float getTimeOfDay(float p_46943_) {
-        // TeaStory.logger(p_46943_,dayTime());
+        // eclipticseasons.logger(p_46943_,dayTime());
         return SolarAngelHelper.getSeasonCelestialAngle((IDayTimeReader)(Object)this, dayTime());
     }
 

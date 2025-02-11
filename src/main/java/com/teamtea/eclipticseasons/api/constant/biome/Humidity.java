@@ -30,7 +30,7 @@ public enum Humidity {
     }
 
     public ITextComponent getTranslation() {
-        return new TranslationTextComponent("info.silveroak.environment.humidity." + getName()).withStyle(color);
+        return new TranslationTextComponent("info.eclipticseasons.environment.humidity." + getName()).withStyle(color);
     }
 
     public float getCoefficient() {

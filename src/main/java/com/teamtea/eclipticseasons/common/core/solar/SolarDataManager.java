@@ -123,7 +123,7 @@ public class SolarDataManager extends WorldSavedData {
             SimpleNetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), new SolarTermsMessage(this.getSolarTermsDay()));
             if (CommonConfig.Season.enableInform.get()
                     &&getSolarTermsDay() % CommonConfig.Season.lastingDaysOfEachTerm.get() == 0) {
-                player.sendMessage(new TranslationTextComponent("info.teastory.environment.solar_term.message", SolarTerm.get(getSolarTermIndex()).getAlternationText()),  Util.NIL_UUID);
+                player.sendMessage(new TranslationTextComponent("info.eclipticseasons.environment.solar_term.message", SolarTerm.get(getSolarTermIndex()).getAlternationText()),  Util.NIL_UUID);
             }
         }
     }

@@ -27,7 +27,7 @@ public enum Season
 
     public ITextComponent getTranslation()
     {
-        return new TranslationTextComponent("info.teastory.environment.season." + getName()).withStyle(color);
+        return new TranslationTextComponent("info.eclipticseasons.environment.season." + getName()).withStyle(color);
     }
 
     public TextFormatting getColor()

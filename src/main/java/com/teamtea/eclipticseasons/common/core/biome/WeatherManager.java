@@ -431,7 +431,7 @@ public class WeatherManager {
             SimpleNetworkHandler.send(serverPlayer, new SolarTermsMessage(t.getSolarTermsDay()));
             if (isLogged && CommonConfig.Season.enableInform.get()
                     && t.getSolarTermsDay() % CommonConfig.Season.lastingDaysOfEachTerm.get() == 0) {
-                serverPlayer.sendMessage(new TranslationTextComponent("info.teastory.environment.solar_term.message", SolarTerm.get(t.getSolarTermIndex()).getAlternationText()), Util.NIL_UUID);
+                serverPlayer.sendMessage(new TranslationTextComponent("info.eclipticseasons.environment.solar_term.message", SolarTerm.get(t.getSolarTermIndex()).getAlternationText()), Util.NIL_UUID);
             }
         });
         WeatherManager.sendBiomePacket(WeatherManager.getBiomeList(serverPlayer.level), Stream.of(serverPlayer).collect(Collectors.toList()));
