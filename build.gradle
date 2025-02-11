@@ -201,15 +201,17 @@ dependencies {
     compileOnly fg.deobf("curse.maven:oculus-581495:5194273")
 
     runtimeOnly fg.deobf("curse.maven:embeddium-908741:5322311")
-//    runtimeOnly fg.deobf("curse.maven:oculus-581495:5194273")
+    runtimeOnly fg.deobf("curse.maven:oculus-581495:5194273")
 
     compileOnly "libs:OptiFine:1.16.5_HD_U_G8"
 
     implementation fg.deobf("curse.maven:jei-238222:4371666")
     implementation fg.deobf("curse.maven:jade-324717:3910873")
 
+
 //    runtimeOnly fg.deobf("curse.maven:journeymap-32274:5208370")
     runtimeOnly fg.deobf("curse.maven:farmers-delight-398521:3765350")
+    runtimeOnly fg.deobf("curse.maven:croptopia-415438:3847095")
 
 }
 

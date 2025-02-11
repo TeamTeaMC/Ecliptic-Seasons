@@ -1,5 +1,6 @@
 package com.teamtea.eclipticseasons.common.core.biome;
 
+import com.mojang.serialization.Codec;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.constant.climate.BiomeRain;
 import com.teamtea.eclipticseasons.api.constant.climate.FlatRain;
@@ -409,18 +410,14 @@ public class WeatherManager {
 
     public static void onLoggedIn(ServerPlayerEntity serverPlayer, boolean isLogged) {
         if ((serverPlayer instanceof FakePlayer)) return;
-        if (CommonConfig.Season.enableInform.get()) {
-            AllListener.getSaveDataLazy(serverPlayer.level).ifPresent(t ->
-            {
-                SimpleNetworkHandler.send(serverPlayer, new SolarTermsMessage(t.getSolarTermsDay()));
-                if (isLogged
-
-                        && t.getSolarTermsDay() % CommonConfig.Season.lastingDaysOfEachTerm.get() == 0) {
-                    serverPlayer.sendMessage(new TranslationTextComponent("info.teastory.environment.solar_term.message", SolarTerm.get(t.getSolarTermIndex()).getAlternationText()), Util.NIL_UUID);
-                }
-            });
-
-        }
+        AllListener.getSaveDataLazy(serverPlayer.level).ifPresent(t ->
+        {
+            SimpleNetworkHandler.send(serverPlayer, new SolarTermsMessage(t.getSolarTermsDay()));
+            if (isLogged &&CommonConfig.Season.enableInform.get()
+                    && t.getSolarTermsDay() % CommonConfig.Season.lastingDaysOfEachTerm.get() == 0) {
+                serverPlayer.sendMessage(new TranslationTextComponent("info.teastory.environment.solar_term.message", SolarTerm.get(t.getSolarTermIndex()).getAlternationText()), Util.NIL_UUID);
+            }
+        });
         WeatherManager.sendBiomePacket(WeatherManager.getBiomeList(serverPlayer.level), Stream.of(serverPlayer).collect(Collectors.toList()));
     }
 
