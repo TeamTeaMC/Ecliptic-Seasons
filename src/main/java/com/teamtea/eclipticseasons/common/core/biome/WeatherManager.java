@@ -407,18 +407,14 @@ public class WeatherManager {
 
     public static void onLoggedIn(ServerPlayer serverPlayer, boolean isLogged) {
         if ((serverPlayer instanceof FakePlayer)) return;
-        if (CommonConfig.Season.enableInform.get()) {
-            AllListener.getSaveDataLazy(serverPlayer.level).ifPresent(t ->
-            {
-                SimpleNetworkHandler.send(serverPlayer, new SolarTermsMessage(t.getSolarTermsDay()));
-                if (isLogged
-
-                        && t.getSolarTermsDay() % CommonConfig.Season.lastingDaysOfEachTerm.get() == 0) {
-                    serverPlayer.sendSystemMessage(Component.translatable("info.teastory.environment.solar_term.message", SolarTerm.get(t.getSolarTermIndex()).getAlternationText()), false);
-                }
-            });
-
-        }
+        AllListener.getSaveDataLazy(serverPlayer.level).ifPresent(t ->
+        {
+            SimpleNetworkHandler.send(serverPlayer, new SolarTermsMessage(t.getSolarTermsDay()));
+            if (isLogged&&CommonConfig.Season.enableInform.get()
+                    && t.getSolarTermsDay() % CommonConfig.Season.lastingDaysOfEachTerm.get() == 0) {
+                serverPlayer.sendSystemMessage(Component.translatable("info.teastory.environment.solar_term.message", SolarTerm.get(t.getSolarTermIndex()).getAlternationText()), false);
+            }
+        });
         WeatherManager.sendBiomePacket(WeatherManager.getBiomeList(serverPlayer.level), List.of(serverPlayer));
     }
 

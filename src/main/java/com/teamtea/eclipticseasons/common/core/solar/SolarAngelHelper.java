@@ -20,7 +20,7 @@ public class SolarAngelHelper {
         {
             return AllListener.getSaveDataLazy(level).map(data ->
             {
-                int dayTime = SolarTerm.get(data.getSolarTermIndex()).getDayTime();
+                int dayTime = data.getSolarTerm().getDayTime();
                 // dayTime=23900;
                 int sunrise = 24000 - dayTime / 2;
                 int sunset = dayTime / 2;
