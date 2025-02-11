@@ -71,6 +71,6 @@
   "commands.eclipticseasons.solar.set": "已将节气天数设置为第%s天",
   "effect.eclipticseasons.heat_stroke": "中暑",
   "block.eclipticseasons.calendar": "日历",
-  "itemGroup.eclipticseasons.core": "节气",
+  "itemGroup.eclipticseasons": "节气",
   "info.eclipticseasons.environment.solar_term.hint": "今日节气:"
 }
