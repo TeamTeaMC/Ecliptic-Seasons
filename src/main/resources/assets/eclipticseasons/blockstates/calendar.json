@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "eclipticseasons:block/calendar",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "eclipticseasons:block/calendar"
+    },
+    "facing=south": {
+      "model": "eclipticseasons:block/calendar",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "eclipticseasons:block/calendar",
+      "y": 270
+    }
+  }
+}

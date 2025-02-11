@@ -1,5 +1,7 @@
 package com.teamtea.eclipticseasons.client;
 
+import com.teamtea.eclipticseasons.client.render.ber.CalendarBlockEntityRenderer;
+import com.teamtea.eclipticseasons.common.registry.BlockEntityRegistry;
 import com.teamtea.eclipticseasons.common.registry.ParticleRegistry;
 import com.teamtea.eclipticseasons.client.color.season.BiomeColorsHandler;
 import com.teamtea.eclipticseasons.client.particle.FireflyParticle;
@@ -75,14 +77,9 @@ public class ClientSetup {
         });
     }
 
-    //    注意static是单次，比如启动类，没有比如右击事件
     @SubscribeEvent
     public static void onRegisterRenderers(EntityRenderersEvent.RegisterRenderers event) {
-        // FluidDrawersLegacyMod.logger("Register Renderer");
-        // ModContents.DRBlockEntities.getEntries().forEach((reg) -> {
-        //     event.registerBlockEntityRenderer((BlockEntityType<BlockEntityFluidDrawer>)reg.get(),
-        //             TESRFluidDrawer::new);
-        // });
+        event.registerBlockEntityRenderer(BlockEntityRegistry.calendar_entity_type.get(), CalendarBlockEntityRenderer::new);
     }
 
 

@@ -68,7 +68,9 @@
     "info.eclipticseasons.environment.solar_term.alternation.winter_solstice": "日影渐长，长夜漫漫。",
     "info.eclipticseasons.environment.solar_term.alternation.lesser_cold": "数九寒天，冷在三九。",
     "info.eclipticseasons.environment.solar_term.alternation.greater_cold": "大寒大寒，无风自寒。",
-    "info.eclipticseasons.record": "您还未安装唱片资源包",
     "commands.eclipticseasons.solar.set": "已将节气天数设置为第%s天",
-    "effect.eclipticseasons.heat_stroke": "中暑"
+    "effect.eclipticseasons.heat_stroke": "中暑",
+    "block.eclipticseasons.calendar": "日历",
+    "itemGroup.eclipticseasons": "节气",
+    "info.eclipticseasons.environment.solar_term.hint": "今日节气:"
 }
