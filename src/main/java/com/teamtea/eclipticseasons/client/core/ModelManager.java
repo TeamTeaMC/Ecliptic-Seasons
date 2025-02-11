@@ -39,18 +39,9 @@ import java.util.*;
 // 未来可以基于RepositorySource实现动态纹理生成（看情况，因为目前不需要，对内存消耗比较大）
 public class ModelManager {
     public static Map<ResourceLocation, BakedModel> models;
-    public static
-    LazyOptional<BakedModel> snowOverlayLeaves =
-            LazyOptional.of(() -> models.get(new ModelResourceLocation(EclipticSeasons.ModContents.snowyLeaves.getId(), "")));
-    public static
-    LazyOptional<BakedModel> snowySlabBottom =
-            LazyOptional.of(() -> models.get(new ModelResourceLocation(EclipticSeasons.ModContents.snowySlab.getId(), "type=bottom,waterlogged=false")));
-    public static
-    LazyOptional<BakedModel> snowOverlayBlock =
-            LazyOptional.of(() -> models.get(new ModelResourceLocation(EclipticSeasons.ModContents.snowyBlock.getId(), "")));
-    public static
-    LazyOptional<BakedModel> snowModel =
-            LazyOptional.of(() -> models.get(new ModelResourceLocation(new ResourceLocation("minecraft:snow_block"), "")));
+    public static ModelResourceLocation snowOverlayLeaves = new ModelResourceLocation(EclipticSeasons.ModContents.snowyLeaves.getId(), "");
+    public static ModelResourceLocation snowySlabBottom = new ModelResourceLocation(EclipticSeasons.ModContents.snowySlab.getId(), "type=bottom,waterlogged=false");
+    public static ModelResourceLocation snowOverlayBlock = new ModelResourceLocation(EclipticSeasons.ModContents.snowyBlock.getId(), "");
 
     public static ResourceLocation snowy_fern = EclipticSeasons.rl("block/snowy_fern");
     public static ResourceLocation snowy_grass = EclipticSeasons.rl("block/snowy_grass");
@@ -340,13 +331,13 @@ public class ModelManager {
                     } else {
                         BakedModel snowModel = null;
                         BlockState snowState = null;
-                        if (snowOverlayBlock.resolve().isPresent() && flag == FLAG_BLOCK) {
+                        if (flag == FLAG_BLOCK) {
                             // snowModel = !isFlowerAbove ? snowOverlayBlock.resolve().get() : models.get(overlay_2);
-                            snowModel = snowOverlayBlock.resolve().get();
-                        } else if (snowOverlayLeaves.resolve().isPresent() && flag == FLAG_LEAVES) {
-                            snowModel = snowOverlayLeaves.resolve().get();
-                        } else if (snowySlabBottom.resolve().isPresent() && flag == FLAG_SLAB) {
-                            snowModel = snowySlabBottom.resolve().get();
+                            snowModel = models.get(snowOverlayBlock);
+                        } else if (flag == FLAG_LEAVES) {
+                            snowModel = models.get(snowOverlayLeaves);
+                        } else if (flag == FLAG_SLAB) {
+                            snowModel = models.get(snowySlabBottom);
                         } else if (models != null && flag == FLAG_STAIRS) {
                             snowState = EclipticSeasons.ModContents.snowyStairs.get().defaultBlockState()
                                     .setValue(StairBlock.FACING, state.getValue(StairBlock.FACING))

@@ -38,8 +38,10 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.storage.ServerLevelData;
 import net.minecraft.world.level.storage.WritableLevelData;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.INBTSerializable;
+import net.minecraftforge.fml.loading.FMLLoader;
 
 import java.util.*;
 
@@ -49,8 +51,13 @@ public class WeatherManager {
     public static Map<Level, Integer> NEXT_CHECK_BIOME_MAP = new HashMap<>();
 
     public static ArrayList<BiomeWeather> getBiomeList(Level level) {
-        if (level == null) return BIOME_WEATHER_LIST.entrySet().stream().findFirst().get().getValue();
-        return BIOME_WEATHER_LIST.get(level);
+        if (level == null) {
+            for (ArrayList<BiomeWeather> value : BIOME_WEATHER_LIST.values()) {
+                return value;
+            }
+            return null;
+        }
+        return BIOME_WEATHER_LIST.getOrDefault(level, null);
     }
 
     public static Float getMinRainLevel(Level level, float p46723) {
@@ -202,6 +209,19 @@ public class WeatherManager {
         }
         return null;
     }
+    public static Level getMainClientLevel() {
+        for (Level level : WeatherManager.BIOME_WEATHER_LIST.keySet()) {
+            if (level.isClientSide) {
+                return level;
+            }
+        }
+        return null;
+    }
+
+    public static Level fetchLevelIfNull(Level level) {
+        level = level != null || FMLLoader.getDist() != Dist.CLIENT ? level : getMainClientLevel();
+        return level != null ? level : getMainServerLevel();
+    }
 
     public static Biome.Precipitation getPrecipitationAt(Biome biome, BlockPos pos) {
         return getPrecipitationAt(null, biome, pos);
@@ -209,7 +229,7 @@ public class WeatherManager {
 
     public static Biome.Precipitation getPrecipitationAt(Level levelNull, Biome biome, BlockPos p198905) {
 
-        var level = levelNull != null ? levelNull : getMainServerLevel();
+        var level = fetchLevelIfNull(levelNull);
         var provider = SolarUtil.getProvider(level);
         var weathers = getBiomeList(level);
         if (provider != null && weathers != null) {

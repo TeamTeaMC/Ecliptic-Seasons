@@ -91,7 +91,7 @@ public class ClientWeatherChecker {
         if (lists != null)
             for (WeatherManager.BiomeWeather biomeWeather : lists) {
                 if (biomeWeather.biomeHolder == biomeHolder) {
-                    return biomeWeather.rainTime > 0 ? 1.0f : 0.0f;
+                    return biomeWeather.thunderTime > 0 ? 1.0f : 0.0f;
                 }
             }
         return 0.0f;
