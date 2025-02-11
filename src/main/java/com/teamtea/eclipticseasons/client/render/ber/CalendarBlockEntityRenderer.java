@@ -105,7 +105,7 @@ public class CalendarBlockEntityRenderer extends TileEntityRenderer<CalendarBloc
         if (line == 1) {
             SolarTerm nowSolarTerm = SimpleUtil.getNowSolarTerm(tile.getLevel());
             // We need disable cull to render the icon
-            RenderSystem.disableCull();
+            // RenderSystem.disableCull();
             IVertexBuilder builder = txtBuffer.getBuffer(RenderType.entitySmoothCutout(SolarTerm.getFullIcon()));
             // builder = txtBuffer.getBuffer(net.minecraftforge.client.RenderTypeHelper.getEntityRenderType(null, false));
             blitRect(matrixStackIn, builder, combinedLightIn, OverlayTexture.NO_OVERLAY,
