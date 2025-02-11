@@ -3,10 +3,9 @@ package com.teamtea.eclipticseasons.common.command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import com.mojang.datafixers.util.Either;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.util.SimpleUtil;
-import com.teamtea.eclipticseasons.common.AllListener;
+import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
@@ -29,8 +28,6 @@ import com.teamtea.eclipticseasons.EclipticSeasons;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
 
 @Mod.EventBusSubscriber(modid = EclipticSeasons.MODID)
 public class CommandHandler {
@@ -53,7 +50,7 @@ public class CommandHandler {
                                         .executes(commandContext -> setDay(commandContext.getSource(), IntegerArgumentType.getInteger(commandContext, "day")))))
                         .then(Commands.literal("get")
                                 .executes(commandContext -> {
-                                    int solar = AllListener.getSaveData(commandContext.getSource().getLevel()).getSolarTermsDay();
+                                    int solar = SolarHolders.getSaveData(commandContext.getSource().getLevel()).getSolarTermsDay();
                                     commandContext.getSource().sendSuccess(new StringTextComponent("" + solar), true);
                                     return 0;
                                 })
@@ -80,7 +77,7 @@ public class CommandHandler {
                                         })))
                         .then(Commands.literal("getTerm")
                                 .executes(commandContext -> {
-                                    SolarTerm solar = AllListener.getSaveData(commandContext.getSource().getLevel()).getSolarTerm();
+                                    SolarTerm solar = SolarHolders.getSaveData(commandContext.getSource().getLevel()).getSolarTerm();
                                     commandContext.getSource().sendSuccess(solar.getTranslation(), true);
                                     return 0;
                                 })
@@ -128,13 +125,13 @@ public class CommandHandler {
     }
 
     private static int getDay(ServerWorld worldIn) {
-        return AllListener.getSaveDataLazy(worldIn).map(SolarDataManager::getSolarTermsDay).orElse(0);
+        return SolarHolders.getSaveDataLazy(worldIn).map(SolarDataManager::getSolarTermsDay).orElse(0);
     }
 
     public static int setDay(CommandSource source, int day) {
         // for (var ServerLevel : List.of(source.getLevel()))
         {
-            AllListener.getSaveDataLazy(source.getLevel()).ifPresent(data ->
+            SolarHolders.getSaveDataLazy(source.getLevel()).ifPresent(data ->
             {
                 data.setSolarTermsDay(day);
                 data.sendUpdateMessage(source.getLevel());
@@ -148,7 +145,7 @@ public class CommandHandler {
     public static int addDay(CommandSource source, int add) {
         // for (var ServerLevel : List.of(source.getLevel()))
         {
-            AllListener.getSaveDataLazy(source.getLevel()).ifPresent(data ->
+            SolarHolders.getSaveDataLazy(source.getLevel()).ifPresent(data ->
             {
                 data.setSolarTermsDay(data.getSolarTermsDay() + add);
                 data.sendUpdateMessage(source.getLevel());

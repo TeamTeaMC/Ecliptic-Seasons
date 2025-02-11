@@ -2,7 +2,7 @@ package com.teamtea.eclipticseasons.client.debug;
 
 
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
-import com.teamtea.eclipticseasons.common.AllListener;
+import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
 import com.teamtea.eclipticseasons.config.ClientConfig;
 import com.teamtea.eclipticseasons.common.core.solar.SolarAngelHelper;
@@ -37,7 +37,7 @@ public final class OverlayEventHandler {
                 if (ClientConfig.GUI.debugInfo.get()
                     // || !FMLEnvironment.production
                 ) {
-                    SolarTerm solar = AllListener.getSaveDataLazy(clientPlayer.level).orElse(new SolarDataManager(clientPlayer.level)).getSolarTerm();
+                    SolarTerm solar = SolarHolders.getSaveDataLazy(clientPlayer.level).orElse(new SolarDataManager(clientPlayer.level)).getSolarTerm();
                     long dayTime = clientPlayer.level.getDayTime();
                     float temp = clientPlayer.level.getBiome(clientPlayer.blockPosition()).getTemperature(clientPlayer.blockPosition());
                     Humidity h = Humidity.getHumid(clientPlayer.level.getBiome(clientPlayer.blockPosition()).getDownfall(), temp);

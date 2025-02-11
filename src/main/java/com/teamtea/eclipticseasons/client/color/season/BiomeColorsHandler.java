@@ -4,20 +4,14 @@ import com.teamtea.eclipticseasons.api.util.EclipticTagClientTool;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.constant.solar.color.SolarTermColor;
 import com.teamtea.eclipticseasons.api.constant.tag.SeasonTypeBiomeTags;
-import com.teamtea.eclipticseasons.api.util.SimpleUtil;
 import com.teamtea.eclipticseasons.client.core.ColorHelper;
-import com.teamtea.eclipticseasons.common.AllListener;
+import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import net.minecraft.client.Minecraft;
 
-import net.minecraft.client.shader.ShaderGroup;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.DimensionType;
 import net.minecraft.world.FoliageColors;
 import net.minecraft.world.GrassColors;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.BiomeColors;
-import net.minecraft.world.gen.Heightmap;
 import net.minecraft.world.level.ColorResolver;
 import net.minecraftforge.common.BiomeDictionary;
 
@@ -39,7 +33,7 @@ public class BiomeColorsHandler {
         ClientWorld clientLevel = Minecraft.getInstance().level;
         if (clientLevel != null) {
             int originColor = biome.getGrassColor(posX, posZ);
-            return AllListener.getSaveDataLazy(clientLevel).map(data ->
+            return SolarHolders.getSaveDataLazy(clientLevel).map(data ->
             {
                 if (needRefresh) {
                     reloadColors();
@@ -64,7 +58,7 @@ public class BiomeColorsHandler {
 
         if (clientLevel != null) {
             int originColor = biome.getFoliageColor();
-            return AllListener.getSaveDataLazy(clientLevel).map(data ->
+            return SolarHolders.getSaveDataLazy(clientLevel).map(data ->
             {
                 if (needRefresh) {
                     reloadColors();
@@ -86,7 +80,7 @@ public class BiomeColorsHandler {
         {
             ClientWorld clientLevel = Minecraft.getInstance().level;
             if (clientLevel != null) {
-                AllListener.getSaveDataLazy(clientLevel).ifPresent(data ->
+                SolarHolders.getSaveDataLazy(clientLevel).ifPresent(data ->
                 {
                     for (BiomeDictionary.Type biomeTagKey : SeasonTypeBiomeTags.BIOMES) {
                         int[] newFoliageBuffer = new int[65536];

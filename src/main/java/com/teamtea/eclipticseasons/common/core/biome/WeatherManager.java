@@ -1,12 +1,12 @@
 package com.teamtea.eclipticseasons.common.core.biome;
 
-import com.teamtea.eclipticseasons.EclipticSeasons;
+import com.teamtea.eclipticseasons.common.registry.EffectRegistry;
 import com.teamtea.eclipticseasons.api.constant.climate.BiomeRain;
 import com.teamtea.eclipticseasons.api.constant.climate.FlatRain;
 import com.teamtea.eclipticseasons.api.constant.climate.SnowTerm;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.util.SimpleUtil;
-import com.teamtea.eclipticseasons.common.AllListener;
+import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
 import com.teamtea.eclipticseasons.common.handler.SolarUtil;
 import com.teamtea.eclipticseasons.common.network.BiomeWeatherMessage;
@@ -87,7 +87,7 @@ public class WeatherManager {
         if (!level.dimensionType().natural()) return false;
         ArrayList<BiomeWeather> ws = getBiomeList(level);
         if (ws != null) {
-            SolarTerm solarTerm = AllListener.getSaveData(level).getSolarTerm();
+            SolarTerm solarTerm = SolarHolders.getSaveData(level).getSolarTerm();
             for (BiomeWeather biomeWeather : ws) {
                 if (!biomeWeather.shouldRain()
                         && !(solarTerm.getBiomeRain(biomeWeather.getBiomeKey()) == FlatRain.RAINLESS)) {
@@ -125,7 +125,7 @@ public class WeatherManager {
         if (!level.dimensionType().natural()) return false;
         ArrayList<BiomeWeather> ws = getBiomeList(level);
         if (ws != null) {
-            SolarTerm solarTerm = AllListener.getSaveData(level).getSolarTerm();
+            SolarTerm solarTerm = SolarHolders.getSaveData(level).getSolarTerm();
             for (BiomeWeather biomeWeather : ws) {
                 if (!biomeWeather.shouldRain()
                         && !(solarTerm.getBiomeRain(biomeWeather.getBiomeKey()) == FlatRain.RAINLESS)) {
@@ -318,7 +318,7 @@ public class WeatherManager {
         World level = player.level;
         if (CommonConfig.Temperature.heatStroke.get()
                 && level.getRandom().nextInt(150) == 0)
-            AllListener.getSaveDataLazy(level).ifPresent(solarDataManager -> {
+            SolarHolders.getSaveDataLazy(level).ifPresent(solarDataManager -> {
                 if (SimpleUtil.getNowSolarTerm(level).isInTerms(SolarTerm.BEGINNING_OF_SUMMER, SolarTerm.BEGINNING_OF_AUTUMN)) {
                     Biome b = level.getBiome(player.blockPosition());
                     if (b.getTemperature(player.blockPosition()) > 0.5f) {
@@ -338,8 +338,8 @@ public class WeatherManager {
                                     }
                                 }
                             }
-                            if (!player.hasEffect(EclipticSeasons.EffectRegistry.HEAT_STROKE) && !isColdHe) {
-                                player.addEffect(new EffectInstance(EclipticSeasons.EffectRegistry.HEAT_STROKE, 600));
+                            if (!player.hasEffect(EffectRegistry.HEAT_STROKE) && !isColdHe) {
+                                player.addEffect(new EffectInstance(EffectRegistry.HEAT_STROKE, 600));
                             }
                         }
                     }
@@ -355,7 +355,7 @@ public class WeatherManager {
             if (biomeWeather.shouldRain()) {
                 biomeWeather.rainTime--;
                 if (!biomeWeather.shouldThunder()) {
-                    BiomeRain biomeRain = AllListener.getSaveData(level).getSolarTerm().getBiomeRain(biomeWeather.getBiomeKey());
+                    BiomeRain biomeRain = SolarHolders.getSaveData(level).getSolarTerm().getBiomeRain(biomeWeather.getBiomeKey());
                     float weight = biomeRain.getThunderChance();
                     if (level.getRandom().nextInt(1000) / 1000.f < weight) {
 
@@ -363,7 +363,7 @@ public class WeatherManager {
                     }
                 }
             } else {
-                BiomeRain biomeRain = AllListener.getSaveData(level).getSolarTerm().getBiomeRain(biomeWeather.getBiomeKey());
+                BiomeRain biomeRain = SolarHolders.getSaveData(level).getSolarTerm().getBiomeRain(biomeWeather.getBiomeKey());
                 float downfall = biomeWeather.biomeHolder.getDownfall();
 
 
@@ -426,7 +426,7 @@ public class WeatherManager {
 
     public static void onLoggedIn(ServerPlayerEntity serverPlayer, boolean isLogged) {
         if ((serverPlayer instanceof FakePlayer)) return;
-        AllListener.getSaveDataLazy(serverPlayer.level).ifPresent(t ->
+        SolarHolders.getSaveDataLazy(serverPlayer.level).ifPresent(t ->
         {
             SimpleNetworkHandler.send(serverPlayer, new SolarTermsMessage(t.getSolarTermsDay()));
             if (isLogged && CommonConfig.Season.enableInform.get()

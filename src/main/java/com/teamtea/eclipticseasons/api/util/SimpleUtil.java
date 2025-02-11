@@ -2,7 +2,7 @@ package com.teamtea.eclipticseasons.api.util;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
-import com.teamtea.eclipticseasons.common.AllListener;
+import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.solar.SolarAngelHelper;
 import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
 import net.minecraft.world.World;
@@ -19,7 +19,7 @@ public class SimpleUtil {
     }
 
     public static SolarTerm getNowSolarTerm(World level) {
-        SolarDataManager sd = AllListener.getSaveData(level);
+        SolarDataManager sd = SolarHolders.getSaveData(level);
         if (sd != null) return sd.getSolarTerm();
         return SolarTerm.NONE;
     }

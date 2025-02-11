@@ -3,7 +3,7 @@ package com.teamtea.eclipticseasons.client.debug;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
-import com.teamtea.eclipticseasons.common.AllListener;
+import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
@@ -48,7 +48,7 @@ public final class DebugInfoRenderer extends AbstractGui {
                     Biome standBiome = level.getBiome(player.blockPosition());
                     for (WeatherManager.BiomeWeather biomeWeather : WeatherManager.getBiomeList(level)) {
                         if (biomeWeather.biomeHolder.equals(standBiome)) {
-                            SolarTerm solarTerm = AllListener.getSaveData(level).getSolarTerm();
+                            SolarTerm solarTerm = SolarHolders.getSaveData(level).getSolarTerm();
                             String solarTermS = "Solar Term: " + solarTerm.getTranslation().getString();
                             String biomeRainS = "Biome Rain: " + solarTerm.getBiomeRain(biomeWeather.getBiomeKey());
                             String snowTermS = "Snow Term: " + SolarTerm.getSnowTerm(biomeWeather.biomeHolder);

@@ -1,6 +1,6 @@
 package com.teamtea.eclipticseasons.client.sound;
 
-import com.teamtea.eclipticseasons.EclipticSeasons;
+import com.teamtea.eclipticseasons.common.registry.SoundEventsRegistry;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.util.SimpleUtil;
 import com.teamtea.eclipticseasons.client.core.ClientWeatherChecker;
@@ -18,7 +18,6 @@ import net.minecraft.world.LightType;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.BiomeManager;
 import net.minecraftforge.common.BiomeDictionary;
-import net.minecraftforge.common.Tags;
 
 import javax.annotation.Nullable;
 import java.util.Map;
@@ -85,7 +84,7 @@ public class SeasonalBiomeAmbientSoundsHandler implements IAmbientSoundHandler {
                     case SPRING: {
                         if (!player.isInWaterOrRain()) {
                             if ((sets.contains(BiomeDictionary.Type.FOREST) || sets.contains(BiomeDictionary.Type.PLAINS)) && !sets.contains(BiomeDictionary.Type.COLD)) {
-                                soundEvent = EclipticSeasons.SoundEventsRegistry.spring_forest;
+                                soundEvent = SoundEventsRegistry.spring_forest;
                             }
                         }
                         break;
@@ -99,11 +98,11 @@ public class SeasonalBiomeAmbientSoundsHandler implements IAmbientSoundHandler {
                                         && !sets.contains(BiomeDictionary.Type.DEAD)
                                         && !sets.contains(BiomeDictionary.Type.SANDY)
                                         && !sets.contains(BiomeDictionary.Type.MOUNTAIN))) {
-                                    soundEvent = EclipticSeasons.SoundEventsRegistry.night_river;
+                                    soundEvent = SoundEventsRegistry.night_river;
                                 }
                             } else {
                                 if ((sets.contains(BiomeDictionary.Type.FOREST) || sets.contains(BiomeDictionary.Type.PLAINS) || sets.contains(BiomeDictionary.Type.RIVER))) {
-                                    soundEvent = EclipticSeasons.SoundEventsRegistry.garden_wind;
+                                    soundEvent = SoundEventsRegistry.garden_wind;
                                 }
                             }
                         }
@@ -112,7 +111,7 @@ public class SeasonalBiomeAmbientSoundsHandler implements IAmbientSoundHandler {
                     case AUTUMN: {
                         if (!player.isInWater()) {
                             if ((sets.contains(BiomeDictionary.Type.FOREST))) {
-                                soundEvent = EclipticSeasons.SoundEventsRegistry.windy_leave;
+                                soundEvent = SoundEventsRegistry.windy_leave;
                             }
                         }
                         break;
@@ -121,8 +120,8 @@ public class SeasonalBiomeAmbientSoundsHandler implements IAmbientSoundHandler {
                         if (!player.isInWater()) {
                             {
                                 if ((sets.contains(BiomeDictionary.Type.FOREST) && ClientWeatherChecker.isRain((ClientWorld) player.level))) {
-                                    soundEvent = EclipticSeasons.SoundEventsRegistry.winter_forest;
-                                } else soundEvent = EclipticSeasons.SoundEventsRegistry.winter_cold;
+                                    soundEvent = SoundEventsRegistry.winter_forest;
+                                } else soundEvent = SoundEventsRegistry.winter_cold;
                             }
                         }
                         break;

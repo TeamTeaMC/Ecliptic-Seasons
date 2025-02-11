@@ -1,6 +1,7 @@
 package com.teamtea.eclipticseasons.client.core;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
+import com.teamtea.eclipticseasons.common.registry.BlockRegistry;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.util.SimpleUtil;
@@ -26,8 +27,6 @@ import net.minecraft.world.IBlockDisplayReader;
 import net.minecraft.world.LightType;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.Heightmap;
-import net.minecraftforge.client.model.SeparatePerspectiveModel;
-import net.minecraftforge.common.util.LazyOptional;
 
 
 import java.util.*;
@@ -38,9 +37,9 @@ import java.util.stream.Stream;
 // 未来可以基于RepositorySource实现动态纹理生成（看情况，因为目前不需要，对内存消耗比较大）
 public class ModelManager {
     public static Map<ResourceLocation, IBakedModel> models;
-    public static ModelResourceLocation snowOverlayLeaves = new ModelResourceLocation(EclipticSeasons.ModContents.snowyLeaves.getId(), "");
-    public static ModelResourceLocation snowySlabBottom = new ModelResourceLocation(EclipticSeasons.ModContents.snowySlab.getId(), "type=bottom,waterlogged=false");
-    public static ModelResourceLocation snowOverlayBlock = new ModelResourceLocation(EclipticSeasons.ModContents.snowyBlock.getId(), "");
+    public static ModelResourceLocation snowOverlayLeaves = new ModelResourceLocation(BlockRegistry.snowyLeaves.getId(), "");
+    public static ModelResourceLocation snowySlabBottom = new ModelResourceLocation(BlockRegistry.snowySlab.getId(), "type=bottom,waterlogged=false");
+    public static ModelResourceLocation snowOverlayBlock = new ModelResourceLocation(BlockRegistry.snowyBlock.getId(), "");
 
     public static ResourceLocation snowy_fern = EclipticSeasons.rl("block/snowy_fern");
     public static ResourceLocation snowy_grass = EclipticSeasons.rl("block/snowy_grass");
@@ -338,7 +337,7 @@ public class ModelManager {
                         } else if (flag == FLAG_SLAB) {
                             snowModel = models.get(snowySlabBottom);
                         } else if (models != null && flag == FLAG_STAIRS) {
-                            snowState = EclipticSeasons.ModContents.snowyStairs.get().defaultBlockState()
+                            snowState = BlockRegistry.snowyStairs.get().defaultBlockState()
                                     .setValue(StairsBlock.FACING, state.getValue(StairsBlock.FACING))
                                     .setValue(StairsBlock.HALF, state.getValue(StairsBlock.HALF))
                                     .setValue(StairsBlock.SHAPE, state.getValue(StairsBlock.SHAPE));

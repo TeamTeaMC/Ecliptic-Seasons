@@ -1,8 +1,7 @@
 package com.teamtea.eclipticseasons.common.core.solar;
 
 
-import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
-import com.teamtea.eclipticseasons.common.AllListener;
+import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.IDayTimeReader;
 import net.minecraft.world.World;
@@ -16,9 +15,9 @@ public class SolarAngelHelper {
 
     public static int getSolarAngelTime(IDayTimeReader world,long worldTime)
     {
-        if (world instanceof World  &&AllListener.getSaveData((World) world)!=null)
+        if (world instanceof World  && SolarHolders.getSaveData((World) world)!=null)
         {
-            return AllListener.getSaveDataLazy((World) world).map(data ->
+            return SolarHolders.getSaveDataLazy((World) world).map(data ->
             {
                 int dayTime = data.getSolarTerm().getDayTime();
                 // dayTime=23900;
