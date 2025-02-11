@@ -50,8 +50,6 @@ public class ModelManager {
     public static ResourceLocation snowy_large_fern_top = EclipticSeasons.rl("block/snowy_large_fern_top");
     public static ResourceLocation snowy_tall_grass_bottom = EclipticSeasons.rl("block/snowy_tall_grass_bottom");
     public static ResourceLocation snowy_tall_grass_top = EclipticSeasons.rl("block/snowy_tall_grass_top");
-    public static ResourceLocation snowy_dandelion = EclipticSeasons.rl("block/snowy_dandelion");
-    public static ResourceLocation dandelion_top = EclipticSeasons.rl("block/dandelion_top");
     public static ResourceLocation overlay_2 = EclipticSeasons.rl("block/overlay_2");
     public static ResourceLocation snow_height2 = EclipticSeasons.rl("block/snow_height2");
     public static ResourceLocation snow_height2_top = EclipticSeasons.rl("block/snow_height2_top");
@@ -122,8 +120,6 @@ public class ModelManager {
                 snowModel = models.get(snowy_grass);
             } else if (onBlock == Blocks.FERN) {
                 snowModel = models.get(snowy_fern);
-            } else if (onBlock == Blocks.DANDELION) {
-                snowModel = models.get(snowy_dandelion);
             } else snowModel = models.get(snowy_grass);
         } else if (flag == MapChecker.FLAG_GRASS_LARGE) {
             if (onBlock == Blocks.TALL_GRASS) {

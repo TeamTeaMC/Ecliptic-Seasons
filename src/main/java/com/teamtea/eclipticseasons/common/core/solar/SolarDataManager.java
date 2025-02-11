@@ -100,30 +100,16 @@ public class SolarDataManager extends SavedData {
         // if (dayTime % 100 == 0)
         {
             solarTermsDay++;
-            solarTermsDay %= 24 * CommonConfig.Season.lastingDaysOfEachTerm.get();
 
             sendAndUpdate(world);
         }
         solarTermsTicks = dayTime;
 
-        // 强制刷新，由于服务器区块是悲观锁，所以不能强刷
-        // if (world.getRandom().nextBoolean() && world.getDayTime() % 1000 == 0) {
-        //     // player.connection.send();
-        //     var a = new ArrayList<ChunkAccess>();
-        //     for (ChunkHolder chunk : (world).getChunkSource().chunkMap.getChunks()) {
-        //         var cs = chunk.getLastAvailable();
-        //         if (cs != null)
-        //             a.add(chunk.getLastAvailable());
-        //     }
-        //
-        //     world.getChunkSource().chunkMap.resendBiomesForChunks(a);
-        // }
-
         setDirty();
     }
 
     public int getSolarTermIndex() {
-        return solarTermsDay / CommonConfig.Season.lastingDaysOfEachTerm.get();
+        return (solarTermsDay / CommonConfig.Season.lastingDaysOfEachTerm.get()) % 24;
     }
 
     public SolarTerm getSolarTerm() {
@@ -139,7 +125,8 @@ public class SolarDataManager extends SavedData {
     }
 
     public void setSolarTermsDay(int solarTermsDay) {
-        this.solarTermsDay = Math.max(solarTermsDay, 0) % (24 * CommonConfig.Season.lastingDaysOfEachTerm.get());
+        // this.solarTermsDay = Math.max(solarTermsDay, 0) % (24 * CommonConfig.Season.lastingDaysOfEachTerm.get());
+        this.solarTermsDay = solarTermsDay;
         setDirty();
     }
 

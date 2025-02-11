@@ -66,8 +66,6 @@ public class ClientSetup {
         event.register(ModelManager.snowy_large_fern_top);
         // 注意这里使用地址和model地址效果不同，后者需要写blockstate
         event.register(ModelManager.snowy_large_fern_bottom);
-        event.register(ModelManager.snowy_dandelion);
-        event.register(ModelManager.dandelion_top);
         event.register(ModelManager.overlay_2);
         event.register(ModelManager.snow_height2);
         event.register(ModelManager.snow_height2_top);

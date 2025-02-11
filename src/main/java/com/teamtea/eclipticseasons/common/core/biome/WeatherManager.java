@@ -378,7 +378,7 @@ public class WeatherManager {
                                         if (armorItem.getEnchantmentLevel(itemstack, Enchantments.FIRE_PROTECTION) > 0) {
                                             isColdHe = true;
                                         }
-                                    }else if (armorItem.getType() == ArmorItem.Type.BOOTS) {
+                                    } else if (armorItem.getType() == ArmorItem.Type.BOOTS) {
                                         if (armorItem.getEnchantmentLevel(itemstack, Enchantments.FROST_WALKER) > 0) {
                                             isColdHe = true;
                                             break;
@@ -485,24 +485,22 @@ public class WeatherManager {
 
     public static void onLoggedIn(ServerPlayer serverPlayer, boolean isLogged) {
         if ((serverPlayer instanceof FakePlayer)) return;
-        if (CommonConfig.Season.enableInform.get()) {
-            SolarHolders.getSaveDataLazy(serverPlayer.level()).ifPresent(t ->
-            {
-                SimpleNetworkHandler.send(serverPlayer, new SolarTermsMessage(t.getSolarTermsDay()));
-                if (isLogged && MapChecker.isValidDimension(serverPlayer.level())
-                        && t.getSolarTermsDay() % CommonConfig.Season.lastingDaysOfEachTerm.get() == 0) {
-                    serverPlayer.sendSystemMessage(SimpleUtil.getSolarTermMessage(t.getSolarTerm()), false);
-                }
-            });
-
-        }
+        SolarHolders.getSaveDataLazy(serverPlayer.level()).ifPresent(t ->
+        {
+            SimpleNetworkHandler.send(serverPlayer, new SolarTermsMessage(t.getSolarTermsDay()));
+            if (isLogged
+                    && CommonConfig.Season.enableInform.get()
+                    && MapChecker.isValidDimension(serverPlayer.level())
+                    && t.getSolarTermsDay() % CommonConfig.Season.lastingDaysOfEachTerm.get() == 0) {
+                serverPlayer.sendSystemMessage(SimpleUtil.getSolarTermMessage(t.getSolarTerm()), false);
+            }
+        });
         WeatherManager.sendBiomePacket(WeatherManager.getBiomeList(serverPlayer.level()), List.of(serverPlayer));
     }
 
     public static void tickPlayerForSeasonCheck(ServerPlayer serverPlayer) {
         var level = serverPlayer.level();
-        if (level.getGameTime() % 200 == 0)
-        {
+        if (level.getGameTime() % 200 == 0) {
             var holder = serverPlayer.getCapability(SolarTermsRecordCa.SolarTermsRecordCa_CAPABILITY);
             holder.ifPresent(
                     solarTermsRecordCa ->
@@ -676,7 +674,7 @@ public class WeatherManager {
         if (needRain) {
             var pos = pContext.getParamOrNull(LootContextParams.ORIGIN);
             if (pos != null) {
-                boolean isRainingAt = pContext.getLevel().isRainingAt( new BlockPos((int) pos.x, (int) pos.y + 1, (int) pos.z));
+                boolean isRainingAt = pContext.getLevel().isRainingAt(new BlockPos((int) pos.x, (int) pos.y + 1, (int) pos.z));
                 if (weatherCheck.isRaining().get() != isRainingAt) {
                     return false;
                 }

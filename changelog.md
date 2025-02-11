@@ -176,18 +176,23 @@ fix sound in desert summer
 
 clean necessary biome cache (not need for 1.20)
 
-0.10
+Here's an improved version of the text with better formatting:
 
-### Critical Fixes
-Fixed an issue where certain mods could not obtain correct rainfall prediction information when using biome queries, due to the lack of Level input and no interaction with the mod. These mods will now receive query results related to the Overworld.
+---
 
-Fixed an issue about the run of solar terms sys when informs are disabled.
-### Improvements
-Due to the increasing amount of registration information, the registration-related code has been refactored and organized.
+**0.10**
 
-When players walk on snow-covered blocks, the sound will now resemble footsteps on snow.
+### Critical Fixes:
+- Fixed an issue where certain mods could not obtain correct rainfall prediction information when using biome queries. This was due to the lack of Level input and no interaction with the mod. These mods will now receive query results related to the Overworld.
+- Fixed an issue regarding the run of solar terms system when informs are disabled.
 
-### Minor Updates
-Added translation support for "Rainfall."
+### Improvements:
+- Refactored and organized the registration-related code due to the increasing amount of registration information.
+- When players walk on snow-covered blocks, the sound will now resemble footsteps on snow.
+- Now counts days beyond a year instead of resetting to zero.
 
-Optimized the display method for some non-critical warning messages.
+### Minor Updates:
+- Added translation support for "Rainfall."
+- Optimized the display method for some non-critical warning messages.
+
+
