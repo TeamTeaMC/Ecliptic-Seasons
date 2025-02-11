@@ -1,0 +1,16 @@
+{
+  "providers": [
+    {
+      "type": "bitmap",
+      "ascent": 7,
+      "chars": [
+        "abcdef",
+        "ghijkl",
+        "mnopqr",
+        "stuvwx"
+      ],
+      "file": "eclipticseasons:font/seasons_icons_font.png",
+      "height": 9
+    }
+  ]
+}

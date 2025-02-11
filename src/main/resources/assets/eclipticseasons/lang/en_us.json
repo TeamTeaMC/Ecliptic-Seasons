@@ -68,7 +68,9 @@
     "info.eclipticseasons.environment.solar_term.alternation.winter_solstice": "Shadows become longer. The endless long night comes.",
     "info.eclipticseasons.environment.solar_term.alternation.lesser_cold": "Severe cold in the depth of winter.",
     "info.eclipticseasons.environment.solar_term.alternation.greater_cold": "Winds died away, but icy coldness still.",
-    "info.eclipticseasons.record": "You haven't installed Record Resources Pack",
     "commands.eclipticseasons.solar.set": "Set the solar day to %s",
-    "effect.eclipticseasons.heat_stroke": "Heat Stroke"
+    "effect.eclipticseasons.heat_stroke": "Heat Stroke",
+    "block.eclipticseasons.calendar": "Calendar",
+    "itemGroup.eclipticseasons": "Ecliptic Seasons",
+    "info.eclipticseasons.environment.solar_term.hint": "Solar Term Today:"
 }

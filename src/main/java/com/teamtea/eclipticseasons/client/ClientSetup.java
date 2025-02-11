@@ -1,5 +1,7 @@
 package com.teamtea.eclipticseasons.client;
 
+import com.teamtea.eclipticseasons.client.render.ber.CalendarBlockEntityRenderer;
+import com.teamtea.eclipticseasons.common.registry.BlockEntityRegistry;
 import com.teamtea.eclipticseasons.common.registry.ParticleRegistry;
 import com.teamtea.eclipticseasons.client.color.season.BiomeColorsHandler;
 import com.teamtea.eclipticseasons.client.particle.FireflyParticle;
@@ -17,6 +19,7 @@ import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.event.ParticleFactoryRegisterEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import com.teamtea.eclipticseasons.EclipticSeasons;
@@ -73,6 +76,8 @@ public class ClientSetup {
             BiomeColors.GRASS_COLOR_RESOLVER = BiomeColorsHandler.GRASS_COLOR;
             BiomeColors.FOLIAGE_COLOR_RESOLVER = BiomeColorsHandler.FOLIAGE_COLOR;
 
+            ClientRegistry.bindTileEntityRenderer(BlockEntityRegistry.calendar_entity_type.get(),
+                    CalendarBlockEntityRenderer::new);
 
         });
     }

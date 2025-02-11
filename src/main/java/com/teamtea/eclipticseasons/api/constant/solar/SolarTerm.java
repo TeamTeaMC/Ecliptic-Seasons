@@ -1,10 +1,13 @@
 package com.teamtea.eclipticseasons.api.constant.solar;
 
+import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.constant.climate.*;
 import com.teamtea.eclipticseasons.api.constant.solar.color.*;
 import com.teamtea.eclipticseasons.api.constant.tag.SeasonTypeBiomeTags;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
+import com.teamtea.eclipticseasons.common.misc.SimplePair;
 import net.minecraft.util.RegistryKey;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.biome.Biome;
@@ -70,8 +73,24 @@ public enum SolarTerm {
     }
 
 
-    public RainySolarTermColors getColorInfo() {
-        return RainySolarTermColors.values()[this.ordinal()];
+    public static ResourceLocation getFont() {
+        return EclipticSeasons.rl("solar_icons");
+    }
+
+    public String getFontLabel() {
+        return String.valueOf((char) (ordinal() + 97));
+    }
+
+    public static ResourceLocation getFullIcon() {
+        return EclipticSeasons.rl("textures/font/" + "seasons_icons.png");
+    }
+
+    public static ResourceLocation getFontIcon() {
+        return EclipticSeasons.rl("textures/font/" + "seasons_icons_font.png");
+    }
+
+    public SimplePair<Integer, Integer> getIconPosition() {
+        return SimplePair.of( this.ordinal() % 6,this.ordinal() / 6);
     }
 
     public SolarTermColor getSolarTermColor(BiomeDictionary.Type biomeHolder) {
