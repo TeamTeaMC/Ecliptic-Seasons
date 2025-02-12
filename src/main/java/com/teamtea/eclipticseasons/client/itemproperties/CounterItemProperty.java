@@ -26,10 +26,8 @@ public class CounterItemProperty implements ClampedItemPropertyFunction {
     public float unclampedCall(@NotNull ItemStack stack, @Nullable ClientLevel level, @Nullable LivingEntity entity, int seed) {
         Entity newEntity = entity != null ? entity : stack.getEntityRepresentation();
 
-        level = tryFixLevelAnyway(entity, level);
+        level = tryFixLevelAnyway(newEntity, level);
         if (level != null) {
-            Object c=null;
-
             BlockPos blockPosition = newEntity.blockPosition();
             return biomeIntegerFunction.apply(level, blockPosition).ordinal() * (1f / (maxLength - 1));
         }

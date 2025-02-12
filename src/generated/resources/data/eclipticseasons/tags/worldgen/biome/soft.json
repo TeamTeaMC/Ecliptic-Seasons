@@ -2,7 +2,6 @@
   "replace": false,
   "values": [
     "#minecraft:is_beach",
-    "#minecraft:is_ocean",
-    "#minecraft:is_deep_ocean"
+    "#minecraft:is_ocean"
   ]
 }

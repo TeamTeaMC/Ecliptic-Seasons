@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "group": "hygrometer",
+  "key": {
+    "x": {
+      "item": "minecraft:amethyst_shard"
+    },
+    "y": {
+      "item": "eclipticseasons:thermometer"
+    },
+    "z": {
+      "item": "eclipticseasons:hyetometer"
+    }
+  },
+  "pattern": [
+    " x ",
+    "xyx",
+    " z "
+  ],
+  "result": {
+    "item": "eclipticseasons:hygrometer"
+  },
+  "show_notification": true
+}

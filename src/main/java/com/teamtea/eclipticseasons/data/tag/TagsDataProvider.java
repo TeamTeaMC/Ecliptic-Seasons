@@ -22,7 +22,7 @@ public class TagsDataProvider extends TagsProvider<Biome> {
     protected void addTags() {
         this.tag(SeasonTypeBiomeTags.SEASONAL).addTags(Tags.Biomes.IS_OVERWORLD);
         this.tag(SeasonTypeBiomeTags.MONSOONAL).addTags(Tags.Biomes.IS_SAVANNA);
-        this.tag(SeasonTypeBiomeTags.RAINLESS).addTags(BiomeTags.IS_NETHER,BiomeTags.IS_NETHER);
+        this.tag(SeasonTypeBiomeTags.RAINLESS).addTags(BiomeTags.IS_NETHER);
         this.tag(SeasonTypeBiomeTags.ARID).addTags(Tags.Biomes.IS_SANDY);
         this.tag(SeasonTypeBiomeTags.DROUGHTY).addTags(BiomeTags.IS_BADLANDS, Tags.Biomes.IS_PEAK, Tags.Biomes.IS_COLD_OVERWORLD);
         this.tag(SeasonTypeBiomeTags.SOFT).addTags(BiomeTags.IS_BEACH, BiomeTags.IS_OCEAN);
