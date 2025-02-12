@@ -1,7 +1,13 @@
 package com.teamtea.eclipticseasons.client;
 
+import com.teamtea.eclipticseasons.api.constant.biome.Humidity;
+import com.teamtea.eclipticseasons.api.constant.biome.Rainfall;
+import com.teamtea.eclipticseasons.api.constant.biome.Temperature;
+import com.teamtea.eclipticseasons.api.util.EclipticUtil;
+import com.teamtea.eclipticseasons.client.itemproperties.CounterItemProperty;
 import com.teamtea.eclipticseasons.client.render.ber.CalendarBlockEntityRenderer;
 import com.teamtea.eclipticseasons.common.registry.BlockEntityRegistry;
+import com.teamtea.eclipticseasons.common.registry.ItemRegistry;
 import com.teamtea.eclipticseasons.common.registry.ParticleRegistry;
 import com.teamtea.eclipticseasons.client.color.season.BiomeColorsHandler;
 import com.teamtea.eclipticseasons.client.particle.FireflyParticle;
@@ -10,6 +16,7 @@ import net.minecraft.client.Minecraft;
 
 import net.minecraft.client.renderer.RenderType;
 
+import net.minecraft.item.ItemModelsProperties;
 import net.minecraft.world.biome.BiomeColors;
 import net.minecraftforge.api.distmarker.Dist;
 
@@ -78,6 +85,10 @@ public class ClientSetup {
 
             ClientRegistry.bindTileEntityRenderer(BlockEntityRegistry.calendar_entity_type.get(),
                     CalendarBlockEntityRenderer::new);
+
+            ItemModelsProperties.register(ItemRegistry.hyetometer.get(), ItemRegistry.hyetometer.getId(), new CounterItemProperty(EclipticUtil::getRainfallAt, Rainfall.collectValues().length));
+            ItemModelsProperties.register(ItemRegistry.hygrometer.get(), ItemRegistry.hygrometer.getId(), new CounterItemProperty(EclipticUtil::getHumidityAt, Humidity.collectValues().length));
+            ItemModelsProperties.register(ItemRegistry.thermometer.get(), ItemRegistry.thermometer.getId(), new CounterItemProperty(EclipticUtil::getTemperatureAt, Temperature.collectValues().length));
 
         });
     }

@@ -3,32 +3,34 @@ package com.teamtea.eclipticseasons.common.core.biome;
 import com.teamtea.eclipticseasons.api.util.EclipticTagTool;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.constant.tag.SeasonTypeBiomeTags;
+import com.teamtea.eclipticseasons.mixin.common.MixinBiomeAttach;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.registry.DynamicRegistries;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.WorldGenRegistries;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
+import net.minecraftforge.fml.server.ServerLifecycleHooks;
 
 
 import java.util.HashMap;
 
 public class BiomeClimateManager {
-    public final static HashMap<Biome, Float> BIOME_DEFAULT_TEMPERATURE_MAP = new HashMap<>();
+    public final static HashMap<ResourceLocation, Float> BIOME_DEFAULT_TEMPERATURE_MAP = new HashMap<>();
 
 
     public static void resetBiomeTemps() {
 
         BIOME_DEFAULT_TEMPERATURE_MAP.clear();
-        WorldGenRegistries.BIOME.forEach(biome ->
+        DynamicRegistries.builtin().registry(Registry.BIOME_REGISTRY).ifPresent(b -> b.forEach(biome ->
         {
-            BIOME_DEFAULT_TEMPERATURE_MAP.put(biome, biome.climateSettings.temperature);
-//             biome.getBiomeCategory()
-// Biome.Category
-        });
-        EclipticTagTool.BIOME_TAG_KEY_MAP.clear();
-        SeasonTypeBiomeTags.init();
+
+            BIOME_DEFAULT_TEMPERATURE_MAP.put(biome.getRegistryName(), ((MixinBiomeAttach) (Object) biome).getBiomeClimateSettings().temperature);
+        }));
     }
 
     public static float getDefaultTemperature(Biome biome) {
-        return BiomeClimateManager.BIOME_DEFAULT_TEMPERATURE_MAP.getOrDefault(biome, 0.6F);
+        return BiomeClimateManager.BIOME_DEFAULT_TEMPERATURE_MAP.getOrDefault(biome.getRegistryName(), 0.6F);
     }
 
     public static final float SNOW_LEVEL = 0.15F;
@@ -36,13 +38,13 @@ public class BiomeClimateManager {
 
     public static void updateTemperature(World level, int solarTermIndex) {
         {
-            WorldGenRegistries.BIOME.forEach(biome ->
+            level.registryAccess().registryOrThrow(Registry.BIOME_REGISTRY).forEach(biome ->
             {
-                float temperature = BiomeClimateManager.getDefaultTemperature(biome) > SNOW_LEVEL ?
+                float temperature = ((MixinBiomeAttach) (Object) biome).getBiomeClimateSettings().temperature > SNOW_LEVEL ?
                         Math.max(SNOW_LEVEL + 0.001F, BiomeClimateManager.getDefaultTemperature(biome) + SolarTerm.get(solarTermIndex).getTemperatureChange()) :
                         Math.min(SNOW_LEVEL, BiomeClimateManager.getDefaultTemperature(biome) + SolarTerm.get(solarTermIndex).getTemperatureChange());
 
-                BIOME_DEFAULT_TEMPERATURE_MAP.put(biome,temperature);
+                BIOME_DEFAULT_TEMPERATURE_MAP.put(biome.getRegistryName(), temperature);
                 // var oldClimateSettings = biome.climateSettings;
                 // biome.climateSettings = new Biome.ClimateSettings(
                 //         oldClimateSettings.hasPrecipitation(),

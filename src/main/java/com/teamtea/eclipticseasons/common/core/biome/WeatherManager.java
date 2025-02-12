@@ -27,6 +27,7 @@ import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.registry.DynamicRegistries;
 import net.minecraft.util.registry.MutableRegistry;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.WorldGenRegistries;
@@ -237,7 +238,7 @@ public class WeatherManager {
             SolarTerm solarTerm = provider.getSolarTerm();
             SnowTerm snowTerm = SolarTerm.getSnowTerm(biome);
             boolean flag_cold = solarTerm.isInTerms(snowTerm.getStart(), snowTerm.getEnd());
-            MutableRegistry<Biome> biomes = level.registryAccess().registry(WorldGenRegistries.BIOME.key()).get();
+            MutableRegistry<Biome> biomes = level.registryAccess().registry(Registry.BIOME_REGISTRY).get();
             ResourceLocation loc = biomes.getKey(biome);
             for (BiomeWeather biomeWeather : weathers) {
                 if (biomeWeather.location.equals(loc)) {
@@ -258,7 +259,7 @@ public class WeatherManager {
         ArrayList<BiomeWeather> list = new ArrayList<BiomeWeather>();
         WeatherManager.BIOME_WEATHER_LIST.put(level, list);
         {
-            Optional<MutableRegistry<Biome>> biomes = level.registryAccess().registry(WorldGenRegistries.BIOME.key());
+            Optional<MutableRegistry<Biome>> biomes = level.registryAccess().registry(Registry.BIOME_REGISTRY);
             if (biomes.isPresent()) {
                 for (Biome biome : biomes.get()) {
                     ResourceLocation loc = biomes.get().getKey(biome);
@@ -279,7 +280,7 @@ public class WeatherManager {
 
     public static void informUpdateBiomes() {
 
-        Optional<Registry<Biome>> biomes = Optional.of(WorldGenRegistries.BIOME);
+        Optional<MutableRegistry<Biome>> biomes = DynamicRegistries.builtin().registry(Registry.BIOME_REGISTRY);
         biomes.ifPresent(biomeRegistry -> biomeRegistry.forEach(biome ->
         {
             ResourceLocation loc = biomeRegistry.getKey(biome);

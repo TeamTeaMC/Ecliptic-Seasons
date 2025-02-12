@@ -1,18 +1,18 @@
 package com.teamtea.eclipticseasons.api.constant.biome;
 
 
-
+import com.teamtea.eclipticseasons.api.misc.ITranslatable;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 
-public enum Humidity {
+public enum Humidity implements ITranslatable {
     ARID(TextFormatting.RED, 0.9F),
     DRY(TextFormatting.GOLD, 0.95F),
-    AVERAGE(TextFormatting.WHITE, 1.0F),
+    AVERAGE(TextFormatting.GREEN, 1.0F),
     MOIST(TextFormatting.BLUE, 1.1F),
-    HUMID(TextFormatting.DARK_GREEN, 1.2F);
-
+    HUMID(TextFormatting.DARK_BLUE, 1.2F);
+    
     private final TextFormatting color;
     private final float tempCoefficient;
 
@@ -25,10 +25,18 @@ public enum Humidity {
         return this.ordinal() + 1;
     }
 
+    private static final Humidity[] humidity = Humidity.values();
+
+    public static Humidity[] collectValues() {
+        return humidity;
+    }
+
+    @Override
     public String getName() {
         return this.toString().toLowerCase();
     }
 
+    @Override
     public ITextComponent getTranslation() {
         return new TranslationTextComponent("info.eclipticseasons.environment.humidity." + getName()).withStyle(color);
     }

@@ -5,6 +5,7 @@
   "refmap": "eclipticseasons.refmap.json",
   "mixins": [
     "common.MixinBiome",
+    "common.MixinBiomeAttach",
     "common.MixinDimensionType",
     "common.MixinLevel",
     "common.MixinLevelTimeAccess",
@@ -36,9 +37,9 @@
     "client.MixinLocalPlayer",
     "client.block.MixinLeavesBlock",
     "client.sound.MixinMusicManager",
-    "compat.rubidium.MixinBlockRender2",
     "compat.embeddium.MixinBlockRender2",
-    "compat.optifine.MixinBlockModelCustomizer"
+    "compat.optifine.MixinBlockModelCustomizer",
+    "compat.rubidium.MixinBlockRender2"
   ],
   "injectors": {
     "defaultRequire": 1

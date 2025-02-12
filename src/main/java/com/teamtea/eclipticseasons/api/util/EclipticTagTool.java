@@ -4,6 +4,7 @@ import com.teamtea.eclipticseasons.api.constant.tag.SeasonTypeBiomeTags;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.registry.MutableRegistry;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.WorldGenRegistries;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
@@ -24,7 +25,7 @@ public class EclipticTagTool {
         BiomeDictionary.Type bt = BIOME_TAG_KEY_MAP.getOrDefault(biome, null);
 
         if (bt == null && level != null) {
-            Optional<MutableRegistry<Biome>> biomes = level.registryAccess().registry(WorldGenRegistries.BIOME.key());
+            Optional<MutableRegistry<Biome>> biomes = level.registryAccess().registry(Registry.BIOME_REGISTRY);
             if (biomes.isPresent()) {
                 for (Map.Entry<RegistryKey<Biome>, Biome> resourceKeyBiomeEntry : biomes.get().entrySet()) {
                     if (resourceKeyBiomeEntry.getValue() == biome) {

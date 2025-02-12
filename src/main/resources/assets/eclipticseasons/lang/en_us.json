@@ -72,5 +72,13 @@
     "effect.eclipticseasons.heat_stroke": "Heat Stroke",
     "block.eclipticseasons.calendar": "Calendar",
     "itemGroup.eclipticseasons": "Ecliptic Seasons",
-    "info.eclipticseasons.environment.solar_term.hint": "Solar Term Today:"
+    "info.eclipticseasons.environment.solar_term.hint": "Solar Term Today:",
+    "item.eclipticseasons.hyetometer": "Hyetometer",
+    "item.eclipticseasons.hygrometer": "Hygrometer",
+    "item.eclipticseasons.thermometer": "Thermometer",
+    "info.eclipticseasons.environment.rainfall.abundant": "Abundant",
+    "info.eclipticseasons.environment.rainfall.adequate": "Adequate",
+    "info.eclipticseasons.environment.rainfall.moderate": "Moderate",
+    "info.eclipticseasons.environment.rainfall.rare": "Rare",
+    "info.eclipticseasons.environment.rainfall.scarce": "Scare"
 }
