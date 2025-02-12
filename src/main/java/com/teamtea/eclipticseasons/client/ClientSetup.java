@@ -1,7 +1,13 @@
 package com.teamtea.eclipticseasons.client;
 
+import com.teamtea.eclipticseasons.api.constant.biome.Humidity;
+import com.teamtea.eclipticseasons.api.constant.biome.Rainfall;
+import com.teamtea.eclipticseasons.api.constant.biome.Temperature;
+import com.teamtea.eclipticseasons.api.util.EclipticUtil;
+import com.teamtea.eclipticseasons.client.itemproperties.CounterItemProperty;
 import com.teamtea.eclipticseasons.client.render.ber.CalendarBlockEntityRenderer;
 import com.teamtea.eclipticseasons.common.registry.BlockEntityRegistry;
+import com.teamtea.eclipticseasons.common.registry.ItemRegistry;
 import com.teamtea.eclipticseasons.common.registry.ParticleRegistry;
 import com.teamtea.eclipticseasons.client.color.season.BiomeColorsHandler;
 import com.teamtea.eclipticseasons.client.particle.FireflyParticle;
@@ -9,6 +15,7 @@ import com.teamtea.eclipticseasons.client.particle.WildGooseParticle;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 
@@ -73,6 +80,9 @@ public class ClientSetup {
             BiomeColors.GRASS_COLOR_RESOLVER = BiomeColorsHandler.GRASS_COLOR;
             BiomeColors.FOLIAGE_COLOR_RESOLVER = BiomeColorsHandler.FOLIAGE_COLOR;
 
+            ItemProperties.register(ItemRegistry.hyetometer.get(), ItemRegistry.hyetometer.getId(), new CounterItemProperty(EclipticUtil::getRainfallAt, Rainfall.collectValues().length));
+            ItemProperties.register(ItemRegistry.hygrometer.get(), ItemRegistry.hygrometer.getId(), new CounterItemProperty(EclipticUtil::getHumidityAt, Humidity.collectValues().length));
+            ItemProperties.register(ItemRegistry.thermometer.get(), ItemRegistry.thermometer.getId(), new CounterItemProperty(EclipticUtil::getTemperatureAt, Temperature.collectValues().length));
 
         });
     }

@@ -1,10 +1,10 @@
 package com.teamtea.eclipticseasons.api.constant.biome;
 
+import com.teamtea.eclipticseasons.api.misc.ITranslatable;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 
-public enum Temperature
-{
+public enum Temperature  implements ITranslatable {
     FREEZING(Float.NEGATIVE_INFINITY, 0.15F),
     COLD(0.15F, 0.4F),
     COOL(0.4F, 0.65F),
@@ -15,53 +15,50 @@ public enum Temperature
     private float min;
     private float max;
 
-    Temperature(float min, float max)
-    {
+    Temperature(float min, float max) {
         this.min = min;
         this.max = max;
     }
 
-    public int getId()
-    {
+    public int getId() {
         return this.ordinal() + 1;
     }
 
-    public String getName()
-    {
+    @Override
+    public String getName() {
         return this.toString().toLowerCase();
     }
 
-    public boolean isInTemperature(float temp)
-    {
+    public boolean isInTemperature(float temp) {
         return min < temp && temp <= max;
     }
 
-    public float getMin()
-    {
+    public float getMin() {
         return min;
     }
 
-    public float getMax()
-    {
+    public float getMax() {
         return max;
     }
 
-    public float getWidth()
-    {
+    public float getWidth() {
         return max - min;
     }
 
-    public Component getTranslation()
-    {
+    private static final Temperature[] temperature = Temperature.values();
+
+    public static Temperature[] collectValues() {
+        return temperature;
+    }
+
+    @Override
+    public Component getTranslation() {
         return new TranslatableComponent("info.eclipticseasons.environment.temperature." + getName());
     }
 
-    public static Temperature getTemperatureLevel(float temp)
-    {
-        for (Temperature t : Temperature.values())
-        {
-            if (t.isInTemperature(temp))
-            {
+    public static Temperature getTemperatureLevel(float temp) {
+        for (Temperature t : Temperature.collectValues()) {
+            if (t.isInTemperature(temp)) {
                 return t;
             }
         }

@@ -1,9 +1,10 @@
 package com.teamtea.eclipticseasons.api.constant.biome;
 
+import com.teamtea.eclipticseasons.api.misc.ITranslatable;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 
-public enum Rainfall
+public enum Rainfall implements ITranslatable
 {
     RARE(Float.NEGATIVE_INFINITY, 0.1F),
     SCARCE(0.1F, 0.3F),
@@ -25,6 +26,7 @@ public enum Rainfall
         return this.ordinal() + 1;
     }
 
+    @Override
     public String getName()
     {
         return this.toString().toLowerCase();
@@ -45,14 +47,22 @@ public enum Rainfall
         return max;
     }
 
+    @Override
     public Component getTranslation()
     {
         return new TranslatableComponent("info.eclipticseasons.environment.rainfall." + getName());
     }
 
+    private static final Rainfall[] rainfall = Rainfall.values();
+
+    public static Rainfall[] collectValues() {
+        return rainfall;
+    }
+
+
     public static Rainfall getRainfallLevel(float rainfall)
     {
-        for (Rainfall r : Rainfall.values())
+        for (Rainfall r : Rainfall.collectValues())
         {
             if (r.isInRainfall(rainfall))
             {

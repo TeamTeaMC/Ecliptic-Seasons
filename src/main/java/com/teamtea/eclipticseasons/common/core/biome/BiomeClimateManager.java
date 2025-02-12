@@ -3,6 +3,7 @@ package com.teamtea.eclipticseasons.common.core.biome;
 import com.teamtea.eclipticseasons.api.util.EclipticTagTool;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.constant.tag.SeasonTypeBiomeTags;
+import com.teamtea.eclipticseasons.mixin.common.MixinBiomeAttach;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.data.BuiltinRegistries;
 import net.minecraft.world.level.Level;
@@ -19,7 +20,7 @@ public class BiomeClimateManager {
         var biomes = registryAccess.registry(BuiltinRegistries.BIOME.key());
         biomes.ifPresent(biomeRegistry -> biomeRegistry.forEach(biome ->
         {
-            BIOME_DEFAULT_TEMPERATURE_MAP.put(biome, biome.climateSettings.temperature);
+            BIOME_DEFAULT_TEMPERATURE_MAP.put(biome, ((MixinBiomeAttach)(Object)biome).getBiomeClimateSettings().temperature);
         }));
     }
 
@@ -35,10 +36,10 @@ public class BiomeClimateManager {
         if (biomes.isPresent()) {
             biomes.get().forEach(biome ->
             {
-                var temperature = BiomeClimateManager.getDefaultTemperature(biome) > SNOW_LEVEL ?
+                var temperature = ((MixinBiomeAttach)(Object)biome).getBiomeClimateSettings().temperature > SNOW_LEVEL ?
                         Math.max(SNOW_LEVEL + 0.001F, BiomeClimateManager.getDefaultTemperature(biome) + SolarTerm.get(solarTermIndex).getTemperatureChange()) :
                         Math.min(SNOW_LEVEL, BiomeClimateManager.getDefaultTemperature(biome) + SolarTerm.get(solarTermIndex).getTemperatureChange());
-
+                BIOME_DEFAULT_TEMPERATURE_MAP.put(biome,temperature);
                 // var oldClimateSettings = biome.climateSettings;
                 // biome.climateSettings = new Biome.ClimateSettings(
                 //         oldClimateSettings.hasPrecipitation(),
