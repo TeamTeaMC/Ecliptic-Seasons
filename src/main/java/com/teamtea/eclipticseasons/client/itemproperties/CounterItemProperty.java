@@ -32,10 +32,8 @@ public class CounterItemProperty implements IItemPropertyGetter {
     public float call(ItemStack stack, @Nullable ClientWorld world, @Nullable LivingEntity entity) {
         Entity newEntity = entity != null ? entity : stack.getEntityRepresentation();
 
-        world = tryFixLevelAnyway(entity, world);
+        world = tryFixLevelAnyway(newEntity, world);
         if (world != null) {
-            Object c = null;
-
             BlockPos blockPosition = newEntity.blockPosition();
             return biomeIntegerFunction.apply(world, blockPosition).ordinal() * (1f / (maxLength - 1));
         }
