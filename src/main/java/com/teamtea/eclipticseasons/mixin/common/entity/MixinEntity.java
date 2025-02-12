@@ -22,7 +22,9 @@ public abstract class MixinEntity {
     @Shadow
     private Level level;
 
-    @WrapOperation(at = {@At(value = "INVOKE",
+    @WrapOperation(at = {@At(
+            remap = false,
+            value = "INVOKE",
             target = "Lnet/minecraft/world/level/block/state/BlockState;getSoundType(Lnet/minecraft/world/level/LevelReader;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/entity/Entity;)Lnet/minecraft/world/level/block/SoundType;")},
             method = {"playStepSound"})
     public SoundType ecliptic$playStepSound(BlockState instance, LevelReader levelReader, BlockPos blockPos, Entity entity, Operation<SoundType> original, @Local(argsOnly = true) BlockPos pos, @Local(argsOnly = true) BlockState state) {

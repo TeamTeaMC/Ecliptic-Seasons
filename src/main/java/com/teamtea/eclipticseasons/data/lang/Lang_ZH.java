@@ -3,6 +3,7 @@ package com.teamtea.eclipticseasons.data.lang;
 
 import com.teamtea.eclipticseasons.common.registry.BlockRegistry;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
+import com.teamtea.eclipticseasons.common.registry.ItemRegistry;
 import net.minecraft.data.PackOutput;
 import net.minecraftforge.common.data.ExistingFileHelper;
 
@@ -34,7 +35,9 @@ public class Lang_ZH extends LangHelper {
         // add(EclipticSeasons.ModContents.pinwheel_orange.get(), "橘色纸风车");
         // add(EclipticSeasons.ModContents.snowy_maker_item.get(), "冰晶法杖");
         // add(EclipticSeasons.ModContents.broom_item.get(), "扫帚");
-
+        add(ItemRegistry.thermometer.get(), "温度计");
+        add(ItemRegistry.hyetometer.get(), "雨量计");
+        add(ItemRegistry.hygrometer.get(), "湿度计");
 
         add("info.eclipticseasons.environment.temperature.under_freezing","严寒");
         add("info.eclipticseasons.environment.temperature.freezing","冰冻");

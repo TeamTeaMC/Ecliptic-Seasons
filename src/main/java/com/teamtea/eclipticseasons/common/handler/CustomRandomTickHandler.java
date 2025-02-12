@@ -1,7 +1,7 @@
 package com.teamtea.eclipticseasons.common.handler;
 
 
-import com.teamtea.eclipticseasons.api.CustomRandomTick;
+import com.teamtea.eclipticseasons.api.misc.CustomRandomTick;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import com.google.common.collect.Lists;

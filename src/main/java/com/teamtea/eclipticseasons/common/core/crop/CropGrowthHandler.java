@@ -127,13 +127,13 @@ public final class CropGrowthHandler {
                             roomStatus = isInRoom(world, pos, blockState, season) ? RoomStatus.GREEN_HOUSE : RoomStatus.NORMAL;
                         }
                         if (nearState != null && roomStatus == RoomStatus.GREEN_HOUSE) {
-                            env = env.above();
+                            env = env.above(1);
                             checkHumidity(event, world, humidityInfo, env, roomStatus, pos, blockState, season, true);
                             should = false;
                             return;
                             //  TODO:下雨增加湿润度
                         } else if (((Level) world).isRainingAt(pos)) {
-                            env = env.above();
+                            env = env.above(1);
                             checkHumidity(event, world, humidityInfo, env, roomStatus, pos, blockState, season, true);
                             should = false;
                             return;

@@ -3,13 +3,14 @@ package com.teamtea.eclipticseasons.api.constant.biome;
 
 import com.teamtea.eclipticseasons.api.constant.climate.BiomeRain;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
+import com.teamtea.eclipticseasons.api.misc.ITranslatable;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.world.level.biome.Biome;
 
-public enum Humidity {
+public enum Humidity implements ITranslatable {
     ARID(ChatFormatting.RED, 0.9F),
     DRY(ChatFormatting.GOLD, 0.95F),
     AVERAGE(ChatFormatting.GREEN, 1.0F),
@@ -32,8 +33,13 @@ public enum Humidity {
         return this.toString().toLowerCase();
     }
 
+    @Override
     public Component getTranslation() {
         return Component.translatable("info.eclipticseasons.environment.humidity." + getName()).withStyle(color);
+    }
+
+    public ChatFormatting getColor() {
+        return color;
     }
 
     public float getCoefficient() {
@@ -46,11 +52,15 @@ public enum Humidity {
         return humidity;
     }
 
-    public Humidity above() {
-        if (this != HUMID) {
-            return collectValues()[ordinal() + 1];
+    public Humidity above(int levelAttach) {
+        int ordinal = ordinal();
+        if (ordinal + levelAttach < 0) {
+            return ARID;
         }
-        return HUMID;
+        if (ordinal + levelAttach >= collectValues().length) {
+            return HUMID;
+        }
+        return collectValues()[ordinal + 1];
     }
 
     @Deprecated

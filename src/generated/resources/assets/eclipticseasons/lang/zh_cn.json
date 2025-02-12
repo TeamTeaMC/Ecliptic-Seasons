@@ -82,5 +82,8 @@
   "info.eclipticseasons.environment.temperature.under_freezing": "严寒",
   "info.eclipticseasons.environment.temperature.warm": "温暖",
   "item.eclipticseasons.calendar.pop_hint": "%1$s，%2$s/%3$s",
+  "item.eclipticseasons.hyetometer": "雨量计",
+  "item.eclipticseasons.hygrometer": "湿度计",
+  "item.eclipticseasons.thermometer": "温度计",
   "itemGroup.eclipticseasons.core": "节气"
 }

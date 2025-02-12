@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "group": "thermometer",
+  "key": {
+    "x": {
+      "item": "minecraft:redstone"
+    },
+    "y": {
+      "type": "forge:partial_nbt",
+      "item": "minecraft:potion",
+      "nbt": "{Potion:\"minecraft:water\"}"
+    }
+  },
+  "pattern": [
+    " x",
+    "y "
+  ],
+  "result": {
+    "item": "eclipticseasons:thermometer"
+  },
+  "show_notification": true
+}

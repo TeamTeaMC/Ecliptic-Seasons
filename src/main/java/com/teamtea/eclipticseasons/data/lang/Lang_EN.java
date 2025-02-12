@@ -2,6 +2,7 @@ package com.teamtea.eclipticseasons.data.lang;
 
 import com.teamtea.eclipticseasons.common.registry.BlockRegistry;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
+import com.teamtea.eclipticseasons.common.registry.ItemRegistry;
 import net.minecraft.data.PackOutput;
 import net.minecraftforge.common.data.ExistingFileHelper;
 
@@ -35,6 +36,9 @@ public class Lang_EN extends LangHelper {
         // add(EclipticSeasons.ModContents.pinwheel_orange.get(), "Orange Pinwheel");
         // add(EclipticSeasons.ModContents.snowy_maker_item.get(), "Ice Wand");
         // add(EclipticSeasons.ModContents.broom_item.get(), "Broom");
+        add(ItemRegistry.thermometer.get(), "Thermometer");
+        add(ItemRegistry.hyetometer.get(), "Hyetometer");
+        add(ItemRegistry.hygrometer.get(), "Hygrometer");
 
         add("info.eclipticseasons.environment.temperature.under_freezing", "Under Freezing");
         add("info.eclipticseasons.environment.temperature.freezing", "Freezing");
@@ -44,11 +48,11 @@ public class Lang_EN extends LangHelper {
         add("info.eclipticseasons.environment.temperature.hot", "Hot");
         add("info.eclipticseasons.environment.temperature.heat", "Heat");
         add("info.eclipticseasons.environment.temperature.over_heat", "Over Heat");
-        add("info.eclipticseasons.environment.rainfall.rare","RARE");
-        add("info.eclipticseasons.environment.rainfall.scarce","SCARCE");
-        add("info.eclipticseasons.environment.rainfall.moderate","MODERATE");
-        add("info.eclipticseasons.environment.rainfall.adequate","ADEQUATE");
-        add("info.eclipticseasons.environment.rainfall.abundant","ABUNDANT");
+        add("info.eclipticseasons.environment.rainfall.rare","Rare");
+        add("info.eclipticseasons.environment.rainfall.scarce","Scare");
+        add("info.eclipticseasons.environment.rainfall.moderate","Moderate");
+        add("info.eclipticseasons.environment.rainfall.adequate","Adequate");
+        add("info.eclipticseasons.environment.rainfall.abundant","Abundant");
         add("info.eclipticseasons.environment.humidity.arid", "Arid");
         add("info.eclipticseasons.environment.humidity.dry", "Dry");
         add("info.eclipticseasons.environment.humidity.average", "Average");
