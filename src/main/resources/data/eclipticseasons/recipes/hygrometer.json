@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "group": "hygrometer",
+  "key": {
+    "#": {
+      "item": "minecraft:iron_ingot"
+    },
+    "x": {
+      "item": "minecraft:purple_dye"
+    },
+    "y": {
+      "item": "eclipticseasons:thermometer"
+    },
+    "z": {
+      "item": "eclipticseasons:hyetometer"
+    }
+  },
+  "pattern": [
+    " x ",
+    "#y#",
+    " z "
+  ],
+  "result": {
+    "item": "eclipticseasons:hygrometer"
+  },
+  "show_notification": true
+}

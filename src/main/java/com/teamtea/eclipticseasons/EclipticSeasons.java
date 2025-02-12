@@ -11,6 +11,7 @@ import com.teamtea.eclipticseasons.config.CommonConfig;
 import com.teamtea.eclipticseasons.data.start;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.crafting.NBTIngredient;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
@@ -33,6 +34,7 @@ public class EclipticSeasons {
     public static final String NETWORK_VERSION = "1.0";
 
     public static void logger(String x) {
+
         // 通过它可以判断是否在哪个服务器
         // ServerLifecycleHooks.getCurrentServer()
         // if (!FMLEnvironment.production||General.bool.get())
