@@ -19,11 +19,11 @@ import com.teamtea.eclipticseasons.EclipticSeasons;
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = EclipticSeasons.MODID)
 public final class OverlayEventHandler {
     public final static ResourceLocation DEFAULT = new ResourceLocation("minecraft", "textures/gui/icons.png");
-    private final static DebugInfoRenderer BAR_4 = new DebugInfoRenderer(Minecraft.getInstance());
+    private  static DebugInfoRenderer BAR_4 =null;
 
     @SubscribeEvent(receiveCanceled = true)
     public static void onEvent(RenderGuiOverlayEvent.Pre event) {
-
+        if(BAR_4==null)BAR_4=new DebugInfoRenderer(Minecraft.getInstance());
 
         LocalPlayer clientPlayer = Minecraft.getInstance().player;
         var level=Minecraft.getInstance().level;

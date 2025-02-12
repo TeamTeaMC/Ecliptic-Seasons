@@ -1,5 +1,7 @@
 {
   "values": [
-    "#forge:is_cave"
+    "#forge:is_cave",
+    "#minecraft:is_nether",
+    "#minecraft:is_end"
   ]
 }

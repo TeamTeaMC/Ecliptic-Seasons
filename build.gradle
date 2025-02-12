@@ -204,11 +204,10 @@ dependencies {
 
     compileOnly "libs:OptiFine:1.19.2_HD_U_I2"
 
-    implementation fg.deobf("curse.maven:storage-drawers-223852:3884263")
     implementation fg.deobf("curse.maven:jei-238222:4615177")
     implementation fg.deobf("curse.maven:jade-324717:4433884")
 
-    runtimeOnly fg.deobf("curse.maven:journeymap-32274:5208387")
+//    runtimeOnly fg.deobf("curse.maven:journeymap-32274:5208387")
     runtimeOnly fg.deobf("curse.maven:farmers-delight-398521:5051241")
 
     runtimeOnly fg.deobf("curse.maven:create-328085:4835190-deobf-sources-api")
