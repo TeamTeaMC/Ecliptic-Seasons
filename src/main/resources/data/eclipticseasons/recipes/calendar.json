@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "calendar",
+  "key": {
+    "x": {
+      "item": "minecraft:paper"
+    },
+    "y": {
+      "item": "minecraft:book"
+    },
+    "z": {
+      "item": "minecraft:feather"
+    }
+  },
+  "pattern": [
+    "xx",
+    "yz"
+  ],
+  "result": {
+    "item": "eclipticseasons:calendar"
+  },
+  "show_notification": true
+}
