@@ -1,15 +1,16 @@
 package com.teamtea.eclipticseasons.api.constant.biome;
 
 
+import com.teamtea.eclipticseasons.api.misc.ITranslatable;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 
-public enum Humidity {
+public enum Humidity implements ITranslatable {
     ARID(ChatFormatting.RED, 0.9F),
     DRY(ChatFormatting.GOLD, 0.95F),
-    AVERAGE(ChatFormatting.WHITE, 1.0F),
+    AVERAGE(ChatFormatting.GREEN, 1.0F),
     MOIST(ChatFormatting.BLUE, 1.1F),
-    HUMID(ChatFormatting.DARK_GREEN, 1.2F);
+    HUMID(ChatFormatting.DARK_BLUE, 1.2F);
 
     private final ChatFormatting color;
     private final float tempCoefficient;
@@ -27,14 +28,37 @@ public enum Humidity {
         return this.toString().toLowerCase();
     }
 
+    @Override
     public Component getTranslation() {
         return Component.translatable("info.eclipticseasons.environment.humidity." + getName()).withStyle(color);
+    }
+
+    public ChatFormatting getColor() {
+        return color;
     }
 
     public float getCoefficient() {
         return tempCoefficient;
     }
 
+    private static final Humidity[] humidity = Humidity.values();
+
+    public static Humidity[] collectValues() {
+        return humidity;
+    }
+
+    public Humidity above(int levelAttach) {
+        int ordinal = ordinal();
+        if (ordinal + levelAttach < 0) {
+            return ARID;
+        }
+        if (ordinal + levelAttach >= collectValues().length) {
+            return HUMID;
+        }
+        return collectValues()[ordinal + 1];
+    }
+
+    @Deprecated
     public static Humidity getHumid(Rainfall rainfall, Temperature temperature) {
         int rOrder = rainfall.ordinal();
         int tOrder = temperature.ordinal();
@@ -42,7 +66,9 @@ public enum Humidity {
         return Humidity.values()[level];
     }
 
+    @Deprecated
     public static Humidity getHumid(float rainfall, float temperature) {
         return Humidity.getHumid(Rainfall.getRainfallLevel(rainfall), Temperature.getTemperatureLevel(temperature));
     }
+
 }
