@@ -32,9 +32,11 @@ public class MapColorReplacer {
         isLight = flag != 0 && isLight
                 && state.getBlock() != Blocks.SNOW_BLOCK
                 && MapChecker.shouldSnowAt(level, pos.below(offset), state, level.getRandom(), state.getSeed(pos))
-                && (!ClientConfig.Renderer.notSnowyNearGlowingBlock.get() ||
-                        level.getBrightness(LightLayer.BLOCK, pos.below(offset - 1)) <
-                                ClientConfig.Renderer.notSnowyNearGlowingBlockLevel.get());
+                // TODO:迁移配置到服务器端
+                // && (!ClientConfig.Renderer.notSnowyNearGlowingBlock.get() ||
+                //         level.getBrightness(LightLayer.BLOCK, pos.below(offset - 1)) <
+                //                 ClientConfig.Renderer.notSnowyNearGlowingBlockLevel.get())
+        ;
 
         return isLight ? MapColor.SNOW : null;
     }

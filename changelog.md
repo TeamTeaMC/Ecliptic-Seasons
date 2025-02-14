@@ -180,16 +180,18 @@ Here's an improved version of the text with better formatting:
 
 ---
 
-**0.10**
+**0.10-pre**
 
 ### Critical Fixes:
 - Fixed an issue where certain mods could not obtain correct rainfall prediction information when using biome queries. This was due to the lack of Level input and no interaction with the mod. These mods will now receive query results related to the Overworld.
 - Fixed an issue regarding the run of solar terms system when informs are disabled.
+- The light check of handheld maps for snow-covered blocks is temporarily disabled to avoid erroneous calls that could cause server disconnects.
 
 ### Improvements:
 - Refactored and organized the registration-related code due to the increasing amount of registration information.
 - When players walk on snow-covered blocks, the sound will now resemble footsteps on snow.
 - Now counts days beyond a year instead of resetting to zero.
+- Add there meters to detect the climate info at the stand position.
 
 ### Minor Updates:
 - Added translation support for "Rainfall."

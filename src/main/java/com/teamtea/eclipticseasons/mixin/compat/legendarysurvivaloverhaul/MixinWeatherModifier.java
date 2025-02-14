@@ -26,7 +26,6 @@ public abstract class MixinWeatherModifier {
                     target = "Lsfiomn/legendarysurvivaloverhaul/api/temperature/ModifierBase;getWorldInfluence(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;)F")
     )
     private float ecliptic$getWorldInfluence(ModifierBase instance, Player player, Level world, BlockPos pos, Operation<Float> original) {
-
         return LSO_ESUtil.ecliptic$EclipticSeasons.get().getWorldInfluence(player, world, pos);
     }
 
