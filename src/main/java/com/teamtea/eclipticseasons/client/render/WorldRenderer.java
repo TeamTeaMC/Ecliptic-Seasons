@@ -1,6 +1,6 @@
 package com.teamtea.eclipticseasons.client.render;
 
-import com.teamtea.eclipticseasons.EclipticSeasons;
+import com.teamtea.eclipticseasons.common.registry.EffectRegistry;
 import com.teamtea.eclipticseasons.client.ClientEventHandler;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.Util;
@@ -11,7 +11,6 @@ import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.PostPass;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
@@ -50,9 +49,15 @@ public class WorldRenderer {
         }
 
         if (CommonConfig.Temperature.heatStroke.get()) {
-            var holder = BuiltInRegistries.MOB_EFFECT.getHolder(EclipticSeasons.EffectRegistry.Effects.HEAT_STROKE).get();
-
-            int blurStatus = player.hasEffect(holder) ? ON_BLUR : NONE_BLUR;
+            // var holder = BuiltInRegistries.MOB_EFFECT.getHolder(EclipticSeasons.EffectRegistry.Effects.HEAT_STROKE).get();
+            boolean hasEffect = false;
+            for (var activeEffect : player.getActiveEffectsMap().keySet()) {
+                if (activeEffect.is(EffectRegistry.Effects.HEAT_STROKE)) {
+                    hasEffect = true;
+                    break;
+                }
+            }
+            int blurStatus = hasEffect ? ON_BLUR : NONE_BLUR;
             if (blurStatus != oldBlurStatus) {
                 if (blurStatus == ON_BLUR) {
                     {

@@ -3,6 +3,7 @@ package com.teamtea.eclipticseasons.mixin.common.entity.animal.bee;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.api.util.WeatherUtil;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.world.entity.animal.Bee;
@@ -27,19 +28,20 @@ public class MixinBee_BeePollinateGoal {
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;isRaining()Z")
     )
     private boolean ecliptic$canBeeUseCheckRain(Level level, Operation<Boolean> original) {
-        if (CommonConfig.Weather.useSolarWeather.get())
+        if (EclipticUtil.useSolarWeather())
             return WeatherUtil.isEntityInRainOrSnow(this$0);
         else return original.call(level);
 
     }
 
 
+    // TODO:改成持续性的
     @WrapOperation(
             method = "canBeeContinueToUse",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;isRaining()Z")
     )
     private boolean ecliptic$canBeeContinueToUseCheckRain(Level level, Operation<Boolean> original) {
-        if (CommonConfig.Weather.useSolarWeather.get())
+        if (EclipticUtil.useSolarWeather())
             return WeatherUtil.isEntityInRainOrSnow(this$0);
         else return original.call(level);
     }

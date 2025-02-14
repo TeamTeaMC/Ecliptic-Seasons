@@ -1,14 +1,19 @@
 package com.teamtea.eclipticseasons.data.model;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
+import com.teamtea.eclipticseasons.api.constant.biome.Humidity;
+import com.teamtea.eclipticseasons.api.constant.biome.Rainfall;
+import com.teamtea.eclipticseasons.api.constant.biome.Temperature;
+import com.teamtea.eclipticseasons.common.registry.ItemRegistry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ItemLike;
+import net.neoforged.neoforge.client.model.generators.ItemModelBuilder;
 import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
+import net.neoforged.neoforge.client.model.generators.ModelFile;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
 public class ESItemModelProvider extends ItemModelProvider {
@@ -27,19 +32,22 @@ public class ESItemModelProvider extends ItemModelProvider {
 
     @Override
     protected void registerModels() {
-        addSimple(EclipticSeasons.ModContents.calendar_item.value());
-        addSimple(EclipticSeasons.ModContents.wind_chimes_item.value());
-        addSimple(EclipticSeasons.ModContents.paper_wind_chimes_item.value());
-        addSimple(EclipticSeasons.ModContents.bamboo_wind_chimes_item.value());
+        addSimple(ItemRegistry.calendar_item.value());
+        addSimple(ItemRegistry.wind_chimes_item.value());
+        addSimple(ItemRegistry.paper_wind_chimes_item.value());
+        addSimple(ItemRegistry.bamboo_wind_chimes_item.value());
 
-        addSimple(EclipticSeasons.ModContents.pinwheel_blue_item.value(), "pinwheel_blue_item");
-        addSimple(EclipticSeasons.ModContents.pinwheel_lime_item.value(), "pinwheel_lime_item");
-        addSimple(EclipticSeasons.ModContents.pinwheel_orange_item.value(), "pinwheel_orange_item");
+        addSimple(ItemRegistry.broom.value());
+        addSimple(ItemRegistry.ice_wand.value());
 
-        withExistingParent(itemName(EclipticSeasons.ModContents.broom_item.value()), ResourceLocation.withDefaultNamespace(GENERATED))
-                .texture("layer0", ResourceLocation.withDefaultNamespace("item/" + itemName(Items.STICK)));
-        withExistingParent(itemName(EclipticSeasons.ModContents.snowy_maker_item.value()), ResourceLocation.withDefaultNamespace(GENERATED))
-                .texture("layer0", ResourceLocation.withDefaultNamespace("item/" + itemName(Items.STICK)));
+        addSimple(ItemRegistry.pinwheel_blue_item.value(), "pinwheel_blue_item");
+        addSimple(ItemRegistry.pinwheel_lime_item.value(), "pinwheel_lime_item");
+        addSimple(ItemRegistry.pinwheel_orange_item.value(), "pinwheel_orange_item");
+
+        addStandProperties(ItemRegistry.hygrometer.get(), Rainfall.collectValues().length);
+        addStandProperties(ItemRegistry.hyetometer.get(), Humidity.collectValues().length);
+        addStandProperties(ItemRegistry.thermometer.get(), Temperature.collectValues().length);
+
     }
 
     public void addSimple(Item item) {
@@ -52,6 +60,11 @@ public class ESItemModelProvider extends ItemModelProvider {
                 .texture("layer0", resourceItem(texture));
     }
 
+    public void addSimple(String item, String texture) {
+        withExistingParent(resourceItem(item).getPath(), ResourceLocation.withDefaultNamespace(GENERATED))
+                .texture("layer0", resourceItem(texture));
+    }
+
     private String itemName(ItemLike item) {
         return BuiltInRegistries.ITEM.getKey(item.asItem()).getPath();
     }
@@ -60,5 +73,22 @@ public class ESItemModelProvider extends ItemModelProvider {
         return EclipticSeasons.rl("item/" + path);
     }
 
+    public void addStandProperties(Item item, int length) {
+        ResourceLocation itemKey = BuiltInRegistries.ITEM.getKey(item.asItem());
+        for (int i = 0; i < length; i++) {
+            String name = itemKey.getPath() + "_stage_" + i;
+            addSimple(name, name);
+        }
+        ItemModelBuilder itemModelBuilder = withExistingParent(itemName(item),
+                itemKey.withSuffix("_stage_0"));
+        for (int i = 0; i < length; i++) {
+            itemModelBuilder
+                    .override()
+                    .predicate(itemKey, i * (1 / ((float) length - 1)))
+                    .model(new ModelFile.ExistingModelFile(resourceItem(itemKey.getPath() + "_stage_" + i), existingFileHelper))
+                    .end();
+
+        }
+    }
 
 }

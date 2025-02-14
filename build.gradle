@@ -137,18 +137,20 @@ dependencies {
     implementation("curse.maven:jei-238222:5606861")
 //    implementation ("curse.maven:jade-324717:4654448")
     implementation("curse.maven:jade-324717:5591256-deobf-sources-api")
-//    implementation ("com.ferreusveritas.dynamictrees:DynamicTrees-1.20.1:1.3.0-BETA10")
+//    implementation ("com.ferreusveritas.dynamictrees:DynamicTrees-neoforge-1.21.1:1.5.0-BETA02")
 
     compileOnly("curse.maven:embeddium-908741:5556146")
 
     compileOnly "org.sinytra.forgified-fabric-api:fabric-renderer-api-v1:3.4.0+acb05a39d1"
     compileOnly "org.sinytra.forgified-fabric-api:fabric-renderer-indigo:1.7.0+acb05a39d1"
 
-    compileOnly "maven.modrinth:sodium:mc1.21.1-0.6.0-neoforge"
-    compileOnly("curse.maven:irisshaders-455508:5910090")
+    compileOnly "maven.modrinth:sodium:mc1.21.1-0.6.5-neoforge"
+    compileOnly("curse.maven:irisshaders-455508:6117625")
 
-    onlyMainRuntimeOnly("curse.maven:irisshaders-455508:5910090")
-    onlyMainRuntimeOnly "maven.modrinth:sodium:mc1.21.1-0.6.0-neoforge"
+    onlyMainRuntimeOnly("curse.maven:irisshaders-455508:6117625")
+    onlyMainRuntimeOnly "maven.modrinth:sodium:mc1.21.1-0.6.5-neoforge"
+
+    compileOnly("curse.maven:journeymap-32274:5541925")
 
     onlyMainRuntimeOnly("curse.maven:journeymap-32274:5541925")
 
@@ -156,9 +158,15 @@ dependencies {
     compileOnly("curse.maven:distant-horizons-508933:5689286")
 //    onlyMainRuntimeOnly ("curse.maven:distant-horizons-508933:5689286")
 
+    compileOnly ("curse.maven:simple-clouds-1121215:5812034")
+
+
     onlyMainRuntimeOnly("curse.maven:spark-361579:5434153")
     onlyMainRuntimeOnly("curse.maven:farmers-delight-398521:5772720")
 
+    compileOnly ("curse.maven:cold-sweat-506194:6058306")
+//    runtimeOnly ("curse.maven:cold-sweat-506194:6058306")
+    
     println("----Scan onlyMainRuntimeOnly libs begin----")
     fileTree(dir: 'libs', include: ['*.jar']).each { File file ->
         def fileName = file.name

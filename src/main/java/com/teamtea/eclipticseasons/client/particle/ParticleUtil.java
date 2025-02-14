@@ -1,12 +1,11 @@
 package com.teamtea.eclipticseasons.client.particle;
 
-import com.teamtea.eclipticseasons.EclipticSeasons;
+import com.teamtea.eclipticseasons.common.registry.ItemRegistry;
+import com.teamtea.eclipticseasons.common.registry.AttachmentRegistry;
+import com.teamtea.eclipticseasons.common.registry.ParticleRegistry;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
-import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.constant.tag.EclipticBlockTags;
-import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
-import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.core.map.SnowyRemover;
 import com.teamtea.eclipticseasons.config.ClientConfig;
 import net.minecraft.client.Minecraft;
@@ -15,7 +14,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ColorParticleOption;
 import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
@@ -89,7 +87,7 @@ public class ParticleUtil {
                     && clientLevel.canSeeSky(blockpos$mutableblockpos)
                     && random.nextInt(1024 * (int) (ClientConfig.Particle.butterflySpawnWeight.get() * 0.1f)) == 0
             ) {
-                clientLevel.addParticle(EclipticSeasons.ParticleRegistry.BUTTERFLY, false, i + 0.5, j + 0.8, k + 0.5, 0.0D, 5.0E-4D, 0.0D);
+                clientLevel.addParticle(ParticleRegistry.BUTTERFLY, false, i + 0.5, j + 0.8, k + 0.5, 0.0D, 5.0E-4D, 0.0D);
             }
         }
         if (ClientConfig.Particle.firefly.get()
@@ -101,7 +99,7 @@ public class ParticleUtil {
                     && clientLevel.canSeeSky(blockpos$mutableblockpos)
                     && random.nextInt(160 * (int) (ClientConfig.Particle.fireflySpawnWeight.get() * 0.1f)) == 0
             ) {
-                clientLevel.addParticle(EclipticSeasons.ParticleRegistry.FIREFLY, false, i + 0.5, j + 0.8, k + 0.5, 0.0D, 5.0E-4D, 0.0D);
+                clientLevel.addParticle(ParticleRegistry.FIREFLY, false, i + 0.5, j + 0.8, k + 0.5, 0.0D, 5.0E-4D, 0.0D);
             }
         }
 
@@ -113,13 +111,13 @@ public class ParticleUtil {
                 && !clientLevel.isRainingAt(blockpos$mutableblockpos)
                 && clientLevel.getBiome(blockpos$mutableblockpos).value().getBaseTemperature() < 0.95f
                 && random.nextInt(2295 * (int) (ClientConfig.Particle.wildGooseSpawnWeight.get() * 0.1f)) == 0) {
-            clientLevel.addParticle(EclipticSeasons.ParticleRegistry.WILD_GOOSE, false, x + random.nextInt(16, 16 * 2) * (random.nextBoolean() ? -1 : 1), y + random.nextInt(15, 16 * 2), z + random.nextInt(16, 16 * 2) * (random.nextBoolean() ? -1 : 1), 0.0D, 5.0E-4D, 0.0D);
+            clientLevel.addParticle(ParticleRegistry.WILD_GOOSE, false, x + random.nextInt(16, 16 * 2) * (random.nextBoolean() ? -1 : 1), y + random.nextInt(15, 16 * 2), z + random.nextInt(16, 16 * 2) * (random.nextBoolean() ? -1 : 1), 0.0D, 5.0E-4D, 0.0D);
         }
 
         if (random.nextInt(b) == 0 &&
                 Minecraft.getInstance().player != null
-                && Minecraft.getInstance().player.getItemInHand(InteractionHand.MAIN_HAND).getItem() == EclipticSeasons.ModContents.snowy_maker_item.get()) {
-            var data = clientLevel.getChunkAt(blockpos$mutableblockpos).getData(EclipticSeasons.ModContents.SNOWY_REMOVER);
+                && Minecraft.getInstance().player.getItemInHand(InteractionHand.MAIN_HAND).getItem() == ItemRegistry.ice_wand.get()) {
+            var data = clientLevel.getChunkAt(blockpos$mutableblockpos).getData(AttachmentRegistry.SNOWY_REMOVER);
             SnowyRemover.SnowyFlag snowyFlag = data.getSnowyFlag(blockpos$mutableblockpos);
             ParticleOptions indicatorParticleOptions = snowyFlag.getIndicatorParticleOptions(random);
             if (indicatorParticleOptions!=null) {
@@ -139,10 +137,11 @@ public class ParticleUtil {
     public static void fallenLeaves(ClientLevel level, BlockPos pos, BlockState state) {
         if (!state.isAir()) {
             int color = Minecraft.getInstance().getBlockColors().getColor(state, level, pos, 2);
-            if (new Color(color).equals(Color.WHITE)) {
-                color = Minecraft.getInstance().getBlockColors().getColor(state, level, pos);
-                // color = Color.PINK.getRGB();
+            if (color==-1) {
+                color = new Color(Minecraft.getInstance().getBlockColors().getColor(state, level, pos)).getRGB();
+
             }
+
             VoxelShape voxelshape = state.getShape(level, pos);
             double d0 = 0.25D;
             int finalColor = color;
@@ -176,7 +175,7 @@ public class ParticleUtil {
                                 d5 = 0.42f;
                             }
 
-                            level.addParticle(ColorParticleOption.create(EclipticSeasons.ParticleRegistry.FALLEN_LEAVES, finalColor),
+                            level.addParticle(ColorParticleOption.create(ParticleRegistry.FALLEN_LEAVES, finalColor),
                                     (double) pos.getX() + d7,
                                     (double) pos.getY() + d8,
                                     (double) pos.getZ() + d9,

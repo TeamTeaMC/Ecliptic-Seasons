@@ -1,15 +1,21 @@
 package com.teamtea.eclipticseasons.api.constant.biome;
 
 
+import com.teamtea.eclipticseasons.api.constant.climate.BiomeRain;
+import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
+import com.teamtea.eclipticseasons.api.misc.ITranslatable;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
+import net.minecraft.tags.BiomeTags;
+import net.minecraft.world.level.biome.Biome;
 
-public enum Humidity {
+public enum Humidity implements ITranslatable {
     ARID(ChatFormatting.RED, 0.9F),
     DRY(ChatFormatting.GOLD, 0.95F),
-    AVERAGE(ChatFormatting.WHITE, 1.0F),
+    AVERAGE(ChatFormatting.GREEN, 1.0F),
     MOIST(ChatFormatting.BLUE, 1.1F),
-    HUMID(ChatFormatting.DARK_GREEN, 1.2F);
+    HUMID(ChatFormatting.DARK_BLUE, 1.2F);
 
     private final ChatFormatting color;
     private final float tempCoefficient;
@@ -27,14 +33,37 @@ public enum Humidity {
         return this.toString().toLowerCase();
     }
 
+    @Override
     public Component getTranslation() {
         return Component.translatable("info.eclipticseasons.environment.humidity." + getName()).withStyle(color);
+    }
+
+    public ChatFormatting getColor() {
+        return color;
     }
 
     public float getCoefficient() {
         return tempCoefficient;
     }
 
+    private static final Humidity[] humidity = Humidity.values();
+
+    public static Humidity[] collectValues() {
+        return humidity;
+    }
+
+    public Humidity above(int levelAttach) {
+        int ordinal = ordinal();
+        if (ordinal + levelAttach < 0) {
+            return ARID;
+        }
+        if (ordinal + levelAttach >= collectValues().length) {
+            return HUMID;
+        }
+        return collectValues()[ordinal + 1];
+    }
+
+    @Deprecated
     public static Humidity getHumid(Rainfall rainfall, Temperature temperature) {
         int rOrder = rainfall.ordinal();
         int tOrder = temperature.ordinal();
@@ -42,7 +71,24 @@ public enum Humidity {
         return Humidity.values()[level];
     }
 
+    @Deprecated
     public static Humidity getHumid(float rainfall, float temperature) {
         return Humidity.getHumid(Rainfall.getRainfallLevel(rainfall), Temperature.getTemperatureLevel(temperature));
+    }
+
+    public static Humidity getHumid(SolarTerm solarTerm, Holder<Biome> biomeHolder) {
+        float t = biomeHolder.value().getModifiedClimateSettings().temperature() + solarTerm.getTemperatureChange();
+        BiomeRain biomeRain = solarTerm.getBiomeRain(biomeHolder);
+        float r = (biomeHolder.value().getModifiedClimateSettings().downfall() * 1.5f + biomeRain.getRainChane() * 0.5f) / 2f;
+        if (biomeHolder.is(BiomeTags.IS_SAVANNA) && biomeRain.getRainChane() > 0) {
+            r += 0.15f;
+        }
+        // float r = biomeHolder.value().getModifiedClimateSettings().downfall();
+        // if(biomeHolder.is(BiomeTags.IS_SAVANNA)&&biomeRain.getRainChane()>0){
+        //     r+=0.2f;
+        // }
+        // r*=(1 + biomeRain.getRainChane());
+        Humidity h = Humidity.getHumid(r, t);
+        return h;
     }
 }

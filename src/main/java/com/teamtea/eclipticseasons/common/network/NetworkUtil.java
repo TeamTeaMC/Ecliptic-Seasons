@@ -1,6 +1,6 @@
 package com.teamtea.eclipticseasons.common.network;
 
-import com.teamtea.eclipticseasons.EclipticSeasons;
+import com.teamtea.eclipticseasons.common.registry.AttachmentRegistry;
 import com.teamtea.eclipticseasons.client.color.season.BiomeColorsHandler;
 import com.teamtea.eclipticseasons.client.core.ClientWeatherChecker;
 import com.teamtea.eclipticseasons.client.map.ClientMapFixer;
@@ -9,6 +9,7 @@ import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
+import com.teamtea.eclipticseasons.common.core.map.BiomeHolder;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.core.map.SnowyRemover;
 import com.teamtea.eclipticseasons.common.network.message.*;
@@ -18,7 +19,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraft.world.level.chunk.status.ChunkStatus;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
@@ -88,7 +91,7 @@ public class NetworkUtil {
             if (context.player().level() instanceof Level level && level.isClientSide()) {
                 if (level.getChunk(chunkUpdateMessage.x, chunkUpdateMessage.z) instanceof LevelChunk levelChunk) {
                     var snow = new SnowyRemover(blocks);
-                    levelChunk.setData(EclipticSeasons.ModContents.SNOWY_REMOVER, new SnowyRemover(blocks));
+                    levelChunk.setData(AttachmentRegistry.SNOWY_REMOVER, new SnowyRemover(blocks));
 
                     for (BlockPos blockPos : chunkUpdateMessage.blockPosList) {
                         ClientMapFixer.clearBlockPos(blockPos);
@@ -151,5 +154,18 @@ public class NetworkUtil {
     }
 
     public static void processChunkBiomeUpdateMessage(ChunkBiomeUpdateMessage chunkBiomeUpdateMessage, IPayloadContext iPayloadContext) {
+        iPayloadContext.enqueueWork(() -> {
+            ChunkAccess chunk = iPayloadContext.player().level().getChunk(chunkBiomeUpdateMessage.x, chunkBiomeUpdateMessage.z, ChunkStatus.FULL, false);
+            if (chunk != null) {
+                // int[] bytes = new int[256];
+                // if (chunk.hasData(EclipticSeasons.ModContents.BIOME_HOLDER)
+                //         && chunk.getData(EclipticSeasons.ModContents.BIOME_HOLDER) instanceof BiomeHolder biomeHolder) {
+                //     biomeHolder.fillArray(bytes, serverLevel, chunkPos);
+                // }
+                // SimplePair<int[], Boolean> pair = new BiomeHolder(bytes, false).prepareBiomes(iPayloadContext.player().level(), new ChunkPos(chunkBiomeUpdateMessage.x,chunkBiomeUpdateMessage.z));
+                chunk.setData(AttachmentRegistry.BIOME_HOLDER, new BiomeHolder(chunkBiomeUpdateMessage.biomes, true, chunkBiomeUpdateMessage.version));
+            }
+
+        });
     }
 }

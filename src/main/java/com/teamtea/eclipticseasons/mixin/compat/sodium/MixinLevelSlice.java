@@ -5,6 +5,7 @@ import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.misc.client.IMapSlice;
 import com.teamtea.eclipticseasons.api.misc.client.ISnowyGetter;
 import com.teamtea.eclipticseasons.client.render.chunk.CompilerCollector;
+import com.teamtea.eclipticseasons.common.core.map.BiomeHolder;
 import com.teamtea.eclipticseasons.common.core.map.ChunkInfoMap;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.core.map.SnowyRemover;
@@ -112,25 +113,15 @@ public abstract class MixinLevelSlice implements IMapSlice {
 
             for (int sectionX = 0; sectionX < SECTION_ARRAY_LENGTH; ++sectionX) {
                 for (int sectionZ = 0; sectionZ < SECTION_ARRAY_LENGTH; ++sectionZ) {
-                    SnowyRemover snowyRemover=((ISnowyGetter)context.getSections()[getLocalSectionIndex(sectionX,0,sectionZ)]).getSnowyRemover();
+                    ISnowyGetter snowyGetter = (ISnowyGetter) context.getSections()[getLocalSectionIndex(sectionX, 0, sectionZ)];
+                    SnowyRemover snowyRemover= snowyGetter.getSnowyRemover();
+                    BiomeHolder biomeHolder = snowyGetter.getBiomeHolder();
                     int localSectionIndex = eclipticSeasons$getLocalSectionIndex(sectionX, sectionZ);
                     int[] heights = HEIGHT_MAP[localSectionIndex];
                     int[] biomes = BIOME_MAP[localSectionIndex];
                     int[] snowys = SNOWY_MAP[localSectionIndex];
                     int startX = originBlockX + sectionX * 16;
                     int startZ = originBlockZ + sectionZ * 16;
-                    // If we have compiled the chunk
-                    // ChunkPos chunkPos = new ChunkPos(
-                    //         c_x + sectionX,
-                    //         c_z + sectionZ);
-                    // List<int[]> ints = CompilerCollector.get(chunkPos);
-                    // if (ints != null) {
-                    //     // System.arraycopy(ints, 0, heights, 0, heights.length);
-                    //     HEIGHT_MAP[localSectionIndex] = ints.getFirst();
-                    //     BIOME_MAP[localSectionIndex] = ints.get(1);
-                    //     continue;
-                    // }
-
 
                     mutableBlockPos.setX(startX);
                     mutableBlockPos.setZ(startZ);
@@ -155,13 +146,10 @@ public abstract class MixinLevelSlice implements IMapSlice {
                                     mutableBlockPos.setY(level.getHeight(Heightmap.Types.MOTION_BLOCKING, mutableBlockPos.getX(), mutableBlockPos.getZ()));
                                 }
 
-                                // TODO：需要检查为啥这里总存在查询问题。有时候会查到一个默认值平原
-                                // if(sectionZ==1&&sectionX==1)
-                                // {
-                                    int biomeId = chunkMap.getBiome(mutableBlockPos);
-                                    biomes[index] = biomeId > -1 ? biomeId :
-                                            MapChecker.getSurfaceOrUpdate(level, mutableBlockPos, false, ChunkInfoMap.TYPE_BIOME);
-                                // }
+                                int biomeId = biomeHolder.getBiomeId(mutableBlockPos);
+                                biomes[index] = biomeId > -1 ? biomeId :
+                                        MapChecker.biomeToId(level,MapChecker.getUnCachedSurfaceBiome(level, mutableBlockPos).value());
+
                                 snowys[index]=snowyRemover.blockWatcher()[x][z];
                             }
                         }
@@ -196,27 +184,26 @@ public abstract class MixinLevelSlice implements IMapSlice {
         }
     }
 
-    // TODO：存在缓存问题
-    // @Override
-    // public int getSurfaceFaceBiomeId(BlockPos pos) {
-    //     if (!this.volume.isInside(pos.getX(), pos.getY(), pos.getZ())) {
-    //         return 0;
-    //     } else {
-    //         int relBlockX = pos.getX() - this.originBlockX;
-    //         int relBlockZ = pos.getZ() - this.originBlockZ;
-    //         int[] lightArrays = this.BIOME_MAP[eclipticSeasons$getLocalSectionIndex(
-    //                 relBlockX >> 4,
-    //                 relBlockZ >> 4)];
-    //         int localBlockX = relBlockX & 15;
-    //         int localBlockZ = relBlockZ & 15;
-    //         return lightArrays[localBlockX * 16 + localBlockZ];
-    //     }
-    // }
-
     @Override
-    public int getSurfaceFaceBiomeId(BlockPos blockPos) {
-        return MapChecker.getSurfaceOrUpdate(level, blockPos, false, ChunkInfoMap.TYPE_BIOME);
+    public int getSurfaceFaceBiomeId(BlockPos pos) {
+        if (!this.volume.isInside(pos.getX(), pos.getY(), pos.getZ())) {
+            return 0;
+        } else {
+            int relBlockX = pos.getX() - this.originBlockX;
+            int relBlockZ = pos.getZ() - this.originBlockZ;
+            int[] lightArrays = this.BIOME_MAP[eclipticSeasons$getLocalSectionIndex(
+                    relBlockX >> 4,
+                    relBlockZ >> 4)];
+            int localBlockX = relBlockX & 15;
+            int localBlockZ = relBlockZ & 15;
+            return lightArrays[localBlockX * 16 + localBlockZ];
+        }
     }
+
+    // @Override
+    // public int getSurfaceFaceBiomeId(BlockPos blockPos) {
+    //     return MapChecker.getSurfaceOrUpdate(level, blockPos, false, ChunkInfoMap.TYPE_BIOME);
+    // }
 
     @Override
     public int getSnowyStatus(BlockPos pos) {

@@ -85,7 +85,7 @@ public class BiomeClimateManager {
     }
 
     public static Boolean agent$hasPrecipitation(Biome biome) {
-        return !((IBiomeTagHolder) (Object) biome).eclipticSeasons$getBindTag().equals(ClimateTypeBiomeTags.RAINLESS);
+        return ((IBiomeTagHolder) (Object) biome).eclipticSeasons$getBindTag()!=ClimateTypeBiomeTags.RAINLESS;
         // return WeatherManager.getPrecipitationAt(biome, BlockPos.ZERO)!= Biome.Precipitation.NONE;
     }
 
@@ -105,7 +105,7 @@ public class BiomeClimateManager {
         return BIOME_TAG_KEY_MAP.getOrDefault(biome, ClimateTypeBiomeTags.RAINLESS);
     }
 
-    // Clear it on client exit a level
+    // TODO：Clear it on client exit a level
     public static void putTag(RegistryAccess registryAccess, boolean isServer) {
         var useMap = isServer ? BIOME_TAG_KEY_MAP : CLIENT_BIOME_TAG_KEY_MAP;
         useMap.clear();

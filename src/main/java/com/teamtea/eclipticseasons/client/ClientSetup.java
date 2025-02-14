@@ -1,7 +1,12 @@
 package com.teamtea.eclipticseasons.client;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
+import com.teamtea.eclipticseasons.api.constant.biome.Humidity;
+import com.teamtea.eclipticseasons.api.constant.biome.Rainfall;
+import com.teamtea.eclipticseasons.api.constant.biome.Temperature;
+import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.client.color.season.BiomeColorsHandler;
+import com.teamtea.eclipticseasons.client.itemproperties.CounterItemProperty;
 import com.teamtea.eclipticseasons.client.model.SnowyBakedModelWrapper;
 import com.teamtea.eclipticseasons.client.particle.ButterflyParticle;
 import com.teamtea.eclipticseasons.client.particle.FallenLeavesParticle;
@@ -10,10 +15,15 @@ import com.teamtea.eclipticseasons.client.particle.WildGooseParticle;
 import com.teamtea.eclipticseasons.client.render.ber.CalendarBlockEntityRenderer;
 import com.teamtea.eclipticseasons.client.render.ber.PinWheelBlockEntityRenderer;
 import com.teamtea.eclipticseasons.client.render.ber.WindChimesBlockEntityRenderer;
+import com.teamtea.eclipticseasons.common.registry.BlockEntityRegistry;
+import com.teamtea.eclipticseasons.common.registry.BlockRegistry;
+import com.teamtea.eclipticseasons.common.registry.ItemRegistry;
+import com.teamtea.eclipticseasons.common.registry.ParticleRegistry;
 import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.BlockModelShaper;
+import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.world.level.GrassColor;
@@ -41,16 +51,19 @@ public class ClientSetup {
 
     @SubscribeEvent
     public static void blockRegister(RegisterParticleProvidersEvent event) {
-        event.registerSpriteSet(EclipticSeasons.ParticleRegistry.FIREFLY, (p_277215_) ->
+        event.registerSpriteSet(ParticleRegistry.FIREFLY, (p_277215_) ->
                 (particleType, level, x, y, z, p_277222_, p_277223_, p_277224_) ->
                         new FireflyParticle(level, x, y, z, p_277215_));
-        event.registerSpriteSet(EclipticSeasons.ParticleRegistry.WILD_GOOSE, (p_277215_) ->
+        event.registerSpriteSet(ParticleRegistry.WILD_GOOSE, (p_277215_) ->
                 (particleType, level, x, y, z, p_277222_, p_277223_, p_277224_) ->
                         new WildGooseParticle(level, x, y, z, 0.01, 0.01, 0.01, p_277215_));
-        event.registerSpriteSet(EclipticSeasons.ParticleRegistry.BUTTERFLY, (p_277215_) ->
+        event.registerSpriteSet(ParticleRegistry.BUTTERFLY, (p_277215_) ->
                 (particleType, level, x, y, z, p_277222_, p_277223_, p_277224_) ->
                         new ButterflyParticle(level, x, y, z, p_277215_));
-        event.registerSpriteSet(EclipticSeasons.ParticleRegistry.FALLEN_LEAVES, (p_277215_) ->
+        event.registerSpriteSet(ParticleRegistry.FALLEN_LEAVES, (p_277215_) ->
+                (particleType, level, x, y, z, p_277222_, p_277223_, p_277224_) ->
+                        new FallenLeavesParticle(level, x, y, z, p_277222_, p_277223_, p_277224_, particleType, p_277215_));
+        event.registerSpriteSet(ParticleRegistry.FLYING_BLOOM, (p_277215_) ->
                 (particleType, level, x, y, z, p_277222_, p_277223_, p_277224_) ->
                         new FallenLeavesParticle(level, x, y, z, p_277222_, p_277223_, p_277224_, particleType, p_277215_));
 
@@ -85,22 +98,26 @@ public class ClientSetup {
             BiomeColors.GRASS_COLOR_RESOLVER = BiomeColorsHandler.GRASS_COLOR;
             BiomeColors.FOLIAGE_COLOR_RESOLVER = BiomeColorsHandler.FOLIAGE_COLOR;
 
-            ItemBlockRenderTypes.setRenderLayer(EclipticSeasons.ModContents.bamboo_wind_chimes.get(), RenderType.cutoutMipped());
-            ItemBlockRenderTypes.setRenderLayer(EclipticSeasons.ModContents.paper_wind_chimes.get(), RenderType.cutoutMipped());
-            ItemBlockRenderTypes.setRenderLayer(EclipticSeasons.ModContents.wind_chimes.get(), RenderType.cutoutMipped());
+            ItemBlockRenderTypes.setRenderLayer(BlockRegistry.bamboo_wind_chimes.get(), RenderType.cutoutMipped());
+            ItemBlockRenderTypes.setRenderLayer(BlockRegistry.paper_wind_chimes.get(), RenderType.cutoutMipped());
+            ItemBlockRenderTypes.setRenderLayer(BlockRegistry.wind_chimes.get(), RenderType.cutoutMipped());
 
-            ItemBlockRenderTypes.setRenderLayer(EclipticSeasons.ModContents.pinwheel_blue.get(), RenderType.cutoutMipped());
-            ItemBlockRenderTypes.setRenderLayer(EclipticSeasons.ModContents.pinwheel_lime.get(), RenderType.cutoutMipped());
-            ItemBlockRenderTypes.setRenderLayer(EclipticSeasons.ModContents.pinwheel_orange.get(), RenderType.cutoutMipped());
+            ItemBlockRenderTypes.setRenderLayer(BlockRegistry.pinwheel_blue.get(), RenderType.cutoutMipped());
+            ItemBlockRenderTypes.setRenderLayer(BlockRegistry.pinwheel_lime.get(), RenderType.cutoutMipped());
+            ItemBlockRenderTypes.setRenderLayer(BlockRegistry.pinwheel_orange.get(), RenderType.cutoutMipped());
+
+            ItemProperties.register(ItemRegistry.hyetometer.get(), ItemRegistry.hyetometer.getId(), new CounterItemProperty(EclipticUtil::getRainfallAt, Rainfall.collectValues().length));
+            ItemProperties.register(ItemRegistry.hygrometer.get(), ItemRegistry.hygrometer.getId(), new CounterItemProperty(EclipticUtil::getHumidityAt, Humidity.collectValues().length));
+            ItemProperties.register(ItemRegistry.thermometer.get(), ItemRegistry.thermometer.getId(), new CounterItemProperty(EclipticUtil::getTemperatureAt, Temperature.collectValues().length));
 
         });
     }
 
     @SubscribeEvent
     public static void onRegisterRenderers(EntityRenderersEvent.RegisterRenderers event) {
-        event.registerBlockEntityRenderer(EclipticSeasons.ModContents.calendar_entity_type.get(), CalendarBlockEntityRenderer::new);
-        event.registerBlockEntityRenderer(EclipticSeasons.ModContents.pinwheel_entity_type.get(), PinWheelBlockEntityRenderer::new);
-        event.registerBlockEntityRenderer(EclipticSeasons.ModContents.wind_chimes_entity_type.get(), WindChimesBlockEntityRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntityRegistry.calendar_entity_type.get(), CalendarBlockEntityRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntityRegistry.pinwheel_entity_type.get(), PinWheelBlockEntityRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntityRegistry.wind_chimes_entity_type.get(), WindChimesBlockEntityRenderer::new);
     }
 
     // public static Map<ResourceLocation, BakedModel> BakedSnowModels=new HashMap<>();
@@ -128,7 +145,7 @@ public class ClientSetup {
                         ModelManager.snowySlabBottom,
                         ModelManager.snowOverlayBlock
                 ));
-        bakedModels.addAll(EclipticSeasons.ModContents.snowyStairs.get().getStateDefinition().getPossibleStates().stream()
+        bakedModels.addAll(BlockRegistry.snowyStairs.get().getStateDefinition().getPossibleStates().stream()
                 .map(BlockModelShaper::stateToModelLocation).toList());
 
         for (ModelResourceLocation modelResourceLocation : bakedModels) {

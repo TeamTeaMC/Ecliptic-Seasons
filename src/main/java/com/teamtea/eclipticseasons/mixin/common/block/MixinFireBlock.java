@@ -4,6 +4,7 @@ package com.teamtea.eclipticseasons.mixin.common.block;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
+import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.core.BlockPos;
@@ -20,8 +21,8 @@ public class MixinFireBlock {
             at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;isRaining()Z", ordinal = 0)
     )
     private boolean mixin$Tick_isRaining(ServerLevel level, Operation<Boolean> original, @Local(ordinal = 0) BlockPos blockPos) {
-        if (CommonConfig.Weather.useSolarWeather.get())
-            return WeatherManager.isRainingAt(level, blockPos);
+        if (EclipticUtil.useSolarWeather())
+            return level.isRainingAt(blockPos);
         else return original.call(level);
     }
 
@@ -30,8 +31,8 @@ public class MixinFireBlock {
             at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;isRaining()Z", ordinal = 1)
     )
     private boolean mixin$Tick_isRaining2(ServerLevel level, Operation<Boolean> original, @Local(ordinal = 0) BlockPos.MutableBlockPos blockPos) {
-        if (CommonConfig.Weather.useSolarWeather.get())
-            return WeatherManager.isRainingAt(level, blockPos);
+        if (EclipticUtil.useSolarWeather())
+            return level.isRainingAt(blockPos);
         else return original.call(level);
     }
 

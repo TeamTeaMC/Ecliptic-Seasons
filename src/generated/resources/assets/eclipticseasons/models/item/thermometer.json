@@ -1,0 +1,41 @@
+{
+  "parent": "eclipticseasons:item/thermometer_stage_0",
+  "overrides": [
+    {
+      "model": "eclipticseasons:item/thermometer_stage_0",
+      "predicate": {
+        "eclipticseasons:thermometer": 0.0
+      }
+    },
+    {
+      "model": "eclipticseasons:item/thermometer_stage_1",
+      "predicate": {
+        "eclipticseasons:thermometer": 0.2
+      }
+    },
+    {
+      "model": "eclipticseasons:item/thermometer_stage_2",
+      "predicate": {
+        "eclipticseasons:thermometer": 0.4
+      }
+    },
+    {
+      "model": "eclipticseasons:item/thermometer_stage_3",
+      "predicate": {
+        "eclipticseasons:thermometer": 0.6
+      }
+    },
+    {
+      "model": "eclipticseasons:item/thermometer_stage_4",
+      "predicate": {
+        "eclipticseasons:thermometer": 0.8
+      }
+    },
+    {
+      "model": "eclipticseasons:item/thermometer_stage_5",
+      "predicate": {
+        "eclipticseasons:thermometer": 1.0
+      }
+    }
+  ]
+}

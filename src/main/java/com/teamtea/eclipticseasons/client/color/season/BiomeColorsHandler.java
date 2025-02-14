@@ -22,6 +22,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.level.*;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.MapColor;
 
 import java.awt.*;
 import java.util.IdentityHashMap;
@@ -38,7 +39,6 @@ public class BiomeColorsHandler {
     // TODO：优化群系颜色，提供一些群系设置不更改颜色
     public static final ColorResolver GRASS_COLOR = (biome, posX, posZ) ->
     {
-
         int originColor = biome.getGrassColor(posX, posZ);
         if (ClientConfig.Renderer.seasonalGrassColorChange.get()) {
             // if (needRefresh) {

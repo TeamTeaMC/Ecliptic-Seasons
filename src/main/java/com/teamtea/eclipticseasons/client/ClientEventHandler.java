@@ -4,8 +4,8 @@ package com.teamtea.eclipticseasons.client;
 import com.mojang.blaze3d.vertex.*;
 import com.mojang.brigadier.CommandDispatcher;
 import com.teamtea.eclipticseasons.EclipticSeasons;
+import com.teamtea.eclipticseasons.common.registry.BlockRegistry;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
-import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.client.color.season.BiomeColorsHandler;
 import com.teamtea.eclipticseasons.client.map.ClientMapFixer;
 import com.teamtea.eclipticseasons.client.core.ClientWeatherChecker;
@@ -35,6 +35,7 @@ import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
@@ -160,7 +161,7 @@ public final class ClientEventHandler {
     @SubscribeEvent
     public static void onLevelUnloadEvent(LevelEvent.Unload event) {
         if (event.getLevel() instanceof ClientLevel clientLevel) {
-            ClientCon.useLevel = null;
+            ClientCon.setUseLevel(null);
             ClientWeatherChecker.unloadLevel(clientLevel);
             ClientMapFixer.clearAll();
             CompilerCollector.clearAll();
@@ -171,7 +172,7 @@ public final class ClientEventHandler {
     public static void onLevelEventLoad(LevelEvent.Load event) {
         if (event.getLevel() instanceof ClientLevel clientLevel) {
 
-            ClientCon.useLevel = clientLevel;
+            ClientCon.setUseLevel(clientLevel);
             ClientCon.tick(clientLevel);
             // BiomeColorsHandler.reloadColors();
             // BiomeColorsHandler.needRefresh=true;
@@ -180,7 +181,6 @@ public final class ClientEventHandler {
             // 这里需要恢复一下数据
             // 客户端登录时同步天气数据，此处先放入
             SolarHolders.createSaveData(clientLevel, ClientSolarDataManager.get(clientLevel));
-
 
         }
     }
@@ -241,15 +241,14 @@ public final class ClientEventHandler {
     public static void onRenderLevelStageEvent(RenderLevelStageEvent event) {
         if (true) return;
         var level = Minecraft.getInstance().level;
-        if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_CUTOUT_BLOCKS
-                && level != null
-                && ClientCon.nowSolarTerm.getSeason() == Season.SPRING
-                && ClientCon.isDay) {
-            var multiBufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
-            var blockpos4 = new BlockPos(141, -59, 220);
+        if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_CUTOUT_BLOCKS) {
 
-            // Vec3 vec3c = new Vec3(cameraEntity.xo - 0.5f, cameraEntity.yOld , cameraEntity.zo - 0.5f);
-            Vec3 vec3c = blockpos4.getCenter().add(0.5f, -0.5f, 0.5f);
+            var multiBufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
+            // var blockpos4 = new BlockPos(141, -59, 220);
+            //
+            Entity cameraEntity = Minecraft.getInstance().cameraEntity;
+            Vec3 vec3c = new Vec3(cameraEntity.xo - 0.5f, cameraEntity.yOld+2f , cameraEntity.zo - 0.5f);
+            // Vec3 vec3c = blockpos4.getCenter().add(0.5f, -0.5f, 0.5f);
 
             var state = Blocks.CAMPFIRE.defaultBlockState();
             var model = Minecraft.getInstance().getBlockRenderer().getBlockModel(state);
@@ -261,7 +260,7 @@ public final class ClientEventHandler {
             var poseStack = event.getPoseStack();
             poseStack.pushPose();
             poseStack.translate((double) vec3c.x() - d0, (double) vec3c.y() - d1, (double) vec3c.z() - d2);
-
+            poseStack.scale(10,10,10);
             Minecraft.getInstance().getBlockRenderer().getModelRenderer().renderModel(
                     event.getPoseStack().last(),
                     multiBufferSource.getBuffer(RenderType.cutoutMipped()), null,
@@ -324,7 +323,7 @@ public final class ClientEventHandler {
                         poseStack.last(),
                         buffer,
                         null,
-                        Minecraft.getInstance().getModelManager().getModel(BlockModelShaper.stateToModelLocation(EclipticSeasons.ModContents.snowyLeaves.get().defaultBlockState())),
+                        Minecraft.getInstance().getModelManager().getModel(BlockModelShaper.stateToModelLocation(BlockRegistry.snowyLeaves.get().defaultBlockState())),
                         1, 1, 1,
                         light, 0, ModelData.EMPTY, RenderType.cutoutMipped()
                 );
@@ -349,9 +348,9 @@ public final class ClientEventHandler {
 
     @SubscribeEvent
     public static void onRegisterClientCommandsEvent(ClientPlayerNetworkEvent.LoggingIn event) {
-        ClientCon.ServerName=
-                event.getPlayer().connection.getServerData()==null?"Client":
-                event.getPlayer().connection.getServerData().name;
+        ClientCon.ServerName =
+                event.getPlayer().connection.getServerData() == null ? "Client" :
+                        event.getPlayer().connection.getServerData().name;
         // ClientCon.ServerName=event.getPlayer().connection.getConnection().getRemoteAddress().toString();
     }
 }

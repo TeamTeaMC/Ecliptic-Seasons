@@ -7,7 +7,8 @@ import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import net.minecraft.world.level.Level;
 
 public class ClientCon {
-    public static Level useLevel;
+    private static Level useLevel;
+    private static Level nextLevel;
 
     public static SolarTerm nowSolarTerm = SolarTerm.NONE;
     public static boolean isDay = false;
@@ -28,6 +29,28 @@ public class ClientCon {
             ClientCon.isDay = false;
             ClientCon.isEvening = false;
             ClientCon.isNoon = false;
+        }
+        // useLevel=clientLevel;
+    }
+
+    public static Level getUseLevel() {
+        return useLevel;
+    }
+
+    // would load level before unload
+    // so if level create and useLevel is none, we should add it if not none means next level
+    // if level is none so check if we have received a new level and push it if not means exit
+    public static void setUseLevel(Level level) {
+        if (level == null) {
+            useLevel = null;
+            if (nextLevel != null) {
+                useLevel = nextLevel;
+                nextLevel = null;
+            }
+        } else {
+            if (useLevel == null)
+                useLevel = level;
+            else nextLevel = level;
         }
     }
 }

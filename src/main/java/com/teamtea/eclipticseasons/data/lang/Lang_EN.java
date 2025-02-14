@@ -1,6 +1,7 @@
 package com.teamtea.eclipticseasons.data.lang;
 
-import com.teamtea.eclipticseasons.EclipticSeasons;
+import com.teamtea.eclipticseasons.common.registry.BlockRegistry;
+import com.teamtea.eclipticseasons.common.registry.ItemRegistry;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import net.minecraft.data.PackOutput;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
@@ -14,8 +15,8 @@ public class Lang_EN extends LangHelper {
 
     @Override
     protected void addTranslations() {
-        add("advancement.eclipticseasons.root", "Ecliptic Seasons : Spring After Autumn");
-        add("advancement.eclipticseasons.root.desc", "Span a year with 24 solar terms.");
+        add("advancement.eclipticseasons.root", "Spring After Autumn");
+        add("advancement.eclipticseasons.root.desc", "Span a year with twenty-four solar terms.");
 
         add("advancement.eclipticseasons.heat_stroke", "First Heat Stroke");
         add("advancement.eclipticseasons.heat_stroke.desc", "Do not walk directly under the sun in hot communities during the summer afternoon. If necessary, bring heat-resistant gear or take ice and snow to cool down.");
@@ -24,15 +25,20 @@ public class Lang_EN extends LangHelper {
 
         add("itemGroup." + EclipticSeasonsApi.MODID + ".core", "Ecliptic Seasons");
 
-        add(EclipticSeasons.ModContents.calendar.get(), "calendar");
-        add(EclipticSeasons.ModContents.wind_chimes.get(), "Wind Chimes");
-        add(EclipticSeasons.ModContents.paper_wind_chimes.get(), "Paper Wind Chimes");
-        add(EclipticSeasons.ModContents.bamboo_wind_chimes.get(), "Bamboo Wind Chimes");
-        add(EclipticSeasons.ModContents.pinwheel_blue.get(), "Blue Pinwheel");
-        add(EclipticSeasons.ModContents.pinwheel_lime.get(), "Lime Pinwheel");
-        add(EclipticSeasons.ModContents.pinwheel_orange.get(), "Orange Pinwheel");
-        add(EclipticSeasons.ModContents.snowy_maker_item.get(), "Ice Wand");
-        add(EclipticSeasons.ModContents.broom_item.get(), "Broom");
+        add(BlockRegistry.calendar.get(), "Calendar");
+        add("item.eclipticseasons.calendar.pop_hint", "%1$s, %2$s/%3$s");
+        add(BlockRegistry.wind_chimes.get(), "Wind Chimes");
+        add(BlockRegistry.paper_wind_chimes.get(), "Paper Wind Chimes");
+        add(BlockRegistry.bamboo_wind_chimes.get(), "Bamboo Wind Chimes");
+        add(BlockRegistry.pinwheel_blue.get(), "Blue Pinwheel");
+        add(BlockRegistry.pinwheel_lime.get(), "Lime Pinwheel");
+        add(BlockRegistry.pinwheel_orange.get(), "Orange Pinwheel");
+        add(ItemRegistry.ice_wand.get(), "Ice Wand");
+        add(ItemRegistry.broom.get(), "Broom");
+
+        add(ItemRegistry.thermometer.get(), "Thermometer");
+        add(ItemRegistry.hyetometer.get(), "Hyetometer");
+        add(ItemRegistry.hygrometer.get(), "Hygrometer");
 
         add("info.eclipticseasons.environment.temperature.under_freezing","Under Freezing");
         add("info.eclipticseasons.environment.temperature.freezing","Freezing");
@@ -42,6 +48,13 @@ public class Lang_EN extends LangHelper {
         add("info.eclipticseasons.environment.temperature.hot","Hot");
         add("info.eclipticseasons.environment.temperature.heat","Heat");
         add("info.eclipticseasons.environment.temperature.over_heat","Over Heat");
+
+        add("info.eclipticseasons.environment.rainfall.rare","Rare");
+        add("info.eclipticseasons.environment.rainfall.scarce","Scare");
+        add("info.eclipticseasons.environment.rainfall.moderate","Moderate");
+        add("info.eclipticseasons.environment.rainfall.adequate","Adequate");
+        add("info.eclipticseasons.environment.rainfall.abundant","Abundant");
+
         add("info.eclipticseasons.environment.humidity.arid","Arid");
         add("info.eclipticseasons.environment.humidity.dry","Dry");
         add("info.eclipticseasons.environment.humidity.average","Average");
@@ -166,6 +179,9 @@ public class Lang_EN extends LangHelper {
         add("eclipticseasons.configuration.FallenLeavesDropWeight", "Fallen Leaves Drop Weight");
         add("eclipticseasons.configuration.SnowyFullCollisionShape", "Snowy if Full Collision Shape");
         add("eclipticseasons.configuration.CropGrowChanceInWrongSeason", "Crop Grow Chance in Wrong Season");
+        add("eclipticseasons.configuration.CropGrowChanceInWrongHumidity", "Crop Grow Chance in Wrong Humidity");
+        add("eclipticseasons.configuration.GreenHouseMaxDiameter","Max Diameter of Green House");
+        add("eclipticseasons.configuration.ComplexGreenHouseCheck","Complex Green House Check");
         add("eclipticseasons.configuration.Compat.button", "Compatibility");
         add("eclipticseasons.configuration.Weather.button", "Weather");
         add("eclipticseasons.configuration.Particle.button", "Particle");
@@ -181,6 +197,23 @@ public class Lang_EN extends LangHelper {
         add("eclipticseasons.configuration.title", "Title");
         add("eclipticseasons.configuration.Debug.button", "Debug");
         add("eclipticseasons.configuration.EnableInformIcon", "Enable Solar Term Icon Display in Inform");
+        add("eclipticseasons.configuration.CalendarItemHint", "Calendar Item Pop Hint");
+
+
+        add("eclipticseasons.configuration.AutumnTemps","Autumn Temps");
+        add("eclipticseasons.configuration.SummerTemps","Summer Temps");
+        add("eclipticseasons.configuration.SpringTemps","Spring Temps");
+        add("eclipticseasons.configuration.ColdSweat","Cold Sweat");
+        add("eclipticseasons.configuration.WinterTemps","Winter Temps");
+        add("eclipticseasons.configuration.SpringTemps.button","Spring Temps");
+        add("eclipticseasons.configuration.WinterTemps.button","Winter Temps");
+        add("eclipticseasons.configuration.SummerTemps.button","Summer Temps");
+        add("eclipticseasons.configuration.AutumnTemps.button","Autumn Temps");
+        add("eclipticseasons.configuration.ColdSweat.button","Cold Sweat");
+
+        add("eclipticseasons.configuration.JourneyMap","Journey Map");
+        add("eclipticseasons.configuration.ShowSnowyBlock","Show Snowy Block");
+        add("eclipticseasons.configuration.JourneyMap.button","Journey Map");
 
     }
 }

@@ -1,0 +1,43 @@
+package com.teamtea.eclipticseasons.api.event;
+
+
+import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
+import net.minecraft.world.level.Level;
+
+
+/**
+ * The event is fired on the {@link net.neoforged.neoforge.common.NeoForge#EVENT_BUS}
+ **/
+public class SolarTermChangeEvent extends net.neoforged.bus.api.Event implements IESEvent {
+    private final SolarTerm oldSolarTerm;
+    private final SolarTerm newSolarTerm;
+    private final Level level;
+    private final int solarDays;
+
+    public SolarTermChangeEvent(SolarTerm oldSolarTerm, SolarTerm newSolarTerm, Level level, int solarDays) {
+        this.oldSolarTerm = oldSolarTerm;
+        this.newSolarTerm = newSolarTerm;
+        this.level = level;
+        this.solarDays = solarDays;
+    }
+
+
+    public Level getLevel() {
+        return level;
+    }
+
+
+    public SolarTerm getNewSolarTerm() {
+        return newSolarTerm;
+    }
+
+
+    public SolarTerm getOldSolarTerm() {
+        return oldSolarTerm;
+    }
+
+
+    public int getSolarDays() {
+        return solarDays;
+    }
+}

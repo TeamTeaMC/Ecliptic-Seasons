@@ -6,7 +6,6 @@ import com.teamtea.eclipticseasons.api.misc.IBiomeTagHolder;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
-import com.teamtea.eclipticseasons.config.CommonConfig;
 import com.teamtea.eclipticseasons.compat.vanilla.VanillaWeather;
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.TagKey;
@@ -22,7 +21,7 @@ public abstract class MixinBiome implements IBiomeTagHolder {
 
     @Inject(at = {@At("HEAD")}, method = {"getPrecipitationAt"}, cancellable = true)
     public void ecliptic$getPrecipitationAt(BlockPos pos, CallbackInfoReturnable<Biome.Precipitation> cir) {
-        if (CommonConfig.Weather.useSolarWeather.get())
+        if (EclipticUtil.useSolarWeather())
             cir.setReturnValue(WeatherManager.getPrecipitationAt((Biome) (Object) this, pos));
         else {
             cir.setReturnValue(VanillaWeather.handlePrecipitationAt((Biome) (Object) this, pos));
@@ -61,6 +60,8 @@ public abstract class MixinBiome implements IBiomeTagHolder {
 
     @Unique
     private boolean eclipticSeasons$small = false;
+    @Unique
+    private int eclipticSeasons$id = -1;
 
     @Unique
     private TagKey<Biome> eclipticSeasons$biomeTagKey = ClimateTypeBiomeTags.RAINLESS;
@@ -83,5 +84,16 @@ public abstract class MixinBiome implements IBiomeTagHolder {
     @Override
     public void eclipticSeasons$setSmall(boolean isSmall) {
         this.eclipticSeasons$small = isSmall;
+    }
+
+
+    @Override
+    public int eclipticSeasons$getBindId() {
+        return this.eclipticSeasons$id;
+    }
+
+    @Override
+    public void eclipticSeasons$setBindId(int id) {
+        this.eclipticSeasons$id = id;
     }
 }

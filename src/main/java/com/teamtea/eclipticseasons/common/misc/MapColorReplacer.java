@@ -1,10 +1,12 @@
 package com.teamtea.eclipticseasons.common.misc;
 
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
+import com.teamtea.eclipticseasons.config.ClientConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
@@ -16,7 +18,6 @@ public class MapColorReplacer {
     public static MapColor getTopSnowColor(BlockGetter blockGetter, BlockState state, BlockPos pos) {
         if (!(blockGetter instanceof Level level) || pos == null)
             return null;
-
         boolean isLight = false;
 
         int flag = MapChecker.getBlockType(state, level, pos);
@@ -33,8 +34,12 @@ public class MapColorReplacer {
 
         isLight = flag != 0 && isLight
                 && state.getBlock() != Blocks.SNOW_BLOCK
-                && MapChecker.shouldSnowAt(level, pos.below(offset), state, level.getRandom(), state.getSeed(pos));
-
+                && MapChecker.shouldSnowAt(level, pos.below(offset), state, level.getRandom(), state.getSeed(pos))
+                // TODO:迁移配置到服务器端
+                // && (!ClientConfig.Renderer.notSnowyNearGlowingBlock.get() ||
+                // level.getBrightness(LightLayer.BLOCK, pos.below(offset - 1)) <
+                //         ClientConfig.Renderer.notSnowyNearGlowingBlockLevel.get())
+        ;
 
         return isLight ? MapColor.SNOW : null;
     }

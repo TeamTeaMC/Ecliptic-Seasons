@@ -22,4 +22,6 @@ public class SolarHolders {
     public static Optional<SolarDataManager> getSaveDataLazy(Level level) {
         return Optional.of(DATA_MANAGER_MAP.getOrDefault(level, new SolarDataManager(level)));
     }
+
+
 }

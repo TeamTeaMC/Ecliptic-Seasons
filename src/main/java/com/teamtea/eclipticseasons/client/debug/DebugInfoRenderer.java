@@ -1,15 +1,20 @@
 package com.teamtea.eclipticseasons.client.debug;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.teamtea.eclipticseasons.api.constant.biome.Humidity;
+import com.teamtea.eclipticseasons.api.constant.climate.BiomeRain;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
+import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
+import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -40,6 +45,12 @@ public final class DebugInfoRenderer {
         String dayS = "Day Time: " + dayTime;
         String envS = "Env Temp: " + env;
         String solarTimeS = "Solar Time: " + solarTime;
+        Holder<Biome> biome = clientLevel.getBiome(player.getOnPos());
+        float temp = biome.value().getBaseTemperature();
+        float rainfall = biome.value().getModifiedClimateSettings().downfall();
+        Humidity h = Humidity.getHumid(ClientCon.nowSolarTerm, biome);
+        String dS = "Downfall: " + rainfall;
+        String jS = "Humidity: " + h;
         String ys = "y: " + MapChecker.getHeight(clientLevel,player.blockPosition());
 
         int index = 0;
@@ -47,6 +58,8 @@ public final class DebugInfoRenderer {
         drawInfo(matrixStack, screenWidth, screenHeight, solarS, index++);
         drawInfo(matrixStack, screenWidth, screenHeight, dayS, index++);
         drawInfo(matrixStack, screenWidth, screenHeight, envS, index++);
+        drawInfo(matrixStack, screenWidth, screenHeight, dS, index++);
+        drawInfo(matrixStack, screenWidth, screenHeight, jS, index++);
         drawInfo(matrixStack, screenWidth, screenHeight, solarTimeS, index++);
         drawInfo(matrixStack, screenWidth, screenHeight, ys, index++);
 

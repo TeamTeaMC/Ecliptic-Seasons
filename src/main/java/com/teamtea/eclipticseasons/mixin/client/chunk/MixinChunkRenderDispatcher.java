@@ -46,13 +46,14 @@ public abstract class MixinChunkRenderDispatcher {
         }
         return bufferbuilder;
     }
+
     @Inject(
             method = "compile(Lnet/minecraft/core/SectionPos;Lnet/minecraft/client/renderer/chunk/RenderChunkRegion;Lcom/mojang/blaze3d/vertex/VertexSorting;Lnet/minecraft/client/renderer/SectionBufferBuilderPack;Ljava/util/List;)Lnet/minecraft/client/renderer/chunk/SectionCompiler$Results;",
             at = @At(value = "HEAD"
             )
     )
-    private void eclipticseasons$compile_init_chunk(SectionPos sectionPos, RenderChunkRegion region, VertexSorting vertexSorting, SectionBufferBuilderPack sectionBufferBuilderPack, List<AddSectionGeometryEvent.AdditionalSectionRenderer> additionalRenderers, CallbackInfoReturnable<SectionCompiler.Results> cir){
-        ((IMapSlice)region).forceMapSliceUpdate();
+    private void eclipticseasons$compile_init_chunk(SectionPos sectionPos, RenderChunkRegion region, VertexSorting vertexSorting, SectionBufferBuilderPack sectionBufferBuilderPack, List<AddSectionGeometryEvent.AdditionalSectionRenderer> additionalRenderers, CallbackInfoReturnable<SectionCompiler.Results> cir) {
+        ((IMapSlice) region).forceMapSliceUpdate();
     }
 
     @ModifyExpressionValue(
@@ -68,9 +69,9 @@ public abstract class MixinChunkRenderDispatcher {
         ((ISeedProvider) renderChunkRegion).setCacheSeed(original);
         if (renderChunkRegion instanceof ExtendBlockView extendBlockView) {
             randomsource.setSeed(original);
-            extendBlockView.setSnowModel(ModelManager. findModel(renderChunkRegion, blockpos2, blockstate, randomsource, original,extendBlockView.getModelCheckPos()));
+            extendBlockView.setSnowModel(ModelManager.findModel(renderChunkRegion, blockpos2, blockstate, randomsource, original, extendBlockView.getModelCheckPos()));
             if (extendBlockView.getSnowModel() != null) {
-                extendBlockView.setCurrentModelReplaceable(ModelManager.isModelReplaceable(((IBlockStateFlagger) blockstate).getBlockTypeFlag(renderChunkRegion, blockpos2)));
+                extendBlockView.setCurrentModelReplaceable(ModelManager.isModelReplaceable(blockstate, renderChunkRegion, blockpos2));
                 extendBlockView.setShouldCollectBakeQuads(YuushyaChecker.isyuushyaContinuityBlock(blockstate));
             } else {
                 extendBlockView.setCurrentModelReplaceable(false);

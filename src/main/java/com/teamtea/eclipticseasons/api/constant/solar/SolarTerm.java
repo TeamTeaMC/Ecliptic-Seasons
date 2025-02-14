@@ -4,6 +4,7 @@ import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.constant.climate.*;
 import com.teamtea.eclipticseasons.api.constant.solar.color.base.*;
 import com.teamtea.eclipticseasons.api.constant.tag.ClimateTypeBiomeTags;
+import com.teamtea.eclipticseasons.api.misc.ITranslatable;
 import com.teamtea.eclipticseasons.common.misc.SimplePair;
 import net.minecraft.client.gui.Font;
 import net.minecraft.core.Holder;
@@ -15,7 +16,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.biome.Biome;
 import net.neoforged.neoforge.common.Tags;
 
-public enum SolarTerm {
+public enum SolarTerm implements ITranslatable {
     // Spring Solar Terms
     BEGINNING_OF_SPRING(-0.25F, 10500),    // 立春
     RAIN_WATER(-0.15F, 11000),             // 雨水
@@ -58,10 +59,12 @@ public enum SolarTerm {
         this.dayTime = dayTime;
     }
 
+    @Override
     public String getName() {
         return this.toString().toLowerCase();
     }
 
+    @Override
     public MutableComponent getTranslation() {
         return Component.translatable("info.eclipticseasons.environment.solar_term." + getName());
     }

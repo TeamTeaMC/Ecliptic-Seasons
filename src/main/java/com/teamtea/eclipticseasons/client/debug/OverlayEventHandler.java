@@ -47,8 +47,6 @@ public final class OverlayEventHandler {
                 ) {
                     var solar = SolarHolders.getSaveDataLazy(clientPlayer.level()).get().getSolarTermsDay();
                     long dayTime = clientPlayer.level().getDayTime();
-                    float temp = clientPlayer.level().getBiome(clientPlayer.getOnPos()).value().getTemperature(clientPlayer.getOnPos());
-                    Humidity h = Humidity.getHumid(clientPlayer.level().getBiome(clientPlayer.getOnPos()).value().getModifiedClimateSettings().downfall(), temp);
                     double env = clientPlayer.level().getBiome(clientPlayer.getOnPos()).value().getTemperature(clientPlayer.getOnPos());
                     int solarTime = SolarAngelHelper.getSolarAngelTime(clientPlayer.level(), clientPlayer.level().getDayTime());
 

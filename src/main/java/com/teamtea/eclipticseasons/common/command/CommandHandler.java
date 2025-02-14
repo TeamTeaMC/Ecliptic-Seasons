@@ -6,6 +6,7 @@ import com.mojang.datafixers.util.Either;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
+import com.teamtea.eclipticseasons.api.util.SimpleUtil;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
@@ -24,6 +25,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.commands.TimeCommand;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.biome.Biome;
@@ -34,6 +36,8 @@ import net.neoforged.neoforge.event.RegisterCommandsEvent;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @EventBusSubscriber(modid = EclipticSeasonsApi.MODID)
 public class CommandHandler {
@@ -120,8 +124,44 @@ public class CommandHandler {
                 )
                 .then(Commands.literal("export")
                         .requires((source) -> source.hasPermission(2))
-                        .then(Commands.argument("pos", BlockPosArgument.blockPos()).executes((stackCommandContext) ->
-                                MapExporter.exportMap(stackCommandContext.getSource(), BlockPosArgument.getLoadedBlockPos(stackCommandContext, "pos"))))
+                        .then(Commands.literal("biome_map")
+                                .then(Commands.argument("pos", BlockPosArgument.blockPos()).executes((stackCommandContext) ->
+                                        MapExporter.exportMap(stackCommandContext.getSource(), BlockPosArgument.getLoadedBlockPos(stackCommandContext, "pos")))))
+
+                        .then(Commands.literal("humid_charts")
+                                .then(Commands.argument("namespace", StringArgumentType.word())
+                                        .suggests((context, builder) -> {
+                                            String pre = "";
+                                            try {
+                                                pre = context.getArgument("namespace", String.class);
+                                            } catch (IllegalArgumentException e) {
+                                                // e.printStackTrace();
+                                            }
+                                            Registry<Biome> biomes = context.getSource().getLevel().registryAccess().registryOrThrow(Registries.BIOME);
+                                            Set<String> collect = biomes.keySet().stream().map(ResourceLocation::getNamespace).collect(Collectors.toSet());
+
+                                            for (String s : collect) {
+                                                if (s.contains(pre)) {
+                                                    builder.suggest(s);
+                                                }
+                                            }
+
+                                            return builder.buildFuture();
+                                        }).executes((stackCommandContext) ->
+                                        {
+                                            try {
+                                                String s = StringArgumentType.getString(stackCommandContext, "namespace");
+                                                SimpleUtil.exportHumidityChart(stackCommandContext.getSource().getLevel(), s);
+                                                stackCommandContext.getSource().sendSuccess(() ->
+                                                                Component.literal("Can find them in " + "%s/humid/%s".formatted(EclipticSeasonsApi.MODID, s))
+                                                        , true);
+                                            } catch (Exception e) {
+                                                stackCommandContext.getSource().sendFailure(Component.literal(e.getMessage()));
+                                                return 1;
+                                            }
+
+                                            return 0;
+                                        })))
                 )
         );
     }
@@ -158,7 +198,7 @@ public class CommandHandler {
             SolarHolders.getSaveDataLazy(ServerLevel).ifPresent(data ->
             {
                 data.setSolarTermsDay(day);
-                data.sendUpdateMessage(ServerLevel);
+                data.sendAndUpdate(ServerLevel);
             });
         }
 
@@ -171,7 +211,7 @@ public class CommandHandler {
             SolarHolders.getSaveDataLazy(ServerLevel).ifPresent(data ->
             {
                 data.setSolarTermsDay(data.getSolarTermsDay() + add);
-                data.sendUpdateMessage(ServerLevel);
+                data.sendAndUpdate(ServerLevel);
                 source.sendSuccess(() -> Component.translatable("commands.teastory.solar.set", data.getSolarTermsDay()), true);
             });
         }

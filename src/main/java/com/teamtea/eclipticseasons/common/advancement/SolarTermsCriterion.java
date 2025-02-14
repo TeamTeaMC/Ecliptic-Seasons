@@ -2,7 +2,7 @@ package com.teamtea.eclipticseasons.common.advancement;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import com.teamtea.eclipticseasons.EclipticSeasons;
+import com.teamtea.eclipticseasons.common.registry.ModAdvancements;
 import net.minecraft.advancements.Criterion;
 import net.minecraft.advancements.critereon.ContextAwarePredicate;
 import net.minecraft.advancements.critereon.EntityPredicate;
@@ -32,13 +32,13 @@ public class SolarTermsCriterion extends SimpleCriterionTrigger<SolarTermsCriter
         );
 
         public static Criterion<TriggerInstance> simple() {
-            return EclipticSeasons.ModContents.SOLAR_TERMS.get().createCriterion(
+            return ModAdvancements.solarTermsCriterion.get().createCriterion(
                     new TriggerInstance(Optional.empty())
             );
         }
 
         public static Criterion<TriggerInstance> simple2() {
-            return EclipticSeasons.ModContents.heatStroke.get().createCriterion(
+            return ModAdvancements.heatStrokeCriterion.get().createCriterion(
                     new TriggerInstance(Optional.empty())
             );
         }

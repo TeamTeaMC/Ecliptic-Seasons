@@ -67,16 +67,6 @@ public class ChunkInfoMap {
             matrix[x][z] = (short) y;
         }
 
-        if (true) return old;
-
-        if (isClient) {
-
-            ChunkPos chunkPos = new ChunkPos(
-                    SectionPos.blockToSectionCoord(x),
-                    SectionPos.blockToSectionCoord(z));
-            MapChecker.addDirtyChunk(chunkPos);
-        }
-
         return old;
     }
 

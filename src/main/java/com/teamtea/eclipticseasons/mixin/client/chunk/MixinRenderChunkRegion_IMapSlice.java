@@ -2,19 +2,18 @@ package com.teamtea.eclipticseasons.mixin.client.chunk;
 
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
+import com.teamtea.eclipticseasons.common.registry.AttachmentRegistry;
 import com.teamtea.eclipticseasons.api.misc.client.IMapSlice;
-import com.teamtea.eclipticseasons.api.misc.client.ISnowyGetter;
+import com.teamtea.eclipticseasons.common.core.map.BiomeHolder;
 import com.teamtea.eclipticseasons.common.core.map.ChunkInfoMap;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.core.map.SnowyRemover;
-import it.unimi.dsi.fastutil.longs.Long2ObjectFunction;
 import net.minecraft.client.renderer.chunk.RenderChunk;
 import net.minecraft.client.renderer.chunk.RenderChunkRegion;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.levelgen.Heightmap;
 import org.spongepowered.asm.mixin.Final;
@@ -47,7 +46,8 @@ public abstract class MixinRenderChunkRegion_IMapSlice implements IMapSlice {
     @Final
     private int minChunkZ;
 
-    @Shadow protected abstract RenderChunk getChunk(int x, int z);
+    @Shadow
+    protected abstract RenderChunk getChunk(int x, int z);
 
     @Unique
     private static final int MAP_BLOCK_COUNT = 16 * 16;
@@ -85,7 +85,8 @@ public abstract class MixinRenderChunkRegion_IMapSlice implements IMapSlice {
                     int localSectionIndex = index(minChunkX, minChunkZ, sectionX, sectionZ);
                     LevelChunk wrapped = getChunk(sectionX, sectionZ).wrapped;
                     ChunkPos chunkPos = wrapped.getPos();
-                    SnowyRemover snowyRemover = getChunk(sectionX,sectionZ).wrapped.getData(EclipticSeasons.ModContents.SNOWY_REMOVER);
+                    SnowyRemover snowyRemover = wrapped.getData(AttachmentRegistry.SNOWY_REMOVER);
+                    BiomeHolder biomeHolder = wrapped.getData(AttachmentRegistry.BIOME_HOLDER);
                     int[] heights = HEIGHT_MAP[localSectionIndex];
                     int[] biomes = BIOME_MAP[localSectionIndex];
                     int[] snowys = SNOWY_MAP[localSectionIndex];
@@ -115,10 +116,9 @@ public abstract class MixinRenderChunkRegion_IMapSlice implements IMapSlice {
                                     mutableBlockPos.setY(level.getHeight(Heightmap.Types.MOTION_BLOCKING, mutableBlockPos.getX(), mutableBlockPos.getZ()));
                                 }
 
-                                // TODO：需要检查为啥这里总存在查询问题。有时候会查到一个默认值平原
-                                // int biomeId = chunkMap.getBiome(mutableBlockPos);
-                                // biomes[index] = biomeId > -1 ? biomeId :
-                                //         MapChecker.getSurfaceOrUpdate(level, mutableBlockPos, false, ChunkInfoMap.TYPE_BIOME);
+                                int biomeId = biomeHolder.getBiomeId(mutableBlockPos);
+                                biomes[index] = biomeId > -1 ? biomeId :
+                                        MapChecker.biomeToId(level,MapChecker.getUnCachedSurfaceBiome(level, mutableBlockPos).value());
 
                                 snowys[index] = snowyRemover.blockWatcher()[x][z];
                             }
@@ -145,7 +145,12 @@ public abstract class MixinRenderChunkRegion_IMapSlice implements IMapSlice {
 
     @Override
     public int getSurfaceFaceBiomeId(BlockPos pos) {
-        return MapChecker.getSurfaceOrUpdate(level, pos, false, ChunkInfoMap.TYPE_BIOME);
+        int relBlockX = SectionPos.blockToSectionCoord(pos.getX());
+        int relBlockZ = SectionPos.blockToSectionCoord(pos.getZ());
+        int[] lightArrays = this.BIOME_MAP[index(minChunkX, minChunkZ, relBlockX, relBlockZ)];
+        int localBlockX = pos.getX() & 15;
+        int localBlockZ = pos.getZ() & 15;
+        return lightArrays[localBlockX * 16 + localBlockZ];
     }
 
     @Override

@@ -6,7 +6,8 @@ import com.teamtea.eclipticseasons.api.constant.crop.CropHumidityInfo;
 import com.teamtea.eclipticseasons.api.constant.crop.CropHumidityType;
 import com.teamtea.eclipticseasons.api.constant.crop.CropSeasonInfo;
 import com.teamtea.eclipticseasons.api.constant.crop.CropSeasonType;
-import com.teamtea.eclipticseasons.config.CommonConfig;
+import com.teamtea.eclipticseasons.api.event.RegisterAndModifyCropInfoEvent;
+import com.teamtea.eclipticseasons.compat.CompatModule;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;
@@ -24,6 +25,8 @@ import net.minecraft.world.level.block.CropBlock;
 
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.event.TagsUpdatedEvent;
 
 import javax.annotation.Nullable;
@@ -99,13 +102,13 @@ public final class CropInfoManager {
         }
         // event.getRegistryAccess().registry(Registries.BLOCK).get().getTagNames().toList();
 
-        if (CommonConfig.Compat.sereneSeasons.getAsBoolean()) {
+        if (CompatModule.CommonConfig.sereneSeasons.getAsBoolean()) {
             registerForSS(blocks, Registries.BLOCK);
             registerForSS(items, Registries.ITEM);
 
         }
 
-        if (CommonConfig.Crop.registerCropDefaultValue.getAsBoolean()) {
+        if (com.teamtea.eclipticseasons.config.CommonConfig.Crop.registerCropDefaultValue.getAsBoolean()) {
             BuiltInRegistries.BLOCK.forEach(block ->
             {
                 registerCropHumidityInfo(block, CropHumidityType.AVERAGE_MOIST, false);
@@ -113,6 +116,7 @@ public final class CropInfoManager {
             });
         }
 
+        NeoForge.EVENT_BUS.post(new RegisterAndModifyCropInfoEvent(CROP_HUMIDITY_INFO,CROP_SEASON_INFO));
     }
 
     public static <T> void registerForSS(Optional<Registry<T>> blocks, ResourceKey<Registry<T>> registryResourceKey) {
@@ -149,7 +153,7 @@ public final class CropInfoManager {
                     CROP_SEASON_INFO.put(block, new CropSeasonInfo(season));
                 }
 
-                if(CommonConfig.Crop.registerCropDefaultValue.getAsBoolean()) {
+                if(com.teamtea.eclipticseasons.config.CommonConfig.Crop.registerCropDefaultValue.getAsBoolean()) {
                     if (block != null && !CROP_HUMIDITY_INFO.containsKey(block)) {
                         CropHumidityType humid;
                         if (season == 1) {

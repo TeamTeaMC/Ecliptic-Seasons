@@ -16,6 +16,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public interface MixinIBlockExtension {
 
 
+    // TODO:允许关闭，这个要在服务器端比较麻烦
     @Inject(at = {@At("HEAD")},
             method = {"getMapColor"},
             cancellable = true)

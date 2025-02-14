@@ -98,7 +98,7 @@ public abstract class MixinBlockRenderer extends AbstractBlockRenderContext impl
     private void eclipticseasons$renderModel_start(BakedModel model, BlockState state, BlockPos pos, BlockPos origin, CallbackInfo ci) {
         eclipticSeasons$snowModel = ModelManager.findModel(slice, pos, state, random, randomSeed, eclipticSeasons$mutableBlockPos);
         if (eclipticSeasons$snowModel != null) {
-            eclipticSeasons$shouldReplaceOriginalGrassModel = ModelManager.isModelReplaceable(((IBlockStateFlagger) state).getBlockTypeFlag(level, pos));
+            eclipticSeasons$shouldReplaceOriginalGrassModel = ModelManager.isModelReplaceable(state,level, pos);
             if (!eclipticSeasons$shouldReplaceOriginalGrassModel) {
                 boolean yuushyaBlock = YuushyaChecker.isyuushyaContinuityBlock(state);
                 if (yuushyaBlock) {

@@ -1,6 +1,6 @@
 package com.teamtea.eclipticseasons.client.sound;
 
-import com.teamtea.eclipticseasons.EclipticSeasons;
+import com.teamtea.eclipticseasons.common.registry.SoundEventsRegistry;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import net.minecraft.core.Holder;
@@ -58,7 +58,7 @@ public class SoundControllers {
                             || biome.is(BiomeTags.IS_FOREST)
                             || biome.is(Tags.Biomes.IS_PLAINS))
                             && !biome.is(Tags.Biomes.IS_COLD)) {
-                        return Stream.of(EclipticSeasons.SoundEventsRegistry.spring_forest).toList();
+                        return Stream.of(SoundEventsRegistry.spring_forest).toList();
                     }
                 }
             }

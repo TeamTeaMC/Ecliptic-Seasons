@@ -1,7 +1,8 @@
 package com.teamtea.eclipticseasons.data.lang;
 
 
-import com.teamtea.eclipticseasons.EclipticSeasons;
+import com.teamtea.eclipticseasons.common.registry.BlockRegistry;
+import com.teamtea.eclipticseasons.common.registry.ItemRegistry;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import net.minecraft.data.PackOutput;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
@@ -15,7 +16,7 @@ public class Lang_ZH extends LangHelper {
 
     @Override
     protected void addTranslations() {
-        add("advancement.eclipticseasons.root", "节气 - 春去秋来");
+        add("advancement.eclipticseasons.root", "春去秋来");
         add("advancement.eclipticseasons.root.desc", "度过一年二十四个节气");
         add("advancement.eclipticseasons.heat_stroke", "第一次中暑");
         add("advancement.eclipticseasons.heat_stroke.desc", "夏季中午请勿在炎热的群系直面太阳行走，如有必要，带上能抵抗炎热的装备或者冰雪降温。");
@@ -23,15 +24,20 @@ public class Lang_ZH extends LangHelper {
         add("info.eclipticseasons.environment.solar_term.hint", "今日节气:");
         add("itemGroup." + EclipticSeasonsApi.MODID + ".core", "节气");
 
-        add(EclipticSeasons.ModContents.calendar.get(), "日历");
-        add(EclipticSeasons.ModContents.wind_chimes.get(), "风铃");
-        add(EclipticSeasons.ModContents.paper_wind_chimes.get(), "纸风铃");
-        add(EclipticSeasons.ModContents.bamboo_wind_chimes.get(), "竹风铃");
-        add(EclipticSeasons.ModContents.pinwheel_blue.get(), "蓝色纸风车");
-        add(EclipticSeasons.ModContents.pinwheel_lime.get(), "淡绿色纸风车");
-        add(EclipticSeasons.ModContents.pinwheel_orange.get(), "橘色纸风车");
-        add(EclipticSeasons.ModContents.snowy_maker_item.get(), "冰晶法杖");
-        add(EclipticSeasons.ModContents.broom_item.get(), "扫帚");
+        add(BlockRegistry.calendar.get(), "日历");
+        add("item.eclipticseasons.calendar.pop_hint", "%1$s，%2$s/%3$s");
+        add(BlockRegistry.wind_chimes.get(), "风铃");
+        add(BlockRegistry.paper_wind_chimes.get(), "纸风铃");
+        add(BlockRegistry.bamboo_wind_chimes.get(), "竹风铃");
+        add(BlockRegistry.pinwheel_blue.get(), "蓝色纸风车");
+        add(BlockRegistry.pinwheel_lime.get(), "淡绿色纸风车");
+        add(BlockRegistry.pinwheel_orange.get(), "橘色纸风车");
+        add(ItemRegistry.ice_wand.get(), "冰晶法杖");
+        add(ItemRegistry.broom.get(), "扫帚");
+
+        add(ItemRegistry.thermometer.get(), "温度计");
+        add(ItemRegistry.hyetometer.get(), "雨量计");
+        add(ItemRegistry.hygrometer.get(), "湿度计");
 
 
         add("info.eclipticseasons.environment.temperature.under_freezing","严寒");
@@ -42,6 +48,13 @@ public class Lang_ZH extends LangHelper {
         add("info.eclipticseasons.environment.temperature.hot","炎热");
         add("info.eclipticseasons.environment.temperature.heat","炙烤");
         add("info.eclipticseasons.environment.temperature.over_heat","酷暑");
+
+        add("info.eclipticseasons.environment.rainfall.rare","罕见");
+        add("info.eclipticseasons.environment.rainfall.scarce","稀少");
+        add("info.eclipticseasons.environment.rainfall.moderate","中等");
+        add("info.eclipticseasons.environment.rainfall.adequate","足量");
+        add("info.eclipticseasons.environment.rainfall.abundant","丰富");
+
         add("info.eclipticseasons.environment.humidity.arid","干旱");
         add("info.eclipticseasons.environment.humidity.dry","干燥");
         add("info.eclipticseasons.environment.humidity.average","一般");
@@ -154,7 +167,7 @@ public class Lang_ZH extends LangHelper {
         add("eclipticseasons.configuration.EnableSeasonalBee", "启用季节性蜜蜂");
         add("eclipticseasons.configuration.UseSolarWeather", "使用太阳天气");
         add("eclipticseasons.configuration.DisableSnowOverlayControlTag", "禁用雪覆盖控制标签");
-        add("eclipticseasons.configuration.SereneSeasonsCropTag", "Serene Seasons 作物标签");
+        add("eclipticseasons.configuration.SereneSeasonsCropTag", "静谧四季作物标签");
         add("eclipticseasons.configuration.Renderer", "渲染器");
         add("eclipticseasons.configuration.SnowUnderFence", "栅栏下的雪");
         add("eclipticseasons.configuration.NaturalSound", "自然音效");
@@ -166,6 +179,9 @@ public class Lang_ZH extends LangHelper {
         add("eclipticseasons.configuration.FallenLeavesDropWeight", "落叶掉落权重");
         add("eclipticseasons.configuration.SnowyFullCollisionShape", "使用完整碰撞形状检查覆雪");
         add("eclipticseasons.configuration.CropGrowChanceInWrongSeason", "错误季节作物生长几率");
+        add("eclipticseasons.configuration.CropGrowChanceInWrongHumidity","错误湿润度作物生长几率");
+        add("eclipticseasons.configuration.GreenHouseMaxDiameter","温室最大直径");
+        add("eclipticseasons.configuration.ComplexGreenHouseCheck","复杂温室检查");
         add("eclipticseasons.configuration.Compat.button", "兼容性");
         add("eclipticseasons.configuration.Weather.button", "天气");
         add("eclipticseasons.configuration.Particle.button", "粒子效果");
@@ -181,6 +197,24 @@ public class Lang_ZH extends LangHelper {
         add("eclipticseasons.configuration.title", "标题");
         add("eclipticseasons.configuration.Debug.button", "调试");
         add("eclipticseasons.configuration.EnableInformIcon", "节气通知中渲染节气图标");
+        add("eclipticseasons.configuration.CalendarItemHint", "物品日历的节气提示");
+
+
+        add("eclipticseasons.configuration.AutumnTemps", "秋季温度");
+        add("eclipticseasons.configuration.SummerTemps", "夏季温度");
+        add("eclipticseasons.configuration.SpringTemps", "春季温度");
+        add("eclipticseasons.configuration.ColdSweat", "冷汗");
+        add("eclipticseasons.configuration.WinterTemps", "冬季温度");
+        add("eclipticseasons.configuration.SpringTemps.button", "春季温度");
+        add("eclipticseasons.configuration.WinterTemps.button", "冬季温度");
+        add("eclipticseasons.configuration.SummerTemps.button", "夏季温度");
+        add("eclipticseasons.configuration.AutumnTemps.button", "秋季温度");
+        add("eclipticseasons.configuration.ColdSweat.button", "冷汗");
+
+        add("eclipticseasons.configuration.JourneyMap","旅行地图");
+        add("eclipticseasons.configuration.ShowSnowyBlock","显示覆雪方块");
+        add("eclipticseasons.configuration.JourneyMap.button","旅行地图");
+
     }
 
 

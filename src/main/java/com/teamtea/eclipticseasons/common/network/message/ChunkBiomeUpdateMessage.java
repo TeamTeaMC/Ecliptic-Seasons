@@ -11,11 +11,13 @@ public class ChunkBiomeUpdateMessage implements CustomPacketPayload {
     public final int[] biomes;
     public final int x;
     public final int z;
+    public final int version;
 
-    public ChunkBiomeUpdateMessage(int[] biomes, int x, int z) {
+    public ChunkBiomeUpdateMessage(int[] biomes, int x, int z, int version) {
         this.biomes = biomes;
         this.x = x;
         this.z = z;
+        this.version = version;
     }
 
     public static final Type<ChunkBiomeUpdateMessage> TYPE = new Type<>(EclipticSeasons.rl("chunk_biome"));
@@ -31,6 +33,8 @@ public class ChunkBiomeUpdateMessage implements CustomPacketPayload {
             chunkUpdateMessage -> chunkUpdateMessage.x,
             ByteBufCodecs.VAR_INT,
             chunkUpdateMessage -> chunkUpdateMessage.z,
+            ByteBufCodecs.VAR_INT,
+            chunkUpdateMessage -> chunkUpdateMessage.version,
             ChunkBiomeUpdateMessage::new
     );
 

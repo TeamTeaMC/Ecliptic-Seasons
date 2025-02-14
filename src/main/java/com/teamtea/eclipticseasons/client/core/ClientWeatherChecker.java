@@ -1,5 +1,7 @@
 package com.teamtea.eclipticseasons.client.core;
 
+import com.teamtea.eclipticseasons.EclipticSeasons;
+import com.teamtea.eclipticseasons.api.util.SimpleUtil;
 import com.teamtea.eclipticseasons.common.misc.SimplePair;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
@@ -21,7 +23,7 @@ import java.util.List;
 
 // TODO:全局雨量控制表
 public class ClientWeatherChecker {
-    public static List<SimplePair<Biome, Long>> lastRainyBiome = new ArrayList<>();
+    public static final List<SimplePair<Biome, Long>> lastRainyBiome = new ArrayList<>();
 
     public static float lastBiomeRainLevel = -1;
     public static float lastBiomeRThunderLevel = -1;
@@ -31,7 +33,8 @@ public class ClientWeatherChecker {
     public static int changeTime_thunder = 0;
     public static int MAX_CHANGE_TIME = 200;
 
-    public static boolean updateForPlayerLogin = false;
+    // set ture if not start the game
+    public static boolean updateForPlayerLogin = true;
     public static float rate = 0.008f;
 
     private static boolean isNear(float a, float b, float interval) {
@@ -45,19 +48,8 @@ public class ClientWeatherChecker {
 
 
     public static float getStandardRainLevel(float p46723, ClientLevel clientLevel, Holder<Biome> biomeHolder) {
-        // if (biomeHolder != null && biomeHolder.is(Tags.Biomes.IS_DESERT)) {
-        //     return 0.0f;
-        // }
-        // return Mth.lerp(p46723, clientLevel.oRainLevel, clientLevel.rainLevel);
-        var lists = WeatherManager.getBiomeList(clientLevel);
-        if (lists != null)
-            for (WeatherManager.BiomeWeather biomeWeather : lists) {
-                if (biomeWeather.biomeHolder == biomeHolder) {
-                    //  0.2<f<3(2.3)
-                    return biomeWeather.rainTime > 0 ? 1f : 0.0f;
-                }
-            }
-        return 0.0f;
+        WeatherManager.BiomeWeather biomeWeather = WeatherManager.getBiomeWeather(clientLevel, biomeHolder);
+        return biomeWeather != null ? (biomeWeather.rainTime > 0 ? 1.0f : 0f) : 0f;
     }
 
     //   TODO：net.minecraft.client.renderer.LevelRenderer.renderSnowAndRain 可以参考平滑方式
@@ -99,7 +91,7 @@ public class ClientWeatherChecker {
             rainLevel += getStandardRainLevel(1f, clientLevel, MapChecker.getSurfaceBiome(clientLevel, lookPos)) * 2;
 
 
-            for (BlockPos blockPos : List.of(pos.east(offset), pos.north(offset), pos.south(offset), pos.west(offset))) {
+            for (BlockPos blockPos : new BlockPos[]{pos.east(offset), pos.north(offset), pos.south(offset), pos.west(offset)}) {
                 // var standBiome = clientLevel.getBiome(blockPos);
                 var standBiome = MapChecker.getSurfaceBiome(clientLevel, blockPos);
 
@@ -142,14 +134,15 @@ public class ClientWeatherChecker {
     }
 
     public static float getStandardThunderLevel(float p46723, ClientLevel clientLevel, Holder<Biome> biomeHolder) {
-        var lists = WeatherManager.getBiomeList(clientLevel);
-        if (lists != null)
-            for (WeatherManager.BiomeWeather biomeWeather : lists) {
-                if (biomeWeather.biomeHolder == biomeHolder) {
-                    return biomeWeather.rainTime > 0 ? 1.0f : 0.0f;
-                }
-            }
-        return 0.0f;
+        // var lists = WeatherManager.getBiomeList(clientLevel);
+        // if (lists != null)
+        //     for (WeatherManager.BiomeWeather biomeWeather : lists) {
+        //         if (biomeWeather.biomeHolder == biomeHolder) {
+        //             return biomeWeather.thunderTime > 0 ? 1.0f : 0.0f;
+        //         }
+        //     }
+        WeatherManager.BiomeWeather biomeWeather = WeatherManager.getBiomeWeather(clientLevel, biomeHolder);
+        return biomeWeather != null ? (biomeWeather.thunderTime > 0 ? 1.0f : 0f) : 0f;
     }
 
     public static boolean isThundering(ClientLevel clientLevel) {
@@ -187,7 +180,7 @@ public class ClientWeatherChecker {
             var lookPos = BlockPos.containing(lookAt);
             thunderLevel += getStandardThunderLevel(1f, clientLevel, MapChecker.getSurfaceBiome(clientLevel, lookPos)) * 2;
 
-            for (BlockPos blockPos : List.of(pos.east(offset), pos.north(offset), pos.south(offset), pos.west(offset))) {
+            for (BlockPos blockPos : new BlockPos[]{pos.east(offset), pos.north(offset), pos.south(offset), pos.west(offset)}) {
                 var standBiome = MapChecker.getSurfaceBiome(clientLevel, blockPos);
                 float othunderLevel = getStandardThunderLevel(1f, clientLevel, standBiome);
                 thunderLevel += othunderLevel;
@@ -273,7 +266,12 @@ public class ClientWeatherChecker {
     }
 
     public static boolean isBiomeRainyLast(Biome biome) {
-        return lastRainyBiome.stream().anyMatch(biomeLongEntry -> biomeLongEntry.getKey() == biome);
+        for (int i = 0; i < lastRainyBiome.size(); i++) {
+            SimplePair<Biome, Long> biomeLongSimplePair = lastRainyBiome.get(i);
+            if (biomeLongSimplePair.getKey() == biome) return true;
+        }
+        return false;
+        // return lastRainyBiome.stream().anyMatch(biomeLongEntry -> biomeLongEntry.getKey() == biome);
     }
 
     public static void tickLastRainyBiome(ClientLevel clientLevel) {

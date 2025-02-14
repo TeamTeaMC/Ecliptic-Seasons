@@ -25,10 +25,12 @@ import java.awt.*;
 public abstract class MixinFullDataToRenderDataTransformer {
 
 
-    @Shadow
+    @Shadow(remap = false)
     @Final
     private static IWrapperFactory WRAPPER_FACTORY;
 
+
+    // 如果有时间，可以优化效率
     @WrapOperation(
             remap = false,
             method = "setRenderColumnView",

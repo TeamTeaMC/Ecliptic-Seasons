@@ -1,6 +1,6 @@
 package com.teamtea.eclipticseasons.common.item;
 
-import com.teamtea.eclipticseasons.EclipticSeasons;
+import com.teamtea.eclipticseasons.common.registry.AttachmentRegistry;
 import com.teamtea.eclipticseasons.common.misc.SimplePair;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.core.map.ServerMapFixer;
@@ -18,8 +18,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -156,10 +154,10 @@ public class SnowyMakerItem extends Item {
         ) {
             if (level instanceof ServerLevel serverLevel) {
                 var chunk = serverLevel.getChunk(chunkPos.x, chunkPos.z);
-                if (!chunk.hasData(EclipticSeasons.ModContents.SNOWY_REMOVER)) {
-                    chunk.setData(EclipticSeasons.ModContents.SNOWY_REMOVER, new SnowyRemover(new int[16][16]));
+                if (!chunk.hasData(AttachmentRegistry.SNOWY_REMOVER)) {
+                    chunk.setData(AttachmentRegistry.SNOWY_REMOVER, new SnowyRemover(new int[16][16]));
                 }
-                var data = chunk.getData(EclipticSeasons.ModContents.SNOWY_REMOVER);
+                var data = chunk.getData(AttachmentRegistry.SNOWY_REMOVER);
 
 
                 int[][] ints1 = new int[16][16];
@@ -167,7 +165,7 @@ public class SnowyMakerItem extends Item {
                     Arrays.fill(ints, type.ordinal());
                 }
                 data = new SnowyRemover(ints1);
-                chunk.setData(EclipticSeasons.ModContents.SNOWY_REMOVER, data);
+                chunk.setData(AttachmentRegistry.SNOWY_REMOVER, data);
 
                 var distance =
                         (serverLevel.getServer() instanceof DedicatedServer dedicatedServer ?
@@ -199,13 +197,13 @@ public class SnowyMakerItem extends Item {
                 }
 
                 if (data.allSnowAble()) {
-                    chunk.removeData(EclipticSeasons.ModContents.SNOWY_REMOVER);
+                    chunk.removeData(AttachmentRegistry.SNOWY_REMOVER);
                 }
                 chunk.setUnsaved(true);
 
             } else {
 
-                var data = level.getChunk(chunkPos.x, chunkPos.z).getData(EclipticSeasons.ModContents.SNOWY_REMOVER);
+                var data = level.getChunk(chunkPos.x, chunkPos.z).getData(AttachmentRegistry.SNOWY_REMOVER);
                 for (int i = chunkPos.getMinBlockX(); i <= chunkPos.getMaxBlockX(); i++) {
                     for (int j = chunkPos.getMinBlockZ(); j <= chunkPos.getMaxBlockZ(); j++) {
                         var notSnowyAtBefore = data.getSnowyFlag(new BlockPos(i, 64, j));
@@ -246,10 +244,10 @@ public class SnowyMakerItem extends Item {
         ) {
             if (level instanceof ServerLevel serverLevel) {
                 var chunk = serverLevel.getChunkAt(clickedPos);
-                if (!chunk.hasData(EclipticSeasons.ModContents.SNOWY_REMOVER)) {
-                    chunk.setData(EclipticSeasons.ModContents.SNOWY_REMOVER, new SnowyRemover(new int[16][16]));
+                if (!chunk.hasData(AttachmentRegistry.SNOWY_REMOVER)) {
+                    chunk.setData(AttachmentRegistry.SNOWY_REMOVER, new SnowyRemover(new int[16][16]));
                 }
-                var data = chunk.getData(EclipticSeasons.ModContents.SNOWY_REMOVER);
+                var data = chunk.getData(AttachmentRegistry.SNOWY_REMOVER);
                 data.setChunkPos(clickedPos, type.ordinal());
 
                 var distance =
@@ -274,7 +272,7 @@ public class SnowyMakerItem extends Item {
                 }
 
                 if (data.allSnowAble()) {
-                    chunk.removeData(EclipticSeasons.ModContents.SNOWY_REMOVER);
+                    chunk.removeData(AttachmentRegistry.SNOWY_REMOVER);
                 }
 
                 chunk.setUnsaved(true);
@@ -290,7 +288,7 @@ public class SnowyMakerItem extends Item {
 
             } else {
 
-                var data = level.getChunkAt(clickedPos).getData(EclipticSeasons.ModContents.SNOWY_REMOVER);
+                var data = level.getChunkAt(clickedPos).getData(AttachmentRegistry.SNOWY_REMOVER);
                 var notSnowyAtBefore = data.getSnowyFlag(new BlockPos(clickedPos));
                 if (type != notSnowyAtBefore) {
                     var particleType = type.getNextParticleOptions();

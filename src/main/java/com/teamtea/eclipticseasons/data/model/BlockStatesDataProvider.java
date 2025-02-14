@@ -2,6 +2,7 @@ package com.teamtea.eclipticseasons.data.model;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
+import com.teamtea.eclipticseasons.common.registry.BlockRegistry;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
@@ -28,7 +29,7 @@ public class BlockStatesDataProvider extends BlockStateProvider {
     @Override
     protected void registerStatesAndModels() {
 
-        for (DeferredHolder<Block, Block> holder : List.of(EclipticSeasons.ModContents.calendar, EclipticSeasons.ModContents.pinwheel_blue, EclipticSeasons.ModContents.pinwheel_orange, EclipticSeasons.ModContents.pinwheel_lime)) {
+        for (DeferredHolder<Block, Block> holder : List.of(BlockRegistry.calendar, BlockRegistry.pinwheel_blue, BlockRegistry.pinwheel_orange, BlockRegistry.pinwheel_lime)) {
             getVariantBuilder(holder.get()).forAllStatesExcept(state -> ConfiguredModel.builder()
                     .modelFile(models().getExistingFile(resourceBlock(holder.getId().getPath())))
                     .rotationY(getRotateYByFacing(state.getValue(BlockStateProperties.HORIZONTAL_FACING)))
@@ -36,9 +37,9 @@ public class BlockStatesDataProvider extends BlockStateProvider {
         }
 
 
-        addSimple(EclipticSeasons.ModContents.wind_chimes.value());
-        addSimple(EclipticSeasons.ModContents.paper_wind_chimes.value());
-        addSimple(EclipticSeasons.ModContents.bamboo_wind_chimes.value());
+        addSimple(BlockRegistry.wind_chimes.value());
+        addSimple(BlockRegistry.paper_wind_chimes.value());
+        addSimple(BlockRegistry.bamboo_wind_chimes.value());
 
 
     }

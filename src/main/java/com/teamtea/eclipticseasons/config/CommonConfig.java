@@ -1,14 +1,16 @@
 package com.teamtea.eclipticseasons.config;
 
 
+import com.teamtea.eclipticseasons.compat.CompatModule;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
+import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
 import java.util.List;
 
 public class CommonConfig {
-    public static final ModConfigSpec COMMON_CONFIG = new ModConfigSpec.Builder().configure(CommonConfig::new).getRight();
+    public static final ModConfigSpec COMMON_CONFIG = new ModConfigSpec.Builder().configure(com.teamtea.eclipticseasons.config.CommonConfig::new).getRight();
 
     protected CommonConfig(ModConfigSpec.Builder builder) {
         Season.load(builder);
@@ -18,20 +20,9 @@ public class CommonConfig {
         Animal.load(builder);
         Map.load(builder);
 
-        Compat.load(builder);
+        CompatModule.CommonConfig.load(builder);
         Debug.load(builder);
 
-    }
-
-    public static class Compat {
-        public static ModConfigSpec.BooleanValue sereneSeasons;
-
-        private static void load(ModConfigSpec.Builder builder) {
-            builder.push("Compat");
-            sereneSeasons = builder.comment("Compatible with mods using SereneSeasons' CropTag.")
-                    .define("SereneSeasonsCropTag", true);
-            builder.pop();
-        }
     }
 
     public static class Debug {
@@ -78,6 +69,7 @@ public class CommonConfig {
         public static ModConfigSpec.IntValue initialSolarTermIndex;
         public static ModConfigSpec.ConfigValue<List<? extends String>> validDimensions;
         public static ModConfigSpec.BooleanValue daylightChange;
+        public static ModConfigSpec.BooleanValue calendarItemHint;
 
         private static void load(ModConfigSpec.Builder builder) {
             builder.push("Season");
@@ -90,7 +82,10 @@ public class CommonConfig {
                     .define("EnableInform", true);
             enableInformIcon = builder.comment("Whether send inform with icon.")
                     .define("EnableInformIcon", true);
-            daylightChange=builder.comment("In summer, the days are long and the nights are short, while in winter, the days are short and the nights are long.")
+            calendarItemHint = builder.comment("Whether to pop up the solar term reminder when the calendar item cannot be placed.")
+                    .define("CalendarItemHint", false);
+
+            daylightChange = builder.comment("In summer, the days are long and the nights are short, while in winter, the days are short and the nights are long.")
                     .define("DynamicDaylightDuration", true);
 
             validDimensions = builder.comment("Which dimensions will have season effects? Note that it must be natrual and have time lapse.")
@@ -107,7 +102,10 @@ public class CommonConfig {
 
         public static ModConfigSpec.BooleanValue enableCrop;
         public static ModConfigSpec.DoubleValue cropGrowChanceInWrongSeason;
+        public static ModConfigSpec.DoubleValue cropGrowChanceInWrongHumidity;
         public static ModConfigSpec.BooleanValue enableCropHumidityControl;
+        public static ModConfigSpec.IntValue greenHouseMaxDiameter;
+        public static ModConfigSpec.BooleanValue complexGreenHouseCheck;
         public static ModConfigSpec.BooleanValue registerCropDefaultValue;
 
 
@@ -115,10 +113,16 @@ public class CommonConfig {
             builder.push("Crop");
             enableCrop = builder.comment("Enable crop season control.")
                     .define("EnableSeasonalCrop", true);
-            cropGrowChanceInWrongSeason = builder.comment("How much chance can crop grow in wrong season.")
+            cropGrowChanceInWrongSeason = builder.comment("How much grow_chance can crop grow in wrong season.")
                     .defineInRange("CropGrowChanceInWrongSeason", 0.25, 0, 1);
             enableCropHumidityControl = builder.comment("Enable crop humidity control.")
                     .define("EnableCropHumidityControl", true);
+            cropGrowChanceInWrongHumidity = builder.comment("How much base grow_chance can crop grow in wrong humidity.")
+                    .defineInRange("CropGrowChanceInWrongHumidity", 0.25, 0.0001, 0.9999);
+            greenHouseMaxDiameter =builder.comment("The maximum effective diameter of the greenhouse.")
+                    .defineInRange("GreenHouseMaxDiameter", 32, 5, 256);
+            complexGreenHouseCheck = builder.comment("Whether to enable complex shape checking.")
+                    .define("ComplexGreenHouseCheck", true);
             registerCropDefaultValue = builder.comment("If a crop is not registered for a season or humid type, default values will be used.")
                     .define("RegisterCropDefaultValue", false);
             builder.pop();
@@ -156,7 +160,8 @@ public class CommonConfig {
             builder.push("Weather");
             useSolarWeather = builder.comment("Enable solar term weather system with biome.")
                     .define("UseSolarWeather", true);
-            rainChanceMultiplier = builder.comment("Set the percentage multiplier of the probability of rain, the range should be between 0 and 1000.")
+            rainChanceMultiplier = builder
+                    .comment("Set the percentage multiplier of the probability of rain, the range should be between 0 and 1000.")
                     .defineInRange("RainChancePercentMultiplier", 40, 0, 1000);
             thunderChanceMultiplier = builder.comment("Set the percentage multiplier of the probability of thunder in the rain, the range should be between 0 and 1000.")
                     .defineInRange("ThunderChancePercentMultiplier", 80, 0, 1000);
@@ -172,6 +177,19 @@ public class CommonConfig {
             delayedUpdates = builder.comment("When snow falls, the top block does not immediately become snowy if the height map change.")
                     .define("ServerRealisticSnowyChange", false);
             builder.pop();
+        }
+    }
+
+    private static boolean useSolarWeather = true;
+
+    public static boolean isUseSolarWeather() {
+        return useSolarWeather;
+    }
+
+    public static void UpdateConfig(ModConfigEvent modConfigEvent) {
+        if (!(modConfigEvent instanceof ModConfigEvent.Unloading)
+                && modConfigEvent.getConfig().getSpec() == COMMON_CONFIG)  {
+            useSolarWeather = Weather.useSolarWeather.get();
         }
     }
 

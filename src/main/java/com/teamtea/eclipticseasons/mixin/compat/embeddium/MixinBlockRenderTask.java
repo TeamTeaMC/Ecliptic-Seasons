@@ -48,7 +48,7 @@ public abstract class MixinBlockRenderTask {
             snowModel = ModelManager.findModel(ctx.world(), mutableBlockPos, state, random,ctx.seed(),null);
         } else {
             // if (ModelManager.isModelReplaceable(state))
-            if (ModelManager.isModelReplaceable(((IBlockStateFlagger) state).getBlockTypeFlag(ctx.world(),ctx.pos())))
+            if (ModelManager.isModelReplaceable(state,ctx.world(),ctx.pos()))
             {
                 snowModel = ModelManager.findModel(ctx.world(), mutableBlockPos, state, random,ctx.seed(),null);
             }

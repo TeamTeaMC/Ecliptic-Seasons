@@ -3,6 +3,7 @@ package com.teamtea.eclipticseasons.data;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.data.advancement.Advancements;
+import com.teamtea.eclipticseasons.data.datapack.DatapackRegistryGenerator;
 import com.teamtea.eclipticseasons.data.font.ESFontProvider;
 import com.teamtea.eclipticseasons.data.lang.Lang_EN;
 import com.teamtea.eclipticseasons.data.lang.Lang_ZH;
@@ -46,6 +47,8 @@ public class start {
 
             generator.addProvider(event.includeServer(),new Advancements(packOutput,lookupProvider,helper));
             generator.addProvider(event.includeServer(),new EclipticSeasonsLootTableProvider(packOutput,lookupProvider));
+
+            generator.addProvider(event.includeServer(),new DatapackRegistryGenerator(packOutput,lookupProvider));
         }
         if (event.includeClient()) {
             generator.addProvider(event.includeClient(),new Lang_EN(packOutput,helper));

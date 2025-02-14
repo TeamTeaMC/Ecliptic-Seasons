@@ -12,4 +12,11 @@ public interface IBiomeTagHolder {
     void eclipticSeasons$setSmall(boolean isSmall);
 
     boolean eclipticSeasons$isSmallBiome();
+
+    default int eclipticSeasons$getBindId() {
+        return -1;
+    }
+
+    default void eclipticSeasons$setBindId(int id) {
+    }
 }

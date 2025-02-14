@@ -1,10 +1,9 @@
 package com.teamtea.eclipticseasons.common.misc;
 
-import com.teamtea.eclipticseasons.api.misc.Mapc;
-
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class LazyGet<T> {
@@ -30,7 +29,7 @@ public class LazyGet<T> {
         consumer.accept(get());
     }
 
-    public <U> Optional<U> map(Mapc<? super T, ? extends U> mapper) {
+    public <U> Optional<U> map(Function<? super T, ? extends U> mapper) {
         Objects.requireNonNull(mapper);
         return this.isPresent() ? Optional.of(mapper.apply(this.getValueUnsafe())) : Optional.empty();
     }

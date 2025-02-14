@@ -21,15 +21,13 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class MapExporter {
     public static int exportMap(CommandSourceStack source, BlockPos pos) {
-        int x = MapChecker.blockToSectionCoord(pos.getX());
-        int z = MapChecker.blockToSectionCoord(pos.getZ());
+        int x = MapChecker.blockToRegionCoord(pos.getX());
+        int z = MapChecker.blockToRegionCoord(pos.getZ());
         Level level = source.getUnsidedLevel();
         ChunkInfoMap map = MapChecker.getChunkMap(level, x, z);
 

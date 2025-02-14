@@ -18,6 +18,9 @@ import org.spongepowered.asm.mixin.Unique;
 @Mixin(BlockState.class)
 public abstract class MixinBlockState extends BlockBehaviour.BlockStateBase implements IBlockStateFlagger {
 
+    // @Shadow
+    // protected abstract BlockState asState();
+
     @Shadow
     protected abstract BlockState asState();
 
@@ -31,9 +34,17 @@ public abstract class MixinBlockState extends BlockBehaviour.BlockStateBase impl
 
 
     @Override
-    public int getBlockTypeFlag(BlockGetter level, BlockPos pos) {
-        if (eclipticSeasons$blockTypeFlag < 0)
-            eclipticSeasons$blockTypeFlag = MapChecker.getBlockType(asState(), level, pos);
+    public void setBlockTypeFlag(int flag) {
+        eclipticSeasons$blockTypeFlag = flag;
+    }
+
+    @Override
+    public int getBlockTypeFlag() {
         return eclipticSeasons$blockTypeFlag;
+    }
+
+    @Override
+    public BlockState es$asState() {
+        return asState();
     }
 }
