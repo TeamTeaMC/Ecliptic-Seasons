@@ -1,7 +1,7 @@
 {
   "required": true,
   "package": "com.teamtea.eclipticseasons.mixin",
-  "compatibilityLevel": "JAVA_8",
+  "compatibilityLevel": "JAVA_17",
   "refmap": "eclipticseasons.refmap.json",
   "mixins": [
     "common.MixinBiome",
@@ -47,6 +47,8 @@
     "compat.distanthorizons.MixinFullDataToRenderDataTransformer",
     "compat.distanthorizons.MixinNetworkUtil",
     "compat.distanthorizons.MixinTintWithoutLevelOverrider",
+    "compat.fabric_renderer_indigo.MixinBlockRenderer",
+    "compat.fabric_renderer_indigo.MixinFabricVanillaModelEncoder",
     "compat.journeymap.MixinBlockMD",
     "compat.journeymap.MixinMapPlayerTask",
     "compat.oculus.MixinBiomeUniforms",
@@ -54,6 +56,7 @@
     "compat.optifine.MixinItemBlockRenderTypes",
     "compat.rubidium.MixinBlockRender2",
     "compat.rubidium.MixinBlockRenderTask",
+    "compat.rubidium.MixinBlockRenderContext",
     "compat.simpleclouds.MixinWorldEffects"
   ],
   "injectors": {

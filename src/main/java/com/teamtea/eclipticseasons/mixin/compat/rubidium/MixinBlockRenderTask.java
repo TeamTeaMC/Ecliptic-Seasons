@@ -4,6 +4,7 @@ package com.teamtea.eclipticseasons.mixin.compat.rubidium;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.teamtea.eclipticseasons.client.core.ModelManager;
+import com.teamtea.eclipticseasons.compat.fabric_renderer_indigo.FabricModelDelayChecker;
 import me.jellysquid.mods.sodium.client.render.chunk.compile.ChunkBuildBuffers;
 import me.jellysquid.mods.sodium.client.render.chunk.compile.pipeline.BlockRenderCache;
 import me.jellysquid.mods.sodium.client.render.chunk.compile.pipeline.BlockRenderContext;
@@ -13,6 +14,7 @@ import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.state.BlockState;
+import org.embeddedt.embeddium.render.frapi.FRAPIModelUtils;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -118,14 +120,17 @@ public abstract class MixinBlockRenderTask {
 
         if (snowModel != null) {
             original = false;
+            ((FabricModelDelayChecker)ctx).updateIsLastFabric(FRAPIModelUtils.isFRAPIModel(ctx.model()));
             ctx.update(mutableBlockPos,
                     mutableBlockPos2,
                     state,
                     snowModel,
                     state.getSeed(mutableBlockPos),
-                    null,
+                    ctx.modelData(),
                     ModelManager.getRenderType(state));
             cache.getBlockRenderer().renderModel(ctx, buffers);
+
+            ((FabricModelDelayChecker)ctx).updateIsLastFabric(false);
         }
         return original;
     }

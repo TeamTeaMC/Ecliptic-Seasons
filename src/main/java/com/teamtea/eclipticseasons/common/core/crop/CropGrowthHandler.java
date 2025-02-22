@@ -177,9 +177,9 @@ public final class CropGrowthHandler {
 
     public static final Vec3[] CHECK_DIRECTIONS = {
             // 基本方向
+            new Vec3(0, 1, 0), // 向上
             new Vec3(1, 0, 0), // 向前
             new Vec3(-1, 0, 0), // 向后
-            new Vec3(0, 1, 0), // 向上
             new Vec3(0, 0, 1), // 向右
             new Vec3(0, 0, -1), // 向左
 
@@ -203,9 +203,9 @@ public final class CropGrowthHandler {
 
     public static final Vec3[] CHECK_DIRECTIONS_SIMPLE = {
             // 基本方向
+            new Vec3(0, 1, 0), // 向上
             new Vec3(1, 0, 0), // 向前
             new Vec3(-1, 0, 0), // 向后
-            new Vec3(0, 1, 0), // 向上
             new Vec3(0, 0, 1), // 向右
             new Vec3(0, 0, -1), // 向左
 
@@ -233,7 +233,7 @@ public final class CropGrowthHandler {
                 CHECK_DIRECTIONS : CHECK_DIRECTIONS_SIMPLE) {
 
             Vec3 startVec = centerVec.add(direction.scale(2));
-            Vec3 endVec = centerVec.add(direction.scale(direction.y > 0 ?
+            Vec3 endVec = centerVec.add(direction.scale(direction.y == 0 ?
                     maxDistance : y_maxDistance));
 
             ClipContext context = new ClipContext(startVec, endVec,

@@ -198,3 +198,11 @@ Here's an improved version of the text with better formatting:
 - Optimized the display method for some non-critical warning messages.
 
 
+---
+
+**0.10-pre2**
+
+### Experimental Updates:
+-Built new looks for snowy trees and vines.
+
+
