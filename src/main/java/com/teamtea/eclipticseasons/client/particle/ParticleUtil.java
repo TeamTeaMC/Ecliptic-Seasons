@@ -1,5 +1,6 @@
 package com.teamtea.eclipticseasons.client.particle;
 
+import com.teamtea.eclipticseasons.client.util.ColorHelper;
 import com.teamtea.eclipticseasons.common.registry.ParticleRegistry;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.tag.EclipticBlockTags;
@@ -7,8 +8,14 @@ import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.config.ClientConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
+import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.util.FastColor;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -16,9 +23,14 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraftforge.client.model.data.ModelData;
 import org.joml.Vector3f;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.util.*;
+import java.util.List;
 
 public class ParticleUtil {
 
@@ -114,7 +126,11 @@ public class ParticleUtil {
 
     public static void fallenLeaves(ClientLevel level, BlockPos pos, BlockState state) {
         if (!state.isAir()) {
-            int color = Minecraft.getInstance().getBlockColors().getColor(state, level, pos, 2);
+            int color = getOrCreateColor(state).getRGB();
+
+            if (new Color(color).equals(Color.WHITE)) {
+                color = Minecraft.getInstance().getBlockColors().getColor(state, level, pos, 2);
+            }
             if (new Color(color).equals(Color.WHITE)) {
                 color = Minecraft.getInstance().getBlockColors().getColor(state, level, pos);
                 // color = Color.PINK.getRGB();
@@ -152,7 +168,7 @@ public class ParticleUtil {
                                 d5 = 0.42f;
                             }
 
-                            level.addParticle(new ColorParticleOptions(new Vector3f(FastColor.ARGB32.red(finalColor) / 255.0f, FastColor.ARGB32.green(finalColor) / 255.0f, FastColor.ARGB32.blue(finalColor) / 255.0f), 1.0f),         (double) pos.getX() + d7,
+                            level.addParticle(new ColorParticleOptions(new Vector3f(FastColor.ARGB32.red(finalColor) / 255.0f, FastColor.ARGB32.green(finalColor) / 255.0f, FastColor.ARGB32.blue(finalColor) / 255.0f), 1.0f), (double) pos.getX() + d7,
                                     (double) pos.getY() + d8,
                                     (double) pos.getZ() + d9,
                                     Mth.clamp(d4 - 0.5D, -0.25f, 0.25f),
@@ -166,4 +182,62 @@ public class ParticleUtil {
             });
         }
     }
+
+
+    public static void onReloadResource() {
+        LEAVES_COLOR_MAP.clear();
+    }
+
+    private static final Map<BlockState, Color> LEAVES_COLOR_MAP = new IdentityHashMap<>();
+
+    public static Color getOrCreateColor(BlockState state) {
+        Minecraft mc = Minecraft.getInstance();
+        Color c = Color.WHITE;
+        try {
+            Color orDefault = LEAVES_COLOR_MAP.getOrDefault(state, null);
+            if (orDefault != null) {
+                return orDefault;
+            }
+            BakedModel blockModel = mc.getBlockRenderer().getBlockModel(state);
+            boolean isColored = false;
+            for (Direction direction : new Direction[]{Direction.UP, Direction.DOWN, Direction.SOUTH, Direction.EAST, Direction.NORTH, Direction.WEST, null}) {
+                List<BakedQuad> quads = blockModel.getQuads(state, direction, mc.level.getRandom(), ModelData.EMPTY, RenderType.cutout());
+                for (BakedQuad quad : quads) {
+                    if (quad.getTintIndex() > -1) {
+                        isColored = true;
+                    }
+                }
+                if (isColored) break;
+            }
+            if (isColored) {
+                c = Color.WHITE;
+            } else {
+                TextureAtlasSprite texture = blockModel.getParticleIcon(ModelData.EMPTY);
+                ArrayList<Integer> rlist = new ArrayList<>();
+                ArrayList<Integer> glist = new ArrayList<>();
+                ArrayList<Integer> blist = new ArrayList<>();
+                for (int i = 0; i < texture.contents().width(); i++) {
+                    for (int j = 0; j < texture.contents().height(); j++) {
+                        int color = texture.getPixelRGBA(0, i, j);
+                        int r = color & 0xff;
+                        int g = (color >> 8) & 0xff;
+                        int b = (color >> 16) & 0xff;
+//                                int a = color >>> 24;
+                        if (r * g * b > 0) {
+                            rlist.add(r);
+                            glist.add(g);
+                            blist.add(b);
+                        }
+                    }
+                }
+                c = new Color((int) ColorHelper.getAvg(rlist), (int) ColorHelper.getAvg(glist), (int) ColorHelper.getAvg(blist));
+            }
+            LEAVES_COLOR_MAP.put(state, c);
+
+        } catch (Exception ignore) {
+            ignore.printStackTrace();
+        }
+        return c;
+    }
+
 }

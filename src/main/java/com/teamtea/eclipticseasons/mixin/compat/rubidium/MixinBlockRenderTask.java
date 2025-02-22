@@ -105,8 +105,10 @@ public abstract class MixinBlockRenderTask {
                     // shift = At.Shift.AFTER,
                     target = "Ljava/util/Iterator;hasNext()Z")
     )
-    private boolean eclipticseasons$tesselateWithAO_getQuads(
-            boolean original, @Local BlockRenderContext ctx, @Local ChunkBuildBuffers buffers, @Local BlockRenderCache cache, @Local(ordinal = 0) BlockPos.MutableBlockPos mutableBlockPos, @Local(ordinal = 1) BlockPos.MutableBlockPos mutableBlockPos2, @Local(ordinal = 0) BlockState state
+    private boolean eclipticseasons$execute_tryRender(
+            boolean original,
+            @Local BakedModel bakedModel,
+            @Local BlockRenderContext ctx, @Local ChunkBuildBuffers buffers, @Local BlockRenderCache cache, @Local(ordinal = 0) BlockPos.MutableBlockPos mutableBlockPos, @Local(ordinal = 1) BlockPos.MutableBlockPos mutableBlockPos2, @Local(ordinal = 0) BlockState state
     ) {
 
         BakedModel snowModel = null;
@@ -120,7 +122,8 @@ public abstract class MixinBlockRenderTask {
 
         if (snowModel != null) {
             original = false;
-            ((FabricModelDelayChecker)ctx).updateIsLastFabric(FRAPIModelUtils.isFRAPIModel(ctx.model()));
+            ((FabricModelDelayChecker)ctx).updateIsLastFabric(
+                    bakedModel != null && FRAPIModelUtils.isFRAPIModel(bakedModel));
             ctx.update(mutableBlockPos,
                     mutableBlockPos2,
                     state,

@@ -5,16 +5,13 @@ import com.teamtea.eclipticseasons.api.constant.biome.Rainfall;
 import com.teamtea.eclipticseasons.api.constant.biome.Temperature;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.client.itemproperties.CounterItemProperty;
+import com.teamtea.eclipticseasons.client.particle.*;
 import com.teamtea.eclipticseasons.common.registry.BlockEntityRegistry;
 import com.teamtea.eclipticseasons.common.registry.BlockRegistry;
 import com.teamtea.eclipticseasons.common.registry.ItemRegistry;
 import com.teamtea.eclipticseasons.common.registry.ParticleRegistry;
 import com.teamtea.eclipticseasons.client.color.season.BiomeColorsHandler;
 import com.teamtea.eclipticseasons.client.model.SnowyBakedModelWrapper;
-import com.teamtea.eclipticseasons.client.particle.ButterflyParticle;
-import com.teamtea.eclipticseasons.client.particle.FallenLeavesParticle;
-import com.teamtea.eclipticseasons.client.particle.FireflyParticle;
-import com.teamtea.eclipticseasons.client.particle.WildGooseParticle;
 import com.teamtea.eclipticseasons.client.render.ber.CalendarBlockEntityRenderer;
 import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
@@ -106,6 +103,8 @@ public class ClientSetup {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onModelBaked(ModelEvent.ModifyBakingResult event) {
+        ParticleUtil.onReloadResource();
+
         Map<ResourceLocation, BakedModel> modelRegistry = event.getModels();
         ModelManager.clearForRebaked(modelRegistry);
 

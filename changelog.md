@@ -216,4 +216,9 @@ enhancing detection speed and accuracy for more efficient performance.
 
 - Slowed down the rate of growth in the wrong season.
 
+--
 
+**0.10-pre3**
+
+- Added a null pointer check for model detector to prevent crash from some mod releasing the render context prematurely
+- Provided colored foliage particle compatibility for resource packs that change foliage textures.
