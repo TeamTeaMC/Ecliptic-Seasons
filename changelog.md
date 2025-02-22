@@ -202,7 +202,16 @@ Here's an improved version of the text with better formatting:
 
 **0.10-pre2**
 
-### Experimental Updates:
--Built new looks for snowy trees and vines.
+- Rendering Pipeline Compatibility Optimization: 
+Resolved the issue where Embeddium and FF API, 
+when loaded simultaneously, 
+caused Fabric Models to use the Fabric rendering pipeline while Forge Models continued to use the legacy pipeline.
+Continuity forced conversion of all models to Fabric Models if it's not a CTM model, 
+resulted in occasional face flickering in Ecliptic Seasons' snow model rendering due to smooth lighting. 
+This update addresses the issue, ensuring consistent rendering. 
+
+- Greenhouse Detection Mechanism Improvement: 
+Optimized the detection logic for greenhouses, 
+enhancing detection speed and accuracy for more efficient performance.
 
 

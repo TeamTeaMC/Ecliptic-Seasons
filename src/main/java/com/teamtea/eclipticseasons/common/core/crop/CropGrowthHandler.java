@@ -1,6 +1,7 @@
 package com.teamtea.eclipticseasons.common.core.crop;
 
 
+import com.mojang.datafixers.util.Pair;
 import com.teamtea.eclipticseasons.api.constant.biome.Humidity;
 import com.teamtea.eclipticseasons.api.constant.crop.CropHumidityInfo;
 import com.teamtea.eclipticseasons.api.constant.crop.CropSeasonInfo;
@@ -12,8 +13,11 @@ import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
 import com.teamtea.eclipticseasons.common.handler.SolarUtil;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
+import net.minecraft.core.SectionPos;
 import net.minecraft.tags.FluidTags;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.*;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
@@ -21,15 +25,22 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.DoorBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraft.world.level.chunk.LevelChunkSection;
 import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.event.level.SaplingGrowTreeEvent;
 import net.minecraftforge.eventbus.api.Event;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 
@@ -211,6 +222,75 @@ public final class CropGrowthHandler {
 
     };
 
+    public static class SectionClipContext extends ClipContext {
+        public final List<Pair<SectionPos, LevelChunkSection>> chunkAccessList = new ArrayList<>(1);
+
+        public SectionClipContext(Vec3 from, Vec3 to, Block block, Fluid fluid, Entity pEntity) {
+            super(from, to, block, fluid, pEntity);
+        }
+
+        public List<Pair<SectionPos, LevelChunkSection>> getChunkAccessList() {
+            return chunkAccessList;
+        }
+
+        public BlockState getBlockState(LevelReader levelAccessor, BlockPos pos) {
+            int x = SectionPos.blockToSectionCoord(pos.getX());
+            int z = SectionPos.blockToSectionCoord(pos.getZ());
+            int y = SectionPos.blockToSectionCoord(pos.getY());
+            for (int i = 0, size = this.chunkAccessList.size(); i < size; i++) {
+                Pair<SectionPos, LevelChunkSection> chunkAccess = this.chunkAccessList.get(i);
+                if (chunkAccess.getFirst().x() == x
+                        && chunkAccess.getFirst().z() == z
+                        && chunkAccess.getFirst().y() == y) {
+                    return chunkAccess.getSecond().getBlockState(pos.getX() & 15, pos.getY() & 15, pos.getZ() & 15);
+                }
+            }
+            LevelChunkSection chunk = levelAccessor.getChunk(x, z).getSection(levelAccessor.getSectionIndex(pos.getY()));
+            this.chunkAccessList.add(Pair.of(SectionPos.of(x, y, z), chunk));
+            return chunk.getBlockState(pos.getX() & 15, pos.getY() & 15, pos.getZ() & 15);
+        }
+
+        public void release() {
+            this.chunkAccessList.clear();
+        }
+    }
+
+    public record BlockTester(
+            LevelReader levelReader) implements BiFunction<SectionClipContext, BlockPos, BlockHitResult> {
+
+        @Override
+        public BlockHitResult apply(SectionClipContext clipContext, BlockPos pos) {
+            BlockState blockstate = clipContext.getBlockState(levelReader, pos);
+            if (!blockstate.isSolid()) return null;
+            Vec3 vec3 = clipContext.getFrom();
+            Vec3 vec31 = clipContext.getTo();
+            VoxelShape voxelshape = clipContext.getBlockShape(blockstate, levelReader, pos);
+            BlockHitResult blockHitResult = voxelshape.clip(vec3, vec31, pos);
+            if (blockHitResult != null)
+                clipContext.release();
+            return blockHitResult;
+        }
+    }
+
+    private static final FailHandler FAIL_HANDLER = new FailHandler();
+
+    public static class FailHandler implements Function<SectionClipContext, BlockHitResult> {
+        @Override
+        public BlockHitResult apply(SectionClipContext clipContext) {
+            clipContext.release();
+            Vec3 vec3 = clipContext.getFrom().subtract(clipContext.getTo());
+            return BlockHitResult.miss(clipContext.getTo(), Direction.getNearest(vec3.x, vec3.y, vec3.z), BlockPos.containing(clipContext.getTo()));
+        }
+    }
+
+    public static BlockHitResult clip(LevelReader levelAccessor, SectionClipContext context) {
+        return BlockGetter.traverseBlocks(context.getFrom(),
+                context.getTo(),
+                context,
+                new BlockTester(levelAccessor),
+                FAIL_HANDLER);
+    }
+
     public static boolean isInRoom(LevelAccessor level, BlockPos pos, BlockState state, Season season) {
         if (state.getFluidState().isSource()) return false;
 
@@ -236,9 +316,9 @@ public final class CropGrowthHandler {
             Vec3 endVec = centerVec.add(direction.scale(direction.y == 0 ?
                     maxDistance : y_maxDistance));
 
-            ClipContext context = new ClipContext(startVec, endVec,
+            SectionClipContext context = new SectionClipContext(startVec, endVec,
                     ClipContext.Block.COLLIDER, ClipContext.Fluid.WATER, null);
-            HitResult hitResult = level.clip(context);
+            HitResult hitResult = clip(level, context);
 
             if (hitResult.getType() == HitResult.Type.MISS) {
                 isConnected = false;
