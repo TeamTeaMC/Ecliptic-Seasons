@@ -309,10 +309,20 @@ public final class CropGrowthHandler {
         int maxDistance = CommonConfig.Crop.greenHouseMaxDiameter.get();
         int y_maxDistance = Math.max(7, maxDistance / 2);
         Vec3 centerVec = pos.getCenter();
-        for (Vec3 direction : CommonConfig.Crop.complexGreenHouseCheck.get() ?
-                CHECK_DIRECTIONS : CHECK_DIRECTIONS_SIMPLE) {
+        Vec3[] vec3s = CommonConfig.Crop.complexGreenHouseCheck.get() ?
+                CHECK_DIRECTIONS : CHECK_DIRECTIONS_SIMPLE;
 
-            Vec3 startVec = centerVec.add(direction.scale(2));
+        float xr = (float) level.getRandom().nextGaussian() / 3f;
+        float yr = (float) level.getRandom().nextGaussian() / 3f;
+        for (int i = 0, vec3sLength = vec3s.length; i < vec3sLength; i++) {
+            Vec3 direction = vec3s[i];
+            direction = direction.add(xr, 0, yr);
+            // TODO: 最小起步点
+            Vec3 startVec = centerVec;
+
+            // direction是否要限制为圆形
+            // direction=direction.normalize();
+
             Vec3 endVec = centerVec.add(direction.scale(direction.y == 0 ?
                     maxDistance : y_maxDistance));
 

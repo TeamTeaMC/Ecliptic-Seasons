@@ -117,7 +117,7 @@ public class CommonConfig {
             enableCrop = builder.comment("Enable crop season control.")
                     .define("EnableSeasonalCrop", true);
             cropGrowChanceInWrongSeason = builder.comment("How much chance can crop grow in wrong season.")
-                    .defineInRange("CropGrowChanceInWrongSeason", 0.25, 0, 1);
+                    .defineInRange("CropGrowChanceInWrongSeason", 0.05, 0, 1);
             enableCropHumidityControl = builder.comment("Enable crop humidity control.")
                     .define("EnableCropHumidityControl", true);
             cropGrowChanceInWrongHumidity = builder.comment("How much base chance can crop grow in wrong humidity.")
