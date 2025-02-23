@@ -242,6 +242,29 @@ public class WeatherManager {
             ResourceLocation loc = biomes.getKey(biome);
             for (BiomeWeather biomeWeather : weathers) {
                 if (biomeWeather.location.equals(loc)) {
+                    return flag_cold
+                            || BiomeClimateManager.getDefaultTemperature(biome) <= BiomeClimateManager.SNOW_LEVEL ?
+                            Biome.RainType.SNOW : Biome.RainType.RAIN;
+                }
+            }
+        }
+
+        return Biome.RainType.NONE;
+    }
+
+
+    public static Biome.RainType getRainOrSnow(World levelNull, Biome biome, BlockPos p198905) {
+        World level = fetchWorldIfNull(levelNull);
+        SolarDataManager provider = SolarUtil.getProvider(level);
+        ArrayList<BiomeWeather> weathers = getBiomeList(level);
+        if (provider != null && weathers != null) {
+            SolarTerm solarTerm = provider.getSolarTerm();
+            SnowTerm snowTerm = SolarTerm.getSnowTerm(biome);
+            boolean flag_cold = solarTerm.isInTerms(snowTerm.getStart(), snowTerm.getEnd());
+            MutableRegistry<Biome> biomes = level.registryAccess().registry(Registry.BIOME_REGISTRY).get();
+            ResourceLocation loc = biomes.getKey(biome);
+            for (BiomeWeather biomeWeather : weathers) {
+                if (biomeWeather.location.equals(loc)) {
                     if (biomeWeather.shouldClear())
                         return Biome.RainType.NONE;
 
@@ -254,6 +277,7 @@ public class WeatherManager {
 
         return Biome.RainType.NONE;
     }
+
 
     public static void createLevelBiomeWeatherList(World level) {
         ArrayList<BiomeWeather> list = new ArrayList<BiomeWeather>();

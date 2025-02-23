@@ -59,8 +59,6 @@ public class ClientSetup {
         ModelLoader.addSpecialModel(ModelManager.snowy_large_fern_top);
         // 注意这里使用地址和model地址效果不同，后者需要写blockstate
         ModelLoader.addSpecialModel(ModelManager.snowy_large_fern_bottom);
-        ModelLoader.addSpecialModel(ModelManager.snowy_dandelion);
-        ModelLoader.addSpecialModel(ModelManager.dandelion_top);
         ModelLoader.addSpecialModel(ModelManager.overlay_2);
         ModelLoader.addSpecialModel(ModelManager.snow_height2);
         ModelLoader.addSpecialModel(ModelManager.snow_height2_top);

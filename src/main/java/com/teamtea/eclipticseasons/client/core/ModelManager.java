@@ -23,6 +23,7 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
+import net.minecraft.world.EmptyBlockReader;
 import net.minecraft.world.IBlockDisplayReader;
 import net.minecraft.world.LightType;
 import net.minecraft.world.biome.Biome;
@@ -47,8 +48,6 @@ public class ModelManager {
     public static ResourceLocation snowy_large_fern_top = EclipticSeasons.rl("block/snowy_large_fern_top");
     public static ResourceLocation snowy_tall_grass_bottom = EclipticSeasons.rl("block/snowy_tall_grass_bottom");
     public static ResourceLocation snowy_tall_grass_top = EclipticSeasons.rl("block/snowy_tall_grass_top");
-    public static ResourceLocation snowy_dandelion = EclipticSeasons.rl("block/snowy_dandelion");
-    public static ResourceLocation dandelion_top = EclipticSeasons.rl("block/dandelion_top");
     public static ResourceLocation overlay_2 = EclipticSeasons.rl("block/overlay_2");
     public static ResourceLocation snow_height2 = EclipticSeasons.rl("block/snow_height2");
     public static ResourceLocation snow_height2_top = EclipticSeasons.rl("block/snow_height2_top");
@@ -78,8 +77,11 @@ public class ModelManager {
         if (Minecraft.getInstance().level != null) {
             Block onBlock = state.getBlock();
             if (!(onBlock instanceof FenceBlock)) {
-                if (onBlock instanceof SlabBlock || onBlock instanceof FarmlandBlock || onBlock instanceof GrassPathBlock || onBlock instanceof StairsBlock
-                        || Block.isShapeFullBlock(state.getOcclusionShape(Minecraft.getInstance().level, BlockPos.ZERO))) {
+                if (onBlock instanceof SlabBlock
+                        || onBlock instanceof FarmlandBlock
+                        || onBlock instanceof GrassPathBlock
+                        || onBlock instanceof StairsBlock
+                        || state.isSolidRender(EmptyBlockReader.INSTANCE, BlockPos.ZERO)) {
                     return true;
                 }
             }
@@ -150,7 +152,6 @@ public class ModelManager {
         return i >> ChunkSizeAxis;
     }
 
-    // TODO:内存更新，双链表+Hash，用LRU
     public static final ArrayList<ChunkHeightMap> RegionList = new ArrayList<>(4);
     // IdentityHashMap似乎不适合Opt
     public static Map<List<BakedQuad>, List<BakedQuad>> quadMap = new HashMap<>(1024);
@@ -239,18 +240,10 @@ public class ModelManager {
     public static final int FLAG_GRASS = 5;
     public static final int FLAG_GRASS_LARGE = 501;
     public static final int FLAG_FARMLAND = 6;
-    public static final List<Block> LowerPlant = Stream.of(Blocks.GRASS, Blocks.FERN, Blocks.DANDELION).collect(Collectors.toList());
+    public static final List<Block> LowerPlant = Stream.of(Blocks.GRASS, Blocks.FERN).collect(Collectors.toList());
     public static final List<Block> LARGE_GRASS = Stream.of(Blocks.TALL_GRASS, Blocks.LARGE_FERN).collect(Collectors.toList());
 
-    // 实际上这里之所以太慢还有个问题就是会一个方块访问七次
     public static List<BakedQuad> appendOverlay(IBlockDisplayReader blockAndTintGetter, BlockState state, BlockPos pos, Direction direction, Random random, long seed, List<BakedQuad> list) {
-        // Minecraft.getInstance().level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING,pos);
-        // 不处理空列表，这代表着不处理这个方向
-        // if (state.is(BlockTags.LEAVES) && !list.isEmpty()) {
-        //     return List.of(new BakedQuadRetextured(list.get(0),
-        //             ClientSetup.snowOverlayBlock.resolve().get().getQuads(null, Direction.UP, null).get(0).getSprite()));
-        // }
-        // if (true)return list;
 
         if (ClientConfig.Renderer.snowyWinter.get()
                 && direction != Direction.DOWN
@@ -348,8 +341,6 @@ public class ModelManager {
                                 snowModel = models.get(snowy_grass);
                             } else if (onBlock == Blocks.FERN) {
                                 snowModel = models.get(snowy_fern);
-                            } else if (onBlock == Blocks.DANDELION) {
-                                snowModel = models.get(snowy_dandelion);
                             } else snowModel = models.get(snowy_grass);
                         } else if (flag == FLAG_GRASS_LARGE) {
                             if (onBlock == Blocks.TALL_GRASS) {
@@ -385,9 +376,6 @@ public class ModelManager {
                                 newList.addAll(snowList);
                             }
 
-                            if (onBlock == Blocks.DANDELION) {
-                                newList.addAll(models.get(dandelion_top).getQuads(null, null, null));
-                            }
 
                             if (flag == FLAG_FARMLAND) {
 

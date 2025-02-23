@@ -1,6 +1,7 @@
 package com.teamtea.eclipticseasons.common.network;
 
 import com.teamtea.eclipticseasons.client.color.season.BiomeColorsHandler;
+import com.teamtea.eclipticseasons.client.core.ClientWeatherChecker;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
@@ -58,17 +59,21 @@ public class NetworkdUtil {
                 if (lists != null) {
                     for (int i = 0; i < biomeWeatherMessage.ids.length; i++) {
                         int biomeId = biomeWeatherMessage.ids[i];
-                        Optional<WeatherManager.BiomeWeather> biomeWeather =
+                        Optional<WeatherManager.BiomeWeather> optionalBiomeWeather =
                                 lists.stream()
                                         .filter(biomeWeather1 -> biomeWeather1.id == biomeId)
                                         .findFirst();
                         int finalI = i;
-                        biomeWeather.ifPresent(biomeWeather1 ->
+                        optionalBiomeWeather.ifPresent(biomeWeather ->
                                 {
-                                    biomeWeather1.rainTime = biomeWeatherMessage.rain[finalI] * 10000;
-                                    biomeWeather1.clearTime = biomeWeatherMessage.clear[finalI] * 10000;
-                                    biomeWeather1.thunderTime = biomeWeatherMessage.thuder[finalI] * 10000;
-                                    biomeWeather1.snowDepth = biomeWeatherMessage.snowDepth[finalI];
+                                    if (biomeWeatherMessage.rain[finalI] == 0
+                                            && biomeWeather.rainTime > 0) {
+                                        ClientWeatherChecker.addLastRainyBiome(biomeWeather.biomeHolder, (long) (1 / ClientWeatherChecker.rate));
+                                    }
+                                    biomeWeather.rainTime = biomeWeatherMessage.rain[finalI] * 10000;
+                                    biomeWeather.clearTime = biomeWeatherMessage.clear[finalI] * 10000;
+                                    biomeWeather.thunderTime = biomeWeatherMessage.thuder[finalI] * 10000;
+                                    biomeWeather.snowDepth = biomeWeatherMessage.snowDepth[finalI];
                                 }
                         );
                     }
@@ -81,7 +86,7 @@ public class NetworkdUtil {
 
                             BlockPos pos = Minecraft.getInstance().player.blockPosition().below();
                             SectionPos sectionPos = SectionPos.of(pos);
-                            lr.setSectionDirtyWithNeighbors(sectionPos.x(),sectionPos.y(),sectionPos.z());
+                            lr.setSectionDirtyWithNeighbors(sectionPos.x(), sectionPos.y(), sectionPos.z());
                             // int x = sectionPos.x();
                             // int y = sectionPos.y();
                             // int z = sectionPos.z();

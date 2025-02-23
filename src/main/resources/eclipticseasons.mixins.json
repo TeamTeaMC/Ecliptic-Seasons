@@ -26,7 +26,6 @@
   ],
   "client": [
     "client.MixinBlockRenderVanilla",
-    "client.MixinClientBiome",
     "client.MixinClientClientLevel",
     "client.MixinClientLevel",
     "client.MixinClientLevelChunk",

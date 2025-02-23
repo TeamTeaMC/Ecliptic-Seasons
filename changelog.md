@@ -1,7 +1,7 @@
 0.3
 
 **Update Highlights**  
-This update focuses on mod improvements and ecosystem compatibility, 
+This update focuses on backport mod improvements and ecosystem compatibility, 
 introducing new climate monitoring tools while refining core mechanics. 
 Key additions include a calendar system and humidity measurement devices, 
 alongside critical fixes for biome anomalies and cross-mod interoperability. 
@@ -31,3 +31,11 @@ The changes span four main areas:
 ### 🔄 Compatibility & Integration
 - Added built-in tag conversion compatibility for Serene Seasons
 - Implemented compatibility measures for weather mods incompatible with this mod (to prevent Overworld conflicts)
+
+0.3.1
+Optimized Transition Effects: 
+Enhanced the visual transition for the onset and conclusion of rain/snow, and refined the vanilla rain effects to achieve a smoother, more natural appearance.
+
+Removed Obsolete Feature: 
+Removed the unused "snowy dandelions" model from the files.
+
