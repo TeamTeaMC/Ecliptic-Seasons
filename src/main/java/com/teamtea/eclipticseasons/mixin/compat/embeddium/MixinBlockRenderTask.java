@@ -1,4 +1,4 @@
-package com.teamtea.eclipticseasons.mixin.compat.rubidium;
+package com.teamtea.eclipticseasons.mixin.compat.embeddium;
 
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
@@ -9,7 +9,6 @@ import me.jellysquid.mods.sodium.client.render.chunk.compile.ChunkBuildBuffers;
 import me.jellysquid.mods.sodium.client.render.chunk.compile.pipeline.BlockRenderCache;
 import me.jellysquid.mods.sodium.client.render.chunk.compile.pipeline.BlockRenderContext;
 import me.jellysquid.mods.sodium.client.render.chunk.compile.tasks.ChunkBuilderMeshingTask;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;

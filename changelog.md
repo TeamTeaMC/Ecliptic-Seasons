@@ -222,3 +222,10 @@ enhancing detection speed and accuracy for more efficient performance.
 
 - Added a null pointer check for model detector to prevent crash from some mod releasing the render context prematurely
 - Provided colored foliage particle compatibility for resource packs that change foliage textures.
+
+--
+
+**0.10-pre4**
+
+- Add support for Snowy Spirit, let enjoy skiing and Christmas Holiday
+- Add support for Haunted Harvest, let enjoy Halloween Holiday

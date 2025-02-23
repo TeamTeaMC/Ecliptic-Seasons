@@ -242,10 +242,20 @@ dependencies {
 //    onlyMainRuntimeOnly fg.deobf("curse.maven:distant-horizons-508933:5689279")
 
     compileOnly fg.deobf("curse.maven:legendary-survival-overhaul-840254:5825918")
-//    runtimeOnly fg.deobf("curse.maven:legendary-survival-overhaul-840254:5825918")
+//    onlyMainRuntimeOnly fg.deobf("curse.maven:legendary-survival-overhaul-840254:5825918")
 
     compileOnly fg.deobf("curse.maven:cold-sweat-506194:6071049")
-//    runtimeOnly fg.deobf("curse.maven:cold-sweat-506194:6071049")
+//    onlyMainRuntimeOnly fg.deobf("curse.maven:cold-sweat-506194:6071049")
+
+
+    compileOnly fg.deobf("curse.maven:snowy-spirit-566142:5928029")
+    compileOnly fg.deobf("curse.maven:haunted-harvest-541753:6032347")
+//    onlyMainRuntimeOnly fg.deobf("curse.maven:snowy-spirit-566142:5928029")
+//    onlyMainRuntimeOnly fg.deobf("curse.maven:selene-499980:6224039")
+//    onlyMainRuntimeOnly fg.deobf("curse.maven:haunted-harvest-541753:6032347")
+
+
+//    onlyMainRuntimeOnly  fg.deobf("curse.maven:hourglass-511172:4834578")
 
     // Examples using mod jars from ./libs
     compileOnly "libs:OptiFine:1.20.1_HD_U_I6"

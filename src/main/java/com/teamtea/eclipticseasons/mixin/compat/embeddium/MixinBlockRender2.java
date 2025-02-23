@@ -1,4 +1,4 @@
-package com.teamtea.eclipticseasons.mixin.compat.rubidium;
+package com.teamtea.eclipticseasons.mixin.compat.embeddium;
 
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
@@ -11,7 +11,6 @@ import me.jellysquid.mods.sodium.client.render.chunk.compile.pipeline.BlockRende
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
-import org.embeddedt.embeddium.render.frapi.FRAPIRenderHandler;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;

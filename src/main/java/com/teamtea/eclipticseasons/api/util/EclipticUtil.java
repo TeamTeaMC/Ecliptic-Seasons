@@ -9,6 +9,7 @@ import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.core.solar.SolarAngelHelper;
+import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
 import com.teamtea.eclipticseasons.common.misc.MapColorReplacer;
 import com.teamtea.eclipticseasons.compat.vanilla.VanillaWeather;
 import com.teamtea.eclipticseasons.config.CommonConfig;
@@ -20,7 +21,7 @@ import net.minecraft.world.level.levelgen.Heightmap;
 
 public class EclipticUtil {
     public static SolarTerm getNowSolarTerm(Level level) {
-        var sd = SolarHolders.getSaveData(level);
+        SolarDataManager sd = SolarHolders.getSaveData(level);
         if (sd != null) return sd.getSolarTerm();
         return SolarTerm.NONE;
     }
@@ -183,7 +184,7 @@ public class EclipticUtil {
 
 
     public static int getNowSolarDay(Level level) {
-        var sd = SolarHolders.getSaveData(level);
+        SolarDataManager sd = SolarHolders.getSaveData(level);
         if (sd != null) return sd.getSolarTermsDay();
         return 0;
     }

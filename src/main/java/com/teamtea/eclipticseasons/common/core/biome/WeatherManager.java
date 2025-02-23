@@ -14,7 +14,6 @@ import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.common.advancement.SolarTermsRecordCa;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
-import com.teamtea.eclipticseasons.common.handler.SolarUtil;
 import com.teamtea.eclipticseasons.common.network.BiomeWeatherMessage;
 import com.teamtea.eclipticseasons.common.network.EmptyMessage;
 import com.teamtea.eclipticseasons.common.network.SimpleNetworkHandler;
@@ -275,7 +274,7 @@ public class WeatherManager {
         if (level == null && ClientCon.getUseLevel() != null) {
             level = ClientCon.getUseLevel();
         }
-        var provider = SolarUtil.getProvider(level);
+        var provider = SolarHolders.getSaveData(level);
         var weathers = getBiomeList(level);
 
 
@@ -636,7 +635,7 @@ public class WeatherManager {
     }
 
     public static SnowRenderStatus getSnowStatus(ServerLevel level, Biome biome, BlockPos pos) {
-        var provider = SolarUtil.getProvider(level);
+        var provider =SolarHolders.getSaveData(level);
         var status = SnowRenderStatus.NONE;
         if (provider != null) {
             var solarTerm = provider.getSolarTerm();

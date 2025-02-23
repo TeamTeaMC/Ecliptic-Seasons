@@ -1,5 +1,6 @@
 package com.teamtea.eclipticseasons.compat;
 
+import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.compat.cold_sweat.Cold_Sweat;
 import com.teamtea.eclipticseasons.compat.dynamictrees.DynamicTreeMod;
 import net.minecraftforge.common.ForgeConfigSpec;
@@ -13,6 +14,8 @@ public class CompatModule {
     private static boolean cold_sweat = false;
     private static boolean legendarysurvivaloverhaul = false;
     private static boolean journeymap = false;
+    private static boolean snowyspirit = false;
+    private static boolean hauntedharvest = false;
 
     /**
      * Used for mod init detect.
@@ -22,6 +25,8 @@ public class CompatModule {
         cold_sweat = Platform.isModLoaded("cold_sweat");
         legendarysurvivaloverhaul = Platform.isModLoaded("legendarysurvivaloverhaul");
         journeymap = Platform.isModLoaded("journeymap");
+        snowyspirit = Platform.isModLoaded("snowyspirit");
+        hauntedharvest = Platform.isModLoaded("hauntedharvest");
     }
 
     /**
@@ -57,6 +62,13 @@ public class CompatModule {
         public static ForgeConfigSpec.ConfigValue<List<? extends Double>> legendarysurvivaloverhaul_summers;
         public static ForgeConfigSpec.ConfigValue<List<? extends Double>> legendarysurvivaloverhaul_autumns;
         public static ForgeConfigSpec.ConfigValue<List<? extends Double>> legendarysurvivaloverhaul_winters;
+
+        public static ForgeConfigSpec.ConfigValue<List<? extends SolarTerm>> snowyspirit_winters;
+        public static ForgeConfigSpec.BooleanValue snowyspirit_enable;
+
+        public static ForgeConfigSpec.ConfigValue<List<? extends SolarTerm>> hauntedharvest_halloween_time;
+        public static ForgeConfigSpec.ConfigValue<List<? extends SolarTerm>> hauntedharvest_mobs_wear_pumpkins_time;
+        public static ForgeConfigSpec.BooleanValue hauntedharvest_enable;
 
         public static void load(ForgeConfigSpec.Builder builder) {
             builder.push("Compat");
@@ -102,7 +114,37 @@ public class CompatModule {
                                 o -> o instanceof Double);
                 builder.pop();
             }
-
+            if (isSnowyspirit()) {
+                builder.push("SnowySpirit");
+                snowyspirit_enable = builder.comment("Enable special time with SnowySpirit.")
+                        .define("Enable", true);
+                snowyspirit_winters = builder.comment("Solar Terms in which SnowySpirit villager AI behaviors will be active.")
+                        .defineListAllowEmpty("WinterTime",
+                                () -> List.of(SolarTerm.BEGINNING_OF_WINTER,
+                                        SolarTerm.LIGHT_SNOW,
+                                        SolarTerm.HEAVY_SNOW,
+                                        SolarTerm.WINTER_SOLSTICE,
+                                        SolarTerm.LESSER_COLD,
+                                        SolarTerm.GREATER_COLD),
+                                o -> o instanceof SolarTerm);
+                builder.pop();
+            }
+            if (isHauntedharvest()) {
+                builder.push("Hauntedharvest");
+                hauntedharvest_enable = builder.comment("Enable special time with Hauntedharvest.")
+                        .define("Enable", true);
+                hauntedharvest_halloween_time = builder.comment("Solar Terms in which Hauntedharvest villager AI behaviors will be active.")
+                        .defineListAllowEmpty("Halloween Time",
+                                () -> List.of(
+                                        SolarTerm.COLD_DEW,
+                                        SolarTerm.FIRST_FROST),
+                                o -> o instanceof SolarTerm);
+                hauntedharvest_mobs_wear_pumpkins_time = builder.comment("Adds custom times in which mobs can wear pumpkins. Leave empty to ignore.")
+                        .defineListAllowEmpty(" Mobs Wear Pumpkins Time",
+                                () -> List.of(SolarTerm.FIRST_FROST),
+                                o -> o instanceof SolarTerm);
+                builder.pop();
+            }
 
             builder.pop();
         }
@@ -137,5 +179,13 @@ public class CompatModule {
 
     public static boolean isJourneymap() {
         return journeymap;
+    }
+
+    public static boolean isSnowyspirit() {
+        return snowyspirit;
+    }
+
+    public static boolean isHauntedharvest() {
+        return hauntedharvest;
     }
 }
