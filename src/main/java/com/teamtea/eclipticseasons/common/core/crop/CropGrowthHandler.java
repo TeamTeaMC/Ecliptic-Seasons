@@ -88,7 +88,7 @@ public final class CropGrowthHandler {
     public static void beforeCropGrowUp(net.minecraftforge.eventbus.api.Event event, LevelAccessor world, BlockPos pos, BlockState blockState) {
         Block block = blockState.getBlock();
         Holder<Biome> biome = world.getBiome(pos);
-        SolarTerm solarTerm = SolarUtil.getSolarTerm((Level) world);
+        SolarTerm solarTerm = EclipticUtil.getNowSolarTerm((Level) world);
         CropSeasonInfo seasonInfo = CropInfoManager.getSeasonInfo(block);
         boolean notCancel = false;
         RoomStatus roomStatus = RoomStatus.UNKNOWN;
