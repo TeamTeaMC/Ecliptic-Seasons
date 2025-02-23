@@ -56,8 +56,6 @@ public class ClientSetup {
         ForgeModelBakery.addSpecialModel(ModelManager.snowy_large_fern_top);
         // 注意这里使用地址和model地址效果不同，后者需要写blockstate
         ForgeModelBakery.addSpecialModel(ModelManager.snowy_large_fern_bottom);
-        ForgeModelBakery.addSpecialModel(ModelManager.snowy_dandelion);
-        ForgeModelBakery.addSpecialModel(ModelManager.dandelion_top);
         ForgeModelBakery.addSpecialModel(ModelManager.overlay_2);
         ForgeModelBakery.addSpecialModel(ModelManager.snow_height2);
         ForgeModelBakery.addSpecialModel(ModelManager.snow_height2_top);

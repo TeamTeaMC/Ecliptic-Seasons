@@ -1,13 +1,15 @@
 package com.teamtea.eclipticseasons.mixin.common;
 
 
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import com.teamtea.eclipticseasons.api.util.EclipticUtil;
+import com.teamtea.eclipticseasons.api.util.SimpleUtil;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.loading.FMLLoader;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -20,6 +22,10 @@ public abstract class MixinBiome {
     @Deprecated
     public abstract float getTemperature(BlockPos p_47506_);
 
+    @Shadow
+    @Final
+    private Biome.ClimateSettings climateSettings;
+
     // 阻止非寒冷群系结冰
     @Inject(at = {@At("HEAD")}, method = {"shouldFreeze(Lnet/minecraft/world/level/LevelReader;Lnet/minecraft/core/BlockPos;)Z"}, cancellable = true)
     public void ecliptic$shouldFreeze(LevelReader p_47520_, BlockPos p_47521_, CallbackInfoReturnable<Boolean> cir) {
@@ -30,27 +36,20 @@ public abstract class MixinBiome {
         // }
     }
 
-    // TODO：这里需要走一下判断是在客户端还是服务器
+
     @Inject(at = {@At("HEAD")}, method = {"getPrecipitation"}, cancellable = true)
     public void ecliptic$getPrecipitationAt(CallbackInfoReturnable<Biome.Precipitation> cir) {
-        if (FMLLoader.getDist() == Dist.DEDICATED_SERVER)
-            cir.setReturnValue(WeatherManager.getPrecipitationAt((Biome) (Object) this, BlockPos.ZERO));
+        cir.setReturnValue(WeatherManager.getPrecipitationAt((Biome) (Object) this, BlockPos.ZERO));
     }
 
-    @Inject(at = {@At("HEAD")}, method = {"warmEnoughToRain"}, cancellable = true)
-    public void ecliptic$warmEnoughToRain(BlockPos p_198905_, CallbackInfoReturnable<Boolean> cir) {
-        // cir.setReturnValue(WeatherManager.onCheckWarmEnoughToRain(p_198905_));
+    @ModifyExpressionValue(at = {@At(value = "INVOKE", target = "Lnet/minecraft/world/level/biome/Biome;getTemperature(Lnet/minecraft/core/BlockPos;)F")}, method = {"warmEnoughToRain"})
+    public float ecliptic$warmEnoughToRain(float original) {
+        return original - SimpleUtil.getNowSolarTerm(WeatherManager.fetchLevelIfNull(null)).getTemperatureChange();
     }
 
-    @Inject(at = {@At("HEAD")}, method = {"shouldSnow"}, cancellable = true)
-    public void ecliptic$shouldSnow(LevelReader p_47520_, BlockPos p_47521_, CallbackInfoReturnable<Boolean> cir) {
-        // if (p_47520_ instanceof ServerLevel level) {
-        //     // cir.setReturnValue(WeatherHandler.onShouldSnow(level,((Biome) (Object) this),p_47521_));
-        //     // cir.setReturnValue(true);
-        //     // 目前设置为不生成雪，根据香草判断一下了
-        //     if ((this.getTemperature(p_47521_) >= 0.15F))
-        //         cir.setReturnValue(false);
-        // }
+    @ModifyExpressionValue(at = {@At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;canSurvive(Lnet/minecraft/world/level/LevelReader;Lnet/minecraft/core/BlockPos;)Z")}, method = {"shouldSnow"})
+    public boolean ecliptic$shouldSnow(boolean original) {
+        return original;
     }
 
     @Inject(at = {@At("HEAD")}, method = {"getBaseTemperature"}, cancellable = true)

@@ -19,6 +19,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.EmptyBlockGetter;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
@@ -44,8 +45,6 @@ public class ModelManager {
     public static ResourceLocation snowy_large_fern_top = EclipticSeasons.rl("block/snowy_large_fern_top");
     public static ResourceLocation snowy_tall_grass_bottom = EclipticSeasons.rl("block/snowy_tall_grass_bottom");
     public static ResourceLocation snowy_tall_grass_top = EclipticSeasons.rl("block/snowy_tall_grass_top");
-    public static ResourceLocation snowy_dandelion = EclipticSeasons.rl("block/snowy_dandelion");
-    public static ResourceLocation dandelion_top = EclipticSeasons.rl("block/dandelion_top");
     public static ResourceLocation overlay_2 = EclipticSeasons.rl("block/overlay_2");
     public static ResourceLocation snow_height2 = EclipticSeasons.rl("block/snow_height2");
     public static ResourceLocation snow_height2_top = EclipticSeasons.rl("block/snow_height2_top");
@@ -76,7 +75,7 @@ public class ModelManager {
             var onBlock = state.getBlock();
             if (!(onBlock instanceof FenceBlock)) {
                 if (onBlock instanceof SlabBlock || onBlock instanceof FarmBlock || onBlock instanceof DirtPathBlock || onBlock instanceof StairBlock
-                        || Block.isShapeFullBlock(state.getOcclusionShape(Minecraft.getInstance().level, BlockPos.ZERO))) {
+                        || state.isSolidRender(EmptyBlockGetter.INSTANCE, BlockPos.ZERO)) {
                     return true;
                 }
             }
@@ -236,7 +235,7 @@ public class ModelManager {
     public static final int FLAG_GRASS = 5;
     public static final int FLAG_GRASS_LARGE = 501;
     public static final int FLAG_FARMLAND = 6;
-    public static final List<Block> LowerPlant = List.of(Blocks.GRASS, Blocks.FERN, Blocks.DANDELION);
+    public static final List<Block> LowerPlant = List.of(Blocks.GRASS, Blocks.FERN);
     public static final List<Block> LARGE_GRASS = List.of(Blocks.TALL_GRASS, Blocks.LARGE_FERN);
 
     // 实际上这里之所以太慢还有个问题就是会一个方块访问七次
@@ -345,9 +344,7 @@ public class ModelManager {
                                 snowModel = models.get(snowy_grass);
                             } else if (onBlock == Blocks.FERN) {
                                 snowModel = models.get(snowy_fern);
-                            } else if (onBlock == Blocks.DANDELION) {
-                                snowModel = models.get(snowy_dandelion);
-                            } else snowModel = models.get(snowy_grass);
+                            }  else snowModel = models.get(snowy_grass);
                         } else if (flag == FLAG_GRASS_LARGE) {
                             if (onBlock == Blocks.TALL_GRASS) {
                                 snowModel = models.get(offset == 1 ? snowy_tall_grass_bottom : snowy_tall_grass_top);
@@ -382,9 +379,7 @@ public class ModelManager {
                                 newList.addAll(snowList);
                             }
 
-                            if (onBlock == Blocks.DANDELION) {
-                                newList.addAll(models.get(dandelion_top).getQuads(null, null, null));
-                            }
+
 
                             if (flag == FLAG_FARMLAND) {
 

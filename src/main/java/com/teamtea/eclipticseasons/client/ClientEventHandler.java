@@ -3,6 +3,7 @@ package com.teamtea.eclipticseasons.client;
 
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.util.SimpleUtil;
+import com.teamtea.eclipticseasons.client.core.ClientWeatherChecker;
 import com.teamtea.eclipticseasons.client.core.ModelManager;
 import com.teamtea.eclipticseasons.client.render.ClientRenderer;
 import com.teamtea.eclipticseasons.common.AllListener;
@@ -73,6 +74,7 @@ public final class ClientEventHandler {
     public static void onLevelUnloadEvent(WorldEvent.Unload event) {
         if (event.getWorld() instanceof ClientLevel clientLevel) {
             ModelManager.clearHeightMap();
+            ClientWeatherChecker.unloadLevel(clientLevel);
         }
     }
 
@@ -97,24 +99,25 @@ public final class ClientEventHandler {
     @SubscribeEvent
     public static void onWorldTick(TickEvent.WorldTickEvent event) {
         if (ClientConfig.Renderer.forceChunkRenderUpdate.get()) {
-            if (event.phase.equals(TickEvent.Phase.END)
-                    && event.world.isClientSide()
-                    && event.world.getGameTime() %100  == 0) {
-                var lr = Minecraft.getInstance().levelRenderer;
-                if (lr != null) {
-                    //
-                    // ((ClientChunkCache) event.level.getChunkSource()).storage.
-                    if (Minecraft.getInstance().cameraEntity instanceof Player player) {
-                        BlockPos pos = player.getOnPos();
-                        SectionPos sectionPos = SectionPos.of(pos);
-                        // lr.setSectionDirtyWithNeighbors(sectionPos.x(),sectionPos.y(),sectionPos.z());
-                        int x = sectionPos.x();
-                        int y = sectionPos.y();
-                        int z = sectionPos.z();
-                        for (int i = x - 2; i <= x + 2; ++i) {
-                            for (int j = z - 2; j <= z + 2; ++j) {
-                                for (int k = y - 1; k <= y + 1; ++k) {
-                                    lr.setSectionDirty(j, k, i);
+            if (event.world.isClientSide() && event.phase.equals(TickEvent.Phase.END)) {
+                ClientWeatherChecker.tickAllCheck((ClientLevel) event.world);
+                if (event.world.getGameTime() % 100 == 0) {
+                    var lr = Minecraft.getInstance().levelRenderer;
+                    if (lr != null) {
+                        //
+                        // ((ClientChunkCache) event.level.getChunkSource()).storage.
+                        if (Minecraft.getInstance().cameraEntity instanceof Player player) {
+                            BlockPos pos = player.getOnPos();
+                            SectionPos sectionPos = SectionPos.of(pos);
+                            // lr.setSectionDirtyWithNeighbors(sectionPos.x(),sectionPos.y(),sectionPos.z());
+                            int x = sectionPos.x();
+                            int y = sectionPos.y();
+                            int z = sectionPos.z();
+                            for (int i = x - 2; i <= x + 2; ++i) {
+                                for (int j = z - 2; j <= z + 2; ++j) {
+                                    for (int k = y - 1; k <= y + 1; ++k) {
+                                        lr.setSectionDirty(j, k, i);
+                                    }
                                 }
                             }
                         }

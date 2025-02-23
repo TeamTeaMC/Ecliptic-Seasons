@@ -1,5 +1,6 @@
 package com.teamtea.eclipticseasons.common.core.biome;
 
+import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.common.registry.EffectRegistry;
 import com.teamtea.eclipticseasons.api.constant.climate.BiomeRain;
 import com.teamtea.eclipticseasons.api.constant.climate.FlatRain;
@@ -35,6 +36,7 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.storage.ServerLevelData;
 import net.minecraft.world.level.storage.WritableLevelData;
@@ -233,6 +235,30 @@ public class WeatherManager {
     public static Biome.Precipitation getPrecipitationAt(Level levelNull, Biome biome, BlockPos p198905) {
 
         var level = fetchLevelIfNull(levelNull);
+
+        var provider = SolarUtil.getProvider(level);
+        var weathers = getBiomeList(level);
+        if (provider != null && weathers != null) {
+            var solarTerm = provider.getSolarTerm();
+            var snowTerm = SolarTerm.getSnowTerm(biome);
+            boolean flag_cold = solarTerm.isInTerms(snowTerm.getStart(), snowTerm.getEnd());
+            var biomes = level.registryAccess().registry(BuiltinRegistries.BIOME.key()).get();
+            var loc=biomes.getKey(biome);
+            for (BiomeWeather biomeWeather : weathers) {
+                if (biomeWeather.location.equals(loc)) {
+                    return flag_cold
+                            || BiomeClimateManager.getDefaultTemperature(biome) <= BiomeClimateManager.SNOW_LEVEL ?
+                            Biome.Precipitation.SNOW : Biome.Precipitation.RAIN;
+                }
+            }
+        }
+
+        return Biome.Precipitation.NONE;
+    }
+
+    public static Biome.Precipitation getRainOrSnow(Level levelNull, Biome biome, BlockPos p198905) {
+        var level = fetchLevelIfNull(levelNull);
+
         var provider = SolarUtil.getProvider(level);
         var weathers = getBiomeList(level);
         if (provider != null && weathers != null) {
@@ -356,7 +382,10 @@ public class WeatherManager {
 
 
     public static void runWeather(ServerLevel level, BiomeWeather biomeWeather, Random random, int size) {
-
+        if(level.dimension().equals(Level.OVERWORLD)
+        &&biomeWeather.biomeHolder.is(Biomes.PLAINS)){
+            EclipticSeasons.logger(biomeWeather.serializeNBT());
+        }
         if (biomeWeather.shouldClear()) {
             biomeWeather.clearTime--;
         } else {

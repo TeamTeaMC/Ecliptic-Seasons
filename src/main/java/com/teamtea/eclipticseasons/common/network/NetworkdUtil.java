@@ -1,6 +1,7 @@
 package com.teamtea.eclipticseasons.common.network;
 
 import com.teamtea.eclipticseasons.client.color.season.BiomeColorsHandler;
+import com.teamtea.eclipticseasons.client.core.ClientWeatherChecker;
 import com.teamtea.eclipticseasons.common.AllListener;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
@@ -51,6 +52,10 @@ public class NetworkdUtil {
                 var lists = WeatherManager.getBiomeList(NetworkdUtil.getClient());
                 if (lists != null) {
                     for (WeatherManager.BiomeWeather biomeWeather : lists) {
+                        if(biomeWeatherMessage.rain[biomeWeather.id]==0
+                                && biomeWeather.rainTime>0){
+                            ClientWeatherChecker.addLastRainyBiome(biomeWeather.biomeHolder.value(), (long) (1/ClientWeatherChecker.rate));
+                        }
                         biomeWeather.rainTime = biomeWeatherMessage.rain[biomeWeather.id] * 10000;
                         biomeWeather.clearTime = biomeWeatherMessage.clear[biomeWeather.id] * 10000;
                         biomeWeather.thunderTime = biomeWeatherMessage.thuder[biomeWeather.id] * 10000;

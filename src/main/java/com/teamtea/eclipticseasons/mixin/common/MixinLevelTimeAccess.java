@@ -20,8 +20,7 @@ public interface MixinLevelTimeAccess extends LevelTimeAccess{
 
     @Override
     default float getTimeOfDay(float p_46943_) {
-        // eclipticseasons.logger(p_46943_,dayTime());
-        return SolarAngelHelper.getSeasonCelestialAngle((LevelTimeAccess)(Object)this, dayTime());
+        return SolarAngelHelper.getSeasonCelestialAngle(this, dayTime());
     }
 
     // @Override
