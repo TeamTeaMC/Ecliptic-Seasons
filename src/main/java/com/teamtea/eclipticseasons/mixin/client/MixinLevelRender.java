@@ -68,7 +68,7 @@ public abstract class MixinLevelRender {
     )
     private void ecliptic$tickRain_modifySound(ClientLevel instance, BlockPos blockPos, SoundEvent soundEvent, SoundSource soundSource, float pVolume, float pPitch, boolean pDistanceDelay, Operation<Void> original) {
         {
-            original.call(instance, blockPos, soundEvent, soundSource, pVolume, pPitch, pDistanceDelay);
+            original.call(instance, blockPos, soundEvent, soundSource, ClientWeatherChecker.modifyVolume(soundEvent, pVolume, level), ClientWeatherChecker.modifyPitch(soundEvent, pPitch, level), pDistanceDelay);
         }
     }
 

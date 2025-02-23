@@ -40,7 +40,7 @@
     "client.sound.MixinMusicManager",
     "compat.embeddium.MixinBlockRender2",
     "compat.optifine.MixinBlockModelCustomizer",
-    "compat.rubidium.MixinBlockRender2"
+    "compat.fbp.MixinFancyBlockParticles"
   ],
   "injectors": {
     "defaultRequire": 1

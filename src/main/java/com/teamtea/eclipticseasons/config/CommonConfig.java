@@ -1,5 +1,6 @@
 package com.teamtea.eclipticseasons.config;
 
+import com.teamtea.eclipticseasons.compat.CompatModule;
 import net.minecraftforge.common.ForgeConfigSpec;
 
 public class CommonConfig {
@@ -9,6 +10,7 @@ public class CommonConfig {
         Temperature.load(builder);
         Season.load(builder);
         Debug.load(builder);
+        CompatModule.CommonConfig.load(builder);
     }
 
     public static class Debug {

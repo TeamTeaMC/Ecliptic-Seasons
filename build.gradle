@@ -6,7 +6,7 @@ buildscript {
         maven { url = 'https://maven.parchmentmc.org' }
     }
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '6.+', changing: true
         classpath group: 'org.spongepowered', name: 'mixingradle', version: '0.7+'
 
         classpath group: 'org.parchmentmc', name: 'librarian', version: "1.+"
@@ -196,28 +196,33 @@ dependencies {
 
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 
-    implementation(annotationProcessor("io.github.llamalad7:mixinextras-common:0.4.0"))
-    implementation(jarJar("io.github.llamalad7:mixinextras-forge:0.4.0")) {
-        jarJar.ranged(it, "[0.4.0,)")
+    implementation(annotationProcessor("io.github.llamalad7:mixinextras-common:0.4.1"))
+    implementation(jarJar("io.github.llamalad7:mixinextras-forge:0.4.1")) {
+        jarJar.ranged(it, "[0.4.1,)")
     }
 
     implementation fg.deobf("com.ferreusveritas.dynamictrees:DynamicTrees-1.18.2:1.0.4")
     compileOnly fg.deobf("curse.maven:embeddium-908741:5322305")
     compileOnly fg.deobf("curse.maven:oculus-581495:4578744")
 
-    runtimeOnly fg.deobf("curse.maven:embeddium-908741:5322305")
-    runtimeOnly fg.deobf("curse.maven:oculus-581495:4578744")
+    onlyMainRuntimeOnly fg.deobf("curse.maven:embeddium-908741:5322305")
+    onlyMainRuntimeOnly fg.deobf("curse.maven:oculus-581495:4578744")
 
     compileOnly "libs:OptiFine:1.18.2_HD_U_H9"
 
     implementation fg.deobf("curse.maven:jei-238222:4593548")
     implementation fg.deobf("curse.maven:jade-324717:5079263")
 
-    runtimeOnly fg.deobf("curse.maven:journeymap-32274:5208370")
-    runtimeOnly fg.deobf("curse.maven:farmers-delight-398521:4679315")
+    onlyMainRuntimeOnly fg.deobf("curse.maven:journeymap-32274:5208370")
+    onlyMainRuntimeOnly fg.deobf("curse.maven:farmers-delight-398521:4679315")
 
     implementation fg.deobf("curse.maven:jade-324717:5079263")
 
+    compileOnly fg.deobf("curse.maven:cold-sweat-506194:6189563")
+//    onlyMainRuntimeOnly fg.deobf("curse.maven:cold-sweat-506194:6189563")
+
+    compileOnly fg.deobf("curse.maven:fbp-renewed-937011:5895334")
+    onlyMainRuntimeOnly fg.deobf("curse.maven:fbp-renewed-937011:5895334")
 
     println("----Scan onlymain libs begin----")
     fileTree(dir: 'mods', include: ['*.jar']).each { File file ->

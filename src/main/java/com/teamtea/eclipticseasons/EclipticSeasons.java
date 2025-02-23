@@ -11,6 +11,7 @@ import com.teamtea.eclipticseasons.config.CommonConfig;
 import com.teamtea.eclipticseasons.data.start;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
@@ -76,16 +77,19 @@ public class EclipticSeasons {
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
 
-        BlockRegistry.BLOCK_DEFERRED_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
-        BlockEntityRegistry.BLOCK_ENTITY_TYPE_DEFERRED_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
-        ItemRegistry.ITEM_DEFERRED_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
+        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::gatherData);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::FMLCommonSetup);
+        BlockRegistry.BLOCK_DEFERRED_REGISTER.register(modEventBus);
+        BlockEntityRegistry.BLOCK_ENTITY_TYPE_DEFERRED_REGISTER.register(modEventBus);
+        ItemRegistry.ITEM_DEFERRED_REGISTER.register(modEventBus);
+
+        modEventBus.addListener(this::gatherData);
+        modEventBus.addListener(this::FMLCommonSetup);
 
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, CommonConfig.SERVER_CONFIG);
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ClientConfig.CLIENT_CONFIG);
 
+        CompatModule.register(MinecraftForge.EVENT_BUS, modEventBus);
 
     }
 
