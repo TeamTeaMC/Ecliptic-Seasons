@@ -19,6 +19,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.EmptyBlockGetter;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
@@ -74,7 +75,7 @@ public class ModelManager {
             var onBlock = state.getBlock();
             if (!(onBlock instanceof FenceBlock)) {
                 if (onBlock instanceof SlabBlock || onBlock instanceof FarmBlock || onBlock instanceof DirtPathBlock || onBlock instanceof StairBlock
-                        || onBlock.isOcclusionShapeFullBlock(state, Minecraft.getInstance().level, BlockPos.ZERO)) {
+                        || state.isSolidRender(EmptyBlockGetter.INSTANCE, BlockPos.ZERO)) {
                     return true;
                 }
             }
@@ -237,15 +238,7 @@ public class ModelManager {
     public static final List<Block> LowerPlant = List.of(Blocks.GRASS, Blocks.FERN);
     public static final List<Block> LARGE_GRASS = List.of(Blocks.TALL_GRASS, Blocks.LARGE_FERN);
 
-    // 实际上这里之所以太慢还有个问题就是会一个方块访问七次
     public static List<BakedQuad> appendOverlay(BlockAndTintGetter blockAndTintGetter, BlockState state, BlockPos pos, Direction direction, RandomSource random, long seed, List<BakedQuad> list) {
-        // Minecraft.getInstance().level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING,pos);
-        // 不处理空列表，这代表着不处理这个方向
-        // if (state.is(BlockTags.LEAVES) && !list.isEmpty()) {
-        //     return List.of(new BakedQuadRetextured(list.get(0),
-        //             ClientSetup.snowOverlayBlock.resolve().get().getQuads(null, Direction.UP, null).get(0).getSprite()));
-        // }
-        // if (true)return list;
 
         if (ClientConfig.Renderer.snowyWinter.get()
                 && direction != Direction.DOWN
@@ -318,7 +311,7 @@ public class ModelManager {
                     // isFlowerAbove=false;
                     var useMap = isFlowerAbove ? quadMap_1 : quadMap;
                     List<BakedQuad> cc =
-                             EclipticSeasonsMixinPlugin.isOptLoad() ? null : useMap.getOrDefault(list, null);
+                            EclipticSeasonsMixinPlugin.isOptLoad() ? null : useMap.getOrDefault(list, null);
                     if (cc != null) {
                         return cc;
                     } else {
@@ -343,7 +336,7 @@ public class ModelManager {
                                 snowModel = models.get(snowy_grass);
                             } else if (onBlock == Blocks.FERN) {
                                 snowModel = models.get(snowy_fern);
-                            }  else snowModel = models.get(snowy_grass);
+                            } else snowModel = models.get(snowy_grass);
                         } else if (flag == FLAG_GRASS_LARGE) {
                             if (onBlock == Blocks.TALL_GRASS) {
                                 snowModel = models.get(offset == 1 ? snowy_tall_grass_bottom : snowy_tall_grass_top);
@@ -386,7 +379,7 @@ public class ModelManager {
                                 }
                             }
 
-                            if (! EclipticSeasonsMixinPlugin.isOptLoad())
+                            if (!EclipticSeasonsMixinPlugin.isOptLoad())
                                 useMap.putIfAbsent(list, newList);
 
                             list = newList;
@@ -409,7 +402,7 @@ public class ModelManager {
                             && random.nextInt(weight * 4) == 0
                             && blockAndTintGetter.getBlockState(pos.above()).isAir()) {
                         List<BakedQuad> cc =
-                                 EclipticSeasonsMixinPlugin.isOptLoad() ? null : quadMap_GRASS.getOrDefault(list, null);
+                                EclipticSeasonsMixinPlugin.isOptLoad() ? null : quadMap_GRASS.getOrDefault(list, null);
                         if (cc != null) {
                             return cc;
                         } else {
@@ -421,7 +414,7 @@ public class ModelManager {
                                 newList = new ArrayList<BakedQuad>(size + snowList.size());
                                 newList.addAll(list);
                                 newList.addAll(snowList);
-                                if (! EclipticSeasonsMixinPlugin.isOptLoad())
+                                if (!EclipticSeasonsMixinPlugin.isOptLoad())
                                     quadMap_GRASS.putIfAbsent(list, newList);
                                 list = newList;
                             }

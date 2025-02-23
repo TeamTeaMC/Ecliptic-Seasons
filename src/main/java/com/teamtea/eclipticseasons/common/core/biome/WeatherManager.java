@@ -240,6 +240,30 @@ public class WeatherManager {
             var loc=biomes.getKey(biome);
             for (BiomeWeather biomeWeather : weathers) {
                 if (biomeWeather.location.equals(loc)) {
+
+                    return flag_cold
+                            || BiomeClimateManager.getDefaultTemperature(biome) <= BiomeClimateManager.SNOW_LEVEL ?
+                            Biome.Precipitation.SNOW : Biome.Precipitation.RAIN;
+                }
+            }
+        }
+
+        return Biome.Precipitation.NONE;
+    }
+
+    public static Biome.Precipitation getRainOrSnow(Level levelNull, Biome biome, BlockPos p198905) {
+
+        var level = fetchLevelIfNull(levelNull);
+        var provider = SolarUtil.getProvider(level);
+        var weathers = getBiomeList(level);
+        if (provider != null && weathers != null) {
+            var solarTerm = provider.getSolarTerm();
+            var snowTerm = SolarTerm.getSnowTerm(biome);
+            boolean flag_cold = solarTerm.isInTerms(snowTerm.getStart(), snowTerm.getEnd());
+            var biomes = level.registryAccess().registry(BuiltinRegistries.BIOME.key()).get();
+            var loc=biomes.getKey(biome);
+            for (BiomeWeather biomeWeather : weathers) {
+                if (biomeWeather.location.equals(loc)) {
                     if (biomeWeather.shouldClear())
                         return Biome.Precipitation.NONE;
 

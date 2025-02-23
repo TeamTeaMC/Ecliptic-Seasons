@@ -19,22 +19,21 @@ import com.teamtea.eclipticseasons.EclipticSeasons;
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = EclipticSeasons.MODID)
 public final class OverlayEventHandler {
     public final static ResourceLocation DEFAULT = new ResourceLocation("minecraft", "textures/gui/icons.png");
-    private  static DebugInfoRenderer BAR_4 =null;
+    private static DebugInfoRenderer BAR_4 = null;
 
     @SubscribeEvent(receiveCanceled = true)
     public static void onEvent(RenderGuiOverlayEvent.Pre event) {
-        if(BAR_4==null)BAR_4=new DebugInfoRenderer(Minecraft.getInstance());
+        if (BAR_4 == null) BAR_4 = new DebugInfoRenderer(Minecraft.getInstance());
 
         LocalPlayer clientPlayer = Minecraft.getInstance().player;
-        var level=Minecraft.getInstance().level;
-        if (clientPlayer != null &&level!=null) {
+        var level = Minecraft.getInstance().level;
+        if (clientPlayer != null && level != null) {
             // if (event.getType() == RenderGameOverlayEvent.ElementType.ALL)
             // if(event.getOverlay().id().getPath().equals("all"))
             {
                 if (ClientConfig.GUI.debugInfo.get()
-                        // || !FMLEnvironment.production
-                )
-                {
+                    // || !FMLEnvironment.production
+                ) {
                     var solar = SolarHolders.getSaveDataLazy(clientPlayer.level).orElse(new SolarDataManager(clientPlayer.level)).getSolarTerm();
                     long dayTime = clientPlayer.level.getDayTime();
                     float temp = clientPlayer.level.getBiome(clientPlayer.getOnPos()).get().getTemperature(clientPlayer.getOnPos());
@@ -43,7 +42,7 @@ public final class OverlayEventHandler {
                     int solarTime = SolarAngelHelper.getSolarAngelTime(clientPlayer.level, clientPlayer.level.getDayTime());
 
 
-                    BAR_4.renderStatusBar(event.getPoseStack(), event.getWindow().getGuiScaledWidth(), event.getWindow().getGuiScaledHeight(),level,clientPlayer, solar, dayTime, env, solarTime);
+                    BAR_4.renderStatusBar(event.getPoseStack(), event.getWindow().getGuiScaledWidth(), event.getWindow().getGuiScaledHeight(), level, clientPlayer, solar, dayTime, env, solarTime);
                 }
             }
         }

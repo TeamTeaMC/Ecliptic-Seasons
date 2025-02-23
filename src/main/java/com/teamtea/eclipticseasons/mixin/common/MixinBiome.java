@@ -33,8 +33,7 @@ public abstract class MixinBiome {
     // TODO：这里需要走一下判断是在客户端还是服务器
     @Inject(at = {@At("HEAD")}, method = {"getPrecipitation"}, cancellable = true)
     public void ecliptic$getPrecipitationAt(CallbackInfoReturnable<Biome.Precipitation> cir) {
-        if (FMLLoader.getDist() == Dist.DEDICATED_SERVER)
-            cir.setReturnValue(WeatherManager.getPrecipitationAt((Biome) (Object) this, BlockPos.ZERO));
+        cir.setReturnValue(WeatherManager.getPrecipitationAt((Biome) (Object) this, BlockPos.ZERO));
     }
 
     @Inject(at = {@At("HEAD")}, method = {"warmEnoughToRain"}, cancellable = true)

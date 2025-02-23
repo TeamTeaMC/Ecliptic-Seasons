@@ -3,14 +3,23 @@ package com.teamtea.eclipticseasons.mixin.client;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.llamalad7.mixinextras.sugar.Local;
+import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
+import com.teamtea.eclipticseasons.client.core.ClientWeatherChecker;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.LevelRenderer;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.core.BlockPos;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.biome.Biome;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import javax.annotation.Nullable;
 
@@ -22,70 +31,52 @@ public abstract class MixinLevelRender {
     @Nullable
     public ClientLevel level;
 
-
-    // 我们注释这个写法，因为它会让光影模组无法正常渲染
-    // @Inject(at = {@At("HEAD")}, method = {"renderSnowAndRain"}, cancellable = true)
-    // private void mixin_renderSnowAndRain(LightTexture p_109704_, float p_109705_, double p_109706_, double p_109707_, double p_109708_, CallbackInfo ci) {
-    //     if (minecraft == null || minecraft.level == null) ci.cancel();
-    //     if (level.effects().renderSnowAndRain(level, ticks, p_109705_, p_109704_, p_109706_, p_109707_, p_109708_))
-    //         return;
-    //     boolean re = ClientWeatherChecker.renderSnowAndRain((LevelRenderer) (Object) this, ticks, rainSizeX, rainSizeZ, RAIN_LOCATION, SNOW_LOCATION, p_109704_, p_109705_, p_109706_, p_109707_, p_109708_);
-    //     if (re)
-    //         ci.cancel();
-    // }
-
-
-    // @WrapOperation(
-    //         method = "renderSnowAndRain",
-    //         at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/ClientLevel;getRainLevel(F)F")
-    // )
-    // private float ecliptic$renderSnowAndRainCheckRain(ClientLevel clientLevel,float p_109705_,Operation<Float> original) {
-    //     // var anyRain = WeatherManager.getBiomeList(Minecraft.getInstance().level).stream().anyMatch(WeatherManager.BiomeWeather::shouldRain);
-    //     // return WeatherManager.getMaximumRainLevel(clientLevel,p_109705_);
-    //     return ClientWeatherChecker.getRainLevel(level, 1.0f);
-    // }
-
-
     // ModifyExpressionValue may cost much time than it
     @WrapOperation(
-            method = "renderSnowAndRain",
+            method = {"renderSnowAndRain", "tickRain"},
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/biome/Biome;warmEnoughToRain(Lnet/minecraft/core/BlockPos;)Z")
     )
-    private boolean ecliptic$renderSnowAndRain_getPrecipitationAt(Biome biome, BlockPos pos, Operation<Biome.Precipitation> original) {
-        return WeatherManager.getPrecipitationAt(level,biome,BlockPos.ZERO)== Biome.Precipitation.RAIN;
+    private boolean ecliptic$renderSnowAndRain_getPrecipitationAt(Biome instance, BlockPos blockPos, Operation<Biome.Precipitation> original) {
+        if (ClientWeatherChecker.isBiomeRainyLast(instance))
+            return WeatherManager.getPrecipitationAt(level, instance, blockPos) == Biome.Precipitation.RAIN;
+        return WeatherManager.getRainOrSnow(level, instance, blockPos) == Biome.Precipitation.RAIN;
     }
 
     @WrapOperation(
             method = "tickRain",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/biome/Biome;warmEnoughToRain(Lnet/minecraft/core/BlockPos;)Z")
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/biome/Biome;getPrecipitation()Lnet/minecraft/world/level/biome/Biome$Precipitation;")
     )
-    private boolean ecliptic$tickRain_getPrecipitationAt(Biome biome, BlockPos pos, Operation<Biome.Precipitation> original) {
-        return WeatherManager.getPrecipitationAt(level,biome,BlockPos.ZERO)== Biome.Precipitation.RAIN;
+    private Biome.Precipitation ecliptic$tickRain_getPrecipitationAt(Biome instance, Operation<Biome.Precipitation> original) {
+        if (ClientWeatherChecker.isBiomeRainyLast(instance))
+            return WeatherManager.getPrecipitationAt(level, instance, BlockPos.ZERO);
+        return WeatherManager.getRainOrSnow(level, instance, BlockPos.ZERO);
     }
 
-    //
-    // @Redirect(method = "renderSnowAndRain", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/LevelRenderer;getLightColor(Lnet/minecraft/world/level/BlockAndTintGetter;Lnet/minecraft/core/BlockPos;)I"))
-    // private int ecliptic$getAdjustedLightColorForSnow(BlockAndTintGetter level, BlockPos pos)
-    // {
-    //     final int packedLight = LevelRenderer.getLightColor(level, pos);
-    //     // if (Config.INSTANCE.weatherRenderChanges.getAsBoolean())
-    //     {
-    //         // Adjusts the light color via a heuristic that mojang uses to make snow appear more white
-    //         // This targets both paths, but since we always use the rain rendering, it's fine.
-    //         final int lightU = packedLight & 0xffff;
-    //         final int lightV = (packedLight >> 16) & 0xffff;
-    //         final int brightLightU = (lightU * 3 + 240) / 4;
-    //         final int brightLightV = (lightV * 3 + 240) / 4;
-    //         return brightLightU | (brightLightV << 16);
-    //     }
-    //     // return packedLight;
-    // }
 
+    @Inject(
+            method = "renderSnowAndRain",
+            at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderSystem;depthMask(Z)V")
+    )
+    private void ecliptic$renderSnowAndRain_ModifySnowAmount(LightTexture pLightTexture, float pPartialTick, double pCamX, double pCamY, double pCamZ, CallbackInfo ci, @Local(ordinal = 3) LocalIntRef integerLocalRef) {
+        integerLocalRef.set(ClientWeatherChecker.ModifySnowAmount(integerLocalRef.get(), pPartialTick, level));
+    }
 
-    // @ModifyConstant(method = "renderSnowAndRain", constant = {@Constant(intValue = 5), @Constant(intValue = 10)})
-    // private int ecliptic$ModifySnowAmount(int constant)
-    // {
-    //     // This constant is used to control how much snow is rendered - 5 with default, 10 with fancy graphics. By default, we bump this all the way to 15.
-    //     return ClientWeatherChecker.ModifySnowAmount(constant);
-    // }
+    @WrapOperation(
+            method = "tickRain",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/ClientLevel;playLocalSound(Lnet/minecraft/core/BlockPos;Lnet/minecraft/sounds/SoundEvent;Lnet/minecraft/sounds/SoundSource;FFZ)V")
+    )
+    private void ecliptic$tickRain_modifySound(ClientLevel instance, BlockPos blockPos, SoundEvent soundEvent, SoundSource soundSource, float pVolume, float pPitch, boolean pDistanceDelay, Operation<Void> original) {
+        {
+            original.call(instance, blockPos, soundEvent, soundSource, pVolume, pPitch, pDistanceDelay);
+        }
+    }
+
+    @ModifyVariable(
+            method = {"tickRain"},
+            at = @At("STORE"),
+            ordinal = 0
+    )
+    private int ecliptic$tickRain_modifyAmount(int originalNum) {
+        return originalNum;
+    }
 }

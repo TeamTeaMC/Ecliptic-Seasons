@@ -1,7 +1,7 @@
 {
   "required": true,
   "package": "com.teamtea.eclipticseasons.mixin",
-  "compatibilityLevel": "JAVA_8",
+  "compatibilityLevel": "JAVA_17",
   "refmap": "eclipticseasons.refmap.json",
   "mixins": [
     "common.MixinBiome",
@@ -27,7 +27,6 @@
   "client": [
     "client.ItemBlockRenderTypes",
     "client.MixinBlockRenderVanilla",
-    "client.MixinClientBiome",
     "client.MixinClientClientLevel",
     "client.MixinClientLevel",
     "client.MixinClientLevelChunk",
