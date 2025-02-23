@@ -2,6 +2,7 @@ package com.teamtea.eclipticseasons.mixin;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.client.core.ModelManager;
+import com.teamtea.eclipticseasons.compat.CompatModule;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
 import org.objectweb.asm.tree.ClassNode;
@@ -28,7 +29,7 @@ public class EclipticSeasonsMixinPlugin implements IMixinConfigPlugin {
     }
     @Override
     public void onLoad(String mixinPackage) {
-
+        CompatModule.init();
     }
 
     @Override
