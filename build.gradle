@@ -6,7 +6,7 @@ buildscript {
         maven { url = 'https://maven.parchmentmc.org' }
     }
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '6.+', changing: true
         classpath group: 'org.spongepowered', name: 'mixingradle', version: '0.7+'
 
         classpath group: 'org.parchmentmc', name: 'librarian', version: "1.+"
@@ -31,6 +31,10 @@ archivesBaseName = mod_name_s
 java.toolchain.languageVersion = JavaLanguageVersion.of(8)
 
 println "Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty 'java.vm.version'} (${System.getProperty 'java.vendor'}), Arch: ${System.getProperty 'os.arch'}"
+sourceSets {
+    onlyMain {
+    }
+}
 minecraft {
     // The mappings can be changed at any time and must be in the following format.
     // Channel:   Version:
@@ -78,6 +82,7 @@ minecraft {
             mods {
                 "${mod_id}" {
                     source sourceSets.main
+                    source sourceSets.onlyMain
                 }
             }
         }
@@ -200,8 +205,8 @@ dependencies {
     compileOnly fg.deobf("curse.maven:embeddium-908741:5322311")
     compileOnly fg.deobf("curse.maven:oculus-581495:5194273")
 
-    runtimeOnly fg.deobf("curse.maven:embeddium-908741:5322311")
-    runtimeOnly fg.deobf("curse.maven:oculus-581495:5194273")
+    onlyMainRuntimeOnly fg.deobf("curse.maven:embeddium-908741:5322311")
+    onlyMainRuntimeOnly fg.deobf("curse.maven:oculus-581495:5194273")
 
     compileOnly "libs:OptiFine:1.16.5_HD_U_G8"
 
@@ -210,8 +215,17 @@ dependencies {
 
 
 //    runtimeOnly fg.deobf("curse.maven:journeymap-32274:5208370")
-    runtimeOnly fg.deobf("curse.maven:farmers-delight-398521:3765350")
-    runtimeOnly fg.deobf("curse.maven:croptopia-415438:3847095")
+    onlyMainRuntimeOnly fg.deobf("curse.maven:farmers-delight-398521:3765350")
+    onlyMainRuntimeOnly fg.deobf("curse.maven:croptopia-415438:3847095")
+
+    compileOnly fg.deobf("curse.maven:cold-sweat-506194:6215891")
+//    onlyMainRuntimeOnly fg.deobf("curse.maven:cold-sweat-506194:5874642")
+
+    compileOnly fg.deobf("curse.maven:legendary-survival-overhaul-840254:6079094")
+//    onlyMainRuntimeOnly fg.deobf("curse.maven:legendary-survival-overhaul-840254:6079094")
+
+    compileOnly fg.deobf("curse.maven:fbp-renewed-937011:5895319")
+    onlyMainRuntimeOnly fg.deobf("curse.maven:fbp-renewed-937011:5895319")
 
 }
 

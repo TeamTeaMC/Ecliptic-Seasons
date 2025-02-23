@@ -22,7 +22,10 @@
     "common.entity.monster.MixinMonster",
     "common.entity.player.MixinServerPlayer",
     "common.entity.projectile.MixinThrownTrident",
-    "common.loot.MixinWeatherCheck"
+    "common.loot.MixinWeatherCheck",
+    "compat.legendarysurvivaloverhaul.MixinModCore",
+    "compat.legendarysurvivaloverhaul.MixinTemperatureModifierRegistry",
+    "compat.legendarysurvivaloverhaul.MixinWeatherModifier"
   ],
   "client": [
     "client.MixinBlockRenderVanilla",
@@ -36,9 +39,9 @@
     "client.MixinLocalPlayer",
     "client.block.MixinLeavesBlock",
     "client.sound.MixinMusicManager",
+    "compat.fbp.MixinFancyBlockParticles",
     "compat.embeddium.MixinBlockRender2",
-    "compat.optifine.MixinBlockModelCustomizer",
-    "compat.rubidium.MixinBlockRender2"
+    "compat.optifine.MixinBlockModelCustomizer"
   ],
   "injectors": {
     "defaultRequire": 1
