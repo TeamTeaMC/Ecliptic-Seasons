@@ -21,7 +21,7 @@ public abstract class MixinBiome {
     public abstract float getTemperature(BlockPos p_47506_);
 
     @Inject(at = {@At("HEAD")}, method = {"getPrecipitationAt"}, cancellable = true)
-    public void ecliptic$getPrecipitationAt(BlockPos pos, CallbackInfoReturnable<Biome.Precipitation> cir) {
+    public void eclipticseasons$getPrecipitationAt(BlockPos pos, CallbackInfoReturnable<Biome.Precipitation> cir) {
         if (EclipticUtil.useSolarWeather())
             cir.setReturnValue(WeatherManager.getPrecipitationAt((Biome) (Object) this, pos));
         else {
@@ -30,13 +30,13 @@ public abstract class MixinBiome {
     }
 
     @Inject(at = {@At("HEAD")}, method = {"getBaseTemperature"}, cancellable = true)
-    public void ecliptic$getBaseTemperature(CallbackInfoReturnable<Float> cir) {
+    public void eclipticseasons$getBaseTemperature(CallbackInfoReturnable<Float> cir) {
         cir.setReturnValue(BiomeClimateManager.agent$GetBaseTemperature((Biome) (Object) this));
     }
 
 
     @Inject(at = {@At("HEAD")}, method = {"hasPrecipitation"}, cancellable = true)
-    public void ecliptic$hasPrecipitation(CallbackInfoReturnable<Boolean> cir) {
+    public void eclipticseasons$hasPrecipitation(CallbackInfoReturnable<Boolean> cir) {
         if (EclipticUtil.useSolarWeather())
             cir.setReturnValue(BiomeClimateManager.agent$hasPrecipitation((Biome) (Object) this));
         else {

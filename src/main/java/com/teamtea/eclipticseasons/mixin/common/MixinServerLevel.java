@@ -39,13 +39,13 @@ public abstract class MixinServerLevel extends Level {
 
     // 早晨有可能继续下雨
     @Inject(at = {@At("HEAD")}, method = {"resetWeatherCycle"}, cancellable = true)
-    public void ecliptic$resetWeatherCycle(CallbackInfo ci) {
+    public void eclipticseasons$resetWeatherCycle(CallbackInfo ci) {
         if (EclipticUtil.useSolarWeather())
             ci.cancel();
     }
 
     @Inject(at = {@At("HEAD")}, method = {"advanceWeatherCycle"}, cancellable = true)
-    public void ecliptic$advanceWeatherCycle(CallbackInfo ci) {
+    public void eclipticseasons$advanceWeatherCycle(CallbackInfo ci) {
         boolean cancel = WeatherManager.agentAdvanceWeatherCycle((ServerLevel) (Object) this, null, null, ((ServerLevel) (Object) this).getRandom());
         if (cancel && EclipticUtil.useSolarWeather())
             ci.cancel();
@@ -55,7 +55,7 @@ public abstract class MixinServerLevel extends Level {
             method = "advanceWeatherCycle",
             at = @At(value = "INVOKE", ordinal = 1, target = "Lnet/minecraft/util/valueproviders/IntProvider;sample(Lnet/minecraft/util/RandomSource;)I")
     )
-    private int ecliptic$advanceWeatherCycle_sample_THUNDER_DELAY(IntProvider intProvider, RandomSource randomSource, Operation<Integer> original) {
+    private int eclipticseasons$advanceWeatherCycle_sample_THUNDER_DELAY(IntProvider intProvider, RandomSource randomSource, Operation<Integer> original) {
         if (EclipticUtil.isSolarWeatherClosed()) {
             return VanillaWeather.replaceThunderDelay(this, original.call(intProvider, randomSource));
         }
@@ -66,7 +66,7 @@ public abstract class MixinServerLevel extends Level {
             method = "advanceWeatherCycle",
             at = @At(value = "INVOKE", ordinal = 3, target = "Lnet/minecraft/util/valueproviders/IntProvider;sample(Lnet/minecraft/util/RandomSource;)I")
     )
-    private int ecliptic$advanceWeatherCycle_sample_RAIN_DELAY(IntProvider intProvider, RandomSource randomSource, Operation<Integer> original) {
+    private int eclipticseasons$advanceWeatherCycle_sample_RAIN_DELAY(IntProvider intProvider, RandomSource randomSource, Operation<Integer> original) {
         if (EclipticUtil.isSolarWeatherClosed()) {
             return VanillaWeather.replaceRainDelay(this, original.call(intProvider, randomSource));
         }
@@ -77,7 +77,7 @@ public abstract class MixinServerLevel extends Level {
             method = "tickChunk",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/material/FluidState;isRandomlyTicking()Z")
     )
-    private void ecliptic$tickChunk_handleRandomTick(LevelChunk chunk, int randomTickSpeed, CallbackInfo ci, @Local BlockState blockState, @Local BlockPos blockPos) {
+    private void eclipticseasons$tickChunk_handleRandomTick(LevelChunk chunk, int randomTickSpeed, CallbackInfo ci, @Local BlockState blockState, @Local BlockPos blockPos) {
         CropGrowthHandler.handleRandomTick(this,chunk,blockPos,blockState);
     }
 
@@ -85,7 +85,7 @@ public abstract class MixinServerLevel extends Level {
             method = "tickChunk",
             at = @At(value = "HEAD")
     )
-    private void ecliptic$tickChunk_handleRandomTick_clear(LevelChunk chunk, int randomTickSpeed, CallbackInfo ci) {
+    private void eclipticseasons$tickChunk_handleRandomTick_clear(LevelChunk chunk, int randomTickSpeed, CallbackInfo ci) {
         CropGrowthHandler.handleRandomTick2(this,chunk);
     }
 
@@ -93,7 +93,7 @@ public abstract class MixinServerLevel extends Level {
             method = "tickChunk",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/biome/Biome;getPrecipitationAt(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/biome/Biome$Precipitation;")
     )
-    private Biome.Precipitation ecliptic$tickChunk_getPrecipitationAt(Biome biome, BlockPos pos, Operation<Biome.Precipitation> original) {
+    private Biome.Precipitation eclipticseasons$tickChunk_getPrecipitationAt(Biome biome, BlockPos pos, Operation<Biome.Precipitation> original) {
         if (EclipticUtil.useSolarWeather())
             return WeatherManager.getPrecipitationAt(this, biome, pos);
         return VanillaWeather.handlePrecipitationAt(this, biome, pos);
@@ -104,7 +104,7 @@ public abstract class MixinServerLevel extends Level {
             method = "tickChunk",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;isRaining()Z")
     )
-    private boolean ecliptic$tickChunk_isRaining(ServerLevel serverLevel, Operation<Boolean> original, @Local(ordinal = 0) LevelChunk levelChunk) {
+    private boolean eclipticseasons$tickChunk_isRaining(ServerLevel serverLevel, Operation<Boolean> original, @Local(ordinal = 0) LevelChunk levelChunk) {
         if (EclipticUtil.useSolarWeather()) {
             var chunkpos = levelChunk.getPos();
             int i = chunkpos.getMiddleBlockX();
@@ -119,7 +119,7 @@ public abstract class MixinServerLevel extends Level {
             method = "tickChunk",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;isThundering()Z")
     )
-    private boolean ecliptic$tickChunk_isThundering(ServerLevel serverLevel, Operation<Boolean> original, @Local(ordinal = 0) LevelChunk levelChunk) {
+    private boolean eclipticseasons$tickChunk_isThundering(ServerLevel serverLevel, Operation<Boolean> original, @Local(ordinal = 0) LevelChunk levelChunk) {
         if (EclipticUtil.useSolarWeather()) {
             var chunkpos = levelChunk.getPos();
             int i = chunkpos.getMiddleBlockX();

@@ -229,3 +229,9 @@ enhancing detection speed and accuracy for more efficient performance.
 
 - Add support for Snowy Spirit, let enjoy skiing and Christmas Holiday
 - Add support for Haunted Harvest, let enjoy Halloween Holiday
+
+---
+
+## **0.10-pre5**
+
+- Add support for InControl to check if rain or thunder and four seasons

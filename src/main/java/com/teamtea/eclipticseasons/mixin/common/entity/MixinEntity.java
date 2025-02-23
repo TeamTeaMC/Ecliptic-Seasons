@@ -29,7 +29,7 @@ public abstract class MixinEntity {
             value = "INVOKE",
             target = "Lnet/minecraft/world/level/block/state/BlockState;getSoundType(Lnet/minecraft/world/level/LevelReader;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/entity/Entity;)Lnet/minecraft/world/level/block/SoundType;")},
             method = {"playStepSound"})
-    public SoundType ecliptic$playStepSound(BlockState instance, LevelReader levelReader, BlockPos blockPos, Entity entity, Operation<SoundType> original, @Local(argsOnly = true) BlockPos pos, @Local(argsOnly = true) BlockState state) {
+    public SoundType eclipticseasons$playStepSound(BlockState instance, LevelReader levelReader, BlockPos blockPos, Entity entity, Operation<SoundType> original, @Local(argsOnly = true) BlockPos pos, @Local(argsOnly = true) BlockState state) {
         if (EclipticSeasonsApi.getInstance().isSnowyBlock(this.level, state, pos))
             return Blocks.SNOW.defaultBlockState().getSoundType(this.level, pos, entity);
         return original.call(instance, levelReader, blockPos, entity);
@@ -38,7 +38,7 @@ public abstract class MixinEntity {
     @WrapOperation(at = {@At(value = "NEW",
             target = "(Lnet/minecraft/core/particles/ParticleType;Lnet/minecraft/world/level/block/state/BlockState;)Lnet/minecraft/core/particles/BlockParticleOption;")},
             method = {"spawnSprintParticle"})
-    public BlockParticleOption ecliptic$spawnSprintParticle_snow(ParticleType<BlockParticleOption> type, BlockState state, Operation<BlockParticleOption> original, @Local(ordinal = 0) BlockPos pos) {
+    public BlockParticleOption eclipticseasons$spawnSprintParticle_snow(ParticleType<BlockParticleOption> type, BlockState state, Operation<BlockParticleOption> original, @Local(ordinal = 0) BlockPos pos) {
         if (EclipticSeasonsApi.getInstance().isSnowyBlock(level, state, pos))
         {
             state=Blocks.SNOW.defaultBlockState();

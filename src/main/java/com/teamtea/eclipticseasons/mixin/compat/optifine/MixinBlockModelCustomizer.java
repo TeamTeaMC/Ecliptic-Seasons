@@ -31,7 +31,7 @@ public abstract class MixinBlockModelCustomizer {
     // opt 似乎无法使用
     // IdentityHashMap似乎不适合Opt
     @Inject(at = {@At(value = "RETURN"),}, remap = false, method = {"getRenderQuads(Ljava/util/List;Lnet/minecraft/world/level/BlockAndTintGetter;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/BlockPos;Lnet/minecraft/core/Direction;Lnet/minecraft/client/renderer/RenderType;JLnet/optifine/render/RenderEnv;)Ljava/util/List;"}, cancellable = true)
-    private static void ecliptic$getRenderQuads(List<BakedQuad> quads, BlockAndTintGetter worldIn, BlockState stateIn, BlockPos posIn, Direction enumfacing, RenderType layer, long rand, net.optifine.render.RenderEnv renderEnv, CallbackInfoReturnable<List<BakedQuad>> cir) {
+    private static void eclipticseasons$getRenderQuads(List<BakedQuad> quads, BlockAndTintGetter worldIn, BlockState stateIn, BlockPos posIn, Direction enumfacing, RenderType layer, long rand, net.optifine.render.RenderEnv renderEnv, CallbackInfoReturnable<List<BakedQuad>> cir) {
         List<BakedQuad> bakedQuadList = cir.getReturnValue();
         if (!bakedQuadList.isEmpty() && Minecraft.getInstance().level != null) {
             ecliptic_1_20_1_opt$randomSource.setSeed(rand);

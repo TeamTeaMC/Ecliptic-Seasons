@@ -27,15 +27,15 @@ public abstract class MixinFabricVanillaModelEncoder {
             method = "emitBlockQuads",
             at = @At(value = "INVOKE",  target = "Lnet/minecraft/client/resources/model/BakedModel;getQuads(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/Direction;Lnet/minecraft/util/RandomSource;Lnet/minecraftforge/client/model/data/ModelData;Lnet/minecraft/client/renderer/RenderType;)Ljava/util/List;")
     )
-    private static List<BakedQuad> ecliptic$emitBlockQuads_getQuads_cancel_top(List<BakedQuad> original,
+    private static List<BakedQuad> eclipticseasons$emitBlockQuads_getQuads_cancel_top(List<BakedQuad> original,
                                                                                @Local(argsOnly = true) BakedModel bakedModel,
                                                                                @Local(argsOnly = true) RenderContext renderContext,
                                                                                @Local(argsOnly = true) Supplier<RandomSource> randomSourceSupplier,
                                                                                @Local(argsOnly = true) BlockState state,
                                                                                @Local Direction direction) {
         if (renderContext instanceof TerrainRenderContextLevelGetter terrainRenderContextLevelGetter) {
-            BlockAndTintGetter blockAndTintGetter = terrainRenderContextLevelGetter.eclipticSeasons$get(); {
-                return ModelManager.cancelTop(bakedModel, blockAndTintGetter, state, terrainRenderContextLevelGetter.eclipticSeasons$getPos(), direction, randomSourceSupplier.get(), state.getSeed(terrainRenderContextLevelGetter.eclipticSeasons$getPos()), original);
+            BlockAndTintGetter blockAndTintGetter = terrainRenderContextLevelGetter.eclipticseasons$get(); {
+                return ModelManager.cancelTop(bakedModel, blockAndTintGetter, state, terrainRenderContextLevelGetter.eclipticseasons$getPos(), direction, randomSourceSupplier.get(), state.getSeed(terrainRenderContextLevelGetter.eclipticseasons$getPos()), original);
                 }
         }
         return original;

@@ -39,7 +39,7 @@ public abstract class MixinSpriteLoader {
     // 我们的问题在于检查
     // 这里可以检查加载的纹理，过一遍
     @Inject(method = "loadSprite", at = @At("RETURN"))
-    private static void ecliptic$loadSprite(ResourceLocation resourceLocation, Resource resource, CallbackInfoReturnable<SpriteContents> cir) {
+    private static void eclipticseasons$loadSprite(ResourceLocation resourceLocation, Resource resource, CallbackInfoReturnable<SpriteContents> cir) {
         if (true)
         {
             return;
@@ -97,7 +97,7 @@ public abstract class MixinSpriteLoader {
 
     // 这个方法改一下，总之可以改
     @ModifyVariable(method = "stitch", argsOnly = true, index = 1, at = @At("HEAD"))
-    private List<SpriteContents> ecliptic$stitch(List<SpriteContents> contents) {
+    private List<SpriteContents> eclipticseasons$stitch(List<SpriteContents> contents) {
         if (true)
         {
             return contents;
@@ -123,7 +123,7 @@ public abstract class MixinSpriteLoader {
                                 NativeImage originalImage = spriteContents.getOriginalImage();
                                 if (originalImage.getWidth() == finalSnowyImage.getWidth()
                                         && originalImage.getHeight() == finalSnowyImage.getHeight()) {
-                                    SpriteContents spriteContents1 = ecliptic$getProcessedSpriteContents(finalSnowyImage, spriteContents);
+                                    SpriteContents spriteContents1 = eclipticseasons$getProcessedSpriteContents(finalSnowyImage, spriteContents);
                                     if (spriteContents1 != null)
                                         replacedContents.add(spriteContents1);
                                 }
@@ -139,7 +139,7 @@ public abstract class MixinSpriteLoader {
     }
 
     @Unique
-    private static SpriteContents ecliptic$getProcessedSpriteContents(
+    private static SpriteContents eclipticseasons$getProcessedSpriteContents(
             NativeImage snowyImage, SpriteContents contents) {
         ResourceLocation name = contents.name();
         AnimationMetadataSection section = null;

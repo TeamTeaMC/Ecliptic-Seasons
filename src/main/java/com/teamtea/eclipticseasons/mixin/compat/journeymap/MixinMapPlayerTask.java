@@ -42,7 +42,7 @@ public abstract class MixinMapPlayerTask extends BaseMapTask {
     // @WrapOperation(at = {@At(value = "INVOKE", target = "Ljava/util/List;removeIf(Ljava/util/function/Predicate;)Z")},
     //         method = {"initTask"},
     //         remap = false)
-    // private boolean ecliptic$initTask(List<ChunkPos> instance, Predicate<ChunkPos> predicate, Operation<Boolean> original,
+    // private boolean eclipticseasons$initTask(List<ChunkPos> instance, Predicate<ChunkPos> predicate, Operation<Boolean> original,
     //                                   @Local RenderSpec renderSpec) {
     //     // if (mapType.isSurface()) {
     //     //     this.chunkCoords.addAll(chunkCoords);

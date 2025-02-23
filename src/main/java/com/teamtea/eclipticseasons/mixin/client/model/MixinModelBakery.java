@@ -38,7 +38,7 @@ public abstract class MixinModelBakery {
     @Shadow @Final private Map<ResourceLocation, UnbakedModel> unbakedCache;
 
     @Inject(method = "bakeModels", at = @At("RETURN"))
-    public void ecliptic$bakeModels(BiFunction<ResourceLocation, Material, TextureAtlasSprite> atlasSpriteGetter, CallbackInfo ci) {
+    public void eclipticseasons$bakeModels(BiFunction<ResourceLocation, Material, TextureAtlasSprite> atlasSpriteGetter, CallbackInfo ci) {
         if (true)
         {
             return;

@@ -82,7 +82,7 @@ public class MixinChunkRenderDispatcher {
 
         if (snowModel != null) {
             original = false;
-            ecliptic$renderModel(snowModel,pChunkBufferBuilderPack, blockpos2, blockstate, posestack, renderchunkregion, randomsource, renderTypeSet);
+            eclipticseasons$renderModel(snowModel,pChunkBufferBuilderPack, blockpos2, blockstate, posestack, renderchunkregion, randomsource, renderTypeSet);
         }
 
         return original;
@@ -90,7 +90,7 @@ public class MixinChunkRenderDispatcher {
 
 
     @Unique
-    private static void ecliptic$renderModel(BakedModel bakedModel, ChunkBufferBuilderPack pChunkBufferBuilderPack, BlockPos pos, BlockState state, PoseStack posestack, RenderChunkRegion renderchunkregion, RandomSource random, Set<RenderType> renderTypeSet) {
+    private static void eclipticseasons$renderModel(BakedModel bakedModel, ChunkBufferBuilderPack pChunkBufferBuilderPack, BlockPos pos, BlockState state, PoseStack posestack, RenderChunkRegion renderchunkregion, RandomSource random, Set<RenderType> renderTypeSet) {
         RenderType renderType =  ModelManager.getRenderType(state);
         BufferBuilder bufferbuilder2 = pChunkBufferBuilderPack.builder(renderType);
         // this$0.beginLayer(bufferbuilder2);

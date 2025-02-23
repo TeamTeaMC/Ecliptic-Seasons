@@ -23,7 +23,7 @@ public abstract class MixinIBlockExtension {
     @Inject(at = {@At("HEAD")},
             method = {"getMapColor"},
             cancellable = true)
-    public void ecliptic$getColor(BlockGetter pLevel, BlockPos pPos, CallbackInfoReturnable<MapColor> cir) {
+    public void eclipticseasons$getColor(BlockGetter pLevel, BlockPos pPos, CallbackInfoReturnable<MapColor> cir) {
         var ii = MapColorReplacer.getTopSnowColor(pLevel, asState(), pPos);
         if (ii != null)
             cir.setReturnValue(ii);

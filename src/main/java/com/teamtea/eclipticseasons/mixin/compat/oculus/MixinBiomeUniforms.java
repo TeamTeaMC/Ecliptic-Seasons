@@ -31,7 +31,7 @@ public abstract class MixinBiomeUniforms {
             method = "addBiomeUniforms",
             at = @At(value = "HEAD")
     )
-    private static void ecliptic$addBiomeUniforms_pre(UniformHolder uniforms, CallbackInfo ci) {
+    private static void eclipticseasons$addBiomeUniforms_pre(UniformHolder uniforms, CallbackInfo ci) {
         uniforms.uniform1i(UniformUpdateFrequency.PER_TICK, "biome_precipitation", playerI((player) -> {
             Biome.Precipitation precipitation =
                     EclipticSeasonsApi.getInstance().getPrecipitationAt(player.level(),player.blockPosition());

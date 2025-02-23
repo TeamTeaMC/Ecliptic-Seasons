@@ -16,7 +16,7 @@ public class MixinLeavesBlock {
 
 
     @Inject(at = {@At("HEAD")}, method = {"animateTick"}, remap = true)
-    private void ecliptic$onProjectileHit_isThundering(BlockState p_221374_, Level level, BlockPos pos, RandomSource randomSource, CallbackInfo ci) {
+    private void eclipticseasons$onProjectileHit_isThundering(BlockState p_221374_, Level level, BlockPos pos, RandomSource randomSource, CallbackInfo ci) {
         if (randomSource.nextInt(15) == 1) {
             BlockPos blockpos = pos.below();
             BlockState blockstate = level.getBlockState(blockpos);

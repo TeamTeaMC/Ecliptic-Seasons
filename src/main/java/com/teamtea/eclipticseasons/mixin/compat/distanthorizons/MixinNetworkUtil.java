@@ -19,7 +19,7 @@ public abstract class MixinNetworkUtil {
 
     @Inject(remap = false,
             at = {@At("HEAD")}, method = {"processEmptyMessage"})
-    private static void ecliptic$processEmptyMessage(EmptyMessage emptyMessage, Supplier<NetworkEvent.Context> context, CallbackInfoReturnable<Boolean> cir) {
+    private static void eclipticseasons$processEmptyMessage(EmptyMessage emptyMessage, Supplier<NetworkEvent.Context> context, CallbackInfoReturnable<Boolean> cir) {
         context.get().enqueueWork(() -> {
             if (ClientConfig.Renderer.enhancementChunkRenderUpdate.get() && ClientConfig.Renderer.forceChunkRenderUpdate.get()) {
                 DHTool.forceReloadAll();

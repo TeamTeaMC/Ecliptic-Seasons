@@ -12,12 +12,12 @@ import org.spongepowered.asm.mixin.Mixin;
 @Mixin({IndigoBlockRenderContext.class})
 public abstract class MixinBlockRenderer extends AbstractBlockRenderContext implements TerrainRenderContextLevelGetter {
     @Override
-    public BlockAndTintGetter eclipticSeasons$get() {
+    public BlockAndTintGetter eclipticseasons$get() {
         return blockInfo.blockView;
     }
 
     @Override
-    public BlockPos eclipticSeasons$getPos() {
+    public BlockPos eclipticseasons$getPos() {
         return blockInfo.blockPos;
     }
 }

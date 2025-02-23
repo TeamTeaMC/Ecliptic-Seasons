@@ -16,7 +16,7 @@ public abstract class MixinSnowySpirit {
     @Inject(at = {@At(value = "HEAD")},
             method = {"isChristmasSeason"},
             remap = false, cancellable = true)
-    private static void ecliptic$isChristmasSeason(Level level, CallbackInfoReturnable<Boolean> cir) {
+    private static void eclipticseasons$isChristmasSeason(Level level, CallbackInfoReturnable<Boolean> cir) {
         if (CompatModule.CommonConfig.snowyspirit_enable.get())
             cir.setReturnValue(CompatModule.CommonConfig.snowyspirit_winters.get().contains(EclipticSeasonsApi.getInstance().getSolarTerm(level)));
     }

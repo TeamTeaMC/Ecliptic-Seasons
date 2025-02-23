@@ -17,7 +17,7 @@ public abstract class MixinHauntedHarvest {
     @Inject(at = {@At(value = "HEAD")},
             method = {"isHalloween"},
             remap = false, cancellable = true)
-    private void ecliptic$isHalloween(Level level, CallbackInfoReturnable<Boolean> cir) {
+    private void eclipticseasons$isHalloween(Level level, CallbackInfoReturnable<Boolean> cir) {
         if (CompatModule.CommonConfig.hauntedharvest_enable.get())
             cir.setReturnValue(CompatModule.CommonConfig.hauntedharvest_halloween_time.get().contains(EclipticSeasonsApi.getInstance().getSolarTerm(level)));
     }
@@ -25,7 +25,7 @@ public abstract class MixinHauntedHarvest {
     @Inject(at = {@At(value = "HEAD")},
             method = {"shouldWearCustomPumpkin"},
             remap = false, cancellable = true)
-    private void ecliptic$shouldWearCustomPumpkin(Level level, CallbackInfoReturnable<Boolean> cir) {
+    private void eclipticseasons$shouldWearCustomPumpkin(Level level, CallbackInfoReturnable<Boolean> cir) {
         if (CompatModule.CommonConfig.hauntedharvest_enable.get())
             cir.setReturnValue(CompatModule.CommonConfig.hauntedharvest_mobs_wear_pumpkins_time.get().contains(EclipticSeasonsApi.getInstance().getSolarTerm(level)));
     }

@@ -34,7 +34,7 @@ public abstract class MixinFullDataToRenderDataTransformer {
             method = "setRenderColumnView",
             at = @At(value = "INVOKE", target = "Lcom/seibel/distanthorizons/core/level/IDhClientLevel;computeBaseColor(Lcom/seibel/distanthorizons/core/pos/blockPos/DhBlockPos;Lcom/seibel/distanthorizons/core/wrapperInterfaces/world/IBiomeWrapper;Lcom/seibel/distanthorizons/core/wrapperInterfaces/block/IBlockStateWrapper;)I")
     )
-    private static int ecliptic$setRenderColumnView_computeBaseColor(IDhClientLevel instance,
+    private static int eclipticseasons$setRenderColumnView_computeBaseColor(IDhClientLevel instance,
                                                                      DhBlockPos dhBlockPos,
                                                                      IBiomeWrapper iBiomeWrapper,
                                                                      IBlockStateWrapper iBlockStateWrapper,

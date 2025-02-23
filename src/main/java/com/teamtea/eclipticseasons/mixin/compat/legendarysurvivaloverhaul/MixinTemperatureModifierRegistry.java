@@ -24,7 +24,7 @@ public abstract class MixinTemperatureModifierRegistry {
             method = "<clinit>",
             at = @At(value = "TAIL")
     )
-    private static void ecliptic$lambda$onLoadComplete$1(CallbackInfo ci) {
-        LSO_ESUtil.ecliptic$EclipticSeasons = MODIFIERS.register("integration/" + EclipticSeasons.MODID, LSO_ESModifier::new);
+    private static void eclipticseasons$lambda$onLoadComplete$1(CallbackInfo ci) {
+        LSO_ESUtil.eclipticseasons$EclipticSeasons = MODIFIERS.register("integration/" + EclipticSeasons.MODID, LSO_ESModifier::new);
     }
 }

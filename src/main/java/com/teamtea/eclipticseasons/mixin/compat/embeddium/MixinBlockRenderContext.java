@@ -10,16 +10,16 @@ import org.spongepowered.asm.mixin.Unique;
 public abstract class MixinBlockRenderContext implements FabricModelDelayChecker {
 
     @Unique
-    boolean ecliptic$isFabricModelYet = false;
+    boolean eclipticseasons$isFabricModelYet = false;
 
 
     @Override
     public boolean isLastFabric() {
-        return ecliptic$isFabricModelYet;
+        return eclipticseasons$isFabricModelYet;
     }
 
     @Override
     public void updateIsLastFabric(boolean is) {
-        this.ecliptic$isFabricModelYet = is;
+        this.eclipticseasons$isFabricModelYet = is;
     }
 }

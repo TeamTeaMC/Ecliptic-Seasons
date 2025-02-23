@@ -27,7 +27,7 @@ public abstract class MixinLivingEntity extends Entity{
     @WrapOperation(at = {@At(value = "NEW",
             target = "(Lnet/minecraft/core/particles/ParticleType;Lnet/minecraft/world/level/block/state/BlockState;)Lnet/minecraft/core/particles/BlockParticleOption;")},
             method = {"checkFallDamage"})
-    public BlockParticleOption ecliptic$checkFallDamage_snow(ParticleType<BlockParticleOption> type, BlockState state,Operation<BlockParticleOption> original, @Local(argsOnly = true) BlockPos pos) {
+    public BlockParticleOption eclipticseasons$checkFallDamage_snow(ParticleType<BlockParticleOption> type, BlockState state,Operation<BlockParticleOption> original, @Local(argsOnly = true) BlockPos pos) {
         if (EclipticSeasonsApi.getInstance().isSnowyBlock(level(), state, pos))
         {
             state=Blocks.SNOW.defaultBlockState();

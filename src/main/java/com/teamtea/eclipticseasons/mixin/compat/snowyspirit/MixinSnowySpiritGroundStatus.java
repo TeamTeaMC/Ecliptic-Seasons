@@ -17,7 +17,7 @@ public abstract class MixinSnowySpiritGroundStatus {
     @ModifyExpressionValue(at = {@At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;getBlockState(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/block/state/BlockState;")},
             method = {"computeFriction"},
             remap = false)
-    private static BlockState ecliptic$computeFriction(BlockState original,
+    private static BlockState eclipticseasons$computeFriction(BlockState original,
                                                        @Local(argsOnly = true) Entity sled) {
         if (EclipticSeasonsApi.getInstance().isSnowyBlock(sled.level(), original, sled.getOnPos()))
             original = Blocks.SNOW.defaultBlockState();

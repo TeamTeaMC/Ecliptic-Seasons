@@ -25,7 +25,7 @@ public class MixinBee_BeePollinateGoal {
             method = "canBeeUse",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;isRaining()Z")
     )
-    private boolean ecliptic$canBeeUse_checkRain(Level instance, Operation<Boolean> original) {
+    private boolean eclipticseasons$canBeeUse_checkRain(Level instance, Operation<Boolean> original) {
         if (EclipticUtil.useSolarWeather())
             return WeatherUtil.isEntityInRainOrSnow(this$0);
         return original.call(instance);
@@ -36,7 +36,7 @@ public class MixinBee_BeePollinateGoal {
             method = "canBeeContinueToUse",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;isRaining()Z")
     )
-    private boolean ecliptic$canBeeContinueToUseCheckRain(Level instance, Operation<Boolean> original) {
+    private boolean eclipticseasons$canBeeContinueToUseCheckRain(Level instance, Operation<Boolean> original) {
         if (EclipticUtil.useSolarWeather())
             return WeatherUtil.isEntityInRainOrSnow(this$0);
         return instance.isRaining();

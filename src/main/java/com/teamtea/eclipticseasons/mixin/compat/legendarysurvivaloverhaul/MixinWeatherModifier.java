@@ -25,8 +25,8 @@ public abstract class MixinWeatherModifier {
                     ordinal = 1,
                     target = "Lsfiomn/legendarysurvivaloverhaul/api/temperature/ModifierBase;getWorldInfluence(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;)F")
     )
-    private float ecliptic$getWorldInfluence(ModifierBase instance, Player player, Level world, BlockPos pos, Operation<Float> original) {
-        return LSO_ESUtil.ecliptic$EclipticSeasons.get().getWorldInfluence(player, world, pos);
+    private float eclipticseasons$getWorldInfluence(ModifierBase instance, Player player, Level world, BlockPos pos, Operation<Float> original) {
+        return LSO_ESUtil.eclipticseasons$EclipticSeasons.get().getWorldInfluence(player, world, pos);
     }
 
     @WrapOperation(
@@ -35,7 +35,7 @@ public abstract class MixinWeatherModifier {
             at = @At(value = "INVOKE",
                     target = "Lsfiomn/legendarysurvivaloverhaul/util/WorldUtil;isRainingOrSnowingAt(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;)Z")
     )
-    private boolean ecliptic$getWorldInfluence_isRainingOrSnowingAt(Level world, BlockPos pos, Operation<Boolean> original) {
+    private boolean eclipticseasons$getWorldInfluence_isRainingOrSnowingAt(Level world, BlockPos pos, Operation<Boolean> original) {
         return EclipticSeasonsApi.getInstance().isRainOrSnowAt(world, pos);
     }
 
@@ -45,7 +45,7 @@ public abstract class MixinWeatherModifier {
                     target = "Lnet/minecraft/world/level/Level;isRaining()Z"
             )
     )
-    private boolean ecliptic$getWorldInfluence_isRaining(Level world, Operation<Boolean> original, @Local(argsOnly = true) BlockPos blockPos) {
+    private boolean eclipticseasons$getWorldInfluence_isRaining(Level world, Operation<Boolean> original, @Local(argsOnly = true) BlockPos blockPos) {
         return world.isRainingAt(blockPos);
     }
 }

@@ -23,7 +23,7 @@ public abstract class MixinTintWithoutLevelOverrider {
             method = "<init>",
             at = @At(value = "INVOKE", ordinal = 0, target = "LloaderCommon/forge/com/seibel/distanthorizons/common/wrappers/block/TintWithoutLevelOverrider;unwrap(Lnet/minecraft/core/Holder;)Lnet/minecraft/world/level/biome/Biome;")
     )
-    private Biome ecliptic$init_unwrap(Holder<Biome> biome,
+    private Biome eclipticseasons$init_unwrap(Holder<Biome> biome,
                                        Operation<Biome> original,
                                        @Local(argsOnly = true) BiomeWrapper biomeWrapper,
                                        @Local(argsOnly = true) IClientLevelWrapper iClientLevelWrapper) {
