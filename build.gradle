@@ -5,7 +5,7 @@ buildscript {
         maven { url = 'https://maven.parchmentmc.org' }
     }
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '6.+', changing: true
         classpath group: 'org.spongepowered', name: 'mixingradle', version: '0.7+'
 
         classpath group: 'org.parchmentmc', name: 'librarian', version: "1.+"
@@ -190,9 +190,9 @@ repositories {
             includeGroup "curse.maven"
         }
     }
-    maven {
-        url "https://maven.su5ed.dev/releases"
-    }
+//    maven {
+//        url "https://maven.su5ed.dev/releases"
+//    }
     maven {
         url "https://harleyoconnor.com/maven"
     }
@@ -205,19 +205,18 @@ dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_min_version}-${forge_version}"
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 
-    implementation(annotationProcessor("io.github.llamalad7:mixinextras-common:0.4.0"))
-    implementation(jarJar("io.github.llamalad7:mixinextras-forge:0.4.0")) {
-        jarJar.ranged(it, "[0.4.0,)")
+    compileOnly(annotationProcessor("io.github.llamalad7:mixinextras-common:0.4.1"))
+    implementation(jarJar("io.github.llamalad7:mixinextras-forge:0.4.1")) {
+        jarJar.ranged(it, "[0.4.1,)")
     }
 
     implementation fg.deobf("curse.maven:jei-238222:4644453")
-//    implementation fg.deobf("curse.maven:jade-324717:4654448")
-    implementation fg.deobf("curse.maven:jade-324717:5072729-deobf-sources-api")
+    implementation fg.deobf("curse.maven:jade-324717:5072729")
+
     implementation fg.deobf("com.ferreusveritas.dynamictrees:DynamicTrees-1.20.1:1.3.6")
 
-    compileOnly fg.deobf( "org.sinytra.forgified-fabric-api:fabric-renderer-api-v1:3.2.1+cf68abbe77")
-
-    compileOnly fg.deobf( "org.sinytra.forgified-fabric-api:fabric-renderer-indigo:1.5.2+b5b2da4177")
+    compileOnly fg.deobf( "libs:fabric-renderer-api-v1:3.2.1+cf68abbe77")
+    compileOnly fg.deobf( "libs:fabric-renderer-indigo:1.5.2+b5b2da4177")
 
     compileOnly fg.deobf("curse.maven:embeddium-908741:5681725")
     compileOnly fg.deobf("curse.maven:oculus-581495:6020952")
@@ -230,7 +229,6 @@ dependencies {
 //    implementation fg.deobf("curse.maven:kiwi-303657:4688568")
 //    implementation fg.deobf("curse.maven:snow-real-magic-308663:5139853")
 
-//    onlyMainRuntimeOnly fg.deobf("curse.maven:terralith-513688:5512076")
     compileOnly fg.deobf("curse.maven:journeymap-32274:4873863")
     onlyMainRuntimeOnly fg.deobf("curse.maven:journeymap-32274:4873863")
 

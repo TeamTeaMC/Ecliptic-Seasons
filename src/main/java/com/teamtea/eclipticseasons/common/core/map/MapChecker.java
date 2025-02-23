@@ -504,10 +504,8 @@ public class MapChecker {
                     onBlock instanceof BellBlock ||
                     onBlock instanceof ComposterBlock ||
                     (onBlock instanceof CampfireBlock && !state.getValue(CampfireBlock.LIT)) ||
-                    onBlock instanceof HoneyBlock ||
                     onBlock instanceof IronBarsBlock ||
-                    onBlock instanceof LightningRodBlock ||
-                    onBlock instanceof SlimeBlock) {
+                    onBlock instanceof LightningRodBlock ) {
                 flag = FLAG_CUSTOM;
             }
             Integer otherFlag = blockTypeCache.putIfAbsent(state, flag);
