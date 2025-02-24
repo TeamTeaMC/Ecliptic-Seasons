@@ -16,7 +16,7 @@ public class MixinLevel {
 
 
     @Inject(at = {@At("HEAD")}, method = {"isRaining"}, cancellable = true)
-    private void ecliptic$isRaining(CallbackInfoReturnable<Boolean> cir) {
+    private void eclipticseasons$isRaining(CallbackInfoReturnable<Boolean> cir) {
         if ((Object) this instanceof ServerLevel serverLevel) {
             if (CommonConfig.Debug.debugMode.get()){
                 throw new IllegalCallerException("Use isRainAt to check if rain");
@@ -26,7 +26,7 @@ public class MixinLevel {
     }
 
     @Inject(at = {@At("HEAD")}, method = {"getRainLevel"}, cancellable = true)
-    private void ecliptic$getRainLevel(float p_46723_, CallbackInfoReturnable<Float> cir) {
+    private void eclipticseasons$getRainLevel(float p_46723_, CallbackInfoReturnable<Float> cir) {
         if ((Object) this instanceof ServerLevel serverLevel) {
             if (CommonConfig.Debug.debugMode.get()){
                 throw new IllegalCallerException("Shouldn't call getRainLevel now");
@@ -36,7 +36,7 @@ public class MixinLevel {
     }
 
     @Inject(at = {@At("HEAD")}, method = {"isRainingAt"}, cancellable = true)
-    private void ecliptic$isRainingAt(BlockPos p_46759_, CallbackInfoReturnable<Boolean> cir) {
+    private void eclipticseasons$isRainingAt(BlockPos p_46759_, CallbackInfoReturnable<Boolean> cir) {
         if ((Object) this instanceof ServerLevel serverLevel) {
             cir.setReturnValue(WeatherManager.isRainingAt(serverLevel, p_46759_));
         }
@@ -44,7 +44,7 @@ public class MixinLevel {
 
 
     @Inject(at = {@At("HEAD")}, method = {"isThundering"}, cancellable = true)
-    private void ecliptic$isThundering(CallbackInfoReturnable<Boolean> cir) {
+    private void eclipticseasons$isThundering(CallbackInfoReturnable<Boolean> cir) {
         if ((Object) this instanceof ServerLevel serverLevel) {
             if (CommonConfig.Debug.debugMode.get()){
                 throw new IllegalCallerException("Use isThunderingAt to check if rain");
@@ -54,7 +54,7 @@ public class MixinLevel {
     }
 
     @Inject(at = {@At("HEAD")}, method = {"getThunderLevel"}, cancellable = true)
-    private void ecliptic$getThunderLevel(float p_46723_, CallbackInfoReturnable<Float> cir) {
+    private void eclipticseasons$getThunderLevel(float p_46723_, CallbackInfoReturnable<Float> cir) {
         if ((Object) this instanceof ServerLevel serverLevel) {
             if (CommonConfig.Debug.debugMode.get()){
                 throw new IllegalCallerException("Shouldn't call getThunderLevel now");

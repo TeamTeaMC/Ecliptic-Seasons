@@ -17,39 +17,33 @@ public class SimpleUtil {
         EclipticSeasons.logger(System.currentTimeMillis() - time);
     }
 
+    @Deprecated(forRemoval = true)
     public static SolarTerm getNowSolarTerm(Level level) {
-        var sd = SolarHolders.getSaveData(level);
-        if (sd != null) return sd.getSolarTerm();
-        return SolarTerm.NONE;
+        return EclipticUtil.getNowSolarTerm(level);
     }
 
+    @Deprecated(forRemoval = true)
     public static boolean isDay(Level level) {
-        long dayTime = level.dimensionType().fixedTime().orElse(SolarAngelHelper.getSolarAngelTime(level, level.getDayTime()));
-        long termTime = getNowSolarTerm(level).getDayTime();
-        long halfTermTime = termTime / 2;
-        if (termTime <= 12000) {
-            return 6000 - (halfTermTime) < dayTime && dayTime < 6000 + (halfTermTime);
-        } else return dayTime >= 24000 + (6000 - (halfTermTime))
-                || dayTime <= 6000 + (halfTermTime);
+       return EclipticUtil.isDay(level);
     }
 
+    @Deprecated(forRemoval = true)
     public static boolean isNight(Level level) {
-        return !isDay(level);
+        return EclipticUtil.isNight(level);
     }
+
+    @Deprecated(forRemoval = true)
     public static int getNightTime(Level level) {
-        long termTime = getNowSolarTerm(level).getDayTime();
-        return (int) (6000 + (termTime / 2));
+        return EclipticUtil.getNightTime(level);
     }
 
+    @Deprecated(forRemoval = true)
     public static boolean isNoon(Level level) {
-        long dayTime = level.dimensionType().fixedTime().orElse(SolarAngelHelper.getSolarAngelTime(level, level.getDayTime()));
-        long termTime = getNowSolarTerm(level).getDayTime();
-        return 6000 - (termTime / 6) < dayTime && dayTime < 6000 + (termTime / 4);
+        return EclipticUtil.isNoon(level);
     }
 
+    @Deprecated(forRemoval = true)
     public static boolean isEvening(Level level) {
-        long dayTime = level.dimensionType().fixedTime().orElse(SolarAngelHelper.getSolarAngelTime(level, level.getDayTime()));
-        long termTime = getNowSolarTerm(level).getDayTime();
-        return 6000 + (termTime  *2 / 5) < dayTime && dayTime < 6000 + ( termTime/2 ) +(24000-termTime)*3/4;
+        return EclipticUtil.isEvening(level);
     }
 }

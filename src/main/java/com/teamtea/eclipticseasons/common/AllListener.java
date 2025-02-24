@@ -19,6 +19,7 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.event.level.LevelEvent;
+import net.minecraftforge.event.level.SaplingGrowTreeEvent;
 import net.minecraftforge.event.level.SleepFinishedTimeEvent;
 import net.minecraftforge.event.server.ServerAboutToStartEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -135,6 +136,11 @@ public class AllListener {
 
     @SubscribeEvent
     public static void onCropGrowUp(BlockEvent.CropGrowEvent.Pre event) {
+        CropGrowthHandler.beforeCropGrowUp(event);
+    }
+
+    @SubscribeEvent
+    public static void onCropGrowUp(SaplingGrowTreeEvent event) {
         CropGrowthHandler.beforeCropGrowUp(event);
     }
 }

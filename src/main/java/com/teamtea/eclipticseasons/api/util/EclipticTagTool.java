@@ -9,16 +9,17 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 
 import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.Map;
 
 public class EclipticTagTool {
 
 
-    public static final Map<Biome, TagKey<Biome>> BIOME_TAG_KEY_MAP = new HashMap<>(128);
+    public static final Map<Biome, TagKey<Biome>> BIOME_TAG_KEY_MAP = new IdentityHashMap<>(128);
 
 
     public static TagKey<Biome> getTag(Biome biome) {
-        return getTag(WeatherManager.getMainServerLevel(), biome);
+        return getTag(WeatherManager.fetchLevelIfNull(null), biome);
     }
 
     public static TagKey<Biome> getTag(Level level, Biome biome) {

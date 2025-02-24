@@ -2,6 +2,8 @@ package com.teamtea.eclipticseasons.client.core;
 
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
+import com.teamtea.eclipticseasons.api.constant.tag.EclipticBlockTags;
+import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.api.util.SimpleUtil;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.registry.BlockRegistry;
@@ -15,12 +17,14 @@ import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockAndTintGetter;
-import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.EmptyBlockGetter;
 import net.minecraft.world.level.LightLayer;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
@@ -70,13 +74,24 @@ public class ModelManager {
     public static final int ChunkSizeAxis = 4 + 5;
 
 
+    public static final Map<BlockState, Boolean> SNOW_OVERLAY_CAN_SURVIVE_ON_MAP = new IdentityHashMap<>();
+
+    public static boolean snowOverlayCanSurviveOn(BlockState state) {
+        Boolean b = SNOW_OVERLAY_CAN_SURVIVE_ON_MAP.get(state);
+        if (b == null) {
+            b = SNOW_OVERLAY_CAN_SURVIVE_ON_MAP.put(state, !state.is(EclipticBlockTags.SNOW_OVERLAY_CANNOT_SURVIVE_ON));
+        }
+        return Boolean.TRUE.equals(b);
+    }
+
+
     public static boolean shouldCutoutMipped(BlockState state) {
         if (Minecraft.getInstance().level != null) {
             var onBlock = state.getBlock();
             if (!(onBlock instanceof FenceBlock)) {
                 if (onBlock instanceof SlabBlock || onBlock instanceof FarmBlock || onBlock instanceof DirtPathBlock || onBlock instanceof StairBlock
                         || state.isSolidRender(EmptyBlockGetter.INSTANCE, BlockPos.ZERO)) {
-                    return true;
+                    return snowOverlayCanSurviveOn(state);
                 }
             }
         }
@@ -160,7 +175,6 @@ public class ModelManager {
             return Integer.MIN_VALUE;
         int x = blockToSectionCoord(pos.getX());
         int z = blockToSectionCoord(pos.getZ());
-        ChunkPos chunkPos = new ChunkPos(x, z);
         // var map = ChunkMap.getOrDefault(chunkPos, null);
 
         ChunkHeightMap map = null;
@@ -395,7 +409,7 @@ public class ModelManager {
                     var solarTerm = SolarTerm.NONE;
                     int weight = 100;
                     if (level != null) {
-                        solarTerm = SimpleUtil.getNowSolarTerm(level);
+                        solarTerm = EclipticUtil.getNowSolarTerm(level);
                         weight = Math.abs(solarTerm.ordinal() - 3) + 1;
                     }
                     if (solarTerm.getSeason() == Season.SPRING
@@ -428,17 +442,28 @@ public class ModelManager {
         return list;
     }
 
-    // TODO:感觉用随机表性能更高
+    public static final Map<Biome, Integer> SNOW_LINE_BIOME_MAP = new IdentityHashMap<>();
+
     public static boolean shouldSnowAt(BlockAndTintGetter blockAndTintGetter, BlockPos pos, BlockState state, RandomSource random, long seed) {
-        // Ecliptic.logger(SolarClientUtil.getSnowLayer() * 100, (seed&99));
-        // Minecraft.getInstance().level.getBiome(pos);
-        var biome = Minecraft.getInstance().level.getBiome(pos);
-        if (WeatherManager.getSnowDepthAtBiome(Minecraft.getInstance().level, biome.get()) > Math.abs(seed % 100)) {
-            return true;
+        int snowLine = ClientConfig.Renderer.snowLine.get();
+        Holder<Biome> biome = Minecraft.getInstance().level.getBiome(pos);
+        snowLine += ((((int) seed) & 3) + (pos.getX() & 3) + (pos.getY() & 3) + (pos.getZ() & 3)) - 4;
+        Integer sH = SNOW_LINE_BIOME_MAP.getOrDefault(biome.value(), null);
+        if (sH == null) {
+            for (Map.Entry<TagKey<Biome>, Integer> entry : ClientConfig.SNOW_LINE_BIOME.entrySet()) {
+                if (biome.is(entry.getKey())) {
+                    snowLine = entry.getValue();
+                    break;
+                }
+            }
+            SNOW_LINE_BIOME_MAP.put(biome.value(), snowLine);
         }
 
+        if (pos.getY() > snowLine
+                || WeatherManager.getSnowDepthAtBiome(Minecraft.getInstance().level, biome.value()) > Math.abs(seed % 100)) {
+            return snowOverlayCanSurviveOn(state);
+        }
         return false;
-        // >= random.nextInt(100));
     }
 
 }

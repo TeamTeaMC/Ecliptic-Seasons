@@ -68,9 +68,16 @@ public enum SolarTerm {
         return Component.translatable("info.eclipticseasons.environment.solar_term.alternation." + getName()).withStyle(getSeason().getColor());
     }
 
-    public static SolarTerm get(int index) {
-        return values()[index];
+    private static final SolarTerm[] solarTerms = SolarTerm.values();
+
+    public static SolarTerm[] collectValues() {
+        return solarTerms;
     }
+
+    public static SolarTerm get(int index) {
+        return collectValues()[index];
+    }
+
 
     public static ResourceLocation getFont() {
         return EclipticSeasons.rl("solar_icons");
@@ -89,7 +96,7 @@ public enum SolarTerm {
     }
 
     public SimplePair<Integer, Integer> getIconPosition() {
-        return SimplePair.of( this.ordinal() % 6,this.ordinal() / 6);
+        return SimplePair.of(this.ordinal() % 6, this.ordinal() / 6);
     }
 
     public SolarTermColor getSolarTermColor(TagKey<Biome> biomeTagKey) {

@@ -6,6 +6,7 @@ import com.mojang.math.Matrix4f;
 import com.mojang.math.Quaternion;
 import com.mojang.math.Vector3d;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
+import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.api.util.SimpleUtil;
 import com.teamtea.eclipticseasons.common.block.base.SimpleHorizontalEntityBlock;
 import com.teamtea.eclipticseasons.common.block.blockentity.CalendarBlockEntity;
@@ -37,7 +38,7 @@ public class CalendarBlockEntityRenderer implements BlockEntityRenderer<Calendar
     public void render(CalendarBlockEntity blockEntity, float partialTicks, PoseStack poseStack, MultiBufferSource bufferIn, int combinedLight, int combinedOverlay) {
 
         var facing = blockEntity.getBlockState().getValue(SimpleHorizontalEntityBlock.FACING).ordinal() * 90;
-        var st = SimpleUtil.getNowSolarTerm(blockEntity.getLevel());
+        var st = EclipticUtil.getNowSolarTerm(blockEntity.getLevel());
 
         drawText(2, Component.translatable("info.eclipticseasons.environment.solar_term.hint").getString(), Color.GRAY.getRGB(), blockEntity, poseStack, bufferIn, combinedLight);
 
@@ -93,7 +94,7 @@ public class CalendarBlockEntityRenderer implements BlockEntityRenderer<Calendar
 
 
         if (line == 1) {
-            SolarTerm nowSolarTerm = SimpleUtil.getNowSolarTerm(tile.getLevel());
+            SolarTerm nowSolarTerm = EclipticUtil.getNowSolarTerm(tile.getLevel());
             // Lighting.setupForFlatItems();
             // GlStateManager._disableCull();
             VertexConsumer builder = txtBuffer.getBuffer(RenderType.entitySmoothCutout(SolarTerm.getFullIcon()));

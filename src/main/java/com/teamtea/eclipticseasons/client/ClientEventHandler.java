@@ -2,11 +2,14 @@ package com.teamtea.eclipticseasons.client;
 
 
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
+import com.teamtea.eclipticseasons.api.util.EclipticTagTool;
+import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.api.util.SimpleUtil;
 import com.teamtea.eclipticseasons.client.core.ClientWeatherChecker;
 import com.teamtea.eclipticseasons.client.core.ModelManager;
 import com.teamtea.eclipticseasons.client.render.ClientRenderer;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
+import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.core.solar.ClientSolarDataManager;
 import com.teamtea.eclipticseasons.config.ClientConfig;
@@ -29,6 +32,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
+import net.minecraftforge.event.TagsUpdatedEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.event.level.LevelEvent;
@@ -40,6 +44,14 @@ import com.teamtea.eclipticseasons.EclipticSeasons;
 public final class ClientEventHandler {
 
     @SubscribeEvent
+    public static void onTagsUpdatedEvent(TagsUpdatedEvent tagsUpdatedEvent) {
+       if(tagsUpdatedEvent.getUpdateCause()== TagsUpdatedEvent.UpdateCause.CLIENT_PACKET_RECEIVED){
+           ModelManager.SNOW_OVERLAY_CAN_SURVIVE_ON_MAP.clear();
+           ModelManager.SNOW_LINE_BIOME_MAP.clear();
+       }
+    }
+
+    @SubscribeEvent
     public static void onRenderTick(TickEvent.RenderTickEvent event) {
         if (event.phase == TickEvent.Phase.END && Minecraft.getInstance().player != null) {
             ClientRenderer.applyEffect(Minecraft.getInstance().gameRenderer, Minecraft.getInstance().player);
@@ -49,13 +61,13 @@ public final class ClientEventHandler {
     @SubscribeEvent
     public static void addTooltips(ItemTooltipEvent event) {
         if (event.getItemStack().getItem() instanceof BlockItem) {
-            if (CommonConfig.Season.enableCropHumidityControl.get()) {
+            if (CommonConfig.Crop.enableCropHumidityControl.get()) {
                 if (CropInfoManager.getHumidityCrops().contains(((BlockItem) event.getItemStack().getItem()).getBlock())) {
                     CropHumidityInfo info = CropInfoManager.getHumidityInfo(((BlockItem) event.getItemStack().getItem()).getBlock());
                     if (info != null) event.getToolTip().addAll(info.getTooltip());
                 }
             }
-            if (CommonConfig.Season.enableCrop.get()) {
+            if (CommonConfig.Crop.enableCrop.get()) {
                 if (CropInfoManager.getSeasonCrops().contains(((BlockItem) event.getItemStack().getItem()).getBlock())) {
                     CropSeasonInfo info = CropInfoManager.getSeasonInfo(((BlockItem) event.getItemStack().getItem()).getBlock());
                     if (info != null) event.getToolTip().addAll(info.getTooltip());
@@ -129,8 +141,8 @@ public final class ClientEventHandler {
         var level = Minecraft.getInstance().level;
         if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_CUTOUT_BLOCKS
                 && level != null
-                && SimpleUtil.getNowSolarTerm(level).getSeason() == Season.SPRING
-                && SimpleUtil.isDay(level)) {
+                && EclipticUtil.getNowSolarTerm(level).getSeason() == Season.SPRING
+                && EclipticUtil.isDay(level)) {
             var multiBufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
             // var itr = Minecraft.getInstance().getItemRenderer();
             // var mds = itr.getItemModelShaper();

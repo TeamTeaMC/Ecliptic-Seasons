@@ -25,7 +25,7 @@ public abstract class MixinBlockRender2 {
             method = "renderModel",
             at = @At(value = "INVOKE", ordinal = 0, target = "Lnet/minecraft/client/resources/model/BakedModel;getQuads(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/Direction;Lnet/minecraft/util/RandomSource;Lnet/minecraftforge/client/model/data/ModelData;Lnet/minecraft/client/renderer/RenderType;)Ljava/util/List;")
     )
-    private List<BakedQuad> mixin_tesselateWithAO_getQuads(List<BakedQuad> original,
+    private List<BakedQuad> eclipticseasons$tesselateWithAO_getQuads(List<BakedQuad> original,
                                                            @Local(argsOnly = true) BlockAndTintGetter world,
                                                            @Local(argsOnly = true) BlockState blockState,
                                                            @Local(ordinal = 0, argsOnly = true) BlockPos blockPos,
@@ -40,7 +40,7 @@ public abstract class MixinBlockRender2 {
             method = "renderModel",
             at = @At(value = "INVOKE", ordinal = 1, target = "Lnet/minecraft/client/resources/model/BakedModel;getQuads(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/Direction;Lnet/minecraft/util/RandomSource;Lnet/minecraftforge/client/model/data/ModelData;Lnet/minecraft/client/renderer/RenderType;)Ljava/util/List;")
     )
-    private List<BakedQuad> mixin_tesselateWithAO_getQuads2(List<BakedQuad> original,
+    private List<BakedQuad> eclipticseasons$tesselateWithAO_getQuads2(List<BakedQuad> original,
                                                             @Local(argsOnly = true) BlockAndTintGetter world,
                                                             @Local(argsOnly = true) BlockState blockState,
                                                             @Local(ordinal = 0, argsOnly = true) BlockPos blockPos,

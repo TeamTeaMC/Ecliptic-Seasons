@@ -15,7 +15,7 @@ public abstract class ItemBlockRenderTypes {
 
     // ctx.world().world.getBlockState(ctx.pos)
     @Inject(at = {@At("HEAD")}, method = {"getRenderLayers"}, cancellable = true, remap = false)
-    private static void ecliptic$getRenderLayers(BlockState state, CallbackInfoReturnable<ChunkRenderTypeSet> cir) {
+    private static void eclipticseasons$getRenderLayers(BlockState state, CallbackInfoReturnable<ChunkRenderTypeSet> cir) {
         if (ModelManager.shouldCutoutMipped(state)) {
             cir.setReturnValue(ChunkRenderTypeSet.of(RenderType.cutoutMipped()));
         }

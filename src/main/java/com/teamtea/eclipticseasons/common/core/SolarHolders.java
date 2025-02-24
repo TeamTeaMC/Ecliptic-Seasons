@@ -7,6 +7,7 @@ import net.minecraftforge.common.util.LazyOptional;
 import java.util.HashMap;
 import java.util.Map;
 
+
 public class SolarHolders {
 
     public static final Map<Level, SolarDataManager> DATA_MANAGER_MAP = new HashMap<>();
@@ -15,6 +16,7 @@ public class SolarHolders {
         return DATA_MANAGER_MAP.getOrDefault(level, null);
     }
 
+    @Deprecated
     public static LazyOptional<SolarDataManager> getSaveDataLazy(Level level) {
         return LazyOptional.of(() -> DATA_MANAGER_MAP.getOrDefault(level, new SolarDataManager(level)));
     }
