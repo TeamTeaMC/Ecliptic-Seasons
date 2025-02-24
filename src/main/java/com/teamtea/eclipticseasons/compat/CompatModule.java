@@ -44,8 +44,8 @@ public class CompatModule {
     }
 
     @SafeVarargs
-    public static <T>List<T> of(T... doubles) {
-        return Arrays.stream(doubles).collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
+    public static <T>List<T> of(T... objs) {
+        return Arrays.stream(objs).collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
     }
 
     public static class CommonConfig {

@@ -34,7 +34,7 @@ public abstract class MixinBlockRender2 {
             method = "renderModel", at = @At(value = "INVOKE",
             target = "Lnet/minecraft/client/renderer/model/IBakedModel;getQuads(Lnet/minecraft/block/BlockState;Lnet/minecraft/util/Direction;Ljava/util/Random;Lnet/minecraftforge/client/model/data/IModelData;)Ljava/util/List;",
             ordinal = 0))
-    private List<BakedQuad> mixin_tesselateWithAO_getQuads(List<BakedQuad> original,
+    private List<BakedQuad> eclipticseasons$tesselateWithAO_getQuads(List<BakedQuad> original,
                                                 @Local(argsOnly = true) IBlockDisplayReader world,
                                                 @Local(argsOnly = true) BlockState blockState,
                                                 @Local(ordinal = 0, argsOnly = true) BlockPos blockPos,
@@ -48,7 +48,7 @@ public abstract class MixinBlockRender2 {
             method = "renderModel", at = @At(value = "INVOKE",
             target = "Lnet/minecraft/client/renderer/model/IBakedModel;getQuads(Lnet/minecraft/block/BlockState;Lnet/minecraft/util/Direction;Ljava/util/Random;Lnet/minecraftforge/client/model/data/IModelData;)Ljava/util/List;",
             ordinal = 1))
-    private List<BakedQuad> mixin_tesselateWithAO_getQuads2(List<BakedQuad> original,
+    private List<BakedQuad> eclipticseasons$tesselateWithAO_getQuads2(List<BakedQuad> original,
                                                            @Local(argsOnly = true) IBlockDisplayReader world,
                                                            @Local(argsOnly = true) BlockState blockState,
                                                            @Local(ordinal = 0, argsOnly = true) BlockPos blockPos,

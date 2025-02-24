@@ -44,8 +44,10 @@ achieve a smoother, more natural appearance.
 Removed Obsolete Feature:
 Removed the unused "snowy dandelions" model from the files.
 
-0.3.2
+Legacy-1.0
 backport support for Cold Sweat
 backport support for Legendary Survival Overhaul (only 1.16)
 remove the support for rubidium (use embeddium instead)
 add support for Fancy Block Particles - Renewed
+backport a simple greenhouse, look the tag to limit it
+add snow line for each biome and global setting

@@ -18,7 +18,7 @@ public interface BiomeRain {
     }
 
     public default SolarTerm getSolarTerm() {
-        return SolarTerm.values()[this.ordinal()];
+        return SolarTerm.get(this.ordinal());
     }
 
     public default Season getSeason() {

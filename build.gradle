@@ -1,3 +1,4 @@
+//Note: build the gradle need java17+, and run the game need java8
 buildscript {
     repositories {
         // These repositories are only for Gradle plugins, put any other repositories in the repository block further below

@@ -8,7 +8,6 @@ import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
 import net.minecraft.world.World;
 
 
-// for other mod use
 public class SimpleUtil {
     public static void testTime(Runnable runnable) {
         long time = System.currentTimeMillis();
@@ -18,39 +17,33 @@ public class SimpleUtil {
         EclipticSeasons.logger(System.currentTimeMillis() - time);
     }
 
+    @Deprecated
     public static SolarTerm getNowSolarTerm(World level) {
-        SolarDataManager sd = SolarHolders.getSaveData(level);
-        if (sd != null) return sd.getSolarTerm();
-        return SolarTerm.NONE;
+        return EclipticUtil.getNowSolarTerm(level);
     }
 
+    @Deprecated
     public static boolean isDay(World level) {
-        long dayTime = level.dimensionType().fixedTime.orElse(SolarAngelHelper.getSolarAngelTime(level, level.getDayTime()));
-        long termTime = getNowSolarTerm(level).getDayTime();
-        long halfTermTime = termTime / 2;
-        if (termTime <= 12000) {
-            return 6000 - (halfTermTime) < dayTime && dayTime < 6000 + (halfTermTime);
-        } else return dayTime >= 24000 + (6000 - (halfTermTime))
-                || dayTime <= 6000 + (halfTermTime);
+        return EclipticUtil.isDay(level);
     }
 
+    @Deprecated
     public static boolean isNight(World level) {
-        return !isDay(level);
+        return EclipticUtil.isNight(level);
     }
+
+    @Deprecated
     public static int getNightTime(World level) {
-        long termTime = getNowSolarTerm(level).getDayTime();
-        return (int) (6000 + (termTime / 2));
+        return EclipticUtil.getNightTime(level);
     }
 
+    @Deprecated
     public static boolean isNoon(World level) {
-        long dayTime = level.dimensionType().fixedTime.orElse(SolarAngelHelper.getSolarAngelTime(level, level.getDayTime()));
-        long termTime = getNowSolarTerm(level).getDayTime();
-        return 6000 - (termTime / 6) < dayTime && dayTime < 6000 + (termTime / 4);
+        return EclipticUtil.isNoon(level);
     }
 
+    @Deprecated
     public static boolean isEvening(World level) {
-        long dayTime = level.dimensionType().fixedTime.orElse(SolarAngelHelper.getSolarAngelTime(level, level.getDayTime()));
-        long termTime = getNowSolarTerm(level).getDayTime();
-        return 6000 + (termTime  *2 / 5) < dayTime && dayTime < 6000 + ( termTime/2 ) +(24000-termTime)*3/4;
+        return EclipticUtil.isEvening(level);
     }
 }

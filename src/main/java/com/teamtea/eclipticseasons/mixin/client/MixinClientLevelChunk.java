@@ -24,7 +24,7 @@ public abstract class MixinClientLevelChunk {
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/gen/Heightmap;update(IIILnet/minecraft/block/BlockState;)Z", ordinal = 1),
             method = "setBlockState"
     )
-    public void ecliptic$setBlockState(BlockPos p_177436_1_, BlockState p_177436_2_, boolean p_177436_3_, CallbackInfoReturnable<BlockState> cir) {
+    public void eclipticseasons$setBlockState(BlockPos p_177436_1_, BlockState p_177436_2_, boolean p_177436_3_, CallbackInfoReturnable<BlockState> cir) {
         if (level instanceof ClientWorld  ){
             ModelManager.getHeightOrUpdate(p_177436_1_,true);
         }

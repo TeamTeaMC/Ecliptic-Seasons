@@ -3,6 +3,7 @@ package com.teamtea.eclipticseasons.client;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
+import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.api.util.SimpleUtil;
 import com.teamtea.eclipticseasons.client.core.ClientWeatherChecker;
 import com.teamtea.eclipticseasons.client.core.ModelManager;
@@ -55,13 +56,13 @@ public final class ClientEventHandler {
     @SubscribeEvent
     public static void addTooltips(ItemTooltipEvent event) {
         if (event.getItemStack().getItem() instanceof BlockItem) {
-            if (CommonConfig.Season.enableCropHumidityControl.get()) {
+            if (CommonConfig.Crop.enableCropHumidityControl.get()) {
                 if (CropInfoManager.getHumidityCrops().contains(((BlockItem) event.getItemStack().getItem()).getBlock())) {
                     CropHumidityInfo info = CropInfoManager.getHumidityInfo(((BlockItem) event.getItemStack().getItem()).getBlock());
                     if (info != null) event.getToolTip().addAll(info.getTooltip());
                 }
             }
-            if (CommonConfig.Season.enableCrop.get()) {
+            if (CommonConfig.Crop.enableCrop.get()) {
                 if (CropInfoManager.getSeasonCrops().contains(((BlockItem) event.getItemStack().getItem()).getBlock())) {
                     CropSeasonInfo info = CropInfoManager.getSeasonInfo(((BlockItem) event.getItemStack().getItem()).getBlock());
                     if (info != null) event.getToolTip().addAll(info.getTooltip());
@@ -138,8 +139,8 @@ public final class ClientEventHandler {
             // event.getStage() == RenderWorldLastEvent.Stage.AFTER_CUTOUT_BLOCKS
                 Minecraft.getInstance().getEntityRenderDispatcher().camera != null
                         && level != null
-                        && SimpleUtil.getNowSolarTerm(level).getSeason() == Season.SPRING
-                        && SimpleUtil.isDay(level)) {
+                        && EclipticUtil.getNowSolarTerm(level).getSeason() == Season.SPRING
+                        && EclipticUtil.isDay(level)) {
             IRenderTypeBuffer.Impl multiBufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
             // var itr = Minecraft.getInstance().getItemRenderer();
             // var mds = itr.getItemModelShaper();

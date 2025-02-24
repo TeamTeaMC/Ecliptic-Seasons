@@ -16,7 +16,7 @@ public class MixinBee {
             method = "wantsToEnterHive",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;isRaining()Z")
     )
-    private boolean ecliptic$wantsToEnterHiveCheckRain(World instance, Operation<Boolean> original) {
+    private boolean eclipticseasons$wantsToEnterHiveCheckRain(World instance, Operation<Boolean> original) {
         return WeatherUtil.isEntityInRain((BeeEntity)(Object)this);
     }
 

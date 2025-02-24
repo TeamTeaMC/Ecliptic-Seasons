@@ -29,7 +29,7 @@ public abstract class MixinBlockRenderVanilla {
                     ordinal = 0,
                     target = "Lnet/minecraft/client/renderer/model/IBakedModel;getQuads(Lnet/minecraft/block/BlockState;Lnet/minecraft/util/Direction;Ljava/util/Random;Lnet/minecraftforge/client/model/data/IModelData;)Ljava/util/List;")
     )
-    private List<BakedQuad> ecliptic$tesselateWithAO_getQuads(List<BakedQuad> original, @Local(ordinal = 0) IBlockDisplayReader blockAndTintGetter, @Local(ordinal = 0) BlockPos pos, @Local(ordinal = 0) BlockState state, @Local(ordinal = 0) Direction direction, @Local(ordinal = 0) Random randomSource, @Local(ordinal = 0) long seed) {
+    private List<BakedQuad> eclipticseasons$tesselateWithAO_getQuads(List<BakedQuad> original, @Local(ordinal = 0) IBlockDisplayReader blockAndTintGetter, @Local(ordinal = 0) BlockPos pos, @Local(ordinal = 0) BlockState state, @Local(ordinal = 0) Direction direction, @Local(ordinal = 0) Random randomSource, @Local(ordinal = 0) long seed) {
         return ModelManager.appendOverlay(blockAndTintGetter, state, pos, direction, randomSource, seed, original);
     }
 
@@ -39,7 +39,7 @@ public abstract class MixinBlockRenderVanilla {
             at = @At(value = "INVOKE",  ordinal = 1,
                     target = "Lnet/minecraft/client/renderer/model/IBakedModel;getQuads(Lnet/minecraft/block/BlockState;Lnet/minecraft/util/Direction;Ljava/util/Random;Lnet/minecraftforge/client/model/data/IModelData;)Ljava/util/List;")
     )
-    private List<BakedQuad> ecliptic$tesselateWithAO_getQuads2(List<BakedQuad> original, @Local(ordinal = 0) IBlockDisplayReader blockAndTintGetter, @Local(ordinal = 0) BlockPos pos, @Local(ordinal = 0) BlockState state, @Local(ordinal = 0) Random randomSource, @Local(ordinal = 0) long seed) {
+    private List<BakedQuad> eclipticseasons$tesselateWithAO_getQuads2(List<BakedQuad> original, @Local(ordinal = 0) IBlockDisplayReader blockAndTintGetter, @Local(ordinal = 0) BlockPos pos, @Local(ordinal = 0) BlockState state, @Local(ordinal = 0) Random randomSource, @Local(ordinal = 0) long seed) {
         return ModelManager.appendOverlay(blockAndTintGetter, state, pos, (Direction) null, randomSource, seed, original);
     }
 
@@ -49,7 +49,7 @@ public abstract class MixinBlockRenderVanilla {
             at = @At(value = "INVOKE",ordinal = 0,
                     target = "Lnet/minecraft/client/renderer/model/IBakedModel;getQuads(Lnet/minecraft/block/BlockState;Lnet/minecraft/util/Direction;Ljava/util/Random;Lnet/minecraftforge/client/model/data/IModelData;)Ljava/util/List;")
     )
-    private List<BakedQuad> ecliptic$tesselateWithoutAO_getQuads(List<BakedQuad> original, @Local(ordinal = 0) IBlockDisplayReader blockAndTintGetter, @Local(ordinal = 0) BlockPos pos, @Local(ordinal = 0) BlockState state, @Local(ordinal = 0) Direction direction, @Local(ordinal = 0) Random randomSource, @Local(ordinal = 0) long seed) {
+    private List<BakedQuad> eclipticseasons$tesselateWithoutAO_getQuads(List<BakedQuad> original, @Local(ordinal = 0) IBlockDisplayReader blockAndTintGetter, @Local(ordinal = 0) BlockPos pos, @Local(ordinal = 0) BlockState state, @Local(ordinal = 0) Direction direction, @Local(ordinal = 0) Random randomSource, @Local(ordinal = 0) long seed) {
         return ModelManager.appendOverlay(blockAndTintGetter, state, pos, direction, randomSource, seed, original);
     }
 
@@ -59,7 +59,7 @@ public abstract class MixinBlockRenderVanilla {
             at = @At(value = "INVOKE",ordinal = 1,
                     target = "Lnet/minecraft/client/renderer/model/IBakedModel;getQuads(Lnet/minecraft/block/BlockState;Lnet/minecraft/util/Direction;Ljava/util/Random;Lnet/minecraftforge/client/model/data/IModelData;)Ljava/util/List;")
     )
-    private List<BakedQuad> ecliptic$tesselateWithoutAO_getQuads2(List<BakedQuad> original, @Local(ordinal = 0) IBlockDisplayReader blockAndTintGetter, @Local(ordinal = 0) BlockPos pos, @Local(ordinal = 0) BlockState state, @Local(ordinal = 0) Random randomSource, @Local(ordinal = 0) long seed) {
+    private List<BakedQuad> eclipticseasons$tesselateWithoutAO_getQuads2(List<BakedQuad> original, @Local(ordinal = 0) IBlockDisplayReader blockAndTintGetter, @Local(ordinal = 0) BlockPos pos, @Local(ordinal = 0) BlockState state, @Local(ordinal = 0) Random randomSource, @Local(ordinal = 0) long seed) {
         return ModelManager.appendOverlay(blockAndTintGetter, state, pos, (Direction) null, randomSource, seed, original);
     }
 }

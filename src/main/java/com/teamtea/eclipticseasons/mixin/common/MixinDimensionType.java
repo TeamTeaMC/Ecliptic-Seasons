@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin({DimensionType.class})
 public abstract class MixinDimensionType {
     @Inject(at = {@At("HEAD")}, method = {"timeOfDay"}, cancellable = true)
-    public void ecliptic$getTimeOfDay(long p_63905_, CallbackInfoReturnable<Float> cir) {
+    public void eclipticseasons$getTimeOfDay(long p_63905_, CallbackInfoReturnable<Float> cir) {
         // cir.setReturnValue( AsmHandler.getSeasonCelestialAngle(p_63905_,(DimensionType)(Object)this));
     }
 }

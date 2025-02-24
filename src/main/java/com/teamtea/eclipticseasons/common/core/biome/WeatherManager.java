@@ -1,5 +1,6 @@
 package com.teamtea.eclipticseasons.common.core.biome;
 
+import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.common.registry.EffectRegistry;
 import com.teamtea.eclipticseasons.api.constant.climate.BiomeRain;
 import com.teamtea.eclipticseasons.api.constant.climate.FlatRain;
@@ -344,12 +345,12 @@ public class WeatherManager {
         if (CommonConfig.Temperature.heatStroke.get()
                 && level.getRandom().nextInt(150) == 0)
             SolarHolders.getSaveDataLazy(level).ifPresent(solarDataManager -> {
-                if (SimpleUtil.getNowSolarTerm(level).isInTerms(SolarTerm.BEGINNING_OF_SUMMER, SolarTerm.BEGINNING_OF_AUTUMN)) {
+                if (EclipticUtil.getNowSolarTerm(level).isInTerms(SolarTerm.BEGINNING_OF_SUMMER, SolarTerm.BEGINNING_OF_AUTUMN)) {
                     Biome b = level.getBiome(player.blockPosition());
                     if (b.getTemperature(player.blockPosition()) > 0.5f) {
 
                         if (!player.isInWaterOrRain()
-                                && ((SimpleUtil.isNoon(level) && (level.canSeeSky(player.blockPosition()))))
+                                && ((EclipticUtil.isNoon(level) && (level.canSeeSky(player.blockPosition()))))
                         ) {
                             boolean isColdHe = false;
                             for (ItemStack itemstack : player.getArmorSlots()) {

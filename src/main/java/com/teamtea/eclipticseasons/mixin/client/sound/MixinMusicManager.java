@@ -14,7 +14,7 @@ public class MixinMusicManager {
     private int nextSongDelay;
 
     @Inject(at = {@At("RETURN")}, method = {"tick"})
-    private void ecliptic$init(CallbackInfo ci) {
+    private void eclipticseasons$init(CallbackInfo ci) {
         nextSongDelay = nextSongDelay;
     }
 }

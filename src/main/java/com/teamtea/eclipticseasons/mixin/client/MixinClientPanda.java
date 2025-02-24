@@ -17,7 +17,7 @@ public class MixinClientPanda {
             method = "tick",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;isThundering()Z")
     )
-    private boolean ecliptic$tick(World instance, Operation<Boolean> original) {
+    private boolean eclipticseasons$tick(World instance, Operation<Boolean> original) {
         if (instance instanceof ClientWorld )
             return ClientWeatherChecker.isThunderAt((ClientWorld) instance, ((PandaEntity) (Object) this).blockPosition());
         return original.call(instance);
@@ -27,7 +27,7 @@ public class MixinClientPanda {
             method = "isScared",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;isThundering()Z")
     )
-    private boolean ecliptic$isScared(World instance, Operation<Boolean> original) {
+    private boolean eclipticseasons$isScared(World instance, Operation<Boolean> original) {
         if (instance instanceof ClientWorld )
             return ClientWeatherChecker.isThunderAt((ClientWorld) instance, ((PandaEntity) (Object) this).blockPosition());
         return original.call(instance);

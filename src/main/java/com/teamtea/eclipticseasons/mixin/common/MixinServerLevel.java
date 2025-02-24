@@ -21,12 +21,12 @@ public abstract class MixinServerLevel {
 
     // 早晨有可能继续下雨
     @Inject(at = {@At("HEAD")}, method = {"stopWeather"}, cancellable = true)
-    public void ecliptic$resetWeatherCycle(CallbackInfo ci) {
+    public void eclipticseasons$resetWeatherCycle(CallbackInfo ci) {
         ci.cancel();
     }
 
     @Inject(at = {@At("HEAD")}, method = {"tick"})
-    public void ecliptic$advanceWeatherCycle(CallbackInfo ci) {
+    public void eclipticseasons$advanceWeatherCycle(CallbackInfo ci) {
         boolean cancel = WeatherManager.agentAdvanceWeatherCycle((ServerWorld) (Object) this, null, null, ((ServerWorld) (Object) this).getRandom());
 
     }
@@ -35,7 +35,7 @@ public abstract class MixinServerLevel {
             method = "tickChunk",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/biome/Biome;getPrecipitation()Lnet/minecraft/world/biome/Biome$RainType;")
     )
-    private Biome.RainType ecliptic$tickChunk_getPrecipitationAt(Biome biome, Operation<Biome.RainType> original) {
+    private Biome.RainType eclipticseasons$tickChunk_getPrecipitationAt(Biome biome, Operation<Biome.RainType> original) {
         return WeatherManager.getPrecipitationAt((ServerWorld) (Object) this, biome,BlockPos.ZERO);
     }
 
@@ -44,7 +44,7 @@ public abstract class MixinServerLevel {
             method = "tickChunk",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/server/ServerWorld;isRaining()Z")
     )
-    private boolean ecliptic$tickChunk_isRaining(ServerWorld instance, Operation<Boolean> original, @Local(ordinal = 0, argsOnly = true) Chunk levelChunk) {
+    private boolean eclipticseasons$tickChunk_isRaining(ServerWorld instance, Operation<Boolean> original, @Local(ordinal = 0, argsOnly = true) Chunk levelChunk) {
         ChunkPos chunkpos = levelChunk.getPos();
         int i = (chunkpos.getMaxBlockX()/2+chunkpos.getMinBlockX()/2);
         int j = (chunkpos.getMaxBlockZ()/2+chunkpos.getMinBlockZ()/2);
@@ -56,7 +56,7 @@ public abstract class MixinServerLevel {
             method = "tickChunk",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/server/ServerWorld;isThundering()Z")
     )
-    private boolean ecliptic$tickChunk_isThundering(ServerWorld instance, Operation<Boolean> original, @Local(ordinal = 0) Chunk levelChunk) {
+    private boolean eclipticseasons$tickChunk_isThundering(ServerWorld instance, Operation<Boolean> original, @Local(ordinal = 0) Chunk levelChunk) {
         ChunkPos chunkpos = levelChunk.getPos();
         int i = (chunkpos.getMaxBlockX()/2+chunkpos.getMinBlockX()/2);
         int j = (chunkpos.getMaxBlockZ()/2+chunkpos.getMinBlockZ()/2);

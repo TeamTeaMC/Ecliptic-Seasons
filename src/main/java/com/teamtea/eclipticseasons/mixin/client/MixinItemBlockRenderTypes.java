@@ -17,7 +17,7 @@ public abstract class MixinItemBlockRenderTypes {
 
     // ctx.world().world.getBlockState(ctx.pos)
     @Inject(at = {@At("HEAD")}, method = {"canRenderInLayer(Lnet/minecraft/block/BlockState;Lnet/minecraft/client/renderer/RenderType;)Z"}, cancellable = true, remap = false)
-    private static void ecliptic$getRenderLayers(BlockState state, RenderType type, CallbackInfoReturnable<Boolean> cir) {
+    private static void eclipticseasons$getRenderLayers(BlockState state, RenderType type, CallbackInfoReturnable<Boolean> cir) {
         if (ModelManager.shouldCutoutMipped(state)) {
             if(type==RenderType.solid())
                 cir.setReturnValue(false);

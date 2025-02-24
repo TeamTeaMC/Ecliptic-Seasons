@@ -30,25 +30,27 @@ public class WeatherUtil {
         // return entity.isInWaterOrRain();
     }
 
-
+    @Deprecated
     public static float getTempAt(World level, BlockPos pos) {
         Biome biome = level.getBiome(pos);
         float bt = biome.getBaseTemperature();
-        bt += SimpleUtil.getNowSolarTerm(level).getTemperatureChange();
+        bt += EclipticUtil.getNowSolarTerm(level).getTemperatureChange();
         return bt;
     }
 
+    @Deprecated
     public static float getBiomeDownFall(World level, BlockPos pos) {
         Biome biome = level.getBiome(pos);
         float bt = biome.getDownfall();
         return bt;
     }
 
+    @Deprecated
     public static float getHumidityAt(World level, BlockPos pos) {
         Biome biome = level.getBiome(pos);
         float bt = biome.getDownfall();
         float bt2 = biome.getBaseTemperature();
-        bt2 += SimpleUtil.getNowSolarTerm(level).getTemperatureChange();
+        bt2 += EclipticUtil.getNowSolarTerm(level).getTemperatureChange();
         return MathHelper.clamp(bt, 0.0F, 1.0F) * MathHelper.clamp(bt2, 0.0F, 1.0F);
     }
 }

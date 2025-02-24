@@ -8,6 +8,7 @@ import com.mojang.blaze3d.vertex.IVertexBuilder;
 import com.mojang.blaze3d.vertex.IVertexConsumer;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
+import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.api.util.SimpleUtil;
 import com.teamtea.eclipticseasons.common.block.base.SimpleHorizontalEntityBlock;
 import com.teamtea.eclipticseasons.common.block.blockentity.CalendarBlockEntity;
@@ -47,7 +48,7 @@ public class CalendarBlockEntityRenderer extends TileEntityRenderer<CalendarBloc
     public void render(CalendarBlockEntity blockEntity, float partialTicks, MatrixStack poseStack, IRenderTypeBuffer bufferIn, int combinedLight, int combinedOverlayIn) {
 
         int facing = blockEntity.getBlockState().getValue(SimpleHorizontalEntityBlock.FACING).ordinal() * 90;
-        SolarTerm st = SimpleUtil.getNowSolarTerm(blockEntity.getLevel());
+        SolarTerm st = EclipticUtil.getNowSolarTerm(blockEntity.getLevel());
 
         drawText(2, new TranslationTextComponent("info.eclipticseasons.environment.solar_term.hint").getString(), Color.GRAY.getRGB(), blockEntity, poseStack, bufferIn, combinedLight);
 
@@ -103,7 +104,7 @@ public class CalendarBlockEntityRenderer extends TileEntityRenderer<CalendarBloc
 
 
         if (line == 1) {
-            SolarTerm nowSolarTerm = SimpleUtil.getNowSolarTerm(tile.getLevel());
+            SolarTerm nowSolarTerm = EclipticUtil.getNowSolarTerm(tile.getLevel());
             // We need disable cull to render the icon
             // RenderSystem.disableCull();
             IVertexBuilder builder = txtBuffer.getBuffer(RenderType.entitySmoothCutout(SolarTerm.getFullIcon()));

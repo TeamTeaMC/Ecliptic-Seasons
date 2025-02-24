@@ -1,0 +1,11 @@
+{
+  "replace": false,
+  "values": [
+    "#minecraft:ice",
+    "minecraft:snow",
+    "minecraft:snow_block",
+    "minecraft:grass_block",
+    "minecraft:dirt",
+    "minecraft:coarse_dirt"
+  ]
+}

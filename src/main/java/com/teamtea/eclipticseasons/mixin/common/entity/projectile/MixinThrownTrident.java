@@ -19,7 +19,7 @@ public class MixinThrownTrident {
             method = "onHitEntity",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;isThundering()Z")
     )
-    private boolean ecliptic$isDarkEnoughToSpawn_isThundering(World instance, Operation<Boolean> original) {
+    private boolean eclipticseasons$isDarkEnoughToSpawn_isThundering(World instance, Operation<Boolean> original) {
         return WeatherManager.isThunderAt((ServerWorld) ((TridentEntity)(Object)this).level, ((TridentEntity)(Object)this).blockPosition());
     }
 }

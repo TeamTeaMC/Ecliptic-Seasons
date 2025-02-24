@@ -21,7 +21,7 @@ public abstract class MixinFancyBlockParticles {
             at = @At(value = "HEAD"),
             cancellable = true
     )
-    private static void ecliptic$getBiomeTemperature(Biome biome, BlockPos pos, ClientWorld level, CallbackInfoReturnable<Float> cir) {
+    private static void eclipticseasons$getBiomeTemperature(Biome biome, BlockPos pos, ClientWorld level, CallbackInfoReturnable<Float> cir) {
         float v =  WeatherManager.getPrecipitationAt(level, biome, pos) == Biome.RainType.SNOW ?
                 0f : 1f;
         cir.setReturnValue(v);
@@ -33,7 +33,7 @@ public abstract class MixinFancyBlockParticles {
             at = @At(value = "HEAD"),
             cancellable = true
     )
-    private static void ecliptic$getBiomePrecipitation(ClientWorld level, Biome biome, CallbackInfoReturnable<Biome.RainType> cir) {
+    private static void eclipticseasons$getBiomePrecipitation(ClientWorld level, Biome biome, CallbackInfoReturnable<Biome.RainType> cir) {
         cir.setReturnValue(WeatherManager.getPrecipitationAt(level, biome, BlockPos.ZERO));
     }
 }

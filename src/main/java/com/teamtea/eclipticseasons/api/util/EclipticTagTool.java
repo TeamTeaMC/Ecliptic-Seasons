@@ -11,14 +11,15 @@ import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.BiomeDictionary;
 
 import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.Optional;
 
 public class EclipticTagTool {
-    public static final Map<Biome, BiomeDictionary.Type> BIOME_TAG_KEY_MAP = new HashMap<>(128);
+    public static final Map<Biome, BiomeDictionary.Type> BIOME_TAG_KEY_MAP = new IdentityHashMap<>(128);
 
     public static BiomeDictionary.Type getTag(Biome biome) {
-        return getTag(WeatherManager.getMainServerWorld(), biome);
+        return getTag(WeatherManager.fetchWorldIfNull(null), biome);
     }
 
     public static BiomeDictionary.Type getTag(World level, Biome biome) {

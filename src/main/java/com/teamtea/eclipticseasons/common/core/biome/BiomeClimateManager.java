@@ -14,9 +14,11 @@ import net.minecraftforge.fml.server.ServerLifecycleHooks;
 
 
 import java.util.HashMap;
+import java.util.IdentityHashMap;
+import java.util.Map;
 
 public class BiomeClimateManager {
-    public final static HashMap<ResourceLocation, Float> BIOME_DEFAULT_TEMPERATURE_MAP = new HashMap<>();
+    public final static Map<Biome, Float> BIOME_DEFAULT_TEMPERATURE_MAP = new IdentityHashMap<>();
 
 
     public static void resetBiomeTemps() {
@@ -25,12 +27,12 @@ public class BiomeClimateManager {
         DynamicRegistries.builtin().registry(Registry.BIOME_REGISTRY).ifPresent(b -> b.forEach(biome ->
         {
 
-            BIOME_DEFAULT_TEMPERATURE_MAP.put(biome.getRegistryName(), ((MixinBiomeAttach) (Object) biome).getBiomeClimateSettings().temperature);
+            BIOME_DEFAULT_TEMPERATURE_MAP.put(biome, ((MixinBiomeAttach) (Object) biome).getBiomeClimateSettings().temperature);
         }));
     }
 
     public static float getDefaultTemperature(Biome biome) {
-        return BiomeClimateManager.BIOME_DEFAULT_TEMPERATURE_MAP.getOrDefault(biome.getRegistryName(), 0.6F);
+        return BiomeClimateManager.BIOME_DEFAULT_TEMPERATURE_MAP.getOrDefault(biome, 0.6F);
     }
 
     public static final float SNOW_LEVEL = 0.15F;
@@ -44,7 +46,7 @@ public class BiomeClimateManager {
                         Math.max(SNOW_LEVEL + 0.001F, BiomeClimateManager.getDefaultTemperature(biome) + SolarTerm.get(solarTermIndex).getTemperatureChange()) :
                         Math.min(SNOW_LEVEL, BiomeClimateManager.getDefaultTemperature(biome) + SolarTerm.get(solarTermIndex).getTemperatureChange());
 
-                BIOME_DEFAULT_TEMPERATURE_MAP.put(biome.getRegistryName(), temperature);
+                BIOME_DEFAULT_TEMPERATURE_MAP.put(biome, temperature);
                 // var oldClimateSettings = biome.climateSettings;
                 // biome.climateSettings = new Biome.ClimateSettings(
                 //         oldClimateSettings.hasPrecipitation(),

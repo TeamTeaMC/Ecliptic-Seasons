@@ -16,13 +16,14 @@ import org.spongepowered.asm.mixin.injection.At;
 public class MixinBee_BeePollinateGoal {
 
    @Dynamic
+
    @Shadow @Final private BeeEntity this$0;
 
     @WrapOperation(
             method = "canBeeUse",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;isRaining()Z")
     )
-    private boolean ecliptic$canBeeUseCheckRain(World instance, Operation<Boolean> original) {
+    private boolean eclipticseasons$canBeeUseCheckRain(World instance, Operation<Boolean> original) {
         return WeatherUtil.isEntityInRain(this$0);
     }
 
@@ -31,7 +32,7 @@ public class MixinBee_BeePollinateGoal {
             method = "canBeeContinueToUse",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;isRaining()Z")
     )
-    private boolean ecliptic$canBeeContinueToUseCheckRain(World instance, Operation<Boolean> original) {
+    private boolean eclipticseasons$canBeeContinueToUseCheckRain(World instance, Operation<Boolean> original) {
         return WeatherUtil.isEntityInRain(this$0);
     }
 

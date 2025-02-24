@@ -15,7 +15,7 @@ public abstract class MixinClientClientLevel {
 
 
     @Inject(at = {@At("RETURN")}, method = {"animateTick"})
-    private void ecliptic$animateTick(int x, int y, int z, CallbackInfo ci) {
+    private void eclipticseasons$animateTick(int x, int y, int z, CallbackInfo ci) {
         ParticleUtil.createParticle((ClientWorld)(Object)this,x,y,z);
 
     }

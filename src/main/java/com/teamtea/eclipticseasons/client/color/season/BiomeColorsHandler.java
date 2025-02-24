@@ -4,6 +4,7 @@ import com.teamtea.eclipticseasons.api.util.EclipticTagClientTool;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.constant.solar.color.SolarTermColor;
 import com.teamtea.eclipticseasons.api.constant.tag.SeasonTypeBiomeTags;
+import com.teamtea.eclipticseasons.api.util.EclipticTagTool;
 import com.teamtea.eclipticseasons.client.core.ColorHelper;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import net.minecraft.client.Minecraft;
@@ -46,7 +47,7 @@ public class BiomeColorsHandler {
                 int j = (int) ((1.0D - humidity) * 255.0D);
                 int k = j << 8 | i;
 
-                int[] newGrassBuffer = newGrassBufferMap.getOrDefault(EclipticTagClientTool.getTag(biome), GrassColors.pixels);
+                int[] newGrassBuffer = newGrassBufferMap.getOrDefault(EclipticTagTool.getTag(biome), GrassColors.pixels);
                 return k > newGrassBuffer.length ? -65281 : newGrassBuffer[k];
             }).orElse(originColor);
         } else return -1;
@@ -70,7 +71,7 @@ public class BiomeColorsHandler {
                 int j = (int) ((1.0D - humidity) * 255.0D);
                 int k = j << 8 | i;
                 
-                int[] newFoliageBuffer = newFoliageBufferMap.getOrDefault(EclipticTagClientTool.getTag(biome), FoliageColors.pixels);
+                int[] newFoliageBuffer = newFoliageBufferMap.getOrDefault(EclipticTagTool.getTag(biome), FoliageColors.pixels);
                 return k > newFoliageBuffer.length ? originColor : newFoliageBuffer[k];
             }).orElse(originColor);
         } else return biome.getFoliageColor();

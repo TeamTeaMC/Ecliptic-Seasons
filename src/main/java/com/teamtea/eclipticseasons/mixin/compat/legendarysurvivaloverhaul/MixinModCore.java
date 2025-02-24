@@ -16,7 +16,7 @@ public abstract class MixinModCore {
             method = "serverStarted",
             at = @At(value = "HEAD")
     )
-    private void ecliptic$lambda$onLoadComplete$1(CallbackInfo ci) {
+    private void eclipticseasons$lambda$onLoadComplete$1(CallbackInfo ci) {
         LSO_ESUtil.initAverageTemperatures();
     }
 

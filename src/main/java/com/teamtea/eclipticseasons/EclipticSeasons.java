@@ -93,6 +93,7 @@ public class EclipticSeasons {
 
         CompatModule.register(MinecraftForge.EVENT_BUS, modEventBus);
 
+        modEventBus.addListener(ClientConfig::UpdateConfig);
     }
 
 
