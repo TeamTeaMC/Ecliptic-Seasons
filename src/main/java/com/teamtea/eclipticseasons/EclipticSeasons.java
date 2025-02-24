@@ -85,6 +85,7 @@ public class EclipticSeasons {
 
         modEventBus.addListener(this::gatherData);
         modEventBus.addListener(this::FMLCommonSetup);
+        modEventBus.addListener(ClientConfig::UpdateConfig);
 
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, CommonConfig.SERVER_CONFIG);
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ClientConfig.CLIENT_CONFIG);

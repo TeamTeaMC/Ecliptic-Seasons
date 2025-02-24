@@ -1,6 +1,16 @@
 package com.teamtea.eclipticseasons.config;
 
+import net.minecraft.ResourceLocationException;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraftforge.common.ForgeConfigSpec;
+import net.minecraftforge.common.Tags;
+import net.minecraftforge.fml.event.config.ModConfigEvent;
+
+import java.io.Serializable;
+import java.util.*;
 
 public class ClientConfig
 {
@@ -12,6 +22,38 @@ public class ClientConfig
         GUI.load(builder);
         Renderer.load(builder);
         Sound.load(builder);
+    }
+
+    @SafeVarargs
+    public static <T> List<T> of(T... objs) {
+        return Arrays.stream(objs).collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
+    }
+
+    private static boolean testLList(Object o) {
+        if (o instanceof List) {
+            List<?> innerChildren = (List<?>) o;
+            if (innerChildren.size() == 2) {
+                return innerChildren.get(0) instanceof String
+                        && innerChildren.get(1) instanceof Integer;
+            }
+        }
+        return false;
+    }
+
+    public static final Map<TagKey<Biome>, Integer> SNOW_LINE_BIOME = new IdentityHashMap<>();
+
+    public static void UpdateConfig(ModConfigEvent modConfigEvent) {
+        if (modConfigEvent.getConfig().getSpec() == CLIENT_CONFIG) {
+            SNOW_LINE_BIOME.clear();
+            for (List<? extends Serializable> serializables : Renderer.snowBiomeLine.get()) {
+                try {
+                    TagKey<Biome> biomeTagKey = TagKey.create(Registry.BIOME_REGISTRY, new ResourceLocation(serializables.get(0).toString()));
+                    SNOW_LINE_BIOME.put(biomeTagKey,
+                            Integer.parseInt(serializables.get(1).toString()));
+                } catch (ResourceLocationException ignore) {
+                }
+            }
+        }
     }
 
     public static class GUI
@@ -41,6 +83,8 @@ public class ClientConfig
         public static ForgeConfigSpec.BooleanValue deeperSnow;
         public static ForgeConfigSpec.BooleanValue underSnow;
         public static ForgeConfigSpec.BooleanValue particle;
+        public static ForgeConfigSpec.IntValue snowLine;
+        public static ForgeConfigSpec.ConfigValue<List<? extends List<? extends Serializable>>> snowBiomeLine;
 
         private static void load(ForgeConfigSpec.Builder builder)
         {
@@ -55,8 +99,12 @@ public class ClientConfig
                     .define("DeeperSnow", false);
             underSnow = builder.comment("Blocks below fences and bamboo will also accumulate snow.")
                     .define("UnderSnow", false);
-            particle = builder.comment("Particle.")
+            particle = builder.comment("Seasonal Particle.")
                     .define("Particle", true);
+            snowLine = builder.comment("Snow Line Height.")
+                    .defineInRange("SowLineHeight", 160, Integer.MIN_VALUE, Integer.MAX_VALUE);
+            snowBiomeLine = builder.comment("Snow Line Height.")
+                    .defineList("SowLineHeightBiome", of(of(Tags.Biomes.IS_COLD_OVERWORLD.location().toString(), 111), of(Tags.Biomes.IS_HOT_OVERWORLD.location().toString(), 200)), ClientConfig::testLList);
             builder.pop();
         }
     }
@@ -68,7 +116,7 @@ public class ClientConfig
         private static void load(ForgeConfigSpec.Builder builder)
         {
             builder.push("Sound");
-            sound = builder.comment("Ambient Sound.")
+            sound = builder.comment("Seasonal Ambient Sound.")
                     .define("Sound", true);
             builder.pop();
         }

@@ -1,6 +1,7 @@
 package com.teamtea.eclipticseasons.common.core.biome;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
+import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.registry.EffectRegistry;
 import com.teamtea.eclipticseasons.api.constant.climate.BiomeRain;
@@ -236,7 +237,7 @@ public class WeatherManager {
 
         var level = fetchLevelIfNull(levelNull);
 
-        var provider = SolarUtil.getProvider(level);
+        var provider = SolarHolders.getSaveData(level);
         var weathers = getBiomeList(level);
         if (provider != null && weathers != null) {
             var solarTerm = provider.getSolarTerm();
@@ -259,7 +260,7 @@ public class WeatherManager {
     public static Biome.Precipitation getRainOrSnow(Level levelNull, Biome biome, BlockPos p198905) {
         var level = fetchLevelIfNull(levelNull);
 
-        var provider = SolarUtil.getProvider(level);
+        var provider = SolarHolders.getSaveData(level);
         var weathers = getBiomeList(level);
         if (provider != null && weathers != null) {
             var solarTerm = provider.getSolarTerm();
@@ -347,12 +348,12 @@ public class WeatherManager {
         if (CommonConfig.Temperature.heatStroke.get()
                 &&level.getRandom().nextInt(150) == 0)
             SolarHolders.getSaveDataLazy(level).ifPresent(solarDataManager -> {
-                if (SimpleUtil.getNowSolarTerm(level).isInTerms(SolarTerm.BEGINNING_OF_SUMMER, SolarTerm.BEGINNING_OF_AUTUMN)) {
+                if (EclipticUtil.getNowSolarTerm(level).isInTerms(SolarTerm.BEGINNING_OF_SUMMER, SolarTerm.BEGINNING_OF_AUTUMN)) {
                     var b = level.getBiome(player.blockPosition()).value();
                     if (b.getTemperature(player.blockPosition()) > 0.5f) {
 
                         if (!player.isInWaterOrRain()
-                                && ((SimpleUtil.isNoon(level) && (level.canSeeSky(player.blockPosition()))))
+                                && ((EclipticUtil.isNoon(level) && (level.canSeeSky(player.blockPosition()))))
                         ) {
                             boolean isColdHe = false;
                             for (ItemStack itemstack : player.getArmorSlots()) {
@@ -594,7 +595,7 @@ public class WeatherManager {
     }
 
     public static SnowRenderStatus getSnowStatus(ServerLevel level, Biome biome, BlockPos pos) {
-        var provider = SolarUtil.getProvider(level);
+        var provider = SolarHolders.getSaveData(level);
         var status = SnowRenderStatus.NONE;
         if (provider != null) {
             var solarTerm = provider.getSolarTerm();

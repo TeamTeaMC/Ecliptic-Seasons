@@ -70,8 +70,14 @@ public enum SolarTerm {
         return new TranslatableComponent("info.eclipticseasons.environment.solar_term.alternation." + getName()).withStyle(getSeason().getColor());
     }
 
+    private static final SolarTerm[] solarTerms = SolarTerm.values();
+
+    public static SolarTerm[] collectValues() {
+        return solarTerms;
+    }
+
     public static SolarTerm get(int index) {
-        return values()[index];
+        return collectValues()[index];
     }
 
     public static ResourceLocation getFont() {

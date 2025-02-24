@@ -40,12 +40,12 @@ public abstract class MixinServerLevel {
 
     // 早晨有可能继续下雨
     @Inject(at = {@At("HEAD")}, method = {"resetWeatherCycle"}, cancellable = true)
-    public void ecliptic$resetWeatherCycle(CallbackInfo ci) {
+    public void eclipticseasons$resetWeatherCycle(CallbackInfo ci) {
         ci.cancel();
     }
 
     @Inject(at = {@At("HEAD")}, method = {"advanceWeatherCycle"}, cancellable = true)
-    public void ecliptic$advanceWeatherCycle(CallbackInfo ci) {
+    public void eclipticseasons$advanceWeatherCycle(CallbackInfo ci) {
         boolean cancel = WeatherManager.agentAdvanceWeatherCycle((ServerLevel) (Object) this, null, null, ((ServerLevel) (Object) this).getRandom());
         if (cancel)
             ci.cancel();
@@ -55,7 +55,7 @@ public abstract class MixinServerLevel {
             method = "tickChunk",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/biome/Biome;getPrecipitation()Lnet/minecraft/world/level/biome/Biome$Precipitation;")
     )
-    private Biome.Precipitation ecliptic$tickChunk_getPrecipitationAt(Biome biome, Operation<Biome.Precipitation> original) {
+    private Biome.Precipitation eclipticseasons$tickChunk_getPrecipitationAt(Biome biome, Operation<Biome.Precipitation> original) {
         return WeatherManager.getPrecipitationAt((ServerLevel) (Object) this, biome,BlockPos.ZERO);
     }
 
@@ -64,7 +64,7 @@ public abstract class MixinServerLevel {
             method = "tickChunk",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;isRaining()Z")
     )
-    private boolean ecliptic$tickChunk_isRaining(ServerLevel serverLevel, Operation<Boolean> original, @Local(ordinal = 0) LevelChunk levelChunk) {
+    private boolean eclipticseasons$tickChunk_isRaining(ServerLevel serverLevel, Operation<Boolean> original, @Local(ordinal = 0) LevelChunk levelChunk) {
         var chunkpos = levelChunk.getPos();
         int i = chunkpos.getMiddleBlockX();
         int j = chunkpos.getMiddleBlockZ();
@@ -76,7 +76,7 @@ public abstract class MixinServerLevel {
             method = "tickChunk",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;isThundering()Z")
     )
-    private boolean ecliptic$tickChunk_isThundering(ServerLevel serverLevel, Operation<Boolean> original, @Local(ordinal = 0) LevelChunk levelChunk) {
+    private boolean eclipticseasons$tickChunk_isThundering(ServerLevel serverLevel, Operation<Boolean> original, @Local(ordinal = 0) LevelChunk levelChunk) {
         var chunkpos = levelChunk.getPos();
         int i = chunkpos.getMiddleBlockX();
         int j = chunkpos.getMiddleBlockZ();

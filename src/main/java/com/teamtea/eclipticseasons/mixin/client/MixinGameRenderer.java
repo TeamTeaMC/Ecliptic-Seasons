@@ -26,7 +26,7 @@ public abstract class MixinGameRenderer {
     @Shadow @Final private static ResourceLocation[] EFFECTS;
 
     @Inject(at = {@At("HEAD")}, method = {"render"})
-    private void ecliptic$init(float pPartialTicks, long pNanoTime, boolean pRenderLevel, CallbackInfo ci) {
+    private void eclipticseasons$init(float pPartialTicks, long pNanoTime, boolean pRenderLevel, CallbackInfo ci) {
         // ClientRenderer.applyEffect((GameRenderer)(Object)this,EFFECTS,this.minecraft.player);
     }
 }

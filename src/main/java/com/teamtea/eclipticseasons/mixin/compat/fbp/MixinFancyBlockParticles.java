@@ -22,8 +22,8 @@ public abstract class MixinFancyBlockParticles {
             at = @At(value = "HEAD"),
             cancellable = true
     )
-    private void ecliptic$coldEnoughToSnow(Holder<Biome> biome, BlockPos pos, Level level, CallbackInfoReturnable<Boolean> cir) {
-        boolean v = ecliptic$isCold(biome, pos, level);
+    private void eclipticseasons$coldEnoughToSnow(Holder<Biome> biome, BlockPos pos, Level level, CallbackInfoReturnable<Boolean> cir) {
+        boolean v = eclipticseasons$isCold(biome, pos, level);
         cir.setReturnValue(v);
     }
 
@@ -33,13 +33,13 @@ public abstract class MixinFancyBlockParticles {
             at = @At(value = "HEAD"),
             cancellable = true
     )
-    private void ecliptic$warmEnoughToRain(Holder<Biome> biome, BlockPos pos, Level level, CallbackInfoReturnable<Boolean> cir) {
-        boolean v = ecliptic$isCold(biome, pos, level);
+    private void eclipticseasons$warmEnoughToRain(Holder<Biome> biome, BlockPos pos, Level level, CallbackInfoReturnable<Boolean> cir) {
+        boolean v = eclipticseasons$isCold(biome, pos, level);
         cir.setReturnValue(!v);
     }
 
     @Unique
-    private static boolean ecliptic$isCold(Holder<Biome> biome, BlockPos pos, Level level) {
+    private static boolean eclipticseasons$isCold(Holder<Biome> biome, BlockPos pos, Level level) {
         return WeatherManager.getPrecipitationAt(level, biome.value(), pos) == Biome.Precipitation.SNOW;
     }
 

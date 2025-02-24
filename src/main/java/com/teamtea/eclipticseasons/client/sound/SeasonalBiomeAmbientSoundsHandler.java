@@ -1,5 +1,6 @@
 package com.teamtea.eclipticseasons.client.sound;
 
+import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.common.registry.SoundEventsRegistry;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.util.SimpleUtil;
@@ -62,8 +63,8 @@ public class SeasonalBiomeAmbientSoundsHandler implements AmbientSoundHandler {
 
 
         {
-            var season = SimpleUtil.getNowSolarTerm(player.level).getSeason();
-            boolean isDayNow = SimpleUtil.isDay(player.level);
+            var season = EclipticUtil.getNowSolarTerm(player.level).getSeason();
+            boolean isDayNow = EclipticUtil.isDay(player.level);
             if (season != this.previousSeason || isDayNow != this.previousIsDay) {
                 this.loopSounds.values().forEach(LoopSoundInstance::fadeOut);
                 {

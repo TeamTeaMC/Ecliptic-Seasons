@@ -57,11 +57,15 @@ public enum TemperateSolarTermColors  implements SolarTermColor
         this.temperateMix = temperateMix;
         this.birchColor = FoliageColor.getBirchColor();
     }
-    
-    
-    public static TemperateSolarTermColors get(int index)
-    {
-        return values()[index];
+
+    private static final TemperateSolarTermColors[] TEMPERATE_SOLAR_TERM_COLORS = TemperateSolarTermColors.values();
+
+    public static TemperateSolarTermColors[] collectValues() {
+        return TEMPERATE_SOLAR_TERM_COLORS;
+    }
+
+    public static TemperateSolarTermColors get(int index) {
+        return collectValues()[index];
     }
    
     @Override

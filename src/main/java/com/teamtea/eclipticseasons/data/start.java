@@ -1,6 +1,7 @@
 package com.teamtea.eclipticseasons.data;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
+import com.teamtea.eclipticseasons.data.tag.BlockTagProvider;
 import com.teamtea.eclipticseasons.data.tag.TagsDataProvider;
 import net.minecraft.data.DataGenerator;
 import net.minecraftforge.common.data.ExistingFileHelper;
@@ -16,6 +17,7 @@ public class start {
 
         if (event.includeServer()) {
             EclipticSeasons.logger("Generate We Data!!!");
+            generator.addProvider(new BlockTagProvider(generator,MODID,helper));
 
             generator.addProvider(new TagsDataProvider(generator,MODID,helper));
 

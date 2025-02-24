@@ -66,7 +66,7 @@ public enum TemperateRain implements BiomeRain {
 
     @Override
     public SolarTerm getSolarTerm() {
-        return SolarTerm.values()[this.ordinal()];
+        return SolarTerm.get(this.ordinal());
     }
 
     @Override

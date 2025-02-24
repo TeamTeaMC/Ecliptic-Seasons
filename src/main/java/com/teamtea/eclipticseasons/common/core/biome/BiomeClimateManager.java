@@ -10,9 +10,11 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 
 import java.util.HashMap;
+import java.util.IdentityHashMap;
+import java.util.Map;
 
 public class BiomeClimateManager {
-    public final static HashMap<Biome, Float> BIOME_DEFAULT_TEMPERATURE_MAP = new HashMap<>();
+    public final static Map<Biome, Float> BIOME_DEFAULT_TEMPERATURE_MAP = new IdentityHashMap<>();
 
 
     public static void resetBiomeTemps(RegistryAccess registryAccess) {

@@ -1,5 +1,6 @@
 package com.teamtea.eclipticseasons.client.particle;
 
+import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.common.registry.ParticleRegistry;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.util.SimpleUtil;
@@ -32,7 +33,7 @@ public class ParticleUtil {
         // if (SimpleUtil.getNowSolarTerm(clientLevel).getSeason() == Season.AUTUMN)
         {
             BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos();
-            var sd = SimpleUtil.getNowSolarTerm(clientLevel).getSeason();
+            var sd = EclipticUtil.getNowSolarTerm(clientLevel).getSeason();
             int chanceW = 19;
             switch (sd) {
                 case SPRING -> chanceW = 17;
@@ -61,8 +62,8 @@ public class ParticleUtil {
             fallenLeaves(clientLevel, blockpos$mutableblockpos, blockstate);
         } else if (blockstate.is(BlockTags.FLOWERS)) {
             // CampfireBlock.
-            if (SimpleUtil.getNowSolarTerm(clientLevel).getSeason() == Season.SUMMER
-                    && SimpleUtil.isEvening(clientLevel)
+            if (EclipticUtil.getNowSolarTerm(clientLevel).getSeason() == Season.SUMMER
+                    && EclipticUtil.isEvening(clientLevel)
                     && !clientLevel.isRainingAt(blockpos$mutableblockpos)
                     && clientLevel.canSeeSky(blockpos$mutableblockpos)
                     && random.nextInt(3) == 0
@@ -71,8 +72,8 @@ public class ParticleUtil {
 
         }
 
-        if (SimpleUtil.getNowSolarTerm(clientLevel).getSeason() == Season.AUTUMN
-                && SimpleUtil.isNoon(clientLevel)
+        if (EclipticUtil.getNowSolarTerm(clientLevel).getSeason() == Season.AUTUMN
+                && EclipticUtil.isNoon(clientLevel)
                 && clientLevel.canSeeSky(blockpos$mutableblockpos)
                 && clientLevel.isEmptyBlock(blockpos$mutableblockpos)
                 && !clientLevel.isRainingAt(blockpos$mutableblockpos)

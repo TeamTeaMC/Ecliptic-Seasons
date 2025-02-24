@@ -17,7 +17,7 @@ public class MixinFox {
             method = "tick",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;isThundering()Z")
     )
-    private boolean ecliptic$tick(Level instance, Operation<Boolean> original) {
+    private boolean eclipticseasons$tick(Level instance, Operation<Boolean> original) {
         return WeatherManager.isThunderAt((ServerLevel) ((Fox)(Object)this).level,((Fox)(Object)this).blockPosition());
     }
 

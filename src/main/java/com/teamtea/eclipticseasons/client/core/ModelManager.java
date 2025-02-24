@@ -1,6 +1,9 @@
 package com.teamtea.eclipticseasons.client.core;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
+import com.teamtea.eclipticseasons.api.constant.tag.EclipticBlockTags;
+import com.teamtea.eclipticseasons.api.util.EclipticUtil;
+import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.registry.BlockRegistry;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
@@ -16,17 +19,21 @@ import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.EmptyBlockGetter;
 import net.minecraft.world.level.LightLayer;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.level.block.state.properties.Half;
 import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraftforge.common.BiomeDictionary;
 
 
 import java.util.*;
@@ -70,13 +77,23 @@ public class ModelManager {
     public static final int ChunkSizeAxis = 4 + 5;
 
 
+    public static final Map<BlockState, Boolean> SNOW_OVERLAY_CAN_SURVIVE_ON_MAP = new IdentityHashMap<>();
+
+    public static boolean snowOverlayCanSurviveOn(BlockState state) {
+        Boolean b = SNOW_OVERLAY_CAN_SURVIVE_ON_MAP.get(state);
+        if (b == null) {
+            b = SNOW_OVERLAY_CAN_SURVIVE_ON_MAP.put(state, !state.is(EclipticBlockTags.SNOW_OVERLAY_CANNOT_SURVIVE_ON));
+        }
+        return Boolean.TRUE.equals(b);
+    }
+
     public static boolean shouldCutoutMipped(BlockState state) {
         if (Minecraft.getInstance().level != null) {
             var onBlock = state.getBlock();
             if (!(onBlock instanceof FenceBlock)) {
                 if (onBlock instanceof SlabBlock || onBlock instanceof FarmBlock || onBlock instanceof DirtPathBlock || onBlock instanceof StairBlock
                         || state.isSolidRender(EmptyBlockGetter.INSTANCE, BlockPos.ZERO)) {
-                    return true;
+                    return snowOverlayCanSurviveOn(state);
                 }
             }
         }
@@ -239,18 +256,14 @@ public class ModelManager {
     public static final List<Block> LARGE_GRASS = List.of(Blocks.TALL_GRASS, Blocks.LARGE_FERN);
 
     // 实际上这里之所以太慢还有个问题就是会一个方块访问七次
-    public static List<BakedQuad> appendOverlay(BlockAndTintGetter blockAndTintGetter, BlockState state, BlockPos pos, Direction direction, Random random, long seed, List<BakedQuad> list) {
-        // Minecraft.getInstance().level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING,pos);
-        // 不处理空列表，这代表着不处理这个方向
-        // if (state.is(BlockTags.LEAVES) && !list.isEmpty()) {
-        //     return List.of(new BakedQuadRetextured(list.get(0),
-        //             ClientSetup.snowOverlayBlock.resolve().get().getQuads(null, Direction.UP, null).get(0).getSprite()));
-        // }
-        // if (true)return list;
+    public static List<BakedQuad> appendOverlay(BlockAndTintGetter blockAndTintGetter, BlockState state, BlockPos pos, Direction direction, Random random, long seed, List<BakedQuad> original) {
+        if(!MapChecker.isValidDimension(Minecraft.getInstance().level)){
+            return original;
+        }
 
         if (ClientConfig.Renderer.snowyWinter.get()
                 && direction != Direction.DOWN
-                && !list.isEmpty()) {
+                && !original.isEmpty()) {
 
             var onBlock = state.getBlock();
             int flag = 0;
@@ -272,7 +285,7 @@ public class ModelManager {
                 flag = FLAG_GRASS_LARGE;
             } else if ((onBlock instanceof FarmBlock || onBlock instanceof DirtPathBlock) && direction == null) {
                 flag = FLAG_FARMLAND;
-            } else return list;
+            } else return original;
 
             int offset = 0;
             if (flag == FLAG_GRASS || flag == FLAG_GRASS_LARGE) {
@@ -319,7 +332,7 @@ public class ModelManager {
                     // isFlowerAbove=false;
                     var useMap = isFlowerAbove ? quadMap_1 : quadMap;
                     List<BakedQuad> cc =
-                             EclipticSeasonsMixinPlugin.isOptLoad() ? null : useMap.getOrDefault(list, null);
+                            EclipticSeasonsMixinPlugin.isOptLoad() ? null : useMap.getOrDefault(original, null);
                     if (cc != null) {
                         return cc;
                     } else {
@@ -344,7 +357,7 @@ public class ModelManager {
                                 snowModel = models.get(snowy_grass);
                             } else if (onBlock == Blocks.FERN) {
                                 snowModel = models.get(snowy_fern);
-                            }  else snowModel = models.get(snowy_grass);
+                            } else snowModel = models.get(snowy_grass);
                         } else if (flag == FLAG_GRASS_LARGE) {
                             if (onBlock == Blocks.TALL_GRASS) {
                                 snowModel = models.get(offset == 1 ? snowy_tall_grass_bottom : snowy_tall_grass_top);
@@ -357,7 +370,7 @@ public class ModelManager {
                         }
 
                         if (snowModel != null) {
-                            int size = list.size();
+                            int size = original.size();
                             var snowList = snowModel.getQuads(snowState, direction, null);
                             ArrayList<BakedQuad> newList;
                             if (flag == FLAG_GRASS) {
@@ -375,10 +388,9 @@ public class ModelManager {
                                 } else newList = new ArrayList<>(snowList);
                             } else {
                                 newList = new ArrayList<BakedQuad>(size + snowList.size());
-                                newList.addAll(list);
+                                newList.addAll(original);
                                 newList.addAll(snowList);
                             }
-
 
 
                             if (flag == FLAG_FARMLAND) {
@@ -388,10 +400,10 @@ public class ModelManager {
                                 }
                             }
 
-                            if (! EclipticSeasonsMixinPlugin.isOptLoad())
-                                useMap.putIfAbsent(list, newList);
+                            if (!EclipticSeasonsMixinPlugin.isOptLoad())
+                                useMap.putIfAbsent(original, newList);
 
-                            list = newList;
+                            original = newList;
 
 
                         }
@@ -404,28 +416,28 @@ public class ModelManager {
                     var solarTerm = SolarTerm.NONE;
                     int weight = 100;
                     if (level != null) {
-                        solarTerm = SimpleUtil.getNowSolarTerm(level);
+                        solarTerm = EclipticUtil.getNowSolarTerm(level);
                         weight = Math.abs(solarTerm.ordinal() - 3) + 1;
                     }
                     if (solarTerm.getSeason() == Season.SPRING
                             && random.nextInt(weight * 4) == 0
                             && blockAndTintGetter.getBlockState(pos.above()).isAir()) {
                         List<BakedQuad> cc =
-                                 EclipticSeasonsMixinPlugin.isOptLoad() ? null : quadMap_GRASS.getOrDefault(list, null);
+                                EclipticSeasonsMixinPlugin.isOptLoad() ? null : quadMap_GRASS.getOrDefault(original, null);
                         if (cc != null) {
                             return cc;
                         } else {
                             BakedModel snowModel = models.get(grass_flower);
                             if (snowModel != null) {
-                                int size = list.size();
+                                int size = original.size();
                                 var snowList = snowModel.getQuads(null, direction, null);
                                 ArrayList<BakedQuad> newList;
                                 newList = new ArrayList<BakedQuad>(size + snowList.size());
-                                newList.addAll(list);
+                                newList.addAll(original);
                                 newList.addAll(snowList);
-                                if (! EclipticSeasonsMixinPlugin.isOptLoad())
-                                    quadMap_GRASS.putIfAbsent(list, newList);
-                                list = newList;
+                                if (!EclipticSeasonsMixinPlugin.isOptLoad())
+                                    quadMap_GRASS.putIfAbsent(original, newList);
+                                original = newList;
                             }
                         }
                     }
@@ -434,20 +446,31 @@ public class ModelManager {
 
 
         }
-        return list;
+        return original;
     }
 
-    // TODO:感觉用随机表性能更高
+    public static final Map<Biome, Integer> SNOW_LINE_BIOME_MAP = new IdentityHashMap<>();
+
     public static boolean shouldSnowAt(BlockAndTintGetter blockAndTintGetter, BlockPos pos, BlockState state, Random random, long seed) {
-        // Ecliptic.logger(SolarClientUtil.getSnowLayer() * 100, (seed&99));
-        // Minecraft.getInstance().level.getBiome(pos);
-        var biome = Minecraft.getInstance().level.getBiome(pos);
-        if (WeatherManager.getSnowDepthAtBiome(Minecraft.getInstance().level, biome.value()) > Math.abs(seed % 100)) {
-            return true;
+        int snowLine = ClientConfig.Renderer.snowLine.get();
+        Holder<Biome> biome = Minecraft.getInstance().level.getBiome(pos);
+        snowLine += ((((int) seed) & 3) + (pos.getX() & 3) + (pos.getY() & 3) + (pos.getZ() & 3)) - 4;
+        Integer sH = SNOW_LINE_BIOME_MAP.getOrDefault(biome.value(), null);
+        if (sH == null) {
+            for (Map.Entry<TagKey<Biome>, Integer> entry : ClientConfig.SNOW_LINE_BIOME.entrySet()) {
+                if (biome.is(entry.getKey())) {
+                    snowLine = entry.getValue();
+                    break;
+                }
+            }
+            SNOW_LINE_BIOME_MAP.put(biome.value(), snowLine);
         }
 
+        if (pos.getY() > snowLine
+                || WeatherManager.getSnowDepthAtBiome(Minecraft.getInstance().level, biome.value()) > Math.abs(seed % 100)) {
+            return snowOverlayCanSurviveOn(state);
+        }
         return false;
-        // >= random.nextInt(100));
     }
 
 }
