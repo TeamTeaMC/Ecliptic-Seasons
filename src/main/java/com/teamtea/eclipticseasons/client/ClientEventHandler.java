@@ -117,17 +117,7 @@ public final class ClientEventHandler {
                         if (Minecraft.getInstance().cameraEntity instanceof Player player) {
                             BlockPos pos = player.getOnPos();
                             SectionPos sectionPos = SectionPos.of(pos);
-                            // lr.setSectionDirtyWithNeighbors(sectionPos.x(),sectionPos.y(),sectionPos.z());
-                            int x = sectionPos.x();
-                            int y = sectionPos.y();
-                            int z = sectionPos.z();
-                            for (int i = x - 2; i <= x + 2; ++i) {
-                                for (int j = z - 2; j <= z + 2; ++j) {
-                                    for (int k = y - 1; k <= y + 1; ++k) {
-                                        lr.setSectionDirty(j, k, i);
-                                    }
-                                }
-                            }
+                            lr.setSectionDirtyWithNeighbors(sectionPos.x(),sectionPos.y(),sectionPos.z());
                         }
                     }
                 }
