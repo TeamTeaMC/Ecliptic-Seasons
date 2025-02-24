@@ -1,18 +1,89 @@
 package com.teamtea.eclipticseasons.api.util;
 
+import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.biome.Humidity;
 import com.teamtea.eclipticseasons.api.constant.biome.Rainfall;
 import com.teamtea.eclipticseasons.api.constant.biome.Temperature;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
+import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.core.solar.SolarAngelHelper;
 import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
+import net.minecraft.world.gen.Heightmap;
 
 public class EclipticUtil {
+    public static final EclipticSeasonsApi INSTANCE = new EclipticSeasonsApi() {
+        @Override
+        public SolarTerm getSolarTerm(World level) {
+            return EclipticUtil.getNowSolarTerm(level);
+        }
+
+        @Override
+        public boolean isDay(World level) {
+            return EclipticUtil.isDay(level);
+        }
+
+        @Override
+        public boolean isNight(World level) {
+            return EclipticUtil.isNight(level);
+        }
+
+        @Override
+        public int getNightTime(World level) {
+            return EclipticUtil.getNightTime(level);
+        }
+
+        @Override
+        public boolean isNoon(World level) {
+            return EclipticUtil.isNoon(level);
+        }
+
+        @Override
+        public boolean isEvening(World level) {
+            return EclipticUtil.isEvening(level);
+        }
+
+
+        @Override
+        public boolean isRainOrSnowAt(World level, BlockPos pos) {
+            if (!WeatherManager.hasWeatherAt(level, pos)) {
+                return false;
+            } else {
+                return WeatherManager.getRainOrSnow(level, level.getBiome(pos), pos) != Biome.RainType.NONE;
+            }
+        }
+
+        @Override
+        public boolean isRainAt(World level, BlockPos pos) {
+            return level.isRainingAt(pos);
+        }
+
+        @Override
+        public boolean isSnowAt(World level, BlockPos pos) {
+            if (!WeatherManager.hasWeatherAt(level, pos)) {
+                return false;
+            } else {
+                return WeatherManager.getRainOrSnow(level, level.getBiome(pos), pos) == Biome.RainType.SNOW;
+            }
+        }
+
+        @Override
+        public boolean isThunderAt(World level, BlockPos pos) {
+            return WeatherManager.isThunderAt(level, pos);
+        }
+
+        @Override
+        public Biome.RainType getPrecipitationAt(World level, BlockPos pos) {
+            int height = level.getHeight(Heightmap.Type.MOTION_BLOCKING, pos.getX(), pos.getZ());
+            pos = new BlockPos(pos.getX(), height, pos.getZ());
+            return WeatherManager.getPrecipitationAt(level, level.getBiome(pos), pos);
+        }
+    };
+
     public static SolarTerm getNowSolarTerm(World level) {
         SolarDataManager sd = SolarHolders.getSaveData(level);
         if (sd != null) return sd.getSolarTerm();

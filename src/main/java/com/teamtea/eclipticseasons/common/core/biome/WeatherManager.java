@@ -1,6 +1,7 @@
 package com.teamtea.eclipticseasons.common.core.biome;
 
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
+import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.registry.EffectRegistry;
 import com.teamtea.eclipticseasons.api.constant.climate.BiomeRain;
 import com.teamtea.eclipticseasons.api.constant.climate.FlatRain;
@@ -138,8 +139,21 @@ public class WeatherManager {
         return true;
     }
 
-    public static Boolean isThunderAtBiome(ServerWorld serverLevel, Biome biome) {
-        ArrayList<BiomeWeather> ws = getBiomeList(serverLevel);
+
+    public static boolean hasWeatherAt(World level, BlockPos pos) {
+        if (!MapChecker.isValidDimension(level)) {
+            return false;
+        }
+        if (!level.canSeeSky(pos)) {
+            return false;
+        } else if (level.getHeightmapPos(Heightmap.Type.MOTION_BLOCKING, pos).getY() > pos.getY()) {
+            return false;
+        }
+        return true;
+    }
+
+    public static Boolean isThunderAtBiome(World level, Biome biome) {
+        ArrayList<BiomeWeather> ws = getBiomeList(level);
         if (ws != null)
             for (BiomeWeather biomeWeather : ws) {
                 if (biome == biomeWeather.biomeHolder) {
@@ -149,20 +163,13 @@ public class WeatherManager {
         return false;
     }
 
-    public static Boolean isThunderAt(ServerWorld serverLevel, BlockPos pos) {
-        if (!serverLevel.dimensionType().natural()) {
+
+    public static Boolean isThunderAt(World level, BlockPos pos) {
+        if (!hasWeatherAt(level, pos)) {
             return false;
         }
-        // if (!isThunderAnywhere(serverLevel)) {
-        //     return false;
-        // }
-        if (!serverLevel.canSeeSky(pos)) {
-            return false;
-        } else if (serverLevel.getHeightmapPos(Heightmap.Type.MOTION_BLOCKING, pos).getY() > pos.getY()) {
-            return false;
-        }
-        Biome biome = serverLevel.getBiome(pos);
-        return isThunderAtBiome(serverLevel, biome);
+        Biome biome = level.getBiome(pos);
+        return isThunderAtBiome(level, biome);
     }
 
     public static Boolean isRainingAt(ServerWorld serverLevel, BlockPos pos) {
