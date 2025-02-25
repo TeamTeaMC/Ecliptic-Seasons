@@ -163,7 +163,7 @@ public class WeatherManager {
         if (!hasWeatherAt(level, pos)) {
             return false;
         }
-        var biome = level.getBiome(pos);
+        var biome = level.getBiomeManager().getNoiseBiomeAtPosition(pos);
         return isThunderAtBiome(level, biome.get());
     }
 
@@ -171,7 +171,7 @@ public class WeatherManager {
         if (!hasWeatherAt(level, pos)) {
             return false;
         }
-        var biome = level.getBiome(pos);
+        var biome = level.getBiomeManager().getNoiseBiomeAtPosition(pos);
         return isRainingAtBiome(level, biome.get());
     }
 

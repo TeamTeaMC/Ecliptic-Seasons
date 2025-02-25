@@ -30,6 +30,7 @@
     "client.MixinClientClientLevel",
     "client.MixinClientLevel",
     "client.MixinClientLevelChunk",
+    "client.MixinBlockLightEngine",
     "client.MixinClientPanda",
     "client.MixinGameRenderer",
     "client.MixinLevelRender",
@@ -37,8 +38,8 @@
     "client.block.MixinLeavesBlock",
     "client.block.MixinLightningRodBlock",
     "client.sound.MixinMusicManager",
-    "compat.fbp.MixinFancyBlockParticles",
     "compat.embeddium.MixinBlockRender2",
+    "compat.fbp.MixinFancyBlockParticles",
     "compat.optifine.MixinBlockModelCustomizer"
   ],
   "injectors": {

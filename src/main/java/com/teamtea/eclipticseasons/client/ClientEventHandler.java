@@ -7,6 +7,7 @@ import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.api.util.SimpleUtil;
 import com.teamtea.eclipticseasons.client.core.ClientWeatherChecker;
 import com.teamtea.eclipticseasons.client.core.ModelManager;
+import com.teamtea.eclipticseasons.client.core.map.ClientMapFixer;
 import com.teamtea.eclipticseasons.client.render.ClientRenderer;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
@@ -35,10 +36,13 @@ import net.minecraftforge.client.event.RenderLevelStageEvent;
 import net.minecraftforge.event.TagsUpdatedEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
+import net.minecraftforge.event.level.ChunkEvent;
 import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import com.teamtea.eclipticseasons.EclipticSeasons;
+
+import java.util.Random;
 
 @Mod.EventBusSubscriber(modid = EclipticSeasons.MODID, value = Dist.CLIENT)
 public final class ClientEventHandler {
@@ -48,6 +52,7 @@ public final class ClientEventHandler {
        if(tagsUpdatedEvent.getUpdateCause()== TagsUpdatedEvent.UpdateCause.CLIENT_PACKET_RECEIVED){
            ModelManager.SNOW_OVERLAY_CAN_SURVIVE_ON_MAP.clear();
            ModelManager.SNOW_LINE_BIOME_MAP.clear();
+           ModelManager.STATE_BLOCK_TYPE_MAP.clear();
        }
     }
 
@@ -79,8 +84,17 @@ public final class ClientEventHandler {
 
 
     @SubscribeEvent
+    public static void onChunkUnloadEvent(ChunkEvent.Unload event) {
+        if (event.getLevel() instanceof ClientLevel clientLevel) {
+            ClientMapFixer.clearChunk(event.getChunk().getPos());
+        }
+    }
+
+
+    @SubscribeEvent
     public static void onLevelUnloadEvent(LevelEvent.Unload event) {
         if (event.getLevel() instanceof ClientLevel clientLevel) {
+            ClientMapFixer.clearAll();
             ModelManager.clearHeightMap();
             ClientWeatherChecker.unloadLevel(clientLevel);
         }
@@ -109,6 +123,7 @@ public final class ClientEventHandler {
         if (ClientConfig.Renderer.forceChunkRenderUpdate.get()) {
             if (event.level.isClientSide() && event.phase.equals(TickEvent.Phase.END)) {
                 ClientWeatherChecker.tickAllCheck((ClientLevel) event.level);
+                ClientMapFixer.tick(event.level);
                 if (event.level.getGameTime() % 100 == 0) {
                     var lr = Minecraft.getInstance().levelRenderer;
                     if (lr != null) {
@@ -117,17 +132,17 @@ public final class ClientEventHandler {
                         if (Minecraft.getInstance().cameraEntity instanceof Player player) {
                             BlockPos pos = player.getOnPos();
                             SectionPos sectionPos = SectionPos.of(pos);
-                            // lr.setSectionDirtyWithNeighbors(sectionPos.x(),sectionPos.y(),sectionPos.z());
-                            int x = sectionPos.x();
-                            int y = sectionPos.y();
-                            int z = sectionPos.z();
-                            for (int i = x - 2; i <= x + 2; ++i) {
-                                for (int j = z - 2; j <= z + 2; ++j) {
-                                    for (int k = y - 1; k <= y + 1; ++k) {
-                                        lr.setSectionDirty(j, k, i);
-                                    }
+                            lr.setSectionDirtyWithNeighbors(sectionPos.x(), sectionPos.y(), sectionPos.z());
+                            RandomSource random = event.level.random;
+                            int lastViewDistance = (int) (lr.getLastViewDistance()-1);
+                            for (int i = 0; i < random.nextInt(8)+4; i++) {
+                                {
+                                    lr.setSectionDirtyWithNeighbors(sectionPos.x()+2*(random.nextInt(lastViewDistance))-lastViewDistance,
+                                            sectionPos.y(),
+                                            sectionPos.z()+2*(random.nextInt(lastViewDistance))-lastViewDistance);
                                 }
                             }
+
                         }
                     }
                 }

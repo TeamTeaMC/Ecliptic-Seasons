@@ -1,4 +1,4 @@
-package com.teamtea.eclipticseasons.common.misc;
+package com.teamtea.eclipticseasons.api.misc;
 
 
 import net.minecraft.core.BlockPos;
