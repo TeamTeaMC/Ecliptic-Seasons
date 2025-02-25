@@ -4,8 +4,10 @@ import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.misc.SimplePair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.world.ClientWorld;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.Heightmap;
 import net.minecraft.util.SoundEvent;
@@ -62,12 +64,21 @@ public class ClientWeatherChecker {
 
     public static float getStandardRainLevel(float p46723, ClientWorld clientLevel, Biome biomeHolder) {
         ArrayList<WeatherManager.BiomeWeather> lists = WeatherManager.getBiomeList(clientLevel);
-        if (lists != null)
+        if (lists != null) {
             for (WeatherManager.BiomeWeather biomeWeather : lists) {
                 if (biomeWeather.biomeHolder == biomeHolder) {
                     return biomeWeather.rainTime > 0 ? 1f : 0.0f;
                 }
             }
+            // ResourceLocation key = clientLevel.registryAccess().registryOrThrow(Registry.BIOME_REGISTRY).getKey(biomeHolder);
+            // if(key!=null){
+            //     for (WeatherManager.BiomeWeather biomeWeather : lists) {
+            //         if (key .equals(biomeWeather.location) ) {
+            //             return biomeWeather.rainTime > 0 ? 1f : 0.0f;
+            //         }
+            //     }
+            // }
+        }
         return 0.0f;
     }
 

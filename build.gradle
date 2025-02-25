@@ -217,7 +217,6 @@ dependencies {
 
 //    runtimeOnly fg.deobf("curse.maven:journeymap-32274:5208370")
     onlyMainRuntimeOnly fg.deobf("curse.maven:farmers-delight-398521:3765350")
-    onlyMainRuntimeOnly fg.deobf("curse.maven:croptopia-415438:3847095")
 
     compileOnly fg.deobf("curse.maven:cold-sweat-506194:6215891")
 //    onlyMainRuntimeOnly fg.deobf("curse.maven:cold-sweat-506194:5874642")
@@ -227,6 +226,8 @@ dependencies {
 
     compileOnly fg.deobf("curse.maven:fbp-renewed-937011:5895319")
     onlyMainRuntimeOnly fg.deobf("curse.maven:fbp-renewed-937011:5895319")
+
+    onlyMainRuntimeOnly fg.deobf("curse.maven:replay-mod-for-forge-499046:3548798")
 
 }
 

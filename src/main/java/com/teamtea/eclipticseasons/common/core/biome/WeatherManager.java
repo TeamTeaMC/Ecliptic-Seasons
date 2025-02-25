@@ -202,12 +202,21 @@ public class WeatherManager {
 
     public static int getSnowDepthAtBiome(World serverLevel, Biome biome) {
         ArrayList<BiomeWeather> ws = getBiomeList(serverLevel);
-        if (ws != null)
+        if (ws != null) {
             for (BiomeWeather biomeWeather : ws) {
                 if (biome == biomeWeather.biomeHolder) {
                     return biomeWeather.snowDepth;
                 }
             }
+            // ResourceLocation key = serverLevel.registryAccess().registryOrThrow(Registry.BIOME_REGISTRY).getKey(biome);
+            // if(key!=null){
+            //     for (BiomeWeather biomeWeather : ws) {
+            //         if (key .equals(biomeWeather.location) ) {
+            //             return biomeWeather.snowDepth;
+            //         }
+            //     }
+            // }
+        }
         return 0;
     }
 
@@ -329,7 +338,7 @@ public class WeatherManager {
                                 // 这里需要根据holder确定一下
                                 if (biomeWeather.location.equals(loc)) {
                                     biomeWeather.id = id;
-                                    biomeWeather.biomeHolder = biomeHolder;
+                                    // biomeWeather.biomeHolder = biomeHolder;
                                     inList = true;
                                     break;
                                 }

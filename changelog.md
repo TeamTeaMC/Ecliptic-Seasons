@@ -50,7 +50,7 @@ Legacy-1.0
 ### New Features
 1. **Fancy Block Particles - Renewed Support**
     - Added compatibility for the particle effects mod *Fancy Block Particles - Renewed*.
-2. **Dynamic Snow Line System**
+2. **Dynamic Snow Line**
     - Added per-biome snow line height configurations with global override settings.
 3. **Snow Overlay Light Check**
     - Snow Overlays now only generate if the block meets specific light level conditions.
@@ -82,10 +82,11 @@ Legacy-1.0
     - Dropped compatibility with *Rubidium*; replaced with *Embeddium* as the rendering backend.
 2. **Chunk Rendering Optimization**
     - Enhanced chunk update logic to reduce lag and performance overhead.
-3. **Legacy Snow & Melt (Optional)**
+3. **Legacy Snow & Melt/ (Optional)**
     - Added legacy snow/melting mechanics as a configurable optional feature.
 
 ---
 
 ### Miscellaneous
 - Code cleanup and internal refactoring for improved stability.  
+
