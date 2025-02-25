@@ -234,4 +234,5 @@ enhancing detection speed and accuracy for more efficient performance.
 
 ## **0.10-pre5**
 
-- Add support for InControl to check if rain or thunder and four seasons
+- Add support for InControl to check four seasons
+- fix a remap issue with Snowy Spirit

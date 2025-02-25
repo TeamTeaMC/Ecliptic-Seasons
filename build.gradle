@@ -225,7 +225,6 @@ dependencies {
     onlyMainRuntimeOnly fg.deobf("curse.maven:oculus-581495:6020952")
 
     compileOnly fg.deobf("curse.maven:simple-clouds-1121215:5812030")
-
 //    implementation fg.deobf("curse.maven:kiwi-303657:4688568")
 //    implementation fg.deobf("curse.maven:snow-real-magic-308663:5139853")
 

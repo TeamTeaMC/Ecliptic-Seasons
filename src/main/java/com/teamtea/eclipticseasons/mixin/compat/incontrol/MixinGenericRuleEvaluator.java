@@ -26,21 +26,21 @@ public abstract class MixinGenericRuleEvaluator {
 
     @Shadow(remap = false) @Final private List<BiFunction<Object, IEventQuery, Boolean>> checks;
 
-    @WrapOperation(at = {@At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;isRaining()Z")},
-            method = {"lambda$addWeatherCheck$44"},
-            remap = false)
-    private static boolean eclipticseasons$lambda$addWeatherCheck$44(Level instance, Operation<Boolean> original, @Local(argsOnly = true) Object event, @Local(argsOnly = true) IEventQuery query) {
-        BlockPos pos = query.getPos(event);
-        return EclipticSeasonsApi.getInstance().isRainOrSnowAt(instance,pos);
-    }
-
-    @WrapOperation(at = {@At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;isThundering()Z")},
-            method = {"lambda$addWeatherCheck$45"},
-            remap = false)
-    private static boolean eclipticseasons$lambda$addWeatherCheck$45(Level instance, Operation<Boolean> original, @Local(argsOnly = true) Object event, @Local(argsOnly = true) IEventQuery query) {
-        BlockPos pos = query.getPos(event);
-        return EclipticSeasonsApi.getInstance().isRainOrSnowAt(instance,pos);
-    }
+    // @WrapOperation(at = {@At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;isRaining()Z")},
+    //         method = {"lambda$addWeatherCheck$44"},
+    //         remap = false)
+    // private static boolean eclipticseasons$lambda$addWeatherCheck$44(Level instance, Operation<Boolean> original, @Local(argsOnly = true) Object event, @Local(argsOnly = true) IEventQuery query) {
+    //     BlockPos pos = query.getPos(event);
+    //     return EclipticSeasonsApi.getInstance().isRainOrSnowAt(instance,pos);
+    // }
+    //
+    // @WrapOperation(at = {@At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;isThundering()Z")},
+    //         method = {"lambda$addWeatherCheck$45"},
+    //         remap = false)
+    // private static boolean eclipticseasons$lambda$addWeatherCheck$45(Level instance, Operation<Boolean> original, @Local(argsOnly = true) Object event, @Local(argsOnly = true) IEventQuery query) {
+    //     BlockPos pos = query.getPos(event);
+    //     return EclipticSeasonsApi.getInstance().isRainOrSnowAt(instance,pos);
+    // }
 
     @Inject(at = {@At(value = "HEAD")},
             method = {"addSpringCheck"},
