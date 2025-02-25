@@ -51,8 +51,8 @@ import java.util.stream.Stream;
 
 public class WeatherManager {
 
-    public static Map<World, ArrayList<BiomeWeather>> BIOME_WEATHER_LIST = new LinkedHashMap<>();
-    public static Map<World, Integer> NEXT_CHECK_BIOME_MAP = new HashMap<>();
+    public static Map<World, ArrayList<BiomeWeather>> BIOME_WEATHER_LIST = new IdentityHashMap<>();
+    public static Map<World, Integer> NEXT_CHECK_BIOME_MAP = new IdentityHashMap<>();
 
     public static ArrayList<BiomeWeather> getBiomeList(World world) {
         if (world == null) {

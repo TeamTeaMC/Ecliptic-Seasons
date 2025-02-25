@@ -9,10 +9,12 @@ import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
+import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
+import net.minecraft.world.server.ServerWorld;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -31,13 +33,17 @@ public abstract class MixinBiome {
     }
 
 
-
     @ModifyExpressionValue(at = {@At(value = "INVOKE",
             target = "Lnet/minecraft/world/biome/Biome;getTemperature(Lnet/minecraft/util/math/BlockPos;)F")},
             method = {"shouldSnow", "shouldFreeze(Lnet/minecraft/world/IWorldReader;Lnet/minecraft/util/math/BlockPos;Z)Z"})
-    public float eclipticseasons$fixTempWithoutSeason(float original, @Local(argsOnly = true) IWorldReader iWorldReader) {
-        if (iWorldReader instanceof World)
+    public float eclipticseasons$fixTempWithoutSeason(float original, @Local(argsOnly = true) IWorldReader iWorldReader, @Local(argsOnly = true) BlockPos pos) {
+        if (iWorldReader instanceof World) {
+            if (iWorldReader instanceof ServerWorld) {
+                if (CommonConfig.Temperature.snowDown.get())
+                    return WeatherManager.getSnowStatus((ServerWorld) iWorldReader, (Biome) (Object) this, pos) != WeatherManager.SnowRenderStatus.SNOW ? 1f : 0f;
+            }
             original -= EclipticUtil.getNowSolarTerm((World) iWorldReader).getTemperatureChange();
+        }
         return original;
     }
 

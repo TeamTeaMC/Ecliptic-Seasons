@@ -42,11 +42,11 @@ public class BiomeClimateManager {
         {
             level.registryAccess().registryOrThrow(Registry.BIOME_REGISTRY).forEach(biome ->
             {
-                float temperature = ((MixinBiomeAttach) (Object) biome).getBiomeClimateSettings().temperature > SNOW_LEVEL ?
-                        Math.max(SNOW_LEVEL + 0.001F, BiomeClimateManager.getDefaultTemperature(biome) + SolarTerm.get(solarTermIndex).getTemperatureChange()) :
-                        Math.min(SNOW_LEVEL, BiomeClimateManager.getDefaultTemperature(biome) + SolarTerm.get(solarTermIndex).getTemperatureChange());
-
-                BIOME_DEFAULT_TEMPERATURE_MAP.put(biome, temperature);
+                float temperature1 = ((MixinBiomeAttach) (Object) biome).getBiomeClimateSettings().temperature;
+                float temperature = temperature1 > SNOW_LEVEL ?
+                        Math.max(SNOW_LEVEL + 0.001F, temperature1 + SolarTerm.get(solarTermIndex).getTemperatureChange()) :
+                        Math.min(SNOW_LEVEL,temperature1+ SolarTerm.get(solarTermIndex).getTemperatureChange());
+                BIOME_DEFAULT_TEMPERATURE_MAP.put(biome,temperature);
                 // var oldClimateSettings = biome.climateSettings;
                 // biome.climateSettings = new Biome.ClimateSettings(
                 //         oldClimateSettings.hasPrecipitation(),

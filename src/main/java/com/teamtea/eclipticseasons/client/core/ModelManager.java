@@ -78,8 +78,14 @@ public class ModelManager {
     public static final int ChunkSizeLoc = ChunkSize - 1;
     public static final int ChunkSizeAxis = 4 + 5;
 
+    public static final Map<BlockState, Boolean> SNOW_OVERLAY_CAN_SURVIVE_ON_MAP = new IdentityHashMap<>();
+
     public static boolean snowOverlayCanSurviveOn(BlockState state) {
-        return !state.is(EclipticBlockTags.SNOW_OVERLAY_CANNOT_SURVIVE_ON);
+        Boolean b = SNOW_OVERLAY_CAN_SURVIVE_ON_MAP.get(state);
+        if (b == null) {
+            b = SNOW_OVERLAY_CAN_SURVIVE_ON_MAP.put(state, !state.is(EclipticBlockTags.SNOW_OVERLAY_CANNOT_SURVIVE_ON));
+        }
+        return Boolean.TRUE.equals(b);
     }
 
     public static boolean shouldCutoutMipped(BlockState state) {
@@ -443,17 +449,24 @@ public class ModelManager {
         return original;
     }
 
+
+    public static final Map<Biome, Integer> SNOW_LINE_BIOME_MAP = new IdentityHashMap<>();
+
     public static boolean shouldSnowAt(IBlockDisplayReader blockAndTintGetter, BlockPos pos, BlockState state, Random random, long seed) {
         int snowLine = ClientConfig.Renderer.snowLine.get();
         Biome biome = Minecraft.getInstance().level.getBiome(pos);
-        RegistryKey<Biome> biomeRegistryKey = RegistryKey.create(Registry.BIOME_REGISTRY, biome.getRegistryName());
+        Integer sH = SNOW_LINE_BIOME_MAP.getOrDefault(biome, null);
 
-        for (BiomeDictionary.Type type : BiomeDictionary.getTypes(biomeRegistryKey)) {
-            Integer integer = ClientConfig.SNOW_LINE_BIOME.getOrDefault(type, null);
-            if (integer != null) {
-                snowLine = integer;
-                break;
+        if (sH == null) {
+            RegistryKey<Biome> biomeRegistryKey = RegistryKey.create(Registry.BIOME_REGISTRY, biome.getRegistryName());
+            for (BiomeDictionary.Type type : BiomeDictionary.getTypes(biomeRegistryKey)) {
+                Integer integer = ClientConfig.SNOW_LINE_BIOME.getOrDefault(type, null);
+                if (integer != null) {
+                    snowLine = integer;
+                    break;
+                }
             }
+            SNOW_LINE_BIOME_MAP.put(biome, snowLine);
         }
 
         if (pos.getY() > snowLine

@@ -11,7 +11,7 @@ public class LSO_ESUtil {
     public static double averageSeasonTemperature;
     // public static double averageTropicalSeasonTemperature;
 
-    public static RegistryObject<ModifierBase> ecliptic$EclipticSeasons;
+    public static RegistryObject<ModifierBase> eclipticseasons$EclipticSeasons;
 
 
 

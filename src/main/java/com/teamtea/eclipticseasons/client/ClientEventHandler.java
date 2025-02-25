@@ -34,17 +34,27 @@ import net.minecraft.util.math.SectionPos;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
+import net.minecraftforge.event.TagsUpdatedEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import com.teamtea.eclipticseasons.EclipticSeasons;
+import net.minecraftforge.fml.loading.FMLLoader;
 
 import java.util.Random;
 
 @Mod.EventBusSubscriber(modid = EclipticSeasons.MODID, value = Dist.CLIENT)
 public final class ClientEventHandler {
+
+    @SubscribeEvent
+    public static void onTagsUpdatedEvent(TagsUpdatedEvent tagsUpdatedEvent) {
+        if (FMLLoader.getDist() == Dist.CLIENT) {
+            ModelManager.SNOW_OVERLAY_CAN_SURVIVE_ON_MAP.clear();
+            ModelManager.SNOW_LINE_BIOME_MAP.clear();
+        }
+    }
 
     @SubscribeEvent
     public static void onRenderTick(TickEvent.RenderTickEvent event) {
