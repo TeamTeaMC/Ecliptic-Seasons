@@ -6,9 +6,11 @@ import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.api.util.SimpleUtil;
 import com.teamtea.eclipticseasons.client.core.ClientWeatherChecker;
 import com.teamtea.eclipticseasons.client.core.ModelManager;
+import com.teamtea.eclipticseasons.client.core.map.ClientMapFixer;
 import com.teamtea.eclipticseasons.client.render.ClientRenderer;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
+import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.core.solar.ClientSolarDataManager;
 import com.teamtea.eclipticseasons.config.ClientConfig;
 import com.teamtea.eclipticseasons.config.CommonConfig;
@@ -32,6 +34,7 @@ import net.minecraftforge.client.event.RenderLevelStageEvent;
 import net.minecraftforge.event.TagsUpdatedEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
+import net.minecraftforge.event.world.ChunkEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -44,7 +47,7 @@ public final class ClientEventHandler {
 
     @SubscribeEvent
     public static void onTagsUpdatedEvent(TagsUpdatedEvent tagsUpdatedEvent) {
-        if(tagsUpdatedEvent.getUpdateCause()== TagsUpdatedEvent.UpdateCause.CLIENT_PACKET_RECEIVED){
+        if (tagsUpdatedEvent.getUpdateCause() == TagsUpdatedEvent.UpdateCause.CLIENT_PACKET_RECEIVED) {
             ModelManager.SNOW_OVERLAY_CAN_SURVIVE_ON_MAP.clear();
             ModelManager.SNOW_LINE_BIOME_MAP.clear();
         }
@@ -77,10 +80,18 @@ public final class ClientEventHandler {
         }
     }
 
+    @SubscribeEvent
+    public static void onChunkUnloadEvent(ChunkEvent.Unload event) {
+        if (event.getWorld() instanceof ClientLevel clientLevel) {
+            ClientMapFixer.clearChunk(event.getChunk().getPos());
+        }
+    }
+
 
     @SubscribeEvent
     public static void onLevelUnloadEvent(WorldEvent.Unload event) {
         if (event.getWorld() instanceof ClientLevel clientLevel) {
+            ClientMapFixer.clearAll();
             ModelManager.clearHeightMap();
             ClientWeatherChecker.unloadLevel(clientLevel);
         }
@@ -109,6 +120,7 @@ public final class ClientEventHandler {
         if (ClientConfig.Renderer.forceChunkRenderUpdate.get()) {
             if (event.world.isClientSide() && event.phase.equals(TickEvent.Phase.END)) {
                 ClientWeatherChecker.tickAllCheck((ClientLevel) event.world);
+                ClientMapFixer.tick(event.world);
                 if (event.world.getGameTime() % 100 == 0) {
                     var lr = Minecraft.getInstance().levelRenderer;
                     if (lr != null) {
@@ -117,7 +129,17 @@ public final class ClientEventHandler {
                         if (Minecraft.getInstance().cameraEntity instanceof Player player) {
                             BlockPos pos = player.getOnPos();
                             SectionPos sectionPos = SectionPos.of(pos);
-                            lr.setSectionDirtyWithNeighbors(sectionPos.x(),sectionPos.y(),sectionPos.z());
+                            lr.setSectionDirtyWithNeighbors(sectionPos.x(), sectionPos.y(), sectionPos.z());
+                            Random random = event.world.random;
+                            int lastViewDistance = (int) (lr.getLastViewDistance()-1);
+                            for (int i = 0; i < random.nextInt(8)+4; i++) {
+                                {
+                                    lr.setSectionDirtyWithNeighbors(sectionPos.x()+2*(random.nextInt(lastViewDistance))-lastViewDistance,
+                                            sectionPos.y(),
+                                            sectionPos.z()+2*(random.nextInt(lastViewDistance))-lastViewDistance);
+                                }
+                            }
+
                         }
                     }
                 }
@@ -143,7 +165,7 @@ public final class ClientEventHandler {
             var blockpos$mutableblockpos = new BlockPos.MutableBlockPos();
             var random = level.getRandom();
             int b = 32;
-            random=new Random();
+            random = new Random();
             for (int i = 0; i < 20; ++i)
                 for (int j = 0; j < 20; ++j)
                     for (int k = 0; k < 20; ++k)

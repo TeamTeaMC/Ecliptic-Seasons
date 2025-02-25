@@ -1,5 +1,6 @@
 package com.teamtea.eclipticseasons.config;
 
+import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import net.minecraft.ResourceLocationException;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
@@ -12,13 +13,11 @@ import net.minecraftforge.fml.event.config.ModConfigEvent;
 import java.io.Serializable;
 import java.util.*;
 
-public class ClientConfig
-{
+public class ClientConfig {
 
     public static final ForgeConfigSpec CLIENT_CONFIG = new ForgeConfigSpec.Builder().configure(ClientConfig::new).getRight();
 
-    protected ClientConfig(ForgeConfigSpec.Builder builder)
-    {
+    protected ClientConfig(ForgeConfigSpec.Builder builder) {
         GUI.load(builder);
         Renderer.load(builder);
         Sound.load(builder);
@@ -56,27 +55,18 @@ public class ClientConfig
         }
     }
 
-    public static class GUI
-    {
-        public static ForgeConfigSpec.IntValue playerTemperatureX;
-        public static ForgeConfigSpec.IntValue playerTemperatureY;
+    public static class GUI {
         public static ForgeConfigSpec.BooleanValue debugInfo;
 
-        private static void load(ForgeConfigSpec.Builder builder)
-        {
+        private static void load(ForgeConfigSpec.Builder builder) {
             builder.push("GUI");
-            playerTemperatureX = builder.comment("The position X of Player Temperature UI")
-                    .defineInRange("PlayerTemperatureX", 10, Integer.MIN_VALUE, Integer.MAX_VALUE);
-            playerTemperatureY = builder.comment("The position Y of Player Temperature UI")
-                    .defineInRange("PlayerTemperatureY", 40, Integer.MIN_VALUE, Integer.MAX_VALUE);
-            debugInfo = builder.comment("Info used for development.")
+           debugInfo = builder.comment("Info used for development.")
                     .define("DebugInfo", false);
             builder.pop();
         }
     }
 
-    public static class Renderer
-    {
+    public static class Renderer {
         public static ForgeConfigSpec.BooleanValue forceChunkRenderUpdate;
         public static ForgeConfigSpec.BooleanValue useVanillaCheck;
         public static ForgeConfigSpec.BooleanValue snowyWinter;
@@ -85,9 +75,9 @@ public class ClientConfig
         public static ForgeConfigSpec.BooleanValue particle;
         public static ForgeConfigSpec.IntValue snowLine;
         public static ForgeConfigSpec.ConfigValue<List<? extends List<? extends Serializable>>> snowBiomeLine;
+        public static ForgeConfigSpec.BooleanValue realisticSnowyChange;
 
-        private static void load(ForgeConfigSpec.Builder builder)
-        {
+        private static void load(ForgeConfigSpec.Builder builder) {
             builder.push("Renderer");
             forceChunkRenderUpdate = builder.comment("Force to update chunk rendering.")
                     .define("ForceChunkRenderUpdate", true);
@@ -95,6 +85,8 @@ public class ClientConfig
                     .define("useVanillaCheck", false);
             snowyWinter = builder.comment("If snow falls during cold weather, it will gradually cover all solid blocks and grass.")
                     .define("SnowyWinter", true);
+            realisticSnowyChange = builder.comment("When the block is updated, the snow cover will not refresh immediately, but will be updated after a delay. Please note that this will consume more performance..")
+                    .define("RealisticSnowyChange", true);
             deeperSnow = builder.comment("Occasionally a thicker layer of snow will cover the flowers and grass, especially.")
                     .define("DeeperSnow", false);
             underSnow = builder.comment("Blocks below fences and bamboo will also accumulate snow.")
@@ -109,12 +101,10 @@ public class ClientConfig
         }
     }
 
-    public static class Sound
-    {
+    public static class Sound {
         public static ForgeConfigSpec.BooleanValue sound;
 
-        private static void load(ForgeConfigSpec.Builder builder)
-        {
+        private static void load(ForgeConfigSpec.Builder builder) {
             builder.push("Sound");
             sound = builder.comment("Seasonal Ambient Sound.")
                     .define("Sound", true);

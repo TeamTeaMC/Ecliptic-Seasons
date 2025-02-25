@@ -20,6 +20,6 @@ public class BlockTagProvider extends BlockTagsProvider {
                 .addTag(BlockTags.ICE).addTag(BlockTags.SNOW);
 
         tag(EclipticBlockTags.NOT_GREEN_HOUSE_MATERIAL)
-                .addTag(BlockTags.ICE).addTag(BlockTags.SNOW).addTag(BlockTags.DIRT);
+                .addTag(BlockTags.ICE).addTag(BlockTags.SNOW);
     }
 }

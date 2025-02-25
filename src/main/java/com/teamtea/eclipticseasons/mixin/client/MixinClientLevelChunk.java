@@ -1,6 +1,8 @@
 package com.teamtea.eclipticseasons.mixin.client;
 
 
+import com.teamtea.eclipticseasons.client.core.map.ClientMapFixer;
+import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
@@ -24,9 +26,10 @@ public abstract class MixinClientLevelChunk {
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/levelgen/Heightmap;update(IIILnet/minecraft/world/level/block/state/BlockState;)Z", ordinal = 1),
             method = "setBlockState", locals = LocalCapture.CAPTURE_FAILEXCEPTION
     )
-    public void eclipticseasons$setBlockState(BlockPos p_62865_, BlockState p_62866_, boolean p_62867_, CallbackInfoReturnable<BlockState> cir) {
+    public void eclipticseasons$setBlockState(BlockPos pos, BlockState state, boolean p_62867_, CallbackInfoReturnable<BlockState> cir) {
         if (level instanceof ClientLevel clientLevel ){
-            ModelManager.getHeightOrUpdate(p_62865_,true);
+            // ModelManager.getHeightOrUpdate(pos,true);
+            ClientMapFixer.addPlanner(clientLevel,state,pos,clientLevel.getGameTime(), ModelManager.getHeightOrUpdate(pos,false));
         }
     }
 }

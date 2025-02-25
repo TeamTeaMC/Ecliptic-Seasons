@@ -27,13 +27,16 @@ public class CommonConfig {
 
     public static class Temperature {
         public static ForgeConfigSpec.BooleanValue iceMelt;
+        public static ForgeConfigSpec.BooleanValue snowDown;
         public static ForgeConfigSpec.BooleanValue heatStroke;
 
 
         private static void load(ForgeConfigSpec.Builder builder) {
             builder.push("Temperature");
-            iceMelt = builder.comment("Ice or snow layer will melt in warm place..")
+            iceMelt = builder.comment("Ice or snow layer will melt in warm time.")
                     .define("IceAndSnowMelt", false);
+            snowDown = builder.comment("Ice or snow layer will snow in cold time.")
+                    .define("IceAndSnow", false);
             heatStroke = builder.comment("Add heat stroke effect in summer noon while in hot biome.")
                     .define("HeatStroke", true);
             builder.pop();

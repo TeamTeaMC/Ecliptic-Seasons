@@ -2,7 +2,6 @@
   "replace": false,
   "values": [
     "#minecraft:ice",
-    "#minecraft:snow",
-    "minecraft:packed_ice"
+    "#minecraft:snow"
   ]
 }

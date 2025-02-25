@@ -7,7 +7,6 @@ import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.registry.BlockRegistry;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
-import com.teamtea.eclipticseasons.api.util.SimpleUtil;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.config.ClientConfig;
 
@@ -22,10 +21,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.level.BlockAndTintGetter;
-import net.minecraft.world.level.ChunkPos;
-import net.minecraft.world.level.EmptyBlockGetter;
-import net.minecraft.world.level.LightLayer;
+import net.minecraft.world.level.*;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
@@ -33,7 +29,6 @@ import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.level.block.state.properties.Half;
 import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraft.world.level.levelgen.Heightmap;
-import net.minecraftforge.common.BiomeDictionary;
 
 
 import java.util.*;
@@ -59,6 +54,7 @@ public class ModelManager {
     public static ResourceLocation butterfly1 = EclipticSeasons.rl("block/butterfly_blue");
     public static ResourceLocation butterfly2 = EclipticSeasons.rl("block/butterfly_magenta");
     public static ResourceLocation butterfly3 = EclipticSeasons.rl("block/butterfly_red");
+
 
     public static ResourceLocation mrl(String s) {
         return mrl(s, "");
@@ -106,6 +102,29 @@ public class ModelManager {
             ModelManager.RegionList.clear();
         }
         updateLock = false;
+    }
+
+    public static void updatePosForce(BlockPos pos, int y) {
+        int x = blockToSectionCoord(pos.getX());
+        int z = blockToSectionCoord(pos.getZ());
+
+        ChunkHeightMap map = null;
+        // try{
+        while (updateLock) {
+            try {
+                Thread.sleep(1);
+            } catch (InterruptedException e) {
+            }
+        }
+        for (int i = 0; i < RegionList.size(); i++) {
+            var chunkHeightMap = RegionList.get(i);
+            if (chunkHeightMap.x == x && chunkHeightMap.z == z) {
+                map = chunkHeightMap;
+                break;
+            }
+        }
+        if (map != null)
+            map.updateHeight(pos, y);
     }
 
     public static class ChunkHeightMap {
@@ -255,9 +274,65 @@ public class ModelManager {
     public static final List<Block> LowerPlant = List.of(Blocks.GRASS, Blocks.FERN);
     public static final List<Block> LARGE_GRASS = List.of(Blocks.TALL_GRASS, Blocks.LARGE_FERN);
 
+
+    public static final Map<BlockState, Integer> STATE_BLOCK_TYPE_MAP = new IdentityHashMap<>();
+
+    public static int getFlagBlock(BlockGetter blockGetter, BlockState state, BlockPos pos) {
+        Integer b = STATE_BLOCK_TYPE_MAP.get(state);
+        int flag = 0;
+        if (b == null) {
+            var onBlock = state.getBlock();
+            if (snowOverlayCanSurviveOn(state)) {
+                if (state.getLightEmission(blockGetter, pos) <= 0) {
+                    if (onBlock instanceof LeavesBlock) {
+                        flag = FLAG_LEAVES;
+                    } else if ((state.isSolidRender(blockGetter, pos)
+                            // state.isSolid()
+                            || onBlock instanceof LeavesBlock
+                            || (onBlock instanceof SlabBlock && state.getValue(SlabBlock.TYPE) == SlabType.TOP)
+                            || (onBlock instanceof StairBlock && state.getValue(StairBlock.HALF) == Half.TOP))) {
+                        flag = FLAG_BLOCK;
+                    } else if (onBlock instanceof SlabBlock) {
+                        flag = FLAG_SLAB;
+                    } else if (onBlock instanceof StairBlock) {
+                        flag = FLAG_STAIRS;
+                    } else if (LowerPlant.contains(onBlock)) {
+                        flag = FLAG_GRASS;
+                    } else if (LARGE_GRASS.contains(onBlock)) {
+                        flag = FLAG_GRASS_LARGE;
+                    } else if ((onBlock instanceof FarmBlock || onBlock instanceof DirtPathBlock)) {
+                        flag = FLAG_FARMLAND;
+                    }
+                }
+            }
+            STATE_BLOCK_TYPE_MAP.put(state, flag);
+        } else {
+            flag = b;
+        }
+        return flag;
+    }
+
+    private static int getOffset(BlockState state, int flag) {
+        int offset = 0;
+        if (flag == FLAG_GRASS || flag == FLAG_GRASS_LARGE) {
+            if (flag == FLAG_GRASS) {
+                offset = 1;
+            }
+            // 这里不忽略这个警告，因为后续会有优化
+            else if (flag == FLAG_GRASS_LARGE) {
+                if (state.getValue(DoublePlantBlock.HALF) == DoubleBlockHalf.LOWER) {
+                    offset = 1;
+                } else {
+                    offset = 2;
+                }
+            }
+        }
+        return offset;
+    }
+
     // 实际上这里之所以太慢还有个问题就是会一个方块访问七次
     public static List<BakedQuad> appendOverlay(BlockAndTintGetter blockAndTintGetter, BlockState state, BlockPos pos, Direction direction, Random random, long seed, List<BakedQuad> original) {
-        if(!MapChecker.isValidDimension(Minecraft.getInstance().level)){
+        if (!MapChecker.isValidDimension(Minecraft.getInstance().level)) {
             return original;
         }
 
@@ -266,42 +341,9 @@ public class ModelManager {
                 && !original.isEmpty()) {
 
             var onBlock = state.getBlock();
-            int flag = 0;
-            if (onBlock instanceof LeavesBlock) {
-                flag = FLAG_LEAVES;
-            } else if ((state.isSolidRender(blockAndTintGetter, pos)
-                    // state.isSolid()
-                    || onBlock instanceof LeavesBlock
-                    || (onBlock instanceof SlabBlock && state.getValue(SlabBlock.TYPE) == SlabType.TOP)
-                    || (onBlock instanceof StairBlock && state.getValue(StairBlock.HALF) == Half.TOP))) {
-                flag = FLAG_BLOCK;
-            } else if (onBlock instanceof SlabBlock) {
-                flag = FLAG_SLAB;
-            } else if (onBlock instanceof StairBlock) {
-                flag = FLAG_STAIRS;
-            } else if (LowerPlant.contains(onBlock)) {
-                flag = FLAG_GRASS;
-            } else if (LARGE_GRASS.contains(onBlock)) {
-                flag = FLAG_GRASS_LARGE;
-            } else if ((onBlock instanceof FarmBlock || onBlock instanceof DirtPathBlock) && direction == null) {
-                flag = FLAG_FARMLAND;
-            } else return original;
-
-            int offset = 0;
-            if (flag == FLAG_GRASS || flag == FLAG_GRASS_LARGE) {
-                if (flag == FLAG_GRASS) {
-                    offset = 1;
-                }
-                // 这里不忽略这个警告，因为后续会有优化
-                else if (flag == FLAG_GRASS_LARGE) {
-                    if (state.getValue(DoublePlantBlock.HALF) == DoubleBlockHalf.LOWER) {
-                        offset = 1;
-                    } else {
-                        offset = 2;
-                    }
-                }
-            }
-
+            int flag = getFlagBlock(blockAndTintGetter, state, pos);
+            if (flag == 0) return original;
+            int offset = getOffset(state, flag);
 
             boolean isLight = false;
 
@@ -309,12 +351,13 @@ public class ModelManager {
                     Minecraft.getInstance().level.getLightEngine().getLayerListener(LightLayer.SKY).getLightValue(pos.above()) >= 15
                     : getHeightOrUpdate(pos, false) == pos.getY() - offset;
 
-
-            // SimpleUtil.testTime(()->{getHeightOrUpdate(pos, false);});
-
             if (isLight) {
-                if (onBlock != Blocks.SNOW_BLOCK
-                        && shouldSnowAt(blockAndTintGetter, pos.below(offset), state, random, seed)) {
+                if ((shouldSnowAt(blockAndTintGetter, pos.below(offset), state, random, seed)
+                )
+                ) {
+                    if (blockAndTintGetter.getBrightness(LightLayer.BLOCK, pos.above()) > 9) {
+                        return original;
+                    }
                     // DynamicLeavesBlock
                     boolean isFlowerAbove = false;
                     if ((flag == FLAG_BLOCK) && ClientConfig.Renderer.deeperSnow.get()) {
@@ -449,11 +492,16 @@ public class ModelManager {
         return original;
     }
 
+
     public static final Map<Biome, Integer> SNOW_LINE_BIOME_MAP = new IdentityHashMap<>();
+
 
     public static boolean shouldSnowAt(BlockAndTintGetter blockAndTintGetter, BlockPos pos, BlockState state, Random random, long seed) {
         int snowLine = ClientConfig.Renderer.snowLine.get();
-        Holder<Biome> biome = Minecraft.getInstance().level.getBiome(pos);
+        Holder<Biome> biome = null;
+        // So i will recommend you to use Embeddium because it carried the biome info that we need in old version
+        biome = EmbeddiumRenderChunkReflector.getBiome(blockAndTintGetter, pos);
+        if (biome == null) biome = Minecraft.getInstance().level.getBiome(pos);
         snowLine += ((((int) seed) & 3) + (pos.getX() & 3) + (pos.getY() & 3) + (pos.getZ() & 3)) - 4;
         Integer sH = SNOW_LINE_BIOME_MAP.getOrDefault(biome.value(), null);
         if (sH == null) {
