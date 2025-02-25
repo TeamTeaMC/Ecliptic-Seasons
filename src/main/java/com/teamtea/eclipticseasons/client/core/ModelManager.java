@@ -283,7 +283,8 @@ public class ModelManager {
         if (b == null) {
             var onBlock = state.getBlock();
             if (snowOverlayCanSurviveOn(state)) {
-                if (state.getLightEmission(blockGetter, pos) <= 0) {
+                if (!ClientConfig.Renderer.notSnowOverlayGlowingBlock.get()
+                        || state.getLightEmission(blockGetter, pos) <= 0) {
                     if (onBlock instanceof LeavesBlock) {
                         flag = FLAG_LEAVES;
                     } else if ((state.isSolidRender(blockGetter, pos)
@@ -355,8 +356,10 @@ public class ModelManager {
                 if ((shouldSnowAt(blockAndTintGetter, pos.below(offset), state, random, seed)
                 )
                 ) {
-                    if (blockAndTintGetter.getBrightness(LightLayer.BLOCK, pos.above()) > 9) {
-                        return original;
+                    if(ClientConfig.Renderer.notSnowyNearGlowingBlock.get()) {
+                        if (blockAndTintGetter.getBrightness(LightLayer.BLOCK, pos.above()) > ClientConfig.Renderer.notSnowyNearGlowingBlockLevel.get()) {
+                            return original;
+                        }
                     }
                     // DynamicLeavesBlock
                     boolean isFlowerAbove = false;

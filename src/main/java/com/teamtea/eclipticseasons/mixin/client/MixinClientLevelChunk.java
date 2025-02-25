@@ -19,12 +19,11 @@ import com.teamtea.eclipticseasons.client.core.ModelManager;
 
 @Mixin({LevelChunk.class})
 public abstract class MixinClientLevelChunk {
-    @Shadow @Final private Level level;
+    @Shadow @Final Level level;
 
-    // 目前还不能发现动态树叶的更新
     @Inject(
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/levelgen/Heightmap;update(IIILnet/minecraft/world/level/block/state/BlockState;)Z", ordinal = 1),
-            method = "setBlockState", locals = LocalCapture.CAPTURE_FAILEXCEPTION
+            method = "setBlockState"
     )
     public void eclipticseasons$setBlockState(BlockPos pos, BlockState state, boolean p_62867_, CallbackInfoReturnable<BlockState> cir) {
         if (level instanceof ClientLevel clientLevel ){

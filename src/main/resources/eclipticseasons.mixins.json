@@ -31,7 +31,7 @@
     "client.MixinClientClientLevel",
     "client.MixinClientLevel",
     "client.MixinClientLevelChunk",
-    "client.MixinLight",
+    "client.MixinBlockLightEngine",
     "client.MixinClientPanda",
     "client.MixinGameRenderer",
     "client.MixinLevelRender",

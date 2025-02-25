@@ -74,6 +74,9 @@ public class ClientConfig {
         public static ForgeConfigSpec.BooleanValue underSnow;
         public static ForgeConfigSpec.BooleanValue particle;
         public static ForgeConfigSpec.IntValue snowLine;
+        public static ForgeConfigSpec.BooleanValue notSnowOverlayGlowingBlock;
+        public static ForgeConfigSpec.BooleanValue notSnowyNearGlowingBlock;
+        public static ForgeConfigSpec.IntValue notSnowyNearGlowingBlockLevel;
         public static ForgeConfigSpec.ConfigValue<List<? extends List<? extends Serializable>>> snowBiomeLine;
         public static ForgeConfigSpec.BooleanValue realisticSnowyChange;
 
@@ -91,6 +94,12 @@ public class ClientConfig {
                     .define("DeeperSnow", false);
             underSnow = builder.comment("Blocks below fences and bamboo will also accumulate snow.")
                     .define("UnderSnow", false);
+            notSnowOverlayGlowingBlock = builder.comment("Snow will not overlay the block has block light.")
+                    .define("NotSnowOverlayGlowingBlock", true);
+            notSnowyNearGlowingBlock = builder.comment("Snow will not appear in overly bright areas, here define restriction levels.")
+                    .define("NotSnowyNearGlowingBlock", true);
+            notSnowyNearGlowingBlockLevel = builder.comment("Snow will not appear in overly bright areas.")
+                    .defineInRange("NotSnowyNearGlowingBlockLevel", 10, 1, 15);
             particle = builder.comment("Seasonal Particle.")
                     .define("Particle", true);
             snowLine = builder.comment("Snow Line Height.")

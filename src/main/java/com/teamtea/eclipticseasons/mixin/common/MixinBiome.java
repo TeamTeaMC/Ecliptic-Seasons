@@ -47,10 +47,6 @@ public abstract class MixinBiome {
             method = {"shouldSnow", "shouldFreeze(Lnet/minecraft/world/level/LevelReader;Lnet/minecraft/core/BlockPos;Z)Z"})
     public boolean eclipticseasons$fixTempWithoutSeason(Biome instance, BlockPos pPos, Operation<Boolean> original, @Local(argsOnly = true) LevelReader levelReader) {
         if (levelReader instanceof Level) {
-            if(levelReader instanceof ServerLevel){
-                if (CommonConfig.Temperature.snowDown.get())
-                    return WeatherManager.getSnowStatus((ServerLevel) levelReader, instance, pPos) != WeatherManager.SnowRenderStatus.SNOW;
-            }
             return this.getTemperature(pPos) - EclipticUtil.getNowSolarTerm((Level) levelReader).getTemperatureChange() >= 0.15F;
         }
         return original.call(instance, pPos);

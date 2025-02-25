@@ -50,6 +50,7 @@ public final class ClientEventHandler {
         if (tagsUpdatedEvent.getUpdateCause() == TagsUpdatedEvent.UpdateCause.CLIENT_PACKET_RECEIVED) {
             ModelManager.SNOW_OVERLAY_CAN_SURVIVE_ON_MAP.clear();
             ModelManager.SNOW_LINE_BIOME_MAP.clear();
+            ModelManager.STATE_BLOCK_TYPE_MAP.clear();
         }
     }
 
