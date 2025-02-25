@@ -9,11 +9,13 @@ import com.teamtea.eclipticseasons.common.handler.CustomRandomTickHandler;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
+import net.minecraft.world.IWorldReader;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.gen.Heightmap;
 import net.minecraft.world.server.ServerWorld;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -78,6 +80,35 @@ public abstract class MixinServerLevel {
             // if(((ServerLevel) (Object) this).isAreaLoaded(blockPos, 1))
             {
                 CustomRandomTickHandler.SNOW_MELT_2.tick((ServerWorld) (Object) this, biome, blockPos);
+            };
+        }
+    }
+
+    @WrapOperation(
+            method = "tickChunk",
+            at = @At(value = "INVOKE",
+                    target = "Lnet/minecraft/world/biome/Biome;shouldFreeze(Lnet/minecraft/world/IWorldReader;Lnet/minecraft/util/math/BlockPos;)Z")
+    )
+    private boolean eclipticseasons$tickChunk_freeze(Biome instance, IWorldReader pLevel, BlockPos pPos, Operation<Boolean> original, @Local Biome biome, @Local(ordinal = 0) BlockPos blockPos) {
+        eclipticseasons$snowDown((ServerWorld) (Object) this, biome, blockPos);
+        return false;
+    }
+
+    @WrapOperation(
+            method = "tickChunk",
+            at = @At(value = "INVOKE",
+                    target = "Lnet/minecraft/world/biome/Biome;shouldSnow(Lnet/minecraft/world/IWorldReader;Lnet/minecraft/util/math/BlockPos;)Z")
+    )
+    private boolean eclipticseasons$tickChunk_snow(Biome instance, IWorldReader iWorldReader, BlockPos pLevel, Operation<Boolean> original, @Local Biome biome, @Local(ordinal = 0) BlockPos blockPos) {
+        eclipticseasons$snowDown((ServerWorld) (Object) this, biome, blockPos);
+        return false;
+    }
+
+    @Unique
+    private void eclipticseasons$snowDown(ServerWorld serverLevel,Biome biome, BlockPos blockPos) {
+        if (CommonConfig.Temperature.snowDown.get()){
+            {
+                CustomRandomTickHandler.SNOW_MELT.tick(serverLevel, biome, blockPos);
             };
         }
     }

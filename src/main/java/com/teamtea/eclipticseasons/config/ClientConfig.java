@@ -2,6 +2,7 @@ package com.teamtea.eclipticseasons.config;
 
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.ForgeConfigSpec;
+import net.minecraftforge.common.Tags;
 import net.minecraftforge.fml.config.ModConfig;
 
 import java.io.Serializable;
@@ -69,8 +70,11 @@ public class ClientConfig {
         public static ForgeConfigSpec.BooleanValue underSnow;
         public static ForgeConfigSpec.BooleanValue particle;
         public static ForgeConfigSpec.IntValue snowLine;
-
+        public static ForgeConfigSpec.BooleanValue notSnowOverlayGlowingBlock;
+        public static ForgeConfigSpec.BooleanValue notSnowyNearGlowingBlock;
+        public static ForgeConfigSpec.IntValue notSnowyNearGlowingBlockLevel;
         public static ForgeConfigSpec.ConfigValue<List<? extends List<? extends Serializable>>> snowBiomeLine;
+        public static ForgeConfigSpec.BooleanValue realisticSnowyChange;
 
         private static void load(ForgeConfigSpec.Builder builder) {
             builder.push("Renderer");
@@ -80,10 +84,18 @@ public class ClientConfig {
                     .define("useVanillaCheck", false);
             snowyWinter = builder.comment("If snow falls during cold weather, it will gradually cover all solid blocks and grass.")
                     .define("SnowyWinter", true);
+            realisticSnowyChange = builder.comment("When the block is updated, the snow cover will not refresh immediately, but will be updated after a delay. Please note that this will consume more performance..")
+                    .define("RealisticSnowyChange", true);
             deeperSnow = builder.comment("Occasionally a thicker layer of snow will cover the flowers and grass, especially.")
                     .define("DeeperSnow", false);
             underSnow = builder.comment("Blocks below fences and bamboo will also accumulate snow.")
                     .define("UnderSnow", false);
+            notSnowOverlayGlowingBlock = builder.comment("Snow will not overlay the block has block light.")
+                    .define("NotSnowOverlayGlowingBlock", true);
+            notSnowyNearGlowingBlock = builder.comment("Snow will not appear in overly bright areas, here define restriction levels.")
+                    .define("NotSnowyNearGlowingBlock", true);
+            notSnowyNearGlowingBlockLevel = builder.comment("Snow will not appear in overly bright areas.")
+                    .defineInRange("NotSnowyNearGlowingBlockLevel", 10, 1, 15);
             particle = builder.comment("Seasonal Particle.")
                     .define("Particle", true);
             snowLine = builder.comment("Snow Line Height.")
@@ -93,7 +105,6 @@ public class ClientConfig {
             builder.pop();
         }
     }
-
 
 
     public static class Sound {

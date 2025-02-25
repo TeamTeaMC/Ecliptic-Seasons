@@ -168,7 +168,7 @@ public class WeatherManager {
         if (!hasWeatherAt(level, pos)) {
             return false;
         }
-        Biome biome = level.getBiome(pos);
+        Biome biome = level.getBiomeManager().getNoiseBiomeAtPosition(pos);
         return isThunderAtBiome(level, biome);
     }
 
@@ -184,7 +184,7 @@ public class WeatherManager {
         } else if (serverLevel.getHeightmapPos(Heightmap.Type.MOTION_BLOCKING, pos).getY() > pos.getY()) {
             return false;
         }
-        Biome biome = serverLevel.getBiome(pos);
+        Biome biome = serverLevel.getBiomeManager().getNoiseBiomeAtPosition(pos);
         return isRainingAtBiome(serverLevel, biome);
     }
 

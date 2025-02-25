@@ -175,12 +175,35 @@ public class ModelManager {
 
     private static boolean updateLock;
 
+    public static void updatePosForce(BlockPos pos, int y) {
+        int x = blockToSectionCoord(pos.getX());
+        int z = blockToSectionCoord(pos.getZ());
+
+        ChunkHeightMap map = null;
+        // try{
+        while (updateLock) {
+            try {
+                Thread.sleep(1);
+            } catch (InterruptedException e) {
+            }
+        }
+        for (int i = 0; i < RegionList.size(); i++) {
+            ChunkHeightMap chunkHeightMap = RegionList.get(i);
+            if (chunkHeightMap.x == x && chunkHeightMap.z == z) {
+                map = chunkHeightMap;
+                break;
+            }
+        }
+        if (map != null)
+            map.updateHeight(pos, y);
+    }
+
     public static int getHeightOrUpdate(BlockPos pos, boolean shouldUpdate) {
         if (ClientConfig.Renderer.useVanillaCheck.get())
             return Integer.MIN_VALUE;
         int x = blockToSectionCoord(pos.getX());
         int z = blockToSectionCoord(pos.getZ());
-        ChunkPos chunkPos = new ChunkPos(x, z);
+        // ChunkPos chunkPos = new ChunkPos(x, z);
         // var map = ChunkMap.getOrDefault(chunkPos, null);
 
         ChunkHeightMap map = null;
@@ -258,6 +281,62 @@ public class ModelManager {
     public static final List<Block> LowerPlant = Stream.of(Blocks.GRASS, Blocks.FERN).collect(Collectors.toList());
     public static final List<Block> LARGE_GRASS = Stream.of(Blocks.TALL_GRASS, Blocks.LARGE_FERN).collect(Collectors.toList());
 
+    public static final Map<BlockState, Integer> STATE_BLOCK_TYPE_MAP = new IdentityHashMap<>();
+
+    public static int getFlagBlock(IBlockDisplayReader blockGetter, BlockState state, BlockPos pos) {
+        Integer b = STATE_BLOCK_TYPE_MAP.get(state);
+        int flag = 0;
+        if (b == null) {
+            Block onBlock = state.getBlock();
+            if (snowOverlayCanSurviveOn(state)) {
+                if (!ClientConfig.Renderer.notSnowOverlayGlowingBlock.get()
+                        || state.getLightValue(blockGetter, pos) <= 0) {
+                    if (onBlock instanceof LeavesBlock) {
+                        flag = FLAG_LEAVES;
+                    } else if ((state.isSolidRender(blockGetter, pos)
+                            // state.isSolid()
+                            || onBlock instanceof LeavesBlock
+                            || (onBlock instanceof SlabBlock && state.getValue(SlabBlock.TYPE) == SlabType.TOP)
+                            || (onBlock instanceof StairsBlock && state.getValue(StairsBlock.HALF) == Half.TOP))) {
+                        flag = FLAG_BLOCK;
+                    } else if (onBlock instanceof SlabBlock) {
+                        flag = FLAG_SLAB;
+                    } else if (onBlock instanceof StairsBlock) {
+                        flag = FLAG_STAIRS;
+                    } else if (LowerPlant.contains(onBlock)) {
+                        flag = FLAG_GRASS;
+                    } else if (LARGE_GRASS.contains(onBlock)) {
+                        flag = FLAG_GRASS_LARGE;
+                    } else if ((onBlock instanceof FarmlandBlock || onBlock instanceof GrassPathBlock)) {
+                        flag = FLAG_FARMLAND;
+                    }
+                }
+            }
+            STATE_BLOCK_TYPE_MAP.put(state, flag);
+        } else {
+            flag = b;
+        }
+        return flag;
+    }
+
+    private static int getOffset(BlockState state, int flag) {
+        int offset = 0;
+        if (flag == FLAG_GRASS || flag == FLAG_GRASS_LARGE) {
+            if (flag == FLAG_GRASS) {
+                offset = 1;
+            }
+            // 这里不忽略这个警告，因为后续会有优化
+            else if (flag == FLAG_GRASS_LARGE) {
+                if (state.getValue(DoublePlantBlock.HALF) == DoubleBlockHalf.LOWER) {
+                    offset = 1;
+                } else {
+                    offset = 2;
+                }
+            }
+        }
+        return offset;
+    }
+
     public static List<BakedQuad> appendOverlay(IBlockDisplayReader blockAndTintGetter, BlockState state, BlockPos pos, Direction direction, Random random, long seed, List<BakedQuad> original) {
         if (!MapChecker.isValidDimension(Minecraft.getInstance().level)) {
             return original;
@@ -268,39 +347,9 @@ public class ModelManager {
                 && !original.isEmpty()) {
 
             Block onBlock = state.getBlock();
-            int flag = 0;
-            if (onBlock instanceof LeavesBlock) {
-                flag = FLAG_LEAVES;
-            } else if ((state.isSolidRender(blockAndTintGetter, pos)
-                    // state.isSolid()
-                    || onBlock instanceof LeavesBlock
-                    || (onBlock instanceof SlabBlock && state.getValue(SlabBlock.TYPE) == SlabType.TOP)
-                    || (onBlock instanceof StairsBlock && state.getValue(StairsBlock.HALF) == Half.TOP))) {
-                flag = FLAG_BLOCK;
-            } else if (onBlock instanceof SlabBlock) {
-                flag = FLAG_SLAB;
-            } else if (onBlock instanceof StairsBlock) {
-                flag = FLAG_STAIRS;
-            } else if (LowerPlant.contains(onBlock)) {
-                flag = FLAG_GRASS;
-            } else if (LARGE_GRASS.contains(onBlock)) {
-                flag = FLAG_GRASS_LARGE;
-            } else if ((onBlock instanceof FarmlandBlock || onBlock instanceof GrassPathBlock) && direction == null) {
-                flag = FLAG_FARMLAND;
-            } else return original;
-
-            int offset = 0;
-            if (flag == FLAG_GRASS || flag == FLAG_GRASS_LARGE) {
-                if (flag == FLAG_GRASS) {
-                    offset = 1;
-                } else if (flag == FLAG_GRASS_LARGE) {
-                    if (state.getValue(DoublePlantBlock.HALF) == DoubleBlockHalf.LOWER) {
-                        offset = 1;
-                    } else {
-                        offset = 2;
-                    }
-                }
-            }
+            int flag = getFlagBlock(blockAndTintGetter, state, pos);
+            if (flag == 0) return original;
+            int offset = getOffset(state, flag);
 
 
             boolean isLight = false;
@@ -315,7 +364,11 @@ public class ModelManager {
             if (isLight) {
                 if (onBlock != Blocks.SNOW_BLOCK
                         && shouldSnowAt(blockAndTintGetter, pos.below(offset), state, random, seed)) {
-                    // DynamicLeavesBlock
+                    if(ClientConfig.Renderer.notSnowyNearGlowingBlock.get()) {
+                        if (blockAndTintGetter.getBrightness(LightType.BLOCK, pos.above()) > ClientConfig.Renderer.notSnowyNearGlowingBlockLevel.get()) {
+                            return original;
+                        }
+                    }
                     boolean isFlowerAbove = false;
                     if ((flag == FLAG_BLOCK) && ClientConfig.Renderer.deeperSnow.get()) {
                         Block bl = blockAndTintGetter.getBlockState(pos.above()).getBlock();
@@ -454,7 +507,8 @@ public class ModelManager {
 
     public static boolean shouldSnowAt(IBlockDisplayReader blockAndTintGetter, BlockPos pos, BlockState state, Random random, long seed) {
         int snowLine = ClientConfig.Renderer.snowLine.get();
-        Biome biome = Minecraft.getInstance().level.getBiome(pos);
+        Biome biome = EmbeddiumRenderChunkReflector.getBiome(blockAndTintGetter, pos);
+        if (biome == null) biome = Minecraft.getInstance().level.getBiome(pos);
         Integer sH = SNOW_LINE_BIOME_MAP.getOrDefault(biome, null);
 
         if (sH == null) {

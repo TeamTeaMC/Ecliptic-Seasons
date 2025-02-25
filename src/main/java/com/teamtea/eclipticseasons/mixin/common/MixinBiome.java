@@ -38,10 +38,6 @@ public abstract class MixinBiome {
             method = {"shouldSnow", "shouldFreeze(Lnet/minecraft/world/IWorldReader;Lnet/minecraft/util/math/BlockPos;Z)Z"})
     public float eclipticseasons$fixTempWithoutSeason(float original, @Local(argsOnly = true) IWorldReader iWorldReader, @Local(argsOnly = true) BlockPos pos) {
         if (iWorldReader instanceof World) {
-            if (iWorldReader instanceof ServerWorld) {
-                if (CommonConfig.Temperature.snowDown.get())
-                    return WeatherManager.getSnowStatus((ServerWorld) iWorldReader, (Biome) (Object) this, pos) != WeatherManager.SnowRenderStatus.SNOW ? 1f : 0f;
-            }
             original -= EclipticUtil.getNowSolarTerm((World) iWorldReader).getTemperatureChange();
         }
         return original;

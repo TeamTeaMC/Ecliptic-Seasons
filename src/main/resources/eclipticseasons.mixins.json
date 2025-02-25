@@ -39,8 +39,9 @@
     "client.MixinLocalPlayer",
     "client.block.MixinLeavesBlock",
     "client.sound.MixinMusicManager",
-    "compat.fbp.MixinFancyBlockParticles",
     "compat.embeddium.MixinBlockRender2",
+    "compat.fbp.MixinFancyBlockParticles",
+    "compat.fbp.MixinFBPPlacingAnimationParticle",
     "compat.optifine.MixinBlockModelCustomizer"
   ],
   "injectors": {

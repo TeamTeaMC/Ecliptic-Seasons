@@ -1,9 +1,13 @@
 package com.teamtea.eclipticseasons.mixin.compat.fbp;
 
 
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import com.llamalad7.mixinextras.sugar.Local;
 import com.teamtea.eclipticseasons.client.core.ClientWeatherChecker;
+import com.teamtea.eclipticseasons.client.core.ModelManager;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import hantonik.fbp.FancyBlockParticles;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.biome.Biome;

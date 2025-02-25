@@ -7,6 +7,7 @@ import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.api.util.SimpleUtil;
 import com.teamtea.eclipticseasons.client.core.ClientWeatherChecker;
 import com.teamtea.eclipticseasons.client.core.ModelManager;
+import com.teamtea.eclipticseasons.client.core.map.ClientMapFixer;
 import com.teamtea.eclipticseasons.client.render.ClientRenderer;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
@@ -37,6 +38,7 @@ import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.event.TagsUpdatedEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
+import net.minecraftforge.event.world.ChunkEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -53,6 +55,7 @@ public final class ClientEventHandler {
         if (FMLLoader.getDist() == Dist.CLIENT) {
             ModelManager.SNOW_OVERLAY_CAN_SURVIVE_ON_MAP.clear();
             ModelManager.SNOW_LINE_BIOME_MAP.clear();
+            ModelManager.STATE_BLOCK_TYPE_MAP.clear();
         }
     }
 
@@ -81,11 +84,18 @@ public final class ClientEventHandler {
             }
         }
     }
+    @SubscribeEvent
+    public static void onChunkUnloadEvent(ChunkEvent.Unload event) {
+        if (event.getWorld() instanceof ClientWorld ) {
+            ClientMapFixer.clearChunk(event.getChunk().getPos());
+        }
+    }
 
 
     @SubscribeEvent
     public static void onLevelUnloadEvent(WorldEvent.Unload event) {
         if (event.getWorld() instanceof ClientWorld) {
+            ClientMapFixer.clearAll();
             ModelManager.clearHeightMap();
             ClientWeatherChecker.unloadLevel((ClientWorld) event.getWorld());
         }
@@ -112,9 +122,11 @@ public final class ClientEventHandler {
     @SubscribeEvent
     public static void onWorldTick(TickEvent.ClientTickEvent event) {
         if (ClientConfig.Renderer.forceChunkRenderUpdate.get()) {
-            if (event.phase.equals(TickEvent.Phase.END) && Minecraft.getInstance().level != null) {
-                ClientWeatherChecker.tickAllCheck(Minecraft.getInstance().level);
-                if (Minecraft.getInstance().level.getGameTime() % 100 == 0) {
+            ClientWorld level = Minecraft.getInstance().level;
+            if (event.phase.equals(TickEvent.Phase.END) && level != null) {
+                ClientWeatherChecker.tickAllCheck(level);
+                ClientMapFixer.tick(level);
+                if (level.getGameTime() % 100 == 0) {
                     WorldRenderer lr = Minecraft.getInstance().levelRenderer;
                     if (lr != null) {
                         //
@@ -123,15 +135,14 @@ public final class ClientEventHandler {
 
                             BlockPos pos = Minecraft.getInstance().player.blockPosition().below();
                             SectionPos sectionPos = SectionPos.of(pos);
-                            // lr.setSectionDirtyWithNeighbors(sectionPos.x(),sectionPos.y(),sectionPos.z());
-                            int x = sectionPos.x();
-                            int y = sectionPos.y();
-                            int z = sectionPos.z();
-                            for (int i = x - 2; i <= x + 2; ++i) {
-                                for (int j = z - 2; j <= z + 2; ++j) {
-                                    for (int k = y - 1; k <= y + 1; ++k) {
-                                        lr.setSectionDirty(j, k, i);
-                                    }
+                            lr.setSectionDirtyWithNeighbors(sectionPos.x(), sectionPos.y(), sectionPos.z());
+                            Random random = level.random;
+                            int lastViewDistance = Minecraft.getInstance().options.renderDistance-1;
+                            for (int i = 0; i < random.nextInt(8)+4; i++) {
+                                {
+                                    lr.setSectionDirtyWithNeighbors(sectionPos.x()+2*(random.nextInt(lastViewDistance))-lastViewDistance,
+                                            sectionPos.y(),
+                                            sectionPos.z()+2*(random.nextInt(lastViewDistance))-lastViewDistance);
                                 }
                             }
                         }

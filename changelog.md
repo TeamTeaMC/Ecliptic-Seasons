@@ -45,9 +45,47 @@ Removed Obsolete Feature:
 Removed the unused "snowy dandelions" model from the files.
 
 Legacy-1.0
-backport support for Cold Sweat
-backport support for Legendary Survival Overhaul (only 1.16)
-remove the support for rubidium (use embeddium instead)
-add support for Fancy Block Particles - Renewed
-backport a simple greenhouse, look the tag to limit it
-add snow line for each biome and global setting
+# Mod Update Changelog
+
+### New Features
+1. **Fancy Block Particles - Renewed Support**
+    - Added compatibility for the particle effects mod *Fancy Block Particles - Renewed*.
+2. **Dynamic Snow Line System**
+    - Added per-biome snow line height configurations with global override settings.
+3. **Snow Overlay Light Check**
+    - Snow Overlays now only generate if the block meets specific light level conditions.
+4. **Realistic Snow Updates**
+    - Improved snowy block render logic to prevent instant snow overlay generation after fast block placement.
+
+---
+
+### Backports
+1. **Cold Sweat Compatibility**
+    - Backported support for the survival mod *Cold Sweat*.
+2. **Legendary Survival Overhaul Compatibility**
+    - Backported support for *Legendary Survival Overhaul* (1.16-only).
+3. **Simple Greenhouse System**
+    - Backported a basic greenhouse feature, restricted via block tags.
+4. **Tree Sapling Grow Control**
+   - Sapling can now be controlled by seasonal and humid tag too.
+
+---
+
+### API & Developer Tools
+1. **Official API Release**
+    - Added an official API version for developers to integrate and extend mod functionality.
+
+---
+
+### Optimizations & Fixes
+1. **Rubidium Support Removed**
+    - Dropped compatibility with *Rubidium*; replaced with *Embeddium* as the rendering backend.
+2. **Chunk Rendering Optimization**
+    - Enhanced chunk update logic to reduce lag and performance overhead.
+3. **Legacy Snow & Melt (Optional)**
+    - Added legacy snow/melting mechanics as a configurable optional feature.
+
+---
+
+### Miscellaneous
+- Code cleanup and internal refactoring for improved stability.  

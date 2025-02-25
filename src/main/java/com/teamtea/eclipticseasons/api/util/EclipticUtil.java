@@ -149,4 +149,12 @@ public class EclipticUtil {
         return Temperature.getTemperatureLevel(standBiome.getTemperature(pos));
     }
 
+    public static boolean isHereWithSnow(World level, BlockPos pos) {
+        return WeatherManager.getSnowDepthAtBiome(level, level.getBiome(level.getHeightmapPos(Heightmap.Type.MOTION_BLOCKING, pos))) > 0;
+    }
+
+
+    public static boolean isHereSnowy(World level, BlockPos pos) {
+        return WeatherManager.getRainOrSnow(level, level.getBiome(level.getHeightmapPos(Heightmap.Type.MOTION_BLOCKING, pos)), pos) == Biome.RainType.SNOW;
+    }
 }
