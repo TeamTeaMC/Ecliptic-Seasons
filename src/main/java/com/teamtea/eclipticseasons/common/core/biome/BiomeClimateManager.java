@@ -35,9 +35,11 @@ public class BiomeClimateManager {
         if (biomes.isPresent()) {
             biomes.get().forEach(biome ->
             {
-                var temperature = BiomeClimateManager.getDefaultTemperature(biome) > SNOW_LEVEL ?
-                        Math.max(SNOW_LEVEL + 0.001F, BiomeClimateManager.getDefaultTemperature(biome) + SolarTerm.get(solarTermIndex).getTemperatureChange()) :
-                        Math.min(SNOW_LEVEL, BiomeClimateManager.getDefaultTemperature(biome) + SolarTerm.get(solarTermIndex).getTemperatureChange());
+                float temperature1 = biome.getModifiedClimateSettings().temperature();
+
+                float temperature = temperature1 > SNOW_LEVEL ?
+                        Math.max(SNOW_LEVEL + 0.001F, temperature1 + SolarTerm.get(solarTermIndex).getTemperatureChange()) :
+                        Math.min(SNOW_LEVEL, temperature1 + SolarTerm.get(solarTermIndex).getTemperatureChange());
                 BIOME_DEFAULT_TEMPERATURE_MAP.put(biome,temperature);
                 // var oldClimateSettings = biome.climateSettings;
                 // biome.climateSettings = new Biome.ClimateSettings(

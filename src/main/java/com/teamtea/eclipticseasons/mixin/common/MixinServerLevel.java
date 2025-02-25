@@ -5,6 +5,8 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
+import com.teamtea.eclipticseasons.common.handler.CustomRandomTickHandler;
+import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.RegistryAccess;
@@ -82,5 +84,21 @@ public abstract class MixinServerLevel {
         int j = chunkpos.getMiddleBlockZ();
         BlockPos blockpos1 = ((ServerLevel) (Object) this).getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, new BlockPos(i, 0, j));
         return WeatherManager.isThunderAt((ServerLevel) (Object) this, blockpos1);
+    }
+
+
+    @Inject(
+            remap = false,
+            method = "tickChunk",
+            at = @At(value = "INVOKE",
+                    target = "Lnet/minecraft/server/level/ServerLevel;isAreaLoaded(Lnet/minecraft/core/BlockPos;I)Z")
+    )
+    private void eclipticseasons$tickChunk_melt(LevelChunk pChunk, int pRandomTickSpeed, CallbackInfo ci, @Local Biome biome,@Local(ordinal = 0) BlockPos blockPos) {
+        if (CommonConfig.Temperature.iceMelt.get()){
+            // if(((ServerLevel) (Object) this).isAreaLoaded(blockPos, 1))
+            {
+                CustomRandomTickHandler.SNOW_MELT_2.tick((ServerLevel) (Object) this, biome, blockPos);
+            };
+        }
     }
 }

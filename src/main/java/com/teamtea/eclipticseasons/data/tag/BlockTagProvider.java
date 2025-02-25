@@ -19,6 +19,6 @@ public class BlockTagProvider extends BlockTagsProvider {
                 .addTag(BlockTags.ICE).addTag(BlockTags.SNOW).addTag(BlockTags.SNOW_LAYER_CANNOT_SURVIVE_ON);
 
         tag(EclipticBlockTags.NOT_GREEN_HOUSE_MATERIAL)
-                .addTag(BlockTags.ICE).addTag(BlockTags.SNOW).addTag(BlockTags.DIRT);
+                .addTag(BlockTags.ICE).addTag(BlockTags.SNOW);
     }
 }

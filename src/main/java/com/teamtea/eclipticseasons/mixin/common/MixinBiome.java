@@ -8,7 +8,9 @@ import com.llamalad7.mixinextras.sugar.Local;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
+import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.biome.Biome;
@@ -46,8 +48,13 @@ public abstract class MixinBiome {
             target = "Lnet/minecraft/world/level/biome/Biome;warmEnoughToRain(Lnet/minecraft/core/BlockPos;)Z")},
             method = {"shouldSnow", "shouldFreeze(Lnet/minecraft/world/level/LevelReader;Lnet/minecraft/core/BlockPos;Z)Z"})
     public boolean eclipticseasons$fixTempWithoutSeason(Biome instance, BlockPos pPos, Operation<Boolean> original, @Local(argsOnly = true) LevelReader levelReader) {
-        if (levelReader instanceof Level)
+        if (levelReader instanceof Level) {
+            if(levelReader instanceof ServerLevel){
+                if (CommonConfig.Temperature.snowDown.get())
+                    return WeatherManager.getSnowStatus((ServerLevel) levelReader, instance, pPos) != WeatherManager.SnowRenderStatus.SNOW;
+            }
             return this.getTemperature(pPos) - EclipticUtil.getNowSolarTerm((Level) levelReader).getTemperatureChange() >= 0.15F;
+        }
         return original.call(instance, pPos);
     }
 

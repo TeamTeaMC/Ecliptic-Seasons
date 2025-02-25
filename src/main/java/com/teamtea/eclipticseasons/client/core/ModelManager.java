@@ -6,6 +6,7 @@ import com.teamtea.eclipticseasons.api.constant.tag.EclipticBlockTags;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.api.util.SimpleUtil;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
+import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.registry.BlockRegistry;
 import com.teamtea.eclipticseasons.config.ClientConfig;
 
@@ -252,11 +253,13 @@ public class ModelManager {
     public static final List<Block> LowerPlant = List.of(Blocks.GRASS, Blocks.FERN);
     public static final List<Block> LARGE_GRASS = List.of(Blocks.TALL_GRASS, Blocks.LARGE_FERN);
 
-    public static List<BakedQuad> appendOverlay(BlockAndTintGetter blockAndTintGetter, BlockState state, BlockPos pos, Direction direction, RandomSource random, long seed, List<BakedQuad> list) {
-
+    public static List<BakedQuad> appendOverlay(BlockAndTintGetter blockAndTintGetter, BlockState state, BlockPos pos, Direction direction, RandomSource random, long seed, List<BakedQuad> original) {
+        if (!MapChecker.isValidDimension(Minecraft.getInstance().level)) {
+            return original;
+        }
         if (ClientConfig.Renderer.snowyWinter.get()
                 && direction != Direction.DOWN
-                && !list.isEmpty()) {
+                && !original.isEmpty()) {
 
             var onBlock = state.getBlock();
             int flag = 0;
@@ -278,7 +281,7 @@ public class ModelManager {
                 flag = FLAG_GRASS_LARGE;
             } else if ((onBlock instanceof FarmBlock || onBlock instanceof DirtPathBlock) && direction == null) {
                 flag = FLAG_FARMLAND;
-            } else return list;
+            } else return original;
 
             int offset = 0;
             if (flag == FLAG_GRASS || flag == FLAG_GRASS_LARGE) {
@@ -325,7 +328,7 @@ public class ModelManager {
                     // isFlowerAbove=false;
                     var useMap = isFlowerAbove ? quadMap_1 : quadMap;
                     List<BakedQuad> cc =
-                            EclipticSeasonsMixinPlugin.isOptLoad() ? null : useMap.getOrDefault(list, null);
+                            EclipticSeasonsMixinPlugin.isOptLoad() ? null : useMap.getOrDefault(original, null);
                     if (cc != null) {
                         return cc;
                     } else {
@@ -363,7 +366,7 @@ public class ModelManager {
                         }
 
                         if (snowModel != null) {
-                            int size = list.size();
+                            int size = original.size();
                             var snowList = snowModel.getQuads(snowState, direction, null);
                             ArrayList<BakedQuad> newList;
                             if (flag == FLAG_GRASS) {
@@ -381,7 +384,7 @@ public class ModelManager {
                                 } else newList = new ArrayList<>(snowList);
                             } else {
                                 newList = new ArrayList<BakedQuad>(size + snowList.size());
-                                newList.addAll(list);
+                                newList.addAll(original);
                                 newList.addAll(snowList);
                             }
 
@@ -394,9 +397,9 @@ public class ModelManager {
                             }
 
                             if (!EclipticSeasonsMixinPlugin.isOptLoad())
-                                useMap.putIfAbsent(list, newList);
+                                useMap.putIfAbsent(original, newList);
 
-                            list = newList;
+                            original = newList;
 
 
                         }
@@ -416,21 +419,21 @@ public class ModelManager {
                             && random.nextInt(weight * 4) == 0
                             && blockAndTintGetter.getBlockState(pos.above()).isAir()) {
                         List<BakedQuad> cc =
-                                EclipticSeasonsMixinPlugin.isOptLoad() ? null : quadMap_GRASS.getOrDefault(list, null);
+                                EclipticSeasonsMixinPlugin.isOptLoad() ? null : quadMap_GRASS.getOrDefault(original, null);
                         if (cc != null) {
                             return cc;
                         } else {
                             BakedModel snowModel = models.get(grass_flower);
                             if (snowModel != null) {
-                                int size = list.size();
+                                int size = original.size();
                                 var snowList = snowModel.getQuads(null, direction, null);
                                 ArrayList<BakedQuad> newList;
                                 newList = new ArrayList<BakedQuad>(size + snowList.size());
-                                newList.addAll(list);
+                                newList.addAll(original);
                                 newList.addAll(snowList);
                                 if (!EclipticSeasonsMixinPlugin.isOptLoad())
-                                    quadMap_GRASS.putIfAbsent(list, newList);
-                                list = newList;
+                                    quadMap_GRASS.putIfAbsent(original, newList);
+                                original = newList;
                             }
                         }
                     }
@@ -439,7 +442,7 @@ public class ModelManager {
 
 
         }
-        return list;
+        return original;
     }
 
     public static final Map<Biome, Integer> SNOW_LINE_BIOME_MAP = new IdentityHashMap<>();

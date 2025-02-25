@@ -90,7 +90,7 @@ public class AllListener {
             }
         }
 
-        CustomRandomTickHandler.onWorldTick(event);
+        // CustomRandomTickHandler.onWorldTick(event);
 
     }
 

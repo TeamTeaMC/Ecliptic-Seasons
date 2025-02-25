@@ -1,7 +1,6 @@
 {
   "values": [
     "#minecraft:ice",
-    "#minecraft:snow",
-    "#minecraft:dirt"
+    "#minecraft:snow"
   ]
 }

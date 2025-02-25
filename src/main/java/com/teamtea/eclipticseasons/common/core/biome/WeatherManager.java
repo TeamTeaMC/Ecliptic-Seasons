@@ -47,8 +47,8 @@ import java.util.*;
 
 public class WeatherManager {
 
-    public static Map<Level, ArrayList<BiomeWeather>> BIOME_WEATHER_LIST = new LinkedHashMap<>();
-    public static Map<Level, Integer> NEXT_CHECK_BIOME_MAP = new HashMap<>();
+    public static Map<Level, ArrayList<BiomeWeather>> BIOME_WEATHER_LIST = new IdentityHashMap<>();
+    public static Map<Level, Integer> NEXT_CHECK_BIOME_MAP = new IdentityHashMap<>();
 
     public static ArrayList<BiomeWeather> getBiomeList(Level level) {
         if (level == null) {
