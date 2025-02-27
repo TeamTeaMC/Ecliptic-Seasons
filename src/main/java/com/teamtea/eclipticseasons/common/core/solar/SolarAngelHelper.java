@@ -20,11 +20,15 @@ public class SolarAngelHelper {
         {
             return SolarHolders.getSaveDataLazy(level).map(data ->
             {
-                int dayTime = data.getSolarTerm().getDayTime();
+                int dayLevelTime = Math.toIntExact((worldTime + 18000) % 24000); // 0 for noon; 6000 for sunset; 18000 for sunrise.
+
+                int dayTime =
+                        dayLevelTime > 12000 && data.isTodayLastDay() ?
+                                data.getNextSolarTerm().getDayTime() :
+                                data.getSolarTerm().getDayTime();
                 // dayTime=23900;
                 int sunrise = 24000 - dayTime / 2;
                 int sunset = dayTime / 2;
-                int dayLevelTime = Math.toIntExact((worldTime + 18000) % 24000); // 0 for noon; 6000 for sunset; 18000 for sunrise.
                 int solarAngelTime;
                 if (0 <= dayLevelTime && dayLevelTime <= sunset)
                 {

@@ -15,6 +15,7 @@ nav:
       - English:
           - Index: 'en/index.md'
           - Crop: 'en/crop.md'
+          - Compatibility: 'en/compat.md'
       - 中文:
           - 首页: 'zh/index.md'
           - 气候: 'zh/climate.md'

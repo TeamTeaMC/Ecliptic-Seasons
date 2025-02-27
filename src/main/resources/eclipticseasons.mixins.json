@@ -7,6 +7,7 @@
     "common.MixinBiome",
     "common.MixinDimensionType",
     "common.MixinLevel",
+    "common.MixinLevelReader",
     "common.MixinLevelTimeAccess",
     "common.MixinServerLevel",
     "common.block.MixinBeehiveBlockEntity",

@@ -116,6 +116,23 @@ public class SolarDataManager extends SavedData {
         return SolarTerm.get(this.getSolarTermIndex());
     }
 
+    public SolarTerm getNextSolarTerm() {
+        SolarTerm solarTerm = SolarTerm.get(this.getSolarTermIndex());
+        return (solarTerm == SolarTerm.GREATER_COLD ?
+                SolarTerm.BEGINNING_OF_SUMMER :
+                SolarTerm.get(solarTerm.ordinal() + 1));
+    }
+
+    public int getSolarTermLastingDays() {
+        return CommonConfig.Season.lastingDaysOfEachTerm.get();
+    }
+
+    public boolean isTodayLastDay() {
+        int longTime = getSolarTermLastingDays();
+        return (getSolarTermsDay() + 1) % longTime == 0;
+    }
+
+
     public int getSolarTermsDay() {
         return solarTermsDay;
     }

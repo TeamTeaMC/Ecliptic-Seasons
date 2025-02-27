@@ -236,3 +236,7 @@ enhancing detection speed and accuracy for more efficient performance.
 
 - Add support for InControl to check four seasons
 - fix a remap issue with Snowy Spirit
+
+## **0.10-pre6**
+- Fixed an issue where the morning sun would move instantly when the solar term was about to change.
+- Fix zombie would burn in some case like just snow locally in the day.
