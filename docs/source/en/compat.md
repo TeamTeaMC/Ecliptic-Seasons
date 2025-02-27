@@ -7,7 +7,7 @@ For crop growth, it mainly supports the growth of crop blocks in Neo/Forge ecosy
 
 ## Modern Version (1.21-1.20)
 
-## Sodium
+### Sodium
 
 Support since NeoForge-1.21, mainly about renders snow-covered blocks, performance acceleration, CTM models support.
 
@@ -19,15 +19,15 @@ Supported in 1.21-NeoForge and 1.20.1-Forge, mainly LODs are rendered with corre
 
 Support in all versions, mainly about renders snow-covered blocks, performance acceleration, CTM models support.
 
-## Optifine
+### Optifine
 
 Support in 1.20, mainly about renders snow-covered blocks.
 
-## Oculus
+### Oculus
 
 Support in 1.20, mainly about provide level bind biome predication.
 
-## Iris
+### Iris
 
 Support in 1.21, mainly about provide level bind biome predication.
 
@@ -77,7 +77,7 @@ Provide seasons.
 
 Support in all versions, mainly about renders snow-covered blocks, performance acceleration.
 
-## Optifine
+### Optifine
 
 Support in legacy Forge versions, mainly about renders snow-covered blocks.
 
