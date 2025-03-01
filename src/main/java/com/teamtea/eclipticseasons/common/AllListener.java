@@ -101,7 +101,6 @@ public class AllListener {
             }
         }
 
-        CustomRandomTickHandler.onWorldTick(event);
 
     }
 

@@ -112,6 +112,7 @@ public final class ClientEventHandler {
                         SectionPos sectionPos = SectionPos.of(pos);
                         if (!ClientConfig.Renderer.enhancementChunkRenderUpdate.get()) {
                             WorldRenderer.setSectionDirtyWithNeighbors(sectionPos);
+                            WorldRenderer.setSectionDirtyRandomly(sectionPos);
                         } else {
                             if (clientLevel.getRandom().nextInt(2) == 0) {
                                 WorldRenderer.setAllDirty(sectionPos);

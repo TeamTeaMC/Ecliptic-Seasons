@@ -34,6 +34,7 @@
     "compat.snowyspirit.MixinSnowySpiritGroundStatus"
   ],
   "client": [
+    "client.MixinClientLayerLightSectionStorage",
     "client.MixinClientLevel",
     "client.MixinClientLevelChunk",
     "client.block.MixinLeavesBlock",

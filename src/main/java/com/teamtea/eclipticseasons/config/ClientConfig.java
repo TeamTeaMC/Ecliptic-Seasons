@@ -43,11 +43,8 @@ public class ClientConfig {
         public static ForgeConfigSpec.BooleanValue enhancementChunkRenderUpdate;
         public static ForgeConfigSpec.BooleanValue useVanillaCheck;
 
-        public static ForgeConfigSpec.BooleanValue snowyWinter;
         public static ForgeConfigSpec.BooleanValue betterSnow;
         public static ForgeConfigSpec.BooleanValue realisticSnowyChange;
-        public static ForgeConfigSpec.BooleanValue notSnowyNearGlowingBlock;
-        public static ForgeConfigSpec.IntValue notSnowyNearGlowingBlockLevel;
 
         public static ForgeConfigSpec.BooleanValue seasonalGrassColorChange;
         public static ForgeConfigSpec.BooleanValue flowerOnGrass;
@@ -61,16 +58,12 @@ public class ClientConfig {
 
             useVanillaCheck = builder.comment("Determines whether snow is falling based on vanilla lighting checks.")
                     .define("UseVanillaCheck", false);
-            snowyWinter = builder.comment("If snow falls during cold weather, it will gradually cover all solid blocks and grass.")
-                    .define("SnowyWinter", true);
+
             realisticSnowyChange = builder.comment("When the block is updated, the snow cover will not refresh immediately, but will be updated after a delay. Please note that this will consume more performance..")
                     .define("RealisticSnowyChange", true);
             betterSnow = builder.comment("Blocks underneath fences etc. may also be covered with snow.")
                     .define("SnowUnderFence", true);
-            notSnowyNearGlowingBlock = builder.comment("Snow will not appear in overly bright areas, here define restriction levels.")
-                    .define("NotSnowyNearGlowingBlock", true);
-            notSnowyNearGlowingBlockLevel = builder.comment("Snow will not appear in overly bright areas.")
-                    .defineInRange("NotSnowyNearGlowingBlockLevel", 10, 1, 15);
+
 
             seasonalGrassColorChange = builder.comment("The colors of the grass and leaves change with the time of year.")
                     .define("SeasonalGrassColorChange", true);

@@ -117,10 +117,7 @@ public class SolarDataManager extends SavedData {
     }
 
     public SolarTerm getNextSolarTerm() {
-        SolarTerm solarTerm = SolarTerm.get(this.getSolarTermIndex());
-        return (solarTerm == SolarTerm.GREATER_COLD ?
-                SolarTerm.BEGINNING_OF_SUMMER :
-                SolarTerm.get(solarTerm.ordinal() + 1));
+        return SolarTerm.get((this.getSolarTermIndex()+1)%24);
     }
 
     public int getSolarTermLastingDays() {

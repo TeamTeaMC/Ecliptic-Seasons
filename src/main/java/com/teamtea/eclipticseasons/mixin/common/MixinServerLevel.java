@@ -7,7 +7,9 @@ import com.llamalad7.mixinextras.sugar.Local;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
+import com.teamtea.eclipticseasons.common.handler.CustomRandomTickHandler;
 import com.teamtea.eclipticseasons.compat.vanilla.VanillaWeather;
+import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.RegistryAccess;
@@ -17,6 +19,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.util.valueproviders.IntProvider;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
@@ -24,6 +27,7 @@ import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.storage.WritableLevelData;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -128,5 +132,49 @@ public abstract class MixinServerLevel extends Level {
             return WeatherManager.isThunderAt(this, blockpos1);
         }
         return original.call(serverLevel);
+    }
+
+    @Inject(
+            remap = false,
+            method = "tickChunk",
+            at = @At(value = "INVOKE",
+                    target = "Lnet/minecraft/server/level/ServerLevel;isAreaLoaded(Lnet/minecraft/core/BlockPos;I)Z")
+    )
+    private void eclipticseasons$tickChunk_melt(LevelChunk pChunk, int pRandomTickSpeed, CallbackInfo ci, @Local Biome biome,@Local(ordinal = 0) BlockPos blockPos) {
+        if (CommonConfig.Temperature.iceMelt.get()){
+            // if(((ServerLevel) (Object) this).isAreaLoaded(blockPos, 1))
+            {
+                CustomRandomTickHandler.SNOW_MELT_2.tick((ServerLevel) (Object) this, biome, blockPos);
+            };
+        }
+    }
+
+    @WrapOperation(
+            method = "tickChunk",
+            at = @At(value = "INVOKE",
+                    target = "Lnet/minecraft/world/level/biome/Biome;shouldFreeze(Lnet/minecraft/world/level/LevelReader;Lnet/minecraft/core/BlockPos;)Z")
+    )
+    private boolean eclipticseasons$tickChunk_freeze(Biome instance, LevelReader pLevel, BlockPos pPos, Operation<Boolean> original, @Local Biome biome, @Local(ordinal = 0) BlockPos blockPos) {
+        eclipticseasons$snowDown((ServerLevel) (Object) this, biome, blockPos);
+        return false;
+    }
+
+    @WrapOperation(
+            method = "tickChunk",
+            at = @At(value = "INVOKE",
+                    target = "Lnet/minecraft/world/level/biome/Biome;shouldSnow(Lnet/minecraft/world/level/LevelReader;Lnet/minecraft/core/BlockPos;)Z")
+    )
+    private boolean eclipticseasons$tickChunk_snow(Biome instance, LevelReader pLevel, BlockPos pPos, Operation<Boolean> original, @Local Biome biome, @Local(ordinal = 0) BlockPos blockPos) {
+        eclipticseasons$snowDown((ServerLevel) (Object) this, biome, blockPos);
+        return false;
+    }
+
+    @Unique
+    private void eclipticseasons$snowDown(ServerLevel serverLevel,Biome biome, BlockPos blockPos) {
+        if (CommonConfig.Temperature.snowDown.get()){
+            {
+                CustomRandomTickHandler.SNOW_MELT.tick(serverLevel, biome, blockPos);
+            };
+        }
     }
 }

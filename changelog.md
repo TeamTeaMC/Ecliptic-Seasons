@@ -240,3 +240,8 @@ enhancing detection speed and accuracy for more efficient performance.
 ## **0.10-pre6**
 - Fixed an issue where the morning sun would move instantly when the solar term was about to change.
 - Fix zombie would burn in some case like just snow locally in the day.
+- Changed the default chunk rendering update strategy to prevent chunk rendering delays and performance impact.
+- Moved Snowy Winter and related options to Common Config. Now Snowy detection can be performed on both ends.
+- If RealisticSnowyChange is enabled, snow overlay that has been melted by light will no longer be replaced immediately, even if the light source is removed.
+- Fixed an issue with unexpected snow blocks appearing when exploring the Biome in winter.
+- Added legacy snow/melting mechanics as a configurable optional feature, and they are separate

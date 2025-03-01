@@ -38,7 +38,6 @@ public class CommonConfig {
 
         public static ForgeConfigSpec.BooleanValue snowyFullCollisionShape;
         public static ForgeConfigSpec.BooleanValue snowOverlayGlowingBlock;
-        public static ForgeConfigSpec.BooleanValue iceMelt;
 
         private static void load(ForgeConfigSpec.Builder builder) {
             builder.push("Debug");
@@ -46,8 +45,6 @@ public class CommonConfig {
                     .define("LogIllegalUse", false);
             notLightAbove = builder.comment("Without snowy block under the light blocks which level is 0.")
                     .define("NotSnowyUnderLight0", false);
-            iceMelt = builder.comment("Enables legacy mode for snow and ice, where snow accumulates when it's cold in snowy day and melts when it's hot.")
-                    .define("LegacySnowAndMelt", false);
             snowyFullCollisionShape = builder.comment("Snow overlay block if has full collision shape not just full render shape.")
                     .define("SnowyFullCollisionShape", false);
             snowOverlayGlowingBlock = builder.comment("Snow can cover the block which would lights.")
@@ -59,10 +56,15 @@ public class CommonConfig {
 
     public static class Temperature {
         public static ForgeConfigSpec.BooleanValue heatStroke;
+        public static ForgeConfigSpec.BooleanValue iceMelt;
+        public static ForgeConfigSpec.BooleanValue snowDown;
 
         private static void load(ForgeConfigSpec.Builder builder) {
             builder.push("Temperature");
-
+            iceMelt = builder.comment("Ice or snow layer will melt in warm time.")
+                    .define("IceAndSnowMelt", false);
+            snowDown = builder.comment("It will snow in cold time.")
+                    .define("IceAndSnow", false);
             heatStroke = builder.comment("Add heat stroke effect in summer noon while in hot biome.")
                     .define("HeatStroke", true);
             builder.pop();
@@ -78,6 +80,10 @@ public class CommonConfig {
         public static ForgeConfigSpec.IntValue initialSolarTermIndex;
         public static ForgeConfigSpec.BooleanValue daylightChange;
         public static ForgeConfigSpec.ConfigValue<List<? extends String>> validDimensions;
+
+        public static ForgeConfigSpec.BooleanValue snowyWinter;
+        public static ForgeConfigSpec.BooleanValue notSnowyNearGlowingBlock;
+        public static ForgeConfigSpec.IntValue notSnowyNearGlowingBlockLevel;
 
 
         private static void load(ForgeConfigSpec.Builder builder) {
@@ -98,6 +104,13 @@ public class CommonConfig {
                     .defineListAllowEmpty("ValidDimensions",
                             () -> List.of(Level.OVERWORLD.location().toString()),
                             o -> o instanceof String s && ResourceLocation.tryParse(s) != null);
+
+            snowyWinter = builder.comment("If snow falls during cold weather, it will gradually cover all solid blocks and grass.")
+                    .define("SnowyWinter", true);
+            notSnowyNearGlowingBlock = builder.comment("Snow will not appear in overly bright areas, here define restriction levels.")
+                    .define("NotSnowyNearGlowingBlock", true);
+            notSnowyNearGlowingBlockLevel = builder.comment("Snow will not appear in overly bright areas.")
+                    .defineInRange("NotSnowyNearGlowingBlockLevel", 10, 1, 15);
             builder.pop();
         }
     }
@@ -122,7 +135,7 @@ public class CommonConfig {
                     .define("EnableCropHumidityControl", true);
             cropGrowChanceInWrongHumidity = builder.comment("How much base chance can crop grow in wrong humidity.")
                     .defineInRange("CropGrowChanceInWrongHumidity", 0.25, 0.0001, 0.9999);
-            greenHouseMaxDiameter =builder.comment("The maximum effective diameter of the greenhouse.")
+            greenHouseMaxDiameter = builder.comment("The maximum effective diameter of the greenhouse.")
                     .defineInRange("GreenHouseMaxDiameter", 32, 5, 256);
             complexGreenHouseCheck = builder.comment("Whether to enable complex shape checking.")
                     .define("ComplexGreenHouseCheck", true);

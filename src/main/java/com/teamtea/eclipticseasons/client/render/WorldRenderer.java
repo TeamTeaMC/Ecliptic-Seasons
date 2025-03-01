@@ -14,6 +14,7 @@ import net.minecraft.client.renderer.PostPass;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
@@ -113,6 +114,20 @@ public class WorldRenderer {
     public static void setSectionDirtyWithNeighbors(SectionPos sectionPos) {
         if (isSectionLoad(sectionPos, 2)) {
             Minecraft.getInstance().levelRenderer.setSectionDirtyWithNeighbors(sectionPos.x(), sectionPos.y(), sectionPos.z());
+        }
+    }
+
+    public static void setSectionDirtyRandomly(SectionPos sectionPos) {
+        if (Minecraft.getInstance().level != null) {
+            RandomSource random = Minecraft.getInstance().level.random;
+            int lastViewDistance = (int) (Minecraft.getInstance().levelRenderer.getLastViewDistance() - 1);
+            for (int i = 0; i < random.nextInt(8) + 4; i++) {
+                {
+                    setSectionDirtyWithNeighbors(SectionPos.of(sectionPos.x() + 2 * (random.nextInt(lastViewDistance)) - lastViewDistance,
+                            sectionPos.y(),
+                            sectionPos.z() + 2 * (random.nextInt(lastViewDistance)) - lastViewDistance));
+                }
+            }
         }
     }
 

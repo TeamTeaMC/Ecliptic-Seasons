@@ -8,6 +8,7 @@ import com.teamtea.eclipticseasons.client.model.*;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.config.ClientConfig;
 
+import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
@@ -80,7 +81,7 @@ public class ModelManager {
     public static HashMap<ResourceLocation, SpriteContents> blocksCache = new HashMap<>();
 
     public static boolean shouldCutoutMipped(BlockState state) {
-        if (ClientConfig.Renderer.snowyWinter.get()) {
+        if (CommonConfig.Season.snowyWinter.get()) {
             if (Minecraft.getInstance().level != null) {
                 var onBlock = state.getBlock();
                 if (!(onBlock instanceof FenceBlock)) {
@@ -391,17 +392,17 @@ public class ModelManager {
 
 
         if (isLight) {
-            if (ClientConfig.Renderer.snowyWinter.get()
+            if (CommonConfig.Season.snowyWinter.get()
                     && onBlock != Blocks.SNOW_BLOCK
                     && MapChecker.shouldSnowAt(level, pos.below(offset), state, random, state.getSeed(pos))) {
                 // DynamicLeavesBlock
 
                 boolean isSnowy = true;
 
-                if (ClientConfig.Renderer.notSnowyNearGlowingBlock.get()) {
+                if (CommonConfig.Season.notSnowyNearGlowingBlock.get()) {
                     BlockPos above = pos.offset(0, 1 - offset, 0);
                     if (blockAndTintGetter.getBrightness(LightLayer.BLOCK, above) >=
-                            ClientConfig.Renderer.notSnowyNearGlowingBlockLevel.get()) {
+                            CommonConfig.Season.notSnowyNearGlowingBlockLevel.get()) {
                         isSnowy = false;
                     }
                 }

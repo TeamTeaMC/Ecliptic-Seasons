@@ -1,8 +1,11 @@
 package com.teamtea.eclipticseasons.client.core.map;
 
+import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
+import com.teamtea.eclipticseasons.common.misc.MapColorReplacer;
 import com.teamtea.eclipticseasons.config.ClientConfig;
+import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
@@ -47,6 +50,32 @@ public class ClientMapFixer {
 
     }
 
+    public static void addLightPlanner(ClientLevel level, long packedPos, int brightness) {
+        if (CommonConfig.Season.snowyWinter.get()
+                && ClientConfig.Renderer.realisticSnowyChange.get()
+                && CommonConfig.Season.notSnowyNearGlowingBlock.get()
+        ) {
+            // int brightness = level.getBrightness(LightLayer.BLOCK, pos);
+            boolean isTooLight = brightness >= CommonConfig.Season.notSnowyNearGlowingBlockLevel.get();
+
+            if (isTooLight) {
+                BlockPos pos = new BlockPos(BlockPos.getX(packedPos), BlockPos.getY(packedPos), BlockPos.getZ(packedPos));
+                long startTick = level.getGameTime();
+                pos = pos.below();
+                BlockState state = level.getBlockState(pos);
+                boolean isOldHeight = pos.getY() == level.getHeight(Heightmap.Types.MOTION_BLOCKING, pos.getX(), pos.getZ()) - 1;
+                if (Heightmap.Types.MOTION_BLOCKING.isOpaque().test(state)
+                        && isOldHeight
+                        && MapColorReplacer.getTopSnowColor(level, state, pos,true)!=null
+                ) {
+                    ChunkPos chunkPos = new ChunkPos(pos);
+                    List<XZPos> xzPosList = CHUNK_POS_XZ_POS_MAP.computeIfAbsent(chunkPos, k -> new ArrayList<>());
+                    xzPosList.add(new XZPos(pos.getX(), pos.getZ(), startTick, pos.getY()));
+                    MapChecker.updatePosForce(level, pos, level.getMaxBuildHeight() + 1);
+                }
+            }
+        }
+    }
 
     public static void addPlanner(ClientLevel level, BlockState state, BlockPos pos, long startTick, int startY) {
         boolean isNotOldHeight = startY != level.getHeight(Heightmap.Types.MOTION_BLOCKING, pos.getX(), pos.getZ()) - 1;
@@ -62,7 +91,7 @@ public class ClientMapFixer {
             List<XZPos> xzPosList = CHUNK_POS_XZ_POS_MAP.computeIfAbsent(chunkPos, k -> new ArrayList<>());
             xzPosList.add(new XZPos(pos.getX(), pos.getZ(), startTick, startY));
             if (state.getBlock() == Blocks.AIR) {
-                MapChecker.updatePosForce(level,pos, level.getMaxBuildHeight() + 1);
+                MapChecker.updatePosForce(level, pos, level.getMaxBuildHeight() + 1);
             }
         } else {
             if (isNotOldHeight) {
@@ -81,7 +110,7 @@ public class ClientMapFixer {
                     for (int i = 0; i < xzPosList.size(); i++) {
                         XZPos xzPos = xzPosList.get(i);
                         if (tick - xzPos.startTick() > 160
-                                &&updateSectionsList.size()<12
+                                && updateSectionsList.size() < 12
                         ) {
                             var updatePos = new BlockPos.MutableBlockPos(xzPos.x(), xzPos.startY(), xzPos.z());
                             if (

@@ -10,36 +10,29 @@ import net.minecraft.world.level.LevelTimeAccess;
 
 public class SolarAngelHelper {
 
-    public static float getSeasonCelestialAngle( LevelTimeAccess world,long worldTime) {
+    public static float getSeasonCelestialAngle(LevelTimeAccess world, long worldTime) {
         return getCelestialAngle(getSolarAngelTime(world, worldTime));
     }
 
-    public static int getSolarAngelTime(LevelTimeAccess world,long worldTime)
-    {
-        if (world instanceof Level level && SolarHolders.getSaveData(level)!=null)
-        {
+    public static int getSolarAngelTime(LevelTimeAccess world, long worldTime) {
+        if (world instanceof Level level && SolarHolders.getSaveData(level) != null) {
             return SolarHolders.getSaveDataLazy(level).map(data ->
             {
                 int dayLevelTime = Math.toIntExact((worldTime + 18000) % 24000); // 0 for noon; 6000 for sunset; 18000 for sunrise.
 
                 int dayTime =
-                        dayLevelTime > 12000 && data.isTodayLastDay() ?
+                        dayLevelTime > 12000 && dayLevelTime <= 18000 && data.isTodayLastDay() ?
                                 data.getNextSolarTerm().getDayTime() :
                                 data.getSolarTerm().getDayTime();
                 // dayTime=23900;
                 int sunrise = 24000 - dayTime / 2;
                 int sunset = dayTime / 2;
                 int solarAngelTime;
-                if (0 <= dayLevelTime && dayLevelTime <= sunset)
-                {
+                if (0 <= dayLevelTime && dayLevelTime <= sunset) {
                     solarAngelTime = 6000 + dayLevelTime * 6000 / sunset;
-                }
-                else if (dayLevelTime > sunset && dayLevelTime <= sunrise)
-                {
+                } else if (dayLevelTime > sunset && dayLevelTime <= sunrise) {
                     solarAngelTime = 12000 + (dayLevelTime - sunset) * 12000 / (24000 - dayTime);
-                }
-                else
-                {
+                } else {
                     solarAngelTime = (dayLevelTime - sunrise) * 6000 / (24000 - sunrise);
                 }
                 return solarAngelTime;

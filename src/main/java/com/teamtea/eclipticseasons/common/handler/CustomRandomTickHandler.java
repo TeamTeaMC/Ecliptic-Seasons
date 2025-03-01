@@ -1,84 +1,78 @@
 package com.teamtea.eclipticseasons.common.handler;
 
 
-import com.teamtea.eclipticseasons.api.misc.CustomRandomTick;
+import com.teamtea.eclipticseasons.api.misc.CustomRandomTick2;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.config.CommonConfig;
-import com.google.common.collect.Lists;
 import net.minecraft.core.BlockPos;
-import net.minecraft.server.level.ChunkHolder;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.LightLayer;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LiquidBlock;
+import net.minecraft.world.level.block.SnowLayerBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.chunk.LevelChunk;
-import net.minecraft.world.level.levelgen.Heightmap;
-import net.minecraftforge.event.TickEvent;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.material.Fluids;
+import net.minecraftforge.event.level.ChunkDataEvent;
 
 
 public final class CustomRandomTickHandler {
-    private static final CustomRandomTick SNOW_MELT = (state, world, pos) ->
+    public static final CustomRandomTick2 SNOW_MELT_2 = (world, biome, blockpos) ->
     {
-        BlockPos blockpos = new BlockPos(pos.getX(), world.getHeight(Heightmap.Types.MOTION_BLOCKING, pos.getX(), pos.getZ()), pos.getZ());
-        if (world.isAreaLoaded(blockpos, 1) && world.getBiome(blockpos).get().getTemperature(pos) >= 0.15F && !WeatherManager.onCheckWarmEnoughToRain(pos)) {
+        if (WeatherManager.getSnowStatus(world, biome, blockpos) == WeatherManager.SnowRenderStatus.SNOW_MELT) {
+            // snow melt
             BlockState topState = world.getBlockState(blockpos);
-            if (topState.getBlock().equals(Blocks.SNOW)) {
-                world.setBlockAndUpdate(blockpos, Blocks.AIR.defaultBlockState());
-            } else {
-                BlockState belowState = world.getBlockState(blockpos.below());
-                if (belowState.getBlock().equals(Blocks.ICE)) {
-                    world.setBlockAndUpdate(blockpos.below(), Blocks.WATER.defaultBlockState());
-                }
+            if (topState.is(Blocks.SNOW)) {
+                int layer = topState.getValue(SnowLayerBlock.LAYERS);
+                world.setBlockAndUpdate(blockpos, layer <= 2 ?
+                        Blocks.AIR.defaultBlockState() :
+                        topState.setValue(SnowLayerBlock.LAYERS, layer - 2));
+            }
+
+            // ice melt
+            BlockState belowState = world.getBlockState(blockpos.below());
+            if (belowState.is(Blocks.ICE)) {
+                if (world.dimensionType().ultraWarm()) world.removeBlock(blockpos, false);
+                else world.setBlockAndUpdate(blockpos.below(), Blocks.WATER.defaultBlockState());
             }
         }
     };
+    public static final CustomRandomTick2 SNOW_MELT = (world, biome, blockpos) ->
+    {
+        if (WeatherManager.getSnowStatus(world, biome, blockpos) == WeatherManager.SnowRenderStatus.SNOW) {
 
-    public static void onWorldTick(TickEvent.LevelTickEvent event) {
-        if (event.phase.equals(TickEvent.Phase.END) && CommonConfig.Debug.iceMelt.get() && !event.level.isClientSide()) {
-            ServerLevel level = (ServerLevel) event.level;
-            int randomTickSpeed = level.getGameRules().getInt(GameRules.RULE_RANDOMTICKING);
-            if (randomTickSpeed > 0) {
-                List<ChunkHolder> list = Lists.newArrayList(((ServerLevel) level).getChunkSource().chunkMap.getChunks());
-                Collections.shuffle(list);
-                level.getChunkSource().chunkMap.getChunks().forEach(chunkHolder ->
-                {
-
-                    Optional<LevelChunk> optional = chunkHolder.getTickingChunkFuture().getNow(ChunkHolder.UNLOADED_LEVEL_CHUNK).left();
-                    if (optional.isPresent()) {
-                        LevelChunk chunk = optional.get();
-                        for (var chunksection : chunk.getSections()) {
-                            if (chunksection.isRandomlyTicking()) {
-                                int i = chunk.getPos().getMinBlockX();
-                                int j = chunk.getPos().getMinBlockZ();
-                                BlockPos blockpos1 = level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, level.getBlockRandomPos(i, 0, j, 15));
-                                // BlockPos blockpos2 = blockpos1.below();
-                                // Biome biome = level.getBiome(blockpos1).value();
-                                if (level.isAreaLoaded(blockpos1, 1)) // Forge: check area to avoid loading neighbors in unloaded chunks
-                                {
-                                    for (int l = 0; l < randomTickSpeed; ++l) {
-                                        if (level.getRandom().nextInt(32) == 0) {
-                                            int x = blockpos1.getX();
-                                            int y = blockpos1.getY();
-                                            int z = blockpos1.getZ();
-                                            doCustomRandomTick(level, x, y, z);
-                                        }
-                                    }
-                                }
-                            }
+            // place snow
+            if (blockpos.getY() >= world.getMinBuildHeight() && blockpos.getY() < world.getMaxBuildHeight() && world.getBrightness(LightLayer.BLOCK, blockpos) < 10) {
+                int layers = world.getGameRules().getInt(GameRules.RULE_SNOW_ACCUMULATION_HEIGHT);
+                if (layers > 0) {
+                    BlockState blockstate = world.getBlockState(blockpos);
+                    if (blockstate.is(Blocks.SNOW)) {
+                        int k = blockstate.getValue(SnowLayerBlock.LAYERS);
+                        if (k < Math.min(layers, 8)) {
+                            BlockState snowState = blockstate.setValue(SnowLayerBlock.LAYERS, k + 1);
+                            Block.pushEntitiesUp(blockstate, snowState, world, blockpos);
+                            world.setBlockAndUpdate(blockpos, snowState);
                         }
+                    } else {
+                        world.setBlockAndUpdate(blockpos, Blocks.SNOW.defaultBlockState());
                     }
-                });
+                }
             }
-        }
-    }
 
-    private static void doCustomRandomTick(ServerLevel world, int x, int y, int z) {
-        if (CommonConfig.Debug.iceMelt.get()) {
-            SNOW_MELT.tick(null, world, new BlockPos(x, y, z));
+            // place ice
+            BlockPos below = blockpos.below();
+            if (below.getY() >= world.getMinBuildHeight() && below.getY() < world.getMaxBuildHeight() && world.getBrightness(LightLayer.BLOCK, below) < 10) {
+                BlockState blockstate = world.getBlockState(below);
+                FluidState fluidstate = world.getFluidState(below);
+                if (fluidstate.getType() == Fluids.WATER && blockstate.getBlock() instanceof LiquidBlock) {
+                    boolean flag = world.isWaterAt(below.west()) && world.isWaterAt(below.east()) && world.isWaterAt(below.north()) && world.isWaterAt(below.south());
+                    if (!flag) {
+                        world.setBlockAndUpdate(below, Blocks.ICE.defaultBlockState());
+                    }
+                }
+            }
+
         }
-    }
+    };
 }

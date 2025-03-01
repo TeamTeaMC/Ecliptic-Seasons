@@ -16,7 +16,6 @@ import com.seibel.distanthorizons.core.wrapperInterfaces.block.IBlockStateWrappe
 import com.seibel.distanthorizons.core.wrapperInterfaces.world.IBiomeWrapper;
 import com.seibel.distanthorizons.core.wrapperInterfaces.world.IClientLevelWrapper;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
-import com.teamtea.eclipticseasons.config.ClientConfig;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import it.unimi.dsi.fastutil.longs.LongArrayList;
 import loaderCommon.forge.com.seibel.distanthorizons.common.wrappers.McObjectConverter;
@@ -77,7 +76,7 @@ public class DHTool {
     }
 
     public static MapColor computeBaseColor(IDhClientLevel instance, DhBlockPos dhBlockPos, IBiomeWrapper iBiomeWrapper, IBlockStateWrapper iBlockStateWrapper, FullDataPointIdMap fullDataMapping, LongArrayList fullColumnData, IWrapperFactory WRAPPER_FACTORY) {
-        if (ClientConfig.Renderer.snowyWinter.get()) {
+        if (CommonConfig.Season.snowyWinter.get()) {
             if (!dhBlockPos.equals(DhBlockPos.ZERO) && iBlockStateWrapper instanceof BlockStateWrapper blockStateWrapper
                     && !blockStateWrapper.isAir()) {
                 var mcPos = McObjectConverter.Convert(dhBlockPos);

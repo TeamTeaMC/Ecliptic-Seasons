@@ -1,12 +1,18 @@
 package com.teamtea.eclipticseasons.mixin.common;
 
 
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.llamalad7.mixinextras.sugar.Local;
 import com.teamtea.eclipticseasons.api.constant.tag.ClimateTypeBiomeTags;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.compat.vanilla.VanillaWeather;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.biome.Biome;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -44,5 +50,25 @@ public abstract class MixinBiome {
                 cir.setReturnValue(VanillaWeather.hasMonsoonalPrecipitation((Biome) (Object) this));
             }
         }
+    }
+
+    @ModifyExpressionValue(at = {@At(value = "INVOKE",
+            target = "Lnet/minecraft/world/level/biome/Biome;getTemperature(Lnet/minecraft/core/BlockPos;)F")},
+            method = {"warmEnoughToRain"})
+    public float eclipticseasons$warmEnoughToRain(float original) {
+        Level level = WeatherManager.fetchLevelIfNull(null);
+        if (level != null)
+            original -= EclipticUtil.getNowSolarTerm(level).getTemperatureChange();
+        return original;
+    }
+
+    @WrapOperation(at = {@At(value = "INVOKE",
+            target = "Lnet/minecraft/world/level/biome/Biome;warmEnoughToRain(Lnet/minecraft/core/BlockPos;)Z")},
+            method = {"shouldSnow", "shouldFreeze(Lnet/minecraft/world/level/LevelReader;Lnet/minecraft/core/BlockPos;Z)Z"})
+    public boolean eclipticseasons$fixTempWithoutSeason(Biome instance, BlockPos pPos, Operation<Boolean> original, @Local(argsOnly = true) LevelReader levelReader) {
+        if (levelReader instanceof Level) {
+            return this.getTemperature(pPos) - EclipticUtil.getNowSolarTerm((Level) levelReader).getTemperatureChange() >= BiomeClimateManager.SNOW_LEVEL;
+        }
+        return original.call(instance, pPos);
     }
 }

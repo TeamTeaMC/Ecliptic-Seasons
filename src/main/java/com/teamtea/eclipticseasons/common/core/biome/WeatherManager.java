@@ -43,8 +43,10 @@ import net.minecraft.world.level.storage.ServerLevelData;
 import net.minecraft.world.level.storage.WritableLevelData;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.INBTSerializable;
+import net.minecraftforge.fml.loading.FMLLoader;
 
 import java.util.*;
 
@@ -61,6 +63,11 @@ public class WeatherManager {
             return null;
         }
         return BIOME_WEATHER_LIST.getOrDefault(level, null);
+    }
+
+    public static Level fetchLevelIfNull(Level level) {
+        level = level != null || FMLLoader.getDist() != Dist.CLIENT ? level : ClientCon.getUseLevel();
+        return level != null ? level : getMainServerLevel();
     }
 
     public static Float getMinRainLevel(Level level, float p46723) {
