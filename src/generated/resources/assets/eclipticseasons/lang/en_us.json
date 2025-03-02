@@ -81,6 +81,7 @@
   "info.eclipticseasons.environment.temperature.over_heat": "Over Heat",
   "info.eclipticseasons.environment.temperature.under_freezing": "Under Freezing",
   "info.eclipticseasons.environment.temperature.warm": "Warm",
+  "item.eclipticseasons.broom": "Broom",
   "item.eclipticseasons.calendar.pop_hint": "%1$s, %2$s/%3$s",
   "item.eclipticseasons.hyetometer": "Hyetometer",
   "item.eclipticseasons.hygrometer": "Hygrometer",

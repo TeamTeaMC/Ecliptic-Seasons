@@ -64,6 +64,15 @@ public final class ESRecipeProvider extends RecipeProvider {
                 .group("hygrometer")
                 .unlockedBy("has_amethyst", has(Items.AMETHYST_SHARD))
                 .save(consumer);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ItemRegistry.broom.get())
+                .define('h', Items.HAY_BLOCK)
+                .define('r', Items.STICK)
+                .pattern(" h")
+                .pattern("r ")
+                .group("broom")
+                .unlockedBy("has_hay_block", has(Items.HAY_BLOCK))
+                .save(consumer);
     }
 
 

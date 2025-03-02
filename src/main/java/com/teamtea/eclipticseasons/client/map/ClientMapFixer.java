@@ -1,7 +1,7 @@
-package com.teamtea.eclipticseasons.client.core.map;
+package com.teamtea.eclipticseasons.client.map;
 
-import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
+import com.teamtea.eclipticseasons.client.core.map.XZPos;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.misc.MapColorReplacer;
 import com.teamtea.eclipticseasons.config.ClientConfig;
@@ -77,7 +77,7 @@ public class ClientMapFixer {
         }
     }
 
-    public static void addPlanner(ClientLevel level, BlockState state, BlockPos pos, long startTick, int startY) {
+    public static void addPlanner(Level level, BlockState state, BlockPos pos, long startTick, int startY) {
         boolean isNotOldHeight = startY != level.getHeight(Heightmap.Types.MOTION_BLOCKING, pos.getX(), pos.getZ()) - 1;
         if (ClientConfig.Renderer.realisticSnowyChange.get()
                 && ((Heightmap.Types.MOTION_BLOCKING.isOpaque().test(state))

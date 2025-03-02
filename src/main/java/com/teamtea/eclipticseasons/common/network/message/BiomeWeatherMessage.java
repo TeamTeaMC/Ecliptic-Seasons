@@ -1,4 +1,4 @@
-package com.teamtea.eclipticseasons.common.network;
+package com.teamtea.eclipticseasons.common.network.message;
 
 
 

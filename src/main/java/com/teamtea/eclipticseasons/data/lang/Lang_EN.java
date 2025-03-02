@@ -35,7 +35,7 @@ public class Lang_EN extends LangHelper {
         // add(EclipticSeasons.ModContents.pinwheel_lime.get(), "Lime Pinwheel");
         // add(EclipticSeasons.ModContents.pinwheel_orange.get(), "Orange Pinwheel");
         // add(EclipticSeasons.ModContents.snowy_maker_item.get(), "Ice Wand");
-        // add(EclipticSeasons.ModContents.broom_item.get(), "Broom");
+        add(ItemRegistry.broom.get(), "Broom");
         add(ItemRegistry.thermometer.get(), "Thermometer");
         add(ItemRegistry.hyetometer.get(), "Hyetometer");
         add(ItemRegistry.hygrometer.get(), "Hygrometer");

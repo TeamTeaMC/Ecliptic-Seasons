@@ -2,6 +2,7 @@ package com.teamtea.eclipticseasons.common.registry;
 
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.common.block.CalendarBlockItem;
+import com.teamtea.eclipticseasons.common.item.BroomItem;
 import com.teamtea.eclipticseasons.common.item.MeterItem;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.BlockItem;
@@ -16,5 +17,7 @@ public class ItemRegistry {
     public static final RegistryObject<MeterItem> hyetometer = ITEM_DEFERRED_REGISTER.register("hyetometer", () -> new MeterItem(new Item.Properties()));
     public static final RegistryObject<MeterItem> thermometer = ITEM_DEFERRED_REGISTER.register("thermometer", () -> new MeterItem(new Item.Properties()));
     public static final RegistryObject<MeterItem> hygrometer = ITEM_DEFERRED_REGISTER.register("hygrometer", () -> new MeterItem(new Item.Properties()));
-    
+
+    public static final RegistryObject<Item>  broom = ITEM_DEFERRED_REGISTER.register("broom", () -> new BroomItem(new Item.Properties().durability(256)));
+
 }

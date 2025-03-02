@@ -33,6 +33,10 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * In 1.20.1, it just thinks about the client level in fact.
+ * TODO: Fix server side check (in dedicated server).
+ * **/
 public class MapChecker {
 
     public static final int ChunkSize = 16 * 32;

@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "group": "broom",
+  "key": {
+    "h": {
+      "item": "minecraft:hay_block"
+    },
+    "r": {
+      "item": "minecraft:stick"
+    }
+  },
+  "pattern": [
+    " h",
+    "r "
+  ],
+  "result": {
+    "item": "eclipticseasons:broom"
+  },
+  "show_notification": true
+}

@@ -7,7 +7,7 @@ import com.teamtea.eclipticseasons.api.util.SimpleUtil;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.network.SimpleNetworkHandler;
-import com.teamtea.eclipticseasons.common.network.SolarTermsMessage;
+import com.teamtea.eclipticseasons.common.network.message.SolarTermsMessage;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import it.unimi.dsi.fastutil.Pair;
 import net.minecraft.core.BlockPos;
@@ -28,7 +28,6 @@ import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.storage.DimensionDataStorage;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.ref.WeakReference;

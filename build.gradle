@@ -254,7 +254,10 @@ dependencies {
 //    onlyMainRuntimeOnly fg.deobf("curse.maven:haunted-harvest-541753:6032347")
 
     compileOnly fg.deobf("curse.maven:in-control-257356:5932870")
-    onlyMainRuntimeOnly fg.deobf("curse.maven:in-control-257356:5932870")
+//    onlyMainRuntimeOnly fg.deobf("curse.maven:in-control-257356:5932870")
+
+    compileOnly fg.deobf("curse.maven:touhou-little-maid-355044:6120178")
+    onlyMainRuntimeOnly fg.deobf("curse.maven:touhou-little-maid-355044:6120178")
 
 //    onlyMainRuntimeOnly  fg.deobf("curse.maven:hourglass-511172:4834578")
 

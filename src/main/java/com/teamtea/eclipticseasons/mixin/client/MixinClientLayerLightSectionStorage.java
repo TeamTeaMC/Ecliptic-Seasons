@@ -2,7 +2,7 @@ package com.teamtea.eclipticseasons.mixin.client;
 
 
 import com.llamalad7.mixinextras.sugar.Local;
-import com.teamtea.eclipticseasons.client.core.map.ClientMapFixer;
+import com.teamtea.eclipticseasons.client.map.ClientMapFixer;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;

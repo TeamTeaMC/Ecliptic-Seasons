@@ -1,7 +1,7 @@
 package com.teamtea.eclipticseasons.mixin.client;
 
 
-import com.teamtea.eclipticseasons.client.core.map.ClientMapFixer;
+import com.teamtea.eclipticseasons.client.map.ClientMapFixer;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;

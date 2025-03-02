@@ -3,6 +3,7 @@ package com.teamtea.eclipticseasons.compat;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.compat.cold_sweat.Cold_Sweat;
 import com.teamtea.eclipticseasons.compat.dynamictrees.DynamicTreeMod;
+import com.teamtea.eclipticseasons.compat.touhou_little_maid.LittleMaid;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.eventbus.api.IEventBus;
 
@@ -16,6 +17,7 @@ public class CompatModule {
     private static boolean journeymap = false;
     private static boolean snowyspirit = false;
     private static boolean hauntedharvest = false;
+    private static boolean touhou_little_maid = false;
 
     /**
      * Used for mod init detect.
@@ -27,6 +29,8 @@ public class CompatModule {
         journeymap = Platform.isModLoaded("journeymap");
         snowyspirit = Platform.isModLoaded("snowyspirit");
         hauntedharvest = Platform.isModLoaded("hauntedharvest");
+        touhou_little_maid = Platform.isModLoaded("touhou_little_maid");
+
     }
 
     /**
@@ -35,6 +39,9 @@ public class CompatModule {
     public static void register(IEventBus gameBus, IEventBus modBus) {
         if (isCold_sweat()) {
             gameBus.register(Cold_Sweat.INSTANCE);
+        }
+        if (isTouhou_little_maid()) {
+            gameBus.register(LittleMaid.INSTANCE);
         }
     }
 
@@ -187,5 +194,9 @@ public class CompatModule {
 
     public static boolean isHauntedharvest() {
         return hauntedharvest;
+    }
+
+    public static boolean isTouhou_little_maid() {
+        return touhou_little_maid;
     }
 }

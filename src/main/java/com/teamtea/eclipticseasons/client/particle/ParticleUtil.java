@@ -129,10 +129,10 @@ public class ParticleUtil {
             int color = getOrCreateColor(state).getRGB();
 
             if (new Color(color).equals(Color.WHITE)) {
-                color = Minecraft.getInstance().getBlockColors().getColor(state, level, pos, 2);
+                color = Minecraft.getInstance().getBlockColors().getColor(state, level, pos, 0);
             }
             if (new Color(color).equals(Color.WHITE)) {
-                color = Minecraft.getInstance().getBlockColors().getColor(state, level, pos);
+                color = state.getMapColor(level, pos).col;
                 // color = Color.PINK.getRGB();
             }
             VoxelShape voxelshape = state.getShape(level, pos);
@@ -200,15 +200,15 @@ public class ParticleUtil {
             }
             BakedModel blockModel = mc.getBlockRenderer().getBlockModel(state);
             boolean isColored = false;
-            for (Direction direction : new Direction[]{Direction.UP, Direction.DOWN, Direction.SOUTH, Direction.EAST, Direction.NORTH, Direction.WEST, null}) {
-                List<BakedQuad> quads = blockModel.getQuads(state, direction, mc.level.getRandom(), ModelData.EMPTY, RenderType.cutout());
-                for (BakedQuad quad : quads) {
-                    if (quad.getTintIndex() > -1) {
-                        isColored = true;
-                    }
-                }
-                if (isColored) break;
-            }
+            // for (Direction direction : new Direction[]{Direction.UP, Direction.DOWN, Direction.SOUTH, Direction.EAST, Direction.NORTH, Direction.WEST, null}) {
+            //     List<BakedQuad> quads = blockModel.getQuads(state, direction, mc.level.getRandom(), ModelData.EMPTY, RenderType.cutout());
+            //     for (BakedQuad quad : quads) {
+            //         if (quad.getTintIndex() != -1) {
+            //             isColored = true;
+            //         }
+            //     }
+            //     if (isColored) break;
+            // }
             if (isColored) {
                 c = Color.WHITE;
             } else {
@@ -231,6 +231,9 @@ public class ParticleUtil {
                     }
                 }
                 c = new Color((int) ColorHelper.getAvg(rlist), (int) ColorHelper.getAvg(glist), (int) ColorHelper.getAvg(blist));
+                if (c.getRed() == c.getBlue() && c.getBlue() == c.getGreen()) {
+                    c = Color.WHITE;
+                }
             }
             LEAVES_COLOR_MAP.put(state, c);
 
