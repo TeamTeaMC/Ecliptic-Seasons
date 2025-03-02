@@ -30,6 +30,11 @@ public final class ESBlockTagProvider extends BlockTagsProvider {
 
 
         tag(CropHumidityType.AVERAGE_MOIST.getBlockTag()).addOptional(fd_rl("tomatoes"));
+
+        tag(EclipticBlockTags.SNOW_OVERLAY_CANNOT_SURVIVE_ON)
+                .addTag(BlockTags.SNOW)
+                .addTag(BlockTags.ICE)
+                .addTag(BlockTags.SNOW_LAYER_CANNOT_SURVIVE_ON);
     }
 
 

@@ -10,6 +10,10 @@ public class EclipticBlockTags {
     public static final TagKey<Block> NONE_FALLEN_LEAVES = create("none_fallen_leaves");
     public static final TagKey<Block> HABITAT_BUTTERFLY = create("habitat/butterfly");
     public static final TagKey<Block> HABITAT_FIREFLY = create("habitat/firefly");
+
+    public static final TagKey<Block> SNOW_OVERLAY_CANNOT_SURVIVE_ON =  create("snow_overlay_cannot_survive_on");
+
+
     public static TagKey<Block> create(String s) {
         return TagKey.create(Registries.BLOCK, EclipticSeasons.rl(s));
     }

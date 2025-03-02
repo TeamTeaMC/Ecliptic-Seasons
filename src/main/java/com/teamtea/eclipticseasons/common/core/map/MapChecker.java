@@ -2,6 +2,7 @@ package com.teamtea.eclipticseasons.common.core.map;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.constant.tag.ClimateTypeBiomeTags;
+import com.teamtea.eclipticseasons.api.constant.tag.EclipticBlockTags;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.misc.SimplePair;
@@ -470,6 +471,8 @@ public class MapChecker {
             var onBlock = state.getBlock();
             if (!CommonConfig.Debug.snowOverlayGlowingBlock.get()
                     && state.getLightEmission(level, pos) > 0) {
+                flag = FLAG_NONE;
+            }else if (state.is(EclipticBlockTags.SNOW_OVERLAY_CANNOT_SURVIVE_ON)) {
                 flag = FLAG_NONE;
             } else if (onBlock instanceof LeavesBlock) {
                 flag = FLAG_LEAVES;
