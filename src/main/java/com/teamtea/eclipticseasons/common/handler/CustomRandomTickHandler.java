@@ -5,8 +5,11 @@ import com.teamtea.eclipticseasons.api.misc.CustomRandomTick2;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.LightLayer;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LiquidBlock;
@@ -38,6 +41,8 @@ public final class CustomRandomTickHandler {
             }
         }
     };
+
+    @Deprecated
     public static final CustomRandomTick2 SNOW_MELT = (world, biome, blockpos) ->
     {
         if (WeatherManager.getSnowStatus(world, biome, blockpos) == WeatherManager.SnowRenderStatus.SNOW) {
@@ -75,4 +80,48 @@ public final class CustomRandomTickHandler {
 
         }
     };
+
+
+    public static boolean checkExtraSnowCondition(ServerLevel level, Biome biomeHolder, BlockPos pos) {
+        if (CommonConfig.Temperature.snowDown.get()
+                && WeatherManager.getSnowStatus(level, biomeHolder, pos) == WeatherManager.SnowRenderStatus.SNOW) {
+            if (pos.getY() >= level.getMinBuildHeight()
+                    && pos.getY() < level.getMaxBuildHeight()
+                    && level.getBrightness(LightLayer.BLOCK, pos) < 10) {
+                BlockState blockstate = level.getBlockState(pos);
+                if ((blockstate.isAir() || blockstate.is(Blocks.SNOW)) && Blocks.SNOW.defaultBlockState().canSurvive(level, pos)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        return false;
+    }
+
+    public static boolean checkExtraFreezeCondition(ServerLevel level, Biome biomeHolder, BlockPos water) {
+        if (CommonConfig.Temperature.snowDown.get()
+                && WeatherManager.getSnowStatus(level, biomeHolder, water) == WeatherManager.SnowRenderStatus.SNOW) {
+            if (water.getY() >= level.getMinBuildHeight()
+                    && water.getY() < level.getMaxBuildHeight()
+                    && level.getBrightness(LightLayer.BLOCK, water) < 10) {
+                BlockState blockstate = level.getBlockState(water);
+                FluidState fluidstate = level.getFluidState(water);
+                if (fluidstate.getType() == Fluids.WATER && blockstate.getBlock() instanceof LiquidBlock) {
+                    // if (!mustBeAtEdge) {
+                    //     return true;
+                    // }
+
+                    boolean flag = level.isWaterAt(water.west())
+                            && level.isWaterAt(water.east())
+                            && level.isWaterAt(water.north())
+                            && level.isWaterAt(water.south());
+                    if (!flag) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+        return false;
+    }
 }

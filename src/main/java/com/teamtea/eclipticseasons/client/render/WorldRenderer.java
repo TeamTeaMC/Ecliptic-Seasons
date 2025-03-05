@@ -53,7 +53,7 @@ public class WorldRenderer {
             }
 
             if (reMainTick > 0) {
-                reMainTick--;
+                reMainTick-=10;
             } else reMainTick = 100;
 
             float progress = getProgress(blurStatus == ON_BLUR) * 0.03f;
