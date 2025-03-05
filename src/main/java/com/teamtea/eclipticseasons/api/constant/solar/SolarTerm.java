@@ -11,9 +11,11 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.tags.TagKey;
+import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.level.biome.Biome;
+import org.jetbrains.annotations.NotNull;
 
-public enum SolarTerm {
+public enum SolarTerm implements StringRepresentable {
     // Spring Solar Terms
     BEGINNING_OF_SPRING(-0.25F, 10500),    // 立春
     RAIN_WATER(-0.15F, 11000),             // 雨水
@@ -134,6 +136,10 @@ public enum SolarTerm {
         return Season.collectValues()[this.ordinal() / 6];
     }
 
+    @Override
+    public @NotNull String getSerializedName() {
+        return getName();
+    }
 
     public BiomeRain getBiomeRain(Holder<Biome> biomeHolder) {
         if (!biomeHolder.is(BiomeTags.IS_OVERWORLD) || biomeHolder.is(ClimateTypeBiomeTags.RAINLESS)) {
@@ -223,4 +229,5 @@ public enum SolarTerm {
         } else
             return start.ordinal() <= this.ordinal() || this.ordinal() <= end.ordinal();
     }
+
 }

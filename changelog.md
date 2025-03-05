@@ -246,9 +246,18 @@ enhancing detection speed and accuracy for more efficient performance.
 - Fixed an issue with unexpected snow blocks appearing when exploring the Biome in winter.
 - Added legacy snow/melting mechanics as a configurable optional feature, and they are separate
 
-pre7
+## **0.10-pre7**
 
 fix leaves particles color
-add maid support
-add snow not like tag
-add fake player support
+add snow overlay not like tag
+test maid support to clean snow overlay
+add fake player support to clean snow overlay such as Deployer in Create
+
+## **0.10-pre8**
+
+- Revert a change to improve map color calculation speed for brute force map mods
+- Test crop growth control data pack.
+
+Ported from version 1.21. Now, different biomes are divided into distinct agricultural climate zones, initially set as cold, temperate, hot, desert, nether, and end. You can configure growth parameter mappings or default values as needed. Different crops will apply various growth parameters over time based on their agricultural climate zone. Existing crop tags still work, and you can also create your own blockset to apply different crops and climate zones. Currently, if a crop fails to grow and a death probability is set, there is a chance it may die. Fertilization probability can also be configured, but for now defualt is set to always succeed.
+
+This may sound a bit complex, but the mod provides some basic conveniences. You can use the existing crop growth control tags without having to write detailed datapacks. If you need to edit datapacks, you can flexibly use blocksets to adjust target objects. Since different climate zones require different growth parameters, a mapping method to temperate is provided (except for the temperate zone itself) to simplify the setup. Moreover, it is not necessary to set time down to the solar term—configuring by season is also allowed.

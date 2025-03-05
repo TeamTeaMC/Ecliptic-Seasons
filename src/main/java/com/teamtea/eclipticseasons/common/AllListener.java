@@ -7,6 +7,7 @@ import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
+import com.teamtea.eclipticseasons.common.core.crop.CropInfoManager;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
 import com.teamtea.eclipticseasons.common.handler.CustomRandomTickHandler;
@@ -20,6 +21,7 @@ import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TagsUpdatedEvent;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.player.BonemealEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.level.*;
 import net.minecraftforge.event.server.ServerAboutToStartEvent;
@@ -36,6 +38,8 @@ public class AllListener {
     public static void onTagsUpdatedEvent(TagsUpdatedEvent tagsUpdatedEvent) {
         BiomeClimateManager.resetBiomeTemps(tagsUpdatedEvent.getRegistryAccess(), tagsUpdatedEvent.getUpdateCause() == TagsUpdatedEvent.UpdateCause.SERVER_DATA_LOAD);
         WeatherManager.informUpdateBiomes(tagsUpdatedEvent.getRegistryAccess());
+        CropInfoManager.init(tagsUpdatedEvent);
+        CropGrowthHandler.resetUpdate(tagsUpdatedEvent.getRegistryAccess(),tagsUpdatedEvent.getUpdateCause()== TagsUpdatedEvent.UpdateCause.SERVER_DATA_LOAD);
     }
 
 
@@ -153,6 +157,12 @@ public class AllListener {
     public static void onSaplingGrowTree(SaplingGrowTreeEvent event) {
         CropGrowthHandler.beforeCropGrowUp(event);
     }
+
+    @SubscribeEvent
+    public static void onSaplingGrowTree(BonemealEvent event) {
+        CropGrowthHandler.beforeCropGrowUp(event);
+    }
+
 
     @SubscribeEvent
     public static void onAttachCapabilitiesEvent(AttachCapabilitiesEvent<Entity> event) {

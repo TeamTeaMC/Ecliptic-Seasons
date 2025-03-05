@@ -54,4 +54,10 @@ public enum CropHumidityType
     public TagKey<Block> getBlockTag() {
         return TagKey.create(Registries.BLOCK, res);
     }
+
+    private static final CropHumidityType[] CROP_HUMIDITY_TYPES = CropHumidityType.values();
+
+    public static CropHumidityType[] collectValues() {
+        return CROP_HUMIDITY_TYPES;
+    }
 }

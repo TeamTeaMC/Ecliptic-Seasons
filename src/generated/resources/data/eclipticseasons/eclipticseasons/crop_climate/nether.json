@@ -1,0 +1,6 @@
+{
+  "biomes": "#minecraft:is_nether",
+  "default_mapping": {
+    "summer": 0.25
+  }
+}

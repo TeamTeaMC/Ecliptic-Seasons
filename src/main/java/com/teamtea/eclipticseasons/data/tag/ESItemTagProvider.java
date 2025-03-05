@@ -1,6 +1,7 @@
 package com.teamtea.eclipticseasons.data.tag;
 
 
+import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.crop.CropHumidityType;
 import com.teamtea.eclipticseasons.api.constant.crop.CropSeasonType;
 import net.minecraft.core.HolderLookup;
@@ -22,7 +23,7 @@ public final class ESItemTagProvider extends ItemTagsProvider {
 
     @Override
     public String getName() {
-        return "Tea the Story Item Tags";
+        return EclipticSeasonsApi.MODID+ " Item Tags";
     }
 
     @Override

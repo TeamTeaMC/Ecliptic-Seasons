@@ -1,0 +1,8 @@
+{
+  "biomes": "#minecraft:is_end",
+  "global": {
+    "grow_chance": 0.35,
+    "death_chance": 0.01,
+    "fertile_chance": 0.5
+  }
+}

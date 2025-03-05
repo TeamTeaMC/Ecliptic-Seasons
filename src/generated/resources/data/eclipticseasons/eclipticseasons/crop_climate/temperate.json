@@ -1,0 +1,26 @@
+{
+  "biomes": {
+    "values": [
+      {
+        "values": [
+          "#minecraft:is_overworld",
+          "#forge:is_void"
+        ],
+        "type": "forge:or"
+      },
+      {
+        "value": "#forge:is_cold/overworld",
+        "type": "forge:not"
+      },
+      {
+        "value": "#forge:is_hot/overworld",
+        "type": "forge:not"
+      },
+      {
+        "value": "#forge:is_desert",
+        "type": "forge:not"
+      }
+    ],
+    "type": "forge:and"
+  }
+}

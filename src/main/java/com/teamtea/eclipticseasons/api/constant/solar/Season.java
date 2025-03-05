@@ -3,9 +3,11 @@ package com.teamtea.eclipticseasons.api.constant.solar;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.util.StringRepresentable;
+import org.jetbrains.annotations.NotNull;
 
 
-public enum Season {
+public enum Season implements StringRepresentable {
     SPRING(ChatFormatting.DARK_GREEN),
     SUMMER(ChatFormatting.RED),
     AUTUMN(ChatFormatting.GOLD),
@@ -38,5 +40,10 @@ public enum Season {
     private static final Season[] seasons = Season.values();
     public static Season[] collectValues() {
         return seasons;
+    }
+
+    @Override
+    public @NotNull String getSerializedName() {
+        return getName();
     }
 }

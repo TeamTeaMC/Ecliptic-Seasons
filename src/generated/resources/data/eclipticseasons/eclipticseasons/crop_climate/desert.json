@@ -1,0 +1,28 @@
+{
+  "biomes": "#forge:is_desert",
+  "mappings": {
+    "spring": [
+      {
+        "beginning_of_summer": 0.5
+      }
+    ],
+    "summer": [
+      {
+        "summer_solstice": 0.5
+      }
+    ],
+    "autumn": [
+      {
+        "summer_solstice": 0.3
+      },
+      {
+        "beginning_of_summer": 0.2
+      }
+    ],
+    "winter": [
+      {
+        "beginning_of_summer": 0.5
+      }
+    ]
+  }
+}

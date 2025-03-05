@@ -1,0 +1,42 @@
+{
+  "biomes": {
+    "values": [
+      {
+        "values": [
+          "#forge:is_hot/overworld"
+        ],
+        "type": "forge:or"
+      },
+      {
+        "value": "#forge:is_desert",
+        "type": "forge:not"
+      }
+    ],
+    "type": "forge:and"
+  },
+  "mappings": {
+    "spring": [
+      {
+        "beginning_of_summer": 1.0
+      }
+    ],
+    "summer": [
+      {
+        "summer_solstice": 1.0
+      }
+    ],
+    "autumn": [
+      {
+        "summer_solstice": 0.6
+      },
+      {
+        "beginning_of_summer": 0.4
+      }
+    ],
+    "winter": [
+      {
+        "beginning_of_summer": 1.0
+      }
+    ]
+  }
+}

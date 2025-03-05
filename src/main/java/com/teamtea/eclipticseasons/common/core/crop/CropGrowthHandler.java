@@ -2,26 +2,38 @@ package com.teamtea.eclipticseasons.common.core.crop;
 
 
 import com.mojang.datafixers.util.Pair;
+import com.teamtea.eclipticseasons.EclipticSeasons;
+import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.biome.Humidity;
-import com.teamtea.eclipticseasons.api.constant.crop.CropHumidityInfo;
-import com.teamtea.eclipticseasons.api.constant.crop.CropSeasonInfo;
+import com.teamtea.eclipticseasons.api.constant.crop.CropHumidityType;
+import com.teamtea.eclipticseasons.api.constant.crop.CropSeasonType;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
+import com.teamtea.eclipticseasons.api.data.climate.CropClimateType;
+import com.teamtea.eclipticseasons.api.data.crop.CropGrow;
+import com.teamtea.eclipticseasons.api.data.crop.CropGrowControl;
+import com.teamtea.eclipticseasons.api.data.crop.CropGrowControlBuilder;
+import com.teamtea.eclipticseasons.api.data.crop.GrowParameter;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
+import com.teamtea.eclipticseasons.common.registry.CropClimateRegistry;
+import com.teamtea.eclipticseasons.common.registry.CropRegistry;
+import com.teamtea.eclipticseasons.common.registry.ESRegistries;
 import com.teamtea.eclipticseasons.config.CommonConfig;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.core.Holder;
-import net.minecraft.core.SectionPos;
-import net.minecraft.tags.FluidTags;
+import net.minecraft.core.*;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.*;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.DoorBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.chunk.LevelChunkSection;
@@ -29,18 +41,16 @@ import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.common.Tags;
+import net.minecraftforge.event.entity.player.BonemealEvent;
 import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.event.level.SaplingGrowTreeEvent;
 import net.minecraftforge.eventbus.api.Event;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Function;
-import java.util.function.Predicate;
 
 
 public final class CropGrowthHandler {
@@ -51,11 +61,208 @@ public final class CropGrowthHandler {
         beforeCropGrowUp(event, world, pos, block);
     }
 
+    public static void beforeCropGrowUp(BonemealEvent event) {
+        var block = event.getBlock();
+        var world = event.getLevel();
+        BlockPos pos = event.getPos();
+        beforeCropGrowUp(event, world, pos, block);
+    }
+
 
     public static void beforeCropGrowUp(SaplingGrowTreeEvent event) {
         var world = event.getLevel();
         BlockPos pos = event.getPos();
         beforeCropGrowUp(event, world, pos, world.getBlockState(pos));
+    }
+
+    private final static Map<Biome, Holder<CropClimateType>> cropClimateTypeMap = new IdentityHashMap<>();
+    private final static Map<ResourceLocation, com.teamtea.eclipticseasons.api.data.crop.CropGrowControlBuilder> CropGrowControlBuilder = new HashMap<>();
+    private final static Map<Block, Map<Holder<CropClimateType>, CropGrowControl>> CROP_GROW_MAP = new IdentityHashMap<>();
+
+    private final static IdentityHashMap<Boolean, Holder<CropClimateType>> DefaultCropClimateType = new IdentityHashMap<>();
+
+
+    public static void resetUpdate(RegistryAccess registryAccess, boolean isServer) {
+
+
+        long startTime = System.currentTimeMillis();
+
+        if (isServer) {
+            cropClimateTypeMap.clear();
+            CropGrowControlBuilder.clear();
+            CROP_GROW_MAP.clear();
+            DefaultCropClimateType.clear();
+        }
+
+
+        Registry<CropClimateType> cropClimateTypeRegistry = registryAccess.registryOrThrow(ESRegistries.CROP_CLIMATE);
+        for (Map.Entry<ResourceKey<CropClimateType>, CropClimateType> entry : cropClimateTypeRegistry.entrySet()) {
+            Optional<Holder.Reference<CropClimateType>> holder = cropClimateTypeRegistry.getHolder(cropClimateTypeRegistry.getId(entry.getValue()));
+            if (holder.isPresent()) {
+                HolderSet<Biome> biomes = entry.getValue().biomes();
+                for (int i = 0; i < biomes.size(); i++) {
+                    cropClimateTypeMap.put(biomes.get(i).value(), holder.get());
+                }
+            }
+        }
+        DefaultCropClimateType.put(isServer, cropClimateTypeRegistry.getHolder(CropClimateRegistry.TEMPERATE).get());
+
+        Registry<Item> itemRegistry = registryAccess.registryOrThrow(Registries.ITEM);
+        Registry<Block> blockRegistry = registryAccess.registryOrThrow(Registries.BLOCK);
+        for (Map.Entry<ResourceKey<CropGrowControlBuilder>, CropGrowControlBuilder> entry : registryAccess.registryOrThrow(ESRegistries.CROP).entrySet()) {
+            CropGrowControlBuilder builder = entry.getValue();
+            CropGrowControlBuilder.put(entry.getKey().location(), builder);
+            Optional<HolderSet<Block>> blocks = Optional.of(builder.applyTarget());
+            if (blocks.isEmpty()) continue;
+
+            EnumMap<SolarTerm, GrowParameter> solarTermGrowParameterEnumMap = new EnumMap<>(builder.solarTermList());
+            EnumMap<Season, GrowParameter> seasonGrowParameterEnumMap = new EnumMap<>(builder.seasonList());
+            EnumMap<Humidity, GrowParameter> humidityGrowParameterEnumMap = new EnumMap<>(builder.humidList());
+            Optional<GrowParameter> solarTermGrowParameter = builder.defaultSolarTermGrowParameter();
+            Optional<GrowParameter> humidityGrowParameter = builder.defaultHumidityGrowParameter();
+
+            if (builder.parent().size() > 0) {
+                List<HolderSet<CropGrowControlBuilder>> holderSets = new ArrayList<>();
+                holderSets.add(builder.parent());
+                while (!holderSets.isEmpty()) {
+                    HolderSet<CropGrowControlBuilder> currentParentSet = holderSets.remove(0);
+                    for (int i = 0; i < currentParentSet.size(); i++) {
+                        CropGrowControlBuilder parentBuilder = builder.parent().get(i).value();
+                        if (!builder.isChildClimateType(parentBuilder.cropClimateType())) continue;
+                        for (Map.Entry<SolarTerm, GrowParameter> entry1 : parentBuilder.solarTermList().entrySet()) {
+                            solarTermGrowParameterEnumMap.putIfAbsent(entry1.getKey(), entry1.getValue());
+                        }
+
+                        for (Map.Entry<Season, GrowParameter> entry1 : parentBuilder.seasonList().entrySet()) {
+                            seasonGrowParameterEnumMap.putIfAbsent(entry1.getKey(), entry1.getValue());
+                        }
+
+                        for (Map.Entry<Humidity, GrowParameter> entry1 : parentBuilder.humidList().entrySet()) {
+                            humidityGrowParameterEnumMap.putIfAbsent(entry1.getKey(), entry1.getValue());
+                        }
+
+                        if (solarTermGrowParameter.isEmpty() && parentBuilder.defaultSolarTermGrowParameter().isPresent()) {
+                            solarTermGrowParameter = parentBuilder.defaultSolarTermGrowParameter();
+                        }
+                        if (humidityGrowParameter.isEmpty() && parentBuilder.defaultHumidityGrowParameter().isPresent()) {
+                            humidityGrowParameter = parentBuilder.defaultHumidityGrowParameter();
+                        }
+                        if (parentBuilder.parent().size() > 0) {
+                            holderSets.add(parentBuilder.parent());
+                        }
+                    }
+                }
+            }
+
+            // Note:TODO:注意这里的链接关系，必要时可以增加内存
+            if (blocks.isPresent()) {
+                HolderSet<Block> holders = blocks.get();
+                Optional<TagKey<Block>> blockTagKey = blocks.get().unwrapKey();
+                if (blockTagKey.isPresent() && blockTagKey.get().location().getNamespace().equals(EclipticSeasonsApi.MODID)) {
+                    TagKey<Item> itemTagKey = ItemTags.create(blockTagKey.get().location());
+                    {
+                        Optional<HolderSet.Named<Item>> itemNamed = itemRegistry.getTag(itemTagKey);
+                        if (itemNamed.isPresent()) {
+                            ArrayList<Holder<Block>> holderArrayList = new ArrayList<>(holders.stream().toList());
+                            for (Holder<Item> blockHolder : itemNamed.get()) {
+                                if (blockHolder.value() instanceof BlockItem blockItem)
+                                    holderArrayList.add(blockRegistry.getHolderOrThrow(blockRegistry.getResourceKey(blockItem.getBlock()).get()));
+                            }
+                            if (!holderArrayList.isEmpty())
+                                holders = HolderSet.direct(holderArrayList);
+                        }
+                    }
+                }
+                for (int i = 0; i < holders.size(); i++) {
+                    Block block = holders.get(i).value();
+
+                    Map<Holder<CropClimateType>, CropGrowControl> c = CROP_GROW_MAP.getOrDefault(block, null);
+                    if (c == null) {
+                        c = new HashMap<>();
+                        CROP_GROW_MAP.put(block, c);
+                    }
+
+                    for (int j = 0; j < builder.cropClimateType().size(); j++) {
+                        CropGrow cropGrow = new CropGrow(
+                                solarTermGrowParameter,
+                                humidityGrowParameter,
+                                new EnumMap<>(solarTermGrowParameterEnumMap),
+                                new EnumMap<>(seasonGrowParameterEnumMap),
+                                new EnumMap<>(humidityGrowParameterEnumMap));
+                        // 一个Block，对应一个cropGrow，绑定到一个CropGrowControl上
+                        // 由于有些Block有自己的湿润度，因此容易出问题
+                        // 而且不同群系湿润度系统不一样
+                        CropGrowControl newControlCache = new CropGrowControl(
+                                cropGrow, Optional.empty(), Optional.empty()
+                        );
+                        Holder<CropClimateType> cropClimateTypeHolder = builder.cropClimateType().get(j);
+                        if (cropClimateTypeHolder.get() != null) {
+                            c.compute(cropClimateTypeHolder, (resourceLocation, oldControl) -> {
+                                if (oldControl == null) return newControlCache;
+                                oldControl.base().solarTermsMap().putAll(newControlCache.base().solarTermsMap());
+                                oldControl.base().seasonMap().putAll(newControlCache.base().seasonMap());
+                                oldControl.base().humidMap().putAll(newControlCache.base().humidMap());
+                                return oldControl;
+                            });
+                        }
+                    }
+                }
+            }
+        }
+
+        CropInfoManager.CROP_SEASON_INFO.forEach((block, cropSeasonInfo) -> {
+            // if (CROP_GROW_MAP.containsKey(block)) return;
+            CropSeasonType name = CropInfoManager.getCropSeasonTypeFrom(cropSeasonInfo);
+            if (name != null) {
+                ResourceLocation location = CropRegistry.createKey(name).location();
+                extracted(block, location);
+            }
+        });
+        CropInfoManager.CROP_HUMIDITY_INFO.forEach((block, cropHumidityInfo) -> {
+            // if (CROP_GROW_MAP.containsKey(block)) return;
+            CropHumidityType name = CropInfoManager.getCropHumidityTypeFrom(cropHumidityInfo);
+            if (name != null) {
+                ResourceLocation location = CropRegistry.createKey(name).location();
+                extracted(block, location);
+            }
+        });
+
+        EclipticSeasons.logger("Reload crop data cost %s ms in %s side.".formatted(System.currentTimeMillis() - startTime, isServer ? "server" : "client")
+        );
+    }
+
+    private static void extracted(Block block, ResourceLocation location) {
+        Map<Holder<CropClimateType>, CropGrowControl> blockClimateMap;
+        CropGrowControlBuilder builder = CropGrowControlBuilder.getOrDefault(location, null);
+        if (builder != null) {
+            CropGrow cropGrow = new CropGrow(builder.defaultSolarTermGrowParameter(),
+                    builder.defaultHumidityGrowParameter(),
+                    new EnumMap<>(builder.solarTermList()),
+                    new EnumMap<>(builder.seasonList()),
+                    new EnumMap<>(builder.humidList()));
+            CropGrowControl newControlCache = new CropGrowControl(
+                    cropGrow, Optional.empty(), Optional.empty()
+            );
+
+            blockClimateMap = CROP_GROW_MAP.getOrDefault(block, null);
+            if (blockClimateMap == null) {
+                blockClimateMap = new HashMap<>();
+                CROP_GROW_MAP.put(block, blockClimateMap);
+            }
+
+            for (int j = 0; j < builder.cropClimateType().size(); j++) {
+                Holder<CropClimateType> cropClimateTypeHolder = builder.cropClimateType().get(j);
+                if (cropClimateTypeHolder.get() != null) {
+                    blockClimateMap.compute(cropClimateTypeHolder, (resourceLocation, oldControl) -> {
+                        if (oldControl == null) return newControlCache;
+                        oldControl.base().solarTermsMap().putAll(newControlCache.base().solarTermsMap());
+                        oldControl.base().seasonMap().putAll(newControlCache.base().seasonMap());
+                        oldControl.base().humidMap().putAll(newControlCache.base().humidMap());
+                        return oldControl;
+                    });
+                }
+            }
+        }
     }
 
     public enum RoomStatus {
@@ -84,74 +291,116 @@ public final class CropGrowthHandler {
         }
     }
 
-    public static void beforeCropGrowUp(net.minecraftforge.eventbus.api.Event event, LevelAccessor world, BlockPos pos, BlockState blockState) {
+    public static float getGrowChance(net.minecraftforge.eventbus.api.Event event, GrowParameter growParameter) {
+        return event instanceof BonemealEvent ?
+                growParameter.fertile_chance() : growParameter.grow_chance();
+    }
+
+    public static void beforeCropGrowUp(net.minecraftforge.eventbus.api.Event event, LevelAccessor level, BlockPos pos, BlockState blockState) {
         Block block = blockState.getBlock();
-        Holder<Biome> biome = world.getBiome(pos);
-        SolarTerm solarTerm = EclipticUtil.getNowSolarTerm((Level) world);
-        CropSeasonInfo seasonInfo = CropInfoManager.getSeasonInfo(block);
+        Map<Holder<CropClimateType>, CropGrowControl> controlMap = CROP_GROW_MAP.get(block);
+
+        if (controlMap == null) return;
+        int i = QuartPos.fromBlock(pos.getX());
+        int j = QuartPos.fromBlock(pos.getY());
+        int k = QuartPos.fromBlock(pos.getZ());
+        Holder<Biome> biomeHolder = level.getNoiseBiome(i, j, k);
+        Biome biome = biomeHolder.value();
+        Holder<CropClimateType> climateTypeHolder = cropClimateTypeMap.getOrDefault(biome, null);
+        if (climateTypeHolder == null) return;
+
+        Holder<CropClimateType> agentClimateTypeHolder = null;
+        CropGrowControl growControl = controlMap.getOrDefault(climateTypeHolder, null);
+        boolean isServerSide = !level.isClientSide();
+        agentClimateTypeHolder = DefaultCropClimateType.getOrDefault(isServerSide, null);
+
         boolean notCancel = false;
+        SolarTerm solarTerm = EclipticSeasonsApi.getInstance().getSolarTerm((Level) level);
+        Season season = solarTerm.getSeason();
         RoomStatus roomStatus = RoomStatus.UNKNOWN;
-        Season season = CropSeason.of((Level) world, biome, pos).modifySeason(solarTerm);
-        if (seasonInfo != null && CommonConfig.Crop.enableCrop.get()) {
+
+        if (growControl == null) return;
+
+        GrowParameter growParameter = null;
+        if (growControl != null) {
+            growParameter = growControl.getGrowParameter(solarTerm);
+        }
+
+        if (growParameter == null
+        ) {
+            CropGrowControl deaultCropGrowControl = controlMap.getOrDefault(agentClimateTypeHolder, null);
+            growParameter = climateTypeHolder.value().getGrowParameterFromMapping(deaultCropGrowControl, solarTerm);
+        }
+
+        int randomKey = level.getRandom().nextInt(1000);
+
+        if (growParameter != null && CommonConfig.Crop.enableCrop.get()) {
             // TODO：计算本地节气？
-            notCancel |= seasonInfo.isSuitable(season);
-            notCancel |= CommonConfig.Crop.cropGrowChanceInWrongSeason.get() > 0
-                    && world.getRandom().nextInt(100) < CommonConfig.Crop.cropGrowChanceInWrongSeason.get() * 100;
+            notCancel |= getGrowChance(event,growParameter) * 1000 > randomKey;
+            // notCancel |= CommonConfig.Crop.cropGrowChanceInWrongSeason.get() > 0
+            //         && randomKey < CommonConfig.Crop.cropGrowChanceInWrongSeason.get() * 1000;
             if (!notCancel) {
-                notCancel = isInRoom(world, pos, blockState, season);
+                notCancel = isInRoom(level, pos, blockState, season);
                 roomStatus = notCancel ? RoomStatus.GREEN_HOUSE : RoomStatus.NORMAL;
             }
         } else {
             notCancel = true;
         }
-
         if (!notCancel) {
             setResult(event, CANCEL);
-        } else {
-            if (blockState.getFluidState().isSource()) return;
-            // TODO:根据降雨量调整
-            Humidity env = Humidity.getHumid(solarTerm, biome);
-            CropHumidityInfo humidityInfo = CropInfoManager.getHumidityInfo(block);
-            checkHumidity(event, world, humidityInfo, env, roomStatus, pos, blockState, season, false);
+            if (randomKey < growParameter.death_chance() * 1000) {
+                ((Level) level).setBlockAndUpdate(pos,
+                        growParameter.deadState().isPresent() ?
+                                growParameter.deadState().get() :
+                                Blocks.DEAD_BUSH.defaultBlockState());
+            }
+        } else if (CommonConfig.Crop.enableCropHumidityControl.get()) {
+            // not need to check it any more
+            // if (blockState.getFluidState().isSource()) return;
+            Humidity env = Humidity.getHumid(solarTerm, biomeHolder);
+            // GrowParameter growParameter = growControl.base().humidMap().getOrDefault(env, null);
+            checkHumidity(event, level, growControl, env, roomStatus, pos, blockState, season, false, randomKey);
         }
     }
 
 
-    // TODO：平衡调整，平原夏天是干旱？
-    public static void checkHumidity(Event event, LevelAccessor world, CropHumidityInfo humidityInfo, Humidity env, RoomStatus roomStatus, BlockPos pos, BlockState blockState, Season season, boolean hasUpdate) {
-        if (humidityInfo != null && CommonConfig.Crop.enableCropHumidityControl.get()) {
-            float f = humidityInfo.getGrowChance(env);
-            if (f == 0) {
-                setResult(event, CANCEL);
-            } else if (f > 1.0F) {
-                setResult(event, GROW);
-            } else {
-                if (world.getRandom().nextInt(1000) < 1000 * f) {
-                    setResult(event, PASS);
+    public static void checkHumidity(Event event, LevelAccessor world, CropGrowControl growControl, Humidity env, RoomStatus roomStatus, BlockPos pos, BlockState blockState, Season season, boolean hasUpdate, int randomKey) {
+        if (growControl != null) {
+            GrowParameter growParameter = growControl.getGrowParameter(env);
+            if (growParameter != null) {
+                float f = getGrowChance(event,growParameter);
+                if (f == 0) {
+                    setResult(event, CANCEL);
+                } else if (f > 1.0F) {
+                    setResult(event, GROW);
                 } else {
-                    // 或者用特殊气体，BlockEntity辅助查询
-                    boolean should = true;
-                    if (!hasUpdate) {
-                        BlockState nearState = SolarHolders.getSaveData((Level) world).findNearPos(pos);
-                        if (nearState != null) {
-                            roomStatus = isInRoom(world, pos, blockState, season) ? RoomStatus.GREEN_HOUSE : RoomStatus.NORMAL;
-                        }
-                        if (nearState != null && roomStatus == RoomStatus.GREEN_HOUSE) {
-                            env = env.above(1);
-                            checkHumidity(event, world, humidityInfo, env, roomStatus, pos, blockState, season, true);
-                            should = false;
-                            return;
-                            //  TODO:下雨增加湿润度
-                        } else if (((Level) world).isRainingAt(pos)) {
-                            env = env.above(1);
-                            checkHumidity(event, world, humidityInfo, env, roomStatus, pos, blockState, season, true);
-                            should = false;
-                            return;
-                        }
+                    if (randomKey < 1000 * f) {
+                        setResult(event, PASS);
+                    } else {
+                        // 或者用特殊气体，BlockEntity辅助查询
+                        boolean should = true;
+                        if (!hasUpdate) {
+                            BlockState nearState = SolarHolders.getSaveData((Level) world).findNearPos(pos);
+                            if (nearState != null) {
+                                roomStatus = isInRoom(world, pos, blockState, season) ? RoomStatus.GREEN_HOUSE : RoomStatus.NORMAL;
+                            }
+                            if (nearState != null && roomStatus == RoomStatus.GREEN_HOUSE) {
+                                env = env.above(1);
+                                checkHumidity(event, world, growControl, env, roomStatus, pos, blockState, season, true, randomKey);
+                                should = false;
+                                return;
+                                //  TODO:下雨增加湿润度
+                            } else if (((Level) world).isRainingAt(pos)) {
+                                env = env.above(1);
+                                checkHumidity(event, world, growControl, env, roomStatus, pos, blockState, season, true, randomKey);
+                                should = false;
+                                return;
+                            }
 
-                    }
-                    if (should) {
-                        setResult(event, CANCEL);
+                        }
+                        if (should) {
+                            setResult(event, CANCEL);
+                        }
                     }
                 }
             }
@@ -171,6 +420,8 @@ public final class CropGrowthHandler {
                     cropGrowEvent.setResult(BlockEvent.CropGrowEvent.Pre.Result.DENY);
                 } else if (event instanceof SaplingGrowTreeEvent blockGrowFeatureEvent) {
                     blockGrowFeatureEvent.setResult(Event.Result.DENY);
+                }else if (event instanceof BonemealEvent bonemealEvent) {
+                    bonemealEvent.setResult(Event.Result.DENY);
                 }
             } else if (flag == PASS) {
                 if (event instanceof BlockEvent.CropGrowEvent.Pre cropGrowEvent) {

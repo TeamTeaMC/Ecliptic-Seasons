@@ -20,7 +20,8 @@ public class MapColorReplacer {
         if (!(blockGetter instanceof Level level) || pos == null)
             return null;
         // if without snow we can faster the query
-        if (!EclipticUtil.isHereWithSnow(level, pos)) return null;
+        // note 也许会更慢？和 x小地图有关
+        // if (!EclipticUtil.isHereWithSnow(level, pos)) return null;
 
         boolean isLight = false;
 
@@ -29,12 +30,9 @@ public class MapColorReplacer {
         int offset = MapChecker.getSnowOffset(state, flag);
 
 
-        isLight = MapChecker.getHeightOrUpdate(level, pos, false) == pos.getY() - offset;
-
-
         // long seed = (long) Mth.abs(pos.hashCode());
 
-        isLight = flag != 0 && isLight
+        isLight = flag != 0 && MapChecker.getHeightOrUpdate(level, pos, false) == pos.getY() - offset
                 && state.getBlock() != Blocks.SNOW_BLOCK
                 && MapChecker.shouldSnowAt(level, pos.below(offset), state, level.getRandom(), state.getSeed(pos))
                 && (ignoreLight || (!CommonConfig.Season.notSnowyNearGlowingBlock.get() ||

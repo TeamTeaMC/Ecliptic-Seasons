@@ -31,10 +31,10 @@ import com.teamtea.eclipticseasons.EclipticSeasons;
 import javax.annotation.Nullable;
 import java.util.*;
 
-@Mod.EventBusSubscriber(modid = EclipticSeasons.MODID)
+@Deprecated
 public final class CropInfoManager {
-    private final static Map<Block, CropHumidityInfo> CROP_HUMIDITY_INFO = new HashMap<>();
-    private final static Map<Block, CropSeasonInfo> CROP_SEASON_INFO = new HashMap<>();
+     final static Map<Block, CropHumidityInfo> CROP_HUMIDITY_INFO = new HashMap<>();
+     final static Map<Block, CropSeasonInfo> CROP_SEASON_INFO = new HashMap<>();
 
     private static final TagKey<Block> ss1 = createBlockTag("sereneseasons", "spring_crops");
     private static final TagKey<Block> ss2 = createBlockTag("sereneseasons", "summer_crops");
@@ -60,7 +60,22 @@ public final class CropInfoManager {
         return BlockTags.create(new ResourceLocation(modId, path));
     }
 
-    @SubscribeEvent
+    static CropSeasonType getCropSeasonTypeFrom(CropSeasonInfo cropSeasonInfo) {
+        for (CropSeasonType value : CropSeasonType.collectValues()) {
+            if (value.getInfo().equals(cropSeasonInfo))
+                return value;
+        }
+        return null;
+    }
+
+    static CropHumidityType getCropHumidityTypeFrom(CropHumidityInfo cropSeasonInfo) {
+        for (CropHumidityType value : CropHumidityType.collectValues()) {
+            if (value.getInfo().equals(cropSeasonInfo))
+                return value;
+        }
+        return null;
+    }
+
     public static void init(TagsUpdatedEvent event) {
         CROP_HUMIDITY_INFO.clear();
         CROP_SEASON_INFO.clear();
