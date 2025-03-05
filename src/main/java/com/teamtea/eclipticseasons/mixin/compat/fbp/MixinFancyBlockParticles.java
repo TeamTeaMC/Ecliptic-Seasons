@@ -28,8 +28,9 @@ public abstract class MixinFancyBlockParticles {
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/resources/model/BakedModel;getRenderTypes(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/util/RandomSource;Lnet/minecraftforge/client/model/data/ModelData;)Lnet/minecraftforge/client/ChunkRenderTypeSet;")
     )
     private ChunkRenderTypeSet eclipticseasons$coldEnoughToSnow(ChunkRenderTypeSet original, @Local(argsOnly = true) BlockState blockState) {
-        if (ModelManager.shouldCutoutMipped(blockState))
+        if (ModelManager.shouldCutoutMipped(blockState)&& !original.contains(RenderType.cutoutMipped())) {
             return ChunkRenderTypeSet.of(RenderType.cutoutMipped());
+        }
         return original;
     }
 

@@ -1,10 +1,8 @@
 package com.teamtea.eclipticseasons.mixin;
 
-import com.teamtea.eclipticseasons.EclipticSeasons;
-import com.teamtea.eclipticseasons.client.core.ModelManager;
+
 import com.teamtea.eclipticseasons.compat.CompatModule;
 import net.minecraftforge.fml.loading.FMLLoader;
-import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
 import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
@@ -14,10 +12,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-/**
- * Non-critical mixin config plugin, just disables mixins if Distant Horizons isn't present,
- * since otherwise the log gets spammed with warnings.
- */
+
 public class EclipticSeasonsMixinPlugin implements IMixinConfigPlugin {
 
     public static final String MIXIN_COMPAT_PACKAGE = "mixin.compat.";

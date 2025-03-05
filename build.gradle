@@ -26,7 +26,7 @@ apply plugin: 'org.parchmentmc.librarian.forgegradle'
 
 version = "${minecraft_min_version}-forge-${mod_version}"
 group = "${mod_base_package}" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = mod_name
+archivesBaseName = mod_name_s
 
 // Mojang ships Java 17 to end users in 1.18+, so your mod should target Java 17.
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)

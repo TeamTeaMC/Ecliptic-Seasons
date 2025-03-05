@@ -21,8 +21,11 @@ public abstract class MixinBlockLightEngine {
     public void eclipticseasons$checkEdge(long pFromPos, long pToPos, int pNewLevel, int pPreviousLevel, int pPropagationLevel, boolean pIsDecreasing, CallbackInfo ci) {
         if ((Object) (this) instanceof BlockLightEngine) {
             if (pNewLevel > pPreviousLevel) {
-                BlockPos blockPos = new BlockPos(BlockPos.getX(pToPos), BlockPos.getY(pToPos), BlockPos.getZ(pToPos));
-                ClientMapFixer.addLightPlanner(Minecraft.getInstance().level,  blockPos, Minecraft.getInstance().level.getGameTime());
+                if (Minecraft.getInstance().level != null)
+                {
+                    BlockPos blockPos = new BlockPos(BlockPos.getX(pToPos), BlockPos.getY(pToPos), BlockPos.getZ(pToPos));
+                    ClientMapFixer.addLightPlanner(Minecraft.getInstance().level, blockPos, Minecraft.getInstance().level.getGameTime());
+                }
             }
         }
     }
