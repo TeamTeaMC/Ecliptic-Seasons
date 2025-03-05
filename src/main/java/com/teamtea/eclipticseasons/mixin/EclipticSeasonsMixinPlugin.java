@@ -11,10 +11,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-/**
- * Non-critical mixin config plugin, just disables mixins if Distant Horizons isn't present,
- * since otherwise the log gets spammed with warnings.
- */
+
 public class EclipticSeasonsMixinPlugin implements IMixinConfigPlugin {
 
     public static final String MIXIN_COMPAT_PACKAGE = "mixin.compat.";
