@@ -140,6 +140,7 @@ public abstract class MixinServerLevel extends Level {
     }
 
     @Inject(
+            remap = false,
             method = "tickChunk",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;isAreaLoaded(Lnet/minecraft/core/BlockPos;I)Z")
     )

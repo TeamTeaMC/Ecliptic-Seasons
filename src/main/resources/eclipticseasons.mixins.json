@@ -5,6 +5,7 @@
   "refmap": "eclipticseasons.refmap.json",
   "mixins": [
     "common.MixinBiome",
+    "common.MixinClientboundLoginPacket",
     "common.MixinDimensionType",
     "common.MixinLevel",
     "common.MixinLevelReader",
