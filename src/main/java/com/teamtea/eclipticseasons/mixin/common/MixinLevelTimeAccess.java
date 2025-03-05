@@ -10,17 +10,8 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin({IDayTimeReader.class})
 public interface MixinLevelTimeAccess extends IDayTimeReader {
 
-    // @Shadow(remap = false) long dayTime();
-
-    // @Inject(at = {@At("HEAD")}, method = {"getTimeOfDay"}, cancellable = true)
-    // public default void mixin_getTimeOfDay(float p_46943_, CallbackInfoReturnable<Float> cir) {
-    //     // cir.setReturnValue( AsmHandler.getSeasonCelestialAngle(p_63905_,(DimensionType)(Object)this));
-    //
-    // }
-
     @Override
     default float getTimeOfDay(float p_46943_) {
-        // eclipticseasons.logger(p_46943_,dayTime());
         return SolarAngelHelper.getSeasonCelestialAngle((IDayTimeReader)(Object)this, dayTime());
     }
 

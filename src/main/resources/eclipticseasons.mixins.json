@@ -6,7 +6,7 @@
   "mixins": [
     "common.MixinBiome",
     "common.MixinBiomeAttach",
-    "common.MixinDimensionType",
+    "common.MixinIWorldReader",
     "common.MixinLevel",
     "common.MixinLevelTimeAccess",
     "common.MixinServerLevel",
@@ -28,13 +28,12 @@
     "compat.legendarysurvivaloverhaul.MixinWeatherModifier"
   ],
   "client": [
+    "client.MixinBlockLightEngine",
     "client.MixinBlockRenderVanilla",
     "client.MixinClientClientLevel",
     "client.MixinClientLevel",
     "client.MixinClientLevelChunk",
-    "client.MixinBlockLightEngine",
     "client.MixinClientPanda",
-    "client.MixinGameRenderer",
     "client.MixinItemBlockRenderTypes",
     "client.MixinLevelRender",
     "client.MixinLocalPlayer",

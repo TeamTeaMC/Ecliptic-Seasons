@@ -227,7 +227,7 @@ dependencies {
     compileOnly fg.deobf("curse.maven:fbp-renewed-937011:5895319")
     onlyMainRuntimeOnly fg.deobf("curse.maven:fbp-renewed-937011:5895319")
 
-    onlyMainRuntimeOnly fg.deobf("curse.maven:replay-mod-for-forge-499046:3548798")
+//    onlyMainRuntimeOnly fg.deobf("curse.maven:replay-mod-for-forge-499046:3548798")
 
 }
 

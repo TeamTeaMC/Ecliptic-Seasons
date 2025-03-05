@@ -20,7 +20,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class MixinFBPPlacingAnimationParticle {
 
     @ModifyExpressionValue(
-            remap = false,
             method = "renderBlock",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/RenderTypeLookup;getMovingBlockRenderType(Lnet/minecraft/block/BlockState;)Lnet/minecraft/client/renderer/RenderType;")
     )

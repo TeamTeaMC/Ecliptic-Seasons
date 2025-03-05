@@ -84,9 +84,16 @@ Legacy-1.0
     - Enhanced chunk update logic to reduce lag and performance overhead.
 3. **Legacy Snow & Melt/ (Optional)**
     - Added legacy snow/melting mechanics as a configurable optional feature.
+4. Fix zombie would burn in some case like just snow locally in the day.
 
 ---
 
 ### Miscellaneous
 - Code cleanup and internal refactoring for improved stability.  
 
+
+1.0.0.1
+Add a null pointer check to avoid world create freeze.
+
+1.0.0.2
+fix a mixin error about fbp
