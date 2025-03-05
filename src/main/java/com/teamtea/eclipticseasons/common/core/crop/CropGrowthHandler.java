@@ -9,7 +9,7 @@ import com.teamtea.eclipticseasons.api.constant.crop.CropHumidityType;
 import com.teamtea.eclipticseasons.api.constant.crop.CropSeasonType;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
-import com.teamtea.eclipticseasons.api.data.climate.CropClimateType;
+import com.teamtea.eclipticseasons.api.data.climate.AgroClimaticZone;
 import com.teamtea.eclipticseasons.api.data.crop.CropGrow;
 import com.teamtea.eclipticseasons.api.data.crop.CropGrowControl;
 import com.teamtea.eclipticseasons.api.data.crop.CropGrowControlBuilder;
@@ -17,7 +17,7 @@ import com.teamtea.eclipticseasons.api.data.crop.GrowParameter;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
-import com.teamtea.eclipticseasons.common.registry.CropClimateRegistry;
+import com.teamtea.eclipticseasons.common.registry.AgroClimateRegistry;
 import com.teamtea.eclipticseasons.common.registry.CropRegistry;
 import com.teamtea.eclipticseasons.common.registry.ESRegistries;
 import com.teamtea.eclipticseasons.config.CommonConfig;
@@ -75,11 +75,11 @@ public final class CropGrowthHandler {
         beforeCropGrowUp(event, world, pos, world.getBlockState(pos));
     }
 
-    private final static Map<Biome, Holder<CropClimateType>> cropClimateTypeMap = new IdentityHashMap<>();
+    private final static Map<Biome, Holder<AgroClimaticZone>> cropClimateTypeMap = new IdentityHashMap<>();
     private final static Map<ResourceLocation, com.teamtea.eclipticseasons.api.data.crop.CropGrowControlBuilder> CropGrowControlBuilder = new HashMap<>();
-    private final static Map<Block, Map<Holder<CropClimateType>, CropGrowControl>> CROP_GROW_MAP = new IdentityHashMap<>();
+    private final static Map<Block, Map<Holder<AgroClimaticZone>, CropGrowControl>> CROP_GROW_MAP = new IdentityHashMap<>();
 
-    private final static IdentityHashMap<Boolean, Holder<CropClimateType>> DefaultCropClimateType = new IdentityHashMap<>();
+    private final static IdentityHashMap<Boolean, Holder<AgroClimaticZone>> DefaultCropClimateType = new IdentityHashMap<>();
 
 
     public static void resetUpdate(RegistryAccess registryAccess, boolean isServer) {
@@ -95,9 +95,9 @@ public final class CropGrowthHandler {
         }
 
 
-        Registry<CropClimateType> cropClimateTypeRegistry = registryAccess.registryOrThrow(ESRegistries.CROP_CLIMATE);
-        for (Map.Entry<ResourceKey<CropClimateType>, CropClimateType> entry : cropClimateTypeRegistry.entrySet()) {
-            Optional<Holder.Reference<CropClimateType>> holder = cropClimateTypeRegistry.getHolder(cropClimateTypeRegistry.getId(entry.getValue()));
+        Registry<AgroClimaticZone> cropClimateTypeRegistry = registryAccess.registryOrThrow(ESRegistries.AGRO_CLIMATE);
+        for (Map.Entry<ResourceKey<AgroClimaticZone>, AgroClimaticZone> entry : cropClimateTypeRegistry.entrySet()) {
+            Optional<Holder.Reference<AgroClimaticZone>> holder = cropClimateTypeRegistry.getHolder(cropClimateTypeRegistry.getId(entry.getValue()));
             if (holder.isPresent()) {
                 HolderSet<Biome> biomes = entry.getValue().biomes();
                 for (int i = 0; i < biomes.size(); i++) {
@@ -105,7 +105,7 @@ public final class CropGrowthHandler {
                 }
             }
         }
-        DefaultCropClimateType.put(isServer, cropClimateTypeRegistry.getHolder(CropClimateRegistry.TEMPERATE).get());
+        DefaultCropClimateType.put(isServer, cropClimateTypeRegistry.getHolder(AgroClimateRegistry.TEMPERATE).get());
 
         Registry<Item> itemRegistry = registryAccess.registryOrThrow(Registries.ITEM);
         Registry<Block> blockRegistry = registryAccess.registryOrThrow(Registries.BLOCK);
@@ -176,7 +176,7 @@ public final class CropGrowthHandler {
                 for (int i = 0; i < holders.size(); i++) {
                     Block block = holders.get(i).value();
 
-                    Map<Holder<CropClimateType>, CropGrowControl> c = CROP_GROW_MAP.getOrDefault(block, null);
+                    Map<Holder<AgroClimaticZone>, CropGrowControl> c = CROP_GROW_MAP.getOrDefault(block, null);
                     if (c == null) {
                         c = new HashMap<>();
                         CROP_GROW_MAP.put(block, c);
@@ -195,7 +195,7 @@ public final class CropGrowthHandler {
                         CropGrowControl newControlCache = new CropGrowControl(
                                 cropGrow, Optional.empty(), Optional.empty()
                         );
-                        Holder<CropClimateType> cropClimateTypeHolder = builder.cropClimateType().get(j);
+                        Holder<AgroClimaticZone> cropClimateTypeHolder = builder.cropClimateType().get(j);
                         if (cropClimateTypeHolder.get() != null) {
                             c.compute(cropClimateTypeHolder, (resourceLocation, oldControl) -> {
                                 if (oldControl == null) return newControlCache;
@@ -232,7 +232,7 @@ public final class CropGrowthHandler {
     }
 
     private static void extracted(Block block, ResourceLocation location) {
-        Map<Holder<CropClimateType>, CropGrowControl> blockClimateMap;
+        Map<Holder<AgroClimaticZone>, CropGrowControl> blockClimateMap;
         CropGrowControlBuilder builder = CropGrowControlBuilder.getOrDefault(location, null);
         if (builder != null) {
             CropGrow cropGrow = new CropGrow(builder.defaultSolarTermGrowParameter(),
@@ -251,7 +251,7 @@ public final class CropGrowthHandler {
             }
 
             for (int j = 0; j < builder.cropClimateType().size(); j++) {
-                Holder<CropClimateType> cropClimateTypeHolder = builder.cropClimateType().get(j);
+                Holder<AgroClimaticZone> cropClimateTypeHolder = builder.cropClimateType().get(j);
                 if (cropClimateTypeHolder.get() != null) {
                     blockClimateMap.compute(cropClimateTypeHolder, (resourceLocation, oldControl) -> {
                         if (oldControl == null) return newControlCache;
@@ -298,7 +298,7 @@ public final class CropGrowthHandler {
 
     public static void beforeCropGrowUp(net.minecraftforge.eventbus.api.Event event, LevelAccessor level, BlockPos pos, BlockState blockState) {
         Block block = blockState.getBlock();
-        Map<Holder<CropClimateType>, CropGrowControl> controlMap = CROP_GROW_MAP.get(block);
+        Map<Holder<AgroClimaticZone>, CropGrowControl> controlMap = CROP_GROW_MAP.get(block);
 
         if (controlMap == null) return;
         int i = QuartPos.fromBlock(pos.getX());
@@ -306,10 +306,10 @@ public final class CropGrowthHandler {
         int k = QuartPos.fromBlock(pos.getZ());
         Holder<Biome> biomeHolder = level.getNoiseBiome(i, j, k);
         Biome biome = biomeHolder.value();
-        Holder<CropClimateType> climateTypeHolder = cropClimateTypeMap.getOrDefault(biome, null);
+        Holder<AgroClimaticZone> climateTypeHolder = cropClimateTypeMap.getOrDefault(biome, null);
         if (climateTypeHolder == null) return;
 
-        Holder<CropClimateType> agentClimateTypeHolder = null;
+        Holder<AgroClimaticZone> agentClimateTypeHolder = null;
         CropGrowControl growControl = controlMap.getOrDefault(climateTypeHolder, null);
         boolean isServerSide = !level.isClientSide();
         agentClimateTypeHolder = DefaultCropClimateType.getOrDefault(isServerSide, null);
@@ -421,7 +421,8 @@ public final class CropGrowthHandler {
                 } else if (event instanceof SaplingGrowTreeEvent blockGrowFeatureEvent) {
                     blockGrowFeatureEvent.setResult(Event.Result.DENY);
                 }else if (event instanceof BonemealEvent bonemealEvent) {
-                    bonemealEvent.setResult(Event.Result.DENY);
+                    // bonemealEvent.setCanceled(true);
+                    bonemealEvent.setResult(Event.Result.ALLOW);
                 }
             } else if (flag == PASS) {
                 if (event instanceof BlockEvent.CropGrowEvent.Pre cropGrowEvent) {

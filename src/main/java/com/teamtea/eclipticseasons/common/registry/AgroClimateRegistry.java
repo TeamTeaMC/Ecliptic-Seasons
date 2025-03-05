@@ -7,7 +7,7 @@ import com.mojang.serialization.Lifecycle;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
-import com.teamtea.eclipticseasons.api.data.climate.CropClimateType;
+import com.teamtea.eclipticseasons.api.data.climate.AgroClimaticZone;
 import com.teamtea.eclipticseasons.api.data.crop.GrowParameter;
 import net.minecraft.core.*;
 import net.minecraft.core.registries.Registries;
@@ -25,21 +25,21 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.stream.Stream;
 
-public class CropClimateRegistry {
+public class AgroClimateRegistry {
 
     /**
      * Temperate Climate is the standard Crop.
      **/
-    public static final ResourceKey<CropClimateType> TEMPERATE = createKey("temperate");
-    public static final ResourceKey<CropClimateType> COLD = createKey("cold");
-    public static final ResourceKey<CropClimateType> HOT = createKey("hot");
-    public static final ResourceKey<CropClimateType> DESERT = createKey("desert");
-    public static final ResourceKey<CropClimateType> NETHER = createKey("nether");
-    public static final ResourceKey<CropClimateType> END = createKey("end");
+    public static final ResourceKey<AgroClimaticZone> TEMPERATE = createKey("temperate");
+    public static final ResourceKey<AgroClimaticZone> COLD = createKey("cold");
+    public static final ResourceKey<AgroClimaticZone> HOT = createKey("hot");
+    public static final ResourceKey<AgroClimaticZone> DESERT = createKey("desert");
+    public static final ResourceKey<AgroClimaticZone> NETHER = createKey("nether");
+    public static final ResourceKey<AgroClimaticZone> END = createKey("end");
 
 
-    private static ResourceKey<CropClimateType> createKey(String name) {
-        return ResourceKey.create(ESRegistries.CROP_CLIMATE, EclipticSeasons.rl(name));
+    private static ResourceKey<AgroClimaticZone> createKey(String name) {
+        return ResourceKey.create(ESRegistries.AGRO_CLIMATE, EclipticSeasons.rl(name));
     }
 
     @SafeVarargs
@@ -63,11 +63,11 @@ public class CropClimateRegistry {
     private static HolderLookup.RegistryLookup<Biome> BIOME_REGISTRY_LOOKUP = null;
     private static HolderGetter<Biome> BIOME_HOLDER_GETTER = null;
 
-    public static void bootstrap(BootstapContext<CropClimateType> context) {
+    public static void bootstrap(BootstapContext<AgroClimaticZone> context) {
         BIOME_HOLDER_GETTER = context.lookup(Registries.BIOME);
         BIOME_REGISTRY_LOOKUP = new BiomeRegistryLookup(BIOME_HOLDER_GETTER);
 
-        context.register(TEMPERATE, CropClimateType.builder((
+        context.register(TEMPERATE, AgroClimaticZone.builder((
                 and(or(get(BiomeTags.IS_OVERWORLD),get(Tags.Biomes.IS_VOID)),
                 not(get(Tags.Biomes.IS_COLD_OVERWORLD)),
                 not(get(Tags.Biomes.IS_HOT_OVERWORLD)),
@@ -104,9 +104,8 @@ public class CropClimateRegistry {
                 Either.<Season, SolarTerm>right(SolarTerm.GREATER_COLD), List.of(Pair.of(Either.<Season, SolarTerm>right(SolarTerm.GREATER_COLD), 0.15f))
         );
 
-        context.register(COLD, CropClimateType.builder(get(Tags.Biomes.IS_COLD_OVERWORLD))
+        context.register(COLD, AgroClimaticZone.builder(get(Tags.Biomes.IS_COLD_OVERWORLD))
                 .mapping(mapCold)
-                .growParameter(GrowParameter.builder().growChance(0.35f).end())
                 .end());
 
         Map<Either<Season, SolarTerm>, List<Pair<Either<Season, SolarTerm>, Float>>> mapHot = of(
@@ -116,7 +115,7 @@ public class CropClimateRegistry {
                 Either.<Season, SolarTerm>left(Season.WINTER), List.of(Pair.of(Either.<Season, SolarTerm>right(SolarTerm.BEGINNING_OF_SUMMER), 1f))
         );
 
-        context.register(HOT, CropClimateType.builder(and(get(Tags.Biomes.IS_HOT_OVERWORLD),not(get(Tags.Biomes.IS_DESERT))))
+        context.register(HOT, AgroClimaticZone.builder(and(get(Tags.Biomes.IS_HOT_OVERWORLD),not(get(Tags.Biomes.IS_DESERT))))
                 .mapping(mapHot)
                 .end());
 
@@ -127,16 +126,16 @@ public class CropClimateRegistry {
                 Either.<Season, SolarTerm>left(Season.WINTER), List.of(Pair.of(Either.<Season, SolarTerm>right(SolarTerm.BEGINNING_OF_SUMMER), .5f))
         );
 
-        context.register(DESERT, CropClimateType.builder(get(Tags.Biomes.IS_DESERT))
+        context.register(DESERT, AgroClimaticZone.builder(get(Tags.Biomes.IS_DESERT))
                 .mapping(mapHot2)
                 .end());
 
 
-        context.register(NETHER, CropClimateType.builder(get(BiomeTags.IS_NETHER))
+        context.register(NETHER, AgroClimaticZone.builder(get(BiomeTags.IS_NETHER))
                 .defaultMapping(Pair.of(Either.<Season, SolarTerm>left(Season.SUMMER), .25f))
                 .end());
 
-        context.register(END, CropClimateType.builder(get(BiomeTags.IS_END))
+        context.register(END, AgroClimaticZone.builder(get(BiomeTags.IS_END))
                 .growParameter(GrowParameter.builder().growChance(0.35f).fertileChance(0.5f).deathChance(0.01f).end())
                 .end());
 

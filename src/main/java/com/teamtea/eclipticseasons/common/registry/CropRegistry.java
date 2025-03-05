@@ -9,10 +9,9 @@ import com.teamtea.eclipticseasons.api.constant.crop.CropSeasonType;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.constant.tag.CropClimateTags;
-import com.teamtea.eclipticseasons.api.data.climate.CropClimateType;
+import com.teamtea.eclipticseasons.api.data.climate.AgroClimaticZone;
 import com.teamtea.eclipticseasons.api.data.crop.CropGrowControlBuilder;
 import com.teamtea.eclipticseasons.api.data.crop.GrowParameter;
-import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.Registries;
@@ -139,9 +138,9 @@ public class CropRegistry {
         blockHolderGetter = context.lookup(Registries.BLOCK);
         var biomeHolderGetter = context.lookup(Registries.BIOME);
         var cropGrowControlBuilderHolderGetter = context.lookup(ESRegistries.CROP);
-        var cropClimateTypeHolderGetter = context.lookup(ESRegistries.CROP_CLIMATE);
+        var cropClimateTypeHolderGetter = context.lookup(ESRegistries.AGRO_CLIMATE);
 
-        HolderSet.Direct<CropClimateType> temperate = HolderSet.direct(cropClimateTypeHolderGetter.getOrThrow(CropClimateRegistry.TEMPERATE));
+        HolderSet.Direct<AgroClimaticZone> temperate = HolderSet.direct(cropClimateTypeHolderGetter.getOrThrow(AgroClimateRegistry.TEMPERATE));
 
 
         context.register(SPRING, new CropGrowControlBuilder(
@@ -703,7 +702,7 @@ public class CropRegistry {
                 humidListEmpty
         ));
 
-        HolderSet.Named<CropClimateType> allHolderSet = cropClimateTypeHolderGetter.get(CropClimateTags.ALL).get();
+        HolderSet.Named<AgroClimaticZone> allHolderSet = cropClimateTypeHolderGetter.get(CropClimateTags.ALL).get();
         context.register(ARID, new CropGrowControlBuilder(
                 allHolderSet,
                 createTagPredicate(ARID),

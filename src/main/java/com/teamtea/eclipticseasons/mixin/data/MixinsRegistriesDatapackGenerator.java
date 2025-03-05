@@ -44,7 +44,7 @@ import java.util.function.Predicate;
 public abstract class MixinsRegistriesDatapackGenerator {
 
 
-    @Shadow @Final private Predicate<String> namespacePredicate;
+    @Shadow(remap = false) @Final private Predicate<String> namespacePredicate;
 
     @Shadow @Final private PackOutput output;
 

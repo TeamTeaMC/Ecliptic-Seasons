@@ -20,34 +20,34 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * The {@link CropClimateType} enum is used to define specific climate requirements for crops, distinguishing them from
+ * The {@link AgroClimaticZone} enum is used to define specific climate requirements for crops, distinguishing them from
  * the broader {@link  com.teamtea.eclipticseasons.api.constant.tag.ClimateTypeBiomeTags ClimateTypeBiomeTags}. While {@link  com.teamtea.eclipticseasons.api.constant.tag.ClimateTypeBiomeTags ClimateTypeBiomeTags} categorizes biomes based on general seasonal and weather patterns
- * (e.g., wet/dry seasons, temperature variations), {@link CropClimateType} focuses on the precise conditions needed
+ * (e.g., wet/dry seasons, temperature variations), {@link AgroClimaticZone} focuses on the precise conditions needed
  * for crops to thrive, such as grow rate ranges in seasons and humidity levels.
  * <p>
  * This distinction is necessary because crops in the game may require very specific conditions (like high humidity
  * or extreme heat) that do not necessarily correlate with the broader biome classification, ensuring realistic crop growth
  * mechanics.
  * <p>
- * Additionally, {@link CropClimateType} allows creation of maps to automatically populate data for newly added agroclimate types.
+ * Additionally, {@link AgroClimaticZone} allows creation of maps to automatically populate data for newly added agroclimate types.
  */
-public record CropClimateType(HolderSet<Biome> biomes,
-                              Optional<GrowParameter> growParameter,
-                              Optional<Map<Either<Season, SolarTerm>, Float>> defaultMapping,
-                              Optional<Map<Either<Season, SolarTerm>, List<Map<Either<Season, SolarTerm>, Float>>>> mapping) {
+public record AgroClimaticZone(HolderSet<Biome> biomes,
+                               Optional<GrowParameter> growParameter,
+                               Optional<Map<Either<Season, SolarTerm>, Float>> defaultMapping,
+                               Optional<Map<Either<Season, SolarTerm>, List<Map<Either<Season, SolarTerm>, Float>>>> mapping) {
 
     public static final Codec<Either<Season, SolarTerm>> EITHER_CODEC = Codec.either(StringRepresentable.fromEnum(Season::collectValues), StringRepresentable.fromEnum(SolarTerm::collectValues));
     public static final Codec<Map<Either<Season, SolarTerm>, Float>> EITHER_PAIR_CODEC = CodecUtil.mapCodec(EITHER_CODEC, Codec.FLOAT);
     public static final Codec<Map<Either<Season, SolarTerm>, List<Map<Either<Season, SolarTerm>, Float>>>> EITHER_MAP_CODEC =
             CodecUtil.mapCodec(EITHER_CODEC, EITHER_PAIR_CODEC.listOf());
 
-    public static final Codec<CropClimateType> CODEC =
+    public static final Codec<AgroClimaticZone> CODEC =
             RecordCodecBuilder.create(builder -> builder.group(
-                    CodecUtil.holderSetCodec(Registries.BIOME).fieldOf("biomes").forGetter(CropClimateType::biomes),
-                    GrowParameter.CODEC.optionalFieldOf("global").forGetter(CropClimateType::growParameter),
-                    EITHER_PAIR_CODEC.optionalFieldOf("default_mapping").forGetter(CropClimateType::defaultMapping),
-                    EITHER_MAP_CODEC.optionalFieldOf("mappings").forGetter(CropClimateType::mapping)
-            ).apply(builder, CropClimateType::new));
+                    CodecUtil.holderSetCodec(Registries.BIOME).fieldOf("biomes").forGetter(AgroClimaticZone::biomes),
+                    GrowParameter.CODEC.optionalFieldOf("global").forGetter(AgroClimaticZone::growParameter),
+                    EITHER_PAIR_CODEC.optionalFieldOf("default_mapping").forGetter(AgroClimaticZone::defaultMapping),
+                    EITHER_MAP_CODEC.optionalFieldOf("mappings").forGetter(AgroClimaticZone::mapping)
+            ).apply(builder, AgroClimaticZone::new));
 
 
     public GrowParameter buildFromList(CropGrowControl deaultCropGrowControl, List<Map<Either<Season, SolarTerm>, Float>> list) {
@@ -138,11 +138,11 @@ public record CropClimateType(HolderSet<Biome> biomes,
             return this;
         }
 
-        public CropClimateType end() {
+        public AgroClimaticZone end() {
             if (biomes == null) {
                 throw new IllegalArgumentException("Biomes must not be null");
             }
-            return new CropClimateType(biomes, Optional.ofNullable(growParameter), Optional.ofNullable(defaultMapping), Optional.ofNullable(mapping));
+            return new AgroClimaticZone(biomes, Optional.ofNullable(growParameter), Optional.ofNullable(defaultMapping), Optional.ofNullable(mapping));
         }
     }
 }

@@ -1,10 +1,5 @@
 {
   "biomes": "#forge:is_cold/overworld",
-  "global": {
-    "grow_chance": 0.35,
-    "death_chance": 0.0,
-    "fertile_chance": 1.0
-  },
   "mappings": {
     "beginning_of_spring": [
       {

@@ -6,17 +6,15 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.teamtea.eclipticseasons.api.constant.biome.Humidity;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
-import com.teamtea.eclipticseasons.api.data.climate.CropClimateType;
+import com.teamtea.eclipticseasons.api.data.climate.AgroClimaticZone;
 import com.teamtea.eclipticseasons.api.util.codec.CodecUtil;
 import com.teamtea.eclipticseasons.common.misc.SimplePair;
 import com.teamtea.eclipticseasons.common.registry.ESRegistries;
 import net.minecraft.ResourceLocationException;
-import net.minecraft.advancements.critereon.NbtPredicate;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.RegistryCodecs;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.level.block.Block;
 import org.jetbrains.annotations.TestOnly;
@@ -25,7 +23,7 @@ import java.util.*;
 
 @TestOnly
 public record CropGrowControlBuilder(
-        HolderSet<CropClimateType> cropClimateType,
+        HolderSet<AgroClimaticZone> cropClimateType,
         HolderSet<Block> applyTarget,
         HolderSet<CropGrowControlBuilder> parent,
         Optional<GrowParameter> defaultSolarTermGrowParameter,
@@ -57,14 +55,14 @@ public record CropGrowControlBuilder(
 
     // 输出的json与这里的排序有关，这里是六个，那么前三个将在后面，具体看情况，，但是基本都是对半分
     public static final Codec<CropGrowControlBuilder> CODEC = RecordCodecBuilder.create(ins -> ins.group(
-            GrowParameter.CODEC.optionalFieldOf("default").forGetter(CropGrowControlBuilder::defaultHumidityGrowParameter),
+            GrowParameter.CODEC.optionalFieldOf("humidity_default").forGetter(CropGrowControlBuilder::defaultHumidityGrowParameter),
             SOLAR_TERM_ENUM_MAP_CODEC.fieldOf("solar_terms").orElse(new EnumMap<>(SolarTerm.class)).forGetter(CropGrowControlBuilder::solarTermList),
             Season_ENUM_MAP_CODEC.fieldOf("seasons").orElse(new EnumMap<>(Season.class)).forGetter(CropGrowControlBuilder::seasonList),
             HUMID_ENUM_MAP_CODEC.fieldOf("humidity").orElse(new EnumMap<>(Humidity.class)).forGetter(CropGrowControlBuilder::humidList),
-            CodecUtil.holderSetCodec(ESRegistries.CROP_CLIMATE).fieldOf("climate").forGetter(CropGrowControlBuilder::cropClimateType),
+            CodecUtil.holderSetCodec(ESRegistries.AGRO_CLIMATE).fieldOf("climate").forGetter(CropGrowControlBuilder::cropClimateType),
             BLOCK_HOLDER_SET_CODEC.fieldOf("apply_target").forGetter(CropGrowControlBuilder::applyTarget),
             CodecUtil.holderSetCodec(ESRegistries.CROP).fieldOf("parent").orElse(EMPTY).forGetter(CropGrowControlBuilder::parent),
-            GrowParameter.CODEC.optionalFieldOf("default").forGetter(CropGrowControlBuilder::defaultSolarTermGrowParameter)
+            GrowParameter.CODEC.optionalFieldOf("season_default").forGetter(CropGrowControlBuilder::defaultSolarTermGrowParameter)
     ).apply(ins, (defaultGrowParameter2, solarTermGrowParameterEnumMap, seasonGrowParameterEnumMap, humidityGrowParameterEnumMap, holders, blockPredicate, holders2, defaultGrowParameter) ->
             new CropGrowControlBuilder(holders, blockPredicate, holders2, defaultGrowParameter, defaultGrowParameter2, solarTermGrowParameterEnumMap, seasonGrowParameterEnumMap, humidityGrowParameterEnumMap)
     ));
@@ -80,16 +78,16 @@ public record CropGrowControlBuilder(
     /**
      * We need to asure every crop info and climate type is matched.
      **/
-    public boolean isChildClimateType(HolderSet<CropClimateType> parent) {
+    public boolean isChildClimateType(HolderSet<AgroClimaticZone> parent) {
         if (cropClimateType().size() > parent().size()) return false;
         // not use stream!!! would create many objects.
-        Set<Holder<CropClimateType>> cropClimateTypes = new HashSet<>();
+        Set<Holder<AgroClimaticZone>> cropClimateTypes = new HashSet<>();
         for (int i = 0; i < parent.size(); i++) {
-            Holder<CropClimateType> cropClimateTypeHolder = parent.get(i);
+            Holder<AgroClimaticZone> cropClimateTypeHolder = parent.get(i);
             cropClimateTypes.add(cropClimateTypeHolder);
         }
         for (int i = 0; i < cropClimateType().size(); i++) {
-            Holder<CropClimateType> cropClimateTypeHolder = cropClimateType().get(i);
+            Holder<AgroClimaticZone> cropClimateTypeHolder = cropClimateType().get(i);
             if (!cropClimateTypes.contains(cropClimateTypeHolder))
                 return false;
         }
