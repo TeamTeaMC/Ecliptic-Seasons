@@ -67,6 +67,18 @@ public record CropGrowControlBuilder(
             new CropGrowControlBuilder(holders, blockPredicate, holders2, defaultGrowParameter, defaultGrowParameter2, solarTermGrowParameterEnumMap, seasonGrowParameterEnumMap, humidityGrowParameterEnumMap)
     ));
 
+    // note 1.20: 与1.21不同的是，数据包同步到客户端时Tag未准备好，此时呼叫HolderSet会导致无法进入服务器
+    // note 1.20: 与1.21不同的是，网络同步时无法使用HolderSet，原因是设计限制，如上
+    public static final Codec<CropGrowControlBuilder> DIRECT_CODEC = RecordCodecBuilder.create(ins -> ins.group(
+            GrowParameter.CODEC.optionalFieldOf("humidity_default").forGetter(CropGrowControlBuilder::defaultHumidityGrowParameter),
+            SOLAR_TERM_ENUM_MAP_CODEC.fieldOf("solar_terms").orElse(new EnumMap<>(SolarTerm.class)).forGetter(CropGrowControlBuilder::solarTermList),
+            Season_ENUM_MAP_CODEC.fieldOf("seasons").orElse(new EnumMap<>(Season.class)).forGetter(CropGrowControlBuilder::seasonList),
+            HUMID_ENUM_MAP_CODEC.fieldOf("humidity").orElse(new EnumMap<>(Humidity.class)).forGetter(CropGrowControlBuilder::humidList),
+            GrowParameter.CODEC.optionalFieldOf("season_default").forGetter(CropGrowControlBuilder::defaultSolarTermGrowParameter)
+    ).apply(ins, (defaultGrowParameter2, solarTermGrowParameterEnumMap, seasonGrowParameterEnumMap, humidityGrowParameterEnumMap, defaultGrowParameter) ->
+            new CropGrowControlBuilder(HolderSet.direct(), HolderSet.direct(), HolderSet.direct(), defaultGrowParameter, defaultGrowParameter2, solarTermGrowParameterEnumMap, seasonGrowParameterEnumMap, humidityGrowParameterEnumMap)
+    ));
+
 
     public SimplePair<Block, CropGrowControl> build() {
         SimplePair<Block, CropGrowControl> pair = SimplePair.of(null, null);

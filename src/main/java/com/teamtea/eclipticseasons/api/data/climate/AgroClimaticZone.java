@@ -49,6 +49,15 @@ public record AgroClimaticZone(HolderSet<Biome> biomes,
                     EITHER_MAP_CODEC.optionalFieldOf("mappings").forGetter(AgroClimaticZone::mapping)
             ).apply(builder, AgroClimaticZone::new));
 
+    // note 1.20: 与1.21不同的是，网络同步时无法使用HolderSet，原因是设计限制，CropGrowControlBuilder
+    // note 可见RegistryFixedCodec和ClientBoundLoginPacket
+    public static final Codec<AgroClimaticZone> DIRECT_CODEC =
+            RecordCodecBuilder.create(builder -> builder.group(
+                    GrowParameter.CODEC.optionalFieldOf("global").forGetter(AgroClimaticZone::growParameter),
+                    EITHER_PAIR_CODEC.optionalFieldOf("default_mapping").forGetter(AgroClimaticZone::defaultMapping),
+                    EITHER_MAP_CODEC.optionalFieldOf("mappings").forGetter(AgroClimaticZone::mapping)
+            ).apply(builder, ((global, default_mapping, mappings) -> new AgroClimaticZone(HolderSet.direct(),global,default_mapping,mappings))));
+
 
     public GrowParameter buildFromList(CropGrowControl deaultCropGrowControl, List<Map<Either<Season, SolarTerm>, Float>> list) {
         GrowParameter growParameterResult = null;

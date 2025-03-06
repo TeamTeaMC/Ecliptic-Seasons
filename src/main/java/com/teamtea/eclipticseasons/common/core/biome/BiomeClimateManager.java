@@ -121,4 +121,10 @@ public class BiomeClimateManager {
             }
         }
     }
+
+    public static void clearOnClientExitOrServerClose() {
+        BiomeClimateManager.BIOME_DEFAULT_TEMPERATURE_MAP.clear();
+        BiomeClimateManager.SMALL_BIOME_MAP.clear();
+        BiomeClimateManager.BIOME_TAG_KEY_MAP.clear();
+    }
 }

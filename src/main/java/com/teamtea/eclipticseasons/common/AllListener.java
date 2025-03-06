@@ -10,7 +10,6 @@ import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
 import com.teamtea.eclipticseasons.common.core.crop.CropInfoManager;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
-import com.teamtea.eclipticseasons.common.handler.CustomRandomTickHandler;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -25,6 +24,7 @@ import net.minecraftforge.event.entity.player.BonemealEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.level.*;
 import net.minecraftforge.event.server.ServerAboutToStartEvent;
+import net.minecraftforge.event.server.ServerStoppingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -49,6 +49,11 @@ public class AllListener {
         WeatherManager.NEXT_CHECK_BIOME_MAP.clear();
     }
 
+    @SubscribeEvent
+    public static void onServerStoppingEvent(ServerStoppingEvent event) {
+        CropGrowthHandler.clearOnClientExitOrServerClose();
+        BiomeClimateManager.clearOnClientExitOrServerClose();
+    }
 
     @SubscribeEvent
     public static void onSleepFinishedTimeEvent(SleepFinishedTimeEvent event) {

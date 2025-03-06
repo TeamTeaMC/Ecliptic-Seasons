@@ -8,7 +8,9 @@ import com.teamtea.eclipticseasons.client.map.ClientMapFixer;
 import com.teamtea.eclipticseasons.client.render.WorldRenderer;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
+import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
+import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.core.solar.ClientSolarDataManager;
 import com.teamtea.eclipticseasons.config.ClientConfig;
@@ -23,6 +25,7 @@ import net.minecraft.core.SectionPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
@@ -76,6 +79,13 @@ public final class ClientEventHandler {
             ClientMapFixer.clearAll();
             ClientCon.setUseLevel(null);
         }
+    }
+
+    @SubscribeEvent
+    public static void onPlayerExit(ClientPlayerNetworkEvent.LoggingOut event) {
+        MapChecker.blockTypeCache.clear();
+        CropGrowthHandler.clearOnClientExitOrServerClose();
+        BiomeClimateManager.clearOnClientExitOrServerClose();
     }
 
     // TODO:似乎未真正解决进入末地后更新失败的消息

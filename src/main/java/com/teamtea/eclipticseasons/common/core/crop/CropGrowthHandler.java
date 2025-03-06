@@ -42,7 +42,6 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.common.Tags;
 import net.minecraftforge.event.entity.player.BonemealEvent;
 import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.event.level.SaplingGrowTreeEvent;
@@ -265,30 +264,17 @@ public final class CropGrowthHandler {
         }
     }
 
-    public enum RoomStatus {
-        GREEN_HOUSE, NORMAL, UNKNOWN;
+    public static void clearOnClientExitOrServerClose() {
+        cropClimateTypeMap.clear();
+        CropGrowControlBuilder.clear();
+        CROP_GROW_MAP.clear();
+        DefaultCropClimateType.clear();
+        CropInfoManager.CROP_HUMIDITY_INFO.clear();
+        CropInfoManager.CROP_SEASON_INFO.clear();
     }
 
-    public enum CropSeason {
-        COLD, HOT, NORMAL;
-
-        public Season modifySeason(SolarTerm solarTerm) {
-            if (this != NORMAL) {
-                int ordinal = solarTerm.ordinal();
-                ordinal += (ordinal > 11.5 ? 1 : -1) * (this == COLD ? 1 : -1);
-                SolarTerm.collectValues()[(ordinal + 24) % 24].getSeason();
-            }
-            return solarTerm.getSeason();
-        }
-
-        public static CropSeason of(Level level, Holder<Biome> biome, BlockPos pos) {
-            if (biome.is(Tags.Biomes.IS_COLD)) {
-                return CropSeason.COLD;
-            } else if (biome.is(Tags.Biomes.IS_HOT)) {
-                return CropSeason.HOT;
-            }
-            return CropSeason.NORMAL;
-        }
+    public enum RoomStatus {
+        GREEN_HOUSE, NORMAL, UNKNOWN;
     }
 
     public static float getGrowChance(net.minecraftforge.eventbus.api.Event event, GrowParameter growParameter) {
