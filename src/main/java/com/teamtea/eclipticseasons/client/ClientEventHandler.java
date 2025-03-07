@@ -83,9 +83,11 @@ public final class ClientEventHandler {
 
     @SubscribeEvent
     public static void onPlayerExit(ClientPlayerNetworkEvent.LoggingOut event) {
-        MapChecker.blockTypeCache.clear();
-        CropGrowthHandler.clearOnClientExitOrServerClose();
-        BiomeClimateManager.clearOnClientExitOrServerClose();
+        if (Minecraft.getInstance().player != null) {
+            MapChecker.blockTypeCache.clear();
+            CropGrowthHandler.clearOnClientExitOrServerClose();
+            BiomeClimateManager.clearOnClientExitOrServerClose();
+        }
     }
 
     // TODO:似乎未真正解决进入末地后更新失败的消息

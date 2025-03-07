@@ -1,3 +1,6 @@
+## **0.10-pre10-2**
+- fix an issue with single player world data cache being lost due to clearing the cache at the wrong time.
+
 ## **0.10-pre10**
 
 - Fixed a server sync error in 0.10-pre8 caused by using a data pack that met the 1.21 requirements but was not designed for 1.20.
