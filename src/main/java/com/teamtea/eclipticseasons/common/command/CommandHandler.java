@@ -70,7 +70,7 @@ public class CommandHandler {
                                                 if (solarTerm != SolarTerm.NONE) {
                                                     MutableComponent translation = solarTerm.getTranslation();
                                                     String s = solarTerm.getName();
-                                                    if (s.toLowerCase().contains(finalPre.toLowerCase())) {
+                                                    if (s.contains(finalPre.toLowerCase(Locale.ROOT))) {
                                                         //  if (FMLLoader.getDist() == Dist.DEDICATED_SERVER)
                                                         //      builder.suggest(s, Component.translatable("%s%s%s",
                                                         //              translation.withStyle(solarTerm.getSeason().getColor()),

@@ -533,11 +533,11 @@ public final class CropGrowthHandler {
 
         boolean isInLight = level.getBrightness(LightLayer.SKY, pos.above()) > 12;
         if (isInLight) {
-            int height = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, pos.getX(), pos.getZ());
+            int height = level.getHeight(Heightmap.Types.MOTION_BLOCKING, pos.getX(), pos.getZ());
             if (height < pos.getY()) return false;
         }
         if (season == Season.SUMMER) {
-            if (isInLight && EclipticUtil.isDay((Level) level))
+            if (isInLight && EclipticUtil.isNoon((Level) level))
                 return false;
         }
         boolean isConnected = true;

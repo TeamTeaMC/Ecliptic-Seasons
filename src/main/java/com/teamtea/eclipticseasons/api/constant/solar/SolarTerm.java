@@ -15,6 +15,8 @@ import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.level.biome.Biome;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Locale;
+
 public enum SolarTerm implements StringRepresentable {
     // Spring Solar Terms
     BEGINNING_OF_SPRING(-0.25F, 10500),    // 立春
@@ -59,7 +61,7 @@ public enum SolarTerm implements StringRepresentable {
     }
 
     public String getName() {
-        return this.toString().toLowerCase();
+        return this.toString().toLowerCase(Locale.ROOT);
     }
 
     public MutableComponent getTranslation() {

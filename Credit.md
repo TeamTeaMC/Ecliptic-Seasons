@@ -17,3 +17,9 @@
 冬天的森林氛围 许可:CC0 作者:Caoilfhionn 来源:耳聆网 https://www.ear0.com/sound/14951
 
 寒冷冬天的实地录音 许可:CC0 作者:Robert 来源:耳聆网 https://www.ear0.com/sound/12239
+
+Wind Chime.wav by YevashenPillay -- https://freesound.org/s/655938/ -- License: Attribution 4.0
+
+bamboo_wind_chimes_2.wav by jppi_Stu -- https://freesound.org/s/17091/ -- License: Attribution 4.0
+
+CHIMES_Wooden Hollow Chimes Bamboo Chimes (SFX).wav by GuntherDorksen -- https://freesound.org/s/328059/ -- License: Attribution 3.0

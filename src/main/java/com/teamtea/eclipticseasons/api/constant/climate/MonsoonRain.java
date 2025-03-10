@@ -3,6 +3,8 @@ package com.teamtea.eclipticseasons.api.constant.climate;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 
+import java.util.Locale;
+
 public enum MonsoonRain implements BiomeRain {
     // Spring Solar Terms
     BEGINNING_OF_SPRING(),
@@ -55,7 +57,7 @@ public enum MonsoonRain implements BiomeRain {
     }
 
     public String getName() {
-        return this.toString().toLowerCase();
+        return this.toString().toLowerCase(Locale.ROOT);
     }
 
     @Override

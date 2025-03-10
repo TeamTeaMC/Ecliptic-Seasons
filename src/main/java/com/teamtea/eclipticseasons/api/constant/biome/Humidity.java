@@ -10,6 +10,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.world.level.biome.Biome;
 
+import java.util.Locale;
+
 public enum Humidity implements ITranslatable {
     ARID(ChatFormatting.RED, 0.9F),
     DRY(ChatFormatting.GOLD, 0.95F),
@@ -30,7 +32,7 @@ public enum Humidity implements ITranslatable {
     }
 
     public String getName() {
-        return this.toString().toLowerCase();
+        return this.toString().toLowerCase(Locale.ROOT);
     }
 
     @Override

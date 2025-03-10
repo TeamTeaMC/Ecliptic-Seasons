@@ -5,7 +5,7 @@ buildscript {
         maven { url = 'https://maven.parchmentmc.org' }
     }
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '6.+', changing: true
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '6.0.33+', changing: true
         classpath group: 'org.spongepowered', name: 'mixingradle', version: '0.7+'
 
         classpath group: 'org.parchmentmc', name: 'librarian', version: "1.+"
@@ -259,8 +259,9 @@ dependencies {
     compileOnly fg.deobf("curse.maven:touhou-little-maid-355044:6120178")
 //    onlyMainRuntimeOnly fg.deobf("curse.maven:touhou-little-maid-355044:6120178")
 
-    compileOnly fg.deobf("curse.maven:create-328085:6247663")
-//    onlyMainRuntimeOnly fg.deobf("curse.maven:create-328085:6247663")
+    implementation fg.deobf("curse.maven:hourglass-511172:4834578")
+
+    //    onlyMainRuntimeOnly fg.deobf("curse.maven:create-328085:6247663")
 //    onlyMainRuntimeOnly  fg.deobf("curse.maven:hourglass-511172:4834578")
 
     onlyMainRuntimeOnly fg.deobf("curse.maven:configured-457570:5180900")

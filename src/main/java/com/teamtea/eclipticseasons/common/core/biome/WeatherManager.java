@@ -454,6 +454,9 @@ public class WeatherManager {
 
             if (biomeWeather.shouldThunder()) {
                 biomeWeather.thunderTime--;
+                if (!biomeWeather.shouldRain()) {
+                    biomeWeather.thunderTime = 0;
+                }
             }
 
             if ((biomeWeather.shouldRain() || level.getRandom().nextInt(5) > 1)) {

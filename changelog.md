@@ -1,3 +1,9 @@
+## **0.10-pre10-3**
+- Use toLowerCase(Locale.ROOT) to avoid locale conversion.
+- Fixed an issue where `setThunder` might not function correctly when `SolarWeather` is not in use.
+- Fixed an issue with thundering weather when it's not raining.
+- Adjusted greenhouses in summer so that they only become inoperable at noon, rather than throughout the day.
+
 ## **0.10-pre10-2**
 - fix an issue with single player world data cache being lost due to clearing the cache at the wrong time.
 

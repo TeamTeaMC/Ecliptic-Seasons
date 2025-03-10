@@ -35,6 +35,7 @@ public record CropGrowControl(
     public GrowParameter getGrowParameter(Season season) {
         GrowParameter growParameter = base().seasonMap().getOrDefault(season, null);
         if (growParameter == null) {
+            if (season == Season.NONE) return base().solarTermsMap().getOrDefault(SolarTerm.NONE, null);
             float a_chance = 0;
             float b_chance = 0;
             float c_chance = 0;

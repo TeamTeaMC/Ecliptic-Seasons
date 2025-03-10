@@ -6,6 +6,8 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.StringRepresentable;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Locale;
+
 
 public enum Season implements StringRepresentable {
     SPRING(ChatFormatting.DARK_GREEN),
@@ -21,7 +23,7 @@ public enum Season implements StringRepresentable {
     }
 
     public String getName() {
-        return this.toString().toLowerCase();
+        return this.toString().toLowerCase(Locale.ROOT);
     }
 
     public MutableComponent getTranslation() {
