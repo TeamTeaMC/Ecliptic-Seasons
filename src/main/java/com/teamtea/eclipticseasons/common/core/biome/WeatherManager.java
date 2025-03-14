@@ -460,7 +460,7 @@ public class WeatherManager {
                 continue;
             if (true) {
                 float ramdomKey = level.getRandom().nextInt(1000) / 1000.f * 3;
-                BiomeRain biomeRain = SolarHolders.getSaveData(level).getSolarTerm().getBiomeRain(biomeWeather.biomeHolder);
+                BiomeRain biomeRain = solarTerm.getBiomeRain(biomeWeather.biomeHolder);
                 float downfall = biomeWeather.biomeHolder.value().getDownfall();
                 if (biomeWeather.biomeHolder.is(Tags.Biomes.IS_SAVANNA)) {
                     downfall += 0.2f;
@@ -476,7 +476,7 @@ public class WeatherManager {
                 }
                 if (biomeWeather.shouldRain()) {
                     weight = biomeRain.getThunderChance();
-                    if (level.getRandom().nextInt(1000) / 1000.f < weight) {
+                    if (ramdomKey < weight) {
                         biomeWeather.thunderTime = THUNDER_DURATION.sample(random) / size;
                     }
                 }

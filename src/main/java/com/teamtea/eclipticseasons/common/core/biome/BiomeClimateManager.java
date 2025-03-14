@@ -23,7 +23,7 @@ public class BiomeClimateManager {
         var biomes = registryAccess.registry(BuiltinRegistries.BIOME.key());
         biomes.ifPresent(biomeRegistry -> biomeRegistry.forEach(biome ->
         {
-            BIOME_DEFAULT_TEMPERATURE_MAP.put(biome, ((MixinBiomeAttach)(Object)biome).getBiomeClimateSettings().temperature);
+            BIOME_DEFAULT_TEMPERATURE_MAP.put(biome, ((MixinBiomeAttach) (Object) biome).getBiomeClimateSettings().temperature);
         }));
     }
 
@@ -42,8 +42,8 @@ public class BiomeClimateManager {
                 float temperature1 = ((MixinBiomeAttach) (Object) biome).getBiomeClimateSettings().temperature;
                 float temperature = temperature1 > SNOW_LEVEL ?
                         Math.max(SNOW_LEVEL + 0.001F, temperature1 + solarTermIndex.getTemperatureChange()) :
-                        Math.min(SNOW_LEVEL,temperature1+ solarTermIndex.getTemperatureChange());
-                BIOME_DEFAULT_TEMPERATURE_MAP.put(biome,temperature);
+                        Math.min(SNOW_LEVEL, temperature1 + solarTermIndex.getTemperatureChange());
+                BIOME_DEFAULT_TEMPERATURE_MAP.put(biome, temperature);
 
             });
         }
@@ -64,6 +64,6 @@ public class BiomeClimateManager {
     }
 
     public static boolean agent$hasPrecipitation(Biome biome) {
-       return ! EclipticTagTool.getTag(biome).equals(SeasonTypeBiomeTags.RAINLESS);
+        return !EclipticTagTool.getTag(biome).equals(SeasonTypeBiomeTags.RAINLESS);
     }
 }

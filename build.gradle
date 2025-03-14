@@ -222,7 +222,7 @@ dependencies {
 //    onlyMainRuntimeOnly fg.deobf("curse.maven:cold-sweat-506194:6189563")
 
     compileOnly fg.deobf("curse.maven:fbp-renewed-937011:5895334")
-    onlyMainRuntimeOnly fg.deobf("curse.maven:fbp-renewed-937011:5895334")
+//    onlyMainRuntimeOnly fg.deobf("curse.maven:fbp-renewed-937011:5895334")
 
     onlyMainRuntimeOnly fg.deobf("curse.maven:spark-361579:4505375")
 
