@@ -6,6 +6,7 @@ import com.teamtea.eclipticseasons.api.constant.solar.color.*;
 import com.teamtea.eclipticseasons.api.constant.tag.SeasonTypeBiomeTags;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.misc.SimplePair;
+import com.teamtea.eclipticseasons.mixin.common.MixinBiomeAttach;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
@@ -152,27 +153,27 @@ public enum SolarTerm {
 
     public static SnowTerm getSnowTerm(Biome biome) {
         if (biome == null) return SnowTerm.T05;
-        else if (BiomeClimateManager.getDefaultTemperature(biome) > 0.95 + 0.001f) {
+        else if (((MixinBiomeAttach) (Object) biome).getBiomeClimateSettings().temperature  > 0.95 + 0.001f) {
             return SnowTerm.T1;
-        } else if (BiomeClimateManager.getDefaultTemperature(biome) > 0.8 + 0.001f) {
+        } else if (((MixinBiomeAttach) (Object) biome).getBiomeClimateSettings().temperature  > 0.8 + 0.001f) {
             return SnowTerm.T08;
-        } else if (BiomeClimateManager.getDefaultTemperature(biome) > 0.6 + 0.001f) {
+        } else if (((MixinBiomeAttach) (Object) biome).getBiomeClimateSettings().temperature  > 0.6 + 0.001f) {
             return SnowTerm.T06;
-        } else if (BiomeClimateManager.getDefaultTemperature(biome) > 0.5 + 0.001f) {
+        } else if (((MixinBiomeAttach) (Object) biome).getBiomeClimateSettings().temperature  > 0.5 + 0.001f) {
             return SnowTerm.T05;
-        } else if (BiomeClimateManager.getDefaultTemperature(biome) > 0.4 + 0.001f) {
+        } else if (((MixinBiomeAttach) (Object) biome).getBiomeClimateSettings().temperature  > 0.4 + 0.001f) {
             return SnowTerm.T04;
-        } else if (BiomeClimateManager.getDefaultTemperature(biome) > 0.3 + 0.001f) {
+        } else if (((MixinBiomeAttach) (Object) biome).getBiomeClimateSettings().temperature  > 0.3 + 0.001f) {
             return SnowTerm.T03;
-        } else if (BiomeClimateManager.getDefaultTemperature(biome) > 0.2 + 0.001f) {
+        } else if (((MixinBiomeAttach) (Object) biome).getBiomeClimateSettings().temperature  > 0.2 + 0.001f) {
             return SnowTerm.T02;
-        } else if (BiomeClimateManager.getDefaultTemperature(biome) > 0.15 + 0.001f) {
+        } else if (((MixinBiomeAttach) (Object) biome).getBiomeClimateSettings().temperature  > 0.15 + 0.001f) {
             return SnowTerm.T015;
-        } else if (BiomeClimateManager.getDefaultTemperature(biome) > 0.1 + 0.001f) {
+        } else if (((MixinBiomeAttach) (Object) biome).getBiomeClimateSettings().temperature  > 0.1 + 0.001f) {
             return SnowTerm.T01;
-        } else if (BiomeClimateManager.getDefaultTemperature(biome) > 0.05 + 0.001f) {
+        } else if (((MixinBiomeAttach) (Object) biome).getBiomeClimateSettings().temperature  > 0.05 + 0.001f) {
             return SnowTerm.T05;
-        } else if (BiomeClimateManager.getDefaultTemperature(biome) > 0.01 + 0.001f) {
+        } else if (((MixinBiomeAttach) (Object) biome).getBiomeClimateSettings().temperature  > 0.01 + 0.001f) {
             return SnowTerm.T001;
         }
         return SnowTerm.T0;

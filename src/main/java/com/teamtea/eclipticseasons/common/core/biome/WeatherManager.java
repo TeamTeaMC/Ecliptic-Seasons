@@ -459,9 +459,8 @@ public class WeatherManager {
                 continue;
             if (true) {
                 float ramdomKey = level.getRandom().nextInt(1000) / 1000.f * 3;
-                BiomeRain biomeRain = SolarHolders.getSaveData(level).getSolarTerm().getBiomeRain(biomeWeather.getBiomeKey());
+                BiomeRain biomeRain = solarTerm.getBiomeRain(biomeWeather.getBiomeKey());
                 float downfall = biomeWeather.biomeHolder.getDownfall();
-
 
                 if (BiomeDictionary.getTypes(biomeWeather.getBiomeKey()).contains(BiomeDictionary.Type.SAVANNA)) {
                     downfall += 0.2f;
