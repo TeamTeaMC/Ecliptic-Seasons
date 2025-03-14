@@ -39,12 +39,11 @@ public class SolarDataManager extends SavedData {
         setSolarTermsTicks(nbt.getInt("SolarTermsTicks"));
         var listTag = nbt.getList("biomes", Tag.TAG_COMPOUND);
         if (levelWeakReference.get() != null) {
-            var biomeWeathers =WeatherManager.getBiomeList(levelWeakReference.get());
+            var biomeWeathers = WeatherManager.getBiomeList(levelWeakReference.get());
             for (int i = 0; i < listTag.size(); i++) {
                 var location = listTag.getCompound(i).getString("biome");
                 for (WeatherManager.BiomeWeather biomeWeather : biomeWeathers) {
-                    if (location.equals(biomeWeather.location.toString()))
-                    {
+                    if (location.equals(biomeWeather.location.toString())) {
                         biomeWeather.deserializeNBT(listTag.getCompound(i));
                         break;
                     }
@@ -67,11 +66,15 @@ public class SolarDataManager extends SavedData {
         compound.put("biomes", listTag);
         return compound;
     }
-    
+
     public static SolarDataManager get(ServerLevel serverLevel) {
         DimensionDataStorage storage = serverLevel.getDataStorage();
         return storage.computeIfAbsent((compoundTag) -> new SolarDataManager(serverLevel, compoundTag),
-                () -> new SolarDataManager(serverLevel), EclipticSeasons.MODID);
+                () -> {
+                    SolarDataManager manager = new SolarDataManager(serverLevel);
+                    WeatherManager.initNewWorldWeather(serverLevel, serverLevel.random, manager.getSolarTerm());
+                    return manager;
+                }, EclipticSeasons.MODID);
     }
 
 
@@ -80,8 +83,7 @@ public class SolarDataManager extends SavedData {
         int dayTime = Math.toIntExact(world.getDayTime() % 24000);
         if (solarTermsTicks > dayTime + 100) {
             solarTermsDay++;
-
-            BiomeClimateManager.updateTemperature(world, getSolarTermIndex());
+            BiomeClimateManager.updateTemperature(world, getSolarTerm());
             sendUpdateMessage(world);
         }
         solarTermsTicks = dayTime;
@@ -91,7 +93,7 @@ public class SolarDataManager extends SavedData {
     }
 
     public int getSolarTermIndex() {
-        return (solarTermsDay / CommonConfig.Season.lastingDaysOfEachTerm.get()) % 24;
+        return (getSolarTermsDay() / CommonConfig.Season.lastingDaysOfEachTerm.get() + 24) % 24;
     }
 
     public SolarTerm getSolarTerm() {
@@ -121,12 +123,11 @@ public class SolarDataManager extends SavedData {
         for (ServerPlayer player : world.players()) {
             SimpleNetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), new SolarTermsMessage(this.getSolarTermsDay()));
             if (CommonConfig.Season.enableInform.get()
-                    &&getSolarTermsDay() % CommonConfig.Season.lastingDaysOfEachTerm.get() == 0) {
+                    && getSolarTermsDay() % CommonConfig.Season.lastingDaysOfEachTerm.get() == 0) {
                 player.sendSystemMessage(Component.translatable("info.eclipticseasons.environment.solar_term.message", SolarTerm.get(getSolarTermIndex()).getAlternationText()), false);
             }
         }
     }
-
 
 
 }
