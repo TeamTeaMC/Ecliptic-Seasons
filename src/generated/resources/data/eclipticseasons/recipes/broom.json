@@ -7,7 +7,7 @@
       "item": "minecraft:hay_block"
     },
     "r": {
-      "item": "minecraft:stick"
+      "tag": "forge:rods/wooden"
     }
   },
   "pattern": [

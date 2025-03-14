@@ -10,7 +10,7 @@
       "item": "minecraft:book"
     },
     "z": {
-      "item": "minecraft:feather"
+      "tag": "forge:feathers"
     }
   },
   "pattern": [

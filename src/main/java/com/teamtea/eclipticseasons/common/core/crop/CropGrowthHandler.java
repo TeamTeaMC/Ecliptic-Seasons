@@ -544,7 +544,7 @@ public final class CropGrowthHandler {
 
 
         int maxDistance = CommonConfig.Crop.greenHouseMaxDiameter.get();
-        int y_maxDistance = Math.max(7, maxDistance / 2);
+        int y_maxDistance = CommonConfig.Crop.greenHouseMaxHeight.get();
         Vec3 centerVec = pos.getCenter();
         Vec3[] vec3s = CommonConfig.Crop.complexGreenHouseCheck.get() ?
                 CHECK_DIRECTIONS : CHECK_DIRECTIONS_SIMPLE;
@@ -575,7 +575,7 @@ public final class CropGrowthHandler {
 
         // TODO:qucikly for windows green house
         if (isConnected && !isInLight) {
-            isConnected = level.getRandom().nextInt(5) > 0;
+            isConnected = level.getRandom().nextInt(10000) > CommonConfig.Crop.darkGreenhouseFailChance.get();
         }
         return isConnected;
     }

@@ -1,8 +1,25 @@
+## **0.10-pre11**
+### Fixes
+- Fixed an issue in the 0.10-pre6 update where biome temperature adjustments during world generation could prevent snow from generating in cold biomes in multiplayer games.
+- Resolved a problem where special creature particles and related sound effects would appear during snow in some cold biomes during spring and summer.
+
+### Additions
+- Added initialization of biome-related weather data during world initialization or when joining a mod for the first time. Now, if certain biomes can snow or have just ended a snow cycle upon login, snow overlay decorations will be visible. Additionally, the probability of initial weather being sunny has been increased.
+- Added two configurations related to greenhouse determination.
+- `SolarDay` can now be set to a negative value, potentially offering an experience akin to BCE (Before Common Era).
+- Replaced some recipe `Item` references with `Item Tag` to improve compatibility.
+
+### Removals
+- Removed redundant temperature checks in weather calculations.
+
+---
+
 ## **0.10-pre10-3**
 - Use toLowerCase(Locale.ROOT) to avoid locale conversion.
 - Fixed an issue where `setThunder` might not function correctly when `SolarWeather` is not in use.
 - Fixed an issue with thundering weather when it's not raining.
 - Adjusted greenhouses in summer so that they only become inoperable at noon, rather than throughout the day.
+- Adjusted the ResourceOrTagArgument.Result used by Ecliptic Seasons when issuing the proxy weather command to be dynamically created and return a non-null value.
 
 ## **0.10-pre10-2**
 - fix an issue with single player world data cache being lost due to clearing the cache at the wrong time.

@@ -122,6 +122,9 @@ public class CommonConfig {
         public static ForgeConfigSpec.DoubleValue cropGrowChanceInWrongHumidity;
         public static ForgeConfigSpec.BooleanValue enableCropHumidityControl;
         public static ForgeConfigSpec.IntValue greenHouseMaxDiameter;
+        public static ForgeConfigSpec.IntValue greenHouseMaxHeight;
+        public static ForgeConfigSpec.IntValue darkGreenhouseFailChance;
+
         public static ForgeConfigSpec.BooleanValue complexGreenHouseCheck;
         public static ForgeConfigSpec.BooleanValue useDefaultValue;
 
@@ -137,6 +140,11 @@ public class CommonConfig {
                     .defineInRange("CropGrowChanceInWrongHumidity", 0.25, 0.0001, 0.9999);
             greenHouseMaxDiameter = builder.comment("The maximum effective diameter of the greenhouse.")
                     .defineInRange("GreenHouseMaxDiameter", 32, 5, 256);
+            greenHouseMaxHeight =builder.comment("The maximum effective diameter of the greenhouse.")
+                    .defineInRange("GreenHouseMaxDiameter", 10, 3, 128);
+            darkGreenhouseFailChance = builder.comment("The possibility of crops not growing when there is insufficient sunlight in green house.")
+                    .defineInRange("DarkGreenhouseFailChance", 2000, 0, 10000);
+
             complexGreenHouseCheck = builder.comment("Whether to enable complex shape checking.")
                     .define("ComplexGreenHouseCheck", true);
             useDefaultValue = builder.comment("If a crop is not registered for a season or humid type, default values will be used.")

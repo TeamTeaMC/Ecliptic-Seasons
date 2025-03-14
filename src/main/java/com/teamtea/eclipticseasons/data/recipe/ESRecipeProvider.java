@@ -11,6 +11,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.crafting.CompoundIngredient;
 import net.minecraftforge.common.crafting.PartialNBTIngredient;
 import net.minecraftforge.common.crafting.StrictNBTIngredient;
@@ -29,7 +30,7 @@ public final class ESRecipeProvider extends RecipeProvider {
         ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, ItemRegistry.calendar_item.get())
                 .define('x', Items.PAPER)
                 .define('y', Items.BOOK)
-                .define('z', Items.FEATHER)
+                .define('z', Tags.Items.FEATHERS)
                 .pattern("xx")
                 .pattern("yz")
                 .group("calendar")
@@ -37,9 +38,9 @@ public final class ESRecipeProvider extends RecipeProvider {
                 .save(consumer);
 
         ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ItemRegistry.hyetometer.get())
-                .define('x', Items.REDSTONE)
+                .define('x', Tags.Items.DUSTS_REDSTONE)
                 .define('y', Items.GLASS_BOTTLE)
-                .define('z', Items.COPPER_INGOT)
+                .define('z', Tags.Items.INGOTS_COPPER)
                 .pattern("xz")
                 .pattern(" y")
                 .group("hyetometer")
@@ -47,7 +48,7 @@ public final class ESRecipeProvider extends RecipeProvider {
                 .save(consumer);
 
         ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ItemRegistry.thermometer.get())
-                .define('x', Items.REDSTONE)
+                .define('x', Tags.Items.DUSTS_REDSTONE)
                 .define('y', PartialNBTIngredient.of(PotionUtils.setPotion(Items.POTION.getDefaultInstance(), Potions.WATER).getOrCreateTag(), Items.POTION))
                 .pattern(" x")
                 .pattern("y ")
@@ -55,19 +56,19 @@ public final class ESRecipeProvider extends RecipeProvider {
                 .unlockedBy("has_glass", has(Items.GLASS_BOTTLE))
                 .save(consumer);
         ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ItemRegistry.hygrometer.get())
-                .define('x', Items.AMETHYST_SHARD)
+                .define('x', Tags.Items.GEMS_AMETHYST)
                 .define('y', ItemRegistry.thermometer.get())
                 .define('z', ItemRegistry.hyetometer.get())
                 .pattern(" x ")
                 .pattern("xyx")
                 .pattern(" z ")
                 .group("hygrometer")
-                .unlockedBy("has_amethyst", has(Items.AMETHYST_SHARD))
+                .unlockedBy("has_amethyst", has(Tags.Items.GEMS_AMETHYST))
                 .save(consumer);
 
         ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ItemRegistry.broom.get())
                 .define('h', Items.HAY_BLOCK)
-                .define('r', Items.STICK)
+                .define('r', Tags.Items.RODS_WOODEN)
                 .pattern(" h")
                 .pattern("r ")
                 .group("broom")

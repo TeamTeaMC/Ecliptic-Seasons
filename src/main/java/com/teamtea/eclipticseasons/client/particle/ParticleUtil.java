@@ -1,5 +1,6 @@
 package com.teamtea.eclipticseasons.client.particle;
 
+import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.client.util.ColorHelper;
 import com.teamtea.eclipticseasons.common.registry.ParticleRegistry;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
@@ -90,7 +91,7 @@ public class ParticleUtil {
                 && ClientCon.isDay
         ) {
             if (blockstate.is(EclipticBlockTags.HABITAT_BUTTERFLY)
-                    && !clientLevel.isRainingAt(blockpos$mutableblockpos)
+                    && !EclipticSeasonsApi.getInstance().isRainOrSnowAt(clientLevel, blockpos$mutableblockpos)
                     && clientLevel.canSeeSky(blockpos$mutableblockpos)
                     && random.nextInt(1024 * (int) (ClientConfig.Particle.butterflySpawnWeight.get() * 0.1f)) == 0
             ) {
@@ -102,7 +103,7 @@ public class ParticleUtil {
                 && ClientCon.isEvening
         ) {
             if (blockstate.is(EclipticBlockTags.HABITAT_FIREFLY)
-                    && !clientLevel.isRainingAt(blockpos$mutableblockpos)
+                    && !EclipticSeasonsApi.getInstance().isRainOrSnowAt(clientLevel, blockpos$mutableblockpos)
                     && clientLevel.canSeeSky(blockpos$mutableblockpos)
                     && random.nextInt(160 * (int) (ClientConfig.Particle.fireflySpawnWeight.get() * 0.1f)) == 0
             ) {
@@ -115,7 +116,7 @@ public class ParticleUtil {
                 && ClientCon.isNoon
                 && clientLevel.canSeeSky(blockpos$mutableblockpos)
                 && clientLevel.isEmptyBlock(blockpos$mutableblockpos)
-                && !clientLevel.isRainingAt(blockpos$mutableblockpos)
+                && !EclipticSeasonsApi.getInstance().isRainAt(clientLevel, blockpos$mutableblockpos)
                 && clientLevel.getBiome(blockpos$mutableblockpos).value().getBaseTemperature() < 0.95f
                 && random.nextInt(2295 * (int) (ClientConfig.Particle.wildGooseSpawnWeight.get() * 0.1f)) == 0) {
             clientLevel.addParticle(ParticleRegistry.WILD_GOOSE, false, x + random.nextInt(16, 16 * 2) * (random.nextBoolean() ? -1 : 1), y + random.nextInt(15, 16 * 2), z + random.nextInt(16, 16 * 2) * (random.nextBoolean() ? -1 : 1), 0.0D, 5.0E-4D, 0.0D);

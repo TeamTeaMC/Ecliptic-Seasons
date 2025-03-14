@@ -4,7 +4,7 @@
   "group": "hygrometer",
   "key": {
     "x": {
-      "item": "minecraft:amethyst_shard"
+      "tag": "forge:gems/amethyst"
     },
     "y": {
       "item": "eclipticseasons:thermometer"

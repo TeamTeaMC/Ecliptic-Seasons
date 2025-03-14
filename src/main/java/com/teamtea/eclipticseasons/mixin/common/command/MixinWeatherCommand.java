@@ -18,7 +18,8 @@ public class MixinWeatherCommand {
     private static void mixin$setClear(CommandSourceStack sourceStack, int p_139174_, CallbackInfoReturnable<Integer> cir) {
         if (EclipticUtil.useSolarWeather()) {
             try {
-                CommandHandler.setBiomeRain(sourceStack, CommandHandler.ALL_BIOME_RESULT, false, false);
+
+                CommandHandler.setBiomeRain(sourceStack, CommandHandler.createAllResult(sourceStack.registryAccess()), false, false);
                 cir.setReturnValue(0);
             } catch (CommandSyntaxException e) {
                 e.printStackTrace();
@@ -31,7 +32,7 @@ public class MixinWeatherCommand {
     private static void mixin$setRain(CommandSourceStack sourceStack, int p_139174_, CallbackInfoReturnable<Integer> cir) {
         if (EclipticUtil.useSolarWeather()) {
             try {
-                CommandHandler.setBiomeRain(sourceStack, CommandHandler.ALL_BIOME_RESULT, true, false);
+                CommandHandler.setBiomeRain(sourceStack, CommandHandler.createAllResult(sourceStack.registryAccess()), true, false);
                 cir.setReturnValue(0);
             } catch (CommandSyntaxException e) {
                 e.printStackTrace();
@@ -44,7 +45,7 @@ public class MixinWeatherCommand {
     private static void mixin$setThunder(CommandSourceStack sourceStack, int p_139174_, CallbackInfoReturnable<Integer> cir) {
         if (EclipticUtil.useSolarWeather()) {
             try {
-                CommandHandler.setBiomeRain(sourceStack, CommandHandler.ALL_BIOME_RESULT, true, true);
+                CommandHandler.setBiomeRain(sourceStack, CommandHandler.createAllResult(sourceStack.registryAccess()), true, true);
                 cir.setReturnValue(0);
             } catch (CommandSyntaxException e) {
                 e.printStackTrace();

@@ -68,15 +68,13 @@ public class AllListener {
 
     @SubscribeEvent
     public static void onLevelLoad(LevelEvent.Load event) {
-        if (event.getLevel() instanceof ServerLevel serverLevel) {
-            WeatherManager.createLevelBiomeWeatherList(serverLevel);
-            // 这里需要恢复一下数据
-            // 客户端登录时同步天气数据，此处先放入
-            SolarHolders.createSaveData(serverLevel, SolarDataManager.get(serverLevel));
-        }
         if (event.getLevel() instanceof Level level) {
             if (CommonConfig.Season.validDimensions.get().contains(level.dimension().location().toString()))
                 MapChecker.validDimension.add(level);
+        }
+        if (event.getLevel() instanceof ServerLevel serverLevel) {
+            WeatherManager.createLevelBiomeWeatherList(serverLevel);
+            SolarHolders.createSaveData(serverLevel, SolarDataManager.get(serverLevel));
         }
     }
 

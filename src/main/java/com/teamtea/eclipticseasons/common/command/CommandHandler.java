@@ -17,6 +17,7 @@ import net.minecraft.commands.arguments.ResourceOrTagArgument;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -28,6 +29,7 @@ import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import com.teamtea.eclipticseasons.EclipticSeasons;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -175,28 +177,40 @@ public class CommandHandler {
         return getDay(source.getLevel());
     }
 
+    public static ResourceOrTagArgument.Result<Biome> createAllResult(RegistryAccess registryAccess) {
+        Registry<Biome> biomes = registryAccess.registryOrThrow(Registries.BIOME);
+        return new crs(biomes.getHolder(0).orElse(null));
+    }
 
-    public static final ResourceOrTagArgument.Result<Biome> ALL_BIOME_RESULT = new ResourceOrTagArgument.Result<Biome>() {
+    // todo would it cause any crash?
+    private record crs(Holder.Reference<Biome> biomeReference) implements ResourceOrTagArgument.Result<Biome> {
         @Override
         public boolean test(Holder<Biome> biomeHolder) {
             return true;
         }
 
         @Override
-        public Either<Holder.Reference<Biome>, HolderSet.Named<Biome>> unwrap() {
-            return null;
+        public @NotNull Either<Holder.Reference<Biome>, HolderSet.Named<Biome>> unwrap() {
+            try {
+                throw new IllegalCallerException("Should not call the method because it just use for internal.");
+            } catch (IllegalCallerException e) {
+                e.printStackTrace();
+            }
+            return Either.left(biomeReference);
         }
 
         @Override
-        public <E> Optional<ResourceOrTagArgument.Result<E>> cast(ResourceKey<? extends Registry<E>> p_249572_) {
+        public <E> @NotNull Optional<ResourceOrTagArgument.Result<E>> cast(@NotNull ResourceKey<? extends Registry<E>> p_249572_) {
             return Optional.empty();
         }
 
         @Override
-        public String asPrintable() {
-            return null;
+        public @NotNull String asPrintable() {
+            return EclipticSeasons.rl("all").toLanguageKey("ResourceOrTagArgument.Result");
         }
-    };
+    }
+
+    ;
 
 
     // InputStream inputStream;

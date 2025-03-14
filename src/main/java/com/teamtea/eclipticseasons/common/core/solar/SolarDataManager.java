@@ -87,7 +87,11 @@ public class SolarDataManager extends SavedData {
     public static SolarDataManager get(ServerLevel serverLevel) {
         DimensionDataStorage storage = serverLevel.getDataStorage();
         return storage.computeIfAbsent((compoundTag) -> new SolarDataManager(serverLevel, compoundTag),
-                () -> new SolarDataManager(serverLevel), EclipticSeasons.MODID);
+                () -> {
+                    SolarDataManager manager = new SolarDataManager(serverLevel);
+                    WeatherManager.initNewWorldWeather(serverLevel, serverLevel.random, manager.getSolarTerm());
+                    return manager;
+                }, EclipticSeasons.MODID);
     }
 
 
@@ -108,7 +112,7 @@ public class SolarDataManager extends SavedData {
     }
 
     public int getSolarTermIndex() {
-        return (solarTermsDay / CommonConfig.Season.lastingDaysOfEachTerm.get()) % 24;
+        return (getSolarTermsDay() / CommonConfig.Season.lastingDaysOfEachTerm.get()+24) % 24;
     }
 
     public SolarTerm getSolarTerm() {

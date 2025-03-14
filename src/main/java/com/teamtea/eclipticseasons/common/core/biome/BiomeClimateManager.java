@@ -2,6 +2,7 @@ package com.teamtea.eclipticseasons.common.core.biome;
 
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.constant.tag.ClimateTypeBiomeTags;
+import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.RegistryAccess;
@@ -65,7 +66,7 @@ public class BiomeClimateManager {
     }
 
     // it's hard to check the
-    public static Float agent$GetBaseTemperature(Biome biome) {
+    public static float agent$GetBaseTemperature(Biome biome) {
         // if (f == DEFAULT_TEMPERATURE) {
         //     float f2 = getDefaultTemperature(biome, false);
         //     f = f2 != f ? f2 : f;
@@ -73,7 +74,17 @@ public class BiomeClimateManager {
         return getDefaultTemperature(biome, true);
     }
 
-    public static Boolean agent$hasPrecipitation(Biome biome) {
+    public static float fixTemp(Level level, Biome biome, float temp) {
+        SolarTerm solarTermIndex = EclipticUtil.getNowSolarTerm(level);
+        float temperatureBiome = biome.getModifiedClimateSettings().temperature();
+        float temperatureGround = temperatureBiome > SNOW_LEVEL ?
+                Math.max(SNOW_LEVEL + 0.001F, temperatureBiome + solarTermIndex.getTemperatureChange()) :
+                Math.min(SNOW_LEVEL, temperatureBiome + solarTermIndex.getTemperatureChange());
+        temp += -temperatureGround + temperatureBiome;
+        return temp;
+    }
+
+    public static boolean agent$hasPrecipitation(Biome biome) {
         // return !getTag(biome).equals(ClimateTypeBiomeTags.RAINLESS);
         return getTag(biome) != ClimateTypeBiomeTags.RAINLESS;
     }

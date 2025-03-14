@@ -259,7 +259,8 @@ public class WeatherManager {
                     var snowTerm = SolarTerm.getSnowTerm(biome);
                     boolean flag_cold = solarTerm.isInTerms(snowTerm.getStart(), snowTerm.getEnd());
                     return flag_cold
-                            || BiomeClimateManager.getDefaultTemperature(biome, level instanceof ServerLevel) <= BiomeClimateManager.SNOW_LEVEL ?
+                            // || BiomeClimateManager.getDefaultTemperature(biome, level instanceof ServerLevel) <= BiomeClimateManager.SNOW_LEVEL
+                            ?
                             Biome.Precipitation.SNOW : Biome.Precipitation.RAIN;
                 }
             }
@@ -298,7 +299,8 @@ public class WeatherManager {
                     //     return Biome.Precipitation.NONE;
 
                     return flag_cold
-                            || BiomeClimateManager.getDefaultTemperature(biome, levelNull instanceof ServerLevel) <= BiomeClimateManager.SNOW_LEVEL ?
+                            // || BiomeClimateManager.getDefaultTemperature(biome, levelNull instanceof ServerLevel) <= BiomeClimateManager.SNOW_LEVEL
+                            ?
                             Biome.Precipitation.SNOW : Biome.Precipitation.RAIN;
                 }
             }
@@ -469,6 +471,57 @@ public class WeatherManager {
             }
         } else {
             VanillaWeather.runVanillaSnowyWeather(level, biomeWeather, random, size);
+        }
+    }
+
+    public static void initNewWorldWeather(ServerLevel level, RandomSource random, SolarTerm solarTerm) {
+        if(level.isClientSide()|| !MapChecker.isValidDimension(level)){
+            return;
+        }
+        ArrayList<BiomeWeather> biomeList = getBiomeList(level);
+        if (biomeList == null) return;
+
+        int size = (int) (biomeList.size() * (Mth.clamp(7f / CommonConfig.Season.lastingDaysOfEachTerm.get(), 0.8f, 3f)));
+        SolarTerm lastSolarTerm =
+                solarTerm == SolarTerm.NONE ? SolarTerm.NONE :
+                        SolarTerm.collectValues()[(solarTerm.ordinal() - 1 + 24) % 24];
+        for (BiomeWeather biomeWeather : biomeList) {
+            if (!biomeWeather.biomeHolder.value().hasPrecipitation())
+                continue;
+            if (EclipticUtil.useSolarWeather()) {
+                float ramdomKey = level.getRandom().nextInt(1000) / 1000.f * 3;
+                BiomeRain biomeRain = solarTerm.getBiomeRain(biomeWeather.biomeHolder);
+                float downfall = biomeWeather.biomeHolder.value().getModifiedClimateSettings().downfall();
+                if (biomeWeather.biomeHolder.is(BiomeTags.IS_SAVANNA)) {
+                    downfall += 0.2f;
+                }
+                float weight = biomeRain.getRainChane()
+                        * Math.max(0.01f, downfall)
+                        * ((CommonConfig.Weather.rainChanceMultiplier.get() * 1f) / 100f);
+                if (ramdomKey < weight) {
+                    biomeWeather.rainTime = ServerLevel.RAIN_DURATION.sample(random) / size;
+                } else {
+                    biomeWeather.clearTime = ServerLevel.RAIN_DURATION.sample(random) / size;
+                }
+                if (biomeWeather.shouldRain()) {
+                    weight = biomeRain.getThunderChance()
+                            * ((CommonConfig.Weather.thunderChanceMultiplier.get() * 1f) / 100f);
+                    if (ramdomKey / 1000.f < weight) {
+                        biomeWeather.thunderTime = ServerLevel.THUNDER_DURATION.sample(random) / size;
+                    }
+                }
+            }
+
+            SnowTerm snowTerm = SolarTerm.getSnowTerm(biomeWeather.biomeHolder.value(), !level.isClientSide());
+            boolean flag_cold = solarTerm.isInTerms(snowTerm.getStart(), snowTerm.getEnd());
+            boolean flag_little_cold = lastSolarTerm.isInTerms(snowTerm.getStart(), snowTerm.getEnd());
+            SnowRenderStatus snow = flag_cold ? SnowRenderStatus.SNOW :
+                    flag_little_cold ? SnowRenderStatus.SNOW_MELT : SnowRenderStatus.NONE;
+            if (snow == SnowRenderStatus.SNOW) {
+                biomeWeather.snowDepth = 100;
+            } else if (snow == SnowRenderStatus.SNOW_MELT) {
+                biomeWeather.snowDepth = (byte) random.nextInt(50);
+            } else biomeWeather.snowDepth = 0;
         }
     }
 

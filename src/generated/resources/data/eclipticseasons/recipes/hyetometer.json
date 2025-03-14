@@ -4,13 +4,13 @@
   "group": "hyetometer",
   "key": {
     "x": {
-      "item": "minecraft:redstone"
+      "tag": "forge:dusts/redstone"
     },
     "y": {
       "item": "minecraft:glass_bottle"
     },
     "z": {
-      "item": "minecraft:copper_ingot"
+      "tag": "forge:ingots/copper"
     }
   },
   "pattern": [

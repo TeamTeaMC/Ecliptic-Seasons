@@ -4,7 +4,7 @@
   "group": "thermometer",
   "key": {
     "x": {
-      "item": "minecraft:redstone"
+      "tag": "forge:dusts/redstone"
     },
     "y": {
       "type": "forge:partial_nbt",
