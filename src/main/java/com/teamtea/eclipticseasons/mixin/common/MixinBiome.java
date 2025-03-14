@@ -13,6 +13,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.biome.Biome;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -38,7 +39,7 @@ public abstract class MixinBiome {
     public float eclipticseasons$warmEnoughToRain(float original) {
         Level level = WeatherManager.fetchLevelIfNull(null);
         if (level != null)
-            original -= EclipticUtil.getNowSolarTerm(level).getTemperatureChange();
+            original = BiomeClimateManager.fixTemp(level, (Biome) (Object) this, original);
         return original;
     }
 
@@ -46,8 +47,16 @@ public abstract class MixinBiome {
             target = "Lnet/minecraft/world/level/biome/Biome;warmEnoughToRain(Lnet/minecraft/core/BlockPos;)Z")},
             method = {"shouldSnow", "shouldFreeze(Lnet/minecraft/world/level/LevelReader;Lnet/minecraft/core/BlockPos;Z)Z"})
     public boolean eclipticseasons$fixTempWithoutSeason(Biome instance, BlockPos pPos, Operation<Boolean> original, @Local(argsOnly = true) LevelReader levelReader) {
-        if (levelReader instanceof Level) {
-            return this.getTemperature(pPos) - EclipticUtil.getNowSolarTerm((Level) levelReader).getTemperatureChange() >= 0.15F;
+        Level level = null;
+        if (levelReader instanceof WorldGenLevel worldGenLevel) {
+            level = worldGenLevel.getLevel();
+        } else if (levelReader instanceof Level level1) {
+            level = level1;
+        } else {
+            level = WeatherManager.fetchLevelIfNull(null);
+        }
+        if (level != null) {
+            return BiomeClimateManager.fixTemp(level, (Biome) (Object) this, getTemperature(pPos)) >= BiomeClimateManager.SNOW_LEVEL;
         }
         return original.call(instance, pPos);
     }

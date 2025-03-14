@@ -111,7 +111,7 @@ public final class ClientEventHandler {
             WeatherManager.createLevelBiomeWeatherList(clientLevel);
             // 这里需要恢复一下数据
             // 客户端登录时同步天气数据，此处先放入
-            SolarHolders.createSaveData(clientLevel, ClientSolarDataManager.get(clientLevel));
+            SolarHolders.createSaveData(clientLevel, new ClientSolarDataManager(clientLevel));
         }
     }
 

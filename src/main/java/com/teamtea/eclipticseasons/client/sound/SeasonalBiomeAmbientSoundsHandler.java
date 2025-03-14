@@ -1,5 +1,6 @@
 package com.teamtea.eclipticseasons.client.sound;
 
+import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.common.registry.SoundEventsRegistry;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
@@ -78,7 +79,8 @@ public class SeasonalBiomeAmbientSoundsHandler implements AmbientSoundHandler {
             if (MapChecker.isValidDimension(player.level)) {
                 switch (season) {
                     case SPRING -> {
-                        if (!player.isInWaterOrRain()) {
+                        if (!player.isInWaterOrRain()
+                                && !EclipticSeasonsApi.getInstance().isRainOrSnowAt(player.level, player.blockPosition())) {
                             if ((biome.is(BiomeTags.IS_FOREST) || biome.is(Tags.Biomes.IS_PLAINS)) && !biome.is(Tags.Biomes.IS_COLD)) {
                                 soundEvent = SoundEventsRegistry.spring_forest;
                             }
@@ -87,7 +89,8 @@ public class SeasonalBiomeAmbientSoundsHandler implements AmbientSoundHandler {
                     case SUMMER -> {
                         // if (player.level().isNight())
                         // 客户端不计算是否为夜晚
-                        if (!player.isInWaterOrRain()) {
+                        if (!player.isInWaterOrRain()
+                                && !EclipticSeasonsApi.getInstance().isRainOrSnowAt(player.level, player.blockPosition())) {
                             if (!isDayNow) {
                                 if (!(biome.is(Tags.Biomes.IS_SAVANNA)
                                         || biome.is(Tags.Biomes.IS_UNDERGROUND)

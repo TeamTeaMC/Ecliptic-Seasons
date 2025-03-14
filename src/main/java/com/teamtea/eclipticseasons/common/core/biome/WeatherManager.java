@@ -25,6 +25,8 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.tags.BiomeTags;
+import net.minecraft.util.Mth;
 import net.minecraft.util.valueproviders.IntProvider;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -260,7 +262,8 @@ public class WeatherManager {
             for (BiomeWeather biomeWeather : weathers) {
                 if (biomeWeather.location.equals(loc)) {
                     return flag_cold
-                            || BiomeClimateManager.getDefaultTemperature(biome) <= BiomeClimateManager.SNOW_LEVEL ?
+                            // || BiomeClimateManager.getDefaultTemperature(biome) <= BiomeClimateManager.SNOW_LEVEL
+                            ?
                             Biome.Precipitation.SNOW : Biome.Precipitation.RAIN;
                 }
             }
@@ -286,7 +289,8 @@ public class WeatherManager {
                         return Biome.Precipitation.NONE;
 
                     return flag_cold
-                            || BiomeClimateManager.getDefaultTemperature(biome) <= BiomeClimateManager.SNOW_LEVEL ?
+                            // || BiomeClimateManager.getDefaultTemperature(biome) <= BiomeClimateManager.SNOW_LEVEL
+                            ?
                             Biome.Precipitation.SNOW : Biome.Precipitation.RAIN;
                 }
             }
@@ -428,13 +432,6 @@ public class WeatherManager {
         if (biomeWeather.shouldThunder()) {
             biomeWeather.thunderTime--;
         }
-        // if (biomeWeather.biomeHolder.is(Biomes.JUNGLE)) {
-        //     // BiomeRain biomeRain = AllListener.getSaveData(level).getSolarTerm().getBiomeRain(biomeWeather.biomeHolder);
-        //     // float weight = biomeRain.getRainChane() * Math.max(0.01f, biomeWeather.biomeHolder.value().getModifiedClimateSettings().downfall());
-        //     //
-        //     // Ecliptic.logger(biomeWeather,weight) ;
-        // }
-
 
         if (biomeWeather.shouldRain() || level.getRandom().nextInt(5) > 1) {
             var snow = WeatherManager.getSnowStatus(level, biomeWeather.biomeHolder.value(), null);
@@ -445,6 +442,57 @@ public class WeatherManager {
             }
         }
 
+    }
+
+    public static void initNewWorldWeather(ServerLevel level, Random random, SolarTerm solarTerm) {
+        if (level.isClientSide() || !MapChecker.isValidDimension(level)) {
+            return;
+        }
+        ArrayList<BiomeWeather> biomeList = getBiomeList(level);
+        if (biomeList == null) return;
+
+        int size = (int) (biomeList.size() * (Mth.clamp(7f / CommonConfig.Season.lastingDaysOfEachTerm.get(), 0.8f, 3f)));
+        SolarTerm lastSolarTerm =
+                solarTerm == SolarTerm.NONE ? SolarTerm.NONE :
+                        SolarTerm.collectValues()[(solarTerm.ordinal() - 1 + 24) % 24];
+        for (BiomeWeather biomeWeather : biomeList) {
+            if (!BiomeClimateManager.agent$hasPrecipitation(biomeWeather.biomeHolder.value()))
+                continue;
+            if (true) {
+                float ramdomKey = level.getRandom().nextInt(1000) / 1000.f * 3;
+                BiomeRain biomeRain = SolarHolders.getSaveData(level).getSolarTerm().getBiomeRain(biomeWeather.biomeHolder);
+                float downfall = biomeWeather.biomeHolder.value().getDownfall();
+                if (biomeWeather.biomeHolder.is(Tags.Biomes.IS_SAVANNA)) {
+                    downfall += 0.2f;
+                }
+                float weight = biomeRain.getRainChane()
+                        * Math.max(0.01f, downfall)
+                        * ((CommonConfig.Season.rainChanceMultiplier.get() * 1f) / 100f);
+                if (ramdomKey < weight) {
+                    biomeWeather.rainTime = RAIN_DURATION.sample(random) / size;
+                } else {
+                    // biomeWeather.clearTime = 10 / (size / 30);
+                    biomeWeather.clearTime = RAIN_DURATION.sample(random) / size;
+                }
+                if (biomeWeather.shouldRain()) {
+                    weight = biomeRain.getThunderChance();
+                    if (level.getRandom().nextInt(1000) / 1000.f < weight) {
+                        biomeWeather.thunderTime = THUNDER_DURATION.sample(random) / size;
+                    }
+                }
+            }
+
+            SnowTerm snowTerm = SolarTerm.getSnowTerm(biomeWeather.biomeHolder.value());
+            boolean flag_cold = solarTerm.isInTerms(snowTerm.getStart(), snowTerm.getEnd());
+            boolean flag_little_cold = lastSolarTerm.isInTerms(snowTerm.getStart(), snowTerm.getEnd());
+            SnowRenderStatus snow = flag_cold ? SnowRenderStatus.SNOW :
+                    flag_little_cold ? SnowRenderStatus.SNOW_MELT : SnowRenderStatus.NONE;
+            if (snow == SnowRenderStatus.SNOW) {
+                biomeWeather.snowDepth = 100;
+            } else if (snow == SnowRenderStatus.SNOW_MELT) {
+                biomeWeather.snowDepth = (byte) random.nextInt(50);
+            } else biomeWeather.snowDepth = 0;
+        }
     }
 
     public static void updateAfterSleep(ServerLevel level, long newTime, long oldDayTime) {
@@ -474,7 +522,7 @@ public class WeatherManager {
             SimpleNetworkHandler.send(serverPlayer, new SolarTermsMessage(t.getSolarTermsDay()));
             if (isLogged && CommonConfig.Season.enableInform.get()
                     && t.getSolarTermsDay() % CommonConfig.Season.lastingDaysOfEachTerm.get() == 0) {
-                serverPlayer.sendMessage(new TranslatableComponent("info.eclipticseasons.environment.solar_term.message", SolarTerm.get(t.getSolarTermIndex()).getAlternationText()), Util.NIL_UUID);
+                serverPlayer.sendMessage(new TranslatableComponent("info.eclipticseasons.environment.solar_term.message", t.getSolarTerm().getAlternationText()), Util.NIL_UUID);
             }
         });
         WeatherManager.sendBiomePacket(WeatherManager.getBiomeList(serverPlayer.level), List.of(serverPlayer));
