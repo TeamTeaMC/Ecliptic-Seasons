@@ -29,6 +29,7 @@ import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.registry.DynamicRegistries;
 import net.minecraft.util.registry.MutableRegistry;
 import net.minecraft.util.registry.Registry;
@@ -40,6 +41,7 @@ import net.minecraft.world.gen.Heightmap;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.BiomeDictionary;
+import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.fml.loading.FMLLoader;
@@ -260,7 +262,8 @@ public class WeatherManager {
             for (BiomeWeather biomeWeather : weathers) {
                 if (biomeWeather.location.equals(loc)) {
                     return flag_cold
-                            || BiomeClimateManager.getDefaultTemperature(biome) <= BiomeClimateManager.SNOW_LEVEL ?
+                            // || BiomeClimateManager.getDefaultTemperature(biome) <= BiomeClimateManager.SNOW_LEVEL
+                            ?
                             Biome.RainType.SNOW : Biome.RainType.RAIN;
                 }
             }
@@ -286,7 +289,8 @@ public class WeatherManager {
                         return Biome.RainType.NONE;
 
                     return flag_cold
-                            || BiomeClimateManager.getDefaultTemperature(biome) <= BiomeClimateManager.SNOW_LEVEL ?
+                            // || BiomeClimateManager.getDefaultTemperature(biome) <= BiomeClimateManager.SNOW_LEVEL
+                            ?
                             Biome.RainType.SNOW : Biome.RainType.RAIN;
                 }
             }
@@ -427,13 +431,6 @@ public class WeatherManager {
         if (biomeWeather.shouldThunder()) {
             biomeWeather.thunderTime--;
         }
-        // if (biomeWeather.biomeHolder.is(Biomes.JUNGLE)) {
-        //     // BiomeRain biomeRain = AllListener.getSaveData(level).getSolarTerm().getBiomeRain(biomeWeather.biomeHolder);
-        //     // float weight = biomeRain.getRainChane() * Math.max(0.01f, biomeWeather.biomeHolder.getModifiedClimateSettings().downfall());
-        //     //
-        //     // Ecliptic.logger(biomeWeather,weight) ;
-        // }
-
 
         if (biomeWeather.shouldRain() || level.getRandom().nextInt(5) > 1) {
             SnowRenderStatus snow = WeatherManager.getSnowStatus(level, biomeWeather.biomeHolder, null);
@@ -444,6 +441,59 @@ public class WeatherManager {
             }
         }
 
+    }
+
+    public static void initNewWorldWeather(ServerWorld level, Random random, SolarTerm solarTerm) {
+        if (level.isClientSide() || !MapChecker.isValidDimension(level)) {
+            return;
+        }
+        ArrayList<BiomeWeather> biomeList = getBiomeList(level);
+        if (biomeList == null) return;
+
+        int size = (int) (biomeList.size() * (MathHelper.clamp(7f / CommonConfig.Season.lastingDaysOfEachTerm.get(), 0.8f, 3f)));
+        SolarTerm lastSolarTerm =
+                solarTerm == SolarTerm.NONE ? SolarTerm.NONE :
+                        SolarTerm.collectValues()[(solarTerm.ordinal() - 1 + 24) % 24];
+        for (BiomeWeather biomeWeather : biomeList) {
+            if (!BiomeClimateManager.agent$hasPrecipitation(biomeWeather.biomeHolder))
+                continue;
+            if (true) {
+                float ramdomKey = level.getRandom().nextInt(1000) / 1000.f * 3;
+                BiomeRain biomeRain = SolarHolders.getSaveData(level).getSolarTerm().getBiomeRain(biomeWeather.getBiomeKey());
+                float downfall = biomeWeather.biomeHolder.getDownfall();
+
+
+                if (BiomeDictionary.getTypes(biomeWeather.getBiomeKey()).contains(BiomeDictionary.Type.SAVANNA)) {
+                    downfall += 0.2f;
+                }
+                float weight = biomeRain.getRainChane()
+                        * Math.max(0.01f, downfall)
+                        * ((CommonConfig.Season.rainChanceMultiplier.get() * 1f) / 100f);
+                if (ramdomKey < weight) {
+                    biomeWeather.rainTime = (random.nextInt(12000) + 12000) / size;
+                } else {
+                    // biomeWeather.clearTime = 10 / (size / 30);
+                    biomeWeather.clearTime = (random.nextInt(12000) + 12000) / size;
+                }
+                if (biomeWeather.shouldRain()) {
+                     weight = biomeRain.getThunderChance();
+                    if (ramdomKey < weight) {
+                        biomeWeather.thunderTime = (random.nextInt(12000) + 3600) / size;
+                    }
+                }
+            }
+
+            SnowTerm snowTerm = SolarTerm.getSnowTerm(biomeWeather.biomeHolder);
+            boolean flag_cold = solarTerm.isInTerms(snowTerm.getStart(), snowTerm.getEnd());
+            boolean flag_little_cold = lastSolarTerm.isInTerms(snowTerm.getStart(), snowTerm.getEnd());
+            SnowRenderStatus snow = flag_cold ? SnowRenderStatus.SNOW :
+                    flag_little_cold ? SnowRenderStatus.SNOW_MELT : SnowRenderStatus.NONE;
+            if (snow == SnowRenderStatus.SNOW) {
+                biomeWeather.snowDepth = 100;
+            } else if (snow == SnowRenderStatus.SNOW_MELT) {
+                biomeWeather.snowDepth = (byte) random.nextInt(50);
+            } else biomeWeather.snowDepth = 0;
+        }
     }
 
     public static void updateAfterSleep(ServerWorld level, long newTime, long oldDayTime) {
@@ -473,7 +523,7 @@ public class WeatherManager {
             SimpleNetworkHandler.send(serverPlayer, new SolarTermsMessage(t.getSolarTermsDay()));
             if (isLogged && CommonConfig.Season.enableInform.get()
                     && t.getSolarTermsDay() % CommonConfig.Season.lastingDaysOfEachTerm.get() == 0) {
-                serverPlayer.sendMessage(new TranslationTextComponent("info.eclipticseasons.environment.solar_term.message", SolarTerm.get(t.getSolarTermIndex()).getAlternationText()), Util.NIL_UUID);
+                serverPlayer.sendMessage(new TranslationTextComponent("info.eclipticseasons.environment.solar_term.message", t.getSolarTerm().getAlternationText()), Util.NIL_UUID);
             }
         });
         WeatherManager.sendBiomePacket(WeatherManager.getBiomeList(serverPlayer.level), Stream.of(serverPlayer).collect(Collectors.toList()));

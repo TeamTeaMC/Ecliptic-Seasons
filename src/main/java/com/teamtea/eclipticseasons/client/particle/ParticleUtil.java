@@ -1,5 +1,6 @@
 package com.teamtea.eclipticseasons.client.particle;
 
+import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.common.registry.ParticleRegistry;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
@@ -78,7 +79,7 @@ public class ParticleUtil {
             // CampfireBlock.
             if (EclipticUtil.getNowSolarTerm(clientLevel).getSeason() == Season.SUMMER
                     && EclipticUtil.isEvening(clientLevel)
-                    && !clientLevel.isRainingAt(blockpos$mutableblockpos)
+                    && !EclipticSeasonsApi.getInstance().isRainOrSnowAt(clientLevel, blockpos$mutableblockpos)
                     && clientLevel.canSeeSky(blockpos$mutableblockpos)
                     && random.nextInt(3) == 0
             )
@@ -90,7 +91,7 @@ public class ParticleUtil {
                 && EclipticUtil.isNoon(clientLevel)
                 && clientLevel.canSeeSky(blockpos$mutableblockpos)
                 && clientLevel.isEmptyBlock(blockpos$mutableblockpos)
-                && !clientLevel.isRainingAt(blockpos$mutableblockpos)
+                && !EclipticSeasonsApi.getInstance().isRainOrSnowAt(clientLevel, blockpos$mutableblockpos)
                 && random.nextInt(255) == 0) {
             clientLevel.addParticle(ParticleRegistry.WILD_GOOSE, false, x + (random.nextInt(16)+16) * (random.nextBoolean() ? -1 : 1), y + (random.nextInt(16)+16), z + (random.nextInt(16)+16) * (random.nextBoolean() ? -1 : 1), 0.0D, 5.0E-4D, 0.0D);
         }

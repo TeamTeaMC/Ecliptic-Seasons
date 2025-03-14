@@ -100,3 +100,15 @@ fix a mixin error about fbp
 
 1.0.0.3
 fix a config name ("snow line")
+
+1.0.1
+### Fixes
+- Fixed an issue where biome temperature adjustments during world generation could prevent snow from generating in cold biomes in multiplayer games.
+- Resolved a problem where special creature particles and related sound effects would appear during snow in some cold biomes during spring and summer.
+
+### Additions
+- Added initialization of biome-related weather data during world initialization or when joining a mod for the first time. Now, if certain biomes can snow or have just ended a snow cycle upon login, snow overlay decorations will be visible. Additionally, the probability of initial weather being sunny has been increased.
+- `SolarDay` can now be set to a negative value, potentially offering an experience akin to BCE (Before Common Era).
+
+### Removals
+- Removed redundant temperature checks in weather calculations.

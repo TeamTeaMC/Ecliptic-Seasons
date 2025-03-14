@@ -1,5 +1,6 @@
 package com.teamtea.eclipticseasons.client.sound;
 
+import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.common.registry.SoundEventsRegistry;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
@@ -80,7 +81,8 @@ public class SeasonalBiomeAmbientSoundsHandler implements IAmbientSoundHandler {
             }
 
             SoundEvent soundEvent = null;
-            if (MapChecker.isValidDimension(player.level)) {
+            if (MapChecker.isValidDimension(player.level)
+                    && !EclipticSeasonsApi.getInstance().isRainOrSnowAt(player.level, player.blockPosition())) {
                 switch (season) {
                     case SPRING: {
                         if (!player.isInWaterOrRain()) {
@@ -91,7 +93,8 @@ public class SeasonalBiomeAmbientSoundsHandler implements IAmbientSoundHandler {
                         break;
                     }
                     case SUMMER: {
-                        if (!player.isInWaterOrRain())
+                        if (!player.isInWaterOrRain()
+                                && !EclipticSeasonsApi.getInstance().isRainOrSnowAt(player.level, player.blockPosition()))
                         {
                             if (!isDayNow) {
                                 if (!(sets.contains(BiomeDictionary.Type.SAVANNA)

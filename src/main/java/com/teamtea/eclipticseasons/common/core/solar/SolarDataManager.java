@@ -73,7 +73,11 @@ public class SolarDataManager extends WorldSavedData {
     
     public static SolarDataManager get(ServerWorld serverLevel) {
         DimensionSavedDataManager storage = serverLevel.getDataStorage();
-        return storage.computeIfAbsent(() -> new SolarDataManager(serverLevel), EclipticSeasons.MODID);
+        return storage.computeIfAbsent(() -> {
+            SolarDataManager manager = new SolarDataManager(serverLevel);
+            WeatherManager.initNewWorldWeather(serverLevel, serverLevel.random, manager.getSolarTerm());
+            return manager;
+        }, EclipticSeasons.MODID);
     }
 
 
@@ -83,7 +87,7 @@ public class SolarDataManager extends WorldSavedData {
         if (solarTermsTicks > dayTime + 100) {
             solarTermsDay++;
 
-            BiomeClimateManager.updateTemperature(world, getSolarTermIndex());
+            BiomeClimateManager.updateTemperature(world, getSolarTerm());
             sendUpdateMessage(world);
         }
         solarTermsTicks = dayTime;
@@ -92,7 +96,7 @@ public class SolarDataManager extends WorldSavedData {
     }
 
     public int getSolarTermIndex() {
-        return (solarTermsDay / CommonConfig.Season.lastingDaysOfEachTerm.get()) % 24;
+        return (getSolarTermsDay() / CommonConfig.Season.lastingDaysOfEachTerm.get() + 24) % 24;
     }
 
     public SolarTerm getSolarTerm() {
@@ -123,7 +127,7 @@ public class SolarDataManager extends WorldSavedData {
             SimpleNetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), new SolarTermsMessage(this.getSolarTermsDay()));
             if (CommonConfig.Season.enableInform.get()
                     &&getSolarTermsDay() % CommonConfig.Season.lastingDaysOfEachTerm.get() == 0) {
-                player.sendMessage(new TranslationTextComponent("info.eclipticseasons.environment.solar_term.message", SolarTerm.get(getSolarTermIndex()).getAlternationText()),  Util.NIL_UUID);
+                player.sendMessage(new TranslationTextComponent("info.eclipticseasons.environment.solar_term.message",getSolarTerm().getAlternationText()),  Util.NIL_UUID);
             }
         }
     }

@@ -32,7 +32,7 @@ public class NetworkdUtil {
                 SolarHolders.getSaveDataLazy(NetworkdUtil.getClient()).ifPresent(data ->
                         {
                             data.setSolarTermsDay(solarTermsMessage.solarDay);
-                            BiomeClimateManager.updateTemperature(NetworkdUtil.getClient(), data.getSolarTermIndex());
+                            BiomeClimateManager.updateTemperature(NetworkdUtil.getClient(), data.getSolarTerm());
                             BiomeColorsHandler.needRefresh = true;
                         }
                 );

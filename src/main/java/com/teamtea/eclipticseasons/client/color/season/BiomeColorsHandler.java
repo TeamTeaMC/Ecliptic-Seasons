@@ -89,7 +89,7 @@ public class BiomeColorsHandler {
                         int[] foliageBuffer = FoliageColors.pixels;
                         int[] grassBuffer = GrassColors.pixels;
 
-                        SolarTerm solar = SolarTerm.get(data.getSolarTermIndex());
+                        SolarTerm solar = data.getSolarTerm();
                         SolarTermColor colorInfo = solar.getSolarTermColor(biomeTagKey);
                         for (int i = 0; i < foliageBuffer.length; i++) {
                             int originColor = foliageBuffer[i];
