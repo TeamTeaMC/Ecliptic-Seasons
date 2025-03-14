@@ -112,9 +112,9 @@ public class ClientConfig
             particle = builder.comment("Seasonal Particle.")
                     .define("Particle", true);
             snowLine = builder.comment("Snow Line Height.")
-                    .defineInRange("SowLineHeight", 160, Integer.MIN_VALUE, Integer.MAX_VALUE);
+                    .defineInRange("SnowLineHeight", 160, Integer.MIN_VALUE, Integer.MAX_VALUE);
             snowBiomeLine = builder.comment("Snow Line Height.")
-                    .defineList("SowLineHeightBiome", of(of(Tags.Biomes.IS_COLD_OVERWORLD.location().toString(), 111), of(Tags.Biomes.IS_HOT_OVERWORLD.location().toString(), 200)), ClientConfig::testLList);
+                    .defineList("SnowLineHeightBiome", of(of(Tags.Biomes.IS_COLD_OVERWORLD.location().toString(), 111), of(Tags.Biomes.IS_HOT_OVERWORLD.location().toString(), 200)), ClientConfig::testLList);
             builder.pop();
         }
     }
