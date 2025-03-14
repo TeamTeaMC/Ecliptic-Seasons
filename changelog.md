@@ -97,3 +97,6 @@ Add a null pointer check to avoid world create freeze.
 
 1.0.0.2
 fix a mixin error about fbp
+
+1.0.0.3
+fix a config name ("snow line")

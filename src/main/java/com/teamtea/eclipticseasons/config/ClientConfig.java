@@ -99,9 +99,9 @@ public class ClientConfig {
             particle = builder.comment("Seasonal Particle.")
                     .define("Particle", true);
             snowLine = builder.comment("Snow Line Height.")
-                    .defineInRange("SowLineHeight", 111, Integer.MIN_VALUE, Integer.MAX_VALUE);
+                    .defineInRange("SnowLineHeight", 111, Integer.MIN_VALUE, Integer.MAX_VALUE);
             snowBiomeLine = builder.comment("Snow Line Height.")
-                    .defineList("SowLineHeightBiome", of(of(BiomeDictionary.Type.COLD.toString(), 95), of(BiomeDictionary.Type.HOT.toString(), 143)), ClientConfig::testLList);
+                    .defineList("SnowLineHeightBiome", of(of(BiomeDictionary.Type.COLD.toString(), 95), of(BiomeDictionary.Type.HOT.toString(), 143)), ClientConfig::testLList);
             builder.pop();
         }
     }
