@@ -2,7 +2,6 @@ package com.teamtea.eclipticseasons.data.tag;
 
 
 import com.teamtea.eclipticseasons.api.constant.crop.CropHumidityType;
-import com.teamtea.eclipticseasons.api.constant.crop.CropSeasonType;
 import com.teamtea.eclipticseasons.api.constant.tag.EclipticBlockTags;
 import com.teamtea.eclipticseasons.common.registry.BlockRegistry;
 import net.minecraft.core.HolderLookup;
@@ -40,14 +39,15 @@ public final class ESBlockTagProvider extends BlockTagsProvider {
 
         tag(BlockTags.MINEABLE_WITH_AXE).add(BlockRegistry.calendar.get(),
                 BlockRegistry.season_quest_wall_hanging_sign.get(),
-                BlockRegistry.season_quest_ceiling_hanging_sign.get());
+                BlockRegistry.season_quest_ceiling_hanging_sign.get(),
+                BlockRegistry.block_in_wooden_grate_block.get());
 
         tag(BlockTags.MINEABLE_WITH_PICKAXE).add(BlockRegistry.spring_greenhouse_core.get(),
                 BlockRegistry.summer_greenhouse_core.get(),
                 BlockRegistry.autumn_greenhouse_core.get(),
                 BlockRegistry.winter_greenhouse_core.get(),
                 BlockRegistry.greenhouse_core_container.get(),
-                BlockRegistry.block_in_copper_grate_block.get());
+                BlockRegistry.block_in_wooden_grate_block.get());
     }
 
 

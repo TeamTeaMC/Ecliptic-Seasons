@@ -35,6 +35,8 @@ public class BlockStatesDataProvider extends BlockStateProvider {
                     .build());
         }
 
+        addSimple(BlockRegistry.block_in_wooden_grate_block.get());
+
         for (Block block : List.of(BlockRegistry.greenhouse_core_container.get(),
                 BlockRegistry.spring_greenhouse_core.get(),
                 BlockRegistry.summer_greenhouse_core.get(),

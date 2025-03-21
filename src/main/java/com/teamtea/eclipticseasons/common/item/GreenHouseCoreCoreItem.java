@@ -1,9 +1,8 @@
 package com.teamtea.eclipticseasons.common.item;
 
-import com.teamtea.eclipticseasons.client.render.item.ClientGreenHouseItem;
 import com.teamtea.eclipticseasons.client.render.item.GreenHouseCoreCoreItemRenderer;
-import com.teamtea.eclipticseasons.common.registry.ItemRegistry;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 
@@ -16,6 +15,11 @@ public class GreenHouseCoreCoreItem extends Item {
 
     @Override
     public void initializeClient(Consumer<IClientItemExtensions> consumer) {
-        consumer.accept(new ClientGreenHouseItem(new GreenHouseCoreCoreItemRenderer(Minecraft.getInstance().getBlockEntityRenderDispatcher(), Minecraft.getInstance().getEntityModels())));
+        consumer.accept(new IClientItemExtensions() {
+            @Override
+            public BlockEntityWithoutLevelRenderer getCustomRenderer() {
+                return new GreenHouseCoreCoreItemRenderer(Minecraft.getInstance().getBlockEntityRenderDispatcher(), Minecraft.getInstance().getEntityModels());
+            }
+        });
     }
 }

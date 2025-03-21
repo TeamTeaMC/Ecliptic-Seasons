@@ -17,6 +17,6 @@ public class BlockEntityRegistry {
     public static final RegistryObject<BlockEntityType<QuestHangingSignBlockEntity>> season_quest_hanging_sign_entity_type = BLOCK_ENTITY_TYPE_DEFERRED_REGISTER.register("season_quest_hanging_sign", () -> BlockEntityType.Builder.of(QuestHangingSignBlockEntity::new, BlockRegistry.season_quest_ceiling_hanging_sign.get(), BlockRegistry.season_quest_wall_hanging_sign.get()).build(null));
 
     public static final RegistryObject<BlockEntityType<HumidityControlBlockEntity>> humidity_control_entity_type = BLOCK_ENTITY_TYPE_DEFERRED_REGISTER.register("humidity_control", () -> BlockEntityType.Builder.of(HumidityControlBlockEntity::new).build(null));
-    public static final RegistryObject<BlockEntityType<BlockInCopperGrateBlockEntity>> block_in_copper_grate_block_entity_type = BLOCK_ENTITY_TYPE_DEFERRED_REGISTER.register("block_in_copper_grate_block", () -> BlockEntityType.Builder.of(BlockInCopperGrateBlockEntity::new, BlockRegistry.block_in_copper_grate_block.get()).build(null));
+    public static final RegistryObject<BlockEntityType<BlockInCopperGrateBlockEntity>> block_in_copper_grate_block_entity_type = BLOCK_ENTITY_TYPE_DEFERRED_REGISTER.register("block_in_copper_grate_block", () -> BlockEntityType.Builder.of(BlockInCopperGrateBlockEntity::new, BlockRegistry.block_in_wooden_grate_block.get()).build(null));
 
 }

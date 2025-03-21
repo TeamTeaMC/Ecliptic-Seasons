@@ -54,6 +54,9 @@ public class Lang_EN extends LangHelper {
         add(BlockRegistry.season_quest_wall_hanging_sign.get(), "Season Quest Sign");
         add(BlockRegistry.season_quest_ceiling_hanging_sign.get(), "Season Quest Sign");
 
+        add(BlockRegistry.block_in_wooden_grate_block.get(), "Wooden Grate Humidifier");
+
+
         add("info.eclipticseasons.environment.temperature.under_freezing", "Under Freezing");
         add("info.eclipticseasons.environment.temperature.freezing", "Freezing");
         add("info.eclipticseasons.environment.temperature.cold", "Cold");

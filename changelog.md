@@ -1,5 +1,13 @@
 ## **0.10**
-- Fixed the built-in compatibility handling for the Jingmi Siji tag data pack. Due to significant modifications in the underlying logic of data packs in version 0.10-pre8, data conversion issues existed prior to the new version.
+This version, ported from 1.21, features comprehensive reworks to seasonal greenhouse mechanics:
+- Fixed the built-in compatibility handling for the Serene Seasons tag data pack. Due to significant modifications in the underlying logic of data packs in version 0.10-pre8, data conversion issues existed prior to the new version.
+- Reworked Greenhouse Construction: Completely redesigned seasonal greenhouse building system.
+- Growth Detector: Added a monitoring device to track crop growth progress.
+- Greenhouse Core System: Introduced Seasonal Greenhouse Core blocks and related components. Crops now require placement within the core's operational radius to receive greenhouse growth bonuses.
+- Humidity Control: Implemented Humidity Regulator Blocks for localized moisture adjustment. Multiple regulators create stacked effects when working in proximity.
+- Seasonal Questline: Added themed quests and associated items. Greenhouse Cores can now be obtained by completing introductory seasonal missions.
+- Progression Optimization: Overhauled achievement system and quest guidance. Completing basic seasonal quests now grants material rewards for crafting Greenhouse Cores.
+- Other simple fixes.
 
 ## **0.10-pre12**
 - Optimized temperature calculation method.

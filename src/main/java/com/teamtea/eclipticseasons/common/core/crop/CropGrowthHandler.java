@@ -211,6 +211,8 @@ public final class CropGrowthHandler {
             }
         }
 
+        // note 这里客户端时，由于接受不到信息，所以会存一个空位，但是这样也好，标志着有吧
+        // note 推荐当前版本还是用标签，因为这样便于指示
         CropInfoManager.CROP_SEASON_INFO.forEach((block, cropSeasonInfo) -> {
             // if (CROP_GROW_MAP.containsKey(block)) return;
             CropSeasonType name = CropInfoManager.getCropSeasonTypeFrom(cropSeasonInfo);

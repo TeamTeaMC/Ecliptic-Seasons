@@ -82,7 +82,9 @@
     [
       "core_require_sheep",
       "core_require_cow",
-      "core_require_chicken",
+      "core_require_chicken"
+    ],
+    [
       "parent"
     ]
   ],

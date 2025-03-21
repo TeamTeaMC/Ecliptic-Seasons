@@ -58,6 +58,8 @@ public class Lang_ZH extends LangHelper {
         add(BlockRegistry.season_quest_wall_hanging_sign.get(), "季节任务告示");
         add(BlockRegistry.season_quest_ceiling_hanging_sign.get(), "季节任务告示");
 
+        add(BlockRegistry.block_in_wooden_grate_block.get(), "湿度调节木格栅");
+
         add("info.eclipticseasons.environment.temperature.under_freezing", "严寒");
         add("info.eclipticseasons.environment.temperature.freezing", "冰冻");
         add("info.eclipticseasons.environment.temperature.cold", "寒冷");
@@ -166,7 +168,7 @@ public class Lang_ZH extends LangHelper {
         add("advancement.eclipticseasons.heat_stroke", "第一次中暑");
         add("advancement.eclipticseasons.heat_stroke.desc", "夏季中午请勿在炎热的群系直面太阳行走，如有必要，带上能抵抗炎热的装备或者冰雪降温。");
 
-        add("advancement.eclipticseasons.copper_grate", "铜格栅");
+        add("advancement.eclipticseasons.copper_grate", "木格栅");
         add("advancement.eclipticseasons.copper_grate.desc", "也许格子里可以放些什么改变环境？");
         add("advancement.eclipticseasons.block_in_copper_grate", "改变湿度");
         add("advancement.eclipticseasons.block_in_copper_grate.desc", "可以尝试放入一些改变湿度的玩意~");

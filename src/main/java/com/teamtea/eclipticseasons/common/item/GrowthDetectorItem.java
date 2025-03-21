@@ -138,6 +138,8 @@ public class GrowthDetectorItem extends Item {
                         } else if (((Level) world).isRainingAt(pos)) {
                             env = env.cycle(1);
                             result = getHumidityGrowChance(world, growControl, env, roomStatus, pos, blockState, season, true);
+                        } else {
+                            result *= f;
                         }
                     }
                 }

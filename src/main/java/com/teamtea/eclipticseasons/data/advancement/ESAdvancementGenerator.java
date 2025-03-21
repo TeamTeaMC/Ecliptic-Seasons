@@ -31,7 +31,7 @@ public class ESAdvancementGenerator implements ForgeAdvancementProvider.Advancem
         return EclipticSeasonsApi.MODID + ":" + id;
     }
 
-    Advancement seasons=null;
+    Advancement seasons = null;
 
     @Override
     public void generate(HolderLookup.Provider registries, Consumer<Advancement> consumer, ExistingFileHelper existingFileHelper) {
@@ -45,8 +45,8 @@ public class ESAdvancementGenerator implements ForgeAdvancementProvider.Advancem
                 .requirements(RequirementsStrategy.AND)
                 .save(consumer, getNameId("main/base"));
 
-         seasons = Advancement.Builder.advancement()
-                 .parent(seasons)
+        seasons = Advancement.Builder.advancement()
+                .parent(seasons)
                 .display(Items.PAPER,
                         Component.translatable("advancement.eclipticseasons.root"),
                         Component.translatable("advancement.eclipticseasons.root.desc"),
@@ -67,14 +67,29 @@ public class ESAdvancementGenerator implements ForgeAdvancementProvider.Advancem
                 .requirements(RequirementsStrategy.AND)
                 .save(consumer, getNameId("main/heat_stroke"));
 
-        Advancement seasonal_prayer_scroll  =
+        Advancement copper_grate = buildAdvancement(seasons, BlockRegistry.block_in_wooden_grate_block.get(),
+                Component.translatable("advancement.eclipticseasons.copper_grate"),
+                Component.translatable("advancement.eclipticseasons.copper_grate.desc"),
+                "core_require", InventoryChangeTrigger.TriggerInstance.hasItems(BlockRegistry.block_in_wooden_grate_block.get()),
+                consumer, "main/copper_grate");
+
+        Advancement block_in_copper_grate = buildAdvancement(copper_grate, Items.SPONGE,
+                Component.translatable("advancement.eclipticseasons.block_in_copper_grate"),
+                Component.translatable("advancement.eclipticseasons.block_in_copper_grate.desc"),
+                "core_require", ItemUsedOnLocationTrigger.TriggerInstance.itemUsedOnBlock(
+                        LocationPredicate.Builder.location().setBlock(BlockPredicate.Builder.block().of(BlockRegistry.block_in_wooden_grate_block.get()).build()),
+                        ItemPredicate.Builder.item()
+                ),
+                consumer, "main/block_in_copper_grate");
+
+        Advancement seasonal_prayer_scroll =
                 Advancement.Builder.advancement().parent(seasons)
                         .display(ItemRegistry.seasonal_prayer_scroll_item.get(), Component.translatable("advancement.eclipticseasons.seasonal_prayer_scroll"),
                                 Component.translatable("advancement.eclipticseasons.seasonal_prayer_scroll.desc"),
                                 null,
                                 FrameType.TASK, false, true, true)
-                        .addCriterion("core_require",  InventoryChangeTrigger.TriggerInstance.hasItems(ItemRegistry.spring_greenhouse_essence_item.get(),
-                                ItemRegistry.summer_greenhouse_essence_item.get(),ItemRegistry.autumn_greenhouse_essence_item.get(),ItemRegistry.winter_greenhouse_essence_item.get()))
+                        .addCriterion("core_require", InventoryChangeTrigger.TriggerInstance.hasItems(ItemRegistry.spring_greenhouse_essence_item.get(),
+                                ItemRegistry.summer_greenhouse_essence_item.get(), ItemRegistry.autumn_greenhouse_essence_item.get(), ItemRegistry.winter_greenhouse_essence_item.get()))
                         .requirements(RequirementsStrategy.AND)
                         .save(consumer, getNameId("main/seasonal_prayer_scroll"));
 
@@ -82,7 +97,7 @@ public class ESAdvancementGenerator implements ForgeAdvancementProvider.Advancem
                 Component.translatable("advancement.eclipticseasons.decorate_oak_hanging_sign"),
                 Component.translatable("advancement.eclipticseasons.decorate_oak_hanging_sign.desc"),
                 "core_require", ItemUsedOnLocationTrigger.TriggerInstance.itemUsedOnBlock(
-                        LocationPredicate.Builder.location().setBlock(BlockPredicate.Builder.block().of(BlockRegistry.season_quest_wall_hanging_sign.get(),BlockRegistry.season_quest_ceiling_hanging_sign.get()).build()),
+                        LocationPredicate.Builder.location().setBlock(BlockPredicate.Builder.block().of(BlockRegistry.season_quest_wall_hanging_sign.get(), BlockRegistry.season_quest_ceiling_hanging_sign.get()).build()),
                         ItemPredicate.Builder.item()
                 ),
                 consumer, "main/decorate_oak_hanging_sign");
@@ -94,7 +109,7 @@ public class ESAdvancementGenerator implements ForgeAdvancementProvider.Advancem
                         Component.translatable("advancement.eclipticseasons.quest.desc"),
                         null,
                         FrameType.TASK, false, false, false)
-                .addCriterion("tick",PlayerTrigger.TriggerInstance.tick())
+                .addCriterion("tick", PlayerTrigger.TriggerInstance.tick())
                 .requirements(RequirementsStrategy.AND)
                 .save(consumer, getNameId("main/quest"));
 
@@ -140,8 +155,9 @@ public class ESAdvancementGenerator implements ForgeAdvancementProvider.Advancem
                                 ItemPredicate.Builder.item().of(Tags.Items.SEEDS),
                                 EntityPredicate.wrap(EntityPredicate.Builder.entity().of(EntityType.CHICKEN).build())
                         ))
-                        .addCriterion("parent",ParentNeedCriterion.TriggerInstance.simple(spring_harvest))
-                        .requirements(RequirementsStrategy.OR)
+                        .addCriterion("parent", ParentNeedCriterion.TriggerInstance.simple(spring_harvest))
+                        // .requirements(RequirementsStrategy.OR)
+                        .requirements(new String[][]{{"core_require_sheep", "core_require_cow", "core_require_chicken"}, {"parent"}})
                         .save(consumer, getNameId("quests/spring_feed"));
 
         Advancement spring_seed = buildAdvancement(spring_feed, Items.WHEAT_SEEDS,
@@ -330,19 +346,19 @@ public class ESAdvancementGenerator implements ForgeAdvancementProvider.Advancem
     }
 
     public Advancement buildAdvancement(Advancement parent,
-                                                    ItemLike icon,
-                                                    Component tittle, Component desc,
-                                                    String criterionKey, CriterionTriggerInstance criterion,
-                                                    Consumer<Advancement> consumer, String id) {
+                                        ItemLike icon,
+                                        Component tittle, Component desc,
+                                        String criterionKey, CriterionTriggerInstance criterion,
+                                        Consumer<Advancement> consumer, String id) {
         return buildAdvancement(parent, icon, tittle, desc, criterionKey, criterion, consumer, id, null);
     }
 
     public Advancement buildAdvancement(Advancement parent,
-                                                    ItemLike icon,
-                                                    Component tittle, Component desc,
-                                                    String criterionKey, CriterionTriggerInstance criterion,
-                                                    Consumer<Advancement> consumer, String id,
-                                                    ResourceLocation lootTable) {
+                                        ItemLike icon,
+                                        Component tittle, Component desc,
+                                        String criterionKey, CriterionTriggerInstance criterion,
+                                        Consumer<Advancement> consumer, String id,
+                                        ResourceLocation lootTable) {
         Advancement.Builder advancement = Advancement.Builder.advancement();
         if (parent != null) {
             advancement = advancement.parent(parent);

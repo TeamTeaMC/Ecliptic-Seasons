@@ -62,9 +62,9 @@ public class start {
             generator.addProvider(event.includeClient(),new Lang_EN(packOutput,helper));
             generator.addProvider(event.includeClient(),new Lang_ZH(packOutput,helper));
 
+            generator.addProvider(event.includeClient(), new ESBlockModelProvider(packOutput, MODID, helper));
             generator.addProvider(event.includeClient(), new BlockStatesDataProvider(packOutput, helper));
             generator.addProvider(event.includeClient(), new ESItemModelProvider(packOutput, MODID, helper));
-            generator.addProvider(event.includeClient(), new ESBlockModelProvider(packOutput, MODID, helper));
             generator.addProvider(event.includeClient(), new ESFontProvider(packOutput, MODID, helper));
 
         }

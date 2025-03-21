@@ -7,6 +7,8 @@ import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.item.alchemy.Potions;
@@ -103,6 +105,15 @@ public final class ESRecipeProvider extends RecipeProvider {
                 .pattern("zxz")
                 .group("greenhouse_core_frame")
                 .unlockedBy("has_amethyst", has(Tags.Items.GEMS_AMETHYST))
+                .save(consumer);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ItemRegistry.block_in_wooden_grate_block_item.get(),4)
+                .define('r', ItemTags.LOGS)
+                .pattern(" r ")
+                .pattern("r r")
+                .pattern(" r ")
+                .group("block_in_wooden_grate_block")
+                .unlockedBy("has_logs", has(ItemTags.LOGS))
                 .save(consumer);
     }
 

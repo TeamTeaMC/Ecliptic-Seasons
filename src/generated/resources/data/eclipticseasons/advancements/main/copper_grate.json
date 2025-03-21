@@ -1,0 +1,38 @@
+{
+  "parent": "eclipticseasons:main/root",
+  "criteria": {
+    "core_require": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "eclipticseasons:block_in_wooden_grate_block"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancement.eclipticseasons.copper_grate.desc"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "eclipticseasons:block_in_wooden_grate_block"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "advancement.eclipticseasons.copper_grate"
+    }
+  },
+  "requirements": [
+    [
+      "core_require"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

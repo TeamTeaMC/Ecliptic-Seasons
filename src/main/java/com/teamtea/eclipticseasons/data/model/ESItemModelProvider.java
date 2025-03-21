@@ -32,6 +32,9 @@ public class ESItemModelProvider extends ItemModelProvider {
         addSimple(ItemRegistry.seasonal_prayer_scroll_item.get());
         addSimple(ItemRegistry.growth_detector.get());
 
+        withExistingParent(resourceItem(ItemRegistry.block_in_wooden_grate_block_item.getId().getPath()).getPath(),
+                resourceBlock(ItemRegistry.block_in_wooden_grate_block_item.getId().getPath()));
+
         // addSimple(EclipticSeasons.ModContents.wind_chimes_item.value());
         // addSimple(EclipticSeasons.ModContents.paper_wind_chimes_item.value());
         // addSimple(EclipticSeasons.ModContents.bamboo_wind_chimes_item.value());
@@ -63,5 +66,8 @@ public class ESItemModelProvider extends ItemModelProvider {
         return EclipticSeasons.rl("item/" + path);
     }
 
+    public ResourceLocation resourceBlock(String path) {
+        return EclipticSeasons.rl("block/" + path);
+    }
 
 }

@@ -30,8 +30,14 @@ public class BlockInCopperGrateBlockEntity extends HumidityControlBlockEntity {
         }
     }
 
+    public static void removeBlock(Level level, BlockPos pos) {
+        if (level.getBlockEntity(pos) instanceof BlockInCopperGrateBlockEntity blockEntity) {
+            blockEntity.setInnerBlock(null);
+        }
+    }
+
     private void popBlock(Level level, BlockPos pos) {
-        if (!level.isClientSide()&&getInnerBlock() != Blocks.AIR
+        if (!level.isClientSide() && getInnerBlock() != Blocks.AIR
                 && (this.humidityControl == null || this.humidityControl.lasting_time() * 0.8 < this.time)) {
             Block.popResource(level, pos, getInnerBlock().asItem().getDefaultInstance());
         }

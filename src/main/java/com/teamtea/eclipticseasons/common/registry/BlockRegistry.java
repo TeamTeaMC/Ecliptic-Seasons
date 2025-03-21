@@ -10,10 +10,6 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
-import java.util.Map;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
-
 public class BlockRegistry {
     public static final DeferredRegister<Block> BLOCK_DEFERRED_REGISTER = DeferredRegister.create(ForgeRegistries.BLOCKS, EclipticSeasons.MODID);
 
@@ -31,7 +27,7 @@ public class BlockRegistry {
     public static final RegistryObject<Block> season_quest_wall_hanging_sign = BLOCK_DEFERRED_REGISTER.register("season_quest_wall_hanging_sign", () -> new QuestWallHangingSignBlock(BlockBehaviour.Properties.of().strength(0.5f).sound(SoundType.WOOD).noOcclusion().pushReaction(PushReaction.DESTROY)));
 
     // humidity_control 湿度调节
-    public static final RegistryObject<Block> block_in_copper_grate_block = BLOCK_DEFERRED_REGISTER.register("block_in_copper_grate_block", () -> new BlockInCopperGrateBlock( BlockBehaviour.Properties.copy(Blocks.OAK_PLANKS).noOcclusion()));
+    public static final RegistryObject<Block> block_in_wooden_grate_block = BLOCK_DEFERRED_REGISTER.register("block_in_wooden_grate_block", () -> new BlockInGrateBlock(BlockBehaviour.Properties.copy(Blocks.OAK_PLANKS).noOcclusion()));
 
     public static RegistryObject<Block> snowyLeaves = BLOCK_DEFERRED_REGISTER.register("snowy_leaves", () -> new Block(BlockBehaviour.Properties.copy(Blocks.SNOW_BLOCK).dynamicShape().noOcclusion()));
     public static RegistryObject<Block> snowyBlock = BLOCK_DEFERRED_REGISTER.register("snowy_block", () -> new Block(BlockBehaviour.Properties.copy(Blocks.SNOW_BLOCK).dynamicShape().noOcclusion()));
