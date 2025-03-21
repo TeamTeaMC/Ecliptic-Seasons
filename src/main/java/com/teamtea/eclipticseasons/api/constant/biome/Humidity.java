@@ -54,7 +54,12 @@ public enum Humidity implements ITranslatable {
         return humidity;
     }
 
+    @Deprecated(forRemoval = true, since = "0.11")
     public Humidity above(int levelAttach) {
+        return cycle(levelAttach);
+    }
+
+    public Humidity cycle(int levelAttach) {
         int ordinal = ordinal();
         if (ordinal + levelAttach < 0) {
             return ARID;
@@ -62,7 +67,7 @@ public enum Humidity implements ITranslatable {
         if (ordinal + levelAttach >= collectValues().length) {
             return HUMID;
         }
-        return collectValues()[ordinal + 1];
+        return collectValues()[ordinal + levelAttach];
     }
 
     @Deprecated

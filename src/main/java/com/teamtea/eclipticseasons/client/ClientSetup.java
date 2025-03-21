@@ -5,21 +5,24 @@ import com.teamtea.eclipticseasons.api.constant.biome.Rainfall;
 import com.teamtea.eclipticseasons.api.constant.biome.Temperature;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.client.itemproperties.CounterItemProperty;
+import com.teamtea.eclipticseasons.client.model.ItemRenderModel;
 import com.teamtea.eclipticseasons.client.particle.*;
+import com.teamtea.eclipticseasons.client.render.ber.*;
 import com.teamtea.eclipticseasons.common.registry.BlockEntityRegistry;
 import com.teamtea.eclipticseasons.common.registry.BlockRegistry;
 import com.teamtea.eclipticseasons.common.registry.ItemRegistry;
 import com.teamtea.eclipticseasons.common.registry.ParticleRegistry;
 import com.teamtea.eclipticseasons.client.color.season.BiomeColorsHandler;
 import com.teamtea.eclipticseasons.client.model.SnowyBakedModelWrapper;
-import com.teamtea.eclipticseasons.client.render.ber.CalendarBlockEntityRenderer;
 import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.BlockModelShaper;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.*;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
@@ -32,6 +35,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.client.core.ModelManager;
+import net.minecraftforge.registries.RegistryObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,8 +59,9 @@ public class ClientSetup {
         event.registerSpriteSet(ParticleRegistry.FALLEN_LEAVES, (p_277215_) ->
                 (particleType, level, x, y, z, p_277222_, p_277223_, p_277224_) ->
                         new FallenLeavesParticle(level, x, y, z, p_277222_, p_277223_, p_277224_, particleType, p_277215_));
-
-
+        event.registerSpriteSet(ParticleRegistry.GREENHOUSE, (p_277215_) ->
+                (particleType, level, x, y, z, p_277222_, p_277223_, p_277224_) ->
+                        new GreenHouseParticle(level, x, y, z, p_277222_, p_277223_, p_277224_, particleType, p_277215_));
     }
 
     @SubscribeEvent
@@ -99,6 +104,14 @@ public class ClientSetup {
     @SubscribeEvent
     public static void onRegisterRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerBlockEntityRenderer(BlockEntityRegistry.calendar_entity_type.get(), CalendarBlockEntityRenderer::new);
+
+        event.registerBlockEntityRenderer(BlockEntityRegistry.greenhouse_core_container_entity_type.get(), GreenHouseCoreFrameRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntityRegistry.greenhouse_core_entity_type.get(), GreenHouseCoreRenderer::new);
+
+        event.registerBlockEntityRenderer(BlockEntityRegistry.season_quest_hanging_sign_entity_type.get(), QuestSignRenderer::new);
+
+        event.registerBlockEntityRenderer(BlockEntityRegistry.block_in_copper_grate_block_entity_type.get(), BlockInBlockRender::new);
+
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
@@ -134,6 +147,23 @@ public class ClientSetup {
                 modelRegistry.put(modelResourceLocation, new SnowyBakedModelWrapper<>(bakedModel1));
             } else {
                 EclipticSeasons.logger("Missing Model", modelResourceLocation);
+            }
+        }
+
+        for (RegistryObject<Item> holder : List.of(
+                ItemRegistry.greenhouse_core_container_item,
+                ItemRegistry.spring_greenhouse_core_item,
+                ItemRegistry.summer_greenhouse_core_item,
+                ItemRegistry.autumn_greenhouse_core_item,
+                ItemRegistry.winter_greenhouse_core_item,
+                ItemRegistry.spring_greenhouse_essence_item,
+                ItemRegistry.summer_greenhouse_essence_item,
+                ItemRegistry.autumn_greenhouse_essence_item,
+                ItemRegistry.winter_greenhouse_essence_item)) {
+            ModelResourceLocation inventory = new ModelResourceLocation(holder.getId(),"inventory");
+            BakedModel itemModel = modelRegistry.getOrDefault(inventory, null);
+            if (itemModel != null) {
+                modelRegistry.put(inventory, new ItemRenderModel<>(itemModel));
             }
         }
     }

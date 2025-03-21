@@ -13,7 +13,7 @@ import net.minecraft.util.ExtraCodecs;
 import org.joml.Vector3f;
 
 public class ColorParticleOptions extends DustParticleOptionsBase {
-    
+
     public static final Codec<ColorParticleOptions> CODEC = RecordCodecBuilder.create((p_253370_) -> p_253370_.group(ExtraCodecs.VECTOR3F.fieldOf("color").forGetter(DustParticleOptionsBase::getColor), Codec.FLOAT.fieldOf("scale").forGetter(DustParticleOptionsBase::getScale)).apply(p_253370_, ColorParticleOptions::new));
     public static final ParticleOptions.Deserializer<ColorParticleOptions> DESERIALIZER = new ParticleOptions.Deserializer<ColorParticleOptions>() {
         public ColorParticleOptions fromCommand(ParticleType<ColorParticleOptions> p_123689_, StringReader p_123690_) throws CommandSyntaxException {
@@ -27,13 +27,20 @@ public class ColorParticleOptions extends DustParticleOptionsBase {
             return new ColorParticleOptions(DustParticleOptionsBase.readVector3f(p_123693_), p_123693_.readFloat());
         }
     };
-    
+
+    private ParticleType<ColorParticleOptions> particleOptionsParticleType;
+
     public ColorParticleOptions(Vector3f p_253868_, float p_254154_) {
         super(p_253868_, p_254154_);
+        particleOptionsParticleType = ParticleRegistry.FALLEN_LEAVES;
     }
 
     @Override
     public ParticleType<ColorParticleOptions> getType() {
-        return ParticleRegistry.FALLEN_LEAVES;
+        return particleOptionsParticleType;
+    }
+
+    public void updateType(ParticleType<ColorParticleOptions> particleOptionsParticleType) {
+        this.particleOptionsParticleType = particleOptionsParticleType;
     }
 }

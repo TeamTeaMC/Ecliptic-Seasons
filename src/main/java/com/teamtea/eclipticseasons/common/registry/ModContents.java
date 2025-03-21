@@ -3,7 +3,9 @@ package com.teamtea.eclipticseasons.common.registry;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.data.climate.AgroClimaticZone;
+import com.teamtea.eclipticseasons.api.data.craft.HumidityControl;
 import com.teamtea.eclipticseasons.api.data.crop.CropGrowControlBuilder;
+import com.teamtea.eclipticseasons.api.data.quest.SeasonQuest;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
@@ -39,5 +41,8 @@ public class ModContents {
     public static void onNewRegistry(DataPackRegistryEvent.NewRegistry event) {
         event.dataPackRegistry(ESRegistries.CROP, CropGrowControlBuilder.CODEC, CropGrowControlBuilder.DIRECT_CODEC);
         event.dataPackRegistry(ESRegistries.AGRO_CLIMATE, AgroClimaticZone.CODEC, AgroClimaticZone.DIRECT_CODEC);
+        event.dataPackRegistry(ESRegistries.SEASON_QUEST, SeasonQuest.CODEC,  null);
+        event.dataPackRegistry(ESRegistries.HUMIDITY_CONTROL, HumidityControl.CODEC, null);
+
     }
 }

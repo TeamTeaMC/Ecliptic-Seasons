@@ -11,14 +11,19 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.StringRepresentable;
 import org.jetbrains.annotations.ApiStatus;
 
-import java.util.EnumMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
 @ApiStatus.Internal
 public class CodecUtil {
+
+    public static <K, V> Codec<Pair<K, V>> pairCodec( Codec<K> keyCodec, Codec<V> valueCodec) {
+        return Codec.compoundList(keyCodec, valueCodec).xmap(
+                l->l.get(0),
+                Collections::singletonList
+        );
+    }
 
     /**
      * By xiaogu

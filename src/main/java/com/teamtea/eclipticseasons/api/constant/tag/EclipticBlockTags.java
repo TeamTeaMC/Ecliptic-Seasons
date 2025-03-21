@@ -13,6 +13,7 @@ public class EclipticBlockTags {
 
     public static final TagKey<Block> SNOW_OVERLAY_CANNOT_SURVIVE_ON =  create("snow_overlay_cannot_survive_on");
 
+    public static final TagKey<Block> SOFT_HEAT_SOURCES =  create("soft_heat_sources");
 
     public static TagKey<Block> create(String s) {
         return TagKey.create(Registries.BLOCK, EclipticSeasons.rl(s));

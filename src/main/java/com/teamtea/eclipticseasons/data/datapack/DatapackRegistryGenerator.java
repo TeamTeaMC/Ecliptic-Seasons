@@ -2,9 +2,7 @@ package com.teamtea.eclipticseasons.data.datapack;
 
 
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
-import com.teamtea.eclipticseasons.common.registry.AgroClimateRegistry;
-import com.teamtea.eclipticseasons.common.registry.CropRegistry;
-import com.teamtea.eclipticseasons.common.registry.ESRegistries;
+import com.teamtea.eclipticseasons.common.registry.*;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistrySetBuilder;
 import net.minecraft.data.PackOutput;
@@ -18,6 +16,8 @@ public class DatapackRegistryGenerator extends DatapackBuiltinEntriesProvider {
     public static final RegistrySetBuilder REGISTRY_SET_BUILDER = new RegistrySetBuilder()
             .add(ESRegistries.CROP, CropRegistry::bootstrap)
             .add(ESRegistries.AGRO_CLIMATE, AgroClimateRegistry::bootstrap)
+            .add(ESRegistries.SEASON_QUEST, SeasonQuestRegistry::bootstrap)
+            .add(ESRegistries.HUMIDITY_CONTROL, HumidityControlRegistry::bootstrap)
             ;
 
     public DatapackRegistryGenerator(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {

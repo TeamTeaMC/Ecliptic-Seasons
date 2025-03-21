@@ -3,21 +3,22 @@ package com.teamtea.eclipticseasons.api.data.climate;
 import com.mojang.datafixers.util.Either;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.data.crop.CropGrowControl;
 import com.teamtea.eclipticseasons.api.data.crop.GrowParameter;
 import com.teamtea.eclipticseasons.api.util.codec.CodecUtil;
+import com.teamtea.eclipticseasons.common.registry.ESRegistries;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.level.biome.Biome;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * The {@link AgroClimaticZone} enum is used to define specific climate requirements for crops, distinguishing them from
@@ -34,7 +35,8 @@ import java.util.Optional;
 public record AgroClimaticZone(HolderSet<Biome> biomes,
                                Optional<GrowParameter> growParameter,
                                Optional<Map<Either<Season, SolarTerm>, Float>> defaultMapping,
-                               Optional<Map<Either<Season, SolarTerm>, List<Map<Either<Season, SolarTerm>, Float>>>> mapping) {
+                               Optional<Map<Either<Season, SolarTerm>, List<Map<Either<Season, SolarTerm>, Float>>>> mapping,
+                               List<Pair<Season, Integer>> seasonalSignalDurations) {
 
     public static final Codec<Either<Season, SolarTerm>> EITHER_CODEC = Codec.either(StringRepresentable.fromEnum(Season::collectValues), StringRepresentable.fromEnum(SolarTerm::collectValues));
     public static final Codec<Map<Either<Season, SolarTerm>, Float>> EITHER_PAIR_CODEC = CodecUtil.mapCodec(EITHER_CODEC, Codec.FLOAT);
@@ -46,7 +48,10 @@ public record AgroClimaticZone(HolderSet<Biome> biomes,
                     CodecUtil.holderSetCodec(Registries.BIOME).fieldOf("biomes").forGetter(AgroClimaticZone::biomes),
                     GrowParameter.CODEC.optionalFieldOf("global").forGetter(AgroClimaticZone::growParameter),
                     EITHER_PAIR_CODEC.optionalFieldOf("default_mapping").forGetter(AgroClimaticZone::defaultMapping),
-                    EITHER_MAP_CODEC.optionalFieldOf("mappings").forGetter(AgroClimaticZone::mapping)
+                    EITHER_MAP_CODEC.optionalFieldOf("mappings").forGetter(AgroClimaticZone::mapping),
+                    CodecUtil.pairCodec(StringRepresentable.fromEnum(Season::collectValues), Codec.INT).listOf().fieldOf("seasonal_signal_durations").orElse(
+                            List.of()
+                    ).forGetter(AgroClimaticZone::seasonalSignalDurations)
             ).apply(builder, AgroClimaticZone::new));
 
     // note 1.20: 与1.21不同的是，网络同步时无法使用HolderSet，原因是设计限制，CropGrowControlBuilder
@@ -55,8 +60,17 @@ public record AgroClimaticZone(HolderSet<Biome> biomes,
             RecordCodecBuilder.create(builder -> builder.group(
                     GrowParameter.CODEC.optionalFieldOf("global").forGetter(AgroClimaticZone::growParameter),
                     EITHER_PAIR_CODEC.optionalFieldOf("default_mapping").forGetter(AgroClimaticZone::defaultMapping),
-                    EITHER_MAP_CODEC.optionalFieldOf("mappings").forGetter(AgroClimaticZone::mapping)
-            ).apply(builder, ((global, default_mapping, mappings) -> new AgroClimaticZone(HolderSet.direct(),global,default_mapping,mappings))));
+                    EITHER_MAP_CODEC.optionalFieldOf("mappings").forGetter(AgroClimaticZone::mapping),
+                    CodecUtil.pairCodec(StringRepresentable.fromEnum(Season::collectValues), Codec.INT).listOf().fieldOf("seasonal_signal_durations").orElse(
+                            List.of()
+                    ).forGetter(AgroClimaticZone::seasonalSignalDurations)
+            ).apply(builder, ((global, default_mapping, mappings,list) -> new AgroClimaticZone(HolderSet.direct(),global,default_mapping,mappings,list))));
+
+
+
+    public static String getDescriptionId(@NotNull ResourceLocation resourceLocation) {
+        return ESRegistries.createLangKey(ESRegistries.AGRO_CLIMATE, resourceLocation);
+    }
 
 
     public GrowParameter buildFromList(CropGrowControl deaultCropGrowControl, List<Map<Either<Season, SolarTerm>, Float>> list) {
@@ -119,6 +133,7 @@ public record AgroClimaticZone(HolderSet<Biome> biomes,
         private GrowParameter growParameter;
         private Map<Either<Season, SolarTerm>, List<Map<Either<Season, SolarTerm>, Float>>> mapping;
         private Map<Either<Season, SolarTerm>, Float> defaultMapping;
+        private List<Pair<Season, Integer>> localSeason = new ArrayList<>();
 
         private Builder(HolderSet<Biome> biomes) {
             this.biomes = biomes;
@@ -147,11 +162,16 @@ public record AgroClimaticZone(HolderSet<Biome> biomes,
             return this;
         }
 
+        public Builder add(Season season, int length) {
+            this.localSeason.add(Pair.of(season, length));
+            return this;
+        }
+
         public AgroClimaticZone end() {
             if (biomes == null) {
                 throw new IllegalArgumentException("Biomes must not be null");
             }
-            return new AgroClimaticZone(biomes, Optional.ofNullable(growParameter), Optional.ofNullable(defaultMapping), Optional.ofNullable(mapping));
+            return new AgroClimaticZone(biomes, Optional.ofNullable(growParameter), Optional.ofNullable(defaultMapping), Optional.ofNullable(mapping), localSeason);
         }
     }
 }

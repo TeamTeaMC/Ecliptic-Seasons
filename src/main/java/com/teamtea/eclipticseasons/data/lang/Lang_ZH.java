@@ -16,10 +16,6 @@ public class Lang_ZH extends LangHelper {
 
     @Override
     protected void addTranslations() {
-        add("advancement.eclipticseasons.root", "春去秋来");
-        add("advancement.eclipticseasons.root.desc", "度过一年二十四个节气");
-        add("advancement.eclipticseasons.heat_stroke", "第一次中暑");
-        add("advancement.eclipticseasons.heat_stroke.desc", "夏季中午请勿在炎热的群系直面太阳行走，如有必要，带上能抵抗炎热的装备或者冰雪降温。");
 
         add("info.eclipticseasons.environment.solar_term.hint", "今日节气:");
         add("itemGroup." + EclipticSeasonsApi.MODID + ".core", "节气");
@@ -38,6 +34,27 @@ public class Lang_ZH extends LangHelper {
         add(ItemRegistry.thermometer.get(), "温度计");
         add(ItemRegistry.hyetometer.get(), "雨量计");
         add(ItemRegistry.hygrometer.get(), "湿度计");
+
+
+        add(BlockRegistry.greenhouse_core_container.get(), "温室之心室");
+
+        add(BlockRegistry.spring_greenhouse_core.get(), "春季温室之心");
+        add(BlockRegistry.summer_greenhouse_core.get(), "夏季温室之心");
+        add(BlockRegistry.autumn_greenhouse_core.get(), "秋季温室之心");
+        add(BlockRegistry.winter_greenhouse_core.get(), "冬季温室之心");
+
+        add(ItemRegistry.spring_greenhouse_essence_item.get(), "春季温室心髓");
+        add(ItemRegistry.summer_greenhouse_essence_item.get(), "夏季温室心髓");
+        add(ItemRegistry.autumn_greenhouse_essence_item.get(), "秋季温室心髓");
+        add(ItemRegistry.winter_greenhouse_essence_item.get(), "冬季温室心髓");
+
+        add(ItemRegistry.seasonal_prayer_scroll_item.get(), "祈年令");
+
+
+        add(ItemRegistry.growth_detector.get(), "生长检测计");
+
+        add(BlockRegistry.season_quest_wall_hanging_sign.get(), "季节任务告示");
+        add(BlockRegistry.season_quest_ceiling_hanging_sign.get(), "季节任务告示");
 
         add("info.eclipticseasons.environment.temperature.under_freezing", "严寒");
         add("info.eclipticseasons.environment.temperature.freezing", "冰冻");
@@ -121,8 +138,115 @@ public class Lang_ZH extends LangHelper {
         add("commands.eclipticseasons.solar.set","已将节气天数设置为第%s天");
         add("effect.eclipticseasons.heat_stroke","中暑");
 
-
+        addAdvancements();
+        addSeasonQuest();
+        addGrowthDetector();
     }
 
+    private void addAdvancements() {
+        add("advancement.eclipticseasons.base", "节气");
+        add("advancement.eclipticseasons.base.desc", "");
+
+        add("advancement.eclipticseasons.root", "春去秋来");
+        add("advancement.eclipticseasons.root.desc", "度过一年二十四个节气");
+        add("advancement.eclipticseasons.heat_stroke", "第一次中暑");
+        add("advancement.eclipticseasons.heat_stroke.desc", "夏季中午请勿在炎热的群系直面太阳行走，如有必要，带上能抵抗炎热的装备或者冰雪降温。");
+
+        add("advancement.eclipticseasons.copper_grate", "铜格栅");
+        add("advancement.eclipticseasons.copper_grate.desc", "也许格子里可以放些什么改变环境？");
+        add("advancement.eclipticseasons.block_in_copper_grate", "改变湿度");
+        add("advancement.eclipticseasons.block_in_copper_grate.desc", "可以尝试放入一些改变湿度的玩意~");
+
+        add("advancement.eclipticseasons.seasonal_prayer_scroll", "祈年令");
+        add("advancement.eclipticseasons.seasonal_prayer_scroll.desc", "制作祈年令来获取更多的温室心髓");
+        add("advancement.eclipticseasons.decorate_oak_hanging_sign", "无尽任务");
+        add("advancement.eclipticseasons.decorate_oak_hanging_sign.desc", "用祈年令装饰悬挂式告示，完成无尽任务，获取温室心髓");
+
+        add("advancement.eclipticseasons.quest", "季节任务");
+        add("advancement.eclipticseasons.quest.desc", "完成季节任务，可以获得温室心髓奖励。");
+
+        add("advancement.eclipticseasons.spring_start", "春季任务");
+        add("advancement.eclipticseasons.spring_start.desc", "在万物生长时种植小麦");
+        add("advancement.eclipticseasons.spring_harvest", "春日收成");
+        add("advancement.eclipticseasons.spring_harvest.desc", "迟迟春日，收获小麦");
+        add("advancement.eclipticseasons.spring_feed", "喂养动物");
+        add("advancement.eclipticseasons.spring_feed.desc", "喂养羊、牛或者鸡");
+        add("advancement.eclipticseasons.spring_seed", "春日留种");
+        add("advancement.eclipticseasons.spring_seed.desc", "收集小麦种子，为下一个春天做准备");
+        add("advancement.eclipticseasons.spring_bread", "制作面包");
+        add("advancement.eclipticseasons.spring_bread.desc", "辛苦之后，来饱餐一顿吧~");
+        add("advancement.eclipticseasons.spring_hay", "制作草垛");
+        add("advancement.eclipticseasons.spring_hay.desc", "制作干草块，储存收获");
+        add("advancement.eclipticseasons.spring_end", "春季温室核心");
+        add("advancement.eclipticseasons.spring_end.desc", "将春季温室心髓放入温室之心室");
+
+        add("advancement.eclipticseasons.summer_start", "夏季任务");
+        add("advancement.eclipticseasons.summer_start.desc", "盛夏可以准备吃西瓜了~");
+        add("advancement.eclipticseasons.summer_harvest", "夏日收获");
+        add("advancement.eclipticseasons.summer_harvest.desc", "炎炎夏天，西瓜清凉");
+        add("advancement.eclipticseasons.summer_melon_slice", "制作西瓜片");
+        add("advancement.eclipticseasons.summer_melon_slice.desc", "会有人能吃下一整个西瓜吗？");
+        add("advancement.eclipticseasons.summer_seed", "夏日留种");
+        add("advancement.eclipticseasons.summer_seed.desc", "收集西瓜种子，为下一个夏天做准备");
+        add("advancement.eclipticseasons.summer_glistering_melon_slice", "闪烁西瓜片");
+        add("advancement.eclipticseasons.summer_glistering_melon_slice.desc", "制作闪烁的西瓜片，这是什么？");
+        add("advancement.eclipticseasons.summer_eat_glistering_melon_slice", "食用闪烁西瓜片");
+        add("advancement.eclipticseasons.summer_eat_glistering_melon_slice.desc", "真的能吃吗？");
+        add("advancement.eclipticseasons.summer_end", "夏季温室核心");
+        add("advancement.eclipticseasons.summer_end.desc", "将夏季温室心髓放入温室之心室");
+
+        add("advancement.eclipticseasons.autumn_start", "秋季任务");
+        add("advancement.eclipticseasons.autumn_start.desc", "种下南瓜");
+        add("advancement.eclipticseasons.autumn_harvest", "秋日收获");
+        add("advancement.eclipticseasons.autumn_harvest.desc", "是大南瓜诶！");
+        add("advancement.eclipticseasons.autumn_seed", "秋日留种");
+        add("advancement.eclipticseasons.autumn_seed.desc", "收集南瓜种子，为下一个夏天做准备");
+        add("advancement.eclipticseasons.autumn_carved_pumpkin", "秋天的雕刻南瓜");
+        add("advancement.eclipticseasons.autumn_carved_pumpkin.desc", "听说神秘的节日就要到了");
+        add("advancement.eclipticseasons.autumn_jack_o_lantern", "制作南瓜灯");
+        add("advancement.eclipticseasons.autumn_jack_o_lantern.desc", "今天也要闪亮登场~");
+        add("advancement.eclipticseasons.autumn_pumpkin_pie", "制作南瓜派");
+        add("advancement.eclipticseasons.autumn_pumpkin_pie.desc", "是派，不是π");
+        add("advancement.eclipticseasons.autumn_end", "秋季温室核心");
+        add("advancement.eclipticseasons.autumn_end.desc", "将秋季温室心髓放入温室之心室");
+
+        add("advancement.eclipticseasons.winter_start", "冬季任务");
+        add("advancement.eclipticseasons.winter_start.desc", "准备拿起扫帚扫雪吧~");
+        add("advancement.eclipticseasons.winter_harvest", "收获细雪");
+        add("advancement.eclipticseasons.winter_harvest.desc", "下雪时可以用炼药锅收集细雪");
+        add("advancement.eclipticseasons.winter_campfire", "冬夜暖火");
+        add("advancement.eclipticseasons.winter_campfire.desc", "雪夜，暖火，与我");
+        add("advancement.eclipticseasons.winter_milk", "喝牛奶");
+        add("advancement.eclipticseasons.winter_milk.desc", "暖暖身子");
+        add("advancement.eclipticseasons.winter_carpet", "制作地毯");
+        add("advancement.eclipticseasons.winter_carpet.desc", "噢，亲爱的，别冷着了");
+        add("advancement.eclipticseasons.winter_cake", "制作蛋糕");
+        add("advancement.eclipticseasons.winter_cake.desc", "让我们来庆祝一年的好收成吧~");
+        add("advancement.eclipticseasons.winter_end", "冬季温室核心");
+        add("advancement.eclipticseasons.winter_end.desc", "将冬季温室心髓放入温室之心室");
+    }
+
+    private void addSeasonQuest() {
+        add("eclipticseasons.season_quest.hint.loading", "空空如也");
+        add("eclipticseasons.season_quest.hint.item_count", "%sx%s");
+    }
+
+    private void addGrowthDetector() {
+        add("item.eclipticseasons.growth_detector.hint.title", "§l检测结果：");
+
+        add("item.eclipticseasons.growth_detector.hint.agro_climatic_zone", "当前农业气候类型为%s，");
+
+        add("item.eclipticseasons.growth_detector.hint.greenroom_1", "%s正在温室中，");
+        add("item.eclipticseasons.growth_detector.hint.greenroom_2", "%s可能在温室中，");
+        add("item.eclipticseasons.growth_detector.hint.greenroom_3", "%s不在温室中，");
+
+        add("item.eclipticseasons.growth_detector.hint.grow_chance_1", "作物会迅速生长");
+        add("item.eclipticseasons.growth_detector.hint.grow_chance_2", "作物会较快生长");
+        add("item.eclipticseasons.growth_detector.hint.grow_chance_3", "作物会正常生长");
+        add("item.eclipticseasons.growth_detector.hint.grow_chance_4", "作物会缓慢生长");
+        add("item.eclipticseasons.growth_detector.hint.grow_chance_5", "作物几乎不会生长");
+        add("item.eclipticseasons.growth_detector.hint.grow_chance_6", "作物不会生长");
+
+    }
 
 }

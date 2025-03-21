@@ -2,6 +2,7 @@ package com.teamtea.eclipticseasons.data.tag;
 
 import com.teamtea.eclipticseasons.api.constant.tag.CropClimateTags;
 import com.teamtea.eclipticseasons.api.data.climate.AgroClimaticZone;
+import com.teamtea.eclipticseasons.common.registry.AgroClimateRegistry;
 import com.teamtea.eclipticseasons.common.registry.ESRegistries;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
@@ -10,6 +11,7 @@ import net.minecraft.data.tags.TagsProvider;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public class CropClimateTagsDataProvider extends TagsProvider<AgroClimaticZone> {
@@ -24,5 +26,8 @@ public class CropClimateTagsDataProvider extends TagsProvider<AgroClimaticZone> 
         for (Holder.Reference<AgroClimaticZone> cropClimateTypeReference : provider.lookupOrThrow(ESRegistries.AGRO_CLIMATE).listElements().toList()) {
             tag(CropClimateTags.ALL).add(cropClimateTypeReference.key());
         }
+
+        tag(CropClimateTags.OVERWORLD).add(AgroClimateRegistry.TEMPERATE, AgroClimateRegistry.COLD, AgroClimateRegistry.HOT, AgroClimateRegistry.DESERT);
+
     }
 }

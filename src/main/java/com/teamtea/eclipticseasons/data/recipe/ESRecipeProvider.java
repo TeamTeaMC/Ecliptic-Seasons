@@ -74,6 +74,36 @@ public final class ESRecipeProvider extends RecipeProvider {
                 .group("broom")
                 .unlockedBy("has_hay_block", has(Items.HAY_BLOCK))
                 .save(consumer);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ItemRegistry.growth_detector.get())
+                .define('x', Tags.Items.GLASS_PANES)
+                .define('y', Tags.Items.GLASS)
+                .define('z', Tags.Items.RODS_WOODEN)
+                .pattern("  x")
+                .pattern(" y ")
+                .pattern("z  ")
+                .group("growth_detector")
+                .unlockedBy("has_glass", has(Tags.Items.GLASS))
+                .save(consumer);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ItemRegistry.seasonal_prayer_scroll_item.get())
+                .define('x', Tags.Items.SEEDS)
+                .define('y', Items.PAPER)
+                .pattern("xx")
+                .pattern("xy")
+                .group("seasonal_prayer_scroll")
+                .unlockedBy("has_seeds", has(Tags.Items.SEEDS))
+                .save(consumer);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ItemRegistry.greenhouse_core_container_item.get())
+                .define('x', Tags.Items.GLASS_TINTED)
+                .define('z', Tags.Items.INGOTS_COPPER)
+                .pattern("zxz")
+                .pattern("x x")
+                .pattern("zxz")
+                .group("greenhouse_core_frame")
+                .unlockedBy("has_amethyst", has(Tags.Items.GEMS_AMETHYST))
+                .save(consumer);
     }
 
 
