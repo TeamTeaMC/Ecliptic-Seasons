@@ -17,6 +17,6 @@ public record WarpItemPredicate(HolderSet<Item> items,
     ).apply(ins, WarpItemPredicate::new));
 
     public boolean test(ItemStack stack) {
-        return items.contains(stack.getItemHolder()) && stack.getCount() >= count;
+        return items.contains(stack.getItemHolder());
     }
 }

@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "eclipticseasons:block/greenhouse_core_container"
+    }
+  }
+}

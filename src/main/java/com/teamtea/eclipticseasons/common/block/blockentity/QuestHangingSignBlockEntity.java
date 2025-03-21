@@ -68,7 +68,7 @@ public class QuestHangingSignBlockEntity extends SignBlockEntity {
 
         tag.putString("sign_type", BuiltInRegistries.BLOCK.getKey(getSignType()).toString());
         if (seasonQuest != null) {
-            SeasonQuest.CODEC
+            SeasonQuest.DIRECT_CODEC
                     .encodeStart(NbtOps.INSTANCE, seasonQuest)
                     .resultOrPartial(EclipticSeasons::logger)
                     .ifPresent(tag1 -> tag.put("season_quest", tag1));
@@ -85,7 +85,7 @@ public class QuestHangingSignBlockEntity extends SignBlockEntity {
                 this.sign = signBlock;
         }
         if (tag.contains("season_quest")) {
-            SeasonQuest.CODEC
+            SeasonQuest.DIRECT_CODEC
                     .parse(NbtOps.INSTANCE, tag.get("season_quest"))
                     .resultOrPartial(EclipticSeasons::logger)
                     .ifPresent(seasonQuest1 -> {
@@ -221,7 +221,7 @@ public class QuestHangingSignBlockEntity extends SignBlockEntity {
             boolean isOk = true;
             for (WarpItemPredicate itemPredicate : quest.need()) {
                 int i = player.getInventory().clearOrCountMatchingItems(itemPredicate::test, 0, player.inventoryMenu.getCraftSlots());
-                if (i == 0) {
+                if (i < itemPredicate.count()) {
                     isOk = false;
                     break;
                 }

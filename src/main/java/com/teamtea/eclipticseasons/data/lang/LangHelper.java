@@ -1,6 +1,8 @@
 package com.teamtea.eclipticseasons.data.lang;
 
+import com.teamtea.eclipticseasons.common.registry.ESRegistries;
 import net.minecraft.data.PackOutput;
+import net.minecraft.resources.ResourceKey;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.common.data.LanguageProvider;
 
@@ -20,6 +22,11 @@ public abstract class LangHelper extends LanguageProvider {
 
 	public void addDebugKey(String key, String value) {
 		// add(ModConstant.DebugKey.getRealKey(key), value);
+	}
+
+
+	public <T> void add(ResourceKey<T> key, String name) {
+		add(ESRegistries.createLangKey(key), name);
 	}
 
 

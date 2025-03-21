@@ -35,6 +35,24 @@ public class BlockStatesDataProvider extends BlockStateProvider {
                     .build());
         }
 
+        for (Block block : List.of(BlockRegistry.greenhouse_core_container.get(),
+                BlockRegistry.spring_greenhouse_core.get(),
+                BlockRegistry.summer_greenhouse_core.get(),
+                BlockRegistry.autumn_greenhouse_core.get(),
+                BlockRegistry.winter_greenhouse_core.get())) {
+            simpleBlockWithItem(block, models()
+                    .cubeAll(blockName(block), EclipticSeasons.rl("block/green_house_core_particle"))
+                    .texture("particle", EclipticSeasons.rl("block/green_house_core_particle"))
+            );
+        }
+
+        for (Block block : List.of(BlockRegistry.season_quest_ceiling_hanging_sign.get(),
+                BlockRegistry.season_quest_wall_hanging_sign.get())) {
+            simpleBlockWithItem(block, models()
+                    .withExistingParent(blockName(block), new ResourceLocation("block/air"))
+                    .texture("particle", new ResourceLocation("block/oak_planks"))
+            );
+        }
     }
 
     public void addSimple(Block block) {

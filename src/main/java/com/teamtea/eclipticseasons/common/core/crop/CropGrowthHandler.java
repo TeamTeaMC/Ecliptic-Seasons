@@ -35,6 +35,7 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.chunk.LevelChunkSection;
 import net.minecraft.world.level.levelgen.Heightmap;
@@ -470,7 +471,7 @@ public final class CropGrowthHandler {
                     cropGrowEvent.setResult(BlockEvent.CropGrowEvent.Pre.Result.DENY);
                 } else if (event instanceof SaplingGrowTreeEvent blockGrowFeatureEvent) {
                     blockGrowFeatureEvent.setResult(Event.Result.DENY);
-                }else if (event instanceof BonemealEvent bonemealEvent) {
+                } else if (event instanceof BonemealEvent bonemealEvent) {
                     // bonemealEvent.setCanceled(true);
                     bonemealEvent.setResult(Event.Result.ALLOW);
                 }
@@ -546,7 +547,12 @@ public final class CropGrowthHandler {
                     return chunkAccess.getSecond().getBlockState(pos.getX() & 15, pos.getY() & 15, pos.getZ() & 15);
                 }
             }
-            LevelChunkSection chunk = levelAccessor.getChunk(x, z).getSection(levelAccessor.getSectionIndex(pos.getY()));
+            ChunkAccess chunk1 = levelAccessor.getChunk(x, z);
+            int sectionIndex = chunk1.getSectionIndex(pos.getY());
+            LevelChunkSection[] sections = chunk1.getSections();
+            if (sectionIndex < 0 || sectionIndex >= sections.length)
+                return Blocks.AIR.defaultBlockState();
+            LevelChunkSection chunk = sections[sectionIndex];
             this.chunkAccessList.add(Pair.of(SectionPos.of(x, y, z), chunk));
             return chunk.getBlockState(pos.getX() & 15, pos.getY() & 15, pos.getZ() & 15);
         }

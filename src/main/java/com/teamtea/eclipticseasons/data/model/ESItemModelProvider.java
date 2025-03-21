@@ -29,6 +29,9 @@ public class ESItemModelProvider extends ItemModelProvider {
         addSimple(ItemRegistry.calendar_item.get());
         addSimple(ItemRegistry.broom.get());
 
+        addSimple(ItemRegistry.seasonal_prayer_scroll_item.get());
+        addSimple(ItemRegistry.growth_detector.get());
+
         // addSimple(EclipticSeasons.ModContents.wind_chimes_item.value());
         // addSimple(EclipticSeasons.ModContents.paper_wind_chimes_item.value());
         // addSimple(EclipticSeasons.ModContents.bamboo_wind_chimes_item.value());
@@ -39,6 +42,12 @@ public class ESItemModelProvider extends ItemModelProvider {
         //         .texture("layer0",  new ResourceLocation("item/"+itemName(Items.STICK)));
         // withExistingParent(itemName(EclipticSeasons.ModContents.snowy_maker_item.value()),  new ResourceLocation(GENERATED))
         //         .texture("layer0",  new ResourceLocation("item/"+itemName(Items.STICK)));
+
+        withExistingParent(itemName(ItemRegistry.spring_greenhouse_essence_item.get()),resourceItem("empty"));
+        withExistingParent(itemName(ItemRegistry.summer_greenhouse_essence_item.get()),resourceItem("empty"));
+        withExistingParent(itemName(ItemRegistry.autumn_greenhouse_essence_item.get()),resourceItem("empty"));
+        withExistingParent(itemName(ItemRegistry.winter_greenhouse_essence_item.get()),resourceItem("empty"));
+
     }
 
     public void addSimple(Item item) {

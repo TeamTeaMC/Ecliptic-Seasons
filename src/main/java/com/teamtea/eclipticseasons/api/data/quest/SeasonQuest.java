@@ -53,6 +53,19 @@ public record SeasonQuest(
             Codec.INT.optionalFieldOf("color").forGetter(SeasonQuest::color)
     ).apply(ins, SeasonQuest::new));
 
+    public static final Codec<SeasonQuest> DIRECT_CODEC = RecordCodecBuilder.create(ins -> ins.group(
+            StringRepresentable.fromEnum(SolarTerm::collectValues).optionalFieldOf("end").forGetter(SeasonQuest::end),
+            StringRepresentable.fromEnum(SolarTerm::collectValues).optionalFieldOf("start").forGetter(SeasonQuest::start),
+            TRANSLATE_CODEC.optionalFieldOf("tittle").forGetter(SeasonQuest::tittle),
+            TRANSLATE_CODEC.listOf().optionalFieldOf("description").forGetter(SeasonQuest::description),
+            Codec.INT.optionalFieldOf("max_count").forGetter(SeasonQuest::max_count),
+            Codec.INT.optionalFieldOf("seasonal_count").forGetter(SeasonQuest::seasonal_count),
+            Codec.INT.optionalFieldOf("weight").forGetter(SeasonQuest::weight),
+            Codec.BOOL.optionalFieldOf("glowing").forGetter(SeasonQuest::glowing),
+            Codec.INT.optionalFieldOf("color").forGetter(SeasonQuest::color)
+    ).apply(ins, (solarTerm, solarTerm2, s, strings, integer, integer2, integer3, aBoolean, integer4) ->
+            new SeasonQuest(solarTerm, solarTerm2, List.of(), List.of(), s, strings, Optional.empty(), integer, integer2, integer3, aBoolean, integer4)));
+
 
     public static Builder builder() {
         return new Builder();

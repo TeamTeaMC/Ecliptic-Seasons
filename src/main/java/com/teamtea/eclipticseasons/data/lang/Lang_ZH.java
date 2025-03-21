@@ -1,9 +1,11 @@
 package com.teamtea.eclipticseasons.data.lang;
 
 
+import com.teamtea.eclipticseasons.common.registry.AgroClimateRegistry;
 import com.teamtea.eclipticseasons.common.registry.BlockRegistry;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.common.registry.ItemRegistry;
+import com.teamtea.eclipticseasons.common.registry.SeasonQuestRegistry;
 import net.minecraft.data.PackOutput;
 import net.minecraftforge.common.data.ExistingFileHelper;
 
@@ -137,6 +139,18 @@ public class Lang_ZH extends LangHelper {
 
         add("commands.eclipticseasons.solar.set","已将节气天数设置为第%s天");
         add("effect.eclipticseasons.heat_stroke","中暑");
+
+        add(AgroClimateRegistry.COLD, "寒带");
+        add(AgroClimateRegistry.TEMPERATE, "温带");
+        add(AgroClimateRegistry.HOT, "热带");
+        add(AgroClimateRegistry.DESERT, "沙漠");
+        add(AgroClimateRegistry.NETHER, "下界");
+        add(AgroClimateRegistry.END, "末地");
+
+        add(SeasonQuestRegistry.SPRING_CORE, "春季核心任务");
+        add(SeasonQuestRegistry.SUMMER_CORE, "夏季核心任务");
+        add(SeasonQuestRegistry.AUTUMN_CORE, "秋季核心任务");
+        add(SeasonQuestRegistry.WINTER_CORE, "冬季核心任务");
 
         addAdvancements();
         addSeasonQuest();

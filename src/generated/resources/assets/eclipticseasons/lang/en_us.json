@@ -71,6 +71,12 @@
   "advancement.eclipticseasons.winter_milk.desc": "Warm yourself up.",
   "advancement.eclipticseasons.winter_start": "Winter Quest",
   "advancement.eclipticseasons.winter_start.desc": "Get ready to grab a broom and sweep the snow~",
+  "agro_climate.eclipticseasons.cold": "Cold Zone",
+  "agro_climate.eclipticseasons.desert": "Desert",
+  "agro_climate.eclipticseasons.end": "End",
+  "agro_climate.eclipticseasons.hot": "Tropical Zone",
+  "agro_climate.eclipticseasons.nether": "Nether",
+  "agro_climate.eclipticseasons.temperate": "Temperate Zone",
   "block.eclipticseasons.autumn_greenhouse_core": "Autumn Greenhouse Core",
   "block.eclipticseasons.calendar": "Calendar",
   "block.eclipticseasons.greenhouse_core_container": "Container of Greenhouse Core",
@@ -181,5 +187,9 @@
   "item.eclipticseasons.summer_greenhouse_essence": "Summer Greenhouse Essence",
   "item.eclipticseasons.thermometer": "Thermometer",
   "item.eclipticseasons.winter_greenhouse_essence": "Winter Greenhouse Essence",
-  "itemGroup.eclipticseasons.core": "Ecliptic Seasons"
+  "itemGroup.eclipticseasons.core": "Ecliptic Seasons",
+  "season_quest.eclipticseasons.autumn_core": "Autumn Core Quest",
+  "season_quest.eclipticseasons.spring_core": "Spring Core Quest",
+  "season_quest.eclipticseasons.summer_core": "Summer Core Quest",
+  "season_quest.eclipticseasons.winter_core": "Winter Core Quest"
 }

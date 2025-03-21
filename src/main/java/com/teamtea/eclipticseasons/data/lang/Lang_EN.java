@@ -1,8 +1,10 @@
 package com.teamtea.eclipticseasons.data.lang;
 
+import com.teamtea.eclipticseasons.common.registry.AgroClimateRegistry;
 import com.teamtea.eclipticseasons.common.registry.BlockRegistry;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.common.registry.ItemRegistry;
+import com.teamtea.eclipticseasons.common.registry.SeasonQuestRegistry;
 import net.minecraft.data.PackOutput;
 import net.minecraftforge.common.data.ExistingFileHelper;
 
@@ -134,6 +136,17 @@ public class Lang_EN extends LangHelper {
         add("commands.eclipticseasons.solar.set", "Set the solar day to %s");
         add("effect.eclipticseasons.heat_stroke", "Heat Stroke");
 
+        add(AgroClimateRegistry.COLD, "Cold Zone");
+        add(AgroClimateRegistry.TEMPERATE, "Temperate Zone");
+        add(AgroClimateRegistry.HOT, "Tropical Zone");
+        add(AgroClimateRegistry.DESERT, "Desert");
+        add(AgroClimateRegistry.NETHER, "Nether");
+        add(AgroClimateRegistry.END, "End");
+
+        add(SeasonQuestRegistry.SPRING_CORE, "Spring Core Quest");
+        add(SeasonQuestRegistry.SUMMER_CORE, "Summer Core Quest");
+        add(SeasonQuestRegistry.AUTUMN_CORE, "Autumn Core Quest");
+        add(SeasonQuestRegistry.WINTER_CORE, "Winter Core Quest");
 
         addAdvancements();
         addSeasonQuest();

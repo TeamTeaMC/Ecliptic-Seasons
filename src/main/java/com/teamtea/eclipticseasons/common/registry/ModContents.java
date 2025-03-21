@@ -41,7 +41,7 @@ public class ModContents {
     public static void onNewRegistry(DataPackRegistryEvent.NewRegistry event) {
         event.dataPackRegistry(ESRegistries.CROP, CropGrowControlBuilder.CODEC, CropGrowControlBuilder.DIRECT_CODEC);
         event.dataPackRegistry(ESRegistries.AGRO_CLIMATE, AgroClimaticZone.CODEC, AgroClimaticZone.DIRECT_CODEC);
-        event.dataPackRegistry(ESRegistries.SEASON_QUEST, SeasonQuest.CODEC,  null);
+        event.dataPackRegistry(ESRegistries.SEASON_QUEST, SeasonQuest.CODEC,  SeasonQuest.DIRECT_CODEC);
         event.dataPackRegistry(ESRegistries.HUMIDITY_CONTROL, HumidityControl.CODEC, null);
 
     }

@@ -71,6 +71,12 @@
   "advancement.eclipticseasons.winter_milk.desc": "暖暖身子",
   "advancement.eclipticseasons.winter_start": "冬季任务",
   "advancement.eclipticseasons.winter_start.desc": "准备拿起扫帚扫雪吧~",
+  "agro_climate.eclipticseasons.cold": "寒带",
+  "agro_climate.eclipticseasons.desert": "沙漠",
+  "agro_climate.eclipticseasons.end": "末地",
+  "agro_climate.eclipticseasons.hot": "热带",
+  "agro_climate.eclipticseasons.nether": "下界",
+  "agro_climate.eclipticseasons.temperate": "温带",
   "block.eclipticseasons.autumn_greenhouse_core": "秋季温室之心",
   "block.eclipticseasons.calendar": "日历",
   "block.eclipticseasons.greenhouse_core_container": "温室之心室",
@@ -182,5 +188,9 @@
   "item.eclipticseasons.summer_greenhouse_essence": "夏季温室心髓",
   "item.eclipticseasons.thermometer": "温度计",
   "item.eclipticseasons.winter_greenhouse_essence": "冬季温室心髓",
-  "itemGroup.eclipticseasons.core": "节气"
+  "itemGroup.eclipticseasons.core": "节气",
+  "season_quest.eclipticseasons.autumn_core": "秋季核心任务",
+  "season_quest.eclipticseasons.spring_core": "春季核心任务",
+  "season_quest.eclipticseasons.summer_core": "夏季核心任务",
+  "season_quest.eclipticseasons.winter_core": "冬季核心任务"
 }
