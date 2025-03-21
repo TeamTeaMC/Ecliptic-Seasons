@@ -15,7 +15,7 @@
     "frame": "task",
     "hidden": false,
     "icon": {
-      "item": "eclipticseasons:calendar"
+      "item": "minecraft:paper"
     },
     "show_toast": true,
     "title": {

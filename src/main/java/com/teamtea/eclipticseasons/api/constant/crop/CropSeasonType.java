@@ -59,4 +59,5 @@ public enum CropSeasonType
     public static CropSeasonType[] collectValues() {
         return CROP_SEASON_TYPES;
     }
+
 }

@@ -8,6 +8,7 @@ import net.minecraft.network.chat.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class CropSeasonInfo
 {
@@ -98,5 +99,18 @@ public class CropSeasonInfo
             }
         }
         return list;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CropSeasonInfo that = (CropSeasonInfo) o;
+        return season == that.season;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(season);
     }
 }

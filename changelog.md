@@ -1,3 +1,6 @@
+## **0.10**
+- Fixed the built-in compatibility handling for the Jingmi Siji tag data pack. Due to significant modifications in the underlying logic of data packs in version 0.10-pre8, data conversion issues existed prior to the new version.
+
 ## **0.10-pre12**
 - Optimized temperature calculation method.
 - Optimized the interaction performance of this mod with dimensions and weather, making its configuration items more stable and reserving room for expansion.

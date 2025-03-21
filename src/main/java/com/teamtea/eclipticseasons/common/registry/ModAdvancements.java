@@ -13,5 +13,6 @@ public class ModAdvancements {
     public static void register() {
         CriteriaTriggers.register(solarTermsCriterion);
         CriteriaTriggers.register(heatStrokeCriterion);
+        CriteriaTriggers.register(parentNeedCriterion);
     }
 }

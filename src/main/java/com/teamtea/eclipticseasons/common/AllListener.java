@@ -10,6 +10,7 @@ import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
 import com.teamtea.eclipticseasons.common.core.crop.CropInfoManager;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
+import com.teamtea.eclipticseasons.common.registry.ModAdvancements;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -100,6 +101,20 @@ public class AllListener {
             SolarDataManager data = SolarHolders.getSaveData(event.level);
             if (data != null) {
                 data.updateTicks((ServerLevel) event.level);
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public static void onPlayerTickPost(TickEvent.PlayerTickEvent event) {
+        if (event.player instanceof ServerPlayer serverPlayer) {
+            if (event.phase == TickEvent.Phase.START) {
+                WeatherManager.tickPlayerSeasonEffecct(serverPlayer);
+            }
+            if (event.phase == TickEvent.Phase.END)
+            {
+                if (serverPlayer.level().getGameTime() % 20 == 0)
+                    ModAdvancements.parentNeedCriterion.trigger(serverPlayer);
             }
         }
     }

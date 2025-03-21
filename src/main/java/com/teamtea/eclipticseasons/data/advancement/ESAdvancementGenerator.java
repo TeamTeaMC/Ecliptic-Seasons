@@ -47,7 +47,7 @@ public class ESAdvancementGenerator implements ForgeAdvancementProvider.Advancem
 
          seasons = Advancement.Builder.advancement()
                  .parent(seasons)
-                .display(ItemRegistry.calendar_item.get(),
+                .display(Items.PAPER,
                         Component.translatable("advancement.eclipticseasons.root"),
                         Component.translatable("advancement.eclipticseasons.root.desc"),
                         new ResourceLocation("minecraft:textures/block/bricks.png"),

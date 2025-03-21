@@ -9,6 +9,7 @@ import net.minecraft.network.chat.MutableComponent;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class CropHumidityInfo {
     private final Humidity min;
@@ -48,5 +49,18 @@ public class CropHumidityInfo {
             list.add(min.getTranslation());
         }
         return list;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CropHumidityInfo that = (CropHumidityInfo) o;
+        return min == that.min && max == that.max;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(min, max);
     }
 }

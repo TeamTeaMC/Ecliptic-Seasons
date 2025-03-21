@@ -24,7 +24,6 @@
     "common.entity.animal.fox.MixinFox_SeekShelterGoal",
     "common.entity.animal.pandas.MixinPanda",
     "common.entity.monster.MixinMonster",
-    "common.entity.player.MixinServerPlayer",
     "common.entity.projectile.MixinThrownTrident",
     "common.loot.MixinWeatherCheck",
     "compat.hauntedharvest.MixinHauntedHarvest",
