@@ -112,7 +112,7 @@ public class SolarDataManager extends SavedData {
     }
 
     public int getSolarTermIndex() {
-        return (getSolarTermsDay() / CommonConfig.Season.lastingDaysOfEachTerm.get()+24) % 24;
+        return (getSolarTermsDay() / CommonConfig.Season.lastingDaysOfEachTerm.get() + 24) % 24;
     }
 
     public SolarTerm getSolarTerm() {
@@ -120,7 +120,7 @@ public class SolarDataManager extends SavedData {
     }
 
     public SolarTerm getNextSolarTerm() {
-        return SolarTerm.get((this.getSolarTermIndex()+1)%24);
+        return SolarTerm.get((this.getSolarTermIndex() + 1) % 24);
     }
 
     public int getSolarTermLastingDays() {

@@ -258,8 +258,9 @@ public class MapChecker {
 
     public static boolean isValidDimension(@Nullable Level level) {
         boolean result = level != null
-                && level.dimensionType().natural()
-                && !level.dimensionType().hasFixedTime();
+                // && level.dimensionType().natural()
+                // && !level.dimensionType().hasFixedTime()
+                ;
         if (result) {
             // fori faster than enhanced for
             for (int i = 0; i < validDimension.size(); i++) {

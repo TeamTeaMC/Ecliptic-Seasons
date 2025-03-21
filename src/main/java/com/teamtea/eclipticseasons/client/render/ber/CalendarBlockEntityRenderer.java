@@ -45,12 +45,15 @@ public class CalendarBlockEntityRenderer implements BlockEntityRenderer<Calendar
     public void render(CalendarBlockEntity blockEntity, float partialTicks, PoseStack poseStack, MultiBufferSource bufferIn, int combinedLight, int combinedOverlay) {
 
         var facing = blockEntity.getBlockState().getValue(SimpleHorizontalEntityBlock.FACING).ordinal() * 90;
-        var st = ClientCon.nowSolarTerm;
+        SolarTerm st = ClientCon.nowSolarTerm;
 
-        drawText(2, Component.translatable("info.eclipticseasons.environment.solar_term.hint").getString(), Color.GRAY.getRGB(), blockEntity, poseStack, bufferIn, combinedLight);
+        if (st != SolarTerm.NONE)
+            drawText(2, Component.translatable("info.eclipticseasons.environment.solar_term.hint").getString(), Color.GRAY.getRGB(), blockEntity, poseStack, bufferIn, combinedLight);
 
-        drawText(1, st.getTranslation().getString(), st.getSeason().getColor().getColor(), blockEntity, poseStack, bufferIn, combinedLight);
+        String string = st.getTranslation().getString() +
+                (st == SolarTerm.NONE ? "" :" (%s)".formatted(st.getSeason().getTranslation().getString()));
 
+        drawText(1, string, st.getSeason().getColor().getColor(), blockEntity, poseStack, bufferIn, combinedLight);
 
         // drawText(2, st.getAlternationText().getString().substring(0,5), st.getSeason().getColor().getColor(), blockEntity, poseStack, bufferIn, combinedLight);
         //

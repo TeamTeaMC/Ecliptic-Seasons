@@ -163,9 +163,9 @@ public class CommonConfig {
             useSolarWeather = builder.comment("Enable solar term weather system with biome.")
                     .define("UseSolarWeather", true);
             rainChanceMultiplier = builder.comment("Set the percentage multiplier of the probability of rain, the range should be between 0 and 1000.")
-                    .defineInRange("RainChancePercentMultiplier", 60, 0, 1000);
+                    .defineInRange("RainChancePercentMultiplier", 40, 0, 1000);
             thunderChanceMultiplier = builder.comment("Set the percentage multiplier of the probability of thunder in the rain, the range should be between 0 and 1000.")
-                    .defineInRange("ThunderChancePercentMultiplier", 80, 0, 1000);
+                    .defineInRange("ThunderChancePercentMultiplier", 20, 0, 1000);
             builder.pop();
         }
     }

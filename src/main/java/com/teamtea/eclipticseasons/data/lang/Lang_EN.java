@@ -48,11 +48,13 @@ public class Lang_EN extends LangHelper {
         add("info.eclipticseasons.environment.temperature.hot", "Hot");
         add("info.eclipticseasons.environment.temperature.heat", "Heat");
         add("info.eclipticseasons.environment.temperature.over_heat", "Over Heat");
-        add("info.eclipticseasons.environment.rainfall.rare","Rare");
-        add("info.eclipticseasons.environment.rainfall.scarce","Scare");
-        add("info.eclipticseasons.environment.rainfall.moderate","Moderate");
-        add("info.eclipticseasons.environment.rainfall.adequate","Adequate");
-        add("info.eclipticseasons.environment.rainfall.abundant","Abundant");
+
+        add("info.eclipticseasons.environment.rainfall.rare", "Rare");
+        add("info.eclipticseasons.environment.rainfall.scarce", "Scare");
+        add("info.eclipticseasons.environment.rainfall.moderate", "Moderate");
+        add("info.eclipticseasons.environment.rainfall.adequate", "Adequate");
+        add("info.eclipticseasons.environment.rainfall.abundant", "Abundant");
+
         add("info.eclipticseasons.environment.humidity.arid", "Arid");
         add("info.eclipticseasons.environment.humidity.dry", "Dry");
         add("info.eclipticseasons.environment.humidity.average", "Average");
@@ -89,6 +91,7 @@ public class Lang_EN extends LangHelper {
         add("info.eclipticseasons.environment.solar_term.winter_solstice", "Winter Solstice");
         add("info.eclipticseasons.environment.solar_term.lesser_cold", "Lesser Cold");
         add("info.eclipticseasons.environment.solar_term.greater_cold", "Greater Cold");
+        add("info.eclipticseasons.environment.solar_term.none", "None");
         add("info.eclipticseasons.environment.solar_term.message", "[Solar Term Tip] %s");
         add("info.eclipticseasons.environment.solar_term.alternation.beginning_of_spring", "Spring coming back, all things awaken.");
         add("info.eclipticseasons.environment.solar_term.alternation.rain_water", "Moisten with drizzle, grass loomed.");
@@ -114,6 +117,8 @@ public class Lang_EN extends LangHelper {
         add("info.eclipticseasons.environment.solar_term.alternation.winter_solstice", "Shadows become longer. The endless long night comes.");
         add("info.eclipticseasons.environment.solar_term.alternation.lesser_cold", "Severe cold in the depth of winter.");
         add("info.eclipticseasons.environment.solar_term.alternation.greater_cold", "Winds died away, but icy coldness still.");
+        add("info.eclipticseasons.environment.solar_term.alternation.none", "...");
+
         add("commands.eclipticseasons.solar.set", "Set the solar day to %s");
         add("effect.eclipticseasons.heat_stroke", "Heat Stroke");
 

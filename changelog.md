@@ -1,3 +1,9 @@
+## **0.10-pre11-2**
+- The default global probability coefficients of thunder and rain have been reduced.
+- Fire resistance grants immunity to heatstroke as well.
+- Adjusted subsequent check limits for ValidDimension.
+- Added some missing translations for calendar.
+
 ## **0.10-pre11**
 ### Fixes
 - Fixed an issue in the 0.10-pre6 update where biome temperature adjustments during world generation could prevent snow from generating in cold biomes in multiplayer games.

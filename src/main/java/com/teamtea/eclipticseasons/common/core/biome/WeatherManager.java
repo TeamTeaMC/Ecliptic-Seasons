@@ -23,6 +23,7 @@ import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
@@ -34,6 +35,7 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
@@ -406,6 +408,9 @@ public class WeatherManager {
                                     }
                                 }
                             }
+                            if (!isColdHe) {
+                                isColdHe = player.hasEffect(MobEffects.FIRE_RESISTANCE);
+                            }
                             if (!player.hasEffect(EffectRegistry.HEAT_STROKE) && !isColdHe) {
                                 player.addEffect(new MobEffectInstance(EffectRegistry.HEAT_STROKE, 600));
                                 ModAdvancements.heatStrokeCriterion.trigger(player);
@@ -475,7 +480,7 @@ public class WeatherManager {
     }
 
     public static void initNewWorldWeather(ServerLevel level, RandomSource random, SolarTerm solarTerm) {
-        if(level.isClientSide()|| !MapChecker.isValidDimension(level)){
+        if (level.isClientSide() || !MapChecker.isValidDimension(level)) {
             return;
         }
         ArrayList<BiomeWeather> biomeList = getBiomeList(level);
@@ -698,7 +703,7 @@ public class WeatherManager {
     }
 
     public static SnowRenderStatus getSnowStatus(ServerLevel level, Biome biome, BlockPos pos) {
-        var provider =SolarHolders.getSaveData(level);
+        var provider = SolarHolders.getSaveData(level);
         var status = SnowRenderStatus.NONE;
         if (provider != null) {
             var solarTerm = provider.getSolarTerm();
