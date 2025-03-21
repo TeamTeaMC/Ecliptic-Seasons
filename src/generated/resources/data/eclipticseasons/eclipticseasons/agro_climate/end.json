@@ -1,4 +1,5 @@
 {
+  "seasonal_signal_durations": [],
   "biomes": "#minecraft:is_end",
   "global": {
     "grow_chance": 0.35,

@@ -1,0 +1,25 @@
+{
+  "level": 1,
+  "lasting_time": 6000,
+  "checks": [
+    {
+      "offset": [
+        0,
+        -1,
+        0
+      ],
+      "block": {
+        "blocks": "#eclipticseasons:soft_heat_sources"
+      }
+    }
+  ],
+  "ingredient": {
+    "item": "minecraft:wet_sponge",
+    "count": 1
+  },
+  "result": {
+    "id": "minecraft:sponge",
+    "Count": 1
+  },
+  "range": 4
+}

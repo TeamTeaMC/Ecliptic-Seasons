@@ -1,5 +1,4 @@
 {
-  "biomes": "#forge:is_cold/overworld",
   "mappings": {
     "beginning_of_spring": [
       {
@@ -163,5 +162,23 @@
         "greater_cold": 0.15
       }
     ]
-  }
+  },
+  "seasonal_signal_durations": [
+    {
+      "winter": 3
+    },
+    {
+      "spring": 4
+    },
+    {
+      "summer": 3
+    },
+    {
+      "autumn": 4
+    },
+    {
+      "winter": 10
+    }
+  ],
+  "biomes": "#forge:is_cold/overworld"
 }

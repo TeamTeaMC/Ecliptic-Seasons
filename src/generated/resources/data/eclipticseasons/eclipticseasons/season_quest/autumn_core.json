@@ -1,0 +1,31 @@
+{
+  "weight": 10,
+  "glowing": true,
+  "color": 16755200,
+  "climate": "#eclipticseasons:all",
+  "award": [
+    {
+      "id": "eclipticseasons:autumn_greenhouse_essence",
+      "Count": 1
+    }
+  ],
+  "tittle": {
+    "translate": "season_quest.eclipticseasons.autumn_core"
+  },
+  "end": "beginning_of_winter",
+  "start": "autumnal_equinox",
+  "need": [
+    {
+      "items": "minecraft:pumpkin",
+      "count": 160
+    },
+    {
+      "items": "minecraft:carrot",
+      "count": 128
+    },
+    {
+      "items": "minecraft:beetroot",
+      "count": 128
+    }
+  ]
+}

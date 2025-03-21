@@ -1,0 +1,61 @@
+{
+  "parent": "eclipticseasons:quests/autumn_pumpkin_pie",
+  "criteria": {
+    "core_require": {
+      "conditions": {
+        "location": [
+          {
+            "condition": "minecraft:location_check",
+            "predicate": {
+              "block": {
+                "blocks": [
+                  "eclipticseasons:autumn_greenhouse_core"
+                ]
+              }
+            }
+          },
+          {
+            "condition": "minecraft:match_tool",
+            "predicate": {}
+          }
+        ]
+      },
+      "trigger": "minecraft:item_used_on_block"
+    },
+    "parent_need": {
+      "conditions": {
+        "parent": "eclipticseasons:quests/autumn_pumpkin_pie"
+      },
+      "trigger": "eclipticseasons:parent"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancement.eclipticseasons.autumn_end.desc"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "eclipticseasons:autumn_greenhouse_core"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "advancement.eclipticseasons.autumn_end"
+    }
+  },
+  "requirements": [
+    [
+      "parent_need"
+    ],
+    [
+      "core_require"
+    ]
+  ],
+  "rewards": {
+    "loot": [
+      "eclipticseasons:gifts/autumn_greenhouse_essence"
+    ]
+  },
+  "sends_telemetry_event": true
+}

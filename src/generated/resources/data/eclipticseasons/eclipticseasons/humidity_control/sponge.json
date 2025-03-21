@@ -1,0 +1,14 @@
+{
+  "level": -1,
+  "lasting_time": 6000,
+  "checks": [],
+  "ingredient": {
+    "item": "minecraft:sponge",
+    "count": 1
+  },
+  "result": {
+    "id": "minecraft:wet_sponge",
+    "Count": 1
+  },
+  "range": 4
+}

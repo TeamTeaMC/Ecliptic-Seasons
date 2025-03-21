@@ -1,5 +1,4 @@
 {
-  "biomes": "#forge:is_desert",
   "mappings": {
     "spring": [
       {
@@ -24,5 +23,11 @@
         "beginning_of_summer": 0.5
       }
     ]
-  }
+  },
+  "seasonal_signal_durations": [
+    {
+      "summer": 24
+    }
+  ],
+  "biomes": "#forge:is_desert"
 }

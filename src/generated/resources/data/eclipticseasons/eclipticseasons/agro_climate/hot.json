@@ -1,19 +1,4 @@
 {
-  "biomes": {
-    "values": [
-      {
-        "values": [
-          "#forge:is_hot/overworld"
-        ],
-        "type": "forge:or"
-      },
-      {
-        "value": "#forge:is_desert",
-        "type": "forge:not"
-      }
-    ],
-    "type": "forge:and"
-  },
   "mappings": {
     "spring": [
       {
@@ -38,5 +23,25 @@
         "beginning_of_summer": 1.0
       }
     ]
+  },
+  "seasonal_signal_durations": [
+    {
+      "summer": 24
+    }
+  ],
+  "biomes": {
+    "values": [
+      {
+        "values": [
+          "#forge:is_hot/overworld"
+        ],
+        "type": "forge:or"
+      },
+      {
+        "value": "#forge:is_desert",
+        "type": "forge:not"
+      }
+    ],
+    "type": "forge:and"
   }
 }

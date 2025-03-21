@@ -1,6 +1,8 @@
 package com.teamtea.eclipticseasons.data.loot;
 
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
+import com.teamtea.eclipticseasons.common.registry.BlockRegistry;
+import com.teamtea.eclipticseasons.common.registry.ItemRegistry;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.loot.BlockLootSubProvider;
@@ -49,6 +51,13 @@ public class EclipticSeasonsBlockLootTables extends BlockLootSubProvider {
                 ;
 
         dropSelfWithContents(blocks);
+
+        dropOther(BlockRegistry.greenhouse_core_container.get(), Items.AIR);
+
+        dropOther(BlockRegistry.spring_greenhouse_core.get(), ItemRegistry.spring_greenhouse_essence_item.get());
+        dropOther(BlockRegistry.summer_greenhouse_core.get(), ItemRegistry.summer_greenhouse_essence_item.get());
+        dropOther(BlockRegistry.autumn_greenhouse_core.get(), ItemRegistry.autumn_greenhouse_essence_item.get());
+        dropOther(BlockRegistry.winter_greenhouse_core.get(), ItemRegistry.winter_greenhouse_essence_item.get());
 
     }
 

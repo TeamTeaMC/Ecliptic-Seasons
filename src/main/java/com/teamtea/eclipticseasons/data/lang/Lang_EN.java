@@ -15,7 +15,6 @@ public class Lang_EN extends LangHelper {
 
     @Override
     protected void addTranslations() {
-        addAdvancements();
 
         add("info.eclipticseasons.environment.solar_term.hint", "Solar Term Today:");
 
