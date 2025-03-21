@@ -30,6 +30,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.util.valueproviders.IntProvider;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.Item;
@@ -366,7 +367,7 @@ public class WeatherManager {
             SolarHolders.getSaveDataLazy(level).ifPresent(solarDataManager -> {
                 if (EclipticUtil.getNowSolarTerm(level).isInTerms(SolarTerm.BEGINNING_OF_SUMMER, SolarTerm.BEGINNING_OF_AUTUMN)) {
                     var b = level.getBiome(player.blockPosition()).value();
-                    if (b.getTemperature(player.blockPosition()) > 0.5f) {
+                    if (b.getTemperature(player.blockPosition()) > 0.85f) {
 
                         if (!player.isInWaterOrRain()
                                 && ((EclipticUtil.isNoon(level) && (level.canSeeSky(player.blockPosition()))))
@@ -382,6 +383,9 @@ public class WeatherManager {
                                         }
                                     }
                                 }
+                            }
+                            if (!isColdHe) {
+                                isColdHe = player.hasEffect(MobEffects.FIRE_RESISTANCE);
                             }
                             if (!player.hasEffect(EffectRegistry.HEAT_STROKE) && !isColdHe) {
                                 player.addEffect(new MobEffectInstance(EffectRegistry.HEAT_STROKE, 600));
