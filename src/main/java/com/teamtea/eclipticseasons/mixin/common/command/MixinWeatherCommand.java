@@ -16,7 +16,7 @@ public class MixinWeatherCommand {
 
     @Inject(method = "setClear", at = @At(value = "HEAD"), cancellable = true)
     private static void mixin$setClear(CommandSourceStack sourceStack, int p_139174_, CallbackInfoReturnable<Integer> cir) {
-        if (EclipticUtil.useSolarWeather()) {
+        if (EclipticUtil.hasLocalWeather(sourceStack.getLevel())) {
             try {
 
                 CommandHandler.setBiomeRain(sourceStack, CommandHandler.createAllResult(sourceStack.registryAccess()), false, false);
@@ -30,7 +30,7 @@ public class MixinWeatherCommand {
 
     @Inject(method = "setRain", at = @At(value = "HEAD"), cancellable = true)
     private static void mixin$setRain(CommandSourceStack sourceStack, int p_139174_, CallbackInfoReturnable<Integer> cir) {
-        if (EclipticUtil.useSolarWeather()) {
+        if (EclipticUtil.hasLocalWeather(sourceStack.getLevel())) {
             try {
                 CommandHandler.setBiomeRain(sourceStack, CommandHandler.createAllResult(sourceStack.registryAccess()), true, false);
                 cir.setReturnValue(0);
@@ -43,7 +43,7 @@ public class MixinWeatherCommand {
 
     @Inject(method = "setThunder", at = @At(value = "HEAD"), cancellable = true)
     private static void mixin$setThunder(CommandSourceStack sourceStack, int p_139174_, CallbackInfoReturnable<Integer> cir) {
-        if (EclipticUtil.useSolarWeather()) {
+        if (EclipticUtil.hasLocalWeather(sourceStack.getLevel())) {
             try {
                 CommandHandler.setBiomeRain(sourceStack, CommandHandler.createAllResult(sourceStack.registryAccess()), true, true);
                 cir.setReturnValue(0);

@@ -18,69 +18,62 @@ import java.util.Map;
 
 public class BiomeClimateManager {
     // 由于在1.20时代，客户端与单人服务器端对象未分离，因此这里不能作为评判依据
-    public final static Map<Biome, Float> BIOME_DEFAULT_TEMPERATURE_MAP = new IdentityHashMap<>();
+    // public final static Map<Biome, Float> BIOME_DEFAULT_TEMPERATURE_MAP = new IdentityHashMap<>();
     public static final Map<Biome, TagKey<Biome>> BIOME_TAG_KEY_MAP = new IdentityHashMap<>(128);
     public static final Map<Biome, Boolean> SMALL_BIOME_MAP = new IdentityHashMap<>(16);
 
     public static void resetBiomeTemps(RegistryAccess registryAccess, boolean isServer) {
-        resetBiomeTempsMap(registryAccess, BIOME_DEFAULT_TEMPERATURE_MAP);
+        // resetBiomeTempsMap(registryAccess, BIOME_DEFAULT_TEMPERATURE_MAP);
         putTag(registryAccess, isServer);
     }
 
+    @Deprecated(forRemoval = true, since = "0.11")
     public static void resetBiomeTempsMap(RegistryAccess registryAccess, Map<Biome, Float> useMap) {
-        useMap.clear();
-        var biomes = registryAccess.registry(Registries.BIOME);
-        biomes.ifPresent(biomeRegistry -> biomeRegistry.forEach(biome ->
-        {
-            useMap.put(biome, biome.getModifiedClimateSettings().temperature());
-        }));
+        // useMap.clear();
+        // var biomes = registryAccess.registry(Registries.BIOME);
+        // biomes.ifPresent(biomeRegistry -> biomeRegistry.forEach(biome ->
+        // {
+        //     useMap.put(biome, biome.getModifiedClimateSettings().temperature());
+        // }));
     }
 
     public static final float DEFAULT_TEMPERATURE = 0.598F;
 
+    @Deprecated(forRemoval = true, since = "0.11")
     public static float getDefaultTemperature(Biome biome, boolean isServer) {
-        return  BIOME_DEFAULT_TEMPERATURE_MAP.getOrDefault(biome, DEFAULT_TEMPERATURE);
+        return biome.getBaseTemperature();
     }
 
     public static final float SNOW_LEVEL = 0.15F;
     public static final float FROZEN_OCEAN_MELT_LEVEL = 0.1F;
 
+    @Deprecated(forRemoval = true, since = "0.11")
     public static void updateTemperature(Level level, SolarTerm solarTermIndex) {
         // boolean isServer = level instanceof ServerLevel;
-        level.registryAccess().registry(Registries.BIOME).ifPresent(biomeRegistry -> biomeRegistry.forEach(biome ->
-        {
-            var temperature = biome.getModifiedClimateSettings().temperature() > SNOW_LEVEL ?
-                    Math.max(SNOW_LEVEL + 0.001F, biome.getModifiedClimateSettings().temperature() + solarTermIndex.getTemperatureChange()) :
-                    Math.min(SNOW_LEVEL, biome.getModifiedClimateSettings().temperature() + solarTermIndex.getTemperatureChange());
-
-            BIOME_DEFAULT_TEMPERATURE_MAP.put(biome, temperature);
-
-            // clean temperature change
-            // var oldClimateSettings = biome.climateSettings;
-            // biome.climateSettings = new Biome.ClimateSettings(
-            //         oldClimateSettings.hasPrecipitation(),
-            //         temperature,
-            //         oldClimateSettings.temperatureModifier(),
-            //         oldClimateSettings.downfall());
-        }));
+        // level.registryAccess().registry(Registries.BIOME).ifPresent(biomeRegistry -> biomeRegistry.forEach(biome ->
+        // {
+        //     var temperature = biome.getModifiedClimateSettings().temperature() > SNOW_LEVEL ?
+        //             Math.max(SNOW_LEVEL + 0.001F, biome.getModifiedClimateSettings().temperature() + solarTermIndex.getTemperatureChange()) :
+        //             Math.min(SNOW_LEVEL, biome.getModifiedClimateSettings().temperature() + solarTermIndex.getTemperatureChange());
+        //
+        //     BIOME_DEFAULT_TEMPERATURE_MAP.put(biome, temperature);
+        //
+        // }));
     }
 
-    // it's hard to check the
+    @Deprecated(forRemoval = true, since = "0.11")
     public static float agent$GetBaseTemperature(Biome biome) {
-        // if (f == DEFAULT_TEMPERATURE) {
-        //     float f2 = getDefaultTemperature(biome, false);
-        //     f = f2 != f ? f2 : f;
-        // }
-        return getDefaultTemperature(biome, true);
+        return biome.getBaseTemperature();
     }
 
+    @Deprecated(forRemoval = true, since = "0.11")
     public static float fixTemp(Level level, Biome biome, float temp) {
-        SolarTerm solarTermIndex = EclipticUtil.getNowSolarTerm(level);
-        float temperatureBiome = biome.getModifiedClimateSettings().temperature();
-        float temperatureGround = temperatureBiome > SNOW_LEVEL ?
-                Math.max(SNOW_LEVEL + 0.001F, temperatureBiome + solarTermIndex.getTemperatureChange()) :
-                Math.min(SNOW_LEVEL, temperatureBiome + solarTermIndex.getTemperatureChange());
-        temp += -temperatureGround + temperatureBiome;
+        // SolarTerm solarTermIndex = EclipticUtil.getNowSolarTerm(level);
+        // float temperatureBiome = biome.getModifiedClimateSettings().temperature();
+        // float temperatureGround = temperatureBiome > SNOW_LEVEL ?
+        //         Math.max(SNOW_LEVEL + 0.001F, temperatureBiome + solarTermIndex.getTemperatureChange()) :
+        //         Math.min(SNOW_LEVEL, temperatureBiome + solarTermIndex.getTemperatureChange());
+        // temp += -temperatureGround + temperatureBiome;
         return temp;
     }
 
@@ -134,7 +127,7 @@ public class BiomeClimateManager {
     }
 
     public static void clearOnClientExitOrServerClose() {
-        BiomeClimateManager.BIOME_DEFAULT_TEMPERATURE_MAP.clear();
+        // BiomeClimateManager.BIOME_DEFAULT_TEMPERATURE_MAP.clear();
         BiomeClimateManager.SMALL_BIOME_MAP.clear();
         BiomeClimateManager.BIOME_TAG_KEY_MAP.clear();
     }

@@ -18,7 +18,7 @@ public class MixinClientLevel {
     @Inject(at = {@At("HEAD")}, method = {"isRaining"}, cancellable = true)
     private void eclipticseasons$isRaining(CallbackInfoReturnable<Boolean> cir) {
         if ((Object) this instanceof ClientLevel clientLevel) {
-            if (EclipticUtil.useSolarWeather())
+            if (EclipticUtil.hasLocalWeather(clientLevel))
                 cir.setReturnValue(ClientWeatherChecker.isRain(clientLevel));
         }
     }
@@ -26,7 +26,7 @@ public class MixinClientLevel {
     @Inject(at = {@At("HEAD")}, method = {"getRainLevel"}, cancellable = true)
     private void eclipticseasons$getRainLevel(float p_46723_, CallbackInfoReturnable<Float> cir) {
         if ((Object) this instanceof ClientLevel clientLevel) {
-            if (EclipticUtil.useSolarWeather())
+            if (EclipticUtil.hasLocalWeather(clientLevel))
                 cir.setReturnValue(ClientWeatherChecker.getRainLevel(clientLevel, p_46723_));
         }
     }
@@ -42,7 +42,7 @@ public class MixinClientLevel {
     @Inject(at = {@At("HEAD")}, method = {"isThundering"}, cancellable = true)
     private void eclipticseasons$isThundering(CallbackInfoReturnable<Boolean> cir) {
         if ((Object) this instanceof ClientLevel clientLevel) {
-            if (EclipticUtil.useSolarWeather())
+            if (EclipticUtil.hasLocalWeather(clientLevel))
                 cir.setReturnValue(ClientWeatherChecker.isThundering(clientLevel));
         }
     }
@@ -50,7 +50,7 @@ public class MixinClientLevel {
     @Inject(at = {@At("HEAD")}, method = {"getThunderLevel"}, cancellable = true)
     private void eclipticseasons$getThunderLevel(float p_46723_, CallbackInfoReturnable<Float> cir) {
         if ((Object) this instanceof ClientLevel clientLevel) {
-            if (EclipticUtil.useSolarWeather())
+            if (EclipticUtil.hasLocalWeather(clientLevel))
                 cir.setReturnValue(ClientWeatherChecker.getThunderLevel(clientLevel, p_46723_));
         }
     }

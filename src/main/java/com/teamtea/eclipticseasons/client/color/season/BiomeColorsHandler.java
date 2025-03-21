@@ -97,7 +97,7 @@ public class BiomeColorsHandler {
     public static void reloadColors() {
         {
             var clientLevel = Minecraft.getInstance().level;
-            if (clientLevel != null) {
+            if (clientLevel != null && MapChecker.isValidDimension(clientLevel)) {
                 SolarHolders.getSaveDataLazy(clientLevel).ifPresent(data ->
                 {
                     for (TagKey<Biome> biomeTagKey : ClimateTypeBiomeTags.BIOME_TYPES) {

@@ -35,49 +35,49 @@ public abstract class MixinBiome {
             cir.setReturnValue(VanillaWeather.handlePrecipitationAt((Biome) (Object) this, pos));
         }
     }
-
-    @Inject(at = {@At("HEAD")}, method = {"getBaseTemperature"}, cancellable = true)
-    public void eclipticseasons$getBaseTemperature(CallbackInfoReturnable<Float> cir) {
-        cir.setReturnValue(BiomeClimateManager.agent$GetBaseTemperature((Biome) (Object) this));
-    }
-
-
-    @Inject(at = {@At("HEAD")}, method = {"hasPrecipitation"}, cancellable = true)
-    public void eclipticseasons$hasPrecipitation(CallbackInfoReturnable<Boolean> cir) {
-        if (EclipticUtil.useSolarWeather())
-            cir.setReturnValue(BiomeClimateManager.agent$hasPrecipitation((Biome) (Object) this));
-        else {
-            if (BiomeClimateManager.getTag((Biome) (Object) this).equals(ClimateTypeBiomeTags.MONSOONAL)) {
-                cir.setReturnValue(VanillaWeather.hasMonsoonalPrecipitation((Biome) (Object) this));
-            }
-        }
-    }
-
-    @ModifyExpressionValue(at = {@At(value = "INVOKE",
-            target = "Lnet/minecraft/world/level/biome/Biome;getTemperature(Lnet/minecraft/core/BlockPos;)F")},
-            method = {"warmEnoughToRain"})
-    public float eclipticseasons$warmEnoughToRain(float original) {
-        Level level = WeatherManager.fetchLevelIfNull(null);
-        if (level != null)
-            original = BiomeClimateManager.fixTemp(level, (Biome) (Object) this, original);
-        return original;
-    }
-
-    @WrapOperation(at = {@At(value = "INVOKE",
-            target = "Lnet/minecraft/world/level/biome/Biome;warmEnoughToRain(Lnet/minecraft/core/BlockPos;)Z")},
-            method = {"shouldSnow", "shouldFreeze(Lnet/minecraft/world/level/LevelReader;Lnet/minecraft/core/BlockPos;Z)Z"})
-    public boolean eclipticseasons$fixTempWithoutSeason(Biome instance, BlockPos pPos, Operation<Boolean> original, @Local(argsOnly = true) LevelReader levelReader) {
-        Level level = null;
-        if (levelReader instanceof WorldGenLevel worldGenLevel) {
-            level = worldGenLevel.getLevel();
-        } else if (levelReader instanceof Level level1) {
-            level = level1;
-        } else {
-            level = WeatherManager.fetchLevelIfNull(null);
-        }
-        if (level != null) {
-            return BiomeClimateManager.fixTemp(level, (Biome) (Object) this, getTemperature(pPos)) >= BiomeClimateManager.SNOW_LEVEL;
-        }
-        return original.call(instance, pPos);
-    }
+    //
+    // @Inject(at = {@At("HEAD")}, method = {"getBaseTemperature"}, cancellable = true)
+    // public void eclipticseasons$getBaseTemperature(CallbackInfoReturnable<Float> cir) {
+    //     cir.setReturnValue(BiomeClimateManager.agent$GetBaseTemperature((Biome) (Object) this));
+    // }
+    //
+    //
+    // @Inject(at = {@At("HEAD")}, method = {"hasPrecipitation"}, cancellable = true)
+    // public void eclipticseasons$hasPrecipitation(CallbackInfoReturnable<Boolean> cir) {
+    //     if (EclipticUtil.useSolarWeather())
+    //         cir.setReturnValue(BiomeClimateManager.agent$hasPrecipitation((Biome) (Object) this));
+    //     else {
+    //         if (BiomeClimateManager.getTag((Biome) (Object) this).equals(ClimateTypeBiomeTags.MONSOONAL)) {
+    //             cir.setReturnValue(VanillaWeather.hasMonsoonalPrecipitation((Biome) (Object) this));
+    //         }
+    //     }
+    // }
+    //
+    // @ModifyExpressionValue(at = {@At(value = "INVOKE",
+    //         target = "Lnet/minecraft/world/level/biome/Biome;getTemperature(Lnet/minecraft/core/BlockPos;)F")},
+    //         method = {"warmEnoughToRain"})
+    // public float eclipticseasons$warmEnoughToRain(float original) {
+    //     Level level = WeatherManager.fetchLevelIfNull(null);
+    //     if (level != null)
+    //         original = BiomeClimateManager.fixTemp(level, (Biome) (Object) this, original);
+    //     return original;
+    // }
+    //
+    // @WrapOperation(at = {@At(value = "INVOKE",
+    //         target = "Lnet/minecraft/world/level/biome/Biome;warmEnoughToRain(Lnet/minecraft/core/BlockPos;)Z")},
+    //         method = {"shouldSnow", "shouldFreeze(Lnet/minecraft/world/level/LevelReader;Lnet/minecraft/core/BlockPos;Z)Z"})
+    // public boolean eclipticseasons$fixTempWithoutSeason(Biome instance, BlockPos pPos, Operation<Boolean> original, @Local(argsOnly = true) LevelReader levelReader) {
+    //     Level level = null;
+    //     if (levelReader instanceof WorldGenLevel worldGenLevel) {
+    //         level = worldGenLevel.getLevel();
+    //     } else if (levelReader instanceof Level level1) {
+    //         level = level1;
+    //     } else {
+    //         level = WeatherManager.fetchLevelIfNull(null);
+    //     }
+    //     if (level != null) {
+    //         return BiomeClimateManager.fixTemp(level, (Biome) (Object) this, getTemperature(pPos)) >= BiomeClimateManager.SNOW_LEVEL;
+    //     }
+    //     return original.call(instance, pPos);
+    // }
 }

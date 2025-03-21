@@ -20,7 +20,7 @@ public class MixinBeehiveBlockEntity {
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;isRaining()Z")
     )
     private static boolean mixin$releaseOccupantCheckRain(Level level, Operation<Boolean> original, @Local(ordinal = 0) BlockPos blockPos) {
-        if (EclipticUtil.useSolarWeather())
+        if (EclipticUtil.hasLocalWeather(level))
             return WeatherUtil.isBlockInRain(level, blockPos);
         return level.isRaining();
     }

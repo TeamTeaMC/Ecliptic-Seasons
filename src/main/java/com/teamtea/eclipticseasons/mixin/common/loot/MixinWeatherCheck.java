@@ -27,10 +27,9 @@ public class MixinWeatherCheck {
     @Nullable
     Boolean isThundering;
 
-    //     TODO:检查一下谁用过这个
     @Inject(at = {@At("HEAD")}, method = {"test(Lnet/minecraft/world/level/storage/loot/LootContext;)Z"}, cancellable = true)
     private void eclipticseasons$Client_isRaining(LootContext pContext, CallbackInfoReturnable<Boolean> cir) {
-        if (EclipticUtil.useSolarWeather()) {
+        if (EclipticUtil.hasLocalWeather(pContext.getLevel())) {
             WeatherManager.WeatherCheck weatherCheck = new WeatherManager.WeatherCheck(
                     Optional.ofNullable(isRaining), Optional.ofNullable(isThundering));
             cir.setReturnValue(WeatherManager.testWeatherCheck(pContext, weatherCheck));

@@ -6,6 +6,7 @@ import com.teamtea.eclipticseasons.api.event.SolarTermChangeEvent;
 import com.teamtea.eclipticseasons.api.util.SimpleUtil;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
+import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.network.SimpleNetworkHandler;
 import com.teamtea.eclipticseasons.common.network.message.SolarTermsMessage;
 import com.teamtea.eclipticseasons.config.CommonConfig;
@@ -41,6 +42,7 @@ public class SolarDataManager extends SavedData {
 
     protected int solarTermsDay = (CommonConfig.Season.initialSolarTermIndex.get() - 1) * CommonConfig.Season.lastingDaysOfEachTerm.get();
     protected int solarTermsTicks = 0;
+    protected boolean isValidDimension = false;
 
     protected WeakReference<Level> levelWeakReference;
     private final Map<ChunkPos, List<Pair<BlockPos, BlockState>>> serverLevelMapMap;
@@ -48,6 +50,7 @@ public class SolarDataManager extends SavedData {
     public SolarDataManager(Level level) {
         levelWeakReference = new WeakReference<>(level);
         serverLevelMapMap = new HashMap<>();
+        isValidDimension = MapChecker.isValidDimension(level);
     }
 
     public SolarDataManager(Level level, CompoundTag nbt) {
@@ -111,7 +114,12 @@ public class SolarDataManager extends SavedData {
         setDirty();
     }
 
+    public boolean isValidDimension() {
+        return this.isValidDimension;
+    }
+
     public int getSolarTermIndex() {
+        if (!isValidDimension()) return SolarTerm.NONE.ordinal();
         return (getSolarTermsDay() / CommonConfig.Season.lastingDaysOfEachTerm.get() + 24) % 24;
     }
 
@@ -120,8 +128,10 @@ public class SolarDataManager extends SavedData {
     }
 
     public SolarTerm getNextSolarTerm() {
+        if (!isValidDimension()) return SolarTerm.NONE;
         return SolarTerm.get((this.getSolarTermIndex() + 1) % 24);
     }
+
 
     public int getSolarTermLastingDays() {
         return CommonConfig.Season.lastingDaysOfEachTerm.get();
@@ -224,19 +234,23 @@ public class SolarDataManager extends SavedData {
     public void sendAndUpdate(ServerLevel world) {
         boolean changeSolarTerm = getSolarTermsDay() % CommonConfig.Season.lastingDaysOfEachTerm.get() == 0;
 
+        SolarTerm solarTerm = getSolarTerm();
+
         if (changeSolarTerm) {
-            BiomeClimateManager.updateTemperature(world, getSolarTerm());
+            // BiomeClimateManager.updateTemperature(world, getSolarTerm());
             SolarTerm old = SolarTerm.collectValues()[(getSolarTermIndex() + 24) % 24];
 
-            MinecraftForge.EVENT_BUS.post(new SolarTermChangeEvent(old, getSolarTerm(), world, solarTermsDay));
+            MinecraftForge.EVENT_BUS.post(new SolarTermChangeEvent(old, solarTerm, world, solarTermsDay));
         }
 
-        for (ServerPlayer player : world.players()) {
-            SimpleNetworkHandler.send(player, new SolarTermsMessage(this.getSolarTermsDay()));
-            if (changeSolarTerm && CommonConfig.Season.enableInform.get()) {
-                player.sendSystemMessage(SimpleUtil.getSolarTermMessage(getSolarTerm()), false);
+        if (solarTerm != SolarTerm.NONE) {
+            for (ServerPlayer player : world.players()) {
+                SimpleNetworkHandler.send(player, new SolarTermsMessage(this.getSolarTermsDay()));
+                if (changeSolarTerm && CommonConfig.Season.enableInform.get()) {
+                    player.sendSystemMessage(SimpleUtil.getSolarTermMessage(solarTerm), false);
+                }
+                WeatherManager.tickPlayerForSeasonCheck(player);
             }
-            WeatherManager.tickPlayerForSeasonCheck(player);
         }
     }
 

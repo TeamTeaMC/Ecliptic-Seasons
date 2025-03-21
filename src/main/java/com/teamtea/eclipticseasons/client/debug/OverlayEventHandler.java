@@ -1,6 +1,7 @@
 package com.teamtea.eclipticseasons.client.debug;
 
 
+import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
 import com.teamtea.eclipticseasons.config.ClientConfig;
@@ -9,8 +10,10 @@ import com.teamtea.eclipticseasons.api.constant.biome.Humidity;
 import net.minecraft.client.Minecraft;
 
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderGuiOverlayEvent;
@@ -31,19 +34,20 @@ public final class OverlayEventHandler {
             // if(event.getOverlay().id().getPath().equals("all"))
             {
                 if (ClientConfig.Debug.debugInfo.get()
-                        // || !FMLEnvironment.production
-                )
-                {
-                    Holder<Biome> biome = clientPlayer.level().getBiome(clientPlayer.getOnPos());
-                    var solar = SolarHolders.getSaveDataLazy(clientPlayer.level()).orElse(new SolarDataManager(clientPlayer.level())).getSolarTerm();
-                    long dayTime = clientPlayer.level().getDayTime();
-                    float temp = biome.get().getTemperature(clientPlayer.getOnPos());
+                        && !Minecraft.getInstance().options.hideGui
+                    // || !FMLEnvironment.production
+                ) {
+                    Level level = clientPlayer.level();
+                    BlockPos blockPos = clientPlayer.blockPosition();
+                    Holder<Biome> biome = level.getBiome(clientPlayer.getOnPos());
+                    var solar = SolarHolders.getSaveDataLazy(level).resolve().get().getSolarTerm();
+                    long dayTime = level.getDayTime();
                     float downfall = biome.get().getModifiedClimateSettings().downfall();
-                    Humidity h = Humidity.getHumid(downfall, temp);
-                    double env = biome.get().getTemperature(clientPlayer.getOnPos());
-                    int solarTime = SolarAngelHelper.getSolarAngelTime(clientPlayer.level(), clientPlayer.level().getDayTime());
+                    Humidity h = EclipticUtil.getHumidityAt(level, blockPos);
+                    double env = EclipticUtil.getTemperatureFloat(level, biome.value(), blockPos);
+                    int solarTime = SolarAngelHelper.getSolarAngelTime(level, level.getDayTime());
 
-                    BAR_4.renderStatusBar(event.getGuiGraphics(), event.getWindow().getGuiScaledWidth(), event.getWindow().getGuiScaledHeight(),clientPlayer,biome, solar, dayTime, env,downfall,h, solarTime);
+                    BAR_4.renderStatusBar(event.getGuiGraphics(), event.getWindow().getGuiScaledWidth(), event.getWindow().getGuiScaledHeight(), clientPlayer, biome, solar, dayTime, env, downfall, h, solarTime);
                 }
             }
         }

@@ -42,9 +42,7 @@ public class ClientWeatherChecker {
     }
 
 
-    public static Boolean isRain(ClientLevel clientLevel) {
-        if (EclipticUtil.isSolarWeatherClosed())
-            return clientLevel.isRaining();
+    public static boolean isRain(ClientLevel clientLevel) {
         return (double) getRainLevel(clientLevel, 1.0F) > 0.2D;
     }
 
@@ -67,8 +65,6 @@ public class ClientWeatherChecker {
 
     //   TODO：net.minecraft.client.renderer.LevelRenderer.renderSnowAndRain 可以参考平滑方式
     public static float getRainLevel(ClientLevel clientLevel, float p46723) {
-        if (EclipticUtil.isSolarWeatherClosed())
-            return clientLevel.getRainLevel(p46723);
         // 初始小于0会导致出现暗角
         if (updateForPlayerLogin) {
             if (Minecraft.getInstance().cameraEntity instanceof Player) {
@@ -159,17 +155,13 @@ public class ClientWeatherChecker {
         return 0.0f;
     }
 
-    public static Boolean isThundering(ClientLevel clientLevel) {
-        if (EclipticUtil.isSolarWeatherClosed())
-            return clientLevel.isThundering();
+    public static boolean isThundering(ClientLevel clientLevel) {
         return (double) getThunderLevel(clientLevel, 1.0F) > 0.2D;
     }
 
 
     //   TODO：net.minecraft.client.renderer.LevelRenderer.renderSnowAndRain 可以参考平滑方式
     public static float getThunderLevel(ClientLevel clientLevel, float p46723) {
-        if (EclipticUtil.isSolarWeatherClosed())
-            return clientLevel.getThunderLevel(p46723);
         if (updateForPlayerLogin) {
             if (Minecraft.getInstance().cameraEntity instanceof Player) {
                 lastBiomeRainLevel = -1;
@@ -224,9 +216,7 @@ public class ClientWeatherChecker {
     }
 
 
-    public static Boolean isRainingAt(ClientLevel clientLevel, BlockPos blockPos) {
-        if (EclipticUtil.isSolarWeatherClosed())
-            return clientLevel.isRainingAt(blockPos);
+    public static boolean isRainingAt(ClientLevel clientLevel, BlockPos blockPos) {
         if (!clientLevel.canSeeSky(blockPos)) {
             return false;
         } else if (clientLevel.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, blockPos).getY() > blockPos.getY()) {
@@ -242,8 +232,6 @@ public class ClientWeatherChecker {
         } else if (clientLevel.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, blockPos).getY() > blockPos.getY()) {
             return false;
         }
-        if (EclipticUtil.isSolarWeatherClosed())
-            return clientLevel.isThundering();
         return getStandardThunderLevel(1.0f, clientLevel, MapChecker.getSurfaceBiome(clientLevel, blockPos)) > 0.9f;
     }
 
@@ -277,11 +265,9 @@ public class ClientWeatherChecker {
     }
 
     public static void tickAllCheck(ClientLevel clientLevel) {
-        if (!EclipticUtil.isSolarWeatherClosed()) {
-            updateRainLevel(clientLevel);
-            updateThunderLevel(clientLevel);
-            tickLastRainyBiome(clientLevel);
-        }
+        updateRainLevel(clientLevel);
+        updateThunderLevel(clientLevel);
+        tickLastRainyBiome(clientLevel);
     }
 
     public static void addLastRainyBiome(Biome biome, long gameTime) {
@@ -305,7 +291,7 @@ public class ClientWeatherChecker {
     }
 
 
-    // public static Boolean hasPrecipitation(Biome biome) {
+    // public static boolean hasPrecipitation(Biome biome) {
     //     return !EclipticTagClientTool.getTag(biome).equals(SeasonTypeBiomeTags.RAINLESS);
     // }
 }

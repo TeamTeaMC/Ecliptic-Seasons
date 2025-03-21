@@ -29,7 +29,7 @@ public abstract class MixinTintWithoutLevelOverrider {
                                        @Local(argsOnly = true) IClientLevelWrapper iClientLevelWrapper) {
         // 也许我们都不喜欢它，但是这必须要修复，否则将会传入DH的缓存Biome，导致我们无法正确读取当前的温度
         // 难道DH不知道它会丢失吗一旦重启关卡，我认为也许他们不在乎
-        if (BiomeClimateManager.BIOME_DEFAULT_TEMPERATURE_MAP.getOrDefault(biomeWrapper.biome.get(), null) == null) {
+        if (BiomeClimateManager.BIOME_TAG_KEY_MAP.getOrDefault(biomeWrapper.biome.get(), null) == null) {
             var biomeObject = DHTool.recoverBiomeObject(biomeWrapper, iClientLevelWrapper);
             if (biomeObject != null)
                 return biomeObject;

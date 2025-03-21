@@ -1,3 +1,8 @@
+## **0.10-pre12**
+- Optimized temperature calculation method.
+- Optimized the interaction performance of this mod with dimensions and weather, making its configuration items more stable and reserving room for expansion.
+- The ambient temperature required to induce heatstroke has been increased.
+
 ## **0.10-pre11-2**
 - The default global probability coefficients of thunder and rain have been reduced.
 - Fire resistance grants immunity to heatstroke as well.

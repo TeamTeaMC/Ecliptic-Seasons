@@ -39,7 +39,7 @@ public class AllListener {
         BiomeClimateManager.resetBiomeTemps(tagsUpdatedEvent.getRegistryAccess(), tagsUpdatedEvent.getUpdateCause() == TagsUpdatedEvent.UpdateCause.SERVER_DATA_LOAD);
         WeatherManager.informUpdateBiomes(tagsUpdatedEvent.getRegistryAccess());
         CropInfoManager.init(tagsUpdatedEvent);
-        CropGrowthHandler.resetUpdate(tagsUpdatedEvent.getRegistryAccess(),tagsUpdatedEvent.getUpdateCause()== TagsUpdatedEvent.UpdateCause.SERVER_DATA_LOAD);
+        CropGrowthHandler.resetUpdate(tagsUpdatedEvent.getRegistryAccess(), tagsUpdatedEvent.getUpdateCause() == TagsUpdatedEvent.UpdateCause.SERVER_DATA_LOAD);
     }
 
 
@@ -58,23 +58,18 @@ public class AllListener {
     @SubscribeEvent
     public static void onSleepFinishedTimeEvent(SleepFinishedTimeEvent event) {
         if (event.getLevel() instanceof ServerLevel level) {
-
             long newTime = event.getNewTime(), oldDayTime = ((Level) event.getLevel()).getDayTime();
             WeatherManager.updateAfterSleep(level, newTime, oldDayTime);
         }
-
     }
-
 
     @SubscribeEvent
     public static void onLevelLoad(LevelEvent.Load event) {
-        if (event.getLevel() instanceof Level level) {
+        if (event.getLevel() instanceof ServerLevel level) {
             if (CommonConfig.Season.validDimensions.get().contains(level.dimension().location().toString()))
                 MapChecker.validDimension.add(level);
-        }
-        if (event.getLevel() instanceof ServerLevel serverLevel) {
-            WeatherManager.createLevelBiomeWeatherList(serverLevel);
-            SolarHolders.createSaveData(serverLevel, SolarDataManager.get(serverLevel));
+            WeatherManager.createLevelBiomeWeatherList(level);
+            SolarHolders.createSaveData(level, SolarDataManager.get(level));
         }
     }
 
@@ -103,12 +98,10 @@ public class AllListener {
                 && !event.level.isClientSide()
                 && MapChecker.isValidDimension(event.level)) {
             SolarDataManager data = SolarHolders.getSaveData(event.level);
-            if (data!=null) {
+            if (data != null) {
                 data.updateTicks((ServerLevel) event.level);
             }
         }
-
-
     }
 
     // @SubscribeEvent

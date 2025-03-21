@@ -5,6 +5,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
+import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.EntityType;
@@ -27,10 +28,10 @@ public abstract class MixinFox extends Animal {
             method = "tick",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;isThundering()Z")
     )
-    private boolean eclipticseasons$tick(Level instance, Operation<Boolean> original) {
-        if (EclipticUtil.useSolarWeather())
-            return WeatherManager.isThunderAt(level(), blockPosition());
-        return instance.isThundering();
+    private boolean eclipticseasons$tick(Level level, Operation<Boolean> original) {
+        if (EclipticUtil.hasLocalWeather(level) && level instanceof ServerLevel serverLevel)
+            return WeatherManager.isThunderAtBiome(serverLevel, blockPosition());
+        else return original.call(level);
     }
 
 }

@@ -35,7 +35,7 @@ public class MixinWorldEffects {
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/ClientLevel;getBiome(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/core/Holder;")
     )
     private Holder<Biome> eclipticseasons$tick_getBiome(ClientLevel instance, BlockPos pos, Operation<Holder<Biome>> original) {
-        return EclipticUtil.useSolarWeather() ?
+        return EclipticUtil.hasLocalWeather(instance) ?
                 MapChecker.getSurfaceBiome(instance, pos) :
                 original.call(instance, pos);
     }
@@ -45,7 +45,7 @@ public class MixinWorldEffects {
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/biome/Biome;getPrecipitationAt(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/biome/Biome$Precipitation;")
     )
     private Biome.Precipitation eclipticseasons$tick_getPrecipitationAt(Biome biome, BlockPos pos, Operation<Biome.Precipitation> original) {
-        if (EclipticUtil.useSolarWeather())
+        if (EclipticUtil.hasLocalWeather(mc.level))
             return mc != null && mc.level != null && (WeatherManager.isRainingOrSnowAt(mc.level, pos)
                     || ClientWeatherChecker.isBiomeRainyLast(biome)) ?
                     WeatherManager.getPrecipitationAt(mc.level, biome, pos) : Biome.Precipitation.NONE;

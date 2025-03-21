@@ -6,6 +6,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.client.core.ClientWeatherChecker;
+import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
@@ -22,8 +23,8 @@ public class MixinLightningRodBlock {
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;isThundering()Z")
     )
     private boolean eclipticseasons$onProjectileHit_isThundering(Level instance, Operation<Boolean> original, @Local(ordinal = 0, argsOnly = true) BlockPos blockPos) {
-        if (EclipticUtil.useSolarWeather())
-            return ClientWeatherChecker.isThunderAt((ClientLevel) instance, blockPos);
+        if (EclipticUtil.hasLocalWeather(instance))
+            return WeatherManager.isThunderAtBiome(instance, blockPos);
         return original.call(instance);
     }
 

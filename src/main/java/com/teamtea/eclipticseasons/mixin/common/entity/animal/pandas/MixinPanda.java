@@ -20,8 +20,8 @@ public class MixinPanda {
     )
     private boolean eclipticseasons$tick(Level instance, Operation<Boolean> original) {
         if (instance instanceof ServerLevel serverLevel)
-            if (EclipticUtil.useSolarWeather())
-                return WeatherManager.isThunderAt(serverLevel, ((Panda) (Object) this).blockPosition());
+            if (EclipticUtil.hasLocalWeather(serverLevel))
+                return WeatherManager.isThunderAtBiome(serverLevel, ((Panda) (Object) this).blockPosition());
         return original.call(instance);
     }
 
@@ -31,8 +31,8 @@ public class MixinPanda {
     )
     private boolean eclipticseasons$isScared(Level instance, Operation<Boolean> original) {
         if (instance instanceof ServerLevel serverLevel)
-            if (EclipticUtil.useSolarWeather())
-                return WeatherManager.isThunderAt(serverLevel, ((Panda) (Object) this).blockPosition());
+            if (EclipticUtil.hasLocalWeather(serverLevel))
+                return WeatherManager.isThunderAtBiome(serverLevel, ((Panda) (Object) this).blockPosition());
         return original.call(instance);
     }
 }

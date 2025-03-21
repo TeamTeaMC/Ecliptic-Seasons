@@ -4,6 +4,7 @@ import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.biome.Humidity;
 import com.teamtea.eclipticseasons.api.constant.biome.Rainfall;
 import com.teamtea.eclipticseasons.api.constant.biome.Temperature;
+import com.teamtea.eclipticseasons.api.constant.climate.WeatherMode;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
@@ -65,6 +66,14 @@ public class EclipticUtil {
         return !useSolarWeather();
     }
 
+    public static WeatherMode getWeatherMode(Level level) {
+        if (!useSolarWeather()) return WeatherMode.DEFAULT;
+        return MapChecker.isValidDimension(level) ? WeatherMode.BIOME : WeatherMode.DEFAULT;
+    }
+
+    public static boolean hasLocalWeather(Level level) {
+        return getWeatherMode(level) != WeatherMode.DEFAULT;
+    }
 
     public static EclipticSeasonsApi INSTANCE;
 
@@ -113,7 +122,7 @@ public class EclipticUtil {
 
             @Override
             public boolean isRainOrSnowAt(Level level, BlockPos pos) {
-                if (useSolarWeather())
+                if (hasLocalWeather(level))
                     return WeatherManager.isRainingOrSnowAt(level, pos);
 
                 // use this to check if underground
@@ -128,7 +137,7 @@ public class EclipticUtil {
 
             @Override
             public boolean isRainAt(Level level, BlockPos pos) {
-                // if (useSolarWeather())
+                // if (hasLocalWeather(level))
                 // use mc method we have fixed it
                 return level.isRainingAt(pos);
 
@@ -146,7 +155,7 @@ public class EclipticUtil {
 
             @Override
             public boolean isSnowAt(Level level, BlockPos pos) {
-                if (useSolarWeather())
+                if (hasLocalWeather(level))
                     return isHereSnowy(level, pos);
                 if (!level.isRaining()) {
                     return false;
@@ -161,7 +170,7 @@ public class EclipticUtil {
 
             @Override
             public boolean isThunderAt(Level level, BlockPos pos) {
-                if (useSolarWeather())
+                if (hasLocalWeather(level))
                     return WeatherManager.isThunderAt(level, pos);
 
                 // use this to check if underground
@@ -175,7 +184,7 @@ public class EclipticUtil {
 
             @Override
             public Biome.Precipitation getPrecipitationAt(Level level, BlockPos pos) {
-                if (useSolarWeather())
+                if (hasLocalWeather(level))
                     return WeatherManager.getPrecipitationAt(level, MapChecker.getSurfaceBiome(level, pos).value(), pos);
                 return VanillaWeather.handlePrecipitationAt(level, MapChecker.getSurfaceBiome(level, pos).value(), pos);
             }
@@ -210,9 +219,13 @@ public class EclipticUtil {
         return WeatherManager.getRainOrSnow(level, MapChecker.getSurfaceBiome(level, pos).value(), pos) == Biome.Precipitation.SNOW;
     }
 
+    public static float getTemperatureFloat(Level level, Biome biome, BlockPos blockPos) {
+        return biome.getTemperature(blockPos) + getNowSolarTerm(level).getTemperatureChange();
+    }
+
     public static Humidity getHumidityAt(Level level, BlockPos pos) {
         Biome standBiome = level.getBiome(pos).value();
-        Temperature temperatureLevel = Temperature.getTemperatureLevel(standBiome.getTemperature(pos));
+        Temperature temperatureLevel = Temperature.getTemperatureLevel(getTemperatureFloat(level, standBiome, pos));
         Rainfall rainfall = Rainfall.getRainfallLevel(standBiome.getModifiedClimateSettings().downfall());
         return Humidity.getHumid(rainfall, temperatureLevel);
     }
@@ -224,6 +237,6 @@ public class EclipticUtil {
 
     public static Temperature getTemperatureAt(Level level, BlockPos pos) {
         Biome standBiome = level.getBiome(pos).value();
-        return Temperature.getTemperatureLevel(standBiome.getTemperature(pos));
+        return Temperature.getTemperatureLevel(getTemperatureFloat(level, standBiome, pos));
     }
 }

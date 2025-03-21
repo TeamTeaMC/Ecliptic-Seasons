@@ -5,6 +5,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
+import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.projectile.ThrownTrident;
 import net.minecraft.world.level.Level;
@@ -20,8 +21,9 @@ public class MixinThrownTrident {
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;isThundering()Z")
     )
     private boolean eclipticseasons$isDarkEnoughToSpawn_isThundering(Level instance, Operation<Boolean> original) {
-        if (EclipticUtil.useSolarWeather())
-            return WeatherManager.isThunderAt((ServerLevel) ((ThrownTrident) (Object) this).level(), ((ThrownTrident) (Object) this).blockPosition());
+        if (EclipticUtil.hasLocalWeather(instance)) {
+            return WeatherManager.isThunderAtBiome(instance, ((ThrownTrident) (Object) this).blockPosition());
+        }
         return instance.isThundering();
     }
 }

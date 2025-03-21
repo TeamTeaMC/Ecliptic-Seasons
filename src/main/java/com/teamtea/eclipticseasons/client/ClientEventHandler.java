@@ -24,6 +24,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
@@ -93,14 +94,16 @@ public final class ClientEventHandler {
     // TODO:似乎未真正解决进入末地后更新失败的消息
     @SubscribeEvent
     public static void onLevelEventLoad(LevelEvent.Load event) {
-        if (event.getLevel() instanceof ClientLevel clientLevel) {
-            ClientCon.setUseLevel(clientLevel);
-            ClientCon.tick(clientLevel);
+        if (event.getLevel() instanceof ClientLevel level) {
+            if (CommonConfig.Season.validDimensions.get().contains(level.dimension().location().toString()))
+                MapChecker.validDimension.add(level);
 
-            WeatherManager.createLevelBiomeWeatherList(clientLevel);
-            // 这里需要恢复一下数据
-            // 客户端登录时同步天气数据，此处先放入
-            SolarHolders.createSaveData(clientLevel, ClientSolarDataManager.get(clientLevel));
+            ClientCon.setUseLevel(level);
+            ClientCon.tick(level);
+
+            WeatherManager.createLevelBiomeWeatherList(level);
+
+            SolarHolders.createSaveData(level, ClientSolarDataManager.get(level));
         }
     }
 
