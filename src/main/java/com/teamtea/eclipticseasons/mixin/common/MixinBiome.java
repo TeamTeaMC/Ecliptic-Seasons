@@ -35,6 +35,18 @@ public abstract class MixinBiome {
             cir.setReturnValue(VanillaWeather.handlePrecipitationAt((Biome) (Object) this, pos));
         }
     }
+
+    @Inject(at = {@At("HEAD")}, method = {"hasPrecipitation"}, cancellable = true)
+    public void eclipticseasons$hasPrecipitation(CallbackInfoReturnable<Boolean> cir) {
+        if (EclipticUtil.useSolarWeather())
+            cir.setReturnValue(BiomeClimateManager.agent$hasPrecipitation((Biome) (Object) this));
+        else {
+            if (BiomeClimateManager.getTag((Biome) (Object) this).equals(ClimateTypeBiomeTags.MONSOONAL)) {
+                cir.setReturnValue(VanillaWeather.hasMonsoonalPrecipitation((Biome) (Object) this));
+            }
+        }
+    }
+
     //
     // @Inject(at = {@At("HEAD")}, method = {"getBaseTemperature"}, cancellable = true)
     // public void eclipticseasons$getBaseTemperature(CallbackInfoReturnable<Float> cir) {
@@ -42,16 +54,7 @@ public abstract class MixinBiome {
     // }
     //
     //
-    // @Inject(at = {@At("HEAD")}, method = {"hasPrecipitation"}, cancellable = true)
-    // public void eclipticseasons$hasPrecipitation(CallbackInfoReturnable<Boolean> cir) {
-    //     if (EclipticUtil.useSolarWeather())
-    //         cir.setReturnValue(BiomeClimateManager.agent$hasPrecipitation((Biome) (Object) this));
-    //     else {
-    //         if (BiomeClimateManager.getTag((Biome) (Object) this).equals(ClimateTypeBiomeTags.MONSOONAL)) {
-    //             cir.setReturnValue(VanillaWeather.hasMonsoonalPrecipitation((Biome) (Object) this));
-    //         }
-    //     }
-    // }
+
     //
     // @ModifyExpressionValue(at = {@At(value = "INVOKE",
     //         target = "Lnet/minecraft/world/level/biome/Biome;getTemperature(Lnet/minecraft/core/BlockPos;)F")},

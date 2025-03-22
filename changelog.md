@@ -1,3 +1,7 @@
+## **0.10.2**
+- Optimized the placement experience of the calendar, allowing it to be placed even when clicking on diagonal surfaces.
+- Fixed a bug related to whether Biome has weather precipitation.
+
 ## **0.10.1**
 - Updated the texture of the Wooden Grate.
 - Fixed a potential item duplication issue.
