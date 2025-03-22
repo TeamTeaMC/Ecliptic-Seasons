@@ -46,8 +46,7 @@ public final class ESBlockTagProvider extends BlockTagsProvider {
                 BlockRegistry.summer_greenhouse_core.get(),
                 BlockRegistry.autumn_greenhouse_core.get(),
                 BlockRegistry.winter_greenhouse_core.get(),
-                BlockRegistry.greenhouse_core_container.get(),
-                BlockRegistry.block_in_wooden_grate_block.get());
+                BlockRegistry.greenhouse_core_container.get());
     }
 
 

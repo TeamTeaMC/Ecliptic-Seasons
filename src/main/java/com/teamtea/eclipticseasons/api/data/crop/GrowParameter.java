@@ -7,7 +7,6 @@ import org.jetbrains.annotations.TestOnly;
 
 import java.util.Optional;
 
-@TestOnly
 public record GrowParameter(
         float grow_chance,
         float death_chance,

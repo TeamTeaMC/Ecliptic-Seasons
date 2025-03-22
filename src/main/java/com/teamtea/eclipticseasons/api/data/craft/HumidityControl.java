@@ -9,7 +9,6 @@ import org.jetbrains.annotations.TestOnly;
 
 import java.util.List;
 
-@TestOnly
 public record HumidityControl(
         WrapSizeIngredient ingredient,
         ItemStack result,

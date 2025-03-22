@@ -21,7 +21,6 @@ import org.jetbrains.annotations.TestOnly;
 
 import java.util.*;
 
-@TestOnly
 public record CropGrowControlBuilder(
         HolderSet<AgroClimaticZone> cropClimateType,
         HolderSet<Block> applyTarget,

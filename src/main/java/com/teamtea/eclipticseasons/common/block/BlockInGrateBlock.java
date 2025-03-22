@@ -85,7 +85,11 @@ public class BlockInGrateBlock extends SimpleEntityBlock implements SimpleWaterl
     public @NotNull InteractionResult use(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hitResult) {
         ItemStack stack = player.getItemInHand(hand);
         InteractionResult interactionResult = getItemInteractionResult(stack, level, pos);
-        if (interactionResult != null && !level.isClientSide()) return interactionResult;
+        if (!level.isClientSide()
+                && interactionResult == InteractionResult.sidedSuccess(level.isClientSide())) {
+            if (!player.isCreative()) stack.shrink(1);
+        }
+        if (interactionResult != null) return interactionResult;
         return super.use(state, level, pos, player, hand, hitResult);
     }
 

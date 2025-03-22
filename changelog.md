@@ -1,3 +1,8 @@
+## **0.10.1**
+- Updated the texture of the Wooden Grate.
+- Fixed a potential item duplication issue.
+- Optimized the rendering speed of greenhouse items.
+
 ## **0.10**
 This version, ported from 1.21, features comprehensive reworks to seasonal greenhouse mechanics:
 - Fixed the built-in compatibility handling for the Serene Seasons tag data pack. Due to significant modifications in the underlying logic of data packs in version 0.10-pre8, data conversion issues existed prior to the new version.

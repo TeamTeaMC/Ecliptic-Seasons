@@ -16,9 +16,13 @@ public class GreenHouseCoreCoreItem extends Item {
     @Override
     public void initializeClient(Consumer<IClientItemExtensions> consumer) {
         consumer.accept(new IClientItemExtensions() {
+            private BlockEntityWithoutLevelRenderer object;
             @Override
             public BlockEntityWithoutLevelRenderer getCustomRenderer() {
-                return new GreenHouseCoreCoreItemRenderer(Minecraft.getInstance().getBlockEntityRenderDispatcher(), Minecraft.getInstance().getEntityModels());
+                if(object==null){
+                    object=new GreenHouseCoreCoreItemRenderer(Minecraft.getInstance().getBlockEntityRenderDispatcher(), Minecraft.getInstance().getEntityModels());
+                }
+                return object;
             }
         });
     }

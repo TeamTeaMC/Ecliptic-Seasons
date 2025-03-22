@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@TestOnly
 public record SeasonQuest(
         Optional<SolarTerm> end,
         Optional<SolarTerm> start,
