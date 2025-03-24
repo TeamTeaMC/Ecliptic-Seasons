@@ -15,7 +15,9 @@ import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -65,14 +67,15 @@ public class QuestHangingSignBlockEntity extends SignBlockEntity {
     @Override
     protected void saveAdditional(@NotNull CompoundTag tag) {
         super.saveAdditional(tag);
-
+        RegistryOps<Tag> registryops = RegistryOps.create(NbtOps.INSTANCE, level.registryAccess());
         tag.putString("sign_type", BuiltInRegistries.BLOCK.getKey(getSignType()).toString());
         if (seasonQuest != null) {
-            SeasonQuest.DIRECT_CODEC
-                    .encodeStart(NbtOps.INSTANCE, seasonQuest)
+            SeasonQuest.CODEC
+                    .encodeStart(registryops, seasonQuest)
                     .resultOrPartial(EclipticSeasons::logger)
                     .ifPresent(tag1 -> tag.put("season_quest", tag1));
         }
+
     }
 
 
@@ -85,8 +88,9 @@ public class QuestHangingSignBlockEntity extends SignBlockEntity {
                 this.sign = signBlock;
         }
         if (tag.contains("season_quest")) {
-            SeasonQuest.DIRECT_CODEC
-                    .parse(NbtOps.INSTANCE, tag.get("season_quest"))
+            RegistryOps<Tag> registryops = RegistryOps.create(NbtOps.INSTANCE, level.registryAccess());
+            SeasonQuest.CODEC
+                    .parse(registryops, tag.get("season_quest"))
                     .resultOrPartial(EclipticSeasons::logger)
                     .ifPresent(seasonQuest1 -> {
                         this.seasonQuest = seasonQuest1;

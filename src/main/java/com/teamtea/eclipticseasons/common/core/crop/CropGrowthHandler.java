@@ -14,6 +14,7 @@ import com.teamtea.eclipticseasons.api.data.crop.CropGrow;
 import com.teamtea.eclipticseasons.api.data.crop.CropGrowControl;
 import com.teamtea.eclipticseasons.api.data.crop.CropGrowControlBuilder;
 import com.teamtea.eclipticseasons.api.data.crop.GrowParameter;
+import com.teamtea.eclipticseasons.api.data.quest.SeasonQuest;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
@@ -22,7 +23,11 @@ import com.teamtea.eclipticseasons.common.registry.CropRegistry;
 import com.teamtea.eclipticseasons.common.registry.ESRegistries;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.core.*;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.Tag;
+import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
@@ -95,6 +100,7 @@ public final class CropGrowthHandler {
             DefaultCropClimateType.clear();
         }
 
+        RegistryOps<Tag> registryops = RegistryOps.create(NbtOps.INSTANCE, registryAccess);
 
         Registry<AgroClimaticZone> cropClimateTypeRegistry = registryAccess.registryOrThrow(ESRegistries.AGRO_CLIMATE);
         for (Map.Entry<ResourceKey<AgroClimaticZone>, AgroClimaticZone> entry : cropClimateTypeRegistry.entrySet()) {
@@ -105,6 +111,12 @@ public final class CropGrowthHandler {
                     cropClimateTypeMap.put(biomes.get(i).value(), holder.get());
                 }
             }
+
+            // todo: test sync
+            // Optional<Tag> tag = AgroClimaticZone.CODEC
+            //         .encodeStart(registryops, entry.getValue())
+            //         .resultOrPartial(EclipticSeasons::logger);
+            // EclipticSeasons.logger(tag.isPresent()?tag.get():"");
         }
         DefaultCropClimateType.put(isServer, cropClimateTypeRegistry.getHolder(AgroClimateRegistry.TEMPERATE).get());
 

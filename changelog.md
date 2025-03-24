@@ -1,3 +1,7 @@
+## **0.10.2.1**
+- Since the mod uses some methods backported by Forge from version 1.21, the version requirements have been raised to avoid misunderstandings. This aligns with the mainstream mods.
+- Fixed an issue where players might be unable to join multiplayer games. The current data pack system was migrated from version 1.21, while Minecraft's 1.20 data pack network synchronization mechanism was somewhat unstable. We sincerely apologize for the inadequate coordination during this transition.
+
 ## **0.10.2**
 - Optimized the placement experience of the calendar, allowing it to be placed even when clicking on diagonal surfaces.
 - Fixed a bug related to whether Biome has weather precipitation.

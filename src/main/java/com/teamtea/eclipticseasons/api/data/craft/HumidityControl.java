@@ -31,8 +31,7 @@ public record HumidityControl(
     public static final Codec<HumidityControl> DIRECT_CODEC = RecordCodecBuilder.create(ins -> ins.group(
             Codec.INT.fieldOf("range").forGetter(HumidityControl::range),
             Codec.INT.fieldOf("level").forGetter(HumidityControl::level),
-            Codec.INT.fieldOf("lasting_time").forGetter(HumidityControl::lasting_time),
-            PosAndBlockStateCheck.CODEC.listOf().fieldOf("checks").forGetter(HumidityControl::checks)
-    ).apply(ins, (integer, integer2, integer3, checks1) ->
-            new HumidityControl(new WrapSizeIngredient(HolderSet.direct(), 0), ItemStack.EMPTY, integer, integer2, integer3, checks1)));
+            Codec.INT.fieldOf("lasting_time").forGetter(HumidityControl::lasting_time)
+    ).apply(ins, (integer, integer2, integer3) ->
+            new HumidityControl(new WrapSizeIngredient(HolderSet.direct(), 0), ItemStack.EMPTY, integer, integer2, integer3, List.of())));
 }
