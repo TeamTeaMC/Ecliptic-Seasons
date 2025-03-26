@@ -54,6 +54,7 @@
     "compat.distanthorizons.MixinFullDataToRenderDataTransformer",
     "compat.distanthorizons.MixinNetworkUtil",
     "compat.distanthorizons.MixinTintWithoutLevelOverrider",
+    "compat.distanthorizons.MixinQuadTree",
     "compat.embeddium.MixinBlockRender2",
     "compat.embeddium.MixinBlockRenderContext",
     "compat.embeddium.MixinBlockRenderTask",

@@ -1,3 +1,6 @@
+## **0.10.2.2**
+- Optimized the LOD (Level of Detail) update mechanism in Distant Horizons' compatibility module when both ForceChunkRenderUpdate and EnhancementChunkRenderUpdate are enabled.
+
 ## **0.10.2.1**
 - Since the mod uses some methods backported by Forge from version 1.21, the version requirements have been raised to avoid misunderstandings. This aligns with the mainstream mods.
 - Fixed an issue where players might be unable to join multiplayer games. The current data pack system was migrated from version 1.21, while Minecraft's 1.20 data pack network synchronization mechanism was somewhat unstable. We sincerely apologize for the inadequate coordination during this transition.

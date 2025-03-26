@@ -9,7 +9,10 @@ import com.seibel.distanthorizons.core.level.DhClientServerLevel;
 import com.seibel.distanthorizons.core.level.IDhClientLevel;
 import com.seibel.distanthorizons.core.pos.DhSectionPos;
 import com.seibel.distanthorizons.core.pos.blockPos.DhBlockPos;
+import com.seibel.distanthorizons.core.render.LodQuadTree;
 import com.seibel.distanthorizons.core.util.FullDataPointUtil;
+import com.seibel.distanthorizons.core.util.gridList.MovableGridRingList;
+import com.seibel.distanthorizons.core.util.objects.quadTree.QuadNode;
 import com.seibel.distanthorizons.core.world.IDhClientWorld;
 import com.seibel.distanthorizons.core.wrapperInterfaces.IWrapperFactory;
 import com.seibel.distanthorizons.core.wrapperInterfaces.block.IBlockStateWrapper;
@@ -17,6 +20,7 @@ import com.seibel.distanthorizons.core.wrapperInterfaces.world.IBiomeWrapper;
 import com.seibel.distanthorizons.core.wrapperInterfaces.world.IClientLevelWrapper;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.config.CommonConfig;
+import com.teamtea.eclipticseasons.mixin.compat.distanthorizons.MixinQuadTree;
 import it.unimi.dsi.fastutil.longs.LongArrayList;
 import loaderCommon.forge.com.seibel.distanthorizons.common.wrappers.McObjectConverter;
 import loaderCommon.forge.com.seibel.distanthorizons.common.wrappers.block.BiomeWrapper;
@@ -33,7 +37,10 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.LightBlock;
 import net.minecraft.world.level.material.MapColor;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Stack;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class DHTool {
@@ -51,25 +58,48 @@ public class DHTool {
                 clientRenderStateAtomicReference = dhClientLevel.clientside.ClientRenderStateRef;
             }
             if (clientRenderStateAtomicReference != null) {
-                //     // 也许未来需要定向刷新，但是目前来看只需要全部刷新即可
-                //     // DhSectionPos.encode((byte) 0,100,100);
-                int d = (int) Config.Client.quickLodChunkRenderDistance.get().get() / 2;
-                BlockPos pos = Minecraft.getInstance().player.getOnPos();
-                SectionPos sectionPos = SectionPos.of(pos);
-                int pSectionX = sectionPos.z();
-                int pSectionZ = sectionPos.x();
-                byte treeMinDetailLevel = clientRenderStateAtomicReference.get().quadtree.treeMinDetailLevel;
-                byte treeMaxDetailLevel = clientRenderStateAtomicReference.get().quadtree.treeMaxDetailLevel;
 
-                for (int i = pSectionX - d; i <= pSectionX + d; i++) {
-                    for (int j = pSectionZ - d; j <= pSectionZ + d; j++) {
-                        for (byte k = treeMaxDetailLevel; k <= treeMinDetailLevel; k++) {
-                            // 注意这里是dh的sectionpos，其实与mc中类似
-                            long rootPos = DhSectionPos.encode(k, i, j);
-                            clientRenderStateAtomicReference.get().quadtree.reloadPos(rootPos);
-                        }
+                LodQuadTree quadtree = clientRenderStateAtomicReference.get().quadtree;
+                MixinQuadTree quadtree1 = (MixinQuadTree) quadtree;
+
+                List<Long> reloadList = new ArrayList<>();
+                MovableGridRingList<QuadNode> topRingList = quadtree1.getTopRingList();
+                Stack<QuadNode> stack = new Stack<>();
+
+                for (int i = 0, topRingListSize = topRingList.size(); i < topRingListSize; i++) {
+                    stack.push(topRingList.get(i));
+                }
+
+                while (!stack.isEmpty()) {
+                    QuadNode node = stack.pop();
+                    if (node == null || node.value == null) continue;
+                    reloadList.add(node.sectionPos);
+                    for (int i = 3; i >= 0; i--) {
+                        stack.push(node.getChildByIndex(i));
                     }
                 }
+
+                for (Long l : reloadList) {
+                    quadtree.reloadPos(l);
+                }
+
+                // int d = (int) Config.Client.quickLodChunkRenderDistance.get().get() / 2;
+                // BlockPos pos = Minecraft.getInstance().player.getOnPos();
+                // SectionPos sectionPos = SectionPos.of(pos);
+                // int pSectionX = sectionPos.z();
+                // int pSectionZ = sectionPos.x();
+                // byte treeMinDetailLevel = clientRenderStateAtomicReference.get().quadtree.treeMinDetailLevel;
+                // byte treeMaxDetailLevel = clientRenderStateAtomicReference.get().quadtree.treeMaxDetailLevel;
+                //
+                // for (int i = pSectionX - d; i <= pSectionX + d; i++) {
+                //     for (int j = pSectionZ - d; j <= pSectionZ + d; j++) {
+                //         for (byte k = treeMaxDetailLevel; k <= treeMinDetailLevel; k++) {
+                //             // 注意这里是dh的sectionpos，其实与mc中类似
+                //             long rootPos = DhSectionPos.encode(k, i, j);
+                //             clientRenderStateAtomicReference.get().quadtree.reloadPos(rootPos);
+                //         }
+                //     }
+                // }
 
             }
         }

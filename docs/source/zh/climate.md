@@ -137,6 +137,7 @@
 群系初始状态可以参考如下表格：
 
 #### Minecraft群系湿润度
+
 | 群系      | id                                 | 湿润度等级 | 英文名称    |
 |---------|------------------------------------|-------|---------|
 | 竹林      | minecraft:bamboo_jungle            | 潮湿    | HUMID   |
@@ -194,6 +195,7 @@
 | 疏林恶地    | minecraft:wooded_badlands          | 干旱    | ARID    |
 
 #### BOP群系湿润度
+
 | 群系                   | id                                    | 湿润度等级 | 英文名称    |
 |----------------------|---------------------------------------|-------|---------|
 | 长沼                   | biomesoplenty:bayou                   | 潮湿    | HUMID   |
@@ -259,6 +261,7 @@
 | Wasteland Steppe     | biomesoplenty:wasteland_steppe        | 干旱    | ARID    |
 
 #### BWG群系湿润度
+
 | 群系        | id                                       | 湿润度等级 | 英文名称    |
 |-----------|------------------------------------------|-------|---------|
 | 长沼        | biomeswevegone:bayou                     | 潮湿    | HUMID   |
@@ -314,6 +317,61 @@
 | 崎岖恶地      | biomeswevegone:rugged_badlands           | 干旱    | ARID    |
 | 锯齿恶地      | biomeswevegone:sierra_badlands           | 干旱    | ARID    |
 | 风袭沙漠      | biomeswevegone:windswept_desert          | 干旱    | ARID    |
+
+#### Nature's Spirit自然之灵湿润度
+
+| 群系      | id                                   | 湿润度等级 | 英文名称    |
+|---------|--------------------------------------|-------|---------|
+| 草本沼泽    | natures_spirit:marsh                 | 潮湿    | humid   |
+| 竹林湿地    | natures_spirit:bamboo_wetlands       | 潮湿    | humid   |
+| 紫藤树林    | natures_spirit:wisteria_forest       | 湿润    | moist   |
+| 繁花山脊    | natures_spirit:floral_ridges         | 湿润    | moist   |
+| 热带森林    | natures_spirit:tropical_woods        | 一般    | average |
+| 热带海岸    | natures_spirit:tropical_shores       | 一般    | average |
+| 热带盆地    | natures_spirit:tropical_basin        | 一般    | average |
+| 雪顶红岩山峰  | natures_spirit:snowcapped_red_peaks  | 一般    | average |
+| 积雪雪坡    | natures_spirit:sleeted_slopes        | 一般    | average |
+| 红杉林     | natures_spirit:redwood_forest        | 一般    | average |
+| 帚石楠花地   | natures_spirit:heather_fields        | 一般    | average |
+| 静谧针叶林   | natures_spirit:coniferous_covert     | 一般    | average |
+| 高山高地    | natures_spirit:alpine_highlands      | 一般    | average |
+| 高山空地    | natures_spirit:alpine_clearings      | 一般    | average |
+| 风蚀柳杉林   | natures_spirit:windswept_sugi_forest | 干燥    | dry     |
+| 白崖      | natures_spirit:white_cliffs          | 干燥    | dry     |
+| 苔原      | natures_spirit:tundra                | 干燥    | dry     |
+| 柳杉树林    | natures_spirit:sugi_forest           | 干燥    | dry     |
+| 稀疏桃花心森林 | natures_spirit:sparse_tropical_woods | 干燥    | dry     |
+| 积雪冷杉林   | natures_spirit:snowy_fir_forest      | 干燥    | dry     |
+| 大草原     | natures_spirit:prairie               | 干燥    | dry     |
+| 万寿菊草甸   | natures_spirit:marigold_meadows      | 干燥    | dry     |
+| 枫树林     | natures_spirit:maple_woodlands       | 干燥    | dry     |
+| 金色荒野    | natures_spirit:golden_wilds          | 干燥    | dry     |
+| 冷杉树林    | natures_spirit:fir_forest            | 干燥    | dry     |
+| 凌寒叶针林   | natures_spirit:boreal_taiga          | 干燥    | dry     |
+| 樱花柳杉林   | natures_spirit:blooming_sugi_forest  | 干燥    | dry     |
+| 白杨树林    | natures_spirit:aspen_forest          | 干燥    | dry     |
+| 干燥疏灌丛平原 | natures_spirit:xeric_plains          | 干旱    | arid    |
+| 高原森林    | natures_spirit:woody_highlands       | 干旱    | arid    |
+| 疏林旱地    | natures_spirit:wooded_drylands       | 干旱    | arid    |
+| 层蚀沙漠    | natures_spirit:stratified_desert     | 干旱    | arid    |
+| 灌木林     | natures_spirit:shrubland             | 干旱    | arid    |
+| 高原灌木林   | natures_spirit:shrubby_highlands     | 干旱    | arid    |
+| 焦草丘陵    | natures_spirit:scorched_dunes        | 干旱    | arid    |
+| 红岩山峰    | natures_spirit:red_peaks             | 干旱    | arid    |
+| 橡木热带草原  | natures_spirit:oak_savanna           | 干旱    | arid    |
+| 生机沙丘    | natures_spirit:lively_dunes          | 干旱    | arid    |
+| 薰衣草原野   | natures_spirit:lavender_fields       | 干旱    | arid    |
+| 繁花灌木林   | natures_spirit:flowering_shrubland   | 干旱    | arid    |
+| 岩土山坡    | natures_spirit:dusty_slopes          | 干旱    | arid    |
+| 旱地      | natures_spirit:drylands              | 干旱    | arid    |
+| 柏树原野    | natures_spirit:cypress_fields        | 干旱    | arid    |
+| 灌木地     | natures_spirit:chaparral             | 干旱    | arid    |
+| 雪松灌木林   | natures_spirit:cedar_thicket         | 干旱    | arid    |
+| 康乃馨原野   | natures_spirit:carnation_fields      | 干旱    | arid    |
+| 繁花山丘    | natures_spirit:blooming_highlands    | 干旱    | arid    |
+| 繁花沙丘    | natures_spirit:blooming_dunes        | 干旱    | arid    |
+| 热带草原旱地  | natures_spirit:arid_savanna          | 干旱    | arid    |
+| 高原旱地    | natures_spirit:arid_highlands        | 干旱    | arid    |
 
 ### 群系颜色
 

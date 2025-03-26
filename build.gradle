@@ -237,8 +237,8 @@ dependencies {
 
     runtimeOnly fg.deobf("curse.maven:farmers-delight-398521:5051242")
 
-    compileOnly fg.deobf("curse.maven:distant-horizons-508933:5689279")
-//    onlyMainRuntimeOnly fg.deobf("curse.maven:distant-horizons-508933:5689279")
+    compileOnly fg.deobf("curse.maven:distant-horizons-508933:6251728")
+    onlyMainRuntimeOnly fg.deobf("curse.maven:distant-horizons-508933:6251728")
 
     compileOnly fg.deobf("curse.maven:legendary-survival-overhaul-840254:5825918")
 //    onlyMainRuntimeOnly fg.deobf("curse.maven:legendary-survival-overhaul-840254:5825918")
@@ -259,7 +259,7 @@ dependencies {
     compileOnly fg.deobf("curse.maven:touhou-little-maid-355044:6120178")
 //    onlyMainRuntimeOnly fg.deobf("curse.maven:touhou-little-maid-355044:6120178")
 
-    implementation fg.deobf("curse.maven:hourglass-511172:4834578")
+//    onlyMainRuntimeOnly fg.deobf("curse.maven:hourglass-511172:4834578")
 
     //    onlyMainRuntimeOnly fg.deobf("curse.maven:create-328085:6247663")
 //    onlyMainRuntimeOnly  fg.deobf("curse.maven:hourglass-511172:4834578")
