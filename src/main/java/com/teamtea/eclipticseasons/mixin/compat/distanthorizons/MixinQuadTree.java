@@ -10,8 +10,7 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 @Mixin(QuadTree.class)
 public interface MixinQuadTree {
 
-    @Accessor("topRingList")
+    @Accessor(value = "topRingList",remap = false)
     MovableGridRingList<QuadNode> getTopRingList();
-
 
 }

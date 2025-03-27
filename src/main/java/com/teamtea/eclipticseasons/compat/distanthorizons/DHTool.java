@@ -9,6 +9,7 @@ import com.seibel.distanthorizons.core.level.DhClientServerLevel;
 import com.seibel.distanthorizons.core.level.IDhClientLevel;
 import com.seibel.distanthorizons.core.pos.DhSectionPos;
 import com.seibel.distanthorizons.core.pos.blockPos.DhBlockPos;
+import com.seibel.distanthorizons.core.pos.blockPos.DhBlockPos2D;
 import com.seibel.distanthorizons.core.render.LodQuadTree;
 import com.seibel.distanthorizons.core.util.FullDataPointUtil;
 import com.seibel.distanthorizons.core.util.gridList.MovableGridRingList;
@@ -18,6 +19,7 @@ import com.seibel.distanthorizons.core.wrapperInterfaces.IWrapperFactory;
 import com.seibel.distanthorizons.core.wrapperInterfaces.block.IBlockStateWrapper;
 import com.seibel.distanthorizons.core.wrapperInterfaces.world.IBiomeWrapper;
 import com.seibel.distanthorizons.core.wrapperInterfaces.world.IClientLevelWrapper;
+import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import com.teamtea.eclipticseasons.mixin.compat.distanthorizons.MixinQuadTree;
@@ -84,22 +86,26 @@ public class DHTool {
                 }
 
                 // int d = (int) Config.Client.quickLodChunkRenderDistance.get().get() / 2;
-                // BlockPos pos = Minecraft.getInstance().player.getOnPos();
-                // SectionPos sectionPos = SectionPos.of(pos);
-                // int pSectionX = sectionPos.z();
-                // int pSectionZ = sectionPos.x();
-                // byte treeMinDetailLevel = clientRenderStateAtomicReference.get().quadtree.treeMinDetailLevel;
-                // byte treeMaxDetailLevel = clientRenderStateAtomicReference.get().quadtree.treeMaxDetailLevel;
+                // DhBlockPos2D pos = quadtree.getCenterBlockPos();
+                // // SectionPos sectionPos = SectionPos.of(pos);
+                // int pSectionX = SectionPos.blockToSectionCoord(pos.x);
+                // int pSectionZ = SectionPos.blockToSectionCoord(pos.z);
                 //
+                // int cc=0;
+                // byte treeMinDetailLevel = quadtree.treeMinDetailLevel;
+                // byte treeMaxDetailLevel = quadtree.treeMaxDetailLevel;
                 // for (int i = pSectionX - d; i <= pSectionX + d; i++) {
                 //     for (int j = pSectionZ - d; j <= pSectionZ + d; j++) {
                 //         for (byte k = treeMaxDetailLevel; k <= treeMinDetailLevel; k++) {
+                //             cc++;
                 //             // 注意这里是dh的sectionpos，其实与mc中类似
-                //             long rootPos = DhSectionPos.encode(k, i, j);
-                //             clientRenderStateAtomicReference.get().quadtree.reloadPos(rootPos);
+                //             // long rootPos = DhSectionPos.encode(k, i, j);
+                //             // clientRenderStateAtomicReference.get().quadtree.reloadPos(rootPos);
+                //
                 //         }
                 //     }
                 // }
+
 
             }
         }
