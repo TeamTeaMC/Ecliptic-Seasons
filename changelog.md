@@ -1,3 +1,6 @@
+## **0.10.3-hotfix**
+- Fixed an issue where putting a greenhouse essence into the greenhouse container would not consume the item.
+
 ## **0.10.2.2**
 - Optimized the LOD (Level of Detail) update mechanism in Distant Horizons' compatibility module when both ForceChunkRenderUpdate and EnhancementChunkRenderUpdate are enabled.
 

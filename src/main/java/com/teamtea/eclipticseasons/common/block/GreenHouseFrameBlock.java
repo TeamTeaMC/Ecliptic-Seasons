@@ -37,18 +37,22 @@ public class GreenHouseFrameBlock extends SimpleEntityBlock {
     public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
         ItemStack stack = player.getItemInHand(hand);
         if (stack.getItem() == ItemRegistry.spring_greenhouse_essence_item.get()) {
+            if (!player.isCreative()) stack.shrink(1);
             if (!level.isClientSide())
                 level.setBlockAndUpdate(pos, BlockRegistry.spring_greenhouse_core.get().defaultBlockState());
             return InteractionResult.sidedSuccess(level.isClientSide());
         } else if (stack.getItem() == ItemRegistry.summer_greenhouse_essence_item.get()) {
+            if (!player.isCreative()) stack.shrink(1);
             if (!level.isClientSide())
                 level.setBlockAndUpdate(pos, BlockRegistry.summer_greenhouse_core.get().defaultBlockState());
             return InteractionResult.sidedSuccess(level.isClientSide());
         } else if (stack.getItem() == ItemRegistry.autumn_greenhouse_essence_item.get()) {
+            if (!player.isCreative()) stack.shrink(1);
             if (!level.isClientSide())
                 level.setBlockAndUpdate(pos, BlockRegistry.autumn_greenhouse_core.get().defaultBlockState());
             return InteractionResult.sidedSuccess(level.isClientSide());
         } else if (stack.getItem() == ItemRegistry.winter_greenhouse_essence_item.get()) {
+            if (!player.isCreative()) stack.shrink(1);
             if (!level.isClientSide())
                 level.setBlockAndUpdate(pos, BlockRegistry.winter_greenhouse_core.get().defaultBlockState());
             return InteractionResult.sidedSuccess(level.isClientSide());
