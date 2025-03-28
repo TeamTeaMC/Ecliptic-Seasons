@@ -220,7 +220,6 @@ public class ParticleUtil {
                 for (int i = 0; i < texture.contents().width(); i++) {
                     for (int j = 0; j < texture.contents().height(); j++) {
                         int color = 0xff000000 | texture.getPixelRGBA(0, i, j);
-                        // note it was ARGB
                         int r = color & 0xff;
                         int g = (color >> 8) & 0xff;
                         int b = (color >> 16) & 0xff;

@@ -75,8 +75,10 @@ public record AgroClimaticZone(HolderSet<Biome> biomes,
 
     public GrowParameter buildFromList(CropGrowControl deaultCropGrowControl, List<Map<Either<Season, SolarTerm>, Float>> list) {
         GrowParameter growParameterResult = null;
-        if (list != null && deaultCropGrowControl != null) {
+        if (list != null
+                && deaultCropGrowControl != null) {
             float chance = 0;
+            boolean any = false;
             for (int m = 0, listSize = list.size(); m < listSize; m++) {
                 Map<Either<Season, SolarTerm>, Float> eitherFloatMap = list.get(m);
                 for (Map.Entry<Either<Season, SolarTerm>, Float> eitherFloatEntry : eitherFloatMap.entrySet()) {
@@ -85,16 +87,20 @@ public record AgroClimaticZone(HolderSet<Biome> biomes,
                         GrowParameter orDefault = deaultCropGrowControl.getGrowParameter(key.right().get());
                         if (orDefault != null) {
                             chance += orDefault.grow_chance() * eitherFloatEntry.getValue();
+                            any = true;
                         }
                     } else if (key.left().isPresent()) {
                         GrowParameter orDefault = deaultCropGrowControl.getGrowParameter(key.left().get());
                         if (orDefault != null) {
                             chance += orDefault.grow_chance() * eitherFloatEntry.getValue();
+                            any = true;
                         }
                     }
                 }
             }
-            growParameterResult = GrowParameter.builder().growChance(chance).end();
+            if (any) {
+                growParameterResult = GrowParameter.builder().growChance(chance).end();
+            }
         }
         return growParameterResult;
     }

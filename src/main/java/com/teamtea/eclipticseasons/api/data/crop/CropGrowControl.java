@@ -40,19 +40,23 @@ public record CropGrowControl(
             float b_chance = 0;
             float c_chance = 0;
             int ordinal = season.ordinal();
+            boolean any=false;
             for (int l = ordinal * 6; l < ordinal * 6 + 6; l++) {
                 GrowParameter termParameter = base().solarTermsMap().getOrDefault(SolarTerm.collectValues()[l], null);
                 if (termParameter != null) {
                     a_chance += termParameter.grow_chance();
                     b_chance += termParameter.fertile_chance();
                     c_chance += termParameter.death_chance();
+                    any=true;
                 }
             }
-            growParameter = GrowParameter.builder()
-                    .growChance(a_chance / 6f)
-                    .fertileChance(b_chance / 6f)
-                    .deathChance(c_chance / 6f)
-                    .end();
+            if(any) {
+                growParameter = GrowParameter.builder()
+                        .growChance(a_chance / 6f)
+                        .fertileChance(b_chance / 6f)
+                        .deathChance(c_chance / 6f)
+                        .end();
+            }
         }
         return growParameter;
     }

@@ -1,3 +1,6 @@
+## **0.10.3.1**
+- Fixed an issue with crop growth errors when incomplete crop growth information was registered.
+
 ## **0.10.3-hotfix**
 - Fixed an issue where putting a greenhouse essence into the greenhouse container would not consume the item.
 
