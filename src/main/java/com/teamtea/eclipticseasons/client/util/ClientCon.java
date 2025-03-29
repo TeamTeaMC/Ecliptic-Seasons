@@ -2,9 +2,13 @@ package com.teamtea.eclipticseasons.client.util;
 
 
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
+import com.teamtea.eclipticseasons.api.data.craft.HumidityControl;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import net.minecraft.world.level.Level;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ClientCon {
     private static Level useLevel;
@@ -14,6 +18,8 @@ public class ClientCon {
     public static boolean isDay = false;
     public static boolean isEvening = false;
     public static boolean isNoon = false;
+
+    public final static List<HumidityControl> humidityControls=new ArrayList<>();
 
     public static void tick(Level clientLevel) {
         if (MapChecker.isValidDimension(clientLevel)) {
@@ -45,5 +51,9 @@ public class ClientCon {
                 useLevel = level;
             else nextLevel = level;
         }
+    }
+
+    public static void onClientPlayerExit() {
+        humidityControls.clear();
     }
 }

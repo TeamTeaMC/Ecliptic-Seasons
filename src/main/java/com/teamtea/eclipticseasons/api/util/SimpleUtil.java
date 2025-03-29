@@ -2,10 +2,14 @@ package com.teamtea.eclipticseasons.api.util;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
+import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.config.CommonConfig;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraftforge.server.ServerLifecycleHooks;
 
 
 // for other mod use
@@ -42,5 +46,18 @@ public class SimpleUtil {
                                 SimpleUtil.addSolarIconBefore(solarTerm, solarTerm.getAlternationText()) :
                                 solarTerm.getAlternationText()
                 ));
+    }
+
+    public static RegistryAccess getRegistryAccess(BlockEntity blockEntity) {
+        RegistryAccess registryAccess = null;
+        if (blockEntity.getLevel() != null) {
+            registryAccess = blockEntity.getLevel().registryAccess();
+        } else if (ClientCon.getUseLevel() != null) {
+            registryAccess = ClientCon.getUseLevel().registryAccess();
+        } else {
+            if (ServerLifecycleHooks.getCurrentServer() != null)
+                registryAccess = ServerLifecycleHooks.getCurrentServer().registryAccess();
+        }
+        return registryAccess;
     }
 }

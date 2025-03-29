@@ -88,6 +88,7 @@ public final class ClientEventHandler {
             MapChecker.blockTypeCache.clear();
             CropGrowthHandler.clearOnClientExitOrServerClose();
             BiomeClimateManager.clearOnClientExitOrServerClose();
+            ClientCon.onClientPlayerExit();
         }
     }
 

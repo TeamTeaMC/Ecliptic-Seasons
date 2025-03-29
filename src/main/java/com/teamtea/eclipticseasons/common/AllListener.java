@@ -2,6 +2,7 @@ package com.teamtea.eclipticseasons.common;
 
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
+import com.teamtea.eclipticseasons.api.data.craft.HumidityControl;
 import com.teamtea.eclipticseasons.common.advancement.SolarTermsRecordCa;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
@@ -10,8 +11,13 @@ import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
 import com.teamtea.eclipticseasons.common.core.crop.CropInfoManager;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
+import com.teamtea.eclipticseasons.common.network.SimpleNetworkHandler;
+import com.teamtea.eclipticseasons.common.network.message.DataPackEvent;
+import com.teamtea.eclipticseasons.common.registry.ESRegistries;
 import com.teamtea.eclipticseasons.common.registry.ModAdvancements;
 import com.teamtea.eclipticseasons.config.CommonConfig;
+import net.minecraft.core.Holder;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
@@ -19,6 +25,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
+import net.minecraftforge.event.OnDatapackSyncEvent;
 import net.minecraftforge.event.TagsUpdatedEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.BonemealEvent;
@@ -28,6 +35,9 @@ import net.minecraftforge.event.server.ServerAboutToStartEvent;
 import net.minecraftforge.event.server.ServerStoppingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.server.ServerLifecycleHooks;
+
+import java.util.Map;
 
 @Mod.EventBusSubscriber(modid = EclipticSeasons.MODID)
 public class AllListener {
@@ -111,8 +121,7 @@ public class AllListener {
             if (event.phase == TickEvent.Phase.START) {
                 WeatherManager.tickPlayerSeasonEffecct(serverPlayer);
             }
-            if (event.phase == TickEvent.Phase.END)
-            {
+            if (event.phase == TickEvent.Phase.END) {
                 if (serverPlayer.level().getGameTime() % 20 == 0)
                     ModAdvancements.parentNeedCriterion.trigger(serverPlayer);
             }
@@ -180,5 +189,17 @@ public class AllListener {
         if (event.getObject() instanceof Player) {
             event.addCapability(EclipticSeasons.rl("solar_term_holder"), new SolarTermsRecordCa());
         }
+    }
+
+    @SubscribeEvent
+    public static void onOnDatapackSyncEvent(OnDatapackSyncEvent event) {
+        if(ServerLifecycleHooks.getCurrentServer()==null)return;
+        RegistryAccess registryAccess=ServerLifecycleHooks.getCurrentServer().registryAccess();
+
+        SimpleNetworkHandler.send(event.getPlayers(), new DataPackEvent<>(
+                registryAccess,
+                ESRegistries.HUMIDITY_CONTROL,
+                registryAccess.registryOrThrow(ESRegistries.HUMIDITY_CONTROL).entrySet().stream().map(Map.Entry::getValue).toList(),
+                HumidityControl.CODEC));
     }
 }

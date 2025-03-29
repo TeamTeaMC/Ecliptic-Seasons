@@ -2,10 +2,7 @@ package com.teamtea.eclipticseasons.common.network;
 
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
-import com.teamtea.eclipticseasons.common.network.message.BiomeWeatherMessage;
-import com.teamtea.eclipticseasons.common.network.message.BroomUseMessage;
-import com.teamtea.eclipticseasons.common.network.message.EmptyMessage;
-import com.teamtea.eclipticseasons.common.network.message.SolarTermsMessage;
+import com.teamtea.eclipticseasons.common.network.message.*;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.loading.FMLLoader;
@@ -55,6 +52,13 @@ public final class SimpleNetworkHandler {
         if (FMLLoader.getDist() == Dist.CLIENT)
             e.consumerNetworkThread(NetworkUtil::processBroomUseMessage);
         e.add();
+
+        var f = CHANNEL.messageBuilder(DataPackEvent.class, id++)
+                .encoder(DataPackEvent::toBytes)
+                .decoder(DataPackEvent::new);
+        if (FMLLoader.getDist() == Dist.CLIENT)
+            f.consumerNetworkThread(NetworkUtil::processDataPackEvent);
+        f.add();
     }
 
     private static void registerMessage(int i, Class<BiomeWeatherMessage> biomeWeatherMessageClass, Object o) {

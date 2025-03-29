@@ -22,4 +22,10 @@ public record WrapSizeIngredient(
     public boolean test(ItemStack stack) {
         return item.contains(stack.getItemHolder()) && stack.getCount() >= count;
     }
+
+    public ItemStack[] getItems() {
+        return item().stream()
+                .map(itemHolder -> itemHolder.get().getDefaultInstance())
+                .toArray(ItemStack[]::new);
+    }
 }

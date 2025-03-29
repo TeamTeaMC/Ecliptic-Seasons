@@ -1,5 +1,7 @@
 package com.teamtea.eclipticseasons.common.network;
 
+import com.teamtea.eclipticseasons.EclipticSeasons;
+import com.teamtea.eclipticseasons.api.data.craft.HumidityControl;
 import com.teamtea.eclipticseasons.client.color.season.BiomeColorsHandler;
 import com.teamtea.eclipticseasons.client.core.ClientWeatherChecker;
 import com.teamtea.eclipticseasons.client.map.ClientMapFixer;
@@ -8,10 +10,7 @@ import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
-import com.teamtea.eclipticseasons.common.network.message.BiomeWeatherMessage;
-import com.teamtea.eclipticseasons.common.network.message.BroomUseMessage;
-import com.teamtea.eclipticseasons.common.network.message.EmptyMessage;
-import com.teamtea.eclipticseasons.common.network.message.SolarTermsMessage;
+import com.teamtea.eclipticseasons.common.network.message.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
@@ -23,6 +22,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkEvent;
 
+import java.util.List;
 import java.util.function.Supplier;
 
 public class NetworkUtil {
@@ -103,4 +103,17 @@ public class NetworkUtil {
         });
         return true;
     }
+
+    public static boolean processDataPackEvent(DataPackEvent<HumidityControl> dataPackEvent, Supplier<NetworkEvent.Context> context) {
+        context.get().enqueueWork(() ->
+        {
+
+            if (context.get().getDirection() == NetworkDirection.PLAY_TO_CLIENT) {
+                List<HumidityControl> build = dataPackEvent.build(ClientCon.getUseLevel().registryAccess(), HumidityControl.class);
+                ClientCon.humidityControls.addAll(build);
+            }
+        });
+        return true;
+    }
+
 }
