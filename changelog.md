@@ -1,3 +1,6 @@
+## **0.10.3.1.1**
+- Fixed the missing translation for "Season Wall Quest Sign" that was incorrectly overwriting the "Air" entry.
+
 ## **0.10.3.1**
 - Fixed an issue with crop growth errors when incomplete crop growth information was registered.
 

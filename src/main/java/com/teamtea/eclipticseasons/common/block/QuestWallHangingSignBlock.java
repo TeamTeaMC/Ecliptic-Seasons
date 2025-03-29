@@ -6,8 +6,10 @@ import com.teamtea.eclipticseasons.common.block.blockentity.QuestHangingSignBloc
 import com.teamtea.eclipticseasons.common.registry.BlockEntityRegistry;
 import com.teamtea.eclipticseasons.common.registry.ItemRegistry;
 import com.teamtea.eclipticseasons.common.registry.ParticleRegistry;
+import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.FastColor;
 import net.minecraft.util.RandomSource;
@@ -26,12 +28,23 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.WoodType;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
 public class QuestWallHangingSignBlock extends WallHangingSignBlock {
+    protected String descriptionId=null;
+
     public QuestWallHangingSignBlock(Properties properties) {
         super(properties, WoodType.OAK);
+    }
+
+    @Override
+    public @NotNull String getDescriptionId() {
+        if (this.descriptionId == null) {
+            this.descriptionId = Util.makeDescriptionId("block", BuiltInRegistries.BLOCK.getKey(this));
+        }
+        return this.descriptionId;
     }
 
     @Override

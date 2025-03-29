@@ -127,10 +127,10 @@ public class GrowthDetectorItem extends Item {
                     result = 0;
                 } else if (f > 1.0F) {
                     result = 1;
-                } else {
+                } else if (f < 1.0F) {
                     if (hasUpdate) {
                         result = f;
-                    } else if (f < 1) {
+                    } else {
                         int modification = SolarHolders.getSaveData((Level) world).calculateHumidityModification(pos);
                         if (modification != 0 && roomStatus == CropGrowthHandler.RoomStatus.GREEN_HOUSE) {
                             env = env.cycle(modification);

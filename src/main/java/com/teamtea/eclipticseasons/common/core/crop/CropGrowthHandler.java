@@ -456,13 +456,12 @@ public final class CropGrowthHandler {
                     setResult(event, CANCEL);
                 } else if (f > 1.0F) {
                     setResult(event, GROW);
-                } else {
+                } else if (f < 1.0F) {
                     if (randomKey < 1000 * f) {
                         setResult(event, PASS);
                     } else {
                         // 或者用特殊气体，BlockEntity辅助查询
                         boolean should = true;
-
                         if (should) {
                             setResult(event, CANCEL);
                         }
