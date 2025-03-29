@@ -213,7 +213,7 @@ dependencies {
     implementation fg.deobf("curse.maven:jei-238222:6075247")
     implementation fg.deobf("curse.maven:jade-324717:5072729")
 
-    implementation fg.deobf("com.ferreusveritas.dynamictrees:DynamicTrees-1.20.1:1.3.6")
+    compileOnly fg.deobf("com.ferreusveritas.dynamictrees:DynamicTrees-1.20.1:1.3.6")
 
     compileOnly fg.deobf( "libs:fabric-renderer-api-v1:3.2.1+cf68abbe77")
     compileOnly fg.deobf( "libs:fabric-renderer-indigo:1.5.2+b5b2da4177")
@@ -238,7 +238,7 @@ dependencies {
     runtimeOnly fg.deobf("curse.maven:farmers-delight-398521:5051242")
 
     compileOnly fg.deobf("curse.maven:distant-horizons-508933:6251728")
-    onlyMainRuntimeOnly fg.deobf("curse.maven:distant-horizons-508933:6251728")
+//    onlyMainRuntimeOnly fg.deobf("curse.maven:distant-horizons-508933:6251728")
 
     compileOnly fg.deobf("curse.maven:legendary-survival-overhaul-840254:5825918")
 //    onlyMainRuntimeOnly fg.deobf("curse.maven:legendary-survival-overhaul-840254:5825918")

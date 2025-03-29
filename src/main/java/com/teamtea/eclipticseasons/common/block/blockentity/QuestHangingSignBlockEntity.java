@@ -6,12 +6,14 @@ import com.teamtea.eclipticseasons.api.data.climate.AgroClimaticZone;
 import com.teamtea.eclipticseasons.api.data.quest.SeasonQuest;
 import com.teamtea.eclipticseasons.api.data.quest.WarpItemPredicate;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
+import com.teamtea.eclipticseasons.api.util.SimpleUtil;
 import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
 import com.teamtea.eclipticseasons.common.registry.BlockEntityRegistry;
 import com.teamtea.eclipticseasons.common.registry.ESRegistries;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
@@ -67,6 +69,7 @@ public class QuestHangingSignBlockEntity extends SignBlockEntity {
     @Override
     protected void saveAdditional(@NotNull CompoundTag tag) {
         super.saveAdditional(tag);
+
         RegistryOps<Tag> registryops = RegistryOps.create(NbtOps.INSTANCE, level.registryAccess());
         tag.putString("sign_type", BuiltInRegistries.BLOCK.getKey(getSignType()).toString());
         if (seasonQuest != null) {
@@ -88,7 +91,8 @@ public class QuestHangingSignBlockEntity extends SignBlockEntity {
                 this.sign = signBlock;
         }
         if (tag.contains("season_quest")) {
-            RegistryOps<Tag> registryops = RegistryOps.create(NbtOps.INSTANCE, level.registryAccess());
+            RegistryAccess registryAccess= SimpleUtil.getRegistryAccess(this);
+            RegistryOps<Tag> registryops = RegistryOps.create(NbtOps.INSTANCE, registryAccess);
             SeasonQuest.CODEC
                     .parse(registryops, tag.get("season_quest"))
                     .resultOrPartial(EclipticSeasons::logger)

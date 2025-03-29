@@ -1,7 +1,10 @@
 package com.teamtea.eclipticseasons.common.block.blockentity;
 
+import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.data.craft.HumidityControl;
 import com.teamtea.eclipticseasons.api.data.misc.PosAndBlockStateCheck;
+import com.teamtea.eclipticseasons.api.data.quest.SeasonQuest;
+import com.teamtea.eclipticseasons.api.util.SimpleUtil;
 import com.teamtea.eclipticseasons.common.block.blockentity.base.SyncBlockEntity;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.crop.HumidityControlProvider;
@@ -10,11 +13,16 @@ import com.teamtea.eclipticseasons.common.registry.BlockEntityRegistry;
 import com.teamtea.eclipticseasons.common.registry.ESRegistries;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.Tag;
+import net.minecraft.resources.RegistryOps;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
 
 public class HumidityControlBlockEntity extends SyncBlockEntity {
@@ -33,12 +41,31 @@ public class HumidityControlBlockEntity extends SyncBlockEntity {
     protected void saveAdditional(CompoundTag tag) {
         super.saveAdditional(tag);
         tag.putInt("time", time);
+        if (this.humidityControl != null) {
+            RegistryOps<Tag> registryops = RegistryOps.create(NbtOps.INSTANCE, level.registryAccess());
+            HumidityControl.CODEC
+                    .encodeStart(registryops, this.humidityControl)
+                    .resultOrPartial(EclipticSeasons::logger)
+                    .ifPresent(tag1 -> tag.put("humidity_control", tag1));
+        }
     }
 
     @Override
     public void load(CompoundTag tag) {
         super.load(tag);
         time = tag.getInt("time");
+        if (tag.contains("humidity_control")) {
+            RegistryAccess registryAccess= SimpleUtil.getRegistryAccess(this);
+            RegistryOps<Tag> registryops = RegistryOps.create(NbtOps.INSTANCE, registryAccess);
+            HumidityControl.CODEC
+                    .parse(registryops, tag.get("humidity_control"))
+                    .resultOrPartial(EclipticSeasons::logger)
+                    .ifPresent(seasonQuest1 -> {
+                        this.humidityControl = seasonQuest1;
+                    });
+        } else {
+            this.humidityControl = null;
+        }
     }
 
     @Override

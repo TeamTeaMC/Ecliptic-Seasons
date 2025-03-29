@@ -1,10 +1,8 @@
 package com.teamtea.eclipticseasons.common.block.blockentity;
 
-import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.data.craft.HumidityControl;
 import com.teamtea.eclipticseasons.common.registry.BlockEntityRegistry;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -54,12 +52,13 @@ public class BlockInCopperGrateBlockEntity extends HumidityControlBlockEntity {
         super.load(tag);
         if (tag.contains("inner_block")) {
             Block block = BuiltInRegistries.BLOCK.get(new ResourceLocation(tag.getString("inner_block")));
-            if (!block.defaultBlockState().isAir())
+            if (!block.defaultBlockState().isAir()) {
                 this.innerBlock = block;
-            else {
+            } else {
                 this.innerBlock = null;
             }
         }
+
     }
 
     public void setInnerBlock(Block innerBlock) {
