@@ -6,6 +6,8 @@ import com.teamtea.eclipticseasons.api.constant.climate.BiomeClimateSettings;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.constant.tag.ClimateTypeBiomeTags;
 import com.teamtea.eclipticseasons.api.data.climate.BiomesClimateSettings;
+import com.teamtea.eclipticseasons.api.data.craft.HumidityControl;
+import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.common.registry.ESRegistries;
 import net.minecraft.core.*;
 import net.minecraft.core.registries.Registries;
@@ -32,6 +34,11 @@ public class BiomeClimateManager {
         if (isServer) {
             Registry<BiomesClimateSettings> biomesClimateSettings = registryAccess.registryOrThrow(ESRegistries.BIOME_CLIMATE_SETTING);
             resetBiomeClimateMap(registryAccess, biomesClimateSettings, BIOME_CLIMATE_MAP);
+        } else {
+            if (ClientCon.biomeDataPackCache != null) {
+                List<BiomesClimateSettings> build = ClientCon.biomeDataPackCache.build(registryAccess, BiomesClimateSettings.class);
+                resetBiomeClimateMap(registryAccess, build, BIOME_CLIMATE_MAP);
+            }
         }
         putTag(registryAccess, isServer);
     }
@@ -146,7 +153,7 @@ public class BiomeClimateManager {
     }
 
     public static void clearOnClientExitOrServerClose() {
-        // BiomeClimateManager.BIOME_DEFAULT_TEMPERATURE_MAP.clear();
+        BiomeClimateManager.BIOME_CLIMATE_MAP.clear();
         BiomeClimateManager.SMALL_BIOME_MAP.clear();
         BiomeClimateManager.BIOME_TAG_KEY_MAP.clear();
     }

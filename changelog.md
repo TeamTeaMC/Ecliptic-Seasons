@@ -1,3 +1,6 @@
+## **0.10.4.0.1**
+Fixed incorrect packet processing timing for biome climate settings on multiplayer clients.
+
 ## **0.10.4**
 Added a biome control temperature and downfall data pack to adjust biome humidity changes without modifying the biome JSON definitions, avoiding conflicts with terrain generation control systems like WWOO, which modify temperature and downfall solely based on terrain considerations.
 Adjusted some humidity calculation methods.

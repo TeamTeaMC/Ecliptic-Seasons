@@ -97,7 +97,7 @@ public class NetworkUtil {
         {
             if (context.get().getDirection() == NetworkDirection.PLAY_TO_CLIENT) {
                 Level client = getClient();
-                if (client != null ) {
+                if (client != null) {
                     int startY = client.getMaxBuildHeight() + 1;
                     BlockPos blockPos = broomUseMessage.blockPos;
                     // MapChecker.updatePosForce(level, blockPos, blockPos.getY());
@@ -115,13 +115,13 @@ public class NetworkUtil {
 
             if (context.get().getDirection() == NetworkDirection.PLAY_TO_CLIENT) {
                 RegistryAccess registryAccess = ClientCon.getUseLevel().registryAccess();
-                if(dataPackEvent.resourceKey.equals(ESRegistries.HUMIDITY_CONTROL)) {
+                if (dataPackEvent.resourceKey.equals(ESRegistries.HUMIDITY_CONTROL)) {
                     List<HumidityControl> build = dataPackEvent.build(registryAccess, HumidityControl.class);
                     ClientCon.humidityControls.addAll(build);
                 }
-                if(dataPackEvent.resourceKey.equals(ESRegistries.BIOME_CLIMATE_SETTING)) {
-                    Iterable<BiomesClimateSettings> build = dataPackEvent.build(registryAccess, BiomeClimateSettings.class);
-                    BiomeClimateManager.resetBiomeClimateMap(registryAccess,build,BiomeClimateManager.BIOME_CLIMATE_MAP);
+                if (dataPackEvent.resourceKey.equals(ESRegistries.BIOME_CLIMATE_SETTING)) {
+                    ClientCon.biomeDataPackCache = dataPackEvent;
+
                 }
 
             }
