@@ -1,6 +1,8 @@
 package com.teamtea.eclipticseasons.common.network;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
+import com.teamtea.eclipticseasons.api.constant.climate.BiomeClimateSettings;
+import com.teamtea.eclipticseasons.api.data.climate.BiomesClimateSettings;
 import com.teamtea.eclipticseasons.api.data.craft.HumidityControl;
 import com.teamtea.eclipticseasons.client.color.season.BiomeColorsHandler;
 import com.teamtea.eclipticseasons.client.core.ClientWeatherChecker;
@@ -11,9 +13,11 @@ import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.network.message.*;
+import com.teamtea.eclipticseasons.common.registry.ESRegistries;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.SectionPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
@@ -22,6 +26,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkEvent;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -104,13 +109,21 @@ public class NetworkUtil {
         return true;
     }
 
-    public static boolean processDataPackEvent(DataPackEvent<HumidityControl> dataPackEvent, Supplier<NetworkEvent.Context> context) {
+    public static boolean processDataPackEvent(DataPackEvent dataPackEvent, Supplier<NetworkEvent.Context> context) {
         context.get().enqueueWork(() ->
         {
 
             if (context.get().getDirection() == NetworkDirection.PLAY_TO_CLIENT) {
-                List<HumidityControl> build = dataPackEvent.build(ClientCon.getUseLevel().registryAccess(), HumidityControl.class);
-                ClientCon.humidityControls.addAll(build);
+                RegistryAccess registryAccess = ClientCon.getUseLevel().registryAccess();
+                if(dataPackEvent.resourceKey.equals(ESRegistries.HUMIDITY_CONTROL)) {
+                    List<HumidityControl> build = dataPackEvent.build(registryAccess, HumidityControl.class);
+                    ClientCon.humidityControls.addAll(build);
+                }
+                if(dataPackEvent.resourceKey.equals(ESRegistries.BIOME_CLIMATE_SETTING)) {
+                    Iterable<BiomesClimateSettings> build = dataPackEvent.build(registryAccess, BiomeClimateSettings.class);
+                    BiomeClimateManager.resetBiomeClimateMap(registryAccess,build,BiomeClimateManager.BIOME_CLIMATE_MAP);
+                }
+
             }
         });
         return true;

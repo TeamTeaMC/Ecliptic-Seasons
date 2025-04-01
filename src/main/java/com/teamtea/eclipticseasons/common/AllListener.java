@@ -2,6 +2,7 @@ package com.teamtea.eclipticseasons.common;
 
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
+import com.teamtea.eclipticseasons.api.data.climate.BiomesClimateSettings;
 import com.teamtea.eclipticseasons.api.data.craft.HumidityControl;
 import com.teamtea.eclipticseasons.common.advancement.SolarTermsRecordCa;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
@@ -196,10 +197,16 @@ public class AllListener {
         if(ServerLifecycleHooks.getCurrentServer()==null)return;
         RegistryAccess registryAccess=ServerLifecycleHooks.getCurrentServer().registryAccess();
 
+
         SimpleNetworkHandler.send(event.getPlayers(), new DataPackEvent<>(
                 registryAccess,
                 ESRegistries.HUMIDITY_CONTROL,
                 registryAccess.registryOrThrow(ESRegistries.HUMIDITY_CONTROL).entrySet().stream().map(Map.Entry::getValue).toList(),
                 HumidityControl.CODEC));
+        SimpleNetworkHandler.send(event.getPlayers(), new DataPackEvent<>(
+                registryAccess,
+                ESRegistries.BIOME_CLIMATE_SETTING,
+                registryAccess.registryOrThrow(ESRegistries.BIOME_CLIMATE_SETTING).entrySet().stream().map(Map.Entry::getValue).toList(),
+                BiomesClimateSettings.CODEC));
     }
 }

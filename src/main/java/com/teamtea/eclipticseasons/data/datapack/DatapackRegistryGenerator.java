@@ -16,6 +16,7 @@ public class DatapackRegistryGenerator extends DatapackBuiltinEntriesProvider {
     public static final RegistrySetBuilder REGISTRY_SET_BUILDER = new RegistrySetBuilder()
             .add(ESRegistries.CROP, CropRegistry::bootstrap)
             .add(ESRegistries.AGRO_CLIMATE, AgroClimateRegistry::bootstrap)
+            .add(ESRegistries.BIOME_CLIMATE_SETTING, BiomeClimateSettingsRegistry::bootstrap)
             .add(ESRegistries.SEASON_QUEST, SeasonQuestRegistry::bootstrap)
             .add(ESRegistries.HUMIDITY_CONTROL, HumidityControlRegistry::bootstrap)
             ;

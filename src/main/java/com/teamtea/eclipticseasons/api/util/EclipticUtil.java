@@ -4,9 +4,11 @@ import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.biome.Humidity;
 import com.teamtea.eclipticseasons.api.constant.biome.Rainfall;
 import com.teamtea.eclipticseasons.api.constant.biome.Temperature;
+import com.teamtea.eclipticseasons.api.constant.climate.BiomeRain;
 import com.teamtea.eclipticseasons.api.constant.climate.WeatherMode;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
+import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.core.solar.SolarAngelHelper;
@@ -15,6 +17,7 @@ import com.teamtea.eclipticseasons.common.misc.MapColorReplacer;
 import com.teamtea.eclipticseasons.compat.vanilla.VanillaWeather;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.state.BlockState;
@@ -220,23 +223,66 @@ public class EclipticUtil {
     }
 
     public static float getTemperatureFloat(Level level, Biome biome, BlockPos blockPos) {
-        return biome.getTemperature(blockPos) + getNowSolarTerm(level).getTemperatureChange();
+        return getTemperatureFloat(getNowSolarTerm(level), biome, blockPos, !level.isClientSide());
     }
 
-    public static Humidity getHumidityAt(Level level, BlockPos pos) {
-        Biome standBiome = level.getBiome(pos).value();
-        Temperature temperatureLevel = Temperature.getTemperatureLevel(getTemperatureFloat(level, standBiome, pos));
-        Rainfall rainfall = Rainfall.getRainfallLevel(standBiome.getModifiedClimateSettings().downfall());
-        return Humidity.getHumid(rainfall, temperatureLevel);
+    public static float getTemperatureFloat(SolarTerm solarTerm, Biome biome, BlockPos blockPos, boolean isServer) {
+        return biome.getTemperature(blockPos) +
+                BiomeClimateManager.getBiomeClimateSettings(biome, isServer).getTemperatureChange(solarTerm);
     }
+
+    public static float getTemperatureFloatConstant(SolarTerm solarTerm, Biome biome, boolean isServer) {
+        return BiomeClimateManager.getBiomeClimateSettings(biome, isServer).getTemperature(solarTerm);
+    }
+
+    public static float getDownfallFloat(Level level, Biome biome, BlockPos blockPos) {
+        return getDownfallFloat(getNowSolarTerm(level), biome, blockPos, !level.isClientSide());
+    }
+
+    public static float getDownfallFloat(SolarTerm solarTerm, Biome biome, BlockPos blockPos, boolean isServer) {
+        return BiomeClimateManager.getBiomeClimateSettings(biome, isServer).getDownfall(solarTerm);
+    }
+
+    public static float getDownfallFloatConstant(SolarTerm solarTerm, Biome biome, boolean isServer) {
+        return BiomeClimateManager.getBiomeClimateSettings(biome, isServer).getDownfall(solarTerm);
+    }
+
 
     public static Rainfall getRainfallAt(Level level, BlockPos pos) {
         Biome standBiome = level.getBiome(pos).value();
-        return Rainfall.getRainfallLevel(standBiome.getModifiedClimateSettings().downfall());
+        return Rainfall.getRainfallLevel(getDownfallFloat(level, standBiome, pos));
     }
 
     public static Temperature getTemperatureAt(Level level, BlockPos pos) {
         Biome standBiome = level.getBiome(pos).value();
         return Temperature.getTemperatureLevel(getTemperatureFloat(level, standBiome, pos));
     }
+
+    public static Humidity getHumidityAt(Level level, BlockPos pos) {
+        Holder<Biome> biome = level.getBiome(pos);
+        Biome standBiome = biome.value();
+        SolarTerm solarTerm = getNowSolarTerm(level);
+        boolean serverSide = !level.isClientSide();
+        float t = getTemperatureFloat(solarTerm, standBiome, pos, serverSide);
+        BiomeRain biomeRain = solarTerm.getBiomeRain(biome);
+        float r = (getDownfallFloat(solarTerm, standBiome, pos, serverSide) * 1.5f + biomeRain.getRainChane() * 0.5f) / 2f;
+        return Humidity.getHumid(r, t);
+    }
+
+    public static Humidity getHumidityConstant(SolarTerm solarTerm, Holder<Biome> biomeHolder, boolean serverSide) {
+        Biome standBiome = biomeHolder.value();
+        float t = getTemperatureFloatConstant(solarTerm, standBiome, serverSide);
+        BiomeRain biomeRain = solarTerm.getBiomeRain(biomeHolder);
+        float r = (getDownfallFloatConstant(solarTerm, standBiome, serverSide) * 1.5f + biomeRain.getRainChane() * 0.5f) / 2f;
+        return Humidity.getHumid(r, t);
+    }
+
+    public static Humidity getHumidityAt(SolarTerm solarTerm, Holder<Biome> biome, BlockPos pos, boolean serverSide) {
+        Biome standBiome = biome.value();
+        float t = getTemperatureFloat(solarTerm, standBiome, pos, serverSide);
+        BiomeRain biomeRain = solarTerm.getBiomeRain(biome);
+        float r = (getDownfallFloat(solarTerm, standBiome, pos, serverSide) * 1.5f + biomeRain.getRainChane() * 0.5f) / 2f;
+        return Humidity.getHumid(r, t);
+    }
+
 }

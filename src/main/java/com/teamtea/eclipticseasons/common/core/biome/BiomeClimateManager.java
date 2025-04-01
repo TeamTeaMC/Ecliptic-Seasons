@@ -1,47 +1,66 @@
 package com.teamtea.eclipticseasons.common.core.biome;
 
+import com.mojang.datafixers.util.Pair;
+import com.mojang.serialization.Lifecycle;
+import com.teamtea.eclipticseasons.api.constant.climate.BiomeClimateSettings;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.constant.tag.ClimateTypeBiomeTags;
-import com.teamtea.eclipticseasons.api.util.EclipticUtil;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Holder;
-import net.minecraft.core.RegistryAccess;
+import com.teamtea.eclipticseasons.api.data.climate.BiomesClimateSettings;
+import com.teamtea.eclipticseasons.common.registry.ESRegistries;
+import net.minecraft.core.*;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.server.level.ServerLevel;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.IdentityHashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Stream;
 
 public class BiomeClimateManager {
     // 由于在1.20时代，客户端与单人服务器端对象未分离，因此这里不能作为评判依据
-    // public final static Map<Biome, Float> BIOME_DEFAULT_TEMPERATURE_MAP = new IdentityHashMap<>();
+    public final static Map<Biome, BiomeClimateSettings> BIOME_CLIMATE_MAP = new IdentityHashMap<>();
     public static final Map<Biome, TagKey<Biome>> BIOME_TAG_KEY_MAP = new IdentityHashMap<>(128);
     public static final Map<Biome, Boolean> SMALL_BIOME_MAP = new IdentityHashMap<>(16);
 
     public static void resetBiomeTemps(RegistryAccess registryAccess, boolean isServer) {
-        // resetBiomeTempsMap(registryAccess, BIOME_DEFAULT_TEMPERATURE_MAP);
+        if (isServer) {
+            Registry<BiomesClimateSettings> biomesClimateSettings = registryAccess.registryOrThrow(ESRegistries.BIOME_CLIMATE_SETTING);
+            resetBiomeClimateMap(registryAccess, biomesClimateSettings, BIOME_CLIMATE_MAP);
+        }
         putTag(registryAccess, isServer);
     }
 
-    @Deprecated(forRemoval = true, since = "0.11")
-    public static void resetBiomeTempsMap(RegistryAccess registryAccess, Map<Biome, Float> useMap) {
-        // useMap.clear();
-        // var biomes = registryAccess.registry(Registries.BIOME);
-        // biomes.ifPresent(biomeRegistry -> biomeRegistry.forEach(biome ->
-        // {
-        //     useMap.put(biome, biome.getModifiedClimateSettings().temperature());
-        // }));
+    public static void resetBiomeClimateMap(RegistryAccess registryAccess, Iterable<BiomesClimateSettings> biomesClimateSettings, Map<Biome, BiomeClimateSettings> useMap) {
+        useMap.clear();
+
+        Map<Biome, List<BiomesClimateSettings>> biomeListMap = new IdentityHashMap<>();
+        for (var value : biomesClimateSettings) {
+
+            for (Holder<Biome> next : value.biomes()) {
+                List<BiomesClimateSettings> biomesClimateSettingsList =
+                        biomeListMap.computeIfAbsent(next.value(), k -> new ArrayList<>());
+                biomesClimateSettingsList.add(value);
+            }
+        }
+        Optional<Registry<Biome>> biomes = registryAccess.registry(Registries.BIOME);
+        List<BiomesClimateSettings> EMPTY_LIST = List.of();
+        biomes.ifPresent(biomeRegistry -> biomeRegistry.forEach(biome ->
+                useMap.put(biome, new BiomeClimateSettings(biome, biomeListMap.getOrDefault(biome, EMPTY_LIST))))
+        );
     }
 
-    public static final float DEFAULT_TEMPERATURE = 0.598F;
+    private static final BiomeClimateSettings EMPTY = new BiomeClimateSettings();
 
-    @Deprecated(forRemoval = true, since = "0.11")
-    public static float getDefaultTemperature(Biome biome, boolean isServer) {
-        return biome.getBaseTemperature();
+    // not really need to know if is server for 1.20
+    @Deprecated
+    public static BiomeClimateSettings getBiomeClimateSettings(Biome biome, boolean isServer) {
+        return BIOME_CLIMATE_MAP.getOrDefault(biome, EMPTY);
     }
 
     public static final float SNOW_LEVEL = 0.15F;

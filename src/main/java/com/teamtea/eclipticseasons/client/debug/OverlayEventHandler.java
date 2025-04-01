@@ -42,7 +42,7 @@ public final class OverlayEventHandler {
                     Holder<Biome> biome = level.getBiome(clientPlayer.getOnPos());
                     var solar = SolarHolders.getSaveDataLazy(level).resolve().get().getSolarTerm();
                     long dayTime = level.getDayTime();
-                    float downfall = biome.get().getModifiedClimateSettings().downfall();
+                    float downfall = EclipticUtil.getDownfallFloat(level,biome.value(),blockPos);
                     Humidity h = EclipticUtil.getHumidityAt(level, blockPos);
                     double env = EclipticUtil.getTemperatureFloat(level, biome.value(), blockPos);
                     int solarTime = SolarAngelHelper.getSolarAngelTime(level, level.getDayTime());

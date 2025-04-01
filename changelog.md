@@ -1,3 +1,7 @@
+## **0.10.4**
+Added a biome control temperature and downfall data pack to adjust biome humidity changes without modifying the biome JSON definitions, avoiding conflicts with terrain generation control systems like WWOO, which modify temperature and downfall solely based on terrain considerations.
+Adjusted some humidity calculation methods.
+
 ## **0.10.3.1.2**
 - Fixed an issue where wet sponges would be ejected from the humidifier during level reloading if they were present and the conditions below met the soft heat source activation criteria.
 - Fixed an issue where seasonal quest notices could lose their assigned quests after reloading.

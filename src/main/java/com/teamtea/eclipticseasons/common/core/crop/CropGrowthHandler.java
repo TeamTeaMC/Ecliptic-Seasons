@@ -422,7 +422,7 @@ public final class CropGrowthHandler {
         } else if (CommonConfig.Crop.enableCropHumidityControl.get()) {
             // not need to check it any more
             // if (blockState.getFluidState().isSource()) return;
-            Humidity env = Humidity.getHumid(solarTerm, biomeHolder);
+            Humidity env = EclipticUtil.getHumidityAt(solarTerm,biomeHolder,pos,!level.isClientSide());
 
             // GrowParameter growParameter = growControl.base().humidMap().getOrDefault(env, null);
             checkHumidity(event, level, growControl, env, roomStatus, pos, blockState, season, false, randomKey);

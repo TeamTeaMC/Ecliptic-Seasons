@@ -110,7 +110,7 @@ public class GrowthDetectorItem extends Item {
         }
 
         if (CommonConfig.Crop.enableCropHumidityControl.get()) {
-            Humidity env = Humidity.getHumid(solarTerm, biomeHolder);
+            Humidity env = EclipticUtil.getHumidityAt(solarTerm,biomeHolder,pos,!level.isClientSide());
             result *= getHumidityGrowChance(level, growControl, env, roomStatus, pos, blockState, season, false);
         }
 

@@ -4,6 +4,8 @@ package com.teamtea.eclipticseasons.api.constant.biome;
 import com.teamtea.eclipticseasons.api.constant.climate.BiomeRain;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.misc.ITranslatable;
+import com.teamtea.eclipticseasons.api.util.EclipticUtil;
+import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
@@ -84,17 +86,11 @@ public enum Humidity implements ITranslatable {
     }
 
     public static Humidity getHumid(SolarTerm solarTerm, Holder<Biome> biomeHolder) {
-        float t = biomeHolder.value().getModifiedClimateSettings().temperature() + solarTerm.getTemperatureChange();
+        Biome biome = biomeHolder.value();
+        boolean ignore = true;
+        float t = EclipticUtil.getTemperatureFloatConstant(solarTerm, biome, ignore);
         BiomeRain biomeRain = solarTerm.getBiomeRain(biomeHolder);
-        float r = (biomeHolder.value().getModifiedClimateSettings().downfall() * 1.5f + biomeRain.getRainChane() * 0.5f) / 2f;
-        if (biomeHolder.is(BiomeTags.IS_SAVANNA) && biomeRain.getRainChane() > 0) {
-            r += 0.15f;
-        }
-        // float r = biomeHolder.value().getModifiedClimateSettings().downfall();
-        // if(biomeHolder.is(BiomeTags.IS_SAVANNA)&&biomeRain.getRainChane()>0){
-        //     r+=0.2f;
-        // }
-        // r*=(1 + biomeRain.getRainChane());
+        float r = (EclipticUtil.getDownfallFloatConstant(solarTerm, biome, ignore) * 1.5f + biomeRain.getRainChane() * 0.5f) / 2f;
         Humidity h = Humidity.getHumid(r, t);
         return h;
     }

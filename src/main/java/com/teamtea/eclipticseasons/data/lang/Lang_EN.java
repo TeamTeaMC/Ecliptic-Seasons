@@ -56,6 +56,7 @@ public class Lang_EN extends LangHelper {
 
         add(BlockRegistry.block_in_wooden_grate_block.get(), "Wooden Grate Humidifier");
 
+        add(ItemRegistry.seasonal_prayer_scroll_item.get(), "Seasonal Prayer Scroll");
 
         add("info.eclipticseasons.environment.temperature.under_freezing", "Under Freezing");
         add("info.eclipticseasons.environment.temperature.freezing", "Freezing");

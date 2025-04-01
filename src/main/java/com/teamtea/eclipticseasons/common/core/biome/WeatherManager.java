@@ -447,8 +447,9 @@ public class WeatherManager {
                         }
                     }
                 } else {
-                    BiomeRain biomeRain = SolarHolders.getSaveData(level).getSolarTerm().getBiomeRain(biomeWeather.biomeHolder);
-                    float downfall = biomeWeather.biomeHolder.value().getModifiedClimateSettings().downfall();
+                    SolarTerm solarTerm = EclipticUtil.getNowSolarTerm(level);
+                    BiomeRain biomeRain = solarTerm.getBiomeRain(biomeWeather.biomeHolder);
+                    float downfall = EclipticUtil.getDownfallFloatConstant(solarTerm, biomeWeather.biomeHolder.value(), !level.isClientSide());
                     if (biomeWeather.biomeHolder.is(BiomeTags.IS_SAVANNA)) {
                         downfall += 0.2f;
                     }
@@ -501,7 +502,7 @@ public class WeatherManager {
             if (weatherLocal) {
                 float ramdomKey = level.getRandom().nextInt(1000) / 1000.f * 3;
                 BiomeRain biomeRain = solarTerm.getBiomeRain(biomeWeather.biomeHolder);
-                float downfall = biomeWeather.biomeHolder.value().getModifiedClimateSettings().downfall();
+                float downfall = EclipticUtil.getDownfallFloatConstant(solarTerm, biomeWeather.biomeHolder.value(), !level.isClientSide());
                 if (biomeWeather.biomeHolder.is(BiomeTags.IS_SAVANNA)) {
                     downfall += 0.2f;
                 }
