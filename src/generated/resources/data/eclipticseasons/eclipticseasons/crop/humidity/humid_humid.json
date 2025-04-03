@@ -1,9 +1,9 @@
 {
-  "climate": "#eclipticseasons:all",
+  "parent": [],
   "apply_target": {
     "blocks": "#eclipticseasons:crops/humid_humid"
   },
-  "parent": [],
+  "climate": "#eclipticseasons:all",
   "solar_terms": {},
   "seasons": {},
   "humidity": {

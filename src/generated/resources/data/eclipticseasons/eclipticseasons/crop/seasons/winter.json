@@ -1,9 +1,9 @@
 {
-  "climate": "eclipticseasons:temperate",
+  "parent": [],
   "apply_target": {
     "blocks": "#eclipticseasons:crops/winter"
   },
-  "parent": [],
+  "climate": "eclipticseasons:temperate",
   "solar_terms": {
     "beginning_of_spring": {
       "grow_chance": 0.3,

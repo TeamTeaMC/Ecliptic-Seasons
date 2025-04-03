@@ -1,9 +1,18 @@
 {
-  "climate": "eclipticseasons:temperate",
+  "parent": [],
   "apply_target": {
     "blocks": "#eclipticseasons:crops/spring_autumn"
   },
-  "parent": [],
+  "climate": "eclipticseasons:temperate",
+  "unlike_greenhouse_material": {
+    "blocks": {
+      "values": [
+        "#minecraft:ice",
+        "#minecraft:snow"
+      ],
+      "type": "forge:or"
+    }
+  },
   "solar_terms": {
     "beginning_of_spring": {
       "grow_chance": 0.2,

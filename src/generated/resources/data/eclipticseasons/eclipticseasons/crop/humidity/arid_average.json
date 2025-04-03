@@ -1,9 +1,9 @@
 {
-  "climate": "#eclipticseasons:all",
+  "parent": [],
   "apply_target": {
     "blocks": "#eclipticseasons:crops/arid_average"
   },
-  "parent": [],
+  "climate": "#eclipticseasons:all",
   "solar_terms": {},
   "seasons": {},
   "humidity": {

@@ -5,6 +5,8 @@ import com.teamtea.eclipticseasons.api.constant.biome.Humidity;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import net.minecraft.advancements.critereon.BlockPredicate;
+import net.minecraft.core.HolderSet;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -15,7 +17,8 @@ import java.util.Optional;
 public record CropGrowControl(
         CropGrow base,
         Optional<IdentityHashMap<BlockState, CropGrow>> blocks,
-        Optional<List<Pair<BlockPredicate, CropGrow>>> entities
+        Optional<List<Pair<BlockPredicate, CropGrow>>> entities,
+        Optional<HolderSet<Block>> notGreenHouse
 ) {
 
 

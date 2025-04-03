@@ -10,6 +10,7 @@ import com.teamtea.eclipticseasons.common.registry.BlockEntityRegistry;
 import com.teamtea.eclipticseasons.common.registry.ParticleRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderSet;
 import net.minecraft.util.FastColor;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockGetter;
@@ -26,6 +27,8 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
+
+import java.util.Optional;
 
 public class GreenHouseCoreBlock extends SimpleEntityBlock {
     public static final IntegerProperty POWER = BlockStateProperties.POWER;
@@ -81,7 +84,7 @@ public class GreenHouseCoreBlock extends SimpleEntityBlock {
                 BlockPos blockPos = new BlockPos((int) x, (int) y, (int) z);
                 boolean inRoom =
                         level.isEmptyBlock(blockPos) &&
-                                CropGrowthHandler.isInRoom(level, blockPos, Blocks.AIR.defaultBlockState(), ClientCon.nowSolarTerm.getSeason());
+                                CropGrowthHandler.isInRoom(level, blockPos, Blocks.AIR.defaultBlockState(), ClientCon.nowSolarTerm.getSeason(), Optional.of(HolderSet.direct()));
                 if (inRoom)
                     level.addParticle(
                             // ParticleTypes.END_ROD,

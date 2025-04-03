@@ -22,6 +22,7 @@ import com.teamtea.eclipticseasons.common.registry.AgroClimateRegistry;
 import com.teamtea.eclipticseasons.common.registry.CropRegistry;
 import com.teamtea.eclipticseasons.common.registry.ESRegistries;
 import com.teamtea.eclipticseasons.config.CommonConfig;
+import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.core.*;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -139,6 +140,8 @@ public final class CropGrowthHandler {
             Optional<GrowParameter> solarTermGrowParameter = builder.defaultSolarTermGrowParameter();
             Optional<GrowParameter> humidityGrowParameter = builder.defaultHumidityGrowParameter();
 
+            Optional<HolderSet<Block>> notGreenHouse = builder.notGreenHouse();
+
             if (builder.parent().size() > 0) {
                 List<HolderSet<CropGrowControlBuilder>> holderSets = new ArrayList<>();
                 holderSets.add(builder.parent());
@@ -165,6 +168,10 @@ public final class CropGrowthHandler {
                         if (humidityGrowParameter.isEmpty() && parentBuilder.defaultHumidityGrowParameter().isPresent()) {
                             humidityGrowParameter = parentBuilder.defaultHumidityGrowParameter();
                         }
+                        if (notGreenHouse.isEmpty() && parentBuilder.notGreenHouse().isPresent()) {
+                            notGreenHouse = parentBuilder.notGreenHouse();
+                        }
+
                         if (parentBuilder.parent().size() > 0) {
                             holderSets.add(parentBuilder.parent());
                         }
@@ -211,7 +218,7 @@ public final class CropGrowthHandler {
                         // 由于有些Block有自己的湿润度，因此容易出问题
                         // 而且不同群系湿润度系统不一样
                         CropGrowControl newControlCache = new CropGrowControl(
-                                cropGrow, Optional.empty(), Optional.empty()
+                                cropGrow, Optional.empty(), Optional.empty(), notGreenHouse
                         );
                         Holder<AgroClimaticZone> cropClimateTypeHolder = builder.cropClimateType().get(j);
                         if (cropClimateTypeHolder.get() != null) {
@@ -220,6 +227,9 @@ public final class CropGrowthHandler {
                                 oldControl.base().solarTermsMap().putAll(newControlCache.base().solarTermsMap());
                                 oldControl.base().seasonMap().putAll(newControlCache.base().seasonMap());
                                 oldControl.base().humidMap().putAll(newControlCache.base().humidMap());
+                                if (oldControl.notGreenHouse().isEmpty() && newControlCache.notGreenHouse().isPresent()) {
+                                    oldControl = new CropGrowControl(oldControl.base(), oldControl.blocks(), oldControl.entities(), newControlCache.notGreenHouse());
+                                }
                                 return oldControl;
                             });
                         }
@@ -261,7 +271,7 @@ public final class CropGrowthHandler {
                     new EnumMap<>(builder.seasonList()),
                     new EnumMap<>(builder.humidList()));
             CropGrowControl newControlCache = new CropGrowControl(
-                    cropGrow, Optional.empty(), Optional.empty()
+                    cropGrow, Optional.empty(), Optional.empty(), Optional.empty()
             );
 
             blockClimateMap = CROP_GROW_MAP.getOrDefault(block, null);
@@ -278,6 +288,9 @@ public final class CropGrowthHandler {
                         oldControl.base().solarTermsMap().putAll(newControlCache.base().solarTermsMap());
                         oldControl.base().seasonMap().putAll(newControlCache.base().seasonMap());
                         oldControl.base().humidMap().putAll(newControlCache.base().humidMap());
+                        if (oldControl.notGreenHouse().isEmpty() && newControlCache.notGreenHouse().isPresent()) {
+                            oldControl = new CropGrowControl(oldControl.base(), oldControl.blocks(), oldControl.entities(), newControlCache.notGreenHouse());
+                        }
                         return oldControl;
                     });
                 }
@@ -403,7 +416,7 @@ public final class CropGrowthHandler {
                         if (saveData != null) {
                             GreenHouseCoreProvider nearGreenHouseProvider = saveData.findNearGreenHouseProvider(pos, seasons);
                             if (nearGreenHouseProvider != null) {
-                                roomStatus = isInRoom(level, pos, blockState, season) ? RoomStatus.GREEN_HOUSE : RoomStatus.NORMAL;
+                                roomStatus = isInRoom(level, pos, blockState, season, growControl.notGreenHouse()) ? RoomStatus.GREEN_HOUSE : RoomStatus.NORMAL;
                                 if (roomStatus == RoomStatus.GREEN_HOUSE) {
                                     notCancel = true;
                                     nearGreenHouseProvider.costAvailCost((2 / seasons.size() + 1));
@@ -441,7 +454,7 @@ public final class CropGrowthHandler {
             if (!hasUpdate) {
                 int modification = SolarHolders.getSaveData((Level) world).calculateHumidityModification(pos);
                 if (modification != 0) {
-                    roomStatus = isInRoom(world, pos, blockState, season) ? RoomStatus.GREEN_HOUSE : RoomStatus.NORMAL;
+                    roomStatus = isInRoom(world, pos, blockState, season,growControl.notGreenHouse()) ? RoomStatus.GREEN_HOUSE : RoomStatus.NORMAL;
                 }
                 if (modification != 0 && roomStatus == RoomStatus.GREEN_HOUSE) {
                     env = env.cycle(modification);
@@ -592,7 +605,8 @@ public final class CropGrowthHandler {
     }
 
     public record BlockTester(
-            LevelReader levelReader) implements BiFunction<SectionClipContext, BlockPos, BlockHitResult> {
+            LevelReader levelReader,
+            Optional<HolderSet<Block>> notCheck) implements BiFunction<SectionClipContext, BlockPos, BlockHitResult> {
 
         @Override
         public BlockHitResult apply(SectionClipContext clipContext, BlockPos pos) {
@@ -602,8 +616,14 @@ public final class CropGrowthHandler {
             Vec3 vec31 = clipContext.getTo();
             VoxelShape voxelshape = clipContext.getBlockShape(blockstate, levelReader, pos);
             BlockHitResult blockHitResult = voxelshape.clip(vec3, vec31, pos);
-            if (blockHitResult != null)
+            if (blockHitResult != null) {
                 clipContext.release();
+                if (notCheck.isPresent()) {
+                    if (notCheck.get().contains(blockstate.getBlockHolder())) {
+                        blockHitResult = BlockHitResult.miss(blockHitResult.getLocation(), blockHitResult.getDirection(), pos);
+                    }
+                }
+            }
             return blockHitResult;
         }
     }
@@ -619,15 +639,15 @@ public final class CropGrowthHandler {
         }
     }
 
-    public static BlockHitResult clip(LevelReader levelAccessor, SectionClipContext context) {
+    public static BlockHitResult clip(LevelReader levelAccessor, SectionClipContext context, Optional<HolderSet<Block>> notCheck) {
         return BlockGetter.traverseBlocks(context.getFrom(),
                 context.getTo(),
                 context,
-                new BlockTester(levelAccessor),
+                new BlockTester(levelAccessor, notCheck),
                 FAIL_HANDLER);
     }
 
-    public static boolean isInRoom(LevelAccessor level, BlockPos pos, BlockState state, Season season) {
+    public static boolean isInRoom(LevelAccessor level, BlockPos pos, BlockState state, Season season, Optional<HolderSet<Block>> notCheck) {
         if (state.getFluidState().isSource()) return false;
 
         boolean isInLight = level.getBrightness(LightLayer.SKY, pos.above()) > 12;
@@ -664,7 +684,7 @@ public final class CropGrowthHandler {
 
             SectionClipContext context = new SectionClipContext(startVec, endVec,
                     ClipContext.Block.COLLIDER, ClipContext.Fluid.WATER, null);
-            HitResult hitResult = clip(level, context);
+            HitResult hitResult = clip(level, context, notCheck);
 
             if (hitResult.getType() == HitResult.Type.MISS) {
                 isConnected = false;
