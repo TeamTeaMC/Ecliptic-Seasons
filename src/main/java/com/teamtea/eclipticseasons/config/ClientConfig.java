@@ -16,6 +16,7 @@ public class ClientConfig {
         Weather.load(builder);
         CompatModule.ClientConfig.load(builder);
     }
+
     public static class Debug {
 
         public static ForgeConfigSpec.BooleanValue debugInfo;
@@ -27,9 +28,11 @@ public class ClientConfig {
             builder.pop();
         }
     }
+
     public static class GUI {
 
         public static ForgeConfigSpec.BooleanValue agriculturalInformation;
+
         private static void load(ForgeConfigSpec.Builder builder) {
             builder.push("GUI");
             agriculturalInformation = builder.comment("Displays the season and humidity levels suitable for growing crops.")
@@ -41,6 +44,8 @@ public class ClientConfig {
     public static class Renderer {
         public static ForgeConfigSpec.BooleanValue forceChunkRenderUpdate;
         public static ForgeConfigSpec.BooleanValue enhancementChunkRenderUpdate;
+        public static ForgeConfigSpec.BooleanValue resetRendererAfterSleep;
+
         public static ForgeConfigSpec.BooleanValue useVanillaCheck;
 
         public static ForgeConfigSpec.BooleanValue betterSnow;
@@ -55,6 +60,8 @@ public class ClientConfig {
                     .define("ForceChunkRenderUpdate", true);
             enhancementChunkRenderUpdate = builder.comment("Enhanced reload, which will refresh all sections periodically.")
                     .define("EnhancementChunkRenderUpdate", false);
+            resetRendererAfterSleep = builder.comment("Whether to reset the renderer after waking up.")
+                    .define("ResetRendererAfterSleep", false);
 
             useVanillaCheck = builder.comment("Determines whether snow is falling based on vanilla lighting checks.")
                     .define("UseVanillaCheck", false);

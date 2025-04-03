@@ -14,6 +14,7 @@ import com.teamtea.eclipticseasons.common.network.SimpleNetworkHandler;
 import com.teamtea.eclipticseasons.common.network.message.SolarTermsMessage;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import it.unimi.dsi.fastutil.Pair;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -50,12 +51,14 @@ public class SolarDataManager extends SavedData {
     protected WeakReference<Level> levelWeakReference;
     private final Map<ChunkPos, List<Pair<BlockPos, HumidityControlProvider>>> serverLevelMapMap;
     private final Map<ChunkPos, List<Pair<BlockPos, GreenHouseCoreProvider>>> serverLevelMapMap2;
+    private final Long2ObjectOpenHashMap<BlockState> onceCheck;
 
     public SolarDataManager(Level level) {
         levelWeakReference = new WeakReference<>(level);
         serverLevelMapMap = new HashMap<>();
         serverLevelMapMap2 = new HashMap<>();
         isValidDimension = MapChecker.isValidDimension(level);
+        onceCheck = new Long2ObjectOpenHashMap<>();
     }
 
     public SolarDataManager(Level level, CompoundTag nbt) {
@@ -394,4 +397,15 @@ public class SolarDataManager extends SavedData {
         });
     }
 
+    public void tickLevel(ServerLevel level) {
+        this.onceCheck.clear();
+    }
+
+    public BlockState addSkipNextCheck(BlockPos blockPos, BlockState blockState) {
+        return this.onceCheck.put(blockPos.asLong(),blockState);
+    }
+
+    public boolean shouldSkipNextCheck(BlockPos blockPos) {
+        return this.onceCheck.containsKey(blockPos.asLong());
+    }
 }

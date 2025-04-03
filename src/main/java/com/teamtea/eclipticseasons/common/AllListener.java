@@ -4,6 +4,7 @@ package com.teamtea.eclipticseasons.common;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.data.climate.BiomesClimateSettings;
 import com.teamtea.eclipticseasons.api.data.craft.HumidityControl;
+import com.teamtea.eclipticseasons.api.util.SimpleUtil;
 import com.teamtea.eclipticseasons.common.advancement.SolarTermsRecordCa;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
@@ -105,13 +106,17 @@ public class AllListener {
     }
 
     @SubscribeEvent
-    public static void onWorldTick(TickEvent.LevelTickEvent event) {
+    public static void onLevelTick(TickEvent.LevelTickEvent event) {
         if (event.phase.equals(TickEvent.Phase.END)
-                && !event.level.isClientSide()
-                && MapChecker.isValidDimension(event.level)) {
+                && !event.level.isClientSide()) {
             SolarDataManager data = SolarHolders.getSaveData(event.level);
+            if (MapChecker.isValidDimension(event.level)) {
+                if (data != null) {
+                    data.updateTicks((ServerLevel) event.level);
+                }
+            }
             if (data != null) {
-                data.updateTicks((ServerLevel) event.level);
+                data.tickLevel((ServerLevel) event.level);
             }
         }
     }
@@ -194,15 +199,15 @@ public class AllListener {
 
     @SubscribeEvent
     public static void onOnDatapackSyncEvent(OnDatapackSyncEvent event) {
-        if(ServerLifecycleHooks.getCurrentServer()==null)return;
-        RegistryAccess registryAccess=ServerLifecycleHooks.getCurrentServer().registryAccess();
-
+        if (ServerLifecycleHooks.getCurrentServer() == null) return;
+        RegistryAccess registryAccess = ServerLifecycleHooks.getCurrentServer().registryAccess();
 
         SimpleNetworkHandler.send(event.getPlayers(), new DataPackEvent<>(
                 registryAccess,
                 ESRegistries.HUMIDITY_CONTROL,
                 registryAccess.registryOrThrow(ESRegistries.HUMIDITY_CONTROL).entrySet().stream().map(Map.Entry::getValue).toList(),
                 HumidityControl.CODEC));
+
         SimpleNetworkHandler.send(event.getPlayers(), new DataPackEvent<>(
                 registryAccess,
                 ESRegistries.BIOME_CLIMATE_SETTING,

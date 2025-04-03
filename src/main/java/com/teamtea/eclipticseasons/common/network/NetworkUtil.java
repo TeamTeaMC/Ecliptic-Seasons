@@ -14,12 +14,14 @@ import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.network.message.*;
 import com.teamtea.eclipticseasons.common.registry.ESRegistries;
+import com.teamtea.eclipticseasons.config.ClientConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.SectionPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
@@ -85,8 +87,16 @@ public class NetworkUtil {
         context.get().enqueueWork(() ->
         {
             if (context.get().getDirection() == NetworkDirection.PLAY_TO_CLIENT) {
-                Minecraft.getInstance().levelRenderer.allChanged();
+                // note 观察是否更新正常
+                if(ClientConfig.Renderer.resetRendererAfterSleep.get()){
+                    Minecraft.getInstance().levelRenderer.allChanged();
+                }
+                else {
+                    if (Minecraft.getInstance().cameraEntity instanceof LivingEntity livingEntity)
+                        WorldRenderer.setAllDirty(SectionPos.of(livingEntity.getOnPos()));
+                }
             }
+
         });
         return true;
     }

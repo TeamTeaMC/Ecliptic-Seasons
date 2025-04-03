@@ -1,3 +1,10 @@
+## **0.10.4.1**
+Additional processing has been applied to the ripening event to cancel consecutively triggered events. For example, when ripening a mushroom into a giant mushroom, duplicate checks will no longer occur across two consecutive events.
+The renderer update logic has been adjusted. By default, the renderer will no longer forcibly reset after sleep completion.
+
+## **0.10.4.0.1**
+Fixed incorrect packet processing timing for biome climate settings on multiplayer clients.
+
 ## **0.10.4.0.1**
 Fixed incorrect packet processing timing for biome climate settings on multiplayer clients.
 

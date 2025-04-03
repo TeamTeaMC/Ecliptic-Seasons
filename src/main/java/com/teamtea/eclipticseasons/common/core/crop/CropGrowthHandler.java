@@ -30,6 +30,7 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.Entity;
@@ -78,6 +79,10 @@ public final class CropGrowthHandler {
     public static void beforeCropGrowUp(SaplingGrowTreeEvent event) {
         var world = event.getLevel();
         BlockPos pos = event.getPos();
+        SolarDataManager data = SolarHolders.getSaveData((Level) world);
+        if (data != null) {
+            if (data.shouldSkipNextCheck(pos)) return;
+        }
         beforeCropGrowUp(event, world, pos, world.getBlockState(pos));
     }
 
@@ -422,7 +427,7 @@ public final class CropGrowthHandler {
         } else if (CommonConfig.Crop.enableCropHumidityControl.get()) {
             // not need to check it any more
             // if (blockState.getFluidState().isSource()) return;
-            Humidity env = EclipticUtil.getHumidityAt(solarTerm,biomeHolder,pos,!level.isClientSide());
+            Humidity env = EclipticUtil.getHumidityAt(solarTerm, biomeHolder, pos, !level.isClientSide());
 
             // GrowParameter growParameter = growControl.base().humidMap().getOrDefault(env, null);
             checkHumidity(event, level, growControl, env, roomStatus, pos, blockState, season, false, randomKey);
@@ -456,8 +461,8 @@ public final class CropGrowthHandler {
                     setResult(event, CANCEL);
                 } else if (f > 1.0F) {
                     setResult(event, GROW);
-                } else if (f < 1.0F) {
-                    if (randomKey < 1000 * f) {
+                } else {
+                    if (f == 1.0F || randomKey < 1000 * f) {
                         setResult(event, PASS);
                     } else {
                         // 或者用特殊气体，BlockEntity辅助查询
@@ -498,7 +503,18 @@ public final class CropGrowthHandler {
                 }
             }
         }
+        postResult(event, flag);
+    }
 
+    static void postResult(Event event, int flag) {
+        if (flag != CANCEL
+                && event instanceof BonemealEvent bonemealEvent
+                && bonemealEvent.getLevel() instanceof ServerLevel serverLevel) {
+            SolarDataManager data = SolarHolders.getSaveData(serverLevel);
+            if (data != null) {
+                data.addSkipNextCheck(bonemealEvent.getPos(), bonemealEvent.getBlock());
+            }
+        }
     }
 
     public static final Vec3[] CHECK_DIRECTIONS = {

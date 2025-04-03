@@ -127,7 +127,7 @@ public class GrowthDetectorItem extends Item {
                     result = 0;
                 } else if (f > 1.0F) {
                     result = 1;
-                } else if (f < 1.0F) {
+                } else if (f <= 1.0F) {
                     if (hasUpdate) {
                         result = f;
                     } else {
