@@ -12,6 +12,7 @@ import com.teamtea.eclipticseasons.client.render.item.ClientGreenHouseItem;
 import com.teamtea.eclipticseasons.client.render.item.GreenHouseCoreCoreItemRenderer;
 import com.teamtea.eclipticseasons.client.render.item.GreenHouseCoreFrameItemRenderer;
 import com.teamtea.eclipticseasons.client.render.item.GreenHouseCoreItemRenderer;
+import com.teamtea.eclipticseasons.client.util.ClientExtraUtil;
 import com.teamtea.eclipticseasons.common.registry.BlockEntityRegistry;
 import com.teamtea.eclipticseasons.common.registry.BlockRegistry;
 import com.teamtea.eclipticseasons.common.registry.ItemRegistry;
@@ -100,7 +101,11 @@ public class ClientSetup {
             ItemBlockRenderTypes.setRenderLayer(BlockRegistry.snowyBlock.get(), RenderType.cutoutMipped());
 
             ItemProperties.register(ItemRegistry.hyetometer.get(), ItemRegistry.hyetometer.getId(), new CounterItemProperty(EclipticUtil::getRainfallAt, Rainfall.collectValues().length));
-            ItemProperties.register(ItemRegistry.hygrometer.get(), ItemRegistry.hygrometer.getId(), new CounterItemProperty(EclipticUtil::getHumidityAt, Humidity.collectValues().length));
+            ItemProperties.register(ItemRegistry.hygrometer.get(), ItemRegistry.hygrometer.getId(), new CounterItemProperty((level, pos) ->{
+                Humidity humidityAt = EclipticUtil.getHumidityAt(level, pos);
+                humidityAt = ClientExtraUtil.modifyHumidity(level, pos, humidityAt);
+                return humidityAt;
+            }, Humidity.collectValues().length));
             ItemProperties.register(ItemRegistry.thermometer.get(), ItemRegistry.thermometer.getId(), new CounterItemProperty(EclipticUtil::getTemperatureAt, Temperature.collectValues().length));
 
             ItemBlockRenderTypes.setRenderLayer(BlockRegistry.block_in_wooden_grate_block.get(), RenderType.cutoutMipped());

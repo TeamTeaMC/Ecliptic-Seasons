@@ -5,13 +5,7 @@
   },
   "climate": "eclipticseasons:temperate",
   "unlike_greenhouse_material": {
-    "blocks": {
-      "values": [
-        "#minecraft:ice",
-        "#minecraft:snow"
-      ],
-      "type": "forge:or"
-    }
+    "blocks": "#minecraft:ice"
   },
   "solar_terms": {
     "beginning_of_spring": {

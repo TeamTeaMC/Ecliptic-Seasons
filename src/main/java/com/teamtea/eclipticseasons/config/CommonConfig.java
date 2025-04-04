@@ -141,7 +141,7 @@ public class CommonConfig {
             greenHouseMaxDiameter = builder.comment("The maximum effective diameter of the greenhouse.")
                     .defineInRange("GreenHouseMaxDiameter", 32, 5, 256);
             greenHouseMaxHeight =builder.comment("The maximum effective diameter of the greenhouse.")
-                    .defineInRange("GreenHouseMaxDiameter", 10, 3, 128);
+                    .defineInRange("GreenHouseMaxHeight", 10, 3, 128);
             darkGreenhouseFailChance = builder.comment("The possibility of crops not growing when there is insufficient sunlight in green house.")
                     .defineInRange("DarkGreenhouseFailChance", 2000, 0, 10000);
 

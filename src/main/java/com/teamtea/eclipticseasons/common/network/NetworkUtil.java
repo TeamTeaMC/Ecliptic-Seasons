@@ -1,8 +1,5 @@
 package com.teamtea.eclipticseasons.common.network;
 
-import com.teamtea.eclipticseasons.EclipticSeasons;
-import com.teamtea.eclipticseasons.api.constant.climate.BiomeClimateSettings;
-import com.teamtea.eclipticseasons.api.data.climate.BiomesClimateSettings;
 import com.teamtea.eclipticseasons.api.data.craft.HumidityControl;
 import com.teamtea.eclipticseasons.client.color.season.BiomeColorsHandler;
 import com.teamtea.eclipticseasons.client.core.ClientWeatherChecker;
@@ -10,17 +7,14 @@ import com.teamtea.eclipticseasons.client.map.ClientMapFixer;
 import com.teamtea.eclipticseasons.client.render.WorldRenderer;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
-import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.network.message.*;
 import com.teamtea.eclipticseasons.common.registry.ESRegistries;
 import com.teamtea.eclipticseasons.config.ClientConfig;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.SectionPos;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -28,7 +22,6 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkEvent;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -119,7 +112,7 @@ public class NetworkUtil {
         return true;
     }
 
-    public static boolean processDataPackEvent(DataPackEvent dataPackEvent, Supplier<NetworkEvent.Context> context) {
+    public static boolean processDataPackEvent(DataPackEventMessage dataPackEvent, Supplier<NetworkEvent.Context> context) {
         context.get().enqueueWork(() ->
         {
 
@@ -139,4 +132,16 @@ public class NetworkUtil {
         return true;
     }
 
+    public static boolean processHumidModifyMessage(HumidModifyMessage message, Supplier<NetworkEvent.Context> context) {
+        context.get().enqueueWork(() ->
+        {
+            if (context.get().getDirection() == NetworkDirection.PLAY_TO_CLIENT) {
+                Level client = getClient();
+                if (client != null) {
+                    ClientCon.humidityModificationLevel =(int)message.value;
+                }
+            }
+        });
+        return true;
+    }
 }

@@ -15,6 +15,8 @@ public class EclipticBlockTags {
 
     public static final TagKey<Block> SOFT_HEAT_SOURCES =  create("soft_heat_sources");
 
+    public static final TagKey<Block> DARK_GROW_PLANTS = create("dark_grow_plants");
+
     public static TagKey<Block> create(String s) {
         return TagKey.create(Registries.BLOCK, EclipticSeasons.rl(s));
     }

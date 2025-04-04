@@ -84,7 +84,7 @@ public class GreenHouseCoreBlock extends SimpleEntityBlock {
                 BlockPos blockPos = new BlockPos((int) x, (int) y, (int) z);
                 boolean inRoom =
                         level.isEmptyBlock(blockPos) &&
-                                CropGrowthHandler.isInRoom(level, blockPos, Blocks.AIR.defaultBlockState(), ClientCon.nowSolarTerm.getSeason(), Optional.of(HolderSet.direct()));
+                                CropGrowthHandler.isInRoom(level, blockPos, Blocks.AIR.defaultBlockState(), Optional.of(HolderSet.direct()));
                 if (inRoom)
                     level.addParticle(
                             // ParticleTypes.END_ROD,

@@ -53,12 +53,19 @@ public final class SimpleNetworkHandler {
             e.consumerNetworkThread(NetworkUtil::processBroomUseMessage);
         e.add();
 
-        var f = CHANNEL.messageBuilder(DataPackEvent.class, id++)
-                .encoder(DataPackEvent::toBytes)
-                .decoder(DataPackEvent::new);
+        var f = CHANNEL.messageBuilder(DataPackEventMessage.class, id++)
+                .encoder(DataPackEventMessage::toBytes)
+                .decoder(DataPackEventMessage::new);
         if (FMLLoader.getDist() == Dist.CLIENT)
             f.consumerNetworkThread(NetworkUtil::processDataPackEvent);
         f.add();
+
+        var g = CHANNEL.messageBuilder(HumidModifyMessage.class, id++)
+                .encoder(HumidModifyMessage::toBytes)
+                .decoder(HumidModifyMessage::new);
+        if (FMLLoader.getDist() == Dist.CLIENT)
+            g.consumerNetworkThread(NetworkUtil::processHumidModifyMessage);
+        g.add();
     }
 
     private static void registerMessage(int i, Class<BiomeWeatherMessage> biomeWeatherMessageClass, Object o) {

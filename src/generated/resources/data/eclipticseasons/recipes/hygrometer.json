@@ -3,20 +3,26 @@
   "category": "equipment",
   "group": "hygrometer",
   "key": {
+    "c": {
+      "item": "minecraft:calcite"
+    },
+    "g": {
+      "tag": "forge:glass_panes"
+    },
     "x": {
       "tag": "forge:gems/amethyst"
     },
     "y": {
-      "item": "eclipticseasons:thermometer"
+      "tag": "forge:ingots/copper"
     },
     "z": {
-      "item": "eclipticseasons:hyetometer"
+      "tag": "forge:dusts/redstone"
     }
   },
   "pattern": [
-    " x ",
-    "xyx",
-    " z "
+    "yxy",
+    "gcg",
+    "czc"
   ],
   "result": {
     "item": "eclipticseasons:hygrometer"

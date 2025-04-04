@@ -47,6 +47,7 @@ public final class ESRecipeProvider extends RecipeProvider {
                 .pattern(" y")
                 .group("hyetometer")
                 .unlockedBy("has_glass_bottle", has(Items.GLASS_BOTTLE))
+                .unlockedBy("self",has(ItemRegistry.hyetometer.get()))
                 .save(consumer);
 
         ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ItemRegistry.thermometer.get())
@@ -56,14 +57,18 @@ public final class ESRecipeProvider extends RecipeProvider {
                 .pattern("y ")
                 .group("thermometer")
                 .unlockedBy("has_glass", has(Items.GLASS_BOTTLE))
+                .unlockedBy("self",has(ItemRegistry.thermometer.get()))
                 .save(consumer);
+
         ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ItemRegistry.hygrometer.get())
                 .define('x', Tags.Items.GEMS_AMETHYST)
-                .define('y', ItemRegistry.thermometer.get())
-                .define('z', ItemRegistry.hyetometer.get())
-                .pattern(" x ")
-                .pattern("xyx")
-                .pattern(" z ")
+                .define('y', Tags.Items.INGOTS_COPPER)
+                .define('z', Tags.Items.DUSTS_REDSTONE)
+                .define('g', Tags.Items.GLASS_PANES)
+                .define('c', Items.CALCITE)
+                .pattern("yxy")
+                .pattern("gcg")
+                .pattern("czc")
                 .group("hygrometer")
                 .unlockedBy("has_amethyst", has(Tags.Items.GEMS_AMETHYST))
                 .save(consumer);

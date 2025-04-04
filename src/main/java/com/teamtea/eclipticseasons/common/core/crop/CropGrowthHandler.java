@@ -9,6 +9,7 @@ import com.teamtea.eclipticseasons.api.constant.crop.CropHumidityType;
 import com.teamtea.eclipticseasons.api.constant.crop.CropSeasonType;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
+import com.teamtea.eclipticseasons.api.constant.tag.EclipticBlockTags;
 import com.teamtea.eclipticseasons.api.data.climate.AgroClimaticZone;
 import com.teamtea.eclipticseasons.api.data.crop.CropGrow;
 import com.teamtea.eclipticseasons.api.data.crop.CropGrowControl;
@@ -416,7 +417,7 @@ public final class CropGrowthHandler {
                         if (saveData != null) {
                             GreenHouseCoreProvider nearGreenHouseProvider = saveData.findNearGreenHouseProvider(pos, seasons);
                             if (nearGreenHouseProvider != null) {
-                                roomStatus = isInRoom(level, pos, blockState, season, growControl.notGreenHouse()) ? RoomStatus.GREEN_HOUSE : RoomStatus.NORMAL;
+                                roomStatus = isInRoom(level, pos, blockState, growControl.notGreenHouse()) ? RoomStatus.GREEN_HOUSE : RoomStatus.NORMAL;
                                 if (roomStatus == RoomStatus.GREEN_HOUSE) {
                                     notCancel = true;
                                     nearGreenHouseProvider.costAvailCost((2 / seasons.size() + 1));
@@ -440,7 +441,7 @@ public final class CropGrowthHandler {
         } else if (CommonConfig.Crop.enableCropHumidityControl.get()) {
             // not need to check it any more
             // if (blockState.getFluidState().isSource()) return;
-            Humidity env = EclipticUtil.getHumidityAt(solarTerm, biomeHolder, pos, !level.isClientSide());
+            Humidity env = EclipticUtil.getHumidityAt((Level) level, solarTerm, biomeHolder, pos, !level.isClientSide());
 
             // GrowParameter growParameter = growControl.base().humidMap().getOrDefault(env, null);
             checkHumidity(event, level, growControl, env, roomStatus, pos, blockState, season, false, randomKey);
@@ -454,7 +455,7 @@ public final class CropGrowthHandler {
             if (!hasUpdate) {
                 int modification = SolarHolders.getSaveData((Level) world).calculateHumidityModification(pos);
                 if (modification != 0) {
-                    roomStatus = isInRoom(world, pos, blockState, season,growControl.notGreenHouse()) ? RoomStatus.GREEN_HOUSE : RoomStatus.NORMAL;
+                    roomStatus = isInRoom(world, pos, blockState, growControl.notGreenHouse()) ? RoomStatus.GREEN_HOUSE : RoomStatus.NORMAL;
                 }
                 if (modification != 0 && roomStatus == RoomStatus.GREEN_HOUSE) {
                     env = env.cycle(modification);
@@ -647,7 +648,7 @@ public final class CropGrowthHandler {
                 FAIL_HANDLER);
     }
 
-    public static boolean isInRoom(LevelAccessor level, BlockPos pos, BlockState state, Season season, Optional<HolderSet<Block>> notCheck) {
+    public static boolean isInRoom(LevelAccessor level, BlockPos pos, BlockState state, Optional<HolderSet<Block>> notCheck) {
         if (state.getFluidState().isSource()) return false;
 
         boolean isInLight = level.getBrightness(LightLayer.SKY, pos.above()) > 12;
@@ -655,10 +656,10 @@ public final class CropGrowthHandler {
             int height = level.getHeight(Heightmap.Types.MOTION_BLOCKING, pos.getX(), pos.getZ());
             if (height < pos.getY()) return false;
         }
-        if (season == Season.SUMMER) {
-            if (isInLight && EclipticUtil.isNoon((Level) level))
-                return false;
-        }
+        // if (season == Season.SUMMER) {
+        //     if (isInLight && EclipticUtil.isNoon((Level) level))
+        //         return false;
+        // }
         boolean isConnected = true;
 
 
@@ -684,18 +685,22 @@ public final class CropGrowthHandler {
 
             SectionClipContext context = new SectionClipContext(startVec, endVec,
                     ClipContext.Block.COLLIDER, ClipContext.Fluid.WATER, null);
-            HitResult hitResult = clip(level, context, notCheck);
+            BlockHitResult hitResult = clip(level, context, notCheck);
 
             if (hitResult.getType() == HitResult.Type.MISS) {
                 isConnected = false;
+                EclipticSeasons.logger(isConnected,isInLight,level.getBlockState(hitResult.getBlockPos()));
                 break;
             }
         }
 
         // TODO:qucikly for windows green house
         if (isConnected && !isInLight) {
-            isConnected = level.getRandom().nextInt(10000) > CommonConfig.Crop.darkGreenhouseFailChance.get();
+            if (level.getRandom().nextInt(10000) <= CommonConfig.Crop.darkGreenhouseFailChance.get()) {
+                isConnected = state.is(EclipticBlockTags.DARK_GROW_PLANTS);
+            }
         }
+        EclipticSeasons.logger(isConnected,isInLight);
         return isConnected;
     }
 

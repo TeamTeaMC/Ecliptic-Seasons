@@ -323,7 +323,7 @@ public class SolarDataManager extends SavedData {
                 if (lis != null) {
                     for (Pair<BlockPos, GreenHouseCoreProvider> p : lis) {
                         if (seasons.contains(p.second().getSeason())
-                                && p.first().getY() >= blockPos.getY()
+                                // && p.first().getY() >= blockPos.getY()
                                 && p.first().getCenter().distanceToSqr(center) < (15 * 15 + 0.1)) {
                             return p.second();
                         }

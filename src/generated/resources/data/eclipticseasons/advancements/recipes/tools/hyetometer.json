@@ -18,11 +18,24 @@
         "recipe": "eclipticseasons:hyetometer"
       },
       "trigger": "minecraft:recipe_unlocked"
+    },
+    "self": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "eclipticseasons:hyetometer"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
     }
   },
   "requirements": [
     [
       "has_glass_bottle",
+      "self",
       "has_the_recipe"
     ]
   ],

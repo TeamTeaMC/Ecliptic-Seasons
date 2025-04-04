@@ -2,10 +2,7 @@ package com.teamtea.eclipticseasons.common.network.message;
 
 import com.mojang.serialization.Codec;
 import com.teamtea.eclipticseasons.EclipticSeasons;
-import com.teamtea.eclipticseasons.api.data.climate.AgroClimaticZone;
-import com.teamtea.eclipticseasons.api.data.quest.SeasonQuest;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
-import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
@@ -19,10 +16,9 @@ import net.minecraftforge.registries.DataPackRegistriesHooks;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
-public class DataPackEvent<T> {
+public class DataPackEventMessage<T> {
 
     public final ResourceKey<Registry<T>> resourceKey;
     public List<T> data = new ArrayList<>();
@@ -30,7 +26,7 @@ public class DataPackEvent<T> {
     public Codec<T> codec = null;
     private RegistryAccess registryAccess = null;
 
-    public DataPackEvent(
+    public DataPackEventMessage(
             RegistryAccess registryAccess,
             ResourceKey<Registry<T>> resourceKey,
             List<T> data,
@@ -42,7 +38,7 @@ public class DataPackEvent<T> {
     }
 
 
-    public DataPackEvent(FriendlyByteBuf buf) {
+    public DataPackEventMessage(FriendlyByteBuf buf) {
         ResourceLocation resourceLocation = buf.readResourceLocation();
         ResourceKey<Registry<T>> registryResourceKeyTo = null;
         for (var syncedCustomRegistry : DataPackRegistriesHooks.getDataPackRegistries()) {

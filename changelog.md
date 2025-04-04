@@ -1,16 +1,30 @@
+## **0.10.5**
+- Thermometers and hyetometers have been hidden.
+
+To avoid player confusion regarding the concepts of thermometer and hyetometer, thermometers and rain gauges are no longer displayed by default in the Creative mode inventory (including JEI). Additionally, their recipe unlock condition has been adjusted to require obtaining them at least once. Meanwhile, the recipe for the hygrometer has been modified to allow direct one-step crafting.
+
+Thermometers and hyetometers are essentially more like debug items—ordinary players don’t need to overly concern themselves with the specific numerical values of temperature and rainfall. Players only need to adjust based on the current humidity status.
+
+- The hygrometer can now also measure the humidity status at the player's current location, rather than just displaying the base value.
+- Added the `eclipticseasons:dark_grow_plants` tag to identify crops that can quickly thrive in dark greenhouse conditions.
+- Greenhouses are no longer directly set as invalid during summer noons, but instead indirectly affect humidity calculations.
+- Fixed naming ambiguity: GreenHouseMaxDiameter (horizontal radius) and GreenHouseMaxHeight (vertical limit) are now properly distinguished in configs.
+- Added greenhouse wall material controls, allowing the configuration of walls disliked by crops to restrict growth. In the default settings, this only affects iceblock greenhouses for non-winter crops.
+- Other minor changes and fixes.
+
 ## **0.10.4.1**
-Additional processing has been applied to the ripening event to cancel consecutively triggered events. For example, when ripening a mushroom into a giant mushroom, duplicate checks will no longer occur across two consecutive events.
-The renderer update logic has been adjusted. By default, the renderer will no longer forcibly reset after sleep completion.
+- Additional processing has been applied to the ripening event to cancel consecutively triggered events. For example, when ripening a mushroom into a giant mushroom, duplicate checks will no longer occur across two consecutive events.
+- The renderer update logic has been adjusted. By default, the renderer will no longer forcibly reset after sleep completion.
 
 ## **0.10.4.0.1**
-Fixed incorrect packet processing timing for biome climate settings on multiplayer clients.
+- Fixed incorrect packet processing timing for biome climate settings on multiplayer clients.
 
 ## **0.10.4.0.1**
-Fixed incorrect packet processing timing for biome climate settings on multiplayer clients.
+- Fixed incorrect packet processing timing for biome climate settings on multiplayer clients.
 
 ## **0.10.4**
-Added a biome control temperature and downfall data pack to adjust biome humidity changes without modifying the biome JSON definitions, avoiding conflicts with terrain generation control systems like WWOO, which modify temperature and downfall solely based on terrain considerations.
-Adjusted some humidity calculation methods.
+- Added a biome control temperature and downfall data pack to adjust biome humidity changes without modifying the biome JSON definitions, avoiding conflicts with terrain generation control systems like WWOO, which modify temperature and downfall solely based on terrain considerations.
+- Adjusted some humidity calculation methods.
 
 ## **0.10.3.1.2**
 - Fixed an issue where wet sponges would be ejected from the humidifier during level reloading if they were present and the conditions below met the soft heat source activation criteria.

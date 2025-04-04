@@ -1,6 +1,8 @@
 package com.teamtea.eclipticseasons.common.item;
 
+import com.teamtea.eclipticseasons.api.constant.biome.Humidity;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
+import com.teamtea.eclipticseasons.client.util.ClientExtraUtil;
 import com.teamtea.eclipticseasons.common.registry.ItemRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -28,7 +30,9 @@ public class MeterItem extends Item {
             } else if (this == ItemRegistry.thermometer.get()) {
                 component = EclipticUtil.getTemperatureAt(level, blockPosition).getTranslation();
             } else if (this == ItemRegistry.hygrometer.get()) {
-                component = EclipticUtil.getHumidityAt(level, blockPosition).getTranslation();
+                Humidity humidityAt = EclipticUtil.getHumidityAt(level, blockPosition);
+                humidityAt = ClientExtraUtil.modifyHumidity(level, blockPosition, humidityAt);
+                component = humidityAt.getTranslation();
             }
 
             if (!component.getString().isEmpty())

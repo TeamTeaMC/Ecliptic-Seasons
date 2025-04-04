@@ -149,8 +149,8 @@ public class CropRegistry {
 
         HolderSet.Direct<AgroClimaticZone> temperate = HolderSet.direct(cropClimateTypeHolderGetter.getOrThrow(AgroClimateRegistry.TEMPERATE));
 
-        OrHolderSet<Block> snowAndIce = new OrHolderSet<>(List.of(blockHolderGetter.getOrThrow(BlockTags.ICE), blockHolderGetter.getOrThrow(BlockTags.SNOW)));
-        Optional<HolderSet<Block>> snowAndIcePredicate=Optional.of(snowAndIce);
+        // OrHolderSet<Block> snowAndIce = new OrHolderSet<>(List.of(blockHolderGetter.getOrThrow(BlockTags.ICE), blockHolderGetter.getOrThrow(BlockTags.SNOW)));
+        Optional<HolderSet<Block>> snowAndIcePredicate=Optional.of(blockHolderGetter.getOrThrow(BlockTags.ICE));
 
         context.register(SPRING, new CropGrowControlBuilder(
                 temperate,

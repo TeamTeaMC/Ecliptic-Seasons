@@ -31,6 +31,11 @@ public final class ESBlockTagProvider extends BlockTagsProvider {
         tag(CropHumidityType.AVERAGE_MOIST.getBlockTag()).addOptional(fd_rl("tomatoes"));
 
         tag(EclipticBlockTags.SOFT_HEAT_SOURCES).add(Blocks.CAMPFIRE).add(Blocks.MAGMA_BLOCK);
+        tag(EclipticBlockTags.DARK_GROW_PLANTS)
+                .add(Blocks.BROWN_MUSHROOM_BLOCK)
+                .add(Blocks.RED_MUSHROOM_BLOCK)
+                .addOptional(fd_rl("brown_mushroom_colony"))
+                .addOptional(fd_rl("red_mushroom_colony"));
 
         tag(EclipticBlockTags.SNOW_OVERLAY_CANNOT_SURVIVE_ON)
                 .addTag(BlockTags.SNOW)

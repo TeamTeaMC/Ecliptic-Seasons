@@ -14,6 +14,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -38,7 +39,13 @@ public class ModContents {
                                 .displayItems((params, output) -> {
                                     ItemRegistry.ITEM_DEFERRED_REGISTER.getEntries().forEach(
                                             itemDeferredHolder ->
-                                                    output.accept(itemDeferredHolder.get())
+                                            {
+                                                Item value = itemDeferredHolder.get();
+                                                if (value != ItemRegistry.hyetometer.get()
+                                                        && value != ItemRegistry.thermometer.get()) {
+                                                    output.accept(value);
+                                                }
+                                            }
                                     );
                                 })
                                 .build());

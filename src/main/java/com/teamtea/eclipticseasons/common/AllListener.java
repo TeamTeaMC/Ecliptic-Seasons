@@ -4,7 +4,6 @@ package com.teamtea.eclipticseasons.common;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.data.climate.BiomesClimateSettings;
 import com.teamtea.eclipticseasons.api.data.craft.HumidityControl;
-import com.teamtea.eclipticseasons.api.util.SimpleUtil;
 import com.teamtea.eclipticseasons.common.advancement.SolarTermsRecordCa;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
@@ -14,14 +13,15 @@ import com.teamtea.eclipticseasons.common.core.crop.CropInfoManager;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
 import com.teamtea.eclipticseasons.common.network.SimpleNetworkHandler;
-import com.teamtea.eclipticseasons.common.network.message.DataPackEvent;
+import com.teamtea.eclipticseasons.common.network.message.DataPackEventMessage;
+import com.teamtea.eclipticseasons.common.network.message.HumidModifyMessage;
 import com.teamtea.eclipticseasons.common.registry.ESRegistries;
 import com.teamtea.eclipticseasons.common.registry.ModAdvancements;
 import com.teamtea.eclipticseasons.config.CommonConfig;
-import net.minecraft.core.Holder;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -128,8 +128,17 @@ public class AllListener {
                 WeatherManager.tickPlayerSeasonEffecct(serverPlayer);
             }
             if (event.phase == TickEvent.Phase.END) {
-                if (serverPlayer.level().getGameTime() % 20 == 0)
+                if (serverPlayer.level().getGameTime() % 20 == 0) {
                     ModAdvancements.parentNeedCriterion.trigger(serverPlayer);
+
+                    SolarDataManager data = SolarHolders.getSaveData(serverPlayer.level());
+                    if(data!=null){
+                        float v = data.calculateHumidityModification(serverPlayer.blockPosition());
+                        SimpleNetworkHandler.send(serverPlayer,new HumidModifyMessage(
+                                serverPlayer.blockPosition(), Mth.floor(v)
+                        ));
+                    }
+                }
             }
         }
     }
@@ -202,13 +211,13 @@ public class AllListener {
         if (ServerLifecycleHooks.getCurrentServer() == null) return;
         RegistryAccess registryAccess = ServerLifecycleHooks.getCurrentServer().registryAccess();
 
-        SimpleNetworkHandler.send(event.getPlayers(), new DataPackEvent<>(
+        SimpleNetworkHandler.send(event.getPlayers(), new DataPackEventMessage<>(
                 registryAccess,
                 ESRegistries.HUMIDITY_CONTROL,
                 registryAccess.registryOrThrow(ESRegistries.HUMIDITY_CONTROL).entrySet().stream().map(Map.Entry::getValue).toList(),
                 HumidityControl.CODEC));
 
-        SimpleNetworkHandler.send(event.getPlayers(), new DataPackEvent<>(
+        SimpleNetworkHandler.send(event.getPlayers(), new DataPackEventMessage<>(
                 registryAccess,
                 ESRegistries.BIOME_CLIMATE_SETTING,
                 registryAccess.registryOrThrow(ESRegistries.BIOME_CLIMATE_SETTING).entrySet().stream().map(Map.Entry::getValue).toList(),

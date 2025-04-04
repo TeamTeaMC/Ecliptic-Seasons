@@ -1,6 +1,5 @@
 package com.teamtea.eclipticseasons.common.item;
 
-import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.biome.Humidity;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
@@ -16,7 +15,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -56,7 +54,7 @@ public class GrowthDetectorItem extends Item {
                     CropGrowControl growControl = CropGrowthHandler.getCropGrowControl(controlMap, climateTypeHolder);
                     float chance = 0;
                     for (int i = 0; i < 100; i++) {
-                        chance += CropGrowthHandler.isInRoom(level, clickedPos, blockState, solarTerm.getSeason(), growControl.notGreenHouse()) ? 1 : 0;
+                        chance += CropGrowthHandler.isInRoom(level, clickedPos, blockState,  growControl.notGreenHouse()) ? 1 : 0;
                     }
                     int chose = chance > 50 ? 1 : chance > 10 ? 2 : 3;
 
@@ -98,7 +96,7 @@ public class GrowthDetectorItem extends Item {
         if (growControl == null) return result;
 
         GrowParameter growParameter = CropGrowthHandler.getSeasonGrowParameter(growControl, solarTerm, controlMap, agentClimateTypeHolder, climateTypeHolder);
-        CropGrowthHandler.RoomStatus roomStatus = CropGrowthHandler.isInRoom(level, pos, blockState, season, growControl.notGreenHouse()) ? CropGrowthHandler.RoomStatus.GREEN_HOUSE : CropGrowthHandler.RoomStatus.NORMAL;
+        CropGrowthHandler.RoomStatus roomStatus = CropGrowthHandler.isInRoom(level, pos, blockState,growControl.notGreenHouse()) ? CropGrowthHandler.RoomStatus.GREEN_HOUSE : CropGrowthHandler.RoomStatus.NORMAL;
 
         if (growParameter != null && CommonConfig.Crop.enableCrop.get()) {
             result *= growParameter.grow_chance();
@@ -112,7 +110,7 @@ public class GrowthDetectorItem extends Item {
         }
 
         if (CommonConfig.Crop.enableCropHumidityControl.get()) {
-            Humidity env = EclipticUtil.getHumidityAt(solarTerm, biomeHolder, pos, !level.isClientSide());
+            Humidity env = EclipticUtil.getHumidityAt(level, solarTerm, biomeHolder, pos, !level.isClientSide());
             result *= getHumidityGrowChance(level, growControl, env, roomStatus, pos, blockState, season, false);
         }
 
