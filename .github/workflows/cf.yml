@@ -16,6 +16,15 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - name: Check CURSEFORGE_APITOKEN Length
+        run: |
+          SECRET_LENGTH=$(echo -n "${{ secrets.CURSEFORGE_APITOKEN }}" | wc -m)
+          echo "CURSEFORGE_APITOKEN length: $SECRET_LENGTH"
+          if [ "$SECRET_LENGTH" -eq 0 ]; then
+          echo "CURSEFORGE_APITOKEN is empty!"
+          exit 1
+          fi
+
       - name: Check Environment Variables
         run: env
 
@@ -46,9 +55,11 @@ jobs:
 
           name: "${{env.RELEASE_NAME}}"
           version: "${{env.VERSION}}"
-          version-type: release
+          version-type: beta
           changelog-file: changelog.md
 
           loaders: forge
           game-versions: "${{env.MINECRAFT_VERSION}}"
           java: "${{env.JAVA_VERSION}}"
+          files: |
+            build/libs/*-all.jar
