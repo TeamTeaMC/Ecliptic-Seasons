@@ -39,7 +39,7 @@ public class ESAdvancementGenerator implements ForgeAdvancementProvider.Advancem
                 .display(ItemRegistry.calendar_item.get(),
                         Component.translatable("advancement.eclipticseasons.base"),
                         Component.translatable("advancement.eclipticseasons.base.desc"),
-                        ResourceLocation.parse("minecraft:textures/block/bricks.png"),
+                        new ResourceLocation("minecraft:textures/block/bricks.png"),
                         FrameType.TASK, false, false, false)
                 .addCriterion("tick", PlayerTrigger.TriggerInstance.tick())
                 .requirements(RequirementsStrategy.AND)

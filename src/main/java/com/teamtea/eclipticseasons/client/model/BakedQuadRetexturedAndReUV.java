@@ -25,7 +25,7 @@ public class BakedQuadRetexturedAndReUV extends BakedQuad {
     }
 
     public BakedQuadRetexturedAndReUV(BakedQuad quad, TextureAtlasSprite textureIn, boolean isSlabDown, float offset) {
-        super(Arrays.copyOf(quad.getVertices(), quad.getVertices().length), quad.getTintIndex(), FaceBakery.calculateFacing(quad.getVertices()), quad.getSprite(), quad.isShade(), quad.hasAmbientOcclusion());
+        super(Arrays.copyOf(quad.getVertices(), quad.getVertices().length), -1, FaceBakery.calculateFacing(quad.getVertices()), textureIn, quad.isShade(), quad.hasAmbientOcclusion());
         this.texture = textureIn;
         this.isSlabDown = isSlabDown;
         this.offset = offset;
@@ -80,10 +80,10 @@ public class BakedQuadRetexturedAndReUV extends BakedQuad {
         }
     }
 
-    @Override
-    public @NotNull TextureAtlasSprite getSprite() {
-        return texture;
-    }
+    // @Override
+    // public @NotNull TextureAtlasSprite getSprite() {
+    //     return texture;
+    // }
 
     // We need not to mul it to 16f because internal changes
     private static float getUnInterpolatedU(TextureAtlasSprite sprite, float u) {
@@ -97,13 +97,13 @@ public class BakedQuadRetexturedAndReUV extends BakedQuad {
     }
 
 
-    @Override
-    public int getTintIndex() {
-        return -1;
-    }
+    // @Override
+    // public int getTintIndex() {
+    //     return -1;
+    // }
 
-    @Override
-    public boolean isTinted() {
-        return false;
-    }
+    // @Override
+    // public boolean isTinted() {
+    //     return false;
+    // }
 }

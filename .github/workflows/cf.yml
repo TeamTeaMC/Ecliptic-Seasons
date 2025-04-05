@@ -1,0 +1,54 @@
+name: Publish on GitHub, CurseForge & Modrinth
+
+on: [ pull_request, workflow_dispatch ]
+
+env:
+  MINECRAFT_VERSION: 1.20.1
+  JAVA_VERSION: 17
+  VERSION: forge-0.10.5.1
+  RELEASE_NAME: EclipticSeasons-1.20.1-forge-0.10.5-all
+  CURSEFORGE_TOKEN: ${{ secrets.CURSEFORGE_APITOKEN }}
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check Environment Variables
+        run: env
+
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+        with:
+          submodules: true
+
+      - name: Setup Java
+        uses: actions/setup-java@v2
+        with:
+          distribution: "temurin"
+          java-version: 17
+
+      - name: Make Gradle Wrapper Executable
+        if: ${{ runner.os != 'Windows' }}
+        run: chmod +x ./gradlew
+
+      - name: Build
+        run: ./gradlew clean build
+
+      - name: Publish (CurseForge)
+        uses: Kir-Antipov/mc-publish@v3.2
+        with:
+          curseforge-id: 1118306
+          curseforge-token: "${{env.CURSEFORGE_TOKEN}}"
+
+
+          name: "${{env.RELEASE_NAME}}"
+          version: "${{env.VERSION}}"
+          version-type: release
+          changelog-file: changelog.md
+
+          loaders: forge
+          game-versions: "${{env.MINECRAFT_VERSION}}"
+          java: "${{env.JAVA_VERSION}}"

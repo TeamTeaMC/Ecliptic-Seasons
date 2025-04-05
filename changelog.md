@@ -1,3 +1,6 @@
+## **0.10.5.0.1**
+- Fixed an issue where snow-covered hedges were incorrectly colored when using Embeddium and Quark.
+
 ## **0.10.5**
 - Thermometers and hyetometers have been hidden.
 

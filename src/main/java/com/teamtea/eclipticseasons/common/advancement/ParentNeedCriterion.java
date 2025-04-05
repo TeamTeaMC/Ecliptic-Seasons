@@ -38,7 +38,7 @@ public class ParentNeedCriterion extends SimpleCriterionTrigger<ParentNeedCriter
     protected TriggerInstance createInstance(JsonObject pJson, ContextAwarePredicate pPredicate, DeserializationContext pDeserializationContext) {
         Optional<ResourceLocation> parent =
                 pJson.has("parent") ?
-                        Optional.of(ResourceLocation.parse(pJson.get("parent").getAsString())) : Optional.empty();
+                        Optional.of(new ResourceLocation(pJson.get("parent").getAsString())) : Optional.empty();
         return new TriggerInstance(getId(), pPredicate, parent);
     }
 

@@ -233,7 +233,7 @@ public class QuestSignRenderer extends HangingSignRenderer {
     }
 
     private static Material createHangingSignMaterial(ResourceLocation resourceLocation) {
-        return new Material(Sheets.SIGN_SHEET, ResourceLocation.fromNamespaceAndPath(resourceLocation.getNamespace(), "entity/signs/hanging/" + resourceLocation.getPath()));
+        return new Material(Sheets.SIGN_SHEET, new ResourceLocation(resourceLocation.getNamespace(), "entity/signs/hanging/" + resourceLocation.getPath()));
     }
 
     public static int getDarkColor(int i, boolean hasGlowingText) {
