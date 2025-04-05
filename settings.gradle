@@ -5,5 +5,5 @@ pluginManagement {
     }
 }
 
-include ':onlySub'
-project(':onlySub').projectDir = file('src/onlySub')
+include ':sub'
+project(':sub').projectDir = file('sub')

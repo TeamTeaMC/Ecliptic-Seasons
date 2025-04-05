@@ -268,7 +268,7 @@ dependencies {
     onlyMainRuntimeOnly fg.deobf("curse.maven:configured-457570:5180900")
     // Examples using mod jars from ./libs
 //    compileOnly "libs:OptiFine:1.20.1_HD_U_I6"
-    compileOnly project(':onlySub')
+    compileOnly project(':sub')
 
     println("----Scan onlymain libs begin----")
     fileTree(dir: 'mods', include: ['*.jar']).each { File file ->
