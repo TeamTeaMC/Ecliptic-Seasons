@@ -4,3 +4,6 @@ pluginManagement {
         maven { url = 'https://maven.minecraftforge.net/' }
     }
 }
+
+include ':onlySub'
+project(':onlySub').projectDir = file('src/onlySub')
