@@ -1,10 +1,15 @@
 name: Publish on GitHub, CurseForge & Modrinth
 
-on: [ pull_request, workflow_dispatch ]
+on:
+  pull_request:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'gradle.properties'
+
 
 env:
   MINECRAFT_VERSION: 1.20.1
-  VERSION: forge-0.10.5.1
   CURSEFORGE_TOKEN: ${{ secrets.CURSEFORGE_APITOKEN }}
 
 permissions:
@@ -51,8 +56,6 @@ jobs:
           curseforge-id: 1118306
           curseforge-token: "${{env.CURSEFORGE_TOKEN}}"
 
-
-          version: "${{env.VERSION}}"
           version-type: beta
           changelog-file: changelog.md
 
