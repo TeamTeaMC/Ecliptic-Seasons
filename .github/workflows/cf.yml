@@ -52,6 +52,7 @@ jobs:
           else
             echo "No mod_version change"
             echo "changed=false" >> "$GITHUB_OUTPUT"
+          fi
 
   build:
     needs: check-version-change
