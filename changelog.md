@@ -253,11 +253,8 @@ faster the weather query time
 faster the small biome check time
 
 ### Bug Fixes:
-
 fix thunder level in client check
-
 fix sound in desert summer
-
 clean necessary biome cache (not need for 1.20)
 
 
@@ -288,9 +285,9 @@ add support for journeymap
 add two advancements
 show a message when use the calendar (need open in config)
 
-* support latest version of Cold Sweat
-  ** fix advancements problem
-  ** adjust the way seasonal temperatures are calculated when the Cold Sweat mod is enabled
+support latest version of Cold Sweat
+fix advancements problem
+adjust the way seasonal temperatures are calculated when the Cold Sweat mod is enabled
 
 ## 0.8
 
@@ -298,11 +295,9 @@ add solar term icons
 add calendar
 add a config to set valid dimensions
 repair an issue from outbound biome query due to biome noise
-✨ add support for DH 2.2.0+
-✨ fix single instance of biome precipitation of Oculus
-✨ stop supporting season-related prompts from Legendary Survival Overhaul (due to over-coupled code)
-✨ stop using built-in temperature settings from Cold Sweat and Legendary Survival Overhaul
-✨ provide dedicated temperature modification configurations for Cold Sweat and Legendary Survival Overhaul
+add support for DH 2.2.0+
+fix single instance of biome precipitation of Oculus
+provide dedicated temperature modification configurations for Cold Sweat and Legendary Survival Overhaul
 
 - fix the names of some configuration items
 ```
