@@ -1,6 +1,9 @@
+## **0.10.5.1.2**
+- Fixed an issue where saplings could not grow into trees via bone meal acceleration based on the growth probability when they had seasonal data but lacked humidity information.
+
 ## **0.10.5.1**
-Fixed an issue where the growth speed of crops in non-temperate area could not be properly checked when datapack information was incomplete.
-Fixed an issue where leaves crop blocks were incorrectly identified as being in a greenhouse.
+- Fixed an issue where the growth speed of crops in non-temperate area could not be properly checked when datapack information was incomplete.
+- Fixed an issue where leaves crop blocks were incorrectly identified as being in a greenhouse.
 
 ## **0.10.5.0.1**
 - Fixed an issue where snow-covered hedges were incorrectly colored when using Embeddium and Quark.

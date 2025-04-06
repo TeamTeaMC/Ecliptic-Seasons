@@ -489,6 +489,8 @@ public final class CropGrowthHandler {
                         }
                     }
                 }
+            } else {
+                setResult(event, PASS);
             }
         }
     }
