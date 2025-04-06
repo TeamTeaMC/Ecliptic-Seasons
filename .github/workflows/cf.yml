@@ -22,6 +22,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # IMPORTANT: Allows access to HEAD~1
 
       - name: Get current mod_version
         id: current
@@ -33,7 +35,11 @@ jobs:
       - name: Get previous mod_version from git
         id: previous
         run: |
-          prev_version=$(git show HEAD~1:gradle.properties | grep "^mod_version=" | cut -d= -f2 || echo "none")
+          if git rev-parse HEAD~1 >/dev/null 2>&1; then
+            prev_version=$(git show HEAD~1:gradle.properties | grep "^mod_version=" | cut -d= -f2)
+          else
+            prev_version=""
+          fi
           echo "Previous mod_version: $prev_version"
           echo "previous_version=$prev_version" >> "$GITHUB_OUTPUT"
 
