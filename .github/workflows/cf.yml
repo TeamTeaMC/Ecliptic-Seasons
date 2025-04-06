@@ -90,6 +90,12 @@ jobs:
       - name: Build
         run: ./gradlew clean build
 
+      - name: Set Release Name Environment Variable
+        id: set_release_name
+        run: |
+          RELEASE_NAME=$(basename $(ls build/libs/*-all.jar))
+          echo "RELEASE_NAME=$RELEASE_NAME" >> $GITHUB_ENVV
+
       - name: Publish (CurseForge)
         uses: Kir-Antipov/mc-publish@v3.3
         with:
@@ -99,5 +105,6 @@ jobs:
           changelog-file: changelog.md
           loaders: forge
           game-versions: "${{ env.MINECRAFT_VERSION }}"
+          name: "${{env.RELEASE_NAME}}"
           files: |
-            build/libs/*-all.jar
+            build/libs/${{ env.RELEASE_NAME }}
