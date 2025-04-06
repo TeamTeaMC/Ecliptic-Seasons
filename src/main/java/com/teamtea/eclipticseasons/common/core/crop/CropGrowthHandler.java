@@ -399,6 +399,9 @@ public final class CropGrowthHandler {
         RoomStatus roomStatus = RoomStatus.UNKNOWN;
 
         // TODO:这些映射应该提前计算，不应该实时计算,但是由于湿润度是全部覆盖的，因此如果没有，则不计算
+        if (growControl == null) {
+            growControl = CropGrowthHandler.getCropGrowControl(controlMap, CropGrowthHandler.getDefaultAgroClimaticZoneHolder(level));
+        }
         if (growControl == null) return;
 
         GrowParameter growParameter = getSeasonGrowParameter(growControl, solarTerm, controlMap, agentClimateTypeHolder, climateTypeHolder);
@@ -611,6 +614,7 @@ public final class CropGrowthHandler {
 
         @Override
         public BlockHitResult apply(SectionClipContext clipContext, BlockPos pos) {
+            if (clipContext.getFrom().distanceTo(pos.getCenter()) < 1) return null;
             BlockState blockstate = clipContext.getBlockState(levelReader, pos);
             if (!blockstate.isSolid()) return null;
             Vec3 vec3 = clipContext.getFrom();
@@ -689,7 +693,6 @@ public final class CropGrowthHandler {
 
             if (hitResult.getType() == HitResult.Type.MISS) {
                 isConnected = false;
-                EclipticSeasons.logger(isConnected,isInLight,level.getBlockState(hitResult.getBlockPos()));
                 break;
             }
         }
@@ -700,7 +703,6 @@ public final class CropGrowthHandler {
                 isConnected = state.is(EclipticBlockTags.DARK_GROW_PLANTS);
             }
         }
-        EclipticSeasons.logger(isConnected,isInLight);
         return isConnected;
     }
 

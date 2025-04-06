@@ -52,6 +52,9 @@ public class GrowthDetectorItem extends Item {
 
                     Map<Holder<AgroClimaticZone>, CropGrowControl> controlMap = CropGrowthHandler.getControlMap(blockState.getBlock());
                     CropGrowControl growControl = CropGrowthHandler.getCropGrowControl(controlMap, climateTypeHolder);
+                    if (growControl == null) {
+                        growControl = CropGrowthHandler.getCropGrowControl(controlMap, CropGrowthHandler.getDefaultAgroClimaticZoneHolder(level));
+                    }
                     float chance = 0;
                     for (int i = 0; i < 100; i++) {
                         chance += CropGrowthHandler.isInRoom(level, clickedPos, blockState,  growControl.notGreenHouse()) ? 1 : 0;
@@ -93,6 +96,9 @@ public class GrowthDetectorItem extends Item {
         SolarTerm solarTerm = EclipticSeasonsApi.getInstance().getSolarTerm(level);
         Season season = solarTerm.getSeason();
 
+        if (growControl == null) {
+            growControl = CropGrowthHandler.getCropGrowControl(controlMap, CropGrowthHandler.getDefaultAgroClimaticZoneHolder(level));
+        }
         if (growControl == null) return result;
 
         GrowParameter growParameter = CropGrowthHandler.getSeasonGrowParameter(growControl, solarTerm, controlMap, agentClimateTypeHolder, climateTypeHolder);
