@@ -4,6 +4,7 @@ package com.teamtea.eclipticseasons.mixin.client.model;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.client.core.ModelManager;
+import com.teamtea.eclipticseasons.client.util.ColorHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.SpriteContents;
@@ -61,7 +62,9 @@ public abstract class MixinSpriteLoader {
         }
         ModelManager.blocksCache.put(resourceLocation, cir.getReturnValue());
 
-        if (cir.getReturnValue().name().getPath().contains("brick")) {
+        if (cir.getReturnValue().name().getPath().contains("sapling")
+                ||cir.getReturnValue().name().getPath().contains("wild")
+        ||cir.getReturnValue().name().getPath().contains("tulip")) {
             AnimationMetadataSection section;
             AnimationMetadataSection snowySection;
             Resource snowy;
@@ -83,13 +86,22 @@ public abstract class MixinSpriteLoader {
 
             for (int i = 0; i < frameSize.width(); i++) {
                 for (int j = 0; j < frameSize.height(); j++) {
-                    // Color color = new Color(snowyImage.getPixelRGBA(i, j));
-                    // if(color.getRGB()>0)
-                    if (snowyImage.getPixelRGBA(i, j) != 0) {
-                        original.setPixelRGBA(i, j, snowyImage.getPixelRGBA(i, j));
+                    int pixel = original.getPixelRGBA(i, j);
+
+                    int r = ColorHelper.getRed(pixel);
+                    int g = ColorHelper.getGreen(pixel);
+                    int b = ColorHelper.getBlue(pixel);
+                    float brightness = 0.2126f * r + 0.7152f * g + 0.0722f * b;
+
+                    float mixRatio = Math.max(0.5f - (brightness / 255f) * 0.2f, 0.2f);
+
+                    if (ColorHelper.getAlpha(pixel) != 0) {
+                        int newColor = ColorHelper.simplyMixColor(pixel, mixRatio, Color.WHITE.getRGB(), 1 - mixRatio);
+                        original.setPixelRGBA(i, j, newColor);
                     }
                 }
             }
+
 
         }
     }

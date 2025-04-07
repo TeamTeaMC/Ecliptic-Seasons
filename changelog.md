@@ -1,3 +1,6 @@
+## **0.10.5.1.3**
+- Fixed the issue where the duration of seasonal day/night cycles was not affected by valid dimensions.
+
 ## **0.10.5.1.2**
 - Fixed an issue where saplings could not grow into trees via bone meal acceleration based on the growth probability when they had seasonal data but lacked humidity information.
 

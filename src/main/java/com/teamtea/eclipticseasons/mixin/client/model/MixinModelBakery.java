@@ -35,7 +35,9 @@ public abstract class MixinModelBakery {
     private @Final Map<ResourceLocation, UnbakedModel> topLevelModels;
 
 
-    @Shadow @Final private Map<ResourceLocation, UnbakedModel> unbakedCache;
+    @Shadow
+    @Final
+    private Map<ResourceLocation, UnbakedModel> unbakedCache;
 
     @Inject(method = "bakeModels", at = @At("RETURN"))
     public void eclipticseasons$bakeModels(BiFunction<ResourceLocation, Material, TextureAtlasSprite> atlasSpriteGetter, CallbackInfo ci) {
@@ -43,27 +45,28 @@ public abstract class MixinModelBakery {
         {
             return;
         }
-        List<Block> blocks = BuiltInRegistries.BLOCK.stream().filter(block -> block.defaultBlockState().isCollisionShapeFullBlock(EmptyBlockGetter.INSTANCE, BlockPos.ZERO)).toList();
+        // List<Block> blocks = BuiltInRegistries.BLOCK.stream().filter(block -> block.defaultBlockState().isCollisionShapeFullBlock(EmptyBlockGetter.INSTANCE, BlockPos.ZERO)).toList();
+        List<Block> blocks = BuiltInRegistries.BLOCK.stream().toList();
         for (Block block : blocks) {
             for (BlockState possibleState : block.getStateDefinition().getPossibleStates()) {
                 UnbakedModel unbakedModel = topLevelModels.getOrDefault(BlockModelShaper.stateToModelLocation(possibleState), null);
-                if(unbakedModel!=null){
-                  if(unbakedModel instanceof MultiVariant multiVariant){
-                      for (Variant variant : multiVariant.getVariants()) {
-                          UnbakedModel unbakedModelVariant = unbakedCache.get(variant.getModelLocation());
-                          if(unbakedModelVariant instanceof BlockModel blockModel){
-                              blockModel.textureMap.forEach(
-                                      (s, materialStringEither) -> {
-                                          materialStringEither.left().ifPresent(
-                                                  material -> {
-                                                      ModelManager.blocksCache.put(material.texture(),null);
-                                                  }
-                                          );
-                                      }
-                              );
-                          }
-                      }
-                  }
+                if (unbakedModel != null) {
+                    if (unbakedModel instanceof MultiVariant multiVariant) {
+                        for (Variant variant : multiVariant.getVariants()) {
+                            UnbakedModel unbakedModelVariant = unbakedCache.get(variant.getModelLocation());
+                            if (unbakedModelVariant instanceof BlockModel blockModel) {
+                                blockModel.textureMap.forEach(
+                                        (s, materialStringEither) -> {
+                                            materialStringEither.left().ifPresent(
+                                                    material -> {
+                                                        ModelManager.blocksCache.put(material.texture(), null);
+                                                    }
+                                            );
+                                        }
+                                );
+                            }
+                        }
+                    }
                 }
             }
         }

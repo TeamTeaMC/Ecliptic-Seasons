@@ -15,16 +15,20 @@ public class SolarAngelHelper {
     }
 
     public static int getSolarAngelTime(LevelTimeAccess world, long worldTime) {
-        if (world instanceof Level level && SolarHolders.getSaveData(level) != null) {
-            return SolarHolders.getSaveDataLazy(level).map(data ->
-            {
+        // && !level.dimensionType().hasFixedTime()
+        if (world instanceof Level level) {
+            SolarDataManager data = SolarHolders.getSaveData(level);
+            if (data != null
+                    && data.isValidDimension()) {
+
                 int dayLevelTime = Math.toIntExact((worldTime + 18000) % 24000); // 0 for noon; 6000 for sunset; 18000 for sunrise.
 
+                // 这里必须要等于，因为0时刻还没切换到下一天。
                 int dayTime =
                         dayLevelTime > 12000 && dayLevelTime <= 18000 && data.isTodayLastDay() ?
                                 data.getNextSolarTerm().getDayTime() :
                                 data.getSolarTerm().getDayTime();
-                // dayTime=23900;
+
                 int sunrise = 24000 - dayTime / 2;
                 int sunset = dayTime / 2;
                 int solarAngelTime;
@@ -35,8 +39,9 @@ public class SolarAngelHelper {
                 } else {
                     solarAngelTime = (dayLevelTime - sunrise) * 6000 / (24000 - sunrise);
                 }
+
                 return solarAngelTime;
-            }).orElse(Math.toIntExact(worldTime % 24000));
+            }
         }
         return Math.toIntExact(worldTime % 24000);
     }
