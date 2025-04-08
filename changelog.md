@@ -1,3 +1,6 @@
+## **0.10.5.1.4**
+- When Distant Horizons is installed and 'EnhancementChunkRenderUpdate' is not enabled, LOD rendering will no longer reset after sleeping for season update.
+
 ## **0.10.5.1.3**
 - Fixed the issue where the duration of seasonal day/night cycles was not affected by valid dimensions.
 
