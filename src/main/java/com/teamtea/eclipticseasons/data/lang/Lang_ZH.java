@@ -141,6 +141,7 @@ public class Lang_ZH extends LangHelper {
 
         add("commands.eclipticseasons.solar.set","已将节气天数设置为第%s天");
         add("effect.eclipticseasons.heat_stroke","中暑");
+        add("effect.eclipticseasons.heat_stroke.description", "酷热难耐，视线渐渐模糊。");
 
         add(AgroClimateRegistry.COLD, "寒带");
         add(AgroClimateRegistry.TEMPERATE, "温带");
