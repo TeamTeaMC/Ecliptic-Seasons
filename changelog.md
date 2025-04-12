@@ -1,3 +1,6 @@
+## **0.10.5.1.4.1**
+- Fixed an issue where the achievement "Spring After Autumn" was being unlocked at incorrect times.
+
 ## **0.10.5.1.4**
 - When Distant Horizons is installed and 'EnhancementChunkRenderUpdate' is not enabled, LOD rendering will no longer reset after sleeping for season update.
 

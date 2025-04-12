@@ -4,7 +4,6 @@ import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraftforge.common.capabilities.*;
-import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.common.util.LazyOptional;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -42,10 +41,10 @@ public class SolarTermsRecordCa implements ICapabilitySerializable<CompoundTag> 
         }
     }
 
-    public boolean addSolarTerm(SolarTerm st) {
+    public boolean addAndCheck(SolarTerm st) {
         if (!solarTerms.contains(st)) {
             solarTerms.add(st);
-            return true;
+            // return true;
         }
         return solarTerms.size()>=24;
     }

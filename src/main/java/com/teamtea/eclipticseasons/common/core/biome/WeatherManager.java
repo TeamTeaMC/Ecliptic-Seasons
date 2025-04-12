@@ -23,7 +23,6 @@ import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
@@ -581,7 +580,7 @@ public class WeatherManager {
                     solarTermsRecordCa ->
                     {
                         var st = EclipticSeasonsApi.getInstance().getSolarTerm(level);
-                        if (solarTermsRecordCa.addSolarTerm(st)) {
+                        if (solarTermsRecordCa.addAndCheck(st)) {
                         } else ModAdvancements.solarTermsCriterion.trigger(serverPlayer);
                     }
             );
