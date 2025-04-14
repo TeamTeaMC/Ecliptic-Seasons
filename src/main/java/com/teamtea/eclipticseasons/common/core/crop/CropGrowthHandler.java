@@ -35,6 +35,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -56,6 +57,7 @@ import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.event.level.SaplingGrowTreeEvent;
 import net.minecraftforge.eventbus.api.Event;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.BiFunction;
@@ -134,7 +136,6 @@ public final class CropGrowthHandler {
             CropGrowControlBuilder.put(entry.getKey().location(), builder);
             Optional<HolderSet<Block>> blocks = Optional.of(builder.applyTarget());
             if (blocks.isEmpty()) continue;
-
             EnumMap<SolarTerm, GrowParameter> solarTermGrowParameterEnumMap = new EnumMap<>(builder.solarTermList());
             EnumMap<Season, GrowParameter> seasonGrowParameterEnumMap = new EnumMap<>(builder.seasonList());
             EnumMap<Humidity, GrowParameter> humidityGrowParameterEnumMap = new EnumMap<>(builder.humidList());
@@ -317,7 +318,7 @@ public final class CropGrowthHandler {
                 growParameter.fertile_chance() : growParameter.grow_chance();
     }
 
-    public static GreenHouseCoreProvider getGreenHouseProvider(
+    public static @Nullable GreenHouseCoreProvider getGreenHouseProvider(
             Level level, BlockPos pos,
             Map<Holder<AgroClimaticZone>, CropGrowControl> controlMap, Holder<AgroClimaticZone> agentClimateTypeHolder) {
         List<Season> seasons = getLikeSeasonsInTemperate(controlMap, agentClimateTypeHolder);
@@ -333,17 +334,19 @@ public final class CropGrowthHandler {
     public static @NotNull List<Season> getLikeSeasonsInTemperate(Map<Holder<AgroClimaticZone>, CropGrowControl> controlMap, Holder<AgroClimaticZone> agentClimateTypeHolder) {
         List<Season> seasons = new ArrayList<>();
         CropGrowControl growControl_Temp = getCropGrowControl(controlMap, agentClimateTypeHolder);
-        for (Season collectValue : Season.collectValues()) {
-            GrowParameter parameter = growControl_Temp.getGrowParameter(collectValue);
-            if (parameter == null
-                    || parameter.grow_chance() > 0.4f) {
-                seasons.add(collectValue);
+        if (growControl_Temp != null) {
+            for (Season collectValue : Season.collectValues()) {
+                GrowParameter parameter = growControl_Temp.getGrowParameter(collectValue);
+                if (parameter == null
+                        || parameter.grow_chance() > 0.4f) {
+                    seasons.add(collectValue);
+                }
             }
         }
         return seasons;
     }
 
-    public static GrowParameter getSeasonGrowParameter(CropGrowControl growControl, SolarTerm solarTerm, Map<Holder<AgroClimaticZone>, CropGrowControl> controlMap, Holder<AgroClimaticZone> agentClimateTypeHolder, Holder<AgroClimaticZone> climateTypeHolder) {
+    public static @Nullable GrowParameter getSeasonGrowParameter(CropGrowControl growControl, SolarTerm solarTerm, Map<Holder<AgroClimaticZone>, CropGrowControl> controlMap, Holder<AgroClimaticZone> agentClimateTypeHolder, Holder<AgroClimaticZone> climateTypeHolder) {
         GrowParameter growParameter = null;
         if (growControl != null) {
             growParameter = growControl.getGrowParameter(solarTerm);
@@ -357,16 +360,16 @@ public final class CropGrowthHandler {
         return growParameter;
     }
 
-    public static CropGrowControl getCropGrowControl(Map<Holder<AgroClimaticZone>, CropGrowControl> controlMap, Holder<AgroClimaticZone> climateTypeHolder) {
+    public static @Nullable CropGrowControl getCropGrowControl(Map<Holder<AgroClimaticZone>, CropGrowControl> controlMap, Holder<AgroClimaticZone> climateTypeHolder) {
         return controlMap.getOrDefault(climateTypeHolder, null);
     }
 
-    public static Holder<AgroClimaticZone> getDefaultAgroClimaticZoneHolder(LevelAccessor level) {
+    public static @Nullable Holder<AgroClimaticZone> getDefaultAgroClimaticZoneHolder(LevelAccessor level) {
         boolean isServerSide = !level.isClientSide();
         return DefaultCropClimateType.getOrDefault(isServerSide, null);
     }
 
-    public static Holder<AgroClimaticZone> getclimateTypeHolder(Holder<Biome> biomeHolder) {
+    public static @Nullable Holder<AgroClimaticZone> getclimateTypeHolder(Holder<Biome> biomeHolder) {
         return cropClimateTypeMap.getOrDefault(biomeHolder.value(), null);
     }
 
@@ -377,7 +380,7 @@ public final class CropGrowthHandler {
         return level.getNoiseBiome(i, j, k);
     }
 
-    public static Map<Holder<AgroClimaticZone>, CropGrowControl> getControlMap(Block block) {
+    public static @Nullable Map<Holder<AgroClimaticZone>, CropGrowControl> getControlMap(Block block) {
         return CROP_GROW_MAP.get(block);
     }
 

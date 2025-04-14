@@ -1,3 +1,6 @@
+## **0.10.5.1.5**
+- Added null checks to greenhouse core to avoid null results from incorrectly tagged biomes and then crash (e.g., overworld biomes missing "is_overworld" tag).
+
 ## **0.10.5.1.4.1**
 - Fixed an issue where the achievement "Spring After Autumn" was being unlocked at incorrect times.
 

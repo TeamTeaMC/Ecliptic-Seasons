@@ -50,12 +50,16 @@ public class GreenHouseCoreBlockEntity extends SyncBlockEntity {
             }
             if (!level.isClientSide() && level.getGameTime() % 100 == 0) {
                 Holder<Biome> cropBiome = CropGrowthHandler.getCropBiome(level, blockPos);
-                AgroClimaticZone agroClimaticZone = CropGrowthHandler.getclimateTypeHolder(cropBiome).value();
-                List<Pair<Season, Integer>> pairs = agroClimaticZone.seasonalSignalDurations();
-                Pair<Season, Integer> currentSeason = findCurrentSeason(pairs, EclipticUtil.getNowSolarTerm(level).ordinal());
-                if (currentSeason.getFirst() == greenHouseCoreBlock.getSeason()) {
-                    level.setBlockAndUpdate(blockPos, blockState.setValue(GreenHouseCoreBlock.POWER, currentSeason.getSecond()));
-                } else level.setBlockAndUpdate(blockPos, blockState.setValue(GreenHouseCoreBlock.POWER, 0));
+                Holder<AgroClimaticZone> agroClimaticZoneHolder = CropGrowthHandler.getclimateTypeHolder(cropBiome);
+
+                if (agroClimaticZoneHolder != null) {
+                    AgroClimaticZone agroClimaticZone = agroClimaticZoneHolder.value();
+                    List<Pair<Season, Integer>> pairs = agroClimaticZone.seasonalSignalDurations();
+                    Pair<Season, Integer> currentSeason = findCurrentSeason(pairs, EclipticUtil.getNowSolarTerm(level).ordinal());
+                    if (currentSeason.getFirst() == greenHouseCoreBlock.getSeason()) {
+                        level.setBlockAndUpdate(blockPos, blockState.setValue(GreenHouseCoreBlock.POWER, currentSeason.getSecond()));
+                    } else level.setBlockAndUpdate(blockPos, blockState.setValue(GreenHouseCoreBlock.POWER, 0));
+                }
             }
         }
     }
@@ -78,12 +82,12 @@ public class GreenHouseCoreBlockEntity extends SyncBlockEntity {
                 if (firstSeason.equals(lastSeason) && (i == 0 || i == localSeason.size() - 1)) {
                     int localIndex = index - accumulatedLength;
                     int totalMergedLength = localSeason.get(0).getSecond() + localSeason.get(localSeason.size() - 1).getSecond();
-                    power = Math.min(index, totalMergedLength - localIndex)  * 30/ totalMergedLength;
+                    power = Math.min(index, totalMergedLength - localIndex) * 30 / totalMergedLength;
                 } else {
-                    power = Math.min((accumulatedLength + seasonLength) - index, index - accumulatedLength) * 30 / (seasonLength) ;
+                    power = Math.min((accumulatedLength + seasonLength) - index, index - accumulatedLength) * 30 / (seasonLength);
                 }
 
-                return Pair.of(season, Mth.clamp(power,1,15));
+                return Pair.of(season, Mth.clamp(power, 1, 15));
             }
 
             accumulatedLength += seasonLength;
