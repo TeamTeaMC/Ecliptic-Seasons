@@ -1,3 +1,6 @@
+### **0.10.5.2.1**
+- Fix daylight cycle if in an invalid dimension.
+
 ## **0.10.5.2**
 - Added snowy tree and snow under tree, with optional legacy versions for both.
 - Fixed an issue where setting the weight too high (with a value less than 10) would cause precision errors in particle spawn probability calculation.

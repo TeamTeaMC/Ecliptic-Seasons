@@ -18,8 +18,7 @@ public class SolarAngelHelper {
         // && !level.dimensionType().hasFixedTime()
         if (world instanceof Level level) {
             SolarDataManager data = SolarHolders.getSaveData(level);
-            if (data != null
-                    && data.isValidDimension()) {
+            if (data != null) {
 
                 int dayLevelTime = Math.toIntExact((worldTime + 18000) % 24000); // 0 for noon; 6000 for sunset; 18000 for sunrise.
 
