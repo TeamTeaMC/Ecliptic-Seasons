@@ -93,7 +93,7 @@ public class ParticleUtil {
             if (blockstate.is(EclipticBlockTags.HABITAT_BUTTERFLY)
                     && !EclipticSeasonsApi.getInstance().isRainOrSnowAt(clientLevel, blockpos$mutableblockpos)
                     && clientLevel.canSeeSky(blockpos$mutableblockpos)
-                    && random.nextInt(1024 * (int) (ClientConfig.Particle.butterflySpawnWeight.get() * 0.1f)) == 0
+                    && random.nextInt((int) (1024 * (ClientConfig.Particle.butterflySpawnWeight.get() * 0.1f))) == 0
             ) {
                 clientLevel.addParticle(ParticleRegistry.BUTTERFLY, false, i + 0.5, j + 0.8, k + 0.5, 0.0D, 5.0E-4D, 0.0D);
             }
@@ -105,7 +105,7 @@ public class ParticleUtil {
             if (blockstate.is(EclipticBlockTags.HABITAT_FIREFLY)
                     && !EclipticSeasonsApi.getInstance().isRainOrSnowAt(clientLevel, blockpos$mutableblockpos)
                     && clientLevel.canSeeSky(blockpos$mutableblockpos)
-                    && random.nextInt(160 * (int) (ClientConfig.Particle.fireflySpawnWeight.get() * 0.1f)) == 0
+                    && random.nextInt((int) (160 * (ClientConfig.Particle.fireflySpawnWeight.get() * 0.1f))) == 0
             ) {
                 clientLevel.addParticle(ParticleRegistry.FIREFLY, false, i + 0.5, j + 0.8, k + 0.5, 0.0D, 5.0E-4D, 0.0D);
             }
@@ -118,7 +118,7 @@ public class ParticleUtil {
                 && clientLevel.isEmptyBlock(blockpos$mutableblockpos)
                 && !EclipticSeasonsApi.getInstance().isRainAt(clientLevel, blockpos$mutableblockpos)
                 && clientLevel.getBiome(blockpos$mutableblockpos).value().getBaseTemperature() < 0.95f
-                && random.nextInt(2295 * (int) (ClientConfig.Particle.wildGooseSpawnWeight.get() * 0.1f)) == 0) {
+                && random.nextInt((int) (2295 * (ClientConfig.Particle.wildGooseSpawnWeight.get() * 0.1f))) == 0) {
             clientLevel.addParticle(ParticleRegistry.WILD_GOOSE, false, x + random.nextInt(16, 16 * 2) * (random.nextBoolean() ? -1 : 1), y + random.nextInt(15, 16 * 2), z + random.nextInt(16, 16 * 2) * (random.nextBoolean() ? -1 : 1), 0.0D, 5.0E-4D, 0.0D);
         }
 

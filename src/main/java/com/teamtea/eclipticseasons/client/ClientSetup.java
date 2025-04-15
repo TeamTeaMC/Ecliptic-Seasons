@@ -86,6 +86,9 @@ public class ClientSetup {
         event.register(ModelManager.snow_height2_top);
         event.register(ModelManager.grass_flower);
 
+        event.register(ModelManager.snowy_leaves_attach);
+        event.register(ModelManager.snowy_leaves_top);
+
         ModelManager.flower_on_grass.forEach(event::register);
 
     }
@@ -135,6 +138,8 @@ public class ClientSetup {
 
         List<ResourceLocation> bakedModels =
                 new ArrayList<>(List.of(
+                        ModelManager.snowy_leaves_attach,
+                        ModelManager.snowy_leaves_top,
                         ModelManager.snowy_custom,
                         ModelManager.stairs_top,
                         ModelManager.snowy_fern,

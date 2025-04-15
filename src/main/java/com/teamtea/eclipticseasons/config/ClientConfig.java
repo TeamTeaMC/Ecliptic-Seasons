@@ -1,5 +1,6 @@
 package com.teamtea.eclipticseasons.config;
 
+import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.compat.CompatModule;
 import net.minecraftforge.common.ForgeConfigSpec;
 
@@ -49,6 +50,9 @@ public class ClientConfig {
         public static ForgeConfigSpec.BooleanValue useVanillaCheck;
 
         public static ForgeConfigSpec.BooleanValue betterSnow;
+        public static ForgeConfigSpec.BooleanValue snowUnderTree;
+        public static ForgeConfigSpec.BooleanValue snowyTree;
+
         public static ForgeConfigSpec.BooleanValue realisticSnowyChange;
 
         public static ForgeConfigSpec.BooleanValue seasonalGrassColorChange;
@@ -70,7 +74,10 @@ public class ClientConfig {
                     .define("RealisticSnowyChange", true);
             betterSnow = builder.comment("Blocks underneath fences etc. may also be covered with snow.")
                     .define("SnowUnderFence", true);
-
+            snowyTree = builder.comment("Not just the top layer—now even the leaves below are dusted with frost and snow.")
+                    .define("SnowyTree", true);
+            snowUnderTree = builder.comment("Blocks under tree may also be covered with snow, note that this is only a client-side effect.")
+                    .define("snowUnderTree", false);
 
             seasonalGrassColorChange = builder.comment("The colors of the grass and leaves change with the time of year.")
                     .define("SeasonalGrassColorChange", true);

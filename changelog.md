@@ -1,3 +1,7 @@
+## **0.10.5.2**
+- Added snowy tree and snow under tree, with optional legacy versions for both.
+- Fixed an issue where setting the weight too high (with a value less than 10) would cause precision errors in particle spawn probability calculation.
+
 ## **0.10.5.1.5**
 - Added null checks to greenhouse core to avoid null results from incorrectly tagged biomes and then crash (e.g., overworld biomes missing "is_overworld" tag).
 

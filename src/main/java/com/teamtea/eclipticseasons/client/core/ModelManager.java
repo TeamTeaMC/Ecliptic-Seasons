@@ -26,6 +26,7 @@ import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.level.*;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraftforge.client.ChunkRenderTypeSet;
 import net.minecraftforge.client.model.data.ModelData;
 import com.teamtea.eclipticseasons.EclipticSeasons;
@@ -42,6 +43,9 @@ public class ModelManager {
     public static ModelResourceLocation snowySlabBottom = new ModelResourceLocation(BlockRegistry.snowySlab.getId(), "type=bottom,waterlogged=false");
     public static ModelResourceLocation snowOverlayBlock = new ModelResourceLocation(BlockRegistry.snowyBlock.getId(), "");
 
+
+    public static ResourceLocation snowy_leaves_attach = EclipticSeasons.rl("block/snowy_leaves_attach");
+    public static ResourceLocation snowy_leaves_top = EclipticSeasons.rl("block/snowy_leaves_top");
 
     public static ResourceLocation snowy_custom = EclipticSeasons.rl("block/snowy_custom");
     public static ResourceLocation stairs_top = EclipticSeasons.rl("block/stairs_top");
@@ -108,7 +112,9 @@ public class ModelManager {
         if (flag == MapChecker.FLAG_BLOCK) {
             snowModel = models.get(snowOverlayBlock);
         } else if (flag == MapChecker.FLAG_LEAVES) {
-            snowModel = models.get(snowOverlayLeaves);
+            snowModel = !ClientConfig.Renderer.snowyTree.get() ?
+                    models.get(snowOverlayLeaves) : snowState != null ?
+                    models.get(snowy_leaves_top) : models.get(snowy_leaves_attach);
         } else if (flag == MapChecker.FLAG_SLAB) {
             snowModel = models.get(snowySlabBottom);
         } else if (flag == MapChecker.FLAG_STAIRS_TOP) {
@@ -365,9 +371,9 @@ public class ModelManager {
                 if (flag == MapChecker.FLAG_BLOCK && pos.getY() == cacheHeight - 1) {
                     BlockPos above = pos.above();
                     BlockState aboveState = blockAndTintGetter.getBlockState(above);
-                    if ( MapChecker.getBlockType(aboveState, blockAndTintGetter, above) == MapChecker.FLAG_CUSTOM
-                                    && !(aboveState.getBlock() instanceof SlabBlock)
-                                    && !(aboveState.getBlock() instanceof StairBlock)) {
+                    if (MapChecker.getBlockType(aboveState, blockAndTintGetter, above) == MapChecker.FLAG_CUSTOM
+                            && !(aboveState.getBlock() instanceof SlabBlock)
+                            && !(aboveState.getBlock() instanceof StairBlock)) {
                         cacheHeight--;
                     } else {
                         for (Direction direction : Direction.Plane.HORIZONTAL) {
@@ -390,6 +396,51 @@ public class ModelManager {
             isLight = cacheHeight == pos.getY() - offset;
         }
 
+        // if(!isLight&&flag!=MapChecker.FLAG_LEAVES){
+        //
+        //     if(blockAndTintGetter.getBrightness(LightLayer.SKY, pos.above())>0){
+        //         if(level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, pos.getX(),pos.getZ())<=pos.getY()+1){
+        //             isLight=true;
+        //         }
+        //     }
+        // }
+
+        boolean isLeaf = flag == MapChecker.FLAG_LEAVES;
+        boolean specialLeaves = false;
+        if (!isLight && isLeaf && ClientConfig.Renderer.snowyTree.get()) {
+            if (blockAndTintGetter.getBrightness(LightLayer.SKY, pos.above()) >= 9) {
+                int y_real = level.getHeight(Heightmap.Types.MOTION_BLOCKING, pos.getX(), pos.getZ()) - 1;
+                if (y_real <= pos.getY()
+                        || blockAndTintGetter.getBlockState(new BlockPos(pos.getX(), y_real, pos.getZ())).getShadeBrightness(blockAndTintGetter, pos) < 0.5f)
+                // if (level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, pos.getX(), pos.getZ()) >= pos.getY() + 1)
+                {
+                    isLight = true;
+                    if (isLeaf) {
+                        specialLeaves = true;
+                    }
+                }
+            }
+        }
+
+        if (!isLight && ClientConfig.Renderer.snowUnderTree.get()) {
+            if (blockAndTintGetter.getBrightness(LightLayer.SKY, pos.above()) >= 9) {
+                int y_real = level.getHeight(Heightmap.Types.MOTION_BLOCKING, pos.getX(), pos.getZ()) - 1;
+                // note 注意这里是section
+                try {
+                    if (level.getBlockState(new BlockPos(pos.getX(), y_real, pos.getZ()))
+                            .getShadeBrightness(blockAndTintGetter, pos) < 0.5f) {
+                        isLight = true;
+                        if (isLeaf) {
+                            if (ClientConfig.Renderer.snowyTree.get())
+                                specialLeaves = true;
+                            else isLight = false;
+                        }
+                    }
+                } catch (Exception e) {
+                    EclipticSeasons.logger(e);
+                }
+            }
+        }
 
         if (isLight) {
             if (CommonConfig.Season.snowyWinter.get()
@@ -409,11 +460,15 @@ public class ModelManager {
 
                 if (isSnowy) {
                     BlockState snowState = null;
-                    if (models != null && flag == MapChecker.FLAG_STAIRS) {
-                        snowState = BlockRegistry.snowyStairs.get().defaultBlockState()
-                                .setValue(StairBlock.FACING, state.getValue(StairBlock.FACING))
-                                .setValue(StairBlock.HALF, state.getValue(StairBlock.HALF))
-                                .setValue(StairBlock.SHAPE, state.getValue(StairBlock.SHAPE));
+                    if (models != null) {
+                        if (flag == MapChecker.FLAG_STAIRS) {
+                            snowState = BlockRegistry.snowyStairs.get().defaultBlockState()
+                                    .setValue(StairBlock.FACING, state.getValue(StairBlock.FACING))
+                                    .setValue(StairBlock.HALF, state.getValue(StairBlock.HALF))
+                                    .setValue(StairBlock.SHAPE, state.getValue(StairBlock.SHAPE));
+                        } else if (isLeaf && !specialLeaves) {
+                            snowState = BlockRegistry.snowyLeaves.get().defaultBlockState();
+                        }
                     }
                     BakedModel snowModel = getSnowyModel(state, snowState, flag, offset);
 
