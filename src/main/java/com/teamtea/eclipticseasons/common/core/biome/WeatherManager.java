@@ -148,7 +148,7 @@ public class WeatherManager {
 
     public static boolean isThunderAtBiome(Level level, BlockPos pos) {
         Holder<Biome> surfaceBiome = MapChecker.getSurfaceBiome(level, pos);
-        return isThunderAtBiome(level,surfaceBiome.get());
+        return isThunderAtBiome(level, surfaceBiome.get());
     }
 
     public static boolean isThunderAtBiome(Level serverLevel, Biome biome) {
@@ -484,7 +484,8 @@ public class WeatherManager {
     }
 
     public static void initNewWorldWeather(ServerLevel level, RandomSource random, SolarTerm solarTerm) {
-        if (level.isClientSide() || !MapChecker.isValidDimension(level)) {
+        if (!CommonConfig.Season.shouldInitWeather.get()
+                || level.isClientSide() || !MapChecker.isValidDimension(level)) {
             return;
         }
         ArrayList<BiomeWeather> biomeList = getBiomeList(level);

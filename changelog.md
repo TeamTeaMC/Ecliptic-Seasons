@@ -1,3 +1,6 @@
+### **0.10.5.2.2**
+- Added a configuration option to control whether weather and snow status should be initialized.
+
 ### **0.10.5.2.1**
 - Fix daylight cycle if in an invalid dimension.
 

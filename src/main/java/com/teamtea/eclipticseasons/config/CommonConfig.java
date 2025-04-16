@@ -80,6 +80,7 @@ public class CommonConfig {
         public static ForgeConfigSpec.IntValue initialSolarTermIndex;
         public static ForgeConfigSpec.BooleanValue daylightChange;
         public static ForgeConfigSpec.ConfigValue<List<? extends String>> validDimensions;
+        public static ForgeConfigSpec.BooleanValue shouldInitWeather;
 
         public static ForgeConfigSpec.BooleanValue snowyWinter;
         public static ForgeConfigSpec.BooleanValue notSnowyNearGlowingBlock;
@@ -104,6 +105,8 @@ public class CommonConfig {
                     .defineListAllowEmpty("ValidDimensions",
                             () -> List.of(Level.OVERWORLD.location().toString()),
                             o -> o instanceof String s && ResourceLocation.tryParse(s) != null);
+            shouldInitWeather = builder.comment("Set it true to initialize weather and snow when loading the mod or level for the first time.")
+                    .define("ShouldInitWeather", true);
 
             snowyWinter = builder.comment("If snow falls during cold weather, it will gradually cover all solid blocks and grass.")
                     .define("SnowyWinter", true);
