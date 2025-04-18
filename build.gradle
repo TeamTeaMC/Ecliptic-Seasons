@@ -223,7 +223,7 @@ dependencies {
     implementation fg.deobf("curse.maven:jei-238222:6075247")
     implementation fg.deobf("curse.maven:jade-324717:5072729")
 
-    compileOnly fg.deobf("com.ferreusveritas.dynamictrees:DynamicTrees-1.20.1:1.3.6")
+    compileOnly fg.deobf("curse.maven:dynamictrees-252818:6410558")
 
     compileOnly fg.deobf( "libs:fabric-renderer-api-v1:3.2.1+cf68abbe77")
     compileOnly fg.deobf( "libs:fabric-renderer-indigo:1.5.2+b5b2da4177")
