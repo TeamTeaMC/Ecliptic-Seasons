@@ -131,15 +131,17 @@ public class CommonConfig {
         public static ForgeConfigSpec.BooleanValue complexGreenHouseCheck;
         public static ForgeConfigSpec.BooleanValue useDefaultValue;
 
+        public static ForgeConfigSpec.BooleanValue forceCompatMode;
+
         private static void load(ForgeConfigSpec.Builder builder) {
             builder.push("Crop");
             enableCrop = builder.comment("Enable crop season control.")
                     .define("EnableSeasonalCrop", true);
-            cropGrowChanceInWrongSeason = builder.comment("How much chance can crop grow in wrong season.")
+            cropGrowChanceInWrongSeason = builder.comment("[Deprecated]How much chance can crop grow in wrong season.")
                     .defineInRange("CropGrowChanceInWrongSeason", 0.05, 0, 1);
             enableCropHumidityControl = builder.comment("Enable crop humidity control.")
                     .define("EnableCropHumidityControl", true);
-            cropGrowChanceInWrongHumidity = builder.comment("How much base chance can crop grow in wrong humidity.")
+            cropGrowChanceInWrongHumidity = builder.comment("[Deprecated]How much base chance can crop grow in wrong humidity.")
                     .defineInRange("CropGrowChanceInWrongHumidity", 0.25, 0.0001, 0.9999);
             greenHouseMaxDiameter = builder.comment("The maximum effective diameter of the greenhouse.")
                     .defineInRange("GreenHouseMaxDiameter", 32, 5, 256);
@@ -150,8 +152,11 @@ public class CommonConfig {
 
             complexGreenHouseCheck = builder.comment("Whether to enable complex shape checking.")
                     .define("ComplexGreenHouseCheck", true);
-            useDefaultValue = builder.comment("If a crop is not registered for a season or humid type, default values will be used.")
+            useDefaultValue = builder.comment("[Deprecated]If a crop is not registered for a season or humid type, default values will be used.")
                     .define("RegisterCropDefaultValue", false);
+
+            forceCompatMode = builder.comment("Force all crops to use compatibility mode for growth control, not just those tagged as eclipticseasons:natural_plants.")
+                    .define("ForceCompatMode", false);
             builder.pop();
         }
     }
@@ -179,10 +184,17 @@ public class CommonConfig {
         return useSolarWeather;
     }
 
+    private static boolean forceCropCompatMode = false;
+
+    public static boolean isForceCropCompatMode() {
+        return forceCropCompatMode;
+    }
+
     public static void UpdateConfig(ModConfigEvent modConfigEvent) {
         if (!(modConfigEvent instanceof ModConfigEvent.Unloading)
                 && modConfigEvent.getConfig().getSpec() == COMMON_CONFIG) {
             useSolarWeather = Weather.useSolarWeather.get();
+            forceCropCompatMode = Crop.forceCompatMode.get();
         }
     }
 

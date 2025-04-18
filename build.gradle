@@ -179,10 +179,16 @@ repositories {
     // If you have mod jar dependencies in ./libs, you can declare them as a repository like so:
      flatDir {
          dir 'libs'
+         content {
+             includeGroup "libs"
+         }
      }
 
     flatDir {
         dir 'mods'
+        content {
+            includeGroup "mods"
+        }
     }
 
     maven {
@@ -196,6 +202,9 @@ repositories {
 //    }
     maven {
         url "https://harleyoconnor.com/maven"
+        content {
+            includeGroup "com.ferreusveritas.dynamictrees"
+        }
     }
 }
 

@@ -4,6 +4,7 @@ package com.teamtea.eclipticseasons.data.tag;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.crop.CropHumidityType;
 import com.teamtea.eclipticseasons.api.constant.crop.CropSeasonType;
+import com.teamtea.eclipticseasons.api.constant.tag.EclipticBlockTags;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.ItemTagsProvider;
@@ -49,6 +50,13 @@ public final class ESItemTagProvider extends ItemTagsProvider {
         // others
         tag(CropHumidityType.AVERAGE_MOIST.getTag()).addOptional(fd_rl("tomato_seeds"));
         tag(CropHumidityType.MOIST_HUMID.getTag()).addOptional(fd_rl("rice")).addOptional(fd_rl("brown_mushroom_colony")).addOptional(fd_rl("red_mushroom_colony"));
+
+        for (CropSeasonType cropSeasonType : CropSeasonType.collectValues()) {
+            tag(cropSeasonType.getTag());
+        }
+        for (CropHumidityType cropHumidityType : CropHumidityType.collectValues()) {
+            tag(cropHumidityType.getTag());
+        }
 
     }
 

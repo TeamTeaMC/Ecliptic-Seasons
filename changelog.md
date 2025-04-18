@@ -1,3 +1,10 @@
+## **0.10.6**
+- Added `eclipticseasons:natural_plants` tag to identify Blocks that require growth control via compatibility mode — typically used for mods that do not natively support the Forge Event Bus or are added via Sinytra Connector (Fabric mods).
+- Added a config entry named as ForceCompatMode: forces all crops to use compatibility mode for growth control, not just those tagged with `eclipticseasons:natural_plants`. Note native support offers significantly better performance.
+- Added missing tags for season quest blocks.
+- Include unused but extendable Crop tags in the resource folder for easy handling.
+- Refined serval English localization strings. Thanks to Korben.
+
 ### **0.10.5.2.2**
 - Added a configuration option to control whether weather and snow status should be initialized.
 

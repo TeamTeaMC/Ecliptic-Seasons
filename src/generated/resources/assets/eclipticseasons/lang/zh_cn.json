@@ -90,6 +90,7 @@
   "eclipticseasons.season_quest.hint.item_count": "%sx%s",
   "eclipticseasons.season_quest.hint.loading": "空空如也",
   "effect.eclipticseasons.heat_stroke": "中暑",
+  "effect.eclipticseasons.heat_stroke.description": "酷热难耐，视线渐渐模糊。",
   "info.eclipticseasons.environment.humidity": "适宜湿度： ",
   "info.eclipticseasons.environment.humidity.arid": "干旱",
   "info.eclipticseasons.environment.humidity.average": "一般",

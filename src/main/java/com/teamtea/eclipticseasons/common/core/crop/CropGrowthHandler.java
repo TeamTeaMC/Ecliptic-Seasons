@@ -65,7 +65,7 @@ import java.util.function.Function;
 
 
 public final class CropGrowthHandler {
-    public static void beforeCropGrowUp(BlockEvent.CropGrowEvent.Pre event) {
+    public static void beforeCropGrowUp(BlockEvent.CropGrowEvent event) {
         var block = event.getState();
         var world = event.getLevel();
         BlockPos pos = event.getPos();
@@ -507,21 +507,21 @@ public final class CropGrowthHandler {
     public static void setResult(net.minecraftforge.eventbus.api.Event event, int flag) {
         if (event.hasResult()) {
             if (flag == CANCEL) {
-                if (event instanceof BlockEvent.CropGrowEvent.Pre cropGrowEvent) {
-                    cropGrowEvent.setResult(BlockEvent.CropGrowEvent.Pre.Result.DENY);
+                if (event instanceof BlockEvent.CropGrowEvent cropGrowEvent) {
+                    cropGrowEvent.setResult(net.minecraftforge.eventbus.api.Event.Result.DENY);
                 } else if (event instanceof SaplingGrowTreeEvent blockGrowFeatureEvent) {
-                    blockGrowFeatureEvent.setResult(Event.Result.DENY);
+                    blockGrowFeatureEvent.setResult(net.minecraftforge.eventbus.api.Event.Result.DENY);
                 } else if (event instanceof BonemealEvent bonemealEvent) {
                     // bonemealEvent.setCanceled(true);
-                    bonemealEvent.setResult(Event.Result.ALLOW);
+                    bonemealEvent.setResult(net.minecraftforge.eventbus.api.Event.Result.ALLOW);
                 }
             } else if (flag == PASS) {
-                if (event instanceof BlockEvent.CropGrowEvent.Pre cropGrowEvent) {
-                    cropGrowEvent.setResult(BlockEvent.CropGrowEvent.Pre.Result.DEFAULT);
+                if (event instanceof BlockEvent.CropGrowEvent cropGrowEvent) {
+                    cropGrowEvent.setResult(net.minecraftforge.eventbus.api.Event.Result.DEFAULT);
                 }
             } else if (flag == GROW) {
-                if (event instanceof BlockEvent.CropGrowEvent.Pre cropGrowEvent) {
-                    cropGrowEvent.setResult(BlockEvent.CropGrowEvent.Pre.Result.ALLOW);
+                if (event instanceof BlockEvent.CropGrowEvent cropGrowEvent) {
+                    cropGrowEvent.setResult(net.minecraftforge.eventbus.api.Event.Result.ALLOW);
                 }
             }
         }

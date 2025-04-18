@@ -2,6 +2,7 @@ package com.teamtea.eclipticseasons.data.tag;
 
 
 import com.teamtea.eclipticseasons.api.constant.crop.CropHumidityType;
+import com.teamtea.eclipticseasons.api.constant.crop.CropSeasonType;
 import com.teamtea.eclipticseasons.api.constant.tag.EclipticBlockTags;
 import com.teamtea.eclipticseasons.common.registry.BlockRegistry;
 import net.minecraft.core.HolderLookup;
@@ -42,6 +43,19 @@ public final class ESBlockTagProvider extends BlockTagsProvider {
                 .addTag(BlockTags.ICE)
                 .addTag(BlockTags.SNOW_LAYER_CANNOT_SURVIVE_ON);
 
+        for (CropSeasonType cropSeasonType : CropSeasonType.collectValues()) {
+            tag(cropSeasonType.getBlockTag());
+        }
+        for (CropHumidityType cropHumidityType : CropHumidityType.collectValues()) {
+            tag(cropHumidityType.getBlockTag());
+        }
+
+        tag(EclipticBlockTags.NATURAL_PLANTS);
+
+        tag(BlockTags.CEILING_HANGING_SIGNS).add(BlockRegistry.season_quest_ceiling_hanging_sign.get());
+        tag(BlockTags.WALL_HANGING_SIGNS).add(BlockRegistry.season_quest_wall_hanging_sign.get());
+
+
         tag(BlockTags.MINEABLE_WITH_AXE).add(BlockRegistry.calendar.get(),
                 BlockRegistry.season_quest_wall_hanging_sign.get(),
                 BlockRegistry.season_quest_ceiling_hanging_sign.get(),
@@ -52,6 +66,8 @@ public final class ESBlockTagProvider extends BlockTagsProvider {
                 BlockRegistry.autumn_greenhouse_core.get(),
                 BlockRegistry.winter_greenhouse_core.get(),
                 BlockRegistry.greenhouse_core_container.get());
+
+
     }
 
 

@@ -4,6 +4,7 @@ package com.teamtea.eclipticseasons.common;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.data.climate.BiomesClimateSettings;
 import com.teamtea.eclipticseasons.api.data.craft.HumidityControl;
+import com.teamtea.eclipticseasons.api.event.CanPlantGrowEvent;
 import com.teamtea.eclipticseasons.common.advancement.SolarTermsRecordCa;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
@@ -132,9 +133,9 @@ public class AllListener {
                     ModAdvancements.parentNeedCriterion.trigger(serverPlayer);
 
                     SolarDataManager data = SolarHolders.getSaveData(serverPlayer.level());
-                    if(data!=null){
+                    if (data != null) {
                         float v = data.calculateHumidityModification(serverPlayer.blockPosition());
-                        SimpleNetworkHandler.send(serverPlayer,new HumidModifyMessage(
+                        SimpleNetworkHandler.send(serverPlayer, new HumidModifyMessage(
                                 serverPlayer.blockPosition(), Mth.floor(v)
                         ));
                     }
@@ -184,8 +185,14 @@ public class AllListener {
     }
 
     @SubscribeEvent
-    public static void onCropGrowUp(BlockEvent.CropGrowEvent.Pre event) {
+    public static void onCropGrowUp(CanPlantGrowEvent event) {
         CropGrowthHandler.beforeCropGrowUp(event);
+    }
+
+    @SubscribeEvent
+    public static void onCropGrowUp(BlockEvent.CropGrowEvent.Pre event) {
+        if (!CommonConfig.isForceCropCompatMode())
+            CropGrowthHandler.beforeCropGrowUp(event);
     }
 
     @SubscribeEvent
