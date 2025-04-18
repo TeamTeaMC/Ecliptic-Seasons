@@ -13,6 +13,7 @@
     "common.MixinLevelTimeAccess",
     "common.MixinServerLevel",
     "common.block.MixinBeehiveBlockEntity",
+    "common.block.MixinBlockStateBase",
     "common.block.MixinFireBlock",
     "common.block.MixinIBlockExtension",
     "common.block.MixinLightningRodBlock",
