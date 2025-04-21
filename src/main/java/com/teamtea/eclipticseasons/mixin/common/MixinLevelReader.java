@@ -26,7 +26,7 @@ public interface MixinLevelReader extends LevelReader {
     default int getMaxLocalRawBrightness(@NotNull BlockPos pPos) {
         int amount = this.getSkyDarken();
         if (this instanceof Level level && EclipticUtil.hasLocalWeather(level)) {
-            amount = WeatherManager.getSkyDarken(level, pPos);
+            amount = WeatherManager.getSkyDarken(level, pPos, amount);
         }
         return this.getMaxLocalRawBrightness(pPos, amount);
     }

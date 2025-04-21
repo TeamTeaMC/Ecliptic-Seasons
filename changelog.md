@@ -1,3 +1,8 @@
+## **0.10.7.2**
+- Fixed incorrect night brightness levels caused by adjustments from 0.10.7
+- Addressed inability to sleep during thunderstorms
+- Optimized thunderstorm generation mechanics
+
 ## **0.10.7.1**
 - Added some missing Crop Tags
 - Greenhouse integrity check now includes water source blocks

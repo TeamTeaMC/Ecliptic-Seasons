@@ -88,7 +88,7 @@ public class WeatherManager {
         return level != null ? level : getMainServerLevel();
     }
 
-    public static Float getMinRainLevel(Level level, float p46723) {
+    public static float getMinRainLevel(Level level, float p46723) {
         var ws = getBiomeList(level);
         if (ws != null)
             for (BiomeWeather biomeWeather : ws) {
@@ -99,7 +99,7 @@ public class WeatherManager {
         return 1.0f;
     }
 
-    public static Float getMaximumRainLevel(Level level, float p46723) {
+    public static float getMaximumRainLevel(Level level, float p46723) {
         var ws = getBiomeList(level);
         if (ws != null)
             for (BiomeWeather biomeWeather : ws) {
@@ -125,7 +125,7 @@ public class WeatherManager {
         return true;
     }
 
-    public static Float getMinThunderLevel(Level level, float p46723) {
+    public static float getMinThunderLevel(Level level, float p46723) {
         var ws = getBiomeList(level);
         if (ws != null)
             for (BiomeWeather biomeWeather : ws) {
@@ -137,7 +137,7 @@ public class WeatherManager {
     }
 
 
-    public static Float getMaximumThunderLevel(Level level, float p46723) {
+    public static float getMaximumThunderLevel(Level level, float p46723) {
         var ws = getBiomeList(level);
         if (ws != null)
             for (BiomeWeather biomeWeather : ws) {
@@ -457,7 +457,8 @@ public class WeatherManager {
                     if (!biomeWeather.shouldThunder()) {
                         BiomeRain biomeRain = SolarHolders.getSaveData(level).getSolarTerm().getBiomeRain(biomeWeather.biomeHolder);
                         float weight = biomeRain.getThunderChance()
-                                * ((CommonConfig.Weather.thunderChanceMultiplier.get() * 1f) / 100f);
+                                * ((CommonConfig.Weather.thunderChanceMultiplier.get() * 1f) / 100f)
+                                * size / 3000f;
                         if (level.getRandom().nextInt(1000) / 1000.f < weight) {
                             biomeWeather.thunderTime = ServerLevel.THUNDER_DURATION.sample(random) / size;
                         }
@@ -606,9 +607,9 @@ public class WeatherManager {
         }
     }
 
-    public static int getSkyDarken(Level level, BlockPos pPos) {
-        WeatherManager.BiomeWeather biomeWeather = WeatherManager.getBiomeWeather(level, MapChecker.getSurfaceBiome(level, pPos));
-        int amount = biomeWeather == null || biomeWeather.shouldClear() ? 0 :
+    public static int getSkyDarken(Level level, BlockPos pos, int amount) {
+        WeatherManager.BiomeWeather biomeWeather = WeatherManager.getBiomeWeather(level, MapChecker.getSurfaceBiome(level, pos));
+        amount += biomeWeather == null || biomeWeather.shouldClear() ? 0 :
                 biomeWeather.shouldThunder() ? 8 : 4;
         return Mth.clamp(amount, 0, 15);
     }
