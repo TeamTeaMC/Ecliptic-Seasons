@@ -81,34 +81,35 @@ public final class CropInfoManager {
         CROP_HUMIDITY_INFO.clear();
         CROP_SEASON_INFO.clear();
 
-        var items = event.getRegistryAccess().registry(Registries.ITEM);
-        if (items.isPresent()) {
-            for (CropHumidityType cropHumidityType : CropHumidityType.values()) {
-                var tagItems = items.get().getTag(ItemTags.create(cropHumidityType.getRes()));
-                tagItems.ifPresent(holders -> holders.stream().toList().forEach(action -> {
-                    registerCropHumidityInfo(action.get(), cropHumidityType);
+        Optional<Registry<Item>> items = event.getRegistryAccess().registry(Registries.ITEM);
+        Optional<Registry<Block>> blocks = event.getRegistryAccess().registry(Registries.BLOCK);
+
+        if (blocks.isPresent()) {
+            for (CropHumidityType cropHumidityType : CropHumidityType.collectValues()) {
+                var tagBlocks = blocks.get().getTag(cropHumidityType.getBlockTag());
+                tagBlocks.ifPresent(holders -> holders.stream().forEach(action -> {
+                    registerCropHumidityInfo(action.value(), cropHumidityType, true);
                 }));
             }
-            for (CropSeasonType cropSeasonType : CropSeasonType.values()) {
-                var tagItems = items.get().getTag(ItemTags.create(cropSeasonType.getRes()));
-                tagItems.ifPresent(holders -> holders.stream().toList().forEach(action -> {
-                    registerCropSeasonInfo(action.get(), cropSeasonType);
+            for (CropSeasonType cropSeasonType : CropSeasonType.collectValues()) {
+                var tagBlocks = blocks.get().getTag(cropSeasonType.getBlockTag());
+                tagBlocks.ifPresent(holders -> holders.stream().forEach(action -> {
+                    registerCropSeasonInfo(action.value(), cropSeasonType, true);
                 }));
             }
         }
 
-        var blocks = event.getRegistryAccess().registry(Registries.BLOCK);
-        if (blocks.isPresent()) {
-            for (CropHumidityType cropHumidityType : CropHumidityType.values()) {
-                var tagBlocks = blocks.get().getTag(BlockTags.create(cropHumidityType.getRes()));
-                tagBlocks.ifPresent(holders -> holders.stream().toList().forEach(action -> {
-                    registerCropHumidityInfo(action.value(), cropHumidityType, true);
+        if (items.isPresent()) {
+            for (CropHumidityType cropHumidityType : CropHumidityType.collectValues()) {
+                var tagItems = items.get().getTag(cropHumidityType.getTag());
+                tagItems.ifPresent(holders -> holders.stream().forEach(action -> {
+                    registerCropHumidityInfo(action.value(), cropHumidityType);
                 }));
             }
-            for (CropSeasonType cropSeasonType : CropSeasonType.values()) {
-                var tagBlocks = blocks.get().getTag(BlockTags.create(cropSeasonType.getRes()));
-                tagBlocks.ifPresent(holders -> holders.stream().toList().forEach(action -> {
-                    registerCropSeasonInfo(action.value(), cropSeasonType, true);
+            for (CropSeasonType cropSeasonType : CropSeasonType.collectValues()) {
+                var tagItems = items.get().getTag(cropSeasonType.getTag());
+                tagItems.ifPresent(holders -> holders.stream().forEach(action -> {
+                    registerCropSeasonInfo(action.value(), cropSeasonType);
                 }));
             }
         }

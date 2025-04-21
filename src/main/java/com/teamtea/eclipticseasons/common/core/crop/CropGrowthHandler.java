@@ -644,10 +644,11 @@ public final class CropGrowthHandler {
                 return null;
             BlockState blockstate = clipContext.getBlockState(levelReader, pos);
             if (!blockstate.isSolid()) {
-                Fluid fluid = blockstate.getFluidState().getType();
-                if (fluid == Fluids.EMPTY
-                        || !(fluid == Fluids.WATER
-                        || fluid == Fluids.FLOWING_WATER)) {
+                // Fluid fluid = blockstate.getFluidState().getType();
+                // if (fluid == Fluids.EMPTY
+                //         || !(fluid == Fluids.WATER
+                //         || fluid == Fluids.FLOWING_WATER))
+                {
                     return null;
                 }
             }
@@ -687,7 +688,7 @@ public final class CropGrowthHandler {
     }
 
     public static boolean isInRoom(LevelAccessor level, BlockPos pos, BlockState state, Optional<HolderSet<Block>> notCheck) {
-        if (state.getFluidState().isSource()) return false;
+        // if (state.getFluidState().isSource()) return false;
 
         boolean isInLight = level.getBrightness(LightLayer.SKY, pos.above()) > 12;
         if (isInLight) {

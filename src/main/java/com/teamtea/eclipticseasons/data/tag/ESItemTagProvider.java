@@ -48,7 +48,7 @@ public final class ESItemTagProvider extends ItemTagsProvider {
         tag(CropHumidityType.MOIST_HUMID.getTag()).add(Items.BAMBOO).add(Items.BROWN_MUSHROOM,Items.RED_MUSHROOM);
 
         // others
-        tag(CropHumidityType.AVERAGE_MOIST.getTag()).addOptional(fd_rl("tomato_seeds"));
+        tag(CropHumidityType.AVERAGE_MOIST.getTag()).addOptional(fd_rl("tomato_seeds")).addOptional(fd_rl("cabbage_seeds")).addOptional(fd_rl("onion"));
         tag(CropHumidityType.MOIST_HUMID.getTag()).addOptional(fd_rl("rice")).addOptional(fd_rl("brown_mushroom_colony")).addOptional(fd_rl("red_mushroom_colony"));
 
         for (CropSeasonType cropSeasonType : CropSeasonType.collectValues()) {

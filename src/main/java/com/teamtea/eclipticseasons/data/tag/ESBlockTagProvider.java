@@ -25,12 +25,42 @@ public final class ESBlockTagProvider extends BlockTagsProvider {
 
     @Override
     protected void addTags(HolderLookup.Provider pProvider) {
+        // add crop info
+        tag(CropSeasonType.SUMMER.getBlockTag()).add(Blocks.MELON_STEM, Blocks.COCOA, Blocks.CACTUS);
+        tag(CropSeasonType.AUTUMN.getBlockTag()).add(Blocks.PUMPKIN_STEM);
+        tag(CropSeasonType.SP_AU.getBlockTag()).add(Blocks.POTATOES, Blocks.BEETROOTS, Blocks.CARROTS);
+        tag(CropSeasonType.SP_SU_AU.getBlockTag()).add(Blocks.KELP, Blocks.KELP_PLANT, Blocks.TORCHFLOWER);
+        tag(CropSeasonType.SP_SU.getBlockTag()).add(Blocks.WHEAT).add(Blocks.SUGAR_CANE);
+        tag(CropSeasonType.ALL.getBlockTag()).add(Blocks.CAVE_VINES, Blocks.CAVE_VINES_PLANT);
+        tag(CropSeasonType.SP_WI.getBlockTag()).add(Blocks.SWEET_BERRY_BUSH);
+        tag(CropSeasonType.SPRING.getBlockTag()).add(Blocks.BAMBOO).add(Blocks.BAMBOO_SAPLING);
+
+        tag(CropHumidityType.DRY_AVERAGE.getBlockTag()).add(Blocks.CACTUS);
+        tag(CropHumidityType.DRY_MOIST.getBlockTag()).add(Blocks.SWEET_BERRY_BUSH);
+        tag(CropHumidityType.DRY_HUMID.getBlockTag()).add(Blocks.MELON_STEM);
+        tag(CropHumidityType.AVERAGE_HUMID.getBlockTag()).add(Blocks.CAVE_VINES, Blocks.CAVE_VINES_PLANT, Blocks.SUGAR_CANE);
+        tag(CropHumidityType.AVERAGE_MOIST.getBlockTag()).add(Blocks.WHEAT, Blocks.CARROTS, Blocks.BEETROOTS, Blocks.POTATOES, Blocks.PUMPKIN_STEM);
+        tag(CropHumidityType.AVERAGE_MOIST.getBlockTag()).add(Blocks.COCOA, Blocks.KELP, Blocks.KELP_PLANT, Blocks.TORCHFLOWER);
+        tag(CropHumidityType.MOIST_HUMID.getBlockTag()).add(Blocks.BAMBOO).add(Blocks.BAMBOO_SAPLING).add(Blocks.BROWN_MUSHROOM, Blocks.RED_MUSHROOM);
+
+        // others
+        tag(CropHumidityType.AVERAGE_MOIST.getBlockTag()).addOptional(fd_rl("tomatoes")).addOptional(fd_rl("budding_tomatoes")).addOptional(fd_rl("cabbages")).addOptional(fd_rl("onions"));
+        tag(CropHumidityType.MOIST_HUMID.getBlockTag()).addOptional(fd_rl("rice")).addOptional(fd_rl("rice_panicles")).addOptional(fd_rl("brown_mushroom_colony")).addOptional(fd_rl("red_mushroom_colony"));
+
+
+        // stand
+        for (CropSeasonType cropSeasonType : CropSeasonType.collectValues()) {
+            tag(cropSeasonType.getBlockTag());
+        }
+        for (CropHumidityType cropHumidityType : CropHumidityType.collectValues()) {
+            tag(cropHumidityType.getBlockTag());
+        }
+
         tag(EclipticBlockTags.NONE_FALLEN_LEAVES).add(Blocks.CHERRY_LEAVES, Blocks.SPRUCE_LEAVES);
         tag(EclipticBlockTags.HABITAT_BUTTERFLY).addTag(BlockTags.FLOWERS);
         tag(EclipticBlockTags.HABITAT_FIREFLY).addTag(BlockTags.SMALL_FLOWERS).add(Blocks.GRASS, Blocks.TALL_GRASS);
 
-        tag(CropHumidityType.AVERAGE_MOIST.getBlockTag()).addOptional(fd_rl("tomatoes"));
-
+        // add common
         tag(EclipticBlockTags.SOFT_HEAT_SOURCES).add(Blocks.CAMPFIRE).add(Blocks.MAGMA_BLOCK);
         tag(EclipticBlockTags.DARK_GROW_PLANTS)
                 .add(Blocks.BROWN_MUSHROOM_BLOCK)
@@ -43,15 +73,12 @@ public final class ESBlockTagProvider extends BlockTagsProvider {
                 .addTag(BlockTags.ICE)
                 .addTag(BlockTags.SNOW_LAYER_CANNOT_SURVIVE_ON);
 
-        for (CropSeasonType cropSeasonType : CropSeasonType.collectValues()) {
-            tag(cropSeasonType.getBlockTag());
-        }
-        for (CropHumidityType cropHumidityType : CropHumidityType.collectValues()) {
-            tag(cropHumidityType.getBlockTag());
-        }
+
 
         tag(EclipticBlockTags.NATURAL_PLANTS);
 
+
+        // add mc
         tag(BlockTags.CEILING_HANGING_SIGNS).add(BlockRegistry.season_quest_ceiling_hanging_sign.get());
         tag(BlockTags.WALL_HANGING_SIGNS).add(BlockRegistry.season_quest_wall_hanging_sign.get());
 

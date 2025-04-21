@@ -1,3 +1,7 @@
+## **0.10.7.1**
+- Added some missing Crop Tags
+- Greenhouse integrity check now includes water source blocks
+
 ## **0.10.7**
 - Fixed the issue of abnormal mob spawning during rainy weather.
 - Add supports for Jade and TOP to check the growth conditions of crops.

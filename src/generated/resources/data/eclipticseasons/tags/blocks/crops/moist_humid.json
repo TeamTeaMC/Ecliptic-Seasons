@@ -1,3 +1,24 @@
 {
-  "values": []
+  "values": [
+    "minecraft:bamboo",
+    "minecraft:bamboo_sapling",
+    "minecraft:brown_mushroom",
+    "minecraft:red_mushroom",
+    {
+      "id": "farmersdelight:rice",
+      "required": false
+    },
+    {
+      "id": "farmersdelight:rice_panicles",
+      "required": false
+    },
+    {
+      "id": "farmersdelight:brown_mushroom_colony",
+      "required": false
+    },
+    {
+      "id": "farmersdelight:red_mushroom_colony",
+      "required": false
+    }
+  ]
 }
