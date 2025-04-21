@@ -25,8 +25,8 @@ public interface MixinIWorldReader extends IWorldReader {
     @Override
     default int getMaxLocalRawBrightness(@Nonnull BlockPos pPos) {
         int amount = this.getSkyDarken();
-        if (this instanceof World  && EclipticUtil.hasLocalWeather((World) this)) {
-            amount = WeatherManager.getSkyDarken((World) this, pPos);
+        if (this instanceof World && EclipticUtil.hasLocalWeather((World) this)) {
+            amount = WeatherManager.getSkyDarken((World) this, pPos, amount);
         }
         return this.getMaxLocalRawBrightness(pPos, amount);
     }

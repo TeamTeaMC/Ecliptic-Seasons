@@ -1,3 +1,8 @@
+## **1.1.1**
+- Fixed incorrect night brightness levels caused by adjustments from 1.1.0
+- Addressed inability to sleep during thunderstorms
+- Optimized thunderstorm generation mechanics
+
 ## 1.1.0
 - Fixed the issue of abnormal mob spawning during rainy weather.
 - Removed unnecessary adjustments to biome temperature, as snowfall timing is actually determined by solar terms.

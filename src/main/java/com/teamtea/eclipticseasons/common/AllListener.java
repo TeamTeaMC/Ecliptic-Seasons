@@ -4,6 +4,7 @@ package com.teamtea.eclipticseasons.common;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.constant.tag.SeasonTypeBiomeTags;
 import com.teamtea.eclipticseasons.api.util.EclipticTagTool;
+import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
@@ -11,9 +12,11 @@ import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
 import com.teamtea.eclipticseasons.common.handler.CustomRandomTickHandler;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 
 import net.minecraft.resources.DataPackRegistries;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.util.FakePlayer;
@@ -21,10 +24,13 @@ import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.TagsUpdatedEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
+import net.minecraftforge.event.entity.player.SleepingTimeCheckEvent;
 import net.minecraftforge.event.world.BiomeLoadingEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.SleepFinishedTimeEvent;
 import net.minecraftforge.event.world.WorldEvent;
+import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -44,6 +50,31 @@ public class AllListener {
         SeasonTypeBiomeTags.init();
 
     }
+
+    @SubscribeEvent
+    public static void onSleepFinishedTimeEvent(PlayerSleepInBedEvent event) {
+        if (event.getResultStatus() == PlayerEntity.SleepResult.NOT_POSSIBLE_NOW) {
+            BlockPos pos = event.getPos();
+            World level = event.getEntity().level;
+            if (pos != null && EclipticUtil.hasLocalWeather(level)
+                    && WeatherManager.isThunderAtBiome(level, MapChecker.getSurfaceBiome(level, pos))) {
+                event.setResult((PlayerEntity.SleepResult) null);
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public static void onSleepFinishedTimeEvent(SleepingTimeCheckEvent event) {
+        if (event.getResult() == Event.Result.DEFAULT) {
+            BlockPos pos = event.getSleepingLocation().orElse(null);
+            World level = event.getEntity().level;
+            if (pos != null && EclipticUtil.hasLocalWeather(level)
+                    && WeatherManager.isThunderAtBiome(level, MapChecker.getSurfaceBiome(level, pos))) {
+                event.setResult(Event.Result.ALLOW);
+            }
+        }
+    }
+
 
     @SubscribeEvent
     public static void onSleepFinishedTimeEvent(SleepFinishedTimeEvent event) {
