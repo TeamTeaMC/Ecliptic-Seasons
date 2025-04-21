@@ -68,6 +68,17 @@ public class WeatherManager {
         return BIOME_WEATHER_LIST.getOrDefault(world, null);
     }
 
+    public static BiomeWeather getBiomeWeather(World level, Biome biome) {
+        ArrayList<BiomeWeather> ws = getBiomeList(level);
+        if (ws != null)
+            for (BiomeWeather biomeWeather : ws) {
+                if (biome == biomeWeather.biomeHolder) {
+                    return biomeWeather;
+                }
+            }
+        return null;
+    }
+
     public static Float getMinRainLevel(World level, float p46723) {
         ArrayList<BiomeWeather> ws = getBiomeList(level);
         if (ws != null)
@@ -480,7 +491,7 @@ public class WeatherManager {
                     biomeWeather.clearTime = (random.nextInt(12000) + 12000) / size;
                 }
                 if (biomeWeather.shouldRain()) {
-                     weight = biomeRain.getThunderChance();
+                    weight = biomeRain.getThunderChance();
                     if (ramdomKey < weight) {
                         biomeWeather.thunderTime = (random.nextInt(12000) + 3600) / size;
                     }
@@ -531,6 +542,13 @@ public class WeatherManager {
             }
         });
         WeatherManager.sendBiomePacket(WeatherManager.getBiomeList(serverPlayer.level), Stream.of(serverPlayer).collect(Collectors.toList()));
+    }
+
+    public static int getSkyDarken(World level, BlockPos pos) {
+        WeatherManager.BiomeWeather biomeWeather = WeatherManager.getBiomeWeather(level, MapChecker.getSurfaceBiome(level, pos));
+        int amount = biomeWeather == null || biomeWeather.shouldClear() ? 0 :
+                biomeWeather.shouldThunder() ? 7 : 3;
+        return MathHelper.clamp(amount, 0, 15);
     }
 
 

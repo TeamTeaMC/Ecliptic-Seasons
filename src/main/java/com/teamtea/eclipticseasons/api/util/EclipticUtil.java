@@ -4,9 +4,11 @@ import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.biome.Humidity;
 import com.teamtea.eclipticseasons.api.constant.biome.Rainfall;
 import com.teamtea.eclipticseasons.api.constant.biome.Temperature;
+import com.teamtea.eclipticseasons.api.constant.climate.WeatherMode;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
+import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.core.solar.SolarAngelHelper;
 import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
 import com.teamtea.eclipticseasons.config.CommonConfig;
@@ -156,5 +158,23 @@ public class EclipticUtil {
 
     public static boolean isHereSnowy(World level, BlockPos pos) {
         return WeatherManager.getRainOrSnow(level, level.getBiome(level.getHeightmapPos(Heightmap.Type.MOTION_BLOCKING, pos)), pos) == Biome.RainType.SNOW;
+    }
+
+    public static boolean useSolarWeather() {
+        // return CommonConfig.isUseSolarWeather();
+        return true;
+    }
+
+    public static boolean isSolarWeatherClosed() {
+        return !useSolarWeather();
+    }
+
+    public static WeatherMode getWeatherMode(World level) {
+        if (!useSolarWeather()) return WeatherMode.DEFAULT;
+        return MapChecker.isValidDimension(level) ? WeatherMode.BIOME : WeatherMode.DEFAULT;
+    }
+
+    public static boolean hasLocalWeather(World level) {
+        return getWeatherMode(level) != WeatherMode.DEFAULT;
     }
 }

@@ -1,7 +1,10 @@
+## 1.1.0
+- Fixed the issue of abnormal mob spawning during rainy weather.
+- Removed unnecessary adjustments to biome temperature, as snowfall timing is actually determined by solar terms.
+
 1.0.2
 - Fire resistance grants immunity to heatstroke as well.
 - The ambient temperature required to induce heatstroke has been increased.
-
 
 1.0.1
 Fixes

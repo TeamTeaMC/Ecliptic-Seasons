@@ -65,7 +65,7 @@ public class CommonConfig {
                     .define("EnableInform", true);
 
             rainChanceMultiplier = builder.comment("Set the percentage multiplier of the probability of rain, the range should be between 0 and 1000.")
-                    .defineInRange("RainChancePercentMultiplier", 60, 0, 1000);
+                    .defineInRange("RainChancePercentMultiplier", 40, 0, 1000);
             builder.pop();
         }
     }
