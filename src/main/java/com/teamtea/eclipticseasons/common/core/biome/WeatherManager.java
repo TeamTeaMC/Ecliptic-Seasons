@@ -44,6 +44,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.fml.loading.FMLLoader;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -60,6 +61,22 @@ public class WeatherManager {
             return null;
         }
         return BIOME_WEATHER_LIST.getOrDefault(level, null);
+    }
+
+    public static BiomeWeather getBiomeWeather(Level level, Holder<Biome> biomeHolder) {
+        if (biomeHolder == null) return null;
+        return getBiomeWeather(level, biomeHolder.value());
+    }
+
+    public static BiomeWeather getBiomeWeather(Level level, Biome biome) {
+        ArrayList<BiomeWeather> ws = getBiomeList(level);
+        if (ws != null)
+            for (BiomeWeather biomeWeather : ws) {
+                if (biome == biomeWeather.biomeHolder.value()) {
+                    return biomeWeather;
+                }
+            }
+        return null;
     }
 
     public static Float getMinRainLevel(Level level, float p46723) {
@@ -509,6 +526,13 @@ public class WeatherManager {
             }
         });
         WeatherManager.sendBiomePacket(WeatherManager.getBiomeList(serverPlayer.level), List.of(serverPlayer));
+    }
+
+    public static int getSkyDarken(Level level, BlockPos pos) {
+        WeatherManager.BiomeWeather biomeWeather = WeatherManager.getBiomeWeather(level, MapChecker.getSurfaceBiome(level, pos));
+        int amount = biomeWeather == null || biomeWeather.shouldClear() ? 0 :
+                biomeWeather.shouldThunder() ? 8 : 4;
+        return Mth.clamp(amount, 0, 15);
     }
 
 

@@ -10,19 +10,22 @@ import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
-import net.optifine.model.BlockModelCustomizer;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Pseudo;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
 
-@Mixin(BlockModelCustomizer.class)
+@Pseudo
+@Mixin(targets = "net.optifine.model.BlockModelCustomizer", remap = false)
 public abstract class MixinBlockModelCustomizer {
 
 
-    private static RandomSource randomSource = RandomSource.createThreadSafe();
+    @Unique
+    private static RandomSource eclipticseasons$randomSource = RandomSource.createThreadSafe();
 
     // 这里不知道要不要ordinal=1
     // 但是opt这里要处理的是那个jar文件得移动移动一下，不能直接用
@@ -32,8 +35,8 @@ public abstract class MixinBlockModelCustomizer {
     private static void eclipticseasons$getRenderQuads(List<BakedQuad> quads, BlockAndTintGetter worldIn, BlockState stateIn, BlockPos posIn, Direction enumfacing, RenderType layer, long rand, net.optifine.render.RenderEnv renderEnv, CallbackInfoReturnable<List<BakedQuad>> cir) {
         List<BakedQuad> bakedQuadList = cir.getReturnValue();
         if (!bakedQuadList.isEmpty() && Minecraft.getInstance().level != null) {
-            randomSource.setSeed(rand);
-            cir.setReturnValue(ModelManager.appendOverlay(worldIn, stateIn, posIn, enumfacing, randomSource, rand, bakedQuadList));
+            eclipticseasons$randomSource.setSeed(rand);
+            cir.setReturnValue(ModelManager.appendOverlay(worldIn, stateIn, posIn, enumfacing, eclipticseasons$randomSource, rand, bakedQuadList));
         }
     }
 

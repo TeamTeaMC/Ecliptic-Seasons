@@ -37,7 +37,7 @@ jobs:
         run: |
           git fetch origin forge-1.16.5
           git checkout origin/forge-1.16.5 -- changelog.md
-          
+
       - name: Setup Java
         uses: actions/setup-java@v2
         with:

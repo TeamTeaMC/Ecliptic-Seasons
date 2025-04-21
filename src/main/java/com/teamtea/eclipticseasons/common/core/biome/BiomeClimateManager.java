@@ -11,6 +11,7 @@ import net.minecraft.world.level.biome.Biome;
 
 import java.util.HashMap;
 
+@Deprecated(forRemoval = true)
 public class BiomeClimateManager {
     public final static HashMap<Biome, Float> BIOME_DEFAULT_TEMPERATURE_MAP = new HashMap<>();
 
