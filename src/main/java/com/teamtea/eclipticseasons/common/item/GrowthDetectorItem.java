@@ -57,7 +57,7 @@ public class GrowthDetectorItem extends Item {
                     }
                     float chance = 0;
                     for (int i = 0; i < 100; i++) {
-                        chance += CropGrowthHandler.isInRoom(level, clickedPos, blockState,  growControl.notGreenHouse()) ? 1 : 0;
+                        chance += CropGrowthHandler.isInRoom(level, clickedPos, blockState, growControl.notGreenHouse()) ? 1 : 0;
                     }
                     int chose = chance > 50 ? 1 : chance > 10 ? 2 : 3;
 
@@ -102,13 +102,13 @@ public class GrowthDetectorItem extends Item {
         if (growControl == null) return result;
 
         GrowParameter growParameter = CropGrowthHandler.getSeasonGrowParameter(growControl, solarTerm, controlMap, agentClimateTypeHolder, climateTypeHolder);
-        CropGrowthHandler.RoomStatus roomStatus = CropGrowthHandler.isInRoom(level, pos, blockState,growControl.notGreenHouse()) ? CropGrowthHandler.RoomStatus.GREEN_HOUSE : CropGrowthHandler.RoomStatus.NORMAL;
-
+        CropGrowthHandler.RoomStatus roomStatus = CropGrowthHandler.isInRoom(level, pos, blockState, growControl.notGreenHouse()) ? CropGrowthHandler.RoomStatus.GREEN_HOUSE : CropGrowthHandler.RoomStatus.NORMAL;
         if (growParameter != null && CommonConfig.Crop.enableCrop.get()) {
             result *= growParameter.grow_chance();
             if (result < 1) {
                 if (roomStatus == CropGrowthHandler.RoomStatus.GREEN_HOUSE) {
-                    if (CropGrowthHandler.getGreenHouseProvider(level, pos, controlMap, agentClimateTypeHolder) != null) {
+                    if (CommonConfig.Crop.simpleGreenHouse.get() ||
+                            CropGrowthHandler.getGreenHouseProvider(level, pos, controlMap, agentClimateTypeHolder) != null) {
                         result = 1;
                     }
                 }
@@ -137,7 +137,14 @@ public class GrowthDetectorItem extends Item {
                     if (hasUpdate) {
                         result = f;
                     } else {
-                        int modification = SolarHolders.getSaveData((Level) world).calculateHumidityModification(pos);
+                        if (CommonConfig.Crop.simpleGreenHouse.get()
+                                && roomStatus == CropGrowthHandler.RoomStatus.GREEN_HOUSE) {
+                            result = 1f;
+                            return result;
+                        }
+                        int modification =
+                                CommonConfig.Crop.simpleGreenHouse.get() ? 0 :
+                                        SolarHolders.getSaveData((Level) world).calculateHumidityModification(pos);
                         if (modification != 0 && roomStatus == CropGrowthHandler.RoomStatus.GREEN_HOUSE) {
                             env = env.cycle(modification);
                             result = getHumidityGrowChance(world, growControl, env, roomStatus, pos, blockState, season, true);

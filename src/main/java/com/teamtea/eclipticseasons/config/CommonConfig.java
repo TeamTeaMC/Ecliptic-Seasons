@@ -127,6 +127,7 @@ public class CommonConfig {
         public static ForgeConfigSpec.IntValue greenHouseMaxDiameter;
         public static ForgeConfigSpec.IntValue greenHouseMaxHeight;
         public static ForgeConfigSpec.IntValue darkGreenhouseFailChance;
+        public static ForgeConfigSpec.BooleanValue simpleGreenHouse;
 
         public static ForgeConfigSpec.BooleanValue complexGreenHouseCheck;
         public static ForgeConfigSpec.BooleanValue useDefaultValue;
@@ -149,6 +150,8 @@ public class CommonConfig {
                     .defineInRange("GreenHouseMaxHeight", 10, 3, 128);
             darkGreenhouseFailChance = builder.comment("The possibility of crops not growing when there is insufficient sunlight in green house.")
                     .defineInRange("DarkGreenhouseFailChance", 2000, 0, 10000);
+            simpleGreenHouse= builder.comment("Build a simple greenhouse without core blocks and humidity modifiers.")
+                    .define("SimpleGreenHouseMode", false);
 
             complexGreenHouseCheck = builder.comment("Whether to enable complex shape checking.")
                     .define("ComplexGreenHouseCheck", true);

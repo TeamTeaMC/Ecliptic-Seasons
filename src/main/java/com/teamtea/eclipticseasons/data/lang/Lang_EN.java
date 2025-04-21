@@ -156,6 +156,14 @@ public class Lang_EN extends LangHelper {
         addAdvancements();
         addSeasonQuest();
         addGrowthDetector();
+
+        addJade();
+    }
+
+    private void addJade() {
+        add("config.jade.plugin_eclipticseasons.crop","Crop");
+        add("config.jade.plugin_eclipticseasons.crop.shift_hint","Shift Key Hint");
+        add("hint.jade.plugin_eclipticseasons.crop.show", "§o<..Hold shift to see more..>");
     }
 
     private void addAdvancements() {

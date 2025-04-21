@@ -3,9 +3,11 @@ package com.teamtea.eclipticseasons.compat;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.compat.cold_sweat.Cold_Sweat;
 import com.teamtea.eclipticseasons.compat.dynamictrees.DynamicTreeMod;
+import com.teamtea.eclipticseasons.compat.theoneprobe.TOPReflector;
 import com.teamtea.eclipticseasons.compat.touhou_little_maid.LittleMaid;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 
 import java.util.List;
 
@@ -43,6 +45,10 @@ public class CompatModule {
         if (isTouhou_little_maid()) {
             gameBus.register(LittleMaid.INSTANCE);
         }
+    }
+
+    public static void onInterModEnqueue(final InterModEnqueueEvent event) {
+        event.enqueueWork(TOPReflector::init);
     }
 
     /**

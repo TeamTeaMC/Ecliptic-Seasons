@@ -222,6 +222,7 @@ dependencies {
 
     implementation fg.deobf("curse.maven:jei-238222:6075247")
     implementation fg.deobf("curse.maven:jade-324717:5072729")
+    compileOnly fg.deobf("curse.maven:the-one-probe-245211:6106996")
 
     compileOnly fg.deobf("curse.maven:dynamictrees-252818:6410558")
 

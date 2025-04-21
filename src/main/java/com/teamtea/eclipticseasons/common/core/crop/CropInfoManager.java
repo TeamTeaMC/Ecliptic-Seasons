@@ -13,6 +13,7 @@ import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
@@ -33,8 +34,8 @@ import java.util.*;
 
 @Deprecated
 public final class CropInfoManager {
-     final static Map<Block, CropHumidityInfo> CROP_HUMIDITY_INFO = new HashMap<>();
-     final static Map<Block, CropSeasonInfo> CROP_SEASON_INFO = new HashMap<>();
+    final static Map<Block, CropHumidityInfo> CROP_HUMIDITY_INFO = new HashMap<>();
+    final static Map<Block, CropSeasonInfo> CROP_SEASON_INFO = new HashMap<>();
 
     private static final TagKey<Block> ss1 = createBlockTag("sereneseasons", "spring_crops");
     private static final TagKey<Block> ss2 = createBlockTag("sereneseasons", "summer_crops");
@@ -227,4 +228,20 @@ public final class CropInfoManager {
         return CROP_SEASON_INFO.get(crop);
     }
 
+    public static List<Component> appendInfo(Block block) {
+        List<Component> toolTip = new ArrayList<>();
+        if (CommonConfig.Crop.enableCropHumidityControl.get()) {
+            if (CropInfoManager.getHumidityCrops().contains(block)) {
+                CropHumidityInfo info = CropInfoManager.getHumidityInfo(block);
+                if (info != null) toolTip.addAll(info.getTooltip());
+            }
+        }
+        if (CommonConfig.Crop.enableCrop.get()) {
+            if (CropInfoManager.getSeasonCrops().contains(block)) {
+                CropSeasonInfo info = CropInfoManager.getSeasonInfo(block);
+                if (info != null) toolTip.addAll(info.getTooltip());
+            }
+        }
+        return toolTip;
+    }
 }

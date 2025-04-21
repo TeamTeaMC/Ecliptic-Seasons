@@ -33,6 +33,7 @@ import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.damagesource.DamageSource;
@@ -48,6 +49,8 @@ import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.chunk.LevelChunkSection;
 import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
@@ -416,7 +419,14 @@ public final class CropGrowthHandler {
             // notCancel |= CommonConfig.Crop.cropGrowChanceInWrongSeason.get() > 0
             //         && randomKey < CommonConfig.Crop.cropGrowChanceInWrongSeason.get() * 1000;
             if (!notCancel) {
-                {
+                if (CommonConfig.Crop.simpleGreenHouse.get()) {
+                    if (isInRoom(level, pos, blockState, growControl.notGreenHouse())) {
+                        notCancel = true;
+                        roomStatus = RoomStatus.GREEN_HOUSE;
+                    } else {
+                        roomStatus = RoomStatus.NORMAL;
+                    }
+                } else {
                     List<Season> seasons = getLikeSeasonsInTemperate(controlMap, agentClimateTypeHolder);
                     if (!seasons.isEmpty()) {
                         SolarDataManager saveData = SolarHolders.getSaveData((Level) level);
@@ -459,7 +469,18 @@ public final class CropGrowthHandler {
         if (blockState.getFluidState().isSource()) return;
         if (growControl != null) {
             if (!hasUpdate) {
-                int modification = SolarHolders.getSaveData((Level) world).calculateHumidityModification(pos);
+                if (CommonConfig.Crop.simpleGreenHouse.get()) {
+                    roomStatus = roomStatus != RoomStatus.UNKNOWN ? roomStatus :
+                            isInRoom(world, pos, blockState, growControl.notGreenHouse()) ?
+                                    RoomStatus.GREEN_HOUSE : RoomStatus.NORMAL;
+                    if (roomStatus == RoomStatus.GREEN_HOUSE) {
+                        setResult(event, GROW);
+                        return;
+                    }
+                }
+                int modification =
+                        CommonConfig.Crop.simpleGreenHouse.get() ? 0 :
+                                SolarHolders.getSaveData((Level) world).calculateHumidityModification(pos);
                 if (modification != 0) {
                     roomStatus = isInRoom(world, pos, blockState, growControl.notGreenHouse()) ? RoomStatus.GREEN_HOUSE : RoomStatus.NORMAL;
                 }
@@ -619,9 +640,17 @@ public final class CropGrowthHandler {
 
         @Override
         public BlockHitResult apply(SectionClipContext clipContext, BlockPos pos) {
-            if (clipContext.getFrom().distanceTo(pos.getCenter()) < 1) return null;
+            if (BlockPos.containing(clipContext.getFrom()).distSqr(pos) == 0)
+                return null;
             BlockState blockstate = clipContext.getBlockState(levelReader, pos);
-            if (!blockstate.isSolid()) return null;
+            if (!blockstate.isSolid()) {
+                Fluid fluid = blockstate.getFluidState().getType();
+                if (fluid == Fluids.EMPTY
+                        || !(fluid == Fluids.WATER
+                        || fluid == Fluids.FLOWING_WATER)) {
+                    return null;
+                }
+            }
             Vec3 vec3 = clipContext.getFrom();
             Vec3 vec31 = clipContext.getTo();
             VoxelShape voxelshape = clipContext.getBlockShape(blockstate, levelReader, pos);

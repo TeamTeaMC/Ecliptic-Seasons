@@ -1,3 +1,9 @@
+## **0.10.7**
+- Fixed the issue of abnormal mob spawning during rainy weather.
+- Add supports for Jade and TOP to check the growth conditions of crops.
+- Allow to choose if play in simple greenhouse mode without core blocks and humidity modifiers.
+- Temporarily treat water and water-containing blocks as greenhouse interior space blocks.
+
 ## **0.10.6**
 - Added `eclipticseasons:natural_plants` tag to identify Blocks that require growth control via compatibility mode — typically used for mods that do not natively support the Forge Event Bus or are added via Sinytra Connector (Fabric mods).
 - Added a config entry named as ForceCompatMode: forces all crops to use compatibility mode for growth control, not just those tagged with `eclipticseasons:natural_plants`. Note native support offers significantly better performance.

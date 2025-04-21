@@ -27,7 +27,7 @@ public abstract class MixinBlockModelCustomizer {
 
 
     @Unique
-    private static RandomSource ecliptic_1_20_1_opt$randomSource = RandomSource.createThreadSafe();
+    private static RandomSource eclipticseasons$randomSource = RandomSource.createThreadSafe();
 
     // 这里不知道要不要ordinal=1
     // 但是opt这里要处理的是那个jar文件得移动移动一下，不能直接用
@@ -37,8 +37,8 @@ public abstract class MixinBlockModelCustomizer {
     private static void eclipticseasons$getRenderQuads(List<BakedQuad> quads, BlockAndTintGetter worldIn, BlockState stateIn, BlockPos posIn, Direction enumfacing, RenderType layer, long rand, net.optifine.render.RenderEnv renderEnv, CallbackInfoReturnable<List<BakedQuad>> cir) {
         List<BakedQuad> bakedQuadList = cir.getReturnValue();
         if (!bakedQuadList.isEmpty() && Minecraft.getInstance().level != null) {
-            ecliptic_1_20_1_opt$randomSource.setSeed(rand);
-            cir.setReturnValue(ModelManager.appendOverlay(worldIn, stateIn, posIn, enumfacing, ecliptic_1_20_1_opt$randomSource, rand, bakedQuadList));
+            eclipticseasons$randomSource.setSeed(rand);
+            cir.setReturnValue(ModelManager.appendOverlay(worldIn, stateIn, posIn, enumfacing, eclipticseasons$randomSource, rand, bakedQuadList));
         }
     }
 

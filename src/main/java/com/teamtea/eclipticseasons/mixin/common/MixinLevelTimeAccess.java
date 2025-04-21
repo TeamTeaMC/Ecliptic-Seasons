@@ -7,10 +7,16 @@ import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelTimeAccess;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
 
 @Mixin({LevelTimeAccess.class})
 public interface MixinLevelTimeAccess extends LevelTimeAccess {
 
+    /**
+     * @author jianzoushihu ( joe vettek)
+     * @reason Ecliptic Seasons adjusts day/night cycle duration based on seasonal variations.
+     */
+    @Overwrite
     @Override
     default float getTimeOfDay(float p_46943_) {
         if (CommonConfig.Season.daylightChange.get()

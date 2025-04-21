@@ -42,7 +42,7 @@ public final class CustomRandomTickHandler {
         }
     };
 
-    @Deprecated
+    @Deprecated(forRemoval = true)
     public static final CustomRandomTick2 SNOW_MELT = (world, biome, blockpos) ->
     {
         if (WeatherManager.getSnowStatus(world, biome, blockpos) == WeatherManager.SnowRenderStatus.SNOW) {

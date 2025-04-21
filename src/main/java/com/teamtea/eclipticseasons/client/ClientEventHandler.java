@@ -25,6 +25,7 @@ import net.minecraft.core.SectionPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
@@ -49,19 +50,9 @@ public final class ClientEventHandler {
     @SubscribeEvent
     public static void addTooltips(ItemTooltipEvent event) {
         if (ClientConfig.GUI.agriculturalInformation.get()
-                && event.getItemStack().getItem() instanceof BlockItem) {
-            if (CommonConfig.Crop.enableCropHumidityControl.get()) {
-                if (CropInfoManager.getHumidityCrops().contains(((BlockItem) event.getItemStack().getItem()).getBlock())) {
-                    CropHumidityInfo info = CropInfoManager.getHumidityInfo(((BlockItem) event.getItemStack().getItem()).getBlock());
-                    if (info != null) event.getToolTip().addAll(info.getTooltip());
-                }
-            }
-            if (CommonConfig.Crop.enableCrop.get()) {
-                if (CropInfoManager.getSeasonCrops().contains(((BlockItem) event.getItemStack().getItem()).getBlock())) {
-                    CropSeasonInfo info = CropInfoManager.getSeasonInfo(((BlockItem) event.getItemStack().getItem()).getBlock());
-                    if (info != null) event.getToolTip().addAll(info.getTooltip());
-                }
-            }
+                && event.getItemStack().getItem() instanceof BlockItem blockItem) {
+            Block block = blockItem.getBlock();
+            event.getToolTip().addAll(CropInfoManager.appendInfo(block));
         }
     }
 

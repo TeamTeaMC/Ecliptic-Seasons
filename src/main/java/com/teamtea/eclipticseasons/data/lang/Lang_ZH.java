@@ -158,6 +158,14 @@ public class Lang_ZH extends LangHelper {
         addAdvancements();
         addSeasonQuest();
         addGrowthDetector();
+
+        addJade();
+    }
+
+    private void addJade() {
+        add("config.jade.plugin_eclipticseasons.crop","作物");
+        add("config.jade.plugin_eclipticseasons.crop.shift_hint","Shift按键提示");
+        add("hint.jade.plugin_eclipticseasons.crop.show", "§o<..按住shift以查看更多..>");
     }
 
     private void addAdvancements() {
