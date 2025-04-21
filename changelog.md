@@ -1,3 +1,6 @@
+## **1.1.2**
+- Greenhouse integrity check now includes water source blocks
+
 ## **1.1.1**
 - Fixed incorrect night brightness levels caused by adjustments from 1.1.0
 - Addressed inability to sleep during thunderstorms
