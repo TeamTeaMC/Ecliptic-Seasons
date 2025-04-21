@@ -271,7 +271,7 @@ public final class CropGrowthHandler {
     }
 
     public static boolean isInRoom(LevelAccessor level, BlockPos pos, BlockState state, Season season) {
-        if (state.getFluidState().isSource()) return false;
+        // if (state.getFluidState().isSource()) return false;
         int brightness = level.getBrightness(LightLayer.SKY, pos.above());
         boolean isInLight = brightness > 12;
         if (isInLight) {
