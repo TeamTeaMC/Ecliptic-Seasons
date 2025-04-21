@@ -208,7 +208,8 @@ dependencies {
     onlyMainRuntimeOnly fg.deobf("curse.maven:embeddium-908741:5322305")
     onlyMainRuntimeOnly fg.deobf("curse.maven:oculus-581495:4578744")
 
-    compileOnly "libs:OptiFine:1.18.2_HD_U_H9"
+//    compileOnly "libs:OptiFine:1.18.2_HD_U_H9"
+    compileOnly project(':sub')
 
     implementation fg.deobf("curse.maven:jei-238222:4593548")
     implementation fg.deobf("curse.maven:jade-324717:5079263")

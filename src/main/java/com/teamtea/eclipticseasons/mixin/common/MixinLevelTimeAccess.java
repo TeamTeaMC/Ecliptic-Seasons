@@ -5,6 +5,7 @@ package com.teamtea.eclipticseasons.mixin.common;
 import com.teamtea.eclipticseasons.common.core.solar.SolarAngelHelper;
 import net.minecraft.world.level.LevelTimeAccess;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin({LevelTimeAccess.class})
@@ -18,6 +19,11 @@ public interface MixinLevelTimeAccess extends LevelTimeAccess{
     //
     // }
 
+    /**
+     * @author jianzoushihu ( joe vettek)
+     * @reason Ecliptic Seasons adjusts day/night cycle duration based on seasonal variations.
+     */
+    @Overwrite
     @Override
     default float getTimeOfDay(float p_46943_) {
         return SolarAngelHelper.getSeasonCelestialAngle(this, dayTime());

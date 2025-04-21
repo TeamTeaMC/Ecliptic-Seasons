@@ -4,6 +4,7 @@ import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.biome.Humidity;
 import com.teamtea.eclipticseasons.api.constant.biome.Rainfall;
 import com.teamtea.eclipticseasons.api.constant.biome.Temperature;
+import com.teamtea.eclipticseasons.api.constant.climate.WeatherMode;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
@@ -162,4 +163,21 @@ public class EclipticUtil {
         return WeatherManager.getRainOrSnow(level, level.getBiome(level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, pos)).value(), pos) == Biome.Precipitation.SNOW;
     }
 
+    public static boolean useSolarWeather() {
+        // return CommonConfig.isUseSolarWeather();
+        return true;
+    }
+
+    public static boolean isSolarWeatherClosed() {
+        return !useSolarWeather();
+    }
+
+    public static WeatherMode getWeatherMode(Level level) {
+        if (!useSolarWeather()) return WeatherMode.DEFAULT;
+        return MapChecker.isValidDimension(level) ? WeatherMode.BIOME : WeatherMode.DEFAULT;
+    }
+
+    public static boolean hasLocalWeather(Level level) {
+        return getWeatherMode(level) != WeatherMode.DEFAULT;
+    }
 }
