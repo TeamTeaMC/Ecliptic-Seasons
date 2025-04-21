@@ -547,7 +547,7 @@ public class WeatherManager {
     public static int getSkyDarken(World level, BlockPos pos) {
         WeatherManager.BiomeWeather biomeWeather = WeatherManager.getBiomeWeather(level, MapChecker.getSurfaceBiome(level, pos));
         int amount = biomeWeather == null || biomeWeather.shouldClear() ? 0 :
-                biomeWeather.shouldThunder() ? 7 : 3;
+                biomeWeather.shouldThunder() ? 8 : 4;
         return MathHelper.clamp(amount, 0, 15);
     }
 

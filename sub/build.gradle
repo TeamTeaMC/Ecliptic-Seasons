@@ -1,0 +1,25 @@
+plugins {
+    id 'java'
+}
+repositories {
+    mavenCentral()
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['java']
+        }
+    }
+}
+
+
+dependencies {
+}
+
+tasks.register('sub') {
+    println("build sub jar start")
+    println "Source Directories: ${sourceSets.main.java.srcDirs}"
+}
+
+jar.dependsOn sub
