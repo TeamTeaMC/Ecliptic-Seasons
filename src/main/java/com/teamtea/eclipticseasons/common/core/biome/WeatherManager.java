@@ -412,7 +412,7 @@ public class WeatherManager {
                 biomeWeather.rainTime--;
                 if (!biomeWeather.shouldThunder()) {
                     BiomeRain biomeRain = SolarHolders.getSaveData(level).getSolarTerm().getBiomeRain(biomeWeather.biomeHolder);
-                    float weight = biomeRain.getThunderChance();
+                    float weight = biomeRain.getThunderChance() * size / 3000f;
                     if (level.getRandom().nextInt(1000) / 1000.f < weight) {
                         biomeWeather.thunderTime = THUNDER_DURATION.sample(random) / size;
                     }
@@ -534,9 +534,9 @@ public class WeatherManager {
         WeatherManager.sendBiomePacket(WeatherManager.getBiomeList(serverPlayer.level), List.of(serverPlayer));
     }
 
-    public static int getSkyDarken(Level level, BlockPos pos) {
+    public static int getSkyDarken(Level level, BlockPos pos, int amount) {
         WeatherManager.BiomeWeather biomeWeather = WeatherManager.getBiomeWeather(level, MapChecker.getSurfaceBiome(level, pos));
-        int amount = biomeWeather == null || biomeWeather.shouldClear() ? 0 :
+        amount += biomeWeather == null || biomeWeather.shouldClear() ? 0 :
                 biomeWeather.shouldThunder() ? 8 : 4;
         return Mth.clamp(amount, 0, 15);
     }
