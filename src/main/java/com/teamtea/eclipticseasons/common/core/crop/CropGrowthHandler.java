@@ -712,7 +712,8 @@ public final class CropGrowthHandler {
         float yr = (float) level.getRandom().nextGaussian() / 3f;
         for (int i = 0, vec3sLength = vec3s.length; i < vec3sLength; i++) {
             Vec3 direction = vec3s[i];
-            direction = direction.add(xr, 0, yr);
+            direction = direction.x != 0 || direction.z != 0 ?
+                    direction.add(xr, 0, yr) : direction;
             // TODO: 最小起步点
             Vec3 startVec = centerVec;
 

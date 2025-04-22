@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.teamtea.eclipticseasons.EclipticSeasons;
+import com.teamtea.eclipticseasons.common.registry.ModAdvancements;
 import net.minecraft.advancements.Criterion;
 import net.minecraft.advancements.critereon.*;
 import net.minecraft.resources.ResourceLocation;
@@ -42,12 +43,17 @@ public class SolarTermsCriterion extends SimpleCriterionTrigger<SolarTermsCriter
         }
 
         public static TriggerInstance simple() {
-            return new TriggerInstance(EclipticSeasons.rl("solar_terms"),
+            return new TriggerInstance(ModAdvancements.solarTermsCriterion.id,
                     ContextAwarePredicate.ANY);
         }
 
         public static TriggerInstance simple2() {
-            return new TriggerInstance(EclipticSeasons.rl("heat_stroke"),
+            return new TriggerInstance(ModAdvancements.heatStrokeCriterion.id,
+                    ContextAwarePredicate.ANY);
+        }
+
+        public static TriggerInstance simple3() {
+            return new TriggerInstance(ModAdvancements.greenhouseCriterion.id,
                     ContextAwarePredicate.ANY);
         }
 

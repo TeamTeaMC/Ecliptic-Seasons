@@ -1,3 +1,7 @@
+### **0.10.8**
+- Optimized the initialization of chunk information caching to better adapt to certain utility or optimization mods that modify initialization behavior, which could otherwise lead to performance degradation from frequent early-phase queries.
+- Refined the advancement progression system to provide clearer guidance for players when constructing greenhouses.
+
 ## **0.10.7.2**
 - Fixed incorrect night brightness levels caused by adjustments from 0.10.7
 - Addressed inability to sleep during thunderstorms

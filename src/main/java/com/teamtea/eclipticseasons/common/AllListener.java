@@ -12,6 +12,7 @@ import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
 import com.teamtea.eclipticseasons.common.core.crop.CropInfoManager;
+import com.teamtea.eclipticseasons.common.core.map.ChunkInfoMap;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
 import com.teamtea.eclipticseasons.common.network.SimpleNetworkHandler;
@@ -27,7 +28,12 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.chunk.ChunkAccess;
+import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.OnDatapackSyncEvent;
@@ -46,6 +52,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.server.ServerLifecycleHooks;
 
 import java.util.Map;
+import java.util.Optional;
 
 @Mod.EventBusSubscriber(modid = EclipticSeasons.MODID)
 public class AllListener {
@@ -131,7 +138,16 @@ public class AllListener {
     }
 
     @SubscribeEvent
+    public static void onChunkLoad(ChunkEvent.Load event) {
+        ChunkAccess chunk = event.getChunk();
+        if (event.getLevel() instanceof Level level) {
+            MapChecker.forceChunkUpdateHeight(level, chunk);
+        }
+    }
+
+    @SubscribeEvent
     public static void onChunkUnloadEvent(ChunkEvent.Unload event) {
+        MapChecker.unloadChunk((Level) event.getLevel(), event.getChunk().getPos());
         CropGrowthHandler.unloadChunk((Level) event.getLevel(), event.getChunk().getPos());
     }
 
@@ -168,6 +184,11 @@ public class AllListener {
                                 serverPlayer.blockPosition(), Mth.floor(v)
                         ));
                     }
+                }
+
+                if(CropGrowthHandler.isInRoom(serverPlayer.level(),serverPlayer.getOnPos().above(),
+                        Blocks.AIR.defaultBlockState(), Optional.empty())){
+                    ModAdvancements.greenhouseCriterion.trigger(serverPlayer);
                 }
             }
         }

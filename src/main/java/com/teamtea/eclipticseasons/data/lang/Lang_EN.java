@@ -176,10 +176,18 @@ public class Lang_EN extends LangHelper {
         add("advancement.eclipticseasons.heat_stroke", "First Heat Stroke");
         add("advancement.eclipticseasons.heat_stroke.desc", "Do not walk directly under the sun in hot communities during the summer afternoon. If necessary, bring heat-resistant gear or take ice and snow to cool down");
 
-        add("advancement.eclipticseasons.copper_grate", "Craft a Copper Grate");
+        add("advancement.eclipticseasons.green_house", "Greenhouse Architect");
+        add("advancement.eclipticseasons.green_house.desc", "Build a sealed space that traps warmth and air—just like nature's cheat code!");
+
+        add("advancement.eclipticseasons.greenhouse_core_container", "Out-of-Season Grower");
+        add("advancement.eclipticseasons.greenhouse_core_container.desc", "Install a Greenhouse Core Container, then grow what nature says you shouldn't");
+        add("advancement.eclipticseasons.greenhouse_core", "Essence Igniter");
+        add("advancement.eclipticseasons.greenhouse_core.desc", "Power up your greenhouse by placing a Greenhouse Essence into its heart");
+
+        add("advancement.eclipticseasons.copper_grate", "Craft a Grate");
         add("advancement.eclipticseasons.copper_grate.desc", "Maybe something can be placed in the grate to alter the environment?");
         add("advancement.eclipticseasons.block_in_copper_grate", "Change Humidity");
-        add("advancement.eclipticseasons.block_in_copper_grate.desc", "Try placing something inside that can modify humidity~");
+        add("advancement.eclipticseasons.block_in_copper_grate.desc", "Some blocks that affect humidity could be placed in the grate—beware, for they may transform with time or need warmth to fade into vapor~");
 
         add("advancement.eclipticseasons.seasonal_prayer_scroll", "Seasonal Prayer Scroll");
         add("advancement.eclipticseasons.seasonal_prayer_scroll.desc", "Craft a Seasonal Prayer Scroll to obtain Greenhouse Essences");
@@ -201,8 +209,8 @@ public class Lang_EN extends LangHelper {
         add("advancement.eclipticseasons.spring_bread.desc", "After hard work, enjoy a hearty meal~");
         add("advancement.eclipticseasons.spring_hay", "Craft Hay Bale");
         add("advancement.eclipticseasons.spring_hay.desc", "Craft hay bales to store your harvest");
-        add("advancement.eclipticseasons.spring_end", "Spring Greenhouse Core");
-        add("advancement.eclipticseasons.spring_end.desc", "Place the Spring Greenhouse Essence into the Greenhouse Core Container");
+        // add("advancement.eclipticseasons.spring_end", "Spring Greenhouse Core");
+        // add("advancement.eclipticseasons.spring_end.desc", "Place the Spring Greenhouse Essence into the Greenhouse Core Container");
 
         add("advancement.eclipticseasons.summer_start", "Summer Quest");
         add("advancement.eclipticseasons.summer_start.desc", "Prepare to enjoy watermelons in the heat of summer~");
@@ -216,8 +224,8 @@ public class Lang_EN extends LangHelper {
         add("advancement.eclipticseasons.summer_glistering_melon_slice.desc", "Craft a glistering melon slice. What is this?");
         add("advancement.eclipticseasons.summer_eat_glistering_melon_slice", "Eat Glistering Melon Slice");
         add("advancement.eclipticseasons.summer_eat_glistering_melon_slice.desc", "Is it really edible?");
-        add("advancement.eclipticseasons.summer_end", "Summer Greenhouse Core");
-        add("advancement.eclipticseasons.summer_end.desc", "Place the Summer Greenhouse Essence into the Greenhouse Core Container");
+        // add("advancement.eclipticseasons.summer_end", "Summer Greenhouse Core");
+        // add("advancement.eclipticseasons.summer_end.desc", "Place the Summer Greenhouse Essence into the Greenhouse Core Container");
 
         add("advancement.eclipticseasons.autumn_start", "Autumn Quest");
         add("advancement.eclipticseasons.autumn_start.desc", "Plant pumpkins");
@@ -231,8 +239,8 @@ public class Lang_EN extends LangHelper {
         add("advancement.eclipticseasons.autumn_jack_o_lantern.desc", "Shine bright today~");
         add("advancement.eclipticseasons.autumn_pumpkin_pie", "Bake Pumpkin Pie");
         add("advancement.eclipticseasons.autumn_pumpkin_pie.desc", "It's pie, not π");
-        add("advancement.eclipticseasons.autumn_end", "Autumn Greenhouse Core");
-        add("advancement.eclipticseasons.autumn_end.desc", "Place the Autumn Greenhouse Essence into the Greenhouse Core Container");
+        // add("advancement.eclipticseasons.autumn_end", "Autumn Greenhouse Core");
+        // add("advancement.eclipticseasons.autumn_end.desc", "Place the Autumn Greenhouse Essence into the Greenhouse Core Container");
 
         add("advancement.eclipticseasons.winter_start", "Winter Quest");
         add("advancement.eclipticseasons.winter_start.desc", "Get ready to grab a broom and sweep the snow~");
@@ -246,8 +254,8 @@ public class Lang_EN extends LangHelper {
         add("advancement.eclipticseasons.winter_carpet.desc", "Oh dear, don't catch a cold");
         add("advancement.eclipticseasons.winter_cake", "Bake Cake");
         add("advancement.eclipticseasons.winter_cake.desc", "Let's celebrate a year of good harvest~");
-        add("advancement.eclipticseasons.winter_end", "Winter Greenhouse Core");
-        add("advancement.eclipticseasons.winter_end.desc", "Place the Winter Greenhouse Essence into the Greenhouse Core Container");
+        // add("advancement.eclipticseasons.winter_end", "Winter Greenhouse Core");
+        // add("advancement.eclipticseasons.winter_end.desc", "Place the Winter Greenhouse Essence into the Greenhouse Core Container");
     }
 
     private void addSeasonQuest() {

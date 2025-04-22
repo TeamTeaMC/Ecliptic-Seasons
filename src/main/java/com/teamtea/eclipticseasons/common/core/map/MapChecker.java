@@ -23,8 +23,10 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.level.block.state.properties.Half;
 import net.minecraft.world.level.block.state.properties.SlabType;
+import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.ChunkSource;
 import net.minecraft.world.level.levelgen.Heightmap;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -99,6 +101,9 @@ public class MapChecker {
 
 
     public static Holder<Biome> getSurfaceBiome(Level level, BlockPos pos) {
+        int maxBuildHeight = level.getMaxBuildHeight();
+        int minBuildHeight = level.getMinBuildHeight();
+
         // fix the pos to surface
         ChunkInfoMap chunkMap1 = getChunkMap(level, pos);
 
@@ -110,8 +115,8 @@ public class MapChecker {
             if (bid > -1) {
                 biome = idToBiome(level, bid);
                 if (isSmallBiome(biome)) {
-                    y = getHeight(level, pos) + 1;
-                    if (y > level.getMaxBuildHeight()) {
+                    y = getHeightSafe(level, pos) + 1;
+                    if (y > maxBuildHeight || y <= minBuildHeight) {
                         y = (level.getHeight(Heightmap.Types.MOTION_BLOCKING, pos.getX(), pos.getZ()));
                     }
                 }
@@ -119,8 +124,8 @@ public class MapChecker {
         }
 
         if (biome == null) {
-            y = getHeight(level, pos) + 1;
-            if (y > level.getMaxBuildHeight()) {
+            y = getHeightSafe(level, pos) + 1;
+            if (y > maxBuildHeight || y <= minBuildHeight) {
                 y = (level.getHeight(Heightmap.Types.MOTION_BLOCKING, pos.getX(), pos.getZ()));
             }
             pos = new BlockPos(pos.getX(), y, pos.getZ());
@@ -171,8 +176,8 @@ public class MapChecker {
                         bid = chunkMap1.getBiome(relative);
                 }
                 if (bid < 0) {
-                    y = getHeight(level, relative) + 1;
-                    if (y > level.getMaxBuildHeight()) {
+                    y = getHeightSafe(level, relative) + 1;
+                    if (y > maxBuildHeight || y <= minBuildHeight) {
                         y = (level.getHeight(Heightmap.Types.MOTION_BLOCKING, relative.getX(), relative.getZ()));
                     }
                     relative.setY(y);
@@ -322,6 +327,14 @@ public class MapChecker {
         return i >> ChunkSizeAxis;
     }
 
+    public static int getHeightSafe(@NotNull Level level, BlockPos pos) {
+        ChunkInfoMap chunkMap = getChunkMap(level, pos);
+        if (chunkMap != null) {
+            return chunkMap.getHeight(pos);
+        }
+        return level.getMinBuildHeight() - 1;
+    }
+
     public static int getHeight(Level levelNull, BlockPos pos) {
         return getHeightOrUpdate(levelNull, pos, false);
     }
@@ -344,6 +357,7 @@ public class MapChecker {
             for (int i = x0; i < x1 + 1; i++) {
                 for (int j = z0; j < z1 + 1; j++) {
                     map.updateHeight(i, j, map.minY);
+                    map.updateBiome(i,j,-1);
                 }
             }
             return true;
@@ -554,6 +568,23 @@ public class MapChecker {
         ChunkInfoMap map = MapChecker.getChunkMap(level,x, z);
         if (map != null)
             map.updateHeight(setPos, y);
+    }
+
+    public static void forceChunkUpdateHeight(Level level, ChunkAccess chunk) {
+        ChunkPos chunkPos = chunk.getPos();
+        BlockPos middleBlockPosition = chunkPos.getMiddleBlockPosition(0);
+        MapChecker.updatePosForce(level, middleBlockPosition, level.getMinBuildHeight() - 1);
+        ChunkInfoMap chunkMap = MapChecker.getChunkMap(level, middleBlockPosition);
+        // BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos();
+        if (chunkMap != null) {
+            for (int i = chunkPos.getMinBlockX(); i <= chunkPos.getMaxBlockX(); i++) {
+                for (int j = chunkPos.getMinBlockZ(); j <= chunkPos.getMaxBlockZ(); j++) {
+                    int k = chunk.getHeight(Heightmap.Types.MOTION_BLOCKING, i, j) - 1;
+                    // mutableBlockPos.set(i,k,j);
+                    chunkMap.updateHeight(i, j, k);
+                }
+            }
+        }
     }
 
 }

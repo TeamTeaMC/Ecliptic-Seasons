@@ -1,0 +1,30 @@
+{
+  "parent": "eclipticseasons:main/root",
+  "criteria": {
+    "core_require": {
+      "conditions": {},
+      "trigger": "eclipticseasons:greenhouse"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancement.eclipticseasons.green_house.desc"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "eclipticseasons:growth_detector"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "advancement.eclipticseasons.green_house"
+    }
+  },
+  "requirements": [
+    [
+      "core_require"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

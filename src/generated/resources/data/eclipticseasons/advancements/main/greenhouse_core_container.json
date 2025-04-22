@@ -6,7 +6,7 @@
         "items": [
           {
             "items": [
-              "eclipticseasons:block_in_wooden_grate_block"
+              "eclipticseasons:greenhouse_core_container"
             ]
           }
         ]
@@ -23,16 +23,16 @@
   "display": {
     "announce_to_chat": true,
     "description": {
-      "translate": "advancement.eclipticseasons.copper_grate.desc"
+      "translate": "advancement.eclipticseasons.greenhouse_core_container.desc"
     },
     "frame": "task",
     "hidden": false,
     "icon": {
-      "item": "eclipticseasons:block_in_wooden_grate_block"
+      "item": "eclipticseasons:greenhouse_core_container"
     },
     "show_toast": false,
     "title": {
-      "translate": "advancement.eclipticseasons.copper_grate"
+      "translate": "advancement.eclipticseasons.greenhouse_core_container"
     }
   },
   "requirements": [

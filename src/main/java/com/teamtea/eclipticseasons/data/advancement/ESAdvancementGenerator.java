@@ -22,6 +22,7 @@ import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.common.data.ForgeAdvancementProvider;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
@@ -67,7 +68,51 @@ public class ESAdvancementGenerator implements ForgeAdvancementProvider.Advancem
                 .requirements(RequirementsStrategy.AND)
                 .save(consumer, getNameId("main/heat_stroke"));
 
-        Advancement copper_grate = buildAdvancement(seasons, BlockRegistry.block_in_wooden_grate_block.get(),
+        Advancement green_house = buildAdvancement(seasons, ItemRegistry.growth_detector.get(),
+                Component.translatable("advancement.eclipticseasons.green_house"),
+                Component.translatable("advancement.eclipticseasons.green_house.desc"),
+                "core_require", SolarTermsCriterion.TriggerInstance.simple3(),
+                consumer, "main/green_house");
+
+        Advancement greenhouse_core_container = buildAdvancement(green_house, ItemRegistry.greenhouse_core_container_item.get(),
+                Component.translatable("advancement.eclipticseasons.greenhouse_core_container"),
+                Component.translatable("advancement.eclipticseasons.greenhouse_core_container.desc"),
+                "core_require", InventoryChangeTrigger.TriggerInstance.hasItems(BlockRegistry.greenhouse_core_container.get()),
+                consumer, "main/greenhouse_core_container");
+
+
+        Advancement greenhouse_core =
+                Advancement.Builder.advancement()
+                        .parent(greenhouse_core_container)
+                        .display(ItemRegistry.spring_greenhouse_core_item.get(),
+                                Component.translatable("advancement.eclipticseasons.greenhouse_core"),
+                                Component.translatable("advancement.eclipticseasons.greenhouse_core.desc"),
+                                null,
+                                FrameType.TASK, false, true, false)
+                        .addCriterion("core_require_spring", ItemUsedOnLocationTrigger.TriggerInstance.itemUsedOnBlock(
+                                LocationPredicate.Builder.location().setBlock(BlockPredicate.Builder.block().of(BlockRegistry.spring_greenhouse_core.get()).build()),
+                                ItemPredicate.Builder.item()
+                        ))
+                        .addCriterion("core_require_summer", ItemUsedOnLocationTrigger.TriggerInstance.itemUsedOnBlock(
+                                LocationPredicate.Builder.location().setBlock(BlockPredicate.Builder.block().of(BlockRegistry.summer_greenhouse_core.get()).build()),
+                                ItemPredicate.Builder.item()
+                        ))
+                        .addCriterion("core_require_autumn", ItemUsedOnLocationTrigger.TriggerInstance.itemUsedOnBlock(
+                                LocationPredicate.Builder.location().setBlock(BlockPredicate.Builder.block().of(BlockRegistry.autumn_greenhouse_core.get()).build()),
+                                ItemPredicate.Builder.item()
+                        ))
+                        .addCriterion("core_require_winter", ItemUsedOnLocationTrigger.TriggerInstance.itemUsedOnBlock(
+                                LocationPredicate.Builder.location().setBlock(BlockPredicate.Builder.block().of(BlockRegistry.winter_greenhouse_core.get()).build()),
+                                ItemPredicate.Builder.item()
+                        ))
+                        // .addCriterion("parent_spring", ParentNeedCriterion.TriggerInstance.simple(EclipticSeasons.rl("quests/spring_end")))
+                        // .addCriterion("parent_summer", ParentNeedCriterion.TriggerInstance.simple(EclipticSeasons.rl("quests/summer_end")))
+                        // .addCriterion("parent_autumn", ParentNeedCriterion.TriggerInstance.simple(EclipticSeasons.rl("quests/autumn_end")))
+                        // .addCriterion("parent_winter", ParentNeedCriterion.TriggerInstance.simple(EclipticSeasons.rl("quests/winter_end")))
+                        .requirements(new String[][]{{"core_require_spring", "core_require_summer", "core_require_autumn", "core_require_winter"}})
+                        .save(consumer, getNameId("quests/greenhouse_core"));
+
+        Advancement copper_grate = buildAdvancement(green_house, BlockRegistry.block_in_wooden_grate_block.get(),
                 Component.translatable("advancement.eclipticseasons.copper_grate"),
                 Component.translatable("advancement.eclipticseasons.copper_grate.desc"),
                 "core_require", InventoryChangeTrigger.TriggerInstance.hasItems(BlockRegistry.block_in_wooden_grate_block.get()),
@@ -178,14 +223,14 @@ public class ESAdvancementGenerator implements ForgeAdvancementProvider.Advancem
                 "core_require", InventoryChangeTrigger.TriggerInstance.hasItems(Items.HAY_BLOCK),
                 consumer, "quests/spring_hay", ESLootTables.spring_greenhouse_essence);
 
-        Advancement spring_end = buildAdvancement(spring_hay, ItemRegistry.spring_greenhouse_core_item.get(),
-                Component.translatable("advancement.eclipticseasons.spring_end"),
-                Component.translatable("advancement.eclipticseasons.spring_end.desc"),
-                "core_require", ItemUsedOnLocationTrigger.TriggerInstance.itemUsedOnBlock(
-                        LocationPredicate.Builder.location().setBlock(BlockPredicate.Builder.block().of(BlockRegistry.spring_greenhouse_core.get()).build()),
-                        ItemPredicate.Builder.item()
-                ),
-                consumer, "quests/spring_end", ESLootTables.spring_greenhouse_essence);
+        // Advancement spring_end = buildAdvancement(spring_hay, ItemRegistry.spring_greenhouse_core_item.get(),
+        //         Component.translatable("advancement.eclipticseasons.spring_end"),
+        //         Component.translatable("advancement.eclipticseasons.spring_end.desc"),
+        //         "core_require", ItemUsedOnLocationTrigger.TriggerInstance.itemUsedOnBlock(
+        //                 LocationPredicate.Builder.location().setBlock(BlockPredicate.Builder.block().of(BlockRegistry.spring_greenhouse_core.get()).build()),
+        //                 ItemPredicate.Builder.item()
+        //         ),
+        //         consumer, "quests/spring_end", ESLootTables.spring_greenhouse_essence);
     }
 
     private void buildSummer(Consumer<Advancement> consumer) {
@@ -228,14 +273,14 @@ public class ESAdvancementGenerator implements ForgeAdvancementProvider.Advancem
                 "core_require", InventoryChangeTrigger.TriggerInstance.hasItems(Items.GLISTERING_MELON_SLICE),
                 consumer, "quests/summer_eat_glistering_melon_slice", ESLootTables.summer_greenhouse_essence);
 
-        Advancement summer_end = buildAdvancement(summer_eat_glistering_melon_slice, ItemRegistry.summer_greenhouse_core_item.get(),
-                Component.translatable("advancement.eclipticseasons.summer_end"),
-                Component.translatable("advancement.eclipticseasons.summer_end.desc"),
-                "core_require", ItemUsedOnLocationTrigger.TriggerInstance.itemUsedOnBlock(
-                        LocationPredicate.Builder.location().setBlock(BlockPredicate.Builder.block().of(BlockRegistry.summer_greenhouse_core.get()).build()),
-                        ItemPredicate.Builder.item()
-                ),
-                consumer, "quests/summer_end", ESLootTables.summer_greenhouse_essence);
+        // Advancement summer_end = buildAdvancement(summer_eat_glistering_melon_slice, ItemRegistry.summer_greenhouse_core_item.get(),
+        //         Component.translatable("advancement.eclipticseasons.summer_end"),
+        //         Component.translatable("advancement.eclipticseasons.summer_end.desc"),
+        //         "core_require", ItemUsedOnLocationTrigger.TriggerInstance.itemUsedOnBlock(
+        //                 LocationPredicate.Builder.location().setBlock(BlockPredicate.Builder.block().of(BlockRegistry.summer_greenhouse_core.get()).build()),
+        //                 ItemPredicate.Builder.item()
+        //         ),
+        //         consumer, "quests/summer_end", ESLootTables.summer_greenhouse_essence);
     }
 
 
@@ -285,14 +330,14 @@ public class ESAdvancementGenerator implements ForgeAdvancementProvider.Advancem
                 ),
                 consumer, "quests/autumn_pumpkin_pie", ESLootTables.autumn_greenhouse_essence);
 
-        Advancement autumn_end = buildAdvancement(autumn_pumpkin_pie, ItemRegistry.autumn_greenhouse_core_item.get(),
-                Component.translatable("advancement.eclipticseasons.autumn_end"),
-                Component.translatable("advancement.eclipticseasons.autumn_end.desc"),
-                "core_require", ItemUsedOnLocationTrigger.TriggerInstance.itemUsedOnBlock(
-                        LocationPredicate.Builder.location().setBlock(BlockPredicate.Builder.block().of(BlockRegistry.autumn_greenhouse_core.get()).build()),
-                        ItemPredicate.Builder.item()
-                ),
-                consumer, "quests/autumn_end", ESLootTables.autumn_greenhouse_essence);
+        // Advancement autumn_end = buildAdvancement(autumn_pumpkin_pie, ItemRegistry.autumn_greenhouse_core_item.get(),
+        //         Component.translatable("advancement.eclipticseasons.autumn_end"),
+        //         Component.translatable("advancement.eclipticseasons.autumn_end.desc"),
+        //         "core_require", ItemUsedOnLocationTrigger.TriggerInstance.itemUsedOnBlock(
+        //                 LocationPredicate.Builder.location().setBlock(BlockPredicate.Builder.block().of(BlockRegistry.autumn_greenhouse_core.get()).build()),
+        //                 ItemPredicate.Builder.item()
+        //         ),
+        //         consumer, "quests/autumn_end", ESLootTables.autumn_greenhouse_essence);
     }
 
     private void buildWinter(Consumer<Advancement> consumer) {
@@ -335,14 +380,14 @@ public class ESAdvancementGenerator implements ForgeAdvancementProvider.Advancem
                 "core_require", InventoryChangeTrigger.TriggerInstance.hasItems(Items.CAKE),
                 consumer, "quests/winter_cake", ESLootTables.winter_greenhouse_essence);
 
-        Advancement winter_end = buildAdvancement(winter_cake, ItemRegistry.winter_greenhouse_core_item.get(),
-                Component.translatable("advancement.eclipticseasons.winter_end"),
-                Component.translatable("advancement.eclipticseasons.winter_end.desc"),
-                "core_require", ItemUsedOnLocationTrigger.TriggerInstance.itemUsedOnBlock(
-                        LocationPredicate.Builder.location().setBlock(BlockPredicate.Builder.block().of(BlockRegistry.winter_greenhouse_core.get()).build()),
-                        ItemPredicate.Builder.item()
-                ),
-                consumer, "quests/winter_end", ESLootTables.winter_greenhouse_essence);
+        // Advancement winter_end = buildAdvancement(winter_cake, ItemRegistry.winter_greenhouse_core_item.get(),
+        //         Component.translatable("advancement.eclipticseasons.winter_end"),
+        //         Component.translatable("advancement.eclipticseasons.winter_end.desc"),
+        //         "core_require", ItemUsedOnLocationTrigger.TriggerInstance.itemUsedOnBlock(
+        //                 LocationPredicate.Builder.location().setBlock(BlockPredicate.Builder.block().of(BlockRegistry.winter_greenhouse_core.get()).build()),
+        //                 ItemPredicate.Builder.item()
+        //         ),
+        //         consumer, "quests/winter_end", ESLootTables.winter_greenhouse_essence);
     }
 
     public Advancement buildAdvancement(Advancement parent,

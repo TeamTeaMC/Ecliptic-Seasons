@@ -175,12 +175,20 @@ public class Lang_ZH extends LangHelper {
         add("advancement.eclipticseasons.root", "春去秋来");
         add("advancement.eclipticseasons.root.desc", "度过一年二十四个节气");
         add("advancement.eclipticseasons.heat_stroke", "第一次中暑");
-        add("advancement.eclipticseasons.heat_stroke.desc", "夏季中午请勿在炎热的群系直面太阳行走，如有必要，带上能抵抗炎热的装备或者冰雪降温。");
+        add("advancement.eclipticseasons.heat_stroke.desc", "夏季中午请勿在炎热的群系直面太阳行走，如有必要，带上能抵抗炎热的装备或者冰雪降温");
 
-        add("advancement.eclipticseasons.copper_grate", "木格栅");
+        add("advancement.eclipticseasons.green_house", "温室建筑师");
+        add("advancement.eclipticseasons.green_house.desc", "建造一个封闭空间，锁住空气和热量");
+
+        add("advancement.eclipticseasons.greenhouse_core_container", "反季节种植");
+        add("advancement.eclipticseasons.greenhouse_core_container.desc", "放置温室核心心室方块，准备完成季节温室建造");
+        add("advancement.eclipticseasons.greenhouse_core", "心髓能量");
+        add("advancement.eclipticseasons.greenhouse_core.desc", "将温室心髓放入心室方块，为温室注入季节能量");
+
+        add("advancement.eclipticseasons.copper_grate", "制作格栅");
         add("advancement.eclipticseasons.copper_grate.desc", "也许格子里可以放些什么改变环境？");
-        add("advancement.eclipticseasons.block_in_copper_grate", "改变湿度");
-        add("advancement.eclipticseasons.block_in_copper_grate.desc", "可以尝试放入一些改变湿度的玩意~");
+        add("advancement.eclipticseasons.block_in_copper_grate", "调节湿度");
+        add("advancement.eclipticseasons.block_in_copper_grate.desc", "可以尝试放入一些改变湿度的玩意，注意他们也许会随着时间变化或是需要额外的热量蒸发~");
 
         add("advancement.eclipticseasons.seasonal_prayer_scroll", "祈年令");
         add("advancement.eclipticseasons.seasonal_prayer_scroll.desc", "制作祈年令来获取更多的温室心髓");
@@ -202,8 +210,8 @@ public class Lang_ZH extends LangHelper {
         add("advancement.eclipticseasons.spring_bread.desc", "辛苦之后，来饱餐一顿吧~");
         add("advancement.eclipticseasons.spring_hay", "制作草垛");
         add("advancement.eclipticseasons.spring_hay.desc", "制作干草块，储存收获");
-        add("advancement.eclipticseasons.spring_end", "春季温室核心");
-        add("advancement.eclipticseasons.spring_end.desc", "将春季温室心髓放入温室之心室");
+        // add("advancement.eclipticseasons.spring_end", "春季温室核心");
+        // add("advancement.eclipticseasons.spring_end.desc", "将春季温室心髓放入温室之心室");
 
         add("advancement.eclipticseasons.summer_start", "夏季任务");
         add("advancement.eclipticseasons.summer_start.desc", "盛夏可以准备吃西瓜了~");
@@ -217,8 +225,8 @@ public class Lang_ZH extends LangHelper {
         add("advancement.eclipticseasons.summer_glistering_melon_slice.desc", "制作闪烁的西瓜片，这是什么？");
         add("advancement.eclipticseasons.summer_eat_glistering_melon_slice", "食用闪烁西瓜片");
         add("advancement.eclipticseasons.summer_eat_glistering_melon_slice.desc", "真的能吃吗？");
-        add("advancement.eclipticseasons.summer_end", "夏季温室核心");
-        add("advancement.eclipticseasons.summer_end.desc", "将夏季温室心髓放入温室之心室");
+        // add("advancement.eclipticseasons.summer_end", "夏季温室核心");
+        // add("advancement.eclipticseasons.summer_end.desc", "将夏季温室心髓放入温室之心室");
 
         add("advancement.eclipticseasons.autumn_start", "秋季任务");
         add("advancement.eclipticseasons.autumn_start.desc", "种下南瓜");
@@ -232,8 +240,8 @@ public class Lang_ZH extends LangHelper {
         add("advancement.eclipticseasons.autumn_jack_o_lantern.desc", "今天也要闪亮登场~");
         add("advancement.eclipticseasons.autumn_pumpkin_pie", "制作南瓜派");
         add("advancement.eclipticseasons.autumn_pumpkin_pie.desc", "是派，不是π");
-        add("advancement.eclipticseasons.autumn_end", "秋季温室核心");
-        add("advancement.eclipticseasons.autumn_end.desc", "将秋季温室心髓放入温室之心室");
+        // add("advancement.eclipticseasons.autumn_end", "秋季温室核心");
+        // add("advancement.eclipticseasons.autumn_end.desc", "将秋季温室心髓放入温室之心室");
 
         add("advancement.eclipticseasons.winter_start", "冬季任务");
         add("advancement.eclipticseasons.winter_start.desc", "准备拿起扫帚扫雪吧~");
@@ -247,8 +255,8 @@ public class Lang_ZH extends LangHelper {
         add("advancement.eclipticseasons.winter_carpet.desc", "噢，亲爱的，别冷着了");
         add("advancement.eclipticseasons.winter_cake", "制作蛋糕");
         add("advancement.eclipticseasons.winter_cake.desc", "让我们来庆祝一年的好收成吧~");
-        add("advancement.eclipticseasons.winter_end", "冬季温室核心");
-        add("advancement.eclipticseasons.winter_end.desc", "将冬季温室心髓放入温室之心室");
+        // add("advancement.eclipticseasons.winter_end", "冬季温室核心");
+        // add("advancement.eclipticseasons.winter_end.desc", "将冬季温室心髓放入温室之心室");
     }
 
     private void addSeasonQuest() {
