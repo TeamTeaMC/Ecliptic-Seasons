@@ -1,0 +1,17 @@
+{
+	"parent": "eclipticseasons:block/grass_flower",
+	"render_type": "cutout",
+	"textures": {
+		"1": "block/pink_petals",
+		"particle": "#1"
+	},
+	"elements": [
+		{
+			"from": [0, 16, 0],
+			"to": [16, 16, 16],
+			"faces": {
+				"up": {"uv": [0, 0, 16, 16], "texture": "#1", "cullface": "up" , "tintindex": 0}
+			}
+		}
+	]
+}
