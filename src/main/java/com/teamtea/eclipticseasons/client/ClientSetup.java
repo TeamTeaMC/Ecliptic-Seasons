@@ -90,7 +90,7 @@ public class ClientSetup {
         event.register(ModelManager.snowy_leaves_top);
 
         ModelManager.flower_on_grass.forEach(event::register);
-
+        ModelManager.fourleaf_clovers.forEach(event::register);
     }
 
     @SubscribeEvent

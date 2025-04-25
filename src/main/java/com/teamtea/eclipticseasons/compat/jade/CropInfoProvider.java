@@ -1,12 +1,15 @@
 package com.teamtea.eclipticseasons.compat.jade;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
+import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.common.core.crop.CropInfoManager;
 import com.teamtea.eclipticseasons.common.registry.ItemRegistry;
 import com.teamtea.eclipticseasons.config.ClientConfig;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.Vec2;
 import snownee.jade.api.BlockAccessor;
@@ -35,6 +38,14 @@ public class CropInfoProvider implements IBlockComponentProvider {
                 } else if(config.get(JadeCompact.SHIFT_HINT)){
                     tooltip.add(Component.translatable("hint.jade.plugin_eclipticseasons.crop.show"));
                 }
+            }
+        }
+
+        if (config.get(JadeCompact.SNOWY_STATUS)) {
+            BlockPos position = accessor.getPosition();
+            Level level = accessor.getLevel();
+            if (EclipticSeasonsApi.getInstance().isSnowyBlock(level, accessor.getBlockState(), position)) {
+                tooltip.add(Component.translatable("hint.jade.plugin_eclipticseasons.snowy_status.snowy"));
             }
         }
     }

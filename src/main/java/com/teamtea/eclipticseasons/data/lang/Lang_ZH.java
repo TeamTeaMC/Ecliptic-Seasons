@@ -166,6 +166,8 @@ public class Lang_ZH extends LangHelper {
         add("config.jade.plugin_eclipticseasons.crop","作物");
         add("config.jade.plugin_eclipticseasons.crop.shift_hint","Shift按键提示");
         add("hint.jade.plugin_eclipticseasons.crop.show", "§o<..按住shift以查看更多..>");
+        add("config.jade.plugin_eclipticseasons.snowy_status","显示覆雪状态");
+        add("hint.jade.plugin_eclipticseasons.snowy_status.snowy", "§7覆雪状态");
     }
 
     private void addAdvancements() {

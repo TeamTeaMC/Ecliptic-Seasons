@@ -1,6 +1,7 @@
 package com.teamtea.eclipticseasons.compat.theoneprobe;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
+import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.common.core.crop.CropInfoManager;
 import com.teamtea.eclipticseasons.config.ClientConfig;
 import mcjty.theoneprobe.api.IProbeHitData;
@@ -36,6 +37,13 @@ public class CropProvider implements IProbeInfoProvider {
                 } else {
                     iProbeInfo.mcText(Component.translatable("hint.jade.plugin_eclipticseasons.crop.show").withStyle(ChatFormatting.GRAY));
                 }
+            }
+        }
+
+        if (iProbeHitData != null && (player == null
+                || player.isShiftKeyDown())) {
+            if (EclipticSeasonsApi.getInstance().isSnowyBlock(level, blockState, iProbeHitData.getPos())) {
+                iProbeInfo.mcText(Component.translatable("hint.jade.plugin_eclipticseasons.snowy_status.snowy"));
             }
         }
     }

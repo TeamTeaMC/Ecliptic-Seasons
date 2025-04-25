@@ -579,8 +579,9 @@ public class MapChecker {
         if (chunkMap != null) {
             for (int i = chunkPos.getMinBlockX(); i <= chunkPos.getMaxBlockX(); i++) {
                 for (int j = chunkPos.getMinBlockZ(); j <= chunkPos.getMaxBlockZ(); j++) {
-                    int k = chunk.getHeight(Heightmap.Types.MOTION_BLOCKING, i, j) - 1;
+                    int k = chunk.getHeight(Heightmap.Types.MOTION_BLOCKING, i, j);
                     // mutableBlockPos.set(i,k,j);
+                    // note 似乎这里不能-1
                     chunkMap.updateHeight(i, j, k);
                 }
             }

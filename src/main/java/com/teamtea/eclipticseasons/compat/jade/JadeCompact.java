@@ -11,6 +11,7 @@ import snownee.jade.api.WailaPlugin;
 @WailaPlugin
 public class JadeCompact implements IWailaPlugin {
     public static final ResourceLocation SHIFT_HINT = EclipticSeasons.rl("crop.shift_hint");
+    public static final ResourceLocation SNOWY_STATUS = EclipticSeasons.rl("snowy_status");
 
     // todo:
     // use IServerExtensionProvider and IClientExtensionProvider instaed
@@ -25,5 +26,6 @@ public class JadeCompact implements IWailaPlugin {
     public void registerClient(IWailaClientRegistration registration) {
         registration.registerBlockComponent(CropInfoProvider.INSTANCE, Block.class);
         registration.addConfig(SHIFT_HINT,true);
+        registration.addConfig(SNOWY_STATUS,true);
     }
 }

@@ -32,6 +32,7 @@
     "compat.legendarysurvivaloverhaul.MixinModCore",
     "compat.legendarysurvivaloverhaul.MixinTemperatureModifierRegistry",
     "compat.legendarysurvivaloverhaul.MixinWeatherModifier",
+    "compat.oculus.MixinIrisForgeHelpers",
     "compat.snowyspirit.MixinSnowySpirit",
     "compat.snowyspirit.MixinSnowySpiritGroundStatus",
     "data.MixinsRegistriesDatapackGenerator"

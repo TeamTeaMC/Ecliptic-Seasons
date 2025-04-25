@@ -32,6 +32,8 @@ import net.minecraftforge.client.model.data.ModelData;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 // https://github.com/DoubleNegation/CompactOres/blob/1.18/src/main/java/doublenegation/mods/compactores/CompactOresResourcePack.java#L164
 // 未来可以基于RepositorySource实现动态纹理生成（看情况，因为目前不需要，对内存消耗比较大）
@@ -75,6 +77,8 @@ public class ModelManager {
     public static List<ResourceLocation> flower_on_grass = List.of(1, 2, 3, 4, 5, 6).stream().map(
             i -> EclipticSeasons.rl("block/flower_%s".formatted(i))
     ).toList();
+
+    public static List<ResourceLocation> fourleaf_clovers = IntStream.rangeClosed(0, 6).mapToObj(i -> EclipticSeasons.rl("block/fourleaf_clover/fourleaf_clover_%s".formatted(i))).collect(Collectors.toCollection(ArrayList::new));
 
 
     public static ResourceLocation mrl(String s, String s2) {
@@ -443,12 +447,13 @@ public class ModelManager {
         }
 
         if (isLight) {
+            boolean isSnowy = false;
             if (CommonConfig.Season.snowyWinter.get()
                     && onBlock != Blocks.SNOW_BLOCK
                     && MapChecker.shouldSnowAt(level, pos.below(offset), state, random, state.getSeed(pos))) {
                 // DynamicLeavesBlock
 
-                boolean isSnowy = true;
+                isSnowy = true;
 
                 if (CommonConfig.Season.notSnowyNearGlowingBlock.get()) {
                     BlockPos above = pos.offset(0, 1 - offset, 0);
@@ -477,21 +482,36 @@ public class ModelManager {
                     }
                 }
 
-            } else if (
-                    ClientConfig.Renderer.flowerOnGrass.get()
-                            && state.getBlock() instanceof GrassBlock
-                            && random.nextInt(15) == 0
-            ) {
-                var solarTerm = SolarTerm.NONE;
-                int weight = 100;
-                solarTerm = EclipticUtil.getNowSolarTerm(level);
-                weight = Math.abs(solarTerm.ordinal() - 3) + 1;
-                if (solarTerm.getSeason() == Season.SPRING
-                        && random.nextInt(weight * 4) == 0
-                        && blockAndTintGetter.getBlockState(pos.above()).isAir()) {
-                    {
-                        BakedModel snowModel = models.get(flower_on_grass.get(random.nextInt(flower_on_grass.size())));
-                        replace = snowModel;
+            }
+
+            if (!isSnowy) {
+                if (
+                        ClientConfig.Renderer.flowerOnGrass.get()
+                                && state.getBlock() instanceof GrassBlock
+                                && random.nextInt(15) == 0
+                ) {
+                    var solarTerm = SolarTerm.NONE;
+                    solarTerm = EclipticUtil.getNowSolarTerm(level);
+                    long seed = state.getSeed(pos);
+                    if (solarTerm.isInTerms(SolarTerm.BEGINNING_OF_SPRING, SolarTerm.BEGINNING_OF_SUMMER)) {
+                        int weight = Math.abs(solarTerm.ordinal() - 3) + 1;
+                        if ((seed % (weight * 4)) == 0
+                                && blockAndTintGetter.getBlockState(pos.above()).isAir()) {
+                            {
+                                BakedModel snowModel = models.get(flower_on_grass.get(random.nextInt(flower_on_grass.size())));
+                                replace = snowModel;
+                            }
+                        }
+                    }
+                    if (replace == null && solarTerm.isInTerms(SolarTerm.BEGINNING_OF_SUMMER, SolarTerm.BEGINNING_OF_AUTUMN)) {
+                        int weight = Math.abs(solarTerm.ordinal() - 7) + 1;
+                        if ((seed % (weight * 3)) == 0
+                                && blockAndTintGetter.getBlockState(pos.above()).isAir()) {
+                            {
+                                BakedModel snowModel = models.get(fourleaf_clovers.get(random.nextInt(fourleaf_clovers.size())));
+                                replace = snowModel;
+                            }
+                        }
                     }
                 }
             }
