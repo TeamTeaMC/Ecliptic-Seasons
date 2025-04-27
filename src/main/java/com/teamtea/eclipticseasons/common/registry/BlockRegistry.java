@@ -16,6 +16,8 @@ public class BlockRegistry {
 
     public static final RegistryObject<Block> calendar = BLOCK_DEFERRED_REGISTER.register("calendar", () -> new CalendarBlock(BlockBehaviour.Properties.of().strength(0.5f).sound(SoundType.WOOD).noOcclusion().pushReaction(PushReaction.DESTROY)));
 
+    public static final RegistryObject<Block> hygrometer = BLOCK_DEFERRED_REGISTER.register("hygrometer", () -> new HygrometerBlock(BlockBehaviour.Properties.of().strength(0.5f).sound(SoundType.AMETHYST).noOcclusion().pushReaction(PushReaction.DESTROY).randomTicks()));
+
     // greenhouse_core 温室核心
     public static final RegistryObject<Block> spring_greenhouse_core = BLOCK_DEFERRED_REGISTER.register("spring_greenhouse_core", () -> new GreenHouseCoreBlock(Season.SPRING, BlockBehaviour.Properties.of().strength(0.5f).sound(SoundType.AMETHYST).noOcclusion().pushReaction(PushReaction.DESTROY)));
     public static final RegistryObject<Block> summer_greenhouse_core = BLOCK_DEFERRED_REGISTER.register("summer_greenhouse_core", () -> new GreenHouseCoreBlock(Season.SUMMER, BlockBehaviour.Properties.of().strength(0.5f).sound(SoundType.AMETHYST).noOcclusion().pushReaction(PushReaction.DESTROY)));

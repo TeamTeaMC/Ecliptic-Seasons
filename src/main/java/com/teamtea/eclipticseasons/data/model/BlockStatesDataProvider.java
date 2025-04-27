@@ -1,6 +1,7 @@
 package com.teamtea.eclipticseasons.data.model;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
+import com.teamtea.eclipticseasons.common.block.HygrometerBlock;
 import com.teamtea.eclipticseasons.common.registry.BlockRegistry;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import net.minecraft.core.Direction;
@@ -34,6 +35,17 @@ public class BlockStatesDataProvider extends BlockStateProvider {
                     .rotationY(getRotateYByFacing(state.getValue(BlockStateProperties.HORIZONTAL_FACING)))
                     .build());
         }
+
+        for (var holder : List.of(BlockRegistry.hygrometer)) {
+            getVariantBuilder(holder.get()).forAllStatesExcept(state -> ConfiguredModel.builder()
+                    .modelFile(models()
+                            .withExistingParent(resourceBlock(holder.getId().getPath()).getPath() + "_" + HygrometerBlock.getHumidityLevelFromPower(state.getValue(HygrometerBlock.POWER)), resourceBlock(holder.getId().getPath()))
+                            .texture("1", resourceBlock(holder.getId().getPath() + "_light_" + HygrometerBlock.getHumidityLevelFromPower(state.getValue(HygrometerBlock.POWER))))
+                    )
+                    .rotationY(getRotateYByFacing(state.getValue(BlockStateProperties.HORIZONTAL_FACING)))
+                    .build());
+        }
+
 
         addSimple(BlockRegistry.block_in_wooden_grate_block.get());
 

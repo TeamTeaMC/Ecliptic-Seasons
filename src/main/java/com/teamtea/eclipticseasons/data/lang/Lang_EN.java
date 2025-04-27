@@ -35,7 +35,7 @@ public class Lang_EN extends LangHelper {
         add(ItemRegistry.broom.get(), "Broom");
         add(ItemRegistry.thermometer.get(), "Thermometer");
         add(ItemRegistry.hyetometer.get(), "Hyetometer");
-        add(ItemRegistry.hygrometer.get(), "Hygrometer");
+        add(BlockRegistry.hygrometer.get(), "Hygrometer");
 
         add(BlockRegistry.greenhouse_core_container.get(), "Container of Greenhouse Core");
 

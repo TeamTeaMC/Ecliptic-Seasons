@@ -1,5 +1,6 @@
 {
   "values": [
+    "eclipticseasons:hygrometer",
     "eclipticseasons:spring_greenhouse_core",
     "eclipticseasons:summer_greenhouse_core",
     "eclipticseasons:autumn_greenhouse_core",

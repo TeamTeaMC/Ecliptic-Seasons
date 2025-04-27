@@ -15,7 +15,7 @@ public class ItemRegistry {
     
     public static final RegistryObject<MeterItem> hyetometer = ITEM_DEFERRED_REGISTER.register("hyetometer", () -> new MeterItem(new Item.Properties()));
     public static final RegistryObject<MeterItem> thermometer = ITEM_DEFERRED_REGISTER.register("thermometer", () -> new MeterItem(new Item.Properties()));
-    public static final RegistryObject<MeterItem> hygrometer = ITEM_DEFERRED_REGISTER.register("hygrometer", () -> new MeterItem(new Item.Properties()));
+    public static final RegistryObject<MeterBlockItem> hygrometer = ITEM_DEFERRED_REGISTER.register("hygrometer", () -> new MeterBlockItem(BlockRegistry.hygrometer.get(),new Item.Properties()));
 
     public static final RegistryObject<Item>  broom = ITEM_DEFERRED_REGISTER.register("broom", () -> new BroomItem(new Item.Properties().durability(256)));
 

@@ -19,17 +19,16 @@ public class MeterItem extends Item {
         super(properties);
     }
 
+    public static void sendInfo(Item meterBlockItem, Level level, Player player) {
 
-    @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand usedHand) {
         if (level.isClientSide()) {
             BlockPos blockPosition = player.blockPosition();
             Component component = Component.empty();
-            if (this == ItemRegistry.hyetometer.get()) {
+            if (meterBlockItem == ItemRegistry.hyetometer.get()) {
                 component = EclipticUtil.getRainfallAt(level, blockPosition).getTranslation();
-            } else if (this == ItemRegistry.thermometer.get()) {
+            } else if (meterBlockItem == ItemRegistry.thermometer.get()) {
                 component = EclipticUtil.getTemperatureAt(level, blockPosition).getTranslation();
-            } else if (this == ItemRegistry.hygrometer.get()) {
+            } else if (meterBlockItem == ItemRegistry.hygrometer.get()) {
                 Humidity humidityAt = EclipticUtil.getHumidityAt(level, blockPosition);
                 humidityAt = ClientExtraUtil.modifyHumidity(level, blockPosition, humidityAt);
                 component = humidityAt.getTranslation();
@@ -38,6 +37,12 @@ public class MeterItem extends Item {
             if (!component.getString().isEmpty())
                 player.displayClientMessage(component, true);
         }
+    }
+
+
+    @Override
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand usedHand) {
+        sendInfo(this, level, player);
         return InteractionResultHolder.sidedSuccess(player.getItemInHand(usedHand), level.isClientSide());
     }
 

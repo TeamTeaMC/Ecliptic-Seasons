@@ -51,6 +51,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.server.ServerLifecycleHooks;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -186,8 +187,8 @@ public class AllListener {
                     }
                 }
 
-                if(CropGrowthHandler.isInRoom(serverPlayer.level(),serverPlayer.getOnPos().above(),
-                        Blocks.AIR.defaultBlockState(), Optional.empty())){
+                if (CropGrowthHandler.isInRoom(serverPlayer.level(), serverPlayer.getOnPos().above(),
+                        Blocks.AIR.defaultBlockState(), Optional.empty())) {
                     ModAdvancements.greenhouseCriterion.trigger(serverPlayer);
                 }
             }
@@ -268,13 +269,17 @@ public class AllListener {
         if (ServerLifecycleHooks.getCurrentServer() == null) return;
         RegistryAccess registryAccess = ServerLifecycleHooks.getCurrentServer().registryAccess();
 
-        SimpleNetworkHandler.send(event.getPlayers(), new DataPackEventMessage<>(
+        ServerPlayer player = event.getPlayer();
+        List<ServerPlayer> serverPlayerList = player == null ?
+                event.getPlayerList().getPlayers() : List.of(player);
+
+        SimpleNetworkHandler.send(serverPlayerList, new DataPackEventMessage<>(
                 registryAccess,
                 ESRegistries.HUMIDITY_CONTROL,
                 registryAccess.registryOrThrow(ESRegistries.HUMIDITY_CONTROL).entrySet().stream().map(Map.Entry::getValue).toList(),
                 HumidityControl.CODEC));
 
-        SimpleNetworkHandler.send(event.getPlayers(), new DataPackEventMessage<>(
+        SimpleNetworkHandler.send(serverPlayerList, new DataPackEventMessage<>(
                 registryAccess,
                 ESRegistries.BIOME_CLIMATE_SETTING,
                 registryAccess.registryOrThrow(ESRegistries.BIOME_CLIMATE_SETTING).entrySet().stream().map(Map.Entry::getValue).toList(),
