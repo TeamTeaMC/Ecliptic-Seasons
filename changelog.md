@@ -4,6 +4,7 @@
 - The configuration option `InitialSolarTermIndex` has been adjusted to "Spring Equinox" instead of "Beginning of Spring." This makes the start of the game less cold when survival mods are installed and also helps reduce early spring snow in some biomes (if `ShouldInitWeather` is enabled).
 - Fixed an issue where the `SnowyWinter` configuration was not properly enabled on the server side.
 - Added a new configuration option `ChangeMapColor` under `Common.Map`, allowing players to disable block map color modifications. This prevents thread deadlocks caused by Fabric mods caching map colors at inappropriate times.
+- Lowered forge version requirement to 47.1.3.
 
 ## **0.10.9**
 - Fixed an issue in version 0.10.8 where optimized chunk info initialization cached incorrect surface height, which could cause snowy leaves to display incorrectly.
