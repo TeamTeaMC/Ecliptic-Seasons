@@ -46,6 +46,7 @@ public class SimpleVoxelShapeUtils {
 
 
     private static Vec3 rotateVec(Vec3 vec, Direction.Axis axis, float angleDegrees, Vec3 origin) {
+
         double x = vec.x - origin.x;
         double y = vec.y - origin.y;
         double z = vec.z - origin.z;
@@ -62,8 +63,8 @@ public class SimpleVoxelShapeUtils {
                 rz = y * sin + z * cos;
             }
             case Y -> {
-                rx = x * cos + z * sin;
-                rz = -x * sin + z * cos;
+                rx = x * cos - z * sin;
+                rz = x * sin + z * cos;
             }
             case Z -> {
                 rx = x * cos - y * sin;

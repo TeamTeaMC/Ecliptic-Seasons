@@ -1,4 +1,4 @@
-package com.teamtea.eclipticseasons.mixin.common;
+package com.teamtea.eclipticseasons.mixin.common.level;
 
 
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;

@@ -114,10 +114,14 @@ public class EclipticUtil {
                 return EclipticUtil.isEvening(level);
             }
 
+            @Deprecated
             @Override
             public boolean isSnowySurfaceAt(Level level, BlockPos pos) {
-                long seed = level.getBlockState(pos).getSeed(pos);
-                return MapChecker.shouldSnowAt(level, pos, level.getBlockState(pos), level.getRandom(), seed);
+                if (CommonConfig.Season.snowyWinter.get()) {
+                    BlockState state = level.getBlockState(pos);
+                    return MapChecker.shouldSnowAt(level, pos, state, level.getRandom(), state.getSeed(pos));
+                }
+                return false;
             }
 
             @Override
@@ -267,7 +271,7 @@ public class EclipticUtil {
         Holder<Biome> biome = level.getBiome(pos);
         SolarTerm solarTerm = getNowSolarTerm(level);
         boolean serverSide = !level.isClientSide();
-        return getHumidityAt(level,solarTerm,biome,pos,serverSide);
+        return getHumidityAt(level, solarTerm, biome, pos, serverSide);
     }
 
     public static Humidity getHumidityConstant(SolarTerm solarTerm, Holder<Biome> biomeHolder, boolean serverSide) {

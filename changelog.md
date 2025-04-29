@@ -1,3 +1,16 @@
+## **0.10.10**
+- The hygrometer can now be placed on walls. After a period of measurement, it will also update the humidity display and emit a redstone signal.
+- The configuration option `ShouldInitWeather` has been moved from `Common.Season` to `Common.Weather`, and its default value is now disabled. If manually enabled, players may see lingering early spring snow in certain regions. This change is intended to ensure players experience a proper spring when they first log in, avoiding confusion caused by snow in springtime.
+- The configuration option `InitialSolarTermIndex` has been adjusted to "Spring Equinox" instead of "Beginning of Spring." This makes the start of the game less cold when survival mods are installed and also helps reduce early spring snow in some biomes (if `ShouldInitWeather` is enabled).
+- Fixed an issue where the `SnowyWinter` configuration was not properly enabled on the server side.
+- Added a new configuration option `ChangeMapColor` under `Common.Map`, allowing players to disable block map color modifications. This prevents thread deadlocks caused by Fabric mods caching map colors at inappropriate times.
+
+## **0.10.9**
+- Fixed an issue in version 0.10.8 where optimized chunk info initialization cached incorrect surface height, which could cause snowy leaves to display incorrectly.
+- Added snowy state display for blocks in Jade and The One Probe to help new players understand block states.
+- Added clovers to grass block in summer. Their distribution changes with the solar terms.
+- Most snowy block variants no longer have different reflection behavior from their base blocks when used with shaders that simulate surface reflections.
+
 ### **0.10.8**
 - Optimized the initialization of chunk information caching to better adapt to certain utility or optimization mods that modify initialization behavior, which could otherwise lead to performance degradation from frequent early-phase queries.
 - Refined the advancement progression system to provide clearer guidance for players when constructing greenhouses.
@@ -59,7 +72,7 @@
 ## **0.10.5**
 - Thermometers and hyetometers have been hidden.
 
-To avoid player confusion regarding the concepts of thermometer and hyetometer, thermometers and rain gauges are no longer displayed by default in the Creative mode inventory (including JEI). Additionally, their recipe unlock condition has been adjusted to require obtaining them at least once. Meanwhile, the recipe for the hygrometer has been modified to allow direct one-step crafting.
+To avoid player confusion regarding the concepts of thermometer and hyetometer, thermometers and hyetometers are no longer displayed by default in the creative mode inventory (including JEI). Additionally, their recipe unlock condition has been adjusted to require obtaining them at least once. Meanwhile, the recipe for the hygrometer has been modified to allow direct one-step crafting.
 
 Thermometers and hyetometers are essentially more like debug items—ordinary players don’t need to overly concern themselves with the specific numerical values of temperature and rainfall. Players only need to adjust based on the current humidity status.
 

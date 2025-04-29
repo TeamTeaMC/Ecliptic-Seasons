@@ -1,6 +1,7 @@
 package com.teamtea.eclipticseasons.config;
 
 import com.teamtea.eclipticseasons.compat.CompatModule;
+import lombok.Getter;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.ForgeConfigSpec;
@@ -18,6 +19,7 @@ public class CommonConfig {
         Crop.load(builder);
         CompatModule.CommonConfig.load(builder);
         Debug.load(builder);
+        Map.load(builder);
     }
 
     // public static class Compat {
@@ -80,7 +82,6 @@ public class CommonConfig {
         public static ForgeConfigSpec.IntValue initialSolarTermIndex;
         public static ForgeConfigSpec.BooleanValue daylightChange;
         public static ForgeConfigSpec.ConfigValue<List<? extends String>> validDimensions;
-        public static ForgeConfigSpec.BooleanValue shouldInitWeather;
 
         public static ForgeConfigSpec.BooleanValue snowyWinter;
         public static ForgeConfigSpec.BooleanValue notSnowyNearGlowingBlock;
@@ -105,8 +106,6 @@ public class CommonConfig {
                     .defineListAllowEmpty("ValidDimensions",
                             () -> List.of(Level.OVERWORLD.location().toString()),
                             o -> o instanceof String s && ResourceLocation.tryParse(s) != null);
-            shouldInitWeather = builder.comment("Set it true to initialize weather and snow when loading the mod or level for the first time.")
-                    .define("ShouldInitWeather", true);
 
             snowyWinter = builder.comment("If snow falls during cold weather, it will gradually cover all solid blocks and grass.")
                     .define("SnowyWinter", true);
@@ -168,11 +167,14 @@ public class CommonConfig {
         public static ForgeConfigSpec.BooleanValue useSolarWeather;
         public static ForgeConfigSpec.IntValue rainChanceMultiplier;
         public static ForgeConfigSpec.IntValue thunderChanceMultiplier;
+        public static ForgeConfigSpec.BooleanValue shouldInitWeather;
 
         private static void load(ForgeConfigSpec.Builder builder) {
             builder.push("Weather");
             useSolarWeather = builder.comment("Enable solar term weather system with biome.")
                     .define("UseSolarWeather", true);
+            shouldInitWeather = builder.comment("Set it true to initialize weather and snow when loading the mod or level for the first time.")
+                    .define("ShouldInitWeather", false);
             rainChanceMultiplier = builder.comment("Set the percentage multiplier of the probability of rain, the range should be between 0 and 1000.")
                     .defineInRange("RainChancePercentMultiplier", 40, 0, 1000);
             thunderChanceMultiplier = builder.comment("Set the percentage multiplier of the probability of thunder in the rain, the range should be between 0 and 1000.")
@@ -181,17 +183,22 @@ public class CommonConfig {
         }
     }
 
+    public static class Map {
+        public static ForgeConfigSpec.BooleanValue changeMapColor;
+
+        private static void load(ForgeConfigSpec.Builder builder) {
+            builder.push("Map");
+            changeMapColor = builder.comment("The map color of blocks will change during snow.")
+                    .define("ChangeMapColor", true);
+            builder.pop();
+        }
+    }
+
+    @Getter
     private static boolean useSolarWeather = true;
 
-    public static boolean isUseSolarWeather() {
-        return useSolarWeather;
-    }
-
+    @Getter
     private static boolean forceCropCompatMode = false;
-
-    public static boolean isForceCropCompatMode() {
-        return forceCropCompatMode;
-    }
 
     public static void UpdateConfig(ModConfigEvent modConfigEvent) {
         if (!(modConfigEvent instanceof ModConfigEvent.Unloading)

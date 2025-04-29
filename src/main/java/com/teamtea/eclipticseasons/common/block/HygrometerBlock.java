@@ -11,6 +11,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.BiomeTags;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockGetter;
@@ -36,10 +37,9 @@ public class HygrometerBlock extends CalendarBlock {
     public HygrometerBlock(Properties properties) {
         super(properties);
         registerDefaultState(defaultBlockState().setValue(POWER, 0));
-
         VoxelShape base = Shapes.box(1 / 16f, 0, 0.75, 15 / 16f, 11 / 16f, 1);
         for (Direction direction : Direction.Plane.HORIZONTAL) {
-            shapes1[direction.get2DDataValue()] = SimpleVoxelShapeUtils.rotateVoxelShape(base, Direction.Axis.Y, getRotateYByFacing(defaultBlockState().setValue(FACING, direction)) + 180);
+            shapes1[direction.get2DDataValue()] = SimpleVoxelShapeUtils.rotateVoxelShape(base, Direction.Axis.Y, getRotateYByFacing(defaultBlockState().setValue(FACING, direction)) );
         }
     }
 

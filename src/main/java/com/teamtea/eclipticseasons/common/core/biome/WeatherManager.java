@@ -48,7 +48,6 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.fml.loading.FMLLoader;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -502,7 +501,7 @@ public class WeatherManager {
     }
 
     public static void initNewWorldWeather(ServerLevel level, RandomSource random, SolarTerm solarTerm) {
-        if (!CommonConfig.Season.shouldInitWeather.get()
+        if (!CommonConfig.Weather.shouldInitWeather.get()
                 || level.isClientSide() || !MapChecker.isValidDimension(level)) {
             return;
         }

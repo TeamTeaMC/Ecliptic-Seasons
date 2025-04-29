@@ -39,5 +39,7 @@ public class BiomeClimateSettingsRegistry {
         // context.register(base, new BiomeClimateModifier(true, holderGetter.getOrThrow(ClimateTypeBiomeTags.SEASONAL),
         //         ImmutableMap.of(Either.left(Season.SUMMER),new BiomeClimate(Optional.empty(),Optional.empty())
         // )));
+
+        
     }
 }

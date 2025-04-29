@@ -1,6 +1,5 @@
 package com.teamtea.eclipticseasons.common.misc;
 
-import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.core.BlockPos;
@@ -19,6 +18,7 @@ public class MapColorReplacer {
     public static MapColor getTopSnowColor(BlockGetter blockGetter, BlockState state, BlockPos pos, boolean ignoreLight) {
         if (!(blockGetter instanceof Level level) || pos == null)
             return null;
+        if (!CommonConfig.Season.snowyWinter.get()) return null;
         // if without snow we can faster the query
         // note 也许会更慢？和 x小地图有关
         // if (!EclipticUtil.isHereWithSnow(level, pos)) return null;

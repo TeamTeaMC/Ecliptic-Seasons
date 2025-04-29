@@ -1,4 +1,4 @@
-package com.teamtea.eclipticseasons.mixin.common;
+package com.teamtea.eclipticseasons.mixin.common.level;
 
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
