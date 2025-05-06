@@ -158,6 +158,7 @@ public class Lang_EN extends LangHelper {
         addGrowthDetector();
 
         addJade();
+        addInfo();
     }
 
     private void addJade() {
@@ -167,6 +168,11 @@ public class Lang_EN extends LangHelper {
 
         add("config.jade.plugin_eclipticseasons.snowy_status","Show Snowy Status");
         add("hint.jade.plugin_eclipticseasons.snowy_status.snowy", "§7Covered with Snow");
+    }
+
+    private void addInfo() {
+        add("info.eclipticseasons.humidity_control", "Humidity Control");
+        add("info.eclipticseasons.season_quest", "Seasonal Quest");
     }
 
     private void addAdvancements() {

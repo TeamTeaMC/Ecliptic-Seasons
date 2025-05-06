@@ -25,6 +25,17 @@ public final class ESBlockTagProvider extends BlockTagsProvider {
 
     @Override
     protected void addTags(HolderLookup.Provider pProvider) {
+        // special
+
+        tag(EclipticBlockTags.DARK_GROW_PLANTS)
+                .add(Blocks.BROWN_MUSHROOM_BLOCK)
+                .add(Blocks.RED_MUSHROOM_BLOCK)
+                .addOptional(fd_rl("brown_mushroom_colony"))
+                .addOptional(fd_rl("red_mushroom_colony"));
+
+        tag(EclipticBlockTags.NATURAL_PLANTS);
+        tag(EclipticBlockTags.VOLATILE_PLANTS);
+
         // add crop info
         tag(CropSeasonType.SUMMER.getBlockTag()).add(Blocks.MELON_STEM, Blocks.COCOA, Blocks.CACTUS);
         tag(CropSeasonType.AUTUMN.getBlockTag()).add(Blocks.PUMPKIN_STEM);
@@ -62,19 +73,12 @@ public final class ESBlockTagProvider extends BlockTagsProvider {
 
         // add common
         tag(EclipticBlockTags.SOFT_HEAT_SOURCES).add(Blocks.CAMPFIRE).add(Blocks.MAGMA_BLOCK);
-        tag(EclipticBlockTags.DARK_GROW_PLANTS)
-                .add(Blocks.BROWN_MUSHROOM_BLOCK)
-                .add(Blocks.RED_MUSHROOM_BLOCK)
-                .addOptional(fd_rl("brown_mushroom_colony"))
-                .addOptional(fd_rl("red_mushroom_colony"));
 
         tag(EclipticBlockTags.SNOW_OVERLAY_CANNOT_SURVIVE_ON)
                 .addTag(BlockTags.SNOW)
                 .addTag(BlockTags.ICE)
                 .addTag(BlockTags.SNOW_LAYER_CANNOT_SURVIVE_ON);
 
-
-        tag(EclipticBlockTags.NATURAL_PLANTS);
 
 
         // add mc

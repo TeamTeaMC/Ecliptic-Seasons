@@ -172,6 +172,8 @@
   "info.eclipticseasons.environment.temperature.over_heat": "Over Heat",
   "info.eclipticseasons.environment.temperature.under_freezing": "Under Freezing",
   "info.eclipticseasons.environment.temperature.warm": "Warm",
+  "info.eclipticseasons.humidity_control": "Humidity Control",
+  "info.eclipticseasons.season_quest": "Seasonal Quest",
   "item.eclipticseasons.autumn_greenhouse_essence": "Autumn Greenhouse Essence",
   "item.eclipticseasons.broom": "Broom",
   "item.eclipticseasons.calendar.pop_hint": "%1$s, %2$s/%3$s",

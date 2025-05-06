@@ -19,6 +19,7 @@ import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
@@ -31,6 +32,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
+import java.awt.*;
 import java.util.List;
 
 
@@ -38,14 +40,30 @@ import java.util.List;
 public class JEIHumidityControlCategory implements IRecipeCategory<HumidityControl> {
     private final IDrawable icon;
     private final IGuiHelper guiHelper;
-    private IDrawableStatic blankDrawable;
+    private final IDrawableStatic clock;
+    private final IDrawableStatic shadow;
+    private final IDrawableStatic range;
+    private final IDrawableStatic right_down_arrow;
+    private final IDrawableStatic blue_arrow_up;
+    private final IDrawableStatic red_arrow;
+    private final IDrawableStatic blankDrawable;
 
     public JEIHumidityControlCategory(IGuiHelper guiHelper) {
         this.guiHelper = guiHelper;
         icon = guiHelper.createDrawableItemStack(ItemRegistry.block_in_wooden_grate_block_item.get().getDefaultInstance());
-        blankDrawable = guiHelper.createBlankDrawable(128, 70);
+        blankDrawable = guiHelper.createBlankDrawable(128, 60);
+        clock = createIDrawableStatic("clock.png");
+        shadow = createIDrawableStatic("shadow.png");
+        range = createIDrawableStatic("range.png");
+        right_down_arrow = createIDrawableStatic("right_down_arrow.png");
+        blue_arrow_up = createIDrawableStatic("blue_arrow_up.png");
+        red_arrow = createIDrawableStatic("red_arrow.png");
     }
 
+    public IDrawableStatic createIDrawableStatic(String name) {
+        return guiHelper.drawableBuilder(EclipticSeasons.rl("textures/gui/icon/" + name), 0, 0, 16, 16)
+                .setTextureSize(16, 16).build();
+    }
 
     @Override
     public @NotNull RecipeType<HumidityControl> getRecipeType() {
@@ -82,10 +100,10 @@ public class JEIHumidityControlCategory implements IRecipeCategory<HumidityContr
     @Override
     public void getTooltip(ITooltipBuilder tooltip, HumidityControl recipe, IRecipeSlotsView recipeSlotsView, double mouseX, double mouseY) {
         IRecipeCategory.super.getTooltip(tooltip, recipe, recipeSlotsView, mouseX, mouseY);
-        if (mouseX > 32 && mouseX < 64
-                && mouseY > 4 && mouseY < 60)
-            tooltip.addAll(List.of(Component.translatable("持续时间：" + recipe.lasting_time()/20),
-                    Component.translatable("湿度变化：" + recipe.level())));
+        // if (mouseX > 32 && mouseX < 64
+        //         && mouseY > 4 && mouseY < 60)
+        //     tooltip.addAll(List.of(Component.translatable("持续时间：" + recipe.lasting_time()/20),
+        //             Component.translatable("湿度变化：" + recipe.level())));
     }
 
     @Override
@@ -93,6 +111,19 @@ public class JEIHumidityControlCategory implements IRecipeCategory<HumidityContr
         guiHelper.getSlotDrawable().draw(guiGraphics, 15, 7);
         guiHelper.getSlotDrawable().draw(guiGraphics, 99, 39);
 
+
+        guiGraphics.pose().pushPose();
+        int shadow_y = 4;
+        for (PosAndBlockStateCheck check : recipe.checks()) {
+            if (check.offset().getY() != 0) {
+                shadow_y += 20;
+                break;
+            }
+        }
+        guiGraphics.pose().translate(25, shadow_y, 0);
+        guiGraphics.pose().scale( 4f, 3f, 4f);
+        shadow.draw(guiGraphics, 0, 0);
+        guiGraphics.pose().popPose();
 
         // guiGraphics.pose().pushPose();
         // guiGraphics.pose().translate(32, 20, 0);
@@ -162,5 +193,51 @@ public class JEIHumidityControlCategory implements IRecipeCategory<HumidityContr
         //         Optional.empty(),
         //         (int) mouseX, (int) mouseY
         // );
+
+        Font font = Minecraft.getInstance().font;
+        guiGraphics.pose().pushPose();
+        guiGraphics.pose().translate(96, 0, 0);
+        // guiGraphics.pose().scale(2f, 2f, 2f);
+        clock.draw(guiGraphics, 0, 0);
+
+        guiGraphics.pose().pushPose();
+        guiGraphics.pose().scale(.75f, .75f, .75f);
+        String timeString = (recipe.lasting_time() / 20) + "s";
+        guiGraphics.drawString(font, timeString, font.width(timeString) / 1.5f + 3,
+                font.lineHeight / 1.5f, Color.GRAY.getRGB(), false);
+        guiGraphics.pose().popPose();
+
+
+        currentTimeMillis = (int) ((System.currentTimeMillis()) % Integer.MAX_VALUE) / 1800;
+        if (currentTimeMillis % 2 == 0) {
+            guiGraphics.pose().pushPose();
+            guiGraphics.pose().translate(0, 10, 0);
+            if (recipe.level() > 0) {
+                blue_arrow_up.draw(guiGraphics, 0, 0);
+            } else {
+                red_arrow.draw(guiGraphics, 0, 0);
+            }
+            guiGraphics.pose().pushPose();
+            guiGraphics.pose().scale(.75f, .75f, .75f);
+            String levelString = "" + Math.abs(recipe.level());
+            guiGraphics.drawString(font, levelString, font.width(levelString) / 1.5f + 14,
+                    font.lineHeight / 1.5f+1, Color.GRAY.getRGB(), false);
+            guiGraphics.pose().popPose();
+            guiGraphics.pose().popPose();
+        } else {
+            guiGraphics.pose().pushPose();
+            guiGraphics.pose().translate(0, 10, 0);
+            range.draw(guiGraphics, 0, 0);
+            guiGraphics.pose().pushPose();
+            guiGraphics.pose().scale(.75f, .75f, .75f);
+            String rangeString = "" + recipe.range();
+            guiGraphics.drawString(font, rangeString, font.width(rangeString) / 1.5f + 14,
+                    font.lineHeight / 1.5f+1, Color.GRAY.getRGB(), false);
+            guiGraphics.pose().popPose();
+            guiGraphics.pose().popPose();
+        }
+
+        guiGraphics.pose().popPose();
+        right_down_arrow.draw(guiGraphics, 80, 24);
     }
 }

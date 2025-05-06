@@ -145,6 +145,7 @@ public class SeasonalBiomeAmbientSoundsHandler implements AmbientSoundHandler {
                 }
 
 
+                // todo 多切换时似乎有bug，可能导致无法关闭
                 if (needAdd && !indoor) {
                     // EclipticSeasons.logger(needAdd, soundEvent.getLocation());
                     LoopSoundInstance loopSoundInstance = new LoopSoundInstance(soundEvent);

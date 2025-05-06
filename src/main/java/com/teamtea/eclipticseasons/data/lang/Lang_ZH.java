@@ -160,6 +160,7 @@ public class Lang_ZH extends LangHelper {
         addGrowthDetector();
 
         addJade();
+        addInfo();
     }
 
     private void addJade() {
@@ -168,6 +169,11 @@ public class Lang_ZH extends LangHelper {
         add("hint.jade.plugin_eclipticseasons.crop.show", "§o<..按住shift以查看更多..>");
         add("config.jade.plugin_eclipticseasons.snowy_status","显示覆雪状态");
         add("hint.jade.plugin_eclipticseasons.snowy_status.snowy", "§7覆雪状态");
+    }
+
+    private void addInfo() {
+        add("info.eclipticseasons.humidity_control", "湿度调节");
+        add("info.eclipticseasons.season_quest", "季节任务");
     }
 
     private void addAdvancements() {

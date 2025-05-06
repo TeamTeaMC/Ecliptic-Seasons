@@ -172,6 +172,8 @@
   "info.eclipticseasons.environment.temperature.over_heat": "酷暑",
   "info.eclipticseasons.environment.temperature.under_freezing": "严寒",
   "info.eclipticseasons.environment.temperature.warm": "温暖",
+  "info.eclipticseasons.humidity_control": "湿度调节",
+  "info.eclipticseasons.season_quest": "季节任务",
   "item.eclipticseasons.autumn_greenhouse_essence": "秋季温室心髓",
   "item.eclipticseasons.broom": "扫帚",
   "item.eclipticseasons.calendar.pop_hint": "%1$s，%2$s/%3$s",

@@ -27,12 +27,20 @@ public abstract class MixinBlockStateBase {
     @Shadow
     public abstract boolean is(TagKey<Block> tag);
 
+    @Shadow
+    private boolean isRandomlyTicking;
+
     @Inject(
             method = "initCache",
             at = @At(value = "TAIL")
     )
     private void eclipticseasons$initCache(CallbackInfo ci) {
-        eclipticseasons$forceTickControl=(is(EclipticBlockTags.NATURAL_PLANTS));
+        if ((Object) this instanceof BlockState) {
+            eclipticseasons$forceTickControl = (is(EclipticBlockTags.NATURAL_PLANTS));
+            if (!isRandomlyTicking && is(EclipticBlockTags.VOLATILE_PLANTS)) {
+                isRandomlyTicking = true;
+            }
+        }
     }
 
     @Inject(
@@ -40,7 +48,7 @@ public abstract class MixinBlockStateBase {
             at = @At(value = "HEAD"),
             cancellable = true)
     private void eclipticseasons$randomTick(ServerLevel level, BlockPos pos, RandomSource random, CallbackInfo ci) {
-        if ((Object)this instanceof BlockState blockState
+        if ((Object) this instanceof BlockState blockState
                 && (eclipticseasons$forceTickControl || CommonConfig.isForceCropCompatMode())) {
             boolean canCropGrow = ESEventHook.canExtraCropGrow(level, pos, blockState, true);
             if (!canCropGrow) ci.cancel();
