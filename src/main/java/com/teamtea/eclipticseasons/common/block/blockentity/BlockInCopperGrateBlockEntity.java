@@ -35,9 +35,10 @@ public class BlockInCopperGrateBlockEntity extends HumidityControlBlockEntity {
     }
 
     private void popBlock(Level level, BlockPos pos) {
-        // todo 放宽限制
         if (!level.isClientSide() && getInnerBlock() != Blocks.AIR
-                && (this.humidityControl == null || this.humidityControl.lasting_time() * 0.8 < this.time)) {
+                && (this.humidityControl == null
+                || this.humidityControl.lasting_time() * 0.6 < this.time
+                || humidityControl.noCost())) {
             Block.popResource(level, pos, getInnerBlock().asItem().getDefaultInstance());
         }
     }

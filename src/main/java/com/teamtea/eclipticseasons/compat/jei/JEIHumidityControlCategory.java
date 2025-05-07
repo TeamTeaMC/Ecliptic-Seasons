@@ -14,10 +14,16 @@ import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.drawable.IDrawableStatic;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.helpers.IGuiHelper;
+import mezz.jei.api.ingredients.IIngredientRenderer;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
+import mezz.jei.api.runtime.IIngredientManager;
+import mezz.jei.api.runtime.IJeiRuntime;
+import mezz.jei.common.Internal;
+import mezz.jei.library.gui.ingredients.TagContentTooltipComponent;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -27,12 +33,15 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -92,6 +101,18 @@ public class JEIHumidityControlCategory implements IRecipeCategory<HumidityContr
         builder.addSlot(RecipeIngredientRole.INPUT, 16, 8)
                 .addIngredients(Ingredient.of(recipe.ingredient().getItems()));
 
+        builder.addInvisibleIngredients(RecipeIngredientRole.CATALYST)
+                .addIngredients(Ingredient.of(BlockRegistry.block_in_wooden_grate_block.get()));
+
+        for (PosAndBlockStateCheck check : recipe.checks()) {
+            if (check.block().size() > 0) {
+                for (Holder<Block> blockHolder : check.block()) {
+                    builder.addInvisibleIngredients(RecipeIngredientRole.CATALYST)
+                            .addIngredients(Ingredient.of(blockHolder.value()));
+                }
+            }
+        }
+
         builder.addSlot(RecipeIngredientRole.OUTPUT, 100, 40)
                 .addIngredients(Ingredient.of(recipe.result()));
 
@@ -100,10 +121,34 @@ public class JEIHumidityControlCategory implements IRecipeCategory<HumidityContr
     @Override
     public void getTooltip(ITooltipBuilder tooltip, HumidityControl recipe, IRecipeSlotsView recipeSlotsView, double mouseX, double mouseY) {
         IRecipeCategory.super.getTooltip(tooltip, recipe, recipeSlotsView, mouseX, mouseY);
-        // if (mouseX > 32 && mouseX < 64
-        //         && mouseY > 4 && mouseY < 60)
-        //     tooltip.addAll(List.of(Component.translatable("持续时间：" + recipe.lasting_time()/20),
-        //             Component.translatable("湿度变化：" + recipe.level())));
+        if (mouseX > 32 && mouseX < 64
+                && mouseY > 4 && mouseY < 60) {
+            int currentTimeMillis = (int) ((System.currentTimeMillis()) % Integer.MAX_VALUE) / 2000;
+            for (PosAndBlockStateCheck check : recipe.checks()) {
+                if ( check.block().size() > 0) {
+                    int index = currentTimeMillis % check.block().size();
+                    Holder<Block> blockHolder = check.block().get(index);
+
+                    if (check.offset().getY() == -1 && check.offset().getX() == 0 && check.offset().getZ() == 0) {
+                        tooltip.add(Component.translatable("info.eclipticseasons.humidity_control.below_need",blockHolder.value().getName().withStyle(ChatFormatting.GRAY)));
+                    }else {
+                        tooltip.add(Component.translatable("info.eclipticseasons.humidity_control.common_need",blockHolder.value().getName().withStyle(ChatFormatting.GRAY)));
+                    }
+
+                    tooltip.add(Component.translatable("info.eclipticseasons.humidity_control.extra_hint"));
+                    IJeiRuntime jeiRuntime = Internal.getJeiRuntime();
+                    IIngredientManager ingredientManager = jeiRuntime.getIngredientManager();
+                    IIngredientRenderer<ItemStack> renderer = ingredientManager.getIngredientRenderer(blockHolder.value().asItem().getDefaultInstance());
+
+                    List<ItemStack> stacks=new ArrayList<>();
+                    for (Holder<Block> holder : check.block()) {
+                        stacks.add(holder.value().asItem().getDefaultInstance());
+                    }
+                    tooltip.add(new TagContentTooltipComponent<>(renderer,stacks));
+                }
+            }
+
+        }
     }
 
     @Override
@@ -202,40 +247,30 @@ public class JEIHumidityControlCategory implements IRecipeCategory<HumidityContr
 
         guiGraphics.pose().pushPose();
         guiGraphics.pose().scale(.75f, .75f, .75f);
-        String timeString = (recipe.lasting_time() / 20) + "s";
-        guiGraphics.drawString(font, timeString, font.width(timeString) / 1.5f + 3,
+        String timeString = recipe.noCost() ? "∞" : ((int) (recipe.lasting_time() / 20)) + "s";
+        guiGraphics.drawString(font, timeString, 20,
                 font.lineHeight / 1.5f, Color.GRAY.getRGB(), false);
         guiGraphics.pose().popPose();
 
-
         currentTimeMillis = (int) ((System.currentTimeMillis()) % Integer.MAX_VALUE) / 1800;
+        guiGraphics.pose().pushPose();
+        guiGraphics.pose().translate(0.5f, 10, 0);
+        String aString = "";
+        IDrawableStatic iDrawableStatic;
         if (currentTimeMillis % 2 == 0) {
-            guiGraphics.pose().pushPose();
-            guiGraphics.pose().translate(0, 10, 0);
-            if (recipe.level() > 0) {
-                blue_arrow_up.draw(guiGraphics, 0, 0);
-            } else {
-                red_arrow.draw(guiGraphics, 0, 0);
-            }
-            guiGraphics.pose().pushPose();
-            guiGraphics.pose().scale(.75f, .75f, .75f);
-            String levelString = "" + Math.abs(recipe.level());
-            guiGraphics.drawString(font, levelString, font.width(levelString) / 1.5f + 14,
-                    font.lineHeight / 1.5f+1, Color.GRAY.getRGB(), false);
-            guiGraphics.pose().popPose();
-            guiGraphics.pose().popPose();
+            iDrawableStatic = recipe.level() > 0 ? blue_arrow_up : red_arrow;
+            aString = "" + Math.abs(recipe.level());
         } else {
-            guiGraphics.pose().pushPose();
-            guiGraphics.pose().translate(0, 10, 0);
-            range.draw(guiGraphics, 0, 0);
-            guiGraphics.pose().pushPose();
-            guiGraphics.pose().scale(.75f, .75f, .75f);
-            String rangeString = "" + recipe.range();
-            guiGraphics.drawString(font, rangeString, font.width(rangeString) / 1.5f + 14,
-                    font.lineHeight / 1.5f+1, Color.GRAY.getRGB(), false);
-            guiGraphics.pose().popPose();
-            guiGraphics.pose().popPose();
+            iDrawableStatic = range;
+            aString = "" + recipe.range();
         }
+        iDrawableStatic.draw(guiGraphics, 0, 0);
+        guiGraphics.pose().pushPose();
+        guiGraphics.pose().scale(.75f, .75f, .75f);
+        guiGraphics.drawString(font, aString, 20,
+                font.lineHeight / 1.5f + 1, Color.GRAY.getRGB(), false);
+        guiGraphics.pose().popPose();
+        guiGraphics.pose().popPose();
 
         guiGraphics.pose().popPose();
         right_down_arrow.draw(guiGraphics, 80, 24);

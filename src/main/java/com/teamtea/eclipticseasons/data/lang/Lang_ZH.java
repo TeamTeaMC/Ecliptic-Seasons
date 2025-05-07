@@ -174,6 +174,9 @@ public class Lang_ZH extends LangHelper {
     private void addInfo() {
         add("info.eclipticseasons.humidity_control", "湿度调节");
         add("info.eclipticseasons.season_quest", "季节任务");
+        add("info.eclipticseasons.humidity_control.below_need", "需要下方有%s");
+        add("info.eclipticseasons.humidity_control.common_need", "需要%s");
+        add("info.eclipticseasons.humidity_control.extra_hint", "§7§o或者");
     }
 
     private void addAdvancements() {

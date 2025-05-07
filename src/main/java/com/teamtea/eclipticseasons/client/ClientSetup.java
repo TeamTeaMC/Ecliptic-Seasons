@@ -7,6 +7,7 @@ import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.client.itemproperties.CounterItemProperty;
 import com.teamtea.eclipticseasons.client.model.ItemRenderModel;
 import com.teamtea.eclipticseasons.client.particle.*;
+import com.teamtea.eclipticseasons.client.reload.ClientJsonCacheListener;
 import com.teamtea.eclipticseasons.client.render.ber.*;
 import com.teamtea.eclipticseasons.client.render.item.ClientGreenHouseItem;
 import com.teamtea.eclipticseasons.client.render.item.GreenHouseCoreCoreItemRenderer;
@@ -31,10 +32,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.*;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.EntityRenderersEvent;
-import net.minecraftforge.client.event.ModelEvent;
-import net.minecraftforge.client.event.RegisterColorHandlersEvent;
-import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
+import net.minecraftforge.client.event.*;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -200,5 +198,10 @@ public class ClientSetup {
     @SubscribeEvent
     public static void onRegisterColorHandlersEvent_Item(RegisterColorHandlersEvent.Item event) {
 
+    }
+
+    @SubscribeEvent
+    public static void onRegisterRenderers(RegisterClientReloadListenersEvent event) {
+        event.registerReloadListener(ClientJsonCacheListener.ambientCache);
     }
 }

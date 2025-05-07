@@ -1,0 +1,22 @@
+{
+  "sound": "eclipticseasons:ambient.windy_leave",
+  "priority": 950,
+  "rain": true,
+  "biomes": {
+    "values": [
+      {
+        "value": "#forge:is_cave",
+        "type": "forge:not"
+      },
+      {
+        "values": [
+          "minecraft:cherry_grove",
+          "#minecraft:is_forest"
+        ],
+        "type": "forge:or"
+      }
+    ],
+    "type": "forge:and"
+  },
+  "season": "winter"
+}

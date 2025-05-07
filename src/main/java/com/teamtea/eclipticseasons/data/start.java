@@ -3,6 +3,7 @@ package com.teamtea.eclipticseasons.data;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.data.advancement.Advancements;
 import com.teamtea.eclipticseasons.data.datapack.DatapackRegistryGenerator;
+import com.teamtea.eclipticseasons.data.datapack.client.SeasonalBiomeAmbientProvider;
 import com.teamtea.eclipticseasons.data.font.ESFontProvider;
 import com.teamtea.eclipticseasons.data.lang.Lang_EN;
 import com.teamtea.eclipticseasons.data.lang.Lang_ZH;
@@ -18,6 +19,7 @@ import com.teamtea.eclipticseasons.data.tag.TagsDataProvider;
 import net.minecraft.Util;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.RegistrySetBuilder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
@@ -36,12 +38,16 @@ public class start {
         ExistingFileHelper helper = event.getExistingFileHelper();
         PackOutput packOutput = generator.getPackOutput();
         CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
+
+
+
         if (event.includeServer()) {
             EclipticSeasons.logger("Generate We Data!!!");
 
             RegistryAccess.Frozen registryaccess$frozen = RegistryAccess.fromRegistryOfRegistries(BuiltInRegistries.REGISTRY);
             HolderLookup.Provider modProvider = DatapackRegistryGenerator.REGISTRY_SET_BUILDER.build(registryaccess$frozen);
             CompletableFuture<HolderLookup.Provider> modFuture = CompletableFuture.supplyAsync(() -> modProvider, Util.backgroundExecutor());
+
             generator.addProvider(event.includeServer(), new CropClimateTagsDataProvider(packOutput, modFuture, MODID, helper));
 
             generator.addProvider(event.includeServer(), new TagsDataProvider(packOutput, lookupProvider, MODID, helper));
@@ -66,6 +72,12 @@ public class start {
             generator.addProvider(event.includeClient(), new BlockStatesDataProvider(packOutput, helper));
             generator.addProvider(event.includeClient(), new ESItemModelProvider(packOutput, MODID, helper));
             generator.addProvider(event.includeClient(), new ESFontProvider(packOutput, MODID, helper));
+
+            // RegistryAccess.Frozen registryaccess$frozen = RegistryAccess.fromRegistryOfRegistries(BuiltInRegistries.REGISTRY);
+            // HolderLookup.Provider modProvider = new RegistrySetBuilder().build(registryaccess$frozen);
+            // CompletableFuture<HolderLookup.Provider> modFuture = CompletableFuture.supplyAsync(() -> modProvider, Util.backgroundExecutor());
+
+            generator.addProvider(event.includeClient(), new SeasonalBiomeAmbientProvider(packOutput,MODID, helper,lookupProvider));
 
         }
 

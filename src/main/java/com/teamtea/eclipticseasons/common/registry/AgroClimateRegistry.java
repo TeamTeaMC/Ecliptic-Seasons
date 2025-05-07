@@ -198,7 +198,7 @@ public class AgroClimateRegistry {
         return map;
     }
 
-    private record BiomeRegistryLookup(
+    public record BiomeRegistryLookup(
             HolderGetter<Biome> biomeHolderGetter) implements HolderLookup.RegistryLookup<Biome> {
 
         @Override

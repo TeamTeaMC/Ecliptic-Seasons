@@ -1,0 +1,25 @@
+{
+  "sound": "eclipticseasons:ambient.spring_forest",
+  "biomes": {
+    "values": [
+      {
+        "values": [
+          "minecraft:cherry_grove",
+          "#minecraft:is_forest",
+          "#forge:is_plains"
+        ],
+        "type": "forge:or"
+      },
+      {
+        "value": "#forge:is_cold",
+        "type": "forge:not"
+      },
+      {
+        "value": "#minecraft:is_beach",
+        "type": "forge:not"
+      }
+    ],
+    "type": "forge:and"
+  },
+  "season": "spring"
+}

@@ -7,6 +7,7 @@ import com.teamtea.eclipticseasons.client.core.ClientWeatherChecker;
 import com.teamtea.eclipticseasons.client.map.ClientMapFixer;
 import com.teamtea.eclipticseasons.client.render.WorldRenderer;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
+import com.teamtea.eclipticseasons.client.util.ClientRef;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
@@ -29,6 +30,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
+import net.minecraftforge.event.TagsUpdatedEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.event.level.ChunkEvent;
@@ -80,6 +82,14 @@ public final class ClientEventHandler {
             CropGrowthHandler.clearOnClientExitOrServerClose();
             BiomeClimateManager.clearOnClientExitOrServerClose();
             ClientCon.onClientPlayerExit();
+            ClientRef.clearOnClientExitOrServerClose();
+        }
+    }
+
+    @SubscribeEvent
+    public static void onTagsUpdatedEvent(TagsUpdatedEvent tagsUpdatedEvent) {
+        if (tagsUpdatedEvent.getUpdateCause() == TagsUpdatedEvent.UpdateCause.CLIENT_PACKET_RECEIVED) {
+            ClientRef.updateClientSide(tagsUpdatedEvent.getRegistryAccess());
         }
     }
 

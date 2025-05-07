@@ -1,5 +1,6 @@
 package com.teamtea.eclipticseasons.config;
 
+import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
 import com.teamtea.eclipticseasons.compat.CompatModule;
 import lombok.Getter;
 import net.minecraft.resources.ResourceLocation;
@@ -132,6 +133,7 @@ public class CommonConfig {
         public static ForgeConfigSpec.BooleanValue useDefaultValue;
 
         public static ForgeConfigSpec.BooleanValue forceCompatMode;
+        public static ForgeConfigSpec.BooleanValue noCostHumidifier;
 
         private static void load(ForgeConfigSpec.Builder builder) {
             builder.push("Crop");
@@ -151,6 +153,8 @@ public class CommonConfig {
                     .defineInRange("DarkGreenhouseFailChance", 2000, 0, 10000);
             simpleGreenHouse= builder.comment("Build a simple greenhouse without core blocks and humidity modifiers.")
                     .define("SimpleGreenHouseMode", false);
+            noCostHumidifier= builder.comment("Enabled to make the Humidifier stop converting inputs/outputs.")
+                    .define("NoCostHumidifier", false);
 
             complexGreenHouseCheck = builder.comment("Whether to enable complex shape checking.")
                     .define("ComplexGreenHouseCheck", true);

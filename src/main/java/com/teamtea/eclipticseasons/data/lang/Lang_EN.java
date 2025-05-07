@@ -173,6 +173,9 @@ public class Lang_EN extends LangHelper {
     private void addInfo() {
         add("info.eclipticseasons.humidity_control", "Humidity Control");
         add("info.eclipticseasons.season_quest", "Seasonal Quest");
+        add("info.eclipticseasons.humidity_control.below_need", "Needs %s below");
+        add("info.eclipticseasons.humidity_control.common_need", "Requires %s");
+        add("info.eclipticseasons.humidity_control.extra_hint", "§7 - Alternative placements:");
     }
 
     private void addAdvancements() {

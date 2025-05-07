@@ -1,0 +1,117 @@
+package com.teamtea.eclipticseasons.data.datapack.client;
+
+import com.teamtea.eclipticseasons.api.constant.solar.Season;
+import com.teamtea.eclipticseasons.api.data.client.SeasonalBiomeAmbient;
+import com.teamtea.eclipticseasons.client.reload.ClientJsonCacheListener;
+import com.teamtea.eclipticseasons.common.registry.AgroClimateRegistry;
+import com.teamtea.eclipticseasons.common.registry.SoundEventsRegistry;
+import com.teamtea.eclipticseasons.data.datapack.client.base.ESClientDataMapProvider;
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderGetter;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.HolderSet;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.data.PackOutput;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.tags.BiomeTags;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.Biomes;
+import net.minecraftforge.common.Tags;
+import net.minecraftforge.common.data.ExistingFileHelper;
+import net.minecraftforge.registries.holdersets.AndHolderSet;
+import net.minecraftforge.registries.holdersets.NotHolderSet;
+import net.minecraftforge.registries.holdersets.OrHolderSet;
+
+import java.util.Arrays;
+import java.util.concurrent.CompletableFuture;
+
+public class SeasonalBiomeAmbientProvider extends ESClientDataMapProvider<SeasonalBiomeAmbient> {
+    public SeasonalBiomeAmbientProvider(PackOutput output, String modid, ExistingFileHelper helper, CompletableFuture<HolderLookup.Provider> registries) {
+        super(output, modid, helper, registries, ClientJsonCacheListener.DIRECTORY_AMBIENT, SeasonalBiomeAmbient.CODEC);
+    }
+
+    @SafeVarargs
+    private static <T> HolderSet<T> and(HolderSet<T>... values) {
+        return new AndHolderSet<>(Arrays.stream(values).toList());
+    }
+
+    @SafeVarargs
+    private static <T> HolderSet<T> or(HolderSet<T>... values) {
+        return new OrHolderSet<>(Arrays.stream(values).toList());
+    }
+
+    private static HolderSet<Biome> not(HolderSet<Biome> value) {
+        return new NotHolderSet<>(BIOME_REGISTRY_LOOKUP, value);
+    }
+
+    private static HolderSet<Biome> get(TagKey<Biome> tagKey) {
+        // return BIOME_HOLDER_GETTER.getOrThrow(tagKey);
+        return HolderSet.emptyNamed(BIOME_REGISTRY_LOOKUP,tagKey);
+    }
+
+
+    private static HolderSet<Biome> get(ResourceKey<Biome> tagKey) {
+        return HolderSet.direct(Holder.Reference.createStandAlone(BIOME_REGISTRY_LOOKUP,tagKey));
+    }
+
+
+    private static HolderLookup.RegistryLookup<Biome> BIOME_REGISTRY_LOOKUP = null;
+    private static HolderGetter<Biome> BIOME_HOLDER_GETTER = null;
+
+
+    @Override
+    protected void gather(HolderLookup.Provider provider) {
+        BIOME_HOLDER_GETTER = provider.lookupOrThrow(Registries.BIOME);
+        BIOME_REGISTRY_LOOKUP = new AgroClimateRegistry.BiomeRegistryLookup(BIOME_HOLDER_GETTER);
+
+        HolderLookup.RegistryLookup<SoundEvent> slp = provider.lookupOrThrow(Registries.SOUND_EVENT);
+
+        add("spring", SeasonalBiomeAmbient.builder().season(Season.SPRING).biomes(
+                and(or(get(Biomes.CHERRY_GROVE),
+                                get(BiomeTags.IS_FOREST),
+                                get(Tags.Biomes.IS_PLAINS)),
+                        not(get(Tags.Biomes.IS_COLD)),
+                        not(get(BiomeTags.IS_BEACH)))
+        ).sound(getSoundHolder(slp, SoundEventsRegistry.spring_forest)).build());
+
+        add("summer_day", SeasonalBiomeAmbient.builder().season(Season.SUMMER).biomes(
+                and(or(get(Biomes.CHERRY_GROVE),
+                        get(BiomeTags.IS_FOREST),
+                        get(Tags.Biomes.IS_PLAINS),
+                        get(BiomeTags.IS_RIVER)))
+        ).ignore_time(false).day(true).sound(getSoundHolder(slp, SoundEventsRegistry.garden_wind)).build());
+
+        add("summer_night", SeasonalBiomeAmbient.builder().season(Season.SUMMER).biomes(
+                not(or(get(BiomeTags.IS_SAVANNA),
+                        get(Tags.Biomes.IS_CAVE),
+                        get(Tags.Biomes.IS_DESERT),
+                        get(BiomeTags.IS_BADLANDS),
+                        get(Tags.Biomes.IS_PEAK)))
+        ).ignore_time(false).day(false).sound(getSoundHolder(slp, SoundEventsRegistry.night_river)).build());
+
+        add("autumn", SeasonalBiomeAmbient.builder().season(Season.AUTUMN).biomes(
+                or(get(Biomes.CHERRY_GROVE),
+                        get(BiomeTags.IS_FOREST))
+        ).sound(getSoundHolder(slp, SoundEventsRegistry.windy_leave)).build());
+
+
+        add("winter_snow", SeasonalBiomeAmbient.builder().season(Season.WINTER).biomes(
+                and(not(get(Tags.Biomes.IS_CAVE)),
+                        or(get(Biomes.CHERRY_GROVE),
+                                get(BiomeTags.IS_FOREST)))
+        ).sound(getSoundHolder(slp, SoundEventsRegistry.windy_leave)).rain(true).priority(950).build());
+
+        add("winter_wind", SeasonalBiomeAmbient.builder().season(Season.WINTER).biomes(
+                not(get(Tags.Biomes.IS_CAVE))
+        ).sound(getSoundHolder(slp, SoundEventsRegistry.windy_leave)).build());
+
+        BIOME_HOLDER_GETTER = null;
+        BIOME_REGISTRY_LOOKUP = null;
+    }
+
+    protected Holder<SoundEvent> getSoundHolder(HolderLookup.RegistryLookup<SoundEvent> lookup, SoundEvent soundEvent) {
+        return lookup.getOrThrow(ResourceKey.create(Registries.SOUND_EVENT, soundEvent.getLocation()));
+    }
+}

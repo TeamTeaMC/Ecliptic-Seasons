@@ -1,6 +1,10 @@
 package com.teamtea.eclipticseasons.client.sound;
 
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
+import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
+import com.teamtea.eclipticseasons.api.constant.solar.TimePeriod;
+import com.teamtea.eclipticseasons.api.data.client.SeasonalBiomeAmbient;
+import com.teamtea.eclipticseasons.client.util.ClientRef;
 import com.teamtea.eclipticseasons.common.registry.SoundEventsRegistry;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.client.core.ClientWeatherChecker;
@@ -19,6 +23,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeManager;
@@ -27,6 +32,7 @@ import net.minecraftforge.common.Tags;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class SeasonalBiomeAmbientSoundsHandler implements AmbientSoundHandler {
@@ -56,13 +62,15 @@ public class SeasonalBiomeAmbientSoundsHandler implements AmbientSoundHandler {
 
         loopSoundList.removeIf(pair -> pair.getValue().isStopped());
 
+        Level level = player.level();
         boolean indoor =
 
-                (player.level().getLightEngine().getLayerListener(LightLayer.SKY).getLightValue(player.blockPosition())) < 11;
+                (level.getLightEngine().getLayerListener(LightLayer.SKY).getLightValue(player.blockPosition())) < 11;
         // EclipticSeasons.logger((player.level().getLightEngine().getLayerListener(LightLayer.SKY).getLightValue(player.blockPosition())));
 
         Holder<Biome> biome = this.biomeManager.getNoiseBiomeAtPosition(this.player.getX(), this.player.getY(), this.player.getZ());
-        Season season = ClientCon.nowSolarTerm.getSeason();
+        SolarTerm solarTerm = ClientCon.nowSolarTerm;
+        Season season = solarTerm.getSeason();
         boolean isDayNow = ClientCon.isDay;
         if (biome.value() != this.previousBiome) {
             this.previousBiome = biome.value();
@@ -73,56 +81,85 @@ public class SeasonalBiomeAmbientSoundsHandler implements AmbientSoundHandler {
         }
         {
             SoundEvent soundEvent = null;
-            if (MapChecker.isValidDimension(player.level())) {
-                switch (season) {
-                    case SPRING -> {
-                        if (!player.isInWaterOrRain()
-                                && !EclipticSeasonsApi.getInstance().isRainOrSnowAt(player.level(), player.blockPosition())) {
-                            if ((biome.is(Biomes.CHERRY_GROVE) || biome.is(BiomeTags.IS_FOREST) || biome.is(Tags.Biomes.IS_PLAINS)) && !biome.is(Tags.Biomes.IS_COLD)) {
-                                soundEvent = SoundEventsRegistry.spring_forest;
-                            }
+            if (MapChecker.isValidDimension(level)) {
+                boolean raining = level.isRaining();
+                TimePeriod timePeriod = TimePeriod.fromTimeOfDay(level.getTimeOfDay(1f));
+                boolean inWater = player.isInWater();
+                List<SeasonalBiomeAmbient> seasonalBiomeAmbientList = new ArrayList<>();
+                for (SeasonalBiomeAmbient sound : ClientRef.sounds) {
+                    if (sound.isIndoor() != indoor) continue;
+                    if (sound.isRain() != raining) continue;
+                    if (sound.getSeason() != Season.NONE) {
+                        if (sound.getSeason() != season) continue;
+                    } else {
+                        if (!solarTerm.isInTerms(sound.getStart(), sound.getEnd())) continue;
+                    }
+                    if (!sound.isIgnore_time()) {
+                        if (sound.getTimePeriod() != TimePeriod.NONE) {
+                            if (sound.getTimePeriod() != timePeriod) continue;
+                        } else {
+                            if (sound.isDay() != isDayNow) continue;
                         }
                     }
-                    case SUMMER -> {
-                        // if (player.level().isNight())
-                        // 客户端不计算是否为夜晚
-                        if (!player.isInWaterOrRain()
-                                && !EclipticSeasonsApi.getInstance().isRainOrSnowAt(player.level(), player.blockPosition())) {
-                            if (!isDayNow) {
-                                if (!(biome.is(BiomeTags.IS_SAVANNA)
-                                        || biome.is(Tags.Biomes.IS_CAVE)
-                                        || biome.is(Tags.Biomes.IS_DESERT)
-                                        || biome.is(BiomeTags.IS_BADLANDS)
-                                        || biome.is(Tags.Biomes.IS_PEAK))) {
-                                    soundEvent = SoundEventsRegistry.night_river;
-                                }
-                            } else {
-                                if ((biome.is(Biomes.CHERRY_GROVE) || biome.is(BiomeTags.IS_FOREST) || biome.is(Tags.Biomes.IS_PLAINS) || biome.is(BiomeTags.IS_RIVER))) {
-                                    soundEvent = SoundEventsRegistry.garden_wind;
-                                }
-                            }
-                        }
-
-                    }
-                    case AUTUMN -> {
-                        if (!player.isInWater()) {
-                            if ((biome.is(Biomes.CHERRY_GROVE) || biome.is(BiomeTags.IS_FOREST))) {
-                                soundEvent = SoundEventsRegistry.windy_leave;
-                            }
-                        }
-                    }
-                    case WINTER -> {
-                        if (!player.isInWater()) {
-                            if (!biome.is(Tags.Biomes.IS_CAVE)) {
-                                if ((biome.is(Biomes.CHERRY_GROVE) || biome.is(BiomeTags.IS_FOREST) && ClientWeatherChecker.isRain((ClientLevel) player.level()))) {
-                                    soundEvent = SoundEventsRegistry.winter_forest;
-                                } else soundEvent = SoundEventsRegistry.winter_cold;
-                            }
-                        }
-                    }
-                    case NONE -> {
-                    }
+                    if (sound.isInwater() != inWater) continue;
+                    if (!sound.getBiomes().contains(biome)) continue;
+                    if (sound.getSeed() > 0 && level.getRandom().nextInt(sound.getSeed()) > 0) continue;
+                    seasonalBiomeAmbientList.add(sound);
                 }
+                if (seasonalBiomeAmbientList.size() > 1) {
+                    seasonalBiomeAmbientList.sort(Comparator.comparing(SeasonalBiomeAmbient::getPriority));
+                }
+                soundEvent = seasonalBiomeAmbientList.isEmpty() ? null :
+                        seasonalBiomeAmbientList.get(0).getSound().value();
+                // switch (season) {
+                //     case SPRING -> {
+                //         if (!player.isInWaterOrRain()
+                //                 && !EclipticSeasonsApi.getInstance().isRainOrSnowAt(player.level(), player.blockPosition())) {
+                //             if ((biome.is(Biomes.CHERRY_GROVE) || biome.is(BiomeTags.IS_FOREST) || biome.is(Tags.Biomes.IS_PLAINS)) && !biome.is(Tags.Biomes.IS_COLD)) {
+                //                 soundEvent = SoundEventsRegistry.spring_forest;
+                //             }
+                //         }
+                //     }
+                //     case SUMMER -> {
+                //         // if (player.level().isNight())
+                //         // 客户端不计算是否为夜晚
+                //         if (!player.isInWaterOrRain()
+                //                 && !EclipticSeasonsApi.getInstance().isRainOrSnowAt(player.level(), player.blockPosition())) {
+                //             if (!isDayNow) {
+                //                 if (!(biome.is(BiomeTags.IS_SAVANNA)
+                //                         || biome.is(Tags.Biomes.IS_CAVE)
+                //                         || biome.is(Tags.Biomes.IS_DESERT)
+                //                         || biome.is(BiomeTags.IS_BADLANDS)
+                //                         || biome.is(Tags.Biomes.IS_PEAK))) {
+                //                     soundEvent = SoundEventsRegistry.night_river;
+                //                 }
+                //             } else {
+                //                 if ((biome.is(Biomes.CHERRY_GROVE) || biome.is(BiomeTags.IS_FOREST) || biome.is(Tags.Biomes.IS_PLAINS) || biome.is(BiomeTags.IS_RIVER))) {
+                //                     soundEvent = SoundEventsRegistry.garden_wind;
+                //                 }
+                //             }
+                //         }
+                //
+                //     }
+                //     case AUTUMN -> {
+                //         if (!player.isInWater()) {
+                //             if ((biome.is(Biomes.CHERRY_GROVE) || biome.is(BiomeTags.IS_FOREST))) {
+                //                 soundEvent = SoundEventsRegistry.windy_leave;
+                //             }
+                //         }
+                //     }
+                //     case WINTER -> {
+                //         if (!player.isInWater()) {
+                //             if (!biome.is(Tags.Biomes.IS_CAVE)) {
+                //                 if ((biome.is(Biomes.CHERRY_GROVE) || biome.is(BiomeTags.IS_FOREST) && ClientWeatherChecker.isRain((ClientLevel) player.level()))) {
+                //                     soundEvent = SoundEventsRegistry.winter_forest;
+                //                 } else soundEvent = SoundEventsRegistry.winter_cold;
+                //             }
+                //         }
+                //     }
+                //     case NONE -> {
+                //     }
+                // }
             }
             if (soundEvent != null) {
                 boolean needAdd = true;

@@ -1,0 +1,120 @@
+package com.teamtea.eclipticseasons.data.datapack.client.base;
+
+import com.google.common.hash.Hashing;
+import com.google.common.hash.HashingOutputStream;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.stream.JsonWriter;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.JsonOps;
+import com.teamtea.eclipticseasons.EclipticSeasons;
+import net.minecraft.Util;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.RegistrySetBuilder;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.data.CachedOutput;
+import net.minecraft.data.DataProvider;
+import net.minecraft.data.PackOutput;
+import net.minecraft.resources.RegistryOps;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.common.data.ExistingFileHelper;
+import net.minecraftforge.registries.DataPackRegistriesHooks;
+import org.jetbrains.annotations.NotNull;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+
+public abstract class ESClientDataMapProvider<T> implements DataProvider {
+
+    private final PackOutput output;
+    protected final String modid;
+    public final ExistingFileHelper helper;
+
+    protected final Map<ResourceLocation, T> outMap;
+    private final String type;
+    private final Codec<T> codec;
+    private final CompletableFuture<HolderLookup.Provider> registries;
+
+    public ESClientDataMapProvider(PackOutput output, String modid, ExistingFileHelper helper, CompletableFuture<HolderLookup.Provider> registries, String type, Codec<T> codec) {
+        this.output = output;
+        this.modid = modid;
+        this.helper = helper;
+        outMap = new HashMap<>();
+        this.type = type;
+        this.codec = codec;
+        this.registries = registries;
+    }
+
+    protected abstract void gather(HolderLookup.Provider provider);
+
+    protected void add(String path, T t) {
+        this.outMap.put(new ResourceLocation(modid, path), t);
+    }
+
+    protected Path resolvePath(String path) {
+        return this.output.getOutputFolder(PackOutput.Target.RESOURCE_PACK)
+                .resolve(modid)
+                .resolve(type)
+                .resolve(path + ".json");
+    }
+
+
+    @Override
+    public CompletableFuture<?> run(CachedOutput output) {
+        return this.registries.thenCompose(provider ->
+        {
+            // RegistrySetBuilder registrySetBuilder = new RegistrySetBuilder();
+            // DataPackRegistriesHooks.getDataPackRegistriesWithDimensions().forEach(data -> registrySetBuilder.add(data.key(), context -> {
+            // }));
+            // provider=registrySetBuilder.buildPatch(RegistryAccess.fromRegistryOfRegistries(BuiltInRegistries.REGISTRY), provider);
+            return this.run(output, provider);
+        });
+    }
+
+    protected CompletableFuture<?> run(CachedOutput output, HolderLookup.Provider provider) {
+        gather(provider);
+        return CompletableFuture.allOf(outMap.entrySet().stream()
+                .map(e -> saveStable(output, provider, codec, e.getValue(), resolvePath(e.getKey().getPath()))
+                ).toArray(CompletableFuture[]::new));
+    }
+
+    @Override
+    public @NotNull String getName() {
+        return "Client Provider for %s: %s".formatted(modid, type);
+    }
+
+    static <T> CompletableFuture<?> saveStable(CachedOutput output, HolderLookup.Provider registries, Codec<T> codec, T value, Path path) {
+        RegistryOps<JsonElement> registryops = RegistryOps.create(JsonOps.INSTANCE, registries);
+        JsonElement jsonelement = codec.encodeStart(registryops, value).getOrThrow(false, EclipticSeasons::logger);
+        return saveStable(output, jsonelement, path);
+    }
+
+    static CompletableFuture<?> saveStable(CachedOutput output, JsonElement json, Path path) {
+        return CompletableFuture.runAsync(() -> {
+            try {
+                ByteArrayOutputStream bytearrayoutputstream = new ByteArrayOutputStream();
+                HashingOutputStream hashingoutputstream = new HashingOutputStream(Hashing.sha1(), bytearrayoutputstream);
+
+                try (JsonWriter jsonwriter = new JsonWriter(new OutputStreamWriter(hashingoutputstream, StandardCharsets.UTF_8))) {
+                    jsonwriter.setSerializeNulls(false);
+                    jsonwriter.setIndent("  ");
+                    Gson gson = new Gson();
+                    gson.toJson(json, jsonwriter);
+                }
+
+
+                output.writeIfNeeded(path, bytearrayoutputstream.toByteArray(), hashingoutputstream.hash());
+            } catch (IOException ioexception) {
+                LOGGER.error("Failed to save file to {}", path, ioexception);
+            }
+        }, Util.backgroundExecutor());
+    }
+}
