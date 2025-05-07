@@ -45,7 +45,7 @@ public class GreenHouseCoreBlockEntity extends SyncBlockEntity {
                         nearGreenHouseProvider.addAvailCost(999);
                     }
                 } else {
-                    manager.addMap(blockPos, new GreenHouseCoreProvider(greenHouseCoreBlock.getSeason(), 999));
+                    manager.addGreenHouseCoreProvider(blockPos, new GreenHouseCoreProvider(greenHouseCoreBlock.getSeason(), 999));
                 }
             }
             if (!level.isClientSide() && level.getGameTime() % 100 == 0) {

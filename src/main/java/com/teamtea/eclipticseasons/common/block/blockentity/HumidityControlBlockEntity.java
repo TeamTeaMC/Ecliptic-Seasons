@@ -3,7 +3,6 @@ package com.teamtea.eclipticseasons.common.block.blockentity;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.data.craft.HumidityControl;
 import com.teamtea.eclipticseasons.api.data.misc.PosAndBlockStateCheck;
-import com.teamtea.eclipticseasons.api.data.quest.SeasonQuest;
 import com.teamtea.eclipticseasons.api.util.SimpleUtil;
 import com.teamtea.eclipticseasons.common.block.blockentity.base.SyncBlockEntity;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
@@ -12,7 +11,6 @@ import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
 import com.teamtea.eclipticseasons.common.registry.BlockEntityRegistry;
 import com.teamtea.eclipticseasons.common.registry.ESRegistries;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
@@ -22,7 +20,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
 
 public class HumidityControlBlockEntity extends SyncBlockEntity {
@@ -38,7 +35,7 @@ public class HumidityControlBlockEntity extends SyncBlockEntity {
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag) {
+    protected void saveAdditional(@NotNull CompoundTag tag) {
         super.saveAdditional(tag);
         tag.putInt("time", time);
         if (this.humidityControl != null) {
@@ -51,11 +48,11 @@ public class HumidityControlBlockEntity extends SyncBlockEntity {
     }
 
     @Override
-    public void load(CompoundTag tag) {
+    public void load(@NotNull CompoundTag tag) {
         super.load(tag);
         time = tag.getInt("time");
         if (tag.contains("humidity_control")) {
-            RegistryAccess registryAccess= SimpleUtil.getRegistryAccess(this);
+            RegistryAccess registryAccess = SimpleUtil.getRegistryAccess(this);
             RegistryOps<Tag> registryops = RegistryOps.create(NbtOps.INSTANCE, registryAccess);
             HumidityControl.CODEC
                     .parse(registryops, tag.get("humidity_control"))
@@ -99,12 +96,15 @@ public class HumidityControlBlockEntity extends SyncBlockEntity {
                     && hl == nearHumidityControlProvider.getLevel()
                     && rl == nearHumidityControlProvider.getRange()
             ) {
-                if (nearHumidityControlProvider.getRemainTime() < 100000) {
+                if (nearHumidityControlProvider.getRemainTime() < 10) {
                     nearHumidityControlProvider.addRemainTime(100);
                 }
             } else {
-                if (hl != 0)
-                    manager.addMap(blockPos, new HumidityControlProvider(hl, rl, 500));
+                if (hl != 0) {
+                    manager.addHumidityControlProvider(blockPos, new HumidityControlProvider(hl, rl, 240));
+                } else if (nearHumidityControlProvider != null) {
+                    manager.removeHumidityControlProvider(blockPos);
+                }
             }
         }
 

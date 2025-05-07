@@ -155,15 +155,10 @@ public class AllListener {
     @SubscribeEvent
     public static void onLevelTick(TickEvent.LevelTickEvent event) {
         if (event.phase.equals(TickEvent.Phase.END)
-                && !event.level.isClientSide()) {
+                && event.level instanceof ServerLevel serverLevel) {
             SolarDataManager data = SolarHolders.getSaveData(event.level);
-            if (MapChecker.isValidDimension(event.level)) {
-                if (data != null) {
-                    data.updateTicks((ServerLevel) event.level);
-                }
-            }
             if (data != null) {
-                data.tickLevel((ServerLevel) event.level);
+                data.tickLevel(serverLevel);
             }
         }
     }

@@ -1,3 +1,10 @@
+## **0.10.11**
+- Added JEI support for the humidity adjustment module.
+- Added the tag `eclipticseasons:volatile_plants` to mark blocks that require forced additional random ticks for seasonal changes.
+- Adjusted the naming of certain functions and fields in `SolarDataManager` and optimized its internal query speed.
+- Fixed an issue where the humidity adjustment effect might take a long time to disappear if the sponge was removed midway from the humidity adjustment block.
+- Merged Pull Request [#50](https://github.com/joe-vettek/Ecliptic-Seasons/issues/50), adding Russian localization contributed by Korben.
+
 ## **0.10.10**
 - The hygrometer can now be placed on walls. After a period of measurement, it will also update the humidity display and emit a redstone signal.
 - The configuration option `ShouldInitWeather` has been moved from `Common.Season` to `Common.Weather`, and its default value is now disabled. If manually enabled, players may see lingering early spring snow in certain regions. This change is intended to ensure players experience a proper spring when they first log in, avoiding confusion caused by snow in springtime.

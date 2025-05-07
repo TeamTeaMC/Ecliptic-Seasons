@@ -5,7 +5,6 @@ import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.event.SolarTermChangeEvent;
 import com.teamtea.eclipticseasons.api.util.SimpleUtil;
-import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.core.crop.GreenHouseCoreProvider;
 import com.teamtea.eclipticseasons.common.core.crop.HumidityControlProvider;
@@ -19,16 +18,12 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.network.protocol.game.ClientboundChunksBiomesPacket;
-import net.minecraft.server.level.ChunkMap;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.chunk.ChunkAccess;
-import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.storage.DimensionDataStorage;
 import net.minecraft.world.phys.Vec3;
@@ -37,9 +32,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 public class SolarDataManager extends SavedData {
@@ -49,16 +42,16 @@ public class SolarDataManager extends SavedData {
     protected boolean isValidDimension = false;
 
     protected WeakReference<Level> levelWeakReference;
-    private final Map<ChunkPos, List<Pair<BlockPos, HumidityControlProvider>>> serverLevelMapMap;
-    private final Map<ChunkPos, List<Pair<BlockPos, GreenHouseCoreProvider>>> serverLevelMapMap2;
-    private final Long2ObjectOpenHashMap<BlockState> onceCheck;
+    private final Long2ObjectOpenHashMap<List<Pair<BlockPos, HumidityControlProvider>>> humidityCoreMap;
+    private final Long2ObjectOpenHashMap<List<Pair<BlockPos, GreenHouseCoreProvider>>> greenHouseCoreMap;
+    private final Long2ObjectOpenHashMap<BlockState> skipNextCheckInTickPosMap;
 
     public SolarDataManager(Level level) {
         levelWeakReference = new WeakReference<>(level);
-        serverLevelMapMap = new HashMap<>();
-        serverLevelMapMap2 = new HashMap<>();
+        humidityCoreMap = new Long2ObjectOpenHashMap<>();
+        greenHouseCoreMap = new Long2ObjectOpenHashMap<>();
         isValidDimension = MapChecker.isValidDimension(level);
-        onceCheck = new Long2ObjectOpenHashMap<>();
+        skipNextCheckInTickPosMap = new Long2ObjectOpenHashMap<>();
     }
 
     public SolarDataManager(Level level, CompoundTag nbt) {
@@ -70,10 +63,12 @@ public class SolarDataManager extends SavedData {
             var biomeWeathers = WeatherManager.getBiomeList(levelWeakReference.get());
             for (int i = 0; i < listTag.size(); i++) {
                 var location = listTag.getCompound(i).getString("biome");
-                for (WeatherManager.BiomeWeather biomeWeather : biomeWeathers) {
-                    if (location.equals(biomeWeather.location.toString())) {
-                        biomeWeather.deserializeNBT(listTag.getCompound(i));
-                        break;
+                if(biomeWeathers!=null) {
+                    for (WeatherManager.BiomeWeather biomeWeather : biomeWeathers) {
+                        if (location.equals(biomeWeather.location.toString())) {
+                            biomeWeather.deserializeNBT(listTag.getCompound(i));
+                            break;
+                        }
                     }
                 }
             }
@@ -87,8 +82,10 @@ public class SolarDataManager extends SavedData {
         ListTag listTag = new ListTag();
         if (levelWeakReference.get() != null) {
             var list = WeatherManager.getBiomeList(levelWeakReference.get());
-            for (WeatherManager.BiomeWeather biomeWeather : list) {
-                listTag.add(biomeWeather.serializeNBT());
+            if(list!=null) {
+                for (WeatherManager.BiomeWeather biomeWeather : list) {
+                    listTag.add(biomeWeather.serializeNBT());
+                }
             }
         }
         compound.put("biomes", listTag);
@@ -170,12 +167,12 @@ public class SolarDataManager extends SavedData {
         setDirty();
     }
 
-    public void addMap(BlockPos pos, HumidityControlProvider humidityControlProvider) {
+    public void addHumidityControlProvider(BlockPos pos, HumidityControlProvider humidityControlProvider) {
         ChunkPos chunkPos = new ChunkPos(pos);
-        List<Pair<BlockPos, HumidityControlProvider>> blockPosBlockStateMap = this.serverLevelMapMap.get(chunkPos);
+        List<Pair<BlockPos, HumidityControlProvider>> blockPosBlockStateMap = this.humidityCoreMap.get(chunkPos.toLong());
         if (blockPosBlockStateMap == null) {
             blockPosBlockStateMap = new ArrayList<>();
-            this.serverLevelMapMap.put(chunkPos, blockPosBlockStateMap);
+            this.humidityCoreMap.put(chunkPos.toLong(), blockPosBlockStateMap);
         }
 
         for (int i = 0; i < blockPosBlockStateMap.size(); i++) {
@@ -190,12 +187,12 @@ public class SolarDataManager extends SavedData {
         blockPosBlockStateMap.add(Pair.of(pos, humidityControlProvider));
     }
 
-    public void addMap(BlockPos pos, GreenHouseCoreProvider provider) {
+    public void addGreenHouseCoreProvider(BlockPos pos, GreenHouseCoreProvider provider) {
         ChunkPos chunkPos = new ChunkPos(pos);
-        List<Pair<BlockPos, GreenHouseCoreProvider>> blockPosBlockStateMap = this.serverLevelMapMap2.get(chunkPos);
+        List<Pair<BlockPos, GreenHouseCoreProvider>> blockPosBlockStateMap = this.greenHouseCoreMap.get(chunkPos.toLong());
         if (blockPosBlockStateMap == null) {
             blockPosBlockStateMap = new ArrayList<>();
-            this.serverLevelMapMap2.put(chunkPos, blockPosBlockStateMap);
+            this.greenHouseCoreMap.put(chunkPos.toLong(), blockPosBlockStateMap);
         }
 
         for (int i = 0; i < blockPosBlockStateMap.size(); i++) {
@@ -211,13 +208,13 @@ public class SolarDataManager extends SavedData {
     }
 
     public void unloadChunk(ChunkPos chunkPos) {
-        this.serverLevelMapMap.remove(chunkPos);
-        this.serverLevelMapMap2.remove(chunkPos);
+        this.humidityCoreMap.remove(chunkPos.toLong());
+        this.greenHouseCoreMap.remove(chunkPos.toLong());
     }
 
     public HumidityControlProvider queryHumidityControlProvider(BlockPos blockPos) {
         ChunkPos chunkPos = new ChunkPos(blockPos);
-        List<Pair<BlockPos, HumidityControlProvider>> lis = this.serverLevelMapMap.getOrDefault(chunkPos, null);
+        List<Pair<BlockPos, HumidityControlProvider>> lis = this.humidityCoreMap.getOrDefault(chunkPos.toLong(), null);
         if (lis != null) {
             for (Pair<BlockPos, HumidityControlProvider> p : lis) {
                 if (p.first().equals(blockPos)) {
@@ -230,14 +227,14 @@ public class SolarDataManager extends SavedData {
 
     public HumidityControlProvider removeHumidityControlProvider(BlockPos blockPos) {
         ChunkPos chunkPos = new ChunkPos(blockPos);
-        List<Pair<BlockPos, HumidityControlProvider>> lis = this.serverLevelMapMap.getOrDefault(chunkPos, null);
+        List<Pair<BlockPos, HumidityControlProvider>> lis = this.humidityCoreMap.getOrDefault(chunkPos.toLong(), null);
         if (lis != null) {
             for (int i = 0, lisSize = lis.size(); i < lisSize; i++) {
                 Pair<BlockPos, HumidityControlProvider> p = lis.get(i);
                 if (p.first().equals(blockPos)) {
                     lis.remove(i);
                     if (lis.isEmpty()) {
-                        serverLevelMapMap2.remove(chunkPos);
+                        greenHouseCoreMap.remove(chunkPos.toLong());
                     }
                     return p.second();
                 }
@@ -262,7 +259,7 @@ public class SolarDataManager extends SavedData {
         for (int dx = isLeftBorder ? -1 : 0; dx <= (isRightBorder ? 1 : 0); dx++) {
             for (int dz = isFrontBorder ? -1 : 0; dz <= (isBackBorder ? 1 : 0); dz++) {
                 ChunkPos currentChunkPos = new ChunkPos(chunkPos.x + dx, chunkPos.z + dz);
-                List<Pair<BlockPos, HumidityControlProvider>> lis = this.serverLevelMapMap.getOrDefault(currentChunkPos, null);
+                List<Pair<BlockPos, HumidityControlProvider>> lis = this.humidityCoreMap.getOrDefault(currentChunkPos.toLong(), null);
 
                 if (lis != null) {
                     for (Pair<BlockPos, HumidityControlProvider> p : lis) {
@@ -282,7 +279,7 @@ public class SolarDataManager extends SavedData {
 
     public GreenHouseCoreProvider queryGreenHouseProvider(BlockPos blockPos) {
         ChunkPos chunkPos = new ChunkPos(blockPos);
-        List<Pair<BlockPos, GreenHouseCoreProvider>> lis = this.serverLevelMapMap2.getOrDefault(chunkPos, null);
+        List<Pair<BlockPos, GreenHouseCoreProvider>> lis = this.greenHouseCoreMap.getOrDefault(chunkPos.toLong(), null);
         if (lis != null) {
             for (Pair<BlockPos, GreenHouseCoreProvider> p : lis) {
                 if (p.first().equals(blockPos)) {
@@ -295,14 +292,14 @@ public class SolarDataManager extends SavedData {
 
     public GreenHouseCoreProvider removeGreenHouseProvider(BlockPos blockPos) {
         ChunkPos chunkPos = new ChunkPos(blockPos);
-        List<Pair<BlockPos, GreenHouseCoreProvider>> lis = this.serverLevelMapMap2.getOrDefault(chunkPos, null);
+        List<Pair<BlockPos, GreenHouseCoreProvider>> lis = this.greenHouseCoreMap.getOrDefault(chunkPos.toLong(), null);
         if (lis != null) {
             for (int i = 0, lisSize = lis.size(); i < lisSize; i++) {
                 Pair<BlockPos, GreenHouseCoreProvider> p = lis.get(i);
                 if (p.first().equals(blockPos)) {
                     lis.remove(i);
                     if (lis.isEmpty()) {
-                        serverLevelMapMap2.remove(chunkPos);
+                        greenHouseCoreMap.remove(chunkPos.toLong());
                     }
                     return p.second();
                 }
@@ -318,7 +315,7 @@ public class SolarDataManager extends SavedData {
         for (int dx = -1; dx <= 1; dx++) {
             for (int dz = -1; dz <= 1; dz++) {
                 ChunkPos currentChunkPos = new ChunkPos(chunkPos.x + dx, chunkPos.z + dz);
-                List<Pair<BlockPos, GreenHouseCoreProvider>> lis = this.serverLevelMapMap2.getOrDefault(currentChunkPos, null);
+                List<Pair<BlockPos, GreenHouseCoreProvider>> lis = this.greenHouseCoreMap.getOrDefault(currentChunkPos.toLong(), null);
 
                 if (lis != null) {
                     for (Pair<BlockPos, GreenHouseCoreProvider> p : lis) {
@@ -335,8 +332,8 @@ public class SolarDataManager extends SavedData {
     }
 
     public void randomClearSome(ChunkPos pos, RandomSource randomSource) {
-        if (this.serverLevelMapMap.isEmpty()) return;
-        List<Pair<BlockPos, HumidityControlProvider>> list = this.serverLevelMapMap.get(pos);
+        if (this.humidityCoreMap.isEmpty()) return;
+        List<Pair<BlockPos, HumidityControlProvider>> list = this.humidityCoreMap.get(pos.toLong());
         if (list != null) {
             for (int i = 0; i < list.size(); i++) {
                 Pair<BlockPos, HumidityControlProvider> pair = list.get(i);
@@ -347,7 +344,7 @@ public class SolarDataManager extends SavedData {
                     pair.second().addRemainTime(-1);
                 }
             }
-            if (list.isEmpty()) this.serverLevelMapMap.remove(pos);
+            if (list.isEmpty()) this.humidityCoreMap.remove(pos.toLong());
         }
     }
 
@@ -375,37 +372,18 @@ public class SolarDataManager extends SavedData {
     }
 
 
-    public void resendBiomesForChunks(ServerLevel serverLevel, ChunkMap chunkMap, List<ChunkAccess> chunkAccessList) {
-        Map<ServerPlayer, List<LevelChunk>> map = new HashMap<>();
-
-        for (ChunkAccess chunkaccess : chunkAccessList) {
-            ChunkPos chunkpos = chunkaccess.getPos();
-            LevelChunk levelchunk;
-            if (chunkaccess instanceof LevelChunk levelchunk1) {
-                levelchunk = levelchunk1;
-            } else {
-                levelchunk = serverLevel.getChunk(chunkpos.x, chunkpos.z);
-            }
-
-            for (ServerPlayer serverplayer : chunkMap.getPlayers(chunkpos, false)) {
-                map.computeIfAbsent(serverplayer, (p_274834_) -> new ArrayList<>()).add(levelchunk);
-            }
-        }
-
-        map.forEach((player, levelChunks) -> {
-            player.connection.send(ClientboundChunksBiomesPacket.forChunks(levelChunks));
-        });
-    }
-
     public void tickLevel(ServerLevel level) {
-        this.onceCheck.clear();
+        this.skipNextCheckInTickPosMap.clear();
+        if (MapChecker.isValidDimension(level)) {
+            this.updateTicks(level);
+        }
     }
 
     public BlockState addSkipNextCheck(BlockPos blockPos, BlockState blockState) {
-        return this.onceCheck.put(blockPos.asLong(),blockState);
+        return this.skipNextCheckInTickPosMap.put(blockPos.asLong(), blockState);
     }
 
     public boolean shouldSkipNextCheck(BlockPos blockPos) {
-        return this.onceCheck.containsKey(blockPos.asLong());
+        return this.skipNextCheckInTickPosMap.containsKey(blockPos.asLong());
     }
 }
