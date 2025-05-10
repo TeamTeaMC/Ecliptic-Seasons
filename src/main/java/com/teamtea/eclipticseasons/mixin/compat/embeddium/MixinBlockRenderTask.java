@@ -3,27 +3,32 @@ package com.teamtea.eclipticseasons.mixin.compat.embeddium;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;
+import com.llamalad7.mixinextras.sugar.Share;
+import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
+import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import com.teamtea.eclipticseasons.client.core.ModelManager;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.compat.fabric_renderer_indigo.FabricModelDelayChecker;
 import com.teamtea.eclipticseasons.compat.iris.IIrisShaderAccesor;
 import me.jellysquid.mods.sodium.client.render.chunk.compile.ChunkBuildBuffers;
 import me.jellysquid.mods.sodium.client.render.chunk.compile.ChunkBuildContext;
+import me.jellysquid.mods.sodium.client.render.chunk.compile.ChunkBuildOutput;
 import me.jellysquid.mods.sodium.client.render.chunk.compile.pipeline.BlockRenderCache;
 import me.jellysquid.mods.sodium.client.render.chunk.compile.pipeline.BlockRenderContext;
 import me.jellysquid.mods.sodium.client.render.chunk.compile.tasks.ChunkBuilderMeshingTask;
-import me.jellysquid.mods.sodium.client.world.cloned.ChunkRenderContext;
+import me.jellysquid.mods.sodium.client.util.task.CancellationToken;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.server.ServerLifecycleHooks;
 import org.embeddedt.embeddium.render.frapi.FRAPIModelUtils;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin({ChunkBuilderMeshingTask.class})
 public abstract class MixinBlockRenderTask {
@@ -103,6 +108,34 @@ public abstract class MixinBlockRenderTask {
     //     return original;
     // }
 
+    @Inject(
+            remap = false,
+            method = "execute(Lme/jellysquid/mods/sodium/client/render/chunk/compile/ChunkBuildContext;Lme/jellysquid/mods/sodium/client/util/task/CancellationToken;)Lme/jellysquid/mods/sodium/client/render/chunk/compile/ChunkBuildOutput;",
+            at = @At(value = "INVOKE",
+                    // shift = At.Shift.AFTER,
+                    ordinal = 0,
+                    target = "Lnet/minecraft/util/RandomSource;setSeed(J)V")
+    )
+    private void eclipticseasons$execute_findModel(
+            ChunkBuildContext buildContext, CancellationToken cancellationToken, CallbackInfoReturnable<ChunkBuildOutput> cir,
+            @Local BakedModel bakedModel,
+            @Local BlockRenderContext ctx,
+            @Local ChunkBuildBuffers buffers,
+            @Local BlockRenderCache cache,
+            @Local(ordinal = 0) BlockPos.MutableBlockPos mutableBlockPos,
+            @Local(ordinal = 1) BlockPos.MutableBlockPos mutableBlockPos2,
+            @Local(ordinal = 0) BlockState state,
+            @Local long seed,
+            @Share("snowModelRef") LocalRef<BakedModel> snowModelRef,
+            @Share("shouldReplace") LocalBooleanRef replace
+    ) {
+        random.setSeed(seed);
+        BakedModel model = ModelManager.findModel(ctx.world(), mutableBlockPos, state, random);
+        snowModelRef.set(model);
+        replace.set(model != null
+                && ModelManager.isModelReplaceable(state, ctx.world(), mutableBlockPos, model));
+    }
+
     @ModifyExpressionValue(
             remap = false,
             method = "execute(Lme/jellysquid/mods/sodium/client/render/chunk/compile/ChunkBuildContext;Lme/jellysquid/mods/sodium/client/util/task/CancellationToken;)Lme/jellysquid/mods/sodium/client/render/chunk/compile/ChunkBuildOutput;",
@@ -114,16 +147,32 @@ public abstract class MixinBlockRenderTask {
             boolean original,
             @Local(argsOnly = true) ChunkBuildContext buildContext,
             @Local BakedModel bakedModel,
-            @Local BlockRenderContext ctx, @Local ChunkBuildBuffers buffers, @Local BlockRenderCache cache, @Local(ordinal = 0) BlockPos.MutableBlockPos mutableBlockPos, @Local(ordinal = 1) BlockPos.MutableBlockPos mutableBlockPos2, @Local(ordinal = 0) BlockState state
+            @Local BlockRenderContext ctx,
+            @Local ChunkBuildBuffers buffers,
+            @Local BlockRenderCache cache,
+            @Local(ordinal = 0) BlockPos.MutableBlockPos mutableBlockPos,
+            @Local(ordinal = 1) BlockPos.MutableBlockPos mutableBlockPos2,
+            @Local(ordinal = 0) BlockState state,
+            @Share("snowModelRef") LocalRef<BakedModel> snowModelRef,
+            @Share("shouldReplace") LocalBooleanRef replace
     ) {
 
+        // BakedModel snowModel = null;
+        // if (!original) {
+        //     snowModel = ModelManager.findModel(ctx.world(), mutableBlockPos, state, random);
+        // } else {
+        //     if (ModelManager.isModelReplaced(state)) {
+        //         snowModel = ModelManager.findModel(ctx.world(), mutableBlockPos, state, random);
+        //     }
+        // }
         BakedModel snowModel = null;
+        if (replace.get()) {
+            original = false;
+        }
+
         if (!original) {
-            snowModel = ModelManager.findModel(ctx.world(), mutableBlockPos, state, random);
-        } else {
-            if (ModelManager.isModelReplaced(state)) {
-                snowModel = ModelManager.findModel(ctx.world(), mutableBlockPos, state, random);
-            }
+            snowModel = snowModelRef.get();
+            snowModelRef.set(null);
         }
 
         if (snowModel != null) {

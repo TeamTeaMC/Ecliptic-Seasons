@@ -4,6 +4,9 @@ package com.teamtea.eclipticseasons.mixin.client.render.chunk;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;
 
+import com.llamalad7.mixinextras.sugar.Share;
+import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
+import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -59,6 +62,32 @@ public class MixinChunkRenderDispatcher {
     //     return original;
     // }
 
+    @ModifyExpressionValue(
+            method = "compile",
+            at = @At(value = "INVOKE",
+                    // shift = At.Shift.AFTER,
+                    // ordinal = 1,
+                    target = "Lnet/minecraft/world/level/block/state/BlockState;getSeed(Lnet/minecraft/core/BlockPos;)J")
+    )
+    private long eclipticseasons$compile_findModel(
+            long original,
+            @Local(argsOnly = true) ChunkBufferBuilderPack pChunkBufferBuilderPack,
+            @Local(ordinal = 2) BlockPos blockpos2,
+            @Local(ordinal = 1) BlockState blockstate,
+            @Local PoseStack posestack,
+            @Local RenderChunkRegion renderchunkregion,
+            @Local RandomSource randomsource,
+            @Local Set<RenderType> renderTypeSet,
+            @Share("snowModelRef") LocalRef<BakedModel> snowModelRef,
+            @Share("shouldReplace") LocalBooleanRef replace
+    ) {
+        randomsource.setSeed(original);
+        BakedModel model = ModelManager.findModel(renderchunkregion, blockpos2, blockstate, randomsource);
+        snowModelRef.set(model);
+        replace.set(model != null
+                && ModelManager.isModelReplaceable(blockstate, renderchunkregion, blockpos2, model));
+        return original;
+    }
 
     @ModifyExpressionValue(
             method = "compile",
@@ -68,21 +97,40 @@ public class MixinChunkRenderDispatcher {
                     target = "Ljava/util/Iterator;hasNext()Z")
     )
     private boolean eclipticseasons$compile_extraSnowyModel23(
-            boolean original,  @Local(argsOnly = true) ChunkBufferBuilderPack pChunkBufferBuilderPack, @Local(ordinal = 2) BlockPos blockpos2, @Local(ordinal = 1) BlockState blockstate, @Local PoseStack posestack, @Local RenderChunkRegion renderchunkregion, @Local RandomSource randomsource, @Local Set<RenderType> renderTypeSet
+            boolean original,
+            @Local(argsOnly = true) ChunkBufferBuilderPack pChunkBufferBuilderPack,
+            @Local(ordinal = 2) BlockPos blockpos2,
+            @Local(ordinal = 1) BlockState blockstate,
+            @Local PoseStack posestack,
+            @Local RenderChunkRegion renderchunkregion,
+            @Local RandomSource randomsource,
+            @Local Set<RenderType> renderTypeSet,
+            @Share("snowModelRef") LocalRef<BakedModel> snowModelRef,
+            @Share("shouldReplace") LocalBooleanRef replace
     ) {
 
+        // BakedModel snowModel = null;
+        // if (!original) {
+        //     snowModel = ModelManager.findModel(renderchunkregion, blockpos2, blockstate, randomsource);
+        // } else {
+        //     if (ModelManager.isModelReplaced(blockstate)) {
+        //         snowModel = ModelManager.findModel(renderchunkregion, blockpos2, blockstate, randomsource);
+        //     }
+        // }
+
         BakedModel snowModel = null;
+        if (replace.get()) {
+            original = false;
+        }
+
         if (!original) {
-            snowModel = ModelManager.findModel(renderchunkregion, blockpos2, blockstate, randomsource);
-        } else {
-            if (ModelManager.isModelReplaced(blockstate)) {
-                snowModel = ModelManager.findModel(renderchunkregion, blockpos2, blockstate, randomsource);
-            }
+            snowModel = snowModelRef.get();
+            snowModelRef.set(null);
         }
 
         if (snowModel != null) {
             original = false;
-            eclipticseasons$renderModel(snowModel,pChunkBufferBuilderPack, blockpos2, blockstate, posestack, renderchunkregion, randomsource, renderTypeSet);
+            eclipticseasons$renderModel(snowModel, pChunkBufferBuilderPack, blockpos2, blockstate, posestack, renderchunkregion, randomsource, renderTypeSet);
         }
 
         return original;
@@ -91,7 +139,7 @@ public class MixinChunkRenderDispatcher {
 
     @Unique
     private static void eclipticseasons$renderModel(BakedModel bakedModel, ChunkBufferBuilderPack pChunkBufferBuilderPack, BlockPos pos, BlockState state, PoseStack posestack, RenderChunkRegion renderchunkregion, RandomSource random, Set<RenderType> renderTypeSet) {
-        RenderType renderType =  ModelManager.getRenderType(state);
+        RenderType renderType = ModelManager.getRenderType(state);
         BufferBuilder bufferbuilder2 = pChunkBufferBuilderPack.builder(renderType);
         // this$0.beginLayer(bufferbuilder2);
         if (renderTypeSet.add(renderType))

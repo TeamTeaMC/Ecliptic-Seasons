@@ -1,3 +1,8 @@
+## **0.11.0-pre2**
+
+- Added support for seasonal and snow-covered model replacements for Embeddium and 1.20. To disable the original model rendering, simply add an entry with replace=true in the model_definitions file.
+- Slightly optimized rendering performance.
+
 ## Ecliptic Seasons v0.11 Preview Update
 
 > ⚠️ **Note: This is a preview update.**
