@@ -1,3 +1,7 @@
+## **0.11.0-pre2-1**
+
+- CanPlantGrowEvent not extends from CropGrowEvent anymore to avoid some incorrect listeners.
+
 ## **0.11.0-pre2**
 
 - Added support for seasonal and snow-covered model replacements for Embeddium and 1.20. To disable the original model rendering, simply add an entry with replace=true in the model_definitions file.

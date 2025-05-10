@@ -16,6 +16,7 @@ import com.teamtea.eclipticseasons.api.data.crop.CropGrowControl;
 import com.teamtea.eclipticseasons.api.data.crop.CropGrowControlBuilder;
 import com.teamtea.eclipticseasons.api.data.crop.GrowParameter;
 import com.teamtea.eclipticseasons.api.data.quest.SeasonQuest;
+import com.teamtea.eclipticseasons.api.event.CanPlantGrowEvent;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
@@ -68,6 +69,13 @@ import java.util.function.Function;
 
 
 public final class CropGrowthHandler {
+    public static void beforeCropGrowUp(CanPlantGrowEvent event) {
+        var block = event.getState();
+        var world = event.getLevel();
+        BlockPos pos = event.getPos();
+        beforeCropGrowUp(event, world, pos, block);
+    }
+
     public static void beforeCropGrowUp(BlockEvent.CropGrowEvent event) {
         var block = event.getState();
         var world = event.getLevel();
@@ -530,6 +538,8 @@ public final class CropGrowthHandler {
             if (flag == CANCEL) {
                 if (event instanceof BlockEvent.CropGrowEvent cropGrowEvent) {
                     cropGrowEvent.setResult(net.minecraftforge.eventbus.api.Event.Result.DENY);
+                } else if (event instanceof CanPlantGrowEvent cropGrowEvent) {
+                    cropGrowEvent.setResult(net.minecraftforge.eventbus.api.Event.Result.DENY);
                 } else if (event instanceof SaplingGrowTreeEvent blockGrowFeatureEvent) {
                     blockGrowFeatureEvent.setResult(net.minecraftforge.eventbus.api.Event.Result.DENY);
                 } else if (event instanceof BonemealEvent bonemealEvent) {
@@ -539,9 +549,13 @@ public final class CropGrowthHandler {
             } else if (flag == PASS) {
                 if (event instanceof BlockEvent.CropGrowEvent cropGrowEvent) {
                     cropGrowEvent.setResult(net.minecraftforge.eventbus.api.Event.Result.DEFAULT);
+                }else if (event instanceof CanPlantGrowEvent cropGrowEvent) {
+                    cropGrowEvent.setResult(net.minecraftforge.eventbus.api.Event.Result.DEFAULT);
                 }
             } else if (flag == GROW) {
                 if (event instanceof BlockEvent.CropGrowEvent cropGrowEvent) {
+                    cropGrowEvent.setResult(net.minecraftforge.eventbus.api.Event.Result.ALLOW);
+                }else if (event instanceof CanPlantGrowEvent cropGrowEvent) {
                     cropGrowEvent.setResult(net.minecraftforge.eventbus.api.Event.Result.ALLOW);
                 }
             }

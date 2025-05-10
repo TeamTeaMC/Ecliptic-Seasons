@@ -12,7 +12,7 @@ import net.minecraftforge.eventbus.api.Event;
  *
  */
 @Event.HasResult
-public class CanPlantGrowEvent extends BlockEvent.CropGrowEvent implements IESEvent{
+public class CanPlantGrowEvent extends BlockEvent implements IESEvent{
     public CanPlantGrowEvent(Level level, BlockPos pos, BlockState state) {
         super(level, pos, state);
     }
