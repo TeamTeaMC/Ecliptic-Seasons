@@ -1,3 +1,6 @@
+### **0.11.0-pre2-3**
+- Fixed the flag use in the test snowy leave definition file.
+
 ### **0.11.0-pre2-2**
 - Fixed a compatibility configuration error related to Embeddium that was introduced in version 0.11.0-pre2.
 
