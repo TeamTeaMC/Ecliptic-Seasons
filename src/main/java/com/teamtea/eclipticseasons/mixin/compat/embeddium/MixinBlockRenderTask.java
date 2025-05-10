@@ -109,7 +109,7 @@ public abstract class MixinBlockRenderTask {
     // }
 
     @Inject(
-            remap = false,
+            // remap = false,
             method = "execute(Lme/jellysquid/mods/sodium/client/render/chunk/compile/ChunkBuildContext;Lme/jellysquid/mods/sodium/client/util/task/CancellationToken;)Lme/jellysquid/mods/sodium/client/render/chunk/compile/ChunkBuildOutput;",
             at = @At(value = "INVOKE",
                     // shift = At.Shift.AFTER,
