@@ -1,3 +1,114 @@
+## Ecliptic Seasons v0.11 Preview Update
+
+> ⚠️ **Note: This is a preview update.**
+
+The **0.11 update** brings us one step closer to the official release. We're excited to announce that **Ecliptic Seasons** has made further progress with a **dual-drive system based on data packs and resource packs**.
+
+---
+
+### ❄️ Custom Snow-Covered Block Types
+
+You can now customize the **snow-covered state of blocks** via a two-step definition:
+
+1. **Model definition file** — written in standard Minecraft BlockStates JSON format.
+
+2. **Placement path**:
+
+   ```
+   resources/assets/<namespace>/eclipticseasons/model_definitions
+   ```
+
+   This system allows you to combine and randomize models to enhance visual richness.
+
+For snow-covered types (which are calculated both client- and server-side), define them under:
+
+```
+resources/data/<namespace>/eclipticseasons/snow_definitions
+```
+
+At minimum, provide:
+
+- A block ID
+- A model definition file ID
+
+Resource packs can also supply snow definitions, but with limited property control (model reference only).
+
+> ⚠️ `model_definitions` currently have limited support for replacing vanilla models. This must be **manually enabled**, and is only available in **Minecraft 1.21 with Sodium** (support for 1.20 and Embeddium is planned). If you want to completely suppress default block rendering, you can try overriding the original block’s blockstate model definition.
+
+---
+
+### 🌸 Seasonal Appearance for Blocks
+
+Blocks can now have **seasonal model variants**. To define these:
+
+- Use the `season_definitions` directory
+- Variants can be defined per **block type**, **biome**, and **season**
+- Supports seamless seasonal transitions by combining models
+
+Model files are still placed under:
+
+```
+resources/assets/<namespace>/eclipticseasons/model_definitions
+```
+
+---
+
+### 🍂 Custom Fallen Leaves Particle Effects
+
+You can now define **block-specific falling leaf particle effects** with rich customization:
+
+```
+resources/assets/<namespace>/eclipticseasons/particles/fallen_leaves
+```
+
+You can configure it by:
+
+- Season
+- Biome
+- Block
+- Weight
+- Texture
+- Color source
+- And more
+
+---
+
+### 🎵 Seasonal Ambient Sounds
+
+Ambient sound settings can now be customized in the `ambient` directory.
+
+Options include:
+
+- Time of day
+- Season
+- Biome
+- Rainfall conditions
+- And more
+
+---
+
+### 💧 Humidity Control Block Updates
+
+For the **Grate Block**:
+
+- Now supports an option to **not consume the source block**
+- **Relaxed restrictions** on extracting contents
+- Enhanced **JEI integration**, clearly showing valid blocks for construction
+
+---
+
+### 📖 Documentation
+
+We will update the **Wiki** soon with more detailed instructions. In the meantime, refer to the **example files included** in this preview build.
+
+---
+
+Thank you for testing and supporting *Ecliptic Seasons*!
+
+___
+___
+___
+
 ## **0.10.11**
 - Added JEI support for the humidity adjustment module.
 - Added the tag `eclipticseasons:volatile_plants` to mark blocks that require forced additional random ticks for seasonal changes.

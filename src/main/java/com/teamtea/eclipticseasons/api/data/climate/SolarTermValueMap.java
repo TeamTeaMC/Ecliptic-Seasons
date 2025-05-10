@@ -13,6 +13,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+/**
+ * Use the class in misc.
+ * **/
+@Deprecated(forRemoval = true)
 public record SolarTermValueMap<T>(
         Optional<T> defaultValue,
         Optional<EnumMap<SolarTerm, T>> solarTermMap,

@@ -4,6 +4,7 @@ package com.teamtea.eclipticseasons.common;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.data.climate.BiomesClimateSettings;
 import com.teamtea.eclipticseasons.api.data.craft.HumidityControl;
+import com.teamtea.eclipticseasons.api.data.season.SnowDefinition;
 import com.teamtea.eclipticseasons.api.event.CanPlantGrowEvent;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.common.advancement.SolarTermsRecordCa;
@@ -14,6 +15,7 @@ import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
 import com.teamtea.eclipticseasons.common.core.crop.CropInfoManager;
 import com.teamtea.eclipticseasons.common.core.map.ChunkInfoMap;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
+import com.teamtea.eclipticseasons.common.core.snow.SnowChecker;
 import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
 import com.teamtea.eclipticseasons.common.network.SimpleNetworkHandler;
 import com.teamtea.eclipticseasons.common.network.message.DataPackEventMessage;
@@ -67,6 +69,7 @@ public class AllListener {
         WeatherManager.informUpdateBiomes(tagsUpdatedEvent.getRegistryAccess());
         CropInfoManager.init(tagsUpdatedEvent);
         CropGrowthHandler.resetUpdate(tagsUpdatedEvent.getRegistryAccess(), tagsUpdatedEvent.getUpdateCause() == TagsUpdatedEvent.UpdateCause.SERVER_DATA_LOAD);
+        SnowChecker.resetUpdate(tagsUpdatedEvent.getRegistryAccess(), tagsUpdatedEvent.getUpdateCause() == TagsUpdatedEvent.UpdateCause.SERVER_DATA_LOAD);
     }
 
 
@@ -80,6 +83,7 @@ public class AllListener {
     public static void onServerStoppingEvent(ServerStoppingEvent event) {
         CropGrowthHandler.clearOnClientExitOrServerClose();
         BiomeClimateManager.clearOnClientExitOrServerClose();
+        SnowChecker.clearOnClientExitOrServerClose();
     }
 
     @SubscribeEvent
@@ -279,5 +283,11 @@ public class AllListener {
                 ESRegistries.BIOME_CLIMATE_SETTING,
                 registryAccess.registryOrThrow(ESRegistries.BIOME_CLIMATE_SETTING).entrySet().stream().map(Map.Entry::getValue).toList(),
                 BiomesClimateSettings.CODEC));
+
+        SimpleNetworkHandler.send(serverPlayerList, new DataPackEventMessage<>(
+                registryAccess,
+                ESRegistries.SNOW_DEFINITIONS,
+                registryAccess.registryOrThrow(ESRegistries.SNOW_DEFINITIONS).entrySet().stream().map(Map.Entry::getValue).toList(),
+                SnowDefinition.CODEC));
     }
 }

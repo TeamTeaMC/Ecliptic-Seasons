@@ -1,6 +1,10 @@
 package com.teamtea.eclipticseasons.client.particle;
 
+import com.mojang.datafixers.util.Pair;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
+import com.teamtea.eclipticseasons.api.data.client.ColorMode;
+import com.teamtea.eclipticseasons.api.data.client.LeafColor;
+import com.teamtea.eclipticseasons.client.util.ClientRef;
 import com.teamtea.eclipticseasons.client.util.ColorHelper;
 import com.teamtea.eclipticseasons.common.registry.ParticleRegistry;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
@@ -11,16 +15,19 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.util.FastColor;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -66,8 +73,37 @@ public class ParticleUtil {
         int i = blockpos$mutableblockpos.getX();
         int j = blockpos$mutableblockpos.getY();
         int k = blockpos$mutableblockpos.getZ();
-        if (ClientConfig.Particle.fallenLeaves.get()
-                && blockstate.getBlock() instanceof LeavesBlock) {
+
+        boolean isLeaf = false;
+        Block block = blockstate.getBlock();
+        List<Pair<LeafColor.InstanceHolder, LeafColor.Instance>> pairs = ClientRef.leaveColors.get(block);
+        if (pairs != null) {
+            for (Pair<LeafColor.InstanceHolder, LeafColor.Instance> pair : pairs) {
+                if (pair.getFirst().matches(clientLevel, i, j, k, random, blockstate)) {
+                    isLeaf = true;
+                    LeafColor.Instance second = pair.getSecond();
+                    Integer chanceW = null;
+                    if (second.weights().contains(ClientCon.nowSolarTerm)) {
+                        chanceW = second.weights().get(ClientCon.nowSolarTerm);
+                    } else switch (ClientCon.nowSolarTerm.getSeason()) {
+                        case SPRING -> chanceW = 17;
+                        case SUMMER -> chanceW = 27;
+                        case AUTUMN -> chanceW = 9;
+                        case WINTER -> chanceW = 15;
+                    }
+                    if (chanceW != null) {
+                        chanceW *= (int) (ClientConfig.Particle.fallenLeavesDropWeight.get() * 0.4f);
+                        if (random.nextInt(chanceW) == 0) {
+                            fallenLeaves(clientLevel, blockpos$mutableblockpos,random, blockstate, second);
+                        }
+                    }
+                    break;
+                }
+            }
+        }
+
+        if (!isLeaf&&ClientConfig.Particle.fallenLeaves.get()
+                && block instanceof LeavesBlock) {
             if (!blockstate.is(EclipticBlockTags.NONE_FALLEN_LEAVES)) {
                 var sd = ClientCon.nowSolarTerm.getSeason();
                 if (sd != Season.NONE) {
@@ -81,7 +117,7 @@ public class ParticleUtil {
                     chanceW *= (int) (ClientConfig.Particle.fallenLeavesDropWeight.get() * 0.4f);
                     // chanceW*=4;
                     if (random.nextInt(chanceW) == 0) {
-                        fallenLeaves(clientLevel, blockpos$mutableblockpos, blockstate);
+                        fallenLeaves(clientLevel, blockpos$mutableblockpos,random, blockstate,null);
                     }
                 }
             }
@@ -125,20 +161,33 @@ public class ParticleUtil {
 
     }
 
-    public static void fallenLeaves(ClientLevel level, BlockPos pos, BlockState state) {
+    public static void fallenLeaves(ClientLevel level, BlockPos pos, RandomSource random, BlockState state, LeafColor.Instance leafInfo) {
         if (!state.isAir()) {
-            int color = getOrCreateColor(state).getRGB();
+            int color = -1;
 
-            if (new Color(color).equals(Color.WHITE)) {
-                color = Minecraft.getInstance().getBlockColors().getColor(state, level, pos, 0);
-            }
-            if (new Color(color).equals(Color.WHITE)) {
-                color = state.getMapColor(level, pos).col;
-                // color = Color.PINK.getRGB();
+            if (leafInfo == null) {
+                color = getOrCreateColor(state).getRGB();
+                if (color == -1) {
+                    color = Minecraft.getInstance().getBlockColors().getColor(state, level, pos, 0);
+                }
+                if (color == -1) {
+                    color = state.getMapColor(level, pos).col;
+                }
+            } else {
+                color = switch (leafInfo.colorSource()) {
+                    case MAP -> state.getMapColor(level, pos).col;
+                    case BLOCK -> Minecraft.getInstance().getBlockColors().getColor(state, level, pos, 0);
+                    case TEXTURE -> getOrCreateColor(state).getRGB();
+                    case CUSTOM -> {
+                        ColorMode.Instance orDefault1 = leafInfo.colors().getOrDefault(ClientCon.nowSolarTerm, null);
+                        yield orDefault1 != null ? orDefault1.value() : -1;
+                    }
+                };
             }
             VoxelShape voxelshape = state.getShape(level, pos);
             double d0 = 0.25D;
             int finalColor = color;
+            int finalColor1 = color;
             voxelshape.forAllBoxes((x0, y0, z0, x1, y1, z1) -> {
                 double x = Math.min(1.0D, x1 - x0);
                 double y = Math.min(1.0D, y1 - y0);
@@ -169,13 +218,33 @@ public class ParticleUtil {
                                 d5 = 0.42f;
                             }
 
-                            level.addParticle(new ColorParticleOptions(new Vector3f(FastColor.ARGB32.red(finalColor) / 255.0f, FastColor.ARGB32.green(finalColor) / 255.0f, FastColor.ARGB32.blue(finalColor) / 255.0f), 1.0f), (double) pos.getX() + d7,
-                                    (double) pos.getY() + d8,
-                                    (double) pos.getZ() + d9,
-                                    Mth.clamp(d4 - 0.5D, -0.25f, 0.25f),
-                                    (d5 - 0.5D) * 0.75,
-                                    Mth.clamp(d6 - 0.5D, -0.25f, 0.25f)
-                            );
+
+                            Vector3f vector3f = new Vector3f(FastColor.ARGB32.red(finalColor) / 255.0f, FastColor.ARGB32.green(finalColor) / 255.0f, FastColor.ARGB32.blue(finalColor) / 255.0f);
+                            if (leafInfo == null || leafInfo.sprites().getOrDefault(ClientCon.nowSolarTerm, null) == null) {
+                                level.addParticle(new ColorParticleOptions(vector3f, 1.0f), (double) pos.getX() + d7,
+                                        (double) pos.getY() + d8,
+                                        (double) pos.getZ() + d9,
+                                        Mth.clamp(d4 - 0.5D, -0.25f, 0.25f),
+                                        (d5 - 0.5D) * 0.75,
+                                        Mth.clamp(d6 - 0.5D, -0.25f, 0.25f)
+                                );
+                            } else {
+                                List<ResourceLocation> resourceLocations = leafInfo.sprites().get(ClientCon.nowSolarTerm);
+                                if(!resourceLocations.isEmpty()) {
+                                    TextureAtlas textureAtlas = (TextureAtlas) Minecraft.getInstance().getTextureManager().getTexture(TextureAtlas.LOCATION_PARTICLES);
+                                    ResourceLocation resourceLocation=resourceLocations.get(random.nextInt(resourceLocations.size()));
+                                    Minecraft.getInstance().particleEngine.add(
+                                            new FallenLeavesParticle(level,
+                                                    (double) pos.getX() + d7,
+                                                    (double) pos.getY() + d8,
+                                                    (double) pos.getZ() + d9,
+                                                    Mth.clamp(d4 - 0.5D, -0.25f, 0.25f),
+                                                    (d5 - 0.5D) * 0.75,
+                                                    Mth.clamp(d6 - 0.5D, -0.25f, 0.25f),
+                                                    new ColorParticleOptions(vector3f, 1.0f),
+                                                    textureAtlas.getSprite(resourceLocation)));
+                                }
+                            }
                         }
                     }
                 }

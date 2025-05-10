@@ -19,6 +19,7 @@ public class DatapackRegistryGenerator extends DatapackBuiltinEntriesProvider {
             .add(ESRegistries.BIOME_CLIMATE_SETTING, BiomeClimateSettingsRegistry::bootstrap)
             .add(ESRegistries.SEASON_QUEST, SeasonQuestRegistry::bootstrap)
             .add(ESRegistries.HUMIDITY_CONTROL, HumidityControlRegistry::bootstrap)
+            .add(ESRegistries.SNOW_DEFINITIONS, SnowDefinitionsRegistry::bootstrap)
             ;
 
     public DatapackRegistryGenerator(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {

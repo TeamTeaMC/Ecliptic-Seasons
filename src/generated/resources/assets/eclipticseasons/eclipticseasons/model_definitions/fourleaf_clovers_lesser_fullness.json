@@ -1,0 +1,31 @@
+{
+  "variants": {
+    "": [
+      {
+        "model": "eclipticseasons:block/fourleaf_clover/fourleaf_clover_0"
+      },
+      {
+        "model": "eclipticseasons:block/fourleaf_clover/fourleaf_clover_1"
+      },
+      {
+        "model": "eclipticseasons:block/fourleaf_clover/fourleaf_clover_2"
+      },
+      {
+        "model": "eclipticseasons:block/fourleaf_clover/fourleaf_clover_3"
+      },
+      {
+        "model": "eclipticseasons:block/fourleaf_clover/fourleaf_clover_4"
+      },
+      {
+        "model": "eclipticseasons:block/fourleaf_clover/fourleaf_clover_5"
+      },
+      {
+        "model": "eclipticseasons:block/fourleaf_clover/fourleaf_clover_6"
+      },
+      {
+        "weight": 84,
+        "model": "minecraft:block/air"
+      }
+    ]
+  }
+}

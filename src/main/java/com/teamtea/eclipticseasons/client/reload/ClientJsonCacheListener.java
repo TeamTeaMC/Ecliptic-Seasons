@@ -8,13 +8,18 @@ import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.JsonOps;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
+import com.teamtea.eclipticseasons.api.data.client.LeafColor;
 import com.teamtea.eclipticseasons.api.data.client.SeasonalBiomeAmbient;
+import com.teamtea.eclipticseasons.api.data.client.model.ESModelLoadedJson;
+import com.teamtea.eclipticseasons.api.data.client.model.seasonal.SeasonBlockDefinition;
+import com.teamtea.eclipticseasons.api.data.season.SnowDefinition;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,12 +30,20 @@ public class ClientJsonCacheListener<T> extends SimpleJsonResourceReloadListener
             // .registerTypeHierarchyAdapter(Component.class, new Component.Serializer())
             .create();
 
+    public static final String DIRECTORY_TEST = EclipticSeasonsApi.MODID + "/test";
+
     public static final String DIRECTORY_BIOME = EclipticSeasonsApi.MODID + "/biome_colors";
     public static final String DIRECTORY_LEAF = EclipticSeasonsApi.MODID + "/particles/fallen_leaves";
-    public static final String DIRECTORY_MODEL = EclipticSeasonsApi.MODID + "/models";
+    public static final String DIRECTORY_SNOW_DEFINITION = EclipticSeasonsApi.MODID + "/snow_definitions";
     public static final String DIRECTORY_AMBIENT = EclipticSeasonsApi.MODID + "/ambient";
+    public static final String DIRECTORY_MODEL_DEFINITION = EclipticSeasonsApi.MODID + "/model_definitions";
+    public static final String DIRECTORY_SEASON_DEFINITION = EclipticSeasonsApi.MODID + "/season_definitions";
 
+    public static final ClientJsonCacheListener<LeafColor> leafCache = new ClientJsonCacheListener<>(GSON, DIRECTORY_LEAF);
+    public static final ClientJsonCacheListener<SnowDefinition> snowDefOverrideCache = new ClientJsonCacheListener<>(GSON, DIRECTORY_SNOW_DEFINITION);
     public static final ClientJsonCacheListener<SeasonalBiomeAmbient> ambientCache = new ClientJsonCacheListener<>(GSON, DIRECTORY_AMBIENT);
+    public static final ClientJsonCacheListener<ESModelLoadedJson> modelDefCache = new ClientJsonCacheListener<>(GSON, DIRECTORY_MODEL_DEFINITION);
+    public static final ClientJsonCacheListener<SeasonBlockDefinition> seasonDefCache = new ClientJsonCacheListener<>(GSON, DIRECTORY_SEASON_DEFINITION);
 
     public ClientJsonCacheListener(Gson gson, String directory) {
         super(gson, directory);
@@ -60,16 +73,28 @@ public class ClientJsonCacheListener<T> extends SimpleJsonResourceReloadListener
 
 
     public Map<ResourceLocation, T> build(Codec<T> codec, RegistryAccess registryAccess) {
+        return getResourceLocationTMap(codec, RegistryOps.create(JsonOps.INSTANCE, registryAccess));
+    }
+
+    public Map<ResourceLocation, T> build(Codec<T> codec) {
+        DynamicOps<JsonElement> dynamicops = JsonOps.INSTANCE;
+        return getResourceLocationTMap(codec, dynamicops);
+    }
+
+    private @NotNull Map<ResourceLocation, T> getResourceLocationTMap(Codec<T> codec, DynamicOps<JsonElement> dynamicops) {
         Map<ResourceLocation, T> map = new HashMap<>();
-        DynamicOps<JsonElement> dynamicops =RegistryOps.create(JsonOps.INSTANCE, registryAccess);
         this.elementMap.forEach(
                 (resourceLocation, jsonElement) -> {
-                    codec
-                            .parse(dynamicops, jsonElement)
-                            .resultOrPartial(EclipticSeasons::logger)
-                            .ifPresent(t -> {
-                                map.put(resourceLocation, t);
-                            });
+                    try {
+                        codec
+                                .parse(dynamicops, jsonElement)
+                                .resultOrPartial(EclipticSeasons::logger)
+                                .ifPresent(t -> {
+                                    map.put(resourceLocation, t);
+                                });
+                    } catch (Exception e) {
+                        EclipticSeasons.logger(e);
+                    }
                 }
         );
         return map;

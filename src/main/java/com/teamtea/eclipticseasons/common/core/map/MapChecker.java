@@ -3,8 +3,10 @@ package com.teamtea.eclipticseasons.common.core.map;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.constant.tag.ClimateTypeBiomeTags;
 import com.teamtea.eclipticseasons.api.constant.tag.EclipticBlockTags;
+import com.teamtea.eclipticseasons.api.data.season.SnowDefinition;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
+import com.teamtea.eclipticseasons.common.core.snow.SnowChecker;
 import com.teamtea.eclipticseasons.common.misc.SimplePair;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.core.BlockPos;
@@ -46,6 +48,8 @@ public class MapChecker {
     public static final int ChunkSizeLoc = ChunkSize - 1;
     public static final int ChunkSizeAxis = 4 + 5;
 
+    public static final int FLAG_IGNORE = -1;
+
     public static final int FLAG_NONE = 0;
     public static final int FLAG_BLOCK = 1;
     public static final int FLAG_SLAB = 2;
@@ -55,7 +59,20 @@ public class MapChecker {
     public static final int FLAG_GRASS = 5;
     public static final int FLAG_GRASS_LARGE = 501;
     public static final int FLAG_FARMLAND = 6;
+    public static final int FLAG_VINE = 7;
     public static final int FLAG_CUSTOM = 999;
+
+    // change model by blockstate, one block state with only one model
+    public static final int FLAG_CUSTOM_JSON = 1000;
+    // but plants which would swaying in shaders
+    public static final int FLAG_CUSTOM_JSON_PLANTS = 1001;
+    // change model by blockstate and if in top or lower, take two model
+    // due to snow passable
+    public static final int FLAG_CUSTOM_JSON_WITH_TOP = 1100;
+    // due to snow passable, but leaves
+    public static final int FLAG_CUSTOM_JSON_WITH_TOP_LEAVES = 1101;
+    // change model if ignore offset, only one model
+    public static final int FLAG_CUSTOM_JSON_VINE_LIKE = 1200;
 
     public static final List<Level> validDimension = new ArrayList<>();
 
@@ -484,7 +501,12 @@ public class MapChecker {
         if (flag < FLAG_NONE) {
             flag = FLAG_NONE;
             var onBlock = state.getBlock();
-            if (!CommonConfig.Debug.snowOverlayGlowingBlock.get()
+            SnowDefinition.Info uncacheSnow = SnowChecker.getUncacheSnow(state); // es patch
+
+            if(uncacheSnow.isValid()) {
+                flag = uncacheSnow.getFlag();
+            }
+            else if (!CommonConfig.Debug.snowOverlayGlowingBlock.get()
                     && state.getLightEmission(level, pos) > 0) {
                 flag = FLAG_NONE;
             }else if (state.is(EclipticBlockTags.SNOW_OVERLAY_CANNOT_SURVIVE_ON)) {
@@ -545,6 +567,14 @@ public class MapChecker {
     }
 
     public static int getSnowOffset(BlockState state, int flag) {
+
+        // es patch start
+        SnowDefinition.Info uncacheSnow = SnowChecker.getUncacheSnow(state);
+        if (uncacheSnow.isValid()) {
+            return uncacheSnow.getOffset();
+        }
+        // es patch end
+
         int offset = 0;
         if (flag == MapChecker.FLAG_GRASS || flag == MapChecker.FLAG_GRASS_LARGE) {
             if (flag == MapChecker.FLAG_GRASS) {

@@ -8,17 +8,14 @@ import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.data.climate.AgroClimaticZone;
 import com.teamtea.eclipticseasons.api.util.codec.CodecUtil;
+import com.teamtea.eclipticseasons.api.util.codec.ESExtraCodec;
 import com.teamtea.eclipticseasons.common.misc.SimplePair;
 import com.teamtea.eclipticseasons.common.registry.ESRegistries;
 import net.minecraft.ResourceLocationException;
-import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
-import net.minecraft.core.RegistryCodecs;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.level.block.Block;
-import org.jetbrains.annotations.TestOnly;
 
 import java.util.*;
 
@@ -48,12 +45,6 @@ public record CropGrowControlBuilder(
     public static final HolderSet.Direct<CropGrowControlBuilder> EMPTY = HolderSet.direct(List.of());
 
 
-    public static final Codec<HolderSet<Block>> BLOCK_HOLDER_SET_CODEC = RecordCodecBuilder.create(
-            instance -> instance.group(
-                    RegistryCodecs.homogeneousList(Registries.BLOCK).optionalFieldOf("blocks").forGetter(b -> Optional.ofNullable(b))
-            ).apply(instance, b -> b.orElseGet(HolderSet::direct))
-    );
-
     // 输出的json与这里的排序有关，这里是六个，那么前三个将在后面，具体看情况，，但是基本都是对半分
 
     public static final Codec<CropGrowControlBuilder> CODEC = RecordCodecBuilder.create(ins -> ins.group(
@@ -62,10 +53,10 @@ public record CropGrowControlBuilder(
             Season_ENUM_MAP_CODEC.fieldOf("seasons").orElse(new EnumMap<>(Season.class)).forGetter(CropGrowControlBuilder::seasonList),
             HUMID_ENUM_MAP_CODEC.fieldOf("humidity").orElse(new EnumMap<>(Humidity.class)).forGetter(CropGrowControlBuilder::humidList),
             CodecUtil.holderSetCodec(ESRegistries.AGRO_CLIMATE).fieldOf("climate").forGetter(CropGrowControlBuilder::cropClimateType),
-            BLOCK_HOLDER_SET_CODEC.optionalFieldOf("unlike_greenhouse_material").forGetter(CropGrowControlBuilder::notGreenHouse),
+            ESExtraCodec.BLOCK_HOLDER_SET_CODEC.optionalFieldOf("unlike_greenhouse_material").forGetter(CropGrowControlBuilder::notGreenHouse),
             CodecUtil.holderSetCodec(ESRegistries.CROP).fieldOf("parent").orElse(HolderSet.direct()).forGetter(CropGrowControlBuilder::parent),
             GrowParameter.CODEC.optionalFieldOf("season_default").forGetter(CropGrowControlBuilder::defaultSolarTermGrowParameter),
-            BLOCK_HOLDER_SET_CODEC.fieldOf("apply_target").forGetter(CropGrowControlBuilder::applyTarget)
+            ESExtraCodec.BLOCK_HOLDER_SET_CODEC.fieldOf("apply_target").forGetter(CropGrowControlBuilder::applyTarget)
     ).apply(ins, (defaultGrowParameter2, solarTermGrowParameterEnumMap, seasonGrowParameterEnumMap, humidityGrowParameterEnumMap, holders,notGreenHouse,  holders2, defaultGrowParameter, blockPredicate) ->
             new CropGrowControlBuilder(holders, blockPredicate, holders2, defaultGrowParameter, defaultGrowParameter2, solarTermGrowParameterEnumMap, seasonGrowParameterEnumMap, humidityGrowParameterEnumMap, notGreenHouse)
     ));

@@ -4,6 +4,7 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.ParticleRenderType;
 import net.minecraft.client.particle.SpriteSet;
 import net.minecraft.client.particle.TextureSheetParticle;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
@@ -37,6 +38,23 @@ public class FallenLeavesParticle extends TextureSheetParticle {
         this.gCol = colorParticleOption.getColor().y;
         this.bCol = colorParticleOption.getColor().z;
         this.setSprite(spriteSet.get(this.random));
+    }
+
+    public FallenLeavesParticle(ClientLevel clientLevel, double pX, double pY, double pZ, double pXSpeed, double pYSpeed, double pZSpeed, ColorParticleOptions colorParticleOption, TextureAtlasSprite sprite) {
+        super(clientLevel, pX, pY, pZ, pXSpeed, pYSpeed, pZSpeed);
+        this.rotSpeed = (float) Math.toRadians(this.random.nextBoolean() ? -30.0D : 30.0D);
+        this.particleRandom = this.random.nextFloat();
+        this.spinAcceleration = (float) Math.toRadians(this.random.nextBoolean() ? -5.0D : 5.0D);
+        this.lifetime = 300;
+        this.gravity = 7.5E-4F;
+        float f = this.random.nextBoolean() ? 0.15F : 0.175F;
+        this.quadSize = f;
+        this.setSize(f, f);
+        this.friction = 1.0F;
+        this.rCol = colorParticleOption.getColor().x;
+        this.gCol = colorParticleOption.getColor().y;
+        this.bCol = colorParticleOption.getColor().z;
+        this.setSprite(sprite);
     }
 
     @Override

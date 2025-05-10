@@ -1,5 +1,14 @@
 package com.teamtea.eclipticseasons.client.core;
 
+import com.teamtea.eclipticseasons.api.data.client.model.ESModelLoadedJson;
+import com.teamtea.eclipticseasons.api.data.client.model.ModelResolver;
+import com.teamtea.eclipticseasons.api.data.client.model.ModelTester;
+import com.teamtea.eclipticseasons.api.data.client.model.seasonal.SeasonBlockDefinition;
+import com.teamtea.eclipticseasons.api.data.season.SnowDefinition;
+import com.teamtea.eclipticseasons.client.reload.ClientJsonCacheListener;
+import com.teamtea.eclipticseasons.client.util.ClientCon;
+import com.teamtea.eclipticseasons.client.util.ClientRef;
+import com.teamtea.eclipticseasons.common.core.snow.SnowChecker;
 import com.teamtea.eclipticseasons.common.registry.BlockRegistry;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
@@ -18,6 +27,7 @@ import net.minecraft.client.renderer.texture.SpriteContents;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
@@ -32,6 +42,7 @@ import net.minecraftforge.client.model.data.ModelData;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 
 import java.util.*;
+import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -85,6 +96,9 @@ public class ModelManager {
         return new ModelResourceLocation(EclipticSeasons.rl(s), s2);
     }
 
+    public static ModelResourceLocation snow_mrl(ResourceLocation resourceLocation, String v) {
+        return new ModelResourceLocation(resourceLocation.withPrefix("extra/"), v);
+    }
 
     public static HashMap<ResourceLocation, SpriteContents> blocksCache = new HashMap<>();
 
@@ -107,52 +121,105 @@ public class ModelManager {
     }
 
 
-    public static Map<BakedModel, Integer> snowyModelsCache = new IdentityHashMap<>();
+    public static Map<BlockState, BakedModel> snowyModelsCache = new IdentityHashMap<>();
+    public static Map<BlockState, BakedModel> snowyModelsCache2 = new IdentityHashMap<>();
 
 
     public static BakedModel getSnowyModel(BlockState state, BlockState snowState, int flag, int offset) {
-        Block onBlock = state.getBlock();
-        BakedModel snowModel = null;
-        if (flag == MapChecker.FLAG_BLOCK) {
-            snowModel = models.get(snowOverlayBlock);
-        } else if (flag == MapChecker.FLAG_LEAVES) {
-            snowModel = !ClientConfig.Renderer.snowyTree.get() ?
-                    models.get(snowOverlayLeaves) : snowState != null ?
-                    models.get(snowy_leaves_top) : models.get(snowy_leaves_attach);
-        } else if (flag == MapChecker.FLAG_SLAB) {
-            snowModel = models.get(snowySlabBottom);
-        } else if (flag == MapChecker.FLAG_STAIRS_TOP) {
-            snowModel = models.get(stairs_top);
-        } else if (models != null && flag == MapChecker.FLAG_STAIRS) {
-            if (snowState != null)
-                snowModel = models.get(BlockModelShaper.stateToModelLocation(snowState));
-        } else if (flag == MapChecker.FLAG_GRASS) {
-            if (onBlock == Blocks.GRASS) {
-                snowModel = models.get(snowy_grass);
-            } else if (onBlock == Blocks.FERN) {
-                snowModel = models.get(snowy_fern);
-            } else snowModel = models.get(snowy_grass);
-        } else if (flag == MapChecker.FLAG_GRASS_LARGE) {
-            if (onBlock == Blocks.TALL_GRASS) {
-                snowModel = models.get(offset == 1 ? snowy_tall_grass_bottom : snowy_tall_grass_top);
-            } else if (onBlock == Blocks.LARGE_FERN) {
-                snowModel = models.get(offset == 1 ? snowy_large_fern_bottom : snowy_large_fern_top);
-            } else snowModel = models.get(offset == 1 ? snowy_tall_grass_bottom : snowy_tall_grass_top);
-        } else if (flag == MapChecker.FLAG_FARMLAND) {
-            snowModel = models.get(snow_height2_top);
-        } else if (flag == MapChecker.FLAG_CUSTOM) {
-            snowModel = models.get(snowy_custom);
-        }
 
-        if (snowModel != null) {
-            snowModel =
-                    snowModel instanceof SnowyBakedModelWrapper<?> ?
-                            (SnowyBakedModelWrapper<?>) snowModel :
-                            new SnowyBakedModelWrapper<>(snowModel);
-            if (snowModel instanceof SnowyBakedModelWrapper<?> snowyBakedModelWrapper
-                    && SnowyBakedModelWrapper.isInvalid(snowyBakedModelWrapper))
-                snowyBakedModelWrapper.updateBlockType(flag);
-            snowyModelsCache.putIfAbsent(snowModel, flag);
+        boolean notSpecialLeaves = !(
+                (leaveLike(flag))
+                        && snowState == null);
+        BakedModel snowModel = notSpecialLeaves ?
+                snowyModelsCache.get(state) : snowyModelsCache2.get(state);
+
+
+        if (snowModel == null) {
+            Block onBlock = state.getBlock();
+            boolean forceReplace = false;
+
+            // **************************
+            // es patch for client override
+            List<SnowDefinition> snowDefinitions = ClientRef.snowClientDef.get(onBlock);
+            if (snowDefinitions != null && !snowDefinitions.isEmpty()) {
+                for (SnowDefinition snowDefinition : snowDefinitions) {
+                    ResourceLocation cinfo =
+                            notSpecialLeaves ? snowDefinition.getInfo().getMid() :
+                                    snowDefinition.getInfo().getMid2();
+                    ModelResolver smr = extraSnowModelBuilds.get(cinfo);
+                    if (smr != null) {
+                        var mmrl = smr.tryFind(state);
+                        if (mmrl != null) {
+                            snowModel = models.get(mmrl.modelResourceLocation());
+                            forceReplace = mmrl.replace();
+                            break;
+                        }
+                    }
+                }
+            }
+            // **************************
+            if (snowModel == null) {
+                if (flag == MapChecker.FLAG_BLOCK) {
+                    snowModel = models.get(snowOverlayBlock);
+                } else if (flag == MapChecker.FLAG_LEAVES) {
+                    snowModel = !ClientConfig.Renderer.snowyTree.get() ?
+                            models.get(snowOverlayLeaves) : notSpecialLeaves ?
+                            models.get(snowy_leaves_top) : models.get(snowy_leaves_attach);
+                } else if (flag == MapChecker.FLAG_SLAB) {
+                    snowModel = models.get(snowySlabBottom);
+                } else if (flag == MapChecker.FLAG_STAIRS_TOP) {
+                    snowModel = models.get(stairs_top);
+                } else if (models != null && flag == MapChecker.FLAG_STAIRS) {
+                    if (snowState != null)
+                        snowModel = models.get(BlockModelShaper.stateToModelLocation(snowState));
+                } else if (flag == MapChecker.FLAG_GRASS) {
+                    if (onBlock == Blocks.GRASS) {
+                        snowModel = models.get(snowy_grass);
+                    } else if (onBlock == Blocks.FERN) {
+                        snowModel = models.get(snowy_fern);
+                    } else snowModel = models.get(snowy_grass);
+                } else if (flag == MapChecker.FLAG_GRASS_LARGE) {
+                    if (onBlock == Blocks.TALL_GRASS) {
+                        snowModel = models.get(offset == 1 ? snowy_tall_grass_bottom : snowy_tall_grass_top);
+                    } else if (onBlock == Blocks.LARGE_FERN) {
+                        snowModel = models.get(offset == 1 ? snowy_large_fern_bottom : snowy_large_fern_top);
+                    } else snowModel = models.get(offset == 1 ? snowy_tall_grass_bottom : snowy_tall_grass_top);
+                } else if (flag == MapChecker.FLAG_FARMLAND) {
+                    snowModel = models.get(snow_height2_top);
+                } else if (flag == MapChecker.FLAG_CUSTOM) {
+                    snowModel = models.get(snowy_custom);
+                } else if (flag == MapChecker.FLAG_CUSTOM_JSON
+                        | flag == MapChecker.FLAG_CUSTOM_JSON_PLANTS
+                        || flag == MapChecker.FLAG_CUSTOM_JSON_VINE_LIKE
+                        || flag == MapChecker.FLAG_CUSTOM_JSON_WITH_TOP
+                        || flag == MapChecker.FLAG_CUSTOM_JSON_WITH_TOP_LEAVES) {
+                    SnowDefinition.Info uncacheSnow = SnowChecker.getUncacheSnow(state);
+                    ResourceLocation cinfo =
+                            notSpecialLeaves ? uncacheSnow.getMid() : uncacheSnow.getMid2();
+                    ModelResolver smr = extraSnowModelBuilds.get(cinfo);
+                    if (smr != null) {
+                        var mmrl = smr.tryFind(state);
+                        if (mmrl != null) {
+                            snowModel = models.get(mmrl.modelResourceLocation());
+                            forceReplace = mmrl.replace();
+                        }
+                    }
+                }
+            }
+
+            if (snowModel != null) {
+                // stateModelsCache.putIfAbsent(snowState, snowModel);
+                SnowyBakedModelWrapper<?> bakedModel =
+                        snowModel instanceof SnowyBakedModelWrapper<?> ?
+                                (SnowyBakedModelWrapper<?>) snowModel :
+                                new SnowyBakedModelWrapper<>(snowModel);
+                bakedModel.setReplace(forceReplace);
+                if (SnowyBakedModelWrapper.isInvalid(bakedModel))
+                    bakedModel.updateBlockType(flag);
+                if (notSpecialLeaves)
+                    snowyModelsCache.put(state, bakedModel);
+                else snowyModelsCache2.put(state, bakedModel);
+            }
         }
         return snowModel;
     }
@@ -305,7 +372,7 @@ public class ModelManager {
                 && !list.isEmpty()
         ) {
             int flag = MapChecker.getBlockType(state, level, pos);
-            if (snowyModelsCache.getOrDefault(snowModel, -1) > -1) {
+            if (flag > MapChecker.FLAG_NONE) {
                 BlockState snowState = null;
                 if (models != null && flag == MapChecker.FLAG_STAIRS) {
                     snowState = BlockRegistry.snowyStairs.get().defaultBlockState()
@@ -349,6 +416,17 @@ public class ModelManager {
             }
         }
         return list;
+    }
+
+    // it meanes the block would have surface layer and below
+    public static boolean leaveLike(int flag) {
+        return flag == MapChecker.FLAG_LEAVES
+                || flag == MapChecker.FLAG_CUSTOM_JSON_WITH_TOP
+                || flag == MapChecker.FLAG_CUSTOM_JSON_WITH_TOP_LEAVES;
+    }
+
+    public static boolean vineLike(int flag) {
+        return flag == MapChecker.FLAG_VINE || flag == MapChecker.FLAG_CUSTOM_JSON_VINE_LIKE;
     }
 
     public static BakedModel findModel(BlockAndTintGetter blockAndTintGetter, BlockPos pos, BlockState state, RandomSource random) {
@@ -409,7 +487,7 @@ public class ModelManager {
         //     }
         // }
 
-        boolean isLeaf = flag == MapChecker.FLAG_LEAVES;
+        boolean isLeaf = leaveLike(flag);
         boolean specialLeaves = false;
         if (!isLight && isLeaf && ClientConfig.Renderer.snowyTree.get()) {
             if (blockAndTintGetter.getBrightness(LightLayer.SKY, pos.above()) >= 9) {
@@ -484,37 +562,62 @@ public class ModelManager {
 
             }
 
-            if (!isSnowy) {
-                if (
-                        ClientConfig.Renderer.flowerOnGrass.get()
-                                && state.getBlock() instanceof GrassBlock
-                                && random.nextInt(15) == 0
-                ) {
-                    var solarTerm = SolarTerm.NONE;
-                    solarTerm = EclipticUtil.getNowSolarTerm(level);
-                    long seed = state.getSeed(pos);
-                    if (solarTerm.isInTerms(SolarTerm.BEGINNING_OF_SPRING, SolarTerm.BEGINNING_OF_SUMMER)) {
-                        int weight = Math.abs(solarTerm.ordinal() - 3) + 1;
-                        if ((seed % (weight * 4)) == 0
-                                && blockAndTintGetter.getBlockState(pos.above()).isAir()) {
-                            {
-                                BakedModel snowModel = models.get(flower_on_grass.get(random.nextInt(flower_on_grass.size())));
-                                replace = snowModel;
-                            }
-                        }
-                    }
-                    if (replace == null && solarTerm.isInTerms(SolarTerm.BEGINNING_OF_SUMMER, SolarTerm.BEGINNING_OF_AUTUMN)) {
-                        int weight = Math.abs(solarTerm.ordinal() - 7) + 1;
-                        if ((seed % (weight * 3)) == 0
-                                && blockAndTintGetter.getBlockState(pos.above()).isAir()) {
-                            {
-                                BakedModel snowModel = models.get(fourleaf_clovers.get(random.nextInt(fourleaf_clovers.size())));
-                                replace = snowModel;
+            List<SeasonBlockDefinition> uncacheSnow = ClientRef.seasonDef.get(onBlock);
+
+            if (uncacheSnow != null)
+                for (SeasonBlockDefinition localSeasonStatus : uncacheSnow) {
+                    SeasonBlockDefinition.FlatSlice flatSlice = localSeasonStatus.getFlatSliceEnumMap().get(ClientCon.nowSolarTerm);
+                    if (flatSlice != null) {
+
+                        if (!flatSlice.emptyAbove() || blockAndTintGetter.getBlockState(pos.above()).isAir()) {
+                            if (localSeasonStatus.getBiomes().contains(MapChecker.getSurfaceBiome(level, pos))) {
+                                ResourceLocation cinfo = flatSlice.mid();
+                                ModelResolver smr = extraSnowModelBuilds.get(cinfo);
+                                if (smr != null) {
+                                    var mmrl = smr.tryFind(state);
+                                    if (mmrl != null) {
+                                        replace = models.get(mmrl.modelResourceLocation());
+                                        if (mmrl.replace()) {
+                                            replace = new TempReplaceModelWrapper<>(replace);
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
                 }
-            }
+
+            // if (!isSnowy || replace != null) {
+            //     if (
+            //             ClientConfig.Renderer.flowerOnGrass.get()
+            //                     && state.getBlock() instanceof GrassBlock
+            //                     && random.nextInt(15) == 0
+            //     ) {
+            //         var solarTerm = SolarTerm.NONE;
+            //         solarTerm = EclipticUtil.getNowSolarTerm(level);
+            //         long seed = state.getSeed(pos);
+            //         if (solarTerm.isInTerms(SolarTerm.BEGINNING_OF_SPRING, SolarTerm.BEGINNING_OF_SUMMER)) {
+            //             int weight = Math.abs(solarTerm.ordinal() - 3) + 1;
+            //             if ((seed % (weight * 4)) == 0
+            //                     && blockAndTintGetter.getBlockState(pos.above()).isAir()) {
+            //                 {
+            //                     BakedModel snowModel = models.get(flower_on_grass.get(random.nextInt(flower_on_grass.size())));
+            //                     replace = snowModel;
+            //                 }
+            //             }
+            //         }
+            //         if (replace == null && solarTerm.isInTerms(SolarTerm.BEGINNING_OF_SUMMER, SolarTerm.BEGINNING_OF_AUTUMN)) {
+            //             int weight = Math.abs(solarTerm.ordinal() - 7) + 1;
+            //             if ((seed % (weight * 3)) == 0
+            //                     && blockAndTintGetter.getBlockState(pos.above()).isAir()) {
+            //                 {
+            //                     BakedModel snowModel = models.get(fourleaf_clovers.get(random.nextInt(fourleaf_clovers.size())));
+            //                     replace = snowModel;
+            //                 }
+            //             }
+            //         }
+            //     }
+            // }
         }
         return replace;
     }
@@ -535,13 +638,86 @@ public class ModelManager {
         //         RenderType.cutoutMipped() : RenderType.solid();
     }
 
+    @Deprecated(forRemoval = true)
     public static boolean isModelReplaced(BlockState state) {
-        return !state.blocksMotion()
-                && MapChecker.getBlockType(state, EmptyBlockGetter.INSTANCE, BlockPos.ZERO) != MapChecker.FLAG_NONE;
+        // return !state.blocksMotion()
+        //         && MapChecker.getBlockType(state, EmptyBlockGetter.INSTANCE, BlockPos.ZERO) != MapChecker.FLAG_NONE;
+        return isModelReplaceable(state, EmptyBlockGetter.INSTANCE, BlockPos.ZERO, null);
+    }
+
+    // todo 目前不能用覆盖模型
+    public static boolean isModelReplaceable(BlockState state, BlockGetter blockAndTintGetter, BlockPos pos, BakedModel bakedModel) {
+        return (bakedModel instanceof IReplaceModel model
+                && model.isReplace())
+                || isModelReplaceable(MapChecker.getBlockType(state, blockAndTintGetter, pos));
+    }
+
+    private static boolean isModelReplaceable(int flag) {
+        return flag == MapChecker.FLAG_GRASS
+                || flag == MapChecker.FLAG_GRASS_LARGE;
     }
 
     public static void clearForRebaked(Map<ResourceLocation, BakedModel> modelRegistry) {
         ModelManager.models = modelRegistry;
         snowyModelsCache.clear();
+        snowyModelsCache2.clear();
+    }
+
+    public static final Map<ResourceLocation, ESModelLoadedJson> extraSnowModels = new HashMap<>(1024);
+
+    public static final Map<ResourceLocation, ModelResolver> extraSnowModelBuilds = new HashMap<>(1024);
+
+    public static void registerExtraSnowyModels(BiConsumer<ModelResourceLocation, UnbakedModel> registerModelAndDependenceMethod) {
+        extraSnowModelBuilds.clear();
+        // extraSnowModels.clear();
+        Map<ResourceLocation, ESModelLoadedJson> snowModelLoadedJsonMap = ClientJsonCacheListener.modelDefCache.build(ESModelLoadedJson.CODEC);
+        // extraSnowModels.putAll(snowModelLoadedJsonMap);
+        snowModelLoadedJsonMap.forEach(
+                (resourceLocation, value) -> {
+                    if (value.getMultiPartLike().isValid()) {
+                        ModelResourceLocation mrl = ModelManager.snow_mrl(resourceLocation, "0");
+                        registerModelAndDependenceMethod.accept(mrl, value.getMultiPartLike());
+                        extraSnowModelBuilds.put(
+                                resourceLocation, new ModelResolver(List.of(new ModelTester(
+                                        mrl, value.isReplace(), List.of()
+                                )))
+                        );
+                    } else {
+                        value.getVariants().forEach(
+                                (va, multiVariant) -> {
+                                    ModelResourceLocation mrl = ModelManager.snow_mrl(resourceLocation, va);
+                                    registerModelAndDependenceMethod.accept(
+                                            mrl, multiVariant
+                                    );
+                                    {
+                                        extraSnowModelBuilds.compute(
+                                                resourceLocation,
+                                                (sss, solver) -> {
+                                                    if (solver == null) {
+                                                        solver = new ModelResolver(new ArrayList<>());
+                                                    }
+                                                    List<SnowDefinition.PropertyTester> test = new ArrayList<>();
+                                                    for (String s : va.split(",")) {
+                                                        String[] split = s.split("=");
+                                                        if (split.length == 2) {
+                                                            test.add(
+                                                                    SnowDefinition.PropertyTester.builder().name(split[0])
+                                                                            .matcher(SnowDefinition.ExactMatcher.builder().value(split[1]).build()).build()
+                                                            );
+                                                        }
+                                                    }
+                                                    solver.modelTesters().add(
+                                                            new ModelTester(mrl, value.isReplace(), test)
+                                                    );
+                                                    return solver;
+
+                                                }
+                                        );
+                                    }
+                                }
+                        );
+                    }
+                }
+        );
     }
 }

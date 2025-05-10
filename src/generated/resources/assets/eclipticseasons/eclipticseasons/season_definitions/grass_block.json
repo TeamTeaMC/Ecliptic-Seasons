@@ -1,0 +1,89 @@
+{
+  "blocks": "minecraft:grass_block",
+  "biomes": {
+    "values": [
+      {
+        "values": [
+          "#eclipticseasons:seasonal"
+        ],
+        "type": "forge:or"
+      },
+      {
+        "value": "#forge:is_hot",
+        "type": "forge:not"
+      },
+      {
+        "value": "#forge:is_cold",
+        "type": "forge:not"
+      }
+    ],
+    "type": "forge:and"
+  },
+  "slices": [
+    {
+      "mid": "eclipticseasons:flower_on_grass_beginning_of_spring",
+      "start": "beginning_of_spring",
+      "end": "beginning_of_spring"
+    },
+    {
+      "mid": "eclipticseasons:flower_on_grass_rain_water",
+      "start": "rain_water",
+      "end": "rain_water"
+    },
+    {
+      "mid": "eclipticseasons:flower_on_grass_insects_awakening",
+      "start": "insects_awakening",
+      "end": "insects_awakening"
+    },
+    {
+      "mid": "eclipticseasons:flower_on_grass_spring_equinox",
+      "start": "spring_equinox",
+      "end": "spring_equinox"
+    },
+    {
+      "mid": "eclipticseasons:flower_on_grass_fresh_green",
+      "start": "fresh_green",
+      "end": "fresh_green"
+    },
+    {
+      "mid": "eclipticseasons:flower_on_grass_grain_rain",
+      "start": "grain_rain",
+      "end": "grain_rain"
+    },
+    {
+      "mid": "eclipticseasons:fourleaf_clovers_lesser_fullness",
+      "start": "lesser_fullness",
+      "end": "lesser_fullness"
+    },
+    {
+      "mid": "eclipticseasons:fourleaf_clovers_grain_in_ear",
+      "start": "grain_in_ear",
+      "end": "grain_in_ear"
+    },
+    {
+      "mid": "eclipticseasons:fourleaf_clovers_summer_solstice",
+      "start": "summer_solstice",
+      "end": "summer_solstice"
+    },
+    {
+      "mid": "eclipticseasons:fourleaf_clovers_lesser_heat",
+      "start": "lesser_heat",
+      "end": "lesser_heat"
+    },
+    {
+      "mid": "eclipticseasons:fourleaf_clovers_greater_heat",
+      "start": "greater_heat",
+      "end": "greater_heat"
+    },
+    {
+      "mid": "eclipticseasons:fourleaf_clovers_beginning_of_autumn",
+      "start": "beginning_of_autumn",
+      "end": "beginning_of_autumn"
+    },
+    {
+      "mid": "eclipticseasons:flower_on_grass_summer_start",
+      "start": "beginning_of_summer",
+      "end": "beginning_of_summer"
+    }
+  ]
+}

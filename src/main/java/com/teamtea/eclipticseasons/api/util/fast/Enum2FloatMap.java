@@ -98,4 +98,8 @@ public class Enum2FloatMap<K extends Enum<K>> {
             this.values[ordinal] += addV;
         }
     }
+
+    public boolean isEmpty() {
+        return size() == 0;
+    }
 }

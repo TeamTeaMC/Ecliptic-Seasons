@@ -80,4 +80,8 @@ public class Enum2LongMap<K extends Enum<K>> {
             this.setFlags.set(i);
         }
     }
+
+    public boolean isEmpty() {
+        return size() == 0;
+    }
 }

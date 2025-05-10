@@ -12,6 +12,7 @@ import net.minecraft.util.StringRepresentable;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.*;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 
@@ -92,5 +93,13 @@ public class CodecUtil {
 
     public static <E> Codec<E> empty(E e) {
         return Codec.unit(e);
+    }
+
+    public static <I, F extends I, S extends I> Codec<I> either(final Codec<F> first,  final Codec<S> second,Class<F> fClass, Class<S> sClass) {
+        return new InterfaceCodec<>(first, fClass, second, sClass);
+    }
+
+    public  static <A> Codec<A> lazyInitialized(final Supplier<Codec<A>> delegate) {
+        return new RecursiveCodec<>(delegate.toString(), self -> delegate.get());
     }
 }

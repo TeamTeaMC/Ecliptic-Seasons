@@ -11,11 +11,14 @@
         "type": "forge:or"
       },
       {
-        "value": "#forge:is_cold",
-        "type": "forge:not"
-      },
-      {
-        "value": "#minecraft:is_beach",
+        "value": {
+          "values": [
+            "#forge:is_cold",
+            "#minecraft:is_ocean",
+            "#minecraft:is_beach"
+          ],
+          "type": "forge:or"
+        },
         "type": "forge:not"
       }
     ],

@@ -1,5 +1,7 @@
 package com.teamtea.eclipticseasons.api.util.fast;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.BitSet;
 
 public class Enum2IntMap<K extends Enum<K>> {
@@ -82,6 +84,16 @@ public class Enum2IntMap<K extends Enum<K>> {
         for (int i = 0; i < this.values.length; i++) {
             this.values[i] = value;
             this.setFlags.set(i);
+        }
+    }
+
+    public boolean isEmpty() {
+        return size() == 0;
+    }
+
+    public void putAll(@NotNull Enum2IntMap<K> newWeights) {
+        for (int i = newWeights.setFlags.nextSetBit(0); i >= 0; i = newWeights.setFlags.nextSetBit(i + 1)) {
+            this.put(i, newWeights.values[i]);
         }
     }
 }

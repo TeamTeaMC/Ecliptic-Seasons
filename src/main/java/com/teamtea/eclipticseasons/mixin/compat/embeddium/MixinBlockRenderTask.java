@@ -135,7 +135,9 @@ public abstract class MixinBlockRenderTask {
                          MapChecker.FLAG_STAIRS,
                          MapChecker.FLAG_STAIRS_TOP,
                          MapChecker.FLAG_FARMLAND,
-                         MapChecker.FLAG_CUSTOM ->
+                         MapChecker.FLAG_CUSTOM,
+                         MapChecker.FLAG_CUSTOM_JSON,
+                         MapChecker.FLAG_CUSTOM_JSON_WITH_TOP ->
                             iIrisShaderAccesor.eclipticseasons$setSnowy(buildContext, Blocks.SNOW.defaultBlockState());
                 }
             }

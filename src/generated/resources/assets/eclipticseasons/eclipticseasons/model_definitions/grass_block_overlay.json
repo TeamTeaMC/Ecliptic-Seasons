@@ -1,0 +1,45 @@
+{
+  "multipart": [
+    {
+      "when": {
+        "snowy": "false"
+      },
+      "apply": [
+        {
+          "model": "minecraft:block/grass_block_snow"
+        },
+        {
+          "y": 90,
+          "model": "minecraft:block/grass_block_snow"
+        },
+        {
+          "y": 180,
+          "model": "minecraft:block/grass_block_snow"
+        },
+        {
+          "y": 270,
+          "model": "minecraft:block/grass_block_snow"
+        }
+      ]
+    },
+    {
+      "apply": [
+        {
+          "model": "eclipticseasons:block/grass_block_overlay"
+        },
+        {
+          "y": 90,
+          "model": "eclipticseasons:block/grass_block_overlay"
+        },
+        {
+          "y": 180,
+          "model": "eclipticseasons:block/grass_block_overlay"
+        },
+        {
+          "y": 270,
+          "model": "eclipticseasons:block/grass_block_overlay"
+        }
+      ]
+    }
+  ]
+}

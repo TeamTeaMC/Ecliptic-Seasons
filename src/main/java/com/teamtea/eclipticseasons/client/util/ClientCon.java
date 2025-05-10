@@ -4,6 +4,7 @@ package com.teamtea.eclipticseasons.client.util;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.data.climate.BiomesClimateSettings;
 import com.teamtea.eclipticseasons.api.data.craft.HumidityControl;
+import com.teamtea.eclipticseasons.api.data.season.SnowDefinition;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.network.message.DataPackEventMessage;
@@ -29,6 +30,7 @@ public class ClientCon {
 
     public final static List<HumidityControl> humidityControls=new ArrayList<>();
     public static DataPackEventMessage<BiomesClimateSettings> biomeDataPackCache;
+    public static DataPackEventMessage<SnowDefinition> snowDefCache;
 
     public static void tick(Level clientLevel) {
         if (MapChecker.isValidDimension(clientLevel)) {

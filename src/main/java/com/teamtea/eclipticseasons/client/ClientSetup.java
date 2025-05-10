@@ -202,6 +202,11 @@ public class ClientSetup {
 
     @SubscribeEvent
     public static void onRegisterRenderers(RegisterClientReloadListenersEvent event) {
+        event.registerReloadListener(ClientJsonCacheListener.leafCache);
+
+        event.registerReloadListener(ClientJsonCacheListener.snowDefOverrideCache);
         event.registerReloadListener(ClientJsonCacheListener.ambientCache);
+        event.registerReloadListener(ClientJsonCacheListener.modelDefCache);
+        event.registerReloadListener(ClientJsonCacheListener.seasonDefCache);
     }
 }

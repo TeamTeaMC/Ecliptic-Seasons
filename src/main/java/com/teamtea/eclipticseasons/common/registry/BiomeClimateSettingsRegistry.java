@@ -3,7 +3,7 @@ package com.teamtea.eclipticseasons.common.registry;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.constant.climate.MonsoonRain;
 import com.teamtea.eclipticseasons.api.data.climate.BiomesClimateSettings;
-import com.teamtea.eclipticseasons.api.data.climate.SolarTermValueMap;
+import com.teamtea.eclipticseasons.api.data.misc.SolarTermValueMap;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstapContext;

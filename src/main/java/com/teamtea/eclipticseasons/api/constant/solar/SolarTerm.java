@@ -225,7 +225,7 @@ public enum SolarTerm implements StringRepresentable {
 
     public boolean isInTerms(SolarTerm start, SolarTerm end) {
         if (start == NONE || end == NONE) return false;
-        else if (start == end) return true;
+        else if (start == end) return this==start;
         else if (start.ordinal() <= end.ordinal()) {
             return start.ordinal() <= this.ordinal() && this.ordinal() <= end.ordinal();
         } else

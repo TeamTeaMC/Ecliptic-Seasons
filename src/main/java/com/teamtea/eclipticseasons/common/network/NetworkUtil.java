@@ -124,7 +124,9 @@ public class NetworkUtil {
                 }
                 if (dataPackEvent.resourceKey.equals(ESRegistries.BIOME_CLIMATE_SETTING)) {
                     ClientCon.biomeDataPackCache = dataPackEvent;
-
+                }
+                if (dataPackEvent.resourceKey.equals(ESRegistries.SNOW_DEFINITIONS)) {
+                    ClientCon.snowDefCache = dataPackEvent;
                 }
 
             }

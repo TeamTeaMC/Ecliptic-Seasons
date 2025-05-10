@@ -5,6 +5,7 @@ import com.teamtea.eclipticseasons.api.data.client.SeasonalBiomeAmbient;
 import com.teamtea.eclipticseasons.client.reload.ClientJsonCacheListener;
 import com.teamtea.eclipticseasons.common.registry.AgroClimateRegistry;
 import com.teamtea.eclipticseasons.common.registry.SoundEventsRegistry;
+import com.teamtea.eclipticseasons.data.datapack.client.base.ESClientBiomeDataMapProvider;
 import com.teamtea.eclipticseasons.data.datapack.client.base.ESClientDataMapProvider;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
@@ -27,44 +28,14 @@ import net.minecraftforge.registries.holdersets.OrHolderSet;
 import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
 
-public class SeasonalBiomeAmbientProvider extends ESClientDataMapProvider<SeasonalBiomeAmbient> {
+public class SeasonalBiomeAmbientProvider extends ESClientBiomeDataMapProvider<SeasonalBiomeAmbient> {
     public SeasonalBiomeAmbientProvider(PackOutput output, String modid, ExistingFileHelper helper, CompletableFuture<HolderLookup.Provider> registries) {
         super(output, modid, helper, registries, ClientJsonCacheListener.DIRECTORY_AMBIENT, SeasonalBiomeAmbient.CODEC);
     }
 
-    @SafeVarargs
-    private static <T> HolderSet<T> and(HolderSet<T>... values) {
-        return new AndHolderSet<>(Arrays.stream(values).toList());
-    }
-
-    @SafeVarargs
-    private static <T> HolderSet<T> or(HolderSet<T>... values) {
-        return new OrHolderSet<>(Arrays.stream(values).toList());
-    }
-
-    private static HolderSet<Biome> not(HolderSet<Biome> value) {
-        return new NotHolderSet<>(BIOME_REGISTRY_LOOKUP, value);
-    }
-
-    private static HolderSet<Biome> get(TagKey<Biome> tagKey) {
-        // return BIOME_HOLDER_GETTER.getOrThrow(tagKey);
-        return HolderSet.emptyNamed(BIOME_REGISTRY_LOOKUP,tagKey);
-    }
-
-
-    private static HolderSet<Biome> get(ResourceKey<Biome> tagKey) {
-        return HolderSet.direct(Holder.Reference.createStandAlone(BIOME_REGISTRY_LOOKUP,tagKey));
-    }
-
-
-    private static HolderLookup.RegistryLookup<Biome> BIOME_REGISTRY_LOOKUP = null;
-    private static HolderGetter<Biome> BIOME_HOLDER_GETTER = null;
-
 
     @Override
-    protected void gather(HolderLookup.Provider provider) {
-        BIOME_HOLDER_GETTER = provider.lookupOrThrow(Registries.BIOME);
-        BIOME_REGISTRY_LOOKUP = new AgroClimateRegistry.BiomeRegistryLookup(BIOME_HOLDER_GETTER);
+    protected void gather(HolderLookup.Provider provider, HolderGetter<Biome> biomeHolderGetter){
 
         HolderLookup.RegistryLookup<SoundEvent> slp = provider.lookupOrThrow(Registries.SOUND_EVENT);
 
@@ -72,8 +43,7 @@ public class SeasonalBiomeAmbientProvider extends ESClientDataMapProvider<Season
                 and(or(get(Biomes.CHERRY_GROVE),
                                 get(BiomeTags.IS_FOREST),
                                 get(Tags.Biomes.IS_PLAINS)),
-                        not(get(Tags.Biomes.IS_COLD)),
-                        not(get(BiomeTags.IS_BEACH)))
+                        not(or(get(Tags.Biomes.IS_COLD),get(BiomeTags.IS_OCEAN),get(BiomeTags.IS_BEACH))))
         ).sound(getSoundHolder(slp, SoundEventsRegistry.spring_forest)).build());
 
         add("summer_day", SeasonalBiomeAmbient.builder().season(Season.SUMMER).biomes(
@@ -88,7 +58,8 @@ public class SeasonalBiomeAmbientProvider extends ESClientDataMapProvider<Season
                         get(Tags.Biomes.IS_CAVE),
                         get(Tags.Biomes.IS_DESERT),
                         get(BiomeTags.IS_BADLANDS),
-                        get(Tags.Biomes.IS_PEAK)))
+                        get(Tags.Biomes.IS_PEAK),
+                        get(BiomeTags.IS_OCEAN)))
         ).ignore_time(false).day(false).sound(getSoundHolder(slp, SoundEventsRegistry.night_river)).build());
 
         add("autumn", SeasonalBiomeAmbient.builder().season(Season.AUTUMN).biomes(
@@ -107,8 +78,7 @@ public class SeasonalBiomeAmbientProvider extends ESClientDataMapProvider<Season
                 not(get(Tags.Biomes.IS_CAVE))
         ).sound(getSoundHolder(slp, SoundEventsRegistry.windy_leave)).build());
 
-        BIOME_HOLDER_GETTER = null;
-        BIOME_REGISTRY_LOOKUP = null;
+
     }
 
     protected Holder<SoundEvent> getSoundHolder(HolderLookup.RegistryLookup<SoundEvent> lookup, SoundEvent soundEvent) {

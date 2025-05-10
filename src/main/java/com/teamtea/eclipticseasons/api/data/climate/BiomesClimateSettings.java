@@ -6,6 +6,7 @@ import net.minecraft.core.HolderSet;
 import net.minecraft.core.RegistryCodecs;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.biome.Biome;
+import com.teamtea.eclipticseasons.api.data.misc.SolarTermValueMap;
 
 import java.util.Optional;
 
