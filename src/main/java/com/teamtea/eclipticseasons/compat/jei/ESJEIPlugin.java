@@ -9,10 +9,7 @@ import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.registration.IRecipeCatalystRegistration;
 import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
-import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.Level;
-import net.minecraftforge.fml.loading.FMLEnvironment;
 import org.jetbrains.annotations.NotNull;
 
 @JeiPlugin
@@ -34,21 +31,16 @@ public class ESJEIPlugin implements IModPlugin {
 
     @Override
     public void registerCategories(@NotNull IRecipeCategoryRegistration registry) {
-        if (FMLEnvironment.production) return;
         registry.addRecipeCategories(new JEIHumidityControlCategory(registry.getJeiHelpers().getGuiHelper()));
     }
 
     @Override
     public void registerRecipeCatalysts(@NotNull IRecipeCatalystRegistration registration) {
-        if (FMLEnvironment.production) return;
         registration.addRecipeCatalyst(ItemRegistry.block_in_wooden_grate_block_item.get().getDefaultInstance(), HUMIDITY_CONTROL_RECIPE_TYPE);
     }
 
     @Override
     public void registerRecipes(@NotNull IRecipeRegistration registration) {
-        if (FMLEnvironment.production) return;
-        Level level = Minecraft.getInstance().level;
-        if (level == null) return;
         registration.addRecipes(HUMIDITY_CONTROL_RECIPE_TYPE, ClientCon.humidityControls);
     }
 }
