@@ -10,9 +10,6 @@ import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.client.util.ClientRef;
 import com.teamtea.eclipticseasons.common.core.snow.SnowChecker;
 import com.teamtea.eclipticseasons.common.registry.BlockRegistry;
-import com.teamtea.eclipticseasons.api.constant.solar.Season;
-import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
-import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.client.model.*;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.config.ClientConfig;
@@ -214,8 +211,10 @@ public class ModelManager {
                                 (SnowyBakedModelWrapper<?>) snowModel :
                                 new SnowyBakedModelWrapper<>(snowModel);
                 bakedModel.setReplace(forceReplace);
-                if (SnowyBakedModelWrapper.isInvalid(bakedModel))
+                if (SnowyBakedModelWrapper.isInvalid(bakedModel)) {
                     bakedModel.updateBlockType(flag);
+                    bakedModel.setLowLayer(!notSpecialLeaves);
+                }
                 if (notSpecialLeaves)
                     snowyModelsCache.put(state, bakedModel);
                 else snowyModelsCache2.put(state, bakedModel);
@@ -238,6 +237,7 @@ public class ModelManager {
                 && !original.isEmpty()
                 && (direction == Direction.UP || direction == null)
                 && !(bakedModel instanceof SnowyBakedModelWrapper)
+                && !(bakedModel instanceof MulBakeModel)
         ) {
             random.setSeed(seed);
             // blockAndTintGetter 现在优化以后可以用来处理了
@@ -283,8 +283,7 @@ public class ModelManager {
             ) {
                 // if(blockType==MapChecker.FLAG_STAIRS)
                 {
-                    if (blockType == MapChecker.FLAG_CUSTOM
-                            || direction != null && direction.ordinal() > 1) {
+                    if (shouldMakeSnowyBakedQuads(blockType, direction)) {
                         ArrayList<BakedQuad> quadsCTM = null;
 
                         BakedModel bakedModelCTM = models.get(BlockModelShaper.stateToModelLocation(state));
@@ -299,62 +298,7 @@ public class ModelManager {
                             }
                         }
 
-                        if (quadsCTM != null) {
-
-                            boolean tooTiny = false;
-                            tooTiny |= state.getBlock() instanceof FenceBlock;
-                            tooTiny |= state.getBlock() instanceof FenceGateBlock;
-                            tooTiny |= state.getBlock() instanceof IronBarsBlock;
-                            tooTiny |= state.getBlock() instanceof StairBlock;
-                            if (!tooTiny)
-                                quadsCTM = QuadFixer.fixQuadCTM(quadsCTM);
-
-
-                            TextureAtlasSprite snow_overlay_sprite = getSprite(snow_overlay);
-                            TextureAtlasSprite snow_overlay_tiny_sprite = getSprite(snow_overlay_tiny);
-                            TextureAtlasSprite snow_sprite = getSprite(snow);
-                            float offset = 0.5f;
-                            boolean isSlabDown = false;
-                            original = new ArrayList<>(quadsCTM.size());
-                            // TODO:按高度清理连接面
-                            for (BakedQuad bakedQuad : quadsCTM) {
-                                Direction bakedQuadDirection = bakedQuad.getDirection();
-                                if (bakedQuadDirection != Direction.DOWN) {
-                                    TextureAtlasSprite spriteUse = snow_overlay_sprite;
-                                    // if (blockType == MapChecker.FLAG_CUSTOM)
-                                    {
-                                        if (bakedQuadDirection != Direction.UP) {
-                                            isSlabDown = true;
-                                            float maxY = QuadFixer.getMaxY(bakedQuad);
-                                            offset = 1 - maxY;
-                                            if (offset < 0.00001f) {
-                                                offset = 0;
-                                                isSlabDown = false;
-                                            }
-                                            // if(maxY<0.75f)continue;
-                                        }
-                                    }
-
-                                    if (bakedQuadDirection == Direction.UP) spriteUse = snow_sprite;
-                                    else {
-                                        if (tooTiny)
-                                            spriteUse = snow_overlay_tiny_sprite;
-                                        else
-                                            spriteUse = QuadFixer.getMaxY(bakedQuad) - QuadFixer.getMinY(bakedQuad) > 0.4002f ? snow_overlay_sprite : snow_overlay_tiny_sprite;
-
-                                    }
-                                    BakedQuad retexturedBakedQuad;
-                                    if (RectangularPrismChecker.isRectangularPrism(bakedQuad)) {
-                                        retexturedBakedQuad = new BakedQuadRetexturedAndReUV(bakedQuad, spriteUse, isSlabDown, offset);
-                                    } else {
-                                        retexturedBakedQuad = new BakedQuadRetextured(bakedQuad, spriteUse);
-                                    }
-
-                                    original.add(retexturedBakedQuad);
-                                }
-                            }
-
-                        }
+                        original = makeSnowyBakedQuads(state, original, quadsCTM);
                     }
                 }
             }
@@ -362,57 +306,95 @@ public class ModelManager {
         return original;
     }
 
-    // 实际上这里之所以太慢还有个问题就是会一个方块访问七次
+    public static boolean shouldMakeSnowyBakedQuads( int blockType,Direction direction) {
+        return blockType == MapChecker.FLAG_CUSTOM
+                || direction != null && direction.ordinal() > 1;
+    }
+
+    public static List<BakedQuad> makeSnowyBakedQuads(BlockState state, List<BakedQuad> original, ArrayList<BakedQuad> quadsCTM) {
+        if (quadsCTM != null) {
+
+            boolean tooTiny = false;
+            tooTiny |= state.getBlock() instanceof FenceBlock;
+            tooTiny |= state.getBlock() instanceof FenceGateBlock;
+            tooTiny |= state.getBlock() instanceof IronBarsBlock;
+            tooTiny |= state.getBlock() instanceof StairBlock;
+            if (!tooTiny)
+                quadsCTM = QuadFixer.fixQuadCTM(quadsCTM);
+
+
+            TextureAtlasSprite snow_overlay_sprite = getSprite(snow_overlay);
+            TextureAtlasSprite snow_overlay_tiny_sprite = getSprite(snow_overlay_tiny);
+            TextureAtlasSprite snow_sprite = getSprite(snow);
+            float offset = 0.5f;
+            boolean isSlabDown = false;
+            original = new ArrayList<>(quadsCTM.size());
+            // TODO:按高度清理连接面
+            for (BakedQuad bakedQuad : quadsCTM) {
+                Direction bakedQuadDirection = bakedQuad.getDirection();
+                if (bakedQuadDirection != Direction.DOWN) {
+                    TextureAtlasSprite spriteUse = snow_overlay_sprite;
+                    // if (blockType == MapChecker.FLAG_CUSTOM)
+                    {
+                        if (bakedQuadDirection != Direction.UP) {
+                            isSlabDown = true;
+                            float maxY = QuadFixer.getMaxY(bakedQuad);
+                            offset = 1 - maxY;
+                            if (offset < 0.00001f) {
+                                offset = 0;
+                                isSlabDown = false;
+                            }
+                            // if(maxY<0.75f)continue;
+                        }
+                    }
+
+                    if (bakedQuadDirection == Direction.UP) spriteUse = snow_sprite;
+                    else {
+                        if (tooTiny)
+                            spriteUse = snow_overlay_tiny_sprite;
+                        else
+                            spriteUse = QuadFixer.getMaxY(bakedQuad) - QuadFixer.getMinY(bakedQuad) > 0.4002f ? snow_overlay_sprite : snow_overlay_tiny_sprite;
+
+                    }
+                    BakedQuad retexturedBakedQuad;
+                    if (RectangularPrismChecker.isRectangularPrism(bakedQuad)) {
+                        retexturedBakedQuad = new BakedQuadRetexturedAndReUV(bakedQuad, spriteUse, isSlabDown, offset);
+                    } else {
+                        retexturedBakedQuad = new BakedQuadRetextured(bakedQuad, spriteUse);
+                    }
+
+                    original.add(retexturedBakedQuad);
+                }
+            }
+
+        }
+        return original;
+    }
+
+    /**
+     * Used for Optfine because it's hard to use it code.
+     * */
     public static List<BakedQuad> appendOverlay(BlockAndTintGetter blockAndTintGetter, BlockState state, BlockPos pos, Direction direction, RandomSource random, long seed, List<BakedQuad> list) {
         random.setSeed(seed);
         BakedModel snowModel = ModelManager.findModel(blockAndTintGetter, pos, state, random);
         Level level = Minecraft.getInstance().level;
-        if (level == null) return list;
-        if (direction != Direction.DOWN
-                && !list.isEmpty()
+        if (level == null || snowModel == null) return list;
+        if (!list.isEmpty()
         ) {
             int flag = MapChecker.getBlockType(state, level, pos);
-            if (flag > MapChecker.FLAG_NONE) {
-                BlockState snowState = null;
-                if (models != null && flag == MapChecker.FLAG_STAIRS) {
-                    snowState = BlockRegistry.snowyStairs.get().defaultBlockState()
-                            .setValue(StairBlock.FACING, state.getValue(StairBlock.FACING))
-                            .setValue(StairBlock.HALF, state.getValue(StairBlock.HALF))
-                            .setValue(StairBlock.SHAPE, state.getValue(StairBlock.SHAPE));
-                }
-                if (snowModel != null) {
-                    int size = list.size();
-                    var snowList = snowModel.getQuads(snowState, direction, null);
-                    ArrayList<BakedQuad> newList;
-                    if (flag == MapChecker.FLAG_GRASS) {
-                        newList = new ArrayList<>(snowList);
-                    } else if (direction == Direction.UP) {
-                        newList = new ArrayList<>(size + snowList.size());
-                        newList.addAll(snowList);
-                    } else {
-                        newList = new ArrayList<>(size + snowList.size());
-                        newList.addAll(list);
-                        newList.addAll(snowList);
+            var snowList = snowModel.getQuads(state, direction, random);
+            if (!isModelReplaceable(snowModel, flag)) {
+                ArrayList<BakedQuad> newList = new ArrayList<>(list.size() + snowList.size());
+                for (BakedQuad bakedQuad : list) {
+                    if (bakedQuad.getDirection() != Direction.UP) {
+                        snowList.add(bakedQuad);
                     }
-
-                    if (flag == MapChecker.FLAG_FARMLAND) {
-                        for (Direction direction1 : List.of(Direction.EAST, Direction.WEST, Direction.SOUTH, Direction.NORTH, Direction.UP)) {
-                            newList.addAll(snowModel.getQuads(null, direction1, random));
-                        }
-                    }
-                    list = newList;
                 }
-            } else if (
-                    state.getBlock() instanceof GrassBlock
-            ) {
-                if (snowModel != null) {
-                    int size = list.size();
-                    var snowList = snowModel.getQuads(null, direction, null);
-                    ArrayList<BakedQuad> newList = new ArrayList<>(size + snowList.size());
-                    newList.addAll(list);
-                    newList.addAll(snowList);
-                    list = newList;
-                }
+                newList.addAll(list);
+                newList.addAll(snowList);
+                list = newList;
+            } else {
+                list = snowList;
             }
         }
         return list;
@@ -427,6 +409,12 @@ public class ModelManager {
 
     public static boolean vineLike(int flag) {
         return flag == MapChecker.FLAG_VINE || flag == MapChecker.FLAG_CUSTOM_JSON_VINE_LIKE;
+    }
+
+    // todo other snow passible
+    public static boolean solidBlockLike(int flag) {
+        return flag == MapChecker.FLAG_BLOCK
+                || flag == MapChecker.FLAG_CUSTOM_JSON;
     }
 
     public static BakedModel findModel(BlockAndTintGetter blockAndTintGetter, BlockPos pos, BlockState state, RandomSource random) {
@@ -450,7 +438,7 @@ public class ModelManager {
             int cacheHeight = MapChecker.getHeightOrUpdate(level, pos, false);
 
             if (ClientConfig.Renderer.betterSnow.get()) {
-                if (flag == MapChecker.FLAG_BLOCK && pos.getY() == cacheHeight - 1) {
+                if (solidBlockLike(flag) && pos.getY() == cacheHeight - 1) {
                     BlockPos above = pos.above();
                     BlockState aboveState = blockAndTintGetter.getBlockState(above);
                     if (MapChecker.getBlockType(aboveState, blockAndTintGetter, above) == MapChecker.FLAG_CUSTOM
@@ -650,6 +638,12 @@ public class ModelManager {
         return (bakedModel instanceof IReplaceModel model
                 && model.isReplace())
                 || isModelReplaceable(MapChecker.getBlockType(state, blockAndTintGetter, pos));
+    }
+
+    public static boolean isModelReplaceable(BakedModel bakedModel,int flag) {
+        return (bakedModel instanceof IReplaceModel model
+                && model.isReplace())
+                || isModelReplaceable(flag);
     }
 
     private static boolean isModelReplaceable(int flag) {

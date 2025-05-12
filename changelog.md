@@ -1,3 +1,5 @@
+### **0.11.0-pre2-5**
+- When using OptiFine, compatibility has been improved: snow-covered models are no longer incorrectly overridden by certain overlay layers and now support the latest model rendering methods. Additionally, forced changes to the model render type that previously caused visual issues are no longer necessary.
 ### **0.11.0-pre2-4**
 - Removed the erroneous code that incorrectly kept Ecliptic Seasons JEI plugin from loading in production environments.
 

@@ -13,6 +13,10 @@ public class SnowyBakedModelWrapper<T extends BakedModel> extends BakedModelWrap
     @Getter
     private boolean replace=false;
 
+    @Setter
+    @Getter
+    private boolean lowLayer =false;
+
     public SnowyBakedModelWrapper(T originalModel) {
         super(originalModel);
     }
