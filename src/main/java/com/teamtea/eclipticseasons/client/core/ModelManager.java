@@ -554,7 +554,7 @@ public class ModelManager {
 
             List<SeasonBlockDefinition> uncacheSnow = ClientRef.seasonDef.get(onBlock);
 
-            if (uncacheSnow != null && onBlock == Blocks.CHERRY_LEAVES)
+            if (uncacheSnow != null)
                 for (SeasonBlockDefinition localSeasonStatus : uncacheSnow) {
                     List<SeasonBlockDefinition.FlatSliceHolder> flatSliceHolders = localSeasonStatus.getFlatSliceEnumMap().get(ClientCon.nowSolarTerm);
                     if (flatSliceHolders != null && !flatSliceHolders.isEmpty()) {
