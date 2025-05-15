@@ -36,7 +36,8 @@ public record LeafColor(
         Optional<HolderSet<Biome>> locationPredicate,
         Optional<SolarTermValueMap<ColorMode>> colors,
         Optional<SolarTermValueMap<List<ResourceLocation>>> sprites,
-        Optional<SolarTermValueMap<Integer>> weights
+        Optional<SolarTermValueMap<Integer>> weights,
+        Optional<Boolean> replace
 ) implements HolderMappable<HolderSet<Block>, Pair<LeafColor.InstanceHolder, LeafColor.Instance>> {
     public static final Codec<LeafColor> CODEC = RecordCodecBuilder.create(ins -> ins.group(
             StringRepresentable.fromEnum(ColorSource::collectValues).fieldOf("source").orElse(ColorSource.CUSTOM).forGetter(LeafColor::colorSource),
@@ -44,7 +45,8 @@ public record LeafColor(
             ESExtraCodec.BIOME_HOLDER_SET_CODEC.optionalFieldOf("location").forGetter(LeafColor::locationPredicate),
             SolarTermValueMap.codec(ColorMode.CODEC).optionalFieldOf("colors").forGetter(LeafColor::colors),
             SolarTermValueMap.codec(ResourceLocation.CODEC.listOf()).optionalFieldOf("sprites").forGetter(LeafColor::sprites),
-            SolarTermValueMap.codec(Codec.INT).optionalFieldOf("weights").forGetter(LeafColor::weights)
+            SolarTermValueMap.codec(Codec.INT).optionalFieldOf("weights").forGetter(LeafColor::weights),
+            Codec.BOOL.optionalFieldOf("replace").forGetter(LeafColor::replace)
     ).apply(ins, LeafColor::new));
 
 
@@ -73,7 +75,7 @@ public record LeafColor(
         Enum2IntMap<SolarTerm> weightsE = new Enum2IntMap<>(SolarTerm.class);
         weightMap.forEach(weightsE::put);
 
-        return Pair.of(new InstanceHolder(Optional.ofNullable(blockPredicate), locationPredicate), new Instance(colorSource, colorsE, spritesE, weightsE));
+        return Pair.of(new InstanceHolder(Optional.ofNullable(blockPredicate), locationPredicate), new Instance(colorSource, colorsE, spritesE, weightsE, replace.orElse(false)));
     }
 
     public enum ColorSource implements StringRepresentable {
@@ -98,11 +100,16 @@ public record LeafColor(
             ColorSource colorSource,
             Enum2ObjectMap<SolarTerm, ColorMode.Instance> colors,
             Enum2ObjectMap<SolarTerm, List<ResourceLocation>> sprites,
-            Enum2IntMap<SolarTerm> weights
+            Enum2IntMap<SolarTerm> weights,
+            boolean replace
     ) implements Mergable<Instance> {
         private static final Enum2ObjectMap<SolarTerm, ColorMode.Instance> EMPTY_COLOR_MAP = new Enum2ObjectMap<>(SolarTerm.class, null);
 
-        private static final Instance EMPTY = new Instance(ColorSource.MAP, new Enum2ObjectMap<>(SolarTerm.class, null), new Enum2ObjectMap<>(SolarTerm.class, null), new Enum2IntMap<>(SolarTerm.class));
+        private static final Instance EMPTY = new Instance(ColorSource.MAP,
+                new Enum2ObjectMap<>(SolarTerm.class, null),
+                new Enum2ObjectMap<>(SolarTerm.class, null),
+                new Enum2IntMap<>(SolarTerm.class),
+                false);
 
         @Override
         public Instance merge(Instance next) {
@@ -115,7 +122,7 @@ public record LeafColor(
             newSprites.putAll(next.sprites);
             newWeights.putAll(weights);
             newWeights.putAll(next.weights);
-            return new Instance(next.colorSource, newColors, newSprites, newWeights);
+            return new Instance(next.colorSource, newColors, newSprites, newWeights, next.replace);
         }
     }
 

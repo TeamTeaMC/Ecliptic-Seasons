@@ -15,7 +15,7 @@ public record ColorMode(
     public static final Codec<ColorMode> CODEC = RecordCodecBuilder.create(ins -> ins.group(
                     Codec.INT.optionalFieldOf("color").forGetter(ColorMode::color),
                     Codec.FLOAT.optionalFieldOf("fix").forGetter(ColorMode::fix),
-                    Codec.STRING.optionalFieldOf("sColor").forGetter(ColorMode::sColor)
+                    Codec.STRING.optionalFieldOf("color_string").forGetter(ColorMode::sColor)
             )
             .apply(ins, ColorMode::new))
             //         .validate(

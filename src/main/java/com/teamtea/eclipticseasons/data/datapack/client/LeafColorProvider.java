@@ -44,7 +44,8 @@ public class LeafColorProvider extends ESClientDataMapProvider<LeafColor> {
                 SolarTermValueMap.<List<ResourceLocation>>builder()
                         .defaultValue(List.of(new ResourceLocation("spark_1"))).ofBuild(),
                 SolarTermValueMap.<Integer>builder()
-                        .defaultValue(100000).ofBuild()
+                        .defaultValue(100000).ofBuild(),
+                Optional.of(false)
         ));
     }
 }

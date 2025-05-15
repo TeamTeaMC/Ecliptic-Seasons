@@ -1,3 +1,13 @@
+## **0.11.0-pre4**
+- Now the falling leaf particles allow setting `replace` to completely disable the original particle rendering, but only when the seasonal particle texture provided for the set season exists.
+- The particle color string key has been changed from `sColor` to `color_string` to better align with the overall naming style. Unless someone has been digging deep into the code, it's unlikely this was being used yet.
+- Snow-covered models can now correctly overlay seasonal models. If the snow-covered model has the `replace` attribute, the seasonal model will be ignored.
+- Fixed a Codec decoding error in non-trivial cases within MultiPart models.
+
+## **0.11.0-pre3**
+- Added a transition_models field to the Season Model to enable more granular block appearance changes beyond just seasonal transitions.
+- Added a Box Distance option, allowing greenhouse blocks to use Manhattan distance instead of Euclidean distance when calculating their effective range.
+
 ## **0.11.0-pre3**
 - Added a transition_models field to the Season Model to enable more granular block appearance changes beyond just seasonal transitions.
 - Added a Box Distance option, allowing greenhouse blocks to use Manhattan distance instead of Euclidean distance when calculating their effective range.

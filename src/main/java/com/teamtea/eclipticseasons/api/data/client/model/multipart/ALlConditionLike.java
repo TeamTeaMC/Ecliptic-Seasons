@@ -17,7 +17,8 @@ public class ALlConditionLike {
                 Codec.either(AND_CODEC, OR_CODEC),
                 KEY_VALUE_CODEC
         ).flatXmap(
-                either -> DataResult.success((ConditionLike) either.map(Function.identity(), Function.identity())),
+                either -> DataResult.success(either.map(c ->
+                        c.left().isPresent() ? c.left().get() : c.right().get(), Function.identity())),
                 cond -> {
                     if (cond instanceof AndConditionLike and) return DataResult.success(Either.left(Either.left(and)));
                     if (cond instanceof OrConditionLike or) return DataResult.success(Either.left(Either.right(or)));
@@ -25,6 +26,7 @@ public class ALlConditionLike {
                     return DataResult.error(() -> "Unknown ConditionLike type: " + cond);
                 }
         );
+
     }
 
     // 为了递归引用

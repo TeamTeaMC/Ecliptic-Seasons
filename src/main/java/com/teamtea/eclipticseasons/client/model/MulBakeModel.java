@@ -41,7 +41,7 @@ public class MulBakeModel<T extends BakedModel> extends BakedModelWrapper<T> {
         this.replace = replace;
         this.snowChunkRenderType = snowChunkRenderType;
         this.snowRenderTypes = ChunkRenderTypeSet.of(this.snowChunkRenderType);
-        this.snowy = esModel instanceof SnowyBakedModelWrapper<?> snowyBakedModelWrapper && !SnowyBakedModelWrapper.isInvalid(snowyBakedModelWrapper);
+        this.snowy = esModel instanceof SnowyBakedModelWrapper<?> snowyBakedModelWrapper && !ISnowyReplaceModel.isInvalid(snowyBakedModelWrapper);
 
     }
 

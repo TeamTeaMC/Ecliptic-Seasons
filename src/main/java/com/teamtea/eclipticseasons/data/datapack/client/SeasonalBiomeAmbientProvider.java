@@ -78,7 +78,6 @@ public class SeasonalBiomeAmbientProvider extends ESClientBiomeDataMapProvider<S
                 not(get(Tags.Biomes.IS_CAVE))
         ).sound(getSoundHolder(slp, SoundEventsRegistry.windy_leave)).build());
 
-
     }
 
     protected Holder<SoundEvent> getSoundHolder(HolderLookup.RegistryLookup<SoundEvent> lookup, SoundEvent soundEvent) {

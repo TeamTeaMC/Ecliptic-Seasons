@@ -212,7 +212,7 @@ public class ModelManager {
                                 (SnowyBakedModelWrapper<?>) snowModel :
                                 new SnowyBakedModelWrapper<>(snowModel);
                 bakedModel.setReplace(forceReplace);
-                if (SnowyBakedModelWrapper.isInvalid(bakedModel)) {
+                if (ISnowyReplaceModel.isInvalid(bakedModel)) {
                     bakedModel.updateBlockType(flag);
                     bakedModel.setLowLayer(!notSpecialLeaves);
                 }
@@ -237,8 +237,7 @@ public class ModelManager {
         if (bakedModel != null
                 && !original.isEmpty()
                 && (direction == Direction.UP || direction == null)
-                && !(bakedModel instanceof SnowyBakedModelWrapper)
-                && !(bakedModel instanceof MulBakeModel)
+                && !(IESReplaceModel.isInvalid(bakedModel))
         ) {
             random.setSeed(seed);
             // blockAndTintGetter 现在优化以后可以用来处理了
@@ -426,8 +425,13 @@ public class ModelManager {
 
         var onBlock = state.getBlock();
         int flag = MapChecker.getBlockType(state, blockAndTintGetter, pos);
-        if (flag == 0)
-            return replace;
+        List<SeasonBlockDefinition> uncacheSnow = null;
+
+        if (flag == 0) {
+            uncacheSnow = ClientRef.seasonDef.get(onBlock);
+            if (uncacheSnow == null)
+                return null;
+        }
         int offset = MapChecker.getSnowOffset(state, flag);
 
         boolean isLight = false;
@@ -552,27 +556,38 @@ public class ModelManager {
 
             }
 
-            List<SeasonBlockDefinition> uncacheSnow = ClientRef.seasonDef.get(onBlock);
-
-            if (uncacheSnow != null)
-                for (SeasonBlockDefinition localSeasonStatus : uncacheSnow) {
-                    List<SeasonBlockDefinition.FlatSliceHolder> flatSliceHolders = localSeasonStatus.getFlatSliceEnumMap().get(ClientCon.nowSolarTerm);
-                    if (flatSliceHolders != null && !flatSliceHolders.isEmpty()) {
-                        for (SeasonBlockDefinition.FlatSliceHolder flatSliceHolder : flatSliceHolders) {
-                            SeasonBlockDefinition.FlatSlice flatSlice = flatSliceHolder.flatSlice();
-                            if (!flatSlice.emptyAbove() || blockAndTintGetter.getBlockState(pos.above()).isAir()) {
-                                if (localSeasonStatus.getBiomes().contains(MapChecker.getSurfaceBiome(level, pos))) {
-                                    ResourceLocation cinfo = flatSlice.transitionModels() == null ?
-                                            flatSlice.mid() :
-                                            Mth.abs(((int) (state.getSeed(pos) + pos.getX()))) % 100 > ClientCon.progress ?
-                                                    flatSlice.transitionModels().getFirst() : flatSlice.transitionModels().getSecond();
-                                    ModelResolver smr = extraSnowModelBuilds.get(cinfo);
-                                    if (smr != null) {
-                                        var mmrl = smr.tryFind(state);
-                                        if (mmrl != null) {
-                                            replace = models.get(mmrl.modelResourceLocation());
-                                            if (mmrl.replace()) {
-                                                replace = new TempReplaceModelWrapper<>(replace);
+            if (replace == null || !(replace instanceof IESReplaceModel iesReplaceModel && iesReplaceModel.isReplace())) {
+                if (uncacheSnow == null)
+                    uncacheSnow = ClientRef.seasonDef.get(onBlock);
+                if (uncacheSnow != null)
+                    for (SeasonBlockDefinition localSeasonStatus : uncacheSnow) {
+                        List<SeasonBlockDefinition.FlatSliceHolder> flatSliceHolders = localSeasonStatus.getFlatSliceEnumMap().get(ClientCon.nowSolarTerm);
+                        if (flatSliceHolders != null && !flatSliceHolders.isEmpty()) {
+                            for (SeasonBlockDefinition.FlatSliceHolder flatSliceHolder : flatSliceHolders) {
+                                SeasonBlockDefinition.FlatSlice flatSlice = flatSliceHolder.flatSlice();
+                                if (!flatSlice.emptyAbove() || blockAndTintGetter.getBlockState(pos.above()).isAir()) {
+                                    if (localSeasonStatus.getBiomes().contains(MapChecker.getSurfaceBiome(level, pos))) {
+                                        ResourceLocation cinfo = flatSlice.transitionModels() == null ?
+                                                flatSlice.mid() :
+                                                Mth.abs(((int) (state.getSeed(pos) + pos.getX()))) % 100 > ClientCon.progress ?
+                                                        flatSlice.transitionModels().getFirst() : flatSlice.transitionModels().getSecond();
+                                        ModelResolver smr = extraSnowModelBuilds.get(cinfo);
+                                        if (smr != null) {
+                                            var mmrl = smr.tryFind(state);
+                                            if (mmrl != null) {
+                                                var to_replace = models.get(mmrl.modelResourceLocation());
+                                                if (to_replace != null) {
+                                                    if (replace != null) {
+                                                        replace = new SnowySeasonBakeModel<>(to_replace, replace, getRenderType(state));
+                                                        if (mmrl.replace() && replace instanceof SnowySeasonBakeModel<?> snowyBakedModelWrapper) {
+                                                            snowyBakedModelWrapper.setReplace(true);
+                                                        }
+                                                    }else {
+                                                        replace = mmrl.replace() ?
+                                                                new TempReplaceModelWrapper<>(to_replace) :
+                                                                to_replace;
+                                                    }
+                                                }
                                             }
                                         }
                                     }
@@ -580,7 +595,7 @@ public class ModelManager {
                             }
                         }
                     }
-                }
+            }
 
             // if (!isSnowy || replace != null) {
             //     if (
@@ -642,13 +657,13 @@ public class ModelManager {
 
     // todo 目前不能用覆盖模型
     public static boolean isModelReplaceable(BlockState state, BlockGetter blockAndTintGetter, BlockPos pos, BakedModel bakedModel) {
-        return (bakedModel instanceof IReplaceModel model
+        return (bakedModel instanceof IESReplaceModel model
                 && model.isReplace())
                 || isModelReplaceable(MapChecker.getBlockType(state, blockAndTintGetter, pos));
     }
 
     public static boolean isModelReplaceable(BakedModel bakedModel, int flag) {
-        return (bakedModel instanceof IReplaceModel model
+        return (bakedModel instanceof IESReplaceModel model
                 && model.isReplace())
                 || isModelReplaceable(flag);
     }

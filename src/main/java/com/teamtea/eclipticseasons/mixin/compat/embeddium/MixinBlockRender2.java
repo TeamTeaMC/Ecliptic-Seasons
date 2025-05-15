@@ -4,15 +4,13 @@ package com.teamtea.eclipticseasons.mixin.compat.embeddium;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.teamtea.eclipticseasons.client.core.ModelManager;
-import com.teamtea.eclipticseasons.client.model.SnowyBakedModelWrapper;
+import com.teamtea.eclipticseasons.client.model.IESReplaceModel;
 import com.teamtea.eclipticseasons.compat.fabric_renderer_indigo.FabricModelDelayChecker;
-import me.jellysquid.mods.sodium.client.model.color.ColorProvider;
 import me.jellysquid.mods.sodium.client.render.chunk.compile.pipeline.BlockRenderContext;
 import me.jellysquid.mods.sodium.client.render.chunk.compile.pipeline.BlockRenderer;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -54,7 +52,7 @@ public abstract class MixinBlockRender2 {
     )
     private boolean eclipticseasons$renderModel_isFRAPIModel(boolean original, @Local(ordinal = 0, argsOnly = true) BlockRenderContext ctx) {
         // TODO:这里解决一下如果仅仅引入连接器，不使用连接纹理的话
-        return (ctx.model() instanceof SnowyBakedModelWrapper<?> && ((FabricModelDelayChecker) ctx).isLastFabric()) || original;
+        return (IESReplaceModel.isInvalid(ctx.model()) && ((FabricModelDelayChecker) ctx).isLastFabric()) || original;
     }
 
     // @ModifyExpressionValue(

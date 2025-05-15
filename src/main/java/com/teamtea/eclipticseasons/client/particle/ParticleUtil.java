@@ -68,8 +68,9 @@ public class ParticleUtil {
     }
 
     // can refer TerrainParticle
-    public static void doAnimateTick(ClientLevel clientLevel, int x, int y, int z, int b, RandomSource random, BlockPos.MutableBlockPos blockpos$mutableblockpos, BlockState blockstate) {
-        if (!ClientConfig.Particle.seasonParticle.get()) return;
+    public static boolean doAnimateTick(ClientLevel clientLevel, int x, int y, int z, int b, RandomSource random, BlockPos.MutableBlockPos blockpos$mutableblockpos, BlockState blockstate) {
+        if (!ClientConfig.Particle.seasonParticle.get()) return false;
+        boolean replace = false;
         int i = blockpos$mutableblockpos.getX();
         int j = blockpos$mutableblockpos.getY();
         int k = blockpos$mutableblockpos.getZ();
@@ -91,18 +92,21 @@ public class ParticleUtil {
                         case AUTUMN -> chanceW = 9;
                         case WINTER -> chanceW = 15;
                     }
-                    if (chanceW != null) {
-                        chanceW *= (int) (ClientConfig.Particle.fallenLeavesDropWeight.get() * 0.4f);
-                        if (random.nextInt(chanceW) == 0) {
-                            fallenLeaves(clientLevel, blockpos$mutableblockpos,random, blockstate, second);
+                    if (second.sprites().get(ClientCon.nowSolarTerm) != null) {
+                        if (chanceW != null) {
+                            chanceW *= (int) (ClientConfig.Particle.fallenLeavesDropWeight.get() * 0.4f);
+                            if (random.nextInt(chanceW) == 0) {
+                                fallenLeaves(clientLevel, blockpos$mutableblockpos, random, blockstate, second);
+                            }
                         }
+                        replace = second.replace();
                     }
                     break;
                 }
             }
         }
 
-        if (!isLeaf&&ClientConfig.Particle.fallenLeaves.get()
+        if (!isLeaf && ClientConfig.Particle.fallenLeaves.get()
                 && block instanceof LeavesBlock) {
             if (!blockstate.is(EclipticBlockTags.NONE_FALLEN_LEAVES)) {
                 var sd = ClientCon.nowSolarTerm.getSeason();
@@ -117,7 +121,7 @@ public class ParticleUtil {
                     chanceW *= (int) (ClientConfig.Particle.fallenLeavesDropWeight.get() * 0.4f);
                     // chanceW*=4;
                     if (random.nextInt(chanceW) == 0) {
-                        fallenLeaves(clientLevel, blockpos$mutableblockpos,random, blockstate,null);
+                        fallenLeaves(clientLevel, blockpos$mutableblockpos, random, blockstate, null);
                     }
                 }
             }
@@ -158,7 +162,7 @@ public class ParticleUtil {
             clientLevel.addParticle(ParticleRegistry.WILD_GOOSE, false, x + random.nextInt(16, 16 * 2) * (random.nextBoolean() ? -1 : 1), y + random.nextInt(15, 16 * 2), z + random.nextInt(16, 16 * 2) * (random.nextBoolean() ? -1 : 1), 0.0D, 5.0E-4D, 0.0D);
         }
 
-
+        return replace;
     }
 
     public static void fallenLeaves(ClientLevel level, BlockPos pos, RandomSource random, BlockState state, LeafColor.Instance leafInfo) {
@@ -230,9 +234,9 @@ public class ParticleUtil {
                                 );
                             } else {
                                 List<ResourceLocation> resourceLocations = leafInfo.sprites().get(ClientCon.nowSolarTerm);
-                                if(!resourceLocations.isEmpty()) {
+                                if (!resourceLocations.isEmpty()) {
                                     TextureAtlas textureAtlas = (TextureAtlas) Minecraft.getInstance().getTextureManager().getTexture(TextureAtlas.LOCATION_PARTICLES);
-                                    ResourceLocation resourceLocation=resourceLocations.get(random.nextInt(resourceLocations.size()));
+                                    ResourceLocation resourceLocation = resourceLocations.get(random.nextInt(resourceLocations.size()));
                                     Minecraft.getInstance().particleEngine.add(
                                             new FallenLeavesParticle(level,
                                                     (double) pos.getX() + d7,

@@ -4,7 +4,7 @@ import lombok.Getter;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraftforge.client.model.BakedModelWrapper;
 
-public class TempReplaceModelWrapper<T extends BakedModel> extends BakedModelWrapper<T> implements IReplaceModel{
+public class TempReplaceModelWrapper<T extends BakedModel> extends BakedModelWrapper<T> implements IESReplaceModel {
 
 
     @Getter
