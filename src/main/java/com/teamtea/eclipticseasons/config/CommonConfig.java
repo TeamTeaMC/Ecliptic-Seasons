@@ -134,6 +134,7 @@ public class CommonConfig {
 
         public static ForgeConfigSpec.BooleanValue forceCompatMode;
         public static ForgeConfigSpec.BooleanValue noCostHumidifier;
+        public static ForgeConfigSpec.BooleanValue useBoxDistance;
 
         private static void load(ForgeConfigSpec.Builder builder) {
             builder.push("Crop");
@@ -158,6 +159,9 @@ public class CommonConfig {
 
             complexGreenHouseCheck = builder.comment("Whether to enable complex shape checking.")
                     .define("ComplexGreenHouseCheck", true);
+            useBoxDistance = builder.comment("Calculate the working range of the greenhouse block by box distance and not Euclidean range.")
+                    .define("UseBoxDistance", false);
+
             useDefaultValue = builder.comment("[Deprecated]If a crop is not registered for a season or humid type, default values will be used.")
                     .define("RegisterCropDefaultValue", false);
 

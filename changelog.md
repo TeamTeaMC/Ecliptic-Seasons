@@ -1,5 +1,11 @@
+## **0.11.0-pre3**
+- Added a transition_models field to the Season Model to enable more granular block appearance changes beyond just seasonal transitions.
+- Added a Box Distance option, allowing greenhouse blocks to use Manhattan distance instead of Euclidean distance when calculating their effective range.
+
 ### **0.11.0-pre2-5**
 - When using OptiFine, compatibility has been improved: snow-covered models are no longer incorrectly overridden by certain overlay layers and now support the latest model rendering methods. Additionally, forced changes to the model render type that previously caused visual issues are no longer necessary.
+- Fixed an issue where grass blocks beneath snow-leaking blocks such as walls and fences were not covered with snow.
+
 ### **0.11.0-pre2-4**
 - Removed the erroneous code that incorrectly kept Ecliptic Seasons JEI plugin from loading in production environments.
 

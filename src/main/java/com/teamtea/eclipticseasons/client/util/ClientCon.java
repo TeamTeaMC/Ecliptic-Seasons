@@ -6,10 +6,13 @@ import com.teamtea.eclipticseasons.api.data.climate.BiomesClimateSettings;
 import com.teamtea.eclipticseasons.api.data.craft.HumidityControl;
 import com.teamtea.eclipticseasons.api.data.season.SnowDefinition;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
+import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
+import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
 import com.teamtea.eclipticseasons.common.network.message.DataPackEventMessage;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.longs.LongBooleanImmutablePair;
+import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 
 import java.util.ArrayList;
@@ -28,6 +31,8 @@ public class ClientCon {
     public static boolean isEvening = false;
     public static boolean isNoon = false;
 
+    public static int progress = 0;
+
     public final static List<HumidityControl> humidityControls=new ArrayList<>();
     public static DataPackEventMessage<BiomesClimateSettings> biomeDataPackCache;
     public static DataPackEventMessage<SnowDefinition> snowDefCache;
@@ -38,11 +43,16 @@ public class ClientCon {
             isDay = EclipticUtil.isDay(clientLevel);
             isEvening = EclipticUtil.isEvening(clientLevel);
             isNoon = EclipticUtil.isNoon(clientLevel);
+            SolarDataManager saveData = SolarHolders.getSaveData(clientLevel);
+            if (saveData != null) {
+                ClientCon.progress = Mth.clamp(Mth.floor(((saveData.getSolarTermDaysInPeriod() + (Mth.floor((clientLevel.getDayTime() + 24000) % 24000L / 24000f * 10)) / 10f) * 100 / saveData.getSolarTermLastingDays())), 0, 100);
+            }
         } else {
             nowSolarTerm = SolarTerm.NONE;
             isDay = false;
             isEvening = false;
             isNoon = false;
+            ClientCon.progress=0;
         }
 
         if (!roomCache.isEmpty()) {

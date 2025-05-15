@@ -75,23 +75,15 @@ public class ClientModelDefinitionProvider extends ESClientDataMapProvider<ESMod
     private void addFlower() {
 
         for (SolarTerm solarTerm : SolarTerm.collectValues()) {
-            if (solarTerm.isInTerms(SolarTerm.BEGINNING_OF_SPRING, SolarTerm.GRAIN_RAIN)) {
-                int weight = (Math.abs(solarTerm.ordinal() - 3) + 1) * 56*2;
+            if (solarTerm.isInTerms(SolarTerm.BEGINNING_OF_SPRING, SolarTerm.BEGINNING_OF_SUMMER)) {
+                int weight = (Math.abs(solarTerm.ordinal() - 3) + 1) * 56 * 2;
                 add(getPath(EclipticSeasons.rl("flower_on_grass_" + solarTerm.getName())), ESModelLoadedJson.builder().variant(ESModelLoadedJson.ALL_VARIANT,
                         buildMultiVariantLikeFromList(ModelManager.flower_on_grass, weight)).build());
             }
-            if (solarTerm.isInTerms(SolarTerm.LESSER_FULLNESS, SolarTerm.BEGINNING_OF_AUTUMN)) {
-                int weight = (Math.abs(solarTerm.ordinal() - 7) + 1) * 42*2;
+            if (solarTerm.isInTerms(SolarTerm.BEGINNING_OF_SUMMER, SolarTerm.BEGINNING_OF_AUTUMN)) {
+                int weight = (Math.abs(solarTerm.ordinal() - 7) + 1) * 42 * 2;
                 add(getPath(EclipticSeasons.rl("fourleaf_clovers_" + solarTerm.getName())), ESModelLoadedJson.builder().variant(ESModelLoadedJson.ALL_VARIANT,
                         buildMultiVariantLikeFromList(ModelManager.fourleaf_clovers, weight)).build());
-            }
-
-            if (solarTerm == SolarTerm.BEGINNING_OF_SUMMER) {
-                int weight = ((Math.abs(solarTerm.ordinal() - 7) + 1) * 42 + (Math.abs(solarTerm.ordinal() - 3) + 1) * 56);
-                ArrayList<ResourceLocation> modelResourceLocations = new ArrayList<>(ModelManager.flower_on_grass);
-                modelResourceLocations.addAll(ModelManager.fourleaf_clovers);
-                add(getPath(EclipticSeasons.rl("flower_on_grass_summer_start")), ESModelLoadedJson.builder().variant(ESModelLoadedJson.ALL_VARIANT,
-                        buildMultiVariantLikeFromList(modelResourceLocations, weight)).build());
             }
         }
 

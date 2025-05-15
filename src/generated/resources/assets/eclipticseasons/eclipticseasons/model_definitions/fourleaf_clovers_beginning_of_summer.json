@@ -2,24 +2,6 @@
   "variants": {
     "": [
       {
-        "model": "eclipticseasons:block/flower_1"
-      },
-      {
-        "model": "eclipticseasons:block/flower_2"
-      },
-      {
-        "model": "eclipticseasons:block/flower_3"
-      },
-      {
-        "model": "eclipticseasons:block/flower_4"
-      },
-      {
-        "model": "eclipticseasons:block/flower_5"
-      },
-      {
-        "model": "eclipticseasons:block/flower_6"
-      },
-      {
         "model": "eclipticseasons:block/fourleaf_clover/fourleaf_clover_0"
       },
       {
@@ -41,7 +23,7 @@
         "model": "eclipticseasons:block/fourleaf_clover/fourleaf_clover_6"
       },
       {
-        "weight": 308,
+        "weight": 168,
         "model": "minecraft:block/air"
       }
     ]

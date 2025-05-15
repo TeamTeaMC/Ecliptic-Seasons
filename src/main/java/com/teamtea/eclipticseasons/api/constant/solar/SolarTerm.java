@@ -4,6 +4,7 @@ import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.constant.climate.*;
 import com.teamtea.eclipticseasons.api.constant.solar.color.base.*;
 import com.teamtea.eclipticseasons.api.constant.tag.ClimateTypeBiomeTags;
+import com.teamtea.eclipticseasons.api.misc.ITranslatableWithPlaceholder;
 import com.teamtea.eclipticseasons.common.misc.SimplePair;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
@@ -17,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Locale;
 
-public enum SolarTerm implements StringRepresentable {
+public enum SolarTerm implements ITranslatableWithPlaceholder {
     // Spring Solar Terms
     BEGINNING_OF_SPRING(-0.25F, 10500),    // 立春
     RAIN_WATER(-0.15F, 11000),             // 雨水
@@ -232,4 +233,8 @@ public enum SolarTerm implements StringRepresentable {
             return start.ordinal() <= this.ordinal() || this.ordinal() <= end.ordinal();
     }
 
+    @Override
+    public boolean isValid(){
+        return this!=NONE;
+    }
 }

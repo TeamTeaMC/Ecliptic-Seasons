@@ -734,8 +734,11 @@ public final class CropGrowthHandler {
             // direction是否要限制为圆形
             // direction=direction.normalize();
 
-            Vec3 endVec = centerVec.add(direction.scale(direction.y == 0 ?
-                    maxDistance : y_maxDistance));
+            Vec3 endVec =
+                    CommonConfig.Crop.useBoxDistance.get() ?
+                            getClampedEndPoint(centerVec, direction, maxDistance, y_maxDistance) :
+                            centerVec.add(direction.scale(direction.y == 0 ?maxDistance : y_maxDistance));
+
 
             SectionClipContext context = new SectionClipContext(startVec, endVec,
                     ClipContext.Block.COLLIDER, ClipContext.Fluid.WATER, null);
@@ -772,5 +775,38 @@ public final class CropGrowthHandler {
     public static void handleRandomTick2(Level level, LevelChunk chunk) {
         SolarDataManager saveData = SolarHolders.getSaveData(level);
         saveData.randomClearSome(chunk.getPos(), level.getRandom());
+    }
+
+    public static Vec3 getClampedEndPoint(
+            Vec3 centerVec,
+            Vec3 direction,
+            double maxXZDistance,
+            double maxYDistance
+    ) {
+        if (direction.lengthSqr() == 0) return centerVec;
+
+        double dx = direction.x;
+        double dy = direction.y;
+        double dz = direction.z;
+
+        double scaleX = (dx == 0) ? Double.POSITIVE_INFINITY : maxXZDistance / Math.abs(dx);
+        double scaleZ = (dz == 0) ? Double.POSITIVE_INFINITY : maxXZDistance / Math.abs(dz);
+        double scaleY = (dy == 0) ? Double.POSITIVE_INFINITY : maxYDistance / Math.abs(dy);
+
+        double scale = Math.min(scaleX, Math.min(scaleZ, scaleY));
+
+        Vec3 scaled = direction.scale(scale);
+        return centerVec.add(scaled);
+    }
+
+
+    public static boolean isWithinDistanceForGreenHouseWorker(Vec3 from, Vec3 to, float limit) {
+        if (CommonConfig.Crop.useBoxDistance.get()) {
+            return Math.abs(from.x - to.x) < limit + 0.1
+                    && Math.abs(from.z - to.z) < limit + 0.1
+                    && Math.abs(from.y - to.y) < limit + 0.1;
+        } else {
+            return from.distanceToSqr(to) < (limit * limit + 0.1);
+        }
     }
 }

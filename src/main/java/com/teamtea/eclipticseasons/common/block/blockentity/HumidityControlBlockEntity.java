@@ -89,7 +89,7 @@ public class HumidityControlBlockEntity extends SyncBlockEntity {
     public static void tick(Level level, BlockPos blockPos, BlockState blockState, HumidityControlBlockEntity blockEntity) {
         SolarDataManager manager = SolarHolders.getSaveData(level);
         int hl = blockEntity.getHumidityModifiedLevel();
-        float rl = blockEntity.getHumidityModifiedRange() * blockEntity.getHumidityModifiedRange();
+        float rl = blockEntity.getHumidityModifiedRange();
         if (manager != null) {
             HumidityControlProvider nearHumidityControlProvider = manager.queryHumidityControlProvider(blockPos);
             if (nearHumidityControlProvider != null

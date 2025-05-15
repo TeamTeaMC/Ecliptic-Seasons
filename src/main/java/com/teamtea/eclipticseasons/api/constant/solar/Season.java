@@ -1,15 +1,17 @@
 package com.teamtea.eclipticseasons.api.constant.solar;
 
+import com.teamtea.eclipticseasons.api.misc.ITranslatableWithPlaceholder;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.StringRepresentable;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
 import java.util.Locale;
 
 
-public enum Season implements StringRepresentable {
+public enum Season implements ITranslatableWithPlaceholder {
     SPRING(ChatFormatting.DARK_GREEN),
     SUMMER(ChatFormatting.RED),
     AUTUMN(ChatFormatting.GOLD),
@@ -40,6 +42,7 @@ public enum Season implements StringRepresentable {
     }
 
     private static final Season[] seasons = Season.values();
+
     public static Season[] collectValues() {
         return seasons;
     }
@@ -48,4 +51,24 @@ public enum Season implements StringRepresentable {
     public @NotNull String getSerializedName() {
         return getName();
     }
+
+    private static final Season[] validSeasons = Arrays.stream(Season.values())
+            .filter(Season::isValid).toArray(Season[]::new);
+
+    public static Season[] collectValidValues() {
+        return validSeasons;
+    }
+
+    public boolean isValid() {
+        return this != NONE;
+    }
+
+    public SolarTerm getFirstSolarTerm() {
+        return SolarTerm.get(ordinal() * 6);
+    }
+
+    public SolarTerm getEndSolarTerm() {
+        return SolarTerm.get(ordinal() * 6 + 5);
+    }
+
 }

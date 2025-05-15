@@ -28,6 +28,7 @@ import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.level.*;
@@ -306,7 +307,7 @@ public class ModelManager {
         return original;
     }
 
-    public static boolean shouldMakeSnowyBakedQuads( int blockType,Direction direction) {
+    public static boolean shouldMakeSnowyBakedQuads(int blockType, Direction direction) {
         return blockType == MapChecker.FLAG_CUSTOM
                 || direction != null && direction.ordinal() > 1;
     }
@@ -373,7 +374,8 @@ public class ModelManager {
 
     /**
      * Used for Optfine because it's hard to use it code.
-     * */
+     */
+    @Deprecated(forRemoval = true)
     public static List<BakedQuad> appendOverlay(BlockAndTintGetter blockAndTintGetter, BlockState state, BlockPos pos, Direction direction, RandomSource random, long seed, List<BakedQuad> list) {
         random.setSeed(seed);
         BakedModel snowModel = ModelManager.findModel(blockAndTintGetter, pos, state, random);
@@ -552,21 +554,26 @@ public class ModelManager {
 
             List<SeasonBlockDefinition> uncacheSnow = ClientRef.seasonDef.get(onBlock);
 
-            if (uncacheSnow != null)
+            if (uncacheSnow != null && onBlock == Blocks.CHERRY_LEAVES)
                 for (SeasonBlockDefinition localSeasonStatus : uncacheSnow) {
-                    SeasonBlockDefinition.FlatSlice flatSlice = localSeasonStatus.getFlatSliceEnumMap().get(ClientCon.nowSolarTerm);
-                    if (flatSlice != null) {
-
-                        if (!flatSlice.emptyAbove() || blockAndTintGetter.getBlockState(pos.above()).isAir()) {
-                            if (localSeasonStatus.getBiomes().contains(MapChecker.getSurfaceBiome(level, pos))) {
-                                ResourceLocation cinfo = flatSlice.mid();
-                                ModelResolver smr = extraSnowModelBuilds.get(cinfo);
-                                if (smr != null) {
-                                    var mmrl = smr.tryFind(state);
-                                    if (mmrl != null) {
-                                        replace = models.get(mmrl.modelResourceLocation());
-                                        if (mmrl.replace()) {
-                                            replace = new TempReplaceModelWrapper<>(replace);
+                    List<SeasonBlockDefinition.FlatSliceHolder> flatSliceHolders = localSeasonStatus.getFlatSliceEnumMap().get(ClientCon.nowSolarTerm);
+                    if (flatSliceHolders != null && !flatSliceHolders.isEmpty()) {
+                        for (SeasonBlockDefinition.FlatSliceHolder flatSliceHolder : flatSliceHolders) {
+                            SeasonBlockDefinition.FlatSlice flatSlice = flatSliceHolder.flatSlice();
+                            if (!flatSlice.emptyAbove() || blockAndTintGetter.getBlockState(pos.above()).isAir()) {
+                                if (localSeasonStatus.getBiomes().contains(MapChecker.getSurfaceBiome(level, pos))) {
+                                    ResourceLocation cinfo = flatSlice.transitionModels() == null ?
+                                            flatSlice.mid() :
+                                            Mth.abs(((int) (state.getSeed(pos) + pos.getX()))) % 100 > ClientCon.progress ?
+                                                    flatSlice.transitionModels().getFirst() : flatSlice.transitionModels().getSecond();
+                                    ModelResolver smr = extraSnowModelBuilds.get(cinfo);
+                                    if (smr != null) {
+                                        var mmrl = smr.tryFind(state);
+                                        if (mmrl != null) {
+                                            replace = models.get(mmrl.modelResourceLocation());
+                                            if (mmrl.replace()) {
+                                                replace = new TempReplaceModelWrapper<>(replace);
+                                            }
                                         }
                                     }
                                 }
@@ -640,7 +647,7 @@ public class ModelManager {
                 || isModelReplaceable(MapChecker.getBlockType(state, blockAndTintGetter, pos));
     }
 
-    public static boolean isModelReplaceable(BakedModel bakedModel,int flag) {
+    public static boolean isModelReplaceable(BakedModel bakedModel, int flag) {
         return (bakedModel instanceof IReplaceModel model
                 && model.isReplace())
                 || isModelReplaceable(flag);
@@ -655,6 +662,9 @@ public class ModelManager {
         ModelManager.models = modelRegistry;
         snowyModelsCache.clear();
         snowyModelsCache2.clear();
+        if (ClientCon.getUseLevel() != null) {
+            ClientRef.updateClientSide(ClientCon.getUseLevel().registryAccess());
+        }
     }
 
     public static final Map<ResourceLocation, ESModelLoadedJson> extraSnowModels = new HashMap<>(1024);

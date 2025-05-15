@@ -6,6 +6,7 @@ import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.event.SolarTermChangeEvent;
 import com.teamtea.eclipticseasons.api.util.SimpleUtil;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
+import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
 import com.teamtea.eclipticseasons.common.core.crop.GreenHouseCoreProvider;
 import com.teamtea.eclipticseasons.common.core.crop.HumidityControlProvider;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
@@ -137,6 +138,9 @@ public class SolarDataManager extends SavedData {
         return SolarTerm.get((this.getSolarTermIndex() + 1) % 24);
     }
 
+    public int getSolarTermDaysInPeriod() {
+        return Math.abs(getSolarTermsDay() % getSolarTermLastingDays());
+    }
 
     public int getSolarTermLastingDays() {
         return CommonConfig.Season.lastingDaysOfEachTerm.get();
@@ -266,7 +270,9 @@ public class SolarDataManager extends SavedData {
                         if (
                             // p.first().getY() > blockPos.getY()
                             // &&
-                                p.first().getCenter().distanceToSqr(center) < (p.second().getRange() + 0.1)) {
+                                CropGrowthHandler.isWithinDistanceForGreenHouseWorker(center, p.first().getCenter(),p.second().getRange())
+                        // p.first().getCenter().distanceToSqr(center) < (p.second().getRange() + 0.1)
+                        ) {
                             result += p.second().getLevel();
                         }
                     }
@@ -321,7 +327,9 @@ public class SolarDataManager extends SavedData {
                     for (Pair<BlockPos, GreenHouseCoreProvider> p : lis) {
                         if (seasons.contains(p.second().getSeason())
                                 // && p.first().getY() >= blockPos.getY()
-                                && p.first().getCenter().distanceToSqr(center) < (15 * 15 + 0.1)) {
+                                &&
+                        CropGrowthHandler.isWithinDistanceForGreenHouseWorker(center, p.first().getCenter(),15)
+                        ) {
                             return p.second();
                         }
                     }

@@ -12,6 +12,7 @@ import net.minecraft.util.StringRepresentable;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -34,6 +35,13 @@ public class CodecUtil {
                 key.fieldOf(nkey).forGetter(Pair::getFirst),
                 val.fieldOf(nval).forGetter(Pair::getSecond)
         ).apply(t, Pair::of));
+    }
+
+    public static <K, V> Codec<Pair<K, V>> pairCodec(Function<String, K> keyCodec, Function<String, V> valueCodec) {
+        return Codec.STRING.listOf().xmap(
+                c -> Pair.of(keyCodec.apply(c.get(0)), valueCodec.apply(c.get(1))),
+                p -> List.of(p.getFirst().toString(), p.getSecond().toString())
+        );
     }
 
     /**

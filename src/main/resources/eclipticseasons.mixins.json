@@ -69,7 +69,7 @@
     "compat.optifine.MixinModelRenderer",
     "compat.optifine.MixinChunkSlice",
     "compat.optifine.MixinRebuildTask",
-    "compat.optifine.MixinDispatcherOF",
+    "compat.optifine.MixinBlockModelDispatcher",
     "compat.optifine_test.MixinBlockModelCustomizer",
     "compat.optifine_test.MixinItemBlockRenderTypes",
     "compat.simpleclouds.MixinWorldEffects"

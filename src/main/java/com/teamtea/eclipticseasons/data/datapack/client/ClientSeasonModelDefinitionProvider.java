@@ -1,5 +1,6 @@
 package com.teamtea.eclipticseasons.data.datapack.client;
 
+import com.mojang.datafixers.util.Pair;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.constant.tag.ClimateTypeBiomeTags;
@@ -38,16 +39,19 @@ public class ClientSeasonModelDefinitionProvider extends ESClientBiomeDataMapPro
         for (SolarTerm solarTerm : SolarTerm.collectValues()) {
             if (solarTerm.isInTerms(SolarTerm.BEGINNING_OF_SPRING, SolarTerm.GRAIN_RAIN)) {
                 ResourceLocation rl = EclipticSeasons.rl("flower_on_grass_" + solarTerm.getName());
-                slices.add(SeasonBlockDefinition.Slice.builder().start(solarTerm).end(solarTerm).mid(rl).build());
+                slices.add(SeasonBlockDefinition.Slice.builder().solarTerm(solarTerm).mid(rl).build());
             }
             if (solarTerm.isInTerms(SolarTerm.LESSER_FULLNESS, SolarTerm.BEGINNING_OF_AUTUMN)) {
                 ResourceLocation rl = EclipticSeasons.rl("fourleaf_clovers_" + solarTerm.getName());
-                slices.add(SeasonBlockDefinition.Slice.builder().start(solarTerm).end(solarTerm).mid(rl).build());
+                slices.add(SeasonBlockDefinition.Slice.builder().solarTerm(solarTerm).mid(rl).build());
             }
         }
 
-        slices.add(SeasonBlockDefinition.Slice.builder().start(SolarTerm.BEGINNING_OF_SUMMER).end(SolarTerm.BEGINNING_OF_SUMMER)
-                .mid(EclipticSeasons.rl("flower_on_grass_summer_start")).build());
+        SolarTerm beginningOfSummer = SolarTerm.BEGINNING_OF_SUMMER;
+        slices.add(SeasonBlockDefinition.Slice.builder().solarTerm(beginningOfSummer)
+                .transitionModels(
+                        Pair.of(EclipticSeasons.rl("flower_on_grass_" + beginningOfSummer.getName()),
+                                EclipticSeasons.rl("fourleaf_clovers_" + beginningOfSummer.getName()))).build());
 
         add("grass_block",new SeasonBlockDefinition(HolderSet.direct(Blocks.GRASS_BLOCK.builtInRegistryHolder()),
                and(get(ClimateTypeBiomeTags.SEASONAL),

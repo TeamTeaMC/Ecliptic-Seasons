@@ -47,6 +47,7 @@ public abstract class MixinModelRenderer {
         return eclipticseasons$addAfterOptOverlays(original, blockAndTintGetter, pos, state, null, randomSource, seed, bakedModel, renderType, renderEnv);
     }
 
+    // 空状态下无法进入二级检查，因此必须加上，避免渲染类型不同时这里为空
     @ModifyExpressionValue(
             remap = false,
             method = {"renderModelSmooth", "renderModelFlat"},
@@ -100,6 +101,9 @@ public abstract class MixinModelRenderer {
 
             // or
             // 由于Optfine会加检查，所以我们无法手动启用
+            // 如果启用，后续会调用renderOverlayModels
+            // 但是前提在于需要一个实质性的顶点更新，导致数量不匹配
+            // 此处为了避免额外的mixin需要，所以不再强制开启
             if (mulBakeModel.isSnowy() && renderEnv.isOverlaysRendered()) {
                 ListQuadsOverlay listQuadsOverlay = renderEnv.getListQuadsOverlay(renderType);
                 BlockState blockState = Blocks.SNOW_BLOCK.defaultBlockState();
