@@ -1,3 +1,6 @@
+### **0.11.0-pre4-1**
+- Added logging hints for custom resources to help pinpoint errors.
+
 ## **0.11.0-pre4**
 - Now the falling leaf particles allow setting `replace` to completely disable the original particle rendering, but only when the seasonal particle texture provided for the set season exists.
 - The particle color string key has been changed from `sColor` to `color_string` to better align with the overall naming style. Unless someone has been digging deep into the code, it's unlikely this was being used yet.

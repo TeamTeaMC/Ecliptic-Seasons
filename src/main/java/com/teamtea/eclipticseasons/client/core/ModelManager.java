@@ -582,7 +582,7 @@ public class ModelManager {
                                                         if (mmrl.replace() && replace instanceof SnowySeasonBakeModel<?> snowyBakedModelWrapper) {
                                                             snowyBakedModelWrapper.setReplace(true);
                                                         }
-                                                    }else {
+                                                    } else {
                                                         replace = mmrl.replace() ?
                                                                 new TempReplaceModelWrapper<>(to_replace) :
                                                                 to_replace;
@@ -691,6 +691,7 @@ public class ModelManager {
         // extraSnowModels.clear();
         Map<ResourceLocation, ESModelLoadedJson> snowModelLoadedJsonMap = ClientJsonCacheListener.modelDefCache.build(ESModelLoadedJson.CODEC);
         // extraSnowModels.putAll(snowModelLoadedJsonMap);
+        EclipticSeasons.logger("Try to register extra model definitions with size %s.".formatted(snowModelLoadedJsonMap.size()));
         snowModelLoadedJsonMap.forEach(
                 (resourceLocation, value) -> {
                     if (value.getMultiPartLike().isValid()) {

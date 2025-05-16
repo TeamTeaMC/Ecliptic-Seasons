@@ -44,9 +44,11 @@ public class ClientJsonCacheListener<T> extends SimpleJsonResourceReloadListener
     public static final ClientJsonCacheListener<SeasonalBiomeAmbient> ambientCache = new ClientJsonCacheListener<>(GSON, DIRECTORY_AMBIENT);
     public static final ClientJsonCacheListener<ESModelLoadedJson> modelDefCache = new ClientJsonCacheListener<>(GSON, DIRECTORY_MODEL_DEFINITION);
     public static final ClientJsonCacheListener<SeasonBlockDefinition> seasonDefCache = new ClientJsonCacheListener<>(GSON, DIRECTORY_SEASON_DEFINITION);
+    private final String directory;
 
     public ClientJsonCacheListener(Gson gson, String directory) {
         super(gson, directory);
+        this.directory = directory;
     }
 
     @Override
@@ -88,15 +90,27 @@ public class ClientJsonCacheListener<T> extends SimpleJsonResourceReloadListener
                     try {
                         codec
                                 .parse(dynamicops, jsonElement)
-                                .resultOrPartial(EclipticSeasons::logger)
+                                .resultOrPartial(x ->
+                                        {
+                                            String formatted = "Unable to load %s: '%s' due to: %s".formatted(getName().replace(EclipticSeasonsApi.MODID+"/",""), resourceLocation, x);
+                                            EclipticSeasons.LOGGER.warn(formatted);
+                                        }
+                                )
                                 .ifPresent(t -> {
                                     map.put(resourceLocation, t);
                                 });
                     } catch (Exception e) {
-                        EclipticSeasons.logger(e);
+                        // EclipticSeasons.logger(e);
+                        String formatted = "Unable to load %s with exception: '%s' due to: %s".formatted(getName().replace(EclipticSeasonsApi.MODID+"/",""), resourceLocation, e);
+                        EclipticSeasons.LOGGER.warn(formatted);
                     }
                 }
         );
         return map;
+    }
+
+    @Override
+    public @NotNull String getName() {
+        return directory;
     }
 }

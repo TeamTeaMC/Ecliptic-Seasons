@@ -1,5 +1,6 @@
 package com.teamtea.eclipticseasons.common.core.snow;
 
+import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.data.season.SnowDefinition;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.common.registry.ESRegistries;
@@ -46,5 +47,6 @@ public class SnowChecker {
                     snowDefinition.fillMap(SNOW_DEFINITION_MAP);
                 }
         }
+        EclipticSeasons.logger("Has registered extra snow definitions with size %s.".formatted(SNOW_DEFINITION_MAP.size()));
     }
 }
