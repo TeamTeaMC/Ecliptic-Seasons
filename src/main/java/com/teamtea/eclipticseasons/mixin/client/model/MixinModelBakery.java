@@ -85,15 +85,17 @@ public abstract class MixinModelBakery {
         // sorry we can not inject in some place better
         Map<ResourceLocation, UnbakedModel> cache = new HashMap<>();
         ModelManager.registerExtraSnowyModels(cache::put);
+        for (UnbakedModel value : cache.values()) {
+            value.resolveParents(this::getModel);
+        }
         cache.forEach(
                 (pLocation, unbakedmodel) -> {
+                    this.getModel(pLocation);
                     this.unbakedCache.put(pLocation, unbakedmodel);
                     this.topLevelModels.put(pLocation, unbakedmodel);
                 }
         );
-        for (UnbakedModel value : cache.values()) {
-            value.resolveParents(this::getModel);
-        }
+
         cache.clear();
     }
 }

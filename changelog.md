@@ -1,3 +1,6 @@
+### **0.11.0-pre4-2**
+- Fixed an issue with height checks during rendering.
+
 ### **0.11.0-pre4-1**
 - Added logging hints for custom resources to help pinpoint errors.
 
