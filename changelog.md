@@ -1,3 +1,6 @@
+### **0.11.0-pre4-3**
+- Fixed an issue where the adjustment to the In Terms mechanism in version 0.11.0-pre3 prevented snowfall in cold regions.
+
 ### **0.11.0-pre4-2**
 - Fixed an issue with height checks during rendering.
 
