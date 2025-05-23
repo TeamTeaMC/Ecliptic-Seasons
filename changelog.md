@@ -1,7 +1,5 @@
 ### **0.11.0-pre4-4**
 - Temporarily Fixed an issue where would cause that certain moving block models lose their top parts.
-
-### **0.11.0-pre4-3**
 - Fixed an issue where the adjustment to the In Terms mechanism in version 0.11.0-pre3 prevented snowfall in cold regions.
 
 ### **0.11.0-pre4-2**
