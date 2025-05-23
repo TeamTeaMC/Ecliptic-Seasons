@@ -5,6 +5,7 @@ import com.teamtea.eclipticseasons.api.data.client.model.ModelResolver;
 import com.teamtea.eclipticseasons.api.data.client.model.ModelTester;
 import com.teamtea.eclipticseasons.api.data.client.model.seasonal.SeasonBlockDefinition;
 import com.teamtea.eclipticseasons.api.data.season.SnowDefinition;
+import com.teamtea.eclipticseasons.api.misc.client.IMapSlice;
 import com.teamtea.eclipticseasons.client.reload.ClientJsonCacheListener;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.client.util.ClientRef;
@@ -240,6 +241,7 @@ public class ModelManager {
                 && !original.isEmpty()
                 && (direction == Direction.UP || direction == null)
                 && !(IESReplaceModel.isInvalid(bakedModel))
+                && blockAndTintGetter instanceof IMapSlice
         ) {
             random.setSeed(seed);
             // blockAndTintGetter 现在优化以后可以用来处理了
