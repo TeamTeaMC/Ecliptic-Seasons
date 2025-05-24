@@ -5,6 +5,7 @@ import com.teamtea.eclipticseasons.api.constant.climate.*;
 import com.teamtea.eclipticseasons.api.constant.solar.color.base.*;
 import com.teamtea.eclipticseasons.api.constant.tag.ClimateTypeBiomeTags;
 import com.teamtea.eclipticseasons.api.misc.ITranslatableWithPlaceholder;
+import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.misc.SimplePair;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
@@ -74,6 +75,7 @@ public enum SolarTerm implements ITranslatableWithPlaceholder {
     }
 
     private static final SolarTerm[] solarTerms = SolarTerm.values();
+
     public static SolarTerm[] collectValues() {
         return solarTerms;
     }
@@ -100,7 +102,7 @@ public enum SolarTerm implements ITranslatableWithPlaceholder {
     }
 
     public SimplePair<Integer, Integer> getIconPosition() {
-        return SimplePair.of( this.ordinal() % 6,this.ordinal() / 6);
+        return SimplePair.of(this.ordinal() % 6, this.ordinal() / 6);
     }
 
     public RainySolarTermColors getColorInfo() {
@@ -145,21 +147,20 @@ public enum SolarTerm implements ITranslatableWithPlaceholder {
     }
 
     public BiomeRain getBiomeRain(Holder<Biome> biomeHolder) {
-        if (!biomeHolder.is(BiomeTags.IS_OVERWORLD) || biomeHolder.is(ClimateTypeBiomeTags.RAINLESS)) {
+        TagKey<Biome> tag = BiomeClimateManager.getTag(biomeHolder.value());
+        if (tag == ClimateTypeBiomeTags.RAINLESS)
             return FlatRain.RAINLESS;
-        } else if (biomeHolder.is(ClimateTypeBiomeTags.ARID)) {
+        if (tag == ClimateTypeBiomeTags.ARID)
             return FlatRain.ARID;
-        } else if (biomeHolder.is(ClimateTypeBiomeTags.DROUGHTY)) {
+        if (tag == ClimateTypeBiomeTags.DROUGHTY)
             return FlatRain.DROUGHTY;
-        } else if (biomeHolder.is(ClimateTypeBiomeTags.SOFT)) {
+        if (tag == ClimateTypeBiomeTags.SOFT)
             return FlatRain.SOFT;
-        } else if (biomeHolder.is(ClimateTypeBiomeTags.RAINY)) {
+        if (tag == ClimateTypeBiomeTags.RAINY)
             return FlatRain.RAINY;
-        } else if (biomeHolder.is(ClimateTypeBiomeTags.MONSOONAL)) {
+        if (tag == ClimateTypeBiomeTags.MONSOONAL)
             return MonsoonRain.collectValues()[this.ordinal()];
-        } else {
-            return TemperateRain.collectValues()[this.ordinal()];
-        }
+        return TemperateRain.collectValues()[this.ordinal()];
     }
 
     public static SnowTerm getSnowTerm(Biome biome) {
@@ -196,7 +197,7 @@ public enum SolarTerm implements ITranslatableWithPlaceholder {
     public static SnowTerm getSnowTerm(Biome biome, boolean isServer) {
         if (biome == null) return SnowTerm.T05;
         // float t = BiomeClimateManager.getDefaultTemperature(biome, isServer);
-        float t =biome.getModifiedClimateSettings().temperature();
+        float t = biome.getModifiedClimateSettings().temperature();
         if (t > 0.95 + 0.001f) {
             return SnowTerm.T1;
         } else if (t > 0.8 + 0.001f) {
@@ -226,7 +227,7 @@ public enum SolarTerm implements ITranslatableWithPlaceholder {
 
     public boolean isInTerms(SolarTerm start, SolarTerm end) {
         if (start == NONE || end == NONE) return false;
-        else if (start == end) return this==start;
+        else if (start == end) return this == start;
         else if (start.ordinal() <= end.ordinal()) {
             return start.ordinal() <= this.ordinal() && this.ordinal() <= end.ordinal();
         } else
@@ -234,7 +235,7 @@ public enum SolarTerm implements ITranslatableWithPlaceholder {
     }
 
     @Override
-    public boolean isValid(){
-        return this!=NONE;
+    public boolean isValid() {
+        return this != NONE;
     }
 }

@@ -32,7 +32,7 @@ public class MapColorReplacer {
 
         // long seed = (long) Mth.abs(pos.hashCode());
 
-        isLight = flag != 0 && MapChecker.getHeightOrUpdate(level, pos, false) == pos.getY() - offset
+        isLight = flag != 0 && MapChecker.getHeightOrUpdate(level, pos, false) <= pos.getY() - offset
                 && state.getBlock() != Blocks.SNOW_BLOCK
                 && MapChecker.shouldSnowAt(level, pos.below(offset), state, level.getRandom(), state.getSeed(pos))
                 && (ignoreLight || (!CommonConfig.Season.notSnowyNearGlowingBlock.get() ||

@@ -1,3 +1,6 @@
+### **0.11.0-pre4-5**
+- Other mods are not supposed to call level.isRaining() frequently when solar weather is enabled , but since some might still do so, we must defensively optimize this query just in case.
+
 ### **0.11.0-pre4-4**
 - Temporarily Fixed an issue where would cause that certain moving block models lose their top parts.
 - Fixed an issue where the adjustment to the In Terms mechanism in version 0.11.0-pre3 prevented snowfall in cold regions.
