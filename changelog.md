@@ -1,3 +1,7 @@
+### **0.11.0-pre4-6**
+- The snow_definitions in the resource pack can now override the offset used during model calculation, and it will no longer skip evaluation if not defined on the data pack side.
+  This allows for purely resource-pack-based visual changes for snow-covered blocks—even though, from the server's perspective, they are not actually considered snow-covered blocks.
+
 ### **0.11.0-pre4-5**
 - Other mods are not supposed to call level.isRaining() frequently when solar weather is enabled , but since some might still do so, we must defensively optimize this query just in case.
 

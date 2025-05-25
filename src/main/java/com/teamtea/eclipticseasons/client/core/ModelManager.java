@@ -429,14 +429,18 @@ public class ModelManager {
 
         var onBlock = state.getBlock();
         int flag = MapChecker.getBlockType(state, blockAndTintGetter, pos);
-        List<SeasonBlockDefinition> uncacheSnow = null;
-
+        List<SeasonBlockDefinition> seasonDefCache = null;
+        List<SnowDefinition> snowDefClientOverlay = null;
         if (flag == 0) {
-            uncacheSnow = ClientRef.seasonDef.get(onBlock);
-            if (uncacheSnow == null)
+            seasonDefCache = ClientRef.seasonDef.get(onBlock);
+            snowDefClientOverlay = ClientRef.snowClientDef.get(onBlock);
+            if (snowDefClientOverlay != null
+                    && snowDefClientOverlay.isEmpty()) snowDefClientOverlay = null;
+            if (seasonDefCache == null && snowDefClientOverlay == null)
                 return null;
         }
-        int offset = MapChecker.getSnowOffset(state, flag);
+        int offset = snowDefClientOverlay == null ?
+                MapChecker.getSnowOffset(state, flag) : snowDefClientOverlay.get(0).getInfo().getOffset();
 
         boolean isLight = false;
 
@@ -561,10 +565,10 @@ public class ModelManager {
             }
 
             if (replace == null || !(replace instanceof IESReplaceModel iesReplaceModel && iesReplaceModel.isReplace())) {
-                if (uncacheSnow == null)
-                    uncacheSnow = ClientRef.seasonDef.get(onBlock);
-                if (uncacheSnow != null)
-                    for (SeasonBlockDefinition localSeasonStatus : uncacheSnow) {
+                if (seasonDefCache == null)
+                    seasonDefCache = ClientRef.seasonDef.get(onBlock);
+                if (seasonDefCache != null)
+                    for (SeasonBlockDefinition localSeasonStatus : seasonDefCache) {
                         List<SeasonBlockDefinition.FlatSliceHolder> flatSliceHolders = localSeasonStatus.getFlatSliceEnumMap().get(ClientCon.nowSolarTerm);
                         if (flatSliceHolders != null && !flatSliceHolders.isEmpty()) {
                             for (SeasonBlockDefinition.FlatSliceHolder flatSliceHolder : flatSliceHolders) {
