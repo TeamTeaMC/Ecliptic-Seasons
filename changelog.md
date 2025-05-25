@@ -1,3 +1,6 @@
+### **0.11.0-pre4-7**
+- Fixed a potential crash that could occur when using a resource pack with custom seasons/snow cover models from Ecliptic Seasons alongside Embeddium, especially when Multipart models are involved.
+
 ### **0.11.0-pre4-6**
 - The snow_definitions in the resource pack can now override the offset used during model calculation, and it will no longer skip evaluation if not defined on the data pack side.
   This allows for purely resource-pack-based visual changes for snow-covered blocks—even though, from the server's perspective, they are not actually considered snow-covered blocks.

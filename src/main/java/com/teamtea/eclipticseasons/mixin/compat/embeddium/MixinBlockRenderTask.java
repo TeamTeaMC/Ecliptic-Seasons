@@ -22,6 +22,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.client.model.data.ModelData;
 import org.embeddedt.embeddium.render.frapi.FRAPIModelUtils;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -154,8 +155,9 @@ public abstract class MixinBlockRenderTask {
             @Local(ordinal = 1) BlockPos.MutableBlockPos mutableBlockPos2,
             @Local(ordinal = 0) BlockState state,
             @Share("snowModelRef") LocalRef<BakedModel> snowModelRef,
-            @Share("shouldReplace") LocalBooleanRef replace
-    ) {
+            @Share("shouldReplace") LocalBooleanRef replace,
+            @Local ModelData modelData
+            ) {
 
         // BakedModel snowModel = null;
         // if (!original) {
@@ -198,7 +200,7 @@ public abstract class MixinBlockRenderTask {
                     state,
                     snowModel,
                     state.getSeed(mutableBlockPos),
-                    ctx.modelData(),
+                    modelData,
                     ModelManager.getRenderType(state));
             cache.getBlockRenderer().renderModel(ctx, buffers);
 
