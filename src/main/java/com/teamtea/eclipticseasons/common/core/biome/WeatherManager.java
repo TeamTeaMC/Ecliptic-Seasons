@@ -215,7 +215,7 @@ public class WeatherManager {
         return getRainOrSnow(serverLevel, biome.value(), pos) == Biome.Precipitation.RAIN;
     }
 
-    public static Boolean isRainingOrSnowAt(Level serverLevel, BlockPos pos) {
+    public static boolean isRainingOrSnowAt(Level serverLevel, BlockPos pos) {
         // if (!MapChecker.isValidDimension(serverLevel)) {
         //     return false;
         // }

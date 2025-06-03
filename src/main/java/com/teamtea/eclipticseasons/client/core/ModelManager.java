@@ -95,8 +95,9 @@ public class ModelManager {
         return new ModelResourceLocation(EclipticSeasons.rl(s), s2);
     }
 
-    public static ModelResourceLocation snow_mrl(ResourceLocation resourceLocation, String v) {
-        return new ModelResourceLocation(resourceLocation.withPrefix("extra/"), v);
+    public static ResourceLocation snow_mrl(ResourceLocation resourceLocation, String v) {
+        // return new ModelResourceLocation(resourceLocation.withPrefix("extra/"), v);
+        return resourceLocation.withPrefix("extra/"+(v.isEmpty()?"": v+"/"));
     }
 
     public static HashMap<ResourceLocation, SpriteContents> blocksCache = new HashMap<>();
@@ -694,7 +695,7 @@ public class ModelManager {
 
     public static final Map<ResourceLocation, ModelResolver> extraSnowModelBuilds = new HashMap<>(1024);
 
-    public static void registerExtraSnowyModels(BiConsumer<ModelResourceLocation, UnbakedModel> registerModelAndDependenceMethod) {
+    public static void registerExtraSnowyModels(BiConsumer<ResourceLocation, UnbakedModel> registerModelAndDependenceMethod) {
         extraSnowModelBuilds.clear();
         // extraSnowModels.clear();
         Map<ResourceLocation, ESModelLoadedJson> snowModelLoadedJsonMap = ClientJsonCacheListener.modelDefCache.build(ESModelLoadedJson.CODEC);
@@ -703,7 +704,7 @@ public class ModelManager {
         snowModelLoadedJsonMap.forEach(
                 (resourceLocation, value) -> {
                     if (value.getMultiPartLike().isValid()) {
-                        ModelResourceLocation mrl = ModelManager.snow_mrl(resourceLocation, "0");
+                        ResourceLocation mrl = ModelManager.snow_mrl(resourceLocation, "0");
                         registerModelAndDependenceMethod.accept(mrl, value.getMultiPartLike());
                         extraSnowModelBuilds.put(
                                 resourceLocation, new ModelResolver(List.of(new ModelTester(
@@ -713,7 +714,7 @@ public class ModelManager {
                     } else {
                         value.getVariants().forEach(
                                 (va, multiVariant) -> {
-                                    ModelResourceLocation mrl = ModelManager.snow_mrl(resourceLocation, va);
+                                    ResourceLocation mrl = ModelManager.snow_mrl(resourceLocation, va);
                                     registerModelAndDependenceMethod.accept(
                                             mrl, multiVariant
                                     );

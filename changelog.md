@@ -1,3 +1,6 @@
+### **0.11.0-pre4-8**
+- Adjusted the cache path structure for additional models during game loading to accommodate potential special cases in the future.
+
 ### **0.11.0-pre4-7**
 - Fixed a potential crash that could occur when using a resource pack with custom seasons/snow cover models from Ecliptic Seasons alongside Embeddium, especially when Multipart models are involved.
 

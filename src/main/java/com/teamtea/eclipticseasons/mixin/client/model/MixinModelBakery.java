@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 
-@Mixin(ModelBakery.class)
+@Mixin(value = ModelBakery.class,priority = 500)
 public abstract class MixinModelBakery {
     @Shadow
     private @Final Map<ResourceLocation, BakedModel> bakedTopLevelModels;
@@ -90,7 +90,7 @@ public abstract class MixinModelBakery {
         }
         cache.forEach(
                 (pLocation, unbakedmodel) -> {
-                    this.getModel(pLocation);
+                    // this.getModel(pLocation);
                     this.unbakedCache.put(pLocation, unbakedmodel);
                     this.topLevelModels.put(pLocation, unbakedmodel);
                 }
