@@ -78,19 +78,19 @@ Generally intended for datapacks. For normal BlockStates, model mapping files ar
 This is used to set some block states not to be snow-covered.
 The list means full match is required.
 
-##### Sub-parameter: name【String】
+**Sub-parameter: name【String】**
 
 Block property name.
 
-##### Optional Sub-parameter: reverse【Bool】
+**Optional Sub-parameter: reverse【Bool】**
 
 Whether to invert the matching result.
 
-##### Sub-parameter: matcher【Object】
+**Sub-parameter: matcher【Object】**
 
 Used for matching, with two types: exact match and range match.
 
-###### Sub-object: Exact Match
+**Sub-object: Exact Match**
 
 Provide a single result.
 
@@ -100,7 +100,7 @@ Provide a single result.
 }
 ```
 
-###### Sub-object: Range Match
+**Sub-object: Range Match**
 
 * Optional sub-parameters: ignore_min, ignore_max
 * Optional sub-parameters: min, max

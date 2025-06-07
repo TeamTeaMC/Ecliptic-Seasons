@@ -55,20 +55,20 @@ Defines the biome check, supporting the same three forms as `blocks`.
 
 Means "slices", used to match seasonal time segments with models; this should be an array of objects.
 
-##### Optional Sub-parameters: start【String】, end【String】, solar_term【String】
+**Optional Sub-parameters: start【String】, end【String】, solar_term【String】**
 
 If time is divided by solar terms, these three can be used to specify the start, end, or a unique solar term. Use lowercase IDs. Refer to the Climate section for exact names.
 
-##### Optional Sub-parameters: start_season【String】, end_season【String】, season【String】
+**Optional Sub-parameters: start_season【String】, end_season【String】, season【String】**
 
 If you prefer to distinguish by seasons, these three parameters can be used. Use lowercase IDs. Note the difference: biome seasonal minimum granularity is solar terms, while these seasons are dimension seasons, so they may not apply to some special biomes (if you care about seasonal distinctions).
 
-##### Optional Sub-parameters: mid【String】, transition_models【String Array】
+**Optional Sub-parameters: mid【String】, transition_models【String Array】**
 
 If the block appearance does not change within the season, use `mid`. Otherwise, use `transition_models`.
 Note that `transition_models` only apply at the first solar term in the interval. Appearance gradually changes over time.
 Currently, `transition_models` supports only two models.
 
-##### Optional Sub-parameter: empty_above【Bool】
+**Optional Sub-parameter: empty_above【Bool】**
 
 A special parameter to check if the block above is empty. Only `true` or `false` are valid.

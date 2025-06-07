@@ -55,19 +55,19 @@
 
 此意思为切片，用于匹配季节片段使用的模型，对应对象应该为数组。
 
-##### 可选子参数：start【String】、end【String】、solar_term【String】
+**可选子参数：start【String】、end【String】、solar_term【String】**
 
 如果划分时间为节气，那么可以使用这三个子参数。分别表示开始，结束，唯一。节气请使用小写id，具体名称可以参考气候一节。
 
-##### 可选子参数：start_season【String】、end_season【String】、season【String】
+**可选子参数：start_season【String】、end_season【String】、season【String】**
 
 如果您更喜欢季节区分，那么可以使用这三个参数。请使用小写id。请注意区别，由于群系季节最小区间为节气，这里提供的季节为维度季节，所以对于部分特殊群系，并不适用季节参数（如果您在意季节区分的话）。
 
-##### 可选子参数：mid【String】、transition_models【String Array】
+**可选子参数：mid【String】、transition_models【String Array】**
 
 如果在该季节内方块外观不变，应该使用mid，否则使用transition_models。注意transition_models仅会应用于区间内的第一个节气。
 随着时间推移，方块外观也会逐渐变化。目前transition_models仅支持双模型。
 
-##### 可选子参数：empty_above【Bool】
+**可选子参数：empty_above【Bool】**
 
 这是一个特殊的参数，用于检查方块上面是否空空如也，只有true/false可以选。
