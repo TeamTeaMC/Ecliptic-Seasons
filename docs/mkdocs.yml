@@ -17,11 +17,11 @@ nav:
           - Climate: 'zh/climate.md'
           - Crop: 'en/crop.md'
           - Compatibility: 'en/compat.md'
-          - Datapack Base: 'zh/datapack.md'
+          - Datapack Base: 'en/datapack.md'
           - Custom:
-              - Model Definitions: 'zh/custom/model_definitions.md'
-              - Snowy Block Models: 'zh/custom/snow_definitions.md'
-              - Seasonal Block Models: 'zh/custom/season_definitions.md'
+              - Model Definitions: 'en/custom/model_definitions.md'
+              - Snowy Block Models: 'en/custom/snow_definitions.md'
+              - Seasonal Block Models: 'en/custom/season_definitions.md'
       - 中文:
           - 首页: 'zh/index.md'
           - 气候: 'zh/climate.md'
