@@ -3,8 +3,8 @@
 The snow-covered model is quite special. Because it involves game content interaction, it requires defining server-side
 data when necessary.
 
-It is a JSON file placed in the resource pack root path at `assets/<namespace>/eclipticseasons/season_definitions`.  
-In datapacks, it is placed at `data/<namespace>/eclipticseasons/season_definitions`.
+It is a JSON file placed in the resource pack root path at `assets/<namespace>/eclipticseasons/snow_definitions`.  
+In datapacks, it is placed at `data/<namespace>/eclipticseasons/snow_definitions`.
 
 ## File Content
 

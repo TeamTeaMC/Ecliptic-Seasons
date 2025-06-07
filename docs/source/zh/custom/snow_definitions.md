@@ -2,8 +2,8 @@
 
 覆雪模型比较特殊，由于涉及到游戏内容交互，所以需要在必要时定义服务器数据。
 
-其为json文件，在资源包的放置根目录路径为`assets/<命名空间>/eclipticseasons/season_definitions`.
-在数据包放置路径为`data/<命名空间>/eclipticseasons/season_definitions`
+其为json文件，在资源包的放置根目录路径为`assets/<命名空间>/eclipticseasons/snow_definitions`.
+在数据包放置路径为`data/<命名空间>/eclipticseasons/snow_definitions`
 
 ## 文件内容
 
