@@ -25,7 +25,7 @@ Below is an example of a snow-covered model for pink petals.
   "flag": 1001,
   "offset": 1
 }
-````
+```
 
 ### Parameter Explanation
 

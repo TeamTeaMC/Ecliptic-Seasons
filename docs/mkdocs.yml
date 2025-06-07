@@ -14,7 +14,7 @@ nav:
   - Home:
       - English:
           - Index: 'en/index.md'
-          - Climate: 'zh/climate.md'
+          - Climate: 'en/climate.md'
           - Crop: 'en/crop.md'
           - Compatibility: 'en/compat.md'
           - Datapack Base: 'en/datapack.md'

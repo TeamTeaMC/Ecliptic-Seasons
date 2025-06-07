@@ -11,6 +11,7 @@ Basically, the model file mapping is very similar to the `blockstates.json` used
 Therefore, you can directly use the Multi-Variant or Multi-Part system. As shown below, they are no different from the standard — the `id` here is the ID inside the model folder:
 
 ### Model Variants
+
 ```json
 {
   "variants": {
@@ -19,7 +20,7 @@ Therefore, you can directly use the Multi-Variant or Multi-Part system. As shown
     }
   }
 }
-````
+```
 
 You can also use weights to adjust spawn probability. Note that block property conditions such as `facing=west,half=bottom,shape=straight` can be added here.
 
