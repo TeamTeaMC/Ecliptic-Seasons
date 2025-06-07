@@ -3,20 +3,26 @@
   "category": "equipment",
   "group": "hygrometer",
   "key": {
+    "c": {
+      "item": "minecraft:calcite"
+    },
+    "g": {
+      "tag": "c:glass_panes"
+    },
     "x": {
-      "item": "minecraft:amethyst_shard"
+      "tag": "c:gems/amethyst"
     },
     "y": {
-      "item": "eclipticseasons:thermometer"
+      "tag": "c:ingots/copper"
     },
     "z": {
-      "item": "eclipticseasons:hyetometer"
+      "tag": "c:dusts/redstone"
     }
   },
   "pattern": [
-    " x ",
-    "xyx",
-    " z "
+    "yxy",
+    "gcg",
+    "czc"
   ],
   "result": {
     "count": 1,

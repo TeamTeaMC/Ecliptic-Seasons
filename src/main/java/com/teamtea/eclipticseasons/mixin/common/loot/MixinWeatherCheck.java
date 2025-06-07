@@ -13,11 +13,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(WeatherCheck.class)
 public class MixinWeatherCheck {
-    //     TODO:检查一下谁用过这个
+
     @Inject(at = {@At("HEAD")}, method = {"test(Lnet/minecraft/world/level/storage/loot/LootContext;)Z"}, cancellable = true)
-    private void ecliptic$Client_isRaining(LootContext pContext,CallbackInfoReturnable<Boolean> cir) {
-        if (EclipticUtil.useSolarWeather()) {
-            cir.setReturnValue(WeatherManager.testWeatherCheck(pContext,(WeatherCheck)(Object)this));
+    private void eclipticseasons$Client_isRaining(LootContext pContext, CallbackInfoReturnable<Boolean> cir) {
+        if (EclipticUtil.hasLocalWeather(pContext.getLevel())) {
+            cir.setReturnValue(WeatherManager.testWeatherCheck(pContext, (WeatherCheck) (Object) this));
         }
     }
 

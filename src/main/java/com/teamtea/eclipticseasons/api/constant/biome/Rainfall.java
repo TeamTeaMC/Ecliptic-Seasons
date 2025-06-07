@@ -3,6 +3,8 @@ package com.teamtea.eclipticseasons.api.constant.biome;
 import com.teamtea.eclipticseasons.api.misc.ITranslatable;
 import net.minecraft.network.chat.Component;
 
+import java.util.Locale;
+
 public enum Rainfall implements ITranslatable
 {
     RARE(Float.NEGATIVE_INFINITY, 0.1F),
@@ -28,7 +30,7 @@ public enum Rainfall implements ITranslatable
     @Override
     public String getName()
     {
-        return this.toString().toLowerCase();
+        return this.toString().toLowerCase(Locale.ROOT);
     }
 
     public boolean isInRainfall(float rainfall)

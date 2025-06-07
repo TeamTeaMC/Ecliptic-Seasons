@@ -18,6 +18,7 @@ public class ClientConfig {
         CompatModule.ClientConfig.load(builder);
 
     }
+
     public static class Debug {
 
         public static ModConfigSpec.BooleanValue debugInfo;
@@ -28,13 +29,15 @@ public class ClientConfig {
 
             debugInfo = builder.comment("Info used for development shown in GUI.")
                     .define("DebugInfo", false);
-            minChunkCompileWaringTime= builder.comment("If a render chunk compilation takes longer than expected, a warning will be emitted in the log.")
-                    .defineInRange("MinChunkCompileWaringTime", 100,5,2000);
+            minChunkCompileWaringTime = builder.comment("If a render chunk compilation takes longer than expected, a warning will be emitted in the log.")
+                    .defineInRange("MinChunkCompileWaringTime", 100, 5, 2000);
             builder.pop();
         }
     }
+
     public static class GUI {
         public static ModConfigSpec.BooleanValue agriculturalInformation;
+
         private static void load(ModConfigSpec.Builder builder) {
             builder.push("GUI");
 
@@ -47,16 +50,19 @@ public class ClientConfig {
     public static class Renderer {
         public static ModConfigSpec.BooleanValue forceChunkRenderUpdate;
         public static ModConfigSpec.BooleanValue enhancementChunkRenderUpdate;
+        public static ModConfigSpec.BooleanValue resetRendererAfterSleep;
 
         public static ModConfigSpec.BooleanValue useVanillaCheck;
-        public static ModConfigSpec.BooleanValue snowyWinter;
-        public static ModConfigSpec.BooleanValue notSnowyNearGlowingBlock;
-        public static ModConfigSpec.IntValue notSnowyNearGlowingBlockLevel;
         public static ModConfigSpec.BooleanValue realisticSnowyChange;
 
         public static ModConfigSpec.BooleanValue flowerOnGrass;
-        public static ModConfigSpec.BooleanValue betterSnow;
         public static ModConfigSpec.BooleanValue seasonalGrassColorChange;
+
+
+        public static ModConfigSpec.BooleanValue snowUnderFence;
+        public static ModConfigSpec.BooleanValue snowUnderTree;
+        public static ModConfigSpec.BooleanValue snowyTree;
+        public static ModConfigSpec.BooleanValue snowTransitionBlend;
 
         private static void load(ModConfigSpec.Builder builder) {
             builder.push("Renderer");
@@ -64,23 +70,23 @@ public class ClientConfig {
                     .define("ForceChunkRenderUpdate", true);
             enhancementChunkRenderUpdate = builder.comment("Enhanced reload, which will refresh all sections periodically.")
                     .define("EnhancementChunkRenderUpdate", false);
+            resetRendererAfterSleep = builder.comment("Whether to reset the renderer after waking up.")
+                    .define("ResetRendererAfterSleep", false);
 
-
-            snowyWinter = builder.comment("If snow falls during cold weather in warm biomes, it will gradually cover all solid blocks and grass.")
-                    .define("SnowyWinter", true);
             useVanillaCheck = builder.comment("Determines whether snow is falling based on vanilla lighting checks.")
                     .define("UseVanillaCheck", false);
 
 
             realisticSnowyChange = builder.comment("When the block is updated, the snow cover will not refresh immediately, but will be updated after a delay. Please note that this will consume more performance and should not be open when 'RealisticSnowyChange' of common config is true.")
                     .define("RealisticSnowyChange", true);
-            betterSnow = builder.comment("Blocks underneath fences etc. may also be covered with snow.")
+            snowUnderFence = builder.comment("Blocks underneath fences etc. may also be covered with snow.")
                     .define("SnowUnderFence", true);
-            notSnowyNearGlowingBlock = builder.comment("Snow will not appear in overly bright areas, here define restriction levels.")
-                    .define("NotSnowyNearGlowingBlock", true);
-            notSnowyNearGlowingBlockLevel = builder.comment("Snow will not appear in overly bright areas.")
-                    .defineInRange("NotSnowyNearGlowingBlockLevel", 10, 1, 15);
-
+            snowyTree = builder.comment("Not just the top layer—now even the leaves below are dusted with frost and snow.")
+                    .define("SnowyTree", true);
+            snowUnderTree = builder.comment("Blocks under tree may also be covered with snow, note that this is only a client-side effect.")
+                    .define("snowUnderTree", false);
+            snowTransitionBlend = builder.comment("Smooths the transition between biome and lighting edges using noise. Improves visual appearance but adds extra rendering load (about 10% during snowfall). Not recommended for survival mode.")
+                    .define("SnowTransitionBlend", false);
 
             seasonalGrassColorChange = builder.comment("The colors of the grass and leaves change with the time of year.")
                     .define("SeasonalGrassColorChange", true);

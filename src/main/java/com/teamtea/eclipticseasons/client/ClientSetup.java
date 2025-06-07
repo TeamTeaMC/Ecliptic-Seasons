@@ -7,18 +7,24 @@ import com.teamtea.eclipticseasons.api.constant.biome.Temperature;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.client.color.season.BiomeColorsHandler;
 import com.teamtea.eclipticseasons.client.itemproperties.CounterItemProperty;
+import com.teamtea.eclipticseasons.client.model.ItemRenderModel;
 import com.teamtea.eclipticseasons.client.model.SnowyBakedModelWrapper;
-import com.teamtea.eclipticseasons.client.particle.ButterflyParticle;
-import com.teamtea.eclipticseasons.client.particle.FallenLeavesParticle;
-import com.teamtea.eclipticseasons.client.particle.FireflyParticle;
-import com.teamtea.eclipticseasons.client.particle.WildGooseParticle;
-import com.teamtea.eclipticseasons.client.render.ber.CalendarBlockEntityRenderer;
-import com.teamtea.eclipticseasons.client.render.ber.PinWheelBlockEntityRenderer;
-import com.teamtea.eclipticseasons.client.render.ber.WindChimesBlockEntityRenderer;
+import com.teamtea.eclipticseasons.client.model.loader.SnowOverlayModel;
+import com.teamtea.eclipticseasons.client.particle.*;
+import com.teamtea.eclipticseasons.client.reload.ClientJsonCacheListener;
+import com.teamtea.eclipticseasons.client.render.ber.*;
+import com.teamtea.eclipticseasons.client.render.item.ClientGreenHouseItem;
+import com.teamtea.eclipticseasons.client.render.item.GreenHouseCoreCoreItemRenderer;
+import com.teamtea.eclipticseasons.client.render.item.GreenHouseCoreFrameItemRenderer;
+import com.teamtea.eclipticseasons.client.render.item.GreenHouseCoreItemRenderer;
+import com.teamtea.eclipticseasons.client.util.ClientCon;
+import com.teamtea.eclipticseasons.client.util.ClientExtraUtil;
+import com.teamtea.eclipticseasons.client.util.ClientSoundUtil;
 import com.teamtea.eclipticseasons.common.registry.BlockEntityRegistry;
 import com.teamtea.eclipticseasons.common.registry.BlockRegistry;
 import com.teamtea.eclipticseasons.common.registry.ItemRegistry;
 import com.teamtea.eclipticseasons.common.registry.ParticleRegistry;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
@@ -26,6 +32,7 @@ import net.minecraft.client.renderer.block.BlockModelShaper;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.GrassColor;
 import net.minecraft.world.level.block.*;
 
@@ -36,6 +43,8 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.*;
+import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
+import net.neoforged.neoforge.registries.DeferredHolder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,7 +75,9 @@ public class ClientSetup {
         event.registerSpriteSet(ParticleRegistry.FLYING_BLOOM, (p_277215_) ->
                 (particleType, level, x, y, z, p_277222_, p_277223_, p_277224_) ->
                         new FallenLeavesParticle(level, x, y, z, p_277222_, p_277223_, p_277224_, particleType, p_277215_));
-
+        event.registerSpriteSet(ParticleRegistry.GREENHOUSE, (p_277215_) ->
+                (particleType, level, x, y, z, p_277222_, p_277223_, p_277224_) ->
+                        new GreenHouseParticle(level, x, y, z, p_277222_, p_277223_, p_277224_, particleType, p_277215_));
     }
 
     @SubscribeEvent
@@ -75,6 +86,8 @@ public class ClientSetup {
         // IOUtils.toString(Minecraft.getInstance().getResourceManager().listPacks().toList().get(0).getResource(PackType.SERVER_DATA, ResourceLocation.withDefaultNamespace("recipe/yellow_terracotta.json")).get(), StandardCharsets.UTF_8)        event.register(ModelManager.snowy_fern);
         event.register(ModelManager.snowy_custom);
         event.register(ModelManager.stairs_top);
+        event.register(ModelManager.snowy_leaves_attach);
+        event.register(ModelManager.snowy_leaves_top);
         event.register(ModelManager.snowy_fern);
         event.register(ModelManager.snowy_grass);
         event.register(ModelManager.snowy_tall_grass_top);
@@ -89,6 +102,14 @@ public class ClientSetup {
         for (ModelResourceLocation flowerOnGrass : ModelManager.flower_on_grass) {
             event.register(flowerOnGrass);
         }
+        for (ModelResourceLocation flowerOnGrass : ModelManager.fourleaf_clovers) {
+            event.register(flowerOnGrass);
+        }
+        for (ModelResourceLocation flowerOnGrass : ModelManager.snow_edge_overlays) {
+            event.register(flowerOnGrass);
+        }
+        event.register(ModelManager.mrl("block/aaaaaaaaaaaa"));
+
     }
 
     @SubscribeEvent
@@ -106,18 +127,61 @@ public class ClientSetup {
             ItemBlockRenderTypes.setRenderLayer(BlockRegistry.pinwheel_lime.get(), RenderType.cutoutMipped());
             ItemBlockRenderTypes.setRenderLayer(BlockRegistry.pinwheel_orange.get(), RenderType.cutoutMipped());
 
+            ItemBlockRenderTypes.setRenderLayer(BlockRegistry.block_in_copper_grate_block.get(), RenderType.cutoutMipped());
+            ItemBlockRenderTypes.setRenderLayer(BlockRegistry.block_in_exposed_copper_grate_block.get(), RenderType.cutoutMipped());
+            ItemBlockRenderTypes.setRenderLayer(BlockRegistry.block_in_weathered_copper_grate_block.get(), RenderType.cutoutMipped());
+            ItemBlockRenderTypes.setRenderLayer(BlockRegistry.block_in_oxidized_copper_grate_block.get(), RenderType.cutoutMipped());
+            ItemBlockRenderTypes.setRenderLayer(BlockRegistry.block_in_waxed_copper_grate_block.get(), RenderType.cutoutMipped());
+            ItemBlockRenderTypes.setRenderLayer(BlockRegistry.block_in_waxed_exposed_copper_grate_block.get(), RenderType.cutoutMipped());
+            ItemBlockRenderTypes.setRenderLayer(BlockRegistry.block_in_waxed_weathered_copper_grate_block.get(), RenderType.cutoutMipped());
+            ItemBlockRenderTypes.setRenderLayer(BlockRegistry.block_in_waxed_oxidized_copper_grate_block.get(), RenderType.cutoutMipped());
+
+            ItemBlockRenderTypes.setRenderLayer(BlockRegistry.block_in_wooden_grate_block.get(), RenderType.cutoutMipped());
+            ItemBlockRenderTypes.setRenderLayer(BlockRegistry.hygrometer.get(), RenderType.cutoutMipped());
+
             ItemProperties.register(ItemRegistry.hyetometer.get(), ItemRegistry.hyetometer.getId(), new CounterItemProperty(EclipticUtil::getRainfallAt, Rainfall.collectValues().length));
-            ItemProperties.register(ItemRegistry.hygrometer.get(), ItemRegistry.hygrometer.getId(), new CounterItemProperty(EclipticUtil::getHumidityAt, Humidity.collectValues().length));
+            ItemProperties.register(ItemRegistry.hygrometer.get(), ItemRegistry.hygrometer.getId(), new CounterItemProperty((level, pos) -> {
+                Humidity humidityAt = EclipticUtil.getHumidityAt(level, pos);
+                humidityAt = ClientExtraUtil.modifyHumidity(level, pos, humidityAt);
+                return humidityAt;
+            }, Humidity.collectValues().length));
             ItemProperties.register(ItemRegistry.thermometer.get(), ItemRegistry.thermometer.getId(), new CounterItemProperty(EclipticUtil::getTemperatureAt, Temperature.collectValues().length));
 
+            ClientCon.soundUtil = new ClientSoundUtil();
         });
     }
+
+
 
     @SubscribeEvent
     public static void onRegisterRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerBlockEntityRenderer(BlockEntityRegistry.calendar_entity_type.get(), CalendarBlockEntityRenderer::new);
-        event.registerBlockEntityRenderer(BlockEntityRegistry.pinwheel_entity_type.get(), PinWheelBlockEntityRenderer::new);
-        event.registerBlockEntityRenderer(BlockEntityRegistry.wind_chimes_entity_type.get(), WindChimesBlockEntityRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntityRegistry.pinwheel_entity_type.get(), PinWheelRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntityRegistry.wind_chimes_entity_type.get(), WindChimesRenderer::new);
+
+        event.registerBlockEntityRenderer(BlockEntityRegistry.greenhouse_core_container_entity_type.get(), GreenHouseCoreFrameRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntityRegistry.greenhouse_core_entity_type.get(), GreenHouseCoreRenderer::new);
+
+        event.registerBlockEntityRenderer(BlockEntityRegistry.season_quest_hanging_sign_entity_type.get(), QuestSignRenderer::new);
+
+        event.registerBlockEntityRenderer(BlockEntityRegistry.block_in_copper_grate_block_entity_type.get(), BlockInBlockRender::new);
+
+    }
+
+    @SubscribeEvent
+    public static void onClientEvent(RegisterClientExtensionsEvent event) {
+        event.registerItem(new ClientGreenHouseItem(new GreenHouseCoreItemRenderer(Minecraft.getInstance().getBlockEntityRenderDispatcher(), Minecraft.getInstance().getEntityModels()))
+                , ItemRegistry.spring_greenhouse_core_item.get()
+                , ItemRegistry.summer_greenhouse_core_item.get()
+                , ItemRegistry.autumn_greenhouse_core_item.get()
+                , ItemRegistry.winter_greenhouse_core_item.get());
+        event.registerItem(new ClientGreenHouseItem(new GreenHouseCoreCoreItemRenderer(Minecraft.getInstance().getBlockEntityRenderDispatcher(), Minecraft.getInstance().getEntityModels()))
+                , ItemRegistry.spring_greenhouse_essence_item.get()
+                , ItemRegistry.summer_greenhouse_essence_item.get()
+                , ItemRegistry.autumn_greenhouse_essence_item.get()
+                , ItemRegistry.winter_greenhouse_essence_item.get());
+        event.registerItem(new ClientGreenHouseItem(new GreenHouseCoreFrameItemRenderer(Minecraft.getInstance().getBlockEntityRenderDispatcher(), Minecraft.getInstance().getEntityModels()))
+                , ItemRegistry.greenhouse_core_container_item.get());
     }
 
     // public static Map<ResourceLocation, BakedModel> BakedSnowModels=new HashMap<>();
@@ -125,12 +189,17 @@ public class ClientSetup {
     // TODO：neocontinuity 会把所有model给warp一层
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onModelBaked(ModelEvent.ModifyBakingResult event) {
+        ParticleUtil.onReloadResource();
+
         Map<ModelResourceLocation, BakedModel> modelRegistry = event.getModels();
         ModelManager.clearForRebaked(modelRegistry);
 
         List<ModelResourceLocation> bakedModels =
                 new ArrayList<>(List.of(
                         ModelManager.snowy_custom,
+                        ModelManager.stairs_top,
+                        ModelManager.snowy_leaves_attach,
+                        ModelManager.snowy_leaves_top,
                         ModelManager.stairs_top,
                         ModelManager.snowy_fern,
                         ModelManager.snowy_grass,
@@ -147,7 +216,7 @@ public class ClientSetup {
                 ));
         bakedModels.addAll(BlockRegistry.snowyStairs.get().getStateDefinition().getPossibleStates().stream()
                 .map(BlockModelShaper::stateToModelLocation).toList());
-
+        bakedModels.addAll(ModelManager.snow_edge_overlays);
         for (ModelResourceLocation modelResourceLocation : bakedModels) {
             BakedModel bakedModel1 = modelRegistry.get(modelResourceLocation);
             if (bakedModel1 != null) {
@@ -156,6 +225,24 @@ public class ClientSetup {
                 EclipticSeasons.logger("Missing Model", modelResourceLocation);
             }
         }
+
+        for (DeferredHolder<Item, ? extends Item> holder : List.of(
+                ItemRegistry.greenhouse_core_container_item,
+                ItemRegistry.spring_greenhouse_core_item,
+                ItemRegistry.summer_greenhouse_core_item,
+                ItemRegistry.autumn_greenhouse_core_item,
+                ItemRegistry.winter_greenhouse_core_item,
+                ItemRegistry.spring_greenhouse_essence_item,
+                ItemRegistry.summer_greenhouse_essence_item,
+                ItemRegistry.autumn_greenhouse_essence_item,
+                ItemRegistry.winter_greenhouse_essence_item)) {
+            ModelResourceLocation inventory = ModelResourceLocation.inventory(holder.getId());
+            BakedModel itemModel = modelRegistry.getOrDefault(inventory, null);
+            if (itemModel != null) {
+                modelRegistry.put(inventory, new ItemRenderModel<>(itemModel));
+            }
+        }
+
     }
 
     @SubscribeEvent
@@ -183,5 +270,20 @@ public class ClientSetup {
     @SubscribeEvent
     public static void onRegisterShader(RegisterShadersEvent event) {
 
+    }
+
+    @SubscribeEvent
+    public static void onRegisterClientReloadListenersEvent(RegisterClientReloadListenersEvent event) {
+        event.registerReloadListener(ClientJsonCacheListener.biomeCache);
+        event.registerReloadListener(ClientJsonCacheListener.leafCache);
+        event.registerReloadListener(ClientJsonCacheListener.snowDefOverrideCache);
+        event.registerReloadListener(ClientJsonCacheListener.ambientCache);
+        event.registerReloadListener(ClientJsonCacheListener.modelDefCache);
+        event.registerReloadListener(ClientJsonCacheListener.seasonDefCache);
+    }
+
+    @SubscribeEvent
+    public static void registerExtraModels(ModelEvent.RegisterGeometryLoaders event) {
+        event.register(EclipticSeasons.rl("snow_overlay"), SnowOverlayModel.Loader.INSTANCE);
     }
 }

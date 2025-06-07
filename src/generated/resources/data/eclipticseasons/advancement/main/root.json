@@ -1,20 +1,33 @@
 {
+  "parent": "eclipticseasons:main/base",
   "criteria": {
     "solar_terms": {
       "trigger": "eclipticseasons:solar_terms"
     }
   },
   "display": {
-    "background": "minecraft:textures/block/bricks.png",
     "description": {
       "translate": "advancement.eclipticseasons.root.desc"
     },
     "icon": {
       "count": 1,
-      "id": "eclipticseasons:calendar"
+      "id": "eclipticseasons:bamboo_wind_chimes"
     },
     "title": {
-      "translate": "advancement.eclipticseasons.root"
+      "color": "#FFFFFF",
+      "extra": [
+        {
+          "extra": [
+            {
+              "translate": "advancement.eclipticseasons.root"
+            }
+          ],
+          "font": "minecraft:default",
+          "text": " "
+        }
+      ],
+      "font": "eclipticseasons:solar_icons",
+      "text": "p"
     }
   },
   "requirements": [

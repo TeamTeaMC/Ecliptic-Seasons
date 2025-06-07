@@ -1,39 +1,54 @@
 package com.teamtea.eclipticseasons.mixin.client.block;
 
 
-import com.mojang.serialization.MapCodec;
 import com.teamtea.eclipticseasons.api.misc.client.ISnowyBlockState;
 import com.teamtea.eclipticseasons.client.core.ModelManager;
-import it.unimi.dsi.fastutil.objects.Reference2ObjectArrayMap;
 import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.Property;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
 @Mixin(BlockState.class)
 public abstract class MixinClientBlockState  implements ISnowyBlockState {
 
     @Unique
-    public BakedModel eclipticSeasons$cacheSnowyBakedModel = null;
+    public BakedModel eclipticseasons$cacheSnowyBakedModel = null;
 
     @Unique
-    public int eclipticSeasons$loadVersion = ModelManager.loadVersion;
+    public BakedModel eclipticseasons$cacheSnowyBakedModel2 = null;
+
+    @Unique
+    public int eclipticseasons$loadVersion = ModelManager.loadVersion;
+
+    @Unique
+    public int eclipticseasons$loadVersion2 = ModelManager.loadVersion;
 
     @Override
     public BakedModel getSnowyModel(int loadVersion) {
-        if (loadVersion != eclipticSeasons$loadVersion) {
-            eclipticSeasons$cacheSnowyBakedModel = null;
+        if (loadVersion != eclipticseasons$loadVersion) {
+            eclipticseasons$cacheSnowyBakedModel = null;
         }
-        return eclipticSeasons$cacheSnowyBakedModel;
+        return eclipticseasons$cacheSnowyBakedModel;
     }
 
     @Override
     public void setSnowyModel(BakedModel bakedModel,int loadVersion) {
-        this.eclipticSeasons$cacheSnowyBakedModel = bakedModel;
-        this.eclipticSeasons$loadVersion=loadVersion;
+        this.eclipticseasons$cacheSnowyBakedModel = bakedModel;
+        this.eclipticseasons$loadVersion=loadVersion;
     }
+
+    @Override
+    public BakedModel getSnowyModel2(int loadVersion) {
+        if (loadVersion != eclipticseasons$loadVersion2) {
+            eclipticseasons$cacheSnowyBakedModel2 = null;
+        }
+        return eclipticseasons$cacheSnowyBakedModel2;
+    }
+
+    @Override
+    public void setSnowyModel2(BakedModel bakedModel,int loadVersion) {
+        this.eclipticseasons$cacheSnowyBakedModel2 = bakedModel;
+        this.eclipticseasons$loadVersion2=loadVersion;
+    }
+
 }

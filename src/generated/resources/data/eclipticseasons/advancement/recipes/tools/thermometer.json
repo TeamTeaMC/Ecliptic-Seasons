@@ -16,12 +16,23 @@
         "recipe": "eclipticseasons:thermometer"
       },
       "trigger": "minecraft:recipe_unlocked"
+    },
+    "self": {
+      "conditions": {
+        "items": [
+          {
+            "items": "eclipticseasons:thermometer"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
     }
   },
   "requirements": [
     [
       "has_the_recipe",
-      "has_glass"
+      "has_glass",
+      "self"
     ]
   ],
   "rewards": {

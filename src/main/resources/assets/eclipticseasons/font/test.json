@@ -2,10 +2,35 @@
     "providers": [
         {
             "type": "bitmap",
-            "file": "eclipticseasons:font/seasons_icons.png",
-            "ascent": 8,
+            "file": "eclipticseasons:font/humid4/1746959612787.png",
+            "ascent": 7,
             "height": 9,
-            "chars": ["\uE010"]
+            "chars": ["a"]
+        },
+        {
+            "type": "bitmap",
+            "file": "eclipticseasons:font/humid4/1746959637049.png",
+            "ascent": 7,
+            "height": 9,
+            "chars": ["b"]
+        },{
+            "type": "bitmap",
+            "file": "eclipticseasons:font/humid4/1746959626560.png",
+            "ascent": 7,
+            "height": 9,
+            "chars": ["c"]
+        },{
+            "type": "bitmap",
+            "file": "eclipticseasons:font/humid4/1746959663272.png",
+            "ascent": 7,
+            "height": 9,
+            "chars": ["d"]
+        },{
+            "type": "bitmap",
+            "file": "eclipticseasons:font/humid4/1746959652390.png",
+            "ascent": 7,
+            "height": 9,
+            "chars": ["e"]
         }
     ]
 }

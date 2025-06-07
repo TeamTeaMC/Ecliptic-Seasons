@@ -15,13 +15,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class MixinNetworkUtil {
 
     @Inject(at = {@At("HEAD")}, method = {"processEmptyMessage"})
-    private static void ecliptic$processEmptyMessage(EmptyMessage emptyMessage, IPayloadContext context, CallbackInfo ci) {
+    private static void eclipticseasons$processEmptyMessage(EmptyMessage emptyMessage, IPayloadContext context, CallbackInfo ci) {
         context.enqueueWork(() -> {
-            if (ClientConfig.Renderer.enhancementChunkRenderUpdate.get() && ClientConfig.Renderer.forceChunkRenderUpdate.get()) {
-                DHTool.forceReloadAll();
-            } else {
-                DHTool.clearRenderCache();
-            }
+            // if (ClientConfig.Renderer.enhancementChunkRenderUpdate.get() && ClientConfig.Renderer.forceChunkRenderUpdate.get()) {
+            //     DHTool.forceReloadAll();
+            // } else {
+            //     DHTool.clearRenderCache();
+            // }
+            DHTool.forceReloadAll();
         });
     }
 }

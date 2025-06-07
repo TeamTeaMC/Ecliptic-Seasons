@@ -1,18 +1,23 @@
 package com.teamtea.eclipticseasons.common.core.crop;
 
 
+import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.crop.CropHumidityInfo;
 import com.teamtea.eclipticseasons.api.constant.crop.CropHumidityType;
 import com.teamtea.eclipticseasons.api.constant.crop.CropSeasonInfo;
 import com.teamtea.eclipticseasons.api.constant.crop.CropSeasonType;
+import com.teamtea.eclipticseasons.api.data.crop.CropGrowControlBuilder;
 import com.teamtea.eclipticseasons.api.event.RegisterAndModifyCropInfoEvent;
+import com.teamtea.eclipticseasons.common.registry.ESRegistries;
 import com.teamtea.eclipticseasons.compat.CompatModule;
+import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
@@ -32,10 +37,9 @@ import net.neoforged.neoforge.event.TagsUpdatedEvent;
 import javax.annotation.Nullable;
 import java.util.*;
 
-@EventBusSubscriber(modid = EclipticSeasonsApi.MODID)
 public final class CropInfoManager {
-    private final static Map<Block, CropHumidityInfo> CROP_HUMIDITY_INFO = new HashMap<>();
-    private final static Map<Block, CropSeasonInfo> CROP_SEASON_INFO = new HashMap<>();
+    final static Map<Block, CropHumidityInfo> CROP_HUMIDITY_INFO = new HashMap<>();
+    final static Map<Block, CropSeasonInfo> CROP_SEASON_INFO = new HashMap<>();
 
     private static final TagKey<Block> ss1 = createBlockTag("sereneseasons", "spring_crops");
     private static final TagKey<Block> ss2 = createBlockTag("sereneseasons", "summer_crops");
@@ -62,8 +66,23 @@ public final class CropInfoManager {
         return BlockTags.create(ResourceLocation.fromNamespaceAndPath(modId, path));
     }
 
+    static CropSeasonType getCropSeasonTypeFrom(CropSeasonInfo cropSeasonInfo) {
+        for (CropSeasonType value : CropSeasonType.collectValues()) {
+            if (value.getInfo().equals(cropSeasonInfo))
+                return value;
+        }
+        return null;
+    }
 
-    @SubscribeEvent
+    static CropHumidityType getCropHumidityTypeFrom(CropHumidityInfo cropSeasonInfo) {
+        for (CropHumidityType value : CropHumidityType.collectValues()) {
+            if (value.getInfo().equals(cropSeasonInfo))
+                return value;
+        }
+        return null;
+    }
+
+
     public static void init(TagsUpdatedEvent event) {
         CROP_HUMIDITY_INFO.clear();
         CROP_SEASON_INFO.clear();
@@ -71,41 +90,41 @@ public final class CropInfoManager {
         Optional<Registry<Item>> items = event.getRegistryAccess().registry(Registries.ITEM);
         Optional<Registry<Block>> blocks = event.getRegistryAccess().registry(Registries.BLOCK);
 
+        if (blocks.isPresent()) {
+            for (CropHumidityType cropHumidityType : CropHumidityType.collectValues()) {
+                var tagBlocks = blocks.get().getTag(cropHumidityType.getBlockTag());
+                tagBlocks.ifPresent(holders -> holders.stream().forEach(action -> {
+                    registerCropHumidityInfo(action.value(), cropHumidityType, true);
+                }));
+            }
+            for (CropSeasonType cropSeasonType : CropSeasonType.collectValues()) {
+                var tagBlocks = blocks.get().getTag(cropSeasonType.getBlockTag());
+                tagBlocks.ifPresent(holders -> holders.stream().forEach(action -> {
+                    registerCropSeasonInfo(action.value(), cropSeasonType, true);
+                }));
+            }
+        }
+
         if (items.isPresent()) {
-            for (CropHumidityType cropHumidityType : CropHumidityType.values()) {
-                var tagItems = items.get().getTag(ItemTags.create(cropHumidityType.getRes()));
-                tagItems.ifPresent(holders -> holders.stream().toList().forEach(action -> {
+            for (CropHumidityType cropHumidityType : CropHumidityType.collectValues()) {
+                var tagItems = items.get().getTag(cropHumidityType.getTag());
+                tagItems.ifPresent(holders -> holders.stream().forEach(action -> {
                     registerCropHumidityInfo(action.value(), cropHumidityType);
                 }));
             }
-            for (CropSeasonType cropSeasonType : CropSeasonType.values()) {
-                var tagItems = items.get().getTag(ItemTags.create(cropSeasonType.getRes()));
-                tagItems.ifPresent(holders -> holders.stream().toList().forEach(action -> {
+            for (CropSeasonType cropSeasonType : CropSeasonType.collectValues()) {
+                var tagItems = items.get().getTag(cropSeasonType.getTag());
+                tagItems.ifPresent(holders -> holders.stream().forEach(action -> {
                     registerCropSeasonInfo(action.value(), cropSeasonType);
                 }));
             }
         }
 
-        if (blocks.isPresent()) {
-            for (CropHumidityType cropHumidityType : CropHumidityType.values()) {
-                var tagBlocks = blocks.get().getTag(BlockTags.create(cropHumidityType.getRes()));
-                tagBlocks.ifPresent(holders -> holders.stream().toList().forEach(action -> {
-                    registerCropHumidityInfo(action.value(), cropHumidityType, true);
-                }));
-            }
-            for (CropSeasonType cropSeasonType : CropSeasonType.values()) {
-                var tagBlocks = blocks.get().getTag(BlockTags.create(cropSeasonType.getRes()));
-                tagBlocks.ifPresent(holders -> holders.stream().toList().forEach(action -> {
-                    registerCropSeasonInfo(action.value(), cropSeasonType, true);
-                }));
-            }
-        }
         // event.getRegistryAccess().registry(Registries.BLOCK).get().getTagNames().toList();
 
         if (CompatModule.CommonConfig.sereneSeasons.getAsBoolean()) {
             registerForSS(blocks, Registries.BLOCK);
             registerForSS(items, Registries.ITEM);
-
         }
 
         if (com.teamtea.eclipticseasons.config.CommonConfig.Crop.registerCropDefaultValue.getAsBoolean()) {
@@ -116,7 +135,7 @@ public final class CropInfoManager {
             });
         }
 
-        NeoForge.EVENT_BUS.post(new RegisterAndModifyCropInfoEvent(CROP_HUMIDITY_INFO,CROP_SEASON_INFO));
+        NeoForge.EVENT_BUS.post(new RegisterAndModifyCropInfoEvent(CROP_HUMIDITY_INFO, CROP_SEASON_INFO));
     }
 
     public static <T> void registerForSS(Optional<Registry<T>> blocks, ResourceKey<Registry<T>> registryResourceKey) {
@@ -153,7 +172,7 @@ public final class CropInfoManager {
                     CROP_SEASON_INFO.put(block, new CropSeasonInfo(season));
                 }
 
-                if(com.teamtea.eclipticseasons.config.CommonConfig.Crop.registerCropDefaultValue.getAsBoolean()) {
+                if (com.teamtea.eclipticseasons.config.CommonConfig.Crop.registerCropDefaultValue.getAsBoolean()) {
                     if (block != null && !CROP_HUMIDITY_INFO.containsKey(block)) {
                         CropHumidityType humid;
                         if (season == 1) {
@@ -217,4 +236,20 @@ public final class CropInfoManager {
         return CROP_SEASON_INFO.get(crop);
     }
 
+    public static List<Component> appendInfo(Block block) {
+        List<Component> toolTip = new ArrayList<>();
+        if (CommonConfig.Crop.enableCropHumidityControl.get()) {
+            if (CropInfoManager.getHumidityCrops().contains(block)) {
+                CropHumidityInfo info = CropInfoManager.getHumidityInfo(block);
+                if (info != null) toolTip.addAll(info.getTooltip());
+            }
+        }
+        if (CommonConfig.Crop.enableCrop.get()) {
+            if (CropInfoManager.getSeasonCrops().contains(block)) {
+                CropSeasonInfo info = CropInfoManager.getSeasonInfo(block);
+                if (info != null) toolTip.addAll(info.getTooltip());
+            }
+        }
+        return toolTip;
+    }
 }

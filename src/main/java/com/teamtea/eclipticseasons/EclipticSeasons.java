@@ -1,6 +1,7 @@
 package com.teamtea.eclipticseasons;
 
 
+import com.mojang.serialization.JsonOps;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.common.registry.*;
 import com.teamtea.eclipticseasons.compat.CompatModule;
@@ -36,10 +37,10 @@ public class EclipticSeasons {
     public EclipticSeasons(IEventBus modEventBus, ModContainer modContainer) {
 
         modEventBus.addListener(CommonConfig::UpdateConfig);
-
         modEventBus.addListener(this::FMLCommonSetup);
         modEventBus.addListener(this::FMLCommonSetup);
         modEventBus.addListener(this::gatherData);
+        modEventBus.addListener(CompatModule::onInterModEnqueue);
         BlockRegistry.BLOCK_DEFERRED_REGISTER.register(modEventBus);
         ItemRegistry.ITEM_DEFERRED_REGISTER.register(modEventBus);
         BlockEntityRegistry.BLOCK_ENTITY_TYPE_DEFERRED_REGISTER.register(modEventBus);
@@ -63,6 +64,10 @@ public class EclipticSeasons {
         return ResourceLocation.fromNamespaceAndPath(EclipticSeasonsApi.MODID, id);
     }
 
+    public static ResourceLocation parse(String id) {
+        return ResourceLocation.parse(id);
+    }
+
 
     public void FMLCommonSetup(final FMLCommonSetupEvent event) {
         // SimpleNetworkHandler.init();
@@ -73,6 +78,10 @@ public class EclipticSeasons {
 
     public void gatherData(final GatherDataEvent event) {
         start.dataGen(event);
+    }
+
+    public static void logger(Exception exception) {
+        LOGGER.error(exception);
     }
 
 

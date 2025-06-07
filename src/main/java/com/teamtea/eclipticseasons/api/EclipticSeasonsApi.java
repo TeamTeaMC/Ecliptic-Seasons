@@ -59,7 +59,7 @@ public interface EclipticSeasonsApi {
 
     /**
      * Checks if the surface should be snowy.
-     * Note that the position may be off {@linkplain tip if the snow cover is not high enough},
+     * Note that the id may be off {@linkplain tip if the snow cover is not high enough},
      * but will not be miscalculated if the surface is fully snow covered or not covered.
      */
     @Deprecated

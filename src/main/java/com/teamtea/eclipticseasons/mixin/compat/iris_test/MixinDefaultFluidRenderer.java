@@ -22,7 +22,7 @@ public abstract class MixinDefaultFluidRenderer {
             method = "render",
             at = @At(value = "INVOKE", target = "Lnet/caffeinemc/mods/sodium/client/render/chunk/compile/pipeline/DefaultFluidRenderer;isSideExposed(Lnet/minecraft/world/level/BlockAndTintGetter;IIILnet/minecraft/core/Direction;F)Z")
     )
-    private boolean ecliptic$getQuads_getQuads(DefaultFluidRenderer instance, BlockAndTintGetter threshold, int i, int world, int x, Direction y, float z, Operation<Boolean> original, @Local BlockState state) {
+    private boolean eclipticseasons$getQuads_getQuads(DefaultFluidRenderer instance, BlockAndTintGetter threshold, int i, int world, int x, Direction y, float z, Operation<Boolean> original, @Local BlockState state) {
         return true;
     }
 
@@ -31,7 +31,7 @@ public abstract class MixinDefaultFluidRenderer {
             method = "render",
             at = @At(value = "INVOKE", target = "Lnet/caffeinemc/mods/sodium/client/render/chunk/compile/pipeline/DefaultFluidRenderer;fluidHeight(Lnet/minecraft/world/level/BlockAndTintGetter;Lnet/minecraft/world/level/material/Fluid;Lnet/minecraft/core/BlockPos;Lnet/minecraft/core/Direction;)F")
     )
-    private float ecliptic$getQuads_getQuads(DefaultFluidRenderer instance, BlockAndTintGetter blockAndTintGetter, Fluid world, BlockPos fluid, Direction blockPos, Operation<Float> original, @Local BlockState state) {
+    private float eclipticseasons$getQuads_getQuads(DefaultFluidRenderer instance, BlockAndTintGetter blockAndTintGetter, Fluid world, BlockPos fluid, Direction blockPos, Operation<Float> original, @Local BlockState state) {
         return 0.1f;
     }
     // @WrapOperation(

@@ -1,6 +1,8 @@
 package com.teamtea.eclipticseasons.common.item;
 
+import com.teamtea.eclipticseasons.api.constant.biome.Humidity;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
+import com.teamtea.eclipticseasons.client.util.ClientExtraUtil;
 import com.teamtea.eclipticseasons.common.registry.ItemRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -20,21 +22,27 @@ public class MeterItem extends Item {
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand usedHand) {
+        sendInfo(this,level, player);
+        return InteractionResultHolder.sidedSuccess(player.getItemInHand(usedHand), level.isClientSide());
+    }
+
+    public static void sendInfo(Item meterItem, Level level, Player player) {
         if (level.isClientSide()) {
             BlockPos blockPosition = player.blockPosition();
             Component component = Component.empty();
-            if (this == ItemRegistry.hyetometer.get()) {
+            if (meterItem == ItemRegistry.hyetometer.get()) {
                 component = EclipticUtil.getRainfallAt(level, blockPosition).getTranslation();
-            } else if (this == ItemRegistry.thermometer.get()) {
+            } else if (meterItem == ItemRegistry.thermometer.get()) {
                 component = EclipticUtil.getTemperatureAt(level, blockPosition).getTranslation();
-            } else if (this == ItemRegistry.hygrometer.get()) {
-                component = EclipticUtil.getHumidityAt(level, blockPosition).getTranslation();
+            } else if (meterItem == ItemRegistry.hygrometer.get()) {
+                Humidity humidityAt = EclipticUtil.getHumidityAt(level, blockPosition);
+                humidityAt = ClientExtraUtil.modifyHumidity(level, blockPosition, humidityAt);
+                component = humidityAt.getTranslation();
             }
 
             if (!component.getString().isEmpty())
                 player.displayClientMessage(component, true);
         }
-        return InteractionResultHolder.sidedSuccess(player.getItemInHand(usedHand), level.isClientSide());
     }
 
     @Override

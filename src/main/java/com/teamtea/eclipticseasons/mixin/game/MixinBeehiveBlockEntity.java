@@ -15,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class MixinBeehiveBlockEntity {
 
     @Inject(at = {@At("HEAD")}, method = {"releaseOccupant"}, cancellable = true)
-    private static void ecliptic$releaseOccupant(CallbackInfoReturnable<Boolean> cir, @Local(argsOnly = true) Level level, @Local(ordinal = 0) BlockPos blockPos) {
+    private static void eclipticseasons$releaseOccupant(CallbackInfoReturnable<Boolean> cir, @Local(argsOnly = true) Level level, @Local(ordinal = 0) BlockPos blockPos) {
         if (AnimalHooks.cancelBeeOut(level, blockPos)) {
             cir.setReturnValue(false);
         }

@@ -1,0 +1,19 @@
+package com.teamtea.eclipticseasons.api.data.misc;
+
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.advancements.critereon.BlockPredicate;
+import net.minecraft.core.Vec3i;
+import org.jetbrains.annotations.TestOnly;
+
+public record PosAndBlockStateCheck(
+        Vec3i offset, BlockPredicate block
+) {
+
+    public static final Codec<PosAndBlockStateCheck> CODEC = RecordCodecBuilder.create(builder -> builder.group(
+            Vec3i.CODEC.fieldOf("offset").forGetter(PosAndBlockStateCheck::offset),
+            BlockPredicate.CODEC.fieldOf("block").forGetter(PosAndBlockStateCheck::block)
+    ).apply(builder, PosAndBlockStateCheck::new));
+
+
+}

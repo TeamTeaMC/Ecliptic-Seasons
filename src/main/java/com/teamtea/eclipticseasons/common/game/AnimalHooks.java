@@ -4,6 +4,7 @@ import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.game.BreedSeasonType;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.tag.AnimalBehaviorTag;
+import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.animal.Animal;
@@ -90,7 +91,7 @@ public class AnimalHooks {
 
         Season season = EclipticSeasonsApi.getInstance().getSolarTerm(level).getSeason();
         if (season == Season.WINTER) {
-            if (level.getBiome(blockPos).value().getTemperature(blockPos) < 0.2f) {
+            if (EclipticUtil.getTemperatureFloat(level,level.getBiome(blockPos).value(),blockPos) < 0.2f) {
                 return false;
             }
         }

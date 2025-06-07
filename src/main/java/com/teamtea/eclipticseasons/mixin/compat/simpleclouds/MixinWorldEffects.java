@@ -31,8 +31,8 @@ public class MixinWorldEffects {
             method = {"tick"},
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/ClientLevel;getBiome(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/core/Holder;")
     )
-    private Holder<Biome> ecliptic$tick_getBiome(ClientLevel instance, BlockPos pos, Operation<Holder<Biome>> original) {
-        return EclipticUtil.useSolarWeather() ?
+    private Holder<Biome> eclipticseasons$tick_getBiome(ClientLevel instance, BlockPos pos, Operation<Holder<Biome>> original) {
+        return EclipticUtil.hasLocalWeather(instance) ?
                 MapChecker.getSurfaceBiome(instance, pos) :
                 original.call(instance, pos);
     }
@@ -41,8 +41,8 @@ public class MixinWorldEffects {
             method = {"tick"},
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/biome/Biome;getPrecipitationAt(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/biome/Biome$Precipitation;")
     )
-    private Biome.Precipitation ecliptic$tick_getPrecipitationAt(Biome biome, BlockPos pos, Operation<Biome.Precipitation> original) {
-        if (EclipticUtil.useSolarWeather())
+    private Biome.Precipitation eclipticseasons$tick_getPrecipitationAt(Biome biome, BlockPos pos, Operation<Biome.Precipitation> original) {
+        if (EclipticUtil.hasLocalWeather(mc.level))
             return mc != null && mc.level != null && (WeatherManager.isRainingOrSnowAt(mc.level, pos)
                     || ClientWeatherChecker.isBiomeRainyLast(biome)) ?
                     WeatherManager.getPrecipitationAt(mc.level, biome, pos) : Biome.Precipitation.NONE;
@@ -56,7 +56,7 @@ public class MixinWorldEffects {
             method = {"tick"},
             at = @At(value = "INVOKE", target = "Ljava/util/Map;containsKey(Ljava/lang/Object;)Z")
     )
-    private boolean ecliptic$tick_cancelNone(boolean original, @Local Biome.Precipitation precipitation) {
+    private boolean eclipticseasons$tick_cancelNone(boolean original, @Local Biome.Precipitation precipitation) {
         if (precipitation == Biome.Precipitation.NONE)
             return true;
         return original;

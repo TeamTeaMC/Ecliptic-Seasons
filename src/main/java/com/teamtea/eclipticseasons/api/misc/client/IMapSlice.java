@@ -4,7 +4,7 @@ import com.teamtea.eclipticseasons.common.core.map.SnowyRemover;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockAndTintGetter;
 
-public interface IMapSlice extends BlockAndTintGetter {
+public interface IMapSlice extends BlockAndTintGetter, IMapSliceProvider {
     int getBlockHeight(BlockPos blockPos);
 
     int getSurfaceFaceBiomeId(BlockPos blockPos);

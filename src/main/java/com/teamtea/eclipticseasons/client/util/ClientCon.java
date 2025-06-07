@@ -3,10 +3,26 @@ package com.teamtea.eclipticseasons.client.util;
 
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
+import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
+import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
+import com.teamtea.eclipticseasons.common.misc.SoundUtil;
+import com.teamtea.eclipticseasons.common.misc.SoundUtilServerImpl;
+import it.unimi.dsi.fastutil.Pair;
+import it.unimi.dsi.fastutil.ints.Int2BooleanOpenHashMap;
+import it.unimi.dsi.fastutil.longs.*;
+import it.unimi.dsi.fastutil.objects.ObjectIterator;
+import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 
+import java.util.Iterator;
+import java.util.Map;
+
 public class ClientCon {
+
+    public static final Long2ObjectOpenHashMap<LongBooleanImmutablePair> roomCache = new Long2ObjectOpenHashMap<>();
+    public static int humidityModificationLevel;
+
     private static Level useLevel;
     private static Level nextLevel;
 
@@ -15,8 +31,13 @@ public class ClientCon {
     public static boolean isEvening = false;
     public static boolean isNoon = false;
 
+    // todo 也许未来应该根据位置提供一个noise的season或者节气
+    public static int progress = 0;
+
     // Use for export
     public static String ServerName = "client";
+
+    public static SoundUtil soundUtil = new SoundUtilServerImpl();
 
     public static void tick(Level clientLevel) {
         if (MapChecker.isValidDimension(clientLevel)) {
@@ -24,11 +45,22 @@ public class ClientCon {
             ClientCon.isDay = EclipticUtil.isDay(clientLevel);
             ClientCon.isEvening = EclipticUtil.isEvening(clientLevel);
             ClientCon.isNoon = EclipticUtil.isNoon(clientLevel);
+            SolarDataManager saveData = SolarHolders.getSaveData(clientLevel);
+            if (saveData != null) {
+                ClientCon.progress = Mth.clamp(Mth.floor(((saveData.getSolarTermDaysInPeriod() + (Mth.floor((clientLevel.getDayTime() + 24000) % 24000L / 24000f * 10)) / 10f) * 100 / saveData.getSolarTermLastingDays())), 0, 100);
+            }
         } else {
             ClientCon.nowSolarTerm = SolarTerm.NONE;
             ClientCon.isDay = false;
             ClientCon.isEvening = false;
             ClientCon.isNoon = false;
+            ClientCon.progress=0;
+        }
+
+        if (!roomCache.isEmpty()) {
+            long gameTime = clientLevel.getGameTime();
+            roomCache.entrySet().removeIf(entry ->
+                    gameTime > entry.getValue().leftLong() + 100);
         }
         // useLevel=clientLevel;
     }
@@ -53,4 +85,11 @@ public class ClientCon {
             else nextLevel = level;
         }
     }
+
+    public static void onClientPlayerExit() {
+        roomCache.clear();
+        humidityModificationLevel = 0;
+    }
+
+
 }

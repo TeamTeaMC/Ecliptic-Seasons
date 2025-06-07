@@ -1,0 +1,28 @@
+{
+  "variants": {
+    "": [
+      {
+        "model": "eclipticseasons:block/flower_1"
+      },
+      {
+        "model": "eclipticseasons:block/flower_2"
+      },
+      {
+        "model": "eclipticseasons:block/flower_3"
+      },
+      {
+        "model": "eclipticseasons:block/flower_4"
+      },
+      {
+        "model": "eclipticseasons:block/flower_5"
+      },
+      {
+        "model": "eclipticseasons:block/flower_6"
+      },
+      {
+        "weight": 448,
+        "model": "minecraft:block/air"
+      }
+    ]
+  }
+}

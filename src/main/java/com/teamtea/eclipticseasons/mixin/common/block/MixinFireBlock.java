@@ -21,7 +21,7 @@ public class MixinFireBlock {
             at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;isRaining()Z", ordinal = 0)
     )
     private boolean mixin$Tick_isRaining(ServerLevel level, Operation<Boolean> original, @Local(ordinal = 0) BlockPos blockPos) {
-        if (EclipticUtil.useSolarWeather())
+        if (EclipticUtil.hasLocalWeather(level))
             return level.isRainingAt(blockPos);
         else return original.call(level);
     }
@@ -31,7 +31,7 @@ public class MixinFireBlock {
             at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;isRaining()Z", ordinal = 1)
     )
     private boolean mixin$Tick_isRaining2(ServerLevel level, Operation<Boolean> original, @Local(ordinal = 0) BlockPos.MutableBlockPos blockPos) {
-        if (EclipticUtil.useSolarWeather())
+        if (EclipticUtil.hasLocalWeather(level))
             return level.isRainingAt(blockPos);
         else return original.call(level);
     }

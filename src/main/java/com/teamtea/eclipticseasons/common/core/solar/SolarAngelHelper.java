@@ -1,7 +1,6 @@
 package com.teamtea.eclipticseasons.common.core.solar;
 
 
-import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
@@ -10,36 +9,36 @@ import net.minecraft.world.level.LevelTimeAccess;
 
 public class SolarAngelHelper {
 
-    public static float getSeasonCelestialAngle( LevelTimeAccess world,long worldTime) {
+    public static float getSeasonCelestialAngle(LevelTimeAccess world, long worldTime) {
         return getCelestialAngle(getSolarAngelTime(world, worldTime));
     }
 
-    public static int getSolarAngelTime(LevelTimeAccess world,long worldTime)
-    {
-        if (world instanceof Level level && SolarHolders.getSaveData(level)!=null)
-        {
-            return SolarHolders.getSaveDataLazy(level).map(data ->
-            {
-                int dayTime = data.getSolarTerm().getDayTime();
-                // dayTime=23900;
-                int sunrise = 24000 - dayTime / 2;
-                int sunset = dayTime / 2;
-                int dayLevelTime = Math.toIntExact((worldTime + 18000) % 24000); // 0 for noon; 6000 for sunset; 18000 for sunrise.
-                int solarAngelTime;
-                if (0 <= dayLevelTime && dayLevelTime <= sunset)
-                {
-                    solarAngelTime = 6000 + dayLevelTime * 6000 / sunset;
-                }
-                else if (dayLevelTime > sunset && dayLevelTime <= sunrise)
-                {
-                    solarAngelTime = 12000 + (dayLevelTime - sunset) * 12000 / (24000 - dayTime);
-                }
-                else
-                {
-                    solarAngelTime = (dayLevelTime - sunrise) * 6000 / (24000 - sunrise);
-                }
-                return solarAngelTime;
-            }).orElse(Math.toIntExact(worldTime % 24000));
+    public static int getSolarAngelTime(LevelTimeAccess world, long worldTime) {
+        if (world instanceof Level level
+                && SolarHolders.getSaveData(level) instanceof SolarDataManager data
+                // && !level.dimensionType().hasFixedTime()
+        ) {
+
+            int dayLevelTime = Math.toIntExact((worldTime + 18000) % 24000); // 0 for noon; 6000 for sunset; 18000 for sunrise.
+
+            // 这里必须要等于，因为0时刻还没切换到下一天。
+            int dayTime =
+                    dayLevelTime > 12000 && dayLevelTime <= 18000 && data.isTodayLastDay() ?
+                            data.getNextSolarTerm().getDayTime() :
+                            data.getSolarTerm().getDayTime();
+
+            int sunrise = 24000 - dayTime / 2;
+            int sunset = dayTime / 2;
+            int solarAngelTime;
+            if (0 <= dayLevelTime && dayLevelTime <= sunset) {
+                solarAngelTime = 6000 + dayLevelTime * 6000 / sunset;
+            } else if (dayLevelTime > sunset && dayLevelTime <= sunrise) {
+                solarAngelTime = 12000 + (dayLevelTime - sunset) * 12000 / (24000 - dayTime);
+            } else {
+                solarAngelTime = (dayLevelTime - sunrise) * 6000 / (24000 - sunrise);
+            }
+
+            return solarAngelTime;
         }
         return Math.toIntExact(worldTime % 24000);
     }

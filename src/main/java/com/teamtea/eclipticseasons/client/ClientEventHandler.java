@@ -4,6 +4,11 @@ package com.teamtea.eclipticseasons.client;
 import com.mojang.blaze3d.vertex.*;
 import com.mojang.brigadier.CommandDispatcher;
 import com.teamtea.eclipticseasons.EclipticSeasons;
+import com.teamtea.eclipticseasons.client.util.ClientRef;
+import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
+import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
+import com.teamtea.eclipticseasons.common.core.map.MapChecker;
+import com.teamtea.eclipticseasons.common.core.snow.SnowChecker;
 import com.teamtea.eclipticseasons.common.registry.BlockRegistry;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.client.color.season.BiomeColorsHandler;
@@ -50,6 +55,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.*;
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.neoforged.neoforge.client.model.data.ModelData;
+import net.neoforged.neoforge.event.TagsUpdatedEvent;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 import net.neoforged.neoforge.event.level.ChunkEvent;
 import net.neoforged.neoforge.event.level.LevelEvent;
@@ -73,22 +79,9 @@ public final class ClientEventHandler {
 
     @SubscribeEvent
     public static void addTooltips(ItemTooltipEvent event) {
-
-        if (event.getItemStack().getItem() instanceof BlockItem) {
-            if (ClientConfig.GUI.agriculturalInformation.getAsBoolean()) {
-                if (CommonConfig.Crop.enableCropHumidityControl.get()) {
-                    if (CropInfoManager.getHumidityCrops().contains(((BlockItem) event.getItemStack().getItem()).getBlock())) {
-                        CropHumidityInfo info = CropInfoManager.getHumidityInfo(((BlockItem) event.getItemStack().getItem()).getBlock());
-                        if (info != null) event.getToolTip().addAll(info.getTooltip());
-                    }
-                }
-                if (CommonConfig.Crop.enableCrop.get()) {
-                    if (CropInfoManager.getSeasonCrops().contains(((BlockItem) event.getItemStack().getItem()).getBlock())) {
-                        CropSeasonInfo info = CropInfoManager.getSeasonInfo(((BlockItem) event.getItemStack().getItem()).getBlock());
-                        if (info != null) event.getToolTip().addAll(info.getTooltip());
-                    }
-                }
-            }
+        if (ClientConfig.GUI.agriculturalInformation.get()
+                && event.getItemStack().getItem() instanceof BlockItem blockItem) {
+            event.getToolTip().addAll(CropInfoManager.appendInfo(blockItem.getBlock()));
         }
     }
 
@@ -169,18 +162,32 @@ public final class ClientEventHandler {
     }
 
     @SubscribeEvent
-    public static void onLevelEventLoad(LevelEvent.Load event) {
-        if (event.getLevel() instanceof ClientLevel clientLevel) {
+    public static void onPlayerExit(ClientPlayerNetworkEvent.LoggingOut event) {
+        if (Minecraft.getInstance().player != null) {
+            MapChecker.blockTypeCache.clear();
+            CropGrowthHandler.clearOnClientExitOrServerClose();
+            BiomeClimateManager.clearOnClientExitOrServerClose();
+            SnowChecker.clearOnClientExitOrServerClose();
+            ClientRef.onClientPlayerExit();
+            ClientCon.onClientPlayerExit();
+        }
+    }
 
-            ClientCon.setUseLevel(clientLevel);
-            ClientCon.tick(clientLevel);
+    @SubscribeEvent
+    public static void onLevelEventLoad(LevelEvent.Load event) {
+        if (event.getLevel() instanceof ClientLevel level) {
+            if (CommonConfig.Season.validDimensions.get().contains(level.dimension().location().toString()))
+                MapChecker.validDimension.add(level);
+
+            ClientCon.setUseLevel(level);
+            ClientCon.tick(level);
             // BiomeColorsHandler.reloadColors();
             // BiomeColorsHandler.needRefresh=true;
 
-            WeatherManager.createLevelBiomeWeatherList(clientLevel);
+            WeatherManager.createLevelBiomeWeatherList(level);
             // 这里需要恢复一下数据
             // 客户端登录时同步天气数据，此处先放入
-            SolarHolders.createSaveData(clientLevel, ClientSolarDataManager.get(clientLevel));
+            SolarHolders.createSaveData(level, ClientSolarDataManager.get(level));
 
         }
     }
@@ -203,6 +210,7 @@ public final class ClientEventHandler {
                         SectionPos sectionPos = SectionPos.of(pos);
                         if (!ClientConfig.Renderer.enhancementChunkRenderUpdate.get()) {
                             WorldRenderer.setSectionDirtyWithNeighbors(sectionPos);
+                            WorldRenderer.setSectionDirtyRandomly(sectionPos);
                         } else {
                             if (clientLevel.getRandom().nextInt(2) == 0) {
                                 WorldRenderer.setAllDirty(sectionPos);
@@ -247,7 +255,7 @@ public final class ClientEventHandler {
             // var blockpos4 = new BlockPos(141, -59, 220);
             //
             Entity cameraEntity = Minecraft.getInstance().cameraEntity;
-            Vec3 vec3c = new Vec3(cameraEntity.xo - 0.5f, cameraEntity.yOld+2f , cameraEntity.zo - 0.5f);
+            Vec3 vec3c = new Vec3(cameraEntity.xo - 0.5f, cameraEntity.yOld + 2f, cameraEntity.zo - 0.5f);
             // Vec3 vec3c = blockpos4.getCenter().add(0.5f, -0.5f, 0.5f);
 
             var state = Blocks.CAMPFIRE.defaultBlockState();
@@ -260,7 +268,7 @@ public final class ClientEventHandler {
             var poseStack = event.getPoseStack();
             poseStack.pushPose();
             poseStack.translate((double) vec3c.x() - d0, (double) vec3c.y() - d1, (double) vec3c.z() - d2);
-            poseStack.scale(10,10,10);
+            poseStack.scale(10, 10, 10);
             Minecraft.getInstance().getBlockRenderer().getModelRenderer().renderModel(
                     event.getPoseStack().last(),
                     multiBufferSource.getBuffer(RenderType.cutoutMipped()), null,
@@ -353,4 +361,22 @@ public final class ClientEventHandler {
                         event.getPlayer().connection.getServerData().name;
         // ClientCon.ServerName=event.getPlayer().connection.getConnection().getRemoteAddress().toString();
     }
+
+    @SubscribeEvent
+    public static void onTagsUpdatedEvent(TagsUpdatedEvent tagsUpdatedEvent) {
+        if (tagsUpdatedEvent.getUpdateCause() == TagsUpdatedEvent.UpdateCause.CLIENT_PACKET_RECEIVED) {
+            ClientRef.updateClientSide(tagsUpdatedEvent.getRegistryAccess());
+        }
+    }
+
+    // @SubscribeEvent
+    // public static void onRenderLivingEvent(RenderLivingEvent.Pre<Pig, EntityModel<Pig>> event) {
+    //     RenderSystem.setShaderColor(0.5f,0.0f,1,0.2f);
+    //
+    // }
+    //
+    // @SubscribeEvent
+    // public static void onRenderLivingEvent(RenderLivingEvent.Post<LivingEntity, EntityModel<LivingEntity>> event) {
+    //     RenderSystem.setShaderColor(1,1,1,1);
+    // }
 }

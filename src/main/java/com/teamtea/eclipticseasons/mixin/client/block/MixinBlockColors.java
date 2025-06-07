@@ -15,13 +15,13 @@ public class MixinBlockColors {
 
     @Inject(at = {@At(value = "HEAD")},
             method = {"lambda$createDefault$3"}, cancellable = true)
-    private static void ecliptic$lambda$createDefault$3_SPRUCE_LEAVES(BlockState p_92636_, BlockAndTintGetter p_92637_, BlockPos p_92638_, int p_92639_, CallbackInfoReturnable<Integer> cir) {
+    private static void eclipticseasons$lambda$createDefault$3_SPRUCE_LEAVES(BlockState p_92636_, BlockAndTintGetter p_92637_, BlockPos p_92638_, int p_92639_, CallbackInfoReturnable<Integer> cir) {
         cir.setReturnValue(BiomeColorsHandler.getSpruceColor(p_92636_,p_92637_,p_92638_,p_92639_));
     }
 
     @Inject(at = {@At(value = "HEAD")},
             method = {"lambda$createDefault$4"}, cancellable = true)
-    private static void ecliptic$lambda$createDefault$4_BIRCH_LEAVES(BlockState p_92636_, BlockAndTintGetter p_92637_, BlockPos p_92638_, int p_92639_, CallbackInfoReturnable<Integer> cir) {
+    private static void eclipticseasons$lambda$createDefault$4_BIRCH_LEAVES(BlockState p_92636_, BlockAndTintGetter p_92637_, BlockPos p_92638_, int p_92639_, CallbackInfoReturnable<Integer> cir) {
         cir.setReturnValue(BiomeColorsHandler.getBirchColor(p_92636_,p_92637_,p_92638_,p_92639_));
     }
 

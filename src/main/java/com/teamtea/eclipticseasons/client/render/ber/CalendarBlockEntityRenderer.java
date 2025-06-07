@@ -41,12 +41,16 @@ public class CalendarBlockEntityRenderer implements BlockEntityRenderer<Calendar
     @Override
     public void render(CalendarBlockEntity blockEntity, float partialTicks, PoseStack poseStack, MultiBufferSource bufferIn, int combinedLight, int combinedOverlay) {
 
-        var facing = blockEntity.getBlockState().getValue(SimpleHorizontalEntityBlock.FACING).ordinal() * 90;
-        var st = ClientCon.nowSolarTerm;
+        int facing = blockEntity.getBlockState().getValue(SimpleHorizontalEntityBlock.FACING).ordinal() * 90;
+        SolarTerm st = ClientCon.nowSolarTerm;
 
-        drawText(2, Component.translatable("info.eclipticseasons.environment.solar_term.hint").getString(), Color.GRAY.getRGB(), blockEntity, poseStack, bufferIn, combinedLight);
+        if (st != SolarTerm.NONE)
+            drawText(2, Component.translatable("info.eclipticseasons.environment.solar_term.hint").getString(), Color.GRAY.getRGB(), blockEntity, poseStack, bufferIn, combinedLight);
 
-        drawText(1, st.getTranslation().getString(), st.getSeason().getColor().getColor(), blockEntity, poseStack, bufferIn, combinedLight);
+        String string = st.getTranslation().getString() +
+                (st == SolarTerm.NONE ? "" :" (%s)".formatted(st.getSeason().getTranslation().getString()));
+
+        drawText(1, string, st.getSeason().getColor().getColor(), blockEntity, poseStack, bufferIn, combinedLight);
 
 
         // drawText(2, st.getAlternationText().getString().substring(0,5), st.getSeason().getColor().getColor(), blockEntity, poseStack, bufferIn, combinedLight);
@@ -93,7 +97,6 @@ public class CalendarBlockEntityRenderer implements BlockEntityRenderer<Calendar
         matrixStackIn.popPose();
 
 
-
         if (line == 1) {
             // matrixStackIn.scale(20, 20, 20);
             matrixStackIn.scale(0.2f, 0.2f, 0.2f);
@@ -102,7 +105,7 @@ public class CalendarBlockEntityRenderer implements BlockEntityRenderer<Calendar
             // GlStateManager._disableCull();
             VertexConsumer builder = txtBuffer.getBuffer(RenderType.entitySmoothCutout(SolarTerm.getFullIcon().withPrefix("textures/").withSuffix(".png")));
             // builder = txtBuffer.getBuffer(net.minecraftforge.client.RenderTypeHelper.getEntityRenderType(null, false));
-            blitRect(matrixStackIn, builder,combinedLightIn, OverlayTexture.NO_OVERLAY,
+            blitRect(matrixStackIn, builder, combinedLightIn, OverlayTexture.NO_OVERLAY,
                     size / 2f,
                     (float) -size * 0.6f,
                     size * ClientCon.nowSolarTerm.getIconPosition().getKey(),

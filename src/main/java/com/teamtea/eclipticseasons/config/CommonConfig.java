@@ -2,6 +2,7 @@ package com.teamtea.eclipticseasons.config;
 
 
 import com.teamtea.eclipticseasons.compat.CompatModule;
+import lombok.Getter;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.neoforged.fml.event.config.ModConfigEvent;
@@ -28,7 +29,6 @@ public class CommonConfig {
     public static class Debug {
         public static ModConfigSpec.BooleanValue logIllegalUse;
         public static ModConfigSpec.BooleanValue notLightAbove;
-        public static ModConfigSpec.BooleanValue iceMelt;
         public static ModConfigSpec.BooleanValue snowyFullCollisionShape;
         public static ModConfigSpec.BooleanValue snowOverlayGlowingBlock;
         public static ModConfigSpec.BooleanValue disableSnowOverlayControlTag;
@@ -39,8 +39,6 @@ public class CommonConfig {
                     .define("LogIllegalUse", false);
             notLightAbove = builder.comment("Without snowy block under the light blocks which level is 0.")
                     .define("NoSnowyUnderLight0", false);
-            iceMelt = builder.comment("Enables legacy mode for snow and ice, where snow accumulates when it's cold in snowy day and melts when it's hot.")
-                    .define("LegacySnowAndMelt", false);
             snowyFullCollisionShape = builder.comment("Snow overlay block if has full collision shape not just full render shape.")
                     .define("SnowyFullCollisionShape", false);
             snowOverlayGlowingBlock = builder.comment("Snow can cover the block which would lights.")
@@ -53,9 +51,15 @@ public class CommonConfig {
 
     public static class Temperature {
         public static ModConfigSpec.BooleanValue heatStroke;
+        public static ModConfigSpec.BooleanValue iceMelt;
+        public static ModConfigSpec.BooleanValue snowDown;
 
         private static void load(ModConfigSpec.Builder builder) {
             builder.push("Temperature");
+            iceMelt = builder.comment("Ice or snow layer will melt in warm time.")
+                    .define("IceAndSnowMelt", false);
+            snowDown = builder.comment("It will snow in cold time.")
+                    .define("IceAndSnow", false);
             heatStroke = builder.comment("Add heat stroke effect in summer noon while in hot biome.")
                     .define("HeatStroke", true);
             builder.pop();
@@ -70,13 +74,16 @@ public class CommonConfig {
         public static ModConfigSpec.ConfigValue<List<? extends String>> validDimensions;
         public static ModConfigSpec.BooleanValue daylightChange;
         public static ModConfigSpec.BooleanValue calendarItemHint;
+        public static ModConfigSpec.BooleanValue snowyWinter;
+        public static ModConfigSpec.BooleanValue notSnowyNearGlowingBlock;
+        public static ModConfigSpec.IntValue notSnowyNearGlowingBlockLevel;
 
         private static void load(ModConfigSpec.Builder builder) {
             builder.push("Season");
             lastingDaysOfEachTerm = builder.comment("The lasting days of each term, while 4 seasons in 1 year, 6 terms in 1 season.")
                     .defineInRange("LastingDaysOfEachTerm", 7, 1, 5000);
             initialSolarTermIndex = builder.comment("The index of the initial solar term, and note it only can be used to first start the world with the mod.")
-                    .defineInRange("InitialSolarTermIndex", 1, 1, 24);
+                    .defineInRange("InitialSolarTermIndex", 4, 1, 24);
 
             enableInform = builder.comment("Enable solar term change inform.")
                     .define("EnableInform", true);
@@ -93,6 +100,14 @@ public class CommonConfig {
                             () -> List.of(Level.OVERWORLD.location().toString()),
                             () -> Level.OVERWORLD.location().toString(),
                             o -> o instanceof String s && ResourceLocation.tryParse(s) != null);
+
+            snowyWinter = builder.comment("If snow falls during cold weather in warm biomes, it will gradually cover all solid blocks and grass.")
+                    .define("SnowyWinter", true);
+            notSnowyNearGlowingBlock = builder.comment("Snow will not appear in overly bright areas, here define restriction levels.")
+                    .define("NotSnowyNearGlowingBlock", true);
+            notSnowyNearGlowingBlockLevel = builder.comment("Snow will not appear in overly bright areas.")
+                    .defineInRange("NotSnowyNearGlowingBlockLevel", 10, 1, 15);
+
             builder.pop();
         }
     }
@@ -105,26 +120,43 @@ public class CommonConfig {
         public static ModConfigSpec.DoubleValue cropGrowChanceInWrongHumidity;
         public static ModConfigSpec.BooleanValue enableCropHumidityControl;
         public static ModConfigSpec.IntValue greenHouseMaxDiameter;
+        public static ModConfigSpec.IntValue greenHouseMaxHeight;
+        public static ModConfigSpec.IntValue darkGreenhouseFailChance;
         public static ModConfigSpec.BooleanValue complexGreenHouseCheck;
         public static ModConfigSpec.BooleanValue registerCropDefaultValue;
-
+        public static ModConfigSpec.BooleanValue forceCompatMode;
+        public static ModConfigSpec.BooleanValue simpleGreenHouse;
+        public static ModConfigSpec.BooleanValue noCostHumidifier;
+        public static ModConfigSpec.BooleanValue useBoxDistance;
 
         private static void load(ModConfigSpec.Builder builder) {
             builder.push("Crop");
             enableCrop = builder.comment("Enable crop season control.")
                     .define("EnableSeasonalCrop", true);
             cropGrowChanceInWrongSeason = builder.comment("How much grow_chance can crop grow in wrong season.")
-                    .defineInRange("CropGrowChanceInWrongSeason", 0.25, 0, 1);
+                    .defineInRange("[Deprecated]CropGrowChanceInWrongSeason", 0.25, 0, 1);
             enableCropHumidityControl = builder.comment("Enable crop humidity control.")
                     .define("EnableCropHumidityControl", true);
             cropGrowChanceInWrongHumidity = builder.comment("How much base grow_chance can crop grow in wrong humidity.")
-                    .defineInRange("CropGrowChanceInWrongHumidity", 0.25, 0.0001, 0.9999);
-            greenHouseMaxDiameter =builder.comment("The maximum effective diameter of the greenhouse.")
+                    .defineInRange("[Deprecated]CropGrowChanceInWrongHumidity", 0.25, 0.0001, 0.9999);
+            greenHouseMaxDiameter = builder.comment("The maximum effective diameter of the greenhouse.")
                     .defineInRange("GreenHouseMaxDiameter", 32, 5, 256);
+            greenHouseMaxHeight = builder.comment("The maximum effective diameter of the greenhouse.")
+                    .defineInRange("GreenHouseMaxHeight", 10, 3, 128);
+            darkGreenhouseFailChance = builder.comment("The possibility of crops not growing when there is insufficient sunlight in green house.")
+                    .defineInRange("DarkGreenhouseFailChance", 2000, 0, 10000);
+            simpleGreenHouse= builder.comment("Build a simple greenhouse without core blocks and humidity modifiers.")
+                    .define("SimpleGreenHouseMode", false);
+            noCostHumidifier= builder.comment("Enabled to make the Humidifier stop converting inputs/outputs.")
+                    .define("NoCostHumidifier", false);
             complexGreenHouseCheck = builder.comment("Whether to enable complex shape checking.")
                     .define("ComplexGreenHouseCheck", true);
-            registerCropDefaultValue = builder.comment("If a crop is not registered for a season or humid type, default values will be used.")
+            useBoxDistance = builder.comment("Calculate the working range of the greenhouse block by box distance and not Euclidean range.")
+                    .define("UseBoxDistance", true);
+            registerCropDefaultValue = builder.comment("[Deprecated]If a crop is not registered for a season or humid type, default values will be used.")
                     .define("RegisterCropDefaultValue", false);
+            forceCompatMode = builder.comment("Force all crops to use compatibility mode for growth control, not just those tagged as eclipticseasons:natural_plants.")
+                    .define("ForceCompatMode", false);
             builder.pop();
         }
     }
@@ -155,41 +187,49 @@ public class CommonConfig {
         public static ModConfigSpec.BooleanValue useSolarWeather;
         public static ModConfigSpec.IntValue rainChanceMultiplier;
         public static ModConfigSpec.IntValue thunderChanceMultiplier;
+        public static ModConfigSpec.BooleanValue shouldInitWeather;
 
         private static void load(ModConfigSpec.Builder builder) {
             builder.push("Weather");
             useSolarWeather = builder.comment("Enable solar term weather system with biome.")
                     .define("UseSolarWeather", true);
+            shouldInitWeather = builder.comment("Set it true to initialize weather and snow when loading the mod or level for the first time.")
+                    .define("ShouldInitWeather", false);
             rainChanceMultiplier = builder
                     .comment("Set the percentage multiplier of the probability of rain, the range should be between 0 and 1000.")
                     .defineInRange("RainChancePercentMultiplier", 40, 0, 1000);
             thunderChanceMultiplier = builder.comment("Set the percentage multiplier of the probability of thunder in the rain, the range should be between 0 and 1000.")
-                    .defineInRange("ThunderChancePercentMultiplier", 80, 0, 1000);
+                    .defineInRange("ThunderChancePercentMultiplier", 20, 0, 1000);
             builder.pop();
         }
     }
 
     public static class Map {
         public static ModConfigSpec.BooleanValue delayedUpdates;
+        public static ModConfigSpec.BooleanValue changeMapColor;
 
         private static void load(ModConfigSpec.Builder builder) {
             builder.push("Map");
             delayedUpdates = builder.comment("When snow falls, the top block does not immediately become snowy if the height map change.")
                     .define("ServerRealisticSnowyChange", false);
+            changeMapColor = builder.comment("The map color of blocks will change during snow.")
+                    .define("ChangeMapColor", true);
             builder.pop();
         }
     }
 
+    @Getter
     private static boolean useSolarWeather = true;
 
-    public static boolean isUseSolarWeather() {
-        return useSolarWeather;
-    }
+    @Getter
+    private static boolean forceCropCompatMode = false;
+
 
     public static void UpdateConfig(ModConfigEvent modConfigEvent) {
         if (!(modConfigEvent instanceof ModConfigEvent.Unloading)
-                && modConfigEvent.getConfig().getSpec() == COMMON_CONFIG)  {
+                && modConfigEvent.getConfig().getSpec() == COMMON_CONFIG) {
             useSolarWeather = Weather.useSolarWeather.get();
+            forceCropCompatMode = Crop.forceCompatMode.get();
         }
     }
 

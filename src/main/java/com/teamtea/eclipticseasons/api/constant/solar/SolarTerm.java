@@ -5,6 +5,8 @@ import com.teamtea.eclipticseasons.api.constant.climate.*;
 import com.teamtea.eclipticseasons.api.constant.solar.color.base.*;
 import com.teamtea.eclipticseasons.api.constant.tag.ClimateTypeBiomeTags;
 import com.teamtea.eclipticseasons.api.misc.ITranslatable;
+import com.teamtea.eclipticseasons.api.misc.ITranslatableWithPlaceholder;
+import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.misc.SimplePair;
 import net.minecraft.client.gui.Font;
 import net.minecraft.core.Holder;
@@ -16,7 +18,9 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.biome.Biome;
 import net.neoforged.neoforge.common.Tags;
 
-public enum SolarTerm implements ITranslatable {
+import java.util.Locale;
+
+public enum SolarTerm implements ITranslatableWithPlaceholder {
     // Spring Solar Terms
     BEGINNING_OF_SPRING(-0.25F, 10500),    // 立春
     RAIN_WATER(-0.15F, 11000),             // 雨水
@@ -61,7 +65,7 @@ public enum SolarTerm implements ITranslatable {
 
     @Override
     public String getName() {
-        return this.toString().toLowerCase();
+        return this.toString().toLowerCase(Locale.ROOT);
     }
 
     @Override
@@ -91,7 +95,7 @@ public enum SolarTerm implements ITranslatable {
     }
 
     public SimplePair<Integer, Integer> getIconPosition() {
-        return SimplePair.of( this.ordinal() % 6,this.ordinal() / 6);
+        return SimplePair.of(this.ordinal() % 6, this.ordinal() / 6);
     }
 
     private static final SolarTerm[] solarTerms = SolarTerm.values();
@@ -143,21 +147,36 @@ public enum SolarTerm implements ITranslatable {
 
 
     public BiomeRain getBiomeRain(Holder<Biome> biomeHolder) {
-        if (!biomeHolder.is(BiomeTags.IS_OVERWORLD) || biomeHolder.is(ClimateTypeBiomeTags.RAINLESS)) {
+        TagKey<Biome> tag = BiomeClimateManager.getTag(biomeHolder.value());
+        if (tag == ClimateTypeBiomeTags.RAINLESS)
             return FlatRain.RAINLESS;
-        } else if (biomeHolder.is(ClimateTypeBiomeTags.ARID)) {
+        if (tag == ClimateTypeBiomeTags.ARID)
             return FlatRain.ARID;
-        } else if (biomeHolder.is(ClimateTypeBiomeTags.DROUGHTY)) {
+        if (tag == ClimateTypeBiomeTags.DROUGHTY)
             return FlatRain.DROUGHTY;
-        } else if (biomeHolder.is(ClimateTypeBiomeTags.SOFT)) {
+        if (tag == ClimateTypeBiomeTags.SOFT)
             return FlatRain.SOFT;
-        } else if (biomeHolder.is(ClimateTypeBiomeTags.RAINY)) {
+        if (tag == ClimateTypeBiomeTags.RAINY)
             return FlatRain.RAINY;
-        } else if (biomeHolder.is(ClimateTypeBiomeTags.MONSOONAL)) {
+        if (tag == ClimateTypeBiomeTags.MONSOONAL)
             return MonsoonRain.collectValues()[this.ordinal()];
-        } else {
-            return TemperateRain.collectValues()[this.ordinal()];
-        }
+        return TemperateRain.collectValues()[this.ordinal()];
+
+        // if (!biomeHolder.is(BiomeTags.IS_OVERWORLD) || biomeHolder.is(ClimateTypeBiomeTags.RAINLESS)) {
+        //     return FlatRain.RAINLESS;
+        // } else if (biomeHolder.is(ClimateTypeBiomeTags.ARID)) {
+        //     return FlatRain.ARID;
+        // } else if (biomeHolder.is(ClimateTypeBiomeTags.DROUGHTY)) {
+        //     return FlatRain.DROUGHTY;
+        // } else if (biomeHolder.is(ClimateTypeBiomeTags.SOFT)) {
+        //     return FlatRain.SOFT;
+        // } else if (biomeHolder.is(ClimateTypeBiomeTags.RAINY)) {
+        //     return FlatRain.RAINY;
+        // } else if (biomeHolder.is(ClimateTypeBiomeTags.MONSOONAL)) {
+        //     return MonsoonRain.collectValues()[this.ordinal()];
+        // } else {
+        //     return TemperateRain.collectValues()[this.ordinal()];
+        // }
     }
 
     // TODO：为海洋设置特别属性，一个难点在于设定冻洋0，冷水海洋0.5，暖水海洋0.5
@@ -231,10 +250,17 @@ public enum SolarTerm implements ITranslatable {
 
     public boolean isInTerms(SolarTerm start, SolarTerm end) {
         if (start == NONE || end == NONE) return false;
-        else if (start == end) return true;
+        else if (start == end)
+            return this == start; // es patch: if A is B then use single if B is next to A ,then means all
         else if (start.ordinal() <= end.ordinal()) {
             return start.ordinal() <= this.ordinal() && this.ordinal() <= end.ordinal();
         } else
             return start.ordinal() <= this.ordinal() || this.ordinal() <= end.ordinal();
+    }
+
+
+    @Override
+    public boolean isValid() {
+        return this != NONE;
     }
 }

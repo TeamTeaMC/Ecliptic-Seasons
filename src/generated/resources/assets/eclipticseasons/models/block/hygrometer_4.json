@@ -1,0 +1,6 @@
+{
+  "parent": "eclipticseasons:block/hygrometer",
+  "textures": {
+    "1": "eclipticseasons:block/hygrometer_light_4"
+  }
+}

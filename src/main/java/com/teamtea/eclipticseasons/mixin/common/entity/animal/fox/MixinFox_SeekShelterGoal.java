@@ -28,9 +28,9 @@ public class MixinFox_SeekShelterGoal {
             method = "canUse",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;isThundering()Z")
     )
-    private boolean ecliptic$canUse_Thunder(Level level, Operation<Boolean> original) {
-        if (EclipticUtil.useSolarWeather() && level instanceof ServerLevel serverLevel)
-            return WeatherManager.isThunderAt(serverLevel, this$0.blockPosition());
+    private boolean eclipticseasons$canUse_Thunder(Level level, Operation<Boolean> original) {
+        if (EclipticUtil.hasLocalWeather(level) && level instanceof ServerLevel serverLevel)
+            return WeatherManager.isThunderAtBiome(serverLevel, this$0.blockPosition());
         else return original.call(level);
     }
 

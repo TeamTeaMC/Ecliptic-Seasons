@@ -3,7 +3,7 @@ plugins {
     id 'eclipse'
     id 'idea'
     id 'maven-publish'
-    id 'net.neoforged.gradle.userdev' version '7.0.165'
+    id 'net.neoforged.gradle.userdev' version '7.0.183'
 }
 
 
@@ -86,6 +86,8 @@ runs {
         systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
         modSource project.sourceSets.onlyMain
         jvmArguments = [
+//                '-XX:TieredStopAtLevel=3',
+//                "-XX:+AllowEnhancedClassRedefinition",
                 '-Dmixin.debug.export=true',
                 "-Xmx3048M"]
 
@@ -93,6 +95,8 @@ runs {
 
     server {
         systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
+        modSource project.sourceSets.onlyMain
+
 //        programArgument '--nogui'
     }
 
@@ -134,49 +138,72 @@ dependencies {
     // For all intends and purposes: You can treat this dependency as if it is a normal library you would use.
     implementation "net.neoforged:neoforge:${neo_version}"
 
+
     implementation("curse.maven:jei-238222:5606861")
 //    implementation ("curse.maven:jade-324717:4654448")
     implementation("curse.maven:jade-324717:5591256-deobf-sources-api")
-//    implementation ("com.ferreusveritas.dynamictrees:DynamicTrees-neoforge-1.21.1:1.5.0-BETA02")
+//    implementation "curse.maven:dynamictrees-252818:6196673"
+    compileOnly("curse.maven:the-one-probe-245211:6106998")
+//    runtimeOnly("curse.maven:the-one-probe-245211:6106998")
 
     compileOnly("curse.maven:embeddium-908741:5556146")
 
     compileOnly "org.sinytra.forgified-fabric-api:fabric-renderer-api-v1:3.4.0+acb05a39d1"
     compileOnly "org.sinytra.forgified-fabric-api:fabric-renderer-indigo:1.7.0+acb05a39d1"
 
-    compileOnly "maven.modrinth:sodium:mc1.21.1-0.6.5-neoforge"
+    compileOnly "maven.modrinth:sodium:mc1.21.1-0.6.9-neoforge"
     compileOnly("curse.maven:irisshaders-455508:6117625")
 
-    onlyMainRuntimeOnly("curse.maven:irisshaders-455508:6117625")
-    onlyMainRuntimeOnly "maven.modrinth:sodium:mc1.21.1-0.6.5-neoforge"
+    onlyMainRuntimeOnly("curse.maven:irisshaders-455508:6213632")
+    onlyMainRuntimeOnly "maven.modrinth:sodium:mc1.21.1-0.6.9-neoforge"
+//    find what's happens bettwen 0.6.5 and 0.6.9
+//    onlyMainRuntimeOnly "maven.modrinth:sodium:mc1.21.1-0.6.5-neoforge"
 
-    compileOnly("curse.maven:journeymap-32274:5541925")
+    compileOnly "curse.maven:journeymap-32274:6213329"
+    onlyMainRuntimeOnly("curse.maven:journeymap-32274:6213329")
 
-    onlyMainRuntimeOnly("curse.maven:journeymap-32274:5541925")
 
 //    onlyMainRuntimeOnly ("maven.modrinth:distanthorizons:2.2.1-a-1.21.1")
-    compileOnly("curse.maven:distant-horizons-508933:5689286")
-//    onlyMainRuntimeOnly ("curse.maven:distant-horizons-508933:5689286")
+    compileOnly("curse.maven:distant-horizons-508933:6251735")
+//    onlyMainRuntimeOnly ("curse.maven:distant-horizons-508933:6251735")
 
     compileOnly ("curse.maven:simple-clouds-1121215:5812034")
 
 
     onlyMainRuntimeOnly("curse.maven:spark-361579:5434153")
-    onlyMainRuntimeOnly("curse.maven:farmers-delight-398521:5772720")
 
     compileOnly ("curse.maven:cold-sweat-506194:6058306")
 //    runtimeOnly ("curse.maven:cold-sweat-506194:6058306")
-    
+
+    compileOnly ("curse.maven:snowy-spirit-566142:5983882")
+//    onlyMainRuntimeOnly ("curse.maven:snowy-spirit-566142:5983882")
+//    onlyMainRuntimeOnly ("curse.maven:selene-499980:6224057")
+    compileOnly ("curse.maven:in-control-257356:5932871")
+//    onlyMainRuntimeOnly ("curse.maven:in-control-257356:5932871")
+
+    compileOnly "curse.maven:touhou-little-maid-355044:6175338"
+//    onlyMainRuntimeOnly "curse.maven:touhou-little-maid-355044:6175338"
+
+//    onlyMainRuntimeOnly "curse.maven:create-328085:6255497"
+    onlyMainRuntimeOnly "curse.maven:minecraft-add-1090474:6167550"
+
+//    onlyMainRuntimeOnly "curse.maven:euphoria-patches-915902:6137784"
+
     println("----Scan onlyMainRuntimeOnly libs begin----")
     fileTree(dir: 'libs', include: ['*.jar']).each { File file ->
         def fileName = file.name
         println(fileName.substring(0, fileName.indexOf("-")) + "," + fileName.substring(fileName.indexOf("-") + 1, fileName.indexOf(".jar")))
-        onlyMainRuntimeOnly(name: fileName.substring(0, fileName.indexOf(".jar")),
+        onlyMainRuntimeOnly(name: fileName.substring(0, fileName.lastIndexOf(".jar")),
                 group: 'libs',
                 version: fileName.substring(0, fileName.indexOf(".jar")))
     }
     println("----Scan onlyMainRuntimeOnly libs end----")
 
+
+    // others
+    // https://mvnrepository.com/artifact/org.projectlombok/lombok
+    compileOnly 'org.projectlombok:lombok:1.18.38'
+    annotationProcessor 'org.projectlombok:lombok:1.18.38'
 //    onlyMainRuntimeOnly("curse.maven:immersive-portals-for-forge-355440:5828143")
 //    onlyMainRuntimeOnly("curse.maven:cloth-config-348521:5729127")
 

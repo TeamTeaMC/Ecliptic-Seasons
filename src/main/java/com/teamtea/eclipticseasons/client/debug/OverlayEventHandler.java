@@ -2,14 +2,16 @@ package com.teamtea.eclipticseasons.client.debug;
 
 
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
+import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.config.ClientConfig;
 import com.teamtea.eclipticseasons.common.core.solar.SolarAngelHelper;
-import com.teamtea.eclipticseasons.api.constant.biome.Humidity;
 import net.minecraft.client.Minecraft;
 
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.Level;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -45,10 +47,12 @@ public final class OverlayEventHandler {
                 )
                         && !Minecraft.getInstance().options.hideGui
                 ) {
-                    var solar = SolarHolders.getSaveDataLazy(clientPlayer.level()).get().getSolarTermsDay();
-                    long dayTime = clientPlayer.level().getDayTime();
-                    double env = clientPlayer.level().getBiome(clientPlayer.getOnPos()).value().getTemperature(clientPlayer.getOnPos());
-                    int solarTime = SolarAngelHelper.getSolarAngelTime(clientPlayer.level(), clientPlayer.level().getDayTime());
+                    Level level1 = clientPlayer.level();
+                    BlockPos onPos = clientPlayer.blockPosition();
+                    var solar = SolarHolders.getSaveDataLazy(level1).get().getSolarTermsDay();
+                    long dayTime = level1.getDayTime();
+                    double env = EclipticUtil.getTemperatureFloat(level1, level1.getBiome(onPos).value(), onPos);
+                    int solarTime = SolarAngelHelper.getSolarAngelTime(level1, level1.getDayTime());
 
                     BAR_4.renderStatusBar(event.getGuiGraphics(), Minecraft.getInstance().getWindow().getGuiScaledWidth(), Minecraft.getInstance().getWindow().getGuiScaledHeight(), level, clientPlayer, solar + "", dayTime, env, solarTime);
                 }

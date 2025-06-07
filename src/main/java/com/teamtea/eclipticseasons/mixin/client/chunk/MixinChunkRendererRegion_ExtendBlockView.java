@@ -16,86 +16,86 @@ import java.util.List;
 @Mixin(RenderChunkRegion.class)
 public abstract class MixinChunkRendererRegion_ExtendBlockView implements ExtendBlockView {
     @Unique
-    private List<BakedQuad> eclipticSeasons$bakedQuads = null;
+    private List<BakedQuad> eclipticseasons$bakedQuads = null;
 
     @Unique
-    private BakedModel eclipticSeasons$snowModel = null;
+    private BakedModel eclipticseasons$snowModel = null;
 
     @Unique
-    private boolean eclipticSeasons$shouldCollectBakeQuads = false;
+    private boolean eclipticseasons$shouldCollectBakeQuads = false;
 
     @Unique
-    private boolean eclipticSeasons$shouldReplaceOriginalGrassModel = false;
+    private boolean eclipticseasons$shouldReplaceOriginalGrassModel = false;
 
     @Unique
-    private BlockPos.MutableBlockPos eclipticSeasons$mutableBlockPos =new BlockPos.MutableBlockPos();
+    private BlockPos.MutableBlockPos eclipticseasons$mutableBlockPos =new BlockPos.MutableBlockPos();
 
     @Override
     public List<BakedQuad> getCacheBakeQuad() {
-        return eclipticSeasons$bakedQuads;
+        return eclipticseasons$bakedQuads;
     }
 
     @Override
     public void clearCacheBakeQuad() {
-        if (eclipticSeasons$bakedQuads != null)
-            eclipticSeasons$bakedQuads.clear();
+        if (eclipticseasons$bakedQuads != null)
+            eclipticseasons$bakedQuads.clear();
     }
 
     @Override
     public void addCacheBakeQuad(BakedQuad bakedQuad) {
-        if (eclipticSeasons$bakedQuads != null
-                && eclipticSeasons$shouldCollectBakeQuads)
-            eclipticSeasons$bakedQuads.add(bakedQuad);
+        if (eclipticseasons$bakedQuads != null
+                && eclipticseasons$shouldCollectBakeQuads)
+            eclipticseasons$bakedQuads.add(bakedQuad);
     }
 
     @Override
     public void setCacheBakeQuad() {
-        eclipticSeasons$bakedQuads = new ArrayList<>();
+        eclipticseasons$bakedQuads = new ArrayList<>();
     }
 
     @Override
     public void resetCacheBakeQuad() {
-        eclipticSeasons$bakedQuads = null;
+        eclipticseasons$bakedQuads = null;
     }
 
     @Override
     public void setSnowModel(BakedModel bakedModel) {
-        eclipticSeasons$snowModel = bakedModel;
+        eclipticseasons$snowModel = bakedModel;
     }
 
     @Override
     public void resetSnowModel() {
-        eclipticSeasons$snowModel = null;
+        eclipticseasons$snowModel = null;
     }
 
     @Override
     public BakedModel getSnowModel() {
-        return eclipticSeasons$snowModel;
+        return eclipticseasons$snowModel;
     }
 
 
     @Override
     public void setCurrentModelReplaceable(boolean isReplaceable) {
-        this.eclipticSeasons$shouldReplaceOriginalGrassModel = isReplaceable;
+        this.eclipticseasons$shouldReplaceOriginalGrassModel = isReplaceable;
     }
 
     @Override
     public void setShouldCollectBakeQuads(boolean shouldCollectBakeQuads) {
-        this.eclipticSeasons$shouldCollectBakeQuads = shouldCollectBakeQuads;
+        this.eclipticseasons$shouldCollectBakeQuads = shouldCollectBakeQuads;
     }
 
     @Override
     public boolean isCurrentModelReplaceable() {
-        return this.eclipticSeasons$shouldReplaceOriginalGrassModel;
+        return this.eclipticseasons$shouldReplaceOriginalGrassModel;
     }
 
     @Override
     public boolean getShouldCollectBakeQuads() {
-        return this.eclipticSeasons$shouldCollectBakeQuads;
+        return this.eclipticseasons$shouldCollectBakeQuads;
     }
 
     @Override
     public BlockPos.MutableBlockPos getModelCheckPos() {
-        return eclipticSeasons$mutableBlockPos;
+        return eclipticseasons$mutableBlockPos;
     }
 }

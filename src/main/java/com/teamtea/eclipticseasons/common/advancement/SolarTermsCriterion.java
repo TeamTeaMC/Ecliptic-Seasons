@@ -8,13 +8,14 @@ import net.minecraft.advancements.critereon.ContextAwarePredicate;
 import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.advancements.critereon.SimpleCriterionTrigger;
 import net.minecraft.server.level.ServerPlayer;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
 public class SolarTermsCriterion extends SimpleCriterionTrigger<SolarTermsCriterion.TriggerInstance> {
 
     @Override
-    public Codec<TriggerInstance> codec() {
+    public @NotNull Codec<TriggerInstance> codec() {
         return TriggerInstance.CODEC;
     }
 
@@ -39,6 +40,12 @@ public class SolarTermsCriterion extends SimpleCriterionTrigger<SolarTermsCriter
 
         public static Criterion<TriggerInstance> simple2() {
             return ModAdvancements.heatStrokeCriterion.get().createCriterion(
+                    new TriggerInstance(Optional.empty())
+            );
+        }
+
+        public static Criterion<TriggerInstance> simple3() {
+            return ModAdvancements.greenhouseCriterion.get().createCriterion(
                     new TriggerInstance(Optional.empty())
             );
         }

@@ -12,9 +12,14 @@ import java.util.Map;
 
 
 /**
- * The event is fired on the {@link net.neoforged.neoforge.common.NeoForge#EVENT_BUS}
- * **/
-public class RegisterAndModifyCropInfoEvent extends net.neoforged.bus.api.Event  implements IESEvent{
+ * <s>Fired on the {@link net.neoforged.neoforge.common.NeoForge#EVENT_BUS}.</s>
+ *
+ * @deprecated This event is no longer supported. See
+ * {@link com.teamtea.eclipticseasons.common.registry.ESRegistries#CROP} for datapack registration.
+ */
+
+@Deprecated(since = "0.11")
+public class RegisterAndModifyCropInfoEvent extends net.neoforged.bus.api.Event implements IESEvent {
 
 
     private final Map<Block, CropHumidityInfo> cropHumidityInfoMap;

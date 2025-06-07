@@ -28,7 +28,7 @@ public abstract class MixinBlockRender2 {
     //         method = "getGeometry",
     //         at = @At(value = "INVOKE",  target = "Lnet/minecraft/client/resources/model/BakedModel;getQuads(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/Direction;Lnet/minecraft/util/RandomSource;Lnet/neoforged/neoforge/client/model/data/ModelData;Lnet/minecraft/client/renderer/RenderType;)Ljava/util/List;")
     // )
-    // private List<BakedQuad> ecliptic$tesselateWithAO_getQuads(List<BakedQuad> original, @Local(ordinal = 0) BlockRenderContext ctx, @Local(ordinal = 0)Direction face) {
+    // private List<BakedQuad> eclipticseasons$tesselateWithAO_getQuads(List<BakedQuad> original, @Local(ordinal = 0) BlockRenderContext ctx, @Local(ordinal = 0)Direction face) {
     //     return ModelManager.appendOverlay(ctx.world(),ctx.state(),ctx.pos(),face,random,ctx.seed(),original);
     // }
 
@@ -37,7 +37,7 @@ public abstract class MixinBlockRender2 {
             method = "getGeometry",
             at = @At(value = "INVOKE",  target = "Lnet/minecraft/client/resources/model/BakedModel;getQuads(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/Direction;Lnet/minecraft/util/RandomSource;Lnet/neoforged/neoforge/client/model/data/ModelData;Lnet/minecraft/client/renderer/RenderType;)Ljava/util/List;")
     )
-    private List<BakedQuad> ecliptic$getGeometry_getQuads(List<BakedQuad> original, @Local(ordinal = 0) BlockRenderContext ctx, @Local(ordinal = 0)Direction face) {
+    private List<BakedQuad> eclipticseasons$getGeometry_getQuads(List<BakedQuad> original, @Local(ordinal = 0) BlockRenderContext ctx, @Local(ordinal = 0)Direction face) {
         return ModelManager.cancelTop(ctx.model(),ctx.world(),ctx.state(),ctx.pos(),face,random,ctx.seed(),original,ModelManager.EMPTY_BAKED_QUAD_LIST, null);
     }
 

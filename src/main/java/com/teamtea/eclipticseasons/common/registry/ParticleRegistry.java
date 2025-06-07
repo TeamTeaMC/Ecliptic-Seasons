@@ -20,6 +20,7 @@ public final class ParticleRegistry {
     public static final SimpleParticleType FIREFLY = new SimpleParticleType(false);
     public static final SimpleParticleType WILD_GOOSE = new SimpleParticleType(false);
     public static final SimpleParticleType BUTTERFLY = new SimpleParticleType(false);
+    public static final ParticleType<ColorParticleOption> GREENHOUSE =  create(false, ColorParticleOption::codec, ColorParticleOption::streamCodec);
     public static final ParticleType<ColorParticleOption> FALLEN_LEAVES = create(false, ColorParticleOption::codec, ColorParticleOption::streamCodec);
     public static final ParticleType<ColorParticleOption> FLYING_BLOOM = create(false, ColorParticleOption::codec, ColorParticleOption::streamCodec);
 
@@ -31,7 +32,7 @@ public final class ParticleRegistry {
             particleTypeRegisterHelper.register(EclipticSeasons.rl("butterfly"), BUTTERFLY);
             particleTypeRegisterHelper.register(EclipticSeasons.rl("fallen_leaves"), FALLEN_LEAVES);
             particleTypeRegisterHelper.register(EclipticSeasons.rl("flying_bloom"), FLYING_BLOOM);
-
+            particleTypeRegisterHelper.register(EclipticSeasons.rl("greenhouse"), GREENHOUSE);
         });
     }
 

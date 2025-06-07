@@ -1,32 +1,31 @@
 package com.teamtea.eclipticseasons.compat.distanthorizons;
 
 import com.seibel.distanthorizons.core.api.internal.SharedApi;
-import com.seibel.distanthorizons.core.config.Config;
 import com.seibel.distanthorizons.core.dataObjects.fullData.FullDataPointIdMap;
 import com.seibel.distanthorizons.core.level.ClientLevelModule;
 import com.seibel.distanthorizons.core.level.DhClientLevel;
 import com.seibel.distanthorizons.core.level.DhClientServerLevel;
 import com.seibel.distanthorizons.core.level.IDhClientLevel;
-import com.seibel.distanthorizons.core.pos.DhSectionPos;
 import com.seibel.distanthorizons.core.pos.blockPos.DhBlockPos;
+import com.seibel.distanthorizons.core.render.LodQuadTree;
 import com.seibel.distanthorizons.core.util.FullDataPointUtil;
+import com.seibel.distanthorizons.core.util.gridList.MovableGridRingList;
+import com.seibel.distanthorizons.core.util.objects.quadTree.QuadNode;
 import com.seibel.distanthorizons.core.world.IDhClientWorld;
 import com.seibel.distanthorizons.core.wrapperInterfaces.IWrapperFactory;
 import com.seibel.distanthorizons.core.wrapperInterfaces.block.IBlockStateWrapper;
 import com.seibel.distanthorizons.core.wrapperInterfaces.world.IBiomeWrapper;
 import com.seibel.distanthorizons.core.wrapperInterfaces.world.IClientLevelWrapper;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
-import com.teamtea.eclipticseasons.config.ClientConfig;
 import com.teamtea.eclipticseasons.config.CommonConfig;
+import com.teamtea.eclipticseasons.mixin.compat.distanthorizons.MixinQuadTree;
 import it.unimi.dsi.fastutil.longs.LongArrayList;
 import loaderCommon.neoforge.com.seibel.distanthorizons.common.wrappers.McObjectConverter;
 import loaderCommon.neoforge.com.seibel.distanthorizons.common.wrappers.block.BiomeWrapper;
 import loaderCommon.neoforge.com.seibel.distanthorizons.common.wrappers.block.BlockStateWrapper;
 import loaderCommon.neoforge.com.seibel.distanthorizons.common.wrappers.world.ClientLevelWrapper;
 import net.minecraft.client.Minecraft;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
-import net.minecraft.core.SectionPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -34,7 +33,10 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.LightBlock;
 import net.minecraft.world.level.material.MapColor;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Stack;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class DHTool {
@@ -52,32 +54,59 @@ public class DHTool {
                 clientRenderStateAtomicReference = dhClientLevel.clientside.ClientRenderStateRef;
             }
             if (clientRenderStateAtomicReference != null) {
-                //     // 也许未来需要定向刷新，但是目前来看只需要全部刷新即可
-                //     // DhSectionPos.encode((byte) 0,100,100);
-                int d = (int) Config.Client.quickLodChunkRenderDistance.get().get() / 2;
-                BlockPos pos = Minecraft.getInstance().player.getOnPos();
-                SectionPos sectionPos = SectionPos.of(pos);
-                int pSectionX = sectionPos.z();
-                int pSectionZ = sectionPos.x();
-                byte treeMinDetailLevel = clientRenderStateAtomicReference.get().quadtree.treeMinDetailLevel;
-                byte treeMaxDetailLevel = clientRenderStateAtomicReference.get().quadtree.treeMaxDetailLevel;
 
-                for (int i = pSectionX - d; i <= pSectionX + d; i++) {
-                    for (int j = pSectionZ - d; j <= pSectionZ + d; j++) {
-                        for (byte k = treeMaxDetailLevel; k <= treeMinDetailLevel; k++) {
-                            // 注意这里是dh的sectionpos，其实与mc中类似
-                            long rootPos = DhSectionPos.encode(k, i, j);
-                            clientRenderStateAtomicReference.get().quadtree.reloadPos(rootPos);
-                        }
+                LodQuadTree quadtree = clientRenderStateAtomicReference.get().quadtree;
+                MixinQuadTree quadtree1 = (MixinQuadTree) quadtree;
+
+
+                List<Long> reloadList = new ArrayList<>();
+                MovableGridRingList<QuadNode> topRingList = quadtree1.getTopRingList();
+                Stack<QuadNode> stack = new Stack<>();
+
+                for (int i = 0, topRingListSize = topRingList.size(); i < topRingListSize; i++) {
+                    stack.push(topRingList.get(i));
+                }
+
+                while (!stack.isEmpty()) {
+                    QuadNode node = stack.pop();
+                    if (node == null || node.value == null) continue;
+                    reloadList.add(node.sectionPos);
+                    for (int i = 3; i >= 0; i--) {
+                        stack.push(node.getChildByIndex(i));
                     }
                 }
+
+
+                for (Long l : reloadList) {
+                    quadtree.reloadPos(l);
+                }
+
+                //     // 也许未来需要定向刷新，但是目前来看只需要全部刷新即可
+                // int d = (int) Config.Client.quickLodChunkRenderDistance.get().get() / 2;
+                // DhBlockPos2D pos = quadtree.getCenterBlockPos();
+                // SectionPos sectionPos = SectionPos.of(pos);
+                // int pSectionX = SectionPos.blockToSectionCoord(pos.x);
+                // int pSectionZ = SectionPos.blockToSectionCoord(pos.z);
+                //
+                // byte treeMinDetailLevel = quadtree.treeMinDetailLevel;
+                // byte treeMaxDetailLevel = quadtree.treeMaxDetailLevel;
+                // for (int i = pSectionX - d; i <= pSectionX + d; i++) {
+                //     for (int j = pSectionZ - d; j <= pSectionZ + d; j++) {
+                //         for (byte k = treeMaxDetailLevel; k <= treeMinDetailLevel; k++) {
+                //             // 注意这里是dh的sectionpos，其实与mc中类似
+                //             // long rootPos = DhSectionPos.encode(k, i, j);
+                //             // clientRenderStateAtomicReference.get().quadtree.reloadPos(rootPos);
+                //
+                //         }
+                //     }
+                // }
 
             }
         }
     }
 
     public static MapColor computeBaseColor(IDhClientLevel instance, DhBlockPos dhBlockPos, IBiomeWrapper iBiomeWrapper, IBlockStateWrapper iBlockStateWrapper, FullDataPointIdMap fullDataMapping, LongArrayList fullColumnData, IWrapperFactory WRAPPER_FACTORY) {
-        if (ClientConfig.Renderer.snowyWinter.get()) {
+        if (CommonConfig.Season.snowyWinter.get()) {
             if (!dhBlockPos.equals(DhBlockPos.ZERO) && iBlockStateWrapper instanceof BlockStateWrapper blockStateWrapper
                     && !blockStateWrapper.isAir()) {
                 var mcPos = McObjectConverter.Convert(dhBlockPos);
@@ -157,15 +186,17 @@ public class DHTool {
         return null;
     }
 
+    // todo 实际上我们仍然需要恢复，只是由于内置给了biome一些东西所以暂时不需要了
+    // todo 未来考虑更好的兼容方式，特别是不知道DH干了啥，运行时数据量没变，但是地址变了
     public static Biome recoverBiomeObject(BiomeWrapper biomeWrapper, IClientLevelWrapper iClientLevelWrapper) {
-        if (iClientLevelWrapper instanceof ClientLevelWrapper clientLevelWrapper) {
-            var holderKey = ResourceKey.create(Registries.BIOME, ResourceLocation.parse(biomeWrapper.getSerialString()));
-            if ((clientLevelWrapper.getLevel().registryAccess().holder(holderKey).orElse(null)
-                    instanceof Holder.Reference<Biome> holder)) {
-                // if (BiomeWrapper.getBiomeWrapper(holder, clientLevelWrapper) instanceof BiomeWrapper biomeWrapper1)
-                return holder.value();
-            }
-        }
+        // if (iClientLevelWrapper instanceof ClientLevelWrapper clientLevelWrapper) {
+        //     var holderKey = ResourceKey.create(Registries.BIOME, ResourceLocation.parse(biomeWrapper.getSerialString()));
+        //     if ((clientLevelWrapper.getLevel().registryAccess().holder(holderKey).orElse(null)
+        //             instanceof Holder.Reference<Biome> holder)) {
+        //         // if (BiomeWrapper.getBiomeWrapper(holder, clientLevelWrapper) instanceof BiomeWrapper biomeWrapper1)
+        //         return holder.value();
+        //     }
+        // }
         return null;
     }
 

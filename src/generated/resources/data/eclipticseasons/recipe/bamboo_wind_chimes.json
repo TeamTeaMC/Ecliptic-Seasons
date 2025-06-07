@@ -4,7 +4,7 @@
   "group": "wind_chimes",
   "key": {
     "x": {
-      "item": "minecraft:string"
+      "tag": "c:strings"
     },
     "y": {
       "item": "minecraft:paper"

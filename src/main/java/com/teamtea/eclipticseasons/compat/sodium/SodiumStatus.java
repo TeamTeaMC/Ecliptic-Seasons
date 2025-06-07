@@ -7,9 +7,15 @@ import net.minecraft.client.resources.model.BakedModel;
 import java.util.List;
 
 public interface SodiumStatus {
-    void eclipticSeasons$bindCounter(SodiumBoard sodiumBoard);
+    void eclipticseasons$bindCounter(SodiumBoard sodiumBoard);
 
     List<BakedQuad> getCacheBakeQuad();
 
     BakedModel getSnowModel();
+
+    void setShouldCollect(boolean shouldCollect);
+
+    boolean shouldCollect();
+
+    ;
 }

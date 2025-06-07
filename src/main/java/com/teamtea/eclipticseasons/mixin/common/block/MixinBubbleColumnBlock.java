@@ -22,7 +22,7 @@ public class MixinBubbleColumnBlock {
             method = "updateColumn(Lnet/minecraft/world/level/LevelAccessor;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/block/state/BlockState;)V",
             at = @At(value = "INVOKE", ordinal = 0, target = "Lnet/minecraft/world/level/LevelAccessor;setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Z")
     )
-    private static void es$updateColumn(LevelAccessor level, BlockPos pos, BlockState fluid, BlockState state, CallbackInfo ci, @Local(ordinal = 2) BlockState blockState) {
+    private static void eclipticseasons$updateColumn(LevelAccessor level, BlockPos pos, BlockState fluid, BlockState state, CallbackInfo ci, @Local(ordinal = 2) BlockState blockState) {
 
         // if (blockState.is(Blocks.BUBBLE_COLUMN) && level.getBlockState(pos.above()).isAir()) {
         //     SolarDataManager saveData = SolarHolders.getSaveData((Level) level);

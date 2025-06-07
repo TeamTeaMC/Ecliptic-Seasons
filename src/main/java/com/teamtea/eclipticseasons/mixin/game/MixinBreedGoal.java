@@ -18,7 +18,7 @@ public abstract class MixinBreedGoal {
     @Shadow public abstract void stop();
 
     @Inject(at = {@At("RETURN")}, method = {"canUse"}, cancellable = true)
-    public void ecliptic$canUse(CallbackInfoReturnable<Boolean> cir) {
+    public void eclipticseasons$canUse(CallbackInfoReturnable<Boolean> cir) {
         if (cir.getReturnValue()) {
             if(AnimalHooks.cancelBreed(animal)){
                 stop();

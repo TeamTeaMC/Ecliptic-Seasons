@@ -1,0 +1,8 @@
+{
+  "values": [
+    "eclipticseasons:temperate",
+    "eclipticseasons:cold",
+    "eclipticseasons:hot",
+    "eclipticseasons:desert"
+  ]
+}

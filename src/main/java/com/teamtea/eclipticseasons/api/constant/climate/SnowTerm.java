@@ -15,7 +15,8 @@ public enum SnowTerm {
     T01(SolarTerm.BEGINNING_OF_AUTUMN, SolarTerm.FRESH_GREEN),
     T005(SolarTerm.GREATER_HEAT, SolarTerm.GRAIN_RAIN),
     T001(SolarTerm.LESSER_HEAT, SolarTerm.BEGINNING_OF_SUMMER),
-    T0(SolarTerm.SUMMER_SOLSTICE, SolarTerm.SUMMER_SOLSTICE),
+    // need reverse
+    T0(SolarTerm.SUMMER_SOLSTICE, SolarTerm.GRAIN_IN_EAR),
     NONE(SolarTerm.NONE, SolarTerm.NONE);
 
     private final SolarTerm start;
@@ -35,6 +36,6 @@ public enum SnowTerm {
     }
 
     public boolean maySnow(SolarTerm solarTerm) {
-        return solarTerm.isInTerms(getStart(),getEnd());
+        return solarTerm.isInTerms(getStart(), getEnd());
     }
 }

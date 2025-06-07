@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "eclipticseasons:block/green_house_core_particle",
+    "particle": "eclipticseasons:block/green_house_core_particle"
+  }
+}

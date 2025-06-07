@@ -84,7 +84,7 @@ public abstract class MixinBlockRenderTask extends ChunkBuilderTask<ChunkBuildOu
     //                 target = "Lnet/caffeinemc/mods/sodium/client/render/chunk/compile/pipeline/BlockRenderer;renderModel(Lnet/minecraft/client/resources/model/BakedModel;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/BlockPos;Lnet/minecraft/core/BlockPos;)V"
     //         )}
     // )
-    // private void eclipticSeasons$onRenderModel(ChunkBuildContext buildContext, CancellationToken cancellationToken, CallbackInfoReturnable<ChunkBuildOutput> cir, @Local ChunkBuildBuffers buffers, @Local BlockState blockState, @Local(ordinal = 0) BlockPos.MutableBlockPos blockPos, @Local LevelSlice levelSlice) {
+    // private void eclipticseasons$onRenderModel(ChunkBuildContext buildContext, CancellationToken cancellationToken, CallbackInfoReturnable<ChunkBuildOutput> cir, @Local ChunkBuildBuffers buffers, @Local BlockState blockState, @Local(ordinal = 0) BlockPos.MutableBlockPos blockPos, @Local LevelSlice levelSlice) {
     //     if (WorldRenderingSettings.INSTANCE.getBlockStateIds() != null) {
     //         {
     //             if (((BlockAndTintGetter) levelSlice).getBlockState(blockPos.above()).isEmpty())
@@ -101,7 +101,7 @@ public abstract class MixinBlockRenderTask extends ChunkBuilderTask<ChunkBuildOu
     //                 target = "Lnet/minecraft/world/level/block/state/BlockState;isSolidRender(Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;)Z"
     //         )}
     // )
-    // private void eclipticSeasons$onEnd(ChunkBuildContext buildContext, CancellationToken cancellationToken, CallbackInfoReturnable<ChunkBuildOutput> cir, @Local ChunkBuildBuffers buffers, @Local BlockState blockState) {
+    // private void eclipticseasons$onEnd(ChunkBuildContext buildContext, CancellationToken cancellationToken, CallbackInfoReturnable<ChunkBuildOutput> cir, @Local ChunkBuildBuffers buffers, @Local BlockState blockState) {
     //     ((BlockSensitiveBufferBuilder) buffers).endBlock();
     // }
 
@@ -112,7 +112,7 @@ public abstract class MixinBlockRenderTask extends ChunkBuilderTask<ChunkBuildOu
     //                 target = "Lnet/caffeinemc/mods/sodium/client/render/chunk/compile/pipeline/FluidRenderer;render(Lnet/caffeinemc/mods/sodium/client/world/LevelSlice;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/material/FluidState;Lnet/minecraft/core/BlockPos;Lnet/minecraft/core/BlockPos;Lnet/caffeinemc/mods/sodium/client/render/chunk/translucent_sorting/TranslucentGeometryCollector;Lnet/caffeinemc/mods/sodium/client/render/chunk/compile/ChunkBuildBuffers;)V"
     //         )}
     // )
-    // private void eclipticSeasons$onRenderLiquid(ChunkBuildContext buildContext, CancellationToken cancellationToken, CallbackInfoReturnable<ChunkBuildOutput> cir, @Local ChunkBuildBuffers buffers, @Local BlockState blockState, @Local FluidState fluidState, @Local(ordinal = 0) BlockPos.MutableBlockPos blockPos) {
+    // private void eclipticseasons$onRenderLiquid(ChunkBuildContext buildContext, CancellationToken cancellationToken, CallbackInfoReturnable<ChunkBuildOutput> cir, @Local ChunkBuildBuffers buffers, @Local BlockState blockState, @Local FluidState fluidState, @Local(ordinal = 0) BlockPos.MutableBlockPos blockPos) {
     //     if (WorldRenderingSettings.INSTANCE.getBlockStateIds() != null) {
     //         ((BlockSensitiveBufferBuilder)buffers).beginBlock(WorldRenderingSettings.INSTANCE.getBlockStateIds().getInt(fluidState.createLegacyBlock()), (byte)1, (byte)blockState.getLightEmission(), blockPos.getX(), blockPos.getY(), blockPos.getZ());
     //     }

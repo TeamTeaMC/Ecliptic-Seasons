@@ -19,6 +19,10 @@ public class EclipticSeasonsLootTableProvider extends LootTableProvider {
                 EclipticSeasonsBlockLootTables::new,
                 // Loot table generator for the 'empty' param set
                 LootContextParamSets.BLOCK
+        ),new SubProviderEntry(
+                EclipticSeasonsGiftLootTables::new,
+                // Loot table generator for the 'empty' param set
+                LootContextParamSets.GIFT
         )),lookupProvider);
         this.generator = generator;
 

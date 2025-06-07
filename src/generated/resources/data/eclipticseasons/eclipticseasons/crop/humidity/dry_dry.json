@@ -1,0 +1,36 @@
+{
+  "parent": [],
+  "apply_target": {
+    "blocks": "#eclipticseasons:crops/dry_dry"
+  },
+  "climate": "#eclipticseasons:all",
+  "solar_terms": {},
+  "seasons": {},
+  "humidity": {
+    "arid": {
+      "grow_chance": 0.15,
+      "death_chance": 0.0,
+      "fertile_chance": 1.0
+    },
+    "dry": {
+      "grow_chance": 0.85,
+      "death_chance": 0.0,
+      "fertile_chance": 1.0
+    },
+    "average": {
+      "grow_chance": 0.25,
+      "death_chance": 0.0,
+      "fertile_chance": 1.0
+    },
+    "moist": {
+      "grow_chance": 0.05,
+      "death_chance": 0.0,
+      "fertile_chance": 1.0
+    },
+    "humid": {
+      "grow_chance": 0.0,
+      "death_chance": 0.0,
+      "fertile_chance": 1.0
+    }
+  }
+}

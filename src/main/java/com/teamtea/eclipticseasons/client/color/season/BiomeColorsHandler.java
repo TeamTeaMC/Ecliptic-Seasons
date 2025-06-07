@@ -8,10 +8,12 @@ import com.teamtea.eclipticseasons.api.constant.solar.color.leaves.LeaveColor;
 import com.teamtea.eclipticseasons.api.constant.solar.color.leaves.MangroveLeavesColor;
 import com.teamtea.eclipticseasons.api.constant.solar.color.leaves.SpruceLeavesColor;
 import com.teamtea.eclipticseasons.api.constant.tag.ClimateTypeBiomeTags;
+import com.teamtea.eclipticseasons.api.data.client.BiomeColor;
+import com.teamtea.eclipticseasons.api.data.client.ColorMode;
 import com.teamtea.eclipticseasons.api.misc.IBiomeTagHolder;
+import com.teamtea.eclipticseasons.api.misc.client.IBiomeColorHolder;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.client.util.ColorHelper;
-import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.config.ClientConfig;
 import net.minecraft.client.Minecraft;
@@ -22,7 +24,6 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.level.*;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.MapColor;
 
 import java.awt.*;
 import java.util.IdentityHashMap;
@@ -41,6 +42,13 @@ public class BiomeColorsHandler {
     {
         int originColor = biome.getGrassColor(posX, posZ);
         if (ClientConfig.Renderer.seasonalGrassColorChange.get()) {
+            BiomeColor.Instance biomeColor = getBiomeColor(biome, originColor);
+            if (biomeColor != null) {
+                ColorMode.Instance instance = biomeColor.grassColor().get(ClientCon.nowSolarTerm);
+                if (instance != null) {
+                    return ColorHelper.simplyMixColor(instance.value(), instance.fix(), originColor, Math.abs(1 - instance.fix()));
+                }
+            }
             // if (needRefresh) {
             //     reloadColors();
             // }
@@ -53,7 +61,7 @@ public class BiomeColorsHandler {
             int i = (int) ((1.0D - temperature) * 255.0D);
             int j = (int) ((1.0D - humidity) * 255.0D);
             int k = j << 8 | i;
-            TagKey<Biome> biomeTagKey = ((IBiomeTagHolder) (Object) biome).eclipticSeasons$getBindTag();
+            TagKey<Biome> biomeTagKey = ((IBiomeTagHolder) (Object) biome).eclipticseasons$getBindTag();
             int[] newGrassBuffer = newGrassBufferMap.getOrDefault(biomeTagKey, GrassColor.pixels);
 
             int color = k > newGrassBuffer.length ? originColor : newGrassBuffer[k];
@@ -67,10 +75,24 @@ public class BiomeColorsHandler {
         return originColor;
     };
 
+    private static BiomeColor.Instance getBiomeColor(Object biome, int originColor) {
+        if (biome instanceof IBiomeColorHolder iBiomeColorHolder) {
+            return iBiomeColorHolder.getBiomeColor();
+        }
+        return null;
+    }
+
     public static final ColorResolver FOLIAGE_COLOR = (biome, posX, posZ) ->
     {
         int originColor = biome.getFoliageColor();
         if (ClientConfig.Renderer.seasonalGrassColorChange.get()) {
+            BiomeColor.Instance biomeColor = getBiomeColor(biome, originColor);
+            if (biomeColor != null) {
+                ColorMode.Instance instance = biomeColor.foliageColor().get(ClientCon.nowSolarTerm);
+                if (instance != null) {
+                    return ColorHelper.simplyMixColor(instance.value(), instance.fix(), originColor, Math.abs(1 - instance.fix()));
+                }
+            }
             // if (needRefresh) {
             //     reloadColors();
             // }
@@ -80,7 +102,7 @@ public class BiomeColorsHandler {
             int i = (int) ((1.0D - temperature) * 255.0D);
             int j = (int) ((1.0D - humidity) * 255.0D);
             int k = j << 8 | i;
-            TagKey<Biome> biomeTagKey = ((IBiomeTagHolder) (Object) biome).eclipticSeasons$getBindTag();
+            TagKey<Biome> biomeTagKey = ((IBiomeTagHolder) (Object) biome).eclipticseasons$getBindTag();
             int[] newFoliageBuffer = newFoliageBufferMap.getOrDefault(biomeTagKey, FoliageColor.pixels);
             int color = k > newFoliageBuffer.length ? originColor : newFoliageBuffer[k];
             if (biomeTagKey != ClimateTypeBiomeTags.SEASONAL

@@ -1,0 +1,23 @@
+{
+	"credit": "Made by Joe Vettek",
+	"textures": {
+		"1": "block/snow",
+		"2": "eclipticseasons:block/snow_overlay_leaves_top",
+		"3": "eclipticseasons:block/snow_spot_overlay_leaves",
+		"particle": "eclipticseasons:block/snow_overlay_leaves_top"
+	},
+	"elements": [
+		{
+			"from": [0, 0, 0],
+			"to": [16, 16, 16],
+			"faces": {
+				"north": {"uv": [0, 0, 16, 16], "texture": "#2", "cullface": "north"},
+				"east": {"uv": [0, 0, 16, 16], "texture": "#2", "cullface": "east"},
+				"south": {"uv": [0, 0, 16, 16], "texture": "#2", "cullface": "south"},
+				"west": {"uv": [0, 0, 16, 16], "texture": "#2", "cullface": "west"},
+				"up": {"uv": [0, 0, 16, 16], "texture": "#1", "cullface": "up"},
+				"down": {"uv": [0, 0, 16, 16], "texture": "#3", "cullface": "down"}
+			}
+		}
+	]
+}

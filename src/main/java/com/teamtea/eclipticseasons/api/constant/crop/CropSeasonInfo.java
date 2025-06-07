@@ -3,12 +3,18 @@ package com.teamtea.eclipticseasons.api.constant.crop;
 
 
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
+import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
+import com.teamtea.eclipticseasons.api.util.SimpleUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
+@Deprecated
 public class CropSeasonInfo
 {
     private final int season;
@@ -80,23 +86,48 @@ public class CropSeasonInfo
         }
         else
         {
+            MutableComponent mutableComponent=Component.empty();
+            int hashCode = mutableComponent.hashCode();
             if (spring)
             {
                 list.add(Season.SPRING.getTranslation());
+                // mutableComponent= SimpleUtil.addSolarIconBefore(SolarTerm.SPRING_EQUINOX,mutableComponent);
             }
             if (summer)
             {
                 list.add(Season.SUMMER.getTranslation());
+                // mutableComponent= SimpleUtil.addSolarIconBefore(SolarTerm.SUMMER_SOLSTICE,mutableComponent);
             }
+
             if (autumn)
             {
                 list.add(Season.AUTUMN.getTranslation());
+                // mutableComponent= SimpleUtil.addSolarIconBefore(SolarTerm.AUTUMNAL_EQUINOX,mutableComponent);
             }
+
             if (winter)
             {
                 list.add(Season.WINTER.getTranslation());
+                // mutableComponent= SimpleUtil.addSolarIconBefore(SolarTerm.WINTER_SOLSTICE,mutableComponent);
+            }
+
+            if(mutableComponent.hashCode()!=hashCode){
+                list.add(mutableComponent);
             }
         }
         return list;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CropSeasonInfo that = (CropSeasonInfo) o;
+        return season == that.season;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(season);
     }
 }

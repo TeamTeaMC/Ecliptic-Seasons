@@ -1,8 +1,13 @@
 package com.teamtea.eclipticseasons.compat;
 
 
+import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.compat.cold_sweat.Cold_Sweat;
+import com.teamtea.eclipticseasons.compat.theoneprobe.TOPHook;
+import com.teamtea.eclipticseasons.compat.touhou_little_maid.LittleMaid;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.InterModComms;
+import net.neoforged.fml.event.lifecycle.InterModEnqueueEvent;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
 import java.util.List;
@@ -11,12 +16,13 @@ public class CompatModule {
 
     private static boolean ctm = false;
     private static boolean continuity = false;
-    private static boolean yuushya = false;
+    private static boolean snowyspirit = false;
     private static boolean fabric_renderer_indigo = false;
     private static boolean sodium = false;
     private static boolean dynamictrees = false;
     private static boolean cold_sweat = false;
     private static boolean journeymap = false;
+    private static boolean touhou_little_maid = false;
 
     /**
      * Used for mod init detect.
@@ -24,12 +30,13 @@ public class CompatModule {
     public static void init() {
         ctm = Platform.isModLoaded("ctm");
         continuity = Platform.isModLoaded("continuity");
-        yuushya = Platform.isModLoaded("yuushya");
+        snowyspirit = Platform.isModLoaded("snowyspirit");
         fabric_renderer_indigo = Platform.isModLoaded("fabric_renderer_indigo");
         sodium = Platform.isModLoaded("sodium");
         dynamictrees = Platform.isModLoaded("dynamictrees");
         cold_sweat = Platform.isModLoaded("cold_sweat");
         journeymap = Platform.isModLoaded("journeymap");
+        touhou_little_maid = Platform.isModLoaded("touhou_little_maid");
     }
 
     /**
@@ -39,6 +46,14 @@ public class CompatModule {
         if (isCold_sweat()) {
             gameBus.register(Cold_Sweat.INSTANCE);
         }
+        if (isTouhou_little_maid()) {
+            gameBus.register(LittleMaid.INSTANCE);
+        }
+    }
+
+
+    public static void onInterModEnqueue(final InterModEnqueueEvent event) {
+        event.enqueueWork(TOPHook::init);
     }
 
 
@@ -60,8 +75,8 @@ public class CompatModule {
         return fabric_renderer_indigo;
     }
 
-    public static boolean isYuuLoad() {
-        return yuushya;
+    public static boolean isSnowyspirit() {
+        return snowyspirit;
     }
 
     public static boolean isContinuity() {
@@ -84,12 +99,19 @@ public class CompatModule {
         return journeymap;
     }
 
+    public static boolean isTouhou_little_maid() {
+        return touhou_little_maid;
+    }
+
     public static class CommonConfig {
         public static ModConfigSpec.BooleanValue sereneSeasons;
         public static ModConfigSpec.ConfigValue<List<? extends Double>> cold_sweat_springs;
         public static ModConfigSpec.ConfigValue<List<? extends Double>> cold_sweat_summers;
         public static ModConfigSpec.ConfigValue<List<? extends Double>> cold_sweat_autumns;
         public static ModConfigSpec.ConfigValue<List<? extends Double>> cold_sweat_winters;
+
+        public static ModConfigSpec.ConfigValue<List<? extends SolarTerm>> snowyspirit_winters;
+        public static ModConfigSpec.BooleanValue snowyspirit_enable;
 
         public static void load(ModConfigSpec.Builder builder) {
             builder.push("Compat");
@@ -117,7 +139,21 @@ public class CompatModule {
                 builder.pop();
             }
 
-
+            if (isSnowyspirit()) {
+                builder.push("SnowySpirit");
+                snowyspirit_enable = builder.comment("Enable special time with SnowySpirit.")
+                        .define("Enable", true);
+                snowyspirit_winters = builder.comment("Solar Terms in which SnowySpirit villager AI behaviors will be active.")
+                        .defineListAllowEmpty("WinterTime",
+                                () -> List.of(SolarTerm.BEGINNING_OF_WINTER,
+                                        SolarTerm.LIGHT_SNOW,
+                                        SolarTerm.HEAVY_SNOW,
+                                        SolarTerm.WINTER_SOLSTICE,
+                                        SolarTerm.LESSER_COLD,
+                                        SolarTerm.GREATER_COLD), () -> SolarTerm.WINTER_SOLSTICE,
+                                o -> o instanceof SolarTerm);
+                builder.pop();
+            }
             builder.pop();
         }
     }

@@ -4,6 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.teamtea.eclipticseasons.api.constant.biome.Humidity;
 import com.teamtea.eclipticseasons.api.constant.climate.BiomeRain;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
+import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
@@ -14,6 +15,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -36,6 +38,8 @@ public final class DebugInfoRenderer {
 
     public void renderStatusBar(GuiGraphics matrixStack, int screenWidth, int screenHeight, ClientLevel clientLevel, LocalPlayer player, String solar, long dayTime, double env, int solarTime) {
 
+        BlockPos pos = player.blockPosition();
+
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         // RenderSystem.enableAlphaTest();
         RenderSystem.enableBlend();
@@ -46,12 +50,10 @@ public final class DebugInfoRenderer {
         String envS = "Env Temp: " + env;
         String solarTimeS = "Solar Time: " + solarTime;
         Holder<Biome> biome = clientLevel.getBiome(player.getOnPos());
-        float temp = biome.value().getBaseTemperature();
-        float rainfall = biome.value().getModifiedClimateSettings().downfall();
-        Humidity h = Humidity.getHumid(ClientCon.nowSolarTerm, biome);
-        String dS = "Downfall: " + rainfall;
-        String jS = "Humidity: " + h;
-        String ys = "y: " + MapChecker.getHeight(clientLevel,player.blockPosition());
+
+        String dS = "Downfall: " + EclipticUtil.getRainfallAt(clientLevel, pos);
+        String jS = "Humidity: " + EclipticUtil.getHumidityAt(clientLevel, pos);
+        String ys = "y: " + MapChecker.getHeight(clientLevel, pos);
 
         int index = 0;
 
@@ -68,46 +70,41 @@ public final class DebugInfoRenderer {
         // level1 = level1 != null ? level1 : Minecraft.getInstance().level;
         level1 = Minecraft.getInstance().level;
         {
-            var standBiome =
+            Holder<Biome> standBiome =
                     biomeHolder == null || delay == 0 ?
                             level1.getBiome(player.getOnPos()) : biomeHolder;
             if (delay == 0) {
                 delay = 100;
             }
+            WeatherManager.BiomeWeather biomeWeather = WeatherManager.getBiomeWeather(level1, standBiome);
+            if (biomeWeather != null) {
+                SolarTerm solarTerm = ClientCon.nowSolarTerm;
+                String biomesS = "Biome: " + Component.translatable(Util.makeDescriptionId("biome", ResourceLocation.parse(standBiome.getRegisteredName()))).getString();
+                String biomesSS = "E-Biome: " + Component.translatable(Util.makeDescriptionId("biome", ResourceLocation.parse(MapChecker.getSurfaceBiome(level1, pos).getRegisteredName()))).getString();
 
-            for (WeatherManager.BiomeWeather biomeWeather : WeatherManager.getBiomeList(level1)) {
-                if (biomeWeather.biomeHolder.is(standBiome)) {
-                    var solarTerm = SolarHolders.getSaveData(level1).getSolarTerm();
-                    String biomesS = "Biome: " + Component.translatable(Util.makeDescriptionId("biome", ResourceLocation.parse(standBiome.getRegisteredName()))).getString();
-                    String biomesSS = "E-Biome: " + Component.translatable(Util.makeDescriptionId("biome", ResourceLocation.parse(MapChecker.getSurfaceBiome(level1,player.blockPosition()).getRegisteredName()))).getString();
+                String solarTermS = "Solar Term: " + solarTerm.getTranslation().getString();
+                String biomeRainS = "Biome Rain: " + solarTerm.getBiomeRain(biomeWeather.biomeHolder);
+                String snowTermS = "Snow Term: " + SolarTerm.getSnowTerm(biomeWeather.biomeHolder.value(), true);
+                drawInfo(matrixStack, screenWidth, screenHeight, "", index++);
+                drawInfo(matrixStack, screenWidth, screenHeight, biomesS, index++);
+                drawInfo(matrixStack, screenWidth, screenHeight, biomesSS, index++);
 
-                    String solarTermS = "Solar Term: " + solarTerm.getTranslation().getString();
-                    String biomeRainS = "Biome Rain: " + solarTerm.getBiomeRain(biomeWeather.biomeHolder);
-                    String snowTermS = "Snow Term: " + SolarTerm.getSnowTerm(biomeWeather.biomeHolder.value(), true);
-                    drawInfo(matrixStack, screenWidth, screenHeight, "", index++);
-                    drawInfo(matrixStack, screenWidth, screenHeight, biomesS, index++);
-                    drawInfo(matrixStack, screenWidth, screenHeight, biomesSS, index++);
+                drawInfo(matrixStack, screenWidth, screenHeight, solarTermS, index++);
+                drawInfo(matrixStack, screenWidth, screenHeight, biomeRainS, index++);
+                drawInfo(matrixStack, screenWidth, screenHeight, snowTermS, index++);
 
-                    drawInfo(matrixStack, screenWidth, screenHeight, solarTermS, index++);
-                    drawInfo(matrixStack, screenWidth, screenHeight, biomeRainS, index++);
-                    drawInfo(matrixStack, screenWidth, screenHeight, snowTermS, index++);
+                drawInfo(matrixStack, screenWidth, screenHeight, "", index++);
 
-                    drawInfo(matrixStack, screenWidth, screenHeight, "", index++);
+                String rainTimeS = "Rain Time: " + biomeWeather.rainTime;
+                String clearTimeS = "Clear Time: " + biomeWeather.clearTime;
+                String thunderTimeS = "Thunder Time: " + biomeWeather.thunderTime;
+                String snowDepthS = "Snow Depth: " + biomeWeather.snowDepth;
 
-                    String rainTimeS = "Rain Time: " + biomeWeather.rainTime;
-                    String clearTimeS = "Clear Time: " + biomeWeather.clearTime;
-                    String thunderTimeS = "Thunder Time: " + biomeWeather.thunderTime;
-                    String snowDepthS = "Snow Depth: " + biomeWeather.snowDepth;
-
-                    drawInfo(matrixStack, screenWidth, screenHeight, rainTimeS, index++);
-                    drawInfo(matrixStack, screenWidth, screenHeight, clearTimeS, index++);
-                    drawInfo(matrixStack, screenWidth, screenHeight, thunderTimeS, index++);
-                    drawInfo(matrixStack, screenWidth, screenHeight, snowDepthS, index++);
-
-                    break;
-                }
+                drawInfo(matrixStack, screenWidth, screenHeight, rainTimeS, index++);
+                drawInfo(matrixStack, screenWidth, screenHeight, clearTimeS, index++);
+                drawInfo(matrixStack, screenWidth, screenHeight, thunderTimeS, index++);
+                drawInfo(matrixStack, screenWidth, screenHeight, snowDepthS, index++);
             }
-
         }
 
 

@@ -1,0 +1,7 @@
+{
+  "default_mapping": {
+    "summer": 0.25
+  },
+  "seasonal_signal_durations": [],
+  "biomes": "#c:is_nether"
+}

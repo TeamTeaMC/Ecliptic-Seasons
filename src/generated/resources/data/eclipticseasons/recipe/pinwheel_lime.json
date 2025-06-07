@@ -10,7 +10,7 @@
       "item": "minecraft:lime_dye"
     },
     "z": {
-      "item": "minecraft:stick"
+      "tag": "c:rods/wooden"
     }
   },
   "pattern": [

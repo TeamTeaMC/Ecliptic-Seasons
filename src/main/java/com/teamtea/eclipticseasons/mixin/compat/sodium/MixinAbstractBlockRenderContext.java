@@ -3,7 +3,11 @@ package com.teamtea.eclipticseasons.mixin.compat.sodium;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;
+import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.client.core.ModelManager;
+import com.teamtea.eclipticseasons.client.model.ISnowyReplaceModel;
+import com.teamtea.eclipticseasons.client.model.SnowyBakedModelWrapper;
+import com.teamtea.eclipticseasons.compat.ctm.CTMSpriteChecker;
 import com.teamtea.eclipticseasons.compat.sodium.SodiumStatus;
 import net.caffeinemc.mods.sodium.client.render.frapi.render.AbstractBlockRenderContext;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -17,6 +21,8 @@ import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.List;
 import java.util.function.Supplier;
@@ -45,28 +51,42 @@ public abstract class MixinAbstractBlockRenderContext {
             method = "bufferDefaultModel",
             at = @At(value = "INVOKE", target = "Lnet/caffeinemc/mods/sodium/client/services/PlatformModelAccess;getQuads(Lnet/minecraft/world/level/BlockAndTintGetter;Lnet/minecraft/core/BlockPos;Lnet/minecraft/client/resources/model/BakedModel;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/Direction;Lnet/minecraft/util/RandomSource;Lnet/minecraft/client/renderer/RenderType;Lnet/caffeinemc/mods/sodium/client/services/SodiumModelData;)Ljava/util/List;")
     )
-    private List<BakedQuad> ecliptic$bufferDefaultModel_getQuads(
+    private List<BakedQuad> eclipticseasons$bufferDefaultModel_getQuads(
             List<BakedQuad> original,
             @Local(argsOnly = true) BakedModel bakedModel,
             @Local(argsOnly = true) BlockState state,
             @Local Direction side,
             @Local RandomSource rand) {
-        // if (BuiltInRegistries.BLOCK.getKey(state.getBlock()).getNamespace().startsWith("yuushya")) {
-        //     EclipticSeasons.logger(BuiltInRegistries.BLOCK.getKey(state.getBlock()), side, original.size());
-        //     if (!original.isEmpty()&& bakedModel instanceof ModelManager.SnowyBakedModelWrapper<?>) {
-        //         // for (int i = 0; i < 4; i++) {
-        //         //     EclipticSeasons.logger(
-        //         //             ((BakedQuadView) original.getFirst()).getSprite(),
-        //         //             ((BakedQuadView) original.getFirst()).getX(i),
-        //         //             ((BakedQuadView) original.getFirst()).getY(i),
-        //         //             ((BakedQuadView) original.getFirst()).getZ(i));
-        //         // }
-        //         return new ArrayList<>();
-        //     }
-        // }
         if (this instanceof SodiumStatus sodiumStatus && sodiumStatus.getSnowModel() != null)
             return ModelManager.cancelTop(bakedModel, level, state, pos, side, rand, randomSeed, original, sodiumStatus.getCacheBakeQuad(), sodiumStatus.getSnowModel());
         return original;
+    }
+
+    @Inject(
+            remap = false,
+            method = "bufferDefaultModel",
+            at = @At(value = "INVOKE", target = "Lnet/caffeinemc/mods/sodium/client/render/frapi/mesh/MutableQuadViewImpl;fromVanilla(Lnet/minecraft/client/renderer/block/model/BakedQuad;Lnet/fabricmc/fabric/api/renderer/v1/material/RenderMaterial;Lnet/minecraft/core/Direction;)Lnet/caffeinemc/mods/sodium/client/render/frapi/mesh/MutableQuadViewImpl;")
+    )
+    private void eclipticseasons$bufferDefaultModel_cache(
+            BakedModel model, BlockState state, CallbackInfo ci,
+            @Local(argsOnly = true) BakedModel bakedModel,
+            @Local BakedQuad bakedQuad,
+            @Local Direction side,
+            @Local RandomSource rand) {
+        if (this instanceof SodiumStatus sodiumStatus
+                && sodiumStatus.getSnowModel() != null
+                && !(ISnowyReplaceModel.isInvalid(bakedModel))
+                && !sodiumStatus.shouldCollect()) {
+            try {
+                if (bakedQuad.getSprite() != null
+                        && bakedQuad.getSprite() instanceof CTMSpriteChecker ctmSpriteChecker
+                        && ctmSpriteChecker.isCTMSprite()) {
+                    sodiumStatus.setShouldCollect(true);
+                }
+            } catch (Exception exception) {
+                EclipticSeasons.logger(exception);
+            }
+        }
     }
 
     // @ModifyExpressionValue(
@@ -74,7 +94,7 @@ public abstract class MixinAbstractBlockRenderContext {
     //         method = "renderQuad",
     //         at = @At(value = "INVOKE", target = "Lnet/caffeinemc/mods/sodium/client/render/frapi/render/AbstractBlockRenderContext;transform(Lnet/fabricmc/fabric/api/renderer/v1/mesh/MutableQuadView;)Z")
     // )
-    // private boolean ecliptic$renderQuad(boolean original,@Local(argsOnly = true) MutableQuadViewImpl quad){
+    // private boolean eclipticseasons$renderQuad(boolean original,@Local(argsOnly = true) MutableQuadViewImpl quad){
     //     if (YuushyaChecker.isyuushyaBlock(state)) {
     //         EclipticSeasons.logger(original,ModelManager.getBakeQuadInfo(
     //                 quad.toBakedQuad(quad.sprite(SpriteFinderCache.forBlockAtlas()))));

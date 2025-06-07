@@ -10,6 +10,7 @@
     "description": {
       "translate": "advancement.eclipticseasons.heat_stroke.desc"
     },
+    "hidden": true,
     "icon": {
       "count": 1,
       "id": "minecraft:magma_block"

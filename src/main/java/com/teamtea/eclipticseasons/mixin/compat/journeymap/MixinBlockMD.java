@@ -27,7 +27,7 @@ public abstract class MixinBlockMD {
             method = {"getBlockColor"},
             cancellable = true,
             remap = false)
-    private void ecliptic$getBlockColor(ChunkMD chunkMD, BlockPos blockPos, CallbackInfoReturnable<Integer> cir) {
+    private void eclipticseasons$getBlockColor(ChunkMD chunkMD, BlockPos blockPos, CallbackInfoReturnable<Integer> cir) {
         if (CompatModule.ClientConfig.journeyMapSupport.getAsBoolean()
                 && MapColorReplacer.getTopSnowColor(chunkMD.getWorld(), blockState, blockPos)
                 instanceof MapColor mapColor) {

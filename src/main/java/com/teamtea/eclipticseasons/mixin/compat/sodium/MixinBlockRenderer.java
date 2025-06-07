@@ -2,91 +2,147 @@ package com.teamtea.eclipticseasons.mixin.compat.sodium;
 
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
-import com.teamtea.eclipticseasons.api.misc.IBlockStateFlagger;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.llamalad7.mixinextras.sugar.Local;
+import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.client.core.ModelManager;
-import com.teamtea.eclipticseasons.client.util.ColorHelper;
+import com.teamtea.eclipticseasons.client.model.SnowyBakedModelWrapper;
+import com.teamtea.eclipticseasons.compat.sodium.ESSodiumContext;
 import com.teamtea.eclipticseasons.compat.sodium.SodiumBoard;
 import com.teamtea.eclipticseasons.compat.sodium.SodiumStatus;
-import com.teamtea.eclipticseasons.compat.yuushya.YuushyaChecker;
-import net.caffeinemc.mods.sodium.client.model.color.ColorProvider;
+import net.caffeinemc.mods.sodium.api.texture.SpriteUtil;
 import net.caffeinemc.mods.sodium.client.render.chunk.compile.pipeline.BlockRenderer;
+import net.caffeinemc.mods.sodium.client.render.chunk.terrain.TerrainRenderPass;
 import net.caffeinemc.mods.sodium.client.render.frapi.mesh.MutableQuadViewImpl;
 import net.caffeinemc.mods.sodium.client.render.frapi.render.AbstractBlockRenderContext;
 import net.caffeinemc.mods.sodium.client.render.texture.SpriteFinderCache;
+import net.caffeinemc.mods.sodium.client.render.texture.SpriteUtilImpl;
 import net.fabricmc.fabric.api.renderer.v1.model.FabricBakedModel;
+import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.awt.*;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.function.Supplier;
 
 @Mixin({BlockRenderer.class})
 public abstract class MixinBlockRenderer extends AbstractBlockRenderContext implements SodiumStatus {
 
+    // @Shadow
+    // private boolean allowDowngrade;
     @Unique
-    public SodiumBoard eclipticSeasons$chunkBuilderMeshingTask;
+    public SodiumBoard eclipticseasons$chunkBuilderMeshingTask;
 
     @Unique
-    private List<BakedQuad> eclipticSeasons$bakedQuads = new ArrayList<>();
+    private List<BakedQuad> eclipticseasons$bakedQuads = new ArrayList<>();
 
     @Unique
-    private BakedModel eclipticSeasons$snowModel = null;
+    private BakedModel eclipticseasons$snowModel = null;
 
     @Unique
-    private boolean eclipticSeasons$shouldCollectBakeQuads = false;
+    private boolean eclipticseasons$shouldCollectBakeQuads = false;
 
     @Unique
-    private boolean eclipticSeasons$shouldReplaceOriginalGrassModel = false;
+    private boolean eclipticseasons$shouldReplaceOriginalGrassModel = false;
 
     @Unique
-    private BlockPos.MutableBlockPos eclipticSeasons$mutableBlockPos = new BlockPos.MutableBlockPos();
+    private BlockPos.MutableBlockPos eclipticseasons$mutableBlockPos = new BlockPos.MutableBlockPos();
+
+    @Unique
+    private ESSodiumContext eclipticseasons$esContext = null;
+
+    @Unique
+    private boolean eclipticseasons$cancelDowngradedPass = false;
 
     @ModifyExpressionValue(
             remap = false,
             method = "renderModel",
             at = @At(value = "INVOKE",
+                    ordinal = 0,
                     // shift = At.Shift.AFTER,
                     target = "Ljava/util/Iterator;hasNext()Z")
     )
     private boolean eclipticseasons$renderModel(
-            boolean original
+            boolean original,
+            @Local(argsOnly = true) BakedModel model
     ) {
-        // BakedModel snowModel = null;
-        // if (!original) {
-        //     snowModel = ModelManager.findModel(slice, pos, state, random, randomSeed);
-        //     if (eclipticSeasons$chunkBuilderMeshingTask != null)
-        //         eclipticSeasons$chunkBuilderMeshingTask.eclipticSeasons$addCount();
-        // } else {
-        //     // if (ModelManager.isModelReplaceable(state))
-        //     if (ModelManager.isModelReplaceable(((IBlockStateFlagger) state).getBlockTypeFlag(level, pos))) {
-        //
-        //         snowModel = ModelManager.findModel(slice, pos, state, random, randomSeed);
-        //         if (eclipticSeasons$chunkBuilderMeshingTask != null)
-        //             eclipticSeasons$chunkBuilderMeshingTask.eclipticSeasons$addCount();
-        //     }
-        // }
 
-        if (eclipticSeasons$shouldReplaceOriginalGrassModel && eclipticSeasons$snowModel != null) {
+        if (eclipticseasons$shouldReplaceOriginalGrassModel && eclipticseasons$snowModel != null) {
             original = false;
         }
 
-        if (!original && eclipticSeasons$snowModel != null) {
-            eclipticSeasons$shouldCollectBakeQuads = false;
+        if (!original && eclipticseasons$snowModel != null && eclipticseasons$shouldReplaceOriginalGrassModel) {
+
+            // if (ModelManager.isSpecialCTMBlock(state)) {
+            //     // eclipticseasons$esContext = new ESSodiumContext();
+            //     //   eclipticseasons$esContext.updateContext(level, pos, state, model, random, modelData);
+            //     //   ((FabricBakedModel) model).emitBlockQuads(this.level, state, pos, this.randomSupplier, eclipticseasons$esContext);
+            //     //   getCacheBakeQuad().addAll(eclipticseasons$esContext.getQuadViews());
+            // }
+            eclipticseasons$cancelDowngradedPass = true;
+            eclipticseasons$shouldCollectBakeQuads = false;
             original = false;
             this.type = ModelManager.getRenderType(state);
-            ((FabricBakedModel) eclipticSeasons$snowModel).emitBlockQuads(this.level, state, pos, this.randomSupplier, this);
+            ((FabricBakedModel) eclipticseasons$snowModel).emitBlockQuads(this.level, state, pos, this.randomSupplier, this);
+
+            // eclipticseasons$esContext.reset();
         }
         return original;
+    }
+
+
+    @WrapOperation(
+            remap = false,
+            method = "renderModel",
+            at = @At(value = "INVOKE",
+                    // shift = At.Shift.AFTER,
+
+                    target = "Lnet/fabricmc/fabric/api/renderer/v1/model/FabricBakedModel;emitBlockQuads(Lnet/minecraft/world/level/BlockAndTintGetter;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/BlockPos;Ljava/util/function/Supplier;Lnet/fabricmc/fabric/api/renderer/v1/render/RenderContext;)V")
+    )
+    private void eclipticseasons$renderModel_wrap_emitBlockQuads(
+            FabricBakedModel instance, BlockAndTintGetter blockView, BlockState state, BlockPos pos, Supplier<RandomSource> randomSupplier, RenderContext context, Operation<Void> original,
+            @Local(argsOnly = true) BakedModel model,
+            @Local Iterator<RenderType> iterator
+    ) {
+
+        // if (eclipticseasons$shouldReplaceOriginalGrassModel && eclipticseasons$snowModel != null) {
+        //     original = false;
+        // }
+
+        original.call(instance, this.level, state, pos, this.randomSupplier, this);
+
+        if (!eclipticseasons$shouldReplaceOriginalGrassModel
+                && !iterator.hasNext() && eclipticseasons$snowModel != null) {
+
+            // if (ModelManager.isSpecialCTMBlock(state)) {
+            //     // eclipticseasons$esContext = new ESSodiumContext();
+            //     //   eclipticseasons$esContext.updateContext(level, pos, state, model, random, modelData);
+            //     //   ((FabricBakedModel) model).emitBlockQuads(this.level, state, pos, this.randomSupplier, eclipticseasons$esContext);
+            //     //   getCacheBakeQuad().addAll(eclipticseasons$esContext.getQuadViews());
+            // }
+            // disableAllowDowngrade();
+            eclipticseasons$cancelDowngradedPass = true;
+            eclipticseasons$shouldCollectBakeQuads = false;
+            this.type = ModelManager.getRenderType(state);
+            ((FabricBakedModel) eclipticseasons$snowModel).emitBlockQuads(this.level, state, pos, this.randomSupplier, this);
+
+            // eclipticseasons$esContext.reset();
+        }
+
     }
 
     // TODO: 如果以后使用shouldCollectBakeQuads去渲染的话，可能需要
@@ -96,23 +152,25 @@ public abstract class MixinBlockRenderer extends AbstractBlockRenderContext impl
             at = @At(value = "INVOKE", target = "Ljava/lang/Iterable;iterator()Ljava/util/Iterator;")
     )
     private void eclipticseasons$renderModel_start(BakedModel model, BlockState state, BlockPos pos, BlockPos origin, CallbackInfo ci) {
-        eclipticSeasons$snowModel = ModelManager.findModel(slice, pos, state, random, randomSeed, eclipticSeasons$mutableBlockPos);
-        if (eclipticSeasons$snowModel != null) {
-            eclipticSeasons$shouldReplaceOriginalGrassModel = ModelManager.isModelReplaceable(state,level, pos);
-            if (!eclipticSeasons$shouldReplaceOriginalGrassModel) {
-                boolean yuushyaBlock = YuushyaChecker.isyuushyaContinuityBlock(state);
+        // this.allowDowngrade = false;
+        eclipticseasons$snowModel = ModelManager.findModel(slice, pos, state, random, randomSeed, eclipticseasons$mutableBlockPos);
+        if (eclipticseasons$snowModel != null) {
+            eclipticseasons$shouldReplaceOriginalGrassModel =
+                    ModelManager.isModelReplaceable(state, level, pos, eclipticseasons$snowModel);
+            if (!eclipticseasons$shouldReplaceOriginalGrassModel) {
+                boolean yuushyaBlock = ModelManager.isSpecialCTMBlock(state);
                 if (yuushyaBlock) {
-                    eclipticSeasons$shouldCollectBakeQuads = true;
+                    eclipticseasons$shouldCollectBakeQuads = true;
                 }
             }
         } else {
-            eclipticSeasons$shouldReplaceOriginalGrassModel = false;
-            eclipticSeasons$shouldCollectBakeQuads = false;
+            eclipticseasons$shouldReplaceOriginalGrassModel = false;
+            eclipticseasons$shouldCollectBakeQuads = false;
         }
 
 
-        if (eclipticSeasons$chunkBuilderMeshingTask != null)
-            eclipticSeasons$chunkBuilderMeshingTask.eclipticSeasons$addCount();
+        if (eclipticseasons$chunkBuilderMeshingTask != null)
+            eclipticseasons$chunkBuilderMeshingTask.eclipticseasons$addCount();
     }
 
     @Inject(
@@ -120,12 +178,21 @@ public abstract class MixinBlockRenderer extends AbstractBlockRenderContext impl
             at = @At(value = "TAIL")
     )
     private void eclipticseasons$renderModel_end(BakedModel model, BlockState state, BlockPos pos, BlockPos origin, CallbackInfo ci) {
-        if (!eclipticSeasons$bakedQuads.isEmpty()) {
-            eclipticSeasons$bakedQuads.clear();
+        if (!eclipticseasons$bakedQuads.isEmpty()) {
+            eclipticseasons$bakedQuads.clear();
         }
-        eclipticSeasons$shouldReplaceOriginalGrassModel = false;
-        eclipticSeasons$shouldCollectBakeQuads = false;
-        eclipticSeasons$snowModel = null;
+        eclipticseasons$shouldReplaceOriginalGrassModel = false;
+        eclipticseasons$shouldCollectBakeQuads = false;
+        eclipticseasons$snowModel = null;
+        eclipticseasons$cancelDowngradedPass = false;
+    }
+
+    @Inject(
+            method = "release",
+            at = @At(value = "TAIL")
+    )
+    private void eclipticseasons$release_end(CallbackInfo ci) {
+        eclipticseasons$esContext = null;
     }
 
     // TODO:这里缓存xyz顶点和光照信息，然后交给下一级构建，或者想办法还原bakequad。
@@ -134,24 +201,47 @@ public abstract class MixinBlockRenderer extends AbstractBlockRenderContext impl
             at = @At(value = "HEAD")
     )
     private void eclipticseasons$processQuad_cacheQuad(MutableQuadViewImpl quad, CallbackInfo ci) {
-        if (eclipticSeasons$shouldCollectBakeQuads) {
-            eclipticSeasons$bakedQuads.add(quad.toBakedQuad(quad.sprite(SpriteFinderCache.forBlockAtlas())));
-            // EclipticSeasons.logger(eclipticSeasons$bakedQuads.stream().map(BakedQuad::getDirection).toList());
+        if (eclipticseasons$shouldCollectBakeQuads) {
+            TextureAtlasSprite sprite = quad.sprite(SpriteFinderCache.forBlockAtlas());
+            // if( SpriteUtil.INSTANCE.hasAnimation(sprite))
+            // SpriteUtil.INSTANCE.markSpriteActive(sprite);
+            eclipticseasons$bakedQuads.add(quad.toBakedQuad(sprite));
         }
+    }
+
+    @ModifyExpressionValue(
+            method = "bufferQuad",
+            at = @At(value = "INVOKE", target = "Lnet/caffeinemc/mods/sodium/client/render/chunk/compile/pipeline/BlockRenderer;attemptPassDowngrade(Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;Lnet/caffeinemc/mods/sodium/client/render/chunk/terrain/TerrainRenderPass;)Lnet/caffeinemc/mods/sodium/client/render/chunk/terrain/TerrainRenderPass;")
+    )
+    private TerrainRenderPass eclipticseasons$bufferQuad_cancelAttemptPassDowngrade(TerrainRenderPass original) {
+        if (eclipticseasons$cancelDowngradedPass) {
+            original = null;
+        }
+        return original;
     }
 
     @Override
     public BakedModel getSnowModel() {
-        return eclipticSeasons$snowModel;
+        return eclipticseasons$snowModel;
+    }
+
+    @Override
+    public void setShouldCollect(boolean shouldCollect) {
+        this.eclipticseasons$shouldCollectBakeQuads = shouldCollect;
+    }
+
+    @Override
+    public boolean shouldCollect() {
+        return this.eclipticseasons$shouldCollectBakeQuads;
     }
 
     @Override
     public List<BakedQuad> getCacheBakeQuad() {
-        return eclipticSeasons$bakedQuads;
+        return eclipticseasons$bakedQuads;
     }
 
     @Override
-    public void eclipticSeasons$bindCounter(SodiumBoard sodiumBoard) {
-        this.eclipticSeasons$chunkBuilderMeshingTask = sodiumBoard;
+    public void eclipticseasons$bindCounter(SodiumBoard sodiumBoard) {
+        this.eclipticseasons$chunkBuilderMeshingTask = sodiumBoard;
     }
 }

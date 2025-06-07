@@ -49,9 +49,9 @@ public abstract class MixinBlockRenderTask extends ChunkBuilderTask<ChunkBuildOu
     // }
 
     @Unique
-    private long eclipticSeasons$time = 0;
+    private long eclipticseasons$time = 0;
     @Unique
-    private long eclipticSeasons$countModel = 0;
+    private long eclipticseasons$countModel = 0;
 
     public MixinBlockRenderTask(RenderSection render, int time, Vector3dc absoluteCameraPos) {
         super(render, time, absoluteCameraPos);
@@ -62,7 +62,7 @@ public abstract class MixinBlockRenderTask extends ChunkBuilderTask<ChunkBuildOu
             at = @At(value = "RETURN")
     )
     private void eclipticseasons$compile_checkb(ChunkBuildContext buildContext, CancellationToken cancellationToken, CallbackInfoReturnable<ChunkBuildOutput> cir) {
-        long l = System.currentTimeMillis() - eclipticSeasons$time;
+        long l = System.currentTimeMillis() - eclipticseasons$time;
         if (l > ClientConfig.Debug.minChunkCompileWaringTime.getAsInt())
             EclipticSeasons.logger("WARNING",
                     Thread.currentThread().toString(),
@@ -70,11 +70,11 @@ public abstract class MixinBlockRenderTask extends ChunkBuilderTask<ChunkBuildOu
                     render.getPosition().center(),
                     render.getOriginX(), render.getOriginY(), render.getOriginZ(),
                     "Rebuild time: " + l,
-                    "Model check count: " + eclipticSeasons$countModel);
+                    "Model check count: " + eclipticseasons$countModel);
 
-        eclipticSeasons$time = 0;
-        eclipticSeasons$countModel = 0;
-        ((SodiumStatus) buildContext.cache.getBlockRenderer()).eclipticSeasons$bindCounter(null);
+        eclipticseasons$time = 0;
+        eclipticseasons$countModel = 0;
+        ((SodiumStatus) buildContext.cache.getBlockRenderer()).eclipticseasons$bindCounter(null);
     }
 
     @Inject(
@@ -82,14 +82,14 @@ public abstract class MixinBlockRenderTask extends ChunkBuilderTask<ChunkBuildOu
             at = @At(value = "HEAD")
     )
     private void eclipticseasons$compile_check(ChunkBuildContext buildContext, CancellationToken cancellationToken, CallbackInfoReturnable<ChunkBuildOutput> cir) {
-        eclipticSeasons$time = System.currentTimeMillis();
-        eclipticSeasons$countModel = 0;
-        ((SodiumStatus) buildContext.cache.getBlockRenderer()).eclipticSeasons$bindCounter(this);
+        eclipticseasons$time = System.currentTimeMillis();
+        eclipticseasons$countModel = 0;
+        ((SodiumStatus) buildContext.cache.getBlockRenderer()).eclipticseasons$bindCounter(this);
     }
 
     @Override
-    public void eclipticSeasons$addCount() {
-        eclipticSeasons$countModel++;
+    public void eclipticseasons$addCount() {
+        eclipticseasons$countModel++;
     }
 
     // @Inject(

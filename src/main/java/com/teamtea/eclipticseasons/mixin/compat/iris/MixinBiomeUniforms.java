@@ -33,8 +33,8 @@ public abstract class MixinBiomeUniforms {
             method = "lambda$addBiomeUniforms$2",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/biome/Biome;getPrecipitationAt(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/biome/Biome$Precipitation;")
     )
-    private static Biome.Precipitation ecliptic$addBiomeUniforms$2_precipitation(Biome instance, BlockPos pos, Operation<Biome.Precipitation> original, @Local(argsOnly = true) LocalPlayer localPlayer) {
-        if (EclipticUtil.useSolarWeather()) {
+    private static Biome.Precipitation eclipticseasons$addBiomeUniforms$2_precipitation(Biome instance, BlockPos pos, Operation<Biome.Precipitation> original, @Local(argsOnly = true) LocalPlayer localPlayer) {
+        if (EclipticUtil.hasLocalWeather(localPlayer.level())) {
             return WeatherManager.getPrecipitationAt(localPlayer.level(), instance, pos);
         } else return original.call(instance, pos);
     }

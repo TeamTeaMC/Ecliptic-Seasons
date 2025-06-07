@@ -1,23 +1,14 @@
 package com.teamtea.eclipticseasons.client.particle;
 
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.ParticleRenderType;
 import net.minecraft.client.particle.SpriteSet;
-import net.minecraft.client.particle.TerrainParticle;
 import net.minecraft.client.particle.TextureSheetParticle;
-import net.minecraft.client.renderer.texture.TextureAtlas;
-import net.minecraft.client.resources.model.Material;
-import net.minecraft.core.BlockPos;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.particles.ColorParticleOption;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.LeavesBlock;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import org.joml.Quaternionf;
 
 import java.util.List;
 
@@ -31,6 +22,7 @@ public class FallenLeavesParticle extends TextureSheetParticle {
     private float rotSpeed;
     private final float particleRandom;
     private final float spinAcceleration;
+
 
     public FallenLeavesParticle(ClientLevel clientLevel, double pX, double pY, double pZ, double pXSpeed, double pYSpeed, double pZSpeed, ColorParticleOption colorParticleOption, SpriteSet spriteSet) {
         super(clientLevel, pX, pY, pZ, pXSpeed, pYSpeed, pZSpeed);
@@ -47,6 +39,28 @@ public class FallenLeavesParticle extends TextureSheetParticle {
         this.gCol = colorParticleOption.getGreen();
         this.bCol = colorParticleOption.getBlue();
         this.setSprite(spriteSet.get(this.random));
+    }
+
+    public FallenLeavesParticle(ClientLevel clientLevel, double pX, double pY, double pZ, double pXSpeed, double pYSpeed, double pZSpeed, ColorParticleOption colorParticleOption, TextureAtlasSprite sprite) {
+        super(clientLevel, pX, pY, pZ, pXSpeed, pYSpeed, pZSpeed);
+        this.rotSpeed = (float) Math.toRadians(this.random.nextBoolean() ? -30.0D : 30.0D);
+        this.particleRandom = this.random.nextFloat();
+        this.spinAcceleration = (float) Math.toRadians(this.random.nextBoolean() ? -5.0D : 5.0D);
+        this.lifetime = 300;
+        this.gravity = 7.5E-4F;
+        float f = this.random.nextBoolean() ? 0.15F : 0.175F;
+        this.quadSize = f;
+        this.setSize(f, f);
+        this.friction = 1.0F;
+        this.rCol = colorParticleOption.getRed();
+        this.gCol = colorParticleOption.getGreen();
+        this.bCol = colorParticleOption.getBlue();
+        this.setSprite(sprite);
+    }
+
+    @Override
+    public void setSprite(TextureAtlasSprite sprite) {
+        super.setSprite(sprite);
     }
 
     @Override

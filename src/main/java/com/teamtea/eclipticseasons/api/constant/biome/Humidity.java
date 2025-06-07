@@ -4,11 +4,15 @@ package com.teamtea.eclipticseasons.api.constant.biome;
 import com.teamtea.eclipticseasons.api.constant.climate.BiomeRain;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.misc.ITranslatable;
+import com.teamtea.eclipticseasons.api.util.EclipticUtil;
+import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.world.level.biome.Biome;
+
+import java.util.Locale;
 
 public enum Humidity implements ITranslatable {
     ARID(ChatFormatting.RED, 0.9F),
@@ -30,7 +34,7 @@ public enum Humidity implements ITranslatable {
     }
 
     public String getName() {
-        return this.toString().toLowerCase();
+        return this.toString().toLowerCase(Locale.ROOT);
     }
 
     @Override
@@ -52,7 +56,12 @@ public enum Humidity implements ITranslatable {
         return humidity;
     }
 
+    @Deprecated(forRemoval = true)
     public Humidity above(int levelAttach) {
+        return cycle(levelAttach);
+    }
+
+    public Humidity cycle(int levelAttach) {
         int ordinal = ordinal();
         if (ordinal + levelAttach < 0) {
             return ARID;
@@ -60,7 +69,7 @@ public enum Humidity implements ITranslatable {
         if (ordinal + levelAttach >= collectValues().length) {
             return HUMID;
         }
-        return collectValues()[ordinal + 1];
+        return collectValues()[ordinal + levelAttach];
     }
 
     @Deprecated
@@ -76,12 +85,16 @@ public enum Humidity implements ITranslatable {
         return Humidity.getHumid(Rainfall.getRainfallLevel(rainfall), Temperature.getTemperatureLevel(temperature));
     }
 
+    @Deprecated(forRemoval = true)
     public static Humidity getHumid(SolarTerm solarTerm, Holder<Biome> biomeHolder) {
-        float t = biomeHolder.value().getModifiedClimateSettings().temperature() + solarTerm.getTemperatureChange();
+        Biome biome = biomeHolder.value();
+        boolean serverInstance = BiomeClimateManager.isServerInstance(biome);
+        float t = EclipticUtil.getTemperatureFloatConstant(solarTerm, biome, serverInstance);
         BiomeRain biomeRain = solarTerm.getBiomeRain(biomeHolder);
-        float r = (biomeHolder.value().getModifiedClimateSettings().downfall() * 1.5f + biomeRain.getRainChane() * 0.5f) / 2f;
+        float r = (EclipticUtil.getDownfallFloatConstant(solarTerm,biome,serverInstance) * 1.5f + biomeRain.getRainChane() * 0.5f) / 2f;
         if (biomeHolder.is(BiomeTags.IS_SAVANNA) && biomeRain.getRainChane() > 0) {
-            r += 0.15f;
+            // r += 0.15f;
+            r += 0;
         }
         // float r = biomeHolder.value().getModifiedClimateSettings().downfall();
         // if(biomeHolder.is(BiomeTags.IS_SAVANNA)&&biomeRain.getRainChane()>0){

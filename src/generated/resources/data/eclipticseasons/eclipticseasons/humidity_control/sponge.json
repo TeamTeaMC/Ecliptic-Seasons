@@ -1,0 +1,14 @@
+{
+  "level": -1,
+  "checks": [],
+  "infinity": true,
+  "ingredient": {
+    "item": "minecraft:sponge",
+    "count": 1
+  },
+  "result": {
+    "id": "minecraft:wet_sponge",
+    "count": 1
+  },
+  "range": 4
+}

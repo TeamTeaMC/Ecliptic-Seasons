@@ -40,6 +40,10 @@ public class ESItemModelProvider extends ItemModelProvider {
         addSimple(ItemRegistry.broom.value());
         addSimple(ItemRegistry.ice_wand.value());
 
+        addSimple(ItemRegistry.seasonal_prayer_scroll_item.value());
+        addSimple(ItemRegistry.growth_detector.value());
+
+
         addSimple(ItemRegistry.pinwheel_blue_item.value(), "pinwheel_blue_item");
         addSimple(ItemRegistry.pinwheel_lime_item.value(), "pinwheel_lime_item");
         addSimple(ItemRegistry.pinwheel_orange_item.value(), "pinwheel_orange_item");
@@ -47,6 +51,14 @@ public class ESItemModelProvider extends ItemModelProvider {
         addStandProperties(ItemRegistry.hygrometer.get(), Rainfall.collectValues().length);
         addStandProperties(ItemRegistry.hyetometer.get(), Humidity.collectValues().length);
         addStandProperties(ItemRegistry.thermometer.get(), Temperature.collectValues().length);
+
+        withExistingParent(itemName(ItemRegistry.spring_greenhouse_essence_item.get()),resourceItem("empty"));
+        withExistingParent(itemName(ItemRegistry.summer_greenhouse_essence_item.get()),resourceItem("empty"));
+        withExistingParent(itemName(ItemRegistry.autumn_greenhouse_essence_item.get()),resourceItem("empty"));
+        withExistingParent(itemName(ItemRegistry.winter_greenhouse_essence_item.get()),resourceItem("empty"));
+
+        withExistingParent(resourceItem(ItemRegistry.block_in_wooden_grate_block_item.getId().getPath()).getPath(),
+                resourceBlock(ItemRegistry.block_in_wooden_grate_block_item.getId().getPath()));
 
     }
 
@@ -91,4 +103,7 @@ public class ESItemModelProvider extends ItemModelProvider {
         }
     }
 
+    public ResourceLocation resourceBlock(String path) {
+        return EclipticSeasons.rl("block/" + path);
+    }
 }

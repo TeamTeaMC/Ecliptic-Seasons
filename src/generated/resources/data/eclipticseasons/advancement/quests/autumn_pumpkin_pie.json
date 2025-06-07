@@ -1,0 +1,53 @@
+{
+  "parent": "eclipticseasons:quests/autumn_jack_o_lantern",
+  "criteria": {
+    "core_require": {
+      "conditions": {
+        "item": {
+          "items": "minecraft:pumpkin_pie"
+        },
+        "player": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {}
+          }
+        ]
+      },
+      "trigger": "minecraft:using_item"
+    },
+    "parent_need": {
+      "conditions": {
+        "parent": "eclipticseasons:quests/autumn_jack_o_lantern"
+      },
+      "trigger": "eclipticseasons:parent"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancement.eclipticseasons.autumn_pumpkin_pie.desc"
+    },
+    "icon": {
+      "count": 1,
+      "id": "minecraft:pumpkin_pie"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "advancement.eclipticseasons.autumn_pumpkin_pie"
+    }
+  },
+  "requirements": [
+    [
+      "parent_need"
+    ],
+    [
+      "core_require"
+    ]
+  ],
+  "rewards": {
+    "loot": [
+      "eclipticseasons:gifts/autumn_greenhouse_essence"
+    ]
+  },
+  "sends_telemetry_event": true
+}

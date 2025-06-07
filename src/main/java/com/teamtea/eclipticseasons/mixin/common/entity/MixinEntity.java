@@ -6,6 +6,8 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.BlockParticleOption;
+import net.minecraft.core.particles.ParticleType;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
@@ -25,11 +27,21 @@ public abstract class MixinEntity {
     @WrapOperation(at = {@At(value = "INVOKE",
             target = "Lnet/minecraft/world/level/block/state/BlockState;getSoundType(Lnet/minecraft/world/level/LevelReader;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/entity/Entity;)Lnet/minecraft/world/level/block/SoundType;")},
             method = {"playStepSound"})
-    public SoundType ecliptic$playStepSound(BlockState instance, LevelReader levelReader, BlockPos blockPos, Entity entity, Operation<SoundType> original, @Local(argsOnly = true) BlockPos pos, @Local(argsOnly = true) BlockState state) {
+    public SoundType eclipticseasons$playStepSound(BlockState instance, LevelReader levelReader, BlockPos blockPos, Entity entity, Operation<SoundType> original, @Local(argsOnly = true) BlockPos pos, @Local(argsOnly = true) BlockState state) {
         if (EclipticSeasonsApi.getInstance().isSnowyBlock(this.level, state, pos))
-            return Blocks.SNOW_BLOCK.defaultBlockState().getSoundType(this.level, pos, entity);
+            return Blocks.SNOW.defaultBlockState().getSoundType(this.level, pos, entity);
         return original.call(instance, levelReader, blockPos, entity);
     }
 
+    @WrapOperation(at = {@At(value = "NEW",
+            target = "(Lnet/minecraft/core/particles/ParticleType;Lnet/minecraft/world/level/block/state/BlockState;)Lnet/minecraft/core/particles/BlockParticleOption;")},
+            method = {"spawnSprintParticle"})
+    public BlockParticleOption eclipticseasons$spawnSprintParticle_snow(ParticleType<BlockParticleOption> type, BlockState state,Operation<BlockParticleOption> original, @Local(ordinal = 0) BlockPos pos) {
+        if (EclipticSeasonsApi.getInstance().isSnowyBlock(level, state, pos))
+        {
+            state=Blocks.SNOW.defaultBlockState();
+        }
+        return original.call(type,state);
+    }
 
 }

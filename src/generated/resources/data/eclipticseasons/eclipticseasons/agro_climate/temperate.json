@@ -1,0 +1,40 @@
+{
+  "seasonal_signal_durations": [
+    {
+      "spring": 6
+    },
+    {
+      "summer": 6
+    },
+    {
+      "autumn": 6
+    },
+    {
+      "winter": 6
+    }
+  ],
+  "biomes": {
+    "values": [
+      {
+        "values": [
+          "#c:is_overworld",
+          "#c:is_void"
+        ],
+        "type": "neoforge:or"
+      },
+      {
+        "value": "#c:is_cold/overworld",
+        "type": "neoforge:not"
+      },
+      {
+        "value": "#c:is_hot/overworld",
+        "type": "neoforge:not"
+      },
+      {
+        "value": "#c:is_desert",
+        "type": "neoforge:not"
+      }
+    ],
+    "type": "neoforge:and"
+  }
+}

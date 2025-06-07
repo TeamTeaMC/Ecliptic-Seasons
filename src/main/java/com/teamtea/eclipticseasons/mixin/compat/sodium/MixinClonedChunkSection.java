@@ -20,26 +20,26 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class MixinClonedChunkSection implements ISnowyGetter {
 
     @Unique
-    private SnowyRemover eclipticSeasons$snowyRemover;
+    private SnowyRemover eclipticseasons$snowyRemover;
 
     @Unique
-    private BiomeHolder eclipticSeasons$biomeHolder;
+    private BiomeHolder eclipticseasons$biomeHolder;
     @Inject(
             method = "<init>",
             at = @At(value = "RETURN")
     )
     private void eclipticseasons$init(Level level, LevelChunk chunk, LevelChunkSection section, SectionPos pos, CallbackInfo ci) {
-        eclipticSeasons$snowyRemover=chunk.getData(AttachmentRegistry.SNOWY_REMOVER);
-        eclipticSeasons$biomeHolder=chunk.getData(AttachmentRegistry.BIOME_HOLDER);
+        eclipticseasons$snowyRemover=chunk.getData(AttachmentRegistry.SNOWY_REMOVER);
+        eclipticseasons$biomeHolder=chunk.getData(AttachmentRegistry.BIOME_HOLDER);
     }
 
     @Override
     public SnowyRemover getSnowyRemover() {
-        return eclipticSeasons$snowyRemover;
+        return eclipticseasons$snowyRemover;
     }
 
     @Override
     public BiomeHolder getBiomeHolder() {
-        return eclipticSeasons$biomeHolder;
+        return eclipticseasons$biomeHolder;
     }
 }

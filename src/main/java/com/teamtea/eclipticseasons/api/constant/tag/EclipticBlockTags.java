@@ -2,7 +2,6 @@ package com.teamtea.eclipticseasons.api.constant.tag;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
 
@@ -13,6 +12,14 @@ public class EclipticBlockTags {
     public static final TagKey<Block> HABITAT_FIREFLY = create("habitat/firefly");
 
     public static final TagKey<Block> SNOW_OVERLAY_CANNOT_SURVIVE_ON =  create("snow_overlay_cannot_survive_on");
+
+    public static final TagKey<Block> SOFT_HEAT_SOURCES =  create("soft_heat_sources");
+
+    public static final TagKey<Block> DARK_GROW_PLANTS = create("dark_grow_plants");
+
+    public static final TagKey<Block> NATURAL_PLANTS = create("natural_plants");
+    public static final TagKey<Block> VOLATILE_PLANTS = create("volatile_plants");
+
     public static TagKey<Block> create(String s) {
         return TagKey.create(Registries.BLOCK, EclipticSeasons.rl(s));
     }

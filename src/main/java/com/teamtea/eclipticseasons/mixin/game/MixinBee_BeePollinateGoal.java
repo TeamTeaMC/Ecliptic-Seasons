@@ -21,7 +21,7 @@ public class MixinBee_BeePollinateGoal {
 
 
     @Inject(at = {@At("RETURN")}, method = {"canBeeUse","canBeeContinueToUse"}, cancellable = true)
-    public void ecliptic$canBeeUse(CallbackInfoReturnable<Boolean> cir) {
+    public void eclipticseasons$canBeeUse(CallbackInfoReturnable<Boolean> cir) {
         if (cir.getReturnValue()) {
             if(AnimalHooks.cancelBeePollinate(this$0)){
                 cir.setReturnValue(false);

@@ -24,7 +24,6 @@ public class LazyGet<T> {
         return lock;
     }
 
-
     public void ifPresent(Consumer<T> consumer) {
         consumer.accept(get());
     }

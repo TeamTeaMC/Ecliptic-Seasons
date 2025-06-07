@@ -23,7 +23,7 @@ public abstract class SimpleEntityBlock extends BaseEntityBlock {
 
 
 	@Nullable
-	protected static <E extends BlockEntity, A extends
+    public static <E extends BlockEntity, A extends
 			BlockEntity> BlockEntityTicker<A> createTickerHelper(BlockEntityType<A> entityType, BlockEntityType<E> entityType1, BlockEntityTicker<? super E> ticker) {
 
 		return entityType1 == entityType ? (BlockEntityTicker<A>) ticker : null;

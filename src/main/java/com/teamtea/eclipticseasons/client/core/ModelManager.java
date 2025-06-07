@@ -1,48 +1,65 @@
 package com.teamtea.eclipticseasons.client.core;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
-import com.teamtea.eclipticseasons.api.constant.solar.Season;
-import com.teamtea.eclipticseasons.api.constant.tag.ClimateTypeBiomeTags;
-import com.teamtea.eclipticseasons.api.misc.IBiomeTagHolder;
-import com.teamtea.eclipticseasons.api.misc.IBlockStateFlagger;
+import com.teamtea.eclipticseasons.api.data.client.model.ESModelLoadedJson;
+import com.teamtea.eclipticseasons.api.data.client.model.seasonal.SeasonBlockDefinition;
+import com.teamtea.eclipticseasons.api.data.client.model.ModelResolver;
+import com.teamtea.eclipticseasons.api.data.client.model.ModelTester;
+import com.teamtea.eclipticseasons.api.data.season.SnowDefinition;
+import com.teamtea.eclipticseasons.api.misc.client.IMapSliceProvider;
 import com.teamtea.eclipticseasons.api.misc.client.IMapSlice;
 import com.teamtea.eclipticseasons.api.misc.client.ISnowyBlockState;
 import com.teamtea.eclipticseasons.client.model.*;
+import com.teamtea.eclipticseasons.client.model.bakequad.*;
+import com.teamtea.eclipticseasons.client.reload.ClientJsonCacheListener;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
+import com.teamtea.eclipticseasons.client.util.ClientRef;
+import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.core.map.SnowyRemover;
+import com.teamtea.eclipticseasons.common.core.snow.SnowChecker;
 import com.teamtea.eclipticseasons.common.registry.BlockRegistry;
 import com.teamtea.eclipticseasons.compat.CompatModule;
-import com.teamtea.eclipticseasons.compat.yuushya.YuushyaChecker;
+import com.teamtea.eclipticseasons.compat.ctm.CtmLoader;
+import com.teamtea.eclipticseasons.compat.ctm.CtmProperties;
 import com.teamtea.eclipticseasons.config.ClientConfig;
 
+import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.BlockModelShaper;
 import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.texture.SpriteContents;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.inventory.InventoryMenu;
-import net.minecraft.world.level.BlockAndTintGetter;
-import net.minecraft.world.level.EmptyBlockGetter;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LightLayer;
+import net.minecraft.world.level.*;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Half;
 import net.minecraft.world.level.block.state.properties.StairsShape;
+import net.minecraft.world.level.levelgen.Heightmap;
+import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.client.ChunkRenderTypeSet;
 import net.neoforged.neoforge.client.model.data.ModelData;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.function.BiConsumer;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 // https://github.com/DoubleNegation/CompactOres/blob/1.18/src/main/java/doublenegation/mods/compactores/CompactOresResourcePack.java#L164
@@ -59,21 +76,29 @@ public class ModelManager {
     public static ModelResourceLocation snowySlabBottom = new ModelResourceLocation(BlockRegistry.snowySlab.getId(), "type=bottom,waterlogged=false");
     public static ModelResourceLocation snowOverlayBlock = new ModelResourceLocation(BlockRegistry.snowyBlock.getId(), "");
 
-    public static BlockState LIGHT_0;
 
     public static ModelResourceLocation snowy_custom = mrl("block/snowy_custom");
     public static ModelResourceLocation stairs_top = mrl("block/stairs_top");
+
+    public static ModelResourceLocation snowy_leaves_attach = mrl("block/snowy_leaves_attach");
+    public static ModelResourceLocation snowy_leaves_top = mrl("block/snowy_leaves_top");
+
     public static ModelResourceLocation snowy_fern = mrl("block/snowy_fern");
     public static ModelResourceLocation snowy_grass = mrl("block/snowy_grass");
     public static ModelResourceLocation snowy_large_fern_bottom = mrl("block/snowy_large_fern_bottom");
     public static ModelResourceLocation snowy_large_fern_top = mrl("block/snowy_large_fern_top");
     public static ModelResourceLocation snowy_tall_grass_bottom = mrl("block/snowy_tall_grass_bottom");
     public static ModelResourceLocation snowy_tall_grass_top = mrl("block/snowy_tall_grass_top");
+
     public static ModelResourceLocation overlay_2 = mrl("block/overlay_2");
     public static ModelResourceLocation snow_height2 = mrl("block/snow_height2");
     public static ModelResourceLocation snow_height2_top = mrl("block/snow_height2_top");
     public static ModelResourceLocation grass_flower = mrl("block/grass_flower");
-    public static List<ModelResourceLocation> flower_on_grass = Stream.of(1, 2, 3, 4, 5, 6).map(i -> mrl("block/flower_%s".formatted(i))).toList();
+    public static List<ModelResourceLocation> flower_on_grass = Stream.of(1, 2, 3, 4, 5, 6).map(i -> mrl("block/flower_%s".formatted(i))).collect(Collectors.toCollection(ArrayList::new));
+    public static List<ModelResourceLocation> snow_edge_overlays = IntStream.rangeClosed(0, 18).mapToObj(i -> mrl("block/snow_edge/snow_edge_overlay_%s".formatted(i))).collect(Collectors.toCollection(ArrayList::new));
+    public static List<ModelResourceLocation> fourleaf_clovers = IntStream.rangeClosed(0, 6).mapToObj(i -> mrl("block/fourleaf_clover/fourleaf_clover_%s".formatted(i))).collect(Collectors.toCollection(ArrayList::new));
+
+    // public static ModelResourceLocation fourleaf_clover = mrl("block/fourleaf_clover");
 
     public static ResourceLocation snow = ResourceLocation.withDefaultNamespace("block/snow");
     public static ResourceLocation snow_overlay_half_left = textureRL("snow_overlay_half_left");
@@ -85,6 +110,10 @@ public class ModelManager {
 
     public static ModelResourceLocation mrl(String s) {
         return ModelResourceLocation.standalone(EclipticSeasons.rl(s));
+    }
+
+    public static ModelResourceLocation snow_mrl(ResourceLocation resourceLocation, String v) {
+        return ModelResourceLocation.standalone(resourceLocation.withPrefix("extra/" + (v.isEmpty() ? "" : v + "/")));
     }
 
     public static ResourceLocation textureRL(String s) {
@@ -115,53 +144,137 @@ public class ModelManager {
     // public static Map<BakedModel, Integer> snowyModelsCache = new IdentityHashMap<>();
     // public static Map<BlockState, BakedModel> stateModelsCache = new IdentityHashMap<>();
 
+    public static Map<Block, CtmProperties> ctmStates = new IdentityHashMap<>();
+    public static Map<ResourceLocation, Void> ctmTiles = new HashMap<>();
+
+    public static boolean isSpecialCTMBlock(BlockState blockState) {
+        if (ctmStates.isEmpty()) return false;
+        CtmProperties orDefault = ctmStates.getOrDefault(blockState.getBlock(), null);
+        return orDefault != null && orDefault.matches(blockState);
+    }
+
+    public static boolean isSpecialCTMSprite(TextureAtlasSprite sprite) {
+        if (ctmTiles.isEmpty()) return false;
+        try {
+            SpriteContents spriteContents = sprite.contents();
+            return ctmTiles.containsKey(spriteContents.name());
+        } catch (Exception exception) {
+            EclipticSeasons.logger(exception);
+        }
+        return false;
+    }
+
+    public static void initCTMDetected() {
+        long l = System.currentTimeMillis();
+        ctmStates.clear();
+        ctmTiles.clear();
+
+        CtmLoader.CTMLoadingResult ctmLoadingResult = CtmLoader.loadAll(Minecraft.getInstance().getResourceManager());
+        ctmStates = ctmLoadingResult.ctmStates;
+        ctmTiles = ctmLoadingResult.ctmTiles;
+
+        EclipticSeasons.logger("CTM detector cost %s ms".formatted(System.currentTimeMillis() - l));
+    }
+
     public static BakedModel getSnowyModel(BlockState state, BlockState snowState, int flag, int offset) {
         ISnowyBlockState snowyBlockState = (ISnowyBlockState) state;
         // BakedModel snowModel = stateModelsCache.getOrDefault(state, null);
-        BakedModel snowModel = snowyBlockState.getSnowyModel(loadVersion);
+        boolean notSpecialLeaves = !(
+                (leaveLike(flag))
+                        && snowState == null);
+        BakedModel snowModel = notSpecialLeaves ?
+                snowyBlockState.getSnowyModel(loadVersion) : snowyBlockState.getSnowyModel2(loadVersion);
         if (snowModel == null) {
             Block onBlock = state.getBlock();
-            if (flag == MapChecker.FLAG_BLOCK) {
-                snowModel = models.get(snowOverlayBlock);
-            } else if (flag == MapChecker.FLAG_LEAVES) {
-                snowModel = models.get(snowOverlayLeaves);
-            } else if (flag == MapChecker.FLAG_SLAB) {
-                snowModel = models.get(snowySlabBottom);
-            } else if (flag == MapChecker.FLAG_STAIRS_TOP) {
-                snowModel = models.get(stairs_top);
-            } else if (flag == MapChecker.FLAG_STAIRS) {
-                if (snowState != null) snowModel = models.get(BlockModelShaper.stateToModelLocation(snowState));
-            } else if (flag == MapChecker.FLAG_GRASS) {
-                if (onBlock == Blocks.SHORT_GRASS) {
-                    snowModel = models.get(snowy_grass);
-                } else if (onBlock == Blocks.FERN) {
-                    snowModel = models.get(snowy_fern);
-                } else snowModel = models.get(snowy_grass);
-            } else if (flag == MapChecker.FLAG_GRASS_LARGE) {
-                if (onBlock == Blocks.TALL_GRASS) {
-                    snowModel = models.get(offset == 1 ? snowy_tall_grass_bottom : snowy_tall_grass_top);
-                } else if (onBlock == Blocks.LARGE_FERN) {
-                    snowModel = models.get(offset == 1 ? snowy_large_fern_bottom : snowy_large_fern_top);
-                } else snowModel = models.get(offset == 1 ? snowy_tall_grass_bottom : snowy_tall_grass_top);
-            } else if (flag == MapChecker.FLAG_FARMLAND) {
-                snowModel = models.get(snow_height2_top);
-                // snowModel = snowOverlayBlock.resolve().get();
-            } else if (flag == MapChecker.FLAG_CUSTOM) {
-                snowModel = models.get(snowy_custom);
+            boolean forceReplace = false;
+
+            // **************************
+            // es patch for client override
+            List<SnowDefinition> snowDefinitions = ClientRef.snowClientDef.get(onBlock);
+            if (snowDefinitions != null && !snowDefinitions.isEmpty()) {
+                for (SnowDefinition snowDefinition : snowDefinitions) {
+                    ResourceLocation cinfo =
+                            notSpecialLeaves ? snowDefinition.getInfo().getMid() :
+                                    snowDefinition.getInfo().getMid2();
+                    ModelResolver smr = extraSnowModelBuilds.get(cinfo);
+                    if (smr != null) {
+                        var mmrl = smr.tryFind(state);
+                        if (mmrl != null) {
+                            snowModel = models.get(mmrl.modelResourceLocation());
+                            forceReplace = mmrl.replace();
+                            break;
+                        }
+                    }
+                }
             }
-            if (YuushyaChecker.isyuushyaContinuityBlock(state)) {
-                snowModel = models.get(snowy_custom);
+            // **************************
+
+            if (snowModel == null) {
+                if (flag == MapChecker.FLAG_BLOCK) {
+                    snowModel = models.get(snowOverlayBlock);
+                } else if (flag == MapChecker.FLAG_LEAVES) {
+                    snowModel = !ClientConfig.Renderer.snowyTree.get() ?
+                            models.get(snowOverlayLeaves) :
+                            notSpecialLeaves ? models.get(snowy_leaves_top) : models.get(snowy_leaves_attach);
+                } else if (flag == MapChecker.FLAG_SLAB) {
+                    snowModel = models.get(snowySlabBottom);
+                } else if (flag == MapChecker.FLAG_STAIRS_TOP) {
+                    snowModel = models.get(stairs_top);
+                } else if (flag == MapChecker.FLAG_STAIRS) {
+                    if (snowState != null) snowModel = models.get(BlockModelShaper.stateToModelLocation(snowState));
+                } else if (flag == MapChecker.FLAG_GRASS) {
+                    if (onBlock == Blocks.SHORT_GRASS) {
+                        snowModel = models.get(snowy_grass);
+                    } else if (onBlock == Blocks.FERN) {
+                        snowModel = models.get(snowy_fern);
+                    } else snowModel = models.get(snowy_grass);
+                } else if (flag == MapChecker.FLAG_GRASS_LARGE) {
+                    if (onBlock == Blocks.TALL_GRASS) {
+                        snowModel = models.get(offset == 1 ? snowy_tall_grass_bottom : snowy_tall_grass_top);
+                    } else if (onBlock == Blocks.LARGE_FERN) {
+                        snowModel = models.get(offset == 1 ? snowy_large_fern_bottom : snowy_large_fern_top);
+                    } else snowModel = models.get(offset == 1 ? snowy_tall_grass_bottom : snowy_tall_grass_top);
+                } else if (flag == MapChecker.FLAG_VINE) {
+                    if (snowState != null) snowModel = models.get(BlockModelShaper.stateToModelLocation(snowState));
+                } else if (flag == MapChecker.FLAG_FARMLAND) {
+                    snowModel = models.get(snow_height2_top);
+                    // snowModel = snowOverlayBlock.resolve().get();
+                } else if (flag == MapChecker.FLAG_CUSTOM) {
+                    snowModel = models.get(snowy_custom);
+                } else if (flag == MapChecker.FLAG_CUSTOM_JSON
+                        | flag == MapChecker.FLAG_CUSTOM_JSON_PLANTS
+                        || flag == MapChecker.FLAG_CUSTOM_JSON_VINE_LIKE
+                        || flag == MapChecker.FLAG_CUSTOM_JSON_WITH_TOP
+                        || flag == MapChecker.FLAG_CUSTOM_JSON_WITH_TOP_LEAVES) {
+                    SnowDefinition.Info uncacheSnow = SnowChecker.getUncacheSnow(state);
+                    ResourceLocation cinfo =
+                            notSpecialLeaves ? uncacheSnow.getMid() : uncacheSnow.getMid2();
+                    ModelResolver smr = extraSnowModelBuilds.get(cinfo);
+                    if (smr != null) {
+                        var mmrl = smr.tryFind(state);
+                        if (mmrl != null) {
+                            snowModel = models.get(mmrl.modelResourceLocation());
+                            forceReplace = mmrl.replace();
+                        }
+                    }
+                }
             }
+
+
             if (snowModel != null) {
                 // stateModelsCache.putIfAbsent(snowState, snowModel);
                 SnowyBakedModelWrapper<?> bakedModel =
                         snowModel instanceof SnowyBakedModelWrapper<?> ?
                                 (SnowyBakedModelWrapper<?>) snowModel :
                                 new SnowyBakedModelWrapper<>(snowModel);
-                if (SnowyBakedModelWrapper.isInvalid(bakedModel))
+                bakedModel.setReplace(forceReplace);
+                if (ISnowyReplaceModel.isInvalid(bakedModel)) {
                     bakedModel.updateBlockType(flag);
-                snowyBlockState.setSnowyModel(
-                        bakedModel, loadVersion);
+                    bakedModel.setLowLayer(!notSpecialLeaves);
+                }
+                if (notSpecialLeaves)
+                    snowyBlockState.setSnowyModel(bakedModel, loadVersion);
+                else snowyBlockState.setSnowyModel2(bakedModel, loadVersion);
             }
 
             // if (snowModel != null) {
@@ -176,58 +289,83 @@ public class ModelManager {
 
     // TODO：关于覆盖cutout面的问题，似乎可以给纹理加一个半透明像素，然后用cutout渲染就能正常覆盖了
     public static List<BakedQuad> cancelTop(@Nullable BakedModel bakedModel, @Nonnull BlockAndTintGetter blockAndTintGetter, @Nonnull BlockState state, @Nonnull BlockPos pos, @Nullable Direction direction, @Nonnull RandomSource random, long seed, @Nonnull List<BakedQuad> original, @Nullable List<BakedQuad> cache, @Nullable BakedModel snowModel) {
-        if (bakedModel != null
-                && !original.isEmpty()
-                && (direction == Direction.UP || direction == null)
-                && !(bakedModel instanceof SnowyBakedModelWrapper)
-        ) {
-            random.setSeed(seed);
-            // blockAndTintGetter 现在优化以后可以用来处理了
-            if (snowModel == null)
-                snowModel = ModelManager.findModel(blockAndTintGetter, pos, state, random, seed, posToMutable(pos));
+        if (FMLEnvironment.production)
+            if (bakedModel != null
+                    && !original.isEmpty()
+                    && (direction == Direction.UP || direction == null)
+                    && !(IESReplaceModel.isInvalid(bakedModel))
+                    && blockAndTintGetter instanceof IMapSliceProvider
+            ) {
+                random.setSeed(seed);
+                // blockAndTintGetter 现在优化以后可以用来处理了
+                if (snowModel == null)
+                    snowModel = ModelManager.findModel(blockAndTintGetter, pos, state, random, seed, posToMutable(pos));
 
-            if (snowModel instanceof SnowyBakedModelWrapper) {
-                int blockType = getBlockTypeFlag(blockAndTintGetter, pos, state);
-                if (blockType == MapChecker.FLAG_CUSTOM)
-                    return original;
-                if (direction == Direction.UP) {
-                    if (blockType == MapChecker.FLAG_BLOCK) return EMPTY;
-                }
-
-
-                // fabric 连接纹理用到了后处理，此处如果不返回给它就会停止渲染
-                if (YuushyaChecker.isyuushyaContinuityBlock(state)) {
-                    if (blockType == MapChecker.FLAG_STAIRS
-                            || blockType == MapChecker.FLAG_SLAB)
+                if (snowModel instanceof SnowyBakedModelWrapper) {
+                    int blockType = MapChecker.getBlockTypeFlag(blockAndTintGetter, pos, state);
+                    if (blockType == MapChecker.FLAG_CUSTOM)
                         return original;
-                }
+                    if (blockType == MapChecker.FLAG_LEAVES || blockType == MapChecker.FLAG_VINE)
+                        return original;
+                    if (direction == Direction.UP) {
+                        if (blockType == MapChecker.FLAG_BLOCK) return EMPTY;
+                    }
 
-                if (original.size() == 1) {
-                    if (original.getFirst().getDirection() == Direction.UP) return EMPTY;
-                } else {
-                    original = new ArrayList<>(original);
-                    for (int i = 0; i < original.size(); i++) {
-                        BakedQuad bakedQuad = original.get(i);
-                        if (bakedQuad.getDirection() == Direction.UP) {
-                            original.remove(i);
-                            i--;
+
+                    if (original.size() == 1) {
+                        if (original.getFirst().getDirection() == Direction.UP) return EMPTY;
+                    } else {
+                        original = new ArrayList<>(original);
+                        for (int i = 0; i < original.size(); i++) {
+                            BakedQuad bakedQuad = original.get(i);
+                            if (bakedQuad.getDirection() == Direction.UP) {
+                                original.remove(i);
+                                i--;
+                            }
                         }
                     }
-                }
 
+                }
             }
-        }
 
 
         if (bakedModel instanceof SnowyBakedModelWrapper) {
 
 
-            int blockType = getBlockTypeFlag(blockAndTintGetter, pos, state);
+            int blockType = MapChecker.getBlockTypeFlag(blockAndTintGetter, pos, state);
             if (blockType == MapChecker.FLAG_CUSTOM) {
                 original = new ArrayList<>();
             }
 
-            boolean yuushyaBlock = YuushyaChecker.isyuushyaContinuityBlock(state);
+
+            // if (!FMLEnvironment.production)
+            // if (blockType == MapChecker.FLAG_BLOCK) {
+            //     {
+            //         if (original.size() == 1) {
+            //             if (blockAndTintGetter instanceof IMapSlice cmapSlice) {
+            //                 byte snowDepth = WeatherManager.getBiomeList(ClientCon.getUseLevel()).get(cmapSlice.getSurfaceFaceBiomeId(pos)).snowDepth;
+            //                 if (snowDepth < 51) {
+            //
+            //                     if (direction == Direction.UP) {
+            //                         original = List.of(new BakedQuadRetextured(original.get(0),
+            //                                 getSprite(textureRL(
+            //                                         snowDepth < 26 ? "snow_small" : "snow_middle")
+            //                                 )));
+            //
+            //                     } else {
+            //                         original = EMPTY;
+            //                     }
+            //                 }
+            //             }
+            //         }
+            //
+            //     }
+            // }
+
+            boolean yuushyaBlock = false;
+            // TODO:完善CTM支持
+            yuushyaBlock |= cache != null && !cache.isEmpty();
+            yuushyaBlock &= blockType != MapChecker.FLAG_LEAVES && blockType != MapChecker.FLAG_VINE;
             boolean sodiumStairs = ((blockType == MapChecker.FLAG_STAIRS || blockType == MapChecker.FLAG_STAIRS_TOP)
                     && CompatModule.isSodium() && state.getBlock() instanceof StairBlock);
             if (blockType == MapChecker.FLAG_CUSTOM
@@ -435,42 +573,13 @@ public class ModelManager {
 
         if (!original.isEmpty()
                 && direction != null
-                && getBlockTypeFlag(blockAndTintGetter, pos, state) == MapChecker.FLAG_LEAVES) {
-            if (!(bakedModel instanceof SnowyBakedModelWrapper<?>)) {
-                if (direction != Direction.UP && direction != Direction.DOWN) {
-                    original = new ArrayList<>(original);
-                    original.add(new BakedQuadRetextured(original.getFirst(), getSprite(snow_spot_overlay_leaves)));
-                }
-
-                // TODO：秋天按几率萧瑟
-                int index = Math.abs(((int) (seed + pos.getX())) % 8);
-                if ((index)>0
-                        &&blockAndTintGetter.getBlockState(pos.relative(direction)).is(state.getBlock())) {
-                    original = new ArrayList<>();
-                }
-            } else {
-                if (MapChecker.getHeight(Minecraft.getInstance().level, pos) != pos.getY()) {
-                    original = new ArrayList<>();
-                } else {
-                    if (direction != Direction.UP) {
-                        var cc = new ArrayList<BakedQuad>();
-                        cc.add(new BakedQuadRetextured(original.getFirst(), getSprite(textureRL("snow_overlay_leaves_top"))));
-
-                        // cc.add(new BakedQuadRetextured(original.getFirst(), getSprite(snow_overlay)));
-                        original = cc;
-                    }
-                }
+                && MapChecker.getBlockTypeFlag(blockAndTintGetter, pos, state) == MapChecker.FLAG_LEAVES) {
+            // TODO：秋天按几率萧瑟
+            int index = Math.abs(((int) (seed + pos.getX())) % 8);
+            if ((index) > 0
+                    && blockAndTintGetter.getBlockState(pos.relative(direction)).is(state.getBlock())) {
+                original = new ArrayList<>();
             }
-        }
-        if (state.getBlock() instanceof VineBlock
-                && !original.isEmpty()
-                && bakedModel instanceof SnowyBakedModelWrapper<?>
-        ) {
-            var cc = new ArrayList<BakedQuad>();
-            for (int i = 0; i < original.size(); i++) {
-                cc.add(new BakedQuadRetextured(original.get(i), getSprite(textureRL("snow_overlay_vine"))));
-            }
-            original = cc;
         }
         return original;
     }
@@ -481,34 +590,64 @@ public class ModelManager {
         return new BlockPos.MutableBlockPos(pos.getX(), pos.getY(), pos.getZ());
     }
 
-    public static BakedModel findModel(BlockAndTintGetter blockAndTintGetter, BlockPos pos, BlockState state, RandomSource random, long seed, @Nullable BlockPos.MutableBlockPos checkPos) {
-        if (state.getBlock() instanceof LeavesBlock) {
-            return getSnowyModel(state, null, MapChecker.FLAG_LEAVES, 0);
-        }
-        if (state.getBlock() instanceof VineBlock ) {
-            return new SnowyBakedModelWrapper<>(models.get(BlockModelShaper.stateToModelLocation(state)));
-        }
+    // it meanes the block would have surface layer and below
+    public static boolean leaveLike(int flag) {
+        return flag == MapChecker.FLAG_LEAVES
+                || flag == MapChecker.FLAG_CUSTOM_JSON_WITH_TOP
+                || flag == MapChecker.FLAG_CUSTOM_JSON_WITH_TOP_LEAVES;
+    }
 
+    public static boolean vineLike(int flag) {
+        return flag == MapChecker.FLAG_VINE || flag == MapChecker.FLAG_CUSTOM_JSON_VINE_LIKE;
+    }
+
+    // todo other snow passible
+    public static boolean solidBlockLike(int flag) {
+        return flag == MapChecker.FLAG_BLOCK
+                || flag == MapChecker.FLAG_CUSTOM_JSON;
+    }
+
+    public static BakedModel findModel(BlockAndTintGetter blockAndTintGetter, BlockPos pos, BlockState state, RandomSource random, long seed, @Nullable BlockPos.MutableBlockPos checkPos) {
+        // if (!state.is(Blocks.LILY_PAD))
+        //     return null;
         Level level = Minecraft.getInstance().level;
-        BakedModel replace = null;
-        // 这里不需要担心，是因为我们给不符合要求的level默认返回一个0或者最低值-1
-        IMapSlice mapSlice = null;
-        if (blockAndTintGetter instanceof IMapSlice cmapSlice) {
-            mapSlice = cmapSlice;
-            int cut = mapSlice.getBlockHeight(pos) - pos.getY();
-            if (cut > 1 || cut < -3)
+        if (level == null) return null;
+        int flag = MapChecker.getBlockTypeFlag(blockAndTintGetter, pos, state);
+        List<SeasonBlockDefinition> seasonDefCache = null;
+        List<SnowDefinition> snowDefClientOverlay = null;
+        var onBlock = state.getBlock();
+
+        if (flag == 0) {
+            seasonDefCache = ClientRef.seasonDef.get(onBlock);
+            snowDefClientOverlay = ClientRef.snowClientDef.get(onBlock);
+            if (snowDefClientOverlay != null
+                    && snowDefClientOverlay.isEmpty()) snowDefClientOverlay = null;
+            if (seasonDefCache == null && snowDefClientOverlay == null)
                 return null;
         }
 
+        boolean leaveLike = leaveLike(flag);
+        boolean leavesOrVine = leaveLike || vineLike(flag);
 
-        if (level == null) return null;
+        BakedModel replace = null;
+        IMapSlice mapSlice = null;
+        if (blockAndTintGetter instanceof IMapSlice cmapSlice) {
+            mapSlice = cmapSlice;
+            if (!leavesOrVine) {
+                int cut = mapSlice.getBlockHeight(pos) - pos.getY();
+
+                if (cut > 1 || cut < -3)
+                    if (!ClientConfig.Renderer.snowUnderTree.get())
+                        return null;
+            }
+        }
 
 
-        var onBlock = state.getBlock();
         // int flag = MapChecker.getBlockType(state, blockAndTintGetter, pos);
-        int flag = getBlockTypeFlag(blockAndTintGetter, pos, state);
-        if (flag == 0) return null;
-        int offset = MapChecker.getSnowOffset(state, flag);
+
+        int offset = snowDefClientOverlay == null ?
+                MapChecker.getSnowOffset(state, flag) : snowDefClientOverlay.get(0).getInfo().getOffset();
+
 
         boolean isLight = false;
         if (checkPos == null) checkPos = posToMutable(pos);
@@ -524,13 +663,13 @@ public class ModelManager {
                     mapSlice.getBlockHeight(pos)
                     : MapChecker.getHeightOrUpdate(level, pos, false);
 
-            if (ClientConfig.Renderer.betterSnow.get()) {
-                if (flag == MapChecker.FLAG_BLOCK && pos.getY() == cacheHeight - 1) {
+            if (ClientConfig.Renderer.snowUnderFence.get()) {
+                if (solidBlockLike(flag) && pos.getY() == cacheHeight - 1) {
                     checkPos.setY(pos.getY() + 1);
                     BlockState aboveState = blockAndTintGetter.getBlockState(checkPos);
                     if (
                         // MapChecker.getBlockType(blockAndTintGetter.getBlockState(pos.above()), blockAndTintGetter, pos.above())
-                            getBlockTypeFlag(blockAndTintGetter, checkPos, aboveState)
+                            MapChecker.getBlockTypeFlag(blockAndTintGetter, checkPos, aboveState)
                                     == MapChecker.FLAG_CUSTOM
                                     && !(aboveState.getBlock() instanceof SlabBlock)
                                     && !(aboveState.getBlock() instanceof StairBlock)) {
@@ -547,7 +686,7 @@ public class ModelManager {
                                 checkPos.setY(pos.getY() + 1);
                                 BlockState neighbourState = blockAndTintGetter.getBlockState(checkPos);
                                 // 函数调用也是耗时
-                                int blockTypeFlag = getBlockTypeFlag(blockAndTintGetter, checkPos, neighbourState);
+                                int blockTypeFlag = MapChecker.getBlockTypeFlag(blockAndTintGetter, checkPos, neighbourState);
                                 if (blockTypeFlag == MapChecker.FLAG_CUSTOM
                                         && !(neighbourState.getBlock() instanceof SlabBlock)
                                         && !(neighbourState.getBlock() instanceof StairBlock)
@@ -560,31 +699,84 @@ public class ModelManager {
                     }
                 }
             }
-            isLight = cacheHeight == pos.getY() - offset;
+            isLight = cacheHeight <= pos.getY() - offset;
+        }
+
+        boolean specialLeaves = false;
+        if (!isLight && leavesOrVine && ClientConfig.Renderer.snowyTree.get()) {
+            if (blockAndTintGetter.getBrightness(LightLayer.SKY, checkPos) >= 9) {
+                int y_real = level.getHeight(Heightmap.Types.MOTION_BLOCKING, pos.getX(), pos.getZ()) - 1;
+                if (y_real <= pos.getY()
+                        || blockAndTintGetter.getBlockState(new BlockPos(pos.getX(), y_real, pos.getZ())).getShadeBrightness(blockAndTintGetter, pos) < 0.5f)
+                // if (level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, pos.getX(), pos.getZ()) >= pos.getY() + 1)
+                {
+                    isLight = true;
+                    if (leaveLike) {
+                        specialLeaves = true;
+                    }
+                }
+            }
+        }
+
+        if (!isLight && ClientConfig.Renderer.snowUnderTree.get()) {
+            checkPos.set(pos.getX(), pos.getY() + 1, pos.getZ());
+            if (blockAndTintGetter.getBrightness(LightLayer.SKY, checkPos) >= 9) {
+                int y_real = level.getHeight(Heightmap.Types.MOTION_BLOCKING, pos.getX(), pos.getZ()) - 1;
+                // note 注意这里是section
+                try {
+                    if (level.getBlockState(new BlockPos(pos.getX(), y_real, pos.getZ()))
+                            .getShadeBrightness(blockAndTintGetter, pos) < 0.5f) {
+                        isLight = true;
+                        if (leaveLike) {
+                            if (ClientConfig.Renderer.snowyTree.get())
+                                specialLeaves = true;
+                            else isLight = false;
+                        }
+                    }
+                } catch (Exception e) {
+                    EclipticSeasons.logger(e);
+                }
+            }
         }
 
         if (isLight) {
-            if (ClientConfig.Renderer.snowyWinter.get()
+            // TODO 尝试生成预先的概率图，随后卷积概率
+            boolean isSnowy = false;
+            if (CommonConfig.Season.snowyWinter.get()
                     && onBlock != Blocks.SNOW_BLOCK
                     && ((mapSlice != null && MapChecker.shouldSnowAt(level, pos, mapSlice.getSurfaceFaceBiomeId(pos), state, random, seed))
                     || (mapSlice == null && MapChecker.shouldSnowAt(level, pos, state, random, seed))
                     || (mapSlice != null && mapSlice.getSnowyStatus(pos) == SnowyRemover.SnowyFlag.SNOWY_ALWAYS.ordinal())
             )
             ) {
-                boolean isSnowy = true;
+                isSnowy = true;
 
-                if (ClientConfig.Renderer.notSnowyNearGlowingBlock.get()) {
+                if (CommonConfig.Season.notSnowyNearGlowingBlock.get()) {
                     if (mapSlice != null
                             && mapSlice.getSnowyStatus(pos) == SnowyRemover.SNOWY) {
                         checkPos.set(pos.getX(), pos.getY() + 1 - offset, pos.getZ());
                         if (blockAndTintGetter.getBrightness(LightLayer.BLOCK, checkPos) >=
-                                ClientConfig.Renderer.notSnowyNearGlowingBlockLevel.getAsInt()) {
+                                CommonConfig.Season.notSnowyNearGlowingBlockLevel.getAsInt()) {
+                            isSnowy = false;
+                        }
+                    }
+
+                    if (mapSlice == null) {
+                        checkPos.set(pos.getX(), pos.getY() + 1 - offset, pos.getZ());
+                        if (blockAndTintGetter.getBrightness(LightLayer.BLOCK, checkPos) >=
+                                CommonConfig.Season.notSnowyNearGlowingBlockLevel.getAsInt()) {
                             isSnowy = false;
                         }
                     }
                 }
 
+                if (isSnowy && ClientConfig.Renderer.snowTransitionBlend.get()) {
+                    isSnowy = isSnowy(pos, seed, checkPos, mapSlice, level, blockAndTintGetter);
+                }
+
                 if (isSnowy) {
+
+
                     // boolean isFlowerAbove = false;
                     // if ((flag == MapChecker.FLAG_BLOCK) && ClientConfig.Renderer.betterSnow.get()) {
                     //     var bl = blockAndTintGetter.getBlockState(pos.above()).getBlock();
@@ -600,11 +792,21 @@ public class ModelManager {
                     // }
                     {
                         BlockState snowState = null;
-                        if (models != null && flag == MapChecker.FLAG_STAIRS) {
+                        if (flag == MapChecker.FLAG_STAIRS) {
                             snowState = BlockRegistry.snowyStairs.get().defaultBlockState()
                                     .setValue(StairBlock.FACING, state.getValue(StairBlock.FACING))
                                     .setValue(StairBlock.HALF, state.getValue(StairBlock.HALF))
                                     .setValue(StairBlock.SHAPE, state.getValue(StairBlock.SHAPE));
+                        } else if (flag == MapChecker.FLAG_VINE) {
+                            snowState = BlockRegistry.snowyVine.get().defaultBlockState()
+                                    .setValue(VineBlock.EAST, state.getValue(VineBlock.EAST))
+                                    .setValue(VineBlock.WEST, state.getValue(VineBlock.WEST))
+                                    .setValue(VineBlock.SOUTH, state.getValue(VineBlock.SOUTH))
+                                    .setValue(VineBlock.NORTH, state.getValue(VineBlock.NORTH))
+                                    .setValue(VineBlock.UP, state.getValue(VineBlock.UP))
+                            ;
+                        } else if (leaveLike && !specialLeaves) {
+                            snowState = BlockRegistry.snowyLeaves.get().defaultBlockState();
                         }
                         BakedModel snowModel = getSnowyModel(state, snowState, flag, offset);
 
@@ -613,42 +815,181 @@ public class ModelManager {
                         }
                     }
                 }
-            } else if (ClientConfig.Renderer.flowerOnGrass.get() && state.getBlock() instanceof GrassBlock
-                    && (seed % 14) == 0)
-            // && random.nextInt(15) == 0)
-            {
-                var solarTerm = ClientCon.nowSolarTerm;
-                int weight = Math.abs(solarTerm.ordinal() - 3) + 1;
-                checkPos.set(pos.getX(), pos.getY() + 1, pos.getZ());
-                if (solarTerm.getSeason() == Season.SPRING
-                        && (seed % (weight * 4)) == 0
-                        && blockAndTintGetter.getBlockState(checkPos).isAir()
-                        && (mapSlice == null || ((IBiomeTagHolder) (Object) MapChecker.idToBiome(level, mapSlice.getSurfaceFaceBiomeId(checkPos)).value()).eclipticSeasons$getBindTag() == ClimateTypeBiomeTags.SEASONAL)
-                ) {
-                    {
-                        int index = Math.abs(((int) (seed + pos.getX())) % flower_on_grass.size());
-                        // index=random.nextInt(flower_on_grass.size());
-                        replace = models.get(flower_on_grass.get(index));
+            }
+
+            if (!FMLEnvironment.production && !isSnowy && flag == MapChecker.FLAG_BLOCK) {
+                int index = -1;
+                int ddLength = 0;
+                int[][][] directions = DirectionMask.DIRECTIONS;
+                int[] indexs = DirectionMask.INDEXS;
+                directionChecks:
+                for (int i = 0, directionsLength = directions.length; i < directionsLength; i++) {
+                    int[][] directionRequireGroup = directions[i];
+                    for (int[] direction : directionRequireGroup) {
+                        checkPos.set(pos.getX() + direction[0], pos.getY(), pos.getZ() + direction[1]);
+                        BlockState neighSate = blockAndTintGetter.getBlockState(checkPos);
+                        long neighSateSeed = neighSate.getSeed(checkPos);
+                        if (!((mapSlice != null && MapChecker.shouldSnowAt(level, checkPos, mapSlice.getSurfaceFaceBiomeId(checkPos), neighSate, random, neighSateSeed))
+                                || (mapSlice == null && MapChecker.shouldSnowAt(level, checkPos, neighSate, random, neighSateSeed))
+                                || (mapSlice != null && mapSlice.getSnowyStatus(checkPos) == SnowyRemover.SnowyFlag.SNOWY_ALWAYS.ordinal())
+                        )) continue directionChecks;
+                    }
+                    // todo 注意后续要考虑多条件满足最多项
+                    if (directionRequireGroup.length > ddLength) {
+                        index = i;
+                        ddLength = directionRequireGroup.length;
                     }
                 }
+                if (index > -1) {
+                    index = indexs[index];
+                    replace = models.get(snow_edge_overlays.get(index));
+                    isSnowy = true;
+                }
+            }
+
+            // if (!isSnowy)
+            if (replace == null || !(replace instanceof IESReplaceModel iesReplaceModel && iesReplaceModel.isReplace())) {
+
+
+                if (seasonDefCache == null)
+                    seasonDefCache = ClientRef.seasonDef.get(onBlock);
+                if (seasonDefCache != null)
+                    for (SeasonBlockDefinition localSeasonStatus : seasonDefCache) {
+                        List<SeasonBlockDefinition.FlatSliceHolder> flatSliceHolders = localSeasonStatus.getFlatSliceEnumMap().get(ClientCon.nowSolarTerm);
+                        if (flatSliceHolders != null && !flatSliceHolders.isEmpty()) {
+                            checkPos.set(pos.getX(), pos.getY() + 1, pos.getZ());
+                            for (SeasonBlockDefinition.FlatSliceHolder flatSliceHolder : flatSliceHolders) {
+                                SeasonBlockDefinition.FlatSlice flatSlice = flatSliceHolder.flatSlice();
+                                if (!flatSlice.emptyAbove() || blockAndTintGetter.getBlockState(checkPos).isEmpty()) {
+                                    if (mapSlice == null
+                                            || localSeasonStatus.getBiomes().contains(MapChecker.idToBiome(level, mapSlice.getSurfaceFaceBiomeId(checkPos)))) {
+                                        ResourceLocation cinfo = flatSlice.transitionModels() == null ?
+                                                flatSlice.mid() :
+                                                Mth.abs(((int) (seed + pos.getX()))) % 100 > ClientCon.progress ?
+                                                        flatSlice.transitionModels().getFirst() : flatSlice.transitionModels().getSecond();
+                                        ModelResolver smr = extraSnowModelBuilds.get(cinfo);
+                                        if (smr != null) {
+                                            var mmrl = smr.tryFind(state);
+                                            if (mmrl != null) {
+                                                var to_replace = models.get(mmrl.modelResourceLocation());
+                                                if (to_replace != null) {
+                                                    if (replace != null) {
+                                                        replace = new SnowySeasonBakeModel<>(to_replace, replace, getRenderType(state));
+                                                        if (mmrl.replace() && replace instanceof SnowySeasonBakeModel<?> snowyBakedModelWrapper) {
+                                                            snowyBakedModelWrapper.setReplace(true);
+                                                        }
+                                                    } else {
+                                                        replace = mmrl.replace() ?
+                                                                new TempReplaceModelWrapper<>(to_replace) :
+                                                                to_replace;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+
+                // if (ClientConfig.Renderer.flowerOnGrass.get() && state.getBlock() instanceof GrassBlock
+                //         && (seed % 14) == 0)
+                // // && random.nextInt(15) == 0)
+                // {
+                //     var solarTerm = ClientCon.nowSolarTerm;
+                //
+                //     checkPos.set(pos.getX(), pos.getY() + 1, pos.getZ());
+                //     if (solarTerm.isInTerms(SolarTerm.BEGINNING_OF_SPRING, SolarTerm.BEGINNING_OF_SUMMER)) {
+                //         int weight = Math.abs(solarTerm.ordinal() - 3) + 1;
+                //         if ((seed % (weight * 4)) == 0
+                //                 && blockAndTintGetter.getBlockState(checkPos).isAir()
+                //                 && (mapSlice == null || ((IBiomeTagHolder) (Object) MapChecker.idToBiome(level, mapSlice.getSurfaceFaceBiomeId(checkPos)).value()).eclipticseasons$getBindTag() == ClimateTypeBiomeTags.SEASONAL)) {
+                //             {
+                //                 int index = Math.abs(((int) (seed + pos.getX())) % flower_on_grass.size());
+                //                 // index=random.nextInt(flower_on_grass.size());
+                //                 replace = models.get(flower_on_grass.get(index));
+                //             }
+                //         }
+                //     }
+                //     if (replace == null && solarTerm.isInTerms(SolarTerm.BEGINNING_OF_SUMMER, SolarTerm.BEGINNING_OF_AUTUMN)) {
+                //         int weight = Math.abs(solarTerm.ordinal() - 7) + 1;
+                //         if ((seed % (weight * 3)) == 0
+                //                 && blockAndTintGetter.getBlockState(checkPos).isAir()
+                //                 && (mapSlice == null || ((IBiomeTagHolder) (Object) MapChecker.idToBiome(level, mapSlice.getSurfaceFaceBiomeId(checkPos)).value()).eclipticseasons$getBindTag() == ClimateTypeBiomeTags.SEASONAL)) {
+                //             {
+                //                 int index = Math.abs(((int) (seed + pos.getX())) % fourleaf_clovers.size());
+                //                 // index=2;
+                //                 replace = models.get(fourleaf_clovers.get(index));
+                //             }
+                //         }
+                //     }
+                // }
             }
         }
         return replace;
     }
 
-    public static int getBlockTypeFlag(BlockAndTintGetter blockAndTintGetter, BlockPos pos, BlockState state) {
-        IBlockStateFlagger flagger = (IBlockStateFlagger) state;
-        int flag = flagger.getBlockTypeFlag();
-        if (flag < 0) {
-            flag = MapChecker.getBlockType(state, blockAndTintGetter, pos);
-            flagger.setBlockTypeFlag(flag);
+    private static boolean isSnowy(BlockPos pos, long seed, BlockPos.@NotNull MutableBlockPos checkPos, IMapSlice mapSlice, Level level, BlockAndTintGetter blockAndTintGetter) {
+        // int randomKey = Math.floorMod(seed + pos.getX() * 31L + pos.getZ() * 17L, 100);
+        // if (CommonConfig.Season.notSnowyNearGlowingBlock.get()) {
+        //     if (mapSlice == null || mapSlice.getSnowyStatus(pos) == SnowyRemover.SNOWY) {
+        //         checkPos.set(pos.getX(), pos.getY() + 1, pos.getZ());
+        //         int brightness = blockAndTintGetter.getBrightness(LightLayer.BLOCK, checkPos);
+        //         int cut = CommonConfig.Season.notSnowyNearGlowingBlockLevel.getAsInt() - brightness;
+        //         if (cut > 0 && cut <= 4) {
+        //             if (randomKey > cut * 20) {
+        //                 return false;
+        //             }
+        //         }
+        //     }
+        //
+        // }
+
+        int lightLimit = CommonConfig.Season.notSnowyNearGlowingBlockLevel.get();
+        boolean lightNot = CommonConfig.Season.notSnowyNearGlowingBlock.get();
+        boolean isSnowy;
+        Holder<Biome> biomeHolder = mapSlice != null ?
+                MapChecker.idToBiome(level, mapSlice.getSurfaceFaceBiomeId(pos)) :
+                MapChecker.getSurfaceBiome(level, pos);
+
+        int snowDepth = WeatherManager.getSnowDepthAtBiome(level, biomeHolder.value());
+
+        int count = snowDepth;
+        int cc = 1;
+        for (int dx = -5; dx <= 5; dx++) {
+            for (int dz = -5; dz <= 5; dz++) {
+                if (dx == 0 && dz == 0) continue;
+
+                checkPos.set(pos.getX() + dx, pos.getY(), pos.getZ() + dz);
+                Holder<Biome> otherBiome = mapSlice != null ?
+                        MapChecker.idToBiome(level, mapSlice.getSurfaceFaceBiomeId(checkPos)) :
+                        MapChecker.getSurfaceBiome(level, checkPos);
+                int i = otherBiome.value() == biomeHolder.value() ? snowDepth :
+                        WeatherManager.getSnowDepthAtBiome(level, otherBiome.value());
+                count += i;
+                cc++;
+                if (lightNot) {
+                    if (mapSlice == null
+                            || mapSlice.getSnowyStatus(pos) == SnowyRemover.SNOWY) {
+                        checkPos.set(pos.getX() + dx, pos.getY() + 1, pos.getZ() + dz);
+                        int brightness = blockAndTintGetter.getBrightness(LightLayer.BLOCK, checkPos);
+                        if (brightness >= lightLimit - 2) {
+                            count -= 200;
+                        }
+                    }
+                }
+            }
         }
-        return flag;
-        // return state.getBlockTypeFlag(blockAndTintGetter, pos);
+
+        int hash = Math.floorMod(seed + pos.getX() * 31L + pos.getZ() * 17L, cc * 100);
+        isSnowy = hash <= count;
+        return isSnowy;
     }
 
     public static RenderType getRenderType(BlockState state) {
-        if (!Minecraft.useFancyGraphics()) return RenderType.solid();
+        // TODO：加一个选择
+        // if (!Minecraft.useFancyGraphics()) return RenderType.solid();
         // RenderType chunkRenderType = ItemBlockRenderTypes.getChunkRenderType(state);
         ChunkRenderTypeSet chunkRenderTypeSet = ItemBlockRenderTypes.getRenderLayers(state);
         if (chunkRenderTypeSet.contains(RenderType.translucent())) return RenderType.translucent();
@@ -657,15 +998,21 @@ public class ModelManager {
                 // ( CompatModule.isContinuityLoad()||CompatModule.isCTMLoad())
                 //         && !CompatModule.isSodiumLoad() ?
                 //          RenderType.cutout() :
-                // TODO:我也是服了这个渲染顺序
                 RenderType.cutoutMipped();
 
         // return Minecraft.useFancyGraphics() ?
         //         RenderType.cutoutMipped() : RenderType.solid();
     }
 
+    @Deprecated(forRemoval = true)
     public static boolean isModelReplaceable(BlockState state, BlockAndTintGetter blockAndTintGetter, BlockPos pos) {
-        return isModelReplaceable(getBlockTypeFlag(blockAndTintGetter, pos, state));
+        return isModelReplaceable(state, blockAndTintGetter, pos, null);
+    }
+
+    public static boolean isModelReplaceable(BlockState state, BlockAndTintGetter blockAndTintGetter, BlockPos pos, BakedModel bakedModel) {
+        return (bakedModel instanceof IESReplaceModel model
+                && model.isReplace())
+                || isModelReplaceable(MapChecker.getBlockTypeFlag(blockAndTintGetter, pos, state));
     }
 
     private static boolean isModelReplaceable(int flag) {
@@ -676,6 +1023,69 @@ public class ModelManager {
     public static void clearForRebaked(Map<ModelResourceLocation, BakedModel> modelRegistry) {
         ModelManager.models = modelRegistry;
         loadVersion++;
-        LIGHT_0 = Blocks.LIGHT.defaultBlockState().setValue(LightBlock.LEVEL, 0);
+        initCTMDetected();
+        if (ClientCon.getUseLevel() != null) {
+            ClientRef.updateClientSide(ClientCon.getUseLevel().registryAccess());
+        }
+    }
+
+
+    public static final Map<ResourceLocation, ESModelLoadedJson> extraSnowModels = HashMap.newHashMap(1024);
+
+    public static final Map<ResourceLocation, ModelResolver> extraSnowModelBuilds = HashMap.newHashMap(1024);
+
+    public static void registerExtraSnowyModels(BiConsumer<ModelResourceLocation, UnbakedModel> registerModelAndDependenceMethod) {
+        extraSnowModelBuilds.clear();
+        // extraSnowModels.clear();
+        Map<ResourceLocation, ESModelLoadedJson> snowModelLoadedJsonMap = ClientJsonCacheListener.modelDefCache.build(ESModelLoadedJson.CODEC);
+        // extraSnowModels.putAll(snowModelLoadedJsonMap);
+        EclipticSeasons.logger("Try to register extra model definitions with size %s.".formatted(snowModelLoadedJsonMap.size()));
+        snowModelLoadedJsonMap.forEach(
+                (resourceLocation, value) -> {
+                    if (value.getMultiPartLike().isValid()) {
+                        ModelResourceLocation mrl = ModelManager.snow_mrl(resourceLocation, "0");
+                        registerModelAndDependenceMethod.accept(mrl, value.getMultiPartLike());
+                        extraSnowModelBuilds.put(
+                                resourceLocation, new ModelResolver(List.of(new ModelTester(
+                                        mrl, value.isReplace(), List.of()
+                                )))
+                        );
+                    } else {
+                        value.getVariants().forEach(
+                                (va, multiVariant) -> {
+                                    ModelResourceLocation mrl = ModelManager.snow_mrl(resourceLocation, va);
+                                    registerModelAndDependenceMethod.accept(
+                                            mrl, multiVariant
+                                    );
+                                    {
+                                        extraSnowModelBuilds.compute(
+                                                resourceLocation,
+                                                (sss, solver) -> {
+                                                    if (solver == null) {
+                                                        solver = new ModelResolver(new ArrayList<>());
+                                                    }
+                                                    List<SnowDefinition.PropertyTester> test = new ArrayList<>();
+                                                    for (String s : va.split(",")) {
+                                                        String[] split = s.split("=");
+                                                        if (split.length == 2) {
+                                                            test.add(
+                                                                    SnowDefinition.PropertyTester.builder().name(split[0])
+                                                                            .matcher(SnowDefinition.ExactMatcher.builder().value(split[1]).build()).build()
+                                                            );
+                                                        }
+                                                    }
+                                                    solver.modelTesters().add(
+                                                            new ModelTester(mrl, value.isReplace(), test)
+                                                    );
+                                                    return solver;
+
+                                                }
+                                        );
+                                    }
+                                }
+                        );
+                    }
+                }
+        );
     }
 }

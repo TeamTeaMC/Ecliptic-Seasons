@@ -1,0 +1,14 @@
+{
+  "sound": "eclipticseasons:ambient.garden_wind",
+  "biomes": {
+    "values": [
+      "minecraft:cherry_grove",
+      "#minecraft:is_forest",
+      "#c:is_plains",
+      "#c:is_river"
+    ],
+    "type": "neoforge:or"
+  },
+  "ignore_time": false,
+  "season": "summer"
+}

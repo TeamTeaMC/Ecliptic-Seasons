@@ -1,0 +1,8 @@
+{
+  "sound": "eclipticseasons:ambient.windy_leave",
+  "biomes": {
+    "value": "#c:is_cave",
+    "type": "neoforge:not"
+  },
+  "season": "winter"
+}

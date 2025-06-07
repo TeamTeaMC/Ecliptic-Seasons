@@ -3,7 +3,9 @@ package com.teamtea.eclipticseasons.data.tag;
 
 import com.teamtea.eclipticseasons.api.constant.crop.CropHumidityType;
 import com.teamtea.eclipticseasons.api.constant.crop.CropSeasonType;
+import com.teamtea.eclipticseasons.api.constant.tag.ESItemTags;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.ItemTagsProvider;
 import net.minecraft.resources.ResourceLocation;
@@ -23,7 +25,7 @@ public final class ESItemTagProvider extends ItemTagsProvider {
 
     @Override
     public String getName() {
-        return "Tea the Story Item Tags";
+        return "ES Item Tags";
     }
 
     @Override
@@ -47,9 +49,18 @@ public final class ESItemTagProvider extends ItemTagsProvider {
         tag(CropHumidityType.MOIST_HUMID.getTag()).add(Items.BAMBOO).add(Items.BROWN_MUSHROOM,Items.RED_MUSHROOM);
 
         // others
+        for (CropSeasonType cropSeasonType : CropSeasonType.collectValues()) {
+            tag(cropSeasonType.getTag());
+        }
+        for (CropHumidityType cropHumidityType : CropHumidityType.collectValues()) {
+            tag(cropHumidityType.getTag());
+        }
 
-        tag(CropHumidityType.AVERAGE_MOIST.getTag()).addOptional(fd_rl("tomato_seeds"));
+        tag(CropHumidityType.AVERAGE_MOIST.getTag()).addOptional(fd_rl("tomato_seeds")).addOptional(fd_rl("cabbage_seeds")).addOptional(fd_rl("onion"));
         tag(CropHumidityType.MOIST_HUMID.getTag()).addOptional(fd_rl("rice")).addOptional(fd_rl("brown_mushroom_colony")).addOptional(fd_rl("red_mushroom_colony"));
+
+        tag(ESItemTags.COOLING_ITEMS).add(Items.SNOWBALL, Items.SNOW_BLOCK, Items.ICE, Items.BLUE_ICE, Items.PACKED_ICE);
+        tag(ESItemTags.HEAT_PROTECTIVE_HELMETS);
     }
 
 

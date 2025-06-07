@@ -4,7 +4,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockAndTintGetter;
 
 public interface TerrainRenderContextLevelGetter {
-    BlockAndTintGetter eclipticSeasons$get();
+    BlockAndTintGetter eclipticseasons$get();
 
-    BlockPos eclipticSeasons$getPos();
+    BlockPos eclipticseasons$getPos();
 }

@@ -1,8 +1,6 @@
 package com.teamtea.eclipticseasons.mixin;
 
-import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.compat.CompatModule;
-import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.neoforged.fml.loading.FMLLoader;
 import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
@@ -12,10 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
-/**
- * Non-critical mixin config plugin, just disables mixins if Distant Horizons isn't present,
- * since otherwise the log gets spammed with warnings.
- */
+
 public class EclipticSeasonsMixinPlugin implements IMixinConfigPlugin {
 
     public static final String MIXIN_COMPAT_PACKAGE = "mixin.compat.";

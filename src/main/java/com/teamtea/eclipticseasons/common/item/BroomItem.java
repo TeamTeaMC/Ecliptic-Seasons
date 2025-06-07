@@ -1,15 +1,21 @@
 package com.teamtea.eclipticseasons.common.item;
 
+import com.google.common.collect.Lists;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.client.map.ClientMapFixer;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.core.map.ServerMapFixer;
+import com.teamtea.eclipticseasons.common.network.SimpleNetworkHandler;
+import com.teamtea.eclipticseasons.common.network.message.BroomUseMessage;
+import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.SectionPos;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.dedicated.DedicatedServer;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -17,6 +23,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.Item;
@@ -31,6 +38,10 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.common.util.FakePlayer;
+
+import java.util.List;
+
 
 public class BroomItem extends Item {
     public BroomItem(Properties pProperties) {
@@ -46,7 +57,11 @@ public class BroomItem extends Item {
     public InteractionResult useOn(UseOnContext pContext) {
         Player player = pContext.getPlayer();
         if (player != null && this.calculateHitResult(player).getType() == HitResult.Type.BLOCK) {
-            player.startUsingItem(pContext.getHand());
+            if (!(player instanceof FakePlayer fakePlayer)) {
+                player.startUsingItem(pContext.getHand());
+            } else {
+                onUseTick(pContext.getLevel(), fakePlayer, pContext.getItemInHand(), this.getUseDuration(pContext.getItemInHand(), player) + 1 - 5);
+            }
         }
 
         return InteractionResult.CONSUME;
@@ -66,11 +81,15 @@ public class BroomItem extends Item {
     public void onUseTick(Level level, LivingEntity pLivingEntity, ItemStack pStack, int pRemainingUseDuration) {
         if (pRemainingUseDuration >= 0) {
             HitResult hitresult = this.calculateHitResult(pLivingEntity);
+            double attributeValue = pLivingEntity.getAttributeValue(Attributes.BLOCK_INTERACTION_RANGE);
+
             if (hitresult instanceof BlockHitResult blockhitresult && hitresult.getType() == HitResult.Type.BLOCK) {
                 int remainTicks = this.getUseDuration(pStack, pLivingEntity) - pRemainingUseDuration + 1;
                 if (remainTicks % ANIMATION_DURATION == 5) {
                     BlockPos blockpos = blockhitresult.getBlockPos();
                     BlockState blockstate = level.getBlockState(blockpos);
+                    BlockPos pickPos = blockpos.above();
+                    BlockState pickState = level.getBlockState(pickPos);
                     HumanoidArm humanoidarm = pLivingEntity.getUsedItemHand() == InteractionHand.MAIN_HAND
                             ? pLivingEntity.getMainArm()
                             : pLivingEntity.getMainArm().getOpposite();
@@ -91,6 +110,11 @@ public class BroomItem extends Item {
                         soundevent = SoundEvents.BRUSH_GENERIC;
                     }
 
+                    if (!level.isClientSide() && pickState.is(Blocks.SNOW)) {
+                        level.destroyBlock(pickPos, true, pLivingEntity);
+
+                        pStack.hurtAndBreak(pLivingEntity instanceof Player player && player.isCreative() ? 0 : 1, pLivingEntity, LivingEntity.getSlotForHand(pLivingEntity.getUsedItemHand()));
+                    }
 
                     level.playSound(pLivingEntity, blockpos, soundevent, SoundSource.BLOCKS, 1f, 1f);
 
@@ -103,11 +127,26 @@ public class BroomItem extends Item {
                     // }
                     if (shouldSet) {
                         if (!level.isClientSide()) {
-                            ServerMapFixer.addPlanner(level,
-                                    blockstate,
-                                    blockstate, blockpos,
-                                    level.getGameTime() + 160,
-                                    MapChecker.getHeight(level, blockpos), true);
+                            if (CommonConfig.Map.delayedUpdates.get()) {
+                                ServerMapFixer.addPlanner(level,
+                                        blockstate,
+                                        blockstate, blockpos,
+                                        level.getGameTime() + 160,
+                                        MapChecker.getHeight(level, blockpos), true);
+                            } else {
+                                var distance = level.getServer() instanceof DedicatedServer dedicatedServer ?
+                                        dedicatedServer.getProperties().viewDistance : 64;
+                                distance = distance * distance;
+                                List<ServerPlayer> nearbyPlayers = Lists.newArrayList();
+                                for (Player player : level.players()) {
+                                    if (player instanceof ServerPlayer serverPlayer && !(player instanceof FakePlayer)) {
+                                        if (serverPlayer.blockPosition().distSqr(blockpos) < distance) {
+                                            nearbyPlayers.add(serverPlayer);
+                                        }
+                                    }
+                                }
+                                SimpleNetworkHandler.send(nearbyPlayers, new BroomUseMessage(blockpos, level.getGameTime()));
+                            }
                         } else if (level.isClientSide()) {
                             int startY = level.getMaxBuildHeight() + 1;
                             MapChecker.updatePosForce(level, blockpos, level.getMaxBuildHeight() + 1);

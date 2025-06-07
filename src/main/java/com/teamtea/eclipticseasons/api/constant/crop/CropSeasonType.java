@@ -48,4 +48,10 @@ public enum CropSeasonType {
     public TagKey<Block> getBlockTag() {
         return TagKey.create(Registries.BLOCK, res);
     }
+
+    private static final CropSeasonType[] CROP_SEASON_TYPES = CropSeasonType.values();
+
+    public static CropSeasonType[] collectValues() {
+        return CROP_SEASON_TYPES;
+    }
 }

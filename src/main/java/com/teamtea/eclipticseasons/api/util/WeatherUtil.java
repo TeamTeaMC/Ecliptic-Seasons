@@ -37,24 +37,27 @@ public class WeatherUtil {
     }
 
 
-    public static float getTempAt(Level level, BlockPos pos) {
-        var biome = level.getBiome(pos);
-        float bt = biome.value().getModifiedClimateSettings().temperature();
-        bt += EclipticUtil.getNowSolarTerm(level).getTemperatureChange();
-        return bt;
-    }
-
-    public static float getBiomeDownFall(Level level, BlockPos pos) {
-        var biome = level.getBiome(pos);
-        float bt = biome.value().getModifiedClimateSettings().downfall();
-        return bt;
-    }
-
-    public static float getHumidityAt(Level level, BlockPos pos) {
-        var biome = level.getBiome(pos);
-        float bt = biome.value().getModifiedClimateSettings().downfall();
-        float bt2 = biome.value().getModifiedClimateSettings().temperature();
-        bt2 += EclipticUtil.getNowSolarTerm(level).getTemperatureChange();
-        return Mth.clamp(bt, 0.0F, 1.0F) * Mth.clamp(bt2, 0.0F, 1.0F);
-    }
+    // @Deprecated(forRemoval = true)
+    // public static float getTempAt(Level level, BlockPos pos) {
+    //     var biome = level.getBiome(pos);
+    //     float bt = biome.value().getModifiedClimateSettings().temperature();
+    //     bt += EclipticUtil.getNowSolarTerm(level).getTemperatureChange();
+    //     return bt;
+    // }
+    //
+    // @Deprecated(forRemoval = true)
+    // public static float getBiomeDownFall(Level level, BlockPos pos) {
+    //     var biome = level.getBiome(pos);
+    //     float bt = biome.value().getModifiedClimateSettings().downfall();
+    //     return bt;
+    // }
+    //
+    // @Deprecated(forRemoval = true)
+    // public static float getHumidityAt(Level level, BlockPos pos) {
+    //     var biome = level.getBiome(pos);
+    //     float bt = biome.value().getModifiedClimateSettings().downfall();
+    //     float bt2 = biome.value().getModifiedClimateSettings().temperature();
+    //     bt2 += EclipticUtil.getNowSolarTerm(level).getTemperatureChange();
+    //     return Mth.clamp(bt, 0.0F, 1.0F) * Mth.clamp(bt2, 0.0F, 1.0F);
+    // }
 }

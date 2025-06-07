@@ -1,0 +1,15 @@
+{"parent": "eclipticseasons:block/overlay",
+  "children": {
+    "sprint": {
+      "parent": "eclipticseasons:block/flower_1"
+    },
+    "summer": {
+      "parent": "eclipticseasons:block/fourleaf_clover/fourleaf_clover_0"
+    }
+  },
+  "item_render_order": [
+    "sprint",
+    "summer"
+  ],
+  "loader": "eclipticseasons:snow_overlay"
+}

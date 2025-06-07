@@ -5,18 +5,18 @@ import net.minecraft.world.level.biome.Biome;
 
 public interface IBiomeTagHolder {
 
-    void eclipticSeasons$setTag(TagKey<Biome> tag);
+    void eclipticseasons$setTag(TagKey<Biome> tag);
 
-    TagKey<Biome> eclipticSeasons$getBindTag();
+    TagKey<Biome> eclipticseasons$getBindTag();
 
-    void eclipticSeasons$setSmall(boolean isSmall);
+    void eclipticseasons$setSmall(boolean isSmall);
 
-    boolean eclipticSeasons$isSmallBiome();
+    boolean eclipticseasons$isSmallBiome();
 
-    default int eclipticSeasons$getBindId() {
+    default int eclipticseasons$getBindId() {
         return -1;
     }
 
-    default void eclipticSeasons$setBindId(int id) {
+    default void eclipticseasons$setBindId(int id) {
     }
 }

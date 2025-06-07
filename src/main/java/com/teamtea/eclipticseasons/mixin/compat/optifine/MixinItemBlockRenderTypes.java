@@ -27,7 +27,7 @@ public abstract class MixinItemBlockRenderTypes {
 
     // ctx.world().world.getBlockState(ctx.pos)
     @Inject(at = {@At("HEAD")}, method = {"getRenderLayers"}, cancellable = true, remap = false)
-    private static void ecliptic$getRenderLayers(BlockState state, CallbackInfoReturnable<ChunkRenderTypeSet> cir) {
+    private static void eclipticseasons$getRenderLayers(BlockState state, CallbackInfoReturnable<ChunkRenderTypeSet> cir) {
         if (renderCutout && BLOCK_RENDER_TYPES.get(state.getBlock()).contains(RenderType.SOLID))
             if (ModelManager.shouldCutoutMipped(state)) {
                 cir.setReturnValue(ChunkRenderTypeSet.of(RenderType.cutoutMipped()));
@@ -39,7 +39,7 @@ public abstract class MixinItemBlockRenderTypes {
     //         method = "getRenderLayers",
     //         at = @At(value = "INVOKE", target = "Ljava/util/Map;get(Ljava/lang/Object;)Ljava/lang/Object;")
     // )
-    // private static V ecliptic$getRenderLayersM(V original, @Local BlockState blockState) {
+    // private static V eclipticseasons$getRenderLayersM(V original, @Local BlockState blockState) {
     //     if (original instanceof ChunkRenderTypeSet)
     //         if (original.contains(RenderType.SOLID)) {
     //             if (ModelManager.shouldCutoutMipped(blockState))

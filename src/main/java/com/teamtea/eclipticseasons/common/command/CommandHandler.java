@@ -3,6 +3,7 @@ package com.teamtea.eclipticseasons.common.command;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.datafixers.util.Either;
+import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
@@ -21,6 +22,7 @@ import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -33,8 +35,10 @@ import net.minecraft.world.level.biome.Biome;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -78,7 +82,7 @@ public class CommandHandler {
                                                 if (solarTerm != SolarTerm.NONE) {
                                                     MutableComponent translation = solarTerm.getTranslation();
                                                     String s = solarTerm.getName();
-                                                    if (s.toLowerCase().contains(finalPre.toLowerCase())) {
+                                                    if (s.contains(finalPre.toLowerCase(Locale.ROOT))) {
                                                         builder.suggest(s, Component.translatable("%s%s%s%s",
                                                                 Component.literal("[").withStyle(ChatFormatting.WHITE),
                                                                 translation.withStyle(solarTerm.getSeason().getColor()).withStyle(ChatFormatting.WHITE),
@@ -212,32 +216,43 @@ public class CommandHandler {
             {
                 data.setSolarTermsDay(data.getSolarTermsDay() + add);
                 data.sendAndUpdate(ServerLevel);
-                source.sendSuccess(() -> Component.translatable("commands.teastory.solar.set", data.getSolarTermsDay()), true);
+                source.sendSuccess(() -> Component.translatable("commands.eclipticseasons.solar.set", data.getSolarTermsDay()), true);
             });
         }
         return getDay(source.getLevel());
     }
 
 
-    public static final ResourceOrTagArgument.Result<Biome> ALL_BIOME_RESULT = new ResourceOrTagArgument.Result<Biome>() {
+    public static ResourceOrTagArgument.Result<Biome> createAllResult(RegistryAccess registryAccess) {
+        Registry<Biome> biomes = registryAccess.registryOrThrow(Registries.BIOME);
+        return new crs(biomes.getHolder(0).orElse(null));
+    }
+
+    // todo would it cause any crash?
+    private record crs(Holder.Reference<Biome> biomeReference) implements ResourceOrTagArgument.Result<Biome> {
         @Override
         public boolean test(Holder<Biome> biomeHolder) {
             return true;
         }
 
         @Override
-        public Either<Holder.Reference<Biome>, HolderSet.Named<Biome>> unwrap() {
-            return null;
+        public @NotNull Either<Holder.Reference<Biome>, HolderSet.Named<Biome>> unwrap() {
+            try {
+                throw new IllegalCallerException("Should not call the method because it just use for internal.");
+            } catch (IllegalCallerException e) {
+                e.printStackTrace();
+            }
+            return Either.left(biomeReference);
         }
 
         @Override
-        public <E> Optional<ResourceOrTagArgument.Result<E>> cast(ResourceKey<? extends Registry<E>> p_249572_) {
+        public <E> @NotNull Optional<ResourceOrTagArgument.Result<E>> cast(@NotNull ResourceKey<? extends Registry<E>> p_249572_) {
             return Optional.empty();
         }
 
         @Override
-        public String asPrintable() {
-            return null;
+        public @NotNull String asPrintable() {
+            return EclipticSeasons.rl("all").toLanguageKey("ResourceOrTagArgument.Result");
         }
-    };
+    }
 }

@@ -34,12 +34,12 @@ public abstract class MixinBlockRenderer extends AbstractBlockRenderContext impl
 
 
     @Override
-    public BlockAndTintGetter eclipticSeasons$get() {
+    public BlockAndTintGetter eclipticseasons$get() {
         return blockInfo.blockView;
     }
 
     @Override
-    public BlockPos eclipticSeasons$getPos() {
+    public BlockPos eclipticseasons$getPos() {
         return blockInfo.blockPos;
     }
 }

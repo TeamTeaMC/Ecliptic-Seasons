@@ -1,0 +1,74 @@
+{
+  "ambient.garden_wind": {
+    "sounds": [
+      {
+        "name": "eclipticseasons:ambient/garden_wind",
+        "stream": true
+      }
+    ]
+  },
+  "ambient.night_river": {
+    "sounds": [
+      {
+        "name": "eclipticseasons:ambient/night_river",
+        "stream": true
+      }
+    ]
+  },
+  "ambient.spring_forest": {
+    "sounds": [
+      {
+        "name": "eclipticseasons:ambient/spring_forest",
+        "stream": true
+      }
+    ]
+  },
+  "ambient.windy_leave": {
+    "sounds": [
+      {
+        "name": "eclipticseasons:ambient/windy_leave",
+        "stream": true
+      }
+    ]
+  },
+  "ambient.winter_cold": {
+    "sounds": [
+      {
+        "name": "eclipticseasons:ambient/winter_cold",
+        "stream": true
+      }
+    ]
+  },
+  "ambient.winter_forest": {
+    "sounds": [
+      {
+        "name": "eclipticseasons:ambient/winter_forest",
+        "stream": true
+      }
+    ]
+  },
+  "block.bamboo_wind_chimes": {
+    "sounds": [
+      {
+        "name": "eclipticseasons:block/bamboo_wind_chimes",
+        "stream": true
+      }
+    ]
+  },
+  "block.paper_wind_chimes": {
+    "sounds": [
+      {
+        "name": "eclipticseasons:block/paper_wind_chimes",
+        "stream": true
+      }
+    ]
+  },
+  "block.wind_chimes": {
+    "sounds": [
+      {
+        "name": "eclipticseasons:block/wind_chimes",
+        "stream": true
+      }
+    ]
+  }
+}

@@ -3,40 +3,36 @@ package com.teamtea.eclipticseasons.api.util;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.biome.Humidity;
-import com.teamtea.eclipticseasons.api.constant.biome.Rainfall;
-import com.teamtea.eclipticseasons.api.constant.biome.Temperature;
-import com.teamtea.eclipticseasons.api.constant.climate.BiomeRain;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
-import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.misc.SimplePair;
 import com.teamtea.eclipticseasons.common.misc.SolarTermHumidityChart;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.Util;
-import net.minecraft.core.Holder;
-import net.minecraft.core.Registry;
+import net.minecraft.core.*;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.data.worldgen.SurfaceRuleData;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.biome.Biomes;
+import net.minecraft.world.level.biome.Climate;
+import net.minecraft.world.level.biome.OverworldBiomeBuilder;
 import net.neoforged.fml.loading.FMLLoader;
 
-import java.awt.*;
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.security.CodeSource;
 import java.security.ProtectionDomain;
 import java.util.*;
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 // for other mod use
@@ -85,10 +81,13 @@ public class SimpleUtil {
 
         Style noBitstyle = mutableComponent.getStyle()
                 .withFont(mutableComponent.getStyle().getFont());
+        Style aDefault = Style.EMPTY.withFont(ResourceLocation.withDefaultNamespace("default"));
+        Style style = Style.EMPTY.withFont(SolarTerm.getFont());
+
         return Component.literal(solarTerm.getFontLabel())
-                .withStyle(Style.EMPTY.withFont(SolarTerm.getFont()))
+                .withStyle(style.withColor(TextColor.fromRgb(-1)))
                 .append(Component.literal(" ")
-                        .withStyle(noBitstyle)
+                        .withStyle(aDefault)
                         .append(mutableComponent))
 
                 // .append(mutableComponent.withStyle(noBitstyle))
@@ -107,24 +106,6 @@ public class SimpleUtil {
                 ));
     }
 
-    public static void printHumidityTable() {
-        List<SimplePair<Humidity, SimplePair<Temperature, Rainfall>>> pl = new ArrayList<>();
-        for (Temperature value : Temperature.values()) {
-            for (Rainfall rainfall : Rainfall.collectValues()) {
-                Humidity humid = Humidity.getHumid(rainfall, value);
-                pl.add(SimplePair.of(humid, SimplePair.of(value, rainfall)));
-
-            }
-        }
-        pl.sort(Comparator.comparing(s -> (10 - s.getKey().ordinal()) * 100 + (s.getValue().getKey().ordinal())));
-        for (SimplePair<Humidity, SimplePair<Temperature, Rainfall>> p : pl) {
-            EclipticSeasons.logger("|%s|%s|%s|".formatted(
-                    p.getValue().getKey().getTranslation().getString(),
-                    p.getValue().getValue().getTranslation().getString(),
-                    p.getKey().getTranslation().getString()));
-        }
-        EclipticSeasons.logger("------------------------end-----------------------");
-    }
 
     public static void printHumidityTable(Level level) {
         Registry<Biome> biomes = level.registryAccess().registryOrThrow(Registries.BIOME);
@@ -133,12 +114,14 @@ public class SimpleUtil {
                 .sorted(Map.Entry.comparingByKey())
                 .toList();
         List<List<String>> ss = new ArrayList<>();
+        List<SimplePair<ResourceLocation, Humidity>> pairs = new ArrayList<>();
+
         for (Map.Entry<ResourceKey<Biome>, Biome> e : collect) {
             Humidity humid = Humidity.getHumid(e.getValue().getModifiedClimateSettings().downfall(),
                     e.getValue().getModifiedClimateSettings().temperature());
             if (biomes.getHolderOrThrow(e.getKey()).is(BiomeTags.IS_OVERWORLD)
-                    // biomeswevegone,biomesoplenty
-                    && e.getKey().location().getNamespace().contains("minecraft")
+                    // biomeswevegone,biomesoplenty,natures_spirit, minecraft
+                    && e.getKey().location().getNamespace().contains("natures_spirit")
             ) {
                 List<String> s2 = new ArrayList<>();
                 s2.add(Component.translatable(Util.makeDescriptionId("biome", e.getKey().location())).getString());
@@ -146,19 +129,27 @@ public class SimpleUtil {
                 s2.add(humid.getTranslation().getString());
                 s2.add(humid.toString());
                 ss.add(s2);
-
+                pairs.add(SimplePair.of(e.getKey().location(), humid));
             }
         }
-        for (List<String> s : ss) {
-            EclipticSeasons.logger(
-                    "|%s|%s|%s|%s|".formatted(s.get(0), s.get(1), s.get(2), s.get(3)));
+        pairs.sort(Comparator.comparing(SimplePair::getValue));
+        pairs = pairs.reversed();
+        // for (List<String> s : ss) {
+        //     EclipticSeasons.logger(
+        //             "|%s|%s|%s|%s|".formatted(s.get(0), s.get(1), s.get(2), s.get(3)));
+        // }
+        StringBuilder stringBuilder = new StringBuilder("\n");
+        for (SimplePair<ResourceLocation, Humidity> pair : pairs) {
+            stringBuilder.append(
+                    "\n|%s|%s|%s|%s|".formatted(Component.translatable(Util.makeDescriptionId("biome", pair.getKey())).getString(),
+                            pair.getKey(), pair.getValue().getTranslation().getString(), pair.getValue().getName()));
         }
-
+        EclipticSeasons.logger(stringBuilder);
         EclipticSeasons.logger("------------------------end-----------------------");
     }
 
     public static void exportHumidityChart(Level level, String namespace) {
-
+        printHumidityTable(level);
         Registry<Biome> biomes = level.registryAccess().registryOrThrow(Registries.BIOME);
         // List<String> list = biomes.entrySet().stream().map(e -> e.getKey().location().toString()).sorted().toList();
         List<Map.Entry<ResourceKey<Biome>, Biome>> collect = biomes.entrySet().stream()
@@ -173,7 +164,7 @@ public class SimpleUtil {
                 Humidity[] humidities = new Humidity[24];
                 for (int i = 0; i < 24; i++) {
                     SolarTerm solarTerm = SolarTerm.collectValues()[i];
-                    humidities[i] = Humidity.getHumid(solarTerm, biomeHolder);
+                    humidities[i] = EclipticUtil.getHumidityConstant(solarTerm, biomeHolder, !level.isClientSide());
                 }
                 String biomeName = Component.translatable(Util.makeDescriptionId("biome", e.getKey().location())).getString();
                 SolarTermHumidityChart chart = new SolarTermHumidityChart(biomeName, humidities);
@@ -183,11 +174,38 @@ public class SimpleUtil {
                 if (!new File(EclipticSeasonsApi.MODID + "/humid").exists()) {
                     new File(EclipticSeasonsApi.MODID + "/humid").mkdir();
                 }
-                if (!new File(EclipticSeasonsApi.MODID + "/humid/"+namespace).exists()) {
-                    new File(EclipticSeasonsApi.MODID + "/humid/"+namespace).mkdir();
+                if (!new File(EclipticSeasonsApi.MODID + "/humid/" + namespace).exists()) {
+                    new File(EclipticSeasonsApi.MODID + "/humid/" + namespace).mkdir();
                 }
-                chart.exportToImage("%s/humid/%s/%s.png".formatted(EclipticSeasonsApi.MODID,namespace, biomeName), "png", 800, 400);
+                chart.exportToImage("%s/humid/%s/%s.png".formatted(EclipticSeasonsApi.MODID, namespace, biomeName), "png", 800, 400);
             }
         }
+    }
+
+    public static <T> List<Holder<T>> holderSetToList(HolderSet<T> holders) {
+        List<Holder<T>> holderList = new ArrayList<>();
+        for (int i = 0; i < holders.size(); i++) {
+            holderList.add(holders.get(i));
+        }
+        return holderList;
+    }
+
+
+    // TODO 元胞自动机
+    // https://zhuanlan.zhihu.com/p/621070746
+    private static int getWorldgenNoise(ServerPlayer player, ServerLevel level, BlockPos blockPos) {
+        int x = QuartPos.fromBlock(blockPos.getX());
+        int y = QuartPos.fromBlock(blockPos.getY());
+        int z = QuartPos.fromBlock(blockPos.getZ());
+        Climate.TargetPoint targetPoint = level.getChunkSource().randomState().sampler().sample(x, y, z);
+        float c = Climate.unquantizeCoord(targetPoint.continentalness());
+        float e = Climate.unquantizeCoord(targetPoint.erosion());
+        float t = Climate.unquantizeCoord(targetPoint.temperature());
+        float h = Climate.unquantizeCoord(targetPoint.humidity());
+        float w = Climate.unquantizeCoord(targetPoint.weirdness());
+
+        OverworldBiomeBuilder overworldBiomeBuilder = new OverworldBiomeBuilder();
+
+        return 0;
     }
 }

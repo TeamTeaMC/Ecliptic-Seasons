@@ -7,18 +7,20 @@ import com.teamtea.eclipticseasons.client.map.ClientMapFixer;
 import com.teamtea.eclipticseasons.client.render.WorldRenderer;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
-import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.core.map.BiomeHolder;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.core.map.SnowyRemover;
 import com.teamtea.eclipticseasons.common.network.message.*;
+import com.teamtea.eclipticseasons.config.ClientConfig;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.chunk.status.ChunkStatus;
@@ -37,7 +39,8 @@ public class NetworkUtil {
         context.enqueueWork(() -> {
             SolarHolders.getSaveDataLazy(context.player().level()).ifPresent(data -> {
                 data.setSolarTermsDay(solarTermsMessage.solarDay);
-                BiomeClimateManager.updateTemperature(context.player().level(), data.getSolarTerm());
+                // note 不再需要更新
+                // BiomeClimateManager.updateTemperature(context.player().level(), data.getSolarTerm());
                 BiomeColorsHandler.needRefresh = true;
                 ClientCon.tick(context.player().level());
                 BiomeColorsHandler.reloadColors();
@@ -51,7 +54,14 @@ public class NetworkUtil {
 
     public static void processEmptyMessage(EmptyMessage emptyMessage, IPayloadContext context) {
         context.enqueueWork(() -> {
-            Minecraft.getInstance().levelRenderer.allChanged();
+            // note 观察是否更新正常
+            if(ClientConfig.Renderer.resetRendererAfterSleep.get()){
+                Minecraft.getInstance().levelRenderer.allChanged();
+            }
+            else {
+                if (Minecraft.getInstance().cameraEntity instanceof LivingEntity livingEntity)
+                    WorldRenderer.setAllDirty(SectionPos.of(livingEntity.getOnPos()));
+            }
         }).exceptionally(e -> {
             // Handle exception
             context.disconnect(Component.translatable("eclipticseasons.networking.failed", e.getMessage()));
@@ -144,6 +154,24 @@ public class NetworkUtil {
         });
     }
 
+    public static void processBroomUseMessage(BroomUseMessage broomUseMessage, IPayloadContext context) {
+
+        context.enqueueWork(() -> {
+            if (context.player().level() instanceof Level level && level.isClientSide()) {
+                int startY = level.getMaxBuildHeight() + 1;
+                BlockPos blockPos = broomUseMessage.blockPos;
+                // MapChecker.updatePosForce(level, blockPos, blockPos.getY());
+                ClientMapFixer.addPlanner(level, Blocks.AIR.defaultBlockState(), blockPos, level.getGameTime(), startY);
+                WorldRenderer.setSectionDirtyWithNeighbors(SectionPos.of(blockPos));
+            }
+
+        }).exceptionally(e -> {
+            // Handle exception
+            context.disconnect(Component.translatable("eclipticseasons.networking.failed", e.getMessage()));
+            return null;
+        });
+    }
+
 
     public static void handleConfigMessage(ConfigMessage configMessage, IPayloadContext iPayloadContext) {
         iPayloadContext.enqueueWork(() -> {
@@ -155,17 +183,26 @@ public class NetworkUtil {
 
     public static void processChunkBiomeUpdateMessage(ChunkBiomeUpdateMessage chunkBiomeUpdateMessage, IPayloadContext iPayloadContext) {
         iPayloadContext.enqueueWork(() -> {
-            ChunkAccess chunk = iPayloadContext.player().level().getChunk(chunkBiomeUpdateMessage.x, chunkBiomeUpdateMessage.z, ChunkStatus.FULL, false);
-            if (chunk != null) {
-                // int[] bytes = new int[256];
-                // if (chunk.hasData(EclipticSeasons.ModContents.BIOME_HOLDER)
-                //         && chunk.getData(EclipticSeasons.ModContents.BIOME_HOLDER) instanceof BiomeHolder biomeHolder) {
-                //     biomeHolder.fillArray(bytes, serverLevel, chunkPos);
-                // }
-                // SimplePair<int[], Boolean> pair = new BiomeHolder(bytes, false).prepareBiomes(iPayloadContext.player().level(), new ChunkPos(chunkBiomeUpdateMessage.x,chunkBiomeUpdateMessage.z));
-                chunk.setData(AttachmentRegistry.BIOME_HOLDER, new BiomeHolder(chunkBiomeUpdateMessage.biomes, true, chunkBiomeUpdateMessage.version));
+            if (ClientCon.getUseLevel() != null) {
+                ChunkAccess chunk = ClientCon.getUseLevel().getChunk(chunkBiomeUpdateMessage.x, chunkBiomeUpdateMessage.z, ChunkStatus.FULL, false);
+                if (chunk != null) {
+                    chunk.setData(AttachmentRegistry.BIOME_HOLDER, new BiomeHolder(chunkBiomeUpdateMessage.biomes, true, chunkBiomeUpdateMessage.version));
+                }
             }
 
+        });
+    }
+
+    public static void processHumidModifyMessage(HumidModifyMessage message, IPayloadContext context) {
+        context.enqueueWork(() -> {
+            if (context.player().level() instanceof Level level && level.isClientSide()) {
+                ClientCon.humidityModificationLevel =(int)message.value;
+            }
+
+        }).exceptionally(e -> {
+            // Handle exception
+            context.disconnect(Component.translatable("eclipticseasons.networking.failed", e.getMessage()));
+            return null;
         });
     }
 }

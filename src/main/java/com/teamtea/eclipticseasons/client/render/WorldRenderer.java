@@ -13,6 +13,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
@@ -69,7 +70,7 @@ public class WorldRenderer {
                 }
 
                 if (reMainTick > 0) {
-                    reMainTick--;
+                    reMainTick-=10;
                 } else reMainTick = 100;
 
                 float progress = getProgress(blurStatus == ON_BLUR) * 0.03f;
@@ -201,6 +202,21 @@ public class WorldRenderer {
             Minecraft.getInstance().levelRenderer.setSectionDirtyWithNeighbors(sectionPos.x(), sectionPos.y(), sectionPos.z());
         }
     }
+
+    public static void setSectionDirtyRandomly(SectionPos sectionPos) {
+        if (Minecraft.getInstance().level != null) {
+            RandomSource random = Minecraft.getInstance().level.random;
+            int lastViewDistance = (int) (Minecraft.getInstance().levelRenderer.getLastViewDistance() - 1);
+            for (int i = 0; i < random.nextInt(8) + 4; i++) {
+                {
+                    setSectionDirtyWithNeighbors(SectionPos.of(sectionPos.x() + 2 * (random.nextInt(lastViewDistance)) - lastViewDistance,
+                            sectionPos.y(),
+                            sectionPos.z() + 2 * (random.nextInt(lastViewDistance)) - lastViewDistance));
+                }
+            }
+        }
+    }
+
 
 
     public static void setAllDirty(SectionPos centerPos) {

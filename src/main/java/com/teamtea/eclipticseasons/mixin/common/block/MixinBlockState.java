@@ -30,21 +30,32 @@ public abstract class MixinBlockState extends BlockBehaviour.BlockStateBase impl
 
 
     @Unique
-    public int eclipticSeasons$blockTypeFlag = -1;
-
+    public int eclipticseasons$blockTypeFlag = -1;
+    @Unique
+    public boolean eclipticseasons$forceTickControl = false;
 
     @Override
     public void setBlockTypeFlag(int flag) {
-        eclipticSeasons$blockTypeFlag = flag;
+        eclipticseasons$blockTypeFlag = flag;
     }
 
     @Override
     public int getBlockTypeFlag() {
-        return eclipticSeasons$blockTypeFlag;
+        return eclipticseasons$blockTypeFlag;
     }
 
     @Override
     public BlockState es$asState() {
         return asState();
+    }
+
+    @Override
+    public boolean forceTickControl() {
+        return eclipticseasons$forceTickControl;
+    }
+
+    @Override
+    public void setForceTickControl(boolean force) {
+        eclipticseasons$forceTickControl=force;
     }
 }

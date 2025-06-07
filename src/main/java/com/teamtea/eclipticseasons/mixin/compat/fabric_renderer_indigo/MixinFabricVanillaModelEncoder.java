@@ -29,18 +29,18 @@ public abstract class MixinFabricVanillaModelEncoder {
             method = "emitBlockQuads",
             at = @At(value = "INVOKE", ordinal = 0, target = "Lnet/minecraft/client/resources/model/BakedModel;getQuads(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/Direction;Lnet/minecraft/util/RandomSource;Lnet/neoforged/neoforge/client/model/data/ModelData;Lnet/minecraft/client/renderer/RenderType;)Ljava/util/List;")
     )
-    private static List<BakedQuad> ecliptic$emitBlockQuads_getQuads_cancel_top(List<BakedQuad> original,
+    private static List<BakedQuad> eclipticseasons$emitBlockQuads_getQuads_cancel_top(List<BakedQuad> original,
                                                                                @Local(argsOnly = true) BakedModel bakedModel,
                                                                                @Local(argsOnly = true) RenderContext renderContext,
                                                                                @Local(argsOnly = true) Supplier<RandomSource> randomSourceSupplier,
                                                                                @Local(argsOnly = true) BlockState state,
                                                                                @Local Direction direction) {
         if (renderContext instanceof TerrainRenderContextLevelGetter terrainRenderContextLevelGetter) {
-            BlockAndTintGetter blockAndTintGetter = terrainRenderContextLevelGetter.eclipticSeasons$get();
+            BlockAndTintGetter blockAndTintGetter = terrainRenderContextLevelGetter.eclipticseasons$get();
             if (blockAndTintGetter instanceof ISeedProvider seedProvider) {
                 if (blockAndTintGetter instanceof ExtendBlockView extendBlockView) {
                     if (extendBlockView.getSnowModel() != null)
-                        return ModelManager.cancelTop(bakedModel, blockAndTintGetter, state, terrainRenderContextLevelGetter.eclipticSeasons$getPos(), direction, randomSourceSupplier.get(), seedProvider.getCacheSeed(), original, extendBlockView.getCacheBakeQuad(),extendBlockView.getSnowModel());
+                        return ModelManager.cancelTop(bakedModel, blockAndTintGetter, state, terrainRenderContextLevelGetter.eclipticseasons$getPos(), direction, randomSourceSupplier.get(), seedProvider.getCacheSeed(), original, extendBlockView.getCacheBakeQuad(),extendBlockView.getSnowModel());
                 }
             }
         }

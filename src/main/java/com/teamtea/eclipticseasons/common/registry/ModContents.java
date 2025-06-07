@@ -2,12 +2,18 @@ package com.teamtea.eclipticseasons.common.registry;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
-import com.teamtea.eclipticseasons.api.data.BiomeClimateModifier;
-import com.teamtea.eclipticseasons.api.data.WetterStructure;
+import com.teamtea.eclipticseasons.api.data.season.BiomeSet;
+import com.teamtea.eclipticseasons.api.data.season.SnowDefinition;
+import com.teamtea.eclipticseasons.api.data.climate.AgroClimaticZone;
+import com.teamtea.eclipticseasons.api.data.climate.BiomesClimateSettings;
+import com.teamtea.eclipticseasons.api.data.craft.HumidityControl;
+import com.teamtea.eclipticseasons.api.data.craft.WetterStructure;
 import com.teamtea.eclipticseasons.api.data.crop.CropGrowControlBuilder;
+import com.teamtea.eclipticseasons.api.data.quest.SeasonQuest;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -26,18 +32,31 @@ public class ModContents {
                                 .displayItems((params, output) -> {
                                     ItemRegistry.ITEM_DEFERRED_REGISTER.getEntries().forEach(
                                             itemDeferredHolder ->
-                                                    output.accept(itemDeferredHolder.value())
+                                            {
+                                                Item value = itemDeferredHolder.get();
+                                                if (value != ItemRegistry.hyetometer.get()
+                                                        && value != ItemRegistry.thermometer.get()) {
+                                                    output.accept(value);
+                                                }
+                                            }
                                     );
+
                                 })
                                 .build());
             });
     }
 
+    @SuppressWarnings("removal")
     @SubscribeEvent
     public static void onNewRegistry(DataPackRegistryEvent.NewRegistry event) {
-        event.dataPackRegistry(ESRegistries.WETTER, WetterStructure.CODEC);
-        event.dataPackRegistry(ESRegistries.BIOME_CLIMATE, BiomeClimateModifier.CODEC, BiomeClimateModifier.CODEC);
-        event.dataPackRegistry(ESRegistries.CROP, CropGrowControlBuilder.CODEC,  CropGrowControlBuilder.CODEC);
+        event.dataPackRegistry(ESRegistries.WETTER, WetterStructure.CODEC, WetterStructure.CODEC);
+        event.dataPackRegistry(ESRegistries.BIOME_CLIMATE_SETTING, BiomesClimateSettings.CODEC, BiomesClimateSettings.CODEC);
+        event.dataPackRegistry(ESRegistries.CROP, CropGrowControlBuilder.CODEC, CropGrowControlBuilder.CODEC);
+        event.dataPackRegistry(ESRegistries.AGRO_CLIMATE, AgroClimaticZone.CODEC, AgroClimaticZone.CODEC);
+        event.dataPackRegistry(ESRegistries.SEASON_QUEST, SeasonQuest.CODEC, SeasonQuest.CODEC);
+        event.dataPackRegistry(ESRegistries.HUMIDITY_CONTROL, HumidityControl.CODEC, HumidityControl.CODEC);
+        event.dataPackRegistry(ESRegistries.SNOW_DEFINITIONS, SnowDefinition.CODEC, SnowDefinition.CODEC);
+        event.dataPackRegistry(ESRegistries.BIOME_SET, BiomeSet.CODEC, BiomeSet.CODEC);
 
     }
 

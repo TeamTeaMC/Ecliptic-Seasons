@@ -19,7 +19,7 @@ public class MixinFishingHook {
             method = "retrieve",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/storage/loot/LootTable;getRandomItems(Lnet/minecraft/world/level/storage/loot/LootParams;)Lit/unimi/dsi/fastutil/objects/ObjectArrayList;")
     )
-    private ObjectArrayList<ItemStack> ecliptic$retrieve(ObjectArrayList<ItemStack> original, @Local LootParams lootparams) {
+    private ObjectArrayList<ItemStack> eclipticseasons$retrieve(ObjectArrayList<ItemStack> original, @Local LootParams lootparams) {
         return SeasonFishingHooks.modify(lootparams, original);
     }
 

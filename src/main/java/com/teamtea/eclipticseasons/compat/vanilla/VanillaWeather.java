@@ -7,6 +7,7 @@ import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.constant.tag.ClimateTypeBiomeTags;
 import com.teamtea.eclipticseasons.api.misc.IBiomeTagHolder;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
+import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
@@ -46,7 +47,7 @@ public class VanillaWeather {
 
 
     public static WeatherManager.SnowRenderStatus getSnowStatus(ServerLevel level, Holder<Biome> biome, BlockPos pos) {
-        var provider = SolarUtil.getProvider(level);
+        var provider = SolarHolders.getSaveData(level);
         var status = WeatherManager.SnowRenderStatus.NONE;
         if (biome.value().hasPrecipitation() && provider != null) {
             boolean flag_cold = isInWinter(level);
@@ -66,6 +67,7 @@ public class VanillaWeather {
         return handlePrecipitationAt(level, biome, pos);
     }
 
+    @Deprecated
     public static boolean hasMonsoonalPrecipitation(Biome biome) {
         var level = getValidLevel(biome);
         return hasPrecipitation(level, biome);
@@ -74,7 +76,7 @@ public class VanillaWeather {
     public static boolean hasPrecipitation(Level level, Biome biome) {
         var solarTerm = EclipticSeasonsApi.getInstance().getSolarTerm(level);
         boolean hasPrecipitation = biome.getModifiedClimateSettings().hasPrecipitation();
-        TagKey<Biome> tag = ((IBiomeTagHolder) (Object) biome).eclipticSeasons$getBindTag();
+        TagKey<Biome> tag = ((IBiomeTagHolder) (Object) biome).eclipticseasons$getBindTag();
         if (tag.equals(ClimateTypeBiomeTags.MONSOONAL)) {
             Season season = solarTerm.getSeason();
             if (season == Season.SUMMER || season == Season.AUTUMN) {
@@ -126,7 +128,7 @@ public class VanillaWeather {
     public static boolean isOnServerThread(Biome biome) {
         if (FMLLoader.getDist() == Dist.DEDICATED_SERVER)
             return true;
-        return BiomeClimateManager.BIOME_DEFAULT_TEMPERATURE_MAP.containsKey(biome);
+        return BiomeClimateManager.BIOME_TAG_KEY_MAP.containsKey(biome);
     }
 
     public static Level getUsingClientLevel() {
@@ -179,7 +181,8 @@ public class VanillaWeather {
         }
     }
 
-    public static boolean canRunSpecialWeather() {
-        return EclipticUtil.useSolarWeather();
-    }
+    // @Deprecated(forRemoval = true)
+    // public static boolean canRunSpecialWeather() {
+    //     return EclipticUtil.useSolarWeather();
+    // }
 }

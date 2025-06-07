@@ -5,6 +5,7 @@ import com.teamtea.eclipticseasons.common.registry.BlockEntityRegistry;
 import com.teamtea.eclipticseasons.common.block.base.SimpleHorizontalEntityBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
@@ -34,7 +35,7 @@ public class CalendarBlock extends SimpleHorizontalEntityBlock {
 
     @Override
     protected VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
-       return shapes[pState.getValue(FACING).get2DDataValue()];
+        return shapes[pState.getValue(FACING).get2DDataValue()];
     }
 
     @Override
@@ -65,5 +66,14 @@ public class CalendarBlock extends SimpleHorizontalEntityBlock {
     @Override
     public @Nullable BlockEntity newBlockEntity(BlockPos pPos, BlockState pState) {
         return BlockEntityRegistry.calendar_entity_type.get().create(pPos, pState);
+    }
+
+    @Override
+    public BlockState getStateForPlacement(BlockPlaceContext context) {
+        Direction clickedFace = context.getClickedFace();
+        if (!Direction.Plane.HORIZONTAL.test(clickedFace)) {
+            clickedFace = context.getHorizontalDirection().getOpposite();
+        }
+        return this.defaultBlockState().setValue(FACING, clickedFace);
     }
 }
