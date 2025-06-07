@@ -26,6 +26,7 @@
   "weights": {
     "default": 100000
   },
+  "replace": false,
   "source": "custom",
   "block": {
     "blocks": "minecraft:pumpkin"

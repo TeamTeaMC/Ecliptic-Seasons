@@ -12,10 +12,7 @@ import com.teamtea.eclipticseasons.data.model.BlockStatesDataProvider;
 import com.teamtea.eclipticseasons.data.model.ESBlockModelProvider;
 import com.teamtea.eclipticseasons.data.model.ESItemModelProvider;
 import com.teamtea.eclipticseasons.data.recipe.ESRecipeProvider;
-import com.teamtea.eclipticseasons.data.tag.CropClimateTagsDataProvider;
-import com.teamtea.eclipticseasons.data.tag.ESBlockTagProvider;
-import com.teamtea.eclipticseasons.data.tag.ESItemTagProvider;
-import com.teamtea.eclipticseasons.data.tag.TagsDataProvider;
+import com.teamtea.eclipticseasons.data.tag.*;
 import net.minecraft.Util;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistryAccess;
@@ -49,7 +46,8 @@ public class start {
             CompletableFuture<HolderLookup.Provider> modFuture = CompletableFuture.supplyAsync(() -> modProvider, Util.backgroundExecutor());
 
             generator.addProvider(event.includeServer(), new CropClimateTagsDataProvider(packOutput, modFuture, MODID, helper));
-
+            generator.addProvider(event.includeServer(), new EffectTagsDataProvider(packOutput, lookupProvider, MODID, helper));
+            generator.addProvider(event.includeServer(), new EnhancementTagsDataProvider(packOutput, lookupProvider, MODID, helper));
             generator.addProvider(event.includeServer(), new TagsDataProvider(packOutput, lookupProvider, MODID, helper));
             var esb = new ESBlockTagProvider(packOutput, lookupProvider, MODID, helper);
             generator.addProvider(event.includeServer(), esb);

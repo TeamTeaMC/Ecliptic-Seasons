@@ -1,7 +1,7 @@
 {
   "level": -1,
-  "lasting_time": 6000,
   "checks": [],
+  "infinity": true,
   "ingredient": {
     "item": "minecraft:sponge",
     "count": 1

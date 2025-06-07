@@ -160,7 +160,7 @@ public class CommonConfig {
             complexGreenHouseCheck = builder.comment("Whether to enable complex shape checking.")
                     .define("ComplexGreenHouseCheck", true);
             useBoxDistance = builder.comment("Calculate the working range of the greenhouse block by box distance and not Euclidean range.")
-                    .define("UseBoxDistance", false);
+                    .define("UseBoxDistance", true);
 
             useDefaultValue = builder.comment("[Deprecated]If a crop is not registered for a season or humid type, default values will be used.")
                     .define("RegisterCropDefaultValue", false);

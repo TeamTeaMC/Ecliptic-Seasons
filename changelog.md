@@ -1,3 +1,10 @@
+## **0.11.0-pre5**
+- Added item tags `eclipticseasons:cooling_items` and `eclipticseasons:heat_protective_helmets`, and armor enchantment tag `eclipticseasons:heatstroke_resistant`. A `eclipticseasons:heatstroke_resistant` mob effect tag is also introduced to control heatstroke behavior. You can tag your own straw hat to provide heatstroke resistance.
+- Greenhouses now use Box Distance by default to determine their working radius.
+- Adjusted the humidity control data pack. By default, sponges and wet sponges will no longer be consumed. Data pack authors can still configure the lasting time manually.
+- Fixed an issue where the hygrometer could not detect greenhouse humidity in greenhouse in real time.
+- Fixed an issue where Silk Touch enchantment could not harvest the greenhouse core block.
+
 ### **0.11.0-pre4-8**
 - Adjusted the cache path structure for additional models during game loading to accommodate potential special cases in the future.
 

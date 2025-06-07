@@ -137,8 +137,10 @@ public class HumidityControlBlockEntity extends SyncBlockEntity {
             endRecipe();
         } else {
             if (this.humidityControl != null && isRecipeCacheValid(this.humidityControl)) {
-                this.time--;
-                setChanged();
+                if (!this.humidityControl.noCost()) {
+                    this.time--;
+                    setChanged();
+                }
             } else {
                 if (this.humidityControl != null || this.time > 0)
                     resetRecipe();

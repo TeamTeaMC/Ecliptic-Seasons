@@ -1,6 +1,5 @@
 {
   "level": 1,
-  "lasting_time": 6000,
   "checks": [
     {
       "offset": [
@@ -13,6 +12,7 @@
       }
     }
   ],
+  "infinity": true,
   "ingredient": {
     "item": "minecraft:wet_sponge",
     "count": 1

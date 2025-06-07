@@ -1,5 +1,8 @@
 package com.teamtea.eclipticseasons.common.core.biome;
 
+import com.teamtea.eclipticseasons.api.constant.tag.ESEnchantmentTags;
+import com.teamtea.eclipticseasons.api.constant.tag.ESItemTags;
+import com.teamtea.eclipticseasons.api.constant.tag.ESMobEffectTags;
 import com.teamtea.eclipticseasons.common.registry.EffectRegistry;
 import com.teamtea.eclipticseasons.common.registry.ModAdvancements;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
@@ -20,9 +23,7 @@ import com.teamtea.eclipticseasons.common.network.SimpleNetworkHandler;
 import com.teamtea.eclipticseasons.common.network.message.SolarTermsMessage;
 import com.teamtea.eclipticseasons.compat.vanilla.VanillaWeather;
 import com.teamtea.eclipticseasons.config.CommonConfig;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Holder;
-import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.*;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
@@ -30,13 +31,14 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BiomeTags;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.*;
-import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.levelgen.Heightmap;
@@ -48,6 +50,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.fml.loading.FMLLoader;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.*;
 
@@ -400,28 +403,34 @@ public class WeatherManager {
                                 && ((EclipticUtil.isNoon(level) && (level.canSeeSky(player.blockPosition()))))
                         ) {
                             boolean isColdHe = false;
+                            armorChecks:
                             for (ItemStack itemstack : player.getArmorSlots()) {
                                 Item item = itemstack.getItem();
                                 if (item instanceof ArmorItem armorItem) {
                                     if (armorItem.getType() == ArmorItem.Type.HELMET) {
-                                        if (armorItem.getEnchantmentLevel(itemstack, Enchantments.FIRE_PROTECTION) > 0) {
-                                            isColdHe = true;
-                                        }
-                                    } else if (armorItem.getType() == ArmorItem.Type.BOOTS) {
-                                        if (armorItem.getEnchantmentLevel(itemstack, Enchantments.FROST_WALKER) > 0) {
+                                        if (itemstack.is(ESItemTags.COOLING_ITEMS)) {
                                             isColdHe = true;
                                             break;
+                                        }
+                                        Map<Enchantment, Integer> allEnchantments = itemstack.getAllEnchantments();
+                                        if (!allEnchantments.isEmpty()) {
+                                            for (Enchantment enchantment : allEnchantments.keySet()) {
+                                                Optional<Holder<Enchantment>> holder = ForgeRegistries.ENCHANTMENTS.getHolder(enchantment);
+                                                if (holder.isPresent() && holder.get().is(ESEnchantmentTags.HEATSTROKE_RESISTANT)) {
+                                                    isColdHe = true;
+                                                    break armorChecks;
+                                                }
+                                            }
                                         }
                                     }
                                 }
                             }
                             if (!isColdHe) {
-                                for (ItemStack itemstack : player.getInventory().items) {
-                                    var item = itemstack.getItem();
-                                    if (item == Items.SNOWBALL ||
-                                            (item instanceof BlockItem blockItem &&
-                                                    (blockItem.getBlock().defaultBlockState().is(BlockTags.SNOW)
-                                                            || blockItem.getBlock().defaultBlockState().is(BlockTags.ICE)))) {
+                                NonNullList<ItemStack> items = player.getInventory().items;
+                                int selectionSize = Inventory.getSelectionSize();
+                                for (int i = 0, itemsSize = items.size(); i < itemsSize && i < selectionSize; i++) {
+                                    ItemStack itemstack = items.get(i);
+                                    if (itemstack.is(ESItemTags.COOLING_ITEMS)) {
                                         isColdHe = true;
                                         break;
                                     }
@@ -429,7 +438,15 @@ public class WeatherManager {
                             }
                             if (!isColdHe) {
                                 isColdHe = player.hasEffect(MobEffects.FIRE_RESISTANCE);
+                                for (MobEffectInstance activeEffect : player.getActiveEffects()) {
+                                    Optional<Holder<MobEffect>> holder = ForgeRegistries.MOB_EFFECTS.getHolder(activeEffect.getEffect());
+                                    if (holder.isPresent() && holder.get().is(ESMobEffectTags.HEATSTROKE_RESISTANT)) {
+                                        isColdHe = true;
+                                        break;
+                                    }
+                                }
                             }
+
                             if (!player.hasEffect(EffectRegistry.HEAT_STROKE) && !isColdHe) {
                                 player.addEffect(new MobEffectInstance(EffectRegistry.HEAT_STROKE, 600));
                                 ModAdvancements.heatStrokeCriterion.trigger(player);

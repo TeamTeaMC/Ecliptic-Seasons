@@ -39,7 +39,7 @@ public class HygrometerBlock extends CalendarBlock {
         registerDefaultState(defaultBlockState().setValue(POWER, 0));
         VoxelShape base = Shapes.box(1 / 16f, 0, 0.75, 15 / 16f, 11 / 16f, 1);
         for (Direction direction : Direction.Plane.HORIZONTAL) {
-            shapes1[direction.get2DDataValue()] = SimpleVoxelShapeUtils.rotateVoxelShape(base, Direction.Axis.Y, getRotateYByFacing(defaultBlockState().setValue(FACING, direction)) );
+            shapes1[direction.get2DDataValue()] = SimpleVoxelShapeUtils.rotateVoxelShape(base, Direction.Axis.Y, getRotateYByFacing(defaultBlockState().setValue(FACING, direction)));
         }
     }
 
@@ -50,8 +50,8 @@ public class HygrometerBlock extends CalendarBlock {
 
     @Override
     public void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
-        super.randomTick(state, level, pos, random);
-        if (random.nextInt(4) == 0) {
+        // super.randomTick(state, level, pos, random);
+        if (random.nextInt(30) == 0) {
             updateLevel(level, state, pos);
         }
     }
@@ -82,13 +82,14 @@ public class HygrometerBlock extends CalendarBlock {
     private static void updateLevel(ServerLevel level, BlockState state, BlockPos pos) {
         SolarDataManager data = SolarHolders.getSaveData(level);
         if (data != null) {
+            BlockPos checkPos = pos;
             float chance = 0;
             for (int i = 0; i < 20; i++) {
-                chance += CropGrowthHandler.isInRoom(level, pos, level.getBlockState(pos), Optional.empty()) ? 1 : 0;
+                chance += CropGrowthHandler.isInRoom(level, checkPos, level.getBlockState(checkPos), Optional.empty()) ? 1 : 0;
             }
-            Humidity humidityAt = EclipticUtil.getHumidityAt(level, pos);
+            Humidity humidityAt = EclipticUtil.getHumidityAt(level, checkPos);
             if (chance > 8) {
-                humidityAt.cycle(Mth.floor(data.calculateHumidityModification(pos)));
+                humidityAt=humidityAt.cycle(Mth.floor(data.calculateHumidityModification(checkPos)));
             }
             int p = getPowerFromHumidityLevel(humidityAt.ordinal());
             if (state.getValue(POWER) != p) {
