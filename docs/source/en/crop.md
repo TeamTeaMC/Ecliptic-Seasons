@@ -1,15 +1,23 @@
 ## Seasonal Crops
 
-The growth of crops is closely related to the seasons, and its essence is the change of water and heat conditions. Therefore, in cold areas, the winter of crops will be longer. In hot areas, summer will dominate.
+Crop growth is closely tied to the seasons, fundamentally driven by changes in water and heat conditions. In colder regions, winters tend to be longer for crops, while in hotter regions, summer dominates the growing cycle.
 
-## Build a greenhouse
+## Building a Greenhouse
 
-In order to adapt crops to different seasons and environments, you need to build a greenhouse.
+To help crops adapt to different seasons and environments, you need to build a greenhouse.
 
-The greenhouse can maintain the growth temperature and humidity conditions of crops.
+A greenhouse maintains the proper temperature and humidity for crop growth. Additionally, for crops that depend on seasonal conditions, you will need to provide a Seasonal Greenhouse Core.
 
-Greenhouses are divided into two types, one is a light-transmitting greenhouse and the other is a closed greenhouse.
+There are two types of greenhouses: transparent and sealed.
 
-The light-transmitting greenhouse can provide sufficient sunlight to crops in winter to ensure the smooth growth of plants. However, during the hot summer daytime, the sunlight will bring too much heat, so it will lose its effect.
+A transparent greenhouse allows ample sunlight during winter, ensuring smooth crop growth.
 
-The darkroom greenhouse is slightly weaker and cannot completely restore the growth rate of crops, but it is not easily affected by the high temperature in summer.
+A sealed greenhouse is less effective at restoring growth speed, but it is more resistant to high summer temperatures.
+
+## Supplementing Humidity
+
+Most crops require good humidity conditions to grow properly. Without it, their growth rate will slow down significantly.
+
+Water sources in a greenhouse can help keep the soil moist. However, improving air humidity is also essential. Using magma blocks to activate bubble columns can effectively increase air humidity in a certain area (1.21 only).
+
+A better method is to use a grille block with sponges placed inside to regulate humidity.

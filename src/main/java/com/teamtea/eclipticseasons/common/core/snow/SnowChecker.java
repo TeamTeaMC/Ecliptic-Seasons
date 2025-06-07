@@ -23,7 +23,16 @@ public class SnowChecker {
         if (sno == null) {
             SnowDefinition snowDefinition = SNOW_DEFINITION_MAP.get(blockState.getBlock());
             if (snowDefinition != null) {
-                sno = snowDefinition.getInfo();
+                boolean match = true;
+                for (SnowDefinition.PropertyTester propertyTester : snowDefinition.getMap()) {
+                    if (!(propertyTester.matches(blockState) && !propertyTester.isReverse())) {
+                        match = false;
+                        break;
+                    }
+                }
+                if (match) {
+                    sno = snowDefinition.getInfo();
+                }
             }
         }
         return sno == null ? SnowDefinition.Info.EMPTY : sno;

@@ -139,9 +139,9 @@ public class SnowDefinition implements MapFiller<Block, SnowDefinition>, HolderM
     @Data
     public static class RangeMatcher implements PropertyMatcher {
         public static final Codec<RangeMatcher> CODEC = RecordCodecBuilder.create(ins -> ins.group(
-                Codec.BOOL.optionalFieldOf("ignoreMin", false).forGetter(o -> o.ignoreMin),
+                Codec.BOOL.optionalFieldOf("ignore_min", false).forGetter(o -> o.ignoreMin),
                 Codec.INT.fieldOf("min").forGetter(o -> o.min),
-                Codec.BOOL.optionalFieldOf("ignoreMax", false).forGetter(o -> o.ignoreMax),
+                Codec.BOOL.optionalFieldOf("ignore_max", false).forGetter(o -> o.ignoreMax),
                 Codec.INT.fieldOf("max").forGetter(o -> o.max)
         ).apply(ins, RangeMatcher::new));
 
