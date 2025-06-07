@@ -1,17 +1,13 @@
 package com.teamtea.eclipticseasons.client.sound;
 
-import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.constant.solar.TimePeriod;
 import com.teamtea.eclipticseasons.api.data.client.SeasonalBiomeAmbient;
 import com.teamtea.eclipticseasons.client.util.ClientRef;
-import com.teamtea.eclipticseasons.common.registry.SoundEventsRegistry;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
-import com.teamtea.eclipticseasons.client.core.ClientWeatherChecker;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.misc.SimplePair;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.resources.sounds.AbstractTickableSoundInstance;
 import net.minecraft.client.resources.sounds.AmbientSoundHandler;
@@ -20,15 +16,12 @@ import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.core.Holder;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.tags.BiomeTags;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeManager;
-import net.minecraft.world.level.biome.Biomes;
-import net.minecraftforge.common.Tags;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -60,7 +53,13 @@ public class SeasonalBiomeAmbientSoundsHandler implements AmbientSoundHandler {
 
         // this.loopSounds.values().removeIf(AbstractTickableSoundInstance::isStopped);
 
-        loopSoundList.removeIf(pair -> pair.getValue().isStopped());
+        loopSoundList.removeIf(pair -> {
+            boolean stopped = pair.getValue().isStopped();
+            if (stopped) {
+                soundManager.stop(pair.getValue());
+            }
+            return stopped;
+        });
 
         Level level = player.level();
         boolean indoor =
@@ -176,6 +175,7 @@ public class SeasonalBiomeAmbientSoundsHandler implements AmbientSoundHandler {
                                 && !soundManager.isActive(pair.getValue())) {
                             needAdd = true;
                             loopSoundList.remove(pair);
+                            soundManager.stop(pair.getValue());
                         }
                         break;
                     }

@@ -1,3 +1,7 @@
+### **0.11.0-pre5-1**
+- Force stop ambient when remove from cache list.
+- Enable properties matcher for snow definitions.
+
 ## **0.11.0-pre5**
 - Added item tags `eclipticseasons:cooling_items` and `eclipticseasons:heat_protective_helmets`, and armor enchantment tag `eclipticseasons:heatstroke_resistant`. A `eclipticseasons:heatstroke_resistant` mob effect tag is also introduced to control heatstroke behavior. You can tag your own straw hat to provide heatstroke resistance.
 - Greenhouses now use Box Distance by default to determine their working radius.
