@@ -3,9 +3,11 @@ package com.teamtea.eclipticseasons.client.sound;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.constant.solar.TimePeriod;
 import com.teamtea.eclipticseasons.api.data.client.SeasonalBiomeAmbient;
+import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.client.util.ClientRef;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
+import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.misc.SimplePair;
 import net.minecraft.client.player.LocalPlayer;
@@ -53,13 +55,8 @@ public class SeasonalBiomeAmbientSoundsHandler implements AmbientSoundHandler {
 
         // this.loopSounds.values().removeIf(AbstractTickableSoundInstance::isStopped);
 
-        loopSoundList.removeIf(pair -> {
-            boolean stopped = pair.getValue().isStopped();
-            if (stopped) {
-                soundManager.stop(pair.getValue());
-            }
-            return stopped;
-        });
+        loopSoundList.removeIf(pair -> pair.getValue().isStopped());
+
 
         Level level = player.level();
         boolean indoor =
@@ -81,6 +78,11 @@ public class SeasonalBiomeAmbientSoundsHandler implements AmbientSoundHandler {
         {
             SoundEvent soundEvent = null;
             if (MapChecker.isValidDimension(level)) {
+                // todo
+                // boolean raining = EclipticUtil.hasLocalWeather(level) ?
+                //         WeatherManager.isRainingOrSnowAtBiome(level, biome.value()) :
+                //         level.isRaining();
+                // 客户端环境下无需担忧
                 boolean raining = level.isRaining();
                 TimePeriod timePeriod = TimePeriod.fromTimeOfDay(level.getTimeOfDay(1f));
                 boolean inWater = player.isInWater();
@@ -175,7 +177,6 @@ public class SeasonalBiomeAmbientSoundsHandler implements AmbientSoundHandler {
                                 && !soundManager.isActive(pair.getValue())) {
                             needAdd = true;
                             loopSoundList.remove(pair);
-                            soundManager.stop(pair.getValue());
                         }
                         break;
                     }
