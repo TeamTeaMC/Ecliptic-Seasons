@@ -1,5 +1,6 @@
 {
-  "sound": "eclipticseasons:ambient.windy_leave",
+  "sound": "eclipticseasons:ambient.winter_cold",
+  "rain": true,
   "biomes": {
     "value": "#forge:is_cave",
     "type": "forge:not"

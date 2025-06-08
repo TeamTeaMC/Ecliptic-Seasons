@@ -1,10 +1,10 @@
 {
   "values": [
     "eclipticseasons:end",
+    "eclipticseasons:hot",
     "eclipticseasons:temperate",
-    "eclipticseasons:cold",
     "eclipticseasons:nether",
-    "eclipticseasons:desert",
-    "eclipticseasons:hot"
+    "eclipticseasons:cold",
+    "eclipticseasons:desert"
   ]
 }

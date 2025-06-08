@@ -72,11 +72,11 @@ public class SeasonalBiomeAmbientProvider extends ESClientBiomeDataMapProvider<S
                 and(not(get(Tags.Biomes.IS_CAVE)),
                         or(get(Biomes.CHERRY_GROVE),
                                 get(BiomeTags.IS_FOREST)))
-        ).sound(getSoundHolder(slp, SoundEventsRegistry.windy_leave)).rain(true).priority(950).build());
+        ).sound(getSoundHolder(slp, SoundEventsRegistry.winter_forest)).rain(true).priority(950).build());
 
         add("winter_wind", SeasonalBiomeAmbient.builder().season(Season.WINTER).biomes(
                 not(get(Tags.Biomes.IS_CAVE))
-        ).sound(getSoundHolder(slp, SoundEventsRegistry.windy_leave)).build());
+        ).rain(true).sound(getSoundHolder(slp, SoundEventsRegistry.winter_cold)).build());
 
     }
 

@@ -1,5 +1,5 @@
 {
-  "sound": "eclipticseasons:ambient.windy_leave",
+  "sound": "eclipticseasons:ambient.winter_forest",
   "priority": 950,
   "rain": true,
   "biomes": {

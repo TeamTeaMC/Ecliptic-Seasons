@@ -405,8 +405,7 @@ public class WeatherManager {
                         ) {
                             boolean isColdHe = false;
                             armorChecks:
-                            for (ItemStack itemstack : player.getArmorSlots()) 
-                            {
+                            for (ItemStack itemstack : player.getArmorSlots()) {
                                 Item item = itemstack.getItem();
                                 if (item instanceof Equipable equipable) {
                                     if (equipable.getEquipmentSlot() == EquipmentSlot.HEAD) {

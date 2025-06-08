@@ -1,3 +1,6 @@
+### **0.11.0-pre5-2**
+- Fix a bug in ambient sound configuration.
+
 ### **0.11.0-pre5-1**
 - Force stop ambient when remove from cache list.
 - Enable properties matcher for snow definitions.

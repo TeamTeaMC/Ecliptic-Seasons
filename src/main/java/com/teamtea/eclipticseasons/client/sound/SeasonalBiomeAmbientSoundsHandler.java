@@ -1,5 +1,6 @@
 package com.teamtea.eclipticseasons.client.sound;
 
+import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.constant.solar.TimePeriod;
 import com.teamtea.eclipticseasons.api.data.client.SeasonalBiomeAmbient;
@@ -164,27 +165,30 @@ public class SeasonalBiomeAmbientSoundsHandler implements AmbientSoundHandler {
             }
             if (soundEvent != null) {
                 boolean needAdd = true;
+
                 for (Iterator<Map.Entry<ResourceLocation, LoopSoundInstance>> it = this.loopSounds.entrySet().iterator(); it.hasNext(); ) {
-                    Map.Entry<ResourceLocation, LoopSoundInstance> pair = it.next();
-                    boolean isTargetSound = pair.getKey().compareTo(soundEvent.getLocation()) == 0;
-                    if (indoor || !isTargetSound) {
-                        pair.getValue().fadeOut();
-                    } else {
-                        pair.getValue().fadeIn();
-                    }
+                    Map.Entry<ResourceLocation, LoopSoundInstance> entry = it.next();
+                    ResourceLocation key = entry.getKey();
+                    LoopSoundInstance loopSound = entry.getValue();
+                    boolean isTargetSound = key.equals(soundEvent.getLocation());
                     if (isTargetSound) {
-                        needAdd = false;
-                        if (System.currentTimeMillis() % 200 <= 5
-                                && !soundManager.isActive(pair.getValue())) {
-                            needAdd = true;
-                            it.remove();
+                        if (indoor) {
+                            loopSound.fadeOut();
+                        } else {
+                            if (!soundManager.isActive(loopSound)) {
+                                it.remove();
+                            } else {
+                                loopSound.fadeIn();
+                                needAdd = false;
+                            }
                         }
-                        break;
+                    } else {
+                        loopSound.fadeOut();
                     }
                 }
 
 
-                // todo 多切换时似乎有bug，可能导致无法关闭
+                // todo check multi
                 if (needAdd && !indoor) {
                     // EclipticSeasons.logger(needAdd, soundEvent.getLocation());
                     LoopSoundInstance loopSoundInstance = new LoopSoundInstance(soundEvent);
@@ -217,19 +221,18 @@ public class SeasonalBiomeAmbientSoundsHandler implements AmbientSoundHandler {
         public void tick() {
             if (this.fade < 0) {
                 this.stop();
+                this.fadeDirection = 0;
             }
-            // EclipticSeasons.logger(this, this.fade);
             this.fade += this.fadeDirection;
             this.volume = Mth.clamp((float) this.fade / 40.0F, 0.0F, 1.0F);
-
         }
+
 
         public void fadeOut() {
             this.fade = Math.min(this.fade, 40);
-            if (this.fade >= -1)
-                this.fadeDirection = -1;
-            else this.fadeDirection = 0;
+            this.fadeDirection = -1;
         }
+
 
         public void fadeIn() {
             this.fade = Math.max(0, this.fade);
