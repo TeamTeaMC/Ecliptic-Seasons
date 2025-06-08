@@ -408,7 +408,7 @@ public class WeatherManager {
                                 Item item = itemstack.getItem();
                                 if (item instanceof ArmorItem armorItem) {
                                     if (armorItem.getType() == ArmorItem.Type.HELMET) {
-                                        if (itemstack.is(ESItemTags.COOLING_ITEMS)) {
+                                        if (itemstack.is(ESItemTags.HEAT_PROTECTIVE_HELMETS)) {
                                             isColdHe = true;
                                             break;
                                         }
