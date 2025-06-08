@@ -36,6 +36,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -404,10 +405,11 @@ public class WeatherManager {
                         ) {
                             boolean isColdHe = false;
                             armorChecks:
-                            for (ItemStack itemstack : player.getArmorSlots()) {
+                            for (ItemStack itemstack : player.getArmorSlots()) 
+                            {
                                 Item item = itemstack.getItem();
-                                if (item instanceof ArmorItem armorItem) {
-                                    if (armorItem.getType() == ArmorItem.Type.HELMET) {
+                                if (item instanceof Equipable equipable) {
+                                    if (equipable.getEquipmentSlot() == EquipmentSlot.HEAD) {
                                         if (itemstack.is(ESItemTags.HEAT_PROTECTIVE_HELMETS)) {
                                             isColdHe = true;
                                             break;
