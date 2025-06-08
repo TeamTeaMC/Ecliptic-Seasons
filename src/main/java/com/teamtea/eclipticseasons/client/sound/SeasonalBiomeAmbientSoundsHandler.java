@@ -16,6 +16,7 @@ import net.minecraft.client.resources.sounds.AmbientSoundHandler;
 import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.core.Holder;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
@@ -26,9 +27,7 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeManager;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 public class SeasonalBiomeAmbientSoundsHandler implements AmbientSoundHandler {
     private final LocalPlayer player;
@@ -42,7 +41,8 @@ public class SeasonalBiomeAmbientSoundsHandler implements AmbientSoundHandler {
     private Season previousSeason;
     private boolean previousIsDay;
 
-    private final List<SimplePair<Biome, LoopSoundInstance>> loopSoundList = new ArrayList<>();
+    // private final List<SimplePair<Biome, LoopSoundInstance>> loopSoundList = new ArrayList<>();
+    private final Map<ResourceLocation, LoopSoundInstance> loopSounds = new HashMap<>();
 
     public SeasonalBiomeAmbientSoundsHandler(LocalPlayer localPlayer, SoundManager soundManager, BiomeManager biomeManager) {
         this.random = localPlayer.level().getRandom();
@@ -55,8 +55,8 @@ public class SeasonalBiomeAmbientSoundsHandler implements AmbientSoundHandler {
 
         // this.loopSounds.values().removeIf(AbstractTickableSoundInstance::isStopped);
 
-        loopSoundList.removeIf(pair -> pair.getValue().isStopped());
-
+        // loopSoundList.removeIf(pair -> pair.getValue().isStopped());
+        loopSounds.values().removeIf(AbstractTickableSoundInstance::isStopped);
 
         Level level = player.level();
         boolean indoor =
@@ -164,8 +164,9 @@ public class SeasonalBiomeAmbientSoundsHandler implements AmbientSoundHandler {
             }
             if (soundEvent != null) {
                 boolean needAdd = true;
-                for (SimplePair<Biome, LoopSoundInstance> pair : this.loopSoundList) {
-                    boolean isTargetSound = pair.getValue().getLocation().compareTo(soundEvent.getLocation()) == 0;
+                for (Iterator<Map.Entry<ResourceLocation, LoopSoundInstance>> it = this.loopSounds.entrySet().iterator(); it.hasNext(); ) {
+                    Map.Entry<ResourceLocation, LoopSoundInstance> pair = it.next();
+                    boolean isTargetSound = pair.getKey().compareTo(soundEvent.getLocation()) == 0;
                     if (indoor || !isTargetSound) {
                         pair.getValue().fadeOut();
                     } else {
@@ -176,7 +177,7 @@ public class SeasonalBiomeAmbientSoundsHandler implements AmbientSoundHandler {
                         if (System.currentTimeMillis() % 200 <= 5
                                 && !soundManager.isActive(pair.getValue())) {
                             needAdd = true;
-                            loopSoundList.remove(pair);
+                            it.remove();
                         }
                         break;
                     }
@@ -187,13 +188,14 @@ public class SeasonalBiomeAmbientSoundsHandler implements AmbientSoundHandler {
                 if (needAdd && !indoor) {
                     // EclipticSeasons.logger(needAdd, soundEvent.getLocation());
                     LoopSoundInstance loopSoundInstance = new LoopSoundInstance(soundEvent);
-                    this.loopSoundList.add(SimplePair.of(biome.value(), loopSoundInstance));
+                    this.loopSounds.put(soundEvent.getLocation(), loopSoundInstance);
                     this.soundManager.play(loopSoundInstance);
                 }
             } else {
-                for (SimplePair<Biome, LoopSoundInstance> pair : this.loopSoundList) {
-                    pair.getValue().fadeOut();
-                }
+                this.loopSounds.forEach((resourceLocation, loopSoundInstance) -> loopSoundInstance.fadeOut());
+                // for (SimplePair<Biome, LoopSoundInstance> pair : this.loopSoundList) {
+                //     pair.getValue().fadeOut();
+                // }
             }
         }
     }
