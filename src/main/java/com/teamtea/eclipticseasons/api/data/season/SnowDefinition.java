@@ -34,6 +34,13 @@ public class SnowDefinition implements MapFiller<Block, SnowDefinition>, HolderM
             PropertyTester.CODEC.listOf().optionalFieldOf("properties", List.of()).forGetter(o -> o.map),
             Info.MAP_CODEC.forGetter(o -> o.info)
     ).apply(ins, SnowDefinition::new));
+
+    public static final Codec<SnowDefinition> DIRECT_CODEC = RecordCodecBuilder.create(ins -> ins.group(
+            // CodecUtil.holderSetCodec(Registries.BLOCK).fieldOf("blocks").forGetter(o -> HolderSet.direct()),
+            PropertyTester.CODEC.listOf().optionalFieldOf("properties", List.of()).forGetter(o -> o.map),
+            Info.MAP_CODEC.forGetter(o -> o.info)
+    ).apply(ins, (map1, info1) -> new SnowDefinition(HolderSet.direct(), map1, info1)));
+
     @NotNull
     private final HolderSet<Block> blocks;
     @Builder.Default

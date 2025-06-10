@@ -1,3 +1,6 @@
+### **0.11.0-pre5-3-hotfix**
+- If you are using preview version 0.11 or above on a server and are using the Snow Definitions data pack or a mod that provides it, and it uses BlockTags, please update to this version to avoid being unable to join the server.
+
 ### **0.11.0-pre5-3**
 - By default, the top face of the snowy model is no longer culled. This behavior is now deprecated and may lead to negative optimization. It can be enabled in the settings.
 - An AbstractModelDefinitionProvider is provided for developers to facilitate automatic model generation.

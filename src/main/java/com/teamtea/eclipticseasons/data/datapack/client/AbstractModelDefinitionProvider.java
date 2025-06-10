@@ -91,23 +91,23 @@ public abstract class AbstractModelDefinitionProvider extends ESClientDataMapPro
             return this;
         }
 
-        @Override
-        public SlefBlockModelBuilder texture(String key, String texture) {
-            Preconditions.checkNotNull(key, "Key must not be null");
-            Preconditions.checkNotNull(texture, "Texture must not be null");
-            if (texture.charAt(0) == '#') {
-                this.textures.put(key, texture);
-                return self();
-            } else {
-                ResourceLocation asLoc;
-                if (texture.contains(":")) {
-                    asLoc = new ResourceLocation(texture);
-                } else {
-                    asLoc = new ResourceLocation(getLocation().getNamespace(), texture);
-                }
-                return texture(key, asLoc);
-            }
-        }
+        // @Override
+        // public SlefBlockModelBuilder texture(String key, String texture) {
+        //     Preconditions.checkNotNull(key, "Key must not be null");
+        //     Preconditions.checkNotNull(texture, "Texture must not be null");
+        //     if (texture.charAt(0) == '#') {
+        //         this.textures.put(key, texture);
+        //         return self();
+        //     } else {
+        //         ResourceLocation asLoc;
+        //         if (texture.contains(":")) {
+        //             asLoc = new ResourceLocation(texture);
+        //         } else {
+        //             asLoc = new ResourceLocation(getLocation().getNamespace(), texture);
+        //         }
+        //         return texture(key, asLoc);
+        //     }
+        // }
 
 
         @Override
