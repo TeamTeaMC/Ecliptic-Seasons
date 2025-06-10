@@ -7,6 +7,7 @@ import com.teamtea.eclipticseasons.api.data.client.model.seasonal.SeasonBlockDef
 import com.teamtea.eclipticseasons.api.data.season.SnowDefinition;
 import com.teamtea.eclipticseasons.api.misc.util.HolderMappable;
 import com.teamtea.eclipticseasons.api.misc.util.Mergable;
+import com.teamtea.eclipticseasons.api.util.SimpleUtil;
 import com.teamtea.eclipticseasons.client.reload.ClientJsonCacheListener;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
@@ -96,7 +97,12 @@ public class ClientRef {
     }
 
     public static <E> ArrayList<Holder<E>> getHolders(RegistryAccess registryAccess, ResourceKey<? extends Registry<? extends E>> registryKey) {
-        return registryAccess.registryOrThrow(registryKey).holders().collect(Collectors.toCollection(ArrayList::new));
+        Optional<Registry<E>> registry = registryAccess.registry(registryKey);
+        if (registry.isEmpty()) {
+            SimpleUtil.warningForModWrongCalling(registryKey);
+            return new ArrayList<>();
+        }
+        return registry.get().holders().collect(Collectors.toCollection(ArrayList::new));
     }
 
     private static <S, T extends Mergable<T>> List<Pair<S, T>> mergePairList(List<Pair<S, T>> instances) {

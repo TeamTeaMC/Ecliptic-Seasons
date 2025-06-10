@@ -2,8 +2,16 @@
   "parent": "eclipticseasons:main/root",
   "criteria": {
     "core_require": {
-      "conditions": {},
-      "trigger": "eclipticseasons:greenhouse"
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "eclipticseasons:growth_detector"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
     }
   },
   "display": {

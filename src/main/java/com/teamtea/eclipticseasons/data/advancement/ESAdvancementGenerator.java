@@ -71,7 +71,7 @@ public class ESAdvancementGenerator implements ForgeAdvancementProvider.Advancem
         Advancement green_house = buildAdvancement(seasons, ItemRegistry.growth_detector.get(),
                 Component.translatable("advancement.eclipticseasons.green_house"),
                 Component.translatable("advancement.eclipticseasons.green_house.desc"),
-                "core_require", SolarTermsCriterion.TriggerInstance.simple3(),
+                "core_require", InventoryChangeTrigger.TriggerInstance.hasItems(ItemRegistry.growth_detector.get()),
                 consumer, "main/green_house");
 
         Advancement greenhouse_core_container = buildAdvancement(green_house, ItemRegistry.greenhouse_core_container_item.get(),
@@ -149,7 +149,7 @@ public class ESAdvancementGenerator implements ForgeAdvancementProvider.Advancem
 
         seasons = Advancement.Builder.advancement()
                 .parent(seasons)
-                .display(ItemRegistry.growth_detector.get(),
+                .display(ItemRegistry.spring_greenhouse_essence_item.get(),
                         Component.translatable("advancement.eclipticseasons.quest"),
                         Component.translatable("advancement.eclipticseasons.quest.desc"),
                         null,
@@ -324,10 +324,7 @@ public class ESAdvancementGenerator implements ForgeAdvancementProvider.Advancem
         Advancement autumn_pumpkin_pie = buildAdvancement(autumn_jack_o_lantern, Items.PUMPKIN_PIE,
                 Component.translatable("advancement.eclipticseasons.autumn_pumpkin_pie"),
                 Component.translatable("advancement.eclipticseasons.autumn_pumpkin_pie.desc"),
-                "core_require", UsingItemTrigger.TriggerInstance.lookingAt(
-                        EntityPredicate.Builder.entity(),
-                        ItemPredicate.Builder.item().of(Items.PUMPKIN_PIE)
-                ),
+                "core_require",  InventoryChangeTrigger.TriggerInstance.hasItems(Items.PUMPKIN_PIE),
                 consumer, "quests/autumn_pumpkin_pie", ESLootTables.autumn_greenhouse_essence);
 
         // Advancement autumn_end = buildAdvancement(autumn_pumpkin_pie, ItemRegistry.autumn_greenhouse_core_item.get(),

@@ -42,6 +42,10 @@ public class EclipticSeasons {
     }
 
     public static void logger(Object... x) {
+        extraLogger(false, x);
+    }
+
+    public static void extraLogger(boolean debug, Object... x) {
 
         // if (!FMLEnvironment.production||General.bool.get())
         {
@@ -51,20 +55,46 @@ public class EclipticSeasons {
                 if (i == null) output.append(", ").append("null");
                 else if (i.getClass().isArray()) {
                     output.append(", [");
-                    for (Object c : (int[]) i) {
-                        output.append(c).append(",");
+                    if (i instanceof Object[] objects) {
+                        for (Object c : objects) {
+                            output.append(c).append(",");
+                        }
+                    } else if (i instanceof float[] objects) {
+                        for (float c : objects) {
+                            output.append(c).append(",");
+                        }
+                    } else if (i instanceof int[] objects) {
+                        for (int c : objects) {
+                            output.append(c).append(",");
+                        }
+                    } else if (i instanceof double[] objects) {
+                        for (double c : objects) {
+                            output.append(c).append(",");
+                        }
+                    } else if (i instanceof long[] objects) {
+                        for (long c : objects) {
+                            output.append(c).append(",");
+                        }
+                    } else if (i instanceof boolean[] objects) {
+                        for (boolean c : objects) {
+                            output.append(c).append(",");
+                        }
                     }
                     output.append("]");
-                } else if (i instanceof List) {
+                } else if (i instanceof List list) {
                     output.append(", [");
-                    for (Object c : (List) i) {
+                    for (Object c : list) {
                         output.append(c);
                     }
                     output.append("]");
                 } else
                     output.append(", ").append(i);
             }
-            LOGGER.info(output.substring(1));
+            if (debug) {
+                LOGGER.debug(output.substring(1));
+            } else {
+                LOGGER.info(output.substring(1));
+            }
         }
 
     }

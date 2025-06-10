@@ -18,6 +18,7 @@ import com.teamtea.eclipticseasons.api.data.crop.GrowParameter;
 import com.teamtea.eclipticseasons.api.data.quest.SeasonQuest;
 import com.teamtea.eclipticseasons.api.event.CanPlantGrowEvent;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
+import com.teamtea.eclipticseasons.api.util.SimpleUtil;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
 import com.teamtea.eclipticseasons.common.registry.AgroClimateRegistry;
@@ -120,9 +121,19 @@ public final class CropGrowthHandler {
             DefaultCropClimateType.clear();
         }
 
+        Optional<Registry<AgroClimaticZone>> agroClimaticZones = registryAccess.registry(ESRegistries.AGRO_CLIMATE);
+        Optional<Registry<CropGrowControlBuilder>> cropGrowControlBuilders = registryAccess.registry(ESRegistries.CROP);
+        if (agroClimaticZones.isEmpty()) {
+            SimpleUtil.warningForModWrongCalling(ESRegistries.AGRO_CLIMATE);
+            return;
+        } else if (cropGrowControlBuilders.isEmpty()) {
+            SimpleUtil.warningForModWrongCalling(ESRegistries.CROP);
+            return;
+        }
+
         RegistryOps<Tag> registryops = RegistryOps.create(NbtOps.INSTANCE, registryAccess);
 
-        Registry<AgroClimaticZone> cropClimateTypeRegistry = registryAccess.registryOrThrow(ESRegistries.AGRO_CLIMATE);
+        Registry<AgroClimaticZone> cropClimateTypeRegistry = agroClimaticZones.get();
         for (Map.Entry<ResourceKey<AgroClimaticZone>, AgroClimaticZone> entry : cropClimateTypeRegistry.entrySet()) {
             Optional<Holder.Reference<AgroClimaticZone>> holder = cropClimateTypeRegistry.getHolder(cropClimateTypeRegistry.getId(entry.getValue()));
             if (holder.isPresent()) {
@@ -142,7 +153,7 @@ public final class CropGrowthHandler {
 
         Registry<Item> itemRegistry = registryAccess.registryOrThrow(Registries.ITEM);
         Registry<Block> blockRegistry = registryAccess.registryOrThrow(Registries.BLOCK);
-        for (Map.Entry<ResourceKey<CropGrowControlBuilder>, CropGrowControlBuilder> entry : registryAccess.registryOrThrow(ESRegistries.CROP).entrySet()) {
+        for (Map.Entry<ResourceKey<CropGrowControlBuilder>, CropGrowControlBuilder> entry : cropGrowControlBuilders.get().entrySet()) {
             CropGrowControlBuilder builder = entry.getValue();
             CropGrowControlBuilder.put(entry.getKey().location(), builder);
             Optional<HolderSet<Block>> blocks = Optional.of(builder.applyTarget());

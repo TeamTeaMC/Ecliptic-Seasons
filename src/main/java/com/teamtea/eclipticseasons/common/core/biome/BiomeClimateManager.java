@@ -7,6 +7,7 @@ import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.constant.tag.ClimateTypeBiomeTags;
 import com.teamtea.eclipticseasons.api.data.climate.BiomesClimateSettings;
 import com.teamtea.eclipticseasons.api.data.craft.HumidityControl;
+import com.teamtea.eclipticseasons.api.util.SimpleUtil;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.common.registry.ESRegistries;
 import net.minecraft.core.*;
@@ -31,16 +32,21 @@ public class BiomeClimateManager {
     public static final Map<Biome, Boolean> SMALL_BIOME_MAP = new IdentityHashMap<>(16);
 
     public static void resetBiomeTemps(RegistryAccess registryAccess, boolean isServer) {
-        if (isServer) {
-            Registry<BiomesClimateSettings> biomesClimateSettings = registryAccess.registryOrThrow(ESRegistries.BIOME_CLIMATE_SETTING);
-            resetBiomeClimateMap(registryAccess, biomesClimateSettings, BIOME_CLIMATE_MAP);
+        Optional<Registry<BiomesClimateSettings>> registry = registryAccess.registry(ESRegistries.BIOME_CLIMATE_SETTING);
+        if (registry.isEmpty()) {
+            SimpleUtil.warningForModWrongCalling(ESRegistries.BIOME_CLIMATE_SETTING);
         } else {
-            if (ClientCon.biomeDataPackCache != null) {
-                List<BiomesClimateSettings> build = ClientCon.biomeDataPackCache.build(registryAccess, BiomesClimateSettings.class);
-                resetBiomeClimateMap(registryAccess, build, BIOME_CLIMATE_MAP);
+            if (isServer) {
+                Registry<BiomesClimateSettings> biomesClimateSettings = registry.get();
+                resetBiomeClimateMap(registryAccess, biomesClimateSettings, BIOME_CLIMATE_MAP);
+            } else {
+                if (ClientCon.biomeDataPackCache != null) {
+                    List<BiomesClimateSettings> build = ClientCon.biomeDataPackCache.build(registryAccess, BiomesClimateSettings.class);
+                    resetBiomeClimateMap(registryAccess, build, BIOME_CLIMATE_MAP);
+                }
             }
+            putTag(registryAccess, isServer);
         }
-        putTag(registryAccess, isServer);
     }
 
     public static void resetBiomeClimateMap(RegistryAccess registryAccess, Iterable<BiomesClimateSettings> biomesClimateSettings, Map<Biome, BiomeClimateSettings> useMap) {

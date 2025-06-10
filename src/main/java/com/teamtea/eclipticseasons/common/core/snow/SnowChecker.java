@@ -2,8 +2,10 @@ package com.teamtea.eclipticseasons.common.core.snow;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.data.season.SnowDefinition;
+import com.teamtea.eclipticseasons.api.util.SimpleUtil;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.common.registry.ESRegistries;
+import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -11,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.IdentityHashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public class SnowChecker {
 
@@ -34,6 +37,9 @@ public class SnowChecker {
                     sno = snowDefinition.getInfo();
                 }
             }
+            statemap.put(blockState, snowDefinition == null ?
+                    SnowDefinition.Info.EMPTY :
+                    snowDefinition.getInfo());
         }
         return sno == null ? SnowDefinition.Info.EMPTY : sno;
     }
@@ -45,17 +51,22 @@ public class SnowChecker {
     // we don't care if we are in a server or client mode now, because block is not syncable
     // there keeps only one copy of block registry in the process
     public static void resetUpdate(RegistryAccess registryAccess, boolean isServer) {
-        SNOW_DEFINITION_MAP.clear();
-        if (isServer) {
-            for (SnowDefinition snowDefinition : registryAccess.registryOrThrow(ESRegistries.SNOW_DEFINITIONS)) {
-                snowDefinition.fillMap(SNOW_DEFINITION_MAP);
-            }
+        Optional<Registry<SnowDefinition>> snowDefinitions = registryAccess.registry(ESRegistries.SNOW_DEFINITIONS);
+        if (snowDefinitions.isEmpty()) {
+            SimpleUtil.warningForModWrongCalling(ESRegistries.SNOW_DEFINITIONS);
         } else {
-            if (ClientCon.snowDefCache != null)
-                for (SnowDefinition snowDefinition : ClientCon.snowDefCache.build(registryAccess, SnowDefinition.class)) {
+            SNOW_DEFINITION_MAP.clear();
+            if (isServer) {
+                for (SnowDefinition snowDefinition : registryAccess.registryOrThrow(ESRegistries.SNOW_DEFINITIONS)) {
                     snowDefinition.fillMap(SNOW_DEFINITION_MAP);
                 }
+            } else {
+                if (ClientCon.snowDefCache != null)
+                    for (SnowDefinition snowDefinition : ClientCon.snowDefCache.build(registryAccess, SnowDefinition.class)) {
+                        snowDefinition.fillMap(SNOW_DEFINITION_MAP);
+                    }
+            }
+            EclipticSeasons.logger("Has registered extra snow definitions with size %s.".formatted(SNOW_DEFINITION_MAP.size()));
         }
-        EclipticSeasons.logger("Has registered extra snow definitions with size %s.".formatted(SNOW_DEFINITION_MAP.size()));
     }
 }

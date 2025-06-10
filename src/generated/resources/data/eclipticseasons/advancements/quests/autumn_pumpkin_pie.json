@@ -3,20 +3,15 @@
   "criteria": {
     "core_require": {
       "conditions": {
-        "item": {
-          "items": [
-            "minecraft:pumpkin_pie"
-          ]
-        },
-        "player": [
+        "items": [
           {
-            "condition": "minecraft:entity_properties",
-            "entity": "this",
-            "predicate": {}
+            "items": [
+              "minecraft:pumpkin_pie"
+            ]
           }
         ]
       },
-      "trigger": "minecraft:using_item"
+      "trigger": "minecraft:inventory_changed"
     },
     "parent_need": {
       "conditions": {

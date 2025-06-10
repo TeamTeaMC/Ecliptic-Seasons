@@ -32,6 +32,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.LevelChunk;
@@ -174,22 +175,33 @@ public class AllListener {
                 WeatherManager.tickPlayerSeasonEffecct(serverPlayer);
             }
             if (event.phase == TickEvent.Phase.END) {
-                if (serverPlayer.level().getGameTime() % 20 == 0) {
+                Level level = serverPlayer.level();
+                if (level.getGameTime() % 20 == 0) {
                     ModAdvancements.parentNeedCriterion.trigger(serverPlayer);
 
-                    SolarDataManager data = SolarHolders.getSaveData(serverPlayer.level());
+                    SolarDataManager data = SolarHolders.getSaveData(level);
                     if (data != null) {
                         float v = data.calculateHumidityModification(serverPlayer.blockPosition());
                         SimpleNetworkHandler.send(serverPlayer, new HumidModifyMessage(
                                 serverPlayer.blockPosition(), Mth.floor(v)
                         ));
                     }
+
+                    // if (((level.getLightEngine().getLayerListener(LightLayer.SKY).getLightValue(serverPlayer.blockPosition())) > 12)
+                    //         &&level.getRandom().nextInt(4) == 0
+                    //         || level.getRandom().nextInt(128) == 0)  {
+                    //     float chance = 0;
+                    //     for (int i = 0; i < 20; i++) {
+                    //         chance += CropGrowthHandler.isInRoom(level, serverPlayer.getOnPos().above(),
+                    //                 Blocks.AIR.defaultBlockState(), Optional.empty()) ? 1 : 0;
+                    //     }
+                    //     if (chance > 16) {
+                    //         ModAdvancements.greenhouseCriterion.trigger(serverPlayer);
+                    //     }
+                    // }
                 }
 
-                if (CropGrowthHandler.isInRoom(serverPlayer.level(), serverPlayer.getOnPos().above(),
-                        Blocks.AIR.defaultBlockState(), Optional.empty())) {
-                    ModAdvancements.greenhouseCriterion.trigger(serverPlayer);
-                }
+
             }
         }
     }

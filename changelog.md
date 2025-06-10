@@ -1,3 +1,9 @@
+## **0.11.0-pre6**
+- No longer logs cache hints for newly constructed chunks to latest.log.
+- Optimized the query method for custom block snow covering, improving rendering performance.
+- Refined advancement progression: completing the autumn task no longer requires eating a pumpkin pie, and the greenhouse construction task now completes upon crafting a Growth Detector.
+- Accessing dynamic registries query outside the data loading or game stage no longer throws an exception directly; instead, a warning is issued to prevent game startup failures caused by mods dispatching events incorrectly.
+
 ### **0.11.0-pre5-3-hotfix**
 - If you are using preview version 0.11 or above on a server and are using the Snow Definitions data pack or a mod that provides it, and it uses BlockTags, please update to this version to avoid being unable to join the server.
 
