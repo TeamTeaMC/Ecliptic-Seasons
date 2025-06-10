@@ -1,3 +1,7 @@
+### **0.11.0-pre5-3**
+- By default, the top face of the snowy model is no longer culled. This behavior is now deprecated and may lead to negative optimization. It can be enabled in the settings.
+- An AbstractModelDefinitionProvider is provided for developers to facilitate automatic model generation.
+
 ### **0.11.0-pre5-2**
 - Fix a bug in ambient sound configuration.
 

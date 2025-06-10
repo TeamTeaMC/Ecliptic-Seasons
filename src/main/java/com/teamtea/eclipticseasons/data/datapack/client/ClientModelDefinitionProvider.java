@@ -25,11 +25,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-public class ClientModelDefinitionProvider extends ESClientDataMapProvider<ESModelLoadedJson> {
+public class ClientModelDefinitionProvider extends AbstractModelDefinitionProvider {
 
 
     public ClientModelDefinitionProvider(PackOutput output, String modid, ExistingFileHelper helper, CompletableFuture<HolderLookup.Provider> registries) {
-        super(output, modid, helper, registries, ClientJsonCacheListener.DIRECTORY_MODEL_DEFINITION, ESModelLoadedJson.CODEC);
+        super(output, modid, helper, registries);
     }
 
     @Override

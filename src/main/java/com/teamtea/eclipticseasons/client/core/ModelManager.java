@@ -97,7 +97,7 @@ public class ModelManager {
 
     public static ResourceLocation snow_mrl(ResourceLocation resourceLocation, String v) {
         // return new ModelResourceLocation(resourceLocation.withPrefix("extra/"), v);
-        return resourceLocation.withPrefix("extra/"+(v.isEmpty()?"": v+"/"));
+        return resourceLocation.withPrefix("extra/" + (v.isEmpty() ? "" : v + "/"));
     }
 
     public static HashMap<ResourceLocation, SpriteContents> blocksCache = new HashMap<>();
@@ -239,6 +239,7 @@ public class ModelManager {
     public static List<BakedQuad> cancelTop(BakedModel bakedModel, BlockAndTintGetter blockAndTintGetter, BlockState state, BlockPos pos, Direction direction, RandomSource random, long seed, List<BakedQuad> original) {
 
         if (bakedModel != null
+                && ClientConfig.isTopFaceCulling()
                 && !original.isEmpty()
                 && (direction == Direction.UP || direction == null)
                 && !(IESReplaceModel.isInvalid(bakedModel))

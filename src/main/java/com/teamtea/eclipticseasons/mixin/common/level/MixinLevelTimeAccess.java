@@ -21,7 +21,9 @@ public interface MixinLevelTimeAccess extends LevelTimeAccess {
     default float getTimeOfDay(float p_46943_) {
         if (CommonConfig.Season.daylightChange.get()
                 && this instanceof Level level
-                && MapChecker.isValidDimension(level))
+                && MapChecker.isValidDimension(level)
+                // && !level.dimensionType().hasFixedTime()
+        )
             return SolarAngelHelper.getSeasonCelestialAngle(this, dayTime());
         else return this.dimensionType().timeOfDay(this.dayTime());
     }

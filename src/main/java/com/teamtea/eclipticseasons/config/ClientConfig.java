@@ -2,7 +2,9 @@ package com.teamtea.eclipticseasons.config;
 
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.compat.CompatModule;
+import lombok.Getter;
 import net.minecraftforge.common.ForgeConfigSpec;
+import net.minecraftforge.fml.event.config.ModConfigEvent;
 
 public class ClientConfig {
 
@@ -46,6 +48,7 @@ public class ClientConfig {
         public static ForgeConfigSpec.BooleanValue forceChunkRenderUpdate;
         public static ForgeConfigSpec.BooleanValue enhancementChunkRenderUpdate;
         public static ForgeConfigSpec.BooleanValue resetRendererAfterSleep;
+        public static ForgeConfigSpec.BooleanValue topFaceCulling;
 
         public static ForgeConfigSpec.BooleanValue useVanillaCheck;
 
@@ -64,6 +67,9 @@ public class ClientConfig {
                     .define("ForceChunkRenderUpdate", true);
             enhancementChunkRenderUpdate = builder.comment("Enhanced reload, which will refresh all sections periodically.")
                     .define("EnhancementChunkRenderUpdate", false);
+            topFaceCulling = builder.comment("Cull the top face if snowy model is applied.")
+                    .define("TopFaceCulling", false);
+
             resetRendererAfterSleep = builder.comment("Whether to reset the renderer after waking up.")
                     .define("ResetRendererAfterSleep", false);
 
@@ -148,6 +154,19 @@ public class ClientConfig {
             weatherBufferDistance = builder.comment("Modify the buffer distance for local weather changes.")
                     .defineInRange("WeatherBufferDistance", 16, 1, 80);
             builder.pop();
+        }
+    }
+
+    private static boolean topFaceCulling = false;
+
+    public static boolean isTopFaceCulling() {
+        return topFaceCulling;
+    }
+
+    public static void UpdateConfig(ModConfigEvent modConfigEvent) {
+        if (!(modConfigEvent instanceof ModConfigEvent.Unloading)
+                && modConfigEvent.getConfig().getSpec() == CLIENT_CONFIG) {
+            topFaceCulling = Renderer.topFaceCulling.get();
         }
     }
 }
