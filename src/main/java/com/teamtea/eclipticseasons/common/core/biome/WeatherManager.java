@@ -241,6 +241,44 @@ public class WeatherManager {
         return false;
     }
 
+    @Deprecated
+    public static boolean isRainingAtBiome(Level level, Biome biome) {
+        var ws = getBiomeList(level);
+        if (ws != null) {
+            var solarTerm = EclipticUtil.getNowSolarTerm(level);
+            var snowTerm = SolarTerm.getSnowTerm(biome);
+            boolean flag_cold = solarTerm.isInTerms(snowTerm.getStart(), snowTerm.getEnd());
+            if (!flag_cold) {
+                for (BiomeWeather biomeWeather : ws) {
+                    if (biome == biomeWeather.biomeHolder.get()) {
+
+                        return biomeWeather.shouldRain();
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    @Deprecated
+    public static boolean isSnowingAtBiome(Level level, Biome biome) {
+        var ws = getBiomeList(level);
+        if (ws != null) {
+            var solarTerm = EclipticUtil.getNowSolarTerm(level);
+            var snowTerm = SolarTerm.getSnowTerm(biome);
+            boolean flag_cold = solarTerm.isInTerms(snowTerm.getStart(), snowTerm.getEnd());
+            if (flag_cold) {
+                for (BiomeWeather biomeWeather : ws) {
+                    if (biome == biomeWeather.biomeHolder.get()) {
+
+                        return biomeWeather.shouldRain();
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
 
     public static int getSnowDepthAtBiome(Level serverLevel, Biome biome) {
         var ws = getBiomeList(serverLevel);

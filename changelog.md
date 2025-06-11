@@ -1,3 +1,8 @@
+### **0.11.0-pre6-1-1**
+- Added four new methods to the API:
+  for checking whether it's raining or thundering in a biome region or across the entire level (when Solar Weather is disabled),
+  and for retrieving both static and dynamically changing humidity values.
+
 ### **0.11.0-pre6-1**
 - A targeted fix was implemented for a rare issue: a check was added to handle cases where chunk unloading may lag behind level unloading, or where certain mods create special levels.
 - Some leftover type-casting code in the crop growth control system was cleaned up to prevent potential problems if a mod dispatches the check event incorrectly.

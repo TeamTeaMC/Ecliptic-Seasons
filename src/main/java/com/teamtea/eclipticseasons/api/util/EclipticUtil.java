@@ -11,6 +11,7 @@ import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
+import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.core.solar.SolarAngelHelper;
 import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
@@ -19,11 +20,15 @@ import com.teamtea.eclipticseasons.compat.vanilla.VanillaWeather;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
+
+import java.util.Optional;
 
 public class EclipticUtil {
     public static SolarTerm getNowSolarTerm(Level level) {
@@ -197,9 +202,66 @@ public class EclipticUtil {
                     return WeatherManager.getPrecipitationAt(level, MapChecker.getSurfaceBiome(level, pos).value(), pos);
                 return VanillaWeather.handlePrecipitationAt(level, MapChecker.getSurfaceBiome(level, pos).value(), pos);
             }
+
+            @Override
+            public boolean isRainingOrSnowing(Level level, BlockPos pos) {
+                if (hasLocalWeather(level))
+                    return WeatherManager.isRainingOrSnowAtBiome(level, MapChecker.getSurfaceBiome(level, pos).value());
+                return level.isRaining();
+            }
+
+            // @Override
+            // public boolean isRaining(Level level, BlockPos pos) {
+            //     if (hasLocalWeather(level))
+            //         return WeatherManager.isRainingAtBiome(level, MapChecker.getSurfaceBiome(level, pos).value());
+            //     return level.isRaining();
+            // }
+            //
+            // @Override
+            // public boolean isSnowing(Level level, BlockPos pos) {
+            //     if (hasLocalWeather(level))
+            //         return WeatherManager.isSnowingAtBiome(level, MapChecker.getSurfaceBiome(level, pos).value());
+            //     return level.isRaining();
+            // }
+
+            @Override
+            public boolean isThundering(Level level, BlockPos pos) {
+                if (hasLocalWeather(level))
+                    return WeatherManager.isThunderAtBiome(level, MapChecker.getSurfaceBiome(level, pos).value());
+                return level.isRaining();
+            }
+
+            @Override
+            public Humidity getBaseHumidity(Level level, BlockPos pos) {
+                return getHumidityAt(level, pos);
+            }
+
+            @Override
+            public Humidity getAdjustedHumidity(ServerLevel level, BlockPos checkPos) {
+                Humidity humidity = getBaseHumidity(level, checkPos);
+                humidity = getHumidityAfterCheck(level, checkPos, humidity);
+                return humidity;
+            }
         };
     }
 
+    public static Humidity getHumidityAfterCheck(ServerLevel level, BlockPos checkPos, Humidity env) {
+        SolarDataManager data = SolarHolders.getSaveData(level);
+        if (data != null) {
+            float chance = 0;
+            for (int i = 0; i < 20; i++) {
+                chance += CropGrowthHandler.isInRoom(level, checkPos, level.getBlockState(checkPos), Optional.empty()) ? 1 : 0;
+            }
+            if (chance > 8) {
+                env = env.cycle(Mth.floor(data.calculateHumidityModification(checkPos)));
+            } else if (chance == 0) {
+                if (level.isRainingAt(checkPos)) {
+                    env = env.cycle(1);
+                }
+            }
+        }
+        return env;
+    }
 
     public static int getNowSolarDay(Level level) {
         SolarDataManager sd = SolarHolders.getSaveData(level);

@@ -1,13 +1,16 @@
 package com.teamtea.eclipticseasons.api;
 
+import com.teamtea.eclipticseasons.api.constant.biome.Humidity;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.dimension.DimensionType;
+import org.jetbrains.annotations.ApiStatus;
 
 /**
  * This API code exists for other mods to query the solar term status or other situations.
@@ -79,4 +82,28 @@ public interface EclipticSeasonsApi {
     boolean isThunderAt(Level level,BlockPos pos);
 
     Biome.Precipitation getPrecipitationAt(Level level, BlockPos pos);
+
+    /**
+     * Roughly checks whether the surface biome or level has weather conditions, ignoring exact position.
+     */
+    boolean isRainingOrSnowing(Level level, BlockPos pos);
+
+    /**
+     * Roughly checks whether it is thundering in the given level, ignoring exact position.
+     */
+    boolean isThundering(Level level, BlockPos pos);
+
+    /**
+     * Gets the base humidity at the given position,
+     * based on biome, season, and elevation.
+     */
+    Humidity getBaseHumidity(Level level, BlockPos pos);
+
+    /**
+     * Gets the final humidity at the given position,
+     * including effects like greenhouses or other modifiers.
+     * This value is more volatile and may fluctuate frequently.
+     */
+    @ApiStatus.Experimental
+    Humidity getAdjustedHumidity(ServerLevel level, BlockPos pos);
 }
