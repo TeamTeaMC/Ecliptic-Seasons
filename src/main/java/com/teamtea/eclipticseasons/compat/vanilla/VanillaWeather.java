@@ -5,6 +5,7 @@ import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.constant.tag.ClimateTypeBiomeTags;
+import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
@@ -46,10 +47,10 @@ public class VanillaWeather {
 
 
     public static WeatherManager.SnowRenderStatus getSnowStatus(ServerLevel level, Holder<Biome> biome, BlockPos pos) {
-        var provider = SolarHolders.getSaveData(level);
+        // var provider = SolarHolders.getSaveData(level);
         var status = WeatherManager.SnowRenderStatus.NONE;
-        if (biome.value().hasPrecipitation() && provider != null) {
-            var solarTerm = provider.getSolarTerm();
+        if (biome.value().hasPrecipitation()) {
+            var solarTerm = EclipticUtil.getNowSolarTerm(level);
             var snowTerm = SolarTerm.getSnowTerm(biome.value());
             boolean flag_cold = solarTerm.isInTerms(snowTerm.getStart(), snowTerm.getEnd());
             if (flag_cold) {
@@ -69,21 +70,21 @@ public class VanillaWeather {
         return handlePrecipitationAt(level, biome, pos);
     }
 
-    public static boolean hasMonsoonalPrecipitation(Biome biome){
+    public static boolean hasMonsoonalPrecipitation(Biome biome) {
         var level = getValidLevel(biome);
-        return hasPrecipitation(level,biome);
+        return hasPrecipitation(level, biome);
     }
 
-    public static boolean hasPrecipitation(Level level,Biome biome){
+    public static boolean hasPrecipitation(Level level, Biome biome) {
         var solarTerm = EclipticSeasonsApi.getInstance().getSolarTerm(level);
-        boolean hasPrecipitation =biome.getModifiedClimateSettings().hasPrecipitation();
+        boolean hasPrecipitation = biome.getModifiedClimateSettings().hasPrecipitation();
         TagKey<Biome> tag = BiomeClimateManager.getTag(biome);
         if (tag.equals(ClimateTypeBiomeTags.MONSOONAL)) {
             Season season = solarTerm.getSeason();
             if (season == Season.SUMMER || season == Season.AUTUMN) {
                 hasPrecipitation = true;
-            }else {
-                hasPrecipitation=false;
+            } else {
+                hasPrecipitation = false;
             }
         }
         return hasPrecipitation;
@@ -93,8 +94,8 @@ public class VanillaWeather {
         var resultPrecipitation = Biome.Precipitation.NONE;
         var solarTerm = EclipticSeasonsApi.getInstance().getSolarTerm(level);
 
-        biome= MapChecker.getSurfaceBiome(level,pos).value();
-        boolean hasPrecipitation =hasPrecipitation(level,biome);
+        biome = MapChecker.getSurfaceBiome(level, pos).value();
+        boolean hasPrecipitation = hasPrecipitation(level, biome);
 
         if (hasPrecipitation) {
             resultPrecipitation = biome.coldEnoughToSnow(pos) ?
@@ -119,16 +120,15 @@ public class VanillaWeather {
     }
 
     public static Level getValidLevel(Biome biome) {
-        boolean isOnServer =  FMLLoader.getDist() == Dist.DEDICATED_SERVER;
+        boolean isOnServer = FMLLoader.getDist() == Dist.DEDICATED_SERVER;
         if (isOnServer) {
             return WeatherManager.getMainServerLevel();
         }
 
-        return getUsingClientLevel()==null?
-                WeatherManager.getMainServerLevel():
+        return getUsingClientLevel() == null ?
+                WeatherManager.getMainServerLevel() :
                 getUsingClientLevel();
     }
-
 
 
     public static Level getUsingClientLevel() {

@@ -114,7 +114,7 @@ public class AllListener {
     @SubscribeEvent
     public static void onSleepFinishedTimeEvent(SleepFinishedTimeEvent event) {
         if (event.getLevel() instanceof ServerLevel level) {
-            long newTime = event.getNewTime(), oldDayTime = ((Level) event.getLevel()).getDayTime();
+            long newTime = event.getNewTime(), oldDayTime = level.getDayTime();
             WeatherManager.updateAfterSleep(level, newTime, oldDayTime);
         }
     }
@@ -153,8 +153,13 @@ public class AllListener {
 
     @SubscribeEvent
     public static void onChunkUnloadEvent(ChunkEvent.Unload event) {
-        MapChecker.unloadChunk((Level) event.getLevel(), event.getChunk().getPos());
-        CropGrowthHandler.unloadChunk((Level) event.getLevel(), event.getChunk().getPos());
+        if (event.getLevel() instanceof Level level) {
+            MapChecker.unloadChunk(level, event.getChunk().getPos());
+            CropGrowthHandler.unloadChunk(level, event.getChunk().getPos());
+        }
+        // else {
+        //     EclipticSeasons.extraLogger(true, "Unload a chunk but not with a level : ", event.getChunk().getPos());
+        // }
     }
 
     @SubscribeEvent

@@ -140,8 +140,6 @@ public class ModelManager {
 
             // **************************
             // es patch for client override
-            // todo 补充我的一个猜测是，如果是组合模型，能不能确保顺序
-            // todo 以及渲染类型问题
             List<SnowDefinition> snowDefinitions = ClientRef.snowClientDef.get(onBlock);
             if (snowDefinitions != null && !snowDefinitions.isEmpty()) {
                 for (SnowDefinition snowDefinition : snowDefinitions) {
@@ -665,7 +663,6 @@ public class ModelManager {
         return isModelReplaceable(state, EmptyBlockGetter.INSTANCE, BlockPos.ZERO, null);
     }
 
-    // todo 目前不能用覆盖模型
     public static boolean isModelReplaceable(BlockState state, BlockGetter blockAndTintGetter, BlockPos pos, BakedModel bakedModel) {
         return (bakedModel instanceof IESReplaceModel model
                 && model.isReplace())

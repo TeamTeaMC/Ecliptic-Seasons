@@ -77,13 +77,13 @@ public abstract class MixinServerLevel extends Level {
         return original.call(intProvider, randomSource);
     }
 
-    @Inject(
-            method = "tickChunk",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/material/FluidState;isRandomlyTicking()Z")
-    )
-    private void eclipticseasons$tickChunk_handleRandomTick(LevelChunk chunk, int randomTickSpeed, CallbackInfo ci, @Local BlockState blockState, @Local BlockPos blockPos) {
-        CropGrowthHandler.handleRandomTick(this, chunk, blockPos, blockState);
-    }
+    // @Inject(
+    //         method = "tickChunk",
+    //         at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/material/FluidState;isRandomlyTicking()Z")
+    // )
+    // private void eclipticseasons$tickChunk_handleRandomTick(LevelChunk chunk, int randomTickSpeed, CallbackInfo ci, @Local BlockState blockState, @Local BlockPos blockPos) {
+    //     CropGrowthHandler.handleRandomTick(this, chunk, blockPos, blockState);
+    // }
 
     @Inject(
             method = "tickChunk",

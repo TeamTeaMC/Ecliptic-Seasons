@@ -10,6 +10,7 @@ import com.teamtea.eclipticseasons.api.data.crop.GrowParameter;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
+import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -123,7 +124,7 @@ public class GrowthDetectorItem extends Item {
         return result;
     }
 
-    public static float getHumidityGrowChance(LevelAccessor world, CropGrowControl growControl, Humidity env, CropGrowthHandler.RoomStatus roomStatus, BlockPos pos, BlockState blockState, Season season, boolean hasUpdate) {
+    public static float getHumidityGrowChance(Level world, CropGrowControl growControl, Humidity env, CropGrowthHandler.RoomStatus roomStatus, BlockPos pos, BlockState blockState, Season season, boolean hasUpdate) {
         float result = 1;
         if (growControl != null) {
             GrowParameter growParameter = growControl.getGrowParameter(env);
@@ -142,9 +143,13 @@ public class GrowthDetectorItem extends Item {
                             result = 1f;
                             return result;
                         }
-                        int modification =
-                                CommonConfig.Crop.simpleGreenHouse.get() ? 0 :
-                                        SolarHolders.getSaveData((Level) world).calculateHumidityModification(pos);
+                        int modification;
+                        if (CommonConfig.Crop.simpleGreenHouse.get()) {
+                            modification = 0;
+                        } else {
+                            SolarDataManager data = SolarHolders.getSaveData(world);
+                            modification = data == null ? 0 : data.calculateHumidityModification(pos);
+                        }
                         if (modification != 0 && roomStatus == CropGrowthHandler.RoomStatus.GREEN_HOUSE) {
                             env = env.cycle(modification);
                             result = getHumidityGrowChance(world, growControl, env, roomStatus, pos, blockState, season, true);

@@ -13,11 +13,6 @@ public class JadeCompact implements IWailaPlugin {
     public static final ResourceLocation SHIFT_HINT = EclipticSeasons.rl("crop.shift_hint");
     public static final ResourceLocation SNOWY_STATUS = EclipticSeasons.rl("snowy_status");
 
-    // todo:
-    // use IServerExtensionProvider and IClientExtensionProvider instaed
-    // use FluidView.overrideText change text
-    // https://github.com/Snownee/Jade/blob/1.19.1-forge/src/main/java/snownee/jade/test/ExampleFluidStorageProvider.java
-
     public JadeCompact() {
     }
 

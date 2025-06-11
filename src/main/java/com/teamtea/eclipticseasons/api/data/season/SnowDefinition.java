@@ -83,7 +83,6 @@ public class SnowDefinition implements MapFiller<Block, SnowDefinition>, HolderM
         private final boolean ignoreOffset = false;
         @Builder.Default
         private final int offset = 0;
-        // todo 研究改进，支持树叶
         @Builder.Default
         private final ResourceLocation mid = ClientModelDefinitions.OVERLAY;
         @Builder.Default

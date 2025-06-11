@@ -74,14 +74,16 @@ public final class CropGrowthHandler {
         var block = event.getState();
         var world = event.getLevel();
         BlockPos pos = event.getPos();
-        beforeCropGrowUp(event, world, pos, block);
+        if (world instanceof Level level)
+            beforeCropGrowUp(event, level, pos, block);
     }
 
     public static void beforeCropGrowUp(BlockEvent.CropGrowEvent event) {
         var block = event.getState();
         var world = event.getLevel();
         BlockPos pos = event.getPos();
-        beforeCropGrowUp(event, world, pos, block);
+        if (world instanceof Level level)
+            beforeCropGrowUp(event, level, pos, block);
     }
 
     public static void beforeCropGrowUp(BonemealEvent event) {
@@ -94,12 +96,14 @@ public final class CropGrowthHandler {
 
     public static void beforeCropGrowUp(SaplingGrowTreeEvent event) {
         var world = event.getLevel();
-        BlockPos pos = event.getPos();
-        SolarDataManager data = SolarHolders.getSaveData((Level) world);
-        if (data != null) {
-            if (data.shouldSkipNextCheck(pos)) return;
+        if (world instanceof Level level) {
+            BlockPos pos = event.getPos();
+            SolarDataManager data = SolarHolders.getSaveData(level);
+            if (data != null) {
+                if (data.shouldSkipNextCheck(pos)) return;
+            }
+            beforeCropGrowUp(event, level, pos, world.getBlockState(pos));
         }
-        beforeCropGrowUp(event, world, pos, world.getBlockState(pos));
     }
 
     private final static Map<Biome, Holder<AgroClimaticZone>> cropClimateTypeMap = new IdentityHashMap<>();
@@ -143,7 +147,6 @@ public final class CropGrowthHandler {
                 }
             }
 
-            // todo: test sync
             // Optional<Tag> tag = AgroClimaticZone.CODEC
             //         .encodeStart(registryops, entry.getValue())
             //         .resultOrPartial(EclipticSeasons::logger);
@@ -406,7 +409,7 @@ public final class CropGrowthHandler {
         return CROP_GROW_MAP.get(block);
     }
 
-    public static void beforeCropGrowUp(net.minecraftforge.eventbus.api.Event event, LevelAccessor level, BlockPos pos, BlockState blockState) {
+    public static void beforeCropGrowUp(net.minecraftforge.eventbus.api.Event event, Level level, BlockPos pos, BlockState blockState) {
         Block block = blockState.getBlock();
         Map<Holder<AgroClimaticZone>, CropGrowControl> controlMap = getControlMap(block);
         if (controlMap == null) return;
@@ -419,7 +422,7 @@ public final class CropGrowthHandler {
         CropGrowControl growControl = getCropGrowControl(controlMap, climateTypeHolder);
 
         boolean notCancel = false;
-        SolarTerm solarTerm = EclipticSeasonsApi.getInstance().getSolarTerm((Level) level);
+        SolarTerm solarTerm = EclipticSeasonsApi.getInstance().getSolarTerm(level);
         Season season = solarTerm.getSeason();
         RoomStatus roomStatus = RoomStatus.UNKNOWN;
 
@@ -468,7 +471,7 @@ public final class CropGrowthHandler {
         if (!notCancel) {
             setResult(event, CANCEL);
             if (randomKey < growParameter.death_chance() * 1000) {
-                ((Level) level).setBlockAndUpdate(pos,
+                level.setBlockAndUpdate(pos,
                         growParameter.deadState().isPresent() ?
                                 growParameter.deadState().get() :
                                 Blocks.DEAD_BUSH.defaultBlockState());
@@ -484,7 +487,7 @@ public final class CropGrowthHandler {
     }
 
 
-    public static void checkHumidity(Event event, LevelAccessor world, CropGrowControl growControl, Humidity env, RoomStatus roomStatus, BlockPos pos, BlockState blockState, Season season, boolean hasUpdate, int randomKey) {
+    public static void checkHumidity(Event event, Level world, CropGrowControl growControl, Humidity env, RoomStatus roomStatus, BlockPos pos, BlockState blockState, Season season, boolean hasUpdate, int randomKey) {
         if (blockState.getFluidState().isSource()) return;
         if (growControl != null) {
             if (!hasUpdate) {
@@ -497,9 +500,14 @@ public final class CropGrowthHandler {
                         return;
                     }
                 }
-                int modification =
-                        CommonConfig.Crop.simpleGreenHouse.get() ? 0 :
-                                SolarHolders.getSaveData((Level) world).calculateHumidityModification(pos);
+                int modification;
+                if (CommonConfig.Crop.simpleGreenHouse.get()) {
+                    modification = 0;
+                } else {
+                    SolarDataManager data = SolarHolders.getSaveData(world);
+                    modification = data == null ? 0 : data.calculateHumidityModification(pos);
+                }
+
                 if (modification != 0) {
                     roomStatus = isInRoom(world, pos, blockState, growControl.notGreenHouse()) ? RoomStatus.GREEN_HOUSE : RoomStatus.NORMAL;
                 }
@@ -508,7 +516,7 @@ public final class CropGrowthHandler {
                     checkHumidity(event, world, growControl, env, roomStatus, pos, blockState, season, true, randomKey);
                     return;
                     //  TODO:下雨增加湿润度
-                } else if (((Level) world).isRainingAt(pos)) {
+                } else if (world.isRainingAt(pos)) {
                     env = env.cycle(1);
                     checkHumidity(event, world, growControl, env, roomStatus, pos, blockState, season, true, randomKey);
                     return;
@@ -560,13 +568,13 @@ public final class CropGrowthHandler {
             } else if (flag == PASS) {
                 if (event instanceof BlockEvent.CropGrowEvent cropGrowEvent) {
                     cropGrowEvent.setResult(net.minecraftforge.eventbus.api.Event.Result.DEFAULT);
-                }else if (event instanceof CanPlantGrowEvent cropGrowEvent) {
+                } else if (event instanceof CanPlantGrowEvent cropGrowEvent) {
                     cropGrowEvent.setResult(net.minecraftforge.eventbus.api.Event.Result.DEFAULT);
                 }
             } else if (flag == GROW) {
                 if (event instanceof BlockEvent.CropGrowEvent cropGrowEvent) {
                     cropGrowEvent.setResult(net.minecraftforge.eventbus.api.Event.Result.ALLOW);
-                }else if (event instanceof CanPlantGrowEvent cropGrowEvent) {
+                } else if (event instanceof CanPlantGrowEvent cropGrowEvent) {
                     cropGrowEvent.setResult(net.minecraftforge.eventbus.api.Event.Result.ALLOW);
                 }
             }
@@ -748,7 +756,7 @@ public final class CropGrowthHandler {
             Vec3 endVec =
                     CommonConfig.Crop.useBoxDistance.get() ?
                             getClampedEndPoint(centerVec, direction, maxDistance, y_maxDistance) :
-                            centerVec.add(direction.scale(direction.y == 0 ?maxDistance : y_maxDistance));
+                            centerVec.add(direction.scale(direction.y == 0 ? maxDistance : y_maxDistance));
 
 
             SectionClipContext context = new SectionClipContext(startVec, endVec,
@@ -771,7 +779,9 @@ public final class CropGrowthHandler {
     }
 
     public static void unloadChunk(Level level, ChunkPos pos) {
-        SolarHolders.getSaveData(level).unloadChunk(pos);
+        SolarDataManager data = SolarHolders.getSaveData(level);
+        if (data != null)
+            data.unloadChunk(pos);
     }
 
     public static void handleRandomTick(Level serverLevel, LevelChunk chunk, BlockPos blockPos, BlockState blockState) {
@@ -785,7 +795,9 @@ public final class CropGrowthHandler {
 
     public static void handleRandomTick2(Level level, LevelChunk chunk) {
         SolarDataManager saveData = SolarHolders.getSaveData(level);
-        saveData.randomClearSome(chunk.getPos(), level.getRandom());
+        if (saveData != null) {
+            saveData.randomClearSome(chunk.getPos(), level.getRandom());
+        }
     }
 
     public static Vec3 getClampedEndPoint(

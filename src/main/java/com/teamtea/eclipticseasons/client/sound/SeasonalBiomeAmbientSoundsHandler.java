@@ -79,11 +79,10 @@ public class SeasonalBiomeAmbientSoundsHandler implements AmbientSoundHandler {
         {
             SoundEvent soundEvent = null;
             if (MapChecker.isValidDimension(level)) {
-                // todo
                 // boolean raining = EclipticUtil.hasLocalWeather(level) ?
                 //         WeatherManager.isRainingOrSnowAtBiome(level, biome.value()) :
                 //         level.isRaining();
-                // 客户端环境下无需担忧
+                // Not care in client
                 boolean raining = level.isRaining();
                 TimePeriod timePeriod = TimePeriod.fromTimeOfDay(level.getTimeOfDay(1f));
                 boolean inWater = player.isInWater();
@@ -188,7 +187,6 @@ public class SeasonalBiomeAmbientSoundsHandler implements AmbientSoundHandler {
                 }
 
 
-                // todo check multi
                 if (needAdd && !indoor) {
                     // EclipticSeasons.logger(needAdd, soundEvent.getLocation());
                     LoopSoundInstance loopSoundInstance = new LoopSoundInstance(soundEvent);

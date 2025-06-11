@@ -54,7 +54,7 @@ public class CommandHandler {
                                         .executes(commandContext -> setDay(commandContext.getSource(), IntegerArgumentType.getInteger(commandContext, "day")))))
                         .then(Commands.literal("get")
                                 .executes(commandContext -> {
-                                    var solar = SolarHolders.getSaveData(commandContext.getSource().getLevel()).getSolarTermsDay();
+                                    int solar = EclipticUtil.getNowSolarDay(commandContext.getSource().getLevel());;
                                     commandContext.getSource().sendSuccess(() -> Component.literal("" + solar), true);
                                     return 0;
                                 })
@@ -104,7 +104,7 @@ public class CommandHandler {
                                         })))
                         .then(Commands.literal("getTerm")
                                 .executes(commandContext -> {
-                                    var solar = SolarHolders.getSaveData(commandContext.getSource().getLevel()).getSolarTerm();
+                                    var solar = EclipticUtil.getNowSolarTerm(commandContext.getSource().getLevel());
                                     commandContext.getSource().sendSuccess(solar::getTranslation, true);
                                     return 0;
                                 })
@@ -182,7 +182,6 @@ public class CommandHandler {
         return new crs(biomes.getHolder(0).orElse(null));
     }
 
-    // todo would it cause any crash?
     private record crs(Holder.Reference<Biome> biomeReference) implements ResourceOrTagArgument.Result<Biome> {
         @Override
         public boolean test(Holder<Biome> biomeHolder) {

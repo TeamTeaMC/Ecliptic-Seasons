@@ -1,3 +1,7 @@
+### **0.11.0-pre6-1**
+- A targeted fix was implemented for a rare issue: a check was added to handle cases where chunk unloading may lag behind level unloading, or where certain mods create special levels.
+- Some leftover type-casting code in the crop growth control system was cleaned up to prevent potential problems if a mod dispatches the check event incorrectly.
+
 ## **0.11.0-pre6**
 - No longer logs cache hints for newly constructed chunks to latest.log.
 - Optimized the query method for custom block snow covering, improving rendering performance.
