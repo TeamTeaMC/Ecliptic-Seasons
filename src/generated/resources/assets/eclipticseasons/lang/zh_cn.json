@@ -202,5 +202,8 @@
   "season_quest.eclipticseasons.autumn_core": "秋季核心任务",
   "season_quest.eclipticseasons.spring_core": "春季核心任务",
   "season_quest.eclipticseasons.summer_core": "夏季核心任务",
-  "season_quest.eclipticseasons.winter_core": "冬季核心任务"
+  "season_quest.eclipticseasons.winter_core": "冬季核心任务",
+  "task.eclipticseasons.clean_snow": "扫雪",
+  "task.eclipticseasons.clean_snow.condition.has_broom": "持有扫帚",
+  "task.eclipticseasons.clean_snow.desc": "适用于节气的覆雪方块"
 }

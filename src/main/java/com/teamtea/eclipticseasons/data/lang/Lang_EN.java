@@ -159,6 +159,8 @@ public class Lang_EN extends LangHelper {
 
         addJade();
         addInfo();
+        addTouhouLittleMaid();
+
     }
 
     private void addJade() {
@@ -168,6 +170,12 @@ public class Lang_EN extends LangHelper {
 
         add("config.jade.plugin_eclipticseasons.snowy_status","Show Snowy Status");
         add("hint.jade.plugin_eclipticseasons.snowy_status.snowy", "§7Covered with Snow");
+    }
+
+    private void addTouhouLittleMaid() {
+        add("task.eclipticseasons.clean_snow", "Clean Snow");
+        add("task.eclipticseasons.clean_snow.desc", "Applied to snow-covered blocks from Ecliptic Season");
+        add("task.eclipticseasons.clean_snow.condition.has_broom", "Has Broom");
     }
 
     private void addInfo() {

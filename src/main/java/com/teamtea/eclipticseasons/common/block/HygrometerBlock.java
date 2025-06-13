@@ -36,7 +36,7 @@ public class HygrometerBlock extends CalendarBlock {
 
     public HygrometerBlock(Properties properties) {
         super(properties);
-        registerDefaultState(defaultBlockState().setValue(POWER, 0));
+        registerDefaultState(defaultBlockState().setValue(POWER, getPowerFromHumidityLevel(Humidity.AVERAGE.ordinal())));
         VoxelShape base = Shapes.box(1 / 16f, 0, 0.75, 15 / 16f, 11 / 16f, 1);
         for (Direction direction : Direction.Plane.HORIZONTAL) {
             shapes1[direction.get2DDataValue()] = SimpleVoxelShapeUtils.rotateVoxelShape(base, Direction.Axis.Y, getRotateYByFacing(defaultBlockState().setValue(FACING, direction)));

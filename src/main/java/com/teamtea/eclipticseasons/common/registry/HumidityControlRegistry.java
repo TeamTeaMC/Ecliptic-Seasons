@@ -25,11 +25,11 @@ public class HumidityControlRegistry {
 
     public static void bootstrap(BootstapContext<HumidityControl> context) {
         context.register(sponge, new HumidityControl(
-                new WrapSizeIngredient(HolderSet.direct(Items.SPONGE.builtInRegistryHolder()), 1), Items.WET_SPONGE.getDefaultInstance(), 4, -1, 20 * 300, List.of()
+                new WrapSizeIngredient(HolderSet.direct(Items.SPONGE.builtInRegistryHolder()), 1), Items.WET_SPONGE.getDefaultInstance(), 5, -1, 20 * 300, List.of()
                 , true));
 
         context.register(wet_sponge, new HumidityControl(
-                new WrapSizeIngredient(HolderSet.direct(Items.WET_SPONGE.builtInRegistryHolder()), 1), Items.SPONGE.getDefaultInstance(), 4, 1, 20 * 300, List.of(
+                new WrapSizeIngredient(HolderSet.direct(Items.WET_SPONGE.builtInRegistryHolder()), 1), Items.SPONGE.getDefaultInstance(), 5, 1, 20 * 300, List.of(
                 new PosAndBlockStateCheck(new Vec3i(0, -1, 0), context.lookup(Registries.BLOCK).getOrThrow(EclipticBlockTags.SOFT_HEAT_SOURCES))
         ), true
         ));

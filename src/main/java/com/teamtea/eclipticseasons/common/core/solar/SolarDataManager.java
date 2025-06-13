@@ -254,10 +254,10 @@ public class SolarDataManager extends SavedData {
         int localX = blockPos.getX() & 15;
         int localZ = blockPos.getZ() & 15;
 
-        boolean isLeftBorder = localX <= 3;
-        boolean isRightBorder = localX >= 12;
-        boolean isFrontBorder = localZ <= 3;
-        boolean isBackBorder = localZ >= 12;
+        boolean isLeftBorder = localX <= 6;
+        boolean isRightBorder = localX >= 7;
+        boolean isFrontBorder = localZ <= 6;
+        boolean isBackBorder = localZ >= 7;
 
         int result = 0;
         for (int dx = isLeftBorder ? -1 : 0; dx <= (isRightBorder ? 1 : 0); dx++) {

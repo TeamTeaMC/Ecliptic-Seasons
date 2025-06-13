@@ -202,5 +202,8 @@
   "season_quest.eclipticseasons.autumn_core": "Autumn Core Quest",
   "season_quest.eclipticseasons.spring_core": "Spring Core Quest",
   "season_quest.eclipticseasons.summer_core": "Summer Core Quest",
-  "season_quest.eclipticseasons.winter_core": "Winter Core Quest"
+  "season_quest.eclipticseasons.winter_core": "Winter Core Quest",
+  "task.eclipticseasons.clean_snow": "Clean Snow",
+  "task.eclipticseasons.clean_snow.condition.has_broom": "Has Broom",
+  "task.eclipticseasons.clean_snow.desc": "Applied to snow-covered blocks from Ecliptic Season"
 }

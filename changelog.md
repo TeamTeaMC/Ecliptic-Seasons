@@ -1,3 +1,8 @@
+### **0.11.0-pre6-2**
+- Optimized the dynamic humidity calculation method. The maximum adjustable humidity range via data pack is now 16.
+  By default, the effective range for sponge and wet sponge in grates has been increased to 5 blocks.
+- Some other minor fixes.
+
 ### **0.11.0-pre6-1-1**
 - Added four new methods to the API:
   for checking whether it's raining or thundering in a biome region or across the entire level (when Solar Weather is disabled),

@@ -139,8 +139,8 @@ public class Lang_ZH extends LangHelper {
         add("info.eclipticseasons.environment.solar_term.alternation.greater_cold", "大寒大寒，无风自寒。");
         add("info.eclipticseasons.environment.solar_term.alternation.none", "...");
 
-        add("commands.eclipticseasons.solar.set","已将节气天数设置为第%s天");
-        add("effect.eclipticseasons.heat_stroke","中暑");
+        add("commands.eclipticseasons.solar.set", "已将节气天数设置为第%s天");
+        add("effect.eclipticseasons.heat_stroke", "中暑");
         add("effect.eclipticseasons.heat_stroke.description", "酷热难耐，视线渐渐模糊。");
 
         add(AgroClimateRegistry.COLD, "寒带");
@@ -161,14 +161,21 @@ public class Lang_ZH extends LangHelper {
 
         addJade();
         addInfo();
+        addTouhouLittleMaid();
     }
 
     private void addJade() {
-        add("config.jade.plugin_eclipticseasons.crop","作物");
-        add("config.jade.plugin_eclipticseasons.crop.shift_hint","Shift按键提示");
+        add("config.jade.plugin_eclipticseasons.crop", "作物");
+        add("config.jade.plugin_eclipticseasons.crop.shift_hint", "Shift按键提示");
         add("hint.jade.plugin_eclipticseasons.crop.show", "§o<..按住shift以查看更多..>");
-        add("config.jade.plugin_eclipticseasons.snowy_status","显示覆雪状态");
+        add("config.jade.plugin_eclipticseasons.snowy_status", "显示覆雪状态");
         add("hint.jade.plugin_eclipticseasons.snowy_status.snowy", "§7覆雪状态");
+    }
+
+    private void addTouhouLittleMaid() {
+        add("task.eclipticseasons.clean_snow", "扫雪");
+        add("task.eclipticseasons.clean_snow.desc", "适用于节气的覆雪方块");
+        add("task.eclipticseasons.clean_snow.condition.has_broom", "持有扫帚");
     }
 
     private void addInfo() {
