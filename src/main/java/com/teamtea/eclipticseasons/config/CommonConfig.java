@@ -134,6 +134,7 @@ public class CommonConfig {
 
         public static ForgeConfigSpec.BooleanValue forceCompatMode;
         public static ForgeConfigSpec.BooleanValue noCostHumidifier;
+        public static ForgeConfigSpec.IntValue seasonCoreRange;
         public static ForgeConfigSpec.BooleanValue useBoxDistance;
 
         private static void load(ForgeConfigSpec.Builder builder) {
@@ -154,8 +155,10 @@ public class CommonConfig {
                     .defineInRange("DarkGreenhouseFailChance", 2000, 0, 10000);
             simpleGreenHouse= builder.comment("Build a simple greenhouse without core blocks and humidity modifiers.")
                     .define("SimpleGreenHouseMode", false);
-            noCostHumidifier= builder.comment("Enabled to make the Humidifier stop converting inputs/outputs.")
+            noCostHumidifier = builder.comment("If true, the Humidifier block will no longer consume blocks during conversion.")
                     .define("NoCostHumidifier", false);
+            seasonCoreRange = builder.comment("The working range of the Season Core block.")
+                    .defineInRange("SeasonCoreRange", 15, 4, 31);
 
             complexGreenHouseCheck = builder.comment("Whether to enable complex shape checking.")
                     .define("ComplexGreenHouseCheck", true);

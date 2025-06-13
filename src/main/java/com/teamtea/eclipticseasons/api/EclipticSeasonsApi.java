@@ -35,12 +35,24 @@ public interface EclipticSeasonsApi {
      * and which solar terms of the biome snow{@link SolarTerm#getSnowTerm(Biome)}.
      *
      * <p>Only dimensions marked as {@linkplain DimensionType#natural()  natural} have solar term changes.</p>
-     *
      */
     SolarTerm getSolarTerm(Level level);
 
+    /**
+     * Checks whether the seasonal system is enabled for the given level.
+     */
+    boolean isSeasonEnabled(Level level);
+
+    /**
+     * Returns the adjusted day time in ticks for the given level,
+     * accounting for custom daylight cycles such as seasonal effects.
+     */
+    long getDayTime(Level level);
+
+    @Deprecated
     boolean isDay(Level level);
 
+    @Deprecated
     boolean isNight(Level level);
 
     /**
@@ -48,16 +60,19 @@ public interface EclipticSeasonsApi {
      * It is also used as a time to distinguish between day and night.
      * After this time, the player can fall asleep quickly.
      */
+    @Deprecated
     int getNightTime(Level level);
 
     /**
      * Determine if it is noon, a few hours around tick 6000.
      */
+    @Deprecated
     boolean isNoon(Level level);
 
     /**
      * Judging whether it is evening now, it will not last until deep into midnight.
      */
+    @Deprecated
     boolean isEvening(Level level);
 
     /**
@@ -73,13 +88,13 @@ public interface EclipticSeasonsApi {
      */
     boolean isSnowyBlock(Level level, BlockState state, BlockPos pos);
 
-    boolean isRainOrSnowAt(Level level,BlockPos pos);
+    boolean isRainOrSnowAt(Level level, BlockPos pos);
 
-    boolean isRainAt(Level level,BlockPos pos);
+    boolean isRainAt(Level level, BlockPos pos);
 
-    boolean isSnowAt(Level level,BlockPos pos);
+    boolean isSnowAt(Level level, BlockPos pos);
 
-    boolean isThunderAt(Level level,BlockPos pos);
+    boolean isThunderAt(Level level, BlockPos pos);
 
     Biome.Precipitation getPrecipitationAt(Level level, BlockPos pos);
 

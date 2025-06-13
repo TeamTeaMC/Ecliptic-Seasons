@@ -117,6 +117,8 @@ public class ClientConfig {
         public static ForgeConfigSpec.IntValue fireflySpawnWeight;
         public static ForgeConfigSpec.BooleanValue wildGoose;
         public static ForgeConfigSpec.IntValue wildGooseSpawnWeight;
+        public static ForgeConfigSpec.BooleanValue seasonGreenhouse;
+        public static ForgeConfigSpec.IntValue SeasonGreenhouseParticleSpawnCount;
 
         private static void load(ForgeConfigSpec.Builder builder) {
             builder.push("Particle");
@@ -141,6 +143,12 @@ public class ClientConfig {
                     .define("WildGoose", true);
             wildGooseSpawnWeight = builder.comment("The difficulty multiplier of wild geese particles, the value should be between 1-10000, the default is 10.")
                     .defineInRange("WildGooseSpawnWeight", 10, 1, 10000);
+
+            seasonGreenhouse = builder.comment("When the season core block is active, emits soft light particles to indicate the growth environment.")
+                    .define("SeasonGreenhouse", true);
+            SeasonGreenhouseParticleSpawnCount = builder.comment("Number of particles emitted by the season greenhouse effect. The higher the value, the denser the effect.")
+                    .defineInRange("SeasonGreenhouseParticleSpawnCount", 30, 0, 160);
+
 
             builder.pop();
         }

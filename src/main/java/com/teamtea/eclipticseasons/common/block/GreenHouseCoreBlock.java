@@ -8,6 +8,7 @@ import com.teamtea.eclipticseasons.common.block.blockentity.GreenHouseCoreBlockE
 import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
 import com.teamtea.eclipticseasons.common.registry.BlockEntityRegistry;
 import com.teamtea.eclipticseasons.common.registry.ParticleRegistry;
+import com.teamtea.eclipticseasons.config.ClientConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderSet;
@@ -59,6 +60,9 @@ public class GreenHouseCoreBlock extends SimpleEntityBlock {
     @Override
     public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
         super.animateTick(state, level, pos, random);
+        if (!ClientConfig.Particle.seasonGreenhouse.get()) return;
+        int count = ClientConfig.Particle.SeasonGreenhouseParticleSpawnCount.get();
+
         Direction direction = Direction.DOWN;
 
         Integer color = getSeason().getColor().getColor();
@@ -68,7 +72,7 @@ public class GreenHouseCoreBlock extends SimpleEntityBlock {
         ColorParticleOptions colorParticleOption = new ColorParticleOptions(new Vector3f(r, g, b), 1.0f);
         colorParticleOption.updateType(ParticleRegistry.GREENHOUSE);
 
-        for (int i = 0; i < 30; i++) {
+        for (int i = 0; i < count; i++) {
             double d0 = pos.getX() + (random.nextDouble() * 32.0 - 16.0);
             double d1 = pos.getY() - 0.5 - (random.nextDouble() * 10.0) + 2;
             double d2 = pos.getZ() + (random.nextDouble() * 32.0 - 16.0);

@@ -1,3 +1,9 @@
+## **0.11.0-pre7**
+- Added two new API methods to check whether a dimension has seasons and to get the current length of daytime (defaults to 24000 ticks per day if no other time-modifying mods are present).
+- The working radius of the Season Core block is now configurable instead of being fixed at 15 blocks.
+- Seasonal greenhouse particle effects emitted by the Season Core block can now be disabled or have their density adjusted.
+- Miscellaneous minor fixes.
+
 ### **0.11.0-pre6-2**
 - Optimized the dynamic humidity calculation method. The maximum adjustable humidity range via data pack is now 16.
   By default, the effective range for sponge and wet sponge in grates has been increased to 5 blocks.

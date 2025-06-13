@@ -95,6 +95,27 @@ public class EclipticUtil {
             }
 
             @Override
+            public boolean isSeasonEnabled(Level level) {
+                return MapChecker.isValidDimension(level);
+            }
+
+            @Override
+            public long getDayTime(Level level) {
+                if (MapChecker.isValidDimension(level)
+                        && CommonConfig.Season.daylightChange.get()) {
+                    SolarDataManager data = SolarHolders.getSaveData(level);
+                    if (data != null) {
+                        long worldTime = level.getDayTime();
+                        int dayLevelTime = Math.toIntExact((worldTime + 18000) % 24000); // 0 for noon; 6000 for sunset; 18000 for sunrise.
+                        return dayLevelTime > 12000 && dayLevelTime <= 18000 && data.isTodayLastDay() ?
+                                data.getNextSolarTerm().getDayTime() :
+                                data.getSolarTerm().getDayTime();
+                    }
+                }
+                return 12000L;
+            }
+
+            @Override
             public boolean isDay(Level level) {
                 return EclipticUtil.isDay(level);
             }

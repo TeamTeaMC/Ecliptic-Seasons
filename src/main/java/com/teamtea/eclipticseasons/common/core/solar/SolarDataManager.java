@@ -317,26 +317,43 @@ public class SolarDataManager extends SavedData {
     public GreenHouseCoreProvider findNearGreenHouseProvider(BlockPos blockPos, List<Season> seasons) {
         ChunkPos chunkPos = new ChunkPos(blockPos);
         Vec3 center = blockPos.getCenter();
+        int d = CommonConfig.Crop.seasonCoreRange.get() / 16 + 1;
 
-        for (int dx = -1; dx <= 1; dx++) {
-            for (int dz = -1; dz <= 1; dz++) {
-                ChunkPos currentChunkPos = new ChunkPos(chunkPos.x + dx, chunkPos.z + dz);
-                List<Pair<BlockPos, GreenHouseCoreProvider>> lis = this.greenHouseCoreMap.getOrDefault(currentChunkPos.toLong(), null);
-
-                if (lis != null) {
-                    for (Pair<BlockPos, GreenHouseCoreProvider> p : lis) {
-                        if (seasons.contains(p.second().getSeason())
-                                // && p.first().getY() >= blockPos.getY()
-                                &&
-                        CropGrowthHandler.isWithinDistanceForGreenHouseWorker(center, p.first().getCenter(),15)
-                        ) {
-                            return p.second();
-                        }
-                    }
+        for (int r = 0; r <= d; r++) {
+            for (int dx = -r; dx <= r; dx++) {
+                int dz = r - Math.abs(dx);
+                // (dx, dz)
+                {
+                    ChunkPos currentChunkPos = new ChunkPos(chunkPos.x + dx, chunkPos.z + dz);
+                    GreenHouseCoreProvider greenHouseCoreProvider = checkSeasonProviderInChunk(seasons, currentChunkPos, center);
+                    if (greenHouseCoreProvider != null) return greenHouseCoreProvider;
+                }
+                // (dx, -dz)
+                if (dz != 0) {
+                    ChunkPos currentChunkPos = new ChunkPos(chunkPos.x + dx, chunkPos.z - dz);
+                    GreenHouseCoreProvider greenHouseCoreProvider = checkSeasonProviderInChunk(seasons, currentChunkPos, center);
+                    if (greenHouseCoreProvider != null) return greenHouseCoreProvider;
                 }
             }
         }
+
         return null;
+    }
+
+    protected GreenHouseCoreProvider checkSeasonProviderInChunk(List<Season> seasons, ChunkPos currentChunkPos, Vec3 center) {
+        GreenHouseCoreProvider greenHouseCoreProvider = null;
+        List<Pair<BlockPos, GreenHouseCoreProvider>> lis = this.greenHouseCoreMap.getOrDefault(currentChunkPos.toLong(), null);
+        if (lis != null) {
+            int seasonCoreRange = CommonConfig.Crop.seasonCoreRange.get();
+            for (Pair<BlockPos, GreenHouseCoreProvider> p : lis) {
+                if (seasons.contains(p.second().getSeason()) &&
+                        CropGrowthHandler.isWithinDistanceForGreenHouseWorker(center, p.first().getCenter(), seasonCoreRange)) {
+                    greenHouseCoreProvider = p.second();
+                    break;
+                }
+            }
+        }
+        return greenHouseCoreProvider;
     }
 
     public void randomClearSome(ChunkPos pos, RandomSource randomSource) {
