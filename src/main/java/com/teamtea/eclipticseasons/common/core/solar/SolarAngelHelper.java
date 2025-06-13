@@ -23,6 +23,7 @@ public class SolarAngelHelper {
                 int dayLevelTime = Math.toIntExact((worldTime + 18000) % 24000); // 0 for noon; 6000 for sunset; 18000 for sunrise.
 
                 // 这里必须要等于，因为0时刻还没切换到下一天。
+                // Must be equal here, as the time 0 tick has not transitioned to the next day.
                 int dayTime =
                         dayLevelTime > 12000 && dayLevelTime <= 18000 && data.isTodayLastDay() ?
                                 data.getNextSolarTerm().getDayTime() :
