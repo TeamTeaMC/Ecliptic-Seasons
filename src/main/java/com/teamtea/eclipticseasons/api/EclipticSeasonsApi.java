@@ -44,8 +44,8 @@ public interface EclipticSeasonsApi {
     boolean isSeasonEnabled(Level level);
 
     /**
-     * Returns the adjusted day time in ticks for the given level,
-     * accounting for custom daylight cycles such as seasonal effects.
+     * Returns the adjusted daytime in ticks for the given level, as an API version of {@link SolarTerm#getDayTime()},
+     * taking into account seasonal variations in day length.
      */
     long getDayTime(Level level);
 
