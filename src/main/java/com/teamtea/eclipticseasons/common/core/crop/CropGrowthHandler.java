@@ -559,7 +559,7 @@ public final class CropGrowthHandler {
                     blockGrowFeatureEvent.setResult(net.minecraftforge.eventbus.api.Event.Result.DENY);
                 } else if (event instanceof BonemealEvent bonemealEvent) {
                     // bonemealEvent.setCanceled(true);
-                    if(CommonConfig.Crop.boneMealFailureConsume.get()) {
+                    if(CommonConfig.Crop.boneMealConsumeOnFailure.get()) {
                         bonemealEvent.setResult(net.minecraftforge.eventbus.api.Event.Result.ALLOW);
                     }else {
                         bonemealEvent.setCanceled(true);

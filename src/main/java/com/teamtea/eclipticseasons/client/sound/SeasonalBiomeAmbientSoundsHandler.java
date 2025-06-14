@@ -54,9 +54,7 @@ public class SeasonalBiomeAmbientSoundsHandler implements AmbientSoundHandler {
 
     public void tick() {
 
-        // this.loopSounds.values().removeIf(AbstractTickableSoundInstance::isStopped);
 
-        // loopSoundList.removeIf(pair -> pair.getValue().isStopped());
         loopSounds.values().removeIf(AbstractTickableSoundInstance::isStopped);
 
         Level level = player.level();
@@ -174,13 +172,16 @@ public class SeasonalBiomeAmbientSoundsHandler implements AmbientSoundHandler {
                         if (indoor) {
                             loopSound.fadeOut();
                         } else {
-                            if (!soundManager.isActive(loopSound)) {
-                                it.remove();
-                            } else {
+                            // if (!soundManager.isActive(loopSound)) {
+                            //     it.remove();
+                            // } else {
+                            //     loopSound.fadeIn();
+                            //     needAdd = false;
+                            // }
+                            if (!loopSound.isStopped())
                                 loopSound.fadeIn();
-                                needAdd = false;
-                            }
                         }
+                        needAdd = false;
                     } else {
                         loopSound.fadeOut();
                     }
@@ -231,12 +232,9 @@ public class SeasonalBiomeAmbientSoundsHandler implements AmbientSoundHandler {
             this.fadeDirection = -1;
         }
 
-
         public void fadeIn() {
             this.fade = Math.max(0, this.fade);
-            if (this.fade < 40)
-                this.fadeDirection = 1;
-            else this.fadeDirection = 0;
+            this.fadeDirection = 1;
         }
 
     }
