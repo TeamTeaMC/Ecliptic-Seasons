@@ -124,6 +124,7 @@ public class CommonConfig {
         public static ForgeConfigSpec.DoubleValue cropGrowChanceInWrongHumidity;
         public static ForgeConfigSpec.BooleanValue enableCropHumidityControl;
         public static ForgeConfigSpec.BooleanValue boneMealFailureMessage;
+        public static ForgeConfigSpec.BooleanValue boneMealFailureConsume;
 
         public static ForgeConfigSpec.IntValue greenHouseMaxDiameter;
         public static ForgeConfigSpec.IntValue greenHouseMaxHeight;
@@ -148,8 +149,10 @@ public class CommonConfig {
                     .define("EnableCropHumidityControl", true);
             cropGrowChanceInWrongHumidity = builder.comment("[Deprecated]How much base chance can crop grow in wrong humidity.")
                     .defineInRange("CropGrowChanceInWrongHumidity", 0.25, 0.0001, 0.9999);
-            boneMealFailureMessage = builder.comment("Send message to player if failed to use Bonemeal on crop.")
+            boneMealFailureMessage =  builder.comment("Send message to player if failed to use bone meal on crop.")
                     .define("BoneMealFailureMessage", true);
+            boneMealFailureConsume =  builder.comment("Consume anyway if failed to use bone meal on crop.")
+                    .define("BoneMealConsumeWhenFailure", true);
             greenHouseMaxDiameter = builder.comment("The maximum effective diameter of the greenhouse.")
                     .defineInRange("GreenHouseMaxDiameter", 32, 5, 256);
             greenHouseMaxHeight = builder.comment("The maximum effective diameter of the greenhouse.")
