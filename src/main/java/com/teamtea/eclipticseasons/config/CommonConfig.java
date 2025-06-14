@@ -1,6 +1,5 @@
 package com.teamtea.eclipticseasons.config;
 
-import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
 import com.teamtea.eclipticseasons.compat.CompatModule;
 import lombok.Getter;
 import net.minecraft.resources.ResourceLocation;
@@ -124,6 +123,8 @@ public class CommonConfig {
         public static ForgeConfigSpec.DoubleValue cropGrowChanceInWrongSeason;
         public static ForgeConfigSpec.DoubleValue cropGrowChanceInWrongHumidity;
         public static ForgeConfigSpec.BooleanValue enableCropHumidityControl;
+        public static ForgeConfigSpec.BooleanValue boneMealFailureMessage;
+
         public static ForgeConfigSpec.IntValue greenHouseMaxDiameter;
         public static ForgeConfigSpec.IntValue greenHouseMaxHeight;
         public static ForgeConfigSpec.IntValue darkGreenhouseFailChance;
@@ -147,13 +148,15 @@ public class CommonConfig {
                     .define("EnableCropHumidityControl", true);
             cropGrowChanceInWrongHumidity = builder.comment("[Deprecated]How much base chance can crop grow in wrong humidity.")
                     .defineInRange("CropGrowChanceInWrongHumidity", 0.25, 0.0001, 0.9999);
+            boneMealFailureMessage = builder.comment("Send message to player if failed to use Bonemeal on crop.")
+                    .define("BoneMealFailureMessage", true);
             greenHouseMaxDiameter = builder.comment("The maximum effective diameter of the greenhouse.")
                     .defineInRange("GreenHouseMaxDiameter", 32, 5, 256);
-            greenHouseMaxHeight =builder.comment("The maximum effective diameter of the greenhouse.")
+            greenHouseMaxHeight = builder.comment("The maximum effective diameter of the greenhouse.")
                     .defineInRange("GreenHouseMaxHeight", 10, 3, 128);
             darkGreenhouseFailChance = builder.comment("The possibility of crops not growing when there is insufficient sunlight in green house.")
                     .defineInRange("DarkGreenhouseFailChance", 2000, 0, 10000);
-            simpleGreenHouse= builder.comment("Build a simple greenhouse without core blocks and humidity modifiers.")
+            simpleGreenHouse = builder.comment("Build a simple greenhouse without core blocks and humidity modifiers.")
                     .define("SimpleGreenHouseMode", false);
             noCostHumidifier = builder.comment("If true, the Humidifier block will no longer consume blocks during conversion.")
                     .define("NoCostHumidifier", false);

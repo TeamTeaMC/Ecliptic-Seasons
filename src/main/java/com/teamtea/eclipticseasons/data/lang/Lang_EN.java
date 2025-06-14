@@ -184,6 +184,8 @@ public class Lang_EN extends LangHelper {
         add("info.eclipticseasons.humidity_control.below_need", "Needs %s below");
         add("info.eclipticseasons.humidity_control.common_need", "Requires %s");
         add("info.eclipticseasons.humidity_control.extra_hint", "§7 - Alternative placements:");
+
+        add("info.eclipticseasons.bone_meal.failure", "Cannot accelerate growth under current conditions.");
     }
 
     private void addAdvancements() {

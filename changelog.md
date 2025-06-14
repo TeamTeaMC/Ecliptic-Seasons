@@ -1,3 +1,6 @@
+### **0.11.0-pre7-1**
+- Add failure message for bone meal using. It's optional.
+
 ## **0.11.0-pre7**
 - Added two new API methods to check whether a dimension has seasons and to get the current length of daytime (defaults to 24000 ticks per day if no other time-modifying mods are present).
 - The working radius of the Season Core block is now configurable instead of being fixed at 15 blocks.

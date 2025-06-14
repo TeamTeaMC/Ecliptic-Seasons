@@ -95,6 +95,7 @@
   "effect.eclipticseasons.heat_stroke.description": "The scorching heat is unbearable, and your vision gradually blurs.",
   "hint.jade.plugin_eclipticseasons.crop.show": "§o<..Hold shift to see more..>",
   "hint.jade.plugin_eclipticseasons.snowy_status.snowy": "§7Covered with Snow",
+  "info.eclipticseasons.bone_meal.failure": "Cannot accelerate growth under current conditions.",
   "info.eclipticseasons.environment.humidity": "Suitable Humidity:",
   "info.eclipticseasons.environment.humidity.arid": "Arid",
   "info.eclipticseasons.environment.humidity.average": "Average",

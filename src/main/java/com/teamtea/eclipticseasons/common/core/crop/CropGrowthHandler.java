@@ -15,7 +15,6 @@ import com.teamtea.eclipticseasons.api.data.crop.CropGrow;
 import com.teamtea.eclipticseasons.api.data.crop.CropGrowControl;
 import com.teamtea.eclipticseasons.api.data.crop.CropGrowControlBuilder;
 import com.teamtea.eclipticseasons.api.data.crop.GrowParameter;
-import com.teamtea.eclipticseasons.api.data.quest.SeasonQuest;
 import com.teamtea.eclipticseasons.api.event.CanPlantGrowEvent;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.api.util.SimpleUtil;
@@ -25,20 +24,18 @@ import com.teamtea.eclipticseasons.common.registry.AgroClimateRegistry;
 import com.teamtea.eclipticseasons.common.registry.CropRegistry;
 import com.teamtea.eclipticseasons.common.registry.ESRegistries;
 import com.teamtea.eclipticseasons.config.CommonConfig;
-import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.core.*;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.tags.FluidTags;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -51,12 +48,11 @@ import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.chunk.LevelChunkSection;
 import net.minecraft.world.level.levelgen.Heightmap;
-import net.minecraft.world.level.material.Fluid;
-import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.entity.player.BonemealEvent;
 import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.event.level.SaplingGrowTreeEvent;
@@ -583,12 +579,24 @@ public final class CropGrowthHandler {
     }
 
     static void postResult(Event event, int flag) {
-        if (flag != CANCEL
-                && event instanceof BonemealEvent bonemealEvent
-                && bonemealEvent.getLevel() instanceof ServerLevel serverLevel) {
-            SolarDataManager data = SolarHolders.getSaveData(serverLevel);
-            if (data != null) {
-                data.addSkipNextCheck(bonemealEvent.getPos(), bonemealEvent.getBlock());
+        if (flag != CANCEL) {
+            if (event instanceof BonemealEvent bonemealEvent
+                    && bonemealEvent.getLevel() instanceof ServerLevel serverLevel) {
+                SolarDataManager data = SolarHolders.getSaveData(serverLevel);
+                if (data != null) {
+                    data.addSkipNextCheck(bonemealEvent.getPos(), bonemealEvent.getBlock());
+                }
+            }
+        }else {
+            if (event instanceof BonemealEvent bonemealEvent) {
+                if (bonemealEvent.getEntity() instanceof ServerPlayer player
+                        && !(player instanceof FakePlayer)
+                        && CommonConfig.Crop.boneMealFailureMessage.get()) {
+                    player.sendSystemMessage(
+                            Component.translatable("info.eclipticseasons.bone_meal.failure"),
+                            true
+                    );
+                }
             }
         }
     }
