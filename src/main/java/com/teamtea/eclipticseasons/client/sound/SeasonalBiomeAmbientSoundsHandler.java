@@ -28,6 +28,7 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeManager;
 
 import javax.annotation.Nullable;
+import java.lang.ref.WeakReference;
 import java.util.*;
 
 public class SeasonalBiomeAmbientSoundsHandler implements AmbientSoundHandler {
@@ -35,15 +36,15 @@ public class SeasonalBiomeAmbientSoundsHandler implements AmbientSoundHandler {
     private final SoundManager soundManager;
     private final BiomeManager biomeManager;
     private final RandomSource random;
-    // private final Map<Biome, LoopSoundInstance> loopSounds = new HashMap<>();
+    // private final Map<Biome, LoopSeasonalSoundInstance> loopSounds = new HashMap<>();
 
     @Nullable
     private Biome previousBiome;
     private Season previousSeason;
     private boolean previousIsDay;
 
-    // private final List<SimplePair<Biome, LoopSoundInstance>> loopSoundList = new ArrayList<>();
-    private final Map<ResourceLocation, LoopSoundInstance> loopSounds = new HashMap<>();
+    // private final List<SimplePair<Biome, LoopSeasonalSoundInstance>> loopSoundList = new ArrayList<>();
+    private final Set<LoopSeasonalSoundInstance> loopSounds = new HashSet<>();
 
     public SeasonalBiomeAmbientSoundsHandler(LocalPlayer localPlayer, SoundManager soundManager, BiomeManager biomeManager) {
         this.random = localPlayer.level().getRandom();
@@ -55,7 +56,7 @@ public class SeasonalBiomeAmbientSoundsHandler implements AmbientSoundHandler {
     public void tick() {
 
 
-        loopSounds.values().removeIf(AbstractTickableSoundInstance::isStopped);
+        loopSounds.removeIf(AbstractTickableSoundInstance::isStopped);
 
         Level level = player.level();
         boolean indoor =
@@ -163,14 +164,12 @@ public class SeasonalBiomeAmbientSoundsHandler implements AmbientSoundHandler {
             if (soundEvent != null) {
                 boolean needAdd = true;
 
-                for (Iterator<Map.Entry<ResourceLocation, LoopSoundInstance>> it = this.loopSounds.entrySet().iterator(); it.hasNext(); ) {
-                    Map.Entry<ResourceLocation, LoopSoundInstance> entry = it.next();
-                    ResourceLocation key = entry.getKey();
-                    LoopSoundInstance loopSound = entry.getValue();
+                for (LoopSeasonalSoundInstance soundInstance : this.loopSounds) {
+                    ResourceLocation key = soundInstance.getLocation();
                     boolean isTargetSound = key.equals(soundEvent.getLocation());
                     if (isTargetSound) {
                         if (indoor) {
-                            loopSound.fadeOut();
+                            soundInstance.fadeOut();
                         } else {
                             // if (!soundManager.isActive(loopSound)) {
                             //     it.remove();
@@ -178,36 +177,38 @@ public class SeasonalBiomeAmbientSoundsHandler implements AmbientSoundHandler {
                             //     loopSound.fadeIn();
                             //     needAdd = false;
                             // }
-                            if (!loopSound.isStopped())
-                                loopSound.fadeIn();
+                            if (!soundInstance.isStopped())
+                                soundInstance.fadeIn();
                         }
                         needAdd = false;
                     } else {
-                        loopSound.fadeOut();
+                        soundInstance.fadeOut();
                     }
                 }
 
 
                 if (needAdd && !indoor) {
                     // EclipticSeasons.logger(needAdd, soundEvent.getLocation());
-                    LoopSoundInstance loopSoundInstance = new LoopSoundInstance(soundEvent);
-                    this.loopSounds.put(soundEvent.getLocation(), loopSoundInstance);
+                    LoopSeasonalSoundInstance loopSoundInstance = new LoopSeasonalSoundInstance(soundEvent, loopSounds);
+                    this.loopSounds.add(loopSoundInstance);
                     this.soundManager.play(loopSoundInstance);
                 }
             } else {
-                this.loopSounds.forEach((resourceLocation, loopSoundInstance) -> loopSoundInstance.fadeOut());
-                // for (SimplePair<Biome, LoopSoundInstance> pair : this.loopSoundList) {
+                this.loopSounds.forEach(LoopSeasonalSoundInstance::fadeOut);
+                // for (SimplePair<Biome, LoopSeasonalSoundInstance> pair : this.loopSoundList) {
                 //     pair.getValue().fadeOut();
                 // }
             }
         }
     }
 
-    public static class LoopSoundInstance extends AbstractTickableSoundInstance {
+    public static class LoopSeasonalSoundInstance extends AbstractTickableSoundInstance {
+        private final WeakReference<Set<LoopSeasonalSoundInstance>> loopSounds;
         private int fadeDirection;
         private int fade;
+        private long lastTickTime;
 
-        public LoopSoundInstance(SoundEvent soundEvent) {
+        public LoopSeasonalSoundInstance(SoundEvent soundEvent, Set<LoopSeasonalSoundInstance> loopSounds) {
             super(soundEvent, SoundSource.AMBIENT, SoundInstance.createUnseededRandom());
             this.looping = true;
             // loop need delay bigger than 0
@@ -215,26 +216,44 @@ public class SeasonalBiomeAmbientSoundsHandler implements AmbientSoundHandler {
             this.volume = 0.5F;
             this.relative = true;
             // this.fade=40;
+            this.lastTickTime = System.currentTimeMillis();
+            this.loopSounds = new WeakReference<>(loopSounds);
         }
 
         public void tick() {
+            if (isStopped()) return;
+            Set<LoopSeasonalSoundInstance> loopSeasonalSoundInstances = loopSounds.get();
+            if (loopSeasonalSoundInstances != null && !loopSeasonalSoundInstances.contains(this)) {
+                this.fadeDirection = -1;
+            }
             if (this.fade < 0) {
                 this.stop();
                 this.fadeDirection = 0;
             }
             this.fade += this.fadeDirection;
             this.volume = Mth.clamp((float) this.fade / 40.0F, 0.0F, 1.0F);
+            this.lastTickTime = System.currentTimeMillis();
         }
 
 
         public void fadeOut() {
             this.fade = Math.min(this.fade, 40);
             this.fadeDirection = -1;
+            checkIfForceStop();
         }
 
         public void fadeIn() {
             this.fade = Math.max(0, this.fade);
-            this.fadeDirection = 1;
+            if (this.fade < 40)
+                this.fadeDirection = 1;
+            else this.fadeDirection = 0;
+            checkIfForceStop();
+        }
+
+        public void checkIfForceStop() {
+            if (lastTickTime - System.currentTimeMillis() > 1000 * 5) {
+                this.stop();
+            }
         }
 
     }

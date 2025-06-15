@@ -133,7 +133,7 @@ public class GrowthDetectorItem extends Item {
                 if (f == 0) {
                     result = 0;
                 } else if (f > 1.0F) {
-                    result = 1;
+                    result *= f;
                 } else if (f <= 1.0F) {
                     if (hasUpdate) {
                         result = f;
@@ -153,7 +153,7 @@ public class GrowthDetectorItem extends Item {
                         if (modification != 0 && roomStatus == CropGrowthHandler.RoomStatus.GREEN_HOUSE) {
                             env = env.cycle(modification);
                             result = getHumidityGrowChance(world, growControl, env, roomStatus, pos, blockState, season, true);
-                        } else if (((Level) world).isRainingAt(pos)) {
+                        } else if (world.isRainingAt(pos)) {
                             env = env.cycle(1);
                             result = getHumidityGrowChance(world, growControl, env, roomStatus, pos, blockState, season, true);
                         } else {

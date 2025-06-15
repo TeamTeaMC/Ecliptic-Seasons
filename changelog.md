@@ -1,3 +1,10 @@
+### **0.11.0-pre7-3**
+
+- Only display a warning when bone meal is guaranteed to have no effect.
+- Fixed a design oversight where crops with a growth probability greater than 1 would not apply additional growth checks
+  as expected.
+- Added extra verification for sound playback to prevent abnormal behavior caused by desynchronization.
+
 ### **0.11.0-pre7-2**
 
 - Allow not consuming bone meal for failed using. It's optional.
