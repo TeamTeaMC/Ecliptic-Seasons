@@ -1,7 +1,6 @@
 package com.teamtea.eclipticseasons.common.core.map;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
-import com.teamtea.eclipticseasons.api.constant.tag.ClimateTypeBiomeTags;
 import com.teamtea.eclipticseasons.api.constant.tag.EclipticBlockTags;
 import com.teamtea.eclipticseasons.api.data.season.SnowDefinition;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
@@ -14,7 +13,12 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.SectionPos;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.server.level.ChunkHolder;
+import net.minecraft.server.level.FullChunkStatus;
+import net.minecraft.server.level.ServerChunkCache;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
+import net.minecraft.util.thread.BlockableEventLoop;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
@@ -27,6 +31,8 @@ import net.minecraft.world.level.block.state.properties.Half;
 import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.ChunkSource;
+import net.minecraft.world.level.chunk.ChunkStatus;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.levelgen.Heightmap;
 import org.jetbrains.annotations.NotNull;
 
@@ -41,7 +47,7 @@ import java.util.stream.Stream;
 /**
  * In 1.20.1, it just thinks about the client level in fact.
  * TODO: Fix server side check (in dedicated server).
- * **/
+ **/
 public class MapChecker {
 
     public static final int ChunkSize = 16 * 32;
@@ -241,6 +247,29 @@ public class MapChecker {
     }
 
     /**
+     * Since Minecraft handles chunk retrieval and status checks differently on the server side,
+     * we need special methods to determine whether a chunk is loaded.
+     * This is especially important because when using Forgified Fabric API,
+     * there are known issues with its chunk loading event mechanism.
+     **/
+    public static boolean isLoadedOnlyServer(Level level, BlockPos pos) {
+        int chunkX = SectionPos.blockToSectionCoord(pos.getX());
+        int chunkZ = SectionPos.blockToSectionCoord(pos.getZ());
+        if (level.getChunkSource() instanceof ServerChunkCache serverChunkCache) {
+            ChunkHolder visibleChunkIfPresent =
+                    serverChunkCache.getVisibleChunkIfPresent((new ChunkPos(chunkX, chunkZ)).toLong());
+            if (visibleChunkIfPresent == null) return false;
+            return visibleChunkIfPresent.getFullChunk() != null;
+            // return visibleChunkIfPresent.getFullStatus().isOrAfter(FullChunkStatus.ENTITY_TICKING);
+        }
+        return !(level instanceof ServerLevel) || level.isLoaded(pos);
+    }
+
+    public static boolean isLoadNearByOnlyServer(Level level, BlockPos pos) {
+        return !(level instanceof ServerLevel) || isLoadNearBy(level, pos);
+    }
+
+    /**
      * 由于Minecraft区块由噪声确定QuartPos里的每个BlockPos的准确群系，因此需要判断临近区块是否加载。
      */
     public static boolean isLoadNearBy(Level level, BlockPos pos) {
@@ -374,7 +403,7 @@ public class MapChecker {
             for (int i = x0; i < x1 + 1; i++) {
                 for (int j = z0; j < z1 + 1; j++) {
                     map.updateHeight(i, j, map.minY);
-                    map.updateBiome(i,j,-1);
+                    map.updateBiome(i, j, -1);
                 }
             }
             return true;
@@ -431,7 +460,7 @@ public class MapChecker {
 
         int x = blockToRegionCoord(pos.getX());
         int z = blockToRegionCoord(pos.getZ());
-        ChunkInfoMap map = getChunkMap(level,x, z);
+        ChunkInfoMap map = getChunkMap(level, x, z);
 
         int value = 0;
         if (map != null) {
@@ -445,7 +474,7 @@ public class MapChecker {
             } else if (type == ChunkInfoMap.TYPE_BIOME) {
                 value = map.getBiome(pos);
                 if (value == -1 || forceUpdate) {
-                    value = biomeToId(level,level.getBiome(pos).value());
+                    value = biomeToId(level, level.getBiome(pos).value());
                     if (isLoadNearBy(level, pos)) {
                         map.updateBiome(pos, value);
                     }
@@ -474,7 +503,7 @@ public class MapChecker {
                 value = getHeightWithCheck(level, pos);
                 map.updateHeight(pos, value);
             } else if (type == ChunkInfoMap.TYPE_BIOME) {
-                value = biomeToId(level,level.getBiome(pos).value());
+                value = biomeToId(level, level.getBiome(pos).value());
                 if (isLoadNearBy(level, pos)) {
                     map.updateBiome(pos, value);
                 }
@@ -492,7 +521,7 @@ public class MapChecker {
         // 不知道为啥这里会有null
         Integer realFlag = blockTypeCache.getOrDefault(state, FLAG_NONE - 1);
         if (realFlag == null) {
-            if(CommonConfig.Debug.logIllegalUse.get())
+            if (CommonConfig.Debug.logIllegalUse.get())
                 EclipticSeasons.logger("Null number get from %s".formatted(state));
             blockTypeCache.remove(state);
         } else {
@@ -503,13 +532,12 @@ public class MapChecker {
             var onBlock = state.getBlock();
             SnowDefinition.Info uncacheSnow = SnowChecker.getUncacheSnow(state); // es patch
 
-            if(uncacheSnow.isValid()) {
+            if (uncacheSnow.isValid()) {
                 flag = uncacheSnow.getFlag();
-            }
-            else if (!CommonConfig.Debug.snowOverlayGlowingBlock.get()
+            } else if (!CommonConfig.Debug.snowOverlayGlowingBlock.get()
                     && state.getLightEmission(level, pos) > 0) {
                 flag = FLAG_NONE;
-            }else if (state.is(EclipticBlockTags.SNOW_OVERLAY_CANNOT_SURVIVE_ON)) {
+            } else if (state.is(EclipticBlockTags.SNOW_OVERLAY_CANNOT_SURVIVE_ON)) {
                 flag = FLAG_NONE;
             } else if (onBlock instanceof LeavesBlock) {
                 flag = FLAG_LEAVES;
@@ -549,7 +577,7 @@ public class MapChecker {
                     onBlock instanceof ComposterBlock ||
                     (onBlock instanceof CampfireBlock && !state.getValue(CampfireBlock.LIT)) ||
                     onBlock instanceof IronBarsBlock ||
-                    onBlock instanceof LightningRodBlock ) {
+                    onBlock instanceof LightningRodBlock) {
                 flag = FLAG_CUSTOM;
             }
             Integer otherFlag = blockTypeCache.putIfAbsent(state, flag);
@@ -595,7 +623,7 @@ public class MapChecker {
     public static void updatePosForce(Level level, BlockPos setPos, int y) {
         int x = MapChecker.blockToRegionCoord(setPos.getX());
         int z = MapChecker.blockToRegionCoord(setPos.getZ());
-        ChunkInfoMap map = MapChecker.getChunkMap(level,x, z);
+        ChunkInfoMap map = MapChecker.getChunkMap(level, x, z);
         if (map != null)
             map.updateHeight(setPos, y);
     }

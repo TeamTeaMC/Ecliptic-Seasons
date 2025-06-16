@@ -1,3 +1,10 @@
+### **0.11.0-pre7-5**
+
+- Implemented preventive handling for map mods that are not yet fully supported, especially those using the Forgified
+  Fabric API's chunk load events. These mods may not correctly handle whether a chunk is fully loaded, which can lead to
+  a circular deadlock when the server-side Minecraft code assumes the chunk exists but encounters issues during getChunk
+  calls.
+
 ### **0.11.0-pre7-4**
 
 - BiomeClimateSettings' fake temperature adjustment now affects snowfall timing. This option can be used to force

@@ -342,7 +342,7 @@ public class WeatherManager {
         }
 
         if (level != null) {
-            if (level.isClientSide() || MapChecker.isLoadNearBy(level,pos)) {
+            if (MapChecker.isLoadNearByOnlyServer(level,pos)) {
                 biome = MapChecker.getSurfaceBiome(level, pos).value();
             }
             // else {

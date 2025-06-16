@@ -12,10 +12,18 @@ import net.minecraft.world.level.material.MapColor;
 
 public class MapColorReplacer {
     public static MapColor getTopSnowColor(BlockGetter blockGetter, BlockState state, BlockPos pos) {
-        return getTopSnowColor(blockGetter, state, pos, false);
+        return getTopSnowColor(blockGetter, state, pos, false, false);
     }
 
     public static MapColor getTopSnowColor(BlockGetter blockGetter, BlockState state, BlockPos pos, boolean ignoreLight) {
+        return getTopSnowColor(blockGetter, state, pos, ignoreLight, false);
+    }
+
+    public static MapColor getBlockIfSnowColorAndCareLoad(BlockGetter blockGetter, BlockState state, BlockPos pos) {
+        return getTopSnowColor(blockGetter, state, pos, false, true);
+    }
+
+    public static MapColor getTopSnowColor(BlockGetter blockGetter, BlockState state, BlockPos pos, boolean ignoreLight, boolean forceCheckLoad) {
         if (!(blockGetter instanceof Level level) || pos == null)
             return null;
         if (!CommonConfig.Season.snowyWinter.get()) return null;
@@ -32,8 +40,10 @@ public class MapColorReplacer {
 
         // long seed = (long) Mth.abs(pos.hashCode());
 
-        isLight = flag != 0 && MapChecker.getHeightOrUpdate(level, pos, false) <= pos.getY() - offset
+        isLight = flag != 0  && (!forceCheckLoad || MapChecker.isLoadedOnlyServer(level, pos))
+                && MapChecker.getHeightOrUpdate(level, pos, false) <= pos.getY() - offset
                 && state.getBlock() != Blocks.SNOW_BLOCK
+                && (!forceCheckLoad || MapChecker.isLoadNearByOnlyServer(level, pos))
                 && MapChecker.shouldSnowAt(level, pos.below(offset), state, level.getRandom(), state.getSeed(pos))
                 && (ignoreLight || (!CommonConfig.Season.notSnowyNearGlowingBlock.get() ||
                 level.getBrightness(LightLayer.BLOCK, pos.below(offset - 1)) <

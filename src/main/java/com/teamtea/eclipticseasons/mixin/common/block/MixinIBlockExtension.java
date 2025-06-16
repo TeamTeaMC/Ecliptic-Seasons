@@ -8,7 +8,6 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MapColor;
-import net.minecraftforge.common.extensions.IForgeBlock;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -26,7 +25,7 @@ public abstract class MixinIBlockExtension {
             cancellable = true)
     public void eclipticseasons$getColor(BlockGetter pLevel, BlockPos pPos, CallbackInfoReturnable<MapColor> cir) {
         if(CommonConfig.Map.changeMapColor.get()) {
-            var ii = MapColorReplacer.getTopSnowColor(pLevel, asState(), pPos);
+            var ii = MapColorReplacer.getBlockIfSnowColorAndCareLoad(pLevel, asState(), pPos);
             if (ii != null)
                 cir.setReturnValue(ii);
         }
