@@ -332,22 +332,33 @@ public class WeatherManager {
         return getPrecipitationAt(null, biome, pos);
     }
 
-    public static Biome.Precipitation getPrecipitationAt(Level levelNull, Biome biome, BlockPos p198905) {
+    public static Biome.Precipitation getPrecipitationAt(Level levelNull, Biome biome, BlockPos pos) {
 
-        if (BiomeClimateManager.getTag(biome).equals(ClimateTypeBiomeTags.RAINLESS)) {
-            return Biome.Precipitation.NONE;
-        }
 
         // TODO:Replay会加载一个本地level
         var level = levelNull != null ? levelNull : getMainServerLevel();
         if (level == null && ClientCon.getUseLevel() != null) {
             level = ClientCon.getUseLevel();
         }
+
+        if (level != null) {
+            if (level.isClientSide() || MapChecker.isLoadNearBy(level,pos)) {
+                biome = MapChecker.getSurfaceBiome(level, pos).value();
+            }
+            // else {
+            //     return biome.coldEnoughToSnow(pos) ?
+            //             Biome.Precipitation.SNOW :
+            //             Biome.Precipitation.RAIN;
+            // }
+        }
+
         var weathers = getBiomeList(level);
 
-
+        if (BiomeClimateManager.getTag(biome).equals(ClimateTypeBiomeTags.RAINLESS)) {
+            return Biome.Precipitation.NONE;
+        }
         if (level != null && weathers != null) {
-            // biome= MapChecker.getSurfaceBiome(level,p198905).value();
+
             var solarTerm = EclipticUtil.getNowSolarTerm(level);
             var snowTerm = SolarTerm.getSnowTerm(biome);
             boolean flag_cold = solarTerm.isInTerms(snowTerm.getStart(), snowTerm.getEnd());
@@ -357,7 +368,6 @@ public class WeatherManager {
                 if (biomeWeather.location.equals(loc)) {
                     // if (biomeWeather.shouldClear())
                     //     return Biome.Precipitation.NONE;
-
                     return flag_cold
                             // || BiomeClimateManager.getDefaultTemperature(biome, levelNull instanceof ServerLevel) <= BiomeClimateManager.SNOW_LEVEL
                             ?

@@ -68,7 +68,7 @@ public class BiomeClimateManager {
         );
     }
 
-    private static final BiomeClimateSettings EMPTY = new BiomeClimateSettings();
+    public static final BiomeClimateSettings EMPTY = new BiomeClimateSettings();
 
     // not really need to know if is server for 1.20
     @Deprecated

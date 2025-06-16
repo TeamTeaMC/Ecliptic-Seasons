@@ -167,6 +167,10 @@ public enum SolarTerm implements ITranslatableWithPlaceholder {
         if (biome == null) return SnowTerm.T05;
         // float t = BiomeClimateManager.agent$GetBaseTemperature(biome);
         float t = biome.getModifiedClimateSettings().temperature();
+
+        BiomeClimateSettings biomeClimateSettings = BiomeClimateManager.getBiomeClimateSettings(biome, true);
+        t = biomeClimateSettings == BiomeClimateManager.EMPTY ? t : biomeClimateSettings.getTemperature();
+
         if (t > 0.95 + 0.001f) {
             return SnowTerm.T1;
         } else if (t > 0.8 + 0.001f) {
@@ -198,6 +202,10 @@ public enum SolarTerm implements ITranslatableWithPlaceholder {
         if (biome == null) return SnowTerm.T05;
         // float t = BiomeClimateManager.getDefaultTemperature(biome, isServer);
         float t = biome.getModifiedClimateSettings().temperature();
+
+        BiomeClimateSettings biomeClimateSettings = BiomeClimateManager.getBiomeClimateSettings(biome, isServer);
+        t = biomeClimateSettings == BiomeClimateManager.EMPTY ? t : biomeClimateSettings.getTemperature();
+
         if (t > 0.95 + 0.001f) {
             return SnowTerm.T1;
         } else if (t > 0.8 + 0.001f) {

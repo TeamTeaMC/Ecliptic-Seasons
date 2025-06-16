@@ -1,3 +1,12 @@
+### **0.11.0-pre7-4**
+
+- BiomeClimateSettings' fake temperature adjustment now affects snowfall timing. This option can be used to force
+  non-snowy biomes to synchronize their snowfall periods.
+- If a mod attempts to query the biome precipitation of an unloaded chunk, Ecliptic Seasons will no longer apply biome
+  corrections. This prevents server chunk generation deadlocks when players load mods that don't support Ecliptic
+  Seasons, such as SnowUnderTrees. Note that such mods still need to move beyond the Serene Seasons mindset, since under
+  default configuration, winter chunk handling is not required.
+
 ### **0.11.0-pre7-3**
 
 - Only display a warning when bone meal is guaranteed to have no effect.

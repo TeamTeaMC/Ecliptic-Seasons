@@ -94,7 +94,15 @@ public class VanillaWeather {
         var resultPrecipitation = Biome.Precipitation.NONE;
         var solarTerm = EclipticSeasonsApi.getInstance().getSolarTerm(level);
 
-        biome = MapChecker.getSurfaceBiome(level, pos).value();
+        if (level.isClientSide() || MapChecker.isLoadNearBy(level,pos)) {
+            biome = MapChecker.getSurfaceBiome(level, pos).value();
+        }
+        // else {
+        //     return biome.coldEnoughToSnow(pos) ?
+        //             Biome.Precipitation.SNOW :
+        //             Biome.Precipitation.RAIN;
+        // }
+
         boolean hasPrecipitation = hasPrecipitation(level, biome);
 
         if (hasPrecipitation) {

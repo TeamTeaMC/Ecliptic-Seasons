@@ -18,6 +18,7 @@ import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
@@ -54,13 +55,9 @@ public class SeasonalBiomeAmbientSoundsHandler implements AmbientSoundHandler {
     }
 
     public void tick() {
-
-
         loopSounds.removeIf(AbstractTickableSoundInstance::isStopped);
-
         Level level = player.level();
         boolean indoor =
-
                 (level.getLightEngine().getLayerListener(LightLayer.SKY).getLightValue(player.blockPosition())) < 11;
         // EclipticSeasons.logger((player.level().getLightEngine().getLayerListener(LightLayer.SKY).getLightValue(player.blockPosition())));
 

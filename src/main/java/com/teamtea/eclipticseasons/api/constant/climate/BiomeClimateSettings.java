@@ -68,4 +68,11 @@ public class BiomeClimateSettings {
         return this.seasonalDownfalls.get(solarTerm) - this.downfall;
     }
 
+    public float getTemperature() {
+        return temperature;
+    }
+
+    public float getDownfall() {
+        return downfall;
+    }
 }
