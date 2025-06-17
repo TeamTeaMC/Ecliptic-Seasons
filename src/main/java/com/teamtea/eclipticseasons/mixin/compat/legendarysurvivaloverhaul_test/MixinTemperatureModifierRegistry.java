@@ -1,4 +1,4 @@
-package com.teamtea.eclipticseasons.mixin.compat.legendarysurvivaloverhaul;
+package com.teamtea.eclipticseasons.mixin.compat.legendarysurvivaloverhaul_test;
 
 
 import com.teamtea.eclipticseasons.EclipticSeasons;

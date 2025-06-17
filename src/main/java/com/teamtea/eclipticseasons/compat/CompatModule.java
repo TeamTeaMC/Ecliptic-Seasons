@@ -107,7 +107,7 @@ public class CompatModule {
                                 o -> o instanceof Double);
                 builder.pop();
             }
-            if (isLegendarysurvivaloverhaul()) {
+            if (isLegendarysurvivaloverhaul() && false) {
                 builder.push("LegendarySurvivalOverhaul");
                 legendarysurvivaloverhaul_springs = builder.comment("Spring Temperatures divided into six periods according to the solar term table.")
                         .defineListAllowEmpty("SpringTemps",

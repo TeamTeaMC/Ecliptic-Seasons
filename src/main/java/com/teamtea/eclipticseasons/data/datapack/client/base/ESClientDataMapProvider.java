@@ -54,11 +54,15 @@ public abstract class ESClientDataMapProvider<T> implements DataProvider {
         this.outMap.put(new ResourceLocation(modid, path), t);
     }
 
-    protected Path resolvePath(String path) {
+    protected void add(ResourceLocation path, T t) {
+        this.outMap.put(path, t);
+    }
+
+    protected Path resolvePath(ResourceLocation id) {
         return this.output.getOutputFolder(PackOutput.Target.RESOURCE_PACK)
-                .resolve(modid)
+                .resolve(id.getNamespace())
                 .resolve(type)
-                .resolve(path + ".json");
+                .resolve(id.getPath() + ".json");
     }
 
 
@@ -77,7 +81,7 @@ public abstract class ESClientDataMapProvider<T> implements DataProvider {
     protected CompletableFuture<?> run(CachedOutput output, HolderLookup.Provider provider) {
         gather(provider);
         return CompletableFuture.allOf(outMap.entrySet().stream()
-                .map(e -> saveStable(output, provider, codec, e.getValue(), resolvePath(e.getKey().getPath()))
+                .map(e -> saveStable(output, provider, codec, e.getValue(), resolvePath(e.getKey()))
                 ).toArray(CompletableFuture[]::new));
     }
 

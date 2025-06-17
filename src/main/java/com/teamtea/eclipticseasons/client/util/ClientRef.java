@@ -9,6 +9,7 @@ import com.teamtea.eclipticseasons.api.misc.util.HolderMappable;
 import com.teamtea.eclipticseasons.api.misc.util.Mergable;
 import com.teamtea.eclipticseasons.api.util.SimpleUtil;
 import com.teamtea.eclipticseasons.client.reload.ClientJsonCacheListener;
+import com.teamtea.eclipticseasons.config.ClientConfig;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;
@@ -59,8 +60,11 @@ public class ClientRef {
 
     private static void buildSeasonalModels(RegistryAccess registryAccess) {
         ArrayList<Pair<HolderSet<Block>, SeasonBlockDefinition>> collect = ClientJsonCacheListener.seasonDefCache
-                .build(SeasonBlockDefinition.CODEC, registryAccess).values()
-                .stream()
+                .build(SeasonBlockDefinition.CODEC, registryAccess)
+                .entrySet()
+                .stream().filter(r->
+                        ClientConfig.Renderer.flowerOnGrass.get()||! r.getKey().equals(SeasonBlockDefinition.GRASS_BLOCK))
+                .map(Map.Entry::getValue)
                 .map(HolderMappable::asHolderMapping)
                 .collect(Collectors.toCollection(ArrayList::new));
         Map<Block, List<SeasonBlockDefinition>> biomeListMap = buildFromHolders(collect, getHolders(registryAccess, Registries.BLOCK));

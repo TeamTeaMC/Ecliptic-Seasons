@@ -14,8 +14,6 @@ public class LSO_ESUtil {
     public static RegistryObject<ModifierBase> eclipticseasons$EclipticSeasons;
 
 
-
-
     public static void initAverageTemperatures() {
         averageSeasonTemperature = 0;
         List<ForgeConfigSpec.ConfigValue<List<? extends Double>>> configValueList = List.of(CompatModule.CommonConfig.legendarysurvivaloverhaul_springs,

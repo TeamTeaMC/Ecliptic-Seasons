@@ -1,3 +1,13 @@
+## **0.11.0-pre8**
+
+- Starting from version 2.3.13 in Minecraft 1.20, Legendary Survival Overhaul will include built-in support for Ecliptic
+  Seasons. Therefore, we will remove our compatibility code starting from version 0.11.0-pre8, as it was too tightly
+  coupled.
+- Provided capability support for the Grate Humidifier and related Grate blocks, allowing them to interact with blocks
+  like hoppers.
+- The client-side FlowerOnGrass config option will continue to take effect. Disabling it will temporarily remove the
+  built-in resource pack, preventing the rendering of additional flowers and plants on grass.
+
 ### **0.11.0-pre7-5**
 
 - Implemented preventive handling for map mods that are not yet fully supported, especially those using the Forgified

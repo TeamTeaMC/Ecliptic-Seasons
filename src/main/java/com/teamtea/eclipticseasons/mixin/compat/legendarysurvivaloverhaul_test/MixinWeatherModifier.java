@@ -1,11 +1,10 @@
-package com.teamtea.eclipticseasons.mixin.compat.legendarysurvivaloverhaul;
+package com.teamtea.eclipticseasons.mixin.compat.legendarysurvivaloverhaul_test;
 
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
-import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.compat.legendarysurvivaloverhaul.LSO_ESUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
