@@ -55,10 +55,10 @@ description='''${mod_description}
     versionRange="${minecraft_version_range}"
     ordering="NONE"
     side="BOTH"
-# legendary survival overhaul
-[[dependencies.${mod_id}]]
-    modId="legendarysurvivaloverhaul"
-    mandatory=false
-    versionRange="[2.3.13,)"
-    ordering="NONE"
-    side="BOTH"
+## legendary survival overhaul
+#[[dependencies.${mod_id}]]
+#    modId="legendarysurvivaloverhaul"
+#    mandatory=false
+#    versionRange="[1.20.1-1.20.1-2.3.13,)"
+#    ordering="NONE"
+#    side="BOTH"

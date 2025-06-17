@@ -2,18 +2,22 @@ package com.teamtea.eclipticseasons.common.block;
 
 import com.teamtea.eclipticseasons.api.constant.biome.Humidity;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
+import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
 import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
 import com.teamtea.eclipticseasons.common.misc.SimpleVoxelShapeUtils;
+import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderSet;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -36,7 +40,7 @@ public class HygrometerBlock extends CalendarBlock {
 
     public HygrometerBlock(Properties properties) {
         super(properties);
-        registerDefaultState(defaultBlockState().setValue(POWER, getPowerFromHumidityLevel(Humidity.AVERAGE.ordinal())));
+        // registerDefaultState(defaultBlockState().setValue(POWER, getPowerFromHumidityLevel(Humidity.AVERAGE.ordinal())));
         VoxelShape base = Shapes.box(1 / 16f, 0, 0.75, 15 / 16f, 11 / 16f, 1);
         for (Direction direction : Direction.Plane.HORIZONTAL) {
             shapes1[direction.get2DDataValue()] = SimpleVoxelShapeUtils.rotateVoxelShape(base, Direction.Axis.Y, getRotateYByFacing(defaultBlockState().setValue(FACING, direction)));
@@ -50,16 +54,17 @@ public class HygrometerBlock extends CalendarBlock {
 
     @Override
     public void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
-        // super.randomTick(state, level, pos, random);
-        if (random.nextInt(30) == 0) {
-            updateLevel(level, state, pos);
-        }
+        super.randomTick(state, level, pos, random);
+        // if (random.nextInt(4) == 0) {
+        //     updateLevel(level, state, pos);
+        // }
     }
 
     @Override
     public void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
         super.tick(state, level, pos, random);
         updateLevel(level, state, pos);
+        level.scheduleTick(pos,this,20*10);
     }
 
     @Override
@@ -72,31 +77,46 @@ public class HygrometerBlock extends CalendarBlock {
         return null;
     }
 
+    // @Override
+    // protected void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
+    //     super.onPlace(state, level, pos, oldState, movedByPiston);
+    //     level.scheduleTick(pos, this, 40);
+    // }
+
     @Override
-    public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
-        super.onPlace(state, level, pos, oldState, movedByPiston);
-        level.scheduleTick(pos, this, 40);
+    public BlockState getStateForPlacement(BlockPlaceContext context) {
+        return getNewState(context.getLevel(),super.getStateForPlacement(context),context.getClickedPos());
     }
 
-
     private static void updateLevel(ServerLevel level, BlockState state, BlockPos pos) {
+        BlockState oldState=state;
+        state = getNewState(level, state, pos);
+        if (state != oldState) {
+            level.setBlock(pos, state, Block.UPDATE_ALL);
+            level.playSound(null, pos, SoundEvents.SMALL_AMETHYST_BUD_PLACE, SoundSource.BLOCKS);
+        }
+    }
+
+    private static BlockState getNewState(Level level, BlockState state, BlockPos pos) {
         SolarDataManager data = SolarHolders.getSaveData(level);
         if (data != null) {
-            BlockPos checkPos = pos;
+            BlockPos checkPos = pos.relative(state.getValue(FACING));
             float chance = 0;
             for (int i = 0; i < 20; i++) {
-                chance += CropGrowthHandler.isInRoom(level, checkPos, level.getBlockState(checkPos), Optional.empty()) ? 1 : 0;
+                chance += CropGrowthHandler.isInRoom(level, checkPos, level.getBlockState(checkPos), Optional.of(HolderSet
+                        .direct(state.getBlock().builtInRegistryHolder()))) ? 1 : 0;
             }
             Humidity humidityAt = EclipticUtil.getHumidityAt(level, checkPos);
             if (chance > 8) {
-                humidityAt=humidityAt.cycle(Mth.floor(data.calculateHumidityModification(checkPos)));
+                humidityAt = humidityAt.cycle(
+                        // todo temporarily
+                        level.isClientSide()? ClientCon.humidityModificationLevel:
+                                Mth.floor(data.calculateHumidityModification(checkPos)));
             }
             int p = getPowerFromHumidityLevel(humidityAt.ordinal());
-            if (state.getValue(POWER) != p) {
-                level.setBlock(pos, state.setValue(POWER, p), Block.UPDATE_ALL);
-                level.playSound(null, pos, SoundEvents.SMALL_AMETHYST_BUD_PLACE, SoundSource.BLOCKS);
-            }
+            state = state.setValue(POWER, p);
         }
+        return state;
     }
 
     @Override

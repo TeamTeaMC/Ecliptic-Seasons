@@ -1,3 +1,6 @@
+### **0.11.0-pre8-1**
+- Adjusted the detection mechanism of the hygrometer block to make it more convenient.
+
 ## **0.11.0-pre8**
 
 - Starting from version 2.3.13 in Minecraft 1.20, Legendary Survival Overhaul will include built-in support for Ecliptic
