@@ -6,6 +6,10 @@ import com.teamtea.eclipticseasons.api.data.client.model.ModelTester;
 import com.teamtea.eclipticseasons.api.data.client.model.seasonal.SeasonBlockDefinition;
 import com.teamtea.eclipticseasons.api.data.season.SnowDefinition;
 import com.teamtea.eclipticseasons.api.misc.client.IMapSlice;
+import com.teamtea.eclipticseasons.client.model.bakequad.BakedQuadRetextured;
+import com.teamtea.eclipticseasons.client.model.bakequad.BakedQuadRetexturedAndReUV;
+import com.teamtea.eclipticseasons.client.model.bakequad.QuadFixer;
+import com.teamtea.eclipticseasons.client.model.bakequad.RectangularPrismChecker;
 import com.teamtea.eclipticseasons.client.reload.ClientJsonCacheListener;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.client.util.ClientRef;
@@ -13,6 +17,7 @@ import com.teamtea.eclipticseasons.common.core.snow.SnowChecker;
 import com.teamtea.eclipticseasons.common.registry.BlockRegistry;
 import com.teamtea.eclipticseasons.client.model.*;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
+import com.teamtea.eclipticseasons.compat.Platform;
 import com.teamtea.eclipticseasons.config.ClientConfig;
 
 import com.teamtea.eclipticseasons.config.CommonConfig;
@@ -39,7 +44,9 @@ import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraftforge.client.ChunkRenderTypeSet;
 import net.minecraftforge.client.model.data.ModelData;
 import com.teamtea.eclipticseasons.EclipticSeasons;
+import net.minecraftforge.fml.loading.moddiscovery.ModJarMetadata;
 
+import java.lang.module.ModuleDescriptor;
 import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
@@ -235,7 +242,9 @@ public class ModelManager {
     }
 
     public static List<BakedQuad> cancelTop(BakedModel bakedModel, BlockAndTintGetter blockAndTintGetter, BlockState state, BlockPos pos, Direction direction, RandomSource random, long seed, List<BakedQuad> original) {
-
+        // if (state.is(Blocks.GRASS_BLOCK)) {
+        //     int c = 0;
+        // }
         if (bakedModel != null
                 && ClientConfig.isTopFaceCulling()
                 && !original.isEmpty()
@@ -700,17 +709,24 @@ public class ModelManager {
         // extraSnowModels.putAll(snowModelLoadedJsonMap);
         EclipticSeasons.logger("Try to register extra model definitions with size %s.".formatted(snowModelLoadedJsonMap.size()));
         snowModelLoadedJsonMap.forEach(
-                (resourceLocation, value) -> {
-                    if (value.getMultiPartLike().isValid()) {
+                (resourceLocation, loadedJson) -> {
+                    if (!loadedJson.getRequire().isEmpty()) {
+                        for (String modid : loadedJson.getRequire()) {
+                            if (!Platform.isModLoaded(modid)) {
+                                return;
+                            }
+                        }
+                    }
+                    if (loadedJson.getMultiPartLike().isValid()) {
                         ResourceLocation mrl = ModelManager.snow_mrl(resourceLocation, "0");
-                        registerModelAndDependenceMethod.accept(mrl, value.getMultiPartLike());
+                        registerModelAndDependenceMethod.accept(mrl, loadedJson.getMultiPartLike());
                         extraSnowModelBuilds.put(
                                 resourceLocation, new ModelResolver(List.of(new ModelTester(
-                                        mrl, value.isReplace(), List.of()
+                                        mrl, loadedJson.isReplace(), List.of()
                                 )))
                         );
                     } else {
-                        value.getVariants().forEach(
+                        loadedJson.getVariants().forEach(
                                 (va, multiVariant) -> {
                                     ResourceLocation mrl = ModelManager.snow_mrl(resourceLocation, va);
                                     registerModelAndDependenceMethod.accept(
@@ -734,7 +750,7 @@ public class ModelManager {
                                                         }
                                                     }
                                                     solver.modelTesters().add(
-                                                            new ModelTester(mrl, value.isReplace(), test)
+                                                            new ModelTester(mrl, loadedJson.isReplace(), test)
                                                     );
                                                     return solver;
 

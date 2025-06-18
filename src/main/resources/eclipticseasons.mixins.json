@@ -44,6 +44,7 @@
     "client.block.MixinLightningRodBlock",
     "client.entity.MixinClientPanda",
     "client.model.MixinModelBakery",
+    "client.model.MixinModelManager",
     "client.model.MixinSpriteLoader",
     "client.render.MixinClientClientLevel",
     "client.render.MixinGameRenderer",

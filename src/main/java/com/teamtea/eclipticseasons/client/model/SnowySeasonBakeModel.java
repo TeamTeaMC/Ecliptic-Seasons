@@ -29,16 +29,9 @@ public class SnowySeasonBakeModel<T extends BakedModel> extends BakedModelWrappe
         this.snowRenderTypes = ChunkRenderTypeSet.of(snowChunkRenderType);
     }
 
-
-    @SuppressWarnings("deprecated")
-    @Override
-    public @NotNull List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, RandomSource rand) {
-        return combineBakedQuads(originalModel.getQuads(state, side, rand),snowModel.getQuads(state, side, rand));
-    }
-
     @Override
     public @NotNull List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @NotNull RandomSource rand, @NotNull ModelData extraData, @Nullable RenderType renderType) {
-        return combineBakedQuads(this.originalModel.getQuads(state, side, rand, extraData, renderType),this.snowModel.getQuads(state, side, rand, extraData, renderType));
+        return combineBakedQuads(this.originalModel.getQuads(state, side, rand, extraData, renderType), this.snowModel.getQuads(state, side, rand, extraData, renderType));
     }
 
     @Override

@@ -4,8 +4,16 @@ import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import lombok.Getter;
 import net.minecraft.client.renderer.block.model.MultiVariant;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.resources.model.Material;
+import net.minecraft.client.resources.model.ModelBaker;
+import net.minecraft.client.resources.model.ModelState;
+import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.function.Function;
 
 @Getter
 public class MultiVariantLike extends MultiVariant {
@@ -24,5 +32,10 @@ public class MultiVariantLike extends MultiVariant {
     public MultiVariantLike(List<VariantLike> variantLikes) {
         super(List.copyOf(variantLikes));
         this.variantLikes = variantLikes;
+    }
+
+    @Override
+    public @Nullable BakedModel bake(ModelBaker pBaker, Function<Material, TextureAtlasSprite> pSpriteGetter, ModelState pState, ResourceLocation pLocation) {
+        return super.bake(pBaker, pSpriteGetter, pState, pLocation);
     }
 }

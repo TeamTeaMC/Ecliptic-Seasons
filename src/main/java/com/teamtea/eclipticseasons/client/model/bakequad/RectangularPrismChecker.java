@@ -1,7 +1,6 @@
-package com.teamtea.eclipticseasons.client.model;
+package com.teamtea.eclipticseasons.client.model.bakequad;
 
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.VertexFormatElement;
 import it.unimi.dsi.fastutil.ints.IntArraySet;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 

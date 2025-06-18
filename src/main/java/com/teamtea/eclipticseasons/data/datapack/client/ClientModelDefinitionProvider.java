@@ -1,6 +1,7 @@
 package com.teamtea.eclipticseasons.data.datapack.client;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
+import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.data.client.model.ESModelLoadedJson;
 import com.teamtea.eclipticseasons.api.data.client.model.multipart.KeyValueConditionLike;
@@ -20,6 +21,10 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.GrassBlock;
 import net.minecraftforge.common.data.ExistingFileHelper;
+import org.apache.maven.artifact.versioning.ArtifactVersion;
+import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
+import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
+import org.apache.maven.artifact.versioning.VersionRange;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,18 +41,27 @@ public class ClientModelDefinitionProvider extends AbstractModelDefinitionProvid
     protected void gather(HolderLookup.Provider provider) {
         add(getPath(ClientModelDefinitions.OVERLAY), ESModelLoadedJson.builder().variant(ESModelLoadedJson.ALL_VARIANT, new MultiVariantLike(List.of(
                 new VariantLike.VariantBuilder(SnowModelConstant.OVERLAY).build()
-        ))).build());
+        ))).requirement(EclipticSeasonsApi.MODID).build());
 
         add(getPath(ClientModelDefinitions.SNOWY_LEAVES_TOP), ESModelLoadedJson.builder().variant(ESModelLoadedJson.ALL_VARIANT, new MultiVariantLike(List.of(
                 new VariantLike.VariantBuilder(SnowModelConstant.SNOWY_LEAVES_TOP).build()
-        ))).build());
+        ))).requirement(EclipticSeasonsApi.MODID).build());
         add(getPath(ClientModelDefinitions.SNOWY_LEAVES_ATTACH), ESModelLoadedJson.builder().variant(ESModelLoadedJson.ALL_VARIANT, new MultiVariantLike(List.of(
                 new VariantLike.VariantBuilder(SnowModelConstant.SNOWY_LEAVES_ATTACH).build()
-        ))).build());
+        ))).requirement(EclipticSeasonsApi.MODID).build());
 
         add(getPath(ClientModelDefinitions.OVERLAY_TINY), ESModelLoadedJson.builder().variant(ESModelLoadedJson.ALL_VARIANT, new MultiVariantLike(List.of(
                 new VariantLike.VariantBuilder(SnowModelConstant.OVERLAY_TINY).build()
-        ))).build());
+        ))).requirement(EclipticSeasonsApi.MODID).build());
+
+        // add(getPath(ClientModelDefinitions.OVERLAY_TINY), ESModelLoadedJson.builder()
+        //         .multiPartLike(new MultiPartLike(List.of(
+        //                 new SelectorLike((new MultiVariantLike(List.of(
+        //                         new VariantLike.VariantBuilder(SnowModelConstant.OVERLAY_TINY).build()
+        //                 ))))
+        //         )))
+        //         .requirement(EclipticSeasonsApi.MODID)
+        //         .build());
 
         add(getPath(ClientModelDefinitions.SNOWY_GRASS_BLOCK_OVERLAY), ESModelLoadedJson.builder()
                 .replace(false)
@@ -66,6 +80,8 @@ public class ClientModelDefinitionProvider extends AbstractModelDefinitionProvid
                                 VariantLike.builder(SnowModelConstant.SNOWY_GRASS_BLOCK_OVERLAY).rotationY(270).build()
                         )))
                 )))
+                .requirement(EclipticSeasonsApi.MODID)
+                .requirement(ResourceLocation.DEFAULT_NAMESPACE)
                 .build());
 
         addFlower();

@@ -177,12 +177,12 @@ repositories {
     // ForgeGradle automatically adds the Forge maven and Maven Central for you
 
     // If you have mod jar dependencies in ./libs, you can declare them as a repository like so:
-     flatDir {
-         dir 'libs'
-         content {
-             includeGroup "libs"
-         }
-     }
+    flatDir {
+        dir 'libs'
+        content {
+            includeGroup "libs"
+        }
+    }
 
     flatDir {
         dir 'mods'
@@ -226,14 +226,14 @@ dependencies {
 
     compileOnly fg.deobf("curse.maven:dynamictrees-252818:6410558")
 
-    compileOnly fg.deobf( "libs:fabric-renderer-api-v1:3.2.1+cf68abbe77")
-    compileOnly fg.deobf( "libs:fabric-renderer-indigo:1.5.2+b5b2da4177")
+    compileOnly fg.deobf("libs:fabric-renderer-api-v1:3.2.1+cf68abbe77")
+    compileOnly fg.deobf("libs:fabric-renderer-indigo:1.5.2+b5b2da4177")
 
     compileOnly fg.deobf("curse.maven:embeddium-908741:5681725")
     compileOnly fg.deobf("curse.maven:oculus-581495:6020952")
 
-    onlyMainRuntimeOnly fg.deobf("curse.maven:embeddium-908741:5681725")
-    onlyMainRuntimeOnly fg.deobf("curse.maven:oculus-581495:6020952")
+//    onlyMainRuntimeOnly fg.deobf("curse.maven:embeddium-908741:5681725")
+//    onlyMainRuntimeOnly fg.deobf("curse.maven:oculus-581495:6020952")
 
     compileOnly fg.deobf("curse.maven:simple-clouds-1121215:5812030")
 //    implementation fg.deobf("curse.maven:kiwi-303657:4688568")
@@ -321,19 +321,19 @@ jar {
 // See https://docs.gradle.org/current/dsl/org.gradle.language.jvm.tasks.ProcessResources.html
 tasks.named('processResources', ProcessResources).configure {
     var replaceProperties = [
-            minecraft_version           : minecraft_version,
-            minecraft_version_range     : minecraft_version_range,
-            forge_version               : forge_version,
-            forge_version_range         : forge_version_range,
-            loader_version_range        : loader_version_range,
-            mod_id                      : mod_id,
-            mod_name                    : mod_name,
-            mod_license                 : mod_license,
-            mod_version                 : mod_version,
-            mod_authors                 : mod_authors,
-            mod_description             : mod_description,
-            mod_update_json             : mod_update_json,
-            mod_url                     : mod_url,
+            minecraft_version      : minecraft_version,
+            minecraft_version_range: minecraft_version_range,
+            forge_version          : forge_version,
+            forge_version_range    : forge_version_range,
+            loader_version_range   : loader_version_range,
+            mod_id                 : mod_id,
+            mod_name               : mod_name,
+            mod_license            : mod_license,
+            mod_version            : mod_version,
+            mod_authors            : mod_authors,
+            mod_description        : mod_description,
+            mod_update_json        : mod_update_json,
+            mod_url                : mod_url,
     ]
     inputs.properties replaceProperties
 
@@ -371,7 +371,7 @@ tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
 }
 
-def curseforge_apiToken =  System.getenv("curseforge_apiToken")
+def curseforge_apiToken = System.getenv("curseforge_apiToken")
 
 curseforge {
     apiToken = curseforge_apiToken

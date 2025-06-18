@@ -1,4 +1,5 @@
 {
+  "require": "eclipticseasons",
   "variants": {
     "": {
       "model": "eclipticseasons:block/snowy_leaves_top"

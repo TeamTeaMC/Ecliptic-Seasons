@@ -1,7 +1,9 @@
 package com.teamtea.eclipticseasons.api.util.codec;
 
+import com.mojang.datafixers.util.Either;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;
@@ -109,5 +111,18 @@ public class CodecUtil {
 
     public  static <A> Codec<A> lazyInitialized(final Supplier<Codec<A>> delegate) {
         return new RecursiveCodec<>(delegate.toString(), self -> delegate.get());
+    }
+
+    public static <E> Codec<List<E>> listFrom(Codec<E> singleCodec) {
+        return Codec.either(singleCodec,singleCodec.listOf())
+                .flatXmap(
+                        either -> DataResult.success(either.left().isPresent() ?
+                                List.of(either.left().get()) :
+                                either.right().isPresent() ? either.right().get() : List.of()),
+                        cond -> {
+                            if (cond.size() == 1) return DataResult.success(Either.left(cond.get(0)));
+                            return DataResult.success(Either.right(cond));
+                        }
+                );
     }
 }

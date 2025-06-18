@@ -1,3 +1,28 @@
+## Version 0.11.0 (Build 0.11.0-z)
+
+Since the initial development plan for this version has been completed, it is now entering the **non-preview** stage.
+
+Special thanks to **ZakoFish** for providing test assistance with problematic machines in the following two issues:
+
+- Fixed the timing issue when registering custom model resource packs.
+- Adjusted the render type handling for custom models.
+
+Others:
+
+- Custom model loading has been optimized to fully asynchronous loading.
+- A new option named `"require"` has been added to the **Model Definition** file, which controls whether specific mods
+  are required to be loaded. The value can be either a JSON string or a string array, for example:
+
+```json
+{
+  "require": [
+    "eclipticseasons",
+    "minecraft"
+  ],
+  "....": "...."
+}
+```
+
 ### **0.11.0-pre8-1**
 - Adjusted the detection mechanism of the hygrometer block to make it more convenient.
 
