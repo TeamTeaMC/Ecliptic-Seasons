@@ -14,7 +14,7 @@ import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import com.teamtea.eclipticseasons.client.core.ModelManager;
+import com.teamtea.eclipticseasons.client.core.ExtraModelManager;
 
 import java.util.List;
 
@@ -69,7 +69,7 @@ public abstract class MixinBlockRenderVanilla {
     )
     private List<BakedQuad> eclipticseasons$tesselateWithAO_getQuads(List<BakedQuad> original, @Local(ordinal = 0) BlockAndTintGetter blockAndTintGetter, @Local(ordinal = 0) BlockPos pos, @Local(ordinal = 0) BlockState state, @Local(ordinal = 0) Direction direction, @Local(ordinal = 0) RandomSource randomSource, @Local(ordinal = 0) long seed,
                                                               @Local(argsOnly = true) BakedModel bakedModel, @Local(argsOnly = true) RenderType renderType) {
-        return ModelManager.cancelTop(bakedModel, blockAndTintGetter, state, pos, direction, randomSource, seed, original);
+        return ExtraModelManager.cancelTop(bakedModel, blockAndTintGetter, state, pos, direction, randomSource, seed, original);
     }
 
     @ModifyExpressionValue(
@@ -79,7 +79,7 @@ public abstract class MixinBlockRenderVanilla {
     )
     private List<BakedQuad> eclipticseasons$tesselateWithAO_getQuads2(List<BakedQuad> original, @Local(ordinal = 0) BlockAndTintGetter blockAndTintGetter, @Local(ordinal = 0) BlockPos pos, @Local(ordinal = 0) BlockState state, @Local(ordinal = 0) RandomSource randomSource, @Local(ordinal = 0) long seed,
                                                                @Local(argsOnly = true) BakedModel bakedModel, @Local(argsOnly = true) RenderType renderType) {
-        return ModelManager.cancelTop(bakedModel, blockAndTintGetter, state, pos, null, randomSource, seed, original);
+        return ExtraModelManager.cancelTop(bakedModel, blockAndTintGetter, state, pos, null, randomSource, seed, original);
     }
 
     @ModifyExpressionValue(
@@ -89,7 +89,7 @@ public abstract class MixinBlockRenderVanilla {
     )
     private List<BakedQuad> eclipticseasons$tesselateWithoutAO_getQuads(List<BakedQuad> original, @Local(ordinal = 0) BlockAndTintGetter blockAndTintGetter, @Local(ordinal = 0) BlockPos pos, @Local(ordinal = 0) BlockState state, @Local(ordinal = 0) Direction direction, @Local(ordinal = 0) RandomSource randomSource, @Local(ordinal = 0) long seed,
                                                                  @Local(argsOnly = true) BakedModel bakedModel, @Local(argsOnly = true) RenderType renderType) {
-        return ModelManager.cancelTop(bakedModel, blockAndTintGetter, state, pos, direction, randomSource, seed, original);
+        return ExtraModelManager.cancelTop(bakedModel, blockAndTintGetter, state, pos, direction, randomSource, seed, original);
     }
 
     @ModifyExpressionValue(
@@ -99,6 +99,6 @@ public abstract class MixinBlockRenderVanilla {
     )
     private List<BakedQuad> eclipticseasons$tesselateWithoutAO_getQuads2(List<BakedQuad> original, @Local(ordinal = 0) BlockAndTintGetter blockAndTintGetter, @Local(ordinal = 0) BlockPos pos, @Local(ordinal = 0) BlockState state, @Local(ordinal = 0) RandomSource randomSource, @Local(ordinal = 0) long seed,
                                                                   @Local(argsOnly = true) BakedModel bakedModel, @Local(argsOnly = true) RenderType renderType) {
-        return ModelManager.cancelTop(bakedModel, blockAndTintGetter, state, pos, null, randomSource, seed, original);
+        return ExtraModelManager.cancelTop(bakedModel, blockAndTintGetter, state, pos, null, randomSource, seed, original);
     }
 }

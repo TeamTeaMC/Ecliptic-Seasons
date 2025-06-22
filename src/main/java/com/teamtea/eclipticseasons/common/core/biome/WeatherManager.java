@@ -334,15 +334,15 @@ public class WeatherManager {
 
     public static Biome.Precipitation getPrecipitationAt(Level levelNull, Biome biome, BlockPos pos) {
 
-
-        // TODO:Replay会加载一个本地level
-        var level = levelNull != null ? levelNull : getMainServerLevel();
-        if (level == null && ClientCon.getUseLevel() != null) {
-            level = ClientCon.getUseLevel();
-        }
+        // TODO:Replay Mod would load a client level only
+        Level level = levelNull != null ? levelNull : ClientCon.getUseLevel();
+        level = level != null ? level : getMainServerLevel();
+        // if (level == null && ClientCon.getUseLevel() != null) {
+        //     level = ClientCon.getUseLevel();
+        // }
 
         if (level != null) {
-            if (MapChecker.isLoadNearByOnlyServer(level,pos)) {
+            if (MapChecker.isLoadNearByOnlyServer(level, pos)) {
                 biome = MapChecker.getSurfaceBiome(level, pos).value();
             }
             // else {

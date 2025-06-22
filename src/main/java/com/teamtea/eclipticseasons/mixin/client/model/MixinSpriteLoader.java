@@ -3,10 +3,9 @@ package com.teamtea.eclipticseasons.mixin.client.model;
 
 import com.mojang.blaze3d.platform.NativeImage;
 import com.teamtea.eclipticseasons.EclipticSeasons;
-import com.teamtea.eclipticseasons.client.core.ModelManager;
+import com.teamtea.eclipticseasons.client.core.ExtraModelManager;
 import com.teamtea.eclipticseasons.client.util.ColorHelper;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.SpriteContents;
 import net.minecraft.client.renderer.texture.SpriteLoader;
 import net.minecraft.client.renderer.texture.TextureAtlas;
@@ -14,7 +13,6 @@ import net.minecraft.client.resources.metadata.animation.AnimationMetadataSectio
 import net.minecraft.client.resources.metadata.animation.FrameSize;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
-import net.minecraft.server.packs.resources.ResourceMetadata;
 import net.minecraftforge.fml.loading.FMLLoader;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -26,7 +24,6 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.awt.*;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -57,10 +54,10 @@ public abstract class MixinSpriteLoader {
             return;
         }
 
-        if (!ModelManager.blocksCache.containsKey(resourceLocation)) {
+        if (!ExtraModelManager.blocksCache.containsKey(resourceLocation)) {
             return;
         }
-        ModelManager.blocksCache.put(resourceLocation, cir.getReturnValue());
+        ExtraModelManager.blocksCache.put(resourceLocation, cir.getReturnValue());
 
         if (cir.getReturnValue().name().getPath().contains("sapling")
                 ||cir.getReturnValue().name().getPath().contains("wild")
@@ -129,7 +126,7 @@ public abstract class MixinSpriteLoader {
             }
             if (snowyImage != null) {
                 NativeImage finalSnowyImage = snowyImage;
-                ModelManager.blocksCache.forEach(
+                ExtraModelManager.blocksCache.forEach(
                         (resourceLocation, spriteContents) -> {
                             if(spriteContents!=null) {
                                 NativeImage originalImage = spriteContents.getOriginalImage();

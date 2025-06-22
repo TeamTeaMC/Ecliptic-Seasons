@@ -6,7 +6,7 @@ import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
-import com.teamtea.eclipticseasons.client.core.ModelManager;
+import com.teamtea.eclipticseasons.client.core.ExtraModelManager;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.compat.fabric_renderer_indigo.FabricModelDelayChecker;
 import com.teamtea.eclipticseasons.compat.iris.IIrisShaderAccesor;
@@ -131,10 +131,10 @@ public abstract class MixinBlockRenderTask {
             @Share("shouldReplace") LocalBooleanRef replace
     ) {
         random.setSeed(seed);
-        BakedModel model = ModelManager.findModel(ctx.world(), mutableBlockPos, state, random);
+        BakedModel model = ExtraModelManager.findModel(ctx.world(), mutableBlockPos, state, random);
         snowModelRef.set(model);
         replace.set(model != null
-                && ModelManager.isModelReplaceable(state, ctx.world(), mutableBlockPos, model));
+                && ExtraModelManager.isModelReplaceable(state, ctx.world(), mutableBlockPos, model));
     }
 
     @ModifyExpressionValue(
@@ -201,7 +201,7 @@ public abstract class MixinBlockRenderTask {
                     snowModel,
                     state.getSeed(mutableBlockPos),
                     modelData,
-                    ModelManager.getRenderType(state));
+                    ExtraModelManager.getRenderType(state));
             cache.getBlockRenderer().renderModel(ctx, buffers);
 
             ((FabricModelDelayChecker) ctx).updateIsLastFabric(false);

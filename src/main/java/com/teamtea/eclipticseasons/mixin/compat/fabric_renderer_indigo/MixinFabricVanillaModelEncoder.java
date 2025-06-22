@@ -3,7 +3,7 @@ package com.teamtea.eclipticseasons.mixin.compat.fabric_renderer_indigo;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;
-import com.teamtea.eclipticseasons.client.core.ModelManager;
+import com.teamtea.eclipticseasons.client.core.ExtraModelManager;
 import com.teamtea.eclipticseasons.compat.fabric_renderer_indigo.TerrainRenderContextLevelGetter;
 import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
 import net.fabricmc.fabric.impl.renderer.VanillaModelEncoder;
@@ -35,7 +35,7 @@ public abstract class MixinFabricVanillaModelEncoder {
                                                                                @Local Direction direction) {
         if (renderContext instanceof TerrainRenderContextLevelGetter terrainRenderContextLevelGetter) {
             BlockAndTintGetter blockAndTintGetter = terrainRenderContextLevelGetter.eclipticseasons$get(); {
-                return ModelManager.cancelTop(bakedModel, blockAndTintGetter, state, terrainRenderContextLevelGetter.eclipticseasons$getPos(), direction, randomSourceSupplier.get(), state.getSeed(terrainRenderContextLevelGetter.eclipticseasons$getPos()), original);
+                return ExtraModelManager.cancelTop(bakedModel, blockAndTintGetter, state, terrainRenderContextLevelGetter.eclipticseasons$getPos(), direction, randomSourceSupplier.get(), state.getSeed(terrainRenderContextLevelGetter.eclipticseasons$getPos()), original);
                 }
         }
         return original;

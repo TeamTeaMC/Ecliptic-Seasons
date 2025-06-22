@@ -4,7 +4,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
-import com.teamtea.eclipticseasons.client.core.ModelManager;
+import com.teamtea.eclipticseasons.client.core.ExtraModelManager;
 import com.teamtea.eclipticseasons.client.model.MulBakeModel;
 import com.teamtea.eclipticseasons.client.model.SnowyBakedModelWrapper;
 import com.teamtea.eclipticseasons.compat.optfine.IOFModelTaker;
@@ -41,7 +41,7 @@ public abstract class MixinRebuildTask {
     ) {
         if (blockAndTintGetter instanceof IOFModelTaker iofModelTaker) {
             randomsource.setSeed(blockState.getSeed(pos));
-            BakedModel model = ModelManager.findModel(blockAndTintGetter, pos, blockState, randomsource);
+            BakedModel model = ExtraModelManager.findModel(blockAndTintGetter, pos, blockState, randomsource);
             if (model != null) {
                 BakedModel oldModel = modelLocalRef.get();
                 BakedModel newModel;
@@ -49,8 +49,8 @@ public abstract class MixinRebuildTask {
                 boolean special = model instanceof SnowyBakedModelWrapper<?> snowyBakedModelWrapper && snowyBakedModelWrapper.isLowLayer();
                 BakedModel cacheModel = snowy ? null : iofModelTaker.eclipticseasons$hasCache(oldModel, special);
                 if (cacheModel == null) {
-                    RenderType renderType = ModelManager.getRenderType(blockState);
-                    boolean replaceable = ModelManager.isModelReplaceable(blockState, blockAndTintGetter, pos, model);
+                    RenderType renderType = ExtraModelManager.getRenderType(blockState);
+                    boolean replaceable = ExtraModelManager.isModelReplaceable(blockState, blockAndTintGetter, pos, model);
                     // todo maybe we can cache it in future
                     newModel = new MulBakeModel<>(oldModel, model, replaceable, renderType);
                     if (snowy) {

@@ -9,10 +9,6 @@ import com.teamtea.eclipticseasons.client.model.ItemRenderModel;
 import com.teamtea.eclipticseasons.client.particle.*;
 import com.teamtea.eclipticseasons.client.reload.ClientJsonCacheListener;
 import com.teamtea.eclipticseasons.client.render.ber.*;
-import com.teamtea.eclipticseasons.client.render.item.ClientGreenHouseItem;
-import com.teamtea.eclipticseasons.client.render.item.GreenHouseCoreCoreItemRenderer;
-import com.teamtea.eclipticseasons.client.render.item.GreenHouseCoreFrameItemRenderer;
-import com.teamtea.eclipticseasons.client.render.item.GreenHouseCoreItemRenderer;
 import com.teamtea.eclipticseasons.client.util.ClientExtraUtil;
 import com.teamtea.eclipticseasons.common.registry.BlockEntityRegistry;
 import com.teamtea.eclipticseasons.common.registry.BlockRegistry;
@@ -20,7 +16,6 @@ import com.teamtea.eclipticseasons.common.registry.ItemRegistry;
 import com.teamtea.eclipticseasons.common.registry.ParticleRegistry;
 import com.teamtea.eclipticseasons.client.color.season.BiomeColorsHandler;
 import com.teamtea.eclipticseasons.client.model.SnowyBakedModelWrapper;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
@@ -29,7 +24,6 @@ import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.FastColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.*;
 import net.minecraftforge.api.distmarker.Dist;
@@ -39,7 +33,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import com.teamtea.eclipticseasons.EclipticSeasons;
-import com.teamtea.eclipticseasons.client.core.ModelManager;
+import com.teamtea.eclipticseasons.client.core.ExtraModelManager;
 import net.minecraftforge.registries.RegistryObject;
 
 import java.util.ArrayList;
@@ -71,25 +65,25 @@ public class ClientSetup {
 
     @SubscribeEvent
     public static void registerExtraModels(ModelEvent.RegisterAdditional event) {
-        event.register(ModelManager.stairs_top);
-        event.register(ModelManager.snowy_custom);
-        event.register(ModelManager.snowy_fern);
-        event.register(ModelManager.snowy_grass);
-        event.register(ModelManager.snowy_tall_grass_top);
-        event.register(ModelManager.snowy_tall_grass_bottom);
-        event.register(ModelManager.snowy_large_fern_top);
+        event.register(ExtraModelManager.stairs_top);
+        event.register(ExtraModelManager.snowy_custom);
+        event.register(ExtraModelManager.snowy_fern);
+        event.register(ExtraModelManager.snowy_grass);
+        event.register(ExtraModelManager.snowy_tall_grass_top);
+        event.register(ExtraModelManager.snowy_tall_grass_bottom);
+        event.register(ExtraModelManager.snowy_large_fern_top);
         // 注意这里使用地址和model地址效果不同，后者需要写blockstate
-        event.register(ModelManager.snowy_large_fern_bottom);
-        event.register(ModelManager.overlay_2);
-        event.register(ModelManager.snow_height2);
-        event.register(ModelManager.snow_height2_top);
-        event.register(ModelManager.grass_flower);
+        event.register(ExtraModelManager.snowy_large_fern_bottom);
+        event.register(ExtraModelManager.overlay_2);
+        event.register(ExtraModelManager.snow_height2);
+        event.register(ExtraModelManager.snow_height2_top);
+        event.register(ExtraModelManager.grass_flower);
 
-        event.register(ModelManager.snowy_leaves_attach);
-        event.register(ModelManager.snowy_leaves_top);
+        event.register(ExtraModelManager.snowy_leaves_attach);
+        event.register(ExtraModelManager.snowy_leaves_top);
 
-        ModelManager.flower_on_grass.forEach(event::register);
-        ModelManager.fourleaf_clovers.forEach(event::register);
+        ExtraModelManager.flower_on_grass.forEach(event::register);
+        ExtraModelManager.fourleaf_clovers.forEach(event::register);
     }
 
     @SubscribeEvent
@@ -134,26 +128,26 @@ public class ClientSetup {
         ParticleUtil.onReloadResource();
 
         Map<ResourceLocation, BakedModel> modelRegistry = event.getModels();
-        ModelManager.clearForRebaked(modelRegistry);
+        ExtraModelManager.clearForRebaked(modelRegistry);
 
         List<ResourceLocation> bakedModels =
                 new ArrayList<>(List.of(
-                        ModelManager.snowy_leaves_attach,
-                        ModelManager.snowy_leaves_top,
-                        ModelManager.snowy_custom,
-                        ModelManager.stairs_top,
-                        ModelManager.snowy_fern,
-                        ModelManager.snowy_grass,
-                        ModelManager.snowy_tall_grass_top,
-                        ModelManager.snowy_tall_grass_bottom,
-                        ModelManager.snowy_large_fern_top,
-                        ModelManager.snowy_large_fern_bottom,
-                        ModelManager.overlay_2,
-                        ModelManager.snow_height2,
-                        ModelManager.snow_height2_top,
-                        ModelManager.snowOverlayLeaves,
-                        ModelManager.snowySlabBottom,
-                        ModelManager.snowOverlayBlock
+                        ExtraModelManager.snowy_leaves_attach,
+                        ExtraModelManager.snowy_leaves_top,
+                        ExtraModelManager.snowy_custom,
+                        ExtraModelManager.stairs_top,
+                        ExtraModelManager.snowy_fern,
+                        ExtraModelManager.snowy_grass,
+                        ExtraModelManager.snowy_tall_grass_top,
+                        ExtraModelManager.snowy_tall_grass_bottom,
+                        ExtraModelManager.snowy_large_fern_top,
+                        ExtraModelManager.snowy_large_fern_bottom,
+                        ExtraModelManager.overlay_2,
+                        ExtraModelManager.snow_height2,
+                        ExtraModelManager.snow_height2_top,
+                        ExtraModelManager.snowOverlayLeaves,
+                        ExtraModelManager.snowySlabBottom,
+                        ExtraModelManager.snowOverlayBlock
                 ));
         bakedModels.addAll(BlockRegistry.snowyStairs.get().getStateDefinition().getPossibleStates().stream()
                 .map(BlockModelShaper::stateToModelLocation).toList());

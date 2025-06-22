@@ -1,6 +1,6 @@
 package com.teamtea.eclipticseasons.client.model;
 
-import com.teamtea.eclipticseasons.client.core.ModelManager;
+import com.teamtea.eclipticseasons.client.core.ExtraModelManager;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -47,14 +47,14 @@ public class MulBakeModel<T extends BakedModel> extends BakedModelWrapper<T> {
 
 
     protected List<BakedQuad> getCustomBakedQuads(@Nullable BlockState state, List<BakedQuad> quads, @Nullable Direction side) {
-        if (ModelManager.shouldMakeSnowyBakedQuads(flag, side)) {
+        if (ExtraModelManager.shouldMakeSnowyBakedQuads(flag, side)) {
             List<BakedQuad> snowModelQuads = new ArrayList<>(quads.size());
             // for (BakedQuad quad : quads) {
             //     if (quad.getDirection() != Direction.UP) {
             //         snowModelQuads.add(quad);
             //     }
             // }
-            snowModelQuads.addAll(ModelManager.makeSnowyBakedQuads(state, quads, new ArrayList<>(quads)));
+            snowModelQuads.addAll(ExtraModelManager.makeSnowyBakedQuads(state, quads, new ArrayList<>(quads)));
             return snowModelQuads;
         }
         return EMPTY_LIST;

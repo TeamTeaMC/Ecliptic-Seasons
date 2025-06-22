@@ -1,9 +1,8 @@
 package com.teamtea.eclipticseasons.data.model;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
-import com.teamtea.eclipticseasons.client.core.ModelManager;
+import com.teamtea.eclipticseasons.client.core.ExtraModelManager;
 import com.teamtea.eclipticseasons.common.registry.BlockRegistry;
-import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.model.generators.BlockModelProvider;
@@ -23,7 +22,7 @@ public class ESBlockModelProvider extends BlockModelProvider {
 
     @Override
     protected void registerModels() {
-        for (ResourceLocation flowerOnGrass : ModelManager.flower_on_grass) {
+        for (ResourceLocation flowerOnGrass : ExtraModelManager.flower_on_grass) {
             withExistingParent(flowerOnGrass.getPath(),resource("grass_flower"))
                     // .element()
                     // .from(0,0,0)
@@ -32,7 +31,7 @@ public class ESBlockModelProvider extends BlockModelProvider {
                     .texture("1",flowerOnGrass.getPath());
         }
 
-        for (ResourceLocation flowerOnGrass : ModelManager.fourleaf_clovers) {
+        for (ResourceLocation flowerOnGrass : ExtraModelManager.fourleaf_clovers) {
             withExistingParent(flowerOnGrass.getPath(),resource("tinted_grass_flower"))
                     .texture("1",flowerOnGrass.getPath());
         }

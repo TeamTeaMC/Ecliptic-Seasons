@@ -29,9 +29,6 @@ public abstract class AbstractModelDefinitionProvider extends ESClientDataMapPro
     }
 
     @Override
-    protected abstract void gather(HolderLookup.Provider provider) ;
-
-    @Override
     protected CompletableFuture<?> run(CachedOutput output, HolderLookup.Provider provider) {
         return CompletableFuture.allOf(
                 super.run(output, provider),
@@ -51,7 +48,7 @@ public abstract class AbstractModelDefinitionProvider extends ESClientDataMapPro
 
         @Override
         public @NotNull String getName() {
-            return "ES Block Model : "+modid;
+            return "ES Block Model : " + modid;
         }
 
         @Override

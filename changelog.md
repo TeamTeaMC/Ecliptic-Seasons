@@ -1,3 +1,14 @@
+### 0.11.0.1
+
+- Adjusted the mechanism for obtaining the level used during biome weather precipitation in autocomplete queries. This
+  may help improve performance when running alongside certain mods that are not fully compatible with Ecliptic Seasons.
+- Added a version requirement for Legendary Survival Overhaul to prevent players from using outdated versions. Support
+  for Ecliptic Seasons has already been integrated into the latest versions of LSO (note: make sure to adjust the temperature
+  settings in LSO's configuration).
+- Renamed the `ModelManager` class used by Ecliptic Seasons to `ExtraModelManager` to avoid confusion for developers (in case they
+  intend to use this mod's version instead of Mojang's, although method access to Minecraft's ModelManager typically
+  doesn't conflict with this mod).
+
 ## Version 0.11.0 (Build 0.11.0-z)
 
 Since the initial development plan for this version has been completed, it is now entering the **non-preview** stage.
@@ -24,6 +35,7 @@ Others:
 ```
 
 ### **0.11.0-pre8-1**
+
 - Adjusted the detection mechanism of the hygrometer block to make it more convenient.
 
 ## **0.11.0-pre8**

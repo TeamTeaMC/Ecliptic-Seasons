@@ -9,22 +9,14 @@ import com.teamtea.eclipticseasons.api.data.client.model.multipart.MultiPartLike
 import com.teamtea.eclipticseasons.api.data.client.model.multipart.SelectorLike;
 import com.teamtea.eclipticseasons.api.data.client.model.variant.MultiVariantLike;
 import com.teamtea.eclipticseasons.api.data.client.model.variant.VariantLike;
-import com.teamtea.eclipticseasons.client.core.ModelManager;
+import com.teamtea.eclipticseasons.client.core.ExtraModelManager;
 import com.teamtea.eclipticseasons.client.model.SnowModelConstant;
-import com.teamtea.eclipticseasons.client.reload.ClientJsonCacheListener;
 import com.teamtea.eclipticseasons.common.core.snow.ClientModelDefinitions;
-import com.teamtea.eclipticseasons.data.datapack.client.base.ESClientBiomeDataMapProvider;
-import com.teamtea.eclipticseasons.data.datapack.client.base.ESClientDataMapProvider;
-import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.GrassBlock;
 import net.minecraftforge.common.data.ExistingFileHelper;
-import org.apache.maven.artifact.versioning.ArtifactVersion;
-import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
-import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
-import org.apache.maven.artifact.versioning.VersionRange;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -94,12 +86,12 @@ public class ClientModelDefinitionProvider extends AbstractModelDefinitionProvid
             if (solarTerm.isInTerms(SolarTerm.BEGINNING_OF_SPRING, SolarTerm.BEGINNING_OF_SUMMER)) {
                 int weight = (Math.abs(solarTerm.ordinal() - 3) + 1) * 56 * 2;
                 add(getPath(EclipticSeasons.rl("flower_on_grass_" + solarTerm.getName())), ESModelLoadedJson.builder().variant(ESModelLoadedJson.ALL_VARIANT,
-                        buildMultiVariantLikeFromList(ModelManager.flower_on_grass, weight)).build());
+                        buildMultiVariantLikeFromList(ExtraModelManager.flower_on_grass, weight)).build());
             }
             if (solarTerm.isInTerms(SolarTerm.BEGINNING_OF_SUMMER, SolarTerm.BEGINNING_OF_AUTUMN)) {
                 int weight = (Math.abs(solarTerm.ordinal() - 7) + 1) * 42 * 2;
                 add(getPath(EclipticSeasons.rl("fourleaf_clovers_" + solarTerm.getName())), ESModelLoadedJson.builder().variant(ESModelLoadedJson.ALL_VARIANT,
-                        buildMultiVariantLikeFromList(ModelManager.fourleaf_clovers, weight)).build());
+                        buildMultiVariantLikeFromList(ExtraModelManager.fourleaf_clovers, weight)).build());
             }
         }
 

@@ -1,7 +1,7 @@
 package com.teamtea.eclipticseasons.mixin.client.model;
 
 
-import com.teamtea.eclipticseasons.client.core.ModelManager;
+import com.teamtea.eclipticseasons.client.core.ExtraModelManager;
 import net.minecraft.client.color.block.BlockColors;
 import net.minecraft.client.renderer.block.BlockModelShaper;
 import net.minecraft.client.renderer.block.model.BlockModel;
@@ -61,7 +61,7 @@ public abstract class MixinModelBakery {
                                         (s, materialStringEither) -> {
                                             materialStringEither.left().ifPresent(
                                                     material -> {
-                                                        ModelManager.blocksCache.put(material.texture(), null);
+                                                        ExtraModelManager.blocksCache.put(material.texture(), null);
                                                     }
                                             );
                                         }
@@ -84,7 +84,7 @@ public abstract class MixinModelBakery {
                                                        CallbackInfo ci) {
         // sorry we can not inject in some place better
         Map<ResourceLocation, UnbakedModel> cache = new HashMap<>();
-        ModelManager.registerExtraSnowyModels(cache::put);
+        ExtraModelManager.registerExtraSnowyModels(cache::put);
         for (UnbakedModel value : cache.values()) {
             value.resolveParents(this::getModel);
         }

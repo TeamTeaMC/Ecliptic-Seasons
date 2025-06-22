@@ -44,9 +44,7 @@ import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraftforge.client.ChunkRenderTypeSet;
 import net.minecraftforge.client.model.data.ModelData;
 import com.teamtea.eclipticseasons.EclipticSeasons;
-import net.minecraftforge.fml.loading.moddiscovery.ModJarMetadata;
 
-import java.lang.module.ModuleDescriptor;
 import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
@@ -54,7 +52,7 @@ import java.util.stream.IntStream;
 
 // https://github.com/DoubleNegation/CompactOres/blob/1.18/src/main/java/doublenegation/mods/compactores/CompactOresResourcePack.java#L164
 // 未来可以基于RepositorySource实现动态纹理生成（看情况，因为目前不需要，对内存消耗比较大）
-public class ModelManager {
+public class ExtraModelManager {
     public static final RenderType CUTOUT_MIPPED = null;
 
     public static Map<ResourceLocation, BakedModel> models;
@@ -254,7 +252,7 @@ public class ModelManager {
         ) {
             random.setSeed(seed);
             // blockAndTintGetter 现在优化以后可以用来处理了
-            var snowModel = ModelManager.findModel(blockAndTintGetter, pos, state, random);
+            var snowModel = ExtraModelManager.findModel(blockAndTintGetter, pos, state, random);
 
             if (snowModel instanceof SnowyBakedModelWrapper) {
                 int blockType = MapChecker.getBlockType(state, blockAndTintGetter, pos);
@@ -390,7 +388,7 @@ public class ModelManager {
     @Deprecated(forRemoval = true)
     public static List<BakedQuad> appendOverlay(BlockAndTintGetter blockAndTintGetter, BlockState state, BlockPos pos, Direction direction, RandomSource random, long seed, List<BakedQuad> list) {
         random.setSeed(seed);
-        BakedModel snowModel = ModelManager.findModel(blockAndTintGetter, pos, state, random);
+        BakedModel snowModel = ExtraModelManager.findModel(blockAndTintGetter, pos, state, random);
         Level level = Minecraft.getInstance().level;
         if (level == null || snowModel == null) return list;
         if (!list.isEmpty()
@@ -690,7 +688,7 @@ public class ModelManager {
     }
 
     public static void clearForRebaked(Map<ResourceLocation, BakedModel> modelRegistry) {
-        ModelManager.models = modelRegistry;
+        ExtraModelManager.models = modelRegistry;
         snowyModelsCache.clear();
         snowyModelsCache2.clear();
         if (ClientCon.getUseLevel() != null) {
@@ -718,7 +716,7 @@ public class ModelManager {
                         }
                     }
                     if (loadedJson.getMultiPartLike().isValid()) {
-                        ResourceLocation mrl = ModelManager.snow_mrl(resourceLocation, "0");
+                        ResourceLocation mrl = ExtraModelManager.snow_mrl(resourceLocation, "0");
                         registerModelAndDependenceMethod.accept(mrl, loadedJson.getMultiPartLike());
                         extraSnowModelBuilds.put(
                                 resourceLocation, new ModelResolver(List.of(new ModelTester(
@@ -728,7 +726,7 @@ public class ModelManager {
                     } else {
                         loadedJson.getVariants().forEach(
                                 (va, multiVariant) -> {
-                                    ResourceLocation mrl = ModelManager.snow_mrl(resourceLocation, va);
+                                    ResourceLocation mrl = ExtraModelManager.snow_mrl(resourceLocation, va);
                                     registerModelAndDependenceMethod.accept(
                                             mrl, multiVariant
                                     );

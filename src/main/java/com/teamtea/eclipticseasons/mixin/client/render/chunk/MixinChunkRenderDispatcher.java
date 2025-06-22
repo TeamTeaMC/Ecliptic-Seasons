@@ -2,8 +2,6 @@ package com.teamtea.eclipticseasons.mixin.client.render.chunk;
 
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
-import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
-import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 
 import com.llamalad7.mixinextras.sugar.Share;
@@ -13,8 +11,7 @@ import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexFormat;
-import com.teamtea.eclipticseasons.client.core.ModelManager;
-import com.teamtea.eclipticseasons.client.model.MulBakeModel;
+import com.teamtea.eclipticseasons.client.core.ExtraModelManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ChunkBufferBuilderPack;
 import net.minecraft.client.renderer.RenderType;
@@ -23,7 +20,6 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.model.data.ModelData;
 import org.spongepowered.asm.mixin.Mixin;
@@ -88,10 +84,10 @@ public class MixinChunkRenderDispatcher {
             @Share("shouldReplace") LocalBooleanRef replace
     ) {
         randomsource.setSeed(original);
-        BakedModel model = ModelManager.findModel(renderchunkregion, blockpos2, blockstate, randomsource);
+        BakedModel model = ExtraModelManager.findModel(renderchunkregion, blockpos2, blockstate, randomsource);
         snowModelRef.set(model);
         replace.set(model != null
-                && ModelManager.isModelReplaceable(blockstate, renderchunkregion, blockpos2, model));
+                && ExtraModelManager.isModelReplaceable(blockstate, renderchunkregion, blockpos2, model));
         return original;
     }
 
@@ -145,7 +141,7 @@ public class MixinChunkRenderDispatcher {
 
     @Unique
     private static void eclipticseasons$renderModel(BakedModel bakedModel, ChunkBufferBuilderPack pChunkBufferBuilderPack, BlockPos pos, BlockState state, PoseStack posestack, RenderChunkRegion renderchunkregion, RandomSource random, Set<RenderType> renderTypeSet) {
-        RenderType renderType = ModelManager.getRenderType(state);
+        RenderType renderType = ExtraModelManager.getRenderType(state);
         BufferBuilder bufferbuilder2 = pChunkBufferBuilderPack.builder(renderType);
         // this$0.beginLayer(bufferbuilder2);
         if (renderTypeSet.add(renderType))
