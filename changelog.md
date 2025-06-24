@@ -1,11 +1,22 @@
+### 0.11.1
+
+- Added configuration support for adjusting sunlight duration.
+- Fixed an issue where an exception occurred when loading a MultiVariant model with control conditions.
+- Enhanced `AbstractModelDefinitionProvider` with more complete functions, and ensured the output JSON uses full UTF-8
+  encoding directly.
+- Added functions to `EclipticSeasonsApi` for querying day and weather information.
+- Added three new snow-covered plant models, which can be configured through data packs.
+
 ### 0.11.0.1
 
 - Adjusted the mechanism for obtaining the level used during biome weather precipitation in autocomplete queries. This
   may help improve performance when running alongside certain mods that are not fully compatible with Ecliptic Seasons.
 - Added a version requirement for Legendary Survival Overhaul to prevent players from using outdated versions. Support
-  for Ecliptic Seasons has already been integrated into the latest versions of LSO (note: make sure to adjust the temperature
+  for Ecliptic Seasons has already been integrated into the latest versions of LSO (note: make sure to adjust the
+  temperature
   settings in LSO's configuration).
-- Renamed the `ModelManager` class used by Ecliptic Seasons to `ExtraModelManager` to avoid confusion for developers (in case they
+- Renamed the `ModelManager` class used by Ecliptic Seasons to `ExtraModelManager` to avoid confusion for developers (in
+  case they
   intend to use this mod's version instead of Mojang's, although method access to Minecraft's ModelManager typically
   doesn't conflict with this mod).
 

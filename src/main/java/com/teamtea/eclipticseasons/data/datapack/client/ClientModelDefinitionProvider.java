@@ -16,6 +16,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.GrassBlock;
+import net.minecraft.world.level.block.SweetBerryBushBlock;
 import net.minecraftforge.common.data.ExistingFileHelper;
 
 import java.util.ArrayList;
@@ -31,52 +32,47 @@ public class ClientModelDefinitionProvider extends AbstractModelDefinitionProvid
 
     @Override
     protected void gather(HolderLookup.Provider provider) {
-        add(getPath(ClientModelDefinitions.OVERLAY), ESModelLoadedJson.builder().variant(ESModelLoadedJson.ALL_VARIANT, new MultiVariantLike(List.of(
-                new VariantLike.VariantBuilder(SnowModelConstant.OVERLAY).build()
-        ))).requirement(EclipticSeasonsApi.MODID).build());
-
-        add(getPath(ClientModelDefinitions.SNOWY_LEAVES_TOP), ESModelLoadedJson.builder().variant(ESModelLoadedJson.ALL_VARIANT, new MultiVariantLike(List.of(
-                new VariantLike.VariantBuilder(SnowModelConstant.SNOWY_LEAVES_TOP).build()
-        ))).requirement(EclipticSeasonsApi.MODID).build());
-        add(getPath(ClientModelDefinitions.SNOWY_LEAVES_ATTACH), ESModelLoadedJson.builder().variant(ESModelLoadedJson.ALL_VARIANT, new MultiVariantLike(List.of(
-                new VariantLike.VariantBuilder(SnowModelConstant.SNOWY_LEAVES_ATTACH).build()
-        ))).requirement(EclipticSeasonsApi.MODID).build());
-
-        add(getPath(ClientModelDefinitions.OVERLAY_TINY), ESModelLoadedJson.builder().variant(ESModelLoadedJson.ALL_VARIANT, new MultiVariantLike(List.of(
-                new VariantLike.VariantBuilder(SnowModelConstant.OVERLAY_TINY).build()
-        ))).requirement(EclipticSeasonsApi.MODID).build());
+        simple(ClientModelDefinitions.SNOWY_LEAVES_TOP).requireMod(modid);
+        simple(ClientModelDefinitions.SNOWY_LEAVES_ATTACH).requireMod(modid);
+        simple(ClientModelDefinitions.OVERLAY_TINY).requireMod(modid);
+        simple(ClientModelDefinitions.OVERLAY).requireMod(modid);
 
         // add(getPath(ClientModelDefinitions.OVERLAY_TINY), ESModelLoadedJson.builder()
         //         .multiPartLike(new MultiPartLike(List.of(
         //                 new SelectorLike((new MultiVariantLike(List.of(
         //                         new VariantLike.VariantBuilder(SnowModelConstant.OVERLAY_TINY).build()
+        //
         //                 ))))
         //         )))
         //         .requirement(EclipticSeasonsApi.MODID)
         //         .build());
 
-        add(getPath(ClientModelDefinitions.SNOWY_GRASS_BLOCK_OVERLAY), ESModelLoadedJson.builder()
+        addModelDefinition(ClientModelDefinitions.SNOWY_GRASS_BLOCK_OVERLAY)
+                .requireMod(EclipticSeasonsApi.MODID)
+                .requireMod(ResourceLocation.DEFAULT_NAMESPACE)
                 .replace(false)
-                .multiPartLike(new MultiPartLike(List.of(
-                        new SelectorLike(new KeyValueConditionLike(GrassBlock.SNOWY, false), new MultiVariantLike(
-                                List.of(
-                                        VariantLike.builder(SnowModelConstant.GRASS_BLOCK_SNOW).rotationY(0).build(),
-                                        VariantLike.builder(SnowModelConstant.GRASS_BLOCK_SNOW).rotationY(90).build(),
-                                        VariantLike.builder(SnowModelConstant.GRASS_BLOCK_SNOW).rotationY(180).build(),
-                                        VariantLike.builder(SnowModelConstant.GRASS_BLOCK_SNOW).rotationY(270).build()
-                                ))),
-                        new SelectorLike(new MultiVariantLike(List.of(
-                                VariantLike.builder(SnowModelConstant.SNOWY_GRASS_BLOCK_OVERLAY).rotationY(0).build(),
-                                VariantLike.builder(SnowModelConstant.SNOWY_GRASS_BLOCK_OVERLAY).rotationY(90).build(),
-                                VariantLike.builder(SnowModelConstant.SNOWY_GRASS_BLOCK_OVERLAY).rotationY(180).build(),
-                                VariantLike.builder(SnowModelConstant.SNOWY_GRASS_BLOCK_OVERLAY).rotationY(270).build()
-                        )))
-                )))
-                .requirement(EclipticSeasonsApi.MODID)
-                .requirement(ResourceLocation.DEFAULT_NAMESPACE)
-                .build());
+                .multiPart(condition(GrassBlock.SNOWY, false), variant(ClientModelDefinitions.GRASS_BLOCK_SNOW).rotationY(0).build(),
+                        variant(ClientModelDefinitions.GRASS_BLOCK_SNOW).rotationY(90).build(),
+                        variant(ClientModelDefinitions.GRASS_BLOCK_SNOW).rotationY(180).build(),
+                        variant(ClientModelDefinitions.GRASS_BLOCK_SNOW).rotationY(270).build())
+                .multiPart(variant(ClientModelDefinitions.SNOWY_GRASS_BLOCK_OVERLAY).rotationY(0).build(),
+                        variant(ClientModelDefinitions.SNOWY_GRASS_BLOCK_OVERLAY).rotationY(90).build(),
+                        variant(ClientModelDefinitions.SNOWY_GRASS_BLOCK_OVERLAY).rotationY(180).build(),
+                        variant(ClientModelDefinitions.SNOWY_GRASS_BLOCK_OVERLAY).rotationY(270).build())
+        ;
 
         addFlower();
+        addModelDefinition(ClientModelDefinitions.SNOWY_SWEET_BERRY_BUSH)
+                .replace(true)
+                .stagedVariants(SweetBerryBushBlock.AGE.getName(), 4);
+
+        addModelDefinition(ClientModelDefinitions.SNOWY_DEAD_BUSH)
+                .singleCross()
+                .replace(true);
+
+        addModelDefinition(ClientModelDefinitions.SNOWY_SUGAR_CANE)
+                .singleCross()
+                .replace(true);
 
     }
 
@@ -103,7 +99,7 @@ public class ClientModelDefinitionProvider extends AbstractModelDefinitionProvid
                 .map(r -> new VariantLike.VariantBuilder(r).weight(1).build())
                 .toList());
         if (emptyWeight > 0)
-            list.add(VariantLike.builder(new ResourceLocation("block/air")).weight(emptyWeight).build());
+            list.add(variant(new ResourceLocation("block/air")).weight(emptyWeight).build());
         return new MultiVariantLike(list);
     }
 

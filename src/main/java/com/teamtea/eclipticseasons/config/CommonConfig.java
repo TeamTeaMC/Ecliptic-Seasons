@@ -1,5 +1,7 @@
 package com.teamtea.eclipticseasons.config;
 
+import com.teamtea.eclipticseasons.EclipticSeasons;
+import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.compat.CompatModule;
 import lombok.Getter;
 import net.minecraft.resources.ResourceLocation;
@@ -7,7 +9,9 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Stream;
 
 public class CommonConfig {
     public static final ForgeConfigSpec COMMON_CONFIG = new ForgeConfigSpec.Builder().configure(com.teamtea.eclipticseasons.config.CommonConfig::new).getRight();
@@ -81,6 +85,12 @@ public class CommonConfig {
         public static ForgeConfigSpec.IntValue lastingDaysOfEachTerm;
         public static ForgeConfigSpec.IntValue initialSolarTermIndex;
         public static ForgeConfigSpec.BooleanValue daylightChange;
+        public static ForgeConfigSpec.ConfigValue<List<? extends Integer>> springDayTimes;
+        public static ForgeConfigSpec.ConfigValue<List<? extends Integer>> summerDayTimes;
+        public static ForgeConfigSpec.ConfigValue<List<? extends Integer>> autumnDayTimes;
+        public static ForgeConfigSpec.ConfigValue<List<? extends Integer>> winterDayTimes;
+        public static ForgeConfigSpec.ConfigValue<List<? extends Integer>> noneDayTimes;
+
         public static ForgeConfigSpec.ConfigValue<List<? extends String>> validDimensions;
 
         public static ForgeConfigSpec.BooleanValue snowyWinter;
@@ -102,6 +112,26 @@ public class CommonConfig {
                     .define("CalendarItemHint", false);
             daylightChange = builder.comment("In summer, the days are long and the nights are short, while in winter, the days are short and the nights are long.")
                     .define("DynamicDaylightDuration", true);
+            springDayTimes = builder.comment("Day time length of spring, divided into six periods according to the solar term table.")
+                    .defineList(List.of("SpringDayTimes"),
+                            () -> List.of(10500, 11000, 11500, 12000, 12500, 13000),
+                            o -> o instanceof Integer i && (i >= 0 && i <= 24000));
+            summerDayTimes = builder.comment("Day time length of summer, divided into six periods according to the solar term table.")
+                    .defineList(List.of("SummerDayTimes"),
+                            () -> List.of(13500, 14000, 14500, 15000, 14500, 14000),
+                            o -> o instanceof Integer i && (i >= 0 && i <= 24000));
+            autumnDayTimes = builder.comment("Day time length of autumn, divided into six periods according to the solar term table.")
+                    .defineList(List.of("AutumnDayTimes"),
+                            () -> List.of(13500, 13000, 12500, 12000, 11500, 11000),
+                            o -> o instanceof Integer i && (i >= 0 && i <= 24000));
+            winterDayTimes = builder.comment("Day time length of winter, divided into six periods according to the solar term table.")
+                    .defineList(List.of("WinterDayTimes"),
+                            () -> List.of(10500, 10000, 9500, 9000, 9500, 10000),
+                            o -> o instanceof Integer i && (i >= 0 && i <= 24000));
+            noneDayTimes = builder.comment("Day time length of none season, divided into six periods according to the solar term table.")
+                    .defineList(List.of("NoneDayTimes"),
+                            () -> List.of(12000),
+                            o -> o instanceof Integer i && (i >= 0 && i <= 24000));
             validDimensions = builder.comment("Which dimensions will have season effects? Note that it must be natrual and have time lapse.")
                     .defineListAllowEmpty("ValidDimensions",
                             () -> List.of(Level.OVERWORLD.location().toString()),
@@ -149,9 +179,9 @@ public class CommonConfig {
                     .define("EnableCropHumidityControl", true);
             cropGrowChanceInWrongHumidity = builder.comment("[Deprecated]How much base chance can crop grow in wrong humidity.")
                     .defineInRange("CropGrowChanceInWrongHumidity", 0.25, 0.0001, 0.9999);
-            boneMealFailureMessage =  builder.comment("Send message to player if failed to use bone meal on crop.")
+            boneMealFailureMessage = builder.comment("Send message to player if failed to use bone meal on crop.")
                     .define("BoneMealFailureMessage", true);
-            boneMealConsumeOnFailure =  builder.comment("Consume anyway if failed to use bone meal on crop.")
+            boneMealConsumeOnFailure = builder.comment("Consume anyway if failed to use bone meal on crop.")
                     .define("BoneMealConsumeOnFailure", true);
             greenHouseMaxDiameter = builder.comment("The maximum effective diameter of the greenhouse.")
                     .defineInRange("GreenHouseMaxDiameter", 32, 5, 256);
@@ -217,11 +247,35 @@ public class CommonConfig {
     @Getter
     private static boolean forceCropCompatMode = false;
 
+    @Getter
+    private static final int[] dayTimesForSeason = new int[SolarTerm.collectValues().length];
+    @Getter
+    private static boolean useDayTimes = false;
+
     public static void UpdateConfig(ModConfigEvent modConfigEvent) {
         if (!(modConfigEvent instanceof ModConfigEvent.Unloading)
                 && modConfigEvent.getConfig().getSpec() == COMMON_CONFIG) {
             useSolarWeather = Weather.useSolarWeather.get();
             forceCropCompatMode = Crop.forceCompatMode.get();
+            int[] ints = Stream.of(Season.springDayTimes, Season.summerDayTimes, Season.autumnDayTimes, Season.winterDayTimes, Season.noneDayTimes)
+                    .map(ForgeConfigSpec.ConfigValue::get)
+                    .flatMap(Collection::stream)
+                    .mapToInt(Integer::intValue)
+                    .toArray();
+            if (ints.length == dayTimesForSeason.length) {
+                System.arraycopy(ints, 0, dayTimesForSeason, 0, ints.length);
+                boolean isSame = true;
+                for (int i = 0; i < dayTimesForSeason.length; i++) {
+                    if (dayTimesForSeason[i] != SolarTerm.get(i).getOriginalDayTime()) {
+                        isSame = false;
+                        break;
+                    }
+                }
+                useDayTimes = !isSame;
+            } else {
+                useDayTimes = false;
+                EclipticSeasons.logger("Invalid Day Times length in configuration:", ints.length);
+            }
         }
     }
 

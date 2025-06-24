@@ -100,7 +100,7 @@ public class ExtraModelManager {
         return new ModelResourceLocation(EclipticSeasons.rl(s), s2);
     }
 
-    public static ResourceLocation snow_mrl(ResourceLocation resourceLocation, String v) {
+    public static ResourceLocation extra_mrl(ResourceLocation resourceLocation, String v) {
         // return new ModelResourceLocation(resourceLocation.withPrefix("extra/"), v);
         return resourceLocation.withPrefix("extra/" + (v.isEmpty() ? "" : v + "/"));
     }
@@ -716,7 +716,7 @@ public class ExtraModelManager {
                         }
                     }
                     if (loadedJson.getMultiPartLike().isValid()) {
-                        ResourceLocation mrl = ExtraModelManager.snow_mrl(resourceLocation, "0");
+                        ResourceLocation mrl = ExtraModelManager.extra_mrl(resourceLocation, "0");
                         registerModelAndDependenceMethod.accept(mrl, loadedJson.getMultiPartLike());
                         extraSnowModelBuilds.put(
                                 resourceLocation, new ModelResolver(List.of(new ModelTester(
@@ -726,7 +726,7 @@ public class ExtraModelManager {
                     } else {
                         loadedJson.getVariants().forEach(
                                 (va, multiVariant) -> {
-                                    ResourceLocation mrl = ExtraModelManager.snow_mrl(resourceLocation, va);
+                                    ResourceLocation mrl = ExtraModelManager.extra_mrl(resourceLocation, va.replaceAll("=","_").replace(",","_"));
                                     registerModelAndDependenceMethod.accept(
                                             mrl, multiVariant
                                     );

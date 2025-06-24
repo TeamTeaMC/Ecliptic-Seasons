@@ -95,8 +95,28 @@ public class EclipticUtil {
             }
 
             @Override
+            public int getSolarDays(Level level) {
+                return EclipticUtil.getNowSolarDay(level);
+            }
+
+            @Override
+            public int getLastingDaysOfEachTerm(Level level) {
+                return CommonConfig.Season.lastingDaysOfEachTerm.get();
+            }
+
+            @Override
+            public int getTimeInTerm(Level level) {
+                return EclipticUtil.getTimeInSolarTerm(level);
+            }
+
+            @Override
             public boolean isSeasonEnabled(Level level) {
                 return MapChecker.isValidDimension(level);
+            }
+
+            @Override
+            public boolean hasLocalWeather(Level level) {
+                return EclipticUtil.hasLocalWeather(level);
             }
 
             @Override
@@ -291,8 +311,9 @@ public class EclipticUtil {
     }
 
     public static int getTimeInSolarTerm(Level level) {
-        return EclipticUtil.getNowSolarDay(level) -
-                CommonConfig.Season.lastingDaysOfEachTerm.get() * EclipticUtil.getNowSolarTerm(level).ordinal();
+        SolarDataManager sd = SolarHolders.getSaveData(level);
+        if (sd != null) return sd.getSolarTermDaysInPeriod();
+        return 0;
     }
 
     public static boolean isHereWithSnow(Level level, BlockPos pos) {

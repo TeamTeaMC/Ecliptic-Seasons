@@ -7,6 +7,7 @@ import com.teamtea.eclipticseasons.api.constant.tag.ClimateTypeBiomeTags;
 import com.teamtea.eclipticseasons.api.misc.ITranslatableWithPlaceholder;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.misc.SimplePair;
+import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -134,6 +135,13 @@ public enum SolarTerm implements ITranslatableWithPlaceholder {
     }
 
     public int getDayTime() {
+        if (CommonConfig.isUseDayTimes()) {
+            return CommonConfig.getDayTimesForSeason()[ordinal()];
+        }
+        return getOriginalDayTime();
+    }
+
+    public int getOriginalDayTime(){
         return dayTime;
     }
 

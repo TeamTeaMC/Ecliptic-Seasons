@@ -38,10 +38,21 @@ public interface EclipticSeasonsApi {
      */
     SolarTerm getSolarTerm(Level level);
 
+    int getSolarDays(Level level);
+
+    int getLastingDaysOfEachTerm(Level level);
+
+    /**
+     * Day index within the current solar term, from 0 to (lastingDays - 1).
+     */
+    int getTimeInTerm(Level level);
+
     /**
      * Checks whether the seasonal system is enabled for the given level.
      */
     boolean isSeasonEnabled(Level level);
+
+    boolean hasLocalWeather(Level level);
 
     /**
      * Returns the adjusted daytime in ticks for the given level, as an API version of {@link SolarTerm#getDayTime()},

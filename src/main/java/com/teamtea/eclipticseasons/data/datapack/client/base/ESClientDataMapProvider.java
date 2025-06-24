@@ -3,6 +3,7 @@ package com.teamtea.eclipticseasons.data.datapack.client.base;
 import com.google.common.hash.Hashing;
 import com.google.common.hash.HashingOutputStream;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.stream.JsonWriter;
 import com.mojang.serialization.Codec;
@@ -26,6 +27,7 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Supplier;
 
 public abstract class ESClientDataMapProvider<T> implements DataProvider {
 
@@ -33,7 +35,7 @@ public abstract class ESClientDataMapProvider<T> implements DataProvider {
     protected final String modid;
     public final ExistingFileHelper helper;
 
-    protected final Map<ResourceLocation, T> outMap;
+    protected final Map<ResourceLocation, Supplier<T> > outMap;
     private final String type;
     private final Codec<T> codec;
     private final CompletableFuture<HolderLookup.Provider> registries;
@@ -51,10 +53,18 @@ public abstract class ESClientDataMapProvider<T> implements DataProvider {
     protected abstract void gather(HolderLookup.Provider provider);
 
     protected void add(String path, T t) {
-        this.outMap.put(new ResourceLocation(modid, path), t);
+        this.outMap.put(new ResourceLocation(modid, path), () -> t);
     }
 
     protected void add(ResourceLocation path, T t) {
+        this.outMap.put(path, () -> t);
+    }
+
+    protected void add(String path, Supplier<T> t) {
+        this.outMap.put(new ResourceLocation(modid, path), t);
+    }
+
+    protected void add(ResourceLocation path, Supplier<T> t) {
         this.outMap.put(path, t);
     }
 
@@ -81,7 +91,7 @@ public abstract class ESClientDataMapProvider<T> implements DataProvider {
     protected CompletableFuture<?> run(CachedOutput output, HolderLookup.Provider provider) {
         gather(provider);
         return CompletableFuture.allOf(outMap.entrySet().stream()
-                .map(e -> saveStable(output, provider, codec, e.getValue(), resolvePath(e.getKey()))
+                .map(e -> saveStable(output, provider, codec, e.getValue().get(), resolvePath(e.getKey()))
                 ).toArray(CompletableFuture[]::new));
     }
 
@@ -105,7 +115,9 @@ public abstract class ESClientDataMapProvider<T> implements DataProvider {
                 try (JsonWriter jsonwriter = new JsonWriter(new OutputStreamWriter(hashingoutputstream, StandardCharsets.UTF_8))) {
                     jsonwriter.setSerializeNulls(false);
                     jsonwriter.setIndent("  ");
-                    Gson gson = new Gson();
+                    Gson gson = new GsonBuilder()
+                            .disableHtmlEscaping()
+                            .create();
                     gson.toJson(json, jsonwriter);
                 }
 
