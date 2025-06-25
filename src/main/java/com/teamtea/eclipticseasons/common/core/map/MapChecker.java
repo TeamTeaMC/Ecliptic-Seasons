@@ -532,7 +532,9 @@ public class MapChecker {
             var onBlock = state.getBlock();
             SnowDefinition.Info uncacheSnow = SnowChecker.getUncacheSnow(state); // es patch
 
-            if (uncacheSnow.isValid()) {
+            if (CommonConfig.getForceBlocksNotSnowy().contains(state.getBlock())) {
+                flag = FLAG_NONE;
+            } else if (uncacheSnow.isValid()) {
                 flag = uncacheSnow.getFlag();
             } else if (!CommonConfig.Debug.snowOverlayGlowingBlock.get()
                     && state.getLightEmission(level, pos) > 0) {

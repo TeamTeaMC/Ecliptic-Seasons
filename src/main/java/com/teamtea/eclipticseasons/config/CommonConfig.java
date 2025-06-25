@@ -4,13 +4,18 @@ import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.compat.CompatModule;
 import lombok.Getter;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Stream;
 
 public class CommonConfig {
@@ -97,6 +102,8 @@ public class CommonConfig {
         public static ForgeConfigSpec.BooleanValue notSnowyNearGlowingBlock;
         public static ForgeConfigSpec.IntValue notSnowyNearGlowingBlockLevel;
 
+        public static ForgeConfigSpec.ConfigValue<List<? extends String>> blocksNotSnowy;
+
 
         private static void load(ForgeConfigSpec.Builder builder) {
             builder.push("Season");
@@ -143,6 +150,10 @@ public class CommonConfig {
                     .define("NotSnowyNearGlowingBlock", true);
             notSnowyNearGlowingBlockLevel = builder.comment("Snow will not appear in overly bright areas.")
                     .defineInRange("NotSnowyNearGlowingBlockLevel", 10, 1, 15);
+            blocksNotSnowy = builder.comment("If need to forcibly prevent a certain block from being covered by snow, can use this setting by specifying the block’s ID.")
+                    .defineListAllowEmpty("ForceBlocksNotSnowy",
+                            List::of,
+                            o -> o instanceof String s && ResourceLocation.tryParse(s) != null);
             builder.pop();
         }
     }
@@ -252,6 +263,9 @@ public class CommonConfig {
     @Getter
     private static boolean useDayTimes = false;
 
+    @Getter
+    private static Set<Block> forceBlocksNotSnowy = new HashSet<>();
+
     public static void UpdateConfig(ModConfigEvent modConfigEvent) {
         if (!(modConfigEvent instanceof ModConfigEvent.Unloading)
                 && modConfigEvent.getConfig().getSpec() == COMMON_CONFIG) {
@@ -275,6 +289,14 @@ public class CommonConfig {
             } else {
                 useDayTimes = false;
                 EclipticSeasons.logger("Invalid Day Times length in configuration:", ints.length);
+            }
+
+            forceBlocksNotSnowy.clear();
+            for (String s : Season.blocksNotSnowy.get()) {
+                Block block = BuiltInRegistries.BLOCK.get(ResourceLocation.tryParse(s));
+                if (block != Blocks.AIR) {
+                    forceBlocksNotSnowy.add(block);
+                }
             }
         }
     }

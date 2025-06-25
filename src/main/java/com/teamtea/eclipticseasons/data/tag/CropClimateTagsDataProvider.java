@@ -11,6 +11,7 @@ import net.minecraft.data.tags.TagsProvider;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -23,7 +24,10 @@ public class CropClimateTagsDataProvider extends TagsProvider<AgroClimaticZone> 
 
     @Override
     protected void addTags(HolderLookup.Provider provider) {
-        for (Holder.Reference<AgroClimaticZone> cropClimateTypeReference : provider.lookupOrThrow(ESRegistries.AGRO_CLIMATE).listElements().toList()) {
+        HolderLookup.RegistryLookup<AgroClimaticZone> lookup = provider.lookupOrThrow(ESRegistries.AGRO_CLIMATE);
+        for (Holder.Reference<AgroClimaticZone> cropClimateTypeReference : lookup.listElements().sorted(Comparator.comparing(
+                Holder.Reference::hashCode
+        )).toList()) {
             tag(CropClimateTags.ALL).add(cropClimateTypeReference.key());
         }
 
