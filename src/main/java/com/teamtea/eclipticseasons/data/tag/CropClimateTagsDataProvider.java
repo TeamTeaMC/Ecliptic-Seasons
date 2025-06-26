@@ -26,7 +26,7 @@ public class CropClimateTagsDataProvider extends TagsProvider<AgroClimaticZone> 
     protected void addTags(HolderLookup.Provider provider) {
         HolderLookup.RegistryLookup<AgroClimaticZone> lookup = provider.lookupOrThrow(ESRegistries.AGRO_CLIMATE);
         for (Holder.Reference<AgroClimaticZone> cropClimateTypeReference : lookup.listElements().sorted(Comparator.comparing(
-                Holder.Reference::hashCode
+                r->r.key().location()
         )).toList()) {
             tag(CropClimateTags.ALL).add(cropClimateTypeReference.key());
         }

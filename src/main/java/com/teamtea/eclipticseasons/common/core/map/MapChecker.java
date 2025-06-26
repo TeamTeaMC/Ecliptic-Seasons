@@ -36,6 +36,7 @@ import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.levelgen.Heightmap;
 import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.IdentityHashMap;
@@ -451,7 +452,33 @@ public class MapChecker {
         //         }
         //     }
         // }
-        return level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, pos).getY() - 1;
+        return getMCHeightWithCheck(level, pos, level.getChunkAt(pos), null, null);
+    }
+
+    public static int getMCHeightWithCheck(Level level, BlockPos pos, @Nonnull ChunkAccess chunkAt, @Nullable Object snowyRemover, @Nullable BlockPos.MutableBlockPos checkPos) {
+        // if (snowyRemover != null && snowyRemover.notSnowyAt(pos)) {
+        //     return level.getMaxBuildHeight() + 1;
+        // }
+        int posX = pos.getX();
+        int posZ = pos.getZ();
+        int height = chunkAt.getHeight(
+                level.isClientSide ?
+                        Heightmap.Types.MOTION_BLOCKING : Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, posX, posZ);
+        if (checkPos == null) checkPos = new BlockPos.MutableBlockPos(posX, height, posZ);
+        else checkPos.setY(height);
+        while (height >= chunkAt.getMinBuildHeight()) {
+            BlockState state = chunkAt.getBlockState(checkPos);
+            if (!(state.getBlock() instanceof BambooStalkBlock) &&
+                    Heightmap.Types.MOTION_BLOCKING_NO_LEAVES.isOpaque().test(state)) {
+                break;
+            }
+            height--;
+            checkPos.setY(height);
+        }
+        if (height < chunkAt.getMinBuildHeight()) {
+            height = chunkAt.getMinBuildHeight();
+        }
+        return height;
     }
 
     public static int getSurfaceOrUpdate(Level level, BlockPos pos, boolean forceUpdate, int type) {
@@ -632,14 +659,18 @@ public class MapChecker {
 
     public static void forceChunkUpdateHeight(Level level, ChunkAccess chunk) {
         ChunkPos chunkPos = chunk.getPos();
-        BlockPos middleBlockPosition = chunkPos.getMiddleBlockPosition(0);
-        MapChecker.updatePosForce(level, middleBlockPosition, level.getMinBuildHeight() - 1);
+        BlockPos.MutableBlockPos middleBlockPosition = new BlockPos.MutableBlockPos(chunkPos.getMiddleBlockX(), 0, chunkPos.getMiddleBlockZ());
+        // MapChecker.updatePosForce(level, middleBlockPosition, level.getMinBuildHeight() - 1);
+        getHeightOrUpdate(level, middleBlockPosition, false);
         ChunkInfoMap chunkMap = MapChecker.getChunkMap(level, middleBlockPosition);
         // BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos();
         if (chunkMap != null) {
             for (int i = chunkPos.getMinBlockX(); i <= chunkPos.getMaxBlockX(); i++) {
                 for (int j = chunkPos.getMinBlockZ(); j <= chunkPos.getMaxBlockZ(); j++) {
-                    int k = chunk.getHeight(Heightmap.Types.MOTION_BLOCKING, i, j);
+                    middleBlockPosition.setX(i);
+                    middleBlockPosition.setZ(j);
+                    int k = getMCHeightWithCheck(level, middleBlockPosition, chunk, null, middleBlockPosition);
+
                     // mutableBlockPos.set(i,k,j);
                     // note 似乎这里不能-1
                     chunkMap.updateHeight(i, j, k);

@@ -24,7 +24,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -107,6 +106,10 @@ public abstract class AbstractModelDefinitionProvider extends ESClientDataMapPro
         return new ResourceLocation(rl.getNamespace(), ExtraModelProvider.BLOCK_FOLDER + "/" + rl.getPath());
     }
 
+    protected VariantLike.VariantBuilder variant(ExtraModelBuilder extraModelBuilder) {
+        return VariantLike.builder(withBlockFolder(extraModelBuilder.getLocation()));
+    }
+
     protected VariantLike.VariantBuilder variant(ResourceLocation resourceLocation) {
         return VariantLike.builder(withBlockFolder(resourceLocation));
     }
@@ -158,7 +161,7 @@ public abstract class AbstractModelDefinitionProvider extends ESClientDataMapPro
     }
 
     public PartialStateModelDefinitionBuilder addPartialStateModelDefinition(ResourceLocation location, Block... blocks) {
-        Map<Property<?>, List<? extends Comparable<?>>> collect = Arrays.stream(blocks)
+        Map<Property<? extends Comparable<?>>, List<? extends Comparable<?>>> collect = Arrays.stream(blocks)
                 .map(block -> block.getStateDefinition().getProperties())
                 .flatMap(Collection::stream)
                 .collect(Collectors.toMap(
@@ -168,7 +171,18 @@ public abstract class AbstractModelDefinitionProvider extends ESClientDataMapPro
         return addPartialStateModelDefinition(location, collect);
     }
 
-    public PartialStateModelDefinitionBuilder addPartialStateModelDefinition(ResourceLocation location, Map<Property<?>, List<? extends Comparable<?>>> allowValues) {
+    @SafeVarargs
+    public final PartialStateModelDefinitionBuilder addPartialStateModelDefinition(ResourceLocation location, Property<? extends Comparable<?>>... allowProperties) {
+        return addPartialStateModelDefinition(location, Arrays.stream(allowProperties)
+                .collect(Collectors.toMap(
+                        e -> e,
+                        e -> List.copyOf(e.getPossibleValues()),
+                        (a, b) -> a,
+                        LinkedHashMap::new
+                )));
+    }
+
+    public PartialStateModelDefinitionBuilder addPartialStateModelDefinition(ResourceLocation location, Map<Property<? extends Comparable<?>>, List<? extends Comparable<?>>> allowValues) {
         PartialStateModelDefinitionBuilder variantModelBuilder = new PartialStateModelDefinitionBuilder(models(), allowValues, location);
         add(location, variantModelBuilder::build);
         return variantModelBuilder;
@@ -216,11 +230,23 @@ public abstract class AbstractModelDefinitionProvider extends ESClientDataMapPro
 
     public static class PartialStateModelDefinitionBuilder extends ModelDefinitionBuilder {
 
-        private final Map<Property<?>, List<? extends Comparable<?>>> allowValues;
+        private final Map<Property<? extends Comparable<?>>, List<? extends Comparable<?>>> allowValues;
 
-        protected PartialStateModelDefinitionBuilder(ExtraModelProvider models, Map<Property<?>, List<? extends Comparable<?>>> allowValues, ResourceLocation defLoc) {
+        protected PartialStateModelDefinitionBuilder(ExtraModelProvider models, Map<Property<? extends Comparable<?>>, List<? extends Comparable<?>>> allowValues, ResourceLocation defLoc) {
             super(models, defLoc);
             this.allowValues = allowValues;
+        }
+
+        public PartialStateModelDefinitionBuilder variantsForAllStatesExceptExact(Function<PartialState, ExtraModelBuilder> mapper, Property<?>... ignored) {
+            return variantsForAllStatesExcept(
+                    state -> new VariantLike[]{VariantLike.builder(mapper.apply(state).getLocation()).build()}, ignored
+            );
+        }
+
+        public PartialStateModelDefinitionBuilder variantsForAllStatesExceptSingle(Function<PartialState, VariantLike.VariantBuilder> mapper, Property<?>... ignored) {
+            return variantsForAllStatesExcept(
+                    state -> new VariantLike[]{mapper.apply(state).build()}, ignored
+            );
         }
 
         public PartialStateModelDefinitionBuilder variantsForAllStatesExcept(Function<PartialState, VariantLike[]> mapper, Property<?>... ignored) {
@@ -238,6 +264,11 @@ public abstract class AbstractModelDefinitionProvider extends ESClientDataMapPro
     }
 
     public record PartialState(Map<Property<?>, Comparable<?>> map) {
+
+        public <T extends Comparable<T>> T getValue(Property<T> property) {
+            T value = (T) map.getOrDefault(property, null);
+            return value;
+        }
 
         public static List<PartialState> combine(Map<Property<?>, List<? extends Comparable<?>>> map) {
             List<Property<?>> properties = new ArrayList<>(map.keySet());
