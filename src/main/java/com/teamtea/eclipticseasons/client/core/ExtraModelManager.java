@@ -453,37 +453,38 @@ public class ExtraModelManager {
 
         if (ClientConfig.Renderer.useVanillaCheck.get()) {
             isLight = blockAndTintGetter.getBrightness(LightLayer.BLOCK, pos.above()) >= 15;
-        } else {
+        }
+        else {
             // ChunkInfoMap chunkMap = MapChecker.getChunkMap(level, pos);
 
             int cacheHeight = MapChecker.getHeightOrUpdate(level, pos, false);
 
-            if (ClientConfig.Renderer.betterSnow.get()) {
-                if (solidBlockLike(flag) && pos.getY() == cacheHeight - 1) {
-                    BlockPos above = pos.above();
-                    BlockState aboveState = blockAndTintGetter.getBlockState(above);
-                    if (MapChecker.getBlockType(aboveState, blockAndTintGetter, above) == MapChecker.FLAG_CUSTOM
-                            && !(aboveState.getBlock() instanceof SlabBlock)
-                            && !(aboveState.getBlock() instanceof StairBlock)) {
-                        cacheHeight--;
-                    } else {
-                        for (Direction direction : Direction.Plane.HORIZONTAL) {
-                            above = pos.relative(direction);
-                            int neighbourHeight = MapChecker.getHeightOrUpdate(level, above, false);
-                            if (neighbourHeight == pos.getY()) {
-                                BlockState neighbourState = blockAndTintGetter.getBlockState(above);
-                                int blockTypeFlag = MapChecker.getBlockType(neighbourState, blockAndTintGetter, above);
-                                if (blockTypeFlag == MapChecker.FLAG_CUSTOM
-                                        && !(aboveState.getBlock() instanceof SlabBlock)
-                                        && !(aboveState.getBlock() instanceof StairBlock)) {
-                                    cacheHeight = neighbourHeight;
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+            // if (ClientConfig.Renderer.betterSnow.get()) {
+            //     if (solidBlockLike(flag) && pos.getY() == cacheHeight - 1) {
+            //         BlockPos above = pos.above();
+            //         BlockState aboveState = blockAndTintGetter.getBlockState(above);
+            //         if (MapChecker.getBlockType(aboveState, blockAndTintGetter, above) == MapChecker.FLAG_CUSTOM
+            //                 && !(aboveState.getBlock() instanceof SlabBlock)
+            //                 && !(aboveState.getBlock() instanceof StairBlock)) {
+            //             cacheHeight--;
+            //         } else {
+            //             for (Direction direction : Direction.Plane.HORIZONTAL) {
+            //                 above = pos.relative(direction);
+            //                 int neighbourHeight = MapChecker.getHeightOrUpdate(level, above, false);
+            //                 if (neighbourHeight == pos.getY()) {
+            //                     BlockState neighbourState = blockAndTintGetter.getBlockState(above);
+            //                     int blockTypeFlag = MapChecker.getBlockType(neighbourState, blockAndTintGetter, above);
+            //                     if (blockTypeFlag == MapChecker.FLAG_CUSTOM
+            //                             && !(aboveState.getBlock() instanceof SlabBlock)
+            //                             && !(aboveState.getBlock() instanceof StairBlock)) {
+            //                         cacheHeight = neighbourHeight;
+            //                         break;
+            //                     }
+            //                 }
+            //             }
+            //         }
+            //     }
+            // }
             isLight = cacheHeight <= pos.getY() - offset;
         }
 
@@ -498,20 +499,20 @@ public class ExtraModelManager {
 
         boolean isLeaf = leaveLike(flag);
         boolean specialLeaves = false;
-        if (!isLight && isLeaf && ClientConfig.Renderer.snowyTree.get()) {
-            if (blockAndTintGetter.getBrightness(LightLayer.SKY, pos.above()) >= 9) {
-                int y_real = level.getHeight(Heightmap.Types.MOTION_BLOCKING, pos.getX(), pos.getZ()) - 1;
-                if (y_real <= pos.getY()
-                        || blockAndTintGetter.getBlockState(new BlockPos(pos.getX(), y_real, pos.getZ())).getShadeBrightness(blockAndTintGetter, pos) < 0.5f)
-                // if (level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, pos.getX(), pos.getZ()) >= pos.getY() + 1)
-                {
-                    isLight = true;
-                    if (isLeaf) {
-                        specialLeaves = true;
-                    }
-                }
-            }
-        }
+        // if (!isLight && isLeaf && ClientConfig.Renderer.snowyTree.get()) {
+        //     if (blockAndTintGetter.getBrightness(LightLayer.SKY, pos.above()) >= 9) {
+        //         int y_real = level.getHeight(Heightmap.Types.MOTION_BLOCKING, pos.getX(), pos.getZ()) - 1;
+        //         if (y_real <= pos.getY()
+        //                 || blockAndTintGetter.getBlockState(new BlockPos(pos.getX(), y_real, pos.getZ())).getShadeBrightness(blockAndTintGetter, pos) < 0.5f)
+        //         // if (level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, pos.getX(), pos.getZ()) >= pos.getY() + 1)
+        //         {
+        //             isLight = true;
+        //             if (isLeaf) {
+        //                 specialLeaves = true;
+        //             }
+        //         }
+        //     }
+        // }
 
         if (!isLight && ClientConfig.Renderer.snowUnderTree.get()) {
             if (blockAndTintGetter.getBrightness(LightLayer.SKY, pos.above()) >= 9) {
@@ -530,6 +531,18 @@ public class ExtraModelManager {
                 } catch (Exception e) {
                     EclipticSeasons.logger(e);
                 }
+            }
+        }
+
+        if (isLight) {
+            // checkPos.set(pos.getX(), pos.getY() + 1, pos.getZ());
+            if (isLeaf) {
+                if (!specialLeaves) {
+                    specialLeaves = !blockAndTintGetter.getBlockState(pos.above()).isAir();
+                }
+            } else {
+                if (MapChecker.extraSnowPassable(state))
+                    isLight = !MapChecker.extraSnowPassable(blockAndTintGetter.getBlockState(pos.above()));
             }
         }
 
@@ -726,7 +739,7 @@ public class ExtraModelManager {
                     } else {
                         loadedJson.getVariants().forEach(
                                 (va, multiVariant) -> {
-                                    ResourceLocation mrl = ExtraModelManager.extra_mrl(resourceLocation, va.replaceAll("=","_").replace(",","_"));
+                                    ResourceLocation mrl = ExtraModelManager.extra_mrl(resourceLocation, va.replaceAll("=", "_").replace(",", "_"));
                                     registerModelAndDependenceMethod.accept(
                                             mrl, multiVariant
                                     );

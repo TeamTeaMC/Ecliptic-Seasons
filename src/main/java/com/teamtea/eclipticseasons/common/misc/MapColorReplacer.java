@@ -50,6 +50,11 @@ public class MapColorReplacer {
                         CommonConfig.Season.notSnowyNearGlowingBlockLevel.get()))
         ;
 
+        if (isLight) {
+            if (MapChecker.extraSnowPassable(state))
+                isLight = !MapChecker.extraSnowPassable(level.getBlockState(pos.above()));
+        }
+
         return isLight ? MapColor.SNOW : null;
     }
 }

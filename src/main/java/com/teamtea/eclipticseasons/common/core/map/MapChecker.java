@@ -468,7 +468,7 @@ public class MapChecker {
         else checkPos.setY(height);
         while (height >= chunkAt.getMinBuildHeight()) {
             BlockState state = chunkAt.getBlockState(checkPos);
-            if (!(state.getBlock() instanceof BambooStalkBlock) &&
+            if (!(extraSnowPassable(state)) &&
                     Heightmap.Types.MOTION_BLOCKING_NO_LEAVES.isOpaque().test(state)) {
                 break;
             }
@@ -479,6 +479,32 @@ public class MapChecker {
             height = chunkAt.getMinBuildHeight();
         }
         return height;
+    }
+
+    public static boolean extraSnowPassable(BlockState state) {
+        Block onBlock = state.getBlock();
+        return ((
+                onBlock instanceof LeavesBlock ||
+                        onBlock instanceof TrapDoorBlock ||
+                        onBlock instanceof DoorBlock ||
+                        onBlock instanceof FenceBlock ||
+                        onBlock instanceof FenceGateBlock ||
+                        onBlock instanceof WallBlock ||
+                        onBlock instanceof BellBlock ||
+                        onBlock instanceof ComposterBlock ||
+                        onBlock instanceof CampfireBlock ||
+                        onBlock instanceof CauldronBlock ||
+                        onBlock instanceof DaylightDetectorBlock ||
+                        onBlock instanceof AnvilBlock ||
+                        onBlock instanceof BasePressurePlateBlock ||
+                        onBlock instanceof HoneyBlock ||
+                        onBlock instanceof IronBarsBlock ||
+                        onBlock instanceof LightningRodBlock ||
+                        onBlock instanceof LecternBlock ||
+                        onBlock instanceof SlimeBlock ||
+                        onBlock instanceof BambooStalkBlock
+        )
+        );
     }
 
     public static int getSurfaceOrUpdate(Level level, BlockPos pos, boolean forceUpdate, int type) {
