@@ -9,6 +9,8 @@ import com.teamtea.eclipticseasons.client.model.ItemRenderModel;
 import com.teamtea.eclipticseasons.client.particle.*;
 import com.teamtea.eclipticseasons.client.reload.ClientJsonCacheListener;
 import com.teamtea.eclipticseasons.client.render.ber.*;
+import com.teamtea.eclipticseasons.client.util.ClientClientAgent;
+import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.client.util.ClientExtraUtil;
 import com.teamtea.eclipticseasons.common.registry.BlockEntityRegistry;
 import com.teamtea.eclipticseasons.common.registry.BlockRegistry;
@@ -107,6 +109,7 @@ public class ClientSetup {
             ItemBlockRenderTypes.setRenderLayer(BlockRegistry.block_in_wooden_grate_block.get(), RenderType.cutoutMipped());
             ItemBlockRenderTypes.setRenderLayer(BlockRegistry.hygrometer.get(), RenderType.cutoutMipped());
 
+            ClientCon.agent = new ClientClientAgent();
         });
     }
 

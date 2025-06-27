@@ -9,6 +9,7 @@ import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
+import com.teamtea.eclipticseasons.common.misc.ClientAgent;
 import com.teamtea.eclipticseasons.common.network.message.DataPackEventMessage;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.longs.LongBooleanImmutablePair;
@@ -33,9 +34,11 @@ public class ClientCon {
 
     public static int progress = 0;
 
-    public final static List<HumidityControl> humidityControls=new ArrayList<>();
+    public final static List<HumidityControl> humidityControls = new ArrayList<>();
     public static DataPackEventMessage<BiomesClimateSettings> biomeDataPackCache;
     public static DataPackEventMessage<SnowDefinition> snowDefCache;
+
+    public static ClientAgent agent = new ClientAgent(){};
 
     public static void tick(Level clientLevel) {
         if (MapChecker.isValidDimension(clientLevel)) {
@@ -52,7 +55,7 @@ public class ClientCon {
             isDay = false;
             isEvening = false;
             isNoon = false;
-            ClientCon.progress=0;
+            ClientCon.progress = 0;
         }
 
         if (!roomCache.isEmpty()) {
@@ -82,8 +85,8 @@ public class ClientCon {
 
     public static void onClientPlayerExit() {
         humidityControls.clear();
-        biomeDataPackCache=null;
+        biomeDataPackCache = null;
         roomCache.clear();
-        humidityModificationLevel=0;
+        humidityModificationLevel = 0;
     }
 }

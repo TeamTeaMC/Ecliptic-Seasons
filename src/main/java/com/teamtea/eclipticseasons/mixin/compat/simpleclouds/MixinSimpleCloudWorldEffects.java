@@ -6,12 +6,9 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
-import com.teamtea.eclipticseasons.client.core.ClientWeatherChecker;
-import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.compat.vanilla.VanillaWeather;
 import dev.nonamecrackers2.simpleclouds.client.renderer.WorldEffects;
-import dev.nonamecrackers2.simpleclouds.client.renderer.rain.PrecipitationQuad;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
@@ -22,10 +19,8 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 
-import java.util.Map;
-
 @Mixin({WorldEffects.class})
-public class MixinWorldEffects {
+public class MixinSimpleCloudWorldEffects {
     @Shadow(remap = false)
     @Final
     private Minecraft mc;
@@ -46,9 +41,8 @@ public class MixinWorldEffects {
     )
     private Biome.Precipitation eclipticseasons$tick_getPrecipitationAt(Biome biome, BlockPos pos, Operation<Biome.Precipitation> original) {
         if (EclipticUtil.hasLocalWeather(mc.level))
-            return mc != null && mc.level != null && (WeatherManager.isRainingOrSnowAt(mc.level, pos)
-                    || ClientWeatherChecker.isBiomeRainyLast(biome)) ?
-                    WeatherManager.getPrecipitationAt(mc.level, biome, pos) : Biome.Precipitation.NONE;
+            return mc != null && mc.level != null ?
+                    EclipticUtil.getRainOrSnow(mc.level, biome, pos) : Biome.Precipitation.NONE;
         else return VanillaWeather.handlePrecipitationAt(mc.level != null ?
                 mc.level :
                 VanillaWeather.getValidLevel(biome), biome, pos);

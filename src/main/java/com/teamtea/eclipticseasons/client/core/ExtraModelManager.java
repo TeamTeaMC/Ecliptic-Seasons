@@ -108,7 +108,7 @@ public class ExtraModelManager {
     public static HashMap<ResourceLocation, SpriteContents> blocksCache = new HashMap<>();
 
     public static boolean shouldCutoutMipped(BlockState state) {
-        if (CommonConfig.Season.snowyWinter.get()) {
+        if (CommonConfig.isSnowyWinter()) {
             if (Minecraft.getInstance().level != null) {
                 var onBlock = state.getBlock();
                 if (!(onBlock instanceof FenceBlock)) {
@@ -133,7 +133,7 @@ public class ExtraModelManager {
     public static BakedModel getSnowyModel(BlockState state, BlockState snowState, int flag, int offset) {
 
         boolean notSpecialLeaves = !(
-                (leaveLike(flag))
+                (MapChecker.leaveLike(flag))
                         && snowState == null);
         BakedModel snowModel = notSpecialLeaves ?
                 snowyModelsCache.get(state) : snowyModelsCache2.get(state);
@@ -167,7 +167,7 @@ public class ExtraModelManager {
                 if (flag == MapChecker.FLAG_BLOCK) {
                     snowModel = models.get(snowOverlayBlock);
                 } else if (flag == MapChecker.FLAG_LEAVES) {
-                    snowModel = !ClientConfig.Renderer.snowyTree.get() ?
+                    snowModel = !CommonConfig.Season.snowyTree.get() ?
                             models.get(snowOverlayLeaves) : notSpecialLeaves ?
                             models.get(snowy_leaves_top) : models.get(snowy_leaves_attach);
                 } else if (flag == MapChecker.FLAG_SLAB) {
@@ -412,23 +412,6 @@ public class ExtraModelManager {
         return list;
     }
 
-    // it meanes the block would have surface layer and below
-    public static boolean leaveLike(int flag) {
-        return flag == MapChecker.FLAG_LEAVES
-                || flag == MapChecker.FLAG_CUSTOM_JSON_WITH_TOP
-                || flag == MapChecker.FLAG_CUSTOM_JSON_WITH_TOP_LEAVES;
-    }
-
-    public static boolean vineLike(int flag) {
-        return flag == MapChecker.FLAG_VINE || flag == MapChecker.FLAG_CUSTOM_JSON_VINE_LIKE;
-    }
-
-    // todo other snow passible
-    public static boolean solidBlockLike(int flag) {
-        return flag == MapChecker.FLAG_BLOCK
-                || flag == MapChecker.FLAG_CUSTOM_JSON;
-    }
-
     public static BakedModel findModel(BlockAndTintGetter blockAndTintGetter, BlockPos pos, BlockState state, RandomSource random) {
         Level level = Minecraft.getInstance().level;
         BakedModel replace = null;
@@ -453,8 +436,7 @@ public class ExtraModelManager {
 
         if (ClientConfig.Renderer.useVanillaCheck.get()) {
             isLight = blockAndTintGetter.getBrightness(LightLayer.BLOCK, pos.above()) >= 15;
-        }
-        else {
+        } else {
             // ChunkInfoMap chunkMap = MapChecker.getChunkMap(level, pos);
 
             int cacheHeight = MapChecker.getHeightOrUpdate(level, pos, false);
@@ -497,7 +479,7 @@ public class ExtraModelManager {
         //     }
         // }
 
-        boolean isLeaf = leaveLike(flag);
+        boolean isLeaf = MapChecker.leaveLike(flag);
         boolean specialLeaves = false;
         // if (!isLight && isLeaf && ClientConfig.Renderer.snowyTree.get()) {
         //     if (blockAndTintGetter.getBrightness(LightLayer.SKY, pos.above()) >= 9) {
@@ -523,7 +505,7 @@ public class ExtraModelManager {
                             .getShadeBrightness(blockAndTintGetter, pos) < 0.5f) {
                         isLight = true;
                         if (isLeaf) {
-                            if (ClientConfig.Renderer.snowyTree.get())
+                            if (CommonConfig.Season.snowyTree.get())
                                 specialLeaves = true;
                             else isLight = false;
                         }
@@ -546,9 +528,15 @@ public class ExtraModelManager {
             }
         }
 
+
+        if (isLight && specialLeaves) {
+            isLight = CommonConfig.Season.snowyTree.get();
+            if (!isLight) specialLeaves = false;
+        }
+
         if (isLight) {
             boolean isSnowy = false;
-            if (CommonConfig.Season.snowyWinter.get()
+            if (CommonConfig.isSnowyWinter()
                     && onBlock != Blocks.SNOW_BLOCK
                     && MapChecker.shouldSnowAt(level, pos.below(offset), state, random, state.getSeed(pos))) {
                 // DynamicLeavesBlock

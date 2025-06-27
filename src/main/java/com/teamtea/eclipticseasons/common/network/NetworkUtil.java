@@ -63,7 +63,7 @@ public class NetworkUtil {
                     for (WeatherManager.BiomeWeather biomeWeather : lists) {
                         if (biomeWeatherMessage.rain[biomeWeather.id] == 0
                                 && biomeWeather.rainTime > 0) {
-                            ClientWeatherChecker.addLastRainyBiome(biomeWeather.biomeHolder.value(), (long) (1 / ClientWeatherChecker.rate));
+                            ClientWeatherChecker.addLastRainyBiome(biomeWeather.biomeHolder.value(), (long) (1 / ClientWeatherChecker.getRate()));
                         }
                         biomeWeather.rainTime = biomeWeatherMessage.rain[biomeWeather.id] * 10000;
                         biomeWeather.clearTime = biomeWeatherMessage.clear[biomeWeather.id] * 10000;

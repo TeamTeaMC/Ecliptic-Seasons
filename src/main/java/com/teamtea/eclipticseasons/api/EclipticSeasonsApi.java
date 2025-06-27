@@ -15,6 +15,9 @@ import org.jetbrains.annotations.ApiStatus;
 /**
  * This API code exists for other mods to query the solar term status or other situations.
  * Please try not to use other internal APIs directly, as they are likely to change.
+ * <p>
+ * Another reason is that this API implements automatic switching based on the configuration.
+ * If you use the API directly, it's easy to run under an incorrect configuration.
  */
 public interface EclipticSeasonsApi {
 

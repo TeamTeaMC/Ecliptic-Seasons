@@ -1,12 +1,11 @@
 package com.teamtea.eclipticseasons.client.core;
 
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
+import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.misc.SimplePair;
 import com.teamtea.eclipticseasons.config.ClientConfig;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.sounds.SoundEvent;
@@ -19,7 +18,6 @@ import net.minecraft.world.level.levelgen.Heightmap;
 import java.util.ArrayList;
 import java.util.List;
 
-// TODO:全局雨量控制表
 public class ClientWeatherChecker {
 
     public static List<SimplePair<Biome, Long>> lastRainyBiome = new ArrayList<>();
@@ -34,6 +32,10 @@ public class ClientWeatherChecker {
 
     public static boolean updateForPlayerLogin = true;
 
+    public static float getRate() {
+        return ClientConfig.Weather.weatherTransitionSpeed.get().floatValue();
+    }
+
     public static float rate = 0.008f;
 
 
@@ -42,12 +44,12 @@ public class ClientWeatherChecker {
     }
 
 
-    public static boolean isRain(ClientLevel clientLevel) {
+    public static boolean isRain(Level clientLevel) {
         return (double) getRainLevel(clientLevel, 1.0F) > 0.2D;
     }
 
 
-    public static float getStandardRainLevel(float p46723, ClientLevel clientLevel, Holder<Biome> biomeHolder) {
+    public static float getStandardRainLevel(float p46723, Level clientLevel, Holder<Biome> biomeHolder) {
         // if (biomeHolder != null && biomeHolder.is(Tags.Biomes.IS_DESERT)) {
         //     return 0.0f;
         // }
@@ -64,10 +66,10 @@ public class ClientWeatherChecker {
     }
 
     //   TODO：net.minecraft.client.renderer.LevelRenderer.renderSnowAndRain 可以参考平滑方式
-    public static float getRainLevel(ClientLevel clientLevel, float p46723) {
+    public static float getRainLevel(Level clientLevel, float p46723) {
         // 初始小于0会导致出现暗角
         if (updateForPlayerLogin) {
-            if (Minecraft.getInstance().cameraEntity instanceof Player) {
+            if (ClientCon.agent.getCameraEntity() instanceof Player) {
                 updateForPlayerLogin = false;
                 lastBiomeRainLevel = -1;
             }
@@ -75,7 +77,7 @@ public class ClientWeatherChecker {
 
         if (lastBiomeRainLevel < 0) {
             lastBiomeRainLevel =
-                    Minecraft.getInstance().cameraEntity instanceof Player player ?
+                    ClientCon.agent.getCameraEntity() instanceof Player player ?
                             getStandardRainLevel(1f, clientLevel, MapChecker.getSurfaceBiome(clientLevel, player.getOnPos().above()))
                             :
                             getStandardRainLevel(1f, clientLevel, null);
@@ -84,25 +86,26 @@ public class ClientWeatherChecker {
     }
 
     // 后续优化方向为优先计算玩家面朝的方向，这个方向加一个权限。
-    public static float updateRainLevel(ClientLevel clientLevel) {
-        // if (Minecraft.getInstance().cameraEntity instanceof Player player &&clientLevel.getBiome(Minecraft.getInstance().cameraEntity.getOnPos()).is(Biomes.PLAINS) )return 0.01f;
+    public static float updateRainLevel(Level clientLevel) {
         float rainLevel = getStandardRainLevel(1f, clientLevel, null);
-        if (Minecraft.getInstance().cameraEntity instanceof Player player) {
-            // Ecliptic.logger(clientLevel.getNoiseBiome((int) player.getX(), (int) player.getY(), (int) player.getZ()));
-            // TODO：根据群系过渡计算雨量（也许需要维护一个群系位置）,目前设置为时间平滑
+        if (ClientCon.agent.getCameraEntity() instanceof Player player) {
             var pos = player.getOnPos();
             int offset = ClientConfig.Weather.weatherBufferDistance.get();
+            boolean frontUse = ClientConfig.Weather.weatherFrontBias.get();
+            float count = 1;
 
             rainLevel = getStandardRainLevel(1f, clientLevel, MapChecker.getSurfaceBiome(clientLevel, pos));
 
-            var lookAt = Minecraft.getInstance().hitResult.getLocation();
-            var crs = lookAt.subtract(Minecraft.getInstance().getCameraEntity().position());
-            lookAt = lookAt.add(crs).add(crs).add(crs);
-            var lookPos = BlockPos.containing(lookAt);
-            rainLevel += getStandardRainLevel(1f, clientLevel, MapChecker.getSurfaceBiome(clientLevel, lookPos)) * 2;
+            if (frontUse && ClientCon.agent.getHitResult() != null) {
+                var lookAt = ClientCon.agent.getHitResult().getLocation();
+                var crs = lookAt.subtract(ClientCon.agent.getCameraEntity().position());
+                lookAt = lookAt.add(crs.normalize().scale(offset));
+                var lookPos = BlockPos.containing(lookAt);
+                rainLevel += getStandardRainLevel(1f, clientLevel, MapChecker.getSurfaceBiome(clientLevel, lookPos)) * 2;
+                count += 2;
+            }
 
-
-            for (BlockPos blockPos :  new BlockPos[]{pos.east(offset), pos.north(offset), pos.south(offset), pos.west(offset)}) {
+            for (BlockPos blockPos : new BlockPos[]{pos.east(offset), pos.north(offset), pos.south(offset), pos.west(offset)}) {
                 // var standBiome = clientLevel.getBiome(blockPos);
                 var standBiome = MapChecker.getSurfaceBiome(clientLevel, blockPos);
 
@@ -111,9 +114,9 @@ public class ClientWeatherChecker {
                 //     rainLevel = orainLevel;
                 // }
                 rainLevel += orainLevel;
+                count++;
             }
-            rainLevel = rainLevel / 7f;
-
+            rainLevel = rainLevel / count;
 
             if (changeTime > 0) {
                 changeTime--;
@@ -121,7 +124,7 @@ public class ClientWeatherChecker {
                 if (lastBiomeRainLevel >= 0 && !isNear(rainLevel, lastBiomeRainLevel, 0.01f)) {
                     // rainLevel = rainLevel + (lastBiomeRainLevel - rainLevel) * 0.99f;
                     // rainLevel = rainLevel + (lastBiomeRainLevel - rainLevel) * 0.99f;
-                    float add = rate * ((rainLevel - lastBiomeRainLevel) > 0 ? 1 : -1);
+                    float add = getRate() * ((rainLevel - lastBiomeRainLevel) > 0 ? 1 : -1);
                     lastBiomeRainLevel += add;
                     rainLevel = lastBiomeRainLevel;
                 }
@@ -144,7 +147,7 @@ public class ClientWeatherChecker {
         return rainLevel;
     }
 
-    public static float getStandardThunderLevel(float p46723, ClientLevel clientLevel, Holder<Biome> biomeHolder) {
+    public static float getStandardThunderLevel(float p46723, Level clientLevel, Holder<Biome> biomeHolder) {
         var lists = WeatherManager.getBiomeList(clientLevel);
         if (lists != null)
             for (WeatherManager.BiomeWeather biomeWeather : lists) {
@@ -155,21 +158,21 @@ public class ClientWeatherChecker {
         return 0.0f;
     }
 
-    public static boolean isThundering(ClientLevel clientLevel) {
+    public static boolean isThundering(Level clientLevel) {
         return (double) getThunderLevel(clientLevel, 1.0F) > 0.2D;
     }
 
 
     //   TODO：net.minecraft.client.renderer.LevelRenderer.renderSnowAndRain 可以参考平滑方式
-    public static float getThunderLevel(ClientLevel clientLevel, float p46723) {
+    public static float getThunderLevel(Level clientLevel, float p46723) {
         if (updateForPlayerLogin) {
-            if (Minecraft.getInstance().cameraEntity instanceof Player) {
+            if (ClientCon.agent.getCameraEntity() instanceof Player) {
                 lastBiomeRainLevel = -1;
             }
         }
         if (lastBiomeRThunderLevel < 0) {
             lastBiomeRThunderLevel =
-                    Minecraft.getInstance().cameraEntity instanceof Player player ?
+                    ClientCon.agent.getCameraEntity() instanceof Player player ?
                             getStandardThunderLevel(1f, clientLevel, MapChecker.getSurfaceBiome(clientLevel, player.getOnPos().above()))
                             :
                             getStandardThunderLevel(1f, clientLevel, null);
@@ -178,29 +181,37 @@ public class ClientWeatherChecker {
     }
 
 
-    public static float updateThunderLevel(ClientLevel clientLevel) {
+    public static float updateThunderLevel(Level clientLevel) {
         float thunderLevel = getStandardThunderLevel(1f, clientLevel, null);
-        if (Minecraft.getInstance().cameraEntity instanceof Player player) {
+        if (ClientCon.agent.getCameraEntity() instanceof Player player) {
             var pos = player.getOnPos();
             int offset = ClientConfig.Weather.weatherBufferDistance.get();
-            thunderLevel = getStandardThunderLevel(1f, clientLevel, MapChecker.getSurfaceBiome(clientLevel, pos));
-            var lookAt = Minecraft.getInstance().hitResult.getLocation();
-            var crs = lookAt.subtract(Minecraft.getInstance().getCameraEntity().position());
-            lookAt = lookAt.add(crs).add(crs).add(crs);
-            var lookPos = BlockPos.containing(lookAt);
-            thunderLevel += getStandardThunderLevel(1f, clientLevel, MapChecker.getSurfaceBiome(clientLevel, lookPos)) * 2;
+            boolean frontUse = ClientConfig.Weather.weatherFrontBias.get();
 
-            for (BlockPos blockPos :  new BlockPos[]{pos.east(offset), pos.north(offset), pos.south(offset), pos.west(offset)}) {
+            thunderLevel = getStandardThunderLevel(1f, clientLevel, MapChecker.getSurfaceBiome(clientLevel, pos));
+            float count = 1;
+
+            if (frontUse && ClientCon.agent.getHitResult() != null) {
+                var lookAt = ClientCon.agent.getHitResult().getLocation();
+                var crs = lookAt.subtract(ClientCon.agent.getCameraEntity().position());
+                lookAt = lookAt.add(crs.normalize().scale(offset));
+                var lookPos = BlockPos.containing(lookAt);
+                thunderLevel += getStandardThunderLevel(1f, clientLevel, MapChecker.getSurfaceBiome(clientLevel, lookPos)) * 2;
+                count += 2;
+            }
+
+            for (BlockPos blockPos : new BlockPos[]{pos.east(offset), pos.north(offset), pos.south(offset), pos.west(offset)}) {
                 var standBiome = MapChecker.getSurfaceBiome(clientLevel, blockPos);
                 float othunderLevel = getStandardThunderLevel(1f, clientLevel, standBiome);
                 thunderLevel += othunderLevel;
+                count++;
             }
-            thunderLevel = thunderLevel / 7f;
+            thunderLevel = thunderLevel / count;
 
             if (changeTime_thunder > 0) {
                 changeTime_thunder--;
                 if (lastBiomeRThunderLevel >= 0 && !isNear(thunderLevel, lastBiomeRThunderLevel, 0.01f)) {
-                    float add = rate * ((thunderLevel - lastBiomeRThunderLevel) > 0 ? 1 : -1);
+                    float add = getRate() * ((thunderLevel - lastBiomeRThunderLevel) > 0 ? 1 : -1);
                     lastBiomeRThunderLevel += add;
                     thunderLevel = lastBiomeRThunderLevel;
                 }
@@ -216,17 +227,17 @@ public class ClientWeatherChecker {
     }
 
 
-    public static boolean isRainingAt(ClientLevel clientLevel, BlockPos blockPos) {
+    public static boolean isRainingAt(Level clientLevel, BlockPos blockPos) {
         if (!clientLevel.canSeeSky(blockPos)) {
             return false;
         } else if (clientLevel.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, blockPos).getY() > blockPos.getY()) {
             return false;
         }
-        return WeatherManager.getRainOrSnow(clientLevel, MapChecker.getSurfaceBiome(clientLevel, blockPos).value(), blockPos)
+        return EclipticUtil.getRainOrSnow(clientLevel, MapChecker.getSurfaceBiome(clientLevel, blockPos).value(), blockPos)
                 == Biome.Precipitation.RAIN;
     }
 
-    public static boolean isThunderAt(ClientLevel clientLevel, BlockPos blockPos) {
+    public static boolean isThunderAt(Level clientLevel, BlockPos blockPos) {
         if (!clientLevel.canSeeSky(blockPos)) {
             return false;
         } else if (clientLevel.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, blockPos).getY() > blockPos.getY()) {
@@ -257,14 +268,14 @@ public class ClientWeatherChecker {
         return (int) (originalNum * level.getRainLevel(1.0f) * 0.6f);
     }
 
-    public static void unloadLevel(ClientLevel clientLevel) {
+    public static void unloadLevel(Level clientLevel) {
         lastBiomeRThunderLevel = -1;
         lastBiomeRainLevel = -1;
         updateForPlayerLogin = true;
         lastRainyBiome.clear();
     }
 
-    public static void tickAllCheck(ClientLevel clientLevel) {
+    public static void tickAllCheck(Level clientLevel) {
         updateRainLevel(clientLevel);
         updateThunderLevel(clientLevel);
         tickLastRainyBiome(clientLevel);
@@ -279,7 +290,7 @@ public class ClientWeatherChecker {
         return lastRainyBiome.stream().anyMatch(biomeLongEntry -> biomeLongEntry.getKey() == biome);
     }
 
-    public static void tickLastRainyBiome(ClientLevel clientLevel) {
+    public static void tickLastRainyBiome(Level clientLevel) {
         for (int i = 0; i < lastRainyBiome.size(); i++) {
             SimplePair<Biome, Long> biomeLongSimplePair = lastRainyBiome.get(i);
             biomeLongSimplePair.setValue(biomeLongSimplePair.getValue() - 1);

@@ -112,7 +112,7 @@ public class DHTool {
     }
 
     public static MapColor computeBaseColor(IDhClientLevel instance, DhBlockPos dhBlockPos, IBiomeWrapper iBiomeWrapper, IBlockStateWrapper iBlockStateWrapper, FullDataPointIdMap fullDataMapping, LongArrayList fullColumnData, IWrapperFactory WRAPPER_FACTORY) {
-        if (CommonConfig.Season.snowyWinter.get()) {
+        if (CommonConfig.isSnowyWinter()) {
             if (!dhBlockPos.equals(DhBlockPos.ZERO) && iBlockStateWrapper instanceof BlockStateWrapper blockStateWrapper
                     && !blockStateWrapper.isAir()) {
                 var mcPos = McObjectConverter.Convert(dhBlockPos);

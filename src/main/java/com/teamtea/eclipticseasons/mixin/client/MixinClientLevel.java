@@ -3,9 +3,12 @@ package com.teamtea.eclipticseasons.mixin.client;
 
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.client.core.ClientWeatherChecker;
+import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
+import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.biome.Biome;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -28,6 +31,16 @@ public class MixinClientLevel {
         if ((Object) this instanceof ClientLevel clientLevel) {
             if (EclipticUtil.hasLocalWeather(clientLevel))
                 cir.setReturnValue(ClientWeatherChecker.getRainLevel(clientLevel, p_46723_));
+        }
+    }
+
+    @Inject(at = {@At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;getBiome(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/core/Holder;")}, method = {"isRainingAt"}, cancellable = true)
+    private void eclipticseasons$client$isRainingAt_endBiomeCheck(BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
+        if ((Object) this instanceof ClientLevel level) {
+            if (EclipticUtil.hasLocalWeather(level)) {
+                Biome.Precipitation precipitation = EclipticUtil.getRainOrSnow(level, MapChecker.getSurfaceBiome(level, pos).value(), pos);
+                cir.setReturnValue(precipitation == Biome.Precipitation.RAIN);
+            }
         }
     }
 

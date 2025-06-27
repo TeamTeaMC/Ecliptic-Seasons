@@ -54,7 +54,7 @@ public class ClientConfig {
 
         public static ForgeConfigSpec.BooleanValue betterSnow;
         public static ForgeConfigSpec.BooleanValue snowUnderTree;
-        public static ForgeConfigSpec.BooleanValue snowyTree;
+
 
         public static ForgeConfigSpec.BooleanValue realisticSnowyChange;
 
@@ -63,7 +63,7 @@ public class ClientConfig {
 
         private static void load(ForgeConfigSpec.Builder builder) {
             builder.push("Renderer");
-            forceChunkRenderUpdate = builder.comment("Force to update chunk rendering.")
+            forceChunkRenderUpdate = builder.comment("When enabled, chunks will be reloaded regularly to fix rendering glitches, but this may impact performance.")
                     .define("ForceChunkRenderUpdate", true);
             enhancementChunkRenderUpdate = builder.comment("Enhanced reload, which will refresh all sections periodically.")
                     .define("EnhancementChunkRenderUpdate", false);
@@ -73,15 +73,13 @@ public class ClientConfig {
             resetRendererAfterSleep = builder.comment("Whether to reset the renderer after waking up.")
                     .define("ResetRendererAfterSleep", false);
 
-            useVanillaCheck = builder.comment("Determines whether snow is falling based on vanilla lighting checks.")
+            useVanillaCheck = builder.comment("Use Minecraft’s default lighting rules to decide if snow should fall.")
                     .define("UseVanillaCheck", false);
 
-            realisticSnowyChange = builder.comment("When the block is updated, the snow cover will not refresh immediately, but will be updated after a delay. Please note that this will consume more performance..")
+            realisticSnowyChange = builder.comment("Snow cover updates with a delay after block changes, making it look more natural. This uses more performance. Do not enable if the common config’s 'RealisticSnowyChange' is also enabled.")
                     .define("RealisticSnowyChange", true);
             betterSnow = builder.comment("Blocks underneath fences etc. may also be covered with snow.")
                     .define("SnowUnderFence", true);
-            snowyTree = builder.comment("Not just the top layer—now even the leaves below are dusted with frost and snow.")
-                    .define("SnowyTree", true);
             snowUnderTree = builder.comment("Blocks under tree may also be covered with snow, note that this is only a client-side effect.")
                     .define("snowUnderTree", false);
 
@@ -156,11 +154,19 @@ public class ClientConfig {
 
     public static class Weather {
         public static ForgeConfigSpec.IntValue weatherBufferDistance;
+        public static ForgeConfigSpec.DoubleValue weatherTransitionSpeed;
+        public static ForgeConfigSpec.BooleanValue weatherFrontBias;
 
         private static void load(ForgeConfigSpec.Builder builder) {
             builder.push("Weather");
-            weatherBufferDistance = builder.comment("Modify the buffer distance for local weather changes.")
-                    .defineInRange("WeatherBufferDistance", 16, 1, 80);
+            weatherBufferDistance = builder.comment("Radius (in blocks) around the player within which weather is sampled and averaged to create smoother local weather transitions.")
+                    .defineInRange("WeatherBufferDistance", 6, 1, 80);
+            weatherTransitionSpeed = builder.comment(
+                            "Speed at which local weather transitions occur. Higher values mean faster transitions.")
+                    .defineInRange("WeatherTransitionSpeed", 0.008d, 0.000001, 1);
+            weatherFrontBias = builder.comment(
+                            "Whether to apply stronger sampling weight in the direction the player is facing.")
+                    .define("WeatherFrontBias", true);
             builder.pop();
         }
     }

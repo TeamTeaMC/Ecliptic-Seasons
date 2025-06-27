@@ -54,7 +54,7 @@ public class CommonConfig {
             builder.push("Debug");
             logIllegalUse = builder.comment("Enable debug option to detect illegal use of functions.")
                     .define("LogIllegalUse", false);
-            notLightAbove = builder.comment("Without snowy block under the light blocks which level is 0.")
+            notLightAbove = builder.comment("Disable snowy blocks beneath light sources with light level 0.")
                     .define("NotSnowyUnderLight0", false);
             snowyFullCollisionShape = builder.comment("Snow overlay block if has full collision shape not just full render shape.")
                     .define("SnowyFullCollisionShape", false);
@@ -99,6 +99,8 @@ public class CommonConfig {
         public static ForgeConfigSpec.ConfigValue<List<? extends String>> validDimensions;
 
         public static ForgeConfigSpec.BooleanValue snowyWinter;
+        public static ForgeConfigSpec.BooleanValue snowyTree;
+
         public static ForgeConfigSpec.BooleanValue notSnowyNearGlowingBlock;
         public static ForgeConfigSpec.IntValue notSnowyNearGlowingBlockLevel;
 
@@ -139,18 +141,20 @@ public class CommonConfig {
                     .defineList(List.of("NoneDayTimes"),
                             () -> List.of(12000),
                             o -> o instanceof Integer i && (i >= 0 && i <= 24000));
-            validDimensions = builder.comment("Which dimensions will have season effects? Note that it must be natrual and have time lapse.")
+            validDimensions = builder.comment("List of dimensions where season effects apply. Must be natural worlds with a day-night cycle.")
                     .defineListAllowEmpty("ValidDimensions",
                             () -> List.of(Level.OVERWORLD.location().toString()),
                             o -> o instanceof String s && ResourceLocation.tryParse(s) != null);
 
             snowyWinter = builder.comment("If snow falls during cold weather, it will gradually cover all solid blocks and grass.")
                     .define("SnowyWinter", true);
+            snowyTree = builder.comment("Not just the top layer, now even the leaves below are dusted with frost and snow.")
+                    .define("SnowyTree", true);
             notSnowyNearGlowingBlock = builder.comment("Snow will not appear in overly bright areas, here define restriction levels.")
                     .define("NotSnowyNearGlowingBlock", true);
             notSnowyNearGlowingBlockLevel = builder.comment("Snow will not appear in overly bright areas.")
                     .defineInRange("NotSnowyNearGlowingBlockLevel", 10, 1, 15);
-            blocksNotSnowy = builder.comment("If need to forcibly prevent a certain block from being covered by snow, can use this setting by specifying the block’s ID.")
+            blocksNotSnowy = builder.comment("Specify block IDs here to prevent those blocks from being covered by snow.")
                     .defineListAllowEmpty("ForceBlocksNotSnowy",
                             List::of,
                             o -> o instanceof String s && ResourceLocation.tryParse(s) != null);
@@ -198,7 +202,7 @@ public class CommonConfig {
                     .defineInRange("GreenHouseMaxDiameter", 32, 5, 256);
             greenHouseMaxHeight = builder.comment("The maximum effective diameter of the greenhouse.")
                     .defineInRange("GreenHouseMaxHeight", 10, 3, 128);
-            darkGreenhouseFailChance = builder.comment("The possibility of crops not growing when there is insufficient sunlight in green house.")
+            darkGreenhouseFailChance = builder.comment("Chance that crops fail to grow due to low sunlight inside the greenhouse.")
                     .defineInRange("DarkGreenhouseFailChance", 2000, 0, 10000);
             simpleGreenHouse = builder.comment("Build a simple greenhouse without core blocks and humidity modifiers.")
                     .define("SimpleGreenHouseMode", false);
@@ -233,9 +237,9 @@ public class CommonConfig {
                     .define("UseSolarWeather", true);
             shouldInitWeather = builder.comment("Set it true to initialize weather and snow when loading the mod or level for the first time.")
                     .define("ShouldInitWeather", false);
-            rainChanceMultiplier = builder.comment("Set the percentage multiplier of the probability of rain, the range should be between 0 and 1000.")
+            rainChanceMultiplier = builder.comment("Multiplier (0-1000) affecting how likely rain will occur.")
                     .defineInRange("RainChancePercentMultiplier", 40, 0, 1000);
-            thunderChanceMultiplier = builder.comment("Set the percentage multiplier of the probability of thunder in the rain, the range should be between 0 and 1000.")
+            thunderChanceMultiplier = builder.comment("Multiplier (0-1000) affecting how likely thunder will occur.")
                     .defineInRange("ThunderChancePercentMultiplier", 20, 0, 1000);
             builder.pop();
         }
@@ -260,8 +264,12 @@ public class CommonConfig {
 
     @Getter
     private static final int[] dayTimesForSeason = new int[SolarTerm.collectValues().length];
+
     @Getter
     private static boolean useDayTimes = false;
+
+    @Getter
+    private static boolean snowyWinter = false;
 
     @Getter
     private static Set<Block> forceBlocksNotSnowy = new HashSet<>();
@@ -271,6 +279,7 @@ public class CommonConfig {
                 && modConfigEvent.getConfig().getSpec() == COMMON_CONFIG) {
             useSolarWeather = Weather.useSolarWeather.get();
             forceCropCompatMode = Crop.forceCompatMode.get();
+            snowyWinter=Season.snowyWinter.get();
             int[] ints = Stream.of(Season.springDayTimes, Season.summerDayTimes, Season.autumnDayTimes, Season.winterDayTimes, Season.noneDayTimes)
                     .map(ForgeConfigSpec.ConfigValue::get)
                     .flatMap(Collection::stream)

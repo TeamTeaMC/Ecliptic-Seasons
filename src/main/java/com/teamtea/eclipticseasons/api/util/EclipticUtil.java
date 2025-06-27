@@ -8,6 +8,7 @@ import com.teamtea.eclipticseasons.api.constant.climate.BiomeRain;
 import com.teamtea.eclipticseasons.api.constant.climate.WeatherMode;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
+import com.teamtea.eclipticseasons.client.core.ClientWeatherChecker;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
@@ -163,7 +164,7 @@ public class EclipticUtil {
             @Deprecated
             @Override
             public boolean isSnowySurfaceAt(Level level, BlockPos pos) {
-                if (CommonConfig.Season.snowyWinter.get()) {
+                if (CommonConfig.isSnowyWinter()) {
                     BlockState state = level.getBlockState(pos);
                     return MapChecker.shouldSnowAt(level, pos, state, level.getRandom(), state.getSeed(pos));
                 }
@@ -177,50 +178,42 @@ public class EclipticUtil {
 
             @Override
             public boolean isRainOrSnowAt(Level level, BlockPos pos) {
-                if (hasLocalWeather(level))
-                    return WeatherManager.isRainingOrSnowAt(level, pos);
-
-                // use this to check if underground
-                if (!level.isRaining()) {
-                    return false;
+                if (hasLocalWeather(level)) {
+                    if (getRainOrSnow(level, MapChecker.getSurfaceBiome(level, pos).value(), pos) == Biome.Precipitation.NONE) {
+                        return false;
+                    }
+                } else {
+                    if (!level.isRaining()) {
+                        return false;
+                    }
                 }
                 if (!level.canSeeSky(pos)) {
                     return false;
                 } else return level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, pos).getY() <= pos.getY();
-
             }
 
             @Override
             public boolean isRainAt(Level level, BlockPos pos) {
-                // if (hasLocalWeather(level))
-                // use mc method we have fixed it
                 return level.isRainingAt(pos);
-
-                // use this to check if underground
-                // if (!level.isRaining()) {
-                //     return false;
-                // } else if (!level.canSeeSky(pos)) {
-                //     return false;
-                // } else if (level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, pos).getY() > pos.getY()) {
-                //     return false;
-                // } else {
-                //     return this.getPrecipitationAt(level, pos) == Biome.Precipitation.RAIN;
-                // }
             }
 
             @Override
             public boolean isSnowAt(Level level, BlockPos pos) {
-                if (hasLocalWeather(level))
-                    return isHereSnowy(level, pos);
-                if (!level.isRaining()) {
-                    return false;
-                } else if (!level.canSeeSky(pos)) {
+                if (hasLocalWeather(level)) {
+                    if (getRainOrSnow(level, MapChecker.getSurfaceBiome(level, pos).value(), pos) == Biome.Precipitation.NONE) {
+                        return false;
+                    }
+                } else {
+                    if (!level.isRaining() || VanillaWeather.handlePrecipitationAt(level, MapChecker.getSurfaceBiome(level, pos).value(), pos) != Biome.Precipitation.SNOW) {
+                        return false;
+                    }
+                }
+                if (!level.canSeeSky(pos)) {
                     return false;
                 } else if (level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, pos).getY() > pos.getY()) {
                     return false;
-                } else {
-                    return this.getPrecipitationAt(level, pos) == Biome.Precipitation.SNOW;
                 }
+                return true;
             }
 
             @Override
@@ -247,7 +240,7 @@ public class EclipticUtil {
             @Override
             public boolean isRainingOrSnowing(Level level, BlockPos pos) {
                 if (hasLocalWeather(level))
-                    return WeatherManager.isRainingOrSnowAtBiome(level, MapChecker.getSurfaceBiome(level, pos).value());
+                    return getRainOrSnow(level, MapChecker.getSurfaceBiome(level, pos).value(),pos)!= Biome.Precipitation.NONE;
                 return level.isRaining();
             }
 
@@ -320,16 +313,23 @@ public class EclipticUtil {
         return WeatherManager.getSnowDepthAtBiome(level, MapChecker.getSurfaceBiome(level, pos).value()) > 0;
     }
 
+    public static Biome.Precipitation getRainOrSnow(Level level, Biome biome, BlockPos pos) {
+        return level.isClientSide() && ClientWeatherChecker.isBiomeRainyLast(biome) ?
+                WeatherManager.getPrecipitationAt(level, biome, pos) :
+                WeatherManager.getRainOrSnow(level, biome, pos)
+                ;
+    }
+
     public static boolean isHereSunny(Level level, BlockPos pos) {
-        return WeatherManager.getRainOrSnow(level, MapChecker.getSurfaceBiome(level, pos).value(), pos) == Biome.Precipitation.NONE;
+        return getRainOrSnow(level, MapChecker.getSurfaceBiome(level, pos).value(), pos) == Biome.Precipitation.NONE;
     }
 
     public static boolean isHereRainy(Level level, BlockPos pos) {
-        return WeatherManager.getRainOrSnow(level, MapChecker.getSurfaceBiome(level, pos).value(), pos) == Biome.Precipitation.RAIN;
+        return getRainOrSnow(level, MapChecker.getSurfaceBiome(level, pos).value(), pos) == Biome.Precipitation.RAIN;
     }
 
     public static boolean isHereSnowy(Level level, BlockPos pos) {
-        return WeatherManager.getRainOrSnow(level, MapChecker.getSurfaceBiome(level, pos).value(), pos) == Biome.Precipitation.SNOW;
+        return getRainOrSnow(level, MapChecker.getSurfaceBiome(level, pos).value(), pos) == Biome.Precipitation.SNOW;
     }
 
     public static float getTemperatureFloat(Level level, Biome biome, BlockPos blockPos) {

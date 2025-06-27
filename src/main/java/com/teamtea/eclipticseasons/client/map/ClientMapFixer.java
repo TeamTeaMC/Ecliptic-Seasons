@@ -51,7 +51,7 @@ public class ClientMapFixer {
     }
 
     public static void addLightPlanner(ClientLevel level, long packedPos, int brightness) {
-        if (CommonConfig.Season.snowyWinter.get()
+        if (CommonConfig.isSnowyWinter()
                 && ClientConfig.Renderer.realisticSnowyChange.get()
                 && CommonConfig.Season.notSnowyNearGlowingBlock.get()
         ) {

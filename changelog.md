@@ -1,3 +1,13 @@
+## 0.11.2
+
+- Improved smoothing of weather calculations for rain at specific locations on the client side.
+- Add two configuration options for client weather calculations.
+- Adjusted the calculation method for the mod’s built-in height map.
+- Moved the snowyTree configuration to the server side.
+- Improved the detection mechanism for cases where other mods attempt to call Biome#getPrecipitationAt on server-side
+  unloaded chunks, which would otherwise bypass chunk load checks and trigger Ecliptic Seasons’ surface biome correction
+  logic.
+
 ### 0.11.1
 
 - Added configuration support for adjusting sunlight duration.
@@ -6,7 +16,8 @@
   encoding directly.
 - Added functions to `EclipticSeasonsApi` for querying day and weather information.
 - Added three new snow-covered plant models, which can be configured through data packs.
-- Added the 'ForceBlocksNotSnowy' configuration for mod packs or players to customize which blocks should not be covered in
+- Added the 'ForceBlocksNotSnowy' configuration for mod packs or players to customize which blocks should not be covered
+  in
   snow. A world reload may be required for changes to take effect.
 
 ### 0.11.0.1

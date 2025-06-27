@@ -26,7 +26,7 @@ public class MapColorReplacer {
     public static MapColor getTopSnowColor(BlockGetter blockGetter, BlockState state, BlockPos pos, boolean ignoreLight, boolean forceCheckLoad) {
         if (!(blockGetter instanceof Level level) || pos == null)
             return null;
-        if (!CommonConfig.Season.snowyWinter.get()) return null;
+        if (!CommonConfig.isSnowyWinter()) return null;
         // if without snow we can faster the query
         // note 也许会更慢？和 x小地图有关
         // if (!EclipticUtil.isHereWithSnow(level, pos)) return null;
@@ -51,8 +51,13 @@ public class MapColorReplacer {
         ;
 
         if (isLight) {
-            if (MapChecker.extraSnowPassable(state))
+            if (MapChecker.extraSnowPassable(state)) {
                 isLight = !MapChecker.extraSnowPassable(level.getBlockState(pos.above()));
+            } else {
+                if (MapChecker.leaveLike(flag) && !level.getBlockState(pos.above()).isAir()) {
+                    isLight = CommonConfig.Season.snowyTree.get();
+                }
+            }
         }
 
         return isLight ? MapColor.SNOW : null;

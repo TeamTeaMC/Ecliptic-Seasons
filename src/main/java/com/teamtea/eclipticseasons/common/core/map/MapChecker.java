@@ -253,9 +253,13 @@ public class MapChecker {
      * This is especially important because when using Forgified Fabric API,
      * there are known issues with its chunk loading event mechanism.
      **/
-    public static boolean isLoadedOnlyServer(Level level, BlockPos pos) {
+    public static boolean isLoaded(Level level, BlockPos pos) {
         int chunkX = SectionPos.blockToSectionCoord(pos.getX());
         int chunkZ = SectionPos.blockToSectionCoord(pos.getZ());
+        return !level.isOutsideBuildHeight(pos) && isLoaded(level, chunkX, chunkZ);
+    }
+
+    public static boolean isLoaded(Level level, int chunkX, int chunkZ) {
         if (level.getChunkSource() instanceof ServerChunkCache serverChunkCache) {
             ChunkHolder visibleChunkIfPresent =
                     serverChunkCache.getVisibleChunkIfPresent((new ChunkPos(chunkX, chunkZ)).toLong());
@@ -263,7 +267,11 @@ public class MapChecker {
             return visibleChunkIfPresent.getFullChunk() != null;
             // return visibleChunkIfPresent.getFullStatus().isOrAfter(FullChunkStatus.ENTITY_TICKING);
         }
-        return !(level instanceof ServerLevel) || level.isLoaded(pos);
+        return level.hasChunk(chunkX, chunkZ);
+    }
+
+    public static boolean isLoadedOnlyServer(Level level, BlockPos pos) {
+        return !(level instanceof ServerLevel) || isLoaded(level, pos);
     }
 
     public static boolean isLoadNearByOnlyServer(Level level, BlockPos pos) {
@@ -293,17 +301,13 @@ public class MapChecker {
         int ze = ((l1) >> 2) > 2 ? 1 : 0;
         int xs = i1 < 2 ? -1 : 0;
         int zs = l1 < 2 ? -1 : 0;
-        ChunkSource chunkSource = level.getChunkSource();
+        // ChunkSource chunkSource = level.getChunkSource();
         for (int i = xs; i <= xe; i++) {
             for (int j = zs; j <= ze; j++) {
-                if (!chunkSource
-                        .hasChunk(chunkX + i, chunkZ + j))
+                if (!isLoaded(level, chunkX + i, chunkZ + j))
                     return false;
             }
         }
-        // if(level.getBiome(pos).is(Biomes.PLAINS)){
-        //     EclipticSeasons.logger(pos);
-        // }
         return true;
     }
 
@@ -482,6 +486,10 @@ public class MapChecker {
     }
 
     public static boolean extraSnowPassable(BlockState state) {
+        SnowDefinition.Info snow = SnowChecker.getUncacheSnow(state);
+        if (snow != SnowDefinition.Info.EMPTY) {
+            return snow.isSnowPassable();
+        }
         Block onBlock = state.getBlock();
         return ((
                 onBlock instanceof LeavesBlock ||
@@ -705,4 +713,19 @@ public class MapChecker {
         }
     }
 
+    // it means the block would have surface layer and below
+    public static boolean leaveLike(int flag) {
+        return flag == FLAG_LEAVES
+                || flag == FLAG_CUSTOM_JSON_WITH_TOP
+                || flag == FLAG_CUSTOM_JSON_WITH_TOP_LEAVES;
+    }
+
+    public static boolean vineLike(int flag) {
+        return flag == FLAG_VINE || flag == FLAG_CUSTOM_JSON_VINE_LIKE;
+    }
+
+    public static boolean solidBlockLike(int flag) {
+        return flag == FLAG_BLOCK
+                || flag == FLAG_CUSTOM_JSON;
+    }
 }
