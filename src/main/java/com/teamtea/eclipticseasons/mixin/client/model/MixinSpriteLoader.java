@@ -5,6 +5,7 @@ import com.mojang.blaze3d.platform.NativeImage;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.client.core.ExtraModelManager;
 import com.teamtea.eclipticseasons.client.util.ColorHelper;
+import com.teamtea.eclipticseasons.client.util.ImageHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.SpriteContents;
 import net.minecraft.client.renderer.texture.SpriteLoader;
@@ -23,7 +24,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.awt.*;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,8 +38,7 @@ public abstract class MixinSpriteLoader {
     // 这里可以检查加载的纹理，过一遍
     @Inject(method = "loadSprite", at = @At("RETURN"))
     private static void eclipticseasons$loadSprite(ResourceLocation resourceLocation, Resource resource, CallbackInfoReturnable<SpriteContents> cir) {
-        if (true)
-        {
+        if (true) {
             return;
         }
         if (cir.getReturnValue() == null) {
@@ -60,15 +59,17 @@ public abstract class MixinSpriteLoader {
         ExtraModelManager.blocksCache.put(resourceLocation, cir.getReturnValue());
 
         if (cir.getReturnValue().name().getPath().contains("sapling")
-                ||cir.getReturnValue().name().getPath().contains("wild")
-        ||cir.getReturnValue().name().getPath().contains("tulip")) {
+                || cir.getReturnValue().name().getPath().contains("wild")
+                || cir.getReturnValue().name().getPath().contains("tulip")
+                || cir.getReturnValue().name().getPath().contains("rose")
+                || cir.getReturnValue().name().getPath().contains("bamboo")) {
             AnimationMetadataSection section;
             AnimationMetadataSection snowySection;
             Resource snowy;
             NativeImage snowyImage;
             try {
                 section = resource.metadata().getSection(AnimationMetadataSection.SERIALIZER).orElse(AnimationMetadataSection.EMPTY);
-                snowy = Minecraft.getInstance().getResourceManager().getResourceOrThrow(EclipticSeasons.rl("textures/block/snow_overlay.png"));
+                snowy = Minecraft.getInstance().getResourceManager().getResourceOrThrow(new ResourceLocation(ResourceLocation.DEFAULT_NAMESPACE, "textures/block/snow.png"));
                 snowySection = snowy.metadata().getSection(AnimationMetadataSection.SERIALIZER).orElse(AnimationMetadataSection.EMPTY);
                 InputStream inputstream = snowy.open();
                 snowyImage = NativeImage.read(inputstream);
@@ -79,26 +80,7 @@ public abstract class MixinSpriteLoader {
 
             SpriteContents content = cir.getReturnValue();
             NativeImage original = content.getOriginalImage();
-            FrameSize frameSize = section.calculateFrameSize(original.getWidth(), original.getHeight());
-
-            for (int i = 0; i < frameSize.width(); i++) {
-                for (int j = 0; j < frameSize.height(); j++) {
-                    int pixel = original.getPixelRGBA(i, j);
-
-                    int r = ColorHelper.getRed(pixel);
-                    int g = ColorHelper.getGreen(pixel);
-                    int b = ColorHelper.getBlue(pixel);
-                    float brightness = 0.2126f * r + 0.7152f * g + 0.0722f * b;
-
-                    float mixRatio = Math.max(0.5f - (brightness / 255f) * 0.2f, 0.2f);
-
-                    if (ColorHelper.getAlpha(pixel) != 0) {
-                        int newColor = ColorHelper.simplyMixColor(pixel, mixRatio, Color.WHITE.getRGB(), 1 - mixRatio);
-                        original.setPixelRGBA(i, j, newColor);
-                    }
-                }
-            }
-
+            ImageHelper.fixSnowImageColor(section, original, snowySection, snowyImage);
 
         }
     }
@@ -107,8 +89,7 @@ public abstract class MixinSpriteLoader {
     // 这个方法改一下，总之可以改
     @ModifyVariable(method = "stitch", argsOnly = true, index = 1, at = @At("HEAD"))
     private List<SpriteContents> eclipticseasons$stitch(List<SpriteContents> contents) {
-        if (true)
-        {
+        if (true) {
             return contents;
         }
         if (location.equals(TextureAtlas.LOCATION_BLOCKS)) {
@@ -128,7 +109,7 @@ public abstract class MixinSpriteLoader {
                 NativeImage finalSnowyImage = snowyImage;
                 ExtraModelManager.blocksCache.forEach(
                         (resourceLocation, spriteContents) -> {
-                            if(spriteContents!=null) {
+                            if (spriteContents != null) {
                                 NativeImage originalImage = spriteContents.getOriginalImage();
                                 if (originalImage.getWidth() == finalSnowyImage.getWidth()
                                         && originalImage.getHeight() == finalSnowyImage.getHeight()) {
@@ -154,7 +135,7 @@ public abstract class MixinSpriteLoader {
         AnimationMetadataSection section = null;
 
         try {
-            ResourceLocation rs=new ResourceLocation(contents.name().getNamespace(),"textures/"+contents.name().getPath()+".png");
+            ResourceLocation rs = new ResourceLocation(contents.name().getNamespace(), "textures/" + contents.name().getPath() + ".png");
             Resource resource = Minecraft.getInstance().getResourceManager().getResourceOrThrow(rs);
             section = resource.metadata().getSection(AnimationMetadataSection.SERIALIZER).orElse(AnimationMetadataSection.EMPTY);
         } catch (Throwable throwable) {

@@ -163,7 +163,7 @@ public class ClientConfig {
                     .defineInRange("WeatherBufferDistance", 6, 1, 80);
             weatherTransitionSpeed = builder.comment(
                             "Speed at which local weather transitions occur. Higher values mean faster transitions.")
-                    .defineInRange("WeatherTransitionSpeed", 0.008d, 0.000001, 1);
+                    .defineInRange("WeatherTransitionSpeed", 0.008d, 0.0008d, 0.08d);
             weatherFrontBias = builder.comment(
                             "Whether to apply stronger sampling weight in the direction the player is facing.")
                     .define("WeatherFrontBias", true);

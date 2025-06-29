@@ -1,3 +1,8 @@
+### 0.11.2.1
+
+- Fix an issue where creating a new map cache on the server could cause the server to freeze.
+  All players using version 0.11.1 or above are recommended to update to this version.
+
 ## 0.11.2
 
 - Improved smoothing of weather calculations for rain at specific locations on the client side.

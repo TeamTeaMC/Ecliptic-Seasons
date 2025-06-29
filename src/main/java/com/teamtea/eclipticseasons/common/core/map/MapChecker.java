@@ -573,6 +573,37 @@ public class MapChecker {
         return value;
     }
 
+    public static @Nullable ChunkInfoMap getChunkInfoMapOrCreate(Level level, BlockPos pos) {
+        if (level == null)
+            return null;
+
+        int x = blockToRegionCoord(pos.getX());
+        int z = blockToRegionCoord(pos.getZ());
+        ChunkInfoMap map = getChunkMap(level, x, z);
+
+        if (map != null) {
+            return map;
+        } else {
+            updateLock = true;
+            synchronized (RegionList) {
+                boolean hasBuild = false;
+                for (ChunkInfoMap chunkHeightMap : RegionList) {
+                    if (chunkHeightMap.x == x && chunkHeightMap.z == z) {
+                        hasBuild = true;
+                        map = chunkHeightMap;
+                        break;
+                    }
+                }
+                if (!hasBuild) {
+                    map = new ChunkInfoMap(x, z, level.getMinBuildHeight() - 1);
+                    RegionList.add(map);
+                }
+            }
+            updateLock = false;
+        }
+        return map;
+    }
+
 
     // 注意这个写法可能会导致重复
     public static Map<BlockState, Integer> blockTypeCache = new IdentityHashMap<>();
@@ -695,8 +726,9 @@ public class MapChecker {
         ChunkPos chunkPos = chunk.getPos();
         BlockPos.MutableBlockPos middleBlockPosition = new BlockPos.MutableBlockPos(chunkPos.getMiddleBlockX(), 0, chunkPos.getMiddleBlockZ());
         // MapChecker.updatePosForce(level, middleBlockPosition, level.getMinBuildHeight() - 1);
-        getHeightOrUpdate(level, middleBlockPosition, false);
-        ChunkInfoMap chunkMap = MapChecker.getChunkMap(level, middleBlockPosition);
+        // getHeightOrUpdate(level, middleBlockPosition, false);
+        ChunkInfoMap chunkMap = getChunkInfoMapOrCreate(level, middleBlockPosition);
+        // ChunkInfoMap chunkMap = MapChecker.getChunkMap(level, middleBlockPosition);
         // BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos();
         if (chunkMap != null) {
             for (int i = chunkPos.getMinBlockX(); i <= chunkPos.getMaxBlockX(); i++) {
