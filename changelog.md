@@ -1,3 +1,7 @@
+### 0.11.2.1.1
+
+- Add an api function to query the current precipitation of biome.
+
 ### 0.11.2.1
 
 - Fix an issue where creating a new map cache on the server could cause the server to freeze.

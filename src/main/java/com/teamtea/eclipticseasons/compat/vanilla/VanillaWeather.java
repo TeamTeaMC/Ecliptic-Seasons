@@ -6,7 +6,6 @@ import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.constant.tag.ClimateTypeBiomeTags;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
-import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
@@ -94,7 +93,7 @@ public class VanillaWeather {
         var resultPrecipitation = Biome.Precipitation.NONE;
         var solarTerm = EclipticSeasonsApi.getInstance().getSolarTerm(level);
 
-        if (MapChecker.isLoadNearByOnlyServer(level,pos)) {
+        if (MapChecker.isLoadNearByOnlyServer(level, pos)) {
             biome = MapChecker.getSurfaceBiome(level, pos).value();
         }
         // else {
@@ -125,6 +124,11 @@ public class VanillaWeather {
 
 
         return resultPrecipitation;
+    }
+
+    public static Biome.Precipitation getRainOrSnow(Level level, Biome biome, BlockPos pos) {
+        return !level.isRaining() ? Biome.Precipitation.NONE :
+                handlePrecipitationAt(level, biome, pos);
     }
 
     public static Level getValidLevel(Biome biome) {

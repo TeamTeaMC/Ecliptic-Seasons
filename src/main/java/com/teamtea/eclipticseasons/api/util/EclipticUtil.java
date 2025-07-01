@@ -238,6 +238,13 @@ public class EclipticUtil {
             }
 
             @Override
+            public Biome.Precipitation getCurrentPrecipitationAt(Level level, BlockPos pos) {
+                if (hasLocalWeather(level))
+                    return EclipticUtil.getRainOrSnow(level, MapChecker.getSurfaceBiome(level, pos).value(), pos);
+                return VanillaWeather.getRainOrSnow(level, MapChecker.getSurfaceBiome(level, pos).value(), pos);
+            }
+
+            @Override
             public boolean isRainingOrSnowing(Level level, BlockPos pos) {
                 if (hasLocalWeather(level))
                     return getRainOrSnow(level, MapChecker.getSurfaceBiome(level, pos).value(),pos)!= Biome.Precipitation.NONE;

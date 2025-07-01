@@ -110,7 +110,15 @@ public interface EclipticSeasonsApi {
 
     boolean isThunderAt(Level level, BlockPos pos);
 
+    /**
+     * Gets the precipitation type at the surface climate biome over a period of time.
+     */
     Biome.Precipitation getPrecipitationAt(Level level, BlockPos pos);
+
+    /**
+     * Gets the current precipitation type at the surface climate biome (i.e., at the current moment).
+     */
+    Biome.Precipitation getCurrentPrecipitationAt(Level level, BlockPos pos);
 
     /**
      * Roughly checks whether the surface biome or level has weather conditions, ignoring exact position.
