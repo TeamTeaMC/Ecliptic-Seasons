@@ -1,17 +1,47 @@
 {
   "variants": {
-    "facing=east": {
+    "display_mode=next,facing=east": {
       "model": "eclipticseasons:block/calendar",
       "y": 90
     },
-    "facing=north": {
+    "display_mode=next,facing=north": {
       "model": "eclipticseasons:block/calendar"
     },
-    "facing=south": {
+    "display_mode=next,facing=south": {
       "model": "eclipticseasons:block/calendar",
       "y": 180
     },
-    "facing=west": {
+    "display_mode=next,facing=west": {
+      "model": "eclipticseasons:block/calendar",
+      "y": 270
+    },
+    "display_mode=normal,facing=east": {
+      "model": "eclipticseasons:block/calendar",
+      "y": 90
+    },
+    "display_mode=normal,facing=north": {
+      "model": "eclipticseasons:block/calendar"
+    },
+    "display_mode=normal,facing=south": {
+      "model": "eclipticseasons:block/calendar",
+      "y": 180
+    },
+    "display_mode=normal,facing=west": {
+      "model": "eclipticseasons:block/calendar",
+      "y": 270
+    },
+    "display_mode=year,facing=east": {
+      "model": "eclipticseasons:block/calendar",
+      "y": 90
+    },
+    "display_mode=year,facing=north": {
+      "model": "eclipticseasons:block/calendar"
+    },
+    "display_mode=year,facing=south": {
+      "model": "eclipticseasons:block/calendar",
+      "y": 180
+    },
+    "display_mode=year,facing=west": {
       "model": "eclipticseasons:block/calendar",
       "y": 270
     }

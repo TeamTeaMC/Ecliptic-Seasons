@@ -1,0 +1,31 @@
+{
+  "biomes": "#forge:is_cold/overworld",
+  "phases": {
+    "solar_terms": {
+      "beginning_of_spring": "eclipticseasons:cold_beginning_of_spring",
+      "rain_water": "eclipticseasons:cold_rain_water",
+      "insects_awakening": "eclipticseasons:cold_insects_awakening",
+      "spring_equinox": "eclipticseasons:cold_spring_equinox",
+      "fresh_green": "eclipticseasons:cold_fresh_green",
+      "grain_rain": "eclipticseasons:cold_grain_rain",
+      "beginning_of_summer": "eclipticseasons:cold_beginning_of_summer",
+      "lesser_fullness": "eclipticseasons:cold_lesser_fullness",
+      "grain_in_ear": "eclipticseasons:cold_grain_in_ear",
+      "summer_solstice": "eclipticseasons:cold_summer_solstice",
+      "lesser_heat": "eclipticseasons:cold_lesser_heat",
+      "greater_heat": "eclipticseasons:cold_greater_heat",
+      "beginning_of_autumn": "eclipticseasons:cold_beginning_of_autumn",
+      "end_of_heat": "eclipticseasons:cold_end_of_heat",
+      "white_dew": "eclipticseasons:cold_white_dew",
+      "autumnal_equinox": "eclipticseasons:cold_autumnal_equinox",
+      "cold_dew": "eclipticseasons:cold_cold_dew",
+      "first_frost": "eclipticseasons:cold_first_frost",
+      "beginning_of_winter": "eclipticseasons:cold_beginning_of_winter",
+      "light_snow": "eclipticseasons:cold_light_snow",
+      "heavy_snow": "eclipticseasons:cold_heavy_snow",
+      "winter_solstice": "eclipticseasons:cold_winter_solstice",
+      "lesser_cold": "eclipticseasons:cold_lesser_cold",
+      "greater_cold": "eclipticseasons:cold_greater_cold"
+    }
+  }
+}

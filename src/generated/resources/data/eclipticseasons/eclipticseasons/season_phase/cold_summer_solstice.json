@@ -1,0 +1,16 @@
+{
+  "color": "red",
+  "icon": {
+    "i": 3,
+    "j": 1,
+    "texture": "eclipticseasons:font/seasons_icons",
+    "width": 180,
+    "height": 120
+  },
+  "font": {
+    "id": "eclipticseasons:solar_icons",
+    "label": "j"
+  },
+  "season": "summer",
+  "name": "eclipticseasons:cold_summer_solstice"
+}

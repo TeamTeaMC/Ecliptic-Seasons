@@ -1,52 +1,77 @@
 package com.teamtea.eclipticseasons.common.core.biome;
 
-import com.mojang.datafixers.util.Pair;
-import com.mojang.serialization.Lifecycle;
 import com.teamtea.eclipticseasons.api.constant.climate.BiomeClimateSettings;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.constant.tag.ClimateTypeBiomeTags;
 import com.teamtea.eclipticseasons.api.data.climate.BiomesClimateSettings;
-import com.teamtea.eclipticseasons.api.data.craft.HumidityControl;
+import com.teamtea.eclipticseasons.api.data.season.SeasonCycle;
+import com.teamtea.eclipticseasons.api.data.season.SeasonPhase;
 import com.teamtea.eclipticseasons.api.util.SimpleUtil;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.common.registry.ESRegistries;
 import net.minecraft.core.*;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-import java.util.stream.Stream;
 
 public class BiomeClimateManager {
     // 由于在1.20时代，客户端与单人服务器端对象未分离，因此这里不能作为评判依据
     public final static Map<Biome, BiomeClimateSettings> BIOME_CLIMATE_MAP = new IdentityHashMap<>();
     public static final Map<Biome, TagKey<Biome>> BIOME_TAG_KEY_MAP = new IdentityHashMap<>(128);
     public static final Map<Biome, Boolean> SMALL_BIOME_MAP = new IdentityHashMap<>(16);
+    public static final Map<Biome, Map<SolarTerm, Holder<SeasonPhase>>> SEASON_PHASE_MAP = new IdentityHashMap<>();
 
     public static void resetBiomeTemps(RegistryAccess registryAccess, boolean isServer) {
         Optional<Registry<BiomesClimateSettings>> registry = registryAccess.registry(ESRegistries.BIOME_CLIMATE_SETTING);
+        var registry2 = registryAccess.registry(ESRegistries.SEASON_PHASE);
+        var registry3 = registryAccess.registry(ESRegistries.SEASON_CYCLE);
         if (registry.isEmpty()) {
             SimpleUtil.warningForModWrongCalling(ESRegistries.BIOME_CLIMATE_SETTING);
+        } else if (registry2.isEmpty()) {
+            SimpleUtil.warningForModWrongCalling(ESRegistries.SEASON_PHASE);
+        } else if (registry3.isEmpty()) {
+            SimpleUtil.warningForModWrongCalling(ESRegistries.SEASON_CYCLE);
         } else {
             if (isServer) {
                 Registry<BiomesClimateSettings> biomesClimateSettings = registry.get();
                 resetBiomeClimateMap(registryAccess, biomesClimateSettings, BIOME_CLIMATE_MAP);
+                Registry<SeasonCycle> seasonCycles = registry3.get();
+                resetSeasonPhaseMap(registryAccess, seasonCycles, SEASON_PHASE_MAP);
             } else {
                 if (ClientCon.biomeDataPackCache != null) {
                     List<BiomesClimateSettings> build = ClientCon.biomeDataPackCache.build(registryAccess, BiomesClimateSettings.class);
                     resetBiomeClimateMap(registryAccess, build, BIOME_CLIMATE_MAP);
                 }
+
+                if (ClientCon.seasonCycleCache != null) {
+                    List<SeasonCycle> build = ClientCon.seasonCycleCache.build(registryAccess, SeasonCycle.class);
+                    resetSeasonPhaseMap(registryAccess, build, SEASON_PHASE_MAP);
+                }
             }
             putTag(registryAccess, isServer);
         }
+    }
+
+    public static void resetSeasonPhaseMap(RegistryAccess registryAccess, Iterable<SeasonCycle> seasonCycles, Map<Biome, Map<SolarTerm, Holder<SeasonPhase>>> useMap) {
+        useMap.clear();
+        Map<Biome, Map<SolarTerm, Holder<SeasonPhase>>> biomeListMap = new IdentityHashMap<>();
+
+        for (var entry : seasonCycles) {
+            EnumMap<SolarTerm, Holder<SeasonPhase>> combine = entry.localMapping().combine();
+            for (Holder<Biome> next : entry.biomes()) {
+                biomeListMap.put(next.value(), combine);
+            }
+        }
+
+        Optional<Registry<Biome>> biomes = registryAccess.registry(Registries.BIOME);
+        Map<SolarTerm, Holder<SeasonPhase>> objects = Map.of();
+        biomes.ifPresent(biomeRegistry -> biomeRegistry.forEach(biome ->
+                useMap.put(biome, biomeListMap.getOrDefault(biome, objects)))
+        );
     }
 
     public static void resetBiomeClimateMap(RegistryAccess registryAccess, Iterable<BiomesClimateSettings> biomesClimateSettings, Map<Biome, BiomeClimateSettings> useMap) {
@@ -54,7 +79,6 @@ public class BiomeClimateManager {
 
         Map<Biome, List<BiomesClimateSettings>> biomeListMap = new IdentityHashMap<>();
         for (var value : biomesClimateSettings) {
-
             for (Holder<Biome> next : value.biomes()) {
                 List<BiomesClimateSettings> biomesClimateSettingsList =
                         biomeListMap.computeIfAbsent(next.value(), k -> new ArrayList<>());

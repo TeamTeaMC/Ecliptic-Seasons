@@ -4,6 +4,7 @@ package com.teamtea.eclipticseasons.client.util;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.data.climate.BiomesClimateSettings;
 import com.teamtea.eclipticseasons.api.data.craft.HumidityControl;
+import com.teamtea.eclipticseasons.api.data.season.SeasonCycle;
 import com.teamtea.eclipticseasons.api.data.season.SnowDefinition;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
@@ -28,6 +29,7 @@ public class ClientCon {
     private static Level nextLevel;
 
     public static SolarTerm nowSolarTerm = SolarTerm.NONE;
+    public static int nowSolarYear = 0;
     public static boolean isDay = false;
     public static boolean isEvening = false;
     public static boolean isNoon = false;
@@ -37,6 +39,7 @@ public class ClientCon {
     public final static List<HumidityControl> humidityControls = new ArrayList<>();
     public static DataPackEventMessage<BiomesClimateSettings> biomeDataPackCache;
     public static DataPackEventMessage<SnowDefinition> snowDefCache;
+    public static DataPackEventMessage<SeasonCycle> seasonCycleCache;
 
     public static ClientAgent agent = new ClientAgent(){};
 
@@ -50,12 +53,14 @@ public class ClientCon {
             if (saveData != null) {
                 ClientCon.progress = Mth.clamp(Mth.floor(((saveData.getSolarTermDaysInPeriod() + (Mth.floor((clientLevel.getDayTime() + 24000) % 24000L / 24000f * 10)) / 10f) * 100 / saveData.getSolarTermLastingDays())), 0, 100);
             }
+            ClientCon.nowSolarYear = EclipticUtil.getNowSolarYear(clientLevel);
         } else {
             nowSolarTerm = SolarTerm.NONE;
             isDay = false;
             isEvening = false;
             isNoon = false;
             ClientCon.progress = 0;
+            ClientCon.nowSolarYear=0;
         }
 
         if (!roomCache.isEmpty()) {

@@ -1,0 +1,12 @@
+{
+  "color": "gold",
+  "icon": {
+    "texture": "eclipticseasons:season_phase/dry_middle"
+  },
+  "font": {
+    "id": "eclipticseasons:monsoon_icons",
+    "label": "b"
+  },
+  "season": "summer",
+  "name": "eclipticseasons:dry"
+}

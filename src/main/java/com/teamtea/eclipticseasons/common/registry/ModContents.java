@@ -9,6 +9,8 @@ import com.teamtea.eclipticseasons.api.data.climate.BiomesClimateSettings;
 import com.teamtea.eclipticseasons.api.data.craft.HumidityControl;
 import com.teamtea.eclipticseasons.api.data.crop.CropGrowControlBuilder;
 import com.teamtea.eclipticseasons.api.data.quest.SeasonQuest;
+import com.teamtea.eclipticseasons.api.data.season.SeasonCycle;
+import com.teamtea.eclipticseasons.api.data.season.SeasonPhase;
 import com.teamtea.eclipticseasons.api.data.season.SnowDefinition;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
@@ -65,5 +67,7 @@ public class ModContents {
         event.dataPackRegistry(ESRegistries.SEASON_QUEST, SeasonQuest.CODEC, SeasonQuest.DIRECT_CODEC);
         event.dataPackRegistry(ESRegistries.HUMIDITY_CONTROL, HumidityControl.CODEC, HumidityControl.DIRECT_CODEC);
         event.dataPackRegistry(ESRegistries.SNOW_DEFINITIONS, SnowDefinition.CODEC, SnowDefinition.DIRECT_CODEC);
+        event.dataPackRegistry(ESRegistries.SEASON_PHASE, SeasonPhase.CODEC, SeasonPhase.CODEC);
+        event.dataPackRegistry(ESRegistries.SEASON_CYCLE, SeasonCycle.CODEC, SeasonCycle.DIRECT_CODEC);
     }
 }

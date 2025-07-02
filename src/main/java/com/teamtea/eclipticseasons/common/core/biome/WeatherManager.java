@@ -647,7 +647,7 @@ public class WeatherManager {
                     && t.getSolarTermsDay() % CommonConfig.Season.lastingDaysOfEachTerm.get() == 0) {
                 SolarTerm solarTerm = t.getSolarTerm();
                 if (solarTerm != SolarTerm.NONE)
-                    serverPlayer.sendSystemMessage(SimpleUtil.getSolarTermMessage(solarTerm), false);
+                    SimpleUtil.sendSolarTermMessage(serverPlayer,solarTerm,isLogged);
             }
         });
         WeatherManager.sendBiomePacket(WeatherManager.getBiomeList(serverPlayer.level()), List.of(serverPlayer));

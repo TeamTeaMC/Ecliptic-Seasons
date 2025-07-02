@@ -3,6 +3,7 @@ package com.teamtea.eclipticseasons.common.block;
 import com.teamtea.eclipticseasons.api.constant.biome.Humidity;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
+import com.teamtea.eclipticseasons.common.block.base.WallPlacedBlock;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
 import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
@@ -33,7 +34,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
-public class HygrometerBlock extends CalendarBlock {
+public class HygrometerBlock extends WallPlacedBlock {
 
     public final VoxelShape[] shapes1 = new VoxelShape[4];
     public static final IntegerProperty POWER = BlockStateProperties.POWER;

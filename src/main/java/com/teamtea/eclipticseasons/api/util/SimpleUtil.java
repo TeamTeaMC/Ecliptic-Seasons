@@ -3,14 +3,19 @@ package com.teamtea.eclipticseasons.api.util;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
+import com.teamtea.eclipticseasons.api.misc.ISolarTerm;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
+import com.teamtea.eclipticseasons.common.core.solar.SolarTermHelper;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.server.ServerLifecycleHooks;
@@ -72,7 +77,7 @@ public class SimpleUtil {
         strings.removeIf(s -> s.equals(EclipticSeasonsApi.MODID));
         strings.removeIf(s -> s.equals("neoforge"));
         strings.removeIf(s -> s.equals("minecraft"));
-        strings.removeIf(s -> s.isEmpty());
+        strings.removeIf(String::isEmpty);
         EclipticSeasons.logger(message);
         EclipticSeasons.logger("Suspected mod: " + String.join(",", strings));
     }
@@ -92,6 +97,24 @@ public class SimpleUtil {
 
     }
 
+    public static MutableComponent addSolarIconBefore(ISolarTerm solarTerm, MutableComponent mutableComponent) {
+
+        // Style noBitstyle = mutableComponent.getStyle()
+        //         .withFont(mutableComponent.getStyle().getFont());
+        Style aDefault = Style.EMPTY.withFont(new ResourceLocation("default"));
+        Style style = Style.EMPTY.withFont(solarTerm.getIconFont());
+
+        return Component.literal(solarTerm.getFontLabel())
+                .withStyle(style.withColor(TextColor.fromRgb(-1)))
+                .append(Component.literal(" ")
+                        .withStyle(aDefault)
+                        .append(mutableComponent))
+
+                // .append(mutableComponent.withStyle(noBitstyle))
+                ;
+
+    }
+
     public static MutableComponent getSolarTermMessage(SolarTerm solarTerm) {
         return Component
                 .empty()
@@ -101,6 +124,18 @@ public class SimpleUtil {
                                 SimpleUtil.addSolarIconBefore(solarTerm, solarTerm.getAlternationText()) :
                                 solarTerm.getAlternationText()
                 ));
+    }
+
+    public static void sendSolarTermMessage(ServerPlayer player, SolarTerm solarTerm, boolean ignoreChangeCheck) {
+        ISolarTerm iSolarTerm = SolarTermHelper.isChangedAndGet(player.level(), player.blockPosition(), solarTerm, solarTerm.getLastSolarTerm(),ignoreChangeCheck);
+        if (iSolarTerm != null) {
+            MutableComponent translatable = Component.translatable("info.eclipticseasons.environment.solar_term.message",
+                    CommonConfig.Season.enableInformIcon.get() ?
+                            SimpleUtil.addSolarIconBefore(iSolarTerm, iSolarTerm.getAlternationText()) :
+                            solarTerm.getAlternationText()
+            );
+            player.sendSystemMessage(translatable, false);
+        }
     }
 
     public static RegistryAccess getRegistryAccess(BlockEntity blockEntity) {

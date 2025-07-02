@@ -58,7 +58,7 @@ public class SeasonalBiomeAmbientSoundsHandler implements AmbientSoundHandler {
         loopSounds.removeIf(AbstractTickableSoundInstance::isStopped);
         Level level = player.level();
         boolean indoor =
-                (level.getLightEngine().getLayerListener(LightLayer.SKY).getLightValue(player.blockPosition())) < 11;
+                (level.getLightEngine().getLayerListener(LightLayer.SKY).getLightValue(player.blockPosition())) < 12;
         // EclipticSeasons.logger((player.level().getLightEngine().getLayerListener(LightLayer.SKY).getLightValue(player.blockPosition())));
 
         Holder<Biome> biome = this.biomeManager.getNoiseBiomeAtPosition(this.player.getX(), this.player.getY(), this.player.getZ());

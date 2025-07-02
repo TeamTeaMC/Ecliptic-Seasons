@@ -18,7 +18,6 @@ public class Lang_EN extends LangHelper {
     @Override
     protected void addTranslations() {
 
-        add("info.eclipticseasons.environment.solar_term.hint", "Solar Term Today:");
 
 
         add("itemGroup." + EclipticSeasonsApi.MODID + ".core", "Ecliptic Seasons");
@@ -161,14 +160,164 @@ public class Lang_EN extends LangHelper {
         addInfo();
         addTouhouLittleMaid();
 
+        addExtraEnvInfo();
     }
 
+    private void addExtraEnvInfo() {
+        add("info.eclipticseasons.environment.solar_term.hint2", "Year %s :");
+        add("info.eclipticseasons.environment.solar_term.hint3", "In %s days:");
+        add("info.eclipticseasons.environment.solar_term.hint", "Term Today:");
+
+        add("info.eclipticseasons.environment.season_phase.hint", "Phase Today:");
+
+        add("info.eclipticseasons.environment.season_phase.dry_start", "Dry");
+        add("info.eclipticseasons.environment.season_phase.dry_middle", "Dry");
+        add("info.eclipticseasons.environment.season_phase.dry_end", "Dry");
+        add("info.eclipticseasons.environment.season_phase.alternation.dry_start", "A weary breeze, the sun rests upon the hills.");
+        add("info.eclipticseasons.environment.season_phase.alternation.dry_middle", "Dust veils the fields. Green leaves wither.");
+        add("info.eclipticseasons.environment.season_phase.alternation.dry_end", "The rivers runs bare and dry.");
+
+        add("info.eclipticseasons.environment.season_phase.rain_start", "Rainy");
+        add("info.eclipticseasons.environment.season_phase.rain_middle", "Rainy");
+        add("info.eclipticseasons.environment.season_phase.rain_end", "Rainy");
+        add("info.eclipticseasons.environment.season_phase.alternation.rain_start", "Drizzling rains, green life awakens.");
+        add("info.eclipticseasons.environment.season_phase.alternation.rain_middle", "Rain pours from the sky. Thunders roar like dragons.");
+        add("info.eclipticseasons.environment.season_phase.alternation.rain_end", "Heavy raindrops fall. Streams swell into rivers.");
+
+        add("info.eclipticseasons.environment.season_phase.wet_start", "Wet");
+        add("info.eclipticseasons.environment.season_phase.wet_middle", "Wet");
+        add("info.eclipticseasons.environment.season_phase.wet_end", "Wet");
+        add("info.eclipticseasons.environment.season_phase.alternation.wet_start", "Moisture hangs heavy, and the heat is suffocating.");
+        add("info.eclipticseasons.environment.season_phase.alternation.wet_middle", "The world steams, and all trees thrive.");
+        add("info.eclipticseasons.environment.season_phase.alternation.wet_end", "Rains grow sparse. Winds gradually calm.");
+
+        add("info.eclipticseasons.environment.season_phase.pattern.dry_start", "%s (Early)");
+        add("info.eclipticseasons.environment.season_phase.pattern.dry_middle", "%s (Mid)");
+        add("info.eclipticseasons.environment.season_phase.pattern.dry_end", "%s (Late)");
+        add("info.eclipticseasons.environment.season_phase.pattern.rain_start", "%s (Early)");
+        add("info.eclipticseasons.environment.season_phase.pattern.rain_middle", "%s (Mid)");
+        add("info.eclipticseasons.environment.season_phase.pattern.rain_end", "%s (Late)");
+        add("info.eclipticseasons.environment.season_phase.pattern.wet_start", "%s (Early)");
+        add("info.eclipticseasons.environment.season_phase.pattern.wet_middle", "%s (Mid)");
+        add("info.eclipticseasons.environment.season_phase.pattern.wet_end", "%s (Late)");
+
+        add("info.eclipticseasons.environment.season_phase.dry", "Dry");
+        add("info.eclipticseasons.environment.season_phase.alternation.dry", "Dust fills the air, and not a drop of rain in sight.");
+        add("info.eclipticseasons.environment.season_phase.pattern.dry", "%s (All year)");
+
+        add("info.eclipticseasons.environment.season_phase.rain", "Rainy");
+        add("info.eclipticseasons.environment.season_phase.alternation.rain", "Rain falls for days, and clear skies are rare.");
+        add("info.eclipticseasons.environment.season_phase.pattern.rain", "%s (All year)");
+
+        add("info.eclipticseasons.environment.season_phase.wet", "Wet");
+        add("info.eclipticseasons.environment.season_phase.alternation.wet", "Heavy humidity lingers, and the heat is unbearable.");
+        add("info.eclipticseasons.environment.season_phase.pattern.wet", "%s (All year)");
+
+        add("info.eclipticseasons.environment.season_phase.cold_beginning_of_spring", "Beginning of Spring");
+        add("info.eclipticseasons.environment.season_phase.alternation.cold_beginning_of_spring", "The old year has passed, snow fills the door.");
+        add("info.eclipticseasons.environment.season_phase.pattern.cold_beginning_of_spring", "%s (SP)");
+
+        add("info.eclipticseasons.environment.season_phase.cold_rain_water", "Rain Water");
+        add("info.eclipticseasons.environment.season_phase.alternation.cold_rain_water", "Cold winter wanes, spring is still faint.");
+        add("info.eclipticseasons.environment.season_phase.pattern.cold_rain_water", "%s (SP)");
+
+        add("info.eclipticseasons.environment.season_phase.cold_insects_awakening", "Insects Awakening");
+        add("info.eclipticseasons.environment.season_phase.alternation.cold_insects_awakening", "Flowers meet a chilly spring.");
+        add("info.eclipticseasons.environment.season_phase.pattern.cold_insects_awakening", "%s (SP)");
+
+        add("info.eclipticseasons.environment.season_phase.cold_spring_equinox", "Spring Equinox");
+        add("info.eclipticseasons.environment.season_phase.alternation.cold_spring_equinox", "It's just as warm as it is cold. Day and night are as long as each other.");
+        add("info.eclipticseasons.environment.season_phase.pattern.cold_spring_equinox", "%s (SP)");
+
+        add("info.eclipticseasons.environment.season_phase.cold_fresh_green", "Fresh Green");
+        add("info.eclipticseasons.environment.season_phase.alternation.cold_fresh_green", "Swallows return as spring renews the land.");
+        add("info.eclipticseasons.environment.season_phase.pattern.cold_fresh_green", "%s (SP)");
+
+        add("info.eclipticseasons.environment.season_phase.cold_grain_rain", "Grain Rain");
+        add("info.eclipticseasons.environment.season_phase.alternation.cold_grain_rain", "Soft rain falls unseen, as birdsong fills the air.");
+        add("info.eclipticseasons.environment.season_phase.pattern.cold_grain_rain", "%s (SP)");
+
+        add("info.eclipticseasons.environment.season_phase.cold_beginning_of_summer", "Beginning of Summer");
+        add("info.eclipticseasons.environment.season_phase.alternation.cold_beginning_of_summer", "Fileds in bloom, spring holds its breath.");
+        add("info.eclipticseasons.environment.season_phase.pattern.cold_beginning_of_summer", "%s (SU)");
+
+        add("info.eclipticseasons.environment.season_phase.cold_lesser_fullness", "Lesser Fullness");
+        add("info.eclipticseasons.environment.season_phase.alternation.cold_lesser_fullness", "The warmer summer is coming.");
+        add("info.eclipticseasons.environment.season_phase.pattern.cold_lesser_fullness", "%s (SU)");
+
+        add("info.eclipticseasons.environment.season_phase.cold_grain_in_ear", "Grain in Ear");
+        add("info.eclipticseasons.environment.season_phase.alternation.cold_grain_in_ear", "Winds graze the field. Insects chirp.");
+        add("info.eclipticseasons.environment.season_phase.pattern.cold_grain_in_ear", "%s (SU)");
+
+        add("info.eclipticseasons.environment.season_phase.cold_summer_solstice", "Summer Solstice");
+        add("info.eclipticseasons.environment.season_phase.alternation.cold_summer_solstice", "Oh, the longest day is coming.");
+        add("info.eclipticseasons.environment.season_phase.pattern.cold_summer_solstice", "%s (SU)");
+
+        add("info.eclipticseasons.environment.season_phase.cold_lesser_heat", "Lesser Heat");
+        add("info.eclipticseasons.environment.season_phase.alternation.cold_lesser_heat", "Summer warmth insufficient, hints of autumn.");
+        add("info.eclipticseasons.environment.season_phase.pattern.cold_lesser_heat", "%s (SU)");
+
+        add("info.eclipticseasons.environment.season_phase.cold_greater_heat", "Greater Heat");
+        add("info.eclipticseasons.environment.season_phase.alternation.cold_greater_heat", "The color of warm summer has faded.");
+        add("info.eclipticseasons.environment.season_phase.pattern.cold_greater_heat", "%s (SU)");
+
+        add("info.eclipticseasons.environment.season_phase.cold_beginning_of_autumn", "Beginning of Autumn");
+        add("info.eclipticseasons.environment.season_phase.alternation.cold_beginning_of_autumn", "Cool breeze arrives, autumn fills the sky.");
+        add("info.eclipticseasons.environment.season_phase.pattern.cold_beginning_of_autumn", "%s (AU)");
+
+        add("info.eclipticseasons.environment.season_phase.cold_end_of_heat", "End of Heat");
+        add("info.eclipticseasons.environment.season_phase.alternation.cold_end_of_heat", "The sense of autumn wanes, and chill begins to rise.");
+        add("info.eclipticseasons.environment.season_phase.pattern.cold_end_of_heat", "%s (AU)");
+
+        add("info.eclipticseasons.environment.season_phase.cold_white_dew", "White Dew");
+        add("info.eclipticseasons.environment.season_phase.alternation.cold_white_dew", "The aura of winter is getting thicker and thicker.");
+        add("info.eclipticseasons.environment.season_phase.pattern.cold_white_dew", "%s (AU)");
+
+        add("info.eclipticseasons.environment.season_phase.cold_autumnal_equinox", "Autumnal Equinox");
+        add("info.eclipticseasons.environment.season_phase.alternation.cold_autumnal_equinox", "The daytime decreases when the nighttime increases.");
+        add("info.eclipticseasons.environment.season_phase.pattern.cold_autumnal_equinox", "%s (AU)");
+
+        add("info.eclipticseasons.environment.season_phase.cold_cold_dew", "Cold Dew");
+        add("info.eclipticseasons.environment.season_phase.alternation.cold_cold_dew", "Frost surprises the evening, cold lights the forest tips.");
+        add("info.eclipticseasons.environment.season_phase.pattern.cold_cold_dew", "%s (AU)");
+
+        add("info.eclipticseasons.environment.season_phase.cold_first_frost", "First Frost");
+        add("info.eclipticseasons.environment.season_phase.alternation.cold_first_frost", "With the winter rain, the weather grows much colder.");
+        add("info.eclipticseasons.environment.season_phase.pattern.cold_first_frost", "%s (AU)");
+
+        add("info.eclipticseasons.environment.season_phase.cold_beginning_of_winter", "Beginning of Winter");
+        add("info.eclipticseasons.environment.season_phase.alternation.cold_beginning_of_winter", "Winds wither white grass, sky dim and dark.");
+        add("info.eclipticseasons.environment.season_phase.pattern.cold_beginning_of_winter", "%s (WI)");
+
+        add("info.eclipticseasons.environment.season_phase.cold_light_snow", "Light Snow");
+        add("info.eclipticseasons.environment.season_phase.alternation.cold_light_snow", "Cold wind roars fiercely, snow falls thick.");
+        add("info.eclipticseasons.environment.season_phase.pattern.cold_light_snow", "%s (WI)");
+
+        add("info.eclipticseasons.environment.season_phase.cold_heavy_snow", "Heavy Snow");
+        add("info.eclipticseasons.environment.season_phase.alternation.cold_heavy_snow", "Snow fills the world, as if trees were blooming with pear blossoms.");
+        add("info.eclipticseasons.environment.season_phase.pattern.cold_heavy_snow", "%s (WI)");
+
+        add("info.eclipticseasons.environment.season_phase.cold_winter_solstice", "Winter Solstice");
+        add("info.eclipticseasons.environment.season_phase.alternation.cold_winter_solstice", "Shadows become longer. The endless long night comes.");
+        add("info.eclipticseasons.environment.season_phase.pattern.cold_winter_solstice", "%s (WI)");
+
+        add("info.eclipticseasons.environment.season_phase.cold_lesser_cold", "Lesser Cold");
+        add("info.eclipticseasons.environment.season_phase.alternation.cold_lesser_cold", "Severe cold in the depth of winter.");
+        add("info.eclipticseasons.environment.season_phase.pattern.cold_lesser_cold", "%s (WI)");
+
+        add("info.eclipticseasons.environment.season_phase.cold_greater_cold", "Greater Cold");
+        add("info.eclipticseasons.environment.season_phase.alternation.cold_greater_cold", "Winds died away, but icy coldness still.");
+        add("info.eclipticseasons.environment.season_phase.pattern.cold_greater_cold", "%s (WI)");
+
+    }
+
+
     private void addJade() {
-        add("config.jade.plugin_eclipticseasons.crop","Crop");
-        add("config.jade.plugin_eclipticseasons.crop.shift_hint","Shift Key Hint");
+        add("config.jade.plugin_eclipticseasons.crop", "Crop");
+        add("config.jade.plugin_eclipticseasons.crop.shift_hint", "Shift Key Hint");
         add("hint.jade.plugin_eclipticseasons.crop.show", "§o<..Hold shift to see more..>");
 
-        add("config.jade.plugin_eclipticseasons.snowy_status","Show Snowy Status");
+        add("config.jade.plugin_eclipticseasons.snowy_status", "Show Snowy Status");
         add("hint.jade.plugin_eclipticseasons.snowy_status.snowy", "§7Covered with Snow");
     }
 
@@ -186,6 +335,11 @@ public class Lang_EN extends LangHelper {
         add("info.eclipticseasons.humidity_control.extra_hint", "§7 - Alternative placements:");
 
         add("info.eclipticseasons.bone_meal.failure", "Cannot accelerate growth under current conditions.");
+
+        add("info.eclipticseasons.calendar.model", "Switched to %s display mode");
+        add("info.eclipticseasons.calendar.model.normal", "Default");
+        add("info.eclipticseasons.calendar.model.year", "Year");
+        add("info.eclipticseasons.calendar.model.next", "Next");
     }
 
     private void addAdvancements() {

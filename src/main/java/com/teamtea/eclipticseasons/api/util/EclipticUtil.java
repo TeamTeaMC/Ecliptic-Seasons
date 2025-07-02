@@ -38,6 +38,12 @@ public class EclipticUtil {
         return SolarTerm.NONE;
     }
 
+    public static int getNowSolarYear(Level level) {
+        var sd = SolarHolders.getSaveData(level);
+        if (sd != null) return sd.getSolarYear();
+        return 0;
+    }
+
     public static boolean isDay(Level level) {
         long dayTime = level.dimensionType().fixedTime().orElse(SolarAngelHelper.getSolarAngelTime(level, level.getDayTime()));
         long termTime = getNowSolarTerm(level).getDayTime();
@@ -98,6 +104,11 @@ public class EclipticUtil {
             @Override
             public int getSolarDays(Level level) {
                 return EclipticUtil.getNowSolarDay(level);
+            }
+
+            @Override
+            public int getSolarYears(Level level) {
+                return EclipticUtil.getNowSolarYear(level);
             }
 
             @Override

@@ -128,7 +128,9 @@ public class NetworkUtil {
                 if (dataPackEvent.resourceKey.equals(ESRegistries.SNOW_DEFINITIONS)) {
                     ClientCon.snowDefCache = dataPackEvent;
                 }
-
+                if (dataPackEvent.resourceKey.equals(ESRegistries.SEASON_CYCLE)) {
+                    ClientCon.seasonCycleCache = dataPackEvent;
+                }
             }
         });
         return true;

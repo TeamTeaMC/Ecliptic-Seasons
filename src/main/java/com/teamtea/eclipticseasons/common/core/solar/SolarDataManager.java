@@ -38,7 +38,8 @@ import java.util.List;
 
 public class SolarDataManager extends SavedData {
 
-    protected int solarTermsDay = (CommonConfig.Season.initialSolarTermIndex.get() - 1) * CommonConfig.Season.lastingDaysOfEachTerm.get();
+    protected final int startSolarTermsDay = (CommonConfig.Season.initialSolarTermIndex.get() - 1) * CommonConfig.Season.lastingDaysOfEachTerm.get();
+    protected int solarTermsDay = startSolarTermsDay;
     protected int solarTermsTicks = 0;
     protected boolean isValidDimension = false;
 
@@ -64,7 +65,7 @@ public class SolarDataManager extends SavedData {
             var biomeWeathers = WeatherManager.getBiomeList(levelWeakReference.get());
             for (int i = 0; i < listTag.size(); i++) {
                 var location = listTag.getCompound(i).getString("biome");
-                if(biomeWeathers!=null) {
+                if (biomeWeathers != null) {
                     for (WeatherManager.BiomeWeather biomeWeather : biomeWeathers) {
                         if (location.equals(biomeWeather.location.toString())) {
                             biomeWeather.deserializeNBT(listTag.getCompound(i));
@@ -83,7 +84,7 @@ public class SolarDataManager extends SavedData {
         ListTag listTag = new ListTag();
         if (levelWeakReference.get() != null) {
             var list = WeatherManager.getBiomeList(levelWeakReference.get());
-            if(list!=null) {
+            if (list != null) {
                 for (WeatherManager.BiomeWeather biomeWeather : list) {
                     listTag.add(biomeWeather.serializeNBT());
                 }
@@ -154,6 +155,11 @@ public class SolarDataManager extends SavedData {
 
     public int getSolarTermsDay() {
         return solarTermsDay;
+    }
+
+    public int getSolarYear() {
+        return !isValidDimension() ? 0 :
+                ((getSolarTermsDay() - 0) / (24 * getSolarTermLastingDays())) + 1;
     }
 
     public int getSolarTermsTicks() {
@@ -270,8 +276,8 @@ public class SolarDataManager extends SavedData {
                         if (
                             // p.first().getY() > blockPos.getY()
                             // &&
-                                CropGrowthHandler.isWithinDistanceForGreenHouseWorker(center, p.first().getCenter(),p.second().getRange())
-                        // p.first().getCenter().distanceToSqr(center) < (p.second().getRange() + 0.1)
+                                CropGrowthHandler.isWithinDistanceForGreenHouseWorker(center, p.first().getCenter(), p.second().getRange())
+                            // p.first().getCenter().distanceToSqr(center) < (p.second().getRange() + 0.1)
                         ) {
                             result += p.second().getLevel();
                         }
@@ -389,7 +395,7 @@ public class SolarDataManager extends SavedData {
             for (ServerPlayer player : world.players()) {
                 SimpleNetworkHandler.send(player, new SolarTermsMessage(this.getSolarTermsDay()));
                 if (changeSolarTerm && CommonConfig.Season.enableInform.get()) {
-                    player.sendSystemMessage(SimpleUtil.getSolarTermMessage(solarTerm), false);
+                    SimpleUtil.sendSolarTermMessage(player, solarTerm, false);
                 }
                 WeatherManager.tickPlayerForSeasonCheck(player);
             }

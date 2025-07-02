@@ -4,6 +4,8 @@ package com.teamtea.eclipticseasons.common;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.data.climate.BiomesClimateSettings;
 import com.teamtea.eclipticseasons.api.data.craft.HumidityControl;
+import com.teamtea.eclipticseasons.api.data.season.SeasonCycle;
+import com.teamtea.eclipticseasons.api.data.season.SeasonPhase;
 import com.teamtea.eclipticseasons.api.data.season.SnowDefinition;
 import com.teamtea.eclipticseasons.api.event.CanPlantGrowEvent;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
@@ -306,5 +308,11 @@ public class AllListener {
                 ESRegistries.SNOW_DEFINITIONS,
                 registryAccess.registryOrThrow(ESRegistries.SNOW_DEFINITIONS).entrySet().stream().map(Map.Entry::getValue).toList(),
                 SnowDefinition.CODEC));
+
+        SimpleNetworkHandler.send(serverPlayerList, new DataPackEventMessage<>(
+                registryAccess,
+                ESRegistries.SEASON_CYCLE,
+                registryAccess.registryOrThrow(ESRegistries.SEASON_CYCLE).entrySet().stream().map(Map.Entry::getValue).toList(),
+                SeasonCycle.CODEC));
     }
 }

@@ -1,9 +1,8 @@
 package com.teamtea.eclipticseasons.data.font;
 
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.serialization.JsonOps;
-import com.mojang.serialization.RecordBuilder;
+import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import net.minecraft.client.gui.font.FontManager;
 import net.minecraft.client.gui.font.providers.BitmapProvider;
@@ -13,13 +12,15 @@ import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.data.ExistingFileHelper;
+import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class ESFontProvider implements DataProvider {
 
@@ -27,7 +28,7 @@ public class ESFontProvider implements DataProvider {
     protected final String modid;
     public final ExistingFileHelper helper;
 
-    protected final Map<ResourceLocation, BitmapProvider.Definition> bits = new HashMap<>();
+    protected final Map<ResourceLocation, FontManager.FontDefinitionFile> outMap = new HashMap<>();
 
 
     public ESFontProvider(PackOutput output, String modid, ExistingFileHelper helper) {
@@ -51,63 +52,54 @@ public class ESFontProvider implements DataProvider {
         gather();
         Path path = this.output.getOutputFolder(PackOutput.Target.RESOURCE_PACK).resolve(modid).resolve("font");
 
-        RecordBuilder<JsonElement> builder = JsonOps.INSTANCE.mapBuilder();
-
-
-        List<GlyphProviderDefinition> conditionals=new ArrayList<>();
-        // for (SolarTerm solarTerm : SolarTerm.collectValues()) {
-        //     // int[][] ints = toInts(List.of("abcd", "efg\u0000"));
-        //     int[][] ints = toInts(List.of(solarTerm.getFontLabel()));
-        //     BitmapProvider.Definition definition = new BitmapProvider.Definition(
-        //             solarTerm.getIcon().withSuffix(".png"),
-        //             9,
-        //             8,
-        //             ints
-        //     );
+        // RecordBuilder<JsonElement> builder
+        //  = BitmapProvider.Definition.CODEC.encode(definition, JsonOps.INSTANCE, builder);
         //
-        //     builder = BitmapProvider.Definition.CODEC.encode(definition, JsonOps.INSTANCE, builder);
-        //
-        //     GlyphProviderDefinition.Conditional conditional =
-        //             new GlyphProviderDefinition.Conditional(definition, FontOption.Filter.ALWAYS_PASS);
-        //     conditionals.add(conditional);
-        // }
-        List<String> strings=new ArrayList<>();
+        // JsonElement j = FontManager.FontDefinitionFile.CODEC
+        //         .encode(new FontManager.FontDefinitionFile(conditionals),
+        //                 builder.ops(), new JsonObject()).result().orElse(new JsonObject());
 
-        for (int i = 0; i < 4; i++) {
-            StringBuilder stringBuilder=new StringBuilder();
-            for (int j = 0; j < 6; j++) {
-                stringBuilder.append(SolarTerm.collectValues()[i*6+j].getFontLabel());
-            }
-            strings.add(stringBuilder.toString());
-        }
-
-        int[][] ints = toInts(strings);
-        BitmapProvider.Definition definition = new BitmapProvider.Definition(
-                SolarTerm.getFontIcon().withSuffix(".png"),
-                9,
-                7,
-              // 16,15,
-              //   12,11,
-                ints
-        );
-
-        conditionals.add(definition);
-
-
-        // JsonObject j = builder.build(new JsonObject()).result().orElse(null);
-        JsonElement j= FontManager.FontDefinitionFile.CODEC
-                .encode(new FontManager.FontDefinitionFile(conditionals),
-                builder.ops(), new JsonObject()).result().orElse(new JsonObject());
-        // JsonObject outs = new JsonObject();
-        // JsonArray jsonArray = new JsonArray();
-        // outs.add("providers", jsonArray);
-        // jsonArray.add(j);
-        return DataProvider.saveStable(output, j, path.resolve(SolarTerm.getFont().withSuffix(".json").getPath()));
+        return CompletableFuture.allOf(outMap.entrySet().stream()
+                .map(e -> DataProvider.saveStable(output, FontManager.FontDefinitionFile.CODEC
+                        .encode(e.getValue(),
+                                JsonOps.INSTANCE, new JsonObject()).result().orElse(new JsonObject()), path.resolve(e.getKey().withSuffix(".json").getPath()))
+                ).toArray(CompletableFuture[]::new));
+        // return DataProvider.saveStable(output, j, path.resolve(SolarTerm.getFont().withSuffix(".json").getPath()));
     }
 
 
     protected void gather() {
 
+        outMap.put(SolarTerm.getFont(), new FontManager.FontDefinitionFile(List.of(buildFont(SolarTerm.getFontIcon(), IntStream.range(0, 4)
+                .mapToObj(ESFontProvider::buildRow)
+                .toList()))));
+
+        outMap.put(EclipticSeasons.rl("monsoon_icons"), new FontManager.FontDefinitionFile(List.of(
+                buildFont(EclipticSeasons.rl("font/season_phase/dry_end"), List.of("a")),
+                buildFont(EclipticSeasons.rl("font/season_phase/dry_middle"), List.of("b")),
+                buildFont(EclipticSeasons.rl("font/season_phase/dry_start"), List.of("c")),
+                buildFont(EclipticSeasons.rl("font/season_phase/rain_end"), List.of("d")),
+                buildFont(EclipticSeasons.rl("font/season_phase/rain_middle"), List.of("e")),
+                buildFont(EclipticSeasons.rl("font/season_phase/rain_start"), List.of("f")),
+                buildFont(EclipticSeasons.rl("font/season_phase/wet_end"), List.of("g")),
+                buildFont(EclipticSeasons.rl("font/season_phase/wet_middle"), List.of("h")),
+                buildFont(EclipticSeasons.rl("font/season_phase/wet_start"), List.of("i"))
+        )));
+    }
+
+    private GlyphProviderDefinition buildFont(ResourceLocation iconCollection, List<String> a) {
+        return new BitmapProvider.Definition(
+                iconCollection.withSuffix(".png"),
+                9,
+                7,
+                toInts(a)
+        );
+    }
+
+    private static String buildRow(int rowIndex) {
+        return IntStream.range(0, 6)
+                .mapToObj(j -> SolarTerm.collectValues()[rowIndex * 6 + j].getFontLabel())
+                .collect(Collectors.joining());
     }
 
     @Override

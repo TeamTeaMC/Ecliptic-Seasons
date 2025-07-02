@@ -1,0 +1,85 @@
+{
+  "providers": [
+    {
+      "type": "bitmap",
+      "ascent": 7,
+      "chars": [
+        "a"
+      ],
+      "file": "eclipticseasons:font/season_phase/dry_end.png",
+      "height": 9
+    },
+    {
+      "type": "bitmap",
+      "ascent": 7,
+      "chars": [
+        "b"
+      ],
+      "file": "eclipticseasons:font/season_phase/dry_middle.png",
+      "height": 9
+    },
+    {
+      "type": "bitmap",
+      "ascent": 7,
+      "chars": [
+        "c"
+      ],
+      "file": "eclipticseasons:font/season_phase/dry_start.png",
+      "height": 9
+    },
+    {
+      "type": "bitmap",
+      "ascent": 7,
+      "chars": [
+        "d"
+      ],
+      "file": "eclipticseasons:font/season_phase/rain_end.png",
+      "height": 9
+    },
+    {
+      "type": "bitmap",
+      "ascent": 7,
+      "chars": [
+        "e"
+      ],
+      "file": "eclipticseasons:font/season_phase/rain_middle.png",
+      "height": 9
+    },
+    {
+      "type": "bitmap",
+      "ascent": 7,
+      "chars": [
+        "f"
+      ],
+      "file": "eclipticseasons:font/season_phase/rain_start.png",
+      "height": 9
+    },
+    {
+      "type": "bitmap",
+      "ascent": 7,
+      "chars": [
+        "g"
+      ],
+      "file": "eclipticseasons:font/season_phase/wet_end.png",
+      "height": 9
+    },
+    {
+      "type": "bitmap",
+      "ascent": 7,
+      "chars": [
+        "h"
+      ],
+      "file": "eclipticseasons:font/season_phase/wet_middle.png",
+      "height": 9
+    },
+    {
+      "type": "bitmap",
+      "ascent": 7,
+      "chars": [
+        "i"
+      ],
+      "file": "eclipticseasons:font/season_phase/wet_start.png",
+      "height": 9
+    }
+  ]
+}

@@ -4,23 +4,22 @@ import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.constant.climate.*;
 import com.teamtea.eclipticseasons.api.constant.solar.color.base.*;
 import com.teamtea.eclipticseasons.api.constant.tag.ClimateTypeBiomeTags;
+import com.teamtea.eclipticseasons.api.misc.ISolarTerm;
 import com.teamtea.eclipticseasons.api.misc.ITranslatableWithPlaceholder;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.misc.SimplePair;
 import com.teamtea.eclipticseasons.config.CommonConfig;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.BiomeTags;
 import net.minecraft.tags.TagKey;
-import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.level.biome.Biome;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Locale;
 
-public enum SolarTerm implements ITranslatableWithPlaceholder {
+public enum SolarTerm implements ITranslatableWithPlaceholder, ISolarTerm {
     // Spring Solar Terms
     BEGINNING_OF_SPRING(-0.25F, 10500),    // 立春
     RAIN_WATER(-0.15F, 11000),             // 雨水
@@ -63,32 +62,62 @@ public enum SolarTerm implements ITranslatableWithPlaceholder {
         this.dayTime = dayTime;
     }
 
+    public SolarTerm getNextSolarTerm() {
+        if (!isValid()) return SolarTerm.NONE;
+        return SolarTerm.get((this.ordinal() + 1) % 24);
+    }
+
+    public SolarTerm getLastSolarTerm() {
+        if (!isValid()) return SolarTerm.NONE;
+        return SolarTerm.get((this.ordinal() + 24 - 1) % 24);
+    }
+
+    @Override
     public String getName() {
         return this.toString().toLowerCase(Locale.ROOT);
     }
 
+    @Override
     public MutableComponent getTranslation() {
         return Component.translatable("info.eclipticseasons.environment.solar_term." + getName());
     }
 
+    @Override
+    public MutableComponent getTittleTranslation() {
+        return Component.translatable("info.eclipticseasons.environment.solar_term.hint");
+    }
+
+    @Override
+    public MutableComponent getPatternTranslation() {
+        return this == SolarTerm.NONE ? this.getTranslation() : Component.literal(this.getTranslation().getString() +
+                (" (%s)".formatted(this.getSeason().getTranslation().getString())));
+    }
+
+    @Override
     public MutableComponent getAlternationText() {
         return Component.translatable("info.eclipticseasons.environment.solar_term.alternation." + getName()).withStyle(getSeason().getColor());
     }
 
-    private static final SolarTerm[] solarTerms = SolarTerm.values();
-
-    public static SolarTerm[] collectValues() {
-        return solarTerms;
+    @Override
+    public ChatFormatting getColor() {
+        return getSeason().getColor();
     }
 
-    public static SolarTerm get(int index) {
-        return collectValues()[index];
+    @Override
+    public ResourceLocation getIconFont() {
+        return EclipticSeasons.rl("solar_icons");
+    }
+
+    @Override
+    public ResourceLocation getIcon() {
+        return getFullIcon();
     }
 
     public static ResourceLocation getFont() {
         return EclipticSeasons.rl("solar_icons");
     }
 
+    @Override
     public String getFontLabel() {
         // return new String(new byte[]{(byte) (ordinal() + 97)});
         return String.valueOf((char) (ordinal() + 97));
@@ -102,9 +131,36 @@ public enum SolarTerm implements ITranslatableWithPlaceholder {
         return EclipticSeasons.rl("font/" + "seasons_icons_font");
     }
 
+    @Override
     public SimplePair<Integer, Integer> getIconPosition() {
         return SimplePair.of(this.ordinal() % 6, this.ordinal() / 6);
     }
+
+    @Override
+    public int getIconAtlasSize() {
+        return 30;
+    }
+
+    @Override
+    public int getIconWidth() {
+        return 180;
+    }
+
+    @Override
+    public int getIconHeight() {
+        return 120;
+    }
+
+    private static final SolarTerm[] solarTerms = SolarTerm.values();
+
+    public static SolarTerm[] collectValues() {
+        return solarTerms;
+    }
+
+    public static SolarTerm get(int index) {
+        return collectValues()[index];
+    }
+
 
     public RainySolarTermColors getColorInfo() {
         return RainySolarTermColors.collectValues()[this.ordinal()];
@@ -141,7 +197,7 @@ public enum SolarTerm implements ITranslatableWithPlaceholder {
         return getOriginalDayTime();
     }
 
-    public int getOriginalDayTime(){
+    public int getOriginalDayTime() {
         return dayTime;
     }
 
@@ -149,10 +205,6 @@ public enum SolarTerm implements ITranslatableWithPlaceholder {
         return Season.collectValues()[this.ordinal() / 6];
     }
 
-    @Override
-    public @NotNull String getSerializedName() {
-        return getName();
-    }
 
     public BiomeRain getBiomeRain(Holder<Biome> biomeHolder) {
         TagKey<Biome> tag = BiomeClimateManager.getTag(biomeHolder.value());
@@ -169,8 +221,31 @@ public enum SolarTerm implements ITranslatableWithPlaceholder {
         if (tag == ClimateTypeBiomeTags.MONSOONAL)
             return MonsoonRain.collectValues()[this.ordinal()];
         return TemperateRain.collectValues()[this.ordinal()];
+
+        // if (!biomeHolder.is(BiomeTags.IS_OVERWORLD) || biomeHolder.is(ClimateTypeBiomeTags.RAINLESS)) {
+        //     return FlatRain.RAINLESS;
+        // } else if (biomeHolder.is(ClimateTypeBiomeTags.ARID)) {
+        //     return FlatRain.ARID;
+        // } else if (biomeHolder.is(ClimateTypeBiomeTags.DROUGHTY)) {
+        //     return FlatRain.DROUGHTY;
+        // } else if (biomeHolder.is(ClimateTypeBiomeTags.SOFT)) {
+        //     return FlatRain.SOFT;
+        // } else if (biomeHolder.is(ClimateTypeBiomeTags.RAINY)) {
+        //     return FlatRain.RAINY;
+        // } else if (biomeHolder.is(ClimateTypeBiomeTags.MONSOONAL)) {
+        //     return MonsoonRain.collectValues()[this.ordinal()];
+        // } else {
+        //     return TemperateRain.collectValues()[this.ordinal()];
+        // }
     }
 
+    // TODO：为海洋设置特别属性，一个难点在于设定冻洋0，冷水海洋0.5，暖水海洋0.5
+    // 一般来说，暖水海洋应该温度高以适应珊瑚生活
+    // 普通海洋可以冬季小雪
+    // 冷水海洋可以多下一些
+    // 冻洋全年下雪
+    // 这里注意的一个地方是海水的比热容比陆地大，应该设定一个调整后的雪期
+    // 此外Mojang设定是，所有海洋都是0.5的温度，除了深海冻洋
     public static SnowTerm getSnowTerm(Biome biome) {
         if (biome == null) return SnowTerm.T05;
         // float t = BiomeClimateManager.agent$GetBaseTemperature(biome);
@@ -243,12 +318,14 @@ public enum SolarTerm implements ITranslatableWithPlaceholder {
 
     public boolean isInTerms(SolarTerm start, SolarTerm end) {
         if (start == NONE || end == NONE) return false;
-        else if (start == end) return this == start;
+        else if (start == end)
+            return this == start; // es patch: if A is B then use single if B is next to A ,then means all
         else if (start.ordinal() <= end.ordinal()) {
             return start.ordinal() <= this.ordinal() && this.ordinal() <= end.ordinal();
         } else
             return start.ordinal() <= this.ordinal() || this.ordinal() <= end.ordinal();
     }
+
 
     @Override
     public boolean isValid() {
