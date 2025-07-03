@@ -1,4 +1,4 @@
-package com.teamtea.eclipticseasons.api.misc;
+package com.teamtea.eclipticseasons.api.constant.solar;
 
 import com.teamtea.eclipticseasons.common.misc.SimplePair;
 import net.minecraft.ChatFormatting;

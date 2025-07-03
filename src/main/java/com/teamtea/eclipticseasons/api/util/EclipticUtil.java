@@ -400,7 +400,7 @@ public class EclipticUtil {
         Biome standBiome = biomeHolder.value();
         float t = getTemperatureFloatConstant(solarTerm, standBiome, serverSide);
         BiomeRain biomeRain = solarTerm.getBiomeRain(biomeHolder);
-        float r = (getDownfallFloatConstant(solarTerm, standBiome, serverSide) * 1.5f + biomeRain.getRainChane() * 0.5f) / 2f;
+        float r = (getDownfallFloatConstant(solarTerm, standBiome, serverSide) * 1.5f + biomeRain.getRainChance() * 0.5f) / 2f;
         return Humidity.getHumid(r, t);
     }
 
@@ -408,7 +408,7 @@ public class EclipticUtil {
         Biome standBiome = biome.value();
         float t = getTemperatureFloat(level, solarTerm, standBiome, pos, serverSide);
         BiomeRain biomeRain = solarTerm.getBiomeRain(biome);
-        float r = (getDownfallFloat(level, solarTerm, standBiome, pos, serverSide) * 1.5f + biomeRain.getRainChane() * 0.5f) / 2f;
+        float r = (getDownfallFloat(level, solarTerm, standBiome, pos, serverSide) * 1.5f + biomeRain.getRainChance() * 0.5f) / 2f;
         return Humidity.getHumid(r, t);
     }
 

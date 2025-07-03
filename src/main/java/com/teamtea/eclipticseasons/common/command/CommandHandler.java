@@ -3,6 +3,8 @@ package com.teamtea.eclipticseasons.common.command;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.datafixers.util.Either;
+import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
+import com.teamtea.eclipticseasons.api.constant.climate.BiomeRain;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
@@ -126,23 +128,25 @@ public class CommandHandler {
     }
 
     public static int setBiomeRain(CommandSourceStack sourceStack, ResourceOrTagArgument.Result<Biome> result, boolean setRain, boolean isThunder) throws CommandSyntaxException {
-        var levelBiomeWeather = WeatherManager.getBiomeList(sourceStack.getLevel());
+        ServerLevel level = sourceStack.getLevel();
+        var levelBiomeWeather = WeatherManager.getBiomeList(level);
         if (levelBiomeWeather != null) {
             boolean found = false;
             int size = levelBiomeWeather.size();
+            SolarTerm solarTerm = EclipticSeasonsApi.getInstance().getSolarTerm(level);
             for (WeatherManager.BiomeWeather biomeWeather : levelBiomeWeather) {
                 if (result.test(biomeWeather.biomeHolder)) {
+                    BiomeRain biomeRain = WeatherManager.getBiomeRain(level, solarTerm, biomeWeather.biomeHolder);
+                    biomeWeather.rainTime = setRain ? biomeRain.sampleRain(level.getRandom()) / size : 0;
+                    biomeWeather.clearTime = setRain ? 0 : biomeRain.sampleRainDelay(level.getRandom()) / size;
 
-                    biomeWeather.rainTime = setRain ? ServerLevel.RAIN_DURATION.sample(sourceStack.getLevel().getRandom()) / size : 0;
-                    biomeWeather.clearTime = setRain ? 0 : ServerLevel.RAIN_DURATION.sample(sourceStack.getLevel().getRandom()) / size;
-
-                    biomeWeather.thunderTime = isThunder ? ServerLevel.THUNDER_DURATION.sample(sourceStack.getLevel().getRandom()) / size : 0;
+                    biomeWeather.thunderTime = isThunder ? biomeRain.sampleThunder(level.getRandom()) / size : 0;
 
                     found = true;
                 }
             }
             if (found) {
-                WeatherManager.sendBiomePacket(levelBiomeWeather, sourceStack.getLevel().players());
+                WeatherManager.sendBiomePacket(levelBiomeWeather, level.players());
             }
         }
         return 0;

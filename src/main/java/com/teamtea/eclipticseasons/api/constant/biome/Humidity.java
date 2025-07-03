@@ -5,11 +5,9 @@ import com.teamtea.eclipticseasons.api.constant.climate.BiomeRain;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.misc.ITranslatable;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
-import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
-import net.minecraft.tags.BiomeTags;
 import net.minecraft.world.level.biome.Biome;
 
 import java.util.Locale;
@@ -90,7 +88,7 @@ public enum Humidity implements ITranslatable {
         boolean ignore = true;
         float t = EclipticUtil.getTemperatureFloatConstant(solarTerm, biome, ignore);
         BiomeRain biomeRain = solarTerm.getBiomeRain(biomeHolder);
-        float r = (EclipticUtil.getDownfallFloatConstant(solarTerm, biome, ignore) * 1.5f + biomeRain.getRainChane() * 0.5f) / 2f;
+        float r = (EclipticUtil.getDownfallFloatConstant(solarTerm, biome, ignore) * 1.5f + biomeRain.getRainChance() * 0.5f) / 2f;
         Humidity h = Humidity.getHumid(r, t);
         return h;
     }

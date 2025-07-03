@@ -25,6 +25,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public abstract class AbstractModelDefinitionProvider extends ESClientDataMapProvider<ESModelLoadedJson> {
@@ -67,6 +68,10 @@ public abstract class AbstractModelDefinitionProvider extends ESClientDataMapPro
         protected void registerModels() {
         }
 
+        public ExtraModelBuilder snowyWithExistingParent(String name) {
+            return super.withExistingParent("snowy/" + name, name);
+        }
+
         // If set folder would not use folder
         // private ResourceLocation extendWithFolder(ResourceLocation rl) {
         //     if (rl.getPath().contains("/")) {
@@ -106,11 +111,23 @@ public abstract class AbstractModelDefinitionProvider extends ESClientDataMapPro
         return new ResourceLocation(rl.getNamespace(), ExtraModelProvider.BLOCK_FOLDER + "/" + rl.getPath());
     }
 
-    protected VariantLike.VariantBuilder variant(ExtraModelBuilder extraModelBuilder) {
+    public ResourceLocation snow_rl(String path) {
+        String prefix = "snowy/";
+        if (path.startsWith(prefix)) {
+            return withBlockFolder(new ResourceLocation(modid, path));
+        }
+        return withBlockFolder(new ResourceLocation(modid, "snowy/" + path));
+    }
+
+    protected static VariantLike.VariantBuilder variant(ExtraModelBuilder extraModelBuilder) {
         return VariantLike.builder(withBlockFolder(extraModelBuilder.getLocation()));
     }
 
-    protected VariantLike.VariantBuilder variant(ResourceLocation resourceLocation) {
+    protected VariantLike.VariantBuilder variant(String path) {
+        return VariantLike.builder(withBlockFolder(new ResourceLocation(modid, path)));
+    }
+
+    protected static VariantLike.VariantBuilder variant(ResourceLocation resourceLocation) {
         return VariantLike.builder(withBlockFolder(resourceLocation));
     }
 
@@ -382,6 +399,16 @@ public abstract class AbstractModelDefinitionProvider extends ESClientDataMapPro
             // modelGenerator.accept(models().getBuilder(modelLoc));
             modelGenerator.apply(modelLoc);
             return multiPart(condition, variants);
+        }
+
+        public ModelDefinitionBuilder multiPartWithGenerate(ConditionLike condition, Supplier<List<ExtraModelBuilder>> modelGenerator) {
+            return multiPart(condition, modelGenerator.get().stream().map(AbstractModelDefinitionProvider::variant)
+                    .map(VariantLike.VariantBuilder::build)
+                    .toArray(VariantLike[]::new));
+        }
+
+        public ModelDefinitionBuilder multiPartWithGenerateSingle(ConditionLike condition, Supplier<ExtraModelBuilder> modelGenerator) {
+            return multiPart(condition, AbstractModelDefinitionProvider.variant(modelGenerator.get()).build());
         }
 
         public ModelDefinitionBuilder multiPart(VariantLike... variant) {

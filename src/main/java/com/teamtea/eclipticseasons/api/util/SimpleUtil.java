@@ -3,7 +3,7 @@ package com.teamtea.eclipticseasons.api.util;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
-import com.teamtea.eclipticseasons.api.misc.ISolarTerm;
+import com.teamtea.eclipticseasons.api.constant.solar.ISolarTerm;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.common.core.solar.SolarTermHelper;
 import com.teamtea.eclipticseasons.config.CommonConfig;

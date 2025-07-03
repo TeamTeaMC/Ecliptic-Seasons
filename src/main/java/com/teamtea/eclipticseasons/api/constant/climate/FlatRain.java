@@ -32,7 +32,7 @@ public enum FlatRain implements BiomeRain {
 
 
     @Override
-    public float getRainChane() {
+    public float getRainChance() {
         return this.rainChane;
     }
 

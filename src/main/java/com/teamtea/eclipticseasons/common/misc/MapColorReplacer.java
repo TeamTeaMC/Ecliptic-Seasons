@@ -8,6 +8,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.material.MapColor;
 
 public class MapColorReplacer {
@@ -40,7 +41,7 @@ public class MapColorReplacer {
 
         // long seed = (long) Mth.abs(pos.hashCode());
 
-        isLight = flag != 0  && (!forceCheckLoad || MapChecker.isLoadedOnlyServer(level, pos))
+        isLight = flag != 0 && (!forceCheckLoad || MapChecker.isLoadedOnlyServer(level, pos))
                 && MapChecker.getHeightOrUpdate(level, pos, false) <= pos.getY() - offset
                 && state.getBlock() != Blocks.SNOW_BLOCK
                 && (!forceCheckLoad || MapChecker.isLoadNearByOnlyServer(level, pos))
@@ -51,11 +52,17 @@ public class MapColorReplacer {
         ;
 
         if (isLight) {
-            if (MapChecker.extraSnowPassable(state)) {
-                isLight = !MapChecker.extraSnowPassable(level.getBlockState(pos.above()));
-            } else {
-                if (MapChecker.leaveLike(flag) && !level.getBlockState(pos.above()).isAir()) {
+            if (MapChecker.leaveLike(flag)) {
+                BlockState aboveState = level.getBlockState(pos.above());
+                boolean specialLeaves = aboveState.is(state.getBlock())
+                        && (Heightmap.Types.MOTION_BLOCKING_NO_LEAVES.isOpaque().test(state) ||
+                        MapChecker.extraSnowPassable(aboveState));
+                if (specialLeaves) {
                     isLight = CommonConfig.Season.snowyTree.get();
+                }
+            } else {
+                if (MapChecker.extraSnowPassable(state)) {
+                    isLight = !MapChecker.extraSnowPassable(level.getBlockState(pos.above()));
                 }
             }
         }

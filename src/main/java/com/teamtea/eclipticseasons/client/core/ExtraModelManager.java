@@ -518,13 +518,22 @@ public class ExtraModelManager {
 
         if (isLight) {
             // checkPos.set(pos.getX(), pos.getY() + 1, pos.getZ());
-            if (isLeaf) {
-                if (!specialLeaves) {
-                    specialLeaves = !blockAndTintGetter.getBlockState(pos.above()).isAir();
+            BlockPos checkPos = pos.above();
+            if (isLeaf) { {
+                    if (!specialLeaves) {
+                        BlockState aboveState = blockAndTintGetter.getBlockState(checkPos);
+                        boolean checkExtra = aboveState.is(state.getBlock())
+                                && (Heightmap.Types.MOTION_BLOCKING_NO_LEAVES.isOpaque().test(state) ||
+                                MapChecker.extraSnowPassable(aboveState));
+                        if (checkExtra) {
+                            isLight = CommonConfig.Season.snowyTree.get();
+                            if (isLight) specialLeaves = true;
+                        }
+                    }
                 }
             } else {
                 if (MapChecker.extraSnowPassable(state))
-                    isLight = !MapChecker.extraSnowPassable(blockAndTintGetter.getBlockState(pos.above()));
+                    isLight = !MapChecker.extraSnowPassable(blockAndTintGetter.getBlockState(checkPos));
             }
         }
 

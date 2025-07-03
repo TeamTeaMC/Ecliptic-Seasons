@@ -3,12 +3,10 @@ package com.teamtea.eclipticseasons.common.core.biome;
 import com.teamtea.eclipticseasons.api.constant.tag.ESEnchantmentTags;
 import com.teamtea.eclipticseasons.api.constant.tag.ESItemTags;
 import com.teamtea.eclipticseasons.api.constant.tag.ESMobEffectTags;
-import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
 import com.teamtea.eclipticseasons.common.registry.EffectRegistry;
 import com.teamtea.eclipticseasons.common.registry.ModAdvancements;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.climate.BiomeRain;
-import com.teamtea.eclipticseasons.api.constant.climate.FlatRain;
 import com.teamtea.eclipticseasons.api.constant.climate.SnowTerm;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.constant.tag.ClimateTypeBiomeTags;
@@ -517,7 +515,7 @@ public class WeatherManager {
                     biomeWeather.rainTime--;
                     if (!biomeWeather.shouldThunder()) {
                         SolarTerm solarTerm = EclipticUtil.getNowSolarTerm(level);
-                        BiomeRain biomeRain = solarTerm.getBiomeRain(biomeWeather.biomeHolder);
+                        BiomeRain biomeRain = getBiomeRain(level, solarTerm, biomeWeather.biomeHolder);
                         float weight = biomeRain.getThunderChance()
                                 * ((CommonConfig.Weather.thunderChanceMultiplier.get() * 1f) / 100f)
                                 * size / 3000f;
@@ -527,12 +525,12 @@ public class WeatherManager {
                     }
                 } else {
                     SolarTerm solarTerm = EclipticUtil.getNowSolarTerm(level);
-                    BiomeRain biomeRain = solarTerm.getBiomeRain(biomeWeather.biomeHolder);
+                    BiomeRain biomeRain = getBiomeRain(level, solarTerm, biomeWeather.biomeHolder);
                     float downfall = EclipticUtil.getDownfallFloatConstant(solarTerm, biomeWeather.biomeHolder.value(), !level.isClientSide());
                     if (biomeWeather.biomeHolder.is(BiomeTags.IS_SAVANNA)) {
                         downfall += 0.2f;
                     }
-                    float weight = biomeRain.getRainChane()
+                    float weight = biomeRain.getRainChance()
                             * Math.max(0.01f, downfall)
                             * ((CommonConfig.Weather.rainChanceMultiplier.get() * 1f) / 100f);
                     if (level.getRandom().nextInt(1000) / 1000.f < weight) {
@@ -563,6 +561,15 @@ public class WeatherManager {
         }
     }
 
+
+    public static BiomeRain getBiomeRain(ServerLevel level, SolarTerm solarTerm, Holder<Biome> biomeWeather) {
+        return getBiomeRain(solarTerm, biomeWeather).cast(level);
+    }
+
+    public static BiomeRain getBiomeRain(SolarTerm solarTerm, Holder<Biome> biomeWeather) {
+        return solarTerm.getBiomeRain(biomeWeather);
+    }
+
     public static void initNewWorldWeather(ServerLevel level, RandomSource random, SolarTerm solarTerm) {
         if (!CommonConfig.Weather.shouldInitWeather.get()
                 || level.isClientSide() || !MapChecker.isValidDimension(level)) {
@@ -581,12 +588,12 @@ public class WeatherManager {
                 continue;
             if (weatherLocal) {
                 float ramdomKey = level.getRandom().nextInt(1000) / 1000.f * 3;
-                BiomeRain biomeRain = solarTerm.getBiomeRain(biomeWeather.biomeHolder);
+                BiomeRain biomeRain = getBiomeRain(solarTerm, biomeWeather.biomeHolder);
                 float downfall = EclipticUtil.getDownfallFloatConstant(solarTerm, biomeWeather.biomeHolder.value(), !level.isClientSide());
                 if (biomeWeather.biomeHolder.is(BiomeTags.IS_SAVANNA)) {
                     downfall += 0.2f;
                 }
-                float weight = biomeRain.getRainChane()
+                float weight = biomeRain.getRainChance()
                         * Math.max(0.01f, downfall)
                         * ((CommonConfig.Weather.rainChanceMultiplier.get() * 1f) / 100f);
                 if (ramdomKey < weight) {
@@ -647,7 +654,7 @@ public class WeatherManager {
                     && t.getSolarTermsDay() % CommonConfig.Season.lastingDaysOfEachTerm.get() == 0) {
                 SolarTerm solarTerm = t.getSolarTerm();
                 if (solarTerm != SolarTerm.NONE)
-                    SimpleUtil.sendSolarTermMessage(serverPlayer,solarTerm,isLogged);
+                    SimpleUtil.sendSolarTermMessage(serverPlayer, solarTerm, isLogged);
             }
         });
         WeatherManager.sendBiomePacket(WeatherManager.getBiomeList(serverPlayer.level()), List.of(serverPlayer));

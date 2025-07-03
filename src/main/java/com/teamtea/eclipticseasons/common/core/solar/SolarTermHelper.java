@@ -3,7 +3,7 @@ package com.teamtea.eclipticseasons.common.core.solar;
 import com.mojang.datafixers.util.Pair;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.data.season.SeasonPhase;
-import com.teamtea.eclipticseasons.api.misc.ISolarTerm;
+import com.teamtea.eclipticseasons.api.constant.solar.ISolarTerm;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;

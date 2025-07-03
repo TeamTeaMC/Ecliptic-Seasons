@@ -8,7 +8,12 @@ import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstapContext;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.function.BiFunction;
 
 public class SnowDefinitionsRegistry {
     public static final ResourceKey<SnowDefinition> OVERLAY = createKey("test/overlay");
@@ -41,17 +46,67 @@ public class SnowDefinitionsRegistry {
                 .info(SnowDefinition.Info.builder().flag(MapChecker.FLAG_CUSTOM_JSON_WITH_TOP_LEAVES).mid(ClientModelDefinitions.SNOWY_LEAVES_TOP).mid2(ClientModelDefinitions.SNOWY_LEAVES_ATTACH).build())
                 .build());
 
-        context.register(SNOWY_SWEET_BERRY_BUSH,SnowDefinition.builder()
+        context.register(SNOWY_SWEET_BERRY_BUSH, SnowDefinition.builder()
                 .blocks(HolderSet.direct(Blocks.SWEET_BERRY_BUSH.builtInRegistryHolder()))
                 .info(SnowDefinition.Info.builder().flag(MapChecker.FLAG_CUSTOM_JSON_PLANTS).offset(1).mid(ClientModelDefinitions.SNOWY_SWEET_BERRY_BUSH).build())
                 .build());
-        context.register(SNOWY_DEAD_BUSH,SnowDefinition.builder()
+        context.register(SNOWY_DEAD_BUSH, SnowDefinition.builder()
                 .blocks(HolderSet.direct(Blocks.DEAD_BUSH.builtInRegistryHolder()))
                 .info(SnowDefinition.Info.builder().flag(MapChecker.FLAG_CUSTOM_JSON_PLANTS).offset(1).mid(ClientModelDefinitions.SNOWY_DEAD_BUSH).build())
                 .build());
-        context.register(SNOWY_SUGAR_CANE,SnowDefinition.builder()
+        context.register(SNOWY_SUGAR_CANE, SnowDefinition.builder()
                 .blocks(HolderSet.direct(Blocks.SUGAR_CANE.builtInRegistryHolder()))
                 .info(SnowDefinition.Info.builder().flag(MapChecker.FLAG_CUSTOM_JSON_VINE_LIKE).mid(ClientModelDefinitions.SNOWY_SUGAR_CANE).build())
                 .build());
+    }
+
+    private static HolderSet.@NotNull Direct<Block> set(Block bamboo) {
+        return HolderSet.direct(bamboo.builtInRegistryHolder());
+    }
+
+    public static void register(BootstapContext<SnowDefinition> context, Block block, BiFunction<Block, SnowDefinition.SnowDefinitionBuilder, SnowDefinition.SnowDefinitionBuilder> function) {
+        context.register(createSnowyKey(block), function.apply(block,
+                SnowDefinition.builder()
+        ).blocks(set(block)).build());
+    }
+
+    public static void addPlant(BootstapContext<SnowDefinition> context, Block block) {
+        addPlant(context, block, MapChecker.FLAG_CUSTOM_JSON_PLANTS);
+    }
+
+    public static void addPlant(BootstapContext<SnowDefinition> context, Block block, int flag) {
+        String path = path(block);
+        context.register(createSnowyKey(path), SnowDefinition.builder()
+                .blocks(set(block))
+                .info(SnowDefinition.Info.builder().offset(1).flag(flag).mid(getSnowModelPath(path)).build())
+                .build());
+    }
+
+    private static @NotNull ResourceKey<SnowDefinition> createSnowyKey(String path) {
+        return createKey(
+                "snowy_" + path
+        );
+    }
+
+    private static @NotNull ResourceKey<SnowDefinition> createSnowyKey(Block block) {
+        return createKey(
+                "snowy_" + path(block)
+        );
+    }
+
+    public static @NotNull String path(Block block) {
+        return block.builtInRegistryHolder().key().location().getPath();
+    }
+
+    public static @NotNull ResourceLocation getSnowModelPath(String path) {
+        return EclipticSeasons.rl("snowy/" + path);
+    }
+
+    public static @NotNull ResourceLocation getSnowModelPath(Block block) {
+        return EclipticSeasons.rl("snowy/" + path(block));
+    }
+
+    public static @NotNull ResourceLocation getSnowModelPath(String modid, Block block) {
+        return new ResourceLocation(modid, "snowy/" + path(block));
     }
 }

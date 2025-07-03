@@ -10,7 +10,6 @@ import net.minecraft.data.worldgen.BootstapContext;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraftforge.common.Tags;
 
 import java.util.Optional;
 
@@ -29,8 +28,8 @@ public class BiomeClimateSettingsRegistry {
         Optional<SolarTermValueMap<Float>> emptyMap = Optional.empty();
         SolarTermValueMap.Builder<Float> builder = SolarTermValueMap.builder();
         for (MonsoonRain monsoonRain : MonsoonRain.collectValues()) {
-            if ((monsoonRain.getRainChane() > 0)) {
-                builder.putSolarTerm(monsoonRain.getSolarTerm(), Math.round(monsoonRain.getRainChane() / 1.5f * 1000.0f) / 1000.0f);
+            if ((monsoonRain.getRainChance() > 0)) {
+                builder.putSolarTerm(monsoonRain.getSolarTerm(), Math.round(monsoonRain.getRainChance() / 1.5f * 1000.0f) / 1000.0f);
             }
         }
 
