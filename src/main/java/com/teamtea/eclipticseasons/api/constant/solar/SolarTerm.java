@@ -4,6 +4,8 @@ import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.constant.climate.*;
 import com.teamtea.eclipticseasons.api.constant.solar.color.base.*;
 import com.teamtea.eclipticseasons.api.constant.tag.ClimateTypeBiomeTags;
+import com.teamtea.eclipticseasons.api.data.weather.CustomRain;
+import com.teamtea.eclipticseasons.api.data.weather.CustomSnowTerm;
 import com.teamtea.eclipticseasons.api.misc.ITranslatableWithPlaceholder;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.misc.SimplePair;
@@ -17,6 +19,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.biome.Biome;
 
 import java.util.Locale;
+import java.util.Map;
 
 public enum SolarTerm implements ITranslatableWithPlaceholder, ISolarTerm {
     // Spring Solar Terms
@@ -206,6 +209,10 @@ public enum SolarTerm implements ITranslatableWithPlaceholder, ISolarTerm {
 
 
     public BiomeRain getBiomeRain(Holder<Biome> biomeHolder) {
+        Map<SolarTerm, CustomRain> customRainMap = BiomeClimateManager.getCustomRain(biomeHolder.value(), true);
+        CustomRain customRain = customRainMap.getOrDefault(this, null);
+        if (customRain != null) return customRain;
+
         TagKey<Biome> tag = BiomeClimateManager.getTag(biomeHolder.value());
         if (tag == ClimateTypeBiomeTags.RAINLESS)
             return FlatRain.RAINLESS;
@@ -245,8 +252,10 @@ public enum SolarTerm implements ITranslatableWithPlaceholder, ISolarTerm {
     // 冻洋全年下雪
     // 这里注意的一个地方是海水的比热容比陆地大，应该设定一个调整后的雪期
     // 此外Mojang设定是，所有海洋都是0.5的温度，除了深海冻洋
-    public static SnowTerm getSnowTerm(Biome biome) {
+    public static ISnowTerm getSnowTerm(Biome biome) {
         if (biome == null) return SnowTerm.T05;
+        CustomSnowTerm customSnowTerm = BiomeClimateManager.getCustomSnowTerm(biome, true);
+        if (customSnowTerm != null) return customSnowTerm;
         // float t = BiomeClimateManager.agent$GetBaseTemperature(biome);
         float t = biome.getModifiedClimateSettings().temperature();
 
@@ -280,8 +289,10 @@ public enum SolarTerm implements ITranslatableWithPlaceholder, ISolarTerm {
     }
 
     @Deprecated
-    public static SnowTerm getSnowTerm(Biome biome, boolean isServer) {
+    public static ISnowTerm getSnowTerm(Biome biome, boolean isServer) {
         if (biome == null) return SnowTerm.T05;
+        CustomSnowTerm customSnowTerm = BiomeClimateManager.getCustomSnowTerm(biome, isServer);
+        if (customSnowTerm != null) return customSnowTerm;
         // float t = BiomeClimateManager.getDefaultTemperature(biome, isServer);
         float t = biome.getModifiedClimateSettings().temperature();
 

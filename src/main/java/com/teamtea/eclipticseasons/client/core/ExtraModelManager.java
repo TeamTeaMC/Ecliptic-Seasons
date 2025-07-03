@@ -523,7 +523,7 @@ public class ExtraModelManager {
                     if (!specialLeaves) {
                         BlockState aboveState = blockAndTintGetter.getBlockState(checkPos);
                         boolean checkExtra = aboveState.is(state.getBlock())
-                                && (Heightmap.Types.MOTION_BLOCKING_NO_LEAVES.isOpaque().test(state) ||
+                                && (Heightmap.Types.MOTION_BLOCKING_NO_LEAVES.isOpaque().test(aboveState) ||
                                 MapChecker.extraSnowPassable(aboveState));
                         if (checkExtra) {
                             isLight = CommonConfig.Season.snowyTree.get();

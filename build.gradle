@@ -257,8 +257,8 @@ dependencies {
     compileOnly fg.deobf("curse.maven:legendary-survival-overhaul-840254:6703282")
 //    onlyMainRuntimeOnly fg.deobf("curse.maven:legendary-survival-overhaul-840254:6703282")
 
-    compileOnly fg.deobf("curse.maven:cold-sweat-506194:6071049")
-//    onlyMainRuntimeOnly fg.deobf("curse.maven:cold-sweat-506194:6071049")
+    compileOnly fg.deobf("curse.maven:cold-sweat-506194:6503192")
+//    onlyMainRuntimeOnly fg.deobf("curse.maven:cold-sweat-506194:6503192")
 
 
     compileOnly fg.deobf("curse.maven:snowy-spirit-566142:5928029")

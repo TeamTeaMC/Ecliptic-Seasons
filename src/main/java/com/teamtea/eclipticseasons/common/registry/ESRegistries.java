@@ -9,6 +9,8 @@ import com.teamtea.eclipticseasons.api.data.quest.SeasonQuest;
 import com.teamtea.eclipticseasons.api.data.season.SeasonCycle;
 import com.teamtea.eclipticseasons.api.data.season.SeasonPhase;
 import com.teamtea.eclipticseasons.api.data.season.SnowDefinition;
+import com.teamtea.eclipticseasons.api.data.weather.CustomRainBuilder;
+import com.teamtea.eclipticseasons.api.data.weather.CustomSnowTerm;
 import net.minecraft.Util;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
@@ -32,6 +34,10 @@ public class ESRegistries {
     public static final ResourceKey<Registry<SeasonPhase>> SEASON_PHASE = ResourceKey.createRegistryKey(EclipticSeasons.rl("season_phase"));
 
     public static final ResourceKey<Registry<SeasonCycle>> SEASON_CYCLE = ResourceKey.createRegistryKey(EclipticSeasons.rl("season_cycle"));
+
+    public static final ResourceKey<Registry<CustomRainBuilder>> BIOME_RAIN = ResourceKey.createRegistryKey(EclipticSeasons.rl("biome_rain"));
+
+    public static final ResourceKey<Registry<CustomSnowTerm>> SNOW_TERM = ResourceKey.createRegistryKey(EclipticSeasons.rl("snow_term"));
 
 
     public static <T> String createLangKey(ResourceKey<Registry<T>> registryResourceKey, ResourceLocation resourceLocation) {

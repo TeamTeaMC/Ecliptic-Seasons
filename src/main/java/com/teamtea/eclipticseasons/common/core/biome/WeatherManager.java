@@ -520,7 +520,7 @@ public class WeatherManager {
                                 * ((CommonConfig.Weather.thunderChanceMultiplier.get() * 1f) / 100f)
                                 * size / 3000f;
                         if (level.getRandom().nextInt(1000) / 1000.f < weight) {
-                            biomeWeather.thunderTime = ServerLevel.THUNDER_DURATION.sample(random) / size;
+                            biomeWeather.thunderTime = biomeRain.getThunderDuration(random) / size;
                         }
                     }
                 } else {
@@ -534,9 +534,9 @@ public class WeatherManager {
                             * Math.max(0.01f, downfall)
                             * ((CommonConfig.Weather.rainChanceMultiplier.get() * 1f) / 100f);
                     if (level.getRandom().nextInt(1000) / 1000.f < weight) {
-                        biomeWeather.rainTime = ServerLevel.RAIN_DURATION.sample(random) / size;
+                        biomeWeather.rainTime = biomeRain.getRainDuration(random) / size;
                     } else {
-                        biomeWeather.clearTime = ServerLevel.RAIN_DURATION.sample(random) / size;
+                        biomeWeather.clearTime = biomeRain.getRainDelay(random) / size;
                     }
                 }
             }
@@ -563,7 +563,7 @@ public class WeatherManager {
 
 
     public static BiomeRain getBiomeRain(ServerLevel level, SolarTerm solarTerm, Holder<Biome> biomeWeather) {
-        return getBiomeRain(solarTerm, biomeWeather).cast(level);
+        return getBiomeRain(solarTerm, biomeWeather).resolve(level);
     }
 
     public static BiomeRain getBiomeRain(SolarTerm solarTerm, Holder<Biome> biomeWeather) {
@@ -597,20 +597,20 @@ public class WeatherManager {
                         * Math.max(0.01f, downfall)
                         * ((CommonConfig.Weather.rainChanceMultiplier.get() * 1f) / 100f);
                 if (ramdomKey < weight) {
-                    biomeWeather.rainTime = ServerLevel.RAIN_DURATION.sample(random) / size;
+                    biomeWeather.rainTime = biomeRain.getRainDuration(random) / size;
                 } else {
-                    biomeWeather.clearTime = ServerLevel.RAIN_DURATION.sample(random) / size;
+                    biomeWeather.clearTime = biomeRain.getRainDelay(random) / size;
                 }
                 if (biomeWeather.shouldRain()) {
                     weight = biomeRain.getThunderChance()
                             * ((CommonConfig.Weather.thunderChanceMultiplier.get() * 1f) / 100f);
                     if (ramdomKey / 1000.f < weight) {
-                        biomeWeather.thunderTime = ServerLevel.THUNDER_DURATION.sample(random) / size;
+                        biomeWeather.thunderTime = biomeRain.getThunderDuration(random) / size;
                     }
                 }
             }
 
-            SnowTerm snowTerm = SolarTerm.getSnowTerm(biomeWeather.biomeHolder.value(), !level.isClientSide());
+            var snowTerm = SolarTerm.getSnowTerm(biomeWeather.biomeHolder.value(), !level.isClientSide());
             boolean flag_cold = solarTerm.isInTerms(snowTerm.getStart(), snowTerm.getEnd());
             boolean flag_little_cold = lastSolarTerm.isInTerms(snowTerm.getStart(), snowTerm.getEnd());
             SnowRenderStatus snow = flag_cold ? SnowRenderStatus.SNOW :

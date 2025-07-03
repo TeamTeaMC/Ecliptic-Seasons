@@ -137,10 +137,10 @@ public class CommandHandler {
             for (WeatherManager.BiomeWeather biomeWeather : levelBiomeWeather) {
                 if (result.test(biomeWeather.biomeHolder)) {
                     BiomeRain biomeRain = WeatherManager.getBiomeRain(level, solarTerm, biomeWeather.biomeHolder);
-                    biomeWeather.rainTime = setRain ? biomeRain.sampleRain(level.getRandom()) / size : 0;
-                    biomeWeather.clearTime = setRain ? 0 : biomeRain.sampleRainDelay(level.getRandom()) / size;
+                    biomeWeather.rainTime = setRain ? biomeRain.getRainDuration(level.getRandom()) / size : 0;
+                    biomeWeather.clearTime = setRain ? 0 : biomeRain.getRainDelay(level.getRandom()) / size;
 
-                    biomeWeather.thunderTime = isThunder ? biomeRain.sampleThunder(level.getRandom()) / size : 0;
+                    biomeWeather.thunderTime = isThunder ? biomeRain.getThunderDuration(level.getRandom()) / size : 0;
 
                     found = true;
                 }

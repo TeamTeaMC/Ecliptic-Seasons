@@ -6,6 +6,8 @@ import com.teamtea.eclipticseasons.api.data.climate.BiomesClimateSettings;
 import com.teamtea.eclipticseasons.api.data.craft.HumidityControl;
 import com.teamtea.eclipticseasons.api.data.season.SeasonCycle;
 import com.teamtea.eclipticseasons.api.data.season.SnowDefinition;
+import com.teamtea.eclipticseasons.api.data.weather.CustomRainBuilder;
+import com.teamtea.eclipticseasons.api.data.weather.CustomSnowTerm;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
@@ -40,8 +42,10 @@ public class ClientCon {
     public static DataPackEventMessage<BiomesClimateSettings> biomeDataPackCache;
     public static DataPackEventMessage<SnowDefinition> snowDefCache;
     public static DataPackEventMessage<SeasonCycle> seasonCycleCache;
-
-    public static ClientAgent agent = new ClientAgent(){};
+    public static DataPackEventMessage<CustomRainBuilder> biomeRainCache;
+    public static DataPackEventMessage<CustomSnowTerm> snowTermCache;
+    public static ClientAgent agent = new ClientAgent() {
+    };
 
     public static void tick(Level clientLevel) {
         if (MapChecker.isValidDimension(clientLevel)) {
@@ -60,7 +64,7 @@ public class ClientCon {
             isEvening = false;
             isNoon = false;
             ClientCon.progress = 0;
-            ClientCon.nowSolarYear=0;
+            ClientCon.nowSolarYear = 0;
         }
 
         if (!roomCache.isEmpty()) {

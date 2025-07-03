@@ -33,23 +33,23 @@ public interface BiomeRain {
         return Season.collectValues()[this.ordinal() / 6];
     }
 
-    public default BiomeRain cast(Level level) {
+    public default BiomeRain resolve(Level level) {
         return this;
     }
 
-    public default int sampleRain(RandomSource random) {
+    public default int getRainDuration(RandomSource random) {
         return ServerLevel.RAIN_DURATION.sample(random);
     }
 
-    public default int sampleRainDelay(RandomSource random) {
+    public default int getRainDelay(RandomSource random) {
         return ServerLevel.RAIN_DELAY.sample(random);
     }
 
-    public default int sampleThunder(RandomSource random) {
+    public default int getThunderDuration(RandomSource random) {
         return ServerLevel.THUNDER_DURATION.sample(random);
     }
 
-    public default int sampleThunderDelay(RandomSource random) {
+    public default int getThunderDelay(RandomSource random) {
         return ServerLevel.THUNDER_DELAY.sample(random);
     }
 

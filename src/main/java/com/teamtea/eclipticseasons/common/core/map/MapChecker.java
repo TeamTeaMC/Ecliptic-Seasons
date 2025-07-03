@@ -488,7 +488,8 @@ public class MapChecker {
     public static boolean extraSnowPassable(BlockState state) {
         SnowDefinition.Info snow = SnowChecker.getUncacheSnow(state);
         if (snow != SnowDefinition.Info.EMPTY) {
-            return snow.isSnowPassable();
+            return snow.isSnowPassable()
+                    || snow.getFlag() == FLAG_CUSTOM_JSON_WITH_TOP_LEAVES;
         }
         Block onBlock = state.getBlock();
         return ((

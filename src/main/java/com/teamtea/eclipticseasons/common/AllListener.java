@@ -7,6 +7,8 @@ import com.teamtea.eclipticseasons.api.data.craft.HumidityControl;
 import com.teamtea.eclipticseasons.api.data.season.SeasonCycle;
 import com.teamtea.eclipticseasons.api.data.season.SeasonPhase;
 import com.teamtea.eclipticseasons.api.data.season.SnowDefinition;
+import com.teamtea.eclipticseasons.api.data.weather.CustomRainBuilder;
+import com.teamtea.eclipticseasons.api.data.weather.CustomSnowTerm;
 import com.teamtea.eclipticseasons.api.event.CanPlantGrowEvent;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.common.advancement.SolarTermsRecordCa;
@@ -314,5 +316,17 @@ public class AllListener {
                 ESRegistries.SEASON_CYCLE,
                 registryAccess.registryOrThrow(ESRegistries.SEASON_CYCLE).entrySet().stream().map(Map.Entry::getValue).toList(),
                 SeasonCycle.CODEC));
+
+        SimpleNetworkHandler.send(serverPlayerList, new DataPackEventMessage<>(
+                registryAccess,
+                ESRegistries.BIOME_RAIN,
+                registryAccess.registryOrThrow(ESRegistries.BIOME_RAIN).entrySet().stream().map(Map.Entry::getValue).toList(),
+                CustomRainBuilder.CODEC));
+
+        SimpleNetworkHandler.send(serverPlayerList, new DataPackEventMessage<>(
+                registryAccess,
+                ESRegistries.SNOW_TERM,
+                registryAccess.registryOrThrow(ESRegistries.SNOW_TERM).entrySet().stream().map(Map.Entry::getValue).toList(),
+                CustomSnowTerm.CODEC));
     }
 }

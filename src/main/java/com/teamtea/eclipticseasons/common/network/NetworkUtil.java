@@ -81,10 +81,9 @@ public class NetworkUtil {
         {
             if (context.get().getDirection() == NetworkDirection.PLAY_TO_CLIENT) {
                 // note 观察是否更新正常
-                if(ClientConfig.Renderer.resetRendererAfterSleep.get()){
+                if (ClientConfig.Renderer.resetRendererAfterSleep.get()) {
                     Minecraft.getInstance().levelRenderer.allChanged();
-                }
-                else {
+                } else {
                     if (Minecraft.getInstance().cameraEntity instanceof LivingEntity livingEntity)
                         WorldRenderer.setAllDirty(SectionPos.of(livingEntity.getOnPos()));
                 }
@@ -121,15 +120,16 @@ public class NetworkUtil {
                 if (dataPackEvent.resourceKey.equals(ESRegistries.HUMIDITY_CONTROL)) {
                     List<HumidityControl> build = dataPackEvent.build(registryAccess, HumidityControl.class);
                     ClientCon.humidityControls.addAll(build);
-                }
-                if (dataPackEvent.resourceKey.equals(ESRegistries.BIOME_CLIMATE_SETTING)) {
+                } else if (dataPackEvent.resourceKey.equals(ESRegistries.BIOME_CLIMATE_SETTING)) {
                     ClientCon.biomeDataPackCache = dataPackEvent;
-                }
-                if (dataPackEvent.resourceKey.equals(ESRegistries.SNOW_DEFINITIONS)) {
+                } else if (dataPackEvent.resourceKey.equals(ESRegistries.SNOW_DEFINITIONS)) {
                     ClientCon.snowDefCache = dataPackEvent;
-                }
-                if (dataPackEvent.resourceKey.equals(ESRegistries.SEASON_CYCLE)) {
+                } else if (dataPackEvent.resourceKey.equals(ESRegistries.SEASON_CYCLE)) {
                     ClientCon.seasonCycleCache = dataPackEvent;
+                } else if (dataPackEvent.resourceKey.equals(ESRegistries.BIOME_RAIN)) {
+                    ClientCon.biomeRainCache = dataPackEvent;
+                } else if (dataPackEvent.resourceKey.equals(ESRegistries.SNOW_TERM)) {
+                    ClientCon.snowTermCache = dataPackEvent;
                 }
             }
         });
@@ -142,7 +142,7 @@ public class NetworkUtil {
             if (context.get().getDirection() == NetworkDirection.PLAY_TO_CLIENT) {
                 Level client = getClient();
                 if (client != null) {
-                    ClientCon.humidityModificationLevel =(int)message.value;
+                    ClientCon.humidityModificationLevel = (int) message.value;
                 }
             }
         });

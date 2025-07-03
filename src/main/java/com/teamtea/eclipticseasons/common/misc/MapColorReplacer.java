@@ -55,7 +55,7 @@ public class MapColorReplacer {
             if (MapChecker.leaveLike(flag)) {
                 BlockState aboveState = level.getBlockState(pos.above());
                 boolean specialLeaves = aboveState.is(state.getBlock())
-                        && (Heightmap.Types.MOTION_BLOCKING_NO_LEAVES.isOpaque().test(state) ||
+                        && (Heightmap.Types.MOTION_BLOCKING_NO_LEAVES.isOpaque().test(aboveState) ||
                         MapChecker.extraSnowPassable(aboveState));
                 if (specialLeaves) {
                     isLight = CommonConfig.Season.snowyTree.get();
