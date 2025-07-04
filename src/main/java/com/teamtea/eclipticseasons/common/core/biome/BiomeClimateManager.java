@@ -284,5 +284,9 @@ public class BiomeClimateManager {
         BiomeClimateManager.BIOME_CLIMATE_MAP.clear();
         BiomeClimateManager.SMALL_BIOME_MAP.clear();
         BiomeClimateManager.BIOME_TAG_KEY_MAP.clear();
+
+        BiomeClimateManager.SEASON_PHASE_MAP.clear();
+        BiomeClimateManager.CUSTOME_BIOME_RAIN_MAP.clear();
+        BiomeClimateManager.CUSTOM_SNOW_TERM_MAP.clear();
     }
 }
