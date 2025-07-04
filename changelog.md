@@ -1,3 +1,40 @@
+## 0.11.5
+
+- Adjusted the detection and display logic for the top-layer block of snow-covered leaves.
+
+### 0.11.4.1
+
+- Fixed an issue where custom snow-covered blocks marked with `WITH_TOP_LEAVES` 1101 flag were not
+  automatically treated as passable snow blocks.
+
+### 0.11.4.0.1
+
+- Bamboo saplings have been added to the natural_plants block tag, since they do not emit block events.
+
+## 0.11.4
+
+- Corrected a typo in the getRainChance function of the BiomeRain interface, now allowing players to define custom
+  BiomeRain data packs, including support for probability and timing.
+- Added a forced override data pack for Snow Term. For developers, the old Snow Term now implements a new ISnowTerm
+  interface—variable usage may need to be updated.
+- Added a compatibility patch for the Cold Sweat mod to fix an issue where, when used together with Solar Weather, rain
+  detection still relied on the global state.
+
+### 0.11.3.1
+
+- Fixed issues with detection and rendering of snow-covered leaves.
+- Adjusted how fallen leaf particles calculate color when necessary.
+
+## 0.11.3
+
+- A new data pack has been added to control seasonal prompts and log display. It allows customization of which solar
+  terms are shown and what text is displayed. Disabled by default; can be enabled in the Season settings.
+  The data pack consists of two parts:
+  Season Cycle: Used for biome-to-season mapping.
+  Season Phase: Stores the actual display information.
+- Two new display modes have been added to the calendar, allowing it to show either the current year or a preview of the
+  upcoming solar term.
+
 ### 0.11.2.1.1
 
 - Add an api function to query the current precipitation of biome.

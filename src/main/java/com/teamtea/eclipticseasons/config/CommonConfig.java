@@ -118,9 +118,8 @@ public class CommonConfig {
                     .define("EnableInform", true);
             enableInformIcon = builder.comment("Whether send inform with icon.")
                     .define("EnableInformIcon", true);
-            enableLocalInfoCalendar = builder
-                    .comment("Enable local calendar and local info synchronization.")
-                    .define("EnableLocalInfoAndCalendar", true);
+            enableLocalInfoCalendar = builder.comment("Enable local calendar and local info synchronization.")
+                    .define("EnableLocalInfoAndCalendar", false);
             calendarItemHint = builder.comment("Whether to pop up the solar term reminder when the calendar item cannot be placed.")
                     .define("CalendarItemHint", false);
             daylightChange = builder.comment("In summer, the days are long and the nights are short, while in winter, the days are short and the nights are long.")

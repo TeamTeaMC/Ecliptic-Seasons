@@ -337,9 +337,9 @@ public class Lang_EN extends LangHelper {
         add("info.eclipticseasons.bone_meal.failure", "Cannot accelerate growth under current conditions.");
 
         add("info.eclipticseasons.calendar.model", "Switched to %s display mode");
-        add("info.eclipticseasons.calendar.model.normal", "Default");
-        add("info.eclipticseasons.calendar.model.year", "Year");
-        add("info.eclipticseasons.calendar.model.next", "Next");
+        add("info.eclipticseasons.calendar.model.normal", "default");
+        add("info.eclipticseasons.calendar.model.year", "year");
+        add("info.eclipticseasons.calendar.model.next", "next");
     }
 
     private void addAdvancements() {

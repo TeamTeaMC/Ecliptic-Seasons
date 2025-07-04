@@ -338,10 +338,10 @@ public class Lang_ZH extends LangHelper {
 
         add("info.eclipticseasons.bone_meal.failure", "当前环境条件无法用骨粉催熟");
 
-        add("info.eclipticseasons.calendar.model","已切换为%显示模式");
-        add("info.eclipticseasons.calendar.model.normal","默认");
+        add("info.eclipticseasons.calendar.model","已切换为%s显示模式");
+        add("info.eclipticseasons.calendar.model.normal","一般");
         add("info.eclipticseasons.calendar.model.year","年份");
-        add("info.eclipticseasons.calendar.model.next","下一个");
+        add("info.eclipticseasons.calendar.model.next","下一节气");
     }
 
     private void addAdvancements() {

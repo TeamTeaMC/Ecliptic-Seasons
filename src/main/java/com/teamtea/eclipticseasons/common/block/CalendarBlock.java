@@ -1,10 +1,13 @@
 package com.teamtea.eclipticseasons.common.block;
 
 import com.teamtea.eclipticseasons.common.block.base.WallPlacedBlock;
+import com.teamtea.eclipticseasons.common.block.blockentity.CalendarBlockEntity;
+import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
 import com.teamtea.eclipticseasons.common.registry.BlockEntityRegistry;
 import com.teamtea.eclipticseasons.common.block.base.SimpleHorizontalEntityBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.StringRepresentable;
@@ -16,6 +19,7 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -70,11 +74,16 @@ public class CalendarBlock extends WallPlacedBlock {
                 level.setBlock(pos, cycle, Block.UPDATE_CLIENTS);
                 player.displayClientMessage(
                         Component.translatable("info.eclipticseasons.calendar.model",
-                                Component.translatable("info.eclipticseasons.calendar.model."+cycle.getValue(MODE).getSerializedName())),
+                                Component.translatable("info.eclipticseasons.calendar.model." + cycle.getValue(MODE).getSerializedName())),
                         true
                 );
             }
             return InteractionResult.SUCCESS;
+        } else if (level.isClientSide()
+                && level.getBlockEntity(pos) instanceof CalendarBlockEntity calendarBlockEntity) {
+            Holder<Biome> cropBiome = CropGrowthHandler.getCropBiome(level, pos);
+            calendarBlockEntity.setBiome(cropBiome);
+            if (!calendarBlockEntity.isInit()) calendarBlockEntity.setInit(true);
         }
         return super.use(state, level, pos, player, pHand, pHit);
     }
