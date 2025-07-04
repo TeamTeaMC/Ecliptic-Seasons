@@ -2,6 +2,7 @@ package com.teamtea.eclipticseasons.common.core.biome;
 
 import com.mojang.datafixers.util.Pair;
 import com.teamtea.eclipticseasons.api.constant.climate.BiomeClimateSettings;
+import com.teamtea.eclipticseasons.api.constant.climate.ISnowTerm;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.constant.tag.ClimateTypeBiomeTags;
 import com.teamtea.eclipticseasons.api.data.climate.BiomesClimateSettings;
@@ -39,7 +40,7 @@ public class BiomeClimateManager {
     public static final Map<Biome, Map<SolarTerm, CustomRain>> CUSTOME_BIOME_RAIN_MAP = new IdentityHashMap<>();
 
     // snow term
-    public static final Map<Biome, CustomSnowTerm> CUSTOM_SNOW_TERM_MAP = new IdentityHashMap<>();
+    public static final Map<Biome, ISnowTerm> CUSTOM_SNOW_TERM_MAP = new IdentityHashMap<>();
 
     public static void resetBiomeTemps(RegistryAccess registryAccess, boolean isServer) {
         Optional<Registry<BiomesClimateSettings>> registry = registryAccess.registry(ESRegistries.BIOME_CLIMATE_SETTING);
@@ -193,7 +194,7 @@ public class BiomeClimateManager {
         return CUSTOME_BIOME_RAIN_MAP.getOrDefault(biome, Map.of());
     }
 
-    public static @Nullable CustomSnowTerm getCustomSnowTerm(Biome biome, boolean isServer) {
+    public static @Nullable ISnowTerm getCustomSnowTerm(Biome biome, boolean isServer) {
         return CUSTOM_SNOW_TERM_MAP.getOrDefault(biome, null);
     }
 

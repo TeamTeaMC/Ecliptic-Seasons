@@ -24,6 +24,7 @@ import net.minecraftforge.common.crafting.conditions.ICondition;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -64,12 +65,14 @@ public abstract class MixinsRegistriesDatapackGenerator {
         }
     }
 
+    @Unique
     private static <E> CompletableFuture<?> dumpValue2(Path pValuePath, CachedOutput pOutput, DynamicOps<JsonElement> pOps, Encoder<E> pEncoder, E pValue) {
         Optional<JsonElement> optional = pEncoder.encodeStart(pOps, pValue).resultOrPartial((p_255999_) -> {
         });
         return optional.isPresent() ? eclipticseasons$lambda$static$0(pOutput, pValuePath, optional.get()) : CompletableFuture.completedFuture((Object) null);
     }
 
+    @Unique
     private static CompletableFuture<Void> eclipticseasons$lambda$static$0(CachedOutput output, Path path, JsonElement json) {
         return CompletableFuture.runAsync(() -> {
             try {

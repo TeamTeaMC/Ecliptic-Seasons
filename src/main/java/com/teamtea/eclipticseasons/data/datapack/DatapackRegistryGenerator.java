@@ -22,6 +22,8 @@ public class DatapackRegistryGenerator extends DatapackBuiltinEntriesProvider {
             .add(ESRegistries.SNOW_DEFINITIONS, SnowDefinitionsRegistry::bootstrap)
             .add(ESRegistries.SEASON_PHASE, SeasonPhaseRegistry::bootstrap)
             .add(ESRegistries.SEASON_CYCLE, SeasonCycleRegistry::bootstrap)
+            .add(ESRegistries.BIOME_RAIN, BiomeRainRegistry::bootstrap)
+            .add(ESRegistries.SNOW_TERM, SnowTermRegistry::bootstrap)
             ;
 
     public DatapackRegistryGenerator(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {

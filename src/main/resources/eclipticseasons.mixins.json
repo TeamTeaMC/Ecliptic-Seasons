@@ -34,7 +34,8 @@
     "compat.legendarysurvivaloverhaul_test.MixinWeatherModifier",
     "compat.snowyspirit.MixinSnowySpirit",
     "compat.snowyspirit.MixinSnowySpiritGroundStatus",
-    "data.MixinsRegistriesDatapackGenerator"
+    "data.MixinsRegistriesDatapackGenerator",
+    "data.RegistrySetBuilderMixin"
   ],
   "client": [
     "client.MixinClientLayerLightSectionStorage",

@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 public record CustomRain(int ordinal,
-                         List<Instance> weatherList,
+                         List<Weather> weatherList,
                          Optional<BiomeRain> defaultWeather,
                          float rainChance,
                          float thunderChance) implements BiomeRain {
@@ -59,7 +59,7 @@ public record CustomRain(int ordinal,
             return defaultWeather.get();
         if (weatherList.isEmpty()) return FlatRain.NONE;
         TimePeriod timePeriod = TimePeriod.fromTimeOfDay(level.getTimeOfDay(1));
-        List<Instance> selectList = new ArrayList<>();
+        List<Weather> selectList = new ArrayList<>();
         for (var weather : weatherList) {
             if (weather.timePeriod().isEmpty() || weather.timePeriod().contains(timePeriod)) {
                 selectList.add(weather);
@@ -69,7 +69,7 @@ public record CustomRain(int ordinal,
         return selectList.get(level.getRandom().nextInt(selectList.size()));
     }
 
-    public record Instance(
+    public record Weather(
             int ordinal,
             Optional<IntProvider> rain,
             Optional<IntProvider> rainDelay,
@@ -80,8 +80,8 @@ public record CustomRain(int ordinal,
             List<TimePeriod> timePeriod
     ) implements BiomeRain {
 
-        public static Instance of(SolarTerm solarTerm, CustomRainBuilder.Weather weather) {
-            return new Instance(
+        public static Weather of(SolarTerm solarTerm, CustomRainBuilder.Weather weather) {
+            return new Weather(
                     solarTerm.ordinal(),
                     weather.rain(),
                     weather.rainDelay(),

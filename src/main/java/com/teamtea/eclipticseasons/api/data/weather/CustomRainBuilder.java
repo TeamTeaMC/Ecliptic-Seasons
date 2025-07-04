@@ -25,11 +25,11 @@ public record CustomRainBuilder(
 
     public static final Codec<CustomRainBuilder> CODEC = RecordCodecBuilder.create(ins -> ins.group(
             CodecUtil.holderSetCodec(Registries.BIOME).fieldOf("biomes").forGetter(CustomRainBuilder::biomes),
-            SolarTermValueMap.codec(CodecUtil.listFrom(Weather.CODEC)).fieldOf("weathers").forGetter(CustomRainBuilder::weathers)
+            SolarTermValueMap.codec(CodecUtil.listFrom(CustomRainBuilder.Weather.CODEC)).fieldOf("weathers").forGetter(CustomRainBuilder::weathers)
     ).apply(ins, CustomRainBuilder::new));
 
     public static final Codec<CustomRainBuilder> DIRECT_CODEC = RecordCodecBuilder.create(ins -> ins.group(
-            SolarTermValueMap.codec(CodecUtil.listFrom(Weather.CODEC)).fieldOf("weathers").forGetter(CustomRainBuilder::weathers)
+            SolarTermValueMap.codec(CodecUtil.listFrom(CustomRainBuilder.Weather.CODEC)).fieldOf("weathers").forGetter(CustomRainBuilder::weathers)
     ).apply(ins, (m) -> new CustomRainBuilder(HolderSet.direct(), m)));
 
     public Map<SolarTerm, CustomRain> build() {
@@ -38,13 +38,13 @@ public record CustomRainBuilder(
                         Collectors.toMap(
                                 Map.Entry::getKey,
                                 e -> {
-                                    List<CustomRain.Instance> weatherList = e.getValue().stream().map(w -> CustomRain.Instance.of(e.getKey(), w)).toList();
+                                    List<CustomRain.Weather> weatherList = e.getValue().stream().map(w -> CustomRain.Weather.of(e.getKey(), w)).toList();
                                     return new CustomRain(
                                             e.getKey().ordinal(),
                                             weatherList,
                                             weatherList.size() == 1 && weatherList.get(0).timePeriod().isEmpty() ? Optional.of(weatherList.get(0)) : Optional.empty(),
-                                            (float) weatherList.stream().mapToDouble(CustomRain.Instance::getRainChance).average().orElse(0),
-                                            (float) weatherList.stream().mapToDouble(CustomRain.Instance::getThunderChance).average().orElse(0)
+                                            (float) weatherList.stream().mapToDouble(CustomRain.Weather::getRainChance).average().orElse(0),
+                                            (float) weatherList.stream().mapToDouble(CustomRain.Weather::getThunderChance).average().orElse(0)
                                     );
                                 },
                                 (a, b) -> b,
@@ -95,14 +95,14 @@ public record CustomRainBuilder(
                 // Codec.FLOAT.fieldOf("thunder_level").forGetter(Weather::thunderLevel),
                 // Biome.Precipitation.CODEC.fieldOf("precipitation").forGetter(Weather::precipitation),
                 // WeatherManager.SnowStatus.CODEC.fieldOf("snow_status").forGetter(Weather::snowStatus),
-                IntProvider.POSITIVE_CODEC.optionalFieldOf("rain").forGetter(Weather::rain),
-                IntProvider.POSITIVE_CODEC.optionalFieldOf("rain_delay").forGetter(Weather::rainDelay),
-                IntProvider.POSITIVE_CODEC.optionalFieldOf("thunder").forGetter(Weather::thunder),
-                IntProvider.POSITIVE_CODEC.optionalFieldOf("thunder_delay").forGetter(Weather::thunderDelay),
-                Codec.FLOAT.fieldOf("rain_chance").forGetter(Weather::rainChance),
-                Codec.FLOAT.fieldOf("thunder_chance").forGetter(Weather::thunderChance),
-                StringRepresentable.fromEnum(TimePeriod::collectValues).listOf().fieldOf("time_periods").forGetter(Weather::timePeriod)
-        ).apply(ins, Weather::new));
+                IntProvider.POSITIVE_CODEC.optionalFieldOf("rain").forGetter(CustomRainBuilder.Weather::rain),
+                IntProvider.POSITIVE_CODEC.optionalFieldOf("rain_delay").forGetter(CustomRainBuilder.Weather::rainDelay),
+                IntProvider.POSITIVE_CODEC.optionalFieldOf("thunder").forGetter(CustomRainBuilder.Weather::thunder),
+                IntProvider.POSITIVE_CODEC.optionalFieldOf("thunder_delay").forGetter(CustomRainBuilder.Weather::thunderDelay),
+                Codec.FLOAT.fieldOf("rain_chance").forGetter(CustomRainBuilder.Weather::rainChance),
+                Codec.FLOAT.fieldOf("thunder_chance").forGetter(CustomRainBuilder.Weather::thunderChance),
+                StringRepresentable.fromEnum(TimePeriod::collectValues).listOf().optionalFieldOf("time_periods",List.of()).forGetter(CustomRainBuilder.Weather::timePeriod)
+        ).apply(ins, CustomRainBuilder.Weather::new));
     }
 
 

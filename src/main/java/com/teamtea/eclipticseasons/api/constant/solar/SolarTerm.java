@@ -254,7 +254,7 @@ public enum SolarTerm implements ITranslatableWithPlaceholder, ISolarTerm {
     // 此外Mojang设定是，所有海洋都是0.5的温度，除了深海冻洋
     public static ISnowTerm getSnowTerm(Biome biome) {
         if (biome == null) return SnowTerm.T05;
-        CustomSnowTerm customSnowTerm = BiomeClimateManager.getCustomSnowTerm(biome, true);
+        ISnowTerm customSnowTerm = BiomeClimateManager.getCustomSnowTerm(biome, true);
         if (customSnowTerm != null) return customSnowTerm;
         // float t = BiomeClimateManager.agent$GetBaseTemperature(biome);
         float t = biome.getModifiedClimateSettings().temperature();
@@ -291,7 +291,7 @@ public enum SolarTerm implements ITranslatableWithPlaceholder, ISolarTerm {
     @Deprecated
     public static ISnowTerm getSnowTerm(Biome biome, boolean isServer) {
         if (biome == null) return SnowTerm.T05;
-        CustomSnowTerm customSnowTerm = BiomeClimateManager.getCustomSnowTerm(biome, isServer);
+        ISnowTerm customSnowTerm = BiomeClimateManager.getCustomSnowTerm(biome, isServer);
         if (customSnowTerm != null) return customSnowTerm;
         // float t = BiomeClimateManager.getDefaultTemperature(biome, isServer);
         float t = biome.getModifiedClimateSettings().temperature();
