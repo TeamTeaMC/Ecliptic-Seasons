@@ -1,11 +1,13 @@
 package com.teamtea.eclipticseasons.mixin.compat.optifine;
 
 
+import com.teamtea.eclipticseasons.api.misc.client.IMapSliceProvider;
 import com.teamtea.eclipticseasons.compat.optfine.IOFModelTaker;
+import net.minecraft.client.renderer.chunk.RenderChunkRegion;
 import net.minecraft.client.resources.model.BakedModel;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Pseudo;
-import org.spongepowered.asm.mixin.Unique;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.levelgen.structure.BoundingBox;
+import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -16,8 +18,11 @@ import java.util.Map;
 @Pseudo
 @Mixin(targets = "net.optifine.override.ChunkCacheOF")
 // @Mixin(CompatModule.class)
-public abstract class MixinChunkSlice implements IOFModelTaker {
+public abstract class MixinChunkSlice implements IOFModelTaker, IMapSliceProvider {
 
+    @Final
+    @Shadow(remap = false)
+    private RenderChunkRegion chunkCache;
 
     @Unique
     private final Map<BakedModel, BakedModel> eclipticseasons$modelCache = new IdentityHashMap<>();
@@ -59,5 +64,10 @@ public abstract class MixinChunkSlice implements IOFModelTaker {
     public void eclipticseasons$setCache(BakedModel bakedModel, BakedModel bakedModel2, boolean special) {
         (special ? eclipticseasons$modelCache2 :
                 eclipticseasons$modelCache).put(bakedModel, bakedModel2);
+    }
+
+    @Override
+    public int getSolidBlockHeight(BlockPos pos) {
+        return ((IMapSliceProvider)chunkCache).getSolidBlockHeight(pos);
     }
 }

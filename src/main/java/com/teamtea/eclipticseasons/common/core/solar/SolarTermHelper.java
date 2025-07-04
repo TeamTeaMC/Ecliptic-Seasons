@@ -7,6 +7,7 @@ import com.teamtea.eclipticseasons.api.constant.solar.ISolarTerm;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
+import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerLevel;
@@ -43,7 +44,9 @@ public class SolarTermHelper {
     }
 
     public static @Nonnull ISolarTerm get(Map<SolarTerm, Holder<SeasonPhase>> solarTermHolderMap, SolarTerm nowSolarTerm) {
-        return solarTermHolderMap != null && solarTermHolderMap.containsKey(nowSolarTerm) ? solarTermHolderMap.get(nowSolarTerm).value() : nowSolarTerm;
+        return CommonConfig.Season.enableLocalInfoCalendar.get() && solarTermHolderMap != null && solarTermHolderMap.containsKey(nowSolarTerm) ?
+                solarTermHolderMap.get(nowSolarTerm).value() :
+                nowSolarTerm;
     }
 
     public static @Nonnull ISolarTerm getNext(Holder<Biome> biome, SolarTerm nowSolarTerm) {

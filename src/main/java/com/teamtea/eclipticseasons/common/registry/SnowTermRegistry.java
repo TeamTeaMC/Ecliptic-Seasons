@@ -21,7 +21,7 @@ public class SnowTermRegistry {
         var holderGetter = context.lookup(Registries.BIOME);
         context.register(PLAIN, new CustomSnowTerm(
                 HolderSet.direct(holderGetter.getOrThrow(Biomes.PLAINS)),
-                SnowTerm.T08.getStart(), SnowTerm.T08.getEnd()
+                SnowTerm.T06.getStart(), SnowTerm.T06.getEnd()
         ));
     }
 }

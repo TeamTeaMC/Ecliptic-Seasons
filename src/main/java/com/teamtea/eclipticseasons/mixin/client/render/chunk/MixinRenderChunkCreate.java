@@ -1,0 +1,65 @@
+package com.teamtea.eclipticseasons.mixin.client.render.chunk;
+
+
+import com.llamalad7.mixinextras.sugar.Local;
+import com.teamtea.eclipticseasons.api.misc.client.IMapSlice;
+import com.teamtea.eclipticseasons.common.core.map.MapChecker;
+import net.minecraft.client.renderer.chunk.RenderChunk;
+import net.minecraft.client.renderer.chunk.RenderChunkRegion;
+import net.minecraft.client.renderer.chunk.RenderRegionCache;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.SectionPos;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraft.world.level.levelgen.Heightmap;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+@Mixin(RenderRegionCache.class)
+public class MixinRenderChunkCreate {
+
+    @Inject(
+            method = "createRegion",
+            at = @At(value = "RETURN", ordinal = 1
+            )
+    )
+    private void eclipticseasons$compile_init_chunk(Level level,
+                                                    BlockPos pStart,
+                                                    BlockPos pEnd,
+                                                    int pPadding,
+                                                    CallbackInfoReturnable<RenderChunkRegion> cir,
+                                                    @Local RenderChunk[][] arenderchunk) {
+        int SIZE_X = 0;
+        int SIZE_Z = 0;
+        if (cir.getReturnValue() instanceof IMapSlice iMapSlice) {
+            int[][] SOLID_HEIGHT_MAP = null;
+            if (MapChecker.isValidDimension(level)) {
+                int minChunkX = SectionPos.blockToSectionCoord(pStart.getX() - pPadding);
+                int minChunkZ = SectionPos.blockToSectionCoord(pStart.getZ() - pPadding);
+                int maxChunkX = SectionPos.blockToSectionCoord(pEnd.getX() + pPadding);
+                int maxChunkZ = SectionPos.blockToSectionCoord(pEnd.getZ() + pPadding);
+                SIZE_X = maxChunkX - minChunkX + 1;
+                SIZE_Z = maxChunkZ - minChunkZ + 1;
+                SOLID_HEIGHT_MAP = new int[SIZE_X * SIZE_Z][16 * 16];
+                for (int sectionX = minChunkX; sectionX < minChunkX + SIZE_X; ++sectionX) {
+                    for (int sectionZ = minChunkZ; sectionZ < minChunkZ + SIZE_Z; ++sectionZ) {
+                        int localSectionIndex =
+                                sectionX - minChunkX + (sectionZ - minChunkZ) * SIZE_X;
+                        LevelChunk wrapped = arenderchunk[sectionX - minChunkX][sectionZ - minChunkZ].wrapped;
+                        Heightmap heightmap = wrapped.getOrCreateHeightmapUnprimed(Heightmap.Types.MOTION_BLOCKING);
+                        int[] solidHeights = SOLID_HEIGHT_MAP[localSectionIndex];
+                        for (int x = 0; x < 16; x++) {
+                            for (int z = 0; z < 16; z++) {
+                                int index = x * 16 + z;
+                                solidHeights[index] = heightmap.getHighestTaken(x, z);
+                            }
+                        }
+                    }
+                }
+            }
+            iMapSlice.forceMapSliceUpdate(SOLID_HEIGHT_MAP, SIZE_X, SIZE_Z);
+        }
+    }
+}

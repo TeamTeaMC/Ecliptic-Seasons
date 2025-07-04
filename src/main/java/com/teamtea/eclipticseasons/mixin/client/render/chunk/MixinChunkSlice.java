@@ -1,21 +1,54 @@
 package com.teamtea.eclipticseasons.mixin.client.render.chunk;
 
-
 import com.teamtea.eclipticseasons.api.misc.client.IMapSlice;
-import me.jellysquid.mods.sodium.client.render.chunk.region.RenderRegion;
-import me.jellysquid.mods.sodium.client.world.WorldSlice;
 import net.minecraft.client.renderer.chunk.RenderChunkRegion;
 import net.minecraft.client.resources.model.BakedModel;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Pseudo;
-import org.spongepowered.asm.mixin.Unique;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.SectionPos;
+import net.minecraft.world.level.Level;
+import org.spongepowered.asm.mixin.*;
 
 @Pseudo
 @Mixin(RenderChunkRegion.class)
 public abstract class MixinChunkSlice implements IMapSlice {
+    @Shadow
+    @Final
+    protected Level level;
+
+    @Shadow
+    @Final
+    private int centerX;
+    @Shadow
+    @Final
+    private int centerZ;
+    @Unique
+    private int[][] SOLID_HEIGHT_MAP = null;
+    @Unique
+    private int SIZE_X = 0;
+    @Unique
+    private int SIZE_Z = 0;
+
+    @Override
+    public void forceMapSliceUpdate(int[][] ints, int sizex, int sizez) {
+        SOLID_HEIGHT_MAP = ints;
+        SIZE_X = sizex;
+        SIZE_Z = sizez;
+    }
+
+    @Override
+    public int getSolidBlockHeight(BlockPos pos) {
+        if (SOLID_HEIGHT_MAP == null || SOLID_HEIGHT_MAP[0] == null) return 0;
+        int relBlockX = SectionPos.blockToSectionCoord(pos.getX()) - centerX ;
+        int relBlockZ = SectionPos.blockToSectionCoord(pos.getZ()) - centerZ ;
+        int[] lightArrays = this.SOLID_HEIGHT_MAP[
+                relBlockX + (relBlockZ) * SIZE_X];
+        int localBlockX = pos.getX() & 15;
+        int localBlockZ = pos.getZ() & 15;
+        return lightArrays[localBlockX * 16 + localBlockZ];
+    }
+
+    /* ======================================== MODEL PART ===================================== */
+
 
     @Unique
     BakedModel eclipticseasons$bakedModelSnow = null;

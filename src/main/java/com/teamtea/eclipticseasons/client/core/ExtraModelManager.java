@@ -6,6 +6,7 @@ import com.teamtea.eclipticseasons.api.data.client.model.ModelTester;
 import com.teamtea.eclipticseasons.api.data.client.model.seasonal.SeasonBlockDefinition;
 import com.teamtea.eclipticseasons.api.data.season.SnowDefinition;
 import com.teamtea.eclipticseasons.api.misc.client.IMapSlice;
+import com.teamtea.eclipticseasons.api.misc.client.IMapSliceProvider;
 import com.teamtea.eclipticseasons.client.model.bakequad.BakedQuadRetextured;
 import com.teamtea.eclipticseasons.client.model.bakequad.BakedQuadRetexturedAndReUV;
 import com.teamtea.eclipticseasons.client.model.bakequad.QuadFixer;
@@ -522,12 +523,23 @@ public class ExtraModelManager {
             if (isLeaf) { {
                     if (!specialLeaves) {
                         BlockState aboveState = blockAndTintGetter.getBlockState(checkPos);
-                        boolean checkExtra = aboveState.is(state.getBlock())
-                                && (Heightmap.Types.MOTION_BLOCKING_NO_LEAVES.isOpaque().test(aboveState) ||
-                                MapChecker.extraSnowPassable(aboveState));
-                        if (checkExtra) {
-                            isLight = CommonConfig.Season.snowyTree.get();
-                            if (isLight) specialLeaves = true;
+                        // boolean checkExtra = aboveState.is(state.getBlock())
+                        //         && (Heightmap.Types.MOTION_BLOCKING_NO_LEAVES.isOpaque().test(aboveState) ||
+                        //         MapChecker.extraSnowPassable(aboveState));
+                        // if (checkExtra) {
+                        //     isLight = CommonConfig.Season.snowyTree.get();
+                        //     if (isLight) {
+                        //         // specialLeaves = true;
+                        //         specialLeaves = blockAndTintGetter instanceof IMapSliceProvider ip ?
+                        //                 ip.getSolidBlockHeight(checkPos) > pos.getY() :
+                        //                 aboveState.is(state.getBlock());
+                        //     }
+                        // }
+                        if (isLight) {
+                            // specialLeaves = true;
+                            specialLeaves = blockAndTintGetter instanceof IMapSliceProvider ip ?
+                                    ip.getSolidBlockHeight(checkPos) > pos.getY() :
+                                    aboveState.is(state.getBlock());
                         }
                     }
                 }
