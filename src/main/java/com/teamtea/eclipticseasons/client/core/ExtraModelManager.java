@@ -480,9 +480,9 @@ public class ExtraModelManager {
         //     }
         // }
 
-        boolean isLeaf = MapChecker.leaveLike(flag);
+        boolean leaveLike = MapChecker.leaveLike(flag);
         boolean specialLeaves = false;
-        // if (!isLight && isLeaf && ClientConfig.Renderer.snowyTree.get()) {
+        // if (!isLight && leaveLike && ClientConfig.Renderer.snowyTree.get()) {
         //     if (blockAndTintGetter.getBrightness(LightLayer.SKY, pos.above()) >= 9) {
         //         int y_real = level.getHeight(Heightmap.Types.MOTION_BLOCKING, pos.getX(), pos.getZ()) - 1;
         //         if (y_real <= pos.getY()
@@ -490,7 +490,7 @@ public class ExtraModelManager {
         //         // if (level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, pos.getX(), pos.getZ()) >= pos.getY() + 1)
         //         {
         //             isLight = true;
-        //             if (isLeaf) {
+        //             if (leaveLike) {
         //                 specialLeaves = true;
         //             }
         //         }
@@ -498,21 +498,43 @@ public class ExtraModelManager {
         // }
 
         if (!isLight && ClientConfig.Renderer.snowUnderTree.get()) {
-            if (blockAndTintGetter.getBrightness(LightLayer.SKY, pos.above()) >= 9) {
-                int y_real = level.getHeight(Heightmap.Types.MOTION_BLOCKING, pos.getX(), pos.getZ()) - 1;
-                // note 注意这里是section
-                try {
-                    if (level.getBlockState(new BlockPos(pos.getX(), y_real, pos.getZ()))
-                            .getShadeBrightness(blockAndTintGetter, pos) < 0.5f) {
-                        isLight = true;
-                        if (isLeaf) {
-                            if (CommonConfig.Season.snowyTree.get())
-                                specialLeaves = true;
-                            else isLight = false;
-                        }
+            // if (blockAndTintGetter.getBrightness(LightLayer.SKY, pos.above()) >= 9) {
+            //     int y_real = level.getHeight(Heightmap.Types.MOTION_BLOCKING, pos.getX(), pos.getZ()) - 1;
+            //     try {
+            //         if (level.getBlockState(new BlockPos(pos.getX(), y_real, pos.getZ()))
+            //                 .getShadeBrightness(blockAndTintGetter, pos) < 0.5f) {
+            //             isLight = true;
+            //             if (leaveLike) {
+            //                 if (CommonConfig.Season.snowyTree.get())
+            //                     specialLeaves = true;
+            //                 else isLight = false;
+            //             }
+            //         }
+            //     } catch (Exception e) {
+            //         EclipticSeasons.logger(e);
+            //     }
+            // }
+            BlockPos.MutableBlockPos checkPos = new BlockPos.MutableBlockPos(pos.getX(), pos.getY()+1, pos.getZ());
+            if (blockAndTintGetter.getBrightness(LightLayer.SKY, checkPos) >= 9) {
+                int y_real = blockAndTintGetter instanceof IMapSliceProvider ip ?
+                        ip.getSolidBlockHeight(pos) :
+                        level.getHeight(Heightmap.Types.MOTION_BLOCKING, pos.getX(), pos.getZ()) - 1;
+                checkPos.setY(y_real);
+                BlockState getterBlockState = blockAndTintGetter.getBlockState(checkPos);
+                if (getterBlockState.isAir()) {
+                    try {
+                        getterBlockState = level.getBlockState(checkPos);
+                    } catch (Exception e) {
+                        EclipticSeasons.logger(e);
                     }
-                } catch (Exception e) {
-                    EclipticSeasons.logger(e);
+                }
+                if (getterBlockState.getShadeBrightness(blockAndTintGetter, checkPos) < 0.5f) {
+                    isLight = true;
+                    if (leaveLike) {
+                        if (CommonConfig.Season.snowyTree.get())
+                            specialLeaves = true;
+                        else isLight = false;
+                    }
                 }
             }
         }
@@ -520,7 +542,7 @@ public class ExtraModelManager {
         if (isLight) {
             // checkPos.set(pos.getX(), pos.getY() + 1, pos.getZ());
             BlockPos checkPos = pos.above();
-            if (isLeaf) { {
+            if (leaveLike) { {
                     if (!specialLeaves) {
                         BlockState aboveState = blockAndTintGetter.getBlockState(checkPos);
                         // boolean checkExtra = aboveState.is(state.getBlock())
@@ -580,7 +602,7 @@ public class ExtraModelManager {
                                     .setValue(StairBlock.FACING, state.getValue(StairBlock.FACING))
                                     .setValue(StairBlock.HALF, state.getValue(StairBlock.HALF))
                                     .setValue(StairBlock.SHAPE, state.getValue(StairBlock.SHAPE));
-                        } else if (isLeaf && !specialLeaves) {
+                        } else if (leaveLike && !specialLeaves) {
                             snowState = BlockRegistry.snowyLeaves.get().defaultBlockState();
                         }
                     }

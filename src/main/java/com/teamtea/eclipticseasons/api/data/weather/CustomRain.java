@@ -94,6 +94,16 @@ public record CustomRain(int ordinal,
         }
 
         @Override
+        public float getThunderChance() {
+            return thunderChance();
+        }
+
+        @Override
+        public float getRainChance() {
+            return rainChance();
+        }
+
+        @Override
         public int getRainDuration(final RandomSource random) {
             return this.rain.map(provider -> provider.sample(random))
                     .orElseGet(() -> BiomeRain.super.getRainDuration(random));

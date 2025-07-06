@@ -502,7 +502,7 @@ public class MapChecker {
                         onBlock instanceof BellBlock ||
                         onBlock instanceof ComposterBlock ||
                         onBlock instanceof CampfireBlock ||
-                        onBlock instanceof CauldronBlock ||
+                        onBlock instanceof AbstractCauldronBlock ||
                         onBlock instanceof DaylightDetectorBlock ||
                         onBlock instanceof AnvilBlock ||
                         onBlock instanceof BasePressurePlateBlock ||

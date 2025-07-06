@@ -1,3 +1,9 @@
+### 0.11.5.1
+
+- Fixed an issue where humidity values were not correctly calculated when using a custom BiomeRain.
+- Optimized the calculation method when the snowUnderTree option is enabled.
+- Fixed an issue where snow would not cover the bottom of a cauldron when it contained contents.
+
 ## 0.11.5
 
 - Adjusted the detection and display logic for the top-layer block of snow-covered leaves.
