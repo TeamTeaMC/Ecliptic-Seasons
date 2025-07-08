@@ -46,18 +46,34 @@ public class SnowDefinitionsRegistry {
                 .info(SnowDefinition.Info.builder().flag(MapChecker.FLAG_CUSTOM_JSON_WITH_TOP_LEAVES).mid(ClientModelDefinitions.SNOWY_LEAVES_TOP).mid2(ClientModelDefinitions.SNOWY_LEAVES_ATTACH).build())
                 .build());
 
-        context.register(SNOWY_SWEET_BERRY_BUSH, SnowDefinition.builder()
-                .blocks(HolderSet.direct(Blocks.SWEET_BERRY_BUSH.builtInRegistryHolder()))
-                .info(SnowDefinition.Info.builder().flag(MapChecker.FLAG_CUSTOM_JSON_PLANTS).offset(1).mid(ClientModelDefinitions.SNOWY_SWEET_BERRY_BUSH).build())
-                .build());
-        context.register(SNOWY_DEAD_BUSH, SnowDefinition.builder()
-                .blocks(HolderSet.direct(Blocks.DEAD_BUSH.builtInRegistryHolder()))
-                .info(SnowDefinition.Info.builder().flag(MapChecker.FLAG_CUSTOM_JSON_PLANTS).offset(1).mid(ClientModelDefinitions.SNOWY_DEAD_BUSH).build())
-                .build());
-        context.register(SNOWY_SUGAR_CANE, SnowDefinition.builder()
-                .blocks(HolderSet.direct(Blocks.SUGAR_CANE.builtInRegistryHolder()))
-                .info(SnowDefinition.Info.builder().flag(MapChecker.FLAG_CUSTOM_JSON_VINE_LIKE).mid(ClientModelDefinitions.SNOWY_SUGAR_CANE).build())
-                .build());
+        addPlant(context, Blocks.SUGAR_CANE, MapChecker.FLAG_CUSTOM_JSON_VINE_LIKE);
+        addPlant(context, Blocks.DEAD_BUSH);
+        addPlant(context, Blocks.SWEET_BERRY_BUSH);
+
+        // addPlant(context, Blocks.SUNFLOWER, MapChecker.FLAG_CUSTOM_JSON_PLANTS);
+        // addPlant(context, Blocks.OAK_SAPLING);
+        // addPlant(context, Blocks.DARK_OAK_SAPLING);
+        // addPlant(context, Blocks.ACACIA_SAPLING);
+        // addPlant(context, Blocks.BIRCH_SAPLING);
+        // addPlant(context, Blocks.JUNGLE_SAPLING);
+        // addPlant(context, Blocks.SPRUCE_SAPLING);
+        // addPlant(context, Blocks.CHERRY_SAPLING);
+        //
+
+        //
+        // context.register(createSnowyKey("mangrove_propagule"), SnowDefinition.builder()
+        //         .blocks(HolderSet.direct(Blocks.MANGROVE_PROPAGULE.builtInRegistryHolder()))
+        //         // .map(List.of(SnowDefinition.PropertyTester.builder().name(MangrovePropaguleBlock.HANGING.getName()).matcher(SnowDefinition.ExactMatcher.builder().value(MangrovePropaguleBlock.HANGING.getName(false)).build()).build()))
+        //         .info(SnowDefinition.Info.builder().offset(1).flag(MapChecker.FLAG_CUSTOM_JSON_PLANTS)
+        //                 .mid(getSnowModelPath("mangrove_propagule")).build())
+        //         .build());
+
+        addPlant(context, Blocks.BAMBOO_SAPLING);
+        register(context, Blocks.BAMBOO,
+                (b, s) -> s.info(SnowDefinition.Info.builder().flag(MapChecker.FLAG_CUSTOM_JSON_WITH_TOP)
+                        .snowPassable(true)
+                        .mid2(getSnowModelPath(b))
+                        .mid(getSnowModelPath(b).withSuffix("_top")).build()));
     }
 
     private static HolderSet.@NotNull Direct<Block> set(Block bamboo) {

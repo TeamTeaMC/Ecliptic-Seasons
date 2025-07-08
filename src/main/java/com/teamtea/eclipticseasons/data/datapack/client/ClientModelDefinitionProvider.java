@@ -12,16 +12,20 @@ import com.teamtea.eclipticseasons.api.data.client.model.variant.VariantLike;
 import com.teamtea.eclipticseasons.client.core.ExtraModelManager;
 import com.teamtea.eclipticseasons.client.model.SnowModelConstant;
 import com.teamtea.eclipticseasons.common.core.snow.ClientModelDefinitions;
+import com.teamtea.eclipticseasons.common.registry.SnowDefinitionsRegistry;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.block.GrassBlock;
-import net.minecraft.world.level.block.SweetBerryBushBlock;
+import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.state.properties.BambooLeaves;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraftforge.common.data.ExistingFileHelper;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.IntStream;
 
 public class ClientModelDefinitionProvider extends AbstractModelDefinitionProvider {
 
@@ -74,6 +78,93 @@ public class ClientModelDefinitionProvider extends AbstractModelDefinitionProvid
                 .singleCross()
                 .replace(true);
 
+        addSnowyBlockModelDefinition(Blocks.SUNFLOWER)
+                .variantsForAllStatesExceptExact(state ->
+                {
+                    if (state.getValue(BlockStateProperties.DOUBLE_BLOCK_HALF) == DoubleBlockHalf.LOWER) {
+                        return models().withExistingParent("block/snowy/sunflower_bottom", "sunflower_bottom")
+                                .texture("cross", "block/snowy/sunflower_bottom");
+                    } else {
+                        return models().withExistingParent("block/snowy/sunflower_top", "sunflower_top")
+                                .texture("cross", "block/snowy/sunflower_top")
+                                .texture("front", "block/snowy/sunflower_front")
+                                .texture("back", "block/snowy/sunflower_back")
+                                .texture("particle", "block/snowy/sunflower_front");
+                    }
+                })
+                .replace(true);
+
+        addSnowyPlant(Blocks.OAK_SAPLING);
+        addSnowyPlant(Blocks.DARK_OAK_SAPLING);
+        addSnowyPlant(Blocks.ACACIA_SAPLING);
+        addSnowyPlant(Blocks.BIRCH_SAPLING);
+        addSnowyPlant(Blocks.JUNGLE_SAPLING);
+        addSnowyPlant(Blocks.SPRUCE_SAPLING);
+        addSnowyPlant(Blocks.CHERRY_SAPLING);
+
+        addSnowyBlockModelDefinition(Blocks.MANGROVE_PROPAGULE)
+                .variantsForAllStatesExceptExact(state ->
+                {
+                    if (state.getValue(MangrovePropaguleBlock.HANGING)) {
+                        return models().withExistingParent("block/snowy/mangrove_propagule_hanging_" + state.getValue(MangrovePropaguleBlock.AGE), "mangrove_propagule_hanging_" + state.getValue(MangrovePropaguleBlock.AGE))
+                                .texture("propagule", "block/snowy/mangrove_propagule_hanging");
+                    } else {
+                        return models().withExistingParent("block/snowy/mangrove_propagule", "mangrove_propagule")
+                                .texture("sapling", "block/snowy/mangrove_propagule");
+                    }
+                }, SaplingBlock.STAGE, BlockStateProperties.WATERLOGGED)
+                .replace(true);
+
+        addSnowyPlant(Blocks.BAMBOO_SAPLING, "bamboo_stage0");
+
+        addSnowyBlockModelDefinition(Blocks.BAMBOO)
+                .multiPartWithGenerate(condition(BambooStalkBlock.AGE, BambooStalkBlock.AGE.getName(0)),
+                        () -> IntStream.range(1, 5)
+                                .mapToObj(i -> models().snowyWithExistingParent("bamboo%s_age0".formatted(i))
+                                        .texture("all", snow_rl("bamboo_stalk"))).toList()
+                )
+                .multiPartWithGenerate(condition(BambooStalkBlock.AGE, BambooStalkBlock.AGE.getName(1)),
+                        () -> IntStream.range(1, 5)
+                                .mapToObj(i -> models().snowyWithExistingParent("bamboo%s_age1".formatted(i))
+                                        .texture("all", snow_rl("bamboo_stalk"))).toList()
+                )
+                .multiPartWithGenerateSingle(condition(BambooStalkBlock.LEAVES, BambooStalkBlock.LEAVES.getName(BambooLeaves.LARGE)),
+                        () -> models().snowyWithExistingParent("bamboo_large_leaves").texture("texture", snow_rl("bamboo_large_leaves"))
+                )
+                .multiPartWithGenerateSingle(condition(BambooStalkBlock.LEAVES, BambooStalkBlock.LEAVES.getName(BambooLeaves.SMALL)),
+                        () -> models().snowyWithExistingParent("bamboo_small_leaves").texture("texture", snow_rl("bamboo_small_leaves"))
+                )
+                .replace(true);
+
+        addBlockModelDefinition(Blocks.BAMBOO, SnowDefinitionsRegistry.getSnowModelPath(modid, Blocks.BAMBOO).withSuffix("_top"))
+                .multiPartWithGenerate(condition(BambooStalkBlock.AGE, BambooStalkBlock.AGE.getName(0)),
+                        () -> IntStream.range(1, 5)
+                                .mapToObj(i -> models().snowyWithExistingParent("bamboo%s_age0_top".formatted(i), "bamboo%s_age0".formatted(i))
+                                        .texture("all", snow_rl("bamboo_stalk_top"))).toList()
+                )
+                .multiPartWithGenerate(condition(BambooStalkBlock.AGE, BambooStalkBlock.AGE.getName(1)),
+                        () -> IntStream.range(1, 5)
+                                .mapToObj(i -> models().snowyWithExistingParent("bamboo%s_age1_top".formatted(i), "bamboo%s_age1".formatted(i))
+                                        .texture("all", snow_rl("bamboo_stalk_top"))).toList()
+                )
+                .multiPart(condition(BambooStalkBlock.LEAVES, BambooStalkBlock.LEAVES.getName(BambooLeaves.LARGE)),
+                        variant(snow_rl("bamboo_large_leaves")).build()
+                )
+                .multiPart(condition(BambooStalkBlock.LEAVES, BambooStalkBlock.LEAVES.getName(BambooLeaves.SMALL)),
+                        variant(snow_rl("bamboo_small_leaves")).build())
+                .replace(true);
+    }
+
+    protected void addSnowyPlant(Block plant) {
+        addModelDefinition(SnowDefinitionsRegistry.getSnowModelPath(plant))
+                .singleCross()
+                .replace(true);
+    }
+
+    protected void addSnowyPlant(Block plant, String texture) {
+        addModelDefinition(SnowDefinitionsRegistry.getSnowModelPath(plant))
+                .singleCross(withBlockFolder(EclipticSeasons.rl(texture).withPrefix("snowy/")))
+                .replace(true);
     }
 
     private void addFlower() {

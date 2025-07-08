@@ -14,11 +14,9 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.SectionPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ChunkHolder;
-import net.minecraft.server.level.FullChunkStatus;
 import net.minecraft.server.level.ServerChunkCache;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
-import net.minecraft.util.thread.BlockableEventLoop;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
@@ -30,9 +28,6 @@ import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.level.block.state.properties.Half;
 import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraft.world.level.chunk.ChunkAccess;
-import net.minecraft.world.level.chunk.ChunkSource;
-import net.minecraft.world.level.chunk.ChunkStatus;
-import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.levelgen.Heightmap;
 import org.jetbrains.annotations.NotNull;
 
@@ -447,7 +442,7 @@ public class MapChecker {
         return map;
     }
 
-    private static int getHeightWithCheck(Level level, BlockPos pos) {
+    private static int getMCHeightWithCheck(Level level, BlockPos pos) {
         // if (level.getChunkAt(pos) instanceof LevelChunk levelChunk) {
         //     if (levelChunk.hasData(EclipticSeasons.ModContents.SNOWY_REMOVER)
         //             && levelChunk.getData(EclipticSeasons.ModContents.SNOWY_REMOVER) instanceof SnowyRemover snowyRemover) {
@@ -456,13 +451,26 @@ public class MapChecker {
         //         }
         //     }
         // }
-        return getMCHeightWithCheck(level, pos, level.getChunkAt(pos), null, null);
+        return getMCHeightWithCheck(level, pos, null);
     }
 
-    public static int getMCHeightWithCheck(Level level, BlockPos pos, @Nonnull ChunkAccess chunkAt, @Nullable Object snowyRemover, @Nullable BlockPos.MutableBlockPos checkPos) {
+    public static int getMCHeightWithCheck(Level level, BlockPos pos, @Nullable Integer oldY) {
+        return getMCHeightWithCheck(level, pos, level.getChunkAt(pos), null, null, oldY);
+    }
+
+    public static int getMCHeightWithCheck(Level level, BlockPos pos,
+                                           @Nonnull ChunkAccess chunkAt,
+                                           @Nullable Object snowyRemover,
+                                           @Nullable BlockPos.MutableBlockPos checkPos,
+                                           @Nullable Integer oldHeight) {
         // if (snowyRemover != null && snowyRemover.notSnowyAt(pos)) {
         //     return level.getMaxBuildHeight() + 1;
         // }
+        if (oldHeight != null
+                && (oldHeight <= level.getMaxBuildHeight()
+                && oldHeight >= level.getMinBuildHeight())) {
+            if (pos.getY() <= oldHeight - 2) return oldHeight;
+        }
         int posX = pos.getX();
         int posZ = pos.getZ();
         int height = chunkAt.getHeight(
@@ -529,7 +537,7 @@ public class MapChecker {
             if (type == ChunkInfoMap.TYPE_HEIGHT) {
                 value = map.getHeight(pos);
                 if (value <= map.minY || forceUpdate) {
-                    var rh = getHeightWithCheck(level, pos);
+                    var rh = getMCHeightWithCheck(level, pos, value);
                     map.updateHeight(pos, rh);
                     value = rh;
                 }
@@ -562,7 +570,7 @@ public class MapChecker {
             updateLock = false;
 
             if (type == ChunkInfoMap.TYPE_HEIGHT) {
-                value = getHeightWithCheck(level, pos);
+                value = getMCHeightWithCheck(level, pos);
                 map.updateHeight(pos, value);
             } else if (type == ChunkInfoMap.TYPE_BIOME) {
                 value = biomeToId(level, level.getBiome(pos).value());
@@ -736,7 +744,7 @@ public class MapChecker {
                 for (int j = chunkPos.getMinBlockZ(); j <= chunkPos.getMaxBlockZ(); j++) {
                     middleBlockPosition.setX(i);
                     middleBlockPosition.setZ(j);
-                    int k = getMCHeightWithCheck(level, middleBlockPosition, chunk, null, middleBlockPosition);
+                    int k = getMCHeightWithCheck(level, middleBlockPosition, chunk, null, middleBlockPosition, null);
 
                     // mutableBlockPos.set(i,k,j);
                     // note 似乎这里不能-1

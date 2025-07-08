@@ -8,6 +8,7 @@ import com.teamtea.eclipticseasons.api.data.client.model.multipart.*;
 import com.teamtea.eclipticseasons.api.data.client.model.variant.MultiVariantLike;
 import com.teamtea.eclipticseasons.api.data.client.model.variant.VariantLike;
 import com.teamtea.eclipticseasons.client.reload.ClientJsonCacheListener;
+import com.teamtea.eclipticseasons.common.registry.SnowDefinitionsRegistry;
 import com.teamtea.eclipticseasons.data.datapack.client.base.ESClientDataMapProvider;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.CachedOutput;
@@ -70,6 +71,10 @@ public abstract class AbstractModelDefinitionProvider extends ESClientDataMapPro
 
         public ExtraModelBuilder snowyWithExistingParent(String name) {
             return super.withExistingParent("snowy/" + name, name);
+        }
+
+        public ExtraModelBuilder snowyWithExistingParent(String name, String parent) {
+            return super.withExistingParent("snowy/" + name, parent);
         }
 
         // If set folder would not use folder
@@ -168,7 +173,7 @@ public abstract class AbstractModelDefinitionProvider extends ESClientDataMapPro
     }
 
     protected BlockModelDefinitionBuilder addSnowyBlockModelDefinition(Block block) {
-        return addBlockModelDefinition(block, block.builtInRegistryHolder().key().location().withPrefix("snowy/"));
+        return addBlockModelDefinition(block, SnowDefinitionsRegistry.getSnowModelPath(modid, block));
     }
 
     public BlockModelDefinitionBuilder addBlockModelDefinition(Block block, ResourceLocation location) {
@@ -224,6 +229,17 @@ public abstract class AbstractModelDefinitionProvider extends ESClientDataMapPro
             this.owner = block;
         }
 
+        public BlockModelDefinitionBuilder variantsForAllStatesExceptExact(Function<BlockState, ExtraModelBuilder> mapper, Property<?>... ignored) {
+            return variantsForAllStatesExcept(
+                    state -> new VariantLike[]{VariantLike.builder(mapper.apply(state).getLocation()).build()}, ignored
+            );
+        }
+
+        public BlockModelDefinitionBuilder variantsForAllStatesExceptSingle(Function<BlockState, VariantLike.VariantBuilder> mapper, Property<?>... ignored) {
+            return variantsForAllStatesExcept(
+                    state -> new VariantLike[]{mapper.apply(state).build()}, ignored
+            );
+        }
 
         public BlockModelDefinitionBuilder variantsForAllStatesExcept(Function<BlockState, VariantLike[]> mapper, Property<?>... ignored) {
             Set<PartialState> seen = new HashSet<>();
@@ -461,11 +477,16 @@ public abstract class AbstractModelDefinitionProvider extends ESClientDataMapPro
         }
 
         public ModelDefinitionBuilder singleCross() {
+            ResourceLocation withPrefix = withBlockFolder(defLoc);
+            return singleCross(withPrefix);
+        }
+
+        public ModelDefinitionBuilder singleCross(ResourceLocation texturePath) {
             clearCache();
             ResourceLocation withPrefix = withBlockFolder(defLoc);
             variant(VariantLike.builder(withPrefix).build());
             // this.modelsToGenerated.add(() -> cross(withPrefix));
-            models.cross(withPrefix.toString(), withPrefix);
+            models.cross(withPrefix.toString(), texturePath);
             return this;
         }
 

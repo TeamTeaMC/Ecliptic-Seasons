@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/sunflower_bottom",
+  "textures": {
+    "cross": "eclipticseasons:block/snowy/sunflower_bottom"
+  }
+}

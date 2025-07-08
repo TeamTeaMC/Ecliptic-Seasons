@@ -1,0 +1,59 @@
+{
+  "replace": true,
+  "multipart": [
+    {
+      "when": {
+        "age": "0"
+      },
+      "apply": [
+        {
+          "model": "eclipticseasons:block/snowy/bamboo1_age0_top"
+        },
+        {
+          "model": "eclipticseasons:block/snowy/bamboo2_age0_top"
+        },
+        {
+          "model": "eclipticseasons:block/snowy/bamboo3_age0_top"
+        },
+        {
+          "model": "eclipticseasons:block/snowy/bamboo4_age0_top"
+        }
+      ]
+    },
+    {
+      "when": {
+        "age": "1"
+      },
+      "apply": [
+        {
+          "model": "eclipticseasons:block/snowy/bamboo1_age1_top"
+        },
+        {
+          "model": "eclipticseasons:block/snowy/bamboo2_age1_top"
+        },
+        {
+          "model": "eclipticseasons:block/snowy/bamboo3_age1_top"
+        },
+        {
+          "model": "eclipticseasons:block/snowy/bamboo4_age1_top"
+        }
+      ]
+    },
+    {
+      "when": {
+        "leaves": "large"
+      },
+      "apply": {
+        "model": "eclipticseasons:block/snowy/bamboo_large_leaves"
+      }
+    },
+    {
+      "when": {
+        "leaves": "small"
+      },
+      "apply": {
+        "model": "eclipticseasons:block/snowy/bamboo_small_leaves"
+      }
+    }
+  ]
+}

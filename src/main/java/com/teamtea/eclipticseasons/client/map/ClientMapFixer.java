@@ -1,12 +1,15 @@
 package com.teamtea.eclipticseasons.client.map;
 
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
-import com.teamtea.eclipticseasons.client.core.map.XZPos;
+import com.teamtea.eclipticseasons.client.render.WorldRenderer;
+import com.teamtea.eclipticseasons.common.core.map.ChunkInfoMap;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
+import com.teamtea.eclipticseasons.common.core.map.XZPos;
 import com.teamtea.eclipticseasons.common.misc.MapColorReplacer;
 import com.teamtea.eclipticseasons.config.ClientConfig;
 import com.teamtea.eclipticseasons.config.CommonConfig;
-import net.minecraft.client.Minecraft;
+import it.unimi.dsi.fastutil.longs.Long2ObjectLinkedOpenHashMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
@@ -16,7 +19,10 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * <p>这里可能会有复杂的情况，比如说<font color="blue">连续放置方块</font>的时候怎么计算。
@@ -28,26 +34,30 @@ import java.util.*;
 public class ClientMapFixer {
 
 
-    private static final Map<ChunkPos, List<XZPos>> CHUNK_POS_XZ_POS_MAP = new HashMap<>();
+    private static final Long2ObjectOpenHashMap<Long2ObjectLinkedOpenHashMap<XZPos>> CHUNK_POS_XZ_POS_MAP = new Long2ObjectOpenHashMap<>();
+
+    // private static final Map<ChunkPos, List<XZPos>> CHUNK_POS_XZ_POS_MAP = new HashMap<>();
 
     public static void clearAll() {
         CHUNK_POS_XZ_POS_MAP.clear();
     }
 
     public static void clearChunk(ChunkPos chunkPos) {
-        CHUNK_POS_XZ_POS_MAP.remove(chunkPos);
+        CHUNK_POS_XZ_POS_MAP.remove(chunkPos.toLong());
     }
 
     public static void clearBlockPos(BlockPos blockPos) {
-        List<XZPos> orDefault = CHUNK_POS_XZ_POS_MAP.getOrDefault(new ChunkPos(blockPos), List.of());
-        for (int i = 0; i < orDefault.size(); i++) {
-            XZPos xzPos = orDefault.get(i);
+        var orDefault = CHUNK_POS_XZ_POS_MAP
+                .computeIfAbsent(new ChunkPos(blockPos).toLong(), a -> new Long2ObjectLinkedOpenHashMap<>());
+
+        var iterator = orDefault.long2ObjectEntrySet().iterator();
+        while (iterator.hasNext()) {
+            var entry = iterator.next();
+            XZPos xzPos = entry.getValue();
             if (xzPos.x() == blockPos.getX() && xzPos.z() == blockPos.getZ()) {
-                orDefault.remove(i);
-                i--;
+                iterator.remove();
             }
         }
-
     }
 
     public static void addLightPlanner(ClientLevel level, long packedPos, int brightness) {
@@ -63,24 +73,42 @@ public class ClientMapFixer {
                 long startTick = level.getGameTime();
                 pos = pos.below();
                 BlockState state = level.getBlockState(pos);
-                boolean isOldHeight = pos.getY() == level.getHeight(Heightmap.Types.MOTION_BLOCKING, pos.getX(), pos.getZ()) - 1;
-                if (Heightmap.Types.MOTION_BLOCKING.isOpaque().test(state)
+                boolean isOldHeight = pos.getY() == agentGetLevelHeight(level, pos);
+                if (solidTest(state)
                         && isOldHeight
-                        && MapColorReplacer.getTopSnowColor(level, state, pos,true)!=null
+                        && MapColorReplacer.getTopSnowColor(level, state, pos, true) != null
                 ) {
                     ChunkPos chunkPos = new ChunkPos(pos);
-                    List<XZPos> xzPosList = CHUNK_POS_XZ_POS_MAP.computeIfAbsent(chunkPos, k -> new ArrayList<>());
-                    xzPosList.add(new XZPos(pos.getX(), pos.getZ(), startTick, pos.getY()));
+                    Long2ObjectLinkedOpenHashMap<XZPos> xzPosList = CHUNK_POS_XZ_POS_MAP.computeIfAbsent(chunkPos.toLong(), k -> new Long2ObjectLinkedOpenHashMap<>());
+                    XZPos xzPos = new XZPos(pos.getX(), pos.getZ(), startTick, pos.getY());
+                    long longKey = xzPos.toLongKey();
+                    xzPosList.remove(longKey);
+                    xzPosList.put(longKey, xzPos);
                     MapChecker.updatePosForce(level, pos, level.getMaxBuildHeight() + 1);
                 }
             }
         }
     }
 
+    public static int agentGetLevelHeight(Level level, BlockPos pos) {
+        // return level.getHeight(Heightmap.Types.MOTION_BLOCKING, pos.getX(), pos.getZ()) - 1;
+        ChunkInfoMap chunkMap = MapChecker.getChunkMap(level, pos);
+        Integer old = null;
+        if (chunkMap != null) {
+            old = chunkMap.getHeight(pos);
+        }
+        return MapChecker.getMCHeightWithCheck(level, pos, old);
+    }
+
+    public static boolean solidTest(BlockState state) {
+        return Heightmap.Types.MOTION_BLOCKING.isOpaque().test(state)
+                && !MapChecker.extraSnowPassable(state);
+    }
+
     public static void addPlanner(Level level, BlockState state, BlockPos pos, long startTick, int startY) {
-        boolean isNotOldHeight = startY != level.getHeight(Heightmap.Types.MOTION_BLOCKING, pos.getX(), pos.getZ()) - 1;
+        boolean isNotOldHeight = startY != agentGetLevelHeight(level, pos);
         if (ClientConfig.Renderer.realisticSnowyChange.get()
-                && ((Heightmap.Types.MOTION_BLOCKING.isOpaque().test(state))
+                && ((solidTest(state))
                 || state.getBlock() == Blocks.AIR
         )
                 && isNotOldHeight
@@ -88,11 +116,16 @@ public class ClientMapFixer {
         ) {
             // TODO：如果这里不下雪的话，那么直接更新就好了.以及未来可以考虑合并同一个点的
             ChunkPos chunkPos = new ChunkPos(pos);
-            List<XZPos> xzPosList = CHUNK_POS_XZ_POS_MAP.computeIfAbsent(chunkPos, k -> new ArrayList<>());
-            xzPosList.add(new XZPos(pos.getX(), pos.getZ(), startTick, startY));
-            if (state.getBlock() == Blocks.AIR) {
-                MapChecker.updatePosForce(level, pos, level.getMaxBuildHeight() + 1);
-            }
+            Long2ObjectLinkedOpenHashMap<XZPos> xzPosList = CHUNK_POS_XZ_POS_MAP.computeIfAbsent(chunkPos.toLong(), k -> new Long2ObjectLinkedOpenHashMap<>());
+            XZPos xzPos = new XZPos(pos.getX(), pos.getZ(), startTick, startY);
+            long longKey = xzPos.toLongKey();
+            xzPosList.remove(longKey);
+            xzPosList.put(longKey, xzPos);
+            // todo not lazy now
+            // if (state.getBlock() == Blocks.AIR) {
+            //     MapChecker.updatePosForce(level, pos, level.getMaxBuildHeight() + 1);
+            // }
+            MapChecker.updatePosForce(level, pos, level.getMaxBuildHeight() + 1);
         } else {
             if (isNotOldHeight) {
                 MapChecker.getHeightOrUpdate(level, pos, true);
@@ -107,8 +140,11 @@ public class ClientMapFixer {
         Set<SectionPos> updateSectionsList = new HashSet<>();
         CHUNK_POS_XZ_POS_MAP.forEach(
                 (chunkPos, xzPosList) -> {
-                    for (int i = 0; i < xzPosList.size(); i++) {
-                        XZPos xzPos = xzPosList.get(i);
+                    var iterator = xzPosList.long2ObjectEntrySet().iterator();
+                    List<XZPos> xzPosToReAdd = null;
+                    while (iterator.hasNext()) {
+                        var entry = iterator.next();
+                        XZPos xzPos = entry.getValue();
                         if (tick - xzPos.startTick() > 160
                                 && updateSectionsList.size() < 12
                         ) {
@@ -119,14 +155,19 @@ public class ClientMapFixer {
                                             // || isHereRainy(level, updatePos)
                                             && EclipticUtil.isHereWithSnow(level, updatePos)
                             ) {
-                                xzPos = new XZPos(xzPos.x(), xzPos.z(), level.getGameTime() - 50, level.getMaxBuildHeight() + 1);
-                                xzPosList.set(i, xzPos);
+                                iterator.remove();
+
+                                if (xzPosToReAdd == null) xzPosToReAdd = new ArrayList<>();
+                                {
+                                    xzPosToReAdd.add(new XZPos(xzPos.x(), xzPos.z(), level.getGameTime() - 50, level.getMaxBuildHeight() + 1));
+                                }
                                 MapChecker.updatePosForce(level, updatePos, xzPos.startY());
                                 var sectionPos = SectionPos.of(updatePos);
                                 updateSectionsList.add(sectionPos);
                             } else {
-                                xzPosList.remove(0);
-                                i--;
+                                // xzPosList.removeFirst();
+                                // i--;
+                                iterator.remove();
                                 int y = MapChecker.getHeightOrUpdate(level, updatePos, true);
                                 // if (y != xzPos.startY())
                                 {
@@ -139,19 +180,57 @@ public class ClientMapFixer {
                             break;
                         }
                     }
+                    if (xzPosToReAdd != null) {
+                        for (XZPos xzPos : xzPosToReAdd) {
+                            xzPosList.put(xzPos.toLongKey(), xzPos);
+                        }
+                    }
+                    // for (int i = 0; i < xzPosList.size(); i++) {
+                    //     XZPos xzPos = xzPosList.get(i);
+                    //     // 这里需要限制，一次不能刷新太多，不然会超载
+                    //     if (tick - xzPos.startTick() > 160
+                    //             && updateSectionsList.size() < 12
+                    //     ) {
+                    //         var updatePos = new BlockPos.MutableBlockPos(xzPos.x(), xzPos.startY(), xzPos.z());
+                    //         if (
+                    //                 !EclipticUtil.isHereSnowy(level, updatePos)
+                    //                         // (isHereSunny(level, updatePos))
+                    //                         // || isHereRainy(level, updatePos)
+                    //                         && EclipticUtil.isHereWithSnow(level, updatePos)
+                    //         ) {
+                    //             xzPos = new XZPos(xzPos.x(), xzPos.z(), level.getGameTime() - 50, level.getMaxBuildHeight() + 1);
+                    //             xzPosList.put(i, xzPos);
+                    //             MapChecker.updatePosForce(level, updatePos, xzPos.startY());
+                    //             var sectionPos = SectionPos.of(updatePos);
+                    //             updateSectionsList.add(sectionPos);
+                    //         } else {
+                    //             xzPosList.removeFirst();
+                    //             i--;
+                    //             int y = MapChecker.getHeightOrUpdate(level, updatePos, true);
+                    //             // if (y != xzPos.startY())
+                    //             {
+                    //                 updatePos.setY(y);
+                    //                 var sectionPos = SectionPos.of(updatePos);
+                    //                 updateSectionsList.add(sectionPos);
+                    //             }
+                    //         }
+                    //     } else {
+                    //         break;
+                    //     }
+                    // }
 
                     if (xzPosList.isEmpty()) {
-                        removeNeedChunkPosList.add(chunkPos);
+                        removeNeedChunkPosList.add(new ChunkPos(chunkPos));
                     }
                 }
         );
 
         for (ChunkPos chunkPos : removeNeedChunkPosList) {
-            CHUNK_POS_XZ_POS_MAP.remove(chunkPos);
+            CHUNK_POS_XZ_POS_MAP.remove(chunkPos.toLong());
         }
 
         for (SectionPos sectionPos : updateSectionsList) {
-            Minecraft.getInstance().levelRenderer.setSectionDirty(sectionPos.x(), sectionPos.y(), sectionPos.z());
+            WorldRenderer.setSectionDirty(sectionPos);
         }
     }
 
