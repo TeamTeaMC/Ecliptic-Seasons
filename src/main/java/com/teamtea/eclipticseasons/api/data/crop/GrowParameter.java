@@ -15,12 +15,9 @@ public record GrowParameter(
 ) {
 
     public static final Codec<GrowParameter> CODEC = RecordCodecBuilder.create(ins -> ins.group(
-            // Codec.FLOAT.optionalFieldOf("grow_chance",1f).forGetter(GrowParameter::grow_chance),
-            // Codec.FLOAT.optionalFieldOf("death_chance",0f).forGetter(GrowParameter::death_chance),
-            // Codec.FLOAT.optionalFieldOf("fertile_chance",1f).forGetter(GrowParameter::fertile_chance),
-            Codec.FLOAT.fieldOf("grow_chance").orElse(1f).forGetter(GrowParameter::grow_chance),
-            Codec.FLOAT.fieldOf("death_chance").orElse(0f).forGetter(GrowParameter::death_chance),
-            Codec.FLOAT.fieldOf("fertile_chance").orElse(1f).forGetter(GrowParameter::fertile_chance),
+            Codec.FLOAT.optionalFieldOf("grow_chance",1f).forGetter(GrowParameter::grow_chance),
+            Codec.FLOAT.optionalFieldOf("death_chance",0f).forGetter(GrowParameter::death_chance),
+            Codec.FLOAT.optionalFieldOf("fertile_chance",1f).forGetter(GrowParameter::fertile_chance),
             BlockState.CODEC.optionalFieldOf("dead_state").forGetter(GrowParameter::deadState)
     ).apply(ins, (GrowParameter::new)));
 

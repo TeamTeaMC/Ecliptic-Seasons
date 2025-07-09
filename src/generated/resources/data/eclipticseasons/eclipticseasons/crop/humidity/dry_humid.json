@@ -8,29 +8,15 @@
   "seasons": {},
   "humidity": {
     "arid": {
-      "grow_chance": 0.25,
-      "death_chance": 0.0,
-      "fertile_chance": 1.0
+      "grow_chance": 0.25
     },
     "dry": {
-      "grow_chance": 0.9,
-      "death_chance": 0.0,
-      "fertile_chance": 1.0
+      "grow_chance": 0.9
     },
-    "average": {
-      "grow_chance": 1.0,
-      "death_chance": 0.0,
-      "fertile_chance": 1.0
-    },
-    "moist": {
-      "grow_chance": 1.0,
-      "death_chance": 0.0,
-      "fertile_chance": 1.0
-    },
+    "average": {},
+    "moist": {},
     "humid": {
-      "grow_chance": 0.9,
-      "death_chance": 0.0,
-      "fertile_chance": 1.0
+      "grow_chance": 0.9
     }
   }
 }
