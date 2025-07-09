@@ -150,19 +150,19 @@ public class CropRegistry {
         HolderSet.Direct<AgroClimaticZone> temperate = HolderSet.direct(cropClimateTypeHolderGetter.getOrThrow(AgroClimateRegistry.TEMPERATE));
 
         // OrHolderSet<Block> snowAndIce = new OrHolderSet<>(List.of(blockHolderGetter.getOrThrow(BlockTags.ICE), blockHolderGetter.getOrThrow(BlockTags.SNOW)));
-        Optional<HolderSet<Block>> snowAndIcePredicate=Optional.of(blockHolderGetter.getOrThrow(BlockTags.ICE));
+        Optional<HolderSet<Block>> icePredicate = Optional.of(blockHolderGetter.getOrThrow(BlockTags.ICE));
 
         context.register(SPRING, new CropGrowControlBuilder(
                 temperate,
                 createTagPredicate(SPRING),
                 HolderSet.direct(), emptyGP, emptyGP2,
                 new EnumMap<>(of(
-                        SolarTerm.BEGINNING_OF_SPRING, GrowParameter.builder().growChance(0.5f).end(),
-                        SolarTerm.RAIN_WATER, GrowParameter.builder().growChance(0.6f).end(),
-                        SolarTerm.INSECTS_AWAKENING, GrowParameter.builder().growChance(0.8f).end(),
-                        SolarTerm.SPRING_EQUINOX, GrowParameter.builder().growChance(0.9f).end(),
-                        SolarTerm.FRESH_GREEN, GrowParameter.builder().growChance(0.8f).end(),
-                        SolarTerm.GRAIN_RAIN, GrowParameter.builder().growChance(0.7f).end(),
+                        SolarTerm.BEGINNING_OF_SPRING, GrowParameter.builder().growChance(0.7f).end(),
+                        SolarTerm.RAIN_WATER, GrowParameter.builder().growChance(0.85f).end(),
+                        SolarTerm.INSECTS_AWAKENING, GrowParameter.builder().growChance(0.95f).end(),
+                        SolarTerm.SPRING_EQUINOX, GrowParameter.builder().growChance(1f).end(),
+                        SolarTerm.FRESH_GREEN, GrowParameter.builder().growChance(1.25f).end(),
+                        SolarTerm.GRAIN_RAIN, GrowParameter.builder().growChance(0.9f).end(),
 
                         SolarTerm.BEGINNING_OF_SUMMER, GrowParameter.builder().growChance(0.3f).end(),
                         SolarTerm.LESSER_FULLNESS, GrowParameter.builder().growChance(0.2f).end(),
@@ -187,7 +187,7 @@ public class CropRegistry {
                 )),
                 seasonListEmpty,
                 humidListEmpty,
-                snowAndIcePredicate
+                icePredicate
         ));
 
         context.register(SUMMER, new CropGrowControlBuilder(
@@ -199,13 +199,13 @@ public class CropRegistry {
                         SolarTerm.RAIN_WATER, GrowParameter.builder().growChance(0.0f).end(),
                         SolarTerm.INSECTS_AWAKENING, GrowParameter.builder().growChance(0.0f).end(),
                         SolarTerm.SPRING_EQUINOX, GrowParameter.builder().growChance(0.0f).end(),
-                        SolarTerm.FRESH_GREEN, GrowParameter.builder().growChance(0.0f).end(),
-                        SolarTerm.GRAIN_RAIN, GrowParameter.builder().growChance(0.0f).end(),
+                        SolarTerm.FRESH_GREEN, GrowParameter.builder().growChance(0.15f).end(),
+                        SolarTerm.GRAIN_RAIN, GrowParameter.builder().growChance(0.1f).end(),
 
-                        SolarTerm.BEGINNING_OF_SUMMER, GrowParameter.builder().growChance(0.5f).end(),
-                        SolarTerm.LESSER_FULLNESS, GrowParameter.builder().growChance(0.6f).end(),
-                        SolarTerm.GRAIN_IN_EAR, GrowParameter.builder().growChance(0.8f).end(),
-                        SolarTerm.SUMMER_SOLSTICE, GrowParameter.builder().growChance(0.9f).end(),
+                        SolarTerm.BEGINNING_OF_SUMMER, GrowParameter.builder().growChance(0.75f).end(),
+                        SolarTerm.LESSER_FULLNESS, GrowParameter.builder().growChance(0.95f).end(),
+                        SolarTerm.GRAIN_IN_EAR, GrowParameter.builder().growChance(1.025f).end(),
+                        SolarTerm.SUMMER_SOLSTICE, GrowParameter.builder().growChance(1f).end(),
                         SolarTerm.LESSER_HEAT, GrowParameter.builder().growChance(0.8f).end(),
                         SolarTerm.GREATER_HEAT, GrowParameter.builder().growChance(0.7f).end(),
 
@@ -225,7 +225,7 @@ public class CropRegistry {
                 )),
                 seasonListEmpty,
                 humidListEmpty,
-                snowAndIcePredicate
+                icePredicate
         ));
 
         context.register(AUTUMN, new CropGrowControlBuilder(
@@ -247,12 +247,12 @@ public class CropRegistry {
                         SolarTerm.LESSER_HEAT, GrowParameter.builder().growChance(0.0f).end(),
                         SolarTerm.GREATER_HEAT, GrowParameter.builder().growChance(0.0f).end(),
 
-                        SolarTerm.BEGINNING_OF_AUTUMN, GrowParameter.builder().growChance(0.5f).end(),
-                        SolarTerm.END_OF_HEAT, GrowParameter.builder().growChance(0.6f).end(),
-                        SolarTerm.WHITE_DEW, GrowParameter.builder().growChance(0.8f).end(),
-                        SolarTerm.AUTUMNAL_EQUINOX, GrowParameter.builder().growChance(0.9f).end(),
-                        SolarTerm.COLD_DEW, GrowParameter.builder().growChance(0.8f).end(),
-                        SolarTerm.FIRST_FROST, GrowParameter.builder().growChance(0.7f).end(),
+                        SolarTerm.BEGINNING_OF_AUTUMN, GrowParameter.builder().growChance(0.8f).end(),
+                        SolarTerm.END_OF_HEAT, GrowParameter.builder().growChance(0.95f).end(),
+                        SolarTerm.WHITE_DEW, GrowParameter.builder().growChance(0.97f).end(),
+                        SolarTerm.AUTUMNAL_EQUINOX, GrowParameter.builder().growChance(1.025f).end(),
+                        SolarTerm.COLD_DEW, GrowParameter.builder().growChance(0.95f).end(),
+                        SolarTerm.FIRST_FROST, GrowParameter.builder().growChance(0.75f).end(),
 
                         SolarTerm.BEGINNING_OF_WINTER, GrowParameter.builder().growChance(0.3f).end(),
                         SolarTerm.LIGHT_SNOW, GrowParameter.builder().growChance(0.2f).end(),
@@ -263,7 +263,7 @@ public class CropRegistry {
                 )),
                 seasonListEmpty,
                 humidListEmpty,
-                snowAndIcePredicate
+                icePredicate
         ));
 
         context.register(WINTER, new CropGrowControlBuilder(
@@ -292,9 +292,9 @@ public class CropRegistry {
                         SolarTerm.COLD_DEW, GrowParameter.builder().growChance(0.1f).end(),
                         SolarTerm.FIRST_FROST, GrowParameter.builder().growChance(0.2f).end(),
 
-                        SolarTerm.BEGINNING_OF_WINTER, GrowParameter.builder().growChance(0.5f).end(),
-                        SolarTerm.LIGHT_SNOW, GrowParameter.builder().growChance(0.6f).end(),
-                        SolarTerm.HEAVY_SNOW, GrowParameter.builder().growChance(0.8f).end(),
+                        SolarTerm.BEGINNING_OF_WINTER, GrowParameter.builder().growChance(0.7f).end(),
+                        SolarTerm.LIGHT_SNOW, GrowParameter.builder().growChance(0.75f).end(),
+                        SolarTerm.HEAVY_SNOW, GrowParameter.builder().growChance(0.85f).end(),
                         SolarTerm.WINTER_SOLSTICE, GrowParameter.builder().growChance(0.9f).end(),
                         SolarTerm.LESSER_COLD, GrowParameter.builder().growChance(0.8f).end(),
                         SolarTerm.GREATER_COLD, GrowParameter.builder().growChance(0.7f).end()
@@ -309,16 +309,16 @@ public class CropRegistry {
                 createTagPredicate(SP_SU),
                 HolderSet.direct(), emptyGP, emptyGP2,
                 new EnumMap<>(of(
-                        SolarTerm.BEGINNING_OF_SPRING, GrowParameter.builder().growChance(0.3f).end(),
-                        SolarTerm.RAIN_WATER, GrowParameter.builder().growChance(0.4f).end(),
-                        SolarTerm.INSECTS_AWAKENING, GrowParameter.builder().growChance(0.5f).end(),
-                        SolarTerm.SPRING_EQUINOX, GrowParameter.builder().growChance(0.7f).end(),
-                        SolarTerm.FRESH_GREEN, GrowParameter.builder().growChance(0.8f).end(),
-                        SolarTerm.GRAIN_RAIN, GrowParameter.builder().growChance(0.7f).end(),
+                        SolarTerm.BEGINNING_OF_SPRING, GrowParameter.builder().growChance(0.5f).end(),
+                        SolarTerm.RAIN_WATER, GrowParameter.builder().growChance(0.6f).end(),
+                        SolarTerm.INSECTS_AWAKENING, GrowParameter.builder().growChance(0.7f).end(),
+                        SolarTerm.SPRING_EQUINOX, GrowParameter.builder().growChance(0.9f).end(),
+                        SolarTerm.FRESH_GREEN, GrowParameter.builder().growChance(0.95f).end(),
+                        SolarTerm.GRAIN_RAIN, GrowParameter.builder().growChance(0.85f).end(),
 
                         SolarTerm.BEGINNING_OF_SUMMER, GrowParameter.builder().growChance(0.9f).end(),
-                        SolarTerm.LESSER_FULLNESS, GrowParameter.builder().growChance(1.0f).end(),
-                        SolarTerm.GRAIN_IN_EAR, GrowParameter.builder().growChance(1.0f).end(),
+                        SolarTerm.LESSER_FULLNESS, GrowParameter.builder().growChance(1.01f).end(),
+                        SolarTerm.GRAIN_IN_EAR, GrowParameter.builder().growChance(1.025f).end(),
                         SolarTerm.SUMMER_SOLSTICE, GrowParameter.builder().growChance(1.0f).end(),
                         SolarTerm.LESSER_HEAT, GrowParameter.builder().growChance(0.8f).end(),
                         SolarTerm.GREATER_HEAT, GrowParameter.builder().growChance(0.7f).end(),
@@ -339,7 +339,7 @@ public class CropRegistry {
                 )),
                 seasonListEmpty,
                 humidListEmpty,
-                snowAndIcePredicate
+                icePredicate
         ));
 
         context.register(SP_AU, new CropGrowControlBuilder(
@@ -347,51 +347,12 @@ public class CropRegistry {
                 createTagPredicate(SP_AU),
                 HolderSet.direct(), emptyGP, emptyGP2,
                 new EnumMap<>(of(
-                        SolarTerm.BEGINNING_OF_SPRING, GrowParameter.builder().growChance(0.2f).end(),
-                        SolarTerm.RAIN_WATER, GrowParameter.builder().growChance(0.3f).end(),
-                        SolarTerm.INSECTS_AWAKENING, GrowParameter.builder().growChance(0.4f).end(),
-                        SolarTerm.SPRING_EQUINOX, GrowParameter.builder().growChance(0.5f).end(),
-                        SolarTerm.FRESH_GREEN, GrowParameter.builder().growChance(0.7f).end(),
-                        SolarTerm.GRAIN_RAIN, GrowParameter.builder().growChance(0.8f).end(),
-
-                        SolarTerm.BEGINNING_OF_SUMMER, GrowParameter.builder().growChance(0.2f).end(),
-                        SolarTerm.LESSER_FULLNESS, GrowParameter.builder().growChance(0.0f).end(),
-                        SolarTerm.GRAIN_IN_EAR, GrowParameter.builder().growChance(0.0f).end(),
-                        SolarTerm.SUMMER_SOLSTICE, GrowParameter.builder().growChance(0.0f).end(),
-                        SolarTerm.LESSER_HEAT, GrowParameter.builder().growChance(0.0f).end(),
-                        SolarTerm.GREATER_HEAT, GrowParameter.builder().growChance(0.05f).end(),
-
-                        SolarTerm.BEGINNING_OF_AUTUMN, GrowParameter.builder().growChance(0.7f).end(),
-                        SolarTerm.END_OF_HEAT, GrowParameter.builder().growChance(0.6f).end(),
-                        SolarTerm.WHITE_DEW, GrowParameter.builder().growChance(0.5f).end(),
-                        SolarTerm.AUTUMNAL_EQUINOX, GrowParameter.builder().growChance(0.4f).end(),
-                        SolarTerm.COLD_DEW, GrowParameter.builder().growChance(0.3f).end(),
-                        SolarTerm.FIRST_FROST, GrowParameter.builder().growChance(0.2f).end(),
-
-                        SolarTerm.BEGINNING_OF_WINTER, GrowParameter.builder().growChance(0.1f).end(),
-                        SolarTerm.LIGHT_SNOW, GrowParameter.builder().growChance(0.0f).end(),
-                        SolarTerm.HEAVY_SNOW, GrowParameter.builder().growChance(0.0f).end(),
-                        SolarTerm.WINTER_SOLSTICE, GrowParameter.builder().growChance(0.0f).end(),
-                        SolarTerm.LESSER_COLD, GrowParameter.builder().growChance(0.0f).end(),
-                        SolarTerm.GREATER_COLD, GrowParameter.builder().growChance(0.0f).end()
-                )),
-                seasonListEmpty,
-                humidListEmpty,
-                snowAndIcePredicate
-        ));
-
-        context.register(SP_WI, new CropGrowControlBuilder(
-                temperate,
-                createTagPredicate(SP_WI),
-                HolderSet.direct(), emptyGP, emptyGP2,
-                new EnumMap<>(of(
-
-                        SolarTerm.BEGINNING_OF_SPRING, GrowParameter.builder().growChance(0.6f).end(),
-                        SolarTerm.RAIN_WATER, GrowParameter.builder().growChance(0.7f).end(),
-                        SolarTerm.INSECTS_AWAKENING, GrowParameter.builder().growChance(0.8f).end(),
-                        SolarTerm.SPRING_EQUINOX, GrowParameter.builder().growChance(0.9f).end(),
-                        SolarTerm.FRESH_GREEN, GrowParameter.builder().growChance(0.9f).end(),
-                        SolarTerm.GRAIN_RAIN, GrowParameter.builder().growChance(0.8f).end(),
+                        SolarTerm.BEGINNING_OF_SPRING, GrowParameter.builder().growChance(0.5f).end(),
+                        SolarTerm.RAIN_WATER, GrowParameter.builder().growChance(0.64f).end(),
+                        SolarTerm.INSECTS_AWAKENING, GrowParameter.builder().growChance(0.75f).end(),
+                        SolarTerm.SPRING_EQUINOX, GrowParameter.builder().growChance(0.85f).end(),
+                        SolarTerm.FRESH_GREEN, GrowParameter.builder().growChance(1.01f).end(),
+                        SolarTerm.GRAIN_RAIN, GrowParameter.builder().growChance(0.85f).end(),
 
                         SolarTerm.BEGINNING_OF_SUMMER, GrowParameter.builder().growChance(0.2f).end(),
                         SolarTerm.LESSER_FULLNESS, GrowParameter.builder().growChance(0.0f).end(),
@@ -400,19 +361,57 @@ public class CropRegistry {
                         SolarTerm.LESSER_HEAT, GrowParameter.builder().growChance(0.0f).end(),
                         SolarTerm.GREATER_HEAT, GrowParameter.builder().growChance(0.0f).end(),
 
-                        SolarTerm.BEGINNING_OF_AUTUMN, GrowParameter.builder().growChance(0.2f).end(),
-                        SolarTerm.END_OF_HEAT, GrowParameter.builder().growChance(0.2f).end(),
-                        SolarTerm.WHITE_DEW, GrowParameter.builder().growChance(0.1f).end(),
-                        SolarTerm.AUTUMNAL_EQUINOX, GrowParameter.builder().growChance(0.1f).end(),
-                        SolarTerm.COLD_DEW, GrowParameter.builder().growChance(0.1f).end(),
-                        SolarTerm.FIRST_FROST, GrowParameter.builder().growChance(0.1f).end(),
+                        SolarTerm.BEGINNING_OF_AUTUMN, GrowParameter.builder().growChance(0.7f).end(),
+                        SolarTerm.END_OF_HEAT, GrowParameter.builder().growChance(0.75f).end(),
+                        SolarTerm.WHITE_DEW, GrowParameter.builder().growChance(0.9f).end(),
+                        SolarTerm.AUTUMNAL_EQUINOX, GrowParameter.builder().growChance(1.01f).end(),
+                        SolarTerm.COLD_DEW, GrowParameter.builder().growChance(0.7f).end(),
+                        SolarTerm.FIRST_FROST, GrowParameter.builder().growChance(0.5f).end(),
+
+                        SolarTerm.BEGINNING_OF_WINTER, GrowParameter.builder().growChance(0.15f).end(),
+                        SolarTerm.LIGHT_SNOW, GrowParameter.builder().growChance(0.0f).end(),
+                        SolarTerm.HEAVY_SNOW, GrowParameter.builder().growChance(0.0f).end(),
+                        SolarTerm.WINTER_SOLSTICE, GrowParameter.builder().growChance(0.0f).end(),
+                        SolarTerm.LESSER_COLD, GrowParameter.builder().growChance(0.0f).end(),
+                        SolarTerm.GREATER_COLD, GrowParameter.builder().growChance(0.0f).end()
+                )),
+                seasonListEmpty,
+                humidListEmpty,
+                icePredicate
+        ));
+
+        context.register(SP_WI, new CropGrowControlBuilder(
+                temperate,
+                createTagPredicate(SP_WI),
+                HolderSet.direct(), emptyGP, emptyGP2,
+                new EnumMap<>(of(
+                        SolarTerm.BEGINNING_OF_SPRING, GrowParameter.builder().growChance(0.64f).end(),
+                        SolarTerm.RAIN_WATER, GrowParameter.builder().growChance(0.75f).end(),
+                        SolarTerm.INSECTS_AWAKENING, GrowParameter.builder().growChance(0.8f).end(),
+                        SolarTerm.SPRING_EQUINOX, GrowParameter.builder().growChance(0.95f).end(),
+                        SolarTerm.FRESH_GREEN, GrowParameter.builder().growChance(1.025f).end(),
+                        SolarTerm.GRAIN_RAIN, GrowParameter.builder().growChance(0.95f).end(),
+
+                        SolarTerm.BEGINNING_OF_SUMMER, GrowParameter.builder().growChance(0.2f).end(),
+                        SolarTerm.LESSER_FULLNESS, GrowParameter.builder().growChance(0.0f).end(),
+                        SolarTerm.GRAIN_IN_EAR, GrowParameter.builder().growChance(0.0f).end(),
+                        SolarTerm.SUMMER_SOLSTICE, GrowParameter.builder().growChance(0.0f).end(),
+                        SolarTerm.LESSER_HEAT, GrowParameter.builder().growChance(0.0f).end(),
+                        SolarTerm.GREATER_HEAT, GrowParameter.builder().growChance(0.0f).end(),
+
+                        SolarTerm.BEGINNING_OF_AUTUMN, GrowParameter.builder().growChance(0.1f).end(),
+                        SolarTerm.END_OF_HEAT, GrowParameter.builder().growChance(0.1f).end(),
+                        SolarTerm.WHITE_DEW, GrowParameter.builder().growChance(0.12f).end(),
+                        SolarTerm.AUTUMNAL_EQUINOX, GrowParameter.builder().growChance(0.15f).end(),
+                        SolarTerm.COLD_DEW, GrowParameter.builder().growChance(0.15f).end(),
+                        SolarTerm.FIRST_FROST, GrowParameter.builder().growChance(0.25f).end(),
 
                         SolarTerm.BEGINNING_OF_WINTER, GrowParameter.builder().growChance(0.7f).end(),
-                        SolarTerm.LIGHT_SNOW, GrowParameter.builder().growChance(0.8f).end(),
-                        SolarTerm.HEAVY_SNOW, GrowParameter.builder().growChance(0.9f).end(),
-                        SolarTerm.WINTER_SOLSTICE, GrowParameter.builder().growChance(1.0f).end(),
-                        SolarTerm.LESSER_COLD, GrowParameter.builder().growChance(0.9f).end(),
-                        SolarTerm.GREATER_COLD, GrowParameter.builder().growChance(0.8f).end()
+                        SolarTerm.LIGHT_SNOW, GrowParameter.builder().growChance(0.85f).end(),
+                        SolarTerm.HEAVY_SNOW, GrowParameter.builder().growChance(0.95f).end(),
+                        SolarTerm.WINTER_SOLSTICE, GrowParameter.builder().growChance(0.9f).end(),
+                        SolarTerm.LESSER_COLD, GrowParameter.builder().growChance(0.7f).end(),
+                        SolarTerm.GREATER_COLD, GrowParameter.builder().growChance(0.6f).end()
                 )),
                 seasonListEmpty,
                 humidListEmpty,
@@ -424,7 +423,6 @@ public class CropRegistry {
                 createTagPredicate(SU_AU),
                 HolderSet.direct(), emptyGP, emptyGP2,
                 new EnumMap<>(of(
-
                         SolarTerm.BEGINNING_OF_SPRING, GrowParameter.builder().growChance(0.1f).end(),
                         SolarTerm.RAIN_WATER, GrowParameter.builder().growChance(0.15f).end(),
                         SolarTerm.INSECTS_AWAKENING, GrowParameter.builder().growChance(0.2f).end(),
@@ -432,21 +430,21 @@ public class CropRegistry {
                         SolarTerm.FRESH_GREEN, GrowParameter.builder().growChance(0.25f).end(),
                         SolarTerm.GRAIN_RAIN, GrowParameter.builder().growChance(0.3f).end(),
 
-                        SolarTerm.BEGINNING_OF_SUMMER, GrowParameter.builder().growChance(0.9f).end(),
-                        SolarTerm.LESSER_FULLNESS, GrowParameter.builder().growChance(1.0f).end(),
-                        SolarTerm.GRAIN_IN_EAR, GrowParameter.builder().growChance(1.0f).end(),
+                        SolarTerm.BEGINNING_OF_SUMMER, GrowParameter.builder().growChance(0.8f).end(),
+                        SolarTerm.LESSER_FULLNESS, GrowParameter.builder().growChance(0.9f).end(),
+                        SolarTerm.GRAIN_IN_EAR, GrowParameter.builder().growChance(0.95f).end(),
                         SolarTerm.SUMMER_SOLSTICE, GrowParameter.builder().growChance(1.0f).end(),
                         SolarTerm.LESSER_HEAT, GrowParameter.builder().growChance(0.8f).end(),
                         SolarTerm.GREATER_HEAT, GrowParameter.builder().growChance(0.7f).end(),
 
-                        SolarTerm.BEGINNING_OF_AUTUMN, GrowParameter.builder().growChance(0.7f).end(),
-                        SolarTerm.END_OF_HEAT, GrowParameter.builder().growChance(0.65f).end(),
-                        SolarTerm.WHITE_DEW, GrowParameter.builder().growChance(0.55f).end(),
-                        SolarTerm.AUTUMNAL_EQUINOX, GrowParameter.builder().growChance(0.45f).end(),
-                        SolarTerm.COLD_DEW, GrowParameter.builder().growChance(0.35f).end(),
-                        SolarTerm.FIRST_FROST, GrowParameter.builder().growChance(0.25f).end(),
+                        SolarTerm.BEGINNING_OF_AUTUMN, GrowParameter.builder().growChance(0.8f).end(),
+                        SolarTerm.END_OF_HEAT, GrowParameter.builder().growChance(0.85f).end(),
+                        SolarTerm.WHITE_DEW, GrowParameter.builder().growChance(0.9f).end(),
+                        SolarTerm.AUTUMNAL_EQUINOX, GrowParameter.builder().growChance(1.01f).end(),
+                        SolarTerm.COLD_DEW, GrowParameter.builder().growChance(0.7f).end(),
+                        SolarTerm.FIRST_FROST, GrowParameter.builder().growChance(0.6f).end(),
 
-                        SolarTerm.BEGINNING_OF_WINTER, GrowParameter.builder().growChance(0.1f).end(),
+                        SolarTerm.BEGINNING_OF_WINTER, GrowParameter.builder().growChance(0.2f).end(),
                         SolarTerm.LIGHT_SNOW, GrowParameter.builder().growChance(0.0f).end(),
                         SolarTerm.HEAVY_SNOW, GrowParameter.builder().growChance(0.0f).end(),
                         SolarTerm.WINTER_SOLSTICE, GrowParameter.builder().growChance(0.0f).end(),
@@ -455,7 +453,7 @@ public class CropRegistry {
                 )),
                 seasonListEmpty,
                 humidListEmpty,
-                snowAndIcePredicate
+                icePredicate
         ));
 
         context.register(SU_WI, new CropGrowControlBuilder(
@@ -471,11 +469,11 @@ public class CropRegistry {
                         SolarTerm.GRAIN_RAIN, GrowParameter.builder().growChance(0.2f).end(),
 
                         SolarTerm.BEGINNING_OF_SUMMER, GrowParameter.builder().growChance(0.6f).end(),
-                        SolarTerm.LESSER_FULLNESS, GrowParameter.builder().growChance(0.8f).end(),
+                        SolarTerm.LESSER_FULLNESS, GrowParameter.builder().growChance(0.85f).end(),
                         SolarTerm.GRAIN_IN_EAR, GrowParameter.builder().growChance(1.0f).end(),
-                        SolarTerm.SUMMER_SOLSTICE, GrowParameter.builder().growChance(1.0f).end(),
-                        SolarTerm.LESSER_HEAT, GrowParameter.builder().growChance(0.9f).end(),
-                        SolarTerm.GREATER_HEAT, GrowParameter.builder().growChance(0.8f).end(),
+                        SolarTerm.SUMMER_SOLSTICE, GrowParameter.builder().growChance(1.025f).end(),
+                        SolarTerm.LESSER_HEAT, GrowParameter.builder().growChance(0.95f).end(),
+                        SolarTerm.GREATER_HEAT, GrowParameter.builder().growChance(0.85f).end(),
 
                         SolarTerm.BEGINNING_OF_AUTUMN, GrowParameter.builder().growChance(0.15f).end(),
                         SolarTerm.END_OF_HEAT, GrowParameter.builder().growChance(0.1f).end(),
@@ -487,9 +485,9 @@ public class CropRegistry {
                         SolarTerm.BEGINNING_OF_WINTER, GrowParameter.builder().growChance(0.8f).end(),
                         SolarTerm.LIGHT_SNOW, GrowParameter.builder().growChance(0.9f).end(),
                         SolarTerm.HEAVY_SNOW, GrowParameter.builder().growChance(1.0f).end(),
-                        SolarTerm.WINTER_SOLSTICE, GrowParameter.builder().growChance(1.0f).end(),
-                        SolarTerm.LESSER_COLD, GrowParameter.builder().growChance(0.9f).end(),
-                        SolarTerm.GREATER_COLD, GrowParameter.builder().growChance(0.8f).end()
+                        SolarTerm.WINTER_SOLSTICE, GrowParameter.builder().growChance(0.95f).end(),
+                        SolarTerm.LESSER_COLD, GrowParameter.builder().growChance(0.7f).end(),
+                        SolarTerm.GREATER_COLD, GrowParameter.builder().growChance(0.6f).end()
                 )),
                 seasonListEmpty,
                 humidListEmpty,
@@ -501,11 +499,11 @@ public class CropRegistry {
                 createTagPredicate(AU_WI),
                 HolderSet.direct(), emptyGP, emptyGP2,
                 new EnumMap<>(of(
-                        SolarTerm.BEGINNING_OF_SPRING, GrowParameter.builder().growChance(0.0f).end(),
+                        SolarTerm.BEGINNING_OF_SPRING, GrowParameter.builder().growChance(0.5f).end(),
                         SolarTerm.RAIN_WATER, GrowParameter.builder().growChance(0.1f).end(),
                         SolarTerm.INSECTS_AWAKENING, GrowParameter.builder().growChance(0.1f).end(),
                         SolarTerm.SPRING_EQUINOX, GrowParameter.builder().growChance(0.2f).end(),
-                        SolarTerm.FRESH_GREEN, GrowParameter.builder().growChance(0.3f).end(),
+                        SolarTerm.FRESH_GREEN, GrowParameter.builder().growChance(0.15f).end(),
                         SolarTerm.GRAIN_RAIN, GrowParameter.builder().growChance(0.1f).end(),
 
                         SolarTerm.BEGINNING_OF_SUMMER, GrowParameter.builder().growChance(0.05f).end(),
@@ -516,18 +514,18 @@ public class CropRegistry {
                         SolarTerm.GREATER_HEAT, GrowParameter.builder().growChance(0.0f).end(),
 
                         SolarTerm.BEGINNING_OF_AUTUMN, GrowParameter.builder().growChance(0.5f).end(),
-                        SolarTerm.END_OF_HEAT, GrowParameter.builder().growChance(0.6f).end(),
-                        SolarTerm.WHITE_DEW, GrowParameter.builder().growChance(0.7f).end(),
-                        SolarTerm.AUTUMNAL_EQUINOX, GrowParameter.builder().growChance(0.8f).end(),
-                        SolarTerm.COLD_DEW, GrowParameter.builder().growChance(0.9f).end(),
-                        SolarTerm.FIRST_FROST, GrowParameter.builder().growChance(1.0f).end(),
+                        SolarTerm.END_OF_HEAT, GrowParameter.builder().growChance(0.64f).end(),
+                        SolarTerm.WHITE_DEW, GrowParameter.builder().growChance(0.75f).end(),
+                        SolarTerm.AUTUMNAL_EQUINOX, GrowParameter.builder().growChance(0.95f).end(),
+                        SolarTerm.COLD_DEW, GrowParameter.builder().growChance(1f).end(),
+                        SolarTerm.FIRST_FROST, GrowParameter.builder().growChance(0.9f).end(),
 
-                        SolarTerm.BEGINNING_OF_WINTER, GrowParameter.builder().growChance(1.0f).end(),
-                        SolarTerm.LIGHT_SNOW, GrowParameter.builder().growChance(1.0f).end(),
-                        SolarTerm.HEAVY_SNOW, GrowParameter.builder().growChance(1.0f).end(),
-                        SolarTerm.WINTER_SOLSTICE, GrowParameter.builder().growChance(1.0f).end(),
-                        SolarTerm.LESSER_COLD, GrowParameter.builder().growChance(0.9f).end(),
-                        SolarTerm.GREATER_COLD, GrowParameter.builder().growChance(0.8f).end()
+                        SolarTerm.BEGINNING_OF_WINTER, GrowParameter.builder().growChance(0.9f).end(),
+                        SolarTerm.LIGHT_SNOW, GrowParameter.builder().growChance(0.85f).end(),
+                        SolarTerm.HEAVY_SNOW, GrowParameter.builder().growChance(0.85f).end(),
+                        SolarTerm.WINTER_SOLSTICE, GrowParameter.builder().growChance(0.85f).end(),
+                        SolarTerm.LESSER_COLD, GrowParameter.builder().growChance(0.8f).end(),
+                        SolarTerm.GREATER_COLD, GrowParameter.builder().growChance(0.75f).end()
                 )),
                 seasonListEmpty,
                 humidListEmpty,
@@ -539,28 +537,28 @@ public class CropRegistry {
                 createTagPredicate(SP_SU_AU),
                 HolderSet.direct(), emptyGP, emptyGP2,
                 new EnumMap<>(of(
-                        SolarTerm.BEGINNING_OF_SPRING, GrowParameter.builder().growChance(0.24f).end(),
-                        SolarTerm.RAIN_WATER, GrowParameter.builder().growChance(0.35f).end(),
-                        SolarTerm.INSECTS_AWAKENING, GrowParameter.builder().growChance(0.45f).end(),
-                        SolarTerm.SPRING_EQUINOX, GrowParameter.builder().growChance(0.7f).end(),
-                        SolarTerm.FRESH_GREEN, GrowParameter.builder().growChance(0.8f).end(),
-                        SolarTerm.GRAIN_RAIN, GrowParameter.builder().growChance(0.8f).end(),
+                        SolarTerm.BEGINNING_OF_SPRING, GrowParameter.builder().growChance(0.35f).end(),
+                        SolarTerm.RAIN_WATER, GrowParameter.builder().growChance(0.5f).end(),
+                        SolarTerm.INSECTS_AWAKENING, GrowParameter.builder().growChance(0.64f).end(),
+                        SolarTerm.SPRING_EQUINOX, GrowParameter.builder().growChance(0.8f).end(),
+                        SolarTerm.FRESH_GREEN, GrowParameter.builder().growChance(0.9f).end(),
+                        SolarTerm.GRAIN_RAIN, GrowParameter.builder().growChance(0.95f).end(),
 
                         SolarTerm.BEGINNING_OF_SUMMER, GrowParameter.builder().growChance(1.0f).end(),
-                        SolarTerm.LESSER_FULLNESS, GrowParameter.builder().growChance(1.0f).end(),
-                        SolarTerm.GRAIN_IN_EAR, GrowParameter.builder().growChance(1.0f).end(),
-                        SolarTerm.SUMMER_SOLSTICE, GrowParameter.builder().growChance(1.0f).end(),
+                        SolarTerm.LESSER_FULLNESS, GrowParameter.builder().growChance(1.01f).end(),
+                        SolarTerm.GRAIN_IN_EAR, GrowParameter.builder().growChance(1.025f).end(),
+                        SolarTerm.SUMMER_SOLSTICE, GrowParameter.builder().growChance(0.95f).end(),
                         SolarTerm.LESSER_HEAT, GrowParameter.builder().growChance(0.9f).end(),
-                        SolarTerm.GREATER_HEAT, GrowParameter.builder().growChance(0.9f).end(),
+                        SolarTerm.GREATER_HEAT, GrowParameter.builder().growChance(0.8f).end(),
 
                         SolarTerm.BEGINNING_OF_AUTUMN, GrowParameter.builder().growChance(0.8f).end(),
                         SolarTerm.END_OF_HEAT, GrowParameter.builder().growChance(0.8f).end(),
-                        SolarTerm.WHITE_DEW, GrowParameter.builder().growChance(0.7f).end(),
-                        SolarTerm.AUTUMNAL_EQUINOX, GrowParameter.builder().growChance(0.7f).end(),
-                        SolarTerm.COLD_DEW, GrowParameter.builder().growChance(0.6f).end(),
-                        SolarTerm.FIRST_FROST, GrowParameter.builder().growChance(0.35f).end(),
+                        SolarTerm.WHITE_DEW, GrowParameter.builder().growChance(0.95f).end(),
+                        SolarTerm.AUTUMNAL_EQUINOX, GrowParameter.builder().growChance(1f).end(),
+                        SolarTerm.COLD_DEW, GrowParameter.builder().growChance(0.7f).end(),
+                        SolarTerm.FIRST_FROST, GrowParameter.builder().growChance(0.5f).end(),
 
-                        SolarTerm.BEGINNING_OF_WINTER, GrowParameter.builder().growChance(0.0f).end(),
+                        SolarTerm.BEGINNING_OF_WINTER, GrowParameter.builder().growChance(0.1f).end(),
                         SolarTerm.LIGHT_SNOW, GrowParameter.builder().growChance(0.0f).end(),
                         SolarTerm.HEAVY_SNOW, GrowParameter.builder().growChance(0.0f).end(),
                         SolarTerm.WINTER_SOLSTICE, GrowParameter.builder().growChance(0.0f).end(),
@@ -569,7 +567,7 @@ public class CropRegistry {
                 )),
                 seasonListEmpty,
                 humidListEmpty,
-                snowAndIcePredicate
+                icePredicate
         ));
 
         context.register(SP_SU_WI, new CropGrowControlBuilder(
@@ -580,16 +578,16 @@ public class CropRegistry {
                         SolarTerm.BEGINNING_OF_SPRING, GrowParameter.builder().growChance(0.8f).end(),
                         SolarTerm.RAIN_WATER, GrowParameter.builder().growChance(0.9f).end(),
                         SolarTerm.INSECTS_AWAKENING, GrowParameter.builder().growChance(1.0f).end(),
-                        SolarTerm.SPRING_EQUINOX, GrowParameter.builder().growChance(1.0f).end(),
-                        SolarTerm.FRESH_GREEN, GrowParameter.builder().growChance(1.0f).end(),
+                        SolarTerm.SPRING_EQUINOX, GrowParameter.builder().growChance(1.025f).end(),
+                        SolarTerm.FRESH_GREEN, GrowParameter.builder().growChance(1.01f).end(),
                         SolarTerm.GRAIN_RAIN, GrowParameter.builder().growChance(1.0f).end(),
 
                         SolarTerm.BEGINNING_OF_SUMMER, GrowParameter.builder().growChance(1.0f).end(),
-                        SolarTerm.LESSER_FULLNESS, GrowParameter.builder().growChance(1.0f).end(),
-                        SolarTerm.GRAIN_IN_EAR, GrowParameter.builder().growChance(1.0f).end(),
+                        SolarTerm.LESSER_FULLNESS, GrowParameter.builder().growChance(1.01f).end(),
+                        SolarTerm.GRAIN_IN_EAR, GrowParameter.builder().growChance(1.025f).end(),
                         SolarTerm.SUMMER_SOLSTICE, GrowParameter.builder().growChance(1.0f).end(),
-                        SolarTerm.LESSER_HEAT, GrowParameter.builder().growChance(1.0f).end(),
-                        SolarTerm.GREATER_HEAT, GrowParameter.builder().growChance(1.0f).end(),
+                        SolarTerm.LESSER_HEAT, GrowParameter.builder().growChance(0.9f).end(),
+                        SolarTerm.GREATER_HEAT, GrowParameter.builder().growChance(0.8f).end(),
 
                         SolarTerm.BEGINNING_OF_AUTUMN, GrowParameter.builder().growChance(0.3f).end(),
                         SolarTerm.END_OF_HEAT, GrowParameter.builder().growChance(0.3f).end(),
@@ -598,12 +596,12 @@ public class CropRegistry {
                         SolarTerm.COLD_DEW, GrowParameter.builder().growChance(0.1f).end(),
                         SolarTerm.FIRST_FROST, GrowParameter.builder().growChance(0.1f).end(),
 
-                        SolarTerm.BEGINNING_OF_WINTER, GrowParameter.builder().growChance(0.5f).end(),
-                        SolarTerm.LIGHT_SNOW, GrowParameter.builder().growChance(0.6f).end(),
-                        SolarTerm.HEAVY_SNOW, GrowParameter.builder().growChance(0.7f).end(),
-                        SolarTerm.WINTER_SOLSTICE, GrowParameter.builder().growChance(0.8f).end(),
-                        SolarTerm.LESSER_COLD, GrowParameter.builder().growChance(0.7f).end(),
-                        SolarTerm.GREATER_COLD, GrowParameter.builder().growChance(0.6f).end()
+                        SolarTerm.BEGINNING_OF_WINTER, GrowParameter.builder().growChance(0.6f).end(),
+                        SolarTerm.LIGHT_SNOW, GrowParameter.builder().growChance(0.8f).end(),
+                        SolarTerm.HEAVY_SNOW, GrowParameter.builder().growChance(0.9f).end(),
+                        SolarTerm.WINTER_SOLSTICE, GrowParameter.builder().growChance(0.7f).end(),
+                        SolarTerm.LESSER_COLD, GrowParameter.builder().growChance(0.6f).end(),
+                        SolarTerm.GREATER_COLD, GrowParameter.builder().growChance(0.55f).end()
                 )),
                 seasonListEmpty,
                 humidListEmpty,
@@ -618,8 +616,8 @@ public class CropRegistry {
                         SolarTerm.BEGINNING_OF_SPRING, GrowParameter.builder().growChance(0.7f).end(),
                         SolarTerm.RAIN_WATER, GrowParameter.builder().growChance(0.8f).end(),
                         SolarTerm.INSECTS_AWAKENING, GrowParameter.builder().growChance(0.9f).end(),
-                        SolarTerm.SPRING_EQUINOX, GrowParameter.builder().growChance(1.0f).end(),
-                        SolarTerm.FRESH_GREEN, GrowParameter.builder().growChance(1.0f).end(),
+                        SolarTerm.SPRING_EQUINOX, GrowParameter.builder().growChance(1.025f).end(),
+                        SolarTerm.FRESH_GREEN, GrowParameter.builder().growChance(1.01f).end(),
                         SolarTerm.GRAIN_RAIN, GrowParameter.builder().growChance(0.8f).end(),
 
                         SolarTerm.BEGINNING_OF_SUMMER, GrowParameter.builder().growChance(0.25f).end(),
@@ -629,19 +627,19 @@ public class CropRegistry {
                         SolarTerm.LESSER_HEAT, GrowParameter.builder().growChance(0.0f).end(),
                         SolarTerm.GREATER_HEAT, GrowParameter.builder().growChance(0.0f).end(),
 
-                        SolarTerm.BEGINNING_OF_AUTUMN, GrowParameter.builder().growChance(0.1f).end(),
-                        SolarTerm.END_OF_HEAT, GrowParameter.builder().growChance(0.15f).end(),
-                        SolarTerm.WHITE_DEW, GrowParameter.builder().growChance(0.2f).end(),
-                        SolarTerm.AUTUMNAL_EQUINOX, GrowParameter.builder().growChance(0.5f).end(),
-                        SolarTerm.COLD_DEW, GrowParameter.builder().growChance(0.6f).end(),
-                        SolarTerm.FIRST_FROST, GrowParameter.builder().growChance(0.55f).end(),
+                        SolarTerm.BEGINNING_OF_AUTUMN, GrowParameter.builder().growChance(0.45f).end(),
+                        SolarTerm.END_OF_HEAT, GrowParameter.builder().growChance(0.6f).end(),
+                        SolarTerm.WHITE_DEW, GrowParameter.builder().growChance(0.8f).end(),
+                        SolarTerm.AUTUMNAL_EQUINOX, GrowParameter.builder().growChance(1f).end(),
+                        SolarTerm.COLD_DEW, GrowParameter.builder().growChance(0.9f).end(),
+                        SolarTerm.FIRST_FROST, GrowParameter.builder().growChance(0.7f).end(),
 
-                        SolarTerm.BEGINNING_OF_WINTER, GrowParameter.builder().growChance(0.55f).end(),
+                        SolarTerm.BEGINNING_OF_WINTER, GrowParameter.builder().growChance(0.65f).end(),
                         SolarTerm.LIGHT_SNOW, GrowParameter.builder().growChance(0.6f).end(),
-                        SolarTerm.HEAVY_SNOW, GrowParameter.builder().growChance(0.7f).end(),
-                        SolarTerm.WINTER_SOLSTICE, GrowParameter.builder().growChance(0.8f).end(),
-                        SolarTerm.LESSER_COLD, GrowParameter.builder().growChance(0.7f).end(),
-                        SolarTerm.GREATER_COLD, GrowParameter.builder().growChance(0.6f).end()
+                        SolarTerm.HEAVY_SNOW, GrowParameter.builder().growChance(0.55f).end(),
+                        SolarTerm.WINTER_SOLSTICE, GrowParameter.builder().growChance(0.5f).end(),
+                        SolarTerm.LESSER_COLD, GrowParameter.builder().growChance(0.5f).end(),
+                        SolarTerm.GREATER_COLD, GrowParameter.builder().growChance(0.45f).end()
                 )),
                 seasonListEmpty,
                 humidListEmpty,
@@ -660,26 +658,26 @@ public class CropRegistry {
                         SolarTerm.FRESH_GREEN, GrowParameter.builder().growChance(0.3f).end(),
                         SolarTerm.GRAIN_RAIN, GrowParameter.builder().growChance(0.3f).end(),
 
-                        SolarTerm.BEGINNING_OF_SUMMER, GrowParameter.builder().growChance(0.4f).end(),
+                        SolarTerm.BEGINNING_OF_SUMMER, GrowParameter.builder().growChance(0.5f).end(),
                         SolarTerm.LESSER_FULLNESS, GrowParameter.builder().growChance(0.5f).end(),
                         SolarTerm.GRAIN_IN_EAR, GrowParameter.builder().growChance(0.7f).end(),
                         SolarTerm.SUMMER_SOLSTICE, GrowParameter.builder().growChance(0.8f).end(),
                         SolarTerm.LESSER_HEAT, GrowParameter.builder().growChance(0.9f).end(),
-                        SolarTerm.GREATER_HEAT, GrowParameter.builder().growChance(1.0f).end(),
+                        SolarTerm.GREATER_HEAT, GrowParameter.builder().growChance(0.9f).end(),
 
-                        SolarTerm.BEGINNING_OF_AUTUMN, GrowParameter.builder().growChance(0.6f).end(),
-                        SolarTerm.END_OF_HEAT, GrowParameter.builder().growChance(0.5f).end(),
-                        SolarTerm.WHITE_DEW, GrowParameter.builder().growChance(0.45f).end(),
-                        SolarTerm.AUTUMNAL_EQUINOX, GrowParameter.builder().growChance(0.6f).end(),
-                        SolarTerm.COLD_DEW, GrowParameter.builder().growChance(0.4f).end(),
-                        SolarTerm.FIRST_FROST, GrowParameter.builder().growChance(0.6f).end(),
+                        SolarTerm.BEGINNING_OF_AUTUMN, GrowParameter.builder().growChance(0.85f).end(),
+                        SolarTerm.END_OF_HEAT, GrowParameter.builder().growChance(0.9f).end(),
+                        SolarTerm.WHITE_DEW, GrowParameter.builder().growChance(1f).end(),
+                        SolarTerm.AUTUMNAL_EQUINOX, GrowParameter.builder().growChance(0.9f).end(),
+                        SolarTerm.COLD_DEW, GrowParameter.builder().growChance(0.9f).end(),
+                        SolarTerm.FIRST_FROST, GrowParameter.builder().growChance(0.85f).end(),
 
-                        SolarTerm.BEGINNING_OF_WINTER, GrowParameter.builder().growChance(0.7f).end(),
-                        SolarTerm.LIGHT_SNOW, GrowParameter.builder().growChance(0.8f).end(),
-                        SolarTerm.HEAVY_SNOW, GrowParameter.builder().growChance(0.9f).end(),
-                        SolarTerm.WINTER_SOLSTICE, GrowParameter.builder().growChance(1.0f).end(),
-                        SolarTerm.LESSER_COLD, GrowParameter.builder().growChance(0.9f).end(),
-                        SolarTerm.GREATER_COLD, GrowParameter.builder().growChance(0.8f).end()
+                        SolarTerm.BEGINNING_OF_WINTER, GrowParameter.builder().growChance(0.85f).end(),
+                        SolarTerm.LIGHT_SNOW, GrowParameter.builder().growChance(0.85f).end(),
+                        SolarTerm.HEAVY_SNOW, GrowParameter.builder().growChance(0.8f).end(),
+                        SolarTerm.WINTER_SOLSTICE, GrowParameter.builder().growChance(0.7f).end(),
+                        SolarTerm.LESSER_COLD, GrowParameter.builder().growChance(0.6f).end(),
+                        SolarTerm.GREATER_COLD, GrowParameter.builder().growChance(0.4f).end()
                 )),
 
                 seasonListEmpty,
@@ -693,11 +691,11 @@ public class CropRegistry {
                 HolderSet.direct(), emptyGP, emptyGP2,
                 new EnumMap<>(of(
                         SolarTerm.BEGINNING_OF_SPRING, GrowParameter.builder().growChance(0.35f).end(),
-                        SolarTerm.RAIN_WATER, GrowParameter.builder().growChance(0.4f).end(),
-                        SolarTerm.INSECTS_AWAKENING, GrowParameter.builder().growChance(0.3f).end(),
-                        SolarTerm.SPRING_EQUINOX, GrowParameter.builder().growChance(0.6f).end(),
-                        SolarTerm.FRESH_GREEN, GrowParameter.builder().growChance(0.7f).end(),
-                        SolarTerm.GRAIN_RAIN, GrowParameter.builder().growChance(0.7f).end(),
+                        SolarTerm.RAIN_WATER, GrowParameter.builder().growChance(0.5f).end(),
+                        SolarTerm.INSECTS_AWAKENING, GrowParameter.builder().growChance(0.6f).end(),
+                        SolarTerm.SPRING_EQUINOX, GrowParameter.builder().growChance(0.8f).end(),
+                        SolarTerm.FRESH_GREEN, GrowParameter.builder().growChance(0.9f).end(),
+                        SolarTerm.GRAIN_RAIN, GrowParameter.builder().growChance(0.9f).end(),
 
                         SolarTerm.BEGINNING_OF_SUMMER, GrowParameter.builder().growChance(0.8f).end(),
                         SolarTerm.LESSER_FULLNESS, GrowParameter.builder().growChance(0.9f).end(),
@@ -706,9 +704,9 @@ public class CropRegistry {
                         SolarTerm.LESSER_HEAT, GrowParameter.builder().growChance(0.9f).end(),
                         SolarTerm.GREATER_HEAT, GrowParameter.builder().growChance(0.8f).end(),
 
-                        SolarTerm.BEGINNING_OF_AUTUMN, GrowParameter.builder().growChance(0.7f).end(),
-                        SolarTerm.END_OF_HEAT, GrowParameter.builder().growChance(0.6f).end(),
-                        SolarTerm.WHITE_DEW, GrowParameter.builder().growChance(0.5f).end(),
+                        SolarTerm.BEGINNING_OF_AUTUMN, GrowParameter.builder().growChance(0.9f).end(),
+                        SolarTerm.END_OF_HEAT, GrowParameter.builder().growChance(0.8f).end(),
+                        SolarTerm.WHITE_DEW, GrowParameter.builder().growChance(0.7f).end(),
                         SolarTerm.AUTUMNAL_EQUINOX, GrowParameter.builder().growChance(0.6f).end(),
                         SolarTerm.COLD_DEW, GrowParameter.builder().growChance(0.5f).end(),
                         SolarTerm.FIRST_FROST, GrowParameter.builder().growChance(0.45f).end(),
@@ -733,11 +731,11 @@ public class CropRegistry {
                 solarTermListEmpty,
                 seasonListEmpty,
                 new EnumMap<>(ImmutableMap.of(
-                        Humidity.ARID, GrowParameter.builder().growChance(0.95f).end(),
-                        Humidity.DRY, GrowParameter.builder().growChance(0.35f).end(),
-                        Humidity.AVERAGE, GrowParameter.builder().growChance(0.2f).end(),
-                        Humidity.MOIST, GrowParameter.builder().growChance(0.1f).end(),
-                        Humidity.HUMID, GrowParameter.builder().growChance(0f).end()
+                        Humidity.ARID, GrowParameter.builder().growChance(1.01f).end(),
+                        Humidity.DRY, GrowParameter.builder().growChance(0.5f).end(),
+                        Humidity.AVERAGE, GrowParameter.builder().growChance(0.15f).end(),
+                        Humidity.MOIST, GrowParameter.builder().growChance(0f).fertileChance(0.8f).end(),
+                        Humidity.HUMID, GrowParameter.builder().growChance(0f).fertileChance(0.5f).end()
                 )),
                 emptyBP
         ));
@@ -749,9 +747,9 @@ public class CropRegistry {
                 solarTermListEmpty,
                 seasonListEmpty,
                 new EnumMap<>(ImmutableMap.of(
-                        Humidity.ARID, GrowParameter.builder().growChance(0.85f).end(),
-                        Humidity.DRY, GrowParameter.builder().growChance(0.6f).end(),
-                        Humidity.AVERAGE, GrowParameter.builder().growChance(0.2f).end(),
+                        Humidity.ARID, GrowParameter.builder().growChance(0.99f).end(),
+                        Humidity.DRY, GrowParameter.builder().growChance(1f).end(),
+                        Humidity.AVERAGE, GrowParameter.builder().growChance(0.35f).end(),
                         Humidity.MOIST, GrowParameter.builder().growChance(0.1f).end(),
                         Humidity.HUMID, GrowParameter.builder().growChance(0f).end()
                 )),
@@ -765,11 +763,11 @@ public class CropRegistry {
                 solarTermListEmpty,
                 seasonListEmpty,
                 new EnumMap<>(ImmutableMap.of(
-                        Humidity.ARID, GrowParameter.builder().growChance(0.75f).end(),
-                        Humidity.DRY, GrowParameter.builder().growChance(0.95f).end(),
-                        Humidity.AVERAGE, GrowParameter.builder().growChance(0.65f).end(),
-                        Humidity.MOIST, GrowParameter.builder().growChance(0.1f).end(),
-                        Humidity.HUMID, GrowParameter.builder().growChance(0f).end()
+                        Humidity.ARID, GrowParameter.builder().growChance(0.97f).end(),
+                        Humidity.DRY, GrowParameter.builder().growChance(1.01f).end(),
+                        Humidity.AVERAGE, GrowParameter.builder().growChance(0.97f).end(),
+                        Humidity.MOIST, GrowParameter.builder().growChance(0.35f).end(),
+                        Humidity.HUMID, GrowParameter.builder().growChance(0.1f).end()
                 )),
                 emptyBP
         ));
@@ -781,11 +779,11 @@ public class CropRegistry {
                 solarTermListEmpty,
                 seasonListEmpty,
                 new EnumMap<>(ImmutableMap.of(
-                        Humidity.ARID, GrowParameter.builder().growChance(0.65f).end(),
-                        Humidity.DRY, GrowParameter.builder().growChance(0.75f).end(),
-                        Humidity.AVERAGE, GrowParameter.builder().growChance(0.98f).end(),
-                        Humidity.MOIST, GrowParameter.builder().growChance(0.6f).end(),
-                        Humidity.HUMID, GrowParameter.builder().growChance(0.2f).end()
+                        Humidity.ARID, GrowParameter.builder().growChance(0.9f).end(),
+                        Humidity.DRY, GrowParameter.builder().growChance(0.97f).end(),
+                        Humidity.AVERAGE, GrowParameter.builder().growChance(1.025f).end(),
+                        Humidity.MOIST, GrowParameter.builder().growChance(0.9f).end(),
+                        Humidity.HUMID, GrowParameter.builder().growChance(0.35f).end()
                 )),
                 emptyBP
         ));
@@ -797,11 +795,11 @@ public class CropRegistry {
                 solarTermListEmpty,
                 seasonListEmpty,
                 new EnumMap<>(ImmutableMap.of(
-                        Humidity.ARID, GrowParameter.builder().growChance(0.55f).end(),
-                        Humidity.DRY, GrowParameter.builder().growChance(0.8f).end(),
+                        Humidity.ARID, GrowParameter.builder().growChance(0.8f).end(),
+                        Humidity.DRY, GrowParameter.builder().growChance(0.85f).end(),
                         Humidity.AVERAGE, GrowParameter.builder().growChance(1f).end(),
-                        Humidity.MOIST, GrowParameter.builder().growChance(0.9f).end(),
-                        Humidity.HUMID, GrowParameter.builder().growChance(0.65f).end()
+                        Humidity.MOIST, GrowParameter.builder().growChance(0.95f).end(),
+                        Humidity.HUMID, GrowParameter.builder().growChance(0.8f).end()
                 )),
                 emptyBP
         ));
@@ -813,10 +811,10 @@ public class CropRegistry {
                 solarTermListEmpty,
                 seasonListEmpty,
                 new EnumMap<>(ImmutableMap.of(
-                        Humidity.ARID, GrowParameter.builder().growChance(0.15f).end(),
-                        Humidity.DRY, GrowParameter.builder().growChance(0.85f).end(),
-                        Humidity.AVERAGE, GrowParameter.builder().growChance(0.25f).end(),
-                        Humidity.MOIST, GrowParameter.builder().growChance(0.05f).end(),
+                        Humidity.ARID, GrowParameter.builder().growChance(0.4f).end(),
+                        Humidity.DRY, GrowParameter.builder().growChance(1.025f).end(),
+                        Humidity.AVERAGE, GrowParameter.builder().growChance(0.45f).end(),
+                        Humidity.MOIST, GrowParameter.builder().growChance(0.15f).end(),
                         Humidity.HUMID, GrowParameter.builder().growChance(0f).end()
                 )),
                 emptyBP
@@ -829,11 +827,11 @@ public class CropRegistry {
                 solarTermListEmpty,
                 seasonListEmpty,
                 new EnumMap<>(ImmutableMap.of(
-                        Humidity.ARID, GrowParameter.builder().growChance(0.1f).end(),
-                        Humidity.DRY, GrowParameter.builder().growChance(0.6f).end(),
-                        Humidity.AVERAGE, GrowParameter.builder().growChance(0.8f).end(),
-                        Humidity.MOIST, GrowParameter.builder().growChance(0.15f).end(),
-                        Humidity.HUMID, GrowParameter.builder().growChance(0f).end()
+                        Humidity.ARID, GrowParameter.builder().growChance(0.3f).end(),
+                        Humidity.DRY, GrowParameter.builder().growChance(0.97f).end(),
+                        Humidity.AVERAGE, GrowParameter.builder().growChance(0.97f).end(),
+                        Humidity.MOIST, GrowParameter.builder().growChance(0.4f).end(),
+                        Humidity.HUMID, GrowParameter.builder().growChance(0.1f).end()
                 )),
                 emptyBP
         ));
@@ -845,11 +843,11 @@ public class CropRegistry {
                 solarTermListEmpty,
                 seasonListEmpty,
                 new EnumMap<>(ImmutableMap.of(
-                        Humidity.ARID, GrowParameter.builder().growChance(0.05f).end(),
-                        Humidity.DRY, GrowParameter.builder().growChance(0.65f).end(),
-                        Humidity.AVERAGE, GrowParameter.builder().growChance(0.95f).end(),
-                        Humidity.MOIST, GrowParameter.builder().growChance(0.7f).end(),
-                        Humidity.HUMID, GrowParameter.builder().growChance(0.15f).end()
+                        Humidity.ARID, GrowParameter.builder().growChance(0.35f).end(),
+                        Humidity.DRY, GrowParameter.builder().growChance(0.95f).end(),
+                        Humidity.AVERAGE, GrowParameter.builder().growChance(1.025f).end(),
+                        Humidity.MOIST, GrowParameter.builder().growChance(0.95f).end(),
+                        Humidity.HUMID, GrowParameter.builder().growChance(0.35f).end()
                 )),
                 emptyBP
         ));
@@ -861,11 +859,11 @@ public class CropRegistry {
                 solarTermListEmpty,
                 seasonListEmpty,
                 new EnumMap<>(ImmutableMap.of(
-                        Humidity.ARID, GrowParameter.builder().growChance(0.1f).end(),
-                        Humidity.DRY, GrowParameter.builder().growChance(0.65f).end(),
+                        Humidity.ARID, GrowParameter.builder().growChance(0.25f).end(),
+                        Humidity.DRY, GrowParameter.builder().growChance(0.9f).end(),
                         Humidity.AVERAGE, GrowParameter.builder().growChance(1f).end(),
-                        Humidity.MOIST, GrowParameter.builder().growChance(0.85f).end(),
-                        Humidity.HUMID, GrowParameter.builder().growChance(0.7f).end()
+                        Humidity.MOIST, GrowParameter.builder().growChance(1f).end(),
+                        Humidity.HUMID, GrowParameter.builder().growChance(0.9f).end()
                 )),
                 emptyBP
         ));
@@ -877,11 +875,11 @@ public class CropRegistry {
                 solarTermListEmpty,
                 seasonListEmpty,
                 new EnumMap<>(ImmutableMap.of(
-                        Humidity.ARID, GrowParameter.builder().growChance(0f).end(),
-                        Humidity.DRY, GrowParameter.builder().growChance(0.1f).end(),
-                        Humidity.AVERAGE, GrowParameter.builder().growChance(0.85f).end(),
-                        Humidity.MOIST, GrowParameter.builder().growChance(0.15f).end(),
-                        Humidity.HUMID, GrowParameter.builder().growChance(0f).end()
+                        Humidity.ARID, GrowParameter.builder().growChance(0.07f).end(),
+                        Humidity.DRY, GrowParameter.builder().growChance(0.45f).end(),
+                        Humidity.AVERAGE, GrowParameter.builder().growChance(1.025f).end(),
+                        Humidity.MOIST, GrowParameter.builder().growChance(0.45f).end(),
+                        Humidity.HUMID, GrowParameter.builder().growChance(0.07f).end()
                 )),
                 emptyBP
         ));
@@ -893,11 +891,11 @@ public class CropRegistry {
                 solarTermListEmpty,
                 seasonListEmpty,
                 new EnumMap<>(ImmutableMap.of(
-                        Humidity.ARID, GrowParameter.builder().growChance(0f).end(),
-                        Humidity.DRY, GrowParameter.builder().growChance(0.05f).end(),
-                        Humidity.AVERAGE, GrowParameter.builder().growChance(0.85f).end(),
-                        Humidity.MOIST, GrowParameter.builder().growChance(0.95f).end(),
-                        Humidity.HUMID, GrowParameter.builder().growChance(0.1f).end()
+                        Humidity.ARID, GrowParameter.builder().growChance(0.1f).end(),
+                        Humidity.DRY, GrowParameter.builder().growChance(0.35f).end(),
+                        Humidity.AVERAGE, GrowParameter.builder().growChance(0.97f).end(),
+                        Humidity.MOIST, GrowParameter.builder().growChance(0.97f).end(),
+                        Humidity.HUMID, GrowParameter.builder().growChance(0.4f).end()
                 )),
                 emptyBP
         ));
@@ -909,11 +907,11 @@ public class CropRegistry {
                 solarTermListEmpty,
                 seasonListEmpty,
                 new EnumMap<>(ImmutableMap.of(
-                        Humidity.ARID, GrowParameter.builder().growChance(0f).end(),
-                        Humidity.DRY, GrowParameter.builder().growChance(0.15f).end(),
-                        Humidity.AVERAGE, GrowParameter.builder().growChance(0.75f).end(),
-                        Humidity.MOIST, GrowParameter.builder().growChance(1f).end(),
-                        Humidity.HUMID, GrowParameter.builder().growChance(0.85f).end()
+                        Humidity.ARID, GrowParameter.builder().growChance(0.05f).end(),
+                        Humidity.DRY, GrowParameter.builder().growChance(0.35f).end(),
+                        Humidity.AVERAGE, GrowParameter.builder().growChance(0.95f).end(),
+                        Humidity.MOIST, GrowParameter.builder().growChance(1.025f).end(),
+                        Humidity.HUMID, GrowParameter.builder().growChance(0.95f).end()
                 )),
                 emptyBP
         ));
@@ -925,11 +923,11 @@ public class CropRegistry {
                 solarTermListEmpty,
                 seasonListEmpty,
                 new EnumMap<>(ImmutableMap.of(
-                        Humidity.ARID, GrowParameter.builder().growChance(0).end(),
-                        Humidity.DRY, GrowParameter.builder().growChance(0f).end(),
-                        Humidity.AVERAGE, GrowParameter.builder().growChance(0.05f).end(),
-                        Humidity.MOIST, GrowParameter.builder().growChance(0.9f).end(),
-                        Humidity.HUMID, GrowParameter.builder().growChance(0.1f).end()
+                        Humidity.ARID, GrowParameter.builder().growChance(0).fertileChance(0.8f).end(),
+                        Humidity.DRY, GrowParameter.builder().growChance(0.15f).end(),
+                        Humidity.AVERAGE, GrowParameter.builder().growChance(0.45f).end(),
+                        Humidity.MOIST, GrowParameter.builder().growChance(1.025f).end(),
+                        Humidity.HUMID, GrowParameter.builder().growChance(0.5f).end()
                 )),
                 emptyBP
         ));
@@ -941,11 +939,11 @@ public class CropRegistry {
                 solarTermListEmpty,
                 seasonListEmpty,
                 new EnumMap<>(ImmutableMap.of(
-                        Humidity.ARID, GrowParameter.builder().growChance(0).end(),
-                        Humidity.DRY, GrowParameter.builder().growChance(0f).end(),
-                        Humidity.AVERAGE, GrowParameter.builder().growChance(0.15f).end(),
-                        Humidity.MOIST, GrowParameter.builder().growChance(0.85f).end(),
-                        Humidity.HUMID, GrowParameter.builder().growChance(0.85f).end()
+                        Humidity.ARID, GrowParameter.builder().growChance(0).fertileChance(0.8f).end(),
+                        Humidity.DRY, GrowParameter.builder().growChance(0.1f).end(),
+                        Humidity.AVERAGE, GrowParameter.builder().growChance(0.35f).end(),
+                        Humidity.MOIST, GrowParameter.builder().growChance(1f).end(),
+                        Humidity.HUMID, GrowParameter.builder().growChance(1f).end()
                 )),
                 emptyBP
         ));
@@ -957,16 +955,16 @@ public class CropRegistry {
                 solarTermListEmpty,
                 seasonListEmpty,
                 new EnumMap<>(ImmutableMap.of(
-                        Humidity.ARID, GrowParameter.builder().growChance(0f).end(),
-                        Humidity.DRY, GrowParameter.builder().growChance(0f).end(),
-                        Humidity.AVERAGE, GrowParameter.builder().growChance(0.1f).end(),
-                        Humidity.MOIST, GrowParameter.builder().growChance(0.25f).end(),
-                        Humidity.HUMID, GrowParameter.builder().growChance(0.9f).end()
+                        Humidity.ARID, GrowParameter.builder().growChance(0f).fertileChance(0.5f).end(),
+                        Humidity.DRY, GrowParameter.builder().growChance(0f).fertileChance(0.8f).end(),
+                        Humidity.AVERAGE, GrowParameter.builder().growChance(0.3f).end(),
+                        Humidity.MOIST, GrowParameter.builder().growChance(0.6f).end(),
+                        Humidity.HUMID, GrowParameter.builder().growChance(1.025f).end()
                 )),
                 emptyBP
         ));
 
 
-        blockHolderGetter=null;
+        blockHolderGetter = null;
     }
 }

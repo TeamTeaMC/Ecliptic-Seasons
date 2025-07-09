@@ -31,7 +31,9 @@ public class CropClimateTagsDataProvider extends TagsProvider<AgroClimaticZone> 
             tag(CropClimateTags.ALL).add(cropClimateTypeReference.key());
         }
 
-        tag(CropClimateTags.OVERWORLD).add(AgroClimateRegistry.TEMPERATE, AgroClimateRegistry.COLD, AgroClimateRegistry.HOT, AgroClimateRegistry.DESERT);
+        tag(CropClimateTags.OVERWORLD).add(AgroClimateRegistry.TEMPERATE, AgroClimateRegistry.COLD, AgroClimateRegistry.HOT
+                // , AgroClimateRegistry.DESERT
+        );
 
     }
 }

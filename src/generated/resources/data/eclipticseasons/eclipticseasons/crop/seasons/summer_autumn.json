@@ -39,17 +39,17 @@
       "fertile_chance": 1.0
     },
     "beginning_of_summer": {
-      "grow_chance": 0.9,
+      "grow_chance": 0.8,
       "death_chance": 0.0,
       "fertile_chance": 1.0
     },
     "lesser_fullness": {
-      "grow_chance": 1.0,
+      "grow_chance": 0.9,
       "death_chance": 0.0,
       "fertile_chance": 1.0
     },
     "grain_in_ear": {
-      "grow_chance": 1.0,
+      "grow_chance": 0.95,
       "death_chance": 0.0,
       "fertile_chance": 1.0
     },
@@ -69,37 +69,37 @@
       "fertile_chance": 1.0
     },
     "beginning_of_autumn": {
-      "grow_chance": 0.7,
+      "grow_chance": 0.8,
       "death_chance": 0.0,
       "fertile_chance": 1.0
     },
     "end_of_heat": {
-      "grow_chance": 0.65,
+      "grow_chance": 0.85,
       "death_chance": 0.0,
       "fertile_chance": 1.0
     },
     "white_dew": {
-      "grow_chance": 0.55,
+      "grow_chance": 0.9,
       "death_chance": 0.0,
       "fertile_chance": 1.0
     },
     "autumnal_equinox": {
-      "grow_chance": 0.45,
+      "grow_chance": 1.01,
       "death_chance": 0.0,
       "fertile_chance": 1.0
     },
     "cold_dew": {
-      "grow_chance": 0.35,
+      "grow_chance": 0.7,
       "death_chance": 0.0,
       "fertile_chance": 1.0
     },
     "first_frost": {
-      "grow_chance": 0.25,
+      "grow_chance": 0.6,
       "death_chance": 0.0,
       "fertile_chance": 1.0
     },
     "beginning_of_winter": {
-      "grow_chance": 0.1,
+      "grow_chance": 0.2,
       "death_chance": 0.0,
       "fertile_chance": 1.0
     },

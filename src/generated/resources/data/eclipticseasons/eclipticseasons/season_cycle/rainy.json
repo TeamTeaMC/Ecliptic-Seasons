@@ -8,7 +8,13 @@
         "type": "forge:or"
       },
       {
-        "value": "#forge:is_desert",
+        "values": [
+          "#forge:is_wet/overworld"
+        ],
+        "type": "forge:or"
+      },
+      {
+        "value": "#eclipticseasons:monsoonal",
         "type": "forge:not"
       }
     ],

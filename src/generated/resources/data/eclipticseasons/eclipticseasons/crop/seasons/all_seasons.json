@@ -11,27 +11,27 @@
       "fertile_chance": 1.0
     },
     "rain_water": {
-      "grow_chance": 0.4,
+      "grow_chance": 0.5,
       "death_chance": 0.0,
       "fertile_chance": 1.0
     },
     "insects_awakening": {
-      "grow_chance": 0.3,
-      "death_chance": 0.0,
-      "fertile_chance": 1.0
-    },
-    "spring_equinox": {
       "grow_chance": 0.6,
       "death_chance": 0.0,
       "fertile_chance": 1.0
     },
+    "spring_equinox": {
+      "grow_chance": 0.8,
+      "death_chance": 0.0,
+      "fertile_chance": 1.0
+    },
     "fresh_green": {
-      "grow_chance": 0.7,
+      "grow_chance": 0.9,
       "death_chance": 0.0,
       "fertile_chance": 1.0
     },
     "grain_rain": {
-      "grow_chance": 0.7,
+      "grow_chance": 0.9,
       "death_chance": 0.0,
       "fertile_chance": 1.0
     },
@@ -66,17 +66,17 @@
       "fertile_chance": 1.0
     },
     "beginning_of_autumn": {
-      "grow_chance": 0.7,
+      "grow_chance": 0.9,
       "death_chance": 0.0,
       "fertile_chance": 1.0
     },
     "end_of_heat": {
-      "grow_chance": 0.6,
+      "grow_chance": 0.8,
       "death_chance": 0.0,
       "fertile_chance": 1.0
     },
     "white_dew": {
-      "grow_chance": 0.5,
+      "grow_chance": 0.7,
       "death_chance": 0.0,
       "fertile_chance": 1.0
     },

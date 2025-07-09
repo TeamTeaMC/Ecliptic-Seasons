@@ -6,12 +6,12 @@
   "climate": "eclipticseasons:temperate",
   "solar_terms": {
     "beginning_of_spring": {
-      "grow_chance": 0.6,
+      "grow_chance": 0.64,
       "death_chance": 0.0,
       "fertile_chance": 1.0
     },
     "rain_water": {
-      "grow_chance": 0.7,
+      "grow_chance": 0.75,
       "death_chance": 0.0,
       "fertile_chance": 1.0
     },
@@ -21,17 +21,17 @@
       "fertile_chance": 1.0
     },
     "spring_equinox": {
-      "grow_chance": 0.9,
+      "grow_chance": 0.95,
       "death_chance": 0.0,
       "fertile_chance": 1.0
     },
     "fresh_green": {
-      "grow_chance": 0.9,
+      "grow_chance": 1.025,
       "death_chance": 0.0,
       "fertile_chance": 1.0
     },
     "grain_rain": {
-      "grow_chance": 0.8,
+      "grow_chance": 0.95,
       "death_chance": 0.0,
       "fertile_chance": 1.0
     },
@@ -66,32 +66,32 @@
       "fertile_chance": 1.0
     },
     "beginning_of_autumn": {
-      "grow_chance": 0.2,
+      "grow_chance": 0.1,
       "death_chance": 0.0,
       "fertile_chance": 1.0
     },
     "end_of_heat": {
-      "grow_chance": 0.2,
+      "grow_chance": 0.1,
       "death_chance": 0.0,
       "fertile_chance": 1.0
     },
     "white_dew": {
-      "grow_chance": 0.1,
+      "grow_chance": 0.12,
       "death_chance": 0.0,
       "fertile_chance": 1.0
     },
     "autumnal_equinox": {
-      "grow_chance": 0.1,
+      "grow_chance": 0.15,
       "death_chance": 0.0,
       "fertile_chance": 1.0
     },
     "cold_dew": {
-      "grow_chance": 0.1,
+      "grow_chance": 0.15,
       "death_chance": 0.0,
       "fertile_chance": 1.0
     },
     "first_frost": {
-      "grow_chance": 0.1,
+      "grow_chance": 0.25,
       "death_chance": 0.0,
       "fertile_chance": 1.0
     },
@@ -101,27 +101,27 @@
       "fertile_chance": 1.0
     },
     "light_snow": {
-      "grow_chance": 0.8,
+      "grow_chance": 0.85,
       "death_chance": 0.0,
       "fertile_chance": 1.0
     },
     "heavy_snow": {
-      "grow_chance": 0.9,
+      "grow_chance": 0.95,
       "death_chance": 0.0,
       "fertile_chance": 1.0
     },
     "winter_solstice": {
-      "grow_chance": 1.0,
-      "death_chance": 0.0,
-      "fertile_chance": 1.0
-    },
-    "lesser_cold": {
       "grow_chance": 0.9,
       "death_chance": 0.0,
       "fertile_chance": 1.0
     },
+    "lesser_cold": {
+      "grow_chance": 0.7,
+      "death_chance": 0.0,
+      "fertile_chance": 1.0
+    },
     "greater_cold": {
-      "grow_chance": 0.8,
+      "grow_chance": 0.6,
       "death_chance": 0.0,
       "fertile_chance": 1.0
     }

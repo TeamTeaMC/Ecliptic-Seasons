@@ -18,6 +18,7 @@ import net.minecraftforge.registries.holdersets.AndHolderSet;
 import net.minecraftforge.registries.holdersets.NotHolderSet;
 import net.minecraftforge.registries.holdersets.OrHolderSet;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class SeasonCycleRegistry {
@@ -31,12 +32,14 @@ public class SeasonCycleRegistry {
         return ResourceKey.create(ESRegistries.SEASON_CYCLE, EclipticSeasons.rl(name));
     }
 
-    private static <T> HolderSet<T> and(List<HolderSet<T>> values) {
-        return new AndHolderSet<>(values);
+    @SafeVarargs
+    private static <T> HolderSet<T> and(HolderSet<T>... values) {
+        return new AndHolderSet<>(Arrays.stream(values).toList());
     }
 
-    private static <T> HolderSet<T> or(List<HolderSet<T>> values) {
-        return new OrHolderSet<>(values);
+    @SafeVarargs
+    private static <T> HolderSet<T> or(HolderSet<T>... values) {
+        return new OrHolderSet<>(Arrays.stream(values).toList());
     }
 
     private static HolderSet<Biome> not(AgroClimateRegistry.BiomeRegistryLookup biomeRegistryLookup, HolderSet<Biome> value) {
@@ -48,9 +51,9 @@ public class SeasonCycleRegistry {
         HolderGetter<SeasonPhase> lookuped = context.lookup(ESRegistries.SEASON_PHASE);
         AgroClimateRegistry.BiomeRegistryLookup lazyLookup = new AgroClimateRegistry.BiomeRegistryLookup(getter);
 
-        context.register(MONSOON,new SeasonCycle(
-               // and( getter.getOrThrow(Tags.Biomes.IS_HOT_OVERWORLD),
-               //         not(lazyLookup,getter.getOrThrow(Tags.Biomes.IS_DESERT))),
+        context.register(MONSOON, new SeasonCycle(
+                // and( getter.getOrThrow(Tags.Biomes.IS_HOT_OVERWORLD),
+                //         not(lazyLookup,getter.getOrThrow(Tags.Biomes.IS_DESERT))),
                 getter.getOrThrow(ClimateTypeBiomeTags.MONSOONAL),
                 SolarTermValueMap.<Holder<SeasonPhase>>builder()
                         // 冬季（旱季）
@@ -87,19 +90,22 @@ public class SeasonCycleRegistry {
                         .build()
         ));
 
-        context.register(RAINY,new SeasonCycle(
-                and(List.of(getter.getOrThrow(Tags.Biomes.IS_HOT_OVERWORLD), not(lazyLookup,getter.getOrThrow(Tags.Biomes.IS_DESERT)))),
+        context.register(RAINY, new SeasonCycle(
+                and(getter.getOrThrow(Tags.Biomes.IS_HOT_OVERWORLD),
+                        getter.getOrThrow(Tags.Biomes.IS_WET_OVERWORLD),
+                        not(lazyLookup, getter.getOrThrow(ClimateTypeBiomeTags.MONSOONAL)))
+                ,
                 SolarTermValueMap.
                         <Holder<SeasonPhase>>builder().defaultValue(lookuped.getOrThrow(SeasonPhaseRegistry.RAIN)).build()
-                ));
+        ));
 
-        context.register(DESERT,new SeasonCycle(
+        context.register(DESERT, new SeasonCycle(
                 getter.getOrThrow(Tags.Biomes.IS_DESERT),
                 SolarTermValueMap.
                         <Holder<SeasonPhase>>builder().defaultValue(lookuped.getOrThrow(SeasonPhaseRegistry.DRY)).build()
         ));
 
-        context.register(COLD,new SeasonCycle(
+        context.register(COLD, new SeasonCycle(
                 getter.getOrThrow(Tags.Biomes.IS_COLD_OVERWORLD),
                 SolarTermValueMap.
                         <Holder<SeasonPhase>>builder()

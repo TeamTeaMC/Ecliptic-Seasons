@@ -21,12 +21,12 @@
       "fertile_chance": 1.0
     },
     "spring_equinox": {
-      "grow_chance": 1.0,
+      "grow_chance": 1.025,
       "death_chance": 0.0,
       "fertile_chance": 1.0
     },
     "fresh_green": {
-      "grow_chance": 1.0,
+      "grow_chance": 1.01,
       "death_chance": 0.0,
       "fertile_chance": 1.0
     },
@@ -41,12 +41,12 @@
       "fertile_chance": 1.0
     },
     "lesser_fullness": {
-      "grow_chance": 1.0,
+      "grow_chance": 1.01,
       "death_chance": 0.0,
       "fertile_chance": 1.0
     },
     "grain_in_ear": {
-      "grow_chance": 1.0,
+      "grow_chance": 1.025,
       "death_chance": 0.0,
       "fertile_chance": 1.0
     },
@@ -56,12 +56,12 @@
       "fertile_chance": 1.0
     },
     "lesser_heat": {
-      "grow_chance": 1.0,
+      "grow_chance": 0.9,
       "death_chance": 0.0,
       "fertile_chance": 1.0
     },
     "greater_heat": {
-      "grow_chance": 1.0,
+      "grow_chance": 0.8,
       "death_chance": 0.0,
       "fertile_chance": 1.0
     },
@@ -96,32 +96,32 @@
       "fertile_chance": 1.0
     },
     "beginning_of_winter": {
-      "grow_chance": 0.5,
+      "grow_chance": 0.6,
       "death_chance": 0.0,
       "fertile_chance": 1.0
     },
     "light_snow": {
-      "grow_chance": 0.6,
-      "death_chance": 0.0,
-      "fertile_chance": 1.0
-    },
-    "heavy_snow": {
-      "grow_chance": 0.7,
-      "death_chance": 0.0,
-      "fertile_chance": 1.0
-    },
-    "winter_solstice": {
       "grow_chance": 0.8,
       "death_chance": 0.0,
       "fertile_chance": 1.0
     },
-    "lesser_cold": {
+    "heavy_snow": {
+      "grow_chance": 0.9,
+      "death_chance": 0.0,
+      "fertile_chance": 1.0
+    },
+    "winter_solstice": {
       "grow_chance": 0.7,
       "death_chance": 0.0,
       "fertile_chance": 1.0
     },
-    "greater_cold": {
+    "lesser_cold": {
       "grow_chance": 0.6,
+      "death_chance": 0.0,
+      "fertile_chance": 1.0
+    },
+    "greater_cold": {
+      "grow_chance": 0.55,
       "death_chance": 0.0,
       "fertile_chance": 1.0
     }

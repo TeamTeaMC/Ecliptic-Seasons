@@ -143,7 +143,7 @@ public class Lang_EN extends LangHelper {
         add(AgroClimateRegistry.COLD, "Cold Zone");
         add(AgroClimateRegistry.TEMPERATE, "Temperate Zone");
         add(AgroClimateRegistry.HOT, "Tropical Zone");
-        add(AgroClimateRegistry.DESERT, "Desert");
+        // add(AgroClimateRegistry.DESERT, "Desert");
         add(AgroClimateRegistry.NETHER, "Nether");
         add(AgroClimateRegistry.END, "End");
 

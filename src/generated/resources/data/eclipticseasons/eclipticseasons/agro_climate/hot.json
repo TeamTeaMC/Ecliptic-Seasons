@@ -31,16 +31,7 @@
   ],
   "biomes": {
     "values": [
-      {
-        "values": [
-          "#forge:is_hot/overworld"
-        ],
-        "type": "forge:or"
-      },
-      {
-        "value": "#forge:is_desert",
-        "type": "forge:not"
-      }
+      "#forge:is_hot/overworld"
     ],
     "type": "forge:and"
   }

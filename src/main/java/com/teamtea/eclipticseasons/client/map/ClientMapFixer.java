@@ -106,32 +106,34 @@ public class ClientMapFixer {
     }
 
     public static void addPlanner(Level level, BlockState state, BlockPos pos, long startTick, int startY) {
-        boolean isNotOldHeight = startY != agentGetLevelHeight(level, pos);
-        if (ClientConfig.Renderer.realisticSnowyChange.get()
-                && ((solidTest(state))
-                || state.getBlock() == Blocks.AIR
-        )
-                && isNotOldHeight
-                && EclipticUtil.isHereWithSnow(level, pos)
-        ) {
-            // TODO：如果这里不下雪的话，那么直接更新就好了.以及未来可以考虑合并同一个点的
-            ChunkPos chunkPos = new ChunkPos(pos);
-            Long2ObjectLinkedOpenHashMap<XZPos> xzPosList = CHUNK_POS_XZ_POS_MAP.computeIfAbsent(chunkPos.toLong(), k -> new Long2ObjectLinkedOpenHashMap<>());
-            XZPos xzPos = new XZPos(pos.getX(), pos.getZ(), startTick, startY);
-            long longKey = xzPos.toLongKey();
-            xzPosList.remove(longKey);
-            xzPosList.put(longKey, xzPos);
-            // todo not lazy now
-            // if (state.getBlock() == Blocks.AIR) {
-            //     MapChecker.updatePosForce(level, pos, level.getMaxBuildHeight() + 1);
-            // }
-            MapChecker.updatePosForce(level, pos, level.getMaxBuildHeight() + 1);
-        } else {
-            if (isNotOldHeight) {
-                MapChecker.getHeightOrUpdate(level, pos, true);
+        if (ClientConfig.Renderer.realisticSnowyChange.get()) {
+            boolean isNotOldHeight = startY != agentGetLevelHeight(level, pos);
+            if (((solidTest(state))
+                    || state.getBlock() == Blocks.AIR
+            )
+                    && isNotOldHeight
+                    && EclipticUtil.isHereWithSnow(level, pos)) {
+                // TODO：如果这里不下雪的话，那么直接更新就好了.以及未来可以考虑合并同一个点的
+                ChunkPos chunkPos = new ChunkPos(pos);
+                Long2ObjectLinkedOpenHashMap<XZPos> xzPosList = CHUNK_POS_XZ_POS_MAP.computeIfAbsent(chunkPos.toLong(), k -> new Long2ObjectLinkedOpenHashMap<>());
+                startY = level.getMaxBuildHeight() + 1;
+                XZPos xzPos = new XZPos(pos.getX(), pos.getZ(), startTick, startY);
+                long longKey = xzPos.toLongKey();
+                xzPosList.remove(longKey);
+                xzPosList.put(longKey, xzPos);
+                // todo not lazy now
+                // if (state.getBlock() == Blocks.AIR) {
+                //     MapChecker.updatePosForce(level, pos, level.getMaxBuildHeight() + 1);
+                // }
+                MapChecker.updatePosForce(level, pos, startY);
+            } else {
+                if (isNotOldHeight) {
+                    MapChecker.getHeightOrUpdate(level, pos, true);
+                }
             }
+        } else {
+            MapChecker.getHeightOrUpdate(level, pos, true);
         }
-
     }
 
     public static void tick(Level level) {

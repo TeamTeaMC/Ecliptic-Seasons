@@ -29,10 +29,6 @@
       {
         "value": "#forge:is_hot/overworld",
         "type": "forge:not"
-      },
-      {
-        "value": "#forge:is_desert",
-        "type": "forge:not"
       }
     ],
     "type": "forge:and"

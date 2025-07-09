@@ -145,7 +145,7 @@ public class Lang_ZH extends LangHelper {
         add(AgroClimateRegistry.COLD, "寒带");
         add(AgroClimateRegistry.TEMPERATE, "温带");
         add(AgroClimateRegistry.HOT, "热带");
-        add(AgroClimateRegistry.DESERT, "沙漠");
+        // add(AgroClimateRegistry.DESERT, "沙漠");
         add(AgroClimateRegistry.NETHER, "下界");
         add(AgroClimateRegistry.END, "末地");
 
