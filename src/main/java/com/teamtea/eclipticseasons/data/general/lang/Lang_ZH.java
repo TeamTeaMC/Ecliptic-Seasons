@@ -342,6 +342,9 @@ public class Lang_ZH extends LangHelper {
         add("info.eclipticseasons.calendar.model.normal","一般");
         add("info.eclipticseasons.calendar.model.year","年份");
         add("info.eclipticseasons.calendar.model.next","下一节气");
+
+        add("pack.eclipticseasons.extra_snow","额外覆雪方块资源包");
+
     }
 
     private void addAdvancements() {

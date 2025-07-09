@@ -1,4 +1,4 @@
-package com.teamtea.eclipticseasons.data.extra_snow;
+package com.teamtea.eclipticseasons.data.extend.extra_snow;
 
 import com.teamtea.eclipticseasons.data.general.datapack.client.ClientModelDefinitionProvider;
 import net.minecraft.core.HolderLookup;

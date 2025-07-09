@@ -1,9 +1,9 @@
 package com.teamtea.eclipticseasons.data;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
-import com.teamtea.eclipticseasons.data.example.DatapackRegistryGeneratorExample;
-import com.teamtea.eclipticseasons.data.extra_snow.DatapackRegistryGeneratorExtra;
-import com.teamtea.eclipticseasons.data.extra_snow.ExtraClientModelDefinitionProvider;
+import com.teamtea.eclipticseasons.data.extend.example.DatapackRegistryGeneratorExample;
+import com.teamtea.eclipticseasons.data.extend.extra_snow.DatapackRegistryGeneratorExtra;
+import com.teamtea.eclipticseasons.data.extend.extra_snow.ExtraClientModelDefinitionProvider;
 import com.teamtea.eclipticseasons.data.general.advancement.Advancements;
 import com.teamtea.eclipticseasons.data.api.MutablePackOutput;
 import com.teamtea.eclipticseasons.data.general.datapack.DatapackRegistryGenerator;

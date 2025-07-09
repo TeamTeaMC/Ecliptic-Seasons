@@ -340,6 +340,9 @@ public class Lang_EN extends LangHelper {
         add("info.eclipticseasons.calendar.model.normal", "default");
         add("info.eclipticseasons.calendar.model.year", "year");
         add("info.eclipticseasons.calendar.model.next", "next");
+
+        add("pack.eclipticseasons.extra_snow","Extra Snow Resourcepack");
+
     }
 
     private void addAdvancements() {

@@ -17,7 +17,7 @@ public class FakeResourceManagerHelperUtil {
                 packId,
                 modFile,
                 Component.translatable(languageKey),
-                PackSource.BUILT_IN);
+                source);
     }
 
     public static void registerBuiltinResourcePack(AddPackFindersEvent event, ResourceLocation packId, ModFile modFile, Component translate, PackSource source) {
