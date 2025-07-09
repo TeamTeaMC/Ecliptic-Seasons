@@ -1,3 +1,31 @@
+## 0.11.6
+
+- Optimized updates for additional heightmaps.
+- Improved block snow covering behavior when Realistic Snowy Change is enabled to better fit the current heightmap
+  structure.
+- Bamboo is now treated as one of the built-in snow-covered blocks (driven by data pack).
+- Added some optional extra snow-covered block variants (can be enabled in the settings; note that this feature is
+  currently incomplete and will be updated further).
+- Removed the built-in desert type from the agro climatic zones, as the humidity control options are now sufficient. In
+  the Overworld, climate regions are now categorized only into temperate, warmer, and colder zones for agricultural
+  calculations (to be further optimized in the future).
+- Rebalanced crop growth conditions for both seasonal and humidity factors. Significantly increased default growth speed
+  during appropriate seasons and humidity levels to reduce reliance on greenhouses, and adjusted some out-of-season
+  growth probabilities. (For data pack creators: note that the current version only builds in default mode, so some
+  parameters are omitted. The data packs you made remain working, as all four growth parameters are optional).
+- Moved the data packs for Biome Rain and Snow Term to the example resource pack unused.
+
+---
+A few additional notes: 
+
+Upcoming versions will primarily focus on balance adjustments and data standardization, such as more precise tuning of biome tags.
+
+Some content that may not be suitable to include in the core mod might be split into separate addons.
+
+If you have any suggestions, feel free to share them with us.
+
+We're getting ready to release an official version—thank you all for your support over the past year!
+
 ### 0.11.5.1
 
 - Fixed an issue where humidity values were not correctly calculated when using a custom BiomeRain.
