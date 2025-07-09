@@ -29,6 +29,7 @@ public class CommonConfig {
         CompatModule.CommonConfig.load(builder);
         Debug.load(builder);
         Map.load(builder);
+        Resource.load(builder);
     }
 
     // public static class Compat {
@@ -259,6 +260,17 @@ public class CommonConfig {
         }
     }
 
+    public static class Resource {
+        public static ForgeConfigSpec.BooleanValue extraSnow;
+
+        private static void load(ForgeConfigSpec.Builder builder) {
+            builder.push("Resource");
+            extraSnow = builder.comment("Enable extra built-in snow definitions resourcepack for game.")
+                    .define("ExtraSnowDefinitions", false);
+            builder.pop();
+        }
+    }
+
     @Getter
     private static boolean useSolarWeather = true;
 
@@ -282,7 +294,7 @@ public class CommonConfig {
                 && modConfigEvent.getConfig().getSpec() == COMMON_CONFIG) {
             useSolarWeather = Weather.useSolarWeather.get();
             forceCropCompatMode = Crop.forceCompatMode.get();
-            snowyWinter=Season.snowyWinter.get();
+            snowyWinter = Season.snowyWinter.get();
             int[] ints = Stream.of(Season.springDayTimes, Season.summerDayTimes, Season.autumnDayTimes, Season.winterDayTimes, Season.noneDayTimes)
                     .map(ForgeConfigSpec.ConfigValue::get)
                     .flatMap(Collection::stream)

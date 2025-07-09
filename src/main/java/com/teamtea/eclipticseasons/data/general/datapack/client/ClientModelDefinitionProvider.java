@@ -75,43 +75,6 @@ public class ClientModelDefinitionProvider extends AbstractModelDefinitionProvid
                 .singleCross()
                 .replace(true);
 
-        addSnowyBlockModelDefinition(Blocks.SUNFLOWER)
-                .variantsForAllStatesExceptExact(state ->
-                {
-                    if (state.getValue(BlockStateProperties.DOUBLE_BLOCK_HALF) == DoubleBlockHalf.LOWER) {
-                        return models().withExistingParent("block/snowy/sunflower_bottom", "sunflower_bottom")
-                                .texture("cross", "block/snowy/sunflower_bottom");
-                    } else {
-                        return models().withExistingParent("block/snowy/sunflower_top", "sunflower_top")
-                                .texture("cross", "block/snowy/sunflower_top")
-                                .texture("front", "block/snowy/sunflower_front")
-                                .texture("back", "block/snowy/sunflower_back")
-                                .texture("particle", "block/snowy/sunflower_front");
-                    }
-                })
-                .replace(true);
-
-        addSnowyPlant(Blocks.OAK_SAPLING);
-        addSnowyPlant(Blocks.DARK_OAK_SAPLING);
-        addSnowyPlant(Blocks.ACACIA_SAPLING);
-        addSnowyPlant(Blocks.BIRCH_SAPLING);
-        addSnowyPlant(Blocks.JUNGLE_SAPLING);
-        addSnowyPlant(Blocks.SPRUCE_SAPLING);
-        addSnowyPlant(Blocks.CHERRY_SAPLING);
-
-        addSnowyBlockModelDefinition(Blocks.MANGROVE_PROPAGULE)
-                .variantsForAllStatesExceptExact(state ->
-                {
-                    if (state.getValue(MangrovePropaguleBlock.HANGING)) {
-                        return models().withExistingParent("block/snowy/mangrove_propagule_hanging_" + state.getValue(MangrovePropaguleBlock.AGE), "mangrove_propagule_hanging_" + state.getValue(MangrovePropaguleBlock.AGE))
-                                .texture("propagule", "block/snowy/mangrove_propagule_hanging");
-                    } else {
-                        return models().withExistingParent("block/snowy/mangrove_propagule", "mangrove_propagule")
-                                .texture("sapling", "block/snowy/mangrove_propagule");
-                    }
-                }, SaplingBlock.STAGE, BlockStateProperties.WATERLOGGED)
-                .replace(true);
-
         addSnowyPlant(Blocks.BAMBOO_SAPLING, "bamboo_stage0");
 
         addSnowyBlockModelDefinition(Blocks.BAMBOO)

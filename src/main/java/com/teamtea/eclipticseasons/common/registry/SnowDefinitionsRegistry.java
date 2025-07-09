@@ -50,23 +50,7 @@ public class SnowDefinitionsRegistry {
         addPlant(context, Blocks.DEAD_BUSH);
         addPlant(context, Blocks.SWEET_BERRY_BUSH);
 
-        // addPlant(context, Blocks.SUNFLOWER, MapChecker.FLAG_CUSTOM_JSON_PLANTS);
-        // addPlant(context, Blocks.OAK_SAPLING);
-        // addPlant(context, Blocks.DARK_OAK_SAPLING);
-        // addPlant(context, Blocks.ACACIA_SAPLING);
-        // addPlant(context, Blocks.BIRCH_SAPLING);
-        // addPlant(context, Blocks.JUNGLE_SAPLING);
-        // addPlant(context, Blocks.SPRUCE_SAPLING);
-        // addPlant(context, Blocks.CHERRY_SAPLING);
-        //
 
-        //
-        // context.register(createSnowyKey("mangrove_propagule"), SnowDefinition.builder()
-        //         .blocks(HolderSet.direct(Blocks.MANGROVE_PROPAGULE.builtInRegistryHolder()))
-        //         // .map(List.of(SnowDefinition.PropertyTester.builder().name(MangrovePropaguleBlock.HANGING.getName()).matcher(SnowDefinition.ExactMatcher.builder().value(MangrovePropaguleBlock.HANGING.getName(false)).build()).build()))
-        //         .info(SnowDefinition.Info.builder().offset(1).flag(MapChecker.FLAG_CUSTOM_JSON_PLANTS)
-        //                 .mid(getSnowModelPath("mangrove_propagule")).build())
-        //         .build());
 
         addPlant(context, Blocks.BAMBOO_SAPLING);
         register(context, Blocks.BAMBOO,
@@ -127,6 +111,20 @@ public class SnowDefinitionsRegistry {
     }
 
     public static void bootstrap_extra(BootstapContext<SnowDefinition> context) {
+        addPlant(context, Blocks.SUNFLOWER, MapChecker.FLAG_CUSTOM_JSON_PLANTS);
+        addPlant(context, Blocks.OAK_SAPLING);
+        addPlant(context, Blocks.DARK_OAK_SAPLING);
+        addPlant(context, Blocks.ACACIA_SAPLING);
+        addPlant(context, Blocks.BIRCH_SAPLING);
+        addPlant(context, Blocks.JUNGLE_SAPLING);
+        addPlant(context, Blocks.SPRUCE_SAPLING);
+        addPlant(context, Blocks.CHERRY_SAPLING);
 
+        context.register(createSnowyKey("mangrove_propagule"), SnowDefinition.builder()
+                .blocks(HolderSet.direct(Blocks.MANGROVE_PROPAGULE.builtInRegistryHolder()))
+                // .map(List.of(SnowDefinition.PropertyTester.builder().name(MangrovePropaguleBlock.HANGING.getName()).matcher(SnowDefinition.ExactMatcher.builder().value(MangrovePropaguleBlock.HANGING.getName(false)).build()).build()))
+                .info(SnowDefinition.Info.builder().offset(1).flag(MapChecker.FLAG_CUSTOM_JSON_PLANTS)
+                        .mid(getSnowModelPath("mangrove_propagule")).build())
+                .build());
     }
 }

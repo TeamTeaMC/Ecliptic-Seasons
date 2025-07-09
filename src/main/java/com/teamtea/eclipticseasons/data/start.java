@@ -3,6 +3,7 @@ package com.teamtea.eclipticseasons.data;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.data.example.DatapackRegistryGeneratorExample;
 import com.teamtea.eclipticseasons.data.extra_snow.DatapackRegistryGeneratorExtra;
+import com.teamtea.eclipticseasons.data.extra_snow.ExtraClientModelDefinitionProvider;
 import com.teamtea.eclipticseasons.data.general.advancement.Advancements;
 import com.teamtea.eclipticseasons.data.api.MutablePackOutput;
 import com.teamtea.eclipticseasons.data.general.datapack.DatapackRegistryGenerator;
@@ -88,6 +89,9 @@ public class start {
         packOutput = packOutput.move(Path.of("resourcepacks", "extra_snow"));
         if (event.includeServer()) {
             generator.addProvider(event.includeServer(), new DatapackRegistryGeneratorExtra(packOutput, lookupProvider));
+        }
+        if (event.includeClient()) {
+            generator.addProvider(event.includeClient(), new ExtraClientModelDefinitionProvider(packOutput, MODID, helper, lookupProvider));
         }
 
         // Example

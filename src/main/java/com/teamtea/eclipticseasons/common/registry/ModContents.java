@@ -14,10 +14,15 @@ import com.teamtea.eclipticseasons.api.data.season.SeasonPhase;
 import com.teamtea.eclipticseasons.api.data.season.SnowDefinition;
 import com.teamtea.eclipticseasons.api.data.weather.CustomRainBuilder;
 import com.teamtea.eclipticseasons.api.data.weather.CustomSnowTerm;
+import com.teamtea.eclipticseasons.common.resource.FakeResourceManagerHelperUtil;
+import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.packs.PackResources;
+import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.repository.PackSource;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -25,12 +30,15 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraftforge.event.AddPackFindersEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.loading.FMLLoader;
+import net.minecraftforge.fml.loading.moddiscovery.ModFile;
 import net.minecraftforge.registries.DataPackRegistryEvent;
 import net.minecraftforge.registries.RegisterEvent;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ModContents {
@@ -78,6 +86,16 @@ public class ModContents {
 
     @SubscribeEvent
     public static void registerBuiltinResourcePacks(AddPackFindersEvent event) {
-
+        Optional<ModFile> modContainer = Optional.ofNullable(FMLLoader.getLoadingModList().getModFileById(EclipticSeasons.MODID).getFile());
+        if (modContainer.isPresent()) {
+            ModFile modFile = modContainer.get();
+            if (event.getPackType() == PackType.CLIENT_RESOURCES
+                    || CommonConfig.Resource.extraSnow.get()) {
+                FakeResourceManagerHelperUtil.registerBuiltinResourcePack(
+                        event,
+                        EclipticSeasons.rl("extra_snow"),
+                        modFile, PackSource.BUILT_IN);
+            }
+        }
     }
 }

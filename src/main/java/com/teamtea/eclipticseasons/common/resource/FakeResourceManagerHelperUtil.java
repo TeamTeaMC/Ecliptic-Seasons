@@ -13,15 +13,19 @@ import net.minecraftforge.fml.loading.moddiscovery.ModFile;
 public class FakeResourceManagerHelperUtil {
     public static void registerBuiltinResourcePack(AddPackFindersEvent event, ResourceLocation packId, ModFile modFile, PackSource source) {
         String languageKey = packId.toLanguageKey("pack");
-        registerBuiltinResourcePack(event, packId, modFile, Component.translatable(languageKey), source);
+        registerBuiltinResourcePack(event,
+                packId,
+                modFile,
+                Component.translatable(languageKey),
+                PackSource.BUILT_IN);
     }
 
     public static void registerBuiltinResourcePack(AddPackFindersEvent event, ResourceLocation packId, ModFile modFile, Component translate, PackSource source) {
         String packIdLanguageKey = packId.toLanguageKey();
         event.addRepositorySource(consumer -> consumer.accept(
-                Pack.readMetaAndCreate(packIdLanguageKey, translate, true,
+                Pack.readMetaAndCreate(packIdLanguageKey, translate, false,
                         id -> new ESModFilePackResources(packId.getNamespace(), packIdLanguageKey, modFile, "resourcepacks/" + packId.getPath()), event.getPackType(),
-                        Pack.Position.TOP, source)));
+                        Pack.Position.BOTTOM, source)));
     }
 
     public static void registerBuiltinResourcePack(AddPackFindersEvent event, ResourceLocation packId, ModFile modFile, MutableComponent translate, PackType packType, PackSource source) {
@@ -34,7 +38,7 @@ public class FakeResourceManagerHelperUtil {
             event.addRepositorySource(consumer -> consumer.accept(
                     Pack.readMetaAndCreate(packIdLanguageKey, translate, require,
                             id -> new ESModFilePackResources(packId.getNamespace(), packIdLanguageKey, modFile, "resourcepacks/" + packId.getPath()), packType,
-                            Pack.Position.TOP, source)));
+                            Pack.Position.BOTTOM, source)));
         }
     }
 

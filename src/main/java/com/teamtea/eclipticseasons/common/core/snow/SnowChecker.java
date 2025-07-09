@@ -46,11 +46,13 @@ public class SnowChecker {
 
     public static void clearOnClientExitOrServerClose() {
         SNOW_DEFINITION_MAP.clear();
+        statemap.clear();
     }
 
     // we don't care if we are in a server or client mode now, because block is not syncable
     // there keeps only one copy of block registry in the process
     public static void resetUpdate(RegistryAccess registryAccess, boolean isServer) {
+        statemap.clear();
         Optional<Registry<SnowDefinition>> snowDefinitions = registryAccess.registry(ESRegistries.SNOW_DEFINITIONS);
         if (snowDefinitions.isEmpty()) {
             SimpleUtil.warningForModWrongCalling(ESRegistries.SNOW_DEFINITIONS);
