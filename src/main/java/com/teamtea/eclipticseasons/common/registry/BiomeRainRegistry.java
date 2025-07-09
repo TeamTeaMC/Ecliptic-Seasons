@@ -2,7 +2,6 @@ package com.teamtea.eclipticseasons.common.registry;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.constant.climate.TemperateRain;
-import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.data.misc.SolarTermValueMap;
 import com.teamtea.eclipticseasons.api.data.weather.CustomRainBuilder;
@@ -24,7 +23,7 @@ public class BiomeRainRegistry {
         return ResourceKey.create(ESRegistries.BIOME_RAIN, EclipticSeasons.rl(name));
     }
 
-    public static void bootstrap(BootstapContext<CustomRainBuilder> context) {
+    public static void bootstrap2(BootstapContext<CustomRainBuilder> context) {
         var holderGetter = context.lookup(Registries.BIOME);
         var solarTermValueMap = SolarTermValueMap.<List<CustomRainBuilder.Weather>>builder().solarTermMap(new EnumMap<>(SolarTerm.class)).build();
         for (int i = 0; i < TemperateRain.collectValues().length; i++) {

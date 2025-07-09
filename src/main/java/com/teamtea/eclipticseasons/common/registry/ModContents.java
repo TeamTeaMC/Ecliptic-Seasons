@@ -22,6 +22,7 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraftforge.event.AddPackFindersEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.DataPackRegistryEvent;
@@ -73,5 +74,10 @@ public class ModContents {
         event.dataPackRegistry(ESRegistries.SEASON_CYCLE, SeasonCycle.CODEC, SeasonCycle.DIRECT_CODEC);
         event.dataPackRegistry(ESRegistries.BIOME_RAIN, CustomRainBuilder.CODEC, CustomRainBuilder.DIRECT_CODEC);
         event.dataPackRegistry(ESRegistries.SNOW_TERM, CustomSnowTerm.CODEC, CustomSnowTerm.DIRECT_CODEC);
+    }
+
+    @SubscribeEvent
+    public static void registerBuiltinResourcePacks(AddPackFindersEvent event) {
+
     }
 }

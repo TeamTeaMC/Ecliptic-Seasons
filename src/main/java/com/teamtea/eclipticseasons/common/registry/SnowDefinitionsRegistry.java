@@ -125,4 +125,8 @@ public class SnowDefinitionsRegistry {
     public static @NotNull ResourceLocation getSnowModelPath(String modid, Block block) {
         return new ResourceLocation(modid, "snowy/" + path(block));
     }
+
+    public static void bootstrap_extra(BootstapContext<SnowDefinition> context) {
+
+    }
 }
