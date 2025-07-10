@@ -180,6 +180,8 @@ public final class CropInfoManager {
                 }
             }
 
+            // BuiltInRegistries.BLOCK.bindTags();
+
         });
     }
 

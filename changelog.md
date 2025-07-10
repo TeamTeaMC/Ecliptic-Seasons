@@ -16,9 +16,10 @@
 - Moved the data packs for Biome Rain and Snow Term to the example resource pack unused.
 
 ---
-A few additional notes: 
+A few additional notes:
 
-Upcoming versions will primarily focus on balance adjustments and data standardization, such as more precise tuning of biome tags.
+Upcoming versions will primarily focus on balance adjustments and data standardization, such as more precise tuning of
+biome tags.
 
 Some content that may not be suitable to include in the core mod might be split into separate addons.
 

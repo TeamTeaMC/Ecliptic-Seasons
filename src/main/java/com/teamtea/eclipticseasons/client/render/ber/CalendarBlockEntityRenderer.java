@@ -26,6 +26,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
+import net.minecraft.util.Mth;
 import net.minecraft.world.level.biome.Biome;
 import org.joml.Matrix4f;
 import org.joml.Vector3d;
@@ -84,8 +85,10 @@ public class CalendarBlockEntityRenderer implements BlockEntityRenderer<Calendar
                             case NEXT -> {
                                 Pair<SolarTerm, ISolarTerm> nextPair = SolarTermHelper.getNextTermAndStart(blockEntity.getBiome(), st);
                                 int lastingDaysOfEachTerm = EclipticSeasonsApi.getInstance().getLastingDaysOfEachTerm(blockEntity.getLevel());
-                                int remain = (ClientCon.progress * lastingDaysOfEachTerm) / 100 - 1;
-                                remain += lastingDaysOfEachTerm * ((nextPair.getFirst().ordinal() < st.ordinal() ? 24 : 0) + nextPair.getFirst().ordinal() - st.ordinal());
+                                int remain = Mth.floor(((1 - ClientCon.progress / 100f) * lastingDaysOfEachTerm));
+                                remain += lastingDaysOfEachTerm * (
+                                        (nextPair.getFirst().ordinal() < st.ordinal() ? 24 : 0)
+                                                + nextPair.getFirst().ordinal() - (st.getNextSolarTerm().ordinal()));
                                 remain = iSolarTermOriginal == nextPair.getSecond() ? 0 : remain;
                                 string = Component.translatable("info.eclipticseasons.environment.solar_term.hint3", remain).getString();
                             }
@@ -271,8 +274,8 @@ public class CalendarBlockEntityRenderer implements BlockEntityRenderer<Calendar
         // ty1=sprite.getV(16d/4d);
 
         if (mirrored) {
-            x0=-x0;
-            x1=-x1;
+            x0 = -x0;
+            x1 = -x1;
         }
 
         Matrix4f matrix = matrixStack.last().pose();
