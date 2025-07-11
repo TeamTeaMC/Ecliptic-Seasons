@@ -5,6 +5,7 @@ package com.teamtea.eclipticseasons.api.constant.crop;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -101,6 +102,57 @@ public class CropSeasonInfo
         return list;
     }
 
+    public static int getSeason(List<Season> seasons) {
+        int season = 0;
+        for (Season season1 : seasons) {
+            season += switch (season1) {
+                case SPRING -> 1;
+                case SUMMER -> 2;
+                case AUTUMN -> 4;
+                case WINTER -> 8;
+                default -> 0;
+            };
+        }
+        return season;
+    }
+
+    public static List<Component> getTooltip(int season) {
+        List<Component> list = new ArrayList<>();
+        list.add(Component.translatable("info.eclipticseasons.environment.season").withStyle(ChatFormatting.GRAY));
+        boolean spring = (season & 1) == 1;
+        boolean summer = (season & 2) == 2;
+        boolean autumn = (season & 4) == 4;
+        boolean winter = (season & 8) == 8;
+        if (spring && summer && autumn && winter) {
+            list.add(Season.NONE.getTranslation());
+        } else {
+            MutableComponent mutableComponent = Component.empty();
+            int hashCode = mutableComponent.hashCode();
+            if (spring) {
+                list.add(Season.SPRING.getTranslation());
+                // mutableComponent= SimpleUtil.addSolarIconBefore(SolarTerm.SPRING_EQUINOX,mutableComponent);
+            }
+            if (summer) {
+                list.add(Season.SUMMER.getTranslation());
+                // mutableComponent= SimpleUtil.addSolarIconBefore(SolarTerm.SUMMER_SOLSTICE,mutableComponent);
+            }
+
+            if (autumn) {
+                list.add(Season.AUTUMN.getTranslation());
+                // mutableComponent= SimpleUtil.addSolarIconBefore(SolarTerm.AUTUMNAL_EQUINOX,mutableComponent);
+            }
+
+            if (winter) {
+                list.add(Season.WINTER.getTranslation());
+                // mutableComponent= SimpleUtil.addSolarIconBefore(SolarTerm.WINTER_SOLSTICE,mutableComponent);
+            }
+
+            if (mutableComponent.hashCode() != hashCode) {
+                list.add(mutableComponent);
+            }
+        }
+        return list;
+    }
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

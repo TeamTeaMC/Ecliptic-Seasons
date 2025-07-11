@@ -4,8 +4,6 @@
     "blocks": "#eclipticseasons:crops/arid_dry"
   },
   "climate": "#eclipticseasons:all",
-  "solar_terms": {},
-  "seasons": {},
   "humidity": {
     "arid": {
       "grow_chance": 0.99

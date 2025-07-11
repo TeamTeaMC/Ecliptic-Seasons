@@ -1,0 +1,13 @@
+{
+  "parent": [
+    "eclipticseasons:seasons/spring_summer",
+    "eclipticseasons:humidity/average_moist"
+  ],
+  "apply_target": {
+    "blocks": "minecraft:sunflower",
+    "state": {
+      "half": "upper"
+    }
+  },
+  "climate": "eclipticseasons:temperate"
+}

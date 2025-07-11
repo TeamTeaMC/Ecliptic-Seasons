@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.StateHolder;
@@ -58,8 +59,13 @@ public record FakeStatePropertiesPredicate(List<PropertyMatcher> properties) {
             return this;
         }
 
-        public FakeStatePropertiesPredicate build() {
-            return new FakeStatePropertiesPredicate(this.matchers.build());
+        public Builder hasProperty(Property<?> property, StringRepresentable value) {
+            this.matchers.add(new PropertyMatcher(property.getName(), new ExactMatcher(value.getSerializedName())));
+            return this;
+        }
+
+        public Optional<FakeStatePropertiesPredicate> build() {
+            return Optional.of(new FakeStatePropertiesPredicate(this.matchers.build()));
         }
     }
 

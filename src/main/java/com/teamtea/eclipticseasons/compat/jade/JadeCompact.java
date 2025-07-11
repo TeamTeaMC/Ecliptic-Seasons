@@ -19,7 +19,7 @@ public class JadeCompact implements IWailaPlugin {
 
     @Override
     public void registerClient(IWailaClientRegistration registration) {
-        registration.registerBlockComponent(CropInfoProvider.INSTANCE, Block.class);
+        registration.registerBlockComponent(JadeCropInfoProvider.INSTANCE, Block.class);
         registration.addConfig(SHIFT_HINT,true);
         registration.addConfig(SNOWY_STATUS,true);
     }

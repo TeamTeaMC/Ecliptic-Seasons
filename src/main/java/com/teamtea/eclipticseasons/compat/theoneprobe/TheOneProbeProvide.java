@@ -11,7 +11,7 @@ public final class TheOneProbeProvide implements Function<ITheOneProbe, Void> {
     @Override
     public Void apply(@Nullable ITheOneProbe probe) {
         if (probe != null) {
-            probe.registerProvider(new CropProvider());
+            probe.registerProvider(new TOPCropProvider());
         }
         return null;
     }

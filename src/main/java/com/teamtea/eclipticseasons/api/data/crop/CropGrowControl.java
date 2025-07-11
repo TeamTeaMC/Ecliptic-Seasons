@@ -1,9 +1,11 @@
 package com.teamtea.eclipticseasons.api.data.crop;
 
 import com.mojang.datafixers.util.Pair;
+import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.constant.biome.Humidity;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
+import com.teamtea.eclipticseasons.api.misc.util.Mergable;
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.core.HolderSet;
 import net.minecraft.world.level.block.Block;
@@ -12,6 +14,7 @@ import org.jetbrains.annotations.ApiStatus;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Optional;
@@ -21,14 +24,14 @@ public record CropGrowControl(
         Optional<IdentityHashMap<BlockState, CropGrow>> blocks,
         Optional<List<Pair<BlockPredicate, CropGrow>>> entities,
         Optional<HolderSet<Block>> notGreenHouse
-) {
+) implements Mergable<CropGrowControl> {
 
     public @Nonnull CropGrow getCropGrow(@Nullable BlockState state) {
         if (state == null || blocks().isEmpty() || blocks().get().isEmpty()) {
             return this.base();
         }
-        return blocks().map(m -> m.getOrDefault(state, CropGrow.EMPTY))
-                .orElse(CropGrow.EMPTY);
+        return blocks().map(m -> m.getOrDefault(state, this.base()))
+                .orElse(this.base());
     }
 
 
@@ -103,5 +106,33 @@ public record CropGrowControl(
             growParameter = cropGrow.growParameter2().orElse(null);
         }
         return growParameter;
+    }
+
+    @Override
+    public CropGrowControl merge(CropGrowControl next) {
+        CropGrowControl control = this;
+        control.base().solarTermsMap().putAll(next.base().solarTermsMap());
+        control.base().seasonMap().putAll(next.base().seasonMap());
+        control.base().humidMap().putAll(next.base().humidMap());
+
+        if (control.blocks().isPresent()
+                && next.blocks().isPresent()) {
+            control.blocks().get().putAll(next.blocks().get());
+        } else if (control.blocks().isEmpty()
+                && next.blocks().isPresent()) {
+            control = new CropGrowControl(control.base(), next.blocks(), control.entities(), control.notGreenHouse());
+        }
+
+        if (next.entities().isPresent()) {
+            List<Pair<BlockPredicate, CropGrow>> arrayList = new ArrayList<>(control.entities().orElse(new ArrayList<>()));
+            arrayList.addAll(next.entities().get());
+            control = new CropGrowControl(control.base(), control.blocks(), Optional.of(arrayList), control.notGreenHouse());
+        }
+
+        if (control.notGreenHouse().isEmpty()
+                && next.notGreenHouse().isPresent()) {
+            control = new CropGrowControl(control.base(), control.blocks(), control.entities(), next.notGreenHouse());
+        }
+        return control;
     }
 }

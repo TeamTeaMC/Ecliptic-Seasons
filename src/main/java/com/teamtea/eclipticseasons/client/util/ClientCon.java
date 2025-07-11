@@ -2,14 +2,17 @@ package com.teamtea.eclipticseasons.client.util;
 
 
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
+import com.teamtea.eclipticseasons.api.data.climate.AgroClimaticZone;
 import com.teamtea.eclipticseasons.api.data.climate.BiomesClimateSettings;
 import com.teamtea.eclipticseasons.api.data.craft.HumidityControl;
+import com.teamtea.eclipticseasons.api.data.crop.CropGrowControlBuilder;
 import com.teamtea.eclipticseasons.api.data.season.SeasonCycle;
 import com.teamtea.eclipticseasons.api.data.season.SnowDefinition;
 import com.teamtea.eclipticseasons.api.data.weather.CustomRainBuilder;
 import com.teamtea.eclipticseasons.api.data.weather.CustomSnowTerm;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
+import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
 import com.teamtea.eclipticseasons.common.misc.ClientAgent;
@@ -44,6 +47,8 @@ public class ClientCon {
     public static DataPackEventMessage<SeasonCycle> seasonCycleCache;
     public static DataPackEventMessage<CustomRainBuilder> biomeRainCache;
     public static DataPackEventMessage<CustomSnowTerm> snowTermCache;
+    public static DataPackEventMessage<AgroClimaticZone> aczCache;
+    public static DataPackEventMessage<CropGrowControlBuilder> cropCache;
     public static ClientAgent agent = new ClientAgent() {
     };
 
@@ -95,6 +100,13 @@ public class ClientCon {
     public static void onClientPlayerExit() {
         humidityControls.clear();
         biomeDataPackCache = null;
+        snowDefCache = null;
+        seasonCycleCache = null;
+        biomeRainCache = null;
+        snowTermCache = null;
+        aczCache = null;
+        cropCache = null;
+
         roomCache.clear();
         humidityModificationLevel = 0;
     }

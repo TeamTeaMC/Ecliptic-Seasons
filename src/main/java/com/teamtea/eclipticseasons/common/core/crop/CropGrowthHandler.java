@@ -5,7 +5,9 @@ import com.mojang.datafixers.util.Pair;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.biome.Humidity;
+import com.teamtea.eclipticseasons.api.constant.crop.CropHumidityInfo;
 import com.teamtea.eclipticseasons.api.constant.crop.CropHumidityType;
+import com.teamtea.eclipticseasons.api.constant.crop.CropSeasonInfo;
 import com.teamtea.eclipticseasons.api.constant.crop.CropSeasonType;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
@@ -18,6 +20,8 @@ import com.teamtea.eclipticseasons.api.data.crop.GrowParameter;
 import com.teamtea.eclipticseasons.api.event.CanPlantGrowEvent;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.api.util.SimpleUtil;
+import com.teamtea.eclipticseasons.api.util.backport.FakeStatePropertiesPredicate;
+import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
 import com.teamtea.eclipticseasons.common.registry.AgroClimateRegistry;
@@ -63,6 +67,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 
 public final class CropGrowthHandler {
@@ -103,7 +108,7 @@ public final class CropGrowthHandler {
     }
 
     private final static Map<Biome, Holder<AgroClimaticZone>> cropClimateTypeMap = new IdentityHashMap<>();
-    private final static Map<ResourceLocation, com.teamtea.eclipticseasons.api.data.crop.CropGrowControlBuilder> CropGrowControlBuilder = new HashMap<>();
+    private final static Map<ResourceLocation, CropGrowControlBuilder> builderCachMap = new HashMap<>();
     private final static Map<Block, Map<Holder<AgroClimaticZone>, CropGrowControl>> CROP_GROW_MAP = new IdentityHashMap<>();
 
     private final static IdentityHashMap<Boolean, Holder<AgroClimaticZone>> DefaultCropClimateType = new IdentityHashMap<>();
@@ -111,12 +116,11 @@ public final class CropGrowthHandler {
 
     public static void resetUpdate(RegistryAccess registryAccess, boolean isServer) {
 
-
         long startTime = System.currentTimeMillis();
 
         if (isServer) {
             cropClimateTypeMap.clear();
-            CropGrowControlBuilder.clear();
+            builderCachMap.clear();
             CROP_GROW_MAP.clear();
             DefaultCropClimateType.clear();
         }
@@ -129,6 +133,13 @@ public final class CropGrowthHandler {
         } else if (cropGrowControlBuilders.isEmpty()) {
             SimpleUtil.warningForModWrongCalling(ESRegistries.CROP);
             return;
+        }
+
+        if (!isServer) {
+            if (ClientCon.cropCache != null)
+                ClientCon.cropCache.build(registryAccess, CropGrowControlBuilder.class);
+            if (ClientCon.aczCache != null)
+                ClientCon.aczCache.build(registryAccess, AgroClimaticZone.class);
         }
 
         RegistryOps<Tag> registryops = RegistryOps.create(NbtOps.INSTANCE, registryAccess);
@@ -154,8 +165,9 @@ public final class CropGrowthHandler {
         Registry<Block> blockRegistry = registryAccess.registryOrThrow(Registries.BLOCK);
         for (Map.Entry<ResourceKey<CropGrowControlBuilder>, CropGrowControlBuilder> entry : cropGrowControlBuilders.get().entrySet()) {
             CropGrowControlBuilder builder = entry.getValue();
-            CropGrowControlBuilder.put(entry.getKey().location(), builder);
+            builderCachMap.put(entry.getKey().location(), builder);
             Optional<HolderSet<Block>> blocks = builder.applyTarget().blocks();
+            Optional<FakeStatePropertiesPredicate> properties = builder.applyTarget().properties();
             if (blocks.isEmpty()) continue;
             EnumMap<SolarTerm, GrowParameter> solarTermGrowParameterEnumMap = new EnumMap<>(builder.solarTermList());
             EnumMap<Season, GrowParameter> seasonGrowParameterEnumMap = new EnumMap<>(builder.seasonList());
@@ -223,12 +235,20 @@ public final class CropGrowthHandler {
                 }
                 for (int i = 0; i < holders.size(); i++) {
                     Block block = holders.get(i).value();
+                    Optional<List<BlockState>> statesCheck = Optional.empty();
 
-                    Map<Holder<AgroClimaticZone>, CropGrowControl> c = CROP_GROW_MAP.getOrDefault(block, null);
-                    if (c == null) {
-                        c = new HashMap<>();
-                        CROP_GROW_MAP.put(block, c);
+                    if (properties.isPresent()) {
+                        FakeStatePropertiesPredicate statePropertiesPredicate = properties.get();
+                        statesCheck = Optional.of(
+                                block.getStateDefinition().getPossibleStates()
+                                        .stream()
+                                        .filter(statePropertiesPredicate::matches)
+                                        .toList()
+                        );
                     }
+                    Map<Holder<AgroClimaticZone>, CropGrowControl> c =
+                            CROP_GROW_MAP.computeIfAbsent(block, (block1) -> new HashMap<>());
+
 
                     for (int j = 0; j < builder.cropClimateType().size(); j++) {
                         CropGrow cropGrow = new CropGrow(
@@ -241,19 +261,25 @@ public final class CropGrowthHandler {
                         // 由于有些Block有自己的湿润度，因此容易出问题
                         // 而且不同群系湿润度系统不一样
                         CropGrowControl newControlCache = new CropGrowControl(
-                                cropGrow, Optional.empty(), Optional.empty(), notGreenHouse
+                                statesCheck.isEmpty() ?
+                                        cropGrow : CropGrow.EMPTY,
+                                statesCheck.map(
+                                        blockStates ->
+                                                blockStates.stream()
+                                                        .collect(Collectors.toMap(
+                                                                Function.identity(),
+                                                                bs -> cropGrow,
+                                                                (a, b) -> b,
+                                                                IdentityHashMap::new
+                                                        ))
+                                ),
+                                Optional.empty(), notGreenHouse
                         );
                         Holder<AgroClimaticZone> cropClimateTypeHolder = builder.cropClimateType().get(j);
                         if (cropClimateTypeHolder.get() != null) {
                             c.compute(cropClimateTypeHolder, (resourceLocation, oldControl) -> {
                                 if (oldControl == null) return newControlCache;
-                                oldControl.base().solarTermsMap().putAll(newControlCache.base().solarTermsMap());
-                                oldControl.base().seasonMap().putAll(newControlCache.base().seasonMap());
-                                oldControl.base().humidMap().putAll(newControlCache.base().humidMap());
-                                if (oldControl.notGreenHouse().isEmpty() && newControlCache.notGreenHouse().isPresent()) {
-                                    oldControl = new CropGrowControl(oldControl.base(), oldControl.blocks(), oldControl.entities(), newControlCache.notGreenHouse());
-                                }
-                                return oldControl;
+                                return oldControl.merge(newControlCache);
                             });
                         }
                     }
@@ -268,7 +294,7 @@ public final class CropGrowthHandler {
             CropSeasonType name = CropInfoManager.getCropSeasonTypeFrom(cropSeasonInfo);
             if (name != null) {
                 ResourceLocation location = CropRegistry.createKey(name).location();
-                extracted(block, location);
+                generateInfoForTag(block, location);
             }
         });
         CropInfoManager.CROP_HUMIDITY_INFO.forEach((block, cropHumidityInfo) -> {
@@ -276,7 +302,7 @@ public final class CropGrowthHandler {
             CropHumidityType name = CropInfoManager.getCropHumidityTypeFrom(cropHumidityInfo);
             if (name != null) {
                 ResourceLocation location = CropRegistry.createKey(name).location();
-                extracted(block, location);
+                generateInfoForTag(block, location);
             }
         });
 
@@ -284,9 +310,9 @@ public final class CropGrowthHandler {
         );
     }
 
-    private static void extracted(Block block, ResourceLocation location) {
+    private static void generateInfoForTag(Block block, ResourceLocation location) {
         Map<Holder<AgroClimaticZone>, CropGrowControl> blockClimateMap;
-        CropGrowControlBuilder builder = CropGrowControlBuilder.getOrDefault(location, null);
+        CropGrowControlBuilder builder = builderCachMap.getOrDefault(location, null);
         if (builder != null) {
             CropGrow cropGrow = new CropGrow(builder.defaultSolarTermGrowParameter(),
                     builder.defaultHumidityGrowParameter(),
@@ -297,24 +323,14 @@ public final class CropGrowthHandler {
                     cropGrow, Optional.empty(), Optional.empty(), Optional.empty()
             );
 
-            blockClimateMap = CROP_GROW_MAP.getOrDefault(block, null);
-            if (blockClimateMap == null) {
-                blockClimateMap = new HashMap<>();
-                CROP_GROW_MAP.put(block, blockClimateMap);
-            }
+            blockClimateMap = CROP_GROW_MAP.computeIfAbsent(block, (b1) -> new HashMap<>());
 
             for (int j = 0; j < builder.cropClimateType().size(); j++) {
                 Holder<AgroClimaticZone> cropClimateTypeHolder = builder.cropClimateType().get(j);
                 if (cropClimateTypeHolder.get() != null) {
                     blockClimateMap.compute(cropClimateTypeHolder, (resourceLocation, oldControl) -> {
                         if (oldControl == null) return newControlCache;
-                        oldControl.base().solarTermsMap().putAll(newControlCache.base().solarTermsMap());
-                        oldControl.base().seasonMap().putAll(newControlCache.base().seasonMap());
-                        oldControl.base().humidMap().putAll(newControlCache.base().humidMap());
-                        if (oldControl.notGreenHouse().isEmpty() && newControlCache.notGreenHouse().isPresent()) {
-                            oldControl = new CropGrowControl(oldControl.base(), oldControl.blocks(), oldControl.entities(), newControlCache.notGreenHouse());
-                        }
-                        return oldControl;
+                        return oldControl.merge(newControlCache);
                     });
                 }
             }
@@ -323,7 +339,7 @@ public final class CropGrowthHandler {
 
     public static void clearOnClientExitOrServerClose() {
         cropClimateTypeMap.clear();
-        CropGrowControlBuilder.clear();
+        builderCachMap.clear();
         CROP_GROW_MAP.clear();
         DefaultCropClimateType.clear();
         CropInfoManager.CROP_HUMIDITY_INFO.clear();
@@ -393,6 +409,23 @@ public final class CropGrowthHandler {
         return seasons;
     }
 
+    public static @NotNull List<Humidity> getLikeHumidityInTemperate(BlockState state,
+                                                                     Map<Holder<AgroClimaticZone>, CropGrowControl> controlMap,
+                                                                     Holder<AgroClimaticZone> agentClimateTypeHolder) {
+        List<Humidity> humidities = new ArrayList<>();
+        CropGrowControl growControl_Temp = getCropGrowControl(controlMap, agentClimateTypeHolder);
+        if (growControl_Temp != null) {
+            for (Humidity collectValue : Humidity.collectValues()) {
+                GrowParameter parameter = growControl_Temp.getGrowParameter(collectValue, state);
+                if (parameter == null
+                        || parameter.grow_chance() > 0.5f) {
+                    humidities.add(collectValue);
+                }
+            }
+        }
+        return humidities;
+    }
+
     public static @Nullable GrowParameter getSeasonGrowParameter(
             BlockState state,
             CropGrowControl growControl,
@@ -417,7 +450,7 @@ public final class CropGrowthHandler {
     }
 
     public static @Nullable Holder<AgroClimaticZone> getDefaultAgroClimaticZoneHolder(LevelAccessor level) {
-        boolean isServerSide = !level.isClientSide();
+        boolean isServerSide = level != null && !level.isClientSide();
         return DefaultCropClimateType.getOrDefault(isServerSide, null);
     }
 
@@ -886,4 +919,30 @@ public final class CropGrowthHandler {
             return from.distanceToSqr(to) < (limit * limit + 0.1);
         }
     }
+
+    public static List<Component> appendInfo(Level level, BlockState state) {
+        List<Component> toolTip = new ArrayList<>();
+
+        if (!CommonConfig.Crop.enableCropHumidityControl.get() && !CommonConfig.Crop.enableCrop.get()) return toolTip;
+        Map<Holder<AgroClimaticZone>, CropGrowControl> controlMap = CropGrowthHandler.getControlMap(state.getBlock());
+        if (controlMap == null) return toolTip;
+        Holder<AgroClimaticZone> defaultAgroClimaticZoneHolder = CropGrowthHandler.getDefaultAgroClimaticZoneHolder(level);
+        if (defaultAgroClimaticZoneHolder == null) return toolTip;
+
+        if (CommonConfig.Crop.enableCropHumidityControl.get()) {
+            List<Humidity> humidityList = CropGrowthHandler.getLikeHumidityInTemperate(
+                    state, controlMap, defaultAgroClimaticZoneHolder
+            );
+            if (!humidityList.isEmpty())
+                toolTip.addAll(CropHumidityInfo.getTooltip(humidityList.get(0), humidityList.get(humidityList.size() - 1)));
+        }
+        if (CommonConfig.Crop.enableCrop.get()) {
+            List<Season> seasons =
+                    CropGrowthHandler.getLikeSeasonsInTemperate(state, controlMap, defaultAgroClimaticZoneHolder
+                    );
+            toolTip.addAll(CropSeasonInfo.getTooltip(CropSeasonInfo.getSeason(seasons)));
+        }
+        return toolTip;
+    }
+
 }

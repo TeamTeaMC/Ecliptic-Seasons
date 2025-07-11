@@ -13,7 +13,9 @@ import com.teamtea.eclipticseasons.api.data.climate.AgroClimaticZone;
 import com.teamtea.eclipticseasons.api.data.crop.CropGrowControlBuilder;
 import com.teamtea.eclipticseasons.api.data.crop.GrowParameter;
 import com.teamtea.eclipticseasons.api.util.backport.FakeBlockPredicate;
+import com.teamtea.eclipticseasons.api.util.backport.FakeStatePropertiesPredicate;
 import net.minecraft.advancements.critereon.BlockPredicate;
+import net.minecraft.advancements.critereon.StatePropertiesPredicate;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.HolderSet;
@@ -23,7 +25,11 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.CropBlock;
+import net.minecraft.world.level.block.DoublePlantBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraftforge.registries.holdersets.AndHolderSet;
 import net.minecraftforge.registries.holdersets.OrHolderSet;
 
@@ -147,7 +153,7 @@ public class CropRegistry {
 
         blockHolderGetter = context.lookup(Registries.BLOCK);
         var biomeHolderGetter = context.lookup(Registries.BIOME);
-        var cropGrowControlBuilderHolderGetter = context.lookup(ESRegistries.CROP);
+        var cropGetter = context.lookup(ESRegistries.CROP);
         var cropClimateTypeHolderGetter = context.lookup(ESRegistries.AGRO_CLIMATE);
 
         HolderSet.Direct<AgroClimaticZone> temperate = HolderSet.direct(cropClimateTypeHolderGetter.getOrThrow(AgroClimateRegistry.TEMPERATE));
@@ -967,6 +973,20 @@ public class CropRegistry {
                 emptyBP
         ));
 
+        context.register(createKey("wheat_test"), new CropGrowControlBuilder(
+                temperate,
+                new FakeBlockPredicate(
+                        Optional.of(HolderSet.direct(Blocks.SUNFLOWER.builtInRegistryHolder())),
+                        FakeStatePropertiesPredicate.Builder.properties().hasProperty(DoublePlantBlock.HALF, DoubleBlockHalf.UPPER).build()
+                ),
+                HolderSet.direct(cropGetter.getOrThrow(SP_SU)
+                        , cropGetter.getOrThrow(AVERAGE_MOIST)
+                ), emptyGP, emptyGP2,
+                new EnumMap<>(SolarTerm.class),
+                seasonListEmpty,
+                humidListEmpty,
+                Optional.empty()
+        ));
 
         blockHolderGetter = null;
     }

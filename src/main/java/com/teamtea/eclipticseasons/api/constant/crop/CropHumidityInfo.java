@@ -51,6 +51,17 @@ public class CropHumidityInfo {
         return list;
     }
 
+    public static List<Component> getTooltip(Humidity min, Humidity max) {
+        List<Component> list = new ArrayList<>();
+        list.add(Component.translatable("info.eclipticseasons.environment.humidity").withStyle(ChatFormatting.GRAY));
+        if (min != max) {
+            list.add(((MutableComponent) min.getTranslation()).append(Component.literal(" - ").withStyle(ChatFormatting.GRAY)).append(max.getTranslation()));
+        } else {
+            list.add(min.getTranslation());
+        }
+        return list;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

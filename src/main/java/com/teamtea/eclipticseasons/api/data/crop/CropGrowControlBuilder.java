@@ -51,9 +51,9 @@ public record CropGrowControlBuilder(
 
     public static final Codec<CropGrowControlBuilder> CODEC = RecordCodecBuilder.create(ins -> ins.group(
             GrowParameter.CODEC.optionalFieldOf("humidity_default").forGetter(CropGrowControlBuilder::defaultHumidityGrowParameter),
-            SOLAR_TERM_ENUM_MAP_CODEC.fieldOf("solar_terms").orElse(new EnumMap<>(SolarTerm.class)).forGetter(CropGrowControlBuilder::solarTermList),
-            Season_ENUM_MAP_CODEC.fieldOf("seasons").orElse(new EnumMap<>(Season.class)).forGetter(CropGrowControlBuilder::seasonList),
-            HUMID_ENUM_MAP_CODEC.fieldOf("humidity").orElse(new EnumMap<>(Humidity.class)).forGetter(CropGrowControlBuilder::humidList),
+            SOLAR_TERM_ENUM_MAP_CODEC.optionalFieldOf("solar_terms",new EnumMap<>(SolarTerm.class)).forGetter(CropGrowControlBuilder::solarTermList),
+            Season_ENUM_MAP_CODEC.optionalFieldOf("seasons",new EnumMap<>(Season.class)).forGetter(CropGrowControlBuilder::seasonList),
+            HUMID_ENUM_MAP_CODEC.optionalFieldOf("humidity",new EnumMap<>(Humidity.class)).forGetter(CropGrowControlBuilder::humidList),
             CodecUtil.holderSetCodec(ESRegistries.AGRO_CLIMATE).fieldOf("climate").forGetter(CropGrowControlBuilder::cropClimateType),
             ESExtraCodec.BLOCK_HOLDER_SET_CODEC.optionalFieldOf("unlike_greenhouse_material").forGetter(CropGrowControlBuilder::notGreenHouse),
             CodecUtil.holderSetCodec(ESRegistries.CROP).fieldOf("parent").orElse(HolderSet.direct()).forGetter(CropGrowControlBuilder::parent),
@@ -66,9 +66,9 @@ public record CropGrowControlBuilder(
     // note 1.20: 与1.21不同的是，网络同步时无法使用HolderSet，原因是设计限制，如上
     public static final Codec<CropGrowControlBuilder> DIRECT_CODEC = RecordCodecBuilder.create(ins -> ins.group(
             GrowParameter.CODEC.optionalFieldOf("humidity_default").forGetter(CropGrowControlBuilder::defaultHumidityGrowParameter),
-            SOLAR_TERM_ENUM_MAP_CODEC.fieldOf("solar_terms").orElse(new EnumMap<>(SolarTerm.class)).forGetter(CropGrowControlBuilder::solarTermList),
-            Season_ENUM_MAP_CODEC.fieldOf("seasons").orElse(new EnumMap<>(Season.class)).forGetter(CropGrowControlBuilder::seasonList),
-            HUMID_ENUM_MAP_CODEC.fieldOf("humidity").orElse(new EnumMap<>(Humidity.class)).forGetter(CropGrowControlBuilder::humidList),
+            SOLAR_TERM_ENUM_MAP_CODEC.optionalFieldOf("solar_terms",new EnumMap<>(SolarTerm.class)).forGetter(CropGrowControlBuilder::solarTermList),
+            Season_ENUM_MAP_CODEC.optionalFieldOf("seasons",new EnumMap<>(Season.class)).forGetter(CropGrowControlBuilder::seasonList),
+            HUMID_ENUM_MAP_CODEC.optionalFieldOf("humidity",new EnumMap<>(Humidity.class)).forGetter(CropGrowControlBuilder::humidList),
             GrowParameter.CODEC.optionalFieldOf("season_default").forGetter(CropGrowControlBuilder::defaultSolarTermGrowParameter)
     ).apply(ins, (defaultGrowParameter2, solarTermGrowParameterEnumMap, seasonGrowParameterEnumMap, humidityGrowParameterEnumMap, defaultGrowParameter) ->
             new CropGrowControlBuilder(HolderSet.direct(), new FakeBlockPredicate(Optional.empty(),Optional.empty()), HolderSet.direct(), defaultGrowParameter, defaultGrowParameter2, solarTermGrowParameterEnumMap, seasonGrowParameterEnumMap, humidityGrowParameterEnumMap,Optional.empty())

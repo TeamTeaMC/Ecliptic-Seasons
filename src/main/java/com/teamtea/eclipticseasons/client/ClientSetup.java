@@ -90,7 +90,7 @@ public class ClientSetup {
 
     @SubscribeEvent
     public static void onClientEvent(FMLClientSetupEvent event) {
-        EclipticSeasons.logger("Register Client");
+        // EclipticSeasons.logger("Register Client");
         event.enqueueWork(() -> {
 
             BiomeColors.GRASS_COLOR_RESOLVER = BiomeColorsHandler.GRASS_COLOR;

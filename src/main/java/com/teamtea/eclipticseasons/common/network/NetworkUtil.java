@@ -130,6 +130,10 @@ public class NetworkUtil {
                     ClientCon.biomeRainCache = dataPackEvent;
                 } else if (dataPackEvent.resourceKey.equals(ESRegistries.SNOW_TERM)) {
                     ClientCon.snowTermCache = dataPackEvent;
+                }else if (dataPackEvent.resourceKey.equals(ESRegistries.AGRO_CLIMATE)) {
+                    ClientCon.aczCache = dataPackEvent;
+                }else if (dataPackEvent.resourceKey.equals(ESRegistries.CROP)) {
+                    ClientCon.cropCache = dataPackEvent;
                 }
             }
         });

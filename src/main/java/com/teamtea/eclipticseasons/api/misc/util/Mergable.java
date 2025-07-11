@@ -1,5 +1,5 @@
 package com.teamtea.eclipticseasons.api.misc.util;
 
 public interface Mergable<T> {
-    T merge(T pre);
+    T merge(T next);
 }

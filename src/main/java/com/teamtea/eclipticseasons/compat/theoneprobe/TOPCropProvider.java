@@ -2,6 +2,7 @@ package com.teamtea.eclipticseasons.compat.theoneprobe;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
+import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
 import com.teamtea.eclipticseasons.common.core.crop.CropInfoManager;
 import com.teamtea.eclipticseasons.config.ClientConfig;
 import mcjty.theoneprobe.api.IProbeHitData;
@@ -18,7 +19,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.List;
 
-public class CropProvider implements IProbeInfoProvider {
+public class TOPCropProvider implements IProbeInfoProvider {
     @Override
     public ResourceLocation getID() {
         return EclipticSeasons.rl("crop");
@@ -27,9 +28,8 @@ public class CropProvider implements IProbeInfoProvider {
     @Override
     public void addProbeInfo(ProbeMode probeMode, IProbeInfo iProbeInfo, Player player, Level level, BlockState blockState, IProbeHitData iProbeHitData) {
         Block block = blockState.getBlock();
-        if (ClientConfig.GUI.agriculturalInformation.get()
-                && block != null) {
-            List<Component> components = CropInfoManager.appendInfo(block);
+        if (ClientConfig.GUI.agriculturalInformation.get()) {
+            List<Component> components = CropGrowthHandler.appendInfo(level,blockState);
             if (!components.isEmpty()) {
                 if (player == null
                         || player.isShiftKeyDown()) {

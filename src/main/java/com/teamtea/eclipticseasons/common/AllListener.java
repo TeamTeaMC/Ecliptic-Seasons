@@ -2,8 +2,10 @@ package com.teamtea.eclipticseasons.common;
 
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
+import com.teamtea.eclipticseasons.api.data.climate.AgroClimaticZone;
 import com.teamtea.eclipticseasons.api.data.climate.BiomesClimateSettings;
 import com.teamtea.eclipticseasons.api.data.craft.HumidityControl;
+import com.teamtea.eclipticseasons.api.data.crop.CropGrowControlBuilder;
 import com.teamtea.eclipticseasons.api.data.season.SeasonCycle;
 import com.teamtea.eclipticseasons.api.data.season.SeasonPhase;
 import com.teamtea.eclipticseasons.api.data.season.SnowDefinition;
@@ -296,37 +298,50 @@ public class AllListener {
         SimpleNetworkHandler.send(serverPlayerList, new DataPackEventMessage<>(
                 registryAccess,
                 ESRegistries.HUMIDITY_CONTROL,
-                registryAccess.registryOrThrow(ESRegistries.HUMIDITY_CONTROL).entrySet().stream().map(Map.Entry::getValue).toList(),
+                registryAccess.registryOrThrow(ESRegistries.HUMIDITY_CONTROL).entrySet(),
                 HumidityControl.CODEC));
 
         SimpleNetworkHandler.send(serverPlayerList, new DataPackEventMessage<>(
                 registryAccess,
                 ESRegistries.BIOME_CLIMATE_SETTING,
-                registryAccess.registryOrThrow(ESRegistries.BIOME_CLIMATE_SETTING).entrySet().stream().map(Map.Entry::getValue).toList(),
+                registryAccess.registryOrThrow(ESRegistries.BIOME_CLIMATE_SETTING).entrySet(),
                 BiomesClimateSettings.CODEC));
 
         SimpleNetworkHandler.send(serverPlayerList, new DataPackEventMessage<>(
                 registryAccess,
                 ESRegistries.SNOW_DEFINITIONS,
-                registryAccess.registryOrThrow(ESRegistries.SNOW_DEFINITIONS).entrySet().stream().map(Map.Entry::getValue).toList(),
+                registryAccess.registryOrThrow(ESRegistries.SNOW_DEFINITIONS).entrySet(),
                 SnowDefinition.CODEC));
 
         SimpleNetworkHandler.send(serverPlayerList, new DataPackEventMessage<>(
                 registryAccess,
                 ESRegistries.SEASON_CYCLE,
-                registryAccess.registryOrThrow(ESRegistries.SEASON_CYCLE).entrySet().stream().map(Map.Entry::getValue).toList(),
+                registryAccess.registryOrThrow(ESRegistries.SEASON_CYCLE).entrySet(),
                 SeasonCycle.CODEC));
 
         SimpleNetworkHandler.send(serverPlayerList, new DataPackEventMessage<>(
                 registryAccess,
                 ESRegistries.BIOME_RAIN,
-                registryAccess.registryOrThrow(ESRegistries.BIOME_RAIN).entrySet().stream().map(Map.Entry::getValue).toList(),
+                registryAccess.registryOrThrow(ESRegistries.BIOME_RAIN).entrySet(),
                 CustomRainBuilder.CODEC));
 
         SimpleNetworkHandler.send(serverPlayerList, new DataPackEventMessage<>(
                 registryAccess,
                 ESRegistries.SNOW_TERM,
-                registryAccess.registryOrThrow(ESRegistries.SNOW_TERM).entrySet().stream().map(Map.Entry::getValue).toList(),
+                registryAccess.registryOrThrow(ESRegistries.SNOW_TERM).entrySet(),
                 CustomSnowTerm.CODEC));
+
+        SimpleNetworkHandler.send(serverPlayerList, new DataPackEventMessage<>(
+                registryAccess,
+                ESRegistries.AGRO_CLIMATE,
+                registryAccess.registryOrThrow(ESRegistries.AGRO_CLIMATE).entrySet(),
+                AgroClimaticZone.CODEC));
+
+        SimpleNetworkHandler.send(serverPlayerList, new DataPackEventMessage<>(
+                registryAccess,
+                ESRegistries.CROP,
+                registryAccess.registryOrThrow(ESRegistries.CROP).entrySet(),
+                CropGrowControlBuilder.CODEC));
+
     }
 }

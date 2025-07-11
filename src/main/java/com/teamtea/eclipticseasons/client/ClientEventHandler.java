@@ -54,8 +54,9 @@ public final class ClientEventHandler {
     public static void addTooltips(ItemTooltipEvent event) {
         if (ClientConfig.GUI.agriculturalInformation.get()
                 && event.getItemStack().getItem() instanceof BlockItem blockItem) {
-            Block block = blockItem.getBlock();
-            event.getToolTip().addAll(CropInfoManager.appendInfo(block));
+            event.getToolTip().addAll(CropGrowthHandler.appendInfo(
+                    event.getEntity() != null ? event.getEntity().level() : null,
+                    blockItem.getBlock().defaultBlockState()));
         }
     }
 

@@ -77,7 +77,5 @@
     "greater_cold": {
       "grow_chance": 0.7
     }
-  },
-  "seasons": {},
-  "humidity": {}
+  }
 }

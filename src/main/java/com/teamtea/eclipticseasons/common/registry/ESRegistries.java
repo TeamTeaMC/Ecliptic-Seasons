@@ -24,7 +24,6 @@ public class ESRegistries {
 
     public static final ResourceKey<Registry<CropGrowControlBuilder>> CROP = ResourceKey.createRegistryKey(EclipticSeasons.rl("crop"));
 
-
     public static final ResourceKey<Registry<SeasonQuest>> SEASON_QUEST = ResourceKey.createRegistryKey(EclipticSeasons.rl("season_quest"));
 
     public static final ResourceKey<Registry<HumidityControl>> HUMIDITY_CONTROL = ResourceKey.createRegistryKey(EclipticSeasons.rl("humidity_control"));

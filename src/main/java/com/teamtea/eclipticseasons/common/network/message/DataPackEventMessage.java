@@ -1,8 +1,10 @@
 package com.teamtea.eclipticseasons.common.network.message;
 
+import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
+import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
@@ -14,14 +16,12 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.DataPackRegistriesHooks;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class DataPackEventMessage<T> {
 
     public final ResourceKey<Registry<T>> resourceKey;
-    public List<T> data = new ArrayList<>();
+    public List<Pair<ResourceKey<T>, T>> data = new ArrayList<>();
     public List<CompoundTag> compoundTags = new ArrayList<>();
     public Codec<T> codec = null;
     private RegistryAccess registryAccess = null;
@@ -29,10 +29,10 @@ public class DataPackEventMessage<T> {
     public DataPackEventMessage(
             RegistryAccess registryAccess,
             ResourceKey<Registry<T>> resourceKey,
-            List<T> data,
+            Set<Map.Entry<ResourceKey<T>, T>> data,
             Codec<T> codec) {
         this.resourceKey = resourceKey;
-        this.data = data;
+        this.data = data.stream().map(e -> Pair.of(e.getKey(), e.getValue())).toList();
         this.codec = codec;
         this.registryAccess = registryAccess;
     }
@@ -66,22 +66,33 @@ public class DataPackEventMessage<T> {
         buf.writeResourceLocation(resourceKey.location());
         buf.writeVarInt(data.size());
         RegistryOps<Tag> registryops = RegistryOps.create(NbtOps.INSTANCE, registryAccess);
-        for (T datum : data) {
+        Codec<ResourceKey<T>> resourceKeyCodec = ResourceKey.codec(resourceKey);
+        for (Pair<ResourceKey<T>, T> datum : data) {
             Optional<Tag> tag = codec
-                    .encodeStart(registryops, datum)
+                    .encodeStart(registryops, datum.getSecond())
+                    .resultOrPartial(EclipticSeasons::logger);
+            Optional<Tag> k_tag = resourceKeyCodec
+                    .encodeStart(registryops, datum.getFirst())
                     .resultOrPartial(EclipticSeasons::logger);
             CompoundTag compoundTag = new CompoundTag();
-            if (tag.isPresent()) compoundTag.put("value", tag.get());
+            if (tag.isPresent()&& k_tag.isPresent()) {
+                compoundTag.put("value", tag.get());
+                compoundTag.put("key", k_tag.get());
+            }
+            ;
             buf.writeNbt(compoundTag);
         }
     }
 
 
     public List<T> build(RegistryAccess clientRegistryAccess, Class<T> tClass) {
+        List<T> tList = new ArrayList<>();
         if (this.codec != null) {
             if (ClientCon.getUseLevel() != null) {
                 RegistryOps<Tag> registryops = RegistryOps.create(NbtOps.INSTANCE, clientRegistryAccess);
-                List<T> tList = new ArrayList<>();
+                Codec<ResourceKey<T>> resourceKeyCodec = ResourceKey.codec(resourceKey);
+                Registry<T> registry = clientRegistryAccess.registryOrThrow(resourceKey);
+                List<Pair<ResourceKey<T>,T>> pairArrayList = new ArrayList<>();
                 for (CompoundTag compoundTag : compoundTags) {
                     if (compoundTag == null) continue;
                     Tag tag = compoundTag.get("value");
@@ -90,13 +101,28 @@ public class DataPackEventMessage<T> {
                             .parse(registryops, tag)
                             .resultOrPartial(EclipticSeasons::logger);
                     if (t.isPresent()) {
-                        tList.add(t.get());
+                        T t1 = t.get();
+                        tList.add(t1);
+
+                        Tag k_tag = compoundTag.get("key");
+                        if (k_tag == null) continue;
+                        Optional<ResourceKey<T>> keyOptional = resourceKeyCodec
+                                .parse(registryops, k_tag)
+                                .resultOrPartial(EclipticSeasons::logger);
+                        if(keyOptional.isPresent()){
+                            ResourceKey<T> tResourceKey = keyOptional.get();
+                            pairArrayList.add(Pair.of(tResourceKey, t1));
+                            Optional<Holder.Reference<T>> holder = registry.getHolder(tResourceKey);
+                            if(holder.isPresent()&&holder.get().getType()!= Holder.Reference.Type.INTRUSIVE){
+                                holder.get().bindValue(t1);
+                            }
+                        }
                     }
                 }
-                this.data = tList;
+                this.data = pairArrayList;
             }
         }
-        return this.data;
+        return tList;
     }
 
 }
