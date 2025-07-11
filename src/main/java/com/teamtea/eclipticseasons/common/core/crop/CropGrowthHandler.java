@@ -400,8 +400,8 @@ public final class CropGrowthHandler {
         if (growControl_Temp != null) {
             for (Season collectValue : Season.collectValues()) {
                 GrowParameter parameter = growControl_Temp.getGrowParameter(collectValue, state);
-                if (parameter == null
-                        || parameter.grow_chance() > 0.4f) {
+                if (parameter != null
+                        && parameter.grow_chance() > 0.4f) {
                     seasons.add(collectValue);
                 }
             }
@@ -417,8 +417,8 @@ public final class CropGrowthHandler {
         if (growControl_Temp != null) {
             for (Humidity collectValue : Humidity.collectValues()) {
                 GrowParameter parameter = growControl_Temp.getGrowParameter(collectValue, state);
-                if (parameter == null
-                        || parameter.grow_chance() > 0.5f) {
+                if (parameter != null
+                        && parameter.grow_chance() > 0.5f) {
                     humidities.add(collectValue);
                 }
             }
@@ -940,7 +940,8 @@ public final class CropGrowthHandler {
             List<Season> seasons =
                     CropGrowthHandler.getLikeSeasonsInTemperate(state, controlMap, defaultAgroClimaticZoneHolder
                     );
-            toolTip.addAll(CropSeasonInfo.getTooltip(CropSeasonInfo.getSeason(seasons)));
+            if (!seasons.isEmpty())
+                toolTip.addAll(CropSeasonInfo.getTooltip(CropSeasonInfo.getSeason(seasons)));
         }
         return toolTip;
     }

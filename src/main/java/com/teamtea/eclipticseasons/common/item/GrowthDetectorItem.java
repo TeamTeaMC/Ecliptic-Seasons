@@ -5,6 +5,7 @@ import com.teamtea.eclipticseasons.api.constant.biome.Humidity;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.data.climate.AgroClimaticZone;
+import com.teamtea.eclipticseasons.api.data.crop.CropGrow;
 import com.teamtea.eclipticseasons.api.data.crop.CropGrowControl;
 import com.teamtea.eclipticseasons.api.data.crop.GrowParameter;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
@@ -55,6 +56,13 @@ public class GrowthDetectorItem extends Item {
                     CropGrowControl growControl = CropGrowthHandler.getCropGrowControl(controlMap, climateTypeHolder);
                     if (growControl == null) {
                         growControl = CropGrowthHandler.getCropGrowControl(controlMap, CropGrowthHandler.getDefaultAgroClimaticZoneHolder(level));
+                    }
+                    if (growControl != null) {
+                        if (growControl.base().equals(CropGrow.EMPTY)) {
+                            if (growControl.blocks().isEmpty() ||
+                                    !growControl.blocks().get().containsKey(blockState))
+                                return super.useOn(context);
+                        }
                     }
                     float chance = 0;
                     for (int i = 0; i < 100; i++) {
