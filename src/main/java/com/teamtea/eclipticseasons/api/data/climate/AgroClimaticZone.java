@@ -16,6 +16,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -64,16 +65,26 @@ public record AgroClimaticZone(HolderSet<Biome> biomes,
                     CodecUtil.pairCodec(StringRepresentable.fromEnum(Season::collectValues), Codec.INT).listOf().fieldOf("seasonal_signal_durations").orElse(
                             List.of()
                     ).forGetter(AgroClimaticZone::seasonalSignalDurations)
-            ).apply(builder, ((global, default_mapping, mappings,list) -> new AgroClimaticZone(HolderSet.direct(),global,default_mapping,mappings,list))));
-
+            ).apply(builder, ((global, default_mapping, mappings, list) -> new AgroClimaticZone(HolderSet.direct(), global, default_mapping, mappings, list))));
 
 
     public static String getDescriptionId(@NotNull ResourceLocation resourceLocation) {
         return ESRegistries.createLangKey(ESRegistries.AGRO_CLIMATE, resourceLocation);
     }
 
+    @Deprecated(forRemoval = true, since = "0.12")
+    public GrowParameter buildFromList(CropGrowControl templateGrowth,
+                                       List<Map<Either<Season, SolarTerm>, Float>> mappings) {
+        return buildFromList(null, templateGrowth, mappings);
+    }
 
-    public GrowParameter buildFromList(CropGrowControl deaultCropGrowControl, List<Map<Either<Season, SolarTerm>, Float>> list) {
+    @Deprecated(forRemoval = true, since = "0.12")
+    public GrowParameter getGrowParameterFromMapping(CropGrowControl templateGrowth,
+                                                     SolarTerm solarTerm) {
+        return getGrowParameterFromMapping(null, templateGrowth, solarTerm);
+    }
+
+    public GrowParameter buildFromList(BlockState state, CropGrowControl deaultCropGrowControl, List<Map<Either<Season, SolarTerm>, Float>> list) {
         GrowParameter growParameterResult = null;
         if (list != null
                 && deaultCropGrowControl != null) {
@@ -84,13 +95,13 @@ public record AgroClimaticZone(HolderSet<Biome> biomes,
                 for (Map.Entry<Either<Season, SolarTerm>, Float> eitherFloatEntry : eitherFloatMap.entrySet()) {
                     Either<Season, SolarTerm> key = eitherFloatEntry.getKey();
                     if (key.right().isPresent()) {
-                        GrowParameter orDefault = deaultCropGrowControl.getGrowParameter(key.right().get());
+                        GrowParameter orDefault = deaultCropGrowControl.getGrowParameter(key.right().get(), state);
                         if (orDefault != null) {
                             chance += orDefault.grow_chance() * eitherFloatEntry.getValue();
                             any = true;
                         }
                     } else if (key.left().isPresent()) {
-                        GrowParameter orDefault = deaultCropGrowControl.getGrowParameter(key.left().get());
+                        GrowParameter orDefault = deaultCropGrowControl.getGrowParameter(key.left().get(), state);
                         if (orDefault != null) {
                             chance += orDefault.grow_chance() * eitherFloatEntry.getValue();
                             any = true;
@@ -105,22 +116,21 @@ public record AgroClimaticZone(HolderSet<Biome> biomes,
         return growParameterResult;
     }
 
-    public GrowParameter getGrowParameterFromMapping(CropGrowControl deaultCropGrowControl, SolarTerm solarTerm) {
+    public GrowParameter getGrowParameterFromMapping(BlockState state, CropGrowControl deaultCropGrowControl, SolarTerm solarTerm) {
         GrowParameter growParameterResult = null;
         if (this.mapping().isPresent()) {
             Map<Either<Season, SolarTerm>, List<Map<Either<Season, SolarTerm>, Float>>> eitherListMap = this.mapping().get();
             List<Map<Either<Season, SolarTerm>, Float>> list = eitherListMap.getOrDefault(Either.right(solarTerm), null);
-            growParameterResult = buildFromList(deaultCropGrowControl, list);
-            if(growParameterResult==null) {
+            growParameterResult = buildFromList(state, deaultCropGrowControl, list);
+            if (growParameterResult == null) {
                 list = eitherListMap.getOrDefault(Either.left(solarTerm.getSeason()), null);
-                growParameterResult = buildFromList(deaultCropGrowControl, list);
+                growParameterResult = buildFromList(state, deaultCropGrowControl, list);
             }
-
         }
 
         if (growParameterResult == null
                 && this.defaultMapping().isPresent()) {
-            growParameterResult = buildFromList(deaultCropGrowControl, List.of(defaultMapping().get()));
+            growParameterResult = buildFromList(state,deaultCropGrowControl, List.of(defaultMapping().get()));
         }
 
         if (growParameterResult == null && this.growParameter().isPresent()) {

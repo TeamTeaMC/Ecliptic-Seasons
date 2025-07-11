@@ -12,6 +12,7 @@ import com.teamtea.eclipticseasons.api.constant.tag.CropClimateTags;
 import com.teamtea.eclipticseasons.api.data.climate.AgroClimaticZone;
 import com.teamtea.eclipticseasons.api.data.crop.CropGrowControlBuilder;
 import com.teamtea.eclipticseasons.api.data.crop.GrowParameter;
+import com.teamtea.eclipticseasons.api.util.backport.FakeBlockPredicate;
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
@@ -125,8 +126,10 @@ public class CropRegistry {
         return TagKey.create(Registries.BLOCK, EclipticSeasons.rl("crops/" + templateName.location().getPath().split("/")[1]));
     }
 
-    private static HolderSet<Block> createTagPredicate(ResourceKey<CropGrowControlBuilder> templateName) {
-        return blockHolderGetter.getOrThrow(createTagKey(templateName));
+    private static FakeBlockPredicate createTagPredicate(ResourceKey<CropGrowControlBuilder> templateName) {
+        return new FakeBlockPredicate(Optional.of(blockHolderGetter.getOrThrow(createTagKey(templateName))),
+                Optional.empty()
+        );
     }
 
     static final HolderSet.Direct<CropGrowControlBuilder> EMPTY_HOLDER_SET = HolderSet.direct(List.of());

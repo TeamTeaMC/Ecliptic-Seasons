@@ -155,7 +155,7 @@ public final class CropGrowthHandler {
         for (Map.Entry<ResourceKey<CropGrowControlBuilder>, CropGrowControlBuilder> entry : cropGrowControlBuilders.get().entrySet()) {
             CropGrowControlBuilder builder = entry.getValue();
             CropGrowControlBuilder.put(entry.getKey().location(), builder);
-            Optional<HolderSet<Block>> blocks = Optional.of(builder.applyTarget());
+            Optional<HolderSet<Block>> blocks = builder.applyTarget().blocks();
             if (blocks.isEmpty()) continue;
             EnumMap<SolarTerm, GrowParameter> solarTermGrowParameterEnumMap = new EnumMap<>(builder.solarTermList());
             EnumMap<Season, GrowParameter> seasonGrowParameterEnumMap = new EnumMap<>(builder.seasonList());
@@ -339,10 +339,34 @@ public final class CropGrowthHandler {
                 growParameter.fertile_chance() : growParameter.grow_chance();
     }
 
+
+    @Deprecated(forRemoval = true, since = "0.12")
     public static @Nullable GreenHouseCoreProvider getGreenHouseProvider(
             Level level, BlockPos pos,
             Map<Holder<AgroClimaticZone>, CropGrowControl> controlMap, Holder<AgroClimaticZone> agentClimateTypeHolder) {
-        List<Season> seasons = getLikeSeasonsInTemperate(controlMap, agentClimateTypeHolder);
+        return getGreenHouseProvider(level, pos, null, controlMap, agentClimateTypeHolder);
+    }
+
+    @Deprecated(forRemoval = true, since = "0.12")
+    public static @NotNull List<Season> getLikeSeasonsInTemperate(Map<Holder<AgroClimaticZone>, CropGrowControl> controlMap,
+                                                                  Holder<AgroClimaticZone> agentClimateTypeHolder) {
+        return getLikeSeasonsInTemperate(null, controlMap, agentClimateTypeHolder);
+    }
+
+    @Deprecated(forRemoval = true, since = "0.12")
+    public static @Nullable GrowParameter getSeasonGrowParameter(
+            CropGrowControl growControl,
+            SolarTerm solarTerm,
+            Map<Holder<AgroClimaticZone>, CropGrowControl> controlMap,
+            Holder<AgroClimaticZone> agentClimateTypeHolder,
+            Holder<AgroClimaticZone> climateTypeHolder) {
+        return getSeasonGrowParameter(null, growControl, solarTerm, controlMap, agentClimateTypeHolder, climateTypeHolder);
+    }
+
+    public static @Nullable GreenHouseCoreProvider getGreenHouseProvider(
+            Level level, BlockPos pos, BlockState state,
+            Map<Holder<AgroClimaticZone>, CropGrowControl> controlMap, Holder<AgroClimaticZone> agentClimateTypeHolder) {
+        List<Season> seasons = getLikeSeasonsInTemperate(state, controlMap, agentClimateTypeHolder);
         if (!seasons.isEmpty()) {
             SolarDataManager saveData = SolarHolders.getSaveData(level);
             if (saveData != null) {
@@ -352,12 +376,14 @@ public final class CropGrowthHandler {
         return null;
     }
 
-    public static @NotNull List<Season> getLikeSeasonsInTemperate(Map<Holder<AgroClimaticZone>, CropGrowControl> controlMap, Holder<AgroClimaticZone> agentClimateTypeHolder) {
+    public static @NotNull List<Season> getLikeSeasonsInTemperate(BlockState state,
+                                                                  Map<Holder<AgroClimaticZone>, CropGrowControl> controlMap,
+                                                                  Holder<AgroClimaticZone> agentClimateTypeHolder) {
         List<Season> seasons = new ArrayList<>();
         CropGrowControl growControl_Temp = getCropGrowControl(controlMap, agentClimateTypeHolder);
         if (growControl_Temp != null) {
             for (Season collectValue : Season.collectValues()) {
-                GrowParameter parameter = growControl_Temp.getGrowParameter(collectValue);
+                GrowParameter parameter = growControl_Temp.getGrowParameter(collectValue, state);
                 if (parameter == null
                         || parameter.grow_chance() > 0.4f) {
                     seasons.add(collectValue);
@@ -367,16 +393,21 @@ public final class CropGrowthHandler {
         return seasons;
     }
 
-    public static @Nullable GrowParameter getSeasonGrowParameter(CropGrowControl growControl, SolarTerm solarTerm, Map<Holder<AgroClimaticZone>, CropGrowControl> controlMap, Holder<AgroClimaticZone> agentClimateTypeHolder, Holder<AgroClimaticZone> climateTypeHolder) {
+    public static @Nullable GrowParameter getSeasonGrowParameter(
+            BlockState state,
+            CropGrowControl growControl,
+            SolarTerm solarTerm,
+            Map<Holder<AgroClimaticZone>, CropGrowControl> controlMap,
+            Holder<AgroClimaticZone> agentClimateTypeHolder,
+            Holder<AgroClimaticZone> climateTypeHolder) {
         GrowParameter growParameter = null;
         if (growControl != null) {
-            growParameter = growControl.getGrowParameter(solarTerm);
+            growParameter = growControl.getGrowParameter(solarTerm, state);
         }
-
         if (growParameter == null
         ) {
             CropGrowControl deaultCropGrowControl = getCropGrowControl(controlMap, agentClimateTypeHolder);
-            growParameter = climateTypeHolder.value().getGrowParameterFromMapping(deaultCropGrowControl, solarTerm);
+            growParameter = climateTypeHolder.value().getGrowParameterFromMapping(state, deaultCropGrowControl, solarTerm);
         }
         return growParameter;
     }
@@ -428,7 +459,7 @@ public final class CropGrowthHandler {
         }
         if (growControl == null) return;
 
-        GrowParameter growParameter = getSeasonGrowParameter(growControl, solarTerm, controlMap, agentClimateTypeHolder, climateTypeHolder);
+        GrowParameter growParameter = getSeasonGrowParameter(blockState, growControl, solarTerm, controlMap, agentClimateTypeHolder, climateTypeHolder);
 
         int randomKey = level.getRandom().nextInt(1000);
         float baseGrowthChance = 1f;
@@ -447,7 +478,7 @@ public final class CropGrowthHandler {
                         roomStatus = RoomStatus.NORMAL;
                     }
                 } else {
-                    List<Season> seasons = getLikeSeasonsInTemperate(controlMap, agentClimateTypeHolder);
+                    List<Season> seasons = getLikeSeasonsInTemperate(blockState, controlMap, agentClimateTypeHolder);
                     if (!seasons.isEmpty()) {
                         SolarDataManager saveData = SolarHolders.getSaveData((Level) level);
                         if (saveData != null) {
@@ -523,7 +554,7 @@ public final class CropGrowthHandler {
                     return;
                 }
             }
-            GrowParameter growParameter = growControl.getGrowParameter(env);
+            GrowParameter growParameter = growControl.getGrowParameter(env, blockState);
             if (growParameter != null) {
                 float f = getGrowChance(event, growParameter);
                 if (f == 0) {

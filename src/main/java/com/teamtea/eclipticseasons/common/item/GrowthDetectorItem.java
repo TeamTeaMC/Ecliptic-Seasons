@@ -102,14 +102,14 @@ public class GrowthDetectorItem extends Item {
         }
         if (growControl == null) return result;
 
-        GrowParameter growParameter = CropGrowthHandler.getSeasonGrowParameter(growControl, solarTerm, controlMap, agentClimateTypeHolder, climateTypeHolder);
+        GrowParameter growParameter = CropGrowthHandler.getSeasonGrowParameter(blockState,growControl, solarTerm, controlMap, agentClimateTypeHolder, climateTypeHolder);
         CropGrowthHandler.RoomStatus roomStatus = CropGrowthHandler.isInRoom(level, pos, blockState, growControl.notGreenHouse()) ? CropGrowthHandler.RoomStatus.GREEN_HOUSE : CropGrowthHandler.RoomStatus.NORMAL;
         if (growParameter != null && CommonConfig.Crop.enableCrop.get()) {
             result *= growParameter.grow_chance();
             if (result < 1) {
                 if (roomStatus == CropGrowthHandler.RoomStatus.GREEN_HOUSE) {
                     if (CommonConfig.Crop.simpleGreenHouse.get() ||
-                            CropGrowthHandler.getGreenHouseProvider(level, pos, controlMap, agentClimateTypeHolder) != null) {
+                            CropGrowthHandler.getGreenHouseProvider(level, pos,blockState, controlMap, agentClimateTypeHolder) != null) {
                         result = 1;
                     }
                 }
@@ -127,7 +127,7 @@ public class GrowthDetectorItem extends Item {
     public static float getHumidityGrowChance(Level world, CropGrowControl growControl, Humidity env, CropGrowthHandler.RoomStatus roomStatus, BlockPos pos, BlockState blockState, Season season, boolean hasUpdate) {
         float result = 1;
         if (growControl != null) {
-            GrowParameter growParameter = growControl.getGrowParameter(env);
+            GrowParameter growParameter = growControl.getGrowParameter(env,blockState);
             if (growParameter != null) {
                 float f = growParameter.grow_chance();
                 if (f == 0) {

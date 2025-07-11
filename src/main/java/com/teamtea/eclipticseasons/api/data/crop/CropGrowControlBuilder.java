@@ -7,8 +7,10 @@ import com.teamtea.eclipticseasons.api.constant.biome.Humidity;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.data.climate.AgroClimaticZone;
+import com.teamtea.eclipticseasons.api.util.backport.FakeBlockPredicate;
 import com.teamtea.eclipticseasons.api.util.codec.CodecUtil;
 import com.teamtea.eclipticseasons.api.util.codec.ESExtraCodec;
+import com.teamtea.eclipticseasons.api.util.backport.FakeStatePropertiesPredicate;
 import com.teamtea.eclipticseasons.common.misc.SimplePair;
 import com.teamtea.eclipticseasons.common.registry.ESRegistries;
 import net.minecraft.ResourceLocationException;
@@ -21,7 +23,7 @@ import java.util.*;
 
 public record CropGrowControlBuilder(
         HolderSet<AgroClimaticZone> cropClimateType,
-        HolderSet<Block> applyTarget,
+        FakeBlockPredicate applyTarget,
         HolderSet<CropGrowControlBuilder> parent,
         Optional<GrowParameter> defaultSolarTermGrowParameter,
         Optional<GrowParameter> defaultHumidityGrowParameter,
@@ -56,7 +58,7 @@ public record CropGrowControlBuilder(
             ESExtraCodec.BLOCK_HOLDER_SET_CODEC.optionalFieldOf("unlike_greenhouse_material").forGetter(CropGrowControlBuilder::notGreenHouse),
             CodecUtil.holderSetCodec(ESRegistries.CROP).fieldOf("parent").orElse(HolderSet.direct()).forGetter(CropGrowControlBuilder::parent),
             GrowParameter.CODEC.optionalFieldOf("season_default").forGetter(CropGrowControlBuilder::defaultSolarTermGrowParameter),
-            ESExtraCodec.BLOCK_HOLDER_SET_CODEC.fieldOf("apply_target").forGetter(CropGrowControlBuilder::applyTarget)
+            FakeBlockPredicate.CODEC.fieldOf("apply_target").forGetter(CropGrowControlBuilder::applyTarget)
     ).apply(ins, (defaultGrowParameter2, solarTermGrowParameterEnumMap, seasonGrowParameterEnumMap, humidityGrowParameterEnumMap, holders,notGreenHouse,  holders2, defaultGrowParameter, blockPredicate) ->
             new CropGrowControlBuilder(holders, blockPredicate, holders2, defaultGrowParameter, defaultGrowParameter2, solarTermGrowParameterEnumMap, seasonGrowParameterEnumMap, humidityGrowParameterEnumMap, notGreenHouse)
     ));
@@ -69,7 +71,7 @@ public record CropGrowControlBuilder(
             HUMID_ENUM_MAP_CODEC.fieldOf("humidity").orElse(new EnumMap<>(Humidity.class)).forGetter(CropGrowControlBuilder::humidList),
             GrowParameter.CODEC.optionalFieldOf("season_default").forGetter(CropGrowControlBuilder::defaultSolarTermGrowParameter)
     ).apply(ins, (defaultGrowParameter2, solarTermGrowParameterEnumMap, seasonGrowParameterEnumMap, humidityGrowParameterEnumMap, defaultGrowParameter) ->
-            new CropGrowControlBuilder(HolderSet.direct(), HolderSet.direct(), HolderSet.direct(), defaultGrowParameter, defaultGrowParameter2, solarTermGrowParameterEnumMap, seasonGrowParameterEnumMap, humidityGrowParameterEnumMap,Optional.empty())
+            new CropGrowControlBuilder(HolderSet.direct(), new FakeBlockPredicate(Optional.empty(),Optional.empty()), HolderSet.direct(), defaultGrowParameter, defaultGrowParameter2, solarTermGrowParameterEnumMap, seasonGrowParameterEnumMap, humidityGrowParameterEnumMap,Optional.empty())
     ));
 
 
