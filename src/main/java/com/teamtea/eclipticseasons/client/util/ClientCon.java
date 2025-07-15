@@ -28,7 +28,7 @@ import java.util.List;
 public class ClientCon {
 
     public static final Long2ObjectOpenHashMap<LongBooleanImmutablePair> roomCache = new Long2ObjectOpenHashMap<>();
-    public static int humidityModificationLevel;
+    public static float humidityModificationLevel;
 
     private static Level useLevel;
     private static Level nextLevel;

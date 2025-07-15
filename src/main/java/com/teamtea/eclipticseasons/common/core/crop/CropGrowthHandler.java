@@ -40,6 +40,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -350,7 +351,7 @@ public final class CropGrowthHandler {
         GREEN_HOUSE, NORMAL, UNKNOWN;
     }
 
-    public static float getGrowChance(net.minecraftforge.eventbus.api.Event event, GrowParameter growParameter) {
+    public static float getGrowChance(Event event, GrowParameter growParameter) {
         return event instanceof BonemealEvent ?
                 growParameter.fertile_chance() : growParameter.grow_chance();
     }
@@ -376,7 +377,9 @@ public final class CropGrowthHandler {
             Map<Holder<AgroClimaticZone>, CropGrowControl> controlMap,
             Holder<AgroClimaticZone> agentClimateTypeHolder,
             Holder<AgroClimaticZone> climateTypeHolder) {
-        return getSeasonGrowParameter(null, growControl, solarTerm, controlMap, agentClimateTypeHolder, climateTypeHolder);
+        return getSeasonGrowParameter(null, growControl,
+                getCropGrowControl(controlMap, agentClimateTypeHolder),
+                solarTerm, climateTypeHolder);
     }
 
     public static @Nullable GreenHouseCoreProvider getGreenHouseProvider(
@@ -429,9 +432,8 @@ public final class CropGrowthHandler {
     public static @Nullable GrowParameter getSeasonGrowParameter(
             BlockState state,
             CropGrowControl growControl,
+            CropGrowControl deaultCropGrowControl,
             SolarTerm solarTerm,
-            Map<Holder<AgroClimaticZone>, CropGrowControl> controlMap,
-            Holder<AgroClimaticZone> agentClimateTypeHolder,
             Holder<AgroClimaticZone> climateTypeHolder) {
         GrowParameter growParameter = null;
         if (growControl != null) {
@@ -439,8 +441,8 @@ public final class CropGrowthHandler {
         }
         if (growParameter == null
         ) {
-            CropGrowControl deaultCropGrowControl = getCropGrowControl(controlMap, agentClimateTypeHolder);
-            growParameter = climateTypeHolder.value().getGrowParameterFromMapping(state, deaultCropGrowControl, solarTerm);
+            growParameter = climateTypeHolder.value()
+                    .getGrowParameterFromMapping(state, deaultCropGrowControl, solarTerm);
         }
         return growParameter;
     }
@@ -469,7 +471,7 @@ public final class CropGrowthHandler {
         return CROP_GROW_MAP.get(block);
     }
 
-    public static void beforeCropGrowUp(net.minecraftforge.eventbus.api.Event event, Level level, BlockPos pos, BlockState blockState) {
+    public static void beforeCropGrowUp(Event event, Level level, BlockPos pos, BlockState blockState) {
         Block block = blockState.getBlock();
         Map<Holder<AgroClimaticZone>, CropGrowControl> controlMap = getControlMap(block);
         if (controlMap == null) return;
@@ -479,20 +481,19 @@ public final class CropGrowthHandler {
         if (climateTypeHolder == null) return;
 
         Holder<AgroClimaticZone> agentClimateTypeHolder = getDefaultAgroClimaticZoneHolder(level);
-        CropGrowControl growControl = getCropGrowControl(controlMap, climateTypeHolder);
-
+        CropGrowControl growControl = CropGrowthHandler.getCropGrowControl(controlMap, climateTypeHolder);
+        CropGrowControl agentGrowControl = CropGrowthHandler.getCropGrowControl(controlMap, agentClimateTypeHolder);
+        if (growControl == null && agentGrowControl == null) {
+            return;
+        }
         boolean notCancel = false;
         SolarTerm solarTerm = EclipticSeasonsApi.getInstance().getSolarTerm(level);
         Season season = solarTerm.getSeason();
         RoomStatus roomStatus = RoomStatus.UNKNOWN;
 
-        // TODO:这些映射应该提前计算，不应该实时计算,但是由于湿润度是全部覆盖的，因此如果没有，则不计算
-        if (growControl == null) {
-            growControl = CropGrowthHandler.getCropGrowControl(controlMap, CropGrowthHandler.getDefaultAgroClimaticZoneHolder(level));
-        }
-        if (growControl == null) return;
-
-        GrowParameter growParameter = getSeasonGrowParameter(blockState, growControl, solarTerm, controlMap, agentClimateTypeHolder, climateTypeHolder);
+        GrowParameter growParameter = getSeasonGrowParameter(blockState, growControl, agentGrowControl, solarTerm, climateTypeHolder);
+        Optional<HolderSet<Block>> notGreenHouse =
+                growControl != null ? growControl.notGreenHouse() : agentGrowControl.notGreenHouse();
 
         int randomKey = level.getRandom().nextInt(1000);
         float baseGrowthChance = 1f;
@@ -504,7 +505,7 @@ public final class CropGrowthHandler {
             //         && randomKey < CommonConfig.Crop.cropGrowChanceInWrongSeason.get() * 1000;
             if (!notCancel) {
                 if (CommonConfig.Crop.simpleGreenHouse.get()) {
-                    if (isInRoom(level, pos, blockState, growControl.notGreenHouse())) {
+                    if (isInRoom(level, pos, blockState, notGreenHouse)) {
                         notCancel = true;
                         roomStatus = RoomStatus.GREEN_HOUSE;
                     } else {
@@ -517,7 +518,7 @@ public final class CropGrowthHandler {
                         if (saveData != null) {
                             GreenHouseCoreProvider nearGreenHouseProvider = saveData.findNearGreenHouseProvider(pos, seasons);
                             if (nearGreenHouseProvider != null) {
-                                roomStatus = isInRoom(level, pos, blockState, growControl.notGreenHouse()) ? RoomStatus.GREEN_HOUSE : RoomStatus.NORMAL;
+                                roomStatus = isInRoom(level, pos, blockState, notGreenHouse) ? RoomStatus.GREEN_HOUSE : RoomStatus.NORMAL;
                                 if (roomStatus == RoomStatus.GREEN_HOUSE) {
                                     notCancel = true;
                                     nearGreenHouseProvider.costAvailCost((2 / seasons.size() + 1));
@@ -542,18 +543,20 @@ public final class CropGrowthHandler {
         } else if (CommonConfig.Crop.enableCropHumidityControl.get()) {
             // not need to check it any more
             // if (blockState.getFluidState().isSource()) return;
-            Humidity env = EclipticUtil.getHumidityAt((Level) level, solarTerm, biomeHolder, pos, !level.isClientSide());
+
+            float env = EclipticUtil.getHumidityLevelAt(level, solarTerm, biomeHolder, pos, !level.isClientSide());
 
             // GrowParameter growParameter = growControl.base().humidMap().getOrDefault(env, null);
-            checkHumidity(event, level, growControl, env, roomStatus, pos, blockState, season, false, randomKey, baseGrowthChance);
+            checkHumidity(event, level, growControl != null ? growControl : agentGrowControl, env, roomStatus, pos, blockState, season, false, randomKey, baseGrowthChance);
         } else {
             setResult(event, ((baseGrowthChance * 1000) - 1000 > randomKey) ? GROW : PASS, growParameter);
         }
     }
 
 
-    public static void checkHumidity(Event event, Level world, CropGrowControl growControl, Humidity env, RoomStatus roomStatus, BlockPos pos, BlockState blockState, Season season, boolean hasUpdate, int randomKey, float baseGrowthChance) {
+    public static void checkHumidity(Event event, Level world, CropGrowControl growControl, float env, RoomStatus roomStatus, BlockPos pos, BlockState blockState, Season season, boolean hasUpdate, int randomKey, float baseGrowthChance) {
         if (blockState.getFluidState().isSource()) return;
+        env = Mth.clamp(env, 0, Humidity.collectValues().length - 1);
         if (growControl != null) {
             if (!hasUpdate) {
                 if (CommonConfig.Crop.simpleGreenHouse.get()) {
@@ -564,27 +567,22 @@ public final class CropGrowthHandler {
                         setResult(event, PASS, null);
                         return;
                     }
-                }
-                int modification;
-                if (CommonConfig.Crop.simpleGreenHouse.get()) {
-                    modification = 0;
                 } else {
                     SolarDataManager data = SolarHolders.getSaveData(world);
-                    modification = data == null ? 0 : data.calculateHumidityModification(pos);
-                }
+                    int modification = data == null ? 0 : data.calculateHumidityModification(pos);
 
-                if (modification != 0) {
-                    roomStatus = isInRoom(world, pos, blockState, growControl.notGreenHouse()) ? RoomStatus.GREEN_HOUSE : RoomStatus.NORMAL;
-                }
-                if (modification != 0 && roomStatus == RoomStatus.GREEN_HOUSE) {
-                    env = env.cycle(modification);
-                    checkHumidity(event, world, growControl, env, roomStatus, pos, blockState, season, true, randomKey, baseGrowthChance);
-                    return;
-                    //  TODO:下雨增加湿润度
-                } else if (world.isRainingAt(pos)) {
-                    env = env.cycle(1);
-                    checkHumidity(event, world, growControl, env, roomStatus, pos, blockState, season, true, randomKey, baseGrowthChance);
-                    return;
+                    if (modification != 0) {
+                        roomStatus = isInRoom(world, pos, blockState, growControl.notGreenHouse()) ? RoomStatus.GREEN_HOUSE : RoomStatus.NORMAL;
+                    }
+                    if (modification != 0 && roomStatus == RoomStatus.GREEN_HOUSE) {
+                        env += modification;
+                        checkHumidity(event, world, growControl, env, roomStatus, pos, blockState, season, true, randomKey, baseGrowthChance);
+                        return;
+                    } else if (world.isRainingAt(pos)) {
+                        env += 1;
+                        checkHumidity(event, world, growControl, env, roomStatus, pos, blockState, season, true, randomKey, baseGrowthChance);
+                        return;
+                    }
                 }
             }
             GrowParameter growParameter = growControl.getGrowParameter(env, blockState);
@@ -625,30 +623,30 @@ public final class CropGrowthHandler {
         if (event.hasResult()) {
             if (flag == CANCEL) {
                 if (event instanceof BlockEvent.CropGrowEvent.Pre cropGrowEvent) {
-                    cropGrowEvent.setResult(net.minecraftforge.eventbus.api.Event.Result.DENY);
+                    cropGrowEvent.setResult(Event.Result.DENY);
                 } else if (event instanceof CanPlantGrowEvent cropGrowEvent) {
-                    cropGrowEvent.setResult(net.minecraftforge.eventbus.api.Event.Result.DENY);
+                    cropGrowEvent.setResult(Event.Result.DENY);
                 } else if (event instanceof SaplingGrowTreeEvent blockGrowFeatureEvent) {
-                    blockGrowFeatureEvent.setResult(net.minecraftforge.eventbus.api.Event.Result.DENY);
+                    blockGrowFeatureEvent.setResult(Event.Result.DENY);
                 } else if (event instanceof BonemealEvent bonemealEvent) {
                     // bonemealEvent.setCanceled(true);
                     if (CommonConfig.Crop.boneMealConsumeOnFailure.get()) {
-                        bonemealEvent.setResult(net.minecraftforge.eventbus.api.Event.Result.ALLOW);
+                        bonemealEvent.setResult(Event.Result.ALLOW);
                     } else {
                         bonemealEvent.setCanceled(true);
                     }
                 }
             } else if (flag == PASS) {
                 if (event instanceof BlockEvent.CropGrowEvent.Pre cropGrowEvent) {
-                    cropGrowEvent.setResult(net.minecraftforge.eventbus.api.Event.Result.DEFAULT);
+                    cropGrowEvent.setResult(Event.Result.DEFAULT);
                 } else if (event instanceof CanPlantGrowEvent cropGrowEvent) {
-                    cropGrowEvent.setResult(net.minecraftforge.eventbus.api.Event.Result.DEFAULT);
+                    cropGrowEvent.setResult(Event.Result.DEFAULT);
                 }
             } else if (flag == GROW) {
                 if (event instanceof BlockEvent.CropGrowEvent.Pre cropGrowEvent) {
-                    cropGrowEvent.setResult(net.minecraftforge.eventbus.api.Event.Result.ALLOW);
+                    cropGrowEvent.setResult(Event.Result.ALLOW);
                 } else if (event instanceof CanPlantGrowEvent cropGrowEvent) {
-                    cropGrowEvent.setResult(net.minecraftforge.eventbus.api.Event.Result.ALLOW);
+                    cropGrowEvent.setResult(Event.Result.ALLOW);
                 }
             }
         }

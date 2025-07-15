@@ -1,6 +1,7 @@
 package com.teamtea.eclipticseasons.common.block;
 
 import com.teamtea.eclipticseasons.api.constant.biome.Humidity;
+import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.common.block.base.WallPlacedBlock;
@@ -8,9 +9,11 @@ import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
 import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
 import com.teamtea.eclipticseasons.common.misc.SimpleVoxelShapeUtils;
+import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -21,6 +24,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -65,7 +69,7 @@ public class HygrometerBlock extends WallPlacedBlock {
     public void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
         super.tick(state, level, pos, random);
         updateLevel(level, state, pos);
-        level.scheduleTick(pos,this,20*10);
+        level.scheduleTick(pos, this, 20 * 10);
     }
 
     @Override
@@ -86,11 +90,11 @@ public class HygrometerBlock extends WallPlacedBlock {
 
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
-        return getNewState(context.getLevel(),super.getStateForPlacement(context),context.getClickedPos());
+        return getNewState(context.getLevel(), super.getStateForPlacement(context), context.getClickedPos());
     }
 
     private static void updateLevel(ServerLevel level, BlockState state, BlockPos pos) {
-        BlockState oldState=state;
+        BlockState oldState = state;
         state = getNewState(level, state, pos);
         if (state != oldState) {
             level.setBlock(pos, state, Block.UPDATE_ALL);
@@ -107,14 +111,14 @@ public class HygrometerBlock extends WallPlacedBlock {
                 chance += CropGrowthHandler.isInRoom(level, checkPos, level.getBlockState(checkPos), Optional.of(HolderSet
                         .direct(state.getBlock().builtInRegistryHolder()))) ? 1 : 0;
             }
-            Humidity humidityAt = EclipticUtil.getHumidityAt(level, checkPos);
+            float humidityAt = EclipticUtil.getHumidityLevelAt(level, data.getSolarTerm(), CropGrowthHandler.getCropBiome(level, pos), pos, !level.isClientSide());
             if (chance > 8) {
-                humidityAt = humidityAt.cycle(
+                humidityAt += (
                         // todo temporarily
-                        level.isClientSide()? ClientCon.humidityModificationLevel:
-                                Mth.floor(data.calculateHumidityModification(checkPos)));
+                        level.isClientSide() ? ClientCon.humidityModificationLevel :
+                                (data.calculateHumidityModification(checkPos)));
             }
-            int p = getPowerFromHumidityLevel(humidityAt.ordinal());
+            int p = getPowerFromHumidityLevel(Humidity.getHumid(humidityAt).ordinal());
             state = state.setValue(POWER, p);
         }
         return state;

@@ -2,13 +2,21 @@ package com.teamtea.eclipticseasons.api.util;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
+import com.teamtea.eclipticseasons.api.constant.biome.Humidity;
+import com.teamtea.eclipticseasons.api.constant.biome.Rainfall;
+import com.teamtea.eclipticseasons.api.constant.biome.Temperature;
+import com.teamtea.eclipticseasons.api.constant.climate.BiomeRain;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.constant.solar.ISolarTerm;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
+import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.solar.SolarTermHelper;
+import com.teamtea.eclipticseasons.common.core.solar.SolarTermHumidityChart;
 import com.teamtea.eclipticseasons.config.CommonConfig;
+import net.minecraft.Util;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
@@ -16,6 +24,10 @@ import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.tags.BiomeTags;
+import net.minecraft.util.Mth;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.server.ServerLifecycleHooks;
@@ -24,10 +36,7 @@ import java.io.File;
 import java.net.URL;
 import java.security.CodeSource;
 import java.security.ProtectionDomain;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 
 // for other mod use
@@ -127,7 +136,7 @@ public class SimpleUtil {
     }
 
     public static void sendSolarTermMessage(ServerPlayer player, SolarTerm solarTerm, boolean ignoreChangeCheck) {
-        ISolarTerm iSolarTerm = SolarTermHelper.isChangedAndGet(player.level(), player.blockPosition(), solarTerm, solarTerm.getLastSolarTerm(),ignoreChangeCheck);
+        ISolarTerm iSolarTerm = SolarTermHelper.isChangedAndGet(player.level(), player.blockPosition(), solarTerm, solarTerm.getLastSolarTerm(), ignoreChangeCheck);
         if (iSolarTerm != null) {
             MutableComponent translatable = Component.translatable("info.eclipticseasons.environment.solar_term.message",
                     CommonConfig.Season.enableInformIcon.get() ?
@@ -149,5 +158,38 @@ public class SimpleUtil {
                 registryAccess = ServerLifecycleHooks.getCurrentServer().registryAccess();
         }
         return registryAccess;
+    }
+
+    public static void exportHumidityChart(Level level, String namespace) {
+        Registry<Biome> biomes = level.registryAccess().registryOrThrow(Registries.BIOME);
+        // List<String> list = biomes.entrySet().stream().map(e -> e.getKey().location().toString()).sorted().toList();
+        List<Map.Entry<ResourceKey<Biome>, Biome>> collect = biomes.entrySet().stream()
+                .sorted(Map.Entry.comparingByKey())
+                .toList();
+
+        for (Map.Entry<ResourceKey<Biome>, Biome> e : collect) {
+            if (biomes.getHolderOrThrow(e.getKey()).is(BiomeTags.IS_OVERWORLD)
+                    && e.getKey().location().getNamespace().contains(namespace)
+            ) {
+                var biomeHolder = BiomeClimateManager.getHolder(level.registryAccess(), e.getValue());
+                double[] humidities = new double[24];
+                for (int i = 0; i < 24; i++) {
+                    SolarTerm solarTerm = SolarTerm.collectValues()[i];
+                    humidities[i] = EclipticUtil.getHumidityConstantFloat(solarTerm, biomeHolder, !level.isClientSide());
+                }
+                String biomeName = Component.translatable(Util.makeDescriptionId("biome", e.getKey().location())).getString();
+                SolarTermHumidityChart chart = new SolarTermHumidityChart(biomeName, humidities);
+                if (!new File(EclipticSeasonsApi.MODID).exists()) {
+                    new File(EclipticSeasonsApi.MODID).mkdir();
+                }
+                if (!new File(EclipticSeasonsApi.MODID + "/humid").exists()) {
+                    new File(EclipticSeasonsApi.MODID + "/humid").mkdir();
+                }
+                if (!new File(EclipticSeasonsApi.MODID + "/humid/" + namespace).exists()) {
+                    new File(EclipticSeasonsApi.MODID + "/humid/" + namespace).mkdir();
+                }
+                chart.exportToImage("%s/humid/%s/%s.png".formatted(EclipticSeasonsApi.MODID, namespace, biomeName), "png", 800, 400);
+            }
+        }
     }
 }

@@ -4,6 +4,7 @@ import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.event.SolarTermChangeEvent;
+import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.api.util.SimpleUtil;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
@@ -127,7 +128,7 @@ public class SolarDataManager extends SavedData {
 
     public int getSolarTermIndex() {
         if (!isValidDimension()) return SolarTerm.NONE.ordinal();
-        return (getSolarTermsDay() / CommonConfig.Season.lastingDaysOfEachTerm.get() + 24) % 24;
+        return ((getSolarTermsDay() / CommonConfig.Season.lastingDaysOfEachTerm.get()) % 24 + 24) % 24;
     }
 
     public SolarTerm getSolarTerm() {
@@ -327,22 +328,15 @@ public class SolarDataManager extends SavedData {
 
         for (int r = 0; r <= d; r++) {
             for (int dx = -r; dx <= r; dx++) {
-                int dz = r - Math.abs(dx);
-                // (dx, dz)
-                {
-                    ChunkPos currentChunkPos = new ChunkPos(chunkPos.x + dx, chunkPos.z + dz);
-                    GreenHouseCoreProvider greenHouseCoreProvider = checkSeasonProviderInChunk(seasons, currentChunkPos, center);
-                    if (greenHouseCoreProvider != null) return greenHouseCoreProvider;
-                }
-                // (dx, -dz)
-                if (dz != 0) {
-                    ChunkPos currentChunkPos = new ChunkPos(chunkPos.x + dx, chunkPos.z - dz);
-                    GreenHouseCoreProvider greenHouseCoreProvider = checkSeasonProviderInChunk(seasons, currentChunkPos, center);
-                    if (greenHouseCoreProvider != null) return greenHouseCoreProvider;
+                for (int dz = -r; dz <= r; dz++) {
+                    if (dx == -r || dx == r || dz == -r || dz == r) {
+                        ChunkPos currentChunkPos = new ChunkPos(chunkPos.x + dx, chunkPos.z + dz);
+                        GreenHouseCoreProvider greenHouseCoreProvider = checkSeasonProviderInChunk(seasons, currentChunkPos, center);
+                        if (greenHouseCoreProvider != null) return greenHouseCoreProvider;
+                    }
                 }
             }
         }
-
         return null;
     }
 

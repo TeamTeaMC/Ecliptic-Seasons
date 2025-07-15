@@ -258,7 +258,7 @@ public class EclipticUtil {
             @Override
             public boolean isRainingOrSnowing(Level level, BlockPos pos) {
                 if (hasLocalWeather(level))
-                    return getRainOrSnow(level, MapChecker.getSurfaceBiome(level, pos).value(),pos)!= Biome.Precipitation.NONE;
+                    return getRainOrSnow(level, MapChecker.getSurfaceBiome(level, pos).value(), pos) != Biome.Precipitation.NONE;
                 return level.isRaining();
             }
 
@@ -290,14 +290,14 @@ public class EclipticUtil {
 
             @Override
             public Humidity getAdjustedHumidity(ServerLevel level, BlockPos checkPos) {
-                Humidity humidity = getBaseHumidity(level, checkPos);
+                float humidity = getHumidityLevelAt(level, checkPos);
                 humidity = getHumidityAfterCheck(level, checkPos, humidity);
-                return humidity;
+                return Humidity.getHumid(humidity);
             }
         };
     }
 
-    public static Humidity getHumidityAfterCheck(ServerLevel level, BlockPos checkPos, Humidity env) {
+    public static float getHumidityAfterCheck(ServerLevel level, BlockPos checkPos, float env) {
         SolarDataManager data = SolarHolders.getSaveData(level);
         if (data != null) {
             float chance = 0;
@@ -305,10 +305,10 @@ public class EclipticUtil {
                 chance += CropGrowthHandler.isInRoom(level, checkPos, level.getBlockState(checkPos), Optional.empty()) ? 1 : 0;
             }
             if (chance > 8) {
-                env = env.cycle(Mth.floor(data.calculateHumidityModification(checkPos)));
+                env += ((data.calculateHumidityModification(checkPos)));
             } else if (chance == 0) {
                 if (level.isRainingAt(checkPos)) {
-                    env = env.cycle(1);
+                    env += 1;
                 }
             }
         }
@@ -404,12 +404,30 @@ public class EclipticUtil {
         return Humidity.getHumid(r, t);
     }
 
+    public static float getHumidityConstantFloat(SolarTerm solarTerm, Holder<Biome> biomeHolder, boolean serverSide) {
+        Biome standBiome = biomeHolder.value();
+        float t = getTemperatureFloatConstant(solarTerm, standBiome, serverSide);
+        BiomeRain biomeRain = solarTerm.getBiomeRain(biomeHolder);
+        float r = (getDownfallFloatConstant(solarTerm, standBiome, serverSide) * 1.5f + biomeRain.getRainChance() * 0.5f) / 2f;
+        return Humidity.getFloatHumidLevel(r, t);
+    }
+
     public static Humidity getHumidityAt(Level level, SolarTerm solarTerm, Holder<Biome> biome, BlockPos pos, boolean serverSide) {
+        return Humidity.getHumid(getHumidityLevelAt(level, solarTerm, biome, pos, serverSide));
+    }
+
+    public static float getHumidityLevelAt(Level level, BlockPos pos) {
+        Holder<Biome> biome = level.getBiome(pos);
+        SolarTerm solarTerm = getNowSolarTerm(level);
+        boolean serverSide = !level.isClientSide();
+        return getHumidityLevelAt(level, solarTerm, biome, pos, serverSide);
+    }
+
+    public static float getHumidityLevelAt(Level level, SolarTerm solarTerm, Holder<Biome> biome, BlockPos pos, boolean serverSide) {
         Biome standBiome = biome.value();
         float t = getTemperatureFloat(level, solarTerm, standBiome, pos, serverSide);
         BiomeRain biomeRain = solarTerm.getBiomeRain(biome);
         float r = (getDownfallFloat(level, solarTerm, standBiome, pos, serverSide) * 1.5f + biomeRain.getRainChance() * 0.5f) / 2f;
-        return Humidity.getHumid(r, t);
+        return Humidity.getFloatHumidLevel(r, t);
     }
-
 }

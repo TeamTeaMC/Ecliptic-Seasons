@@ -6,7 +6,7 @@ import net.minecraft.network.FriendlyByteBuf;
 
 public final class HumidModifyMessage {
     public final BlockPos blockPos;
-    public final int value;
+    public final float value;
 
 
     public HumidModifyMessage(BlockPos blockPos, int time) {
@@ -16,12 +16,12 @@ public final class HumidModifyMessage {
 
     public HumidModifyMessage(FriendlyByteBuf buf) {
         blockPos = buf.readBlockPos();
-        value = buf.readVarInt();
+        value = buf.readFloat();
     }
 
 
     public void toBytes(FriendlyByteBuf buf) {
         buf.writeBlockPos(blockPos);
-        buf.writeVarInt(value);
+        buf.writeFloat(value);
     }
 }

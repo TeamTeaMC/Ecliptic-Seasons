@@ -146,7 +146,7 @@ public class NetworkUtil {
             if (context.get().getDirection() == NetworkDirection.PLAY_TO_CLIENT) {
                 Level client = getClient();
                 if (client != null) {
-                    ClientCon.humidityModificationLevel = (int) message.value;
+                    ClientCon.humidityModificationLevel = message.value;
                 }
             }
         });

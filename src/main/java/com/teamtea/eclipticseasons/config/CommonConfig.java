@@ -172,6 +172,7 @@ public class CommonConfig {
         public static ForgeConfigSpec.DoubleValue cropGrowChanceInWrongSeason;
         public static ForgeConfigSpec.DoubleValue cropGrowChanceInWrongHumidity;
         public static ForgeConfigSpec.BooleanValue enableCropHumidityControl;
+        public static ForgeConfigSpec.BooleanValue cropHumidityTransition;
         public static ForgeConfigSpec.BooleanValue boneMealFailureMessage;
         public static ForgeConfigSpec.BooleanValue boneMealConsumeOnFailure;
 
@@ -196,6 +197,8 @@ public class CommonConfig {
                     .defineInRange("CropGrowChanceInWrongSeason", 0.05, 0, 1);
             enableCropHumidityControl = builder.comment("Enable crop humidity control.")
                     .define("EnableCropHumidityControl", true);
+            cropHumidityTransition = builder.comment("If enabled, humidity check will transition smoothly instead of snapping.")
+                    .define("CropHumidityTransition", true);
             cropGrowChanceInWrongHumidity = builder.comment("[Deprecated]How much base chance can crop grow in wrong humidity.")
                     .defineInRange("CropGrowChanceInWrongHumidity", 0.25, 0.0001, 0.9999);
             boneMealFailureMessage = builder.comment("Send message to player if failed to use bone meal on crop.")
@@ -287,6 +290,9 @@ public class CommonConfig {
     private static boolean snowyWinter = false;
 
     @Getter
+    private static boolean cropHumidityTransition = true;
+
+    @Getter
     private static Set<Block> forceBlocksNotSnowy = new HashSet<>();
 
     public static void UpdateConfig(ModConfigEvent modConfigEvent) {
@@ -295,6 +301,7 @@ public class CommonConfig {
             useSolarWeather = Weather.useSolarWeather.get();
             forceCropCompatMode = Crop.forceCompatMode.get();
             snowyWinter = Season.snowyWinter.get();
+            cropHumidityTransition = Crop.cropHumidityTransition.get();
             int[] ints = Stream.of(Season.springDayTimes, Season.summerDayTimes, Season.autumnDayTimes, Season.winterDayTimes, Season.noneDayTimes)
                     .map(ForgeConfigSpec.ConfigValue::get)
                     .flatMap(Collection::stream)

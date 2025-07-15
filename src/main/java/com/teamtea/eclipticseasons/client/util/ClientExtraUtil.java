@@ -10,7 +10,7 @@ import net.minecraft.world.level.Level;
 import java.util.Optional;
 
 public class ClientExtraUtil {
-    public static Humidity modifyHumidity(Level level, BlockPos pos, Humidity original) {
+    public static float modifyHumidity(Level level, BlockPos pos, float original) {
         if (ClientCon.humidityModificationLevel != 0
                 && pos.closerThan(Minecraft.getInstance().player.blockPosition(), 2)) {
             long aLong = pos.asLong();
@@ -24,7 +24,7 @@ public class ClientExtraUtil {
                 ClientCon.roomCache.put(aLong, orDefault);
             }
             if (orDefault.rightBoolean())
-                original = original.cycle(ClientCon.humidityModificationLevel);
+                original += (ClientCon.humidityModificationLevel);
         }
         return original;
     }

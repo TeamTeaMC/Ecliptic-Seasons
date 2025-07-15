@@ -1,8 +1,13 @@
 package com.teamtea.eclipticseasons.client.debug;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.constant.biome.Humidity;
+import com.teamtea.eclipticseasons.api.constant.biome.Rainfall;
+import com.teamtea.eclipticseasons.api.constant.biome.Temperature;
+import com.teamtea.eclipticseasons.api.constant.climate.BiomeRain;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
+import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
@@ -11,10 +16,12 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import org.lwjgl.opengl.GL11;
@@ -40,7 +47,7 @@ public final class DebugInfoRenderer {
         String dayS = "Day Time: " + dayTime;
         String envS = "Env Temp: " + env;
         String dS = "Downfall: " + d;
-        String jS = "Humidity: " + h;
+        String jS = "Humidity: " + h+"\n" + EclipticUtil.getHumidityLevelAt(player.level(),player.blockPosition());
         String solarTimeS = "Solar Time: " + solarTime;
 
         int index = 0;

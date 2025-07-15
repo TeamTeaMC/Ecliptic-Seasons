@@ -108,6 +108,38 @@ public record CropGrowControl(
         return growParameter;
     }
 
+    @ApiStatus.Internal
+    public GrowParameter getGrowParameter(float env, BlockState state) {
+        Humidity.Environment environment = Humidity.getEnvironment(env);
+        List<Humidity.Composition> compositions = environment.compositions();
+        CropGrow cropGrow = getCropGrow(state);
+        GrowParameter growParameter = cropGrow.humidMap().getOrDefault(environment.base(), null);
+        if (growParameter == null) {
+            growParameter = cropGrow.growParameter2().orElse(null);
+        } else xx:
+                if (compositions.size() > 1) {
+                    float growChance = 0;
+                    float fertileChance = 0;
+                    float deathChance = 0;
+                    for (Humidity.Composition composition : compositions) {
+                        GrowParameter g = cropGrow.humidMap().getOrDefault(composition.humidity(), null);
+                        if (g == null) break xx;
+                        else {
+                            growChance += g.grow_chance() * composition.percent();
+                            fertileChance += g.fertile_chance() * composition.percent();
+                            deathChance += g.death_chance() * composition.percent();
+                        }
+                    }
+                    growParameter = GrowParameter.builder()
+                            .growChance(growChance)
+                            .fertileChance(fertileChance)
+                            .deathChance(deathChance)
+                            .deadState(growParameter.deadState())
+                            .end();
+                }
+        return growParameter;
+    }
+
     @Override
     public CropGrowControl merge(CropGrowControl next) {
         CropGrowControl control = this;

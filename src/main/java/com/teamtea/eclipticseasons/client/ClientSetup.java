@@ -3,6 +3,7 @@ package com.teamtea.eclipticseasons.client;
 import com.teamtea.eclipticseasons.api.constant.biome.Humidity;
 import com.teamtea.eclipticseasons.api.constant.biome.Rainfall;
 import com.teamtea.eclipticseasons.api.constant.biome.Temperature;
+import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.client.itemproperties.CounterItemProperty;
 import com.teamtea.eclipticseasons.client.model.ItemRenderModel;
@@ -18,6 +19,7 @@ import com.teamtea.eclipticseasons.common.registry.ItemRegistry;
 import com.teamtea.eclipticseasons.common.registry.ParticleRegistry;
 import com.teamtea.eclipticseasons.client.color.season.BiomeColorsHandler;
 import com.teamtea.eclipticseasons.client.model.SnowyBakedModelWrapper;
+import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
@@ -25,8 +27,11 @@ import net.minecraft.client.renderer.block.BlockModelShaper;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.*;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.*;
@@ -99,10 +104,10 @@ public class ClientSetup {
             ItemBlockRenderTypes.setRenderLayer(BlockRegistry.snowyBlock.get(), RenderType.cutoutMipped());
 
             ItemProperties.register(ItemRegistry.hyetometer.get(), ItemRegistry.hyetometer.getId(), new CounterItemProperty(EclipticUtil::getRainfallAt, Rainfall.collectValues().length));
-            ItemProperties.register(ItemRegistry.hygrometer.get(), ItemRegistry.hygrometer.getId(), new CounterItemProperty((level, pos) ->{
-                Humidity humidityAt = EclipticUtil.getHumidityAt(level, pos);
+            ItemProperties.register(ItemRegistry.hygrometer.get(), ItemRegistry.hygrometer.getId(), new CounterItemProperty((level, pos) -> {
+                float humidityAt = EclipticUtil.getHumidityLevelAt(level, pos);
                 humidityAt = ClientExtraUtil.modifyHumidity(level, pos, humidityAt);
-                return humidityAt;
+                return Humidity.getHumid(humidityAt);
             }, Humidity.collectValues().length));
             ItemProperties.register(ItemRegistry.thermometer.get(), ItemRegistry.thermometer.getId(), new CounterItemProperty(EclipticUtil::getTemperatureAt, Temperature.collectValues().length));
 
@@ -174,7 +179,7 @@ public class ClientSetup {
                 ItemRegistry.summer_greenhouse_essence_item,
                 ItemRegistry.autumn_greenhouse_essence_item,
                 ItemRegistry.winter_greenhouse_essence_item)) {
-            ModelResourceLocation inventory = new ModelResourceLocation(holder.getId(),"inventory");
+            ModelResourceLocation inventory = new ModelResourceLocation(holder.getId(), "inventory");
             BakedModel itemModel = modelRegistry.getOrDefault(inventory, null);
             if (itemModel != null) {
                 modelRegistry.put(inventory, new ItemRenderModel<>(itemModel));

@@ -1,5 +1,6 @@
 package com.teamtea.eclipticseasons.common.item;
 
+import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.biome.Humidity;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
@@ -15,19 +16,21 @@ import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
+import net.minecraft.core.HolderSet;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.Map;
+import java.util.Optional;
 
 public class GrowthDetectorItem extends Item {
     public GrowthDetectorItem(Properties properties) {
@@ -44,7 +47,6 @@ public class GrowthDetectorItem extends Item {
             if (!blockState.isAir() && CropGrowthHandler.getControlMap(blockState.getBlock()) != null) {
                 if (!level.isClientSide()) {
                     MutableComponent component = Component.translatable("item.eclipticseasons.growth_detector.hint.title");
-                    SolarTerm solarTerm = EclipticUtil.getNowSolarTerm(level);
 
                     Holder<Biome> biomeHolder = CropGrowthHandler.getCropBiome(level, clickedPos);
                     Holder<AgroClimaticZone> climateTypeHolder = CropGrowthHandler.getclimateTypeHolder(biomeHolder);
@@ -53,6 +55,7 @@ public class GrowthDetectorItem extends Item {
                     }
 
                     Map<Holder<AgroClimaticZone>, CropGrowControl> controlMap = CropGrowthHandler.getControlMap(blockState.getBlock());
+                    if (controlMap == null) return super.useOn(context);
                     CropGrowControl growControl = CropGrowthHandler.getCropGrowControl(controlMap, climateTypeHolder);
                     if (growControl == null) {
                         growControl = CropGrowthHandler.getCropGrowControl(controlMap, CropGrowthHandler.getDefaultAgroClimaticZoneHolder(level));
@@ -64,14 +67,16 @@ public class GrowthDetectorItem extends Item {
                                 return super.useOn(context);
                         }
                     }
+
                     float chance = 0;
-                    for (int i = 0; i < 100; i++) {
-                        chance += CropGrowthHandler.isInRoom(level, clickedPos, blockState, growControl.notGreenHouse()) ? 1 : 0;
+                    int chose = 0;
+                    if (growControl != null) {
+                        for (int i = 0; i < 100; i++) {
+                            chance += CropGrowthHandler.isInRoom(level, clickedPos, blockState, growControl.notGreenHouse()) ? 1 : 0;
+                        }
+                        chose = chance > 50 ? 1 : chance > 10 ? 2 : 3;
+                        component.append(Component.translatable("item.eclipticseasons.growth_detector.hint.greenroom_" + chose, blockState.getBlock().getName()));
                     }
-                    int chose = chance > 50 ? 1 : chance > 10 ? 2 : 3;
-
-                    component.append(Component.translatable("item.eclipticseasons.growth_detector.hint.greenroom_" + chose, blockState.getBlock().getName()));
-
 
                     chance = 0;
                     for (int i = 0; i < 100; i++) {
@@ -101,23 +106,26 @@ public class GrowthDetectorItem extends Item {
 
         Holder<AgroClimaticZone> agentClimateTypeHolder = CropGrowthHandler.getDefaultAgroClimaticZoneHolder(level);
         CropGrowControl growControl = CropGrowthHandler.getCropGrowControl(controlMap, climateTypeHolder);
+        CropGrowControl agentGrowControl = CropGrowthHandler.getCropGrowControl(controlMap, agentClimateTypeHolder);
+        if (growControl == null && agentGrowControl == null) {
+            return result;
+        }
 
         SolarTerm solarTerm = EclipticSeasonsApi.getInstance().getSolarTerm(level);
         Season season = solarTerm.getSeason();
 
-        if (growControl == null) {
-            growControl = CropGrowthHandler.getCropGrowControl(controlMap, CropGrowthHandler.getDefaultAgroClimaticZoneHolder(level));
-        }
-        if (growControl == null) return result;
+        GrowParameter growParameter = CropGrowthHandler.getSeasonGrowParameter(blockState, growControl, agentGrowControl, solarTerm, climateTypeHolder);
 
-        GrowParameter growParameter = CropGrowthHandler.getSeasonGrowParameter(blockState,growControl, solarTerm, controlMap, agentClimateTypeHolder, climateTypeHolder);
-        CropGrowthHandler.RoomStatus roomStatus = CropGrowthHandler.isInRoom(level, pos, blockState, growControl.notGreenHouse()) ? CropGrowthHandler.RoomStatus.GREEN_HOUSE : CropGrowthHandler.RoomStatus.NORMAL;
+        Optional<HolderSet<Block>> notGreenHouse =
+                growControl != null ? growControl.notGreenHouse() : agentGrowControl.notGreenHouse();
+        CropGrowthHandler.RoomStatus roomStatus = CropGrowthHandler.isInRoom(level, pos, blockState, notGreenHouse) ? CropGrowthHandler.RoomStatus.GREEN_HOUSE : CropGrowthHandler.RoomStatus.NORMAL;
+
         if (growParameter != null && CommonConfig.Crop.enableCrop.get()) {
             result *= growParameter.grow_chance();
             if (result < 1) {
                 if (roomStatus == CropGrowthHandler.RoomStatus.GREEN_HOUSE) {
                     if (CommonConfig.Crop.simpleGreenHouse.get() ||
-                            CropGrowthHandler.getGreenHouseProvider(level, pos,blockState, controlMap, agentClimateTypeHolder) != null) {
+                            CropGrowthHandler.getGreenHouseProvider(level, pos, blockState, controlMap, agentClimateTypeHolder) != null) {
                         result = 1;
                     }
                 }
@@ -125,17 +133,18 @@ public class GrowthDetectorItem extends Item {
         }
 
         if (CommonConfig.Crop.enableCropHumidityControl.get()) {
-            Humidity env = EclipticUtil.getHumidityAt(level, solarTerm, biomeHolder, pos, !level.isClientSide());
+            float env = EclipticUtil.getHumidityLevelAt(level, solarTerm, biomeHolder, pos, !level.isClientSide());
+
             result *= getHumidityGrowChance(level, growControl, env, roomStatus, pos, blockState, season, false);
         }
-
         return result;
     }
 
-    public static float getHumidityGrowChance(Level world, CropGrowControl growControl, Humidity env, CropGrowthHandler.RoomStatus roomStatus, BlockPos pos, BlockState blockState, Season season, boolean hasUpdate) {
+    public static float getHumidityGrowChance(Level world, CropGrowControl growControl, float env, CropGrowthHandler.RoomStatus roomStatus, BlockPos pos, BlockState blockState, Season season, boolean hasUpdate) {
         float result = 1;
+        env = Mth.clamp(env, 0, Humidity.collectValues().length - 1);
         if (growControl != null) {
-            GrowParameter growParameter = growControl.getGrowParameter(env,blockState);
+            GrowParameter growParameter = growControl.getGrowParameter(env, blockState);
             if (growParameter != null) {
                 float f = growParameter.grow_chance();
                 if (f == 0) {
@@ -159,10 +168,10 @@ public class GrowthDetectorItem extends Item {
                             modification = data == null ? 0 : data.calculateHumidityModification(pos);
                         }
                         if (modification != 0 && roomStatus == CropGrowthHandler.RoomStatus.GREEN_HOUSE) {
-                            env = env.cycle(modification);
+                            env += (modification);
                             result = getHumidityGrowChance(world, growControl, env, roomStatus, pos, blockState, season, true);
                         } else if (world.isRainingAt(pos)) {
-                            env = env.cycle(1);
+                            env += (1);
                             result = getHumidityGrowChance(world, growControl, env, roomStatus, pos, blockState, season, true);
                         } else {
                             result *= f;

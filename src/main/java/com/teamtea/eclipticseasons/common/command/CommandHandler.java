@@ -7,6 +7,7 @@ import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.climate.BiomeRain;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
+import com.teamtea.eclipticseasons.api.util.SimpleUtil;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
@@ -16,6 +17,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.ResourceOrTagArgument;
+import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;
@@ -24,6 +26,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.commands.TimeCommand;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.biome.Biome;
@@ -34,6 +37,7 @@ import com.teamtea.eclipticseasons.EclipticSeasons;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Mod.EventBusSubscriber(modid = EclipticSeasons.MODID)
 public class CommandHandler {
@@ -123,6 +127,43 @@ public class CommandHandler {
                                 .then(Commands.literal("clear")
                                         .executes((commandContext) -> setBiomeRain(commandContext.getSource(), ResourceOrTagArgument.getResourceOrTag(commandContext, "biome", Registries.BIOME), false, false)))
                         )
+                )
+                .then(Commands.literal("export")
+                        .requires((source) -> source.hasPermission(2))
+                        .then(Commands.literal("humid_charts")
+                                .then(Commands.argument("namespace", StringArgumentType.word())
+                                        .suggests((context, builder) -> {
+                                            String pre = "";
+                                            try {
+                                                pre = context.getArgument("namespace", String.class);
+                                            } catch (IllegalArgumentException e) {
+                                                // e.printStackTrace();
+                                            }
+                                            Registry<Biome> biomes = context.getSource().getLevel().registryAccess().registryOrThrow(Registries.BIOME);
+                                            Set<String> collect = biomes.keySet().stream().map(ResourceLocation::getNamespace).collect(Collectors.toSet());
+
+                                            for (String s : collect) {
+                                                if (s.contains(pre)) {
+                                                    builder.suggest(s);
+                                                }
+                                            }
+
+                                            return builder.buildFuture();
+                                        }).executes((stackCommandContext) ->
+                                        {
+                                            try {
+                                                String s = StringArgumentType.getString(stackCommandContext, "namespace");
+                                                SimpleUtil.exportHumidityChart(stackCommandContext.getSource().getLevel(), s);
+                                                stackCommandContext.getSource().sendSuccess(() ->
+                                                                Component.literal("Can find them in " + "%s/humid/%s".formatted(EclipticSeasonsApi.MODID, s))
+                                                        , true);
+                                            } catch (Exception e) {
+                                                stackCommandContext.getSource().sendFailure(Component.literal(e.getMessage()));
+                                                return 1;
+                                            }
+
+                                            return 0;
+                                        })))
                 )
         );
     }
