@@ -554,33 +554,33 @@ public final class CropGrowthHandler {
     }
 
 
-    public static void checkHumidity(Event event, Level world, CropGrowControl growControl, float env, RoomStatus roomStatus, BlockPos pos, BlockState blockState, Season season, boolean hasUpdate, int randomKey, float baseGrowthChance) {
+    public static void checkHumidity(Event event, Level level, CropGrowControl growControl, float env, RoomStatus roomStatus, BlockPos pos, BlockState blockState, Season season, boolean hasUpdate, int randomKey, float baseGrowthChance) {
         if (blockState.getFluidState().isSource()) return;
         env = Mth.clamp(env, 0, Humidity.collectValues().length - 1);
         if (growControl != null) {
             if (!hasUpdate) {
                 if (CommonConfig.Crop.simpleGreenHouse.get()) {
                     roomStatus = roomStatus != RoomStatus.UNKNOWN ? roomStatus :
-                            isInRoom(world, pos, blockState, growControl.notGreenHouse()) ?
+                            isInRoom(level, pos, blockState, growControl.notGreenHouse()) ?
                                     RoomStatus.GREEN_HOUSE : RoomStatus.NORMAL;
                     if (roomStatus == RoomStatus.GREEN_HOUSE) {
                         setResult(event, PASS, null);
                         return;
                     }
                 } else {
-                    SolarDataManager data = SolarHolders.getSaveData(world);
+                    SolarDataManager data = SolarHolders.getSaveData(level);
                     int modification = data == null ? 0 : data.calculateHumidityModification(pos);
 
                     if (modification != 0) {
-                        roomStatus = isInRoom(world, pos, blockState, growControl.notGreenHouse()) ? RoomStatus.GREEN_HOUSE : RoomStatus.NORMAL;
+                        roomStatus = isInRoom(level, pos, blockState, growControl.notGreenHouse()) ? RoomStatus.GREEN_HOUSE : RoomStatus.NORMAL;
                     }
                     if (modification != 0 && roomStatus == RoomStatus.GREEN_HOUSE) {
                         env += modification;
-                        checkHumidity(event, world, growControl, env, roomStatus, pos, blockState, season, true, randomKey, baseGrowthChance);
+                        checkHumidity(event, level, growControl, env, roomStatus, pos, blockState, season, true, randomKey, baseGrowthChance);
                         return;
-                    } else if (world.isRainingAt(pos)) {
+                    } else if (level.isRainingAt(pos)) {
                         env += 1;
-                        checkHumidity(event, world, growControl, env, roomStatus, pos, blockState, season, true, randomKey, baseGrowthChance);
+                        checkHumidity(event, level, growControl, env, roomStatus, pos, blockState, season, true, randomKey, baseGrowthChance);
                         return;
                     }
                 }
@@ -588,20 +588,23 @@ public final class CropGrowthHandler {
             GrowParameter growParameter = growControl.getGrowParameter(env, blockState);
             if (growParameter != null) {
                 float f = getGrowChance(event, growParameter);
+                int flag = PASS;
                 if (f == 0) {
-                    setResult(event, CANCEL, growParameter);
+                    flag = CANCEL;
                 } else if (f > 1.0F) {
-                    setResult(event, ((f * baseGrowthChance * 1000) - 1000 > randomKey) ? GROW : PASS, growParameter);
+                    flag=((f * baseGrowthChance * 1000) - 1000 > randomKey) ? GROW : PASS;
                 } else {
                     if (f == 1.0F || randomKey < 1000 * f) {
-                        setResult(event, PASS, growParameter);
                     } else {
-                        // 或者用特殊气体，BlockEntity辅助查询
-                        boolean should = true;
-                        if (should) {
-                            setResult(event, CANCEL, growParameter);
-                        }
+                        flag=CANCEL;
                     }
+                }
+                setResult(event, flag, growParameter);
+                if (flag == CANCEL && randomKey < growParameter.death_chance() * 1000) {
+                    level.setBlockAndUpdate(pos,
+                            growParameter.deadState().isPresent() ?
+                                    growParameter.deadState().get() :
+                                    Blocks.DEAD_BUSH.defaultBlockState());
                 }
             } else {
                 setResult(event, PASS, null);

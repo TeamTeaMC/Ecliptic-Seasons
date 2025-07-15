@@ -12,6 +12,8 @@ import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
+import com.teamtea.eclipticseasons.common.network.SimpleNetworkHandler;
+import com.teamtea.eclipticseasons.common.network.message.EmptyMessage;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
@@ -126,6 +128,10 @@ public class CommandHandler {
                                         .executes((commandContext) -> setBiomeRain(commandContext.getSource(), ResourceOrTagArgument.getResourceOrTag(commandContext, "biome", Registries.BIOME), true, true)))
                                 .then(Commands.literal("clear")
                                         .executes((commandContext) -> setBiomeRain(commandContext.getSource(), ResourceOrTagArgument.getResourceOrTag(commandContext, "biome", Registries.BIOME), false, false)))
+                                .then(Commands.literal("snow_depth")
+                                        .then(Commands.argument("depth", IntegerArgumentType.integer(0, 100))
+                                                .executes((commandContext) -> setSnowDepth(commandContext.getSource(), ResourceOrTagArgument.getResourceOrTag(commandContext, "biome", Registries.BIOME), IntegerArgumentType.getInteger(commandContext, "depth"))))
+                                )
                         )
                 )
                 .then(Commands.literal("export")
@@ -166,6 +172,25 @@ public class CommandHandler {
                                         })))
                 )
         );
+    }
+
+    public static int setSnowDepth(CommandSourceStack sourceStack, ResourceOrTagArgument.Result<Biome> result, int depth) {
+        ServerLevel level = sourceStack.getLevel();
+        var levelBiomeWeather = WeatherManager.getBiomeList(level);
+        if (levelBiomeWeather != null) {
+            boolean found = false;
+            for (WeatherManager.BiomeWeather biomeWeather : levelBiomeWeather) {
+                if (result.test(biomeWeather.biomeHolder)) {
+                    biomeWeather.snowDepth = (byte) depth;
+                    found = true;
+                }
+            }
+            if (found) {
+                WeatherManager.sendBiomePacket(levelBiomeWeather, level.players());
+                SimpleNetworkHandler.send(level.players(),new EmptyMessage());
+            }
+        }
+        return 0;
     }
 
     public static int setBiomeRain(CommandSourceStack sourceStack, ResourceOrTagArgument.Result<Biome> result, boolean setRain, boolean isThunder) throws CommandSyntaxException {

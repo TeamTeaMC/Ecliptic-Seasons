@@ -30,7 +30,7 @@ public final class SimpleNetworkHandler {
         if (FMLLoader.getDist() == Dist.CLIENT)
             a.consumerNetworkThread(NetworkUtil::processSolarTermsMessage);
         a.add();
-        
+
         var c = CHANNEL.messageBuilder(BiomeWeatherMessage.class, id++)
                 .encoder(BiomeWeatherMessage::toBytes)
                 .decoder(BiomeWeatherMessage::new);
@@ -66,6 +66,13 @@ public final class SimpleNetworkHandler {
         if (FMLLoader.getDist() == Dist.CLIENT)
             g.consumerNetworkThread(NetworkUtil::processHumidModifyMessage);
         g.add();
+
+        var h = CHANNEL.messageBuilder(MapFixerMessage.class, id++)
+                .encoder(MapFixerMessage::toBytes)
+                .decoder(MapFixerMessage::new);
+        if (FMLLoader.getDist() == Dist.CLIENT)
+            h.consumerNetworkThread(NetworkUtil::processMapFixerMessage);
+        h.add();
     }
 
     private static void registerMessage(int i, Class<BiomeWeatherMessage> biomeWeatherMessageClass, Object o) {

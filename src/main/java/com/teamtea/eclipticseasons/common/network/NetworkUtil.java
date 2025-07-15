@@ -8,6 +8,7 @@ import com.teamtea.eclipticseasons.client.render.WorldRenderer;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
+import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.network.message.*;
 import com.teamtea.eclipticseasons.common.registry.ESRegistries;
 import com.teamtea.eclipticseasons.config.ClientConfig;
@@ -15,6 +16,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.SectionPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -22,7 +24,10 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkEvent;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Supplier;
 
 public class NetworkUtil {
@@ -130,9 +135,9 @@ public class NetworkUtil {
                     ClientCon.biomeRainCache = dataPackEvent;
                 } else if (dataPackEvent.resourceKey.equals(ESRegistries.SNOW_TERM)) {
                     ClientCon.snowTermCache = dataPackEvent;
-                }else if (dataPackEvent.resourceKey.equals(ESRegistries.AGRO_CLIMATE)) {
+                } else if (dataPackEvent.resourceKey.equals(ESRegistries.AGRO_CLIMATE)) {
                     ClientCon.aczCache = dataPackEvent;
-                }else if (dataPackEvent.resourceKey.equals(ESRegistries.CROP)) {
+                } else if (dataPackEvent.resourceKey.equals(ESRegistries.CROP)) {
                     ClientCon.cropCache = dataPackEvent;
                 }
             }
@@ -152,4 +157,31 @@ public class NetworkUtil {
         });
         return true;
     }
+
+    public static boolean processMapFixerMessage(MapFixerMessage mapFixerMessage, Supplier<NetworkEvent.Context> context) {
+        Set<SectionPos> sectionPosSet = new HashSet<>();
+        List<BlockPos> blockPosList = new ArrayList<>(mapFixerMessage.blockPosList);
+        for (int i = 0; i < mapFixerMessage.blockPosList.size(); i++) {
+            BlockPos blockPos = blockPosList.get(i);
+            BlockPos blockPos1 = new BlockPos(blockPos.getX(), mapFixerMessage.startYList.get(i), blockPos.getZ());
+            blockPosList.add(blockPos1);
+            sectionPosSet.add(SectionPos.of(blockPos));
+            sectionPosSet.add(SectionPos.of(blockPos1));
+        }
+
+        context.get().enqueueWork(() -> {
+            Level level = getClient();
+            if (level != null && level.isClientSide()) {
+                for (BlockPos blockPos : mapFixerMessage.blockPosList) {
+                    MapChecker.updatePosForce(level, blockPos, blockPos.getY());
+                }
+                for (SectionPos ySection : sectionPosSet) {
+                    WorldRenderer.setSectionDirty(ySection);
+                }
+            }
+
+        });
+        return true;
+    }
+
 }

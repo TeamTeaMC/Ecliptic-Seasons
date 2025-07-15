@@ -5,8 +5,10 @@ import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.client.map.ClientMapFixer;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
+import com.teamtea.eclipticseasons.common.core.map.ServerMapFixer;
 import com.teamtea.eclipticseasons.common.network.SimpleNetworkHandler;
 import com.teamtea.eclipticseasons.common.network.message.BroomUseMessage;
+import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -31,6 +33,7 @@ import net.minecraft.world.item.*;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.BrushableBlock;
 import net.minecraft.world.level.block.RenderShape;
@@ -130,34 +133,35 @@ public class BroomItem extends Item {
                     //     ClientMapFixer.addPlanner(level,blockstate,blockpos,level.getGameTime()+160, startY);
                     // }
                     if (shouldSet) {
-                        // if (!level.isClientSide()) {
-                        //     ServerMapFixer.addPlanner(level,
-                        //             blockstate,
-                        //             blockstate, blockpos,
-                        //             level.getGameTime() + 160,
-                        //             MapChecker.getHeight(level, blockpos), true);
-                        // } else
-                        if (level.isClientSide()) {
+                        if (!level.isClientSide()) {
+                            if (CommonConfig.Map.delayedUpdates.get()) {
+                                if (level.getRandom().nextInt(4) == 0)
+                                    Block.popResource(level, blockpos, Items.SNOWBALL.getDefaultInstance());
+                                ServerMapFixer.addPlanner(level,
+                                        blockstate,
+                                        blockstate, blockpos,
+                                        level.getGameTime() + 160,
+                                        MapChecker.getHeight(level, blockpos), true);
+                            } else {
+                                var distance = level.getServer() instanceof DedicatedServer dedicatedServer ?
+                                        dedicatedServer.getProperties().viewDistance : 64;
+                                distance = distance * distance;
+                                List<ServerPlayer> nearbyPlayers = Lists.newArrayList();
+                                for (Player player : level.players()) {
+                                    if (player instanceof ServerPlayer serverPlayer && !(player instanceof FakePlayer)) {
+                                        if (serverPlayer.blockPosition().distSqr(blockpos) < distance) {
+                                            nearbyPlayers.add(serverPlayer);
+                                        }
+                                    }
+                                }
+                                SimpleNetworkHandler.send(nearbyPlayers, new BroomUseMessage(blockpos, level.getGameTime()));
+                            }
+                        } else if (level.isClientSide()) {
                             int startY = level.getMaxBuildHeight() + 1;
-                            // NOTE:尽管这里未限制服务器端，但是由于在1.20是仅客户端的，所以
                             MapChecker.updatePosForce(level, blockpos, level.getMaxBuildHeight() + 1);
                             SectionPos sectionPos = SectionPos.of(blockpos);
                             Minecraft.getInstance().levelRenderer.setSectionDirty(sectionPos.x(), sectionPos.y(), sectionPos.z());
                             ClientMapFixer.addPlanner(level, blockstate, blockpos, level.getGameTime() + 160, startY);
-                        } else {
-                            var distance = level.getServer() instanceof DedicatedServer dedicatedServer ?
-                                    dedicatedServer.getProperties().viewDistance : 64;
-                            distance = distance * distance;
-                            List<ServerPlayer> nearbyPlayers = Lists.newArrayList();
-                            for (Player player : level.players()) {
-                                if (player instanceof ServerPlayer serverPlayer && !(player instanceof FakePlayer)) {
-                                    if (serverPlayer.blockPosition().distSqr(blockpos) < distance) {
-                                        nearbyPlayers.add(serverPlayer);
-                                    }
-                                }
-                            }
-
-                            SimpleNetworkHandler.send(nearbyPlayers, new BroomUseMessage(blockpos, level.getGameTime()));
                         }
                     }
                 }

@@ -253,10 +253,13 @@ public class CommonConfig {
     }
 
     public static class Map {
+        public static ForgeConfigSpec.BooleanValue delayedUpdates;
         public static ForgeConfigSpec.BooleanValue changeMapColor;
 
         private static void load(ForgeConfigSpec.Builder builder) {
             builder.push("Map");
+            delayedUpdates = builder.comment("Delay updating the top block to snowy when height map changes during snowfall.")
+                    .define("ServerRealisticSnowyChange", false);
             changeMapColor = builder.comment("The map color of blocks will change during snow.")
                     .define("ChangeMapColor", true);
             builder.pop();

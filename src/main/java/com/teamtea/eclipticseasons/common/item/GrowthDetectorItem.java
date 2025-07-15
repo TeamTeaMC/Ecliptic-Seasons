@@ -134,22 +134,19 @@ public class GrowthDetectorItem extends Item {
 
         if (CommonConfig.Crop.enableCropHumidityControl.get()) {
             float env = EclipticUtil.getHumidityLevelAt(level, solarTerm, biomeHolder, pos, !level.isClientSide());
-
-            result *= getHumidityGrowChance(level, growControl, env, roomStatus, pos, blockState, season, false);
+            result *= getHumidityGrowChance(level, growControl != null ? growControl : agentGrowControl, env, roomStatus, pos, blockState, season, false);
         }
         return result;
     }
 
-    public static float getHumidityGrowChance(Level world, CropGrowControl growControl, float env, CropGrowthHandler.RoomStatus roomStatus, BlockPos pos, BlockState blockState, Season season, boolean hasUpdate) {
+    public static float getHumidityGrowChance(Level level, CropGrowControl growControl, float env, CropGrowthHandler.RoomStatus roomStatus, BlockPos pos, BlockState blockState, Season season, boolean hasUpdate) {
         float result = 1;
         env = Mth.clamp(env, 0, Humidity.collectValues().length - 1);
         if (growControl != null) {
             GrowParameter growParameter = growControl.getGrowParameter(env, blockState);
             if (growParameter != null) {
                 float f = growParameter.grow_chance();
-                if (f == 0) {
-                    result = 0;
-                } else if (f > 1.0F) {
+                if (f > 1.0F) {
                     result *= f;
                 } else if (f <= 1.0F) {
                     if (hasUpdate) {
@@ -164,15 +161,15 @@ public class GrowthDetectorItem extends Item {
                         if (CommonConfig.Crop.simpleGreenHouse.get()) {
                             modification = 0;
                         } else {
-                            SolarDataManager data = SolarHolders.getSaveData(world);
+                            SolarDataManager data = SolarHolders.getSaveData(level);
                             modification = data == null ? 0 : data.calculateHumidityModification(pos);
                         }
                         if (modification != 0 && roomStatus == CropGrowthHandler.RoomStatus.GREEN_HOUSE) {
                             env += (modification);
-                            result = getHumidityGrowChance(world, growControl, env, roomStatus, pos, blockState, season, true);
-                        } else if (world.isRainingAt(pos)) {
+                            result = getHumidityGrowChance(level, growControl, env, roomStatus, pos, blockState, season, true);
+                        } else if (level.isRainingAt(pos)) {
                             env += (1);
-                            result = getHumidityGrowChance(world, growControl, env, roomStatus, pos, blockState, season, true);
+                            result = getHumidityGrowChance(level, growControl, env, roomStatus, pos, blockState, season, true);
                         } else {
                             result *= f;
                         }

@@ -21,6 +21,7 @@ import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
 import com.teamtea.eclipticseasons.common.core.crop.CropInfoManager;
 import com.teamtea.eclipticseasons.common.core.map.ChunkInfoMap;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
+import com.teamtea.eclipticseasons.common.core.map.ServerMapFixer;
 import com.teamtea.eclipticseasons.common.core.snow.SnowChecker;
 import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
 import com.teamtea.eclipticseasons.common.network.SimpleNetworkHandler;
@@ -143,7 +144,9 @@ public class AllListener {
             {
                 SolarHolders.DATA_MANAGER_MAP.remove(level);
             }
-
+            if (!level.isClientSide()) {
+                ServerMapFixer.unloadLevel(level);
+            }
             MapChecker.validDimension.removeIf(l -> l.equals(level));
         }
 
@@ -154,6 +157,7 @@ public class AllListener {
         ChunkAccess chunk = event.getChunk();
         if (event.getLevel() instanceof Level level) {
             MapChecker.forceChunkUpdateHeight(level, chunk);
+            ServerMapFixer.unloadChunk(level, event.getChunk().getPos());
         }
     }
 
@@ -176,6 +180,7 @@ public class AllListener {
             if (data != null) {
                 data.tickLevel(serverLevel);
             }
+            ServerMapFixer.tick(serverLevel);
         }
     }
 

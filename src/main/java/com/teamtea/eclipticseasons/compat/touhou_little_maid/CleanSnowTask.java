@@ -8,6 +8,7 @@ import com.google.common.collect.Lists;
 import com.mojang.datafixers.util.Pair;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
+import com.teamtea.eclipticseasons.common.core.map.ServerMapFixer;
 import com.teamtea.eclipticseasons.common.network.SimpleNetworkHandler;
 import com.teamtea.eclipticseasons.common.network.message.BroomUseMessage;
 import com.teamtea.eclipticseasons.common.registry.ItemRegistry;
@@ -75,9 +76,9 @@ public class CleanSnowTask implements IFarmTask {
         boolean snowyBlock = !blockState.is(BlockTags.DIRT)
                 && EclipticSeasonsApi.getInstance().isSnowyBlock(level, blockState, below);
         if (snowyBlock) {
-            // ChatBubbleManger.addInnerChatText(maid, cropPos.toString()+"****"+cropPos.distToCenterSqr(maid.position()));
+            // ChatBubbleManger.addInnerChatText(maid, cropPos.toString()+"****"+cropPos.distToCenterSqr(maid.id()));
         }
-        return snowyBlock&&!hasCleanedPos.containsKey( GlobalPos.of(level.dimension(),cropPos));
+        return snowyBlock && !hasCleanedPos.containsKey(GlobalPos.of(level.dimension(), cropPos));
     }
 
     @Override
@@ -88,10 +89,9 @@ public class CleanSnowTask implements IFarmTask {
         blockState = cropState;
         below = cropPos;
         hasCleanedPos.put(GlobalPos.of(level.dimension(), cropPos), level.getGameTime());
-        // if (CommonConfig.Map.delayedUpdates.get()) {
-        //     ServerMapFixer.addPlanner(level, blockState, blockState, below, level.getGameTime(), below.getY(), true);
-        // } else
-        {
+        if (CommonConfig.Map.delayedUpdates.get()) {
+            ServerMapFixer.addPlanner(level, blockState, blockState, below, level.getGameTime(), below.getY(), true);
+        } else {
             if (maid.getOwner() instanceof ServerPlayer serverPlayer) {
                 SimpleNetworkHandler.send(serverPlayer, new BroomUseMessage(below, level.getGameTime()));
             }
