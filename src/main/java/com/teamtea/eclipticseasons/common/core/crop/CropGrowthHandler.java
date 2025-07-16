@@ -499,7 +499,7 @@ public final class CropGrowthHandler {
         float baseGrowthChance = 1f;
         if (growParameter != null && CommonConfig.Crop.enableCrop.get()) {
             float growChance = getGrowChance(event, growParameter);
-            notCancel |= growChance * 1000 > randomKey;
+            notCancel |= growChance * 1000 >= randomKey;
             baseGrowthChance = growChance;
             // notCancel |= CommonConfig.Crop.cropGrowChanceInWrongSeason.get() > 0
             //         && randomKey < CommonConfig.Crop.cropGrowChanceInWrongSeason.get() * 1000;
@@ -514,7 +514,7 @@ public final class CropGrowthHandler {
                 } else {
                     List<Season> seasons = getLikeSeasonsInTemperate(blockState, controlMap, agentClimateTypeHolder);
                     if (!seasons.isEmpty()) {
-                        SolarDataManager saveData = SolarHolders.getSaveData((Level) level);
+                        SolarDataManager saveData = SolarHolders.getSaveData(level);
                         if (saveData != null) {
                             GreenHouseCoreProvider nearGreenHouseProvider = saveData.findNearGreenHouseProvider(pos, seasons);
                             if (nearGreenHouseProvider != null) {

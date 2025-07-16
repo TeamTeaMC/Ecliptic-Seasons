@@ -10,6 +10,7 @@ import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.chunk.DataLayer;
 import net.minecraft.world.level.chunk.LightChunkGetter;
 import net.minecraft.world.level.lighting.LayerLightSectionStorage;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -34,7 +35,7 @@ public abstract class MixinLayerLightSectionStorage {
             method = "setStoredLevel"
     )
     public void eclipticseasons$setStoredLevel_trackLightDecrease(long pLevelPos, int pLightLevel, CallbackInfo ci, @Local DataLayer datalayer) {
-        if (layer == LightLayer.BLOCK && chunkSource.getLevel() instanceof ServerLevel serverLevel) {
+        if (!FMLEnvironment.production && layer == LightLayer.BLOCK && chunkSource.getLevel() instanceof ServerLevel serverLevel) {
             if (pLightLevel == 0) {
                 int old = datalayer.get(SectionPos.sectionRelative(BlockPos.getX(pLevelPos)), SectionPos.sectionRelative(BlockPos.getY(pLevelPos)), SectionPos.sectionRelative(BlockPos.getZ(pLevelPos)));
                 ServerMapFixer.addLightPlanner(serverLevel, pLevelPos, old);

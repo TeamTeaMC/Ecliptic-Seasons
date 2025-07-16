@@ -154,7 +154,7 @@ public class MapChecker {
         }
 
         if (biome == null)
-            biome = level.registryAccess().registryOrThrow(Registries.BIOME).getHolderOrThrow(Biomes.THE_VOID);
+            biome = level.registryAccess().registryOrThrow(Registries.BIOME).getHolderOrThrow(Biomes.PLAINS);
 
         BlockPos.MutableBlockPos relative = null;
 

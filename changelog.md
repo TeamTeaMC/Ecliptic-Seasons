@@ -1,3 +1,47 @@
+## 0.11.7
+
+- Added smoothing calculation for humidity, reducing the impact of boundary conditions on humidity transitions. This
+  makes humidity levels smoother between similar adjacent solar terms. This behavior can be disabled in the settings.
+
+- Adjusted the seasonal greenhouse core's working way: If the work radius is set larger than the width of a chunk,
+  it now uses a square-based neighboring chunk querying mechanism.
+
+- Fixed an issue in automatic mapping of growth conditions for agricultural zones. This may affect crop growth
+  outside temperate regions. For example, spring crops may grow later in colder climates compared to temperate areas.
+
+- Officially added support for BlockState checks in Crop data packs. You can now define the target like this:
+
+  ```json
+  {
+    "parent": [
+      "eclipticseasons:seasons/spring_summer",
+      "eclipticseasons:humidity/average_moist"
+    ],
+    "apply_target": {
+      "blocks": "minecraft:wheat",
+      "state": {
+        "age": "0"
+      }
+    },
+    "climate": "eclipticseasons:temperate"
+  }
+  ```
+
+  to limit the application target.
+
+- Migrated tooltip behavior to be based on Crop data packs instead of solely relying on tags, in order to
+  accommodate changes.
+
+- In humidity condition checks, if growth fails, a death judgment will now be applied instead of being ignored.
+
+- Added a command to set the snow coverage percentage for a biome set.
+
+- A test option named `Map->ServerRealisticSnowyChange` has been added. When enabled, it synchronizes delayed changes to
+  snowy block appearances among players on the server. Additionally, there is a chance to obtain a snowball when sweeping
+  away snow with a broom.
+
+- Others.
+
 ## 0.11.6
 
 - Optimized updates for additional heightmaps.
