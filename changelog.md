@@ -1,3 +1,7 @@
+### 0.11.7.1
+
+- Update the compatibility code for DH v2.3.3b.
+
 ## 0.11.7
 
 - Added smoothing calculation for humidity, reducing the impact of boundary conditions on humidity transitions. This

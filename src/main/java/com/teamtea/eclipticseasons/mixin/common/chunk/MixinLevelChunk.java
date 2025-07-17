@@ -11,10 +11,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelHeightAccessor;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.chunk.ChunkAccess;
-import net.minecraft.world.level.chunk.LevelChunk;
-import net.minecraft.world.level.chunk.LevelChunkSection;
-import net.minecraft.world.level.chunk.UpgradeData;
+import net.minecraft.world.level.chunk.*;
 import net.minecraft.world.level.levelgen.blending.BlendingData;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
@@ -30,6 +27,9 @@ public abstract class MixinLevelChunk extends ChunkAccess {
     @Final
     Level level;
 
+    @Shadow
+    public abstract ChunkStatus getStatus();
+
     public MixinLevelChunk(ChunkPos chunkPos, UpgradeData upgradeData, LevelHeightAccessor levelHeightAccessor, Registry<Biome> biomeRegistry, long inhabitedTime, @Nullable LevelChunkSection[] sections, @Nullable BlendingData blendingData) {
         super(chunkPos, upgradeData, levelHeightAccessor, biomeRegistry, inhabitedTime, sections, blendingData);
     }
@@ -44,6 +44,8 @@ public abstract class MixinLevelChunk extends ChunkAccess {
             // int j = pos.getX() & 15;
             // int l = pos.getZ() & 15;
             // MapChecker.updatePosForce(level, pos, level.getHeight(Heightmap.Types.MOTION_BLOCKING, j, l));
+            // DH do some work for world generation would stick when close server, so we need to check it.
+            if (!MapChecker.isLoaded(level, pos)) return;
             ServerMapFixer.addPlanner(level, state, oldState, pos, level.getGameTime(), MapChecker.getHeight(level, pos), false);
         }
     }

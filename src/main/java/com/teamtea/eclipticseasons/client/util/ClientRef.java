@@ -25,7 +25,7 @@ public class ClientRef {
 
     public static final Map<Block, List<Pair<LeafColor.InstanceHolder, LeafColor.Instance>>> leaveColors = new IdentityHashMap<>();
 
-    public static final List<SeasonalBiomeAmbient> sounds=new ArrayList<>();
+    public static final List<SeasonalBiomeAmbient> sounds = new ArrayList<>();
     public static final Map<Block, List<SeasonBlockDefinition>> seasonDef = new IdentityHashMap<>();
     public static final Map<Block, List<SnowDefinition>> snowClientDef = new IdentityHashMap<>();
 
@@ -62,8 +62,8 @@ public class ClientRef {
         ArrayList<Pair<HolderSet<Block>, SeasonBlockDefinition>> collect = ClientJsonCacheListener.seasonDefCache
                 .build(SeasonBlockDefinition.CODEC, registryAccess)
                 .entrySet()
-                .stream().filter(r->
-                        ClientConfig.Renderer.flowerOnGrass.get()||! r.getKey().equals(SeasonBlockDefinition.GRASS_BLOCK))
+                .stream().filter(r ->
+                        ClientConfig.Renderer.flowerOnGrass.get() || !r.getKey().equals(SeasonBlockDefinition.GRASS_BLOCK))
                 .map(Map.Entry::getValue)
                 .map(HolderMappable::asHolderMapping)
                 .collect(Collectors.toCollection(ArrayList::new));
@@ -84,6 +84,7 @@ public class ClientRef {
                 }
         );
     }
+
     public static <T, V> Map<T, List<V>> buildFromHolders(List<Pair<HolderSet<T>, V>> pairs, List<Holder<T>> holders) {
         Map<T, List<V>> resultMap = new HashMap<>();
         for (Pair<HolderSet<T>, V> pair : pairs) {
@@ -126,7 +127,7 @@ public class ClientRef {
     }
 
 
-        public static void clearOnClientExitOrServerClose() {
+    public static void onClientPlayerExit() {
         sounds.clear();
         seasonDef.clear();
         snowClientDef.clear();

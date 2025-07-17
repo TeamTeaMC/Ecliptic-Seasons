@@ -17,17 +17,12 @@ import com.teamtea.eclipticseasons.common.core.snow.SnowChecker;
 import com.teamtea.eclipticseasons.common.core.solar.ClientSolarDataManager;
 import com.teamtea.eclipticseasons.config.ClientConfig;
 import com.teamtea.eclipticseasons.config.CommonConfig;
-import com.teamtea.eclipticseasons.common.core.crop.CropInfoManager;
-import com.teamtea.eclipticseasons.api.constant.crop.CropSeasonInfo;
-import com.teamtea.eclipticseasons.api.constant.crop.CropHumidityInfo;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
@@ -84,7 +79,7 @@ public final class ClientEventHandler {
             CropGrowthHandler.clearOnClientExitOrServerClose();
             BiomeClimateManager.clearOnClientExitOrServerClose();
             ClientCon.onClientPlayerExit();
-            ClientRef.clearOnClientExitOrServerClose();
+            ClientRef.onClientPlayerExit();
             SnowChecker.clearOnClientExitOrServerClose();
         }
     }

@@ -36,7 +36,7 @@ public abstract class MixinClientLevelChunk {
                     MapChecker.getHeightOrUpdate(level, pos, true);
                 }
             } else {
-                ClientMapFixer.addPlanner(level, state, pos, level.getGameTime(), MapChecker.getHeight(level, pos));
+                ClientMapFixer.addPlanner(level, state, pos, level.getGameTime(), MapChecker.getHeightSafe(level, pos));
             }
         }
     }
