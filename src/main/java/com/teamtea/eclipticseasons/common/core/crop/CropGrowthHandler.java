@@ -857,7 +857,7 @@ public final class CropGrowthHandler {
             }
         }
 
-        // TODO:qucikly for windows green house
+        // TODO:quickly for windows green house
         if (isConnected && !isInLight) {
             if (level.getRandom().nextInt(10000) <= CommonConfig.Crop.darkGreenhouseFailChance.get()) {
                 isConnected = state.is(EclipticBlockTags.DARK_GROW_PLANTS);

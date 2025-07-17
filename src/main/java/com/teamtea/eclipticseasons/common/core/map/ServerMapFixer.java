@@ -65,6 +65,7 @@ public class ServerMapFixer {
         Integer old = null;
         if (chunkMap != null) {
             old = chunkMap.getHeight(pos);
+            if (old > level.getMaxBuildHeight()) return old;
         }
         return MapChecker.getMCHeightWithCheck(level, pos, old);
     }
@@ -73,7 +74,7 @@ public class ServerMapFixer {
         return Heightmap.Types.MOTION_BLOCKING.isOpaque().test(state)
                 && !MapChecker.extraSnowPassable(state);
     }
-
+    // todo 在1.20似乎有时机问题，光照同步客户端会有轻微延迟
     public static void addLightPlanner(Level level, long packedPos, int brightness) {
         if (CommonConfig.isSnowyWinter()
                 && CommonConfig.Map.delayedUpdates.get()

@@ -30,12 +30,14 @@ public abstract class MixinClientLevelChunk {
             method = "setBlockState"
     )
     public void eclipticseasons$setBlockState(BlockPos pos, BlockState state, boolean p_62867_, CallbackInfoReturnable<BlockState> cir) {
-        if (CommonConfig.Map.delayedUpdates.get()) {
-            if (!EclipticUtil.isHereWithSnow(level, pos)) {
-                MapChecker.getHeightOrUpdate(level, pos, true);
+        if (level != null && level.isClientSide()) {
+            if (CommonConfig.Map.delayedUpdates.get()) {
+                if (!EclipticUtil.isHereWithSnow(level, pos)) {
+                    MapChecker.getHeightOrUpdate(level, pos, true);
+                }
+            } else {
+                ClientMapFixer.addPlanner(level, state, pos, level.getGameTime(), MapChecker.getHeight(level, pos));
             }
-        } else {
-            ClientMapFixer.addPlanner(level, state, pos, level.getGameTime(), MapChecker.getHeight(level, pos));
         }
     }
 }

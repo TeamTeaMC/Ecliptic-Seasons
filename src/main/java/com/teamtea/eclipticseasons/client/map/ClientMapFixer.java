@@ -96,6 +96,7 @@ public class ClientMapFixer {
         Integer old = null;
         if (chunkMap != null) {
             old = chunkMap.getHeight(pos);
+            if (old > level.getMaxBuildHeight()) return old;
         }
         return MapChecker.getMCHeightWithCheck(level, pos, old);
     }
@@ -113,7 +114,6 @@ public class ClientMapFixer {
             )
                     && isNotOldHeight
                     && EclipticUtil.isHereWithSnow(level, pos)) {
-                // TODO：如果这里不下雪的话，那么直接更新就好了.以及未来可以考虑合并同一个点的
                 ChunkPos chunkPos = new ChunkPos(pos);
                 Long2ObjectLinkedOpenHashMap<XZPos> xzPosList = CHUNK_POS_XZ_POS_MAP.computeIfAbsent(chunkPos.toLong(), k -> new Long2ObjectLinkedOpenHashMap<>());
                 startY = level.getMaxBuildHeight() + 1;
