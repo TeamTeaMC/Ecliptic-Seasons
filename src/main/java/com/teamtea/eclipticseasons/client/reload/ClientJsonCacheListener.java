@@ -13,6 +13,7 @@ import com.teamtea.eclipticseasons.api.data.client.LeafColor;
 import com.teamtea.eclipticseasons.api.data.client.SeasonalBiomeAmbient;
 import com.teamtea.eclipticseasons.api.data.client.model.ESModelLoadedJson;
 import com.teamtea.eclipticseasons.api.data.client.model.seasonal.SeasonBlockDefinition;
+import com.teamtea.eclipticseasons.api.data.client.model.seasonal.SeasonalTexture;
 import com.teamtea.eclipticseasons.api.data.season.SnowDefinition;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.FileToIdConverter;
@@ -51,8 +52,11 @@ public class ClientJsonCacheListener<T> extends SimpleJsonResourceReloadListener
     public static final String DIRECTORY_MODEL_DEFINITION = EclipticSeasonsApi.MODID + "/model_definitions";
     public static final String DIRECTORY_SEASON_DEFINITION = EclipticSeasonsApi.MODID + "/season_definitions";
 
+    public static final String DIRECTORY_SEASON_TEXTURES = EclipticSeasonsApi.MODID + "/season_textures";
+
     // async
     public static final ClientJsonCacheListener<ESModelLoadedJson> modelDefCache = new ClientJsonCacheListener<>(GSON, DIRECTORY_MODEL_DEFINITION);
+    public static final ClientJsonCacheListener<SeasonalTexture> textureReMappingsCache = new ClientJsonCacheListener<>(GSON, DIRECTORY_SEASON_TEXTURES);
 
     // normal
     public static final ClientJsonCacheListener<LeafColor> leafCache = new ClientJsonCacheListener<>(GSON, DIRECTORY_LEAF);

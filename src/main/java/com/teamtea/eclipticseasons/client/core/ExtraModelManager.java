@@ -4,6 +4,7 @@ import com.teamtea.eclipticseasons.api.data.client.model.ESModelLoadedJson;
 import com.teamtea.eclipticseasons.api.data.client.model.ModelResolver;
 import com.teamtea.eclipticseasons.api.data.client.model.ModelTester;
 import com.teamtea.eclipticseasons.api.data.client.model.seasonal.SeasonBlockDefinition;
+import com.teamtea.eclipticseasons.api.data.client.model.seasonal.SeasonalTexture;
 import com.teamtea.eclipticseasons.api.data.season.SnowDefinition;
 import com.teamtea.eclipticseasons.api.misc.client.IMapSlice;
 import com.teamtea.eclipticseasons.api.misc.client.IMapSliceProvider;
@@ -11,6 +12,7 @@ import com.teamtea.eclipticseasons.client.model.bakequad.BakedQuadRetextured;
 import com.teamtea.eclipticseasons.client.model.bakequad.BakedQuadRetexturedAndReUV;
 import com.teamtea.eclipticseasons.client.model.bakequad.QuadFixer;
 import com.teamtea.eclipticseasons.client.model.bakequad.RectangularPrismChecker;
+import com.teamtea.eclipticseasons.client.model.unbake.SolarBlockModel;
 import com.teamtea.eclipticseasons.client.reload.ClientJsonCacheListener;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.client.util.ClientRef;
@@ -27,6 +29,7 @@ import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.BlockModelShaper;
 import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.renderer.texture.SpriteContents;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
@@ -804,5 +807,15 @@ public class ExtraModelManager {
                     }
                 }
         );
+    }
+
+    public static final Map<ResourceLocation, List<SeasonalTexture>> SEASONAL_TEXTURE_HASH_MAP = new HashMap<>();
+
+    public static BlockModel remappingSeasonTextures(ResourceLocation resourceLocation, BlockModel returnValue) {
+        if (SEASONAL_TEXTURE_HASH_MAP.containsKey(resourceLocation)) {
+            List<SeasonalTexture> seasonalTexture = SEASONAL_TEXTURE_HASH_MAP.get(resourceLocation);
+            return SolarBlockModel.of(returnValue).setSeasonalTexture(seasonalTexture);
+        }
+        return null;
     }
 }

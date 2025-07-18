@@ -4,6 +4,7 @@ import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.data.extend.example.DatapackRegistryGeneratorExample;
 import com.teamtea.eclipticseasons.data.extend.extra_snow.DatapackRegistryGeneratorExtra;
 import com.teamtea.eclipticseasons.data.extend.extra_snow.ExtraClientModelDefinitionProvider;
+import com.teamtea.eclipticseasons.data.general.SeasonTextureProvider;
 import com.teamtea.eclipticseasons.data.general.advancement.Advancements;
 import com.teamtea.eclipticseasons.data.api.MutablePackOutput;
 import com.teamtea.eclipticseasons.data.general.datapack.DatapackRegistryGenerator;
@@ -82,7 +83,6 @@ public class start {
             generator.addProvider(event.includeClient(), new ClientModelDefinitionProvider(packOutput, MODID, helper, lookupProvider));
             generator.addProvider(event.includeClient(), new ClientTestProvider(packOutput, MODID, helper, lookupProvider));
             generator.addProvider(event.includeClient(), new ClientSeasonModelDefinitionProvider(packOutput, MODID, helper, lookupProvider));
-
         }
 
         // Extra Snow
@@ -98,6 +98,9 @@ public class start {
         packOutput = packOutput.move(Path.of("resourcepacks", "example"));
         if (event.includeServer()) {
             generator.addProvider(event.includeServer(), new DatapackRegistryGeneratorExample(packOutput, lookupProvider));
+        }
+        if (event.includeClient()) {
+            generator.addProvider(event.includeClient(), new SeasonTextureProvider(packOutput, MODID, helper, lookupProvider));
         }
 
     }

@@ -18,7 +18,6 @@ public class MixinWeatherCommand {
     private static void mixin$setClear(CommandSourceStack sourceStack, int p_139174_, CallbackInfoReturnable<Integer> cir) {
         if (EclipticUtil.hasLocalWeather(sourceStack.getLevel())) {
             try {
-
                 CommandHandler.setBiomeRain(sourceStack, CommandHandler.createAllResult(sourceStack.registryAccess()), false, false);
                 cir.setReturnValue(0);
             } catch (CommandSyntaxException e) {

@@ -4,7 +4,6 @@
   "compatibilityLevel": "JAVA_17",
   "refmap": "eclipticseasons.refmap.json",
   "mixins": [
-    "common.MixinClientboundLoginPacket",
     "common.biome.MixinBiome",
     "common.block.MixinBeehiveBlockEntity",
     "common.block.MixinBlockStateBase",
