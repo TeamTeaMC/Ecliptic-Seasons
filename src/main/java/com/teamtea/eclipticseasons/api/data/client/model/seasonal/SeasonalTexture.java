@@ -28,7 +28,7 @@ import java.util.Optional;
 public class SeasonalTexture {
 
     public static final Codec<SeasonalTexture> CODEC = RecordCodecBuilder.create(ins -> ins.group(
-            CodecUtil.listFrom(ResourceLocation.CODEC).fieldOf("parent").forGetter(o -> o.parent),
+            CodecUtil.listFrom(ResourceLocation.CODEC).optionalFieldOf("target",List.of()).forGetter(o -> o.parent),
             Codec.either(CodecUtil.listFrom(ResourceLocation.CODEC), TagKey.hashedCodec(Registries.BIOME)).optionalFieldOf("biomes").forGetter(o -> o.biomes),
             Slice.CODEC.listOf().fieldOf("slices").forGetter(o -> o.slices)
     ).apply(ins, SeasonalTexture::new));
