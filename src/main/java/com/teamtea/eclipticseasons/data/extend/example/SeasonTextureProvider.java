@@ -1,4 +1,4 @@
-package com.teamtea.eclipticseasons.data.general;
+package com.teamtea.eclipticseasons.data.extend.example;
 
 import com.mojang.datafixers.util.Either;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
@@ -24,7 +24,7 @@ public class SeasonTextureProvider extends ESClientDataMapProvider<SeasonalTextu
     @Override
     protected void gather(HolderLookup.Provider provider) {
         add(new ResourceLocation("oak_leaves"), new SeasonalTexture(
-                Optional.empty(), Optional.of(Either.right(ClimateTypeBiomeTags.SEASONAL)), List.of(
+                List.of(), Optional.of(Either.right(ClimateTypeBiomeTags.SEASONAL)), List.of(
                 SeasonalTexture.Slice.builder().season(Season.SPRING)
                         .textures((Map.of(
                                 "all", new ResourceLocation("block/cherry_leaves")

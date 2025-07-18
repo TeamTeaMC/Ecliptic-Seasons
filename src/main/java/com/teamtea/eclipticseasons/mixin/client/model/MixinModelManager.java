@@ -50,9 +50,17 @@ public abstract class MixinModelManager {
                     build.forEach(
                             (resourceLocation, seasonalTexture) -> {
                                 seasonalTexture = seasonalTexture.build(resourceLocation);
-                                List<SeasonalTexture> seasonalTextures = ExtraModelManager.SEASONAL_TEXTURE_HASH_MAP.computeIfAbsent(
-                                        seasonalTexture.getParent().orElseGet(() -> resourceLocation.withPrefix("block/")), (xx) -> new ArrayList<>());
-                                seasonalTextures.add(seasonalTexture);
+                                if (seasonalTexture.getParent().isEmpty()) {
+                                    List<SeasonalTexture> seasonalTextures = ExtraModelManager.SEASONAL_TEXTURE_HASH_MAP.computeIfAbsent(
+                                            resourceLocation.withPrefix("block/"), (xx) -> new ArrayList<>());
+                                    seasonalTextures.add(seasonalTexture);
+                                } else {
+                                    for (ResourceLocation location : seasonalTexture.getParent()) {
+                                        List<SeasonalTexture> seasonalTextures = ExtraModelManager.SEASONAL_TEXTURE_HASH_MAP.computeIfAbsent(
+                                                location, (xx) -> new ArrayList<>());
+                                        seasonalTextures.add(seasonalTexture);
+                                    }
+                                }
                             }
                     );
                 })

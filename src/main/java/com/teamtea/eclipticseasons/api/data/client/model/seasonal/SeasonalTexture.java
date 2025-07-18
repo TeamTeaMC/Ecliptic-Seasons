@@ -28,12 +28,12 @@ import java.util.Optional;
 public class SeasonalTexture {
 
     public static final Codec<SeasonalTexture> CODEC = RecordCodecBuilder.create(ins -> ins.group(
-            ResourceLocation.CODEC.optionalFieldOf("parent").forGetter(o -> o.parent),
+            CodecUtil.listFrom(ResourceLocation.CODEC).fieldOf("parent").forGetter(o -> o.parent),
             Codec.either(CodecUtil.listFrom(ResourceLocation.CODEC), TagKey.hashedCodec(Registries.BIOME)).optionalFieldOf("biomes").forGetter(o -> o.biomes),
             Slice.CODEC.listOf().fieldOf("slices").forGetter(o -> o.slices)
     ).apply(ins, SeasonalTexture::new));
 
-    private final Optional<ResourceLocation> parent;
+    private final List<ResourceLocation> parent;
     private final Optional<Either<List<ResourceLocation>, TagKey<Biome>>> biomes;
     private final List<Slice> slices;
 
