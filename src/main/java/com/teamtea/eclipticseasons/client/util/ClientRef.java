@@ -1,6 +1,7 @@
 package com.teamtea.eclipticseasons.client.util;
 
 import com.mojang.datafixers.util.Pair;
+import com.teamtea.eclipticseasons.api.data.client.BiomeColor;
 import com.teamtea.eclipticseasons.api.data.client.LeafColor;
 import com.teamtea.eclipticseasons.api.data.client.SeasonalBiomeAmbient;
 import com.teamtea.eclipticseasons.api.data.client.model.seasonal.SeasonBlockDefinition;
@@ -16,12 +17,15 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class ClientRef {
+
+    public static final Map<Biome, BiomeColor.Instance> biomeColors = new IdentityHashMap<>();
 
     public static final Map<Block, List<Pair<LeafColor.InstanceHolder, LeafColor.Instance>>> leaveColors = new IdentityHashMap<>();
 
@@ -30,11 +34,14 @@ public class ClientRef {
     public static final Map<Block, List<SnowDefinition>> snowClientDef = new IdentityHashMap<>();
 
     public static void updateClientSide(RegistryAccess registryAccess) {
+        biomeColors.clear();
+
         sounds.clear();
         seasonDef.clear();
         snowClientDef.clear();
         leaveColors.clear();
 
+        buildBiomeColors(registryAccess);
         buildLeafColors(registryAccess);
         buildSeasonalSounds(registryAccess);
         buildSeasonalModels(registryAccess);
@@ -85,6 +92,21 @@ public class ClientRef {
         );
     }
 
+    private static void buildBiomeColors(RegistryAccess registryAccess) {
+        ArrayList<Pair<HolderSet<Biome>, BiomeColor.Instance>> collect = ClientJsonCacheListener.biomeCache
+                .build(BiomeColor.CODEC, registryAccess).values()
+                .stream().map(HolderMappable::asHolderMapping)
+                .collect(Collectors.toCollection(ArrayList::new));
+        Map<Biome, List<BiomeColor.Instance>> biomeListMap = buildFromHolders(collect, getHolders(registryAccess, Registries.BIOME));
+        biomeListMap.forEach(
+                (biome, instances) -> {
+                    BiomeColor.Instance instance = mergeList(instances);
+                    biomeColors.put(biome, instance);
+                }
+        );
+    }
+
+
     public static <T, V> Map<T, List<V>> buildFromHolders(List<Pair<HolderSet<T>, V>> pairs, List<Holder<T>> holders) {
         Map<T, List<V>> resultMap = new HashMap<>();
         for (Pair<HolderSet<T>, V> pair : pairs) {
@@ -126,8 +148,19 @@ public class ClientRef {
                 .collect(Collectors.toList());
     }
 
+    private static <T extends Mergable<T>> T mergeList(List<T> instances) {
+        if (instances.isEmpty()) {
+            return null;
+        }
+        if (instances.size() == 1) {
+            return instances.get(0);
+        }
+        return instances.stream().reduce(Mergable::merge).orElse(null);
+    }
 
     public static void onClientPlayerExit() {
+        biomeColors.clear();
+        leaveColors.clear();
         sounds.clear();
         seasonDef.clear();
         snowClientDef.clear();

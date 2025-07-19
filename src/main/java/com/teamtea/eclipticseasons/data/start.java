@@ -1,6 +1,7 @@
 package com.teamtea.eclipticseasons.data;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
+import com.teamtea.eclipticseasons.data.extend.example.BiomeColorProvider;
 import com.teamtea.eclipticseasons.data.extend.example.DatapackRegistryGeneratorExample;
 import com.teamtea.eclipticseasons.data.extend.extra_snow.DatapackRegistryGeneratorExtra;
 import com.teamtea.eclipticseasons.data.extend.extra_snow.ExtraClientModelDefinitionProvider;
@@ -100,6 +101,7 @@ public class start {
             generator.addProvider(event.includeServer(), new DatapackRegistryGeneratorExample(packOutput, lookupProvider));
         }
         if (event.includeClient()) {
+            generator.addProvider(event.includeClient(), new BiomeColorProvider(packOutput,MODID, helper,lookupProvider));
             generator.addProvider(event.includeClient(), new SeasonTextureProvider(packOutput, MODID, helper, lookupProvider));
         }
 

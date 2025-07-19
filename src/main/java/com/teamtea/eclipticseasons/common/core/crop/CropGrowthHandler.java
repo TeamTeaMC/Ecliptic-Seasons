@@ -146,20 +146,14 @@ public final class CropGrowthHandler {
         RegistryOps<Tag> registryops = RegistryOps.create(NbtOps.INSTANCE, registryAccess);
 
         Registry<AgroClimaticZone> cropClimateTypeRegistry = agroClimaticZones.get();
-        for (Map.Entry<ResourceKey<AgroClimaticZone>, AgroClimaticZone> entry : cropClimateTypeRegistry.entrySet()) {
-            Optional<Holder.Reference<AgroClimaticZone>> holder = cropClimateTypeRegistry.getHolder(cropClimateTypeRegistry.getId(entry.getValue()));
-            if (holder.isPresent()) {
-                HolderSet<Biome> biomes = entry.getValue().biomes();
-                for (int i = 0; i < biomes.size(); i++) {
-                    cropClimateTypeMap.put(biomes.get(i).value(), holder.get());
-                }
+        for (Holder.Reference<AgroClimaticZone> agroClimaticZoneReference : cropClimateTypeRegistry.holders().toList()) {
+            if (!agroClimaticZoneReference.isBound()) continue;
+            HolderSet<Biome> biomes = agroClimaticZoneReference.value().biomes();
+            for (int i = 0; i < biomes.size(); i++) {
+                cropClimateTypeMap.put(biomes.get(i).value(), agroClimaticZoneReference);
             }
-
-            // Optional<Tag> tag = AgroClimaticZone.CODEC
-            //         .encodeStart(registryops, entry.getValue())
-            //         .resultOrPartial(EclipticSeasons::logger);
-            // EclipticSeasons.logger(tag.isPresent()?tag.get():"");
         }
+
         DefaultCropClimateType.put(isServer, cropClimateTypeRegistry.getHolder(AgroClimateRegistry.TEMPERATE).get());
 
         Registry<Item> itemRegistry = registryAccess.registryOrThrow(Registries.ITEM);

@@ -206,6 +206,7 @@ public class ClientSetup {
     @SubscribeEvent
     public static void onRegisterClientReloadListeners(RegisterClientReloadListenersEvent event) {
         event.registerReloadListener(ClientJsonCacheListener.leafCache);
+        event.registerReloadListener(ClientJsonCacheListener.biomeCache);
 
         event.registerReloadListener(ClientJsonCacheListener.snowDefOverrideCache);
         event.registerReloadListener(ClientJsonCacheListener.ambientCache);

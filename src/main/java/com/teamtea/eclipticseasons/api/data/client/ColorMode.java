@@ -9,12 +9,12 @@ import java.awt.*;
 import java.util.Optional;
 
 public record ColorMode(
-        Optional<Integer> color, Optional<Float> fix, Optional<String> sColor
+        Optional<Integer> color, Optional<Float> mix, Optional<String> sColor
 ) {
 
     public static final Codec<ColorMode> CODEC = RecordCodecBuilder.create(ins -> ins.group(
                     Codec.INT.optionalFieldOf("color").forGetter(ColorMode::color),
-                    Codec.FLOAT.optionalFieldOf("fix").forGetter(ColorMode::fix),
+                    Codec.FLOAT.optionalFieldOf("mix").forGetter(ColorMode::mix),
                     Codec.STRING.optionalFieldOf("color_string").forGetter(ColorMode::sColor)
             )
             .apply(ins, ColorMode::new))
@@ -25,7 +25,7 @@ public record ColorMode(
 
     private static DataResult<ColorMode> check(ColorMode o) {
         if (o.color.isEmpty() && o.sColor().isEmpty()) return DataResult.error(() -> "All Empty");
-        if (o.fix.isPresent() && o.fix.get() < 0) return DataResult.error(() -> "Not valid mix " + o.fix.get());
+        if (o.mix.isPresent() && o.mix.get() < 0) return DataResult.error(() -> "Not valid mix " + o.mix.get());
         return DataResult.success(o);
     }
 
@@ -47,12 +47,12 @@ public record ColorMode(
         if (colorInt == null) {
             return null;
         }
-        return new Instance(colorInt, fix.orElse(1f));
+        return new Instance(colorInt, mix.orElse(1f));
     }
 
     public record Instance(
             int value,
-            float fix
+            float mix
     ) {
     }
 }

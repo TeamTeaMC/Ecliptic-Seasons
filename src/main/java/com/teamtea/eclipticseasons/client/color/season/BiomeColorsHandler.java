@@ -8,7 +8,10 @@ import com.teamtea.eclipticseasons.api.constant.solar.color.leaves.SpruceLeavesC
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.constant.solar.color.base.SolarTermColor;
 import com.teamtea.eclipticseasons.api.constant.tag.ClimateTypeBiomeTags;
-import com.teamtea.eclipticseasons.api.util.EclipticUtil;
+import com.teamtea.eclipticseasons.api.data.client.BiomeColor;
+import com.teamtea.eclipticseasons.api.data.client.ColorMode;
+import com.teamtea.eclipticseasons.client.util.ClientCon;
+import com.teamtea.eclipticseasons.client.util.ClientRef;
 import com.teamtea.eclipticseasons.client.util.ColorHelper;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
@@ -38,11 +41,22 @@ public class BiomeColorsHandler {
 
     public static boolean needRefresh = false;
 
+    private static BiomeColor.Instance getBiomeColor(Biome biome, int originColor) {
+        return ClientRef.biomeColors.getOrDefault(biome,null);
+    }
+
     public static final ColorResolver GRASS_COLOR = (biome, posX, posZ) ->
     {
 
         int originColor = biome.getGrassColor(posX, posZ);
         if (ClientConfig.Renderer.seasonalGrassColorChange.get()) {
+            BiomeColor.Instance biomeColor = getBiomeColor(biome, originColor);
+            if (biomeColor != null) {
+                ColorMode.Instance instance = biomeColor.grassColor().get(ClientCon.nowSolarTerm);
+                if (instance != null) {
+                    return ColorHelper.simplyMixColor(instance.value(), instance.mix(), originColor, Math.abs(1 - instance.mix()));
+                }
+            }
             if (needRefresh) {
                 reloadColors();
             }
@@ -73,6 +87,13 @@ public class BiomeColorsHandler {
     {
         int originColor = biome.getFoliageColor();
         if (ClientConfig.Renderer.seasonalGrassColorChange.get()) {
+            BiomeColor.Instance biomeColor = getBiomeColor(biome, originColor);
+            if (biomeColor != null) {
+                ColorMode.Instance instance = biomeColor.foliageColor().get(ClientCon.nowSolarTerm);
+                if (instance != null) {
+                    return ColorHelper.simplyMixColor(instance.value(), instance.mix(), originColor, Math.abs(1 - instance.mix()));
+                }
+            }
             if (needRefresh) {
                 reloadColors();
             }

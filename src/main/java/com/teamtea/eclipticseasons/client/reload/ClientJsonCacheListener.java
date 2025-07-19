@@ -9,6 +9,7 @@ import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.JsonOps;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
+import com.teamtea.eclipticseasons.api.data.client.BiomeColor;
 import com.teamtea.eclipticseasons.api.data.client.LeafColor;
 import com.teamtea.eclipticseasons.api.data.client.SeasonalBiomeAmbient;
 import com.teamtea.eclipticseasons.api.data.client.model.ESModelLoadedJson;
@@ -59,6 +60,7 @@ public class ClientJsonCacheListener<T> extends SimpleJsonResourceReloadListener
     public static final ClientJsonCacheListener<SeasonalTexture> textureReMappingsCache = new ClientJsonCacheListener<>(GSON, DIRECTORY_SEASON_TEXTURES);
 
     // normal
+    public static final ClientJsonCacheListener<BiomeColor> biomeCache = new ClientJsonCacheListener<>(GSON, DIRECTORY_BIOME);
     public static final ClientJsonCacheListener<LeafColor> leafCache = new ClientJsonCacheListener<>(GSON, DIRECTORY_LEAF);
     public static final ClientJsonCacheListener<SnowDefinition> snowDefOverrideCache = new ClientJsonCacheListener<>(GSON, DIRECTORY_SNOW_DEFINITION);
     public static final ClientJsonCacheListener<SeasonalBiomeAmbient> ambientCache = new ClientJsonCacheListener<>(GSON, DIRECTORY_AMBIENT);

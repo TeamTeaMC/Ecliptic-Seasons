@@ -1,0 +1,103 @@
+{
+  "biomes": "minecraft:plains",
+  "foliage_colors": {
+    "solar_terms": {
+      "beginning_of_spring": {
+        "color": 7253557,
+        "mix": 0.32
+      },
+      "rain_water": {
+        "color": 6009126,
+        "mix": 0.16
+      },
+      "insects_awakening": {
+        "color": 4764952,
+        "mix": 0.0
+      },
+      "spring_equinox": {
+        "color": 4764952,
+        "mix": 0.0
+      },
+      "fresh_green": {
+        "color": 4764952,
+        "mix": 0.16
+      },
+      "grain_rain": {
+        "color": 4764952,
+        "mix": 0.32
+      },
+      "beginning_of_summer": {
+        "color": 4764952,
+        "mix": 0.48
+      },
+      "lesser_fullness": {
+        "color": 5092630,
+        "mix": 0.64
+      },
+      "grain_in_ear": {
+        "color": 5485846,
+        "mix": 0.8
+      },
+      "summer_solstice": {
+        "color": 5813525,
+        "mix": 0.8
+      },
+      "lesser_heat": {
+        "color": 6206996,
+        "mix": 0.8
+      },
+      "greater_heat": {
+        "color": 7715858,
+        "mix": 0.8
+      },
+      "beginning_of_autumn": {
+        "color": 10732556,
+        "mix": 0.8
+      },
+      "end_of_heat": {
+        "color": 13749254,
+        "mix": 0.8
+      },
+      "white_dew": {
+        "color": 16765952,
+        "mix": 0.8
+      },
+      "autumnal_equinox": {
+        "color": 16765952,
+        "mix": 0.8
+      },
+      "cold_dew": {
+        "color": 16765952,
+        "mix": 0.8
+      },
+      "first_frost": {
+        "color": 15911191,
+        "mix": 0.8
+      },
+      "beginning_of_winter": {
+        "color": 15122222,
+        "mix": 0.8
+      },
+      "light_snow": {
+        "color": 14267717,
+        "mix": 0.8
+      },
+      "heavy_snow": {
+        "color": 13478748,
+        "mix": 0.8
+      },
+      "winter_solstice": {
+        "color": 11052384,
+        "mix": 0.8
+      },
+      "lesser_cold": {
+        "color": 9807954,
+        "mix": 0.64
+      },
+      "greater_cold": {
+        "color": 8563523,
+        "mix": 0.48
+      }
+    }
+  }
+}
