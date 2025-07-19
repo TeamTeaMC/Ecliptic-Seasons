@@ -1,3 +1,12 @@
+## 0.11.8
+
+- It is now possible to seasonally switch the textures of specified models and disable tinting. You can refer to the
+  implementation in the season_textures section under
+  `src\generated\resources\resourcepacks\example\assets\minecraft\eclipticseasons` in the GitHub source code.
+- The Biome Color resource pack from version 1.21 has been ported to 1.20. Modpack authors can use it to define biome
+  color changes.
+- Fixed an issue with reloading data packs that could cause agro climate zone information to be lost.
+
 ### 0.11.7.1
 
 - Update the compatibility code for DH v2.3.3b.
@@ -41,7 +50,8 @@
 - Added a command to set the snow coverage percentage for a biome set.
 
 - A test option named `Map->ServerRealisticSnowyChange` has been added. When enabled, it synchronizes delayed changes to
-  snowy block appearances among players on the server. Additionally, there is a chance to obtain a snowball when sweeping
+  snowy block appearances among players on the server. Additionally, there is a chance to obtain a snowball when
+  sweeping
   away snow with a broom.
 
 - Others.
