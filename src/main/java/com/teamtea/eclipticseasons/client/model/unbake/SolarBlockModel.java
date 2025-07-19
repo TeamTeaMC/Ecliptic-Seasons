@@ -6,15 +6,13 @@ import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.data.client.model.seasonal.SeasonalTexture;
 import com.teamtea.eclipticseasons.client.model.SeasonBiomeGoingModel;
 import com.teamtea.eclipticseasons.client.model.SeasonGoingModel;
-import net.minecraft.client.renderer.block.model.BlockElement;
-import net.minecraft.client.renderer.block.model.BlockModel;
-import net.minecraft.client.renderer.block.model.ItemOverride;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
+import net.minecraft.client.renderer.block.model.*;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.client.resources.model.ModelBaker;
 import net.minecraft.client.resources.model.ModelState;
+import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.InventoryMenu;
@@ -49,7 +47,7 @@ public class SolarBlockModel extends BlockModel {
         );
     }
 
-    public BlockModel to(Map<String, ResourceLocation> stringStringMap) {
+    public BlockModel to(Map<String, ResourceLocation> stringStringMap, Map<String, Integer> integerMap) {
         Map<String, Either<Material, String>> map = new HashMap<>();
         map.putAll(this.textureMap);
         stringStringMap.forEach(
@@ -59,8 +57,24 @@ public class SolarBlockModel extends BlockModel {
                     }
                 }
         );
+        List<BlockElement> elements = this.getElements();
+        if (!integerMap.isEmpty()) {
+            elements = new ArrayList<>(elements);
+            for (int i = 0, elementsSize = elements.size(); i < elementsSize; i++) {
+                BlockElement element = elements.get(i);
+                EnumMap<Direction, BlockElementFace> directionBlockElementFaceEnumMap = new EnumMap<>(Direction.class);
+                element.faces.forEach((direction, face) -> {
+                    Integer orDefault = integerMap.getOrDefault(face.texture, null);
+                    if (orDefault != null && face.tintIndex != orDefault) {
+                        directionBlockElementFaceEnumMap.put(direction,
+                                new BlockElementFace(face.cullForDirection, orDefault, face.texture, face.uv, face.getFaceData()));
+                    }
+                });
+                element.faces.putAll(directionBlockElementFaceEnumMap);
+            }
+        }
         return new BlockModel(this.getParentLocation(),
-                this.getElements(),
+                elements,
                 map,
                 this.hasAmbientOcclusion(),
                 this.getGuiLight(),
@@ -69,12 +83,13 @@ public class SolarBlockModel extends BlockModel {
         );
     }
 
-    public List<BlockModel> toList(List<Map<String, ResourceLocation>> stringStringMap) {
-        return stringStringMap.stream().map(this::to).toList();
+
+    public List<BlockModel> toList(List<Map<String, ResourceLocation>> stringStringMap, Map<String, Integer> stringIntegerMap) {
+        return stringStringMap.stream().map(m -> to(m, stringIntegerMap)).toList();
     }
 
-    public List<Pair<BlockModel, BlockModel>> toPairList(List<Pair<Map<String, ResourceLocation>, Map<String, ResourceLocation>>> stringStringMap) {
-        return stringStringMap.stream().map(p -> Pair.of(to(p.getFirst()), to(p.getSecond()))).toList();
+    public List<Pair<BlockModel, BlockModel>> toPairList(List<Pair<Map<String, ResourceLocation>, Map<String, ResourceLocation>>> stringStringMap, Map<String, Integer> stringIntegerMap) {
+        return stringStringMap.stream().map(p -> Pair.of(to(p.getFirst(), stringIntegerMap), to(p.getSecond(), stringIntegerMap))).toList();
     }
 
     public SolarBlockModel setSeasonalTexture(List<SeasonalTexture> seasonalTexture) {
@@ -97,7 +112,7 @@ public class SolarBlockModel extends BlockModel {
                                 (solarTerm, flatSliceHolders) -> {
                                     if (flatSliceHolders.flatSlice().mid() != null)
                                         solarTermBakedModelEnumMap.put(solarTerm,
-                                                toList(flatSliceHolders.flatSlice().mid()).stream().map(
+                                                toList(flatSliceHolders.flatSlice().mid(), flatSliceHolders.flatSlice().tintMap()).stream().map(
                                                         b -> {
                                                             BakedModel sliceModel = UnbakedGeometryHelper.bake(b, baker, model, spriteGetter, state, pLocation, guiLight3d);
                                                             return Pair.of(sliceModel, sliceModel);
@@ -106,7 +121,7 @@ public class SolarBlockModel extends BlockModel {
                                         );
                                     if (flatSliceHolders.flatSlice().transitionModels() != null)
                                         solarTermBakedModelEnumMap.put(solarTerm,
-                                                toPairList(flatSliceHolders.flatSlice().transitionModels()).stream().map(
+                                                toPairList(flatSliceHolders.flatSlice().transitionModels(), flatSliceHolders.flatSlice().tintMap()).stream().map(
                                                         b -> Pair.of(UnbakedGeometryHelper.bake(b.getFirst(), baker, model, spriteGetter, state, pLocation, guiLight3d),
                                                                 UnbakedGeometryHelper.bake(b.getSecond(), baker, model, spriteGetter, state, pLocation, guiLight3d))
                                                 ).toList()

@@ -42,6 +42,7 @@ public class SeasonTextureProvider extends ESClientDataMapProvider<SeasonalTextu
                         ), Map.of(
                                 "all", new ResourceLocation("block/spruce_leaves")
                         )))
+                        .tintMap(Map.of("#all",-1))
                         .build()
         )
         ));

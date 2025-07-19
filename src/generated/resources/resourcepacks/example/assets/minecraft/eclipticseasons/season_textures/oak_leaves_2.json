@@ -11,6 +11,9 @@
           "all": "minecraft:block/spruce_leaves"
         }
       ],
+      "tint": {
+        "#all": -1
+      },
       "season": "spring"
     }
   ]

@@ -49,7 +49,7 @@ public class SeasonalTexture {
         for (Slice slice : slices) {
             FlatSlice flatSlice = new FlatSlice(
                     slice.textures.isEmpty() ? null : slice.textures
-                    , slice.emptyAbove, slice.transitionMaterials.isEmpty() ? null : slice.transitionMaterials);
+                    , slice.tintMap, slice.transitionMaterials.isEmpty() ? null : slice.transitionMaterials);
 
             SolarTerm start = slice.start.isValid() ? slice.start :
                     slice.solarTerm.isValid() ? slice.solarTerm :
@@ -98,7 +98,7 @@ public class SeasonalTexture {
                                 },
                                 p -> DataResult.success(List.of(p.getFirst(), p.getSecond()))))
                         .optionalFieldOf("transition_textures", List.of()).forGetter(o -> o.transitionMaterials),
-                Codec.BOOL.optionalFieldOf("empty_above", true).forGetter(o -> o.emptyAbove)
+                CodecUtil.mapCodec(Codec.STRING, Codec.INT).optionalFieldOf("tint", Map.of()).forGetter(o -> o.tintMap)
         ).apply(ins, Slice::new));
 
         @Builder.Default
@@ -118,7 +118,7 @@ public class SeasonalTexture {
         @Builder.Default
         private final List<Pair<Map<String, ResourceLocation>, Map<String, ResourceLocation>>> transitionMaterials = List.of();
         @Builder.Default
-        private final boolean emptyAbove = true;
+        private final Map<String, Integer> tintMap = Map.of();
     }
 
     public record FlatSliceHolder(
@@ -127,7 +127,7 @@ public class SeasonalTexture {
     }
 
 
-    public record FlatSlice(@Nullable List<Map<String, ResourceLocation>> mid, boolean emptyAbove,
+    public record FlatSlice(@Nullable List<Map<String, ResourceLocation>> mid, Map<String, Integer> tintMap,
                             @Nullable List<Pair<Map<String, ResourceLocation>, Map<String, ResourceLocation>>> transitionModels) {
     }
 
