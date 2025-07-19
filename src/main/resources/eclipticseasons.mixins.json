@@ -47,6 +47,7 @@
     "client.entity.MixinClientPanda",
     "client.model.MixinModelBakery",
     "client.model.MixinModelManager",
+    "client.model.MixinMultiPart",
     "client.model.MixinSpriteLoader",
     "client.render.MixinClientClientLevel",
     "client.render.MixinGameRenderer",

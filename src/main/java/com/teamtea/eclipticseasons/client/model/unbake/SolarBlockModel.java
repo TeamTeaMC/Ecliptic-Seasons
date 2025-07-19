@@ -69,6 +69,14 @@ public class SolarBlockModel extends BlockModel {
         );
     }
 
+    public List<BlockModel> toList(List<Map<String, ResourceLocation>> stringStringMap) {
+        return stringStringMap.stream().map(this::to).toList();
+    }
+
+    public List<Pair<BlockModel, BlockModel>> toPairList(List<Pair<Map<String, ResourceLocation>, Map<String, ResourceLocation>>> stringStringMap) {
+        return stringStringMap.stream().map(p -> Pair.of(to(p.getFirst()), to(p.getSecond()))).toList();
+    }
+
     public SolarBlockModel setSeasonalTexture(List<SeasonalTexture> seasonalTexture) {
         this.seasonalTexture = seasonalTexture;
         return this;
@@ -83,13 +91,25 @@ public class SolarBlockModel extends BlockModel {
             List<Pair<SeasonBiomeGoingModel.BiomePredicate, SeasonGoingModel<BakedModel>>> list = new ArrayList<>();
             List<Pair<SeasonBiomeGoingModel.BiomePredicate, SeasonGoingModel<BakedModel>>> defaultList = new ArrayList<>();
             for (SeasonalTexture texture : seasonalTexture) {
-                EnumMap<SolarTerm, BakedModel> solarTermBakedModelEnumMap = new EnumMap<>(SolarTerm.class);
+                EnumMap<SolarTerm, List<Pair<BakedModel, BakedModel>>> solarTermBakedModelEnumMap = new EnumMap<>(SolarTerm.class);
                 texture.getFlatSliceEnumMap()
                         .forEach(
                                 (solarTerm, flatSliceHolders) -> {
                                     if (flatSliceHolders.flatSlice().mid() != null)
                                         solarTermBakedModelEnumMap.put(solarTerm,
-                                                UnbakedGeometryHelper.bake(to(flatSliceHolders.flatSlice().mid()), baker, model, spriteGetter, state, pLocation, guiLight3d)
+                                                toList(flatSliceHolders.flatSlice().mid()).stream().map(
+                                                        b -> {
+                                                            BakedModel sliceModel = UnbakedGeometryHelper.bake(b, baker, model, spriteGetter, state, pLocation, guiLight3d);
+                                                            return Pair.of(sliceModel, sliceModel);
+                                                        }
+                                                ).toList()
+                                        );
+                                    if (flatSliceHolders.flatSlice().transitionModels() != null)
+                                        solarTermBakedModelEnumMap.put(solarTerm,
+                                                toPairList(flatSliceHolders.flatSlice().transitionModels()).stream().map(
+                                                        b -> Pair.of(UnbakedGeometryHelper.bake(b.getFirst(), baker, model, spriteGetter, state, pLocation, guiLight3d),
+                                                                UnbakedGeometryHelper.bake(b.getSecond(), baker, model, spriteGetter, state, pLocation, guiLight3d))
+                                                ).toList()
                                         );
                                 }
                         );

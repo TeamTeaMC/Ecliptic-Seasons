@@ -249,7 +249,7 @@ dependencies {
     runtimeOnly fg.deobf("curse.maven:farmers-delight-398521:5051242")
 
     compileOnly fg.deobf("curse.maven:distant-horizons-508933:6760064")
-    onlyMainRuntimeOnly fg.deobf("curse.maven:distant-horizons-508933:6760064")
+//    onlyMainRuntimeOnly fg.deobf("curse.maven:distant-horizons-508933:6760064")
 
 
     compileOnly fg.deobf("curse.maven:legendary-survival-overhaul-840254:6703282")

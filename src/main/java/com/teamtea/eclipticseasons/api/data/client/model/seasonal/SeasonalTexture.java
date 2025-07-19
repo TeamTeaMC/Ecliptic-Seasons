@@ -4,6 +4,7 @@ package com.teamtea.eclipticseasons.api.data.client.model.seasonal;
 import com.mojang.datafixers.util.Either;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
@@ -28,7 +29,7 @@ import java.util.Optional;
 public class SeasonalTexture {
 
     public static final Codec<SeasonalTexture> CODEC = RecordCodecBuilder.create(ins -> ins.group(
-            CodecUtil.listFrom(ResourceLocation.CODEC).optionalFieldOf("target",List.of()).forGetter(o -> o.parent),
+            CodecUtil.listFrom(ResourceLocation.CODEC).optionalFieldOf("target", List.of()).forGetter(o -> o.parent),
             Codec.either(CodecUtil.listFrom(ResourceLocation.CODEC), TagKey.hashedCodec(Registries.BIOME)).optionalFieldOf("biomes").forGetter(o -> o.biomes),
             Slice.CODEC.listOf().fieldOf("slices").forGetter(o -> o.slices)
     ).apply(ins, SeasonalTexture::new));
@@ -48,7 +49,7 @@ public class SeasonalTexture {
         for (Slice slice : slices) {
             FlatSlice flatSlice = new FlatSlice(
                     slice.textures.isEmpty() ? null : slice.textures
-                    , slice.emptyAbove, slice.transitionMaterials.getFirst().isEmpty() || slice.transitionMaterials.getSecond().isEmpty() ? null : slice.transitionMaterials);
+                    , slice.emptyAbove, slice.transitionMaterials.isEmpty() ? null : slice.transitionMaterials);
 
             SolarTerm start = slice.start.isValid() ? slice.start :
                     slice.solarTerm.isValid() ? slice.solarTerm :
@@ -89,9 +90,14 @@ public class SeasonalTexture {
                 ESExtraCodec.SEASON.optionalFieldOf("start_season", Season.NONE).forGetter(o -> o.startSeason),
                 ESExtraCodec.SEASON.optionalFieldOf("end_season", Season.NONE).forGetter(o -> o.endSeason),
                 ESExtraCodec.SEASON.optionalFieldOf("season", Season.NONE).forGetter(o -> o.season),
-                MATERIALS.optionalFieldOf("textures", Map.of()).forGetter(o -> o.textures),
-                MATERIALS.listOf().xmap(c -> Pair.of(c.get(0), c.get(1)), p -> List.of(p.getFirst(), p.getSecond()))
-                        .optionalFieldOf("transition_textures", (Pair.of(Map.of(), Map.of()))).forGetter(o -> o.transitionMaterials),
+                CodecUtil.listFrom(MATERIALS).optionalFieldOf("textures", List.of()).forGetter(o -> o.textures),
+                CodecUtil.listFrom(MATERIALS.listOf().flatXmap(
+                                c -> {
+                                    if (c.size() == 2) return DataResult.success(Pair.of(c.get(0), c.get(1)));
+                                    else return DataResult.error(() -> "Unknown Size " + c.size());
+                                },
+                                p -> DataResult.success(List.of(p.getFirst(), p.getSecond()))))
+                        .optionalFieldOf("transition_textures", List.of()).forGetter(o -> o.transitionMaterials),
                 Codec.BOOL.optionalFieldOf("empty_above", true).forGetter(o -> o.emptyAbove)
         ).apply(ins, Slice::new));
 
@@ -108,9 +114,9 @@ public class SeasonalTexture {
         @Builder.Default
         private final Season season = Season.NONE;
         @Builder.Default
-        private final Map<String, ResourceLocation> textures = Map.of();
+        private final List<Map<String, ResourceLocation>> textures = List.of();
         @Builder.Default
-        private final Pair<Map<String, ResourceLocation>, Map<String, ResourceLocation>> transitionMaterials = (Pair.of(Map.of(), Map.of()));
+        private final List<Pair<Map<String, ResourceLocation>, Map<String, ResourceLocation>>> transitionMaterials = List.of();
         @Builder.Default
         private final boolean emptyAbove = true;
     }
@@ -121,8 +127,8 @@ public class SeasonalTexture {
     }
 
 
-    public record FlatSlice(@Nullable Map<String, ResourceLocation> mid, boolean emptyAbove,
-                            @Nullable Pair<Map<String, ResourceLocation>, Map<String, ResourceLocation>> transitionModels) {
+    public record FlatSlice(@Nullable List<Map<String, ResourceLocation>> mid, boolean emptyAbove,
+                            @Nullable List<Pair<Map<String, ResourceLocation>, Map<String, ResourceLocation>>> transitionModels) {
     }
 
 
