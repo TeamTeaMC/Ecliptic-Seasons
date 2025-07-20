@@ -1,4 +1,4 @@
-package com.teamtea.eclipticseasons.data.general.datapack.client;
+package com.teamtea.eclipticseasons.data.extend.example;
 
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.data.client.ColorMode;

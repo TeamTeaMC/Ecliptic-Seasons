@@ -3,6 +3,7 @@ package com.teamtea.eclipticseasons.data;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.data.extend.example.BiomeColorProvider;
 import com.teamtea.eclipticseasons.data.extend.example.DatapackRegistryGeneratorExample;
+import com.teamtea.eclipticseasons.data.extend.example.LeafColorProvider;
 import com.teamtea.eclipticseasons.data.extend.extra_snow.DatapackRegistryGeneratorExtra;
 import com.teamtea.eclipticseasons.data.extend.extra_snow.ExtraClientModelDefinitionProvider;
 import com.teamtea.eclipticseasons.data.extend.example.SeasonTextureProvider;
@@ -77,7 +78,6 @@ public class start {
             // HolderLookup.Provider modProvider = new RegistrySetBuilder().build(registryaccess$frozen);
             // CompletableFuture<HolderLookup.Provider> modFuture = CompletableFuture.supplyAsync(() -> modProvider, Util.backgroundExecutor());
 
-            generator.addProvider(event.includeClient(), new LeafColorProvider(packOutput, MODID, helper, lookupProvider));
 
             generator.addProvider(event.includeClient(), new ClientSnowDefinitionProvider(packOutput, MODID, helper, lookupProvider));
             generator.addProvider(event.includeClient(), new SeasonalBiomeAmbientProvider(packOutput, MODID, helper, lookupProvider));
@@ -103,6 +103,7 @@ public class start {
         if (event.includeClient()) {
             generator.addProvider(event.includeClient(), new BiomeColorProvider(packOutput,MODID, helper,lookupProvider));
             generator.addProvider(event.includeClient(), new SeasonTextureProvider(packOutput, MODID, helper, lookupProvider));
+            generator.addProvider(event.includeClient(), new LeafColorProvider(packOutput, MODID, helper, lookupProvider));
         }
 
     }

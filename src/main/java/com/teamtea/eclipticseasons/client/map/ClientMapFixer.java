@@ -1,5 +1,6 @@
 package com.teamtea.eclipticseasons.client.map;
 
+import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.client.render.WorldRenderer;
 import com.teamtea.eclipticseasons.common.core.map.ChunkInfoMap;
