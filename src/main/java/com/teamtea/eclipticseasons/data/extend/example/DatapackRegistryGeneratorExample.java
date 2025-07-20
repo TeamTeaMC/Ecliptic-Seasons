@@ -16,6 +16,7 @@ public class DatapackRegistryGeneratorExample extends DatapackBuiltinEntriesProv
     public static final RegistrySetBuilder REGISTRY_SET_BUILDER = new RegistrySetBuilder()
             .add(ESRegistries.BIOME_RAIN, BiomeRainRegistry::bootstrap2)
             .add(ESRegistries.SNOW_TERM, SnowTermRegistry::bootstrap2)
+            .add(ESRegistries.CROP, CropRegistry::bootstrap2)
             ;
 
     public DatapackRegistryGeneratorExample(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {

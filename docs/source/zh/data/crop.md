@@ -1,82 +1,61 @@
 ## 基本说明
 
-作物生长控制用于调整方块的生长速度，主要基于Forge事件管线进行处理，支持一般作物方块生长、树苗生长或者催熟事件。
-如果存在不支持Forge事件的方块，可以使用设置中的强制兼容模式，或者将其id放入natrual
+作物生长用于调整方块的生长速度，主要基于Neo/Forge事件管线进行处理，支持一般作物方块生长、树苗生长或者催熟事件。
+如果存在不支持Neo/Forge事件的方块，可以使用设置中的强制兼容模式，或者将其id放入`eclipticseasons:natural_plants`标签中。
+将通过限制随机刻的方式来调整其生长速度。
+其分为两部分，分别是季节条件和湿度条件。
 
-其为json文件，在资源包的放置根目录路径为`assets/<命名空间>/eclipticseasons/season_textures`。
+其为json文件，在资源包的放置根目录路径为`data/<命名空间>/eclipticseasons/crop`。
 
 ## 文件内容
 
-季节贴图为季节模型的简化设计，可以对一般的Minecraft模型进行季节性贴图置换，从而免去创建繁杂的模型文件。当然功能也有所简化。
+作物生长是较为早期的数据包结构，且考虑到维护问题，
+因此不直接支持后续的SolarTermMap，结果会有所差异。但本质上区别不大。
+此外，默认情况下，一般用标签系统即可。如果需要针对指定作物或者含有BlockState条件的方块进行设置，那么才应该考虑使用。
 
 ### 定义示例
 
-下方展示了一个用于把春季橡树树叶模型莲花替换为其他贴图的写法。
+下方展示了一个用于根据向日葵是否为上半部分设置生长控制的示例写法。
+由于我们不需要实际修改生长参数，因此设置一下parent即可引用现有参数。
+对于气候设置而言，默认应该给予温带参数，这是映射到其他农业气候区的需要。
+如果有多余时间，也可以为每个气候区专门设置参数。
 
 ```json
 {
-  "target": "minecraft:block/oak_leaves",
-  "biomes": "#eclipticseasons:seasonal",
-  "slices": [
-    {
-      "textures": [
-        {
-          "all": "minecraft:block/cherry_leaves"
-        },
-        {
-          "all": "minecraft:block/spruce_leaves"
-        }
-      ],
-      "tint": {
-        "#all": -1
-      },
-      "season": "spring"
-    },
-    {
-      "transition_textures": [
-        {
-          "all": "minecraft:block/cherry_leaves"
-        },
-        {
-          "all": "minecraft:block/spruce_leaves"
-        }
-      ],
-      "tint": {
-        "#all": -1
-      },
-      "season": "summer"
+  "parent": [
+    "eclipticseasons:seasons/spring_summer",
+    "eclipticseasons:humidity/average_moist"
+  ],
+  "apply_target": {
+    "blocks": "minecraft:sunflower",
+    "state": {
+      "half": "upper"
     }
-  ]
+  },
+  "climate": "eclipticseasons:temperate"
 }
 ```
 
-### 参数说明
+### 生长参数
 
-#### 可选参数：target【String|Object】
+如果您已经查看了`eclipticseasons:seasons/xx`等数据，或许需要自定义一些生长参数。
+这里分别可以设置生长速度（默认1），施肥成功率（默认1），生长失败时的死亡概率（默认0），以及死亡状态（默认为死去灌木）。
+如果你需要设置死亡状态，并且精确到BlockState，可以参考Minecraft反序列化一些写法。
+因为历史问题，这里部分参数是大写的。
+注意这些参数都是可以省略的。
+生长参数如果设置为大于1f的数可能存在不支持情况，需要该方块支持Neo/Forge事件才能有促进效果。
+但由于季节和湿度同时影响，即使方块不支持事件，也可以略微设置为大于1的值。
 
-用于定义应用的模型对象，可以是模型id或者id字符串列表。如果不写那么会根据当前id进行自动映射。如当前在资源包中位置为`minecraft\eclipticseasons\season_textures\oak_leaves.json`，那么会自动应用到模型``minecraft:block/oak_leaves`上。
-
-#### 参数：biomes【String|Array】
-
-用于检测群系对应，支持标签，或者是群系id字符串列表。
-
-#### 参数：slices【Object Array】
-
-此意思为切片，用于匹配季节片段使用的模型，对应对象应该为数组。
-
-**可选子参数：start【String】、end【String】、solar_term【String】**
-
-如果划分时间为节气，那么可以使用这三个子参数。分别表示开始，结束，唯一。节气请使用小写id，具体名称可以参考气候一节。
-
-**可选子参数：start_season【String】、end_season【String】、season【String】**
-
-如果您更喜欢季节区分，那么可以使用这三个参数。请使用小写id。请注意区别，由于群系季节最小区间为节气，这里提供的季节为维度季节，所以对于部分特殊群系，并不适用季节参数（如果您在意季节区分的话）。
-
-**可选子参数：textures【Array|Object】、transition_textures【Array】**
-
-如果在该季节内方块外观不变，应该使用textures，否则使用transition_textures。注意transition_textures仅会应用于区间内的第一个节气产生变化。
-必须注意的是，如果这里想做变化，那么需要给加一个[]变成数组，否则只需要写一个Texture Map进行映射覆盖即可。对于transition_textures，最好写为双列表，即[[xx,xx]]这样的形式。
-
-**可选子参数：tint【Object】**
-
-这是一个特殊的参数，用于修改染色id，设置为-1取消对应参数的面的染色。
+```json
+{
+  "grow_chance": 0.9,
+  "fertile_chance": 0.8,
+  "death_chance": 0.01,
+  "dead_state": {
+    "Name": "minecraft:wheat",
+    "Properties": {
+      "age": "1"
+    }
+  }
+}
+```

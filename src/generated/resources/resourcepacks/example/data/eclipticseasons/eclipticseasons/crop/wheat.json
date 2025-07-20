@@ -1,0 +1,26 @@
+{
+  "parent": [
+    "eclipticseasons:seasons/spring_summer",
+    "eclipticseasons:humidity/average_moist"
+  ],
+  "apply_target": {
+    "blocks": "minecraft:wheat",
+    "state": {
+      "age": "3"
+    }
+  },
+  "climate": "eclipticseasons:temperate",
+  "solar_terms": {
+    "beginning_of_spring": {
+      "dead_state": {
+        "Name": "minecraft:wheat",
+        "Properties": {
+          "age": "0"
+        }
+      },
+      "death_chance": 0.01,
+      "fertile_chance": 0.8,
+      "grow_chance": 0.9
+    }
+  }
+}

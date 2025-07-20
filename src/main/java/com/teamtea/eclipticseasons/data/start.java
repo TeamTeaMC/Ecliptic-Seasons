@@ -41,13 +41,13 @@ public class start {
         ExistingFileHelper helper = event.getExistingFileHelper();
         MutablePackOutput packOutput = new MutablePackOutput(generator.getPackOutput());
         CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
-
+        CompletableFuture<HolderLookup.Provider> modFuture = null;
         if (event.includeServer()) {
             EclipticSeasons.logger("Generate We Data!!!");
 
             RegistryAccess.Frozen registryaccess$frozen = RegistryAccess.fromRegistryOfRegistries(BuiltInRegistries.REGISTRY);
             HolderLookup.Provider modProvider = DatapackRegistryGenerator.REGISTRY_SET_BUILDER.build(registryaccess$frozen);
-            CompletableFuture<HolderLookup.Provider> modFuture = CompletableFuture.supplyAsync(() -> modProvider, Util.backgroundExecutor());
+            modFuture = CompletableFuture.supplyAsync(() -> modProvider, Util.backgroundExecutor());
 
             generator.addProvider(event.includeServer(), new CropClimateTagsDataProvider(packOutput, modFuture, MODID, helper));
             generator.addProvider(event.includeServer(), new EffectTagsDataProvider(packOutput, lookupProvider, MODID, helper));
@@ -98,10 +98,10 @@ public class start {
         // Example
         packOutput = packOutput.move(Path.of("resourcepacks", "example"));
         if (event.includeServer()) {
-            generator.addProvider(event.includeServer(), new DatapackRegistryGeneratorExample(packOutput, lookupProvider));
+            generator.addProvider(event.includeServer(), new DatapackRegistryGeneratorExample(packOutput, modFuture));
         }
         if (event.includeClient()) {
-            generator.addProvider(event.includeClient(), new BiomeColorProvider(packOutput,MODID, helper,lookupProvider));
+            generator.addProvider(event.includeClient(), new BiomeColorProvider(packOutput, MODID, helper, lookupProvider));
             generator.addProvider(event.includeClient(), new SeasonTextureProvider(packOutput, MODID, helper, lookupProvider));
             generator.addProvider(event.includeClient(), new LeafColorProvider(packOutput, MODID, helper, lookupProvider));
         }

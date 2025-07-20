@@ -35,6 +35,7 @@ import net.minecraftforge.registries.holdersets.OrHolderSet;
 
 import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public class CropRegistry {
@@ -973,21 +974,39 @@ public class CropRegistry {
                 emptyBP
         ));
 
-        // context.register(createKey("wheat_test"), new CropGrowControlBuilder(
-        //         temperate,
-        //         new FakeBlockPredicate(
-        //                 Optional.of(HolderSet.direct(Blocks.SUNFLOWER.builtInRegistryHolder())),
-        //                 FakeStatePropertiesPredicate.Builder.properties().hasProperty(DoublePlantBlock.HALF, DoubleBlockHalf.UPPER).build()
-        //         ),
-        //         HolderSet.direct(cropGetter.getOrThrow(SP_SU)
-        //                 , cropGetter.getOrThrow(AVERAGE_MOIST)
-        //         ), emptyGP, emptyGP2,
-        //         new EnumMap<>(SolarTerm.class),
-        //         seasonListEmpty,
-        //         humidListEmpty,
-        //         Optional.empty()
-        // ));
 
         blockHolderGetter = null;
+    }
+
+    public static void bootstrap2(BootstapContext<CropGrowControlBuilder> context) {
+
+        var cropClimateTypeHolderGetter = context.lookup(ESRegistries.AGRO_CLIMATE);
+        HolderSet.Direct<AgroClimaticZone> temperate = HolderSet.direct(cropClimateTypeHolderGetter.getOrThrow(AgroClimateRegistry.TEMPERATE));
+        var cropGetter = context.lookup(ESRegistries.CROP);
+        Optional<BlockState> empty = Optional.empty();
+        Optional<GrowParameter> emptyGP = Optional.empty();
+        Optional<GrowParameter> emptyGP2 = Optional.empty();
+        final EnumMap<SolarTerm, GrowParameter> solarTermListEmpty = new EnumMap<>(SolarTerm.class);
+        final EnumMap<Season, GrowParameter> seasonListEmpty = new EnumMap<>(Season.class);
+        final EnumMap<Humidity, GrowParameter> humidListEmpty = new EnumMap<>(Humidity.class);
+        Optional<HolderSet<Block>> emptyBP = Optional.empty();
+
+        context.register(createKey("wheat"), new CropGrowControlBuilder(
+                temperate,
+                new FakeBlockPredicate(
+                        Optional.of(HolderSet.direct(Blocks.WHEAT.builtInRegistryHolder())),
+                        FakeStatePropertiesPredicate.Builder.properties().hasProperty(CropBlock.AGE, 3).build()
+                ),
+                HolderSet.direct(cropGetter.getOrThrow(SP_SU)
+                        , cropGetter.getOrThrow(AVERAGE_MOIST)
+                ), emptyGP, emptyGP2,
+                new EnumMap<>(Map.of(SolarTerm.BEGINNING_OF_SPRING, GrowParameter.builder()
+                        .growChance(0.9f).fertileChance(0.8f).deathChance(0.01f)
+                        .deadState(Blocks.WHEAT.defaultBlockState())
+                        .end())),
+                seasonListEmpty,
+                humidListEmpty,
+                Optional.empty()
+        ));
     }
 }
