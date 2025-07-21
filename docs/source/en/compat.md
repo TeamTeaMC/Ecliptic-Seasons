@@ -1,9 +1,10 @@
+The mods not listed here are not necessarily incompatible; some mods provide compatibility for this mod. You can check
+the "Dependents" section on the CurseForge page for details.
 
 ## Basically
 
-Now support the seasonal crop tag from Serene Seasons. However, I recommend using the tags from Ecliptic Seasons and the upcoming data pack, especially since the season tags lack humidity information. 
-
-For crop growth, it mainly supports the growth of crop blocks in Neo/Forge ecosystems, as well as the growth of saplings. If a crop does not support the Forge ecosystem, or is not working on the Forge ecosystem, it cannot be controlled by tags alone. This is also true for other mods that control crop growth, such as Serene Seasons.
+Now support the seasonal crop tag from Serene Seasons. However, I recommend using the tags from Ecliptic Seasons and the
+upcoming data pack, especially since the season tags lack humidity information.
 
 ## Modern Version (1.21-1.20)
 
@@ -13,7 +14,8 @@ Support since NeoForge-1.21, mainly about renders snow-covered blocks, performan
 
 ### Distant Horizons: A Level of Detail mod
 
-Supported in 1.21-NeoForge and 1.20.1-Forge, mainly LODs are rendered with correct season colors (even when reloading the level), and LODs are updated dynamically.
+Supported in 1.21-NeoForge and 1.20.1-Forge, mainly LODs are rendered with correct season colors (even when reloading
+the level), and LODs are updated dynamically.
 
 ### Embeddium
 
@@ -35,10 +37,6 @@ Support in 1.21, mainly about provide level bind biome predication.
 
 Support in all versions, Mainly to provide the correct winter colours.
 
-### Simple Clouds
-
-Support in all versions, Mostly about fix crash if biome change predication.
-
 ### Cold Sweat
 
 Provide compatibility across all versions, mainly seasonal temperature changes, which will be configurable in Config.
@@ -57,11 +55,13 @@ Support in 1.20, Mostly about the Halloween season.
 
 ### Incontrol
 
-Support in all versions, Mostly about provide season check, note if you use SolarWeather, the global weather check is not meaningful.
+Support in all versions, Mostly about provide season check, note if you use SolarWeather, the global weather check is
+not meaningful.
 
 ### Fabric Renderer API and CTM mods (Continuity...)
 
-In 1.20.1, must use Embeddium, can stay together if the CTM blocks placed were not in 'Snowy' state such as glass block in Stay True.
+In 1.20.1, must use Embeddium, can stay together if the CTM blocks placed were not in 'Snowy' state such as glass block
+in Stay True.
 
 In 1.21.1, if you use Sodium or Vanilla environment, ctm models can also in snowy state without conflicts.
 
@@ -91,7 +91,8 @@ Provide compatibility in 1.16.5, mainly seasonal temperature changes, which will
 
 ### Fancy Block Particles - Renewed
 
-Due to some limitations of this mod, compatibility must be provided in the Legacy Version in order to work, mainly regarding seasonal particle and block rendering modes.
+Due to some limitations of this mod, compatibility must be provided in the Legacy Version in order to work, mainly
+regarding seasonal particle and block rendering modes.
 
 ### Dynamic Trees
 

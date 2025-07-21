@@ -17,7 +17,8 @@ nav:
           - Climate: 'en/climate.md'
           - Crop: 'en/crop.md'
           - Compatibility: 'en/compat.md'
-          - Datapack Base: 'en/datapack.md'
+          - Configuration: 'en/configuration.md'
+          - Frequent Question: 'en/question.md'
           - Custom:
               - Model Definitions: 'en/custom/model_definitions.md'
               - Snowy Block Models: 'en/custom/snow_definitions.md'
@@ -40,7 +41,9 @@ nav:
           - 气候: 'zh/climate.md'
           - 作物: 'zh/crop.md'
           - 兼容性: 'zh/compat.md'
+          - 配置: 'zh/configuration.md'
           - 数据包基本: 'zh/datapack.md'
+          - 常见问题: 'zh/question.md'
           - 自定义:
               - 模型映射: 'zh/custom/model_definitions.md'
               - 覆雪方块定义与模型: 'zh/custom/snow_definitions.md'
