@@ -100,7 +100,7 @@ public record CustomRainBuilder(
                 IntProvider.POSITIVE_CODEC.optionalFieldOf("thunder").forGetter(CustomRainBuilder.Weather::thunder),
                 IntProvider.POSITIVE_CODEC.optionalFieldOf("thunder_delay").forGetter(CustomRainBuilder.Weather::thunderDelay),
                 Codec.FLOAT.fieldOf("rain_chance").forGetter(CustomRainBuilder.Weather::rainChance),
-                Codec.FLOAT.fieldOf("thunder_chance").forGetter(CustomRainBuilder.Weather::thunderChance),
+                Codec.FLOAT.optionalFieldOf("thunder_chance",0f).forGetter(CustomRainBuilder.Weather::thunderChance),
                 StringRepresentable.fromEnum(TimePeriod::collectValues).listOf().optionalFieldOf("time_periods",List.of()).forGetter(CustomRainBuilder.Weather::timePeriod)
         ).apply(ins, CustomRainBuilder.Weather::new));
     }

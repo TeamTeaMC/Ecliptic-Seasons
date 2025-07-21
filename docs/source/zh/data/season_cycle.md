@@ -1,0 +1,47 @@
+## 基本说明
+
+季节循环与季节阶段一起使用，以修改当前节气到实际显示的映射。这可以实现一些特殊群系效果，如永秋。
+注意默认不使用季节循环，需要在设置中打开。
+
+其为json文件，在资源包的放置根目录路径为`data/<命名空间>/eclipticseasons/season_cycle`。
+
+## 文件内容
+
+### 定义示例
+
+下方展示了热带草原地区设置这种映射关系的文件，这里biomes是HolderSet，所以也可以使用标签字符串等。
+phases字段基于SolarTermMap结构，可以写solar_terms、seasons或者default。
+
+```json
+{
+  "biomes": "#eclipticseasons:monsoonal",
+  "phases": {
+    "solar_terms": {
+      "beginning_of_spring": "eclipticseasons:dry_middle",
+      "rain_water": "eclipticseasons:dry_middle",
+      "insects_awakening": "eclipticseasons:dry_end",
+      "spring_equinox": "eclipticseasons:dry_end",
+      "fresh_green": "eclipticseasons:dry_end",
+      "grain_rain": "eclipticseasons:dry_end",
+      "beginning_of_summer": "eclipticseasons:rain_start",
+      "lesser_fullness": "eclipticseasons:rain_middle",
+      "grain_in_ear": "eclipticseasons:rain_middle",
+      "summer_solstice": "eclipticseasons:rain_end",
+      "lesser_heat": "eclipticseasons:rain_end",
+      "greater_heat": "eclipticseasons:rain_end",
+      "beginning_of_autumn": "eclipticseasons:rain_end",
+      "end_of_heat": "eclipticseasons:wet_start",
+      "white_dew": "eclipticseasons:wet_start",
+      "autumnal_equinox": "eclipticseasons:wet_middle",
+      "cold_dew": "eclipticseasons:wet_middle",
+      "first_frost": "eclipticseasons:wet_end",
+      "beginning_of_winter": "eclipticseasons:dry_start",
+      "light_snow": "eclipticseasons:dry_start",
+      "heavy_snow": "eclipticseasons:dry_start",
+      "winter_solstice": "eclipticseasons:dry_start",
+      "lesser_cold": "eclipticseasons:dry_middle",
+      "greater_cold": "eclipticseasons:dry_middle"
+    }
+  }
+}
+```

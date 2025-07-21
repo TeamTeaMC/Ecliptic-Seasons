@@ -7,6 +7,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.stream.JsonWriter;
 import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.Encoder;
+import com.teamtea.eclipticseasons.data.extend.example.DatapackRegistryGeneratorExample;
 import com.teamtea.eclipticseasons.data.general.datapack.DatapackRegistryGenerator;
 import net.minecraft.Util;
 import net.minecraft.core.HolderLookup;
@@ -44,7 +45,7 @@ public abstract class MixinsRegistriesDatapackGenerator {
 
     @Inject(at = {@At("HEAD")}, method = {"dumpRegistryCap"}, cancellable = true)
     private <T> void eclipticseasons$lambda$dumpRegistryCap$11(CachedOutput pOutput, HolderLookup.Provider pRegistries, DynamicOps<JsonElement> pOps, RegistryDataLoader.RegistryData<T> pRegistryData, CallbackInfoReturnable<Optional<CompletableFuture<?>>> cir) {
-        if ((Object) this instanceof DatapackRegistryGenerator) {
+        if ((Object) this instanceof DatapackRegistryGenerator||(Object) this instanceof DatapackRegistryGeneratorExample) {
             ResourceKey<? extends Registry<T>> resourcekey = pRegistryData.key();
             var cc= pRegistries.lookup(resourcekey).map((p_255847_) -> {
                 PackOutput.PathProvider packoutput$pathprovider = this.output.createPathProvider(PackOutput.Target.DATA_PACK, net.minecraftforge.common.ForgeHooks.prefixNamespace(resourcekey.location()));

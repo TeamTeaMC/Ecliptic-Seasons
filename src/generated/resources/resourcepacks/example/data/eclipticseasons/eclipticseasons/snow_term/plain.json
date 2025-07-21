@@ -1,5 +1,5 @@
 {
   "biomes": "minecraft:plains",
-  "end": "greater_cold",
-  "start": "light_snow"
+  "start": "light_snow",
+  "end": "greater_cold"
 }
