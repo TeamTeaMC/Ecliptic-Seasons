@@ -53,6 +53,8 @@ public class start {
             generator.addProvider(event.includeServer(), new EffectTagsDataProvider(packOutput, lookupProvider, MODID, helper));
             generator.addProvider(event.includeServer(), new EnhancementTagsDataProvider(packOutput, lookupProvider, MODID, helper));
             generator.addProvider(event.includeServer(), new TagsDataProvider(packOutput, lookupProvider, MODID, helper));
+            generator.addProvider(event.includeServer(), new ESEntityTypeTagsProvider(packOutput, lookupProvider, MODID, helper));
+
             var esb = new ESBlockTagProvider(packOutput, lookupProvider, MODID, helper);
             generator.addProvider(event.includeServer(), esb);
             generator.addProvider(event.includeServer(), new ESItemTagProvider(packOutput, lookupProvider, esb.contentsGetter()));

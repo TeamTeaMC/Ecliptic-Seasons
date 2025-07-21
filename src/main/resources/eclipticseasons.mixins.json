@@ -36,7 +36,11 @@
     "compat.snowyspirit.MixinSnowySpirit",
     "compat.snowyspirit.MixinSnowySpiritGroundStatus",
     "data.MixinsRegistriesDatapackGenerator",
-    "data.RegistrySetBuilderMixin"
+    "data.RegistrySetBuilderMixin",
+    "game.MixinBee_BeePollinateGoal",
+    "game.MixinBeehiveBlockEntity",
+    "game.MixinBreedGoal",
+    "game.MixinFishingHook"
   ],
   "client": [
     "client.MixinClientLayerLightSectionStorage",

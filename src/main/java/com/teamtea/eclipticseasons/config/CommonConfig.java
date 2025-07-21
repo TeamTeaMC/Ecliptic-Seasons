@@ -26,6 +26,7 @@ public class CommonConfig {
         Weather.load(builder);
         Temperature.load(builder);
         Crop.load(builder);
+        Animal.load(builder);
         CompatModule.CommonConfig.load(builder);
         Debug.load(builder);
         Map.load(builder);
@@ -228,6 +229,26 @@ public class CommonConfig {
 
             forceCompatMode = builder.comment("Force all crops to use compatibility mode for growth control, not just those tagged as eclipticseasons:natural_plants.")
                     .define("ForceCompatMode", false);
+            builder.pop();
+        }
+    }
+
+    public static class Animal {
+
+        public static ForgeConfigSpec.BooleanValue enableBreed;
+        public static ForgeConfigSpec.BooleanValue enableBee;
+        public static ForgeConfigSpec.BooleanValue enableFishing;
+
+        private static void load(ForgeConfigSpec.Builder builder) {
+            builder.push("Animal");
+            enableBreed = builder.comment("Enable seasonal animal breed.")
+                    .define("EnableSeasonalBreed", false);
+
+            enableBee = builder.comment("Enable seasonal bee behavior, bee would like spring and not like winter and cold.")
+                    .define("EnableSeasonalBee", false);
+
+            enableFishing = builder.comment("Enable seasonal fishing behavior, let enjoy summer.")
+                    .define("EnableSeasonalFishing", false);
             builder.pop();
         }
     }
