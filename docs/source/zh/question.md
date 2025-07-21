@@ -43,7 +43,7 @@ jstack 42928 > a.log
 
 jstack 42928 > D:\logs\mc\_thread\_dump.txt
 
-````
+```
 
 5. **如果出现类似错误 `'jstack' 不是内部或外部命令`**
 
