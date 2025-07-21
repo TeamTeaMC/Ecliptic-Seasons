@@ -1,120 +1,137 @@
-## Detect Problem
+## 问题检测
 
-### Generating a Java Thread Dump for Minecraft
+### 检测服务器卡死问题（非节气也可以使用）
 
-1. **Open Command Prompt (CMD)**
+1. **打开命令提示符（CMD）**
 
-2. **List Java processes**
-   Run the command:
-
-   ```
-   jps -l
-   ```
-
-   Find the line showing Minecraft; the number on the left is the PID (Process ID).
-
-3. **Generate thread dump**
-   Run the command:
-
-   ```
-   jstack <PID> > a.log
-   ```
-
-   Example:
-
-   ```
-   jstack 42928 > a.log
-   ```
-
-   This creates a file named `a.log` in the current directory.
-
-4. **(Optional) Specify output file path or name**
-   Example:
-
-   ```
-   jstack 42928 > D:\logs\mc_thread_dump.txt
-   ```
-
-5. **If you get the error `'jstack' is not recognized as an internal or external command`**
-
-    * Locate your Java installation path, e.g.:
-
-      ```
-      C:\Program Files\Java\jdk-17\bin
-      ```
-
-      ```
-      cd "C:\Program Files\Java\jdk-17\bin"
-      ```
-    * Run the `jstack` command again.
-
-## Compatibility
-
-### Does a certain crop grow based on seasons and humidity? / Does it support seasonal crops from specific mods?
-
-Actually, it’s better to ask the other way around. Ecliptic Seasons doesn’t natively support specific crops
-or blocks, because when all mods are combined, there can be tens of thousands of blocks. However, you can manually add
-compatibility using tags.
-
-If the mods you're using already support Serene Seasons and you haven’t disabled the compatibility settings, then
-seasonal crop behavior will be enabled.
-
-As for humidity, that needs to be configured separately.
-
-### Does this mod work with Serene Seasons？
-
-As a season mod, Ecliptic Seasons shares many similarities with Serene Seasons — both represent the Minecraft year using
-four seasons, change grass and foliage colors, modify rain and snow effects, and control seasonal crop growth. However,
-Minecraft has been around for 15 years, and we aim to push things further.
-
-Also, you might try running both mods together and notice crashes during rain, then assume it’s caused by the new mod.
-In reality, the problem comes from Serene Seasons’ use of a compatibility-unfriendly @Redirect mixin to cache data,
-instead of capturing it with local variables (which was also possible back in the older Mixin days). This design makes
-their code quite fragile.
-
-Sometimes crashes don’t happen because you have mods like Pretty Rain installed. Those mods add separate rendering logic
-that bypasses the risky Serene Seasons code, preventing crashes.
-
-## Commands
-
-### Season
-
-You can set the current day count and solar term in the seasonal system using a command like:
+2. **列出 Java 进程**  
+   运行命令：
 
 ```
+
+jps -l
+
+```
+
+找到显示 Minecraft 的那一行，左侧的数字即为 PID（进程ID）。
+
+3. **生成线程转储**  
+   
+运行命令：
+
+```
+
+jstack <PID> > a.log
+
+```
+
+示例：
+
+```
+
+jstack 42928 > a.log
+
+```
+
+这将在当前目录生成名为 `a.log` 的文件。
+
+4. **（可选）指定输出文件路径或文件名**  
+   
+示例：
+
+```
+
+jstack 42928 > D:\logs\mc\_thread\_dump.txt
+
+````
+
+5. **如果出现类似错误 `'jstack' 不是内部或外部命令`**
+
+- 找到你的 Java 安装路径，例如：
+  ```
+  C:\Program Files\Java\jdk-17\bin
+  ```  
+- 使用 `cd` 命令进入该目录：
+  ```
+  cd "C:\Program Files\Java\jdk-17\bin"
+  ```  
+- 然后重新运行 `jstack` 命令。
+
+## 兼容性
+
+### 某个作物是否根据季节和湿度生长？/ 是否支持特定模组的季节作物？
+
+其实，问法反过来会更好。节气本身并不直接支持特定作物或方块，  
+因为当所有模组叠加时，方块数量可能达到数万。你可以通过手动添加标签来实现兼容。
+
+如果你使用的模组已经支持静谧四季，且你未关闭兼容设置，那么季节作物的行为将被继承。
+
+至于湿度，则需要单独进行配置。
+
+### 这个模组和静谧四季是否兼容？
+
+作为一个季节模组，节气与静谧四季有很多相似之处——  
+两者均用四季表示 Minecraft 年，改变草地和叶子的颜色，修改雨雪效果，控制季节作物生长。  
+但 Minecraft 已有 15 年历史，我们的目标是进一步推动季节系统的发展。
+
+你也许尝试同时运行这两个模组，发现在下雨时游戏崩溃，就认为是新模组导致的。  
+实际上问题出在静谧四季使用了不兼容的 @Redirect mixin 来缓存数据，  
+而没有用本地变量捕获（早期 Mixin 时代也是可行的）。这种设计使代码非常脆弱。
+
+有时没有崩溃，可能是因为你安装了Pretty Rain等模组，它们提供了独立的渲染逻辑，  
+绕开了风险较高的静谧四季代码，从而防止了崩溃。
+
+## 命令
+
+### Season（季节）
+
+你可以使用如下命令设置当前的天数计数和节气：
+
+```
+
 /ecliptic solar set 99
-```
-
-Alternatively, if you remember the solar term names, you can use:
 
 ```
-/ecliptic solar setTerm beginning_of_autumn
-```
 
-### Weather
-
-You can use commands like:
+如果记得节气名称，也可以使用：
 
 ```
+
+/ecliptic solar setTerm beginning\_of\_autumn
+
+```
+
+### Weather（天气）
+
+你可以使用：
+
+```
+
 /weather rain
-```
-
-However, this is an Ecliptic Seasons compatibility behavior that forces all biomes to change their weather state.
-
-It is better to use:
 
 ```
+
+但这属于 节气的兼容行为，会强制所有群系改变天气状态。
+
+更好的做法是使用：
+
+```
+
 /ecliptic weather <biome> rain
-```
-
-where `<biome>` can be a biome tag or biome ID.
-
-### Time
-
-Ecliptic Seasons overrides the vanilla command, so commands like:
 
 ```
+
+其中 `<biome>` 可以是群系标签或群系 ID。
+
+### Time（时间）
+
+节气会覆写原版命令，因此：
+
+```
+
 /time set night
+
 ```
 
-will change dynamically according to the season.
+会根据季节动态变化。
+
