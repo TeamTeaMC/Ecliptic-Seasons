@@ -51,9 +51,10 @@
 
 ### 参数说明
 
-#### 可选参数：target【String|Object】
+#### 可选参数：target【String|List】
 
-用于定义应用的模型对象，可以是模型id或者id字符串列表。如果不写那么会根据当前id进行自动映射。如当前在资源包中位置为`minecraft\eclipticseasons\season_textures\oak_leaves.json`，那么会自动应用到模型``minecraft:block/oak_leaves`上。
+用于定义应用的模型对象，可以是模型id或者id字符串列表。如果不写那么会根据当前id进行自动映射。如当前在资源包中位置为
+`minecraft\eclipticseasons\season_textures\oak_leaves.json`，那么会自动应用到模型``minecraft:block/oak_leaves`上。
 
 #### 参数：biomes【String|Array】
 
@@ -74,7 +75,8 @@
 **可选子参数：textures【Array|Object】、transition_textures【Array】**
 
 如果在该季节内方块外观不变，应该使用textures，否则使用transition_textures。注意transition_textures仅会应用于区间内的第一个节气产生变化。
-必须注意的是，如果这里想做变化，那么需要给加一个[]变成数组，否则只需要写一个Texture Map进行映射覆盖即可。对于transition_textures，最好写为双列表，即[[xx,xx]]这样的形式。
+必须注意的是，如果这里想做变化，那么需要给加一个[]变成数组，否则只需要写一个Texture
+Map进行映射覆盖即可。对于transition_textures，最好写为双列表，即[[xx,xx]]这样的形式。
 
 **可选子参数：tint【Object】**
 

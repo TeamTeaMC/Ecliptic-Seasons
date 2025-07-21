@@ -22,6 +22,19 @@ nav:
               - Model Definitions: 'en/custom/model_definitions.md'
               - Snowy Block Models: 'en/custom/snow_definitions.md'
               - Seasonal Block Models: 'en/custom/season_definitions.md'
+              - Seasonal Textures Changes of Models: 'en/custom/season_textures.md'
+              - Fallen Leaves Particles: 'en/custom/fallen_leaves.md'
+              - Seasonal Biome Ambient: 'en/custom/ambient.md'
+          - Data packs:
+              - Crop Growth: 'en/data/crop.md'
+              - Agro Climate Zones: 'en/data/agro_climate.md'
+              - Override Biome Climate Settings: 'en/data/biome_climate_setting.md'
+              - Adjust Snow Timing: 'en/data/snow_term.md'
+              - Override Biome Weather: 'en/data/biome_rain.md'
+              - Modify Season Cycle: 'en/data/season_cycle.md'
+              - Create Season Phases: 'en/data/season_phase.md'
+              - Humidity Control: 'en/data/humidity_control.md'
+              - Season Quests: 'en/data/season_quest.md'
       - 中文:
           - 首页: 'zh/index.md'
           - 气候: 'zh/climate.md'
@@ -29,9 +42,22 @@ nav:
           - 兼容性: 'zh/compat.md'
           - 数据包基本: 'zh/datapack.md'
           - 自定义:
-            - 模型映射: 'zh/custom/model_definitions.md'
-            - 覆雪方块定义与模型: 'zh/custom/snow_definitions.md'
-            - 四季模型: 'zh/custom/season_definitions.md'
+              - 模型映射: 'zh/custom/model_definitions.md'
+              - 覆雪方块定义与模型: 'zh/custom/snow_definitions.md'
+              - 四季模型: 'zh/custom/season_definitions.md'
+              - 四季模型贴图调整: 'zh/custom/season_textures.md'
+              - 落叶: 'zh/custom/fallen_leaves.md'
+              - 季节音效: 'zh/custom/ambient.md'
+          - 数据包:
+              - 作物生长: 'zh/data/crop.md'
+              - 农业气候区: 'zh/data/agro_climate.md'
+              - 覆写群系气候设定: 'zh/data/biome_climate_setting.md'
+              - 调整下雪时间: 'zh/data/snow_term.md'
+              - 覆写群系天气: 'zh/data/biome_rain.md'
+              - 修改季节循环: 'zh/data/season_cycle.md'
+              - 创建季节片段: 'zh/data/season_phase.md'
+              - 湿度调整: 'zh/data/humidity_control.md'
+              - 季节任务: 'zh/data/season_quest.md'
 
 
 markdown_extensions:

@@ -1,6 +1,5 @@
-数据包
-
-支持数据包是Minecraft模组的基础性工作，对于节气，这也不例外。受到开发时间的限制，目前支持的数据包有限。
+支持数据包是Minecraft模组的基础性工作，对于节气，这也不例外。
+本章主要介绍节气的一些标签和进度系统。
 
 ## 群系天气（局部天气）
 
@@ -82,3 +81,50 @@ Tag平台运行，目前主要分为三种。四季型地区，干湿季地区�
 | `eclipticseasons:crops/moist_humid`     | 湿润   | 潮湿   |
 | `eclipticseasons:crops/humid_humid`     | 潮湿   | 潮湿   |
 
+### 额外控制
+
+| 标签名                                | 用途              |
+|:-----------------------------------|:----------------|
+| `eclipticseasons:natural_plants`   | 强制方块兼容节气的生长控制系统 |
+| `eclipticseasons:volatile_plants`  | 强制方块添加随机刻       | 
+| `eclipticseasons:dark_grow_plants` | 适应弱光温室的植物       | 
+
+### 农业气候区
+
+| 标签名                         | 说明     |
+|:----------------------------|:-------|
+| `eclipticseasons:all`       | 所有     |
+| `eclipticseasons:overworld` | 主世界气候区 | 
+
+## 粒子效果
+
+| 标签名                                  | 用途        |
+|:-------------------------------------|:----------|
+| `eclipticseasons:habitat/butterfly`  | 蝴蝶粒子源     |
+| `eclipticseasons:habitat/firefly`    | 萤火虫粒子源    | 
+| `eclipticseasons:none_fallen_leaves` | 不应该有落叶的方块 |
+
+## 中暑抵抗
+
+| 标签名                                       | 类型    |
+|:------------------------------------------|-------|
+| `eclipticseasons:heatstroke_resistant`    | 头盔附魔  |
+| `eclipticseasons:cooling_items`           | 物品栏物品 | 
+| `eclipticseasons:heat_protective_helmets` | 头盔物品  |
+| `heatstroke_resistant`                    | 生物状态  | 
+
+## 杂项
+
+| 标签名                                              | 用途              |
+|:-------------------------------------------------|:----------------|
+| `eclipticseasons:snow_overlay_cannot_survive_on` | 用于快速禁用某些方块的覆雪效果 |
+
+## 进度系统
+
+节气的进度系统主要结合Minecraft的一些设置，因此受到数据驱动限制，进行修改必须要覆写或者考虑一些魔改模组。
+
+这里提及主要是节气的一些特殊控制参数。在完成季节进度之后，会奖励一下心髓物品。
+
+如果不想让玩家获得，可以覆盖`eclipticseasons:gifts`这个目录下的战利品表或者调整进度。
+
+此外，注意节气进度使用了父亲函数来锁进度，即`eclipticseasons:parent`。

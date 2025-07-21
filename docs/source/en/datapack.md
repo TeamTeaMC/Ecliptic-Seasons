@@ -1,7 +1,5 @@
-## Data Packs
-
-Supporting data packs is a foundational feature for Minecraft mods, and this is no exception for Ecliptic Seasons. Due
-to limited development time, only a few data pack types are currently supported.
+Supporting data packs is a fundamental part of Minecraft mod development, and Ecliptic Seasons are no exception.  
+This chapter introduces several tags and advancement systems related to Ecliptic Seasons.
 
 ## Biome Weather (Localized Weather)
 
@@ -45,9 +43,11 @@ default to having the seasons **Spring + Summer + Autumn** and humidity range **
 
 ### Season Types
 
-Crop seasonal growth control now supports a richer set of data pack options, replacing the older simple configuration system. However, you may still use the system described here if preferred.
+Crop seasonal growth control now supports a richer set of data pack options, replacing the older simple configuration
+system. However, you may still use the system described here if preferred.
 
-By default, out-of-season crops may still grow at a reduced rate during adjacent or similar seasons. For example, crops suited for summer and autumn may grow slowly in spring. However, they will not grow at all during winter.
+By default, out-of-season crops may still grow at a reduced rate during adjacent or similar seasons. For example, crops
+suited for summer and autumn may grow slowly in spring. However, they will not grow at all during winter.
 
 | Type Name                                    | Supported Seasons        |
 |----------------------------------------------|--------------------------|
@@ -71,7 +71,8 @@ By default, out-of-season crops may still grow at a reduced rate during adjacent
 
 ### Humidity Types
 
-There are only five humidity levels. By default, crops can grow slowly under humidity levels adjacent to their required range. 
+There are only five humidity levels. By default, crops can grow slowly under humidity levels adjacent to their required
+range.
 However, if the difference is too great, growth will not occur at all.
 
 | Type Name                               | Minimum Humidity | Maximum Humidity |
@@ -91,3 +92,55 @@ However, if the difference is too great, growth will not occur at all.
 | `eclipticseasons:crops/moist_moist`     | Moist            | Moist            |
 | `eclipticseasons:crops/moist_humid`     | Moist            | Humid            |
 | `eclipticseasons:crops/humid_humid`     | Humid            | Humid            |
+
+### Extra Controls
+
+| Tag Name                           | Purpose                                                            |
+|:-----------------------------------|:-------------------------------------------------------------------|
+| `eclipticseasons:natural_plants`   | Force blocks to comply with Ecliptic Seasons growth control system |
+| `eclipticseasons:volatile_plants`  | Force blocks to tick randomly                                      |
+| `eclipticseasons:dark_grow_plants` | Plants adapted to low-light greenhouses                            |
+
+### Agricultural Climate Zones
+
+| Tag Name                    | Description            |
+|:----------------------------|:-----------------------|
+| `eclipticseasons:all`       | All                    |
+| `eclipticseasons:overworld` | Overworld climate zone |
+
+## Particle Effects
+
+| Tag Name                             | Purpose                                  |
+|:-------------------------------------|:-----------------------------------------|
+| `eclipticseasons:habitat/butterfly`  | Butterfly particle source                |
+| `eclipticseasons:habitat/firefly`    | Firefly particle source                  |
+| `eclipticseasons:none_fallen_leaves` | Blocks that shouldn't have fallen leaves |
+
+## Heatstroke Resistance
+
+| Tag Name                                  | Type               |
+|:------------------------------------------|:-------------------|
+| `eclipticseasons:heatstroke_resistant`    | Helmet enchantment |
+| `eclipticseasons:cooling_items`           | Inventory items    |
+| `eclipticseasons:heat_protective_helmets` | Helmet items       |
+| `heatstroke_resistant`                    | Entity state       |
+
+## Miscellaneous
+
+| Tag Name                                         | Purpose                                                |
+|:-------------------------------------------------|:-------------------------------------------------------|
+| `eclipticseasons:snow_overlay_cannot_survive_on` | Used to quickly disable snow overlay on certain blocks |
+
+## Advancement System
+
+The advancement system of Ecliptic Seasons is largely based on Minecraft’s built-in setup, and is thus constrained by
+data-driven
+design. Modification typically requires overrides or support from modding mods.
+
+This section refers to some special control parameters of Ecliptic Seasons. Upon completing seasonal progress, a *Core
+Essence* item is rewarded.
+
+If you don't want players to receive this item, you can override the loot tables under the `eclipticseasons:gifts`
+directory or adjust the advancements accordingly.
+
+Note that advancements of Ecliptic Seasons use a parent function to lock progression, namely `eclipticseasons:parent`.
