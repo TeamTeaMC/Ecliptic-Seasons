@@ -7,9 +7,15 @@ import com.teamtea.eclipticseasons.api.constant.tag.AnimalBehaviorTag;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.animal.Bee;
+import net.minecraft.world.entity.animal.Cow;
 import net.minecraft.world.level.Level;
+
+import java.util.List;
 
 public class AnimalHooks {
     public static boolean cancelBreed(Animal animal) {
@@ -43,7 +49,7 @@ public class AnimalHooks {
 
         }
 
-        return season != Season.SPRING && season != Season.SUMMER;
+        return true;
     }
 
     public static boolean cancelBeePollinate(Bee bee) {
@@ -63,5 +69,26 @@ public class AnimalHooks {
             }
         }
         return season != Season.SPRING && level.getRandom().nextBoolean();
+    }
+
+    public static List<Component> getBreedInfo(LivingEntity entity) {
+        return entity == null ? List.of() : getBreedInfo(entity.getType());
+    }
+
+    public static List<Component> getBreedInfo(EntityType<?> entity) {
+        if (!CommonConfig.Animal.enableBreed.get()) return List.of();
+
+        BreedSeasonType breedSeasonType = null;
+        for (BreedSeasonType seasonType : BreedSeasonType.values()) {
+            if (entity.is(seasonType.getTag())) {
+                breedSeasonType = seasonType;
+                break;
+            }
+        }
+
+        if (breedSeasonType != null) {
+            return breedSeasonType.getInfo().getTooltip();
+        }
+        return List.of();
     }
 }

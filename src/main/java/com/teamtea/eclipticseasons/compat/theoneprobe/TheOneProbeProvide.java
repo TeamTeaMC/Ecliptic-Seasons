@@ -12,6 +12,7 @@ public final class TheOneProbeProvide implements Function<ITheOneProbe, Void> {
     public Void apply(@Nullable ITheOneProbe probe) {
         if (probe != null) {
             probe.registerProvider(new TOPCropProvider());
+            probe.registerEntityProvider(new TOPAnimalProvider());
         }
         return null;
     }

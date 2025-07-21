@@ -85,6 +85,7 @@
   "block.eclipticseasons.summer_greenhouse_core": "Summer Greenhouse Core",
   "block.eclipticseasons.winter_greenhouse_core": "Winter Greenhouse Core",
   "commands.eclipticseasons.solar.set": "Set the solar day to %s",
+  "config.jade.plugin_eclipticseasons.animal": "Animal",
   "config.jade.plugin_eclipticseasons.crop": "Crop",
   "config.jade.plugin_eclipticseasons.crop.shift_hint": "Shift Key Hint",
   "config.jade.plugin_eclipticseasons.snowy_status": "Show Snowy Status",

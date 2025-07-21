@@ -31,8 +31,7 @@ public class TOPCropProvider implements IProbeInfoProvider {
         if (ClientConfig.GUI.agriculturalInformation.get()) {
             List<Component> components = CropGrowthHandler.appendInfo(level,blockState);
             if (!components.isEmpty()) {
-                if (player == null
-                        || player.isShiftKeyDown()) {
+                if (player == null || player.isShiftKeyDown()) {
                     components.forEach(iProbeInfo::mcText);
                 } else {
                     iProbeInfo.mcText(Component.translatable("hint.jade.plugin_eclipticseasons.crop.show").withStyle(ChatFormatting.GRAY));

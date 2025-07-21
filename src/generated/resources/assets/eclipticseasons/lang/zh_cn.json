@@ -85,6 +85,7 @@
   "block.eclipticseasons.summer_greenhouse_core": "夏季温室之心",
   "block.eclipticseasons.winter_greenhouse_core": "冬季温室之心",
   "commands.eclipticseasons.solar.set": "已将节气天数设置为第%s天",
+  "config.jade.plugin_eclipticseasons.animal": "动物",
   "config.jade.plugin_eclipticseasons.crop": "作物",
   "config.jade.plugin_eclipticseasons.crop.shift_hint": "Shift按键提示",
   "config.jade.plugin_eclipticseasons.snowy_status": "显示覆雪状态",

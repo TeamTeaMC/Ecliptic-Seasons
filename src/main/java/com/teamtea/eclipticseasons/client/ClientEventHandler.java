@@ -15,6 +15,7 @@ import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.core.snow.SnowChecker;
 import com.teamtea.eclipticseasons.common.core.solar.ClientSolarDataManager;
+import com.teamtea.eclipticseasons.common.game.AnimalHooks;
 import com.teamtea.eclipticseasons.config.ClientConfig;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.client.Minecraft;
@@ -23,6 +24,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.SpawnEggItem;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
@@ -47,11 +49,16 @@ public final class ClientEventHandler {
 
     @SubscribeEvent
     public static void addTooltips(ItemTooltipEvent event) {
-        if (ClientConfig.GUI.agriculturalInformation.get()
-                && event.getItemStack().getItem() instanceof BlockItem blockItem) {
-            event.getToolTip().addAll(CropGrowthHandler.appendInfo(
-                    event.getEntity() != null ? event.getEntity().level() : null,
-                    blockItem.getBlock().defaultBlockState()));
+        if (ClientConfig.GUI.agriculturalInformation.get()) {
+            if (event.getItemStack().getItem() instanceof BlockItem blockItem) {
+                event.getToolTip().addAll(CropGrowthHandler.appendInfo(
+                        event.getEntity() != null ? event.getEntity().level() : null,
+                        blockItem.getBlock().defaultBlockState()));
+            }
+            if (event.getItemStack().getItem() instanceof SpawnEggItem blockItem) {
+                event.getToolTip().addAll(AnimalHooks.getBreedInfo(
+                        blockItem.getType(event.getItemStack().getTag())));
+            }
         }
     }
 
