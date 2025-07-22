@@ -81,6 +81,7 @@ public class Lang_ZH extends LangHelper {
         add("info.eclipticseasons.environment.humidity.humid", "潮湿");
         add("info.eclipticseasons.environment.humidity", "适宜湿度： ");
         add("info.eclipticseasons.environment.season", "适宜季节： ");
+        add("info.eclipticseasons.environment.season.feed", "繁殖季节： ");
         add("info.eclipticseasons.environment.season.spring", "春");
         add("info.eclipticseasons.environment.season.summer", "夏");
         add("info.eclipticseasons.environment.season.autumn", "秋");

@@ -65,7 +65,6 @@ public class CalendarBlockEntityRenderer implements BlockEntityRenderer<Calendar
 
         setEnv(facing, blockEntity.getBlockPos(), poseStack, bufferIn, combinedLight,
                 (PoseStack matrixStackIn, MultiBufferSource multiBufferSource, Integer combinedLightIn) -> {
-
                     matrixStackIn.translate(0, -0.0f, 0);
                     drawIcon(seasonPhaseUsed.getIcon(),
                             seasonPhaseUsed.getIconWidth(),

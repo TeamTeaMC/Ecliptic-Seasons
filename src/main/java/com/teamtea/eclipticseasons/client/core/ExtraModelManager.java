@@ -517,7 +517,7 @@ public class ExtraModelManager {
             //         EclipticSeasons.logger(e);
             //     }
             // }
-            BlockPos.MutableBlockPos checkPos = new BlockPos.MutableBlockPos(pos.getX(), pos.getY()+1, pos.getZ());
+            BlockPos.MutableBlockPos checkPos = new BlockPos.MutableBlockPos(pos.getX(), pos.getY() + 1, pos.getZ());
             if (blockAndTintGetter.getBrightness(LightLayer.SKY, checkPos) >= 9) {
                 int y_real = blockAndTintGetter instanceof IMapSliceProvider ip ?
                         ip.getSolidBlockHeight(pos) :
@@ -545,7 +545,8 @@ public class ExtraModelManager {
         if (isLight) {
             // checkPos.set(pos.getX(), pos.getY() + 1, pos.getZ());
             BlockPos checkPos = pos.above();
-            if (leaveLike) { {
+            if (leaveLike) {
+                {
                     if (!specialLeaves) {
                         BlockState aboveState = blockAndTintGetter.getBlockState(checkPos);
                         // boolean checkExtra = aboveState.is(state.getBlock())
@@ -569,8 +570,11 @@ public class ExtraModelManager {
                     }
                 }
             } else {
-                if (MapChecker.extraSnowPassable(state))
+                if (MapChecker.extraSnowPassable(state)) {
                     isLight = !MapChecker.extraSnowPassable(blockAndTintGetter.getBlockState(checkPos));
+                } else if (!ClientConfig.Renderer.snowUnderTree.get()) {
+                    isLight = !MapChecker.solidTest(blockAndTintGetter.getBlockState(checkPos));
+                }
             }
         }
 

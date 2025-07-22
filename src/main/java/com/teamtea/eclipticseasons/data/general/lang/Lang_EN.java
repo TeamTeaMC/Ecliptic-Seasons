@@ -79,6 +79,7 @@ public class Lang_EN extends LangHelper {
         add("info.eclipticseasons.environment.humidity.humid", "Humid");
         add("info.eclipticseasons.environment.humidity", "Suitable Humidity:");
         add("info.eclipticseasons.environment.season", "Suitable Season:");
+        add("info.eclipticseasons.environment.season.feed", "Breeding Season:");
         add("info.eclipticseasons.environment.season.spring", "Spring");
         add("info.eclipticseasons.environment.season.summer", "Summer");
         add("info.eclipticseasons.environment.season.autumn", "Autumn");

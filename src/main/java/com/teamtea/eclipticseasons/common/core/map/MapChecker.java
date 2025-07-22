@@ -494,6 +494,11 @@ public class MapChecker {
         return height;
     }
 
+    public static boolean solidTest(BlockState state) {
+        return Heightmap.Types.MOTION_BLOCKING.isOpaque().test(state)
+                && !MapChecker.extraSnowPassable(state);
+    }
+
     public static boolean extraSnowPassable(BlockState state) {
         SnowDefinition.Info snow = SnowChecker.getUncacheSnow(state);
         if (snow != SnowDefinition.Info.EMPTY) {

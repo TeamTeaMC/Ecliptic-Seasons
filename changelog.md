@@ -1,3 +1,11 @@
+### 0.11.8.1
+
+- Ported the animal breeding season control system, bee hibernation mechanism, and fishing control mechanics to 1.20.
+  These features need to be manually enabled in the config.
+- Added Jade and The One Probe support to show breeding season information for animals.
+- Added spawn egg tooltip support to display breeding season info.
+- Other miscellaneous issues.
+
 ## 0.11.8
 
 - It is now possible to seasonally switch the textures of specified models and disable tinting. You can refer to the
