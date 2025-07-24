@@ -1,3 +1,8 @@
+### 0.11.8.2
+
+- Fix #74 in GitHub issues.
+- Apply seasonal settings from Agro Climatic Zone to animal hooks.
+
 ### 0.11.8.1
 
 - Ported the animal breeding season control system, bee hibernation mechanism, and fishing control mechanics to 1.20.

@@ -11,7 +11,7 @@ successfully.
 
 The greenhouse maintains suitable temperature and humidity conditions for crop growth.  
 Additionally, for crops that require seasons, you need to place a Seasonal Greenhouse Core.  
-The Seasonal Greenhouse Core is the result of placing the “core” into a container.
+The Seasonal Greenhouse Core is the result of placing the “essence” into a container.
 
 There are two types of greenhouses: a regular greenhouse and a low-light greenhouse.
 

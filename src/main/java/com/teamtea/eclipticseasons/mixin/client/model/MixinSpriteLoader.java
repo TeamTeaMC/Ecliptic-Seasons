@@ -4,16 +4,15 @@ package com.teamtea.eclipticseasons.mixin.client.model;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.client.core.ExtraModelManager;
-import com.teamtea.eclipticseasons.client.util.ColorHelper;
 import com.teamtea.eclipticseasons.client.util.ImageHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.SpriteContents;
 import net.minecraft.client.renderer.texture.SpriteLoader;
-import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.resources.metadata.animation.AnimationMetadataSection;
 import net.minecraft.client.resources.metadata.animation.FrameSize;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
+import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraftforge.fml.loading.FMLLoader;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -33,9 +32,6 @@ public abstract class MixinSpriteLoader {
     @Shadow
     private @Final ResourceLocation location;
 
-
-    // 我们的问题在于检查
-    // 这里可以检查加载的纹理，过一遍
     @Inject(method = "loadSprite", at = @At("RETURN"))
     private static void eclipticseasons$loadSprite(ResourceLocation resourceLocation, Resource resource, CallbackInfoReturnable<SpriteContents> cir) {
         if (true) {
@@ -53,16 +49,14 @@ public abstract class MixinSpriteLoader {
             return;
         }
 
-        if (!ExtraModelManager.blocksCache.containsKey(resourceLocation)) {
-            return;
-        }
+        // if (!ExtraModelManager.blocksCache.containsKey(resourceLocation)) {
+        //     return;
+        // }
         ExtraModelManager.blocksCache.put(resourceLocation, cir.getReturnValue());
 
         if (cir.getReturnValue().name().getPath().contains("sapling")
-                || cir.getReturnValue().name().getPath().contains("wild")
-                || cir.getReturnValue().name().getPath().contains("tulip")
-                || cir.getReturnValue().name().getPath().contains("rose")
-                || cir.getReturnValue().name().getPath().contains("bamboo")) {
+                || cir.getReturnValue().name().getNamespace().contains("kaleido")
+                || cir.getReturnValue().name().getNamespace().contains("farm")) {
             AnimationMetadataSection section;
             AnimationMetadataSection snowySection;
             Resource snowy;
@@ -86,16 +80,15 @@ public abstract class MixinSpriteLoader {
     }
 
 
-    // 这个方法改一下，总之可以改
     @ModifyVariable(method = "stitch", argsOnly = true, index = 1, at = @At("HEAD"))
     private List<SpriteContents> eclipticseasons$stitch(List<SpriteContents> contents) {
         if (true) {
             return contents;
         }
-        if (location.equals(TextureAtlas.LOCATION_BLOCKS)) {
+        if (location.equals(InventoryMenu.BLOCK_ATLAS)) {
             ArrayList<SpriteContents> replacedContents = new ArrayList<>(contents);
 
-            AnimationMetadataSection snowySection;
+            AnimationMetadataSection snowySection=null;
             Resource snowy;
             NativeImage snowyImage = null;
             try {
@@ -107,13 +100,14 @@ public abstract class MixinSpriteLoader {
             }
             if (snowyImage != null) {
                 NativeImage finalSnowyImage = snowyImage;
+                AnimationMetadataSection finalSnowySection = snowySection;
                 ExtraModelManager.blocksCache.forEach(
                         (resourceLocation, spriteContents) -> {
                             if (spriteContents != null) {
                                 NativeImage originalImage = spriteContents.getOriginalImage();
                                 if (originalImage.getWidth() == finalSnowyImage.getWidth()
                                         && originalImage.getHeight() == finalSnowyImage.getHeight()) {
-                                    SpriteContents spriteContents1 = eclipticseasons$getProcessedSpriteContents(finalSnowyImage, spriteContents);
+                                    SpriteContents spriteContents1 = eclipticseasons$getProcessedSpriteContents(finalSnowyImage, finalSnowySection, spriteContents);
                                     if (spriteContents1 != null)
                                         replacedContents.add(spriteContents1);
                                 }
@@ -130,7 +124,7 @@ public abstract class MixinSpriteLoader {
 
     @Unique
     private static SpriteContents eclipticseasons$getProcessedSpriteContents(
-            NativeImage snowyImage, SpriteContents contents) {
+            NativeImage snowyImage, AnimationMetadataSection snowySection, SpriteContents contents) {
         ResourceLocation name = contents.name();
         AnimationMetadataSection section = null;
 
@@ -149,18 +143,22 @@ public abstract class MixinSpriteLoader {
                 contents.getOriginalImage().getWidth(),
                 contents.getOriginalImage().getHeight(),
                 true);
+        //
+        // for (int i = 0; i < frameSize.width(); i++) {
+        //     for (int j = 0; j < frameSize.height(); j++) {
+        //         if (snowyImage.getPixelRGBA(i, j) != 0) {
+        //             image.setPixelRGBA(i, j, snowyImage.getPixelRGBA(i, j));
+        //         } else {
+        //             image.setPixelRGBA(i, j, original.getPixelRGBA(i, j));
+        //         }
+        //     }
+        // }
 
-        for (int i = 0; i < frameSize.width(); i++) {
-            for (int j = 0; j < frameSize.height(); j++) {
-                if (snowyImage.getPixelRGBA(i, j) != 0) {
-                    image.setPixelRGBA(i, j, snowyImage.getPixelRGBA(i, j));
-                } else {
-                    image.setPixelRGBA(i, j, original.getPixelRGBA(i, j));
-                }
-            }
-        }
+        ImageHelper.fixSnowImageColor(section, original, snowySection, snowyImage);
 
 
-        return new SpriteContents(name.withSuffix(".snowy"), frameSize, image, section);
+        return new SpriteContents(name
+                .withSuffix(".snowy")
+                , frameSize, image, section);
     }
 }

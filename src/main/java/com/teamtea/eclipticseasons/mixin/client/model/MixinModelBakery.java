@@ -13,6 +13,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.BushBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -27,7 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 
-@Mixin(value = ModelBakery.class,priority = 500)
+@Mixin(value = ModelBakery.class, priority = 500)
 public abstract class MixinModelBakery {
     @Shadow
     private @Final Map<ResourceLocation, BakedModel> bakedTopLevelModels;
@@ -51,27 +52,28 @@ public abstract class MixinModelBakery {
         // List<Block> blocks = BuiltInRegistries.BLOCK.stream().filter(block -> block.defaultBlockState().isCollisionShapeFullBlock(EmptyBlockGetter.INSTANCE, BlockPos.ZERO)).toList();
         List<Block> blocks = BuiltInRegistries.BLOCK.stream().toList();
         for (Block block : blocks) {
-            for (BlockState possibleState : block.getStateDefinition().getPossibleStates()) {
-                UnbakedModel unbakedModel = topLevelModels.getOrDefault(BlockModelShaper.stateToModelLocation(possibleState), null);
-                if (unbakedModel != null) {
-                    if (unbakedModel instanceof MultiVariant multiVariant) {
-                        for (Variant variant : multiVariant.getVariants()) {
-                            UnbakedModel unbakedModelVariant = unbakedCache.get(variant.getModelLocation());
-                            if (unbakedModelVariant instanceof BlockModel blockModel) {
-                                blockModel.textureMap.forEach(
-                                        (s, materialStringEither) -> {
-                                            materialStringEither.left().ifPresent(
-                                                    material -> {
-                                                        ExtraModelManager.blocksCache.put(material.texture(), null);
-                                                    }
-                                            );
-                                        }
-                                );
+            if (block instanceof BushBlock)
+                for (BlockState possibleState : block.getStateDefinition().getPossibleStates()) {
+                    UnbakedModel unbakedModel = topLevelModels.getOrDefault(BlockModelShaper.stateToModelLocation(possibleState), null);
+                    if (unbakedModel != null) {
+                        if (unbakedModel instanceof MultiVariant multiVariant) {
+                            for (Variant variant : multiVariant.getVariants()) {
+                                UnbakedModel unbakedModelVariant = unbakedCache.get(variant.getModelLocation());
+                                if (unbakedModelVariant instanceof BlockModel blockModel) {
+                                    blockModel.textureMap.forEach(
+                                            (s, materialStringEither) -> {
+                                                materialStringEither.left().ifPresent(
+                                                        material -> {
+                                                            ExtraModelManager.blocksCache.put(material.texture(), null);
+                                                        }
+                                                );
+                                            }
+                                    );
+                                }
                             }
                         }
                     }
                 }
-            }
         }
 
     }

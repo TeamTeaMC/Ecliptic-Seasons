@@ -415,7 +415,7 @@ public final class CropGrowthHandler {
             for (Humidity collectValue : Humidity.collectValues()) {
                 GrowParameter parameter = growControl_Temp.getGrowParameter(collectValue, state);
                 if (parameter != null
-                        && parameter.grow_chance() > 0.5f) {
+                        && parameter.grow_chance() > 0.7f) {
                     humidities.add(collectValue);
                 }
             }
