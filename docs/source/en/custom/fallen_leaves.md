@@ -102,3 +102,42 @@ The `colors`, `weights`, and `sprites` fields all support the **SolarTermMap** f
   "source": "custom"
 }
 ```
+
+Here’s another example:
+
+Some parameters can be omitted. source can be set to map (map color), block (block color, some leaves can be tinted), texture (extracted from texture), or custom (custom color).
+
+Note: Tags are used here for simplified display—be specific in actual usage.
+
+```json
+{
+  "block": {
+    "blocks": "#minecraft:leaves"
+  },
+  "location": {
+    "biomes": "#eclipticseasons:seasonal"
+  },
+  "sprites": {
+    "default": [
+      "eclipticseasons:fallen_leaves/leaf_0",
+      "eclipticseasons:fallen_leaves/leaf_1",
+      "eclipticseasons:fallen_leaves/leaf_2",
+      "eclipticseasons:fallen_leaves/leaf_3",
+      "eclipticseasons:fallen_leaves/leaf_4",
+      "eclipticseasons:fallen_leaves/leaf_5",
+      "eclipticseasons:fallen_leaves/leaf_6",
+      "eclipticseasons:fallen_leaves/leaf_7",
+      "eclipticseasons:fallen_leaves/leaf_8",
+      "eclipticseasons:fallen_leaves/leaf_9",
+      "eclipticseasons:fallen_leaves/leaf_10",
+      "eclipticseasons:fallen_leaves/leaf_11",
+      "eclipticseasons:fallen_leaves/leaf_12",
+      "eclipticseasons:fallen_leaves/leaf_13",
+      "eclipticseasons:fallen_leaves/leaf_14",
+      "eclipticseasons:fallen_leaves/leaf_15"
+    ]
+  },
+  "source": "block"
+}
+```
+

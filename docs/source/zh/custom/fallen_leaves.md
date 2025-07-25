@@ -95,6 +95,42 @@
 }
 ```
 
+另一个示例：
 
+部分参数可省略，source 可设为 map（地图色）、block（方块色，部分树叶可染色）、texture（提取纹理色）或 custom（自定义色）。
+
+注意这里用了标签来简化展示，实际应用请保持针对性。
+
+```json
+{
+  "block": {
+    "blocks": "#minecraft:leaves"
+  },
+  "location": {
+    "biomes": "#eclipticseasons:seasonal"
+  },
+  "sprites": {
+    "default": [
+      "eclipticseasons:fallen_leaves/leaf_0",
+      "eclipticseasons:fallen_leaves/leaf_1",
+      "eclipticseasons:fallen_leaves/leaf_2",
+      "eclipticseasons:fallen_leaves/leaf_3",
+      "eclipticseasons:fallen_leaves/leaf_4",
+      "eclipticseasons:fallen_leaves/leaf_5",
+      "eclipticseasons:fallen_leaves/leaf_6",
+      "eclipticseasons:fallen_leaves/leaf_7",
+      "eclipticseasons:fallen_leaves/leaf_8",
+      "eclipticseasons:fallen_leaves/leaf_9",
+      "eclipticseasons:fallen_leaves/leaf_10",
+      "eclipticseasons:fallen_leaves/leaf_11",
+      "eclipticseasons:fallen_leaves/leaf_12",
+      "eclipticseasons:fallen_leaves/leaf_13",
+      "eclipticseasons:fallen_leaves/leaf_14",
+      "eclipticseasons:fallen_leaves/leaf_15"
+    ]
+  },
+  "source": "block"
+}
+```
 
 
