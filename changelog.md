@@ -1,3 +1,9 @@
+### 0.11.8.3
+
+- Improved biome ID deserialization to reduce null returns.
+- added null checks for sub-biome detection.
+- switched DH 2.3.3b-specific optimization to reflection.
+
 ### 0.11.8.2
 
 - Fix #74 in GitHub issues.

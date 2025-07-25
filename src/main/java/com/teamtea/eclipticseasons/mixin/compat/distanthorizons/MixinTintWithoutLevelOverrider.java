@@ -1,12 +1,16 @@
 package com.teamtea.eclipticseasons.mixin.compat.distanthorizons;
 
 
+import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.client.util.ClientRef;
 import loaderCommon.forge.com.seibel.distanthorizons.common.wrappers.block.TintWithoutLevelOverrider;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import java.lang.reflect.Field;
+import java.util.Map;
 
 @Mixin({ClientRef.class})
 public abstract class MixinTintWithoutLevelOverrider {
@@ -18,7 +22,16 @@ public abstract class MixinTintWithoutLevelOverrider {
     )
     private static void eclipticseasons$onClientPlayerExit(CallbackInfo ci) {
         // 也不知道为什么DH不重置
-        TintWithoutLevelOverrider.BIOME_BY_RESOURCE_STRING.clear();
+        try {
+            Field field = TintWithoutLevelOverrider.class.getDeclaredField("BIOME_BY_RESOURCE_STRING");
+            field.setAccessible(true);
+            Object map = field.get(null);
+            if (map instanceof Map<?, ?>) {
+                ((Map<?, ?>) map).clear();
+            }
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            EclipticSeasons.logger(e);
+        }
     }
 
     // @WrapOperation(

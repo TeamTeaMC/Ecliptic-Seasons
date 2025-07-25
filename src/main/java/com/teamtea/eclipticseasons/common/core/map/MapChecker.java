@@ -8,10 +8,7 @@ import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.core.snow.SnowChecker;
 import com.teamtea.eclipticseasons.common.misc.SimplePair;
 import com.teamtea.eclipticseasons.config.CommonConfig;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.core.Holder;
-import net.minecraft.core.SectionPos;
+import net.minecraft.core.*;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ChunkHolder;
 import net.minecraft.server.level.ServerChunkCache;
@@ -34,10 +31,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.IdentityHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -89,19 +83,25 @@ public class MapChecker {
 
 
     public static boolean isSmallBiome(Holder<Biome> biomeHolder) {
-        return BiomeClimateManager.SMALL_BIOME_MAP.containsKey(biomeHolder.value());
+        return biomeHolder != null && BiomeClimateManager.SMALL_BIOME_MAP.containsKey(biomeHolder.value());
     }
 
     public static Holder<Biome> idToBiome(Level level, int id) {
         var list = WeatherManager
                 .getBiomeList(level);
-        return
-                list != null ?
-                        list.get(id).biomeHolder :
-                        level.registryAccess()
-                                .registry(Registries.BIOME)
-                                .flatMap(registry -> registry.getHolder(id))
-                                .orElse(null);
+        if (list != null) {
+            Holder<Biome> biomeHolder = list.get(id).biomeHolder;
+            if (biomeHolder != null) return biomeHolder;
+        }
+        Optional<Registry<Biome>> biomeRegistry = level.registryAccess().registry(Registries.BIOME);
+        if (biomeRegistry.isPresent()) {
+            Optional<Holder.Reference<Biome>> holder = biomeRegistry.get().getHolder(id);
+            if (holder.isPresent()) return holder.get();
+            EclipticSeasons.extraLogger(true, "Unknown id with level", level, id);
+            return biomeRegistry.get().getHolder(Biomes.PLAINS).orElse(null);
+        }
+        EclipticSeasons.extraLogger(true, "Unknown id with level", level, id);
+        return null;
     }
 
     public static int biomeToId(Level level, Biome b) {
