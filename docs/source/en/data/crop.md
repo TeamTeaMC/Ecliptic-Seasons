@@ -1,3 +1,6 @@
+> Note: Crop data packs have the highest priority. Since we also use crop tags, you must either use the `replace` property
+> to override them, or define the blocks within a crop datapack to ensure proper behavior.
+
 ## Basic Description
 
 Crop growth is used to adjust the growth speed of blocks. It is primarily handled via the Neo/Forge event pipeline and

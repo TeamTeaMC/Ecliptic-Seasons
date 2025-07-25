@@ -97,7 +97,7 @@ jstack 42928 > D:\logs\mc\_thread\_dump.txt
 
 ```
 
-/ecliptic solar setTerm beginning\_of\_autumn
+/ecliptic solar setTerm beginning_of_autumn
 
 ```
 

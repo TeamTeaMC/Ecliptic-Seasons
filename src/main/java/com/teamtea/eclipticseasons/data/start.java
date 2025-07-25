@@ -1,12 +1,9 @@
 package com.teamtea.eclipticseasons.data;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
-import com.teamtea.eclipticseasons.data.extend.example.BiomeColorProvider;
-import com.teamtea.eclipticseasons.data.extend.example.DatapackRegistryGeneratorExample;
-import com.teamtea.eclipticseasons.data.extend.example.LeafColorProvider;
+import com.teamtea.eclipticseasons.data.extend.example.*;
 import com.teamtea.eclipticseasons.data.extend.extra_snow.DatapackRegistryGeneratorExtra;
 import com.teamtea.eclipticseasons.data.extend.extra_snow.ExtraClientModelDefinitionProvider;
-import com.teamtea.eclipticseasons.data.extend.example.SeasonTextureProvider;
 import com.teamtea.eclipticseasons.data.general.advancement.Advancements;
 import com.teamtea.eclipticseasons.data.api.MutablePackOutput;
 import com.teamtea.eclipticseasons.data.general.datapack.DatapackRegistryGenerator;
@@ -101,6 +98,8 @@ public class start {
         packOutput = packOutput.move(Path.of("resourcepacks", "example"));
         if (event.includeServer()) {
             generator.addProvider(event.includeServer(), new DatapackRegistryGeneratorExample(packOutput, modFuture));
+            generator.addProvider(event.includeServer(), new ExampleLootTableProvider(packOutput));
+
         }
         if (event.includeClient()) {
             generator.addProvider(event.includeClient(), new BiomeColorProvider(packOutput, MODID, helper, lookupProvider));

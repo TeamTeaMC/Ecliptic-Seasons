@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:gift",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "eclipticseasons:season",
+          "require": {
+            "end": "beginning_of_winter",
+            "start": "autumnal_equinox"
+          }
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "eclipticseasons:spring_greenhouse_essence",
+          "weight": 10
+        }
+      ],
+      "rolls": 1.0
+    }
+  ],
+  "random_sequence": "eclipticseasons:gifts/autumn_greenhouse_essence"
+}
