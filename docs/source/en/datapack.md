@@ -1,4 +1,8 @@
-Supporting data packs is a fundamental part of Minecraft mod development, and Ecliptic Seasons are no exception.  
+Supporting data packs is a fundamental part of Minecraft mod development, and Ecliptic Seasons are no exception.
+
+You can also check for community support, such
+as [Data packs for Ecliptic Seasons](https://github.com/joe-vettek/Datapacks-for-Ecliptic-Seasons).
+
 This chapter introduces several tags and advancement systems related to Ecliptic Seasons.
 
 ## Biome Weather (Localized Weather)
@@ -107,6 +111,33 @@ However, if the difference is too great, growth will not occur at all.
 |:----------------------------|:-----------------------|
 | `eclipticseasons:all`       | All                    |
 | `eclipticseasons:overworld` | Overworld climate zone |
+
+## Breeding Seasons
+
+These tags only take effect if the corresponding configuration is enabled.
+
+### Season Types
+
+Similar to crops, but primarily applied to entity types. Note that the applicable seasons are related to agricultural
+climate zones.
+
+| Type Name                                    | Applicable Seasons       |
+|:---------------------------------------------|:-------------------------|
+| `eclipticseasons:breed/spring`               | Spring                   |
+| `eclipticseasons:breed/summer`               | Summer                   |
+| `eclipticseasons:breed/autumn`               | Autumn                   |
+| `eclipticseasons:breed/winter`               | Winter                   |
+| `eclipticseasons:breed/spring_summer`        | Spring + Summer          |
+| `eclipticseasons:breed/spring_autumn`        | Spring + Autumn          |
+| `eclipticseasons:breed/spring_winter`        | Spring + Winter          |
+| `eclipticseasons:breed/summer_autumn`        | Summer + Autumn          |
+| `eclipticseasons:breed/summer_winter`        | Summer + Winter          |
+| `eclipticseasons:breed/autumn_winter`        | Autumn + Winter          |
+| `eclipticseasons:breed/spring_summer_autumn` | Spring + Summer + Autumn |
+| `eclipticseasons:breed/spring_summer_winter` | Spring + Summer + Winter |
+| `eclipticseasons:breed/spring_autumn_winter` | Spring + Autumn + Winter |
+| `eclipticseasons:breed/summer_autumn_winter` | Summer + Autumn + Winter |
+| `eclipticseasons:breed/all_seasons`          | All seasons (year-round) |
 
 ## Particle Effects
 

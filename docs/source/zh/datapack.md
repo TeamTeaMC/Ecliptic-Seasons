@@ -1,4 +1,7 @@
 支持数据包是Minecraft模组的基础性工作，对于节气，这也不例外。
+
+你也可以查看是否有社区支持，如 [Data packs for Ecliptic Seasons](https://github.com/joe-vettek/Datapacks-for-Ecliptic-Seasons )。
+
 本章主要介绍节气的一些标签和进度系统。
 
 ## 群系天气（局部天气）
@@ -95,6 +98,32 @@ Tag平台运行，目前主要分为三种。四季型地区，干湿季地区�
 |:----------------------------|:-------|
 | `eclipticseasons:all`       | 所有     |
 | `eclipticseasons:overworld` | 主世界气候区 | 
+
+## 动物繁衍季节
+
+如果启用了相关配置文件，这些标签才会生效。
+
+### 季节类型
+
+这与作物相似，但是这里主要应用于实体类型。特别需要注意的是，季节与农业气候区有关系。
+
+| 类型名称                                         | 适用季节         |
+|:---------------------------------------------|:-------------|
+| `eclipticseasons:breed/spring`               | 春季           |
+| `eclipticseasons:breed/summer`               | 夏季           |
+| `eclipticseasons:breed/autumn`               | 秋季           |
+| `eclipticseasons:breed/winter`               | 冬季           |
+| `eclipticseasons:breed/spring_summer`        | 春季 + 夏季      |
+| `eclipticseasons:breed/spring_autumn`        | 春季 + 秋季      |
+| `eclipticseasons:breed/spring_winter`        | 春季 + 冬季      |
+| `eclipticseasons:breed/summer_autumn`        | 夏季 + 秋季      |
+| `eclipticseasons:breed/summer_winter`        | 夏季 + 冬季      |
+| `eclipticseasons:breed/autumn_winter`        | 秋季 + 冬季      |
+| `eclipticseasons:breed/spring_summer_autumn` | 春季 + 夏季 + 秋季 |
+| `eclipticseasons:breed/spring_summer_winter` | 春季 + 夏季 + 冬季 |
+| `eclipticseasons:breed/spring_autumn_winter` | 春季 + 秋季 + 冬季 |
+| `eclipticseasons:breed/summer_autumn_winter` | 夏季 + 秋季 + 冬季 |
+| `eclipticseasons:breed/all_seasons`          | 所有季节（全年）     |
 
 ## 粒子效果
 

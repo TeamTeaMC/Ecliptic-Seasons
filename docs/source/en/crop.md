@@ -18,6 +18,16 @@ There are two types of greenhouses: a regular greenhouse and a low-light greenho
 The low-light greenhouse has a weaker effect. Crops not adapted to it will not receive the full growth speed bonus, but
 it is less affected by high summer temperatures.
 
+### Season Essence of the Greenhouse
+
+There are two ways to obtain the essences. The first is by completing all 24 seasonal quests in the
+advancement system — one essence is awarded per quest group.
+
+The second method is to right-click a hanging sign with the seasonal prayer scroll and complete the seasonal planting
+challenge.
+
+Additionally, some mod packs may configure it as a reward from boss challenges.
+
 ## Supplementing Humidity
 
 Most crops require good humidity conditions for growth; otherwise, their growth rate will slow down significantly.
