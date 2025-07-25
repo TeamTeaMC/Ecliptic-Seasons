@@ -11,8 +11,10 @@ import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.tag.EclipticBlockTags;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.config.ClientConfig;
+import it.unimi.dsi.fastutil.ints.IntArraySet;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlas;
@@ -170,9 +172,14 @@ public class ParticleUtil {
             int color = -1;
 
             if (leafInfo == null) {
-                color = getOrCreateColor(state).getRGB();
-                if (color == -1) {
-                    color = Minecraft.getInstance().getBlockColors().getColor(state, level, pos, 0);
+                Pair<Color, Integer> pair = getOrCreateColor(state);
+                color = pair.getFirst().getRGB();
+                if (pair.getSecond() != -1) {
+                    int blockColor = Minecraft.getInstance().getBlockColors().getColor(state, level, pos, pair.getSecond());
+                    if (blockColor != -1) {
+                        color = color == -1 ? blockColor :
+                                ColorHelper.simplyMixColor(color, 0.25f, blockColor, 0.75f);
+                    }
                 }
                 if (color == -1) {
                     color = state.getMapColor(level, pos).col;
@@ -181,7 +188,18 @@ public class ParticleUtil {
                 color = switch (leafInfo.colorSource()) {
                     case MAP -> state.getMapColor(level, pos).col;
                     case BLOCK -> Minecraft.getInstance().getBlockColors().getColor(state, level, pos, 0);
-                    case TEXTURE -> getOrCreateColor(state).getRGB();
+                    case TEXTURE -> {
+                        Pair<Color, Integer> pair = getOrCreateColor(state);
+                        int textureColor = pair.getFirst().getRGB();
+                        if (pair.getSecond() != -1) {
+                            int color2 = Minecraft.getInstance().getBlockColors().getColor(state, level, pos, 0);
+                            if (color2 != -1) {
+                                textureColor = textureColor == -1 ? color2 :
+                                        ColorHelper.simplyMixColor(textureColor, 0.25f, color2, 0.75f);
+                            }
+                        }
+                        yield textureColor;
+                    }
                     case CUSTOM -> {
                         ColorMode.Instance orDefault1 = leafInfo.colors().getOrDefault(ClientCon.nowSolarTerm, null);
                         yield orDefault1 != null ? orDefault1.value() : -1;
@@ -262,30 +280,28 @@ public class ParticleUtil {
         LEAVES_COLOR_MAP.clear();
     }
 
-    private static final Map<BlockState, Color> LEAVES_COLOR_MAP = new IdentityHashMap<>();
+    private static final Map<BlockState, Pair<Color, Integer>> LEAVES_COLOR_MAP = new IdentityHashMap<>();
 
-    public static Color getOrCreateColor(BlockState state) {
+    public static Pair<Color, Integer> getOrCreateColor(BlockState state) {
         Minecraft mc = Minecraft.getInstance();
         Color c = Color.WHITE;
         try {
-            Color orDefault = LEAVES_COLOR_MAP.getOrDefault(state, null);
+            Pair<Color, Integer> orDefault = LEAVES_COLOR_MAP.getOrDefault(state, null);
             if (orDefault != null) {
                 return orDefault;
             }
             BakedModel blockModel = mc.getBlockRenderer().getBlockModel(state);
-            boolean isColored = false;
-            // for (Direction direction : new Direction[]{Direction.UP, Direction.DOWN, Direction.SOUTH, Direction.EAST, Direction.NORTH, Direction.WEST, null}) {
-            //     List<BakedQuad> quads = blockModel.getQuads(state, direction, mc.level.getRandom(), ModelData.EMPTY, RenderType.cutout());
-            //     for (BakedQuad quad : quads) {
-            //         if (quad.getTintIndex() != -1) {
-            //             isColored = true;
-            //         }
-            //     }
-            //     if (isColored) break;
-            // }
-            if (isColored) {
-                c = Color.WHITE;
-            } else {
+            int tintIndex = -1;
+            for (Direction direction : new Direction[]{Direction.UP, Direction.DOWN, Direction.SOUTH, Direction.EAST, Direction.NORTH, Direction.WEST, null}) {
+                List<BakedQuad> quads = blockModel.getQuads(state, direction, mc.level.getRandom(), ModelData.EMPTY, ItemBlockRenderTypes.getChunkRenderType(state));
+                for (BakedQuad quad : quads) {
+                    if (quad.getTintIndex() != -1) {
+                        tintIndex = quad.getTintIndex();
+                        break;
+                    }
+                }
+            }
+            {
                 TextureAtlasSprite texture = blockModel.getParticleIcon(ModelData.EMPTY);
                 ArrayList<Integer> rlist = new ArrayList<>();
                 ArrayList<Integer> glist = new ArrayList<>();
@@ -305,16 +321,29 @@ public class ParticleUtil {
                     }
                 }
                 c = new Color((int) ColorHelper.getAvg(rlist), (int) ColorHelper.getAvg(glist), (int) ColorHelper.getAvg(blist));
-                if (c.getRed() == c.getBlue() && c.getBlue() == c.getGreen()) {
-                    c = Color.WHITE;
-                }
+                // c = new Color((int) rlist.stream()
+                //         .mapToInt(Integer::intValue)
+                //         .average()
+                //         .orElse(0.0),
+                //         (int) glist.stream()
+                //                 .mapToInt(Integer::intValue)
+                //                 .average()
+                //                 .orElse(0.0),
+                //         (int) blist.stream()
+                //                 .mapToInt(Integer::intValue)
+                //                 .average()
+                //                 .orElse(0.0));
+                // if (c.getRed() == c.getBlue() && c.getBlue() == c.getGreen()) {
+                //     c = Color.WHITE;
+                // }
             }
-            LEAVES_COLOR_MAP.put(state, c);
-
+            Pair<Color, Integer> colorIntegerPair = Pair.of(c, tintIndex);
+            LEAVES_COLOR_MAP.put(state, colorIntegerPair);
+            return colorIntegerPair;
         } catch (Exception ignore) {
             ignore.printStackTrace();
         }
-        return c;
+        return Pair.of(c, -1);
     }
 
 }

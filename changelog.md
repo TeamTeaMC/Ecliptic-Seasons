@@ -1,6 +1,12 @@
+#### 0.11.8.4.1
+
+-Improved the color calculation for leaf particles to enhance compatibility with a wider range of mods and resource
+packs.
+
 ### 0.11.8.4
 
 - Add a control condition named `eclipticseasons:season` for loot, which can be used to specify loot tables by season.
+
 ```json
 {
   "condition": "eclipticseasons:season",
@@ -10,6 +16,7 @@
   }
 }
   ```
+
 ### 0.11.8.3
 
 - Improved biome ID deserialization to reduce null returns.
