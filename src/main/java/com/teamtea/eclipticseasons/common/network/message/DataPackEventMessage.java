@@ -86,6 +86,7 @@ public class DataPackEventMessage<T> {
 
 
     public List<T> build(RegistryAccess clientRegistryAccess, Class<T> tClass) {
+        EclipticSeasons.logger("Rebuild registry %s for client side.".formatted(tClass.getSimpleName()));
         List<T> tList = new ArrayList<>();
         if (this.codec != null) {
             if (ClientCon.getUseLevel() != null) {
@@ -122,6 +123,7 @@ public class DataPackEventMessage<T> {
                 this.data = pairArrayList;
             }
         }
+        EclipticSeasons.logger("End registry %s for client side with size %s.".formatted(tClass.getSimpleName(), tList.size()));
         return tList;
     }
 
