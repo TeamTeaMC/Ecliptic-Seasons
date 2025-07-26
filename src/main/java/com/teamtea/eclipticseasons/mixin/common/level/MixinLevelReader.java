@@ -3,6 +3,7 @@ package com.teamtea.eclipticseasons.mixin.common.level;
 
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
+import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
@@ -22,7 +23,9 @@ public interface MixinLevelReader extends LevelReader {
     @Override
     default int getMaxLocalRawBrightness(@NotNull BlockPos pPos) {
         int amount = this.getSkyDarken();
-        if (this instanceof Level level && EclipticUtil.hasLocalWeather(level)) {
+        if (this instanceof Level level
+                && EclipticUtil.hasLocalWeather(level)
+                && MapChecker.isLoadNearByOnlyServer(level, pPos)) {
             amount = WeatherManager.getSkyDarken(level, pPos, amount);
         }
         return this.getMaxLocalRawBrightness(pPos, amount);

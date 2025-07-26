@@ -1,3 +1,8 @@
+#### 0.11.8.4.2
+
+-Added additional checks to certain server-side biome-related queries to prevent them from being called by mods during
+world generation.
+
 #### 0.11.8.4.1
 
 -Improved the color calculation for leaf particles to enhance compatibility with a wider range of mods and resource

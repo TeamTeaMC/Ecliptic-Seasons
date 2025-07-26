@@ -75,7 +75,7 @@ public class DataPackEventMessage<T> {
                     .encodeStart(registryops, datum.getFirst())
                     .resultOrPartial(EclipticSeasons::logger);
             CompoundTag compoundTag = new CompoundTag();
-            if (tag.isPresent()&& k_tag.isPresent()) {
+            if (tag.isPresent() && k_tag.isPresent()) {
                 compoundTag.put("value", tag.get());
                 compoundTag.put("key", k_tag.get());
             }
@@ -92,7 +92,7 @@ public class DataPackEventMessage<T> {
                 RegistryOps<Tag> registryops = RegistryOps.create(NbtOps.INSTANCE, clientRegistryAccess);
                 Codec<ResourceKey<T>> resourceKeyCodec = ResourceKey.codec(resourceKey);
                 Registry<T> registry = clientRegistryAccess.registryOrThrow(resourceKey);
-                List<Pair<ResourceKey<T>,T>> pairArrayList = new ArrayList<>();
+                List<Pair<ResourceKey<T>, T>> pairArrayList = new ArrayList<>();
                 for (CompoundTag compoundTag : compoundTags) {
                     if (compoundTag == null) continue;
                     Tag tag = compoundTag.get("value");
@@ -109,11 +109,11 @@ public class DataPackEventMessage<T> {
                         Optional<ResourceKey<T>> keyOptional = resourceKeyCodec
                                 .parse(registryops, k_tag)
                                 .resultOrPartial(EclipticSeasons::logger);
-                        if(keyOptional.isPresent()){
+                        if (keyOptional.isPresent()) {
                             ResourceKey<T> tResourceKey = keyOptional.get();
                             pairArrayList.add(Pair.of(tResourceKey, t1));
                             Optional<Holder.Reference<T>> holder = registry.getHolder(tResourceKey);
-                            if(holder.isPresent()&&holder.get().getType()!= Holder.Reference.Type.INTRUSIVE){
+                            if (holder.isPresent() && holder.get().getType() != Holder.Reference.Type.INTRUSIVE) {
                                 holder.get().bindValue(t1);
                             }
                         }

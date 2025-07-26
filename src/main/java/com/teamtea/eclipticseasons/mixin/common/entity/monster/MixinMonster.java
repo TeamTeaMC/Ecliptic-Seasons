@@ -21,9 +21,10 @@ public class MixinMonster {
             method = "isDarkEnoughToSpawn",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;isThundering()Z")
     )
-    private static boolean eclipticseasons$isDarkEnoughToSpawn_isThundering(ServerLevel instance, Operation<Boolean> original, @Local(ordinal = 0) BlockPos blockPos) {
-        if (EclipticUtil.hasLocalWeather(instance))
-            return WeatherManager.isThunderAtBiome(instance,blockPos);
+    private static boolean eclipticseasons$isDarkEnoughToSpawn_isThundering(ServerLevel instance, Operation<Boolean> original, @Local(ordinal = 0, argsOnly = true) BlockPos blockPos) {
+        if (EclipticUtil.hasLocalWeather(instance)
+                && MapChecker.isLoadNearByOnlyServer(instance, blockPos))
+            return WeatherManager.isThunderAtBiome(instance, blockPos);
         return instance.isThundering();
     }
 }
