@@ -2,9 +2,14 @@ package com.teamtea.eclipticseasons.common.network.message;
 
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.Lifecycle;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
+import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.core.Holder;
+import net.minecraft.core.MappedRegistry;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
@@ -86,7 +91,7 @@ public class DataPackEventMessage<T> {
 
 
     public List<T> build(RegistryAccess clientRegistryAccess, Class<T> tClass) {
-        EclipticSeasons.logger("Rebuild registry %s for client side.".formatted(tClass.getSimpleName()));
+        EclipticSeasons.extraLogger(true, "Rebuild registry %s for client side.".formatted(tClass.getSimpleName()));
         List<T> tList = new ArrayList<>();
         if (this.codec != null) {
             if (ClientCon.getUseLevel() != null) {
@@ -113,17 +118,33 @@ public class DataPackEventMessage<T> {
                         if (keyOptional.isPresent()) {
                             ResourceKey<T> tResourceKey = keyOptional.get();
                             pairArrayList.add(Pair.of(tResourceKey, t1));
-                            Optional<Holder.Reference<T>> holder = registry.getHolder(tResourceKey);
-                            if (holder.isPresent() && holder.get().getType() != Holder.Reference.Type.INTRUSIVE) {
-                                holder.get().bindValue(t1);
+
+                            if (registry instanceof MappedRegistry<T> mappedRegistry) {
+                                Optional<Holder.Reference<T>> holder = registry.getHolder(tResourceKey);
+                                if (holder.isPresent() && holder.get().getType() != Holder.Reference.Type.INTRUSIVE) {
+                                    Holder.Reference<T> reference = holder.get();
+                                    T old = reference.value();
+                                    int oldId = mappedRegistry.toId.getInt(old);
+                                    reference.bindValue(t1);
+                                    mappedRegistry.byValue.remove(old);
+                                    mappedRegistry.byValue.put(t1, reference);
+                                    if (oldId > -1) {
+                                        mappedRegistry.toId.remove(old, oldId);
+                                        mappedRegistry.toId.put(t1, oldId);
+                                    }
+                                }
                             }
+                            // mappedRegistry.register(tResourceKey, t1, Lifecycle.stable());
                         }
                     }
+                }
+                if (!(registry instanceof MappedRegistry<T>)) {
+                    EclipticSeasons.logger("Error for a registry not override from MappedRegistry, which location at " + registry.getClass().getName());
                 }
                 this.data = pairArrayList;
             }
         }
-        EclipticSeasons.logger("End registry %s for client side with size %s.".formatted(tClass.getSimpleName(), tList.size()));
+        EclipticSeasons.extraLogger(true, "End registry %s for client side with size %s.".formatted(tClass.getSimpleName(), tList.size()));
         return tList;
     }
 

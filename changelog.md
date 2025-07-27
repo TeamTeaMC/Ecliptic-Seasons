@@ -1,3 +1,10 @@
+#### 0.11.8.4.3
+
+- _Thanks to GuaiJieYo for providing the test device._
+- Fixed an issue in 1.20 LAN multiplayer, where index information could change due to the dedicated client patcher for
+  dynamic registries running on a non-dedicated host server. This issue has existed since 0.11.7-rebind.
+  Singleplayer clients and players on dedicated servers were not affected.
+
 #### 0.11.8.4.2
 
 -Added additional checks to certain server-side biome-related queries to prevent them from being called by mods during

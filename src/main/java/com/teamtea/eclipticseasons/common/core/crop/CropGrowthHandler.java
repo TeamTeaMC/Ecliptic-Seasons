@@ -143,7 +143,7 @@ public final class CropGrowthHandler {
                 ClientCon.aczCache.build(registryAccess, AgroClimaticZone.class);
         }
 
-        RegistryOps<Tag> registryops = RegistryOps.create(NbtOps.INSTANCE, registryAccess);
+        // RegistryOps<Tag> registryops = RegistryOps.create(NbtOps.INSTANCE, registryAccess);
 
         Registry<AgroClimaticZone> cropClimateTypeRegistry = agroClimaticZones.get();
         for (Holder.Reference<AgroClimaticZone> agroClimaticZoneReference : cropClimateTypeRegistry.holders().toList()) {
@@ -154,7 +154,7 @@ public final class CropGrowthHandler {
             }
         }
 
-        DefaultCropClimateType.put(isServer, cropClimateTypeRegistry.getHolder(AgroClimateRegistry.TEMPERATE).get());
+        DefaultCropClimateType.put(isServer, cropClimateTypeRegistry.getHolder(AgroClimateRegistry.TEMPERATE).orElse(null));
 
         Registry<Item> itemRegistry = registryAccess.registryOrThrow(Registries.ITEM);
         Registry<Block> blockRegistry = registryAccess.registryOrThrow(Registries.BLOCK);
