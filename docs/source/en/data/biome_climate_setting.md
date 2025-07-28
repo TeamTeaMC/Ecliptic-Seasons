@@ -1,3 +1,7 @@
+> The purpose of the biome climate settings datapack is to enable seasonal variations without modifying the hardcoded
+> values in the biome datapack.
+> Most importantly, this value does not affect world generation.
+
 ## Basic Description
 
 **Biome climate settings** are an auxiliary data pack system primarily used to adjust the native climate parameters of

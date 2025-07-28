@@ -1,3 +1,6 @@
+> Snowfall timing follows three priority levels: the base biome temperature (lowest),
+> biome climate settings override datapack (middle), and snow term datapack (highest).
+
 ## Basic Description
 
 Snow terms based on solar terms are primarily time-driven.

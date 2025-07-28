@@ -1,3 +1,6 @@
+> Biome precipitation is a compound probability—
+> you also need to consider the downfall value defined in the biome climate settings.
+
 ## Basic Description
 
 Biome rain is mainly used to adjust the weather parameters for certain biomes. Generally, it does not require much

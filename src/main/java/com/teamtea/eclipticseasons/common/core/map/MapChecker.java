@@ -258,7 +258,7 @@ public class MapChecker {
     public static boolean isLoaded(Level level, int chunkX, int chunkZ) {
         if (level.getChunkSource() instanceof ServerChunkCache serverChunkCache) {
             ChunkHolder visibleChunkIfPresent =
-                    serverChunkCache.getVisibleChunkIfPresent((new ChunkPos(chunkX, chunkZ)).toLong());
+                    serverChunkCache.getVisibleChunkIfPresent(ChunkPos.asLong(chunkX, chunkZ));
             if (visibleChunkIfPresent == null) return false;
             return visibleChunkIfPresent.getFullChunk() != null;
             // return visibleChunkIfPresent.getFullStatus().isOrAfter(FullChunkStatus.ENTITY_TICKING);
