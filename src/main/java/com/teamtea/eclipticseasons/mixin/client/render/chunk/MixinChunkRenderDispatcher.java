@@ -10,6 +10,7 @@ import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import com.mojang.blaze3d.vertex.*;
 import com.teamtea.eclipticseasons.api.misc.client.IMapSlice;
 import com.teamtea.eclipticseasons.client.core.ExtraModelManager;
+import com.teamtea.eclipticseasons.compat.vanilla.ExtendBlockView;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ChunkBufferBuilderPack;
 import net.minecraft.client.renderer.RenderType;
@@ -66,7 +67,6 @@ public class MixinChunkRenderDispatcher {
     // }
 
 
-
     @ModifyExpressionValue(
             method = "compile",
             at = @At(value = "INVOKE",
@@ -87,7 +87,8 @@ public class MixinChunkRenderDispatcher {
             @Share("shouldReplace") LocalBooleanRef replace
     ) {
         randomsource.setSeed(original);
-        BakedModel model = ExtraModelManager.findModel(renderchunkregion, blockpos2, blockstate, randomsource);
+        BakedModel model = ExtraModelManager.findModel(renderchunkregion, blockpos2, blockstate, randomsource, original,
+                renderchunkregion instanceof ExtendBlockView view ? view.getModelCheckPos() : null);
         snowModelRef.set(model);
         replace.set(model != null
                 && ExtraModelManager.isModelReplaceable(blockstate, renderchunkregion, blockpos2, model));

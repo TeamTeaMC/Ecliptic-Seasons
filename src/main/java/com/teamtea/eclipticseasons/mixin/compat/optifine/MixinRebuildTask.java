@@ -8,6 +8,7 @@ import com.teamtea.eclipticseasons.client.core.ExtraModelManager;
 import com.teamtea.eclipticseasons.client.model.MulBakeModel;
 import com.teamtea.eclipticseasons.client.model.SnowyBakedModelWrapper;
 import com.teamtea.eclipticseasons.compat.optfine.IOFModelTaker;
+import com.teamtea.eclipticseasons.compat.vanilla.ExtendBlockView;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
@@ -40,8 +41,10 @@ public abstract class MixinRebuildTask {
             @Local LocalRef<BakedModel> modelLocalRef
     ) {
         if (blockAndTintGetter instanceof IOFModelTaker iofModelTaker) {
-            randomsource.setSeed(blockState.getSeed(pos));
-            BakedModel model = ExtraModelManager.findModel(blockAndTintGetter, pos, blockState, randomsource);
+            long seed = blockState.getSeed(pos);
+            randomsource.setSeed(seed);
+            BakedModel model = ExtraModelManager.findModel(blockAndTintGetter, pos, blockState, randomsource,seed,
+                    blockAndTintGetter instanceof ExtendBlockView view ? view.getModelCheckPos() : null);
             if (model != null) {
                 BakedModel oldModel = modelLocalRef.get();
                 BakedModel newModel;

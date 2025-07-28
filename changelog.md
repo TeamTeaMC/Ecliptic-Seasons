@@ -1,3 +1,7 @@
+#### 0.11.8.4.3.0.2
+
+- Optimized the use of BlockPos objects and random seed calculations during model rendering.
+
 #### 0.11.8.4.3
 
 - _Thanks to GuaiJieYo for providing the test device._

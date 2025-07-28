@@ -27,12 +27,16 @@ import org.embeddedt.embeddium.render.frapi.FRAPIModelUtils;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin({ChunkBuilderMeshingTask.class})
 public abstract class MixinBlockRenderTask {
+
+    @Unique
+    private BlockPos.MutableBlockPos eclipticseasons$checkPos = new BlockPos.MutableBlockPos();
 
     // @ModifyExpressionValue(
     //         remap = false,
@@ -131,7 +135,7 @@ public abstract class MixinBlockRenderTask {
             @Share("shouldReplace") LocalBooleanRef replace
     ) {
         random.setSeed(seed);
-        BakedModel model = ExtraModelManager.findModel(ctx.world(), mutableBlockPos, state, random);
+        BakedModel model = ExtraModelManager.findModel(ctx.world(), mutableBlockPos, state, random, seed, eclipticseasons$checkPos);
         snowModelRef.set(model);
         replace.set(model != null
                 && ExtraModelManager.isModelReplaceable(state, ctx.world(), mutableBlockPos, model));
@@ -157,7 +161,7 @@ public abstract class MixinBlockRenderTask {
             @Share("snowModelRef") LocalRef<BakedModel> snowModelRef,
             @Share("shouldReplace") LocalBooleanRef replace,
             @Local ModelData modelData
-            ) {
+    ) {
 
         // BakedModel snowModel = null;
         // if (!original) {
