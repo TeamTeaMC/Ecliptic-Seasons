@@ -1,0 +1,35 @@
+{
+  "replace": true,
+  "variants": {
+    "age=1,hanging=true": {
+      "model": "eclipticseasons:block/snowy/mangrove_propagule_hanging_1"
+    },
+    "age=3,hanging=false": {
+      "model": "eclipticseasons:block/snowy/mangrove_propagule"
+    },
+    "age=0,hanging=false": {
+      "model": "eclipticseasons:block/snowy/mangrove_propagule"
+    },
+    "age=2,hanging=true": {
+      "model": "eclipticseasons:block/snowy/mangrove_propagule_hanging_2"
+    },
+    "age=0,hanging=true": {
+      "model": "eclipticseasons:block/snowy/mangrove_propagule_hanging_0"
+    },
+    "age=3,hanging=true": {
+      "model": "eclipticseasons:block/snowy/mangrove_propagule_hanging_3"
+    },
+    "age=1,hanging=false": {
+      "model": "eclipticseasons:block/snowy/mangrove_propagule"
+    },
+    "age=4,hanging=false": {
+      "model": "eclipticseasons:block/snowy/mangrove_propagule"
+    },
+    "age=2,hanging=false": {
+      "model": "eclipticseasons:block/snowy/mangrove_propagule"
+    },
+    "age=4,hanging=true": {
+      "model": "eclipticseasons:block/snowy/mangrove_propagule_hanging_4"
+    }
+  }
+}

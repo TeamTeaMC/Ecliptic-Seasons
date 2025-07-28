@@ -14,20 +14,7 @@
       "id": "eclipticseasons:bamboo_wind_chimes"
     },
     "title": {
-      "color": "#FFFFFF",
-      "extra": [
-        {
-          "extra": [
-            {
-              "translate": "advancement.eclipticseasons.root"
-            }
-          ],
-          "font": "minecraft:default",
-          "text": " "
-        }
-      ],
-      "font": "eclipticseasons:solar_icons",
-      "text": "p"
+      "translate": "advancement.eclipticseasons.root"
     }
   },
   "requirements": [

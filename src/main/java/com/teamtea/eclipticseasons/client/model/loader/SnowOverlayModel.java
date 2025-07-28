@@ -29,10 +29,7 @@ import net.neoforged.neoforge.client.model.IDynamicBakedModel;
 import net.neoforged.neoforge.client.model.IModelBuilder;
 import net.neoforged.neoforge.client.model.data.ModelData;
 import net.neoforged.neoforge.client.model.data.ModelProperty;
-import net.neoforged.neoforge.client.model.geometry.IGeometryBakingContext;
-import net.neoforged.neoforge.client.model.geometry.IGeometryLoader;
-import net.neoforged.neoforge.client.model.geometry.IUnbakedGeometry;
-import net.neoforged.neoforge.client.model.geometry.UnbakedGeometryHelper;
+import net.neoforged.neoforge.client.model.geometry.*;
 import net.neoforged.neoforge.common.util.ConcatenatedListView;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -46,11 +43,14 @@ import java.util.stream.Collectors;
 public class SnowOverlayModel implements IUnbakedGeometry<SnowOverlayModel> {
     // private final ResourceLocation parent;
     private final BlockModel parentModel;
+    private final Map<String, BlockModel> children;
     private final ImmutableList<String> itemPasses;
 
 
     @Override
     public @NotNull BakedModel bake(@NotNull IGeometryBakingContext context, @NotNull ModelBaker baker, @NotNull Function<Material, TextureAtlasSprite> spriteGetter, @NotNull ModelState modelState, @NotNull ItemOverrides overrides) {
+        // ((BlockModel)baker.getModel(parentModel.getParentLocation())).textureMap
+        // ((BlockGeometryBakingContext) context).owner.textureMap;
         return new Baked<>(parentModel.bake(
                 baker,spriteGetter,modelState
         ));
@@ -101,9 +101,11 @@ public class SnowOverlayModel implements IUnbakedGeometry<SnowOverlayModel> {
             readChildren(jsonObject, "children", deserializationContext, childrenBuilder, itemPasses);
             JsonObject jsonObject1=new JsonObject();
             jsonObject1.add("parent",jsonObject.get("parent"));
+            JsonElement textures = jsonObject.get("texture_overrides");
             return new SnowOverlayModel(
-                    BlockModel.fromString(jsonObject1.toString())
-                    , ImmutableList.copyOf(itemPasses));
+                    BlockModel.fromString(jsonObject1.toString()),
+                    childrenBuilder.build(),
+                    ImmutableList.copyOf(itemPasses));
         }
 
         private void readChildren(JsonObject jsonObject, String name, JsonDeserializationContext deserializationContext, ImmutableMap.Builder<String, BlockModel> children, List<String> itemPasses) {
@@ -114,7 +116,6 @@ public class SnowOverlayModel implements IUnbakedGeometry<SnowOverlayModel> {
                 children.put(entry.getKey(), deserializationContext.deserialize(entry.getValue(), BlockModel.class));
                 itemPasses.add(entry.getKey()); // We can do this because GSON preserves ordering during deserialization
             }
-
         }
     }
 }

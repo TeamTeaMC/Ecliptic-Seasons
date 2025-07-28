@@ -1,0 +1,78 @@
+package com.teamtea.eclipticseasons.common.resource;
+
+import com.teamtea.eclipticseasons.EclipticSeasons;
+import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
+import net.minecraft.SharedConstants;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.PackLocationInfo;
+import net.minecraft.server.packs.PackSelectionConfig;
+import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.repository.KnownPack;
+import net.minecraft.server.packs.repository.Pack;
+import net.minecraft.server.packs.repository.PackSource;
+import net.neoforged.fml.loading.moddiscovery.ModFile;
+import net.neoforged.neoforge.event.AddPackFindersEvent;
+
+import java.nio.file.Path;
+import java.util.Optional;
+
+public class FakeResourceManagerHelperUtil {
+    private static final PackSelectionConfig FEATURE_SELECTION_CONFIG = new PackSelectionConfig(true, Pack.Position.BOTTOM, false);
+
+    public static void registerBuiltinResourcePack(AddPackFindersEvent event, ResourceLocation packId, ModFile modFile, PackSource source) {
+        String languageKey = packId.toLanguageKey("pack");
+        registerBuiltinResourcePack(event,
+                packId,
+                modFile,
+                Component.translatable(languageKey),
+                source);
+    }
+
+    public static void registerBuiltinResourcePack(AddPackFindersEvent event, ResourceLocation packId, ModFile modFile, Component translate, PackSource source) {
+        String packIdLanguageKey = packId.toLanguageKey() + "_" + event.getPackType().getSerializedName();
+        var packLocationInfo = new PackLocationInfo(
+                packIdLanguageKey, translate, source, Optional.of(knowPack(packIdLanguageKey)
+        ));
+        event.addRepositorySource(consumer -> consumer.accept(
+                Pack.readMetaAndCreate(packLocationInfo,
+                        new ESModFilePackResources.PathResourcesSupplier(modFile, Path.of("resourcepacks/" + packId.getPath())),
+                        event.getPackType(),
+                        FEATURE_SELECTION_CONFIG
+                )));
+    }
+
+    public static void registerBuiltinResourcePack(AddPackFindersEvent event, ResourceLocation packId, ModFile modFile, MutableComponent translate, PackType packType, PackSource source) {
+        registerBuiltinResourcePack(event, packId, modFile, translate, packType, source, FEATURE_SELECTION_CONFIG);
+    }
+
+    public static void registerBuiltinResourcePack(AddPackFindersEvent event, ResourceLocation packId, ModFile modFile, MutableComponent translate, PackType packType, PackSource source, PackSelectionConfig selectionConfig) {
+        if (event.getPackType() == packType) {
+            String packIdLanguageKey = packId.toLanguageKey() + "_" + packType.getSerializedName();
+            var packLocationInfo = new PackLocationInfo(
+                    packIdLanguageKey, translate, source, Optional.of(knowPack(packIdLanguageKey)
+            ));
+            event.addRepositorySource(consumer -> consumer.accept(
+                    Pack.readMetaAndCreate(packLocationInfo,
+                            new ESModFilePackResources.PathResourcesSupplier(modFile, Path.of("resourcepacks/" + packId.getPath())),
+                            packType,
+                            selectionConfig
+                    )));
+        }
+    }
+
+    public static void registerBuiltinDataPack(AddPackFindersEvent event, ModFile modContainer, String packId) {
+        FakeResourceManagerHelperUtil.registerBuiltinResourcePack(
+                event,
+                EclipticSeasons.rl("compat_" + packId),
+                modContainer,
+                Component.translatable("pack." + EclipticSeasonsApi.MODID + "." + packId),
+                PackType.SERVER_DATA,
+                PackSource.BUILT_IN);
+    }
+
+    public static KnownPack knowPack(String pName) {
+        return new KnownPack(EclipticSeasonsApi.MODID, pName, SharedConstants.getCurrentVersion().getId());
+    }
+}

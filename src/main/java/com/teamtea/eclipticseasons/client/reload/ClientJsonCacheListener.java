@@ -3,6 +3,7 @@ package com.teamtea.eclipticseasons.client.reload;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.JsonOps;
@@ -13,16 +14,28 @@ import com.teamtea.eclipticseasons.api.data.client.LeafColor;
 import com.teamtea.eclipticseasons.api.data.client.SeasonalBiomeAmbient;
 import com.teamtea.eclipticseasons.api.data.client.model.ESModelLoadedJson;
 import com.teamtea.eclipticseasons.api.data.client.model.seasonal.SeasonBlockDefinition;
+import com.teamtea.eclipticseasons.api.data.client.model.seasonal.SeasonalTexture;
 import com.teamtea.eclipticseasons.api.data.season.SnowDefinition;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.resources.FileToIdConverter;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
+import net.minecraft.util.GsonHelper;
 import net.minecraft.util.profiling.ProfilerFiller;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
+import java.io.Reader;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.Executor;
 
 public class ClientJsonCacheListener<T> extends SimpleJsonResourceReloadListener {
     private final Map<ResourceLocation, JsonElement> elementMap = new HashMap<>();
@@ -39,11 +52,16 @@ public class ClientJsonCacheListener<T> extends SimpleJsonResourceReloadListener
     public static final String DIRECTORY_MODEL_DEFINITION = EclipticSeasonsApi.MODID + "/model_definitions";
     public static final String DIRECTORY_SEASON_DEFINITION = EclipticSeasonsApi.MODID + "/season_definitions";
 
+    public static final String DIRECTORY_SEASON_TEXTURES = EclipticSeasonsApi.MODID + "/season_textures";
+    // Async
+    public static final ClientJsonCacheListener<ESModelLoadedJson> modelDefCache = new ClientJsonCacheListener<>(GSON, DIRECTORY_MODEL_DEFINITION);
+    public static final ClientJsonCacheListener<SeasonalTexture> textureReMappingsCache = new ClientJsonCacheListener<>(GSON, DIRECTORY_SEASON_TEXTURES);
+
+    // normal
     public static final ClientJsonCacheListener<BiomeColor> biomeCache = new ClientJsonCacheListener<>(GSON, DIRECTORY_BIOME);
     public static final ClientJsonCacheListener<LeafColor> leafCache = new ClientJsonCacheListener<>(GSON, DIRECTORY_LEAF);
     public static final ClientJsonCacheListener<SnowDefinition> snowDefOverrideCache = new ClientJsonCacheListener<>(GSON, DIRECTORY_SNOW_DEFINITION);
     public static final ClientJsonCacheListener<SeasonalBiomeAmbient> ambientCache = new ClientJsonCacheListener<>(GSON, DIRECTORY_AMBIENT);
-    public static final ClientJsonCacheListener<ESModelLoadedJson> modelDefCache = new ClientJsonCacheListener<>(GSON, DIRECTORY_MODEL_DEFINITION);
     public static final ClientJsonCacheListener<SeasonBlockDefinition> seasonDefCache = new ClientJsonCacheListener<>(GSON, DIRECTORY_SEASON_DEFINITION);
     private final String directory;
 
@@ -63,6 +81,45 @@ public class ClientJsonCacheListener<T> extends SimpleJsonResourceReloadListener
 
     @Override
     protected void apply(Map<ResourceLocation, JsonElement> object, ResourceManager resourceManager, ProfilerFiller profiler) {
+    }
+
+    public CompletableFuture<Map<ResourceLocation, JsonElement>> prepareAsync(ResourceManager resourceManager, ProfilerFiller profiler, Executor executor) {
+        return CompletableFuture.supplyAsync(() -> {
+            ConcurrentMap<ResourceLocation, JsonElement> prepare = new ConcurrentHashMap<>();
+            scanDirectoryAsync(resourceManager, this.directory, GSON, prepare, executor).join();
+            this.elementMap.clear();
+            this.elementMap.putAll(prepare);
+            return prepare;
+        }, executor);
+    }
+
+    public static CompletableFuture<Void> scanDirectoryAsync(ResourceManager resourceManager, String name, Gson gson, ConcurrentMap<ResourceLocation, JsonElement> output, Executor executor) {
+        FileToIdConverter fileToIdConverter = FileToIdConverter.json(name);
+        Map<ResourceLocation, Resource> matching = fileToIdConverter.listMatchingResources(resourceManager);
+
+        List<CompletableFuture<Void>> futures = new ArrayList<>();
+
+        for (Map.Entry<ResourceLocation, Resource> entry : matching.entrySet()) {
+            ResourceLocation file = entry.getKey();
+            ResourceLocation id = fileToIdConverter.fileToId(file);
+            Resource resource = entry.getValue();
+
+            CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
+                try (Reader reader = resource.openAsReader()) {
+                    JsonElement element = GsonHelper.fromJson(gson, reader, JsonElement.class);
+                    JsonElement previous = output.putIfAbsent(id, element);
+                    if (previous != null) {
+                        throw new IllegalStateException("Duplicate data file ignored with ID " + id);
+                    }
+                } catch (IllegalArgumentException | IOException | JsonParseException e) {
+                    EclipticSeasons.LOGGER.error("Couldn't parse data file {} from {}", id, file, e);
+                }
+            }, executor);
+
+            futures.add(future);
+        }
+
+        return CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]));
     }
 
     // @Override

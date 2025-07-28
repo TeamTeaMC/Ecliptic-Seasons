@@ -1,9 +1,12 @@
 package com.teamtea.eclipticseasons.common.core.map;
 
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
+import com.teamtea.eclipticseasons.common.misc.MapColorReplacer;
 import com.teamtea.eclipticseasons.common.network.SimpleNetworkHandler;
 import com.teamtea.eclipticseasons.common.network.message.MapFixerMessage;
+import com.teamtea.eclipticseasons.config.ClientConfig;
 import com.teamtea.eclipticseasons.config.CommonConfig;
+import it.unimi.dsi.fastutil.longs.Long2ObjectLinkedOpenHashMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
 import net.minecraft.server.level.ServerLevel;
@@ -59,7 +62,76 @@ public class ServerMapFixer {
         }
     }
 
-    // 这里指的是先前Y高度
+    public static int agentGetLevelHeight(Level level, BlockPos pos) {
+        ChunkInfoMap chunkMap = MapChecker.getChunkMap(level, pos);
+        Integer old = null;
+        if (chunkMap != null) {
+            old = chunkMap.getHeight(pos);
+            if (old > level.getMaxBuildHeight()) return old;
+        }
+        return MapChecker.getMCHeightWithCheck(level, pos, old);
+    }
+
+    public static boolean solidTest(BlockState state) {
+        return Heightmap.Types.MOTION_BLOCKING.isOpaque().test(state)
+                && !MapChecker.extraSnowPassable(state);
+    }
+
+    public static void addLightPlanner(Level level, long packedPos, int brightness) {
+        if (CommonConfig.isSnowyWinter()
+                && CommonConfig.Map.delayedUpdates.get()
+                && CommonConfig.Season.notSnowyNearGlowingBlock.get()
+        ) {
+            boolean isTooLight = brightness >= CommonConfig.Season.notSnowyNearGlowingBlockLevel.get();
+
+            if (isTooLight) {
+                boolean updateAndInformClientImmediately = false;
+                int newy = level.getMinBuildHeight();
+                boolean addToList = false;
+
+                BlockPos pos = new BlockPos(BlockPos.getX(packedPos), BlockPos.getY(packedPos), BlockPos.getZ(packedPos));
+                long startTick = level.getGameTime();
+                pos = pos.below();
+                BlockState state = level.getBlockState(pos);
+                boolean isOldHeight = pos.getY() == agentGetLevelHeight(level, pos);
+                if (solidTest(state)
+                        && isOldHeight
+                        && MapColorReplacer.getTopSnowColor(level, state, pos, true) != null) {
+                    newy = level.getMaxBuildHeight() + 1;
+                    updateAndInformClientImmediately = true;
+                    addToList = true;
+                }
+
+                if (addToList) {
+                    if (lastTick <= 0) {
+                        lastTick = level.getGameTime();
+                    }
+                    tickBlocksCount++;
+                    if (tickBlocksCount > MAX_TICK_BLOCK_RESET) {
+                        long nowTick = level.getGameTime();
+                        if (nowTick - lastTick < MIN_TICK_CHECK_INTERVAL) {
+                            addToList = false;
+                        } else {
+                            lastTick = nowTick;
+                            tickBlocksCount = 0;
+                        }
+                    }
+                    if (addToList) {
+                        ChunkPos chunkPos = new ChunkPos(pos);
+                        List<XZPos> xzPosList = getMap(level).computeIfAbsent(chunkPos, k -> new ArrayList<>());
+                        xzPosList.add(new XZPos(pos.getX(), pos.getZ(), startTick, pos.getY()));
+                    }
+                }
+
+                if (updateAndInformClientImmediately && level instanceof ServerLevel serverLevel) {
+                    MapChecker.updatePosForce(level, pos, newy);
+                    BlockPos nextPos = new BlockPos(pos.getX(), newy, pos.getZ());
+                    SimpleNetworkHandler.send(serverLevel.players(), new MapFixerMessage(List.of(nextPos), List.of(pos.getY())));
+                }
+            }
+        }
+    }
+
     public static void addPlanner(Level level, BlockState state, BlockState oldState, BlockPos pos, long startTick, int startY, boolean broomUse) {
         if (!MapChecker.isValidDimension(level)) return;
         if (!CommonConfig.Map.delayedUpdates.get()) {
@@ -70,21 +142,22 @@ public class ServerMapFixer {
         int newy = level.getMinBuildHeight();
         boolean addToList = false;
         if (!broomUse) {
-            int mcHeight = MapChecker.getMCHeightWithCheck(level, pos);
+            int mcHeight = agentGetLevelHeight(level, pos);
             // boolean stateChange = state != oldState;
             boolean isNotOldHeight =
                     startY != mcHeight;
             if (isNotOldHeight
-                    && (Heightmap.Types.MOTION_BLOCKING.isOpaque().test(state)
+                    && (solidTest(state)
                     || state.getBlock() == Blocks.AIR
             )
                     && EclipticUtil.isHereWithSnow(level, pos)
             ) {
                 addToList = true;
-                if (state.getBlock() == Blocks.AIR) {
-                    newy = level.getMaxBuildHeight() + 1;
-                    updateAndInformClientImmediately = true;
-                }
+                // if (state.getBlock() == Blocks.AIR) {
+                //
+                // }
+                newy = level.getMaxBuildHeight() + 1;
+                updateAndInformClientImmediately = true;
             } else {
                 // 延迟一会再更新覆雪状态
                 // TODO: 客户端自行更新，假如不下雪的话，不通知客户端了

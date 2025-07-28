@@ -13,10 +13,10 @@ import java.awt.Graphics2D;
 public class SolarTermHumidityChart {
 
 
-    private final Humidity[] humidity;
+    private final double[] humidity;
     private final String biomeName;
 
-    public SolarTermHumidityChart(String biomeName, Humidity[] humidity) {
+    public SolarTermHumidityChart(String biomeName, double[] humidity) {
         this.biomeName = biomeName;
         this.humidity = humidity;
     }
@@ -26,11 +26,10 @@ public class SolarTermHumidityChart {
         BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2d = image.createGraphics();
 
-        // back
         g2d.setColor(Color.WHITE);
         g2d.fillRect(0, 0, width, height);
 
-        int padding = 50; // 边距
+        int padding = 50;
         int chartWidth = width - 2 * padding;
         int chartHeight = height - 2 * padding;
 
@@ -54,7 +53,7 @@ public class SolarTermHumidityChart {
 
         // humid
         g2d.drawLine(padding, padding, padding, chartHeight + padding);
-        Humidity[] humidityLabels = Humidity.values();
+        Humidity[] humidityLabels = Humidity.collectValues();
         int yStep = chartHeight / (humidityLabels.length - 1);
         for (int i = 0; i < humidityLabels.length; i++) {
             int y = chartHeight + padding - i * yStep;
@@ -65,9 +64,9 @@ public class SolarTermHumidityChart {
         // lines
         for (int i = 0; i < humidity.length - 1; i++) {
             int x1 = padding + i * xStep;
-            int y1 = chartHeight + padding - humidity[i].ordinal() * yStep;
+            int y1 = (int) (chartHeight + padding - humidity[i] * yStep);
             int x2 = padding + (i + 1) * xStep;
-            int y2 = chartHeight + padding - humidity[i + 1].ordinal() * yStep;
+            int y2 = (int) (chartHeight + padding - humidity[i + 1] * yStep);
 
             g2d.setColor(Color.black);
             g2d.drawLine(x1, y1, x2, y2);

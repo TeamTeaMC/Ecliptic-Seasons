@@ -33,7 +33,6 @@ public abstract class MixinBiome implements IBiomeTagHolder {
         }
     }
 
-    // todo 注意检查雨中中暑情况，部分时候检查异常
     @Inject(at = {@At("HEAD")}, method = {"hasPrecipitation"}, cancellable = true)
     public void eclipticseasons$hasPrecipitation(CallbackInfoReturnable<Boolean> cir) {
         if (EclipticUtil.useSolarWeather())

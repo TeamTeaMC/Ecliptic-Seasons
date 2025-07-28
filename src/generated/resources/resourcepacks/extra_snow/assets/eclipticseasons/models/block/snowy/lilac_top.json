@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/lilac_top",
+  "textures": {
+    "cross": "eclipticseasons:block/snowy/lilac_top"
+  }
+}

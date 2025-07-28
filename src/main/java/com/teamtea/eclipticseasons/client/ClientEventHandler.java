@@ -7,8 +7,10 @@ import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.client.util.ClientRef;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
+import com.teamtea.eclipticseasons.common.core.crop.NaturalPlantHandler;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.core.snow.SnowChecker;
+import com.teamtea.eclipticseasons.common.game.AnimalHooks;
 import com.teamtea.eclipticseasons.common.registry.BlockRegistry;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.client.color.season.BiomeColorsHandler;
@@ -39,13 +41,18 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Registry;
 import net.minecraft.core.SectionPos;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.SpawnEggItem;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.Vec3;
@@ -79,9 +86,15 @@ public final class ClientEventHandler {
 
     @SubscribeEvent
     public static void addTooltips(ItemTooltipEvent event) {
-        if (ClientConfig.GUI.agriculturalInformation.get()
-                && event.getItemStack().getItem() instanceof BlockItem blockItem) {
-            event.getToolTip().addAll(CropInfoManager.appendInfo(blockItem.getBlock()));
+        if (ClientConfig.GUI.agriculturalInformation.get()) {
+            if (event.getItemStack().getItem() instanceof BlockItem blockItem) {
+                event.getToolTip().addAll(CropGrowthHandler.appendInfo(
+                        event.getContext().level(),
+                        blockItem.getBlock().defaultBlockState()));
+            } else if (event.getItemStack().getItem() instanceof SpawnEggItem blockItem) {
+                event.getToolTip().addAll(AnimalHooks.getBreedInfo(
+                        blockItem.getType(event.getItemStack())));
+            }
         }
     }
 
@@ -166,6 +179,7 @@ public final class ClientEventHandler {
         if (Minecraft.getInstance().player != null) {
             MapChecker.blockTypeCache.clear();
             CropGrowthHandler.clearOnClientExitOrServerClose();
+            NaturalPlantHandler.clearOnClientExitOrServerClose();
             BiomeClimateManager.clearOnClientExitOrServerClose();
             SnowChecker.clearOnClientExitOrServerClose();
             ClientRef.onClientPlayerExit();
@@ -366,6 +380,12 @@ public final class ClientEventHandler {
     public static void onTagsUpdatedEvent(TagsUpdatedEvent tagsUpdatedEvent) {
         if (tagsUpdatedEvent.getUpdateCause() == TagsUpdatedEvent.UpdateCause.CLIENT_PACKET_RECEIVED) {
             ClientRef.updateClientSide(tagsUpdatedEvent.getRegistryAccess());
+
+            // Registry<Biome> biomes = tagsUpdatedEvent.getRegistryAccess()
+            //         .registryOrThrow(Registries.BIOME);
+            // biomes.bindTags(
+            //
+            // );
         }
     }
 

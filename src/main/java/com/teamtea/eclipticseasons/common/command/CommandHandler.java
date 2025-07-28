@@ -5,6 +5,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.datafixers.util.Either;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
+import com.teamtea.eclipticseasons.api.constant.climate.BiomeRain;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.api.util.SimpleUtil;
@@ -13,16 +14,15 @@ import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.teamtea.eclipticseasons.common.misc.MapExporter;
+import com.teamtea.eclipticseasons.common.network.SimpleNetworkHandler;
+import com.teamtea.eclipticseasons.common.network.message.EmptyMessage;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.ResourceOrTagArgument;
 import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
-import net.minecraft.core.Holder;
-import net.minecraft.core.HolderSet;
-import net.minecraft.core.Registry;
-import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.*;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -64,7 +64,7 @@ public class CommandHandler {
                                         .executes(commandContext -> setDay(commandContext.getSource(), IntegerArgumentType.getInteger(commandContext, "day")))))
                         .then(Commands.literal("get")
                                 .executes(commandContext -> {
-                                    var solar = SolarHolders.getSaveData(commandContext.getSource().getLevel()).getSolarTermsDay();
+                                    int solar = EclipticUtil.getNowSolarDay(commandContext.getSource().getLevel());
                                     commandContext.getSource().sendSuccess(() -> Component.literal("" + solar), true);
                                     return 0;
                                 })
@@ -108,7 +108,7 @@ public class CommandHandler {
                                         })))
                         .then(Commands.literal("getTerm")
                                 .executes(commandContext -> {
-                                    var solar = SolarHolders.getSaveData(commandContext.getSource().getLevel()).getSolarTerm();
+                                    var solar = EclipticUtil.getNowSolarTerm(commandContext.getSource().getLevel());
                                     commandContext.getSource().sendSuccess(solar::getTranslation, true);
                                     return 0;
                                 })
@@ -124,6 +124,10 @@ public class CommandHandler {
                                         .executes((commandContext) -> setBiomeRain(commandContext.getSource(), ResourceOrTagArgument.getResourceOrTag(commandContext, "biome", Registries.BIOME), true, true)))
                                 .then(Commands.literal("clear")
                                         .executes((commandContext) -> setBiomeRain(commandContext.getSource(), ResourceOrTagArgument.getResourceOrTag(commandContext, "biome", Registries.BIOME), false, false)))
+                                .then(Commands.literal("snow_depth")
+                                        .then(Commands.argument("depth", IntegerArgumentType.integer(0, 100))
+                                                .executes((commandContext) -> setSnowDepth(commandContext.getSource(), ResourceOrTagArgument.getResourceOrTag(commandContext, "biome", Registries.BIOME), IntegerArgumentType.getInteger(commandContext, "depth"))))
+                                )
                         )
                 )
                 .then(Commands.literal("export")
@@ -170,24 +174,45 @@ public class CommandHandler {
         );
     }
 
+    private static int setSnowDepth(CommandSourceStack sourceStack, ResourceOrTagArgument.Result<Biome> result, int depth) {
+        ServerLevel level = sourceStack.getLevel();
+        var levelBiomeWeather = WeatherManager.getBiomeList(level);
+        if (levelBiomeWeather != null) {
+            boolean found = false;
+            for (WeatherManager.BiomeWeather biomeWeather : levelBiomeWeather) {
+                if (result.test(biomeWeather.biomeHolder)) {
+                    biomeWeather.snowDepth = (byte) depth;
+                    found = true;
+                }
+            }
+            if (found) {
+                WeatherManager.sendBiomePacket(levelBiomeWeather, level.players());
+                SimpleNetworkHandler.send(level.players(),new EmptyMessage());
+            }
+        }
+        return 0;
+    }
+
     public static int setBiomeRain(CommandSourceStack sourceStack, ResourceOrTagArgument.Result<Biome> result, boolean setRain, boolean isThunder) throws CommandSyntaxException {
-        var levelBiomeWeather = WeatherManager.getBiomeList(sourceStack.getLevel());
+        ServerLevel level = sourceStack.getLevel();
+        var levelBiomeWeather = WeatherManager.getBiomeList(level);
         if (levelBiomeWeather != null) {
             boolean found = false;
             int size = levelBiomeWeather.size();
+            SolarTerm solarTerm = EclipticSeasonsApi.getInstance().getSolarTerm(level);
             for (WeatherManager.BiomeWeather biomeWeather : levelBiomeWeather) {
                 if (result.test(biomeWeather.biomeHolder)) {
+                    BiomeRain biomeRain = WeatherManager.getBiomeRain(level, solarTerm, biomeWeather.biomeHolder);
+                    biomeWeather.rainTime = setRain ? biomeRain.getRainDuration(level.getRandom()) / size : 0;
+                    biomeWeather.clearTime = setRain ? 0 : biomeRain.getRainDelay(level.getRandom()) / size;
 
-                    biomeWeather.rainTime = setRain ? ServerLevel.RAIN_DURATION.sample(sourceStack.getLevel().getRandom()) / size : 0;
-                    biomeWeather.clearTime = setRain ? 0 : ServerLevel.RAIN_DURATION.sample(sourceStack.getLevel().getRandom()) / size;
-
-                    biomeWeather.thunderTime = isThunder ? ServerLevel.THUNDER_DURATION.sample(sourceStack.getLevel().getRandom()) / size : 0;
+                    biomeWeather.thunderTime = isThunder ? biomeRain.getThunderDuration(level.getRandom()) / size : 0;
 
                     found = true;
                 }
             }
             if (found) {
-                WeatherManager.sendBiomePacket(levelBiomeWeather, sourceStack.getLevel().players());
+                WeatherManager.sendBiomePacket(levelBiomeWeather, level.players());
             }
         }
         return 0;
@@ -228,7 +253,6 @@ public class CommandHandler {
         return new crs(biomes.getHolder(0).orElse(null));
     }
 
-    // todo would it cause any crash?
     private record crs(Holder.Reference<Biome> biomeReference) implements ResourceOrTagArgument.Result<Biome> {
         @Override
         public boolean test(Holder<Biome> biomeHolder) {

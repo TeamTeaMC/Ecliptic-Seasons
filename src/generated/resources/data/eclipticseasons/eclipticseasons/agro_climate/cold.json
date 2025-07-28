@@ -2,12 +2,12 @@
   "mappings": {
     "beginning_of_spring": [
       {
-        "greater_cold": 0.5
+        "greater_cold": 0.8
       }
     ],
     "rain_water": [
       {
-        "winter_solstice": 0.9
+        "winter_solstice": 0.95
       }
     ],
     "insects_awakening": [
@@ -154,12 +154,12 @@
     ],
     "lesser_cold": [
       {
-        "greater_cold": 0.5
+        "greater_cold": 0.8
       }
     ],
     "greater_cold": [
       {
-        "greater_cold": 0.15
+        "greater_cold": 0.55
       }
     ]
   },

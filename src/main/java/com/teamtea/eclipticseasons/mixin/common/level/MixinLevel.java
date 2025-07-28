@@ -58,12 +58,13 @@ public class MixinLevel implements IBiomeWeatherProvider {
 
     @WrapOperation(at = {@At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;isRaining()Z")}, method = {"isRainingAt"})
     private boolean eclipticseasons$isRainingAt_skipRainCheck(Level instance, Operation<Boolean> original) {
-        return EclipticUtil.hasLocalWeather(instance) || original.call(instance);
+        return (EclipticUtil.hasLocalWeather(instance)
+                &&instance instanceof ServerLevel) || original.call(instance);
     }
 
     @Inject(at = {@At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;getBiome(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/core/Holder;")}, method = {"isRainingAt"}, cancellable = true)
     private void eclipticseasons$isRainingAt_endBiomeCheck(BlockPos p_46759_, CallbackInfoReturnable<Boolean> cir) {
-        if ((Object) this instanceof Level level) {
+        if ((Object) this instanceof ServerLevel level) {
             if (EclipticUtil.hasLocalWeather(level)) {
                 cir.setReturnValue(WeatherManager.isRainingUnderSky(level, p_46759_));
             }

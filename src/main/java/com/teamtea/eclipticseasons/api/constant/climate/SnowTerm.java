@@ -2,7 +2,7 @@ package com.teamtea.eclipticseasons.api.constant.climate;
 
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 
-public enum SnowTerm {
+public enum SnowTerm implements ISnowTerm {
 
     T1(SolarTerm.NONE, SolarTerm.NONE),
     T08(SolarTerm.WINTER_SOLSTICE, SolarTerm.LESSER_COLD),
@@ -27,15 +27,14 @@ public enum SnowTerm {
         this.end = end;
     }
 
+    @Override
     public SolarTerm getStart() {
         return start;
     }
 
+    @Override
     public SolarTerm getEnd() {
         return end;
     }
 
-    public boolean maySnow(SolarTerm solarTerm) {
-        return solarTerm.isInTerms(getStart(), getEnd());
-    }
 }

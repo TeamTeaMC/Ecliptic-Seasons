@@ -1,0 +1,11 @@
+{
+  "biomes": "#eclipticseasons:seasonal",
+  "slices": [
+    {
+      "textures": {
+        "all": "minecraft:block/cherry_leaves"
+      },
+      "season": "spring"
+    }
+  ]
+}

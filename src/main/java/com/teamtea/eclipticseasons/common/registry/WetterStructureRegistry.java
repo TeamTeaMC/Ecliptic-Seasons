@@ -16,7 +16,6 @@ import net.minecraft.world.level.block.Blocks;
 import java.util.List;
 import java.util.Optional;
 
-@SuppressWarnings("removal")
 public class WetterStructureRegistry {
     public static final ResourceKey<WetterStructure> BUBBLE_COLUMN_ON_MAGMA = createKey("bubble_column_on_magma");
 
@@ -27,7 +26,6 @@ public class WetterStructureRegistry {
     private static ResourceKey<Block> createBlockKey(ResourceLocation resourceLocation) {
         return ResourceKey.create(Registries.BLOCK, resourceLocation);
     }
-    @SuppressWarnings("removal")
     public static void bootstrap(BootstrapContext<WetterStructure> context) {
         var blockHolderGetter = context.lookup(Registries.BLOCK);
         context.register(BUBBLE_COLUMN_ON_MAGMA, new WetterStructure(0.75f, 4,600,true,Optional.of(new BlockPredicate( Optional.of(HolderSet.direct(Blocks.BUBBLE_COLUMN.builtInRegistryHolder())),Optional.empty(), Optional.empty())),  List.of(

@@ -6,10 +6,14 @@ import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.fml.loading.FMLLoader;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import net.neoforged.neoforgespi.locating.IModFile;
+import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
+import org.apache.maven.artifact.versioning.VersionRange;
 
 import java.util.List;
 
 public class Platform {
+
+    // VersionRange.createFromVersionSpec("[0.11.0-z,)").containsVersion(new DefaultArtifactVersion("0.11.0.1"))
 
     public static boolean isModLoaded(String id) {
         return FMLLoader.getLoadingModList().getModFileById(id) != null;

@@ -9,6 +9,7 @@ import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
 import com.teamtea.eclipticseasons.common.core.crop.CropInfoManager;
+import com.teamtea.eclipticseasons.common.core.crop.NaturalPlantHandler;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.core.map.ServerMapFixer;
 import com.teamtea.eclipticseasons.common.core.snow.SnowChecker;
@@ -23,6 +24,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -55,6 +57,7 @@ public class AllListener {
         WeatherManager.informUpdateBiomes(tagsUpdatedEvent.getRegistryAccess(), tagsUpdatedEvent.getUpdateCause() == TagsUpdatedEvent.UpdateCause.SERVER_DATA_LOAD);
         CropInfoManager.init(tagsUpdatedEvent);
         CropGrowthHandler.resetUpdate(tagsUpdatedEvent.getRegistryAccess(), tagsUpdatedEvent.getUpdateCause() == TagsUpdatedEvent.UpdateCause.SERVER_DATA_LOAD);
+        NaturalPlantHandler.resetUpdate(tagsUpdatedEvent.getRegistryAccess(), tagsUpdatedEvent.getUpdateCause() == TagsUpdatedEvent.UpdateCause.SERVER_DATA_LOAD);
         SnowChecker.resetUpdate(tagsUpdatedEvent.getRegistryAccess(), tagsUpdatedEvent.getUpdateCause() == TagsUpdatedEvent.UpdateCause.SERVER_DATA_LOAD);
     }
 
@@ -70,6 +73,7 @@ public class AllListener {
     @SubscribeEvent
     public static void onServerStoppingEvent(ServerStoppingEvent event) {
         CropGrowthHandler.clearOnClientExitOrServerClose();
+        NaturalPlantHandler.clearOnClientExitOrServerClose();
         BiomeClimateManager.clearOnClientExitOrServerClose();
         SnowChecker.clearOnClientExitOrServerClose();
     }
@@ -104,7 +108,7 @@ public class AllListener {
         if (event.getLevel() instanceof ServerLevel level) {
 
             long newTime = event.getNewTime(),
-                    oldDayTime = ((Level) event.getLevel()).getDayTime();
+                    oldDayTime = level.getDayTime();
             WeatherManager.updateAfterSleep(level, newTime, oldDayTime);
             // // TODO: 根据季节更新概率
             // if (!serverLevel.isRaining() && serverLevel.getRandom().nextFloat() > 0.8) {
@@ -231,21 +235,30 @@ public class AllListener {
     @SubscribeEvent
     public static void onPlayerTickPost(PlayerTickEvent.Post event) {
         if (event.getEntity() instanceof ServerPlayer serverPlayer) {
-            if (serverPlayer.level().getGameTime() % 20 == 0) {
+            Level level = serverPlayer.level();
+            if (level.getGameTime() % 20 == 0) {
                 ModAdvancements.parentNeedCriterion.get().trigger(serverPlayer);
 
-                SolarDataManager data = SolarHolders.getSaveData(serverPlayer.level());
+                SolarDataManager data = SolarHolders.getSaveData(level);
                 if (data != null) {
-                    float v = data.calculateHumidityModification(serverPlayer.blockPosition());
+                    float v = data.calculateHumidityModification(serverPlayer.blockPosition(),false);
                     SimpleNetworkHandler.send(serverPlayer, new HumidModifyMessage(
-                            serverPlayer.blockPosition(), Mth.floor(v)
+                            serverPlayer.blockPosition(), v
                     ));
                 }
 
-                if (CropGrowthHandler.isInRoom(serverPlayer.level(), serverPlayer.getOnPos().above(),
-                        Blocks.AIR.defaultBlockState(), Optional.empty())) {
-                    ModAdvancements.greenhouseCriterion.get().trigger(serverPlayer);
-                }
+                // if (((level.getLightEngine().getLayerListener(LightLayer.SKY).getLightValue(serverPlayer.blockPosition())) > 12)
+                //         && level.getRandom().nextInt(4) == 0
+                //         || level.getRandom().nextInt(128) == 0) {
+                //     float rainChance = 0;
+                //     for (int i = 0; i < 20; i++) {
+                //         rainChance += CropGrowthHandler.isInRoom(level, serverPlayer.getOnPos().above(),
+                //                 Blocks.AIR.defaultBlockState(), Optional.empty()) ? 1 : 0;
+                //     }
+                //     if (rainChance > 16) {
+                //         ModAdvancements.greenhouseCriterion.get().trigger(serverPlayer);
+                //     }
+                // }
             }
         }
     }

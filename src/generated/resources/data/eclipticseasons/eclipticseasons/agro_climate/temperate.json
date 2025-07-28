@@ -29,10 +29,6 @@
       {
         "value": "#c:is_hot/overworld",
         "type": "neoforge:not"
-      },
-      {
-        "value": "#c:is_desert",
-        "type": "neoforge:not"
       }
     ],
     "type": "neoforge:and"

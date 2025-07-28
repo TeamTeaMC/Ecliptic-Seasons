@@ -1,6 +1,7 @@
 package com.teamtea.eclipticseasons.client.util;
 
 import com.mojang.datafixers.util.Pair;
+import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.data.client.BiomeColor;
 import com.teamtea.eclipticseasons.api.data.client.LeafColor;
 import com.teamtea.eclipticseasons.api.data.client.SeasonalBiomeAmbient;
@@ -9,7 +10,9 @@ import com.teamtea.eclipticseasons.api.data.season.SnowDefinition;
 import com.teamtea.eclipticseasons.api.misc.client.IBiomeColorHolder;
 import com.teamtea.eclipticseasons.api.misc.util.HolderMappable;
 import com.teamtea.eclipticseasons.api.misc.util.Mergable;
+import com.teamtea.eclipticseasons.api.util.SimpleUtil;
 import com.teamtea.eclipticseasons.client.reload.ClientJsonCacheListener;
+import com.teamtea.eclipticseasons.config.ClientConfig;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;
@@ -33,7 +36,7 @@ public class ClientRef {
     public static final Map<Block, List<SeasonBlockDefinition>> seasonDef = new IdentityHashMap<>();
     public static final Map<Block, List<SnowDefinition>> snowClientDef = new IdentityHashMap<>();
 
-    // TODO Need to be cafeful for game reloading
+    // TODO Need to be careful for game reloading
     public static void updateClientSide(RegistryAccess registryAccess) {
         biomeColors.clear();
         leaveColors.clear();
@@ -66,8 +69,11 @@ public class ClientRef {
 
     private static void buildSeasonalModels(RegistryAccess registryAccess) {
         ArrayList<Pair<HolderSet<Block>, SeasonBlockDefinition>> collect = ClientJsonCacheListener.seasonDefCache
-                .build(SeasonBlockDefinition.CODEC, registryAccess).values()
-                .stream()
+                .build(SeasonBlockDefinition.CODEC, registryAccess)
+                .entrySet()
+                .stream().filter(r->
+                        ClientConfig.Renderer.flowerOnGrass.get()||! r.getKey().equals(SeasonBlockDefinition.GRASS_BLOCK))
+                .map(Map.Entry::getValue)
                 .map(HolderMappable::asHolderMapping)
                 .collect(Collectors.toCollection(ArrayList::new));
         Map<Block, List<SeasonBlockDefinition>> biomeListMap = buildFromHolders(collect, getHolders(registryAccess, Registries.BLOCK));
@@ -123,7 +129,12 @@ public class ClientRef {
     }
 
     public static <E> ArrayList<Holder<E>> getHolders(RegistryAccess registryAccess, ResourceKey<? extends Registry<? extends E>> registryKey) {
-        return registryAccess.registryOrThrow(registryKey).holders().collect(Collectors.toCollection(ArrayList::new));
+        Optional<Registry<E>> registry = registryAccess.registry(registryKey);
+        if (registry.isEmpty()) {
+            SimpleUtil.warningForModWrongCalling(registryKey);
+            return new ArrayList<>();
+        }
+        return registry.get().holders().collect(Collectors.toCollection(ArrayList::new));
     }
 
     private static <T extends Mergable<T>> T mergeList(List<T> instances) {

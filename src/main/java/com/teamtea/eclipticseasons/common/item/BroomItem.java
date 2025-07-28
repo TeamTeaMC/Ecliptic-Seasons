@@ -28,9 +28,11 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.BrushableBlock;
 import net.minecraft.world.level.block.RenderShape;
@@ -114,6 +116,7 @@ public class BroomItem extends Item {
                         level.destroyBlock(pickPos, true, pLivingEntity);
 
                         pStack.hurtAndBreak(pLivingEntity instanceof Player player && player.isCreative() ? 0 : 1, pLivingEntity, LivingEntity.getSlotForHand(pLivingEntity.getUsedItemHand()));
+
                     }
 
                     level.playSound(pLivingEntity, blockpos, soundevent, SoundSource.BLOCKS, 1f, 1f);
@@ -128,6 +131,8 @@ public class BroomItem extends Item {
                     if (shouldSet) {
                         if (!level.isClientSide()) {
                             if (CommonConfig.Map.delayedUpdates.get()) {
+                                if (level.getRandom().nextInt(4) == 0)
+                                    Block.popResource(level, blockpos, Items.SNOWBALL.getDefaultInstance());
                                 ServerMapFixer.addPlanner(level,
                                         blockstate,
                                         blockstate, blockpos,

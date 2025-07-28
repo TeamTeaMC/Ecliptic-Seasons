@@ -4,9 +4,8 @@ package com.teamtea.eclipticseasons.mixin.compat.sodium;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.teamtea.eclipticseasons.EclipticSeasons;
-import com.teamtea.eclipticseasons.client.core.ModelManager;
+import com.teamtea.eclipticseasons.client.core.ExtraModelManager;
 import com.teamtea.eclipticseasons.client.model.ISnowyReplaceModel;
-import com.teamtea.eclipticseasons.client.model.SnowyBakedModelWrapper;
 import com.teamtea.eclipticseasons.compat.ctm.CTMSpriteChecker;
 import com.teamtea.eclipticseasons.compat.sodium.SodiumStatus;
 import net.caffeinemc.mods.sodium.client.render.frapi.render.AbstractBlockRenderContext;
@@ -58,7 +57,7 @@ public abstract class MixinAbstractBlockRenderContext {
             @Local Direction side,
             @Local RandomSource rand) {
         if (this instanceof SodiumStatus sodiumStatus && sodiumStatus.getSnowModel() != null)
-            return ModelManager.cancelTop(bakedModel, level, state, pos, side, rand, randomSeed, original, sodiumStatus.getCacheBakeQuad(), sodiumStatus.getSnowModel());
+            return ExtraModelManager.cancelTop(bakedModel, level, state, pos, side, rand, randomSeed, original, sodiumStatus.getCacheBakeQuad(), sodiumStatus.getSnowModel());
         return original;
     }
 

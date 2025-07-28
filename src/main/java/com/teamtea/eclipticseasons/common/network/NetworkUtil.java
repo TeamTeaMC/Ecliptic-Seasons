@@ -55,10 +55,9 @@ public class NetworkUtil {
     public static void processEmptyMessage(EmptyMessage emptyMessage, IPayloadContext context) {
         context.enqueueWork(() -> {
             // note 观察是否更新正常
-            if(ClientConfig.Renderer.resetRendererAfterSleep.get()){
+            if (ClientConfig.Renderer.resetRendererAfterSleep.get()) {
                 Minecraft.getInstance().levelRenderer.allChanged();
-            }
-            else {
+            } else {
                 if (Minecraft.getInstance().cameraEntity instanceof LivingEntity livingEntity)
                     WorldRenderer.setAllDirty(SectionPos.of(livingEntity.getOnPos()));
             }
@@ -73,15 +72,23 @@ public class NetworkUtil {
         context.enqueueWork(() -> {
             var lists = WeatherManager.getBiomeList(context.player().level());
             if (lists != null) {
+                boolean update = false;
                 for (WeatherManager.BiomeWeather biomeWeather : lists) {
                     if (biomeWeatherMessage.rain[biomeWeather.id] == 0 && biomeWeather.rainTime > 0) {
-                        ClientWeatherChecker.addLastRainyBiome(biomeWeather.biomeHolder.value(), (long) (1 / ClientWeatherChecker.rate));
+                        ClientWeatherChecker.addLastRainyBiome(biomeWeather.biomeHolder.value(), (long) (1 / ClientWeatherChecker.getRate()));
                     }
+                    if (!update && biomeWeather.rainTime + biomeWeather.clearTime + biomeWeather.thunderTime > 0)
+                        update = biomeWeather.snowDepth == biomeWeatherMessage.snowDepth[biomeWeather.id];
                     biomeWeather.rainTime = biomeWeatherMessage.rain[biomeWeather.id] * 10000;
                     biomeWeather.clearTime = biomeWeatherMessage.clear[biomeWeather.id] * 10000;
                     biomeWeather.thunderTime = biomeWeatherMessage.thuder[biomeWeather.id] * 10000;
                     biomeWeather.snowDepth = biomeWeatherMessage.snowDepth[biomeWeather.id];
                 }
+                // if (update
+                //         && ClientCon.agent.getCameraEntity() != null
+                //         && ClientConfig.Renderer.forceChunkRenderUpdate.get()) {
+                //     WorldRenderer.setAllDirty(SectionPos.of(ClientCon.agent.getCameraEntity().getOnPos()));
+                // }
             }
         }).exceptionally(e -> {
             // Handle exception
@@ -196,7 +203,7 @@ public class NetworkUtil {
     public static void processHumidModifyMessage(HumidModifyMessage message, IPayloadContext context) {
         context.enqueueWork(() -> {
             if (context.player().level() instanceof Level level && level.isClientSide()) {
-                ClientCon.humidityModificationLevel =(int)message.value;
+                ClientCon.humidityModificationLevel = message.value;
             }
 
         }).exceptionally(e -> {

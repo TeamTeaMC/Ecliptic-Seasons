@@ -6,13 +6,9 @@ import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.constant.tag.ClimateTypeBiomeTags;
 import com.teamtea.eclipticseasons.api.misc.IBiomeTagHolder;
-import com.teamtea.eclipticseasons.api.util.EclipticUtil;
-import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
-import com.teamtea.eclipticseasons.common.handler.SolarUtil;
-import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerLevel;
@@ -47,9 +43,8 @@ public class VanillaWeather {
 
 
     public static WeatherManager.SnowRenderStatus getSnowStatus(ServerLevel level, Holder<Biome> biome, BlockPos pos) {
-        var provider = SolarHolders.getSaveData(level);
         var status = WeatherManager.SnowRenderStatus.NONE;
-        if (biome.value().hasPrecipitation() && provider != null) {
+        if (biome.value().hasPrecipitation()) {
             boolean flag_cold = isInWinter(level);
             if (flag_cold) {
                 if (level.isRaining())
@@ -92,7 +87,15 @@ public class VanillaWeather {
         var resultPrecipitation = Biome.Precipitation.NONE;
         var solarTerm = EclipticSeasonsApi.getInstance().getSolarTerm(level);
 
-        biome = MapChecker.getSurfaceBiome(level, pos).value();
+        if (MapChecker.isLoadNearByOnlyServer(level, pos)) {
+            biome = MapChecker.getSurfaceBiome(level, pos).value();
+        }
+        // else {
+        //     return biome.coldEnoughToSnow(pos) ?
+        //             Biome.Precipitation.SNOW :
+        //             Biome.Precipitation.RAIN;
+        // }
+
         boolean hasPrecipitation = hasPrecipitation(level, biome);
 
         if (hasPrecipitation) {
@@ -179,6 +182,11 @@ public class VanillaWeather {
                 return call;
             }
         }
+    }
+
+    public static Biome.Precipitation getRainOrSnow(Level level, Biome biome, BlockPos pos) {
+        return !level.isRaining() ? Biome.Precipitation.NONE :
+                handlePrecipitationAt(level, biome, pos);
     }
 
     // @Deprecated(forRemoval = true)

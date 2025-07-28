@@ -15,12 +15,11 @@ import java.util.function.Consumer;
 
 class ESConfigTask implements ICustomConfigurationTask {
 
-    private static final Type configTask = new Type(EclipticSeasons.rl("config_task"));
+    private final Type configTask = new Type(EclipticSeasons.rl("config_task"));
     private final RegisterConfigurationTasksEvent event;
 
     public ESConfigTask(RegisterConfigurationTasksEvent event) {
         this.event = event;
-
     }
 
     @Override

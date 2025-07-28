@@ -16,7 +16,6 @@ public class ESExtraCodec {
 
     public static final StringRepresentable.EnumCodec<Humidity> HUMIDITY = StringRepresentable.fromEnum(Humidity::collectValues);
 
-
     public static final StringRepresentable.EnumCodec<TimePeriod> TIME_PERIOD = StringRepresentable.fromEnum(TimePeriod::collectValues);
 
 }

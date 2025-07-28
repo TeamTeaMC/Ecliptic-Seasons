@@ -4,6 +4,7 @@ package com.teamtea.eclipticseasons.mixin.client;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.client.map.ClientMapFixer;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
+import com.teamtea.eclipticseasons.common.core.map.ServerMapFixer;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
@@ -24,7 +25,7 @@ public abstract class MixinClientLevelChunk {
     Level level;
 
     @Inject(
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/levelgen/Heightmap;update(IIILnet/minecraft/world/level/block/state/BlockState;)Z", ordinal = 1),
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/levelgen/Heightmap;update(IIILnet/minecraft/world/level/block/state/BlockState;)Z", ordinal = 2),
             method = "setBlockState"
     )
     public void eclipticseasons$Client_setBlockState(BlockPos pos, BlockState state, boolean p_62867_, CallbackInfoReturnable<BlockState> cir) {
@@ -33,11 +34,7 @@ public abstract class MixinClientLevelChunk {
             // ClientMapFixer.addPlanner(clientLevel, state, pos, clientLevel.getGameTime(), MapChecker.getHeight(clientLevel, pos));
             if (CommonConfig.Map.delayedUpdates.get()) {
                 if (!EclipticUtil.isHereWithSnow(level, pos)) {
-                    boolean isNotOldHeight = MapChecker.getHeight(level, pos)
-                            != level.getHeight(Heightmap.Types.MOTION_BLOCKING, pos.getX(), pos.getZ()) - 1;
-                    if (isNotOldHeight) {
-                        MapChecker.getHeightOrUpdate(level, pos, true);
-                    }
+                    MapChecker.getHeightOrUpdate(level, pos, true);
                 }
             } else {
                 ClientMapFixer.addPlanner(level, state, pos, level.getGameTime(), MapChecker.getHeight(level, pos));

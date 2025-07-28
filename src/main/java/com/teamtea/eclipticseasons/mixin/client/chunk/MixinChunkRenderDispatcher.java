@@ -7,7 +7,7 @@ import com.mojang.blaze3d.vertex.*;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.misc.client.IMapSlice;
 import com.teamtea.eclipticseasons.api.misc.client.ISeedProvider;
-import com.teamtea.eclipticseasons.client.core.ModelManager;
+import com.teamtea.eclipticseasons.client.core.ExtraModelManager;
 import com.teamtea.eclipticseasons.client.render.SnowRenderer;
 import com.teamtea.eclipticseasons.compat.vanilla.ExtendBlockView;
 import com.teamtea.eclipticseasons.config.ClientConfig;
@@ -36,13 +36,13 @@ public abstract class MixinChunkRenderDispatcher {
 
     @Shadow
     private BufferBuilder getOrBeginLayer(Map<RenderType, BufferBuilder> pBufferLayers, SectionBufferBuilderPack pSectionBufferBuilderPack, RenderType pRenderType) {
-        BufferBuilder bufferbuilder = pBufferLayers.get(pRenderType);
-        if (bufferbuilder == null) {
-            ByteBufferBuilder bytebufferbuilder = pSectionBufferBuilderPack.buffer(pRenderType);
-            bufferbuilder = new BufferBuilder(bytebufferbuilder, VertexFormat.Mode.QUADS, DefaultVertexFormat.BLOCK);
-            pBufferLayers.put(pRenderType, bufferbuilder);
-        }
-        return bufferbuilder;
+        // BufferBuilder bufferbuilder = pBufferLayers.get(pRenderType);
+        // if (bufferbuilder == null) {
+        //     ByteBufferBuilder bytebufferbuilder = pSectionBufferBuilderPack.buffer(pRenderType);
+        //     bufferbuilder = new BufferBuilder(bytebufferbuilder, VertexFormat.Mode.QUADS, DefaultVertexFormat.BLOCK);
+        //     pBufferLayers.put(pRenderType, bufferbuilder);
+        // }
+        throw  new UnsupportedOperationException();
     }
 
     @Inject(
@@ -67,10 +67,10 @@ public abstract class MixinChunkRenderDispatcher {
         ((ISeedProvider) renderChunkRegion).setCacheSeed(original);
         if (renderChunkRegion instanceof ExtendBlockView extendBlockView) {
             randomsource.setSeed(original);
-            extendBlockView.setSnowModel(ModelManager.findModel(renderChunkRegion, blockpos2, blockstate, randomsource, original, extendBlockView.getModelCheckPos()));
+            extendBlockView.setSnowModel(ExtraModelManager.findModel(renderChunkRegion, blockpos2, blockstate, randomsource, original, extendBlockView.getModelCheckPos()));
             if (extendBlockView.getSnowModel() != null) {
-                extendBlockView.setCurrentModelReplaceable(ModelManager.isModelReplaceable(blockstate, renderChunkRegion, blockpos2,extendBlockView.getSnowModel()));
-                extendBlockView.setShouldCollectBakeQuads(ModelManager.isSpecialCTMBlock(blockstate));
+                extendBlockView.setCurrentModelReplaceable(ExtraModelManager.isModelReplaceable(blockstate, renderChunkRegion, blockpos2,extendBlockView.getSnowModel()));
+                extendBlockView.setShouldCollectBakeQuads(ExtraModelManager.isSpecialCTMBlock(blockstate));
             } else {
                 extendBlockView.setCurrentModelReplaceable(false);
                 extendBlockView.setShouldCollectBakeQuads(false);
@@ -132,7 +132,7 @@ public abstract class MixinChunkRenderDispatcher {
 
     @Unique
     private void eclipticseasons$renderModel(BakedModel bakedModel, SectionBufferBuilderPack pChunkBufferBuilderPack, BlockPos pos, BlockState state, PoseStack posestack, RenderChunkRegion renderchunkregion, RandomSource random, long seed, Map<RenderType, BufferBuilder> renderTypeSet) {
-        RenderType renderType = ModelManager.getRenderType(state);
+        RenderType renderType = ExtraModelManager.getRenderType(state);
         BufferBuilder bufferbuilder2 = getOrBeginLayer(renderTypeSet, pChunkBufferBuilderPack, renderType);
         SnowRenderer.renderSnowyBlock(bakedModel, bufferbuilder2, pos, state, posestack, renderchunkregion, random, seed, renderType);
     }
@@ -152,7 +152,6 @@ public abstract class MixinChunkRenderDispatcher {
     )
     private void eclipticseasons$compile_checkb(SectionPos pSectionPos, RenderChunkRegion pRegion, VertexSorting pVertexSorting, SectionBufferBuilderPack pSectionBufferBuilderPack, List<AddSectionGeometryEvent.AdditionalSectionRenderer> additionalRenderers, CallbackInfoReturnable<SectionCompiler.Results> cir) {
         ((ExtendBlockView) pRegion).finishChunkRender();
-
         long l = System.currentTimeMillis() - eclipticseasons$time;
         if (l > ClientConfig.Debug.minChunkCompileWaringTime.getAsInt())
             EclipticSeasons.logger("WARNING",

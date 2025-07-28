@@ -4,14 +4,15 @@ import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.biome.Humidity;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
+import com.teamtea.eclipticseasons.api.constant.solar.ISolarTerm;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
+import com.teamtea.eclipticseasons.common.core.solar.SolarTermHelper;
 import com.teamtea.eclipticseasons.common.misc.SimplePair;
 import com.teamtea.eclipticseasons.common.misc.SolarTermHumidityChart;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.Util;
 import net.minecraft.core.*;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.data.worldgen.SurfaceRuleData;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
@@ -70,10 +71,24 @@ public class SimpleUtil {
 
     public static List<String> getModsUse(int offset) {
         ArrayList<String> strings = new ArrayList<>();
-        for (int i = 2; i < 10; i++) {
+        for (int i = 2; i < 15; i++) {
             strings.add(getModUse(i));
         }
         return new ArrayList<>(new HashSet<>(strings));
+    }
+
+    public static <E> void warningForModWrongCalling(ResourceKey<? extends Registry<? extends E>> registryKey) {
+        SimpleUtil.warningForModWrongCalling("Warning for call " + registryKey + " at wrong time.");
+    }
+
+    public static void warningForModWrongCalling(String message) {
+        HashSet<String> strings = new HashSet<>(getModsUse(0));
+        strings.removeIf(s -> s.equals(EclipticSeasonsApi.MODID));
+        strings.removeIf(s -> s.equals("neoforge"));
+        strings.removeIf(s -> s.equals("minecraft"));
+        strings.removeIf(String::isEmpty);
+        EclipticSeasons.logger(message);
+        EclipticSeasons.logger("Suspected mod: " + String.join(",", strings));
     }
 
 
@@ -95,6 +110,24 @@ public class SimpleUtil {
 
     }
 
+    public static MutableComponent addSolarIconBefore(ISolarTerm solarTerm, MutableComponent mutableComponent) {
+
+        // Style noBitstyle = mutableComponent.getStyle()
+        //         .withFont(mutableComponent.getStyle().getFont());
+        Style aDefault = Style.EMPTY.withFont(ResourceLocation.withDefaultNamespace("default"));
+        Style style = Style.EMPTY.withFont(solarTerm.getIconFont());
+
+        return Component.literal(solarTerm.getFontLabel())
+                .withStyle(style.withColor(TextColor.fromRgb(-1)))
+                .append(Component.literal(" ")
+                        .withStyle(aDefault)
+                        .append(mutableComponent))
+
+                // .append(mutableComponent.withStyle(noBitstyle))
+                ;
+
+    }
+
     public static MutableComponent getSolarTermMessage(SolarTerm solarTerm) {
         return Component
                 .empty()
@@ -104,6 +137,18 @@ public class SimpleUtil {
                                 SimpleUtil.addSolarIconBefore(solarTerm, solarTerm.getAlternationText()) :
                                 solarTerm.getAlternationText()
                 ));
+    }
+
+    public static void sendSolarTermMessage(ServerPlayer player, SolarTerm solarTerm,boolean ignoreChangeCheck) {
+        ISolarTerm iSolarTerm = SolarTermHelper.isChangedAndGet(player.level(), player.blockPosition(), solarTerm, solarTerm.getLastSolarTerm(),ignoreChangeCheck);
+        if (iSolarTerm != null) {
+            MutableComponent translatable = Component.translatable("info.eclipticseasons.environment.solar_term.message",
+                    CommonConfig.Season.enableInformIcon.get() ?
+                            SimpleUtil.addSolarIconBefore(iSolarTerm, iSolarTerm.getAlternationText()) :
+                            solarTerm.getAlternationText()
+            );
+            player.sendSystemMessage(translatable, false);
+        }
     }
 
 
@@ -161,10 +206,10 @@ public class SimpleUtil {
                     && e.getKey().location().getNamespace().contains(namespace)
             ) {
                 var biomeHolder = BiomeClimateManager.getHolder(level.registryAccess(), e.getValue());
-                Humidity[] humidities = new Humidity[24];
+                double[] humidities = new double[24];
                 for (int i = 0; i < 24; i++) {
                     SolarTerm solarTerm = SolarTerm.collectValues()[i];
-                    humidities[i] = EclipticUtil.getHumidityConstant(solarTerm, biomeHolder, !level.isClientSide());
+                    humidities[i] = EclipticUtil.getHumidityConstantFloat(solarTerm, biomeHolder, !level.isClientSide());
                 }
                 String biomeName = Component.translatable(Util.makeDescriptionId("biome", e.getKey().location())).getString();
                 SolarTermHumidityChart chart = new SolarTermHumidityChart(biomeName, humidities);

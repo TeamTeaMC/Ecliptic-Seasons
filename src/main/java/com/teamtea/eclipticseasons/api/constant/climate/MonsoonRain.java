@@ -62,7 +62,7 @@ public enum MonsoonRain implements BiomeRain {
     }
 
     @Override
-    public float getRainChane() {
+    public float getRainChance() {
         return rainChane;
     }
     @Override

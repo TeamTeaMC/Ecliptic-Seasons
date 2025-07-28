@@ -14,7 +14,7 @@ public class SelectorLike extends Selector {
     public static final AndConditionLike EMPTY_CONDITION = new AndConditionLike(List.of());
 
     public static final Codec<SelectorLike> CODEC = RecordCodecBuilder.create(ins -> ins.group(
-            ConditionLike.CODEC.optionalFieldOf("when",EMPTY_CONDITION).forGetter(o -> o.condition),
+            ConditionLike.CODEC.optionalFieldOf("when", EMPTY_CONDITION).forGetter(o -> o.condition),
             MultiVariantLike.CODEC.fieldOf("apply").forGetter(o -> o.variant)
     ).apply(ins, SelectorLike::new));
     private final ConditionLike condition;
@@ -27,7 +27,7 @@ public class SelectorLike extends Selector {
         this.variant = variant;
     }
 
-    public SelectorLike( MultiVariantLike variant) {
+    public SelectorLike(MultiVariantLike variant) {
         this(EMPTY_CONDITION, variant);
     }
 

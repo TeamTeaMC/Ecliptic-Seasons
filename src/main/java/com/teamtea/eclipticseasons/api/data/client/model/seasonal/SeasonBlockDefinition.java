@@ -4,6 +4,7 @@ package com.teamtea.eclipticseasons.api.data.client.model.seasonal;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.misc.util.HolderMappable;
@@ -26,6 +27,8 @@ import java.util.List;
 // TODO  support dh changes
 @Data
 public class SeasonBlockDefinition implements HolderMappable<HolderSet<Block>, SeasonBlockDefinition> {
+
+    public static final ResourceLocation GRASS_BLOCK = EclipticSeasons.rl("grass_block");
 
     public static final Codec<SeasonBlockDefinition> CODEC = RecordCodecBuilder.create(ins -> ins.group(
             CodecUtil.holderSetCodec(Registries.BLOCK).fieldOf("blocks").forGetter(o -> o.blocks),

@@ -1,9 +1,0 @@
-{
-  "apply": true,
-  "biome": "#eclipticseasons:seasonal",
-  "modifiers": [
-    {
-      "index": 24
-    }
-  ]
-}

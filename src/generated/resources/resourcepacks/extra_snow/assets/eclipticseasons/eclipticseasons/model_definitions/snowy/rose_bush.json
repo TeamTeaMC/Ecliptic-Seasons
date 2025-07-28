@@ -1,0 +1,11 @@
+{
+  "replace": true,
+  "variants": {
+    "half=upper": {
+      "model": "eclipticseasons:block/snowy/rose_bush_top"
+    },
+    "half=lower": {
+      "model": "eclipticseasons:block/snowy/rose_bush_bottom"
+    }
+  }
+}

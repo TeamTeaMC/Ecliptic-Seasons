@@ -8,7 +8,8 @@ import com.google.gson.stream.JsonWriter;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.Encoder;
-import com.teamtea.eclipticseasons.data.datapack.DatapackRegistryGenerator;
+import com.teamtea.eclipticseasons.data.extend.example.DatapackRegistryGeneratorExample;
+import com.teamtea.eclipticseasons.data.general.datapack.DatapackRegistryGenerator;
 import net.minecraft.Util;
 import net.minecraft.core.Holder;
 import net.minecraft.data.CachedOutput;
@@ -20,6 +21,7 @@ import net.neoforged.neoforge.common.conditions.WithConditions;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -44,7 +46,7 @@ public abstract class MixinsRegistriesDatapackGenerator {
 
     @Inject(at = {@At("HEAD")}, method = {"lambda$dumpRegistryCap$5"}, cancellable = true)
     private void eclipticseasons$lambda$dumpRegistryCap$11(PackOutput.PathProvider packoutput$pathprovider, CachedOutput output, DynamicOps ops, Codec conditionalCodec, Holder.Reference p_256105_, CallbackInfoReturnable<CompletableFuture> cir) {
-        if ((Object) this instanceof DatapackRegistryGenerator)
+        if ((Object) this instanceof DatapackRegistryGenerator||(Object) this instanceof DatapackRegistryGeneratorExample)
             cir.setReturnValue(dumpValue2(
                     packoutput$pathprovider.json(p_256105_.key().location()),
                     output,
@@ -54,6 +56,7 @@ public abstract class MixinsRegistriesDatapackGenerator {
             ));
     }
 
+    @Unique
     private static <E> CompletableFuture<?> dumpValue2(
             Path p_255678_, CachedOutput p_256438_, DynamicOps<JsonElement> p_256127_, Encoder<Optional<WithConditions<E>>> p_255938_, java.util.Optional<net.neoforged.neoforge.common.conditions.WithConditions<E>> p_256590_
     ) {
@@ -64,6 +67,7 @@ public abstract class MixinsRegistriesDatapackGenerator {
                 );
     }
 
+    @Unique
     private static CompletableFuture<Void> eclipticseasons$lambda$static$0(CachedOutput output, Path path, JsonElement json) {
         return CompletableFuture.runAsync(() -> {
             try {

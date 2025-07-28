@@ -2,30 +2,34 @@ package com.teamtea.eclipticseasons.data;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
-import com.teamtea.eclipticseasons.data.advancement.Advancements;
-import com.teamtea.eclipticseasons.data.datapack.DatapackRegistryGenerator;
-import com.teamtea.eclipticseasons.data.datapack.ESDataMapProvider;
-import com.teamtea.eclipticseasons.data.datapack.client.*;
-import com.teamtea.eclipticseasons.data.font.ESFontProvider;
-import com.teamtea.eclipticseasons.data.lang.Lang_EN;
-import com.teamtea.eclipticseasons.data.lang.Lang_ZH;
-import com.teamtea.eclipticseasons.data.loot.EclipticSeasonsLootTableProvider;
-import com.teamtea.eclipticseasons.data.model.BlockStatesDataProvider;
-import com.teamtea.eclipticseasons.data.model.ESBlockModelProvider;
-import com.teamtea.eclipticseasons.data.model.ESItemModelProvider;
-import com.teamtea.eclipticseasons.data.recipe.ESRecipeProvider;
-import com.teamtea.eclipticseasons.data.sound.ESSoundDefinitionsProvider;
-import com.teamtea.eclipticseasons.data.tag.*;
+import com.teamtea.eclipticseasons.data.api.MutablePackOutput;
+import com.teamtea.eclipticseasons.data.extend.example.*;
+import com.teamtea.eclipticseasons.data.extend.extra_snow.DatapackRegistryGeneratorExtra;
+import com.teamtea.eclipticseasons.data.extend.extra_snow.ExtraClientModelDefinitionProvider;
+import com.teamtea.eclipticseasons.data.general.advancement.Advancements;
+import com.teamtea.eclipticseasons.data.general.datapack.DatapackRegistryGenerator;
+import com.teamtea.eclipticseasons.data.general.datapack.ESDataMapProvider;
+import com.teamtea.eclipticseasons.data.general.datapack.client.*;
+import com.teamtea.eclipticseasons.data.general.font.ESFontProvider;
+import com.teamtea.eclipticseasons.data.general.lang.Lang_EN;
+import com.teamtea.eclipticseasons.data.general.lang.Lang_ZH;
+import com.teamtea.eclipticseasons.data.general.loot.EclipticSeasonsLootTableProvider;
+import com.teamtea.eclipticseasons.data.general.model.BlockStatesDataProvider;
+import com.teamtea.eclipticseasons.data.general.model.ESBlockModelProvider;
+import com.teamtea.eclipticseasons.data.general.model.ESItemModelProvider;
+import com.teamtea.eclipticseasons.data.general.recipe.ESRecipeProvider;
+import com.teamtea.eclipticseasons.data.general.sound.ESSoundDefinitionsProvider;
+import com.teamtea.eclipticseasons.data.general.tag.*;
 import net.minecraft.Util;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.PackOutput;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 
 
+import java.nio.file.Path;
 import java.util.concurrent.CompletableFuture;
 
 
@@ -35,7 +39,7 @@ public class start {
     public static void dataGen(GatherDataEvent event) {
         DataGenerator generator = event.getGenerator();
         ExistingFileHelper helper = event.getExistingFileHelper();
-        PackOutput packOutput = generator.getPackOutput();
+        MutablePackOutput packOutput = new MutablePackOutput(generator.getPackOutput());
         CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
         if (event.includeServer()) {
             EclipticSeasons.logger("Generate We Data!!!");
@@ -78,9 +82,6 @@ public class start {
             generator.addProvider(event.includeClient(), new ESSoundDefinitionsProvider(packOutput, MODID, helper));
 
 
-            generator.addProvider(event.includeClient(), new BiomeColorProvider(packOutput,MODID, helper,lookupProvider));
-            generator.addProvider(event.includeClient(), new LeafColorProvider(packOutput,MODID, helper,lookupProvider));
-
             generator.addProvider(event.includeClient(), new ClientSnowDefinitionProvider(packOutput,MODID, helper,lookupProvider));
             generator.addProvider(event.includeClient(), new SeasonalBiomeAmbientProvider(packOutput,MODID, helper,lookupProvider));
             generator.addProvider(event.includeClient(), new ClientModelDefinitionProvider(packOutput,MODID, helper,lookupProvider));
@@ -89,6 +90,27 @@ public class start {
 
         }
 
+        // Extra Snow
+        packOutput = packOutput.move(Path.of("resourcepacks", "extra_snow"));
+        if (event.includeServer()) {
+            generator.addProvider(event.includeServer(), new DatapackRegistryGeneratorExtra(packOutput, lookupProvider));
+        }
+        if (event.includeClient()) {
+            generator.addProvider(event.includeClient(), new ExtraClientModelDefinitionProvider(packOutput, MODID, helper, lookupProvider));
+        }
 
+        // Example
+        packOutput = packOutput.move(Path.of("resourcepacks", "example"));
+        if (event.includeServer()) {
+            generator.addProvider(event.includeServer(), new DatapackRegistryGeneratorExample(packOutput, lookupProvider));
+            generator.addProvider(event.includeServer(), new ExampleLootTableProvider(packOutput, lookupProvider));
+
+        }
+        if(event.includeClient()){
+            generator.addProvider(event.includeClient(), new SeasonTextureProvider(packOutput,MODID, helper,lookupProvider));
+            generator.addProvider(event.includeClient(), new BiomeColorProvider(packOutput,MODID, helper,lookupProvider));
+            generator.addProvider(event.includeClient(), new LeafColorProvider(packOutput,MODID, helper,lookupProvider));
+
+        }
     }
 }

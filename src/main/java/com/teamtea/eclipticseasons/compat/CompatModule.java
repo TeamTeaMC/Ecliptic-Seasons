@@ -3,6 +3,7 @@ package com.teamtea.eclipticseasons.compat;
 
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.compat.cold_sweat.Cold_Sweat;
+import com.teamtea.eclipticseasons.compat.dynamictrees.DynamicTreeMod;
 import com.teamtea.eclipticseasons.compat.theoneprobe.TOPHook;
 import com.teamtea.eclipticseasons.compat.touhou_little_maid.LittleMaid;
 import net.neoforged.bus.api.IEventBus;
@@ -61,9 +62,9 @@ public class CompatModule {
      * Used for mod setup.
      **/
     public static void setup() {
-        // if (isDynamictrees()) {
-        //     DynamicTreeMod.init();
-        // }
+        if (isDynamictrees()) {
+            DynamicTreeMod.init();
+        }
     }
 
     public static boolean isCtm() {

@@ -67,9 +67,9 @@ public abstract class MixinLevelRender {
         if (level == null)
             return original.call(biome, pos);
         if (EclipticUtil.hasLocalWeather(level)) {
-            if (ClientWeatherChecker.isBiomeRainyLast(biome))
-                return WeatherManager.getPrecipitationAt(level, biome, pos);
-            return WeatherManager.getRainOrSnow(level, biome, pos);
+            // if (ClientWeatherChecker.isBiomeRainyLast(biome))
+            //     return WeatherManager.getPrecipitationAt(level, biome, pos);
+            return EclipticUtil.getRainOrSnow(level, biome, pos);
         }
         return VanillaWeather.handlePrecipitationAt(level, biome, pos);
     }

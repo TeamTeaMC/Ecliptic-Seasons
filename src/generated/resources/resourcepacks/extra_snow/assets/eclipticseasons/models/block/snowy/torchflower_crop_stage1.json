@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/torchflower_crop_stage1",
+  "textures": {
+    "cross": "eclipticseasons:block/snowy/torchflower_crop_stage1"
+  }
+}

@@ -36,7 +36,7 @@ public class AgroClimateRegistry {
     public static final ResourceKey<AgroClimaticZone> TEMPERATE = createKey("temperate");
     public static final ResourceKey<AgroClimaticZone> COLD = createKey("cold");
     public static final ResourceKey<AgroClimaticZone> HOT = createKey("hot");
-    public static final ResourceKey<AgroClimaticZone> DESERT = createKey("desert");
+    // public static final ResourceKey<AgroClimaticZone> DESERT = createKey("desert");
     public static final ResourceKey<AgroClimaticZone> NETHER = createKey("nether");
     public static final ResourceKey<AgroClimaticZone> END = createKey("end");
 
@@ -73,15 +73,14 @@ public class AgroClimateRegistry {
         context.register(TEMPERATE, AgroClimaticZone.builder((
                 and(or(get(Tags.Biomes.IS_OVERWORLD), get(Tags.Biomes.IS_VOID)),
                         not(get(Tags.Biomes.IS_COLD_OVERWORLD)),
-                        not(get(Tags.Biomes.IS_HOT_OVERWORLD)),
-                        not(get(Tags.Biomes.IS_DESERT))
+                        not(get(Tags.Biomes.IS_HOT_OVERWORLD))
                 )))
                 .add(Season.SPRING, 6).add(Season.SUMMER, 6).add(Season.AUTUMN, 6).add(Season.WINTER, 6)
                 .end());
 
         Map<Either<Season, SolarTerm>, List<Pair<Either<Season, SolarTerm>, Float>>> mapCold = of(
-                Either.<Season, SolarTerm>right(SolarTerm.BEGINNING_OF_SPRING), List.of(Pair.of(Either.<Season, SolarTerm>right(SolarTerm.GREATER_COLD), 0.5f)),
-                Either.<Season, SolarTerm>right(SolarTerm.RAIN_WATER), List.of(Pair.of(Either.<Season, SolarTerm>right(SolarTerm.WINTER_SOLSTICE), 0.9f)),
+                Either.<Season, SolarTerm>right(SolarTerm.BEGINNING_OF_SPRING), List.of(Pair.of(Either.<Season, SolarTerm>right(SolarTerm.GREATER_COLD), 0.8f)),
+                Either.<Season, SolarTerm>right(SolarTerm.RAIN_WATER), List.of(Pair.of(Either.<Season, SolarTerm>right(SolarTerm.WINTER_SOLSTICE), 0.95f)),
                 Either.<Season, SolarTerm>right(SolarTerm.INSECTS_AWAKENING), List.of(Pair.of(Either.<Season, SolarTerm>right(SolarTerm.WINTER_SOLSTICE), 1f)),
                 Either.<Season, SolarTerm>right(SolarTerm.SPRING_EQUINOX), List.of(Pair.of(Either.<Season, SolarTerm>right(SolarTerm.WINTER_SOLSTICE), 0.8f), Pair.of(Either.<Season, SolarTerm>right(SolarTerm.BEGINNING_OF_SPRING), 0.2f)),
                 Either.<Season, SolarTerm>right(SolarTerm.FRESH_GREEN), List.of(Pair.of(Either.<Season, SolarTerm>right(SolarTerm.BEGINNING_OF_SPRING), 0.7f), Pair.of(Either.<Season, SolarTerm>right(SolarTerm.SPRING_EQUINOX), 0.3f)),
@@ -105,8 +104,8 @@ public class AgroClimateRegistry {
                 Either.<Season, SolarTerm>right(SolarTerm.LIGHT_SNOW), List.of(Pair.of(Either.<Season, SolarTerm>right(SolarTerm.SUMMER_SOLSTICE), 0.6f), Pair.of(Either.<Season, SolarTerm>right(SolarTerm.GREATER_COLD), 0.4f)),
                 Either.<Season, SolarTerm>right(SolarTerm.HEAVY_SNOW), List.of(Pair.of(Either.<Season, SolarTerm>right(SolarTerm.SUMMER_SOLSTICE), 0.4f), Pair.of(Either.<Season, SolarTerm>right(SolarTerm.GREATER_COLD), 0.6f)),
                 Either.<Season, SolarTerm>right(SolarTerm.WINTER_SOLSTICE), List.of(Pair.of(Either.<Season, SolarTerm>right(SolarTerm.GREATER_COLD), 1f)),
-                Either.<Season, SolarTerm>right(SolarTerm.LESSER_COLD), List.of(Pair.of(Either.<Season, SolarTerm>right(SolarTerm.GREATER_COLD), .5f)),
-                Either.<Season, SolarTerm>right(SolarTerm.GREATER_COLD), List.of(Pair.of(Either.<Season, SolarTerm>right(SolarTerm.GREATER_COLD), 0.15f))
+                Either.<Season, SolarTerm>right(SolarTerm.LESSER_COLD), List.of(Pair.of(Either.<Season, SolarTerm>right(SolarTerm.GREATER_COLD), .8f)),
+                Either.<Season, SolarTerm>right(SolarTerm.GREATER_COLD), List.of(Pair.of(Either.<Season, SolarTerm>right(SolarTerm.GREATER_COLD), 0.55f))
         );
 
         context.register(COLD, AgroClimaticZone.builder(get(Tags.Biomes.IS_COLD_OVERWORLD))
@@ -121,20 +120,8 @@ public class AgroClimateRegistry {
                 Either.<Season, SolarTerm>left(Season.WINTER), List.of(Pair.of(Either.<Season, SolarTerm>right(SolarTerm.BEGINNING_OF_SUMMER), 1f))
         );
 
-        context.register(HOT, AgroClimaticZone.builder(and(get(Tags.Biomes.IS_HOT_OVERWORLD), not(get(Tags.Biomes.IS_DESERT))))
+        context.register(HOT, AgroClimaticZone.builder(and(get(Tags.Biomes.IS_HOT_OVERWORLD)))
                 .mapping(mapHot)
-                .add(Season.SUMMER, 24)
-                .end());
-
-        Map<Either<Season, SolarTerm>, List<Pair<Either<Season, SolarTerm>, Float>>> mapHot2 = of(
-                Either.<Season, SolarTerm>left(Season.SPRING), List.of(Pair.of(Either.<Season, SolarTerm>right(SolarTerm.BEGINNING_OF_SUMMER), .5f)),
-                Either.<Season, SolarTerm>left(Season.SUMMER), List.of(Pair.of(Either.<Season, SolarTerm>right(SolarTerm.SUMMER_SOLSTICE), .5f)),
-                Either.<Season, SolarTerm>left(Season.AUTUMN), List.of(Pair.of(Either.<Season, SolarTerm>right(SolarTerm.SUMMER_SOLSTICE), .3f), Pair.of(Either.<Season, SolarTerm>right(SolarTerm.BEGINNING_OF_SUMMER), .2f)),
-                Either.<Season, SolarTerm>left(Season.WINTER), List.of(Pair.of(Either.<Season, SolarTerm>right(SolarTerm.BEGINNING_OF_SUMMER), .5f))
-        );
-
-        context.register(DESERT, AgroClimaticZone.builder(get(Tags.Biomes.IS_DESERT))
-                .mapping(mapHot2)
                 .add(Season.SUMMER, 24)
                 .end());
 

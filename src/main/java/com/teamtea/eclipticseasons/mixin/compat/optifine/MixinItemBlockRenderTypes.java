@@ -1,7 +1,7 @@
 package com.teamtea.eclipticseasons.mixin.compat.optifine;
 
 
-import com.teamtea.eclipticseasons.client.core.ModelManager;
+import com.teamtea.eclipticseasons.client.core.ExtraModelManager;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -29,7 +29,7 @@ public abstract class MixinItemBlockRenderTypes {
     @Inject(at = {@At("HEAD")}, method = {"getRenderLayers"}, cancellable = true, remap = false)
     private static void eclipticseasons$getRenderLayers(BlockState state, CallbackInfoReturnable<ChunkRenderTypeSet> cir) {
         if (renderCutout && BLOCK_RENDER_TYPES.get(state.getBlock()).contains(RenderType.SOLID))
-            if (ModelManager.shouldCutoutMipped(state)) {
+            if (ExtraModelManager.shouldCutoutMipped(state)) {
                 cir.setReturnValue(ChunkRenderTypeSet.of(RenderType.cutoutMipped()));
             }
     }

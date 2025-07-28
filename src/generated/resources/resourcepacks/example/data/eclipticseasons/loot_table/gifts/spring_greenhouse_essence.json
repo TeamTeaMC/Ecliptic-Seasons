@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:gift",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "eclipticseasons:season",
+          "require": {
+            "solar_term": "beginning_of_spring"
+          }
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "eclipticseasons:spring_greenhouse_essence",
+          "weight": 10
+        }
+      ],
+      "rolls": 1.0
+    }
+  ],
+  "random_sequence": "eclipticseasons:gifts/spring_greenhouse_essence"
+}

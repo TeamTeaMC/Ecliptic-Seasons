@@ -5,6 +5,7 @@ import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
 import net.minecraft.world.level.Level;
 
+import javax.annotation.Nullable;
 import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -20,7 +21,7 @@ public class SolarHolders {
         // }
     }
 
-    public static SolarDataManager getSaveData(Level level) {
+    public static @Nullable SolarDataManager getSaveData(Level level) {
         return DATA_MANAGER_MAP.getOrDefault(level, null);
     }
 

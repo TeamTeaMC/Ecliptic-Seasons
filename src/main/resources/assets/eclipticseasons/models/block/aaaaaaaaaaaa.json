@@ -1,4 +1,5 @@
-{"parent": "eclipticseasons:block/overlay",
+{
+  "parent": "eclipticseasons:block/overlay",
   "children": {
     "sprint": {
       "parent": "eclipticseasons:block/flower_1"
@@ -11,5 +12,16 @@
     "sprint",
     "summer"
   ],
+  "texture_overrides": {
+    "summer": {
+      "all": "eclipticseasons:block/summer_yellow_autumnal_leaves"
+    },
+    "autumn": {
+      "all": "eclipticseasons:block/cherry_leaves_autumn"
+    },
+    "winter": {
+      "all": "eclipticseasons:block/cherry_leaves_winter"
+    }
+  },
   "loader": "eclipticseasons:snow_overlay"
 }

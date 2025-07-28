@@ -6,126 +6,72 @@
   "climate": "eclipticseasons:temperate",
   "solar_terms": {
     "beginning_of_spring": {
-      "grow_chance": 0.35,
-      "death_chance": 0.0,
-      "fertile_chance": 1.0
+      "grow_chance": 0.35
     },
     "rain_water": {
-      "grow_chance": 0.4,
-      "death_chance": 0.0,
-      "fertile_chance": 1.0
+      "grow_chance": 0.5
     },
     "insects_awakening": {
-      "grow_chance": 0.3,
-      "death_chance": 0.0,
-      "fertile_chance": 1.0
+      "grow_chance": 0.6
     },
     "spring_equinox": {
-      "grow_chance": 0.6,
-      "death_chance": 0.0,
-      "fertile_chance": 1.0
+      "grow_chance": 0.8
     },
     "fresh_green": {
-      "grow_chance": 0.7,
-      "death_chance": 0.0,
-      "fertile_chance": 1.0
+      "grow_chance": 0.9
     },
     "grain_rain": {
-      "grow_chance": 0.7,
-      "death_chance": 0.0,
-      "fertile_chance": 1.0
+      "grow_chance": 0.9
     },
     "beginning_of_summer": {
-      "grow_chance": 0.8,
-      "death_chance": 0.0,
-      "fertile_chance": 1.0
+      "grow_chance": 0.8
     },
     "lesser_fullness": {
-      "grow_chance": 0.9,
-      "death_chance": 0.0,
-      "fertile_chance": 1.0
+      "grow_chance": 0.9
     },
-    "grain_in_ear": {
-      "grow_chance": 1.0,
-      "death_chance": 0.0,
-      "fertile_chance": 1.0
-    },
-    "summer_solstice": {
-      "grow_chance": 1.0,
-      "death_chance": 0.0,
-      "fertile_chance": 1.0
-    },
+    "grain_in_ear": {},
+    "summer_solstice": {},
     "lesser_heat": {
-      "grow_chance": 0.9,
-      "death_chance": 0.0,
-      "fertile_chance": 1.0
+      "grow_chance": 0.9
     },
     "greater_heat": {
-      "grow_chance": 0.8,
-      "death_chance": 0.0,
-      "fertile_chance": 1.0
+      "grow_chance": 0.8
     },
     "beginning_of_autumn": {
-      "grow_chance": 0.7,
-      "death_chance": 0.0,
-      "fertile_chance": 1.0
+      "grow_chance": 0.9
     },
     "end_of_heat": {
-      "grow_chance": 0.6,
-      "death_chance": 0.0,
-      "fertile_chance": 1.0
+      "grow_chance": 0.8
     },
     "white_dew": {
-      "grow_chance": 0.5,
-      "death_chance": 0.0,
-      "fertile_chance": 1.0
+      "grow_chance": 0.7
     },
     "autumnal_equinox": {
-      "grow_chance": 0.6,
-      "death_chance": 0.0,
-      "fertile_chance": 1.0
+      "grow_chance": 0.6
     },
     "cold_dew": {
-      "grow_chance": 0.5,
-      "death_chance": 0.0,
-      "fertile_chance": 1.0
+      "grow_chance": 0.5
     },
     "first_frost": {
-      "grow_chance": 0.45,
-      "death_chance": 0.0,
-      "fertile_chance": 1.0
+      "grow_chance": 0.45
     },
     "beginning_of_winter": {
-      "grow_chance": 0.4,
-      "death_chance": 0.0,
-      "fertile_chance": 1.0
+      "grow_chance": 0.4
     },
     "light_snow": {
-      "grow_chance": 0.4,
-      "death_chance": 0.0,
-      "fertile_chance": 1.0
+      "grow_chance": 0.4
     },
     "heavy_snow": {
-      "grow_chance": 0.4,
-      "death_chance": 0.0,
-      "fertile_chance": 1.0
+      "grow_chance": 0.4
     },
     "winter_solstice": {
-      "grow_chance": 0.35,
-      "death_chance": 0.0,
-      "fertile_chance": 1.0
+      "grow_chance": 0.35
     },
     "lesser_cold": {
-      "grow_chance": 0.2,
-      "death_chance": 0.0,
-      "fertile_chance": 1.0
+      "grow_chance": 0.2
     },
     "greater_cold": {
-      "grow_chance": 0.2,
-      "death_chance": 0.0,
-      "fertile_chance": 1.0
+      "grow_chance": 0.2
     }
-  },
-  "seasons": {},
-  "humidity": {}
+  }
 }

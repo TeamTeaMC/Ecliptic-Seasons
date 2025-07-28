@@ -40,6 +40,11 @@ public class WindChimesBlockEntity extends SyncBlockEntity {
     @Override
     public void onLoad() {
         super.onLoad();
-        ClientCon.soundUtil.set(this);
+        ClientCon.agent.loadWindChime(this);
+    }
+
+    @Override
+    public void onChunkUnloaded() {
+        super.onChunkUnloaded();
     }
 }

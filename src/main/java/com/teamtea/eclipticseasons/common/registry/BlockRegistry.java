@@ -12,6 +12,7 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -71,19 +72,26 @@ public class BlockRegistry {
     private static Map<Block, Supplier<Block>> REVERSE_COPPER_GRATE_MAP;
 
     public static void initCopperGrateMap() {
-        COPPER_GRATE_MAP = Map.of(
-                Blocks.COPPER_GRATE, block_in_copper_grate_block,
-                Blocks.EXPOSED_COPPER_GRATE, block_in_exposed_copper_grate_block,
-                Blocks.WEATHERED_COPPER_GRATE, block_in_weathered_copper_grate_block,
-                Blocks.OXIDIZED_COPPER_GRATE, block_in_oxidized_copper_grate_block,
-                Blocks.WAXED_COPPER_GRATE, block_in_waxed_copper_grate_block,
-                Blocks.WAXED_EXPOSED_COPPER_GRATE, block_in_waxed_exposed_copper_grate_block,
-                Blocks.WAXED_WEATHERED_COPPER_GRATE, block_in_waxed_weathered_copper_grate_block,
-                Blocks.WAXED_OXIDIZED_COPPER_GRATE, block_in_waxed_oxidized_copper_grate_block,
-                block_in_wooden_grate_block.get(), block_in_wooden_grate_block
-        );
-        REVERSE_COPPER_GRATE_MAP = COPPER_GRATE_MAP.entrySet().stream()
-                .collect(Collectors.toMap(e -> e.getValue().get(), e -> e::getKey));
+        Map<Block, Supplier<Block>> map = new LinkedHashMap<>();
+        map.put(Blocks.COPPER_GRATE, block_in_copper_grate_block);
+        map.put(Blocks.EXPOSED_COPPER_GRATE, block_in_exposed_copper_grate_block);
+        map.put(Blocks.WEATHERED_COPPER_GRATE, block_in_weathered_copper_grate_block);
+        map.put(Blocks.OXIDIZED_COPPER_GRATE, block_in_oxidized_copper_grate_block);
+        map.put(Blocks.WAXED_COPPER_GRATE, block_in_waxed_copper_grate_block);
+        map.put(Blocks.WAXED_EXPOSED_COPPER_GRATE, block_in_waxed_exposed_copper_grate_block);
+        map.put(Blocks.WAXED_WEATHERED_COPPER_GRATE, block_in_waxed_weathered_copper_grate_block);
+        map.put(Blocks.WAXED_OXIDIZED_COPPER_GRATE, block_in_waxed_oxidized_copper_grate_block);
+        map.put(block_in_wooden_grate_block.get(), block_in_wooden_grate_block);
+
+        COPPER_GRATE_MAP = Map.copyOf(map);
+
+        REVERSE_COPPER_GRATE_MAP = map.entrySet().stream()
+                .collect(Collectors.toMap(
+                        e -> e.getValue().get(),
+                        e -> e::getKey,
+                        (a, b) -> a,
+                        LinkedHashMap::new
+                ));
     }
 
     public static Block getCopperGrateBlockChange(Block origin) {
@@ -101,4 +109,8 @@ public class BlockRegistry {
         return new ArrayList<>(REVERSE_COPPER_GRATE_MAP.keySet());
     }
 
+    public static List<Block> getAllGrateBlocks() {
+        if (COPPER_GRATE_MAP == null) initCopperGrateMap();
+        return new ArrayList<>(COPPER_GRATE_MAP.keySet());
+    }
 }

@@ -4,7 +4,7 @@ package com.teamtea.eclipticseasons.mixin.compat.fabric_renderer_indigo;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.teamtea.eclipticseasons.api.misc.client.ISeedProvider;
-import com.teamtea.eclipticseasons.client.core.ModelManager;
+import com.teamtea.eclipticseasons.client.core.ExtraModelManager;
 import com.teamtea.eclipticseasons.compat.fabric_renderer_indigo.TerrainRenderContextLevelGetter;
 import com.teamtea.eclipticseasons.compat.vanilla.ExtendBlockView;
 import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
@@ -40,7 +40,7 @@ public abstract class MixinFabricVanillaModelEncoder {
             if (blockAndTintGetter instanceof ISeedProvider seedProvider) {
                 if (blockAndTintGetter instanceof ExtendBlockView extendBlockView) {
                     if (extendBlockView.getSnowModel() != null)
-                        return ModelManager.cancelTop(bakedModel, blockAndTintGetter, state, terrainRenderContextLevelGetter.eclipticseasons$getPos(), direction, randomSourceSupplier.get(), seedProvider.getCacheSeed(), original, extendBlockView.getCacheBakeQuad(),extendBlockView.getSnowModel());
+                        return ExtraModelManager.cancelTop(bakedModel, blockAndTintGetter, state, terrainRenderContextLevelGetter.eclipticseasons$getPos(), direction, randomSourceSupplier.get(), seedProvider.getCacheSeed(), original, extendBlockView.getCacheBakeQuad(),extendBlockView.getSnowModel());
                 }
             }
         }

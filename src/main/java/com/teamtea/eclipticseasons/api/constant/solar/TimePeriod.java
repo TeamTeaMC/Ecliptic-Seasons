@@ -8,8 +8,8 @@ public enum TimePeriod implements ITranslatable {
     DAY,       // 白天
     DUSK,      // 黄昏
     NIGHT,     // 夜晚
-    MIDNIGHT,
-    NONE;  // 午夜
+    MIDNIGHT,  // 午夜
+    NONE;
 
     private static final TimePeriod[] timePeriods = TimePeriod.values();
 

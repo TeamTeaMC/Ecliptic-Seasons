@@ -106,7 +106,7 @@ public class DHTool {
     }
 
     public static MapColor computeBaseColor(IDhClientLevel instance, DhBlockPos dhBlockPos, IBiomeWrapper iBiomeWrapper, IBlockStateWrapper iBlockStateWrapper, FullDataPointIdMap fullDataMapping, LongArrayList fullColumnData, IWrapperFactory WRAPPER_FACTORY) {
-        if (CommonConfig.Season.snowyWinter.get()) {
+        if (CommonConfig.isSnowyWinter()) {
             if (!dhBlockPos.equals(DhBlockPos.ZERO) && iBlockStateWrapper instanceof BlockStateWrapper blockStateWrapper
                     && !blockStateWrapper.isAir()) {
                 var mcPos = McObjectConverter.Convert(dhBlockPos);
@@ -186,8 +186,8 @@ public class DHTool {
         return null;
     }
 
-    // todo 实际上我们仍然需要恢复，只是由于内置给了biome一些东西所以暂时不需要了
-    // todo 未来考虑更好的兼容方式，特别是不知道DH干了啥，运行时数据量没变，但是地址变了
+    // todo : need do more for compat
+    // todo : dh change the address of object but the content not, should find the reason
     public static Biome recoverBiomeObject(BiomeWrapper biomeWrapper, IClientLevelWrapper iClientLevelWrapper) {
         // if (iClientLevelWrapper instanceof ClientLevelWrapper clientLevelWrapper) {
         //     var holderKey = ResourceKey.create(Registries.BIOME, ResourceLocation.parse(biomeWrapper.getSerialString()));

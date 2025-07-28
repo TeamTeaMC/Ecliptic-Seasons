@@ -24,7 +24,7 @@ public class HeatStrokeEffect extends MobEffect {
         // if (entityLivingBaseIn.getHealth() > 0.1F)
         {
             // need a damage tag is bypasses_armor
-            // entityLivingBaseIn.hurt(entityLivingBaseIn.damageSources().generic(), Math.min(entityLivingBaseIn.getHealth() * 0.025f,0.1f) + 0.001f);
+            // entityLivingBaseIn.hurt(entityLivingBaseIn.damageSources().generic(), Math.minTime(entityLivingBaseIn.getHealth() * 0.025f,0.1f) + 0.001f);
         }
         return true;
     }

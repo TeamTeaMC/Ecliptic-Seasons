@@ -1,0 +1,26 @@
+{
+  "biomes": {
+    "values": [
+      {
+        "values": [
+          "#c:is_hot/overworld"
+        ],
+        "type": "neoforge:or"
+      },
+      {
+        "values": [
+          "#c:is_wet/overworld"
+        ],
+        "type": "neoforge:or"
+      },
+      {
+        "value": "#eclipticseasons:monsoonal",
+        "type": "neoforge:not"
+      }
+    ],
+    "type": "neoforge:and"
+  },
+  "phases": {
+    "default": "eclipticseasons:rain"
+  }
+}

@@ -1,17 +1,23 @@
 package com.teamtea.eclipticseasons.api;
 
+import com.teamtea.eclipticseasons.api.constant.biome.Humidity;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.dimension.DimensionType;
+import org.jetbrains.annotations.ApiStatus;
 
 /**
  * This API code exists for other mods to query the solar term status or other situations.
  * Please try not to use other internal APIs directly, as they are likely to change.
+ * <p>
+ * Another reason is that this API implements automatic switching based on the configuration.
+ * If you use the API directly, it's easy to run under an incorrect configuration.
  */
 public interface EclipticSeasonsApi {
 
@@ -32,12 +38,37 @@ public interface EclipticSeasonsApi {
      * and which solar terms of the biome snow{@link SolarTerm#getSnowTerm(Biome)}.
      *
      * <p>Only dimensions marked as {@linkplain DimensionType#natural()  natural} have solar term changes.</p>
-     *
      */
     SolarTerm getSolarTerm(Level level);
 
+    int getSolarDays(Level level);
+
+    int getSolarYears(Level level);
+
+    int getLastingDaysOfEachTerm(Level level);
+
+    /**
+     * Day index within the current solar term, from 0 to (lastingDays - 1).
+     */
+    int getTimeInTerm(Level level);
+
+    /**
+     * Checks whether the seasonal system is enabled for the given level.
+     */
+    boolean isSeasonEnabled(Level level);
+
+    boolean hasLocalWeather(Level level);
+
+    /**
+     * Returns the adjusted daytime in ticks for the given level, as an API version of {@link SolarTerm#getDayTime()},
+     * taking into account seasonal variations in day length.
+     */
+    long getDayTime(Level level);
+
+    @Deprecated
     boolean isDay(Level level);
 
+    @Deprecated
     boolean isNight(Level level);
 
     /**
@@ -45,16 +76,19 @@ public interface EclipticSeasonsApi {
      * It is also used as a time to distinguish between day and night.
      * After this time, the player can fall asleep quickly.
      */
+    @Deprecated
     int getNightTime(Level level);
 
     /**
      * Determine if it is noon, a few hours around tick 6000.
      */
+    @Deprecated
     boolean isNoon(Level level);
 
     /**
      * Judging whether it is evening now, it will not last until deep into midnight.
      */
+    @Deprecated
     boolean isEvening(Level level);
 
     /**
@@ -70,13 +104,46 @@ public interface EclipticSeasonsApi {
      */
     boolean isSnowyBlock(Level level, BlockState state, BlockPos pos);
 
-    boolean isRainOrSnowAt(Level level,BlockPos pos);
+    boolean isRainOrSnowAt(Level level, BlockPos pos);
 
-    boolean isRainAt(Level level,BlockPos pos);
+    boolean isRainAt(Level level, BlockPos pos);
 
-    boolean isSnowAt(Level level,BlockPos pos);
+    boolean isSnowAt(Level level, BlockPos pos);
 
-    boolean isThunderAt(Level level,BlockPos pos);
+    boolean isThunderAt(Level level, BlockPos pos);
 
+    /**
+     * Gets the precipitation type at the surface climate biome over a period of time.
+     */
     Biome.Precipitation getPrecipitationAt(Level level, BlockPos pos);
+
+    /**
+     * Gets the current precipitation type at the surface climate biome (i.e., at the current moment).
+     */
+    Biome.Precipitation getCurrentPrecipitationAt(Level level, BlockPos pos);
+
+    /**
+     * Roughly checks whether the surface biome or level has weather conditions, ignoring exact position.
+     */
+    boolean isRainingOrSnowing(Level level, BlockPos pos);
+
+    /**
+     * Roughly checks whether it is thundering in the given level, ignoring exact position.
+     */
+    boolean isThundering(Level level, BlockPos pos);
+
+    /**
+     * Gets the base humidity at the given position,
+     * based on biome, season, and elevation.
+     */
+    Humidity getBaseHumidity(Level level, BlockPos pos);
+
+    /**
+     * Gets the final humidity at the given position,
+     * including effects like greenhouses or other modifiers.
+     * This value is more volatile and may fluctuate frequently.
+     */
+    @ApiStatus.Experimental
+    Humidity getAdjustedHumidity(ServerLevel level, BlockPos pos);
+
 }

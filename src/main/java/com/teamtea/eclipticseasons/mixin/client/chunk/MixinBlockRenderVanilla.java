@@ -14,7 +14,7 @@ import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import com.teamtea.eclipticseasons.client.core.ModelManager;
+import com.teamtea.eclipticseasons.client.core.ExtraModelManager;
 
 import java.util.List;
 
@@ -68,7 +68,7 @@ public abstract class MixinBlockRenderVanilla {
     private List<BakedQuad> eclipticseasons$tesselateWithAO_getQuads_cancel_top(List<BakedQuad> original, @Local(argsOnly = true) BakedModel bakedModel, @Local(argsOnly = true) BlockAndTintGetter blockAndTintGetter, @Local(ordinal = 0, argsOnly = true) BlockPos pos, @Local(ordinal = 0, argsOnly = true) BlockState state, @Local(ordinal = 0) Direction direction, @Local(argsOnly = true) RandomSource randomSource, @Local(argsOnly = true) long seed) {
         if (blockAndTintGetter instanceof ExtendBlockView extendBlockView) {
             if (extendBlockView.getSnowModel() != null)
-                return ModelManager.cancelTop(bakedModel, blockAndTintGetter, state, pos, direction, randomSource, seed, original, extendBlockView.getCacheBakeQuad(), extendBlockView.getSnowModel());
+                return ExtraModelManager.cancelTop(bakedModel, blockAndTintGetter, state, pos, direction, randomSource, seed, original, extendBlockView.getCacheBakeQuad(), extendBlockView.getSnowModel());
         }
         return original;
     }
@@ -81,7 +81,7 @@ public abstract class MixinBlockRenderVanilla {
     private List<BakedQuad> eclipticseasons$tesselateWithoutAO_getQuads_cancel_top(List<BakedQuad> original, @Local(argsOnly = true) BakedModel bakedModel, @Local(argsOnly = true) BlockAndTintGetter blockAndTintGetter, @Local(argsOnly = true) BlockPos pos, @Local(argsOnly = true) BlockState state, @Local(ordinal = 0) Direction direction, @Local(argsOnly = true) RandomSource randomSource, @Local(argsOnly = true) long seed) {
         if (blockAndTintGetter instanceof ExtendBlockView extendBlockView) {
             if (extendBlockView.getSnowModel() != null)
-                return ModelManager.cancelTop(bakedModel, blockAndTintGetter, state, pos, direction, randomSource, seed, original, extendBlockView.getCacheBakeQuad(), extendBlockView.getSnowModel());
+                return ExtraModelManager.cancelTop(bakedModel, blockAndTintGetter, state, pos, direction, randomSource, seed, original, extendBlockView.getCacheBakeQuad(), extendBlockView.getSnowModel());
         }
         return original;
     }
@@ -95,7 +95,7 @@ public abstract class MixinBlockRenderVanilla {
         if (blockAndTintGetter instanceof ExtendBlockView extendBlockView) {
 
             if (extendBlockView.getSnowModel() != null)
-                return ModelManager.cancelTop(bakedModel, blockAndTintGetter, state, pos, null, randomSource, seed, original, extendBlockView.getCacheBakeQuad(), extendBlockView.getSnowModel());
+                return ExtraModelManager.cancelTop(bakedModel, blockAndTintGetter, state, pos, null, randomSource, seed, original, extendBlockView.getCacheBakeQuad(), extendBlockView.getSnowModel());
         }
         return original;
     }
@@ -108,7 +108,7 @@ public abstract class MixinBlockRenderVanilla {
     private List<BakedQuad> eclipticseasons$tesselateWithoutAO_getQuads2(List<BakedQuad> original, @Local(argsOnly = true) BakedModel bakedModel, @Local(argsOnly = true) BlockAndTintGetter blockAndTintGetter, @Local(argsOnly = true) BlockPos pos, @Local(argsOnly = true) BlockState state, @Local(argsOnly = true) RandomSource randomSource, @Local(argsOnly = true) long seed) {
         if (blockAndTintGetter instanceof ExtendBlockView extendBlockView) {
             if (extendBlockView.getSnowModel() != null)
-                return ModelManager.cancelTop(bakedModel, blockAndTintGetter, state, pos, null, randomSource, seed, original, extendBlockView.getCacheBakeQuad(), extendBlockView.getSnowModel());
+                return ExtraModelManager.cancelTop(bakedModel, blockAndTintGetter, state, pos, null, randomSource, seed, original, extendBlockView.getCacheBakeQuad(), extendBlockView.getSnowModel());
         }
         return original;
     }

@@ -1,0 +1,12 @@
+{
+  "color": "green",
+  "icon": {
+    "texture": "eclipticseasons:season_phase/wet_middle"
+  },
+  "font": {
+    "id": "eclipticseasons:monsoon_icons",
+    "label": "h"
+  },
+  "season": "summer",
+  "name": "eclipticseasons:wet"
+}

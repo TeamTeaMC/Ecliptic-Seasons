@@ -1,0 +1,184 @@
+{
+  "biomes": "minecraft:plains",
+  "changes": {
+    "seasons": {
+      "spring": {
+        "original": {
+          "blocks": "minecraft:grass_block"
+        },
+        "place": {
+          "block": [
+            {
+              "Name": "minecraft:short_grass"
+            },
+            {
+              "Name": "minecraft:short_grass"
+            },
+            {
+              "Name": "minecraft:short_grass"
+            },
+            {
+              "Name": "minecraft:short_grass"
+            },
+            {
+              "Name": "minecraft:short_grass"
+            },
+            {
+              "Name": "minecraft:short_grass"
+            },
+            {
+              "Name": "minecraft:short_grass"
+            },
+            {
+              "Name": "minecraft:short_grass"
+            },
+            {
+              "Name": "minecraft:short_grass"
+            },
+            {
+              "Name": "minecraft:short_grass"
+            },
+            {
+              "Name": "minecraft:short_grass"
+            },
+            {
+              "Name": "minecraft:short_grass"
+            },
+            {
+              "Name": "minecraft:short_grass"
+            },
+            {
+              "Name": "minecraft:short_grass"
+            },
+            {
+              "Name": "minecraft:short_grass"
+            },
+            {
+              "Name": "minecraft:short_grass"
+            },
+            {
+              "Name": "minecraft:short_grass"
+            },
+            {
+              "Name": "minecraft:short_grass"
+            },
+            {
+              "Name": "minecraft:short_grass"
+            },
+            {
+              "Name": "minecraft:short_grass"
+            },
+            {
+              "Name": "minecraft:short_grass"
+            },
+            {
+              "Name": "minecraft:short_grass"
+            },
+            {
+              "Name": "minecraft:dandelion"
+            },
+            {
+              "Name": "minecraft:oxeye_daisy"
+            }
+          ],
+          "offset": [
+            0,
+            1,
+            0
+          ]
+        }
+      },
+      "summer": {
+        "original": {
+          "blocks": "minecraft:short_grass"
+        },
+        "place": [
+          {
+            "block": {
+              "Properties": {
+                "half": "lower"
+              },
+              "Name": "minecraft:tall_grass"
+            }
+          },
+          {
+            "block": {
+              "Properties": {
+                "half": "upper"
+              },
+              "Name": "minecraft:tall_grass"
+            },
+            "offset": [
+              0,
+              1,
+              0
+            ]
+          }
+        ]
+      },
+      "autumn": [
+        {
+          "original": {
+            "blocks": "minecraft:tall_grass",
+            "state": {
+              "half": "lower"
+            }
+          },
+          "place": {
+            "block": {
+              "Name": "minecraft:short_grass"
+            }
+          }
+        },
+        {
+          "original": {
+            "blocks": "minecraft:tall_grass",
+            "state": {
+              "half": "upper"
+            }
+          },
+          "place": {
+            "block": {
+              "Name": "minecraft:air"
+            }
+          }
+        }
+      ],
+      "winter": [
+        {
+          "original": {
+            "blocks": "minecraft:short_grass"
+          },
+          "place": {
+            "block": {
+              "Name": "minecraft:air"
+            },
+            "replace": true
+          }
+        },
+        {
+          "original": {
+            "blocks": "minecraft:dandelion"
+          },
+          "place": {
+            "block": {
+              "Name": "minecraft:air"
+            },
+            "replace": true
+          }
+        },
+        {
+          "original": {
+            "blocks": "minecraft:oxeye_daisy"
+          },
+          "place": {
+            "block": {
+              "Name": "minecraft:air"
+            },
+            "replace": true
+          }
+        }
+      ]
+    }
+  }
+}

@@ -49,9 +49,9 @@ public record CropGrowControlBuilder(
     // 输出的json与这里的排序有关，这里是六个，那么前三个将在后面，具体看情况，，但是基本都是对半分
     public static final Codec<CropGrowControlBuilder> CODEC = RecordCodecBuilder.create(ins -> ins.group(
             GrowParameter.CODEC.optionalFieldOf("humidity_default").forGetter(CropGrowControlBuilder::defaultHumidityGrowParameter),
-            SOLAR_TERM_ENUM_MAP_CODEC.fieldOf("solar_terms").orElse(new EnumMap<>(SolarTerm.class)).forGetter(CropGrowControlBuilder::solarTermList),
-            Season_ENUM_MAP_CODEC.fieldOf("seasons").orElse(new EnumMap<>(Season.class)).forGetter(CropGrowControlBuilder::seasonList),
-            HUMID_ENUM_MAP_CODEC.fieldOf("humidity").orElse(new EnumMap<>(Humidity.class)).forGetter(CropGrowControlBuilder::humidList),
+            SOLAR_TERM_ENUM_MAP_CODEC.optionalFieldOf("solar_terms",new EnumMap<>(SolarTerm.class)).forGetter(CropGrowControlBuilder::solarTermList),
+            Season_ENUM_MAP_CODEC.optionalFieldOf("seasons",new EnumMap<>(Season.class)).forGetter(CropGrowControlBuilder::seasonList),
+            HUMID_ENUM_MAP_CODEC.optionalFieldOf("humidity",new EnumMap<>(Humidity.class)).forGetter(CropGrowControlBuilder::humidList),
             CodecUtil.holderSetCodec(ESRegistries.AGRO_CLIMATE).fieldOf("climate").forGetter(CropGrowControlBuilder::cropClimateType),
             BlockPredicate.CODEC.optionalFieldOf("unlike_greenhouse_material").forGetter(CropGrowControlBuilder::notGreenHouse),
             CodecUtil.holderSetCodec(ESRegistries.CROP).fieldOf("parent").orElse(HolderSet.empty()).forGetter(CropGrowControlBuilder::parent),

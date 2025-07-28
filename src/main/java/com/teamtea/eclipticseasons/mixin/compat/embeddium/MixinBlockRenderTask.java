@@ -6,8 +6,7 @@ import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
-import com.teamtea.eclipticseasons.api.misc.IBlockStateFlagger;
-import com.teamtea.eclipticseasons.client.core.ModelManager;
+import com.teamtea.eclipticseasons.client.core.ExtraModelManager;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
@@ -61,10 +60,10 @@ public abstract class MixinBlockRenderTask {
     ) {
         random.setSeed(seed);
         eclipticseasons$checkPos.set(mutableBlockPos.getX(), mutableBlockPos.getY(), mutableBlockPos.getZ());
-        BakedModel model = ModelManager.findModel(ctx.world(), mutableBlockPos, state, random, seed, eclipticseasons$checkPos);
+        BakedModel model = ExtraModelManager.findModel(ctx.world(), mutableBlockPos, state, random, seed, eclipticseasons$checkPos);
         snowModelRef.set(model);
         replace.set(model != null
-                && ModelManager.isModelReplaceable(state, ctx.world(), mutableBlockPos, model));
+                && ExtraModelManager.isModelReplaceable(state, ctx.world(), mutableBlockPos, model));
     }
 
     @ModifyExpressionValue(
@@ -117,7 +116,7 @@ public abstract class MixinBlockRenderTask {
                     seed,
                     // TODO: we need the model data
                     modelData,
-                    ModelManager.getRenderType(state));
+                    ExtraModelManager.getRenderType(state));
             cache.getBlockRenderer().renderModel(ctx, buffers);
         }
         return original;

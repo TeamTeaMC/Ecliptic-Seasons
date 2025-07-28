@@ -11,19 +11,19 @@ import org.jetbrains.annotations.NotNull;
 
 public final class HumidModifyMessage implements CustomPacketPayload {
     public final BlockPos blockPos;
-    public final int value;
+    public final float value;
 
     public static final Type<HumidModifyMessage> TYPE = new Type<>(EclipticSeasons.rl("humidity"));
 
     public static final StreamCodec<ByteBuf, HumidModifyMessage> STREAM_CODEC = StreamCodec.composite(
             BlockPos.STREAM_CODEC,
             message -> message.blockPos,
-            ByteBufCodecs.VAR_INT,
+            ByteBufCodecs.FLOAT,
             message -> message.value,
             HumidModifyMessage::new
     );
 
-    public HumidModifyMessage(BlockPos blockPos, int time) {
+    public HumidModifyMessage(BlockPos blockPos, float time) {
         this.blockPos = blockPos;
         this.value = time;
     }

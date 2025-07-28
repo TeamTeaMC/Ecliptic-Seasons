@@ -57,7 +57,7 @@ public enum TemperateRain implements BiomeRain {
     }
 
     @Override
-    public float getRainChane() {
+    public float getRainChance() {
         return rainChane;
     }
 

@@ -56,6 +56,9 @@ public abstract class MixinRenderChunkRegion_IMapSlice implements IMapSlice {
     private int[][] HEIGHT_MAP;
 
     @Unique
+    private int[][] SOLID_HEIGHT_MAP;
+
+    @Unique
     private int[][] BIOME_MAP;
 
     @Unique
@@ -70,8 +73,7 @@ public abstract class MixinRenderChunkRegion_IMapSlice implements IMapSlice {
         HEIGHT_MAP = new int[SIZE * SIZE][MAP_BLOCK_COUNT];
         BIOME_MAP = new int[SIZE * SIZE][MAP_BLOCK_COUNT];
         SNOWY_MAP = new int[SIZE * SIZE][MAP_BLOCK_COUNT];
-
-
+        SOLID_HEIGHT_MAP = new int[SIZE * SIZE][MAP_BLOCK_COUNT];
     }
 
     @Override
@@ -84,12 +86,14 @@ public abstract class MixinRenderChunkRegion_IMapSlice implements IMapSlice {
                 for (int sectionZ = minChunkZ; sectionZ < minChunkZ + SIZE; ++sectionZ) {
                     int localSectionIndex = index(minChunkX, minChunkZ, sectionX, sectionZ);
                     LevelChunk wrapped = getChunk(sectionX, sectionZ).wrapped;
+                    Heightmap heightmap = wrapped.getOrCreateHeightmapUnprimed(Heightmap.Types.MOTION_BLOCKING);
                     ChunkPos chunkPos = wrapped.getPos();
                     SnowyRemover snowyRemover = wrapped.getData(AttachmentRegistry.SNOWY_REMOVER);
                     BiomeHolder biomeHolder = wrapped.getData(AttachmentRegistry.BIOME_HOLDER);
                     int[] heights = HEIGHT_MAP[localSectionIndex];
                     int[] biomes = BIOME_MAP[localSectionIndex];
                     int[] snowys = SNOWY_MAP[localSectionIndex];
+                    int[] solidHeights = SOLID_HEIGHT_MAP[localSectionIndex];
                     int startX = chunkPos.getMinBlockX();
                     int startZ = chunkPos.getMinBlockZ();
 
@@ -118,9 +122,12 @@ public abstract class MixinRenderChunkRegion_IMapSlice implements IMapSlice {
 
                                 int biomeId = biomeHolder.getBiomeId(mutableBlockPos);
                                 biomes[index] = biomeId > -1 ? biomeId :
-                                        MapChecker.biomeToId(level,MapChecker.getUnCachedSurfaceBiome(level, mutableBlockPos).value());
+                                        MapChecker.biomeToId(level, MapChecker.getUnCachedSurfaceBiome(level, mutableBlockPos).value());
 
                                 snowys[index] = snowyRemover.blockWatcher()[x][z];
+
+                                solidHeights[index]=heightmap.getHighestTaken(x,z);
+
                             }
                         }
                     } else {
@@ -141,6 +148,16 @@ public abstract class MixinRenderChunkRegion_IMapSlice implements IMapSlice {
         int localBlockZ = pos.getZ() & 15;
         return lightArrays[localBlockX * 16 + localBlockZ];
         // return MapChecker.getHeight(level, pos);
+    }
+
+    @Override
+    public int getSolidBlockHeight(BlockPos pos) {
+        int relBlockX = SectionPos.blockToSectionCoord(pos.getX());
+        int relBlockZ = SectionPos.blockToSectionCoord(pos.getZ());
+        int[] lightArrays = this.SOLID_HEIGHT_MAP[index(minChunkX, minChunkZ, relBlockX, relBlockZ)];
+        int localBlockX = pos.getX() & 15;
+        int localBlockZ = pos.getZ() & 15;
+        return lightArrays[localBlockX * 16 + localBlockZ];
     }
 
     @Override

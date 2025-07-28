@@ -31,7 +31,7 @@ public class SnowRenderer {
                             true,
                             random,
                             seed,
-                            OverlayTexture.RED_OVERLAY_V,
+                            OverlayTexture.NO_OVERLAY,
                             ModelData.EMPTY,
                             renderType);
         } else {

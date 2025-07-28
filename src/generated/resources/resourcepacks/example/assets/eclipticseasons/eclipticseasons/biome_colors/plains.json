@@ -1,0 +1,22 @@
+{
+  "biomes": "#c:is_plains",
+  "grass_colors": {
+    "seasons": {
+      "spring": {
+        "color": -20561
+      },
+      "summer": {
+        "color": -16711936
+      },
+      "autumn": {
+        "color": -14336
+      },
+      "winter": {
+        "color": -16776961
+      },
+      "none": {
+        "color": -1
+      }
+    }
+  }
+}

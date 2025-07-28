@@ -21,6 +21,7 @@ import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.SectionPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -38,6 +39,7 @@ import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.storage.DimensionDataStorage;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.common.NeoForge;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.ref.WeakReference;
@@ -46,7 +48,8 @@ import java.util.*;
 
 public class SolarDataManager extends SavedData {
 
-    protected int solarTermsDay = (CommonConfig.Season.initialSolarTermIndex.get() - 1) * CommonConfig.Season.lastingDaysOfEachTerm.get();
+    protected final int startSolarTermsDay = (CommonConfig.Season.initialSolarTermIndex.get() - 1) * CommonConfig.Season.lastingDaysOfEachTerm.get();
+    protected int solarTermsDay = startSolarTermsDay;
     protected int solarTermsTicks = 0;
     private int biomeDataVersion = 0;
     protected boolean isValidDimension = false;
@@ -145,7 +148,7 @@ public class SolarDataManager extends SavedData {
 
     public int getSolarTermIndex() {
         if (!isValidDimension()) return SolarTerm.NONE.ordinal();
-        return (getSolarTermsDay() / CommonConfig.Season.lastingDaysOfEachTerm.get() + 24) % 24;
+        return ((getSolarTermsDay() / CommonConfig.Season.lastingDaysOfEachTerm.get()) % 24 + 24) % 24;
     }
 
     public SolarTerm getSolarTerm() {
@@ -170,6 +173,11 @@ public class SolarDataManager extends SavedData {
         return (getSolarTermsDay() + 1) % longTime == 0;
     }
 
+    public int getSolarYear() {
+        return !isValidDimension() ? 0 :
+                ((getSolarTermsDay() - 0) / (24 * getSolarTermLastingDays())) + 1;
+    }
+
     public int getSolarTermsDay() {
         return solarTermsDay;
     }
@@ -183,7 +191,7 @@ public class SolarDataManager extends SavedData {
     }
 
     public void setSolarTermsDay(int solarTermsDay) {
-        // this.solarTermsDay = Math.max(solarTermsDay, 0) % (24 * CommonConfig.Season.lastingDaysOfEachTerm.get());
+        // this.solarTermsDay = Math.maxTime(solarTermsDay, 0) % (24 * CommonConfig.Season.lastingDaysOfEachTerm.get());
         this.solarTermsDay = solarTermsDay;
         setDirty();
     }
@@ -213,8 +221,14 @@ public class SolarDataManager extends SavedData {
         blockPosBlockStateMap.add(Pair.of(pos, humidityControlProvider));
     }
 
+
     public void addGreenHouseCoreProvider(BlockPos pos, GreenHouseCoreProvider provider) {
-        ChunkPos chunkPos = new ChunkPos(pos);
+        addGreenHouseCoreProvider(pos, provider, SectionPos.blockToSectionCoord(pos.getX()), SectionPos.blockToSectionCoord(pos.getZ()));
+    }
+
+    @ApiStatus.Experimental
+    private void addGreenHouseCoreProvider(BlockPos pos, GreenHouseCoreProvider provider, int chunkX, int chunkZ) {
+        ChunkPos chunkPos = new ChunkPos(chunkX, chunkZ);
         List<Pair<BlockPos, GreenHouseCoreProvider>> blockPosBlockStateMap = this.greenHouseCoreMap.get(chunkPos.toLong());
         if (blockPosBlockStateMap == null) {
             blockPosBlockStateMap = new ArrayList<>();
@@ -272,19 +286,25 @@ public class SolarDataManager extends SavedData {
     }
 
     public float calculateHumidityModification(BlockPos blockPos) {
+        return calculateHumidityModification(blockPos, true);
+    }
+
+    public float calculateHumidityModification(BlockPos blockPos, boolean growPlus) {
         ChunkPos chunkPos = new ChunkPos(blockPos);
-        needTickMap.put(chunkPos.toLong(), levelWeakReference.get() != null ?
-                levelWeakReference.get().getGameTime() : 0);
+        if (growPlus) {
+            needTickMap.put(chunkPos.toLong(), levelWeakReference.get() != null ?
+                    levelWeakReference.get().getGameTime() : 0);
+        }
 
         Vec3 center = blockPos.getCenter();
 
         int localX = blockPos.getX() & 15;
         int localZ = blockPos.getZ() & 15;
 
-        boolean isLeftBorder = localX <= 3;
-        boolean isRightBorder = localX >= 12;
-        boolean isFrontBorder = localZ <= 3;
-        boolean isBackBorder = localZ >= 12;
+        boolean isLeftBorder = localX <= 6;
+        boolean isRightBorder = localX >= 7;
+        boolean isFrontBorder = localZ <= 6;
+        boolean isBackBorder = localZ >= 7;
 
         float result = 0f;
         for (int dx = isLeftBorder ? -1 : 0; dx <= (isRightBorder ? 1 : 0); dx++) {
@@ -297,9 +317,9 @@ public class SolarDataManager extends SavedData {
                         if (
                             // p.first().getY() > blockPos.getY()
                             // &&
-                                CropGrowthHandler.isWithinDistanceForGreenHouseWorker(center, p.first().getCenter(),p.second().getRange())
-                                // p.first().getCenter().distanceToSqr(center) < (p.second().getRange() + 0.1)
-                    ) {
+                                CropGrowthHandler.isWithinDistanceForGreenHouseWorker(center, p.first().getCenter(), p.second().getRange())
+                            // p.first().getCenter().distanceToSqr(center) < (p.second().getRange() + 0.1)
+                        ) {
                             result += p.second().getLevel();
                         }
                     }
@@ -345,29 +365,37 @@ public class SolarDataManager extends SavedData {
     public GreenHouseCoreProvider findNearGreenHouseProvider(BlockPos blockPos, List<Season> seasons) {
         ChunkPos chunkPos = new ChunkPos(blockPos);
         Vec3 center = blockPos.getCenter();
+        int d = CommonConfig.Crop.seasonCoreRange.get() / 16 + 1;
 
-        for (int dx = -1; dx <= 1; dx++) {
-            for (int dz = -1; dz <= 1; dz++) {
-                ChunkPos currentChunkPos = new ChunkPos(chunkPos.x + dx, chunkPos.z + dz);
-                List<Pair<BlockPos, GreenHouseCoreProvider>> lis = this.greenHouseCoreMap.getOrDefault(currentChunkPos.toLong(), null);
-
-                if (lis != null) {
-                    for (Pair<BlockPos, GreenHouseCoreProvider> p : lis) {
-                        if (seasons.contains(p.second().getSeason())
-                                // && p.first().getY() >= blockPos.getY()
-                                // todo 这里应该为三次
-                                &&
-                                CropGrowthHandler.isWithinDistanceForGreenHouseWorker(center, p.first().getCenter(),15)
-
-                        // p.first().getCenter().distanceToSqr(center) < (15 * 15 + 0.1)
-                    ) {
-                            return p.second();
-                        }
+        for (int r = 0; r <= d; r++) {
+            for (int dx = -r; dx <= r; dx++) {
+                for (int dz = -r; dz <= r; dz++) {
+                    if (dx == -r || dx == r || dz == -r || dz == r) {
+                        ChunkPos currentChunkPos = new ChunkPos(chunkPos.x + dx, chunkPos.z + dz);
+                        GreenHouseCoreProvider greenHouseCoreProvider = checkSeasonProviderInChunk(seasons, currentChunkPos, center);
+                        if (greenHouseCoreProvider != null) return greenHouseCoreProvider;
                     }
                 }
             }
         }
+
         return null;
+    }
+
+    protected GreenHouseCoreProvider checkSeasonProviderInChunk(List<Season> seasons, ChunkPos currentChunkPos, Vec3 center) {
+        GreenHouseCoreProvider greenHouseCoreProvider = null;
+        List<Pair<BlockPos, GreenHouseCoreProvider>> lis = this.greenHouseCoreMap.getOrDefault(currentChunkPos.toLong(), null);
+        if (lis != null) {
+            int seasonCoreRange = CommonConfig.Crop.seasonCoreRange.get();
+            for (Pair<BlockPos, GreenHouseCoreProvider> p : lis) {
+                if (seasons.contains(p.second().getSeason()) &&
+                        CropGrowthHandler.isWithinDistanceForGreenHouseWorker(center, p.first().getCenter(), seasonCoreRange)) {
+                    greenHouseCoreProvider = p.second();
+                    break;
+                }
+            }
+        }
+        return greenHouseCoreProvider;
     }
 
     public void tickChunk(LevelChunk chunk) {
@@ -410,7 +438,7 @@ public class SolarDataManager extends SavedData {
             for (ServerPlayer player : world.players()) {
                 SimpleNetworkHandler.send(player, new SolarTermsMessage(this.getSolarTermsDay()));
                 if (changeSolarTerm && CommonConfig.Season.enableInform.get()) {
-                    player.sendSystemMessage(SimpleUtil.getSolarTermMessage(solarTerm), false);
+                    SimpleUtil.sendSolarTermMessage(player, solarTerm, false);
                 }
                 WeatherManager.tickPlayerForSeasonCheck(player);
             }
@@ -434,54 +462,54 @@ public class SolarDataManager extends SavedData {
         compound.put("biomes", listTag);
         compound.putInt("BiomeDataVersion", biomeDataVersion);
 
-        // TODO：这里为将来写缓存做准备
-        if (false) {
-            CompoundTag test = new CompoundTag();
-            long a = System.currentTimeMillis();
-            if (levelWeakReference.get() instanceof ServerLevel serverLevel) {
-                serverLevel.getChunkSource().chunkMap.getChunks().forEach(chunkHolder ->
-                {
-                    ChunkAccess latestChunk = chunkHolder.getLatestChunk();
-                    if (latestChunk != null) {
-                        ChunkPos chunkPos = latestChunk.getPos();
-                        String vs = chunkPos.toString();
-                        CompoundTag chunk = new CompoundTag();
-                        int[] biomes = new int[256];
-                        Object2IntArrayMap<ResourceLocation> platte = new Object2IntArrayMap<>();
-                        int idn = 0;
-                        for (int i = chunkPos.getMinBlockX(); i <= chunkPos.getMaxBlockX(); i++) {
-                            for (int j = chunkPos.getMinBlockZ(); j <= chunkPos.getMaxBlockZ(); j++) {
-                                int y = serverLevel.getHeight(Heightmap.Types.MOTION_BLOCKING,
-                                        i, j);
-                                Holder<Biome> biome = serverLevel.getBiome(new BlockPos(i, y, j));
-                                ResourceLocation location = biome.getKey().location();
-                                if (!platte.containsKey(location)) {
-                                    platte.put(location, idn);
-                                    idn++;
-                                }
-                                int id = platte.getInt(location);
-                                biomes[(i & 15) * 16 + (j & 15)] = id;
-                            }
-                        }
-                        ListTag platteTag = new ListTag();
-
-                        for (ResourceLocation resourceLocation : platte.object2IntEntrySet().stream().map(
-                                Map.Entry::getKey
-                        ).toList()) {
-                            CompoundTag ss = new CompoundTag();
-                            ss.putString("id", resourceLocation.toString());
-                            platteTag.add(ss);
-                        }
-                        chunk.putIntArray("matrix", biomes);
-                        chunk.put("platte", platteTag);
-                        test.put(vs, chunk);
-                    }
-                });
-            }
-            compound.put("test", test);
-            long c = System.currentTimeMillis();
-            EclipticSeasons.logger("Test Biome data backup", c - a);
-        }
+        // // TODO：这里为将来写缓存做准备
+        // if (false) {
+        //     CompoundTag test = new CompoundTag();
+        //     long a = System.currentTimeMillis();
+        //     if (levelWeakReference.get() instanceof ServerLevel serverLevel) {
+        //         serverLevel.getChunkSource().chunkMap.getChunks().forEach(chunkHolder ->
+        //         {
+        //             ChunkAccess latestChunk = chunkHolder.getLatestChunk();
+        //             if (latestChunk != null) {
+        //                 ChunkPos chunkPos = latestChunk.getPos();
+        //                 String vs = chunkPos.toString();
+        //                 CompoundTag chunk = new CompoundTag();
+        //                 int[] biomes = new int[256];
+        //                 Object2IntArrayMap<ResourceLocation> platte = new Object2IntArrayMap<>();
+        //                 int idn = 0;
+        //                 for (int i = chunkPos.getMinBlockX(); i <= chunkPos.getMaxBlockX(); i++) {
+        //                     for (int j = chunkPos.getMinBlockZ(); j <= chunkPos.getMaxBlockZ(); j++) {
+        //                         int y = serverLevel.getHeight(Heightmap.Types.MOTION_BLOCKING,
+        //                                 i, j);
+        //                         Holder<Biome> biome = serverLevel.getBiome(new BlockPos(i, y, j));
+        //                         ResourceLocation location = biome.getKey().location();
+        //                         if (!platte.containsKey(location)) {
+        //                             platte.put(location, idn);
+        //                             idn++;
+        //                         }
+        //                         int id = platte.getInt(location);
+        //                         biomes[(i & 15) * 16 + (j & 15)] = id;
+        //                     }
+        //                 }
+        //                 ListTag platteTag = new ListTag();
+        //
+        //                 for (ResourceLocation resourceLocation : platte.object2IntEntrySet().stream().map(
+        //                         Map.Entry::getKey
+        //                 ).toList()) {
+        //                     CompoundTag ss = new CompoundTag();
+        //                     ss.putString("id", resourceLocation.toString());
+        //                     platteTag.add(ss);
+        //                 }
+        //                 chunk.putIntArray("matrix", biomes);
+        //                 chunk.put("platte", platteTag);
+        //                 test.put(vs, chunk);
+        //             }
+        //         });
+        //     }
+        //     compound.put("test", test);
+        //     long c = System.currentTimeMillis();
+        //     EclipticSeasons.logger("Test Biome data backup", c - a);
+        // }
         return compound;
     }
 

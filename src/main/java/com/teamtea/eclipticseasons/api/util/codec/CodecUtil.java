@@ -1,8 +1,13 @@
 package com.teamtea.eclipticseasons.api.util.codec;
 
+import com.mojang.datafixers.util.Either;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.*;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.teamtea.eclipticseasons.api.data.client.model.multipart.AndConditionLike;
+import com.teamtea.eclipticseasons.api.data.client.model.multipart.ConditionLike;
+import com.teamtea.eclipticseasons.api.data.client.model.multipart.KeyValueConditionLike;
+import com.teamtea.eclipticseasons.api.data.client.model.multipart.OrConditionLike;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryCodecs;
@@ -105,5 +110,17 @@ public class CodecUtil {
 
     public static <I, F extends I, S extends I> Codec<I> either(final Codec<F> first, final Codec<S> second, Class<F> fClass, Class<S> sClass) {
         return new InterfaceCodec<>(first, fClass, second, sClass);
+    }
+
+    public static <E> Codec<List<E>> listFrom(Codec<E> singleCodec) {
+        return Codec.either(singleCodec,singleCodec.listOf())
+                .flatXmap(
+                        either -> DataResult.success(either.left().isPresent() ?
+                                List.of(either.left().get()) :
+                                either.right().isPresent() ? either.right().get() : List.of()),
+                        cond -> {
+                            if (cond.size() == 1) return DataResult.success(Either.left(cond.getFirst()));
+                            return DataResult.success(Either.right(cond));
+                        });
     }
 }

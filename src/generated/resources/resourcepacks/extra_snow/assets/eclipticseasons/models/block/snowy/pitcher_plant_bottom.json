@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/pitcher_plant_bottom",
+  "textures": {
+    "bottom": "eclipticseasons:block/snowy/pitcher_crop_bottom_stage_4"
+  }
+}

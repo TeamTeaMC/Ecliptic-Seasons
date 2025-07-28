@@ -4,7 +4,7 @@ package com.teamtea.eclipticseasons.mixin.compat.sodium;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.misc.client.IMapSlice;
 import com.teamtea.eclipticseasons.api.misc.client.ISnowyGetter;
-import com.teamtea.eclipticseasons.client.render.chunk.CompilerCollector;
+import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.core.map.BiomeHolder;
 import com.teamtea.eclipticseasons.common.core.map.ChunkInfoMap;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
@@ -14,19 +14,19 @@ import net.caffeinemc.mods.sodium.client.world.LevelSlice;
 import net.caffeinemc.mods.sodium.client.world.cloned.ChunkRenderContext;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.ChunkPos;
-import net.minecraft.world.level.LightLayer;
+import net.minecraft.core.Holder;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.chunk.DataLayer;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.List;
+import java.util.IdentityHashMap;
+import java.util.Map;
 
 
 // TODO:有空的时候要做假如搞完的话清理reset
@@ -43,10 +43,17 @@ public abstract class MixinLevelSlice implements IMapSlice {
     private int[][] HEIGHT_MAP;
 
     @Unique
+    private int[][] SOLID_HEIGHT_MAP;
+
+    @Unique
     private int[][] BIOME_MAP;
 
     @Unique
     private int[][] SNOWY_MAP;
+
+    @Unique
+    private int[][] SNOW_DEPTH_MAP;
+
     // @Shadow
     // @Final
     // private static int SECTION_ARRAY_SIZE;
@@ -102,8 +109,10 @@ public abstract class MixinLevelSlice implements IMapSlice {
     )
     private void eclipticseasons$init(ClientLevel level, CallbackInfo ci) {
         HEIGHT_MAP = new int[MAP_ARRAY_SIZE][MAP_BLOCK_COUNT];
+        SOLID_HEIGHT_MAP = new int[MAP_ARRAY_SIZE][MAP_BLOCK_COUNT];
         BIOME_MAP = new int[MAP_ARRAY_SIZE][MAP_BLOCK_COUNT];
         SNOWY_MAP = new int[MAP_ARRAY_SIZE][MAP_BLOCK_COUNT];
+        SNOW_DEPTH_MAP = new int[MAP_ARRAY_SIZE][MAP_BLOCK_COUNT];
     }
 
 
@@ -128,8 +137,10 @@ public abstract class MixinLevelSlice implements IMapSlice {
                     BiomeHolder biomeHolder = snowyGetter.getBiomeHolder();
                     int localSectionIndex = eclipticseasons$getLocalSectionIndex(sectionX, sectionZ);
                     int[] heights = HEIGHT_MAP[localSectionIndex];
+                    int[] solidHeights = SOLID_HEIGHT_MAP[localSectionIndex];
                     int[] biomes = BIOME_MAP[localSectionIndex];
                     int[] snowys = SNOWY_MAP[localSectionIndex];
+
                     int startX = originBlockX + sectionX * 16;
                     int startZ = originBlockZ + sectionZ * 16;
 
@@ -161,12 +172,49 @@ public abstract class MixinLevelSlice implements IMapSlice {
                                         MapChecker.biomeToId(level, MapChecker.getUnCachedSurfaceBiome(level, mutableBlockPos).value());
 
                                 snowys[index] = snowyRemover.blockWatcher()[x][z];
+
+                                solidHeights[index]=snowyGetter.getSolidHeightMap().getHighestTaken(x,z);
                             }
                         }
                     } else {
                         EclipticSeasons.logger("Warning, now try create slice for invalid level", level, context.getOrigin());
                     }
                     // CompilerCollector.add(chunkPos, List.of(heights, biomes));
+                }
+            }
+
+            boolean snowTransitionBlend = ClientConfig.Renderer.snowTransitionBlend.get();
+            if (snowTransitionBlend) {
+                Map<Holder<Biome>, Integer> snowDepthCache = new IdentityHashMap<>();
+                BlockPos.MutableBlockPos checkPos = new BlockPos.MutableBlockPos();
+                for (int sectionX = 1; sectionX < SECTION_ARRAY_LENGTH - 1; ++sectionX) {
+                    for (int sectionZ = 1; sectionZ < SECTION_ARRAY_LENGTH - 1; ++sectionZ) {
+                        int localSectionIndex = eclipticseasons$getLocalSectionIndex(sectionX, sectionZ);
+                        int[] snowDepths = SNOW_DEPTH_MAP[localSectionIndex];
+                        int startX = originBlockX + sectionX * 16;
+                        int startZ = originBlockZ + sectionZ * 16;
+                        for (int x = 0; x < 16; x++) {
+                            for (int z = 0; z < 16; z++) {
+                                int index = x * 16 + z;
+                                mutableBlockPos.setX(startX + x);
+                                mutableBlockPos.setZ(startZ + z);
+                                int snowDepth = 0;
+                                int cc = 0;
+                                for (int dx = -5; dx <= 5; dx++) {
+                                    for (int dz = -5; dz <= 5; dz++) {
+                                        checkPos.set(mutableBlockPos.getX() + dx, mutableBlockPos.getY(), mutableBlockPos.getZ() + dz);
+                                        Holder<Biome> otherBiome = MapChecker.idToBiome(level, getSurfaceFaceBiomeId(checkPos));
+                                        int neighborSnowDepth = snowDepthCache.computeIfAbsent(otherBiome, b -> WeatherManager.getSnowDepthAtBiome(level, b.value()));
+                                        snowDepth += neighborSnowDepth;
+                                        cc++;
+                                    }
+                                }
+                                snowDepths[index] = snowDepth / cc;
+                                snowDepthCache.clear();
+                            }
+                        }
+
+                    }
                 }
             }
         }
@@ -186,6 +234,22 @@ public abstract class MixinLevelSlice implements IMapSlice {
             int relBlockX = pos.getX() - this.originBlockX;
             int relBlockZ = pos.getZ() - this.originBlockZ;
             int[] lightArrays = this.HEIGHT_MAP[eclipticseasons$getLocalSectionIndex(
+                    relBlockX >> 4,
+                    relBlockZ >> 4)];
+            int localBlockX = relBlockX & 15;
+            int localBlockZ = relBlockZ & 15;
+            return lightArrays[localBlockX * 16 + localBlockZ];
+        }
+    }
+
+    @Override
+    public int getSolidBlockHeight(BlockPos pos) {
+        if (!this.volume.isInside(pos.getX(), pos.getY(), pos.getZ())) {
+            return level.getMaxBuildHeight() + 1;
+        } else {
+            int relBlockX = pos.getX() - this.originBlockX;
+            int relBlockZ = pos.getZ() - this.originBlockZ;
+            int[] lightArrays = this.SOLID_HEIGHT_MAP[eclipticseasons$getLocalSectionIndex(
                     relBlockX >> 4,
                     relBlockZ >> 4)];
             int localBlockX = relBlockX & 15;
@@ -232,22 +296,38 @@ public abstract class MixinLevelSlice implements IMapSlice {
         }
     }
 
-    /**
-     * @author jianzoushihu
-     * @reason For test snow transition if enable SnowTransitionBlend.
-     */
-    @Overwrite
     @Override
-    public int getBrightness(@NotNull LightLayer type, @NotNull BlockPos pos) {
-        if (!ClientConfig.Renderer.snowTransitionBlend.get()
-                && !this.volume.isInside(pos.getX(), pos.getY(), pos.getZ())) {
-            return 0;
+    public int getSnowDepth(BlockPos pos) {
+        if (!this.volume.isInside(pos.getX(), pos.getY(), pos.getZ())) {
+            return -1;
         } else {
             int relBlockX = pos.getX() - this.originBlockX;
-            int relBlockY = pos.getY() - this.originBlockY;
             int relBlockZ = pos.getZ() - this.originBlockZ;
-            DataLayer lightArray = this.lightArrays[getLocalSectionIndex(relBlockX >> 4, relBlockY >> 4, relBlockZ >> 4)][type.ordinal()];
-            return lightArray == null ? 0 : lightArray.get(relBlockX & 15, relBlockY & 15, relBlockZ & 15);
+            int[] lightArrays = this.SNOW_DEPTH_MAP[eclipticseasons$getLocalSectionIndex(
+                    relBlockX >> 4,
+                    relBlockZ >> 4)];
+            int localBlockX = relBlockX & 15;
+            int localBlockZ = relBlockZ & 15;
+            return lightArrays[localBlockX * 16 + localBlockZ];
         }
     }
+
+    // /**
+    //  * @author jianzoushihu
+    //  * @reason For test snow transition if enable SnowTransitionBlend.
+    //  */
+    // @Overwrite
+    // @Override
+    // public int getBrightness(@NotNull LightLayer type, @NotNull BlockPos pos) {
+    //     if (!ClientConfig.Renderer.snowTransitionBlend.get()
+    //             && !this.volume.isInside(pos.getX(), pos.getY(), pos.getZ())) {
+    //         return 0;
+    //     } else {
+    //         int relBlockX = pos.getX() - this.originBlockX;
+    //         int relBlockY = pos.getY() - this.originBlockY;
+    //         int relBlockZ = pos.getZ() - this.originBlockZ;
+    //         DataLayer lightArray = this.lightArrays[getLocalSectionIndex(relBlockX >> 4, relBlockY >> 4, relBlockZ >> 4)][type.ordinal()];
+    //         return lightArray == null ? 0 : lightArray.get(relBlockX & 15, relBlockY & 15, relBlockZ & 15);
+    //     }
+    // }
 }

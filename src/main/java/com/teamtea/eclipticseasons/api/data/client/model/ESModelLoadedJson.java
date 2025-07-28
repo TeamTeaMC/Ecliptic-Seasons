@@ -11,6 +11,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.Singular;
 
+import java.util.List;
 import java.util.Map;
 
 @Builder
@@ -24,12 +25,16 @@ public class ESModelLoadedJson {
     // ).apply(ins, ESModelLoadedJson::new));
 
     public static final MapCodec<ESModelLoadedJson> MAP_CODEC = RecordCodecBuilder.mapCodec(ins -> ins.group(
+            CodecUtil.listFrom(Codec.STRING).optionalFieldOf("require", List.of()).forGetter(c -> c.require),
             Codec.BOOL.optionalFieldOf("replace", false).forGetter(c -> c.replace),
             VARIANTS.forGetter(c -> c.variants),
             MULTIPART.forGetter(c -> c.multiPartLike)
     ).apply(ins, ESModelLoadedJson::new));
 
     public static final Codec<ESModelLoadedJson> CODEC = MAP_CODEC.codec();
+
+    @Singular("requirement")
+    private final List<String> require;
 
     @Builder.Default
     private final boolean replace = false;

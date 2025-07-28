@@ -20,7 +20,7 @@ version = mod_version
 group = mod_group_id
 
 repositories {
-    mavenLocal()
+//    mavenLocal()
     flatDir {
         dirs("libs")
     }
@@ -88,8 +88,8 @@ runs {
         jvmArguments = [
 //                '-XX:TieredStopAtLevel=3',
 //                "-XX:+AllowEnhancedClassRedefinition",
-                '-Dmixin.debug.export=true',
-                "-Xmx3048M"]
+'-Dmixin.debug.export=true',
+"-Xmx3000M"]
 
     }
 
@@ -140,9 +140,8 @@ dependencies {
 
 
     implementation("curse.maven:jei-238222:5606861")
-//    implementation ("curse.maven:jade-324717:4654448")
-    implementation("curse.maven:jade-324717:5591256-deobf-sources-api")
-//    implementation "curse.maven:dynamictrees-252818:6196673"
+    implementation "curse.maven:jade-324717:6291517"
+    compileOnly "curse.maven:dynamictrees-252818:6611182"
     compileOnly("curse.maven:the-one-probe-245211:6106998")
 //    runtimeOnly("curse.maven:the-one-probe-245211:6106998")
 
@@ -164,28 +163,30 @@ dependencies {
 
 
 //    onlyMainRuntimeOnly ("maven.modrinth:distanthorizons:2.2.1-a-1.21.1")
-    compileOnly("curse.maven:distant-horizons-508933:6251735")
-//    onlyMainRuntimeOnly ("curse.maven:distant-horizons-508933:6251735")
+//    compileOnly("curse.maven:distant-horizons-508933:6251735")
+    compileOnly("curse.maven:distant-horizons-508933:6760074")
+//    onlyMainRuntimeOnly ("curse.maven:distant-horizons-508933:6760074")
 
-    compileOnly ("curse.maven:simple-clouds-1121215:5812034")
+    compileOnly("curse.maven:simple-clouds-1121215:5812034")
 
 
     onlyMainRuntimeOnly("curse.maven:spark-361579:5434153")
 
-    compileOnly ("curse.maven:cold-sweat-506194:6058306")
-//    runtimeOnly ("curse.maven:cold-sweat-506194:6058306")
+    compileOnly("curse.maven:cold-sweat-506194:6176789")
+//    runtimeOnly("curse.maven:cold-sweat-506194:6176789")
 
-    compileOnly ("curse.maven:snowy-spirit-566142:5983882")
+    compileOnly("curse.maven:snowy-spirit-566142:5983882")
 //    onlyMainRuntimeOnly ("curse.maven:snowy-spirit-566142:5983882")
 //    onlyMainRuntimeOnly ("curse.maven:selene-499980:6224057")
-    compileOnly ("curse.maven:in-control-257356:5932871")
+    compileOnly("curse.maven:in-control-257356:5932871")
 //    onlyMainRuntimeOnly ("curse.maven:in-control-257356:5932871")
 
     compileOnly "curse.maven:touhou-little-maid-355044:6175338"
 //    onlyMainRuntimeOnly "curse.maven:touhou-little-maid-355044:6175338"
 
 //    onlyMainRuntimeOnly "curse.maven:create-328085:6255497"
-    onlyMainRuntimeOnly "curse.maven:minecraft-add-1090474:6167550"
+
+//    onlyMainRuntimeOnly "curse.maven:minecraft-add-1090474:6167550"
 
 //    onlyMainRuntimeOnly "curse.maven:euphoria-patches-915902:6137784"
 

@@ -76,7 +76,6 @@ public class SnowDefinition implements MapFiller<Block, SnowDefinition>, HolderM
         private final boolean ignoreOffset = false;
         @Builder.Default
         private final int offset = 0;
-        // todo 研究改进，支持树叶
         @Builder.Default
         private final ResourceLocation mid = ClientModelDefinitions.OVERLAY;
         @Builder.Default
@@ -114,8 +113,6 @@ public class SnowDefinition implements MapFiller<Block, SnowDefinition>, HolderM
             }
             return matcher.matches(test, blockState);
         }
-
-
     }
 
 
@@ -139,10 +136,10 @@ public class SnowDefinition implements MapFiller<Block, SnowDefinition>, HolderM
     @Data
     public static class RangeMatcher implements PropertyMatcher {
         public static final Codec<RangeMatcher> CODEC = RecordCodecBuilder.create(ins -> ins.group(
-                Codec.BOOL.optionalFieldOf("ignoreMin", false).forGetter(o -> o.ignoreMin),
-                Codec.INT.fieldOf("min").forGetter(o -> o.min),
-                Codec.BOOL.optionalFieldOf("ignoreMax", false).forGetter(o -> o.ignoreMax),
-                Codec.INT.fieldOf("max").forGetter(o -> o.max)
+                Codec.BOOL.optionalFieldOf("ignore_min", false).forGetter(o -> o.ignoreMin),
+                Codec.INT.fieldOf("minTime").forGetter(o -> o.min),
+                Codec.BOOL.optionalFieldOf("ignore_max", false).forGetter(o -> o.ignoreMax),
+                Codec.INT.fieldOf("maxTime").forGetter(o -> o.max)
         ).apply(ins, RangeMatcher::new));
 
         @Builder.Default

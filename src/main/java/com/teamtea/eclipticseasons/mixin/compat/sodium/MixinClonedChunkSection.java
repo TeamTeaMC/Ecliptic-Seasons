@@ -10,6 +10,7 @@ import net.minecraft.core.SectionPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.chunk.LevelChunkSection;
+import net.minecraft.world.level.levelgen.Heightmap;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -24,13 +25,18 @@ public abstract class MixinClonedChunkSection implements ISnowyGetter {
 
     @Unique
     private BiomeHolder eclipticseasons$biomeHolder;
+
+    @Unique
+    private Heightmap eclipticseasons$heightmap;
+
     @Inject(
             method = "<init>",
             at = @At(value = "RETURN")
     )
     private void eclipticseasons$init(Level level, LevelChunk chunk, LevelChunkSection section, SectionPos pos, CallbackInfo ci) {
-        eclipticseasons$snowyRemover=chunk.getData(AttachmentRegistry.SNOWY_REMOVER);
-        eclipticseasons$biomeHolder=chunk.getData(AttachmentRegistry.BIOME_HOLDER);
+        eclipticseasons$snowyRemover = chunk.getData(AttachmentRegistry.SNOWY_REMOVER);
+        eclipticseasons$biomeHolder = chunk.getData(AttachmentRegistry.BIOME_HOLDER);
+        eclipticseasons$heightmap = chunk.getOrCreateHeightmapUnprimed(Heightmap.Types.MOTION_BLOCKING);
     }
 
     @Override
@@ -41,5 +47,10 @@ public abstract class MixinClonedChunkSection implements ISnowyGetter {
     @Override
     public BiomeHolder getBiomeHolder() {
         return eclipticseasons$biomeHolder;
+    }
+
+    @Override
+    public Heightmap getSolidHeightMap() {
+        return eclipticseasons$heightmap;
     }
 }

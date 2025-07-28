@@ -6,27 +6,21 @@ import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
-import com.teamtea.eclipticseasons.common.misc.SoundUtil;
-import com.teamtea.eclipticseasons.common.misc.SoundUtilServerImpl;
-import it.unimi.dsi.fastutil.Pair;
-import it.unimi.dsi.fastutil.ints.Int2BooleanOpenHashMap;
+import com.teamtea.eclipticseasons.common.misc.ClientAgent;
 import it.unimi.dsi.fastutil.longs.*;
-import it.unimi.dsi.fastutil.objects.ObjectIterator;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
-
-import java.util.Iterator;
-import java.util.Map;
 
 public class ClientCon {
 
     public static final Long2ObjectOpenHashMap<LongBooleanImmutablePair> roomCache = new Long2ObjectOpenHashMap<>();
-    public static int humidityModificationLevel;
+    public static float humidityModificationLevel;
 
     private static Level useLevel;
     private static Level nextLevel;
 
     public static SolarTerm nowSolarTerm = SolarTerm.NONE;
+    public static int nowSolarYear = 0;
     public static boolean isDay = false;
     public static boolean isEvening = false;
     public static boolean isNoon = false;
@@ -37,7 +31,7 @@ public class ClientCon {
     // Use for export
     public static String ServerName = "client";
 
-    public static SoundUtil soundUtil = new SoundUtilServerImpl();
+    public static ClientAgent agent = new ClientAgent(){};
 
     public static void tick(Level clientLevel) {
         if (MapChecker.isValidDimension(clientLevel)) {
@@ -49,12 +43,14 @@ public class ClientCon {
             if (saveData != null) {
                 ClientCon.progress = Mth.clamp(Mth.floor(((saveData.getSolarTermDaysInPeriod() + (Mth.floor((clientLevel.getDayTime() + 24000) % 24000L / 24000f * 10)) / 10f) * 100 / saveData.getSolarTermLastingDays())), 0, 100);
             }
+            ClientCon.nowSolarYear = EclipticUtil.getNowSolarYear(clientLevel);
         } else {
             ClientCon.nowSolarTerm = SolarTerm.NONE;
             ClientCon.isDay = false;
             ClientCon.isEvening = false;
             ClientCon.isNoon = false;
             ClientCon.progress=0;
+            ClientCon.nowSolarYear=0;
         }
 
         if (!roomCache.isEmpty()) {

@@ -19,7 +19,7 @@ import com.teamtea.eclipticseasons.client.render.item.GreenHouseCoreFrameItemRen
 import com.teamtea.eclipticseasons.client.render.item.GreenHouseCoreItemRenderer;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.client.util.ClientExtraUtil;
-import com.teamtea.eclipticseasons.client.util.ClientSoundUtil;
+import com.teamtea.eclipticseasons.client.util.ClientClientAgent;
 import com.teamtea.eclipticseasons.common.registry.BlockEntityRegistry;
 import com.teamtea.eclipticseasons.common.registry.BlockRegistry;
 import com.teamtea.eclipticseasons.common.registry.ItemRegistry;
@@ -36,7 +36,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.GrassColor;
 import net.minecraft.world.level.block.*;
 
-import com.teamtea.eclipticseasons.client.core.ModelManager;
+import com.teamtea.eclipticseasons.client.core.ExtraModelManager;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -84,37 +84,37 @@ public class ClientSetup {
     public static void registerExtraModels(ModelEvent.RegisterAdditional event) {
         // Minecraft.getInstance().getResourceManager().listPacks().toList().get(0).getResource(PackType.CLIENT_RESOURCES, ResourceLocation.withDefaultNamespace("textures/block/snow.png")).get()
         // IOUtils.toString(Minecraft.getInstance().getResourceManager().listPacks().toList().get(0).getResource(PackType.SERVER_DATA, ResourceLocation.withDefaultNamespace("recipe/yellow_terracotta.json")).get(), StandardCharsets.UTF_8)        event.register(ModelManager.snowy_fern);
-        event.register(ModelManager.snowy_custom);
-        event.register(ModelManager.stairs_top);
-        event.register(ModelManager.snowy_leaves_attach);
-        event.register(ModelManager.snowy_leaves_top);
-        event.register(ModelManager.snowy_fern);
-        event.register(ModelManager.snowy_grass);
-        event.register(ModelManager.snowy_tall_grass_top);
-        event.register(ModelManager.snowy_tall_grass_bottom);
-        event.register(ModelManager.snowy_large_fern_top);
+        event.register(ExtraModelManager.snowy_custom);
+        event.register(ExtraModelManager.stairs_top);
+        event.register(ExtraModelManager.snowy_leaves_attach);
+        event.register(ExtraModelManager.snowy_leaves_top);
+        event.register(ExtraModelManager.snowy_fern);
+        event.register(ExtraModelManager.snowy_grass);
+        event.register(ExtraModelManager.snowy_tall_grass_top);
+        event.register(ExtraModelManager.snowy_tall_grass_bottom);
+        event.register(ExtraModelManager.snowy_large_fern_top);
         // 注意这里使用地址和model地址效果不同，后者需要写blockstate
-        event.register(ModelManager.snowy_large_fern_bottom);
-        event.register(ModelManager.overlay_2);
-        event.register(ModelManager.snow_height2);
-        event.register(ModelManager.snow_height2_top);
-        event.register(ModelManager.grass_flower);
-        for (ModelResourceLocation flowerOnGrass : ModelManager.flower_on_grass) {
+        event.register(ExtraModelManager.snowy_large_fern_bottom);
+        event.register(ExtraModelManager.overlay_2);
+        event.register(ExtraModelManager.snow_height2);
+        event.register(ExtraModelManager.snow_height2_top);
+        event.register(ExtraModelManager.grass_flower);
+        for (ModelResourceLocation flowerOnGrass : ExtraModelManager.flower_on_grass) {
             event.register(flowerOnGrass);
         }
-        for (ModelResourceLocation flowerOnGrass : ModelManager.fourleaf_clovers) {
+        for (ModelResourceLocation flowerOnGrass : ExtraModelManager.fourleaf_clovers) {
             event.register(flowerOnGrass);
         }
-        for (ModelResourceLocation flowerOnGrass : ModelManager.snow_edge_overlays) {
+        for (ModelResourceLocation flowerOnGrass : ExtraModelManager.snow_edge_overlays) {
             event.register(flowerOnGrass);
         }
-        event.register(ModelManager.mrl("block/aaaaaaaaaaaa"));
+        event.register(ExtraModelManager.mrl("block/aaaaaaaaaaaa"));
 
     }
 
     @SubscribeEvent
     public static void onClientEvent(FMLClientSetupEvent event) {
-        EclipticSeasons.logger("Register Client");
+        // EclipticSeasons.logger("Register Client");
         event.enqueueWork(() -> {
             BiomeColors.GRASS_COLOR_RESOLVER = BiomeColorsHandler.GRASS_COLOR;
             BiomeColors.FOLIAGE_COLOR_RESOLVER = BiomeColorsHandler.FOLIAGE_COLOR;
@@ -141,13 +141,13 @@ public class ClientSetup {
 
             ItemProperties.register(ItemRegistry.hyetometer.get(), ItemRegistry.hyetometer.getId(), new CounterItemProperty(EclipticUtil::getRainfallAt, Rainfall.collectValues().length));
             ItemProperties.register(ItemRegistry.hygrometer.get(), ItemRegistry.hygrometer.getId(), new CounterItemProperty((level, pos) -> {
-                Humidity humidityAt = EclipticUtil.getHumidityAt(level, pos);
+                float humidityAt = EclipticUtil.getHumidityLevelAt(level, pos);
                 humidityAt = ClientExtraUtil.modifyHumidity(level, pos, humidityAt);
-                return humidityAt;
+                return Humidity.getHumid(humidityAt);
             }, Humidity.collectValues().length));
             ItemProperties.register(ItemRegistry.thermometer.get(), ItemRegistry.thermometer.getId(), new CounterItemProperty(EclipticUtil::getTemperatureAt, Temperature.collectValues().length));
 
-            ClientCon.soundUtil = new ClientSoundUtil();
+            ClientCon.agent = new ClientClientAgent();
         });
     }
 
@@ -192,31 +192,31 @@ public class ClientSetup {
         ParticleUtil.onReloadResource();
 
         Map<ModelResourceLocation, BakedModel> modelRegistry = event.getModels();
-        ModelManager.clearForRebaked(modelRegistry);
+        ExtraModelManager.clearForRebaked(modelRegistry);
 
         List<ModelResourceLocation> bakedModels =
                 new ArrayList<>(List.of(
-                        ModelManager.snowy_custom,
-                        ModelManager.stairs_top,
-                        ModelManager.snowy_leaves_attach,
-                        ModelManager.snowy_leaves_top,
-                        ModelManager.stairs_top,
-                        ModelManager.snowy_fern,
-                        ModelManager.snowy_grass,
-                        ModelManager.snowy_tall_grass_top,
-                        ModelManager.snowy_tall_grass_bottom,
-                        ModelManager.snowy_large_fern_top,
-                        ModelManager.snowy_large_fern_bottom,
-                        ModelManager.overlay_2,
-                        ModelManager.snow_height2,
-                        ModelManager.snow_height2_top,
-                        ModelManager.snowOverlayLeaves,
-                        ModelManager.snowySlabBottom,
-                        ModelManager.snowOverlayBlock
+                        ExtraModelManager.snowy_custom,
+                        ExtraModelManager.stairs_top,
+                        ExtraModelManager.snowy_leaves_attach,
+                        ExtraModelManager.snowy_leaves_top,
+                        ExtraModelManager.stairs_top,
+                        ExtraModelManager.snowy_fern,
+                        ExtraModelManager.snowy_grass,
+                        ExtraModelManager.snowy_tall_grass_top,
+                        ExtraModelManager.snowy_tall_grass_bottom,
+                        ExtraModelManager.snowy_large_fern_top,
+                        ExtraModelManager.snowy_large_fern_bottom,
+                        ExtraModelManager.overlay_2,
+                        ExtraModelManager.snow_height2,
+                        ExtraModelManager.snow_height2_top,
+                        ExtraModelManager.snowOverlayLeaves,
+                        ExtraModelManager.snowySlabBottom,
+                        ExtraModelManager.snowOverlayBlock
                 ));
         bakedModels.addAll(BlockRegistry.snowyStairs.get().getStateDefinition().getPossibleStates().stream()
                 .map(BlockModelShaper::stateToModelLocation).toList());
-        bakedModels.addAll(ModelManager.snow_edge_overlays);
+        bakedModels.addAll(ExtraModelManager.snow_edge_overlays);
         for (ModelResourceLocation modelResourceLocation : bakedModels) {
             BakedModel bakedModel1 = modelRegistry.get(modelResourceLocation);
             if (bakedModel1 != null) {
@@ -273,12 +273,12 @@ public class ClientSetup {
     }
 
     @SubscribeEvent
-    public static void onRegisterClientReloadListenersEvent(RegisterClientReloadListenersEvent event) {
+    public static void onRegisterClientReloadListeners(RegisterClientReloadListenersEvent event) {
         event.registerReloadListener(ClientJsonCacheListener.biomeCache);
         event.registerReloadListener(ClientJsonCacheListener.leafCache);
         event.registerReloadListener(ClientJsonCacheListener.snowDefOverrideCache);
         event.registerReloadListener(ClientJsonCacheListener.ambientCache);
-        event.registerReloadListener(ClientJsonCacheListener.modelDefCache);
+        // event.registerReloadListener(ClientJsonCacheListener.modelDefCache);
         event.registerReloadListener(ClientJsonCacheListener.seasonDefCache);
     }
 

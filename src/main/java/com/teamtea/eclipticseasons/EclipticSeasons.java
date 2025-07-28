@@ -37,6 +37,7 @@ public class EclipticSeasons {
     public EclipticSeasons(IEventBus modEventBus, ModContainer modContainer) {
 
         modEventBus.addListener(CommonConfig::UpdateConfig);
+        modEventBus.addListener(ClientConfig::UpdateConfig);
         modEventBus.addListener(this::FMLCommonSetup);
         modEventBus.addListener(this::FMLCommonSetup);
         modEventBus.addListener(this::gatherData);
@@ -48,6 +49,8 @@ public class EclipticSeasons {
         AttachmentRegistry.ATTACHMENT_TYPES.register(modEventBus);
 
         TestContents.weathers.register(modEventBus);
+
+        LootItemConditionRegistry.LOOT_ITEM_CONDITION_TYPE_DEFERRED_REGISTER.register(modEventBus);
 
         modContainer.registerConfig(ModConfig.Type.COMMON, CommonConfig.COMMON_CONFIG);
         modContainer.registerConfig(ModConfig.Type.CLIENT, ClientConfig.CLIENT_CONFIG);
@@ -97,6 +100,10 @@ public class EclipticSeasons {
     }
 
     public static void logger(Object... x) {
+        extraLogger(false, x);
+    }
+
+    public static void extraLogger(boolean debug, Object... x) {
 
         // if (!FMLEnvironment.production||General.bool.get())
         {
@@ -141,10 +148,13 @@ public class EclipticSeasons {
                 } else
                     output.append(", ").append(i);
             }
-            LOGGER.info(output.substring(1));
+            if (debug) {
+                LOGGER.debug(output.substring(1));
+            } else {
+                LOGGER.info(output.substring(1));
+            }
         }
 
     }
-
 
 }

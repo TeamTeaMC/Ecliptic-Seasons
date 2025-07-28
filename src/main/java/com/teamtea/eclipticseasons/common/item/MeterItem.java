@@ -28,16 +28,16 @@ public class MeterItem extends Item {
 
     public static void sendInfo(Item meterItem, Level level, Player player) {
         if (level.isClientSide()) {
-            BlockPos blockPosition = player.blockPosition();
+            BlockPos pos = player.blockPosition();
             Component component = Component.empty();
             if (meterItem == ItemRegistry.hyetometer.get()) {
-                component = EclipticUtil.getRainfallAt(level, blockPosition).getTranslation();
+                component = EclipticUtil.getRainfallAt(level, pos).getTranslation();
             } else if (meterItem == ItemRegistry.thermometer.get()) {
-                component = EclipticUtil.getTemperatureAt(level, blockPosition).getTranslation();
+                component = EclipticUtil.getTemperatureAt(level, pos).getTranslation();
             } else if (meterItem == ItemRegistry.hygrometer.get()) {
-                Humidity humidityAt = EclipticUtil.getHumidityAt(level, blockPosition);
-                humidityAt = ClientExtraUtil.modifyHumidity(level, blockPosition, humidityAt);
-                component = humidityAt.getTranslation();
+                float humidityAt = EclipticUtil.getHumidityLevelAt(level, pos);
+                humidityAt = ClientExtraUtil.modifyHumidity(level, pos, humidityAt);
+                component = Humidity.getHumid(humidityAt).getTranslation();
             }
 
             if (!component.getString().isEmpty())

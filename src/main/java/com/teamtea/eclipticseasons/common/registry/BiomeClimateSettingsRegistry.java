@@ -23,13 +23,12 @@ public class BiomeClimateSettingsRegistry {
 
     public static void bootstrap(BootstrapContext<BiomesClimateSettings> context) {
         HolderGetter<Biome> holderGetter = context.lookup(Registries.BIOME);
-
         Optional<Float> empty = Optional.empty();
         Optional<SolarTermValueMap<Float>> emptyMap = Optional.empty();
         SolarTermValueMap.Builder<Float> builder = SolarTermValueMap.builder();
         for (MonsoonRain monsoonRain : MonsoonRain.collectValues()) {
-            if ((monsoonRain.getRainChane() > 0)) {
-                builder.putSolarTerm(monsoonRain.getSolarTerm(), Math.round(monsoonRain.getRainChane() / 1.5f * 1000.0f) / 1000.0f);
+            if ((monsoonRain.getRainChance() > 0)) {
+                builder.putSolarTerm(monsoonRain.getSolarTerm(), Math.round(monsoonRain.getRainChance() / 1.5f * 1000.0f) / 1000.0f);
             }
         }
 

@@ -36,6 +36,11 @@ public class BlockInCopperGrateBlock extends WeatheringCopperGrateBlock implemen
         return BlockRegistry.getOriginalCopperGrateBlock(this).asItem().getDefaultInstance();
     }
 
+    public static boolean validItemAndBlock(Level level, ItemStack stack, BlockState state) {
+        Pair<BlockItem, HumidityControl> match = BlockInCopperGrateBlock.getItemMatch(level, stack);
+        return match != null && BlockRegistry.getCopperGrateBlockChange(state.getBlock()) != null;
+    }
+
     public static Pair<BlockItem, HumidityControl> getItemMatch(Level level, ItemStack stack) {
         if (stack.getItem() instanceof BlockItem blockItem) {
             for (HumidityControl humidityControl : level.registryAccess().registryOrThrow(ESRegistries.HUMIDITY_CONTROL)) {
@@ -50,18 +55,22 @@ public class BlockInCopperGrateBlock extends WeatheringCopperGrateBlock implemen
     public static ItemInteractionResult getItemInteractionResult(ItemStack stack, Level level, BlockPos pos, BlockState state) {
         Pair<BlockItem, HumidityControl> itemMatch = getItemMatch(level, stack);
         if (itemMatch != null) {
-            if (!level.isClientSide()) {
-                Block copperGrateBlockChange = BlockRegistry.getCopperGrateBlockChange(state.getBlock());
-                if (copperGrateBlockChange != Blocks.AIR) {
-                    level.setBlockAndUpdate(pos, copperGrateBlockChange.withPropertiesOf(state));
-                    if (level.getBlockEntity(pos) instanceof BlockInCopperGrateBlockEntity blockEntity) {
-                        blockEntity.setInnerBlock(itemMatch.getFirst().getBlock());
-                    }
-                }
-            }
+            setNewBlock(level, pos, state, itemMatch.getFirst());
             return ItemInteractionResult.sidedSuccess(level.isClientSide());
         }
         return null;
+    }
+
+    public static void setNewBlock(Level level, BlockPos pos, BlockState state, BlockItem input) {
+        if (!level.isClientSide()) {
+            Block copperGrateBlockChange = BlockRegistry.getCopperGrateBlockChange(state.getBlock());
+            if (copperGrateBlockChange != Blocks.AIR) {
+                level.setBlockAndUpdate(pos, copperGrateBlockChange.withPropertiesOf(state));
+                if (level.getBlockEntity(pos) instanceof BlockInCopperGrateBlockEntity blockEntity) {
+                    blockEntity.setInnerBlock(input.getBlock());
+                }
+            }
+        }
     }
 
     public static @Nullable ItemInteractionResult getItemInteractionResult(ItemStack stack, Level level, BlockPos pos) {

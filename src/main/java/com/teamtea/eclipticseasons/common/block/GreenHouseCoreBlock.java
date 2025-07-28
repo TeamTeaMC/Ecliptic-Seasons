@@ -4,18 +4,17 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.util.codec.ESExtraCodec;
-import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.common.block.base.SimpleEntityBlock;
 import com.teamtea.eclipticseasons.common.block.blockentity.GreenHouseCoreBlockEntity;
 import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
 import com.teamtea.eclipticseasons.common.registry.BlockEntityRegistry;
 import com.teamtea.eclipticseasons.common.registry.ParticleRegistry;
+import com.teamtea.eclipticseasons.config.ClientConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ColorParticleOption;
 import net.minecraft.util.FastColor;
 import net.minecraft.util.RandomSource;
-import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
@@ -45,7 +44,7 @@ public class GreenHouseCoreBlock extends SimpleEntityBlock {
 
     public GreenHouseCoreBlock(Season season, Properties properties) {
         super(properties);
-        registerDefaultState(defaultBlockState().setValue(POWER,0));
+        registerDefaultState(defaultBlockState().setValue(POWER, 0));
         this.season = season;
     }
 
@@ -72,6 +71,9 @@ public class GreenHouseCoreBlock extends SimpleEntityBlock {
     @Override
     public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
         super.animateTick(state, level, pos, random);
+        if (!ClientConfig.Particle.seasonGreenhouse.get()) return;
+        int count = ClientConfig.Particle.SeasonGreenhouseParticleSpawnCount.get();
+
         Direction direction = Direction.DOWN;
 
         Integer color = getSeason().getColor().getColor();
@@ -79,8 +81,7 @@ public class GreenHouseCoreBlock extends SimpleEntityBlock {
         float g = FastColor.ARGB32.green(color) / 255.0F;
         float b = FastColor.ARGB32.blue(color) / 255.0F;
         ColorParticleOption colorParticleOption = ColorParticleOption.create(ParticleRegistry.GREENHOUSE, r, g, b);
-
-        for (int i = 0; i < 30; i++) {
+        for (int i = 0; i < count; i++) {
             double d0 = pos.getX() + (random.nextDouble() * 32.0 - 16.0);
             double d1 = pos.getY() - 0.5 - (random.nextDouble() * 10.0) + 2;
             double d2 = pos.getZ() + (random.nextDouble() * 32.0 - 16.0);
@@ -96,7 +97,7 @@ public class GreenHouseCoreBlock extends SimpleEntityBlock {
                 BlockPos blockPos = new BlockPos((int) x, (int) y, (int) z);
                 boolean inRoom =
                         level.isEmptyBlock(blockPos) &&
-                                CropGrowthHandler.isInRoom(level, blockPos, Blocks.AIR.defaultBlockState(),  Optional.empty());
+                                CropGrowthHandler.isInRoom(level, blockPos, Blocks.AIR.defaultBlockState(), Optional.empty());
                 if (inRoom)
                     level.addParticle(
                             // ParticleTypes.END_ROD,

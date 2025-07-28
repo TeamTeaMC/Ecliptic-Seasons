@@ -22,7 +22,7 @@ public class ChunkInfoMap {
         this.isClient = isClient;
         this.x = x;
         this.z = z;
-        EclipticSeasons.logger(String.format("Create new Height Map with [%s, %s]", x, z));
+        EclipticSeasons.extraLogger(true,String.format("Create new Height Map with [%s, %s]", x, z));
         for (int i = 0; i < MapChecker.ChunkSize; i++) {
             for (int j = 0; j < MapChecker.ChunkSize; j++) {
                 biomes[i][j] = -1;
@@ -30,7 +30,7 @@ public class ChunkInfoMap {
                 lockArray[i][j] = new Object();
             }
         }
-        EclipticSeasons.logger(String.format("End create [%s, %s]", x, z));
+        EclipticSeasons.extraLogger(true,String.format("End create [%s, %s]", x, z));
     }
 
     // 获取chunk内部位置

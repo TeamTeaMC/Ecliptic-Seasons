@@ -16,7 +16,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class MixinGameRenderer {
 
 
-    @Shadow @Final private Minecraft minecraft;
+    @Shadow @Final
+    Minecraft minecraft;
 
     @Shadow public abstract void loadEffect(ResourceLocation pResourceLocation);
 

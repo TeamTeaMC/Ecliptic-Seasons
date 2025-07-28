@@ -1,5 +1,7 @@
 package com.teamtea.eclipticseasons.common.core.map;
 
+import net.minecraft.core.BlockPos;
+
 import java.util.Objects;
 
 public record XZPos(int x, int z, long startTick, int startY) {
@@ -10,6 +12,10 @@ public record XZPos(int x, int z, long startTick, int startY) {
         if (o == null || getClass() != o.getClass()) return false;
         XZPos xzPos = (XZPos) o;
         return x == xzPos.x && z == xzPos.z;
+    }
+
+    public long toLongKey(){
+        return BlockPos.asLong(x,0,z);
     }
 
     @Override

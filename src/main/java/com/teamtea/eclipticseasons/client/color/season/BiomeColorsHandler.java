@@ -46,7 +46,7 @@ public class BiomeColorsHandler {
             if (biomeColor != null) {
                 ColorMode.Instance instance = biomeColor.grassColor().get(ClientCon.nowSolarTerm);
                 if (instance != null) {
-                    return ColorHelper.simplyMixColor(instance.value(), instance.fix(), originColor, Math.abs(1 - instance.fix()));
+                    return ColorHelper.simplyMixColor(instance.value(), instance.mix(), originColor, Math.abs(1 - instance.mix()));
                 }
             }
             // if (needRefresh) {
@@ -90,7 +90,7 @@ public class BiomeColorsHandler {
             if (biomeColor != null) {
                 ColorMode.Instance instance = biomeColor.foliageColor().get(ClientCon.nowSolarTerm);
                 if (instance != null) {
-                    return ColorHelper.simplyMixColor(instance.value(), instance.fix(), originColor, Math.abs(1 - instance.fix()));
+                    return ColorHelper.simplyMixColor(instance.value(), instance.mix(), originColor, Math.abs(1 - instance.mix()));
                 }
             }
             // if (needRefresh) {

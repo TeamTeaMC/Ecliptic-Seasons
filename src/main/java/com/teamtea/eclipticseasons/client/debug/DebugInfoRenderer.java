@@ -52,7 +52,7 @@ public final class DebugInfoRenderer {
         Holder<Biome> biome = clientLevel.getBiome(player.getOnPos());
 
         String dS = "Downfall: " + EclipticUtil.getRainfallAt(clientLevel, pos);
-        String jS = "Humidity: " + EclipticUtil.getHumidityAt(clientLevel, pos);
+        String jS = "Humidity: " + EclipticUtil.getHumidityAt(clientLevel, pos) + "\n" + EclipticUtil.getHumidityLevelAt(player.level(), player.blockPosition());
         String ys = "y: " + MapChecker.getHeight(clientLevel, pos);
 
         int index = 0;

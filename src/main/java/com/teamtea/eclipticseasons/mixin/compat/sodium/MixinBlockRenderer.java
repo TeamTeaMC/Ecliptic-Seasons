@@ -5,19 +5,15 @@ import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
-import com.teamtea.eclipticseasons.EclipticSeasons;
-import com.teamtea.eclipticseasons.client.core.ModelManager;
-import com.teamtea.eclipticseasons.client.model.SnowyBakedModelWrapper;
+import com.teamtea.eclipticseasons.client.core.ExtraModelManager;
 import com.teamtea.eclipticseasons.compat.sodium.ESSodiumContext;
 import com.teamtea.eclipticseasons.compat.sodium.SodiumBoard;
 import com.teamtea.eclipticseasons.compat.sodium.SodiumStatus;
-import net.caffeinemc.mods.sodium.api.texture.SpriteUtil;
 import net.caffeinemc.mods.sodium.client.render.chunk.compile.pipeline.BlockRenderer;
 import net.caffeinemc.mods.sodium.client.render.chunk.terrain.TerrainRenderPass;
 import net.caffeinemc.mods.sodium.client.render.frapi.mesh.MutableQuadViewImpl;
 import net.caffeinemc.mods.sodium.client.render.frapi.render.AbstractBlockRenderContext;
 import net.caffeinemc.mods.sodium.client.render.texture.SpriteFinderCache;
-import net.caffeinemc.mods.sodium.client.render.texture.SpriteUtilImpl;
 import net.fabricmc.fabric.api.renderer.v1.model.FabricBakedModel;
 import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
 import net.minecraft.client.renderer.RenderType;
@@ -96,7 +92,7 @@ public abstract class MixinBlockRenderer extends AbstractBlockRenderContext impl
             eclipticseasons$cancelDowngradedPass = true;
             eclipticseasons$shouldCollectBakeQuads = false;
             original = false;
-            this.type = ModelManager.getRenderType(state);
+            this.type = ExtraModelManager.getRenderType(state);
             ((FabricBakedModel) eclipticseasons$snowModel).emitBlockQuads(this.level, state, pos, this.randomSupplier, this);
 
             // eclipticseasons$esContext.reset();
@@ -137,7 +133,7 @@ public abstract class MixinBlockRenderer extends AbstractBlockRenderContext impl
             // disableAllowDowngrade();
             eclipticseasons$cancelDowngradedPass = true;
             eclipticseasons$shouldCollectBakeQuads = false;
-            this.type = ModelManager.getRenderType(state);
+            this.type = ExtraModelManager.getRenderType(state);
             ((FabricBakedModel) eclipticseasons$snowModel).emitBlockQuads(this.level, state, pos, this.randomSupplier, this);
 
             // eclipticseasons$esContext.reset();
@@ -153,12 +149,12 @@ public abstract class MixinBlockRenderer extends AbstractBlockRenderContext impl
     )
     private void eclipticseasons$renderModel_start(BakedModel model, BlockState state, BlockPos pos, BlockPos origin, CallbackInfo ci) {
         // this.allowDowngrade = false;
-        eclipticseasons$snowModel = ModelManager.findModel(slice, pos, state, random, randomSeed, eclipticseasons$mutableBlockPos);
+        eclipticseasons$snowModel = ExtraModelManager.findModel(slice, pos, state, random, randomSeed, eclipticseasons$mutableBlockPos);
         if (eclipticseasons$snowModel != null) {
             eclipticseasons$shouldReplaceOriginalGrassModel =
-                    ModelManager.isModelReplaceable(state, level, pos, eclipticseasons$snowModel);
+                    ExtraModelManager.isModelReplaceable(state, level, pos, eclipticseasons$snowModel);
             if (!eclipticseasons$shouldReplaceOriginalGrassModel) {
-                boolean yuushyaBlock = ModelManager.isSpecialCTMBlock(state);
+                boolean yuushyaBlock = ExtraModelManager.isSpecialCTMBlock(state);
                 if (yuushyaBlock) {
                     eclipticseasons$shouldCollectBakeQuads = true;
                 }

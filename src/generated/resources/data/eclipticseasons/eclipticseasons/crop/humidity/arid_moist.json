@@ -4,33 +4,21 @@
     "blocks": "#eclipticseasons:crops/arid_moist"
   },
   "climate": "#eclipticseasons:all",
-  "solar_terms": {},
-  "seasons": {},
   "humidity": {
     "arid": {
-      "grow_chance": 0.65,
-      "death_chance": 0.0,
-      "fertile_chance": 1.0
+      "grow_chance": 0.9
     },
     "dry": {
-      "grow_chance": 0.75,
-      "death_chance": 0.0,
-      "fertile_chance": 1.0
+      "grow_chance": 0.97
     },
     "average": {
-      "grow_chance": 0.98,
-      "death_chance": 0.0,
-      "fertile_chance": 1.0
+      "grow_chance": 1.025
     },
     "moist": {
-      "grow_chance": 0.6,
-      "death_chance": 0.0,
-      "fertile_chance": 1.0
+      "grow_chance": 0.9
     },
     "humid": {
-      "grow_chance": 0.2,
-      "death_chance": 0.0,
-      "fertile_chance": 1.0
+      "grow_chance": 0.35
     }
   }
 }
