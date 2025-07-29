@@ -154,7 +154,7 @@ climate zones.
 | `eclipticseasons:heatstroke_resistant`    | Helmet enchantment |
 | `eclipticseasons:cooling_items`           | Inventory items    |
 | `eclipticseasons:heat_protective_helmets` | Helmet items       |
-| `heatstroke_resistant`                    | Entity state       |
+| `eclipticseasons:heatstroke_resistant`    | Mob effects        |
 
 ## Miscellaneous
 

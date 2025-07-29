@@ -140,7 +140,7 @@ Tag平台运行，目前主要分为三种。四季型地区，干湿季地区�
 | `eclipticseasons:heatstroke_resistant`    | 头盔附魔  |
 | `eclipticseasons:cooling_items`           | 物品栏物品 | 
 | `eclipticseasons:heat_protective_helmets` | 头盔物品  |
-| `heatstroke_resistant`                    | 生物状态  | 
+| `eclipticseasons:heatstroke_resistant`    | 状态效果  | 
 
 ## 杂项
 

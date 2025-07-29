@@ -18,6 +18,7 @@ nav:
           - Crop: 'en/crop.md'
           - Compatibility: 'en/compat.md'
           - Configuration: 'en/configuration.md'
+          - Datapack Base: 'en/datapack.md'
           - Frequent Question: 'en/question.md'
           - Custom:
               - Model Definitions: 'en/custom/model_definitions.md'
