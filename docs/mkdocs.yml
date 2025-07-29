@@ -26,6 +26,7 @@ nav:
               - Seasonal Textures Changes of Models: 'en/custom/season_textures.md'
               - Fallen Leaves Particles: 'en/custom/fallen_leaves.md'
               - Seasonal Biome Ambient: 'en/custom/ambient.md'
+              - Seasonal Biome Color: 'en/custom/biome_colors.md'
           - Data packs:
               - Crop Growth: 'en/data/crop.md'
               - Agro Climate Zones: 'en/data/agro_climate.md'
@@ -48,9 +49,10 @@ nav:
               - 模型映射: 'zh/custom/model_definitions.md'
               - 覆雪方块定义与模型: 'zh/custom/snow_definitions.md'
               - 四季模型: 'zh/custom/season_definitions.md'
-              - 四季模型贴图调整: 'zh/custom/season_textures.md'
+              - 季节贴图变化: 'zh/custom/season_textures.md'
               - 落叶: 'zh/custom/fallen_leaves.md'
               - 季节音效: 'zh/custom/ambient.md'
+              - 群系颜色: 'zh/custom/biome_colors.md'
           - 数据包:
               - 作物生长: 'zh/data/crop.md'
               - 农业气候区: 'zh/data/agro_climate.md'
