@@ -7,13 +7,24 @@ import com.teamtea.eclipticseasons.common.block.base.SimpleEntityBlock;
 import com.teamtea.eclipticseasons.common.block.blockentity.GreenHouseCoreBlockEntity;
 import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
 import com.teamtea.eclipticseasons.common.registry.BlockEntityRegistry;
+import com.teamtea.eclipticseasons.common.registry.BlockRegistry;
+import com.teamtea.eclipticseasons.common.registry.ItemRegistry;
 import com.teamtea.eclipticseasons.common.registry.ParticleRegistry;
 import com.teamtea.eclipticseasons.config.ClientConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderSet;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.FastColor;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -26,6 +37,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.phys.BlockHitResult;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
@@ -118,5 +131,25 @@ public class GreenHouseCoreBlock extends SimpleEntityBlock {
     @Override
     public int getSignal(BlockState blockState, BlockGetter blockAccess, BlockPos pos, Direction side) {
         return blockState.getValue(POWER);
+    }
+
+    @Override
+    public @NotNull InteractionResult use(@NotNull BlockState pState, @NotNull Level level, @NotNull BlockPos pos, Player pPlayer, @NotNull InteractionHand pHand, @NotNull BlockHitResult pHit) {
+        if (pPlayer.isShiftKeyDown() && pPlayer.getItemInHand(pHand).isEmpty()) {
+            if (level instanceof ServerLevel) {
+                level.playSound(null, pos, SoundEvents.SMALL_AMETHYST_BUD_BREAK, SoundSource.BLOCKS);
+                Item item = switch (getSeason()) {
+                    case SPRING -> ItemRegistry.spring_greenhouse_essence_item.get();
+                    case SUMMER -> ItemRegistry.summer_greenhouse_essence_item.get();
+                    case AUTUMN -> ItemRegistry.autumn_greenhouse_essence_item.get();
+                    case WINTER -> ItemRegistry.winter_greenhouse_essence_item.get();
+                    default -> Items.AIR;
+                };
+                Block.popResource(level, pos.above(), new ItemStack(item));
+                level.setBlockAndUpdate(pos, BlockRegistry.greenhouse_core_container.get().defaultBlockState());
+            }
+            return InteractionResult.SUCCESS;
+        }
+        return super.use(pState, level, pos, pPlayer, pHand, pHit);
     }
 }

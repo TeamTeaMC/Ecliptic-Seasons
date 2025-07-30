@@ -1,3 +1,8 @@
+### 0.12.0-pre-2
+
+- Completed the additional snow overlay resource pack for vanilla plants, which needs to be enabled in the settings.
+- Added crafting recipes for the Seasonal Greenhouse Core. It is now also possible to extract the essence from the core.
+
 ### 0.12.0-pre-1
 
 - Move mixins for Simple Clouds to Ecliptic Seasons: MultiMod Patch.

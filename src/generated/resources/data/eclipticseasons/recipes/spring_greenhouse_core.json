@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "group": "spring_greenhouse_core",
+  "ingredients": [
+    {
+      "item": "eclipticseasons:spring_greenhouse_essence"
+    },
+    {
+      "item": "eclipticseasons:greenhouse_core_container"
+    }
+  ],
+  "result": {
+    "item": "eclipticseasons:spring_greenhouse_core"
+  }
+}

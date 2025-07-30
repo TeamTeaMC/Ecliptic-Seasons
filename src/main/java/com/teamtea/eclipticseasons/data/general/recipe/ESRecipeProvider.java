@@ -3,10 +3,7 @@ package com.teamtea.eclipticseasons.data.general.recipe;
 
 import com.teamtea.eclipticseasons.common.registry.ItemRegistry;
 import net.minecraft.data.PackOutput;
-import net.minecraft.data.recipes.FinishedRecipe;
-import net.minecraft.data.recipes.RecipeCategory;
-import net.minecraft.data.recipes.RecipeProvider;
-import net.minecraft.data.recipes.ShapedRecipeBuilder;
+import net.minecraft.data.recipes.*;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.Items;
@@ -119,6 +116,34 @@ public final class ESRecipeProvider extends RecipeProvider {
                 .pattern(" r ")
                 .group("block_in_wooden_grate_block")
                 .unlockedBy("has_logs", has(ItemTags.LOGS))
+                .save(consumer);
+
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.TOOLS, ItemRegistry.spring_greenhouse_core_item.get())
+                .requires(ItemRegistry.spring_greenhouse_essence_item.get())
+                .requires(ItemRegistry.greenhouse_core_container_item.get())
+                .group("spring_greenhouse_core")
+                .unlockedBy("has_amethyst", has(Tags.Items.GEMS_AMETHYST))
+                .save(consumer);
+
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.TOOLS, ItemRegistry.summer_greenhouse_core_item.get())
+                .requires(ItemRegistry.summer_greenhouse_essence_item.get())
+                .requires(ItemRegistry.greenhouse_core_container_item.get())
+                .group("summer_greenhouse_core")
+                .unlockedBy("has_amethyst", has(Tags.Items.GEMS_AMETHYST))
+                .save(consumer);
+
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.TOOLS, ItemRegistry.autumn_greenhouse_core_item.get())
+                .requires(ItemRegistry.autumn_greenhouse_essence_item.get())
+                .requires(ItemRegistry.greenhouse_core_container_item.get())
+                .group("autumn_greenhouse_core")
+                .unlockedBy("has_amethyst", has(Tags.Items.GEMS_AMETHYST))
+                .save(consumer);
+
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.TOOLS, ItemRegistry.winter_greenhouse_core_item.get())
+                .requires(ItemRegistry.winter_greenhouse_essence_item.get())
+                .requires(ItemRegistry.greenhouse_core_container_item.get())
+                .group("winter_greenhouse_core")
+                .unlockedBy("has_amethyst", has(Tags.Items.GEMS_AMETHYST))
                 .save(consumer);
     }
 
