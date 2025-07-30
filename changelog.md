@@ -1,3 +1,10 @@
+## 0.12.0-pre
+
+- Mixins or compatibilities for JourneyMap, Snowy Spirit, Haunted Harvest, and Touhou Little Maid are no longer included. Please use
+  Ecliptic Seasons: MultiMod Patch instead.
+  Ecliptic Seasons will now serve solely as a core mod.
+- The default value of `Realistic Snowy Change` is now set to false; the functionality remains unchanged.
+
 #### 0.11.8.4.3.0.2
 
 - Optimized the use of BlockPos objects and random seed calculations during model rendering.

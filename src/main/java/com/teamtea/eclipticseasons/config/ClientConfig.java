@@ -77,7 +77,7 @@ public class ClientConfig {
                     .define("UseVanillaCheck", false);
 
             realisticSnowyChange = builder.comment("Snow cover updates with a delay after block changes, making it look more natural. This uses more performance. Do not enable if the common config’s 'RealisticSnowyChange' is also enabled.")
-                    .define("RealisticSnowyChange", true);
+                    .define("RealisticSnowyChange", false);
             betterSnow = builder.comment("Blocks underneath fences etc. may also be covered with snow.")
                     .define("SnowUnderFence", true);
             snowUnderTree = builder.comment("Blocks under tree may also be covered with snow, note that this is only a client-side effect.")
