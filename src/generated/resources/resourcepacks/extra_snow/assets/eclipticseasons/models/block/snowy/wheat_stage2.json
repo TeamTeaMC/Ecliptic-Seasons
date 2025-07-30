@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/wheat_stage2",
+  "textures": {
+    "crop": "eclipticseasons:block/snowy/wheat_stage2"
+  }
+}

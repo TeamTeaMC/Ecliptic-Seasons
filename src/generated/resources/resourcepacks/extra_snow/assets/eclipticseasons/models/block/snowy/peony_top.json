@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/peony_top",
+  "textures": {
+    "cross": "eclipticseasons:block/snowy/peony_top"
+  }
+}

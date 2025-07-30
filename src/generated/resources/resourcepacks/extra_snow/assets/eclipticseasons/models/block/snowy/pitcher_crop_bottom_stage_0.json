@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/pitcher_crop_bottom_stage_0",
+  "textures": {
+    "pitcher_side": "eclipticseasons:block/snowy/pitcher_crop_side",
+    "pitcher_top": "eclipticseasons:block/snowy/pitcher_crop_top"
+  }
+}

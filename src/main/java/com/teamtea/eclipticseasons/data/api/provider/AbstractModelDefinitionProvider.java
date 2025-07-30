@@ -565,5 +565,9 @@ public abstract class AbstractModelDefinitionProvider extends ESClientDataMapPro
             this.textures.put(key, texture.toString());
             return self();
         }
+
+        public ExtraModelBuilder cross() {
+            return texture("cross", getUncheckedLocation());
+        }
     }
 }

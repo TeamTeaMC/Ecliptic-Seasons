@@ -127,6 +127,22 @@ public class ClientModelDefinitionProvider extends AbstractModelDefinitionProvid
                 .replace(true);
     }
 
+    protected ModelDefinitionBuilder addSnowyCrossDoublePlant(Block lilac) {
+        String path = getPath(lilac.builtInRegistryHolder().key().location());
+        return addSnowyBlockModelDefinition(lilac)
+                .variantsForAllStatesExceptExact(state ->
+                {
+                    if (state.getValue(BlockStateProperties.DOUBLE_BLOCK_HALF) == DoubleBlockHalf.LOWER) {
+                        return models().snowyWithExistingParent(path + "_bottom")
+                                .texture("cross", "block/snowy/%s_bottom".formatted(path));
+                    } else {
+                        return models().snowyWithExistingParent(path + "_top")
+                                .texture("cross", "block/snowy/%s_top".formatted(path));
+                    }
+                })
+                .replace(true);
+    }
+
     private void addFlower() {
 
         for (SolarTerm solarTerm : SolarTerm.collectValues()) {

@@ -1,0 +1,11 @@
+{
+  "replace": true,
+  "variants": {
+    "half=upper": {
+      "model": "eclipticseasons:block/snowy/peony_top"
+    },
+    "half=lower": {
+      "model": "eclipticseasons:block/snowy/peony_bottom"
+    }
+  }
+}

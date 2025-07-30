@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/beetroots_stage0",
+  "textures": {
+    "crop": "eclipticseasons:block/snowy/beetroots_stage0"
+  }
+}

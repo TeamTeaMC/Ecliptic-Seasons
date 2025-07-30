@@ -111,7 +111,6 @@ public class SnowDefinitionsRegistry {
     }
 
     public static void bootstrap_extra(BootstapContext<SnowDefinition> context) {
-        addPlant(context, Blocks.SUNFLOWER, MapChecker.FLAG_CUSTOM_JSON_PLANTS);
         addPlant(context, Blocks.OAK_SAPLING);
         addPlant(context, Blocks.DARK_OAK_SAPLING);
         addPlant(context, Blocks.ACACIA_SAPLING);
@@ -126,5 +125,44 @@ public class SnowDefinitionsRegistry {
                 .info(SnowDefinition.Info.builder().offset(1).flag(MapChecker.FLAG_CUSTOM_JSON_PLANTS)
                         .mid(getSnowModelPath("mangrove_propagule")).build())
                 .build());
+
+
+        addPlant(context, Blocks.RED_MUSHROOM);
+        addPlant(context, Blocks.BROWN_MUSHROOM);
+        addPlant(context, Blocks.ALLIUM);
+        addPlant(context, Blocks.AZURE_BLUET);
+        addPlant(context, Blocks.BLUE_ORCHID);
+        addPlant(context, Blocks.CORNFLOWER);
+        addPlant(context, Blocks.DANDELION);
+        addPlant(context, Blocks.LILY_OF_THE_VALLEY);
+        addPlant(context, Blocks.ORANGE_TULIP);
+        addPlant(context, Blocks.PINK_TULIP);
+        addPlant(context, Blocks.WHITE_TULIP);
+        addPlant(context, Blocks.RED_TULIP);
+        addPlant(context, Blocks.OXEYE_DAISY);
+        addPlant(context, Blocks.POPPY);
+        addPlant(context, Blocks.WITHER_ROSE);
+
+        addPlant(context, Blocks.SUNFLOWER, MapChecker.FLAG_CUSTOM_JSON_PLANTS);
+        addPlant(context, Blocks.LILAC, MapChecker.FLAG_CUSTOM_JSON_PLANTS);
+        addPlant(context, Blocks.PEONY, MapChecker.FLAG_CUSTOM_JSON_PLANTS);
+        addPlant(context, Blocks.ROSE_BUSH, MapChecker.FLAG_CUSTOM_JSON_PLANTS);
+
+        addPlant(context, Blocks.TORCHFLOWER);
+        addPlant(context, Blocks.TORCHFLOWER_CROP);
+
+        addPlant(context, Blocks.PITCHER_CROP, MapChecker.FLAG_CUSTOM_JSON_PLANTS);
+        addPlant(context, Blocks.PITCHER_PLANT, MapChecker.FLAG_CUSTOM_JSON_PLANTS);
+
+        addPlant(context, Blocks.BEETROOTS);
+        addPlant(context, Blocks.CARROTS);
+        addPlant(context, Blocks.POTATOES);
+        addPlant(context, Blocks.WHEAT);
+
+
+        addPlant(context, Blocks.MELON_STEM);
+        addPlant(context, Blocks.ATTACHED_MELON_STEM);
+        addPlant(context, Blocks.PUMPKIN_STEM);
+        addPlant(context, Blocks.ATTACHED_PUMPKIN_STEM);
     }
 }
