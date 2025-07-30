@@ -7,7 +7,6 @@ import com.teamtea.eclipticseasons.api.data.climate.BiomesClimateSettings;
 import com.teamtea.eclipticseasons.api.data.craft.HumidityControl;
 import com.teamtea.eclipticseasons.api.data.crop.CropGrowControlBuilder;
 import com.teamtea.eclipticseasons.api.data.season.SeasonCycle;
-import com.teamtea.eclipticseasons.api.data.season.SeasonPhase;
 import com.teamtea.eclipticseasons.api.data.season.SnowDefinition;
 import com.teamtea.eclipticseasons.api.data.weather.CustomRainBuilder;
 import com.teamtea.eclipticseasons.api.data.weather.CustomSnowTerm;
@@ -19,7 +18,6 @@ import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
 import com.teamtea.eclipticseasons.common.core.crop.CropInfoManager;
-import com.teamtea.eclipticseasons.common.core.map.ChunkInfoMap;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.core.map.ServerMapFixer;
 import com.teamtea.eclipticseasons.common.core.snow.SnowChecker;
@@ -37,13 +35,8 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LightLayer;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.chunk.ChunkAccess;
-import net.minecraft.world.level.chunk.LevelChunk;
-import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.OnDatapackSyncEvent;
@@ -62,8 +55,6 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.server.ServerLifecycleHooks;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 @Mod.EventBusSubscriber(modid = EclipticSeasons.MODID)
 public class AllListener {
@@ -188,7 +179,7 @@ public class AllListener {
     public static void onPlayerTickPost(TickEvent.PlayerTickEvent event) {
         if (event.player instanceof ServerPlayer serverPlayer) {
             if (event.phase == TickEvent.Phase.START) {
-                WeatherManager.tickPlayerSeasonEffecct(serverPlayer);
+                WeatherManager.tickPlayerSeasonEffect(serverPlayer);
             }
             if (event.phase == TickEvent.Phase.END) {
                 Level level = serverPlayer.level();

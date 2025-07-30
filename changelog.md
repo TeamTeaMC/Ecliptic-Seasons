@@ -1,3 +1,8 @@
+### 0.12.0-pre-1
+
+- Move mixins for Simple Clouds to Ecliptic Seasons: MultiMod Patch.
+- Players in creative or spectator mode will no longer suffer from heatstroke.
+
 ## 0.12.0-pre
 
 - Mixins or compatibilities for JourneyMap, Snowy Spirit, Haunted Harvest, and Touhou Little Maid are no longer included. Please use

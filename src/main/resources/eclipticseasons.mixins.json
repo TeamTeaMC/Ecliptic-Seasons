@@ -76,8 +76,7 @@
     "compat.optifine.MixinModelRenderer",
     "compat.optifine.MixinRebuildTask",
     "compat.optifine_test.MixinBlockModelCustomizer",
-    "compat.optifine_test.MixinItemBlockRenderTypes",
-    "compat.simpleclouds.MixinSimpleCloudWorldEffects"
+    "compat.optifine_test.MixinItemBlockRenderTypes"
   ],
   "injectors": {
     "defaultRequire": 1
