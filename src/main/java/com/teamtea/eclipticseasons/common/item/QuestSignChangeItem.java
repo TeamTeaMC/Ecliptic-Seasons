@@ -6,15 +6,20 @@ import com.teamtea.eclipticseasons.common.block.QuestWallHangingSignBlock;
 import com.teamtea.eclipticseasons.common.block.blockentity.QuestHangingSignBlockEntity;
 import com.teamtea.eclipticseasons.common.registry.BlockRegistry;
 import com.teamtea.eclipticseasons.common.registry.ParticleRegistry;
+import com.teamtea.eclipticseasons.config.ClientConfig;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SignApplicator;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -25,7 +30,12 @@ import net.minecraft.world.level.block.entity.SignBlockEntity;
 import net.minecraft.world.level.block.entity.SignText;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.loading.FMLLoader;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
+
+import java.util.List;
 
 public class QuestSignChangeItem extends Item implements SignApplicator {
     public QuestSignChangeItem(Properties properties) {
@@ -107,4 +117,12 @@ public class QuestSignChangeItem extends Item implements SignApplicator {
     }
 
 
+    @Override
+    public void appendHoverText(ItemStack pStack, @Nullable Level pLevel, List<Component> pTooltipComponents, TooltipFlag pIsAdvanced) {
+        super.appendHoverText(pStack, pLevel, pTooltipComponents, pIsAdvanced);
+        if (FMLLoader.getDist() != Dist.CLIENT || !ClientConfig.GUI.itemInformation.get()) return;
+        pTooltipComponents.add(Component.translatable(
+                "info.eclipticseasons.seasonal_prayer_scroll.use"
+        ).withStyle(ChatFormatting.GRAY));
+    }
 }

@@ -35,11 +35,14 @@ public class ClientConfig {
     public static class GUI {
 
         public static ForgeConfigSpec.BooleanValue agriculturalInformation;
+        public static ForgeConfigSpec.BooleanValue itemInformation;
 
         private static void load(ForgeConfigSpec.Builder builder) {
             builder.push("GUI");
             agriculturalInformation = builder.comment("Displays the season and humidity levels suitable for growing crops.")
                     .define("AgriculturalInformation", true);
+            itemInformation = builder.comment("Displays the use or source of a item.")
+                    .define("ItemInformation", true);
             builder.pop();
         }
     }

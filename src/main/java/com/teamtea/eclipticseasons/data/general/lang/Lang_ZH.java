@@ -348,6 +348,14 @@ public class Lang_ZH extends LangHelper {
 
         add("pack.eclipticseasons.extra_snow","额外覆雪方块资源包");
 
+        add("info.eclipticseasons.config.inactive","§7当前配置下不起作用");
+        add("info.eclipticseasons.greenhouse_core.effect", "为温室中%1$s格范围内的%2$s季作物提供生长加成");
+
+        add("info.eclipticseasons.show.shift", "§o<..按住shift..>");
+        add("info.eclipticseasons.greenhouse_essence.source", "完成%1$s季进度或者任务获取");
+
+        add("info.eclipticseasons.seasonal_prayer_scroll.use", "激活悬挂式告示牌为季节任务栏，完成限时任务");
+
     }
 
     private void addAdvancements() {
@@ -454,6 +462,10 @@ public class Lang_ZH extends LangHelper {
         add("item.eclipticseasons.growth_detector.hint.greenroom_1", "%s正在温室中，");
         add("item.eclipticseasons.growth_detector.hint.greenroom_2", "%s可能在温室中，");
         add("item.eclipticseasons.growth_detector.hint.greenroom_3", "%s不在温室中，");
+
+
+        add("item.eclipticseasons.growth_detector.hint.season_core", "缺乏季节温室核心，");
+        add("item.eclipticseasons.growth_detector.hint.humidity", "湿度条件不适宜，");
 
         add("item.eclipticseasons.growth_detector.hint.grow_chance_1", "作物会迅速生长");
         add("item.eclipticseasons.growth_detector.hint.grow_chance_2", "作物会较快生长");

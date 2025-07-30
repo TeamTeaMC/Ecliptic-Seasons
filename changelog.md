@@ -1,3 +1,7 @@
+#### 0.12.0-pre-2-1
+
+- Added gameplay tips for some greenhouse-related items to help players understand how to build a proper greenhouse.
+
 ### 0.12.0-pre-2
 
 - Completed the additional snow overlay resource pack for vanilla plants, which needs to be enabled in the settings.
@@ -10,7 +14,8 @@
 
 ## 0.12.0-pre
 
-- Mixins or compatibilities for JourneyMap, Snowy Spirit, Haunted Harvest, and Touhou Little Maid are no longer included. Please use
+- Mixins or compatibilities for JourneyMap, Snowy Spirit, Haunted Harvest, and Touhou Little Maid are no longer
+  included. Please use
   Ecliptic Seasons: MultiMod Patch instead.
   Ecliptic Seasons will now serve solely as a core mod.
 - The default value of `Realistic Snowy Change` is now set to false; the functionality remains unchanged.

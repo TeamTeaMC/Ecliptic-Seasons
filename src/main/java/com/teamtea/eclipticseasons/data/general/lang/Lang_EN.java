@@ -346,6 +346,16 @@ public class Lang_EN extends LangHelper {
 
         add("pack.eclipticseasons.extra_snow","Extra Snow Resourcepack");
 
+
+        add("info.eclipticseasons.config.inactive", "§7Not work under the current configuration.");
+        add("info.eclipticseasons.greenhouse_core.effect", "Boosts %2$s crops within %1$s blocks in a greenhouse");
+
+        add("info.eclipticseasons.show.shift", "§o<..Hold shift..>");
+        add("info.eclipticseasons.greenhouse_essence.source", "Obtained by completing %1$s advancements or quests");
+
+        add("info.eclipticseasons.seasonal_prayer_scroll.use", "Activate a hanging sign as a seasonal quest sign for timed quests");
+
+
     }
 
     private void addAdvancements() {
@@ -454,11 +464,14 @@ public class Lang_EN extends LangHelper {
         add("item.eclipticseasons.growth_detector.hint.greenroom_2", "%s might be in the greenhouse, ");
         add("item.eclipticseasons.growth_detector.hint.greenroom_3", "%s is not in the greenhouse, ");
 
-        add("item.eclipticseasons.growth_detector.hint.grow_chance_1", "Crops will grow rapidly");
-        add("item.eclipticseasons.growth_detector.hint.grow_chance_2", "Crops will grow faster");
-        add("item.eclipticseasons.growth_detector.hint.grow_chance_3", "Crops will grow normally");
-        add("item.eclipticseasons.growth_detector.hint.grow_chance_4", "Crops will grow slowly");
-        add("item.eclipticseasons.growth_detector.hint.grow_chance_5", "Crops will hardly grow");
-        add("item.eclipticseasons.growth_detector.hint.grow_chance_6", "Crops will not grow");
+        add("item.eclipticseasons.growth_detector.hint.season_core", "seasonal greenhouse core is missing, ");
+        add("item.eclipticseasons.growth_detector.hint.humidity", "humidity conditions are unsuitable, ");
+
+        add("item.eclipticseasons.growth_detector.hint.grow_chance_1", "will grow rapidly");
+        add("item.eclipticseasons.growth_detector.hint.grow_chance_2", "will grow faster");
+        add("item.eclipticseasons.growth_detector.hint.grow_chance_3", "will grow normally");
+        add("item.eclipticseasons.growth_detector.hint.grow_chance_4", "will grow slowly");
+        add("item.eclipticseasons.growth_detector.hint.grow_chance_5", "will hardly grow");
+        add("item.eclipticseasons.growth_detector.hint.grow_chance_6", "will not grow");
     }
 }

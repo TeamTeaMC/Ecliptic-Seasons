@@ -2,6 +2,7 @@ package com.teamtea.eclipticseasons.common.registry;
 
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.common.block.CalendarBlockItem;
+import com.teamtea.eclipticseasons.common.block.GreenHouseCoreBlock;
 import com.teamtea.eclipticseasons.common.item.*;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.BlockItem;
@@ -23,15 +24,15 @@ public class ItemRegistry {
 
     public static final RegistryObject<Item> greenhouse_core_container_item = ITEM_DEFERRED_REGISTER.register("greenhouse_core_container", () -> new GreenHouseFrameItem(BlockRegistry.greenhouse_core_container.get(), (new Item.Properties())));
 
-    public static final RegistryObject<Item> spring_greenhouse_core_item = ITEM_DEFERRED_REGISTER.register("spring_greenhouse_core", () -> new GreenHouseCoreItem(BlockRegistry.spring_greenhouse_core.get(), (new Item.Properties())));
-    public static final RegistryObject<Item> summer_greenhouse_core_item = ITEM_DEFERRED_REGISTER.register("summer_greenhouse_core", () -> new GreenHouseCoreItem(BlockRegistry.summer_greenhouse_core.get(), (new Item.Properties())));
-    public static final RegistryObject<Item> autumn_greenhouse_core_item = ITEM_DEFERRED_REGISTER.register("autumn_greenhouse_core", () -> new GreenHouseCoreItem(BlockRegistry.autumn_greenhouse_core.get(), (new Item.Properties())));
-    public static final RegistryObject<Item> winter_greenhouse_core_item = ITEM_DEFERRED_REGISTER.register("winter_greenhouse_core", () -> new GreenHouseCoreItem(BlockRegistry.winter_greenhouse_core.get(), (new Item.Properties())));
+    public static final RegistryObject<Item> spring_greenhouse_core_item = ITEM_DEFERRED_REGISTER.register("spring_greenhouse_core", () -> new GreenhouseCoreBlockItem((GreenHouseCoreBlock) BlockRegistry.spring_greenhouse_core.get(), (new Item.Properties())));
+    public static final RegistryObject<Item> summer_greenhouse_core_item = ITEM_DEFERRED_REGISTER.register("summer_greenhouse_core", () -> new GreenhouseCoreBlockItem((GreenHouseCoreBlock) BlockRegistry.summer_greenhouse_core.get(), (new Item.Properties())));
+    public static final RegistryObject<Item> autumn_greenhouse_core_item = ITEM_DEFERRED_REGISTER.register("autumn_greenhouse_core", () -> new GreenhouseCoreBlockItem((GreenHouseCoreBlock) BlockRegistry.autumn_greenhouse_core.get(), (new Item.Properties())));
+    public static final RegistryObject<Item> winter_greenhouse_core_item = ITEM_DEFERRED_REGISTER.register("winter_greenhouse_core", () -> new GreenhouseCoreBlockItem((GreenHouseCoreBlock) BlockRegistry.winter_greenhouse_core.get(), (new Item.Properties())));
 
-    public static final RegistryObject<Item> spring_greenhouse_essence_item = ITEM_DEFERRED_REGISTER.register("spring_greenhouse_essence", () -> new GreenHouseCoreCoreItem((new Item.Properties())));
-    public static final RegistryObject<Item> summer_greenhouse_essence_item = ITEM_DEFERRED_REGISTER.register("summer_greenhouse_essence", () -> new GreenHouseCoreCoreItem((new Item.Properties())));
-    public static final RegistryObject<Item> autumn_greenhouse_essence_item = ITEM_DEFERRED_REGISTER.register("autumn_greenhouse_essence", () -> new GreenHouseCoreCoreItem((new Item.Properties())));
-    public static final RegistryObject<Item> winter_greenhouse_essence_item = ITEM_DEFERRED_REGISTER.register("winter_greenhouse_essence", () -> new GreenHouseCoreCoreItem((new Item.Properties())));
+    public static final RegistryObject<Item> spring_greenhouse_essence_item = ITEM_DEFERRED_REGISTER.register("spring_greenhouse_essence", () -> new GreenhouseEssenceItem((new Item.Properties())));
+    public static final RegistryObject<Item> summer_greenhouse_essence_item = ITEM_DEFERRED_REGISTER.register("summer_greenhouse_essence", () -> new GreenhouseEssenceItem((new Item.Properties())));
+    public static final RegistryObject<Item> autumn_greenhouse_essence_item = ITEM_DEFERRED_REGISTER.register("autumn_greenhouse_essence", () -> new GreenhouseEssenceItem((new Item.Properties())));
+    public static final RegistryObject<Item> winter_greenhouse_essence_item = ITEM_DEFERRED_REGISTER.register("winter_greenhouse_essence", () -> new GreenhouseEssenceItem((new Item.Properties())));
 
     public static final RegistryObject<Item> seasonal_prayer_scroll_item = ITEM_DEFERRED_REGISTER.register("seasonal_prayer_scroll", () -> new QuestSignChangeItem((new Item.Properties())));
 
