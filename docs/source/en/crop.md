@@ -3,6 +3,8 @@
 Crop growth is closely related to the seasons, essentially reflecting changes in water and heat conditions.  
 In cold regions, winter for crops will be longer, while in hot regions, summer will dominate.
 
+![greenhouse.png](..%2F_static%2Fimage%2Fgreenhouse.png)
+
 ## Building a Greenhouse
 
 To help crops adapt to different seasons and environments, you need to build a greenhouse.  
