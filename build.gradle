@@ -81,7 +81,7 @@ minecraft {
             // use for logger control
             property 'forgegradle.runs.dev', 'true'
 
-//            jvmArgs "-Xmx2048M"
+            jvmArgs "-Xmx2048M"
             mods {
                 "${mod_id}" {
                     source sourceSets.main
@@ -246,7 +246,6 @@ dependencies {
 //    implementation fg.deobf("curse.maven:snow-real-magic-308663:5139853")
 
     onlyMainRuntimeOnly fg.deobf("curse.maven:journeymap-32274:4873863")
-
     onlyMainRuntimeOnly fg.deobf("curse.maven:spark-361579:4587309")
     // Real mod deobf dependency examples - these get remapped to your current mappings
     // implementation fg.deobf("com.tterrag.registrate:Registrate:MC${mc_version}-${registrate_version}") // Adds registrate as a dependency
@@ -256,21 +255,14 @@ dependencies {
     compileOnly fg.deobf("curse.maven:distant-horizons-508933:6760064")
 //    onlyMainRuntimeOnly fg.deobf("curse.maven:distant-horizons-508933:6760064")
 
-
-    compileOnly fg.deobf("curse.maven:legendary-survival-overhaul-840254:6703282")
-//    onlyMainRuntimeOnly fg.deobf("curse.maven:legendary-survival-overhaul-840254:6703282")
+//    compileOnly fg.deobf("curse.maven:legendary-survival-overhaul-840254:6703282")
 
     compileOnly fg.deobf("curse.maven:cold-sweat-506194:6503192")
 //    onlyMainRuntimeOnly fg.deobf("curse.maven:cold-sweat-506194:6503192")
 
-
     compileOnly fg.deobf("curse.maven:in-control-257356:5932870")
 //    onlyMainRuntimeOnly fg.deobf("curse.maven:in-control-257356:5932870")
 
-
-//    onlyMainRuntimeOnly fg.deobf("curse.maven:hourglass-511172:4834578")
-
-    //    onlyMainRuntimeOnly fg.deobf("curse.maven:create-328085:6247663")
 //    onlyMainRuntimeOnly  fg.deobf("curse.maven:hourglass-511172:4834578")
 
 //    onlyMainRuntimeOnly fg.deobf("curse.maven:configured-457570:5096828")
