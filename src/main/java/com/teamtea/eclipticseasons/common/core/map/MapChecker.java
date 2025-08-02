@@ -89,7 +89,7 @@ public class MapChecker {
     public static Holder<Biome> idToBiome(Level level, int id) {
         var list = WeatherManager
                 .getBiomeList(level);
-        if (list != null) {
+        if (list != null && id < list.size()) {
             Holder<Biome> biomeHolder = list.get(id).biomeHolder;
             if (biomeHolder != null) return biomeHolder;
         }

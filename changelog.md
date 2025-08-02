@@ -1,3 +1,8 @@
+#### 0.12.0-pre-2-2
+
+- Fixed a crash that could occur when biome registries were modified during world reload, due to outdated
+  deserialization mappings.
+
 #### 0.12.0-pre-2-1
 
 - Added gameplay tips for some greenhouse-related items to help players understand how to build a proper greenhouse.
@@ -12,7 +17,7 @@
 - Move mixins for Simple Clouds to Ecliptic Seasons: MultiMod Patch.
 - Players in creative or spectator mode will no longer suffer from heatstroke.
 
-## 0.12.0-pre
+### 0.12.0-pre
 
 - Mixins or compatibilities for JourneyMap, Snowy Spirit, Haunted Harvest, and Touhou Little Maid are no longer
   included. Please use
