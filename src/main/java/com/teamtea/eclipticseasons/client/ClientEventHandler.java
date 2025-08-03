@@ -12,6 +12,7 @@ import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
+import com.teamtea.eclipticseasons.common.core.crop.CropInfoManager;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.core.snow.SnowChecker;
 import com.teamtea.eclipticseasons.common.core.solar.ClientSolarDataManager;
@@ -54,7 +55,10 @@ public final class ClientEventHandler {
                 event.getToolTip().addAll(CropGrowthHandler.appendInfo(
                         event.getEntity() != null ? event.getEntity().level() : null,
                         blockItem.getBlock().defaultBlockState()));
+            } else {
+                event.getToolTip().addAll(CropInfoManager.appendInfo(event.getItemStack().getItem()));
             }
+
             if (event.getItemStack().getItem() instanceof SpawnEggItem blockItem) {
                 event.getToolTip().addAll(AnimalHooks.getBreedInfo(
                         blockItem.getType(event.getItemStack().getTag())));

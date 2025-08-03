@@ -1,3 +1,7 @@
+#### 0.12.0-pre-2-3
+
+- Now if an item crop tag is added without a corresponding block, the tooltip information will also be displayed.
+
 #### 0.12.0-pre-2-2
 
 - Fixed a crash that could occur when biome registries were modified during world reload, due to outdated
