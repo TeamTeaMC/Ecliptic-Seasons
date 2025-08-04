@@ -231,7 +231,7 @@ dependencies {
     implementation fg.deobf("curse.maven:jade-324717:5072729")
     compileOnly fg.deobf("curse.maven:the-one-probe-245211:6106996")
 
-    compileOnly fg.deobf("curse.maven:dynamictrees-252818:6410558")
+
 
     compileOnly fg.deobf("libs:fabric-renderer-api-v1:3.2.1+cf68abbe77")
     compileOnly fg.deobf("libs:fabric-renderer-indigo:1.5.2+b5b2da4177")
@@ -257,11 +257,6 @@ dependencies {
 
 //    compileOnly fg.deobf("curse.maven:legendary-survival-overhaul-840254:6703282")
 
-    compileOnly fg.deobf("curse.maven:cold-sweat-506194:6503192")
-//    onlyMainRuntimeOnly fg.deobf("curse.maven:cold-sweat-506194:6503192")
-
-    compileOnly fg.deobf("curse.maven:in-control-257356:5932870")
-//    onlyMainRuntimeOnly fg.deobf("curse.maven:in-control-257356:5932870")
 
 //    onlyMainRuntimeOnly  fg.deobf("curse.maven:hourglass-511172:4834578")
 

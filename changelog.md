@@ -1,3 +1,8 @@
+### 0.12.0-pre-3
+
+- Mixins or compatibilities for Cold Sweat, InControl, and patch for Dynamic Trees are no longer included. Please use
+  Ecliptic Seasons: MultiMod Patch instead.
+
 #### 0.12.0-pre-2-4
 
 - Fixed excessively low growth rates for `eclipticseasons:crops/all_seasons` tagged crops during winter.
