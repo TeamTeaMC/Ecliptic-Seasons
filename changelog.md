@@ -1,3 +1,7 @@
+#### 0.12.0-pre-2-4
+
+- Fixed excessively low growth rates for `eclipticseasons:crops/all_seasons` tagged crops during winter.
+
 #### 0.12.0-pre-2-3
 
 - Now if an item crop tag is added without a corresponding block, the tooltip information will also be displayed.

@@ -6,22 +6,20 @@
   "climate": "eclipticseasons:temperate",
   "solar_terms": {
     "beginning_of_spring": {
-      "grow_chance": 0.35
+      "grow_chance": 0.45
     },
     "rain_water": {
-      "grow_chance": 0.5
+      "grow_chance": 0.55
     },
     "insects_awakening": {
-      "grow_chance": 0.6
+      "grow_chance": 0.7
     },
     "spring_equinox": {
-      "grow_chance": 0.8
+      "grow_chance": 0.85
     },
-    "fresh_green": {
-      "grow_chance": 0.9
-    },
+    "fresh_green": {},
     "grain_rain": {
-      "grow_chance": 0.9
+      "grow_chance": 0.95
     },
     "beginning_of_summer": {
       "grow_chance": 0.8
@@ -47,31 +45,31 @@
       "grow_chance": 0.7
     },
     "autumnal_equinox": {
-      "grow_chance": 0.6
+      "grow_chance": 0.8
     },
     "cold_dew": {
-      "grow_chance": 0.5
+      "grow_chance": 0.7
     },
     "first_frost": {
-      "grow_chance": 0.45
+      "grow_chance": 0.6
     },
     "beginning_of_winter": {
-      "grow_chance": 0.4
+      "grow_chance": 0.5
     },
     "light_snow": {
-      "grow_chance": 0.4
+      "grow_chance": 0.48
     },
     "heavy_snow": {
-      "grow_chance": 0.4
+      "grow_chance": 0.45
     },
     "winter_solstice": {
-      "grow_chance": 0.35
+      "grow_chance": 0.4
     },
     "lesser_cold": {
-      "grow_chance": 0.2
+      "grow_chance": 0.37
     },
     "greater_cold": {
-      "grow_chance": 0.2
+      "grow_chance": 0.35
     }
   }
 }

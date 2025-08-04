@@ -186,8 +186,8 @@ public final class CropInfoManager {
     }
 
     public static void registerCropHumidityInfo(Item item, CropHumidityType info) {
-        if (item instanceof BlockItem && !CROP_HUMIDITY_INFO.containsKey(((BlockItem) item).getBlock())) {
-            CROP_HUMIDITY_INFO.put(((BlockItem) item).getBlock(), info.getInfo());
+        if (item instanceof BlockItem blockItem) {
+            registerCropHumidityInfo(blockItem.getBlock(), info, false);
         }
         if (!ITEM_CROP_HUMIDITY_INFO.containsKey(item)) {
             ITEM_CROP_HUMIDITY_INFO.put(item, info.getInfo());
@@ -204,8 +204,8 @@ public final class CropInfoManager {
     }
 
     public static void registerCropSeasonInfo(Item item, CropSeasonType info) {
-        if (item instanceof BlockItem && !CROP_SEASON_INFO.containsKey(((BlockItem) item).getBlock())) {
-            CROP_SEASON_INFO.put(((BlockItem) item).getBlock(), info.getInfo());
+        if (item instanceof BlockItem blockItem) {
+            registerCropSeasonInfo(blockItem.getBlock(), info, false);
         }
 
         if (!ITEM_CROP_SEASON_INFO.containsKey(item)) {
