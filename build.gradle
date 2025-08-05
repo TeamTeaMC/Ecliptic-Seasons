@@ -257,6 +257,7 @@ dependencies {
 
 //    compileOnly fg.deobf("curse.maven:legendary-survival-overhaul-840254:6703282")
 
+//    onlyMainRuntimeOnly fg.deobf("curse.maven:snow-under-trees-353942:6751711")
 
 //    onlyMainRuntimeOnly  fg.deobf("curse.maven:hourglass-511172:4834578")
 

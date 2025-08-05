@@ -1,5 +1,6 @@
 package com.teamtea.eclipticseasons.common.core.biome;
 
+import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.constant.tag.ESEnchantmentTags;
 import com.teamtea.eclipticseasons.api.constant.tag.ESItemTags;
 import com.teamtea.eclipticseasons.api.constant.tag.ESMobEffectTags;
@@ -41,6 +42,7 @@ import net.minecraft.world.item.*;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.storage.ServerLevelData;
 import net.minecraft.world.level.storage.WritableLevelData;
@@ -331,16 +333,17 @@ public class WeatherManager {
     }
 
     public static Biome.Precipitation getPrecipitationAt(Level levelNull, Biome biome, BlockPos pos) {
-
         // TODO:Replay Mod would load a client level only
-        Level level = levelNull != null ? levelNull : ClientCon.getUseLevel();
+        Level level=levelNull ;
         level = level != null ? level : getMainServerLevel();
+        level = level != null ? level : ClientCon.getUseLevel();
         // if (level == null && ClientCon.getUseLevel() != null) {
         //     level = ClientCon.getUseLevel();
         // }
 
         if (level != null) {
-            if (MapChecker.isLoadNearByOnlyServer(level, pos)) {
+            // if (MapChecker.isLoadNearByOnlyServer(level, pos))
+            {
                 biome = MapChecker.getSurfaceBiome(level, pos).value();
             }
             // else {

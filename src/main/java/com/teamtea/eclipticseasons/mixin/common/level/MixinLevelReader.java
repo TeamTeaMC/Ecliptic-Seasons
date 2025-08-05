@@ -25,7 +25,8 @@ public interface MixinLevelReader extends LevelReader {
         int amount = this.getSkyDarken();
         if (this instanceof Level level
                 && EclipticUtil.hasLocalWeather(level)
-                && MapChecker.isLoadNearByOnlyServer(level, pPos)) {
+                // && MapChecker.isLoadNearByOnlyServer(level, pPos)
+        ) {
             amount = WeatherManager.getSkyDarken(level, pPos, amount);
         }
         return this.getMaxLocalRawBrightness(pPos, amount);
