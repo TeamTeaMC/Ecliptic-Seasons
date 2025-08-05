@@ -25,6 +25,7 @@ import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.level.block.state.properties.Half;
 import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraft.world.level.chunk.ChunkAccess;
+import net.minecraft.world.level.chunk.ChunkStatus;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.levelgen.Heightmap;
 import org.jetbrains.annotations.NotNull;
@@ -137,7 +138,7 @@ public class MapChecker {
                 if (isSmallBiome(biome)) {
                     y = getHeightSafe(level, pos) + 1;
                     if (y > maxBuildHeight || y <= minBuildHeight) {
-                        y = (level.getHeight(Heightmap.Types.MOTION_BLOCKING, pos.getX(), pos.getZ()));
+                        y = getVanillaSolidHeightOrSelf(level, pos);
                     }
                 }
             }
@@ -146,7 +147,7 @@ public class MapChecker {
         if (biome == null) {
             y = getHeightSafe(level, pos) + 1;
             if (y > maxBuildHeight || y <= minBuildHeight) {
-                y = (level.getHeight(Heightmap.Types.MOTION_BLOCKING, pos.getX(), pos.getZ()));
+                y = getVanillaSolidHeightOrSelf(level, pos);
             }
             pos = new BlockPos(pos.getX(), y, pos.getZ());
             bid = getSurfaceOrUpdate(level, pos, false, ChunkInfoMap.TYPE_BIOME);
@@ -198,7 +199,7 @@ public class MapChecker {
                 if (bid < 0) {
                     y = getHeightSafe(level, relative) + 1;
                     if (y > maxBuildHeight || y <= minBuildHeight) {
-                        y = (level.getHeight(Heightmap.Types.MOTION_BLOCKING, relative.getX(), relative.getZ()));
+                        y = getVanillaSolidHeightOrSelf(level, relative);
                     }
                     relative.setY(y);
                     bid = getSurfaceOrUpdate(level, relative, false, ChunkInfoMap.TYPE_BIOME);
@@ -443,6 +444,19 @@ public class MapChecker {
         return map;
     }
 
+
+    public static @Nullable ChunkAccess getChunkView(Level level, BlockPos pos) {
+        return level.getChunk(SectionPos.blockToSectionCoord(pos.getX()),
+                SectionPos.blockToSectionCoord(pos.getZ()), ChunkStatus.SURFACE, false);
+    }
+
+    public static int getVanillaSolidHeightOrSelf(Level level, BlockPos pos) {
+        ChunkAccess biomeChunk = getChunkView(level, pos);
+        return biomeChunk != null ?
+                biomeChunk.getHeight(Heightmap.Types.MOTION_BLOCKING, pos.getX(), pos.getZ()) + 1 :
+                pos.getY();
+    }
+
     private static int getMCHeightWithCheck(Level level, BlockPos pos) {
         // if (level.getChunkAt(pos) instanceof LevelChunk levelChunk) {
         //     if (levelChunk.hasData(EclipticSeasons.ModContents.SNOWY_REMOVER)
@@ -456,7 +470,9 @@ public class MapChecker {
     }
 
     public static int getMCHeightWithCheck(Level level, BlockPos pos, @Nullable Integer oldY) {
-        return getMCHeightWithCheck(level, pos, level.getChunkAt(pos), null, null, oldY);
+        ChunkAccess chunkView = getChunkView(level, pos);
+        return chunkView == null ? pos.getY() :
+                getMCHeightWithCheck(level, pos, chunkView, null, null, oldY);
     }
 
     public static int getMCHeightWithCheck(Level level, BlockPos pos,

@@ -1,3 +1,7 @@
+#### 0.12.0-pre-3-1
+
+- Surface biome lookup no longer depends on neighboring chunk load state.
+
 ### 0.12.0-pre-3
 
 - Mixins or compatibilities for Cold Sweat, InControl, and patch for Dynamic Trees are no longer included. Please use

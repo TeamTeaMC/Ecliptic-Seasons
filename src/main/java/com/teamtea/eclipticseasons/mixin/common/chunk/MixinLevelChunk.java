@@ -27,9 +27,6 @@ public abstract class MixinLevelChunk extends ChunkAccess {
     @Final
     Level level;
 
-    @Shadow
-    public abstract ChunkStatus getStatus();
-
     public MixinLevelChunk(ChunkPos chunkPos, UpgradeData upgradeData, LevelHeightAccessor levelHeightAccessor, Registry<Biome> biomeRegistry, long inhabitedTime, @Nullable LevelChunkSection[] sections, @Nullable BlendingData blendingData) {
         super(chunkPos, upgradeData, levelHeightAccessor, biomeRegistry, inhabitedTime, sections, blendingData);
     }
@@ -38,7 +35,7 @@ public abstract class MixinLevelChunk extends ChunkAccess {
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/levelgen/Heightmap;update(IIILnet/minecraft/world/level/block/state/BlockState;)Z", ordinal = 2),
             method = "setBlockState"
     )
-    public void eclipticseasons$Client_setBlockState(BlockPos pos, BlockState state, boolean p_62867_, CallbackInfoReturnable<BlockState> cir,
+    public void eclipticseasons$server_setBlockState(BlockPos pos, BlockState state, boolean p_62867_, CallbackInfoReturnable<BlockState> cir,
                                                      @Local(ordinal = 1) BlockState oldState) {
         if (level != null && !level.isClientSide()) {
             // int j = pos.getX() & 15;
