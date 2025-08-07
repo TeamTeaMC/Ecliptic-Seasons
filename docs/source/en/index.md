@@ -17,7 +17,7 @@ By understanding the right time and following the seasons, one can achieve harmo
 
 ## 2.Does Ecliptic Seasons overlap with mods like Serene Seasons, or can they work together?
 
-Ecliptic Seasons is a completely new and standalone seasonal mod.
+Ecliptic Seasons is a completely new and standalone season provider mod.
 Our goal is not to replace existing mods or duplicate their features, but to push Minecraft’s seasonal experience further, after more than a decade of its development.
 It’s not just about changing biome colors, but also about evolving other plants; not only snow in winter, but transforming the appearance of blocks throughout the world.
 It goes beyond simple seasonal restrictions, requiring crops to grow under suitable humidity.
