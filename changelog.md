@@ -1,3 +1,7 @@
+#### 0.12.0-pre-3-1-3
+
+- Fixed an issue where using RegisterCropDefaultValue would add crop information to all blocks.
+
 #### 0.12.0-pre-3-1
 
 - Surface biome lookup no longer depends on neighboring chunk load state.

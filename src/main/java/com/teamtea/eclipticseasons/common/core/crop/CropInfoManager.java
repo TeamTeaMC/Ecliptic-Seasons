@@ -123,16 +123,18 @@ public final class CropInfoManager {
             registerForSS(items, Registries.ITEM);
         }
 
-        if (CommonConfig.Crop.useDefaultValue.get()) {
-            BuiltInRegistries.BLOCK.forEach(block ->
-            {
-                registerCropHumidityInfo(block, CropHumidityType.AVERAGE_MOIST, false);
-                registerCropSeasonInfo(block, CropSeasonType.SP_SU_AU, false);
-            });
-        }
 
         MinecraftForge.EVENT_BUS.post(new RegisterAndModifyCropInfoEvent(CROP_HUMIDITY_INFO, CROP_SEASON_INFO));
 
+        if (CommonConfig.Crop.useDefaultValue.get()) {
+            BuiltInRegistries.BLOCK.forEach(block ->
+            {
+                if (block instanceof CropBlock) {
+                    registerCropHumidityInfo(block, CropHumidityType.AVERAGE_MOIST, true);
+                    registerCropSeasonInfo(block, CropSeasonType.SP_SU_AU, true);
+                }
+            });
+        }
     }
 
     public static <T> void registerForSS(Optional<Registry<T>> blocks, ResourceKey<Registry<T>> registryResourceKey) {
