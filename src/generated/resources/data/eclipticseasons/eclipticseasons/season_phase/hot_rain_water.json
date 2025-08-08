@@ -1,0 +1,15 @@
+{
+  "color": "dark_green",
+  "icon": {
+    "i": 1,
+    "texture": "eclipticseasons:font/seasons_icons",
+    "width": 180,
+    "height": 120
+  },
+  "font": {
+    "id": "eclipticseasons:solar_icons",
+    "label": "b"
+  },
+  "season": "spring",
+  "name": "eclipticseasons:hot_rain_water"
+}

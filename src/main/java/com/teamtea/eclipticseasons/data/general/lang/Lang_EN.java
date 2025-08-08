@@ -310,6 +310,102 @@ public class Lang_EN extends LangHelper {
         add("info.eclipticseasons.environment.season_phase.alternation.cold_greater_cold", "Winds died away, but icy coldness still.");
         add("info.eclipticseasons.environment.season_phase.pattern.cold_greater_cold", "%s (WI)");
 
+        add("info.eclipticseasons.environment.season_phase.hot_beginning_of_spring", "Beginning of Spring");
+        add("info.eclipticseasons.environment.season_phase.alternation.hot_beginning_of_spring", "Gentle winds warm, chill retreats.");
+        add("info.eclipticseasons.environment.season_phase.pattern.hot_beginning_of_spring", "%s (SP)");
+
+        add("info.eclipticseasons.environment.season_phase.hot_rain_water", "Rain Water");
+        add("info.eclipticseasons.environment.season_phase.alternation.hot_rain_water", "Soft spring rains, flowers bloom full.");
+        add("info.eclipticseasons.environment.season_phase.pattern.hot_rain_water", "%s (SP)");
+
+        add("info.eclipticseasons.environment.season_phase.hot_insects_awakening", "Insects Awakening");
+        add("info.eclipticseasons.environment.season_phase.alternation.hot_insects_awakening", "Insect calls stir, thunder rumbles near.");
+        add("info.eclipticseasons.environment.season_phase.pattern.hot_insects_awakening", "%s (SP)");
+
+        add("info.eclipticseasons.environment.season_phase.hot_spring_equinox", "Spring Equinox");
+        add("info.eclipticseasons.environment.season_phase.alternation.hot_spring_equinox", "It's just warm enough. Day and night are as long as each other.");
+        add("info.eclipticseasons.environment.season_phase.pattern.hot_spring_equinox", "%s (SP)");
+
+        add("info.eclipticseasons.environment.season_phase.hot_fresh_green", "Fresh Green");
+        add("info.eclipticseasons.environment.season_phase.alternation.hot_fresh_green", "Swallows fly, blossoms fall.");
+        add("info.eclipticseasons.environment.season_phase.pattern.hot_fresh_green", "%s (SP)");
+
+        add("info.eclipticseasons.environment.season_phase.hot_grain_rain", "Grain Rain");
+        add("info.eclipticseasons.environment.season_phase.alternation.hot_grain_rain", "Dark skies hang, soft wind and wet air.");
+        add("info.eclipticseasons.environment.season_phase.pattern.hot_grain_rain", "%s (SP)");
+
+        add("info.eclipticseasons.environment.season_phase.hot_beginning_of_summer", "Beginning of Summer");
+        add("info.eclipticseasons.environment.season_phase.alternation.hot_beginning_of_summer", "Clearing rains, heat arrives.");
+        add("info.eclipticseasons.environment.season_phase.pattern.hot_beginning_of_summer", "%s (SU)");
+
+        add("info.eclipticseasons.environment.season_phase.hot_lesser_fullness", "Lesser Fullness");
+        add("info.eclipticseasons.environment.season_phase.alternation.hot_lesser_fullness", "The hotter summer is now.");
+        add("info.eclipticseasons.environment.season_phase.pattern.hot_lesser_fullness", "%s (SU)");
+
+        add("info.eclipticseasons.environment.season_phase.hot_grain_in_ear", "Grain in Ear");
+        add("info.eclipticseasons.environment.season_phase.alternation.hot_grain_in_ear", "Winds graze the field. Insects chirp.");
+        add("info.eclipticseasons.environment.season_phase.pattern.hot_grain_in_ear", "%s (SU)");
+
+        add("info.eclipticseasons.environment.season_phase.hot_summer_solstice", "Summer Solstice");
+        add("info.eclipticseasons.environment.season_phase.alternation.hot_summer_solstice", "Oh, the longest day is coming.");
+        add("info.eclipticseasons.environment.season_phase.pattern.hot_summer_solstice", "%s (SU)");
+
+        add("info.eclipticseasons.environment.season_phase.hot_lesser_heat", "Lesser Heat");
+        add("info.eclipticseasons.environment.season_phase.alternation.hot_lesser_heat", "The height of summer begins.");
+        add("info.eclipticseasons.environment.season_phase.pattern.hot_lesser_heat", "%s (SU)");
+
+        add("info.eclipticseasons.environment.season_phase.hot_greater_heat", "Greater Heat");
+        add("info.eclipticseasons.environment.season_phase.alternation.hot_greater_heat", "Sun shining, summer heat rises.");
+        add("info.eclipticseasons.environment.season_phase.pattern.hot_greater_heat", "%s (SU)");
+
+        add("info.eclipticseasons.environment.season_phase.hot_beginning_of_autumn", "Beginning of Autumn");
+        add("info.eclipticseasons.environment.season_phase.alternation.hot_beginning_of_autumn", "Winds dry the grass, leaves droop low.");
+        add("info.eclipticseasons.environment.season_phase.pattern.hot_beginning_of_autumn", "%s (AU)");
+
+        add("info.eclipticseasons.environment.season_phase.hot_end_of_heat", "End of Heat");
+        add("info.eclipticseasons.environment.season_phase.alternation.hot_end_of_heat", "Summer heat fades, autumn rains near.");
+        add("info.eclipticseasons.environment.season_phase.pattern.hot_end_of_heat", "%s (AU)");
+
+        add("info.eclipticseasons.environment.season_phase.hot_white_dew", "White Dew");
+        add("info.eclipticseasons.environment.season_phase.alternation.hot_white_dew", "Heat withdraws, new coolness follows rain.");
+        add("info.eclipticseasons.environment.season_phase.pattern.hot_white_dew", "%s (AU)");
+
+        add("info.eclipticseasons.environment.season_phase.hot_autumnal_equinox", "Autumnal Equinox");
+        add("info.eclipticseasons.environment.season_phase.alternation.hot_autumnal_equinox", "The daytime decreases when the nighttime increases.");
+        add("info.eclipticseasons.environment.season_phase.pattern.hot_autumnal_equinox", "%s (AU)");
+
+        add("info.eclipticseasons.environment.season_phase.hot_cold_dew", "Cold Dew");
+        add("info.eclipticseasons.environment.season_phase.alternation.hot_cold_dew", "Clear skies, south geese arrive.");
+        add("info.eclipticseasons.environment.season_phase.pattern.hot_cold_dew", "%s (AU)");
+
+        add("info.eclipticseasons.environment.season_phase.hot_first_frost", "First Frost");
+        add("info.eclipticseasons.environment.season_phase.alternation.hot_first_frost", "Greens fade, parasol leaves yellow.");
+        add("info.eclipticseasons.environment.season_phase.pattern.hot_first_frost", "%s (AU)");
+
+        add("info.eclipticseasons.environment.season_phase.hot_beginning_of_winter", "Beginning of Winter");
+        add("info.eclipticseasons.environment.season_phase.alternation.hot_beginning_of_winter", "Heat departs, yet autumn’s breath remains.");
+        add("info.eclipticseasons.environment.season_phase.pattern.hot_beginning_of_winter", "%s (WI)");
+
+        add("info.eclipticseasons.environment.season_phase.hot_light_snow", "Light Snow");
+        add("info.eclipticseasons.environment.season_phase.alternation.hot_light_snow", "Maple leaves red, chilly winds rise.");
+        add("info.eclipticseasons.environment.season_phase.pattern.hot_light_snow", "%s (WI)");
+
+        add("info.eclipticseasons.environment.season_phase.hot_heavy_snow", "Heavy Snow");
+        add("info.eclipticseasons.environment.season_phase.alternation.hot_heavy_snow", "Sparse cold rains, leisurely tapping leaves.");
+        add("info.eclipticseasons.environment.season_phase.pattern.hot_heavy_snow", "%s (WI)");
+
+        add("info.eclipticseasons.environment.season_phase.hot_winter_solstice", "Winter Solstice");
+        add("info.eclipticseasons.environment.season_phase.alternation.hot_winter_solstice", "Shadows become longer. The endless long night comes.");
+        add("info.eclipticseasons.environment.season_phase.pattern.hot_winter_solstice", "%s (WI)");
+
+        add("info.eclipticseasons.environment.season_phase.hot_lesser_cold", "Lesser Cold");
+        add("info.eclipticseasons.environment.season_phase.alternation.hot_lesser_cold", "North winds chill, occasional snow falls.");
+        add("info.eclipticseasons.environment.season_phase.pattern.hot_lesser_cold", "%s (WI)");
+
+        add("info.eclipticseasons.environment.season_phase.hot_greater_cold", "Greater Cold");
+        add("info.eclipticseasons.environment.season_phase.alternation.hot_greater_cold", "Winds died away, but icy coldness still.");
+        add("info.eclipticseasons.environment.season_phase.pattern.hot_greater_cold", "%s (WI)");
+
     }
 
 

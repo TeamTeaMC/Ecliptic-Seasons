@@ -1,6 +1,0 @@
-{
-  "biomes": "#forge:is_desert",
-  "phases": {
-    "default": "eclipticseasons:dry"
-  }
-}

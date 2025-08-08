@@ -18,6 +18,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.biome.Biome;
 
+import java.util.Arrays;
 import java.util.Locale;
 import java.util.Map;
 
@@ -157,6 +158,13 @@ public enum SolarTerm implements ITranslatableWithPlaceholder, ISolarTerm {
 
     public static SolarTerm[] collectValues() {
         return solarTerms;
+    }
+
+    private static final SolarTerm[] validSolarTerms = Arrays.stream(SolarTerm.values())
+            .filter(SolarTerm::isValid).toArray(SolarTerm[]::new);
+
+    public static SolarTerm[] collectValidValues() {
+        return validSolarTerms;
     }
 
     public static SolarTerm get(int index) {

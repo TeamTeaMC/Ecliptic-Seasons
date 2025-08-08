@@ -223,7 +223,7 @@ public class Lang_ZH extends LangHelper {
         add("info.eclipticseasons.environment.season_phase.pattern.cold_beginning_of_spring", "%s (春)");
 
         add("info.eclipticseasons.environment.season_phase.cold_rain_water", "雨水");
-        add("info.eclipticseasons.environment.season_phase.alternation.cold_rain_water", "寒冬将渐，春意犹浅");
+        add("info.eclipticseasons.environment.season_phase.alternation.cold_rain_water", "寒冬将渐，春意犹浅。");
         add("info.eclipticseasons.environment.season_phase.pattern.cold_rain_water", "%s (春)");
 
         add("info.eclipticseasons.environment.season_phase.cold_insects_awakening", "惊蛰");
@@ -259,7 +259,7 @@ public class Lang_ZH extends LangHelper {
         add("info.eclipticseasons.environment.season_phase.pattern.cold_summer_solstice", "%s (夏)");
 
         add("info.eclipticseasons.environment.season_phase.cold_lesser_heat", "小暑");
-        add("info.eclipticseasons.environment.season_phase.alternation.cold_lesser_heat", "暖夏未足，秋意渐");
+        add("info.eclipticseasons.environment.season_phase.alternation.cold_lesser_heat", "暖夏未足，秋意渐。");
         add("info.eclipticseasons.environment.season_phase.pattern.cold_lesser_heat", "%s (夏)");
 
         add("info.eclipticseasons.environment.season_phase.cold_greater_heat", "大暑");
@@ -314,6 +314,101 @@ public class Lang_ZH extends LangHelper {
         add("info.eclipticseasons.environment.season_phase.alternation.cold_greater_cold", "大寒大寒，无风自寒。");
         add("info.eclipticseasons.environment.season_phase.pattern.cold_greater_cold", "%s (冬)");
 
+        add("info.eclipticseasons.environment.season_phase.hot_beginning_of_spring", "立春");
+        add("info.eclipticseasons.environment.season_phase.alternation.hot_beginning_of_spring", "风初和，冷意没。");
+        add("info.eclipticseasons.environment.season_phase.pattern.hot_beginning_of_spring", "%s (春)");
+
+        add("info.eclipticseasons.environment.season_phase.hot_rain_water", "雨水");
+        add("info.eclipticseasons.environment.season_phase.alternation.hot_rain_water", "春雨轻，花满渚。");
+        add("info.eclipticseasons.environment.season_phase.pattern.hot_rain_water", "%s (春)");
+
+        add("info.eclipticseasons.environment.season_phase.hot_insects_awakening", "惊蛰");
+        add("info.eclipticseasons.environment.season_phase.alternation.hot_insects_awakening", "虫声骚动，雷声渐起。");
+        add("info.eclipticseasons.environment.season_phase.pattern.hot_insects_awakening", "%s (春)");
+
+        add("info.eclipticseasons.environment.season_phase.hot_spring_equinox", "春分");
+        add("info.eclipticseasons.environment.season_phase.alternation.hot_spring_equinox", "昼夜平分，天气正暖。");
+        add("info.eclipticseasons.environment.season_phase.pattern.hot_spring_equinox", "%s (春)");
+
+        add("info.eclipticseasons.environment.season_phase.hot_fresh_green", "清明");
+        add("info.eclipticseasons.environment.season_phase.alternation.hot_fresh_green", "燕衔春去，梨落清明。");
+        add("info.eclipticseasons.environment.season_phase.pattern.hot_fresh_green", "%s (春)");
+
+        add("info.eclipticseasons.environment.season_phase.hot_grain_rain", "谷雨");
+        add("info.eclipticseasons.environment.season_phase.alternation.hot_grain_rain", "天色冥冥，风软湿重。");
+        add("info.eclipticseasons.environment.season_phase.pattern.hot_grain_rain", "%s (春)");
+
+        add("info.eclipticseasons.environment.season_phase.hot_beginning_of_summer", "立夏");
+        add("info.eclipticseasons.environment.season_phase.alternation.hot_beginning_of_summer", "雨晴梅肥，炎暑已至。");
+        add("info.eclipticseasons.environment.season_phase.pattern.hot_beginning_of_summer", "%s (夏)");
+
+        add("info.eclipticseasons.environment.season_phase.hot_lesser_fullness", "小满");
+        add("info.eclipticseasons.environment.season_phase.alternation.hot_lesser_fullness", "小满未满，禾黍纷纭。");
+        add("info.eclipticseasons.environment.season_phase.pattern.hot_lesser_fullness", "%s (夏)");
+
+        add("info.eclipticseasons.environment.season_phase.hot_grain_in_ear", "芒种");
+        add("info.eclipticseasons.environment.season_phase.alternation.hot_grain_in_ear", "风吹麦浪，虫鸣夏忙。");
+        add("info.eclipticseasons.environment.season_phase.pattern.hot_grain_in_ear", "%s (夏)");
+
+        add("info.eclipticseasons.environment.season_phase.hot_summer_solstice", "夏至");
+        add("info.eclipticseasons.environment.season_phase.alternation.hot_summer_solstice", "绿树浓阴，白昼长。");
+        add("info.eclipticseasons.environment.season_phase.pattern.hot_summer_solstice", "%s (夏)");
+
+        add("info.eclipticseasons.environment.season_phase.hot_lesser_heat", "小暑");
+        add("info.eclipticseasons.environment.season_phase.alternation.hot_lesser_heat", "盛夏之始，入伏天。");
+        add("info.eclipticseasons.environment.season_phase.pattern.hot_lesser_heat", "%s (夏)");
+
+        add("info.eclipticseasons.environment.season_phase.hot_greater_heat", "大暑");
+        add("info.eclipticseasons.environment.season_phase.alternation.hot_greater_heat", "日盛三伏，暑气熏。");
+        add("info.eclipticseasons.environment.season_phase.pattern.hot_greater_heat", "%s (夏)");
+
+        add("info.eclipticseasons.environment.season_phase.hot_beginning_of_autumn", "立秋");
+        add("info.eclipticseasons.environment.season_phase.alternation.hot_beginning_of_autumn", "风熏干草，杨柳恹恹。");
+        add("info.eclipticseasons.environment.season_phase.pattern.hot_beginning_of_autumn", "%s (秋)");
+
+        add("info.eclipticseasons.environment.season_phase.hot_end_of_heat", "处暑");
+        add("info.eclipticseasons.environment.season_phase.alternation.hot_end_of_heat", "灼日消磨，清风无处。");
+        add("info.eclipticseasons.environment.season_phase.pattern.hot_end_of_heat", "%s (秋)");
+
+        add("info.eclipticseasons.environment.season_phase.hot_white_dew", "白露");
+        add("info.eclipticseasons.environment.season_phase.alternation.hot_white_dew", "暑气渐退，雨后新凉。");
+        add("info.eclipticseasons.environment.season_phase.pattern.hot_white_dew", "%s (秋)");
+
+        add("info.eclipticseasons.environment.season_phase.hot_autumnal_equinox", "秋分");
+        add("info.eclipticseasons.environment.season_phase.alternation.hot_autumnal_equinox", "昼渐短，夜渐长。");
+        add("info.eclipticseasons.environment.season_phase.pattern.hot_autumnal_equinox", "%s (秋)");
+
+        add("info.eclipticseasons.environment.season_phase.hot_cold_dew", "寒露");
+        add("info.eclipticseasons.environment.season_phase.alternation.hot_cold_dew", "长空云淡，南雁至此。");
+        add("info.eclipticseasons.environment.season_phase.pattern.hot_cold_dew", "%s (秋)");
+
+        add("info.eclipticseasons.environment.season_phase.hot_first_frost", "霜降");
+        add("info.eclipticseasons.environment.season_phase.alternation.hot_first_frost", "绿意渐浅，梧叶初黄。");
+        add("info.eclipticseasons.environment.season_phase.pattern.hot_first_frost", "%s (秋)");
+
+        add("info.eclipticseasons.environment.season_phase.hot_beginning_of_winter", "立冬");
+        add("info.eclipticseasons.environment.season_phase.alternation.hot_beginning_of_winter", "暑气方尽，冬犹秋。");
+        add("info.eclipticseasons.environment.season_phase.pattern.hot_beginning_of_winter", "%s (冬)");
+
+        add("info.eclipticseasons.environment.season_phase.hot_light_snow", "小雪");
+        add("info.eclipticseasons.environment.season_phase.alternation.hot_light_snow", "霜叶红遍，晚风生寒。");
+        add("info.eclipticseasons.environment.season_phase.pattern.hot_light_snow", "%s (冬)");
+
+        add("info.eclipticseasons.environment.season_phase.hot_heavy_snow", "大雪");
+        add("info.eclipticseasons.environment.season_phase.alternation.hot_heavy_snow", "寒雨稀稀，闲打芭蕉。");
+        add("info.eclipticseasons.environment.season_phase.pattern.hot_heavy_snow", "%s (冬)");
+
+        add("info.eclipticseasons.environment.season_phase.hot_winter_solstice", "冬至");
+        add("info.eclipticseasons.environment.season_phase.alternation.hot_winter_solstice", "日影渐长，长夜漫漫。");
+        add("info.eclipticseasons.environment.season_phase.pattern.hot_winter_solstice", "%s (冬)");
+
+        add("info.eclipticseasons.environment.season_phase.hot_lesser_cold", "小寒");
+        add("info.eclipticseasons.environment.season_phase.alternation.hot_lesser_cold", "北风凉冷，时偶雪。");
+        add("info.eclipticseasons.environment.season_phase.pattern.hot_lesser_cold", "%s (冬)");
+
+        add("info.eclipticseasons.environment.season_phase.hot_greater_cold", "大寒");
+        add("info.eclipticseasons.environment.season_phase.alternation.hot_greater_cold", "大寒大寒，无风犹冷。");
+        add("info.eclipticseasons.environment.season_phase.pattern.hot_greater_cold", "%s (冬)");
     }
 
     private void addJade() {

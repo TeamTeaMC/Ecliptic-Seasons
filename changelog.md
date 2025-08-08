@@ -1,3 +1,23 @@
+### 0.12.0-pre4
+
+**Main Changes:**
+
+- Adjustments to the **default built-in data pack**, especially biome and seasonal definitions.
+  Feedback is welcome.
+
+**Biome Classification:**
+
+- Replaced “Tropical / Temperate / Cold” zones with **Hot / Warm / Cold regions** for overworld biome classification.
+- **Hot** regions no longer defaults to eternal summer. They now feature **all four seasons**, with **summer lasting over half the cycle**.
+- **Cold region coverage reduced**. Upper threshold lowered — e.g., *Windswept Forest* is no longer considered cold — to **reduce player confusion**.
+
+**Seasonal Info (Optional Setting):**
+
+- When `EnableLocalInfoAndCalendar` is enabled:
+
+  - **New inform content** added for **Hot regions**.
+  - **Desert, Jungle**, and similar biomes **no longer have custom informs/calendar** — they now follow **Hot region** templates.
+
 #### 0.12.0-pre-3-1-3
 
 - Fixed an issue where using RegisterCropDefaultValue would add crop information to all blocks.

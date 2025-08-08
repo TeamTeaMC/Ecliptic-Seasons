@@ -1,0 +1,16 @@
+{
+  "color": "gold",
+  "icon": {
+    "i": 5,
+    "j": 2,
+    "texture": "eclipticseasons:font/seasons_icons",
+    "width": 180,
+    "height": 120
+  },
+  "font": {
+    "id": "eclipticseasons:solar_icons",
+    "label": "r"
+  },
+  "season": "autumn",
+  "name": "eclipticseasons:hot_first_frost"
+}

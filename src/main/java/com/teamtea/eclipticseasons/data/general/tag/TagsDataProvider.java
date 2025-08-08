@@ -26,7 +26,7 @@ public class TagsDataProvider extends TagsProvider<Biome> {
         this.tag(ClimateTypeBiomeTags.MONSOONAL).addTags(BiomeTags.IS_SAVANNA);
         this.tag(ClimateTypeBiomeTags.RAINLESS).addTags(Tags.Biomes.IS_CAVE);
         this.tag(ClimateTypeBiomeTags.ARID).addTags(Tags.Biomes.IS_DESERT);
-        this.tag(ClimateTypeBiomeTags.DROUGHTY).addTags(BiomeTags.IS_BADLANDS, Tags.Biomes.IS_PEAK, Tags.Biomes.IS_COLD_OVERWORLD);
+        this.tag(ClimateTypeBiomeTags.DROUGHTY).addTags(BiomeTags.IS_BADLANDS, Tags.Biomes.IS_PEAK, Tags.Biomes.IS_SNOWY);
         this.tag(ClimateTypeBiomeTags.SOFT).addTags(BiomeTags.IS_BEACH, BiomeTags.IS_OCEAN);
         this.tag(ClimateTypeBiomeTags.RAINY).addTags(BiomeTags.IS_JUNGLE);
 
