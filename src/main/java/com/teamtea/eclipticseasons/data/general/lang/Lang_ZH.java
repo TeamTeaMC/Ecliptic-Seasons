@@ -143,9 +143,9 @@ public class Lang_ZH extends LangHelper {
         add("effect.eclipticseasons.heat_stroke", "中暑");
         add("effect.eclipticseasons.heat_stroke.description", "酷热难耐，视线渐渐模糊。");
 
-        add(AgroClimateRegistry.COLD, "寒带");
-        add(AgroClimateRegistry.TEMPERATE, "温带");
-        add(AgroClimateRegistry.HOT, "热带");
+        add(AgroClimateRegistry.COLD, "寒冷地区");
+        add(AgroClimateRegistry.TEMPERATE, "温暖地区");
+        add(AgroClimateRegistry.HOT, "炎热地区");
         // add(AgroClimateRegistry.DESERT, "沙漠");
         add(AgroClimateRegistry.NETHER, "下界");
         add(AgroClimateRegistry.END, "末地");

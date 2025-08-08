@@ -141,9 +141,9 @@ public class Lang_EN extends LangHelper {
         add("effect.eclipticseasons.heat_stroke", "Heat Stroke");
         add("effect.eclipticseasons.heat_stroke.description", "The scorching heat is unbearable, and your vision gradually blurs.");
 
-        add(AgroClimateRegistry.COLD, "Cold Zone");
-        add(AgroClimateRegistry.TEMPERATE, "Temperate Zone");
-        add(AgroClimateRegistry.HOT, "Tropical Zone");
+        add(AgroClimateRegistry.COLD, "Cold Region");
+        add(AgroClimateRegistry.TEMPERATE, "Warm Region");
+        add(AgroClimateRegistry.HOT, "Hot Region");
         // add(AgroClimateRegistry.DESERT, "Desert");
         add(AgroClimateRegistry.NETHER, "Nether");
         add(AgroClimateRegistry.END, "End");
