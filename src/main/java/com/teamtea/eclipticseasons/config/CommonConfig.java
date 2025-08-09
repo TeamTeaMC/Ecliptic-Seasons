@@ -183,7 +183,7 @@ public class CommonConfig {
         public static ForgeConfigSpec.BooleanValue simpleGreenHouse;
 
         public static ForgeConfigSpec.BooleanValue complexGreenHouseCheck;
-        public static ForgeConfigSpec.BooleanValue useDefaultValue;
+        public static ForgeConfigSpec.BooleanValue registerCropDefaultValue;
 
         public static ForgeConfigSpec.BooleanValue forceCompatMode;
         public static ForgeConfigSpec.BooleanValue noCostHumidifier;
@@ -224,7 +224,7 @@ public class CommonConfig {
             useBoxDistance = builder.comment("Calculate the working range of the greenhouse block by box distance and not Euclidean range.")
                     .define("UseBoxDistance", true);
 
-            useDefaultValue = builder.comment("[Deprecated]If a crop is not registered for a season or humid type, default values will be used.")
+            registerCropDefaultValue = builder.comment("[Deprecated]If a crop is not registered for a season or humid type, default values will be used.")
                     .define("RegisterCropDefaultValue", false);
 
             forceCompatMode = builder.comment("Force all crops to use compatibility mode for growth control, not just those tagged as eclipticseasons:natural_plants.")

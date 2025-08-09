@@ -1,3 +1,13 @@
+### 0.12.0-pre4-1
+
+- Enabling the EnhancementChunkRenderUpdate option while using DH may cause slow generation of DH fake chunks. This
+  potential issue has been optimized.
+- Added registration for crop data converting `sereneseasons:year_round_crops` tag to `eclipticseasons:all_seasons`.
+- **Developer related:**
+    - Renamed `useDefaultValue` field in `CommonConfig$Crop` to `registerCropDefaultValue` for consistency with 1.21.
+    - Added API method `getAgroSeason` to query the locally applied season based on agricultural zones, avoiding biome
+      characteristics being overlooked due to global season limitations.
+
 ### 0.12.0-pre4
 
 **Main Changes:**
@@ -8,15 +18,18 @@
 **Biome Classification:**
 
 - Replaced “Tropical / Temperate / Cold” zones with **Hot / Warm / Cold regions** for overworld biome classification.
-- **Hot** regions no longer defaults to eternal summer. They now feature **all four seasons**, with **summer lasting over half the cycle**.
-- **Cold region coverage reduced**. Upper threshold lowered — e.g., *Windswept Forest* is no longer considered cold — to **reduce player confusion**.
+- **Hot** regions no longer defaults to eternal summer. They now feature **all four seasons**, with **summer lasting
+  over half the cycle**.
+- **Cold region coverage reduced**. Upper threshold lowered — e.g., *Windswept Forest* is no longer considered cold — to
+  **reduce player confusion**.
 
 **Seasonal Info (Optional Setting):**
 
 - When `EnableLocalInfoAndCalendar` is enabled:
 
-  - **New inform content** added for **Hot regions**.
-  - **Desert, Jungle**, and similar biomes **no longer have custom informs/calendar** — they now follow **Hot region** templates.
+    - **New inform content** added for **Hot regions**.
+    - **Desert, Jungle**, and similar biomes **no longer have custom informs/calendar** — they now follow **Hot region**
+      templates.
 
 #### 0.12.0-pre-3-1-3
 

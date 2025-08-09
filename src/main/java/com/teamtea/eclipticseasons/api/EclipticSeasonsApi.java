@@ -1,6 +1,7 @@
 package com.teamtea.eclipticseasons.api;
 
 import com.teamtea.eclipticseasons.api.constant.biome.Humidity;
+import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import net.minecraft.core.BlockPos;
@@ -40,6 +41,12 @@ public interface EclipticSeasonsApi {
      * <p>Only dimensions marked as {@linkplain DimensionType#natural()  natural} have solar term changes.</p>
      */
     SolarTerm getSolarTerm(Level level);
+
+    /**
+     * Returns the localized (Agro) season at the given position.
+     * Unlike the global season, this considers regional climate.
+     */
+    Season getAgroSeason(Level level, BlockPos pos);
 
     int getSolarDays(Level level);
 

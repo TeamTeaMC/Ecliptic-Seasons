@@ -25,9 +25,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.CropBlock;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TagsUpdatedEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import com.teamtea.eclipticseasons.EclipticSeasons;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -46,6 +43,8 @@ public final class CropInfoManager {
     private static final TagKey<Block> ss4 = createBlockTag("sereneseasons", "winter_crops");
 
     private static final TagKey<Block> SERENE_SEASONS_UNBREAKABLE_FERTILE_CROPS = createBlockTag("sereneseasons", "unbreakable_infertile_crops");
+    private static final TagKey<Block> SERENE_SEASONS_YEAR_ROUND_CROPS = createBlockTag("sereneseasons", "year_round_crops");
+    private static final TagKey<Item> ITEM_SERENE_SEASONS_YEAR_ROUND_CROPS = createItemTag("sereneseasons", "year_round_crops");
 
     private static final TagKey<Item> ssi1 = createItemTag("sereneseasons", "spring_crops");
     private static final TagKey<Item> ssi2 = createItemTag("sereneseasons", "summer_crops");
@@ -121,12 +120,28 @@ public final class CropInfoManager {
         if (CompatModule.CommonConfig.sereneSeasons.get()) {
             registerForSS(blocks, Registries.BLOCK);
             registerForSS(items, Registries.ITEM);
+            blocks.flatMap(br -> br.getTag(SERENE_SEASONS_YEAR_ROUND_CROPS)).ifPresent(nblocks -> {
+                for (Holder<Block> nblock : nblocks) {
+                    registerCropSeasonInfo(nblock.value(), CropSeasonType.ALL, true);
+                    if (CommonConfig.Crop.registerCropDefaultValue.get()) {
+                        registerCropHumidityInfo(nblock.value(), CropHumidityType.AVERAGE_MOIST, true);
+                    }
+                }
+            });
+            items.flatMap(br -> br.getTag(ITEM_SERENE_SEASONS_YEAR_ROUND_CROPS)).ifPresent(itemNamed -> {
+                for (Holder<Item> itemHolder : itemNamed) {
+                    registerCropSeasonInfo(itemHolder.value(), CropSeasonType.ALL);
+                    if (CommonConfig.Crop.registerCropDefaultValue.get()) {
+                        registerCropHumidityInfo(itemHolder.value(), CropHumidityType.AVERAGE_MOIST);
+                    }
+                }
+            });
         }
 
 
         MinecraftForge.EVENT_BUS.post(new RegisterAndModifyCropInfoEvent(CROP_HUMIDITY_INFO, CROP_SEASON_INFO));
 
-        if (CommonConfig.Crop.useDefaultValue.get()) {
+        if (CommonConfig.Crop.registerCropDefaultValue.get()) {
             BuiltInRegistries.BLOCK.forEach(block ->
             {
                 if (block instanceof CropBlock) {
@@ -167,7 +182,7 @@ public final class CropInfoManager {
                     registerCropSeasonInfo(item, getCropSeasonTypeFrom(new CropSeasonInfo(season)));
                 }
 
-                if (CommonConfig.Crop.useDefaultValue.get()) {
+                if (CommonConfig.Crop.registerCropDefaultValue.get()) {
                     CropHumidityType humid;
                     if (season == 1) {
                         humid = CropHumidityType.AVERAGE_HUMID;

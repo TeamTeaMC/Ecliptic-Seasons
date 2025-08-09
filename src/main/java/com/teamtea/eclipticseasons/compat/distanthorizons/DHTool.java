@@ -3,6 +3,7 @@ package com.teamtea.eclipticseasons.compat.distanthorizons;
 import com.seibel.distanthorizons.core.api.internal.SharedApi;
 import com.seibel.distanthorizons.core.config.Config;
 import com.seibel.distanthorizons.core.dataObjects.fullData.FullDataPointIdMap;
+import com.seibel.distanthorizons.core.enums.EDhDirection;
 import com.seibel.distanthorizons.core.level.ClientLevelModule;
 import com.seibel.distanthorizons.core.level.DhClientLevel;
 import com.seibel.distanthorizons.core.level.DhClientServerLevel;
@@ -24,6 +25,7 @@ import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import com.teamtea.eclipticseasons.mixin.compat.distanthorizons.MixinQuadTree;
 import it.unimi.dsi.fastutil.longs.LongArrayList;
+import it.unimi.dsi.fastutil.longs.LongLinkedOpenHashSet;
 import loaderCommon.forge.com.seibel.distanthorizons.common.wrappers.McObjectConverter;
 import loaderCommon.forge.com.seibel.distanthorizons.common.wrappers.block.BiomeWrapper;
 import loaderCommon.forge.com.seibel.distanthorizons.common.wrappers.block.BlockStateWrapper;
@@ -39,10 +41,7 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.LightBlock;
 import net.minecraft.world.level.material.MapColor;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Stack;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class DHTool {
@@ -81,8 +80,15 @@ public class DHTool {
                     }
                 }
 
-                for (Long l : reloadList) {
-                    quadtree.reloadPos(l);
+                Set<Long> setsLong = new LongLinkedOpenHashSet();
+                for (long pos : reloadList) {
+                    if (setsLong.contains(pos)) continue;
+                    quadtree.reloadPos(pos);
+                    setsLong.add(pos);
+                    for (EDhDirection direction : EDhDirection.ADJ_DIRECTIONS) {
+                        long adjacentPos = DhSectionPos.getAdjacentPos(pos, direction);
+                        setsLong.add(adjacentPos);
+                    }
                 }
 
                 // int d = (int) Config.Client.quickLodChunkRenderDistance.get().get() / 2;
