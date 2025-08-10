@@ -12,6 +12,7 @@ import com.seibel.distanthorizons.core.pos.DhSectionPos;
 import com.seibel.distanthorizons.core.pos.blockPos.DhBlockPos;
 import com.seibel.distanthorizons.core.pos.blockPos.DhBlockPos2D;
 import com.seibel.distanthorizons.core.render.LodQuadTree;
+import com.seibel.distanthorizons.core.render.LodRenderSection;
 import com.seibel.distanthorizons.core.util.FullDataPointUtil;
 import com.seibel.distanthorizons.core.util.gridList.MovableGridRingList;
 import com.seibel.distanthorizons.core.util.objects.quadTree.QuadNode;
@@ -74,11 +75,28 @@ public class DHTool {
                 while (!stack.isEmpty()) {
                     QuadNode node = stack.pop();
                     if (node == null || node.value == null) continue;
-                    reloadList.add(node.sectionPos);
+
+                    if (!(node.value instanceof LodRenderSection lodRenderSection)
+                            || lodRenderSection.getRenderingEnabled()) {
+                        reloadList.add(node.sectionPos);
+                    }
                     for (int i = 3; i >= 0; i--) {
-                        stack.push(node.getChildByIndex(i));
+                        QuadNode childByIndex = node.getChildByIndex(i);
+                        stack.push(childByIndex);
                     }
                 }
+
+                // DhBlockPos2D centerBlockPos = quadtree.getCenterBlockPos();
+                // reloadList.sort((l1, l2) -> {
+                //     int dx1 = Math.abs(centerBlockPos.x - DhSectionPos.getCenterBlockPosX(l1));
+                //     int dz1 = Math.abs(centerBlockPos.z - DhSectionPos.getCenterBlockPosZ(l1));
+                //     int dx2 = Math.abs(centerBlockPos.x - DhSectionPos.getCenterBlockPosX(l2));
+                //     int dz2 = Math.abs(centerBlockPos.z - DhSectionPos.getCenterBlockPosZ(l2));
+                //
+                //     int distSq1 = dx1 + dz1;
+                //     int distSq2 = dx2 + dz2;
+                //     return Integer.compare(distSq1, distSq2);
+                // });
 
                 Set<Long> setsLong = new LongLinkedOpenHashSet();
                 for (long pos : reloadList) {
