@@ -17,16 +17,16 @@ currently includes three main categories: seasonal, monsoonal, and thermally sta
 category called "small biomes," which inherit climate states from adjacent biomes and are generally ignored for
 customization.
 
-| Tag                         | Name        | Auto Assignment Logic          | Priority | Rainfall (Relative) |
-|-----------------------------|-------------|--------------------------------|----------|---------------------|
-| `eclipticseasons:seasonal`  | Seasonal    | Based on Overworld status      | Lowest   | Varies with season  |
-| `eclipticseasons:monsoonal` | Monsoonal   | Based on tropical savanna type | Medium   | Distinct wet/dry    |
-| `eclipticseasons:rainless`  | Rainless    | Based on forecast availability | High     | No rainfall         |
-| `eclipticseasons:arid`      | Arid        | Based on rainfall amount       | High     | 0.01F               |
-| `eclipticseasons:droughty`  | Droughty    | Based on rainfall amount       | High     | 0.1F                |
-| `eclipticseasons:soft`      | Soft        | Based on rainfall amount       | High     | 0.3F                |
-| `eclipticseasons:rainy`     | Rainy       | Based on rainfall amount       | High     | 0.9F                |
-| `eclipticseasons:is_small`  | Small Biome | No                             | Highest  | Inherit from nearby |
+| Tag                                                                                             | Name        | Auto Assignment Logic          | Priority | Rainfall (Relative) |
+|-------------------------------------------------------------------------------------------------|-------------|--------------------------------|----------|---------------------|
+| `eclipticseasons:seasonal`<br>`eclipticseasons:seasonal/hot`<br>`eclipticseasons:seasonal/cold` | Seasonal    | Based on Overworld status      | Lowest   | Varies with season  |
+| `eclipticseasons:monsoonal`                                                                     | Monsoonal   | Based on tropical savanna type | Medium   | Distinct wet/dry    |
+| `eclipticseasons:rainless`                                                                      | Rainless    | Based on forecast availability | High     | No rainfall         |
+| `eclipticseasons:arid`                                                                          | Arid        | Based on rainfall amount       | High     | 0.01F               |
+| `eclipticseasons:droughty`                                                                      | Droughty    | Based on rainfall amount       | High     | 0.1F                |
+| `eclipticseasons:soft`                                                                          | Soft        | Based on rainfall amount       | High     | 0.3F                |
+| `eclipticseasons:rainy`                                                                         | Rainy       | Based on rainfall amount       | High     | 0.9F                |
+| `eclipticseasons:is_small`                                                                      | Small Biome | No                             | Highest  | Inherit from nearby |
 
 By default, the `seasonal` tag is assigned to all Overworld biomes. If other tags are assigned, those features take
 precedence.
@@ -35,6 +35,15 @@ By default, `monsoonal` is only assigned to tropical savanna.
 
 If no tags are assigned, biomes will automatically be treated as thermally stable types based on their existing rainfall
 values—no need to explicitly configure this.
+
+For biome color types, it's actually recommended to use resource packs to achieve more customized
+colors.
+
+* `eclipticseasons:color/seasonal`, `eclipticseasons:color/seasonal/hot`, `eclipticseasons:color/seasonal/cold` —
+  represent seasonal colors for normal, hot, and cold biomes respectively.
+* `eclipticseasons:color/monsoonal` — represents colors for (tropical) monsoonal climate biomes.
+* `eclipticseasons:color/stable`, `eclipticseasons:color/slightly` — represent areas with stable and slight color
+  changes.
 
 ## Seasonal Crops and Humidity Conditions
 

@@ -2,10 +2,13 @@ package com.teamtea.eclipticseasons.api.constant.solar;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.constant.climate.*;
+import com.teamtea.eclipticseasons.api.constant.climate.seasonal.ColdRain;
+import com.teamtea.eclipticseasons.api.constant.climate.seasonal.HotRain;
 import com.teamtea.eclipticseasons.api.constant.solar.color.base.*;
+import com.teamtea.eclipticseasons.api.constant.solar.color.base.seasonal.ColdSolarTermColors;
+import com.teamtea.eclipticseasons.api.constant.solar.color.base.seasonal.HotSolarTermColors;
 import com.teamtea.eclipticseasons.api.constant.tag.ClimateTypeBiomeTags;
 import com.teamtea.eclipticseasons.api.data.weather.CustomRain;
-import com.teamtea.eclipticseasons.api.data.weather.CustomSnowTerm;
 import com.teamtea.eclipticseasons.api.misc.ITranslatableWithPlaceholder;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.misc.SimplePair;
@@ -184,9 +187,9 @@ public enum SolarTerm implements ITranslatableWithPlaceholder, ISolarTerm {
         } else if (biomeTagKey.equals(ClimateTypeBiomeTags.MONSOONAL_COLOR_CHANGE)) {
             return RainySolarTermColors.collectValues()[this.ordinal()];
         } else if (biomeTagKey.equals(ClimateTypeBiomeTags.SEASONAL_HOT_COLOR_CHANGE)) {
-            return TemperateSolarTermColors.collectValues()[this.ordinal()];
+            return HotSolarTermColors.collectValues()[this.ordinal()];
         } else if (biomeTagKey.equals(ClimateTypeBiomeTags.SEASONAL_COLD_COLOR_CHANGE)) {
-            return TemperateSolarTermColors.collectValues()[this.ordinal()];
+            return ColdSolarTermColors.collectValues()[this.ordinal()];
         } else if (biomeTagKey.equals(ClimateTypeBiomeTags.SEASONAL_COLOR_CHANGE)) {
             return TemperateSolarTermColors.collectValues()[this.ordinal()];
         } else {
@@ -232,6 +235,10 @@ public enum SolarTerm implements ITranslatableWithPlaceholder, ISolarTerm {
             return FlatRain.RAINY;
         if (tag == ClimateTypeBiomeTags.MONSOONAL)
             return MonsoonRain.collectValues()[this.ordinal()];
+        if (tag == ClimateTypeBiomeTags.SEASONAL_HOT)
+            return HotRain.collectValues()[this.ordinal()];
+        if (tag == ClimateTypeBiomeTags.SEASONAL_COLD)
+            return ColdRain.collectValues()[this.ordinal()];
         return TemperateRain.collectValues()[this.ordinal()];
 
         // if (!biomeHolder.is(BiomeTags.IS_OVERWORLD) || biomeHolder.is(ClimateTypeBiomeTags.RAINLESS)) {

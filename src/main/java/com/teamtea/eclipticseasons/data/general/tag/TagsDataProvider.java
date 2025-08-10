@@ -38,8 +38,8 @@ public class TagsDataProvider extends TagsProvider<Biome> {
 
         // Biome Color
         tag(ClimateTypeBiomeTags.SEASONAL_COLOR_CHANGE).addTags(BiomeTags.IS_OVERWORLD);
-        tag(ClimateTypeBiomeTags.SEASONAL_HOT).addTags(Tags.Biomes.IS_HOT_OVERWORLD);
-        tag(ClimateTypeBiomeTags.SEASONAL_COLD).addTags(Tags.Biomes.IS_PEAK, Tags.Biomes.IS_SNOWY);
+        tag(ClimateTypeBiomeTags.SEASONAL_HOT_COLOR_CHANGE).addTags(Tags.Biomes.IS_HOT_OVERWORLD);
+        tag(ClimateTypeBiomeTags.SEASONAL_COLD_COLOR_CHANGE).addTags(Tags.Biomes.IS_PEAK, Tags.Biomes.IS_SNOWY);
 
         tag(ClimateTypeBiomeTags.MONSOONAL_COLOR_CHANGE).addTags(ClimateTypeBiomeTags.MONSOONAL);
         tag(ClimateTypeBiomeTags.NONE_COLOR_CHANGE).addTags(Tags.Biomes.IS_CAVE, BiomeTags.IS_BADLANDS, Tags.Biomes.IS_DESERT);

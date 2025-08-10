@@ -1,3 +1,8 @@
+### 0.12.0-pre4-2
+
+- Split the tags used for Biome Rain and Biome Color (these can also be customized via resource packs or data packs).
+- Adjusted the default seasonal biome colors and biome rain for cold and hot regions.
+
 ### 0.12.0-pre4-1
 
 - Enabling the EnhancementChunkRenderUpdate option while using DH may cause slow generation of DH fake chunks. This
