@@ -69,14 +69,14 @@ public class BiomeColorsHandler {
             int i = (int) ((1.0D - temperature) * 255.0D);
             int j = (int) ((1.0D - humidity) * 255.0D);
             int k = j << 8 | i;
-            TagKey<Biome> biomeTagKey = BiomeClimateManager.getTag(biome);
+            TagKey<Biome> biomeTagKey = BiomeClimateManager.getColorTag(biome);
             int[] newGrassBuffer = newGrassBufferMap.getOrDefault(biomeTagKey, GrassColor.pixels);
 
             int color = k > newGrassBuffer.length ? originColor : newGrassBuffer[k];
-            if (biomeTagKey != ClimateTypeBiomeTags.SEASONAL
-                    && biomeTagKey != ClimateTypeBiomeTags.MONSOONAL) {
-                color = ColorHelper.simplyMixColor(color, 0.1f, originColor, 0.9f);
-            }
+            // if (biomeTagKey != ClimateTypeBiomeTags.SEASONAL
+            //         && biomeTagKey != ClimateTypeBiomeTags.MONSOONAL) {
+            //     color = ColorHelper.simplyMixColor(color, 0.1f, originColor, 0.9f);
+            // }
             // 注意大概率会DH
             return color;
         }
@@ -103,13 +103,13 @@ public class BiomeColorsHandler {
             int i = (int) ((1.0D - temperature) * 255.0D);
             int j = (int) ((1.0D - humidity) * 255.0D);
             int k = j << 8 | i;
-            TagKey<Biome> biomeTagKey = BiomeClimateManager.getTag(biome);
+            TagKey<Biome> biomeTagKey = BiomeClimateManager.getColorTag(biome);
             int[] newFoliageBuffer = newFoliageBufferMap.getOrDefault(biomeTagKey, FoliageColor.pixels);
             int color = k > newFoliageBuffer.length ? originColor : newFoliageBuffer[k];
-            if (biomeTagKey != ClimateTypeBiomeTags.SEASONAL
-                    && biomeTagKey != ClimateTypeBiomeTags.MONSOONAL) {
-                color = ColorHelper.simplyMixColor(color, 0.1f, originColor, 0.9f);
-            }
+            // if (biomeTagKey != ClimateTypeBiomeTags.SEASONAL
+            //         && biomeTagKey != ClimateTypeBiomeTags.MONSOONAL) {
+            //     color = ColorHelper.simplyMixColor(color, 0.1f, originColor, 0.9f);
+            // }
             return color;
         }
         return originColor;
@@ -121,7 +121,7 @@ public class BiomeColorsHandler {
             if (clientLevel != null && MapChecker.isValidDimension(clientLevel)) {
                 SolarHolders.getSaveDataLazy(clientLevel).ifPresent(data ->
                 {
-                    for (TagKey<Biome> biomeTagKey : ClimateTypeBiomeTags.BIOME_TYPES) {
+                    for (TagKey<Biome> biomeTagKey : ClimateTypeBiomeTags.BIOME_COLOR_TYPES) {
                         int[] newFoliageBuffer = new int[65536];
                         int[] newGrassBuffer = new int[65536];
                         int[] foliageBuffer = FoliageColor.pixels;
