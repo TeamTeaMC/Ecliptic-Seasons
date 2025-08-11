@@ -81,7 +81,7 @@ minecraft {
             // use for logger control
             property 'forgegradle.runs.dev', 'true'
 
-            jvmArgs "-Xmx3000M"
+            jvmArgs "-Xmx2048M"
             mods {
                 "${mod_id}" {
                     source sourceSets.main
@@ -231,7 +231,7 @@ dependencies {
     implementation fg.deobf("curse.maven:jade-324717:5072729")
     compileOnly fg.deobf("curse.maven:the-one-probe-245211:6106996")
 
-
+    implementation fg.deobf("curse.maven:patchouli-306770:6164575")
 
     compileOnly fg.deobf("libs:fabric-renderer-api-v1:3.2.1+cf68abbe77")
     compileOnly fg.deobf("libs:fabric-renderer-indigo:1.5.2+b5b2da4177")

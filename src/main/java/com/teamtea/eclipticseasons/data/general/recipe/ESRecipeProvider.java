@@ -1,19 +1,28 @@
 package com.teamtea.eclipticseasons.data.general.recipe;
 
 
+import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.common.registry.ItemRegistry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.*;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.ShapelessRecipe;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.crafting.CompoundIngredient;
+import net.minecraftforge.common.crafting.ConditionalRecipe;
 import net.minecraftforge.common.crafting.PartialNBTIngredient;
 import net.minecraftforge.common.crafting.StrictNBTIngredient;
+import net.minecraftforge.common.crafting.conditions.ModLoadedCondition;
+import net.minecraftforge.fml.ModList;
 
 import java.util.function.Consumer;
 
@@ -145,6 +154,23 @@ public final class ESRecipeProvider extends RecipeProvider {
                 .group("winter_greenhouse_core")
                 .unlockedBy("has_amethyst", has(Tags.Items.GEMS_AMETHYST))
                 .save(consumer);
+
+        // if (ModList.get().isLoaded("patchouli"))
+        {
+            ConditionalRecipe.builder().addCondition(new ModLoadedCondition("patchouli"))
+                    .addRecipe(c->{
+                        ItemStack defaultInstance = BuiltInRegistries.ITEM.get(new ResourceLocation("patchouli:guide_book")).getDefaultInstance();
+                        CompoundTag compoundTag = defaultInstance.getOrCreateTag();
+                        compoundTag.putString("patchouli:book","eclipticseasons:seasons_chronicle");
+                        // defaultInstance.set((DataComponentType) BuiltInRegistries.DATA_COMPONENT_TYPE.get(ResourceLocation.parse("patchouli:book")), (Object) ResourceLocation.parse("eclipticseasons:seasons_chronicle"));
+                        NBTShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, defaultInstance)
+                                .requires(Items.BOOK)
+                                .requires(Tags.Items.SEEDS)
+                                .group("seasons_chronicle")
+                                .unlockedBy("has_seeds", has(Tags.Items.SEEDS))
+                                .save(c, EclipticSeasons.rl("seasons_chronicle"));
+                    }).build(consumer, EclipticSeasons.rl("seasons_chronicle"));
+        }
     }
 
 

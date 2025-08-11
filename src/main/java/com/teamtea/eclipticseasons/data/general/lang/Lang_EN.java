@@ -427,6 +427,9 @@ public class Lang_EN extends LangHelper {
     }
 
     private void addInfo() {
+        add("patchouli_books.eclipticseasons.seasons_chronicle.name", "Seasons Chronicle");
+        add("patchouli_books.eclipticseasons.seasons_chronicle.landing_text", "Each season leaves a mark — the \"Chronicle of the Seasons\" records them all.");
+
         add("info.eclipticseasons.humidity_control", "Humidity Control");
         add("info.eclipticseasons.season_quest", "Seasonal Quest");
         add("info.eclipticseasons.humidity_control.below_need", "Needs %s below");

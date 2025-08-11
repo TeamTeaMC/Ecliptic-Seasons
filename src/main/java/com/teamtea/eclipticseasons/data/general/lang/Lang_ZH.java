@@ -428,6 +428,9 @@ public class Lang_ZH extends LangHelper {
     }
 
     private void addInfo() {
+        add("patchouli_books.eclipticseasons.seasons_chronicle.name", "岁时记");
+        add("patchouli_books.eclipticseasons.seasons_chronicle.landing_text", "每个季节都会留下印记——《岁时记》记录了这一切。");
+
         add("info.eclipticseasons.humidity_control", "湿度调节");
         add("info.eclipticseasons.season_quest", "季节任务");
         add("info.eclipticseasons.humidity_control.below_need", "需要下方有%s");

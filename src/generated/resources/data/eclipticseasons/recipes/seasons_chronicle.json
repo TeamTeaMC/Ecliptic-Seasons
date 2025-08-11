@@ -1,0 +1,30 @@
+{
+  "type": "forge:conditional",
+  "recipes": [
+    {
+      "conditions": [
+        {
+          "type": "forge:mod_loaded",
+          "modid": "patchouli"
+        }
+      ],
+      "recipe": {
+        "type": "minecraft:crafting_shapeless",
+        "category": "misc",
+        "group": "seasons_chronicle",
+        "ingredients": [
+          {
+            "item": "minecraft:book"
+          },
+          {
+            "tag": "forge:seeds"
+          }
+        ],
+        "result": {
+          "item": "patchouli:guide_book",
+          "nbt": "{\"patchouli:book\":\"eclipticseasons:seasons_chronicle\"}"
+        }
+      }
+    }
+  ]
+}

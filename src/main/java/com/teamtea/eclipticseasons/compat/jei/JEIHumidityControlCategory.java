@@ -213,7 +213,7 @@ public class JEIHumidityControlCategory implements IRecipeCategory<HumidityContr
                         blockRenderer.renderSingleBlock(blockState,
                                 guiGraphics.pose(),
                                 guiGraphics.bufferSource(), LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
-                        guiGraphics.flush();
+                        // guiGraphics.flush();
 
                     } catch (Throwable throwable) {
                         EclipticSeasons.logger(throwable);

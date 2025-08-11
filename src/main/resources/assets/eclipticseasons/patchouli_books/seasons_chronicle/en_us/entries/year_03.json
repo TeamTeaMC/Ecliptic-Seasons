@@ -1,0 +1,15 @@
+{
+  "name": "03 - Autumn",
+  "icon": "eclipticseasons:calendar",
+  "category": "eclipticseasons:core",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "The ancients once said, “I love the autumn than the spring.” Yet indeed, from this time, heat energy gradually weakens and becomes less favorable for plants.$(br)$(br)Autumn has less rainfall and fewer thunderstorms, with moderate humidity. It is generally suitable for the growth of tuber crops and the harvest of fruits and gourds, such as potatoes and pumpkins.$(br)$(br)Snow may occasionally fall, and in colder regions, it often arrives earlier."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "At $(l)Beginning of Autumn$(), the summer heat usually has not yet fully subsided, but by $(l)End of Heat$(), it improves.$(br)$(br)After $(l)White Dew$(), a slight chill sets in. By $(l)Autumnal Equinox$(), day and night are again equal, and from then on, the nights grow longer. The temperature drops quickly in autumn, so it is time to prepare for the harvest to endure the cold winter ahead.$(br)$(br)Finally come $(l)Cold Dew$() and $(l)First Frost$(), when the scenery turns ever more desolate."
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "name": "00 - Prologue",
+  "icon": "eclipticseasons:calendar",
+  "category": "eclipticseasons:core",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "In the beginning, heaven and earth opened; the sun traveled back and forth, the four seasons alternated, cold and heat succeeded each other. Thus arose the great cycle, divided into twenty-four parts.$(br)$(br)The way of heaven is such that even at its peak, it does not last long — a slight delay, and it begins to wane.$(br)$(br)Therefore, the Summer Solstice is not the hottest time, and the Winter Solstice is not the coldest day."
+    }
+  ]
+}

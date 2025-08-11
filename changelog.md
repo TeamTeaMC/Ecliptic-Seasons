@@ -1,3 +1,9 @@
+### 0.12.0-pre4-3
+
+- Added a new Patchouli guide, the _Seasons Chronicle_, craftable with seeds and a book.
+  It provides a brief introduction to the mod’s seasons, agriculture, regional differences, and explanations of certain terms.
+- Cauldrons, honey blocks, slime blocks, and composters are no longer treated as blocks that snow can pass through by default.
+
 ### 0.12.0-pre4-2
 
 - Split the tags used for Biome Rain and Biome Color (these can also be customized via resource packs or data packs).

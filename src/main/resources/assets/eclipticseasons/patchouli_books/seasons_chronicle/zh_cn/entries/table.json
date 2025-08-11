@@ -1,0 +1,14 @@
+{
+  "name": "07 - 附录",
+  "icon": "eclipticseasons:calendar",
+  "category": "eclipticseasons:core",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "$(l)二十四节气列表：$(br2)$(l)春季：$()立春、雨水、惊蛰、春分、清明、谷雨$(br)$(br)$(l)夏季：$()立夏、小满、芒种、夏至、小暑、大暑$(br)$(br)$(l)秋季：$()立秋、处暑、白露、秋分、寒露、霜降$(br)$(br)$(l)冬季：$()立冬、小雪、大雪、冬至、小寒、大寒"
+    },{
+      "type": "patchouli:text",
+      "text": "$(br)$(l)湿度列表：$(br2)$()干旱、干燥、一般、湿润、潮湿。"
+    }
+  ]
+}

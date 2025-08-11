@@ -1,0 +1,15 @@
+{
+  "name": "07 - Appendix",
+  "icon": "eclipticseasons:calendar",
+  "category": "eclipticseasons:core",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "$(l)List of the 24 Solar Terms:$(br2)$(l)Spring:$() Beginning of Spring, Rain Water, Insects Awakening, Spring Equinox, Fresh Green, Grain Rain$(br)$(br)$(l)Summer:$() Beginning of Summer, Lesser Fullness, Grain in Ear, Summer Solstice, Lesser Heat, Greater Heat$(br)$(br)$(l)Autumn:$() Beginning of Autumn, End of Heat, White Dew, Autumnal "
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Equinox, Cold Dew, First Frost$(br)$(br)$(l)Winter:$() Beginning of Winter, Light Snow, Heavy Snow, Winter Solstice, Lesser Cold, Greater Cold$(br)$(br)$(l)List of Humidity Levels:$(br2)$()Arid, Dry, Average, Moist, Humid."
+    }
+  ]
+}

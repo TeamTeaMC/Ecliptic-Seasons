@@ -1,0 +1,15 @@
+{
+  "name": "05 - Regional Differences",
+  "icon": "eclipticseasons:calendar",
+  "category": "eclipticseasons:core",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "You may have noticed that there are also some climatic differences between regions here. The most significant difference is in rainfall frequency, which greatly affects humidity conditions — for example, the wet and dry seasons of savannas, or the evenly distributed rainfall throughout the year in oceanic regions.$(br)$(br)In addition, there are actual seasonal differences, which are easy to tell apart."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "In hot regions, summers are longer; in cold regions, winters are longer. These factors can affect crop growth and animal reproduction (if applicable). $(br)$(br)As for snowfall, it generally depends on the annual average coldness of the region — sometimes in autumn, but more often only in winter.$(br)$(br)Different regions’ landscapes also vary accordingly: some remain unchanged all year round, while others have distinct seasons. You are free to find a place you like."
+    }
+  ]
+}

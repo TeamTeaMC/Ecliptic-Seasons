@@ -530,17 +530,17 @@ public class MapChecker {
                         onBlock instanceof FenceGateBlock ||
                         onBlock instanceof WallBlock ||
                         onBlock instanceof BellBlock ||
-                        onBlock instanceof ComposterBlock ||
+                        // onBlock instanceof ComposterBlock ||
                         onBlock instanceof CampfireBlock ||
-                        onBlock instanceof AbstractCauldronBlock ||
-                        onBlock instanceof DaylightDetectorBlock ||
+                        // onBlock instanceof AbstractCauldronBlock ||
+                        // onBlock instanceof DaylightDetectorBlock ||
                         onBlock instanceof AnvilBlock ||
                         onBlock instanceof BasePressurePlateBlock ||
-                        onBlock instanceof HoneyBlock ||
+                        // onBlock instanceof HoneyBlock ||
                         onBlock instanceof IronBarsBlock ||
                         onBlock instanceof LightningRodBlock ||
                         onBlock instanceof LecternBlock ||
-                        onBlock instanceof SlimeBlock ||
+                        // onBlock instanceof SlimeBlock ||
                         onBlock instanceof BambooStalkBlock
         )
         );

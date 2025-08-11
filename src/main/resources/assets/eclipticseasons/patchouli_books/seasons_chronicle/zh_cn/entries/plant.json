@@ -1,0 +1,96 @@
+{
+  "name": "06 - 农业",
+  "icon": "eclipticseasons:calendar",
+  "category": "eclipticseasons:core",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "作物的生长需要合适的季节和湿度条件，因此作物的生长速度会随着节气和湿度条件的波动而变化。$(br)$(br)不过一般而言，由于大多数作物都适合在中间的湿润度生长，而大部分区域的湿度也并不极端，因此往往只需要在合适的时候种植具有季节适应性的作物即可。$(br)$(br)这便是所谓顺应天时。"
+    },
+    {
+      "type": "patchouli:multiblock",
+      "name": "温室",
+      "multiblock": {
+        "pattern": [
+          [
+            "GGGGG",
+            "GGGGG",
+            "GGGGG",
+            "GGGGG",
+            "GGGGG"
+          ],
+          [
+            "GGGGG",
+            "G   G",
+            "G O G",
+            "G   G",
+            "GGGGG"
+          ],
+          [
+            "GGGGG",
+            "G   G",
+            "G   G",
+            "G  PG",
+            "GGSGG"
+          ],
+          [
+            "GGGGG",
+            "GWWWG",
+            "GWWWG",
+            "GWWQG",
+            "GGRGG"
+          ],
+          [
+            "DDDDD",
+            "DFFFD",
+            "DF0FD",
+            "DFFFD",
+            "DDDDD"
+          ]
+        ],
+        "mapping": {
+          "0": "minecraft:farmland",
+          "G": "minecraft:glass",
+          "F": "minecraft:farmland",
+          "D": "minecraft:grass_block",
+          "R": "minecraft:oak_door[half=lower,open=false]",
+          "S": "minecraft:oak_door[half=upper,open=false]",
+          "W": "minecraft:wheat[age=6]",
+          "O": "eclipticseasons:spring_greenhouse_core",
+          "P": "eclipticseasons:block_in_wooden_grate_block[waterlogged=false]{inner_block:\"minecraft:wet_sponge\",time:0}",
+          "Q": "minecraft:campfire"
+        }
+      },
+      "text": "但如果急需种植某些不适合当前环境的作物，我们便需要建造温室了。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "温室的建造方法",
+      "text": "温室的构建并没有什么限制，只需要是一个相对封闭的空间即可，一般推荐用透光性较好的坚固材料作为墙壁和天花板，如玻璃。$(br)$(br)为了确保作物能够四季生长，我们需要使用季节核心，季节核心与作物的偏好季节对应。如种植小麦可以使用春季或者夏季核心。$(br)$(br)核心可以由相应心髓合成此外，也可以右键放入或者潜行右键取出。"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "季节心髓的获取方式默认是完成进度或者季节任务，在整合包中需根据任务指引。$(br)$(br)偶尔也会湿度不适宜，这时只能放置格栅方块，通过右键放入海绵或者湿海绵（需要软热源方块，如营火）来调节范围湿度，更多请查看JEI插件。$(br)$(br)使用生长检测器可以检查作物是否适合这个温室。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "动物的季节变化",
+      "text": "$(o)这是一个可选功能。$()$(br)$(br)动物们也会有繁衍季节限制，注意实际的季节取决于地区，请查看$(l:region)地区性差异$()一节。一个特别的变化是不能再随时取牛奶了，必须在其繁殖季节才可以。$(br)$(br)另外一个变化是蜜蜂，蜜蜂仅仅在春天采蜜，且在冬天时会不再出来。$(br)$(br)而对于渔业而言事情则相当简单，请留个鱼儿们一个休息的时间吧，现在若不是夏天或者较好的天气，那么捕鱼的收获将会损失。"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "eclipticseasons:greenhouse_core_container",
+      "recipe2": "eclipticseasons:spring_greenhouse_core"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "eclipticseasons:summer_greenhouse_core",
+      "recipe2": "eclipticseasons:autumn_greenhouse_core"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "eclipticseasons:winter_greenhouse_core",
+      "recipe2": "eclipticseasons:block_in_wooden_grate_block"
+    }
+  ]
+}
