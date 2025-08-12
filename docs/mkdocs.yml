@@ -14,9 +14,9 @@ nav:
   - Home:
       - English:
           - Index: 'en/index.md'
+          - Season: 'en/season.md'
           - Climate: 'en/climate.md'
           - Crop: 'en/crop.md'
-#          - Compatibility: 'en/compat.md'
           - Configuration: 'en/configuration.md'
           - Datapack Base: 'en/datapack.md'
           - Frequent Question: 'en/question.md'
@@ -40,9 +40,9 @@ nav:
               - Season Quests: 'en/data/season_quest.md'
       - 中文:
           - 首页: 'zh/index.md'
+          - 季节: 'zh/season.md'
           - 气候: 'zh/climate.md'
           - 作物: 'zh/crop.md'
-#          - 兼容性: 'zh/compat.md'
           - 配置: 'zh/configuration.md'
           - 数据包基本: 'zh/datapack.md'
           - 常见问题: 'zh/question.md'
