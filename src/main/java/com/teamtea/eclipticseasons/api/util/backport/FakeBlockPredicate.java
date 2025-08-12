@@ -32,12 +32,14 @@ public record FakeBlockPredicate(Optional<HolderSet<Block>> blocks, Optional<Fak
                 && (this.properties.isEmpty() || this.properties.get().matches(state));
     }
 
-    public boolean matches(Level level, BlockPos blockPos) {
-        return matches(level.getBlockState(blockPos));
+    public boolean matches(Level level, BlockPos pos) {
+        if (!level.isLoaded(pos))
+            return false;
+        return matches(level.getBlockState(pos));
     }
 
 
     public HolderSet<Block> getBlocks() {
-        return blocks.isPresent() ? blocks.get() : HolderSet.direct();
+        return blocks.orElseGet(HolderSet::direct);
     }
 }

@@ -898,11 +898,11 @@ public final class CropGrowthHandler {
         }
     }
 
-    public static void handleRandomTick(ServerLevel level, BlockPos blockPos, BlockState blockState, List<WetterStructure> wetterStructureList) {
+    public static void handleRandomTick(ServerLevel level, BlockPos pos, BlockState state, List<WetterStructure> wetterStructureList) {
         SolarDataManager saveData = SolarHolders.getSaveData(level);
         if (saveData == null) return;
-        HumidityControlProvider humidityControlProvider = saveData.queryHumidityControlProvider(blockPos);
-        if (humidityControlProvider != null && humidityControlProvider.getRemainTime() > 0) return;
+        // HumidityControlProvider humidityControlProvider = saveData.queryHumidityControlProvider(pos);
+        // if (humidityControlProvider != null && humidityControlProvider.getRemainTime() > 0) return;
         boolean hasFound = false;
         WetterStructure needAdd = null;
         for (int j = 0, wetterStructuresSize = wetterStructureList.size(); j < wetterStructuresSize; j++) {
@@ -910,14 +910,14 @@ public final class CropGrowthHandler {
             boolean needSkip = false;
             //         structure.core().isEmpty()
             //         || (structure.core().get().blocks().isEmpty())
-            //         || (!structure.core().get().blocks().get().contains(blockState.getBlockHolder()));
+            //         || (!structure.core().get().blocks().get().contains(state.getBlockHolder()));
             // if (!needSkip) {
-            //     // HumidityControlProvider humidityControlProvider = saveData.queryHumidityControlProvider(blockPos);
+            //     // HumidityControlProvider humidityControlProvider = saveData.queryHumidityControlProvider(pos);
             //     // if (humidityControlProvider != null) needSkip = true;
             // }
             if (!needSkip) {
                 if (structure.enableAirCheck()) {
-                    needSkip = level.getBlockState(blockPos).isAir();
+                    needSkip = !level.getBlockState(pos.above()).isAir();
                 }
             }
             if (!needSkip) {
@@ -926,11 +926,11 @@ public final class CropGrowthHandler {
                     PosAndBlockStateCheck check = blockStatePredicate.get(i);
                     // BlockState stateTested;
                     // if (check.offset().equals(Vec3i.ZERO)) {
-                    //     stateTested = blockState;
+                    //     stateTested = state;
                     // } else {
-                    //     stateTested = chunk.getBlockState(blockPos.offset(check.offset()));
+                    //     stateTested = chunk.getBlockState(pos.offset(check.offset()));
                     // }
-                    if (!check.block().matches(level, blockPos.offset(check.offset()))) {
+                    if (!check.block().matches(level, pos.offset(check.offset()))) {
                         needSkip = true;
                         break;
                     }
@@ -943,11 +943,14 @@ public final class CropGrowthHandler {
             }
         }
         if (hasFound) {
-            saveData.addHumidityControlProvider(blockPos, new HumidityControlProvider(
+            // if(humidityControlProvider!=null) {
+            //     saveData.removeHumidityControlProvider(pos);
+            // }
+            saveData.addHumidityControlProvider(pos, new HumidityControlProvider(
                     needAdd.level(), needAdd.range() * needAdd.range(), needAdd.lastingTime()
             ));
             // todo 后续激活更新
-            // level.scheduleTick(blockPos, blockState.getBlock(), needAdd.lastingTime());
+            // level.scheduleTick(pos, state.getBlock(), needAdd.lastingTime());
         }
     }
 
