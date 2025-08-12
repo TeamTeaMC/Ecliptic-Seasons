@@ -4,7 +4,6 @@ import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.event.SolarTermChangeEvent;
-import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.api.util.SimpleUtil;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
@@ -254,7 +253,7 @@ public class SolarDataManager extends SavedData {
         return null;
     }
 
-    public int calculateHumidityModification(BlockPos blockPos) {
+    public float calculateHumidityModification(BlockPos blockPos) {
         ChunkPos chunkPos = new ChunkPos(blockPos);
         Vec3 center = blockPos.getCenter();
 
@@ -266,7 +265,7 @@ public class SolarDataManager extends SavedData {
         boolean isFrontBorder = localZ <= 6;
         boolean isBackBorder = localZ >= 7;
 
-        int result = 0;
+        float result = 0;
         for (int dx = isLeftBorder ? -1 : 0; dx <= (isRightBorder ? 1 : 0); dx++) {
             for (int dz = isFrontBorder ? -1 : 0; dz <= (isBackBorder ? 1 : 0); dz++) {
                 ChunkPos currentChunkPos = new ChunkPos(chunkPos.x + dx, chunkPos.z + dz);
@@ -356,7 +355,7 @@ public class SolarDataManager extends SavedData {
         return greenHouseCoreProvider;
     }
 
-    public void randomClearSome(ChunkPos pos, RandomSource randomSource) {
+    public void tickChunk(ChunkPos pos, RandomSource randomSource) {
         if (this.humidityCoreMap.isEmpty()) return;
         List<Pair<BlockPos, HumidityControlProvider>> list = this.humidityCoreMap.get(pos.toLong());
         if (list != null) {

@@ -5,6 +5,7 @@ import com.teamtea.eclipticseasons.api.constant.tag.EclipticBlockTags;
 import com.teamtea.eclipticseasons.api.data.craft.HumidityControl;
 import com.teamtea.eclipticseasons.api.data.craft.WrapSizeIngredient;
 import com.teamtea.eclipticseasons.api.data.misc.PosAndBlockStateCheck;
+import com.teamtea.eclipticseasons.api.util.backport.FakeBlockPredicate;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.Vec3i;
 import net.minecraft.core.registries.Registries;
@@ -30,7 +31,7 @@ public class HumidityControlRegistry {
 
         context.register(wet_sponge, new HumidityControl(
                 new WrapSizeIngredient(HolderSet.direct(Items.WET_SPONGE.builtInRegistryHolder()), 1), Items.SPONGE.getDefaultInstance(), 5, 1, 20 * 300, List.of(
-                new PosAndBlockStateCheck(new Vec3i(0, -1, 0), context.lookup(Registries.BLOCK).getOrThrow(EclipticBlockTags.SOFT_HEAT_SOURCES))
+                new PosAndBlockStateCheck(new Vec3i(0, -1, 0), new FakeBlockPredicate(context.lookup(Registries.BLOCK).getOrThrow(EclipticBlockTags.SOFT_HEAT_SOURCES)))
         ), true
         ));
     }

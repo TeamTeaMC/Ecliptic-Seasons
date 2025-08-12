@@ -105,8 +105,8 @@ public class JEIHumidityControlCategory implements IRecipeCategory<HumidityContr
                 .addIngredients(Ingredient.of(BlockRegistry.block_in_wooden_grate_block.get()));
 
         for (PosAndBlockStateCheck check : recipe.checks()) {
-            if (check.block().size() > 0) {
-                for (Holder<Block> blockHolder : check.block()) {
+            if (check.block().getBlocks().size() > 0) {
+                for (Holder<Block> blockHolder : check.block().getBlocks()) {
                     builder.addInvisibleIngredients(RecipeIngredientRole.CATALYST)
                             .addIngredients(Ingredient.of(blockHolder.value()));
                 }
@@ -125,9 +125,9 @@ public class JEIHumidityControlCategory implements IRecipeCategory<HumidityContr
                 && mouseY > 4 && mouseY < 60) {
             int currentTimeMillis = (int) ((System.currentTimeMillis()) % Integer.MAX_VALUE) / 2000;
             for (PosAndBlockStateCheck check : recipe.checks()) {
-                if ( check.block().size() > 0) {
-                    int index = currentTimeMillis % check.block().size();
-                    Holder<Block> blockHolder = check.block().get(index);
+                if ( check.block().getBlocks().size() > 0) {
+                    int index = currentTimeMillis % check.block().getBlocks().size();
+                    Holder<Block> blockHolder = check.block().getBlocks().get(index);
 
                     if (check.offset().getY() == -1 && check.offset().getX() == 0 && check.offset().getZ() == 0) {
                         tooltip.add(Component.translatable("info.eclipticseasons.humidity_control.below_need",blockHolder.value().getName().withStyle(ChatFormatting.GRAY)));
@@ -141,7 +141,7 @@ public class JEIHumidityControlCategory implements IRecipeCategory<HumidityContr
                     IIngredientRenderer<ItemStack> renderer = ingredientManager.getIngredientRenderer(blockHolder.value().asItem().getDefaultInstance());
 
                     List<ItemStack> stacks=new ArrayList<>();
-                    for (Holder<Block> holder : check.block()) {
+                    for (Holder<Block> holder : check.block().getBlocks()) {
                         stacks.add(holder.value().asItem().getDefaultInstance());
                     }
                     tooltip.add(new TagContentTooltipComponent<>(renderer,stacks));
@@ -188,9 +188,9 @@ public class JEIHumidityControlCategory implements IRecipeCategory<HumidityContr
         // guiGraphics.pose().popPose();
         int currentTimeMillis = (int) ((System.currentTimeMillis()) % Integer.MAX_VALUE) / 2000;
         for (PosAndBlockStateCheck check : recipe.checks()) {
-            if (check.block().size() > 0) {
-                int index = currentTimeMillis % check.block().size();
-                Holder<Block> blockHolder = check.block().get(index);
+            if (check.block().getBlocks().size() > 0) {
+                int index = currentTimeMillis % check.block().getBlocks().size();
+                Holder<Block> blockHolder = check.block().getBlocks().get(index);
                 guiGraphics.pose().pushPose();
                 guiGraphics.pose().translate(16 * check.offset().getX(), -16 * check.offset().getY(), 16 * check.offset().getZ());
                 float x = 7f;

@@ -13,13 +13,16 @@ import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.constant.tag.EclipticBlockTags;
 import com.teamtea.eclipticseasons.api.data.climate.AgroClimaticZone;
+import com.teamtea.eclipticseasons.api.data.craft.WetterStructure;
 import com.teamtea.eclipticseasons.api.data.crop.CropGrow;
 import com.teamtea.eclipticseasons.api.data.crop.CropGrowControl;
 import com.teamtea.eclipticseasons.api.data.crop.CropGrowControlBuilder;
 import com.teamtea.eclipticseasons.api.data.crop.GrowParameter;
+import com.teamtea.eclipticseasons.api.data.misc.PosAndBlockStateCheck;
 import com.teamtea.eclipticseasons.api.event.CanPlantGrowEvent;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.api.util.SimpleUtil;
+import com.teamtea.eclipticseasons.api.util.backport.FakeBlockPredicate;
 import com.teamtea.eclipticseasons.api.util.backport.FakeStatePropertiesPredicate;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
@@ -28,12 +31,10 @@ import com.teamtea.eclipticseasons.common.registry.AgroClimateRegistry;
 import com.teamtea.eclipticseasons.common.registry.CropRegistry;
 import com.teamtea.eclipticseasons.common.registry.ESRegistries;
 import com.teamtea.eclipticseasons.config.CommonConfig;
+import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.core.*;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.nbt.NbtOps;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -108,6 +109,8 @@ public final class CropGrowthHandler {
         }
     }
 
+    private final static Map<Block, List<WetterStructure>> wetterStructures = new IdentityHashMap<>();
+
     private final static Map<Biome, Holder<AgroClimaticZone>> cropClimateTypeMap = new IdentityHashMap<>();
     private final static Map<ResourceLocation, CropGrowControlBuilder> builderCachMap = new HashMap<>();
     private final static Map<Block, Map<Holder<AgroClimaticZone>, CropGrowControl>> CROP_GROW_MAP = new IdentityHashMap<>();
@@ -117,6 +120,26 @@ public final class CropGrowthHandler {
 
     public static void resetUpdate(RegistryAccess registryAccess, boolean isServer) {
 
+        if (isServer) {
+
+            Optional<Registry<WetterStructure>> structures = registryAccess.registry(ESRegistries.WETTER);
+            if (structures.isPresent()) {
+                wetterStructures.clear();
+                for (WetterStructure structure : structures.get()) {
+                    HolderSet<Block> holders = structure.core().isPresent()
+                            && structure.core().get().blocks().isPresent() ?
+                            structure.core().get().blocks().get() : HolderSet.direct(Blocks.AIR.builtInRegistryHolder());
+                    for (Holder<Block> holder : holders) {
+                        wetterStructures.compute(holder.value(),
+                                (block, wetterStructures1) -> {
+                                    wetterStructures1 = wetterStructures1 == null ? new ArrayList<>() : wetterStructures1;
+                                    wetterStructures1.add(structure);
+                                    return wetterStructures1;
+                                });
+                    }
+                }
+            }
+        }
         long startTime = System.currentTimeMillis();
 
         if (isServer) {
@@ -563,7 +586,7 @@ public final class CropGrowthHandler {
                     }
                 } else {
                     SolarDataManager data = SolarHolders.getSaveData(level);
-                    int modification = data == null ? 0 : data.calculateHumidityModification(pos);
+                    float modification = data == null ? 0 : data.calculateHumidityModification(pos);
 
                     if (modification != 0) {
                         roomStatus = isInRoom(level, pos, blockState, growControl.notGreenHouse()) ? RoomStatus.GREEN_HOUSE : RoomStatus.NORMAL;
@@ -586,11 +609,11 @@ public final class CropGrowthHandler {
                 if (f == 0) {
                     flag = CANCEL;
                 } else if (f > 1.0F) {
-                    flag=((f * baseGrowthChance * 1000) - 1000 > randomKey) ? GROW : PASS;
+                    flag = ((f * baseGrowthChance * 1000) - 1000 > randomKey) ? GROW : PASS;
                 } else {
                     if (f == 1.0F || randomKey < 1000 * f) {
                     } else {
-                        flag=CANCEL;
+                        flag = CANCEL;
                     }
                 }
                 setResult(event, flag, growParameter);
@@ -875,10 +898,89 @@ public final class CropGrowthHandler {
         }
     }
 
-    public static void handleRandomTick2(Level level, LevelChunk chunk) {
+    public static void handleRandomTick(ServerLevel level, BlockPos blockPos, BlockState blockState, List<WetterStructure> wetterStructureList) {
+        SolarDataManager saveData = SolarHolders.getSaveData(level);
+        if (saveData == null) return;
+        HumidityControlProvider humidityControlProvider = saveData.queryHumidityControlProvider(blockPos);
+        if (humidityControlProvider != null && humidityControlProvider.getRemainTime() > 0) return;
+        boolean hasFound = false;
+        WetterStructure needAdd = null;
+        for (int j = 0, wetterStructuresSize = wetterStructureList.size(); j < wetterStructuresSize; j++) {
+            WetterStructure structure = wetterStructureList.get(j);
+            boolean needSkip = false;
+            //         structure.core().isEmpty()
+            //         || (structure.core().get().blocks().isEmpty())
+            //         || (!structure.core().get().blocks().get().contains(blockState.getBlockHolder()));
+            // if (!needSkip) {
+            //     // HumidityControlProvider humidityControlProvider = saveData.queryHumidityControlProvider(blockPos);
+            //     // if (humidityControlProvider != null) needSkip = true;
+            // }
+            if (!needSkip) {
+                if (structure.enableAirCheck()) {
+                    needSkip = level.getBlockState(blockPos).isAir();
+                }
+            }
+            if (!needSkip) {
+                List<PosAndBlockStateCheck> blockStatePredicate = structure.blockStatePredicate();
+                for (int i = 0, blockStatePredicateSize = blockStatePredicate.size(); i < blockStatePredicateSize; i++) {
+                    PosAndBlockStateCheck check = blockStatePredicate.get(i);
+                    // BlockState stateTested;
+                    // if (check.offset().equals(Vec3i.ZERO)) {
+                    //     stateTested = blockState;
+                    // } else {
+                    //     stateTested = chunk.getBlockState(blockPos.offset(check.offset()));
+                    // }
+                    if (!check.block().matches(level, blockPos.offset(check.offset()))) {
+                        needSkip = true;
+                        break;
+                    }
+                }
+            }
+            if (!needSkip) {
+                hasFound = true;
+                needAdd = structure;
+                break;
+            }
+        }
+        if (hasFound) {
+            saveData.addHumidityControlProvider(blockPos, new HumidityControlProvider(
+                    needAdd.level(), needAdd.range() * needAdd.range(), needAdd.lastingTime()
+            ));
+            // todo 后续激活更新
+            // level.scheduleTick(blockPos, blockState.getBlock(), needAdd.lastingTime());
+        }
+    }
+
+    public static List<WetterStructure> validTick(BlockState state) {
+        List<WetterStructure> wetterStructureList = wetterStructures.getOrDefault(state.getBlock(), List.of());
+        List<WetterStructure> wetterStructureListFilter = null;
+        // boolean air = state.getBlock() == Blocks.AIR;
+        for (WetterStructure wetterStructure : wetterStructureList) {
+            boolean use = false;
+            if (wetterStructure.core().isPresent() && wetterStructure.core().get().blocks().isPresent()
+                // || air
+            ) {
+                FakeBlockPredicate blockPredicate = wetterStructure.core().get();
+                // HolderSet<Block> holders = blockPredicate.blocks().get();
+                if (blockPredicate.matches(state)) {
+                    use = true;
+                }
+            } else {
+                use = true;
+            }
+            if (use) {
+                if (wetterStructureListFilter == null) wetterStructureListFilter = new ArrayList<>();
+                wetterStructureListFilter.add(wetterStructure);
+            }
+        }
+        return wetterStructureListFilter == null ? List.of() :
+                wetterStructureList.size() == wetterStructureListFilter.size() ? wetterStructureList : wetterStructureListFilter;
+    }
+
+    public static void handleChunkTick(Level level, LevelChunk chunk) {
         SolarDataManager saveData = SolarHolders.getSaveData(level);
         if (saveData != null) {
-            saveData.randomClearSome(chunk.getPos(), level.getRandom());
+            saveData.tickChunk(chunk.getPos(), level.getRandom());
         }
     }
 

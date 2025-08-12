@@ -1,3 +1,9 @@
+### 0.12.0-pre5
+
+- Optimized the environmental passive as a humidity adjustment mechanism, now by default adding magma bubble columns that can randomly increase humidity. Developers can refer to the wetter datapack for details.
+- Added the `eclipticseasons:volatile` tag to mark non-plant blocks that require random ticks to be enabled (can be used in conjunction with environmental passive adjustment).
+- The humidity control datapack now also supports state checks, similar to the crop datapack.
+
 ### 0.12.0-pre4-3
 
 - Added a new Patchouli guide, the _Seasons Chronicle_, craftable with seeds and a book.

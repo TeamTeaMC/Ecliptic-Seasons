@@ -23,7 +23,6 @@ import net.minecraft.util.valueproviders.IntProvider;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.storage.WritableLevelData;
@@ -90,7 +89,7 @@ public abstract class MixinServerLevel extends Level {
             at = @At(value = "HEAD")
     )
     private void eclipticseasons$tickChunk_handleRandomTick_clear(LevelChunk chunk, int randomTickSpeed, CallbackInfo ci) {
-        CropGrowthHandler.handleRandomTick2(this, chunk);
+        CropGrowthHandler.handleChunkTick(this, chunk);
     }
 
     @WrapOperation(

@@ -3,11 +3,11 @@ package com.teamtea.eclipticseasons.common.core.crop;
 
 public final class HumidityControlProvider {
     private float range;
-    private int level;
+    private float level;
     private int remainTime;
 
 
-    public HumidityControlProvider(int level, float range, int remainTime) {
+    public HumidityControlProvider(float level, float range, int remainTime) {
         this.level = level;
         this.range = range;
         this.remainTime = remainTime;
@@ -25,11 +25,11 @@ public final class HumidityControlProvider {
         this.remainTime = remainTime;
     }
 
-    public int getLevel() {
+    public float getLevel() {
         return level;
     }
 
-    public void setLevel(int level) {
+    public void setLevel(float level) {
         this.level = level;
     }
 

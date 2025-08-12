@@ -14,6 +14,7 @@ import java.util.concurrent.CompletableFuture;
 public class DatapackRegistryGenerator extends DatapackBuiltinEntriesProvider {
 
     public static final RegistrySetBuilder REGISTRY_SET_BUILDER = new RegistrySetBuilder()
+            .add(ESRegistries.WETTER, WetterStructureRegistry::bootstrap)
             .add(ESRegistries.CROP, CropRegistry::bootstrap)
             .add(ESRegistries.AGRO_CLIMATE, AgroClimateRegistry::bootstrap)
             .add(ESRegistries.BIOME_CLIMATE_SETTING, BiomeClimateSettingsRegistry::bootstrap)

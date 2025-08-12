@@ -176,7 +176,7 @@ public class GrowthDetectorItem extends Item {
                             result = 1f;
                             return result;
                         }
-                        int modification;
+                        float modification;
                         if (CommonConfig.Crop.simpleGreenHouse.get()) {
                             modification = 0;
                         } else {
