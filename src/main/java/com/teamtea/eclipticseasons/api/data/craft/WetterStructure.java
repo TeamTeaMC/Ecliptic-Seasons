@@ -14,10 +14,9 @@ import java.util.Optional;
 /**
 * Better for define a structure with a rare grow_chance for start check which would cost much time and depend on random tick.
 **/
-// note 一个考虑是其实可以作为软加载的随机刻查询，当有作物申请湿润度调整时，才对区块进行随机扫描，并限时消失
-@TestOnly
+// @TestOnly
 // @Deprecated(forRemoval = true)
-@Beta
+// @Beta
 @ApiStatus.Experimental
 // @SuppressWarnings("removal")
 public record WetterStructure(

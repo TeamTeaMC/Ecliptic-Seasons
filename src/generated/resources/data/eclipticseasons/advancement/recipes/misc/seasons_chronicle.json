@@ -1,0 +1,38 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "patchouli"
+    }
+  ],
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_seeds": {
+      "conditions": {
+        "items": [
+          {
+            "items": "#c:seeds"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "eclipticseasons:seasons_chronicle"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_seeds"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "eclipticseasons:seasons_chronicle"
+    ]
+  }
+}

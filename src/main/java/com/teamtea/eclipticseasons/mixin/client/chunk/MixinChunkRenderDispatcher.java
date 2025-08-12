@@ -42,7 +42,7 @@ public abstract class MixinChunkRenderDispatcher {
         //     bufferbuilder = new BufferBuilder(bytebufferbuilder, VertexFormat.Mode.QUADS, DefaultVertexFormat.BLOCK);
         //     pBufferLayers.put(pRenderType, bufferbuilder);
         // }
-        throw  new UnsupportedOperationException();
+        throw new UnsupportedOperationException();
     }
 
     @Inject(
@@ -69,7 +69,7 @@ public abstract class MixinChunkRenderDispatcher {
             randomsource.setSeed(original);
             extendBlockView.setSnowModel(ExtraModelManager.findModel(renderChunkRegion, blockpos2, blockstate, randomsource, original, extendBlockView.getModelCheckPos()));
             if (extendBlockView.getSnowModel() != null) {
-                extendBlockView.setCurrentModelReplaceable(ExtraModelManager.isModelReplaceable(blockstate, renderChunkRegion, blockpos2,extendBlockView.getSnowModel()));
+                extendBlockView.setCurrentModelReplaceable(ExtraModelManager.isModelReplaceable(blockstate, renderChunkRegion, blockpos2, extendBlockView.getSnowModel()));
                 extendBlockView.setShouldCollectBakeQuads(ExtraModelManager.isSpecialCTMBlock(blockstate));
             } else {
                 extendBlockView.setCurrentModelReplaceable(false);

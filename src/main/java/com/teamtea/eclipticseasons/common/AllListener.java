@@ -21,11 +21,8 @@ import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LightLayer;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -40,8 +37,6 @@ import net.neoforged.neoforge.event.server.ServerAboutToStartEvent;
 import net.neoforged.neoforge.event.server.ServerStoppingEvent;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
-
-import java.util.Optional;
 
 @EventBusSubscriber(modid = EclipticSeasonsApi.MODID)
 public class AllListener {
@@ -227,7 +222,7 @@ public class AllListener {
     @SubscribeEvent
     public static void onPlayerTickPre(PlayerTickEvent.Pre event) {
         if (event.getEntity() instanceof ServerPlayer serverPlayer) {
-            WeatherManager.tickPlayerSeasonEffecct(serverPlayer);
+            WeatherManager.tickPlayerSeasonEffect(serverPlayer);
             // WeatherManager.tickPlayerForSeasonCheck(serverPlayer);
         }
     }

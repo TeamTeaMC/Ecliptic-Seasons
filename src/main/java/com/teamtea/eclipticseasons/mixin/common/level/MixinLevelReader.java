@@ -20,7 +20,8 @@ public interface MixinLevelReader {
     default int eclipticseasons$getMaxLocalRawBrightness(int amount, @Local(argsOnly = true) BlockPos pPos) {
         if (this instanceof Level level
                 && EclipticUtil.hasLocalWeather(level)
-                && MapChecker.isLoadNearByOnlyServer(level, pPos)) {
+                && MapChecker.isLoadNearByOnlyServer(level, pPos)
+        ) {
             amount = WeatherManager.getSkyDarken(level, pPos, amount);
         }
         return amount;

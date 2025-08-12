@@ -91,7 +91,10 @@ public final class ClientEventHandler {
                 event.getToolTip().addAll(CropGrowthHandler.appendInfo(
                         event.getContext().level(),
                         blockItem.getBlock().defaultBlockState()));
-            } else if (event.getItemStack().getItem() instanceof SpawnEggItem blockItem) {
+            } else {
+                event.getToolTip().addAll(CropInfoManager.appendInfo(event.getItemStack().getItem()));
+            }
+            if (event.getItemStack().getItem() instanceof SpawnEggItem blockItem) {
                 event.getToolTip().addAll(AnimalHooks.getBreedInfo(
                         blockItem.getType(event.getItemStack())));
             }

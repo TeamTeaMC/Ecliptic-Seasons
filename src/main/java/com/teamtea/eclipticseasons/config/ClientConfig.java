@@ -17,7 +17,6 @@ public class ClientConfig {
         Particle.load(builder);
         Weather.load(builder);
         CompatModule.ClientConfig.load(builder);
-
     }
 
     public static class Debug {
@@ -41,12 +40,14 @@ public class ClientConfig {
 
     public static class GUI {
         public static ModConfigSpec.BooleanValue agriculturalInformation;
+        public static ModConfigSpec.BooleanValue itemInformation;
 
         private static void load(ModConfigSpec.Builder builder) {
             builder.push("GUI");
-
             agriculturalInformation = builder.comment("Displays the season and humidity levels suitable for growing crops.")
                     .define("AgriculturalInformation", true);
+            itemInformation = builder.comment("Displays the use or source of a item.")
+                    .define("ItemInformation", true);
             builder.pop();
         }
     }
@@ -85,7 +86,7 @@ public class ClientConfig {
 
 
             realisticSnowyChange = builder.comment("Snow cover updates with a delay after block changes, making it look more natural. This uses more performance. Do not enable if the common config’s 'RealisticSnowyChange' is also enabled.")
-                    .define("RealisticSnowyChange", true);
+                    .define("RealisticSnowyChange", false);
             snowUnderFence = builder.comment("Blocks underneath fences etc. may also be covered with snow.")
                     .define("SnowUnderFence", true);
             snowUnderTree = builder.comment("Blocks under tree may also be covered with snow, note that this is only a client-side effect.")

@@ -150,5 +150,16 @@ public class SnowDefinitionsRegistry {
 
         addPlant(context, Blocks.PITCHER_CROP, MapChecker.FLAG_CUSTOM_JSON_PLANTS);
         addPlant(context, Blocks.PITCHER_PLANT, MapChecker.FLAG_CUSTOM_JSON_PLANTS);
+
+        addPlant(context, Blocks.BEETROOTS);
+        addPlant(context, Blocks.CARROTS);
+        addPlant(context, Blocks.POTATOES);
+        addPlant(context, Blocks.WHEAT);
+
+
+        addPlant(context, Blocks.MELON_STEM);
+        addPlant(context, Blocks.ATTACHED_MELON_STEM);
+        addPlant(context, Blocks.PUMPKIN_STEM);
+        addPlant(context, Blocks.ATTACHED_PUMPKIN_STEM);
     }
 }

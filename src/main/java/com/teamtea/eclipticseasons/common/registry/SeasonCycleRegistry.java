@@ -23,9 +23,10 @@ import java.util.List;
 public class SeasonCycleRegistry {
 
     public static final ResourceKey<SeasonCycle> MONSOON = createKey("monsoon");
-    public static final ResourceKey<SeasonCycle> RAINY = createKey("rainy");
-    public static final ResourceKey<SeasonCycle> DESERT = createKey("desert");
+    // public static final ResourceKey<SeasonCycle> RAINY = createKey("rainy");
+    // public static final ResourceKey<SeasonCycle> DESERT = createKey("desert");
     public static final ResourceKey<SeasonCycle> COLD = createKey("cold");
+    public static final ResourceKey<SeasonCycle> HOT = createKey("hot");
 
     private static ResourceKey<SeasonCycle> createKey(String name) {
         return ResourceKey.create(ESRegistries.SEASON_CYCLE, EclipticSeasons.rl(name));
@@ -89,23 +90,26 @@ public class SeasonCycleRegistry {
                         .build()
         ));
 
-        context.register(RAINY, new SeasonCycle(
-                and(getter.getOrThrow(Tags.Biomes.IS_HOT_OVERWORLD),
-                        getter.getOrThrow(Tags.Biomes.IS_WET_OVERWORLD),
-                        not(lazyLookup, getter.getOrThrow(ClimateTypeBiomeTags.MONSOONAL)))
-                ,
-                SolarTermValueMap.
-                        <Holder<SeasonPhase>>builder().defaultValue(lookuped.getOrThrow(SeasonPhaseRegistry.RAIN)).build()
-        ));
-
-        context.register(DESERT, new SeasonCycle(
-                getter.getOrThrow(Tags.Biomes.IS_DESERT),
-                SolarTermValueMap.
-                        <Holder<SeasonPhase>>builder().defaultValue(lookuped.getOrThrow(SeasonPhaseRegistry.DRY)).build()
-        ));
+        // context.register(RAINY, new SeasonCycle(
+        //         and(getter.getOrThrow(Tags.Biomes.IS_HOT_OVERWORLD),
+        //                 getter.getOrThrow(Tags.Biomes.IS_WET_OVERWORLD),
+        //                 not(lazyLookup, getter.getOrThrow(ClimateTypeBiomeTags.MONSOONAL)))
+        //         ,
+        //         SolarTermValueMap.
+        //                 <Holder<SeasonPhase>>builder().defaultValue(lookuped.getOrThrow(SeasonPhaseRegistry.RAIN)).build()
+        // ));
+        //
+        // context.register(DESERT, new SeasonCycle(
+        //         getter.getOrThrow(Tags.Biomes.IS_DESERT),
+        //         SolarTermValueMap.
+        //                 <Holder<SeasonPhase>>builder().defaultValue(lookuped.getOrThrow(SeasonPhaseRegistry.DRY)).build()
+        // ));
 
         context.register(COLD, new SeasonCycle(
-                getter.getOrThrow(Tags.Biomes.IS_COLD_OVERWORLD),
+                and(getter.getOrThrow(Tags.Biomes.IS_OVERWORLD),
+                        or(getter.getOrThrow(Tags.Biomes.IS_MOUNTAIN_PEAK),
+                                getter.getOrThrow(Tags.Biomes.IS_SNOWY),
+                                getter.getOrThrow(Tags.Biomes.IS_ICY))),
                 SolarTermValueMap.
                         <Holder<SeasonPhase>>builder()
                         .putSolarTerm(SolarTerm.BEGINNING_OF_SPRING, lookuped.getOrThrow(SeasonPhaseRegistry.COLD_BEGINNING_OF_SPRING))
@@ -135,7 +139,41 @@ public class SeasonCycleRegistry {
                         .putSolarTerm(SolarTerm.WINTER_SOLSTICE, lookuped.getOrThrow(SeasonPhaseRegistry.COLD_WINTER_SOLSTICE))
                         .putSolarTerm(SolarTerm.LESSER_COLD, lookuped.getOrThrow(SeasonPhaseRegistry.COLD_LESSER_COLD))
                         .putSolarTerm(SolarTerm.GREATER_COLD, lookuped.getOrThrow(SeasonPhaseRegistry.COLD_GREATER_COLD))
+                        .build()
+        ));
 
+        context.register(HOT, new SeasonCycle(
+                and(getter.getOrThrow(Tags.Biomes.IS_HOT_OVERWORLD),
+                        not(lazyLookup, getter.getOrThrow(ClimateTypeBiomeTags.MONSOONAL))),
+                SolarTermValueMap.
+                        <Holder<SeasonPhase>>builder()
+                        .putSolarTerm(SolarTerm.BEGINNING_OF_SPRING, lookuped.getOrThrow(SeasonPhaseRegistry.HOT_BEGINNING_OF_SPRING))
+                        .putSolarTerm(SolarTerm.RAIN_WATER, lookuped.getOrThrow(SeasonPhaseRegistry.HOT_RAIN_WATER))
+                        .putSolarTerm(SolarTerm.INSECTS_AWAKENING, lookuped.getOrThrow(SeasonPhaseRegistry.HOT_INSECTS_AWAKENING))
+                        .putSolarTerm(SolarTerm.SPRING_EQUINOX, lookuped.getOrThrow(SeasonPhaseRegistry.HOT_SPRING_EQUINOX))
+                        .putSolarTerm(SolarTerm.FRESH_GREEN, lookuped.getOrThrow(SeasonPhaseRegistry.HOT_FRESH_GREEN))
+                        .putSolarTerm(SolarTerm.GRAIN_RAIN, lookuped.getOrThrow(SeasonPhaseRegistry.HOT_GRAIN_RAIN))
+
+                        .putSolarTerm(SolarTerm.BEGINNING_OF_SUMMER, lookuped.getOrThrow(SeasonPhaseRegistry.HOT_BEGINNING_OF_SUMMER))
+                        .putSolarTerm(SolarTerm.LESSER_FULLNESS, lookuped.getOrThrow(SeasonPhaseRegistry.HOT_LESSER_FULLNESS))
+                        .putSolarTerm(SolarTerm.GRAIN_IN_EAR, lookuped.getOrThrow(SeasonPhaseRegistry.HOT_GRAIN_IN_EAR))
+                        .putSolarTerm(SolarTerm.SUMMER_SOLSTICE, lookuped.getOrThrow(SeasonPhaseRegistry.HOT_SUMMER_SOLSTICE))
+                        .putSolarTerm(SolarTerm.LESSER_HEAT, lookuped.getOrThrow(SeasonPhaseRegistry.HOT_LESSER_HEAT))
+                        .putSolarTerm(SolarTerm.GREATER_HEAT, lookuped.getOrThrow(SeasonPhaseRegistry.HOT_GREATER_HEAT))
+
+                        .putSolarTerm(SolarTerm.BEGINNING_OF_AUTUMN, lookuped.getOrThrow(SeasonPhaseRegistry.HOT_BEGINNING_OF_AUTUMN))
+                        .putSolarTerm(SolarTerm.END_OF_HEAT, lookuped.getOrThrow(SeasonPhaseRegistry.HOT_END_OF_HEAT))
+                        .putSolarTerm(SolarTerm.WHITE_DEW, lookuped.getOrThrow(SeasonPhaseRegistry.HOT_WHITE_DEW))
+                        .putSolarTerm(SolarTerm.AUTUMNAL_EQUINOX, lookuped.getOrThrow(SeasonPhaseRegistry.HOT_AUTUMNAL_EQUINOX))
+                        .putSolarTerm(SolarTerm.COLD_DEW, lookuped.getOrThrow(SeasonPhaseRegistry.HOT_COLD_DEW))
+                        .putSolarTerm(SolarTerm.FIRST_FROST, lookuped.getOrThrow(SeasonPhaseRegistry.HOT_FIRST_FROST))
+
+                        .putSolarTerm(SolarTerm.BEGINNING_OF_WINTER, lookuped.getOrThrow(SeasonPhaseRegistry.HOT_BEGINNING_OF_WINTER))
+                        .putSolarTerm(SolarTerm.LIGHT_SNOW, lookuped.getOrThrow(SeasonPhaseRegistry.HOT_LIGHT_SNOW))
+                        .putSolarTerm(SolarTerm.HEAVY_SNOW, lookuped.getOrThrow(SeasonPhaseRegistry.HOT_HEAVY_SNOW))
+                        .putSolarTerm(SolarTerm.WINTER_SOLSTICE, lookuped.getOrThrow(SeasonPhaseRegistry.HOT_WINTER_SOLSTICE))
+                        .putSolarTerm(SolarTerm.LESSER_COLD, lookuped.getOrThrow(SeasonPhaseRegistry.HOT_LESSER_COLD))
+                        .putSolarTerm(SolarTerm.GREATER_COLD, lookuped.getOrThrow(SeasonPhaseRegistry.HOT_GREATER_COLD))
                         .build()
         ));
     }

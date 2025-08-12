@@ -30,8 +30,13 @@ import java.util.function.*;
 public class BiomeClimateManager {
     public final static Map<Biome, BiomeClimateSettings> BIOME_CLIMATE_MAP = new IdentityHashMap<>();
     public final static Map<Biome, BiomeClimateSettings> CLIENT_CLIMATE_MAP = new IdentityHashMap<>();
+
     public static final Map<Biome, TagKey<Biome>> BIOME_TAG_KEY_MAP = new IdentityHashMap<>(128);
     public static final Map<Biome, TagKey<Biome>> CLIENT_BIOME_TAG_KEY_MAP = new IdentityHashMap<>(128);
+
+    public static final Map<Biome, TagKey<Biome>> BIOME_COLOR_TAG_KEY_MAP = new IdentityHashMap<>(128);
+    public static final Map<Biome, TagKey<Biome>> CLIENT_BIOME_COLOR_TAG_KEY_MAP = new IdentityHashMap<>(128);
+
     public static final Map<Biome, Boolean> SMALL_BIOME_MAP = new IdentityHashMap<>(16);
     public static final Map<Biome, Map<SolarTerm, Holder<SeasonPhase>>> SEASON_PHASE_MAP = new IdentityHashMap<>();
     public static final Map<Biome, Map<SolarTerm, Holder<SeasonPhase>>> CLIENT_SEASON_PHASE_MAP = new IdentityHashMap<>();
@@ -82,7 +87,9 @@ public class BiomeClimateManager {
                 (biome, map) -> map
         );
         putTag(registryAccess, isServer);
+        putColorTag(registryAccess, isServer);
     }
+
 
     public static <T, U, R, S> void resetSomeMap(RegistryAccess registryAccess,
                                                  ResourceKey<Registry<T>> resourceKey,
@@ -171,13 +178,13 @@ public class BiomeClimateManager {
     }
 
     public static Map<SolarTerm, CustomRain> getCustomRain(Biome biome, boolean isServer) {
-        return isServer?
+        return isServer ?
                 CUSTOME_BIOME_RAIN_MAP.getOrDefault(biome, Map.of()) :
                 CLIENT_CUSTOME_BIOME_RAIN_MAP.getOrDefault(biome, Map.of());
     }
 
     public static @Nullable ISnowTerm getCustomSnowTerm(Biome biome, boolean isServer) {
-        return isServer?
+        return isServer ?
                 CUSTOM_SNOW_TERM_MAP.getOrDefault(biome, null) :
                 CLIENT_CUSTOM_SNOW_TERM_MAP.getOrDefault(biome, null);
     }
@@ -253,14 +260,38 @@ public class BiomeClimateManager {
         return BIOME_TAG_KEY_MAP.getOrDefault(biome, ClimateTypeBiomeTags.RAINLESS);
     }
 
-    // TODO：Clear it on client exit a level
+    public static TagKey<Biome> getColorTag(Biome biome) {
+        // return getTag(WeatherManager.getMainServerLevel(), biome);
+        TagKey<Biome> biomeTagKey = CLIENT_BIOME_COLOR_TAG_KEY_MAP.getOrDefault(biome, null);
+        if (biomeTagKey != null) return biomeTagKey;
+        return BIOME_COLOR_TAG_KEY_MAP.getOrDefault(biome, ClimateTypeBiomeTags.NONE_COLOR_CHANGE);
+    }
+
+
+    private static void putColorTag(RegistryAccess registryAccess, boolean isServer) {
+        var useMap = isServer ? BIOME_COLOR_TAG_KEY_MAP : CLIENT_BIOME_COLOR_TAG_KEY_MAP;
+        useMap.clear();
+        var biomeRegistry = registryAccess.registry(Registries.BIOME);
+        if (biomeRegistry.isPresent()) {
+            for (var holder : biomeRegistry.get().holders().toList()) {
+                var tag = ClimateTypeBiomeTags.BIOME_COLOR_TYPES.stream().filter(holder::is).findFirst();
+                if (tag.isPresent()) {
+                    useMap.put(holder.value(), tag.get());
+                    ((IBiomeTagHolder) (Object) holder.value()).eclipticseasons$setColorTag(tag.get());
+                } else {
+                    useMap.put(holder.value(), ClimateTypeBiomeTags.NONE_COLOR_CHANGE);
+                    ((IBiomeTagHolder) (Object) holder.value()).eclipticseasons$setColorTag(ClimateTypeBiomeTags.NONE_COLOR_CHANGE);
+                }
+            }
+        }
+    }
+
     public static void putTag(RegistryAccess registryAccess, boolean isServer) {
         var useMap = isServer ? BIOME_TAG_KEY_MAP : CLIENT_BIOME_TAG_KEY_MAP;
         useMap.clear();
         for (Biome biome : SMALL_BIOME_MAP.entrySet().stream().filter(biomeBooleanEntry -> biomeBooleanEntry.getValue() == isServer).map(Map.Entry::getKey).toList()) {
             SMALL_BIOME_MAP.remove(biome);
         }
-
         var biomeRegistry = registryAccess.registry(Registries.BIOME);
         if (biomeRegistry.isPresent()) {
             for (var holder : biomeRegistry.get().holders().toList()) {
@@ -302,6 +333,8 @@ public class BiomeClimateManager {
         BiomeClimateManager.CLIENT_CUSTOME_BIOME_RAIN_MAP.clear();
         BiomeClimateManager.CUSTOM_SNOW_TERM_MAP.clear();
         BiomeClimateManager.CLIENT_CUSTOM_SNOW_TERM_MAP.clear();
+        BiomeClimateManager.BIOME_COLOR_TAG_KEY_MAP.clear();
+        BiomeClimateManager.CLIENT_BIOME_COLOR_TAG_KEY_MAP.clear();
     }
 
     public static boolean isServerInstance(Biome value) {

@@ -1,15 +1,11 @@
 package com.teamtea.eclipticseasons.common.core.crop;
 
 
-import com.teamtea.eclipticseasons.EclipticSeasons;
-import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.crop.CropHumidityInfo;
 import com.teamtea.eclipticseasons.api.constant.crop.CropHumidityType;
 import com.teamtea.eclipticseasons.api.constant.crop.CropSeasonInfo;
 import com.teamtea.eclipticseasons.api.constant.crop.CropSeasonType;
-import com.teamtea.eclipticseasons.api.data.crop.CropGrowControlBuilder;
 import com.teamtea.eclipticseasons.api.event.RegisterAndModifyCropInfoEvent;
-import com.teamtea.eclipticseasons.common.registry.ESRegistries;
 import com.teamtea.eclipticseasons.compat.CompatModule;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.core.Holder;
@@ -28,10 +24,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.CropBlock;
 
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.event.TagsUpdatedEvent;
 
 import javax.annotation.Nullable;
@@ -41,12 +34,17 @@ public final class CropInfoManager {
     final static Map<Block, CropHumidityInfo> CROP_HUMIDITY_INFO = new HashMap<>();
     final static Map<Block, CropSeasonInfo> CROP_SEASON_INFO = new HashMap<>();
 
+    final static Map<Item, CropHumidityInfo> ITEM_CROP_HUMIDITY_INFO = new HashMap<>();
+    final static Map<Item, CropSeasonInfo> ITEM_CROP_SEASON_INFO = new HashMap<>();
+
     private static final TagKey<Block> ss1 = createBlockTag("sereneseasons", "spring_crops");
     private static final TagKey<Block> ss2 = createBlockTag("sereneseasons", "summer_crops");
     private static final TagKey<Block> ss3 = createBlockTag("sereneseasons", "autumn_crops");
     private static final TagKey<Block> ss4 = createBlockTag("sereneseasons", "winter_crops");
 
     private static final TagKey<Block> SERENE_SEASONS_UNBREAKABLE_FERTILE_CROPS = createBlockTag("sereneseasons", "unbreakable_infertile_crops");
+    private static final TagKey<Block> SERENE_SEASONS_YEAR_ROUND_CROPS = createBlockTag("sereneseasons", "year_round_crops");
+    private static final TagKey<Item> ITEM_SERENE_SEASONS_YEAR_ROUND_CROPS = createItemTag("sereneseasons", "year_round_crops");
 
     private static final TagKey<Item> ssi1 = createItemTag("sereneseasons", "spring_crops");
     private static final TagKey<Item> ssi2 = createItemTag("sereneseasons", "summer_crops");
@@ -125,17 +123,35 @@ public final class CropInfoManager {
         if (CompatModule.CommonConfig.sereneSeasons.getAsBoolean()) {
             registerForSS(blocks, Registries.BLOCK);
             registerForSS(items, Registries.ITEM);
-        }
-
-        if (com.teamtea.eclipticseasons.config.CommonConfig.Crop.registerCropDefaultValue.getAsBoolean()) {
-            BuiltInRegistries.BLOCK.forEach(block ->
-            {
-                registerCropHumidityInfo(block, CropHumidityType.AVERAGE_MOIST, false);
-                registerCropSeasonInfo(block, CropSeasonType.SP_SU_AU, false);
+            blocks.flatMap(br -> br.getTag(SERENE_SEASONS_YEAR_ROUND_CROPS)).ifPresent(nblocks -> {
+                for (Holder<Block> nblock : nblocks) {
+                    registerCropSeasonInfo(nblock.value(), CropSeasonType.ALL, true);
+                    if (CommonConfig.Crop.registerCropDefaultValue.getAsBoolean()) {
+                        registerCropHumidityInfo(nblock.value(), CropHumidityType.AVERAGE_MOIST, true);
+                    }
+                }
+            });
+            items.flatMap(br -> br.getTag(ITEM_SERENE_SEASONS_YEAR_ROUND_CROPS)).ifPresent(itemNamed -> {
+                for (Holder<Item> itemHolder : itemNamed) {
+                    registerCropSeasonInfo(itemHolder.value(), CropSeasonType.ALL);
+                    if (CommonConfig.Crop.registerCropDefaultValue.get()) {
+                        registerCropHumidityInfo(itemHolder.value(), CropHumidityType.AVERAGE_MOIST);
+                    }
+                }
             });
         }
 
+
         NeoForge.EVENT_BUS.post(new RegisterAndModifyCropInfoEvent(CROP_HUMIDITY_INFO, CROP_SEASON_INFO));
+        if (com.teamtea.eclipticseasons.config.CommonConfig.Crop.registerCropDefaultValue.getAsBoolean()) {
+            BuiltInRegistries.BLOCK.forEach(block ->
+            {
+                if (block instanceof CropBlock) {
+                    registerCropHumidityInfo(block, CropHumidityType.AVERAGE_MOIST, true);
+                    registerCropSeasonInfo(block, CropSeasonType.SP_SU_AU, true);
+                }
+            });
+        }
     }
 
     public static <T> void registerForSS(Optional<Registry<T>> blocks, ResourceKey<Registry<T>> registryResourceKey) {
@@ -161,27 +177,24 @@ public final class CropInfoManager {
                         season += seasonInfoList.get(i);
                     }
                 }
-                Block block = null;
-                if (t instanceof Block) {
-                    block = (Block) t;
-                } else if (t instanceof BlockItem) {
-                    block = ((BlockItem) t).getBlock();
+
+                if (t instanceof Block block) {
+                    registerCropSeasonInfo(block, getCropSeasonTypeFrom(new CropSeasonInfo(season)), true);
+                } else if (t instanceof Item item) {
+                    registerCropSeasonInfo(item, getCropSeasonTypeFrom(new CropSeasonInfo(season)));
                 }
 
-                if (block != null && !CROP_SEASON_INFO.containsKey(block)) {
-                    CROP_SEASON_INFO.put(block, new CropSeasonInfo(season));
-                }
-
-                if (com.teamtea.eclipticseasons.config.CommonConfig.Crop.registerCropDefaultValue.getAsBoolean()) {
-                    if (block != null && !CROP_HUMIDITY_INFO.containsKey(block)) {
-                        CropHumidityType humid;
-                        if (season == 1) {
-                            humid = CropHumidityType.AVERAGE_HUMID;
-                        } else if (season == 5) {
-                            humid = CropHumidityType.AVERAGE_MOIST;
-                        } else humid = CropHumidityType.DRY_HUMID;
-
-                        CROP_HUMIDITY_INFO.put(block, humid.getInfo());
+                if (CommonConfig.Crop.registerCropDefaultValue.getAsBoolean()) {
+                    CropHumidityType humid;
+                    if (season == 1) {
+                        humid = CropHumidityType.AVERAGE_HUMID;
+                    } else if (season == 5) {
+                        humid = CropHumidityType.AVERAGE_MOIST;
+                    } else humid = CropHumidityType.DRY_MOIST;
+                    if (t instanceof Block block) {
+                        registerCropHumidityInfo(block, humid, true);
+                    } else if (t instanceof Item item) {
+                        registerCropHumidityInfo(item, humid);
                     }
                 }
             }
@@ -191,13 +204,17 @@ public final class CropInfoManager {
 
 
     public static void registerCropHumidityInfo(Item item, CropHumidityType info) {
-        if (item instanceof BlockItem && !CROP_HUMIDITY_INFO.containsKey(((BlockItem) item).getBlock())) {
-            CROP_HUMIDITY_INFO.put(((BlockItem) item).getBlock(), info.getInfo());
+        if (item instanceof BlockItem blockItem) {
+            registerCropHumidityInfo(blockItem.getBlock(), info, false);
+        }
+        if (!ITEM_CROP_HUMIDITY_INFO.containsKey(item)) {
+            ITEM_CROP_HUMIDITY_INFO.put(item, info.getInfo());
         }
     }
 
     public static void registerCropHumidityInfo(Block block, CropHumidityType info, boolean force) {
-        if (force || block instanceof CropBlock) {
+        // if (force || block instanceof CropBlock)
+        {
             if (!CROP_HUMIDITY_INFO.containsKey(block)) {
                 CROP_HUMIDITY_INFO.put(block, info.getInfo());
             }
@@ -205,13 +222,18 @@ public final class CropInfoManager {
     }
 
     public static void registerCropSeasonInfo(Item item, CropSeasonType info) {
-        if (item instanceof BlockItem && !CROP_SEASON_INFO.containsKey(((BlockItem) item).getBlock())) {
-            CROP_SEASON_INFO.put(((BlockItem) item).getBlock(), info.getInfo());
+        if (item instanceof BlockItem blockItem) {
+            registerCropSeasonInfo(blockItem.getBlock(), info, false);
+        }
+
+        if (!ITEM_CROP_SEASON_INFO.containsKey(item)) {
+            ITEM_CROP_SEASON_INFO.put(item, info.getInfo());
         }
     }
 
     public static void registerCropSeasonInfo(Block block, CropSeasonType info, boolean force) {
-        if (force || block instanceof CropBlock) {
+        // if (force || block instanceof CropBlock)
+        {
             if (!CROP_SEASON_INFO.containsKey(block)) {
                 CROP_SEASON_INFO.put(block, info.getInfo());
             }
@@ -236,6 +258,17 @@ public final class CropInfoManager {
         return CROP_SEASON_INFO.get(crop);
     }
 
+
+    @Nullable
+    public static CropHumidityInfo getHumidityInfo(Item crop) {
+        return ITEM_CROP_HUMIDITY_INFO.get(crop);
+    }
+
+    @Nullable
+    public static CropSeasonInfo getSeasonInfo(Item crop) {
+        return ITEM_CROP_SEASON_INFO.get(crop);
+    }
+
     public static List<Component> appendInfo(Block block) {
         List<Component> toolTip = new ArrayList<>();
         if (CommonConfig.Crop.enableCropHumidityControl.get()) {
@@ -247,6 +280,23 @@ public final class CropInfoManager {
         if (CommonConfig.Crop.enableCrop.get()) {
             if (CropInfoManager.getSeasonCrops().contains(block)) {
                 CropSeasonInfo info = CropInfoManager.getSeasonInfo(block);
+                if (info != null) toolTip.addAll(info.getTooltip());
+            }
+        }
+        return toolTip;
+    }
+
+    public static List<Component> appendInfo(Item item) {
+        List<Component> toolTip = new ArrayList<>();
+        if (CommonConfig.Crop.enableCropHumidityControl.get()) {
+            if (ITEM_CROP_HUMIDITY_INFO.containsKey(item)) {
+                CropHumidityInfo info = CropInfoManager.getHumidityInfo(item);
+                if (info != null) toolTip.addAll(info.getTooltip());
+            }
+        }
+        if (CommonConfig.Crop.enableCrop.get()) {
+            if (ITEM_CROP_SEASON_INFO.containsKey(item)) {
+                CropSeasonInfo info = CropInfoManager.getSeasonInfo(item);
                 if (info != null) toolTip.addAll(info.getTooltip());
             }
         }

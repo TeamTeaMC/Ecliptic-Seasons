@@ -1,6 +1,5 @@
 package com.teamtea.eclipticseasons.api.constant.solar.color.base;
 
-import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.client.util.ColorHelper;
 import net.minecraft.world.level.FoliageColor;
 

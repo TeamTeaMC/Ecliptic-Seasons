@@ -23,11 +23,15 @@
         "type": "neoforge:or"
       },
       {
-        "value": "#c:is_cold/overworld",
-        "type": "neoforge:not"
-      },
-      {
-        "value": "#c:is_hot/overworld",
+        "value": {
+          "values": [
+            "#c:is_mountain/peak",
+            "#c:is_snowy",
+            "#c:is_icy",
+            "#c:is_hot/overworld"
+          ],
+          "type": "neoforge:or"
+        },
         "type": "neoforge:not"
       }
     ],

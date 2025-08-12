@@ -6,6 +6,9 @@ import com.teamtea.eclipticseasons.common.misc.SimplePair;
 import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
+import net.minecraft.core.Registry;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
@@ -48,19 +51,20 @@ public record BiomeHolder(
             )
     );
 
-    public static BiomeHolder prepareBiomes(Level serverLevel, ChunkPos chunkPos, int biomeDataVersion) {
+    public static BiomeHolder prepareBiomes(Level serverLevel, ChunkPos chunkPos, int biomeDataVersion, boolean registryUpdate) {
         int[] newBiomes = new int[256];
         boolean near = true;
-
+        Registry<Biome> biomeRegistry = serverLevel.registryAccess().registryOrThrow(Registries.BIOME);
         BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos();
         for (int i = 0; i < 16; i++) {
             for (int j = 0; j < 16; j++) {
                 int xm = chunkPos.getBlockX(i);
                 int zm = chunkPos.getBlockZ(j);
                 mutableBlockPos.set(xm, 0, zm);
-
-                newBiomes[i * 16 + j] =
-                        MapChecker.biomeToId(serverLevel, MapChecker.getUnCachedSurfaceBiome(serverLevel, mutableBlockPos).value());
+                Holder<Biome> unCachedSurfaceBiome = MapChecker.getUnCachedSurfaceBiome(serverLevel, mutableBlockPos);
+                newBiomes[i * 16 + j] = registryUpdate ?
+                        MapChecker.biomeToId(biomeRegistry, unCachedSurfaceBiome.value()) :
+                        MapChecker.biomeToId(serverLevel, unCachedSurfaceBiome.value());
                 near &= MapChecker.isLoadNearBy(serverLevel, mutableBlockPos);
 
                 if (!near) break;

@@ -1,0 +1,29 @@
+{
+  "replace": true,
+  "variants": {
+    "age=5": {
+      "model": "eclipticseasons:block/snowy/carrots_stage2"
+    },
+    "age=4": {
+      "model": "eclipticseasons:block/snowy/carrots_stage2"
+    },
+    "age=3": {
+      "model": "eclipticseasons:block/snowy/carrots_stage1"
+    },
+    "age=2": {
+      "model": "eclipticseasons:block/snowy/carrots_stage1"
+    },
+    "age=1": {
+      "model": "eclipticseasons:block/snowy/carrots_stage0"
+    },
+    "age=0": {
+      "model": "eclipticseasons:block/snowy/carrots_stage0"
+    },
+    "age=7": {
+      "model": "eclipticseasons:block/snowy/carrots_stage3"
+    },
+    "age=6": {
+      "model": "eclipticseasons:block/snowy/carrots_stage2"
+    }
+  }
+}

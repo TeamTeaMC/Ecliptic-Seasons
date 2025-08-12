@@ -14,6 +14,7 @@ import com.teamtea.eclipticseasons.api.misc.IBiomeTagHolder;
 import com.teamtea.eclipticseasons.api.misc.client.IBiomeColorHolder;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.client.util.ColorHelper;
+import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.config.ClientConfig;
 import net.minecraft.client.Minecraft;
@@ -61,14 +62,14 @@ public class BiomeColorsHandler {
             int i = (int) ((1.0D - temperature) * 255.0D);
             int j = (int) ((1.0D - humidity) * 255.0D);
             int k = j << 8 | i;
-            TagKey<Biome> biomeTagKey = ((IBiomeTagHolder) (Object) biome).eclipticseasons$getBindTag();
+            TagKey<Biome> biomeTagKey = ((IBiomeTagHolder) (Object) biome).eclipticseasons$getBindColorTag();
             int[] newGrassBuffer = newGrassBufferMap.getOrDefault(biomeTagKey, GrassColor.pixels);
 
             int color = k > newGrassBuffer.length ? originColor : newGrassBuffer[k];
-            if (biomeTagKey != ClimateTypeBiomeTags.SEASONAL
-                    && biomeTagKey != ClimateTypeBiomeTags.MONSOONAL) {
-                color = ColorHelper.simplyMixColor(color, 0.1f, originColor, 0.9f);
-            }
+            // if (biomeTagKey != ClimateTypeBiomeTags.SEASONAL
+            //         && biomeTagKey != ClimateTypeBiomeTags.MONSOONAL) {
+            //     color = ColorHelper.simplyMixColor(color, 0.1f, originColor, 0.9f);
+            // }
             // 注意大概率会DH
             return color;
         }
@@ -102,13 +103,13 @@ public class BiomeColorsHandler {
             int i = (int) ((1.0D - temperature) * 255.0D);
             int j = (int) ((1.0D - humidity) * 255.0D);
             int k = j << 8 | i;
-            TagKey<Biome> biomeTagKey = ((IBiomeTagHolder) (Object) biome).eclipticseasons$getBindTag();
+            TagKey<Biome> biomeTagKey = ((IBiomeTagHolder) (Object) biome).eclipticseasons$getBindColorTag();
             int[] newFoliageBuffer = newFoliageBufferMap.getOrDefault(biomeTagKey, FoliageColor.pixels);
             int color = k > newFoliageBuffer.length ? originColor : newFoliageBuffer[k];
-            if (biomeTagKey != ClimateTypeBiomeTags.SEASONAL
-                    && biomeTagKey != ClimateTypeBiomeTags.MONSOONAL) {
-                color = ColorHelper.simplyMixColor(color, 0.1f, originColor, 0.9f);
-            }
+            // if (biomeTagKey != ClimateTypeBiomeTags.SEASONAL
+            //         && biomeTagKey != ClimateTypeBiomeTags.MONSOONAL) {
+            //     color = ColorHelper.simplyMixColor(color, 0.1f, originColor, 0.9f);
+            // }
             return color;
         }
         return originColor;
@@ -116,15 +117,14 @@ public class BiomeColorsHandler {
 
     public static void reloadColors() {
         {
-            for (TagKey<Biome> biomeTagKey : ClimateTypeBiomeTags.BIOME_TYPES) {
+            for (TagKey<Biome> biomeTagKey : ClimateTypeBiomeTags.BIOME_COLOR_TYPES) {
                 int[] newFoliageBuffer = new int[65536];
                 int[] newGrassBuffer = new int[65536];
                 int[] foliageBuffer = FoliageColor.pixels;
                 int[] grassBuffer = GrassColor.pixels;
 
                 SolarTerm solar = ClientCon.nowSolarTerm;
-                SolarTermColor colorInfo =
-                        solar == SolarTerm.NONE ?
+                SolarTermColor colorInfo = solar == SolarTerm.NONE ?
                                 NoneSolarTermColors.BEGINNING_OF_SPRING :
                                 solar.getSolarTermColor(biomeTagKey);
                 for (int i = 0; i < foliageBuffer.length; i++) {

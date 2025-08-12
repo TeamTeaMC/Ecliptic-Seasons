@@ -2,7 +2,6 @@ package com.teamtea.eclipticseasons.api.constant.climate;
 
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
-import com.teamtea.eclipticseasons.api.constant.solar.color.base.TemperateSolarTermColors;
 
 import java.util.Locale;
 

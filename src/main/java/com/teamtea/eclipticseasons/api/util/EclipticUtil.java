@@ -16,6 +16,7 @@ import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.core.solar.SolarAngelHelper;
 import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
+import com.teamtea.eclipticseasons.common.game.AnimalHooks;
 import com.teamtea.eclipticseasons.common.misc.MapColorReplacer;
 import com.teamtea.eclipticseasons.compat.vanilla.VanillaWeather;
 import com.teamtea.eclipticseasons.config.CommonConfig;
@@ -112,6 +113,11 @@ public class EclipticUtil {
             @Override
             public SolarTerm getSolarTerm(Level level) {
                 return EclipticUtil.getNowSolarTerm(level);
+            }
+
+            @Override
+            public Season getAgroSeason(Level level, BlockPos pos) {
+                return AnimalHooks.getUseSeason(level, pos);
             }
 
             @Override

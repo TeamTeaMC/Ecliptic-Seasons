@@ -1,0 +1,16 @@
+{
+  "color": "gold",
+  "icon": {
+    "i": 3,
+    "j": 2,
+    "texture": "eclipticseasons:font/seasons_icons",
+    "width": 180,
+    "height": 120
+  },
+  "font": {
+    "id": "eclipticseasons:solar_icons",
+    "label": "p"
+  },
+  "season": "autumn",
+  "name": "eclipticseasons:hot_autumnal_equinox"
+}

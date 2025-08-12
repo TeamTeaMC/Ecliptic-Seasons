@@ -71,10 +71,12 @@ public class AgroClimateRegistry {
         BIOME_REGISTRY_LOOKUP = new BiomeRegistryLookup(BIOME_HOLDER_GETTER);
 
         context.register(TEMPERATE, AgroClimaticZone.builder((
-                and(or(get(Tags.Biomes.IS_OVERWORLD), get(Tags.Biomes.IS_VOID)),
-                        not(get(Tags.Biomes.IS_COLD_OVERWORLD)),
-                        not(get(Tags.Biomes.IS_HOT_OVERWORLD))
-                )))
+                        and(or(get(Tags.Biomes.IS_OVERWORLD), get(Tags.Biomes.IS_VOID)),
+                                not(or(get(Tags.Biomes.IS_MOUNTAIN_PEAK),
+                                        get(Tags.Biomes.IS_SNOWY),
+                                        get(Tags.Biomes.IS_ICY),
+                                        get(Tags.Biomes.IS_HOT_OVERWORLD)))
+                        )))
                 .add(Season.SPRING, 6).add(Season.SUMMER, 6).add(Season.AUTUMN, 6).add(Season.WINTER, 6)
                 .end());
 
@@ -108,21 +110,49 @@ public class AgroClimateRegistry {
                 Either.<Season, SolarTerm>right(SolarTerm.GREATER_COLD), List.of(Pair.of(Either.<Season, SolarTerm>right(SolarTerm.GREATER_COLD), 0.55f))
         );
 
-        context.register(COLD, AgroClimaticZone.builder(get(Tags.Biomes.IS_COLD_OVERWORLD))
+        context.register(COLD, AgroClimaticZone.builder(
+                        and(get(Tags.Biomes.IS_OVERWORLD),
+                                or(get(Tags.Biomes.IS_MOUNTAIN_PEAK),
+                                        get(Tags.Biomes.IS_SNOWY),
+                                        get(Tags.Biomes.IS_ICY)))
+                )
                 .mapping(mapCold)
                 .add(Season.WINTER, 3).add(Season.SPRING, 4).add(Season.SUMMER, 3).add(Season.AUTUMN, 4).add(Season.WINTER, 10)
                 .end());
 
         Map<Either<Season, SolarTerm>, List<Pair<Either<Season, SolarTerm>, Float>>> mapHot = of(
-                Either.<Season, SolarTerm>left(Season.SPRING), List.of(Pair.of(Either.<Season, SolarTerm>right(SolarTerm.BEGINNING_OF_SUMMER), 1f)),
-                Either.<Season, SolarTerm>left(Season.SUMMER), List.of(Pair.of(Either.<Season, SolarTerm>right(SolarTerm.SUMMER_SOLSTICE), 1f)),
-                Either.<Season, SolarTerm>left(Season.AUTUMN), List.of(Pair.of(Either.<Season, SolarTerm>right(SolarTerm.SUMMER_SOLSTICE), .6f), Pair.of(Either.<Season, SolarTerm>right(SolarTerm.BEGINNING_OF_SUMMER), .4f)),
-                Either.<Season, SolarTerm>left(Season.WINTER), List.of(Pair.of(Either.<Season, SolarTerm>right(SolarTerm.BEGINNING_OF_SUMMER), 1f))
+                Either.<Season, SolarTerm>right(SolarTerm.BEGINNING_OF_SPRING), List.of(Pair.of(Either.<Season, SolarTerm>right(SolarTerm.BEGINNING_OF_SPRING), 1f)),
+                Either.<Season, SolarTerm>right(SolarTerm.RAIN_WATER), List.of(Pair.of(Either.<Season, SolarTerm>right(SolarTerm.BEGINNING_OF_SPRING), 0.8f), Pair.of(Either.<Season, SolarTerm>right(SolarTerm.SPRING_EQUINOX), 0.2f)),
+                Either.<Season, SolarTerm>right(SolarTerm.INSECTS_AWAKENING), List.of(Pair.of(Either.<Season, SolarTerm>right(SolarTerm.SPRING_EQUINOX), 1f)),
+                Either.<Season, SolarTerm>right(SolarTerm.SPRING_EQUINOX), List.of(Pair.of(Either.<Season, SolarTerm>right(SolarTerm.SPRING_EQUINOX), 0.8f), Pair.of(Either.<Season, SolarTerm>right(SolarTerm.BEGINNING_OF_SUMMER), 0.2f)),
+                Either.<Season, SolarTerm>right(SolarTerm.FRESH_GREEN), List.of(Pair.of(Either.<Season, SolarTerm>right(SolarTerm.BEGINNING_OF_SUMMER), 0.7f), Pair.of(Either.<Season, SolarTerm>right(SolarTerm.LESSER_FULLNESS), 0.3f)),
+                Either.<Season, SolarTerm>right(SolarTerm.GRAIN_RAIN), List.of(Pair.of(Either.<Season, SolarTerm>right(SolarTerm.LESSER_FULLNESS), 0.5f), Pair.of(Either.<Season, SolarTerm>right(SolarTerm.GRAIN_IN_EAR), 0.5f)),
+
+                Either.<Season, SolarTerm>right(SolarTerm.BEGINNING_OF_SUMMER), List.of(Pair.of(Either.<Season, SolarTerm>right(SolarTerm.GRAIN_IN_EAR), 1f)),
+                Either.<Season, SolarTerm>right(SolarTerm.LESSER_FULLNESS), List.of(Pair.of(Either.<Season, SolarTerm>right(SolarTerm.GRAIN_IN_EAR), 0.3f), Pair.of(Either.<Season, SolarTerm>right(SolarTerm.SUMMER_SOLSTICE), 0.7f)),
+                Either.<Season, SolarTerm>right(SolarTerm.GRAIN_IN_EAR), List.of(Pair.of(Either.<Season, SolarTerm>right(SolarTerm.SUMMER_SOLSTICE), 0.8f), Pair.of(Either.<Season, SolarTerm>right(SolarTerm.GREATER_HEAT), 0.2f)),
+                Either.<Season, SolarTerm>right(SolarTerm.SUMMER_SOLSTICE), List.of(Pair.of(Either.<Season, SolarTerm>right(SolarTerm.SUMMER_SOLSTICE), 0.4f), Pair.of(Either.<Season, SolarTerm>right(SolarTerm.LESSER_HEAT), 0.4f), Pair.of(Either.<Season, SolarTerm>right(SolarTerm.GREATER_HEAT), 0.2f)),
+                Either.<Season, SolarTerm>right(SolarTerm.LESSER_HEAT), List.of(Pair.of(Either.<Season, SolarTerm>right(SolarTerm.GREATER_HEAT), 1f)),
+                Either.<Season, SolarTerm>right(SolarTerm.GREATER_HEAT), List.of(Pair.of(Either.<Season, SolarTerm>right(SolarTerm.GREATER_HEAT), 0.8f)),
+
+                Either.<Season, SolarTerm>right(SolarTerm.BEGINNING_OF_AUTUMN), List.of(Pair.of(Either.<Season, SolarTerm>right(SolarTerm.GREATER_HEAT), .7f)),
+                Either.<Season, SolarTerm>right(SolarTerm.END_OF_HEAT), List.of(Pair.of(Either.<Season, SolarTerm>right(SolarTerm.GREATER_HEAT), 0.95f)),
+                Either.<Season, SolarTerm>right(SolarTerm.WHITE_DEW), List.of(Pair.of(Either.<Season, SolarTerm>right(SolarTerm.SUMMER_SOLSTICE), 0.97f)),
+                Either.<Season, SolarTerm>right(SolarTerm.AUTUMNAL_EQUINOX), List.of(Pair.of(Either.<Season, SolarTerm>right(SolarTerm.SUMMER_SOLSTICE), 1f)),
+                Either.<Season, SolarTerm>right(SolarTerm.COLD_DEW), List.of(Pair.of(Either.<Season, SolarTerm>right(SolarTerm.SUMMER_SOLSTICE), 0.8f), Pair.of(Either.<Season, SolarTerm>right(SolarTerm.BEGINNING_OF_AUTUMN), 0.2f)),
+                Either.<Season, SolarTerm>right(SolarTerm.FIRST_FROST), List.of(Pair.of(Either.<Season, SolarTerm>right(SolarTerm.SUMMER_SOLSTICE), 0.6f), Pair.of(Either.<Season, SolarTerm>right(SolarTerm.BEGINNING_OF_AUTUMN), 0.4f)),
+
+                Either.<Season, SolarTerm>right(SolarTerm.BEGINNING_OF_WINTER), List.of(Pair.of(Either.<Season, SolarTerm>right(SolarTerm.BEGINNING_OF_AUTUMN), 1f)),
+                Either.<Season, SolarTerm>right(SolarTerm.LIGHT_SNOW), List.of(Pair.of(Either.<Season, SolarTerm>right(SolarTerm.BEGINNING_OF_AUTUMN), 0.6f), Pair.of(Either.<Season, SolarTerm>right(SolarTerm.AUTUMNAL_EQUINOX), 0.4f)),
+                Either.<Season, SolarTerm>right(SolarTerm.HEAVY_SNOW), List.of(Pair.of(Either.<Season, SolarTerm>right(SolarTerm.AUTUMNAL_EQUINOX), 0.4f), Pair.of(Either.<Season, SolarTerm>right(SolarTerm.BEGINNING_OF_WINTER), 0.6f)),
+                Either.<Season, SolarTerm>right(SolarTerm.WINTER_SOLSTICE), List.of(Pair.of(Either.<Season, SolarTerm>right(SolarTerm.AUTUMNAL_EQUINOX), 0.2f), Pair.of(Either.<Season, SolarTerm>right(SolarTerm.BEGINNING_OF_WINTER), 0.8f)),
+                Either.<Season, SolarTerm>right(SolarTerm.LESSER_COLD), List.of(Pair.of(Either.<Season, SolarTerm>right(SolarTerm.BEGINNING_OF_WINTER), .5f), Pair.of(Either.<Season, SolarTerm>right(SolarTerm.WINTER_SOLSTICE), 0.5f)),
+                Either.<Season, SolarTerm>right(SolarTerm.GREATER_COLD), List.of(Pair.of(Either.<Season, SolarTerm>right(SolarTerm.WINTER_SOLSTICE), 1f))
         );
 
         context.register(HOT, AgroClimaticZone.builder(and(get(Tags.Biomes.IS_HOT_OVERWORLD)))
                 .mapping(mapHot)
-                .add(Season.SUMMER, 24)
+                .add(Season.SPRING, 4).add(Season.SUMMER, 14).add(Season.AUTUMN, 3).add(Season.WINTER, 3)
                 .end());
 
 

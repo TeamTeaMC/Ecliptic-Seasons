@@ -9,6 +9,10 @@ public interface IBiomeTagHolder {
 
     TagKey<Biome> eclipticseasons$getBindTag();
 
+    void eclipticseasons$setColorTag(TagKey<Biome> tag);
+
+    TagKey<Biome> eclipticseasons$getBindColorTag();
+
     void eclipticseasons$setSmall(boolean isSmall);
 
     boolean eclipticseasons$isSmallBiome();

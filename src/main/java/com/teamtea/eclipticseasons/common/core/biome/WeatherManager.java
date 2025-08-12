@@ -1,7 +1,6 @@
 package com.teamtea.eclipticseasons.common.core.biome;
 
 import com.mojang.serialization.Codec;
-import com.teamtea.eclipticseasons.api.constant.climate.ISnowTerm;
 import com.teamtea.eclipticseasons.api.constant.tag.ESEnchantmentTags;
 import com.teamtea.eclipticseasons.api.constant.tag.ESItemTags;
 import com.teamtea.eclipticseasons.api.constant.tag.ESMobEffectTags;
@@ -82,7 +81,6 @@ public class WeatherManager {
     }
 
     public static Level fetchLevelIfNull(Level level, Biome biome) {
-
         level = level != null || !BiomeClimateManager.CLIENT_BIOME_TAG_KEY_MAP.containsKey(biome)
                 ? level : ClientCon.getUseLevel();
         return level != null ? level : getMainServerLevel();
@@ -116,77 +114,77 @@ public class WeatherManager {
 
 
     public static float getMinRainLevel(Level level, float p46723) {
-        var ws = getBiomeList(level);
-        if (ws != null)
-            for (BiomeWeather biomeWeather : ws) {
-                if (!biomeWeather.shouldRain()) {
-                    return 0.0f;
-                }
-            }
-        return 1.0f;
+        // var ws = getBiomeList(level);
+        // if (ws != null)
+        //     for (BiomeWeather biomeWeather : ws) {
+        //         if (!biomeWeather.shouldRain()) {
+        //             return 0.0f;
+        //         }
+        //     }
+        return 0.0f;
     }
 
     public static float getMaximumRainLevel(Level level, float p46723) {
-        var ws = getBiomeList(level);
-        if (ws != null)
-            for (BiomeWeather biomeWeather : ws) {
-                if (biomeWeather.shouldRain()) {
-                    return 1.0f;
-                }
-            }
-        return 0.0f;
+        // var ws = getBiomeList(level);
+        // if (ws != null)
+        //     for (BiomeWeather biomeWeather : ws) {
+        //         if (biomeWeather.shouldRain()) {
+        //             return 1.0f;
+        //         }
+        //     }
+        return 1.0f;
     }
 
     // todo other mods should not use it but we not sure
     public static boolean isRainingEverywhere(ServerLevel level) {
         // if (!MapChecker.isValidDimension(level)) return false;
-        var ws = getBiomeList(level);
-        if (ws != null) {
-            // SolarTerm solarTerm = EclipticUtil.getNowSolarTerm(level);
-            for (BiomeWeather biomeWeather : ws) {
-                if (!biomeWeather.shouldRain()
-                ) {
-                    return false;
-                }
-            }
-        }
-        return true;
+        // var ws = getBiomeList(level);
+        // if (ws != null) {
+        //     // SolarTerm solarTerm = EclipticUtil.getNowSolarTerm(level);
+        //     for (BiomeWeather biomeWeather : ws) {
+        //         if (!biomeWeather.shouldRain()
+        //         ) {
+        //             return false;
+        //         }
+        //     }
+        // }
+        return false;
     }
 
     public static float getMinThunderLevel(Level level, float p46723) {
-        var ws = getBiomeList(level);
-        if (ws != null)
-            for (BiomeWeather biomeWeather : ws) {
-                if (!biomeWeather.shouldThunder()) {
-                    return 0.0f;
-                }
-            }
-        return 1.0f;
+        // var ws = getBiomeList(level);
+        // if (ws != null)
+        //     for (BiomeWeather biomeWeather : ws) {
+        //         if (!biomeWeather.shouldThunder()) {
+        //             return 0.0f;
+        //         }
+        //     }
+        return 0.0f;
     }
 
 
     public static float getMaximumThunderLevel(Level level, float p46723) {
-        var ws = getBiomeList(level);
-        if (ws != null)
-            for (BiomeWeather biomeWeather : ws) {
-                if (biomeWeather.shouldThunder()) {
-                    return 1.0f;
-                }
-            }
-        return 0.0f;
+        // var ws = getBiomeList(level);
+        // if (ws != null)
+        //     for (BiomeWeather biomeWeather : ws) {
+        //         if (biomeWeather.shouldThunder()) {
+        //             return 1.0f;
+        //         }
+        //     }
+        return 1.0f;
     }
 
     public static boolean isThunderEverywhere(ServerLevel level) {
         // if (!MapChecker.isValidDimension(level)) return false;
-        var ws = getBiomeList(level);
-        if (ws != null) {
-            for (BiomeWeather biomeWeather : ws) {
-                if (!biomeWeather.shouldThunder()) {
-                    return false;
-                }
-            }
-        }
-        return true;
+        // var ws = getBiomeList(level);
+        // if (ws != null) {
+        //     for (BiomeWeather biomeWeather : ws) {
+        //         if (!biomeWeather.shouldThunder()) {
+        //             return false;
+        //         }
+        //     }
+        // }
+        return false;
     }
 
     public static boolean isThunderAtBiome(Level level, BlockPos pos) {
@@ -355,16 +353,9 @@ public class WeatherManager {
 
 
     public static Biome.Precipitation getPrecipitationAt(Biome biome, BlockPos pos) {
-        return getPrecipitationAt(null, biome, pos);
-    }
-
-    // TODO：make a cache here
-    public static Biome.Precipitation getPrecipitationAt(@Nullable Level levelNull, Biome biome, BlockPos pos) {
-
-        // TODO：we need to know the biome instance from server side or client registry
-        var level = fetchLevelIfNull(levelNull, biome);
-
+        var level = fetchLevelIfNull(null, biome);
         if (level != null) {
+            // TODO should fix in some times
             if (MapChecker.isLoadNearByOnlyServer(level, pos)) {
                 biome = MapChecker.getSurfaceBiome(level, pos).value();
             }
@@ -374,6 +365,14 @@ public class WeatherManager {
             //             Biome.Precipitation.RAIN;
             // }
         }
+        return getPrecipitationAt(level, biome, pos);
+    }
+
+    // TODO：make a cache here
+    public static Biome.Precipitation getPrecipitationAt(@Nullable Level levelNull, Biome biome, BlockPos pos) {
+
+        // TODO：we need to know the biome instance from server side or client registry
+        var level = fetchLevelIfNull(levelNull, biome);
 
         // check if it has predication
         if (((IBiomeTagHolder) (Object) biome).eclipticseasons$getBindTag().equals(ClimateTypeBiomeTags.RAINLESS)) {
@@ -484,8 +483,8 @@ public class WeatherManager {
         WeatherManager.BIOME_WEATHER_LIST.forEach((key, value) -> value.sort(Comparator.comparing(c -> c.id)));
     }
 
-    public static void tickPlayerSeasonEffecct(ServerPlayer player) {
-        if (  // player.isCreative() ||
+    public static void tickPlayerSeasonEffect(ServerPlayer player) {
+        if (player.isCreative() || player.isSpectator() ||
                 !CommonConfig.Temperature.heatStroke.get()) return;
         Level level = player.level();
         if (MapChecker.isValidDimension(level)

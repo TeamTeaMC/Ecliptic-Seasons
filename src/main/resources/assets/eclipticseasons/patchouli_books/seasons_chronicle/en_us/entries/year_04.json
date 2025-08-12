@@ -1,0 +1,15 @@
+{
+  "name": "04 - Winter",
+  "icon": "eclipticseasons:calendar",
+  "category": "eclipticseasons:core",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "Winter marks the end of the year — the warm days have passed, and now it is the season of snow.$(br)$(br)However, only truly cold places can collect snow. In slightly warmer areas, snow is merely decorative, and rivers will not freeze. Although snow can be collected with a cauldron, the efficiency is ultimately too low.$(br)$(br)Still, my friend, let us sit by the fireplace together, watching the snowflakes dance across a land blanketed in white."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "The first solar term of winter is $(l)Beginning of Winter$(). At this time, it is not very cold and may not even snow — just be careful of the chilly winter rain. Next come $(l)Light Snow$() and $(l)Heavy Snow$(), when most biomes will begin to see snowfall in succession.$(br)$(br)After that is $(l)Winter Solstice$(), the longest night of the year, though not the coldest. We must still pass through $(l)Lesser Cold$() and $(l)Greater Cold$(), the coldest time of the year. Even in some hot regions, if you are lucky enough, you may see snow."
+    }
+  ]
+}

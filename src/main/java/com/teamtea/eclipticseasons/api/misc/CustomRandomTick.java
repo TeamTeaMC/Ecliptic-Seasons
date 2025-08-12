@@ -7,5 +7,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public interface CustomRandomTick
 {
-    void tick(BlockState state, ServerLevel worldIn, BlockPos pos);
+    void eclipticseasons$tick(BlockState state, ServerLevel worldIn, BlockPos pos);
+
+    void eclipticseasons$reset();
 }

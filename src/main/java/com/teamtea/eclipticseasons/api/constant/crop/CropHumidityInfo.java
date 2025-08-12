@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-@Deprecated
 public class CropHumidityInfo {
     private final Humidity min;
     private final Humidity max;

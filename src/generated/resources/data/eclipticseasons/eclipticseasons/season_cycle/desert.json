@@ -1,6 +1,0 @@
-{
-  "biomes": "#c:is_desert",
-  "phases": {
-    "default": "eclipticseasons:dry"
-  }
-}

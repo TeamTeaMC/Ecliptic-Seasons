@@ -6,8 +6,8 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.Share;
-import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
+import com.teamtea.eclipticseasons.api.misc.CustomRandomTick;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
@@ -31,7 +31,6 @@ import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.storage.ServerLevelData;
 import net.minecraft.world.level.storage.WritableLevelData;
-import net.neoforged.fml.loading.FMLEnvironment;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -93,30 +92,33 @@ public abstract class MixinServerLevel extends Level {
     }
 
 
-    @Inject(
-            method = "tickChunk",
-            at = @At(value = "HEAD")
-    )
-    private void eclipticseasons$tickChunk_handleRandomTick_start(LevelChunk chunk, int randomTickSpeed, CallbackInfo ci, @Share("shouldTick") LocalBooleanRef shouldTick) {
-        shouldTick.set(CropGrowthHandler.shouldTick(this, chunk));
-    }
+    // @Inject(
+    //         method = "tickChunk",
+    //         at = @At(value = "HEAD")
+    // )
+    // private void eclipticseasons$tickChunk_handleRandomTick_start(LevelChunk chunk, int randomTickSpeed, CallbackInfo ci, @Share("shouldTick") LocalBooleanRef shouldTick) {
+    //     shouldTick.set(CropGrowthHandler.shouldTick(this, chunk));
+    // }
 
-    @Inject(
-            method = "tickChunk",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/material/FluidState;isRandomlyTicking()Z")
-    )
-    private void ecliptic$tickChunk_handleRandomTick(LevelChunk chunk, int randomTickSpeed, CallbackInfo ci, @Local BlockState blockState, @Local BlockPos blockPos, @Share("shouldTick") LocalBooleanRef shouldTick) {
-        if (shouldTick.get())
-            CropGrowthHandler.handleRandomTick((ServerLevel) (Object) this, chunk, blockPos, blockState);
-    }
+    // @Inject(
+    //         method = "tickChunk",
+    //         at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/material/FluidState;isRandomlyTicking()Z")
+    // )
+    // private void ecliptic$tickChunk_handleRandomTick(LevelChunk chunk, int randomTickSpeed, CallbackInfo ci, @Local BlockState blockState, @Local BlockPos blockPos, @Share("shouldTick") LocalBooleanRef shouldTick) {
+    //     if (shouldTick.get())
+    //         CropGrowthHandler.handleRandomTick((ServerLevel) (Object) this, chunk, blockPos, blockState);
+    // }
 
     @Inject(
             method = "tickChunk",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;isRandomlyTicking()Z")
     )
-    private void ecliptic$tickChunk_justTickPlant(LevelChunk chunk, int randomTickSpeed, CallbackInfo ci, @Local BlockState blockState, @Local BlockPos blockPos) {
+    private void ecliptic$tickChunk_customRandomTick(LevelChunk chunk, int randomTickSpeed, CallbackInfo ci, @Local BlockState blockState, @Local BlockPos blockPos) {
         if (CommonConfig.Debug.seasonDefinition.get())
             NaturalPlantHandler.tickBlock((ServerLevel) (Object) this, blockPos, blockState);
+        // if (blockState instanceof CustomRandomTick customRandomTick) {
+        //     customRandomTick.eclipticseasons$tick(blockState, (ServerLevel) (Object) this, blockPos);
+        // }
     }
 
     @Inject(

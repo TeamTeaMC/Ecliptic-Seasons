@@ -20,6 +20,8 @@ import net.minecraft.core.*;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ChunkHolder;
+import net.minecraft.server.level.ServerChunkCache;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
@@ -34,7 +36,6 @@ import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.level.block.state.properties.Half;
 import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraft.world.level.chunk.ChunkAccess;
-import net.minecraft.world.level.chunk.ChunkSource;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.chunk.status.ChunkStatus;
 import net.minecraft.world.level.levelgen.Heightmap;
@@ -161,17 +162,30 @@ public class MapChecker {
         return map;
     }
 
+    public static @Nullable ChunkAccess getChunkView(Level level, BlockPos pos) {
+        return level.getChunk(SectionPos.blockToSectionCoord(pos.getX()),
+                SectionPos.blockToSectionCoord(pos.getZ()), ChunkStatus.SURFACE, false);
+    }
+
+    public static int getVanillaSolidHeightOrSelf(Level level, BlockPos pos) {
+        ChunkAccess biomeChunk = getChunkView(level, pos);
+        return biomeChunk != null ?
+                biomeChunk.getHeight(Heightmap.Types.MOTION_BLOCKING, pos.getX(), pos.getZ()) + 1 :
+                pos.getY();
+    }
+
     public static int getMCHeightWithCheck(Level level, BlockPos pos) {
         return getMCHeightWithCheck(level, pos, null);
     }
 
     public static int getMCHeightWithCheck(Level level, BlockPos pos, @Nullable Integer oldY) {
-        LevelChunk chunkAt = level.getChunkAt(pos);
+        ChunkAccess chunkAt = getChunkView(level, pos);
         SnowyRemover snowyRemover = null;
         if (chunkAt != null && chunkAt.hasData(AttachmentRegistry.SNOWY_REMOVER)) {
             snowyRemover = chunkAt.getData(AttachmentRegistry.SNOWY_REMOVER);
         }
-        return getMCHeightWithCheck(level, pos, chunkAt, snowyRemover, null, oldY);
+        return chunkAt == null ? pos.getY() :
+                getMCHeightWithCheck(level, pos, chunkAt, snowyRemover, null, oldY);
     }
 
     public static int getMCHeightWithCheck(Level level, BlockPos pos,
@@ -230,15 +244,15 @@ public class MapChecker {
                         onBlock instanceof BellBlock ||
                         onBlock instanceof ComposterBlock ||
                         onBlock instanceof CampfireBlock ||
-                        onBlock instanceof AbstractCauldronBlock ||
-                        onBlock instanceof DaylightDetectorBlock ||
+                        // onBlock instanceof AbstractCauldronBlock ||
+                        // onBlock instanceof DaylightDetectorBlock ||
                         onBlock instanceof AnvilBlock ||
                         onBlock instanceof BasePressurePlateBlock ||
-                        onBlock instanceof HoneyBlock ||
+                        // onBlock instanceof HoneyBlock ||
                         onBlock instanceof IronBarsBlock ||
                         onBlock instanceof LightningRodBlock ||
                         onBlock instanceof LecternBlock ||
-                        onBlock instanceof SlimeBlock ||
+                        // onBlock instanceof SlimeBlock ||
                         onBlock instanceof BambooStalkBlock
         )
         );
@@ -368,9 +382,34 @@ public class MapChecker {
         return map;
     }
 
+    /**
+     * Since Minecraft handles chunk retrieval and status checks differently on the server side,
+     * we need special methods to determine whether a chunk is loaded.
+     * This is especially important because when using Forgified Fabric API,
+     * there are known issues with its chunk loading event mechanism.
+     **/
+    public static boolean isLoaded(Level level, BlockPos pos) {
+        int chunkX = SectionPos.blockToSectionCoord(pos.getX());
+        int chunkZ = SectionPos.blockToSectionCoord(pos.getZ());
+        return !level.isOutsideBuildHeight(pos) && isLoaded(level, chunkX, chunkZ);
+    }
+
+    public static boolean isLoaded(Level level, int chunkX, int chunkZ) {
+        if (level.getChunkSource() instanceof ServerChunkCache serverChunkCache) {
+            ChunkHolder visibleChunkIfPresent =
+                    serverChunkCache.getVisibleChunkIfPresent(ChunkPos.asLong(chunkX, chunkZ));
+            if (visibleChunkIfPresent == null) return false;
+            var completablefuture = visibleChunkIfPresent.getFullChunkFuture();
+            var either = completablefuture.getNow(null);
+            LevelChunk o = either == null ? null : either.orElse(null);
+            return o != null;
+            // return visibleChunkIfPresent.getFullStatus().isOrAfter(FullChunkStatus.ENTITY_TICKING);
+        }
+        return level.hasChunk(chunkX, chunkZ);
+    }
 
     public static boolean isLoadedOnlyServer(Level level, BlockPos pos) {
-        return !(level instanceof ServerLevel) || level.isLoaded(pos);
+        return !(level instanceof ServerLevel) || isLoaded(level, pos);
     }
 
     public static boolean isLoadNearByOnlyServer(Level level, BlockPos pos) {
@@ -400,11 +439,10 @@ public class MapChecker {
         int ze = ((l1) >> 2) > 2 ? 1 : 0;
         int xs = i1 < 2 ? -1 : 0;
         int zs = l1 < 2 ? -1 : 0;
-        ChunkSource chunkSource = level.getChunkSource();
+        // ChunkSource chunkSource = level.getChunkSource();
         for (int i = xs; i <= xe; i++) {
             for (int j = zs; j <= ze; j++) {
-                if (!chunkSource
-                        .hasChunk(chunkX + i, chunkZ + j))
+                if (!isLoaded(level, chunkX + i, chunkZ + j))
                     return false;
             }
         }
@@ -424,7 +462,7 @@ public class MapChecker {
     public static boolean notLightAbove(Level level, BlockPos pos, int times) {
         var abovePos = pos.above();
         if (level.isLoaded(abovePos)) {
-            BlockState stateAbove = null;
+            BlockState stateAbove;
             // TODO: add this for I'm not know if we will crash for logic world change but not render section change
             try {
                 stateAbove = level.getBlockState(abovePos);
@@ -485,8 +523,9 @@ public class MapChecker {
     public static Holder<Biome> idToBiome(Level level, int id) {
         var list = WeatherManager
                 .getBiomeList(level);
-        if (list != null) {
-            Holder<Biome> biomeHolder = list.get(id).biomeHolder;
+        if (list != null && id < list.size()) {
+            Holder<Biome> biomeHolder =
+                    list.get(id).biomeHolder;
             if (biomeHolder != null) return biomeHolder;
         }
         Optional<Registry<Biome>> biomeRegistry = level.registryAccess().registry(Registries.BIOME);
@@ -526,13 +565,20 @@ public class MapChecker {
 
 
     // TODO:优化双map
+    //
+    // 重写getSurfaceBiome，死锁主要来自于level.getChunk(x, z, ChunkStatus.FULL, false)
+    // 使用ChunkStatus.BIOME替代看看,level.getBiome(pos)
+    // level.getChunk(SectionPos.blockToSectionCoord(pos.getX()), SectionPos.blockToSectionCoord(pos.getZ()), ChunkStatus.BIOMES, false)
+    // level.getHeight(Heightmap.Types.MOTION_BLOCKING, pos.getX(), pos.getZ()) 也会卡死，因为要full了
+    // 继续优化缓存
     public static Holder<Biome> getSurfaceBiome(Level level, BlockPos pos) {
         int x = SectionPos.blockToSectionCoord(pos.getX());
         int z = SectionPos.blockToSectionCoord(pos.getZ());
-        ChunkAccess chunkAt = level.getChunk(x, z, ChunkStatus.FULL, false);
+        ChunkAccess chunkAt = level.getChunk(x, z, ChunkStatus.BIOMES, false);
         if (chunkAt != null
                 && chunkAt instanceof IChunkBiomeHolder iChunkBiomeHolder
-                && iChunkBiomeHolder.eclipticseasons$getBiomeHolder() != null) {
+                && iChunkBiomeHolder.eclipticseasons$getBiomeHolder() != null
+                && iChunkBiomeHolder.eclipticseasons$getBiomeHolder().version() == SolarHolders.getSaveData(level).getBiomeDataVersion()) {
             // BiomeHolder biomeHolder = chunkAt.getData(ModContents.BIOME_HOLDER);
             return getSurfaceBiome(level, pos, iChunkBiomeHolder.eclipticseasons$getBiomeHolder());
         }
@@ -559,7 +605,7 @@ public class MapChecker {
                 if (isSmallBiome(biome)) {
                     y = getHeightSafe(level, pos) + 1;
                     if (y > maxBuildHeight || y <= minBuildHeight) {
-                        y = (level.getHeight(Heightmap.Types.MOTION_BLOCKING, pos.getX(), pos.getZ()));
+                        y = getVanillaSolidHeightOrSelf(level, pos);
                     }
                 }
             }
@@ -568,7 +614,7 @@ public class MapChecker {
         if (biome == null) {
             y = getHeightSafe(level, pos) + 1;
             if (y > maxBuildHeight || y <= minBuildHeight) {
-                y = (level.getHeight(Heightmap.Types.MOTION_BLOCKING, pos.getX(), pos.getZ()));
+                y = getVanillaSolidHeightOrSelf(level, pos);
             }
             pos = new BlockPos(pos.getX(), y, pos.getZ());
             bid = getSurfaceOrUpdate(level, pos, false, ChunkInfoMap.TYPE_BIOME);
@@ -620,7 +666,7 @@ public class MapChecker {
                 if (bid < 0) {
                     y = getHeightSafe(level, relative) + 1;
                     if (y > maxBuildHeight || y <= minBuildHeight) {
-                        y = (level.getHeight(Heightmap.Types.MOTION_BLOCKING, relative.getX(), relative.getZ()));
+                        y = getVanillaSolidHeightOrSelf(level, relative);
                     }
                     relative.setY(y);
                     bid = getSurfaceOrUpdate(level, relative, false, ChunkInfoMap.TYPE_BIOME);
@@ -897,7 +943,7 @@ public class MapChecker {
                 // note 此时有世界生成时已经获取了一次，可以压缩性能
                 // 后续只需要检查额外数据即可
                 biomeHolder = BiomeHolder
-                        .prepareBiomes(serverLevel, chunkPos, biomeDataVersion);
+                        .prepareBiomes(serverLevel, chunkPos, biomeDataVersion, false);
                 chunk.setData(AttachmentRegistry.BIOME_HOLDER, biomeHolder);
             } else {
                 biomeHolder = chunk.getData(AttachmentRegistry.BIOME_HOLDER);
@@ -907,7 +953,7 @@ public class MapChecker {
                     chunk.setData(AttachmentRegistry.BIOME_HOLDER, biomeHolder);
                 } else if (!biomeHolder.hasUpdated() || biomeHolder.version() != biomeDataVersion) {
                     biomeHolder = BiomeHolder
-                            .prepareBiomes(serverLevel, chunkPos, biomeDataVersion);
+                            .prepareBiomes(serverLevel, chunkPos, biomeDataVersion, biomeHolder.version() != biomeDataVersion);
                     chunk.setData(AttachmentRegistry.BIOME_HOLDER, biomeHolder);
                 }
             }

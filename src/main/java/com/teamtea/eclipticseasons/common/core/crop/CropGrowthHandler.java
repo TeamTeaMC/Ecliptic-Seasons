@@ -368,7 +368,7 @@ public final class CropGrowthHandler {
         GREEN_HOUSE, NORMAL, UNKNOWN;
     }
 
-    public static float getGrowChance(net.neoforged.bus.api.Event event, GrowParameter growParameter) {
+    public static float getGrowChance(Event event, GrowParameter growParameter) {
         return event instanceof BonemealEvent ?
                 growParameter.fertile_chance() : growParameter.grow_chance();
     }
@@ -490,7 +490,7 @@ public final class CropGrowthHandler {
 
 
     // 由于前面的事情的缘故，需要记录
-    public static void beforeCropGrowUp(net.neoforged.bus.api.Event event, Level level, BlockPos pos, BlockState blockState) {
+    public static void beforeCropGrowUp(Event event, Level level, BlockPos pos, BlockState blockState) {
         Block block = blockState.getBlock();
         Map<Holder<AgroClimaticZone>, CropGrowControl> controlMap = getControlMap(block);
         if (controlMap == null) return;
@@ -925,23 +925,21 @@ public final class CropGrowthHandler {
         if (saveData != null)
             saveData.tickChunk(chunk);
     }
+    //
+    // public static boolean shouldTick(Level level, LevelChunk chunk) {
+    //     SolarDataManager saveData = SolarHolders.getSaveData(level);
+    //     if (saveData != null)
+    //         return saveData.shouldTickChunk(chunk.getPos());
+    //     else return false;
+    // }
 
-    public static boolean shouldTick(Level level, LevelChunk chunk) {
-        SolarDataManager saveData = SolarHolders.getSaveData(level);
-        if (saveData != null)
-            return saveData.shouldTickChunk(chunk.getPos());
-        else return false;
-    }
-
-    public static void handleRandomTick(ServerLevel level, LevelChunk chunk, BlockPos blockPos, BlockState blockState) {
+    public static void handleRandomTick(ServerLevel level, BlockPos blockPos, BlockState blockState, List<WetterStructure> wetterStructureList) {
         SolarDataManager saveData = SolarHolders.getSaveData(level);
         if (saveData == null) return;
         HumidityControlProvider humidityControlProvider = saveData.queryHumidityControlProvider(blockPos);
         if (humidityControlProvider != null && humidityControlProvider.getRemainTime() > 0) return;
         boolean hasFound = false;
         WetterStructure needAdd = null;
-        Block block = blockState.getBlock();
-        List<WetterStructure> wetterStructureList = wetterStructures.getOrDefault(block, List.of());
         for (int j = 0, wetterStructuresSize = wetterStructureList.size(); j < wetterStructuresSize; j++) {
             WetterStructure structure = wetterStructureList.get(j);
             boolean needSkip = false;
@@ -954,7 +952,7 @@ public final class CropGrowthHandler {
             // }
             if (!needSkip) {
                 if (structure.enableAirCheck()) {
-                    needSkip = chunk.getBlockState(blockPos).isEmpty();
+                    needSkip = level.getBlockState(blockPos).isEmpty();
                 }
             }
             if (!needSkip) {
@@ -967,7 +965,7 @@ public final class CropGrowthHandler {
                     // } else {
                     //     stateTested = chunk.getBlockState(blockPos.offset(check.offset()));
                     // }
-                    if (!check.block().matches(new BlockInWorld(level, blockPos.offset(check.offset()), true))) {
+                    if (!check.block().matches(level, blockPos.offset(check.offset()))) {
                         needSkip = true;
                         break;
                     }
@@ -983,7 +981,35 @@ public final class CropGrowthHandler {
             saveData.addHumidityControlProvider(blockPos, new HumidityControlProvider(
                     needAdd.level(), needAdd.range() * needAdd.range(), needAdd.lastingTime()
             ));
+            level.scheduleTick(blockPos, blockState.getBlock(), needAdd.lastingTime());
         }
+    }
+
+    public static List<WetterStructure> validTick(BlockState state) {
+        List<WetterStructure> wetterStructureList = wetterStructures.getOrDefault(state.getBlock(), List.of());
+        List<WetterStructure> wetterStructureListFilter = null;
+        // boolean air = state.getBlock() == Blocks.AIR;
+        for (WetterStructure wetterStructure : wetterStructureList) {
+            boolean use = false;
+            if (wetterStructure.core().isPresent() && wetterStructure.core().get().blocks().isPresent()
+                // || air
+            ) {
+                BlockPredicate blockPredicate = wetterStructure.core().get();
+                HolderSet<Block> holders = blockPredicate.blocks().get();
+                if (holders.contains(state.getBlockHolder())
+                        && (blockPredicate.properties().isEmpty() || blockPredicate.properties().get().matches(state))) {
+                    use = true;
+                }
+            } else {
+                use = true;
+            }
+            if (use) {
+                if (wetterStructureListFilter == null) wetterStructureListFilter = new ArrayList<>();
+                wetterStructureListFilter.add(wetterStructure);
+            }
+        }
+        return wetterStructureListFilter == null ? List.of() :
+                wetterStructureList.size() == wetterStructureListFilter.size() ? wetterStructureList : wetterStructureListFilter;
     }
 
     public static Vec3 getClampedEndPoint(

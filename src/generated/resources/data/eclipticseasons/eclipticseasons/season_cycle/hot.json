@@ -1,0 +1,45 @@
+{
+  "biomes": {
+    "values": [
+      {
+        "values": [
+          "#c:is_hot/overworld"
+        ],
+        "type": "neoforge:or"
+      },
+      {
+        "value": "#eclipticseasons:monsoonal",
+        "type": "neoforge:not"
+      }
+    ],
+    "type": "neoforge:and"
+  },
+  "phases": {
+    "solar_terms": {
+      "beginning_of_spring": "eclipticseasons:hot_beginning_of_spring",
+      "rain_water": "eclipticseasons:hot_rain_water",
+      "insects_awakening": "eclipticseasons:hot_insects_awakening",
+      "spring_equinox": "eclipticseasons:hot_spring_equinox",
+      "fresh_green": "eclipticseasons:hot_fresh_green",
+      "grain_rain": "eclipticseasons:hot_grain_rain",
+      "beginning_of_summer": "eclipticseasons:hot_beginning_of_summer",
+      "lesser_fullness": "eclipticseasons:hot_lesser_fullness",
+      "grain_in_ear": "eclipticseasons:hot_grain_in_ear",
+      "summer_solstice": "eclipticseasons:hot_summer_solstice",
+      "lesser_heat": "eclipticseasons:hot_lesser_heat",
+      "greater_heat": "eclipticseasons:hot_greater_heat",
+      "beginning_of_autumn": "eclipticseasons:hot_beginning_of_autumn",
+      "end_of_heat": "eclipticseasons:hot_end_of_heat",
+      "white_dew": "eclipticseasons:hot_white_dew",
+      "autumnal_equinox": "eclipticseasons:hot_autumnal_equinox",
+      "cold_dew": "eclipticseasons:hot_cold_dew",
+      "first_frost": "eclipticseasons:hot_first_frost",
+      "beginning_of_winter": "eclipticseasons:hot_beginning_of_winter",
+      "light_snow": "eclipticseasons:hot_light_snow",
+      "heavy_snow": "eclipticseasons:hot_heavy_snow",
+      "winter_solstice": "eclipticseasons:hot_winter_solstice",
+      "lesser_cold": "eclipticseasons:hot_lesser_cold",
+      "greater_cold": "eclipticseasons:hot_greater_cold"
+    }
+  }
+}

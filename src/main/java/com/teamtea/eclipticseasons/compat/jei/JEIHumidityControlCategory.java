@@ -49,7 +49,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-
+@SuppressWarnings("removal")
 public class JEIHumidityControlCategory implements IRecipeCategory<HumidityControl> {
     private final IDrawable icon;
     private final IGuiHelper guiHelper;
@@ -215,11 +215,11 @@ public class JEIHumidityControlCategory implements IRecipeCategory<HumidityContr
                         guiGraphics.pose().mulPose(XYZ.deg_to_rad(30, 225, 0));
                         guiGraphics.pose().scale(0.625f, 0.625f, 0.625f);
 
-                        Lighting.setupLevel();
+                        // Lighting.setupLevel();
                         blockRenderer.renderSingleBlock(blockState,
                                 guiGraphics.pose(),
                                 guiGraphics.bufferSource(), LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
-                        guiGraphics.flush();
+                        // guiGraphics.flush();
 
                     } catch (Throwable throwable) {
                         EclipticSeasons.logger(throwable);

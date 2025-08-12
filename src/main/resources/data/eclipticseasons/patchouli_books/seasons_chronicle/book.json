@@ -1,0 +1,11 @@
+{
+  "name": "patchouli_books.eclipticseasons.seasons_chronicle.name",
+  "landing_text": "patchouli_books.eclipticseasons.seasons_chronicle.landing_text",
+  "version": 1,
+  "creative_tab": "eclipticseasons:eclipticseasons",
+  "use_resource_pack": true,
+  "pamphlet": true,
+  "model": "eclipticseasons:seasons_chronicle",
+  "index_icon":"eclipticseasons:textures/item/seasons_chronicle.png",
+  "filler_texture": "eclipticseasons:textures/show_ccc.png"
+}

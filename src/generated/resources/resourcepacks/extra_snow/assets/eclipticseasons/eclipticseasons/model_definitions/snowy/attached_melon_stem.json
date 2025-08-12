@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=south": {
+      "y": 270,
+      "model": "eclipticseasons:block/snowy/attached_melon_stem"
+    },
+    "facing=east": {
+      "y": 180,
+      "model": "eclipticseasons:block/snowy/attached_melon_stem"
+    },
+    "facing=north": {
+      "y": 90,
+      "model": "eclipticseasons:block/snowy/attached_melon_stem"
+    },
+    "facing=west": {
+      "model": "eclipticseasons:block/snowy/attached_melon_stem"
+    }
+  }
+}

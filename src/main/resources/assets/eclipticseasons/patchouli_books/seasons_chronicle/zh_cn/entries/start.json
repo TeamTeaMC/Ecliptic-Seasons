@@ -1,0 +1,11 @@
+{
+  "name": "00 - 前传",
+  "icon": "eclipticseasons:calendar",
+  "category": "eclipticseasons:core",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "天地始开，日行往复，四时递嬗，寒暑相推，遂有大数，以分廿四。$(br)$(br)天之道，虽盛不久，稍迟而衰。$(br)$(br)是故夏至非极热之时，冬至非大冷之日。"
+    }
+  ]
+}

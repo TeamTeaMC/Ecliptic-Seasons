@@ -1,0 +1,15 @@
+{
+  "name": "01 - Spring",
+  "icon": "eclipticseasons:calendar",
+  "category": "eclipticseasons:core",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "People often have a good impression of spring — it is the season of flowers and grass growing. From this time, heat energy begins to accumulate, and crops start to grow rapidly.$(br)$(br)Spring is the boundary between winter and summer; it is neither too cold nor too hot, with just the right temperature. However, crops do not start growing quickly right at $(l)Beginning of Spring$(); usually after $(l)Rain Water$(), conditions become most suitable for crop growth, as rainfall increases and humidity becomes favorable."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "After $(l)Insects Awakening$(), there may occasionally be thunderstorms, along with continuous light spring rain. By $(l)Spring Equinox$(), day and night are equal, and the cold has mostly dissipated. Of course, in hot regions the cold retreats earlier, while in cold regions it retreats later.$(br)$(br)Next comes $(l)Fresh Green$(), with just the right sunshine — the perfect time for outings. After that is $(l)Grain Rain$(), bringing even more rainfall. Spring is ending and summer is approaching, and the grains sown in spring can be prepared for harvest."
+    }
+  ]
+}

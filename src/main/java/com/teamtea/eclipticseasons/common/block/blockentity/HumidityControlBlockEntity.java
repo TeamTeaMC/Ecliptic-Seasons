@@ -76,7 +76,7 @@ public class HumidityControlBlockEntity extends SyncBlockEntity {
     protected boolean isRecipeCacheValid(@NotNull HumidityControl humidityControl) {
         if (level instanceof ServerLevel serverLevel) {
             for (PosAndBlockStateCheck c : humidityControl.checks()) {
-                if (!c.block().matches(serverLevel, getBlockPos().offset(c.offset()))) {
+                if (!c.matches(serverLevel, getBlockPos())) {
                     return false;
                 }
             }

@@ -291,10 +291,10 @@ public class SolarDataManager extends SavedData {
 
     public float calculateHumidityModification(BlockPos blockPos, boolean growPlus) {
         ChunkPos chunkPos = new ChunkPos(blockPos);
-        if (growPlus) {
-            needTickMap.put(chunkPos.toLong(), levelWeakReference.get() != null ?
-                    levelWeakReference.get().getGameTime() : 0);
-        }
+        // if (growPlus) {
+        //     needTickMap.put(chunkPos.toLong(), levelWeakReference.get() != null ?
+        //             levelWeakReference.get().getGameTime() : 0);
+        // }
 
         Vec3 center = blockPos.getCenter();
 
@@ -399,13 +399,13 @@ public class SolarDataManager extends SavedData {
     }
 
     public void tickChunk(LevelChunk chunk) {
-        if (!this.needTickMap.isEmpty()) {
-            long longPos = chunk.getPos().toLong();
-            long startTime = needTickMap.get(longPos);
-            if (startTime > 1)
-                needTickMap.put(longPos, startTime - 1);
-            else needTickMap.remove(longPos);
-        }
+        // if (!this.needTickMap.isEmpty()) {
+        //     long longPos = chunk.getPos().toLong();
+        //     long startTime = needTickMap.get(longPos);
+        //     if (startTime > 1)
+        //         needTickMap.put(longPos, startTime - 1);
+        //     else needTickMap.remove(longPos);
+        // }
         if (this.humidityCoreMap.isEmpty()) return;
         ChunkPos pos = chunk.getPos();
         List<Pair<BlockPos, HumidityControlProvider>> list = this.humidityCoreMap.get(pos.toLong());

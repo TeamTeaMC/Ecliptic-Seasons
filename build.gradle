@@ -89,7 +89,7 @@ runs {
 //                '-XX:TieredStopAtLevel=3',
 //                "-XX:+AllowEnhancedClassRedefinition",
 '-Dmixin.debug.export=true',
-"-Xmx3000M"]
+"-Xmx2048M"]
 
     }
 
@@ -139,9 +139,8 @@ dependencies {
     implementation "net.neoforged:neoforge:${neo_version}"
 
 
-    implementation("curse.maven:jei-238222:5606861")
+    implementation("curse.maven:jei-238222:6614392")
     implementation "curse.maven:jade-324717:6291517"
-    compileOnly "curse.maven:dynamictrees-252818:6611182"
     compileOnly("curse.maven:the-one-probe-245211:6106998")
 //    runtimeOnly("curse.maven:the-one-probe-245211:6106998")
 
@@ -158,37 +157,21 @@ dependencies {
 //    find what's happens bettwen 0.6.5 and 0.6.9
 //    onlyMainRuntimeOnly "maven.modrinth:sodium:mc1.21.1-0.6.5-neoforge"
 
-    compileOnly "curse.maven:journeymap-32274:6213329"
     onlyMainRuntimeOnly("curse.maven:journeymap-32274:6213329")
 
 
 //    onlyMainRuntimeOnly ("maven.modrinth:distanthorizons:2.2.1-a-1.21.1")
 //    compileOnly("curse.maven:distant-horizons-508933:6251735")
-    compileOnly("curse.maven:distant-horizons-508933:6760074")
-//    onlyMainRuntimeOnly ("curse.maven:distant-horizons-508933:6760074")
-
-    compileOnly("curse.maven:simple-clouds-1121215:5812034")
-
+    compileOnly("curse.maven:distant-horizons-508933:6791190")
+//    onlyMainRuntimeOnly ("curse.maven:distant-horizons-508933:6791190")
 
     onlyMainRuntimeOnly("curse.maven:spark-361579:5434153")
-
-    compileOnly("curse.maven:cold-sweat-506194:6176789")
-//    runtimeOnly("curse.maven:cold-sweat-506194:6176789")
-
-    compileOnly("curse.maven:snowy-spirit-566142:5983882")
-//    onlyMainRuntimeOnly ("curse.maven:snowy-spirit-566142:5983882")
-//    onlyMainRuntimeOnly ("curse.maven:selene-499980:6224057")
-    compileOnly("curse.maven:in-control-257356:5932871")
-//    onlyMainRuntimeOnly ("curse.maven:in-control-257356:5932871")
-
-    compileOnly "curse.maven:touhou-little-maid-355044:6175338"
-//    onlyMainRuntimeOnly "curse.maven:touhou-little-maid-355044:6175338"
-
-//    onlyMainRuntimeOnly "curse.maven:create-328085:6255497"
 
 //    onlyMainRuntimeOnly "curse.maven:minecraft-add-1090474:6167550"
 
 //    onlyMainRuntimeOnly "curse.maven:euphoria-patches-915902:6137784"
+
+    implementation "curse.maven:patchouli-306770:6842247"
 
     println("----Scan onlyMainRuntimeOnly libs begin----")
     fileTree(dir: 'libs', include: ['*.jar']).each { File file ->

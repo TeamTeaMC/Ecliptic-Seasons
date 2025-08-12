@@ -1,3 +1,100 @@
+### 0.12.0-pre5
+
+- Optimized the environmental passive as a humidity adjustment mechanism, now by default adding magma bubble columns that can randomly increase moisture, you can check the wetter datapack if as a developer.
+- Added the `eclipticseasons:volatile` tag to mark non-plant blocks that require random ticks to be enabled (can be used in conjunction with environmental passive adjustment).
+- The humidity control datapack now also supports state checks, similar to the crop datapack.
+
+### 0.12.0-pre4-3
+
+- Added a new Patchouli guide, the _Seasons Chronicle_, craftable with seeds and a book.
+  It provides a brief introduction to the mod’s seasons, agriculture, regional differences, and explanations of certain terms.
+- Cauldrons, honey blocks, slime blocks, and composters are no longer treated as blocks that snow can pass through by default.
+
+### 0.12.0-pre4-2
+
+- Split the tags used for Biome Rain and Biome Color (these can also be customized via resource packs or data packs).
+- Adjusted the default seasonal biome colors and biome rain for cold and hot regions.
+
+### 0.12.0-pre4-1
+
+- Added registration for crop data converting `sereneseasons:year_round_crops` tag to `eclipticseasons:all_seasons`.
+- Enabling the EnhancementChunkRenderUpdate option while using DH may cause slow generation of DH fake chunks. This
+  potential issue has been optimized.
+- **Developer related:**
+  - Added API method `getAgroSeason` to query the locally applied season based on agricultural zones, avoiding biome
+    characteristics being overlooked due to global season limitations.
+
+
+### 0.12.0-pre4
+
+**Main Changes:**
+
+- Adjustments to the **default built-in data pack**, especially biome and seasonal definitions.
+  Feedback is welcome.
+
+**Biome Classification:**
+
+- Replaced “Tropical / Temperate / Cold” zones with **Hot / Warm / Cold regions** for overworld biome classification.
+- **Hot** regions no longer defaults to eternal summer. They now feature **all four seasons**, with **summer lasting over half the cycle**.
+- **Cold region coverage reduced**. Upper threshold lowered — e.g., *Windswept Forest* is no longer considered cold — to **reduce player confusion**.
+
+**Seasonal Info (Optional Setting):**
+
+- When `EnableLocalInfoAndCalendar` is enabled:
+
+  - **New inform content** added for **Hot regions**.
+  - **Desert, Jungle**, and similar biomes **no longer have custom informs/calendar** — they now follow **Hot region** templates.
+
+#### 0.12.0-pre-3-1-3
+
+- Fixed an issue where using RegisterCropDefaultValue would add crop information to all blocks.
+
+#### 0.12.0-pre-3-1
+
+- Surface biome lookup no longer depends on neighboring chunk load state.
+
+### 0.12.0-pre-3
+
+- Mixins or compatibilities for Cold Sweat, InControl, Simple Clouds, and patch for Dynamic Trees are no longer included. Please use
+  Ecliptic Seasons: MultiMod Patch instead.
+
+#### 0.12.0-pre-2-4
+
+- Fixed an issue where biome data in chunks wasn't updated due to caching not reflecting registry changes (affects
+  players who removed biome mods without resetting chunks).
+
+- Fixed excessively low growth rates for `eclipticseasons:crops/all_seasons` tagged crops during winter.
+
+#### 0.12.0-pre-2-3
+
+- Now if an item crop tag is added without a corresponding block, the tooltip information will also be displayed.
+
+#### 0.12.0-pre-2-2
+
+- Fixed a crash that could occur when biome registries were modified during world reload, due to outdated
+  deserialization mappings.
+
+#### 0.12.0-pre-2-1
+
+- Added gameplay tips for some greenhouse-related items to help players understand how to build a proper greenhouse.
+
+### 0.12.0-pre-2
+
+- Completed the additional snow overlay resource pack for vanilla plants, which needs to be enabled in the settings.
+- Added crafting recipes for the Seasonal Greenhouse Core. It is now also possible to extract the essence from the core.
+
+### 0.12.0-pre
+
+- Mixins or compatibilities for JourneyMap, Snowy Spirit, and Touhou Little Maid are no longer included. Please use
+  Ecliptic Seasons: MultiMod Patch instead.
+  Ecliptic Seasons will now serve solely as a core mod.
+- The default value of `Realistic Snowy Change` is now set to false; the functionality remains unchanged.
+
+#### 0.11.8.4.3
+
+- Optimized compatibility with AoA3, which alters the Biome.shouldSnow check and triggers precipitation queries during
+  world generation.
+
 #### 0.11.8.4.2
 
 -Added additional checks to certain server-side biome-related queries to prevent them from being called by mods during

@@ -32,6 +32,7 @@ public final class ESBlockTagProvider extends BlockTagsProvider {
                 .addOptional(fd_rl("red_mushroom_colony"));
 
         tag(EclipticBlockTags.NATURAL_PLANTS).add(Blocks.BAMBOO_SAPLING);
+        tag(EclipticBlockTags.VOLATILE).add(Blocks.BUBBLE_COLUMN).addTag(EclipticBlockTags.VOLATILE_PLANTS);
         tag(EclipticBlockTags.VOLATILE_PLANTS);
 
         // add crop info

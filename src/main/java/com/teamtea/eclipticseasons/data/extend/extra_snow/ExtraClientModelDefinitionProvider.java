@@ -1,5 +1,9 @@
 package com.teamtea.eclipticseasons.data.extend.extra_snow;
 
+import com.mojang.datafixers.util.Pair;
+import com.teamtea.eclipticseasons.EclipticSeasons;
+import com.teamtea.eclipticseasons.api.data.client.model.variant.VariantLike;
+import com.teamtea.eclipticseasons.common.block.base.SimpleHorizontalEntityBlock;
 import com.teamtea.eclipticseasons.data.general.datapack.client.ClientModelDefinitionProvider;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
@@ -12,6 +16,7 @@ import net.neoforged.neoforge.client.model.generators.BlockModelProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public class ExtraClientModelDefinitionProvider extends ClientModelDefinitionProvider {
@@ -111,13 +116,52 @@ public class ExtraClientModelDefinitionProvider extends ClientModelDefinitionPro
                         return pitcherBottom;
                     } else {
                         int age = state.getValue(PitcherCropBlock.AGE);
-                        ExtraModelBuilder pitcherBottom = models().snowyWithExistingParent("pitcher_crop_top_stage_" + age) ;
+                        ExtraModelBuilder pitcherBottom = models().snowyWithExistingParent("pitcher_crop_top_stage_" + age);
                         if (age > 2)
                             pitcherBottom.texture("stage_" + age + "_top", "block/snowy/pitcher_crop_top_stage_" + age);
                         return pitcherBottom;
                     }
                 })
                 .replace(true);
+
+        for (Block block : List.of(Blocks.BEETROOTS, Blocks.CARROTS, Blocks.POTATOES, Blocks.WHEAT)) {
+            addSnowyBlockModelDefinition(block)
+                    .variantsForAllStatesExceptExact(state ->
+                    {
+                        int age = ((CropBlock) block).getAge(state);
+                        String path = block.builtInRegistryHolder().getKey().location().getPath()
+                                + "_stage" + age / (block == Blocks.CARROTS || block == Blocks.POTATOES ? (age == 6 ? 3 : 2) : 1);
+                        return models().snowyWithExistingParent(path)
+                                .texture("crop", snow_rl(path));
+                    })
+                    .replace(true);
+        }
+
+        for (Block block : List.of(Blocks.MELON_STEM,Blocks.PUMPKIN_STEM)) {
+            addSnowyBlockModelDefinition(block)
+                    .variantsForAllStatesExceptExact(state ->
+                    {
+                        int age = state.getValue(StemBlock.AGE);
+                        String path = block.builtInRegistryHolder().getKey().location().getPath();
+                        return models().snowyWithExistingParent(path + "_stage" + age, snow_rl("template/stem_growth" + age).toString())
+                                .texture("stem",  snow_rl("stem"));
+                    })
+                    .replace(false);
+        }
+        for (var block : List.of(Pair.of(Blocks.MELON_STEM, Blocks.ATTACHED_MELON_STEM),
+                Pair.of(Blocks.PUMPKIN_STEM, Blocks.ATTACHED_PUMPKIN_STEM))) {
+            String path1 = block.getFirst().builtInRegistryHolder().getKey().location().getPath();
+            String path2 = block.getSecond().builtInRegistryHolder().getKey().location().getPath();
+            ExtraModelBuilder builder = models().snowyWithExistingParent(path2, snow_rl("template/stem_fruit").toString())
+                    .texture("stem", snow_rl("stem"))
+                    .texture("upperstem", snow_rl("attached_stem"));
+            addSnowyBlockModelDefinition(block.getSecond())
+                    .variantsForAllStatesExcept(state ->
+                            new VariantLike[]{variant(builder)
+                                    .rotationY((SimpleHorizontalEntityBlock.getRotateYByFacing(state) + 90) % 360)
+                                    .build()})
+                    .replace(false);
+        }
     }
 
 

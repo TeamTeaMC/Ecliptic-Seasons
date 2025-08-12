@@ -12,6 +12,7 @@ import com.teamtea.eclipticseasons.api.data.crop.GrowParameter;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
+import com.teamtea.eclipticseasons.common.core.crop.GreenHouseCoreProvider;
 import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.advancements.critereon.BlockPredicate;
@@ -19,6 +20,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -30,6 +32,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -44,9 +47,9 @@ public class GrowthDetectorItem extends Item {
         if (player != null) {
             Level level = context.getLevel();
             BlockPos clickedPos = context.getClickedPos();
-            BlockState blockState = level.getBlockState(clickedPos);
-            if (!blockState.isAir() && CropGrowthHandler.getControlMap(blockState.getBlock()) != null) {
-                if (!level.isClientSide()) {
+            BlockState state = level.getBlockState(clickedPos);
+            if (!state.isAir() && CropGrowthHandler.getControlMap(state.getBlock()) != null) {
+                if (level instanceof ServerLevel serverLevel) {
                     MutableComponent component = Component.translatable("item.eclipticseasons.growth_detector.hint.title");
 
                     Holder<Biome> biomeHolder = CropGrowthHandler.getCropBiome(level, clickedPos);
@@ -55,17 +58,18 @@ public class GrowthDetectorItem extends Item {
                         component.append(Component.translatable("item.eclipticseasons.growth_detector.hint.agro_climatic_zone", Component.translatable(AgroClimaticZone.getDescriptionId(EclipticSeasons.parse(climateTypeHolder.getRegisteredName())))));
                     }
 
-                    Map<Holder<AgroClimaticZone>, CropGrowControl> controlMap = CropGrowthHandler.getControlMap(blockState.getBlock());
+                    Map<Holder<AgroClimaticZone>, CropGrowControl> controlMap = CropGrowthHandler.getControlMap(state.getBlock());
                     if (controlMap == null) return super.useOn(context);
 
                     CropGrowControl growControl = CropGrowthHandler.getCropGrowControl(controlMap, climateTypeHolder);
+                    Holder<AgroClimaticZone> agent = CropGrowthHandler.getDefaultAgroClimaticZoneHolder(level);
                     if (growControl == null) {
-                        growControl = CropGrowthHandler.getCropGrowControl(controlMap, CropGrowthHandler.getDefaultAgroClimaticZoneHolder(level));
+                        growControl = CropGrowthHandler.getCropGrowControl(controlMap, agent);
                     }
                     if (growControl != null) {
                         if (growControl.base().equals(CropGrow.EMPTY)) {
                             if (growControl.blocks().isEmpty() ||
-                                    !growControl.blocks().get().containsKey(blockState))
+                                    !growControl.blocks().get().containsKey(state))
                                 return super.useOn(context);
                         }
                     }
@@ -74,17 +78,33 @@ public class GrowthDetectorItem extends Item {
                     int chose = 0;
                     if (growControl != null) {
                         for (int i = 0; i < 100; i++) {
-                            chance += CropGrowthHandler.isInRoom(level, clickedPos, blockState, growControl.notGreenHouse()) ? 1 : 0;
+                            chance += CropGrowthHandler.isInRoom(level, clickedPos, state, growControl.notGreenHouse()) ? 1 : 0;
                         }
                         chose = chance > 50 ? 1 : chance > 10 ? 2 : 3;
-                        component.append(Component.translatable("item.eclipticseasons.growth_detector.hint.greenroom_" + chose, blockState.getBlock().getName()));
+                        component.append(Component.translatable("item.eclipticseasons.growth_detector.hint.greenroom_" + chose, state.getBlock().getName()));
                     }
 
                     chance = 0;
                     for (int i = 0; i < 100; i++) {
-                        chance += getGrowChance(level, clickedPos, blockState);
+                        chance += getGrowChance(level, clickedPos, state);
                     }
                     chose = chance > 80f ? 1 : chance > 60f ? 2 : chance > 40f ? 3 : chance > 20f ? 4 : chance > 0f ? 5 : 6;
+
+                    if (chance <= 40) {
+                        List<Season> seasons = CropGrowthHandler.getLikeSeasonsInTemperate(state, controlMap, agent);
+                        if (!seasons.isEmpty()) {
+                            SolarDataManager saveData = SolarHolders.getSaveData(level);
+                            if (saveData != null && saveData.findNearGreenHouseProvider(clickedPos, seasons) == null) {
+                                component.append(Component.translatable("item.eclipticseasons.growth_detector.hint.season_core"));
+                            }
+                        }
+                        List<Humidity> humidityList = CropGrowthHandler.getLikeHumidityInTemperate(state, controlMap, agent);
+                        if (!humidityList.isEmpty()) {
+                            if (!humidityList.contains(EclipticSeasonsApi.getInstance().getAdjustedHumidity(serverLevel, clickedPos))) {
+                                component.append(Component.translatable("item.eclipticseasons.growth_detector.hint.humidity"));
+                            }
+                        }
+                    }
                     component.append(Component.translatable("item.eclipticseasons.growth_detector.hint.grow_chance_" + chose, chance));
                     // component.append(","+chance);
                     player.sendSystemMessage(component);

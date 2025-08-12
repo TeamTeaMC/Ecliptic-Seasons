@@ -92,6 +92,9 @@ public abstract class MixinBiome implements IBiomeTagHolder {
     @Unique
     private TagKey<Biome> eclipticseasons$biomeTagKey = ClimateTypeBiomeTags.RAINLESS;
 
+    @Unique
+    private TagKey<Biome> eclipticseasons$biomeColorTagKey = ClimateTypeBiomeTags.NONE_COLOR_CHANGE;
+
     @Override
     public TagKey<Biome> eclipticseasons$getBindTag() {
         return eclipticseasons$biomeTagKey;
@@ -100,6 +103,16 @@ public abstract class MixinBiome implements IBiomeTagHolder {
     @Override
     public void eclipticseasons$setTag(TagKey<Biome> tag) {
         this.eclipticseasons$biomeTagKey = tag;
+    }
+
+    @Override
+    public void eclipticseasons$setColorTag(TagKey<Biome> tag) {
+        this.eclipticseasons$biomeColorTagKey=tag;
+    }
+
+    @Override
+    public TagKey<Biome> eclipticseasons$getBindColorTag() {
+        return this.eclipticseasons$biomeColorTagKey;
     }
 
     @Override

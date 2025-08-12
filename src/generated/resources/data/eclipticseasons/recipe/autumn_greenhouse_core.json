@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "group": "autumn_greenhouse_core",
+  "ingredients": [
+    {
+      "item": "eclipticseasons:autumn_greenhouse_essence"
+    },
+    {
+      "item": "eclipticseasons:greenhouse_core_container"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "eclipticseasons:autumn_greenhouse_core"
+  }
+}

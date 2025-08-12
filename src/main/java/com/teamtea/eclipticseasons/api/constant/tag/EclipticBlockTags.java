@@ -19,6 +19,7 @@ public class EclipticBlockTags {
 
     public static final TagKey<Block> NATURAL_PLANTS = create("natural_plants");
     public static final TagKey<Block> VOLATILE_PLANTS = create("volatile_plants");
+    public static final TagKey<Block> VOLATILE = create("volatile");
 
     public static TagKey<Block> create(String s) {
         return TagKey.create(Registries.BLOCK, EclipticSeasons.rl(s));
