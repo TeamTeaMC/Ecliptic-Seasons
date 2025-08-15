@@ -190,6 +190,9 @@ public class CommonConfig {
         public static ForgeConfigSpec.IntValue seasonCoreRange;
         public static ForgeConfigSpec.BooleanValue useBoxDistance;
 
+        public static ForgeConfigSpec.BooleanValue saveChunkEnvironmentalHumidity;
+
+
         private static void load(ForgeConfigSpec.Builder builder) {
             builder.push("Crop");
             enableCrop = builder.comment("Enable crop season control.")
@@ -229,6 +232,9 @@ public class CommonConfig {
 
             forceCompatMode = builder.comment("Force all crops to use compatibility mode for growth control, not just those tagged as eclipticseasons:natural_plants.")
                     .define("ForceCompatMode", false);
+
+            saveChunkEnvironmentalHumidity= builder.comment("Save environmental humidity modifiers to chunk file.")
+                    .define("SaveChunkEnvironmentalHumidity", true);
             builder.pop();
         }
     }
@@ -238,6 +244,7 @@ public class CommonConfig {
         public static ForgeConfigSpec.BooleanValue enableBreed;
         public static ForgeConfigSpec.BooleanValue enableBee;
         public static ForgeConfigSpec.BooleanValue enableFishing;
+        public static ForgeConfigSpec.BooleanValue enableCoreWork;
 
         private static void load(ForgeConfigSpec.Builder builder) {
             builder.push("Animal");
@@ -249,6 +256,10 @@ public class CommonConfig {
 
             enableFishing = builder.comment("Enable seasonal fishing behavior, let enjoy summer.")
                     .define("EnableSeasonalFishing", false);
+
+            enableCoreWork = builder.comment("Greenhouse core would also work for animal check but not need a greenhouse.")
+                    .define("EnableCoreWork", true);
+
             builder.pop();
         }
     }

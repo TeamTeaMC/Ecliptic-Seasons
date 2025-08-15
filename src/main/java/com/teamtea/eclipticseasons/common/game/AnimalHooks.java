@@ -8,7 +8,9 @@ import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.constant.tag.AnimalBehaviorTag;
 import com.teamtea.eclipticseasons.api.data.climate.AgroClimaticZone;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
+import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
+import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -20,7 +22,9 @@ import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.animal.Bee;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraftforge.common.Tags;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class AnimalHooks {
@@ -73,7 +77,14 @@ public class AnimalHooks {
 
         if (breedSeasonType != null) {
             if (!breedSeasonType.getInfo().isSuitable(season)) {
-                return true;
+                List<Season> seasons = new ArrayList<>();
+                for (Season collectValidValue : Season.collectValidValues()) {
+                    if (breedSeasonType.getInfo().isSuitable(collectValidValue))
+                        seasons.add(collectValidValue);
+                }
+
+                if (!CommonConfig.Animal.enableCoreWork.get() || withoutSeasonBonus(animal.level(), animal.blockPosition(), seasons))
+                    return true;
             }
 
             boolean isDay = EclipticSeasonsApi.getInstance().isDay(animal.level());
@@ -92,10 +103,20 @@ public class AnimalHooks {
         return true;
     }
 
+    public static boolean withoutSeasonBonus(Level level, BlockPos pos, List<Season> seasons) {
+        if (!seasons.isEmpty()) {
+            SolarDataManager saveData = SolarHolders.getSaveData(level);
+            return saveData != null && saveData.findNearGreenHouseProvider(pos, seasons) == null;
+        } else {
+            return true;
+        }
+    }
+
     public static boolean cancelBeePollinate(Bee bee) {
         if (!CommonConfig.Animal.enableBee.get()) return false;
         Season season = getUseSeason(bee.level(), bee);
-        return season != Season.SPRING;
+        return season != Season.SPRING
+                && (!CommonConfig.Animal.enableCoreWork.get() || withoutSeasonBonus(bee.level(), bee.blockPosition(), List.of(Season.SPRING)));
     }
 
     public static boolean cancelBeeOut(Level level, BlockPos blockPos) {
@@ -103,11 +124,12 @@ public class AnimalHooks {
 
         Season season = getUseSeason(level, blockPos);
         if (season == Season.WINTER) {
-            if (EclipticUtil.getTemperatureFloat(level, level.getBiome(blockPos).value(), blockPos) < 0.2f) {
-                return false;
+            if (CropGrowthHandler.getCropBiome(level, blockPos).is(Tags.Biomes.IS_COLD)) {
+                return !CommonConfig.Animal.enableCoreWork.get() || withoutSeasonBonus(level, blockPos, List.of(Season.WINTER));
             }
         }
-        return season != Season.SPRING && level.getRandom().nextBoolean();
+        return (season != Season.SPRING && (level.getRandom().nextBoolean()
+                || (!CommonConfig.Animal.enableCoreWork.get() || withoutSeasonBonus(level, blockPos, List.of(Season.SPRING)))));
     }
 
     public static List<Component> getBreedInfo(LivingEntity entity) {

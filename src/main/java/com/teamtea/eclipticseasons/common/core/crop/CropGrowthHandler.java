@@ -31,7 +31,6 @@ import com.teamtea.eclipticseasons.common.registry.AgroClimateRegistry;
 import com.teamtea.eclipticseasons.common.registry.CropRegistry;
 import com.teamtea.eclipticseasons.common.registry.ESRegistries;
 import com.teamtea.eclipticseasons.config.CommonConfig;
-import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.core.*;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -50,9 +49,7 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.chunk.ChunkAccess;
-import net.minecraft.world.level.chunk.LevelChunk;
-import net.minecraft.world.level.chunk.LevelChunkSection;
+import net.minecraft.world.level.chunk.*;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -61,6 +58,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.entity.player.BonemealEvent;
 import net.minecraftforge.event.level.BlockEvent;
+import net.minecraftforge.event.level.ChunkDataEvent;
 import net.minecraftforge.event.level.SaplingGrowTreeEvent;
 import net.minecraftforge.eventbus.api.Event;
 import org.jetbrains.annotations.NotNull;
@@ -889,15 +887,6 @@ public final class CropGrowthHandler {
             data.unloadChunk(pos);
     }
 
-    public static void handleRandomTick(Level serverLevel, LevelChunk chunk, BlockPos blockPos, BlockState blockState) {
-        if (blockState.is(Blocks.BUBBLE_COLUMN)
-                && chunk.getBlockState(blockPos.above()).isAir()
-                && chunk.getBlockState(blockPos.below()).is(Blocks.MAGMA_BLOCK)) {
-            SolarDataManager saveData = SolarHolders.getSaveData(serverLevel);
-            // saveData.addMap(blockPos, blockState);
-        }
-    }
-
     public static void handleRandomTick(ServerLevel level, BlockPos pos, BlockState state, List<WetterStructure> wetterStructureList) {
         SolarDataManager saveData = SolarHolders.getSaveData(level);
         if (saveData == null) return;
@@ -947,11 +936,16 @@ public final class CropGrowthHandler {
             //     saveData.removeHumidityControlProvider(pos);
             // }
             saveData.addHumidityControlProvider(pos, new HumidityControlProvider(
-                    needAdd.level(), needAdd.range() * needAdd.range(), needAdd.lastingTime()
+                    needAdd.level(), needAdd.range() * needAdd.range(), needAdd.lastingTime(), true
             ));
+            ChunkAccess chunk = level.getChunk(SectionPos.blockToSectionCoord(pos.getX()), SectionPos.blockToSectionCoord(pos.getZ()), ChunkStatus.BIOMES, false);
+            if (chunk != null) chunk.setUnsaved(true);
             // todo 后续激活更新
             // level.scheduleTick(pos, state.getBlock(), needAdd.lastingTime());
         }
+        // else {
+        //     saveData.removeHumidityControlProvider(pos);
+        // }
     }
 
     public static List<WetterStructure> validTick(BlockState state) {

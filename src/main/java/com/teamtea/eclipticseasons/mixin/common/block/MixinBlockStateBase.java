@@ -11,6 +11,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
@@ -53,6 +54,15 @@ public abstract class MixinBlockStateBase implements CustomRandomTick {
             eclipticseasons$reset();
         }
     }
+
+    // @Inject(
+    //         method = "onPlace",
+    //         at = @At(value = "HEAD")
+    // )
+    // private void eclipticseasons$onPlace(Level pLevel, BlockPos pPos, BlockState pOldState, boolean pMovedByPiston, CallbackInfo ci) {
+    //     if (pLevel instanceof ServerLevel serverLevel)
+    //         eclipticseasons$tick(asState(), serverLevel, pPos);
+    // }
 
     @Inject(
             method = "randomTick",

@@ -1,16 +1,24 @@
 package com.teamtea.eclipticseasons.common.core.crop;
 
 
-public final class HumidityControlProvider {
+import net.minecraft.nbt.CompoundTag;
+import net.minecraftforge.common.util.INBTSerializable;
+
+public final class HumidityControlProvider implements INBTSerializable<CompoundTag> {
     private float range;
     private float level;
     private int remainTime;
-
+    private boolean save;
 
     public HumidityControlProvider(float level, float range, int remainTime) {
+        this(level, range, remainTime, false);
+    }
+
+    public HumidityControlProvider(float level, float range, int remainTime, boolean save) {
         this.level = level;
         this.range = range;
         this.remainTime = remainTime;
+        this.save = save;
     }
 
     public float getRange() {
@@ -39,5 +47,25 @@ public final class HumidityControlProvider {
 
     public void addRemainTime(int remainTime) {
         this.remainTime += remainTime;
+    }
+
+    public boolean shouldSave() {
+        return save;
+    }
+
+    @Override
+    public CompoundTag serializeNBT() {
+        CompoundTag compoundTag=new CompoundTag();
+        compoundTag.putInt("remain_time",getRemainTime());
+        compoundTag.putFloat("range",getRange());
+        compoundTag.putFloat("level",getLevel());
+        return compoundTag;
+    }
+
+    @Override
+    public void deserializeNBT(CompoundTag nbt) {
+        this.remainTime=nbt.getInt("remain_time");
+        this.range=nbt.getFloat("range");
+        this.level=nbt.getFloat("level");
     }
 }

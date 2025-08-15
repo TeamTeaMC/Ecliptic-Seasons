@@ -25,6 +25,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.storage.DimensionDataStorage;
 import net.minecraft.world.phys.Vec3;
@@ -37,6 +38,8 @@ import java.util.List;
 
 
 public class SolarDataManager extends SavedData {
+
+    public static final String KEY_ATTACH_SOLAR_DATA = EclipticSeasons.rl("attach_solar_data").toString();
 
     protected final int startSolarTermsDay = (CommonConfig.Season.initialSolarTermIndex.get() - 1) * CommonConfig.Season.lastingDaysOfEachTerm.get();
     protected int solarTermsDay = startSolarTermsDay;
@@ -409,5 +412,37 @@ public class SolarDataManager extends SavedData {
 
     public boolean shouldSkipNextCheck(BlockPos blockPos) {
         return this.skipNextCheckInTickPosMap.containsKey(blockPos.asLong());
+    }
+
+    public void saveChunk(ChunkPos pos, CompoundTag data) {
+        if (!CommonConfig.Crop.saveChunkEnvironmentalHumidity.get()) return;
+        List<Pair<BlockPos, HumidityControlProvider>> list = this.humidityCoreMap.getOrDefault(pos.toLong(), null);
+        if (list != null) {
+            ListTag compoundTag = new ListTag();
+            for (Pair<BlockPos, HumidityControlProvider> pair : list) {
+                if (!pair.right().shouldSave()) continue;
+                CompoundTag ct = new CompoundTag();
+                ct.putLong("pos", pair.left().asLong());
+                ct.put("humidity_modifiers", pair.right().serializeNBT());
+                compoundTag.add(ct);
+            }
+            if (!compoundTag.isEmpty())
+                data.put(KEY_ATTACH_SOLAR_DATA, compoundTag);
+        }
+    }
+
+    public void loadChunk(ChunkPos pos, CompoundTag data) {
+        if (!data.contains(KEY_ATTACH_SOLAR_DATA)) return;
+        ListTag attachSolarData = data.getList(KEY_ATTACH_SOLAR_DATA, Tag.TAG_COMPOUND);
+        for (Tag attachSolarDatum : attachSolarData) {
+            CompoundTag compoundTag = (CompoundTag) attachSolarDatum;
+            long aLong = compoundTag.getLong("pos");
+            BlockPos blockPos = BlockPos.of(aLong);
+            CompoundTag humidity_modifier = compoundTag.getCompound("humidity_modifiers");
+            if (humidity_modifier.isEmpty()) continue;
+            HumidityControlProvider humidityControlProvider = new HumidityControlProvider(0, 0, 0, true);
+            humidityControlProvider.deserializeNBT(humidity_modifier);
+            addHumidityControlProvider(blockPos, humidityControlProvider);
+        }
     }
 }

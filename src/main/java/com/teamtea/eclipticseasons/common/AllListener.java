@@ -164,6 +164,26 @@ public class AllListener {
     }
 
     @SubscribeEvent
+    public static void onChunkSaveEvent(ChunkDataEvent.Save event) {
+        if (event.getLevel() instanceof Level level) {
+            SolarHolders.getSaveDataLazy(level)
+                            .ifPresent(solarDataManager -> {
+                                solarDataManager.saveChunk(event.getChunk().getPos(),event.getData());
+                            });
+        }
+    }
+
+    @SubscribeEvent
+    public static void onChunkLoadEvent(ChunkDataEvent.Load event) {
+        if (event.getLevel() instanceof Level level) {
+            SolarHolders.getSaveDataLazy(level)
+                    .ifPresent(solarDataManager -> {
+                        solarDataManager.loadChunk(event.getChunk().getPos(),event.getData());
+                    });
+        }
+    }
+
+    @SubscribeEvent
     public static void onLevelTick(TickEvent.LevelTickEvent event) {
         if (event.phase.equals(TickEvent.Phase.END)
                 && event.level instanceof ServerLevel serverLevel) {

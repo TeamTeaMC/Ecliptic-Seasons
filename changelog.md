@@ -1,3 +1,8 @@
+### 0.12.0-pre5-1
+
+- Animals can now benefit from the power of the Season Core, even though they do not require a greenhouse for breeding.
+- Environmental humidity modifier structures can now be set to save along with chunk data.
+
 ### 0.12.0-pre5
 
 - Optimized the environmental passive as a humidity adjustment mechanism, now by default adding magma bubble columns that can randomly increase humidity. Developers can refer to the wetter datapack for details.
