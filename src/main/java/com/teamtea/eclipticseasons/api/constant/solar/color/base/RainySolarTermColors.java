@@ -35,7 +35,9 @@ public enum RainySolarTermColors implements SolarTermColor {
     HEAVY_SNOW(),
     WINTER_SOLSTICE(),
     LESSER_COLD(),
-    GREATER_COLD();
+    GREATER_COLD(),
+
+    NONE();
 
 
     private final int rainyColor;

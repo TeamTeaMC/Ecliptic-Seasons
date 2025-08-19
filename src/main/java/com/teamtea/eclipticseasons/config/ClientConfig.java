@@ -62,6 +62,8 @@ public class ClientConfig {
         public static ForgeConfigSpec.BooleanValue realisticSnowyChange;
 
         public static ForgeConfigSpec.BooleanValue seasonalGrassColorChange;
+        public static ForgeConfigSpec.BooleanValue smootherSeasonalGrassColorChange;
+
         public static ForgeConfigSpec.BooleanValue flowerOnGrass;
 
         private static void load(ForgeConfigSpec.Builder builder) {
@@ -88,6 +90,8 @@ public class ClientConfig {
 
             seasonalGrassColorChange = builder.comment("The colors of the grass and leaves change with the time of year.")
                     .define("SeasonalGrassColorChange", true);
+            smootherSeasonalGrassColorChange = builder.comment("When applying changes, perform mean calculation based on the percentage progress of the solar term instead of using a fixed value.")
+                    .define("SmootherSeasonalGrassColorChange", true);
             flowerOnGrass = builder.comment("In spring, grass blocks will occasionally have small flowers on them.")
                     .define("FlowerOnGrass", true);
 

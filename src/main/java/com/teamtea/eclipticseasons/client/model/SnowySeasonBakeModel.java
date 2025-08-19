@@ -9,6 +9,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.ChunkRenderTypeSet;
 import net.minecraftforge.client.model.BakedModelWrapper;
 import net.minecraftforge.client.model.data.ModelData;
+import net.minecraftforge.common.util.ConcatenatedListView;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -44,10 +45,10 @@ public class SnowySeasonBakeModel<T extends BakedModel> extends BakedModelWrappe
         if (snowModelQuads_Ori.isEmpty()) return quads;
         if (quads.isEmpty()) return snowModelQuads_Ori;
 
-        List<BakedQuad> snowModelQuads = new ArrayList<>(quads.size() + snowModelQuads_Ori.size());
-        snowModelQuads.addAll(quads);
-        snowModelQuads.addAll(snowModelQuads_Ori);
-        return snowModelQuads;
+        // List<BakedQuad> snowModelQuads = new ArrayList<>(quads.size() + snowModelQuads_Ori.size());
+        // snowModelQuads.addAll(quads);
+        // snowModelQuads.addAll(snowModelQuads_Ori);
+        return ConcatenatedListView.of(quads, snowModelQuads_Ori);
     }
 
     @Override

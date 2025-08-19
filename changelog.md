@@ -1,3 +1,8 @@
+### 0.12.0-pre6
+
+- Added smooth transitions within solar terms for biome grass and foliage colors, which can be disabled in settings.
+- Other performance improvements and optimizations.
+
 ### 0.12.0-pre5-1
 
 - Animals can now benefit from the power of the Season Core, even though they do not require a greenhouse for breeding.
@@ -5,15 +10,19 @@
 
 ### 0.12.0-pre5
 
-- Optimized the environmental passive as a humidity adjustment mechanism, now by default adding magma bubble columns that can randomly increase humidity. Developers can refer to the wetter datapack for details.
-- Added the `eclipticseasons:volatile` tag to mark non-plant blocks that require random ticks to be enabled (can be used in conjunction with environmental passive adjustment).
+- Optimized the environmental passive as a humidity adjustment mechanism, now by default adding magma bubble columns
+  that can randomly increase humidity. Developers can refer to the wetter datapack for details.
+- Added the `eclipticseasons:volatile` tag to mark non-plant blocks that require random ticks to be enabled (can be used
+  in conjunction with environmental passive adjustment).
 - The humidity control datapack now also supports state checks, similar to the crop datapack.
 
 ### 0.12.0-pre4-3
 
 - Added a new Patchouli guide, the _Seasons Chronicle_, craftable with seeds and a book.
-  It provides a brief introduction to the mod’s seasons, agriculture, regional differences, and explanations of certain terms.
-- Cauldrons, honey blocks, slime blocks, and composters are no longer treated as blocks that snow can pass through by default.
+  It provides a brief introduction to the mod’s seasons, agriculture, regional differences, and explanations of certain
+  terms.
+- Cauldrons, honey blocks, slime blocks, and composters are no longer treated as blocks that snow can pass through by
+  default.
 
 ### 0.12.0-pre4-2
 

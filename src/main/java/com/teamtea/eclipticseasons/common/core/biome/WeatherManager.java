@@ -390,40 +390,32 @@ public class WeatherManager {
         }
     }
 
-    public static void informUpdateBiomes(RegistryAccess registryAccess) {
-        var biomes = registryAccess.registry(Registries.BIOME);
-        biomes.ifPresent(biomeRegistry -> biomeRegistry.forEach(biome ->
-        {
-            var loc = biomeRegistry.getKey(biome);
-            var id = biomeRegistry.getId(biome);
-            biomeRegistry.getHolder(ResourceKey.create(Registries.BIOME, biomeRegistry.getKey(biome))).ifPresent(biomeHolder -> {
+    public static void informUpdateBiomes(RegistryAccess registryAccess, boolean isServer) {
+        WeatherManager.BIOME_WEATHER_LIST.forEach((key, biomeWeathers) ->
+                registryAccess.registry(Registries.BIOME)
+                        .ifPresent(biomeRegistry -> biomeRegistry
+                                .holders().forEach(biomeHolder ->
+                                {
+                                    ResourceLocation loc = biomeHolder.key().location();
+                                    var id = biomeRegistry.getId(biomeHolder.value());
+                                    boolean inList = false;
+                                    for (BiomeWeather biomeWeather : biomeWeathers) {
+                                        if (biomeWeather.biomeHolder.is(loc)) {
+                                            biomeWeather.id = id;
+                                            biomeWeather.biomeHolder = biomeHolder;
+                                            inList = true;
+                                            break;
+                                        }
+                                    }
+                                    if (!inList) {
+                                        var biomeWeather = new BiomeWeather(biomeHolder);
+                                        biomeWeather.location = loc;
+                                        biomeWeather.id = id;
+                                        biomeWeathers.add(biomeWeather);
+                                    }
+                                })));
 
-                WeatherManager.BIOME_WEATHER_LIST.entrySet().stream().forEach(levelArrayListEntry ->
-                {
-                    var biomeWeathers = levelArrayListEntry.getValue();
-
-                    boolean inList = false;
-
-                    for (BiomeWeather biomeWeather : biomeWeathers) {
-                        // 这里需要根据holder确定一下
-                        if (biomeWeather.location.equals(loc)) {
-                            biomeWeather.id = id;
-                            biomeWeather.biomeHolder = biomeHolder;
-                            inList = true;
-                            break;
-                        }
-                    }
-                    if (!inList) {
-                        var biomeWeather = new BiomeWeather(biomeHolder);
-                        biomeRegistry.getId(biome);
-                        biomeWeather.location = loc;
-                        biomeWeather.id = id;
-                        biomeWeathers.add(biomeWeather);
-                    }
-                });
-            });
-
-        }));
+        WeatherManager.BIOME_WEATHER_LIST.forEach((key, value) -> value.sort(Comparator.comparing(c -> c.id)));
     }
 
     public static void tickPlayerSeasonEffect(ServerPlayer player) {

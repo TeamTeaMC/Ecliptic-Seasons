@@ -58,19 +58,14 @@ import java.util.List;
 
 @Mod.EventBusSubscriber(modid = EclipticSeasons.MODID)
 public class AllListener {
-    // public static LazyOptional<SolarProvider> provider = LazyOptional.empty();
-
-
-    // TagsUpdatedEvent invoke before ServerAboutToStartEvent
     @SubscribeEvent
     public static void onTagsUpdatedEvent(TagsUpdatedEvent tagsUpdatedEvent) {
         BiomeClimateManager.resetBiomeTemps(tagsUpdatedEvent.getRegistryAccess(), tagsUpdatedEvent.getUpdateCause() == TagsUpdatedEvent.UpdateCause.SERVER_DATA_LOAD);
-        WeatherManager.informUpdateBiomes(tagsUpdatedEvent.getRegistryAccess());
+        WeatherManager.informUpdateBiomes(tagsUpdatedEvent.getRegistryAccess(), tagsUpdatedEvent.getUpdateCause() == TagsUpdatedEvent.UpdateCause.SERVER_DATA_LOAD);
         CropInfoManager.init(tagsUpdatedEvent);
         CropGrowthHandler.resetUpdate(tagsUpdatedEvent.getRegistryAccess(), tagsUpdatedEvent.getUpdateCause() == TagsUpdatedEvent.UpdateCause.SERVER_DATA_LOAD);
         SnowChecker.resetUpdate(tagsUpdatedEvent.getRegistryAccess(), tagsUpdatedEvent.getUpdateCause() == TagsUpdatedEvent.UpdateCause.SERVER_DATA_LOAD);
     }
-
 
     @SubscribeEvent
     public static void onServerAboutToStartEvent(ServerAboutToStartEvent event) {
@@ -167,9 +162,9 @@ public class AllListener {
     public static void onChunkSaveEvent(ChunkDataEvent.Save event) {
         if (event.getLevel() instanceof Level level) {
             SolarHolders.getSaveDataLazy(level)
-                            .ifPresent(solarDataManager -> {
-                                solarDataManager.saveChunk(event.getChunk().getPos(),event.getData());
-                            });
+                    .ifPresent(solarDataManager -> {
+                        solarDataManager.saveChunk(event.getChunk().getPos(), event.getData());
+                    });
         }
     }
 
@@ -178,7 +173,7 @@ public class AllListener {
         if (event.getLevel() instanceof Level level) {
             SolarHolders.getSaveDataLazy(level)
                     .ifPresent(solarDataManager -> {
-                        solarDataManager.loadChunk(event.getChunk().getPos(),event.getData());
+                        solarDataManager.loadChunk(event.getChunk().getPos(), event.getData());
                     });
         }
     }

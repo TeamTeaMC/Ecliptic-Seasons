@@ -92,12 +92,16 @@ public class ModContents {
         Optional<ModFile> modContainer = Optional.ofNullable(FMLLoader.getLoadingModList().getModFileById(EclipticSeasons.MODID).getFile());
         if (modContainer.isPresent()) {
             ModFile modFile = modContainer.get();
-            if (event.getPackType() == PackType.CLIENT_RESOURCES
-                    || CommonConfig.Resource.extraSnow.get()) {
-                FakeResourceManagerHelperUtil.registerBuiltinResourcePack(
-                        event,
-                        EclipticSeasons.rl("extra_snow"),
-                        modFile, PackSource.BUILT_IN);
+            try {
+                if (event.getPackType() == PackType.CLIENT_RESOURCES
+                        || CommonConfig.Resource.extraSnow.get()) {
+                    FakeResourceManagerHelperUtil.registerBuiltinResourcePack(
+                            event,
+                            EclipticSeasons.rl("extra_snow"),
+                            modFile, PackSource.BUILT_IN);
+                }
+            } catch (Exception e) {
+                EclipticSeasons.logger(e);
             }
         }
     }

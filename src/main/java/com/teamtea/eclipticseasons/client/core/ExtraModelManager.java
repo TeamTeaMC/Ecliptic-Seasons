@@ -181,7 +181,7 @@ public class ExtraModelManager {
                     snowModel = models.get(stairs_top);
                 } else if (models != null && flag == MapChecker.FLAG_STAIRS) {
                     if (snowState != null)
-                        snowModel = models.get(BlockModelShaper.stateToModelLocation(snowState));
+                        snowModel =Minecraft.getInstance().getModelManager().getBlockModelShaper().getBlockModel(snowState);
                 } else if (flag == MapChecker.FLAG_GRASS) {
                     if (onBlock == Blocks.GRASS) {
                         snowModel = models.get(snowy_grass);
@@ -301,7 +301,7 @@ public class ExtraModelManager {
                     if (shouldMakeSnowyBakedQuads(blockType, direction)) {
                         ArrayList<BakedQuad> quadsCTM = null;
 
-                        BakedModel bakedModelCTM = models.get(BlockModelShaper.stateToModelLocation(state));
+                        BakedModel bakedModelCTM = Minecraft.getInstance().getModelManager().getBlockModelShaper().getBlockModel(state);
                         if (bakedModelCTM != null) {
                             ModelData modelDataCTM = bakedModelCTM.getModelData(blockAndTintGetter, pos, state, ModelData.EMPTY);
                             random.setSeed(seed);

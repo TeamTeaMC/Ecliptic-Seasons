@@ -42,7 +42,7 @@ public class BiomeColorsHandler {
     public static boolean needRefresh = false;
 
     private static BiomeColor.Instance getBiomeColor(Biome biome, int originColor) {
-        return ClientRef.biomeColors.getOrDefault(biome,null);
+        return ClientRef.biomeColors.getOrDefault(biome, null);
     }
 
     public static final ColorResolver GRASS_COLOR = (biome, posX, posZ) ->
@@ -54,9 +54,28 @@ public class BiomeColorsHandler {
             if (biomeColor != null) {
                 ColorMode.Instance instance = biomeColor.grassColor().get(ClientCon.nowSolarTerm);
                 if (instance != null) {
-                    return ColorHelper.simplyMixColor(instance.value(), instance.mix(), originColor, Math.abs(1 - instance.mix()));
+                    int color = ColorHelper.simplyMixColor(instance.value(), instance.mix(), originColor, Math.abs(1 - instance.mix()));
+                    if (ClientConfig.Renderer.smootherSeasonalGrassColorChange.get()) {
+                        ColorMode.Instance instance2 = biomeColor.grassColor().get(ClientCon.nowSolarTerm.getLastSolarTerm());
+                        if (instance2 != null && !instance.equals(instance2)) {
+                            int color2 = ColorHelper.simplyMixColor(instance2.value(), instance2.mix(), originColor, Math.abs(1 - instance2.mix()));
+                            float progressFloat = ClientCon.progress / 100f;
+                            return ColorHelper.simplyMixColor(color, progressFloat, color2, 1 - progressFloat);
+                        }
+                    }
+                    return color;
                 }
             }
+            TagKey<Biome> biomeTagKey = BiomeClimateManager.getColorTag(biome);
+            if (ClientConfig.Renderer.smootherSeasonalGrassColorChange.get()) {
+                SolarTermColor colorInfo = ClientCon.nowSolarTerm.getSolarTermColor(biomeTagKey);
+                SolarTermColor colorInfo2 = ClientCon.nowSolarTerm.getLastSolarTerm().getSolarTermColor(biomeTagKey);
+                int color = ColorHelper.simplyMixColor(colorInfo.getGrassColor(), colorInfo.getMix(), originColor, 1 - colorInfo.getMix());
+                int color2 = ColorHelper.simplyMixColor(colorInfo2.getGrassColor(), colorInfo2.getMix(), originColor, 1 - colorInfo2.getMix());
+                float progressFloat = ClientCon.progress / 100f;
+                return ColorHelper.simplyMixColor(color, progressFloat, color2, 1 - progressFloat);
+            }
+
             if (needRefresh) {
                 reloadColors();
             }
@@ -69,7 +88,6 @@ public class BiomeColorsHandler {
             int i = (int) ((1.0D - temperature) * 255.0D);
             int j = (int) ((1.0D - humidity) * 255.0D);
             int k = j << 8 | i;
-            TagKey<Biome> biomeTagKey = BiomeClimateManager.getColorTag(biome);
             int[] newGrassBuffer = newGrassBufferMap.getOrDefault(biomeTagKey, GrassColor.pixels);
 
             int color = k > newGrassBuffer.length ? originColor : newGrassBuffer[k];
@@ -91,8 +109,26 @@ public class BiomeColorsHandler {
             if (biomeColor != null) {
                 ColorMode.Instance instance = biomeColor.foliageColor().get(ClientCon.nowSolarTerm);
                 if (instance != null) {
-                    return ColorHelper.simplyMixColor(instance.value(), instance.mix(), originColor, Math.abs(1 - instance.mix()));
+                    int color = ColorHelper.simplyMixColor(instance.value(), instance.mix(), originColor, Math.abs(1 - instance.mix()));
+                    if (ClientConfig.Renderer.smootherSeasonalGrassColorChange.get()) {
+                        ColorMode.Instance instance2 = biomeColor.foliageColor().get(ClientCon.nowSolarTerm.getLastSolarTerm());
+                        if (instance2 != null && !instance.equals(instance2)) {
+                            int color2 = ColorHelper.simplyMixColor(instance2.value(), instance2.mix(), originColor, Math.abs(1 - instance2.mix()));
+                            float progressFloat = ClientCon.progress / 100f;
+                            return ColorHelper.simplyMixColor(color, progressFloat, color2, 1 - progressFloat);
+                        }
+                    }
+                    return color;
                 }
+            }
+            TagKey<Biome> biomeTagKey = BiomeClimateManager.getColorTag(biome);
+            if (ClientConfig.Renderer.smootherSeasonalGrassColorChange.get()) {
+                SolarTermColor colorInfo = ClientCon.nowSolarTerm.getSolarTermColor(biomeTagKey);
+                SolarTermColor colorInfo2 = ClientCon.nowSolarTerm.getLastSolarTerm().getSolarTermColor(biomeTagKey);
+                int color = ColorHelper.simplyMixColor(colorInfo.getLeaveColor(), colorInfo.getMix(), originColor, 1 - colorInfo.getMix());
+                int color2 = ColorHelper.simplyMixColor(colorInfo2.getLeaveColor(), colorInfo2.getMix(), originColor, 1 - colorInfo2.getMix());
+                float progressFloat = ClientCon.progress / 100f;
+                return ColorHelper.simplyMixColor(color, progressFloat, color2, 1 - progressFloat);
             }
             if (needRefresh) {
                 reloadColors();
@@ -103,7 +139,6 @@ public class BiomeColorsHandler {
             int i = (int) ((1.0D - temperature) * 255.0D);
             int j = (int) ((1.0D - humidity) * 255.0D);
             int k = j << 8 | i;
-            TagKey<Biome> biomeTagKey = BiomeClimateManager.getColorTag(biome);
             int[] newFoliageBuffer = newFoliageBufferMap.getOrDefault(biomeTagKey, FoliageColor.pixels);
             int color = k > newFoliageBuffer.length ? originColor : newFoliageBuffer[k];
             // if (biomeTagKey != ClimateTypeBiomeTags.SEASONAL
@@ -177,33 +212,41 @@ public class BiomeColorsHandler {
 
     public static int getLeavesColor(int base, LeaveColor[] values, BlockPos pos) {
         if (ClientConfig.Renderer.seasonalGrassColorChange.get()) {
-            if (pos != null &&
-                    Minecraft.getInstance().level instanceof ClientLevel
-                    && MapChecker.isValidDimension(Minecraft.getInstance().level)) {
+            if (pos != null && MapChecker.isValidDimension(ClientCon.getUseLevel())) {
 
-                SolarTerm solarTerm = EclipticSeasonsApi.getInstance().getSolarTerm(Minecraft.getInstance().level);
+                SolarTerm solarTerm = ClientCon.nowSolarTerm;
                 LeaveColor leaveColor = values[solarTerm.ordinal()];
 
-                int color = leaveColor.getColor();
-
-                if (values instanceof BirchLeavesColor[]
-                        && solarTerm.isInTerms(SolarTerm.END_OF_HEAT, SolarTerm.LIGHT_SNOW)) {
-                    float saturation = 1.0f;
-                    float brightness = 1.0f;
-                    float xChange = (float) ((Math.sin((float) pos.getX() / 16) + 1) / 2);
-                    float yChange = (float) ((Math.sin((float) pos.getY() / 128) + 1) / 2);
-                    float zChange = (float) ((Math.sin((float) pos.getZ() / 32) + 1) / 2);
-
-                    float change = (xChange + yChange + zChange) / 3;
-                    float hue = 0.025f + change * 0.14f;
-                    Color foliage = Color.getHSBColor(hue, saturation, brightness);
-                    color = foliage.getRGB();
-                }
-
-                return ColorHelper.simplyMixColor(color, leaveColor.getMix(),
+                int color = ColorHelper.simplyMixColor(fixColor(values, pos, solarTerm, leaveColor.getColor()), leaveColor.getMix(),
                         base, 1 - leaveColor.getMix());
+                if (ClientConfig.Renderer.smootherSeasonalGrassColorChange.get()) {
+                    SolarTerm solarTerm2 = solarTerm.getLastSolarTerm();
+                    LeaveColor leaveColor2 = values[solarTerm2.ordinal()];
+                    int color2 = ColorHelper.simplyMixColor(fixColor(values, pos, solarTerm2, leaveColor2.getColor()), leaveColor2.getMix(),
+                            base, 1 - leaveColor2.getMix());
+                    float progressFloat = ClientCon.progress / 100f;
+                    return ColorHelper.simplyMixColor(color, progressFloat, color2, 1 - progressFloat);
+                }
+                return color;
             }
         }
         return base;
+    }
+
+    private static int fixColor(LeaveColor[] values, BlockPos pos, SolarTerm solarTerm, int color) {
+        if (values instanceof BirchLeavesColor[]
+                && solarTerm.isInTerms(SolarTerm.END_OF_HEAT, SolarTerm.LIGHT_SNOW)) {
+            float saturation = 1.0f;
+            float brightness = 1.0f;
+            float xChange = (float) ((Math.sin((float) pos.getX() / 16) + 1) / 2);
+            float yChange = (float) ((Math.sin((float) pos.getY() / 128) + 1) / 2);
+            float zChange = (float) ((Math.sin((float) pos.getZ() / 32) + 1) / 2);
+
+            float change = (xChange + yChange + zChange) / 3;
+            float hue = 0.025f + change * 0.14f;
+            Color foliage = Color.getHSBColor(hue, saturation, brightness);
+            color = foliage.getRGB();
+        }
+        return color;
     }
 }

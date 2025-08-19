@@ -36,7 +36,9 @@ public enum HotSolarTermColors implements SolarTermColor {
     HEAVY_SNOW(ColorHelper.simplyMixColor(0xd1923f, 0.3F, 0xc1a173, 0.7F), 0.35F, ColorHelper.simplyMixColor(0xffd400, 0.2F, 0xc1a173, 0.8F), 0.35F),
     WINTER_SOLSTICE(0xc1a173, 0.35F, 0xc1a173, 0.35F),
     LESSER_COLD(0xc1a173, 0.35F, 0xc1a173, 0.3F),
-    GREATER_COLD(0xc1a173, 0.2F, 0xc1a173, 0.2F);
+    GREATER_COLD(0xc1a173, 0.2F, 0xc1a173, 0.2F),
+
+    NONE(-1,0,-1,0);
 
     private final int temperateColor;
     private final float temperateMix;

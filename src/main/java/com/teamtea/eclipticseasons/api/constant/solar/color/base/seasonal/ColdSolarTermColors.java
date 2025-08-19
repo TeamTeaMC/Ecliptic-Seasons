@@ -36,7 +36,9 @@ public enum ColdSolarTermColors implements SolarTermColor {
     HEAVY_SNOW(0xc1a173, 0.35F, 0xc1a173, 0.35F),
     WINTER_SOLSTICE(0xc1a173, 0.32F, 0xc1a173, 0.32F),
     LESSER_COLD(0xc1a173, 0.3F, 0xc1a173, 0.3F),
-    GREATER_COLD(0xc1a173, 0.25F, 0xc1a173, 0.25F);
+    GREATER_COLD(0xc1a173, 0.25F, 0xc1a173, 0.25F),
+
+    NONE(-1,0,-1,0);
 
     private final int temperateColor;
     private final float temperateMix;
