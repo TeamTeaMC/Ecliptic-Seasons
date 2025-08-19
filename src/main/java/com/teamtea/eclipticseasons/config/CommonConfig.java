@@ -1,5 +1,6 @@
 package com.teamtea.eclipticseasons.config;
 
+import com.electronwill.nightconfig.toml.TomlParser;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.compat.CompatModule;
@@ -259,7 +260,6 @@ public class CommonConfig {
 
             enableCoreWork = builder.comment("Greenhouse core would also work for animal check but not need a greenhouse.")
                     .define("EnableCoreWork", true);
-
             builder.pop();
         }
     }

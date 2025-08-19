@@ -162,6 +162,7 @@ public class ExtraModelManager {
                         if (mmrl != null) {
                             snowModel = models.get(mmrl.modelResourceLocation());
                             forceReplace = mmrl.replace();
+                            flag = snowDefinition.getInfo().getFlag();
                             break;
                         }
                     }
@@ -181,7 +182,7 @@ public class ExtraModelManager {
                     snowModel = models.get(stairs_top);
                 } else if (models != null && flag == MapChecker.FLAG_STAIRS) {
                     if (snowState != null)
-                        snowModel =Minecraft.getInstance().getModelManager().getBlockModelShaper().getBlockModel(snowState);
+                        snowModel = Minecraft.getInstance().getModelManager().getBlockModelShaper().getBlockModel(snowState);
                 } else if (flag == MapChecker.FLAG_GRASS) {
                     if (onBlock == Blocks.GRASS) {
                         snowModel = models.get(snowy_grass);
@@ -284,10 +285,11 @@ public class ExtraModelManager {
         }
 
 
-        if (bakedModel instanceof SnowyBakedModelWrapper) {
+        if (bakedModel instanceof SnowyBakedModelWrapper<?> snowyBakedModelWrapper) {
 
-
-            int blockType = MapChecker.getBlockType(state, blockAndTintGetter, pos);
+            int blockType = snowyBakedModelWrapper.getBindBlockType() > MapChecker.FLAG_IGNORE ?
+                    snowyBakedModelWrapper.getBindBlockType() :
+                    MapChecker.getBlockType(state, blockAndTintGetter, pos);
             if (blockType == MapChecker.FLAG_CUSTOM) {
                 original = new ArrayList<>();
             }
@@ -389,11 +391,6 @@ public class ExtraModelManager {
 
     public static BlockPos.MutableBlockPos posToMutable(BlockPos pos) {
         return new BlockPos.MutableBlockPos(pos.getX(), pos.getY(), pos.getZ());
-    }
-
-    @Deprecated(forRemoval = true,since = "0.12")
-    public static BakedModel findModel(BlockAndTintGetter blockAndTintGetter, BlockPos pos, BlockState state, RandomSource random) {
-        return findModel(blockAndTintGetter, pos, state, random, state.getSeed(pos), null);
     }
 
     public static BakedModel findModel(BlockAndTintGetter blockAndTintGetter, BlockPos pos, BlockState state, RandomSource random, long seed, @Nullable BlockPos.MutableBlockPos checkPos) {

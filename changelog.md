@@ -1,3 +1,8 @@
+### 0.12.0-pre6-1
+
+- Moved Resource configuration from Common Config to Start Config to avoid cases where some mods cause the built-in resource pack to register too early, preventing configuration access (1.21 only).
+- Optimized client-side snow definitions override, allowing the use of custom flag for real-time model generation during rendering.
+
 ### 0.12.0-pre6
 
 - Added smooth transitions within solar terms for biome grass and foliage colors, which can be disabled in settings.
