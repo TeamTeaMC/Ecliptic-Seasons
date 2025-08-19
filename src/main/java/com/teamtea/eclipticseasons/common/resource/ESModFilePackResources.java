@@ -2,8 +2,10 @@ package com.teamtea.eclipticseasons.common.resource;
 
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
+import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.DetectedVersion;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.metadata.MetadataSectionSerializer;
 import net.minecraft.server.packs.metadata.pack.PackMetadataSection;
@@ -56,6 +58,20 @@ public class ESModFilePackResources extends PathPackResources {
                 return getMetadataFromStream(pDeserializer, inputstream);
             }
         }
+    }
+
+    @Override
+    public void listResources(PackType type, String namespace, String path, ResourceOutput resourceOutput) {
+        if (type == PackType.CLIENT_RESOURCES && sourcePath.equals("resourcepacks/extra_snow")) {
+            try {
+                if (!CommonConfig.Resource.extraSnow.get()) {
+                    return;
+                }
+            } catch (Exception e) {
+                EclipticSeasons.logger(e);
+            }
+        }
+        super.listResources(type, namespace, path, resourceOutput);
     }
 
 }

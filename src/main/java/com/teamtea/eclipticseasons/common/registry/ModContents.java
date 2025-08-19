@@ -97,8 +97,9 @@ public class ModContents {
                         || CommonConfig.Resource.extraSnow.get()) {
                     FakeResourceManagerHelperUtil.registerBuiltinResourcePack(
                             event,
-                            EclipticSeasons.rl("extra_snow"),
-                            modFile, PackSource.BUILT_IN);
+                            EclipticSeasons.rl("extra_snow"), modFile,
+                            Component.translatable(EclipticSeasons.rl("extra_snow").toLanguageKey("pack")),
+                            event.getPackType(), PackSource.BUILT_IN, true);
                 }
             } catch (Exception e) {
                 EclipticSeasons.logger(e);

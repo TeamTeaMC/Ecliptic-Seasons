@@ -1,7 +1,14 @@
+### 0.12.0-pre6-1-0-1
+
+- Due to limitations of the Forge configuration system in 1.20, the Extra Snow resource pack is now forced to load;
+  however, the actual content loaded into the game still depends on the configuration.
+
 ### 0.12.0-pre6-1
 
-- Moved Resource configuration from Common Config to Start Config to avoid cases where some mods cause the built-in resource pack to register too early, preventing configuration access (1.21 only).
-- Optimized client-side snow definitions override, allowing the use of custom flag for real-time model generation during rendering.
+- Moved Resource configuration from Common Config to Start Config to avoid cases where some mods cause the built-in
+  resource pack to register too early, preventing configuration access (1.21 only).
+- Optimized client-side snow definitions override, allowing the use of custom flag for real-time model generation during
+  rendering.
 
 ### 0.12.0-pre6
 
