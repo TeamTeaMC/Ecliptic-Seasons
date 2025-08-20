@@ -406,7 +406,7 @@ public class SolarDataManager extends SavedData {
             SolarTerm old = SolarTerm.collectValues()[(getSolarTermIndex() + 24) % 24];
 
             MinecraftForge.EVENT_BUS.post(new SolarTermChangeEvent(old, solarTerm, world, solarTermsDay));
-            if (solarTerm == SolarTerm.BEGINNING_OF_SPRING) {
+            if (solarTerm == SolarTerm.SUMMER_SOLSTICE) {
                 setSolarTempChange(createTempChange(world));
                 updateTempChange = true;
             }
