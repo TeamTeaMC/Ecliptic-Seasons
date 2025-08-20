@@ -1,5 +1,6 @@
 package com.teamtea.eclipticseasons.common.command;
 
+import com.mojang.brigadier.arguments.FloatArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.datafixers.util.Either;
@@ -14,6 +15,7 @@ import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.teamtea.eclipticseasons.common.network.SimpleNetworkHandler;
 import com.teamtea.eclipticseasons.common.network.message.EmptyMessage;
+import com.teamtea.eclipticseasons.common.network.message.UpdateTempChangeMessage;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
@@ -64,6 +66,16 @@ public class CommandHandler {
                                 .executes(commandContext -> {
                                     int solar = EclipticUtil.getNowSolarDay(commandContext.getSource().getLevel());;
                                     commandContext.getSource().sendSuccess(() -> Component.literal("" + solar), true);
+                                    return 0;
+                                })
+                        )
+                        .then(Commands.literal("setSnowTempChange")
+                                .then(Commands.argument("tempChange", FloatArgumentType.floatArg(-0.25f, 0.25f))
+                                        .executes(commandContext -> setTempChange(commandContext.getSource(), FloatArgumentType.getFloat(commandContext, "tempChange")))))
+                        .then(Commands.literal("getSnowTempChange")
+                                .executes(commandContext -> {
+                                    float snowTempChange = EclipticUtil.getSnowTempChange(commandContext.getSource().getLevel());
+                                    commandContext.getSource().sendSuccess(() -> Component.literal("" + snowTempChange), true);
                                     return 0;
                                 })
                         )
@@ -233,6 +245,19 @@ public class CommandHandler {
 
         source.sendSuccess(() -> Component.translatable("commands.eclipticseasons.solar.set", day), true);
         return getDay(source.getLevel());
+    }
+
+    public static int setTempChange(CommandSourceStack source, float tempChange) {
+        for (ServerLevel serverLevel : List.of(source.getLevel())) {
+            SolarHolders.getSaveDataLazy(serverLevel).ifPresent(data ->
+            {
+                data.setSolarTempChange(tempChange);
+                SimpleNetworkHandler.send(serverLevel.players(), new UpdateTempChangeMessage(tempChange));
+            });
+        }
+
+        source.sendSuccess(() -> Component.literal(tempChange + ""), true);
+        return 0;
     }
 
     public static int addDay(CommandSourceStack source, int add) {

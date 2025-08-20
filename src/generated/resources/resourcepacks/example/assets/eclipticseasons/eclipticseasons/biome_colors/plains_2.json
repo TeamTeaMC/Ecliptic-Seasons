@@ -97,6 +97,10 @@
       "greater_cold": {
         "color": 8563523,
         "mix": 0.48
+      },
+      "none": {
+        "color": 4764952,
+        "mix": 0.0
       }
     }
   }

@@ -12,6 +12,7 @@ import com.teamtea.eclipticseasons.common.core.crop.HumidityControlProvider;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.network.SimpleNetworkHandler;
 import com.teamtea.eclipticseasons.common.network.message.SolarTermsMessage;
+import com.teamtea.eclipticseasons.common.network.message.UpdateTempChangeMessage;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import it.unimi.dsi.fastutil.Pair;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
@@ -45,6 +46,7 @@ public class SolarDataManager extends SavedData {
     protected int solarTermsDay = startSolarTermsDay;
     protected int solarTermsTicks = 0;
     protected boolean isValidDimension = false;
+    protected float solarTempChange = 0;
 
     protected WeakReference<Level> levelWeakReference;
     private final Long2ObjectOpenHashMap<List<Pair<BlockPos, HumidityControlProvider>>> humidityCoreMap;
@@ -57,12 +59,21 @@ public class SolarDataManager extends SavedData {
         greenHouseCoreMap = new Long2ObjectOpenHashMap<>();
         isValidDimension = MapChecker.isValidDimension(level);
         skipNextCheckInTickPosMap = new Long2ObjectOpenHashMap<>();
+        solarTempChange = createTempChange(level);
+    }
+
+    protected float createTempChange(Level level) {
+        return isValidDimension() ?
+                level.getRandom().nextFloat() * 0.5f - 0.25f : 0;
     }
 
     public SolarDataManager(Level level, CompoundTag nbt) {
         this(level);
         setSolarTermsDay(nbt.getInt("SolarTermsDay"));
         setSolarTermsTicks(nbt.getInt("SolarTermsTicks"));
+        if (nbt.contains("SolarTempChange")) {
+            setSolarTempChange(nbt.getFloat("SolarTempChange"));
+        }
         var listTag = nbt.getList("biomes", Tag.TAG_COMPOUND);
         if (levelWeakReference.get() != null) {
             var biomeWeathers = WeatherManager.getBiomeList(levelWeakReference.get());
@@ -169,6 +180,10 @@ public class SolarDataManager extends SavedData {
         return solarTermsTicks;
     }
 
+    public float getSolarTempChange() {
+        return solarTempChange;
+    }
+
     public void setSolarTermsDay(int solarTermsDay) {
         // this.solarTermsDay = Math.max(solarTermsDay, 0) % (24 * CommonConfig.Season.lastingDaysOfEachTerm.get());
         this.solarTermsDay = solarTermsDay;
@@ -177,6 +192,11 @@ public class SolarDataManager extends SavedData {
 
     public void setSolarTermsTicks(int solarTermsTicks) {
         this.solarTermsTicks = solarTermsTicks;
+        setDirty();
+    }
+
+    public void setSolarTempChange(float solarTempChange) {
+        this.solarTempChange = solarTempChange;
         setDirty();
     }
 
@@ -377,6 +397,7 @@ public class SolarDataManager extends SavedData {
 
     public void sendAndUpdate(ServerLevel world) {
         boolean changeSolarTerm = getSolarTermsDay() % CommonConfig.Season.lastingDaysOfEachTerm.get() == 0;
+        boolean updateTempChange = false;
 
         SolarTerm solarTerm = getSolarTerm();
 
@@ -385,6 +406,10 @@ public class SolarDataManager extends SavedData {
             SolarTerm old = SolarTerm.collectValues()[(getSolarTermIndex() + 24) % 24];
 
             MinecraftForge.EVENT_BUS.post(new SolarTermChangeEvent(old, solarTerm, world, solarTermsDay));
+            if (solarTerm == SolarTerm.BEGINNING_OF_SPRING) {
+                setSolarTempChange(createTempChange(world));
+                updateTempChange = true;
+            }
         }
 
         if (solarTerm != SolarTerm.NONE) {
@@ -392,6 +417,9 @@ public class SolarDataManager extends SavedData {
                 SimpleNetworkHandler.send(player, new SolarTermsMessage(this.getSolarTermsDay()));
                 if (changeSolarTerm && CommonConfig.Season.enableInform.get()) {
                     SimpleUtil.sendSolarTermMessage(player, solarTerm, false);
+                }
+                if (updateTempChange) {
+                    SimpleNetworkHandler.send(player, new UpdateTempChangeMessage(getSolarTempChange()));
                 }
                 WeatherManager.tickPlayerForSeasonCheck(player);
             }

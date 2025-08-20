@@ -50,8 +50,8 @@ public class VanillaWeather {
         var status = WeatherManager.SnowRenderStatus.NONE;
         if (biome.value().hasPrecipitation()) {
             var solarTerm = EclipticUtil.getNowSolarTerm(level);
-            var snowTerm = SolarTerm.getSnowTerm(biome.value());
-            boolean flag_cold = solarTerm.isInTerms(snowTerm.getStart(), snowTerm.getEnd());
+            var snowTerm = SolarTerm.getSnowTerm(biome.value(), EclipticUtil.getSnowTempChange(level));
+            boolean flag_cold = snowTerm.maySnow(solarTerm);
             if (flag_cold) {
                 if (level.isRaining())
                     status = WeatherManager.SnowRenderStatus.SNOW;
@@ -110,8 +110,8 @@ public class VanillaWeather {
                     Biome.Precipitation.SNOW :
                     Biome.Precipitation.RAIN;
 
-            var snowTerm = SolarTerm.getSnowTerm(biome);
-            boolean flag_cold = solarTerm.isInTerms(snowTerm.getStart(), snowTerm.getEnd());
+            var snowTerm = SolarTerm.getSnowTerm(biome, EclipticUtil.getSnowTempChange(level));
+            boolean flag_cold = snowTerm.maySnow(solarTerm);
             if (resultPrecipitation == Biome.Precipitation.RAIN) {
                 if (flag_cold) {
                     resultPrecipitation = Biome.Precipitation.SNOW;

@@ -1,0 +1,12 @@
+{
+  "biomes": "minecraft:sunflower_plains",
+  "start": "winter_solstice",
+  "end": "greater_cold",
+  "events": [
+    {
+      "temp_offset": 0.1,
+      "start": "none",
+      "end": "none"
+    }
+  ]
+}

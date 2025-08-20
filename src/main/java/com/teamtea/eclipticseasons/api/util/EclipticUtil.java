@@ -45,6 +45,14 @@ public class EclipticUtil {
         return 0;
     }
 
+    public static float getSnowTempChange(Level level) {
+        if (CommonConfig.Season.dynamicSnowTerm.get()) {
+            SolarDataManager sd = SolarHolders.getSaveData(level);
+            if (sd != null) return sd.getSolarTempChange();
+        }
+        return 0f;
+    }
+
     public static boolean isDay(Level level) {
         long dayTime = level.dimensionType().fixedTime().orElse(SolarAngelHelper.getSolarAngelTime(level, level.getDayTime()));
         long termTime = getNowSolarTerm(level).getDayTime();

@@ -110,6 +110,7 @@ public class CommonConfig {
 
         public static ForgeConfigSpec.ConfigValue<List<? extends String>> blocksNotSnowy;
 
+        public static ForgeConfigSpec.BooleanValue dynamicSnowTerm;
 
         private static void load(ForgeConfigSpec.Builder builder) {
             builder.push("Season");
@@ -164,6 +165,10 @@ public class CommonConfig {
                     .defineListAllowEmpty("ForceBlocksNotSnowy",
                             List::of,
                             o -> o instanceof String s && ResourceLocation.tryParse(s) != null);
+
+            dynamicSnowTerm = builder.comment("The timing of snowfall now varies within a certain range each year.")
+                    .define("DynamicSnowTerm", true);
+
             builder.pop();
         }
     }
@@ -234,7 +239,7 @@ public class CommonConfig {
             forceCompatMode = builder.comment("Force all crops to use compatibility mode for growth control, not just those tagged as eclipticseasons:natural_plants.")
                     .define("ForceCompatMode", false);
 
-            saveChunkEnvironmentalHumidity= builder.comment("Save environmental humidity modifiers to chunk file.")
+            saveChunkEnvironmentalHumidity = builder.comment("Save environmental humidity modifiers to chunk file.")
                     .define("SaveChunkEnvironmentalHumidity", true);
             builder.pop();
         }

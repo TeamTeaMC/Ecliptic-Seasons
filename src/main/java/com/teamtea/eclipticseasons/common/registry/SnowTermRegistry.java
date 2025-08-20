@@ -9,8 +9,11 @@ import net.minecraft.data.worldgen.BootstapContext;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.biome.Biomes;
 
+import java.util.List;
+
 public class SnowTermRegistry {
     public static final ResourceKey<CustomSnowTerm> PLAIN = createKey("plain");
+    public static final ResourceKey<CustomSnowTerm> SUNFLOWER_PLAINS = createKey("sunflower_plains");
 
     private static ResourceKey<CustomSnowTerm> createKey(String name) {
         return ResourceKey.create(ESRegistries.SNOW_TERM, EclipticSeasons.rl(name));
@@ -20,7 +23,14 @@ public class SnowTermRegistry {
         var holderGetter = context.lookup(Registries.BIOME);
         context.register(PLAIN, new CustomSnowTerm(
                 HolderSet.direct(holderGetter.getOrThrow(Biomes.PLAINS)),
-                SnowTerm.T06.getStart(), SnowTerm.T06.getEnd()
+                SnowTerm.T08.getStart(), SnowTerm.T08.getEnd(),
+                List.of()
+        ));
+
+        context.register(SUNFLOWER_PLAINS, new CustomSnowTerm(
+                HolderSet.direct(holderGetter.getOrThrow(Biomes.SUNFLOWER_PLAINS)),
+                SnowTerm.T08.getStart(), SnowTerm.T08.getEnd(),
+                List.of(new CustomSnowTerm.TempEvent(0.1f, SnowTerm.T1.getStart(), SnowTerm.T1.getEnd()))
         ));
     }
 }

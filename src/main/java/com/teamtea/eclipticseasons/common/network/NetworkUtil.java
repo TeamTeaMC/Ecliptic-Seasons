@@ -184,4 +184,15 @@ public class NetworkUtil {
         return true;
     }
 
+    public static boolean processUpdateTempChangeMessage(UpdateTempChangeMessage emptyMessage, Supplier<NetworkEvent.Context> context) {
+        context.get().enqueueWork(() -> {
+            if (getClient()!=null) {
+                SolarHolders.getSaveDataLazy(getClient()).ifPresent(solarDataManager -> {
+                    solarDataManager.setSolarTempChange(emptyMessage.change);
+                });
+            }
+        });
+        return true;
+    }
+
 }

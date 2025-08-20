@@ -1,3 +1,8 @@
+### 0.12.0-pre7
+
+- The snowfall timing now varies within a certain range each year and can be adjusted via configuration toggle or
+  command. Changes to the Snow Term datapack can be referenced from the built-in example.
+
 ### 0.12.0-pre6-1-0-1
 
 - Due to limitations of the Forge configuration system in 1.20, the Extra Snow resource pack is now forced to load;

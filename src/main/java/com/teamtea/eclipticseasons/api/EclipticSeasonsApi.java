@@ -36,7 +36,7 @@ public interface EclipticSeasonsApi {
      * Get the solar term.
      * Or use it to get the season{@link SolarTerm#getSeason()},
      * or get the climate classification of the biome{@link SolarTerm#getBiomeRain(Holder)},
-     * and which solar terms of the biome snow{@link SolarTerm#getSnowTerm(Biome)}.
+     * and which solar terms of the biome snow{@link SolarTerm#getSnowTerm(Biome, boolean, float)}.
      *
      * <p>Only dimensions marked as {@linkplain DimensionType#natural()  natural} have solar term changes.</p>
      */

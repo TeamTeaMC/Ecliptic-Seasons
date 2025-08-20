@@ -47,7 +47,7 @@ public final class DebugInfoRenderer {
         String dayS = "Day Time: " + dayTime;
         String envS = "Env Temp: " + env;
         String dS = "Downfall: " + d;
-        String jS = "Humidity: " + h+"\n" + EclipticUtil.getHumidityLevelAt(player.level(),player.blockPosition());
+        String jS = "Humidity: " + h + "\n" + EclipticUtil.getHumidityLevelAt(player.level(), player.blockPosition());
         String solarTimeS = "Solar Time: " + solarTime;
 
         int index = 0;
@@ -73,7 +73,7 @@ public final class DebugInfoRenderer {
                                     var solarTerm = saveData.getSolarTerm();
                                     String solarTermS = "Solar Term: " + solarTerm.getTranslation().getString();
                                     String biomeRainS = "Biome Rain: " + solarTerm.getBiomeRain(biomeWeather.biomeHolder);
-                                    String snowTermS = "Snow Term: " + SolarTerm.getSnowTerm(biomeWeather.biomeHolder.get());
+                                    String snowTermS = "Snow Term: " + SolarTerm.getSnowTerm(biomeWeather.biomeHolder.value(), true, EclipticUtil.getSnowTempChange(level));
                                     drawInfo(matrixStack, screenWidth, screenHeight, "", index++);
                                     drawInfo(matrixStack, screenWidth, screenHeight, solarTermS, index++);
                                     drawInfo(matrixStack, screenWidth, screenHeight, biomeRainS, index++);

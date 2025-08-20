@@ -18,11 +18,7 @@ public class SolarHolders {
 
     public static LazyOptional<SolarDataManager> getSaveDataLazy(Level level) {
         SolarDataManager saveData = getSaveData(level);
-        if (saveData == null) {
-            saveData = new SolarDataManager(level);
-        }
-        SolarDataManager finalSaveData = saveData;
-        return LazyOptional.of(()-> finalSaveData);
+        return LazyOptional.of(saveData == null ? null : () -> saveData);
     }
 
     public static void createSaveData(Level level, SolarDataManager solarDataManager) {

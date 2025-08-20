@@ -3,6 +3,7 @@ package com.teamtea.eclipticseasons.common.core.biome;
 import com.teamtea.eclipticseasons.api.constant.tag.ESEnchantmentTags;
 import com.teamtea.eclipticseasons.api.constant.tag.ESItemTags;
 import com.teamtea.eclipticseasons.api.constant.tag.ESMobEffectTags;
+import com.teamtea.eclipticseasons.common.network.message.UpdateTempChangeMessage;
 import com.teamtea.eclipticseasons.common.registry.EffectRegistry;
 import com.teamtea.eclipticseasons.common.registry.ModAdvancements;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
@@ -247,8 +248,8 @@ public class WeatherManager {
         var ws = getBiomeList(level);
         if (ws != null) {
             var solarTerm = EclipticUtil.getNowSolarTerm(level);
-            var snowTerm = SolarTerm.getSnowTerm(biome);
-            boolean flag_cold = solarTerm.isInTerms(snowTerm.getStart(), snowTerm.getEnd());
+            var snowTerm = SolarTerm.getSnowTerm(biome, EclipticUtil.getSnowTempChange(level));
+            boolean flag_cold = snowTerm.maySnow(solarTerm);
             if (!flag_cold) {
                 for (BiomeWeather biomeWeather : ws) {
                     if (biome == biomeWeather.biomeHolder.get()) {
@@ -266,8 +267,8 @@ public class WeatherManager {
         var ws = getBiomeList(level);
         if (ws != null) {
             var solarTerm = EclipticUtil.getNowSolarTerm(level);
-            var snowTerm = SolarTerm.getSnowTerm(biome);
-            boolean flag_cold = solarTerm.isInTerms(snowTerm.getStart(), snowTerm.getEnd());
+            var snowTerm = SolarTerm.getSnowTerm(biome, EclipticUtil.getSnowTempChange(level));
+            boolean flag_cold = snowTerm.maySnow(solarTerm);
             if (flag_cold) {
                 for (BiomeWeather biomeWeather : ws) {
                     if (biome == biomeWeather.biomeHolder.get()) {
@@ -318,8 +319,8 @@ public class WeatherManager {
                 if (biome == biomeWeather.biomeHolder.value()) {
                     if (biomeWeather.shouldClear()) return Biome.Precipitation.NONE;
                     var solarTerm = EclipticUtil.getNowSolarTerm(level);
-                    var snowTerm = SolarTerm.getSnowTerm(biome);
-                    boolean flag_cold = solarTerm.isInTerms(snowTerm.getStart(), snowTerm.getEnd());
+                    var snowTerm = SolarTerm.getSnowTerm(biome, EclipticUtil.getSnowTempChange(level));
+                    boolean flag_cold = snowTerm.maySnow(solarTerm);
                     return flag_cold
                             // || BiomeClimateManager.getDefaultTemperature(biome, level instanceof ServerLevel) <= BiomeClimateManager.SNOW_LEVEL
                             ?
@@ -350,8 +351,8 @@ public class WeatherManager {
         if (level != null && weathers != null) {
 
             var solarTerm = EclipticUtil.getNowSolarTerm(level);
-            var snowTerm = SolarTerm.getSnowTerm(biome);
-            boolean flag_cold = solarTerm.isInTerms(snowTerm.getStart(), snowTerm.getEnd());
+            var snowTerm = SolarTerm.getSnowTerm(biome, EclipticUtil.getSnowTempChange(level));
+            boolean flag_cold = snowTerm.maySnow(solarTerm);
             var biomes = level.registryAccess().registry(Registries.BIOME).get();
             var loc = biomes.getKey(biome);
             for (BiomeWeather biomeWeather : weathers) {
@@ -595,9 +596,9 @@ public class WeatherManager {
                 }
             }
 
-            var snowTerm = SolarTerm.getSnowTerm(biomeWeather.biomeHolder.value(), !level.isClientSide());
-            boolean flag_cold = solarTerm.isInTerms(snowTerm.getStart(), snowTerm.getEnd());
-            boolean flag_little_cold = lastSolarTerm.isInTerms(snowTerm.getStart(), snowTerm.getEnd());
+            var snowTerm = SolarTerm.getSnowTerm(biomeWeather.biomeHolder.value(), !level.isClientSide(), EclipticUtil.getSnowTempChange(level));
+            boolean flag_cold = snowTerm.maySnow(solarTerm);
+            boolean flag_little_cold = snowTerm.maySnow(lastSolarTerm);
             SnowRenderStatus snow = flag_cold ? SnowRenderStatus.SNOW :
                     flag_little_cold ? SnowRenderStatus.SNOW_MELT : SnowRenderStatus.NONE;
             if (snow == SnowRenderStatus.SNOW) {
@@ -641,6 +642,7 @@ public class WeatherManager {
                 if (solarTerm != SolarTerm.NONE)
                     SimpleUtil.sendSolarTermMessage(serverPlayer, solarTerm, isLogged);
             }
+            SimpleNetworkHandler.send(serverPlayer, new UpdateTempChangeMessage(t.getSolarTempChange()));
         });
         WeatherManager.sendBiomePacket(WeatherManager.getBiomeList(serverPlayer.level()), List.of(serverPlayer));
     }
@@ -795,8 +797,8 @@ public class WeatherManager {
         // if (provider != null)
         {
             var solarTerm = EclipticUtil.getNowSolarTerm(level);
-            var snowTerm = SolarTerm.getSnowTerm(biome);
-            boolean flag_cold = solarTerm.isInTerms(snowTerm.getStart(), snowTerm.getEnd());
+            var snowTerm = SolarTerm.getSnowTerm(biome, EclipticUtil.getSnowTempChange(level));
+            boolean flag_cold = snowTerm.maySnow(solarTerm);
             if (flag_cold) {
                 // 为了呼应之前的修改，这里设置为有预测
                 if (biome.hasPrecipitation() && isRainingOrSnowAtBiome(level, biome)) {

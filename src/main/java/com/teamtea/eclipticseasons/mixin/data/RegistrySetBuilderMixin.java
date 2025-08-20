@@ -17,11 +17,12 @@ public abstract class RegistrySetBuilderMixin {
     private Set<ResourceKey<Object>> eclipticseasons$buildPatch$fixError(Set<ResourceKey<Object>> original) {
         // because we not generate feature by dg, so it is not registered.
         // if ((Object) this instanceof DatapackRegistryGenerator)
-        if (original.contains(Biomes.PLAINS)) {
-                HashSet<ResourceKey<Object>> resourceKeys = new HashSet<>(original);
-                resourceKeys.remove(Biomes.PLAINS);
-                return resourceKeys;
-            }
+        if (original.contains(Biomes.PLAINS) || original.contains(Biomes.SUNFLOWER_PLAINS)) {
+            HashSet<ResourceKey<Object>> resourceKeys = new HashSet<>(original);
+            resourceKeys.remove(Biomes.PLAINS);
+            resourceKeys.remove(Biomes.SUNFLOWER_PLAINS);
+            return resourceKeys;
+        }
         return original;
     }
 }
