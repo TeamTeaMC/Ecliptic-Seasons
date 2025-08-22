@@ -315,7 +315,7 @@ public class MapChecker {
         return false;
     }
 
-    public static boolean shouldSnowAt(Level level, BlockPos pos, BlockState state, RandomSource random, long seed) {
+    public static boolean shouldSnowAt(Level level, BlockPos pos, BlockState state,@Nullable RandomSource random, long seed) {
         var biomeHolder = getSurfaceBiome(level, pos);
         if (WeatherManager.getSnowDepthAtBiome(level, biomeHolder.value()) > Math.abs(seed % 100)) {
             if (CommonConfig.Debug.notLightAbove.get()) {
@@ -329,7 +329,7 @@ public class MapChecker {
         return false;
     }
 
-    public static boolean shouldSnowAtBiome(Level level, Biome biome, BlockState state, RandomSource random, long seed) {
+    public static boolean shouldSnowAtBiome(Level level, Biome biome, BlockState state, @Nullable RandomSource random, long seed) {
         if (WeatherManager.getSnowDepthAtBiome(level, biome) > Math.abs(seed % 100)) {
             return true;
         }

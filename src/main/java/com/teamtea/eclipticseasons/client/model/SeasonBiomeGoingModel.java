@@ -1,9 +1,10 @@
 package com.teamtea.eclipticseasons.client.model;
 
 import com.mojang.datafixers.util.Pair;
-import com.teamtea.eclipticseasons.api.misc.client.IMapSlice;
+import com.teamtea.eclipticseasons.client.core.ExtraModelManager;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
+import com.teamtea.eclipticseasons.compat.vanilla.IExtendBlockView;
 import lombok.Getter;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -49,12 +50,14 @@ public class SeasonBiomeGoingModel<T extends BakedModel> extends BakedModelWrapp
 
     @Override
     public @NotNull ModelData getModelData(@NotNull BlockAndTintGetter level, @NotNull BlockPos pos, BlockState state, ModelData modelData) {
-        return super.getModelData(level, pos, state, modelData)
-                .derive()
+        ModelData.Builder modelData1 = super.getModelData(level, pos, state, modelData).derive()
                 .with(
                         BIOME_PROPERTY,
                         MapChecker.getSurfaceBiome(ClientCon.getUseLevel(), pos)
-                ).build();
+                );
+        if (ExtraModelManager.canSnowy(level, pos, state, state.getSeed(pos), level instanceof IExtendBlockView extendBlockView ? extendBlockView.getModelCheckPos() : null))
+            modelData1.with(SeasonGoingModel.SNOW_PROPERTY, true);
+        return modelData1.build();
     }
 
     @FunctionalInterface

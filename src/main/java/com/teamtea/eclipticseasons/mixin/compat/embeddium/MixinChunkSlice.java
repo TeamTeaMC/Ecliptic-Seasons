@@ -4,6 +4,7 @@ package com.teamtea.eclipticseasons.mixin.compat.embeddium;
 import com.teamtea.eclipticseasons.api.misc.client.IMapSlice;
 import com.teamtea.eclipticseasons.api.misc.client.ISnowyGetterProvider;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
+import com.teamtea.eclipticseasons.compat.vanilla.IExtendBlockView;
 import me.jellysquid.mods.sodium.client.world.WorldSlice;
 import me.jellysquid.mods.sodium.client.world.cloned.ChunkRenderContext;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -17,7 +18,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Pseudo
 @Mixin(WorldSlice.class)
-public abstract class MixinChunkSlice implements IMapSlice {
+public abstract class MixinChunkSlice implements IMapSlice, IExtendBlockView {
 
     @Unique
     private static final int MAP_BLOCK_COUNT = 16 * 16;
@@ -28,24 +29,31 @@ public abstract class MixinChunkSlice implements IMapSlice {
     @Unique
     private int[][] SOLID_HEIGHT_MAP;
 
-    @Shadow(remap = false)    @Final
+    @Shadow(remap = false)
+    @Final
     private static int SECTION_ARRAY_LENGTH;
 
-    @Shadow(remap = false)    private BoundingBox volume;
+    @Shadow(remap = false)
+    private BoundingBox volume;
 
-    @Shadow(remap = false)    @Final
+    @Shadow(remap = false)
+    @Final
     private static int NEIGHBOR_CHUNK_RADIUS;
 
-    @Shadow(remap = false)    public static int getLocalSectionIndex(int sectionX, int sectionY, int sectionZ) {
+    @Shadow(remap = false)
+    public static int getLocalSectionIndex(int sectionX, int sectionY, int sectionZ) {
         return 0;
     }
 
-    @Shadow(remap = false)    @Final
+    @Shadow(remap = false)
+    @Final
     public ClientLevel world;
 
-    @Shadow(remap = false)    private int originX;
+    @Shadow(remap = false)
+    private int originX;
 
-    @Shadow(remap = false)    private int originZ;
+    @Shadow(remap = false)
+    private int originZ;
 
     @Inject(
             remap = false,
@@ -137,4 +145,11 @@ public abstract class MixinChunkSlice implements IMapSlice {
         this.eclipticseasons$bakedModelSnow = bakedModel;
     }
 
+    @Unique
+    private BlockPos.MutableBlockPos eclipticseasons$checkPos = new BlockPos.MutableBlockPos();
+
+    @Override
+    public BlockPos.MutableBlockPos getModelCheckPos() {
+        return eclipticseasons$checkPos;
+    }
 }

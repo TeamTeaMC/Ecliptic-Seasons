@@ -393,6 +393,102 @@ public class ExtraModelManager {
         return new BlockPos.MutableBlockPos(pos.getX(), pos.getY(), pos.getZ());
     }
 
+    public static boolean canSnowy(BlockAndTintGetter blockAndTintGetter, BlockPos pos, BlockState state, long seed, @Nullable BlockPos.MutableBlockPos checkPos) {
+        Level level = Minecraft.getInstance().level;
+        if (level == null) return false;
+
+        var onBlock = state.getBlock();
+        int flag = MapChecker.getBlockType(state, blockAndTintGetter, pos);
+        List<SnowDefinition> snowDefClientOverlay = ClientRef.snowClientDef.get(onBlock);
+
+        int offset = snowDefClientOverlay == null ?
+                MapChecker.getSnowOffset(state, flag) : snowDefClientOverlay.get(0).getInfo().getOffset();
+
+        boolean isLight = false;
+        if (checkPos == null) checkPos = posToMutable(pos);
+        else checkPos.set(pos.getX(), pos.getY(), pos.getZ());
+
+        if (ClientConfig.Renderer.useVanillaCheck.get()) {
+            isLight = blockAndTintGetter.getBrightness(LightLayer.BLOCK, pos.above()) >= 15;
+        } else {
+            int cacheHeight = MapChecker.getHeightOrUpdate(level, pos, false);
+            isLight = cacheHeight <= pos.getY() - offset;
+        }
+
+        boolean leaveLike = MapChecker.leaveLike(flag);
+        boolean specialLeaves = false;
+
+        if (!isLight && ClientConfig.Renderer.snowUnderTree.get()) {
+            checkPos.set(pos.getX(), pos.getY() + 1, pos.getZ());
+            if (blockAndTintGetter.getBrightness(LightLayer.SKY, checkPos) >= 9) {
+                int y_real = blockAndTintGetter instanceof IMapSliceProvider ip ?
+                        ip.getSolidBlockHeight(pos) :
+                        level.getHeight(Heightmap.Types.MOTION_BLOCKING, pos.getX(), pos.getZ()) - 1;
+                checkPos.setY(y_real);
+                BlockState getterBlockState = blockAndTintGetter.getBlockState(checkPos);
+                if (getterBlockState.isAir()) {
+                    try {
+                        getterBlockState = level.getBlockState(checkPos);
+                    } catch (Exception e) {
+                        EclipticSeasons.logger(e);
+                    }
+                }
+                if (getterBlockState.getShadeBrightness(blockAndTintGetter, checkPos) < 0.5f) {
+                    isLight = true;
+                    if (leaveLike) {
+                        if (CommonConfig.Season.snowyTree.get())
+                            specialLeaves = true;
+                        else isLight = false;
+                    }
+                }
+            }
+        }
+
+        if (isLight) {
+            checkPos.set(pos.getX(), pos.getY() + 1, pos.getZ());
+            if (leaveLike) {
+                {if (!specialLeaves) {
+                        BlockState aboveState = blockAndTintGetter.getBlockState(checkPos);
+                        if (isLight) {
+                            // specialLeaves = true;
+                            specialLeaves = blockAndTintGetter instanceof IMapSliceProvider ip ?
+                                    ip.getSolidBlockHeight(checkPos) > pos.getY() :
+                                    aboveState.is(state.getBlock());
+                        }
+                    }
+                }
+            } else {
+                if (MapChecker.extraSnowPassable(state)) {
+                    isLight = !MapChecker.extraSnowPassable(blockAndTintGetter.getBlockState(checkPos));
+                } else if (!ClientConfig.Renderer.snowUnderTree.get()) {
+                    isLight = !MapChecker.solidTest(blockAndTintGetter.getBlockState(checkPos));
+                }
+            }
+        }
+
+
+        if (isLight && specialLeaves) {
+            isLight = CommonConfig.Season.snowyTree.get();
+            if (!isLight) specialLeaves = false;
+        }
+        boolean isSnowy = false;
+        if (isLight) {
+            if (CommonConfig.isSnowyWinter()
+                    && onBlock != Blocks.SNOW_BLOCK
+                    && MapChecker.shouldSnowAt(level, pos, state, null, seed)) {
+                isSnowy = true;
+                if (CommonConfig.Season.notSnowyNearGlowingBlock.get()) {
+                    checkPos.set(pos.getX(), pos.getY() + 1 - offset, pos.getZ());
+                    if (blockAndTintGetter.getBrightness(LightLayer.BLOCK, checkPos) >=
+                            CommonConfig.Season.notSnowyNearGlowingBlockLevel.get()) {
+                        isSnowy = false;
+                    }
+                }
+            }
+        }
+        return isSnowy;
+    }
+
     public static BakedModel findModel(BlockAndTintGetter blockAndTintGetter, BlockPos pos, BlockState state, RandomSource random, long seed, @Nullable BlockPos.MutableBlockPos checkPos) {
         Level level = Minecraft.getInstance().level;
         BakedModel replace = null;

@@ -50,19 +50,25 @@ public class SeasonalTexture {
             FlatSlice flatSlice = new FlatSlice(
                     slice.textures.isEmpty() ? null : slice.textures
                     , slice.tintMap, slice.transitionMaterials.isEmpty() ? null : slice.transitionMaterials);
+            FlatSlice snowFlatSlice = new FlatSlice(
+                    slice.snowTextures.isEmpty() ? null : slice.snowTextures
+                    , slice.snowTintMap, slice.snowTransitionMaterials.isEmpty() ? null : slice.snowTransitionMaterials);
 
             SolarTerm start = slice.start.isValid() ? slice.start :
                     slice.solarTerm.isValid() ? slice.solarTerm :
                             slice.season.isValid() ? slice.season.getFirstSolarTerm() :
-                                    slice.startSeason.isValid() ? slice.endSeason.getFirstSolarTerm() : SolarTerm.NONE;
+                                    slice.startSeason.isValid() ? slice.endSeason.getFirstSolarTerm() : null;
 
             SolarTerm end = slice.end.isValid() ? slice.end :
                     slice.solarTerm.isValid() ? slice.solarTerm :
                             slice.season.isValid() ? slice.season.getEndSolarTerm() :
-                                    slice.endSeason.isValid() ? slice.endSeason.getEndSolarTerm() : SolarTerm.NONE;
-
-            if (start.isValid() && end.isValid()) {
-                FlatSliceHolder flatSliceHolder = new FlatSliceHolder(start, end, flatSlice);
+                                    slice.endSeason.isValid() ? slice.endSeason.getEndSolarTerm() : null;
+            if (start == null && end == null) {
+                start = SolarTerm.BEGINNING_OF_SPRING;
+                end = SolarTerm.GREATER_COLD;
+            }
+            if (start != null && end != null && start.isValid() && end.isValid()) {
+                FlatSliceHolder flatSliceHolder = new FlatSliceHolder(start, end, flatSlice, snowFlatSlice);
                 for (SolarTerm solarTerm : SolarTerm.collectValues()) {
                     if (solarTerm.isInTerms(start, end))
                         flatSliceEnumMap.compute(solarTerm, (solarTerm1, flatSliceHolders) -> {
@@ -98,7 +104,16 @@ public class SeasonalTexture {
                                 },
                                 p -> DataResult.success(List.of(p.getFirst(), p.getSecond()))))
                         .optionalFieldOf("transition_textures", List.of()).forGetter(o -> o.transitionMaterials),
-                CodecUtil.mapCodec(Codec.STRING, Codec.INT).optionalFieldOf("tint", Map.of()).forGetter(o -> o.tintMap)
+                CodecUtil.listFrom(MATERIALS).optionalFieldOf("snow_textures", List.of()).forGetter(o -> o.snowTextures),
+                CodecUtil.listFrom(MATERIALS.listOf().flatXmap(
+                                c -> {
+                                    if (c.size() == 2) return DataResult.success(Pair.of(c.get(0), c.get(1)));
+                                    else return DataResult.error(() -> "Unknown Size " + c.size());
+                                },
+                                p -> DataResult.success(List.of(p.getFirst(), p.getSecond()))))
+                        .optionalFieldOf("snow_transition_textures", List.of()).forGetter(o -> o.snowTransitionMaterials),
+                CodecUtil.mapCodec(Codec.STRING, Codec.INT).optionalFieldOf("tint", Map.of()).forGetter(o -> o.tintMap),
+                CodecUtil.mapCodec(Codec.STRING, Codec.INT).optionalFieldOf("snow_tint", Map.of()).forGetter(o -> o.tintMap)
         ).apply(ins, Slice::new));
 
         @Builder.Default
@@ -118,12 +133,19 @@ public class SeasonalTexture {
         @Builder.Default
         private final List<Pair<Map<String, ResourceLocation>, Map<String, ResourceLocation>>> transitionMaterials = List.of();
         @Builder.Default
+        private final List<Map<String, ResourceLocation>> snowTextures = List.of();
+        @Builder.Default
+        private final List<Pair<Map<String, ResourceLocation>, Map<String, ResourceLocation>>> snowTransitionMaterials = List.of();
+        @Builder.Default
         private final Map<String, Integer> tintMap = Map.of();
+        @Builder.Default
+        private final Map<String, Integer> snowTintMap = Map.of();
     }
 
     public record FlatSliceHolder(
             SolarTerm start, SolarTerm end,
-            FlatSlice flatSlice) {
+            FlatSlice flatSlice,
+            FlatSlice snowSlice) {
     }
 
 

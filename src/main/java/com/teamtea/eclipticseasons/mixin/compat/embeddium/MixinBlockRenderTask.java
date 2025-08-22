@@ -10,6 +10,7 @@ import com.teamtea.eclipticseasons.client.core.ExtraModelManager;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.compat.fabric_renderer_indigo.FabricModelDelayChecker;
 import com.teamtea.eclipticseasons.compat.iris.IIrisShaderAccesor;
+import com.teamtea.eclipticseasons.compat.vanilla.IExtendBlockView;
 import me.jellysquid.mods.sodium.client.render.chunk.compile.ChunkBuildBuffers;
 import me.jellysquid.mods.sodium.client.render.chunk.compile.ChunkBuildContext;
 import me.jellysquid.mods.sodium.client.render.chunk.compile.ChunkBuildOutput;
@@ -20,6 +21,7 @@ import me.jellysquid.mods.sodium.client.util.task.CancellationToken;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.model.data.ModelData;
@@ -27,7 +29,6 @@ import org.embeddedt.embeddium.render.frapi.FRAPIModelUtils;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -35,8 +36,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin({ChunkBuilderMeshingTask.class})
 public abstract class MixinBlockRenderTask {
 
-    @Unique
-    private BlockPos.MutableBlockPos eclipticseasons$checkPos = new BlockPos.MutableBlockPos();
 
     // @ModifyExpressionValue(
     //         remap = false,
@@ -135,7 +134,8 @@ public abstract class MixinBlockRenderTask {
             @Share("shouldReplace") LocalBooleanRef replace
     ) {
         random.setSeed(seed);
-        BakedModel model = ExtraModelManager.findModel(ctx.world(), mutableBlockPos, state, random, seed, eclipticseasons$checkPos);
+        BlockAndTintGetter level = ctx.world();
+        BakedModel model = ExtraModelManager.findModel(level, mutableBlockPos, state, random, seed, level instanceof IExtendBlockView extendBlockView ? extendBlockView.getModelCheckPos() : null);
         snowModelRef.set(model);
         replace.set(model != null
                 && ExtraModelManager.isModelReplaceable(state, ctx.world(), mutableBlockPos, model));

@@ -1,3 +1,30 @@
+### 0.12.0-pre7-2
+
+- Added snow-covered variants to the `season_textures` resource pack.** You can now prefix the original key with `snow_` to use them. Additionally, if no specific season is set, the textures will apply to all seasons.
+  Example:
+
+  ```json
+  {
+    "target": [
+      "biomeswevegone:block/amaranth"
+    ],
+    "slices": [
+      {
+        "snow_textures": [
+          {
+            "cross": "biomeswevegone:block/snowy_amaranth"
+          }
+        ]
+      }
+    ]
+  }
+  ```
+
+- Fixed an issue where `season_textures` resource packs could not inherit the render type from the original model JSON.
+- Optimized the duplicate baking issue of identical models in `season_textures`.
+- Adjusted the required crop quantities for seasonal tasks.
+
+
 ### 0.12.0-pre7-1
 
 - Optimized the annual snow timing variation calculation method to improve central stability.

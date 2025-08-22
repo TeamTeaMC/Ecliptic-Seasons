@@ -1,7 +1,7 @@
 package com.teamtea.eclipticseasons.mixin.client.render.chunk;
 
 import com.teamtea.eclipticseasons.api.misc.client.IMapSlice;
-import com.teamtea.eclipticseasons.compat.vanilla.ExtendBlockView;
+import com.teamtea.eclipticseasons.compat.vanilla.IExtendBlockView;
 import net.minecraft.client.renderer.chunk.RenderChunkRegion;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.*;
 
 @Pseudo
 @Mixin(RenderChunkRegion.class)
-public abstract class MixinChunkSlice implements IMapSlice, ExtendBlockView {
+public abstract class MixinChunkSlice implements IMapSlice, IExtendBlockView {
     @Shadow
     @Final
     protected Level level;

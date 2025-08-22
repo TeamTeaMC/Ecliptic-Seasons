@@ -3,11 +3,10 @@ package com.teamtea.eclipticseasons.mixin.compat.optifine;
 
 import com.teamtea.eclipticseasons.api.misc.client.IMapSliceProvider;
 import com.teamtea.eclipticseasons.compat.optfine.IOFModelTaker;
-import com.teamtea.eclipticseasons.compat.vanilla.ExtendBlockView;
+import com.teamtea.eclipticseasons.compat.vanilla.IExtendBlockView;
 import net.minecraft.client.renderer.chunk.RenderChunkRegion;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -19,7 +18,7 @@ import java.util.Map;
 @Pseudo
 @Mixin(targets = "net.optifine.override.ChunkCacheOF")
 // @Mixin(CompatModule.class)
-public abstract class MixinChunkSlice implements IOFModelTaker, IMapSliceProvider, ExtendBlockView {
+public abstract class MixinChunkSlice implements IOFModelTaker, IMapSliceProvider, IExtendBlockView {
 
     @Final
     @Shadow(remap = false)
@@ -74,6 +73,6 @@ public abstract class MixinChunkSlice implements IOFModelTaker, IMapSliceProvide
 
     @Override
     public BlockPos.MutableBlockPos getModelCheckPos() {
-        return ((ExtendBlockView) chunkCache).getModelCheckPos();
+        return ((IExtendBlockView) chunkCache).getModelCheckPos();
     }
 }

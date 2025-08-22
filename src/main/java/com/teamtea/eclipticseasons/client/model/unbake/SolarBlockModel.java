@@ -6,6 +6,8 @@ import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.data.client.model.seasonal.SeasonalTexture;
 import com.teamtea.eclipticseasons.client.model.SeasonBiomeGoingModel;
 import com.teamtea.eclipticseasons.client.model.SeasonGoingModel;
+import it.unimi.dsi.fastutil.Hash;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
 import net.minecraft.client.renderer.block.model.*;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
@@ -18,6 +20,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraftforge.client.model.geometry.UnbakedGeometryHelper;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -37,7 +40,7 @@ public class SolarBlockModel extends BlockModel {
     }
 
     public static SolarBlockModel of(BlockModel blockModel) {
-        return new SolarBlockModel(blockModel.getParentLocation(),
+        SolarBlockModel solarBlockModel = new SolarBlockModel(blockModel.getParentLocation(),
                 blockModel.getElements(),
                 blockModel.textureMap,
                 blockModel.hasAmbientOcclusion(),
@@ -45,6 +48,8 @@ public class SolarBlockModel extends BlockModel {
                 blockModel.getTransforms(),
                 blockModel.getOverrides()
         );
+        solarBlockModel.customData.copyFrom(blockModel.customData);
+        return solarBlockModel;
     }
 
     public BlockModel to(Map<String, ResourceLocation> stringStringMap, Map<String, Integer> integerMap) {
@@ -99,14 +104,33 @@ public class SolarBlockModel extends BlockModel {
 
 
     @Override
-    public BakedModel bake(ModelBaker baker, BlockModel model, Function<Material, TextureAtlasSprite> spriteGetter, ModelState state, ResourceLocation pLocation, boolean guiLight3d) {
+    public @NotNull BakedModel bake(ModelBaker baker, BlockModel model, Function<Material, TextureAtlasSprite> spriteGetter, ModelState state, ResourceLocation pLocation, boolean guiLight3d) {
         if (seasonalTexture != null) {
             BakedModel bake = UnbakedGeometryHelper.bake(this, baker, model, spriteGetter, state, pLocation, guiLight3d);
             SeasonGoingModel<BakedModel> end = null;
             List<Pair<SeasonBiomeGoingModel.BiomePredicate, SeasonGoingModel<BakedModel>>> list = new ArrayList<>();
             List<Pair<SeasonBiomeGoingModel.BiomePredicate, SeasonGoingModel<BakedModel>>> defaultList = new ArrayList<>();
+
+            Map<BlockModel, BakedModel> bakedCache =
+                    new Object2ObjectOpenCustomHashMap<>(new Hash.Strategy<>() {
+                        @Override
+                        public int hashCode(BlockModel blockModel) {
+                            return Objects.hash(blockModel.getElements(), blockModel.textureMap);
+                        }
+
+                        @Override
+                        public boolean equals(BlockModel a, BlockModel b) {
+                            if (a == b) return true;
+                            if (b == null || a.getClass() != b.getClass()) return false;
+                            return (a.getElements().equals(b.getElements())
+                                    && a.textureMap.equals(b.textureMap));
+                        }
+                    });
+
             for (SeasonalTexture texture : seasonalTexture) {
                 EnumMap<SolarTerm, List<Pair<BakedModel, BakedModel>>> solarTermBakedModelEnumMap = new EnumMap<>(SolarTerm.class);
+                EnumMap<SolarTerm, List<Pair<BakedModel, BakedModel>>> snowSolarTermBakedModelEnumMap = new EnumMap<>(SolarTerm.class);
+
                 texture.getFlatSliceEnumMap()
                         .forEach(
                                 (solarTerm, flatSliceHolders) -> {
@@ -114,21 +138,40 @@ public class SolarBlockModel extends BlockModel {
                                         solarTermBakedModelEnumMap.put(solarTerm,
                                                 toList(flatSliceHolders.flatSlice().mid(), flatSliceHolders.flatSlice().tintMap()).stream().map(
                                                         b -> {
-                                                            BakedModel sliceModel = UnbakedGeometryHelper.bake(b, baker, model, spriteGetter, state, pLocation, guiLight3d);
+                                                            BakedModel sliceModel = bakedCache.computeIfAbsent(b, (blockModel -> UnbakedGeometryHelper.bake(b, baker, model, spriteGetter, state, pLocation, guiLight3d)));
                                                             return Pair.of(sliceModel, sliceModel);
                                                         }
                                                 ).toList()
                                         );
+
                                     if (flatSliceHolders.flatSlice().transitionModels() != null)
-                                        solarTermBakedModelEnumMap.put(solarTerm,
+                                        snowSolarTermBakedModelEnumMap.put(solarTerm,
                                                 toPairList(flatSliceHolders.flatSlice().transitionModels(), flatSliceHolders.flatSlice().tintMap()).stream().map(
-                                                        b -> Pair.of(UnbakedGeometryHelper.bake(b.getFirst(), baker, model, spriteGetter, state, pLocation, guiLight3d),
-                                                                UnbakedGeometryHelper.bake(b.getSecond(), baker, model, spriteGetter, state, pLocation, guiLight3d))
+                                                                b -> Pair.of(bakedCache.computeIfAbsent(b.getFirst(), (blockModel -> UnbakedGeometryHelper.bake(blockModel, baker, model, spriteGetter, state, pLocation, guiLight3d))),
+                                                                        bakedCache.computeIfAbsent(b.getSecond(), (blockModel -> UnbakedGeometryHelper.bake(blockModel, baker, model, spriteGetter, state, pLocation, guiLight3d)))))
+                                                        .toList()
+                                        );
+
+                                    if (flatSliceHolders.snowSlice().mid() != null)
+                                        snowSolarTermBakedModelEnumMap.put(solarTerm,
+                                                toList(flatSliceHolders.snowSlice().mid(), flatSliceHolders.flatSlice().tintMap()).stream().map(
+                                                        b -> {
+                                                            BakedModel sliceModel = bakedCache.computeIfAbsent(b, (blockModel -> UnbakedGeometryHelper.bake(b, baker, model, spriteGetter, state, pLocation, guiLight3d)));
+                                                            return Pair.of(sliceModel, sliceModel);
+                                                        }
                                                 ).toList()
+                                        );
+
+                                    if (flatSliceHolders.snowSlice().transitionModels() != null)
+                                        snowSolarTermBakedModelEnumMap.put(solarTerm,
+                                                toPairList(flatSliceHolders.snowSlice().transitionModels(), flatSliceHolders.flatSlice().tintMap()).stream().map(
+                                                                b -> Pair.of(bakedCache.computeIfAbsent(b.getFirst(), (blockModel -> UnbakedGeometryHelper.bake(blockModel, baker, model, spriteGetter, state, pLocation, guiLight3d))),
+                                                                        bakedCache.computeIfAbsent(b.getSecond(), (blockModel -> UnbakedGeometryHelper.bake(blockModel, baker, model, spriteGetter, state, pLocation, guiLight3d)))))
+                                                        .toList()
                                         );
                                 }
                         );
-                end = new SeasonGoingModel<>(bake, solarTermBakedModelEnumMap);
+                end = new SeasonGoingModel<>(bake, solarTermBakedModelEnumMap, snowSolarTermBakedModelEnumMap);
                 if (texture.getBiomes().isEmpty()) {
                     defaultList.add(Pair.of((b) -> true, end));
                 } else {
@@ -165,4 +208,5 @@ public class SolarBlockModel extends BlockModel {
 
         return super.bake(baker, model, spriteGetter, state, pLocation, guiLight3d);
     }
+
 }
