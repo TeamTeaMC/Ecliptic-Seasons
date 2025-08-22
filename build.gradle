@@ -253,6 +253,10 @@ dependencies {
     runtimeOnly fg.deobf("curse.maven:farmers-delight-398521:5051242")
 
     compileOnly fg.deobf("curse.maven:distant-horizons-508933:6791186")
+
+//    onlyMainRuntimeOnly fg.deobf("curse.maven:cloth-config-348521:5729105")
+//    onlyMainRuntimeOnly fg.deobf("curse.maven:architectury-api-419699:5137938")
+//    onlyMainRuntimeOnly fg.deobf("curse.maven:stevesrealisticsleep-616330:5962707")
 //    onlyMainRuntimeOnly fg.deobf("curse.maven:distant-horizons-508933:6791186")
 
 //    compileOnly fg.deobf("curse.maven:legendary-survival-overhaul-840254:6703282")

@@ -71,6 +71,7 @@ public class AllListener {
     public static void onServerAboutToStartEvent(ServerAboutToStartEvent event) {
         WeatherManager.BIOME_WEATHER_LIST.clear();
         WeatherManager.NEXT_CHECK_BIOME_MAP.clear();
+        WeatherManager.BIOME_WEATHER_QUERY_LIST.clear();
     }
 
     @SubscribeEvent
@@ -126,6 +127,9 @@ public class AllListener {
     public static void onLevelUnloadEvent(LevelEvent.Unload event) {
         if (event.getLevel() instanceof Level level) {
             WeatherManager.BIOME_WEATHER_LIST.remove(level);
+            WeatherManager.NEXT_CHECK_BIOME_MAP.remove(level);
+            WeatherManager.BIOME_WEATHER_QUERY_LIST.remove(level);
+
             // if (level instanceof ServerLevel serverLevel)
             {
                 SolarHolders.DATA_MANAGER_MAP.remove(level);
@@ -153,13 +157,10 @@ public class AllListener {
             MapChecker.unloadChunk(level, event.getChunk().getPos());
             CropGrowthHandler.unloadChunk(level, event.getChunk().getPos());
         }
-        // else {
-        //     EclipticSeasons.extraLogger(true, "Unload a chunk but not with a level : ", event.getChunk().getPos());
-        // }
     }
 
     @SubscribeEvent
-    public static void onChunkSaveEvent(ChunkDataEvent.Save event) {
+    public static void onChunkDataSaveEvent(ChunkDataEvent.Save event) {
         if (event.getLevel() instanceof Level level) {
             SolarHolders.getSaveDataLazy(level)
                     .ifPresent(solarDataManager -> {
@@ -169,7 +170,7 @@ public class AllListener {
     }
 
     @SubscribeEvent
-    public static void onChunkLoadEvent(ChunkDataEvent.Load event) {
+    public static void onChunkDataLoadEvent(ChunkDataEvent.Load event) {
         if (event.getLevel() instanceof Level level) {
             SolarHolders.getSaveDataLazy(level)
                     .ifPresent(solarDataManager -> {

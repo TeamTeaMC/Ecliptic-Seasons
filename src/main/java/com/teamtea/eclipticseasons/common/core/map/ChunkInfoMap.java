@@ -67,6 +67,9 @@ public class ChunkInfoMap {
     }
 
     public int updateBiome(int x, int z, int id) {
+        // if(id==40) {
+        //     EclipticSeasons.logger(x, z);
+        // }
         x = getChunkValue(x);
         z = getChunkValue(z);
         int old;

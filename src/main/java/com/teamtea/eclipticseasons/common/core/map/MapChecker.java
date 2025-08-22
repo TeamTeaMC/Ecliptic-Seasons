@@ -126,17 +126,17 @@ public class MapChecker {
         int minBuildHeight = level.getMinBuildHeight();
 
         // fix the pos to surface
-        ChunkInfoMap chunkMap1 = getChunkMap(level, pos);
+        ChunkInfoMap chunkMap = getChunkMap(level, pos);
 
         Holder<Biome> biome = null;
         int bid = 0;
         int y = 0;
-        if (chunkMap1 != null) {
-            bid = chunkMap1.getBiome(pos);
+        if (chunkMap != null) {
+            bid = chunkMap.getBiome(pos);
             if (bid > -1) {
                 biome = idToBiome(level, bid);
                 if (isSmallBiome(biome)) {
-                    y = getHeightSafe(level, pos) + 1;
+                    y = chunkMap.getHeight(pos) + 1;
                     if (y > maxBuildHeight || y <= minBuildHeight) {
                         y = getVanillaSolidHeightOrSelf(level, pos);
                     }
@@ -145,7 +145,7 @@ public class MapChecker {
         }
 
         if (biome == null) {
-            y = getHeightSafe(level, pos) + 1;
+            if (chunkMap != null) y = chunkMap.getHeight(pos) + 1;
             if (y > maxBuildHeight || y <= minBuildHeight) {
                 y = getVanillaSolidHeightOrSelf(level, pos);
             }
@@ -157,61 +157,54 @@ public class MapChecker {
         if (biome == null)
             biome = level.registryAccess().registryOrThrow(Registries.BIOME).getHolderOrThrow(Biomes.PLAINS);
 
-        BlockPos.MutableBlockPos relative = null;
+        biome = fixSmallBiome(level, pos, biome, null, y, chunkMap, maxBuildHeight, minBuildHeight);
 
+        return biome;
+    }
+
+    private static @Nullable Holder<Biome> fixSmallBiome(Level level, BlockPos pos, Holder<Biome> biome, @Nullable BlockPos.MutableBlockPos relative, int y, ChunkInfoMap chunkMap1, int maxBuildHeight, int minBuildHeight) {
         int i = 0;
         int last_ii = 0;
         boolean shouldBreak = false;
         while (isSmallBiome(biome)) {
             // if(true)break;
             if (relative == null) {
-                relative = new BlockPos.MutableBlockPos(
-                        pos.getX(), y, pos.getZ()
-                );
+                relative = new BlockPos.MutableBlockPos(pos.getX(), y, pos.getZ());
             }
             i += 1;
             for (SimplePair<Direction, Direction> pair : SMALL_OFFSET_DIRECTIONS) {
-                // BlockPos relative = pos.relative(pair.getKey(), i);
-
                 if (pair.getValue() != null) {
-                    // relative = relative.relative(pair.getValue(), i);
-                    // 这里需要是1，否则锯齿
-                    int ii;
-                    // ii = (int) Mth.sqrt(i) + 1;
-                    // ii=i*3/4;
-                    ii = i - 1;
-                    if (
-                        // i == 1 ||
-                            ii == last_ii)
-                        continue;
+                    int ii = i - 1;
+                    if (ii == last_ii) continue;
                     relative.move(pair.getKey(), ii);
                     relative.move(pair.getValue(), ii);
                     last_ii = ii;
                 } else {
                     relative.move(pair.getKey(), i);
                 }
-                if (chunkMap1 != null) {
-                    int x = blockToRegionCoord(relative.getX());
-                    int z = blockToRegionCoord(relative.getZ());
-                    if (chunkMap1.getX() == x && chunkMap1.getZ() == z)
-                        bid = chunkMap1.getBiome(relative);
+                // if (chunkMap1 != null) {
+                //     int x = blockToRegionCoord(relative.getX());
+                //     int z = blockToRegionCoord(relative.getZ());
+                //     if (chunkMap1.getX() == x && chunkMap1.getZ() == z)
+                //         bid = chunkMap1.getBiome(relative);
+                // }
+                if (chunkMap1 != null) y = chunkMap1.getHeight(relative) + 1;
+                if (y > maxBuildHeight || y <= minBuildHeight) {
+                    y = getVanillaSolidHeightOrSelf(level, relative);
                 }
-                if (bid < 0) {
-                    y = getHeightSafe(level, relative) + 1;
-                    if (y > maxBuildHeight || y <= minBuildHeight) {
-                        y = getVanillaSolidHeightOrSelf(level, relative);
-                    }
-                    relative.setY(y);
-                    bid = getSurfaceOrUpdate(level, relative, false, ChunkInfoMap.TYPE_BIOME);
-                }
-                biome = idToBiome(level, bid);
+                relative.setY(y);
+                biome = level.getBiome(relative);
+
+                // if (bid < 0) {
+                //     y = getHeightSafe(level, relative) + 1;
+                //     if (y > maxBuildHeight || y <= minBuildHeight) {
+                //         y = getVanillaSolidHeightOrSelf(level, relative);
+                //     }
+                //     relative.setY(y);
+                //     bid = getSurfaceOrUpdate(level, relative, false, ChunkInfoMap.TYPE_BIOME);
+                // }
+                // if (bid > -1) biome = idToBiome(level, bid);
                 if (!isSmallBiome(biome)) {
-                    // 不再保存，避免累进。
-                    // ChunkInfoMap chunkMap = getChunkMap(level, pos);
-                    // if (chunkMap != null) {
-                    //     if (isLoadNearBy(level, relative))
-                    //         chunkMap.updateBiome(pos, bid);
-                    // }
                     shouldBreak = true;
                     break;
                 } else {
@@ -222,25 +215,6 @@ public class MapChecker {
 
             if (shouldBreak || i > 128) break;
         }
-
-        // var biome = level.getBiome(pos);
-        // int i = 0;
-        // while (isSmallBiome(biome)) {
-        //     i += 1;
-        //     for (Direction direction : Direction.Plane.HORIZONTAL) {
-        //         // if (level.isLoaded(pos.relative(direction, i)))
-        //         {
-        //             biome = level.getBiome(pos.relative(direction, i));
-        //             if (!isSmallBiome(biome)) {
-        //                 break;
-        //             }
-        //         }
-        //     }
-        // }
-
-        // if(biome.is(Biomes.PLAINS)){
-        //     EclipticSeasons.logger(level.getBiome(pos));
-        // }
         return biome;
     }
 
@@ -566,9 +540,16 @@ public class MapChecker {
             } else if (type == ChunkInfoMap.TYPE_BIOME) {
                 value = map.getBiome(pos);
                 if (value == -1 || forceUpdate) {
-                    value = biomeToId(level, level.getBiome(pos).value());
+                    Holder<Biome> biome = level.getBiome(pos);
                     if (isLoadNearBy(level, pos)) {
-                        map.updateBiome(pos, value);
+                        Holder<Biome> biome2 = fixSmallBiome(level, pos, biome, null, pos.getY(), map, level.getMaxBuildHeight(), level.getMinBuildHeight());
+                        if (biome2 != null) {
+                            if (biome2 != biome) {
+                                biome = biome2;
+                            }
+                            value = biomeToId(level, biome.value());
+                            map.updateBiome(pos, value);
+                        }
                     }
                 }
             }
@@ -595,9 +576,16 @@ public class MapChecker {
                 value = getMCHeightWithCheck(level, pos);
                 map.updateHeight(pos, value);
             } else if (type == ChunkInfoMap.TYPE_BIOME) {
-                value = biomeToId(level, level.getBiome(pos).value());
+                Holder<Biome> biome = level.getBiome(pos);
                 if (isLoadNearBy(level, pos)) {
-                    map.updateBiome(pos, value);
+                    Holder<Biome> biome2 = fixSmallBiome(level, pos, biome, null, pos.getY(), map, level.getMaxBuildHeight(), level.getMinBuildHeight());
+                    if (biome2 != null) {
+                        if (biome2 != biome) {
+                            biome = biome2;
+                        }
+                        value = biomeToId(level, biome.value());
+                        map.updateBiome(pos, value);
+                    }
                 }
             }
         }
@@ -768,9 +756,23 @@ public class MapChecker {
                     middleBlockPosition.setZ(j);
                     int k = getMCHeightWithCheck(level, middleBlockPosition, chunk, null, middleBlockPosition, null);
 
-                    // mutableBlockPos.set(i,k,j);
-                    // note 似乎这里不能-1
+
                     chunkMap.updateHeight(i, j, k);
+
+                    // due to
+                    if (level instanceof ServerLevel serverLevel) {
+                        middleBlockPosition.set(i, k + 1, j);
+                        Holder<Biome> biome = serverLevel.getBiome(middleBlockPosition);
+                        int biomedToId = biomeToId(level, biome.value());
+                        Holder<Biome> biome2 = fixSmallBiome(serverLevel, middleBlockPosition, biome, middleBlockPosition, k + 1, chunkMap, level.getMaxBuildHeight(), level.getMinBuildHeight());
+                        if (biome2 != null) {
+                            if (biome2 != biome) {
+                                biomedToId = biomeToId(level, biome2.value());
+                                middleBlockPosition.set(i, k + 1, j);
+                            }
+                            chunkMap.updateBiome(middleBlockPosition, biomedToId);
+                        }
+                    }
                 }
             }
         }

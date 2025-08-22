@@ -1,3 +1,9 @@
+### 0.12.0-pre7-1
+
+- Optimized the annual snow timing variation calculation method to improve central stability.
+- Optimized the surface biome caching mechanism, as well as buffering operations involving small biomes such as rivers, removing server-side cache restrictions on border chunks.
+- Removed restrictions on querying or correcting surface biomes in border or unloaded chunks, improving result for weather- and rainfall-related operations such as ticking and mob spawning in these.
+
 ### 0.12.0-pre7
 
 - The snowfall timing now varies within a certain range each year and can be adjusted via configuration toggle or

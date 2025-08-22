@@ -6,11 +6,12 @@ import net.minecraftforge.common.util.LazyOptional;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.Map;
 
 public class SolarHolders {
 
-    public static final Map<Level, SolarDataManager> DATA_MANAGER_MAP = new HashMap<>();
+    public static final Map<Level, SolarDataManager> DATA_MANAGER_MAP = new IdentityHashMap<>();
 
     public static @Nullable SolarDataManager getSaveData(Level level) {
         return DATA_MANAGER_MAP.getOrDefault(level, null);

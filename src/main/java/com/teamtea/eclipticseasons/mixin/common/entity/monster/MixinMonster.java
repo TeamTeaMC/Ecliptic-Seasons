@@ -23,7 +23,7 @@ public class MixinMonster {
     )
     private static boolean eclipticseasons$isDarkEnoughToSpawn_isThundering(ServerLevel instance, Operation<Boolean> original, @Local(ordinal = 0, argsOnly = true) BlockPos blockPos) {
         if (EclipticUtil.hasLocalWeather(instance)
-                && MapChecker.isLoadNearByOnlyServer(instance, blockPos)
+                // && MapChecker.isLoadNearByOnlyServer(instance, blockPos)
         )
             return WeatherManager.isThunderAtBiome(instance, blockPos);
         return instance.isThundering();

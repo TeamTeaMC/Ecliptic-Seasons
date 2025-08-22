@@ -22,6 +22,7 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
@@ -64,7 +65,7 @@ public class SolarDataManager extends SavedData {
 
     protected float createTempChange(Level level) {
         return isValidDimension() ?
-                level.getRandom().nextFloat() * 0.5f - 0.25f : 0;
+                (float) Mth.clamp((level.getRandom().nextGaussian() * (0.25f / 2f)), -0.25f, 0.25f) : 0;
     }
 
     public SolarDataManager(Level level, CompoundTag nbt) {
