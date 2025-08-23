@@ -102,7 +102,6 @@ public final class ClientEventHandler {
         }
     }
 
-    // TODO:似乎未真正解决进入末地后更新失败的消息
     @SubscribeEvent
     public static void onLevelEventLoad(LevelEvent.Load event) {
         if (event.getLevel() instanceof ClientLevel level) {

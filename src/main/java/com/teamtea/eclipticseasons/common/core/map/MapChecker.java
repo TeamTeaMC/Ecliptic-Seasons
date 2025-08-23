@@ -470,7 +470,6 @@ public class MapChecker {
         //     }
         // }
 
-        // TODO:似乎都是+1，那么就是+1两个方向查询即可
         int i1 = (pos.getX() & 15) - 2;
         int l1 = (pos.getZ() & 15) - 2;
         int xe = ((i1) >> 2) > 2 ? 1 : 0;
@@ -501,7 +500,6 @@ public class MapChecker {
         var abovePos = pos.above();
         if (level.isLoaded(abovePos)) {
             BlockState stateAbove;
-            // TODO: add this for I'm not know if we will crash for logic world change but not render section change
             try {
                 stateAbove = level.getBlockState(abovePos);
             } catch (Exception e) {
@@ -705,7 +703,6 @@ public class MapChecker {
     public static List<Block> LowerPlant = Stream.of(Blocks.GRASS, Blocks.FERN).collect(Collectors.toList());
     public static List<Block> LARGE_GRASS = Stream.of(Blocks.TALL_GRASS, Blocks.LARGE_FERN).collect(Collectors.toList());
 
-    // TODO: 注意全部加上缓存
     public static int getBlockType(BlockState state, BlockGetter level, BlockPos pos) {
         int flag = FLAG_NONE;
         // 不知道为啥这里会有null

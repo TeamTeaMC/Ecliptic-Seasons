@@ -346,7 +346,6 @@ public class ExtraModelManager {
             float offset = 0.5f;
             boolean isSlabDown = false;
             original = new ArrayList<>(quadsCTM.size());
-            // TODO:按高度清理连接面
             for (BakedQuad bakedQuad : quadsCTM) {
                 Direction bakedQuadDirection = bakedQuad.getDirection();
                 if (bakedQuadDirection != Direction.DOWN) {

@@ -179,13 +179,6 @@ public class DHTool {
                                         && !iBlockStateWrapper_NowQuery.isAir()
                                         && !blockStatesToIgnore.contains(iBlockStateWrapper_NowQuery)
                                 ) {
-                                    // TODO:后续需要研究哪些方块是被DH跳过渲染的，实际上草是不渲染的，但是樱花树林的粉色小花却渲染
-                                    // 此为错误结论，原因是上面被跳过的方块会给下面的染色，比如上面是花，那么下面就可以被染色粉色
-                                    // 以及直接跳过流体下方的渲染
-                                    // 那么还是要研究谁会被跳过渲染
-                                    // 目前猜测是无生物碰撞的
-                                    // 以及双层的植物需要继续向下，看是否需要处理
-                                    // boolean colorBelowWithAvoidedBlocks = Config.Client.Advanced.Graphics.Quality.tintWithAvoidedBlocks.get();
 
                                     if (bottomY + instance.getMinY() == dhBlockPos.getY() &&
                                             (MapChecker.getBlockType(blockStateWrapper_NowQuery.blockState, level, mcPos) != 0

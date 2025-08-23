@@ -157,8 +157,6 @@ public class ServerMapFixer {
                 newy = level.getMaxBuildHeight() + 1;
                 updateAndInformClientImmediately = true;
             } else {
-                // 延迟一会再更新覆雪状态
-                // TODO: 客户端自行更新，假如不下雪的话，不通知客户端了
                 if (isNotOldHeight) {
                     MapChecker.updatePosForce(level, pos, mcHeight);
                 }

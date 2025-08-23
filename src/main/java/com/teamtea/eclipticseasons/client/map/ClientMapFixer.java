@@ -122,7 +122,6 @@ public class ClientMapFixer {
                 long longKey = xzPos.toLongKey();
                 xzPosList.remove(longKey);
                 xzPosList.put(longKey, xzPos);
-                // todo not lazy now
                 // if (state.getBlock() == Blocks.AIR) {
                 //     MapChecker.updatePosForce(level, pos, level.getMaxBuildHeight() + 1);
                 // }

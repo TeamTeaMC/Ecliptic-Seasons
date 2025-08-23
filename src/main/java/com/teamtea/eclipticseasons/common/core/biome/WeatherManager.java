@@ -97,7 +97,6 @@ public class WeatherManager {
         return 1.0f;
     }
 
-    // todo other mods should not use it but we not sure
     public static boolean isRainingEverywhere(ServerLevel level) {
         return false;
     }
@@ -267,7 +266,6 @@ public class WeatherManager {
     }
 
     public static Biome.Precipitation getPrecipitationAt(@Nullable Level level, Biome biome, BlockPos pos) {
-        // TODO:Replay Mod would load a client level only
 
         if (!biome.hasPrecipitation()) {
             return Biome.Precipitation.NONE;

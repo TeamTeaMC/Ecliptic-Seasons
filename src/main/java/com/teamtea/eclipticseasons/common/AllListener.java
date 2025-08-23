@@ -262,7 +262,6 @@ public class AllListener {
                     Thread.sleep(100);
                 } catch (InterruptedException ignored) {
                 }
-                // TODO：修复这里
                 WeatherManager.onLoggedIn(serverPlayer, false);
             });
             t.start();

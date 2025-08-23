@@ -850,7 +850,6 @@ public final class CropGrowthHandler {
             Vec3 direction = vec3s[i];
             direction = direction.x != 0 || direction.z != 0 ?
                     direction.add(xr, 0, yr) : direction;
-            // TODO: 最小起步点
             Vec3 startVec = centerVec;
 
             // direction是否要限制为圆形
@@ -872,7 +871,6 @@ public final class CropGrowthHandler {
             }
         }
 
-        // TODO:quickly for windows green house
         if (isConnected && !isInLight) {
             if (level.getRandom().nextInt(10000) <= CommonConfig.Crop.darkGreenhouseFailChance.get()) {
                 isConnected = state.is(EclipticBlockTags.DARK_GROW_PLANTS);
@@ -940,7 +938,6 @@ public final class CropGrowthHandler {
             ));
             ChunkAccess chunk = level.getChunk(SectionPos.blockToSectionCoord(pos.getX()), SectionPos.blockToSectionCoord(pos.getZ()), ChunkStatus.BIOMES, false);
             if (chunk != null) chunk.setUnsaved(true);
-            // todo 后续激活更新
             // level.scheduleTick(pos, state.getBlock(), needAdd.lastingTime());
         }
         // else {

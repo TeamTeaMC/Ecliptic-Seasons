@@ -17,7 +17,6 @@ public enum TimePeriod implements ITranslatable {
         return timePeriods;
     }
 
-    // todo fix in future
     public static TimePeriod fromTimeOfDay(float timeOfDay) {
         float angle = (timeOfDay * 20f + 5) % 20;
         if (angle > 0.83 && angle < 10) {

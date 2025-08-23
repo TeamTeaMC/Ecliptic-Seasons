@@ -114,7 +114,6 @@ public class HygrometerBlock extends WallPlacedBlock {
             float humidityAt = EclipticUtil.getHumidityLevelAt(level, data.getSolarTerm(), CropGrowthHandler.getCropBiome(level, pos), pos, !level.isClientSide());
             if (chance > 8) {
                 humidityAt += (
-                        // todo temporarily
                         level.isClientSide() ? ClientCon.humidityModificationLevel :
                                 (data.calculateHumidityModification(checkPos)));
             }
