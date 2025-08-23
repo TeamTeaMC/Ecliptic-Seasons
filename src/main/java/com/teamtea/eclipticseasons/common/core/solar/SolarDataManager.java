@@ -96,6 +96,7 @@ public class SolarDataManager extends SavedData {
     public @NotNull CompoundTag save(CompoundTag compound) {
         compound.putInt("SolarTermsDay", getSolarTermsDay());
         compound.putInt("SolarTermsTicks", getSolarTermsTicks());
+        compound.putFloat("SolarTempChange", getSolarTempChange());
         ListTag listTag = new ListTag();
         if (levelWeakReference.get() != null) {
             var list = WeatherManager.getBiomeList(levelWeakReference.get());

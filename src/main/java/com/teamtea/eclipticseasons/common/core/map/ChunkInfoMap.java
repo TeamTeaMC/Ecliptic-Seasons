@@ -9,13 +9,15 @@ public class ChunkInfoMap {
 
     private final short[][] matrix = new short[MapChecker.ChunkSize][MapChecker.ChunkSize];
     private final short[][] biomes = new short[MapChecker.ChunkSize][MapChecker.ChunkSize];
-    private final Object[][] lockArray = new Object[MapChecker.ChunkSize][MapChecker.ChunkSize];
+    // private final Object[][] lockArray = new Object[MapChecker.ChunkSize][MapChecker.ChunkSize];
     final int x;
     final int z;
     final short minY;
+    final boolean isClient;
 
-    public ChunkInfoMap(int x, int z, int minY) {
+    public ChunkInfoMap(int x, int z, int minY, boolean isClient) {
         this.minY = (short) minY;
+        this.isClient = isClient;
         this.x = x;
         this.z = z;
         EclipticSeasons.extraLogger(true, String.format("Create new Height Map with [%s, %s]", x, z));
@@ -23,7 +25,7 @@ public class ChunkInfoMap {
             for (int j = 0; j < MapChecker.ChunkSize; j++) {
                 biomes[i][j] = -1;
                 matrix[i][j] = this.minY;
-                lockArray[i][j] = new Object();
+                // lockArray[i][j] = new Object();
             }
         }
 
@@ -59,7 +61,8 @@ public class ChunkInfoMap {
         x = getChunkValue(x);
         z = getChunkValue(z);
         int old;
-        synchronized (lockArray[x][z]) {
+        // synchronized (lockArray[x][z])
+        {
             old = matrix[x][z];
             matrix[x][z] = (short) y;
         }
@@ -73,7 +76,8 @@ public class ChunkInfoMap {
         x = getChunkValue(x);
         z = getChunkValue(z);
         int old;
-        synchronized (lockArray[x][z]) {
+        // synchronized (lockArray[x][z])
+        {
             old = biomes[x][z];
             biomes[x][z] = (short) id;
         }

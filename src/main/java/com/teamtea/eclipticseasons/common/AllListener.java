@@ -189,6 +189,7 @@ public class AllListener {
             }
             ServerMapFixer.tick(serverLevel);
         }
+        MapChecker.tickLevel(event.level);
     }
 
     @SubscribeEvent

@@ -180,17 +180,17 @@ public enum SolarTerm implements ITranslatableWithPlaceholder, ISolarTerm {
     }
 
     public SolarTermColor getSolarTermColor(TagKey<Biome> biomeTagKey) {
-        if (biomeTagKey.equals(ClimateTypeBiomeTags.NONE_COLOR_CHANGE)) {
+        if (biomeTagKey == (ClimateTypeBiomeTags.NONE_COLOR_CHANGE)) {
             return NoneSolarTermColors.get(this.ordinal());
-        } else if (biomeTagKey.equals(ClimateTypeBiomeTags.SLIGHTLY_COLOR_CHANGE)) {
+        } else if (biomeTagKey == (ClimateTypeBiomeTags.SLIGHTLY_COLOR_CHANGE)) {
             return SlightlySolarTermColors.get(this.ordinal());
-        } else if (biomeTagKey.equals(ClimateTypeBiomeTags.MONSOONAL_COLOR_CHANGE)) {
+        } else if (biomeTagKey == (ClimateTypeBiomeTags.MONSOONAL_COLOR_CHANGE)) {
             return RainySolarTermColors.collectValues()[this.ordinal()];
-        } else if (biomeTagKey.equals(ClimateTypeBiomeTags.SEASONAL_HOT_COLOR_CHANGE)) {
+        } else if (biomeTagKey == (ClimateTypeBiomeTags.SEASONAL_HOT_COLOR_CHANGE)) {
             return HotSolarTermColors.collectValues()[this.ordinal()];
-        } else if (biomeTagKey.equals(ClimateTypeBiomeTags.SEASONAL_COLD_COLOR_CHANGE)) {
+        } else if (biomeTagKey == (ClimateTypeBiomeTags.SEASONAL_COLD_COLOR_CHANGE)) {
             return ColdSolarTermColors.collectValues()[this.ordinal()];
-        } else if (biomeTagKey.equals(ClimateTypeBiomeTags.SEASONAL_COLOR_CHANGE)) {
+        } else if (biomeTagKey == (ClimateTypeBiomeTags.SEASONAL_COLOR_CHANGE)) {
             return TemperateSolarTermColors.collectValues()[this.ordinal()];
         } else {
             return NoneSolarTermColors.get(this.ordinal());

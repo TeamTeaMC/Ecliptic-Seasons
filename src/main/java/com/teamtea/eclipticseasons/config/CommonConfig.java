@@ -52,6 +52,7 @@ public class CommonConfig {
 
         public static ForgeConfigSpec.BooleanValue snowyFullCollisionShape;
         public static ForgeConfigSpec.BooleanValue snowOverlayGlowingBlock;
+        public static ForgeConfigSpec.BooleanValue disableChunkCacheCleaner;
 
         private static void load(ForgeConfigSpec.Builder builder) {
             builder.push("Debug");
@@ -63,7 +64,8 @@ public class CommonConfig {
                     .define("SnowyFullCollisionShape", false);
             snowOverlayGlowingBlock = builder.comment("Snow can cover the block which would lights.")
                     .define("NotSnowOverlayGlowingBlock", false);
-
+            disableChunkCacheCleaner = builder.comment("Disable chunk extra info cache cleanup.")
+                    .define("DisableChunkCacheCleaner", false);
             builder.pop();
         }
     }

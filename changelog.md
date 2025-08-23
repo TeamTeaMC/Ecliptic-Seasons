@@ -1,6 +1,19 @@
+### 0.12.0-pre7-3
+
+- Fixed an issue where the annual snowfall duration parameter was not saved when unloading levels.
+- Added a dynamic clean-up mechanism for the chunk extra info cache, which can be disabled in Debug configuration.
+- Removed the peer access lock from the chunk extra info cache.
+- These two changes will save long-distance explorers (players who travel across hundreds or thousands of blocks)
+  100–200 MB or more of memory usage.
+- Backported the multidimensional chunk info caching method from 1.21 to 1.20, improving server-side query efficiency
+  and fixing potential cache errors.
+- Biome information is no longer cached immediately on chunk load. Instead, results are stored after random access,
+  preventing potential stutters caused by instant caching.
+
 ### 0.12.0-pre7-2
 
-- Added snow-covered variants to the `season_textures` resource pack.** You can now prefix the original key with `snow_` to use them. Additionally, if no specific season is set, the textures will apply to all seasons.
+- Added snow-covered variants to the `season_textures` resource pack.** You can now prefix the original key with `snow_`
+  to use them. Additionally, if no specific season is set, the textures will apply to all seasons.
   Example:
 
   ```json
@@ -24,12 +37,13 @@
 - Optimized the duplicate baking issue of identical models in `season_textures`.
 - Adjusted the required crop quantities for seasonal tasks.
 
-
 ### 0.12.0-pre7-1
 
 - Optimized the annual snow timing variation calculation method to improve central stability.
-- Optimized the surface biome caching mechanism, as well as buffering operations involving small biomes such as rivers, removing server-side cache restrictions on border chunks.
-- Removed restrictions on querying or correcting surface biomes in border or unloaded chunks, improving result for weather- and rainfall-related operations such as ticking and mob spawning in these.
+- Optimized the surface biome caching mechanism, as well as buffering operations involving small biomes such as rivers,
+  removing server-side cache restrictions on border chunks.
+- Removed restrictions on querying or correcting surface biomes in border or unloaded chunks, improving result for
+  weather- and rainfall-related operations such as ticking and mob spawning in these.
 
 ### 0.12.0-pre7
 
