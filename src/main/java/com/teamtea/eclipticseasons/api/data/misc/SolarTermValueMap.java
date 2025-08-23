@@ -1,23 +1,25 @@
 package com.teamtea.eclipticseasons.api.data.misc;
 
+import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
+import com.teamtea.eclipticseasons.api.data.climate.AgroClimaticZone;
 import com.teamtea.eclipticseasons.api.util.codec.CodecUtil;
 import com.teamtea.eclipticseasons.api.util.codec.ESExtraCodec;
 import com.teamtea.eclipticseasons.api.util.fast.Enum2ObjectMap;
+import com.teamtea.eclipticseasons.common.registry.ESRegistries;
+import net.minecraft.core.Holder;
 
-import java.util.Arrays;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public record SolarTermValueMap<T>(
         Optional<T> defaultValue,
         Optional<EnumMap<SolarTerm, T>> solarTermMap,
+        Optional<Holder<AgroClimaticZone>> climate,
         Optional<EnumMap<Season, T>> seasonMap
 ) {
 
@@ -29,7 +31,8 @@ public record SolarTermValueMap<T>(
                 codec.optionalFieldOf("default").forGetter(SolarTermValueMap::defaultValue),
                 CodecUtil.enumMapCodec(ESExtraCodec.SOLAR_TERM, codec, SolarTerm.class)
                         .optionalFieldOf("solar_terms").forGetter(SolarTermValueMap::solarTermMap),
-                CodecUtil.enumMapCodec(ESExtraCodec.SEASON, codec, Season.class)
+                CodecUtil.holderCodec(ESRegistries.AGRO_CLIMATE)
+                        .optionalFieldOf("climate").forGetter(SolarTermValueMap::climate), CodecUtil.enumMapCodec(ESExtraCodec.SEASON, codec, Season.class)
                         .optionalFieldOf("seasons").forGetter(SolarTermValueMap::seasonMap)
         ).apply(ins, SolarTermValueMap::new));
     }
@@ -43,9 +46,24 @@ public record SolarTermValueMap<T>(
             map.putAll(solarTermMap().get());
         }
         if (seasonMap().isPresent()) {
+            EnumMap<Season, List<SolarTerm>> usemap;
+            if (climate.isPresent()) {
+                usemap = new EnumMap<>(Season.class);
+                usemap.put(Season.NONE, List.of(SolarTerm.NONE));
+                int i = 0;
+                for (Pair<Season, Integer> pair : climate.get().value().seasonalSignalDurations()) {
+                    List<SolarTerm> solarTerms = usemap.computeIfAbsent(pair.getFirst(), (c) -> new ArrayList<>());
+                    solarTerms.addAll(Arrays.asList(SolarTerm.collectValues())
+                            .subList(i, pair.getSecond() + i));
+                    i += pair.getSecond();
+                }
+            } else {
+                usemap = SEASON_TO_SOLAR_TERMS_MAP;
+            }
+
             seasonMap().get().forEach(
                     (season, t) -> {
-                        List<SolarTerm> associatedSolarTerms = SEASON_TO_SOLAR_TERMS_MAP.get(season);
+                        List<SolarTerm> associatedSolarTerms = usemap.get(season);
                         if (associatedSolarTerms != null) {
                             for (SolarTerm solarTerm : associatedSolarTerms) {
                                 map.putIfAbsent(solarTerm, t);
@@ -87,6 +105,7 @@ public record SolarTermValueMap<T>(
         private T defaultValue;
         private EnumMap<SolarTerm, T> solarTermMap;
         private EnumMap<Season, T> seasonMap;
+        private Holder<AgroClimaticZone> climate;
 
         private Builder() {
         }
@@ -122,10 +141,15 @@ public record SolarTermValueMap<T>(
             return this;
         }
 
+        public void climate(Holder<AgroClimaticZone> climate) {
+            this.climate = climate;
+        }
+
         public SolarTermValueMap<T> build() {
             return new SolarTermValueMap<>(
                     Optional.ofNullable(defaultValue),
                     Optional.ofNullable(solarTermMap),
+                    Optional.ofNullable(climate),
                     Optional.ofNullable(seasonMap)
             );
         }
@@ -134,6 +158,7 @@ public record SolarTermValueMap<T>(
             return Optional.of(new SolarTermValueMap<>(
                     Optional.ofNullable(defaultValue),
                     Optional.ofNullable(solarTermMap),
+                    Optional.ofNullable(climate),
                     Optional.ofNullable(seasonMap)
             ));
         }

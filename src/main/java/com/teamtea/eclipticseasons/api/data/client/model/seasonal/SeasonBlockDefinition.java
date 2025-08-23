@@ -7,13 +7,16 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
+import com.teamtea.eclipticseasons.api.data.climate.AgroClimaticZone;
 import com.teamtea.eclipticseasons.api.misc.util.HolderMappable;
 import com.teamtea.eclipticseasons.api.util.codec.CodecUtil;
 import com.teamtea.eclipticseasons.api.util.codec.ESExtraCodec;
 import com.teamtea.eclipticseasons.api.util.fast.Enum2ObjectMap;
 import com.teamtea.eclipticseasons.client.model.LocalSeasonStatusModel;
+import com.teamtea.eclipticseasons.common.registry.ESRegistries;
 import lombok.Builder;
 import lombok.Data;
+import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
@@ -23,6 +26,7 @@ import net.minecraft.world.level.block.Block;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.BiPredicate;
 
 @Data
@@ -31,11 +35,13 @@ public class SeasonBlockDefinition implements HolderMappable<HolderSet<Block>, S
 
     public static final Codec<SeasonBlockDefinition> CODEC = RecordCodecBuilder.create(ins -> ins.group(
             CodecUtil.holderSetCodec(Registries.BLOCK).fieldOf("blocks").forGetter(o -> o.blocks),
+            CodecUtil.holderCodec(ESRegistries.AGRO_CLIMATE).optionalFieldOf("climate").forGetter(o -> o.climate),
             CodecUtil.holderSetCodec(Registries.BIOME).optionalFieldOf("biomes", HolderSet.direct()).forGetter(o -> o.biomes),
             Slice.CODEC.listOf().fieldOf("slices").forGetter(o -> o.slices)
     ).apply(ins, SeasonBlockDefinition::new));
 
     private final HolderSet<Block> blocks;
+    private final Optional<Holder<AgroClimaticZone>> climate;
     private final HolderSet<Biome> biomes;
     private final List<Slice> slices;
 
@@ -56,15 +62,17 @@ public class SeasonBlockDefinition implements HolderMappable<HolderSet<Block>, S
                     slice.mid.equals(LocalSeasonStatusModel.EMPTY) ? null : slice.mid
                     , slice.emptyAbove, slice.transitionModels.equals(Slice.EMPTY_PAIR) ? null : slice.transitionModels);
 
+            AgroClimaticZone climate = getClimate().map(Holder::value).orElse(null);
+
             SolarTerm start = slice.start.isValid() ? slice.start :
                     slice.solarTerm.isValid() ? slice.solarTerm :
-                            slice.season.isValid() ? slice.season.getFirstSolarTerm() :
-                                    slice.startSeason.isValid() ? slice.endSeason.getFirstSolarTerm() : SolarTerm.NONE;
+                            slice.season.isValid() ? slice.season.getFirstSolarTerm(climate) :
+                                    slice.startSeason.isValid() ? slice.endSeason.getFirstSolarTerm(climate) : SolarTerm.NONE;
 
             SolarTerm end = slice.end.isValid() ? slice.end :
                     slice.solarTerm.isValid() ? slice.solarTerm :
-                            slice.season.isValid() ? slice.season.getEndSolarTerm() :
-                                    slice.endSeason.isValid() ? slice.endSeason.getEndSolarTerm() : SolarTerm.NONE;
+                            slice.season.isValid() ? slice.season.getEndSolarTerm(climate) :
+                                    slice.endSeason.isValid() ? slice.endSeason.getEndSolarTerm(climate) : SolarTerm.NONE;
 
             if (start.isValid() && end.isValid()) {
                 FlatSliceHolder flatSliceHolder = new FlatSliceHolder(start, end, flatSlice);

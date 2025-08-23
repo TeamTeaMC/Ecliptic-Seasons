@@ -1,5 +1,7 @@
 package com.teamtea.eclipticseasons.api.constant.solar;
 
+import com.mojang.datafixers.util.Pair;
+import com.teamtea.eclipticseasons.api.data.climate.AgroClimaticZone;
 import com.teamtea.eclipticseasons.api.misc.ITranslatableWithPlaceholder;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -71,4 +73,34 @@ public enum Season implements ITranslatableWithPlaceholder {
         return SolarTerm.get(ordinal() * 6 + 5);
     }
 
+    public SolarTerm getFirstSolarTerm(AgroClimaticZone climate) {
+        if (climate == null) return getFirstSolarTerm();
+        if (climate.seasonalSignalDurations().isEmpty()) return SolarTerm.NONE;
+
+        int ordinal = 0;
+        int foundCount = 0;
+        for (Pair<Season, Integer> pair : climate.seasonalSignalDurations()) {
+            if (pair.getFirst() == this) {
+                if (foundCount > 0 || ordinal > 0) {
+                    return SolarTerm.get(ordinal);
+                }
+                foundCount++;
+            }
+            ordinal += pair.getSecond();
+        }
+        return SolarTerm.get(foundCount == 1 ? 0 : ordinal - 1);
+    }
+
+    public SolarTerm getEndSolarTerm(AgroClimaticZone climate) {
+        if (climate == null) return getEndSolarTerm();
+        if (climate.seasonalSignalDurations().isEmpty()) return SolarTerm.NONE;
+        int ordinal = 0;
+        for (Pair<Season, Integer> pair : climate.seasonalSignalDurations()) {
+            ordinal += pair.getSecond();
+            if (pair.getFirst() == this) {
+                return SolarTerm.collectValues()[ordinal - 1];
+            }
+        }
+        return SolarTerm.NONE;
+    }
 }

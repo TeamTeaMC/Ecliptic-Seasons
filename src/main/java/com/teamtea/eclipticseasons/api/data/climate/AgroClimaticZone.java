@@ -50,9 +50,7 @@ public record AgroClimaticZone(HolderSet<Biome> biomes,
                     GrowParameter.CODEC.optionalFieldOf("global").forGetter(AgroClimaticZone::growParameter),
                     EITHER_PAIR_CODEC.optionalFieldOf("default_mapping").forGetter(AgroClimaticZone::defaultMapping),
                     EITHER_MAP_CODEC.optionalFieldOf("mappings").forGetter(AgroClimaticZone::mapping),
-                    CodecUtil.pairCodec(StringRepresentable.fromEnum(Season::collectValues), Codec.INT).listOf().fieldOf("seasonal_signal_durations").orElse(
-                            List.of()
-                    ).forGetter(AgroClimaticZone::seasonalSignalDurations)
+                    CodecUtil.pairCodec(StringRepresentable.fromEnum(Season::collectValues), Codec.INT).listOf().optionalFieldOf("seasonal_signal_durations",List.of()).forGetter(AgroClimaticZone::seasonalSignalDurations)
             ).apply(builder, AgroClimaticZone::new));
 
     // note 1.20: 与1.21不同的是，网络同步时无法使用HolderSet，原因是设计限制，CropGrowControlBuilder

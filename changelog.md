@@ -1,3 +1,17 @@
+### 0.12.0-pre8
+
+- Fixed an issue where the `snow_tint` parameter in the `season_textures` resource pack was not working.**
+- Added local season conversion support for all data packs and resource packs using the `SolarTermValueMap` structure,
+  including `biome_colors`, `particles/fallen_leaves` resource packs, and `biome_climate_setting`, `season_cycle`,
+  `biome_rain` data packs. When initialized with the `seasons` parameter, you can adjust season mappings to more
+  accurate intervals by using entries such as `"climate": "eclipticseasons:cold"` (AGRO).
+- Provided the same parameter for `season_definitions`, `season_textures`, and `ambient` resource packs. Note that this
+  is a top-level parameter.
+- The same parameter is also supported for the loot condition `eclipticseasons:season`. Note that it is a sub-parameter
+  under `require`.
+- For the `agro_climate` data pack definition, `seasonal_signal_durations` does not need to be provided. If omitted, it
+  defaults to `none`.
+
 ### 0.12.0-pre7-3
 
 - Fixed an issue where the annual snowfall duration parameter was not saved when unloading levels.

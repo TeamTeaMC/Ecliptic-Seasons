@@ -8,12 +8,15 @@ import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
+import com.teamtea.eclipticseasons.api.data.climate.AgroClimaticZone;
 import com.teamtea.eclipticseasons.api.util.codec.CodecUtil;
 import com.teamtea.eclipticseasons.api.util.codec.ESExtraCodec;
 import com.teamtea.eclipticseasons.api.util.fast.Enum2ObjectMap;
 import com.teamtea.eclipticseasons.client.model.LocalSeasonStatusModel;
+import com.teamtea.eclipticseasons.common.registry.ESRegistries;
 import lombok.Builder;
 import lombok.Data;
+import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
@@ -30,11 +33,13 @@ public class SeasonalTexture {
 
     public static final Codec<SeasonalTexture> CODEC = RecordCodecBuilder.create(ins -> ins.group(
             CodecUtil.listFrom(ResourceLocation.CODEC).optionalFieldOf("target", List.of()).forGetter(o -> o.parent),
+            CodecUtil.holderCodec(ESRegistries.AGRO_CLIMATE).optionalFieldOf("climate").forGetter(o -> o.climate),
             Codec.either(CodecUtil.listFrom(ResourceLocation.CODEC), TagKey.hashedCodec(Registries.BIOME)).optionalFieldOf("biomes").forGetter(o -> o.biomes),
             Slice.CODEC.listOf().fieldOf("slices").forGetter(o -> o.slices)
     ).apply(ins, SeasonalTexture::new));
 
     private final List<ResourceLocation> parent;
+    private final Optional<Holder<AgroClimaticZone>> climate;
     private final Optional<Either<List<ResourceLocation>, TagKey<Biome>>> biomes;
     private final List<Slice> slices;
 
@@ -54,15 +59,18 @@ public class SeasonalTexture {
                     slice.snowTextures.isEmpty() ? null : slice.snowTextures
                     , slice.snowTintMap, slice.snowTransitionMaterials.isEmpty() ? null : slice.snowTransitionMaterials);
 
+            AgroClimaticZone climate = getClimate().map(Holder::value).orElse(null);
+
             SolarTerm start = slice.start.isValid() ? slice.start :
                     slice.solarTerm.isValid() ? slice.solarTerm :
-                            slice.season.isValid() ? slice.season.getFirstSolarTerm() :
-                                    slice.startSeason.isValid() ? slice.endSeason.getFirstSolarTerm() : null;
+                            slice.season.isValid() ? slice.season.getFirstSolarTerm(climate) :
+                                    slice.startSeason.isValid() ? slice.endSeason.getFirstSolarTerm(climate) : null;
 
             SolarTerm end = slice.end.isValid() ? slice.end :
                     slice.solarTerm.isValid() ? slice.solarTerm :
-                            slice.season.isValid() ? slice.season.getEndSolarTerm() :
-                                    slice.endSeason.isValid() ? slice.endSeason.getEndSolarTerm() : null;
+                            slice.season.isValid() ? slice.season.getEndSolarTerm(climate) :
+                                    slice.endSeason.isValid() ? slice.endSeason.getEndSolarTerm(climate) : null;
+
             if (start == null && end == null) {
                 start = SolarTerm.BEGINNING_OF_SPRING;
                 end = SolarTerm.GREATER_COLD;
@@ -113,7 +121,7 @@ public class SeasonalTexture {
                                 p -> DataResult.success(List.of(p.getFirst(), p.getSecond()))))
                         .optionalFieldOf("snow_transition_textures", List.of()).forGetter(o -> o.snowTransitionMaterials),
                 CodecUtil.mapCodec(Codec.STRING, Codec.INT).optionalFieldOf("tint", Map.of()).forGetter(o -> o.tintMap),
-                CodecUtil.mapCodec(Codec.STRING, Codec.INT).optionalFieldOf("snow_tint", Map.of()).forGetter(o -> o.tintMap)
+                CodecUtil.mapCodec(Codec.STRING, Codec.INT).optionalFieldOf("snow_tint", Map.of()).forGetter(o -> o.snowTintMap)
         ).apply(ins, Slice::new));
 
         @Builder.Default

@@ -21,6 +21,7 @@ import net.minecraftforge.common.data.ExistingFileHelper;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 public class ClientSeasonModelDefinitionProvider extends ESClientBiomeDataMapProvider<SeasonBlockDefinition> {
@@ -52,7 +53,7 @@ public class ClientSeasonModelDefinitionProvider extends ESClientBiomeDataMapPro
                         Pair.of(EclipticSeasons.rl("flower_on_grass_" + beginningOfSummer.getName()),
                                 EclipticSeasons.rl("fourleaf_clovers_" + beginningOfSummer.getName()))).build());
 
-        add(SeasonBlockDefinition.GRASS_BLOCK,new SeasonBlockDefinition(HolderSet.direct(Blocks.GRASS_BLOCK.builtInRegistryHolder()),
+        add(SeasonBlockDefinition.GRASS_BLOCK,new SeasonBlockDefinition(HolderSet.direct(Blocks.GRASS_BLOCK.builtInRegistryHolder()), Optional.empty(),
                and(get(ClimateTypeBiomeTags.SEASONAL),
                        not(get(Tags.Biomes.IS_HOT)),
                        not(get(Tags.Biomes.IS_COLD))),

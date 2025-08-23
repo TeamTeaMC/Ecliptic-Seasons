@@ -12,10 +12,14 @@ import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
+import com.teamtea.eclipticseasons.api.data.climate.AgroClimaticZone;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
+import com.teamtea.eclipticseasons.api.util.codec.CodecUtil;
 import com.teamtea.eclipticseasons.api.util.codec.ESExtraCodec;
+import com.teamtea.eclipticseasons.common.registry.ESRegistries;
 import com.teamtea.eclipticseasons.common.registry.LootItemConditionRegistry;
 import lombok.Data;
+import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
@@ -23,6 +27,7 @@ import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
+import java.util.Optional;
 
 public record SeasonCondition(Slice require) implements LootItemCondition {
     public static final MapCodec<SeasonCondition> CODEC = RecordCodecBuilder.mapCodec(
@@ -42,15 +47,17 @@ public record SeasonCondition(Slice require) implements LootItemCondition {
         ServerLevel level = context.getLevel();
         SolarTerm solarTerm = EclipticSeasonsApi.getInstance().getSolarTerm(level);
         if (!solarTerm.isValid()) return false;
+        AgroClimaticZone climate = require.climate.map(Holder::value).orElse(null);
+
         SolarTerm start = require.start.isValid() ? require.start :
                 require.solarTerm.isValid() ? require.solarTerm :
-                        require.season.isValid() ? require.season.getFirstSolarTerm() :
-                                require.startSeason.isValid() ? require.endSeason.getFirstSolarTerm() : SolarTerm.NONE;
+                        require.season.isValid() ? require.season.getFirstSolarTerm(climate) :
+                                require.startSeason.isValid() ? require.endSeason.getFirstSolarTerm(climate) : SolarTerm.NONE;
 
         SolarTerm end = require.end.isValid() ? require.end :
                 require.solarTerm.isValid() ? require.solarTerm :
-                        require.season.isValid() ? require.season.getEndSolarTerm() :
-                                require.endSeason.isValid() ? require.endSeason.getEndSolarTerm() : SolarTerm.NONE;
+                        require.season.isValid() ? require.season.getEndSolarTerm(climate) :
+                                require.endSeason.isValid() ? require.endSeason.getEndSolarTerm(climate) : SolarTerm.NONE;
 
         if (start.isValid() && end.isValid()) {
             return solarTerm.isInTerms(start, end);
@@ -65,6 +72,7 @@ public record SeasonCondition(Slice require) implements LootItemCondition {
                 ESExtraCodec.SOLAR_TERM.optionalFieldOf("start", SolarTerm.NONE).forGetter(o -> o.start),
                 ESExtraCodec.SOLAR_TERM.optionalFieldOf("end", SolarTerm.NONE).forGetter(o -> o.end),
                 ESExtraCodec.SOLAR_TERM.optionalFieldOf("solar_term", SolarTerm.NONE).forGetter(o -> o.solarTerm),
+                CodecUtil.holderCodec(ESRegistries.AGRO_CLIMATE).optionalFieldOf("climate").forGetter(o -> o.climate),
                 ESExtraCodec.SEASON.optionalFieldOf("start_season", Season.NONE).forGetter(o -> o.startSeason),
                 ESExtraCodec.SEASON.optionalFieldOf("end_season", Season.NONE).forGetter(o -> o.endSeason),
                 ESExtraCodec.SEASON.optionalFieldOf("season", Season.NONE).forGetter(o -> o.season)
@@ -76,6 +84,8 @@ public record SeasonCondition(Slice require) implements LootItemCondition {
         private final SolarTerm end = SolarTerm.NONE;
         @lombok.Builder.Default
         private final SolarTerm solarTerm = SolarTerm.NONE;
+        @lombok.Builder.Default
+        private final Optional<Holder<AgroClimaticZone>> climate = Optional.empty();
         @lombok.Builder.Default
         private final Season startSeason = Season.NONE;
         @lombok.Builder.Default

@@ -51,13 +51,13 @@ public record LeafColor(
 
 
     private static final SolarTermValueMap<ColorMode> EMPTY_MODE_MAP = new SolarTermValueMap<>(
-            Optional.empty(), Optional.empty(), Optional.empty()
+            Optional.empty(), Optional.empty(),Optional.empty(), Optional.empty()
     );
     private static final SolarTermValueMap<List<ResourceLocation>> EMPTY_LIST_MAP = new SolarTermValueMap<>(
-            Optional.empty(), Optional.empty(), Optional.empty()
+            Optional.empty(), Optional.empty(),Optional.empty(), Optional.empty()
     );
     private static final SolarTermValueMap<Integer> EMPTY_INTEGER_MAP = new SolarTermValueMap<>(
-            Optional.empty(), Optional.empty(), Optional.empty()
+            Optional.empty(), Optional.empty(),Optional.empty(), Optional.empty()
     );
 
     @Override

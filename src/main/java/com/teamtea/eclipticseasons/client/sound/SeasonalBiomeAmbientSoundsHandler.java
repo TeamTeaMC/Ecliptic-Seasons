@@ -63,7 +63,7 @@ public class SeasonalBiomeAmbientSoundsHandler implements AmbientSoundHandler {
 
         Holder<Biome> biome = this.biomeManager.getNoiseBiomeAtPosition(this.player.getX(), this.player.getY(), this.player.getZ());
         SolarTerm solarTerm = ClientCon.nowSolarTerm;
-        Season season = solarTerm.getSeason();
+        Season season = ClientCon.nowSeason;
         boolean isDayNow = ClientCon.isDay;
         if (biome.value() != this.previousBiome) {
             this.previousBiome = biome.value();

@@ -1,6 +1,8 @@
 package com.teamtea.eclipticseasons.client.util;
 
 
+import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
+import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.data.climate.AgroClimaticZone;
 import com.teamtea.eclipticseasons.api.data.climate.BiomesClimateSettings;
@@ -19,6 +21,7 @@ import com.teamtea.eclipticseasons.common.misc.ClientAgent;
 import com.teamtea.eclipticseasons.common.network.message.DataPackEventMessage;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.longs.LongBooleanImmutablePair;
+import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 
@@ -34,6 +37,8 @@ public class ClientCon {
     private static Level nextLevel;
 
     public static SolarTerm nowSolarTerm = SolarTerm.NONE;
+    public static Season nowSeason = Season.NONE;
+
     public static int nowSolarYear = 0;
     public static boolean isDay = false;
     public static boolean isEvening = false;
@@ -55,6 +60,9 @@ public class ClientCon {
     public static void tick(Level clientLevel) {
         if (MapChecker.isValidDimension(clientLevel)) {
             nowSolarTerm = EclipticUtil.getNowSolarTerm(clientLevel);
+            ClientCon.nowSeason = EclipticSeasonsApi.getInstance().getAgroSeason(clientLevel,
+                    agent.getCameraEntity() == null ? BlockPos.ZERO :
+                            agent.getCameraEntity().blockPosition());
             isDay = EclipticUtil.isDay(clientLevel);
             isEvening = EclipticUtil.isEvening(clientLevel);
             isNoon = EclipticUtil.isNoon(clientLevel);
@@ -65,6 +73,7 @@ public class ClientCon {
             ClientCon.nowSolarYear = EclipticUtil.getNowSolarYear(clientLevel);
         } else {
             nowSolarTerm = SolarTerm.NONE;
+            ClientCon.nowSeason = Season.NONE;
             isDay = false;
             isEvening = false;
             isNoon = false;

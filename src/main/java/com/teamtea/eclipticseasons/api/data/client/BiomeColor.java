@@ -34,7 +34,7 @@ public record BiomeColor(
     ).apply(ins, BiomeColor::new));
 
     private static final SolarTermValueMap<ColorMode> EMPTY_MODE_MAP = new SolarTermValueMap<>(
-            Optional.empty(), Optional.empty(), Optional.empty()
+            Optional.empty(),Optional.empty(), Optional.empty(), Optional.empty()
     );
 
 

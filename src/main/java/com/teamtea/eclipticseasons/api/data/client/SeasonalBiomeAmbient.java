@@ -6,8 +6,10 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.constant.solar.TimePeriod;
+import com.teamtea.eclipticseasons.api.data.climate.AgroClimaticZone;
 import com.teamtea.eclipticseasons.api.util.codec.CodecUtil;
 import com.teamtea.eclipticseasons.api.util.codec.ESExtraCodec;
+import com.teamtea.eclipticseasons.common.registry.ESRegistries;
 import lombok.Builder;
 import lombok.Data;
 import net.minecraft.core.Holder;
@@ -16,6 +18,8 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.level.biome.Biome;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Optional;
 
 @Data
 @Builder
@@ -30,6 +34,7 @@ public class SeasonalBiomeAmbient {
             ESExtraCodec.TIME_PERIOD.optionalFieldOf("time_period", TimePeriod.NONE).forGetter(o -> o.timePeriod),
             Codec.BOOL.optionalFieldOf("inwater", false).forGetter(o -> o.inwater),
             Codec.BOOL.optionalFieldOf("rain", false).forGetter(o -> o.rain),
+            CodecUtil.holderCodec(ESRegistries.AGRO_CLIMATE).optionalFieldOf("climate").forGetter(o -> o.climate),
             CodecUtil.holderSetCodec(Registries.BIOME).optionalFieldOf("biomes", HolderSet.direct()).forGetter(o -> o.biomes),
             CodecUtil.holderCodec(Registries.SOUND_EVENT).fieldOf("sound").forGetter(o -> o.sound),
             Codec.BOOL.optionalFieldOf("loop", true).forGetter(o -> o.loop),
@@ -56,6 +61,8 @@ public class SeasonalBiomeAmbient {
     private final boolean inwater = false;
     @Builder.Default
     private final boolean rain = false;
+    @Builder.Default
+    private final Optional<Holder<AgroClimaticZone>> climate = Optional.empty();
     @Builder.Default
     private final HolderSet<Biome> biomes=HolderSet.direct();
     @NotNull

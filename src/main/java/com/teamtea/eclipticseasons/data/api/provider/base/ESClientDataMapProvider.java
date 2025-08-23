@@ -35,10 +35,10 @@ public abstract class ESClientDataMapProvider<T> implements DataProvider {
     protected final String modid;
     public final ExistingFileHelper helper;
 
-    protected final Map<ResourceLocation, Supplier<T> > outMap;
+    protected final Map<ResourceLocation, Supplier<T>> outMap;
     private final String type;
     private final Codec<T> codec;
-    private final CompletableFuture<HolderLookup.Provider> registries;
+    protected CompletableFuture<HolderLookup.Provider> registries;
 
     public ESClientDataMapProvider(PackOutput output, String modid, ExistingFileHelper helper, CompletableFuture<HolderLookup.Provider> registries, String type, Codec<T> codec) {
         this.output = output;

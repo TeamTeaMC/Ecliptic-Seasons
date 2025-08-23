@@ -25,7 +25,7 @@ public class SeasonTextureProvider extends ESClientDataMapProvider<SeasonalTextu
     @Override
     protected void gather(HolderLookup.Provider provider) {
         add(new ResourceLocation("oak_leaves"), new SeasonalTexture(
-                List.of(), Optional.of(Either.right(ClimateTypeBiomeTags.SEASONAL)), List.of(
+                List.of(), Optional.empty(), Optional.of(Either.right(ClimateTypeBiomeTags.SEASONAL)), List.of(
                 SeasonalTexture.Slice.builder().season(Season.SPRING)
                         .textures(List.of((Map.of(
                                 "all", new ResourceLocation("block/cherry_leaves")
@@ -35,7 +35,7 @@ public class SeasonTextureProvider extends ESClientDataMapProvider<SeasonalTextu
         ));
 
         add(new ResourceLocation("oak_leaves_2"), new SeasonalTexture(
-                List.of(new ResourceLocation("block/oak_leaves")), Optional.of(Either.right(ClimateTypeBiomeTags.SEASONAL)), List.of(
+                List.of(new ResourceLocation("block/oak_leaves")), Optional.empty(), Optional.of(Either.right(ClimateTypeBiomeTags.SEASONAL)), List.of(
                 SeasonalTexture.Slice.builder().season(Season.SPRING)
                         .textures(List.of(Map.of(
                                 "all", new ResourceLocation("block/cherry_leaves")
@@ -48,7 +48,7 @@ public class SeasonTextureProvider extends ESClientDataMapProvider<SeasonalTextu
         ));
 
         add(new ResourceLocation("oak_leaves_3"), new SeasonalTexture(
-                List.of(new ResourceLocation("block/oak_leaves")), Optional.of(Either.right(ClimateTypeBiomeTags.SEASONAL)), List.of(
+                List.of(new ResourceLocation("block/oak_leaves")), Optional.empty(), Optional.of(Either.right(ClimateTypeBiomeTags.SEASONAL)), List.of(
                 SeasonalTexture.Slice.builder().season(Season.SPRING)
                         .transitionMaterials(List.of(
                                 Pair.of(Map.of(
@@ -62,7 +62,7 @@ public class SeasonTextureProvider extends ESClientDataMapProvider<SeasonalTextu
         ));
 
         add(new ResourceLocation("oak_leaves_4"), new SeasonalTexture(
-                List.of(new ResourceLocation("block/oak_leaves")), Optional.of(Either.right(ClimateTypeBiomeTags.SEASONAL)), List.of(
+                List.of(new ResourceLocation("block/oak_leaves")), Optional.empty(), Optional.of(Either.right(ClimateTypeBiomeTags.SEASONAL)), List.of(
                 SeasonalTexture.Slice.builder().season(Season.SPRING)
                         .transitionMaterials(List.of(
                                 Pair.of(Map.of(
