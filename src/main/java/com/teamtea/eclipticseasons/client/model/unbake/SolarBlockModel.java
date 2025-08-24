@@ -67,15 +67,19 @@ public class SolarBlockModel extends BlockModel {
             elements = new ArrayList<>(elements);
             for (int i = 0, elementsSize = elements.size(); i < elementsSize; i++) {
                 BlockElement element = elements.get(i);
-                EnumMap<Direction, BlockElementFace> directionBlockElementFaceEnumMap = new EnumMap<>(Direction.class);
+                EnumMap<Direction, BlockElementFace> elementFace = new EnumMap<>(Direction.class);
                 element.faces.forEach((direction, face) -> {
                     Integer orDefault = integerMap.getOrDefault(face.texture, null);
                     if (orDefault != null && face.tintIndex != orDefault) {
-                        directionBlockElementFaceEnumMap.put(direction,
+                        elementFace.put(direction,
                                 new BlockElementFace(face.cullForDirection, orDefault, face.texture, face.uv, face.getFaceData()));
+                    }else {
+                        elementFace.put(direction,face);
                     }
                 });
-                element.faces.putAll(directionBlockElementFaceEnumMap);
+                // element.faces.putAll(elementFace);
+                BlockElement blockElement = new BlockElement(element.from, element.to, elementFace, element.rotation, element.shade, element.getFaceData());
+                elements.set(i,blockElement);
             }
         }
         return new BlockModel(this.getParentLocation(),
@@ -154,7 +158,7 @@ public class SolarBlockModel extends BlockModel {
 
                                     if (flatSliceHolders.snowSlice().mid() != null)
                                         snowSolarTermBakedModelEnumMap.put(solarTerm,
-                                                toList(flatSliceHolders.snowSlice().mid(), flatSliceHolders.flatSlice().tintMap()).stream().map(
+                                                toList(flatSliceHolders.snowSlice().mid(), flatSliceHolders.snowSlice().tintMap()).stream().map(
                                                         b -> {
                                                             BakedModel sliceModel = bakedCache.computeIfAbsent(b, (blockModel -> UnbakedGeometryHelper.bake(b, baker, model, spriteGetter, state, pLocation, guiLight3d)));
                                                             return Pair.of(sliceModel, sliceModel);
@@ -164,7 +168,7 @@ public class SolarBlockModel extends BlockModel {
 
                                     if (flatSliceHolders.snowSlice().transitionModels() != null)
                                         snowSolarTermBakedModelEnumMap.put(solarTerm,
-                                                toPairList(flatSliceHolders.snowSlice().transitionModels(), flatSliceHolders.flatSlice().tintMap()).stream().map(
+                                                toPairList(flatSliceHolders.snowSlice().transitionModels(), flatSliceHolders.snowSlice().tintMap()).stream().map(
                                                                 b -> Pair.of(bakedCache.computeIfAbsent(b.getFirst(), (blockModel -> UnbakedGeometryHelper.bake(blockModel, baker, model, spriteGetter, state, pLocation, guiLight3d))),
                                                                         bakedCache.computeIfAbsent(b.getSecond(), (blockModel -> UnbakedGeometryHelper.bake(blockModel, baker, model, spriteGetter, state, pLocation, guiLight3d)))))
                                                         .toList()
