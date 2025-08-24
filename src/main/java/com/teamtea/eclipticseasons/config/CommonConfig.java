@@ -273,14 +273,17 @@ public class CommonConfig {
 
     public static class Weather {
         public static ForgeConfigSpec.BooleanValue useSolarWeather;
+        public static ForgeConfigSpec.BooleanValue enableWeatherRegion;
         public static ForgeConfigSpec.IntValue rainChanceMultiplier;
         public static ForgeConfigSpec.IntValue thunderChanceMultiplier;
         public static ForgeConfigSpec.BooleanValue shouldInitWeather;
 
         private static void load(ForgeConfigSpec.Builder builder) {
             builder.push("Weather");
-            useSolarWeather = builder.comment("Enable solar term weather system with biome.")
+            useSolarWeather = builder.comment("Enable the Ecliptic local weather system that adapts weather to each biome.")
                     .define("UseSolarWeather", true);
+            enableWeatherRegion = builder.comment("Enable weather regions, linking specific biomes to particular weather to prevent scattered patterns.")
+                    .define("EnableWeatherRegion", true);
             shouldInitWeather = builder.comment("Set it true to initialize weather and snow when loading the mod or level for the first time.")
                     .define("ShouldInitWeather", false);
             rainChanceMultiplier = builder.comment("Multiplier (0-1000) affecting how likely rain will occur.")
@@ -320,6 +323,9 @@ public class CommonConfig {
     private static boolean useSolarWeather = true;
 
     @Getter
+    private static boolean enableWeatherRegion = true;
+
+    @Getter
     private static boolean forceCropCompatMode = false;
 
     @Getter
@@ -341,6 +347,7 @@ public class CommonConfig {
         if (!(modConfigEvent instanceof ModConfigEvent.Unloading)
                 && modConfigEvent.getConfig().getSpec() == COMMON_CONFIG) {
             useSolarWeather = Weather.useSolarWeather.get();
+            enableWeatherRegion = Weather.enableWeatherRegion.get();
             forceCropCompatMode = Crop.forceCompatMode.get();
             snowyWinter = Season.snowyWinter.get();
             cropHumidityTransition = Crop.cropHumidityTransition.get();

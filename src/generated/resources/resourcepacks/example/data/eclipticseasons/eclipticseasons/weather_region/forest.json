@@ -1,0 +1,8 @@
+{
+  "core": "minecraft:forest",
+  "sub": [
+    "minecraft:flower_forest",
+    "minecraft:dark_forest",
+    "minecraft:birch_forest"
+  ]
+}

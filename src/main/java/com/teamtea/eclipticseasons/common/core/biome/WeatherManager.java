@@ -1,6 +1,7 @@
 package com.teamtea.eclipticseasons.common.core.biome;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
+import com.teamtea.eclipticseasons.api.constant.climate.WeatherMode;
 import com.teamtea.eclipticseasons.api.constant.tag.ESEnchantmentTags;
 import com.teamtea.eclipticseasons.api.constant.tag.ESItemTags;
 import com.teamtea.eclipticseasons.api.constant.tag.ESMobEffectTags;
@@ -313,7 +314,9 @@ public class WeatherManager {
     }
 
     public static void informUpdateBiomes(RegistryAccess registryAccess, boolean isServer) {
-        WeatherManager.BIOME_WEATHER_LIST.forEach((key, biomeWeathers) ->
+
+        WeatherManager.BIOME_WEATHER_LIST.forEach((key, biomeWeathers) -> {
+            if ((key instanceof ServerLevel) == isServer) {
                 registryAccess.registry(Registries.BIOME)
                         .ifPresent(biomeRegistry -> biomeRegistry
                                 .holders().forEach(biomeHolder ->
@@ -335,7 +338,9 @@ public class WeatherManager {
                                         biomeWeather.id = id;
                                         biomeWeathers.add(biomeWeather);
                                     }
-                                })));
+                                }));
+            }
+        });
 
         WeatherManager.BIOME_WEATHER_LIST.forEach((key, value) -> value.sort(Comparator.comparing(c -> c.id)));
     }
@@ -408,6 +413,20 @@ public class WeatherManager {
     }
 
     public static void runWeather(ServerLevel level, BiomeWeather biomeWeather, RandomSource random, int size) {
+        WeatherMode weatherMode = EclipticUtil.getWeatherMode(level);
+        if (weatherMode == WeatherMode.REGION) {
+            Holder<Biome> onwer = BiomeClimateManager.getWeatherRegionOnwer(biomeWeather.biomeHolder.value());
+            if (onwer != null) {
+                BiomeWeather ownerBiomeWeather = getBiomeWeather(level, onwer);
+                if (ownerBiomeWeather != null) {
+                    biomeWeather.rainTime = ownerBiomeWeather.rainTime;
+                    biomeWeather.thunderTime = ownerBiomeWeather.thunderTime;
+                    biomeWeather.clearTime = ownerBiomeWeather.clearTime;
+                    updateSnowOrMelt(level, biomeWeather, random);
+                    return;
+                }
+            }
+        }
         if (!biomeWeather.biomeHolder.value().hasPrecipitation())
             return;
         boolean isEcliptic = EclipticUtil.hasLocalWeather(level);
@@ -455,19 +474,23 @@ public class WeatherManager {
                 }
             }
 
-            if ((biomeWeather.shouldRain() || level.getRandom().nextInt(5) > 1)) {
-                var snow = WeatherManager.getSnowStatus(level, biomeWeather.biomeHolder.value(), null);
-                if (snow == SnowRenderStatus.SNOW) {
-                    biomeWeather.snowDepth = (byte) Math.min(100, biomeWeather.snowDepth + 1);
-                } else if (snow == SnowRenderStatus.SNOW_MELT) {
-                    biomeWeather.snowDepth = (byte) Math.max(0, biomeWeather.snowDepth - 1);
-                }
-            }
+            updateSnowOrMelt(level, biomeWeather, random);
         } else {
             VanillaWeather.runVanillaSnowyWeather(level, biomeWeather, random, size);
         }
     }
 
+
+    protected static void updateSnowOrMelt(ServerLevel level, BiomeWeather biomeWeather, RandomSource randomSource) {
+        if ((biomeWeather.shouldRain() || randomSource.nextInt(5) > 1)) {
+            var snow = WeatherManager.getSnowStatus(level, biomeWeather.biomeHolder.value(), null);
+            if (snow == SnowRenderStatus.SNOW) {
+                biomeWeather.snowDepth = (byte) Math.min(100, biomeWeather.snowDepth + 1);
+            } else if (snow == SnowRenderStatus.SNOW_MELT) {
+                biomeWeather.snowDepth = (byte) Math.max(0, biomeWeather.snowDepth - 1);
+            }
+        }
+    }
 
     public static BiomeRain getBiomeRain(ServerLevel level, SolarTerm solarTerm, Holder<Biome> biomeWeather) {
         return getBiomeRain(solarTerm, biomeWeather).resolve(level);

@@ -44,12 +44,15 @@ public class BiomeClimateManager {
     // snow term
     public static final Map<Biome, ISnowTerm> CUSTOM_SNOW_TERM_MAP = new IdentityHashMap<>();
 
+    public static final Map<Biome, Holder<Biome>> WEATHER_REGION_MAP = new IdentityHashMap<>();
+
     public static void resetBiomeTemps(RegistryAccess registryAccess, boolean isServer) {
         Optional<Registry<BiomesClimateSettings>> registry = registryAccess.registry(ESRegistries.BIOME_CLIMATE_SETTING);
         var registry2 = registryAccess.registry(ESRegistries.SEASON_PHASE);
         var registry3 = registryAccess.registry(ESRegistries.SEASON_CYCLE);
         var registry4 = registryAccess.registry(ESRegistries.BIOME_RAIN);
         var registry5 = registryAccess.registry(ESRegistries.SNOW_TERM);
+        var registry6 = isServer ? registryAccess.registry(ESRegistries.WEATHER_REGION) : null;
         if (registry.isEmpty()) {
             SimpleUtil.warningForModWrongCalling(ESRegistries.BIOME_CLIMATE_SETTING);
         } else if (registry2.isEmpty()) {
@@ -60,6 +63,8 @@ public class BiomeClimateManager {
             SimpleUtil.warningForModWrongCalling(ESRegistries.BIOME_RAIN);
         } else if (registry5.isEmpty()) {
             SimpleUtil.warningForModWrongCalling(ESRegistries.SNOW_TERM);
+        } else if (registry6 != null && registry6.isEmpty()) {
+            SimpleUtil.warningForModWrongCalling(ESRegistries.WEATHER_REGION);
         } else {
             // if (isServer) {
             //     Registry<BiomesClimateSettings> biomesClimateSettings = registry.get();
@@ -77,6 +82,16 @@ public class BiomeClimateManager {
             //         resetSeasonPhaseMap(registryAccess, build, SEASON_PHASE_MAP);
             //     }
             // }
+            if (isServer) {
+                resetSomeMap(registryAccess, registry6.get(),
+                        WEATHER_REGION_MAP,
+                        (customRainBuilder -> Pair.of(customRainBuilder.sub(), customRainBuilder.core())),
+                        (map, pair) -> map.put(pair.getFirst().value(), pair.getSecond()),
+                        () -> (Holder<Biome>) null,
+                        (biome, map) -> map
+                );
+            }
+
             if (isServer || ClientCon.biomeDataPackCache != null) {
                 resetSomeMap(registryAccess, isServer ? registry.get() : ClientCon.biomeDataPackCache.build(registryAccess, BiomesClimateSettings.class),
                         BIOME_CLIMATE_MAP,
@@ -120,6 +135,8 @@ public class BiomeClimateManager {
             }
             putTag(registryAccess, isServer);
             putColorTag(registryAccess, isServer);
+
+
         }
     }
 
@@ -257,6 +274,9 @@ public class BiomeClimateManager {
         return BIOME_COLOR_TAG_KEY_MAP.getOrDefault(biome, ClimateTypeBiomeTags.NONE_COLOR_CHANGE);
     }
 
+    public static Holder<Biome> getWeatherRegionOnwer(Biome biome) {
+        return WEATHER_REGION_MAP.getOrDefault(biome, null);
+    }
 
     private static void putColorTag(RegistryAccess registryAccess, boolean isServer) {
         var useMap = BIOME_COLOR_TAG_KEY_MAP;
@@ -305,6 +325,7 @@ public class BiomeClimateManager {
     }
 
     public static void clearOnClientExitOrServerClose() {
+        BiomeClimateManager.WEATHER_REGION_MAP.clear();
         BiomeClimateManager.BIOME_CLIMATE_MAP.clear();
         BiomeClimateManager.SMALL_BIOME_MAP.clear();
         BiomeClimateManager.BIOME_TAG_KEY_MAP.clear();

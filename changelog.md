@@ -1,3 +1,28 @@
+### 0.12.0-pre8-1
+**Description:**
+A new `eclipticseasons:weather_region` datapack has been added. When **Solar Weather** is enabled, it allows you to bind similar biomes to share the same weather, reducing fragmented biome transitions.
+
+**Example JSON:**
+
+```json
+{
+  "core": "minecraft:forest",
+  "sub": [
+    "minecraft:flower_forest",
+    "minecraft:dark_forest",
+    "minecraft:birch_forest"
+  ]
+}
+```
+
+* `core` specifies the main biome ID.
+* `sub` is a list of associated biomes (as `HolderSet`).
+* You can also use the optional `priority` parameter (integer) to adjust application order, preventing conflicts when using tags.
+
+**Fix**
+
+Fixed an issue in single-player mode where the weather server logic incorrectly used client-side biome variables, which may cause unexpected errors.
+
 ### 0.12.0-pre8
 
 - Fixed an issue where the `snow_tint` parameter in the `season_textures` resource pack was not working.**
