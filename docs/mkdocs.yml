@@ -38,6 +38,8 @@ nav:
               - Create Season Phases: 'en/data/season_phase.md'
               - Humidity Control: 'en/data/humidity_control.md'
               - Season Quests: 'en/data/season_quest.md'
+              - Loot with Seasons: 'en/data/loot.md'
+              - Weather Region: 'zh/data/weather_region.md'
       - 中文:
           - 首页: 'zh/index.md'
           - 季节: 'zh/season.md'
@@ -64,6 +66,8 @@ nav:
               - 创建季节片段: 'zh/data/season_phase.md'
               - 湿度调整: 'zh/data/humidity_control.md'
               - 季节任务: 'zh/data/season_quest.md'
+              - 战利品表与季节条件: 'zh/data/loot.md'
+              - 天气区: 'zh/data/weather_region.md'
 
 
 markdown_extensions:
