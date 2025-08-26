@@ -1,8 +1,18 @@
 ### 0.12.0-pre8-2
 
+- Now, if a mod tries to query biome precipitation using the raw method instead of ours, corrections will only be
+  applied when the biome is a small biome, with an added config option to disable this behavior. At the same time, when
+  completing the Level parameter, assignment will be done based on threads (only in 1.20) to reduce related queries to
+  ServerLevel, since server level involves slower chunk lookups, especially in single player mode. However, we also need
+  to properly distinguish between mods attempting to query biome precipitation via `getPrecipitationAt` for chunk
+  generation or chunk ticks, and those related to client-side weather effects.
+- Optimized chunk extra information lookups by adding some optimistic limits against multithreaded access to prevent
+  null pointers or out-of-bounds queries caused by thread synchronization, while minimizing performance loss.
+  Additionally, specifically optimized client queries for faster lookups.
 - Fixed an issue where the `snow_tint` parameter in the `season_textures` resource pack was not working.
 - Fixed an issue where disabling tinting caused the original model to lose its tint data.
-- Fixed an issue where, when using season only, the transition parameters in the `season_definitions` and `season_textures`
+- Fixed an issue where, when using season only, the transition parameters in the `season_definitions` and
+  `season_textures`
   resource packs were not applied exclusively at the start of a season as intended.
 - Optimized the loot condition `eclipticseasons:season`: if only the season parameter is provided and no fixed season
   type is specified via climate, it will now apply the Agro season.

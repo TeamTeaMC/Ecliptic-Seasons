@@ -1,6 +1,5 @@
 package com.teamtea.eclipticseasons.common.core.biome;
 
-import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.constant.climate.WeatherMode;
 import com.teamtea.eclipticseasons.api.constant.tag.ESEnchantmentTags;
 import com.teamtea.eclipticseasons.api.constant.tag.ESItemTags;
@@ -12,7 +11,6 @@ import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.climate.BiomeRain;
 import com.teamtea.eclipticseasons.api.constant.climate.SnowTerm;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
-import com.teamtea.eclipticseasons.api.constant.tag.ClimateTypeBiomeTags;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.api.util.SimpleUtil;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
@@ -23,6 +21,7 @@ import com.teamtea.eclipticseasons.common.network.message.BiomeWeatherMessage;
 import com.teamtea.eclipticseasons.common.network.message.EmptyMessage;
 import com.teamtea.eclipticseasons.common.network.SimpleNetworkHandler;
 import com.teamtea.eclipticseasons.common.network.message.SolarTermsMessage;
+import com.teamtea.eclipticseasons.compat.CompatModule;
 import com.teamtea.eclipticseasons.compat.vanilla.VanillaWeather;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.core.*;
@@ -52,6 +51,7 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.server.ServerLifecycleHooks;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -85,9 +85,11 @@ public class WeatherManager {
     }
 
     public static Level fetchLevelIfNull(Level level) {
-        level = level != null ? level : getMainServerLevel();
-        level = level != null ? level : ClientCon.getUseLevel();
-        return level;
+        if (level != null) return level;
+        boolean isClient = ServerLifecycleHooks.getCurrentServer() == null ||
+                (!ServerLifecycleHooks.getCurrentServer().isSameThread()
+                        && !Thread.currentThread().getName().startsWith("Worker-Main"));
+        return isClient ? ClientCon.getUseLevel() : getMainServerLevel();
     }
 
     public static float getMinRainLevel(Level level, float p46723) {
@@ -190,7 +192,7 @@ public class WeatherManager {
         var biomeWeather = getBiomeWeather(level, biome);
         if (biomeWeather != null) {
             var solarTerm = EclipticUtil.getNowSolarTerm(level);
-            var snowTerm = SolarTerm.getSnowTerm(biome, EclipticUtil.getSnowTempChange(level));
+            var snowTerm = SolarTerm.getSnowTerm(biome, level instanceof ServerLevel, EclipticUtil.getSnowTempChange(level));
             boolean flag_cold = snowTerm.maySnow(solarTerm);
             if (!flag_cold) {
                 return biomeWeather.shouldRain();
@@ -204,7 +206,7 @@ public class WeatherManager {
         var biomeWeather = getBiomeWeather(level, biome);
         if (biomeWeather != null) {
             var solarTerm = EclipticUtil.getNowSolarTerm(level);
-            var snowTerm = SolarTerm.getSnowTerm(biome, EclipticUtil.getSnowTempChange(level));
+            var snowTerm = SolarTerm.getSnowTerm(biome, level instanceof ServerLevel, EclipticUtil.getSnowTempChange(level));
             boolean flag_cold = snowTerm.maySnow(solarTerm);
             if (flag_cold) {
                 return biomeWeather.shouldRain();
@@ -245,7 +247,7 @@ public class WeatherManager {
         if (biomeWeather != null) {
             if (biomeWeather.shouldClear()) return Biome.Precipitation.NONE;
             var solarTerm = EclipticUtil.getNowSolarTerm(level);
-            var snowTerm = SolarTerm.getSnowTerm(biome, EclipticUtil.getSnowTempChange(level));
+            var snowTerm = SolarTerm.getSnowTerm(biome, level instanceof ServerLevel, EclipticUtil.getSnowTempChange(level));
             boolean flag_cold = snowTerm.maySnow(solarTerm);
             return flag_cold
                     // || BiomeClimateManager.getDefaultTemperature(biome, level instanceof ServerLevel) <= BiomeClimateManager.SNOW_LEVEL
@@ -257,7 +259,7 @@ public class WeatherManager {
 
     public static Biome.Precipitation getPrecipitationAt(Biome biome, BlockPos pos) {
         var level = fetchLevelIfNull(null);
-        if (level != null) {
+        if (level != null && CompatModule.CommonConfig.fixBiome.get() && MapChecker.isSmallBiome(biome)) {
             // if (MapChecker.isLoadNearByOnlyServer(level, pos))
             {
                 biome = MapChecker.getSurfaceBiome(level, pos).value();
@@ -276,7 +278,7 @@ public class WeatherManager {
 
         if (level != null && biomeWeather != null) {
             var solarTerm = EclipticUtil.getNowSolarTerm(level);
-            var snowTerm = SolarTerm.getSnowTerm(biome, EclipticUtil.getSnowTempChange(level));
+            var snowTerm = SolarTerm.getSnowTerm(biome, level instanceof ServerLevel, EclipticUtil.getSnowTempChange(level));
             boolean flag_cold = snowTerm.maySnow(solarTerm);
             return flag_cold ? Biome.Precipitation.SNOW : Biome.Precipitation.RAIN;
         }
@@ -741,7 +743,7 @@ public class WeatherManager {
         // if (provider != null)
         {
             var solarTerm = EclipticUtil.getNowSolarTerm(level);
-            var snowTerm = SolarTerm.getSnowTerm(biome, EclipticUtil.getSnowTempChange(level));
+            var snowTerm = SolarTerm.getSnowTerm(biome, level instanceof ServerLevel, EclipticUtil.getSnowTempChange(level));
             boolean flag_cold = snowTerm.maySnow(solarTerm);
             if (flag_cold) {
                 if (biome.hasPrecipitation() && isRainingOrSnowAtBiome(level, biome)) {

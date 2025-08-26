@@ -41,11 +41,14 @@ public class CompatModule {
 
     public static class CommonConfig {
         public static ForgeConfigSpec.BooleanValue sereneSeasons;
+        public static ForgeConfigSpec.BooleanValue fixBiome;
 
         public static void load(ForgeConfigSpec.Builder builder) {
             builder.push("Compat");
             sereneSeasons = builder.comment("Compatible with mods using SereneSeasons' CropTag.")
                     .define("SereneSeasonsCropTag", true);
+            fixBiome = builder.comment("If a mod tries to query biome precipitation using the raw method, would adjust it to correctly ignore small biomes like rivers.")
+                    .define("FixBiomePrecipitation", true);
             builder.pop();
         }
     }

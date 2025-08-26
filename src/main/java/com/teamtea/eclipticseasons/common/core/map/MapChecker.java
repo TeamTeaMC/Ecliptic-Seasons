@@ -3,22 +3,16 @@ package com.teamtea.eclipticseasons.common.core.map;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.constant.tag.EclipticBlockTags;
 import com.teamtea.eclipticseasons.api.data.season.SnowDefinition;
-import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.core.snow.SnowChecker;
-import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
 import com.teamtea.eclipticseasons.common.misc.SimplePair;
-import com.teamtea.eclipticseasons.common.network.SimpleNetworkHandler;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.core.*;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ChunkHolder;
 import net.minecraft.server.level.ServerChunkCache;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.ChunkPos;
@@ -32,7 +26,6 @@ import net.minecraft.world.level.block.state.properties.Half;
 import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.ChunkStatus;
-import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.levelgen.Heightmap;
 import org.jetbrains.annotations.NotNull;
 
@@ -79,7 +72,7 @@ public class MapChecker {
     //  unload some
     public static void unloadLevel(Level level) {
         // updateLock = true;
-        List<ChunkInfoMap> orDefault = getMapsList(level);
+        List<ChunkInfoMap> orDefault = getMapsListOrCreate(level);
         synchronized (orDefault) {
             orDefault.clear();
         }
@@ -112,24 +105,27 @@ public class MapChecker {
     }
 
     public static void tickLevel(Level level) {
+        List<ChunkInfoMap> mapsList = MapChecker.getMapsListOrCreate(level);
+        if (level.isClientSide()) CLIENT_REGION_LIST = mapsList;
+
         if (CommonConfig.Debug.disableChunkCacheCleaner.get()) return;
         List<ChunkInfoMap> chunkInfoMaps = null;
-        List<ChunkInfoMap> mapsList = MapChecker.getMapsList(level);
         if (mapsList != null && level.getRandom().nextInt(100) == 0) {
             for (int zz = 0; zz < mapsList.size(); zz++) {
-                ChunkInfoMap map = mapsList.get(zz);
-
-                int x0 = regionCoordToChunkStart(map.getX());
-                int z0 = regionCoordToChunkStart(map.getZ());
-                int mapChunkSize = mapChunkSize();
-
                 boolean shouldRemove = true;
-                loopCheckMapIfEmpty:
-                for (int i = 0; i < mapChunkSize; i++) {
-                    for (int j = 0; j < mapChunkSize; j++) {
-                        if (MapChecker.isLoaded(level, i + x0, j + z0)) {
-                            shouldRemove = false;
-                            break loopCheckMapIfEmpty;
+                ChunkInfoMap map = mapsList.get(zz);
+                if (map != null) {
+                    int x0 = regionCoordToChunkStart(map.getX());
+                    int z0 = regionCoordToChunkStart(map.getZ());
+                    int mapChunkSize = mapChunkSize();
+
+                    loopCheckMapIfEmpty:
+                    for (int i = 0; i < mapChunkSize; i++) {
+                        for (int j = 0; j < mapChunkSize; j++) {
+                            if (MapChecker.isLoaded(level, i + x0, j + z0)) {
+                                shouldRemove = false;
+                                break loopCheckMapIfEmpty;
+                            }
                         }
                     }
                 }
@@ -142,7 +138,9 @@ public class MapChecker {
                 for (ChunkInfoMap chunkInfoMap : chunkInfoMaps) {
                     EclipticSeasons.extraLogger(true, String.format("Remove the empty Height Map [%s, %s]", chunkInfoMap.getX(), chunkInfoMap.getZ()));
                 }
-                mapsList.removeAll(chunkInfoMaps);
+                synchronized (mapsList) {
+                    mapsList.removeAll(chunkInfoMaps);
+                }
             }
         }
     }
@@ -161,11 +159,14 @@ public class MapChecker {
     }
 
 
+    public static List<ChunkInfoMap> getMapsListOrCreate(Level level) {
+        return REGION_LIST_COLLECTOR.computeIfAbsent(level, level1 -> new ArrayList<>());
+    }
+
     public static List<ChunkInfoMap> getMapsList(Level level) {
-        List<ChunkInfoMap> chunkInfoMaps = REGION_LIST_COLLECTOR.computeIfAbsent(level, level1 -> new ArrayList<>());
-        // to fix it
-        if (level.isClientSide()) CLIENT_REGION_LIST = chunkInfoMaps;
-        return chunkInfoMaps;
+        return level.isClientSide ?
+                (CLIENT_REGION_LIST == null ? new ArrayList<>() : CLIENT_REGION_LIST) :
+                getMapsListOrCreate(level);
     }
 
     public static ChunkInfoMap getChunkMap(Level level, BlockPos pos) {
@@ -176,16 +177,14 @@ public class MapChecker {
 
 
     public static ChunkInfoMap getChunkMap(Level level, int regionX, int regionZ) {
-        return getChunkMap(
-                level.isClientSide ? CLIENT_REGION_LIST :
-                        getMapsList(level), regionX, regionZ);
+        return getChunkMap(getMapsList(level), regionX, regionZ);
     }
 
     public static ChunkInfoMap getChunkMap(List<ChunkInfoMap> orDefault, int regionX, int regionZ) {
         ChunkInfoMap map = null;
         for (int i = 0; i < orDefault.size(); i++) {
             var chunkHeightMap = orDefault.get(i);
-            if (chunkHeightMap.x == regionX && chunkHeightMap.z == regionZ) {
+            if (chunkHeightMap != null && chunkHeightMap.x == regionX && chunkHeightMap.z == regionZ) {
                 map = chunkHeightMap;
                 break;
             }
@@ -398,7 +397,7 @@ public class MapChecker {
 
         int x = blockToRegionCoord(pos.getX());
         int z = blockToRegionCoord(pos.getZ());
-        List<ChunkInfoMap> mapsList = getMapsList(level);
+        List<ChunkInfoMap> mapsList = getMapsListOrCreate(level);
         ChunkInfoMap map = getChunkMap(mapsList, x, z);
 
         if (map != null) {
@@ -552,6 +551,10 @@ public class MapChecker {
 
     public static boolean isSmallBiome(@Nonnull Holder<Biome> biomeHolder) {
         return biomeHolder != null && BiomeClimateManager.SMALL_BIOME_MAP.containsKey(biomeHolder.value());
+    }
+
+    public static boolean isSmallBiome(@Nonnull Biome biomeHolder) {
+        return BiomeClimateManager.SMALL_BIOME_MAP.containsKey(biomeHolder);
     }
 
     public static Holder<Biome> idToBiome(Level level, int id) {

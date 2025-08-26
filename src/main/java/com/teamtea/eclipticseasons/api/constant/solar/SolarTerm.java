@@ -241,21 +241,6 @@ public enum SolarTerm implements ITranslatableWithPlaceholder, ISolarTerm {
             return ColdRain.collectValues()[this.ordinal()];
         return TemperateRain.collectValues()[this.ordinal()];
 
-        // if (!biomeHolder.is(BiomeTags.IS_OVERWORLD) || biomeHolder.is(ClimateTypeBiomeTags.RAINLESS)) {
-        //     return FlatRain.RAINLESS;
-        // } else if (biomeHolder.is(ClimateTypeBiomeTags.ARID)) {
-        //     return FlatRain.ARID;
-        // } else if (biomeHolder.is(ClimateTypeBiomeTags.DROUGHTY)) {
-        //     return FlatRain.DROUGHTY;
-        // } else if (biomeHolder.is(ClimateTypeBiomeTags.SOFT)) {
-        //     return FlatRain.SOFT;
-        // } else if (biomeHolder.is(ClimateTypeBiomeTags.RAINY)) {
-        //     return FlatRain.RAINY;
-        // } else if (biomeHolder.is(ClimateTypeBiomeTags.MONSOONAL)) {
-        //     return MonsoonRain.collectValues()[this.ordinal()];
-        // } else {
-        //     return TemperateRain.collectValues()[this.ordinal()];
-        // }
     }
 
     @Deprecated(forRemoval = true, since = "0.12.0")
