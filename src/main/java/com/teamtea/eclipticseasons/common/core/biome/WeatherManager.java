@@ -93,7 +93,7 @@ public class WeatherManager {
         if (level != null) return level;
         boolean isClient = ServerLifecycleHooks.getCurrentServer() == null ||
                 (!ServerLifecycleHooks.getCurrentServer().isSameThread()
-                        && IS_ON_SERVER_THREAD.get());
+                        && !IS_ON_SERVER_THREAD.get());
         return isClient ? ClientCon.getUseLevel() : getMainServerLevel();
     }
 
