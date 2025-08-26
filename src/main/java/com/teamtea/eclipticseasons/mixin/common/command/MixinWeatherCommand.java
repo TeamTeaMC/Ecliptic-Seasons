@@ -11,6 +11,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.util.function.Predicate;
+
 @Mixin(WeatherCommand.class)
 public class MixinWeatherCommand {
 
@@ -18,7 +20,7 @@ public class MixinWeatherCommand {
     private static void mixin$setClear(CommandSourceStack sourceStack, int p_139174_, CallbackInfoReturnable<Integer> cir) {
         if (EclipticUtil.hasLocalWeather(sourceStack.getLevel())) {
             try {
-                CommandHandler.setBiomeRain(sourceStack, CommandHandler.createAllResult(sourceStack.registryAccess()), false, false);
+                CommandHandler.setBiomeRain(sourceStack, bh->true, false, false);
                 cir.setReturnValue(0);
             } catch (CommandSyntaxException e) {
                 e.printStackTrace();
@@ -31,7 +33,7 @@ public class MixinWeatherCommand {
     private static void mixin$setRain(CommandSourceStack sourceStack, int p_139174_, CallbackInfoReturnable<Integer> cir) {
         if (EclipticUtil.hasLocalWeather(sourceStack.getLevel())) {
             try {
-                CommandHandler.setBiomeRain(sourceStack, CommandHandler.createAllResult(sourceStack.registryAccess()), true, false);
+                CommandHandler.setBiomeRain(sourceStack, bh->true, true, false);
                 cir.setReturnValue(0);
             } catch (CommandSyntaxException e) {
                 e.printStackTrace();
@@ -44,7 +46,7 @@ public class MixinWeatherCommand {
     private static void mixin$setThunder(CommandSourceStack sourceStack, int p_139174_, CallbackInfoReturnable<Integer> cir) {
         if (EclipticUtil.hasLocalWeather(sourceStack.getLevel())) {
             try {
-                CommandHandler.setBiomeRain(sourceStack, CommandHandler.createAllResult(sourceStack.registryAccess()), true, true);
+                CommandHandler.setBiomeRain(sourceStack, bh->true, true, true);
                 cir.setReturnValue(0);
             } catch (CommandSyntaxException e) {
                 e.printStackTrace();

@@ -84,11 +84,16 @@ public class WeatherManager {
         return null;
     }
 
+    private static final ThreadLocal<Boolean> IS_ON_SERVER_THREAD =
+            ThreadLocal.withInitial(() ->
+                    "SERVER".equals(Thread.currentThread().getThreadGroup().getName())
+            );
+
     public static Level fetchLevelIfNull(Level level) {
         if (level != null) return level;
         boolean isClient = ServerLifecycleHooks.getCurrentServer() == null ||
                 (!ServerLifecycleHooks.getCurrentServer().isSameThread()
-                        && !Thread.currentThread().getName().startsWith("Worker-Main"));
+                        && IS_ON_SERVER_THREAD.get());
         return isClient ? ClientCon.getUseLevel() : getMainServerLevel();
     }
 

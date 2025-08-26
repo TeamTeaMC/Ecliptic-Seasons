@@ -550,7 +550,7 @@ public class MapChecker {
     }
 
     public static boolean isSmallBiome(@Nonnull Holder<Biome> biomeHolder) {
-        return biomeHolder != null && BiomeClimateManager.SMALL_BIOME_MAP.containsKey(biomeHolder.value());
+        return biomeHolder != null && isSmallBiome(biomeHolder.value());
     }
 
     public static boolean isSmallBiome(@Nonnull Biome biomeHolder) {

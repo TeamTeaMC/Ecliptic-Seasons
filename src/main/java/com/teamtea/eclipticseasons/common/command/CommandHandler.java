@@ -41,6 +41,7 @@ import com.teamtea.eclipticseasons.EclipticSeasons;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Mod.EventBusSubscriber(modid = EclipticSeasons.MODID)
@@ -205,7 +206,7 @@ public class CommandHandler {
         return 0;
     }
 
-    public static int setBiomeRain(CommandSourceStack sourceStack, ResourceOrTagArgument.Result<Biome> result, boolean setRain, boolean isThunder) throws CommandSyntaxException {
+    public static int setBiomeRain(CommandSourceStack sourceStack, Predicate<Holder<Biome>> result, boolean setRain, boolean isThunder) throws CommandSyntaxException {
         ServerLevel level = sourceStack.getLevel();
         var levelBiomeWeather = WeatherManager.getBiomeList(level);
         if (levelBiomeWeather != null) {

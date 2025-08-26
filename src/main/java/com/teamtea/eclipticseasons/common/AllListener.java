@@ -162,10 +162,8 @@ public class AllListener {
     @SubscribeEvent
     public static void onChunkDataSaveEvent(ChunkDataEvent.Save event) {
         if (event.getLevel() instanceof Level level) {
-            SolarHolders.getSaveDataLazy(level)
-                    .ifPresent(solarDataManager -> {
-                        solarDataManager.saveChunk(event.getChunk().getPos(), event.getData());
-                    });
+            SolarDataManager data = SolarHolders.getSaveData(level);
+            if (data != null) data.saveChunk(event.getChunk().getPos(), event.getData());
         }
     }
 
