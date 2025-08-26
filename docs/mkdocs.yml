@@ -39,7 +39,7 @@ nav:
               - Humidity Control: 'en/data/humidity_control.md'
               - Season Quests: 'en/data/season_quest.md'
               - Loot with Seasons: 'en/data/loot.md'
-              - Weather Region: 'zh/data/weather_region.md'
+              - Weather Region: 'en/data/weather_region.md'
       - 中文:
           - 首页: 'zh/index.md'
           - 季节: 'zh/season.md'
