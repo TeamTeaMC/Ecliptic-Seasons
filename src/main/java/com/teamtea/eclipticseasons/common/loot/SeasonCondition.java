@@ -19,9 +19,11 @@ import com.teamtea.eclipticseasons.api.util.codec.ESExtraCodec;
 import com.teamtea.eclipticseasons.common.registry.ESRegistries;
 import com.teamtea.eclipticseasons.common.registry.LootItemConditionRegistry;
 import lombok.Data;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
 import org.jetbrains.annotations.NotNull;
@@ -46,23 +48,34 @@ public record SeasonCondition(Slice require) implements LootItemCondition {
     public boolean test(LootContext context) {
         ServerLevel level = context.getLevel();
         SolarTerm solarTerm = EclipticSeasonsApi.getInstance().getSolarTerm(level);
-        if (!solarTerm.isValid()) return false;
+
         AgroClimaticZone climate = require.climate.map(Holder::value).orElse(null);
 
         SolarTerm start = require.start.isValid() ? require.start :
                 require.solarTerm.isValid() ? require.solarTerm :
-                        require.season.isValid() ? require.season.getFirstSolarTerm(climate) :
-                                require.startSeason.isValid() ? require.endSeason.getFirstSolarTerm(climate) : SolarTerm.NONE;
+                        climate != null && require.season.isValid() ? require.season.getFirstSolarTerm(climate) :
+                                climate != null && require.startSeason.isValid() ? require.endSeason.getFirstSolarTerm(climate) : SolarTerm.NONE;
 
         SolarTerm end = require.end.isValid() ? require.end :
                 require.solarTerm.isValid() ? require.solarTerm :
-                        require.season.isValid() ? require.season.getEndSolarTerm(climate) :
-                                require.endSeason.isValid() ? require.endSeason.getEndSolarTerm(climate) : SolarTerm.NONE;
+                        climate != null && require.season.isValid() ? require.season.getEndSolarTerm(climate) :
+                                climate != null && require.endSeason.isValid() ? require.endSeason.getEndSolarTerm(climate) : SolarTerm.NONE;
 
         if (start.isValid() && end.isValid()) {
             return solarTerm.isInTerms(start, end);
         }
-        return false;
+
+        Season startSeason = require.season.isValid() ? require.season : require.startSeason;
+        Season endSeason = require.season.isValid() ? require.season : require.endSeason;
+        if (startSeason.isValid() && endSeason.isValid()) {
+            var vec3 = context.getParamOrNull(LootContextParams.ORIGIN);
+            BlockPos pos = vec3 == null ? null : BlockPos.containing(vec3);
+            if (pos != null) {
+                Season agroSeason = EclipticSeasonsApi.getInstance().getAgroSeason(level, pos);
+                return agroSeason.isInTerms(startSeason, endSeason);
+            }
+        }
+        return solarTerm == SolarTerm.NONE;
     }
 
     @lombok.Builder

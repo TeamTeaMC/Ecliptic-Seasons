@@ -75,14 +75,31 @@ public class SeasonBlockDefinition implements HolderMappable<HolderSet<Block>, S
                                     slice.endSeason.isValid() ? slice.endSeason.getEndSolarTerm(climate) : SolarTerm.NONE;
 
             if (start.isValid() && end.isValid()) {
-                FlatSliceHolder flatSliceHolder = new FlatSliceHolder(start, end, flatSlice);
+                FlatSliceHolder firstSliceHolder;
+                FlatSliceHolder otherHolder;
+                if (start != end && (flatSlice.transitionModels != null)) {
+                    firstSliceHolder = new FlatSliceHolder(start, start, flatSlice);
+                    otherHolder = new FlatSliceHolder(start.getNextSolarTerm(), end,
+                            new FlatSlice(flatSlice.transitionModels.getSecond(), flatSlice.emptyAbove, null));
+                } else {
+                    firstSliceHolder = new FlatSliceHolder(start, end, flatSlice);
+                    otherHolder = firstSliceHolder;
+                }
+
                 for (SolarTerm solarTerm : SolarTerm.collectValues()) {
-                    if (solarTerm.isInTerms(start, end))
+                    if (start == solarTerm) {
                         flatSliceEnumMap.compute(solarTerm, (solarTerm1, flatSliceHolders) -> {
                             if (flatSliceHolders == null) flatSliceHolders = new ArrayList<>();
-                            flatSliceHolders.add(flatSliceHolder);
+                            flatSliceHolders.add(firstSliceHolder);
                             return flatSliceHolders;
                         });
+                    } else if (solarTerm.isInTerms(start, end)) {
+                        flatSliceEnumMap.compute(solarTerm, (solarTerm1, flatSliceHolders) -> {
+                            if (flatSliceHolders == null) flatSliceHolders = new ArrayList<>();
+                            flatSliceHolders.add(otherHolder);
+                            return flatSliceHolders;
+                        });
+                    }
                 }
             }
         }

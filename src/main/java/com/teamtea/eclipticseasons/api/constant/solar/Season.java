@@ -65,6 +65,16 @@ public enum Season implements ITranslatableWithPlaceholder {
         return this != NONE;
     }
 
+    public boolean isInTerms(Season start, Season end) {
+        if (start == NONE || end == NONE) return false;
+        else if (start == end)
+            return this == start; // es patch: if A is B then use single if B is next to A ,then means all
+        else if (start.ordinal() <= end.ordinal()) {
+            return start.ordinal() <= this.ordinal() && this.ordinal() <= end.ordinal();
+        } else
+            return start.ordinal() <= this.ordinal() || this.ordinal() <= end.ordinal();
+    }
+
     public SolarTerm getFirstSolarTerm() {
         return SolarTerm.get(ordinal() * 6);
     }

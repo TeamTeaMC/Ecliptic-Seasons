@@ -76,14 +76,19 @@ public class SeasonalTexture {
                 end = SolarTerm.GREATER_COLD;
             }
             if (start != null && end != null && start.isValid() && end.isValid()) {
-                FlatSliceHolder flatSliceHolder = new FlatSliceHolder(start, end, flatSlice, snowFlatSlice);
+                FlatSliceHolder firstSliceHolder = new FlatSliceHolder(start, end, flatSlice, snowFlatSlice);
+                FlatSliceHolder otherHolder;
+                if (start != end && (flatSlice.transitionModels != null || snowFlatSlice.transitionModels != null)) {
+                    firstSliceHolder = new FlatSliceHolder(start, start, flatSlice, snowFlatSlice);
+                    otherHolder = new FlatSliceHolder(start.getNextSolarTerm(), end,
+                            new FlatSlice(flatSlice.transitionModels == null ? flatSlice.mid : flatSlice.transitionModels.stream().map(Pair::getSecond).toList(), flatSlice.tintMap, null),
+                            new FlatSlice(snowFlatSlice.transitionModels == null ? snowFlatSlice.mid : snowFlatSlice.transitionModels.stream().map(Pair::getSecond).toList(), flatSlice.tintMap, null));
+                } else {
+                    otherHolder = firstSliceHolder;
+                }
                 for (SolarTerm solarTerm : SolarTerm.collectValues()) {
-                    if (solarTerm.isInTerms(start, end))
-                        flatSliceEnumMap.compute(solarTerm, (solarTerm1, flatSliceHolders) -> {
-                            // if (flatSliceHolders == null) flatSliceHolders = new ArrayList<>();
-                            // flatSliceHolders.add(flatSliceHolder);
-                            return flatSliceHolder;
-                        });
+                    if (start == solarTerm) flatSliceEnumMap.put(start, firstSliceHolder);
+                    else if (solarTerm.isInTerms(start, end)) flatSliceEnumMap.put(solarTerm, otherHolder);
                 }
             }
         }

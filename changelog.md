@@ -2,6 +2,10 @@
 
 - Fixed an issue where the `snow_tint` parameter in the `season_textures` resource pack was not working.
 - Fixed an issue where disabling tinting caused the original model to lose its tint data.
+- Fixed an issue where, when using season only, the transition parameters in the `season_definitions` and `season_textures`
+  resource packs were not applied exclusively at the start of a season as intended.
+- Optimized the loot condition `eclipticseasons:season`: if only the season parameter is provided and no fixed season
+  type is specified via climate, it will now apply the Agro season.
 
 ### 0.12.0-pre8-1
 
