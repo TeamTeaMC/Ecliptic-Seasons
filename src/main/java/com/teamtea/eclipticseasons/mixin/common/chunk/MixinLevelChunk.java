@@ -2,10 +2,12 @@ package com.teamtea.eclipticseasons.mixin.common.chunk;
 
 
 import com.llamalad7.mixinextras.sugar.Local;
+import com.teamtea.eclipticseasons.api.misc.IChunkBiomeHolder;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.core.map.ServerMapFixer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelHeightAccessor;
@@ -19,6 +21,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin({LevelChunk.class})
@@ -44,6 +47,17 @@ public abstract class MixinLevelChunk extends ChunkAccess {
             // DH do some work for world generation would stick when close server, so we need to check it.
             if (!MapChecker.isLoaded(level, pos)) return;
             ServerMapFixer.addPlanner(level, state, oldState, pos, level.getGameTime(), MapChecker.getHeight(level, pos), false);
+        }
+    }
+
+    @Inject(
+            at = @At(value = "RETURN"),
+            method = "<init>(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/level/chunk/ProtoChunk;Lnet/minecraft/world/level/chunk/LevelChunk$PostLoadProcessor;)V"
+    )
+    public void eclipticseasons$init(ServerLevel pLevel, ProtoChunk pChunk, LevelChunk.PostLoadProcessor pPostLoad, CallbackInfo ci) {
+        if (pChunk instanceof IChunkBiomeHolder holderOld
+                && this instanceof IChunkBiomeHolder holder) {
+            holder.eclipticseasons$setBiomeHolder(holderOld.eclipticseasons$getBiomeHolder());
         }
     }
 }

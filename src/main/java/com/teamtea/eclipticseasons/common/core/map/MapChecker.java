@@ -1,24 +1,33 @@
 package com.teamtea.eclipticseasons.common.core.map;
 
+import com.mojang.datafixers.util.Pair;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.constant.tag.EclipticBlockTags;
 import com.teamtea.eclipticseasons.api.data.season.SnowDefinition;
+import com.teamtea.eclipticseasons.api.misc.IBiomeTagHolder;
+import com.teamtea.eclipticseasons.api.misc.IChunkBiomeHolder;
+import com.teamtea.eclipticseasons.api.util.SimpleUtil;
+import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
+import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
 import com.teamtea.eclipticseasons.common.core.snow.SnowChecker;
+import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
 import com.teamtea.eclipticseasons.common.misc.SimplePair;
+import com.teamtea.eclipticseasons.common.network.SimpleNetworkHandler;
+import com.teamtea.eclipticseasons.common.network.message.ChunkBiomeUpdateMessage;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.core.*;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ChunkHolder;
 import net.minecraft.server.level.ServerChunkCache;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.biome.Biomes;
+import net.minecraft.world.level.biome.*;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
@@ -26,6 +35,7 @@ import net.minecraft.world.level.block.state.properties.Half;
 import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.ChunkStatus;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.levelgen.Heightmap;
 import org.jetbrains.annotations.NotNull;
 
@@ -80,6 +90,8 @@ public class MapChecker {
 
         // updateLock = false;
         validDimension.removeIf(level1 -> level1 == level);
+
+        LEVEL_PARAMETER_LIST_MAP.remove(level);
     }
 
     public static boolean unloadChunk(Level level, ChunkPos chunkPos) {
@@ -122,7 +134,8 @@ public class MapChecker {
                     loopCheckMapIfEmpty:
                     for (int i = 0; i < mapChunkSize; i++) {
                         for (int j = 0; j < mapChunkSize; j++) {
-                            if (MapChecker.isLoaded(level, i + x0, j + z0)) {
+                            if ((level instanceof ServerLevel serverLevel && !(serverLevel.getChunkSource().hasChunk(i + x0, j + z0)))
+                                    || (level.isClientSide() && MapChecker.isLoaded(level, i + x0, j + z0))) {
                                 shouldRemove = false;
                                 break loopCheckMapIfEmpty;
                             }
@@ -554,7 +567,7 @@ public class MapChecker {
     }
 
     public static boolean isSmallBiome(@Nonnull Biome biomeHolder) {
-        return BiomeClimateManager.SMALL_BIOME_MAP.containsKey(biomeHolder);
+        return ((IBiomeTagHolder) (Object) biomeHolder).eclipticseasons$isSmallBiome();
     }
 
     public static Holder<Biome> idToBiome(Level level, int id) {
@@ -577,6 +590,11 @@ public class MapChecker {
     }
 
     public static int biomeToId(Level level, Biome b) {
+        Object o = b;
+        if (o instanceof IBiomeTagHolder iBiomeTagHolder) {
+            int id = iBiomeTagHolder.eclipticseasons$getBindId();
+            if (id > -1) return id;
+        }
         return level.registryAccess().registryOrThrow(Registries.BIOME).getId(b);
     }
 
@@ -644,16 +662,23 @@ public class MapChecker {
         return biome;
     }
 
+    public static final Map<Level, Climate.ParameterList<Holder<Biome>>> LEVEL_PARAMETER_LIST_MAP = new IdentityHashMap<>();
+
     private static @Nullable Holder<Biome> fixSmallBiome(Level level, BlockPos pos, Holder<Biome> biome, @Nullable BlockPos.MutableBlockPos relative, int y, ChunkInfoMap chunkMap1, int maxBuildHeight, int minBuildHeight) {
         int i = 0;
         int last_ii = 0;
         boolean shouldBreak = false;
         while (isSmallBiome(biome)) {
+            // if (level instanceof ServerLevel serverLevel) {
+            //     biome = fixBiomeOnServer(serverLevel, pos, biome, chunkMap1);
+            //     return biome;
+            // }
+
             // if(true)break;
             if (relative == null) {
                 relative = new BlockPos.MutableBlockPos(pos.getX(), y, pos.getZ());
             }
-            i += 1;
+            i += 4;
             for (SimplePair<Direction, Direction> pair : SMALL_OFFSET_DIRECTIONS) {
                 if (pair.getValue() != null) {
                     int ii = i - 1;
@@ -676,7 +701,8 @@ public class MapChecker {
                     y = pos.getY();
                 }
                 relative.setY(y);
-                biome = level.getBiome(relative);
+
+                biome = CropGrowthHandler.getCropBiome(level,relative);
 
                 // if (bid < 0) {
                 //     y = getHeightSafe(level, relative) + 1;
@@ -697,6 +723,31 @@ public class MapChecker {
             }
 
             if (shouldBreak || i > 128) break;
+        }
+        return biome;
+    }
+
+    public static Holder<Biome> fixBiomeOnServer(ServerLevel level, BlockPos pos, Holder<Biome> biome, ChunkInfoMap map) {
+        Climate.ParameterList<Holder<Biome>> parameters = LEVEL_PARAMETER_LIST_MAP.get(level);
+        if (parameters == null) {
+            BiomeSource biomeSource = level.getChunkSource().getGenerator().getBiomeSource();
+            if (biomeSource instanceof MultiNoiseBiomeSource multiNoiseBiomeSource) {
+                Climate.ParameterList<Holder<Biome>> parameters2 = multiNoiseBiomeSource.parameters();
+                List<Pair<Climate.ParameterPoint, Holder<Biome>>> list = parameters2.values().stream().filter(p -> !isSmallBiome(p.getSecond())).toList();
+                parameters = new Climate.ParameterList<>(list);
+                LEVEL_PARAMETER_LIST_MAP.put(level, parameters);
+            }
+        }
+        if (parameters != null) {
+            int biomeId = map == null ? -1 :
+                    map.getBiome(QuartPos.toBlock(QuartPos.fromBlock(pos.getX())), QuartPos.toBlock(QuartPos.fromBlock(pos.getZ())));
+            if (biomeId > -1) {
+                biome = idToBiome(level, biomeId);
+            } else {
+                Climate.Sampler sampler = level.getChunkSource().randomState().sampler();
+                Climate.TargetPoint sample = sampler.sample(QuartPos.fromBlock(pos.getX()), QuartPos.fromBlock(pos.getY()), QuartPos.fromBlock(pos.getZ()));
+                biome = parameters.findValue(sample);
+            }
         }
         return biome;
     }
@@ -840,6 +891,23 @@ public class MapChecker {
         return false;
     }
 
+    public static void sendChunkLoginInfo(ServerLevel serverLevel, LevelChunk chunk, ChunkPos chunkPos, ServerPlayer player) {
+
+        int minBlockX = chunkPos.getMinBlockX();
+        int minBlockZ = chunkPos.getMinBlockZ();
+        ChunkInfoMap chunkMap = getChunkMap(serverLevel, blockToRegionCoord(minBlockX), blockToRegionCoord(minBlockZ));
+
+        if (chunkMap != null) {
+            int[] biomes = new int[256];
+            for (int i = 0; i < 16; i++) {
+                for (int j = 0; j < 16; j++) {
+                    biomes[i * 16 + j] = chunkMap.getBiome(minBlockX + i, minBlockZ + j);
+                }
+            }
+            SimpleNetworkHandler.send(player, new ChunkBiomeUpdateMessage(biomes, chunk.getPos().x, chunk.getPos().z, 0));
+        }
+
+    }
 
     public static void forceChunkUpdateHeight(Level level, ChunkAccess chunk) {
         ChunkPos chunkPos = chunk.getPos();
@@ -849,6 +917,33 @@ public class MapChecker {
         ChunkInfoMap chunkMap = getChunkInfoMapOrCreate(level, middleBlockPosition);
         // ChunkInfoMap chunkMap = MapChecker.getChunkMap(level, middleBlockPosition);
         // BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos();
+
+        ChunkBiomeUpdateMessage chunkBiomeUpdateMessage = null;
+        boolean shouldset = false;
+        int bv = SolarHolders.getSaveDataLazy(level).map(SolarDataManager::getBiomeDataVersion).orElse(0);
+
+        if (level instanceof ServerLevel) {
+            if (chunk instanceof LevelChunk levelChunk) {
+                Optional<ChunkBiomeUpdateMessage> resolve = levelChunk.getCapability(ChunkBiomeUpdateMessage.CHUNK_BIOME_UPDATE_MESSAGE_CAPABILITY).resolve();
+                if (resolve.isPresent()) {
+                    chunkBiomeUpdateMessage = resolve.get();
+                    ChunkBiomeUpdateMessage mesageInWg = null;
+                    if (chunk instanceof IChunkBiomeHolder iChunkBiomeHolder) {
+                        mesageInWg = iChunkBiomeHolder.eclipticseasons$getBiomeHolder();
+                    }
+                    if (mesageInWg != null) {
+                        chunkBiomeUpdateMessage.biomes = mesageInWg.biomes;
+                        chunkBiomeUpdateMessage.version = mesageInWg.version;
+                        chunk.setUnsaved(true);
+                    }
+
+                    if (chunkBiomeUpdateMessage.version == ChunkBiomeUpdateMessage.FLAG_NEED_VERSION) {
+                        chunkBiomeUpdateMessage.version = bv;
+                    }
+                }
+            }
+        }
+
         if (chunkMap != null) {
             for (int i = chunkPos.getMinBlockX(); i <= chunkPos.getMaxBlockX(); i++) {
                 for (int j = chunkPos.getMinBlockZ(); j <= chunkPos.getMaxBlockZ(); j++) {
@@ -856,27 +951,55 @@ public class MapChecker {
                     middleBlockPosition.setZ(j);
                     int k = getMCHeightWithCheck(level, middleBlockPosition, chunk, null, middleBlockPosition, null);
 
-
                     chunkMap.updateHeight(i, j, k);
 
                     // due to
-                    // if (level instanceof ServerLevel serverLevel) {
-                    //     middleBlockPosition.set(i, k + 1, j);
-                    //     Holder<Biome> biome = serverLevel.getBiome(middleBlockPosition);
-                    //     int biomedToId = biomeToId(level, biome.value());
-                    //     Holder<Biome> biome2 = fixSmallBiome(serverLevel, middleBlockPosition, biome, middleBlockPosition, k + 1, chunkMap, level.getMaxBuildHeight(), level.getMinBuildHeight());
-                    //     if (biome2 != null) {
-                    //         if (biome2 != biome) {
-                    //             biomedToId = biomeToId(level, biome2.value());
-                    //             middleBlockPosition.set(i, k + 1, j);
-                    //         }
-                    //         chunkMap.updateBiome(middleBlockPosition, biomedToId);
-                    //     }
-                    // }
+                    if (level instanceof ServerLevel serverLevel) {
+                        if (chunkBiomeUpdateMessage != null) {
+                            int indexInArray = (i - chunkPos.getMinBlockX()) * 16 + (j - chunkPos.getMinBlockZ());
+                            if (chunkBiomeUpdateMessage.version < ChunkBiomeUpdateMessage.FLAG_NEED_VERSION
+                                    || (chunkBiomeUpdateMessage.version > ChunkBiomeUpdateMessage.FLAG_NEED_VERSION
+                                    && chunkBiomeUpdateMessage.version != bv)) {
+                                middleBlockPosition.set(i, k + 1, j);
+                                if (chunkBiomeUpdateMessage.version == ChunkBiomeUpdateMessage.FLAG_FILL_SMALL) {
+                                    Holder<Biome> biome = idToBiome(level, chunkBiomeUpdateMessage.biomes[indexInArray]);
+                                    if (isSmallBiome(biome)) {
+                                        Holder<Biome> biome2 = fixSmallBiome(serverLevel, middleBlockPosition, biome,
+                                                middleBlockPosition,middleBlockPosition.getY(),chunkMap,level.getMaxBuildHeight(),level.getMinBuildHeight());
+                                        int biomedToId = biomeToId(level, biome2.value());
+                                        middleBlockPosition.set(i, k + 1, j);
+                                        chunkMap.updateBiome(middleBlockPosition, biomedToId);
+                                        chunkBiomeUpdateMessage.biomes[indexInArray] = biomedToId;
+                                        shouldset = true;
+                                    }
+                                } else {
+                                    Holder<Biome> biome = serverLevel.getBiome(middleBlockPosition);
+                                    int biomedToId = biomeToId(level, biome.value());
+                                    Holder<Biome> biome2 = fixSmallBiome(serverLevel, middleBlockPosition, biome,
+                                            middleBlockPosition,middleBlockPosition.getY(),chunkMap,level.getMaxBuildHeight(),level.getMinBuildHeight());
+                                    if (biome2 != null) {
+                                        if (biome2 != biome) {biomedToId = biomeToId(level, biome2.value());}
+                                        middleBlockPosition.set(i, k + 1, j);
+                                        chunkMap.updateBiome(middleBlockPosition, biomedToId);
+                                        chunkBiomeUpdateMessage.biomes[indexInArray] = biomedToId;
+                                        shouldset = true;
+                                    }
+                                }
+                            } else {
+                                chunkMap.updateBiome(i, j, chunkBiomeUpdateMessage.biomes[indexInArray]);
+                            }
+                        }
+                    }
+
                 }
             }
         }
+
+        if (shouldset && chunkBiomeUpdateMessage != null) {
+            chunk.setUnsaved(true);
+        }
     }
+
 
     // it means the block would have surface layer and below
     public static boolean leaveLike(int flag) {

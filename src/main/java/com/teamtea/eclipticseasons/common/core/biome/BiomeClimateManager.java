@@ -11,6 +11,7 @@ import com.teamtea.eclipticseasons.api.data.season.SeasonPhase;
 import com.teamtea.eclipticseasons.api.data.weather.CustomRain;
 import com.teamtea.eclipticseasons.api.data.weather.CustomRainBuilder;
 import com.teamtea.eclipticseasons.api.data.weather.CustomSnowTerm;
+import com.teamtea.eclipticseasons.api.misc.IBiomeTagHolder;
 import com.teamtea.eclipticseasons.api.util.SimpleUtil;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.common.registry.ESRegistries;
@@ -253,7 +254,7 @@ public class BiomeClimateManager {
 
     public static boolean agent$hasPrecipitation(Biome biome) {
         // return !getTag(biome).equals(ClimateTypeBiomeTags.RAINLESS);
-        return getTag(biome) != ClimateTypeBiomeTags.RAINLESS;
+        return ((IBiomeTagHolder) (Object) biome).eclipticseasons$getBindTag() != ClimateTypeBiomeTags.RAINLESS;
     }
 
 
@@ -287,8 +288,10 @@ public class BiomeClimateManager {
                 var tag = ClimateTypeBiomeTags.BIOME_COLOR_TYPES.stream().filter(holder::is).findFirst();
                 if (tag.isPresent()) {
                     useMap.put(holder.value(), tag.get());
+                    ((IBiomeTagHolder) (Object) holder.value()).eclipticseasons$setColorTag(tag.get());
                 } else {
                     useMap.put(holder.value(), ClimateTypeBiomeTags.NONE_COLOR_CHANGE);
+                    ((IBiomeTagHolder) (Object) holder.value()).eclipticseasons$setColorTag(ClimateTypeBiomeTags.NONE_COLOR_CHANGE);
                 }
             }
         }
@@ -307,6 +310,7 @@ public class BiomeClimateManager {
                 // var tag = holder.get().tags().filter(ClimateTypeBiomeTags.BIOME_TYPES::contains).findFirst();
                 if (tag.isPresent()) {
                     useMap.put(holder.value(), tag.get());
+                    ((IBiomeTagHolder) (Object) holder.value()).eclipticseasons$setTag(tag.get());
                 } else {
                     // 我们按照降雨量进行分配，如果无预测则无雨
                     int size = ClimateTypeBiomeTags.COMMON_BIOME_TYPES.size();
@@ -314,11 +318,14 @@ public class BiomeClimateManager {
                     if (!holder.value().getModifiedClimateSettings().hasPrecipitation()) {
                         index = 0;
                     }
-                    useMap.put(holder.value(), ClimateTypeBiomeTags.COMMON_BIOME_TYPES.get(index));
+                    TagKey<Biome> biomeTagKey = ClimateTypeBiomeTags.COMMON_BIOME_TYPES.get(index);
+                    useMap.put(holder.value(), biomeTagKey);
+                    ((IBiomeTagHolder) (Object) holder.value()).eclipticseasons$setTag(biomeTagKey);
                 }
 
                 if (holder.is(ClimateTypeBiomeTags.IS_SMALL)) {
                     SMALL_BIOME_MAP.put(holder.value(), isServer);
+                    ((IBiomeTagHolder) (Object) holder.value()).eclipticseasons$setSmall(true);
                 }
             }
         }

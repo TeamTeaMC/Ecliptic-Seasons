@@ -8,8 +8,10 @@ import com.teamtea.eclipticseasons.api.constant.biome.Temperature;
 import com.teamtea.eclipticseasons.api.constant.climate.BiomeRain;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
+import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
+import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
@@ -60,6 +62,10 @@ public final class DebugInfoRenderer {
         drawInfo(matrixStack, screenWidth, screenHeight, dS, index++);
         drawInfo(matrixStack, screenWidth, screenHeight, jS, index++);
         drawInfo(matrixStack, screenWidth, screenHeight, solarTimeS, index++);
+
+        // drawInfo(matrixStack,screenWidth,screenHeight, MapChecker.getSurfaceBiome(WeatherManager.getMainServerLevel(), ClientCon.agent.getCameraEntity().blockPosition()).unwrapKey().get().location()+"",index++);
+        // drawInfo(matrixStack,screenWidth,screenHeight, MapChecker.getSurfaceBiome(ClientCon.getUseLevel(), ClientCon.agent.getCameraEntity().blockPosition()).unwrapKey().get().location()+"",index++);
+        // drawInfo(matrixStack,screenWidth,screenHeight, ClientCon.getUseLevel().getBiome(ClientCon.agent.getCameraEntity().blockPosition()).unwrapKey().get().location()+"",index++);
 
         for (Level level : WeatherManager.BIOME_WEATHER_LIST.keySet()) {
             if (level.dimension() == Level.OVERWORLD && level instanceof ServerLevel) {

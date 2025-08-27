@@ -13,6 +13,7 @@ import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
+import com.teamtea.eclipticseasons.common.misc.MapExporter;
 import com.teamtea.eclipticseasons.common.network.SimpleNetworkHandler;
 import com.teamtea.eclipticseasons.common.network.message.EmptyMessage;
 import com.teamtea.eclipticseasons.common.network.message.UpdateTempChangeMessage;
@@ -149,6 +150,9 @@ public class CommandHandler {
                 )
                 .then(Commands.literal("export")
                         .requires((source) -> source.hasPermission(2))
+                        .then(Commands.literal("biome_map")
+                                .then(Commands.argument("pos", BlockPosArgument.blockPos()).executes((stackCommandContext) ->
+                                        MapExporter.exportMap(stackCommandContext.getSource(), BlockPosArgument.getLoadedBlockPos(stackCommandContext, "pos")))))
                         .then(Commands.literal("humid_charts")
                                 .then(Commands.argument("namespace", StringArgumentType.word())
                                         .suggests((context, builder) -> {
@@ -272,63 +276,4 @@ public class CommandHandler {
         }
         return getDay(source.getLevel());
     }
-
-    public static ResourceOrTagArgument.Result<Biome> createAllResult(RegistryAccess registryAccess) {
-        Registry<Biome> biomes = registryAccess.registryOrThrow(Registries.BIOME);
-        return new crs(biomes.getHolder(0).orElse(null));
-    }
-
-    private record crs(Holder.Reference<Biome> biomeReference) implements ResourceOrTagArgument.Result<Biome> {
-        @Override
-        public boolean test(Holder<Biome> biomeHolder) {
-            return true;
-        }
-
-        @Override
-        public @NotNull Either<Holder.Reference<Biome>, HolderSet.Named<Biome>> unwrap() {
-            try {
-                throw new IllegalCallerException("Should not call the method because it just use for internal.");
-            } catch (IllegalCallerException e) {
-                e.printStackTrace();
-            }
-            return Either.left(biomeReference);
-        }
-
-        @Override
-        public <E> @NotNull Optional<ResourceOrTagArgument.Result<E>> cast(@NotNull ResourceKey<? extends Registry<E>> p_249572_) {
-            return Optional.empty();
-        }
-
-        @Override
-        public @NotNull String asPrintable() {
-            return EclipticSeasons.rl("all").toLanguageKey("ResourceOrTagArgument.Result");
-        }
-    }
-
-    ;
-
-
-    // InputStream inputStream;
-    // try {
-    //      inputStream = ServerLifecycleHooks.getCurrentServer().getResourceManager().getResourceStack(EclipticSeasons.rl("lang/zh_cn.json")).get(0).open();
-    // } catch (IOException e) {
-    //     throw new RuntimeException(e);
-    // }
-    // try
-    // {
-    //     Pattern PATTERN = Pattern.compile("%(\\d+\\$)?[\\d\\.]*[df]");
-    //     Gson GSON = new Gson();
-    //     JsonElement jsonelement = GSON.fromJson(new InputStreamReader(inputStream, StandardCharsets.UTF_8), JsonElement.class);
-    //     JsonObject jsonobject = GsonHelper.convertToJsonObject(jsonelement, "strings");
-    //     Map<String, String> modTable=new HashMap<>();
-    //     for (Map.Entry<String, JsonElement> entry : jsonobject.entrySet()) {
-    //         String s = PATTERN.matcher(GsonHelper.convertToString(entry.getValue(), entry.getKey())).replaceAll("%$1s");
-    //         modTable.put(entry.getKey(), s);
-    //         builder.suggest(s);
-    //     }
-    //
-    // } finally
-    // {
-    //     IOUtils.closeQuietly(inputStream);
-    // }
 }

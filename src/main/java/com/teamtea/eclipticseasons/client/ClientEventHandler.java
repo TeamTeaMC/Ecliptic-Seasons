@@ -1,6 +1,8 @@
 package com.teamtea.eclipticseasons.client;
 
 
+import com.mojang.brigadier.CommandDispatcher;
+import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.client.core.ClientWeatherChecker;
@@ -17,10 +19,14 @@ import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.core.snow.SnowChecker;
 import com.teamtea.eclipticseasons.common.core.solar.ClientSolarDataManager;
 import com.teamtea.eclipticseasons.common.game.AnimalHooks;
+import com.teamtea.eclipticseasons.common.misc.MapExporter;
 import com.teamtea.eclipticseasons.config.ClientConfig;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
+import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
 import net.minecraft.world.entity.player.Player;
@@ -28,6 +34,7 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.SpawnEggItem;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
+import net.minecraftforge.client.event.RegisterClientCommandsEvent;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
 import net.minecraftforge.event.TagsUpdatedEvent;
 import net.minecraftforge.event.TickEvent;
@@ -227,5 +234,25 @@ public final class ClientEventHandler {
             //             }
             //         }
         }
+    }
+
+    @SubscribeEvent
+    public static void onRegisterClientCommandsEvent(ClientPlayerNetworkEvent.LoggingIn event) {
+        ClientCon.ServerName =
+                event.getPlayer().connection.getServerData() == null ? "Client" :
+                        event.getPlayer().connection.getServerData().name;
+        // ClientCon.ServerName=event.getPlayer().connection.getConnection().getRemoteAddress().toString();
+    }
+
+    @SubscribeEvent
+    public static void onRegisterClientCommandsEvent(RegisterClientCommandsEvent event) {
+        CommandDispatcher<CommandSourceStack> dispatcher = event.getDispatcher();
+        dispatcher.register(Commands.literal(EclipticSeasonsApi.SMODID)
+                .then(Commands.literal("c_export")
+                        .requires((source) -> source.hasPermission(2))
+                        .then(Commands.argument("pos", BlockPosArgument.blockPos()).executes((stackCommandContext) ->
+                                MapExporter.exportMap(stackCommandContext.getSource(), BlockPosArgument.getBlockPos(stackCommandContext, "pos"))))
+                )
+        );
     }
 }

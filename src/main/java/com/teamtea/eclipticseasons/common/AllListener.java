@@ -23,6 +23,7 @@ import com.teamtea.eclipticseasons.common.core.map.ServerMapFixer;
 import com.teamtea.eclipticseasons.common.core.snow.SnowChecker;
 import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
 import com.teamtea.eclipticseasons.common.network.SimpleNetworkHandler;
+import com.teamtea.eclipticseasons.common.network.message.ChunkBiomeUpdateMessage;
 import com.teamtea.eclipticseasons.common.network.message.DataPackEventMessage;
 import com.teamtea.eclipticseasons.common.network.message.HumidModifyMessage;
 import com.teamtea.eclipticseasons.common.registry.ESRegistries;
@@ -37,6 +38,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.chunk.ChunkAccess;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.OnDatapackSyncEvent;
@@ -143,11 +145,15 @@ public class AllListener {
     }
 
     @SubscribeEvent
+    public static void onChunkWatch(ChunkWatchEvent.Watch event) {
+        MapChecker.sendChunkLoginInfo(event.getLevel(), event.getChunk(), event.getPos(), event.getPlayer());
+    }
+
+    @SubscribeEvent
     public static void onChunkLoad(ChunkEvent.Load event) {
         ChunkAccess chunk = event.getChunk();
         if (event.getLevel() instanceof Level level) {
             MapChecker.forceChunkUpdateHeight(level, chunk);
-            ServerMapFixer.unloadChunk(level, event.getChunk().getPos());
         }
     }
 
@@ -156,6 +162,7 @@ public class AllListener {
         if (event.getLevel() instanceof Level level) {
             MapChecker.unloadChunk(level, event.getChunk().getPos());
             CropGrowthHandler.unloadChunk(level, event.getChunk().getPos());
+            ServerMapFixer.unloadChunk(level, event.getChunk().getPos());
         }
     }
 
@@ -293,6 +300,13 @@ public class AllListener {
     public static void onAttachCapabilitiesEvent(AttachCapabilitiesEvent<Entity> event) {
         if (event.getObject() instanceof Player) {
             event.addCapability(EclipticSeasons.rl("solar_term_holder"), new SolarTermsRecordCa());
+        }
+    }
+
+    @SubscribeEvent
+    public static void onLevelChunkAttachCapabilitiesEvent(AttachCapabilitiesEvent<LevelChunk> event) {
+        if (event.getObject() instanceof LevelChunk) {
+            event.addCapability(EclipticSeasons.rl("biomes_holder"), new ChunkBiomeUpdateMessage());
         }
     }
 

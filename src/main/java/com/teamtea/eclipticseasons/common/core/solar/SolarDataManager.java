@@ -48,6 +48,7 @@ public class SolarDataManager extends SavedData {
     protected int solarTermsTicks = 0;
     protected boolean isValidDimension = false;
     protected float solarTempChange = 0;
+    private int biomeDataVersion = 0;
 
     protected WeakReference<Level> levelWeakReference;
     private final Long2ObjectOpenHashMap<List<Pair<BlockPos, HumidityControlProvider>>> humidityCoreMap;
@@ -75,19 +76,35 @@ public class SolarDataManager extends SavedData {
         if (nbt.contains("SolarTempChange")) {
             setSolarTempChange(nbt.getFloat("SolarTempChange"));
         }
-        var listTag = nbt.getList("biomes", Tag.TAG_COMPOUND);
+        this.biomeDataVersion = nbt.getInt("BiomeDataVersion");
+        setLevelData(nbt);
+    }
+
+    protected void setLevelData(CompoundTag nbt) {
         if (levelWeakReference.get() != null) {
+            var listTag = nbt.getList("biomes", Tag.TAG_COMPOUND);
             var biomeWeathers = WeatherManager.getBiomeList(levelWeakReference.get());
+            int countCheck = 0;
             for (int i = 0; i < listTag.size(); i++) {
-                var location = listTag.getCompound(i).getString("biome");
+                CompoundTag compound = listTag.getCompound(i);
+                var location = compound.getString("biome");
                 if (biomeWeathers != null) {
-                    for (WeatherManager.BiomeWeather biomeWeather : biomeWeathers) {
+                    for (int j = 0; j < biomeWeathers.size(); j++) {
+                        WeatherManager.BiomeWeather biomeWeather = biomeWeathers.get(j);
                         if (location.equals(biomeWeather.location.toString())) {
-                            biomeWeather.deserializeNBT(listTag.getCompound(i));
+                            biomeWeather.deserializeNBT(compound);
+                            // 这里必须要id相等，不然缓存全部失效
+                            if (i == j) {
+                                countCheck++;
+                            }
                             break;
                         }
                     }
                 }
+            }
+            if (countCheck != listTag.size()) {
+                this.biomeDataVersion++;
+                EclipticSeasons.logger("Warning for biome date need to be update with", listTag.size(), biomeWeathers == null ? 0 : biomeWeathers.size(), " new version is", biomeDataVersion);
             }
         }
     }
@@ -97,6 +114,7 @@ public class SolarDataManager extends SavedData {
         compound.putInt("SolarTermsDay", getSolarTermsDay());
         compound.putInt("SolarTermsTicks", getSolarTermsTicks());
         compound.putFloat("SolarTempChange", getSolarTempChange());
+        compound.putInt("BiomeDataVersion", biomeDataVersion);
         ListTag listTag = new ListTag();
         if (levelWeakReference.get() != null) {
             var list = WeatherManager.getBiomeList(levelWeakReference.get());
@@ -180,6 +198,10 @@ public class SolarDataManager extends SavedData {
 
     public int getSolarTermsTicks() {
         return solarTermsTicks;
+    }
+
+    public int getBiomeDataVersion() {
+        return biomeDataVersion;
     }
 
     public float getSolarTempChange() {

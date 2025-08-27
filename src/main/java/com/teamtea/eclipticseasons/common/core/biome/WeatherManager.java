@@ -4,6 +4,8 @@ import com.teamtea.eclipticseasons.api.constant.climate.WeatherMode;
 import com.teamtea.eclipticseasons.api.constant.tag.ESEnchantmentTags;
 import com.teamtea.eclipticseasons.api.constant.tag.ESItemTags;
 import com.teamtea.eclipticseasons.api.constant.tag.ESMobEffectTags;
+import com.teamtea.eclipticseasons.api.misc.IBiomeTagHolder;
+import com.teamtea.eclipticseasons.api.misc.IBiomeWeatherProvider;
 import com.teamtea.eclipticseasons.common.network.message.UpdateTempChangeMessage;
 import com.teamtea.eclipticseasons.common.registry.EffectRegistry;
 import com.teamtea.eclipticseasons.common.registry.ModAdvancements;
@@ -69,6 +71,9 @@ public class WeatherManager {
             }
             return null;
         }
+        if (level instanceof IBiomeWeatherProvider iBiomeWeatherProvider) {
+            return iBiomeWeatherProvider.es$get();
+        }
         return BIOME_WEATHER_LIST.getOrDefault(level, null);
     }
 
@@ -78,10 +83,24 @@ public class WeatherManager {
     }
 
     public static BiomeWeather getBiomeWeather(Level level, Biome biome) {
-        Map<Biome, BiomeWeather> ws = BIOME_WEATHER_QUERY_LIST.getOrDefault(level, null);
-        if (ws != null)
-            return ws.getOrDefault(biome, null);
-        return null;
+        BiomeWeather weather = null;
+        // var weatherQueryListOrDefault = BIOME_WEATHER_QUERY_LIST.getOrDefault(level, null);
+        // if (weatherQueryListOrDefault != null) {
+        //     weather = weatherQueryListOrDefault.getOrDefault(biome, null);
+        // }
+        // var weatherQueryListOrDefault = BIOME_WEATHER_LIST.getOrDefault(level, null);
+        if (level instanceof IBiomeWeatherProvider iBiomeWeatherProvider) {
+            var weatherQueryListOrDefault = iBiomeWeatherProvider.es$get();
+            if (weatherQueryListOrDefault != null) {
+                Object object = biome;
+                if (object instanceof IBiomeTagHolder iBiomeTagHolder) {
+                    int id = iBiomeTagHolder.eclipticseasons$getBindId();
+                    if (weatherQueryListOrDefault.size() > id && id > -1)
+                        weather = weatherQueryListOrDefault.get(id);
+                }
+            }
+        }
+        return weather;
     }
 
     private static final ThreadLocal<Boolean> IS_ON_SERVER_THREAD =
@@ -293,6 +312,9 @@ public class WeatherManager {
     public static void createLevelBiomeWeatherList(Level level) {
         var biomesWeathers = new ArrayList<WeatherManager.BiomeWeather>();
         WeatherManager.BIOME_WEATHER_LIST.put(level, biomesWeathers);
+        if (level instanceof IBiomeWeatherProvider iBiomeWeatherProvider) {
+            iBiomeWeatherProvider.es$set(biomesWeathers);
+        }
         {
             var biomes = level.registryAccess().registry(Registries.BIOME);
             if (biomes.isPresent()) {
@@ -306,6 +328,7 @@ public class WeatherManager {
                         biomeWeather.location = loc;
                         biomeWeather.id = id;
                         biomesWeathers.add(biomeWeather);
+                        ((IBiomeTagHolder) (Object) biome).eclipticseasons$setBindId(id);
                     }
                 }
 
@@ -601,7 +624,7 @@ public class WeatherManager {
     public static void tickPlayerForSeasonCheck(ServerPlayer serverPlayer) {
         var level = serverPlayer.level();
         if (level.getGameTime() % 200 == 0) {
-            var holder = serverPlayer.getCapability(SolarTermsRecordCa.SolarTermsRecordCa_CAPABILITY);
+            var holder = serverPlayer.getCapability(SolarTermsRecordCa.SOLAR_TERMS_RECORD_CA_CAPABILITY);
             holder.ifPresent(
                     solarTermsRecordCa ->
                     {

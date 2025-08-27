@@ -23,11 +23,14 @@ public class ClientConfig {
     public static class Debug {
 
         public static ForgeConfigSpec.BooleanValue debugInfo;
+        public static ForgeConfigSpec.BooleanValue debugRender;
 
         private static void load(ForgeConfigSpec.Builder builder) {
             builder.push("Debug");
             debugInfo = builder.comment("Info used for development.")
                     .define("DebugInfo", false);
+            debugRender = builder.comment("Render snow edge overlay on neighbors for smoother snowy transitions.")
+                    .define("SnowyEdges", false);
             builder.pop();
         }
     }

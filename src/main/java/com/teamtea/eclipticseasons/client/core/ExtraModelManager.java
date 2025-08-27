@@ -8,10 +8,7 @@ import com.teamtea.eclipticseasons.api.data.client.model.seasonal.SeasonalTextur
 import com.teamtea.eclipticseasons.api.data.season.SnowDefinition;
 import com.teamtea.eclipticseasons.api.misc.client.IMapSlice;
 import com.teamtea.eclipticseasons.api.misc.client.IMapSliceProvider;
-import com.teamtea.eclipticseasons.client.model.bakequad.BakedQuadRetextured;
-import com.teamtea.eclipticseasons.client.model.bakequad.BakedQuadRetexturedAndReUV;
-import com.teamtea.eclipticseasons.client.model.bakequad.QuadFixer;
-import com.teamtea.eclipticseasons.client.model.bakequad.RectangularPrismChecker;
+import com.teamtea.eclipticseasons.client.model.bakequad.*;
 import com.teamtea.eclipticseasons.client.model.unbake.SolarBlockModel;
 import com.teamtea.eclipticseasons.client.reload.ClientJsonCacheListener;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
@@ -27,7 +24,6 @@ import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.block.BlockModelShaper;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.renderer.texture.SpriteContents;
@@ -97,6 +93,7 @@ public class ExtraModelManager {
     public static List<ResourceLocation> flower_on_grass = List.of(1, 2, 3, 4, 5, 6).stream().map(
             i -> EclipticSeasons.rl("block/flower_%s".formatted(i))
     ).toList();
+    public static List<ResourceLocation> snow_edge_overlays = IntStream.rangeClosed(0, 18).mapToObj(i -> EclipticSeasons.rl("block/snow_edge/snow_edge_overlay_%s".formatted(i))).collect(Collectors.toCollection(ArrayList::new));
 
     public static List<ResourceLocation> fourleaf_clovers = IntStream.rangeClosed(0, 6).mapToObj(i -> EclipticSeasons.rl("block/fourleaf_clover/fourleaf_clover_%s".formatted(i))).collect(Collectors.toCollection(ArrayList::new));
 
@@ -517,8 +514,14 @@ public class ExtraModelManager {
                 MapChecker.getSnowOffset(state, flag) : snowDefClientOverlay.get(0).getInfo().getOffset();
 
         boolean isLight = false;
+
+        boolean extendCheck = false;
         if (checkPos == null) checkPos = posToMutable(pos);
         else checkPos.set(pos.getX(), pos.getY(), pos.getZ());
+        checkPos.set(pos.getX(), pos.getY() + 1, pos.getZ());
+        if (ClientConfig.Debug.debugRender.get() && blockAndTintGetter.getBrightness(LightLayer.SKY, checkPos) > 0) {
+            extendCheck = true;
+        }
 
         if (ClientConfig.Renderer.useVanillaCheck.get()) {
             isLight = blockAndTintGetter.getBrightness(LightLayer.BLOCK, pos.above()) >= 15;
@@ -585,10 +588,10 @@ public class ExtraModelManager {
             if (!isLight) specialLeaves = false;
         }
 
-        if (isLight) {
+        if (extendCheck || isLight) {
             boolean isSnowy = false;
             if (CommonConfig.isSnowyWinter()
-                    && onBlock != Blocks.SNOW_BLOCK
+                    && isLight && onBlock != Blocks.SNOW_BLOCK
                     && MapChecker.shouldSnowAt(level, pos, state, random, seed)) {
                 // DynamicLeavesBlock
 
@@ -621,6 +624,56 @@ public class ExtraModelManager {
                     }
                 }
 
+            }
+
+            if (
+                // !FMLEnvironment.production
+                    !isSnowy
+                            && (flag == MapChecker.FLAG_BLOCK || onBlock == Blocks.GRASS_BLOCK)
+                            && ClientConfig.Debug.debugRender.get()) {
+                int index = -1;
+                int ddLength = 0;
+                int[][][] directions = DirectionMask.DIRECTIONS;
+                int[] indexs = DirectionMask.INDICES;
+                BlockPos.MutableBlockPos originalCache = null;
+                directionChecks:
+                for (int i = 0, directionsLength = directions.length; i < directionsLength; i++) {
+                    int[][] directionRequireGroup = directions[i];
+                    for (int[] direction : directionRequireGroup) {
+                        checkPos.set(pos.getX() + direction[0], pos.getY() + 1, pos.getZ() + direction[1]);
+                        if ((MapChecker.getHeightOrUpdate(level, checkPos, false)) != pos.getY()) {
+                            continue directionChecks;
+                        }
+                        checkPos.set(pos.getX() + direction[0], pos.getY(), pos.getZ() + direction[1]);
+
+                        BlockState neighSate = blockAndTintGetter.getBlockState(checkPos);
+                        long neighSateSeed = neighSate.getSeed(checkPos);
+
+
+                        // if (!((mapSlice != null && MapChecker.shouldSnowAt(level, checkPos, mapSlice.getSurfaceFaceBiomeId(checkPos), neighSate, random, neighSateSeed))
+                        //         || (mapSlice == null && MapChecker.shouldSnowAt(level, checkPos, neighSate, random, neighSateSeed))
+                        //         || (mapSlice != null && mapSlice.getSnowyStatus(checkPos) == SnowyRemover.SnowyFlag.SNOWY_ALWAYS.ordinal())
+                        // ))
+                        if (!(neighSate.is(Blocks.GRASS_BLOCK) || MapChecker.getBlockType(neighSate, blockAndTintGetter, checkPos) == MapChecker.FLAG_BLOCK)) {
+                            continue directionChecks;
+                        }
+                        if (originalCache == null)
+                            originalCache = new BlockPos.MutableBlockPos(checkPos.getX(), checkPos.getY(), checkPos.getZ());
+                        else originalCache.set(checkPos.getX(), checkPos.getY(), checkPos.getZ());
+                        if (!canSnowy(level, originalCache, neighSate, neighSateSeed, checkPos)) {
+                            continue directionChecks;
+                        }
+                    }
+                    if (directionRequireGroup.length > ddLength) {
+                        index = i;
+                        ddLength = directionRequireGroup.length;
+                    }
+                }
+                if (index > -1) {
+                    index = indexs[index];
+                    replace = models.get(snow_edge_overlays.get(index));
+                    isSnowy = true;
+                }
             }
 
             if (replace == null || !(replace instanceof IESReplaceModel iesReplaceModel && iesReplaceModel.isReplace())) {

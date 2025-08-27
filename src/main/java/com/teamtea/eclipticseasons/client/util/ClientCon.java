@@ -57,6 +57,9 @@ public class ClientCon {
     public static ClientAgent agent = new ClientAgent() {
     };
 
+    // Use for export
+    public static String ServerName = "client";
+
     public static void tick(Level clientLevel) {
         if (MapChecker.isValidDimension(clientLevel)) {
             nowSolarTerm = EclipticUtil.getNowSolarTerm(clientLevel);

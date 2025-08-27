@@ -51,13 +51,13 @@ public class SolarTermsRecordCa implements ICapabilitySerializable<CompoundTag> 
 
     @Override
     public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
-        if(cap==SolarTermsRecordCa_CAPABILITY){
+        if(cap== SOLAR_TERMS_RECORD_CA_CAPABILITY){
             return LazyOptional.of(()->this).cast();
         }
         return LazyOptional.empty();
     }
 
 
-    public static Capability<SolarTermsRecordCa> SolarTermsRecordCa_CAPABILITY = CapabilityManager.get(new CapabilityToken<>() {
+    public static final Capability<SolarTermsRecordCa> SOLAR_TERMS_RECORD_CA_CAPABILITY = CapabilityManager.get(new CapabilityToken<>() {
     });
 }

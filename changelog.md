@@ -1,3 +1,9 @@
+### 0.12.0-pre8-3
+
+- Added transition textures between snow-covered blocks and normal blocks, which can be enabled in the Debug options.
+- Introduced chunk surface biome cache to speed up biome queries.
+- Other miscellaneous optimizations.
+
 ### 0.12.0-pre8-2
 
 - Now, if a mod tries to query biome precipitation using the raw method instead of ours, corrections will only be

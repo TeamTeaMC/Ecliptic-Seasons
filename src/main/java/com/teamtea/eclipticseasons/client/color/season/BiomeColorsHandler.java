@@ -10,6 +10,7 @@ import com.teamtea.eclipticseasons.api.constant.solar.color.base.SolarTermColor;
 import com.teamtea.eclipticseasons.api.constant.tag.ClimateTypeBiomeTags;
 import com.teamtea.eclipticseasons.api.data.client.BiomeColor;
 import com.teamtea.eclipticseasons.api.data.client.ColorMode;
+import com.teamtea.eclipticseasons.api.misc.IBiomeTagHolder;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.client.util.ClientRef;
 import com.teamtea.eclipticseasons.client.util.ColorHelper;
@@ -66,7 +67,7 @@ public class BiomeColorsHandler {
                     return color;
                 }
             }
-            TagKey<Biome> biomeTagKey = BiomeClimateManager.getColorTag(biome);
+            TagKey<Biome> biomeTagKey = ((IBiomeTagHolder) (Object) biome).eclipticseasons$getBindColorTag();
             if (ClientConfig.Renderer.smootherSeasonalGrassColorChange.get()) {
                 SolarTermColor colorInfo = ClientCon.nowSolarTerm.getSolarTermColor(biomeTagKey);
                 SolarTermColor colorInfo2 = ClientCon.nowSolarTerm.getLastSolarTerm().getSolarTermColor(biomeTagKey);
@@ -121,7 +122,7 @@ public class BiomeColorsHandler {
                     return color;
                 }
             }
-            TagKey<Biome> biomeTagKey = BiomeClimateManager.getColorTag(biome);
+            TagKey<Biome> biomeTagKey = ((IBiomeTagHolder) (Object) biome).eclipticseasons$getBindColorTag();
             if (ClientConfig.Renderer.smootherSeasonalGrassColorChange.get()) {
                 SolarTermColor colorInfo = ClientCon.nowSolarTerm.getSolarTermColor(biomeTagKey);
                 SolarTermColor colorInfo2 = ClientCon.nowSolarTerm.getLastSolarTerm().getSolarTermColor(biomeTagKey);

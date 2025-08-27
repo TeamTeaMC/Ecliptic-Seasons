@@ -5,6 +5,7 @@ import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.constant.tag.ClimateTypeBiomeTags;
+import com.teamtea.eclipticseasons.api.misc.IBiomeTagHolder;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
@@ -76,8 +77,8 @@ public class VanillaWeather {
 
     public static boolean hasPrecipitation(Level level, Biome biome) {
         var solarTerm = EclipticSeasonsApi.getInstance().getSolarTerm(level);
-        boolean hasPrecipitation = biome.getModifiedClimateSettings().hasPrecipitation();
-        TagKey<Biome> tag = BiomeClimateManager.getTag(biome);
+        boolean hasPrecipitation = biome.hasPrecipitation();
+        TagKey<Biome> tag = ((IBiomeTagHolder) (Object) biome).eclipticseasons$getBindTag();
         if (tag.equals(ClimateTypeBiomeTags.MONSOONAL)) {
             Season season = solarTerm.getSeason();
             if (season == Season.SUMMER || season == Season.AUTUMN) {

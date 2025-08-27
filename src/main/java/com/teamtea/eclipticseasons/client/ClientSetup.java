@@ -91,6 +91,7 @@ public class ClientSetup {
 
         ExtraModelManager.flower_on_grass.forEach(event::register);
         ExtraModelManager.fourleaf_clovers.forEach(event::register);
+        ExtraModelManager.snow_edge_overlays.forEach(event::register);
     }
 
     @SubscribeEvent
@@ -159,6 +160,7 @@ public class ClientSetup {
                 ));
         bakedModels.addAll(BlockRegistry.snowyStairs.get().getStateDefinition().getPossibleStates().stream()
                 .map(BlockModelShaper::stateToModelLocation).toList());
+        bakedModels.addAll(ExtraModelManager.snow_edge_overlays);
 
         for (ResourceLocation modelResourceLocation : bakedModels) {
             BakedModel bakedModel1 = modelRegistry.get(modelResourceLocation);

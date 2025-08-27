@@ -80,6 +80,13 @@ public final class SimpleNetworkHandler {
         if (FMLLoader.getDist() == Dist.CLIENT)
             i.consumerNetworkThread(NetworkUtil::processUpdateTempChangeMessage);
         i.add();
+
+        var j = CHANNEL.messageBuilder(ChunkBiomeUpdateMessage.class, id++)
+                .encoder(ChunkBiomeUpdateMessage::toBytes)
+                .decoder(ChunkBiomeUpdateMessage::new);
+        if (FMLLoader.getDist() == Dist.CLIENT)
+            j.consumerNetworkThread(NetworkUtil::processChunkBiomeUpdateMessage);
+        j.add();
     }
 
     private static void registerMessage(int i, Class<BiomeWeatherMessage> biomeWeatherMessageClass, Object o) {
