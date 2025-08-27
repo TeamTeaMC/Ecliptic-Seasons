@@ -400,6 +400,13 @@ public class ExtraModelManager {
         int flag = MapChecker.getBlockType(state, blockAndTintGetter, pos);
         List<SnowDefinition> snowDefClientOverlay = ClientRef.snowClientDef.get(onBlock);
 
+        if (flag == MapChecker.FLAG_NONE
+                && (snowDefClientOverlay == null
+                || snowDefClientOverlay.isEmpty()
+                || snowDefClientOverlay.get(0).getInfo().getFlag() == MapChecker.FLAG_NONE)) {
+            return false;
+        }
+
         int offset = snowDefClientOverlay == null ?
                 MapChecker.getSnowOffset(state, flag) : snowDefClientOverlay.get(0).getInfo().getOffset();
 
@@ -446,7 +453,8 @@ public class ExtraModelManager {
         if (isLight) {
             checkPos.set(pos.getX(), pos.getY() + 1, pos.getZ());
             if (leaveLike) {
-                {if (!specialLeaves) {
+                {
+                    if (!specialLeaves) {
                         BlockState aboveState = blockAndTintGetter.getBlockState(checkPos);
                         if (isLight) {
                             // specialLeaves = true;
