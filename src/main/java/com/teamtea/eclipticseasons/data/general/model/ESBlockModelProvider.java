@@ -24,29 +24,33 @@ public class ESBlockModelProvider extends BlockModelProvider {
     @Override
     protected void registerModels() {
         for (ResourceLocation flowerOnGrass : ExtraModelManager.flower_on_grass) {
-            withExistingParent(flowerOnGrass.getPath(),resource("grass_flower"))
+            withExistingParent(flowerOnGrass.getPath(), resource("grass_flower"))
                     // .element()
                     // .from(0,0,0)
                     // .to(1,1,1)
                     // .end()
-                    .texture("1",flowerOnGrass.getPath());
+                    .texture("1", flowerOnGrass.getPath());
         }
 
         for (ResourceLocation flowerOnGrass : ExtraModelManager.fourleaf_clovers) {
-            withExistingParent(flowerOnGrass.getPath(),resource("tinted_grass_flower"))
-                    .texture("1",flowerOnGrass.getPath());
+            withExistingParent(flowerOnGrass.getPath(), resource("tinted_grass_flower"))
+                    .texture("1", flowerOnGrass.getPath());
         }
 
         for (ResourceLocation flowerOnGrass : ExtraModelManager.snow_edge_overlays) {
             withExistingParent(flowerOnGrass.getPath(), resource("grass_flower"))
                     .texture("1", flowerOnGrass.getPath());
         }
+
         // for (SolarTerm solarTerm : SolarTerm.collectValues()) {
         //     getBuilder(soa)
         // }
-        cubeAll(resource(BlockRegistry.block_in_wooden_grate_block.getId().getPath()).getPath(),EclipticSeasons.rl("block/wooden_grate"));
-    }
+        cubeAll(resource(BlockRegistry.block_in_wooden_grate_block.getId().getPath()).getPath(), EclipticSeasons.rl("block/wooden_grate"));
 
+
+        // withExistingParent("snowy_grass_block", "grass_block_snow")
+        //         .texture("top", ResourceLocation.tryParse("block/snow"));
+    }
 
 
     public ResourceLocation resource(String path) {

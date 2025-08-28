@@ -78,7 +78,6 @@ public class start {
             // CompletableFuture<HolderLookup.Provider> modFuture = CompletableFuture.supplyAsync(() -> modProvider, Util.backgroundExecutor());
 
 
-            generator.addProvider(event.includeClient(), new ClientSnowDefinitionProvider(packOutput, MODID, helper, lookupProvider));
             generator.addProvider(event.includeClient(), new SeasonalBiomeAmbientProvider(packOutput, MODID, helper, lookupProvider));
             generator.addProvider(event.includeClient(), new ClientModelDefinitionProvider(packOutput, MODID, helper, lookupProvider));
             generator.addProvider(event.includeClient(), new ClientTestProvider(packOutput, MODID, helper, lookupProvider));
@@ -105,6 +104,7 @@ public class start {
             generator.addProvider(event.includeClient(), new BiomeColorProvider(packOutput, MODID, helper, lookupProvider));
             generator.addProvider(event.includeClient(), new SeasonTextureProvider(packOutput, MODID, helper, lookupProvider));
             generator.addProvider(event.includeClient(), new LeafColorProvider(packOutput, MODID, helper, lookupProvider));
+            generator.addProvider(event.includeClient(), new ClientSnowDefinitionProvider(packOutput,MODID, helper,lookupProvider));
         }
 
     }

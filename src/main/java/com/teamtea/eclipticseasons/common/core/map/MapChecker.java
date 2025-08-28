@@ -522,7 +522,7 @@ public class MapChecker {
             if (stateAbove.getBlock() instanceof LightBlock) {
                 if (stateAbove.getValue(LightBlock.LEVEL) == 0)
                     return false;
-            } else if (!stateAbove.isAir() && !stateAbove.blocksMotion()) {
+            } else if (!stateAbove.isAir() && !solidTest(stateAbove)) {
                 if (times > 0)
                     return notLightAbove(level, abovePos, (times - 1));
             }

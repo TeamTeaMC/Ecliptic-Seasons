@@ -1,4 +1,4 @@
-package com.teamtea.eclipticseasons.data.general.datapack.client;
+package com.teamtea.eclipticseasons.data.extend.example;
 
 import com.teamtea.eclipticseasons.api.data.season.SnowDefinition;
 import com.teamtea.eclipticseasons.client.reload.ClientJsonCacheListener;

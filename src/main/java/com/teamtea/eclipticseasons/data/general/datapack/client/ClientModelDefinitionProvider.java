@@ -48,18 +48,23 @@ public class ClientModelDefinitionProvider extends AbstractModelDefinitionProvid
         //         .requirement(EclipticSeasonsApi.MODID)
         //         .build());
 
+
+
         addModelDefinition(ClientModelDefinitions.SNOWY_GRASS_BLOCK_OVERLAY)
-                .requireMod(EclipticSeasonsApi.MODID)
-                .requireMod(ResourceLocation.DEFAULT_NAMESPACE)
-                .replace(false)
-                .multiPart(condition(GrassBlock.SNOWY, false), variant(ClientModelDefinitions.GRASS_BLOCK_SNOW).rotationY(0).build(),
-                        variant(ClientModelDefinitions.GRASS_BLOCK_SNOW).rotationY(90).build(),
-                        variant(ClientModelDefinitions.GRASS_BLOCK_SNOW).rotationY(180).build(),
-                        variant(ClientModelDefinitions.GRASS_BLOCK_SNOW).rotationY(270).build())
-                .multiPart(variant(ClientModelDefinitions.SNOWY_GRASS_BLOCK_OVERLAY).rotationY(0).build(),
-                        variant(ClientModelDefinitions.SNOWY_GRASS_BLOCK_OVERLAY).rotationY(90).build(),
-                        variant(ClientModelDefinitions.SNOWY_GRASS_BLOCK_OVERLAY).rotationY(180).build(),
-                        variant(ClientModelDefinitions.SNOWY_GRASS_BLOCK_OVERLAY).rotationY(270).build())
+                .replace(true)
+                .variant(variant(models().withExistingParent("snowy_grass_block","grass_block_snow")
+                        .texture("top",ResourceLocation.tryParse("block/snow"))).build())
+        // .requireMod(EclipticSeasonsApi.MODID)
+                // .requireMod(ResourceLocation.DEFAULT_NAMESPACE)
+                // .replace(false)
+                // .multiPart(condition(GrassBlock.SNOWY, false), variant(ClientModelDefinitions.GRASS_BLOCK_SNOW).rotationY(0).build(),
+                //         variant(ClientModelDefinitions.GRASS_BLOCK_SNOW).rotationY(90).build(),
+                //         variant(ClientModelDefinitions.GRASS_BLOCK_SNOW).rotationY(180).build(),
+                //         variant(ClientModelDefinitions.GRASS_BLOCK_SNOW).rotationY(270).build())
+                // .multiPart(variant(ClientModelDefinitions.SNOWY_GRASS_BLOCK_OVERLAY).rotationY(0).build(),
+                //         variant(ClientModelDefinitions.SNOWY_GRASS_BLOCK_OVERLAY).rotationY(90).build(),
+                //         variant(ClientModelDefinitions.SNOWY_GRASS_BLOCK_OVERLAY).rotationY(180).build(),
+                //         variant(ClientModelDefinitions.SNOWY_GRASS_BLOCK_OVERLAY).rotationY(270).build())
         ;
 
         addFlower();

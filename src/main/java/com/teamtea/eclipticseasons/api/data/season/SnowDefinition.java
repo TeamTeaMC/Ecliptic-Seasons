@@ -68,7 +68,7 @@ public class SnowDefinition implements MapFiller<Block, SnowDefinition>, HolderM
                 Codec.BOOL.optionalFieldOf("snow_passable", false).forGetter(o -> o.snowPassable),
                 Codec.BOOL.optionalFieldOf("ignore_offset", false).forGetter(o -> o.ignoreOffset),
                 Codec.INT.optionalFieldOf("offset", 0).forGetter(o -> o.offset),
-                ResourceLocation.CODEC.optionalFieldOf("mid", ClientModelDefinitions.OVERLAY).forGetter(o -> o.mid),
+                ResourceLocation.CODEC.optionalFieldOf("mid", ClientModelDefinitions.EMPTY).forGetter(o -> o.mid),
                 ResourceLocation.CODEC.optionalFieldOf("mid2", ClientModelDefinitions.EMPTY).forGetter(o -> o.mid2)
         ).apply(ins, Info::new));
         public static final Codec<Info> CODEC = MAP_CODEC.codec();

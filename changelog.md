@@ -1,3 +1,9 @@
+### 0.12.0-pre8-5
+
+- Fixed an issue where level 0 light checks did not support custom snow-covered blocks.
+- Changed the built-in snow-covered model for grass blocks to use Multivariant instead of the demo MultiPart model. It also no longer applies random rotation. Variant-type models require fewer checks and combinations, resulting in faster rendering.
+- Removed the built-in client resource pack override file for the snow-covered cobblestone definition.
+
 ### 0.12.0-pre8-4
 
 - Backported the extra rendering acceleration from 1.21 to 1.20, greatly reducing rendering performance loss.
