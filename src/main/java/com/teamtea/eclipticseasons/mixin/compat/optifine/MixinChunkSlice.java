@@ -1,6 +1,7 @@
 package com.teamtea.eclipticseasons.mixin.compat.optifine;
 
 
+import com.teamtea.eclipticseasons.api.misc.client.IMapSlice;
 import com.teamtea.eclipticseasons.api.misc.client.IMapSliceProvider;
 import com.teamtea.eclipticseasons.compat.optfine.IOFModelTaker;
 import com.teamtea.eclipticseasons.compat.vanilla.IExtendBlockView;
@@ -66,6 +67,12 @@ public abstract class MixinChunkSlice implements IOFModelTaker, IMapSliceProvide
                 eclipticseasons$modelCache).put(bakedModel, bakedModel2);
     }
 
+
+    @Override
+    public int getBlockHeight(BlockPos pos) {
+        return ((IMapSlice) chunkCache).getBlockHeight(pos);
+    }
+
     @Override
     public int getSolidBlockHeight(BlockPos pos) {
         return ((IMapSliceProvider) chunkCache).getSolidBlockHeight(pos);
@@ -75,4 +82,10 @@ public abstract class MixinChunkSlice implements IOFModelTaker, IMapSliceProvide
     public BlockPos.MutableBlockPos getModelCheckPos() {
         return ((IExtendBlockView) chunkCache).getModelCheckPos();
     }
+
+    @Override
+    public int getSurfaceFaceBiomeId(BlockPos pos) {
+        return ((IMapSlice) chunkCache).getSurfaceFaceBiomeId(pos);
+    }
+
 }

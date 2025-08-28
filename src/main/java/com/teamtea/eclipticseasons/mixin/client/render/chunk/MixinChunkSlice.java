@@ -22,16 +22,26 @@ public abstract class MixinChunkSlice implements IMapSlice, IExtendBlockView {
     @Shadow
     @Final
     private int centerZ;
+
     @Unique
-    private int[][] SOLID_HEIGHT_MAP = null;
+    private int[][] HEIGHT_MAP;
+
     @Unique
-    private int SIZE_X = 0;
+    private int[][] SOLID_HEIGHT_MAP;
+
     @Unique
-    private int SIZE_Z = 0;
+    private int[][] BIOME_MAP;
+
+    @Unique
+    private int SIZE_X;
+    @Unique
+    private int SIZE_Z;
 
     @Override
-    public void forceMapSliceUpdate(int[][] ints, int sizex, int sizez) {
-        SOLID_HEIGHT_MAP = ints;
+    public void forceMapSliceUpdate(int[][] heights, int[][] solidHeights, int[][] biomes, int sizex, int sizez) {
+        HEIGHT_MAP = heights;
+        SOLID_HEIGHT_MAP = solidHeights;
+        BIOME_MAP = biomes;
         SIZE_X = sizex;
         SIZE_Z = sizez;
     }
@@ -39,9 +49,33 @@ public abstract class MixinChunkSlice implements IMapSlice, IExtendBlockView {
     @Override
     public int getSolidBlockHeight(BlockPos pos) {
         if (SOLID_HEIGHT_MAP == null || SOLID_HEIGHT_MAP[0] == null) return 0;
-        int relBlockX = SectionPos.blockToSectionCoord(pos.getX()) - centerX ;
-        int relBlockZ = SectionPos.blockToSectionCoord(pos.getZ()) - centerZ ;
+        int relBlockX = SectionPos.blockToSectionCoord(pos.getX()) - centerX;
+        int relBlockZ = SectionPos.blockToSectionCoord(pos.getZ()) - centerZ;
         int[] lightArrays = this.SOLID_HEIGHT_MAP[
+                relBlockX + (relBlockZ) * SIZE_X];
+        int localBlockX = pos.getX() & 15;
+        int localBlockZ = pos.getZ() & 15;
+        return lightArrays[localBlockX * 16 + localBlockZ];
+    }
+
+    @Override
+    public int getBlockHeight(BlockPos pos) {
+        if (HEIGHT_MAP == null || HEIGHT_MAP[0] == null) return 0;
+        int relBlockX = SectionPos.blockToSectionCoord(pos.getX()) - centerX;
+        int relBlockZ = SectionPos.blockToSectionCoord(pos.getZ()) - centerZ;
+        int[] lightArrays = this.HEIGHT_MAP[
+                relBlockX + (relBlockZ) * SIZE_X];
+        int localBlockX = pos.getX() & 15;
+        int localBlockZ = pos.getZ() & 15;
+        return lightArrays[localBlockX * 16 + localBlockZ];
+    }
+
+    @Override
+    public int getSurfaceFaceBiomeId(BlockPos pos) {
+        if (BIOME_MAP == null || BIOME_MAP[0] == null) return 0;
+        int relBlockX = SectionPos.blockToSectionCoord(pos.getX()) - centerX;
+        int relBlockZ = SectionPos.blockToSectionCoord(pos.getZ()) - centerZ;
+        int[] lightArrays = this.BIOME_MAP[
                 relBlockX + (relBlockZ) * SIZE_X];
         int localBlockX = pos.getX() & 15;
         int localBlockZ = pos.getZ() & 15;
@@ -65,7 +99,7 @@ public abstract class MixinChunkSlice implements IMapSlice, IExtendBlockView {
     }
 
     @Unique
-    private BlockPos.MutableBlockPos eclipticseasons$mutableBlockPos =new BlockPos.MutableBlockPos();
+    private BlockPos.MutableBlockPos eclipticseasons$mutableBlockPos = new BlockPos.MutableBlockPos();
 
     @Override
     public BlockPos.MutableBlockPos getModelCheckPos() {

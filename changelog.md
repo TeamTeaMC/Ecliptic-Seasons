@@ -1,3 +1,8 @@
+### 0.12.0-pre8-4
+
+- Backported the extra rendering acceleration from 1.21 to 1.20, greatly reducing rendering performance loss.
+- Currently supports three renderers: Minecraft, Embeddium, and OptiFine.
+
 ### 0.12.0-pre8-3
 
 - Added transition textures between snow-covered blocks and normal blocks, which can be enabled in the Debug options.

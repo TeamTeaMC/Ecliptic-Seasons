@@ -101,5 +101,7 @@ public class ChunkInfoMap {
         return z;
     }
 
-
+    public short getMinY() {
+        return minY;
+    }
 }

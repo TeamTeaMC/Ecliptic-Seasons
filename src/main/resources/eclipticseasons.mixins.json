@@ -57,7 +57,7 @@
     "client.render.chunk.MixinBlockRenderVanilla",
     "client.render.chunk.MixinChunkRenderDispatcher",
     "client.render.chunk.MixinChunkSlice",
-    "client.render.chunk.MixinRenderChunkCreate",
+    "client.render.chunk.MixinRenderRegionCache",
     "client.sound.MixinLocalPlayer",
     "client.sound.MixinMusicManager",
     "compat.distanthorizons.MixinClientLevel",

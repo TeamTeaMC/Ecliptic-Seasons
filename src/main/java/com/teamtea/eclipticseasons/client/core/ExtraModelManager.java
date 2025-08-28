@@ -13,6 +13,7 @@ import com.teamtea.eclipticseasons.client.model.unbake.SolarBlockModel;
 import com.teamtea.eclipticseasons.client.reload.ClientJsonCacheListener;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.client.util.ClientRef;
+import com.teamtea.eclipticseasons.common.core.map.SnowyRemover;
 import com.teamtea.eclipticseasons.common.core.snow.SnowChecker;
 import com.teamtea.eclipticseasons.common.registry.BlockRegistry;
 import com.teamtea.eclipticseasons.client.model.*;
@@ -404,6 +405,22 @@ public class ExtraModelManager {
             return false;
         }
 
+        boolean leaveLike = MapChecker.leaveLike(flag);
+        boolean leavesOrVine = leaveLike || MapChecker.vineLike(flag);
+
+        IMapSlice mapSlice = null;
+        if (blockAndTintGetter instanceof IMapSlice cmapSlice) {
+            mapSlice = cmapSlice;
+            if (!leavesOrVine) {
+                int cut = mapSlice.getBlockHeight(pos) - pos.getY();
+                if (cut > 1
+                    // || cut < -3
+                )
+                    if (!ClientConfig.Renderer.snowUnderTree.get())
+                        return false;
+            }
+        }
+
         int offset = snowDefClientOverlay == null ?
                 MapChecker.getSnowOffset(state, flag) : snowDefClientOverlay.get(0).getInfo().getOffset();
 
@@ -414,11 +431,11 @@ public class ExtraModelManager {
         if (ClientConfig.Renderer.useVanillaCheck.get()) {
             isLight = blockAndTintGetter.getBrightness(LightLayer.BLOCK, pos.above()) >= 15;
         } else {
-            int cacheHeight = MapChecker.getHeightOrUpdate(level, pos, false);
+            int cacheHeight = mapSlice != null ? mapSlice.getBlockHeight(pos) :
+                    MapChecker.getHeightOrUpdate(level, pos, false);
             isLight = cacheHeight <= pos.getY() - offset;
         }
 
-        boolean leaveLike = MapChecker.leaveLike(flag);
         boolean specialLeaves = false;
 
         if (!isLight && ClientConfig.Renderer.snowUnderTree.get()) {
@@ -479,13 +496,26 @@ public class ExtraModelManager {
         if (isLight) {
             if (CommonConfig.isSnowyWinter()
                     && onBlock != Blocks.SNOW_BLOCK
-                    && MapChecker.shouldSnowAt(level, pos, state, null, seed)) {
+                    && ((mapSlice != null && MapChecker.shouldSnowAt(level, pos, mapSlice.getSurfaceFaceBiomeId(pos), state, null, seed))
+                    || (mapSlice == null && MapChecker.shouldSnowAt(level, pos, state, null, seed))
+            )
+            ) {
                 isSnowy = true;
                 if (CommonConfig.Season.notSnowyNearGlowingBlock.get()) {
-                    checkPos.set(pos.getX(), pos.getY() + 1 - offset, pos.getZ());
-                    if (blockAndTintGetter.getBrightness(LightLayer.BLOCK, checkPos) >=
-                            CommonConfig.Season.notSnowyNearGlowingBlockLevel.get()) {
-                        isSnowy = false;
+                    if (mapSlice != null) {
+                        checkPos.set(pos.getX(), pos.getY() + 1 - offset, pos.getZ());
+                        if (blockAndTintGetter.getBrightness(LightLayer.BLOCK, checkPos) >=
+                                CommonConfig.Season.notSnowyNearGlowingBlockLevel.get()) {
+                            isSnowy = false;
+                        }
+                    }
+
+                    if (mapSlice == null) {
+                        checkPos.set(pos.getX(), pos.getY() + 1 - offset, pos.getZ());
+                        if (blockAndTintGetter.getBrightness(LightLayer.BLOCK, checkPos) >=
+                                CommonConfig.Season.notSnowyNearGlowingBlockLevel.get()) {
+                            isSnowy = false;
+                        }
                     }
                 }
             }
@@ -523,15 +553,33 @@ public class ExtraModelManager {
             extendCheck = true;
         }
 
+        boolean leaveLike = MapChecker.leaveLike(flag);
+        boolean specialLeaves = false;
+        boolean leavesOrVine = leaveLike || MapChecker.vineLike(flag);
+
+        IMapSlice mapSlice = null;
+        if (blockAndTintGetter instanceof IMapSlice cmapSlice) {
+            mapSlice = cmapSlice;
+            if (!leavesOrVine) {
+                int cut = mapSlice.getBlockHeight(pos) - pos.getY();
+                if (cut > 1
+                    // || cut < -3
+                )
+                    if (!ClientConfig.Renderer.snowUnderTree.get()
+                            && !extendCheck)
+                        return null;
+            }
+        }
+
         if (ClientConfig.Renderer.useVanillaCheck.get()) {
             isLight = blockAndTintGetter.getBrightness(LightLayer.BLOCK, pos.above()) >= 15;
         } else {
-            int cacheHeight = MapChecker.getHeightOrUpdate(level, pos, false);
+            int cacheHeight = mapSlice != null ?
+                    mapSlice.getBlockHeight(pos)
+                    : MapChecker.getHeightOrUpdate(level, pos, false);
             isLight = cacheHeight <= pos.getY() - offset;
         }
 
-        boolean leaveLike = MapChecker.leaveLike(flag);
-        boolean specialLeaves = false;
 
         if (!isLight && ClientConfig.Renderer.snowUnderTree.get()) {
             checkPos.set(pos.getX(), pos.getY() + 1, pos.getZ());
@@ -592,16 +640,28 @@ public class ExtraModelManager {
             boolean isSnowy = false;
             if (CommonConfig.isSnowyWinter()
                     && isLight && onBlock != Blocks.SNOW_BLOCK
-                    && MapChecker.shouldSnowAt(level, pos, state, random, seed)) {
+                    && ((mapSlice != null && MapChecker.shouldSnowAt(level, pos, mapSlice.getSurfaceFaceBiomeId(pos), state, random, seed))
+                    || (mapSlice == null && MapChecker.shouldSnowAt(level, pos, state, random, seed))
+            )) {
                 // DynamicLeavesBlock
 
                 isSnowy = true;
 
                 if (CommonConfig.Season.notSnowyNearGlowingBlock.get()) {
-                    checkPos.set(pos.getX(), pos.getY() + 1 - offset, pos.getZ());
-                    if (blockAndTintGetter.getBrightness(LightLayer.BLOCK, checkPos) >=
-                            CommonConfig.Season.notSnowyNearGlowingBlockLevel.get()) {
-                        isSnowy = false;
+                    if (mapSlice != null) {
+                        checkPos.set(pos.getX(), pos.getY() + 1 - offset, pos.getZ());
+                        if (blockAndTintGetter.getBrightness(LightLayer.BLOCK, checkPos) >=
+                                CommonConfig.Season.notSnowyNearGlowingBlockLevel.get()) {
+                            isSnowy = false;
+                        }
+                    }
+
+                    if (mapSlice == null) {
+                        checkPos.set(pos.getX(), pos.getY() + 1 - offset, pos.getZ());
+                        if (blockAndTintGetter.getBrightness(LightLayer.BLOCK, checkPos) >=
+                                CommonConfig.Season.notSnowyNearGlowingBlockLevel.get()) {
+                            isSnowy = false;
+                        }
                     }
                 }
 
@@ -687,7 +747,9 @@ public class ExtraModelManager {
                             for (SeasonBlockDefinition.FlatSliceHolder flatSliceHolder : flatSliceHolders) {
                                 SeasonBlockDefinition.FlatSlice flatSlice = flatSliceHolder.flatSlice();
                                 if (!flatSlice.emptyAbove() || blockAndTintGetter.getBlockState(checkPos).isAir()) {
-                                    if (localSeasonStatus.getBiomes().contains(MapChecker.getSurfaceBiome(level, pos))) {
+                                    if ((mapSlice == null && localSeasonStatus.getBiomes().contains(MapChecker.getSurfaceBiome(level, pos))
+                                            || (mapSlice != null && localSeasonStatus.getBiomes().contains(MapChecker.idToBiome(level, mapSlice.getSurfaceFaceBiomeId(checkPos))))))
+                                    {
                                         ResourceLocation cinfo = flatSlice.transitionModels() == null ?
                                                 flatSlice.mid() :
                                                 Mth.abs(((int) (seed + pos.getX()))) % 100 > ClientCon.progress ?
