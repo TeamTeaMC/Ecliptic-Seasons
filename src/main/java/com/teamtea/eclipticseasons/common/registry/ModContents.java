@@ -11,6 +11,7 @@ import com.teamtea.eclipticseasons.api.data.craft.WetterStructure;
 import com.teamtea.eclipticseasons.api.data.crop.CropGrowControlBuilder;
 import com.teamtea.eclipticseasons.api.data.quest.SeasonQuest;
 import com.teamtea.eclipticseasons.api.data.season.SeasonCycle;
+import com.teamtea.eclipticseasons.api.data.season.SeasonDefinition;
 import com.teamtea.eclipticseasons.api.data.season.SeasonPhase;
 import com.teamtea.eclipticseasons.api.data.season.SnowDefinition;
 import com.teamtea.eclipticseasons.api.data.weather.CustomRainBuilder;
@@ -89,6 +90,8 @@ public class ModContents {
 
         // not sync
         event.dataPackRegistry(ESRegistries.WEATHER_REGION, WeatherRegion.CODEC);
+        event.dataPackRegistry(ESRegistries.SEASON_DEFINITION, SeasonDefinition.CODEC);
+
     }
 
     @SubscribeEvent

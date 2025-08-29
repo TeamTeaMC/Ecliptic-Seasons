@@ -1,0 +1,140 @@
+{
+  "biomes": "minecraft:the_void",
+  "changes": {
+    "seasons": {
+      "spring": {
+        "target": {
+          "blocks": "minecraft:grass_block"
+        },
+        "place": [
+          {
+            "replace": false,
+            "conditions": {
+              "empty_above": true
+            },
+            "block": {
+              "Name": "minecraft:grass"
+            },
+            "weight": 22,
+            "offset": [
+              0,
+              1,
+              0
+            ]
+          },
+          {
+            "replace": false,
+            "conditions": {
+              "empty_above": true
+            },
+            "block": {
+              "Name": "minecraft:dandelion"
+            },
+            "weight": 1,
+            "offset": [
+              0,
+              1,
+              0
+            ]
+          },
+          {
+            "replace": false,
+            "conditions": {
+              "empty_above": true
+            },
+            "block": {
+              "Name": "minecraft:oxeye_daisy"
+            },
+            "weight": 1,
+            "offset": [
+              0,
+              1,
+              0
+            ]
+          }
+        ],
+        "fixed_seed": true
+      },
+      "summer": {
+        "target": {
+          "blocks": "minecraft:grass"
+        },
+        "place": {
+          "multi_blocks": [
+            {
+              "state": {
+                "Properties": {
+                  "half": "upper"
+                },
+                "Name": "minecraft:tall_grass"
+              },
+              "offset": [
+                0,
+                1,
+                0
+              ]
+            },
+            {
+              "state": {
+                "Properties": {
+                  "half": "lower"
+                },
+                "Name": "minecraft:tall_grass"
+              }
+            }
+          ],
+          "offset": [
+            0,
+            1,
+            0
+          ]
+        },
+        "fixed_seed": true
+      },
+      "autumn": [
+        {
+          "target": {
+            "blocks": "minecraft:tall_grass",
+            "state": {
+              "half": "lower"
+            }
+          },
+          "place": {
+            "block": {
+              "Name": "minecraft:grass"
+            }
+          }
+        },
+        {
+          "target": {
+            "blocks": "minecraft:tall_grass",
+            "state": {
+              "half": "upper"
+            }
+          },
+          "place": {}
+        }
+      ],
+      "winter": [
+        {
+          "target": {
+            "blocks": "minecraft:grass"
+          },
+          "place": {}
+        },
+        {
+          "target": {
+            "blocks": "minecraft:dandelion"
+          },
+          "place": {}
+        },
+        {
+          "target": {
+            "blocks": "minecraft:oxeye_daisy"
+          },
+          "place": {}
+        }
+      ]
+    }
+  }
+}

@@ -735,41 +735,41 @@ public class ExtraModelManager {
                     isSnowy = true;
                 }
             }
+        }
 
-            if (replace == null || !(replace instanceof IESReplaceModel iesReplaceModel && iesReplaceModel.isReplace())) {
-                if (seasonDefCache == null)
-                    seasonDefCache = ClientRef.seasonDef.get(onBlock);
-                if (seasonDefCache != null)
-                    for (SeasonBlockDefinition localSeasonStatus : seasonDefCache) {
-                        List<SeasonBlockDefinition.FlatSliceHolder> flatSliceHolders = localSeasonStatus.getFlatSliceEnumMap().get(ClientCon.nowSolarTerm);
-                        if (flatSliceHolders != null && !flatSliceHolders.isEmpty()) {
-                            checkPos.set(pos.getX(), pos.getY() + 1, pos.getZ());
-                            for (SeasonBlockDefinition.FlatSliceHolder flatSliceHolder : flatSliceHolders) {
-                                SeasonBlockDefinition.FlatSlice flatSlice = flatSliceHolder.flatSlice();
-                                if (!flatSlice.emptyAbove() || blockAndTintGetter.getBlockState(checkPos).isAir()) {
-                                    if ((mapSlice == null && localSeasonStatus.getBiomes().contains(MapChecker.getSurfaceBiome(level, pos))
-                                            || (mapSlice != null && localSeasonStatus.getBiomes().contains(MapChecker.idToBiome(level, mapSlice.getSurfaceFaceBiomeId(checkPos))))))
-                                    {
-                                        ResourceLocation cinfo = flatSlice.transitionModels() == null ?
-                                                flatSlice.mid() :
-                                                Mth.abs(((int) (seed + pos.getX()))) % 100 > ClientCon.progress ?
-                                                        flatSlice.transitionModels().getFirst() : flatSlice.transitionModels().getSecond();
-                                        ModelResolver smr = extraSnowModelBuilds.get(cinfo);
-                                        if (smr != null) {
-                                            var mmrl = smr.tryFind(state);
-                                            if (mmrl != null) {
-                                                var to_replace = models.get(mmrl.modelResourceLocation());
-                                                if (to_replace != null) {
-                                                    if (replace != null) {
-                                                        replace = new SnowySeasonBakeModel<>(to_replace, replace, getRenderType(state));
-                                                        if (mmrl.replace() && replace instanceof SnowySeasonBakeModel<?> snowyBakedModelWrapper) {
-                                                            snowyBakedModelWrapper.setReplace(true);
-                                                        }
-                                                    } else {
-                                                        replace = mmrl.replace() ?
-                                                                new TempReplaceModelWrapper<>(to_replace) :
-                                                                to_replace;
+        if (replace == null || !(replace instanceof IESReplaceModel iesReplaceModel && iesReplaceModel.isReplace())) {
+            if (seasonDefCache == null)
+                seasonDefCache = ClientRef.seasonDef.get(onBlock);
+            if (seasonDefCache != null)
+                for (SeasonBlockDefinition localSeasonStatus : seasonDefCache) {
+                    List<SeasonBlockDefinition.FlatSliceHolder> flatSliceHolders = localSeasonStatus.getFlatSliceEnumMap().get(ClientCon.nowSolarTerm);
+                    if (flatSliceHolders != null && !flatSliceHolders.isEmpty()) {
+                        checkPos.set(pos.getX(), pos.getY() + 1, pos.getZ());
+                        for (SeasonBlockDefinition.FlatSliceHolder flatSliceHolder : flatSliceHolders) {
+                            SeasonBlockDefinition.FlatSlice flatSlice = flatSliceHolder.flatSlice();
+                            if (!flatSlice.emptyAbove() || blockAndTintGetter.getBlockState(checkPos).isAir()) {
+                                if ((mapSlice == null && localSeasonStatus.getBiomes().contains(MapChecker.getSurfaceBiome(level, pos))
+                                        || (mapSlice != null && localSeasonStatus.getBiomes().contains(MapChecker.idToBiome(level, mapSlice.getSurfaceFaceBiomeId(checkPos))))))
+                                {
+                                    ResourceLocation cinfo = flatSlice.transitionModels() == null ?
+                                            flatSlice.mid() :
+                                            Mth.abs(((int) (seed + pos.getX()))) % 100 > ClientCon.progress ?
+                                                    flatSlice.transitionModels().getFirst() : flatSlice.transitionModels().getSecond();
+                                    ModelResolver smr = extraSnowModelBuilds.get(cinfo);
+                                    if (smr != null) {
+                                        var mmrl = smr.tryFind(state);
+                                        if (mmrl != null) {
+                                            var to_replace = models.get(mmrl.modelResourceLocation());
+                                            if (to_replace != null) {
+                                                if (replace != null) {
+                                                    replace = new SnowySeasonBakeModel<>(to_replace, replace, getRenderType(state));
+                                                    if (mmrl.replace() && replace instanceof SnowySeasonBakeModel<?> snowyBakedModelWrapper) {
+                                                        snowyBakedModelWrapper.setReplace(true);
                                                     }
+                                                } else {
+                                                    replace = mmrl.replace() ?
+                                                            new TempReplaceModelWrapper<>(to_replace) :
+                                                            to_replace;
                                                 }
                                             }
                                         }
@@ -778,8 +778,9 @@ public class ExtraModelManager {
                             }
                         }
                     }
-            }
+                }
         }
+
         return replace;
     }
 

@@ -1,3 +1,10 @@
+### 0.12.0-pre10
+
+- Added the `season_definitions` datapack, which is used to define the actual seasonal block changes. Note that since this
+  datapack affects the world, it is currently placed under the Debug configuration and must be enabled before use.
+- Seasonal block models are no longer restricted to surface-only placement.
+- Various other optimizations.
+
 ### 0.12.0-pre9
 
 **Bug Fixes:**
@@ -18,7 +25,9 @@
 ### 0.12.0-pre8-5
 
 - Fixed an issue where level 0 light checks did not support custom snow-covered blocks.
-- Changed the built-in snow-covered model for grass blocks to use Multivariant instead of the demo MultiPart model. It also no longer applies random rotation. Variant-type models require fewer checks and combinations, resulting in faster rendering.
+- Changed the built-in snow-covered model for grass blocks to use Multivariant instead of the demo MultiPart model. It
+  also no longer applies random rotation. Variant-type models require fewer checks and combinations, resulting in faster
+  rendering.
 - Removed the built-in client resource pack override file for the snow-covered cobblestone definition.
 
 ### 0.12.0-pre8-4

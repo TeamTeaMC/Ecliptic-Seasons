@@ -1,6 +1,7 @@
 package com.teamtea.eclipticseasons.client.model;
 
 import com.mojang.datafixers.util.Pair;
+import com.teamtea.eclipticseasons.api.misc.BiomeHolderPredicate;
 import com.teamtea.eclipticseasons.client.core.ExtraModelManager;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
@@ -23,14 +24,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.function.Predicate;
 
 public class SeasonBiomeGoingModel<T extends BakedModel> extends BakedModelWrapper<T> {
     public static final ModelProperty<Holder<Biome>> BIOME_PROPERTY = new ModelProperty<>();
     @Getter
-    private final List<Pair<BiomePredicate, SeasonGoingModel<T>>> models;
+    private final List<Pair<BiomeHolderPredicate, SeasonGoingModel<T>>> models;
 
-    public SeasonBiomeGoingModel(T originalModel, List<Pair<BiomePredicate, SeasonGoingModel<T>>> models) {
+    public SeasonBiomeGoingModel(T originalModel, List<Pair<BiomeHolderPredicate, SeasonGoingModel<T>>> models) {
         super(originalModel);
         this.models = models;
     }
@@ -39,7 +39,7 @@ public class SeasonBiomeGoingModel<T extends BakedModel> extends BakedModelWrapp
     public @NotNull List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, RandomSource rand, ModelData extraData, @Nullable RenderType renderType) {
         if (extraData.has(BIOME_PROPERTY)) {
             Holder<Biome> biomeHolder = extraData.get(BIOME_PROPERTY);
-            for (Pair<BiomePredicate, SeasonGoingModel<T>> model : models) {
+            for (Pair<BiomeHolderPredicate, SeasonGoingModel<T>> model : models) {
                 if (model.getFirst().test(biomeHolder)) {
                     return model.getSecond().getQuads(state, side, rand, extraData, renderType);
                 }
@@ -60,7 +60,4 @@ public class SeasonBiomeGoingModel<T extends BakedModel> extends BakedModelWrapp
         return modelData1.build();
     }
 
-    @FunctionalInterface
-    public interface BiomePredicate extends Predicate<Holder<Biome>> {
-    }
 }

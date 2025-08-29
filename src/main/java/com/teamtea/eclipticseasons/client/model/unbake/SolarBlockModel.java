@@ -4,6 +4,7 @@ import com.mojang.datafixers.util.Either;
 import com.mojang.datafixers.util.Pair;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.data.client.model.seasonal.SeasonalTexture;
+import com.teamtea.eclipticseasons.api.misc.BiomeHolderPredicate;
 import com.teamtea.eclipticseasons.client.model.SeasonBiomeGoingModel;
 import com.teamtea.eclipticseasons.client.model.SeasonGoingModel;
 import it.unimi.dsi.fastutil.Hash;
@@ -112,8 +113,8 @@ public class SolarBlockModel extends BlockModel {
         if (seasonalTexture != null) {
             BakedModel bake = UnbakedGeometryHelper.bake(this, baker, model, spriteGetter, state, pLocation, guiLight3d);
             SeasonGoingModel<BakedModel> end = null;
-            List<Pair<SeasonBiomeGoingModel.BiomePredicate, SeasonGoingModel<BakedModel>>> list = new ArrayList<>();
-            List<Pair<SeasonBiomeGoingModel.BiomePredicate, SeasonGoingModel<BakedModel>>> defaultList = new ArrayList<>();
+            List<Pair<BiomeHolderPredicate, SeasonGoingModel<BakedModel>>> list = new ArrayList<>();
+            List<Pair<BiomeHolderPredicate, SeasonGoingModel<BakedModel>>> defaultList = new ArrayList<>();
 
             Map<BlockModel, BakedModel> bakedCache =
                     new Object2ObjectOpenCustomHashMap<>(new Hash.Strategy<>() {
@@ -179,7 +180,7 @@ public class SolarBlockModel extends BlockModel {
                 if (texture.getBiomes().isEmpty()) {
                     defaultList.add(Pair.of((b) -> true, end));
                 } else {
-                    SeasonBiomeGoingModel.BiomePredicate biomePredicate = (biomeHolder -> {
+                    BiomeHolderPredicate biomePredicate = (biomeHolder -> {
                         var biomes = texture.getBiomes();
                         if (biomes.isEmpty()) return true;
                         var either = biomes.get();

@@ -53,6 +53,7 @@ public class CommonConfig {
         public static ForgeConfigSpec.BooleanValue snowOverlayGlowingBlock;
         public static ForgeConfigSpec.BooleanValue disableChunkCacheCleaner;
         public static ForgeConfigSpec.BooleanValue disableUniqueRebindingBiomeTags;
+        public static ForgeConfigSpec.BooleanValue seasonDefinition;
 
         private static void load(ForgeConfigSpec.Builder builder) {
             builder.push("Debug");
@@ -64,6 +65,8 @@ public class CommonConfig {
                     .define("SnowyFullCollisionShape", false);
             snowOverlayGlowingBlock = builder.comment("Snow can cover the block which would lights.")
                     .define("NotSnowOverlayGlowingBlock", false);
+            seasonDefinition = builder.comment("Enable the season definitions system.")
+                    .define("EnableSeasonDefinition", false);
             disableChunkCacheCleaner = builder.comment("Disable chunk extra info cache cleanup.")
                     .define("DisableChunkCacheCleaner", false);
             disableUniqueRebindingBiomeTags = builder.comment("Disable unique rebinding for biome tags. Note that after disabling, tags may overlap.")
@@ -322,6 +325,9 @@ public class CommonConfig {
     }
 
     @Getter
+    private static boolean seasonDefinition = false;
+
+    @Getter
     private static boolean useSolarWeather = true;
 
     @Getter
@@ -353,6 +359,7 @@ public class CommonConfig {
             forceCropCompatMode = Crop.forceCompatMode.get();
             snowyWinter = Season.snowyWinter.get();
             cropHumidityTransition = Crop.cropHumidityTransition.get();
+            seasonDefinition = Debug.seasonDefinition.get();
             int[] ints = Stream.of(Season.springDayTimes, Season.summerDayTimes, Season.autumnDayTimes, Season.winterDayTimes, Season.noneDayTimes)
                     .map(ForgeConfigSpec.ConfigValue::get)
                     .flatMap(Collection::stream)

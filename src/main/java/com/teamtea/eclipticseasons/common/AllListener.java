@@ -18,6 +18,7 @@ import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
 import com.teamtea.eclipticseasons.common.core.crop.CropInfoManager;
+import com.teamtea.eclipticseasons.common.core.crop.NaturalPlantHandler;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.core.map.ServerMapFixer;
 import com.teamtea.eclipticseasons.common.core.snow.SnowChecker;
@@ -73,6 +74,7 @@ public class AllListener {
         WeatherManager.informUpdateBiomes(tagsUpdatedEvent.getRegistryAccess(), tagsUpdatedEvent.getUpdateCause() == TagsUpdatedEvent.UpdateCause.SERVER_DATA_LOAD);
         CropInfoManager.init(tagsUpdatedEvent);
         CropGrowthHandler.resetUpdate(tagsUpdatedEvent.getRegistryAccess(), tagsUpdatedEvent.getUpdateCause() == TagsUpdatedEvent.UpdateCause.SERVER_DATA_LOAD);
+        NaturalPlantHandler.resetUpdate(tagsUpdatedEvent.getRegistryAccess(), tagsUpdatedEvent.getUpdateCause() == TagsUpdatedEvent.UpdateCause.SERVER_DATA_LOAD);
         SnowChecker.resetUpdate(tagsUpdatedEvent.getRegistryAccess(), tagsUpdatedEvent.getUpdateCause() == TagsUpdatedEvent.UpdateCause.SERVER_DATA_LOAD);
     }
 
@@ -86,6 +88,7 @@ public class AllListener {
     @SubscribeEvent
     public static void onServerStoppingEvent(ServerStoppingEvent event) {
         CropGrowthHandler.clearOnClientExitOrServerClose();
+        NaturalPlantHandler.clearOnClientExitOrServerClose();
         BiomeClimateManager.clearOnClientExitOrServerClose();
         SnowChecker.clearOnClientExitOrServerClose();
     }

@@ -5,6 +5,8 @@ import com.teamtea.eclipticseasons.api.constant.tag.EclipticBlockTags;
 import com.teamtea.eclipticseasons.api.data.craft.WetterStructure;
 import com.teamtea.eclipticseasons.api.misc.CustomRandomTick;
 import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
+import com.teamtea.eclipticseasons.common.core.crop.ExtraTickType;
+import com.teamtea.eclipticseasons.common.core.crop.NaturalPlantHandler;
 import com.teamtea.eclipticseasons.common.hook.ESEventHook;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.core.BlockPos;
@@ -79,7 +81,7 @@ public abstract class MixinBlockStateBase implements CustomRandomTick {
     }
 
     @Unique
-    public int eclipticseasons$tickType = -1;
+    public int eclipticseasons$tickType = ExtraTickType.UNCHECK;
 
     @Unique
     public List<WetterStructure> eclipticseasons$wetterStructures = null;
@@ -87,16 +89,25 @@ public abstract class MixinBlockStateBase implements CustomRandomTick {
     @Override
     public void eclipticseasons$tick(BlockState state, ServerLevel worldIn, BlockPos pos) {
         switch (eclipticseasons$tickType) {
-            case 0 -> {
+            case ExtraTickType.NONE -> {
                 return;
             }
-            case 1 -> {
+            case ExtraTickType.WETTER -> {
                 CropGrowthHandler.handleRandomTick(worldIn, pos, state, eclipticseasons$wetterStructures);
+            }
+            case ExtraTickType.NATURAL -> {
+                NaturalPlantHandler.tickBlock(worldIn, pos, state);
+            }
+            case ExtraTickType.WETTER_AND_NATURAL -> {
+                CropGrowthHandler.handleRandomTick(worldIn, pos, state, eclipticseasons$wetterStructures);
+                NaturalPlantHandler.tickBlock(worldIn, pos, state);
             }
             default -> {
                 List<WetterStructure> wetterStructures = CropGrowthHandler.validTick(state);
-                eclipticseasons$tickType = wetterStructures.isEmpty() ? 0 : 1;
+                eclipticseasons$tickType = wetterStructures.isEmpty() ? ExtraTickType.NONE : ExtraTickType.WETTER;
                 eclipticseasons$wetterStructures = wetterStructures;
+                if (NaturalPlantHandler.shouldTick(state))
+                    eclipticseasons$tickType = eclipticseasons$tickType == ExtraTickType.NONE ? ExtraTickType.NATURAL : ExtraTickType.WETTER_AND_NATURAL;
                 eclipticseasons$tick(state, worldIn, pos);
             }
         }
@@ -104,7 +115,12 @@ public abstract class MixinBlockStateBase implements CustomRandomTick {
 
     @Override
     public void eclipticseasons$reset() {
-        eclipticseasons$tickType = -1;
+        eclipticseasons$tickType = ExtraTickType.UNCHECK;
         eclipticseasons$wetterStructures = null;
+    }
+
+    @Override
+    public int eclipticseasons$getType() {
+        return eclipticseasons$tickType;
     }
 }

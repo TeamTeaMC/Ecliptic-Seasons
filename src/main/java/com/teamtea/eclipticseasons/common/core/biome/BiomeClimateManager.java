@@ -1,6 +1,7 @@
 package com.teamtea.eclipticseasons.common.core.biome;
 
 import com.mojang.datafixers.util.Pair;
+import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.constant.climate.BiomeClimateSettings;
 import com.teamtea.eclipticseasons.api.constant.climate.ISnowTerm;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
@@ -21,6 +22,7 @@ import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.core.*;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
@@ -282,6 +284,20 @@ public class BiomeClimateManager {
                 for (var holder : biomeNamed.get()) {
                     SMALL_BIOME_MAP.put(holder.value(), isServer);
                     ((IBiomeTagHolder) (Object) holder.value()).eclipticseasons$setSmall(true);
+                }
+            }
+
+            for (TagKey<Biome> biomeType : ClimateTypeBiomeTags.BIOME_TYPES) {
+                TagKey<Biome> oldTag = ClimateTypeBiomeTags.create(biomeType.location().getPath().replace("rain/", ""));
+                Optional<HolderSet.Named<Biome>> oldTagApplied = biomeRegistry.get().getTag(oldTag);
+                if (oldTagApplied.isPresent() && oldTagApplied.get().size() > 0) {
+                    String message = "[%s] was deprecated now, please use [%s] instead.".formatted(
+                            oldTag.location(), biomeType.location());
+                    message += "\nBiome list: " + String.join(",", oldTagApplied.get().stream()
+                            .map(h -> h.unwrapKey().map(ResourceKey::location).map(ResourceLocation::toString).orElse(null))
+                            .filter(Objects::nonNull)
+                            .toList());
+                    EclipticSeasons.LOGGER.error(message);
                 }
             }
         }
