@@ -1,5 +1,5 @@
 {
-  "biomes": "#eclipticseasons:seasonal",
+  "biomes": "#eclipticseasons:rain/seasonal",
   "slices": [
     {
       "textures": {

@@ -20,8 +20,6 @@ public class SnowDefinitionsRegistry {
 
     public static final ResourceKey<SnowDefinition> SNOWY_GRASS_BLOCK = createKey("snowy_grass_block");
 
-    public static final ResourceKey<SnowDefinition> LEAVE_TEST = createKey("test/leave");
-
     public static final ResourceKey<SnowDefinition> SNOWY_SWEET_BERRY_BUSH = createKey("snowy_sweet_berry_bush");
     public static final ResourceKey<SnowDefinition> SNOWY_DEAD_BUSH = createKey("snowy_dead_bush");
     public static final ResourceKey<SnowDefinition> SNOWY_SUGAR_CANE = createKey("snowy_sugar_cane");
@@ -40,10 +38,6 @@ public class SnowDefinitionsRegistry {
         context.register(SNOWY_GRASS_BLOCK, SnowDefinition.builder()
                 .blocks(HolderSet.direct(Blocks.GRASS_BLOCK.builtInRegistryHolder()))
                 .info(SnowDefinition.Info.builder().mid(ClientModelDefinitions.SNOWY_GRASS_BLOCK_OVERLAY).build())
-                .build());
-        context.register(LEAVE_TEST, SnowDefinition.builder()
-                .blocks(HolderSet.direct(Blocks.OAK_LEAVES.builtInRegistryHolder()))
-                .info(SnowDefinition.Info.builder().flag(MapChecker.FLAG_CUSTOM_JSON_WITH_TOP_LEAVES).mid(ClientModelDefinitions.SNOWY_LEAVES_TOP).mid2(ClientModelDefinitions.SNOWY_LEAVES_ATTACH).build())
                 .build());
 
         addPlant(context, Blocks.SUGAR_CANE, MapChecker.FLAG_CUSTOM_JSON_VINE_LIKE);

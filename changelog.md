@@ -1,3 +1,20 @@
+### 0.12.0-pre9
+
+**Bug Fixes:**
+
+- Fixed an issue where disabling Solar Weather caused infinite biome precipitation queries. This bug was unintentionally
+  introduced in version 0.12.0-pre8-3.
+
+**Changes / Improvements:**
+
+- Refactored the biome tag system: old biome tags have been reorganized into categories. Tags affecting Biome Rain have
+  been moved to the rain directory.
+- Added new tags for Overworld Agro Climatic biomes and simplified nested tags used in `agro_climate` and `season_cycle`
+  data packs.
+- The biome tag system for the mod now uses a three-layer structure. Biomes can be assigned tags directly without
+  `replace` field. Unassigned biomes are automatically allocated via internal logic.
+- Removed the built-in demo snow-covered oak leaves block definition.
+
 ### 0.12.0-pre8-5
 
 - Fixed an issue where level 0 light checks did not support custom snow-covered blocks.

@@ -10,31 +10,26 @@
 
 ### 群系分类
 
-对于群系，最根本的工作是根据其特性分类别，该系统基于Biome
-Tag平台运行，目前主要分为三种。四季型地区，干湿季地区，恒温地区。此外还有一类特殊群系被标记为小群系，用于附着临近群系气候状态，一般无需考虑。
+对于 **主世界农业气候群系**，提供以下特殊标签：
 
-| 标签                                                                                              | 名称   | 是否支持自动分配   | 覆盖优先级 | 降雨概率（相对） |
-|-------------------------------------------------------------------------------------------------|------|------------|-------|----------|
-| `eclipticseasons:seasonal`<br>`eclipticseasons:seasonal/hot`<br>`eclipticseasons:seasonal/cold` | 四季型  | 按是否为主世界群系  | 最低    | 随节气变化    |
-| `eclipticseasons:monsoonal`                                                                     | 干湿季型 | 按是否为热带草原群系 | 中     | 雨季旱季分明   |
-| `eclipticseasons:rainless`                                                                      | 无雨   | 按有无预测      | 高     | 不下雨      |
-| `eclipticseasons:arid`                                                                          | 干旱   | 按雨量        | 高     | 0.01F    |
-| `eclipticseasons:droughty`                                                                      | 干燥   | 按雨量        | 高     | 0.1F     |
-| `eclipticseasons:soft`                                                                          | 温和   | 按雨量        | 高     | 0.3F     |
-| `eclipticseasons:rainy`                                                                         | 多雨   | 按雨量        | 高     | 0.9F     |
-| `eclipticseasons:is_small`                                                                      | 小群系  | 否          | 最高    | 根据附近群系   |
+* `eclipticseasons:agro/warm` – 适用于 **温暖地区**
+* `eclipticseasons:agro/cold` – 适用于 **寒冷地区**
+* `eclipticseasons:agro/hot` – 适用于 **炎热地区**
 
-默认状态下，四季型标签将分配给所有主世界群系，如果设定了其他类别将应用其他特性特性。
+这些标签用于根据气候对群系进行分类，以支持 Agro Climate 机制。
 
-干湿季默认状态下仅分配给热带草原。
+有关 **Biome Rain** 类型，请查看数据文件夹中的现有标签：
 
-如果未设定标签，群系将按现有降雨概率自动分配恒温型标签，因此并不需要刻意设计这一点。
+* `eclipticseasons:rain/seasonal`、`eclipticseasons:rain/seasonal/hot`、`eclipticseasons:rain/seasonal/cold` – 表示群系具有明显的季节变化。
+* `eclipticseasons:rain/monsoonal` – 表示群系有季节性的干湿周期。
+* `eclipticseasons:is_small` – 用于标记小型群系的特殊标签，一般不需要手动使用。
+* 其余标签 `eclipticseasons:rain/rainless`、`eclipticseasons:rain/arid`、`eclipticseasons:rain/droughty`、`eclipticseasons:rain/soft`、`eclipticseasons:rain/rainy` – 表示群系的降雨季节性变化较小，主要区分降雨量的不同。
 
-对于季节颜色也有一些标签，但是更推荐使用自定义资源包来定义自己喜欢的群系颜色。
-* `eclipticseasons:color/seasonal`、`eclipticseasons:color/seasonal/hot`、`eclipticseasons:color/seasonal/cold` — 分别表示正常、炎热和寒冷生物群系的季节性颜色。
-* `eclipticseasons:color/monsoonal` — 表示（热带）季风气候生物群系的颜色。
-* `eclipticseasons:color/stable`、`eclipticseasons:color/slightly` — 表示颜色变化稳定和轻微的区域。
+**群系颜色** 类型与上述类似，实际推荐使用资源包来自定义颜色：
 
+* `eclipticseasons:color/seasonal`、`eclipticseasons:color/seasonal/hot`、`eclipticseasons:color/seasonal/cold` – 分别表示普通、炎热和寒冷群系的季节性色彩变化。
+* `eclipticseasons:color/monsoonal` – 表示（热带）季风气候群系的颜色。
+* `eclipticseasons:color/stable`、`eclipticseasons:color/slightly` – 分别表示颜色变化稳定和变化轻微的区域。
 
 ## 季节性作物与湿度条件
 

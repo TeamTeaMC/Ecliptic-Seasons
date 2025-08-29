@@ -1,5 +1,5 @@
 {
-  "biomes": "#eclipticseasons:monsoonal",
+  "biomes": "#eclipticseasons:rain/monsoonal",
   "phases": {
     "solar_terms": {
       "beginning_of_spring": "eclipticseasons:dry_middle",

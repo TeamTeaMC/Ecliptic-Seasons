@@ -77,7 +77,9 @@ public class VanillaWeather {
 
     public static boolean hasPrecipitation(Level level, Biome biome) {
         var solarTerm = EclipticSeasonsApi.getInstance().getSolarTerm(level);
-        boolean hasPrecipitation = biome.hasPrecipitation();
+        // here we check if the biome has precipitation in vanilla game
+        // so we can reset the monsoonal rain then
+        boolean hasPrecipitation = biome.getModifiedClimateSettings().hasPrecipitation();
         TagKey<Biome> tag = ((IBiomeTagHolder) (Object) biome).eclipticseasons$getBindTag();
         if (tag.equals(ClimateTypeBiomeTags.MONSOONAL)) {
             Season season = solarTerm.getSeason();

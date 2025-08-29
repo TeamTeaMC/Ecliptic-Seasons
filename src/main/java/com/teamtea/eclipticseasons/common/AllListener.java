@@ -52,6 +52,7 @@ import net.minecraftforge.event.level.*;
 import net.minecraftforge.event.server.ServerAboutToStartEvent;
 import net.minecraftforge.event.server.ServerStoppingEvent;
 import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.server.ServerLifecycleHooks;
@@ -60,6 +61,12 @@ import java.util.List;
 
 @Mod.EventBusSubscriber(modid = EclipticSeasons.MODID)
 public class AllListener {
+
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public static void onTagsUpdatedEventEarly(TagsUpdatedEvent tagsUpdatedEvent) {
+        BiomeClimateManager.resetBiomeTags(tagsUpdatedEvent.getRegistryAccess(), tagsUpdatedEvent.getUpdateCause() == TagsUpdatedEvent.UpdateCause.SERVER_DATA_LOAD);
+    }
+
     @SubscribeEvent
     public static void onTagsUpdatedEvent(TagsUpdatedEvent tagsUpdatedEvent) {
         BiomeClimateManager.resetBiomeTemps(tagsUpdatedEvent.getRegistryAccess(), tagsUpdatedEvent.getUpdateCause() == TagsUpdatedEvent.UpdateCause.SERVER_DATA_LOAD);

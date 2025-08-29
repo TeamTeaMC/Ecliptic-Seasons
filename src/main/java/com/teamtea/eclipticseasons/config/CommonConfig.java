@@ -1,6 +1,5 @@
 package com.teamtea.eclipticseasons.config;
 
-import com.electronwill.nightconfig.toml.TomlParser;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.compat.CompatModule;
@@ -53,6 +52,7 @@ public class CommonConfig {
         public static ForgeConfigSpec.BooleanValue snowyFullCollisionShape;
         public static ForgeConfigSpec.BooleanValue snowOverlayGlowingBlock;
         public static ForgeConfigSpec.BooleanValue disableChunkCacheCleaner;
+        public static ForgeConfigSpec.BooleanValue disableUniqueRebindingBiomeTags;
 
         private static void load(ForgeConfigSpec.Builder builder) {
             builder.push("Debug");
@@ -66,6 +66,8 @@ public class CommonConfig {
                     .define("NotSnowOverlayGlowingBlock", false);
             disableChunkCacheCleaner = builder.comment("Disable chunk extra info cache cleanup.")
                     .define("DisableChunkCacheCleaner", false);
+            disableUniqueRebindingBiomeTags = builder.comment("Disable unique rebinding for biome tags. Note that after disabling, tags may overlap.")
+                    .define("DisableUniqueBiomeTagsRebinding", false);
             builder.pop();
         }
     }

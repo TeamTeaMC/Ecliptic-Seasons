@@ -7,6 +7,7 @@ import com.mojang.serialization.Lifecycle;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
+import com.teamtea.eclipticseasons.api.constant.tag.ClimateTypeBiomeTags;
 import com.teamtea.eclipticseasons.api.data.climate.AgroClimaticZone;
 import com.teamtea.eclipticseasons.api.data.crop.GrowParameter;
 import net.minecraft.core.*;
@@ -68,11 +69,8 @@ public class AgroClimateRegistry {
         BIOME_REGISTRY_LOOKUP = new BiomeRegistryLookup(BIOME_HOLDER_GETTER);
 
         context.register(TEMPERATE, AgroClimaticZone.builder((
-                        and(or(get(BiomeTags.IS_OVERWORLD), get(Tags.Biomes.IS_VOID)),
-                                not(or(get(Tags.Biomes.IS_PEAK),
-                                        get(Tags.Biomes.IS_SNOWY),
-                                        get(Tags.Biomes.IS_HOT_OVERWORLD)))
-                        )))
+                        get(ClimateTypeBiomeTags.WARM_REGION)
+                ))
                 .add(Season.SPRING, 6).add(Season.SUMMER, 6).add(Season.AUTUMN, 6).add(Season.WINTER, 6)
                 .end());
 
@@ -107,9 +105,7 @@ public class AgroClimateRegistry {
         );
 
         context.register(COLD, AgroClimaticZone.builder(
-                        and(get(BiomeTags.IS_OVERWORLD),
-                                or(get(Tags.Biomes.IS_PEAK),
-                                        get(Tags.Biomes.IS_SNOWY)))
+                        get(ClimateTypeBiomeTags.COLD_REGION)
                 )
                 .mapping(mapCold)
                 .add(Season.WINTER, 3).add(Season.SPRING, 4).add(Season.SUMMER, 3).add(Season.AUTUMN, 4).add(Season.WINTER, 10)
@@ -145,7 +141,9 @@ public class AgroClimateRegistry {
                 Either.<Season, SolarTerm>right(SolarTerm.GREATER_COLD), List.of(Pair.of(Either.<Season, SolarTerm>right(SolarTerm.WINTER_SOLSTICE), 1f))
         );
 
-        context.register(HOT, AgroClimaticZone.builder(and(get(Tags.Biomes.IS_HOT_OVERWORLD)))
+        context.register(HOT, AgroClimaticZone.builder(
+                        get(ClimateTypeBiomeTags.HOT_REGION)
+                )
                 .mapping(mapHot)
                 .add(Season.SPRING, 4).add(Season.SUMMER, 14).add(Season.AUTUMN, 3).add(Season.WINTER, 3)
                 .end());

@@ -108,10 +108,7 @@ public class SeasonCycleRegistry {
         // ));
 
         context.register(COLD, new SeasonCycle(
-                and(getter.getOrThrow(BiomeTags.IS_OVERWORLD),
-                        or(getter.getOrThrow(Tags.Biomes.IS_PEAK),
-                                getter.getOrThrow(Tags.Biomes.IS_SNOWY)
-                        )),
+                getter.getOrThrow(ClimateTypeBiomeTags.COLD_REGION),
                 SolarTermValueMap.
                         <Holder<SeasonPhase>>builder()
                         .putSolarTerm(SolarTerm.BEGINNING_OF_SPRING, lookuped.getOrThrow(SeasonPhaseRegistry.COLD_BEGINNING_OF_SPRING))
@@ -147,7 +144,7 @@ public class SeasonCycleRegistry {
 
 
         context.register(HOT, new SeasonCycle(
-                and(getter.getOrThrow(Tags.Biomes.IS_HOT_OVERWORLD),
+                and(getter.getOrThrow(ClimateTypeBiomeTags.HOT_REGION),
                         not(lazyLookup, getter.getOrThrow(ClimateTypeBiomeTags.MONSOONAL))),
                 SolarTermValueMap.
                         <Holder<SeasonPhase>>builder()

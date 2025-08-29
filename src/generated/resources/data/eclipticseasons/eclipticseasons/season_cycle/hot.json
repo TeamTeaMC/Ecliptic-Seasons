@@ -3,12 +3,12 @@
     "values": [
       {
         "values": [
-          "#forge:is_hot/overworld"
+          "#eclipticseasons:agro/hot"
         ],
         "type": "forge:or"
       },
       {
-        "value": "#eclipticseasons:monsoonal",
+        "value": "#eclipticseasons:rain/monsoonal",
         "type": "forge:not"
       }
     ],

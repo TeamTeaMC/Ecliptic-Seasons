@@ -13,27 +13,5 @@
       "winter": 6
     }
   ],
-  "biomes": {
-    "values": [
-      {
-        "values": [
-          "#minecraft:is_overworld",
-          "#forge:is_void"
-        ],
-        "type": "forge:or"
-      },
-      {
-        "value": {
-          "values": [
-            "#forge:is_peak",
-            "#forge:is_snowy",
-            "#forge:is_hot/overworld"
-          ],
-          "type": "forge:or"
-        },
-        "type": "forge:not"
-      }
-    ],
-    "type": "forge:and"
-  }
+  "biomes": "#eclipticseasons:agro/warm"
 }

@@ -177,10 +177,5 @@
       "winter": 3
     }
   ],
-  "biomes": {
-    "values": [
-      "#forge:is_hot/overworld"
-    ],
-    "type": "forge:and"
-  }
+  "biomes": "#eclipticseasons:agro/hot"
 }

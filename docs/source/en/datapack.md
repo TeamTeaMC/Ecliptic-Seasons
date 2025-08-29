@@ -12,38 +12,21 @@ reference only, not yet supported).
 
 ### Biome Classification
 
-The fundamental task for biomes is classification by characteristics. This system is based on the Biome Tag platform and
-currently includes three main categories: seasonal, monsoonal, and thermally stable. In addition, there is a special
-category called "small biomes," which inherit climate states from adjacent biomes and are generally ignored for
-customization.
+For **overworld agro biomes**, the following special tags are provided:
+* `eclipticseasons:agro/warm` – applied to **warm regions**
+* `eclipticseasons:agro/cold` – applied to **cold regions**
+* `eclipticseasons:agro/hot` – applied to **hot regions**
 
-| Tag                                                                                             | Name        | Auto Assignment Logic          | Priority | Rainfall (Relative) |
-|-------------------------------------------------------------------------------------------------|-------------|--------------------------------|----------|---------------------|
-| `eclipticseasons:seasonal`<br>`eclipticseasons:seasonal/hot`<br>`eclipticseasons:seasonal/cold` | Seasonal    | Based on Overworld status      | Lowest   | Varies with season  |
-| `eclipticseasons:monsoonal`                                                                     | Monsoonal   | Based on tropical savanna type | Medium   | Distinct wet/dry    |
-| `eclipticseasons:rainless`                                                                      | Rainless    | Based on forecast availability | High     | No rainfall         |
-| `eclipticseasons:arid`                                                                          | Arid        | Based on rainfall amount       | High     | 0.01F               |
-| `eclipticseasons:droughty`                                                                      | Droughty    | Based on rainfall amount       | High     | 0.1F                |
-| `eclipticseasons:soft`                                                                          | Soft        | Based on rainfall amount       | High     | 0.3F                |
-| `eclipticseasons:rainy`                                                                         | Rainy       | Based on rainfall amount       | High     | 0.9F                |
-| `eclipticseasons:is_small`                                                                      | Small Biome | No                             | Highest  | Inherit from nearby |
+For **biome rain** types, check the existing tags in the data folder.
+* `eclipticseasons:rain/seasonal`,`eclipticseasons:rain/seasonal/hot`,`eclipticseasons:rain/seasonal/cold` indicates that the biome has distinct seasonal changes.
+* `eclipticseasons:rain/monsoonal` indicates that the biome has seasonal wet and dry periods.
+* The `eclipticseasons:is_small` tag is a special tag for marking small biomes, and generally doesn’t need to be used.
+* The remaining tags, `eclipticseasons:rain/rainless`, `eclipticseasons:rain/arid`, `eclipticseasons:rain/droughty`, `eclipticseasons:rain/soft`, `eclipticseasons:rain/rainy`, indicate biomes with only slight seasonal changes in rainfall, with only differences in precipitation amounts.
 
-By default, the `seasonal` tag is assigned to all Overworld biomes. If other tags are assigned, those features take
-precedence.
-
-By default, `monsoonal` is only assigned to tropical savanna.
-
-If no tags are assigned, biomes will automatically be treated as thermally stable types based on their existing rainfall
-values—no need to explicitly configure this.
-
-For biome color types, it's actually recommended to use resource packs to achieve more customized
-colors.
-
-* `eclipticseasons:color/seasonal`, `eclipticseasons:color/seasonal/hot`, `eclipticseasons:color/seasonal/cold` —
-  represent seasonal colors for normal, hot, and cold biomes respectively.
+For **biome color** types, it's similar. And it's actually recommended to use resource packs to achieve more customized colors.
+* `eclipticseasons:color/seasonal`, `eclipticseasons:color/seasonal/hot`, `eclipticseasons:color/seasonal/cold` — represent seasonal colors for normal, hot, and cold biomes respectively.
 * `eclipticseasons:color/monsoonal` — represents colors for (tropical) monsoonal climate biomes.
-* `eclipticseasons:color/stable`, `eclipticseasons:color/slightly` — represent areas with stable and slight color
-  changes.
+* `eclipticseasons:color/stable`, `eclipticseasons:color/slightly` — represent areas with stable and slight color changes.
 
 ## Seasonal Crops and Humidity Conditions
 
