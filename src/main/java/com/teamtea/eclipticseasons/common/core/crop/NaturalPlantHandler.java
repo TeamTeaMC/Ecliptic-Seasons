@@ -3,7 +3,10 @@ package com.teamtea.eclipticseasons.common.core.crop;
 import com.mojang.datafixers.util.Pair;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
-import com.teamtea.eclipticseasons.api.data.season.SeasonDefinition;
+import com.teamtea.eclipticseasons.api.data.season.definition.ChangeMode;
+import com.teamtea.eclipticseasons.api.data.season.definition.ChangeSelector;
+import com.teamtea.eclipticseasons.api.data.season.definition.MultiBlockPart;
+import com.teamtea.eclipticseasons.api.data.season.definition.SeasonDefinition;
 import com.teamtea.eclipticseasons.api.misc.BiomeHolderPredicate;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.api.util.SimpleUtil;
@@ -13,7 +16,6 @@ import it.unimi.dsi.fastutil.HashCommon;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
@@ -33,7 +35,7 @@ import java.util.*;
 
 public class NaturalPlantHandler {
 
-    public final static Map<Block, EnumMap<SolarTerm, List<Pair<BiomeHolderPredicate, SeasonDefinition.ChangeMode>>>> SEASON_DEFINITIONS = new IdentityHashMap<>();
+    public final static Map<Block, EnumMap<SolarTerm, List<Pair<BiomeHolderPredicate, ChangeMode>>>> SEASON_DEFINITIONS = new IdentityHashMap<>();
 
     public static void resetUpdate(RegistryAccess registryAccess, boolean isServer) {
         if (isServer) {
@@ -43,10 +45,10 @@ public class NaturalPlantHandler {
                 SimpleUtil.warningForModWrongCalling(ESRegistries.SEASON_DEFINITION);
             } else {
                 for (SeasonDefinition seasonDefinition : registry.get()) {
-                    EnumMap<SolarTerm, List<SeasonDefinition.ChangeMode>> combine = seasonDefinition.changes().combine();
+                    EnumMap<SolarTerm, List<ChangeMode>> combine = seasonDefinition.changes().combine();
                     combine.forEach(
                             (solarTerm, changeModes) -> {
-                                for (SeasonDefinition.ChangeMode changeMode : changeModes) {
+                                for (ChangeMode changeMode : changeModes) {
                                     for (final Block possibleBlock : changeMode.getPossibleBlocks()) {
                                         seasonDefinition.biomes().ifPresent(holderSet -> {
                                             var blockMap = SEASON_DEFINITIONS.computeIfAbsent(possibleBlock, (b) -> new EnumMap<>(SolarTerm.class));
@@ -90,16 +92,16 @@ public class NaturalPlantHandler {
             if (nowSolarTerm.isValid()) {
                 var mapMap = SEASON_DEFINITIONS.getOrDefault(state.getBlock(), null);
                 if (mapMap != null) {
-                    List<Pair<BiomeHolderPredicate, SeasonDefinition.ChangeMode>> pairs = mapMap.getOrDefault(nowSolarTerm, null);
+                    List<Pair<BiomeHolderPredicate, ChangeMode>> pairs = mapMap.getOrDefault(nowSolarTerm, null);
                     if (pairs == null) return;
                     Holder<Biome> cropBiome = null;
                     long fixedSeedValue = -1;
                     boolean hasCheckFixedSeed = false;
                     for (int i = 0, pairsSize = pairs.size(); i < pairsSize; i++) {
-                        Pair<BiomeHolderPredicate, SeasonDefinition.ChangeMode> pair = pairs.get(i);
+                        Pair<BiomeHolderPredicate, ChangeMode> pair = pairs.get(i);
                         // if (pair.getFirst().test(cropBiome))
                         {
-                            SeasonDefinition.ChangeMode changeMode = pair.getSecond();
+                            ChangeMode changeMode = pair.getSecond();
                             if (changeMode.fixedSeed()) {
                                 if (!hasCheckFixedSeed) {
                                     fixedSeedValue = level.getSeed();
@@ -120,7 +122,7 @@ public class NaturalPlantHandler {
                                 if (false) continue;
 
                                 int totalWeight = 0;
-                                List<SeasonDefinition.Selector> selectors = changeMode.selectors();
+                                List<ChangeSelector> selectors = changeMode.selectors();
                                 for (int j = 0, selectorsSize = selectors.size(); j < selectorsSize; j++) {
                                     var blockStatePlaced = selectors.get(j);
                                     if (blockStatePlaced.isValid(level, pos)) {
@@ -131,8 +133,8 @@ public class NaturalPlantHandler {
                                 int weightIndex = changeMode.fixedSeed()
                                         ? Math.floorMod(fixedSeedValue, totalWeight)
                                         : level.getRandom().nextInt(totalWeight);
-                                SeasonDefinition.Selector chosen = null;
-                                List<SeasonDefinition.Selector> selectorsed = changeMode.selectors();
+                                ChangeSelector chosen = null;
+                                List<ChangeSelector> selectorsed = changeMode.selectors();
                                 for (int j = 0, selectorsedSize = selectorsed.size(); j < selectorsedSize; j++) {
                                     var blockStatePlaced = selectorsed.get(j);
                                     if (!blockStatePlaced.isValid(level, pos)) continue;
@@ -152,9 +154,9 @@ public class NaturalPlantHandler {
                                         chosen.feature().get().value().place(level, level.getChunkSource().getGenerator(), level.getRandom(), newpos);
                                         applied = true;
                                     } else if (chosen.multiBlocks().isPresent()) {
-                                        List<SeasonDefinition.MultiBlockPart> get = chosen.multiBlocks().get();
+                                        List<MultiBlockPart> get = chosen.multiBlocks().get();
                                         for (int j = 0, getSize = get.size(); j < getSize; j++) {
-                                            SeasonDefinition.MultiBlockPart part = get.get(j);
+                                            MultiBlockPart part = get.get(j);
                                             if (chosen.replace() || level.isEmptyBlock(newpos))
                                                 setBlockAndSelfCheck(level, part.offset().isEmpty() ? newpos : newpos.offset(part.offset().get()), part.state());
                                         }
