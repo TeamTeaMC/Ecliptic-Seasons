@@ -1,3 +1,8 @@
+### 0.12.0-pre10-1
+
+- Added the `copy_state` field to objects inside the place section of the `season_definitions` datapack, which determines whether the old block state should be copied to the new one.
+- Added the `copy_state_properties` field to restrict the range of properties to be copied.
+
 ### 0.12.0-pre10
 
 - Added the `season_definitions` datapack, which is used to define the actual seasonal block changes. Note that since this

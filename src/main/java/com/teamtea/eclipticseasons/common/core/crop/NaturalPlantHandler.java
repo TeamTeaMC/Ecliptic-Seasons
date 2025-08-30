@@ -22,6 +22,7 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
@@ -164,8 +165,17 @@ public class NaturalPlantHandler {
                                             applied = true;
                                         } else {
                                             if (chosen.offset().isEmpty()) {
-                                                setBlockAndSelfCheck(level, newpos, chosen.state().get());
-                                                applied = true;
+                                                BlockState oldState = level.getBlockState(newpos);
+                                                BlockState newState = chosen.state().get();
+                                                if (chosen.copyState()) {
+                                                    Set<String> propertyNameList = chosen.copyStateProperties().map(HashSet::new).orElse(null);
+                                                    for (Property<?> property : oldState.getProperties()) {
+                                                        if (newState.hasProperty(property) && (propertyNameList == null || propertyNameList.contains(property.getName()))) {
+                                                            newState = newState.setValue((Property) property, oldState.getValue(property));
+                                                        }
+                                                    }
+                                                }
+                                                setBlockAndSelfCheck(level, newpos, newState, oldState);                                                applied = true;
                                             } else if (chosen.replace() || level.isEmptyBlock(newpos)) {
                                                 setBlockAndSelfCheck(level, newpos, chosen.state().get());
                                                 applied = true;
@@ -186,7 +196,11 @@ public class NaturalPlantHandler {
     }
 
     public static void setBlockAndSelfCheck(ServerLevel level, BlockPos pos, BlockState chosen) {
-        if (level.getBlockState(pos) != chosen) {
+        setBlockAndSelfCheck(level, pos, chosen, level.getBlockState(pos));
+    }
+
+    public static void setBlockAndSelfCheck(ServerLevel level, BlockPos pos, BlockState chosen, BlockState old) {
+        if (old != chosen) {
             level.setBlock(pos, chosen, Block.UPDATE_CLIENTS);
             SoundType soundType = chosen.getSoundType(level, pos, null);
             if (soundType != null)

@@ -127,6 +127,8 @@ public record SeasonDefinition(
             int weight,
             Optional<Vec3i> offset,
             boolean replace,
+            boolean copyState,
+            Optional<List<String>> copyStateProperties,
             List<Condition> conditions,
             Optional<ResourceLocation> loot,
             Optional<Holder<PlacedFeature>> feature) {
@@ -137,6 +139,8 @@ public record SeasonDefinition(
                 Codec.INT.optionalFieldOf("weight", 10).forGetter(Selector::weight),
                 Vec3i.CODEC.optionalFieldOf("offset").forGetter(Selector::offset),
                 Codec.BOOL.optionalFieldOf("replace", true).forGetter(Selector::replace),
+                Codec.BOOL.optionalFieldOf("copy_state", false).forGetter(Selector::copyState),
+                Codec.STRING.listOf().optionalFieldOf("copy_properties").forGetter(Selector::copyStateProperties),
                 CodecUtil.listFrom(Condition.CODEC).optionalFieldOf("conditions", List.of()).forGetter(Selector::conditions),
                 ResourceLocation.CODEC.optionalFieldOf("loot").forGetter(Selector::loot),
                 CodecUtil.holderCodec(Registries.PLACED_FEATURE).optionalFieldOf("feature").forGetter(Selector::feature)
@@ -151,15 +155,15 @@ public record SeasonDefinition(
         }
 
         public Selector(BlockState state, int weight, Optional<Vec3i> offset) {
-            this(Optional.of(state), Optional.empty(), weight, offset, true, List.of(), Optional.empty(), Optional.empty());
+            this(Optional.of(state), Optional.empty(), weight, offset, true, offset.isEmpty(), Optional.empty(), List.of(), Optional.empty(), Optional.empty());
         }
 
         public Selector(Optional<List<MultiBlockPart>> multiBlockParts, Optional<Vec3i> offset) {
-            this(Optional.empty(), multiBlockParts, 10, offset, true, List.of(), Optional.empty(), Optional.empty());
+            this(Optional.empty(), multiBlockParts, 10, offset, true, false, Optional.empty(), List.of(), Optional.empty(), Optional.empty());
         }
 
         public static Selector of() {
-            return new Selector(Optional.empty(), Optional.empty(), 10, Optional.empty(), true, List.of(), Optional.empty(), Optional.empty());
+            return new Selector(Optional.empty(), Optional.empty(), 10, Optional.empty(), true, false, Optional.empty(), List.of(), Optional.empty(), Optional.empty());
         }
 
         public static Selector of(BlockState state) {
@@ -172,7 +176,7 @@ public record SeasonDefinition(
 
         public static Selector of(BlockState state, int weight, Vec3i vec3i, Condition condition, boolean replace) {
             return new Selector(Optional.of(state), Optional.empty(), weight, Optional.of(vec3i),
-                    replace, List.of(condition), Optional.empty(), Optional.empty());
+                    replace, false, Optional.empty(), List.of(condition), Optional.empty(), Optional.empty());
         }
 
         public static Selector of(List<MultiBlockPart> multiBlockParts, Vec3i vec3i) {
