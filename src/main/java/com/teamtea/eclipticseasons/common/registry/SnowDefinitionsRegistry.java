@@ -44,8 +44,6 @@ public class SnowDefinitionsRegistry {
         addPlant(context, Blocks.DEAD_BUSH);
         addPlant(context, Blocks.SWEET_BERRY_BUSH);
 
-
-
         addPlant(context, Blocks.BAMBOO_SAPLING);
         register(context, Blocks.BAMBOO,
                 (b, s) -> s.info(SnowDefinition.Info.builder().flag(MapChecker.FLAG_CUSTOM_JSON_WITH_TOP)

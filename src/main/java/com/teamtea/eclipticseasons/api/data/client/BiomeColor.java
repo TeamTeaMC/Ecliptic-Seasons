@@ -14,13 +14,11 @@ import net.minecraft.core.RegistryCodecs;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.biome.Biome;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.TestOnly;
 
 import java.util.EnumMap;
 import java.util.Optional;
 
 
-@TestOnly
 public record BiomeColor(
         HolderSet<Biome> biomes,
         Optional<SolarTermValueMap<ColorMode>> grassColor,

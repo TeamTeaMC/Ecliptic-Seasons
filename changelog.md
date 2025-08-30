@@ -1,3 +1,13 @@
+### 0.12.0-pre11-1
+
+- Added a `NotRainInDesert` option in `Common.Weather`  to prevent rain in desert and other biomes where it does not rain in vanilla game. It is disabled by default and must be enabled manually.
+
+### 0.12.0-pre11
+⚠️ **Note:** This version is not fully compatible with the `season_definitions` datapack structure from **pre10**, except for the basic place methods.
+
+- The main change in this release is a complete rewrite of datapack extensibility.
+  It now allows addons to introduce their own placement condition checks and placement methods.
+
 ### 0.12.0-pre10-1
 
 - Added the `copy_state` field to objects inside the place section of the `season_definitions` datapack, which determines whether the old block state should be copied to the new one.

@@ -37,6 +37,8 @@ public record SeasonCondition(Slice require) implements LootItemCondition {
                     .apply(instance, SeasonCondition::new)
     );
 
+    public static final Codec<SeasonCondition> CONDITION_CODEC = SeasonCondition.CODEC.codec();
+
 
     @Override
     public @NotNull LootItemConditionType getType() {
@@ -129,7 +131,7 @@ public record SeasonCondition(Slice require) implements LootItemCondition {
         public static final Serializer INSTANCE = new Serializer();
 
         public void serialize(@NotNull JsonObject jsonObject, @NotNull SeasonCondition value, @NotNull JsonSerializationContext context) {
-            JsonElement jsonelement = SeasonCondition.CODEC.codec().encodeStart(JsonOps.INSTANCE, value).getOrThrow(false, EclipticSeasons::logger);
+            JsonElement jsonelement = CONDITION_CODEC.encodeStart(JsonOps.INSTANCE, value).getOrThrow(false, EclipticSeasons::logger);
             if (jsonelement.isJsonObject()) {
                 JsonObject obj = jsonelement.getAsJsonObject();
                 for (Map.Entry<String, JsonElement> entry : obj.entrySet()) {
@@ -139,7 +141,7 @@ public record SeasonCondition(Slice require) implements LootItemCondition {
         }
 
         public @NotNull SeasonCondition deserialize(@NotNull JsonObject value, @NotNull JsonDeserializationContext context) {
-            return SeasonCondition.CODEC.codec().decode(JsonOps.INSTANCE, value).getOrThrow(false, EclipticSeasons::logger).getFirst();
+            return CONDITION_CODEC.decode(JsonOps.INSTANCE, value).getOrThrow(false, EclipticSeasons::logger).getFirst();
         }
     }
 }

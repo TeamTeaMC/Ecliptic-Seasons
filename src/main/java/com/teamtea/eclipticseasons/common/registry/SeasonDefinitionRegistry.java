@@ -4,6 +4,9 @@ import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.data.misc.SolarTermValueMap;
 import com.teamtea.eclipticseasons.api.data.season.definition.*;
+import com.teamtea.eclipticseasons.api.data.season.definition.condition.EmptyAboveCondition;
+import com.teamtea.eclipticseasons.api.data.season.definition.selector.BlockSelector;
+import com.teamtea.eclipticseasons.api.data.season.definition.selector.MultiBlockSelector;
 import com.teamtea.eclipticseasons.api.util.backport.FakeBlockPredicate;
 import com.teamtea.eclipticseasons.api.util.backport.FakeStatePropertiesPredicate;
 import net.minecraft.core.HolderSet;
@@ -27,50 +30,75 @@ public class SeasonDefinitionRegistry {
         return ResourceKey.create(ESRegistries.SEASON_DEFINITION, EclipticSeasons.rl(name));
     }
 
+    
     public static void bootstrap2(BootstapContext<SeasonDefinition> context) {
         var holderGetter = context.lookup(Registries.BIOME);
 
         HolderSet.Direct<Biome> plains = HolderSet.direct(holderGetter.getOrThrow(Biomes.THE_VOID));
         Vec3i above = new Vec3i(0, 1, 0);
-        ChangeCondition condition = ChangeCondition.of(true);
+        List<EmptyAboveCondition> condition = List.of(EmptyAboveCondition.builder().above(true).build());
         context.register(test, new SeasonDefinition(
                 Optional.of(plains),
                 SolarTermValueMap.<List<ChangeMode>>builder()
-                        .putSeason(Season.SPRING, List.of(new ChangeMode(FakeBlockPredicate.Builder.block().of(Blocks.GRASS_BLOCK).build(),
-                                List.of(
-                                        ChangeSelector.of(Blocks.GRASS.defaultBlockState(), 22, above, condition, false),
-                                        ChangeSelector.of(Blocks.DANDELION.defaultBlockState(), 1, above, condition, false),
-                                        ChangeSelector.of(Blocks.OXEYE_DAISY.defaultBlockState(), 1, above, condition, false)
-                                ), 1 / 16f, true
-                        )))
-                        .putSeason(Season.SUMMER, List.of(new ChangeMode(FakeBlockPredicate.Builder.block().of(Blocks.GRASS).build(),
-                                List.of(ChangeSelector.of(
-                                        MultiBlockPart.ofList(
-                                                Blocks.TALL_GRASS.defaultBlockState().setValue(DoublePlantBlock.HALF, DoubleBlockHalf.UPPER),
-                                                Blocks.TALL_GRASS.defaultBlockState().setValue(DoublePlantBlock.HALF, DoubleBlockHalf.LOWER))
-                                        , above))
-                                , 1 / 16f, true
-                        )))
-                        .putSeason(Season.AUTUMN, List.of(new ChangeMode(
-                                        FakeBlockPredicate.Builder.block().of(Blocks.TALL_GRASS).setProperties(FakeStatePropertiesPredicate.Builder.properties().hasProperty(DoublePlantBlock.HALF, DoubleBlockHalf.LOWER)).build(),
-                                        List.of(ChangeSelector.of(Blocks.GRASS.defaultBlockState())),
-                                        1 / 16f, false),
-                                new ChangeMode(
-                                        FakeBlockPredicate.Builder.block().of(Blocks.TALL_GRASS).setProperties(FakeStatePropertiesPredicate.Builder.properties().hasProperty(DoublePlantBlock.HALF, DoubleBlockHalf.UPPER)).build(),
-                                        List.of(ChangeSelector.of()), 1 / 16f, false
-                                )))
+                        .putSeason(Season.SPRING, List.of(
+                                ChangeMode.builder()
+                                        .original(FakeBlockPredicate.Builder.block().of(Blocks.GRASS_BLOCK).build())
+                                        .fixedSeed(true)
+                                        .chance(1 / 16f)
+                                        .selector(BlockSelector.builder().conditions(condition).state(Optional.of(Blocks.GRASS.defaultBlockState())).weight(22).offset(Optional.of(above)).build())
+                                        .selector(BlockSelector.builder().conditions(condition).state(Optional.of(Blocks.DANDELION.defaultBlockState())).weight(1).offset(Optional.of(above)).build())
+                                        .selector(BlockSelector.builder().conditions(condition).state(Optional.of(Blocks.OXEYE_DAISY.defaultBlockState())).weight(1).offset(Optional.of(above)).build())
+                                        .build()
+                        ))
+                        .putSeason(Season.SUMMER, List.of(
+                                ChangeMode.builder()
+                                        .original(FakeBlockPredicate.Builder.block().of(Blocks.GRASS).build())
+                                        .fixedSeed(true)
+                                        .chance(1 / 16f)
+                                        .selector(MultiBlockSelector.builder()
+                                                .conditions(condition)
+                                                .multiBlock(MultiBlockSelector.Part.builder()
+                                                        .state( Blocks.TALL_GRASS.defaultBlockState().setValue(DoublePlantBlock.HALF, DoubleBlockHalf.UPPER))
+                                                        .build())
+                                                .multiBlock(MultiBlockSelector.Part.builder()
+                                                        .state( Blocks.TALL_GRASS.defaultBlockState().setValue(DoublePlantBlock.HALF, DoubleBlockHalf.LOWER))
+                                                        .build())
+                                                .build())
+                                        .build()
+                        ))
+                        .putSeason(Season.AUTUMN, List.of(
+                                ChangeMode.builder()
+                                        .original(FakeBlockPredicate.Builder.block().of(Blocks.TALL_GRASS).setProperties(FakeStatePropertiesPredicate.Builder.properties().hasProperty(DoublePlantBlock.HALF, DoubleBlockHalf.LOWER)).build())
+                                        .fixedSeed(false)
+                                        .chance(1 / 16f)
+                                        .selector(BlockSelector.builder().state(Optional.of(Blocks.GRASS.defaultBlockState())).build())
+                                        .build(),
+                                ChangeMode.builder()
+                                        .original(FakeBlockPredicate.Builder.block().of(Blocks.TALL_GRASS).setProperties(FakeStatePropertiesPredicate.Builder.properties().hasProperty(DoublePlantBlock.HALF, DoubleBlockHalf.UPPER)).build())
+                                        .fixedSeed(false)
+                                        .chance(1 / 16f)
+                                        .selector(BlockSelector.builder().build())
+                                        .build())
+                        )
                         .putSeason(Season.WINTER, List.of(
-                                new ChangeMode(FakeBlockPredicate.Builder.block().of(Blocks.GRASS).build(),
-                                        List.of(ChangeSelector.of()), 1 / 16f, false
-                                ),
-                                new ChangeMode(FakeBlockPredicate.Builder.block().of(Blocks.DANDELION).build(),
-                                        List.of(ChangeSelector.of()), 1 / 16f, false
-                                ),
-                                new ChangeMode(FakeBlockPredicate.Builder.block().of(Blocks.OXEYE_DAISY).build(),
-                                        List.of(ChangeSelector.of()), 1 / 16f, false
-                                )
+                                ChangeMode.builder()
+                                        .original(FakeBlockPredicate.Builder.block().of(Blocks.GRASS).build())
+                                        .fixedSeed(false)
+                                        .chance(1 / 16f)
+                                        .build(),
+                                ChangeMode.builder()
+                                        .original(FakeBlockPredicate.Builder.block().of(Blocks.DANDELION).build())
+                                        .fixedSeed(false)
+                                        .chance(1 / 16f)
+                                        .build(),
+                                ChangeMode.builder()
+                                        .original(FakeBlockPredicate.Builder.block().of(Blocks.OXEYE_DAISY).build())
+                                        .fixedSeed(false)
+                                        .chance(1 / 16f)
+                                        .build()
                         ))
                         .build()
         ));
     }
+
 }

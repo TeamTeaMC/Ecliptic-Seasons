@@ -2,8 +2,12 @@ package com.teamtea.eclipticseasons.api.data.season.definition;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.teamtea.eclipticseasons.api.data.season.definition.selector.IChangeSelector;
 import com.teamtea.eclipticseasons.api.util.backport.FakeBlockPredicate;
 import com.teamtea.eclipticseasons.api.util.codec.CodecUtil;
+import lombok.Builder;
+import lombok.Singular;
+import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.advancements.critereon.NbtPredicate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -21,14 +25,16 @@ import java.util.List;
 /**
  * 这里我有一个特殊的想法，根据关卡种子、位置和天数进展、年份固定生成种子
  **/
+@Builder
 public record ChangeMode(FakeBlockPredicate original,
-                         List<ChangeSelector> selectors,
+                         @Singular
+                         List<IChangeSelector> selectors,
                          float chance,
                          boolean fixedSeed) {
 
     public static final Codec<ChangeMode> CODEC = RecordCodecBuilder.create(ins -> ins.group(
             FakeBlockPredicate.CODEC.fieldOf("target").forGetter(ChangeMode::original),
-            CodecUtil.listFrom(ChangeSelector.CODEC).fieldOf("place").forGetter(ChangeMode::selectors),
+            CodecUtil.listFrom(IChangeSelector.CCODEC).fieldOf("place").forGetter(ChangeMode::selectors),
             Codec.FLOAT.optionalFieldOf("chance", 1 / 16f).forGetter(ChangeMode::chance),
             Codec.BOOL.optionalFieldOf("fixed_seed", false).forGetter(ChangeMode::fixedSeed)
     ).apply(ins, ChangeMode::new));

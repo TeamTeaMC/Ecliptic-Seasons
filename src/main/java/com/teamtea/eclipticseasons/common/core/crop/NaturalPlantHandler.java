@@ -4,9 +4,9 @@ import com.mojang.datafixers.util.Pair;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.data.season.definition.ChangeMode;
-import com.teamtea.eclipticseasons.api.data.season.definition.ChangeSelector;
-import com.teamtea.eclipticseasons.api.data.season.definition.MultiBlockPart;
+import com.teamtea.eclipticseasons.api.data.season.definition.ISeasonChangeContext;
 import com.teamtea.eclipticseasons.api.data.season.definition.SeasonDefinition;
+import com.teamtea.eclipticseasons.api.data.season.definition.selector.IChangeSelector;
 import com.teamtea.eclipticseasons.api.misc.BiomeHolderPredicate;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.api.util.SimpleUtil;
@@ -86,6 +86,9 @@ public class NaturalPlantHandler {
         return rand < chance;
     }
 
+    private static final ThreadLocal<ISeasonChangeContext> SEASON_CHANGE_CONTEXT_THREAD_LOCAL =
+            ThreadLocal.withInitial(ISeasonChangeContext::of);
+
     public static void tickBlock(ServerLevel level, BlockPos pos, BlockState state) {
         if (CommonConfig.isSeasonDefinition()) {
             SolarTerm nowSolarTerm = EclipticUtil.getNowSolarTerm(level);
@@ -119,26 +122,27 @@ public class NaturalPlantHandler {
 
                             if (changeMode.matches(state, level, pos)) {
                                 cropBiome = cropBiome == null ? CropGrowthHandler.getCropBiome(level, pos) : cropBiome;
-                                if (false) continue;
 
                                 int totalWeight = 0;
-                                List<ChangeSelector> selectors = changeMode.selectors();
+                                List<IChangeSelector> selectors = changeMode.selectors();
+                                ISeasonChangeContext context = SEASON_CHANGE_CONTEXT_THREAD_LOCAL.get();
+
                                 for (int j = 0, selectorsSize = selectors.size(); j < selectorsSize; j++) {
                                     var blockStatePlaced = selectors.get(j);
-                                    if (blockStatePlaced.isValid(level, pos)) {
-                                        totalWeight += blockStatePlaced.weight();
+                                    if (blockStatePlaced.shouldApply(level, pos, context)) {
+                                        totalWeight += blockStatePlaced.getWeight();
                                     }
                                 }
                                 if (totalWeight <= 0) return;
                                 int weightIndex = changeMode.fixedSeed()
                                         ? Math.floorMod(fixedSeedValue, totalWeight)
                                         : level.getRandom().nextInt(totalWeight);
-                                ChangeSelector chosen = null;
-                                List<ChangeSelector> selectorsed = changeMode.selectors();
+                                IChangeSelector chosen = null;
+                                List<IChangeSelector> selectorsed = changeMode.selectors();
                                 for (int j = 0, selectorsedSize = selectorsed.size(); j < selectorsedSize; j++) {
                                     var blockStatePlaced = selectorsed.get(j);
-                                    if (!blockStatePlaced.isValid(level, pos)) continue;
-                                    weightIndex -= blockStatePlaced.weight();
+                                    if (!blockStatePlaced.shouldApply(level, pos, context)) continue;
+                                    weightIndex -= blockStatePlaced.getWeight();
                                     if (weightIndex <= 0) {
                                         chosen = blockStatePlaced;
                                         break;
@@ -147,47 +151,12 @@ public class NaturalPlantHandler {
 
 
                                 if (chosen != null) {
-                                    BlockPos newpos = chosen.offset().isEmpty() ? pos : pos.offset(chosen.offset().get());
-                                    boolean applied = false;
+                                    boolean applied = chosen.place(level, pos, context);
 
-                                    if (chosen.feature().isPresent()) {
-                                        chosen.feature().get().value().place(level, level.getChunkSource().getGenerator(), level.getRandom(), newpos);
-                                        applied = true;
-                                    } else if (chosen.multiBlocks().isPresent()) {
-                                        List<MultiBlockPart> get = chosen.multiBlocks().get();
-                                        for (int j = 0, getSize = get.size(); j < getSize; j++) {
-                                            MultiBlockPart part = get.get(j);
-                                            if (chosen.replace() || level.isEmptyBlock(newpos))
-                                                setBlockAndSelfCheck(level, part.offset().isEmpty() ? newpos : newpos.offset(part.offset().get()), part.state());
-                                        }
-                                        applied = true;
-                                    } else {
-                                        if (chosen.state().isEmpty()) {
-                                            level.removeBlock(newpos, false);
-                                            applied = true;
-                                        } else {
-                                            if (chosen.offset().isEmpty()) {
-                                                BlockState oldState = level.getBlockState(newpos);
-                                                BlockState newState = chosen.state().get();
-                                                if (chosen.copyState()) {
-                                                    Set<String> propertyNameList = chosen.copyStateProperties().map(HashSet::new).orElse(null);
-                                                    for (Property<?> property : oldState.getProperties()) {
-                                                        if (newState.hasProperty(property) && (propertyNameList == null || propertyNameList.contains(property.getName()))) {
-                                                            newState = newState.setValue((Property) property, oldState.getValue(property));
-                                                        }
-                                                    }
-                                                }
-                                                setBlockAndSelfCheck(level, newpos, newState, oldState);                                                applied = true;
-                                            } else if (chosen.replace() || level.isEmptyBlock(newpos)) {
-                                                setBlockAndSelfCheck(level, newpos, chosen.state().get());
-                                                applied = true;
-                                            }
-                                        }
+                                    if (applied && chosen.getLoot().isPresent()&& chosen.dropWhenApplied(level, pos, context)) {
+                                        dropLootTable(level, pos, chosen.getLoot().get(), changeMode.fixedSeed() ? fixedSeedValue : level.getRandom().nextLong(), state);
                                     }
-
-                                    if (applied && chosen.loot().isPresent()) {
-                                        dropLootTable(level, newpos, chosen.loot().get(), changeMode.fixedSeed() ? fixedSeedValue : level.getRandom().nextLong(), state);
-                                    }
+                                    return;
                                 }
                             }
                         }
@@ -197,17 +166,21 @@ public class NaturalPlantHandler {
         }
     }
 
-    public static void setBlockAndSelfCheck(ServerLevel level, BlockPos pos, BlockState chosen) {
-        setBlockAndSelfCheck(level, pos, chosen, level.getBlockState(pos));
+    public static boolean setBlockAndSelfCheck(ServerLevel level, BlockPos pos, BlockState chosen) {
+        return setBlockAndSelfCheck(level, pos, chosen, level.getBlockState(pos));
     }
 
-    public static void setBlockAndSelfCheck(ServerLevel level, BlockPos pos, BlockState chosen, BlockState old) {
+    public static boolean setBlockAndSelfCheck(ServerLevel level, BlockPos pos, BlockState chosen, BlockState old) {
         if (old != chosen) {
-            level.setBlock(pos, chosen, Block.UPDATE_CLIENTS);
-            SoundType soundType = chosen.getSoundType(level, pos, null);
-            if (soundType != null)
-                level.playSound(null, pos, soundType.getPlaceSound(), SoundSource.BLOCKS, (soundType.getVolume() + 1.0F) / 2.0F, soundType.getPitch() * 0.8F);
+            boolean set = level.setBlock(pos, chosen, Block.UPDATE_CLIENTS);
+            if (set) {
+                SoundType soundType = chosen.getSoundType(level, pos, null);
+                if (soundType != null)
+                    level.playSound(null, pos, soundType.getPlaceSound(), SoundSource.BLOCKS, (soundType.getVolume() + 1.0F) / 2.0F, soundType.getPitch() * 0.8F);
+                return true;
+            }
         }
+        return false;
     }
 
     public static void dropLootTable(ServerLevel level, BlockPos pos, ResourceLocation resourcekey, long seed, BlockState state) {

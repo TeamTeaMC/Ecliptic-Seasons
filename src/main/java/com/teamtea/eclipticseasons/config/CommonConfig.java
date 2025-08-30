@@ -279,6 +279,8 @@ public class CommonConfig {
     public static class Weather {
         public static ForgeConfigSpec.BooleanValue useSolarWeather;
         public static ForgeConfigSpec.BooleanValue enableWeatherRegion;
+        public static ForgeConfigSpec.BooleanValue notRainInDesert;
+
         public static ForgeConfigSpec.IntValue rainChanceMultiplier;
         public static ForgeConfigSpec.IntValue thunderChanceMultiplier;
         public static ForgeConfigSpec.BooleanValue shouldInitWeather;
@@ -289,6 +291,8 @@ public class CommonConfig {
                     .define("UseSolarWeather", true);
             enableWeatherRegion = builder.comment("Enable weather regions, linking specific biomes to particular weather to prevent scattered patterns.")
                     .define("EnableWeatherRegion", true);
+            notRainInDesert = builder.comment("Prevent rain from occurring in biomes without precipitation like desert.")
+                    .define("NotRainInDesert", false);
             shouldInitWeather = builder.comment("Set it true to initialize weather and snow when loading the mod or level for the first time.")
                     .define("ShouldInitWeather", false);
             rainChanceMultiplier = builder.comment("Multiplier (0-1000) affecting how likely rain will occur.")

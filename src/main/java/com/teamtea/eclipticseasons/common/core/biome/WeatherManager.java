@@ -267,6 +267,11 @@ public class WeatherManager {
         if (!biome.hasPrecipitation()) {
             return Biome.Precipitation.NONE;
         }
+
+        if (CommonConfig.Weather.notRainInDesert.get()
+                && !biome.getModifiedClimateSettings().hasPrecipitation())
+            return Biome.Precipitation.NONE;
+
         var biomeWeather = getBiomeWeather(level, biome);
         if (biomeWeather != null) {
             if (biomeWeather.shouldClear()) return Biome.Precipitation.NONE;
@@ -297,6 +302,10 @@ public class WeatherManager {
         if (!biome.hasPrecipitation()) {
             return Biome.Precipitation.NONE;
         }
+
+        if (CommonConfig.Weather.notRainInDesert.get()
+                && !biome.getModifiedClimateSettings().hasPrecipitation())
+            return Biome.Precipitation.NONE;
 
         var biomeWeather = getBiomeWeather(level, biome);
 
@@ -766,22 +775,15 @@ public class WeatherManager {
     }
 
     public static SnowRenderStatus getSnowStatus(ServerLevel level, Biome biome, BlockPos pos) {
-        // var provider = SolarHolders.getSaveData(level);
         var status = SnowRenderStatus.NONE;
-        // if (provider != null)
-        {
-            var solarTerm = EclipticUtil.getNowSolarTerm(level);
-            var snowTerm = SolarTerm.getSnowTerm(biome, level instanceof ServerLevel, EclipticUtil.getSnowTempChange(level));
-            boolean flag_cold = snowTerm.maySnow(solarTerm);
-            if (flag_cold) {
-                if (biome.hasPrecipitation() && isRainingOrSnowAtBiome(level, biome)) {
-                    status = SnowRenderStatus.SNOW;
-                }
+        if (biome.hasPrecipitation()) {
+            Biome.Precipitation precipitation = getRainOrSnow(level, biome, pos);
+            if (precipitation == Biome.Precipitation.SNOW) {
+                status = SnowRenderStatus.SNOW;
             } else {
-                status = level.getRandom().nextBoolean() | isRainingOrSnowAtBiome(level, biome) ?
+                status = level.getRandom().nextBoolean() | precipitation == Biome.Precipitation.RAIN ?
                         SnowRenderStatus.SNOW_MELT : SnowRenderStatus.NONE;
             }
-
         }
         return status;
     }
