@@ -212,7 +212,8 @@ public class BiomeColorsHandler {
 
 
     public static int getLeavesColor(int base, LeaveColor[] values, BlockPos pos) {
-        if (ClientConfig.Renderer.seasonalGrassColorChange.get()) {
+        if (ClientConfig.Renderer.seasonalGrassColorChange.get()
+                && ClientConfig.Renderer.seasonalColorChangeExtend.get()) {
             if (pos != null && MapChecker.isValidDimension(ClientCon.getUseLevel())) {
 
                 SolarTerm solarTerm = ClientCon.nowSolarTerm;

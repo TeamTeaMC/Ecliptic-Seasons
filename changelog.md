@@ -1,3 +1,9 @@
+### 0.12.0-pre11-3
+
+- Added a config option `SeasonalColorChangeExtend` to disable seasonal color changes for birch and other two trees.
+- Backported wind chimes and pinwheels from 1.21 to 1.20.
+- Various other optimizations.
+
 ### 0.12.0-pre11-2
 
 - Optimized several configuration options related to seasonal animal behaviors.
