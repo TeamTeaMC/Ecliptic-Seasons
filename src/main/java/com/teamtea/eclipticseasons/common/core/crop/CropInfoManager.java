@@ -29,7 +29,6 @@ import net.minecraftforge.event.TagsUpdatedEvent;
 import javax.annotation.Nullable;
 import java.util.*;
 
-@Deprecated
 public final class CropInfoManager {
     final static Map<Block, CropHumidityInfo> CROP_HUMIDITY_INFO = new HashMap<>();
     final static Map<Block, CropSeasonInfo> CROP_SEASON_INFO = new HashMap<>();

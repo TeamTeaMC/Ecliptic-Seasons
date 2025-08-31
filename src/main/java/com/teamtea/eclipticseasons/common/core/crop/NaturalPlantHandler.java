@@ -50,11 +50,13 @@ public class NaturalPlantHandler {
                             (solarTerm, changeModes) -> {
                                 for (ChangeMode changeMode : changeModes) {
                                     for (final Block possibleBlock : changeMode.getPossibleBlocks()) {
-                                        seasonDefinition.biomes().ifPresent(holderSet -> {
-                                            var blockMap = SEASON_DEFINITIONS.computeIfAbsent(possibleBlock, (b) -> new EnumMap<>(SolarTerm.class));
-                                            var pairList = blockMap.computeIfAbsent(solarTerm, (b) -> new ArrayList<>());
-                                            pairList.add(Pair.of(BiomeHolderPredicate.of(holderSet), changeMode));
-                                        });
+                                        var blockMap = SEASON_DEFINITIONS.computeIfAbsent(possibleBlock, (b) -> new EnumMap<>(SolarTerm.class));
+                                        var pairList = blockMap.computeIfAbsent(solarTerm, (b) -> new ArrayList<>());
+                                        if (seasonDefinition.biomes().isPresent()) {
+                                            pairList.add(Pair.of(BiomeHolderPredicate.of(seasonDefinition.biomes().get()), changeMode));
+                                        } else {
+                                            pairList.add(Pair.of(BiomeHolderPredicate.of(), changeMode));
+                                        }
                                     }
                                 }
                             }
@@ -116,6 +118,7 @@ public class NaturalPlantHandler {
                                     fixedSeedValue ^= HashCommon.mix(EclipticSeasonsApi.getInstance().getTimeInTerm(level));
                                     fixedSeedValue ^= HashCommon.mix(EclipticSeasonsApi.getInstance().getLastingDaysOfEachTerm(level));
                                     // fixedSeedValue ^= HashCommon.mix(TimePeriod.fromTimeOfDay(level.getTimeOfDay(1f)).ordinal() * 100);
+                                    hasCheckFixedSeed = true;
                                 }
                                 if (!testChance(fixedSeedValue, changeMode.chance())) continue;
                             } else if (level.getRandom().nextFloat() >= changeMode.chance()) continue;

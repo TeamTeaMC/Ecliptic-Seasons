@@ -183,8 +183,6 @@ public class CommonConfig {
     public static class Crop {
 
         public static ForgeConfigSpec.BooleanValue enableCrop;
-        public static ForgeConfigSpec.DoubleValue cropGrowChanceInWrongSeason;
-        public static ForgeConfigSpec.DoubleValue cropGrowChanceInWrongHumidity;
         public static ForgeConfigSpec.BooleanValue enableCropHumidityControl;
         public static ForgeConfigSpec.BooleanValue cropHumidityTransition;
         public static ForgeConfigSpec.BooleanValue boneMealFailureMessage;
@@ -210,14 +208,10 @@ public class CommonConfig {
             builder.push("Crop");
             enableCrop = builder.comment("Enable crop season control.")
                     .define("EnableSeasonalCrop", true);
-            cropGrowChanceInWrongSeason = builder.comment("[Deprecated]How much chance can crop grow in wrong season.")
-                    .defineInRange("CropGrowChanceInWrongSeason", 0.05, 0, 1);
             enableCropHumidityControl = builder.comment("Enable crop humidity control.")
                     .define("EnableCropHumidityControl", true);
             cropHumidityTransition = builder.comment("If enabled, humidity check will transition smoothly instead of snapping.")
                     .define("CropHumidityTransition", true);
-            cropGrowChanceInWrongHumidity = builder.comment("[Deprecated]How much base chance can crop grow in wrong humidity.")
-                    .defineInRange("CropGrowChanceInWrongHumidity", 0.25, 0.0001, 0.9999);
             boneMealFailureMessage = builder.comment("Send message to player if failed to use bone meal on crop.")
                     .define("BoneMealFailureMessage", true);
             boneMealConsumeOnFailure = builder.comment("Consume anyway if failed to use bone meal on crop.")
@@ -256,7 +250,12 @@ public class CommonConfig {
 
         public static ForgeConfigSpec.BooleanValue enableBreed;
         public static ForgeConfigSpec.BooleanValue enableBee;
+        public static ForgeConfigSpec.ConfigValue<List<? extends com.teamtea.eclipticseasons.api.constant.solar.Season>> beePollinateSeasons;
+        public static ForgeConfigSpec.ConfigValue<List<? extends com.teamtea.eclipticseasons.api.constant.solar.Season>> beeActiveSeasons;
+
         public static ForgeConfigSpec.BooleanValue enableFishing;
+        public static ForgeConfigSpec.ConfigValue<List<? extends com.teamtea.eclipticseasons.api.constant.solar.Season>> fishingSeasons;
+        public static ForgeConfigSpec.BooleanValue lessFishInThunder;
         public static ForgeConfigSpec.BooleanValue enableCoreWork;
 
         private static void load(ForgeConfigSpec.Builder builder) {
@@ -266,9 +265,35 @@ public class CommonConfig {
 
             enableBee = builder.comment("Enable seasonal bee behavior, bee would like spring and not like winter and cold.")
                     .define("EnableSeasonalBee", false);
+            beePollinateSeasons = builder.comment("Seasons in which bees are able to pollinate crops and flowers.",
+                    "Default: [SPRING]").defineListAllowEmpty("BeePollinateSeasons",
+                    () -> List.of(
+                            com.teamtea.eclipticseasons.api.constant.solar.Season.SPRING
+                    ),
+                    o -> o instanceof com.teamtea.eclipticseasons.api.constant.solar.Season);
+
+            beeActiveSeasons = builder.comment("Seasons in which bees are generally active outside the hive.",
+                    "Default: [SPRING, SUMMER, AUTUMN]").defineListAllowEmpty("BeeActiveSeasons",
+                    () -> List.of(
+                            com.teamtea.eclipticseasons.api.constant.solar.Season.SPRING,
+                            com.teamtea.eclipticseasons.api.constant.solar.Season.SUMMER,
+                            com.teamtea.eclipticseasons.api.constant.solar.Season.AUTUMN
+                    ),
+                    o -> o instanceof com.teamtea.eclipticseasons.api.constant.solar.Season);
 
             enableFishing = builder.comment("Enable seasonal fishing behavior, let enjoy summer.")
                     .define("EnableSeasonalFishing", false);
+
+            fishingSeasons = builder.comment("Seasons during which fishing is allowed or more effective.",
+                    "Default: [SUMMER]"
+            ).defineListAllowEmpty("FishingSeasons",
+                    () -> List.of(
+                            com.teamtea.eclipticseasons.api.constant.solar.Season.SUMMER
+                    ),
+                    o -> o instanceof com.teamtea.eclipticseasons.api.constant.solar.Season);
+
+            lessFishInThunder = builder.comment("Reduce fish availability during thunderstorms.")
+                    .define("LessFishInThunder", false);
 
             enableCoreWork = builder.comment("Greenhouse core would also work for animal check but not need a greenhouse.")
                     .define("EnableCoreWork", true);

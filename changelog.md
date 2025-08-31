@@ -1,3 +1,9 @@
+### 0.12.0-pre11-2
+
+- Optimized several configuration options related to seasonal animal behaviors.
+- For the season_definitions datapack, if the biomes parameter is not set, it will now default to applying to all biomes.
+- The two deprecated configuration options, CropGrowChanceInWrongSeason and CropGrowChanceInWrongHumidity, have been removed.
+
 ### 0.12.0-pre11-1
 
 - Added a `NotRainInDesert` option in `Common.Weather`  to prevent rain in desert and other biomes where it does not rain in vanilla game. It is disabled by default and must be enabled manually.
