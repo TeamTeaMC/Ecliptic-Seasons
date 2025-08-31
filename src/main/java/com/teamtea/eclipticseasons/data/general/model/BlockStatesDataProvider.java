@@ -29,7 +29,7 @@ public class BlockStatesDataProvider extends BlockStateProvider {
 
     @Override
     protected void registerStatesAndModels() {
-        for (var holder : List.of(BlockRegistry.calendar)) {
+        for (var holder : List.of(BlockRegistry.calendar, BlockRegistry.pinwheel_blue, BlockRegistry.pinwheel_orange, BlockRegistry.pinwheel_lime)) {
             getVariantBuilder(holder.get()).forAllStatesExcept(state -> ConfiguredModel.builder()
                     .modelFile(models().getExistingFile(resourceBlock(holder.getId().getPath())))
                     .rotationY(getRotateYByFacing(state.getValue(BlockStateProperties.HORIZONTAL_FACING)))
@@ -46,6 +46,9 @@ public class BlockStatesDataProvider extends BlockStateProvider {
                     .build());
         }
 
+        addSimple(BlockRegistry.wind_chimes.get());
+        addSimple(BlockRegistry.paper_wind_chimes.get());
+        addSimple(BlockRegistry.bamboo_wind_chimes.get());
 
         addSimple(BlockRegistry.block_in_wooden_grate_block.get());
 

@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "wind_chimes",
+  "key": {
+    "i": {
+      "item": "minecraft:blue_dye"
+    },
+    "j": {
+      "item": "minecraft:yellow_dye"
+    },
+    "x": {
+      "item": "minecraft:string"
+    },
+    "y": {
+      "item": "minecraft:paper"
+    }
+  },
+  "pattern": [
+    "xyi",
+    " yj",
+    " y "
+  ],
+  "result": {
+    "item": "eclipticseasons:paper_wind_chimes"
+  },
+  "show_notification": true
+}

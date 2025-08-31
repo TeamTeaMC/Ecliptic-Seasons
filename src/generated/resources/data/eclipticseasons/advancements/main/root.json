@@ -15,7 +15,7 @@
     "frame": "task",
     "hidden": false,
     "icon": {
-      "item": "minecraft:paper"
+      "item": "eclipticseasons:bamboo_wind_chimes"
     },
     "show_toast": true,
     "title": {

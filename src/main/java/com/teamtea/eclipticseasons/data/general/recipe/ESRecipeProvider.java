@@ -2,6 +2,7 @@ package com.teamtea.eclipticseasons.data.general.recipe;
 
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
+import com.teamtea.eclipticseasons.common.registry.BlockRegistry;
 import com.teamtea.eclipticseasons.common.registry.ItemRegistry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
@@ -45,6 +46,64 @@ public final class ESRecipeProvider extends RecipeProvider {
                 .unlockedBy("has_paper", has(Items.PAPER))
                 .save(consumer);
 
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, BlockRegistry.pinwheel_blue.get())
+                .define('x', Items.PAPER)
+                .define('y', Items.BLUE_DYE)
+                .define('z', Tags.Items.RODS_WOODEN)
+                .pattern("xy")
+                .pattern("z ")
+                .group("pinwheel")
+                .unlockedBy("has_paper", has(Items.PAPER))
+                .save(consumer);
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, BlockRegistry.pinwheel_lime.get())
+                .define('x', Items.PAPER)
+                .define('y', Items.LIME_DYE)
+                .define('z', Tags.Items.RODS_WOODEN)
+                .pattern("xy")
+                .pattern("z ")
+                .group("pinwheel")
+                .unlockedBy("has_paper", has(Items.PAPER))
+                .save(consumer);
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, BlockRegistry.pinwheel_orange.get())
+                .define('x', Items.PAPER)
+                .define('y', Items.ORANGE_DYE)
+                .define('z', Tags.Items.RODS_WOODEN)
+                .pattern("xy")
+                .pattern("z ")
+                .group("pinwheel")
+                .unlockedBy("has_paper", has(Items.PAPER))
+                .save(consumer);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, BlockRegistry.wind_chimes.get())
+                .define('x', Items.STRING)
+                .define('z', Items.BAMBOO)
+                .pattern(" x ")
+                .pattern("zzz")
+                .group("wind_chimes")
+                .unlockedBy("has_string", has(Items.STRING))
+                .save(consumer);
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, BlockRegistry.bamboo_wind_chimes.get())
+                .define('x', Items.STRING)
+                .define('z', Items.BAMBOO_BLOCK)
+                .define('y', Items.PAPER)
+                .pattern(" x ")
+                .pattern(" z ")
+                .pattern(" y ")
+                .group("wind_chimes")
+                .unlockedBy("has_string", has(Items.STRING))
+                .save(consumer);
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, BlockRegistry.paper_wind_chimes.get())
+                .define('x', Items.STRING)
+                .define('y', Items.PAPER)
+                .define('i', Items.BLUE_DYE)
+                .define('j', Items.YELLOW_DYE)
+                .pattern("xyi")
+                .pattern(" yj")
+                .pattern(" y ")
+                .group("wind_chimes")
+                .unlockedBy("has_paper", has(Items.STRING))
+                .save(consumer);
+        
         ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ItemRegistry.hyetometer.get())
                 .define('x', Tags.Items.DUSTS_REDSTONE)
                 .define('y', Items.GLASS_BOTTLE)

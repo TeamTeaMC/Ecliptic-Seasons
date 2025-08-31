@@ -48,7 +48,7 @@ public class ESAdvancementGenerator implements ForgeAdvancementProvider.Advancem
 
         seasons = Advancement.Builder.advancement()
                 .parent(seasons)
-                .display(Items.PAPER,
+                .display(ItemRegistry.bamboo_wind_chimes_item.get(),
                         Component.translatable("advancement.eclipticseasons.root"),
                         Component.translatable("advancement.eclipticseasons.root.desc"),
                         new ResourceLocation("minecraft:textures/block/bricks.png"),
@@ -149,7 +149,7 @@ public class ESAdvancementGenerator implements ForgeAdvancementProvider.Advancem
 
         seasons = Advancement.Builder.advancement()
                 .parent(seasons)
-                .display(ItemRegistry.spring_greenhouse_essence_item.get(),
+                .display(ItemRegistry.pinwheel_lime_item.get(),
                         Component.translatable("advancement.eclipticseasons.quest"),
                         Component.translatable("advancement.eclipticseasons.quest.desc"),
                         null,

@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "pinwheel",
+  "key": {
+    "x": {
+      "item": "minecraft:paper"
+    },
+    "y": {
+      "item": "minecraft:orange_dye"
+    },
+    "z": {
+      "tag": "forge:rods/wooden"
+    }
+  },
+  "pattern": [
+    "xy",
+    "z "
+  ],
+  "result": {
+    "item": "eclipticseasons:pinwheel_orange"
+  },
+  "show_notification": true
+}

@@ -12,6 +12,14 @@ import net.minecraftforge.registries.RegistryObject;
 
 public class ItemRegistry {
     public static final DeferredRegister<Item> ITEM_DEFERRED_REGISTER = DeferredRegister.create(Registries.ITEM, EclipticSeasonsApi.MODID);
+
+    public static final RegistryObject<BlockItem> bamboo_wind_chimes_item = ITEM_DEFERRED_REGISTER.register("bamboo_wind_chimes", () -> new BlockItem(BlockRegistry.bamboo_wind_chimes.get(), (new Item.Properties())));
+    public static final RegistryObject<BlockItem> paper_wind_chimes_item = ITEM_DEFERRED_REGISTER.register("paper_wind_chimes", () -> new BlockItem(BlockRegistry.paper_wind_chimes.get(), (new Item.Properties())));
+    public static final RegistryObject<BlockItem> wind_chimes_item = ITEM_DEFERRED_REGISTER.register("wind_chimes", () -> new BlockItem(BlockRegistry.wind_chimes.get(), (new Item.Properties())));
+    public static final RegistryObject<BlockItem> pinwheel_orange_item = ITEM_DEFERRED_REGISTER.register("pinwheel_orange", () -> new BlockItem(BlockRegistry.pinwheel_orange.get(), (new Item.Properties())));
+    public static final RegistryObject<BlockItem> pinwheel_lime_item = ITEM_DEFERRED_REGISTER.register("pinwheel_lime", () -> new BlockItem(BlockRegistry.pinwheel_lime.get(), (new Item.Properties())));
+    public static final RegistryObject<BlockItem> pinwheel_blue_item = ITEM_DEFERRED_REGISTER.register("pinwheel_blue", () -> new BlockItem(BlockRegistry.pinwheel_blue.get(), (new Item.Properties())));
+
     public static final RegistryObject<BlockItem> calendar_item = ITEM_DEFERRED_REGISTER.register("calendar", () -> new CalendarBlockItem(BlockRegistry.calendar.get(), (new Item.Properties())));
 
     public static final RegistryObject<MeterItem> hyetometer = ITEM_DEFERRED_REGISTER.register("hyetometer", () -> new MeterItem(new Item.Properties()));

@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "eclipticseasons:bamboo_wind_chimes"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ],
+  "random_sequence": "eclipticseasons:blocks/bamboo_wind_chimes"
+}

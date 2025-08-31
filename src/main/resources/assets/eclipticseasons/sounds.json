@@ -51,5 +51,32 @@
         "stream": true
       }
     ]
+  },
+  "block.bamboo_wind_chimes": {
+    "category": "block",
+    "sounds": [
+      {
+        "name": "eclipticseasons:block/bamboo_wind_chimes",
+        "stream": true
+      }
+    ]
+  },
+  "block.paper_wind_chimes": {
+    "category": "block",
+    "sounds": [
+      {
+        "name": "eclipticseasons:block/paper_wind_chimes",
+        "stream": true
+      }
+    ]
+  },
+  "block.wind_chimes": {
+    "category": "block",
+    "sounds": [
+      {
+        "name": "eclipticseasons:block/wind_chimes",
+        "stream": true
+      }
+    ]
   }
 }

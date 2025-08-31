@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "wind_chimes",
+  "key": {
+    "x": {
+      "item": "minecraft:string"
+    },
+    "z": {
+      "item": "minecraft:bamboo"
+    }
+  },
+  "pattern": [
+    " x ",
+    "zzz"
+  ],
+  "result": {
+    "item": "eclipticseasons:wind_chimes"
+  },
+  "show_notification": true
+}

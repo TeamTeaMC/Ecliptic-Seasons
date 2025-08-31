@@ -30,7 +30,7 @@ public class CropHumidityInfo {
     }
 
     public float getGrowChance(Humidity env) {
-        float mul = 1 / (CommonConfig.Crop.cropGrowChanceInWrongHumidity.get().floatValue());
+        float mul = 1 / 0.25f;
         if (isSuitable(env)) {
             return 1.0F;
         } else if (env.getId() < min.getId()) {

@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "eclipticseasons:item/paper_wind_chimes"
+  }
+}

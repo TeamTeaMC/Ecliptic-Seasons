@@ -24,12 +24,13 @@ public class Lang_EN extends LangHelper {
 
         add(BlockRegistry.calendar.get(), "Calendar");
         add("item.eclipticseasons.calendar.pop_hint", "%1$s, %2$s/%3$s");
-        // add(EclipticSeasons.ModContents.wind_chimes.get(), "Wind Chimes");
-        // add(EclipticSeasons.ModContents.paper_wind_chimes.get(), "Paper Wind Chimes");
-        // add(EclipticSeasons.ModContents.bamboo_wind_chimes.get(), "Bamboo Wind Chimes");
-        // add(EclipticSeasons.ModContents.pinwheel_blue.get(), "Blue Pinwheel");
-        // add(EclipticSeasons.ModContents.pinwheel_lime.get(), "Lime Pinwheel");
-        // add(EclipticSeasons.ModContents.pinwheel_orange.get(), "Orange Pinwheel");
+
+        add(BlockRegistry.wind_chimes.get(), "Wind Chimes");
+        add(BlockRegistry.paper_wind_chimes.get(), "Paper Wind Chimes");
+        add(BlockRegistry.bamboo_wind_chimes.get(), "Bamboo Wind Chimes");
+        add(BlockRegistry.pinwheel_blue.get(), "Blue Pinwheel");
+        add(BlockRegistry.pinwheel_lime.get(), "Lime Pinwheel");
+        add(BlockRegistry.pinwheel_orange.get(), "Orange Pinwheel");
         // add(EclipticSeasons.ModContents.snowy_maker_item.get(), "Ice Wand");
         add(ItemRegistry.broom.get(), "Broom");
         add(ItemRegistry.thermometer.get(), "Thermometer");

@@ -89,6 +89,12 @@ public final class ESBlockTagProvider extends BlockTagsProvider {
         tag(BlockTags.MINEABLE_WITH_AXE).add(BlockRegistry.calendar.get(),
                 BlockRegistry.season_quest_wall_hanging_sign.get(),
                 BlockRegistry.season_quest_ceiling_hanging_sign.get(),
+                BlockRegistry.wind_chimes.get(),
+                BlockRegistry.bamboo_wind_chimes.get(),
+                BlockRegistry.wind_chimes.get(),
+                BlockRegistry.pinwheel_blue.get(),
+                BlockRegistry.pinwheel_lime.get(),
+                BlockRegistry.pinwheel_orange.get(),
                 BlockRegistry.block_in_wooden_grate_block.get());
 
         tag(BlockTags.MINEABLE_WITH_PICKAXE).add(BlockRegistry.hygrometer.get(),

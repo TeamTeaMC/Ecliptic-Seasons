@@ -115,6 +115,14 @@ public class ClientSetup {
             ItemBlockRenderTypes.setRenderLayer(BlockRegistry.block_in_wooden_grate_block.get(), RenderType.cutoutMipped());
             ItemBlockRenderTypes.setRenderLayer(BlockRegistry.hygrometer.get(), RenderType.cutoutMipped());
 
+            ItemBlockRenderTypes.setRenderLayer(BlockRegistry.bamboo_wind_chimes.get(), RenderType.cutoutMipped());
+            ItemBlockRenderTypes.setRenderLayer(BlockRegistry.paper_wind_chimes.get(), RenderType.cutoutMipped());
+            ItemBlockRenderTypes.setRenderLayer(BlockRegistry.wind_chimes.get(), RenderType.cutoutMipped());
+
+            ItemBlockRenderTypes.setRenderLayer(BlockRegistry.pinwheel_blue.get(), RenderType.cutoutMipped());
+            ItemBlockRenderTypes.setRenderLayer(BlockRegistry.pinwheel_lime.get(), RenderType.cutoutMipped());
+            ItemBlockRenderTypes.setRenderLayer(BlockRegistry.pinwheel_orange.get(), RenderType.cutoutMipped());
+
             ClientCon.agent = new ClientClientAgent();
         });
     }
@@ -122,6 +130,8 @@ public class ClientSetup {
     @SubscribeEvent
     public static void onRegisterRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerBlockEntityRenderer(BlockEntityRegistry.calendar_entity_type.get(), CalendarBlockEntityRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntityRegistry.pinwheel_entity_type.get(), PinWheelRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntityRegistry.wind_chimes_entity_type.get(), WindChimesRenderer::new);
 
         event.registerBlockEntityRenderer(BlockEntityRegistry.greenhouse_core_container_entity_type.get(), GreenHouseCoreFrameRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.greenhouse_core_entity_type.get(), GreenHouseCoreRenderer::new);

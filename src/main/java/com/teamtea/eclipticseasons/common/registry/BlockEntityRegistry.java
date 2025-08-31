@@ -9,6 +9,10 @@ import net.minecraftforge.registries.RegistryObject;
 
 public class BlockEntityRegistry {
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITY_TYPE_DEFERRED_REGISTER = DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, EclipticSeasonsApi.MODID);
+
+    public static final RegistryObject<BlockEntityType<WindChimesBlockEntity>> wind_chimes_entity_type = BLOCK_ENTITY_TYPE_DEFERRED_REGISTER.register("wind_chimes", () -> BlockEntityType.Builder.of(WindChimesBlockEntity::new, BlockRegistry.wind_chimes.get(), BlockRegistry.paper_wind_chimes.get(), BlockRegistry.bamboo_wind_chimes.get()).build(null));
+    public static final RegistryObject<BlockEntityType<PinWheelBlockEntity>> pinwheel_entity_type = BLOCK_ENTITY_TYPE_DEFERRED_REGISTER.register("paper_wind_mill", () -> BlockEntityType.Builder.of(PinWheelBlockEntity::new, BlockRegistry.pinwheel_blue.get(), BlockRegistry.pinwheel_lime.get(), BlockRegistry.pinwheel_orange.get()).build(null));
+
     public static final RegistryObject<BlockEntityType<CalendarBlockEntity>> calendar_entity_type = BLOCK_ENTITY_TYPE_DEFERRED_REGISTER.register("calendar", () -> BlockEntityType.Builder.of(CalendarBlockEntity::new, BlockRegistry.calendar.get()).build(null));
 
     public static final RegistryObject<BlockEntityType<GreenHouseCoreBlockEntity>> greenhouse_core_entity_type = BLOCK_ENTITY_TYPE_DEFERRED_REGISTER.register("greenhouse_core", () -> BlockEntityType.Builder.of(GreenHouseCoreBlockEntity::new, BlockRegistry.spring_greenhouse_core.get(), BlockRegistry.summer_greenhouse_core.get(), BlockRegistry.autumn_greenhouse_core.get(), BlockRegistry.winter_greenhouse_core.get()).build(null));
