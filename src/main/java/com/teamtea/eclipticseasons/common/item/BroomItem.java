@@ -230,8 +230,8 @@ public class BroomItem extends Item {
         if (FMLLoader.getDist() != Dist.CLIENT || !ClientConfig.GUI.itemInformation.get()) return;
 
         boolean use = FMLEnvironment.dist == Dist.CLIENT ?
-                ClientConfig.Renderer.realisticSnowyChange.get() : true;
-        use &= CommonConfig.Map.delayedUpdates.get();
+                ClientConfig.Renderer.realisticSnowyChange.get() : false;
+        use |= CommonConfig.Map.delayedUpdates.get();
 
         if (!use) {
             tooltipComponents.add(Component.translatable("info.eclipticseasons.config.inactive")
