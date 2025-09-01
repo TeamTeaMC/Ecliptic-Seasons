@@ -1,5 +1,7 @@
 ### 0.12.0-pre11-4
 
+- Fixed a bug where snow fall but blocks within view were not covered with snow. This issue may have been introduced
+  since version 0.12.0-pre11-1.
 - Fixed a bug where textures could be missing from the season_textures resource pack.
 - Optimized object lookup when sending data with the broom and ice wand.
 

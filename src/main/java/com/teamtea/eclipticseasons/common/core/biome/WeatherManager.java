@@ -777,11 +777,12 @@ public class WeatherManager {
     public static SnowRenderStatus getSnowStatus(ServerLevel level, Biome biome, BlockPos pos) {
         var status = SnowRenderStatus.NONE;
         if (biome.hasPrecipitation()) {
-            Biome.Precipitation precipitation = getRainOrSnow(level, biome, pos);
+            Biome.Precipitation precipitation = getPrecipitationAt(level, biome, pos);
             if (precipitation == Biome.Precipitation.SNOW) {
-                status = SnowRenderStatus.SNOW;
+                if (isRainingOrSnowAtBiome(level, biome))
+                    status = SnowRenderStatus.SNOW;
             } else {
-                status = level.getRandom().nextBoolean() | precipitation == Biome.Precipitation.RAIN ?
+                status = level.getRandom().nextBoolean() | (isRainingOrSnowAtBiome(level, biome) && precipitation == Biome.Precipitation.RAIN) ?
                         SnowRenderStatus.SNOW_MELT : SnowRenderStatus.NONE;
             }
         }
