@@ -54,8 +54,8 @@ public class SolarBlockModel extends BlockModel {
     }
 
     public BlockModel to(Map<String, ResourceLocation> stringStringMap, Map<String, Integer> integerMap) {
-        Map<String, Either<Material, String>> map = new HashMap<>();
-        map.putAll(this.textureMap);
+        Map<String, Either<Material, String>> map = new HashMap<>(this.textureMap);
+        if(this.parent!=null) map.putAll(this.parent.textureMap);
         stringStringMap.forEach(
                 (string, location) -> {
                     if (map.containsKey(string)) {

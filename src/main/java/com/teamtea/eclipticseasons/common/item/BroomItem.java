@@ -18,6 +18,7 @@ import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.dedicated.DedicatedServer;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.sounds.SoundEvent;
@@ -33,6 +34,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -138,7 +140,7 @@ public class BroomItem extends Item {
                     //     ClientMapFixer.addPlanner(level,blockstate,blockpos,level.getGameTime()+160, startY);
                     // }
                     if (shouldSet) {
-                        if (!level.isClientSide()) {
+                        if (level instanceof ServerLevel serverLevel) {
                             if (CommonConfig.Map.delayedUpdates.get()) {
                                 if (level.getRandom().nextInt(4) == 0)
                                     Block.popResource(level, blockpos, Items.SNOWBALL.getDefaultInstance());
@@ -148,19 +150,19 @@ public class BroomItem extends Item {
                                         level.getGameTime() + 160,
                                         MapChecker.getHeight(level, blockpos), true);
                             } else {
-                                var distance = level.getServer() instanceof DedicatedServer dedicatedServer ?
-                                        dedicatedServer.getProperties().viewDistance : 64;
-                                distance = distance * distance;
-                                List<ServerPlayer> nearbyPlayers = Lists.newArrayList();
-                                for (Player player : level.players()) {
-                                    if (player instanceof ServerPlayer serverPlayer && !(player instanceof FakePlayer)) {
-                                        if (serverPlayer.blockPosition().distSqr(blockpos) < distance) {
-                                            nearbyPlayers.add(serverPlayer);
-                                        }
-                                    }
-                                }
-                                SimpleNetworkHandler.send(nearbyPlayers, new BroomUseMessage(blockpos, level.getGameTime()));
-                            }
+                                // var distance = level.getServer() instanceof DedicatedServer dedicatedServer ?
+                                //         dedicatedServer.getProperties().viewDistance : 64;
+                                // distance = distance * distance;
+                                // List<ServerPlayer> nearbyPlayers = Lists.newArrayList();
+                                // for (Player player : level.players()) {
+                                //     if (player instanceof ServerPlayer serverPlayer && !(player instanceof FakePlayer)) {
+                                //         if (serverPlayer.blockPosition().distSqr(blockpos) < distance) {
+                                //             nearbyPlayers.add(serverPlayer);
+                                //         }
+                                //     }
+                                // }
+                                SimpleNetworkHandler.send(serverLevel.getChunkSource().chunkMap.getPlayers(new ChunkPos(blockpos), false)
+                                        , new BroomUseMessage(blockpos, level.getGameTime()));                            }
                         } else if (level.isClientSide()) {
                             int startY = level.getMaxBuildHeight() + 1;
                             MapChecker.updatePosForce(level, blockpos, level.getMaxBuildHeight() + 1);
