@@ -613,31 +613,33 @@ public class MapChecker {
         int x = SectionPos.blockToSectionCoord(pos.getX());
         int z = SectionPos.blockToSectionCoord(pos.getZ());
         ChunkAccess chunkAt = level.getChunk(x, z, ChunkStatus.BIOMES, false);
-        if (chunkAt instanceof ImposterProtoChunk imposterProtoChunk) {
-            chunkAt = imposterProtoChunk.getWrapped();
-        }
-        if (chunkAt instanceof IChunkBiomeHolder iChunkBiomeHolder
-                && iChunkBiomeHolder.eclipticseasons$getBiomeHolder() != null
-                && iChunkBiomeHolder.eclipticseasons$getBiomeHolder().version() == SolarHolders.getSaveData(level).getBiomeDataVersion()) {
-            // BiomeHolder biomeHolder = chunkAt.getData(ModContents.BIOME_HOLDER);
-            return getSurfaceBiome(level, pos, iChunkBiomeHolder.eclipticseasons$getBiomeHolder());
+        if (chunkAt instanceof IChunkBiomeHolder iChunkBiomeHolder) {
+            BiomeHolder biomeHolder = iChunkBiomeHolder.eclipticseasons$getBiomeHolder();
+            if (biomeHolder != null
+                    && biomeHolder.version() == SolarHolders.getSaveData(level).getBiomeDataVersion()) {
+                // BiomeHolder biomeHolder = chunkAt.getData(ModContents.BIOME_HOLDER);
+                return getSurfaceBiome(level, pos, biomeHolder);
+            }
         }
         return getUnCachedSurfaceBiome(level, pos);
     }
 
     public static Holder<Biome> getSurfaceBiomeByChunk(Level level, LevelChunk chunkAt, BlockPos pos) {
-        if (chunkAt instanceof IChunkBiomeHolder iChunkBiomeHolder
-                && iChunkBiomeHolder.eclipticseasons$getBiomeHolder() != null
-                && iChunkBiomeHolder.eclipticseasons$getBiomeHolder().version() == SolarHolders.getSaveData(level).getBiomeDataVersion()) {
-            // BiomeHolder biomeHolder = chunkAt.getData(ModContents.BIOME_HOLDER);
-            return getSurfaceBiome(level, pos, iChunkBiomeHolder.eclipticseasons$getBiomeHolder());
+        if (chunkAt instanceof IChunkBiomeHolder iChunkBiomeHolder) {
+            BiomeHolder biomeHolder = iChunkBiomeHolder.eclipticseasons$getBiomeHolder();
+            if (biomeHolder != null
+                    && biomeHolder.version() == SolarHolders.getSaveData(level).getBiomeDataVersion()) {
+                // BiomeHolder biomeHolder = chunkAt.getData(ModContents.BIOME_HOLDER);
+                return getSurfaceBiome(level, pos, biomeHolder);
+            }
         }
         return getUnCachedSurfaceBiome(level, pos);
     }
 
     public static Holder<Biome> getSurfaceBiome(Level level, BlockPos pos, @Nonnull BiomeHolder biomeHolder) {
         int biomeId = biomeHolder.getBiomeId(pos);
-        return biomeId > -1 ? idToBiome(level, biomeId) : getUnCachedSurfaceBiome(level, pos);
+        return biomeId > -1 ? idToBiome(level, biomeId) :
+                getUnCachedSurfaceBiome(level, pos);
     }
 
     public static Holder<Biome> getUnCachedSurfaceBiome(Level level, BlockPos pos) {

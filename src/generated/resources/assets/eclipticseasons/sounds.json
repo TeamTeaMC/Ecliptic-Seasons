@@ -1,14 +1,13 @@
 {
   "ambient.garden_wind": {
-    "category": "ambient",
     "sounds": [
       {
-        "name": "eclipticseasons:ambient/garden_wind"
+        "name": "eclipticseasons:ambient/garden_wind",
+        "stream": true
       }
     ]
   },
   "ambient.night_river": {
-    "category": "ambient",
     "sounds": [
       {
         "name": "eclipticseasons:ambient/night_river",
@@ -17,7 +16,6 @@
     ]
   },
   "ambient.spring_forest": {
-    "category": "ambient",
     "sounds": [
       {
         "name": "eclipticseasons:ambient/spring_forest",
@@ -26,7 +24,6 @@
     ]
   },
   "ambient.windy_leave": {
-    "category": "ambient",
     "sounds": [
       {
         "name": "eclipticseasons:ambient/windy_leave",
@@ -35,7 +32,6 @@
     ]
   },
   "ambient.winter_cold": {
-    "category": "ambient",
     "sounds": [
       {
         "name": "eclipticseasons:ambient/winter_cold",
@@ -44,7 +40,6 @@
     ]
   },
   "ambient.winter_forest": {
-    "category": "ambient",
     "sounds": [
       {
         "name": "eclipticseasons:ambient/winter_forest",
@@ -53,7 +48,6 @@
     ]
   },
   "block.bamboo_wind_chimes": {
-    "category": "block",
     "sounds": [
       {
         "name": "eclipticseasons:block/bamboo_wind_chimes",
@@ -62,7 +56,6 @@
     ]
   },
   "block.paper_wind_chimes": {
-    "category": "block",
     "sounds": [
       {
         "name": "eclipticseasons:block/paper_wind_chimes",
@@ -71,10 +64,17 @@
     ]
   },
   "block.wind_chimes": {
-    "category": "block",
     "sounds": [
       {
         "name": "eclipticseasons:block/wind_chimes",
+        "stream": true
+      }
+    ]
+  },
+  "record.snowless_hometown": {
+    "sounds": [
+      {
+        "name": "eclipticseasons:record/snowless_hometown",
         "stream": true
       }
     ]

@@ -7,6 +7,8 @@ import com.teamtea.eclipticseasons.common.item.*;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Rarity;
+import net.minecraft.world.item.RecordItem;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
 
@@ -45,5 +47,7 @@ public class ItemRegistry {
     public static final RegistryObject<Item> seasonal_prayer_scroll_item = ITEM_DEFERRED_REGISTER.register("seasonal_prayer_scroll", () -> new QuestSignChangeItem((new Item.Properties())));
 
     public static final RegistryObject<Item> block_in_wooden_grate_block_item = ITEM_DEFERRED_REGISTER.register("block_in_wooden_grate_block", () -> new BlockItem(BlockRegistry.block_in_wooden_grate_block.get(), (new Item.Properties())));
+
+    public static final RegistryObject<RecordItem> snowless_hometown = ITEM_DEFERRED_REGISTER.register("snowless_hometown", () -> new RecordItem(14, () -> SoundEventsRegistry.snowless_hometown, new Item.Properties().stacksTo(1).rarity(Rarity.RARE), 243));
 
 }

@@ -16,6 +16,7 @@ import com.teamtea.eclipticseasons.data.general.model.BlockStatesDataProvider;
 import com.teamtea.eclipticseasons.data.general.model.ESBlockModelProvider;
 import com.teamtea.eclipticseasons.data.general.model.ESItemModelProvider;
 import com.teamtea.eclipticseasons.data.general.recipe.ESRecipeProvider;
+import com.teamtea.eclipticseasons.data.general.sound.ESSoundDefinitionsProvider;
 import com.teamtea.eclipticseasons.data.general.tag.*;
 import net.minecraft.Util;
 import net.minecraft.core.HolderLookup;
@@ -76,6 +77,7 @@ public class start {
             // RegistryAccess.Frozen registryaccess$frozen = RegistryAccess.fromRegistryOfRegistries(BuiltInRegistries.REGISTRY);
             // HolderLookup.Provider modProvider = new RegistrySetBuilder().build(registryaccess$frozen);
             // CompletableFuture<HolderLookup.Provider> modFuture = CompletableFuture.supplyAsync(() -> modProvider, Util.backgroundExecutor());
+            generator.addProvider(event.includeClient(), new ESSoundDefinitionsProvider(packOutput, MODID, helper));
 
 
             generator.addProvider(event.includeClient(), new SeasonalBiomeAmbientProvider(packOutput, MODID, helper, lookupProvider));

@@ -1,3 +1,11 @@
+### 0.12.0-pre12
+
+- For the sake of code structure and data stability, `RealisticSnowyChange` and broom usage have been temporarily removed. As a result, we no longer need to intervene in the internal implementation of the lighting engine.
+- The biome caching mode has been adjusted to stay closer to 1.21, with the missing capability acquisition part from Forge now supplemented.
+- Further optimizations have been made to the conversion between BlockState and Block Snowy Type queries.
+- The default snow-covered grass block model has been adjusted to a composite overlay model, in order to avoid false positives from Fusion-style connected-texture mods that rely on model detection.
+- Special thanks to Beishanwei and Orangesoda for their special authorization to carry and adapt the song “Snowless Hometown” in this mod. Due to scheduling constraints for the arrangement, the acquisition method is not open at this time.
+
 ### 0.12.0-pre11-4
 
 - Fixed a bug where snow fall but blocks within view were not covered with snow. This issue may have been introduced

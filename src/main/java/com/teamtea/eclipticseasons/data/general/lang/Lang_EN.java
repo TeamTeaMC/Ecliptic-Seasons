@@ -58,6 +58,9 @@ public class Lang_EN extends LangHelper {
 
         add(ItemRegistry.seasonal_prayer_scroll_item.get(), "Seasonal Prayer Scroll");
 
+        add(ItemRegistry.snowless_hometown.get(),"Snowless Homeland");
+        add(ItemRegistry.snowless_hometown.get().getDescriptionId() + ".desc", "Beishanwei & Orange Soda (feat. Others)");
+
         add("info.eclipticseasons.environment.temperature.under_freezing", "Under Freezing");
         add("info.eclipticseasons.environment.temperature.freezing", "Freezing");
         add("info.eclipticseasons.environment.temperature.cold", "Cold");

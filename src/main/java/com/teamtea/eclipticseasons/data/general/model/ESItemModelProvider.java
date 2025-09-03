@@ -41,6 +41,8 @@ public class ESItemModelProvider extends ItemModelProvider {
         addSimple(ItemRegistry.seasonal_prayer_scroll_item.get());
         addSimple(ItemRegistry.growth_detector.get());
 
+        addSimple(ItemRegistry.snowless_hometown.get());
+
         withExistingParent(resourceItem(ItemRegistry.block_in_wooden_grate_block_item.getId().getPath()).getPath(),
                 resourceBlock(ItemRegistry.block_in_wooden_grate_block_item.getId().getPath()));
 

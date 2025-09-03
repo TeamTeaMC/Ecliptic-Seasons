@@ -12,7 +12,7 @@
     "common.block.MixinIBlockExtension",
     "common.block.MixinLightningRodBlock",
     "common.chunk.MixinChunkAccess",
-    "common.chunk.MixinChunkMap",
+    "common.chunk.MixinImposterProtoChunk",
     "common.chunk.MixinLevelChunk",
     "common.command.MixinWeatherCommand",
     "common.entity.MixinEntity",

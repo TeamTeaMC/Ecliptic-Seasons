@@ -396,6 +396,8 @@
   "item.eclipticseasons.growth_detector.hint.title": "§l检测结果：",
   "item.eclipticseasons.hyetometer": "雨量计",
   "item.eclipticseasons.seasonal_prayer_scroll": "祈年令",
+  "item.eclipticseasons.snowless_hometown": "无雪的故乡",
+  "item.eclipticseasons.snowless_hometown.desc": "北山薇 & 橙子苏打 等",
   "item.eclipticseasons.spring_greenhouse_essence": "春季温室心髓",
   "item.eclipticseasons.summer_greenhouse_essence": "夏季温室心髓",
   "item.eclipticseasons.thermometer": "温度计",

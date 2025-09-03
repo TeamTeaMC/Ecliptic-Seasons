@@ -19,6 +19,8 @@ public class SoundEventsRegistry {
     public final static SoundEvent bamboo_wind_chimes = SoundEvent.createVariableRangeEvent(EclipticSeasons.rl("block.bamboo_wind_chimes"));
     public final static SoundEvent paper_wind_chimes = SoundEvent.createVariableRangeEvent(EclipticSeasons.rl("block.paper_wind_chimes"));
 
+    public final static SoundEvent snowless_hometown = SoundEvent.createVariableRangeEvent(EclipticSeasons.rl( "record.snowless_hometown"));
+
     @SubscribeEvent
     public static void blockRegister(RegisterEvent event) {
         // MultiPackResourceManager
@@ -32,6 +34,7 @@ public class SoundEventsRegistry {
             soundEventRegisterHelper.register(wind_chimes.getLocation(), wind_chimes);
             soundEventRegisterHelper.register(bamboo_wind_chimes.getLocation(), bamboo_wind_chimes);
             soundEventRegisterHelper.register(paper_wind_chimes.getLocation(), paper_wind_chimes);
+            soundEventRegisterHelper.register(snowless_hometown.getLocation(), snowless_hometown);
         });
     }
 }

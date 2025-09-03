@@ -59,6 +59,9 @@ public class Lang_ZH extends LangHelper {
 
         add(BlockRegistry.block_in_wooden_grate_block.get(), "湿度调节木格栅");
 
+        add(ItemRegistry.snowless_hometown.get(), "无雪的故乡");
+        add(ItemRegistry.snowless_hometown.get().getDescriptionId() + ".desc", "北山薇 & 橙子苏打 等");
+
         add("info.eclipticseasons.environment.temperature.under_freezing", "严寒");
         add("info.eclipticseasons.environment.temperature.freezing", "冰冻");
         add("info.eclipticseasons.environment.temperature.cold", "寒冷");
@@ -439,14 +442,14 @@ public class Lang_ZH extends LangHelper {
 
         add("info.eclipticseasons.bone_meal.failure", "当前环境条件无法用骨粉催熟");
 
-        add("info.eclipticseasons.calendar.model","已切换为%s显示模式");
-        add("info.eclipticseasons.calendar.model.normal","一般");
-        add("info.eclipticseasons.calendar.model.year","年份");
-        add("info.eclipticseasons.calendar.model.next","下一节气");
+        add("info.eclipticseasons.calendar.model", "已切换为%s显示模式");
+        add("info.eclipticseasons.calendar.model.normal", "一般");
+        add("info.eclipticseasons.calendar.model.year", "年份");
+        add("info.eclipticseasons.calendar.model.next", "下一节气");
 
-        add("pack.eclipticseasons.extra_snow","额外覆雪方块资源包");
+        add("pack.eclipticseasons.extra_snow", "额外覆雪方块资源包");
 
-        add("info.eclipticseasons.config.inactive","§7当前配置下不起作用");
+        add("info.eclipticseasons.config.inactive", "§7当前配置下不起作用");
         add("info.eclipticseasons.greenhouse_core.effect", "为温室中%1$s格范围内的%2$s季作物提供生长加成");
 
         add("info.eclipticseasons.show.shift", "§o<..按住shift..>");
