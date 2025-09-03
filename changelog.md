@@ -4,6 +4,8 @@
 - The biome caching mode has been adjusted to stay closer to 1.21, with the missing capability acquisition part from Forge now supplemented.
 - Further optimizations have been made to the conversion between BlockState and Block Snowy Type queries.
 - The default snow-covered grass block model has been adjusted to a composite overlay model, in order to avoid false positives from Fusion-style connected-texture mods that rely on model detection.
+- Internal use of EnumMap has been revised wherever possible in favor of our custom implementation Enum2ObjectMap.
+- Fixed an issue when rendering additional models, might not have correctly applied precise offset position checks.
 - Special thanks to Beishanwei and Orangesoda for their special authorization to carry and adapt the song “Snowless Hometown” in this mod. Due to scheduling constraints for the arrangement, the acquisition method is not open at this time.
 
 ### 0.12.0-pre11-4

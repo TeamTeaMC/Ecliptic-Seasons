@@ -10,6 +10,7 @@ import com.teamtea.eclipticseasons.api.data.season.definition.selector.IChangeSe
 import com.teamtea.eclipticseasons.api.misc.BiomeHolderPredicate;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.api.util.SimpleUtil;
+import com.teamtea.eclipticseasons.api.util.fast.Enum2ObjectMap;
 import com.teamtea.eclipticseasons.common.registry.ESRegistries;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import it.unimi.dsi.fastutil.HashCommon;
@@ -45,7 +46,7 @@ public class NaturalPlantHandler {
                 SimpleUtil.warningForModWrongCalling(ESRegistries.SEASON_DEFINITION);
             } else {
                 for (SeasonDefinition seasonDefinition : registry.get()) {
-                    EnumMap<SolarTerm, List<ChangeMode>> combine = seasonDefinition.changes().combine();
+                    Enum2ObjectMap<SolarTerm, List<ChangeMode>> combine = seasonDefinition.changes().combine();
                     combine.forEach(
                             (solarTerm, changeModes) -> {
                                 for (ChangeMode changeMode : changeModes) {

@@ -16,6 +16,7 @@ import com.teamtea.eclipticseasons.api.data.weather.CustomSnowTerm;
 import com.teamtea.eclipticseasons.api.misc.IBiomeTagHolder;
 import com.teamtea.eclipticseasons.api.misc.RegistryFilter;
 import com.teamtea.eclipticseasons.api.util.SimpleUtil;
+import com.teamtea.eclipticseasons.api.util.fast.Enum2ObjectMap;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.common.registry.ESRegistries;
 import com.teamtea.eclipticseasons.config.CommonConfig;
@@ -129,7 +130,7 @@ public class BiomeClimateManager {
                         SEASON_PHASE_MAP,
                         (customRainBuilder -> Pair.of(customRainBuilder.biomes(), customRainBuilder.localMapping().combine())),
                         (map, pair) -> map.put(pair.getFirst().value(), pair.getSecond()),
-                        () -> new EnumMap<SolarTerm, Holder<SeasonPhase>>(SolarTerm.class),
+                        () -> new Enum2ObjectMap<SolarTerm, Holder<SeasonPhase>>(SolarTerm.class),
                         (biome, map) -> map
                 );
             }

@@ -5,6 +5,7 @@ import com.mojang.datafixers.util.Pair;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.data.client.model.seasonal.SeasonalTexture;
 import com.teamtea.eclipticseasons.api.misc.BiomeHolderPredicate;
+import com.teamtea.eclipticseasons.api.util.fast.Enum2ObjectMap;
 import com.teamtea.eclipticseasons.client.model.SeasonBiomeGoingModel;
 import com.teamtea.eclipticseasons.client.model.SeasonGoingModel;
 import it.unimi.dsi.fastutil.Hash;
@@ -68,7 +69,7 @@ public class SolarBlockModel extends BlockModel {
             elements = new ArrayList<>(elements);
             for (int i = 0, elementsSize = elements.size(); i < elementsSize; i++) {
                 BlockElement element = elements.get(i);
-                EnumMap<Direction, BlockElementFace> elementFace = new EnumMap<>(Direction.class);
+                Enum2ObjectMap<Direction, BlockElementFace> elementFace = new Enum2ObjectMap<>(Direction.class);
                 element.faces.forEach((direction, face) -> {
                     Integer orDefault = integerMap.getOrDefault(face.texture, null);
                     if (orDefault != null && face.tintIndex != orDefault) {
@@ -133,8 +134,8 @@ public class SolarBlockModel extends BlockModel {
                     });
 
             for (SeasonalTexture texture : seasonalTexture) {
-                EnumMap<SolarTerm, List<Pair<BakedModel, BakedModel>>> solarTermBakedModelEnumMap = new EnumMap<>(SolarTerm.class);
-                EnumMap<SolarTerm, List<Pair<BakedModel, BakedModel>>> snowSolarTermBakedModelEnumMap = new EnumMap<>(SolarTerm.class);
+                Enum2ObjectMap<SolarTerm, List<Pair<BakedModel, BakedModel>>> solarTermBakedModelEnumMap = new Enum2ObjectMap<>(SolarTerm.class);
+                Enum2ObjectMap<SolarTerm, List<Pair<BakedModel, BakedModel>>> snowSolarTermBakedModelEnumMap = new Enum2ObjectMap<>(SolarTerm.class);
 
                 texture.getFlatSliceEnumMap()
                         .forEach(

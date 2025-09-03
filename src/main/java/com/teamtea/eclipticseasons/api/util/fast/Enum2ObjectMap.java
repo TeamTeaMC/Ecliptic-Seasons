@@ -19,7 +19,24 @@ public class Enum2ObjectMap<K extends Enum<K>, V> implements Map<K, V> {
         this.defaultValue = defaultValue;
         K[] constants = keyType.getEnumConstants();
         this.values = (V[]) new Object[constants.length];
+        Arrays.fill(this.values, defaultValue);
         this.setFlags = new BitSet(constants.length);
+    }
+
+    public Enum2ObjectMap(EnumMap<K, V> m, Class<K> keyType) {
+        this(keyType, null);
+        this.putAll(m);
+    }
+
+    public Enum2ObjectMap(Enum2ObjectMap<K, V> m) {
+        this(m.getKeyType());
+        this.putAll(m);
+    }
+
+
+    public Enum2ObjectMap(Map<K, V> m) {
+        this(m instanceof Enum2ObjectMap em ? em.getKeyType() : ((Enum) m.keySet().iterator().next()).getDeclaringClass());
+        this.putAll(m);
     }
 
     @Override
@@ -31,23 +48,25 @@ public class Enum2ObjectMap<K extends Enum<K>, V> implements Map<K, V> {
 
     @Override
     public V get(Object key) {
-        if (!(keyType.isInstance(key))) return null;
+        // if (!(keyType.isInstance(key))) return null;
         return get((K) key);
     }
 
     public V get(K key) {
-        return this.setFlags.get(key.ordinal()) ? (V) this.values[key.ordinal()] : defaultValue;
+        return this.values[key.ordinal()];
     }
 
     @Override
     public boolean containsKey(Object key) {
-        return keyType.isInstance(key) && this.setFlags.get(((K) key).ordinal());
+        return
+                // keyType.isInstance(key) &&
+                this.values[((K) key).ordinal()] != defaultValue;
     }
 
     @Override
     public boolean containsValue(Object value) {
         for (int i = 0; i < values.length; i++) {
-            if (setFlags.get(i) && Objects.equals(values[i], value)) {
+            if (Objects.equals(values[i], value)) {
                 return true;
             }
         }
@@ -56,19 +75,16 @@ public class Enum2ObjectMap<K extends Enum<K>, V> implements Map<K, V> {
 
     @Override
     public V remove(Object key) {
-        if (!(keyType.isInstance(key))) return null;
+        // if (!(keyType.isInstance(key))) return null;
         return remove((K) key);
     }
 
     public V remove(K key) {
         int ordinal = key.ordinal();
-        if (this.setFlags.get(ordinal)) {
-            V oldValue = this.values[ordinal];
-            this.setFlags.clear(ordinal);
-            this.values[ordinal] = null;
-            return oldValue;
-        }
-        return this.defaultValue;
+        V oldValue = this.values[ordinal];
+        this.values[ordinal] = null;
+        this.setFlags.clear(ordinal);
+        return oldValue;
     }
 
     @Override
@@ -80,8 +96,8 @@ public class Enum2ObjectMap<K extends Enum<K>, V> implements Map<K, V> {
 
     @Override
     public void clear() {
+        Arrays.fill(this.values, defaultValue);
         this.setFlags.clear();
-        Arrays.fill(this.values, null);
     }
 
     @Override
@@ -98,7 +114,7 @@ public class Enum2ObjectMap<K extends Enum<K>, V> implements Map<K, V> {
     public @NotNull Set<K> keySet() {
         Set<K> keys = EnumSet.noneOf(keyType);
         for (K key : keyType.getEnumConstants()) {
-            if (this.setFlags.get(key.ordinal())) {
+            if (this.values[key.ordinal()] != defaultValue) {
                 keys.add(key);
             }
         }
@@ -109,8 +125,8 @@ public class Enum2ObjectMap<K extends Enum<K>, V> implements Map<K, V> {
     public @NotNull Collection<V> values() {
         List<V> vals = new ArrayList<>();
         for (int i = 0; i < values.length; i++) {
-            if (this.setFlags.get(i)) {
-                vals.add((V) values[i]);
+            if (this.values[i] != defaultValue) {
+                vals.add(values[i]);
             }
         }
         return vals;
@@ -120,18 +136,11 @@ public class Enum2ObjectMap<K extends Enum<K>, V> implements Map<K, V> {
     public @NotNull Set<Entry<K, V>> entrySet() {
         Set<Entry<K, V>> entries = new HashSet<>();
         for (K key : keyType.getEnumConstants()) {
-            if (this.setFlags.get(key.ordinal())) {
+            if (this.values[key.ordinal()] != defaultValue) {
                 entries.add(new AbstractMap.SimpleEntry<>(key, get(key)));
             }
         }
         return entries;
-    }
-
-    public void fill(V value) {
-        for (int i = 0; i < this.values.length; i++) {
-            this.values[i] = value;
-            this.setFlags.set(i);
-        }
     }
 
     public Class<K> getKeyType() {

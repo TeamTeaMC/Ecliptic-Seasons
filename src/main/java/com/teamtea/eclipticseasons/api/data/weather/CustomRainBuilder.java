@@ -6,6 +6,7 @@ import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.constant.solar.TimePeriod;
 import com.teamtea.eclipticseasons.api.data.misc.SolarTermValueMap;
 import com.teamtea.eclipticseasons.api.util.codec.CodecUtil;
+import com.teamtea.eclipticseasons.api.util.fast.Enum2ObjectMap;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.util.StringRepresentable;
@@ -48,7 +49,7 @@ public record CustomRainBuilder(
                                     );
                                 },
                                 (a, b) -> b,
-                                () -> new EnumMap<>(SolarTerm.class)
+                                () -> new Enum2ObjectMap<>(SolarTerm.class)
                         )
                 );
     }

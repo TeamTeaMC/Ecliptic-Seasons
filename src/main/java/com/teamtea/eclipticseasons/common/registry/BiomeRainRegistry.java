@@ -5,6 +5,7 @@ import com.teamtea.eclipticseasons.api.constant.climate.TemperateRain;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.data.misc.SolarTermValueMap;
 import com.teamtea.eclipticseasons.api.data.weather.CustomRainBuilder;
+import com.teamtea.eclipticseasons.api.util.fast.Enum2ObjectMap;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstapContext;
@@ -25,7 +26,7 @@ public class BiomeRainRegistry {
 
     public static void bootstrap2(BootstapContext<CustomRainBuilder> context) {
         var holderGetter = context.lookup(Registries.BIOME);
-        var solarTermValueMap = SolarTermValueMap.<List<CustomRainBuilder.Weather>>builder().solarTermMap(new EnumMap<>(SolarTerm.class)).build();
+        var solarTermValueMap = SolarTermValueMap.<List<CustomRainBuilder.Weather>>builder().solarTermMap(new Enum2ObjectMap<>(SolarTerm.class)).build();
         for (int i = 0; i < TemperateRain.collectValues().length; i++) {
             TemperateRain temperateRain = TemperateRain.collectValues()[i];
             SolarTerm solarTerm = temperateRain.getSolarTerm();

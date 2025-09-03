@@ -66,12 +66,12 @@ public record LeafColor(
     }
 
     public @NotNull Pair<InstanceHolder, Instance> toInstance() {
-        EnumMap<SolarTerm, ColorMode> colorMap = colors.orElse(EMPTY_MODE_MAP).combine();
-        EnumMap<SolarTerm, List<ResourceLocation>> spriteMap = sprites.orElse(EMPTY_LIST_MAP).combine();
-        EnumMap<SolarTerm, Integer> weightMap = weights.orElse(EMPTY_INTEGER_MAP).combine();
+        Enum2ObjectMap<SolarTerm, ColorMode> colorMap = colors.orElse(EMPTY_MODE_MAP).combine();
+        Enum2ObjectMap<SolarTerm, List<ResourceLocation>> spriteMap = sprites.orElse(EMPTY_LIST_MAP).combine();
+        Enum2ObjectMap<SolarTerm, Integer> weightMap = weights.orElse(EMPTY_INTEGER_MAP).combine();
 
-        Enum2ObjectMap<SolarTerm, ColorMode.Instance> colorsE = SolarTermValueMap.convertToEnum2ObjectMap(colorMap, ColorMode::toInstance);
-        Enum2ObjectMap<SolarTerm, List<ResourceLocation>> spritesE = SolarTermValueMap.convertToEnum2ObjectMap(spriteMap, Function.identity());
+        Enum2ObjectMap<SolarTerm, ColorMode.Instance> colorsE = SolarTermValueMap.convertToEnum2ObjectMap(SolarTerm.class,colorMap, ColorMode::toInstance);
+        Enum2ObjectMap<SolarTerm, List<ResourceLocation>> spritesE = SolarTermValueMap.convertToEnum2ObjectMap(SolarTerm.class,spriteMap, Function.identity());
         Enum2IntMap<SolarTerm> weightsE = new Enum2IntMap<>(SolarTerm.class);
         weightMap.forEach(weightsE::put);
 

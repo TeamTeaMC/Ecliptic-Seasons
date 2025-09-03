@@ -37,15 +37,15 @@ public record BiomeColor(
 
 
     public @NotNull Instance toInstance() {
-        EnumMap<SolarTerm, ColorMode> grassMap = grassColor.orElse(EMPTY_MODE_MAP).combine();
-        EnumMap<SolarTerm, ColorMode> foliageMap = foliageColor.orElse(EMPTY_MODE_MAP).combine();
+        Enum2ObjectMap<SolarTerm, ColorMode> grassMap = grassColor.orElse(EMPTY_MODE_MAP).combine();
+        Enum2ObjectMap<SolarTerm, ColorMode> foliageMap = foliageColor.orElse(EMPTY_MODE_MAP).combine();
 
         if (grassMap.isEmpty() && foliageMap.isEmpty()) {
             return Instance.EMPTY;
         }
 
-        Enum2ObjectMap<SolarTerm, ColorMode.Instance> grassColorMap = SolarTermValueMap.convertToEnum2ObjectMap(grassMap, ColorMode::toInstance);
-        Enum2ObjectMap<SolarTerm, ColorMode.Instance> foliageColorMap = SolarTermValueMap.convertToEnum2ObjectMap(foliageMap, ColorMode::toInstance);
+        Enum2ObjectMap<SolarTerm, ColorMode.Instance> grassColorMap = SolarTermValueMap.convertToEnum2ObjectMap(SolarTerm.class,grassMap, ColorMode::toInstance);
+        Enum2ObjectMap<SolarTerm, ColorMode.Instance> foliageColorMap = SolarTermValueMap.convertToEnum2ObjectMap(SolarTerm.class,foliageMap, ColorMode::toInstance);
 
         if (grassColorMap.isEmpty() && foliageColorMap.isEmpty()) {
             return Instance.EMPTY;

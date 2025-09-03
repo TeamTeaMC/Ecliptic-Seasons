@@ -5,6 +5,7 @@ import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.teamtea.eclipticseasons.api.util.fast.Enum2ObjectMap;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryCodecs;
@@ -80,6 +81,22 @@ public class CodecUtil {
         return Codec.compoundList(keyCodec, valueCodec).xmap(
                 pl -> {
                     EnumMap<K, V> collect = new EnumMap<>(kClass);
+                    for (int i = 0, plSize = pl.size(); i < plSize; i++) {
+                        Pair<K, V> kvPair = pl.get(i);
+                        collect.put(kvPair.getFirst(), kvPair.getSecond());
+                    }
+                    return collect;
+                },
+                map -> map.entrySet().stream()
+                        .map(ent -> Pair.of(ent.getKey(), ent.getValue()))
+                        .collect(Collectors.toList())
+        );
+    }
+
+    public static <K extends Enum<K> & StringRepresentable, V> Codec<Enum2ObjectMap<K, V>> enum2ObjectMapCodec(StringRepresentable.EnumCodec<K> keyCodec, Codec<V> valueCodec, Class<K> kClass) {
+        return Codec.compoundList(keyCodec, valueCodec).xmap(
+                pl -> {
+                    Enum2ObjectMap<K, V> collect = new Enum2ObjectMap<>(kClass);
                     for (int i = 0, plSize = pl.size(); i < plSize; i++) {
                         Pair<K, V> kvPair = pl.get(i);
                         collect.put(kvPair.getFirst(), kvPair.getSecond());

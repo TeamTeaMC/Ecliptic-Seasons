@@ -14,9 +14,7 @@ import com.teamtea.eclipticseasons.api.data.crop.CropGrowControlBuilder;
 import com.teamtea.eclipticseasons.api.data.crop.GrowParameter;
 import com.teamtea.eclipticseasons.api.util.backport.FakeBlockPredicate;
 import com.teamtea.eclipticseasons.api.util.backport.FakeStatePropertiesPredicate;
-import net.minecraft.advancements.critereon.BlockPredicate;
-import net.minecraft.advancements.critereon.StatePropertiesPredicate;
-import net.minecraft.core.Holder;
+import com.teamtea.eclipticseasons.api.util.fast.Enum2ObjectMap;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.Registries;
@@ -27,13 +25,8 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CropBlock;
-import net.minecraft.world.level.block.DoublePlantBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
-import net.minecraftforge.registries.holdersets.AndHolderSet;
-import net.minecraftforge.registries.holdersets.OrHolderSet;
 
-import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -79,7 +72,7 @@ public class CropRegistry {
 
     private static HolderGetter<Block> blockHolderGetter;
 
-    public static <K extends Enum<K>, V> EnumMap<K, V> of(
+    public static <K extends Enum<K>, V> Enum2ObjectMap<K, V> of(
             K k1, V v1, K k2, V v2, K k3, V v3, K k4, V v4, K k5, V v5,
             K k6, V v6, K k7, V v7, K k8, V v8, K k9, V v9, K k10, V v10,
             K k11, V v11, K k12, V v12, K k13, V v13, K k14, V v14, K k15, V v15,
@@ -89,7 +82,7 @@ public class CropRegistry {
             throw new IllegalArgumentException("First key cannot be null");
         }
         Class<K> enumType = k1.getDeclaringClass();
-        EnumMap<K, V> map = new EnumMap<>(enumType);
+        Enum2ObjectMap<K, V> map = new Enum2ObjectMap<>(enumType);
         map.put(k1, v1);
         map.put(k2, v2);
         map.put(k3, v3);
@@ -142,9 +135,9 @@ public class CropRegistry {
     static final HolderSet.Direct<CropGrowControlBuilder> EMPTY_HOLDER_SET = HolderSet.direct(List.of());
 
     public static void bootstrap(BootstapContext<CropGrowControlBuilder> context) {
-        final EnumMap<SolarTerm, GrowParameter> solarTermListEmpty = new EnumMap<>(SolarTerm.class);
-        final EnumMap<Season, GrowParameter> seasonListEmpty = new EnumMap<>(Season.class);
-        final EnumMap<Humidity, GrowParameter> humidListEmpty = new EnumMap<>(Humidity.class);
+        final Enum2ObjectMap<SolarTerm, GrowParameter> solarTermListEmpty = new Enum2ObjectMap<>(SolarTerm.class);
+        final Enum2ObjectMap<Season, GrowParameter> seasonListEmpty = new Enum2ObjectMap<>(Season.class);
+        final Enum2ObjectMap<Humidity, GrowParameter> humidListEmpty = new Enum2ObjectMap<>(Humidity.class);
 
         Optional<BlockState> empty = Optional.empty();
         Optional<GrowParameter> emptyGP = Optional.empty();
@@ -166,7 +159,7 @@ public class CropRegistry {
                 temperate,
                 createTagPredicate(SPRING),
                 HolderSet.direct(), emptyGP, emptyGP2,
-                new EnumMap<>(of(
+                new Enum2ObjectMap<>(of(
                         SolarTerm.BEGINNING_OF_SPRING, GrowParameter.builder().growChance(0.7f).end(),
                         SolarTerm.RAIN_WATER, GrowParameter.builder().growChance(0.85f).end(),
                         SolarTerm.INSECTS_AWAKENING, GrowParameter.builder().growChance(0.95f).end(),
@@ -204,7 +197,7 @@ public class CropRegistry {
                 temperate,
                 createTagPredicate(SUMMER),
                 HolderSet.direct(), emptyGP, emptyGP2,
-                new EnumMap<>(of(
+                new Enum2ObjectMap<>(of(
                         SolarTerm.BEGINNING_OF_SPRING, GrowParameter.builder().growChance(0.0f).end(),
                         SolarTerm.RAIN_WATER, GrowParameter.builder().growChance(0.0f).end(),
                         SolarTerm.INSECTS_AWAKENING, GrowParameter.builder().growChance(0.0f).end(),
@@ -242,7 +235,7 @@ public class CropRegistry {
                 temperate,
                 createTagPredicate(AUTUMN),
                 HolderSet.direct(), emptyGP, emptyGP2,
-                new EnumMap<>(of(
+                new Enum2ObjectMap<>(of(
                         SolarTerm.BEGINNING_OF_SPRING, GrowParameter.builder().growChance(0.0f).end(),
                         SolarTerm.RAIN_WATER, GrowParameter.builder().growChance(0.0f).end(),
                         SolarTerm.INSECTS_AWAKENING, GrowParameter.builder().growChance(0.0f).end(),
@@ -280,7 +273,7 @@ public class CropRegistry {
                 temperate,
                 createTagPredicate(WINTER),
                 HolderSet.direct(), emptyGP, emptyGP2,
-                new EnumMap<>(of(
+                new Enum2ObjectMap<>(of(
                         SolarTerm.BEGINNING_OF_SPRING, GrowParameter.builder().growChance(0.3f).end(),
                         SolarTerm.RAIN_WATER, GrowParameter.builder().growChance(0.1f).end(),
                         SolarTerm.INSECTS_AWAKENING, GrowParameter.builder().growChance(0.0f).end(),
@@ -318,7 +311,7 @@ public class CropRegistry {
                 temperate,
                 createTagPredicate(SP_SU),
                 HolderSet.direct(), emptyGP, emptyGP2,
-                new EnumMap<>(of(
+                new Enum2ObjectMap<>(of(
                         SolarTerm.BEGINNING_OF_SPRING, GrowParameter.builder().growChance(0.5f).end(),
                         SolarTerm.RAIN_WATER, GrowParameter.builder().growChance(0.6f).end(),
                         SolarTerm.INSECTS_AWAKENING, GrowParameter.builder().growChance(0.7f).end(),
@@ -356,7 +349,7 @@ public class CropRegistry {
                 temperate,
                 createTagPredicate(SP_AU),
                 HolderSet.direct(), emptyGP, emptyGP2,
-                new EnumMap<>(of(
+                new Enum2ObjectMap<>(of(
                         SolarTerm.BEGINNING_OF_SPRING, GrowParameter.builder().growChance(0.5f).end(),
                         SolarTerm.RAIN_WATER, GrowParameter.builder().growChance(0.64f).end(),
                         SolarTerm.INSECTS_AWAKENING, GrowParameter.builder().growChance(0.75f).end(),
@@ -394,7 +387,7 @@ public class CropRegistry {
                 temperate,
                 createTagPredicate(SP_WI),
                 HolderSet.direct(), emptyGP, emptyGP2,
-                new EnumMap<>(of(
+                new Enum2ObjectMap<>(of(
                         SolarTerm.BEGINNING_OF_SPRING, GrowParameter.builder().growChance(0.64f).end(),
                         SolarTerm.RAIN_WATER, GrowParameter.builder().growChance(0.75f).end(),
                         SolarTerm.INSECTS_AWAKENING, GrowParameter.builder().growChance(0.8f).end(),
@@ -432,7 +425,7 @@ public class CropRegistry {
                 temperate,
                 createTagPredicate(SU_AU),
                 HolderSet.direct(), emptyGP, emptyGP2,
-                new EnumMap<>(of(
+                new Enum2ObjectMap<>(of(
                         SolarTerm.BEGINNING_OF_SPRING, GrowParameter.builder().growChance(0.1f).end(),
                         SolarTerm.RAIN_WATER, GrowParameter.builder().growChance(0.15f).end(),
                         SolarTerm.INSECTS_AWAKENING, GrowParameter.builder().growChance(0.2f).end(),
@@ -470,7 +463,7 @@ public class CropRegistry {
                 temperate,
                 createTagPredicate(SU_WI),
                 HolderSet.direct(), emptyGP, emptyGP2,
-                new EnumMap<>(of(
+                new Enum2ObjectMap<>(of(
                         SolarTerm.BEGINNING_OF_SPRING, GrowParameter.builder().growChance(0.3f).end(),
                         SolarTerm.RAIN_WATER, GrowParameter.builder().growChance(0.1f).end(),
                         SolarTerm.INSECTS_AWAKENING, GrowParameter.builder().growChance(0.01f).end(),
@@ -508,7 +501,7 @@ public class CropRegistry {
                 temperate,
                 createTagPredicate(AU_WI),
                 HolderSet.direct(), emptyGP, emptyGP2,
-                new EnumMap<>(of(
+                new Enum2ObjectMap<>(of(
                         SolarTerm.BEGINNING_OF_SPRING, GrowParameter.builder().growChance(0.5f).end(),
                         SolarTerm.RAIN_WATER, GrowParameter.builder().growChance(0.1f).end(),
                         SolarTerm.INSECTS_AWAKENING, GrowParameter.builder().growChance(0.1f).end(),
@@ -546,7 +539,7 @@ public class CropRegistry {
                 temperate,
                 createTagPredicate(SP_SU_AU),
                 HolderSet.direct(), emptyGP, emptyGP2,
-                new EnumMap<>(of(
+                new Enum2ObjectMap<>(of(
                         SolarTerm.BEGINNING_OF_SPRING, GrowParameter.builder().growChance(0.35f).end(),
                         SolarTerm.RAIN_WATER, GrowParameter.builder().growChance(0.5f).end(),
                         SolarTerm.INSECTS_AWAKENING, GrowParameter.builder().growChance(0.64f).end(),
@@ -584,7 +577,7 @@ public class CropRegistry {
                 temperate,
                 createTagPredicate(SP_SU_WI),
                 HolderSet.direct(), emptyGP, emptyGP2,
-                new EnumMap<>(of(
+                new Enum2ObjectMap<>(of(
                         SolarTerm.BEGINNING_OF_SPRING, GrowParameter.builder().growChance(0.8f).end(),
                         SolarTerm.RAIN_WATER, GrowParameter.builder().growChance(0.9f).end(),
                         SolarTerm.INSECTS_AWAKENING, GrowParameter.builder().growChance(1.0f).end(),
@@ -622,7 +615,7 @@ public class CropRegistry {
                 temperate,
                 createTagPredicate(SP_AU_WI),
                 HolderSet.direct(), emptyGP, emptyGP2,
-                new EnumMap<>(of(
+                new Enum2ObjectMap<>(of(
                         SolarTerm.BEGINNING_OF_SPRING, GrowParameter.builder().growChance(0.7f).end(),
                         SolarTerm.RAIN_WATER, GrowParameter.builder().growChance(0.8f).end(),
                         SolarTerm.INSECTS_AWAKENING, GrowParameter.builder().growChance(0.9f).end(),
@@ -660,7 +653,7 @@ public class CropRegistry {
                 temperate,
                 createTagPredicate(SU_AU_WI),
                 HolderSet.direct(), emptyGP, emptyGP2,
-                new EnumMap<>(of(
+                new Enum2ObjectMap<>(of(
                         SolarTerm.BEGINNING_OF_SPRING, GrowParameter.builder().growChance(0.0f).end(),
                         SolarTerm.RAIN_WATER, GrowParameter.builder().growChance(0.0f).end(),
                         SolarTerm.INSECTS_AWAKENING, GrowParameter.builder().growChance(0.1f).end(),
@@ -699,7 +692,7 @@ public class CropRegistry {
                 temperate,
                 createTagPredicate(ALL),
                 HolderSet.direct(), emptyGP, emptyGP2,
-                new EnumMap<>(of(
+                new Enum2ObjectMap<>(of(
                         SolarTerm.BEGINNING_OF_SPRING, GrowParameter.builder().growChance(0.45f).end(),
                         SolarTerm.RAIN_WATER, GrowParameter.builder().growChance(0.55f).end(),
                         SolarTerm.INSECTS_AWAKENING, GrowParameter.builder().growChance(0.7f).end(),
@@ -740,7 +733,7 @@ public class CropRegistry {
                 HolderSet.direct(), emptyGP, emptyGP2,
                 solarTermListEmpty,
                 seasonListEmpty,
-                new EnumMap<>(ImmutableMap.of(
+                new Enum2ObjectMap<>(ImmutableMap.of(
                         Humidity.ARID, GrowParameter.builder().growChance(1.01f).end(),
                         Humidity.DRY, GrowParameter.builder().growChance(0.5f).end(),
                         Humidity.AVERAGE, GrowParameter.builder().growChance(0.15f).end(),
@@ -756,7 +749,7 @@ public class CropRegistry {
                 HolderSet.direct(), emptyGP, emptyGP2,
                 solarTermListEmpty,
                 seasonListEmpty,
-                new EnumMap<>(ImmutableMap.of(
+                new Enum2ObjectMap<>(ImmutableMap.of(
                         Humidity.ARID, GrowParameter.builder().growChance(0.99f).end(),
                         Humidity.DRY, GrowParameter.builder().growChance(1f).end(),
                         Humidity.AVERAGE, GrowParameter.builder().growChance(0.35f).end(),
@@ -772,7 +765,7 @@ public class CropRegistry {
                 HolderSet.direct(), emptyGP, emptyGP2,
                 solarTermListEmpty,
                 seasonListEmpty,
-                new EnumMap<>(ImmutableMap.of(
+                new Enum2ObjectMap<>(ImmutableMap.of(
                         Humidity.ARID, GrowParameter.builder().growChance(0.97f).end(),
                         Humidity.DRY, GrowParameter.builder().growChance(1.01f).end(),
                         Humidity.AVERAGE, GrowParameter.builder().growChance(0.97f).end(),
@@ -788,7 +781,7 @@ public class CropRegistry {
                 HolderSet.direct(), emptyGP, emptyGP2,
                 solarTermListEmpty,
                 seasonListEmpty,
-                new EnumMap<>(ImmutableMap.of(
+                new Enum2ObjectMap<>(ImmutableMap.of(
                         Humidity.ARID, GrowParameter.builder().growChance(0.9f).end(),
                         Humidity.DRY, GrowParameter.builder().growChance(0.97f).end(),
                         Humidity.AVERAGE, GrowParameter.builder().growChance(1.025f).end(),
@@ -804,7 +797,7 @@ public class CropRegistry {
                 HolderSet.direct(), emptyGP, emptyGP2,
                 solarTermListEmpty,
                 seasonListEmpty,
-                new EnumMap<>(ImmutableMap.of(
+                new Enum2ObjectMap<>(ImmutableMap.of(
                         Humidity.ARID, GrowParameter.builder().growChance(0.8f).end(),
                         Humidity.DRY, GrowParameter.builder().growChance(0.85f).end(),
                         Humidity.AVERAGE, GrowParameter.builder().growChance(1f).end(),
@@ -820,7 +813,7 @@ public class CropRegistry {
                 HolderSet.direct(), emptyGP, emptyGP2,
                 solarTermListEmpty,
                 seasonListEmpty,
-                new EnumMap<>(ImmutableMap.of(
+                new Enum2ObjectMap<>(ImmutableMap.of(
                         Humidity.ARID, GrowParameter.builder().growChance(0.4f).end(),
                         Humidity.DRY, GrowParameter.builder().growChance(1.025f).end(),
                         Humidity.AVERAGE, GrowParameter.builder().growChance(0.45f).end(),
@@ -836,7 +829,7 @@ public class CropRegistry {
                 HolderSet.direct(), emptyGP, emptyGP2,
                 solarTermListEmpty,
                 seasonListEmpty,
-                new EnumMap<>(ImmutableMap.of(
+                new Enum2ObjectMap<>(ImmutableMap.of(
                         Humidity.ARID, GrowParameter.builder().growChance(0.3f).end(),
                         Humidity.DRY, GrowParameter.builder().growChance(0.97f).end(),
                         Humidity.AVERAGE, GrowParameter.builder().growChance(0.97f).end(),
@@ -852,7 +845,7 @@ public class CropRegistry {
                 HolderSet.direct(), emptyGP, emptyGP2,
                 solarTermListEmpty,
                 seasonListEmpty,
-                new EnumMap<>(ImmutableMap.of(
+                new Enum2ObjectMap<>(ImmutableMap.of(
                         Humidity.ARID, GrowParameter.builder().growChance(0.35f).end(),
                         Humidity.DRY, GrowParameter.builder().growChance(0.95f).end(),
                         Humidity.AVERAGE, GrowParameter.builder().growChance(1.025f).end(),
@@ -868,7 +861,7 @@ public class CropRegistry {
                 HolderSet.direct(), emptyGP, emptyGP2,
                 solarTermListEmpty,
                 seasonListEmpty,
-                new EnumMap<>(ImmutableMap.of(
+                new Enum2ObjectMap<>(ImmutableMap.of(
                         Humidity.ARID, GrowParameter.builder().growChance(0.25f).end(),
                         Humidity.DRY, GrowParameter.builder().growChance(0.9f).end(),
                         Humidity.AVERAGE, GrowParameter.builder().growChance(1f).end(),
@@ -884,7 +877,7 @@ public class CropRegistry {
                 HolderSet.direct(), emptyGP, emptyGP2,
                 solarTermListEmpty,
                 seasonListEmpty,
-                new EnumMap<>(ImmutableMap.of(
+                new Enum2ObjectMap<>(ImmutableMap.of(
                         Humidity.ARID, GrowParameter.builder().growChance(0.07f).end(),
                         Humidity.DRY, GrowParameter.builder().growChance(0.45f).end(),
                         Humidity.AVERAGE, GrowParameter.builder().growChance(1.025f).end(),
@@ -900,7 +893,7 @@ public class CropRegistry {
                 HolderSet.direct(), emptyGP, emptyGP2,
                 solarTermListEmpty,
                 seasonListEmpty,
-                new EnumMap<>(ImmutableMap.of(
+                new Enum2ObjectMap<>(ImmutableMap.of(
                         Humidity.ARID, GrowParameter.builder().growChance(0.1f).end(),
                         Humidity.DRY, GrowParameter.builder().growChance(0.35f).end(),
                         Humidity.AVERAGE, GrowParameter.builder().growChance(0.97f).end(),
@@ -916,7 +909,7 @@ public class CropRegistry {
                 HolderSet.direct(), emptyGP, emptyGP2,
                 solarTermListEmpty,
                 seasonListEmpty,
-                new EnumMap<>(ImmutableMap.of(
+                new Enum2ObjectMap<>(ImmutableMap.of(
                         Humidity.ARID, GrowParameter.builder().growChance(0.05f).end(),
                         Humidity.DRY, GrowParameter.builder().growChance(0.35f).end(),
                         Humidity.AVERAGE, GrowParameter.builder().growChance(0.95f).end(),
@@ -932,7 +925,7 @@ public class CropRegistry {
                 HolderSet.direct(), emptyGP, emptyGP2,
                 solarTermListEmpty,
                 seasonListEmpty,
-                new EnumMap<>(ImmutableMap.of(
+                new Enum2ObjectMap<>(ImmutableMap.of(
                         Humidity.ARID, GrowParameter.builder().growChance(0).fertileChance(0.8f).end(),
                         Humidity.DRY, GrowParameter.builder().growChance(0.15f).end(),
                         Humidity.AVERAGE, GrowParameter.builder().growChance(0.45f).end(),
@@ -948,7 +941,7 @@ public class CropRegistry {
                 HolderSet.direct(), emptyGP, emptyGP2,
                 solarTermListEmpty,
                 seasonListEmpty,
-                new EnumMap<>(ImmutableMap.of(
+                new Enum2ObjectMap<>(ImmutableMap.of(
                         Humidity.ARID, GrowParameter.builder().growChance(0).fertileChance(0.8f).end(),
                         Humidity.DRY, GrowParameter.builder().growChance(0.1f).end(),
                         Humidity.AVERAGE, GrowParameter.builder().growChance(0.35f).end(),
@@ -964,7 +957,7 @@ public class CropRegistry {
                 HolderSet.direct(), emptyGP, emptyGP2,
                 solarTermListEmpty,
                 seasonListEmpty,
-                new EnumMap<>(ImmutableMap.of(
+                new Enum2ObjectMap<>(ImmutableMap.of(
                         Humidity.ARID, GrowParameter.builder().growChance(0f).fertileChance(0.5f).end(),
                         Humidity.DRY, GrowParameter.builder().growChance(0f).fertileChance(0.8f).end(),
                         Humidity.AVERAGE, GrowParameter.builder().growChance(0.3f).end(),
@@ -986,9 +979,9 @@ public class CropRegistry {
         Optional<BlockState> empty = Optional.empty();
         Optional<GrowParameter> emptyGP = Optional.empty();
         Optional<GrowParameter> emptyGP2 = Optional.empty();
-        final EnumMap<SolarTerm, GrowParameter> solarTermListEmpty = new EnumMap<>(SolarTerm.class);
-        final EnumMap<Season, GrowParameter> seasonListEmpty = new EnumMap<>(Season.class);
-        final EnumMap<Humidity, GrowParameter> humidListEmpty = new EnumMap<>(Humidity.class);
+        final Enum2ObjectMap<SolarTerm, GrowParameter> solarTermListEmpty = new Enum2ObjectMap<>(SolarTerm.class);
+        final Enum2ObjectMap<Season, GrowParameter> seasonListEmpty = new Enum2ObjectMap<>(Season.class);
+        final Enum2ObjectMap<Humidity, GrowParameter> humidListEmpty = new Enum2ObjectMap<>(Humidity.class);
         Optional<HolderSet<Block>> emptyBP = Optional.empty();
 
         context.register(createKey("wheat"), new CropGrowControlBuilder(
@@ -1000,7 +993,7 @@ public class CropRegistry {
                 HolderSet.direct(cropGetter.getOrThrow(SP_SU)
                         , cropGetter.getOrThrow(AVERAGE_MOIST)
                 ), emptyGP, emptyGP2,
-                new EnumMap<>(Map.of(SolarTerm.BEGINNING_OF_SPRING, GrowParameter.builder()
+                new Enum2ObjectMap<>(Map.of(SolarTerm.BEGINNING_OF_SPRING, GrowParameter.builder()
                         .growChance(0.9f).fertileChance(0.8f).deathChance(0.01f)
                         .deadState(Blocks.WHEAT.defaultBlockState())
                         .end())),
