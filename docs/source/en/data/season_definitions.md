@@ -1,3 +1,5 @@
+> Need enable`Common->Debug->EnableSeasonDefinition`.
+
 ## Basic Description
 
 This configuration is used to define block replacement, loot drops, or block generation rules that occur with seasonal changes in specific biomes (if omitted, biome checks are ignored).
