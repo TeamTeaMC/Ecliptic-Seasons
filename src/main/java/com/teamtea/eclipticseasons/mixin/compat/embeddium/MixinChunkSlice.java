@@ -3,7 +3,9 @@ package com.teamtea.eclipticseasons.mixin.compat.embeddium;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.misc.client.IMapSlice;
+import com.teamtea.eclipticseasons.api.misc.client.ISnowyGetter;
 import com.teamtea.eclipticseasons.api.misc.client.ISnowyGetterProvider;
+import com.teamtea.eclipticseasons.common.core.map.BiomeHolder;
 import com.teamtea.eclipticseasons.common.core.map.ChunkInfoMap;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.compat.vanilla.IExtendBlockView;
@@ -100,7 +102,7 @@ public abstract class MixinChunkSlice implements IMapSlice, IExtendBlockView {
             for (int sectionX = 0; sectionX < SECTION_ARRAY_LENGTH; ++sectionX) {
                 for (int sectionZ = 0; sectionZ < SECTION_ARRAY_LENGTH; ++sectionZ) {
                     ClonedChunkSection contextSection = context.getSections()[getLocalSectionIndex(sectionX, 0, sectionZ)];
-                    ISnowyGetterProvider snowyGetter = (ISnowyGetterProvider) contextSection;
+                    ISnowyGetter snowyGetter = (ISnowyGetter) contextSection;
                     int localSectionIndex = eclipticseasons$getLocalSectionIndex(sectionX, sectionZ);
                     ChunkPos chunkPos = contextSection.getPosition().chunk();
                     int startX = chunkPos.getMinBlockX();
@@ -113,6 +115,7 @@ public abstract class MixinChunkSlice implements IMapSlice, IExtendBlockView {
                     mutableBlockPos.setX(startX);
                     mutableBlockPos.setZ(startZ);
                     ChunkInfoMap chunkMap = snowyGetter.getChunkInfoMap();
+                    BiomeHolder biomeHolder = snowyGetter.getBiomeHolder();
 
                     if (chunkMap != null) {
                         for (int x = 0; x < 16; x++) {
@@ -130,9 +133,9 @@ public abstract class MixinChunkSlice implements IMapSlice, IExtendBlockView {
                                     mutableBlockPos.setY(world.getHeight(Heightmap.Types.MOTION_BLOCKING, mutableBlockPos.getX(), mutableBlockPos.getZ()));
                                 }
 
-                                int biomeId = chunkMap.getBiome(mutableBlockPos);
+                                int biomeId = biomeHolder.getBiomeId(mutableBlockPos);
                                 biomes[index] = biomeId > -1 ? biomeId :
-                                        MapChecker.biomeToId(world, MapChecker.getSurfaceBiome(world, mutableBlockPos).value());
+                                        MapChecker.biomeToId(world, MapChecker.getUnCachedSurfaceBiome(world, mutableBlockPos).value());
 
                                 solidHeights[index] = snowyGetter.getSolidHeightMap().getHighestTaken(x, z);
 

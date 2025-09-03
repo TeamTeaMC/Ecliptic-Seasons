@@ -1,11 +1,12 @@
 package com.teamtea.eclipticseasons.mixin.compat.embeddium;
 
 
-import com.teamtea.eclipticseasons.api.misc.client.ISnowyGetterProvider;
+import com.teamtea.eclipticseasons.api.misc.IChunkBiomeHolder;
+import com.teamtea.eclipticseasons.api.misc.client.ISnowyGetter;
+import com.teamtea.eclipticseasons.common.core.map.BiomeHolder;
 import com.teamtea.eclipticseasons.common.core.map.ChunkInfoMap;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import me.jellysquid.mods.sodium.client.world.cloned.ClonedChunkSection;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.chunk.LevelChunk;
@@ -18,7 +19,11 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin({ClonedChunkSection.class})
-public abstract class MixinClonedChunkSection implements ISnowyGetterProvider {
+public abstract class MixinClonedChunkSection implements ISnowyGetter {
+
+
+    @Unique
+    private BiomeHolder eclipticseasons$biomeHolder;
 
     @Unique
     private Heightmap eclipticseasons$heightmap;
@@ -31,8 +36,14 @@ public abstract class MixinClonedChunkSection implements ISnowyGetterProvider {
             at = @At(value = "RETURN")
     )
     private void eclipticseasons$init(Level level, LevelChunk chunk, LevelChunkSection section, SectionPos pos, CallbackInfo ci) {
+        eclipticseasons$biomeHolder = ((IChunkBiomeHolder)chunk).eclipticseasons$getBiomeHolder();
         eclipticseasons$heightmap = chunk.getOrCreateHeightmapUnprimed(Heightmap.Types.MOTION_BLOCKING);
         eclipticseasons$chunkInfoMap = MapChecker.getChunkInfoMapOrCreate(level, chunk.getPos().getMiddleBlockPosition(64));
+    }
+
+    @Override
+    public BiomeHolder getBiomeHolder() {
+        return eclipticseasons$biomeHolder;
     }
 
     @Override

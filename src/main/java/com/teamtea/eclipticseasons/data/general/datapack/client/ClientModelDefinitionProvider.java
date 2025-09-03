@@ -17,6 +17,8 @@ import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.properties.BambooLeaves;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
+import net.minecraftforge.client.model.generators.ModelFile;
+import net.minecraftforge.client.model.generators.loaders.CompositeModelBuilder;
 import net.minecraftforge.common.data.ExistingFileHelper;
 
 import java.util.ArrayList;
@@ -29,6 +31,11 @@ public class ClientModelDefinitionProvider extends AbstractModelDefinitionProvid
 
     public ClientModelDefinitionProvider(PackOutput output, String modid, ExistingFileHelper helper, CompletableFuture<HolderLookup.Provider> registries) {
         super(output, modid, helper, registries);
+    }
+
+    public ExtraModelBuilder getModel(String resourceLocation) {
+        return new ExtraModelBuilder(withBlockFolder(EclipticSeasons.rl(resourceLocation)), helper)
+                .parent(new ModelFile.ExistingModelFile(withBlockFolder(EclipticSeasons.rl(resourceLocation)), helper));
     }
 
     @Override
@@ -52,8 +59,12 @@ public class ClientModelDefinitionProvider extends AbstractModelDefinitionProvid
 
         addModelDefinition(ClientModelDefinitions.SNOWY_GRASS_BLOCK_OVERLAY)
                 .replace(true)
-                .variant(variant(models().withExistingParent("snowy_grass_block","grass_block_snow")
-                        .texture("top",ResourceLocation.tryParse("block/snow"))).build())
+                .variant(variant(models().withExistingParent("snowy_grass_block", "block/block")
+                        .customLoader(CompositeModelBuilder::begin)
+                        .child("snowy_grass_block_no_top",models().withExistingParent("snowy_grass_block_no_top", "grass_block_snow",true)
+                                .texture("top", new ResourceLocation("block/air")))
+                        .child("top_snow",getModel("grass_block_overlay"))
+                        .end()).build())
         // .requireMod(EclipticSeasonsApi.MODID)
                 // .requireMod(ResourceLocation.DEFAULT_NAMESPACE)
                 // .replace(false)

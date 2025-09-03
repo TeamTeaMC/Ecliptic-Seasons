@@ -1,37 +1,32 @@
 package com.teamtea.eclipticseasons.common.network;
 
 import com.teamtea.eclipticseasons.api.data.craft.HumidityControl;
+import com.teamtea.eclipticseasons.api.misc.IChunkBiomeHolder;
 import com.teamtea.eclipticseasons.client.color.season.BiomeColorsHandler;
 import com.teamtea.eclipticseasons.client.core.ClientWeatherChecker;
-import com.teamtea.eclipticseasons.client.map.ClientMapFixer;
 import com.teamtea.eclipticseasons.client.render.WorldRenderer;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
+import com.teamtea.eclipticseasons.common.core.map.BiomeHolder;
 import com.teamtea.eclipticseasons.common.core.map.ChunkInfoMap;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.network.message.*;
 import com.teamtea.eclipticseasons.common.registry.ESRegistries;
 import com.teamtea.eclipticseasons.config.ClientConfig;
 import net.minecraft.client.Minecraft;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.SectionPos;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.ChunkStatus;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkEvent;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.function.Supplier;
 
 public class NetworkUtil {
@@ -102,23 +97,6 @@ public class NetworkUtil {
         return true;
     }
 
-    public static boolean processBroomUseMessage(BroomUseMessage broomUseMessage, Supplier<NetworkEvent.Context> context) {
-
-        context.get().enqueueWork(() ->
-        {
-            if (context.get().getDirection() == NetworkDirection.PLAY_TO_CLIENT) {
-                Level client = getClient();
-                if (client != null) {
-                    int startY = client.getMaxBuildHeight() + 1;
-                    BlockPos blockPos = broomUseMessage.blockPos;
-                    // MapChecker.updatePosForce(level, blockPos, blockPos.getY());
-                    ClientMapFixer.addPlanner(client, Blocks.AIR.defaultBlockState(), blockPos, client.getGameTime(), startY);
-                    WorldRenderer.setSectionDirtyWithNeighbors(SectionPos.of(blockPos));
-                }
-            }
-        });
-        return true;
-    }
 
     public static boolean processDataPackEvent(DataPackEventMessage dataPackEvent, Supplier<NetworkEvent.Context> context) {
         context.get().enqueueWork(() ->
@@ -162,31 +140,6 @@ public class NetworkUtil {
         return true;
     }
 
-    public static boolean processMapFixerMessage(MapFixerMessage mapFixerMessage, Supplier<NetworkEvent.Context> context) {
-        Set<SectionPos> sectionPosSet = new HashSet<>();
-        List<BlockPos> blockPosList = new ArrayList<>(mapFixerMessage.blockPosList);
-        for (int i = 0; i < mapFixerMessage.blockPosList.size(); i++) {
-            BlockPos blockPos = blockPosList.get(i);
-            BlockPos blockPos1 = new BlockPos(blockPos.getX(), mapFixerMessage.startYList.get(i), blockPos.getZ());
-            blockPosList.add(blockPos1);
-            sectionPosSet.add(SectionPos.of(blockPos));
-            sectionPosSet.add(SectionPos.of(blockPos1));
-        }
-
-        context.get().enqueueWork(() -> {
-            Level level = getClient();
-            if (level != null && level.isClientSide()) {
-                for (BlockPos blockPos : mapFixerMessage.blockPosList) {
-                    MapChecker.updatePosForce(level, blockPos, blockPos.getY());
-                }
-                for (SectionPos ySection : sectionPosSet) {
-                    WorldRenderer.setSectionDirty(ySection);
-                }
-            }
-
-        });
-        return true;
-    }
 
     public static boolean processUpdateTempChangeMessage(UpdateTempChangeMessage emptyMessage, Supplier<NetworkEvent.Context> context) {
         context.get().enqueueWork(() -> {
@@ -202,18 +155,26 @@ public class NetworkUtil {
     public static boolean processChunkBiomeUpdateMessage(ChunkBiomeUpdateMessage chunkBiomeUpdateMessage, Supplier<NetworkEvent.Context> iPayloadContext) {
         iPayloadContext.get().enqueueWork(() -> {
             if (ClientCon.getUseLevel() != null) {
-                ChunkPos chunkPos = new ChunkPos(chunkBiomeUpdateMessage.x, chunkBiomeUpdateMessage.z);
-                int minBlockX = chunkPos.getMinBlockX();
-                int minBlockZ = chunkPos.getMinBlockZ();
-                ChunkInfoMap chunkMap = MapChecker.getChunkInfoMapOrCreate(ClientCon.getUseLevel(),
-                        chunkPos.getMiddleBlockPosition(64));
-                if (chunkMap != null) {
-                    int[] biomes = chunkBiomeUpdateMessage.biomes;
-                    for (int i = 0; i < 16; i++) {
-                        for (int j = 0; j < 16; j++) {
-                            chunkMap.updateBiome(minBlockX + i, minBlockZ + j, biomes[i * 16 + j]);
-                        }
-                    }
+
+                // ChunkPos chunkPos = new ChunkPos(chunkBiomeUpdateMessage.x, chunkBiomeUpdateMessage.z);
+                // int minBlockX = chunkPos.getMinBlockX();
+                // int minBlockZ = chunkPos.getMinBlockZ();
+                // ChunkInfoMap chunkMap = MapChecker.getChunkInfoMapOrCreate(ClientCon.getUseLevel(),
+                //         chunkPos.getMiddleBlockPosition(64));
+                // if (chunkMap != null) {
+                //     int[] biomes = chunkBiomeUpdateMessage.biomes;
+                //     for (int i = 0; i < 16; i++) {
+                //         for (int j = 0; j < 16; j++) {
+                //             chunkMap.updateBiome(minBlockX + i, minBlockZ + j, biomes[i * 16 + j]);
+                //         }
+                //     }
+                // }
+
+                // =======================
+                // port from 1.21
+                ChunkAccess chunk = ClientCon.getUseLevel().getChunk(chunkBiomeUpdateMessage.x, chunkBiomeUpdateMessage.z, ChunkStatus.FULL, false);
+                if (chunk instanceof IChunkBiomeHolder chunkBiomeHolder) {
+                    chunkBiomeHolder.eclipticseasons$setBiomeHolder(new BiomeHolder(chunkBiomeUpdateMessage.biomes, true, chunkBiomeUpdateMessage.version));
                 }
             }
         });

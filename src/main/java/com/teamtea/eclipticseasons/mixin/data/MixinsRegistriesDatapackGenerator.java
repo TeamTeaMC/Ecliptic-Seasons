@@ -39,15 +39,19 @@ import java.util.function.Predicate;
 public abstract class MixinsRegistriesDatapackGenerator {
 
 
-    @Shadow(remap = false) @Final private Predicate<String> namespacePredicate;
+    @Shadow(remap = false)
+    @Final
+    private Predicate<String> namespacePredicate;
 
-    @Shadow @Final private PackOutput output;
+    @Shadow
+    @Final
+    private PackOutput output;
 
     @Inject(at = {@At("HEAD")}, method = {"dumpRegistryCap"}, cancellable = true)
     private <T> void eclipticseasons$lambda$dumpRegistryCap$11(CachedOutput pOutput, HolderLookup.Provider pRegistries, DynamicOps<JsonElement> pOps, RegistryDataLoader.RegistryData<T> pRegistryData, CallbackInfoReturnable<Optional<CompletableFuture<?>>> cir) {
-        if ((Object) this instanceof DatapackRegistryGenerator||(Object) this instanceof DatapackRegistryGeneratorExample) {
+        if ((Object) this instanceof DatapackRegistryGenerator || (Object) this instanceof DatapackRegistryGeneratorExample) {
             ResourceKey<? extends Registry<T>> resourcekey = pRegistryData.key();
-            var cc= pRegistries.lookup(resourcekey).map((p_255847_) -> {
+            var cc = pRegistries.lookup(resourcekey).map((p_255847_) -> {
                 PackOutput.PathProvider packoutput$pathprovider = this.output.createPathProvider(PackOutput.Target.DATA_PACK, net.minecraftforge.common.ForgeHooks.prefixNamespace(resourcekey.location()));
                 return CompletableFuture.allOf(p_255847_.listElements().filter(holder -> this.namespacePredicate.test(holder.key().location().getNamespace())).map((p_256105_) -> {
                     return dumpValue2(packoutput$pathprovider.json(p_256105_.key().location()), pOutput, pOps, pRegistryData.elementCodec(), p_256105_.value());
@@ -55,7 +59,7 @@ public abstract class MixinsRegistriesDatapackGenerator {
                     return new CompletableFuture[p_256279_];
                 }));
             });
-            cir.setReturnValue(((Optional)cc));
+            cir.setReturnValue(((Optional) cc));
         }
     }
 

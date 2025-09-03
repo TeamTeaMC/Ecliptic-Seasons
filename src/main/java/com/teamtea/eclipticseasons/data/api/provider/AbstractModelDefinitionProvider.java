@@ -77,6 +77,13 @@ public abstract class AbstractModelDefinitionProvider extends ESClientDataMapPro
             return super.withExistingParent("snowy/" + name, parent);
         }
 
+        public ExtraModelBuilder withExistingParent(String path, String parent, boolean notSave) {
+            ExtraModelBuilder extraModelBuilder = withExistingParent(path, parent);
+            ResourceLocation outputLoc = withBlockFolder(path.contains(":") ? new ResourceLocation(path) : new ResourceLocation(modid, path));
+            if (notSave)generatedModels.remove(outputLoc);
+            return extraModelBuilder;
+        }
+
         // If set folder would not use folder
         // private ResourceLocation extendWithFolder(ResourceLocation rl) {
         //     if (rl.getPath().contains("/")) {

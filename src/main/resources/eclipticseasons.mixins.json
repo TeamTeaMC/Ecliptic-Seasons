@@ -6,6 +6,7 @@
   "mixins": [
     "common.biome.MixinBiome",
     "common.block.MixinBeehiveBlockEntity",
+    "common.block.MixinBlockState",
     "common.block.MixinBlockStateBase",
     "common.block.MixinFireBlock",
     "common.block.MixinIBlockExtension",
@@ -25,7 +26,6 @@
     "common.entity.projectile.MixinThrownTrident",
     "common.level.MixinDimensionType",
     "common.level.MixinHeightmap_Types",
-    "common.level.MixinLayerLightSectionStorage",
     "common.level.MixinLevel",
     "common.level.MixinLevelReader",
     "common.level.MixinLevelTimeAccess",
@@ -41,9 +41,7 @@
     "game.MixinFishingHook"
   ],
   "client": [
-    "client.MixinClientLayerLightSectionStorage",
     "client.MixinClientLevel",
-    "client.MixinClientLevelChunk",
     "client.block.MixinLeavesBlock",
     "client.block.MixinLightningRodBlock",
     "client.entity.MixinClientPanda",

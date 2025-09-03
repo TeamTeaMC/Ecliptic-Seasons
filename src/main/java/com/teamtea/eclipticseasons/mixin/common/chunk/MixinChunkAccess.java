@@ -2,7 +2,7 @@ package com.teamtea.eclipticseasons.mixin.common.chunk;
 
 
 import com.teamtea.eclipticseasons.api.misc.IChunkBiomeHolder;
-import com.teamtea.eclipticseasons.common.network.message.ChunkBiomeUpdateMessage;
+import com.teamtea.eclipticseasons.common.core.map.BiomeHolder;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -12,15 +12,25 @@ public abstract class MixinChunkAccess implements IChunkBiomeHolder {
 
 
     @Unique
-    private ChunkBiomeUpdateMessage eclipticseasons$biomeHolder = null;
+    private BiomeHolder eclipticseasons$biomeHolder = null;
 
     @Override
-    public ChunkBiomeUpdateMessage eclipticseasons$getBiomeHolder() {
+    public BiomeHolder eclipticseasons$getBiomeHolder() {
         return this.eclipticseasons$biomeHolder;
     }
 
     @Override
-    public void eclipticseasons$setBiomeHolder(ChunkBiomeUpdateMessage chunkBiomeUpdateMessage) {
-        this.eclipticseasons$biomeHolder=chunkBiomeUpdateMessage;
+    public void eclipticseasons$setBiomeHolder(BiomeHolder biomeHolder) {
+        this.eclipticseasons$biomeHolder=biomeHolder;
+    }
+
+    @Override
+    public BiomeHolder eclipticseasons$getBiomeHolder$1201() {
+        return this.eclipticseasons$biomeHolder;
+    }
+
+    @Override
+    public void eclipticseasons$setBiomeHolder$1201(BiomeHolder biomeHolder) {
+        this.eclipticseasons$biomeHolder=biomeHolder;
     }
 }

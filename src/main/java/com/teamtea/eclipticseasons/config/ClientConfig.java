@@ -1,8 +1,6 @@
 package com.teamtea.eclipticseasons.config;
 
-import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.compat.CompatModule;
-import lombok.Getter;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
 
@@ -62,7 +60,6 @@ public class ClientConfig {
         public static ForgeConfigSpec.BooleanValue snowUnderTree;
 
 
-        public static ForgeConfigSpec.BooleanValue realisticSnowyChange;
 
         public static ForgeConfigSpec.BooleanValue seasonalGrassColorChange;
         public static ForgeConfigSpec.BooleanValue seasonalColorChangeExtend;
@@ -85,8 +82,7 @@ public class ClientConfig {
             useVanillaCheck = builder.comment("Use Minecraft’s default lighting rules to decide if snow should fall.")
                     .define("UseVanillaCheck", false);
 
-            realisticSnowyChange = builder.comment("Snow cover updates with a delay after block changes, making it look more natural. This uses more performance. Do not enable if the common config’s 'RealisticSnowyChange' is also enabled.")
-                    .define("RealisticSnowyChange", false);
+
             betterSnow = builder.comment("Blocks underneath fences etc. may also be covered with snow.")
                     .define("SnowUnderFence", true);
             snowUnderTree = builder.comment("Blocks under tree may also be covered with snow, note that this is only a client-side effect.")

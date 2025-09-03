@@ -2,7 +2,9 @@ package com.teamtea.eclipticseasons.mixin.client.render.chunk;
 
 
 import com.llamalad7.mixinextras.sugar.Local;
+import com.teamtea.eclipticseasons.api.misc.IChunkBiomeHolder;
 import com.teamtea.eclipticseasons.api.misc.client.IMapSlice;
+import com.teamtea.eclipticseasons.common.core.map.BiomeHolder;
 import com.teamtea.eclipticseasons.common.core.map.ChunkInfoMap;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import net.minecraft.client.renderer.chunk.RenderChunk;
@@ -59,6 +61,7 @@ public class MixinRenderRegionCache {
                         LevelChunk wrapped = arenderchunk[sectionX - minChunkX][sectionZ - minChunkZ].wrapped;
                         Heightmap heightmap = wrapped.getOrCreateHeightmapUnprimed(Heightmap.Types.MOTION_BLOCKING);
                         ChunkPos chunkPos = wrapped.getPos();
+                        BiomeHolder biomeHolder = ((IChunkBiomeHolder)wrapped).eclipticseasons$getBiomeHolder();
                         int[] heights = HEIGHT_MAP[localSectionIndex];
                         int[] biomes = BIOME_MAP[localSectionIndex];
                         int[] solidHeights = SOLID_HEIGHT_MAP[localSectionIndex];
@@ -82,10 +85,9 @@ public class MixinRenderRegionCache {
                                         mutableBlockPos.setY(level.getHeight(Heightmap.Types.MOTION_BLOCKING, mutableBlockPos.getX(), mutableBlockPos.getZ()));
                                     }
 
-                                    int biomeId = chunkMap.getBiome(mutableBlockPos);
+                                    int biomeId = biomeHolder.getBiomeId(mutableBlockPos);
                                     biomes[index] = biomeId > -1 ? biomeId :
-                                            MapChecker.biomeToId(level, MapChecker.getSurfaceBiome(level, mutableBlockPos).value());
-
+                                            MapChecker.biomeToId(level, MapChecker.getUnCachedSurfaceBiome(level, mutableBlockPos).value());
                                     solidHeights[index] = heightmap.getHighestTaken(x, z);
                                 }
                             }

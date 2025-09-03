@@ -11,6 +11,7 @@ import com.teamtea.eclipticseasons.api.data.season.SnowDefinition;
 import com.teamtea.eclipticseasons.api.data.weather.CustomRainBuilder;
 import com.teamtea.eclipticseasons.api.data.weather.CustomSnowTerm;
 import com.teamtea.eclipticseasons.api.event.CanPlantGrowEvent;
+import com.teamtea.eclipticseasons.api.misc.IChunkBiomeHolder;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.common.advancement.SolarTermsRecordCa;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
@@ -19,12 +20,11 @@ import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
 import com.teamtea.eclipticseasons.common.core.crop.CropInfoManager;
 import com.teamtea.eclipticseasons.common.core.crop.NaturalPlantHandler;
+import com.teamtea.eclipticseasons.common.core.map.BiomeHolder;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
-import com.teamtea.eclipticseasons.common.core.map.ServerMapFixer;
 import com.teamtea.eclipticseasons.common.core.snow.SnowChecker;
 import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
 import com.teamtea.eclipticseasons.common.network.SimpleNetworkHandler;
-import com.teamtea.eclipticseasons.common.network.message.ChunkBiomeUpdateMessage;
 import com.teamtea.eclipticseasons.common.network.message.DataPackEventMessage;
 import com.teamtea.eclipticseasons.common.network.message.HumidModifyMessage;
 import com.teamtea.eclipticseasons.common.registry.ESRegistries;
@@ -147,7 +147,7 @@ public class AllListener {
                 SolarHolders.DATA_MANAGER_MAP.remove(level);
             }
             if (!level.isClientSide()) {
-                ServerMapFixer.unloadLevel(level);
+
             }
             MapChecker.validDimension.removeIf(l -> l.equals(level));
         }
@@ -163,6 +163,12 @@ public class AllListener {
     public static void onChunkLoad(ChunkEvent.Load event) {
         ChunkAccess chunk = event.getChunk();
         if (event.getLevel() instanceof Level level) {
+            if (level instanceof ServerLevel serverLevel) {
+                if (event.isNewChunk()) {
+                    MapChecker.setNewChunk(serverLevel, chunk);
+                }
+                MapChecker.getOrUpdateChunkBiomeData(serverLevel, (IChunkBiomeHolder) chunk, event.getChunk().getPos());
+            }
             MapChecker.forceChunkUpdateHeight(level, chunk);
         }
     }
@@ -172,7 +178,6 @@ public class AllListener {
         if (event.getLevel() instanceof Level level) {
             MapChecker.unloadChunk(level, event.getChunk().getPos());
             CropGrowthHandler.unloadChunk(level, event.getChunk().getPos());
-            ServerMapFixer.unloadChunk(level, event.getChunk().getPos());
         }
     }
 
@@ -202,7 +207,6 @@ public class AllListener {
             if (data != null) {
                 data.tickLevel(serverLevel);
             }
-            ServerMapFixer.tick(serverLevel);
         }
         MapChecker.tickLevel(event.level);
     }
@@ -316,7 +320,7 @@ public class AllListener {
     @SubscribeEvent
     public static void onLevelChunkAttachCapabilitiesEvent(AttachCapabilitiesEvent<LevelChunk> event) {
         if (event.getObject() instanceof LevelChunk) {
-            event.addCapability(EclipticSeasons.rl("biomes_holder"), new ChunkBiomeUpdateMessage());
+            event.addCapability(EclipticSeasons.rl("biomes_holder"), BiomeHolder.empty());
         }
     }
 

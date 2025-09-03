@@ -6,7 +6,6 @@ import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.client.core.ClientWeatherChecker;
-import com.teamtea.eclipticseasons.client.map.ClientMapFixer;
 import com.teamtea.eclipticseasons.client.render.WorldRenderer;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.client.util.ClientRef;
@@ -76,7 +75,6 @@ public final class ClientEventHandler {
     @SubscribeEvent
     public static void onChunkUnloadEvent(ChunkEvent.Unload event) {
         if (event.getLevel() instanceof ClientLevel clientLevel) {
-            ClientMapFixer.clearChunk(event.getChunk().getPos());
         }
     }
 
@@ -85,7 +83,6 @@ public final class ClientEventHandler {
         if (event.getLevel() instanceof ClientLevel clientLevel) {
             MapChecker.unloadLevel(clientLevel);
             ClientWeatherChecker.unloadLevel(clientLevel);
-            ClientMapFixer.clearAll();
             ClientCon.setUseLevel(null);
         }
     }
@@ -131,7 +128,6 @@ public final class ClientEventHandler {
         if (event.level instanceof ClientLevel clientLevel
                 && event.phase.equals(TickEvent.Phase.END)) {
             ClientWeatherChecker.tickAllCheck(clientLevel);
-            ClientMapFixer.tick(clientLevel);
             ClientCon.tick(clientLevel);
 
             if (ClientConfig.Renderer.forceChunkRenderUpdate.get()) {

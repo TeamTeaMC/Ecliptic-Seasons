@@ -46,12 +46,12 @@ public final class SimpleNetworkHandler {
             d.consumerNetworkThread(NetworkUtil::processEmptyMessage);
         d.add();
 
-        var e = CHANNEL.messageBuilder(BroomUseMessage.class, id++)
-                .encoder(BroomUseMessage::toBytes)
-                .decoder(BroomUseMessage::new);
-        if (FMLLoader.getDist() == Dist.CLIENT)
-            e.consumerNetworkThread(NetworkUtil::processBroomUseMessage);
-        e.add();
+        // var e = CHANNEL.messageBuilder(BroomUseMessage.class, id++)
+        //         .encoder(BroomUseMessage::toBytes)
+        //         .decoder(BroomUseMessage::new);
+        // if (FMLLoader.getDist() == Dist.CLIENT)
+        //     e.consumerNetworkThread(NetworkUtil::processBroomUseMessage);
+        // e.add();
 
         var f = CHANNEL.messageBuilder(DataPackEventMessage.class, id++)
                 .encoder(DataPackEventMessage::toBytes)
@@ -67,12 +67,12 @@ public final class SimpleNetworkHandler {
             g.consumerNetworkThread(NetworkUtil::processHumidModifyMessage);
         g.add();
 
-        var h = CHANNEL.messageBuilder(MapFixerMessage.class, id++)
-                .encoder(MapFixerMessage::toBytes)
-                .decoder(MapFixerMessage::new);
-        if (FMLLoader.getDist() == Dist.CLIENT)
-            h.consumerNetworkThread(NetworkUtil::processMapFixerMessage);
-        h.add();
+        // var h = CHANNEL.messageBuilder(MapFixerMessage.class, id++)
+        //         .encoder(MapFixerMessage::toBytes)
+        //         .decoder(MapFixerMessage::new);
+        // if (FMLLoader.getDist() == Dist.CLIENT)
+        //     h.consumerNetworkThread(NetworkUtil::processMapFixerMessage);
+        // h.add();
 
         var i = CHANNEL.messageBuilder(UpdateTempChangeMessage.class, id++)
                 .encoder(UpdateTempChangeMessage::toBytes)

@@ -4,6 +4,7 @@ package com.teamtea.eclipticseasons.mixin.common.block;
 import com.teamtea.eclipticseasons.api.constant.tag.EclipticBlockTags;
 import com.teamtea.eclipticseasons.api.data.craft.WetterStructure;
 import com.teamtea.eclipticseasons.api.misc.CustomRandomTick;
+import com.teamtea.eclipticseasons.api.misc.IBlockStateFlagger;
 import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
 import com.teamtea.eclipticseasons.common.core.crop.ExtraTickType;
 import com.teamtea.eclipticseasons.common.core.crop.NaturalPlantHandler;
@@ -13,7 +14,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
@@ -29,14 +29,14 @@ import java.util.List;
 @Mixin(BlockBehaviour.BlockStateBase.class)
 public abstract class MixinBlockStateBase implements CustomRandomTick {
 
-    @Unique
-    public boolean eclipticseasons$forceTickControl = false;
-
     @Shadow
     public abstract boolean is(TagKey<Block> tag);
 
     @Shadow
     private boolean isRandomlyTicking;
+
+    @Shadow
+    public abstract boolean isRandomlyTicking();
 
     @Shadow
     protected abstract BlockState asState();
@@ -46,25 +46,19 @@ public abstract class MixinBlockStateBase implements CustomRandomTick {
             at = @At(value = "TAIL")
     )
     private void eclipticseasons$initCache(CallbackInfo ci) {
-        if ((Object) this instanceof BlockState) {
-            eclipticseasons$forceTickControl = (is(EclipticBlockTags.NATURAL_PLANTS));
-            if (!isRandomlyTicking && is(EclipticBlockTags.VOLATILE)) {
+        if (this instanceof IBlockStateFlagger iBlockStateFlagger) {
+            iBlockStateFlagger.setBlockTypeFlag(-1);
+            iBlockStateFlagger.setForceTickControl(is(EclipticBlockTags.NATURAL_PLANTS));
+            if (!isRandomlyTicking() && is(EclipticBlockTags.VOLATILE)) {
                 isRandomlyTicking = true;
             }
         }
-        if (this instanceof CustomRandomTick) {
+        // if (this instanceof CustomRandomTick customRandomTick)
+        {
             eclipticseasons$reset();
         }
-    }
 
-    // @Inject(
-    //         method = "onPlace",
-    //         at = @At(value = "HEAD")
-    // )
-    // private void eclipticseasons$onPlace(Level pLevel, BlockPos pPos, BlockState pOldState, boolean pMovedByPiston, CallbackInfo ci) {
-    //     if (pLevel instanceof ServerLevel serverLevel)
-    //         eclipticseasons$tick(asState(), serverLevel, pPos);
-    // }
+    }
 
     @Inject(
             method = "randomTick",
@@ -73,12 +67,13 @@ public abstract class MixinBlockStateBase implements CustomRandomTick {
     private void eclipticseasons$randomTick(ServerLevel level, BlockPos pos, RandomSource random, CallbackInfo ci) {
         eclipticseasons$tick(asState(), level, pos);
 
-        if ((Object) this instanceof BlockState blockState
-                && (eclipticseasons$forceTickControl || CommonConfig.isForceCropCompatMode())) {
-            boolean canCropGrow = ESEventHook.canExtraCropGrow(level, pos, blockState, true);
+        if (this instanceof IBlockStateFlagger iBlockStateFlagger
+                && (iBlockStateFlagger.forceTickControl() || CommonConfig.isForceCropCompatMode())) {
+            boolean canCropGrow = ESEventHook.canExtraCropGrow(level, pos, iBlockStateFlagger.es$asState(), true);
             if (!canCropGrow) ci.cancel();
         }
     }
+
 
     @Unique
     public int eclipticseasons$tickType = ExtraTickType.UNCHECK;
@@ -123,4 +118,14 @@ public abstract class MixinBlockStateBase implements CustomRandomTick {
     public int eclipticseasons$getType() {
         return eclipticseasons$tickType;
     }
+
+
+    // @Inject(
+    //         method = "onRemove",
+    //         at = @At(value = "HEAD")
+    // )
+    // private void eclipticseasons$onRemove(Level level, BlockPos pos, BlockState newState, boolean movedByPiston, CallbackInfo ci) {
+    //     EclipticSeasons.logger(asState(),newState,eclipticseasons$tickType);
+    // }
+
 }

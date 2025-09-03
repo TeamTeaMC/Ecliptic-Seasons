@@ -13,7 +13,6 @@ import com.teamtea.eclipticseasons.client.model.unbake.SolarBlockModel;
 import com.teamtea.eclipticseasons.client.reload.ClientJsonCacheListener;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.client.util.ClientRef;
-import com.teamtea.eclipticseasons.common.core.map.SnowyRemover;
 import com.teamtea.eclipticseasons.common.core.snow.SnowChecker;
 import com.teamtea.eclipticseasons.common.registry.BlockRegistry;
 import com.teamtea.eclipticseasons.client.model.*;
@@ -391,11 +390,12 @@ public class ExtraModelManager {
     }
 
     public static boolean canSnowy(BlockAndTintGetter blockAndTintGetter, BlockPos pos, BlockState state, long seed, @Nullable BlockPos.MutableBlockPos checkPos) {
+        // if (!state.is(Blocks.LILY_PAD))
+        //     return null;
         Level level = Minecraft.getInstance().level;
         if (level == null) return false;
-
+        int flag = MapChecker.getBlockTypeFlag(blockAndTintGetter, pos, state);
         var onBlock = state.getBlock();
-        int flag = MapChecker.getBlockType(state, blockAndTintGetter, pos);
         List<SnowDefinition> snowDefClientOverlay = ClientRef.snowClientDef.get(onBlock);
 
         if (flag == MapChecker.FLAG_NONE
@@ -424,15 +424,17 @@ public class ExtraModelManager {
         int offset = snowDefClientOverlay == null ?
                 MapChecker.getSnowOffset(state, flag) : snowDefClientOverlay.get(0).getInfo().getOffset();
 
+
         boolean isLight = false;
         if (checkPos == null) checkPos = posToMutable(pos);
         else checkPos.set(pos.getX(), pos.getY(), pos.getZ());
 
         if (ClientConfig.Renderer.useVanillaCheck.get()) {
-            isLight = blockAndTintGetter.getBrightness(LightLayer.BLOCK, pos.above()) >= 15;
+            checkPos.setY(pos.getY() + 1);
+            isLight = blockAndTintGetter.getBrightness(LightLayer.BLOCK, checkPos) >= 15;
         } else {
-            int cacheHeight = mapSlice != null ? mapSlice.getBlockHeight(pos) :
-                    MapChecker.getHeightOrUpdate(level, pos, false);
+            int cacheHeight = mapSlice != null ? mapSlice.getBlockHeight(checkPos) :
+                    MapChecker.getHeightOrUpdate(level, checkPos, false);
             isLight = cacheHeight <= pos.getY() - offset;
         }
 
@@ -442,7 +444,7 @@ public class ExtraModelManager {
             checkPos.set(pos.getX(), pos.getY() + 1, pos.getZ());
             if (blockAndTintGetter.getBrightness(LightLayer.SKY, checkPos) >= 9) {
                 int y_real = blockAndTintGetter instanceof IMapSliceProvider ip ?
-                        ip.getSolidBlockHeight(pos) :
+                        ip.getSolidBlockHeight(checkPos) :
                         level.getHeight(Heightmap.Types.MOTION_BLOCKING, pos.getX(), pos.getZ()) - 1;
                 checkPos.setY(y_real);
                 BlockState getterBlockState = blockAndTintGetter.getBlockState(checkPos);
@@ -466,16 +468,14 @@ public class ExtraModelManager {
 
         if (isLight) {
             checkPos.set(pos.getX(), pos.getY() + 1, pos.getZ());
-            if (leaveLike) {
-                {
-                    if (!specialLeaves) {
-                        BlockState aboveState = blockAndTintGetter.getBlockState(checkPos);
-                        if (isLight) {
-                            // specialLeaves = true;
-                            specialLeaves = blockAndTintGetter instanceof IMapSliceProvider ip ?
-                                    ip.getSolidBlockHeight(checkPos) > pos.getY() :
-                                    aboveState.is(state.getBlock());
-                        }
+            if (MapChecker.leaveLike(flag)) {
+                if (!specialLeaves) {
+                    BlockState aboveState = blockAndTintGetter.getBlockState(checkPos);
+                    if (isLight) {
+                        // specialLeaves = true;
+                        specialLeaves = blockAndTintGetter instanceof IMapSliceProvider ip ?
+                                ip.getSolidBlockHeight(checkPos) > pos.getY() :
+                                aboveState.is(state.getBlock());
                     }
                 }
             } else {
@@ -487,20 +487,21 @@ public class ExtraModelManager {
             }
         }
 
-
         if (isLight && specialLeaves) {
             isLight = CommonConfig.Season.snowyTree.get();
             if (!isLight) specialLeaves = false;
         }
         boolean isSnowy = false;
         if (isLight) {
+            checkPos.setY(pos.getY());
             if (CommonConfig.isSnowyWinter()
                     && onBlock != Blocks.SNOW_BLOCK
-                    && ((mapSlice != null && MapChecker.shouldSnowAt(level, pos, mapSlice.getSurfaceFaceBiomeId(pos), state, null, seed))
-                    || (mapSlice == null && MapChecker.shouldSnowAt(level, pos, state, null, seed))
+                    && ((mapSlice != null && MapChecker.shouldSnowAt(level, checkPos, mapSlice.getSurfaceFaceBiomeId(checkPos), state, null, seed))
+                    || (mapSlice == null && MapChecker.shouldSnowAt(level, checkPos, state, null, seed))
             )
             ) {
                 isSnowy = true;
+
                 if (CommonConfig.Season.notSnowyNearGlowingBlock.get()) {
                     if (mapSlice != null) {
                         checkPos.set(pos.getX(), pos.getY() + 1 - offset, pos.getZ());
@@ -519,19 +520,21 @@ public class ExtraModelManager {
                     }
                 }
             }
+
         }
         return isSnowy;
     }
 
     public static BakedModel findModel(BlockAndTintGetter blockAndTintGetter, BlockPos pos, BlockState state, RandomSource random, long seed, @Nullable BlockPos.MutableBlockPos checkPos) {
+        // if (!state.is(Blocks.LILY_PAD))
+        //     return null;
         Level level = Minecraft.getInstance().level;
-        BakedModel replace = null;
-        if (level == null) return replace;
-
-        var onBlock = state.getBlock();
-        int flag = MapChecker.getBlockType(state, blockAndTintGetter, pos);
+        if (level == null) return null;
+        int flag = MapChecker.getBlockTypeFlag(blockAndTintGetter, pos, state);
         List<SeasonBlockDefinition> seasonDefCache = null;
         List<SnowDefinition> snowDefClientOverlay = null;
+        var onBlock = state.getBlock();
+
         if (flag == 0) {
             seasonDefCache = ClientRef.seasonDef.get(onBlock);
             snowDefClientOverlay = ClientRef.snowClientDef.get(onBlock);
@@ -540,10 +543,6 @@ public class ExtraModelManager {
             if (seasonDefCache == null && snowDefClientOverlay == null)
                 return null;
         }
-        int offset = snowDefClientOverlay == null ?
-                MapChecker.getSnowOffset(state, flag) : snowDefClientOverlay.get(0).getInfo().getOffset();
-
-        boolean isLight = false;
 
         boolean extendCheck = false;
         if (checkPos == null) checkPos = posToMutable(pos);
@@ -554,14 +553,15 @@ public class ExtraModelManager {
         }
 
         boolean leaveLike = MapChecker.leaveLike(flag);
-        boolean specialLeaves = false;
         boolean leavesOrVine = leaveLike || MapChecker.vineLike(flag);
 
+        BakedModel replace = null;
         IMapSlice mapSlice = null;
         if (blockAndTintGetter instanceof IMapSlice cmapSlice) {
             mapSlice = cmapSlice;
             if (!leavesOrVine) {
                 int cut = mapSlice.getBlockHeight(pos) - pos.getY();
+
                 if (cut > 1
                     // || cut < -3
                 )
@@ -571,21 +571,100 @@ public class ExtraModelManager {
             }
         }
 
+
+        // int flag = MapChecker.getBlockType(state, blockAndTintGetter, pos);
+
+        int offset = snowDefClientOverlay == null ?
+                MapChecker.getSnowOffset(state, flag) : snowDefClientOverlay.get(0).getInfo().getOffset();
+
+
+        boolean isLight = false;
+        if (checkPos == null) checkPos = posToMutable(pos);
+        else checkPos.set(pos.getX(), pos.getY(), pos.getZ());
+
         if (ClientConfig.Renderer.useVanillaCheck.get()) {
-            isLight = blockAndTintGetter.getBrightness(LightLayer.BLOCK, pos.above()) >= 15;
+            checkPos.setY(pos.getY() + 1);
+            isLight = blockAndTintGetter.getBrightness(LightLayer.BLOCK, checkPos) >= 15;
         } else {
+            // ChunkInfoMap chunkMap = MapChecker.getChunkMap(level, pos);
+
             int cacheHeight = mapSlice != null ?
-                    mapSlice.getBlockHeight(pos)
-                    : MapChecker.getHeightOrUpdate(level, pos, false);
+                    mapSlice.getBlockHeight(checkPos)
+                    : MapChecker.getHeightOrUpdate(level, checkPos, false);
+
+            // if (ClientConfig.Renderer.snowUnderFence.get()) {
+            //     if (solidBlockLike(flag) && pos.getY() == cacheHeight - 1) {
+            //         checkPos.setY(pos.getY() + 1);
+            //         BlockState aboveState = blockAndTintGetter.getBlockState(checkPos);
+            //         if (
+            //             // MapChecker.getBlockType(blockAndTintGetter.getBlockState(pos.above()), blockAndTintGetter, pos.above())
+            //                 MapChecker.getBlockTypeFlag(blockAndTintGetter, checkPos, aboveState)
+            //                         == MapChecker.FLAG_CUSTOM
+            //                         && !(aboveState.getBlock() instanceof SlabBlock)
+            //                         && !(aboveState.getBlock() instanceof StairBlock)) {
+            //             cacheHeight--;
+            //         } else {
+            //             for (int i = 0; i < HORIZONTAL_DIRECTIONS.size(); i++) {
+            //                 Direction direction = HORIZONTAL_DIRECTIONS.get(i);
+            //                 checkPos.setX(pos.getX() + direction.getStepX());
+            //                 checkPos.setZ(pos.getZ() + direction.getStepZ());
+            //                 int neighbourHeight = mapSlice != null ?
+            //                         mapSlice.getBlockHeight(checkPos) :
+            //                         MapChecker.getHeightOrUpdate(level, checkPos, false);
+            //                 if (neighbourHeight == pos.getY()) {
+            //                     checkPos.setY(pos.getY() + 1);
+            //                     BlockState neighbourState = blockAndTintGetter.getBlockState(checkPos);
+            //                     // 函数调用也是耗时
+            //                     int blockTypeFlag = MapChecker.getBlockTypeFlag(blockAndTintGetter, checkPos, neighbourState);
+            //                     if (blockTypeFlag == MapChecker.FLAG_CUSTOM
+            //                             && !(neighbourState.getBlock() instanceof SlabBlock)
+            //                             && !(neighbourState.getBlock() instanceof StairBlock)
+            //                     ) {
+            //                         cacheHeight = neighbourHeight;
+            //                         break;
+            //                     }
+            //                 }
+            //             }
+            //         }
+            //     }
+            // }
+
             isLight = cacheHeight <= pos.getY() - offset;
+            // isLight = cacheHeight <= pos.getY() - 0;
         }
 
+        // if (isLight) {
+        //     if (!(MapChecker.extraSnowPassable(state))
+        //             &&Heightmap.Types.MOTION_BLOCKING.isOpaque().test(state)) {
+        //         int y_real = mapSlice!=null ?
+        //                 mapSlice.getBlockHeight(checkPos) :
+        //                 level.getHeight(Heightmap.Types.MOTION_BLOCKING, pos.getX(), pos.getZ()) - 1;
+        //         if(y_real!=pos.getY())
+        //         isLight=false;
+        //     }
+        // }
+
+        boolean specialLeaves = false;
+        // if (!isLight && leavesOrVine && ClientConfig.Renderer.snowyTree.get()) {
+        //     if (blockAndTintGetter.getBrightness(LightLayer.SKY, checkPos) >= 9) {
+        //         int y_real = level.getHeight(Heightmap.Types.MOTION_BLOCKING, pos.getX(), pos.getZ()) - 1;
+        //         if (y_real <= pos.getY()
+        //                 || blockAndTintGetter.getBlockState(new BlockPos(pos.getX(), y_real, pos.getZ())).getShadeBrightness(blockAndTintGetter, pos) < 0.5f)
+        //         // if (level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, pos.getX(), pos.getZ()) >= pos.getY() + 1)
+        //         {
+        //             isLight = true;
+        //             if (leaveLike) {
+        //                 specialLeaves = true;
+        //             }
+        //         }
+        //     }
+        // }
 
         if (!isLight && ClientConfig.Renderer.snowUnderTree.get()) {
             checkPos.set(pos.getX(), pos.getY() + 1, pos.getZ());
             if (blockAndTintGetter.getBrightness(LightLayer.SKY, checkPos) >= 9) {
                 int y_real = blockAndTintGetter instanceof IMapSliceProvider ip ?
-                        ip.getSolidBlockHeight(pos) :
+                        ip.getSolidBlockHeight(checkPos) :
                         level.getHeight(Heightmap.Types.MOTION_BLOCKING, pos.getX(), pos.getZ()) - 1;
                 checkPos.setY(y_real);
                 BlockState getterBlockState = blockAndTintGetter.getBlockState(checkPos);
@@ -609,16 +688,26 @@ public class ExtraModelManager {
 
         if (isLight) {
             checkPos.set(pos.getX(), pos.getY() + 1, pos.getZ());
-            if (leaveLike) {
-                {
-                    if (!specialLeaves) {
-                        BlockState aboveState = blockAndTintGetter.getBlockState(checkPos);
-                        if (isLight) {
-                            // specialLeaves = true;
-                            specialLeaves = blockAndTintGetter instanceof IMapSliceProvider ip ?
-                                    ip.getSolidBlockHeight(checkPos) > pos.getY() :
-                                    aboveState.is(state.getBlock());
-                        }
+            if (MapChecker.leaveLike(flag)) {
+                if (!specialLeaves) {
+                    BlockState aboveState = blockAndTintGetter.getBlockState(checkPos);
+                    // boolean checkExtra = aboveState.is(state.getBlock())
+                    //         && (Heightmap.Types.MOTION_BLOCKING_NO_LEAVES.isOpaque().test(aboveState) ||
+                    //         MapChecker.extraSnowPassable(aboveState));
+                    // if (checkExtra) {
+                    //     isLight = CommonConfig.Season.snowyTree.get();
+                    //     if (isLight) {
+                    //         // specialLeaves = aboveState.is(state.getBlock());
+                    //         specialLeaves = blockAndTintGetter instanceof IMapSliceProvider ip ?
+                    //                 ip.getSolidBlockHeight(checkPos) > pos.getY() :
+                    //                 aboveState.is(state.getBlock());
+                    //     }
+                    // }
+                    if (isLight) {
+                        // specialLeaves = true;
+                        specialLeaves = blockAndTintGetter instanceof IMapSliceProvider ip ?
+                                ip.getSolidBlockHeight(checkPos) > pos.getY() :
+                                aboveState.is(state.getBlock());
                     }
                 }
             } else {
@@ -630,21 +719,21 @@ public class ExtraModelManager {
             }
         }
 
-
         if (isLight && specialLeaves) {
             isLight = CommonConfig.Season.snowyTree.get();
             if (!isLight) specialLeaves = false;
         }
 
-        if (extendCheck || isLight) {
+        if (isLight || extendCheck) {
             boolean isSnowy = false;
+            checkPos.setY(pos.getY());
             if (CommonConfig.isSnowyWinter()
-                    && isLight && onBlock != Blocks.SNOW_BLOCK
-                    && ((mapSlice != null && MapChecker.shouldSnowAt(level, pos, mapSlice.getSurfaceFaceBiomeId(pos), state, random, seed))
-                    || (mapSlice == null && MapChecker.shouldSnowAt(level, pos, state, random, seed))
-            )) {
-                // DynamicLeavesBlock
-
+                    && isLight
+                    && onBlock != Blocks.SNOW_BLOCK
+                    && ((mapSlice != null && MapChecker.shouldSnowAt(level, checkPos, mapSlice.getSurfaceFaceBiomeId(checkPos), state, random, seed))
+                    || (mapSlice == null && MapChecker.shouldSnowAt(level, checkPos, state, random, seed))
+            )
+            ) {
                 isSnowy = true;
 
                 if (CommonConfig.Season.notSnowyNearGlowingBlock.get()) {
@@ -665,25 +754,40 @@ public class ExtraModelManager {
                     }
                 }
 
+
                 if (isSnowy) {
-                    BlockState snowState = null;
-                    if (models != null) {
+
+
+                    // boolean isFlowerAbove = false;
+                    // if ((flag == MapChecker.FLAG_BLOCK) && ClientConfig.Renderer.betterSnow.get()) {
+                    //     var bl = blockAndTintGetter.getBlockState(pos.above()).getBlock();
+                    //     isFlowerAbove = bl instanceof FlowerBlock
+                    //             || bl instanceof PinkPetalsBlock
+                    //             || bl instanceof DoublePlantBlock
+                    //             || bl instanceof SaplingBlock;
+                    //
+                    //     if (!isFlowerAbove) {
+                    //         isFlowerAbove = random.nextInt(12) > 0;
+                    //         // isFlowerAbove=true;
+                    //     }
+                    // }
+                    {
+                        BlockState snowState = null;
                         if (flag == MapChecker.FLAG_STAIRS) {
                             snowState = BlockRegistry.snowyStairs.get().defaultBlockState()
                                     .setValue(StairBlock.FACING, state.getValue(StairBlock.FACING))
                                     .setValue(StairBlock.HALF, state.getValue(StairBlock.HALF))
                                     .setValue(StairBlock.SHAPE, state.getValue(StairBlock.SHAPE));
-                        } else if (leaveLike && !specialLeaves) {
+                        }  else if (leaveLike && !specialLeaves) {
                             snowState = BlockRegistry.snowyLeaves.get().defaultBlockState();
                         }
-                    }
-                    BakedModel snowModel = getSnowyModel(state, snowState, flag, offset);
+                        BakedModel snowModel = getSnowyModel(state, snowState, flag, offset);
 
-                    if (snowModel != null) {
-                        replace = snowModel;
+                        if (snowModel != null) {
+                            replace = snowModel;
+                        }
                     }
                 }
-
             }
 
             if (
@@ -701,7 +805,8 @@ public class ExtraModelManager {
                     int[][] directionRequireGroup = directions[i];
                     for (int[] direction : directionRequireGroup) {
                         checkPos.set(pos.getX() + direction[0], pos.getY() + 1, pos.getZ() + direction[1]);
-                        if ((MapChecker.getHeightOrUpdate(level, checkPos, false)) != pos.getY()) {
+                        if ((mapSlice != null ? mapSlice.getBlockHeight(checkPos)
+                                : MapChecker.getHeightOrUpdate(level, checkPos, false)) != pos.getY()) {
                             continue directionChecks;
                         }
                         checkPos.set(pos.getX() + direction[0], pos.getY(), pos.getZ() + direction[1]);
@@ -709,11 +814,6 @@ public class ExtraModelManager {
                         BlockState neighSate = blockAndTintGetter.getBlockState(checkPos);
                         long neighSateSeed = neighSate.getSeed(checkPos);
 
-
-                        // if (!((mapSlice != null && MapChecker.shouldSnowAt(level, checkPos, mapSlice.getSurfaceFaceBiomeId(checkPos), neighSate, random, neighSateSeed))
-                        //         || (mapSlice == null && MapChecker.shouldSnowAt(level, checkPos, neighSate, random, neighSateSeed))
-                        //         || (mapSlice != null && mapSlice.getSnowyStatus(checkPos) == SnowyRemover.SnowyFlag.SNOWY_ALWAYS.ordinal())
-                        // ))
                         if (!(neighSate.is(Blocks.GRASS_BLOCK) || MapChecker.getBlockType(neighSate, blockAndTintGetter, checkPos) == MapChecker.FLAG_BLOCK)) {
                             continue directionChecks;
                         }
@@ -723,6 +823,10 @@ public class ExtraModelManager {
                         if (!canSnowy(level, originalCache, neighSate, neighSateSeed, checkPos)) {
                             continue directionChecks;
                         }
+                        // if (!((mapSlice != null && MapChecker.shouldSnowAt(level, checkPos, mapSlice.getSurfaceFaceBiomeId(checkPos), neighSate, random, neighSateSeed))
+                        //         || (mapSlice == null && MapChecker.shouldSnowAt(level, checkPos, neighSate, random, neighSateSeed))
+                        //         || (mapSlice != null && mapSlice.getSnowyStatus(checkPos) == SnowyRemover.SnowyFlag.SNOWY_ALWAYS.ordinal())
+                        // ))
                     }
                     if (directionRequireGroup.length > ddLength) {
                         index = i;
@@ -735,6 +839,8 @@ public class ExtraModelManager {
                     isSnowy = true;
                 }
             }
+
+            // if (!isSnowy)
         }
 
         if (replace == null || !(replace instanceof IESReplaceModel iesReplaceModel && iesReplaceModel.isReplace())) {
@@ -748,9 +854,8 @@ public class ExtraModelManager {
                         for (SeasonBlockDefinition.FlatSliceHolder flatSliceHolder : flatSliceHolders) {
                             SeasonBlockDefinition.FlatSlice flatSlice = flatSliceHolder.flatSlice();
                             if (!flatSlice.emptyAbove() || blockAndTintGetter.getBlockState(checkPos).isAir()) {
-                                if ((mapSlice == null && localSeasonStatus.getBiomes().contains(MapChecker.getSurfaceBiome(level, pos))
-                                        || (mapSlice != null && localSeasonStatus.getBiomes().contains(MapChecker.idToBiome(level, mapSlice.getSurfaceFaceBiomeId(checkPos))))))
-                                {
+                                if ((mapSlice == null && localSeasonStatus.getBiomes().contains(MapChecker.getSurfaceBiome(level, checkPos))
+                                        || (mapSlice != null && localSeasonStatus.getBiomes().contains(MapChecker.idToBiome(level, mapSlice.getSurfaceFaceBiomeId(checkPos)))))) {
                                     ResourceLocation cinfo = flatSlice.transitionModels() == null ?
                                             flatSlice.mid() :
                                             Mth.abs(((int) (seed + pos.getX()))) % 100 > ClientCon.progress ?
@@ -779,11 +884,44 @@ public class ExtraModelManager {
                         }
                     }
                 }
+
+
+            // if (ClientConfig.Renderer.flowerOnGrass.get() && state.getBlock() instanceof GrassBlock
+            //         && (seed % 14) == 0)
+            // // && random.nextInt(15) == 0)
+            // {
+            //     var solarTerm = ClientCon.nowSolarTerm;
+            //
+            //     checkPos.set(pos.getX(), pos.getY() + 1, pos.getZ());
+            //     if (solarTerm.isInTerms(SolarTerm.BEGINNING_OF_SPRING, SolarTerm.BEGINNING_OF_SUMMER)) {
+            //         int weight = Math.abs(solarTerm.ordinal() - 3) + 1;
+            //         if ((seed % (weight * 4)) == 0
+            //                 && blockAndTintGetter.getBlockState(checkPos).isAir()
+            //                 && (mapSlice == null || ((IBiomeTagHolder) (Object) MapChecker.idToBiome(level, mapSlice.getSurfaceFaceBiomeId(checkPos)).value()).eclipticseasons$getBindTag() == ClimateTypeBiomeTags.SEASONAL)) {
+            //             {
+            //                 int index = Math.abs(((int) (seed + pos.getX())) % flower_on_grass.size());
+            //                 // index=random.nextInt(flower_on_grass.size());
+            //                 replace = models.get(flower_on_grass.get(index));
+            //             }
+            //         }
+            //     }
+            //     if (replace == null && solarTerm.isInTerms(SolarTerm.BEGINNING_OF_SUMMER, SolarTerm.BEGINNING_OF_AUTUMN)) {
+            //         int weight = Math.abs(solarTerm.ordinal() - 7) + 1;
+            //         if ((seed % (weight * 3)) == 0
+            //                 && blockAndTintGetter.getBlockState(checkPos).isAir()
+            //                 && (mapSlice == null || ((IBiomeTagHolder) (Object) MapChecker.idToBiome(level, mapSlice.getSurfaceFaceBiomeId(checkPos)).value()).eclipticseasons$getBindTag() == ClimateTypeBiomeTags.SEASONAL)) {
+            //             {
+            //                 int index = Math.abs(((int) (seed + pos.getX())) % fourleaf_clovers.size());
+            //                 // index=2;
+            //                 replace = models.get(fourleaf_clovers.get(index));
+            //             }
+            //         }
+            //     }
+            // }
         }
 
         return replace;
     }
-
     public static RenderType getRenderType(BlockState state) {
         // if (!Minecraft.useFancyGraphics()) return RenderType.solid();
         // RenderType chunkRenderType = ItemBlockRenderTypes.getChunkRenderType(state);

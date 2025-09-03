@@ -8,6 +8,7 @@ Ecliptic Seasons is a Chinese mod about seasons and weather.
 *   For code: BSD-3
 *   For resources: CC BY-NC-SA 4.0
 *   Please do not port arbitrarily, communication can make the community better, and please respect our work.
+*   For disc *Snowless Homeland*: authorized by Beishanwei & Orangesoda for distribution and instrumental adaptation.
 
 ## 1.What is Ecliptic Seasons?
 

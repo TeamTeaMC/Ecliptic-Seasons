@@ -6,8 +6,8 @@ import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import com.teamtea.eclipticseasons.api.misc.IChunkBiomeHolder;
+import com.teamtea.eclipticseasons.common.core.map.BiomeHolder;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
-import com.teamtea.eclipticseasons.common.network.message.ChunkBiomeUpdateMessage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
@@ -45,7 +45,7 @@ public abstract class MixinSurfaceSystem {
         // BiomeHolder biomeHolder1 = chunk.getData(AttachmentRegistry.BIOME_HOLDER);
         biomeHolderLocalRef.set(new int[256]);
         localIntRef.set(0);
-        signal.set(ChunkBiomeUpdateMessage.FLAG_NEED_VERSION);
+        signal.set(BiomeHolder.FLAG_NEED_VERSION);
     }
 
     @Inject(at = {@At(value = "INVOKE_ASSIGN",
@@ -74,7 +74,7 @@ public abstract class MixinSurfaceSystem {
             localIntRef.set(localIntRef.get() + 1);
 
             if (MapChecker.isSmallBiome(biomeHolder)) {
-                signal.set(ChunkBiomeUpdateMessage.FLAG_FILL_SMALL);
+                signal.set(BiomeHolder.FLAG_FILL_SMALL);
             }
         }
     }
@@ -98,8 +98,8 @@ public abstract class MixinSurfaceSystem {
         // BiomeHolder biomeHolder1 = chunk.getData(AttachmentRegistry.BIOME_HOLDER);
         if (localIntRef.get() == 256 && chunk instanceof IChunkBiomeHolder iChunkBiomeHolder) {
             iChunkBiomeHolder.eclipticseasons$setBiomeHolder(
-                    new ChunkBiomeUpdateMessage(biomeHolderLocalRef.get(),
-                            chunk.getPos().x, chunk.getPos().z, signal.get())
+                    new BiomeHolder(biomeHolderLocalRef.get(),
+                            true, signal.get())
             );
         }
     }

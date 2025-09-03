@@ -33,24 +33,13 @@ public class CommonConfig {
         Resource.load(builder);
     }
 
-    // public static class Compat {
-    //     public static ForgeConfigSpec.BooleanValue sereneSeasons;
-    //
-    //     private static void load(ForgeConfigSpec.Builder builder) {
-    //         builder.push("Compat");
-    //         CompatModule.CommonConfig.load(builder);
-    //         sereneSeasons = builder.comment("Compatible with mods using SereneSeasons' CropTag.")
-    //                 .define("SereneSeasonsCropTag", true);
-    //         builder.pop();
-    //     }
-    // }
-
     public static class Debug {
         public static ForgeConfigSpec.BooleanValue logIllegalUse;
         public static ForgeConfigSpec.BooleanValue notLightAbove;
 
         public static ForgeConfigSpec.BooleanValue snowyFullCollisionShape;
         public static ForgeConfigSpec.BooleanValue snowOverlayGlowingBlock;
+        public static ForgeConfigSpec.BooleanValue disableSnowOverlayControlTag;
         public static ForgeConfigSpec.BooleanValue disableChunkCacheCleaner;
         public static ForgeConfigSpec.BooleanValue disableUniqueRebindingBiomeTags;
         public static ForgeConfigSpec.BooleanValue seasonDefinition;
@@ -65,6 +54,8 @@ public class CommonConfig {
                     .define("SnowyFullCollisionShape", false);
             snowOverlayGlowingBlock = builder.comment("Snow can cover the block which would lights.")
                     .define("NotSnowOverlayGlowingBlock", false);
+            disableSnowOverlayControlTag = builder.comment("Set to false to disable tag which stops block from snowy is tagged with \"eclipticseasons:snow_overlay_cannot_survive_on\".")
+                    .define("DisableSnowOverlayControlTag", false);
             seasonDefinition = builder.comment("Enable the season definitions system.")
                     .define("EnableSeasonDefinition", false);
             disableChunkCacheCleaner = builder.comment("Disable chunk extra info cache cleanup.")
@@ -329,13 +320,10 @@ public class CommonConfig {
     }
 
     public static class Map {
-        public static ForgeConfigSpec.BooleanValue delayedUpdates;
         public static ForgeConfigSpec.BooleanValue changeMapColor;
 
         private static void load(ForgeConfigSpec.Builder builder) {
             builder.push("Map");
-            delayedUpdates = builder.comment("Delay updating the top block to snowy when height map changes during snowfall.")
-                    .define("ServerRealisticSnowyChange", false);
             changeMapColor = builder.comment("The map color of blocks will change during snow.")
                     .define("ChangeMapColor", true);
             builder.pop();
