@@ -75,11 +75,13 @@ public abstract class MixinLevelChunk extends ChunkAccess implements IChunkBiome
             Optional<BiomeHolder> biomeHolderLazyOptional = getCapability(BiomeHolder.BIOME_HOLDER_CAPABILITY, null).resolve();
             if (biomeHolderLazyOptional.isPresent()) {
                 var biomeHolder = biomeHolderLazyOptional.get();
-                biomeHolder.copyFrom(biomeHolderNew);
+
+                if (biomeHolder != biomeHolderNew) biomeHolder.copyFrom(biomeHolderNew);
                 if (biomeHolderNew.hasUpdated()
                         && biomeHolderNew.version() != BiomeHolder.FLAG_NEED_VERSION
-                        && biomeHolderNew.version() != BiomeHolder.FLAG_FILL_SMALL)
+                        && biomeHolderNew.version() != BiomeHolder.FLAG_FILL_SMALL) {
                     setUnsaved(true);
+                }
             }
         }
     }

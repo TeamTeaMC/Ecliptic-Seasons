@@ -5,10 +5,13 @@ import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
+import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
+import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
+import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.handler.CustomRandomTickHandler;
 import com.teamtea.eclipticseasons.compat.vanilla.VanillaWeather;
 import com.teamtea.eclipticseasons.config.CommonConfig;
@@ -90,6 +93,20 @@ public abstract class MixinServerLevel extends Level {
     )
     private void eclipticseasons$tickChunk_handleRandomTick_clear(LevelChunk chunk, int randomTickSpeed, CallbackInfo ci) {
         CropGrowthHandler.handleChunkTick(this, chunk);
+    }
+
+
+    @WrapOperation(
+            method = "tickChunk",
+            at = @At(value = "INVOKE",
+                    target = "Lnet/minecraft/server/level/ServerLevel;getBiome(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/core/Holder;")
+    )
+    private Holder<Biome> eclipticseasons$tickPrecipitation_setBiome(ServerLevel instance, BlockPos pos, Operation<Holder<Biome>> original, @Local(ordinal = 1) BlockPos posAbove) {
+        Holder<Biome> surfaceBiome = EclipticUtil.hasLocalWeather(this) ? MapChecker.getSurfaceBiome(this, posAbove) : null;
+        if (surfaceBiome == null) {
+            surfaceBiome = (original.call(instance, pos));
+        }
+        return surfaceBiome;
     }
 
     @WrapOperation(

@@ -452,6 +452,9 @@ public class WeatherManager {
     }
 
     public static void runWeather(ServerLevel level, BiomeWeather biomeWeather, RandomSource random, int size) {
+        size = (int) (size * (Mth.clamp(7f / CommonConfig.Season.lastingDaysOfEachTerm.get(), 0.8f, 3f)));
+        size = Math.max(1, size);
+
         WeatherMode weatherMode = EclipticUtil.getWeatherMode(level);
         if (weatherMode == WeatherMode.REGION) {
             Holder<Biome> onwer = BiomeClimateManager.getWeatherRegionOnwer(biomeWeather.biomeHolder.value());
@@ -461,7 +464,7 @@ public class WeatherManager {
                     biomeWeather.rainTime = ownerBiomeWeather.rainTime;
                     biomeWeather.thunderTime = ownerBiomeWeather.thunderTime;
                     biomeWeather.clearTime = ownerBiomeWeather.clearTime;
-                    updateSnowOrMelt(level, biomeWeather, random);
+                    updateSnowOrMelt(level, biomeWeather, random, size, biomeWeather.shouldRain());
                     return;
                 }
             }
@@ -470,7 +473,6 @@ public class WeatherManager {
             return;
         boolean isEcliptic = EclipticUtil.hasLocalWeather(level);
 
-        size = (int) (size * (Mth.clamp(7f / CommonConfig.Season.lastingDaysOfEachTerm.get(), 0.8f, 3f)));
 
         if (isEcliptic) {
             if (biomeWeather.shouldClear()) {
@@ -512,17 +514,16 @@ public class WeatherManager {
                     biomeWeather.thunderTime = 0;
                 }
             }
-
-            updateSnowOrMelt(level, biomeWeather, random);
+            updateSnowOrMelt(level, biomeWeather, random, size, biomeWeather.shouldRain());
         } else {
-            VanillaWeather.runVanillaSnowyWeather(level, biomeWeather, random, size);
+            updateSnowOrMelt(level, biomeWeather, random, size, level.isRaining());
         }
     }
 
 
-    protected static void updateSnowOrMelt(ServerLevel level, BiomeWeather biomeWeather, RandomSource randomSource) {
+    protected static void updateSnowOrMelt(ServerLevel level, BiomeWeather biomeWeather, RandomSource randomSource, int size, boolean rain) {
         if ((biomeWeather.shouldRain() || randomSource.nextInt(5) > 1)) {
-            var snow = WeatherManager.getSnowStatus(level, biomeWeather.biomeHolder.value(), null);
+            var snow = WeatherManager.getSnowStatus(level, biomeWeather.biomeHolder.value(), BlockPos.ZERO, rain);
             if (snow == SnowRenderStatus.SNOW) {
                 biomeWeather.snowDepth = (byte) Math.min(100, biomeWeather.snowDepth + 1);
             } else if (snow == SnowRenderStatus.SNOW_MELT) {
@@ -774,15 +775,19 @@ public class WeatherManager {
         NONE
     }
 
+    @Deprecated(forRemoval = true, since = "0.12.0.1")
     public static SnowRenderStatus getSnowStatus(ServerLevel level, Biome biome, BlockPos pos) {
+        return getSnowStatus(level, biome, pos, isRainingOrSnowAtBiome(level, biome));
+    }
+
+    public static SnowRenderStatus getSnowStatus(ServerLevel level, Biome biome, BlockPos pos, boolean rain) {
         var status = SnowRenderStatus.NONE;
         if (biome.hasPrecipitation()) {
             Biome.Precipitation precipitation = getPrecipitationAt(level, biome, pos);
             if (precipitation == Biome.Precipitation.SNOW) {
-                if (isRainingOrSnowAtBiome(level, biome))
-                    status = SnowRenderStatus.SNOW;
+                if (rain) status = SnowRenderStatus.SNOW;
             } else {
-                status = level.getRandom().nextBoolean() | (isRainingOrSnowAtBiome(level, biome) && precipitation == Biome.Precipitation.RAIN) ?
+                status = level.getRandom().nextBoolean() | (rain && precipitation == Biome.Precipitation.RAIN) ?
                         SnowRenderStatus.SNOW_MELT : SnowRenderStatus.NONE;
             }
         }

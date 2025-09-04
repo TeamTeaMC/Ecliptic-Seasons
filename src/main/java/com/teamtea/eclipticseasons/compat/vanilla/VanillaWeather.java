@@ -33,38 +33,6 @@ public class VanillaWeather {
         return EclipticSeasonsApi.getInstance().getSolarTerm(level).getSeason() == Season.SUMMER;
     }
 
-    public static void runVanillaSnowyWeather(ServerLevel level, WeatherManager.BiomeWeather biomeWeather, RandomSource random, int size) {
-        boolean isRaining = level.isRaining();
-        if ((isRaining || level.getRandom().nextInt(5) > 1)) {
-            var snow = getSnowStatus(level, biomeWeather.biomeHolder, null);
-            if (snow == WeatherManager.SnowRenderStatus.SNOW) {
-                biomeWeather.snowDepth = (byte) Math.min(100, biomeWeather.snowDepth + 1);
-            } else if (snow == WeatherManager.SnowRenderStatus.SNOW_MELT) {
-                biomeWeather.snowDepth = (byte) Math.max(0, biomeWeather.snowDepth - 1);
-            }
-        }
-    }
-
-
-    public static WeatherManager.SnowRenderStatus getSnowStatus(ServerLevel level, Holder<Biome> biome, BlockPos pos) {
-        // var provider = SolarHolders.getSaveData(level);
-        var status = WeatherManager.SnowRenderStatus.NONE;
-        if (biome.value().hasPrecipitation()) {
-            var solarTerm = EclipticUtil.getNowSolarTerm(level);
-            var snowTerm = SolarTerm.getSnowTerm(biome.value(), level instanceof ServerLevel, EclipticUtil.getSnowTempChange(level));
-            boolean flag_cold = snowTerm.maySnow(solarTerm);
-            if (flag_cold) {
-                if (level.isRaining())
-                    status = WeatherManager.SnowRenderStatus.SNOW;
-            } else {
-                status = level.getRandom().nextBoolean() | level.isRaining() ?
-                        WeatherManager.SnowRenderStatus.SNOW_MELT : WeatherManager.SnowRenderStatus.NONE;
-            }
-        }
-        return status;
-    }
-
-
     public static Biome.Precipitation handlePrecipitationAt(Biome biome, BlockPos pos) {
         var level = getValidLevel(biome);
         return handlePrecipitationAt(level, biome, pos);

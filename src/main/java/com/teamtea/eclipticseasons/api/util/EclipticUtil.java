@@ -343,6 +343,12 @@ public class EclipticUtil {
         return 0;
     }
 
+    public static boolean isRainingOrSnowingWithSurfaceBiome(Level level, Biome biome, BlockPos pos) {
+        if (hasLocalWeather(level))
+            return getRainOrSnow(level, biome, pos) != Biome.Precipitation.NONE;
+        return level.isRaining();
+    }
+
     public static boolean isHereWithSnow(Level level, BlockPos pos) {
         return WeatherManager.getSnowDepthAtBiome(level, MapChecker.getSurfaceBiome(level, pos).value()) > 0;
     }
