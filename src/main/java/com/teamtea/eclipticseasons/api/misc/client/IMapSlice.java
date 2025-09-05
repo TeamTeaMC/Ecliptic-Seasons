@@ -6,7 +6,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockAndTintGetter;
 
 public interface IMapSlice extends IMapSliceProvider, BlockAndTintGetter, IExtendBlockView {
-    default void forceMapSliceUpdate(int[][] heights, int[][] solidHeights, int[][] biomes, int SIZE_X, int SIZE_Z){};
+    default void forceMapSliceUpdate(int[][] heights, int[][] solidHeights, int[][] biomes, int SIZE_X, int SIZE_Z) {
+    }
 
     BakedModel eclipticseasons$getSnowModel();
 
@@ -15,4 +16,9 @@ public interface IMapSlice extends IMapSliceProvider, BlockAndTintGetter, IExten
     int getBlockHeight(BlockPos blockPos);
 
     int getSurfaceFaceBiomeId(BlockPos blockPos);
+
+    default boolean isSnowyBlock(BlockPos blockPos) {
+        return false;
+    }
+
 }

@@ -130,7 +130,8 @@ public final class ClientEventHandler {
             ClientWeatherChecker.tickAllCheck(clientLevel);
             ClientCon.tick(clientLevel);
 
-            if (ClientConfig.Renderer.forceChunkRenderUpdate.get()) {
+            if (!EclipticUtil.canSnowyBlockInteract()
+                    &&ClientConfig.Renderer.forceChunkRenderUpdate.get()) {
                 if (clientLevel.getGameTime() - lastFreshTime > 80
                         || clientLevel.getGameTime() < lastFreshTime - 1) {
                     lastFreshTime = clientLevel.getGameTime();

@@ -37,12 +37,10 @@ public class CommonConfig {
         public static ForgeConfigSpec.BooleanValue logIllegalUse;
         public static ForgeConfigSpec.BooleanValue notLightAbove;
 
-        public static ForgeConfigSpec.BooleanValue snowyFullCollisionShape;
         public static ForgeConfigSpec.BooleanValue snowOverlayGlowingBlock;
         public static ForgeConfigSpec.BooleanValue disableSnowOverlayControlTag;
         public static ForgeConfigSpec.BooleanValue disableChunkCacheCleaner;
         public static ForgeConfigSpec.BooleanValue disableUniqueRebindingBiomeTags;
-        public static ForgeConfigSpec.BooleanValue seasonDefinition;
 
         private static void load(ForgeConfigSpec.Builder builder) {
             builder.push("Debug");
@@ -50,14 +48,13 @@ public class CommonConfig {
                     .define("LogIllegalUse", false);
             notLightAbove = builder.comment("Disable snowy blocks beneath light sources with light level 0.")
                     .define("NotSnowyUnderLight0", false);
-            snowyFullCollisionShape = builder.comment("Snow overlay block if has full collision shape not just full render shape.")
-                    .define("SnowyFullCollisionShape", false);
+
+
             snowOverlayGlowingBlock = builder.comment("Snow can cover the block which would lights.")
                     .define("NotSnowOverlayGlowingBlock", false);
             disableSnowOverlayControlTag = builder.comment("Set to false to disable tag which stops block from snowy is tagged with \"eclipticseasons:snow_overlay_cannot_survive_on\".")
                     .define("DisableSnowOverlayControlTag", false);
-            seasonDefinition = builder.comment("Enable the season definitions system.")
-                    .define("EnableSeasonDefinition", false);
+
             disableChunkCacheCleaner = builder.comment("Disable chunk extra info cache cleanup.")
                     .define("DisableChunkCacheCleaner", false);
             disableUniqueRebindingBiomeTags = builder.comment("Disable unique rebinding for biome tags. Note that after disabling, tags may overlap.")
@@ -100,15 +97,8 @@ public class CommonConfig {
 
         public static ForgeConfigSpec.ConfigValue<List<? extends String>> validDimensions;
 
-        public static ForgeConfigSpec.BooleanValue snowyWinter;
-        public static ForgeConfigSpec.BooleanValue snowyTree;
-
-        public static ForgeConfigSpec.BooleanValue notSnowyNearGlowingBlock;
-        public static ForgeConfigSpec.IntValue notSnowyNearGlowingBlockLevel;
-
-        public static ForgeConfigSpec.ConfigValue<List<? extends String>> blocksNotSnowy;
-
         public static ForgeConfigSpec.BooleanValue dynamicSnowTerm;
+        public static ForgeConfigSpec.BooleanValue seasonDefinition;
 
         private static void load(ForgeConfigSpec.Builder builder) {
             builder.push("Season");
@@ -116,6 +106,8 @@ public class CommonConfig {
                     .defineInRange("LastingDaysOfEachTerm", 7, 1, 5000);
             initialSolarTermIndex = builder.comment("The index of the initial solar term, and note it only can be used to first start the world with the mod.")
                     .defineInRange("InitialSolarTermIndex", 1, 1, 24);
+            seasonDefinition = builder.comment("Enable the season definitions system.")
+                    .define("EnableSeasonDefinition", false);
             enableInform = builder.comment("Enable solar term change inform.")
                     .define("EnableInform", true);
             enableInformIcon = builder.comment("Whether send inform with icon.")
@@ -151,18 +143,6 @@ public class CommonConfig {
                             () -> List.of(Level.OVERWORLD.location().toString()),
                             o -> o instanceof String s && ResourceLocation.tryParse(s) != null);
 
-            snowyWinter = builder.comment("If snow falls during cold weather, it will gradually cover all solid blocks and grass.")
-                    .define("SnowyWinter", true);
-            snowyTree = builder.comment("Not just the top layer, now even the leaves below are dusted with frost and snow.")
-                    .define("SnowyTree", true);
-            notSnowyNearGlowingBlock = builder.comment("Snow will not appear in overly bright areas, here define restriction levels.")
-                    .define("NotSnowyNearGlowingBlock", true);
-            notSnowyNearGlowingBlockLevel = builder.comment("Snow will not appear in overly bright areas.")
-                    .defineInRange("NotSnowyNearGlowingBlockLevel", 10, 1, 15);
-            blocksNotSnowy = builder.comment("Specify block IDs here to prevent those blocks from being covered by snow.")
-                    .defineListAllowEmpty("ForceBlocksNotSnowy",
-                            List::of,
-                            o -> o instanceof String s && ResourceLocation.tryParse(s) != null);
 
             dynamicSnowTerm = builder.comment("The timing of snowfall now varies within a certain range each year.")
                     .define("DynamicSnowTerm", true);
@@ -330,6 +310,43 @@ public class CommonConfig {
         }
     }
 
+    public static class Snow {
+
+        public static ForgeConfigSpec.BooleanValue snowyWinter;
+        public static ForgeConfigSpec.BooleanValue snowyTree;
+        public static ForgeConfigSpec.BooleanValue notSnowyNearGlowingBlock;
+        public static ForgeConfigSpec.IntValue notSnowyNearGlowingBlockLevel;
+        public static ForgeConfigSpec.ConfigValue<List<? extends String>> blocksNotSnowy;
+
+        public static ForgeConfigSpec.BooleanValue snowInWorld;
+        public static ForgeConfigSpec.BooleanValue forceChunkUpdate;
+        public static ForgeConfigSpec.BooleanValue snowyUnderSnowLike;
+
+        private static void load(ForgeConfigSpec.Builder builder) {
+            builder.push("Snow");
+
+            snowyWinter = builder.comment("If snow falls during cold weather in warm biomes, it will gradually cover all solid blocks and grass.")
+                    .define("SnowyWinter", true);
+            snowyTree = builder.comment("Not just the top layer, now even the leaves below are dusted with frost and snow.")
+                    .define("SnowyTree", true);
+            notSnowyNearGlowingBlock = builder.comment("Snow will not appear in overly bright areas, here define restriction levels.")
+                    .define("NotSnowyNearGlowingBlock", true);
+            notSnowyNearGlowingBlockLevel = builder.comment("Snow will not appear in overly bright areas.")
+                    .defineInRange("NotSnowyNearGlowingBlockLevel", 10, 1, 15);
+            blocksNotSnowy = builder.comment("Specify block IDs here to prevent those blocks from being covered by snow.")
+                    .defineListAllowEmpty("ForceBlocksNotSnowy",
+                            List::of,
+                            o -> o instanceof String s && ResourceLocation.tryParse(s) != null);
+            snowInWorld = builder.comment("Snowfall is now bound to world position rather than only to biomes. This allows for more location-based operations, such as snow sweeping and localized snowfall events.")
+                    .define("SnowInWorld", false);
+            forceChunkUpdate = builder.comment("When SnowInWorld is enabled, update chunk state on load based on differences from previous state records.")
+                    .define("ForceSnowyChunkUpdate", true);
+            snowyUnderSnowLike = builder.comment("When SnowInWorld is enabled, blocks like full blocks under snow layers will have a snowy appearance.")
+                    .define("SnowyUnderSnowLike", true);
+            builder.pop();
+        }
+    }
+
     public static class Resource {
         public static ForgeConfigSpec.BooleanValue extraSnow;
 
@@ -360,7 +377,9 @@ public class CommonConfig {
     private static boolean useDayTimes = false;
 
     @Getter
-    private static boolean snowyWinter = false;
+    private static boolean snowyWinter = true;
+    @Getter
+    private static boolean snowInWorld = true;
 
     @Getter
     private static boolean cropHumidityTransition = true;
@@ -374,9 +393,10 @@ public class CommonConfig {
             useSolarWeather = Weather.useSolarWeather.get();
             enableWeatherRegion = Weather.enableWeatherRegion.get();
             forceCropCompatMode = Crop.forceCompatMode.get();
-            snowyWinter = Season.snowyWinter.get();
+            snowyWinter = Snow.snowyWinter.get();
+            snowInWorld = Snow.snowInWorld.get() && snowyWinter;
             cropHumidityTransition = Crop.cropHumidityTransition.get();
-            seasonDefinition = Debug.seasonDefinition.get();
+            seasonDefinition = Season.seasonDefinition.get();
             int[] ints = Stream.of(Season.springDayTimes, Season.summerDayTimes, Season.autumnDayTimes, Season.winterDayTimes, Season.noneDayTimes)
                     .map(ForgeConfigSpec.ConfigValue::get)
                     .flatMap(Collection::stream)
@@ -398,7 +418,7 @@ public class CommonConfig {
             }
 
             forceBlocksNotSnowy.clear();
-            for (String s : Season.blocksNotSnowy.get()) {
+            for (String s : Snow.blocksNotSnowy.get()) {
                 Block block = BuiltInRegistries.BLOCK.get(ResourceLocation.tryParse(s));
                 if (block != Blocks.AIR) {
                     forceBlocksNotSnowy.add(block);

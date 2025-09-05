@@ -1,5 +1,6 @@
 package com.teamtea.eclipticseasons.common.misc;
 
+import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.core.BlockPos;
@@ -38,6 +39,7 @@ public class MapColorReplacer {
 
         int offset = MapChecker.getSnowOffset(state, flag);
 
+        ignoreLight |= EclipticUtil.canSnowyBlockInteract();
 
         // long seed = (long) Mth.abs(pos.hashCode());
 
@@ -46,9 +48,9 @@ public class MapColorReplacer {
                 && state.getBlock() != Blocks.SNOW_BLOCK
                 && (!forceCheckLoad || MapChecker.isLoadNearByOnlyServer(level, pos))
                 && MapChecker.shouldSnowAt(level, pos.below(offset), state, level.getRandom(), state.getSeed(pos))
-                && (ignoreLight || (!CommonConfig.Season.notSnowyNearGlowingBlock.get() ||
+                && (ignoreLight || (!CommonConfig.Snow.notSnowyNearGlowingBlock.get() ||
                 level.getBrightness(LightLayer.BLOCK, pos.below(offset - 1)) <
-                        CommonConfig.Season.notSnowyNearGlowingBlockLevel.get()))
+                        CommonConfig.Snow.notSnowyNearGlowingBlockLevel.get()))
         ;
 
         if (isLight) {
@@ -58,7 +60,7 @@ public class MapColorReplacer {
                         && (Heightmap.Types.MOTION_BLOCKING_NO_LEAVES.isOpaque().test(aboveState) ||
                         MapChecker.extraSnowPassable(aboveState));
                 if (specialLeaves) {
-                    isLight = CommonConfig.Season.snowyTree.get();
+                    isLight = CommonConfig.Snow.snowyTree.get();
                 }
             } else {
                 if (MapChecker.extraSnowPassable(state)) {

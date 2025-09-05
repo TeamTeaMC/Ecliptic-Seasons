@@ -103,6 +103,10 @@ public class EclipticUtil {
         return getWeatherMode(level) != WeatherMode.DEFAULT;
     }
 
+    public static boolean canSnowyBlockInteract() {
+        return CommonConfig.isSnowInWorld();
+    }
+
     public static EclipticSeasonsApi INSTANCE;
 
     static {

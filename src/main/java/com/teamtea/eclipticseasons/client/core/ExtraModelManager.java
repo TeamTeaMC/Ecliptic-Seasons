@@ -8,11 +8,13 @@ import com.teamtea.eclipticseasons.api.data.client.model.seasonal.SeasonalTextur
 import com.teamtea.eclipticseasons.api.data.season.SnowDefinition;
 import com.teamtea.eclipticseasons.api.misc.client.IMapSlice;
 import com.teamtea.eclipticseasons.api.misc.client.IMapSliceProvider;
+import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.client.model.bakequad.*;
 import com.teamtea.eclipticseasons.client.model.unbake.SolarBlockModel;
 import com.teamtea.eclipticseasons.client.reload.ClientJsonCacheListener;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.client.util.ClientRef;
+import com.teamtea.eclipticseasons.common.core.map.SnowyRemover;
 import com.teamtea.eclipticseasons.common.core.snow.SnowChecker;
 import com.teamtea.eclipticseasons.common.registry.BlockRegistry;
 import com.teamtea.eclipticseasons.client.model.*;
@@ -170,7 +172,7 @@ public class ExtraModelManager {
                 if (flag == MapChecker.FLAG_BLOCK) {
                     snowModel = models.get(snowOverlayBlock);
                 } else if (flag == MapChecker.FLAG_LEAVES) {
-                    snowModel = !CommonConfig.Season.snowyTree.get() ?
+                    snowModel = !CommonConfig.Snow.snowyTree.get() ?
                             models.get(snowOverlayLeaves) : notSpecialLeaves ?
                             models.get(snowy_leaves_top) : models.get(snowy_leaves_attach);
                 } else if (flag == MapChecker.FLAG_SLAB) {
@@ -458,7 +460,7 @@ public class ExtraModelManager {
                 if (getterBlockState.getShadeBrightness(blockAndTintGetter, checkPos) < 0.5f) {
                     isLight = true;
                     if (leaveLike) {
-                        if (CommonConfig.Season.snowyTree.get())
+                        if (CommonConfig.Snow.snowyTree.get())
                             specialLeaves = true;
                         else isLight = false;
                     }
@@ -488,7 +490,7 @@ public class ExtraModelManager {
         }
 
         if (isLight && specialLeaves) {
-            isLight = CommonConfig.Season.snowyTree.get();
+            isLight = CommonConfig.Snow.snowyTree.get();
             if (!isLight) specialLeaves = false;
         }
         boolean isSnowy = false;
@@ -502,11 +504,12 @@ public class ExtraModelManager {
             ) {
                 isSnowy = true;
 
-                if (CommonConfig.Season.notSnowyNearGlowingBlock.get()) {
+                if (CommonConfig.Snow.notSnowyNearGlowingBlock.get()
+                        && !EclipticUtil.canSnowyBlockInteract()) {
                     if (mapSlice != null) {
                         checkPos.set(pos.getX(), pos.getY() + 1 - offset, pos.getZ());
                         if (blockAndTintGetter.getBrightness(LightLayer.BLOCK, checkPos) >=
-                                CommonConfig.Season.notSnowyNearGlowingBlockLevel.get()) {
+                                CommonConfig.Snow.notSnowyNearGlowingBlockLevel.get()) {
                             isSnowy = false;
                         }
                     }
@@ -514,7 +517,7 @@ public class ExtraModelManager {
                     if (mapSlice == null) {
                         checkPos.set(pos.getX(), pos.getY() + 1 - offset, pos.getZ());
                         if (blockAndTintGetter.getBrightness(LightLayer.BLOCK, checkPos) >=
-                                CommonConfig.Season.notSnowyNearGlowingBlockLevel.get()) {
+                                CommonConfig.Snow.notSnowyNearGlowingBlockLevel.get()) {
                             isSnowy = false;
                         }
                     }
@@ -525,6 +528,17 @@ public class ExtraModelManager {
         return isSnowy;
     }
 
+    public static boolean maySnowyAt(Level level, IMapSlice mapSlice, BlockState state, BlockPos checkPos, RandomSource random, long seed) {
+        if (mapSlice != null) {
+            // if (mapSlice.getSnowyStatus(checkPos) == SnowyRemover.SnowyFlag.SNOWY_ALWAYS.ordinal()) {
+            //     return true;
+            // }
+            if (EclipticUtil.canSnowyBlockInteract()) return mapSlice.isSnowyBlock(checkPos);
+            return MapChecker.shouldSnowAt(level, checkPos, mapSlice.getSurfaceFaceBiomeId(checkPos), state, random, seed);
+        } else {
+            return MapChecker.shouldSnowAt(level, checkPos, state, null, seed);
+        }
+    }
     public static BakedModel findModel(BlockAndTintGetter blockAndTintGetter, BlockPos pos, BlockState state, RandomSource random, long seed, @Nullable BlockPos.MutableBlockPos checkPos) {
         // if (!state.is(Blocks.LILY_PAD))
         //     return null;
@@ -678,7 +692,7 @@ public class ExtraModelManager {
                 if (getterBlockState.getShadeBrightness(blockAndTintGetter, checkPos) < 0.5f) {
                     isLight = true;
                     if (leaveLike) {
-                        if (CommonConfig.Season.snowyTree.get())
+                        if (CommonConfig.Snow.snowyTree.get())
                             specialLeaves = true;
                         else isLight = false;
                     }
@@ -720,7 +734,7 @@ public class ExtraModelManager {
         }
 
         if (isLight && specialLeaves) {
-            isLight = CommonConfig.Season.snowyTree.get();
+            isLight = CommonConfig.Snow.snowyTree.get();
             if (!isLight) specialLeaves = false;
         }
 
@@ -736,11 +750,12 @@ public class ExtraModelManager {
             ) {
                 isSnowy = true;
 
-                if (CommonConfig.Season.notSnowyNearGlowingBlock.get()) {
+                if (CommonConfig.Snow.notSnowyNearGlowingBlock.get()
+                        && !EclipticUtil.canSnowyBlockInteract()) {
                     if (mapSlice != null) {
                         checkPos.set(pos.getX(), pos.getY() + 1 - offset, pos.getZ());
                         if (blockAndTintGetter.getBrightness(LightLayer.BLOCK, checkPos) >=
-                                CommonConfig.Season.notSnowyNearGlowingBlockLevel.get()) {
+                                CommonConfig.Snow.notSnowyNearGlowingBlockLevel.get()) {
                             isSnowy = false;
                         }
                     }
@@ -748,7 +763,7 @@ public class ExtraModelManager {
                     if (mapSlice == null) {
                         checkPos.set(pos.getX(), pos.getY() + 1 - offset, pos.getZ());
                         if (blockAndTintGetter.getBrightness(LightLayer.BLOCK, checkPos) >=
-                                CommonConfig.Season.notSnowyNearGlowingBlockLevel.get()) {
+                                CommonConfig.Snow.notSnowyNearGlowingBlockLevel.get()) {
                             isSnowy = false;
                         }
                     }
