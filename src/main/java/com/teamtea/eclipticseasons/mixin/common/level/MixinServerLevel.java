@@ -44,7 +44,8 @@ import java.util.function.Supplier;
 @Mixin({ServerLevel.class})
 public abstract class MixinServerLevel extends Level {
 
-    @Shadow public abstract ServerLevel getLevel();
+    @Shadow
+    public abstract ServerLevel getLevel();
 
     protected MixinServerLevel(WritableLevelData pLevelData, ResourceKey<Level> pDimension, RegistryAccess pRegistryAccess, Holder<DimensionType> pDimensionTypeRegistration, Supplier<ProfilerFiller> pProfiler, boolean pIsClientSide, boolean pIsDebug, long pBiomeZoomSeed, int pMaxChainedNeighborUpdates) {
         super(pLevelData, pDimension, pRegistryAccess, pDimensionTypeRegistration, pProfiler, pIsClientSide, pIsDebug, pBiomeZoomSeed, pMaxChainedNeighborUpdates);
@@ -217,20 +218,25 @@ public abstract class MixinServerLevel extends Level {
         mapLocalRef.set(MapChecker.getChunkInfoMapOrCreate(getLevel(), chunk.getPos()));
     }
 
-    @ModifyExpressionValue(
+    @WrapOperation(
             method = "tickChunk",
             at = @At(value = "INVOKE",
                     ordinal = 1,
                     target = "Lnet/minecraft/server/level/ServerLevel;getBlockRandomPos(IIII)Lnet/minecraft/core/BlockPos;")
     )
-    private BlockPos eclipticseasons$tickChunk_our_snow(BlockPos original, @Local(argsOnly = true) LevelChunk chunk, @Local ChunkPos chunkPos, @Share("snowy_status") LocalRef<SnowyStatusKeeper> keeper,
-                                                        @Share("chunk_info_map") LocalRef<ChunkInfoMap> mapLocalRef) {
+    private BlockPos eclipticseasons$tickChunk_our_snow(ServerLevel instance, int i, int k, int j, int mask, Operation<BlockPos> original, @Local(argsOnly = true) LevelChunk chunk, @Local ChunkPos chunkPos, @Share("snowy_status") LocalRef<SnowyStatusKeeper> keeper, @Share("chunk_info_map") LocalRef<ChunkInfoMap> mapLocalRef, @Local(ordinal = 0, argsOnly = true) int pRandomTickSpeed) {
         SnowyStatusKeeper data = keeper.get();
         if (data != null) {
             ChunkInfoMap chunkInfoMap = mapLocalRef.get();
-            if (chunkInfoMap != null) data.tickChunk(getLevel(), chunk, chunkPos, original, chunkInfoMap);
+            if (chunkInfoMap != null) {
+                // patch for 1.20.1
+                for (int i1 = 0; i1 < Math.max(1, pRandomTickSpeed >> 3); i1++) {
+                    var pos = original.call(instance, i, k, j, mask);
+                    data.tickChunk(getLevel(), chunk, chunkPos, pos, chunkInfoMap);
+                }
+            }
         }
-        return original;
+        return original.call(instance, i, k, j, mask);
     }
 
     @Inject(

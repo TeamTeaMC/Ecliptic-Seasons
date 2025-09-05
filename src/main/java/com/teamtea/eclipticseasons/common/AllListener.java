@@ -160,6 +160,7 @@ public class AllListener {
     @SubscribeEvent
     public static void onChunkWatch(ChunkWatchEvent.Watch event) {
         MapChecker.sendChunkLoginInfo(event.getLevel(), event.getChunk(), event.getPos(), event.getPlayer());
+        SnowyMapChecker.sendChunkLoginInfo$1_20_1(event.getLevel(), event.getChunk(), event.getPos(), event.getPlayer());
     }
 
     @SubscribeEvent

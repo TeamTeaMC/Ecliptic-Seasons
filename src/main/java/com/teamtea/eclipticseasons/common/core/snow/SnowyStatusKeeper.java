@@ -312,6 +312,7 @@ public class SnowyStatusKeeper implements Cloneable, ICapabilityProvider, INBTSe
 
     @Override
     public CompoundTag serializeNBT() {
+        if (!EclipticUtil.canSnowyBlockInteract()) new CompoundTag();
         Level level = WeatherManager.fetchLevelIfNull(null);
         if (level != null) {
             RegistryOps<Tag> registryOps = RegistryOps.create(NbtOps.INSTANCE, level.registryAccess());
@@ -325,6 +326,8 @@ public class SnowyStatusKeeper implements Cloneable, ICapabilityProvider, INBTSe
 
     @Override
     public void deserializeNBT(CompoundTag nbt) {
+        if (!EclipticUtil.canSnowyBlockInteract()) return;
+
         Level level = WeatherManager.fetchLevelIfNull(null);
         if (level != null) {
             RegistryOps<Tag> registryOps = RegistryOps.create(NbtOps.INSTANCE, level.registryAccess());
