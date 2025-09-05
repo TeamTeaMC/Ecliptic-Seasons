@@ -5,6 +5,7 @@ import com.llamalad7.mixinextras.sugar.Local;
 import com.teamtea.eclipticseasons.api.misc.IChunkBiomeHolder;
 import com.teamtea.eclipticseasons.common.core.map.BiomeHolder;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
+import com.teamtea.eclipticseasons.common.core.snow.SnowyMapChecker;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Registry;
@@ -13,6 +14,7 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelHeightAccessor;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.*;
 import net.minecraft.world.level.levelgen.blending.BlendingData;
@@ -49,11 +51,13 @@ public abstract class MixinLevelChunk extends ChunkAccess implements IChunkBiome
             method = "setBlockState"
     )
     public void eclipticseasons$server_setBlockState(BlockPos pos, BlockState state, boolean p_62867_, CallbackInfoReturnable<BlockState> cir,
-                                                     @Local(ordinal = 1) BlockState oldState) {
+                                                     @Local(ordinal = 1) BlockState oldState,
+                                                     @Local Block block) {
         if (level != null) {
             // DH do some work for world generation would stick when close server, so we need to check it.
             if (!MapChecker.isLoaded(level, pos)) return;
             MapChecker.getHeightOrUpdate(level, pos, true);
+            SnowyMapChecker.updatePos(level,(LevelChunk) (Object) this,pos, state, oldState, block);
         }
     }
 

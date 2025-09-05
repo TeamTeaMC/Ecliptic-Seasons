@@ -1,9 +1,13 @@
 package com.teamtea.eclipticseasons.common.item;
 
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
+import com.teamtea.eclipticseasons.api.util.EclipticUtil;
+import com.teamtea.eclipticseasons.client.util.ClientCon;
+import com.teamtea.eclipticseasons.common.core.snow.SnowyMapChecker;
 import com.teamtea.eclipticseasons.config.ClientConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.SectionPos;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
@@ -112,9 +116,11 @@ public class BroomItem extends Item {
 
                     level.playSound(pLivingEntity, blockpos, soundevent, SoundSource.BLOCKS, 1f, 1f);
 
-                    if (shouldSet) {
+                    if (shouldSet && EclipticUtil.canSnowyBlockInteract()) {
                         if (level instanceof ServerLevel serverLevel) {
-                        } else if (level.isClientSide()) {
+                            SnowyMapChecker.removeSnowyStatus(serverLevel, blockpos);
+                        } else {
+                            ClientCon.agent.setChunkDirty(SectionPos.of(blockpos));
                         }
                     }
                 }
@@ -178,7 +184,7 @@ public class BroomItem extends Item {
         if (FMLLoader.getDist() != Dist.CLIENT || !ClientConfig.GUI.itemInformation.get()) return;
 
 
-        if (true) {
+        if (!EclipticUtil.canSnowyBlockInteract()) {
             tooltipComponents.add(Component.translatable("info.eclipticseasons.config.inactive")
             );
         }

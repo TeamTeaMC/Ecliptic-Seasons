@@ -8,6 +8,7 @@ import com.teamtea.eclipticseasons.api.misc.client.ISnowyGetterProvider;
 import com.teamtea.eclipticseasons.common.core.map.BiomeHolder;
 import com.teamtea.eclipticseasons.common.core.map.ChunkInfoMap;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
+import com.teamtea.eclipticseasons.common.core.snow.SnowyStatusKeeper;
 import com.teamtea.eclipticseasons.compat.vanilla.IExtendBlockView;
 import me.jellysquid.mods.sodium.client.world.WorldSlice;
 import me.jellysquid.mods.sodium.client.world.cloned.ChunkRenderContext;
@@ -42,6 +43,9 @@ public abstract class MixinChunkSlice implements IMapSlice, IExtendBlockView {
 
     @Unique
     private int[][] BIOME_MAP;
+
+    @Unique
+    private SnowyStatusKeeper[] SNOWY_STATUS_MAP;
 
     @Shadow(remap = false)
     @Final
@@ -87,6 +91,7 @@ public abstract class MixinChunkSlice implements IMapSlice, IExtendBlockView {
         HEIGHT_MAP = new int[MAP_ARRAY_SIZE][MAP_BLOCK_COUNT];
         SOLID_HEIGHT_MAP = new int[MAP_ARRAY_SIZE][MAP_BLOCK_COUNT];
         BIOME_MAP = new int[MAP_ARRAY_SIZE][MAP_BLOCK_COUNT];
+        SNOWY_STATUS_MAP = new SnowyStatusKeeper[MAP_ARRAY_SIZE];
     }
 
 
@@ -112,6 +117,7 @@ public abstract class MixinChunkSlice implements IMapSlice, IExtendBlockView {
                     int[] heights = HEIGHT_MAP[localSectionIndex];
                     int[] biomes = BIOME_MAP[localSectionIndex];
                     int[] solidHeights = SOLID_HEIGHT_MAP[localSectionIndex];
+                    SNOWY_STATUS_MAP[localSectionIndex] = snowyGetter.getSnowyStatusKeeper();
                     mutableBlockPos.setX(startX);
                     mutableBlockPos.setZ(startZ);
                     ChunkInfoMap chunkMap = snowyGetter.getChunkInfoMap();
@@ -202,6 +208,19 @@ public abstract class MixinChunkSlice implements IMapSlice, IExtendBlockView {
             int localBlockZ = relBlockZ & 15;
             return lightArrays[localBlockX * 16 + localBlockZ];
         }
+    }
+
+    @Override
+    public boolean isSnowyBlock(BlockPos pos) {
+        if (!this.volume.isInside(pos.getX(), pos.getY(), pos.getZ())) {
+            return false;
+        }
+        int relBlockX = pos.getX() - this.originX;
+        int relBlockZ = pos.getZ() - this.originZ;
+        SnowyStatusKeeper lightArrays = this.SNOWY_STATUS_MAP[eclipticseasons$getLocalSectionIndex(
+                relBlockX >> 4,
+                relBlockZ >> 4)];
+        return lightArrays.isSnowyBlock(pos);
     }
 
     /* ======================================== MODEL PART ===================================== */

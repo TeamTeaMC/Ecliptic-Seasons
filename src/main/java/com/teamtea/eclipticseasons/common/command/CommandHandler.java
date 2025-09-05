@@ -11,6 +11,7 @@ import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.api.util.SimpleUtil;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
+import com.teamtea.eclipticseasons.common.core.snow.SnowyMapChecker;
 import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.teamtea.eclipticseasons.common.misc.MapExporter;
@@ -204,6 +205,7 @@ public class CommandHandler {
             }
             if (found) {
                 WeatherManager.sendBiomePacket(levelBiomeWeather, level.players());
+                SnowyMapChecker.updateAllChunks(level);
                 SimpleNetworkHandler.send(level.players(),new EmptyMessage());
             }
         }

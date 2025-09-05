@@ -1,6 +1,7 @@
 package com.teamtea.eclipticseasons.common.misc;
 
 import com.teamtea.eclipticseasons.common.block.blockentity.WindChimesBlockEntity;
+import net.minecraft.core.SectionPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.HitResult;
 
@@ -19,5 +20,8 @@ public interface ClientAgent {
     @Nullable
     default HitResult getHitResult() {
         return null;
+    }
+
+    default void setChunkDirty(SectionPos chunkPos) {
     }
 }

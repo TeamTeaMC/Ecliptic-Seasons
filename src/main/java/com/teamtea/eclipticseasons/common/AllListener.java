@@ -21,8 +21,11 @@ import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
 import com.teamtea.eclipticseasons.common.core.crop.CropInfoManager;
 import com.teamtea.eclipticseasons.common.core.crop.NaturalPlantHandler;
 import com.teamtea.eclipticseasons.common.core.map.BiomeHolder;
+import com.teamtea.eclipticseasons.common.core.map.ChunkInfoMap;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.core.snow.SnowChecker;
+import com.teamtea.eclipticseasons.common.core.snow.SnowyMapChecker;
+import com.teamtea.eclipticseasons.common.core.snow.SnowyStatusKeeper;
 import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
 import com.teamtea.eclipticseasons.common.network.SimpleNetworkHandler;
 import com.teamtea.eclipticseasons.common.network.message.DataPackEventMessage;
@@ -163,13 +166,25 @@ public class AllListener {
     public static void onChunkLoad(ChunkEvent.Load event) {
         ChunkAccess chunk = event.getChunk();
         if (event.getLevel() instanceof Level level) {
-            if (level instanceof ServerLevel serverLevel) {
+            BiomeHolder biomeHolder = null;
+            if (event.getLevel() instanceof ServerLevel serverLevel) {
                 if (event.isNewChunk()) {
                     MapChecker.setNewChunk(serverLevel, chunk);
                 }
-                MapChecker.getOrUpdateChunkBiomeData(serverLevel, (IChunkBiomeHolder) chunk, event.getChunk().getPos());
+                biomeHolder = MapChecker.getOrUpdateChunkBiomeData(serverLevel, (IChunkBiomeHolder) chunk, event.getChunk().getPos());
             }
-            MapChecker.forceChunkUpdateHeight(level, chunk);
+
+            {
+                ChunkInfoMap chunkInfoMap = MapChecker.forceChunkUpdateHeight(level, chunk);
+
+                if (biomeHolder != null && level instanceof ServerLevel serverLevel) {
+                    int biomeDataVersion = SolarHolders.getSaveData(level).getBiomeDataVersion();
+                    if (biomeHolder.version() != biomeDataVersion || !biomeHolder.hasUpdated()) biomeHolder = null;
+                    if (biomeHolder != null) {
+                        SnowyMapChecker.forceChunkUpdateHeight(serverLevel, chunk, chunkInfoMap, biomeHolder, true);
+                    }
+                }
+            }
         }
     }
 
@@ -321,6 +336,7 @@ public class AllListener {
     public static void onLevelChunkAttachCapabilitiesEvent(AttachCapabilitiesEvent<LevelChunk> event) {
         if (event.getObject() instanceof LevelChunk) {
             event.addCapability(EclipticSeasons.rl("biomes_holder"), BiomeHolder.empty());
+            event.addCapability(EclipticSeasons.rl("snowy_status"), SnowyStatusKeeper.create());
         }
     }
 

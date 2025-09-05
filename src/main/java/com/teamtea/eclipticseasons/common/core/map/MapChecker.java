@@ -13,6 +13,7 @@ import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
 import com.teamtea.eclipticseasons.common.core.snow.SnowChecker;
+import com.teamtea.eclipticseasons.common.core.snow.SnowyMapChecker;
 import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
 import com.teamtea.eclipticseasons.common.misc.SimplePair;
 import com.teamtea.eclipticseasons.common.network.SimpleNetworkHandler;
@@ -165,6 +166,10 @@ public class MapChecker {
     // 获取chunk位置
     public static int blockToRegionCoord(int i) {
         return i >> ChunkSizeAxis;
+    }
+
+    public static int chunkToRegionCoord(int chunkI) {
+        return chunkI >> (ChunkSizeAxis - 4);
     }
 
     public static int regionCoordToChunkStart(int i) {
@@ -404,8 +409,22 @@ public class MapChecker {
 
         int x = blockToRegionCoord(pos.getX());
         int z = blockToRegionCoord(pos.getZ());
+        return getChunkInfoMapOrCreate(level, x, z);
+    }
+
+    public static @Nullable ChunkInfoMap getChunkInfoMapOrCreate(Level level, ChunkPos pos) {
+        if (level == null)
+            return null;
+
+        int x = chunkToRegionCoord(pos.x);
+        int z = chunkToRegionCoord(pos.z);
+        return getChunkInfoMapOrCreate(level, x, z);
+    }
+
+    public static @NotNull ChunkInfoMap getChunkInfoMapOrCreate(@NotNull Level level, int regionX, int regionZ) {
+
         List<ChunkInfoMap> mapsList = getMapsListOrCreate(level);
-        ChunkInfoMap map = getChunkMap(mapsList, x, z);
+        ChunkInfoMap map = getChunkMap(mapsList, regionX, regionZ);
 
         if (map != null) {
             return map;
@@ -413,7 +432,7 @@ public class MapChecker {
             synchronized (mapsList) {
                 boolean hasBuild = false;
                 for (ChunkInfoMap chunkHeightMap : mapsList) {
-                    if (chunkHeightMap.x == x && chunkHeightMap.z == z) {
+                    if (chunkHeightMap.x == regionX && chunkHeightMap.z == regionZ) {
                         hasBuild = true;
                         map = chunkHeightMap;
                         break;
@@ -421,7 +440,7 @@ public class MapChecker {
                 }
                 if (!hasBuild) {
                     // level.registryAccess().registry(Registries.BIOME).get().getId(Biomes.THE_VOID)
-                    map = new ChunkInfoMap(x, z, level.getMinBuildHeight() - 1, level.isClientSide);
+                    map = new ChunkInfoMap(regionX, regionZ, level.getMinBuildHeight() - 1, level.isClientSide);
                     mapsList.add(map);
                 }
             }
@@ -527,6 +546,10 @@ public class MapChecker {
 
 
     public static boolean shouldSnowAt(Level level, BlockPos pos, BlockState state, RandomSource random, long seed) {
+        if (SnowyMapChecker.shouldCheckSnowyStatus(level, pos)) {
+            return SnowyMapChecker.isSnowyBlock(level, pos);
+        }
+
         var biomeHolder = getSurfaceBiome(level, pos);
         boolean isSnowy = false;
         if (WeatherManager.getSnowDepthAtBiome(level, biomeHolder.value()) > Math.abs(seed % 100)) {
@@ -537,6 +560,10 @@ public class MapChecker {
 
 
     public static boolean shouldSnowAt(Level level, BlockPos pos, int biomeId, BlockState state, RandomSource random, long seed) {
+        if (SnowyMapChecker.shouldCheckSnowyStatus(level, pos)) {
+            return SnowyMapChecker.isSnowyBlock(level, pos);
+        }
+
         boolean isSnowy = false;
 
         ArrayList<WeatherManager.BiomeWeather> biomeList = WeatherManager.getBiomeList(level);
@@ -578,6 +605,13 @@ public class MapChecker {
         }
         EclipticSeasons.extraLogger(true, "Unknown id with level", level, id);
         return null;
+    }
+
+    public static Holder<Biome> idToBiome(Registry<Biome> biomes, int id) {
+        Optional<Holder.Reference<Biome>> holder = biomes.getHolder(id);
+        if (holder.isPresent()) return holder.get();
+        EclipticSeasons.extraLogger(true, "Unknown id for biome", id);
+        return biomes.getHolder(Biomes.PLAINS).orElse(null);
     }
 
     public static int biomeToId(Level level, Biome b) {

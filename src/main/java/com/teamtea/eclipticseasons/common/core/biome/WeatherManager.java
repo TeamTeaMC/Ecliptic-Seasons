@@ -6,6 +6,7 @@ import com.teamtea.eclipticseasons.api.constant.tag.ESItemTags;
 import com.teamtea.eclipticseasons.api.constant.tag.ESMobEffectTags;
 import com.teamtea.eclipticseasons.api.misc.IBiomeTagHolder;
 import com.teamtea.eclipticseasons.api.misc.IBiomeWeatherProvider;
+import com.teamtea.eclipticseasons.common.core.snow.SnowyMapChecker;
 import com.teamtea.eclipticseasons.common.network.message.UpdateTempChangeMessage;
 import com.teamtea.eclipticseasons.common.registry.EffectRegistry;
 import com.teamtea.eclipticseasons.common.registry.ModAdvancements;
@@ -608,6 +609,8 @@ public class WeatherManager {
                 if (!level.players().isEmpty()) {
                     WeatherManager.sendBiomePacket(ws, level.players());
                 }
+
+                SnowyMapChecker.updateAllChunks(level);
             }
         }
         SimpleNetworkHandler.send(new ArrayList<>(level.players()), new EmptyMessage());

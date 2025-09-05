@@ -1,6 +1,7 @@
 package com.teamtea.eclipticseasons.mixin.client.render.chunk;
 
 import com.teamtea.eclipticseasons.api.misc.client.IMapSlice;
+import com.teamtea.eclipticseasons.common.core.snow.SnowyStatusKeeper;
 import com.teamtea.eclipticseasons.compat.vanilla.IExtendBlockView;
 import net.minecraft.client.renderer.chunk.RenderChunkRegion;
 import net.minecraft.client.resources.model.BakedModel;
@@ -37,13 +38,17 @@ public abstract class MixinChunkSlice implements IMapSlice, IExtendBlockView {
     @Unique
     private int SIZE_Z;
 
+    @Unique
+    private SnowyStatusKeeper[] SNOWY_STATUS_MAP;
+
     @Override
-    public void forceMapSliceUpdate(int[][] heights, int[][] solidHeights, int[][] biomes, int sizex, int sizez) {
+    public void forceMapSliceUpdate(int[][] heights, int[][] solidHeights, int[][] biomes, int sizex, int sizez, SnowyStatusKeeper[] statusKeepers) {
         HEIGHT_MAP = heights;
         SOLID_HEIGHT_MAP = solidHeights;
         BIOME_MAP = biomes;
         SIZE_X = sizex;
         SIZE_Z = sizez;
+        this.SNOWY_STATUS_MAP = statusKeepers;
     }
 
     @Override
@@ -80,6 +85,16 @@ public abstract class MixinChunkSlice implements IMapSlice, IExtendBlockView {
         int localBlockX = pos.getX() & 15;
         int localBlockZ = pos.getZ() & 15;
         return lightArrays[localBlockX * 16 + localBlockZ];
+    }
+
+    @Override
+    public boolean isSnowyBlock(BlockPos pos) {
+        if (SNOWY_STATUS_MAP == null || SNOWY_STATUS_MAP[0] == null) return false;
+        int relBlockX = SectionPos.blockToSectionCoord(pos.getX()) - centerX;
+        int relBlockZ = SectionPos.blockToSectionCoord(pos.getZ()) - centerZ;
+        SnowyStatusKeeper lightArrays = this.SNOWY_STATUS_MAP[
+                relBlockX + (relBlockZ) * SIZE_X];
+        return lightArrays.isSnowyBlock(pos);
     }
 
     /* ======================================== MODEL PART ===================================== */

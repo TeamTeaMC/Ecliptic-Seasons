@@ -88,4 +88,8 @@ public abstract class MixinChunkSlice implements IOFModelTaker, IMapSliceProvide
         return ((IMapSlice) chunkCache).getSurfaceFaceBiomeId(pos);
     }
 
+    @Override
+    public boolean isSnowyBlock(BlockPos pos) {
+        return ((IMapSlice) chunkCache).isSnowyBlock(pos);
+    }
 }

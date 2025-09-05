@@ -2,6 +2,7 @@ package com.teamtea.eclipticseasons.common.network;
 
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
+import com.teamtea.eclipticseasons.common.core.snow.SnowyStatusHandler;
 import com.teamtea.eclipticseasons.common.network.message.*;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.api.distmarker.Dist;
@@ -46,12 +47,12 @@ public final class SimpleNetworkHandler {
             d.consumerNetworkThread(NetworkUtil::processEmptyMessage);
         d.add();
 
-        // var e = CHANNEL.messageBuilder(BroomUseMessage.class, id++)
-        //         .encoder(BroomUseMessage::toBytes)
-        //         .decoder(BroomUseMessage::new);
-        // if (FMLLoader.getDist() == Dist.CLIENT)
-        //     e.consumerNetworkThread(NetworkUtil::processBroomUseMessage);
-        // e.add();
+        var e = CHANNEL.messageBuilder(SnowyStatusHandler.class, id++)
+                .encoder(SnowyStatusHandler::write)
+                .decoder(SnowyStatusHandler::new);
+        if (FMLLoader.getDist() == Dist.CLIENT)
+            e.consumerNetworkThread(SnowyStatusHandler::processSnowyStatusMessage);
+        e.add();
 
         var f = CHANNEL.messageBuilder(DataPackEventMessage.class, id++)
                 .encoder(DataPackEventMessage::toBytes)
