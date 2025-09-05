@@ -31,6 +31,7 @@ public class SyncBlockEntity extends BlockEntity {
 
     @Override
     public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
+        if (pkt.getTag() == null) return;
         load(pkt.getTag());
     }
 

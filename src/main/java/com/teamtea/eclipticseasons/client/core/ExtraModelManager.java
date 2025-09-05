@@ -14,7 +14,6 @@ import com.teamtea.eclipticseasons.client.model.unbake.SolarBlockModel;
 import com.teamtea.eclipticseasons.client.reload.ClientJsonCacheListener;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.client.util.ClientRef;
-import com.teamtea.eclipticseasons.common.core.map.SnowyRemover;
 import com.teamtea.eclipticseasons.common.core.snow.SnowChecker;
 import com.teamtea.eclipticseasons.common.registry.BlockRegistry;
 import com.teamtea.eclipticseasons.client.model.*;
@@ -498,9 +497,7 @@ public class ExtraModelManager {
             checkPos.setY(pos.getY());
             if (CommonConfig.isSnowyWinter()
                     && onBlock != Blocks.SNOW_BLOCK
-                    && ((mapSlice != null && MapChecker.shouldSnowAt(level, checkPos, mapSlice.getSurfaceFaceBiomeId(checkPos), state, null, seed))
-                    || (mapSlice == null && MapChecker.shouldSnowAt(level, checkPos, state, null, seed))
-            )
+                    && maySnowyAt(level, mapSlice, state, checkPos, null, seed)
             ) {
                 isSnowy = true;
 
@@ -539,6 +536,7 @@ public class ExtraModelManager {
             return MapChecker.shouldSnowAt(level, checkPos, state, null, seed);
         }
     }
+
     public static BakedModel findModel(BlockAndTintGetter blockAndTintGetter, BlockPos pos, BlockState state, RandomSource random, long seed, @Nullable BlockPos.MutableBlockPos checkPos) {
         // if (!state.is(Blocks.LILY_PAD))
         //     return null;
@@ -744,9 +742,7 @@ public class ExtraModelManager {
             if (CommonConfig.isSnowyWinter()
                     && isLight
                     && onBlock != Blocks.SNOW_BLOCK
-                    && ((mapSlice != null && MapChecker.shouldSnowAt(level, checkPos, mapSlice.getSurfaceFaceBiomeId(checkPos), state, random, seed))
-                    || (mapSlice == null && MapChecker.shouldSnowAt(level, checkPos, state, random, seed))
-            )
+                    && maySnowyAt(level, mapSlice, state, checkPos, random, seed)
             ) {
                 isSnowy = true;
 
@@ -793,7 +789,7 @@ public class ExtraModelManager {
                                     .setValue(StairBlock.FACING, state.getValue(StairBlock.FACING))
                                     .setValue(StairBlock.HALF, state.getValue(StairBlock.HALF))
                                     .setValue(StairBlock.SHAPE, state.getValue(StairBlock.SHAPE));
-                        }  else if (leaveLike && !specialLeaves) {
+                        } else if (leaveLike && !specialLeaves) {
                             snowState = BlockRegistry.snowyLeaves.get().defaultBlockState();
                         }
                         BakedModel snowModel = getSnowyModel(state, snowState, flag, offset);
@@ -937,6 +933,7 @@ public class ExtraModelManager {
 
         return replace;
     }
+
     public static RenderType getRenderType(BlockState state) {
         // if (!Minecraft.useFancyGraphics()) return RenderType.solid();
         // RenderType chunkRenderType = ItemBlockRenderTypes.getChunkRenderType(state);

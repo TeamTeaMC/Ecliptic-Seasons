@@ -27,6 +27,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
+import net.minecraft.resources.RegistryOps;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
@@ -48,16 +49,6 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import java.util.*;
 
-/**
- * 一个可能的设计是我们需要记录所有可能下雪的位置，至少是ymax和ymin。
- * 那么此时我们就需要追踪所有的方块变化，即LevelChunk的setState变化
- * 同时统计群系与百分比的关系
- * <p>
- * 注意方块变化也应该对覆雪状态产生影响，例如，摧毁应该remove，上方放置了方块导致固体高度更新也应该remove
- * 其余情况可以忽略
- * <p>
- * 目前一个问题在tick可能会忽略底下的覆雪方块，我们也可以将其作为特性，意为不受到阳光直射，因此保持特性。
- **/
 
 @Data
 public class SnowyStatusKeeper implements Cloneable, ICapabilityProvider, INBTSerializable<CompoundTag> {
@@ -149,7 +140,7 @@ public class SnowyStatusKeeper implements Cloneable, ICapabilityProvider, INBTSe
             if (change) {
                 chunk.setUnsaved(true);
                 if (!posListUpdate.isEmpty()) {
-                    SimpleNetworkHandler.send(serverLevel.getChunkSource().chunkMap.getPlayers(chunk.getPos(), false), new SnowyStatusHandler(false, this,chunk.getPos()));
+                    SimpleNetworkHandler.send(serverLevel.getChunkSource().chunkMap.getPlayers(chunk.getPos(), false), new SnowyStatusHandler(false, this, chunk.getPos()));
                     posListUpdate.clear();
                     statusListUpdate.clear();
                 }
@@ -239,7 +230,7 @@ public class SnowyStatusKeeper implements Cloneable, ICapabilityProvider, INBTSe
                     snowStatus = WeatherManager.SnowRenderStatus.SNOW_MELT;
                     forceMelt = true;
                 }
-                if (!forceMelt && MapChecker.notLightAbove(level, checkPos, 4)) {
+                if (!forceMelt && !MapChecker.notLightAbove(level, checkPos, 4)) {
                     snowStatus = WeatherManager.SnowRenderStatus.SNOW_MELT;
                     forceMelt = true;
                 }
@@ -321,22 +312,35 @@ public class SnowyStatusKeeper implements Cloneable, ICapabilityProvider, INBTSe
 
     @Override
     public CompoundTag serializeNBT() {
-        Optional<Tag> result = CODEC.encodeStart(NbtOps.INSTANCE, this).result();
-        if (result.orElse(null) instanceof CompoundTag compoundTag) {
-            return compoundTag;
+        Level level = WeatherManager.fetchLevelIfNull(null);
+        if (level != null) {
+            RegistryOps<Tag> registryOps = RegistryOps.create(NbtOps.INSTANCE, level.registryAccess());
+            Optional<Tag> result = CODEC.encodeStart(registryOps, this).result();
+            if (result.orElse(null) instanceof CompoundTag compoundTag) {
+                return compoundTag;
+            }
         }
         return new CompoundTag();
     }
 
     @Override
     public void deserializeNBT(CompoundTag nbt) {
-        Optional<SnowyStatusKeeper> result = CODEC.parse(NbtOps.INSTANCE, nbt).result();
-        result.ifPresent(this::copyFrom);
+        Level level = WeatherManager.fetchLevelIfNull(null);
+        if (level != null) {
+            RegistryOps<Tag> registryOps = RegistryOps.create(NbtOps.INSTANCE, level.registryAccess());
+            Optional<SnowyStatusKeeper> result = CODEC.parse(registryOps, nbt).result();
+            result.ifPresent(this::copyFrom);
+        }
     }
 
     public void copyFrom(SnowyStatusKeeper keeper) {
         this.posMap.clear();
         this.snowDepthRecord.clear();
+        this.posMap.putAll(keeper.posMap);
+        this.snowDepthRecord.putAll(keeper.snowDepthRecord);
+    }
+
+    public void addFrom(SnowyStatusKeeper keeper) {
         this.posMap.putAll(keeper.posMap);
         this.snowDepthRecord.putAll(keeper.snowDepthRecord);
     }

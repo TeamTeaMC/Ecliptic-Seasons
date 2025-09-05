@@ -9,6 +9,7 @@ import net.minecraft.core.SectionPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
@@ -36,26 +37,26 @@ public class SnowyStatusHandler {
         attachment = SnowyStatusKeeper.create();
 
         if (!EclipticUtil.canSnowyBlockInteract()) return;
-
-        boolean initialSync = buf.readBoolean();
-        int size = buf.readVarInt();
-        if (initialSync) {
-            Set<SectionPos> set = new HashSet<>();
-            for (int i = 0; i < size; i++) {
-                long pos = buf.readLong();
-                int status = buf.readVarInt();
-                attachment.set(pos, status);
-                set.add(SectionPos.of(BlockPos.of(pos)));
+        int size = 0;
+        try {
+            size = buf.readVarInt();
+            if (!initialSync) {
+                for (int i = 0; i < size; i++) {
+                    long pos = buf.readLong();
+                    int status = buf.readVarInt();
+                    // 1.20 patch for copy
+                    attachment.getPosListUpdate().add(pos);
+                    attachment.getStatusListUpdate().add(status);
+                }
+            } else {
+                for (int i = 0; i < size; i++) {
+                    long pos = buf.readLong();
+                    int status = buf.readVarInt();
+                    attachment.set(pos, status);
+                }
             }
-            for (SectionPos sectionPos : set) {
-                ClientCon.agent.setChunkDirty(sectionPos);
-            }
-        } else {
-            for (int i = 0; i < size; i++) {
-                long pos = buf.readLong();
-                int status = buf.readVarInt();
-                attachment.set(pos, status);
-            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -90,7 +91,24 @@ public class SnowyStatusHandler {
             if (context.get().getDirection() == NetworkDirection.PLAY_TO_CLIENT) {
                 Level useLevel = ClientCon.getUseLevel();
                 if (useLevel != null) {
-
+                    LevelChunk chunkAt = useLevel.getChunkAt(msg.chunkPos.getWorldPosition());
+                    if (chunkAt != null) {
+                        SnowyStatusKeeper snowyStatusKeeper = SnowyMapChecker.getSnowyStatusKeeper(chunkAt);
+                        if (!msg.attachment.getPosMap().isEmpty())
+                            snowyStatusKeeper.copyFrom(msg.attachment);
+                        else {
+                            LongArrayList posListUpdate = msg.attachment.getPosListUpdate();
+                            Set<SectionPos> set = new HashSet<>();
+                            for (int i = 0, posListUpdateSize = posListUpdate.size(); i < posListUpdateSize; i++) {
+                                long pos = posListUpdate.getLong(i);
+                                snowyStatusKeeper.set(pos, msg.attachment.getStatusListUpdate().getInt(i));
+                                set.add(SectionPos.of(BlockPos.of(pos)));
+                            }
+                            for (SectionPos sectionPos : set) {
+                                ClientCon.agent.setChunkDirty(sectionPos);
+                            }
+                        }
+                    }
                 }
             }
         });

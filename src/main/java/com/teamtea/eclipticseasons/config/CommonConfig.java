@@ -30,6 +30,7 @@ public class CommonConfig {
         CompatModule.CommonConfig.load(builder);
         Debug.load(builder);
         Map.load(builder);
+        Snow.load(builder);
         Resource.load(builder);
     }
 
