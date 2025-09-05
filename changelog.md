@@ -1,3 +1,19 @@
+### 0.12.0-pre13
+
+- Slightly optimized the issue where snow cover rate was affected by the number of biomes.
+- Fixed an issue where disabling Solar Weather and enabling vanilla snowing might not work.
+- Fixed an issue where, with Solar Weather enabled, the vanilla precipitation update mechanism was not applied to
+  surface biomes.
+- Moved several snow-related options from the **Season** section into a dedicated **Snow** section.
+- Relocated the **EnableSeasonDefinition** option from the **Debug** section to the **Season** section.
+- Removed the **SnowyFullCollisionShape** configuration due to compatibility issues, as it can now be fully replaced
+  with datapacks.
+- Added the **SnowInWorld** configuration series, which stores actual snowfall in chunks and updates with chunk ticks,
+  providing precise behavior. Brooms will work under this configuration. You can also clear snowfall states via block updates — for example, to
+  create a clean boulevard.
+- When **SnowInWorld** is enabled, if only **ForceChunkRenderUpdate** is enabled but **EnhancementChunkRenderUpdate** is
+  not, the mod will no longer attempt to refresh the chunk, since chunk updates are now more targeted.
+
 ### 0.12.0-pre12
 
 - For the sake of code structure and data stability, `RealisticSnowyChange` and broom usage have been temporarily removed. As a result, we no longer need to intervene in the internal implementation of the lighting engine.
