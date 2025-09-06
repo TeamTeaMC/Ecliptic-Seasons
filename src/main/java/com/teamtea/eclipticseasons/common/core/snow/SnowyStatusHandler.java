@@ -32,11 +32,18 @@ public class SnowyStatusHandler {
     }
 
     public SnowyStatusHandler(FriendlyByteBuf buf) {
+        if (!EclipticUtil.canSnowyBlockInteract()) {
+            this.initialSync = false;
+            this.chunkPos = new ChunkPos(0, 0);
+            this.attachment = SnowyStatusKeeper.create();
+            return;
+        }
+
         this.initialSync = buf.readBoolean();
         this.chunkPos = buf.readChunkPos();
         attachment = SnowyStatusKeeper.create();
 
-        if (!EclipticUtil.canSnowyBlockInteract()) return;
+
         int size = 0;
         try {
             size = buf.readVarInt();

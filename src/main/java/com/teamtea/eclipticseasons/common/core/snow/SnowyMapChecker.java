@@ -48,6 +48,7 @@ public class SnowyMapChecker {
     }
 
     public static @NotNull SnowyStatusKeeper getSnowyStatusKeeperCopy(LevelChunk chunk) {
+        if (!EclipticUtil.canSnowyBlockInteract()) return SnowyStatusKeeper.EMPTY;
         return getSnowyStatusKeeper(chunk).clone();
     }
 

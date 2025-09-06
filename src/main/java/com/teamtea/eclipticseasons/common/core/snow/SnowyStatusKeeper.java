@@ -290,9 +290,11 @@ public class SnowyStatusKeeper implements Cloneable, ICapabilityProvider, INBTSe
         return newKepper;
     }
 
+    public static final SnowyStatusKeeper EMPTY = SnowyStatusKeeper.create();
 
     // ===================================================================
     // 1.20.1 use
+
 
 
     public static final Capability<SnowyStatusKeeper> SNOWY_STATUS_KEEPER_CAPABILITY = CapabilityManager.get(new CapabilityToken<>() {

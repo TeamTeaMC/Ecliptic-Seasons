@@ -7,6 +7,7 @@ import com.teamtea.eclipticseasons.api.data.season.SnowDefinition;
 import com.teamtea.eclipticseasons.api.misc.IBiomeTagHolder;
 import com.teamtea.eclipticseasons.api.misc.IBlockStateFlagger;
 import com.teamtea.eclipticseasons.api.misc.IChunkBiomeHolder;
+import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.api.util.SimpleUtil;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
@@ -1064,8 +1065,10 @@ public class MapChecker {
             SimpleNetworkHandler.send(player, new ChunkBiomeUpdateMessage(biomeHolder.biomes(), chunk.getPos().x, chunk.getPos().z, biomeHolder.version()));
         }
 
-        SnowyStatusKeeper snowyStatusKeeper = SnowyMapChecker.getSnowyStatusKeeper(chunk);
-        SimpleNetworkHandler.send(player, new SnowyStatusHandler(true, snowyStatusKeeper, chunk.getPos()));
+        if (EclipticUtil.canSnowyBlockInteract()) {
+            SnowyStatusKeeper snowyStatusKeeper = SnowyMapChecker.getSnowyStatusKeeper(chunk);
+            SimpleNetworkHandler.send(player, new SnowyStatusHandler(true, snowyStatusKeeper, chunk.getPos()));
+        }
     }
 
     public static @NotNull BiomeHolder getOrUpdateChunkBiomeData(ServerLevel serverLevel, IChunkBiomeHolder

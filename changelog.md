@@ -1,3 +1,8 @@
+### 0.12.0-pre13-1
+
+- Fixed an issue where the game could fail to load when SnowInWorld was disabled due to empty network packets being sent incorrectly.
+- Other minor optimizations.
+
 ### 0.12.0-pre13
 
 - Slightly optimized the issue where snow cover rate was affected by the number of biomes.
