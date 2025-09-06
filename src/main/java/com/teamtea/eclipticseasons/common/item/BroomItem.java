@@ -18,12 +18,14 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.BrushableBlock;
@@ -37,6 +39,7 @@ import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.fml.loading.FMLLoader;
 
 import java.util.List;
+import java.util.function.Predicate;
 
 public class BroomItem extends Item {
     public BroomItem(Properties pProperties) {
@@ -135,9 +138,33 @@ public class BroomItem extends Item {
     }
 
     private HitResult calculateHitResult(LivingEntity livingEntity) {
-        return ProjectileUtil.getHitResultOnViewVector(livingEntity, (entity) ->
+        return getHitResultOnViewVector(livingEntity, (entity) ->
                 !entity.isSpectator() && entity.isPickable(), MAX_DISTANCE);
     }
+
+    // ===========================================
+    // ****** we just need to change to outline mode *****
+    public static HitResult getHitResultOnViewVector(Entity pProjectile, Predicate<Entity> pFilter, double pScale) {
+        Vec3 vec3 = pProjectile.getViewVector(0.0F).scale(pScale);
+        Level level = pProjectile.level();
+        Vec3 vec31 = pProjectile.getEyePosition();
+        return getHitResult(vec31, pProjectile, pFilter, vec3, level);
+    }
+
+    private static HitResult getHitResult(Vec3 pStartVec, Entity pProjectile, Predicate<Entity> pFilter, Vec3 pEndVecOffset, Level pLevel) {
+        Vec3 vec3 = pStartVec.add(pEndVecOffset);
+        HitResult hitresult = pLevel.clip(new ClipContext(pStartVec, vec3, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, pProjectile));
+        if (hitresult.getType() != HitResult.Type.MISS) {
+            vec3 = hitresult.getLocation();
+        }
+        HitResult hitresult1 = ProjectileUtil.getEntityHitResult(pLevel, pProjectile, pStartVec, vec3, pProjectile.getBoundingBox().expandTowards(pEndVecOffset).inflate(1.0D), pFilter);
+        if (hitresult1 != null) {
+            hitresult = hitresult1;
+        }
+        return hitresult;
+    }
+    // ==================end======================
+    // ===========================================
 
     private void spawnDustParticles(Level pLevel, BlockHitResult pHitResult, BlockState pState, Vec3 pPos, HumanoidArm pArm) {
         double speed = 3.0;

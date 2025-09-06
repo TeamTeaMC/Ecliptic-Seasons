@@ -322,6 +322,7 @@ public class CommonConfig {
         public static ForgeConfigSpec.BooleanValue snowInWorld;
         public static ForgeConfigSpec.BooleanValue forceChunkUpdate;
         public static ForgeConfigSpec.BooleanValue snowyUnderSnowLike;
+        public static ForgeConfigSpec.BooleanValue stepMelt;
 
         private static void load(ForgeConfigSpec.Builder builder) {
             builder.push("Snow");
@@ -344,6 +345,8 @@ public class CommonConfig {
                     .define("ForceSnowyChunkUpdate", true);
             snowyUnderSnowLike = builder.comment("When SnowInWorld is enabled, blocks like full blocks under snow layers will have a snowy appearance.")
                     .define("SnowyUnderSnowLike", true);
+            stepMelt = builder.comment("When SnowInWorld is enabled, snow may melt when stepped on due to heat.")
+                    .define("StepMelt", false);
             builder.pop();
         }
     }

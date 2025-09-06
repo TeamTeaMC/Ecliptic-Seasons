@@ -18,6 +18,8 @@ import net.minecraft.server.level.ChunkHolder;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
@@ -242,5 +244,32 @@ public class SnowyMapChecker {
 
     public static boolean isSnowyBlock(SnowyStatusKeeper keeper, BlockPos pos) {
         return keeper.isSnowyBlock(pos);
+    }
+
+
+    public static void onEntityStepOn(Entity entity, Level level, BlockPos pos, BlockState blockstate) {
+        if (!EclipticUtil.canSnowyBlockInteract()) return;
+        if (!(entity instanceof LivingEntity)) return;
+        if (!CommonConfig.Snow.stepMelt.get()) return;
+
+        if (level instanceof ServerLevel serverLevel
+                && MapChecker.getBlockTypeFlag(level, pos, blockstate) != MapChecker.FLAG_NONE
+                && level.getRandom().nextInt(48) == 0
+                && MapChecker.getHeight(level, pos) <= pos.getY()
+                && SnowyMapChecker.shouldCheckSnowyStatus(serverLevel, pos)) {
+            LevelChunk chunkAt = level.getChunkAt(pos);
+            SnowyMapChecker.removeSnowyStatus(serverLevel, chunkAt, pos);
+
+            // clean above
+            BlockPos.MutableBlockPos above = pos.mutable();
+            for (int count = 1; count < 4; count++) {
+                above.setY(pos.getY() + count);
+                BlockState stateAbove = chunkAt.getBlockState(above);
+                if (stateAbove.isAir()) break;
+                int flagAbove = MapChecker.getBlockTypeFlag(level, above, stateAbove);
+                if (flagAbove == MapChecker.FLAG_NONE) break;
+                SnowyMapChecker.removeSnowyStatus(serverLevel, chunkAt, above);
+            }
+        }
     }
 }
