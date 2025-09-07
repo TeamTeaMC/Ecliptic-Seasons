@@ -14,7 +14,9 @@ import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.Supplier;
 
@@ -92,6 +94,8 @@ public class SnowyStatusHandler {
         }
     }
 
+    public static final Map<ChunkPos, SnowyStatusHandler> SNOWY_STATUS_HANDLER_HASH_MAP = new HashMap<>();
+
     public static boolean processSnowyStatusMessage(SnowyStatusHandler msg, Supplier<NetworkEvent.Context> context) {
         context.get().enqueueWork(() ->
         {
@@ -99,30 +103,35 @@ public class SnowyStatusHandler {
                 Level useLevel = ClientCon.getUseLevel();
                 if (useLevel != null) {
                     LevelChunk chunkAt = useLevel.getChunkAt(msg.chunkPos.getWorldPosition());
-                    if (chunkAt != null) {
-                        SnowyStatusKeeper snowyStatusKeeper = SnowyMapChecker.getSnowyStatusKeeper(chunkAt);
-                        if (!msg.attachment.getPosMap().isEmpty()) {
-                            synchronized (snowyStatusKeeper.getPosMap()) {
-                                snowyStatusKeeper.copyFrom(msg.attachment);
-                            }
-                        } else {
-                            LongArrayList posListUpdate = msg.attachment.getPosListUpdate();
-                            Set<SectionPos> set = new HashSet<>();
-                            synchronized (snowyStatusKeeper.getPosMap()) {
-                                for (int i = 0, posListUpdateSize = posListUpdate.size(); i < posListUpdateSize; i++) {
-                                    long pos = posListUpdate.getLong(i);
-                                    snowyStatusKeeper.set(pos, msg.attachment.getStatusListUpdate().getInt(i));
-                                    set.add(SectionPos.of(BlockPos.of(pos)));
-                                }
-                            }
-                            for (SectionPos sectionPos : set) {
-                                ClientCon.agent.setChunkDirty(sectionPos);
-                            }
-                        }
-                    }
+                    if (!(chunkAt.isEmpty())) setChunkWithUpdate(msg, chunkAt);
+                    else SNOWY_STATUS_HANDLER_HASH_MAP.put(msg.chunkPos, msg);
                 }
             }
         });
         return true;
+    }
+
+    public static void setChunkWithUpdate(SnowyStatusHandler msg, LevelChunk chunkAt) {
+        {
+            SnowyStatusKeeper snowyStatusKeeper = SnowyMapChecker.getSnowyStatusKeeper(chunkAt);
+            if (msg.initialSync) {
+                synchronized (snowyStatusKeeper.getPosMap()) {
+                    snowyStatusKeeper.copyFrom(msg.attachment);
+                }
+            } else {
+                LongArrayList posListUpdate = msg.attachment.getPosListUpdate();
+                Set<SectionPos> set = new HashSet<>();
+                synchronized (snowyStatusKeeper.getPosMap()) {
+                    for (int i = 0, posListUpdateSize = posListUpdate.size(); i < posListUpdateSize; i++) {
+                        long pos = posListUpdate.getLong(i);
+                        snowyStatusKeeper.set(pos, msg.attachment.getStatusListUpdate().getInt(i));
+                        set.add(SectionPos.of(BlockPos.of(pos)));
+                    }
+                }
+                for (SectionPos sectionPos : set) {
+                    ClientCon.agent.setChunkDirty(sectionPos);
+                }
+            }
+        }
     }
 }

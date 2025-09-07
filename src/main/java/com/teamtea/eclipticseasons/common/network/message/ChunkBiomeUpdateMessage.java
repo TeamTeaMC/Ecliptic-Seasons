@@ -2,21 +2,20 @@ package com.teamtea.eclipticseasons.common.network.message;
 
 
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.level.ChunkPos;
 
 public class ChunkBiomeUpdateMessage{
     public int[] biomes;
-    public int x;
-    public int z;
+    public ChunkPos chunkPos;
     public int version;
 
     // public ChunkBiomeUpdateMessage() {
     //     this(new int[256], 0, 0, ChunkBiomeUpdateMessage.FLAG_EMPTY);
     // }
 
-    public ChunkBiomeUpdateMessage(int[] biomes, int x, int z, int version) {
+    public ChunkBiomeUpdateMessage(int[] biomes, ChunkPos chunkPos, int version) {
         this.biomes = biomes;
-        this.x = x;
-        this.z = z;
+        this.chunkPos = chunkPos;
         this.version = version;
     }
 
@@ -28,8 +27,7 @@ public class ChunkBiomeUpdateMessage{
             list[i] = buf.readVarInt();
         }
         this.biomes = list;
-        this.x = buf.readVarInt();
-        this.z = buf.readVarInt();
+        this.chunkPos = buf.readChunkPos();
         this.version = buf.readVarInt();
     }
 
@@ -39,8 +37,7 @@ public class ChunkBiomeUpdateMessage{
         for (int i : biomes) {
             buf.writeVarInt(i);
         }
-        buf.writeVarInt(this.x);
-        buf.writeVarInt(this.z);
+        buf.writeChunkPos(this.chunkPos);
         buf.writeVarInt(this.version);
     }
 

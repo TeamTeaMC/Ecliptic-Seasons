@@ -23,6 +23,7 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.ChunkStatus;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkEvent;
 
@@ -172,9 +173,13 @@ public class NetworkUtil {
 
                 // =======================
                 // port from 1.21
-                ChunkAccess chunk = ClientCon.getUseLevel().getChunk(chunkBiomeUpdateMessage.x, chunkBiomeUpdateMessage.z, ChunkStatus.FULL, false);
-                if (chunk instanceof IChunkBiomeHolder chunkBiomeHolder) {
+                LevelChunk chunkAt = ClientCon.getUseLevel().getChunkAt(chunkBiomeUpdateMessage.chunkPos.getWorldPosition());
+                if (!(chunkAt.isEmpty())
+                        && chunkAt instanceof IChunkBiomeHolder chunkBiomeHolder) {
                     chunkBiomeHolder.eclipticseasons$setBiomeHolder(new BiomeHolder(chunkBiomeUpdateMessage.biomes, true, chunkBiomeUpdateMessage.version));
+                }else {
+                    BiomeHolder.BIOME_HOLDER_MAP.put(chunkBiomeUpdateMessage.chunkPos,
+                            new BiomeHolder(chunkBiomeUpdateMessage.biomes, true, chunkBiomeUpdateMessage.version));
                 }
             }
         });

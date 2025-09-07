@@ -1,3 +1,11 @@
+### 0.12.0-pre13-3-1
+
+- Set the default start time to the Spring Equinox.
+- Optimized the way the 1.20 client receives additional chunk packets: if the corresponding chunk is not loaded, the
+  effect is applied with a delay. Some mods may interfere, causing the additional chunk data to arrive at the client
+  before the initially sent chunk data, which can prevent the optimization from being applied correctly (this may result
+  in client lag when loading new chunks due to repeated biome queries, and SnowInWorld may not take effect).
+
 ### 0.12.0-pre13-3
 
 - Fixed an issue where the Ice Wand could not forcibly prevent certain chunks from being covered with snow.

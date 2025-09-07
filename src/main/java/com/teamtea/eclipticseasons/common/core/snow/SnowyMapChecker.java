@@ -214,6 +214,7 @@ public class SnowyMapChecker {
 
     @Deprecated
     public static void sendChunkLoginInfo$1_20_1(ServerLevel serverLevel, LevelChunk chunk, ChunkPos chunkPos, ServerPlayer player) {
+        if (!EclipticUtil.canSnowyBlockInteract()) return;
         SnowyStatusKeeper snowyStatusKeeper = SnowyMapChecker.getSnowyStatusKeeper(chunk);
         SimpleNetworkHandler.send(player, new SnowyStatusHandler(true, snowyStatusKeeper, chunkPos));
     }
@@ -278,4 +279,5 @@ public class SnowyMapChecker {
                 keeper.stepAndCheck(above);
             }
         }
-    }}
+    }
+}

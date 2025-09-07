@@ -24,9 +24,7 @@ import net.minecraftforge.common.util.LazyOptional;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 
 public final class BiomeHolder implements ICapabilityProvider, INBTSerializable<CompoundTag> {
@@ -172,6 +170,8 @@ public final class BiomeHolder implements ICapabilityProvider, INBTSerializable<
         BiomeHolder.this.version = biomeHolder.version;
         BiomeHolder.this.hasUpdated = biomeHolder.hasUpdated;
     }
+
+    public static final Map<ChunkPos, BiomeHolder> BIOME_HOLDER_MAP = new HashMap<>();
 
     // ======================================================================
     // record to class

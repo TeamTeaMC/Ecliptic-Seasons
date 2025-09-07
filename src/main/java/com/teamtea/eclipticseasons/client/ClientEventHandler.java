@@ -4,6 +4,7 @@ package com.teamtea.eclipticseasons.client;
 import com.mojang.brigadier.CommandDispatcher;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
+import com.teamtea.eclipticseasons.api.misc.IChunkBiomeHolder;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.client.core.ClientWeatherChecker;
 import com.teamtea.eclipticseasons.client.render.WorldRenderer;
@@ -14,8 +15,11 @@ import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
 import com.teamtea.eclipticseasons.common.core.crop.CropInfoManager;
+import com.teamtea.eclipticseasons.common.core.map.BiomeHolder;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.core.snow.SnowChecker;
+import com.teamtea.eclipticseasons.common.core.snow.SnowyStatusHandler;
+import com.teamtea.eclipticseasons.common.core.snow.SnowyStatusKeeper;
 import com.teamtea.eclipticseasons.common.core.solar.ClientSolarDataManager;
 import com.teamtea.eclipticseasons.common.game.AnimalHooks;
 import com.teamtea.eclipticseasons.common.misc.MapExporter;
@@ -31,6 +35,7 @@ import net.minecraft.core.SectionPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.SpawnEggItem;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.client.event.RegisterClientCommandsEvent;
@@ -72,9 +77,28 @@ public final class ClientEventHandler {
         }
     }
 
+    // 1.20.1 patch for lazy chunk load
+    @SubscribeEvent
+    public static void onChunkUnloadEvent(ChunkEvent.Load event) {
+        if (event.getLevel() instanceof ClientLevel clientLevel) {
+            BiomeHolder orDefault = BiomeHolder.BIOME_HOLDER_MAP.getOrDefault(event.getChunk().getPos(), null);
+            if (orDefault != null) {
+                ((IChunkBiomeHolder) event.getChunk()).eclipticseasons$setBiomeHolder(orDefault);
+            }
+
+            SnowyStatusHandler orDefault1 = SnowyStatusHandler.SNOWY_STATUS_HANDLER_HASH_MAP.getOrDefault(event.getChunk().getPos(), null);
+            if (orDefault1 != null && event.getChunk() instanceof LevelChunk chunk) {
+                SnowyStatusHandler.setChunkWithUpdate(orDefault1, chunk);
+            }
+        }
+    }
+
+    // 1.20.1 patch for lazy chunk load
     @SubscribeEvent
     public static void onChunkUnloadEvent(ChunkEvent.Unload event) {
         if (event.getLevel() instanceof ClientLevel clientLevel) {
+            BiomeHolder.BIOME_HOLDER_MAP.remove(event.getChunk().getPos());
+            SnowyStatusHandler.SNOWY_STATUS_HANDLER_HASH_MAP.remove(event.getChunk().getPos());
         }
     }
 
@@ -84,6 +108,10 @@ public final class ClientEventHandler {
             MapChecker.unloadLevel(clientLevel);
             ClientWeatherChecker.unloadLevel(clientLevel);
             ClientCon.setUseLevel(null);
+
+            // 1.20.1 patch for lazy chunk load
+            BiomeHolder.BIOME_HOLDER_MAP.clear();
+            SnowyStatusHandler.SNOWY_STATUS_HANDLER_HASH_MAP.clear();
         }
     }
 
@@ -130,8 +158,8 @@ public final class ClientEventHandler {
             ClientWeatherChecker.tickAllCheck(clientLevel);
             ClientCon.tick(clientLevel);
 
-            if ((!EclipticUtil.canSnowyBlockInteract()||ClientConfig.Renderer.enhancementChunkRenderUpdate.get())
-                    &&ClientConfig.Renderer.forceChunkRenderUpdate.get()) {
+            if ((!EclipticUtil.canSnowyBlockInteract() || ClientConfig.Renderer.enhancementChunkRenderUpdate.get())
+                    && ClientConfig.Renderer.forceChunkRenderUpdate.get()) {
                 if (clientLevel.getGameTime() - lastFreshTime > 80
                         || clientLevel.getGameTime() < lastFreshTime - 1) {
                     lastFreshTime = clientLevel.getGameTime();

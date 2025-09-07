@@ -1062,13 +1062,13 @@ public class MapChecker {
         BiomeHolder biomeHolder = getOrUpdateChunkBiomeData(serverLevel, (IChunkBiomeHolder) chunk, chunkPos);
 
         if (biomeHolder != null && biomeHolder.hasUpdated()) {
-            SimpleNetworkHandler.send(player, new ChunkBiomeUpdateMessage(biomeHolder.biomes(), chunk.getPos().x, chunk.getPos().z, biomeHolder.version()));
+            SimpleNetworkHandler.send(player, new ChunkBiomeUpdateMessage(biomeHolder.biomes(), chunkPos, biomeHolder.version()));
         }
-
-        if (EclipticUtil.canSnowyBlockInteract()) {
-            SnowyStatusKeeper snowyStatusKeeper = SnowyMapChecker.getSnowyStatusKeeper(chunk);
-            SimpleNetworkHandler.send(player, new SnowyStatusHandler(true, snowyStatusKeeper, chunk.getPos()));
-        }
+        //
+        // if (EclipticUtil.canSnowyBlockInteract()) {
+        //     SnowyStatusKeeper snowyStatusKeeper = SnowyMapChecker.getSnowyStatusKeeper(chunk);
+        //     SimpleNetworkHandler.send(player, new SnowyStatusHandler(true, snowyStatusKeeper, chunk.getPos()));
+        // }
     }
 
     public static @NotNull BiomeHolder getOrUpdateChunkBiomeData(ServerLevel serverLevel, IChunkBiomeHolder
