@@ -96,9 +96,11 @@ public class SnowyStatusKeeper implements Cloneable, ICapabilityProvider, INBTSe
                 snowDepthRecord.put(biome, snow_depth.get(i));
             }
         }
+        stepCount.defaultReturnValue(-1);
     }
 
     private final Long2IntLinkedOpenHashMap posMap = new Long2IntLinkedOpenHashMap();
+    private final Long2IntLinkedOpenHashMap stepCount = new Long2IntLinkedOpenHashMap();
     // private final Short2ObjectLinkedOpenHashMap<IntArrayList> xzPosList = new Short2ObjectLinkedOpenHashMap<>();
     private final Map<Holder<Biome>, Integer> snowDepthRecord = new Reference2ObjectLinkedOpenHashMap<>();
 
@@ -118,6 +120,7 @@ public class SnowyStatusKeeper implements Cloneable, ICapabilityProvider, INBTSe
             posListUpdate.add(aLong);
             statusListUpdate.add(flag);
             setChange();
+            if (!stepCount.isEmpty() && flag == FLAG_NONE) stepCount.remove(aLong);
         }
     }
 
@@ -127,6 +130,14 @@ public class SnowyStatusKeeper implements Cloneable, ICapabilityProvider, INBTSe
             case FLAG_SNOW -> this.posMap.put(pos, flag) != flag;
             default -> false;
         };
+    }
+
+    public void stepAndCheck(BlockPos pos) {
+        long aLong = pos.asLong();
+        int result = !isSnowyBlock(pos) ? 0 : stepCount.addTo(aLong, 1);
+        if (result > 8) {
+            set(pos, SnowyStatusKeeper.FLAG_NONE);
+        }
     }
 
     public void removeBiomeRecord(Holder<Biome> biomeHolder) {
@@ -211,7 +222,9 @@ public class SnowyStatusKeeper implements Cloneable, ICapabilityProvider, INBTSe
         if (!EclipticUtil.canSnowyBlockInteract()) return;
         int height = chunkInfoMap.getHeight(checkPos);
         int surfaceHeight = chunk.getHeight(Heightmap.Types.WORLD_SURFACE, checkPos.getX(), checkPos.getZ());
-        checkPos = new BlockPos(checkPos.getX(), height == surfaceHeight ? height : level.getRandom().nextIntBetweenInclusive(height, surfaceHeight), checkPos.getZ());
+        checkPos = new BlockPos(checkPos.getX(), height < surfaceHeight ?
+                (level.getRandom().nextIntBetweenInclusive(0, surfaceHeight - height) + height) : height
+                , checkPos.getZ());
 
         if (height <= checkPos.getY()) {
             Holder<Biome> biome = MapChecker.getSurfaceBiomeByChunk(level, chunk, checkPos);
@@ -296,7 +309,6 @@ public class SnowyStatusKeeper implements Cloneable, ICapabilityProvider, INBTSe
     // 1.20.1 use
 
 
-
     public static final Capability<SnowyStatusKeeper> SNOWY_STATUS_KEEPER_CAPABILITY = CapabilityManager.get(new CapabilityToken<>() {
     });
 
@@ -341,11 +353,6 @@ public class SnowyStatusKeeper implements Cloneable, ICapabilityProvider, INBTSe
     public void copyFrom(SnowyStatusKeeper keeper) {
         this.posMap.clear();
         this.snowDepthRecord.clear();
-        this.posMap.putAll(keeper.posMap);
-        this.snowDepthRecord.putAll(keeper.snowDepthRecord);
-    }
-
-    public void addFrom(SnowyStatusKeeper keeper) {
         this.posMap.putAll(keeper.posMap);
         this.snowDepthRecord.putAll(keeper.snowDepthRecord);
     }

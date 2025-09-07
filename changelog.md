@@ -1,6 +1,22 @@
+### 0.12.0-pre13-3
+
+- Fixed an issue where the Ice Wand could not forcibly prevent certain chunks from being covered with snow.
+- Optimized client-side rendering: when SnowInWorld is enabled, fixed a rare case where block updates could briefly go
+  out of sync.
+- Optimized the StepMelt feature to make it more performance-friendly and with more stable detection conditions.
+- Fixed an issue where negative surface heights could cause incorrect random tick calculations in additional chunks.
+
+### 0.12.0-pre13-2
+
+- Optimized broom usage: when clearing snowy grass, it now removes the snow status of grass plant directly instead of
+  affecting the grass block underneath.
+- Added the Snow → StepMelt setting: when SnowInWorld is enabled, creatures stepping on snowy blocks now have a chance
+  to remove the snow cover, revealing paths in the snow.
+
 ### 0.12.0-pre13-1
 
-- Fixed an issue where the game could fail to load when SnowInWorld was disabled due to empty network packets being sent incorrectly.
+- Fixed an issue where the game could fail to load when SnowInWorld was disabled due to empty network packets being sent
+  incorrectly.
 - Other minor optimizations.
 
 ### 0.12.0-pre13
@@ -14,20 +30,26 @@
 - Removed the **SnowyFullCollisionShape** configuration due to compatibility issues, as it can now be fully replaced
   with datapacks.
 - Added the **SnowInWorld** configuration series, which stores actual snowfall in chunks and updates with chunk ticks,
-  providing precise behavior. Brooms will work under this configuration. You can also clear snowfall states via block updates — for example, to
+  providing precise behavior. Brooms will work under this configuration. You can also clear snowfall states via block
+  updates — for example, to
   create a clean boulevard.
 - When **SnowInWorld** is enabled, if only **ForceChunkRenderUpdate** is enabled but **EnhancementChunkRenderUpdate** is
   not, the mod will no longer attempt to refresh the chunk, since chunk updates are now more targeted.
 
 ### 0.12.0-pre12
 
-- For the sake of code structure and data stability, `RealisticSnowyChange` and broom usage have been temporarily removed. As a result, we no longer need to intervene in the internal implementation of the lighting engine.
-- The biome caching mode has been adjusted to stay closer to 1.21, with the missing capability acquisition part from Forge now supplemented.
+- For the sake of code structure and data stability, `RealisticSnowyChange` and broom usage have been temporarily
+  removed. As a result, we no longer need to intervene in the internal implementation of the lighting engine.
+- The biome caching mode has been adjusted to stay closer to 1.21, with the missing capability acquisition part from
+  Forge now supplemented.
 - Further optimizations have been made to the conversion between BlockState and Block Snowy Type queries.
-- The default snow-covered grass block model has been adjusted to a composite overlay model, in order to avoid false positives from Fusion-style connected-texture mods that rely on model detection.
+- The default snow-covered grass block model has been adjusted to a composite overlay model, in order to avoid false
+  positives from Fusion-style connected-texture mods that rely on model detection.
 - Internal use of EnumMap has been revised wherever possible in favor of our custom implementation Enum2ObjectMap.
 - Fixed an issue when rendering extra models, might not have correctly applied precise offset position checks.
-- Special thanks to Beishanwei and Orangesoda for their special authorization to carry and adapt the song “Snowless Hometown” in this mod. Due to scheduling constraints for the arrangement, the acquisition method is not open at this time.
+- Special thanks to Beishanwei and Orangesoda for their special authorization to carry and adapt the song “Snowless
+  Hometown” in this mod. Due to scheduling constraints for the arrangement, the acquisition method is not open at this
+  time.
 
 ### 0.12.0-pre11-4
 
@@ -45,27 +67,34 @@
 ### 0.12.0-pre11-2
 
 - Optimized several configuration options related to seasonal animal behaviors.
-- For the season_definitions datapack, if the biomes parameter is not set, it will now default to applying to all biomes.
-- The two deprecated configuration options, CropGrowChanceInWrongSeason and CropGrowChanceInWrongHumidity, have been removed.
+- For the season_definitions datapack, if the biomes parameter is not set, it will now default to applying to all
+  biomes.
+- The two deprecated configuration options, CropGrowChanceInWrongSeason and CropGrowChanceInWrongHumidity, have been
+  removed.
 
 ### 0.12.0-pre11-1
 
-- Added a `NotRainInDesert` option in `Common.Weather`  to prevent rain in desert and other biomes where it does not rain in vanilla game. It is disabled by default and must be enabled manually.
+- Added a `NotRainInDesert` option in `Common.Weather`  to prevent rain in desert and other biomes where it does not
+  rain in vanilla game. It is disabled by default and must be enabled manually.
 
 ### 0.12.0-pre11
-⚠️ **Note:** This version is not fully compatible with the `season_definitions` datapack structure from **pre10**, except for the basic place methods.
+
+⚠️ **Note:** This version is not fully compatible with the `season_definitions` datapack structure from **pre10**,
+except for the basic place methods.
 
 - The main change in this release is a complete rewrite of datapack extensibility.
   It now allows addons to introduce their own placement condition checks and placement methods.
 
 ### 0.12.0-pre10-1
 
-- Added the `copy_state` field to objects inside the place section of the `season_definitions` datapack, which determines whether the old block state should be copied to the new one.
+- Added the `copy_state` field to objects inside the place section of the `season_definitions` datapack, which
+  determines whether the old block state should be copied to the new one.
 - Added the `copy_state_properties` field to restrict the range of properties to be copied.
 
 ### 0.12.0-pre10
 
-- Added the `season_definitions` datapack, which is used to define the actual seasonal block changes. Note that since this
+- Added the `season_definitions` datapack, which is used to define the actual seasonal block changes. Note that since
+  this
   datapack affects the world, it is currently placed under the Debug configuration and must be enabled before use.
 - Seasonal block models are no longer restricted to surface-only placement.
 - Various other optimizations.

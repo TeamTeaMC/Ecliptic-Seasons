@@ -51,7 +51,7 @@ public class SnowyMapChecker {
 
     public static @NotNull SnowyStatusKeeper getSnowyStatusKeeperCopy(LevelChunk chunk) {
         if (!EclipticUtil.canSnowyBlockInteract()) return SnowyStatusKeeper.EMPTY;
-        return getSnowyStatusKeeper(chunk).clone();
+        return getSnowyStatusKeeper(chunk);
     }
 
     public static void updatePos(Level level, LevelChunk chunk, BlockPos pos, BlockState state, BlockState oldState, Block block) {
@@ -60,6 +60,7 @@ public class SnowyMapChecker {
             if (state.isAir()) {
                 blockDestroyOrReplace = true;
             } else if (MapChecker.solidTest(state)) {
+                SnowyMapChecker.removeSnowyStatus(level, chunk, pos);
                 SnowyMapChecker.removeSnowyStatus(level, chunk, pos.below());
             } else if (CommonConfig.Snow.snowyUnderSnowLike.get() && state.is(BlockTags.SNOW)) {
                 SnowyMapChecker.setSnowyStatus(level, chunk, pos.below());
@@ -207,6 +208,7 @@ public class SnowyMapChecker {
 
         if (!loadingChunk && chunk instanceof LevelChunk levelChunk) {
             keeper.updateAndSend(level, levelChunk);
+            keeper.getStepCount().clear();
         }
     }
 
@@ -254,11 +256,15 @@ public class SnowyMapChecker {
 
         if (level instanceof ServerLevel serverLevel
                 && MapChecker.getBlockTypeFlag(level, pos, blockstate) != MapChecker.FLAG_NONE
-                && level.getRandom().nextInt(48) == 0
-                && MapChecker.getHeight(level, pos) <= pos.getY()
+                && level.getGameTime() >> 3 == 0
+                // && level.getRandom().nextInt(15) == 0
+                // && MapChecker.getHeight(level, pos) <= pos.getY()
                 && SnowyMapChecker.shouldCheckSnowyStatus(serverLevel, pos)) {
             LevelChunk chunkAt = level.getChunkAt(pos);
-            SnowyMapChecker.removeSnowyStatus(serverLevel, chunkAt, pos);
+            // SnowyMapChecker.removeSnowyStatus(serverLevel, chunkAt, pos);
+
+            SnowyStatusKeeper keeper = getSnowyStatusKeeper(chunkAt);
+            keeper.stepAndCheck(pos);
 
             // clean above
             BlockPos.MutableBlockPos above = pos.mutable();
@@ -268,8 +274,8 @@ public class SnowyMapChecker {
                 if (stateAbove.isAir()) break;
                 int flagAbove = MapChecker.getBlockTypeFlag(level, above, stateAbove);
                 if (flagAbove == MapChecker.FLAG_NONE) break;
-                SnowyMapChecker.removeSnowyStatus(serverLevel, chunkAt, above);
+                // SnowyMapChecker.removeSnowyStatus(serverLevel, chunkAt, above);
+                keeper.stepAndCheck(above);
             }
         }
-    }
-}
+    }}

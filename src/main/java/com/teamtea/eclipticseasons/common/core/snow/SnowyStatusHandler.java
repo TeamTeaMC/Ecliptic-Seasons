@@ -101,15 +101,19 @@ public class SnowyStatusHandler {
                     LevelChunk chunkAt = useLevel.getChunkAt(msg.chunkPos.getWorldPosition());
                     if (chunkAt != null) {
                         SnowyStatusKeeper snowyStatusKeeper = SnowyMapChecker.getSnowyStatusKeeper(chunkAt);
-                        if (!msg.attachment.getPosMap().isEmpty())
-                            snowyStatusKeeper.copyFrom(msg.attachment);
-                        else {
+                        if (!msg.attachment.getPosMap().isEmpty()) {
+                            synchronized (snowyStatusKeeper.getPosMap()) {
+                                snowyStatusKeeper.copyFrom(msg.attachment);
+                            }
+                        } else {
                             LongArrayList posListUpdate = msg.attachment.getPosListUpdate();
                             Set<SectionPos> set = new HashSet<>();
-                            for (int i = 0, posListUpdateSize = posListUpdate.size(); i < posListUpdateSize; i++) {
-                                long pos = posListUpdate.getLong(i);
-                                snowyStatusKeeper.set(pos, msg.attachment.getStatusListUpdate().getInt(i));
-                                set.add(SectionPos.of(BlockPos.of(pos)));
+                            synchronized (snowyStatusKeeper.getPosMap()) {
+                                for (int i = 0, posListUpdateSize = posListUpdate.size(); i < posListUpdateSize; i++) {
+                                    long pos = posListUpdate.getLong(i);
+                                    snowyStatusKeeper.set(pos, msg.attachment.getStatusListUpdate().getInt(i));
+                                    set.add(SectionPos.of(BlockPos.of(pos)));
+                                }
                             }
                             for (SectionPos sectionPos : set) {
                                 ClientCon.agent.setChunkDirty(sectionPos);
