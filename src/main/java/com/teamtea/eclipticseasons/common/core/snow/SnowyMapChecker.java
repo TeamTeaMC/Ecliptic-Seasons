@@ -256,7 +256,7 @@ public class SnowyMapChecker {
 
         if (level instanceof ServerLevel serverLevel
                 && MapChecker.getBlockTypeFlag(level, pos, blockstate) != MapChecker.FLAG_NONE
-                && level.getGameTime() >> 3 == 0
+                && level.getGameTime() % 8 == 0
                 // && level.getRandom().nextInt(15) == 0
                 // && MapChecker.getHeight(level, pos) <= pos.getY()
                 && SnowyMapChecker.shouldCheckSnowyStatus(serverLevel, pos)) {
