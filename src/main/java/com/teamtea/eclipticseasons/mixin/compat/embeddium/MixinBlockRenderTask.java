@@ -198,7 +198,7 @@ public abstract class MixinBlockRenderTask {
             }
             original = false;
             ((FabricModelDelayChecker) ctx).updateIsLastFabric(
-                    bakedModel != null && FRAPIModelUtils.isFRAPIModel(bakedModel));
+                    bakedModel);
             ctx.update(mutableBlockPos,
                     mutableBlockPos2,
                     state,
@@ -208,7 +208,7 @@ public abstract class MixinBlockRenderTask {
                     ExtraModelManager.getRenderType(state));
             cache.getBlockRenderer().renderModel(ctx, buffers);
 
-            ((FabricModelDelayChecker) ctx).updateIsLastFabric(false);
+            ((FabricModelDelayChecker) ctx).updateIsLastFabric(null);
         }
         return original;
     }

@@ -1,7 +1,9 @@
 package com.teamtea.eclipticseasons.compat.fabric_renderer_indigo;
 
-public interface FabricModelDelayChecker {
-    boolean isLastFabric();
+import net.minecraft.client.resources.model.BakedModel;
 
-    void updateIsLastFabric(boolean is);
+public interface FabricModelDelayChecker {
+    BakedModel isLastFabric();
+
+    void updateIsLastFabric(BakedModel is);
 }

@@ -242,7 +242,7 @@ public class CommonConfig {
                     () -> List.of(
                             com.teamtea.eclipticseasons.api.constant.solar.Season.SPRING
                     ),
-                    o -> o instanceof com.teamtea.eclipticseasons.api.constant.solar.Season);
+                    Animal::validSeason);
 
             beeActiveSeasons = builder.comment("Seasons in which bees are generally active outside the hive.",
                     "Default: [SPRING, SUMMER, AUTUMN]").defineListAllowEmpty("BeeActiveSeasons",
@@ -251,7 +251,7 @@ public class CommonConfig {
                             com.teamtea.eclipticseasons.api.constant.solar.Season.SUMMER,
                             com.teamtea.eclipticseasons.api.constant.solar.Season.AUTUMN
                     ),
-                    o -> o instanceof com.teamtea.eclipticseasons.api.constant.solar.Season);
+                    Animal::validSeason);
 
             enableFishing = builder.comment("Enable seasonal fishing behavior, let enjoy summer.")
                     .define("EnableSeasonalFishing", false);
@@ -262,7 +262,7 @@ public class CommonConfig {
                     () -> List.of(
                             com.teamtea.eclipticseasons.api.constant.solar.Season.SUMMER
                     ),
-                    o -> o instanceof com.teamtea.eclipticseasons.api.constant.solar.Season);
+                    Animal::validSeason);
 
             lessFishInThunder = builder.comment("Reduce fish availability during thunderstorms.")
                     .define("LessFishInThunder", false);
@@ -270,6 +270,17 @@ public class CommonConfig {
             enableCoreWork = builder.comment("Greenhouse core would also work for animal check but not need a greenhouse.")
                     .define("EnableCoreWork", true);
             builder.pop();
+        }
+
+        private static boolean validSeason(Object o) {
+            if (o instanceof String s) {
+                try {
+                    com.teamtea.eclipticseasons.api.constant.solar.Season.valueOf(s);
+                    return true;
+                } catch (IllegalArgumentException ignored) {
+                }
+            }
+            return o instanceof com.teamtea.eclipticseasons.api.constant.solar.Season;
         }
     }
 
