@@ -73,6 +73,7 @@ public class MapChecker {
     public static final int FLAG_FARMLAND = 6;
     public static final int FLAG_VINE = 7;
     public static final int FLAG_CUSTOM = 999;
+    public static final int FLAG_CUSTOM_AO = 998;
 
     // change model by blockstate, one block state with only one model
     public static final int FLAG_CUSTOM_JSON = 1000;
@@ -1019,7 +1020,7 @@ public class MapChecker {
                     offset = 2;
                 }
             }
-        } else if (flag == FLAG_CUSTOM) {
+        } else if (customBuiltin(flag)) {
             if (state.getBlock() instanceof AzaleaBlock)
                 offset = 1;
         }
@@ -1147,5 +1148,9 @@ public class MapChecker {
     public static boolean solidBlockLike(int flag) {
         return flag == FLAG_BLOCK
                 || flag == FLAG_CUSTOM_JSON;
+    }
+
+    public static boolean customBuiltin(int flag) {
+        return flag == FLAG_CUSTOM_AO || flag == FLAG_CUSTOM;
     }
 }

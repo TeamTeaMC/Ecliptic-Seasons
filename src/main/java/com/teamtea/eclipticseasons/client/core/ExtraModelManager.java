@@ -196,7 +196,7 @@ public class ExtraModelManager {
                     } else snowModel = models.get(offset == 1 ? snowy_tall_grass_bottom : snowy_tall_grass_top);
                 } else if (flag == MapChecker.FLAG_FARMLAND) {
                     snowModel = models.get(snow_height2_top);
-                } else if (flag == MapChecker.FLAG_CUSTOM) {
+                } else if (MapChecker.customBuiltin(flag)) {
                     snowModel = models.get(snowy_custom);
                 } else if (flag == MapChecker.FLAG_CUSTOM_JSON
                         | flag == MapChecker.FLAG_CUSTOM_JSON_PLANTS
@@ -262,7 +262,7 @@ public class ExtraModelManager {
 
             if (snowModel instanceof SnowyBakedModelWrapper) {
                 int blockType = MapChecker.getBlockType(state, blockAndTintGetter, pos);
-                if (blockType == MapChecker.FLAG_CUSTOM)
+                if (MapChecker.customBuiltin(blockType))
                     return original;
                 if (direction == Direction.UP) {
                     if (blockType == MapChecker.FLAG_BLOCK) return EMPTY;
@@ -287,15 +287,14 @@ public class ExtraModelManager {
 
 
         if (bakedModel instanceof SnowyBakedModelWrapper<?> snowyBakedModelWrapper) {
-
             int blockType = snowyBakedModelWrapper.getBindBlockType() > MapChecker.FLAG_IGNORE ?
                     snowyBakedModelWrapper.getBindBlockType() :
                     MapChecker.getBlockType(state, blockAndTintGetter, pos);
-            if (blockType == MapChecker.FLAG_CUSTOM) {
+            if (MapChecker.customBuiltin(blockType)) {
                 original = new ArrayList<>();
             }
 
-            if ((blockType == MapChecker.FLAG_CUSTOM)
+            if ((MapChecker.customBuiltin(blockType))
                 // && state.toString().contains("stairs_a_cherry_blindwall")
                 // &&(state.hasProperty(StairBlock.SHAPE)&& state.getValue(StairBlock.SHAPE) == StairsShape.OUTER_RIGHT)
             ) {
@@ -325,7 +324,7 @@ public class ExtraModelManager {
     }
 
     public static boolean shouldMakeSnowyBakedQuads(int blockType, Direction direction) {
-        return blockType == MapChecker.FLAG_CUSTOM
+        return MapChecker.customBuiltin(blockType)
                 || direction != null && direction.ordinal() > 1;
     }
 
@@ -351,7 +350,7 @@ public class ExtraModelManager {
                 Direction bakedQuadDirection = bakedQuad.getDirection();
                 if (bakedQuadDirection != Direction.DOWN) {
                     TextureAtlasSprite spriteUse = snow_overlay_sprite;
-                    // if (blockType == MapChecker.FLAG_CUSTOM)
+                    // if (MapChecker.customBuiltin(blockType))
                     {
                         if (bakedQuadDirection != Direction.UP) {
                             isSlabDown = true;
@@ -374,11 +373,13 @@ public class ExtraModelManager {
 
                     }
                     BakedQuad retexturedBakedQuad;
-                    if (RectangularPrismChecker.isRectangularPrism(bakedQuad)) {
+                    // if (RectangularPrismChecker.isRectangularPrism(bakedQuad))
+                    {
                         retexturedBakedQuad = new BakedQuadRetexturedAndReUV(bakedQuad, spriteUse, isSlabDown, offset);
-                    } else {
-                        retexturedBakedQuad = new BakedQuadRetextured(bakedQuad, spriteUse);
                     }
+                    // else {
+                    //     retexturedBakedQuad = new BakedQuadRetextured(bakedQuad, spriteUse);
+                    // }
 
                     original.add(retexturedBakedQuad);
                 }
@@ -975,6 +976,21 @@ public class ExtraModelManager {
     private static boolean isModelReplaceable(int flag) {
         return flag == MapChecker.FLAG_GRASS
                 || flag == MapChecker.FLAG_GRASS_LARGE;
+    }
+
+    public static boolean renderAsSnowInShader(BlockState state, BlockGetter blockAndTintGetter, BlockPos pos) {
+        int blockType = MapChecker.getBlockType(state, blockAndTintGetter, pos);
+        return switch (blockType) {
+            case MapChecker.FLAG_BLOCK,
+                 MapChecker.FLAG_SLAB,
+                 MapChecker.FLAG_STAIRS,
+                 MapChecker.FLAG_STAIRS_TOP,
+                 MapChecker.FLAG_FARMLAND,
+                 MapChecker.FLAG_CUSTOM,
+                 MapChecker.FLAG_CUSTOM_JSON,
+                 MapChecker.FLAG_CUSTOM_JSON_WITH_TOP -> true;
+            default -> false;
+        };
     }
 
     public static void clearForRebaked(Map<ResourceLocation, BakedModel> modelRegistry) {

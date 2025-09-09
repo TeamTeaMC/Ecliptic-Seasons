@@ -7,20 +7,16 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.teamtea.eclipticseasons.api.misc.client.IESRendererHolder;
 import com.teamtea.eclipticseasons.client.core.ExtraModelManager;
-import com.teamtea.eclipticseasons.client.model.IESReplaceModel;
 import com.teamtea.eclipticseasons.compat.fabric_renderer_indigo.FabricModelDelayChecker;
-import me.jellysquid.mods.sodium.client.model.light.LightMode;
 import me.jellysquid.mods.sodium.client.render.chunk.compile.pipeline.BlockRenderContext;
 import me.jellysquid.mods.sodium.client.render.chunk.compile.pipeline.BlockRenderer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
-import org.embeddedt.embeddium.render.frapi.FRAPIModelUtils;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -57,15 +53,15 @@ public abstract class MixinBlockRender2 {
         ) || original;
     }
 
-    @WrapOperation(
+    @ModifyExpressionValue(
             remap = false,
-            method = "renderModel",
-            at = @At(value = "INVOKE", target = "Lme/jellysquid/mods/sodium/client/render/chunk/compile/pipeline/BlockRenderer;getLightingMode(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/client/resources/model/BakedModel;Lnet/minecraft/world/level/BlockAndTintGetter;Lnet/minecraft/core/BlockPos;Lnet/minecraft/client/renderer/RenderType;)Lme/jellysquid/mods/sodium/client/model/light/LightMode;")
+            method = "getLightingMode",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/resources/model/BakedModel;useAmbientOcclusion(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/client/renderer/RenderType;)Z")
     )
-    private LightMode eclipticseasons$renderModel_getLightingMode(BlockRenderer instance, BlockState state, BakedModel model, BlockAndTintGetter world, BlockPos pos, RenderType renderLayer, Operation<LightMode> original, @Local(ordinal = 0, argsOnly = true) BlockRenderContext ctx) {
-        return original.call(instance, state,
-                IESRendererHolder.getOriginalModel(ctx.world(), model)
-                , world, pos, renderLayer);
+    private boolean eclipticseasons$getLightingMode_useAmbientOcclusion(boolean original, @Local(ordinal = 0, argsOnly = true) BlockAndTintGetter blockAndTintGetter, @Local(ordinal = 0, argsOnly = true) BlockState state) {
+        Boolean modelForAmbientOcclusion = IESRendererHolder.getModelForAmbientOcclusion( blockAndTintGetter,state);
+        if (modelForAmbientOcclusion != null) return modelForAmbientOcclusion;
+        return original;
     }
 
 }

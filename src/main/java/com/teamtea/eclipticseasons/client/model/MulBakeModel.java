@@ -18,7 +18,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MulBakeModel<T extends BakedModel> extends BakedModelWrapper<T> {
+public class MulBakeModel<T extends BakedModel> extends BakedModelWrapper<T> implements ISnowyReplaceModel {
     public static final ModelData ES_DATA = ModelData.builder().with(new ModelProperty<>(), null).build();
 
     public static final List<BakedQuad> EMPTY_LIST = new ArrayList<>();
@@ -35,7 +35,7 @@ public class MulBakeModel<T extends BakedModel> extends BakedModelWrapper<T> {
         super(originalModel);
         this.flag = esModel instanceof SnowyBakedModelWrapper<?> snowyBakedModelWrapper ?
                 snowyBakedModelWrapper.getBindBlockType() : 0;
-        this.customRuntime = this.flag == MapChecker.FLAG_CUSTOM;
+        this.customRuntime = MapChecker.customBuiltin(this.flag);
         this.esModel = esModel;
         this.valid = esModel != null;
         this.replace = replace;
@@ -81,22 +81,6 @@ public class MulBakeModel<T extends BakedModel> extends BakedModelWrapper<T> {
         snowModelQuads.addAll(quads);
         snowModelQuads.addAll(snowModelQuads_Ori);
         return snowModelQuads;
-    }
-
-    @SuppressWarnings("deprecated")
-    @Override
-    public @NotNull List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, RandomSource rand) {
-        if (this.replace) {
-            return this.esModel.getQuads(state, side, rand);
-        }
-        List<BakedQuad> quads = this.originalModel.getQuads(state, side, rand);
-        if (this.valid) {
-            quads = cancelTop(quads);
-            quads = customRuntime ?
-                    combineBakedQuads(quads, getCustomBakedQuads(state, quads, side)) :
-                    combineBakedQuads(quads, esModel.getQuads(state, side, rand));
-        }
-        return quads;
     }
 
     @Override
@@ -154,5 +138,34 @@ public class MulBakeModel<T extends BakedModel> extends BakedModelWrapper<T> {
             }
         }
         return renderTypes;
+    }
+
+    @Override
+    public boolean isLowLayer() {
+        return esModel instanceof ISnowyReplaceModel isrm && isrm.isLowLayer();
+    }
+
+    @Override
+    public void setLowLayer(boolean lowLayer) {
+        if (esModel instanceof ISnowyReplaceModel isrm) {
+            isrm.setLowLayer(lowLayer);
+        }
+    }
+
+    @Override
+    public void updateBlockType(int bindBlockType) {
+        if (esModel instanceof ISnowyReplaceModel isrm) {
+            isrm.updateBlockType(bindBlockType);
+        }
+    }
+
+    @Override
+    public int getBindBlockType() {
+        return esModel instanceof ISnowyReplaceModel isrm ? isrm.getBindBlockType() : MapChecker.FLAG_NONE;
+    }
+
+    @Override
+    public boolean isReplace() {
+        return esModel instanceof ISnowyReplaceModel isrm && isrm.isReplace();
     }
 }

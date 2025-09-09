@@ -110,18 +110,8 @@ public abstract class MixinBlockRenderTask {
 
         if (snowModel != null) {
             if (this instanceof IIrisShaderAccesor iIrisShaderAccesor) {
-                int blockType = MapChecker.getBlockType(state, ctx.world(), mutableBlockPos);
-                switch (blockType) {
-                    case MapChecker.FLAG_BLOCK,
-                         MapChecker.FLAG_SLAB,
-                         MapChecker.FLAG_STAIRS,
-                         MapChecker.FLAG_STAIRS_TOP,
-                         MapChecker.FLAG_FARMLAND,
-                         MapChecker.FLAG_CUSTOM,
-                         MapChecker.FLAG_CUSTOM_JSON,
-                         MapChecker.FLAG_CUSTOM_JSON_WITH_TOP ->
-                            iIrisShaderAccesor.eclipticseasons$setSnowy(buildContext, Blocks.SNOW.defaultBlockState());
-                }
+                if (ExtraModelManager.renderAsSnowInShader(state, ctx.world(), mutableBlockPos))
+                    iIrisShaderAccesor.eclipticseasons$setSnowy(buildContext, Blocks.SNOW.defaultBlockState());
             }
             original = false;
             ctx.update(mutableBlockPos,
@@ -134,7 +124,7 @@ public abstract class MixinBlockRenderTask {
             cache.getBlockRenderer().renderModel(ctx, buffers);
         }
 
-        if(!original){
+        if (!original) {
             rendererHolder.resetAll();
         }
         return original;
