@@ -10,10 +10,6 @@ public interface IMapSlice extends IMapSliceProvider, BlockAndTintGetter, IExten
     default void forceMapSliceUpdate(int[][] heights, int[][] solidHeights, int[][] biomes, int SIZE_X, int SIZE_Z, SnowyStatusKeeper[] statusKeepers) {
     }
 
-    BakedModel eclipticseasons$getSnowModel();
-
-    void eclipticseasons$setSnowModel(BakedModel bakedModel);
-
     int getBlockHeight(BlockPos pos);
 
     int getSurfaceFaceBiomeId(BlockPos pos);

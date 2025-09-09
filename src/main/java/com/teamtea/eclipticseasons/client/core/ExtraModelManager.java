@@ -6,6 +6,7 @@ import com.teamtea.eclipticseasons.api.data.client.model.ModelTester;
 import com.teamtea.eclipticseasons.api.data.client.model.seasonal.SeasonBlockDefinition;
 import com.teamtea.eclipticseasons.api.data.client.model.seasonal.SeasonalTexture;
 import com.teamtea.eclipticseasons.api.data.season.SnowDefinition;
+import com.teamtea.eclipticseasons.api.misc.client.IESRendererHolder;
 import com.teamtea.eclipticseasons.api.misc.client.IMapSlice;
 import com.teamtea.eclipticseasons.api.misc.client.IMapSliceProvider;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
@@ -247,6 +248,8 @@ public class ExtraModelManager {
         // if (state.is(Blocks.GRASS_BLOCK)) {
         //     int c = 0;
         // }
+        ESRendererHolderImpl rendererHolder = IESRendererHolder.of(blockAndTintGetter);
+
         if (bakedModel != null
                 && ClientConfig.isTopFaceCulling()
                 && !original.isEmpty()
@@ -255,7 +258,7 @@ public class ExtraModelManager {
                 && blockAndTintGetter instanceof IMapSlice
         ) {
             random.setSeed(seed);
-            var snowModel = ExtraModelManager.findModel(blockAndTintGetter, pos, state, random, seed, posToMutable(pos));
+            var snowModel = rendererHolder.getExtraModel();
 
             if (snowModel instanceof SnowyBakedModelWrapper) {
                 int blockType = MapChecker.getBlockType(state, blockAndTintGetter, pos);
@@ -301,9 +304,9 @@ public class ExtraModelManager {
                     if (shouldMakeSnowyBakedQuads(blockType, direction)) {
                         ArrayList<BakedQuad> quadsCTM = null;
 
-                        BakedModel bakedModelCTM = Minecraft.getInstance().getModelManager().getBlockModelShaper().getBlockModel(state);
+                        BakedModel bakedModelCTM = rendererHolder.getOriginalModel();
                         if (bakedModelCTM != null) {
-                            ModelData modelDataCTM = bakedModelCTM.getModelData(blockAndTintGetter, pos, state, ModelData.EMPTY);
+                            ModelData modelDataCTM = rendererHolder.getModelData();
                             random.setSeed(seed);
                             ChunkRenderTypeSet renderTypes = bakedModelCTM.getRenderTypes(state, random, modelDataCTM);
                             quadsCTM = new ArrayList<>();

@@ -1,6 +1,8 @@
 package com.teamtea.eclipticseasons.mixin.client.render.chunk;
 
+import com.teamtea.eclipticseasons.api.misc.client.IESRendererHolder;
 import com.teamtea.eclipticseasons.api.misc.client.IMapSlice;
+import com.teamtea.eclipticseasons.client.core.ESRendererHolderImpl;
 import com.teamtea.eclipticseasons.common.core.snow.SnowyStatusKeeper;
 import com.teamtea.eclipticseasons.compat.vanilla.IExtendBlockView;
 import net.minecraft.client.renderer.chunk.RenderChunkRegion;
@@ -12,7 +14,7 @@ import org.spongepowered.asm.mixin.*;
 
 @Pseudo
 @Mixin(RenderChunkRegion.class)
-public abstract class MixinChunkSlice implements IMapSlice, IExtendBlockView {
+public abstract class MixinChunkSlice implements IMapSlice, IESRendererHolder {
     @Shadow
     @Final
     protected Level level;
@@ -100,17 +102,11 @@ public abstract class MixinChunkSlice implements IMapSlice, IExtendBlockView {
     /* ======================================== MODEL PART ===================================== */
 
 
-    @Unique
-    BakedModel eclipticseasons$bakedModelSnow = null;
+    private ESRendererHolderImpl eclipticseasons$rendererHolder =new ESRendererHolderImpl();
 
     @Override
-    public BakedModel eclipticseasons$getSnowModel() {
-        return this.eclipticseasons$bakedModelSnow;
-    }
-
-    @Override
-    public void eclipticseasons$setSnowModel(BakedModel bakedModel) {
-        this.eclipticseasons$bakedModelSnow = bakedModel;
+    public ESRendererHolderImpl eclipticseasons$getContext() {
+        return eclipticseasons$rendererHolder;
     }
 
     @Unique

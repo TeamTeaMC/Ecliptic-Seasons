@@ -2,21 +2,19 @@ package com.teamtea.eclipticseasons.mixin.compat.embeddium;
 
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
+import com.teamtea.eclipticseasons.api.misc.client.IESRendererHolder;
 import com.teamtea.eclipticseasons.api.misc.client.IMapSlice;
 import com.teamtea.eclipticseasons.api.misc.client.ISnowyGetter;
-import com.teamtea.eclipticseasons.api.misc.client.ISnowyGetterProvider;
+import com.teamtea.eclipticseasons.client.core.ESRendererHolderImpl;
 import com.teamtea.eclipticseasons.common.core.map.BiomeHolder;
 import com.teamtea.eclipticseasons.common.core.map.ChunkInfoMap;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.core.snow.SnowyStatusKeeper;
-import com.teamtea.eclipticseasons.compat.vanilla.IExtendBlockView;
 import me.jellysquid.mods.sodium.client.world.WorldSlice;
 import me.jellysquid.mods.sodium.client.world.cloned.ChunkRenderContext;
 import me.jellysquid.mods.sodium.client.world.cloned.ClonedChunkSection;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.SectionPos;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
@@ -27,7 +25,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Pseudo
 @Mixin(WorldSlice.class)
-public abstract class MixinChunkSlice implements IMapSlice, IExtendBlockView {
+public abstract class MixinChunkSlice implements IMapSlice, IESRendererHolder {
 
     @Unique
     private static final int MAP_BLOCK_COUNT = 16 * 16;
@@ -223,6 +221,14 @@ public abstract class MixinChunkSlice implements IMapSlice, IExtendBlockView {
         return lightArrays.isSnowyBlock(pos);
     }
 
+    @Unique
+    private BlockPos.MutableBlockPos eclipticseasons$checkPos = new BlockPos.MutableBlockPos();
+
+    @Override
+    public BlockPos.MutableBlockPos getModelCheckPos() {
+        return eclipticseasons$checkPos;
+    }
+
     /* ======================================== MODEL PART ===================================== */
 
     @Inject(
@@ -231,27 +237,13 @@ public abstract class MixinChunkSlice implements IMapSlice, IExtendBlockView {
             at = @At(value = "RETURN")
     )
     private void eclipticseasons$release(CallbackInfo ci) {
-        eclipticseasons$setSnowModel(null);
+        eclipticseasons$rendererHolder.resetAll();
     }
 
-    @Unique
-    BakedModel eclipticseasons$bakedModelSnow = null;
+    private ESRendererHolderImpl eclipticseasons$rendererHolder =new ESRendererHolderImpl();
 
     @Override
-    public BakedModel eclipticseasons$getSnowModel() {
-        return this.eclipticseasons$bakedModelSnow;
-    }
-
-    @Override
-    public void eclipticseasons$setSnowModel(BakedModel bakedModel) {
-        this.eclipticseasons$bakedModelSnow = bakedModel;
-    }
-
-    @Unique
-    private BlockPos.MutableBlockPos eclipticseasons$checkPos = new BlockPos.MutableBlockPos();
-
-    @Override
-    public BlockPos.MutableBlockPos getModelCheckPos() {
-        return eclipticseasons$checkPos;
+    public ESRendererHolderImpl eclipticseasons$getContext() {
+        return eclipticseasons$rendererHolder;
     }
 }

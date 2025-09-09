@@ -4,6 +4,8 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
+import com.teamtea.eclipticseasons.api.misc.client.IESRendererHolder;
+import com.teamtea.eclipticseasons.client.core.ESRendererHolderImpl;
 import com.teamtea.eclipticseasons.client.core.ExtraModelManager;
 import com.teamtea.eclipticseasons.client.model.MulBakeModel;
 import com.teamtea.eclipticseasons.client.model.SnowyBakedModelWrapper;
@@ -41,9 +43,11 @@ public abstract class MixinRebuildTask {
             @Local LocalRef<BakedModel> modelLocalRef
     ) {
         if (blockAndTintGetter instanceof IOFModelTaker iofModelTaker) {
+            ESRendererHolderImpl rendererHolder = IESRendererHolder.of(blockAndTintGetter);
+            boolean replaceable = false;
             long seed = blockState.getSeed(pos);
             randomsource.setSeed(seed);
-            BakedModel model = ExtraModelManager.findModel(blockAndTintGetter, pos, blockState, randomsource,seed,
+            BakedModel model = ExtraModelManager.findModel(blockAndTintGetter, pos, blockState, randomsource, seed,
                     blockAndTintGetter instanceof IExtendBlockView view ? view.getModelCheckPos() : null);
             if (model != null) {
                 BakedModel oldModel = modelLocalRef.get();
@@ -53,7 +57,7 @@ public abstract class MixinRebuildTask {
                 BakedModel cacheModel = snowy ? null : iofModelTaker.eclipticseasons$hasCache(oldModel, special);
                 if (cacheModel == null) {
                     RenderType renderType = ExtraModelManager.getRenderType(blockState);
-                    boolean replaceable = ExtraModelManager.isModelReplaceable(blockState, blockAndTintGetter, pos, model);
+                    replaceable = ExtraModelManager.isModelReplaceable(blockState, blockAndTintGetter, pos, model);
                     // todo maybe we can cache it in future
                     newModel = new MulBakeModel<>(oldModel, model, replaceable, renderType);
                     if (snowy) {
@@ -62,10 +66,15 @@ public abstract class MixinRebuildTask {
                 } else {
                     newModel = cacheModel;
                 }
+                // replace the model with ours
                 modelLocalRef.set(newModel);
-                iofModelTaker.eclipticseasons$setSnowModel(newModel);
+
+                rendererHolder.setReplace(replaceable)
+                        .setModelData(modelData)
+                        .setOriginalModel(oldModel)
+                        .setExtraModel(newModel);
             } else {
-                iofModelTaker.eclipticseasons$setSnowModel(null);
+                rendererHolder.resetAll();
             }
         }
         return original.call(instance, blockAndTintGetter, pos, blockState, modelData);

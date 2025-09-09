@@ -8,6 +8,8 @@ import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import com.mojang.blaze3d.vertex.*;
+import com.teamtea.eclipticseasons.api.misc.client.IESRendererHolder;
+import com.teamtea.eclipticseasons.client.core.ESRendererHolderImpl;
 import com.teamtea.eclipticseasons.client.core.ExtraModelManager;
 import com.teamtea.eclipticseasons.compat.vanilla.IExtendBlockView;
 import net.minecraft.client.Minecraft;
@@ -29,38 +31,6 @@ import java.util.Set;
 @Mixin(targets = "net.minecraft.client.renderer.chunk.ChunkRenderDispatcher$RenderChunk$RebuildTask")
 public class MixinChunkRenderDispatcher {
 
-
-    // @ModifyExpressionValue(
-    //         remap = false,
-    //         method = "compile",
-    //         at = @At(value = "INVOKE",
-    //                 // shift = At.Shift.AFTER,
-    //                 target = "Lnet/minecraft/client/resources/model/BakedModel;getRenderTypes(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/util/RandomSource;Lnet/minecraftforge/client/model/data/ModelData;)Lnet/minecraftforge/client/ChunkRenderTypeSet;")
-    // )
-    // private ChunkRenderTypeSet eclipticseasons$compile_extraSnowyModel2(
-    //         ChunkRenderTypeSet original,
-    //         @Local(argsOnly = true) ChunkBufferBuilderPack pChunkBufferBuilderPack,
-    //         @Local(ordinal = 2) BlockPos blockpos2,
-    //         @Local(ordinal = 1) BlockState blockstate,
-    //         @Local PoseStack posestack,
-    //         @Local RenderChunkRegion renderchunkregion,
-    //         @Local RandomSource randomsource,
-    //         @Local Set<RenderType> renderTypeSet
-    // ) {
-    //
-    //     // boolean replace = ModelManager.appendModel(pChunkBufferBuilderPack, blockpos2, blockstate, posestack, renderchunkregion, randomsource, renderTypeSet);
-    //     //
-    //     // return replace ? ChunkRenderTypeSet.none() : original;
-    //     //
-    //     BakedModel snowModel = ModelManager.findModel(renderchunkregion, blockpos2, blockstate, randomsource);
-    //     if (snowModel != null) if (!original.contains(RenderType.cutoutMipped())) {
-    //         return ChunkRenderTypeSet.union(original, ChunkRenderTypeSet.of(RenderType.cutoutMipped()));
-    //
-    //     }
-    //     return original;
-    // }
-
-
     @ModifyExpressionValue(
             method = "compile",
             at = @At(value = "INVOKE",
@@ -77,15 +47,18 @@ public class MixinChunkRenderDispatcher {
             @Local RenderChunkRegion renderchunkregion,
             @Local RandomSource randomsource,
             @Local Set<RenderType> renderTypeSet,
-            @Share("snowModelRef") LocalRef<BakedModel> snowModelRef,
-            @Share("shouldReplace") LocalBooleanRef replace
+            @Local BakedModel bakedModel,
+            @Local ModelData modelData
     ) {
         randomsource.setSeed(original);
         BakedModel model = ExtraModelManager.findModel(renderchunkregion, blockpos2, blockstate, randomsource, original,
                 renderchunkregion instanceof IExtendBlockView view ? view.getModelCheckPos() : null);
-        snowModelRef.set(model);
-        replace.set(model != null
-                && ExtraModelManager.isModelReplaceable(blockstate, renderchunkregion, blockpos2, model));
+        IESRendererHolder.of(renderchunkregion)
+                .setModelData(modelData)
+                .setOriginalModel(bakedModel)
+                .setExtraModel(model)
+                .setReplace(model != null
+                        && ExtraModelManager.isModelReplaceable(blockstate, renderchunkregion, blockpos2, model));
         return original;
     }
 
@@ -104,33 +77,28 @@ public class MixinChunkRenderDispatcher {
             @Local PoseStack posestack,
             @Local RenderChunkRegion renderchunkregion,
             @Local RandomSource randomsource,
-            @Local Set<RenderType> renderTypeSet,
-            @Share("snowModelRef") LocalRef<BakedModel> snowModelRef,
-            @Share("shouldReplace") LocalBooleanRef replace
+            @Local Set<RenderType> renderTypeSet
     ) {
 
-        // BakedModel snowModel = null;
-        // if (!original) {
-        //     snowModel = ModelManager.findModel(renderchunkregion, blockpos2, blockstate, randomsource);
-        // } else {
-        //     if (ModelManager.isModelReplaced(blockstate)) {
-        //         snowModel = ModelManager.findModel(renderchunkregion, blockpos2, blockstate, randomsource);
-        //     }
-        // }
+        ESRendererHolderImpl rendererHolder = IESRendererHolder.of(renderchunkregion);
 
         BakedModel snowModel = null;
-        if (replace.get()) {
+        if (rendererHolder.isReplace()) {
             original = false;
         }
 
         if (!original) {
-            snowModel = snowModelRef.get();
-            snowModelRef.set(null);
+            snowModel = rendererHolder.getExtraModel();
+            // snowModelRef.set(null);
         }
 
         if (snowModel != null) {
             original = false;
             eclipticseasons$renderModel(snowModel, pChunkBufferBuilderPack, blockpos2, blockstate, posestack, renderchunkregion, randomsource, renderTypeSet);
+        }
+
+        if (!original) {
+            IESRendererHolder.of(renderchunkregion).resetAll();
         }
 
         return original;
@@ -158,7 +126,7 @@ public class MixinChunkRenderDispatcher {
                         random,
                         seed,
                         OverlayTexture.NO_OVERLAY,
-                        ModelData.EMPTY,
+                        IESRendererHolder.of(renderchunkregion).getModelData(),
                         renderType);
         posestack.popPose();
     }

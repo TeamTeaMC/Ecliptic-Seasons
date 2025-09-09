@@ -5,6 +5,7 @@ import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
+import com.teamtea.eclipticseasons.api.misc.client.IESRendererHolder;
 import com.teamtea.eclipticseasons.client.core.ExtraModelManager;
 import com.teamtea.eclipticseasons.client.model.IESReplaceModel;
 import com.teamtea.eclipticseasons.compat.fabric_renderer_indigo.FabricModelDelayChecker;
@@ -52,9 +53,7 @@ public abstract class MixinBlockRender2 {
     private boolean eclipticseasons$renderModel_isFRAPIModel(boolean original, @Local(ordinal = 0, argsOnly = true) BlockRenderContext ctx) {
         // TODO:这里解决一下如果仅仅引入连接器，不使用连接纹理的话
         return (
-                IESReplaceModel.isInvalid(ctx.model())
-                        && ((FabricModelDelayChecker) ctx).isLastFabric() != null
-                        && FRAPIModelUtils.isFRAPIModel(((FabricModelDelayChecker) ctx).isLastFabric())
+                FabricModelDelayChecker.asFabricMode(ctx.world())
         ) || original;
     }
 
@@ -65,11 +64,8 @@ public abstract class MixinBlockRender2 {
     )
     private LightMode eclipticseasons$renderModel_getLightingMode(BlockRenderer instance, BlockState state, BakedModel model, BlockAndTintGetter world, BlockPos pos, RenderType renderLayer, Operation<LightMode> original, @Local(ordinal = 0, argsOnly = true) BlockRenderContext ctx) {
         return original.call(instance, state,
-                        IESReplaceModel.isInvalid(ctx.model())
-                                && ((FabricModelDelayChecker) ctx).isLastFabric() != null ?
-                                ((FabricModelDelayChecker) ctx).isLastFabric() : model
-                        , world, pos, renderLayer);
+                IESRendererHolder.getOriginalModel(ctx.world(), model)
+                , world, pos, renderLayer);
     }
-
 
 }

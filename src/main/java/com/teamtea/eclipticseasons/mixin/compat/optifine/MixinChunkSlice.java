@@ -1,8 +1,10 @@
 package com.teamtea.eclipticseasons.mixin.compat.optifine;
 
 
+import com.teamtea.eclipticseasons.api.misc.client.IESRendererHolder;
 import com.teamtea.eclipticseasons.api.misc.client.IMapSlice;
 import com.teamtea.eclipticseasons.api.misc.client.IMapSliceProvider;
+import com.teamtea.eclipticseasons.client.core.ESRendererHolderImpl;
 import com.teamtea.eclipticseasons.compat.optfine.IOFModelTaker;
 import com.teamtea.eclipticseasons.compat.vanilla.IExtendBlockView;
 import net.minecraft.client.renderer.chunk.RenderChunkRegion;
@@ -19,7 +21,7 @@ import java.util.Map;
 @Pseudo
 @Mixin(targets = "net.optifine.override.ChunkCacheOF")
 // @Mixin(CompatModule.class)
-public abstract class MixinChunkSlice implements IOFModelTaker, IMapSliceProvider, IExtendBlockView {
+public abstract class MixinChunkSlice implements IOFModelTaker, IESRendererHolder {
 
     @Final
     @Shadow(remap = false)
@@ -37,22 +39,16 @@ public abstract class MixinChunkSlice implements IOFModelTaker, IMapSliceProvide
             at = @At(value = "RETURN")
     )
     private void eclipticseasons$release(CallbackInfo ci) {
-        eclipticseasons$setSnowModel(null);
+        eclipticseasons$rendererHolder.resetAll();
         eclipticseasons$modelCache.clear();
         eclipticseasons$modelCache2.clear();
     }
 
-    @Unique
-    BakedModel eclipticseasons$bakedModelSnow = null;
+    private ESRendererHolderImpl eclipticseasons$rendererHolder =new ESRendererHolderImpl();
 
     @Override
-    public BakedModel eclipticseasons$getSnowModel() {
-        return this.eclipticseasons$bakedModelSnow;
-    }
-
-    @Override
-    public void eclipticseasons$setSnowModel(BakedModel bakedModel) {
-        this.eclipticseasons$bakedModelSnow = bakedModel;
+    public ESRendererHolderImpl eclipticseasons$getContext() {
+        return eclipticseasons$rendererHolder;
     }
 
     @Override
@@ -66,7 +62,6 @@ public abstract class MixinChunkSlice implements IOFModelTaker, IMapSliceProvide
         (special ? eclipticseasons$modelCache2 :
                 eclipticseasons$modelCache).put(bakedModel, bakedModel2);
     }
-
 
     @Override
     public int getBlockHeight(BlockPos pos) {
