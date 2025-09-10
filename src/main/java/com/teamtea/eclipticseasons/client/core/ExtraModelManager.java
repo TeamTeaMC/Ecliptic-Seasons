@@ -195,6 +195,9 @@ public class ExtraModelManager {
                     } else if (onBlock == Blocks.LARGE_FERN) {
                         snowModel = models.get(offset == 1 ? snowy_large_fern_bottom : snowy_large_fern_top);
                     } else snowModel = models.get(offset == 1 ? snowy_tall_grass_bottom : snowy_tall_grass_top);
+                } else if (flag == MapChecker.FLAG_VINE) {
+                    if (snowState != null)
+                        snowModel = Minecraft.getInstance().getModelManager().getBlockModelShaper().getBlockModel(snowState);
                 } else if (flag == MapChecker.FLAG_FARMLAND) {
                     snowModel = models.get(snow_height2_top);
                 } else if (MapChecker.customBuiltin(flag)) {
@@ -794,6 +797,13 @@ public class ExtraModelManager {
                                     .setValue(StairBlock.FACING, state.getValue(StairBlock.FACING))
                                     .setValue(StairBlock.HALF, state.getValue(StairBlock.HALF))
                                     .setValue(StairBlock.SHAPE, state.getValue(StairBlock.SHAPE));
+                        } else if (flag == MapChecker.FLAG_VINE) {
+                            snowState = BlockRegistry.snowyVine.get().defaultBlockState()
+                                    .setValue(VineBlock.EAST, state.getValue(VineBlock.EAST))
+                                    .setValue(VineBlock.WEST, state.getValue(VineBlock.WEST))
+                                    .setValue(VineBlock.SOUTH, state.getValue(VineBlock.SOUTH))
+                                    .setValue(VineBlock.NORTH, state.getValue(VineBlock.NORTH))
+                                    .setValue(VineBlock.UP, state.getValue(VineBlock.UP));
                         } else if (leaveLike && !specialLeaves) {
                             snowState = BlockRegistry.snowyLeaves.get().defaultBlockState();
                         }
