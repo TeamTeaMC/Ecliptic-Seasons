@@ -246,7 +246,7 @@ public class ExtraModelManager {
 
     public static List<BakedQuad> cancelTop(BakedModel bakedModel, BlockAndTintGetter blockAndTintGetter, BlockState state, BlockPos pos, Direction direction, RandomSource random, long seed, List<BakedQuad> original) {
         ExtraRendererContext rendererHolder = IExtraRendererContextOwner.of(blockAndTintGetter);
-        if(rendererHolder.getExtraModel()==null)return original;
+        if (rendererHolder.getExtraModel() == null) return original;
 
         if (bakedModel != null
                 && ClientConfig.isTopFaceCulling()
@@ -977,7 +977,7 @@ public class ExtraModelManager {
     }
 
     public static boolean renderAsSnowInShader(BlockState state, BlockGetter blockAndTintGetter, BlockPos pos) {
-        int blockType = MapChecker.getBlockType(state, blockAndTintGetter, pos);
+        int blockType = MapChecker.getBlockTypeFlag(blockAndTintGetter, pos, state);
         return switch (blockType) {
             case MapChecker.FLAG_BLOCK,
                  MapChecker.FLAG_SLAB,
@@ -985,6 +985,7 @@ public class ExtraModelManager {
                  MapChecker.FLAG_STAIRS_TOP,
                  MapChecker.FLAG_FARMLAND,
                  MapChecker.FLAG_CUSTOM,
+                 MapChecker.FLAG_CUSTOM_AO,
                  MapChecker.FLAG_CUSTOM_JSON,
                  MapChecker.FLAG_CUSTOM_JSON_WITH_TOP -> true;
             default -> false;

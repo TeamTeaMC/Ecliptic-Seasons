@@ -31,7 +31,7 @@ public class BakedQuadRetexturedAndReUV extends BakedQuad {
     }
 
     private void remapQuad() {
-        Direction direction1 = getDirection();
+        // Direction direction1 = getDirection();
 
         float x0 = Float.intBitsToFloat(this.vertices[0]);
         float y0 = Float.intBitsToFloat(this.vertices[1]);
