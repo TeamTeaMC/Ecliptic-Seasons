@@ -200,9 +200,9 @@ public class ExtraModelManager {
                         snowModel = Minecraft.getInstance().getModelManager().getBlockModelShaper().getBlockModel(snowState);
                 } else if (flag == MapChecker.FLAG_FARMLAND) {
                     snowModel = models.get(snow_height2_top);
-                } else if (MapChecker.customBuiltin(flag)) {
+                } else if (flag == MapChecker.FLAG_CUSTOM) {
                     snowModel = models.get(snowy_custom);
-                } else if (MapChecker.customBuiltin(flag)) {
+                } else if (flag == MapChecker.FLAG_CUSTOM_AO) {
                     snowModel = models.get(snowy_custom_ao);
                 } else if (flag == MapChecker.FLAG_CUSTOM_JSON
                         | flag == MapChecker.FLAG_CUSTOM_JSON_PLANTS
