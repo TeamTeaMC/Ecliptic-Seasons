@@ -32,8 +32,8 @@ public abstract class MixinModelRenderer {
             method = "tesselateBlock(Lnet/minecraft/world/level/BlockAndTintGetter;Lnet/minecraft/client/resources/model/BakedModel;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/BlockPos;Lcom/mojang/blaze3d/vertex/PoseStack;Lcom/mojang/blaze3d/vertex/VertexConsumer;ZLnet/minecraft/util/RandomSource;JILnet/minecraftforge/client/model/data/ModelData;Lnet/minecraft/client/renderer/RenderType;)V",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/resources/model/BakedModel;useAmbientOcclusion(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/client/renderer/RenderType;)Z")
     )
-    private boolean eclipticseasons$tesselateBlock_useAmbientOcclusion(boolean original, @Local(ordinal = 0, argsOnly = true) BlockAndTintGetter blockAndTintGetter, @Local(ordinal = 0, argsOnly = true) BlockState state) {
-        Boolean modelForAmbientOcclusion = ExtraRendererContext.getModelForAmbientOcclusion(blockAndTintGetter, state);
+    private boolean eclipticseasons$tesselateBlock_useAmbientOcclusion(boolean original, @Local(ordinal = 0, argsOnly = true) BlockAndTintGetter blockAndTintGetter, @Local(ordinal = 0, argsOnly = true) BlockState state, @Local(argsOnly = true) RenderType renderType) {
+        Boolean modelForAmbientOcclusion = ExtraRendererContext.getModelForAmbientOcclusion(blockAndTintGetter, state, renderType);
         if (modelForAmbientOcclusion != null) return modelForAmbientOcclusion;
         return original;
     }
