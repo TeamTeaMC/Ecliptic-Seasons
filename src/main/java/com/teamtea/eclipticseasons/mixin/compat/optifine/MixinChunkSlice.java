@@ -1,10 +1,10 @@
 package com.teamtea.eclipticseasons.mixin.compat.optifine;
 
 
-import com.teamtea.eclipticseasons.api.misc.client.IESRendererHolder;
+import com.teamtea.eclipticseasons.api.misc.client.IExtraRendererContextOwner;
 import com.teamtea.eclipticseasons.api.misc.client.IMapSlice;
 import com.teamtea.eclipticseasons.api.misc.client.IMapSliceProvider;
-import com.teamtea.eclipticseasons.client.core.ESRendererHolderImpl;
+import com.teamtea.eclipticseasons.client.core.ExtraRendererContext;
 import com.teamtea.eclipticseasons.compat.optfine.IOFModelTaker;
 import com.teamtea.eclipticseasons.compat.vanilla.IExtendBlockView;
 import net.minecraft.client.renderer.chunk.RenderChunkRegion;
@@ -21,7 +21,7 @@ import java.util.Map;
 @Pseudo
 @Mixin(targets = "net.optifine.override.ChunkCacheOF")
 // @Mixin(CompatModule.class)
-public abstract class MixinChunkSlice implements IOFModelTaker, IESRendererHolder {
+public abstract class MixinChunkSlice implements IOFModelTaker, IExtraRendererContextOwner {
 
     @Final
     @Shadow(remap = false)
@@ -44,10 +44,11 @@ public abstract class MixinChunkSlice implements IOFModelTaker, IESRendererHolde
         eclipticseasons$modelCache2.clear();
     }
 
-    private ESRendererHolderImpl eclipticseasons$rendererHolder =new ESRendererHolderImpl();
+    @Unique
+    private ExtraRendererContext eclipticseasons$rendererHolder =new ExtraRendererContext();
 
     @Override
-    public ESRendererHolderImpl eclipticseasons$getContext() {
+    public ExtraRendererContext eclipticseasons$getContext() {
         return eclipticseasons$rendererHolder;
     }
 

@@ -251,9 +251,11 @@ dependencies {
     // Real mod deobf dependency examples - these get remapped to your current mappings
     // implementation fg.deobf("com.tterrag.registrate:Registrate:MC${mc_version}-${registrate_version}") // Adds registrate as a dependency
 
-    runtimeOnly fg.deobf("curse.maven:farmers-delight-398521:5051242")
+    onlyMainRuntimeOnly fg.deobf("curse.maven:farmers-delight-398521:5051242")
 
     compileOnly fg.deobf("curse.maven:distant-horizons-508933:6791186")
+
+    onlyMainRuntimeOnly fg.deobf("curse.maven:wishing-fountain-1255471:6873585")
 
 //    onlyMainRuntimeOnly fg.deobf("curse.maven:cloth-config-348521:5729105")
 //    onlyMainRuntimeOnly fg.deobf("curse.maven:architectury-api-419699:5137938")

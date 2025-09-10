@@ -1,3 +1,12 @@
+### 0.12.0-pre14
+
+- Slightly improved chunk rendering performance.
+- Optimized snowy models of the Custom type, enhancing handling of slopes and other irregular surfaces.
+- Refined global weather queries and internal function calls: when other mods attempt to call vanilla weather functions
+  while Solar Weather is enabled, the system will now perform checks based on the areas around players instead of
+  returning null. If no players are present, the spawn point parameters will be applied. For mods that set weather
+  parameters for specific levels, the latter will be applied to all biomes where rain can occur.
+
 ### 0.12.0-pre13-3-1
 
 - Set the default start time to the Spring Equinox.

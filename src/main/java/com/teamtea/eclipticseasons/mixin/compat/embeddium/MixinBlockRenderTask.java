@@ -3,14 +3,9 @@ package com.teamtea.eclipticseasons.mixin.compat.embeddium;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;
-import com.llamalad7.mixinextras.sugar.Share;
-import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
-import com.llamalad7.mixinextras.sugar.ref.LocalRef;
-import com.teamtea.eclipticseasons.api.misc.client.IESRendererHolder;
-import com.teamtea.eclipticseasons.client.core.ESRendererHolderImpl;
+import com.teamtea.eclipticseasons.api.misc.client.IExtraRendererContextOwner;
+import com.teamtea.eclipticseasons.client.core.ExtraRendererContext;
 import com.teamtea.eclipticseasons.client.core.ExtraModelManager;
-import com.teamtea.eclipticseasons.common.core.map.MapChecker;
-import com.teamtea.eclipticseasons.compat.fabric_renderer_indigo.FabricModelDelayChecker;
 import com.teamtea.eclipticseasons.compat.iris.IIrisShaderAccesor;
 import com.teamtea.eclipticseasons.compat.vanilla.IExtendBlockView;
 import me.jellysquid.mods.sodium.client.render.chunk.compile.ChunkBuildBuffers;
@@ -66,7 +61,7 @@ public abstract class MixinBlockRenderTask {
         BlockAndTintGetter level = ctx.world();
         BakedModel model = ExtraModelManager.findModel(level, mutableBlockPos, state, random, seed, level instanceof IExtendBlockView extendBlockView ? extendBlockView.getModelCheckPos() : null);
 
-        IESRendererHolder.of(ctx.world())
+        IExtraRendererContextOwner.of(ctx.world())
                 .setModelData(modelData)
                 .setOriginalModel(bakedModel)
                 .setExtraModel(model)
@@ -96,7 +91,7 @@ public abstract class MixinBlockRenderTask {
             // @Local ModelData modelData
     ) {
 
-        ESRendererHolderImpl rendererHolder = IESRendererHolder.of(ctx.world());
+        ExtraRendererContext rendererHolder = IExtraRendererContextOwner.of(ctx.world());
 
         BakedModel snowModel = null;
         if (rendererHolder.isReplace()) {

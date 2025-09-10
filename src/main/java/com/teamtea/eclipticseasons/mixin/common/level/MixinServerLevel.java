@@ -51,7 +51,14 @@ public abstract class MixinServerLevel extends Level {
         super(pLevelData, pDimension, pRegistryAccess, pDimensionTypeRegistration, pProfiler, pIsClientSide, pIsDebug, pBiomeZoomSeed, pMaxChainedNeighborUpdates);
     }
 
-    // 早晨有可能继续下雨
+    @Inject(at = {@At("HEAD")}, method = {"setWeatherParameters"}, cancellable = true)
+    public void eclipticseasons$setWeatherParameters(int pClearTime, int pWeatherTime, boolean pIsRaining, boolean pIsThundering, CallbackInfo ci) {
+        if (EclipticUtil.hasLocalWeather(this)) {
+            WeatherManager.onSetWeatherParameters(getLevel(), pClearTime, pWeatherTime, pIsRaining, pIsThundering);
+            ci.cancel();
+        }
+    }
+
     @Inject(at = {@At("HEAD")}, method = {"resetWeatherCycle"}, cancellable = true)
     public void eclipticseasons$resetWeatherCycle(CallbackInfo ci) {
         if (EclipticUtil.hasLocalWeather(this))

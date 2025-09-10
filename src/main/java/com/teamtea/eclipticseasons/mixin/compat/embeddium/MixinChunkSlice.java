@@ -2,10 +2,10 @@ package com.teamtea.eclipticseasons.mixin.compat.embeddium;
 
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
-import com.teamtea.eclipticseasons.api.misc.client.IESRendererHolder;
+import com.teamtea.eclipticseasons.api.misc.client.IExtraRendererContextOwner;
 import com.teamtea.eclipticseasons.api.misc.client.IMapSlice;
 import com.teamtea.eclipticseasons.api.misc.client.ISnowyGetter;
-import com.teamtea.eclipticseasons.client.core.ESRendererHolderImpl;
+import com.teamtea.eclipticseasons.client.core.ExtraRendererContext;
 import com.teamtea.eclipticseasons.common.core.map.BiomeHolder;
 import com.teamtea.eclipticseasons.common.core.map.ChunkInfoMap;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
@@ -25,7 +25,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Pseudo
 @Mixin(WorldSlice.class)
-public abstract class MixinChunkSlice implements IMapSlice, IESRendererHolder {
+public abstract class MixinChunkSlice implements IMapSlice, IExtraRendererContextOwner {
 
     @Unique
     private static final int MAP_BLOCK_COUNT = 16 * 16;
@@ -240,10 +240,11 @@ public abstract class MixinChunkSlice implements IMapSlice, IESRendererHolder {
         eclipticseasons$rendererHolder.resetAll();
     }
 
-    private ESRendererHolderImpl eclipticseasons$rendererHolder =new ESRendererHolderImpl();
+    @Unique
+    private ExtraRendererContext eclipticseasons$rendererHolder =new ExtraRendererContext();
 
     @Override
-    public ESRendererHolderImpl eclipticseasons$getContext() {
+    public ExtraRendererContext eclipticseasons$getContext() {
         return eclipticseasons$rendererHolder;
     }
 }

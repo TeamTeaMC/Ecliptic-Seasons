@@ -42,6 +42,7 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.Level;
@@ -117,29 +118,81 @@ public class WeatherManager {
         return isClient ? ClientCon.getUseLevel() : getMainServerLevel();
     }
 
-    public static float getMinRainLevel(Level level, float p46723) {
-        return 0.0f;
+    public static float getAverageRainLevel(Level level, float delta) {
+        return getAverageWeatherLevel(level, delta, BiomeWeather::shouldRain);
     }
 
-    public static float getMaximumRainLevel(Level level, float p46723) {
-        return 1.0f;
+    public static boolean isEffectiveRaining(ServerLevel level) {
+        return getAverageRainLevel(level, 1f) > CompatModule.CommonConfig.weatherVotePercent.get();
     }
 
-    public static boolean isRainingEverywhere(ServerLevel level) {
-        return false;
+    public static float getAverageThunderLevel(Level level, float delta) {
+        return getAverageWeatherLevel(level, delta, BiomeWeather::shouldThunder);
     }
 
-    public static float getMinThunderLevel(Level level, float p46723) {
-        return 0.0f;
+    public static boolean isEffectiveThundering(ServerLevel level) {
+        return getAverageThunderLevel(level, 1f) > CompatModule.CommonConfig.weatherVotePercent.get();
     }
 
-
-    public static float getMaximumThunderLevel(Level level, float p46723) {
-        return 1.0f;
+    @FunctionalInterface
+    public interface BiomeWeatherPredicate {
+        boolean test(BiomeWeather biome);
     }
 
-    public static boolean isThunderEverywhere(ServerLevel level) {
-        return false;
+    public static float getAverageWeatherLevel(Level level, float delta, BiomeWeatherPredicate function) {
+        List<? extends Player> players = level.players();
+        if (!players.isEmpty()) {
+            if (players.size() == 1) {
+                return function.test(getBiomeWeather(level, MapChecker.getSurfaceBiome(level, players.get(0).blockPosition()))) ? 1f : 0;
+            } else {
+                float thunder = 0f;
+                for (int i = 0, playersSize = players.size(); i < playersSize; i++) {
+                    Player player = players.get(i);
+                    thunder += function.test(getBiomeWeather(level, MapChecker.getSurfaceBiome(level, player.blockPosition())))
+                            ? 1f : 0;
+                }
+                return thunder / (float) players.size();
+            }
+        }
+        return function.test(getBiomeWeather(level, MapChecker.getSurfaceBiome(level, level.getSharedSpawnPos()))) ? 1f : 0;
+    }
+
+    public static void onSetWeatherParameters(ServerLevel level, int pClearTime, int pWeatherTime, boolean pIsRaining, boolean pIsThundering) {
+        ArrayList<BiomeWeather> biomeList = getBiomeList(level);
+        if (biomeList == null) return;
+        int size = biomeList.size();
+        List<? extends Player> players = level.players();
+        int clearTime = pIsRaining ? 0 : pClearTime / size;
+        int rainTime = pIsRaining ? pWeatherTime / size : 0;
+        int thunderTime = pIsRaining && pIsThundering ? pWeatherTime / size : 0;
+        if (!players.isEmpty()) {
+            if (players.size() == 1) {
+                BiomeWeather biomeWeather = getBiomeWeather(level, MapChecker.getSurfaceBiome(level, players.get(0).blockPosition()));
+                if (biomeWeather != null) {
+                    setBiomeWeather(biomeWeather, clearTime, rainTime, thunderTime);
+                }
+            } else {
+                for (Player player : players) {
+                    BiomeWeather biomeWeather = getBiomeWeather(level, MapChecker.getSurfaceBiome(level, player.blockPosition()));
+                    if (biomeWeather != null) {
+                        setBiomeWeather(biomeWeather, clearTime, rainTime, thunderTime);
+                    }
+                }
+            }
+        } else {
+            for (BiomeWeather biomeWeather : biomeList) {
+                Biome biome = biomeWeather.biomeHolder.value();
+                if (!hasNonePrecipitation(biome)) {
+                    setBiomeWeather(biomeWeather, clearTime, rainTime, thunderTime);
+                }
+            }
+        }
+    }
+
+    public static void setBiomeWeather(BiomeWeather biomeWeather, int clearTime, int rainTime, int thunderTime) {
+        biomeWeather.clearTime = clearTime;
+        biomeWeather.rainTime = rainTime;
+        biomeWeather.thunderTime = thunderTime;
     }
 
     public static boolean isThunderAtBiome(Level level, BlockPos pos) {
@@ -258,20 +311,7 @@ public class WeatherManager {
     }
 
     public static Biome.Precipitation getRainOrSnow(Level level, Biome biome, BlockPos pos) {
-        // if (!MapChecker.isValidDimension(level)) {
-        //     if (!biome.hasPrecipitation()) {
-        //         return Biome.Precipitation.NONE;
-        //     } else {
-        //         return biome.coldEnoughToSnow(pos) ? Biome.Precipitation.SNOW : Biome.Precipitation.RAIN;
-        //     }
-        // }
-        if (!biome.hasPrecipitation()) {
-            return Biome.Precipitation.NONE;
-        }
-
-        if (CommonConfig.Weather.notRainInDesert.get()
-                && !biome.getModifiedClimateSettings().hasPrecipitation())
-            return Biome.Precipitation.NONE;
+        if (hasNonePrecipitation(biome)) return Biome.Precipitation.NONE;
 
         var biomeWeather = getBiomeWeather(level, biome);
         if (biomeWeather != null) {
@@ -300,13 +340,7 @@ public class WeatherManager {
 
     public static Biome.Precipitation getPrecipitationAt(@Nullable Level level, Biome biome, BlockPos pos) {
 
-        if (!biome.hasPrecipitation()) {
-            return Biome.Precipitation.NONE;
-        }
-
-        if (CommonConfig.Weather.notRainInDesert.get()
-                && !biome.getModifiedClimateSettings().hasPrecipitation())
-            return Biome.Precipitation.NONE;
+        if (hasNonePrecipitation(biome)) return Biome.Precipitation.NONE;
 
         var biomeWeather = getBiomeWeather(level, biome);
 
@@ -317,6 +351,15 @@ public class WeatherManager {
             return flag_cold ? Biome.Precipitation.SNOW : Biome.Precipitation.RAIN;
         }
         return Biome.Precipitation.NONE;
+    }
+
+    public static boolean hasNonePrecipitation(Biome biome) {
+        if (!biome.hasPrecipitation()) {
+            return true;
+        }
+
+        return CommonConfig.Weather.notRainInDesert.get()
+                && !biome.getModifiedClimateSettings().hasPrecipitation();
     }
 
     public static void createLevelBiomeWeatherList(Level level) {

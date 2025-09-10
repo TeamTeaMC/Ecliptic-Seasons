@@ -4,8 +4,8 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
-import com.teamtea.eclipticseasons.api.misc.client.IESRendererHolder;
-import com.teamtea.eclipticseasons.client.core.ESRendererHolderImpl;
+import com.teamtea.eclipticseasons.api.misc.client.IExtraRendererContextOwner;
+import com.teamtea.eclipticseasons.client.core.ExtraRendererContext;
 import com.teamtea.eclipticseasons.client.core.ExtraModelManager;
 import com.teamtea.eclipticseasons.client.model.MulBakeModel;
 import com.teamtea.eclipticseasons.client.model.SnowyBakedModelWrapper;
@@ -43,7 +43,7 @@ public abstract class MixinRebuildTask {
             @Local LocalRef<BakedModel> modelLocalRef
     ) {
         if (blockAndTintGetter instanceof IOFModelTaker iofModelTaker) {
-            ESRendererHolderImpl rendererHolder = IESRendererHolder.of(blockAndTintGetter);
+            ExtraRendererContext rendererHolder = IExtraRendererContextOwner.of(blockAndTintGetter);
             boolean replaceable = false;
             long seed = blockState.getSeed(pos);
             randomsource.setSeed(seed);

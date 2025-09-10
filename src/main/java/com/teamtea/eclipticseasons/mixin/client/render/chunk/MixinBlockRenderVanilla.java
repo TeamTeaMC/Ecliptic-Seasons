@@ -3,7 +3,7 @@ package com.teamtea.eclipticseasons.mixin.client.render.chunk;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;
-import com.teamtea.eclipticseasons.api.misc.client.IESRendererHolder;
+import com.teamtea.eclipticseasons.client.core.ExtraRendererContext;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.ModelBlockRenderer;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -27,7 +27,7 @@ public abstract class MixinBlockRenderVanilla {
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/resources/model/BakedModel;useAmbientOcclusion(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/client/renderer/RenderType;)Z")
     )
     private boolean eclipticseasons$tesselateBlock_useAmbientOcclusion(boolean original, @Local(ordinal = 0, argsOnly = true) BlockAndTintGetter blockAndTintGetter, @Local(ordinal = 0, argsOnly = true) BlockState state, @Local(ordinal = 0, argsOnly = true) RenderType renderType) {
-        Boolean modelForAmbientOcclusion = IESRendererHolder.getModelForAmbientOcclusion(blockAndTintGetter, state,renderType);
+        Boolean modelForAmbientOcclusion = ExtraRendererContext.getModelForAmbientOcclusion(blockAndTintGetter, state,renderType);
         if (modelForAmbientOcclusion != null) return modelForAmbientOcclusion;
         return original;
     }

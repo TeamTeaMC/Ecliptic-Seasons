@@ -4,9 +4,8 @@ package com.teamtea.eclipticseasons.mixin.compat.optifine;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
-import com.teamtea.eclipticseasons.api.misc.client.IESRendererHolder;
-import com.teamtea.eclipticseasons.client.core.ESRendererHolderImpl;
-import com.teamtea.eclipticseasons.compat.optfine.IOFModelTaker;
+import com.teamtea.eclipticseasons.api.misc.client.IExtraRendererContextOwner;
+import com.teamtea.eclipticseasons.client.core.ExtraRendererContext;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.world.level.BlockAndTintGetter;
@@ -31,7 +30,7 @@ public class MixinBlockModelDispatcher {
             Operation<BakedModel> original,
             @Local(argsOnly = true) BlockAndTintGetter blockAndTintGetter
     ) {
-        ESRendererHolderImpl rendererHolder = IESRendererHolder.of(blockAndTintGetter);
+        ExtraRendererContext rendererHolder = IExtraRendererContextOwner.of(blockAndTintGetter);
         BakedModel bakedModel = rendererHolder.getExtraModel();
         if (bakedModel != null) return bakedModel;
         return original.call(instance, pState);

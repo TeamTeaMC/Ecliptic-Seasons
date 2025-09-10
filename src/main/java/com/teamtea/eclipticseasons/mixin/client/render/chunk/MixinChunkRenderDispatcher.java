@@ -4,12 +4,9 @@ package com.teamtea.eclipticseasons.mixin.client.render.chunk;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;
 
-import com.llamalad7.mixinextras.sugar.Share;
-import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
-import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import com.mojang.blaze3d.vertex.*;
-import com.teamtea.eclipticseasons.api.misc.client.IESRendererHolder;
-import com.teamtea.eclipticseasons.client.core.ESRendererHolderImpl;
+import com.teamtea.eclipticseasons.api.misc.client.IExtraRendererContextOwner;
+import com.teamtea.eclipticseasons.client.core.ExtraRendererContext;
 import com.teamtea.eclipticseasons.client.core.ExtraModelManager;
 import com.teamtea.eclipticseasons.compat.vanilla.IExtendBlockView;
 import net.minecraft.client.Minecraft;
@@ -53,7 +50,7 @@ public class MixinChunkRenderDispatcher {
         randomsource.setSeed(original);
         BakedModel model = ExtraModelManager.findModel(renderchunkregion, blockpos2, blockstate, randomsource, original,
                 renderchunkregion instanceof IExtendBlockView view ? view.getModelCheckPos() : null);
-        IESRendererHolder.of(renderchunkregion)
+        IExtraRendererContextOwner.of(renderchunkregion)
                 .setModelData(modelData)
                 .setOriginalModel(bakedModel)
                 .setExtraModel(model)
@@ -80,7 +77,7 @@ public class MixinChunkRenderDispatcher {
             @Local Set<RenderType> renderTypeSet
     ) {
 
-        ESRendererHolderImpl rendererHolder = IESRendererHolder.of(renderchunkregion);
+        ExtraRendererContext rendererHolder = IExtraRendererContextOwner.of(renderchunkregion);
 
         BakedModel snowModel = null;
         if (rendererHolder.isReplace()) {
@@ -98,7 +95,7 @@ public class MixinChunkRenderDispatcher {
         }
 
         if (!original) {
-            IESRendererHolder.of(renderchunkregion).resetAll();
+            IExtraRendererContextOwner.of(renderchunkregion).resetAll();
         }
 
         return original;
@@ -126,7 +123,7 @@ public class MixinChunkRenderDispatcher {
                         random,
                         seed,
                         OverlayTexture.NO_OVERLAY,
-                        IESRendererHolder.of(renderchunkregion).getModelData(),
+                        IExtraRendererContextOwner.of(renderchunkregion).getModelData(),
                         renderType);
         posestack.popPose();
     }

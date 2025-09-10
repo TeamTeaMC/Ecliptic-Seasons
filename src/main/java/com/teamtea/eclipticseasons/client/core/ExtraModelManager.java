@@ -6,7 +6,7 @@ import com.teamtea.eclipticseasons.api.data.client.model.ModelTester;
 import com.teamtea.eclipticseasons.api.data.client.model.seasonal.SeasonBlockDefinition;
 import com.teamtea.eclipticseasons.api.data.client.model.seasonal.SeasonalTexture;
 import com.teamtea.eclipticseasons.api.data.season.SnowDefinition;
-import com.teamtea.eclipticseasons.api.misc.client.IESRendererHolder;
+import com.teamtea.eclipticseasons.api.misc.client.IExtraRendererContextOwner;
 import com.teamtea.eclipticseasons.api.misc.client.IMapSlice;
 import com.teamtea.eclipticseasons.api.misc.client.IMapSliceProvider;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
@@ -245,10 +245,8 @@ public class ExtraModelManager {
     }
 
     public static List<BakedQuad> cancelTop(BakedModel bakedModel, BlockAndTintGetter blockAndTintGetter, BlockState state, BlockPos pos, Direction direction, RandomSource random, long seed, List<BakedQuad> original) {
-        // if (state.is(Blocks.GRASS_BLOCK)) {
-        //     int c = 0;
-        // }
-        ESRendererHolderImpl rendererHolder = IESRendererHolder.of(blockAndTintGetter);
+        ExtraRendererContext rendererHolder = IExtraRendererContextOwner.of(blockAndTintGetter);
+        if(rendererHolder.getExtraModel()==null)return original;
 
         if (bakedModel != null
                 && ClientConfig.isTopFaceCulling()
