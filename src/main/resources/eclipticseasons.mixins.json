@@ -64,7 +64,6 @@
     "compat.distanthorizons.MixinQuadTree",
     "compat.distanthorizons.MixinTintWithoutLevelOverrider",
     "compat.embeddium.MixinBlockRender2",
-    "compat.embeddium.MixinBlockRenderContext",
     "compat.embeddium.MixinBlockRenderTask",
     "compat.embeddium.MixinChunkSlice",
     "compat.embeddium.MixinClonedChunkSection",
