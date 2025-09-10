@@ -68,6 +68,7 @@ public class ExtraModelManager {
     public static ResourceLocation snowy_leaves_top = EclipticSeasons.rl("block/snowy_leaves_top");
 
     public static ResourceLocation snowy_custom = EclipticSeasons.rl("block/snowy_custom");
+    public static ResourceLocation snowy_custom_ao = EclipticSeasons.rl("block/snowy_custom_ao");
     public static ResourceLocation stairs_top = EclipticSeasons.rl("block/stairs_top");
     public static ResourceLocation snowy_fern = EclipticSeasons.rl("block/snowy_fern");
     public static ResourceLocation snowy_grass = EclipticSeasons.rl("block/snowy_grass");
@@ -198,6 +199,8 @@ public class ExtraModelManager {
                     snowModel = models.get(snow_height2_top);
                 } else if (MapChecker.customBuiltin(flag)) {
                     snowModel = models.get(snowy_custom);
+                } else if (MapChecker.customBuiltin(flag)) {
+                    snowModel = models.get(snowy_custom_ao);
                 } else if (flag == MapChecker.FLAG_CUSTOM_JSON
                         | flag == MapChecker.FLAG_CUSTOM_JSON_PLANTS
                         || flag == MapChecker.FLAG_CUSTOM_JSON_VINE_LIKE

@@ -74,6 +74,7 @@ public class ClientSetup {
     public static void registerExtraModels(ModelEvent.RegisterAdditional event) {
         event.register(ExtraModelManager.stairs_top);
         event.register(ExtraModelManager.snowy_custom);
+        event.register(ExtraModelManager.snowy_custom_ao);
         event.register(ExtraModelManager.snowy_fern);
         event.register(ExtraModelManager.snowy_grass);
         event.register(ExtraModelManager.snowy_tall_grass_top);
@@ -154,6 +155,7 @@ public class ClientSetup {
                         ExtraModelManager.snowy_leaves_attach,
                         ExtraModelManager.snowy_leaves_top,
                         ExtraModelManager.snowy_custom,
+                        ExtraModelManager.snowy_custom_ao,
                         ExtraModelManager.stairs_top,
                         ExtraModelManager.snowy_fern,
                         ExtraModelManager.snowy_grass,
