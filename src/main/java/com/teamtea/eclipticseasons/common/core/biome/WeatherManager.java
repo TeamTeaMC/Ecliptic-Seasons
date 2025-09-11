@@ -25,7 +25,6 @@ import com.teamtea.eclipticseasons.common.network.message.EmptyMessage;
 import com.teamtea.eclipticseasons.common.network.SimpleNetworkHandler;
 import com.teamtea.eclipticseasons.common.network.message.SolarTermsMessage;
 import com.teamtea.eclipticseasons.compat.CompatModule;
-import com.teamtea.eclipticseasons.compat.vanilla.VanillaWeather;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.core.*;
 import net.minecraft.core.registries.Registries;
@@ -77,6 +76,14 @@ public class WeatherManager {
             return iBiomeWeatherProvider.es$get();
         }
         return BIOME_WEATHER_LIST.getOrDefault(level, null);
+    }
+
+    public static int getWeatherTickFactor(Level level) {
+        ArrayList<BiomeWeather> biomeList = getBiomeList(level);
+        int size = biomeList == null ? 1 : biomeList.size();
+        size = (int) (size * (Mth.clamp(7f / EclipticSeasonsApi.getInstance().getLastingDaysOfEachTerm(level), 0.8f, 3f)));
+        size = Math.max(1, size);
+        return size;
     }
 
     public static BiomeWeather getBiomeWeather(Level level, Holder<Biome> biomeHolder) {
@@ -160,7 +167,7 @@ public class WeatherManager {
     public static void onSetWeatherParameters(ServerLevel level, int pClearTime, int pWeatherTime, boolean pIsRaining, boolean pIsThundering) {
         ArrayList<BiomeWeather> biomeList = getBiomeList(level);
         if (biomeList == null) return;
-        int size = biomeList.size();
+        int size = getWeatherTickFactor(level);
         List<? extends Player> players = level.players();
         int clearTime = pIsRaining ? 0 : pClearTime / size;
         int rainTime = pIsRaining ? pWeatherTime / size : 0;
@@ -496,8 +503,6 @@ public class WeatherManager {
     }
 
     public static void runWeather(ServerLevel level, BiomeWeather biomeWeather, RandomSource random, int size) {
-        size = (int) (size * (Mth.clamp(7f / CommonConfig.Season.lastingDaysOfEachTerm.get(), 0.8f, 3f)));
-        size = Math.max(1, size);
 
         WeatherMode weatherMode = EclipticUtil.getWeatherMode(level);
         if (weatherMode == WeatherMode.REGION) {
@@ -592,7 +597,7 @@ public class WeatherManager {
         ArrayList<BiomeWeather> biomeList = getBiomeList(level);
         if (biomeList == null) return;
 
-        int size = (int) (biomeList.size() * (Mth.clamp(7f / CommonConfig.Season.lastingDaysOfEachTerm.get(), 0.8f, 3f)));
+        int size = getWeatherTickFactor(level);
         SolarTerm lastSolarTerm =
                 solarTerm == SolarTerm.NONE ? SolarTerm.NONE :
                         SolarTerm.collectValues()[(solarTerm.ordinal() - 1 + 24) % 24];
@@ -642,7 +647,7 @@ public class WeatherManager {
             var ws = WeatherManager.getBiomeList(level);
             if (ws != null) {
                 var random = level.getRandom();
-                int size = ws.size();
+                int size = getWeatherTickFactor(level);
                 for (WeatherManager.BiomeWeather biomeWeather : ws) {
                     for (int i = 0; i < (newTime - oldDayTime) / size; i++) {
                         WeatherManager.runWeather(level, biomeWeather, random, size);
@@ -777,7 +782,7 @@ public class WeatherManager {
         var levelBiomeWeather = getBiomeList(level);
 
         if (pos >= 0 && levelBiomeWeather != null && pos < levelBiomeWeather.size()) {
-            int size = levelBiomeWeather.size();
+            int size = getWeatherTickFactor(level);
             var biomeWeather = getBiomeList(level).get(pos);
 
             runWeather(level, biomeWeather, random, size);
