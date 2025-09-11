@@ -425,7 +425,7 @@ public class ExtraModelManager {
                 if (cut > 1
                     // || cut < -3
                 )
-                    if (!ClientConfig.Renderer.snowUnderTree.get())
+                    if (!ClientConfig.Renderer.snowUnderFence.get())
                         return false;
             }
         }
@@ -449,7 +449,7 @@ public class ExtraModelManager {
 
         boolean specialLeaves = false;
 
-        if (!isLight && ClientConfig.Renderer.snowUnderTree.get()) {
+        if (!isLight && ClientConfig.Renderer.snowUnderFence.get()) {
             checkPos.set(pos.getX(), pos.getY() + 1, pos.getZ());
             if (blockAndTintGetter.getBrightness(LightLayer.SKY, checkPos) >= 9) {
                 int y_real = blockAndTintGetter instanceof IMapSliceProvider ip ?
@@ -490,7 +490,7 @@ public class ExtraModelManager {
             } else {
                 if (MapChecker.extraSnowPassable(state)) {
                     isLight = !MapChecker.extraSnowPassable(blockAndTintGetter.getBlockState(checkPos));
-                } else if (!ClientConfig.Renderer.snowUnderTree.get()) {
+                } else if (!ClientConfig.Renderer.snowUnderFence.get()) {
                     isLight = !MapChecker.solidTest(blockAndTintGetter.getBlockState(checkPos));
                 }
             }
@@ -585,7 +585,7 @@ public class ExtraModelManager {
                 if (cut > 1
                     // || cut < -3
                 )
-                    if (!ClientConfig.Renderer.snowUnderTree.get()
+                    if (!ClientConfig.Renderer.snowUnderFence.get()
                             && !extendCheck)
                         return null;
             }
@@ -680,7 +680,7 @@ public class ExtraModelManager {
         //     }
         // }
 
-        if (!isLight && ClientConfig.Renderer.snowUnderTree.get()) {
+        if (!isLight && ClientConfig.Renderer.snowUnderFence.get()) {
             checkPos.set(pos.getX(), pos.getY() + 1, pos.getZ());
             if (blockAndTintGetter.getBrightness(LightLayer.SKY, checkPos) >= 9) {
                 int y_real = blockAndTintGetter instanceof IMapSliceProvider ip ?
@@ -733,7 +733,7 @@ public class ExtraModelManager {
             } else {
                 if (MapChecker.extraSnowPassable(state)) {
                     isLight = !MapChecker.extraSnowPassable(blockAndTintGetter.getBlockState(checkPos));
-                } else if (!ClientConfig.Renderer.snowUnderTree.get()) {
+                } else if (!ClientConfig.Renderer.snowUnderFence.get()) {
                     isLight = !MapChecker.solidTest(blockAndTintGetter.getBlockState(checkPos));
                 }
             }
@@ -846,7 +846,7 @@ public class ExtraModelManager {
                         if (originalCache == null)
                             originalCache = new BlockPos.MutableBlockPos(checkPos.getX(), checkPos.getY(), checkPos.getZ());
                         else originalCache.set(checkPos.getX(), checkPos.getY(), checkPos.getZ());
-                        if (!canSnowy(level, originalCache, neighSate, neighSateSeed, checkPos)) {
+                        if (!canSnowy(blockAndTintGetter, originalCache, neighSate, neighSateSeed, checkPos)) {
                             continue directionChecks;
                         }
                         // if (!((mapSlice != null && MapChecker.shouldSnowAt(level, checkPos, mapSlice.getSurfaceFaceBiomeId(checkPos), neighSate, random, neighSateSeed))

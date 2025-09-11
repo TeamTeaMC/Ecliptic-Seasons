@@ -1,3 +1,8 @@
+### 0.12.0-pre14-1
+
+- Fixed #89 _Rare random rendering crash when snowy edge is enabled_
+- Removed a deprecated option: Client.Render.snowUnderTree.
+
 ### 0.12.0-pre14
 
 - Slightly improved chunk rendering performance.

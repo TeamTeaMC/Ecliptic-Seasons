@@ -56,8 +56,7 @@ public class ClientConfig {
 
         public static ForgeConfigSpec.BooleanValue useVanillaCheck;
 
-        public static ForgeConfigSpec.BooleanValue betterSnow;
-        public static ForgeConfigSpec.BooleanValue snowUnderTree;
+        public static ForgeConfigSpec.BooleanValue snowUnderFence;
 
 
 
@@ -83,10 +82,8 @@ public class ClientConfig {
                     .define("UseVanillaCheck", false);
 
 
-            betterSnow = builder.comment("Blocks underneath fences etc. may also be covered with snow.")
-                    .define("SnowUnderFence", true);
-            snowUnderTree = builder.comment("Blocks under tree may also be covered with snow, note that this is only a client-side effect.")
-                    .define("snowUnderTree", false);
+            snowUnderFence = builder.comment("Blocks underneath solid blocks etc. may also be covered with snow.")
+                    .define("SnowUnderShadow", false);
 
             seasonalGrassColorChange = builder.comment("The colors of the grass and leaves change with the time of year.")
                     .define("SeasonalGrassColorChange", true);
