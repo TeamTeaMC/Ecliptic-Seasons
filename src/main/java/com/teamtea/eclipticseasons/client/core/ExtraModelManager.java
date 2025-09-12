@@ -265,7 +265,7 @@ public class ExtraModelManager {
             var snowModel = rendererHolder.getExtraModel();
 
             if (snowModel instanceof SnowyBakedModelWrapper) {
-                int blockType = MapChecker.getBlockType(state, blockAndTintGetter, pos);
+                int blockType = MapChecker.getBlockTypeFlag(blockAndTintGetter, pos, state);
                 if (MapChecker.customBuiltin(blockType))
                     return original;
                 if (direction == Direction.UP) {
@@ -293,7 +293,7 @@ public class ExtraModelManager {
         if (bakedModel instanceof SnowyBakedModelWrapper<?> snowyBakedModelWrapper) {
             int blockType = snowyBakedModelWrapper.getBindBlockType() > MapChecker.FLAG_IGNORE ?
                     snowyBakedModelWrapper.getBindBlockType() :
-                    MapChecker.getBlockType(state, blockAndTintGetter, pos);
+                    MapChecker.getBlockTypeFlag(blockAndTintGetter, pos, state);
             if (MapChecker.customBuiltin(blockType)) {
                 original = new ArrayList<>();
             }
@@ -840,7 +840,7 @@ public class ExtraModelManager {
                         BlockState neighSate = blockAndTintGetter.getBlockState(checkPos);
                         long neighSateSeed = neighSate.getSeed(checkPos);
 
-                        if (!(neighSate.is(Blocks.GRASS_BLOCK) || MapChecker.getBlockType(neighSate, blockAndTintGetter, checkPos) == MapChecker.FLAG_BLOCK)) {
+                        if (!(neighSate.is(Blocks.GRASS_BLOCK) || MapChecker.getBlockTypeFlag(blockAndTintGetter, checkPos, neighSate) == MapChecker.FLAG_BLOCK)) {
                             continue directionChecks;
                         }
                         if (originalCache == null)
@@ -975,7 +975,7 @@ public class ExtraModelManager {
     public static boolean isModelReplaceable(BlockState state, BlockGetter blockAndTintGetter, BlockPos pos, BakedModel bakedModel) {
         return (bakedModel instanceof IESReplaceModel model
                 && model.isReplace())
-                || isModelReplaceable(MapChecker.getBlockType(state, blockAndTintGetter, pos));
+                || isModelReplaceable(MapChecker.getBlockTypeFlag(blockAndTintGetter, pos, state));
     }
 
     public static boolean isModelReplaceable(BakedModel bakedModel, int flag) {

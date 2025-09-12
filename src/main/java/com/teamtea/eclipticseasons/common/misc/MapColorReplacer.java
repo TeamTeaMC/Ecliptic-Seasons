@@ -41,7 +41,7 @@ public class MapColorReplacer {
 
         boolean isLight = false;
 
-        int flag = MapChecker.getBlockType(state, level, pos);
+        int flag = MapChecker.getBlockTypeFlag(level, pos, state);
 
         int offset = MapChecker.getSnowOffset(state, flag);
 

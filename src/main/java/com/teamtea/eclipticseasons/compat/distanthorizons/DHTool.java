@@ -181,7 +181,7 @@ public class DHTool {
                                 ) {
 
                                     if (bottomY + instance.getMinY() == dhBlockPos.getY() &&
-                                            (MapChecker.getBlockType(blockStateWrapper_NowQuery.blockState, level, mcPos) != 0
+                                            (MapChecker.getBlockTypeFlag(level, mcPos, blockStateWrapper_NowQuery.blockState) != 0
                                                     // || (blockStateWrapper1.blockState.is(BlockTags.FLOWERS))
                                                     || (!blockStateWrapper_NowQuery.isSolid() && !blockStateWrapper_NowQuery.isLiquid())
                                             )) {

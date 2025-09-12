@@ -1,3 +1,7 @@
+### 0.12.0-pre15-1
+
+- Fixed an issue where the snow flag could not be set on blocks by SnowDefinition datapack in certain cases.
+
 ### 0.12.0-pre15
 
 - Optimized the tick calculation multiplier for weather.
