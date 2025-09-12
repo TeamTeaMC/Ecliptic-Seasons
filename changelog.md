@@ -1,3 +1,10 @@
+### 0.12.0-pre15
+
+- Optimized the tick calculation multiplier for weather.
+- The Snowy Edge model is no longer wrapped as a snowy model to avoid conflicts with the TopFaceCulling setting.
+- Fixed the issue where Enum2ObjectMap did not implement link traversal and the equals method.
+- Fixed the issue where a single Block object could not apply multiple SnowDefinition data packs for splitting.
+
 ### 0.12.0-pre14-1
 
 - Fixed #89 _Rare random rendering crash when snowy edge is enabled_

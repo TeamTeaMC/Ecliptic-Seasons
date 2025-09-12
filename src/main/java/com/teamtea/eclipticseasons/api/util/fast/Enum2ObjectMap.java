@@ -134,13 +134,24 @@ public class Enum2ObjectMap<K extends Enum<K>, V> implements Map<K, V> {
 
     @Override
     public @NotNull Set<Entry<K, V>> entrySet() {
-        Set<Entry<K, V>> entries = new HashSet<>();
+        Set<Entry<K, V>> entries = new LinkedHashSet<>();
         for (K key : keyType.getEnumConstants()) {
             if (this.values[key.ordinal()] != defaultValue) {
                 entries.add(new AbstractMap.SimpleEntry<>(key, get(key)));
             }
         }
         return entries;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Enum2ObjectMap<?, ?> that = (Enum2ObjectMap<?, ?>) o;
+        return Objects.deepEquals(values, that.values)
+                && Objects.equals(setFlags, that.setFlags)
+                && Objects.equals(keyType, that.keyType)
+                && Objects.equals(defaultValue, that.defaultValue);
     }
 
     public Class<K> getKeyType() {

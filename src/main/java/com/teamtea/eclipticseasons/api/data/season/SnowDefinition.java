@@ -49,9 +49,10 @@ public class SnowDefinition implements MapFiller<Block, SnowDefinition>, HolderM
     private final Info info = Info.builder().build();
 
     @Override
-    public void fillMap(Map<Block, SnowDefinition> map) {
+    public void fillMap(Map<Block, List<SnowDefinition>> map) {
         for (Holder<Block> block : blocks) {
-            map.put(block.value(), this);
+            List<SnowDefinition> definitionList = map.computeIfAbsent(block.value(), (b) -> new ArrayList<>());
+            definitionList.add(this);
         }
     }
 

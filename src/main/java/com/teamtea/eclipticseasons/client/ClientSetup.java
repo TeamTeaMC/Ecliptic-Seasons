@@ -170,9 +170,10 @@ public class ClientSetup {
                         ExtraModelManager.snowySlabBottom,
                         ExtraModelManager.snowOverlayBlock
                 ));
-        bakedModels.addAll(BlockRegistry.snowyStairs.get().getStateDefinition().getPossibleStates().stream()
-                .map(BlockModelShaper::stateToModelLocation).toList());
-        bakedModels.addAll(ExtraModelManager.snow_edge_overlays);
+        List.of(BlockRegistry.snowyBlock, BlockRegistry.snowyLeaves, BlockRegistry.snowySlab, BlockRegistry.snowyStairs, BlockRegistry.snowyVine)
+                .forEach(bh -> bakedModels.addAll(bh.get().getStateDefinition().getPossibleStates().stream()
+                        .map(BlockModelShaper::stateToModelLocation).toList()));
+        // bakedModels.addAll(ExtraModelManager.snow_edge_overlays);
 
         for (ResourceLocation modelResourceLocation : bakedModels) {
             BakedModel bakedModel1 = modelRegistry.get(modelResourceLocation);

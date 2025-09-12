@@ -12,34 +12,35 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.IdentityHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 public class SnowChecker {
 
-    public static final Map<Block, SnowDefinition> SNOW_DEFINITION_MAP = new IdentityHashMap<>(1024);
+    public static final Map<Block, List<SnowDefinition>> SNOW_DEFINITION_MAP = new IdentityHashMap<>(1024);
 
     public static final Map<BlockState, SnowDefinition.Info> statemap = new IdentityHashMap<>(4096);
 
     public static @NotNull SnowDefinition.Info getUncacheSnow(BlockState blockState) {
         SnowDefinition.Info sno = statemap.get(blockState);
         if (sno == null) {
-            SnowDefinition snowDefinition = SNOW_DEFINITION_MAP.get(blockState.getBlock());
-            if (snowDefinition != null) {
-                boolean match = true;
-                for (SnowDefinition.PropertyTester propertyTester : snowDefinition.getMap()) {
-                    if (!(propertyTester.matches(blockState) && !propertyTester.isReverse())) {
-                        match = false;
-                        break;
+            SnowDefinition snowDefinition = null;
+            List<SnowDefinition> snowDefinitions = SNOW_DEFINITION_MAP.get(blockState.getBlock());
+            if (snowDefinitions != null) {
+                snowFind:
+                for (SnowDefinition definition : snowDefinitions) {
+                    for (SnowDefinition.PropertyTester propertyTester : definition.getMap()) {
+                        boolean matches = propertyTester.matches(blockState);
+                        if (matches ^ propertyTester.isReverse()) {
+                            snowDefinition = definition;
+                            break snowFind;
+                        }
                     }
                 }
-                if (match) {
-                    sno = snowDefinition.getInfo();
-                }
             }
-            statemap.put(blockState, snowDefinition == null ?
-                    SnowDefinition.Info.EMPTY :
-                    snowDefinition.getInfo());
+            sno = snowDefinition == null ? SnowDefinition.Info.EMPTY : snowDefinition.getInfo();
+            statemap.put(blockState, sno);
         }
         return sno == null ? SnowDefinition.Info.EMPTY : sno;
     }
