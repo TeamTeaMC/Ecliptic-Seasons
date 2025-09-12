@@ -28,14 +28,21 @@ public class SnowChecker {
             SnowDefinition snowDefinition = null;
             List<SnowDefinition> snowDefinitions = SNOW_DEFINITION_MAP.get(blockState.getBlock());
             if (snowDefinitions != null) {
-                snowFind:
                 for (SnowDefinition definition : snowDefinitions) {
-                    for (SnowDefinition.PropertyTester propertyTester : definition.getMap()) {
-                        boolean matches = propertyTester.matches(blockState);
-                        if (matches ^ propertyTester.isReverse()) {
-                            snowDefinition = definition;
-                            break snowFind;
+                    if (definition.getMap().isEmpty()) {
+                        snowDefinition = definition;
+                        break;
+                    }
+                    boolean allMatch = true;
+                    for (SnowDefinition.PropertyTester tester : definition.getMap()) {
+                        if (tester.matches(blockState) == tester.isReverse()) {
+                            allMatch = false;
+                            break;
                         }
+                    }
+                    if (allMatch) {
+                        snowDefinition = definition;
+                        break;
                     }
                 }
             }
