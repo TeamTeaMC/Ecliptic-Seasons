@@ -43,7 +43,7 @@ public class CommonConfig {
 
         private static void load(ForgeConfigSpec.Builder builder) {
             builder.push("Debug");
-            logIllegalUse = builder.comment("Enable debug option to detect illegal use of functions.")
+            logIllegalUse = builder.comment("“Enable logging for illegal function usage.")
                     .define("LogIllegalUse", false);
             notLightAbove = builder.comment("Disable snowy blocks beneath light sources with light level 0.")
                     .define("NotSnowyUnderLight0", false);
@@ -188,10 +188,10 @@ public class CommonConfig {
                     .define("BoneMealConsumeOnFailure", true);
             greenHouseMaxDiameter = builder.comment("The maximum effective diameter of the greenhouse.")
                     .defineInRange("GreenHouseMaxDiameter", 32, 5, 256);
-            greenHouseMaxHeight = builder.comment("The maximum effective diameter of the greenhouse.")
+            greenHouseMaxHeight = builder.comment("The maximum effective height of the greenhouse.")
                     .defineInRange("GreenHouseMaxHeight", 10, 3, 128);
-            darkGreenhouseFailChance = builder.comment("Chance that crops fail to grow due to low sunlight inside the greenhouse.")
-                    .defineInRange("DarkGreenhouseFailChance", 2000, 0, 10000);
+            darkGreenhouseFailChance = builder.comment("Chance that crops fail to grow inside the greenhouse due to insufficient light. Higher values make failure more likely.")
+                    .defineInRange("LowLightGreenhouseFailChance", 2000, 0, 10000);
             simpleGreenHouse = builder.comment("Build a simple greenhouse without core blocks and humidity modifiers.")
                     .define("SimpleGreenHouseMode", false);
             noCostHumidifier = builder.comment("If true, the Humidifier block will no longer consume blocks during conversion.")
@@ -265,8 +265,8 @@ public class CommonConfig {
             lessFishInThunder = builder.comment("Reduce fish availability during thunderstorms.")
                     .define("LessFishInThunder", false);
 
-            enableCoreWork = builder.comment("Greenhouse core would also work for animal check but not need a greenhouse.")
-                    .define("EnableCoreWork", true);
+            enableCoreWork = builder.comment("Season Core affects animals even without a greenhouse.")
+                    .define("SeasonCoreAffectsAnimals", true);
             builder.pop();
         }
 
@@ -301,9 +301,9 @@ public class CommonConfig {
                     .define("NotRainInDesert", false);
             shouldInitWeather = builder.comment("Set it true to initialize weather and snow when loading the mod or level for the first time.")
                     .define("ShouldInitWeather", false);
-            rainChanceMultiplier = builder.comment("Multiplier (0-1000) affecting how likely rain will occur.")
+            rainChanceMultiplier = builder.comment("Multiplier (0-1000) affecting the chance of rain. Higher values make rain more likely.")
                     .defineInRange("RainChancePercentMultiplier", 40, 0, 1000);
-            thunderChanceMultiplier = builder.comment("Multiplier (0-1000) affecting how likely thunder will occur.")
+            thunderChanceMultiplier = builder.comment("Multiplier (0-1000) affecting the chance of thunder. Higher values make thunder more likely.")
                     .defineInRange("ThunderChancePercentMultiplier", 20, 0, 1000);
             builder.pop();
         }
@@ -383,9 +383,9 @@ public class CommonConfig {
             forceChunkUpdate = builder.comment("When SnowInWorld is enabled, update chunk state on load based on differences from previous state records.")
                     .define("ForceSnowyChunkUpdate", true);
             snowyUnderSnowLike = builder.comment("When SnowInWorld is enabled, blocks like full blocks under snow layers will have a snowy appearance.")
-                    .define("SnowyUnderSnowLike", true);
+                    .define("SnowCoverUnderBlocks", true);
             stepMelt = builder.comment("When SnowInWorld is enabled, snow may melt when stepped on due to heat.")
-                    .define("StepMelt", false);
+                    .define("SnowStepMelt", false);
             builder.pop();
         }
     }

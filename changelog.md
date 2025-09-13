@@ -1,3 +1,39 @@
+### 0.12.0-pre17
+
+> This version mainly organizes configuration names and some comments.
+> Please pay attention to the updates and adjustments.
+
+**Particle**
+
+- SeasonParticle → SeasonalParticles
+- butterflySpawnWeight → ButterflySpawnDelay
+- FallenLeavesDropWeight → FallenLeavesDropDelay
+- FireflySpawnWeight → FireflySpawnDelay
+- WildGooseSpawnWeight → WildGooseSpawnDelay
+
+**Renderer**
+
+- TopFaceCulling → CullTopFaceWithSnow
+- UseVanillaSnowCheck → UseVanillaLightCheckForSnow
+
+**Debug**
+
+- SnowyEdges → SmoothSnowyEdges
+- MinChunkCompileWaringTime → MinChunkCompileWarningTime
+
+**Snow**
+
+- StepMelt → SnowStepMelt
+- SnowyUnderSnowLike → SnowCoverUnderBlocks
+
+**Crop**
+
+- DarkGreenhouseFailChance → LowLightGreenhouseFailChance
+
+**Animal**
+
+- EnableCoreWork → SeasonCoreAffectsAnimals
+
 ### 0.12.0-pre16
 
 - Added configurable biome snow lines.

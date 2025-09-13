@@ -21,14 +21,14 @@ public class ClientConfig {
     public static class Debug {
 
         public static ForgeConfigSpec.BooleanValue debugInfo;
-        public static ForgeConfigSpec.BooleanValue debugRender;
+        public static ForgeConfigSpec.BooleanValue smoothSnowyEdges;
 
         private static void load(ForgeConfigSpec.Builder builder) {
             builder.push("Debug");
             debugInfo = builder.comment("Info used for development.")
                     .define("DebugInfo", false);
-            debugRender = builder.comment("Render snow edge overlay on neighbors for smoother snowy transitions.")
-                    .define("SnowyEdges", false);
+            smoothSnowyEdges = builder.comment("Render snow edge overlay on neighbors for smoother snowy transitions.")
+                    .define("SmoothSnowyEdges", false);
             builder.pop();
         }
     }
@@ -58,8 +58,6 @@ public class ClientConfig {
 
         public static ForgeConfigSpec.BooleanValue snowUnderFence;
 
-
-
         public static ForgeConfigSpec.BooleanValue seasonalGrassColorChange;
         public static ForgeConfigSpec.BooleanValue seasonalColorChangeExtend;
         public static ForgeConfigSpec.BooleanValue smootherSeasonalGrassColorChange;
@@ -73,19 +71,19 @@ public class ClientConfig {
             enhancementChunkRenderUpdate = builder.comment("Enhanced reload, which will refresh all sections periodically.")
                     .define("EnhancementChunkRenderUpdate", false);
             topFaceCulling = builder.comment("Cull the top face if snowy model is applied.")
-                    .define("TopFaceCulling", false);
+                    .define("CullTopFaceWithSnow", false);
 
             resetRendererAfterSleep = builder.comment("Whether to reset the renderer after waking up.")
                     .define("ResetRendererAfterSleep", false);
 
             useVanillaCheck = builder.comment("Use Minecraft’s default lighting rules to decide if snow should fall.")
-                    .define("UseVanillaCheck", false);
+                    .define("UseVanillaSnowCheck", false);
 
 
             snowUnderFence = builder.comment("Blocks underneath solid blocks etc. may also be covered with snow.")
                     .define("SnowUnderShadow", false);
 
-            seasonalGrassColorChange = builder.comment("The colors of the grass and leaves change with the time of year.")
+            seasonalGrassColorChange = builder.comment("Changes grass and leaf colors with seasons visually.")
                     .define("SeasonalGrassColorChange", true);
             seasonalColorChangeExtend = builder.comment("Birch, spruce, and mangrove leaves colors also have seasonal changes.")
                     .define("SeasonalColorChangeExtend", true);
@@ -128,26 +126,28 @@ public class ClientConfig {
         private static void load(ForgeConfigSpec.Builder builder) {
             builder.push("Particle");
             seasonParticle = builder.comment("See butterflies in the spring, fireflies in the summer, and fallen leaves.")
-                    .define("SeasonParticle", true);
+                    .define("SeasonalParticles", true);
+
             butterfly = builder.comment("In spring, butterflies fly over the flowers.")
                     .define("Butterfly", true);
-            butterflySpawnWeight = builder.comment("The difficulty multiplier of butterfly particles, the value should be between 1-10000, the default is 10.")
-                    .defineInRange("butterflySpawnWeight", 10, 1, 10000);
+            butterflySpawnWeight = builder.comment("The interval/delay of butterfly particles. Higher values make butterflies appear less frequently.")
+                    .defineInRange("ButterflySpawnDelay", 10, 1, 10000);
 
             fallenLeaves = builder.comment("Leaf blocks will drop leaves, and most frequently in the fall.")
                     .define("FallenLeaves", true);
-            fallenLeavesDropWeight = builder.comment("The difficulty multiplier of fallen leaves particles, the value should be between 1-10000, the default is 10.")
-                    .defineInRange("FallenLeavesDropWeight", 10, 1, 10000);
+            fallenLeavesDropWeight = builder.comment("The interval/delay of fallen leaf particles. Higher values make butterflies appear less frequently.")
+                    .defineInRange("FallenLeavesDropDelay", 10, 1, 10000);
 
             firefly = builder.comment("In the summer evenings, you can see fireflies beside the flowers.")
                     .define("Firefly", true);
-            fireflySpawnWeight = builder.comment("The difficulty multiplier of firefly particles, the value should be between 1-10000, the default is 10.")
-                    .defineInRange("FireflySpawnWeight", 10, 1, 10000);
+            fireflySpawnWeight = builder.comment("The interval/delay of firefly particles. Higher values make butterflies appear less frequently.")
+                    .defineInRange("FireflySpawnDelay", 10, 1, 10000);
 
             wildGoose = builder.comment("When the grass and trees turn yellow, the wild geese fly south.")
                     .define("WildGoose", true);
-            wildGooseSpawnWeight = builder.comment("The difficulty multiplier of wild geese particles, the value should be between 1-10000, the default is 10.")
-                    .defineInRange("WildGooseSpawnWeight", 10, 1, 10000);
+            wildGooseSpawnWeight = builder.comment("The interval/delay of wild goose particles. Higher values make butterflies appear less frequently.")
+                    .defineInRange("WildGooseSpawnDelay", 10, 1, 10000);
+
 
             seasonGreenhouse = builder.comment("When the season core block is active, emits soft light particles to indicate the growth environment.")
                     .define("SeasonGreenhouse", true);

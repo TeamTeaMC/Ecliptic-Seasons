@@ -568,7 +568,7 @@ public class ExtraModelManager {
         if (checkPos == null) checkPos = posToMutable(pos);
         else checkPos.set(pos.getX(), pos.getY(), pos.getZ());
         checkPos.set(pos.getX(), pos.getY() + 1, pos.getZ());
-        if (ClientConfig.Debug.debugRender.get() && blockAndTintGetter.getBrightness(LightLayer.SKY, checkPos) > 0) {
+        if (ClientConfig.Debug.smoothSnowyEdges.get() && blockAndTintGetter.getBrightness(LightLayer.SKY, checkPos) > 0) {
             extendCheck = true;
         }
 
@@ -820,7 +820,7 @@ public class ExtraModelManager {
                 // !FMLEnvironment.production
                     !isSnowy
                             && (flag == MapChecker.FLAG_BLOCK || onBlock == Blocks.GRASS_BLOCK)
-                            && ClientConfig.Debug.debugRender.get()) {
+                            && ClientConfig.Debug.smoothSnowyEdges.get()) {
                 int index = -1;
                 int ddLength = 0;
                 int[][][] directions = DirectionMask.DIRECTIONS;
