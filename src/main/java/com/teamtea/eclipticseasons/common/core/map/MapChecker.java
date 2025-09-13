@@ -549,39 +549,51 @@ public class MapChecker {
     }
 
 
-    public static boolean shouldSnowAt(Level level, BlockPos pos, BlockState state, RandomSource random, long seed) {
+    public static boolean isAboveSnowLine(@NotNull Level level, Biome biome, BlockPos pos) {
+        return isAboveSnowLine(biome, pos.getY(), level instanceof ServerLevel);
+    }
+
+    public static boolean isAboveSnowLine(Biome biome, int pos, boolean isServer) {
+        return pos > BiomeClimateManager.getSnowLine(biome, isServer);
+    }
+
+    public static boolean shouldSnowAt(@Nonnull Level level, BlockPos pos, BlockState state, RandomSource random, long seed) {
         if (SnowyMapChecker.shouldCheckSnowyStatus(level, pos)) {
             return SnowyMapChecker.isSnowyBlock(level, pos);
         }
 
         var biomeHolder = getSurfaceBiome(level, pos);
-        boolean isSnowy = false;
-        if (WeatherManager.getSnowDepthAtBiome(level, biomeHolder.value()) > Math.abs(seed % 100)) {
-            isSnowy = notLightAbove(level, pos, 4);
+        Biome biome = biomeHolder.value();
+        boolean isSnowy = WeatherManager.getSnowDepthAtBiome(level, biome) > Math.abs(seed % 100);
+        if (!isSnowy) {
+            isSnowy = isAboveSnowLine(level, biome, pos);
         }
+        if (isSnowy) isSnowy = notLightAbove(level, pos, 4);
         return isSnowy;
     }
 
 
-    public static boolean shouldSnowAt(Level level, BlockPos pos, int biomeId, BlockState state, RandomSource random, long seed) {
+    public static boolean shouldSnowAt(@Nonnull Level level, BlockPos pos, int biomeId, BlockState state, @Nullable RandomSource random, long seed) {
         if (SnowyMapChecker.shouldCheckSnowyStatus(level, pos)) {
             return SnowyMapChecker.isSnowyBlock(level, pos);
         }
 
-        boolean isSnowy = false;
-
+        Biome biome = idToBiome(level, biomeId).value();
         ArrayList<WeatherManager.BiomeWeather> biomeList = WeatherManager.getBiomeList(level);
-        if (biomeList != null && WeatherManager.getSnowDepthAtBiome(level, idToBiome(level, biomeId).value()) > Math.abs(seed % 100)) {
-            isSnowy = notLightAbove(level, pos, 4);
+        boolean isSnowy = biomeList != null && WeatherManager.getSnowDepthAtBiome(level, biome) > Math.abs(seed % 100);
+        if (!isSnowy) {
+            isSnowy = isAboveSnowLine(level, biome, pos);
         }
+        if (isSnowy) isSnowy = notLightAbove(level, pos, 4);
         return isSnowy;
     }
 
-    public static boolean shouldSnowAtBiome(Level level, Biome biome, BlockState state, RandomSource random, long seed) {
-        if (WeatherManager.getSnowDepthAtBiome(level, biome) > Math.abs(seed % 100)) {
+
+    public static boolean shouldSnowAtBiome(@Nonnull Level level, Biome biome, BlockState state, RandomSource random, long seed, BlockPos mcPos) {
+        if (isAboveSnowLine(level, biome, mcPos)) {
             return true;
         }
-        return false;
+        return WeatherManager.getSnowDepthAtBiome(level, biome) > Math.abs(seed % 100);
     }
 
     public static boolean isSmallBiome(@Nonnull Holder<Biome> biomeHolder) {

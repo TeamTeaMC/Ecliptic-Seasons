@@ -200,6 +200,7 @@ public class CommandHandler {
             for (WeatherManager.BiomeWeather biomeWeather : levelBiomeWeather) {
                 if (result.test(biomeWeather.biomeHolder)) {
                     biomeWeather.snowDepth = (byte) depth;
+                    biomeWeather.lastRainTime= level.getGameTime();
                     found = true;
                 }
             }
@@ -217,14 +218,15 @@ public class CommandHandler {
         var levelBiomeWeather = WeatherManager.getBiomeList(level);
         if (levelBiomeWeather != null) {
             boolean found = false;
-            int size = levelBiomeWeather.size();
+            int size = WeatherManager.getWeatherTickFactor(level);
             SolarTerm solarTerm = EclipticSeasonsApi.getInstance().getSolarTerm(level);
             for (WeatherManager.BiomeWeather biomeWeather : levelBiomeWeather) {
                 if (result.test(biomeWeather.biomeHolder)) {
                     BiomeRain biomeRain = WeatherManager.getBiomeRain(level, solarTerm, biomeWeather.biomeHolder);
-                    biomeWeather.rainTime = setRain ? biomeRain.getRainDuration(level.getRandom()) / size : 0;
                     biomeWeather.clearTime = setRain ? 0 : biomeRain.getRainDelay(level.getRandom()) / size;
 
+                    biomeWeather.rainTime = setRain ? biomeRain.getRainDuration(level.getRandom()) / size : 0;
+                    biomeWeather.lastRainTime = setRain ? level.getGameTime() : biomeWeather.lastRainTime;
                     biomeWeather.thunderTime = isThunder ? biomeRain.getThunderDuration(level.getRandom()) / size : 0;
 
                     found = true;

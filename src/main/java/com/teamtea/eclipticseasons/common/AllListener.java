@@ -26,6 +26,7 @@ import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.core.snow.SnowChecker;
 import com.teamtea.eclipticseasons.common.core.snow.SnowyMapChecker;
 import com.teamtea.eclipticseasons.common.core.snow.SnowyStatusKeeper;
+import com.teamtea.eclipticseasons.common.core.snow.WeatherStatusKeeper;
 import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
 import com.teamtea.eclipticseasons.common.network.SimpleNetworkHandler;
 import com.teamtea.eclipticseasons.common.network.message.DataPackEventMessage;
@@ -338,6 +339,7 @@ public class AllListener {
         if (event.getObject() instanceof LevelChunk) {
             event.addCapability(EclipticSeasons.rl("biomes_holder"), BiomeHolder.empty());
             event.addCapability(EclipticSeasons.rl("snowy_status"), SnowyStatusKeeper.create());
+            event.addCapability(EclipticSeasons.rl("weather_status"), WeatherStatusKeeper.create());
         }
     }
 

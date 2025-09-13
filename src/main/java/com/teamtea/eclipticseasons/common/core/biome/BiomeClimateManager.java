@@ -54,6 +54,9 @@ public class BiomeClimateManager {
 
     public static final Map<Biome, Holder<Biome>> WEATHER_REGION_MAP = new IdentityHashMap<>();
 
+    // snow line
+    public static final Map<Biome, Integer> SNOW_LINE_MAP = new IdentityHashMap<>();
+
     public static void resetBiomeTags(RegistryAccess registryAccess, boolean isServer) {
         Optional<Registry<Biome>> registry = registryAccess.registry(Registries.BIOME);
         if (registry.isEmpty()) {
@@ -152,6 +155,8 @@ public class BiomeClimateManager {
                         (biome, map) -> map
                 );
             }
+
+            setSnowLine(registryAccess, SNOW_LINE_MAP);
         }
     }
 
@@ -180,22 +185,50 @@ public class BiomeClimateManager {
         );
     }
 
+    public static void setSnowLine(RegistryAccess registryAccess, Map<Biome, Integer> biomeIntegerMap) {
+        Optional<Registry<Biome>> biomeRegistry = registryAccess.registry(Registries.BIOME);
+        if (biomeRegistry.isPresent()) {
+            biomeIntegerMap.clear();
+            for (var serializable : CommonConfig.Snow.biomeSnowLines.get()) {
+                String biomeOrTag = serializable.get(0) + "";
+                int snowLineHeight = Integer.parseInt(serializable.get(1) + "");
+                if (biomeOrTag.startsWith("#")) {
+                    TagKey<Biome> biomeTagKey = TagKey.create(Registries.BIOME, new ResourceLocation(biomeOrTag.substring(1, biomeOrTag.length() - 1)));
+                    Optional<HolderSet.Named<Biome>> tag = biomeRegistry.get().getTag(biomeTagKey);
+                    if (tag.isPresent()) {
+                        for (Holder<Biome> biomeHolder : tag.get()) {
+                            biomeIntegerMap.putIfAbsent(biomeHolder.value(), snowLineHeight);
+                        }
+                    }
+                } else {
+                    Optional<Holder.Reference<Biome>> holder = biomeRegistry.get().getHolder(ResourceKey.create(Registries.BIOME, new ResourceLocation(biomeOrTag)));
+                    if (holder.isPresent()) {
+                        biomeIntegerMap.putIfAbsent(holder.get().value(), snowLineHeight);
+                    }
+                }
+            }
+        }
+    }
 
     public static final BiomeClimateSettings EMPTY = new BiomeClimateSettings();
 
-    // not really need to know if is server for 1.20
-    @Deprecated
     public static BiomeClimateSettings getBiomeClimateSettings(Biome biome, boolean isServer) {
-        return BIOME_CLIMATE_MAP.getOrDefault(biome, EMPTY);
+        BiomeClimateSettings v = BIOME_CLIMATE_MAP.get(biome);
+        return v != null ? v : EMPTY;
     }
 
-
     public static Map<SolarTerm, CustomRain> getCustomRain(Biome biome, boolean isServer) {
-        return CUSTOME_BIOME_RAIN_MAP.getOrDefault(biome, Map.of());
+        Map<SolarTerm, CustomRain> v = CUSTOME_BIOME_RAIN_MAP.get(biome);
+        return v != null ? v : Map.of();
     }
 
     public static @Nullable ISnowTerm getCustomSnowTerm(Biome biome, boolean isServer) {
-        return CUSTOM_SNOW_TERM_MAP.getOrDefault(biome, null);
+        return CUSTOM_SNOW_TERM_MAP.get(biome);
+    }
+
+    public static int getSnowLine(Biome biome, boolean isServer) {
+        Integer i = SNOW_LINE_MAP.get(biome);
+        return i == null ? Integer.MAX_VALUE : i;
     }
 
     public static final float SNOW_LEVEL = 0.15F;

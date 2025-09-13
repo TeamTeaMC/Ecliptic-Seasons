@@ -1,6 +1,7 @@
 package com.teamtea.eclipticseasons.common.core.snow;
 
 
+import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
@@ -12,13 +13,14 @@ import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.network.SimpleNetworkHandler;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntIntImmutablePair;
+import it.unimi.dsi.fastutil.ints.IntLongMutablePair;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import it.unimi.dsi.fastutil.longs.Long2IntLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.longs.LongArrayList;
 import it.unimi.dsi.fastutil.longs.LongIterator;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ReferenceLinkedOpenHashSet;
-import lombok.Data;
+import lombok.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
@@ -63,15 +65,11 @@ public class SnowyStatusKeeper implements Cloneable, ICapabilityProvider, INBTSe
                     .forGetter(o -> new ArrayList<>(o.posMap.keySet())),
             Codec.BYTE.listOf()
                     .optionalFieldOf("status", List.of())
-                    .forGetter(o -> o.posMap.values().stream().map(Integer::byteValue).toList()),
-            CodecUtil.holderCodec(Registries.BIOME).listOf().optionalFieldOf("biomes", List.of())
-                    .forGetter(o -> new ArrayList<>(o.snowDepthRecord.keySet())),
-            Codec.INT.listOf().optionalFieldOf("snow_depth", List.of())
-                    .forGetter(o -> new ArrayList<>(o.snowDepthRecord.values()))
+                    .forGetter(o -> o.posMap.values().stream().map(Integer::byteValue).toList())
     ).apply(ins, SnowyStatusKeeper::new));
 
     protected SnowyStatusKeeper() {
-        this(List.of(), List.of(), List.of(), List.of());
+        this(List.of(), List.of());
     }
 
     public static SnowyStatusKeeper create() {
@@ -79,9 +77,7 @@ public class SnowyStatusKeeper implements Cloneable, ICapabilityProvider, INBTSe
     }
 
     public SnowyStatusKeeper(List<Long> posList,
-                             List<Byte> status,
-                             List<Holder<Biome>> biomes,
-                             List<Integer> snow_depth) {
+                             List<Byte> status) {
         posMap.defaultReturnValue(FLAG_NOT_RECORD);
         if (posList.size() == status.size() || status.isEmpty()) {
             for (int i = 0, pairsSize = posList.size(); i < pairsSize; i++) {
@@ -90,21 +86,14 @@ public class SnowyStatusKeeper implements Cloneable, ICapabilityProvider, INBTSe
             }
         }
 
-        if (biomes.size() == snow_depth.size()) {
-            for (int i = 0, biomesSize = biomes.size(); i < biomesSize; i++) {
-                Holder<Biome> biome = biomes.get(i);
-                snowDepthRecord.put(biome, snow_depth.get(i));
-            }
-        }
         stepCount.defaultReturnValue(-1);
     }
+
 
     private final Long2IntLinkedOpenHashMap posMap = new Long2IntLinkedOpenHashMap();
     private final Long2IntLinkedOpenHashMap stepCount = new Long2IntLinkedOpenHashMap();
     // private final Short2ObjectLinkedOpenHashMap<IntArrayList> xzPosList = new Short2ObjectLinkedOpenHashMap<>();
-    private final Map<Holder<Biome>, Integer> snowDepthRecord = new Reference2ObjectLinkedOpenHashMap<>();
 
-    private final Set<Holder<Biome>> biomeUse = new ReferenceLinkedOpenHashSet<>();
     private final LongArrayList posListUpdate = new LongArrayList();
     private final IntArrayList statusListUpdate = new IntArrayList();
 
@@ -140,14 +129,9 @@ public class SnowyStatusKeeper implements Cloneable, ICapabilityProvider, INBTSe
         }
     }
 
-    public void removeBiomeRecord(Holder<Biome> biomeHolder) {
-        this.snowDepthRecord.remove(biomeHolder);
-        setChange();
-    }
 
     public void updateAndSend(ServerLevel serverLevel, LevelChunk chunk) {
         if (EclipticUtil.canSnowyBlockInteract()) {
-            updateBiomeWhenEndTick(serverLevel);
             if (change) {
                 chunk.setUnsaved(true);
                 if (!posListUpdate.isEmpty()) {
@@ -160,65 +144,15 @@ public class SnowyStatusKeeper implements Cloneable, ICapabilityProvider, INBTSe
         change = false;
     }
 
-    protected void updateBiomeWhenEndTick(ServerLevel serverLevel) {
-        for (Holder<Biome> biomeHolder : biomeUse) {
-            int snowDepthAtBiome = WeatherManager.getSnowDepthAtBiome(serverLevel, biomeHolder.value());
-            Integer put = snowDepthRecord.put(biomeHolder, snowDepthAtBiome);
-            if (put != null && put != snowDepthAtBiome) {
-                setChange();
-            }
-        }
-    }
 
     protected void setChange() {
         change = true;
+        cacheTag = null;
     }
 
-    public Map<Holder<Biome>, IntIntImmutablePair> collectSnowyUpdate(Level level, @Nullable BiomeHolder biomeHolder) {
-        Map<Holder<Biome>, IntIntImmutablePair> biomeSnowyUpdate = new IdentityHashMap<>();
-        if (EclipticUtil.canSnowyBlockInteract() && !level.isClientSide) {
-            // a chunk never tick without any record
-            if (snowDepthRecord.isEmpty()) {
-                Set<Holder<Biome>> biomeDetect = new ReferenceLinkedOpenHashSet<>();
-                if (biomeHolder != null) {
-                    Registry<Biome> biomes = level.registryAccess().registryOrThrow(Registries.BIOME);
-                    IntOpenHashSet ids = new IntOpenHashSet(biomeHolder.biomes());
-                    for (int i : ids.toIntArray()) {
-                        biomeDetect.add(MapChecker.idToBiome(biomes, i));
-                    }
-                }
-                var ws = WeatherManager.getBiomeList(level);
-                if (ws != null) {
-                    // level.getChunkSource().getGenerator().getBiomeSource().possibleBiomes()
-                    for (WeatherManager.BiomeWeather w : ws) {
-                        if (w.snowDepth > 0 && (biomeDetect.isEmpty() || biomeDetect.contains(w.biomeHolder)))
-                            biomeSnowyUpdate.put(w.biomeHolder, IntIntImmutablePair.of(w.snowDepth, 0));
-                    }
-                }
-            } else {
-                snowDepthRecord.forEach((biome, oldBiomeSnowDepth) -> {
-                    int snowDepthAtBiome = WeatherManager.getSnowDepthAtBiome(level, biome.value());
-                    int snowDepthIncrease = snowDepthAtBiome - oldBiomeSnowDepth;
-                    int offsetAbs = Mth.abs(snowDepthIncrease);
-                    if ((snowDepthAtBiome < 3 || snowDepthAtBiome > 97) && offsetAbs != 0) {
-                        biomeSnowyUpdate.put(biome, IntIntImmutablePair.of(snowDepthAtBiome, 0));
-                    } else if (offsetAbs > 20) {
-                        biomeSnowyUpdate.put(biome, IntIntImmutablePair.of(snowDepthAtBiome, snowDepthIncrease));
-                    }
-                });
-            }
-        }
-        return biomeSnowyUpdate;
-    }
 
-    public void updateSnowDepthRecord(Map<Holder<Biome>, IntIntImmutablePair> map) {
-        map.forEach((biomeHolder, immutablePair) ->
-                snowDepthRecord.put(biomeHolder, immutablePair.leftInt())
-        );
-        setChange();
-    }
-
-    public void tickChunk(ServerLevel level, LevelChunk chunk, ChunkPos chunkPos, BlockPos checkPos, ChunkInfoMap chunkInfoMap) {
+    public void tickChunk(ServerLevel level, LevelChunk chunk, ChunkPos chunkPos, BlockPos checkPos, ChunkInfoMap chunkInfoMap,
+                          WeatherStatusKeeper weatherStatusKeeper) {
         if (!EclipticUtil.canSnowyBlockInteract()) return;
         int height = chunkInfoMap.getHeight(checkPos);
         int surfaceHeight = chunk.getHeight(Heightmap.Types.WORLD_SURFACE, checkPos.getX(), checkPos.getZ());
@@ -228,7 +162,7 @@ public class SnowyStatusKeeper implements Cloneable, ICapabilityProvider, INBTSe
 
         if (height <= checkPos.getY()) {
             Holder<Biome> biome = MapChecker.getSurfaceBiomeByChunk(level, chunk, checkPos);
-            biomeUse.add(biome);
+            weatherStatusKeeper.getBiomeUse().add(biome);
 
             BlockState state = chunk.getBlockState(checkPos);
             int flag = MapChecker.getBlockTypeFlag(level, checkPos, state);
@@ -324,14 +258,21 @@ public class SnowyStatusKeeper implements Cloneable, ICapabilityProvider, INBTSe
         return LazyOptional.empty();
     }
 
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    @Getter(AccessLevel.NONE)
+    private transient CompoundTag cacheTag = null;
+
     @Override
     public CompoundTag serializeNBT() {
         if (!EclipticUtil.canSnowyBlockInteract()) new CompoundTag();
+        if (cacheTag != null) return cacheTag;
         Level level = WeatherManager.fetchLevelIfNull(null);
         if (level != null) {
             RegistryOps<Tag> registryOps = RegistryOps.create(NbtOps.INSTANCE, level.registryAccess());
             Optional<Tag> result = CODEC.encodeStart(registryOps, this).result();
             if (result.orElse(null) instanceof CompoundTag compoundTag) {
+                this.cacheTag = compoundTag;
                 return compoundTag;
             }
         }
@@ -341,7 +282,7 @@ public class SnowyStatusKeeper implements Cloneable, ICapabilityProvider, INBTSe
     @Override
     public void deserializeNBT(CompoundTag nbt) {
         if (!EclipticUtil.canSnowyBlockInteract()) return;
-
+        if (!posMap.isEmpty() || !stepCount.isEmpty()) return;
         Level level = WeatherManager.fetchLevelIfNull(null);
         if (level != null) {
             RegistryOps<Tag> registryOps = RegistryOps.create(NbtOps.INSTANCE, level.registryAccess());
@@ -352,8 +293,6 @@ public class SnowyStatusKeeper implements Cloneable, ICapabilityProvider, INBTSe
 
     public void copyFrom(SnowyStatusKeeper keeper) {
         this.posMap.clear();
-        this.snowDepthRecord.clear();
         this.posMap.putAll(keeper.posMap);
-        this.snowDepthRecord.putAll(keeper.snowDepthRecord);
     }
 }

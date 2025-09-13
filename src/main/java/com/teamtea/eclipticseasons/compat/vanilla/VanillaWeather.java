@@ -82,7 +82,7 @@ public class VanillaWeather {
                     Biome.Precipitation.RAIN;
 
             var snowTerm = SolarTerm.getSnowTerm(biome, level instanceof ServerLevel, EclipticUtil.getSnowTempChange(level));
-            boolean flag_cold = snowTerm.maySnow(solarTerm);
+            boolean flag_cold = snowTerm.maySnow(solarTerm, biome, pos, level instanceof ServerLevel);
             if (resultPrecipitation == Biome.Precipitation.RAIN) {
                 if (flag_cold) {
                     resultPrecipitation = Biome.Precipitation.SNOW;

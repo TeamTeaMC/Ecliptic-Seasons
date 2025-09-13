@@ -1,3 +1,10 @@
+### 0.12.0-pre16
+
+- Added configurable biome snow lines.
+- Removed `isRainingAtBiome` and `isSnowingAtBiome` from class `WeatherManager`, as they are no longer compatible with the current version’s mechanics.
+- Introduced additional data serialization tag caching, significantly reducing serialization and deserialization overhead, especially for chunk surface biome caches.
+- Split chunk snow status into two separate additional data groups: snow records and weather status, optimizing serialization overhead when `SnowInWorld` is enabled and it is raining.
+
 ### 0.12.0-pre15-1
 
 - Fixed an issue where the snow flag could not be set on blocks by SnowDefinition datapack in certain cases.

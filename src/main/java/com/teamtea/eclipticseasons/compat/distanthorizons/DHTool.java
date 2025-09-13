@@ -150,7 +150,7 @@ public class DHTool {
                     //         instanceof Holder.Reference<Biome> holder))
                     {
 
-                        if (MapChecker.shouldSnowAtBiome(level, holder.value(), blockState, level.getRandom(), blockState.getSeed(mcPos)))
+                        if (MapChecker.shouldSnowAtBiome(level, holder.value(), blockState, level.getRandom(), blockState.getSeed(mcPos),mcPos))
                         //     return mapColor.col;
                         {
                             HashSet<IBlockStateWrapper> blockStatesToIgnore = WRAPPER_FACTORY.getRendererIgnoredBlocks(instance.getLevelWrapper());

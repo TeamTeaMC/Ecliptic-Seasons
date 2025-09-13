@@ -541,7 +541,7 @@ public class ExtraModelManager {
             if (EclipticUtil.canSnowyBlockInteract()) return mapSlice.isSnowyBlock(checkPos);
             return MapChecker.shouldSnowAt(level, checkPos, mapSlice.getSurfaceFaceBiomeId(checkPos), state, random, seed);
         } else {
-            return MapChecker.shouldSnowAt(level, checkPos, state, null, seed);
+            return MapChecker.shouldSnowAt(level, checkPos, state, random, seed);
         }
     }
 

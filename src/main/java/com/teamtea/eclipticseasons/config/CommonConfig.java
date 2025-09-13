@@ -12,10 +12,8 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.io.Serializable;
+import java.util.*;
 import java.util.stream.Stream;
 
 public class CommonConfig {
@@ -329,11 +327,37 @@ public class CommonConfig {
         public static ForgeConfigSpec.BooleanValue notSnowyNearGlowingBlock;
         public static ForgeConfigSpec.IntValue notSnowyNearGlowingBlockLevel;
         public static ForgeConfigSpec.ConfigValue<List<? extends String>> blocksNotSnowy;
+        public static ForgeConfigSpec.ConfigValue<List<? extends List<? extends Serializable>>> biomeSnowLines;
 
         public static ForgeConfigSpec.BooleanValue snowInWorld;
         public static ForgeConfigSpec.BooleanValue forceChunkUpdate;
         public static ForgeConfigSpec.BooleanValue snowyUnderSnowLike;
         public static ForgeConfigSpec.BooleanValue stepMelt;
+
+        @SafeVarargs
+        private static <T> List<T> of(T... objs) {
+            return Arrays.stream(objs).collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
+        }
+
+        private static boolean testLList(Object o) {
+            if (o instanceof List<?> innerChildren) {
+                if (innerChildren.size() == 2) {
+                    if (innerChildren.get(0) instanceof String s) {
+                        try {
+                            s = s.startsWith("#") ? s.substring(1, s.length() - 1) : s;
+                            new ResourceLocation(s);
+                        } catch (Exception e) {
+                            EclipticSeasons.logger(e);
+                            return false;
+                        }
+                        return innerChildren.get(1) instanceof Integer;
+                    } else {
+                        return false;
+                    }
+                }
+            }
+            return false;
+        }
 
         private static void load(ForgeConfigSpec.Builder builder) {
             builder.push("Snow");
@@ -350,6 +374,10 @@ public class CommonConfig {
                     .defineListAllowEmpty("ForceBlocksNotSnowy",
                             List::of,
                             o -> o instanceof String s && ResourceLocation.tryParse(s) != null);
+            biomeSnowLines = builder.comment("Snow Line Height, define like [\"#c:is_cold/overworld\", 200].")
+                    .defineListAllowEmpty("BiomeSnowLines",
+                            List.of(),
+                            Snow::testLList);
             snowInWorld = builder.comment("Snowfall is now bound to world position rather than only to biomes. This allows for more location-based operations, such as snow sweeping and localized snowfall events.")
                     .define("SnowInWorld", false);
             forceChunkUpdate = builder.comment("When SnowInWorld is enabled, update chunk state on load based on differences from previous state records.")

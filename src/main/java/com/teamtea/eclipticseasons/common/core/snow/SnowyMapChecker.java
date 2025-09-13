@@ -1,5 +1,6 @@
 package com.teamtea.eclipticseasons.common.core.snow;
 
+import com.mojang.datafixers.util.Pair;
 import com.teamtea.eclipticseasons.api.misc.IChunkBiomeHolder;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
@@ -8,7 +9,6 @@ import com.teamtea.eclipticseasons.common.core.map.BiomeHolder;
 import com.teamtea.eclipticseasons.common.core.map.ChunkInfoMap;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.network.SimpleNetworkHandler;
-import com.teamtea.eclipticseasons.common.network.message.ChunkBiomeUpdateMessage;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import it.unimi.dsi.fastutil.ints.IntIntImmutablePair;
 import net.minecraft.core.BlockPos;
@@ -37,7 +37,6 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.Map;
-import java.util.Optional;
 
 public class SnowyMapChecker {
 
@@ -45,8 +44,14 @@ public class SnowyMapChecker {
         LevelChunk levelChunk = chunk instanceof LevelChunk levelChunk1 ?
                 levelChunk1 : chunk instanceof ImposterProtoChunk imposterProtoChunk ?
                 imposterProtoChunk.getWrapped() : new EmptyLevelChunk(ClientCon.getUseLevel(), chunk.getPos(), ClientCon.getUseLevel().registryAccess().registryOrThrow(Registries.BIOME).getHolderOrThrow(Biomes.PLAINS));
-        Optional<SnowyStatusKeeper> optionalSnowyStatusKeeper = levelChunk.getCapability(SnowyStatusKeeper.SNOWY_STATUS_KEEPER_CAPABILITY, null).resolve();
-        return optionalSnowyStatusKeeper.orElseGet(SnowyStatusKeeper::create);
+        return levelChunk.getCapability(SnowyStatusKeeper.SNOWY_STATUS_KEEPER_CAPABILITY, null).orElseGet(SnowyStatusKeeper::create);
+    }
+
+    public static @NotNull WeatherStatusKeeper getWeatherStatusKeeper(ChunkAccess chunk) {
+        LevelChunk levelChunk = chunk instanceof LevelChunk levelChunk1 ?
+                levelChunk1 : chunk instanceof ImposterProtoChunk imposterProtoChunk ?
+                imposterProtoChunk.getWrapped() : new EmptyLevelChunk(ClientCon.getUseLevel(), chunk.getPos(), ClientCon.getUseLevel().registryAccess().registryOrThrow(Registries.BIOME).getHolderOrThrow(Biomes.PLAINS));
+        return levelChunk.getCapability(WeatherStatusKeeper.WEATHER_STATUS_KEEPER_CAPABILITY, null).orElseGet(WeatherStatusKeeper::create);
     }
 
     public static @NotNull SnowyStatusKeeper getSnowyStatusKeeperCopy(LevelChunk chunk) {
@@ -127,8 +132,9 @@ public class SnowyMapChecker {
         ChunkPos chunkPos = chunk.getPos();
         BlockPos.MutableBlockPos checkPos = new BlockPos.MutableBlockPos(chunkPos.getMinBlockX(), 0, chunkPos.getMinBlockZ());
         SnowyStatusKeeper keeper = getSnowyStatusKeeper(chunk);
+        WeatherStatusKeeper weatherStatusKeeper = getWeatherStatusKeeper(chunk);
         boolean checkIfBiomeCacheAnyMore = false;
-        Map<Holder<Biome>, IntIntImmutablePair> biomeSnowyUpdate = keeper.collectSnowyUpdate(level, biomeHolder);
+        var biomeSnowyUpdate = weatherStatusKeeper.collectSnowyUpdate(level, biomeHolder);
 
         if (chunkMap != null) {
             for (int i = chunkPos.getMinBlockX(); i <= chunkPos.getMaxBlockX(); i++) {
@@ -137,26 +143,29 @@ public class SnowyMapChecker {
                     checkPos.setZ(j);
                     int k = chunkMap.getHeight(i, j);
                     checkPos.setY(k);
-                    checkIfBiomeCacheAnyMore = SnowyMapChecker.isCheckIfBiomeCacheAnyMore(level, chunk, biomeHolder, biomeSnowyUpdate, checkPos, keeper, k);
+                    checkIfBiomeCacheAnyMore = SnowyMapChecker.isCheckIfBiomeCacheAnyMore(level, chunk, biomeHolder, biomeSnowyUpdate, checkPos, keeper,weatherStatusKeeper, k);
                 }
             }
         }
-        SnowyMapChecker.postAfterChunkUpdate(level, chunk, keeper, biomeSnowyUpdate, checkIfBiomeCacheAnyMore, loadingChunk);
+        SnowyMapChecker.postAfterChunkUpdate(level, chunk, keeper,weatherStatusKeeper, checkIfBiomeCacheAnyMore, loadingChunk);
     }
 
 
-    private static boolean isCheckIfBiomeCacheAnyMore(Level level,
+    private static boolean isCheckIfBiomeCacheAnyMore(ServerLevel level,
                                                       ChunkAccess chunk,
                                                       BiomeHolder biomeHolder,
-                                                      Map<Holder<Biome>, IntIntImmutablePair> biomeSnowyUpdate,
+                                                      Pair<Map<Holder<Biome>, IntIntImmutablePair>, Map<Holder<Biome>, Long>> pair,
                                                       BlockPos.MutableBlockPos checkPos,
                                                       SnowyStatusKeeper keeper,
-                                                      int solidHeight) {
-        if (EclipticUtil.canSnowyBlockInteract() && !level.isClientSide && !biomeSnowyUpdate.isEmpty()) {
+                                                      WeatherStatusKeeper weatherStatusKeeper, int solidHeight) {
+        Map<Holder<Biome>, IntIntImmutablePair> biomeSnowyUpdate = pair.getFirst();
+        Map<Holder<Biome>, Long> rainUpdateMap = pair.getSecond();
+        if (!biomeSnowyUpdate.isEmpty()) {
             Holder<Biome> biome = MapChecker.getSurfaceBiome(level, checkPos, biomeHolder);
-            keeper.getBiomeUse().add(biome);
-            IntIntImmutablePair snowDepthUse = biomeSnowyUpdate.getOrDefault(biome, null);
-            if (snowDepthUse != null) {
+            weatherStatusKeeper.getBiomeUse().add(biome);
+            boolean rainInMissingTime = rainUpdateMap == null || rainUpdateMap.containsKey(biome);
+            if (rainInMissingTime) {
+                IntIntImmutablePair snowDepthUse = biomeSnowyUpdate.getOrDefault(biome, null);
                 int heightSurface = chunk.getHeight(Heightmap.Types.WORLD_SURFACE, checkPos.getX(), checkPos.getZ());
                 for (int posH = solidHeight; posH <= heightSurface; posH++) {
                     checkPos.setY(posH);
@@ -165,8 +174,13 @@ public class SnowyMapChecker {
                     if (flag != MapChecker.FLAG_NONE) {
                         if (isTooLight(level, checkPos, state, flag)) {
                             keeper.set(checkPos, SnowyStatusKeeper.FLAG_NONE);
+                        } else if (snowDepthUse == null) {
+                            if (MapChecker.isAboveSnowLine(level, biome.value(), checkPos)) {
+                                keeper.set(checkPos, SnowyStatusKeeper.FLAG_SNOW);
+                            }
                         } else if (snowDepthUse.rightInt() == 0) {
-                            if (snowDepthUse.leftInt() > Math.abs(state.getSeed(checkPos) % 100)) {
+                            if (snowDepthUse.leftInt() > Math.abs(state.getSeed(checkPos) % 100)
+                                    || MapChecker.isAboveSnowLine(level, biome.value(), checkPos)) {
                                 keeper.set(checkPos, SnowyStatusKeeper.FLAG_SNOW);
                             } else {
                                 keeper.set(checkPos, SnowyStatusKeeper.FLAG_NONE);
@@ -174,7 +188,8 @@ public class SnowyMapChecker {
                         } else {
                             int cut = snowDepthUse.rightInt() + (snowDepthUse.leftInt() - snowDepthUse.rightInt()) / 4;
                             if (cut > 0) {
-                                if (cut > Math.abs(state.getSeed(checkPos) % 100)) {
+                                if (cut > Math.abs(state.getSeed(checkPos) % 100)
+                                        || MapChecker.isAboveSnowLine(level, biome.value(), checkPos)) {
                                     keeper.set(checkPos, SnowyStatusKeeper.FLAG_SNOW);
                                 }
                             } else {
@@ -192,21 +207,20 @@ public class SnowyMapChecker {
     }
 
 
-    private static void postAfterChunkUpdate(ServerLevel level, ChunkAccess chunk, SnowyStatusKeeper keeper, Map<Holder<Biome>, IntIntImmutablePair> biomeSnowyUpdate, boolean checkIfBiomeCacheAnyMore, boolean loadingChunk) {
+    private static void postAfterChunkUpdate(ServerLevel level, ChunkAccess chunk, SnowyStatusKeeper keeper, WeatherStatusKeeper weatherStatusKeeper, boolean checkIfBiomeCacheAnyMore, boolean loadingChunk) {
         // client or should be ignored
-        if (!biomeSnowyUpdate.isEmpty()) {
-            keeper.updateSnowDepthRecord(biomeSnowyUpdate);
-        }
+        weatherStatusKeeper.updateSnowDepthRecord(level);
 
         keeper.checkPosValid(chunk);
 
         // clear biomes should not be recorded
         if (checkIfBiomeCacheAnyMore) {
-            boolean shouldClear = keeper.getSnowDepthRecord().keySet().removeIf(holder -> !keeper.getBiomeUse().contains(holder));
+            boolean shouldClear = weatherStatusKeeper.getSnowDepthRecord().keySet().removeIf(holder -> !weatherStatusKeeper.getBiomeUse().contains(holder));
             if (shouldClear) keeper.setChange();
         }
 
         if (!loadingChunk && chunk instanceof LevelChunk levelChunk) {
+            weatherStatusKeeper.updateAndSend(level, levelChunk);
             keeper.updateAndSend(level, levelChunk);
             keeper.getStepCount().clear();
         }

@@ -150,10 +150,20 @@ public final class BiomeHolder implements ICapabilityProvider, INBTSerializable<
         return LazyOptional.empty();
     }
 
+    private int cacheVersion = Integer.MIN_VALUE;
+    private boolean cacheUpdate = false;
+    private CompoundTag cacheTag = null;
+
     @Override
     public CompoundTag serializeNBT() {
+        if (cacheUpdate == hasUpdated && cacheVersion == version && cacheTag != null) {
+            return cacheTag;
+        }
         Optional<Tag> result = CODEC.encodeStart(NbtOps.INSTANCE, this).result();
         if (result.orElse(null) instanceof CompoundTag compoundTag) {
+            this.cacheTag = compoundTag;
+            this.cacheUpdate = hasUpdated;
+            this.cacheVersion = version;
             return compoundTag;
         }
         return new CompoundTag();
@@ -161,6 +171,7 @@ public final class BiomeHolder implements ICapabilityProvider, INBTSerializable<
 
     @Override
     public void deserializeNBT(CompoundTag nbt) {
+        if (version != 0 && !hasUpdated) return;
         Optional<BiomeHolder> result = CODEC.parse(NbtOps.INSTANCE, nbt).result();
         result.ifPresent(this::copyFrom);
     }
