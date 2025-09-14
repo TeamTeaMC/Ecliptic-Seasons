@@ -13,9 +13,11 @@ buildscript {
 }
 plugins {
     id 'eclipse'
+    id 'idea'
     id 'maven-publish'
-    id("io.github.themrmilchmann.curseforge-publish") version "0.8.0"
+    id 'net.minecraftforge.gradle' version '[6.0,6.2)'
 }
+
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'org.spongepowered.mixin'
 apply plugin: 'org.parchmentmc.librarian.forgegradle'
@@ -371,28 +373,4 @@ publishing {
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
-}
-
-def curseforge_apiToken = System.getenv("curseforge_apiToken")
-
-curseforge {
-    apiToken = curseforge_apiToken
-    publications {
-        register("curseForge") {
-            projectId = "1118306"
-
-            gameVersion("minecraft-1-20", "1.20.1")
-
-            artifacts.register("main") {
-                from(tasks.named("jar"))
-                displayName = "${mod_name_s}-${minecraft_min_version}-forge-${mod_version}"
-                releaseType = io.github.themrmilchmann.gradle.publish.curseforge.ReleaseType.BETA
-
-                changelog {
-                    format = io.github.themrmilchmann.gradle.publish.curseforge.ChangelogFormat.MARKDOWN
-                    from(file("changelog.md"))
-                }
-            }
-        }
-    }
 }

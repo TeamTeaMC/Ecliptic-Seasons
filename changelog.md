@@ -1,3 +1,7 @@
+### 0.12.0-pre17-1
+
+- Add a sky_colors field to the biome color resource pack, which can be used to modify biome colors.
+
 ### 0.12.0-pre17
 
 > This version mainly organizes configuration names and some comments.

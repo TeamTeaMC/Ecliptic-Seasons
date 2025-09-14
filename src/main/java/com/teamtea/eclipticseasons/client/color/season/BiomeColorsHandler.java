@@ -251,4 +251,26 @@ public class BiomeColorsHandler {
         }
         return color;
     }
+
+    public static int getSkyColor(Biome biome, int originColor) {
+        if (ClientConfig.Renderer.seasonalGrassColorChange.get()) {
+            BiomeColor.Instance biomeColor = getBiomeColor(biome, originColor);
+            if (biomeColor != null) {
+                ColorMode.Instance instance = biomeColor.skyColor().get(ClientCon.nowSolarTerm);
+                if (instance != null) {
+                    int color = ColorHelper.simplyMixColor(instance.value(), instance.mix(), originColor, Math.abs(1 - instance.mix()));
+                    if (ClientConfig.Renderer.smootherSeasonalGrassColorChange.get()) {
+                        ColorMode.Instance instance2 = biomeColor.skyColor().get(ClientCon.nowSolarTerm.getLastSolarTerm());
+                        if (instance2 != null && !instance.equals(instance2)) {
+                            int color2 = ColorHelper.simplyMixColor(instance2.value(), instance2.mix(), originColor, Math.abs(1 - instance2.mix()));
+                            float progressFloat = ClientCon.progress / 100f;
+                            return ColorHelper.simplyMixColor(color, progressFloat, color2, 1 - progressFloat);
+                        }
+                    }
+                    return color;
+                }
+            }
+        }
+        return originColor;
+    }
 }

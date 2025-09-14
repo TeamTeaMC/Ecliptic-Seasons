@@ -42,6 +42,7 @@
   ],
   "client": [
     "client.MixinClientLevel",
+    "client.biome.MixinClientBiome",
     "client.block.MixinLeavesBlock",
     "client.block.MixinLightningRodBlock",
     "client.entity.MixinClientPanda",
