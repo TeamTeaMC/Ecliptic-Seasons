@@ -290,6 +290,7 @@ public class CommonConfig {
         public static ForgeConfigSpec.IntValue rainChanceMultiplier;
         public static ForgeConfigSpec.IntValue thunderChanceMultiplier;
         public static ForgeConfigSpec.BooleanValue shouldInitWeather;
+        public static ForgeConfigSpec.BooleanValue clearAfterSleep;
 
         private static void load(ForgeConfigSpec.Builder builder) {
             builder.push("Weather");
@@ -305,6 +306,8 @@ public class CommonConfig {
                     .defineInRange("RainChancePercentMultiplier", 40, 0, 1000);
             thunderChanceMultiplier = builder.comment("Multiplier (0-1000) affecting the chance of thunder. Higher values make thunder more likely.")
                     .defineInRange("ThunderChancePercentMultiplier", 20, 0, 1000);
+            clearAfterSleep = builder.comment("Clear rain or thunder status after the player sleeps.")
+                    .define("ClearAfterSleep", false);
             builder.pop();
         }
     }

@@ -1,3 +1,7 @@
+### 0.12.0-pre17-1-3
+
+- Added a new option `ClearAfterSleep`.
+
 ### 0.12.0-pre17-1-2
 
 - Add tag `eclipticseasons:crops/unaffected_by_seasons`,`eclipticseasons:crops/unaffected_by_humidity` to remove the crop info of some blocks at the end of data build.

@@ -635,6 +635,18 @@ public class WeatherManager {
                     }
                 }
 
+                if (CommonConfig.Weather.clearAfterSleep.get()) {
+                    SolarTerm solarTerm = EclipticUtil.getNowSolarTerm(level);
+                    for (BiomeWeather biomeWeather : ws) {
+                        if (biomeWeather.shouldRain()) {
+                            biomeWeather.thunderTime = 0;
+                            biomeWeather.rainTime = 0;
+                            BiomeRain biomeRain = getBiomeRain(level, solarTerm, biomeWeather.biomeHolder);
+                            biomeWeather.clearTime = biomeRain.getRainDelay(random) / size;
+                        }
+                    }
+                }
+
                 if (!level.players().isEmpty()) {
                     WeatherManager.sendBiomePacket(ws, level.players());
                 }
