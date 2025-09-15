@@ -33,9 +33,14 @@ public class ESItemModelProvider extends ItemModelProvider {
     @Override
     protected void registerModels() {
         addSimple(ItemRegistry.calendar_item.value());
+
         addSimple(ItemRegistry.wind_chimes_item.value());
         addSimple(ItemRegistry.paper_wind_chimes_item.value());
         addSimple(ItemRegistry.bamboo_wind_chimes_item.value());
+
+        addSimple(ItemRegistry.pinwheel_blue_item.value(), "pinwheel_blue_item");
+        addSimple(ItemRegistry.pinwheel_lime_item.value(), "pinwheel_lime_item");
+        addSimple(ItemRegistry.pinwheel_orange_item.value(), "pinwheel_orange_item");
 
         addSimple(ItemRegistry.broom.value());
         addSimple(ItemRegistry.ice_wand.value());
@@ -43,10 +48,7 @@ public class ESItemModelProvider extends ItemModelProvider {
         addSimple(ItemRegistry.seasonal_prayer_scroll_item.value());
         addSimple(ItemRegistry.growth_detector.value());
 
-
-        addSimple(ItemRegistry.pinwheel_blue_item.value(), "pinwheel_blue_item");
-        addSimple(ItemRegistry.pinwheel_lime_item.value(), "pinwheel_lime_item");
-        addSimple(ItemRegistry.pinwheel_orange_item.value(), "pinwheel_orange_item");
+        addSimple(ItemRegistry.snowless_hometown.value());
 
         addStandProperties(ItemRegistry.hygrometer.get(), Rainfall.collectValues().length);
         addStandProperties(ItemRegistry.hyetometer.get(), Humidity.collectValues().length);

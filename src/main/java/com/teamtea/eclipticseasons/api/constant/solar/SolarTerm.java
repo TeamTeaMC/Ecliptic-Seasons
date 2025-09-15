@@ -180,17 +180,17 @@ public enum SolarTerm implements ITranslatableWithPlaceholder, ISolarTerm {
     }
 
     public SolarTermColor getSolarTermColor(TagKey<Biome> biomeTagKey) {
-        if (biomeTagKey.equals(ClimateTypeBiomeTags.NONE_COLOR_CHANGE)) {
+        if (biomeTagKey == (ClimateTypeBiomeTags.NONE_COLOR_CHANGE)) {
             return NoneSolarTermColors.get(this.ordinal());
-        } else if (biomeTagKey.equals(ClimateTypeBiomeTags.SLIGHTLY_COLOR_CHANGE)) {
+        } else if (biomeTagKey == (ClimateTypeBiomeTags.SLIGHTLY_COLOR_CHANGE)) {
             return SlightlySolarTermColors.get(this.ordinal());
-        } else if (biomeTagKey.equals(ClimateTypeBiomeTags.MONSOONAL_COLOR_CHANGE)) {
+        } else if (biomeTagKey == (ClimateTypeBiomeTags.MONSOONAL_COLOR_CHANGE)) {
             return RainySolarTermColors.collectValues()[this.ordinal()];
-        } else if (biomeTagKey.equals(ClimateTypeBiomeTags.SEASONAL_HOT_COLOR_CHANGE)) {
+        } else if (biomeTagKey == (ClimateTypeBiomeTags.SEASONAL_HOT_COLOR_CHANGE)) {
             return HotSolarTermColors.collectValues()[this.ordinal()];
-        } else if (biomeTagKey.equals(ClimateTypeBiomeTags.SEASONAL_COLD_COLOR_CHANGE)) {
+        } else if (biomeTagKey == (ClimateTypeBiomeTags.SEASONAL_COLD_COLOR_CHANGE)) {
             return ColdSolarTermColors.collectValues()[this.ordinal()];
-        } else if (biomeTagKey.equals(ClimateTypeBiomeTags.SEASONAL_COLOR_CHANGE)) {
+        } else if (biomeTagKey == (ClimateTypeBiomeTags.SEASONAL_COLOR_CHANGE)) {
             return TemperateSolarTermColors.collectValues()[this.ordinal()];
         } else {
             return NoneSolarTermColors.get(this.ordinal());
@@ -258,85 +258,28 @@ public enum SolarTerm implements ITranslatableWithPlaceholder, ISolarTerm {
         // }
     }
 
-    // TODO：为海洋设置特别属性，一个难点在于设定冻洋0，冷水海洋0.5，暖水海洋0.5
-    // 一般来说，暖水海洋应该温度高以适应珊瑚生活
-    // 普通海洋可以冬季小雪
-    // 冷水海洋可以多下一些
-    // 冻洋全年下雪
-    // 这里注意的一个地方是海水的比热容比陆地大，应该设定一个调整后的雪期
-    // 此外Mojang设定是，所有海洋都是0.5的温度，除了深海冻洋
-    @Deprecated
     public static ISnowTerm getSnowTerm(Biome biome) {
         if (biome == null) return SnowTerm.T05;
         boolean serverInstance = BiomeClimateManager.isServerInstance(biome);
-        ISnowTerm customSnowTerm = BiomeClimateManager.getCustomSnowTerm(biome, serverInstance);
-        if (customSnowTerm != null) return customSnowTerm;
-        // float t = BiomeClimateManager.agent$GetBaseTemperature(biome);
-        float t = biome.getModifiedClimateSettings().temperature();
-
-        BiomeClimateSettings biomeClimateSettings = BiomeClimateManager.getBiomeClimateSettings(biome, serverInstance);
-        t = biomeClimateSettings == BiomeClimateManager.EMPTY ? t : biomeClimateSettings.getTemperature();
-
-        if (t > 0.95 + 0.001f) {
-            return SnowTerm.T1;
-        } else if (t > 0.8 + 0.001f) {
-            return SnowTerm.T08;
-        } else if (t > 0.6 + 0.001f) {
-            return SnowTerm.T06;
-        } else if (t > 0.5 + 0.001f) {
-            return SnowTerm.T05;
-        } else if (t > 0.4 + 0.001f) {
-            return SnowTerm.T04;
-        } else if (t > 0.3 + 0.001f) {
-            return SnowTerm.T03;
-        } else if (t > 0.2 + 0.001f) {
-            return SnowTerm.T02;
-        } else if (t > 0.15 + 0.001f) {
-            return SnowTerm.T015;
-        } else if (t > 0.1 + 0.001f) {
-            return SnowTerm.T01;
-        } else if (t > 0.05 + 0.001f) {
-            return SnowTerm.T05;
-        } else if (t > 0.01 + 0.001f) {
-            return SnowTerm.T001;
-        }
-        return SnowTerm.T0;
+        return getSnowTerm(biome, serverInstance);
     }
 
+    @Deprecated(forRemoval = true, since = "0.12.0")
     public static ISnowTerm getSnowTerm(Biome biome, boolean isServer) {
+        return getSnowTerm(biome, isServer, 0);
+    }
+
+    public static ISnowTerm getSnowTerm(Biome biome, boolean isServer, float tempChange) {
         if (biome == null) return SnowTerm.T05;
         ISnowTerm customSnowTerm = BiomeClimateManager.getCustomSnowTerm(biome, isServer);
-        if (customSnowTerm != null) return customSnowTerm;
+        if (customSnowTerm != null) return customSnowTerm.cast(tempChange);
         // float t = BiomeClimateManager.getDefaultTemperature(biome, isServer);
         float t = biome.getModifiedClimateSettings().temperature();
 
         BiomeClimateSettings biomeClimateSettings = BiomeClimateManager.getBiomeClimateSettings(biome, isServer);
         t = biomeClimateSettings == BiomeClimateManager.EMPTY ? t : biomeClimateSettings.getTemperature();
 
-        if (t > 0.95 + 0.001f) {
-            return SnowTerm.T1;
-        } else if (t > 0.8 + 0.001f) {
-            return SnowTerm.T08;
-        } else if (t > 0.6 + 0.001f) {
-            return SnowTerm.T06;
-        } else if (t > 0.5 + 0.001f) {
-            return SnowTerm.T05;
-        } else if (t > 0.4 + 0.001f) {
-            return SnowTerm.T04;
-        } else if (t > 0.3 + 0.001f) {
-            return SnowTerm.T03;
-        } else if (t > 0.2 + 0.001f) {
-            return SnowTerm.T02;
-        } else if (t > 0.15 + 0.001f) {
-            return SnowTerm.T015;
-        } else if (t > 0.1 + 0.001f) {
-            return SnowTerm.T01;
-        } else if (t > 0.05 + 0.001f) {
-            return SnowTerm.T05;
-        } else if (t > 0.01 + 0.001f) {
-            return SnowTerm.T001;
-        }
-        return SnowTerm.T0;
+        return SnowTerm.get(t, tempChange);
     }
 
 

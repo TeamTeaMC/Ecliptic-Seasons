@@ -16,7 +16,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 
-// TODO: 我们可以构建自己的Render Context用以读取吗
 @Mixin({AbstractBlockRenderContext.class})
 public abstract class MixinAbstractBlockRenderer {
 

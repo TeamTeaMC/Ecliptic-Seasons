@@ -7,6 +7,7 @@ import com.teamtea.eclipticseasons.common.registry.*;
 import com.teamtea.eclipticseasons.compat.CompatModule;
 import com.teamtea.eclipticseasons.config.ClientConfig;
 import com.teamtea.eclipticseasons.config.CommonConfig;
+import com.teamtea.eclipticseasons.config.StartConfig;
 import com.teamtea.eclipticseasons.data.start;
 import net.minecraft.resources.ResourceLocation;
 
@@ -54,6 +55,8 @@ public class EclipticSeasons {
 
         modContainer.registerConfig(ModConfig.Type.COMMON, CommonConfig.COMMON_CONFIG);
         modContainer.registerConfig(ModConfig.Type.CLIENT, ClientConfig.CLIENT_CONFIG);
+
+        modContainer.registerConfig(ModConfig.Type.STARTUP, StartConfig.START_CONFIG);
 
 
         if (FMLLoader.getDist() == Dist.CLIENT)

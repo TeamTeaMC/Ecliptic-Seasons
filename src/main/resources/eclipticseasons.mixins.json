@@ -31,7 +31,6 @@
     "common.entity.monster.MixinMonster",
     "common.entity.projectile.MixinThrownTrident",
     "common.level.MixinDimensionType",
-    "common.level.MixinLayerLightSectionStorage",
     "common.level.MixinLevel",
     "common.level.MixinLevelReader",
     "common.level.MixinLevelTimeAccess",
@@ -50,9 +49,8 @@
     "game.MixinFishingHook"
   ],
   "client": [
-    "client.MixinClientBiome",
+    "client.biome.MixinClientBiome",
     "client.MixinClientClientLevel",
-    "client.MixinClientLayerLightSectionStorage",
     "client.MixinClientLevel",
     "client.MixinClientLevelChunk",
     "client.MixinGameRenderer",
@@ -73,6 +71,8 @@
     "client.model.MixinModelBakery",
     "client.model.MixinModelManager",
     "client.model.MixinMultiPart",
+    "client.model.MixinSpriteLoader",
+    "client.model.MixinSpriteLoader2",
     "client.model.MixinTextureAtlasSprite",
     "client.sound.MixinMusicManager",
     "compat.distanthorizons.MixinClientLevel",

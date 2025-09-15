@@ -160,7 +160,7 @@ public class DHTool {
                     var holderKey = ResourceKey.create(Registries.BIOME, ResourceLocation.parse(iBiomeWrapper.getSerialString()));
                     if ((clientLevelWrapper.getLevel().registryAccess().holder(holderKey).orElse(null)
                             instanceof Holder.Reference<Biome> holder)) {
-                        if (MapChecker.shouldSnowAtBiome(level, holder.value(), blockState, level.getRandom(), blockState.getSeed(mcPos)))
+                        if (MapChecker.shouldSnowAtBiome(level, holder.value(), blockState, level.getRandom(), blockState.getSeed(mcPos),mcPos))
                         //     return mapColor.col;
                         {
                             HashSet<IBlockStateWrapper> blockStatesToIgnore = WRAPPER_FACTORY.getRendererIgnoredBlocks(instance.getLevelWrapper());
@@ -198,7 +198,7 @@ public class DHTool {
                                     // boolean colorBelowWithAvoidedBlocks = Config.Client.Advanced.Graphics.Quality.tintWithAvoidedBlocks.get();
 
                                     if (bottomY + instance.getMinY() == dhBlockPos.getY() &&
-                                            (MapChecker.getBlockType(blockStateWrapper_NowQuery.blockState, level, mcPos) != 0
+                                            (MapChecker.getBlockTypeFlag(level, mcPos, blockStateWrapper_NowQuery.blockState) != 0
                                                     // || (blockStateWrapper1.blockState.is(BlockTags.FLOWERS))
                                                     || (!blockStateWrapper_NowQuery.isSolid() && !blockStateWrapper_NowQuery.isLiquid())
                                             )) {
@@ -229,8 +229,6 @@ public class DHTool {
         return null;
     }
 
-    // todo : need do more for compat
-    // todo : dh change the address of object but the content not, should find the reason
     public static Biome recoverBiomeObject(BiomeWrapper biomeWrapper, IClientLevelWrapper iClientLevelWrapper) {
         // if (iClientLevelWrapper instanceof ClientLevelWrapper clientLevelWrapper) {
         //     var holderKey = ResourceKey.create(Registries.BIOME, ResourceLocation.parse(biomeWrapper.getSerialString()));

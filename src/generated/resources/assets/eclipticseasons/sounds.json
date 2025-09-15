@@ -70,5 +70,13 @@
         "stream": true
       }
     ]
+  },
+  "record.snowless_hometown": {
+    "sounds": [
+      {
+        "name": "eclipticseasons:record/snowless_hometown",
+        "stream": true
+      }
+    ]
   }
 }

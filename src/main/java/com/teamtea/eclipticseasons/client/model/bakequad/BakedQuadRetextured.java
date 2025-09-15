@@ -17,7 +17,7 @@ public class BakedQuadRetextured extends BakedQuad {
     public static int verticeSpace = DefaultVertexFormat.BLOCK.getVertexSize() / 4;
 
     public BakedQuadRetextured(BakedQuad quad, TextureAtlasSprite textureIn) {
-        super(Arrays.copyOf(quad.getVertices(), quad.getVertices().length), -1, FaceBakery.calculateFacing(quad.getVertices()), quad.getSprite(), quad.isShade(), quad.hasAmbientOcclusion());
+        super(Arrays.copyOf(quad.getVertices(), quad.getVertices().length), -1, quad.getDirection(), quad.getSprite(), quad.isShade(), quad.hasAmbientOcclusion());
         this.texture = textureIn;
         this.remapQuad();
     }

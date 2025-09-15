@@ -1,9 +1,12 @@
 package com.teamtea.eclipticseasons.client.model;
 
 import com.mojang.datafixers.util.Pair;
+import com.teamtea.eclipticseasons.api.misc.BiomeHolderPredicate;
 import com.teamtea.eclipticseasons.api.misc.client.IMapSlice;
+import com.teamtea.eclipticseasons.client.core.ExtraModelManager;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
+import com.teamtea.eclipticseasons.compat.vanilla.IExtendBlockView;
 import lombok.Getter;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -22,14 +25,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.function.Predicate;
 
 public class SeasonBiomeGoingModel<T extends BakedModel> extends BakedModelWrapper<T> {
     public static final ModelProperty<Holder<Biome>> BIOME_PROPERTY = new ModelProperty<>();
     @Getter
-    private final List<Pair<BiomePredicate, SeasonGoingModel<T>>> models;
+    private final List<Pair<BiomeHolderPredicate, SeasonGoingModel<T>>> models;
 
-    public SeasonBiomeGoingModel(T originalModel, List<Pair<BiomePredicate, SeasonGoingModel<T>>> models) {
+    public SeasonBiomeGoingModel(T originalModel, List<Pair<BiomeHolderPredicate, SeasonGoingModel<T>>> models) {
         super(originalModel);
         this.models = models;
     }
@@ -39,7 +41,7 @@ public class SeasonBiomeGoingModel<T extends BakedModel> extends BakedModelWrapp
         extraData = net.neoforged.neoforge.client.model.data.MultipartModelData.resolve(extraData, this);
         if (extraData.has(BIOME_PROPERTY)) {
             Holder<Biome> biomeHolder = extraData.get(BIOME_PROPERTY);
-            for (Pair<BiomePredicate, SeasonGoingModel<T>> model : models) {
+            for (Pair<BiomeHolderPredicate, SeasonGoingModel<T>> model : models) {
                 if (model.getFirst().test(biomeHolder)) {
                     return model.getSecond().getQuads(state, side, rand, extraData, renderType);
                 }
@@ -50,17 +52,16 @@ public class SeasonBiomeGoingModel<T extends BakedModel> extends BakedModelWrapp
 
     @Override
     public @NotNull ModelData getModelData(@NotNull BlockAndTintGetter level, @NotNull BlockPos pos, BlockState state, ModelData modelData) {
-        return super.getModelData(level, pos, state, modelData)
-                .derive()
+        ModelData.Builder modelData1 = super.getModelData(level, pos, state, modelData).derive()
                 .with(
                         BIOME_PROPERTY,
                         level instanceof IMapSlice iMapSlice ?
                                 MapChecker.idToBiome(ClientCon.getUseLevel(), iMapSlice.getSurfaceFaceBiomeId(pos)) :
                                 MapChecker.getSurfaceBiome(ClientCon.getUseLevel(), pos)
-                ).build();
+                );
+        if (ExtraModelManager.canSnowy(level, pos, state, state.getSeed(pos), level instanceof IExtendBlockView extendBlockView ? extendBlockView.getModelCheckPos() : null))
+            modelData1.with(SeasonGoingModel.SNOW_PROPERTY, true);
+        return modelData1.build();
     }
 
-    @FunctionalInterface
-    public interface BiomePredicate extends Predicate<Holder<Biome>> {
-    }
 }

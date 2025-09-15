@@ -2,6 +2,10 @@ package com.teamtea.eclipticseasons.mixin.client.chunk;
 
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
+import com.teamtea.eclipticseasons.api.misc.client.IExtraRendererContextOwner;
+import com.teamtea.eclipticseasons.client.core.ExtraRendererContext;
+import com.teamtea.eclipticseasons.common.core.snow.SnowyMapChecker;
+import com.teamtea.eclipticseasons.common.core.snow.SnowyStatusKeeper;
 import com.teamtea.eclipticseasons.common.registry.AttachmentRegistry;
 import com.teamtea.eclipticseasons.api.misc.client.IMapSlice;
 import com.teamtea.eclipticseasons.common.core.map.BiomeHolder;
@@ -25,7 +29,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin({RenderChunkRegion.class})
-public abstract class MixinRenderChunkRegion_IMapSlice implements IMapSlice {
+public abstract class MixinRenderChunkRegion_IMapSlice implements IMapSlice, IExtraRendererContextOwner {
 
     @Shadow
     @Final
@@ -64,6 +68,9 @@ public abstract class MixinRenderChunkRegion_IMapSlice implements IMapSlice {
     @Unique
     private int[][] SNOWY_MAP;
 
+    @Unique
+    private SnowyStatusKeeper[] SNOWY_STATUS_MAP;
+
     @Inject(
             remap = false,
             method = "<init>(Lnet/minecraft/world/level/Level;II[Lnet/minecraft/client/renderer/chunk/RenderChunk;Lit/unimi/dsi/fastutil/longs/Long2ObjectFunction;)V",
@@ -74,6 +81,7 @@ public abstract class MixinRenderChunkRegion_IMapSlice implements IMapSlice {
         BIOME_MAP = new int[SIZE * SIZE][MAP_BLOCK_COUNT];
         SNOWY_MAP = new int[SIZE * SIZE][MAP_BLOCK_COUNT];
         SOLID_HEIGHT_MAP = new int[SIZE * SIZE][MAP_BLOCK_COUNT];
+        SNOWY_STATUS_MAP = new SnowyStatusKeeper[SIZE * SIZE];
     }
 
     @Override
@@ -94,6 +102,8 @@ public abstract class MixinRenderChunkRegion_IMapSlice implements IMapSlice {
                     int[] biomes = BIOME_MAP[localSectionIndex];
                     int[] snowys = SNOWY_MAP[localSectionIndex];
                     int[] solidHeights = SOLID_HEIGHT_MAP[localSectionIndex];
+                    SNOWY_STATUS_MAP[localSectionIndex] = SnowyMapChecker.getSnowyStatusKeeperCopy(wrapped);
+
                     int startX = chunkPos.getMinBlockX();
                     int startZ = chunkPos.getMinBlockZ();
 
@@ -126,7 +136,7 @@ public abstract class MixinRenderChunkRegion_IMapSlice implements IMapSlice {
 
                                 snowys[index] = snowyRemover.blockWatcher()[x][z];
 
-                                solidHeights[index]=heightmap.getHighestTaken(x,z);
+                                solidHeights[index] = heightmap.getHighestTaken(x, z);
 
                             }
                         }
@@ -179,7 +189,27 @@ public abstract class MixinRenderChunkRegion_IMapSlice implements IMapSlice {
         int localBlockX = pos.getX() & 15;
         int localBlockZ = pos.getZ() & 15;
         return lightArrays[localBlockX * 16 + localBlockZ];
-        // return level.getChunk(pos) instanceof ChunkAccess chunkAccess
-        //         ? chunkAccess.getData(EclipticSeasons.ModContents.SNOWY_REMOVER).getSnowyFlag(pos).ordinal() : SnowyRemover.SNOWY;
     }
+
+    @Override
+    public boolean isSnowyBlock(BlockPos pos) {
+        int relBlockX = SectionPos.blockToSectionCoord(pos.getX());
+        int relBlockZ = SectionPos.blockToSectionCoord(pos.getZ());
+
+        SnowyStatusKeeper lightArrays = this.SNOWY_STATUS_MAP[index(minChunkX, minChunkZ, relBlockX, relBlockZ)];
+
+        return lightArrays.isSnowyBlock(pos);
+    }
+
+    /* ======================================== MODEL PART ===================================== */
+
+
+    @Unique
+    private ExtraRendererContext eclipticseasons$rendererHolder =new ExtraRendererContext();
+
+    @Override
+    public ExtraRendererContext eclipticseasons$getContext() {
+        return eclipticseasons$rendererHolder;
+    }
+
 }

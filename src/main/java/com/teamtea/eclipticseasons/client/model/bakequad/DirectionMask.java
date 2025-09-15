@@ -25,13 +25,16 @@ public class DirectionMask {
 
             {{0, 1}, {0, -1}},
             {{1, 0}, {-1, 0}},
+
+            {{1, 1}}, {{-1, 1}}, {{1, -1}}, {{-1, -1}}
     };
 
-    public final static int[] INDEXS = new int[]{
+    public final static int[] INDICES = new int[]{
             1, 3, 4, 5, 6, 8,
             9, 11, 13,
             15, 10,
             7, 12,
-            17, 18
+            17, 18,
+            0, 2, 14, 16
     };
 }

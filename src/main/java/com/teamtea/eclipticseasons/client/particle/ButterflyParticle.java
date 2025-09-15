@@ -97,7 +97,6 @@ public class ButterflyParticle extends FireflyParticle {
 // super.renderRotatedQuad(pBuffer, pQuaternion, pX, pY, pZ, pPartialTicks);
     }
 
-    // TODO:这里存在贴图法向量问题，偶尔会看不到，也可能是面剔除机制？
     @Override
     protected void renderVertex(VertexConsumer pBuffer, Quaternionf pQuaternion, float pX, float pY, float pZ, float pXOffset, float pYOffset, float pQuadSize, float pU, float pV, int pPackedLight, float alpha) {
         super.renderVertex(pBuffer, pQuaternion, pX, pY, pZ, pXOffset, pYOffset, pQuadSize, pU, pV, pPackedLight, alpha);

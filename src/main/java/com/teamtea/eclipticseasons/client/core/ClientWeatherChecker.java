@@ -19,7 +19,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-// TODO:全局雨量控制表
 public class ClientWeatherChecker {
     public static final List<SimplePair<Biome, Long>> lastRainyBiome = new ArrayList<>();
 

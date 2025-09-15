@@ -10,4 +10,7 @@ public interface CustomRandomTick
     void eclipticseasons$tick(BlockState state, ServerLevel worldIn, BlockPos pos);
 
     void eclipticseasons$reset();
+
+
+    int eclipticseasons$getType();
 }

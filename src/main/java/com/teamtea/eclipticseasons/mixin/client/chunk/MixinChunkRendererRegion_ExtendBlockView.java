@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-// 这里基本靠RenderChunkRegion传递信息了
 @Mixin(RenderChunkRegion.class)
 public abstract class MixinChunkRendererRegion_ExtendBlockView implements ExtendBlockView {
     @Unique
@@ -59,34 +58,8 @@ public abstract class MixinChunkRendererRegion_ExtendBlockView implements Extend
     }
 
     @Override
-    public void setSnowModel(BakedModel bakedModel) {
-        eclipticseasons$snowModel = bakedModel;
-    }
-
-    @Override
-    public void resetSnowModel() {
-        eclipticseasons$snowModel = null;
-    }
-
-    @Override
-    public BakedModel getSnowModel() {
-        return eclipticseasons$snowModel;
-    }
-
-
-    @Override
-    public void setCurrentModelReplaceable(boolean isReplaceable) {
-        this.eclipticseasons$shouldReplaceOriginalGrassModel = isReplaceable;
-    }
-
-    @Override
     public void setShouldCollectBakeQuads(boolean shouldCollectBakeQuads) {
         this.eclipticseasons$shouldCollectBakeQuads = shouldCollectBakeQuads;
-    }
-
-    @Override
-    public boolean isCurrentModelReplaceable() {
-        return this.eclipticseasons$shouldReplaceOriginalGrassModel;
     }
 
     @Override

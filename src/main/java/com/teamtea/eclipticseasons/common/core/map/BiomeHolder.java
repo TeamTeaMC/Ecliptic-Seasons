@@ -2,24 +2,46 @@ package com.teamtea.eclipticseasons.common.core.map;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.teamtea.eclipticseasons.api.util.EclipticUtil;
+import com.teamtea.eclipticseasons.common.core.snow.SnowyStatusKeeper;
 import com.teamtea.eclipticseasons.common.misc.SimplePair;
 import it.unimi.dsi.fastutil.ints.IntList;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Holder;
-import net.minecraft.core.Registry;
-import net.minecraft.core.RegistryAccess;
+import lombok.*;
+import net.minecraft.core.*;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.Tag;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
+import net.neoforged.neoforge.attachment.IAttachmentHolder;
+import net.neoforged.neoforge.attachment.IAttachmentSerializer;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
-public record BiomeHolder(
-        int[] biomes, boolean hasUpdated, int version
-) {
+@Data
+public class BiomeHolder {
+    final int[] biomes;
+    final boolean hasUpdated;
+    final int version;
+
+    public int[] biomes() {
+        return biomes;
+    }
+
+    public boolean hasUpdated() {
+        return hasUpdated;
+    }
+
+    public int version() {
+        return version;
+    }
+
     public static final int FLAG_NEED_VERSION = -1;
     public static final int FLAG_FILL_SMALL = -2;
 
@@ -65,7 +87,7 @@ public record BiomeHolder(
                 newBiomes[i * 16 + j] = registryUpdate ?
                         MapChecker.biomeToId(biomeRegistry, unCachedSurfaceBiome.value()) :
                         MapChecker.biomeToId(serverLevel, unCachedSurfaceBiome.value());
-                near &= MapChecker.isLoadNearBy(serverLevel, mutableBlockPos);
+                // near &= MapChecker.isLoadNearBy(serverLevel, mutableBlockPos);
 
                 if (!near) break;
             }
@@ -89,7 +111,7 @@ public record BiomeHolder(
 
                     newBiomes[i * 16 + j] =
                             MapChecker.biomeToId(serverLevel, MapChecker.getUnCachedSurfaceBiome(serverLevel, mutableBlockPos).value());
-                    near &= MapChecker.isLoadNearBy(serverLevel, mutableBlockPos);
+                    // near &= MapChecker.isLoadNearBy(serverLevel, mutableBlockPos);
 
                     if (!near) break;
                 } else {
@@ -105,5 +127,46 @@ public record BiomeHolder(
     public int getBiomeId(BlockPos blockPos) {
         // return -1;
         return hasUpdated ? biomes[((blockPos.getX() & 15) * 16) + (blockPos.getZ() & 15)] : -1;
+    }
+
+    public static BiomeHolder empty() {
+        return new BiomeHolder(new int[256], false, 0);
+    }
+
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    @Getter(AccessLevel.NONE)
+    private transient int cacheVersion = Integer.MIN_VALUE;
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    @Getter(AccessLevel.NONE)
+    private transient boolean cacheUpdate = false;
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    @Getter(AccessLevel.NONE)
+    private transient CompoundTag cacheTag = null;
+
+    public static class Serializer implements IAttachmentSerializer<Tag, BiomeHolder> {
+
+        @Override
+        public @NotNull BiomeHolder read(@NotNull IAttachmentHolder holder, @NotNull Tag tag, HolderLookup.@NotNull Provider provider) {
+            Optional<BiomeHolder> result = CODEC.parse(provider.createSerializationContext(NbtOps.INSTANCE), tag).result();
+            return result.orElseGet(BiomeHolder::empty);
+        }
+
+        @Override
+        public Tag write(@NotNull BiomeHolder attachment, HolderLookup.@NotNull Provider provider) {
+            if (attachment.cacheUpdate == attachment.hasUpdated && attachment.cacheVersion == attachment.version && attachment.cacheTag != null) {
+                return attachment.cacheTag;
+            }
+            Optional<Tag> result = CODEC.encodeStart(provider.createSerializationContext(NbtOps.INSTANCE), attachment).result();
+            if (result.orElse(null) instanceof CompoundTag compoundTag) {
+                attachment.cacheTag = compoundTag;
+                attachment.cacheUpdate = attachment.hasUpdated;
+                attachment.cacheVersion = attachment.version;
+                return compoundTag;
+            }
+            return new CompoundTag();
+        }
     }
 }

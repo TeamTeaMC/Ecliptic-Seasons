@@ -7,6 +7,7 @@ import com.teamtea.eclipticseasons.common.item.*;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Rarity;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
@@ -29,6 +30,7 @@ public class ItemRegistry {
     public static final DeferredHolder<Item, BlockItem> pinwheel_orange_item = ITEM_DEFERRED_REGISTER.register("pinwheel_orange", () -> new BlockItem(BlockRegistry.pinwheel_orange.get(), (new Item.Properties())));
     public static final DeferredHolder<Item, BlockItem> pinwheel_lime_item = ITEM_DEFERRED_REGISTER.register("pinwheel_lime", () -> new BlockItem(BlockRegistry.pinwheel_lime.get(), (new Item.Properties())));
     public static final DeferredHolder<Item, BlockItem> pinwheel_blue_item = ITEM_DEFERRED_REGISTER.register("pinwheel_blue", () -> new BlockItem(BlockRegistry.pinwheel_blue.get(), (new Item.Properties())));
+
     public static final DeferredHolder<Item, BlockItem> calendar_item = ITEM_DEFERRED_REGISTER.register("calendar", () -> new CalendarBlockItem(BlockRegistry.calendar.get(), (new Item.Properties())));
 
     public static final DeferredHolder<Item, BlockItem> greenhouse_core_container_item = ITEM_DEFERRED_REGISTER.register("greenhouse_core_container", () -> new BlockItem(BlockRegistry.greenhouse_core_container.get(), (new Item.Properties())));
@@ -46,5 +48,8 @@ public class ItemRegistry {
     public static final DeferredHolder<Item, Item> seasonal_prayer_scroll_item = ITEM_DEFERRED_REGISTER.register("seasonal_prayer_scroll", () -> new QuestSignChangeItem((new Item.Properties())));
 
     public static final DeferredHolder<Item, Item> block_in_wooden_grate_block_item = ITEM_DEFERRED_REGISTER.register("block_in_wooden_grate_block", () -> new BlockItem(BlockRegistry.block_in_wooden_grate_block.get(), (new Item.Properties())));
+
+
+    public static final DeferredHolder<Item, Item> snowless_hometown = ITEM_DEFERRED_REGISTER.register("snowless_hometown", () -> new Item(new Item.Properties().stacksTo(1).rarity(Rarity.RARE).jukeboxPlayable(SongRegistry.SNOWLESS_HOMETOWN)));
 
 }

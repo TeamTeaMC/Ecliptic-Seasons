@@ -12,7 +12,6 @@ import net.neoforged.neoforge.client.model.data.ModelData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class SnowySeasonBakeModel<T extends BakedModel> extends BakedModelWrapper<T> implements ISnowyReplaceModel {
@@ -43,11 +42,10 @@ public class SnowySeasonBakeModel<T extends BakedModel> extends BakedModelWrappe
     protected @NotNull List<BakedQuad> combineBakedQuads(List<BakedQuad> quads, List<BakedQuad> snowModelQuads_Ori) {
         if (snowModelQuads_Ori.isEmpty()) return quads;
         if (quads.isEmpty()) return snowModelQuads_Ori;
-
-        List<BakedQuad> snowModelQuads = new ArrayList<>(quads.size() + snowModelQuads_Ori.size());
-        snowModelQuads.addAll(quads);
-        snowModelQuads.addAll(snowModelQuads_Ori);
-        return snowModelQuads;
+        // List<BakedQuad> snowModelQuads = new ArrayList<>(quads.size() + snowModelQuads_Ori.size());
+        // snowModelQuads.addAll(quads);
+        // snowModelQuads.addAll(snowModelQuads_Ori);
+        return net.neoforged.neoforge.common.util.ConcatenatedListView.of(quads,snowModelQuads_Ori);
     }
 
     @Override
@@ -60,6 +58,7 @@ public class SnowySeasonBakeModel<T extends BakedModel> extends BakedModelWrappe
         this.lowlayer = lowLayer;
     }
 
+    // todo set block type
     @Override
     public void updateBlockType(int bindBlockType) {
         this.flag = bindBlockType;

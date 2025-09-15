@@ -15,12 +15,13 @@ import net.neoforged.neoforge.registries.RegisterEvent;
 
 import java.util.function.Function;
 
+@SuppressWarnings("removal")
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
 public final class ParticleRegistry {
     public static final SimpleParticleType FIREFLY = new SimpleParticleType(false);
     public static final SimpleParticleType WILD_GOOSE = new SimpleParticleType(false);
     public static final SimpleParticleType BUTTERFLY = new SimpleParticleType(false);
-    public static final ParticleType<ColorParticleOption> GREENHOUSE =  create(false, ColorParticleOption::codec, ColorParticleOption::streamCodec);
+    public static final ParticleType<ColorParticleOption> GREENHOUSE = create(false, ColorParticleOption::codec, ColorParticleOption::streamCodec);
     public static final ParticleType<ColorParticleOption> FALLEN_LEAVES = create(false, ColorParticleOption::codec, ColorParticleOption::streamCodec);
     public static final ParticleType<ColorParticleOption> FLYING_BLOOM = create(false, ColorParticleOption::codec, ColorParticleOption::streamCodec);
 

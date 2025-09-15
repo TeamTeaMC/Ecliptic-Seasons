@@ -22,6 +22,7 @@ import com.teamtea.eclipticseasons.api.data.misc.PosAndBlockStateCheck;
 import com.teamtea.eclipticseasons.api.event.CanPlantGrowEvent;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.api.util.SimpleUtil;
+import com.teamtea.eclipticseasons.api.util.fast.Enum2ObjectMap;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
 import com.teamtea.eclipticseasons.common.registry.AgroClimateRegistry;
@@ -90,7 +91,6 @@ public final class CropGrowthHandler {
         }
     }
 
-    // TODO 确认一下蘑菇这种作物是不是会触发两次事件，因为变成大蘑菇
     // note 确实会变成BlockGrowFeatureEvent再触发一次，很麻烦，那只能阻止一下了，a计划是弄一个缓存map
     public static void beforeCropGrowUp(BonemealEvent event) {
         // if(!event.isValidBonemealTarget())return;
@@ -186,9 +186,9 @@ public final class CropGrowthHandler {
             Optional<StatePropertiesPredicate> properties = builder.applyTarget().properties();
             if (blocks.isEmpty()) continue;
 
-            EnumMap<SolarTerm, GrowParameter> solarTermGrowParameterEnumMap = new EnumMap<>(builder.solarTermList());
-            EnumMap<Season, GrowParameter> seasonGrowParameterEnumMap = new EnumMap<>(builder.seasonList());
-            EnumMap<Humidity, GrowParameter> humidityGrowParameterEnumMap = new EnumMap<>(builder.humidList());
+            Enum2ObjectMap<SolarTerm, GrowParameter> solarTermGrowParameterEnumMap = new Enum2ObjectMap<>(builder.solarTermList());
+            Enum2ObjectMap<Season, GrowParameter> seasonGrowParameterEnumMap = new Enum2ObjectMap<>(builder.seasonList());
+            Enum2ObjectMap<Humidity, GrowParameter> humidityGrowParameterEnumMap = new Enum2ObjectMap<>(builder.humidList());
             Optional<GrowParameter> solarTermGrowParameter = builder.defaultSolarTermGrowParameter();
             Optional<GrowParameter> humidityGrowParameter = builder.defaultHumidityGrowParameter();
             Optional<BlockPredicate> notGreenHouse = builder.notGreenHouse();
@@ -269,9 +269,9 @@ public final class CropGrowthHandler {
                         CropGrow cropGrow = new CropGrow(
                                 solarTermGrowParameter,
                                 humidityGrowParameter,
-                                new EnumMap<>(solarTermGrowParameterEnumMap),
-                                new EnumMap<>(seasonGrowParameterEnumMap),
-                                new EnumMap<>(humidityGrowParameterEnumMap));
+                                new Enum2ObjectMap<>(solarTermGrowParameterEnumMap),
+                                new Enum2ObjectMap<>(seasonGrowParameterEnumMap),
+                                new Enum2ObjectMap<>(humidityGrowParameterEnumMap));
                         // 一个Block，对应一个cropGrow，绑定到一个CropGrowControl上
                         // 由于有些Block有自己的湿润度，因此容易出问题
                         // 而且不同群系湿润度系统不一样
@@ -331,9 +331,9 @@ public final class CropGrowthHandler {
         if (builder != null) {
             CropGrow cropGrow = new CropGrow(builder.defaultSolarTermGrowParameter(),
                     builder.defaultHumidityGrowParameter(),
-                    new EnumMap<>(builder.solarTermList()),
-                    new EnumMap<>(builder.seasonList()),
-                    new EnumMap<>(builder.humidList()));
+                    new Enum2ObjectMap<>(builder.solarTermList()),
+                    new Enum2ObjectMap<>(builder.seasonList()),
+                    new Enum2ObjectMap<>(builder.humidList()));
 
             CropGrowControl newControlCache = new CropGrowControl(
                     cropGrow, Optional.empty(), Optional.empty(), Optional.empty()
@@ -882,7 +882,6 @@ public final class CropGrowthHandler {
             Vec3 direction = vec3s[i];
             direction = direction.x != 0 || direction.z != 0 ?
                     direction.add(xr, 0, yr) : direction;
-            // TODO: 最小起步点
             Vec3 startVec = centerVec;
 
             // direction是否要限制为圆形
@@ -904,7 +903,6 @@ public final class CropGrowthHandler {
 
         }
 
-        // TODO:qucikly for windows green house
         if (isConnected && !isInLight) {
             if (level.getRandom().nextInt(10000) <= CommonConfig.Crop.darkGreenhouseFailChance.get()) {
                 isConnected = state.is(EclipticBlockTags.NATURAL_PLANTS);
@@ -933,11 +931,11 @@ public final class CropGrowthHandler {
     //     else return false;
     // }
 
-    public static void handleRandomTick(ServerLevel level, BlockPos blockPos, BlockState blockState, List<WetterStructure> wetterStructureList) {
+    public static void handleRandomTick(ServerLevel level, BlockPos pos, BlockState state, List<WetterStructure> wetterStructureList) {
         SolarDataManager saveData = SolarHolders.getSaveData(level);
         if (saveData == null) return;
-        HumidityControlProvider humidityControlProvider = saveData.queryHumidityControlProvider(blockPos);
-        if (humidityControlProvider != null && humidityControlProvider.getRemainTime() > 0) return;
+        // HumidityControlProvider humidityControlProvider = saveData.queryHumidityControlProvider(pos);
+        // if (humidityControlProvider != null && humidityControlProvider.getRemainTime() > 0) return;
         boolean hasFound = false;
         WetterStructure needAdd = null;
         for (int j = 0, wetterStructuresSize = wetterStructureList.size(); j < wetterStructuresSize; j++) {
@@ -945,14 +943,14 @@ public final class CropGrowthHandler {
             boolean needSkip = false;
             //         structure.core().isEmpty()
             //         || (structure.core().get().blocks().isEmpty())
-            //         || (!structure.core().get().blocks().get().contains(blockState.getBlockHolder()));
+            //         || (!structure.core().get().blocks().get().contains(state.getBlockHolder()));
             // if (!needSkip) {
-            //     // HumidityControlProvider humidityControlProvider = saveData.queryHumidityControlProvider(blockPos);
+            //     // HumidityControlProvider humidityControlProvider = saveData.queryHumidityControlProvider(pos);
             //     // if (humidityControlProvider != null) needSkip = true;
             // }
             if (!needSkip) {
                 if (structure.enableAirCheck()) {
-                    needSkip = level.getBlockState(blockPos).isEmpty();
+                    needSkip = !level.getBlockState(pos.above()).isEmpty();
                 }
             }
             if (!needSkip) {
@@ -961,11 +959,11 @@ public final class CropGrowthHandler {
                     PosAndBlockStateCheck check = blockStatePredicate.get(i);
                     // BlockState stateTested;
                     // if (check.offset().equals(Vec3i.ZERO)) {
-                    //     stateTested = blockState;
+                    //     stateTested = state;
                     // } else {
-                    //     stateTested = chunk.getBlockState(blockPos.offset(check.offset()));
+                    //     stateTested = chunk.getBlockState(pos.offset(check.offset()));
                     // }
-                    if (!check.block().matches(level, blockPos.offset(check.offset()))) {
+                    if (!check.block().matches(level, pos.offset(check.offset()))) {
                         needSkip = true;
                         break;
                     }
@@ -978,10 +976,13 @@ public final class CropGrowthHandler {
             }
         }
         if (hasFound) {
-            saveData.addHumidityControlProvider(blockPos, new HumidityControlProvider(
-                    needAdd.level(), needAdd.range() * needAdd.range(), needAdd.lastingTime()
+            // if(humidityControlProvider!=null) {
+            //     saveData.removeHumidityControlProvider(pos);
+            // }
+            saveData.addHumidityControlProvider(pos, new HumidityControlProvider(
+                    needAdd.level(), needAdd.range() * needAdd.range(), needAdd.lastingTime(),true
             ));
-            level.scheduleTick(blockPos, blockState.getBlock(), needAdd.lastingTime());
+            // level.scheduleTick(pos, state.getBlock(), needAdd.lastingTime());
         }
     }
 

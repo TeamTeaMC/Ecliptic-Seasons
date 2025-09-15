@@ -9,6 +9,7 @@ import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.data.climate.AgroClimaticZone;
 import com.teamtea.eclipticseasons.api.util.codec.CodecUtil;
 import com.teamtea.eclipticseasons.api.util.codec.ESExtraCodec;
+import com.teamtea.eclipticseasons.api.util.fast.Enum2ObjectMap;
 import com.teamtea.eclipticseasons.common.misc.SimplePair;
 import com.teamtea.eclipticseasons.common.registry.ESRegistries;
 import net.minecraft.ResourceLocationException;
@@ -28,9 +29,9 @@ public record CropGrowControlBuilder(
         HolderSet<CropGrowControlBuilder> parent,
         Optional<GrowParameter> defaultSolarTermGrowParameter,
         Optional<GrowParameter> defaultHumidityGrowParameter,
-        EnumMap<SolarTerm, GrowParameter> solarTermList,
-        EnumMap<Season, GrowParameter> seasonList,
-        EnumMap<Humidity, GrowParameter> humidList,
+        Enum2ObjectMap<SolarTerm, GrowParameter> solarTermList,
+        Enum2ObjectMap<Season, GrowParameter> seasonList,
+        Enum2ObjectMap<Humidity, GrowParameter> humidList,
         Optional<BlockPredicate> notGreenHouse) {
 
     public static final Codec<SolarTerm> SOLAR_TERM_CODEC_STRING = Codec.STRING
@@ -42,16 +43,16 @@ public record CropGrowControlBuilder(
                 }
             }, SolarTerm::getName)
             .stable();
-    public static final Codec<EnumMap<Season, GrowParameter>> Season_ENUM_MAP_CODEC = CodecUtil.enumMapCodec(ESExtraCodec.SEASON, GrowParameter.CODEC, Season.class);
-    public static final Codec<EnumMap<Humidity, GrowParameter>> HUMID_ENUM_MAP_CODEC = CodecUtil.enumMapCodec(ESExtraCodec.HUMIDITY, GrowParameter.CODEC, Humidity.class);
-    public static final Codec<EnumMap<SolarTerm, GrowParameter>> SOLAR_TERM_ENUM_MAP_CODEC = CodecUtil.enumMapCodec(ESExtraCodec.SOLAR_TERM, GrowParameter.CODEC, SolarTerm.class);
+    public static final Codec<Enum2ObjectMap<Season, GrowParameter>> Season_ENUM_MAP_CODEC = CodecUtil.enum2ObjectMapCodec(ESExtraCodec.SEASON, GrowParameter.CODEC, Season.class);
+    public static final Codec<Enum2ObjectMap<Humidity, GrowParameter>> HUMID_ENUM_MAP_CODEC = CodecUtil.enum2ObjectMapCodec(ESExtraCodec.HUMIDITY, GrowParameter.CODEC, Humidity.class);
+    public static final Codec<Enum2ObjectMap<SolarTerm, GrowParameter>> SOLAR_TERM_ENUM_MAP_CODEC = CodecUtil.enum2ObjectMapCodec(ESExtraCodec.SOLAR_TERM, GrowParameter.CODEC, SolarTerm.class);
 
     // 输出的json与这里的排序有关，这里是六个，那么前三个将在后面，具体看情况，，但是基本都是对半分
     public static final Codec<CropGrowControlBuilder> CODEC = RecordCodecBuilder.create(ins -> ins.group(
             GrowParameter.CODEC.optionalFieldOf("humidity_default").forGetter(CropGrowControlBuilder::defaultHumidityGrowParameter),
-            SOLAR_TERM_ENUM_MAP_CODEC.optionalFieldOf("solar_terms",new EnumMap<>(SolarTerm.class)).forGetter(CropGrowControlBuilder::solarTermList),
-            Season_ENUM_MAP_CODEC.optionalFieldOf("seasons",new EnumMap<>(Season.class)).forGetter(CropGrowControlBuilder::seasonList),
-            HUMID_ENUM_MAP_CODEC.optionalFieldOf("humidity",new EnumMap<>(Humidity.class)).forGetter(CropGrowControlBuilder::humidList),
+            SOLAR_TERM_ENUM_MAP_CODEC.optionalFieldOf("solar_terms",new Enum2ObjectMap<>(SolarTerm.class)).forGetter(CropGrowControlBuilder::solarTermList),
+            Season_ENUM_MAP_CODEC.optionalFieldOf("seasons",new Enum2ObjectMap<>(Season.class)).forGetter(CropGrowControlBuilder::seasonList),
+            HUMID_ENUM_MAP_CODEC.optionalFieldOf("humidity",new Enum2ObjectMap<>(Humidity.class)).forGetter(CropGrowControlBuilder::humidList),
             CodecUtil.holderSetCodec(ESRegistries.AGRO_CLIMATE).fieldOf("climate").forGetter(CropGrowControlBuilder::cropClimateType),
             BlockPredicate.CODEC.optionalFieldOf("unlike_greenhouse_material").forGetter(CropGrowControlBuilder::notGreenHouse),
             CodecUtil.holderSetCodec(ESRegistries.CROP).fieldOf("parent").orElse(HolderSet.empty()).forGetter(CropGrowControlBuilder::parent),

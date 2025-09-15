@@ -1,6 +1,8 @@
 package com.teamtea.eclipticseasons.client.util;
 
 
+import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
+import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
@@ -8,6 +10,7 @@ import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
 import com.teamtea.eclipticseasons.common.misc.ClientAgent;
 import it.unimi.dsi.fastutil.longs.*;
+import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 
@@ -20,6 +23,8 @@ public class ClientCon {
     private static Level nextLevel;
 
     public static SolarTerm nowSolarTerm = SolarTerm.NONE;
+    public static Season nowSeason = Season.NONE;
+
     public static int nowSolarYear = 0;
     public static boolean isDay = false;
     public static boolean isEvening = false;
@@ -31,11 +36,15 @@ public class ClientCon {
     // Use for export
     public static String ServerName = "client";
 
-    public static ClientAgent agent = new ClientAgent(){};
+    public static ClientAgent agent = new ClientAgent() {
+    };
 
     public static void tick(Level clientLevel) {
         if (MapChecker.isValidDimension(clientLevel)) {
             ClientCon.nowSolarTerm = EclipticUtil.getNowSolarTerm(clientLevel);
+            ClientCon.nowSeason = EclipticSeasonsApi.getInstance().getAgroSeason(clientLevel,
+                    agent.getCameraEntity() == null ? BlockPos.ZERO :
+                            agent.getCameraEntity().blockPosition());
             ClientCon.isDay = EclipticUtil.isDay(clientLevel);
             ClientCon.isEvening = EclipticUtil.isEvening(clientLevel);
             ClientCon.isNoon = EclipticUtil.isNoon(clientLevel);
@@ -46,11 +55,12 @@ public class ClientCon {
             ClientCon.nowSolarYear = EclipticUtil.getNowSolarYear(clientLevel);
         } else {
             ClientCon.nowSolarTerm = SolarTerm.NONE;
+            ClientCon.nowSeason = Season.NONE;
             ClientCon.isDay = false;
             ClientCon.isEvening = false;
             ClientCon.isNoon = false;
-            ClientCon.progress=0;
-            ClientCon.nowSolarYear=0;
+            ClientCon.progress = 0;
+            ClientCon.nowSolarYear = 0;
         }
 
         if (!roomCache.isEmpty()) {

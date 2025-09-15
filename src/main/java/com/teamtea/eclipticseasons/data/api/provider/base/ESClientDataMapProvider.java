@@ -37,7 +37,7 @@ public abstract class ESClientDataMapProvider<T> implements DataProvider {
     protected final Map<ResourceLocation, Supplier<T>> outMap;
     private final String type;
     private final Codec<T> codec;
-    private final CompletableFuture<HolderLookup.Provider> registries;
+    protected   CompletableFuture<HolderLookup.Provider> registries;
 
     public ESClientDataMapProvider(PackOutput output, String modid, ExistingFileHelper helper, CompletableFuture<HolderLookup.Provider> registries, String type, Codec<T> codec) {
         this.output = output;
@@ -107,7 +107,7 @@ public abstract class ESClientDataMapProvider<T> implements DataProvider {
 
                 try (JsonWriter jsonwriter = new JsonWriter(new OutputStreamWriter(hashingoutputstream, StandardCharsets.UTF_8))) {
                     jsonwriter.setSerializeNulls(false);
-                    jsonwriter.setIndent(" ".repeat(java.lang.Math.max(0, INDENT_WIDTH.get()))); // Neo: Allow changing the indent width without needing to mixin this lambda.
+                    jsonwriter.setIndent(" ".repeat(Math.max(0, INDENT_WIDTH.get()))); // Neo: Allow changing the indent width without needing to mixin this lambda.
                     Gson gson = new GsonBuilder()
                             .disableHtmlEscaping()
                             .create();

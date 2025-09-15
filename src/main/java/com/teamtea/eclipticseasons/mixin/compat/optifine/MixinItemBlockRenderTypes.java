@@ -28,10 +28,10 @@ public abstract class MixinItemBlockRenderTypes {
     // ctx.world().world.getBlockState(ctx.pos)
     @Inject(at = {@At("HEAD")}, method = {"getRenderLayers"}, cancellable = true, remap = false)
     private static void eclipticseasons$getRenderLayers(BlockState state, CallbackInfoReturnable<ChunkRenderTypeSet> cir) {
-        if (renderCutout && BLOCK_RENDER_TYPES.get(state.getBlock()).contains(RenderType.SOLID))
-            if (ExtraModelManager.shouldCutoutMipped(state)) {
-                cir.setReturnValue(ChunkRenderTypeSet.of(RenderType.cutoutMipped()));
-            }
+        // if (renderCutout && BLOCK_RENDER_TYPES.get(state.getBlock()).contains(RenderType.SOLID))
+            // if (ExtraModelManager.shouldCutoutMipped(state)) {
+            //     cir.setReturnValue(ChunkRenderTypeSet.of(RenderType.cutoutMipped()));
+            // }
     }
 
     // @ModifyExpressionValue(

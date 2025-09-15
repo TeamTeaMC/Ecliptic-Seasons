@@ -25,7 +25,7 @@ public class SeasonTextureProvider extends ESClientDataMapProvider<SeasonalTextu
     @Override
     protected void gather(HolderLookup.Provider provider) {
         add(ResourceLocation.withDefaultNamespace("oak_leaves"), new SeasonalTexture(
-                List.of(), Optional.of(Either.right(ClimateTypeBiomeTags.SEASONAL)), List.of(
+                List.of(), Optional.empty(), Optional.of(Either.right(ClimateTypeBiomeTags.SEASONAL)), List.of(
                 SeasonalTexture.Slice.builder().season(Season.SPRING)
                         .textures(List.of((Map.of(
                                 "all", ResourceLocation.withDefaultNamespace("block/cherry_leaves")
@@ -35,20 +35,22 @@ public class SeasonTextureProvider extends ESClientDataMapProvider<SeasonalTextu
         ));
 
         add(ResourceLocation.withDefaultNamespace("oak_leaves_2"), new SeasonalTexture(
-                List.of(ResourceLocation.withDefaultNamespace("block/oak_leaves")), Optional.of(Either.right(ClimateTypeBiomeTags.SEASONAL)), List.of(
-                SeasonalTexture.Slice.builder().season(Season.SPRING)
+                List.of(ResourceLocation.withDefaultNamespace("block/oak_leaves")),
+                Optional.empty(),
+                Optional.of(Either.right(ClimateTypeBiomeTags.SEASONAL)),
+                List.of(SeasonalTexture.Slice.builder().season(Season.SPRING)
                         .textures(List.of(Map.of(
                                 "all", ResourceLocation.withDefaultNamespace("block/cherry_leaves")
                         ), Map.of(
                                 "all", ResourceLocation.withDefaultNamespace("block/spruce_leaves")
                         )))
-                        .tintMap(Map.of("#all",-1))
+                        .tintMap(Map.of("#all", -1))
                         .build()
-        )
+                )
         ));
 
         add(ResourceLocation.withDefaultNamespace("oak_leaves_3"), new SeasonalTexture(
-                List.of(ResourceLocation.withDefaultNamespace("block/oak_leaves")), Optional.of(Either.right(ClimateTypeBiomeTags.SEASONAL)), List.of(
+                List.of(ResourceLocation.withDefaultNamespace("block/oak_leaves")), Optional.empty(), Optional.of(Either.right(ClimateTypeBiomeTags.SEASONAL)), List.of(
                 SeasonalTexture.Slice.builder().season(Season.SPRING)
                         .transitionMaterials(List.of(
                                 Pair.of(Map.of(
@@ -62,7 +64,7 @@ public class SeasonTextureProvider extends ESClientDataMapProvider<SeasonalTextu
         ));
 
         add(ResourceLocation.withDefaultNamespace("oak_leaves_4"), new SeasonalTexture(
-                List.of(ResourceLocation.withDefaultNamespace("block/oak_leaves")), Optional.of(Either.right(ClimateTypeBiomeTags.SEASONAL)), List.of(
+                List.of(ResourceLocation.withDefaultNamespace("block/oak_leaves")), Optional.empty(), Optional.of(Either.right(ClimateTypeBiomeTags.SEASONAL)), List.of(
                 SeasonalTexture.Slice.builder().season(Season.SPRING)
                         .transitionMaterials(List.of(
                                 Pair.of(Map.of(

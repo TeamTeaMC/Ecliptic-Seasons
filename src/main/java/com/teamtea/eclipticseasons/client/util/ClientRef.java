@@ -36,7 +36,6 @@ public class ClientRef {
     public static final Map<Block, List<SeasonBlockDefinition>> seasonDef = new IdentityHashMap<>();
     public static final Map<Block, List<SnowDefinition>> snowClientDef = new IdentityHashMap<>();
 
-    // TODO Need to be careful for game reloading
     public static void updateClientSide(RegistryAccess registryAccess) {
         biomeColors.clear();
         leaveColors.clear();

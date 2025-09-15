@@ -11,11 +11,13 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
 @Mixin({ChunkAccess.class})
-public abstract class MixinChunkAccess  implements IChunkBiomeHolder {
+public abstract class MixinChunkAccess implements IChunkBiomeHolder {
 
-    @Shadow public abstract boolean hasData(AttachmentType<?> type);
+    @Shadow
+    public abstract boolean hasData(AttachmentType<?> type);
 
-    @Shadow public abstract <T> T getData(AttachmentType<T> type);
+    @Shadow
+    public abstract <T> T getData(AttachmentType<T> type);
 
     @Unique
     private BiomeHolder eclipticseasons$biomeHolder = null;

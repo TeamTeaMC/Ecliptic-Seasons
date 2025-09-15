@@ -25,7 +25,6 @@ public abstract class MixinLivingEntity extends Entity {
     public MixinLivingEntity(EntityType<?> entityType, Level level) {
         super(entityType, level);
     }
-    // TODO:修改走路粒子
     // @ModifyExpressionValue(at = {@At(value = "INVOKE",
     //         target = "Lnet/minecraft/world/level/block/state/BlockState;getFriction(Lnet/minecraft/world/level/LevelReader;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/entity/Entity;)F")},
     //         method = {"travel"})

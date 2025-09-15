@@ -11,7 +11,7 @@ public class ChunkInfoMap {
 
     private final short[][] matrix = new short[MapChecker.ChunkSize][MapChecker.ChunkSize];
     private final short[][] biomes = new short[MapChecker.ChunkSize][MapChecker.ChunkSize];
-    private final Object[][] lockArray = new Object[MapChecker.ChunkSize][MapChecker.ChunkSize];
+    // private final Object[][] lockArray = new Object[MapChecker.ChunkSize][MapChecker.ChunkSize];
     final int x;
     final int z;
     final short minY;
@@ -27,7 +27,7 @@ public class ChunkInfoMap {
             for (int j = 0; j < MapChecker.ChunkSize; j++) {
                 biomes[i][j] = -1;
                 matrix[i][j] = this.minY;
-                lockArray[i][j] = new Object();
+                // lockArray[i][j] = new Object();
             }
         }
         EclipticSeasons.extraLogger(true,String.format("End create [%s, %s]", x, z));
@@ -62,7 +62,8 @@ public class ChunkInfoMap {
         x = getChunkValue(x);
         z = getChunkValue(z);
         int old;
-        synchronized (lockArray[x][z]) {
+        // synchronized (lockArray[x][z])
+        {
             old = matrix[x][z];
             matrix[x][z] = (short) y;
         }
@@ -74,7 +75,8 @@ public class ChunkInfoMap {
         x = getChunkValue(x);
         z = getChunkValue(z);
         int old;
-        synchronized (lockArray[x][z]) {
+        // synchronized (lockArray[x][z])
+        {
             old = biomes[x][z];
             biomes[x][z] = (short) id;
         }

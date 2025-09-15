@@ -29,7 +29,7 @@ import java.awt.*;
 public final class DebugInfoRenderer {
     private final Minecraft mc;
     private long delay = 0;
-    private net.minecraft.core.Holder<Biome> biomeHolder;
+    private Holder<Biome> biomeHolder;
 
     public DebugInfoRenderer(Minecraft mc) {
 
@@ -84,7 +84,7 @@ public final class DebugInfoRenderer {
 
                 String solarTermS = "Solar Term: " + solarTerm.getTranslation().getString();
                 String biomeRainS = "Biome Rain: " + solarTerm.getBiomeRain(biomeWeather.biomeHolder);
-                String snowTermS = "Snow Term: " + SolarTerm.getSnowTerm(biomeWeather.biomeHolder.value(), true);
+                String snowTermS = "Snow Term: " + SolarTerm.getSnowTerm(biomeWeather.biomeHolder.value(), true,EclipticUtil.getSnowTempChange(level1));
                 drawInfo(matrixStack, screenWidth, screenHeight, "", index++);
                 drawInfo(matrixStack, screenWidth, screenHeight, biomesS, index++);
                 drawInfo(matrixStack, screenWidth, screenHeight, biomesSS, index++);

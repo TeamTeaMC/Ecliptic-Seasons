@@ -67,9 +67,9 @@ public class BlockInCopperGrateBlockEntity extends HumidityControlBlockEntity {
         if (tag.contains("inner_block")) {
             Block block = BuiltInRegistries.BLOCK.get(EclipticSeasons.parse(tag.getString("inner_block")));
             if (!block.defaultBlockState().isAir())
-                setBlockNotSync(block);
+                setBlockAndItemNotSync(block);
             else {
-                setBlockNotSync(null);
+                setBlockAndItemNotSync(null);
             }
         }
     }

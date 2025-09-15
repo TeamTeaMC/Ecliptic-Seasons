@@ -35,7 +35,7 @@ public class MixinLevel implements IBiomeWeatherProvider {
                         e.printStackTrace();
                     }
                 }
-                cir.setReturnValue(WeatherManager.isRainingEverywhere(serverLevel));
+                cir.setReturnValue(WeatherManager.isEffectiveRaining(serverLevel));
             }
         }
     }
@@ -51,7 +51,7 @@ public class MixinLevel implements IBiomeWeatherProvider {
                         e.printStackTrace();
                     }
                 }
-                cir.setReturnValue(WeatherManager.getMinRainLevel(serverLevel, p_46723_));
+                cir.setReturnValue(WeatherManager.getAverageRainLevel(serverLevel, p_46723_));
             }
         }
     }
@@ -93,7 +93,7 @@ public class MixinLevel implements IBiomeWeatherProvider {
                         e.printStackTrace();
                     }
                 }
-                cir.setReturnValue(WeatherManager.isThunderEverywhere(serverLevel));
+                cir.setReturnValue(WeatherManager.isEffectiveThundering(serverLevel));
             }
         }
     }
@@ -109,7 +109,7 @@ public class MixinLevel implements IBiomeWeatherProvider {
                         e.printStackTrace();
                     }
                 }
-                cir.setReturnValue(WeatherManager.getMinThunderLevel(serverLevel, p_46723_));
+                cir.setReturnValue(WeatherManager.getAverageThunderLevel(serverLevel, p_46723_));
             }
         }
     }

@@ -1,9 +1,7 @@
 package com.teamtea.eclipticseasons.client.sound;
 
-import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.common.block.blockentity.WindChimesBlockEntity;
-import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import net.minecraft.client.resources.sounds.AbstractTickableSoundInstance;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;

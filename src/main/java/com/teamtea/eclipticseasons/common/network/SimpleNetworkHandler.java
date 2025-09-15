@@ -15,6 +15,7 @@ import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
 import java.util.List;
 
+@SuppressWarnings("removal")
 @EventBusSubscriber(modid = EclipticSeasonsApi.MODID, bus = EventBusSubscriber.Bus.MOD)
 public final class SimpleNetworkHandler {
 
@@ -61,21 +62,15 @@ public final class SimpleNetworkHandler {
         );
 
         registrar.playToClient(
-                MapFixerMessage.TYPE,
-                MapFixerMessage.STREAM_CODEC,
-                NetworkUtil::processMapFixerMessage
-        );
-
-        registrar.playToClient(
-                BroomUseMessage.TYPE,
-                BroomUseMessage.STREAM_CODEC,
-                NetworkUtil::processBroomUseMessage
-        );
-
-        registrar.playToClient(
                 HumidModifyMessage.TYPE,
                 HumidModifyMessage.STREAM_CODEC,
                 NetworkUtil::processHumidModifyMessage
+        );
+
+        registrar.playToClient(
+                UpdateTempChangeMessage.TYPE,
+                UpdateTempChangeMessage.STREAM_CODEC,
+                NetworkUtil::processUpdateTempChangeMessage
         );
     }
 
@@ -90,12 +85,7 @@ public final class SimpleNetworkHandler {
     }
 
     public static <MSG extends CustomPacketPayload> void send(List<ServerPlayer> players, MSG msg) {
-        players.forEach(player -> {
-            // if (player instanceof ServerPlayer serverPlayer)
-            {
-                send(player, msg);
-            }
-        });
+        players.forEach(player -> send(player, msg));
     }
 
 }

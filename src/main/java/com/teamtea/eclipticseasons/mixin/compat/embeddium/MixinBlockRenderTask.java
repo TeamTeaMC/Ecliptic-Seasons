@@ -6,7 +6,9 @@ import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
+import com.teamtea.eclipticseasons.api.misc.client.IExtraRendererContextOwner;
 import com.teamtea.eclipticseasons.client.core.ExtraModelManager;
+import com.teamtea.eclipticseasons.client.core.ExtraRendererContext;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
@@ -55,16 +57,20 @@ public abstract class MixinBlockRenderTask {
             @Local(ordinal = 1) BlockPos.MutableBlockPos mutableBlockPos2,
             @Local(ordinal = 0) BlockState state,
             @Local long seed,
-            @Share("snowModelRef") LocalRef<BakedModel> snowModelRef,
-            @Share("shouldReplace") LocalBooleanRef replace
+            @Local ModelData modelData
     ) {
         random.setSeed(seed);
         eclipticseasons$checkPos.set(mutableBlockPos.getX(), mutableBlockPos.getY(), mutableBlockPos.getZ());
         BakedModel model = ExtraModelManager.findModel(ctx.world(), mutableBlockPos, state, random, seed, eclipticseasons$checkPos);
-        snowModelRef.set(model);
-        replace.set(model != null
-                && ExtraModelManager.isModelReplaceable(state, ctx.world(), mutableBlockPos, model));
+
+        IExtraRendererContextOwner.of(ctx.world())
+                .setModelData(modelData)
+                .setOriginalModel(bakedModel)
+                .setExtraModel(model)
+                .setReplace(model != null
+                        && ExtraModelManager.isModelReplaceable(state, ctx.world(), mutableBlockPos, model));
     }
+
 
     @ModifyExpressionValue(
             remap = false,
@@ -82,29 +88,21 @@ public abstract class MixinBlockRenderTask {
             @Local(ordinal = 1) BlockPos.MutableBlockPos mutableBlockPos2,
             @Local(ordinal = 0) BlockState state,
             @Local long seed,
-            @Share("snowModelRef") LocalRef<BakedModel> snowModelRef,
-            @Share("shouldReplace") LocalBooleanRef replace,
+            // @Share("snowModelRef") LocalRef<BakedModel> snowModelRef,
+            // @Share("shouldReplace") LocalBooleanRef replace,
             @Local ModelData modelData
     ) {
 
-        // BakedModel snowModel = null;
-        // if (!original) {
-        //     snowModel = ModelManager.findModel(ctx.world(), mutableBlockPos, state, random, ctx.seed(), null);
-        // } else {
-        //     // if (ModelManager.isModelReplaceable(state))
-        //     if (ModelManager.isModelReplaceable(state, ctx.world(), ctx.pos())) {
-        //         snowModel = ModelManager.findModel(ctx.world(), mutableBlockPos, state, random, ctx.seed(), null);
-        //     }
-        // }
+        ExtraRendererContext rendererHolder = IExtraRendererContextOwner.of(ctx.world());
 
         BakedModel snowModel = null;
-        if (replace.get()) {
+        if (rendererHolder.isReplace()) {
             original = false;
         }
 
         if (!original) {
-            snowModel = snowModelRef.get();
-            snowModelRef.set(null);
+            snowModel = rendererHolder.getExtraModel();
+            // snowModelRef.set(null);
         }
 
         if (snowModel != null) {
@@ -113,11 +111,14 @@ public abstract class MixinBlockRenderTask {
                     mutableBlockPos2,
                     state,
                     snowModel,
-                    seed,
-                    // TODO: we need the model data
-                    modelData,
+                    state.getSeed(mutableBlockPos),
+                    rendererHolder.getModelData(),
                     ExtraModelManager.getRenderType(state));
             cache.getBlockRenderer().renderModel(ctx, buffers);
+        }
+
+        if (!original) {
+            rendererHolder.resetAll();
         }
         return original;
     }

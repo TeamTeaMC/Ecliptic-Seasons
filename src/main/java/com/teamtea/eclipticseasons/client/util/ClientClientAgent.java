@@ -1,12 +1,15 @@
 package com.teamtea.eclipticseasons.client.util;
 
+import com.teamtea.eclipticseasons.client.render.WorldRenderer;
 import com.teamtea.eclipticseasons.client.sound.WindChimeSoundInstance;
 import com.teamtea.eclipticseasons.common.block.WindChimesBlock;
 import com.teamtea.eclipticseasons.common.block.blockentity.WindChimesBlockEntity;
 import com.teamtea.eclipticseasons.common.misc.ClientAgent;
 import net.minecraft.client.Minecraft;
+import net.minecraft.core.SectionPos;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.phys.HitResult;
 
 public class ClientClientAgent implements ClientAgent {
@@ -27,5 +30,10 @@ public class ClientClientAgent implements ClientAgent {
     @Override
     public HitResult getHitResult() {
         return Minecraft.getInstance().hitResult;
+    }
+
+    @Override
+    public void setChunkDirty(SectionPos sectionPos) {
+        WorldRenderer.setSectionDirtyWithNeighbors(sectionPos);
     }
 }

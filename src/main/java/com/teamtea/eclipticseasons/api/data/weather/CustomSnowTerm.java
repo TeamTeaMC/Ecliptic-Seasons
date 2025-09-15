@@ -10,17 +10,21 @@ import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.biome.Biome;
 
+import java.util.List;
+
 
 public record CustomSnowTerm(
         HolderSet<Biome> biomes,
         SolarTerm start,
-        SolarTerm end
+        SolarTerm end,
+        List<TempEvent> tempEvents
 ) implements ISnowTerm {
 
     public static final Codec<CustomSnowTerm> CODEC = RecordCodecBuilder.create(ins -> ins.group(
             CodecUtil.holderSetCodec(Registries.BIOME).fieldOf("biomes").forGetter(CustomSnowTerm::biomes),
             ESExtraCodec.SOLAR_TERM.fieldOf("start").forGetter(CustomSnowTerm::start),
-            ESExtraCodec.SOLAR_TERM.fieldOf("end").forGetter(CustomSnowTerm::end)
+            ESExtraCodec.SOLAR_TERM.fieldOf("end").forGetter(CustomSnowTerm::end),
+            TempEvent.CODEC.listOf().optionalFieldOf("events", List.of()).forGetter(CustomSnowTerm::tempEvents)
     ).apply(ins, CustomSnowTerm::new));
 
     @Override
@@ -31,5 +35,34 @@ public record CustomSnowTerm(
     @Override
     public SolarTerm getEnd() {
         return end;
+    }
+
+    @Override
+    public ISnowTerm cast(float tempChange) {
+        for (TempEvent tempEvent : tempEvents) {
+            if (tempEvent.tempOffset > tempChange) {
+                return tempEvent;
+            }
+        }
+        return this;
+    }
+
+
+    public record TempEvent(float tempOffset, SolarTerm start, SolarTerm end) implements ISnowTerm {
+        public static final Codec<TempEvent> CODEC = RecordCodecBuilder.create(ins -> ins.group(
+                Codec.FLOAT.fieldOf("temp_offset").forGetter(TempEvent::tempOffset),
+                ESExtraCodec.SOLAR_TERM.fieldOf("start").forGetter(TempEvent::start),
+                ESExtraCodec.SOLAR_TERM.fieldOf("end").forGetter(TempEvent::end)
+        ).apply(ins, TempEvent::new));
+
+        @Override
+        public SolarTerm getStart() {
+            return start();
+        }
+
+        @Override
+        public SolarTerm getEnd() {
+            return end();
+        }
     }
 }

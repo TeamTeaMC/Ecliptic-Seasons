@@ -10,5 +10,5 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 @Mixin({LevelChunkSection.class})
 public interface MixinAccessorLevelChunkSection {
     @Accessor("states")
-    PalettedContainer<BlockState> getStates();
+    PalettedContainer<BlockState> es$getStates();
 }

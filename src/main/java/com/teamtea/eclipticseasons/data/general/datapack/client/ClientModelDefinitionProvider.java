@@ -17,6 +17,8 @@ import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.properties.BambooLeaves;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
+import net.neoforged.neoforge.client.model.generators.ModelFile;
+import net.neoforged.neoforge.client.model.generators.loaders.CompositeModelBuilder;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
 import java.util.List;
@@ -30,6 +32,10 @@ public class ClientModelDefinitionProvider extends AbstractModelDefinitionProvid
         super(output, modid, helper, registries);
     }
 
+    public ExtraModelBuilder getModel(String resourceLocation) {
+        return new ExtraModelBuilder(withBlockFolder(EclipticSeasons.rl(resourceLocation)), helper)
+                .parent(new ModelFile.ExistingModelFile(withBlockFolder(EclipticSeasons.rl(resourceLocation)), helper));
+    }
 
     @Override
     protected void gather(HolderLookup.Provider provider) {
@@ -39,26 +45,23 @@ public class ClientModelDefinitionProvider extends AbstractModelDefinitionProvid
         simple(ClientModelDefinitions.OVERLAY_TINY).requireMod(modid);
         simple(ClientModelDefinitions.OVERLAY).requireMod(modid);
 
-        // add(getPath(ClientModelDefinitions.OVERLAY_TINY), ESModelLoadedJson.builder()
-        //         .multiPartLike(new MultiPartLike(List.of(
-        //                 new SelectorLike((new MultiVariantLike(List.of(
-        //                         new VariantLike.VariantBuilder(ClientModelDefinitions.OVERLAY_TINY).build()
-        //
-        //                 ))))
-        //         )))
-        //         .requirement(EclipticSeasonsApi.MODID)
-        //         .build());
 
         addModelDefinition(ClientModelDefinitions.SNOWY_GRASS_BLOCK_OVERLAY)
-                .replace(false)
-                .multiPart(condition(GrassBlock.SNOWY, false), variant(ClientModelDefinitions.GRASS_BLOCK_SNOW).rotationY(0).build(),
-                        variant(ClientModelDefinitions.GRASS_BLOCK_SNOW).rotationY(90).build(),
-                        variant(ClientModelDefinitions.GRASS_BLOCK_SNOW).rotationY(180).build(),
-                        variant(ClientModelDefinitions.GRASS_BLOCK_SNOW).rotationY(270).build())
-                .multiPart(variant(ClientModelDefinitions.SNOWY_GRASS_BLOCK_OVERLAY).rotationY(0).build(),
-                        variant(ClientModelDefinitions.SNOWY_GRASS_BLOCK_OVERLAY).rotationY(90).build(),
-                        variant(ClientModelDefinitions.SNOWY_GRASS_BLOCK_OVERLAY).rotationY(180).build(),
-                        variant(ClientModelDefinitions.SNOWY_GRASS_BLOCK_OVERLAY).rotationY(270).build())
+                .replace(true)
+                .variant(variant(models().withExistingParent("snowy_grass_block", "block/block")
+                        .customLoader(CompositeModelBuilder::begin)
+                        .child("snowy_grass_block_no_top",models().withExistingParent("snowy_grass_block_no_top", "grass_block_snow",true)
+                                .texture("top", ResourceLocation.withDefaultNamespace("block/air")))
+                        .child("top_snow",getModel("grass_block_overlay"))
+                        .end()).build())
+        // .multiPart(condition(GrassBlock.SNOWY, false), variant(ClientModelDefinitions.GRASS_BLOCK_SNOW).rotationY(0).build(),
+        //         variant(ClientModelDefinitions.GRASS_BLOCK_SNOW).rotationY(90).build(),
+        //         variant(ClientModelDefinitions.GRASS_BLOCK_SNOW).rotationY(180).build(),
+        //         variant(ClientModelDefinitions.GRASS_BLOCK_SNOW).rotationY(270).build())
+        // .multiPart(variant(ClientModelDefinitions.SNOWY_GRASS_BLOCK_OVERLAY).rotationY(0).build(),
+        //         variant(ClientModelDefinitions.SNOWY_GRASS_BLOCK_OVERLAY).rotationY(90).build(),
+        //         variant(ClientModelDefinitions.SNOWY_GRASS_BLOCK_OVERLAY).rotationY(180).build(),
+        //         variant(ClientModelDefinitions.SNOWY_GRASS_BLOCK_OVERLAY).rotationY(270).build())
         ;
 
         addFlower();

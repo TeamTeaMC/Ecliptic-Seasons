@@ -16,7 +16,7 @@ import net.neoforged.neoforge.client.model.data.ModelData;
 
 public class SnowRenderer {
 
-    public static void renderSnowyBlock(BakedModel bakedModel, VertexConsumer bufferbuilder2, BlockPos pos, BlockState state, PoseStack posestack, RenderChunkRegion renderchunkregion, RandomSource random, long seed, RenderType renderType) {
+    public static void renderSnowyBlock(BakedModel bakedModel, VertexConsumer bufferbuilder2, BlockPos pos, BlockState state, PoseStack posestack, RenderChunkRegion renderchunkregion, RandomSource random, long seed, RenderType renderType, ModelData modelData) {
         // long seed = state.getSeed(pos);
         posestack.pushPose();
         posestack.translate((float) (pos.getX() & 15), (float) (pos.getY() & 15), (float) (pos.getZ() & 15));
@@ -32,10 +32,10 @@ public class SnowRenderer {
                             random,
                             seed,
                             OverlayTexture.NO_OVERLAY,
-                            ModelData.EMPTY,
+                            modelData,
                             renderType);
         } else {
-            FabricRender.render(renderchunkregion, state, pos, bakedModel, posestack, ModelData.EMPTY, renderType);
+            FabricRender.render(renderchunkregion, state, pos, bakedModel, posestack, modelData, renderType);
         }
 
         posestack.popPose();

@@ -1,5 +1,6 @@
 package com.teamtea.eclipticseasons.common.command;
 
+import com.mojang.brigadier.arguments.FloatArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.datafixers.util.Either;
@@ -11,11 +12,13 @@ import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.api.util.SimpleUtil;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
+import com.teamtea.eclipticseasons.common.core.snow.SnowyMapChecker;
 import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.teamtea.eclipticseasons.common.misc.MapExporter;
 import com.teamtea.eclipticseasons.common.network.SimpleNetworkHandler;
 import com.teamtea.eclipticseasons.common.network.message.EmptyMessage;
+import com.teamtea.eclipticseasons.common.network.message.UpdateTempChangeMessage;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
@@ -41,6 +44,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @EventBusSubscriber(modid = EclipticSeasonsApi.MODID)
@@ -66,6 +70,16 @@ public class CommandHandler {
                                 .executes(commandContext -> {
                                     int solar = EclipticUtil.getNowSolarDay(commandContext.getSource().getLevel());
                                     commandContext.getSource().sendSuccess(() -> Component.literal("" + solar), true);
+                                    return 0;
+                                })
+                        )
+                        .then(Commands.literal("setSnowTempChange")
+                                .then(Commands.argument("tempChange", FloatArgumentType.floatArg(-0.25f, 0.25f))
+                                        .executes(commandContext -> setTempChange(commandContext.getSource(), FloatArgumentType.getFloat(commandContext, "tempChange")))))
+                        .then(Commands.literal("getSnowTempChange")
+                                .executes(commandContext -> {
+                                    float snowTempChange = EclipticUtil.getSnowTempChange(commandContext.getSource().getLevel());
+                                    commandContext.getSource().sendSuccess(() -> Component.literal("" + snowTempChange), true);
                                     return 0;
                                 })
                         )
@@ -182,30 +196,33 @@ public class CommandHandler {
             for (WeatherManager.BiomeWeather biomeWeather : levelBiomeWeather) {
                 if (result.test(biomeWeather.biomeHolder)) {
                     biomeWeather.snowDepth = (byte) depth;
+                    biomeWeather.lastRainTime= level.getGameTime();
                     found = true;
                 }
             }
             if (found) {
                 WeatherManager.sendBiomePacket(levelBiomeWeather, level.players());
-                SimpleNetworkHandler.send(level.players(),new EmptyMessage());
+                SnowyMapChecker.updateAllChunks(level);
+                SimpleNetworkHandler.send(level.players(), new EmptyMessage());
             }
         }
         return 0;
     }
 
-    public static int setBiomeRain(CommandSourceStack sourceStack, ResourceOrTagArgument.Result<Biome> result, boolean setRain, boolean isThunder) throws CommandSyntaxException {
+    public static int setBiomeRain(CommandSourceStack sourceStack, Predicate<Holder<Biome>> result, boolean setRain, boolean isThunder) throws CommandSyntaxException {
         ServerLevel level = sourceStack.getLevel();
         var levelBiomeWeather = WeatherManager.getBiomeList(level);
         if (levelBiomeWeather != null) {
             boolean found = false;
-            int size = levelBiomeWeather.size();
+            int size = WeatherManager.getWeatherTickFactor(level);
             SolarTerm solarTerm = EclipticSeasonsApi.getInstance().getSolarTerm(level);
             for (WeatherManager.BiomeWeather biomeWeather : levelBiomeWeather) {
                 if (result.test(biomeWeather.biomeHolder)) {
                     BiomeRain biomeRain = WeatherManager.getBiomeRain(level, solarTerm, biomeWeather.biomeHolder);
-                    biomeWeather.rainTime = setRain ? biomeRain.getRainDuration(level.getRandom()) / size : 0;
                     biomeWeather.clearTime = setRain ? 0 : biomeRain.getRainDelay(level.getRandom()) / size;
 
+                    biomeWeather.rainTime = setRain ? biomeRain.getRainDuration(level.getRandom()) / size : 0;
+                    biomeWeather.lastRainTime = setRain ? level.getGameTime() : biomeWeather.lastRainTime;
                     biomeWeather.thunderTime = isThunder ? biomeRain.getThunderDuration(level.getRandom()) / size : 0;
 
                     found = true;
@@ -223,16 +240,29 @@ public class CommandHandler {
     }
 
     public static int setDay(CommandSourceStack source, int day) {
-        for (ServerLevel ServerLevel : List.of(source.getLevel())) {
-            SolarHolders.getSaveDataLazy(ServerLevel).ifPresent(data ->
+        for (ServerLevel serverLevel : List.of(source.getLevel())) {
+            SolarHolders.getSaveDataLazy(serverLevel).ifPresent(data ->
             {
                 data.setSolarTermsDay(day);
-                data.sendAndUpdate(ServerLevel);
+                data.sendAndUpdate(serverLevel);
             });
         }
 
         source.sendSuccess(() -> Component.translatable("commands.eclipticseasons.solar.set", day), true);
         return getDay(source.getLevel());
+    }
+
+    public static int setTempChange(CommandSourceStack source, float tempChange) {
+        for (ServerLevel serverLevel : List.of(source.getLevel())) {
+            SolarHolders.getSaveDataLazy(serverLevel).ifPresent(data ->
+            {
+                data.setSolarTempChange(tempChange);
+                SimpleNetworkHandler.send(serverLevel.players(), new UpdateTempChangeMessage(tempChange));
+            });
+        }
+
+        source.sendSuccess(() -> Component.literal(tempChange + ""), true);
+        return 0;
     }
 
     public static int addDay(CommandSourceStack source, int add) {

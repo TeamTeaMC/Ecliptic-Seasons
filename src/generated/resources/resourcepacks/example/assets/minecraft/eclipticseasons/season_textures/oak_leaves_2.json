@@ -1,8 +1,11 @@
 {
   "target": "minecraft:block/oak_leaves",
-  "biomes": "#eclipticseasons:seasonal",
+  "biomes": "#eclipticseasons:rain/seasonal",
   "slices": [
     {
+      "tint": {
+        "#all": -1
+      },
       "textures": [
         {
           "all": "minecraft:block/cherry_leaves"
@@ -11,9 +14,6 @@
           "all": "minecraft:block/spruce_leaves"
         }
       ],
-      "tint": {
-        "#all": -1
-      },
       "season": "spring"
     }
   ]

@@ -6,6 +6,7 @@ import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
 import net.minecraft.world.level.Level;
 
 import javax.annotation.Nullable;
+import java.util.EnumMap;
 import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -28,10 +29,10 @@ public class SolarHolders {
     // Lazy
     public static Optional<SolarDataManager> getSaveDataLazy(Level level) {
         SolarDataManager saveData = getSaveData(level);
-        if (saveData == null) {
-            saveData = new SolarDataManager(level);
-        }
-        return Optional.of(saveData);
+        // if (saveData == null) {
+        //     saveData = new SolarDataManager(level);
+        // }
+        return Optional.ofNullable(saveData);
     }
 
 

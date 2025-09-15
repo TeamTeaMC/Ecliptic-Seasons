@@ -52,6 +52,8 @@ public class ESBlockModelProvider extends BlockModelProvider {
         cubeAll(resource(BlockRegistry.block_in_wooden_grate_block.getId().getPath()).getPath(), EclipticSeasons.rl("block/wooden_grate"));
 
 
+        // withExistingParent("snowy_grass_block","grass_block_snow")
+        //         .texture("top",ResourceLocation.withDefaultNamespace("block/snow"));
 
     }
 

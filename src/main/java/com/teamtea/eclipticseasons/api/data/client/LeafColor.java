@@ -50,13 +50,13 @@ public record LeafColor(
 
 
     private static final SolarTermValueMap<ColorMode> EMPTY_MODE_MAP = new SolarTermValueMap<>(
-            Optional.empty(), Optional.empty(), Optional.empty()
+            Optional.empty(), Optional.empty(), Optional.empty(),Optional.empty()
     );
     private static final SolarTermValueMap<List<ResourceLocation>> EMPTY_LIST_MAP = new SolarTermValueMap<>(
-            Optional.empty(), Optional.empty(), Optional.empty()
+            Optional.empty(), Optional.empty(), Optional.empty(),Optional.empty()
     );
     private static final SolarTermValueMap<Integer> EMPTY_INTEGER_MAP = new SolarTermValueMap<>(
-            Optional.empty(), Optional.empty(), Optional.empty()
+            Optional.empty(), Optional.empty(), Optional.empty(),Optional.empty()
     );
 
     @Override
@@ -65,12 +65,12 @@ public record LeafColor(
     }
 
     public @NotNull Pair<InstanceHolder, Instance> toInstance() {
-        EnumMap<SolarTerm, ColorMode> colorMap = colors.orElse(EMPTY_MODE_MAP).combine();
-        EnumMap<SolarTerm, List<ResourceLocation>> spriteMap = sprites.orElse(EMPTY_LIST_MAP).combine();
-        EnumMap<SolarTerm, Integer> weightMap = weights.orElse(EMPTY_INTEGER_MAP).combine();
+        Enum2ObjectMap<SolarTerm, ColorMode> colorMap = colors.orElse(EMPTY_MODE_MAP).combine();
+        Enum2ObjectMap<SolarTerm, List<ResourceLocation>> spriteMap = sprites.orElse(EMPTY_LIST_MAP).combine();
+        Enum2ObjectMap<SolarTerm, Integer> weightMap = weights.orElse(EMPTY_INTEGER_MAP).combine();
 
-        Enum2ObjectMap<SolarTerm, ColorMode.Instance> colorsE = SolarTermValueMap.convertToEnum2ObjectMap(colorMap, ColorMode::toInstance);
-        Enum2ObjectMap<SolarTerm, List<ResourceLocation>> spritesE = SolarTermValueMap.convertToEnum2ObjectMap(spriteMap, Function.identity());
+        Enum2ObjectMap<SolarTerm, ColorMode.Instance> colorsE = SolarTermValueMap.convertToEnum2ObjectMap(SolarTerm.class,colorMap, ColorMode::toInstance);
+        Enum2ObjectMap<SolarTerm, List<ResourceLocation>> spritesE = SolarTermValueMap.convertToEnum2ObjectMap(SolarTerm.class,spriteMap, Function.identity());
         Enum2IntMap<SolarTerm> weightsE = new Enum2IntMap<>(SolarTerm.class);
         weightMap.forEach(weightsE::put);
 
@@ -102,11 +102,11 @@ public record LeafColor(
             Enum2IntMap<SolarTerm> weights,
             boolean replace
     ) implements Mergable<Instance> {
-        private static final Enum2ObjectMap<SolarTerm, ColorMode.Instance> EMPTY_COLOR_MAP = new Enum2ObjectMap<>(SolarTerm.class, null);
+        private static final Enum2ObjectMap<SolarTerm, ColorMode.Instance> EMPTY_COLOR_MAP = new Enum2ObjectMap<>(SolarTerm.class);
 
         private static final Instance EMPTY = new Instance(ColorSource.MAP,
-                new Enum2ObjectMap<>(SolarTerm.class, null),
-                new Enum2ObjectMap<>(SolarTerm.class, null),
+                new Enum2ObjectMap<>(SolarTerm.class),
+                new Enum2ObjectMap<>(SolarTerm.class),
                 new Enum2IntMap<>(SolarTerm.class),
                 false);
         @Override

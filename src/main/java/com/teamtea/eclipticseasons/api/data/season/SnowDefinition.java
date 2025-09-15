@@ -42,15 +42,16 @@ public class SnowDefinition implements MapFiller<Block, SnowDefinition>, HolderM
     private final Info info = Info.builder().build();
 
     @Override
-    public void fillMap(Map<Block, SnowDefinition> map) {
+    public void fillMap(Map<Block, List<SnowDefinition>> map) {
         for (Holder<Block> block : blocks) {
-            map.put(block.value(), this);
+            List<SnowDefinition> definitionList = map.computeIfAbsent(block.value(), (b) -> new ArrayList<>());
+            definitionList.add(this);
         }
     }
 
     @Override
     public Pair<HolderSet<Block>, SnowDefinition> asHolderMapping() {
-        return Pair.of(blocks,this);
+        return Pair.of(blocks, this);
     }
 
     @Builder
@@ -61,7 +62,7 @@ public class SnowDefinition implements MapFiller<Block, SnowDefinition>, HolderM
                 Codec.BOOL.optionalFieldOf("snow_passable", false).forGetter(o -> o.snowPassable),
                 Codec.BOOL.optionalFieldOf("ignore_offset", false).forGetter(o -> o.ignoreOffset),
                 Codec.INT.optionalFieldOf("offset", 0).forGetter(o -> o.offset),
-                ResourceLocation.CODEC.optionalFieldOf("mid", ClientModelDefinitions.OVERLAY).forGetter(o -> o.mid),
+                ResourceLocation.CODEC.optionalFieldOf("mid", ClientModelDefinitions.EMPTY).forGetter(o -> o.mid),
                 ResourceLocation.CODEC.optionalFieldOf("mid2", ClientModelDefinitions.EMPTY).forGetter(o -> o.mid2)
         ).apply(ins, Info::new));
         public static final Codec<Info> CODEC = MAP_CODEC.codec();

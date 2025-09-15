@@ -1,13 +1,13 @@
 package com.teamtea.eclipticseasons.common.registry;
 
-import com.mojang.datafixers.util.Either;
 import com.teamtea.eclipticseasons.EclipticSeasons;
-import com.teamtea.eclipticseasons.api.constant.climate.SnowTerm;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
-import com.teamtea.eclipticseasons.api.data.climate.AgroClimaticZone;
 import com.teamtea.eclipticseasons.api.data.misc.SolarTermValueMap;
-import com.teamtea.eclipticseasons.api.data.season.SeasonDefinition;
-import com.teamtea.eclipticseasons.api.data.weather.CustomSnowTerm;
+import com.teamtea.eclipticseasons.api.data.season.definition.ChangeMode;
+import com.teamtea.eclipticseasons.api.data.season.definition.SeasonDefinition;
+import com.teamtea.eclipticseasons.api.data.season.definition.condition.EmptyAboveCondition;
+import com.teamtea.eclipticseasons.api.data.season.definition.selector.BlockSelector;
+import com.teamtea.eclipticseasons.api.data.season.definition.selector.MultiBlockSelector;
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.advancements.critereon.StatePropertiesPredicate;
 import net.minecraft.core.HolderSet;
@@ -31,87 +31,71 @@ public class SeasonDefinitionRegistry {
         return ResourceKey.create(ESRegistries.SEASON_DEFINITION, EclipticSeasons.rl(name));
     }
 
-    public static void bootstrap(BootstrapContext<SeasonDefinition> context) {
+    public static void bootstrap2(BootstrapContext<SeasonDefinition> context) {
         var holderGetter = context.lookup(Registries.BIOME);
-        var cropClimateTypeHolderGetter = context.lookup(ESRegistries.AGRO_CLIMATE);
 
-        HolderSet.Direct<AgroClimaticZone> temperate = HolderSet.direct(cropClimateTypeHolderGetter.getOrThrow(AgroClimateRegistry.TEMPERATE));
-        HolderSet.Direct<Biome> plains = HolderSet.direct(holderGetter.getOrThrow(Biomes.PLAINS));
+        HolderSet.Direct<Biome> plains = HolderSet.direct(holderGetter.getOrThrow(Biomes.THE_VOID));
+        Vec3i above = new Vec3i(0, 1, 0);
+        List<EmptyAboveCondition> condition = List.of(EmptyAboveCondition.builder().above(true).build());
         context.register(test, new SeasonDefinition(
-                Optional.empty(),Optional.of(plains),
-                SolarTermValueMap.<List<SeasonDefinition.ChangeMode>>builder()
-                        .putSeason(Season.SPRING, List.of(new SeasonDefinition.ChangeMode(BlockPredicate.Builder.block().of(Blocks.GRASS_BLOCK).build(),
-                                List.of(new SeasonDefinition.PlaceContent(List.of(
-                                        Blocks.SHORT_GRASS.defaultBlockState(),
-                                        Blocks.SHORT_GRASS.defaultBlockState(),
-                                        Blocks.SHORT_GRASS.defaultBlockState(),
-                                        Blocks.SHORT_GRASS.defaultBlockState(),
-                                        Blocks.SHORT_GRASS.defaultBlockState(),
-                                        Blocks.SHORT_GRASS.defaultBlockState(),
-                                        Blocks.SHORT_GRASS.defaultBlockState(),
-                                        Blocks.SHORT_GRASS.defaultBlockState(),
-                                        Blocks.SHORT_GRASS.defaultBlockState(),
-                                        Blocks.SHORT_GRASS.defaultBlockState(),
-                                        Blocks.SHORT_GRASS.defaultBlockState(),
-                                        Blocks.SHORT_GRASS.defaultBlockState(),
-                                        Blocks.SHORT_GRASS.defaultBlockState(),
-                                        Blocks.SHORT_GRASS.defaultBlockState(),
-                                        Blocks.SHORT_GRASS.defaultBlockState(),
-                                        Blocks.SHORT_GRASS.defaultBlockState(),
-                                        Blocks.SHORT_GRASS.defaultBlockState(),
-                                        Blocks.SHORT_GRASS.defaultBlockState(),
-                                        Blocks.SHORT_GRASS.defaultBlockState(),
-                                        Blocks.SHORT_GRASS.defaultBlockState(),
-                                        Blocks.SHORT_GRASS.defaultBlockState(),
-                                        Blocks.SHORT_GRASS.defaultBlockState(),
-                                        Blocks.DANDELION.defaultBlockState(),
-                                        Blocks.OXEYE_DAISY.defaultBlockState()
-                                ),
-                                        Optional.of(new Vec3i(0, 1, 0)),
-                                        false
-                                )), 1/16f
-                        )))
-                        .putSeason(Season.SUMMER, List.of(new SeasonDefinition.ChangeMode(BlockPredicate.Builder.block().of(Blocks.SHORT_GRASS).build(),
-                                List.of(new SeasonDefinition.PlaceContent(Blocks.TALL_GRASS.defaultBlockState().setValue(DoublePlantBlock.HALF, DoubleBlockHalf.LOWER),
-                                                Optional.empty(),
-                                                false),
-                                        new SeasonDefinition.PlaceContent(Blocks.TALL_GRASS.defaultBlockState().setValue(DoublePlantBlock.HALF, DoubleBlockHalf.UPPER),
-                                                Optional.of(new Vec3i(0, 1, 0)),
-                                                false)
-                                ), 1/16f
-                        )))
-                        .putSeason(Season.AUTUMN, List.of(new SeasonDefinition.ChangeMode(
-                                BlockPredicate.Builder.block().of(Blocks.TALL_GRASS).setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(DoublePlantBlock.HALF, DoubleBlockHalf.LOWER)).build(),
-                                List.of(new SeasonDefinition.PlaceContent(Blocks.SHORT_GRASS.defaultBlockState(),
-                                        Optional.empty(),
-                                        false
-                                )), 1/16f
-                        ),new SeasonDefinition.ChangeMode(
-                                BlockPredicate.Builder.block().of(Blocks.TALL_GRASS).setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(DoublePlantBlock.HALF, DoubleBlockHalf.UPPER)).build(),
-                                List.of(new SeasonDefinition.PlaceContent(Blocks.AIR.defaultBlockState(),
-                                        Optional.empty(),
-                                        false
-                                )), 1/16f
-                        )))
+                Optional.of(plains),
+                SolarTermValueMap.<List<ChangeMode>>builder()
+                        .putSeason(Season.SPRING, List.of(
+                                ChangeMode.builder()
+                                        .original(BlockPredicate.Builder.block().of(Blocks.GRASS_BLOCK).build())
+                                        .fixedSeed(true)
+                                        .chance(1 / 16f)
+                                        .selector(BlockSelector.builder().conditions(condition).state(Optional.of(Blocks.SHORT_GRASS.defaultBlockState())).weight(22).offset(Optional.of(above)).build())
+                                        .selector(BlockSelector.builder().conditions(condition).state(Optional.of(Blocks.DANDELION.defaultBlockState())).weight(1).offset(Optional.of(above)).build())
+                                        .selector(BlockSelector.builder().conditions(condition).state(Optional.of(Blocks.OXEYE_DAISY.defaultBlockState())).weight(1).offset(Optional.of(above)).build())
+                                        .build()
+                        ))
+                        .putSeason(Season.SUMMER, List.of(
+                                ChangeMode.builder()
+                                        .original(BlockPredicate.Builder.block().of(Blocks.SHORT_GRASS).build())
+                                        .fixedSeed(true)
+                                        .chance(1 / 16f)
+                                        .selector(MultiBlockSelector.builder()
+                                                .conditions(condition)
+                                                .multiBlock(MultiBlockSelector.Part.builder()
+                                                        .state( Blocks.TALL_GRASS.defaultBlockState().setValue(DoublePlantBlock.HALF, DoubleBlockHalf.UPPER))
+                                                        .build())
+                                                .multiBlock(MultiBlockSelector.Part.builder()
+                                                        .state( Blocks.TALL_GRASS.defaultBlockState().setValue(DoublePlantBlock.HALF, DoubleBlockHalf.LOWER))
+                                                        .build())
+                                                .build())
+                                        .build()
+                        ))
+                        .putSeason(Season.AUTUMN, List.of(
+                                ChangeMode.builder()
+                                        .original(BlockPredicate.Builder.block().of(Blocks.TALL_GRASS).setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(DoublePlantBlock.HALF, DoubleBlockHalf.LOWER)).build())
+                                        .fixedSeed(false)
+                                        .chance(1 / 16f)
+                                        .selector(BlockSelector.builder().state(Optional.of(Blocks.SHORT_GRASS.defaultBlockState())).build())
+                                        .build(),
+                                ChangeMode.builder()
+                                        .original(BlockPredicate.Builder.block().of(Blocks.TALL_GRASS).setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(DoublePlantBlock.HALF, DoubleBlockHalf.UPPER)).build())
+                                        .fixedSeed(false)
+                                        .chance(1 / 16f)
+                                        .selector(BlockSelector.builder().build())
+                                        .build())
+                        )
                         .putSeason(Season.WINTER, List.of(
-                                new SeasonDefinition.ChangeMode(BlockPredicate.Builder.block().of(Blocks.SHORT_GRASS).build(),
-                                List.of(new SeasonDefinition.PlaceContent(Blocks.AIR.defaultBlockState(),
-                                        Optional.empty(),
-                                        true
-                                )), 1/16f
-                        ),
-                                new SeasonDefinition.ChangeMode(BlockPredicate.Builder.block().of(Blocks.DANDELION).build(),
-                                        List.of(new SeasonDefinition.PlaceContent(Blocks.AIR.defaultBlockState(),
-                                                Optional.empty(),
-                                                true
-                                        )), 1/16f
-                                ),
-                                new SeasonDefinition.ChangeMode(BlockPredicate.Builder.block().of(Blocks.OXEYE_DAISY).build(),
-                                        List.of(new SeasonDefinition.PlaceContent(Blocks.AIR.defaultBlockState(),
-                                                Optional.empty(),
-                                                true
-                                        )), 1/16f
-                                )
+                                ChangeMode.builder()
+                                        .original(BlockPredicate.Builder.block().of(Blocks.SHORT_GRASS).build())
+                                        .fixedSeed(false)
+                                        .chance(1 / 16f)
+                                        .build(),
+                                ChangeMode.builder()
+                                        .original(BlockPredicate.Builder.block().of(Blocks.DANDELION).build())
+                                        .fixedSeed(false)
+                                        .chance(1 / 16f)
+                                        .build(),
+                                ChangeMode.builder()
+                                        .original(BlockPredicate.Builder.block().of(Blocks.OXEYE_DAISY).build())
+                                        .fixedSeed(false)
+                                        .chance(1 / 16f)
+                                        .build()
                         ))
                         .build()
         ));

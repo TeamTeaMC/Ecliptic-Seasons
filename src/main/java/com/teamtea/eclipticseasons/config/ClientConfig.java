@@ -22,18 +22,18 @@ public class ClientConfig {
     public static class Debug {
 
         public static ModConfigSpec.BooleanValue debugInfo;
-        public static ModConfigSpec.BooleanValue debugRender;
-        public static ModConfigSpec.IntValue minChunkCompileWaringTime;
+        public static ModConfigSpec.BooleanValue smoothSnowyEdges;
+        public static ModConfigSpec.IntValue minChunkCompileWarningTime;
 
         private static void load(ModConfigSpec.Builder builder) {
             builder.push("Debug");
 
             debugInfo = builder.comment("Info used for development shown in GUI.")
                     .define("DebugInfo", false);
-            debugRender = builder.comment("Render used for development environment.")
-                    .define("RenderTestMode", false);
-            minChunkCompileWaringTime = builder.comment("If the game takes too long to load a chunk for render, a warning will be shown in the log.")
-                    .defineInRange("MinChunkCompileWaringTime", 100, 5, 2000);
+            smoothSnowyEdges = builder.comment("Render snow edge overlay on neighbors for smoother snowy transitions.")
+                    .define("SmoothSnowyEdges", false);
+            minChunkCompileWarningTime = builder.comment("If the game takes too long to load a chunk for render, a warning will be shown in the log.")
+                    .defineInRange("MinChunkCompileWarningTime", 100, 5, 2000);
             builder.pop();
         }
     }
@@ -59,15 +59,15 @@ public class ClientConfig {
         public static ModConfigSpec.BooleanValue topFaceCulling;
 
         public static ModConfigSpec.BooleanValue useVanillaCheck;
-        public static ModConfigSpec.BooleanValue realisticSnowyChange;
+        // public static ModConfigSpec.BooleanValue realisticSnowyChange;
 
         public static ModConfigSpec.BooleanValue flowerOnGrass;
         public static ModConfigSpec.BooleanValue seasonalGrassColorChange;
+        public static ModConfigSpec.BooleanValue seasonalColorChangeExtend;
+        public static ModConfigSpec.BooleanValue smootherSeasonalGrassColorChange;
 
 
         public static ModConfigSpec.BooleanValue snowUnderFence;
-        public static ModConfigSpec.BooleanValue snowUnderTree;
-        public static ModConfigSpec.BooleanValue snowTransitionBlend;
 
         private static void load(ModConfigSpec.Builder builder) {
             builder.push("Renderer");
@@ -76,26 +76,27 @@ public class ClientConfig {
             enhancementChunkRenderUpdate = builder.comment("Enhanced reload, which will refresh all sections periodically.")
                     .define("EnhancementChunkRenderUpdate", false);
             topFaceCulling = builder.comment("Cull the top face if snowy model is applied.")
-                    .define("TopFaceCulling", false);
+                    .define("CullTopFaceWithSnow", false);
 
             resetRendererAfterSleep = builder.comment("Whether to reset the renderer after waking up.")
                     .define("ResetRendererAfterSleep", false);
 
             useVanillaCheck = builder.comment("Use Minecraft’s default lighting rules to decide if snow should fall.")
-                    .define("UseVanillaCheck", false);
+                    .define("UseVanillaSnowCheck", false);
 
 
-            realisticSnowyChange = builder.comment("Snow cover updates with a delay after block changes, making it look more natural. This uses more performance. Do not enable if the common config’s 'RealisticSnowyChange' is also enabled.")
-                    .define("RealisticSnowyChange", false);
-            snowUnderFence = builder.comment("Blocks underneath fences etc. may also be covered with snow.")
-                    .define("SnowUnderFence", true);
-            snowUnderTree = builder.comment("Blocks under tree may also be covered with snow, note that this is only a client-side effect.")
-                    .define("snowUnderTree", false);
-            snowTransitionBlend = builder.comment("Makes transitions between biome edges and lighting smoother for better visuals. May reduce performance by about 10% during snowfall. Not recommended for survival mode.")
-                    .define("SnowTransitionBlend", false);
+            // realisticSnowyChange = builder.comment("Snow cover updates with a delay after block changes, making it look more natural. This uses more performance. Do not enable if the common config’s 'RealisticSnowyChange' is also enabled.")
+            //         .define("RealisticSnowyChange", false);
+            snowUnderFence = builder.comment("Blocks underneath solid blocks etc. may also be covered with snow.")
+                    .define("SnowUnderShadow", false);
 
-            seasonalGrassColorChange = builder.comment("The colors of the grass and leaves change with the time of year.")
+            seasonalGrassColorChange = builder.comment("Changes grass and leaf colors with seasons visually.")
                     .define("SeasonalGrassColorChange", true);
+            seasonalColorChangeExtend = builder.comment("Birch, spruce, and mangrove leaves colors also have seasonal changes.")
+                    .define("SeasonalColorChangeExtend", true);
+
+            smootherSeasonalGrassColorChange = builder.comment("When applying changes, perform mean calculation based on the percentage progress of the solar term instead of using a fixed value.")
+                    .define("SmootherSeasonalGrassColorChange", true);
             flowerOnGrass = builder.comment("In spring, grass blocks will occasionally have small flowers on them.")
                     .define("FlowerOnGrass", true);
             builder.pop();
@@ -131,26 +132,28 @@ public class ClientConfig {
         private static void load(ModConfigSpec.Builder builder) {
             builder.push("Particle");
             seasonParticle = builder.comment("See butterflies in the spring, fireflies in the summer, and fallen leaves.")
-                    .define("SeasonParticle", true);
+                    .define("SeasonalParticles", true);
+
             butterfly = builder.comment("In spring, butterflies fly over the flowers.")
                     .define("Butterfly", true);
-            butterflySpawnWeight = builder.comment("The difficulty multiplier of butterfly particles, the value should be between 1-10000, the default is 10.")
-                    .defineInRange("butterflySpawnWeight", 10, 1, 10000);
+            butterflySpawnWeight = builder.comment("The interval/delay of butterfly particles. Higher values make butterflies appear less frequently.")
+                    .defineInRange("ButterflySpawnDelay", 10, 1, 10000);
 
             fallenLeaves = builder.comment("Leaf blocks will drop leaves, and most frequently in the fall.")
                     .define("FallenLeaves", true);
-            fallenLeavesDropWeight = builder.comment("The difficulty multiplier of fallen leaves particles, the value should be between 1-10000, the default is 10.")
-                    .defineInRange("FallenLeavesDropWeight", 10, 1, 10000);
+            fallenLeavesDropWeight = builder.comment("The interval/delay of fallen leaf particles. Higher values make butterflies appear less frequently.")
+                    .defineInRange("FallenLeavesDropDelay", 10, 1, 10000);
 
             firefly = builder.comment("In the summer evenings, you can see fireflies beside the flowers.")
                     .define("Firefly", true);
-            fireflySpawnWeight = builder.comment("The difficulty multiplier of firefly particles, the value should be between 1-10000, the default is 10.")
-                    .defineInRange("FireflySpawnWeight", 10, 1, 10000);
+            fireflySpawnWeight = builder.comment("The interval/delay of firefly particles. Higher values make butterflies appear less frequently.")
+                    .defineInRange("FireflySpawnDelay", 10, 1, 10000);
 
             wildGoose = builder.comment("When the grass and trees turn yellow, the wild geese fly south.")
                     .define("WildGoose", true);
-            wildGooseSpawnWeight = builder.comment("The difficulty multiplier of wild geese particles, the value should be between 1-10000, the default is 10.")
-                    .defineInRange("WildGooseSpawnWeight", 10, 1, 10000);
+            wildGooseSpawnWeight = builder.comment("The interval/delay of wild goose particles. Higher values make butterflies appear less frequently.")
+                    .defineInRange("WildGooseSpawnDelay", 10, 1, 10000);
+
 
             seasonGreenhouse = builder.comment("When the season core block is active, emits soft light particles to indicate the growth environment.")
                     .define("SeasonGreenhouse", true);

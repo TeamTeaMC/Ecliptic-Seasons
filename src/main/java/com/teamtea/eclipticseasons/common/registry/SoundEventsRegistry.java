@@ -7,6 +7,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.registries.RegisterEvent;
 
+@SuppressWarnings("removal")
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
 public class SoundEventsRegistry {
     public final static SoundEvent spring_forest = SoundEvent.createVariableRangeEvent(EclipticSeasons.rl("ambient.spring_forest"));
@@ -18,6 +19,8 @@ public class SoundEventsRegistry {
     public final static SoundEvent wind_chimes = SoundEvent.createVariableRangeEvent(EclipticSeasons.rl("block.wind_chimes"));
     public final static SoundEvent bamboo_wind_chimes = SoundEvent.createVariableRangeEvent(EclipticSeasons.rl("block.bamboo_wind_chimes"));
     public final static SoundEvent paper_wind_chimes = SoundEvent.createVariableRangeEvent(EclipticSeasons.rl("block.paper_wind_chimes"));
+
+    public final static SoundEvent snowless_hometown = SoundEvent.createVariableRangeEvent(EclipticSeasons.rl( "record.snowless_hometown"));
 
     @SubscribeEvent
     public static void blockRegister(RegisterEvent event) {
@@ -32,7 +35,7 @@ public class SoundEventsRegistry {
             soundEventRegisterHelper.register(wind_chimes.getLocation(), wind_chimes);
             soundEventRegisterHelper.register(bamboo_wind_chimes.getLocation(), bamboo_wind_chimes);
             soundEventRegisterHelper.register(paper_wind_chimes.getLocation(), paper_wind_chimes);
-
+            soundEventRegisterHelper.register(snowless_hometown.getLocation(), snowless_hometown);
         });
     }
 }

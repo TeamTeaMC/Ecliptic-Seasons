@@ -12,34 +12,42 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.IdentityHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 public class SnowChecker {
 
-    public static final Map<Block, SnowDefinition> SNOW_DEFINITION_MAP = new IdentityHashMap<>(1024);
+    public static final Map<Block, List<SnowDefinition>> SNOW_DEFINITION_MAP = new IdentityHashMap<>(1024);
 
     public static final Map<BlockState, SnowDefinition.Info> statemap = new IdentityHashMap<>(4096);
 
     public static @NotNull SnowDefinition.Info getUncacheSnow(BlockState blockState) {
         SnowDefinition.Info sno = statemap.get(blockState);
         if (sno == null) {
-            SnowDefinition snowDefinition = SNOW_DEFINITION_MAP.get(blockState.getBlock());
-            if (snowDefinition != null) {
-                boolean match = true;
-                for (SnowDefinition.PropertyTester propertyTester : snowDefinition.getMap()) {
-                    if (!(propertyTester.matches(blockState) && !propertyTester.isReverse())) {
-                        match = false;
+            SnowDefinition snowDefinition = null;
+            List<SnowDefinition> snowDefinitions = SNOW_DEFINITION_MAP.get(blockState.getBlock());
+            if (snowDefinitions != null) {
+                for (SnowDefinition definition : snowDefinitions) {
+                    if (definition.getMap().isEmpty()) {
+                        snowDefinition = definition;
+                        break;
+                    }
+                    boolean allMatch = true;
+                    for (SnowDefinition.PropertyTester tester : definition.getMap()) {
+                        if (tester.matches(blockState) == tester.isReverse()) {
+                            allMatch = false;
+                            break;
+                        }
+                    }
+                    if (allMatch) {
+                        snowDefinition = definition;
                         break;
                     }
                 }
-                if (match) {
-                    sno = snowDefinition.getInfo();
-                }
             }
-            statemap.put(blockState, snowDefinition == null ?
-                    SnowDefinition.Info.EMPTY :
-                    snowDefinition.getInfo());
+            sno = snowDefinition == null ? SnowDefinition.Info.EMPTY : snowDefinition.getInfo();
+            statemap.put(blockState, sno);
         }
         return sno == null ? SnowDefinition.Info.EMPTY : sno;
     }

@@ -1,6 +1,7 @@
 package com.teamtea.eclipticseasons.api.constant.solar;
 
-import com.teamtea.eclipticseasons.api.misc.ITranslatable;
+import com.mojang.datafixers.util.Pair;
+import com.teamtea.eclipticseasons.api.data.climate.AgroClimaticZone;
 import com.teamtea.eclipticseasons.api.misc.ITranslatableWithPlaceholder;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -55,15 +56,56 @@ public enum Season implements ITranslatableWithPlaceholder {
         return validSeasons;
     }
 
-    public boolean isValid(){
-       return this!=NONE;
+    public boolean isValid() {
+        return this != NONE;
+    }
+
+    public boolean isInTerms(Season start, Season end) {
+        if (start == NONE || end == NONE) return false;
+        else if (start == end)
+            return this == start; // es patch: if A is B then use single if B is next to A ,then means all
+        else if (start.ordinal() <= end.ordinal()) {
+            return start.ordinal() <= this.ordinal() && this.ordinal() <= end.ordinal();
+        } else
+            return start.ordinal() <= this.ordinal() || this.ordinal() <= end.ordinal();
     }
 
     public SolarTerm getFirstSolarTerm() {
-        return SolarTerm.get(ordinal()*6);
+        return SolarTerm.get(ordinal() * 6);
     }
 
     public SolarTerm getEndSolarTerm() {
-        return SolarTerm.get(ordinal()*6+5);
+        return SolarTerm.get(ordinal() * 6 + 5);
+    }
+
+    public SolarTerm getFirstSolarTerm(AgroClimaticZone climate) {
+        if (climate == null) return getFirstSolarTerm();
+        if (climate.seasonalSignalDurations().isEmpty()) return SolarTerm.NONE;
+
+        int ordinal = 0;
+        int foundCount = 0;
+        for (Pair<Season, Integer> pair : climate.seasonalSignalDurations()) {
+            if (pair.getFirst() == this) {
+                if (foundCount > 0 || ordinal > 0) {
+                    return SolarTerm.get(ordinal);
+                }
+                foundCount++;
+            }
+            ordinal += pair.getSecond();
+        }
+        return SolarTerm.get(foundCount == 1 ? 0 : ordinal - 1);
+    }
+
+    public SolarTerm getEndSolarTerm(AgroClimaticZone climate) {
+        if (climate == null) return getEndSolarTerm();
+        if (climate.seasonalSignalDurations().isEmpty()) return SolarTerm.NONE;
+        int ordinal = 0;
+        for (Pair<Season, Integer> pair : climate.seasonalSignalDurations()) {
+            ordinal += pair.getSecond();
+            if (pair.getFirst() == this) {
+                return SolarTerm.collectValues()[ordinal - 1];
+            }
+        }
+        return SolarTerm.NONE;
     }
 }

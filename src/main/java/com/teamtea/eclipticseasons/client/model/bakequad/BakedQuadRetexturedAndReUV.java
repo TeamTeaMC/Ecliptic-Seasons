@@ -3,6 +3,7 @@ package com.teamtea.eclipticseasons.client.model.bakequad;
 
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormatElement;
+import com.teamtea.eclipticseasons.EclipticSeasons;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.FaceBakery;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -25,7 +26,7 @@ public class BakedQuadRetexturedAndReUV extends BakedQuad {
     }
 
     public BakedQuadRetexturedAndReUV(BakedQuad quad, TextureAtlasSprite textureIn, boolean isSlabDown, float offset) {
-        super(Arrays.copyOf(quad.getVertices(), quad.getVertices().length), quad.getTintIndex(), FaceBakery.calculateFacing(quad.getVertices()), quad.getSprite(), quad.isShade(), quad.hasAmbientOcclusion());
+        super(Arrays.copyOf(quad.getVertices(), quad.getVertices().length), quad.getTintIndex(), quad.getDirection(), quad.getSprite(), quad.isShade(), quad.hasAmbientOcclusion());
         this.texture = textureIn;
         this.isSlabDown = isSlabDown;
         this.offset = offset;
@@ -33,6 +34,62 @@ public class BakedQuadRetexturedAndReUV extends BakedQuad {
     }
 
     private void remapQuad() {
+        // Direction direction1 = getDirection();
+
+        float x0 = Float.intBitsToFloat(this.vertices[0]);
+        float y0 = Float.intBitsToFloat(this.vertices[1]);
+        float z0 = Float.intBitsToFloat(this.vertices[2]);
+
+        float x1 = Float.intBitsToFloat(this.vertices[verticeSpace]);
+        float y1 = Float.intBitsToFloat(this.vertices[verticeSpace + 1]);
+        float z1 = Float.intBitsToFloat(this.vertices[verticeSpace + 2]);
+
+        float x3 = Float.intBitsToFloat(this.vertices[3 * verticeSpace]);
+        float y3 = Float.intBitsToFloat(this.vertices[3 * verticeSpace + 1]);
+        float z3 = Float.intBitsToFloat(this.vertices[3 * verticeSpace + 2]);
+
+        // 边向量
+        float edge1X = x1 - x0;
+        float edge1Y = y1 - y0;
+        float edge1Z = z1 - z0;
+
+        float edge2X = x3 - x0;
+        float edge2Y = y3 - y0;
+        float edge2Z = z3 - z0;
+
+        // 边长度
+        float lenU = (float) Math.sqrt(edge2X*edge2X + edge2Y*edge2Y + edge2Z*edge2Z);
+        float lenV = (float) Math.sqrt(edge1X*edge1X + edge1Y*edge1Y + edge1Z*edge1Z);
+
+        for (int i = 0; i < 4; ++i) {
+            int j = verticeSpace * i;
+
+            float x = Float.intBitsToFloat(this.vertices[j]);
+            float y = Float.intBitsToFloat(this.vertices[j + 1]);
+            float z = Float.intBitsToFloat(this.vertices[j + 2]);
+
+            // 面局部坐标投影（交换顺序避免 90° 偏转）
+            float du = ((x - x0) * edge2X + (y - y0) * edge2Y + (z - z0) * edge2Z)
+                    / (edge2X * edge2X + edge2Y * edge2Y + edge2Z * edge2Z);
+            float dv = ((x - x0) * edge1X + (y - y0) * edge1Y + (z - z0) * edge1Z)
+                    / (edge1X * edge1X + edge1Y * edge1Y + edge1Z * edge1Z);
+
+            // if (isSlabDown) {
+            //     dv -= offset;
+            // }
+
+            du *= lenU ;
+            dv *= lenV ;
+
+            du = Mth.clamp(du, 0f, 1f);
+            dv = Mth.clamp(dv, 0f, 1f);
+
+            this.vertices[j + uvIndex]     = Float.floatToRawIntBits(this.texture.getU(du));
+            this.vertices[j + uvIndex + 1] = Float.floatToRawIntBits(this.texture.getV(dv));
+        }
+    }
+
+    private void remapQuadOld() {
         Direction direction1 = getDirection();
 
         for (int i = 0; i < 4; ++i) {

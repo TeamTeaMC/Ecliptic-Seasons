@@ -17,6 +17,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
+import net.neoforged.neoforge.client.model.generators.CustomLoaderBuilder;
 import net.neoforged.neoforge.client.model.generators.ModelBuilder;
 import net.neoforged.neoforge.client.model.generators.ModelProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
@@ -25,6 +26,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -514,6 +516,23 @@ public abstract class AbstractModelDefinitionProvider extends ESClientDataMapPro
         protected void registerModels() {
         }
 
+        @Override
+        public ExtraModelBuilder withExistingParent(String name, String parent) {
+            return super.withExistingParent(name, parent);
+        }
+
+        @Override
+        public ExtraModelBuilder withExistingParent(String name, ResourceLocation parent) {
+            return super.withExistingParent(name, parent);
+        }
+
+        public ExtraModelBuilder withExistingParent(String path, String parent, boolean notSave) {
+            ExtraModelBuilder extraModelBuilder = withExistingParent(path, parent);
+            ResourceLocation outputLoc = withBlockFolder(path.contains(":") ? ResourceLocation.parse(path) : ResourceLocation.fromNamespaceAndPath(modid, path));
+            if (notSave)generatedModels.remove(outputLoc);
+            return extraModelBuilder;
+        }
+
         public ExtraModelBuilder snowyWithExistingParent(String name) {
             return super.withExistingParent("snowy/" + name, name);
         }
@@ -549,7 +568,6 @@ public abstract class AbstractModelDefinitionProvider extends ESClientDataMapPro
         public @NotNull CompletableFuture<?> generateAll(@NotNull CachedOutput cache) {
             return super.generateAll(cache);
         }
-
     }
 
     public static class ExtraModelBuilder extends ModelBuilder<ExtraModelBuilder> {

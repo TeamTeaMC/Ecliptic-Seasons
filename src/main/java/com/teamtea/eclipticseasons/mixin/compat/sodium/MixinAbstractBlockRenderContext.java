@@ -57,7 +57,7 @@ public abstract class MixinAbstractBlockRenderContext {
             @Local Direction side,
             @Local RandomSource rand) {
         if (this instanceof SodiumStatus sodiumStatus && sodiumStatus.getSnowModel() != null)
-            return ExtraModelManager.cancelTop(bakedModel, level, state, pos, side, rand, randomSeed, original, sodiumStatus.getCacheBakeQuad(), sodiumStatus.getSnowModel());
+            return ExtraModelManager.cancelTop(bakedModel, level, state, pos, side, rand, randomSeed, original, sodiumStatus.getCacheBakeQuad());
         return original;
     }
 

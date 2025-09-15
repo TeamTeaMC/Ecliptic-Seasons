@@ -82,7 +82,6 @@ public class start {
             generator.addProvider(event.includeClient(), new ESSoundDefinitionsProvider(packOutput, MODID, helper));
 
 
-            generator.addProvider(event.includeClient(), new ClientSnowDefinitionProvider(packOutput,MODID, helper,lookupProvider));
             generator.addProvider(event.includeClient(), new SeasonalBiomeAmbientProvider(packOutput,MODID, helper,lookupProvider));
             generator.addProvider(event.includeClient(), new ClientModelDefinitionProvider(packOutput,MODID, helper,lookupProvider));
             generator.addProvider(event.includeClient(), new ClientTestProvider(packOutput,MODID, helper,lookupProvider));
@@ -104,12 +103,12 @@ public class start {
         if (event.includeServer()) {
             generator.addProvider(event.includeServer(), new DatapackRegistryGeneratorExample(packOutput, lookupProvider));
             generator.addProvider(event.includeServer(), new ExampleLootTableProvider(packOutput, lookupProvider));
-
         }
         if(event.includeClient()){
             generator.addProvider(event.includeClient(), new SeasonTextureProvider(packOutput,MODID, helper,lookupProvider));
             generator.addProvider(event.includeClient(), new BiomeColorProvider(packOutput,MODID, helper,lookupProvider));
             generator.addProvider(event.includeClient(), new LeafColorProvider(packOutput,MODID, helper,lookupProvider));
+            generator.addProvider(event.includeClient(), new ClientSnowDefinitionProvider(packOutput,MODID, helper,lookupProvider));
 
         }
     }

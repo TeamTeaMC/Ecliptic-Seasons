@@ -70,7 +70,7 @@ public class WorldRenderer {
                 }
 
                 if (reMainTick > 0) {
-                    reMainTick-=10;
+                    reMainTick -= 10;
                 } else reMainTick = 100;
 
                 float progress = getProgress(blurStatus == ON_BLUR) * 0.03f;
@@ -216,7 +216,6 @@ public class WorldRenderer {
             }
         }
     }
-
 
 
     public static void setAllDirty(SectionPos centerPos) {

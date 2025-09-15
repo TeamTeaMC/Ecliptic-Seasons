@@ -5,6 +5,8 @@ import com.teamtea.eclipticseasons.api.constant.crop.CropHumidityInfo;
 import com.teamtea.eclipticseasons.api.constant.crop.CropHumidityType;
 import com.teamtea.eclipticseasons.api.constant.crop.CropSeasonInfo;
 import com.teamtea.eclipticseasons.api.constant.crop.CropSeasonType;
+import com.teamtea.eclipticseasons.api.constant.tag.ESItemTags;
+import com.teamtea.eclipticseasons.api.constant.tag.EclipticBlockTags;
 import com.teamtea.eclipticseasons.api.event.RegisterAndModifyCropInfoEvent;
 import com.teamtea.eclipticseasons.compat.CompatModule;
 import com.teamtea.eclipticseasons.config.CommonConfig;
@@ -21,7 +23,9 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CropBlock;
 
 import net.neoforged.neoforge.common.NeoForge;
@@ -141,9 +145,7 @@ public final class CropInfoManager {
             });
         }
 
-
-        NeoForge.EVENT_BUS.post(new RegisterAndModifyCropInfoEvent(CROP_HUMIDITY_INFO, CROP_SEASON_INFO));
-        if (com.teamtea.eclipticseasons.config.CommonConfig.Crop.registerCropDefaultValue.getAsBoolean()) {
+        if (CommonConfig.Crop.registerCropDefaultValue.getAsBoolean()) {
             BuiltInRegistries.BLOCK.forEach(block ->
             {
                 if (block instanceof CropBlock) {
@@ -151,6 +153,37 @@ public final class CropInfoManager {
                     registerCropSeasonInfo(block, CropSeasonType.SP_SU_AU, true);
                 }
             });
+        }
+
+        NeoForge.EVENT_BUS.post(new RegisterAndModifyCropInfoEvent(CROP_HUMIDITY_INFO, CROP_SEASON_INFO));
+
+        removeBlockAndItemShouldBeIgnored(blocks, items);
+    }
+
+    private static void removeBlockAndItemShouldBeIgnored(Optional<Registry<Block>> blocks, Optional<Registry<Item>> items) {
+        if (blocks.isPresent() && items.isPresent()) {
+            // Block → Item
+            blocks.get().getTag(EclipticBlockTags.UNAFFECTED_BY_SEASONS).ifPresent(tag ->
+                    tag.forEach(holder -> clearCropInfo(holder.value(), holder.value().asItem())));
+            blocks.get().getTag(EclipticBlockTags.UNAFFECTED_BY_HUMIDITY).ifPresent(tag ->
+                    tag.forEach(holder -> clearCropInfo(holder.value(), holder.value().asItem())));
+
+            // Item → Block
+            items.get().getTag(ESItemTags.UNAFFECTED_BY_SEASONS).ifPresent(tag ->
+                    tag.forEach(holder -> clearCropInfo(Block.byItem(holder.value()), holder.value())));
+            items.get().getTag(ESItemTags.UNAFFECTED_BY_HUMIDITY).ifPresent(tag ->
+                    tag.forEach(holder -> clearCropInfo(Block.byItem(holder.value()), holder.value())));
+        }
+    }
+
+    private static void clearCropInfo(Block block, Item item) {
+        if (block != Blocks.AIR) {
+            CROP_SEASON_INFO.remove(block);
+            CROP_HUMIDITY_INFO.remove(block);
+        }
+        if (item != Items.AIR) {
+            ITEM_CROP_SEASON_INFO.remove(item);
+            ITEM_CROP_HUMIDITY_INFO.remove(item);
         }
     }
 

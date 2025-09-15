@@ -32,7 +32,9 @@ public enum SlightlySolarTermColors implements SolarTermColor {
     HEAVY_SNOW(),
     WINTER_SOLSTICE(),
     LESSER_COLD(),
-    GREATER_COLD();
+    GREATER_COLD(),
+
+    NONE();
 
 
     private final float ratio;

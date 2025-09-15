@@ -106,4 +106,67 @@ public final class ColorHelper
         if(r>0.7)return maxColor[0]*0.6f+secondColor[0]*0.4f;
         return maxColor[0];
     }
+
+    public static int frostify(int pixel, float hueShift, float satReduce, float lightAdd) {
+        int a = getAlpha(pixel);
+        float[] hsl = rgbToHSL(getRed(pixel), getGreen(pixel), getBlue(pixel));
+
+        // 调整 HSL
+        hsl[0] = (hsl[0] + hueShift) % 360f;
+        hsl[1] = clamp01(hsl[1] - satReduce);
+        hsl[2] = clamp01(hsl[2] + lightAdd);
+
+        int[] rgb = hslToRGB(hsl[0], hsl[1], hsl[2]);
+        return (a << 24) | (rgb[0] << 16) | (rgb[1] << 8) | rgb[2];
+    }
+
+    private static float[] rgbToHSL(int r, int g, int b) {
+        float rf = r / 255f, gf = g / 255f, bf = b / 255f;
+        float max = Math.max(rf, Math.max(gf, bf));
+        float min = Math.min(rf, Math.min(gf, bf));
+        float h, s, l = (max + min) / 2f;
+
+        if (max == min) {
+            h = s = 0f; // achromatic
+        } else {
+            float d = max - min;
+            s = l > 0.5f ? d / (2f - max - min) : d / (max + min);
+            if (max == rf) {
+                h = ((gf - bf) / d + (gf < bf ? 6f : 0f)) * 60f;
+            } else if (max == gf) {
+                h = ((bf - rf) / d + 2f) * 60f;
+            } else {
+                h = ((rf - gf) / d + 4f) * 60f;
+            }
+        }
+
+        return new float[]{h, s, l};
+    }
+
+    private static int[] hslToRGB(float h, float s, float l) {
+        float c = (1f - Math.abs(2f * l - 1f)) * s;
+        float x = c * (1f - Math.abs((h / 60f) % 2 - 1f));
+        float m = l - c / 2f;
+        float r1 = 0, g1 = 0, b1 = 0;
+
+        if (h < 60f)       { r1 = c; g1 = x; }
+        else if (h < 120f) { r1 = x; g1 = c; }
+        else if (h < 180f) { g1 = c; b1 = x; }
+        else if (h < 240f) { g1 = x; b1 = c; }
+        else if (h < 300f) { r1 = x; b1 = c; }
+        else              { r1 = c; g1 = 0; b1 = x; }
+
+        int r = clamp((int)((r1 + m) * 255f));
+        int g = clamp((int)((g1 + m) * 255f));
+        int b = clamp((int)((b1 + m) * 255f));
+        return new int[]{r, g, b};
+    }
+
+    private static float clamp01(float v) {
+        return Math.max(0f, Math.min(1f, v));
+    }
+
+    private static int clamp(int v) {
+        return Math.max(0, Math.min(255, v));
+    }
 }

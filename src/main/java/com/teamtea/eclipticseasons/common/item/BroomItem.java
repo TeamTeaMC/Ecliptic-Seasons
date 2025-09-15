@@ -1,28 +1,23 @@
 package com.teamtea.eclipticseasons.common.item;
 
-import com.google.common.collect.Lists;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
-import com.teamtea.eclipticseasons.client.map.ClientMapFixer;
-import com.teamtea.eclipticseasons.common.core.map.MapChecker;
-import com.teamtea.eclipticseasons.common.core.map.ServerMapFixer;
-import com.teamtea.eclipticseasons.common.network.SimpleNetworkHandler;
-import com.teamtea.eclipticseasons.common.network.message.BroomUseMessage;
+import com.teamtea.eclipticseasons.api.util.EclipticUtil;
+import com.teamtea.eclipticseasons.client.util.ClientCon;
+import com.teamtea.eclipticseasons.common.core.snow.SnowyMapChecker;
 import com.teamtea.eclipticseasons.config.ClientConfig;
-import com.teamtea.eclipticseasons.config.CommonConfig;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.SectionPos;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.dedicated.DedicatedServer;
-import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -30,8 +25,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.BrushableBlock;
 import net.minecraft.world.level.block.RenderShape;
@@ -40,11 +35,11 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.fml.loading.FMLLoader;
 import net.neoforged.neoforge.common.util.FakePlayer;
 
 import java.util.List;
+import java.util.function.Predicate;
 
 
 public class BroomItem extends Item {
@@ -116,50 +111,16 @@ public class BroomItem extends Item {
 
                     if (!level.isClientSide() && pickState.is(Blocks.SNOW)) {
                         level.destroyBlock(pickPos, true, pLivingEntity);
-
                         pStack.hurtAndBreak(pLivingEntity instanceof Player player && player.isCreative() ? 0 : 1, pLivingEntity, LivingEntity.getSlotForHand(pLivingEntity.getUsedItemHand()));
-
                     }
 
                     level.playSound(pLivingEntity, blockpos, soundevent, SoundSource.BLOCKS, 1f, 1f);
 
-                    // if(shouldSet&&level.isClientSide()){
-                    //     int startY=level.getMaxBuildHeight() + 1;
-                    //     MapChecker.updatePosForce(level,blockpos, level.getMaxBuildHeight() + 1);
-                    //     SectionPos sectionPos = SectionPos.of(blockpos);
-                    //     Minecraft.getInstance().levelRenderer.setSectionDirty(sectionPos.x(),sectionPos.y(),sectionPos.z());
-                    //     ClientMapFixer.addPlanner(level,blockstate,blockpos,level.getGameTime()+160, startY);
-                    // }
-                    if (shouldSet) {
-                        if (!level.isClientSide()) {
-                            if (CommonConfig.Map.delayedUpdates.get()) {
-                                if (level.getRandom().nextInt(4) == 0)
-                                    Block.popResource(level, blockpos, Items.SNOWBALL.getDefaultInstance());
-                                ServerMapFixer.addPlanner(level,
-                                        blockstate,
-                                        blockstate, blockpos,
-                                        level.getGameTime() + 160,
-                                        MapChecker.getHeight(level, blockpos), true);
-                            } else {
-                                var distance = level.getServer() instanceof DedicatedServer dedicatedServer ?
-                                        dedicatedServer.getProperties().viewDistance : 64;
-                                distance = distance * distance;
-                                List<ServerPlayer> nearbyPlayers = Lists.newArrayList();
-                                for (Player player : level.players()) {
-                                    if (player instanceof ServerPlayer serverPlayer && !(player instanceof FakePlayer)) {
-                                        if (serverPlayer.blockPosition().distSqr(blockpos) < distance) {
-                                            nearbyPlayers.add(serverPlayer);
-                                        }
-                                    }
-                                }
-                                SimpleNetworkHandler.send(nearbyPlayers, new BroomUseMessage(blockpos, level.getGameTime()));
-                            }
-                        } else if (level.isClientSide()) {
-                            int startY = level.getMaxBuildHeight() + 1;
-                            MapChecker.updatePosForce(level, blockpos, level.getMaxBuildHeight() + 1);
-                            SectionPos sectionPos = SectionPos.of(blockpos);
-                            Minecraft.getInstance().levelRenderer.setSectionDirty(sectionPos.x(), sectionPos.y(), sectionPos.z());
-                            ClientMapFixer.addPlanner(level, blockstate, blockpos, level.getGameTime() + 160, startY);
+                    if (shouldSet && EclipticUtil.canSnowyBlockInteract()) {
+                        if (level instanceof ServerLevel serverLevel) {
+                            SnowyMapChecker.removeSnowyStatus(serverLevel, blockpos);
+                        } else {
+                            ClientCon.agent.setChunkDirty(SectionPos.of(blockpos));
                         }
                     }
                 }
@@ -174,11 +135,18 @@ public class BroomItem extends Item {
     }
 
     private HitResult calculateHitResult(LivingEntity livingEntity) {
-        return ProjectileUtil.getHitResultOnViewVector(
+        return calculateHitResult2(
                 livingEntity, entity -> !entity.isSpectator() && entity.isPickable(),
                 livingEntity instanceof Player player ?
                         player.blockInteractionRange() : 4.5f
         );
+    }
+
+    private HitResult calculateHitResult2(Entity projectile, Predicate<Entity> filter, double scale) {
+        Vec3 vec3 = projectile.getViewVector(0.0F).scale(scale);
+        Level level = projectile.level();
+        Vec3 vec31 = projectile.getEyePosition();
+        return ProjectileUtil.getHitResult(vec31, projectile, filter, vec3, level, 0.0F, ClipContext.Block.OUTLINE);
     }
 
     private void spawnDustParticles(Level pLevel, BlockHitResult pHitResult, BlockState pState, Vec3 pPos, HumanoidArm pArm) {
@@ -230,11 +198,11 @@ public class BroomItem extends Item {
         super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
         if (FMLLoader.getDist() != Dist.CLIENT || !ClientConfig.GUI.itemInformation.get()) return;
 
-        boolean use = FMLEnvironment.dist == Dist.CLIENT ?
-                ClientConfig.Renderer.realisticSnowyChange.get() : true;
-        use &= CommonConfig.Map.delayedUpdates.get();
+        // boolean use = FMLEnvironment.dist == Dist.CLIENT ?
+        //         ClientConfig.Renderer.realisticSnowyChange.get() : false;
+        // use |= CommonConfig.Map.delayedUpdates.get();
 
-        if (!use) {
+        if (!EclipticUtil.canSnowyBlockInteract()) {
             tooltipComponents.add(Component.translatable("info.eclipticseasons.config.inactive")
             );
         }

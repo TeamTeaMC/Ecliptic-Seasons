@@ -121,10 +121,8 @@ public class WindChimesBlock extends SimpleHorizontalEntityBlock {
     @Override
     protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
         super.randomTick(state, level, pos, random);
-        if ((EclipticUtil.hasLocalWeather(level)?
-                WeatherManager.isRainingOrSnowAtBiome(level, MapChecker.getSurfaceBiome(level,pos)):
-                        level.isRaining())
-                &&level.getBlockEntity(pos) instanceof WindChimesBlockEntity windChimesBlockEntity
+        if (EclipticSeasonsApi.getInstance().isRainingOrSnowing(level, pos)
+                && level.getBlockEntity(pos) instanceof WindChimesBlockEntity windChimesBlockEntity
         ) {
             windChimesBlockEntity.setShaking(true);
         }

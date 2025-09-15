@@ -50,6 +50,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+@SuppressWarnings("removal")
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class ClientSetup {
 
@@ -85,6 +86,8 @@ public class ClientSetup {
         // Minecraft.getInstance().getResourceManager().listPacks().toList().get(0).getResource(PackType.CLIENT_RESOURCES, ResourceLocation.withDefaultNamespace("textures/block/snow.png")).get()
         // IOUtils.toString(Minecraft.getInstance().getResourceManager().listPacks().toList().get(0).getResource(PackType.SERVER_DATA, ResourceLocation.withDefaultNamespace("recipe/yellow_terracotta.json")).get(), StandardCharsets.UTF_8)        event.register(ModelManager.snowy_fern);
         event.register(ExtraModelManager.snowy_custom);
+        event.register(ExtraModelManager.snowy_custom_ao);
+
         event.register(ExtraModelManager.stairs_top);
         event.register(ExtraModelManager.snowy_leaves_attach);
         event.register(ExtraModelManager.snowy_leaves_top);
@@ -108,7 +111,6 @@ public class ClientSetup {
         for (ModelResourceLocation flowerOnGrass : ExtraModelManager.snow_edge_overlays) {
             event.register(flowerOnGrass);
         }
-        event.register(ExtraModelManager.mrl("block/aaaaaaaaaaaa"));
 
     }
 
@@ -152,7 +154,6 @@ public class ClientSetup {
     }
 
 
-
     @SubscribeEvent
     public static void onRegisterRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerBlockEntityRenderer(BlockEntityRegistry.calendar_entity_type.get(), CalendarBlockEntityRenderer::new);
@@ -186,7 +187,7 @@ public class ClientSetup {
 
     // public static Map<ResourceLocation, BakedModel> BakedSnowModels=new HashMap<>();
 
-    // TODO：neocontinuity 会把所有model给warp一层
+    // neocontinuity 会把所有model给warp一层
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onModelBaked(ModelEvent.ModifyBakingResult event) {
         ParticleUtil.onReloadResource();
@@ -197,6 +198,7 @@ public class ClientSetup {
         List<ModelResourceLocation> bakedModels =
                 new ArrayList<>(List.of(
                         ExtraModelManager.snowy_custom,
+                        ExtraModelManager.snowy_custom_ao,
                         ExtraModelManager.stairs_top,
                         ExtraModelManager.snowy_leaves_attach,
                         ExtraModelManager.snowy_leaves_top,
@@ -214,9 +216,10 @@ public class ClientSetup {
                         ExtraModelManager.snowySlabBottom,
                         ExtraModelManager.snowOverlayBlock
                 ));
-        bakedModels.addAll(BlockRegistry.snowyStairs.get().getStateDefinition().getPossibleStates().stream()
-                .map(BlockModelShaper::stateToModelLocation).toList());
-        bakedModels.addAll(ExtraModelManager.snow_edge_overlays);
+        List.of(BlockRegistry.snowyBlock, BlockRegistry.snowyLeaves, BlockRegistry.snowySlab, BlockRegistry.snowyStairs, BlockRegistry.snowyVine)
+                .forEach(bh -> bakedModels.addAll(bh.get().getStateDefinition().getPossibleStates().stream()
+                        .map(BlockModelShaper::stateToModelLocation).toList()));
+        // bakedModels.addAll(ExtraModelManager.snow_edge_overlays);
         for (ModelResourceLocation modelResourceLocation : bakedModels) {
             BakedModel bakedModel1 = modelRegistry.get(modelResourceLocation);
             if (bakedModel1 != null) {

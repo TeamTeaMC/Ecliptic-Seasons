@@ -4,6 +4,7 @@ package com.teamtea.eclipticseasons.client;
 import com.mojang.blaze3d.vertex.*;
 import com.mojang.brigadier.CommandDispatcher;
 import com.teamtea.eclipticseasons.EclipticSeasons;
+import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.client.util.ClientRef;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
@@ -14,7 +15,6 @@ import com.teamtea.eclipticseasons.common.game.AnimalHooks;
 import com.teamtea.eclipticseasons.common.registry.BlockRegistry;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.client.color.season.BiomeColorsHandler;
-import com.teamtea.eclipticseasons.client.map.ClientMapFixer;
 import com.teamtea.eclipticseasons.client.core.ClientWeatherChecker;
 import com.teamtea.eclipticseasons.client.render.WorldRenderer;
 import com.teamtea.eclipticseasons.client.render.chunk.CompilerCollector;
@@ -41,10 +41,7 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Registry;
 import net.minecraft.core.SectionPos;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.InventoryMenu;
@@ -52,7 +49,6 @@ import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.SpawnEggItem;
-import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.Vec3;
@@ -133,7 +129,6 @@ public final class ClientEventHandler {
     public static void addTooltips(RenderTooltipEvent.GatherComponents event) {
 
         // https://codepen.io/devbobcorn/full/YzZMZvV
-        // TODO:试试自定义bitmap font
         if (event.getItemStack().getItem() instanceof BlockItem) {
             if (ClientConfig.GUI.agriculturalInformation.getAsBoolean()) {
                 if (CommonConfig.Crop.enableCropHumidityControl.get()) {
@@ -161,9 +156,7 @@ public final class ClientEventHandler {
     @SubscribeEvent
     public static void onChunkUnloadEvent(ChunkEvent.Unload event) {
         if (event.getLevel().isClientSide()) {
-            ClientMapFixer.clearChunk(event.getChunk().getPos());
             CompilerCollector.clearChunk(event.getChunk().getPos());
-
         }
     }
 
@@ -172,7 +165,6 @@ public final class ClientEventHandler {
         if (event.getLevel() instanceof ClientLevel clientLevel) {
             ClientCon.setUseLevel(null);
             ClientWeatherChecker.unloadLevel(clientLevel);
-            ClientMapFixer.clearAll();
             CompilerCollector.clearAll();
         }
     }
@@ -215,10 +207,10 @@ public final class ClientEventHandler {
     public static void onLevelTick(LevelTickEvent.Post event) {
         if (event.getLevel() instanceof ClientLevel clientLevel) {
             ClientWeatherChecker.tickAllCheck(clientLevel);
-            ClientMapFixer.tick(clientLevel);
             ClientCon.tick(clientLevel);
 
-            if (ClientConfig.Renderer.forceChunkRenderUpdate.get()) {
+            if ((!EclipticUtil.canSnowyBlockInteract()||ClientConfig.Renderer.enhancementChunkRenderUpdate.get())
+                    &&ClientConfig.Renderer.forceChunkRenderUpdate.get()) {
                 if (clientLevel.getGameTime() - lastFreshTime > 80
                         || clientLevel.getGameTime() < lastFreshTime - 1) {
                     lastFreshTime = clientLevel.getGameTime();

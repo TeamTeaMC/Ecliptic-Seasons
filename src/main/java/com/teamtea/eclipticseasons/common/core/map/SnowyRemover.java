@@ -2,18 +2,32 @@ package com.teamtea.eclipticseasons.common.core.map;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import lombok.*;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.Tag;
 import net.minecraft.util.RandomSource;
+import net.neoforged.neoforge.attachment.IAttachmentHolder;
+import net.neoforged.neoforge.attachment.IAttachmentSerializer;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.IntStream;
 
-public record SnowyRemover(
-        int[][] blockWatcher
-) {
+@Data
+public class SnowyRemover {
+    final int[][] blockWatcher;
+
+    public int[][] blockWatcher() {
+        return blockWatcher;
+    }
+
     public static final Codec<SnowyRemover> CODEC = Codec.lazyInitialized(
             () -> RecordCodecBuilder.create(
                     snowyRemoverInstance ->
@@ -44,6 +58,7 @@ public record SnowyRemover(
 
     public void setChunkPos(BlockPos blockPos, int value) {
         blockWatcher[getChunkPos(blockPos.getX())][getChunkPos(blockPos.getZ())] = value;
+        cacheTag = null;
     }
 
     public boolean notSnowyAt(int x, int z) {
@@ -86,19 +101,54 @@ public record SnowyRemover(
             return randomSourceConsumer.apply(r);
         }
 
+        private static final SnowyFlag[] VALUES = SnowyFlag.values();
+
+        public static SnowyFlag[] collectValues() {
+            return VALUES;
+        }
+
         public SnowyFlag cycle() {
-            SnowyFlag[] snowyFlags = values();
+            SnowyFlag[] snowyFlags = collectValues();
             int index = ordinal();
             index = index < snowyFlags.length - 1 ? index + 1 : 0;
             return snowyFlags[index];
         }
 
         public static SnowyFlag cycle(int index) {
-            SnowyFlag[] snowyFlags = values();
+            SnowyFlag[] snowyFlags = collectValues();
             index = index < snowyFlags.length - 1 ? index + 1 : 0;
             return snowyFlags[index];
         }
-
     }
 
+    public static SnowyRemover empty() {
+        return new SnowyRemover(new int[16][16]);
+    }
+
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    @Getter(AccessLevel.NONE)
+    private transient CompoundTag cacheTag = null;
+
+    public static class Serializer implements IAttachmentSerializer<Tag, SnowyRemover> {
+
+        @Override
+        public @NotNull SnowyRemover read(@NotNull IAttachmentHolder holder, @NotNull Tag tag, HolderLookup.@NotNull Provider provider) {
+            Optional<SnowyRemover> result = CODEC.parse(provider.createSerializationContext(NbtOps.INSTANCE), tag).result();
+            return result.orElseGet(SnowyRemover::empty);
+        }
+
+        @Override
+        public Tag write(@NotNull SnowyRemover attachment, HolderLookup.@NotNull Provider provider) {
+            if (attachment.cacheTag != null) {
+                return attachment.cacheTag;
+            }
+            Optional<Tag> result = CODEC.encodeStart(provider.createSerializationContext(NbtOps.INSTANCE), attachment).result();
+            if (result.orElse(null) instanceof CompoundTag compoundTag) {
+                attachment.cacheTag = compoundTag;
+                return compoundTag;
+            }
+            return new CompoundTag();
+        }
+    }
 }

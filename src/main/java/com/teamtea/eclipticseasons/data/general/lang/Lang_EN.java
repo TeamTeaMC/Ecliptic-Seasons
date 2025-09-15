@@ -1,10 +1,7 @@
 package com.teamtea.eclipticseasons.data.general.lang;
 
-import com.teamtea.eclipticseasons.common.registry.AgroClimateRegistry;
-import com.teamtea.eclipticseasons.common.registry.BlockRegistry;
-import com.teamtea.eclipticseasons.common.registry.ItemRegistry;
+import com.teamtea.eclipticseasons.common.registry.*;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
-import com.teamtea.eclipticseasons.common.registry.SeasonQuestRegistry;
 import net.minecraft.data.PackOutput;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
@@ -66,6 +63,8 @@ public class Lang_EN extends LangHelper {
 
         add(ItemRegistry.seasonal_prayer_scroll_item.get(), "Seasonal Prayer Scroll");
 
+        add(ItemRegistry.snowless_hometown.get(),"Snowless Homeland");
+        add(SongRegistry.toLangKey(SongRegistry.SNOWLESS_HOMETOWN), "Beishanwei & Orange Soda (feat. Others)");
 
         add("info.eclipticseasons.environment.temperature.under_freezing", "Under Freezing");
         add("info.eclipticseasons.environment.temperature.freezing", "Freezing");
@@ -423,7 +422,7 @@ public class Lang_EN extends LangHelper {
         add("config.jade.plugin_eclipticseasons.animal", "Animal");
 
         add("config.jade.plugin_eclipticseasons.crop.shift_hint", "Shift Key Hint");
-        add("hint.jade.plugin_eclipticseasons.crop.show", "§o<..Hold shift to see more..>");
+        add("hint.jade.plugin_eclipticseasons.crop.show", "§o<..Hold %s§o to see more..>");
 
         add("config.jade.plugin_eclipticseasons.snowy_status", "Show Snowy Status");
         add("hint.jade.plugin_eclipticseasons.snowy_status.snowy", "§7Covered with Snow");
@@ -598,20 +597,20 @@ public class Lang_EN extends LangHelper {
         add("eclipticseasons.configuration.LogIllegalUse", "Log Illegal Use");
         add("eclipticseasons.configuration.Crop", "Crop");
         add("eclipticseasons.configuration.HeatStroke", "Heat Stroke");
-        add("eclipticseasons.configuration.WildGooseSpawnWeight", "Wild Goose Spawn Weight");
+        add("eclipticseasons.configuration.WildGooseSpawnDelay", "Wild Goose Spawn Delay");
         add("eclipticseasons.configuration.SnowOverlayGlowingBlock", "Snow Overlay on Glowing Blocks");
         add("eclipticseasons.configuration.SnowyWinter", "Snowy Winter");
         add("eclipticseasons.configuration.WildGoose", "Wild Goose");
-        add("eclipticseasons.configuration.UseVanillaCheck", "Use Vanilla Check");
-        add("eclipticseasons.configuration.SeasonParticle", "Season Particle");
+        add("eclipticseasons.configuration.UseVanillaSnowCheck", "Use Vanilla Light Check for Snow");
+        add("eclipticseasons.configuration.SeasonalParticles", "Seasonal Particle");
         add("eclipticseasons.configuration.Season", "Season");
-        add("eclipticseasons.configuration.FireflySpawnWeight", "Firefly Spawn Weight");
+        add("eclipticseasons.configuration.FireflySpawnDelay", "Firefly Spawn Delay");
         add("eclipticseasons.configuration.LastingDaysOfEachTerm", "Lasting Days of Each Term");
         add("eclipticseasons.configuration.ThunderChancePercentMultiplier", "Thunder Chance Percent Multiplier");
         add("eclipticseasons.configuration.ValidDimensions", "Valid Dimensions");
         add("eclipticseasons.configuration.Temperature", "Temperature");
         add("eclipticseasons.configuration.Firefly", "Firefly");
-        add("eclipticseasons.configuration.MinChunkCompileWaringTime", "Minimum Chunk Compile Warning Time");
+        add("eclipticseasons.configuration.MinChunkCompileWarningTime", "Minimum Chunk Compile Warning Time");
         add("eclipticseasons.configuration.LegacyIceAndSnowAccumulationMelt", "Legacy Ice and Snow Accumulation Melt");
         add("eclipticseasons.configuration.RealisticSnowyChange", "Realistic Snowy Change");
         add("eclipticseasons.configuration.NotSnowyNearGlowingBlockLevel", "No Snow Near Glowing Block Level");
@@ -629,18 +628,18 @@ public class Lang_EN extends LangHelper {
         add("eclipticseasons.configuration.NotSnowyNearGlowingBlock", "No Snow Near Glowing Blocks");
         add("eclipticseasons.configuration.DebugInfo", "Debug Info");
         add("eclipticseasons.configuration.EnableSeasonalBee", "Enable Seasonal Bee");
-        add("eclipticseasons.configuration.UseSolarWeather", "Use Solar Weather");
+        add("eclipticseasons.configuration.UseSolarWeather", "Use Solar Biome Weather");
         add("eclipticseasons.configuration.DisableSnowOverlayControlTag", "Disable Snow Overlay Control Tag");
         add("eclipticseasons.configuration.SereneSeasonsCropTag", "Serene Seasons Crop Tag");
         add("eclipticseasons.configuration.Renderer", "Renderer");
         add("eclipticseasons.configuration.SnowUnderFence", "Snow Under Fence");
         add("eclipticseasons.configuration.NaturalSound", "Natural Sound");
-        add("eclipticseasons.configuration.butterflySpawnWeight", "Butterfly Spawn Weight");
+        add("eclipticseasons.configuration.ButterflySpawnDelay", "Butterfly Spawn Delay");
         add("eclipticseasons.configuration.EnableSeasonalFishing", "Enable Seasonal Fishing");
         add("eclipticseasons.configuration.EnableSeasonalCrop", "Enable Seasonal Crop");
         add("eclipticseasons.configuration.WeatherBufferDistance", "Weather Buffer Distance");
         add("eclipticseasons.configuration.InitialSolarTermIndex", "Initial Solar Term Index");
-        add("eclipticseasons.configuration.FallenLeavesDropWeight", "Fallen Leaves Drop Weight");
+        add("eclipticseasons.configuration.FallenLeavesDropDelay", "Fallen Leaves Drop Delay");
         add("eclipticseasons.configuration.SnowyFullCollisionShape", "Snowy if Full Collision Shape");
         add("eclipticseasons.configuration.CropGrowChanceInWrongSeason", "Crop Grow Chance in Wrong Season");
         add("eclipticseasons.configuration.CropGrowChanceInWrongHumidity", "Crop Grow Chance in Wrong Humidity");
@@ -663,36 +662,20 @@ public class Lang_EN extends LangHelper {
         add("eclipticseasons.configuration.EnableInformIcon", "Enable Solar Term Icon Display in Inform");
         add("eclipticseasons.configuration.CalendarItemHint", "Calendar Item Pop Hint");
 
-
-        add("eclipticseasons.configuration.AutumnTemps", "Autumn Temps");
-        add("eclipticseasons.configuration.SummerTemps", "Summer Temps");
-        add("eclipticseasons.configuration.SpringTemps", "Spring Temps");
-        add("eclipticseasons.configuration.ColdSweat", "Cold Sweat");
-        add("eclipticseasons.configuration.WinterTemps", "Winter Temps");
-        add("eclipticseasons.configuration.SpringTemps.button", "Spring Temps");
-        add("eclipticseasons.configuration.WinterTemps.button", "Winter Temps");
-        add("eclipticseasons.configuration.SummerTemps.button", "Summer Temps");
-        add("eclipticseasons.configuration.AutumnTemps.button", "Autumn Temps");
-        add("eclipticseasons.configuration.ColdSweat.button", "Cold Sweat");
-
-        add("eclipticseasons.configuration.JourneyMap", "Journey Map");
         add("eclipticseasons.configuration.ShowSnowyBlock", "Show Snowy Block");
-        add("eclipticseasons.configuration.JourneyMap.button", "Journey Map");
 
-        add("eclipticseasons.configuration.[Deprecated]CropGrowChanceInWrongSeason", "[Deprecated] Crop Grow Chance in Wrong Season");
-        add("eclipticseasons.configuration.DarkGreenhouseFailChance", "Dark Greenhouse Fail Chance");
+        add("eclipticseasons.configuration.LowLightGreenhouseFailChance", "Low Light Greenhouse Fail Chance");
         add("eclipticseasons.configuration.NoCostHumidifier", "No Cost Humidifier");
         add("eclipticseasons.configuration.SimpleGreenHouseMode", "Simple Greenhouse Mode");
         add("eclipticseasons.configuration.ForceCompatMode", "Force Compat Mode");
         add("eclipticseasons.configuration.ShouldInitWeather", "Should Init Weather");
         add("eclipticseasons.configuration.IceAndSnowMelt", "Ice and Snow Melt");
         add("eclipticseasons.configuration.ResetRendererAfterSleep", "Reset Renderer After Sleep");
-        add("eclipticseasons.configuration.[Deprecated]CropGrowChanceInWrongHumidity", "[Deprecated] Crop Grow Chance in Wrong Humidity");
         add("eclipticseasons.configuration.ChangeMapColor", "Change Map Color");
         add("eclipticseasons.configuration.RenderTestMode", "Render Test Mode");
         add("eclipticseasons.configuration.snowUnderTree", "Snow Under Tree");
         add("eclipticseasons.configuration.SnowTransitionBlend", "Snow Transition Blend");
-        add("eclipticseasons.configuration.TopFaceCulling", "Top Face Culling");
+        add("eclipticseasons.configuration.CullTopFaceWithSnow", "Cull Top Face with Snow");
         add("eclipticseasons.configuration.IceAndSnow", "Ice and Snow");
         add("eclipticseasons.configuration.SnowyTree", "Snowy Tree");
         add("eclipticseasons.configuration.RegisterCropDefaultValue", "Register Crop Default Value");
@@ -724,5 +707,36 @@ public class Lang_EN extends LangHelper {
         add("eclipticseasons.configuration.CropHumidityTransition", "Smoother Crop Humidity");
         add("eclipticseasons.configuration.ItemInformation", "Item Information");
 
+        add("eclipticseasons.configuration.SeasonCoreAffectsAnimals", "Season Core Affects Animals");
+        add("eclipticseasons.configuration.Resource", "Extra Resources");
+        add("eclipticseasons.configuration.SaveChunkEnvironmentalHumidity", "Save Environmental Humidity");
+        add("eclipticseasons.configuration.EnableSeasonDefinition", "Enable Seasonal Block Changes");
+        add("eclipticseasons.configuration.SmootherSeasonalGrassColorChange", "Smoother Grass and Foliage Color Transitions");
+        add("eclipticseasons.configuration.DynamicSnowTerm", "Dynamically Varying Snowfall Timing");
+
+        add("eclipticseasons.configuration.LessFishInThunder", "Less Fish in Thunderstorms");
+        add("eclipticseasons.configuration.FishingSeasons", "Fishing Seasons");
+        add("eclipticseasons.configuration.SmoothSnowyEdges", "Smooth Snowy Edges");
+        add("eclipticseasons.configuration.BeeActiveSeasons", "Bee Active Seasons");
+        add("eclipticseasons.configuration.DisableUniqueBiomeTagsRebinding", "Disable Unique Biome Tags");
+        add("eclipticseasons.configuration.NotRainInDesert", "No Rain in Deserts");
+        add("eclipticseasons.configuration.BeePollinateSeasons", "Bee Pollinate Seasons");
+        add("eclipticseasons.configuration.FixBiomePrecipitation", "Fix Biome Precipitation");
+        add("eclipticseasons.configuration.EnableWeatherRegion", "Weather Regions");
+        add("eclipticseasons.configuration.ExtraSnowDefinitions", "Extra Snow Blocks");
+        add("eclipticseasons.configuration.DisableChunkCacheCleaner", "Disable Chunk Cache Cleaner");
+
+        add("eclipticseasons.configuration.SeasonalColorChangeExtend", "Seasonal Color Change Extend");
+
+        add("eclipticseasons.configuration.Snow", "Snow");
+        add("eclipticseasons.configuration.SnowStepMelt", "Snow Step Melt");
+        add("eclipticseasons.configuration.ForceSnowyChunkUpdate", "Force Snowy Chunk Update");
+        add("eclipticseasons.configuration.SnowUnderShadow", "Snow Under Shadow");
+        add("eclipticseasons.configuration.SnowCoverUnderBlocks", "Snow Cover Under Blocks");
+        add("eclipticseasons.configuration.BiomeSnowLines", "Biome Snow Lines");
+        add("eclipticseasons.configuration.SnowInWorld", "Snow In World");
+        add("eclipticseasons.configuration.WeatherVotePercent", "Weather Vote Percent");
+
+        add("eclipticseasons.configuration.ClearAfterSleep", "Clear After Sleep");
     }
 }

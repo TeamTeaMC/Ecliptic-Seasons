@@ -2,6 +2,7 @@ package com.teamtea.eclipticseasons.mixin.compat.iris;
 
 
 import com.llamalad7.mixinextras.sugar.Local;
+import com.teamtea.eclipticseasons.client.core.ExtraModelManager;
 import com.teamtea.eclipticseasons.client.model.ISnowyReplaceModel;
 import com.teamtea.eclipticseasons.client.model.SnowyBakedModelWrapper;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
@@ -50,16 +51,8 @@ public abstract class MixinIrisForgeHelpers {
                     //     appearance = Blocks.SNOW.defaultBlockState();
                     // }
 
-                    switch (snowyBakedModelWrapper.getBindBlockType()) {
-                        case MapChecker.FLAG_BLOCK,
-                             MapChecker.FLAG_SLAB,
-                             MapChecker.FLAG_STAIRS,
-                             MapChecker.FLAG_STAIRS_TOP,
-                             MapChecker.FLAG_FARMLAND,
-                             MapChecker.FLAG_CUSTOM,
-                             MapChecker.FLAG_CUSTOM_JSON,
-                             MapChecker.FLAG_CUSTOM_JSON_WITH_TOP ->
-                                ((BlockSensitiveBufferBuilder) ((BlockRendererAccessor) r).getBuffers()).overrideBlock(WorldRenderingSettings.INSTANCE.getBlockStateIds().getInt(Blocks.SNOW.defaultBlockState()));
+                    if (ExtraModelManager.renderAsSnowInShader(state, level, pos)) {
+                        ((BlockSensitiveBufferBuilder) ((BlockRendererAccessor) r).getBuffers()).overrideBlock(WorldRenderingSettings.INSTANCE.getBlockStateIds().getInt(Blocks.SNOW.defaultBlockState()));
                     }
                 }
             }

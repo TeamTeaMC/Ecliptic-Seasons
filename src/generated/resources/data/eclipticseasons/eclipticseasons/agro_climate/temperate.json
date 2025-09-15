@@ -13,28 +13,5 @@
       "winter": 6
     }
   ],
-  "biomes": {
-    "values": [
-      {
-        "values": [
-          "#c:is_overworld",
-          "#c:is_void"
-        ],
-        "type": "neoforge:or"
-      },
-      {
-        "value": {
-          "values": [
-            "#c:is_mountain/peak",
-            "#c:is_snowy",
-            "#c:is_icy",
-            "#c:is_hot/overworld"
-          ],
-          "type": "neoforge:or"
-        },
-        "type": "neoforge:not"
-      }
-    ],
-    "type": "neoforge:and"
-  }
+  "biomes": "#eclipticseasons:agro/warm"
 }

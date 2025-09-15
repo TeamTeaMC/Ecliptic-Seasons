@@ -57,6 +57,14 @@ public class EclipticUtil {
         return 0;
     }
 
+    public static float getSnowTempChange(Level level) {
+        if (CommonConfig.Season.dynamicSnowTerm.get()) {
+            SolarDataManager sd = SolarHolders.getSaveData(level);
+            if (sd != null) return sd.getSolarTempChange();
+        }
+        return 0f;
+    }
+
     public static boolean isDay(Level level) {
         long dayTime = level.dimensionType().fixedTime().orElse(SolarAngelHelper.getSolarAngelTime(level, level.getDayTime()));
         long termTime = getNowSolarTerm(level).getDayTime();
@@ -98,13 +106,18 @@ public class EclipticUtil {
 
     public static WeatherMode getWeatherMode(Level level) {
         if (!useSolarWeather()) return WeatherMode.DEFAULT;
-        return MapChecker.isValidDimension(level) ? WeatherMode.BIOME : WeatherMode.DEFAULT;
+        return MapChecker.isValidDimension(level) ?
+                (CommonConfig.isEnableWeatherRegion() ? WeatherMode.REGION : WeatherMode.BIOME)
+                : WeatherMode.DEFAULT;
     }
 
     public static boolean hasLocalWeather(Level level) {
         return getWeatherMode(level) != WeatherMode.DEFAULT;
     }
 
+    public static boolean canSnowyBlockInteract() {
+        return CommonConfig.isSnowInWorld();
+    }
 
     public static EclipticSeasonsApi INSTANCE;
 
@@ -331,6 +344,12 @@ public class EclipticUtil {
             }
         }
         return env;
+    }
+
+    public static boolean isRainingOrSnowingWithSurfaceBiome(Level level, Holder<Biome> biome, BlockPos pos) {
+        if (hasLocalWeather(level))
+            return getRainOrSnow(level, biome.value(), pos) != Biome.Precipitation.NONE;
+        return level.isRaining();
     }
 
     public static boolean isHereWithSnow(Level level, BlockPos pos) {

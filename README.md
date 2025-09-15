@@ -1,4 +1,4 @@
-# [Ecliptic Seasons](https://legacy.curseforge.com/minecraft/mc-mods/ecliptic-seasons) 
+# [Ecliptic Seasons](https://legacy.curseforge.com/minecraft/mc-mods/ecliptic-seasons)
 
 ![Ecliptic Seasons](https://github.com/user-attachments/assets/549d6626-d78e-4901-8b96-f420a6c2d3ea)
 
@@ -10,6 +10,7 @@ Ecliptic Seasons is a Chinese mod about seasons and weather.
 *   For code: BSD-3
 *   For resources: CC BY-NC-SA 4.0
 *   Please do not port arbitrarily, communication can make the community better, and please respect our work.
+*   For disc *Snowless Homeland*: authorized by Beishanwei & Orangesoda for distribution and instrumental adaptation.
 
 ## 1.What is Ecliptic Seasons?
 
@@ -42,13 +43,18 @@ At the same time, we strive to optimize performance as much as possible and welc
 
 ## 4.Quick support for Ecliptic Seasons data packs.
 
-For biome climate types, check the existing tags in the data folder.
-* `eclipticseasons:seasonal`,`eclipticseasons:seasonal/hot`,`eclipticseasons:seasonal/cold` indicates that the biome has distinct seasonal changes.
-* `eclipticseasons:monsoonal` indicates that the biome has seasonal wet and dry periods.
-* The `eclipticseasons:is_small` tag is a special tag for marking small biomes, and generally doesn’t need to be used.
-* The remaining tags, `eclipticseasons:rainless`, `eclipticseasons:arid`, `eclipticseasons:droughty`, `eclipticseasons:soft`, `eclipticseasons:rainy`, indicate biomes with only slight seasonal changes in rainfall, with only differences in precipitation amounts.
+For **overworld agro biomes**, the following special tags are provided:
+* `eclipticseasons:agro/warm` – applied to **warm regions**
+* `eclipticseasons:agro/cold` – applied to **cold regions**
+* `eclipticseasons:agro/hot` – applied to **hot regions**
 
-For biome color types, it's similar. And it's actually recommended to use resource packs to achieve more customized colors.
+For **biome rain** types, check the existing tags in the data folder.
+* `eclipticseasons:rain/seasonal`,`eclipticseasons:rain/seasonal/hot`,`eclipticseasons:rain/seasonal/cold` indicates that the biome has distinct seasonal changes.
+* `eclipticseasons:rain/monsoonal` indicates that the biome has seasonal wet and dry periods.
+* The `eclipticseasons:is_small` tag is a special tag for marking small biomes, and generally doesn’t need to be used.
+* The remaining tags, `eclipticseasons:rain/rainless`, `eclipticseasons:rain/arid`, `eclipticseasons:rain/droughty`, `eclipticseasons:rain/soft`, `eclipticseasons:rain/rainy`, indicate biomes with only slight seasonal changes in rainfall, with only differences in precipitation amounts.
+
+For **biome color** types, it's similar. And it's actually recommended to use resource packs to achieve more customized colors.
 * `eclipticseasons:color/seasonal`, `eclipticseasons:color/seasonal/hot`, `eclipticseasons:color/seasonal/cold` — represent seasonal colors for normal, hot, and cold biomes respectively.
 * `eclipticseasons:color/monsoonal` — represents colors for (tropical) monsoonal climate biomes.
 * `eclipticseasons:color/stable`, `eclipticseasons:color/slightly` — represent areas with stable and slight color changes.

@@ -17,6 +17,7 @@ import net.neoforged.neoforge.registries.RegistryBuilder;
  * Not really use.
  * **/
 @Deprecated
+@SuppressWarnings("removal")
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
 public class TestContents {
     public static final ResourceKey<Registry<BasicWeather>> WEATHER = createRegistryKey("weather");

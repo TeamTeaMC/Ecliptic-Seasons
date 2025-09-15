@@ -13,28 +13,24 @@ import com.teamtea.eclipticseasons.common.core.crop.HumidityControlProvider;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.network.SimpleNetworkHandler;
 import com.teamtea.eclipticseasons.common.network.message.SolarTermsMessage;
+import com.teamtea.eclipticseasons.common.network.message.UpdateTempChangeMessage;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import it.unimi.dsi.fastutil.Pair;
 import it.unimi.dsi.fastutil.longs.Long2LongOpenHashMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.SectionPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Mth;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.LevelChunk;
-import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.storage.DimensionDataStorage;
 import net.minecraft.world.phys.Vec3;
@@ -53,10 +49,10 @@ public class SolarDataManager extends SavedData {
     protected int solarTermsTicks = 0;
     private int biomeDataVersion = 0;
     protected boolean isValidDimension = false;
+    protected float solarTempChange = 0;
 
     protected WeakReference<Level> levelWeakReference;
 
-    // TODO 考虑用这个
     // Long2ObjectOpenHashMap<List<T>>
     private final Long2ObjectOpenHashMap<List<Pair<BlockPos, HumidityControlProvider>>> humidityCoreMap;
     private final Long2ObjectOpenHashMap<List<Pair<BlockPos, GreenHouseCoreProvider>>> greenHouseCoreMap;
@@ -70,12 +66,21 @@ public class SolarDataManager extends SavedData {
         needTickMap = new Long2LongOpenHashMap();
         isValidDimension = MapChecker.isValidDimension(level);
         skipNextCheckInTickPosMap = new Long2ObjectOpenHashMap<>();
+        solarTempChange = createTempChange(level);
+    }
+
+    protected float createTempChange(Level level) {
+        return isValidDimension() ?
+                (float) Mth.clamp((level.getRandom().nextGaussian() * (0.25f / 2f)), -0.25f, 0.25f) : 0;
     }
 
     public SolarDataManager(Level level, CompoundTag nbt) {
         this(level);
         setSolarTermsDay(nbt.getInt("SolarTermsDay"));
         setSolarTermsTicks(nbt.getInt("SolarTermsTicks"));
+        if (nbt.contains("SolarTempChange")) {
+            setSolarTempChange(nbt.getFloat("SolarTempChange"));
+        }
         this.biomeDataVersion = nbt.getInt("BiomeDataVersion");
         setLevelData(nbt);
     }
@@ -102,7 +107,6 @@ public class SolarDataManager extends SavedData {
                     }
                 }
             }
-            // TODO：如果存在未命中，说明更新了，检查是否真的有效
             if (countCheck != listTag.size()) {
                 this.biomeDataVersion++;
                 EclipticSeasons.logger("Warning for biome date need to be update with", listTag.size(), biomeWeathers == null ? 0 : biomeWeathers.size(), " new version is", biomeDataVersion);
@@ -190,6 +194,10 @@ public class SolarDataManager extends SavedData {
         return biomeDataVersion;
     }
 
+    public float getSolarTempChange() {
+        return solarTempChange;
+    }
+
     public void setSolarTermsDay(int solarTermsDay) {
         // this.solarTermsDay = Math.maxTime(solarTermsDay, 0) % (24 * CommonConfig.Season.lastingDaysOfEachTerm.get());
         this.solarTermsDay = solarTermsDay;
@@ -198,6 +206,11 @@ public class SolarDataManager extends SavedData {
 
     public void setSolarTermsTicks(int solarTermsTicks) {
         this.solarTermsTicks = solarTermsTicks;
+        setDirty();
+    }
+
+    public void setSolarTempChange(float solarTempChange) {
+        this.solarTempChange = solarTempChange;
         setDirty();
     }
 
@@ -425,13 +438,17 @@ public class SolarDataManager extends SavedData {
 
     public void sendAndUpdate(ServerLevel world) {
         boolean changeSolarTerm = getSolarTermsDay() % CommonConfig.Season.lastingDaysOfEachTerm.get() == 0;
-
+        boolean updateTempChange = false;
         SolarTerm solarTerm = getSolarTerm();
         if (changeSolarTerm) {
             // note 不再需要更新
             // BiomeClimateManager.updateTemperature(world, getSolarTerm());
             SolarTerm old = SolarTerm.collectValues()[(getSolarTermIndex() + 24) % 24];
             NeoForge.EVENT_BUS.post(new SolarTermChangeEvent(old, solarTerm, world, solarTermsDay));
+            if (solarTerm == SolarTerm.SUMMER_SOLSTICE) {
+                setSolarTempChange(createTempChange(world));
+                updateTempChange = true;
+            }
         }
 
         if (solarTerm != SolarTerm.NONE) {
@@ -439,6 +456,9 @@ public class SolarDataManager extends SavedData {
                 SimpleNetworkHandler.send(player, new SolarTermsMessage(this.getSolarTermsDay()));
                 if (changeSolarTerm && CommonConfig.Season.enableInform.get()) {
                     SimpleUtil.sendSolarTermMessage(player, solarTerm, false);
+                }
+                if (updateTempChange) {
+                    SimpleNetworkHandler.send(player, new UpdateTempChangeMessage(getSolarTempChange()));
                 }
                 WeatherManager.tickPlayerForSeasonCheck(player);
             }
@@ -450,6 +470,7 @@ public class SolarDataManager extends SavedData {
     public @NotNull CompoundTag save(CompoundTag compound, HolderLookup.@NotNull Provider pRegistries) {
         compound.putInt("SolarTermsDay", getSolarTermsDay());
         compound.putInt("SolarTermsTicks", getSolarTermsTicks());
+        compound.putFloat("SolarTempChange", getSolarTempChange());
         ListTag listTag = new ListTag();
         if (levelWeakReference.get() != null) {
             var list = WeatherManager.getBiomeList(levelWeakReference.get());
@@ -532,5 +553,44 @@ public class SolarDataManager extends SavedData {
 
     public boolean shouldSkipNextCheck(BlockPos blockPos) {
         return this.skipNextCheckInTickPosMap.containsKey(blockPos.asLong());
+    }
+
+    public static final String KEY_ATTACH_SOLAR_DATA = EclipticSeasons.rl("attach_solar_data").toString();
+
+    public void saveChunk(ChunkPos pos, CompoundTag data) {
+        Level level = levelWeakReference.get();
+        if (level == null) return;
+        if (!CommonConfig.Crop.saveChunkEnvironmentalHumidity.get()) return;
+
+        List<Pair<BlockPos, HumidityControlProvider>> list = this.humidityCoreMap.getOrDefault(pos.toLong(), null);
+        if (list != null) {
+            ListTag compoundTag = new ListTag();
+            for (Pair<BlockPos, HumidityControlProvider> pair : list) {
+                if (!pair.right().shouldSave()) continue;
+                CompoundTag ct = new CompoundTag();
+                ct.putLong("pos", pair.left().asLong());
+                ct.put("humidity_modifiers", pair.right().serializeNBT(level.registryAccess()));
+                compoundTag.add(ct);
+            }
+            if (!compoundTag.isEmpty())
+                data.put(KEY_ATTACH_SOLAR_DATA, compoundTag);
+        }
+    }
+
+    public void loadChunk(ChunkPos pos, CompoundTag data) {
+        Level level = levelWeakReference.get();
+        if (level == null) return;
+        if (!data.contains(KEY_ATTACH_SOLAR_DATA)) return;
+        ListTag attachSolarData = data.getList(KEY_ATTACH_SOLAR_DATA, Tag.TAG_COMPOUND);
+        for (Tag attachSolarDatum : attachSolarData) {
+            CompoundTag compoundTag = (CompoundTag) attachSolarDatum;
+            long aLong = compoundTag.getLong("pos");
+            BlockPos blockPos = BlockPos.of(aLong);
+            CompoundTag humidity_modifier = compoundTag.getCompound("humidity_modifiers");
+            if (humidity_modifier.isEmpty()) continue;
+            HumidityControlProvider humidityControlProvider = new HumidityControlProvider(0, 0, 0, true);
+            humidityControlProvider.deserializeNBT(level.registryAccess(), humidity_modifier);
+            addHumidityControlProvider(blockPos, humidityControlProvider);
+        }
     }
 }

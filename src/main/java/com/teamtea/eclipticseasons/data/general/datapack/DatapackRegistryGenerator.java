@@ -6,6 +6,7 @@ import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.common.registry.*;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistrySetBuilder;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
 import net.neoforged.neoforge.common.data.DatapackBuiltinEntriesProvider;
 
@@ -24,8 +25,7 @@ public class DatapackRegistryGenerator extends DatapackBuiltinEntriesProvider {
             .add(ESRegistries.SNOW_DEFINITIONS, SnowDefinitionsRegistry::bootstrap)
             .add(ESRegistries.SEASON_PHASE, SeasonPhaseRegistry::bootstrap)
             .add(ESRegistries.SEASON_CYCLE, SeasonCycleRegistry::bootstrap)
-            .add(ESRegistries.SEASON_DEFINITION, SeasonDefinitionRegistry::bootstrap)
-            // .add(ESRegistries.BIOME_SET, BiomeSetRegistry::bootstrap)
+            .add(Registries.JUKEBOX_SONG, SongRegistry::bootstrap)
             ;
 
     public DatapackRegistryGenerator(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {

@@ -65,11 +65,18 @@ public class CompatModule {
 
     public static class CommonConfig {
         public static ModConfigSpec.BooleanValue sereneSeasons;
+        public static ModConfigSpec.BooleanValue fixBiome;
+        public static ModConfigSpec.DoubleValue weatherVotePercent;
 
         public static void load(ModConfigSpec.Builder builder) {
             builder.push("Compat");
             sereneSeasons = builder.comment("Compatible with mods using SereneSeasons' CropTag.")
                     .define("SereneSeasonsCropTag", true);
+            fixBiome = builder.comment("If a mod tries to query biome precipitation using the raw method, would adjust it to correctly ignore small biomes like rivers.")
+                    .define("FixBiomePrecipitation", true);
+            weatherVotePercent = builder.comment("When a mod tries to query global weather parameters directly instead of using our API, " +
+                            "Solar Weather will determine the result based on a weighted vote from the areas around players.")
+                    .defineInRange("WeatherVotePercent", 0.5f, 0, 1d);
             builder.pop();
         }
     }

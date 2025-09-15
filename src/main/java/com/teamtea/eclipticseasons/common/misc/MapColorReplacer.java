@@ -1,11 +1,11 @@
 package com.teamtea.eclipticseasons.common.misc;
 
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
+import com.teamtea.eclipticseasons.common.core.snow.SnowyMapChecker;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
@@ -28,6 +28,11 @@ public class MapColorReplacer {
         if (!(blockGetter instanceof Level level) || pos == null)
             return null;
         if (!CommonConfig.isSnowyWinter()) return null;
+
+        if (SnowyMapChecker.shouldCheckSnowyStatus(level, pos)) {
+            return SnowyMapChecker.isSnowyBlock(level, pos) ? MapColor.SNOW : null;
+        }
+
         // if(state.getBlock()!=Blocks.VINE)return null;
         // if without snow we can faster the query
         // note 也许会更慢？和 x小地图有关
@@ -42,15 +47,14 @@ public class MapColorReplacer {
 
         // long seed = (long) Mth.abs(pos.hashCode());
 
+
         // todo should update high check rule
         isLight = flag != MapChecker.FLAG_NONE && (!forceCheckLoad || MapChecker.isLoadedOnlyServer(level, pos))
                 && MapChecker.getHeightOrUpdate(level, pos, false) <= pos.getY() - offset
                 && state.getBlock() != Blocks.SNOW_BLOCK
                 && (!forceCheckLoad || MapChecker.isLoadNearByOnlyServer(level, pos))
                 && MapChecker.shouldSnowAt(level, pos.below(offset), state, level.getRandom(), state.getSeed(pos))
-                && (ignoreLight || (!CommonConfig.Season.notSnowyNearGlowingBlock.get() ||
-                level.getBrightness(LightLayer.BLOCK, pos.below(offset - 1)) <
-                        CommonConfig.Season.notSnowyNearGlowingBlockLevel.get()))
+                && (ignoreLight || !SnowyMapChecker.isTooLight(level, pos, state, flag))
         ;
 
         if (isLight) {
@@ -60,7 +64,7 @@ public class MapColorReplacer {
                         && (Heightmap.Types.MOTION_BLOCKING_NO_LEAVES.isOpaque().test(aboveState) ||
                         MapChecker.extraSnowPassable(aboveState));
                 if (specialLeaves) {
-                    isLight = CommonConfig.Season.snowyTree.get();
+                    isLight = CommonConfig.Snow.snowyTree.get();
                 }
             } else {
                 if (MapChecker.extraSnowPassable(state)) {

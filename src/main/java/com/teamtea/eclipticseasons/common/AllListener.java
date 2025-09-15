@@ -10,9 +10,11 @@ import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
 import com.teamtea.eclipticseasons.common.core.crop.CropInfoManager;
 import com.teamtea.eclipticseasons.common.core.crop.NaturalPlantHandler;
+import com.teamtea.eclipticseasons.common.core.map.BiomeHolder;
+import com.teamtea.eclipticseasons.common.core.map.ChunkInfoMap;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
-import com.teamtea.eclipticseasons.common.core.map.ServerMapFixer;
 import com.teamtea.eclipticseasons.common.core.snow.SnowChecker;
+import com.teamtea.eclipticseasons.common.core.snow.SnowyMapChecker;
 import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
 import com.teamtea.eclipticseasons.common.network.SimpleNetworkHandler;
 import com.teamtea.eclipticseasons.common.network.message.HumidModifyMessage;
@@ -24,6 +26,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.chunk.ChunkAccess;
+import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.TagsUpdatedEvent;
@@ -41,13 +44,14 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 @EventBusSubscriber(modid = EclipticSeasonsApi.MODID)
 public class AllListener {
 
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public static void onTagsUpdatedEventEarly(TagsUpdatedEvent tagsUpdatedEvent) {
+        BiomeClimateManager.resetBiomeTags(tagsUpdatedEvent.getRegistryAccess(), tagsUpdatedEvent.getUpdateCause() == TagsUpdatedEvent.UpdateCause.SERVER_DATA_LOAD);
+    }
 
     // TagsUpdatedEvent invoke before ServerAboutToStartEvent
-    // TODO：优化这个问题，理论上来说，更新数据的时候不能发送群系包，话说回来，既然是群系天气，实际上与level关系不大，不应该一个level一个
-    // 但是这也说不准啊，谁知道谁无聊就搞这个呢
     @SubscribeEvent
     public static void onTagsUpdatedEvent(TagsUpdatedEvent tagsUpdatedEvent) {
-        // EntityTickEvent.Post
         BiomeClimateManager.resetBiomeTemps(tagsUpdatedEvent.getRegistryAccess(), tagsUpdatedEvent.getUpdateCause() == TagsUpdatedEvent.UpdateCause.SERVER_DATA_LOAD);
         WeatherManager.informUpdateBiomes(tagsUpdatedEvent.getRegistryAccess(), tagsUpdatedEvent.getUpdateCause() == TagsUpdatedEvent.UpdateCause.SERVER_DATA_LOAD);
         CropInfoManager.init(tagsUpdatedEvent);
@@ -105,7 +109,6 @@ public class AllListener {
             long newTime = event.getNewTime(),
                     oldDayTime = level.getDayTime();
             WeatherManager.updateAfterSleep(level, newTime, oldDayTime);
-            // // TODO: 根据季节更新概率
             // if (!serverLevel.isRaining() && serverLevel.getRandom().nextFloat() > 0.8) {
             //     serverLevel.setWeatherParameters(0,
             //             ServerLevel.RAIN_DURATION.sample(serverLevel.getRandom()),
@@ -131,12 +134,10 @@ public class AllListener {
     public static void onLevelUnloadEvent(LevelEvent.Unload event) {
         if (event.getLevel() instanceof Level level) {
             WeatherManager.BIOME_WEATHER_LIST.remove(level);
+            WeatherManager.NEXT_CHECK_BIOME_MAP.remove(level);
             WeatherManager.BIOME_WEATHER_QUERY_LIST.remove(level);
             SolarHolders.DATA_MANAGER_MAP.remove(level);
             MapChecker.unloadLevel(level);
-            if (!level.isClientSide()) {
-                ServerMapFixer.unloadLevel(level);
-            }
             MapChecker.validDimension.removeIf(l -> l.equals(level));
         }
     }
@@ -149,21 +150,37 @@ public class AllListener {
         //     MapChecker.clearChunk(event.getChunk().getLevel(),event.getChunk().getPos());
         // }
         MapChecker.unloadChunk(event.getChunk().getLevel(), event.getChunk().getPos());
-        ServerMapFixer.unloadChunk(event.getChunk().getLevel(), event.getChunk().getPos());
         CropGrowthHandler.unloadChunk(event.getChunk().getLevel(), event.getChunk().getPos());
     }
 
+    @SubscribeEvent
+    public static void onChunkDataSaveEvent(ChunkDataEvent.Save event) {
+        if (event.getLevel() instanceof Level level) {
+            SolarDataManager data = SolarHolders.getSaveData(level);
+            if (data != null) data.saveChunk(event.getChunk().getPos(), event.getData());
+        }
+    }
+
+    @SubscribeEvent
+    public static void onChunkDataLoadEvent(ChunkDataEvent.Load event) {
+        if (event.getLevel() instanceof Level level) {
+            SolarHolders.getSaveDataLazy(level)
+                    .ifPresent(solarDataManager -> {
+                        solarDataManager.loadChunk(event.getChunk().getPos(), event.getData());
+                    });
+        }
+    }
 
     @SubscribeEvent
     public static void onLevelTick(LevelTickEvent.Post event) {
-        if (event.getLevel() instanceof ServerLevel serverLevel) {
-            ServerMapFixer.tick(serverLevel);
+        Level level = event.getLevel();
+        if (level instanceof ServerLevel serverLevel) {
             SolarDataManager data = SolarHolders.getSaveData(serverLevel);
             if (data != null) {
                 data.tickLevel(serverLevel);
             }
         }
-
+        MapChecker.tickLevel(level);
     }
 
 
@@ -236,7 +253,7 @@ public class AllListener {
 
                 SolarDataManager data = SolarHolders.getSaveData(level);
                 if (data != null) {
-                    float v = data.calculateHumidityModification(serverPlayer.blockPosition(),false);
+                    float v = data.calculateHumidityModification(serverPlayer.blockPosition(), false);
                     SimpleNetworkHandler.send(serverPlayer, new HumidModifyMessage(
                             serverPlayer.blockPosition(), v
                     ));
@@ -267,17 +284,29 @@ public class AllListener {
     @SubscribeEvent
     public static void onChunkLoad(ChunkEvent.Load event) {
         ChunkAccess chunk = event.getChunk();
-        if (event.isNewChunk() && event.getLevel() instanceof ServerLevel serverLevel) {
-            MapChecker.setNewChunk(serverLevel, chunk);
+        BiomeHolder biomeHolder = null;
+        if (event.getLevel() instanceof ServerLevel serverLevel) {
+            if (event.isNewChunk()) {
+                MapChecker.setNewChunk(serverLevel, chunk);
+            }
+            biomeHolder = MapChecker.getOrUpdateChunkBiomeData(serverLevel, chunk, event.getChunk().getPos());
         }
 
         if (event.getLevel() instanceof Level level) {
-            MapChecker.forceChunkUpdateHeight(level, chunk);
+            ChunkInfoMap chunkInfoMap = MapChecker.forceChunkUpdateHeight(level, chunk);
+
+            if (biomeHolder != null&& level instanceof ServerLevel serverLevel) {
+                int biomeDataVersion = SolarHolders.getSaveData(level).getBiomeDataVersion();
+                if (biomeHolder.version() != biomeDataVersion || !biomeHolder.hasUpdated()) biomeHolder = null;
+                if (biomeHolder != null) {
+                    SnowyMapChecker.forceChunkUpdateHeight(serverLevel, chunk, chunkInfoMap, biomeHolder, true);
+                }
+            }
         }
     }
 
     @SubscribeEvent
-    public static void onQuestCheck(BlockEvent.NeighborNotifyEvent event) {
+    public static void onNeighborNotifyEvent(BlockEvent.NeighborNotifyEvent event) {
     }
 
 

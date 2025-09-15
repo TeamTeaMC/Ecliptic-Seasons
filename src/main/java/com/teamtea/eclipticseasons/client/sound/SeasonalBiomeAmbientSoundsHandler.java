@@ -1,8 +1,10 @@
 package com.teamtea.eclipticseasons.client.sound;
 
+import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.constant.solar.TimePeriod;
 import com.teamtea.eclipticseasons.api.data.client.SeasonalBiomeAmbient;
+import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.client.util.ClientRef;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
@@ -61,7 +63,7 @@ public class SeasonalBiomeAmbientSoundsHandler implements AmbientSoundHandler {
         Holder<Biome> biome = getBiome();
 
         SolarTerm solarTerm = ClientCon.nowSolarTerm;
-        Season season = solarTerm.getSeason();
+        Season season = ClientCon.nowSeason;
         boolean isDayNow = ClientCon.isDay;
         if (biome.value() != this.previousBiome) {
             this.previousBiome = biome.value();
@@ -184,7 +186,7 @@ public class SeasonalBiomeAmbientSoundsHandler implements AmbientSoundHandler {
                 // todo update the volume of autumn wind
                 if (needAdd && !indoor) {
                     // EclipticSeasons.logger(needAdd, soundEvent.getLocation());
-                    LoopSeasonalSoundInstance loopSoundInstance = new LoopSeasonalSoundInstance(soundEvent,loopSounds);
+                    LoopSeasonalSoundInstance loopSoundInstance = new LoopSeasonalSoundInstance(soundEvent, loopSounds);
                     this.loopSounds.add(loopSoundInstance);
                     this.soundManager.play(loopSoundInstance);
                 }

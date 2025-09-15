@@ -1,11 +1,8 @@
 package com.teamtea.eclipticseasons.data.general.lang;
 
 
-import com.teamtea.eclipticseasons.common.registry.AgroClimateRegistry;
-import com.teamtea.eclipticseasons.common.registry.BlockRegistry;
-import com.teamtea.eclipticseasons.common.registry.ItemRegistry;
+import com.teamtea.eclipticseasons.common.registry.*;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
-import com.teamtea.eclipticseasons.common.registry.SeasonQuestRegistry;
 import net.minecraft.data.PackOutput;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
@@ -67,6 +64,9 @@ public class Lang_ZH extends LangHelper {
         add(BlockRegistry.block_in_waxed_oxidized_copper_grate_block.get(), "打蜡的氧化湿度调节铜格栅");
 
         add(BlockRegistry.block_in_wooden_grate_block.get(), "湿度调节木格栅");
+
+        add(ItemRegistry.snowless_hometown.get(),"无雪的故乡");
+        add(SongRegistry.toLangKey(SongRegistry.SNOWLESS_HOMETOWN), "北山薇 & 橙子苏打 等");
 
         add("info.eclipticseasons.environment.temperature.under_freezing", "严寒");
         add("info.eclipticseasons.environment.temperature.freezing", "冰冻");
@@ -179,7 +179,7 @@ public class Lang_ZH extends LangHelper {
         add("info.eclipticseasons.environment.solar_term.hint3", "自 %s 日后:");
         add("info.eclipticseasons.environment.solar_term.hint", "今日节气:");
 
-        add("info.eclipticseasons.environment.season_phase.hint","今日时节:");
+        add("info.eclipticseasons.environment.season_phase.hint", "今日时节:");
 
         add("info.eclipticseasons.environment.season_phase.dry_start", "干季");
         add("info.eclipticseasons.environment.season_phase.dry_middle", "干季");
@@ -424,7 +424,7 @@ public class Lang_ZH extends LangHelper {
         add("config.jade.plugin_eclipticseasons.animal", "动物");
 
         add("config.jade.plugin_eclipticseasons.crop.shift_hint", "Shift按键提示");
-        add("hint.jade.plugin_eclipticseasons.crop.show", "§o<..按住shift以查看更多..>");
+        add("hint.jade.plugin_eclipticseasons.crop.show", "§o<..按住%s§o以查看更多..>");
         add("config.jade.plugin_eclipticseasons.snowy_status", "显示覆雪状态");
         add("hint.jade.plugin_eclipticseasons.snowy_status.snowy", "§7覆雪状态");
     }
@@ -447,14 +447,14 @@ public class Lang_ZH extends LangHelper {
 
         add("info.eclipticseasons.bone_meal.failure", "当前环境条件无法用骨粉催熟");
 
-        add("info.eclipticseasons.calendar.model","已切换为%s显示模式");
-        add("info.eclipticseasons.calendar.model.normal","一般");
-        add("info.eclipticseasons.calendar.model.year","年份");
-        add("info.eclipticseasons.calendar.model.next","下一节气");
+        add("info.eclipticseasons.calendar.model", "已切换为%s显示模式");
+        add("info.eclipticseasons.calendar.model.normal", "一般");
+        add("info.eclipticseasons.calendar.model.year", "年份");
+        add("info.eclipticseasons.calendar.model.next", "下一节气");
 
-        add("pack.eclipticseasons.extra_snow","额外覆雪方块资源包");
+        add("pack.eclipticseasons.extra_snow", "额外覆雪方块资源包");
 
-        add("info.eclipticseasons.config.inactive","§7当前配置下不起作用");
+        add("info.eclipticseasons.config.inactive", "§7当前配置下不起作用");
         add("info.eclipticseasons.greenhouse_core.effect", "为温室中%1$s格范围内的%2$s季作物提供生长加成");
 
         add("info.eclipticseasons.show.shift", "§o<..按住shift..>");
@@ -596,20 +596,20 @@ public class Lang_ZH extends LangHelper {
         add("eclipticseasons.configuration.LogIllegalUse", "记录非法使用");
         add("eclipticseasons.configuration.Crop", "作物");
         add("eclipticseasons.configuration.HeatStroke", "中暑");
-        add("eclipticseasons.configuration.WildGooseSpawnWeight", "大雁生成权重");
+        add("eclipticseasons.configuration.WildGooseSpawnDelay", "大雁生成逆权重");
         add("eclipticseasons.configuration.SnowOverlayGlowingBlock", "发光方块上可以有雪覆盖");
         add("eclipticseasons.configuration.SnowyWinter", "冬季雪景");
         add("eclipticseasons.configuration.WildGoose", "大雁");
-        add("eclipticseasons.configuration.UseVanillaCheck", "使用原版检查");
-        add("eclipticseasons.configuration.SeasonParticle", "季节粒子效果");
+        add("eclipticseasons.configuration.UseVanillaSnowCheck", "使用简单光照检查是否覆雪");
+        add("eclipticseasons.configuration.SeasonalParticles", "季节性粒子效果");
         add("eclipticseasons.configuration.Season", "季节");
-        add("eclipticseasons.configuration.FireflySpawnWeight", "萤火虫生成权重");
+        add("eclipticseasons.configuration.FireflySpawnDelay", "萤火虫生成逆权重");
         add("eclipticseasons.configuration.LastingDaysOfEachTerm", "每个节气的持续天数");
         add("eclipticseasons.configuration.ThunderChancePercentMultiplier", "雷暴几率百分比倍数");
         add("eclipticseasons.configuration.ValidDimensions", "有效维度");
         add("eclipticseasons.configuration.Temperature", "温度");
         add("eclipticseasons.configuration.Firefly", "萤火虫");
-        add("eclipticseasons.configuration.MinChunkCompileWaringTime", "区块编译超时警告时间");
+        add("eclipticseasons.configuration.MinChunkCompileWarningTime", "区块编译超时警告时间");
         add("eclipticseasons.configuration.LegacyIceAndSnowAccumulationMelt", "经典冰雪积累与融化");
         add("eclipticseasons.configuration.RealisticSnowyChange", "真实雪景变化");
         add("eclipticseasons.configuration.NotSnowyNearGlowingBlockLevel", "不覆雪需要的光照等级强度");
@@ -627,18 +627,18 @@ public class Lang_ZH extends LangHelper {
         add("eclipticseasons.configuration.NotSnowyNearGlowingBlock", "发光方块附近无雪");
         add("eclipticseasons.configuration.DebugInfo", "调试信息");
         add("eclipticseasons.configuration.EnableSeasonalBee", "启用季节性蜜蜂");
-        add("eclipticseasons.configuration.UseSolarWeather", "使用太阳天气");
+        add("eclipticseasons.configuration.UseSolarWeather", "启用节气的群系天气");
         add("eclipticseasons.configuration.DisableSnowOverlayControlTag", "禁用雪覆盖控制标签");
         add("eclipticseasons.configuration.SereneSeasonsCropTag", "静谧四季作物标签");
         add("eclipticseasons.configuration.Renderer", "渲染器");
         add("eclipticseasons.configuration.SnowUnderFence", "栅栏下的雪");
         add("eclipticseasons.configuration.NaturalSound", "自然音效");
-        add("eclipticseasons.configuration.butterflySpawnWeight", "蝴蝶生成权重");
+        add("eclipticseasons.configuration.ButterflySpawnDelay", "蝴蝶生成逆权重");
         add("eclipticseasons.configuration.EnableSeasonalFishing", "启用季节性钓鱼");
         add("eclipticseasons.configuration.EnableSeasonalCrop", "启用季节性作物");
         add("eclipticseasons.configuration.WeatherBufferDistance", "天气缓冲距离");
         add("eclipticseasons.configuration.InitialSolarTermIndex", "初始节气索引");
-        add("eclipticseasons.configuration.FallenLeavesDropWeight", "落叶掉落权重");
+        add("eclipticseasons.configuration.FallenLeavesDropDelay", "落叶掉落逆权重");
         add("eclipticseasons.configuration.SnowyFullCollisionShape", "使用完整碰撞形状检查覆雪");
         add("eclipticseasons.configuration.CropGrowChanceInWrongSeason", "错误季节作物生长几率");
         add("eclipticseasons.configuration.CropGrowChanceInWrongHumidity", "错误湿润度作物生长几率");
@@ -661,36 +661,18 @@ public class Lang_ZH extends LangHelper {
         add("eclipticseasons.configuration.EnableInformIcon", "节气通知中渲染节气图标");
         add("eclipticseasons.configuration.CalendarItemHint", "物品日历的节气提示");
 
-
-        add("eclipticseasons.configuration.AutumnTemps", "秋季温度");
-        add("eclipticseasons.configuration.SummerTemps", "夏季温度");
-        add("eclipticseasons.configuration.SpringTemps", "春季温度");
-        add("eclipticseasons.configuration.ColdSweat", "冷汗");
-        add("eclipticseasons.configuration.WinterTemps", "冬季温度");
-        add("eclipticseasons.configuration.SpringTemps.button", "春季温度");
-        add("eclipticseasons.configuration.WinterTemps.button", "冬季温度");
-        add("eclipticseasons.configuration.SummerTemps.button", "夏季温度");
-        add("eclipticseasons.configuration.AutumnTemps.button", "秋季温度");
-        add("eclipticseasons.configuration.ColdSweat.button", "冷汗");
-
-        add("eclipticseasons.configuration.JourneyMap", "旅行地图");
-        add("eclipticseasons.configuration.ShowSnowyBlock", "显示覆雪方块");
-        add("eclipticseasons.configuration.JourneyMap.button", "旅行地图");
-
-        add("eclipticseasons.configuration.[Deprecated]CropGrowChanceInWrongSeason", "【已弃用】作物在错误季节下的生长概率");
-        add("eclipticseasons.configuration.DarkGreenhouseFailChance", "黑暗温室失败概率");
+        add("eclipticseasons.configuration.LowLightGreenhouseFailChance", "低光温室作物失败概率");
         add("eclipticseasons.configuration.NoCostHumidifier", "零消耗加湿器");
         add("eclipticseasons.configuration.SimpleGreenHouseMode", "简易温室模式");
         add("eclipticseasons.configuration.ForceCompatMode", "强制兼容模式");
         add("eclipticseasons.configuration.ShouldInitWeather", "是否初始化天气");
         add("eclipticseasons.configuration.IceAndSnowMelt", "冰雪融化");
         add("eclipticseasons.configuration.ResetRendererAfterSleep", "睡觉后重置渲染器");
-        add("eclipticseasons.configuration.[Deprecated]CropGrowChanceInWrongHumidity", "【已弃用】作物在湿度不适时的生长概率");
         add("eclipticseasons.configuration.ChangeMapColor", "更改地图颜色");
         add("eclipticseasons.configuration.RenderTestMode", "渲染测试模式");
         add("eclipticseasons.configuration.snowUnderTree", "树下积雪");
         add("eclipticseasons.configuration.SnowTransitionBlend", "雪过渡混合");
-        add("eclipticseasons.configuration.TopFaceCulling", "顶面剔除");
+        add("eclipticseasons.configuration.CullTopFaceWithSnow", "剔除覆雪的顶面");
         add("eclipticseasons.configuration.IceAndSnow", "冰雪效果");
         add("eclipticseasons.configuration.SnowyTree", "覆雪树木");
         add("eclipticseasons.configuration.RegisterCropDefaultValue", "注册作物默认值");
@@ -721,6 +703,38 @@ public class Lang_ZH extends LangHelper {
 
         add("eclipticseasons.configuration.CropHumidityTransition", "更平滑的作物湿度");
         add("eclipticseasons.configuration.ItemInformation", "物品信息");
+
+        add("eclipticseasons.configuration.SeasonCoreAffectsAnimals", "季节核心影响动物");
+        add("eclipticseasons.configuration.Resource", "额外资源");
+        add("eclipticseasons.configuration.SaveChunkEnvironmentalHumidity", "保存环境湿度");
+        add("eclipticseasons.configuration.EnableSeasonDefinition", "启用季节方块变化");
+        add("eclipticseasons.configuration.SmootherSeasonalGrassColorChange", "更平滑的草木颜色变化");
+        add("eclipticseasons.configuration.DynamicSnowTerm", "动态变化的下雪时间");
+
+        add("eclipticseasons.configuration.LessFishInThunder", "雷雨天气下减少鱼类数量");
+        add("eclipticseasons.configuration.FishingSeasons", "允许或更适合钓鱼的季节");
+        add("eclipticseasons.configuration.SmoothSnowyEdges", "启用积雪过渡纹理模型");
+        add("eclipticseasons.configuration.BeeActiveSeasons", "蜜蜂在巢外活跃的季节");
+        add("eclipticseasons.configuration.DisableUniqueBiomeTagsRebinding", "禁用群系标签唯一绑定");
+        add("eclipticseasons.configuration.NotRainInDesert", "禁止沙漠等群系下雨");
+        add("eclipticseasons.configuration.BeePollinateSeasons", "蜜蜂授粉的季节");
+        add("eclipticseasons.configuration.FixBiomePrecipitation", "修正群系降水状态");
+        add("eclipticseasons.configuration.EnableWeatherRegion", "群系天气区");
+        add("eclipticseasons.configuration.ExtraSnowDefinitions", "扩展的覆雪方块定义");
+        add("eclipticseasons.configuration.DisableChunkCacheCleaner", "禁用自动区块额外缓存清理");
+
+        add("eclipticseasons.configuration.SeasonalColorChangeExtend", "季节颜色变化扩展");
+
+        add("eclipticseasons.configuration.Snow", "积雪");
+        add("eclipticseasons.configuration.SnowStepMelt", "踩化积雪");
+        add("eclipticseasons.configuration.ForceSnowyChunkUpdate", "强制更新覆雪的区块");
+        add("eclipticseasons.configuration.SnowUnderShadow", "阴影下积雪");
+        add("eclipticseasons.configuration.SnowCoverUnderBlocks", "雪下的覆雪方块");
+        add("eclipticseasons.configuration.BiomeSnowLines", "群系雪线");
+        add("eclipticseasons.configuration.SnowInWorld", "世界中的积雪");
+        add("eclipticseasons.configuration.WeatherVotePercent", "天气投票百分比");
+
+        add("eclipticseasons.configuration.ClearAfterSleep", "醒后天晴");
 
     }
 

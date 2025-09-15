@@ -3,16 +3,13 @@ package com.teamtea.eclipticseasons.common.item;
 import com.teamtea.eclipticseasons.common.registry.AttachmentRegistry;
 import com.teamtea.eclipticseasons.common.misc.SimplePair;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
-import com.teamtea.eclipticseasons.common.core.map.ServerMapFixer;
 import com.teamtea.eclipticseasons.common.core.map.SnowyRemover;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
@@ -142,7 +139,6 @@ public class IceWandItem extends Item {
     }
 
     private InteractionResult modifySnowyBlocks(Level level, Player contextPlayer, ChunkPos chunkPos, SnowyRemover.SnowyFlag type) {
-        ServerMapFixer.unloadChunk(level, chunkPos);
         BlockPos worldPosition = chunkPos.getMiddleBlockPosition(MapChecker.getMCHeightWithCheck(level, new BlockPos(chunkPos.getMiddleBlockX(), 0, chunkPos.getMiddleBlockZ())));
         if (level.isLoaded(chunkPos.getWorldPosition())
                 && (contextPlayer == null
@@ -167,18 +163,20 @@ public class IceWandItem extends Item {
                 data = new SnowyRemover(ints1);
                 chunk.setData(AttachmentRegistry.SNOWY_REMOVER, data);
 
-                var distance =
-                        (serverLevel.getServer() instanceof DedicatedServer dedicatedServer ?
-                                dedicatedServer.getProperties().viewDistance :
-                                Minecraft.getInstance().options.renderDistance().get())
-                                * 16;
-                var players = serverLevel.getPlayers(
-                        serverPlayer -> {
-                            var onPos = new ChunkPos(serverPlayer.getOnPos());
-                            return Mth.sqrt(Mth.square(chunkPos.x - onPos.x) + Mth.square(chunkPos.z - onPos.z))
-                                    < distance + 0.1f;
-                        }
-                );
+                // var distance =
+                //         (serverLevel.getServer() instanceof DedicatedServer dedicatedServer ?
+                //                 dedicatedServer.getProperties().viewDistance :
+                //                 Minecraft.getInstance().options.renderDistance().get())
+                //                 * 16;
+                // var players = serverLevel.getPlayers(
+                //         serverPlayer -> {
+                //             // var onPos = new ChunkPos(serverPlayer.getOnPos());
+                //             // return Mth.sqrt(Mth.square(chunkPos.x - onPos.x) + Mth.square(chunkPos.z - onPos.z))
+                //             //         < distance + 0.1f;
+                //             return !(serverPlayer instanceof FakePlayer)
+                //                     && serverPlayer.getChunkTrackingView().contains(chunkPos);
+                //         }
+                // );
 
                 List<Integer> ys = new ArrayList<>();
                 List<BlockPos> blockPoss = new ArrayList<>();
@@ -192,7 +190,7 @@ public class IceWandItem extends Item {
                     }
                 }
 
-                for (ServerPlayer player : players) {
+                for (ServerPlayer player : serverLevel.getChunkSource().chunkMap.getPlayers(chunkPos, false)) {
                     MapChecker.sendChunkInfo(chunk, chunkPos, player, ys, blockPoss);
                 }
 
@@ -250,24 +248,26 @@ public class IceWandItem extends Item {
                 var data = chunk.getData(AttachmentRegistry.SNOWY_REMOVER);
                 data.setChunkPos(clickedPos, type.ordinal());
 
-                var distance =
-                        (serverLevel.getServer() instanceof DedicatedServer dedicatedServer ?
-                                dedicatedServer.getProperties().viewDistance :
-                                Minecraft.getInstance().options.renderDistance().get())
-                                * 16;
-                var players = serverLevel.getPlayers(
-                        serverPlayer -> {
-                            var onPos = serverPlayer.getOnPos();
-                            return onPos.distToCenterSqr(clickedPos.getCenter()) < distance;
-                        }
-                );
+                // var distance =
+                //         (serverLevel.getServer() instanceof DedicatedServer dedicatedServer ?
+                //                 dedicatedServer.getProperties().viewDistance :
+                //                 Minecraft.getInstance().options.renderDistance().get())
+                //                 * 16;
+                // var players = serverLevel.getPlayers(
+                //         serverPlayer -> {
+                //             // var onPos = serverPlayer.getOnPos();
+                //             // return onPos.distToCenterSqr(clickedPos.getCenter()) < distance;
+                //             return !(serverPlayer instanceof FakePlayer)
+                //                     && serverPlayer.getChunkTrackingView().contains(chunkPos);
+                //         }
+                // );
 
                 int y = level.getHeight(Heightmap.Types.MOTION_BLOCKING, clickedPos.getX(), clickedPos.getZ()) - 1;
                 BlockPos newPos = new BlockPos(clickedPos.getX(), y, clickedPos.getZ());
                 int sk = SectionPos.of(newPos).y();
 
                 // just set one chunk dirty would not re compile chunk render cache
-                for (ServerPlayer player : players) {
+                for (ServerPlayer player : serverLevel.getChunkSource().chunkMap.getPlayers(chunkPos, false)) {
                     MapChecker.sendChunkInfo(chunk, chunkPos, player, List.of(sk), List.of(newPos));
                 }
 

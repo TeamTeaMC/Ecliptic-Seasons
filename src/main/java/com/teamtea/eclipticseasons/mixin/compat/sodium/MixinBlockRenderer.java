@@ -5,10 +5,13 @@ import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
+import com.teamtea.eclipticseasons.api.misc.client.IExtraRendererContextOwner;
 import com.teamtea.eclipticseasons.client.core.ExtraModelManager;
+import com.teamtea.eclipticseasons.client.core.ExtraRendererContext;
 import com.teamtea.eclipticseasons.compat.sodium.ESSodiumContext;
 import com.teamtea.eclipticseasons.compat.sodium.SodiumBoard;
 import com.teamtea.eclipticseasons.compat.sodium.SodiumStatus;
+import com.teamtea.eclipticseasons.compat.vanilla.IExtendBlockView;
 import net.caffeinemc.mods.sodium.client.render.chunk.compile.pipeline.BlockRenderer;
 import net.caffeinemc.mods.sodium.client.render.chunk.terrain.TerrainRenderPass;
 import net.caffeinemc.mods.sodium.client.render.frapi.mesh.MutableQuadViewImpl;
@@ -24,6 +27,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.common.util.TriState;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -150,6 +154,7 @@ public abstract class MixinBlockRenderer extends AbstractBlockRenderContext impl
     private void eclipticseasons$renderModel_start(BakedModel model, BlockState state, BlockPos pos, BlockPos origin, CallbackInfo ci) {
         // this.allowDowngrade = false;
         eclipticseasons$snowModel = ExtraModelManager.findModel(slice, pos, state, random, randomSeed, eclipticseasons$mutableBlockPos);
+
         if (eclipticseasons$snowModel != null) {
             eclipticseasons$shouldReplaceOriginalGrassModel =
                     ExtraModelManager.isModelReplaceable(state, level, pos, eclipticseasons$snowModel);
@@ -164,9 +169,27 @@ public abstract class MixinBlockRenderer extends AbstractBlockRenderContext impl
             eclipticseasons$shouldCollectBakeQuads = false;
         }
 
+        IExtraRendererContextOwner.of(slice)
+                .setModelData(getModelData())
+                .setOriginalModel(model)
+                .setExtraModel(eclipticseasons$snowModel)
+                .setReplace(eclipticseasons$shouldReplaceOriginalGrassModel);
 
         if (eclipticseasons$chunkBuilderMeshingTask != null)
             eclipticseasons$chunkBuilderMeshingTask.eclipticseasons$addCount();
+    }
+
+
+    @Inject(
+            remap = false,
+            method = "renderModel",
+            at = @At(value = "INVOKE", target = "Lnet/caffeinemc/mods/sodium/client/services/PlatformModelAccess;getModelRenderTypes(Lnet/minecraft/world/level/BlockAndTintGetter;Lnet/minecraft/client/resources/model/BakedModel;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/BlockPos;Lnet/minecraft/util/RandomSource;Lnet/caffeinemc/mods/sodium/client/services/SodiumModelData;)Ljava/lang/Iterable;")
+    )
+    private void eclipticseasons$renderModel_useAmbientOcclusion(BakedModel model, BlockState state, BlockPos pos, BlockPos origin, CallbackInfo ci) {
+        TriState modelForAmbientOcclusion = ExtraRendererContext.getModelForAmbientOcclusion(slice, state, getModelData(), getRenderType());
+        if (modelForAmbientOcclusion != null && modelForAmbientOcclusion.isTrue()) {
+            prepareAoInfo(true);
+        }
     }
 
     @Inject(
@@ -181,6 +204,8 @@ public abstract class MixinBlockRenderer extends AbstractBlockRenderContext impl
         eclipticseasons$shouldCollectBakeQuads = false;
         eclipticseasons$snowModel = null;
         eclipticseasons$cancelDowngradedPass = false;
+
+        IExtraRendererContextOwner.of(slice).resetAll();
     }
 
     @Inject(

@@ -3,7 +3,7 @@ package com.teamtea.eclipticseasons.common.registry;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.data.season.SeasonCycle;
-import com.teamtea.eclipticseasons.api.data.season.SeasonDefinition;
+import com.teamtea.eclipticseasons.api.data.season.definition.SeasonDefinition;
 import com.teamtea.eclipticseasons.api.data.season.SeasonPhase;
 import com.teamtea.eclipticseasons.api.data.season.SnowDefinition;
 import com.teamtea.eclipticseasons.api.data.climate.AgroClimaticZone;
@@ -14,14 +14,14 @@ import com.teamtea.eclipticseasons.api.data.crop.CropGrowControlBuilder;
 import com.teamtea.eclipticseasons.api.data.quest.SeasonQuest;
 import com.teamtea.eclipticseasons.api.data.weather.CustomRainBuilder;
 import com.teamtea.eclipticseasons.api.data.weather.CustomSnowTerm;
+import com.teamtea.eclipticseasons.api.data.weather.WeatherRegion;
 import com.teamtea.eclipticseasons.common.block.BlockInCopperGrateBlock;
 import com.teamtea.eclipticseasons.common.resource.FakeResourceManagerHelperUtil;
-import com.teamtea.eclipticseasons.config.CommonConfig;
+import com.teamtea.eclipticseasons.config.StartConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.repository.PackSource;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
@@ -44,6 +44,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
+@SuppressWarnings("removal")
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
 public class ModContents {
 
@@ -86,6 +87,7 @@ public class ModContents {
         event.dataPackRegistry(ESRegistries.BIOME_RAIN, CustomRainBuilder.CODEC, CustomRainBuilder.CODEC);
         event.dataPackRegistry(ESRegistries.SNOW_TERM, CustomSnowTerm.CODEC, CustomSnowTerm.CODEC);
         event.dataPackRegistry(ESRegistries.SEASON_DEFINITION, SeasonDefinition.CODEC, SeasonDefinition.CODEC);
+        event.dataPackRegistry(ESRegistries.WEATHER_REGION, WeatherRegion.CODEC, WeatherRegion.CODEC);
     }
 
     @SubscribeEvent
@@ -120,11 +122,15 @@ public class ModContents {
         Optional<ModFile> modContainer = Optional.ofNullable(FMLLoader.getLoadingModList().getModFileById(EclipticSeasonsApi.MODID).getFile());
         if (modContainer.isPresent()) {
             ModFile modFile = modContainer.get();
-            if (CommonConfig.Resource.extraSnow.get()) {
-                FakeResourceManagerHelperUtil.registerBuiltinResourcePack(
-                        event,
-                        EclipticSeasons.rl("extra_snow"),
-                        modFile, PackSource.DEFAULT);
+            try {
+                if (StartConfig.Resource.extraSnow.get()) {
+                    FakeResourceManagerHelperUtil.registerBuiltinResourcePack(
+                            event,
+                            EclipticSeasons.rl("extra_snow"),
+                            modFile, PackSource.DEFAULT);
+                }
+            } catch (Exception e) {
+                EclipticSeasons.logger(e);
             }
         }
     }

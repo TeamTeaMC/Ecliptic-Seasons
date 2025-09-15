@@ -29,33 +29,6 @@ public class VanillaWeather {
         return EclipticSeasonsApi.getInstance().getSolarTerm(level).getSeason() == Season.SUMMER;
     }
 
-    public static void runVanillaSnowyWeather(ServerLevel level, WeatherManager.BiomeWeather biomeWeather, RandomSource random, int size) {
-        boolean isRaining = level.isRaining();
-        if ((isRaining || level.getRandom().nextInt(5) > 1)) {
-            var snow = getSnowStatus(level, biomeWeather.biomeHolder, null);
-            if (snow == WeatherManager.SnowRenderStatus.SNOW) {
-                biomeWeather.snowDepth = (byte) Math.min(100, biomeWeather.snowDepth + 1);
-            } else if (snow == WeatherManager.SnowRenderStatus.SNOW_MELT) {
-                biomeWeather.snowDepth = (byte) Math.max(0, biomeWeather.snowDepth - 1);
-            }
-        }
-    }
-
-
-    public static WeatherManager.SnowRenderStatus getSnowStatus(ServerLevel level, Holder<Biome> biome, BlockPos pos) {
-        var status = WeatherManager.SnowRenderStatus.NONE;
-        if (biome.value().hasPrecipitation()) {
-            boolean flag_cold = isInWinter(level);
-            if (flag_cold) {
-                if (level.isRaining())
-                    status = WeatherManager.SnowRenderStatus.SNOW;
-            } else {
-                status = level.getRandom().nextBoolean() | level.isRaining() ?
-                        WeatherManager.SnowRenderStatus.SNOW_MELT : WeatherManager.SnowRenderStatus.NONE;
-            }
-        }
-        return status;
-    }
 
     public static Biome.Precipitation handlePrecipitationAt(Biome biome, BlockPos pos) {
         var level = getValidLevel(biome);
@@ -70,6 +43,8 @@ public class VanillaWeather {
 
     public static boolean hasPrecipitation(Level level, Biome biome) {
         var solarTerm = EclipticSeasonsApi.getInstance().getSolarTerm(level);
+        // here we check if the biome has precipitation in vanilla game
+        // so we can reset the monsoonal rain then
         boolean hasPrecipitation = biome.getModifiedClimateSettings().hasPrecipitation();
         TagKey<Biome> tag = ((IBiomeTagHolder) (Object) biome).eclipticseasons$getBindTag();
         if (tag.equals(ClimateTypeBiomeTags.MONSOONAL)) {
@@ -105,7 +80,7 @@ public class VanillaWeather {
                     Biome.Precipitation.RAIN;
 
             var snowTerm = SolarTerm.getSnowTerm(biome);
-            boolean flag_cold = solarTerm.isInTerms(snowTerm.getStart(), snowTerm.getEnd());
+            boolean flag_cold = snowTerm.maySnow(solarTerm, biome, pos, level instanceof ServerLevel);
             if (resultPrecipitation == Biome.Precipitation.RAIN) {
                 if (flag_cold) {
                     resultPrecipitation = Biome.Precipitation.SNOW;

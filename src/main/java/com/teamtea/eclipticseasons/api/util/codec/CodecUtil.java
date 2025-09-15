@@ -8,6 +8,7 @@ import com.teamtea.eclipticseasons.api.data.client.model.multipart.AndConditionL
 import com.teamtea.eclipticseasons.api.data.client.model.multipart.ConditionLike;
 import com.teamtea.eclipticseasons.api.data.client.model.multipart.KeyValueConditionLike;
 import com.teamtea.eclipticseasons.api.data.client.model.multipart.OrConditionLike;
+import com.teamtea.eclipticseasons.api.util.fast.Enum2ObjectMap;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryCodecs;
@@ -94,6 +95,22 @@ public class CodecUtil {
         );
     }
 
+    public static <K extends Enum<K> & StringRepresentable, V> Codec<Enum2ObjectMap<K, V>> enum2ObjectMapCodec(StringRepresentable.EnumCodec<K> keyCodec, Codec<V> valueCodec, Class<K> kClass) {
+        return Codec.compoundList(keyCodec, valueCodec).xmap(
+                pl -> {
+                    Enum2ObjectMap<K, V> collect = new Enum2ObjectMap<>(kClass);
+                    for (int i = 0, plSize = pl.size(); i < plSize; i++) {
+                        Pair<K, V> kvPair = pl.get(i);
+                        collect.put(kvPair.getFirst(), kvPair.getSecond());
+                    }
+                    return collect;
+                },
+                map -> map.entrySet().stream()
+                        .map(ent -> Pair.of(ent.getKey(), ent.getValue()))
+                        .collect(Collectors.toList())
+        );
+    }
+
     public static <E> RegistryFixedCodec<E> holderCodec(ResourceKey<? extends Registry<E>> registryKey) {
         return RegistryFixedCodec.create(registryKey);
     }
@@ -123,4 +140,12 @@ public class CodecUtil {
                             return DataResult.success(Either.right(cond));
                         });
     }
+
+    // static {
+    //     Codec<Item> dispatch = ResourceLocation.CODEC.dispatch("type",
+    //             BuiltInRegistries.ITEM::getKey,
+    //             resourceLocation ->
+    //                     MapCodec.unit(BuiltInRegistries.ITEM.get(resourceLocation))
+    //     );
+    // }
 }

@@ -1,7 +1,6 @@
 package com.teamtea.eclipticseasons.common.core.crop;
 
 import com.mojang.datafixers.util.Pair;
-import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.misc.IUnpackablePalettedContainer;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import com.teamtea.eclipticseasons.mixin.common.chunk.MixinAccessorLevelChunkSection;
@@ -283,7 +282,7 @@ public class GreenHouseAir {
 
     public static BlockState[] getLevelChunkSection(LevelChunkSection section) {
         return IUnpackablePalettedContainer.of(
-                        ((MixinAccessorLevelChunkSection) section).getStates())
+                        ((MixinAccessorLevelChunkSection) section).es$getStates())
                 .eclipticseasons$unpack(BlockState.class);
     }
 
@@ -357,7 +356,7 @@ public class GreenHouseAir {
                         continue;
                     LevelChunkSection section = sections[sectionIndex];
                     secMap.put(
-                            SectionPos.asLong(cx, cy, cz), ((MixinAccessorLevelChunkSection) section).getStates().copy()
+                            SectionPos.asLong(cx, cy, cz), ((MixinAccessorLevelChunkSection) section).es$getStates().copy()
                     );
                 }
             }

@@ -52,9 +52,7 @@ public record AgroClimaticZone(HolderSet<Biome> biomes,
                     GrowParameter.CODEC.optionalFieldOf("global").forGetter(AgroClimaticZone::growParameter),
                     EITHER_MAP_PAIR_CODEC.optionalFieldOf("default_mapping").forGetter(AgroClimaticZone::defaultMapping),
                     EITHER_MAP_CODEC.optionalFieldOf("mappings").forGetter(AgroClimaticZone::mapping),
-                    CodecUtil.pairCodec(ESExtraCodec.SEASON, Codec.INT).listOf().fieldOf("seasonal_signal_durations").orElse(
-                            List.of()
-                    ).validate(AgroClimaticZone::checkSeasonalSignalDurations
+                    CodecUtil.pairCodec(ESExtraCodec.SEASON, Codec.INT).listOf().optionalFieldOf("seasonal_signal_durations",List.of()).validate(AgroClimaticZone::checkSeasonalSignalDurations
                     ).forGetter(AgroClimaticZone::seasonalSignalDurations)
             ).apply(builder, AgroClimaticZone::new));
 

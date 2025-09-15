@@ -30,9 +30,8 @@ public class CropHumidityInfo {
     }
 
     public float getGrowChance(Humidity env) {
-        // TODO: 设置最适宜的，以及这个给个配置选项
 
-        float mul = 1 / (CommonConfig.Crop.cropGrowChanceInWrongHumidity.get().floatValue());
+        float mul = 1 / (0.25f);
 
         if (isSuitable(env)) {
             return 1.0F;

@@ -35,7 +35,6 @@ public class MixinBee_BeePollinateGoal {
     }
 
 
-    // TODO:改成持续性的
     @WrapOperation(
             method = "canBeeContinueToUse",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;isRaining()Z")

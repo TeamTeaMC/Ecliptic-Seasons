@@ -7,7 +7,7 @@ import net.minecraft.core.BlockPos;
 import java.util.List;
 
 
-public interface ExtendBlockView {
+public interface ExtendBlockView extends IExtendBlockView {
 
     void setCacheBakeQuad();
 
@@ -19,40 +19,23 @@ public interface ExtendBlockView {
 
     void addCacheBakeQuad(BakedQuad bakedQuad);
 
-    void setSnowModel(BakedModel bakedModel);
-
-    void resetSnowModel();
-
-    BakedModel getSnowModel();
-
-    void setCurrentModelReplaceable(boolean isReplaceable);
-
-    boolean isCurrentModelReplaceable();
-
     void setShouldCollectBakeQuads(boolean shouldCollectBakeQuads);
 
     boolean getShouldCollectBakeQuads();
 
-    BlockPos.MutableBlockPos getModelCheckPos();
 
     default void cleanAfterRender() {
         clearCacheBakeQuad();
-        resetSnowModel();
-        setCurrentModelReplaceable(false);
         setShouldCollectBakeQuads(false);
     }
 
     default void finishChunkRender() {
         resetCacheBakeQuad();
-        resetSnowModel();
-        setCurrentModelReplaceable(false);
         setShouldCollectBakeQuads(false);
     }
 
     default void startChunkRender() {
         setCacheBakeQuad();
-        resetSnowModel();
-        setCurrentModelReplaceable(false);
         setShouldCollectBakeQuads(false);
     }
 }

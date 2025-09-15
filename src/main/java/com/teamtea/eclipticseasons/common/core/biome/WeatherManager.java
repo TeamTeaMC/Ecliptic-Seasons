@@ -1,18 +1,20 @@
 package com.teamtea.eclipticseasons.common.core.biome;
 
 import com.mojang.serialization.Codec;
+import com.teamtea.eclipticseasons.EclipticSeasons;
+import com.teamtea.eclipticseasons.api.constant.climate.WeatherMode;
 import com.teamtea.eclipticseasons.api.constant.tag.ESEnchantmentTags;
 import com.teamtea.eclipticseasons.api.constant.tag.ESItemTags;
 import com.teamtea.eclipticseasons.api.constant.tag.ESMobEffectTags;
 import com.teamtea.eclipticseasons.api.misc.ITranslatable;
+import com.teamtea.eclipticseasons.common.core.snow.SnowyMapChecker;
+import com.teamtea.eclipticseasons.common.network.message.UpdateTempChangeMessage;
 import com.teamtea.eclipticseasons.common.registry.EffectRegistry;
 import com.teamtea.eclipticseasons.common.registry.ModAdvancements;
 import com.teamtea.eclipticseasons.common.registry.AttachmentRegistry;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.climate.BiomeRain;
-import com.teamtea.eclipticseasons.api.constant.climate.SnowTerm;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
-import com.teamtea.eclipticseasons.api.constant.tag.ClimateTypeBiomeTags;
 import com.teamtea.eclipticseasons.api.misc.IBiomeTagHolder;
 import com.teamtea.eclipticseasons.api.misc.IBiomeWeatherProvider;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
@@ -25,8 +27,8 @@ import com.teamtea.eclipticseasons.common.network.message.BiomeWeatherMessage;
 import com.teamtea.eclipticseasons.common.network.message.EmptyMessage;
 import com.teamtea.eclipticseasons.common.network.SimpleNetworkHandler;
 import com.teamtea.eclipticseasons.common.network.message.SolarTermsMessage;
+import com.teamtea.eclipticseasons.compat.CompatModule;
 import com.teamtea.eclipticseasons.config.CommonConfig;
-import com.teamtea.eclipticseasons.compat.vanilla.VanillaWeather;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.NonNullList;
@@ -45,14 +47,13 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.levelgen.Heightmap;
-import net.minecraft.world.level.storage.ServerLevelData;
-import net.minecraft.world.level.storage.WritableLevelData;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.WeatherCheck;
@@ -78,6 +79,14 @@ public class WeatherManager {
             return iBiomeWeatherProvider.es$get();
         }
         return BIOME_WEATHER_LIST.getOrDefault(level, null);
+    }
+
+    public static int getWeatherTickFactor(Level level) {
+        ArrayList<BiomeWeather> biomeList = getBiomeList(level);
+        int size = biomeList == null ? 1 : biomeList.size();
+        size = (int) (size * (Mth.clamp(7f / EclipticSeasonsApi.getInstance().getLastingDaysOfEachTerm(level), 0.8f, 3f)));
+        size = Math.max(1, size);
+        return size;
     }
 
     public static Level fetchLevelIfNull(Level level, Biome biome) {
@@ -113,78 +122,84 @@ public class WeatherManager {
     }
 
 
-    public static float getMinRainLevel(Level level, float p46723) {
-        // var ws = getBiomeList(level);
-        // if (ws != null)
-        //     for (BiomeWeather biomeWeather : ws) {
-        //         if (!biomeWeather.shouldRain()) {
-        //             return 0.0f;
-        //         }
-        //     }
-        return 0.0f;
+    public static float getAverageRainLevel(Level level, float delta) {
+        return getAverageWeatherLevel(level, delta, BiomeWeather::shouldRain);
     }
 
-    public static float getMaximumRainLevel(Level level, float p46723) {
-        // var ws = getBiomeList(level);
-        // if (ws != null)
-        //     for (BiomeWeather biomeWeather : ws) {
-        //         if (biomeWeather.shouldRain()) {
-        //             return 1.0f;
-        //         }
-        //     }
-        return 1.0f;
+    public static boolean isEffectiveRaining(ServerLevel level) {
+        return getAverageRainLevel(level, 1f) > CompatModule.CommonConfig.weatherVotePercent.get();
     }
 
-    // todo other mods should not use it but we not sure
-    public static boolean isRainingEverywhere(ServerLevel level) {
-        // if (!MapChecker.isValidDimension(level)) return false;
-        // var ws = getBiomeList(level);
-        // if (ws != null) {
-        //     // SolarTerm solarTerm = EclipticUtil.getNowSolarTerm(level);
-        //     for (BiomeWeather biomeWeather : ws) {
-        //         if (!biomeWeather.shouldRain()
-        //         ) {
-        //             return false;
-        //         }
-        //     }
-        // }
-        return false;
+    public static float getAverageThunderLevel(Level level, float delta) {
+        return getAverageWeatherLevel(level, delta, BiomeWeather::shouldThunder);
     }
 
-    public static float getMinThunderLevel(Level level, float p46723) {
-        // var ws = getBiomeList(level);
-        // if (ws != null)
-        //     for (BiomeWeather biomeWeather : ws) {
-        //         if (!biomeWeather.shouldThunder()) {
-        //             return 0.0f;
-        //         }
-        //     }
-        return 0.0f;
+    public static boolean isEffectiveThundering(ServerLevel level) {
+        return getAverageThunderLevel(level, 1f) > CompatModule.CommonConfig.weatherVotePercent.get();
+    }
+
+    @FunctionalInterface
+    public interface BiomeWeatherPredicate {
+        boolean test(BiomeWeather biome);
+    }
+
+    public static float getAverageWeatherLevel(Level level, float delta, BiomeWeatherPredicate function) {
+        List<? extends Player> players = level.players();
+        if (!players.isEmpty()) {
+            if (players.size() == 1) {
+                return function.test(getBiomeWeather(level, MapChecker.getSurfaceBiome(level, players.get(0).blockPosition()))) ? 1f : 0;
+            } else {
+                float thunder = 0f;
+                for (int i = 0, playersSize = players.size(); i < playersSize; i++) {
+                    Player player = players.get(i);
+                    thunder += function.test(getBiomeWeather(level, MapChecker.getSurfaceBiome(level, player.blockPosition())))
+                            ? 1f : 0;
+                }
+                return thunder / (float) players.size();
+            }
+        }
+
+        return function.test(getBiomeWeather(level, MapChecker.getSurfaceBiome(level, level.getSharedSpawnPos()))) ? 1f : 0;
     }
 
 
-    public static float getMaximumThunderLevel(Level level, float p46723) {
-        // var ws = getBiomeList(level);
-        // if (ws != null)
-        //     for (BiomeWeather biomeWeather : ws) {
-        //         if (biomeWeather.shouldThunder()) {
-        //             return 1.0f;
-        //         }
-        //     }
-        return 1.0f;
+    public static void onSetWeatherParameters(ServerLevel level, int pClearTime, int pWeatherTime, boolean pIsRaining, boolean pIsThundering) {
+        ArrayList<BiomeWeather> biomeList = getBiomeList(level);
+        if (biomeList == null) return;
+        int size = getWeatherTickFactor(level);
+        List<? extends Player> players = level.players();
+        int clearTime = pIsRaining ? 0 : pClearTime / size;
+        int rainTime = pIsRaining ? pWeatherTime / size : 0;
+        int thunderTime = pIsRaining && pIsThundering ? pWeatherTime / size : 0;
+        if (!players.isEmpty()) {
+            if (players.size() == 1) {
+                BiomeWeather biomeWeather = getBiomeWeather(level, MapChecker.getSurfaceBiome(level, players.get(0).blockPosition()));
+                if (biomeWeather != null) {
+                    setBiomeWeather(level, biomeWeather, clearTime, rainTime, thunderTime);
+                }
+            } else {
+                for (Player player : players) {
+                    BiomeWeather biomeWeather = getBiomeWeather(level, MapChecker.getSurfaceBiome(level, player.blockPosition()));
+                    if (biomeWeather != null) {
+                        setBiomeWeather(level, biomeWeather, clearTime, rainTime, thunderTime);
+                    }
+                }
+            }
+        } else {
+            for (BiomeWeather biomeWeather : biomeList) {
+                Biome biome = biomeWeather.biomeHolder.value();
+                if (!hasNonePrecipitation(biome)) {
+                    setBiomeWeather(level, biomeWeather, clearTime, rainTime, thunderTime);
+                }
+            }
+        }
     }
 
-    public static boolean isThunderEverywhere(ServerLevel level) {
-        // if (!MapChecker.isValidDimension(level)) return false;
-        // var ws = getBiomeList(level);
-        // if (ws != null) {
-        //     for (BiomeWeather biomeWeather : ws) {
-        //         if (!biomeWeather.shouldThunder()) {
-        //             return false;
-        //         }
-        //     }
-        // }
-        return false;
+    public static void setBiomeWeather(ServerLevel level, BiomeWeather biomeWeather, int clearTime, int rainTime, int thunderTime) {
+        biomeWeather.clearTime = clearTime;
+        biomeWeather.rainTime = rainTime;
+        biomeWeather.thunderTime = thunderTime;
+        biomeWeather.lastRainTime = rainTime > 0 ? level.getGameTime() : biomeWeather.lastRainTime;
     }
 
     public static boolean isThunderAtBiome(Level level, BlockPos pos) {
@@ -200,52 +215,52 @@ public class WeatherManager {
         return false;
     }
 
-    public static boolean isThunderAt(Level serverLevel, BlockPos pos) {
-        // if (!MapChecker.isValidDimension(serverLevel)) {
+    public static boolean isThunderAt(Level level, BlockPos pos) {
+        // if (!MapChecker.isValidDimension(level)) {
         //     return false;
         // }
-        if (!serverLevel.canSeeSky(pos)) {
+        if (!level.canSeeSky(pos)) {
             return false;
-        } else if (serverLevel.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, pos).getY() > pos.getY()) {
+        } else if (level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, pos).getY() > pos.getY()) {
             return false;
         }
-        var biome = MapChecker.getSurfaceBiome(serverLevel, pos);
-        return isThunderAtBiome(serverLevel, biome);
+        var biome = MapChecker.getSurfaceBiome(level, pos);
+        return isThunderAtBiome(level, biome);
     }
 
-    public static boolean isRainingUnderSky(Level serverLevel, BlockPos pos) {
-        // if (!MapChecker.isValidDimension(serverLevel)) {
+    public static boolean isRainingUnderSky(Level level, BlockPos pos) {
+        // if (!MapChecker.isValidDimension(level)) {
         //     return false;
         // }
-        var biome = MapChecker.getSurfaceBiome(serverLevel, pos);
-        return getRainOrSnow(serverLevel, biome.value(), pos) == Biome.Precipitation.RAIN;
+        var biome = MapChecker.getSurfaceBiome(level, pos);
+        return getRainOrSnow(level, biome.value(), pos) == Biome.Precipitation.RAIN;
     }
 
 
-    public static boolean isRainingAt(Level serverLevel, BlockPos pos) {
-        // if (!MapChecker.isValidDimension(serverLevel)) {
+    public static boolean isRainingAt(Level level, BlockPos pos) {
+        // if (!MapChecker.isValidDimension(level)) {
         //     return false;
         // }
-        if (!serverLevel.canSeeSky(pos)) {
+        if (!level.canSeeSky(pos)) {
             return false;
-        } else if (serverLevel.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, pos).getY() > pos.getY()) {
+        } else if (level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, pos).getY() > pos.getY()) {
             return false;
         }
-        var biome = MapChecker.getSurfaceBiome(serverLevel, pos);
-        return getRainOrSnow(serverLevel, biome.value(), pos) == Biome.Precipitation.RAIN;
+        var biome = MapChecker.getSurfaceBiome(level, pos);
+        return getRainOrSnow(level, biome.value(), pos) == Biome.Precipitation.RAIN;
     }
 
-    public static boolean isRainingOrSnowAt(Level serverLevel, BlockPos pos) {
-        // if (!MapChecker.isValidDimension(serverLevel)) {
+    public static boolean isRainingOrSnowAt(Level level, BlockPos pos) {
+        // if (!MapChecker.isValidDimension(level)) {
         //     return false;
         // }
-        if (!serverLevel.canSeeSky(pos)) {
+        if (!level.canSeeSky(pos)) {
             return false;
-        } else if (serverLevel.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, pos).getY() > pos.getY()) {
+        } else if (level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, pos).getY() > pos.getY()) {
             return false;
         }
-        var biome = MapChecker.getSurfaceBiome(serverLevel, pos);
-        return isRainingOrSnowAtBiome(serverLevel, biome);
+        var biome = MapChecker.getSurfaceBiome(level, pos);
+        return isRainingOrSnowAtBiome(level, biome);
     }
 
     public static boolean isRainingOrSnowAtBiome(Level level, Holder<Biome> biome) {
@@ -256,55 +271,9 @@ public class WeatherManager {
         return false;
     }
 
-    @Deprecated
-    public static boolean isRainingAtBiome(Level level, Holder<Biome> biome) {
-        var ws = getBiomeList(level);
-        if (ws != null) {
-            var solarTerm = EclipticUtil.getNowSolarTerm(level);
-            var snowTerm = SolarTerm.getSnowTerm(biome.value());
-            boolean flag_cold = solarTerm.isInTerms(snowTerm.getStart(), snowTerm.getEnd());
-            if (!flag_cold) {
-                BiomeWeather biomeWeather = getBiomeWeather(level, biome);
-                if (biomeWeather != null) {
-                    return biomeWeather.shouldRain();
-                }
-            }
-        }
-        return false;
-    }
-
-    @Deprecated
-    public static boolean isSnowingAtBiome(Level level, Holder<Biome> biome) {
-        var ws = getBiomeList(level);
-        if (ws != null) {
-            var solarTerm = EclipticUtil.getNowSolarTerm(level);
-            var snowTerm = SolarTerm.getSnowTerm(biome.value());
-            boolean flag_cold = solarTerm.isInTerms(snowTerm.getStart(), snowTerm.getEnd());
-            if (!flag_cold) {
-                BiomeWeather biomeWeather = getBiomeWeather(level, biome);
-                if (biomeWeather != null) {
-                    return biomeWeather.shouldRain();
-                }
-            }
-        }
-        return false;
-    }
-
-    // TODO：这里好像没法解决黑名单群系，得想办法那里不代理
     public static Biome.Precipitation getRainOrSnow(Level level, Biome biome, BlockPos pos) {
-        // note 这里给不下雨的群系带来了麻烦，一个问题是，假如没有正确添加有效维度，就会错误的下雨
-        // note 对于无效维度，应该直接按照原版天气去做，不搞局部雨，是否useSolarWeather应该考虑入Level参数
-        // if (!MapChecker.isValidDimension(level)) {
-        //     // return Biome.Precipitation.NONE;
-        //     if (!biome.hasPrecipitation()) {
-        //         return Biome.Precipitation.NONE;
-        //     } else {
-        //         return biome.coldEnoughToSnow(pos) ? Biome.Precipitation.SNOW : Biome.Precipitation.RAIN;
-        //     }
-        // }
-        if (!biome.hasPrecipitation()) {
-            return Biome.Precipitation.NONE;
-        }
+        if (hasNonePrecipitation(biome)) return Biome.Precipitation.NONE;
+
         BiomeWeather biomeWeather = getBiomeWeather(level, biome);
         if (biomeWeather != null) {
             if (biomeWeather.shouldClear()) return Biome.Precipitation.NONE;
@@ -320,8 +289,8 @@ public class WeatherManager {
             // }
 
             var solarTerm = EclipticUtil.getNowSolarTerm(level);
-            var snowTerm = SolarTerm.getSnowTerm(biome);
-            boolean flag_cold = solarTerm.isInTerms(snowTerm.getStart(), snowTerm.getEnd());
+            var snowTerm = SolarTerm.getSnowTerm(biome, level instanceof ServerLevel, EclipticUtil.getSnowTempChange(level));
+            boolean flag_cold = snowTerm.maySnow(solarTerm, biome, pos, level instanceof ServerLevel);
             return flag_cold
                     // || BiomeClimateManager.getDefaultTemperature(biome, !level.isClientSide()) <= BiomeClimateManager.SNOW_LEVEL
                     ?
@@ -340,6 +309,14 @@ public class WeatherManager {
         return 0;
     }
 
+    public static long getLastRainTimeAtBiome(Level level, Biome biome) {
+        BiomeWeather biomeWeather = getBiomeWeather(level, biome);
+        if (biomeWeather != null) {
+            return biomeWeather.lastRainTime;
+        }
+        return 0;
+    }
+
     public static ServerLevel getMainServerLevel() {
         for (Level level : WeatherManager.BIOME_WEATHER_LIST.keySet()) {
             if (level.dimension() == Level.OVERWORLD
@@ -354,48 +331,36 @@ public class WeatherManager {
 
     public static Biome.Precipitation getPrecipitationAt(Biome biome, BlockPos pos) {
         var level = fetchLevelIfNull(null, biome);
-        if (level != null) {
-            // TODO should fix in some times
-            if (MapChecker.isLoadNearByOnlyServer(level, pos)) {
+        if (level != null && CompatModule.CommonConfig.fixBiome.get() && MapChecker.isSmallBiome(biome)) {
+            // if (MapChecker.isLoadNearByOnlyServer(level, pos))
+            {
                 biome = MapChecker.getSurfaceBiome(level, pos).value();
             }
-            // else {
-            //     return biome.coldEnoughToSnow(pos) ?
-            //             Biome.Precipitation.SNOW :
-            //             Biome.Precipitation.RAIN;
-            // }
         }
         return getPrecipitationAt(level, biome, pos);
     }
 
-    // TODO：make a cache here
     public static Biome.Precipitation getPrecipitationAt(@Nullable Level levelNull, Biome biome, BlockPos pos) {
 
-        // TODO：we need to know the biome instance from server side or client registry
+        // check if it has predication
+        if (hasNonePrecipitation(biome)) return Biome.Precipitation.NONE;
+
         var level = fetchLevelIfNull(levelNull, biome);
 
-        // check if it has predication
-        if (((IBiomeTagHolder) (Object) biome).eclipticseasons$getBindTag().equals(ClimateTypeBiomeTags.RAINLESS)) {
-            return Biome.Precipitation.NONE;
-        }
-
         // var provider = SolarHolders.getSaveData(level);
-        var weathers = getBiomeList(level);
+        // var weathers = getBiomeList(level);
 
         // Not add 'has' check because we have checked it
-        if (
-            // biome.hasPrecipitation() &&
-                weathers != null) {
+        if (level != null) {
             var solarTerm = EclipticUtil.getNowSolarTerm(level);
-            var snowTerm = SolarTerm.getSnowTerm(biome, levelNull instanceof ServerLevel);
-            boolean flag_cold = solarTerm.isInTerms(snowTerm.getStart(), snowTerm.getEnd());
+            var snowTerm = SolarTerm.getSnowTerm(biome, levelNull instanceof ServerLevel, EclipticUtil.getSnowTempChange(level));
+            boolean flag_cold = snowTerm.maySnow(solarTerm, biome, pos, level instanceof ServerLevel);
             // var biomes = level.registryAccess().registry(Registries.BIOME).get();
             // var loc = biomes.getKey(biome);
             BiomeWeather biomeWeather = getBiomeWeather(level, biome);
             if (biomeWeather != null) {
                 // if (biomeWeather.shouldClear())
                 //     return Biome.Precipitation.NONE;
-
                 return flag_cold
                         // || BiomeClimateManager.getDefaultTemperature(biome, levelNull instanceof ServerLevel) <= BiomeClimateManager.SNOW_LEVEL
                         ?
@@ -405,6 +370,15 @@ public class WeatherManager {
         }
 
         return Biome.Precipitation.NONE;
+    }
+
+    public static boolean hasNonePrecipitation(Biome biome) {
+        if (!biome.hasPrecipitation()) {
+            return true;
+        }
+
+        return CommonConfig.Weather.notRainInDesert.get()
+                && !biome.getModifiedClimateSettings().hasPrecipitation();
     }
 
     public static void createLevelBiomeWeatherList(Level level) {
@@ -444,40 +418,31 @@ public class WeatherManager {
 
     public static void informUpdateBiomes(RegistryAccess registryAccess, boolean isServer) {
 
-        WeatherManager.BIOME_WEATHER_LIST.entrySet().stream().forEach(biomeWeathers1 ->
-        {
-
-            var biomeWeathers = biomeWeathers1.getValue();
-            var level = biomeWeathers1.getKey();
-
-
-            level.registryAccess().registry(Registries.BIOME)
-                    .ifPresent(biomeRegistry -> biomeRegistry.forEach(biome ->
-                    {
-                        var loc = biomeRegistry.getKey(biome);
-                        var id = biomeRegistry.getId(biome);
-                        biomeRegistry.getHolder(loc).ifPresent(biomeHolder -> {
-                            {
-                                boolean inList = false;
-                                for (BiomeWeather biomeWeather : biomeWeathers) {
-                                    // 这里需要根据holder确定一下
-                                    if (biomeWeather.location.equals(loc)) {
-                                        biomeWeather.id = id;
-                                        biomeWeather.biomeHolder = biomeHolder;
-                                        inList = true;
-                                        break;
+        WeatherManager.BIOME_WEATHER_LIST.forEach((key, biomeWeathers) -> {
+            if ((key instanceof ServerLevel) == isServer) {
+                registryAccess.registry(Registries.BIOME)
+                        .ifPresent(biomeRegistry -> biomeRegistry
+                                .holders().forEach(biomeHolder ->
+                                {
+                                    ResourceLocation loc = biomeHolder.key().location();
+                                    var id = biomeRegistry.getId(biomeHolder.value());
+                                    boolean inList = false;
+                                    for (BiomeWeather biomeWeather : biomeWeathers) {
+                                        if (biomeWeather.biomeHolder.is(loc)) {
+                                            biomeWeather.id = id;
+                                            biomeWeather.biomeHolder = biomeHolder;
+                                            inList = true;
+                                            break;
+                                        }
                                     }
-                                }
-                                if (!inList) {
-                                    var biomeWeather = new BiomeWeather(biomeHolder);
-                                    biomeRegistry.getId(biome);
-                                    biomeWeather.location = loc;
-                                    biomeWeather.id = id;
-                                    biomeWeathers.add(biomeWeather);
-                                }
-                            }
-                        });
-                    }));
+                                    if (!inList) {
+                                        var biomeWeather = new BiomeWeather(biomeHolder);
+                                        biomeWeather.location = loc;
+                                        biomeWeather.id = id;
+                                        biomeWeathers.add(biomeWeather);
+                                    }
+                                }));
+            }
         });
 
         WeatherManager.BIOME_WEATHER_LIST.forEach((key, value) -> value.sort(Comparator.comparing(c -> c.id)));
@@ -552,13 +517,26 @@ public class WeatherManager {
     }
 
     public static void runWeather(ServerLevel level, BiomeWeather biomeWeather, RandomSource random, int size) {
+        WeatherMode weatherMode = EclipticUtil.getWeatherMode(level);
+        if (weatherMode == WeatherMode.REGION) {
+            Holder<Biome> onwer = BiomeClimateManager.getWeatherRegionOnwer(biomeWeather.biomeHolder.value());
+            if (onwer != null) {
+                BiomeWeather ownerBiomeWeather = getBiomeWeather(level, onwer);
+                if (ownerBiomeWeather != null) {
+                    biomeWeather.rainTime = ownerBiomeWeather.rainTime;
+                    biomeWeather.thunderTime = ownerBiomeWeather.thunderTime;
+                    biomeWeather.clearTime = ownerBiomeWeather.clearTime;
+                    updateSnowOrMelt(level, biomeWeather, random, size, biomeWeather.shouldRain());
+                    return;
+                }
+            }
+        }
+
         if (!biomeWeather.biomeHolder.value().hasPrecipitation())
             return;
         boolean isEcliptic = EclipticUtil.hasLocalWeather(level);
 
 
-        size = (int) (size * (Mth.clamp(7f / CommonConfig.Season.lastingDaysOfEachTerm.get(), 0.8f, 3f)));
-        size = Math.max(1, size);
         if (isEcliptic) {
             if (biomeWeather.shouldClear()) {
                 biomeWeather.clearTime--;
@@ -597,17 +575,22 @@ public class WeatherManager {
                     biomeWeather.thunderTime = 0;
                 }
             }
-
-            if ((biomeWeather.shouldRain() || level.getRandom().nextInt(5) > 1)) {
-                var snow = WeatherManager.getSnowStatus(level, biomeWeather.biomeHolder, null);
-                if (snow == SnowRenderStatus.SNOW) {
-                    biomeWeather.snowDepth = (byte) Math.min(100, biomeWeather.snowDepth + 1);
-                } else if (snow == SnowRenderStatus.SNOW_MELT) {
-                    biomeWeather.snowDepth = (byte) Math.max(0, biomeWeather.snowDepth - 1);
-                }
-            }
+            updateSnowOrMelt(level, biomeWeather, random, size, biomeWeather.shouldRain());
         } else {
-            VanillaWeather.runVanillaSnowyWeather(level, biomeWeather, random, size);
+            updateSnowOrMelt(level, biomeWeather, random, size, level.isRaining());
+        }
+    }
+
+    protected static void updateSnowOrMelt(ServerLevel level, BiomeWeather biomeWeather, RandomSource randomSource, int size, boolean rain) {
+        if (rain) biomeWeather.lastRainTime = level.getGameTime();
+        if ((rain || randomSource.nextInt(5) > 1)) {
+            var snow = WeatherManager.getSnowStatus(level, biomeWeather.biomeHolder, BlockPos.ZERO, rain);
+            int rate = Math.max(1, size >> 6);
+            if (snow == SnowRenderStatus.SNOW) {
+                biomeWeather.snowDepth = (byte) Math.min(100, biomeWeather.snowDepth + rate);
+            } else if (snow == SnowRenderStatus.SNOW_MELT) {
+                biomeWeather.snowDepth = (byte) Math.max(0, biomeWeather.snowDepth - rate);
+            }
         }
     }
 
@@ -627,7 +610,7 @@ public class WeatherManager {
         ArrayList<BiomeWeather> biomeList = getBiomeList(level);
         if (biomeList == null) return;
 
-        int size = (int) (biomeList.size() * (Mth.clamp(7f / CommonConfig.Season.lastingDaysOfEachTerm.get(), 0.8f, 3f)));
+        int size = getWeatherTickFactor(level);
         SolarTerm lastSolarTerm =
                 solarTerm == SolarTerm.NONE ? SolarTerm.NONE :
                         SolarTerm.collectValues()[(solarTerm.ordinal() - 1 + 24) % 24];
@@ -658,9 +641,9 @@ public class WeatherManager {
                 }
             }
 
-            var snowTerm = SolarTerm.getSnowTerm(biomeWeather.biomeHolder.value(), !level.isClientSide());
-            boolean flag_cold = solarTerm.isInTerms(snowTerm.getStart(), snowTerm.getEnd());
-            boolean flag_little_cold = lastSolarTerm.isInTerms(snowTerm.getStart(), snowTerm.getEnd());
+            var snowTerm = SolarTerm.getSnowTerm(biomeWeather.biomeHolder.value(), !level.isClientSide(), EclipticUtil.getSnowTempChange(level));
+            boolean flag_cold = snowTerm.maySnow(solarTerm);
+            boolean flag_little_cold = snowTerm.maySnow(lastSolarTerm);
             SnowRenderStatus snow = flag_cold ? SnowRenderStatus.SNOW :
                     flag_little_cold ? SnowRenderStatus.SNOW_MELT : SnowRenderStatus.NONE;
             if (snow == SnowRenderStatus.SNOW) {
@@ -676,16 +659,30 @@ public class WeatherManager {
             var ws = WeatherManager.getBiomeList(level);
             if (ws != null) {
                 var random = level.getRandom();
-                int size = ws.size();
+                int size = getWeatherTickFactor(level);
                 for (BiomeWeather biomeWeather : ws) {
                     for (int i = 0; i < (newTime - oldDayTime) / size; i++) {
                         WeatherManager.runWeather(level, biomeWeather, random, size);
                     }
                 }
 
+                if (CommonConfig.Weather.clearAfterSleep.get()) {
+                    SolarTerm solarTerm = EclipticUtil.getNowSolarTerm(level);
+                    for (BiomeWeather biomeWeather : ws) {
+                        if (biomeWeather.shouldRain()) {
+                            biomeWeather.thunderTime = 0;
+                            biomeWeather.rainTime = 0;
+                            BiomeRain biomeRain = getBiomeRain(level, solarTerm, biomeWeather.biomeHolder);
+                            biomeWeather.clearTime = biomeRain.getRainDelay(random) / size;
+                        }
+                    }
+                }
+
                 if (!level.players().isEmpty()) {
                     WeatherManager.sendBiomePacket(ws, level.players());
                 }
+
+                SnowyMapChecker.updateAllChunks(level);
             }
         }
         SimpleNetworkHandler.send(new ArrayList<>(level.players()), new EmptyMessage(true));
@@ -704,6 +701,7 @@ public class WeatherManager {
                 // if (solarTerm != SolarTerm.NONE)
                 SimpleUtil.sendSolarTermMessage(serverPlayer, solarTerm, isLogged);
             }
+            SimpleNetworkHandler.send(serverPlayer, new UpdateTempChangeMessage(t.getSolarTempChange()));
         });
         WeatherManager.sendBiomePacket(WeatherManager.getBiomeList(serverPlayer.level()), List.of(serverPlayer));
     }
@@ -747,30 +745,28 @@ public class WeatherManager {
     }
 
     public static int getSkyDarken(Level level, BlockPos pos, int amount) {
-        WeatherManager.BiomeWeather biomeWeather = WeatherManager.getBiomeWeather(level, MapChecker.getSurfaceBiome(level, pos));
+        BiomeWeather biomeWeather = WeatherManager.getBiomeWeather(level, MapChecker.getSurfaceBiome(level, pos));
         amount += biomeWeather == null || biomeWeather.shouldClear() ? 0 :
                 biomeWeather.shouldThunder() ? 8 : 4;
-        // todo 后续添加缓存值避免反复计算
         return Mth.clamp(amount, 0, 15);
     }
 
     public static class BiomeWeather {
         public Holder<Biome> biomeHolder;
         public int id;
-        public SnowTerm snowTerm;
 
         public ResourceLocation location;
         public int rainTime = 0;
         public int thunderTime = 0;
         public int clearTime = 0;
         public byte snowDepth = 0;
+        public long lastRainTime = 0;
 
 
         public BiomeWeather(Holder<Biome> biomeHolder) {
             this.biomeHolder = biomeHolder;
         }
 
-        // 雨天也可能是晴天
         public boolean shouldRain() {
             return rainTime > 0;
         }
@@ -794,6 +790,7 @@ public class WeatherManager {
             CompoundTag tag = new CompoundTag();
             tag.putString("biome", location.toString());
             tag.putInt("rainTime", rainTime);
+            tag.putLong("lastRainTime", lastRainTime);
             tag.putInt("thunderTime", thunderTime);
             tag.putInt("clearTime", clearTime);
             tag.putByte("snowDepth", snowDepth);
@@ -804,6 +801,7 @@ public class WeatherManager {
         public void deserializeNBT(CompoundTag nbt) {
             location = ResourceLocation.parse(nbt.getString("biome"));
             rainTime = nbt.getInt("rainTime");
+            lastRainTime = nbt.getLong("lastRainTime");
             thunderTime = nbt.getInt("thunderTime");
             clearTime = nbt.getInt("clearTime");
             snowDepth = nbt.getByte("snowDepth");
@@ -820,7 +818,7 @@ public class WeatherManager {
         return true;
     }
 
-    public static boolean agentAdvanceWeatherCycle(ServerLevel level, ServerLevelData serverLevelData, WritableLevelData levelData, RandomSource random) {
+    public static boolean agentAdvanceWeatherCycle(ServerLevel level, RandomSource random) {
         // if (!MapChecker.isValidDimension(level)) {
         //     return true;
         // }
@@ -830,7 +828,7 @@ public class WeatherManager {
         var levelBiomeWeather = getBiomeList(level);
 
         if (pos >= 0 && levelBiomeWeather != null && pos < levelBiomeWeather.size()) {
-            int size = levelBiomeWeather.size();
+            int size = getWeatherTickFactor(level);
             var biomeWeather = getBiomeList(level).get(pos);
 
             runWeather(level, biomeWeather, random, size);
@@ -876,7 +874,7 @@ public class WeatherManager {
 
     public enum SnowStatus implements ITranslatable {
         SNOW,
-        MELT,
+        // MELT,
         NONE;
         public static final Codec<SnowStatus> CODEC = StringRepresentable.fromEnum(SnowStatus::values);
 
@@ -886,22 +884,22 @@ public class WeatherManager {
         }
     }
 
+
+    @Deprecated(forRemoval = true, since = "0.12.0.1")
     public static SnowRenderStatus getSnowStatus(ServerLevel level, Holder<Biome> biome, BlockPos pos) {
-        // var provider = SolarHolders.getSaveData(level);
+        return getSnowStatus(level, biome, pos, isRainingOrSnowAtBiome(level, biome));
+    }
+
+    public static SnowRenderStatus getSnowStatus(ServerLevel level, Holder<Biome> biome, BlockPos pos, boolean rain) {
         var status = SnowRenderStatus.NONE;
         if (biome.value().hasPrecipitation()) {
-            var solarTerm = EclipticUtil.getNowSolarTerm(level);
-            var snowTerm = SolarTerm.getSnowTerm(biome.value(), !level.isClientSide());
-            boolean flag_cold = solarTerm.isInTerms(snowTerm.getStart(), snowTerm.getEnd());
-            if (flag_cold) {
-                if (isRainingOrSnowAtBiome(level, biome)) {
-                    status = SnowRenderStatus.SNOW;
-                }
+            Biome.Precipitation precipitation = getPrecipitationAt(level, biome.value(), pos);
+            if (precipitation == Biome.Precipitation.SNOW) {
+                if (rain) status = SnowRenderStatus.SNOW;
             } else {
-                status = level.getRandom().nextBoolean() | isRainingOrSnowAtBiome(level, biome) ?
+                status = level.getRandom().nextBoolean() | (rain && precipitation == Biome.Precipitation.RAIN) ?
                         SnowRenderStatus.SNOW_MELT : SnowRenderStatus.NONE;
             }
-
         }
         return status;
     }

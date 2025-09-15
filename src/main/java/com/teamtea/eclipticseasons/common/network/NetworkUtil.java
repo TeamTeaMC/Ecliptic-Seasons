@@ -3,7 +3,6 @@ package com.teamtea.eclipticseasons.common.network;
 import com.teamtea.eclipticseasons.common.registry.AttachmentRegistry;
 import com.teamtea.eclipticseasons.client.color.season.BiomeColorsHandler;
 import com.teamtea.eclipticseasons.client.core.ClientWeatherChecker;
-import com.teamtea.eclipticseasons.client.map.ClientMapFixer;
 import com.teamtea.eclipticseasons.client.render.WorldRenderer;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
@@ -20,7 +19,6 @@ import net.minecraft.core.SectionPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.chunk.status.ChunkStatus;
@@ -110,10 +108,6 @@ public class NetworkUtil {
                     var snow = new SnowyRemover(blocks);
                     levelChunk.setData(AttachmentRegistry.SNOWY_REMOVER, new SnowyRemover(blocks));
 
-                    for (BlockPos blockPos : chunkUpdateMessage.blockPosList) {
-                        ClientMapFixer.clearBlockPos(blockPos);
-                        MapChecker.updatePosForce(level, blockPos, snow.notSnowyAt(blockPos) ? level.getMaxBuildHeight() + 1 : level.getHeight(Heightmap.Types.MOTION_BLOCKING, blockPos.getX(), blockPos.getZ()) - 1);
-                    }
                     // if too less chunk need re compile render, it would not work
                     List<Integer> y = chunkUpdateMessage.y;
                     if (y.size() == 1) {
@@ -124,52 +118,6 @@ public class NetworkUtil {
                         WorldRenderer.setSectionDirty(SectionPos.of(chunkUpdateMessage.x, ySection, chunkUpdateMessage.z));
                     }
                 }
-            }
-
-        }).exceptionally(e -> {
-            // Handle exception
-            context.disconnect(Component.translatable("eclipticseasons.networking.failed", e.getMessage()));
-            return null;
-        });
-    }
-
-    public static void processMapFixerMessage(MapFixerMessage mapFixerMessage, IPayloadContext context) {
-        Set<SectionPos> sectionPosSet = new HashSet<>();
-        List<BlockPos> blockPosList = new ArrayList<>(mapFixerMessage.blockPosList);
-        for (int i = 0; i < mapFixerMessage.blockPosList.size(); i++) {
-            BlockPos blockPos = blockPosList.get(i);
-            BlockPos blockPos1 = new BlockPos(blockPos.getX(), mapFixerMessage.startYList.get(i), blockPos.getZ());
-            blockPosList.add(blockPos1);
-            sectionPosSet.add(SectionPos.of(blockPos));
-            sectionPosSet.add(SectionPos.of(blockPos1));
-        }
-
-        context.enqueueWork(() -> {
-            if (context.player().level() instanceof Level level && level.isClientSide()) {
-                for (BlockPos blockPos : mapFixerMessage.blockPosList) {
-                    MapChecker.updatePosForce(level, blockPos, blockPos.getY());
-                }
-                for (SectionPos ySection : sectionPosSet) {
-                    WorldRenderer.setSectionDirty(ySection);
-                }
-            }
-
-        }).exceptionally(e -> {
-            // Handle exception
-            context.disconnect(Component.translatable("eclipticseasons.networking.failed", e.getMessage()));
-            return null;
-        });
-    }
-
-    public static void processBroomUseMessage(BroomUseMessage broomUseMessage, IPayloadContext context) {
-
-        context.enqueueWork(() -> {
-            if (context.player().level() instanceof Level level && level.isClientSide()) {
-                int startY = level.getMaxBuildHeight() + 1;
-                BlockPos blockPos = broomUseMessage.blockPos;
-                // MapChecker.updatePosForce(level, blockPos, blockPos.getY());
-                ClientMapFixer.addPlanner(level, Blocks.AIR.defaultBlockState(), blockPos, level.getGameTime(), startY);
-                WorldRenderer.setSectionDirtyWithNeighbors(SectionPos.of(blockPos));
             }
 
         }).exceptionally(e -> {
@@ -196,7 +144,6 @@ public class NetworkUtil {
                     chunk.setData(AttachmentRegistry.BIOME_HOLDER, new BiomeHolder(chunkBiomeUpdateMessage.biomes, true, chunkBiomeUpdateMessage.version));
                 }
             }
-
         });
     }
 
@@ -206,6 +153,20 @@ public class NetworkUtil {
                 ClientCon.humidityModificationLevel = message.value;
             }
 
+        }).exceptionally(e -> {
+            // Handle exception
+            context.disconnect(Component.translatable("eclipticseasons.networking.failed", e.getMessage()));
+            return null;
+        });
+    }
+
+    public static void processUpdateTempChangeMessage(UpdateTempChangeMessage emptyMessage, IPayloadContext context) {
+        context.enqueueWork(() -> {
+            if (context.player().level() instanceof Level level) {
+                SolarHolders.getSaveDataLazy(level).ifPresent(solarDataManager -> {
+                    solarDataManager.setSolarTempChange(emptyMessage.change);
+                });
+            }
         }).exceptionally(e -> {
             // Handle exception
             context.disconnect(Component.translatable("eclipticseasons.networking.failed", e.getMessage()));
