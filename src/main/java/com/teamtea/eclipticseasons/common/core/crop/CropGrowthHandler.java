@@ -322,29 +322,30 @@ public final class CropGrowthHandler {
                 generateInfoForTag(block, location);
             }
         });
-        removeBlockShouldBeIgnored(blockRegistry, itemRegistry);
+        // removeBlockShouldBeIgnored(blockRegistry, itemRegistry);
 
         EclipticSeasons.logger("Reload crop data cost %s ms in %s side.".formatted(System.currentTimeMillis() - startTime, isServer ? "server" : "client")
         );
     }
 
-    private static void removeBlockShouldBeIgnored(Registry<Block> blockRegistry, Registry<Item> itemRegistry) {
-        Optional<HolderSet.Named<Block>> tag = blockRegistry.getTag(EclipticBlockTags.CROPS_IGNORE);
-        if (tag.isPresent()) {
-            for (Holder<Block> blockHolder : tag.get()) {
-                CROP_GROW_MAP.remove(blockHolder.value());
-            }
-        }
-        Optional<HolderSet.Named<Item>> tag2 = itemRegistry.getTag(ESItemTags.CROPS_IGNORE);
-        if (tag2.isPresent()) {
-            for (Holder<Item> itemHolder : tag2.get()) {
-                Block block = Block.byItem(itemHolder.value());
-                if (block != Blocks.AIR) {
-                    CROP_GROW_MAP.remove(block);
-                }
-            }
-        }
-    }
+    // @Deprecated(forRemoval = true)
+    // private static void removeBlockShouldBeIgnored(Registry<Block> blockRegistry, Registry<Item> itemRegistry) {
+    //     Optional<HolderSet.Named<Block>> tag = blockRegistry.getTag(EclipticBlockTags.CROPS_IGNORE);
+    //     if (tag.isPresent()) {
+    //         for (Holder<Block> blockHolder : tag.get()) {
+    //             CROP_GROW_MAP.remove(blockHolder.value());
+    //         }
+    //     }
+    //     Optional<HolderSet.Named<Item>> tag2 = itemRegistry.getTag(ESItemTags.CROPS_IGNORE);
+    //     if (tag2.isPresent()) {
+    //         for (Holder<Item> itemHolder : tag2.get()) {
+    //             Block block = Block.byItem(itemHolder.value());
+    //             if (block != Blocks.AIR) {
+    //                 CROP_GROW_MAP.remove(block);
+    //             }
+    //         }
+    //     }
+    // }
 
     private static void generateInfoForTag(Block block, ResourceLocation location) {
         Map<Holder<AgroClimaticZone>, CropGrowControl> blockClimateMap;

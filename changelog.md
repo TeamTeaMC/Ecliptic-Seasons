@@ -1,6 +1,6 @@
-### 0.12.0-pre17-1-1
+### 0.12.0-pre17-1-2
 
-- Add tag `eclipticseasons:crops/ignore` to remove the crop info of some blocks at the end of data build.
+- Add tag `eclipticseasons:crops/unaffected_by_seasons`,`eclipticseasons:crops/unaffected_by_humidity` to remove the crop info of some blocks at the end of data build.
 
 ### 0.12.0-pre17-1
 

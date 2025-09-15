@@ -64,7 +64,8 @@ public final class ESItemTagProvider extends ItemTagsProvider {
 
         tag(ESItemTags.COOLING_ITEMS).add(Items.SNOWBALL, Items.SNOW_BLOCK, Items.ICE, Items.BLUE_ICE, Items.PACKED_ICE);
         tag(ESItemTags.HEAT_PROTECTIVE_HELMETS);
-        tag(ESItemTags.CROPS_IGNORE);
+        tag(ESItemTags.UNAFFECTED_BY_SEASONS);
+        tag(ESItemTags.UNAFFECTED_BY_HUMIDITY);
     }
 
 

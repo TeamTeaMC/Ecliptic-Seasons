@@ -160,30 +160,28 @@ public final class CropInfoManager {
 
     private static void removeBlockAndItemShouldBeIgnored(Optional<Registry<Block>> blocks, Optional<Registry<Item>> items) {
         if (blocks.isPresent() && items.isPresent()) {
-            Optional<HolderSet.Named<Block>> tag = blocks.get().getTag(EclipticBlockTags.CROPS_IGNORE);
-            if (tag.isPresent()) {
-                for (Holder<Block> blockHolder : tag.get()) {
-                    CROP_SEASON_INFO.remove(blockHolder.value());
-                    CROP_HUMIDITY_INFO.remove(blockHolder.value());
-                    Item item = blockHolder.value().asItem();
-                    if (item != Items.AIR) {
-                        ITEM_CROP_SEASON_INFO.remove(item);
-                        ITEM_CROP_HUMIDITY_INFO.remove(item);
-                    }
-                }
-            }
-            Optional<HolderSet.Named<Item>> tag2 = items.get().getTag(ESItemTags.CROPS_IGNORE);
-            if (tag2.isPresent()) {
-                for (Holder<Item> itemHolder : tag2.get()) {
-                    ITEM_CROP_SEASON_INFO.remove(itemHolder.value());
-                    ITEM_CROP_HUMIDITY_INFO.remove(itemHolder.value());
-                    Block block = Block.byItem(itemHolder.value());
-                    if (block != Blocks.AIR) {
-                        CROP_SEASON_INFO.remove(block);
-                        CROP_HUMIDITY_INFO.remove(block);
-                    }
-                }
-            }
+            // Block → Item
+            blocks.get().getTag(EclipticBlockTags.UNAFFECTED_BY_SEASONS).ifPresent(tag ->
+                    tag.forEach(holder -> clearCropInfo(holder.value(), holder.value().asItem())));
+            blocks.get().getTag(EclipticBlockTags.UNAFFECTED_BY_HUMIDITY).ifPresent(tag ->
+                    tag.forEach(holder -> clearCropInfo(holder.value(), holder.value().asItem())));
+
+            // Item → Block
+            items.get().getTag(ESItemTags.UNAFFECTED_BY_SEASONS).ifPresent(tag ->
+                    tag.forEach(holder -> clearCropInfo(Block.byItem(holder.value()), holder.value())));
+            items.get().getTag(ESItemTags.UNAFFECTED_BY_HUMIDITY).ifPresent(tag ->
+                    tag.forEach(holder -> clearCropInfo(Block.byItem(holder.value()), holder.value())));
+        }
+    }
+
+    private static void clearCropInfo(Block block, Item item) {
+        if (block != Blocks.AIR) {
+            CROP_SEASON_INFO.remove(block);
+            CROP_HUMIDITY_INFO.remove(block);
+        }
+        if (item != Items.AIR) {
+            ITEM_CROP_SEASON_INFO.remove(item);
+            ITEM_CROP_HUMIDITY_INFO.remove(item);
         }
     }
 
