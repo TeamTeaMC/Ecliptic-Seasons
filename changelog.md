@@ -1,3 +1,7 @@
+### 0.12.0-pre17-1-4
+
+- When the player is not holding Shift as the sneak key, modify the crop tooltips in Jade or TOP.
+
 ### 0.12.0-pre17-1-3
 
 - Added a new option `ClearAfterSleep`.

@@ -418,7 +418,7 @@ public class Lang_EN extends LangHelper {
         add("config.jade.plugin_eclipticseasons.animal", "Animal");
 
         add("config.jade.plugin_eclipticseasons.crop.shift_hint", "Shift Key Hint");
-        add("hint.jade.plugin_eclipticseasons.crop.show", "§o<..Hold shift to see more..>");
+        add("hint.jade.plugin_eclipticseasons.crop.show", "§o<..Hold %s§o to see more..>");
 
         add("config.jade.plugin_eclipticseasons.snowy_status", "Show Snowy Status");
         add("hint.jade.plugin_eclipticseasons.snowy_status.snowy", "§7Covered with Snow");

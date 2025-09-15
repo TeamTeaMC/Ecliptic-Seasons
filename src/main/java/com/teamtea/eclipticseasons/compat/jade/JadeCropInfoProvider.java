@@ -5,6 +5,7 @@ import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
 import com.teamtea.eclipticseasons.common.core.crop.CropInfoManager;
 import com.teamtea.eclipticseasons.config.ClientConfig;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -32,7 +33,7 @@ public class JadeCropInfoProvider implements IBlockComponentProvider {
                         || accessor.getPlayer().isShiftKeyDown()) {
                     tooltip.addAll(components);
                 } else if(config.get(JadeCompact.SHIFT_HINT)){
-                    tooltip.add(Component.translatable("hint.jade.plugin_eclipticseasons.crop.show"));
+                    tooltip.add(Component.translatable("hint.jade.plugin_eclipticseasons.crop.show", Minecraft.getInstance().options.keyShift.getKey().getDisplayName()));
                 }
             }
         }

@@ -10,6 +10,7 @@ import mcjty.theoneprobe.api.IProbeInfo;
 import mcjty.theoneprobe.api.IProbeInfoProvider;
 import mcjty.theoneprobe.api.ProbeMode;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
@@ -34,7 +35,7 @@ public class TOPCropProvider implements IProbeInfoProvider {
                 if (player == null || player.isShiftKeyDown()) {
                     components.forEach(iProbeInfo::mcText);
                 } else {
-                    iProbeInfo.mcText(Component.translatable("hint.jade.plugin_eclipticseasons.crop.show").withStyle(ChatFormatting.GRAY));
+                    iProbeInfo.mcText(Component.translatable("hint.jade.plugin_eclipticseasons.crop.show", Minecraft.getInstance().options.keyShift.getKey().getDisplayName()).withStyle(ChatFormatting.GRAY));
                 }
             }
         }
