@@ -36,6 +36,7 @@ public final class ESBlockTagProvider extends BlockTagsProvider {
         tag(EclipticBlockTags.NATURAL_PLANTS).add(Blocks.BAMBOO_SAPLING);
         tag(EclipticBlockTags.VOLATILE).add(Blocks.BUBBLE_COLUMN).addTag(EclipticBlockTags.VOLATILE_PLANTS);
         tag(EclipticBlockTags.VOLATILE_PLANTS);
+        tag(EclipticBlockTags.CROPS_IGNORE);
         // add crop info
         tag(CropSeasonType.SUMMER.getBlockTag()).add(Blocks.MELON_STEM, Blocks.COCOA, Blocks.CACTUS);
         tag(CropSeasonType.AUTUMN.getBlockTag()).add(Blocks.PUMPKIN_STEM);

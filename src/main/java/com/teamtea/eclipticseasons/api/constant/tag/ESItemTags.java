@@ -8,6 +8,7 @@ import net.minecraft.world.item.Item;
 public class ESItemTags {
     public static final TagKey<Item> COOLING_ITEMS = create("cooling_items");
     public static final TagKey<Item> HEAT_PROTECTIVE_HELMETS = create("heat_protective_helmets");
+    public static final TagKey<Item> CROPS_IGNORE = create(("crops/ignore"));
 
     public static TagKey<Item> create(String s) {
         return TagKey.create(Registries.ITEM, EclipticSeasons.rl(s));

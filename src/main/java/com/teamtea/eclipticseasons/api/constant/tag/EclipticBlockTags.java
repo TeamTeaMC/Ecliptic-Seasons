@@ -11,15 +11,16 @@ public class EclipticBlockTags {
     public static final TagKey<Block> HABITAT_BUTTERFLY = create("habitat/butterfly");
     public static final TagKey<Block> HABITAT_FIREFLY = create("habitat/firefly");
 
-    public static final TagKey<Block> SNOW_OVERLAY_CANNOT_SURVIVE_ON =  create("snow_overlay_cannot_survive_on");
+    public static final TagKey<Block> SNOW_OVERLAY_CANNOT_SURVIVE_ON = create("snow_overlay_cannot_survive_on");
 
-    public static final TagKey<Block> SOFT_HEAT_SOURCES =  create("soft_heat_sources");
+    public static final TagKey<Block> SOFT_HEAT_SOURCES = create("soft_heat_sources");
 
     public static final TagKey<Block> DARK_GROW_PLANTS = create("dark_grow_plants");
 
     public static final TagKey<Block> NATURAL_PLANTS = create("natural_plants");
     public static final TagKey<Block> VOLATILE = create("volatile");
     public static final TagKey<Block> VOLATILE_PLANTS = create("volatile_plants");
+    public static final TagKey<Block> CROPS_IGNORE = create(("crops/ignore"));
 
     public static TagKey<Block> create(String s) {
         return TagKey.create(Registries.BLOCK, EclipticSeasons.rl(s));

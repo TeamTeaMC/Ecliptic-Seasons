@@ -1,3 +1,7 @@
+### 0.12.0-pre17-1-1
+
+- Add tag `eclipticseasons:crops/ignore` to remove the crop info of some blocks at the end of data build.
+
 ### 0.12.0-pre17-1
 
 - Add a sky_colors field to the biome color resource pack, which can be used to modify biome colors.

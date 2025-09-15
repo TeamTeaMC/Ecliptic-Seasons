@@ -5,6 +5,8 @@ import com.teamtea.eclipticseasons.api.constant.crop.CropHumidityInfo;
 import com.teamtea.eclipticseasons.api.constant.crop.CropHumidityType;
 import com.teamtea.eclipticseasons.api.constant.crop.CropSeasonInfo;
 import com.teamtea.eclipticseasons.api.constant.crop.CropSeasonType;
+import com.teamtea.eclipticseasons.api.constant.tag.ESItemTags;
+import com.teamtea.eclipticseasons.api.constant.tag.EclipticBlockTags;
 import com.teamtea.eclipticseasons.api.event.RegisterAndModifyCropInfoEvent;
 import com.teamtea.eclipticseasons.compat.CompatModule;
 import com.teamtea.eclipticseasons.config.CommonConfig;
@@ -21,7 +23,9 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CropBlock;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TagsUpdatedEvent;
@@ -49,6 +53,7 @@ public final class CropInfoManager {
     private static final TagKey<Item> ssi2 = createItemTag("sereneseasons", "summer_crops");
     private static final TagKey<Item> ssi3 = createItemTag("sereneseasons", "autumn_crops");
     private static final TagKey<Item> ssi4 = createItemTag("sereneseasons", "winter_crops");
+
 
     private static final List<Integer> seasonInfoList = List.of(1, 2, 4, 8);
     private static final List<TagKey<Block>> ss_blockList = List.of(ss1, ss2, ss3, ss4);
@@ -138,8 +143,6 @@ public final class CropInfoManager {
         }
 
 
-        MinecraftForge.EVENT_BUS.post(new RegisterAndModifyCropInfoEvent(CROP_HUMIDITY_INFO, CROP_SEASON_INFO));
-
         if (CommonConfig.Crop.registerCropDefaultValue.get()) {
             BuiltInRegistries.BLOCK.forEach(block ->
             {
@@ -148,6 +151,39 @@ public final class CropInfoManager {
                     registerCropSeasonInfo(block, CropSeasonType.SP_SU_AU, true);
                 }
             });
+        }
+
+        MinecraftForge.EVENT_BUS.post(new RegisterAndModifyCropInfoEvent(CROP_HUMIDITY_INFO, CROP_SEASON_INFO));
+
+        removeBlockAndItemShouldBeIgnored(blocks, items);
+    }
+
+    private static void removeBlockAndItemShouldBeIgnored(Optional<Registry<Block>> blocks, Optional<Registry<Item>> items) {
+        if (blocks.isPresent() && items.isPresent()) {
+            Optional<HolderSet.Named<Block>> tag = blocks.get().getTag(EclipticBlockTags.CROPS_IGNORE);
+            if (tag.isPresent()) {
+                for (Holder<Block> blockHolder : tag.get()) {
+                    CROP_SEASON_INFO.remove(blockHolder.value());
+                    CROP_HUMIDITY_INFO.remove(blockHolder.value());
+                    Item item = blockHolder.value().asItem();
+                    if (item != Items.AIR) {
+                        ITEM_CROP_SEASON_INFO.remove(item);
+                        ITEM_CROP_HUMIDITY_INFO.remove(item);
+                    }
+                }
+            }
+            Optional<HolderSet.Named<Item>> tag2 = items.get().getTag(ESItemTags.CROPS_IGNORE);
+            if (tag2.isPresent()) {
+                for (Holder<Item> itemHolder : tag2.get()) {
+                    ITEM_CROP_SEASON_INFO.remove(itemHolder.value());
+                    ITEM_CROP_HUMIDITY_INFO.remove(itemHolder.value());
+                    Block block = Block.byItem(itemHolder.value());
+                    if (block != Blocks.AIR) {
+                        CROP_SEASON_INFO.remove(block);
+                        CROP_HUMIDITY_INFO.remove(block);
+                    }
+                }
+            }
         }
     }
 
