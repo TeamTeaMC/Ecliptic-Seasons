@@ -1,22 +1,30 @@
 package com.teamtea.eclipticseasons.mixin.compat.optifine;
 
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
+import com.llamalad7.mixinextras.sugar.Share;
+import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import com.teamtea.eclipticseasons.api.misc.client.IExtraRendererContextOwner;
 import com.teamtea.eclipticseasons.client.core.ExtraRendererContext;
 import com.teamtea.eclipticseasons.client.core.ExtraModelManager;
 import com.teamtea.eclipticseasons.client.model.MulBakeModel;
 import com.teamtea.eclipticseasons.client.model.SnowyBakedModelWrapper;
+import com.teamtea.eclipticseasons.client.render.chunk.IceKeeper;
 import com.teamtea.eclipticseasons.compat.optfine.IOFModelTaker;
 import com.teamtea.eclipticseasons.compat.vanilla.IExtendBlockView;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.block.BlockRenderDispatcher;
+import net.minecraft.client.renderer.chunk.RenderChunkRegion;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.FluidState;
 import net.minecraftforge.client.model.data.ModelData;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -96,5 +104,48 @@ public abstract class MixinRebuildTask {
     //         iofModelTaker.eclipticseasons$setSnowModel(null);
     //     }
     // }
+    @ModifyExpressionValue(
+            method = "compile",
+            at = @At(value = "INVOKE",
+                    // shift = At.Shift.AFTER,
+                    // ordinal = 1,
+                    target = "Lnet/minecraft/world/level/block/state/BlockState;getRenderShape()Lnet/minecraft/world/level/block/RenderShape;")
+    )
+    private RenderShape eclipticseasons$compile_replaceModel(
+            RenderShape original,
+            @Local RandomSource randomsource,
+            @Local RenderChunkRegion blockAndTintGetter,
+            @Local(ordinal = 2) BlockPos pos,
+            @Local BlockState blockState,
+            @Share("frozen_water") LocalBooleanRef ref
+    ) {
+        ref.set(false);
+        if (!IceKeeper.notFrozen(blockAndTintGetter, pos, blockState, blockState.getFluidState())) {
+            ref.set(true);
+            return RenderShape.MODEL;
+        }
+        return original;
+    }
 
+    @WrapOperation(
+            method = "compile",
+            at = @At(value = "INVOKE",
+                    // shift = At.Shift.AFTER,
+                    // ordinal = 1,
+                    target = "Lnet/minecraft/client/renderer/block/BlockRenderDispatcher;getBlockModel(Lnet/minecraft/world/level/block/state/BlockState;)Lnet/minecraft/client/resources/model/BakedModel;")
+    )
+    private BakedModel eclipticseasons$compile_replaceModel(
+            BlockRenderDispatcher instance,
+            BlockState pState,
+            Operation<BakedModel> original,
+            @Local LocalRef<BlockState> blockState,
+            @Share("frozen_water") LocalBooleanRef ref
+    ) {
+        if (ref.get()) {
+            blockState.set(IceKeeper.getFakeState(pState, pState.getFluidState()));
+            BakedModel iceModel = IceKeeper.getIceModel(pState, pState.getFluidState());
+            if (iceModel != null) return iceModel;
+        }
+        return original.call(instance, pState);
+    }
 }

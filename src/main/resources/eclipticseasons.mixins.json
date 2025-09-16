@@ -50,7 +50,7 @@
     "client.model.MixinModelManager",
     "client.model.MixinMultiPart",
     "client.model.MixinSpriteLoader",
-    "client.render.MixinClientClientLevel",
+    "client.MixinClientClientLevel",
     "client.render.MixinGameRenderer",
     "client.render.MixinLevelRender",
     "client.render.chunk.MixinBlockRenderVanilla",

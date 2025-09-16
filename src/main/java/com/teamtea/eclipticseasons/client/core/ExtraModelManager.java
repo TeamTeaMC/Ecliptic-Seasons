@@ -63,6 +63,7 @@ public class ExtraModelManager {
     public static ModelResourceLocation snowySlabBottom = new ModelResourceLocation(BlockRegistry.snowySlab.getId(), "type=bottom,waterlogged=false");
     public static ModelResourceLocation snowOverlayBlock = new ModelResourceLocation(BlockRegistry.snowyBlock.getId(), "");
 
+    public static ResourceLocation ice = EclipticSeasons.rl("block/ice");
 
     public static ResourceLocation snowy_leaves_attach = EclipticSeasons.rl("block/snowy_leaves_attach");
     public static ResourceLocation snowy_leaves_top = EclipticSeasons.rl("block/snowy_leaves_top");

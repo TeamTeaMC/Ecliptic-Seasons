@@ -45,6 +45,12 @@ public class EclipticUtil {
         return 0;
     }
 
+    public static int getBiomeDataVersion(Level level) {
+        SolarDataManager sd = SolarHolders.getSaveData(level);
+        if (sd != null) return sd.getBiomeDataVersion();
+        return 0;
+    }
+
     public static float getSnowTempChange(Level level) {
         if (CommonConfig.Season.dynamicSnowTerm.get()) {
             SolarDataManager sd = SolarHolders.getSaveData(level);

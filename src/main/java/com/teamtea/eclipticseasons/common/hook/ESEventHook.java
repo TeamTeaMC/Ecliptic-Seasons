@@ -1,7 +1,9 @@
 package com.teamtea.eclipticseasons.common.hook;
 
 import com.teamtea.eclipticseasons.api.event.CanPlantGrowEvent;
+import com.teamtea.eclipticseasons.api.event.ESClientEntityTickEvent;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.MinecraftForge;
@@ -22,5 +24,9 @@ public class ESEventHook {
         var ev = new CanPlantGrowEvent(level, pos, state);
         MinecraftForge.EVENT_BUS.post(ev);
         return (ev.getResult() == Event.Result.ALLOW || (ev.getResult() == Event.Result.DEFAULT && def));
+    }
+
+    public static void onClientEntityTick(Entity entity) {
+        MinecraftForge.EVENT_BUS.post(new ESClientEntityTickEvent(entity));
     }
 }

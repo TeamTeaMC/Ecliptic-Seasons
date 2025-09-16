@@ -1,6 +1,5 @@
 package com.teamtea.eclipticseasons.client.color.season;
 
-import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.solar.color.leaves.BirchLeavesColor;
 import com.teamtea.eclipticseasons.api.constant.solar.color.leaves.LeaveColor;
 import com.teamtea.eclipticseasons.api.constant.solar.color.leaves.MangroveLeavesColor;
@@ -11,15 +10,14 @@ import com.teamtea.eclipticseasons.api.constant.tag.ClimateTypeBiomeTags;
 import com.teamtea.eclipticseasons.api.data.client.BiomeColor;
 import com.teamtea.eclipticseasons.api.data.client.ColorMode;
 import com.teamtea.eclipticseasons.api.misc.IBiomeTagHolder;
+import com.teamtea.eclipticseasons.api.util.fast.Enum2ObjectMap;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.client.util.ClientRef;
 import com.teamtea.eclipticseasons.client.util.ColorHelper;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
-import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.config.ClientConfig;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
@@ -33,6 +31,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import java.awt.*;
 import java.util.IdentityHashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 public class BiomeColorsHandler {
     // public static int[] newFoliageBuffer = new int[65536];
@@ -253,14 +252,40 @@ public class BiomeColorsHandler {
     }
 
     public static int getSkyColor(Biome biome, int originColor) {
+        return getBiomeColorInternal(biome, originColor, BiomeColorsHandler::getSkyColorMap);
+    }
+    public static int getWaterColor(Biome biome, int originColor) {
+        return getBiomeColorInternal(biome, originColor, BiomeColorsHandler::getWaterColorMap);
+    }
+    public static int getWaterFogColor(Biome biome, int originColor) {
+        return getBiomeColorInternal(biome, originColor, BiomeColorsHandler::getWaterFogColorMap);
+    }
+    public static int getFogColor(Biome biome, int originColor) {
+        return getBiomeColorInternal(biome, originColor, BiomeColorsHandler::getFogColorMap);
+    }
+
+    public static Enum2ObjectMap<SolarTerm, ColorMode.Instance> getSkyColorMap(BiomeColor.Instance instance) {
+        return instance.skyColor();
+    }
+    public static Enum2ObjectMap<SolarTerm, ColorMode.Instance> getWaterColorMap(BiomeColor.Instance instance) {
+        return instance.waterColor();
+    }
+    public static Enum2ObjectMap<SolarTerm, ColorMode.Instance> getWaterFogColorMap(BiomeColor.Instance instance) {
+        return instance.waterFogColor();
+    }
+    public static Enum2ObjectMap<SolarTerm, ColorMode.Instance> getFogColorMap(BiomeColor.Instance instance) {
+        return instance.fogColor();
+    }
+
+    public static int getBiomeColorInternal(Biome biome, int originColor, Function<BiomeColor.Instance, Enum2ObjectMap<SolarTerm, ColorMode.Instance>> function) {
         if (ClientConfig.Renderer.seasonalGrassColorChange.get()) {
             BiomeColor.Instance biomeColor = getBiomeColor(biome, originColor);
             if (biomeColor != null) {
-                ColorMode.Instance instance = biomeColor.skyColor().get(ClientCon.nowSolarTerm);
+                ColorMode.Instance instance = function.apply(biomeColor).get(ClientCon.nowSolarTerm);
                 if (instance != null) {
                     int color = ColorHelper.simplyMixColor(instance.value(), instance.mix(), originColor, Math.abs(1 - instance.mix()));
                     if (ClientConfig.Renderer.smootherSeasonalGrassColorChange.get()) {
-                        ColorMode.Instance instance2 = biomeColor.skyColor().get(ClientCon.nowSolarTerm.getLastSolarTerm());
+                        ColorMode.Instance instance2 = function.apply(biomeColor).get(ClientCon.nowSolarTerm.getLastSolarTerm());
                         if (instance2 != null && !instance.equals(instance2)) {
                             int color2 = ColorHelper.simplyMixColor(instance2.value(), instance2.mix(), originColor, Math.abs(1 - instance2.mix()));
                             float progressFloat = ClientCon.progress / 100f;

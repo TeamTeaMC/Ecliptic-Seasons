@@ -4,10 +4,12 @@ package com.teamtea.eclipticseasons.client;
 import com.mojang.brigadier.CommandDispatcher;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
+import com.teamtea.eclipticseasons.api.event.ESClientEntityTickEvent;
 import com.teamtea.eclipticseasons.api.misc.IChunkBiomeHolder;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.client.core.ClientWeatherChecker;
 import com.teamtea.eclipticseasons.client.render.WorldRenderer;
+import com.teamtea.eclipticseasons.client.render.chunk.IceKeeper;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.client.util.ClientRef;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
@@ -32,6 +34,7 @@ import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.SpawnEggItem;
@@ -42,6 +45,7 @@ import net.minecraftforge.client.event.RegisterClientCommandsEvent;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
 import net.minecraftforge.event.TagsUpdatedEvent;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.event.level.ChunkEvent;
 import net.minecraftforge.event.level.LevelEvent;
@@ -108,6 +112,7 @@ public final class ClientEventHandler {
             MapChecker.unloadLevel(clientLevel);
             ClientWeatherChecker.unloadLevel(clientLevel);
             ClientCon.setUseLevel(null);
+            IceKeeper.clearAll();
 
             // 1.20.1 patch for lazy chunk load
             BiomeHolder.BIOME_HOLDER_MAP.clear();
@@ -147,6 +152,14 @@ public final class ClientEventHandler {
 
             SolarHolders.createSaveData(level, ClientSolarDataManager.get(level));
         }
+    }
+
+    /**
+     * Forge don't provide an entity tick event, so we need to make it self.
+     * **/
+    @SubscribeEvent
+    public static void onPlayerTick(ESClientEntityTickEvent event) {
+       IceKeeper.checkIfPlayerStepInFrozenWater(event.getEntity());
     }
 
     private static long lastFreshTime = -1;

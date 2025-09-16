@@ -1,3 +1,9 @@
+### 0.12.0-pre18
+
+- Added support for water_colors, water_fog_colors, fog_colors, etc. in Biome Color resource packs, allowing seasonal variation adjustments.
+- Added null-safety checks when querying BiomeDataVersion related to levels, to prevent null pointers in special mod environments (e.g., when the Level does not exist during chunk loading or no corresponding cache is available).
+- Added a preview feature option FrozenWater: rivers will form a thin ice layer during snowfall, which breaks when entities step on it. (WIP — since Water blocks have no Snow Type, this will have no effect when SnowInWorld is enabled.)
+
 ### 0.12.0-pre17-1-4
 
 - When the player is not holding Shift as the sneak key, modify the crop tooltips in Jade or TOP.

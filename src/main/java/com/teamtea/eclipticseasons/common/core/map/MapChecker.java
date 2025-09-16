@@ -662,7 +662,7 @@ public class MapChecker {
         if (chunkAt instanceof IChunkBiomeHolder iChunkBiomeHolder) {
             BiomeHolder biomeHolder = iChunkBiomeHolder.eclipticseasons$getBiomeHolder();
             if (biomeHolder != null
-                    && biomeHolder.version() == SolarHolders.getSaveData(level).getBiomeDataVersion()) {
+                    && biomeHolder.version() == EclipticUtil.getBiomeDataVersion(level)) {
                 // BiomeHolder biomeHolder = chunkAt.getData(ModContents.BIOME_HOLDER);
                 return getSurfaceBiome(level, pos, biomeHolder);
             }
@@ -674,7 +674,7 @@ public class MapChecker {
         if (chunkAt instanceof IChunkBiomeHolder iChunkBiomeHolder) {
             BiomeHolder biomeHolder = iChunkBiomeHolder.eclipticseasons$getBiomeHolder();
             if (biomeHolder != null
-                    && biomeHolder.version() == SolarHolders.getSaveData(level).getBiomeDataVersion()) {
+                    && biomeHolder.version() == EclipticUtil.getBiomeDataVersion(level)) {
                 // BiomeHolder biomeHolder = chunkAt.getData(ModContents.BIOME_HOLDER);
                 return getSurfaceBiome(level, pos, biomeHolder);
             }
@@ -1086,8 +1086,7 @@ public class MapChecker {
 
     public static @NotNull BiomeHolder getOrUpdateChunkBiomeData(ServerLevel serverLevel, IChunkBiomeHolder
             chunk, ChunkPos chunkPos) {
-        SolarDataManager data = SolarHolders.getSaveData(serverLevel);
-        int biomeDataVersion = data == null ? 0 : data.getBiomeDataVersion();
+        int biomeDataVersion = EclipticUtil.getBiomeDataVersion(serverLevel);
         BiomeHolder biomeHolder = chunk.eclipticseasons$getBiomeHolder();
         if (biomeHolder == null) {
             biomeHolder = BiomeHolder

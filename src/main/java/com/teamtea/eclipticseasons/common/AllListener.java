@@ -179,8 +179,8 @@ public class AllListener {
             {
                 ChunkInfoMap chunkInfoMap = MapChecker.forceChunkUpdateHeight(level, chunk);
 
-                if (biomeHolder != null && level instanceof ServerLevel serverLevel) {
-                    int biomeDataVersion = SolarHolders.getSaveData(level).getBiomeDataVersion();
+                if (EclipticUtil.canSnowyBlockInteract() && biomeHolder != null && level instanceof ServerLevel serverLevel) {
+                    int biomeDataVersion = EclipticUtil.getBiomeDataVersion(level);
                     if (biomeHolder.version() != biomeDataVersion || !biomeHolder.hasUpdated()) biomeHolder = null;
                     if (biomeHolder != null) {
                         SnowyMapChecker.forceChunkUpdateHeight(serverLevel, chunk, chunkInfoMap, biomeHolder, true);

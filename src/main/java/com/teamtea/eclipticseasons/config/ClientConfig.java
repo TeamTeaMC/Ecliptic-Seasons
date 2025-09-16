@@ -22,6 +22,7 @@ public class ClientConfig {
 
         public static ForgeConfigSpec.BooleanValue debugInfo;
         public static ForgeConfigSpec.BooleanValue smoothSnowyEdges;
+        public static ForgeConfigSpec.BooleanValue frozenWater;
 
         private static void load(ForgeConfigSpec.Builder builder) {
             builder.push("Debug");
@@ -29,6 +30,10 @@ public class ClientConfig {
                     .define("DebugInfo", false);
             smoothSnowyEdges = builder.comment("Render snow edge overlay on neighbors for smoother snowy transitions.")
                     .define("SmoothSnowyEdges", false);
+
+            frozenWater = builder
+                    .define("FrozenWater", false);
+
             builder.pop();
         }
     }

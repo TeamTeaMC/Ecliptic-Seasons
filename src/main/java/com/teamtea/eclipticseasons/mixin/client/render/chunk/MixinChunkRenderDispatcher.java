@@ -8,6 +8,7 @@ import com.mojang.blaze3d.vertex.*;
 import com.teamtea.eclipticseasons.api.misc.client.IExtraRendererContextOwner;
 import com.teamtea.eclipticseasons.client.core.ExtraRendererContext;
 import com.teamtea.eclipticseasons.client.core.ExtraModelManager;
+import com.teamtea.eclipticseasons.client.render.chunk.IceKeeper;
 import com.teamtea.eclipticseasons.compat.vanilla.IExtendBlockView;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ChunkBufferBuilderPack;
@@ -18,11 +19,13 @@ import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.FluidState;
 import net.minecraftforge.client.model.data.ModelData;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 
+import java.util.Map;
 import java.util.Set;
 
 @Mixin(targets = "net.minecraft.client.renderer.chunk.ChunkRenderDispatcher$RenderChunk$RebuildTask")
@@ -101,6 +104,31 @@ public class MixinChunkRenderDispatcher {
         return original;
     }
 
+    @ModifyExpressionValue(
+            method = "compile",
+            at = @At(value = "INVOKE",
+                    // shift = At.Shift.AFTER,
+                    // ordinal = 1,
+                    target = "Lnet/minecraft/world/level/material/FluidState;isEmpty()Z")
+    )
+    private boolean eclipticseasons$renderFrozenWaterIce(
+            boolean original,
+            @Local(argsOnly = true) ChunkBufferBuilderPack pChunkBufferBuilderPack,
+            @Local(ordinal = 2) BlockPos blockpos2,
+            @Local(ordinal = 1) BlockState blockstate,
+            @Local PoseStack posestack,
+            @Local RenderChunkRegion renderchunkregion,
+            @Local RandomSource randomsource,
+            @Local Set<RenderType> renderTypeSet,
+            @Local FluidState fluidState
+    ) {
+
+        if (!original
+                && !IceKeeper.notFrozen(renderchunkregion, blockpos2, blockstate, fluidState)) {
+            eclipticseasons$renderModel(IceKeeper.getIceModel(blockstate, fluidState), pChunkBufferBuilderPack, blockpos2, IceKeeper.getFakeState(blockstate, fluidState), posestack, renderchunkregion, randomsource, renderTypeSet);
+        }
+        return original;
+    }
 
     @Unique
     private static void eclipticseasons$renderModel(BakedModel bakedModel, ChunkBufferBuilderPack pChunkBufferBuilderPack, BlockPos pos, BlockState state, PoseStack posestack, RenderChunkRegion renderchunkregion, RandomSource random, Set<RenderType> renderTypeSet) {

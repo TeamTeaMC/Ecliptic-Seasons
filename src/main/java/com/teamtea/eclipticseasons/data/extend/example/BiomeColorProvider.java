@@ -68,7 +68,7 @@ public class BiomeColorProvider extends ESClientDataMapProvider<BiomeColor> {
         builder2.climate(aThrow.getOrThrow(AgroClimateRegistry.COLD));
         add("snowy_plains", new BiomeColor(
                 HolderSet.direct(Holder.Reference.createStandAlone(BIOME_REGISTRY_LOOKUP, Biomes.SNOWY_PLAINS)),
-                Optional.empty(), builder2.ofBuild(), builder2.ofBuild()
+                Optional.empty(), builder2.ofBuild(), builder2.ofBuild(), builder2.ofBuild(), builder2.ofBuild(), builder2.ofBuild()
         ));
 
     }

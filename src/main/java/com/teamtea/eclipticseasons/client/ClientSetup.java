@@ -93,6 +93,8 @@ public class ClientSetup {
         ExtraModelManager.flower_on_grass.forEach(event::register);
         ExtraModelManager.fourleaf_clovers.forEach(event::register);
         ExtraModelManager.snow_edge_overlays.forEach(event::register);
+        event.register(ExtraModelManager.ice);
+
     }
 
     @SubscribeEvent

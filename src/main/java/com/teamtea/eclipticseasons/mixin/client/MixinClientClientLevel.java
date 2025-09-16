@@ -1,14 +1,17 @@
-package com.teamtea.eclipticseasons.mixin.client.render;
+package com.teamtea.eclipticseasons.mixin.client;
 
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
+import com.teamtea.eclipticseasons.client.ClientEventHandler;
 import com.teamtea.eclipticseasons.client.particle.ParticleUtil;
+import com.teamtea.eclipticseasons.common.hook.ESEventHook;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -48,14 +51,22 @@ public abstract class MixinClientClientLevel {
             @Local(argsOnly = true, ordinal = 2) int pPosZ,
             @Local(argsOnly = true, ordinal = 3) int pRange,
             @Local(argsOnly = true) BlockPos.MutableBlockPos blockpos$mutableblockpos) {
-       boolean shouldcancel= ParticleUtil.doAnimateTick((ClientLevel) (Object) this,
+        boolean shouldcancel = ParticleUtil.doAnimateTick((ClientLevel) (Object) this,
                 pPosX, pPosY, pPosZ,
                 pRange,
                 pRandom,
                 blockpos$mutableblockpos,
                 blockState);
-       if(!shouldcancel){
-           original.call(instance, pState, pLevel, pPos, pRandom);
-       }
+        if (!shouldcancel) {
+            original.call(instance, pState, pLevel, pPos, pRandom);
+        }
+    }
+
+    @Inject(at = {@At(value = "TAIL")},
+            method = {"tickNonPassenger"})
+    public void eclipticseasons$tickNonPassenger(Entity entity, CallbackInfo ci) {
+        if (entity.canUpdate()) {
+            ESEventHook.onClientEntityTick(entity);
+        }
     }
 }

@@ -86,7 +86,7 @@ public class SnowyMapChecker {
     public static void updateAllChunks(ServerLevel level) {
         if (!EclipticUtil.canSnowyBlockInteract()) return;
 
-        int biomeDataVersion = SolarHolders.getSaveData(level).getBiomeDataVersion();
+        int biomeDataVersion = EclipticUtil.getBiomeDataVersion(level);
         for (ChunkHolder chunk : level.getChunkSource().chunkMap.getChunks()) {
             ChunkAccess latestChunk = chunk.getFullChunk();
             if (latestChunk instanceof IChunkBiomeHolder chunkBiomeHolder) {
