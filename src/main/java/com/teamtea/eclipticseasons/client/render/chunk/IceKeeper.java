@@ -35,6 +35,9 @@ public class IceKeeper {
         BlockPos blockPos = player.blockPosition();
         // player.getBoundingBoxForCulling()
         if (MapChecker.getHeight(level, blockPos) != blockPos.getY()) return;
+        BlockState water = Blocks.WATER.defaultBlockState();
+        if (!ExtraModelManager.maySnowyAt(level, null, water, blockPos, level.getRandom(), water.getSeed(blockPos)))
+            return;
         if (!ICE_SHOULD_BE_IGNORED.contains(blockPos.asLong())) {
 
             BlockPos above = blockPos.above();
