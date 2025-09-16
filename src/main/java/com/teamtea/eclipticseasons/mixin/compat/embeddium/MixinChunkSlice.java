@@ -23,6 +23,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.Arrays;
+
 @Pseudo
 @Mixin(WorldSlice.class)
 public abstract class MixinChunkSlice implements IMapSlice, IExtraRendererContextOwner {
@@ -218,7 +220,7 @@ public abstract class MixinChunkSlice implements IMapSlice, IExtraRendererContex
         SnowyStatusKeeper lightArrays = this.SNOWY_STATUS_MAP[eclipticseasons$getLocalSectionIndex(
                 relBlockX >> 4,
                 relBlockZ >> 4)];
-        return lightArrays.isSnowyBlock(pos);
+        return lightArrays != null && lightArrays.isSnowyBlock(pos);
     }
 
     @Unique
@@ -238,10 +240,11 @@ public abstract class MixinChunkSlice implements IMapSlice, IExtraRendererContex
     )
     private void eclipticseasons$release(CallbackInfo ci) {
         eclipticseasons$rendererHolder.resetAll();
+        Arrays.fill(SNOWY_STATUS_MAP, null);
     }
 
     @Unique
-    private ExtraRendererContext eclipticseasons$rendererHolder =new ExtraRendererContext();
+    private ExtraRendererContext eclipticseasons$rendererHolder = new ExtraRendererContext();
 
     @Override
     public ExtraRendererContext eclipticseasons$getContext() {

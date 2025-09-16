@@ -94,13 +94,13 @@ public abstract class MixinChunkSlice implements IMapSlice, IExtraRendererContex
         int relBlockZ = SectionPos.blockToSectionCoord(pos.getZ()) - centerZ;
         SnowyStatusKeeper lightArrays = this.SNOWY_STATUS_MAP[
                 relBlockX + (relBlockZ) * SIZE_X];
-        return lightArrays.isSnowyBlock(pos);
+        return lightArrays != null && lightArrays.isSnowyBlock(pos);
     }
 
     /* ======================================== MODEL PART ===================================== */
 
     @Unique
-    private ExtraRendererContext eclipticseasons$rendererHolder =new ExtraRendererContext();
+    private ExtraRendererContext eclipticseasons$rendererHolder = new ExtraRendererContext();
 
     @Override
     public ExtraRendererContext eclipticseasons$getContext() {

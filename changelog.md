@@ -1,3 +1,7 @@
+### 0.12.0-pre19
+
+- Fixed a crash that occurred when entering a dimension without seasons while SnowInWorld was enabled.
+
 ### 0.12.0-pre18-1
 
 - Added the option FrozenWaterBreakable, which can be used to disable the ability for entities to break thin ice layers.
@@ -6,9 +10,13 @@
 
 ### 0.12.0-pre18
 
-- Added support for water_colors, water_fog_colors, fog_colors, etc. in Biome Color resource packs, allowing seasonal variation adjustments.
-- Added null-safety checks when querying BiomeDataVersion related to levels, to prevent null pointers in special mod environments (e.g., when the Level does not exist during chunk loading or no corresponding cache is available).
-- Added a preview feature option FrozenWater: rivers will form a thin ice layer during snowfall, which breaks when entities step on it. (WIP — since Water blocks have no Snow Type, this will have no effect when SnowInWorld is enabled.)
+- Added support for water_colors, water_fog_colors, fog_colors, etc. in Biome Color resource packs, allowing seasonal
+  variation adjustments.
+- Added null-safety checks when querying BiomeDataVersion related to levels, to prevent null pointers in special mod
+  environments (e.g., when the Level does not exist during chunk loading or no corresponding cache is available).
+- Added a preview feature option FrozenWater: rivers will form a thin ice layer during snowfall, which breaks when
+  entities step on it. (WIP — since Water blocks have no Snow Type, this will have no effect when SnowInWorld is
+  enabled.)
 
 ### 0.12.0-pre17-1-4
 
@@ -20,7 +28,8 @@
 
 ### 0.12.0-pre17-1-2
 
-- Add tag `eclipticseasons:crops/unaffected_by_seasons`,`eclipticseasons:crops/unaffected_by_humidity` to remove the crop info of some blocks at the end of data build.
+- Add tag `eclipticseasons:crops/unaffected_by_seasons`,`eclipticseasons:crops/unaffected_by_humidity` to remove the
+  crop info of some blocks at the end of data build.
 
 ### 0.12.0-pre17-1
 
@@ -65,9 +74,12 @@
 ### 0.12.0-pre16
 
 - Added configurable biome snow lines.
-- Removed `isRainingAtBiome` and `isSnowingAtBiome` from class `WeatherManager`, as they are no longer compatible with the current version’s mechanics.
-- Introduced additional data serialization tag caching, significantly reducing serialization and deserialization overhead, especially for chunk surface biome caches.
-- Split chunk snow status into two separate additional data groups: snow records and weather status, optimizing serialization overhead when `SnowInWorld` is enabled and it is raining.
+- Removed `isRainingAtBiome` and `isSnowingAtBiome` from class `WeatherManager`, as they are no longer compatible with
+  the current version’s mechanics.
+- Introduced additional data serialization tag caching, significantly reducing serialization and deserialization
+  overhead, especially for chunk surface biome caches.
+- Split chunk snow status into two separate additional data groups: snow records and weather status, optimizing
+  serialization overhead when `SnowInWorld` is enabled and it is raining.
 
 ### 0.12.0-pre15-1
 
