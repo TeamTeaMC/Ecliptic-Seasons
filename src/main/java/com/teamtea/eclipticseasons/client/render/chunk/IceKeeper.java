@@ -29,7 +29,7 @@ public class IceKeeper {
     public static final LongOpenHashSet ICE_SHOULD_BE_IGNORED = new LongOpenHashSet();
 
     public static void checkIfPlayerStepInFrozenWater(Entity player) {
-        if (!ClientConfig.Debug.frozenWater.get() || EclipticUtil.canSnowyBlockInteract()) return;
+        if (!ClientConfig.Debug.frozenWater.get() || !ClientConfig.Debug.frozenWaterBreakable.get()) return;
         if (!player.isInWater()) return;
         Level level = player.level();
         BlockPos blockPos = player.blockPosition();
@@ -76,13 +76,13 @@ public class IceKeeper {
 
 
     public static boolean notFrozen(BlockAndTintGetter worldSlice, BlockPos blockPos, BlockState blockState, FluidState fluidState) {
-        if (!ClientConfig.Debug.frozenWater.get() || EclipticUtil.canSnowyBlockInteract()) return true;
+        if (!ClientConfig.Debug.frozenWater.get()) return true;
         if (!fluidState.isSourceOfType(Fluids.WATER)) return true;
         if (!(worldSlice instanceof IMapSlice mapSlice)) return true;
         if (mapSlice.getBlockHeight(blockPos) != blockPos.getY()) return true;
         if (!ExtraModelManager.maySnowyAt(ClientCon.getUseLevel(), mapSlice, blockState, blockPos, null, blockState.getSeed(blockPos)))
             return true;
-        return ICE_SHOULD_BE_IGNORED.contains(blockPos.asLong());
+        return ClientConfig.Debug.frozenWaterBreakable.get() && ICE_SHOULD_BE_IGNORED.contains(blockPos.asLong());
     }
 
     public static BakedModel getIceModel(BlockState state, FluidState fluidState) {
@@ -92,35 +92,4 @@ public class IceKeeper {
     public static BlockState getFakeState(BlockState state, FluidState fluidState) {
         return Blocks.ICE.defaultBlockState();
     }
-
-    // int y = blockPos.getY();
-    // int x = blockPos.getX();
-    // int z = blockPos.getZ();
-    // blockPos.setY(y + 1);
-    // boolean isEmptyAbove = !mapSlice.getBlockState(blockPos).isAir();
-    // blockPos.setY(y);
-    // if (isEmptyAbove) {
-    //     return;
-    // }
-    // int maxRadius = 2;
-    // outer:
-    // for (int r = 1; r <= maxRadius; r++) {
-    //     for (int dx = -r; dx <= r; dx++) {
-    //         for (int dz = -r; dz <= r; dz++) {
-    //             if (Math.max(Math.abs(dx), Math.abs(dz)) != r) continue;
-    //             if (r == 2 && Mth.abs(blockState.getSeed(blockPos) % 100) > 80) {
-    //                 continue;
-    //             }
-    //
-    //             blockPos.setX(x + dx);
-    //             blockPos.setZ(z + dz);
-    //             if (mapSlice.getBlockState(blockPos).isSolidRender(mapSlice, blockPos)) {
-    //                 findSolid = true;
-    //                 break outer;
-    //             }
-    //         }
-    //     }
-    // }
-    // findSolid = true;
-    //     blockPos.set(x, y, z);
 }

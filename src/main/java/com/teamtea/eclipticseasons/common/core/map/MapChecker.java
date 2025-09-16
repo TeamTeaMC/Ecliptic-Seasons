@@ -558,7 +558,7 @@ public class MapChecker {
     }
 
     public static boolean shouldSnowAt(@Nonnull Level level, BlockPos pos, BlockState state, RandomSource random, long seed) {
-        if (SnowyMapChecker.shouldCheckSnowyStatus(level, pos)) {
+        if (SnowyMapChecker.shouldCheckSnowyStatus(level, pos) && notWater(state)) {
             return SnowyMapChecker.isSnowyBlock(level, pos);
         }
 
@@ -574,7 +574,7 @@ public class MapChecker {
 
 
     public static boolean shouldSnowAt(@Nonnull Level level, BlockPos pos, int biomeId, BlockState state, @Nullable RandomSource random, long seed) {
-        if (SnowyMapChecker.shouldCheckSnowyStatus(level, pos)) {
+        if (SnowyMapChecker.shouldCheckSnowyStatus(level, pos) && notWater(state)) {
             return SnowyMapChecker.isSnowyBlock(level, pos);
         }
 
@@ -588,6 +588,9 @@ public class MapChecker {
         return isSnowy;
     }
 
+    public static boolean notWater(BlockState state) {
+        return state == null || !state.is(Blocks.WATER);
+    }
 
     public static boolean shouldSnowAtBiome(@Nonnull Level level, Biome biome, BlockState state, RandomSource random, long seed, BlockPos mcPos) {
         if (isAboveSnowLine(level, biome, mcPos)) {

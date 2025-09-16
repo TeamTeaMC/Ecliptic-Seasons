@@ -1,3 +1,9 @@
+### 0.12.0-pre18-1
+
+- Added the option FrozenWaterBreakable, which can be used to disable the ability for entities to break thin ice layers.
+- Added compatibility between the DH mod and FrozenWater.
+- Temporarily removed the restriction that prevented FrozenWater from being used when SnowInWorld is enabled.
+
 ### 0.12.0-pre18
 
 - Added support for water_colors, water_fog_colors, fog_colors, etc. in Biome Color resource packs, allowing seasonal variation adjustments.

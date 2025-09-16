@@ -539,7 +539,8 @@ public class ExtraModelManager {
             // if (mapSlice.getSnowyStatus(checkPos) == SnowyRemover.SnowyFlag.SNOWY_ALWAYS.ordinal()) {
             //     return true;
             // }
-            if (EclipticUtil.canSnowyBlockInteract()) return mapSlice.isSnowyBlock(checkPos);
+            if (EclipticUtil.canSnowyBlockInteract() && MapChecker.notWater(state))
+                return mapSlice.isSnowyBlock(checkPos);
             return MapChecker.shouldSnowAt(level, checkPos, mapSlice.getSurfaceFaceBiomeId(checkPos), state, random, seed);
         } else {
             return MapChecker.shouldSnowAt(level, checkPos, state, random, seed);

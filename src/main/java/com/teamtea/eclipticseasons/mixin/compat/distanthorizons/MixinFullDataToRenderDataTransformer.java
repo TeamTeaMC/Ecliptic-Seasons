@@ -8,11 +8,13 @@ import com.seibel.distanthorizons.core.dataObjects.fullData.FullDataPointIdMap;
 import com.seibel.distanthorizons.core.dataObjects.transformers.FullDataToRenderDataTransformer;
 import com.seibel.distanthorizons.core.level.IDhClientLevel;
 import com.seibel.distanthorizons.core.pos.blockPos.DhBlockPos;
+import com.seibel.distanthorizons.core.pos.blockPos.DhBlockPosMutable;
 import com.seibel.distanthorizons.core.wrapperInterfaces.IWrapperFactory;
 import com.seibel.distanthorizons.core.wrapperInterfaces.block.IBlockStateWrapper;
 import com.seibel.distanthorizons.core.wrapperInterfaces.world.IBiomeWrapper;
 import com.teamtea.eclipticseasons.compat.distanthorizons.DHTool;
 import it.unimi.dsi.fastutil.longs.LongArrayList;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MapColor;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -48,5 +50,27 @@ public abstract class MixinFullDataToRenderDataTransformer {
         return original.call(instance, dhBlockPos, iBiomeWrapper, iBlockStateWrapper);
     }
 
+
+    @WrapOperation(
+            remap = false,
+            method = "setRenderColumnView",
+            at = @At(value = "INVOKE", target = "Lcom/seibel/distanthorizons/core/dataObjects/fullData/FullDataPointIdMap;getBlockStateWrapper(I)Lcom/seibel/distanthorizons/core/wrapperInterfaces/block/IBlockStateWrapper;")
+    )
+    private static IBlockStateWrapper eclipticseasons$setRenderColumnView_fixIce(
+            FullDataPointIdMap instance,
+            int id,
+            Operation<IBlockStateWrapper> original,
+            @Local(argsOnly = true) IDhClientLevel clientLevel,
+            @Local(argsOnly = true) FullDataPointIdMap fullDataMapping,
+            @Local(argsOnly = true) LongArrayList fullColumnData,
+            @Local DhBlockPosMutable dhBlockPosMutable,
+            @Local IBiomeWrapper biomeWrapper) {
+        IBlockStateWrapper call = original.call(instance, id);
+        if (call.isLiquid() && call.getWrappedMcObject() instanceof BlockState blockState) {
+            IBlockStateWrapper warp = DHTool.shouldFrozen(clientLevel, biomeWrapper, dhBlockPosMutable, blockState);
+            if (warp != null) call = warp;
+        }
+        return call;
+    }
 
 }
