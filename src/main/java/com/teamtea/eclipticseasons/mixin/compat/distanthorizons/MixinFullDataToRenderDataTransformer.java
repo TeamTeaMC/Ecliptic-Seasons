@@ -4,6 +4,7 @@ package com.teamtea.eclipticseasons.mixin.compat.distanthorizons;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
+import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
 import com.seibel.distanthorizons.core.dataObjects.fullData.FullDataPointIdMap;
 import com.seibel.distanthorizons.core.dataObjects.transformers.FullDataToRenderDataTransformer;
 import com.seibel.distanthorizons.core.level.IDhClientLevel;
@@ -64,10 +65,11 @@ public abstract class MixinFullDataToRenderDataTransformer {
             @Local(argsOnly = true) FullDataPointIdMap fullDataMapping,
             @Local(argsOnly = true) LongArrayList fullColumnData,
             @Local DhBlockPosMutable dhBlockPosMutable,
-            @Local IBiomeWrapper biomeWrapper) {
+            @Local IBiomeWrapper biomeWrapper,
+            @Local(name = "fullDataIndex") LocalIntRef localIntRef) {
         IBlockStateWrapper call = original.call(instance, id);
         if (call.isLiquid() && call.getWrappedMcObject() instanceof BlockState blockState) {
-            IBlockStateWrapper warp = DHTool.shouldFrozen(clientLevel, biomeWrapper, dhBlockPosMutable, blockState);
+            IBlockStateWrapper warp = DHTool.shouldFrozen(clientLevel, biomeWrapper, dhBlockPosMutable, blockState,fullDataMapping, fullColumnData,localIntRef.get());
             if (warp != null) call = warp;
         }
         return call;
