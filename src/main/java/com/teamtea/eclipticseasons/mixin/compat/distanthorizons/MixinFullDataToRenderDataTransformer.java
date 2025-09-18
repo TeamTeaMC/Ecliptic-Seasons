@@ -34,6 +34,7 @@ public abstract class MixinFullDataToRenderDataTransformer {
 
     @WrapOperation(
             remap = false,
+            require = 0,
             method = "setRenderColumnView",
             at = @At(value = "INVOKE", target = "Lcom/seibel/distanthorizons/core/level/IDhClientLevel;computeBaseColor(Lcom/seibel/distanthorizons/core/pos/blockPos/DhBlockPos;Lcom/seibel/distanthorizons/core/wrapperInterfaces/world/IBiomeWrapper;Lcom/seibel/distanthorizons/core/wrapperInterfaces/block/IBlockStateWrapper;)I")
     )
@@ -54,6 +55,7 @@ public abstract class MixinFullDataToRenderDataTransformer {
 
     @WrapOperation(
             remap = false,
+            require = 0,
             method = "setRenderColumnView",
             at = @At(value = "INVOKE", target = "Lcom/seibel/distanthorizons/core/dataObjects/fullData/FullDataPointIdMap;getBlockStateWrapper(I)Lcom/seibel/distanthorizons/core/wrapperInterfaces/block/IBlockStateWrapper;")
     )

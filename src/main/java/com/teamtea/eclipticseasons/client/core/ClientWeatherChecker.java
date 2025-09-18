@@ -287,7 +287,12 @@ public class ClientWeatherChecker {
     }
 
     public static boolean isBiomeRainyLast(Biome biome) {
-        return lastRainyBiome.stream().anyMatch(biomeLongEntry -> biomeLongEntry.getKey() == biome);
+        for (int i = 0; i < lastRainyBiome.size(); i++) {
+            SimplePair<Biome, Long> biomeLongSimplePair = lastRainyBiome.get(i);
+            if (biomeLongSimplePair.getKey() == biome) return true;
+        }
+        return false;
+        // return lastRainyBiome.stream().anyMatch(biomeLongEntry -> biomeLongEntry.getKey() == biome);
     }
 
     public static void tickLastRainyBiome(Level clientLevel) {

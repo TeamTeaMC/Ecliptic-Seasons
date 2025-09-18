@@ -10,17 +10,15 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(Bee.BeePollinateGoal.class)@SuppressWarnings("target")
+@Mixin(value = {Bee.BeePollinateGoal.class, Bee.BeeGoToKnownFlowerGoal.class})
 public class MixinBee_BeePollinateGoal {
-
-    // @Shadow @Final private Bee this$0;
 
     @Shadow
     @Final
     Bee this$0;
 
 
-    @Inject(at = {@At("RETURN")}, method = {"canBeeUse", "canBeeContinueToUse"}, cancellable = true)
+    @Inject(at = {@At("RETURN")}, method = {"canBeeUse"}, cancellable = true)
     public void eclipticseasons$canBeeUse(CallbackInfoReturnable<Boolean> cir) {
         if (cir.getReturnValue()) {
             if (AnimalHooks.cancelBeePollinate(this$0)) {
@@ -28,6 +26,4 @@ public class MixinBee_BeePollinateGoal {
             }
         }
     }
-
-
 }

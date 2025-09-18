@@ -1,3 +1,7 @@
+### 0.12.0-pre19-1
+
+- Fixed an issue where bees would lock onto flowers even when unable to collect nectar.
+
 ### 0.12.0-pre19
 
 - Fixed a crash that occurred when entering a dimension without seasons while SnowInWorld was enabled.
