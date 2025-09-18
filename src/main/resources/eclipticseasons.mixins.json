@@ -34,7 +34,6 @@
     "common.wg.MixinSurfaceSystem",
     "data.MixinsRegistriesDatapackGenerator",
     "data.RegistrySetBuilderMixin",
-    "game.MixinBee_BeeGoToKnownFlowerGoal",
     "game.MixinBee_BeePollinateGoal",
     "game.MixinBeehiveBlockEntity",
     "game.MixinBreedGoal",
