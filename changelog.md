@@ -1,6 +1,6 @@
 ### 0.12.0-pre19-1
 
-- Fixed an issue where bees would lock onto flowers even when unable to collect nectar.
+- Fixed an issue where deserialization of specified seasons in the animal class configuration file was not working.
 
 ### 0.12.0-pre19
 

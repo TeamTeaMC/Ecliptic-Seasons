@@ -34,6 +34,7 @@
     "common.wg.MixinSurfaceSystem",
     "data.MixinsRegistriesDatapackGenerator",
     "data.RegistrySetBuilderMixin",
+    "game.MixinBee_BeeGoToKnownFlowerGoal",
     "game.MixinBee_BeePollinateGoal",
     "game.MixinBeehiveBlockEntity",
     "game.MixinBreedGoal",
@@ -41,6 +42,7 @@
     "game.MixinFishingHook"
   ],
   "client": [
+    "client.MixinClientClientLevel",
     "client.MixinClientLevel",
     "client.biome.MixinClientBiome",
     "client.block.MixinLeavesBlock",
@@ -50,7 +52,6 @@
     "client.model.MixinModelManager",
     "client.model.MixinMultiPart",
     "client.model.MixinSpriteLoader",
-    "client.MixinClientClientLevel",
     "client.render.MixinGameRenderer",
     "client.render.MixinLevelRender",
     "client.render.chunk.MixinBlockRenderVanilla",

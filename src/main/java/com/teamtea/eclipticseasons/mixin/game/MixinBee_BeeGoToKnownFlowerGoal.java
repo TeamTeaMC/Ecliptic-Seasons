@@ -12,8 +12,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @SuppressWarnings("target")
-@Mixin(value = {Bee.BeePollinateGoal.class})
-public class MixinBee_BeePollinateGoal {
+@Mixin(value = {Bee.BeeGoToKnownFlowerGoal.class})
+public class MixinBee_BeeGoToKnownFlowerGoal {
 
     @Shadow@Dynamic
     @Final
