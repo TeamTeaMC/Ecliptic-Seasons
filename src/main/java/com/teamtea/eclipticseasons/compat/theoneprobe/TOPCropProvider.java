@@ -35,7 +35,7 @@ public class TOPCropProvider implements IProbeInfoProvider {
                 if (player == null || player.isShiftKeyDown()) {
                     components.forEach(iProbeInfo::mcText);
                 } else {
-                    iProbeInfo.mcText(Component.translatable("hint.jade.plugin_eclipticseasons.crop.show", Minecraft.getInstance().options.keyShift.getKey().getDisplayName()).withStyle(ChatFormatting.GRAY));
+                    iProbeInfo.mcText(Component.translatable("hint.jade.plugin_eclipticseasons.crop.show", Minecraft.getInstance().options.keyShift.getKey().getDisplayName().getString()).withStyle(ChatFormatting.GRAY));
                 }
             }
         }

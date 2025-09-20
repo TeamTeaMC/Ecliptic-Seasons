@@ -1,3 +1,7 @@
+### 0.12.0-pre19-1-2
+
+- Fixed a deserialization error in the Crop datapack’s NbtPredicate, which could cause crop requirements to be displayed incorrectly on the client.
+
 ### 0.12.0-pre19-1
 
 - Fixed an issue where deserialization of specified seasons in the animal class configuration file was not working.

@@ -1,6 +1,5 @@
 package com.teamtea.eclipticseasons.api.util.backport;
 
-import com.google.gson.JsonObject;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.advancements.critereon.NbtPredicate;
@@ -28,7 +27,7 @@ public record FakeBlockPredicate(Optional<HolderSet<Block>> blocks,
             p_337342_ -> p_337342_.group(
                             RegistryCodecs.homogeneousList(Registries.BLOCK).optionalFieldOf("blocks").forGetter(FakeBlockPredicate::blocks),
                             FakeStatePropertiesPredicate.CODEC.optionalFieldOf("state").forGetter(FakeBlockPredicate::properties),
-                            ExtraCodecs.JSON.optionalFieldOf("nbt").forGetter(c -> Optional.of(c.nbt().map(NbtPredicate::serializeToJson).orElse(new JsonObject())))
+                            ExtraCodecs.JSON.optionalFieldOf("nbt").forGetter(c -> c.nbt().map(NbtPredicate::serializeToJson))
                     )
                     .apply(p_337342_, (holders, fakeStatePropertiesPredicate, jsonElement) ->
                             new FakeBlockPredicate(holders, fakeStatePropertiesPredicate, jsonElement.map(NbtPredicate::fromJson)))
