@@ -6,6 +6,7 @@ import com.teamtea.eclipticseasons.api.data.climate.AgroClimaticZone;
 import com.teamtea.eclipticseasons.api.data.climate.BiomesClimateSettings;
 import com.teamtea.eclipticseasons.api.data.craft.HumidityControl;
 import com.teamtea.eclipticseasons.api.data.crop.CropGrowControlBuilder;
+import com.teamtea.eclipticseasons.api.data.misc.ESSortInfo;
 import com.teamtea.eclipticseasons.api.data.season.SeasonCycle;
 import com.teamtea.eclipticseasons.api.data.season.SnowDefinition;
 import com.teamtea.eclipticseasons.api.data.weather.CustomRainBuilder;
@@ -69,6 +70,7 @@ public class AllListener {
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void onTagsUpdatedEventEarly(TagsUpdatedEvent tagsUpdatedEvent) {
+        ESSortInfo.resetUpdate(tagsUpdatedEvent.getRegistryAccess(), tagsUpdatedEvent.getUpdateCause() == TagsUpdatedEvent.UpdateCause.SERVER_DATA_LOAD);
         BiomeClimateManager.resetBiomeTags(tagsUpdatedEvent.getRegistryAccess(), tagsUpdatedEvent.getUpdateCause() == TagsUpdatedEvent.UpdateCause.SERVER_DATA_LOAD);
     }
 
@@ -95,6 +97,7 @@ public class AllListener {
         NaturalPlantHandler.clearOnClientExitOrServerClose();
         BiomeClimateManager.clearOnClientExitOrServerClose();
         SnowChecker.clearOnClientExitOrServerClose();
+        ESSortInfo.clearOnClientExitOrServerClose();
     }
 
     @SubscribeEvent

@@ -1,0 +1,5 @@
+{
+  "registry": "eclipticseasons:biome_climate_setting",
+  "target": "eclipticseasons:savanna",
+  "priority": 800
+}

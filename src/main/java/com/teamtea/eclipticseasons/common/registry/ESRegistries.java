@@ -6,6 +6,7 @@ import com.teamtea.eclipticseasons.api.data.climate.BiomesClimateSettings;
 import com.teamtea.eclipticseasons.api.data.craft.HumidityControl;
 import com.teamtea.eclipticseasons.api.data.craft.WetterStructure;
 import com.teamtea.eclipticseasons.api.data.crop.CropGrowControlBuilder;
+import com.teamtea.eclipticseasons.api.data.misc.ESSortInfo;
 import com.teamtea.eclipticseasons.api.data.quest.SeasonQuest;
 import com.teamtea.eclipticseasons.api.data.season.SeasonCycle;
 import com.teamtea.eclipticseasons.api.data.season.definition.SeasonDefinition;
@@ -46,6 +47,8 @@ public class ESRegistries {
     public static final ResourceKey<Registry<WeatherRegion>> WEATHER_REGION = ResourceKey.createRegistryKey(EclipticSeasons.rl("weather_region"));
 
     public static final ResourceKey<Registry<SeasonDefinition>> SEASON_DEFINITION = ResourceKey.createRegistryKey(EclipticSeasons.rl("season_definitions"));
+
+    public static final ResourceKey<Registry<ESSortInfo>> EXTRA_INFO = ResourceKey.createRegistryKey(EclipticSeasons.rl("extra_info"));
 
     public static <T> String createLangKey(ResourceKey<Registry<T>> registryResourceKey, ResourceLocation resourceLocation) {
         // return resourceLocation.toLanguageKey(registryResourceKey.location().getPath());

@@ -2,6 +2,7 @@ package com.teamtea.eclipticseasons.common.block;
 
 import com.mojang.datafixers.util.Pair;
 import com.teamtea.eclipticseasons.api.data.craft.HumidityControl;
+import com.teamtea.eclipticseasons.api.data.misc.ESSortInfo;
 import com.teamtea.eclipticseasons.common.block.base.SimpleEntityBlock;
 import com.teamtea.eclipticseasons.common.block.blockentity.BlockInCopperGrateBlockEntity;
 import com.teamtea.eclipticseasons.common.block.blockentity.QuestHangingSignBlockEntity;
@@ -47,7 +48,7 @@ public class BlockInGrateBlock extends SimpleEntityBlock implements SimpleWaterl
 
     public static Pair<BlockItem, HumidityControl> getItemMatch(Level level, ItemStack stack) {
         if (stack.getItem() instanceof BlockItem blockItem) {
-            for (HumidityControl humidityControl : level.registryAccess().registryOrThrow(ESRegistries.HUMIDITY_CONTROL)) {
+            for (HumidityControl humidityControl : ESSortInfo.sorted2(level.registryAccess().registryOrThrow(ESRegistries.HUMIDITY_CONTROL))) {
                 if (humidityControl.ingredient().test(stack)) {
                     return Pair.of(blockItem, humidityControl);
                 }

@@ -2,6 +2,7 @@ package com.teamtea.eclipticseasons.common.block.blockentity;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.data.craft.HumidityControl;
+import com.teamtea.eclipticseasons.api.data.misc.ESSortInfo;
 import com.teamtea.eclipticseasons.api.data.misc.PosAndBlockStateCheck;
 import com.teamtea.eclipticseasons.api.util.SimpleUtil;
 import com.teamtea.eclipticseasons.common.block.blockentity.base.SyncBlockEntity;
@@ -116,7 +117,7 @@ public class HumidityControlBlockEntity extends SyncBlockEntity {
 
     protected void searchRecipe() {
         if (humidityControl == null) {
-            for (HumidityControl humidityControl : level.registryAccess().registryOrThrow(ESRegistries.HUMIDITY_CONTROL)) {
+            for (HumidityControl humidityControl : ESSortInfo.sorted2(level.registryAccess().registryOrThrow(ESRegistries.HUMIDITY_CONTROL))) {
                 if (isRecipeCacheValid(humidityControl)
                 ) {
                     this.humidityControl = humidityControl;

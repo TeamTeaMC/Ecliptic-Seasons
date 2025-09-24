@@ -262,7 +262,7 @@ public class CommonConfig {
                     .define("RegisterCropDefaultValue", false);
 
             forceCompatMode = builder.comment("Force all crops to use compatibility mode for growth control, not just those tagged as eclipticseasons:natural_plants.")
-                    .define("ForceCompatMode", false);
+                    .define("ForceCompatMode", true);
 
             saveChunkEnvironmentalHumidity = builder.comment("Save environmental humidity modifiers to chunk file.")
                     .define("SaveChunkEnvironmentalHumidity", true);

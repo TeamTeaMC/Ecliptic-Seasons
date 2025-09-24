@@ -1,6 +1,7 @@
 package com.teamtea.eclipticseasons.common.core.snow;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
+import com.teamtea.eclipticseasons.api.data.misc.ESSortInfo;
 import com.teamtea.eclipticseasons.api.data.season.SnowDefinition;
 import com.teamtea.eclipticseasons.api.util.SimpleUtil;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
@@ -66,16 +67,13 @@ public class SnowChecker {
             SimpleUtil.warningForModWrongCalling(ESRegistries.SNOW_DEFINITIONS);
         } else {
             SNOW_DEFINITION_MAP.clear();
-            if (isServer) {
-                for (SnowDefinition snowDefinition : registryAccess.registryOrThrow(ESRegistries.SNOW_DEFINITIONS)) {
-                    snowDefinition.fillMap(SNOW_DEFINITION_MAP);
-                }
-            } else {
-                if (ClientCon.snowDefCache != null)
-                    for (SnowDefinition snowDefinition : ClientCon.snowDefCache.build(registryAccess, SnowDefinition.class)) {
-                        snowDefinition.fillMap(SNOW_DEFINITION_MAP);
-                    }
+            if (ClientCon.snowDefCache != null)
+                ClientCon.snowDefCache.build(registryAccess, SnowDefinition.class);
+
+            for (SnowDefinition snowDefinition : ESSortInfo.sorted2(registryAccess.registryOrThrow(ESRegistries.SNOW_DEFINITIONS))) {
+                snowDefinition.fillMap(SNOW_DEFINITION_MAP);
             }
+
             EclipticSeasons.logger("Has registered extra snow definitions with size %s.".formatted(SNOW_DEFINITION_MAP.size()));
         }
     }

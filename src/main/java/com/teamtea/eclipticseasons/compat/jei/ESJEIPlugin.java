@@ -2,15 +2,22 @@ package com.teamtea.eclipticseasons.compat.jei;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.data.craft.HumidityControl;
+import com.teamtea.eclipticseasons.api.data.misc.ESSortInfo;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
+import com.teamtea.eclipticseasons.common.registry.ESRegistries;
 import com.teamtea.eclipticseasons.common.registry.ItemRegistry;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.registration.IRecipeCatalystRegistration;
 import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
+import net.minecraft.client.Minecraft;
+import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Optional;
 
 @JeiPlugin
 public class ESJEIPlugin implements IModPlugin {
@@ -41,6 +48,11 @@ public class ESJEIPlugin implements IModPlugin {
 
     @Override
     public void registerRecipes(@NotNull IRecipeRegistration registration) {
-        registration.addRecipes(HUMIDITY_CONTROL_RECIPE_TYPE, ClientCon.humidityControls);
+        Level level = Minecraft.getInstance().level;
+        if (level == null) return;
+        Optional<Registry<HumidityControl>> humidityControls = level.registryAccess().registry(
+                ESRegistries.HUMIDITY_CONTROL
+        );
+        humidityControls.ifPresent(controls -> registration.addRecipes(HUMIDITY_CONTROL_RECIPE_TYPE, ESSortInfo.sorted2(controls)));
     }
 }

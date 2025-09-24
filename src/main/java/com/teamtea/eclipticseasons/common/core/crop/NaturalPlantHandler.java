@@ -3,6 +3,7 @@ package com.teamtea.eclipticseasons.common.core.crop;
 import com.mojang.datafixers.util.Pair;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
+import com.teamtea.eclipticseasons.api.data.misc.ESSortInfo;
 import com.teamtea.eclipticseasons.api.data.season.definition.ChangeMode;
 import com.teamtea.eclipticseasons.api.data.season.definition.ISeasonChangeContext;
 import com.teamtea.eclipticseasons.api.data.season.definition.SeasonDefinition;
@@ -45,7 +46,7 @@ public class NaturalPlantHandler {
             if (registry.isEmpty()) {
                 SimpleUtil.warningForModWrongCalling(ESRegistries.SEASON_DEFINITION);
             } else {
-                for (SeasonDefinition seasonDefinition : registry.get()) {
+                for (SeasonDefinition seasonDefinition : ESSortInfo.sorted2( registry.get())) {
                     Enum2ObjectMap<SolarTerm, List<ChangeMode>> combine = seasonDefinition.changes().combine();
                     combine.forEach(
                             (solarTerm, changeModes) -> {

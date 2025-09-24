@@ -9,6 +9,7 @@ import com.teamtea.eclipticseasons.api.data.climate.BiomesClimateSettings;
 import com.teamtea.eclipticseasons.api.data.craft.HumidityControl;
 import com.teamtea.eclipticseasons.api.data.craft.WetterStructure;
 import com.teamtea.eclipticseasons.api.data.crop.CropGrowControlBuilder;
+import com.teamtea.eclipticseasons.api.data.misc.ESSortInfo;
 import com.teamtea.eclipticseasons.api.data.quest.SeasonQuest;
 import com.teamtea.eclipticseasons.api.data.season.SeasonCycle;
 import com.teamtea.eclipticseasons.api.data.season.definition.SeasonDefinition;
@@ -89,6 +90,8 @@ public class ModContents {
         event.dataPackRegistry(ESRegistries.WEATHER_REGION, WeatherRegion.CODEC);
         event.dataPackRegistry(ESRegistries.SEASON_DEFINITION, SeasonDefinition.CODEC);
 
+        // sync safely
+        event.dataPackRegistry(ESRegistries.EXTRA_INFO, ESSortInfo.CODEC, ESSortInfo.CODEC);
     }
 
     @SubscribeEvent

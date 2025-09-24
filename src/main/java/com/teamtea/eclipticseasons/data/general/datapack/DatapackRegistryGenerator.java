@@ -27,16 +27,17 @@ public class DatapackRegistryGenerator extends DatapackBuiltinEntriesProvider {
             .add(ESRegistries.SNOW_DEFINITIONS, SnowDefinitionsRegistry::bootstrap)
             .add(ESRegistries.SEASON_PHASE, SeasonPhaseRegistry::bootstrap)
             .add(ESRegistries.SEASON_CYCLE, SeasonCycleRegistry::bootstrap)
+            .add(ESRegistries.EXTRA_INFO, ESSortInfoRegistry::bootstrap)
             ;
 
     public DatapackRegistryGenerator(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
         super(output, registries, REGISTRY_SET_BUILDER, Set.of(EclipticSeasonsApi.MODID));
     }
 
-    public static HolderLookup.Provider constructRegistries(HolderLookup.Provider original, RegistrySetBuilder datapackEntriesBuilder)
-    {
+    public static HolderLookup.Provider constructRegistries(HolderLookup.Provider original, RegistrySetBuilder datapackEntriesBuilder) {
         var builderKeys = new HashSet<>(datapackEntriesBuilder.getEntryKeys());
-        DataPackRegistriesHooks.getDataPackRegistriesWithDimensions().filter(data -> !builderKeys.contains(data.key())).forEach(data -> datapackEntriesBuilder.add(data.key(), context -> {}));
+        DataPackRegistriesHooks.getDataPackRegistriesWithDimensions().filter(data -> !builderKeys.contains(data.key())).forEach(data -> datapackEntriesBuilder.add(data.key(), context -> {
+        }));
         return datapackEntriesBuilder.buildPatch(RegistryAccess.fromRegistryOfRegistries(BuiltInRegistries.REGISTRY), original);
     }
 }

@@ -4,6 +4,7 @@ package com.teamtea.eclipticseasons.client;
 import com.mojang.brigadier.CommandDispatcher;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
+import com.teamtea.eclipticseasons.api.data.misc.ESSortInfo;
 import com.teamtea.eclipticseasons.api.event.ESClientEntityTickEvent;
 import com.teamtea.eclipticseasons.api.misc.IChunkBiomeHolder;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
@@ -129,6 +130,7 @@ public final class ClientEventHandler {
             ClientCon.onClientPlayerExit();
             ClientRef.onClientPlayerExit();
             SnowChecker.clearOnClientExitOrServerClose();
+            ESSortInfo.clearOnClientExitOrServerClose();
         }
     }
 
