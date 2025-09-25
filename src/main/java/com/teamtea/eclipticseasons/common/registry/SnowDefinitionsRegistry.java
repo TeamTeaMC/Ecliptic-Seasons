@@ -23,6 +23,8 @@ public class SnowDefinitionsRegistry {
     public static final ResourceKey<SnowDefinition> SNOWY_SWEET_BERRY_BUSH = createKey("snowy_sweet_berry_bush");
     public static final ResourceKey<SnowDefinition> SNOWY_DEAD_BUSH = createKey("snowy_dead_bush");
     public static final ResourceKey<SnowDefinition> SNOWY_SUGAR_CANE = createKey("snowy_sugar_cane");
+    public static final ResourceKey<SnowDefinition> SNOWY_BAMBOO = createKey("snowy_bamboo");
+    public static final ResourceKey<SnowDefinition> SNOWY_BAMBOO_SAPLING = createKey("snowy_bamboo_sapling");
 
 
     private static ResourceKey<SnowDefinition> createKey(String name) {
