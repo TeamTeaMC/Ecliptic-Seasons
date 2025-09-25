@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.function.BiFunction;
 
 public class SnowDefinitionsRegistry {
-    public static final ResourceKey<SnowDefinition> OVERLAY = createKey("test/overlay");
+    private static final ResourceKey<SnowDefinition> OVERLAY = createKey("test/overlay");
 
     public static final ResourceKey<SnowDefinition> SNOWY_GRASS_BLOCK = createKey("snowy_grass_block");
 
@@ -29,12 +29,16 @@ public class SnowDefinitionsRegistry {
         return ResourceKey.create(ESRegistries.SNOW_DEFINITIONS, EclipticSeasons.rl(name));
     }
 
-    public static void bootstrap(BootstapContext<SnowDefinition> context) {
+    public static void bootstrap2(BootstapContext<SnowDefinition> context) {
         var blockHolderGetter = context.lookup(Registries.BLOCK);
         context.register(OVERLAY, SnowDefinition.builder()
                 .blocks(HolderSet.direct())
                 .info(SnowDefinition.Info.builder().mid(ClientModelDefinitions.OVERLAY).build())
                 .build());
+    }
+
+    public static void bootstrap(BootstapContext<SnowDefinition> context) {
+        var blockHolderGetter = context.lookup(Registries.BLOCK);
         context.register(SNOWY_GRASS_BLOCK, SnowDefinition.builder()
                 .blocks(HolderSet.direct(Blocks.GRASS_BLOCK.builtInRegistryHolder()))
                 .info(SnowDefinition.Info.builder().mid(ClientModelDefinitions.SNOWY_GRASS_BLOCK_OVERLAY).build())

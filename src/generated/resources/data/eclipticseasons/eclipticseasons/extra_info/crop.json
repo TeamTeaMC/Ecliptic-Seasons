@@ -1,8 +1,6 @@
 {
   "registry": "eclipticseasons:crop",
   "target": [
-    "eclipticseasons:templates/wheat",
-    "eclipticseasons:wheat2",
     "eclipticseasons:seasons/spring",
     "eclipticseasons:seasons/summer",
     "eclipticseasons:seasons/autumn",

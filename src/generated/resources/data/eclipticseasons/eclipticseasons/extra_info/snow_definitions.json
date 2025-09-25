@@ -1,7 +1,6 @@
 {
   "registry": "eclipticseasons:snow_definitions",
   "target": [
-    "eclipticseasons:test/overlay",
     "eclipticseasons:snowy_grass_block",
     "eclipticseasons:snowy_sweet_berry_bush",
     "eclipticseasons:snowy_dead_bush",

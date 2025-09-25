@@ -21,6 +21,7 @@ public class ESSortInfoRegistry {
         try {
             for (Field field : classType.getDeclaredFields()) {
                 if (java.lang.reflect.Modifier.isStatic(field.getModifiers())
+                        && java.lang.reflect.Modifier.isPublic(field.getModifiers())
                         && ResourceKey.class.isAssignableFrom(field.getType())) {
                     Object value = field.get(null);
                     if (value instanceof ResourceKey<?> key) {

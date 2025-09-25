@@ -18,6 +18,7 @@ public class DatapackRegistryGeneratorExample extends DatapackBuiltinEntriesProv
             .add(ESRegistries.SNOW_TERM, SnowTermRegistry::bootstrap2)
             .add(ESRegistries.CROP, CropRegistry::bootstrap2)
             .add(ESRegistries.WEATHER_REGION, WeatherRegionRegistry::bootstrap2)
+            .add(ESRegistries.SNOW_DEFINITIONS, SnowDefinitionsRegistry::bootstrap2)
             .add(ESRegistries.SEASON_DEFINITION, SeasonDefinitionRegistry::bootstrap2)
             ;
 
