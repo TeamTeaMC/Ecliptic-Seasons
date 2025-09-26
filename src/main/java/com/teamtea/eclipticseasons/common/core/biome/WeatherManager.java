@@ -17,7 +17,7 @@ import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.api.util.SimpleUtil;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
-import com.teamtea.eclipticseasons.common.advancement.SolarTermsRecordCa;
+import com.teamtea.eclipticseasons.common.advancement.SolarTermsRecord;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.network.message.BiomeWeatherMessage;
@@ -47,8 +47,6 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.levelgen.Heightmap;
-import net.minecraft.world.level.storage.ServerLevelData;
-import net.minecraft.world.level.storage.WritableLevelData;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraftforge.common.util.FakePlayer;
@@ -125,8 +123,25 @@ public class WeatherManager {
         return isClient ? ClientCon.getUseLevel() : getMainServerLevel();
     }
 
-    public static float getAverageRainLevel(Level level, float delta) {
+    public static void tickAverageWeather(Level level) {
+        if (level instanceof IBiomeWeatherProvider provider
+                && EclipticSeasonsApi.getInstance().hasLocalWeather(level)) {
+            provider.es$setAverageRainLevel(calculateAverageRainLevel(level, 1f));
+            provider.es$setAverageThunderLevel(calculateAverageThunderLevel(level, 1f));
+        }
+    }
+
+
+    public static float calculateAverageRainLevel(Level level, float delta) {
         return getAverageWeatherLevel(level, delta, BiomeWeather::shouldRain);
+    }
+
+    public static float calculateAverageThunderLevel(Level level, float delta) {
+        return getAverageWeatherLevel(level, delta, BiomeWeather::shouldThunder);
+    }
+
+    public static float getAverageRainLevel(Level level, float delta) {
+        return ((IBiomeWeatherProvider) level).es$getAverageRainLevel(delta);
     }
 
     public static boolean isEffectiveRaining(ServerLevel level) {
@@ -134,7 +149,7 @@ public class WeatherManager {
     }
 
     public static float getAverageThunderLevel(Level level, float delta) {
-        return getAverageWeatherLevel(level, delta, BiomeWeather::shouldThunder);
+        return ((IBiomeWeatherProvider) level).es$getAverageThunderLevel(delta);
     }
 
     public static boolean isEffectiveThundering(ServerLevel level) {
@@ -675,14 +690,13 @@ public class WeatherManager {
         WeatherManager.sendBiomePacket(WeatherManager.getBiomeList(serverPlayer.level()), List.of(serverPlayer));
     }
 
-    public static void tickPlayerForSeasonCheck(ServerPlayer serverPlayer) {
-        var level = serverPlayer.level();
-        if (level.getGameTime() % 200 == 0) {
-            var holder = serverPlayer.getCapability(SolarTermsRecordCa.SOLAR_TERMS_RECORD_CA_CAPABILITY);
+    public static void tickPlayerForSeasonCheck(ServerPlayer serverPlayer, SolarTerm st) {
+        // if (level.getGameTime() % 200 == 0)
+        {
+            var holder = serverPlayer.getCapability(SolarTermsRecord.SOLAR_TERMS_RECORD_CA_CAPABILITY);
             holder.ifPresent(
                     solarTermsRecordCa ->
                     {
-                        var st = EclipticSeasonsApi.getInstance().getSolarTerm(level);
                         if (solarTermsRecordCa.addAndCheck(st)) {
                         } else ModAdvancements.solarTermsCriterion.trigger(serverPlayer);
                     }

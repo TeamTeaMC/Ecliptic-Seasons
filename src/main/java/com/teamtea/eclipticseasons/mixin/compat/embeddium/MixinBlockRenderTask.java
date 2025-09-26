@@ -108,7 +108,7 @@ public abstract class MixinBlockRenderTask {
         if (snowModel != null) {
             if (this instanceof IIrisShaderAccesor iIrisShaderAccesor) {
                 if (ExtraModelManager.renderAsSnowInShader(state, ctx.world(), mutableBlockPos))
-                    iIrisShaderAccesor.eclipticseasons$setSnowy(buildContext, Blocks.SNOW.defaultBlockState());
+                    iIrisShaderAccesor.eclipticseasons$setSnowy(buildContext, Blocks.SNOW_BLOCK.defaultBlockState());
             }
             original = false;
             ctx.update(mutableBlockPos,

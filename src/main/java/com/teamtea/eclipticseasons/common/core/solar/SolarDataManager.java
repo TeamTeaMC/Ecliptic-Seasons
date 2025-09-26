@@ -445,7 +445,10 @@ public class SolarDataManager extends SavedData {
                 if (updateTempChange) {
                     SimpleNetworkHandler.send(player, new UpdateTempChangeMessage(getSolarTempChange()));
                 }
-                WeatherManager.tickPlayerForSeasonCheck(player);
+
+                if (changeSolarTerm) {
+                    WeatherManager.tickPlayerForSeasonCheck(player,solarTerm);
+                }
             }
         }
     }

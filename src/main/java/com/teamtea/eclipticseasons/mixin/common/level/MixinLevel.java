@@ -114,4 +114,29 @@ public class MixinLevel implements IBiomeWeatherProvider {
     public void es$set(ArrayList<WeatherManager.BiomeWeather> biomeWeathers) {
         this.eclipticseasons$biomeWeathers = biomeWeathers;
     }
+
+    @Unique
+    float es$averageRainLevel;
+    @Unique
+    float es$averageThunderLevel;
+
+    @Override
+    public float es$getAverageRainLevel(float delta) {
+        return es$averageRainLevel;
+    }
+
+    @Override
+    public float es$getAverageThunderLevel(float delta) {
+        return es$averageThunderLevel;
+    }
+
+    @Override
+    public void es$setAverageRainLevel(float value) {
+        this.es$averageRainLevel = value;
+    }
+
+    @Override
+    public void es$setAverageThunderLevel(float value) {
+        this.es$averageThunderLevel = value;
+    }
 }

@@ -7,6 +7,7 @@ import com.teamtea.eclipticseasons.client.render.WorldRenderer;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.config.ClientConfig;
+import com.teamtea.eclipticseasons.config.CommonConfig;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
@@ -29,6 +30,7 @@ public class IceKeeper {
     public static final LongOpenHashSet ICE_SHOULD_BE_IGNORED = new LongOpenHashSet();
 
     public static void checkIfPlayerStepInFrozenWater(Entity player) {
+        if (!CommonConfig.isSnowyWinter()) return ;
         if (!ClientConfig.Debug.frozenWater.get() || !ClientConfig.Debug.frozenWaterBreakable.get()) return;
         if (!player.isInWater()) return;
         Level level = player.level();
@@ -76,6 +78,7 @@ public class IceKeeper {
 
 
     public static boolean notFrozen(BlockAndTintGetter worldSlice, BlockPos blockPos, BlockState blockState, FluidState fluidState) {
+        if (!CommonConfig.isSnowyWinter()) return true;
         if (!ClientConfig.Debug.frozenWater.get()) return true;
         if (!fluidState.isSourceOfType(Fluids.WATER)) return true;
         if (!(worldSlice instanceof IMapSlice mapSlice)) return true;

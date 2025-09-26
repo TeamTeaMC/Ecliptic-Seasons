@@ -14,7 +14,7 @@ import com.teamtea.eclipticseasons.api.data.weather.CustomSnowTerm;
 import com.teamtea.eclipticseasons.api.event.CanPlantGrowEvent;
 import com.teamtea.eclipticseasons.api.misc.IChunkBiomeHolder;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
-import com.teamtea.eclipticseasons.common.advancement.SolarTermsRecordCa;
+import com.teamtea.eclipticseasons.common.advancement.SolarTermsRecord;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
@@ -221,14 +221,22 @@ public class AllListener {
 
     @SubscribeEvent
     public static void onLevelTick(TickEvent.LevelTickEvent event) {
-        if (event.phase.equals(TickEvent.Phase.END)
-                && event.level instanceof ServerLevel serverLevel) {
-            SolarDataManager data = SolarHolders.getSaveData(event.level);
-            if (data != null) {
-                data.tickLevel(serverLevel);
+        if (event.phase.equals(TickEvent.Phase.END)) {
+            if (event.level instanceof ServerLevel serverLevel) {
+                SolarDataManager data = SolarHolders.getSaveData(event.level);
+                if (data != null) {
+                    data.tickLevel(serverLevel);
+                }
             }
+
+            MapChecker.tickLevel(event.level);
         }
-        MapChecker.tickLevel(event.level);
+    }
+
+    @SubscribeEvent
+    public static void onLevelTickPre(TickEvent.LevelTickEvent event) {
+        if (event.phase.equals(TickEvent.Phase.START)&&event.level instanceof ServerLevel)
+            WeatherManager.tickAverageWeather(event.level);
     }
 
     @SubscribeEvent
@@ -333,7 +341,7 @@ public class AllListener {
     @SubscribeEvent
     public static void onAttachCapabilitiesEvent(AttachCapabilitiesEvent<Entity> event) {
         if (event.getObject() instanceof Player) {
-            event.addCapability(EclipticSeasons.rl("solar_term_holder"), new SolarTermsRecordCa());
+            event.addCapability(EclipticSeasons.rl("solar_term_holder"), new SolarTermsRecord());
         }
     }
 

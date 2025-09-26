@@ -6,6 +6,7 @@ import com.teamtea.eclipticseasons.api.constant.crop.CropHumidityType;
 import com.teamtea.eclipticseasons.api.constant.crop.CropSeasonType;
 import com.teamtea.eclipticseasons.api.constant.tag.ESItemTags;
 import com.teamtea.eclipticseasons.api.constant.tag.EclipticBlockTags;
+import com.teamtea.eclipticseasons.common.registry.ItemRegistry;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.ItemTagsProvider;
@@ -66,6 +67,8 @@ public final class ESItemTagProvider extends ItemTagsProvider {
         tag(ESItemTags.HEAT_PROTECTIVE_HELMETS);
         tag(ESItemTags.UNAFFECTED_BY_SEASONS);
         tag(ESItemTags.UNAFFECTED_BY_HUMIDITY);
+
+        tag(ItemTags.MUSIC_DISCS).add(ItemRegistry.snowless_hometown.get());
     }
 
 
