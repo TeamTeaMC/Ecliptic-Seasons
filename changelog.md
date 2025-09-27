@@ -1,3 +1,12 @@
+### 0.12.0-z
+
+- Enabled ForceCompatMode by default, since many crop-related mods do not use Forge crop events. Forced compatibility essentially restricts random block ticks; if issues occur (though unlikely), you may try disabling it.
+- Optimized data recording and caching fields for the “Spring Gone, Autumn Come” advancement. This change invalidates old version data, but it improves tracking of how many seasonal cycles a player has passed, allowing for special use cases.
+- Added a special extra_info data pack for prioritizing Ecliptic Seasons’ data packs and removing built-in registrations. For example, biomes can now use an independent argo climate without overriding the built-in argo files. This applies to all mod-provided data pack registrations; please report if you find cases where it doesn’t.
+- The FrozenWater feature now requires SnowyWinter to be enabled first, keeping it consistent with existing seasonal mechanics.
+- Added temporary caching to server-side global weather parameter calculations when Solar Weather is enabled.
+- Optimized the snow reflection parameter object during Iris loading, now aligned with the snow block rather than the snow layer, fixing distant transparency issues in certain shaders (e.g., Complementary Shaders Unbound).
+
 ### 0.12.0-pre19-1-2
 
 - Fixed a deserialization error in the Crop datapack’s NbtPredicate, which could cause crop requirements to be displayed incorrectly on the client.
