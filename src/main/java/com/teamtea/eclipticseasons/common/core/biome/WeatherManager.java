@@ -1,6 +1,7 @@
 package com.teamtea.eclipticseasons.common.core.biome;
 
 import com.teamtea.eclipticseasons.api.constant.climate.WeatherMode;
+import com.teamtea.eclipticseasons.api.constant.tag.ClimateTypeBiomeTags;
 import com.teamtea.eclipticseasons.api.constant.tag.ESEnchantmentTags;
 import com.teamtea.eclipticseasons.api.constant.tag.ESItemTags;
 import com.teamtea.eclipticseasons.api.constant.tag.ESMobEffectTags;
@@ -361,7 +362,8 @@ public class WeatherManager {
         }
 
         return CommonConfig.Weather.notRainInDesert.get()
-                && !biome.getModifiedClimateSettings().hasPrecipitation();
+                && !biome.getModifiedClimateSettings().hasPrecipitation()
+                && BiomeClimateManager.getTag(biome) == ClimateTypeBiomeTags.MONSOONAL;
     }
 
     public static void createLevelBiomeWeatherList(Level level) {
