@@ -89,22 +89,6 @@ public class BiomeClimateManager {
         } else if (registry6 != null && registry6.isEmpty()) {
             SimpleUtil.warningForModWrongCalling(ESRegistries.WEATHER_REGION);
         } else {
-            // if (isServer) {
-            //     Registry<BiomesClimateSettings> biomesClimateSettings = registry.get();
-            //     resetBiomeClimateMap(registryAccess, biomesClimateSettings, BIOME_CLIMATE_MAP);
-            //     Registry<SeasonCycle> seasonCycles = registry3.get();
-            //     resetSeasonPhaseMap(registryAccess, seasonCycles, SEASON_PHASE_MAP);
-            // } else {
-            //     if (ClientCon.biomeDataPackCache != null) {
-            //         List<BiomesClimateSettings> build = ClientCon.biomeDataPackCache.build(registryAccess, BiomesClimateSettings.class);
-            //         resetBiomeClimateMap(registryAccess, build, BIOME_CLIMATE_MAP);
-            //     }
-            //
-            //     if (ClientCon.seasonCycleCache != null) {
-            //         List<SeasonCycle> build = ClientCon.seasonCycleCache.build(registryAccess, SeasonCycle.class);
-            //         resetSeasonPhaseMap(registryAccess, build, SEASON_PHASE_MAP);
-            //     }
-            // }
             if (isServer) {
                 resetSomeMap(registryAccess, registry6.get(),
                         WEATHER_REGION_MAP,

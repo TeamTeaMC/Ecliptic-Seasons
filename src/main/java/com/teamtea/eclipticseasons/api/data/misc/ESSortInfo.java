@@ -65,7 +65,7 @@ public record ESSortInfo(
 
         Map<ResourceLocation, Map.Entry<ResourceKey<T>, T>> oldMap = new HashMap<>();
         for (Map.Entry<ResourceKey<T>, T> e : original) {
-            if (removemap2.contains(e.getKey().location())) oldMap.put(e.getKey().location(), e);
+            if (!removemap2.contains(e.getKey().location())) oldMap.put(e.getKey().location(), e);
         }
 
         return oldMap.entrySet().stream().sorted(
