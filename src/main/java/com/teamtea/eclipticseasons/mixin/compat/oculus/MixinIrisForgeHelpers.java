@@ -1,7 +1,9 @@
 package com.teamtea.eclipticseasons.mixin.compat.oculus;
 
 
+import com.teamtea.eclipticseasons.compat.CompatModule;
 import com.teamtea.eclipticseasons.compat.iris.IIrisShaderAccesor;
+import com.teamtea.eclipticseasons.config.ClientConfig;
 import me.jellysquid.mods.sodium.client.render.chunk.compile.ChunkBuildContext;
 import me.jellysquid.mods.sodium.client.render.chunk.compile.tasks.ChunkBuilderMeshingTask;
 import net.irisshaders.iris.compat.sodium.impl.block_context.ChunkBuildBuffersExt;
@@ -30,7 +32,8 @@ public abstract class MixinIrisForgeHelpers implements IIrisShaderAccesor {
 
     @Override
     public void eclipticseasons$setSnowy(ChunkBuildContext context, BlockState blockState) {
-        if (context.buffers instanceof ChunkBuildBuffersExt) {
+        if (context.buffers instanceof ChunkBuildBuffersExt
+                && CompatModule.ClientConfig.unifiedSnowyBlockShading.get()) {
             ((ChunkBuildBuffersExt) context.buffers).iris$setMaterialId(blockState, (short) -1, (byte) blockState.getLightEmission());
         }
     }

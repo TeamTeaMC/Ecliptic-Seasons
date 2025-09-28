@@ -2,23 +2,24 @@ package com.teamtea.eclipticseasons.compat;
 
 
 import com.teamtea.eclipticseasons.compat.theoneprobe.TOPReflector;
+import lombok.Getter;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
-
-import java.util.List;
 
 public class CompatModule {
 
     // private static boolean dynamictrees = false;
     // private static boolean cold_sweat = false;
-
+    @Getter
+    private static boolean oculus = false;
     /**
      * Used for mod init detect.
      **/
     public static void init() {
         // dynamictrees = Platform.isModLoaded("dynamictrees");
         // cold_sweat = Platform.isModLoaded("cold_sweat");
+        oculus = Platform.isModLoaded("oculus");
     }
 
     /**
@@ -58,10 +59,16 @@ public class CompatModule {
     }
 
     public static class ClientConfig {
+        public static ForgeConfigSpec.BooleanValue unifiedSnowyBlockShading;
 
         public static void load(ForgeConfigSpec.Builder builder) {
             builder.push("Compat");
-
+            if (isOculus()) {
+                builder.push("Oculus");
+                unifiedSnowyBlockShading = builder.comment("Unify the shading and surface parameters of snow-covered blocks.")
+                        .define("UnifiedSnowyBlockShading", true);
+                builder.pop();
+            }
             builder.pop();
         }
     }
