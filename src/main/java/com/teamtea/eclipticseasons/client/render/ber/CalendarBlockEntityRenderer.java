@@ -86,8 +86,7 @@ public class CalendarBlockEntityRenderer implements BlockEntityRenderer<Calendar
                                 int lastingDaysOfEachTerm = EclipticSeasonsApi.getInstance().getLastingDaysOfEachTerm(blockEntity.getLevel());
                                 int remain = Mth.floor(((1 - ClientCon.progress / 100f) * lastingDaysOfEachTerm));
                                 remain += lastingDaysOfEachTerm * (
-                                        (nextPair.getFirst().ordinal() < st.ordinal() ? 24 : 0)
-                                                + nextPair.getFirst().ordinal() - (st.getNextSolarTerm().ordinal()));
+                                        ((nextPair.getFirst().ordinal() - st.getNextSolarTerm().ordinal() + 24) % 24));
                                 remain = iSolarTermOriginal == nextPair.getSecond() ? 0 : remain;
                                 string = Component.translatable("info.eclipticseasons.environment.solar_term.hint3", remain).getString();
                             }
