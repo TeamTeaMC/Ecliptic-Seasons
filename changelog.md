@@ -1,3 +1,8 @@
+### 0.12.0-z-2
+
+- Fixed an issue where the calendar displayed incorrectly in Next mode when it was the last solar term of the year.
+- Added a more complete built-in compatibility system for crop growth conditions. Note that humidity requirements are now included; if you encounter errors, you can disable this feature in the settings.
+
 ### 0.12.0-z
 
 - Enabled ForceCompatMode by default, since many crop-related mods do not use Forge crop events. Forced compatibility

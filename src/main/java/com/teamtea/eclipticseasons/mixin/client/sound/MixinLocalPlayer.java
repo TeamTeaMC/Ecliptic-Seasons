@@ -26,7 +26,9 @@ public abstract class MixinLocalPlayer {
     private List<AmbientSoundHandler> ambientSoundHandlers;
 
     @Inject(at = {@At("RETURN")}, method = {"<init>"})
-    private void eclipticseasons$init(CallbackInfo ci, @Local Minecraft minecraft, @Local ClientLevel clientLevel) {
+    private void eclipticseasons$init(CallbackInfo ci,
+                                      @Local(argsOnly = true) Minecraft minecraft,
+                                      @Local(argsOnly = true) ClientLevel clientLevel) {
         if (ClientConfig.Sound.sound.get() && MapChecker.isValidDimension(clientLevel))
             ambientSoundHandlers.add(new SeasonalBiomeAmbientSoundsHandler((LocalPlayer) (Object) this, minecraft.getSoundManager(), clientLevel.getBiomeManager()));
     }
