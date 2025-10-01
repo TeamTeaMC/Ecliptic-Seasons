@@ -43,6 +43,9 @@ public class BlockRegistry {
     public static final RegistryObject<Block> block_in_wooden_grate_block = BLOCK_DEFERRED_REGISTER.register("block_in_wooden_grate_block", () -> new BlockInGrateBlock(BlockBehaviour.Properties.copy(Blocks.OAK_PLANKS).noOcclusion().sound(SoundType.BAMBOO_WOOD)
             .mapColor(MapColor.WOOD).pushReaction(PushReaction.NORMAL)));
 
+    public static final RegistryObject<Block> snow_cauldron = BLOCK_DEFERRED_REGISTER.register("snow_cauldron", () -> new IceOrSnowCauldronBlock(BlockBehaviour.Properties.copy(Blocks.CAULDRON)));
+    public static final RegistryObject<Block> ice_cauldron = BLOCK_DEFERRED_REGISTER.register("ice_cauldron", () -> new IceOrSnowCauldronBlock(BlockBehaviour.Properties.copy(Blocks.CAULDRON)));
+
     public static RegistryObject<Block> snowyLeaves = BLOCK_DEFERRED_REGISTER.register("snowy_leaves", () -> new Block(BlockBehaviour.Properties.copy(Blocks.SNOW_BLOCK).dynamicShape().noOcclusion()));
     public static RegistryObject<Block> snowyBlock = BLOCK_DEFERRED_REGISTER.register("snowy_block", () -> new Block(BlockBehaviour.Properties.copy(Blocks.SNOW_BLOCK).dynamicShape().noOcclusion()));
     public static RegistryObject<Block> snowyStairs = BLOCK_DEFERRED_REGISTER.register("snowy_stairs", () -> new StairBlock(Blocks.OAK_PLANKS::defaultBlockState, BlockBehaviour.Properties.copy(Blocks.OAK_STAIRS).dynamicShape().noOcclusion()));

@@ -2,6 +2,7 @@ package com.teamtea.eclipticseasons.compat.jade;
 
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
+import com.teamtea.eclipticseasons.common.block.IceOrSnowCauldronBlock;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.block.Block;
@@ -22,6 +23,7 @@ public class JadeCompact implements IWailaPlugin {
     public void registerClient(IWailaClientRegistration registration) {
         registration.registerBlockComponent(JadeCropInfoProvider.INSTANCE, Block.class);
         registration.registerEntityComponent(JadeAnimalBreedInfoProvider.INSTANCE, LivingEntity.class);
+        registration.registerBlockComponent(JadeESCauldronInfoProvider.INSTANCE, IceOrSnowCauldronBlock.class);
 
         registration.addConfig(SHIFT_HINT, true);
         registration.addConfig(SNOWY_STATUS, true);

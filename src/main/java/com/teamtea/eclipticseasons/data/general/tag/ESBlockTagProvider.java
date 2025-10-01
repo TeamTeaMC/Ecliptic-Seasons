@@ -10,6 +10,7 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.data.BlockTagsProvider;
 import net.minecraftforge.common.data.ExistingFileHelper;
 
@@ -83,7 +84,6 @@ public final class ESBlockTagProvider extends BlockTagsProvider {
                 .addTag(BlockTags.SNOW_LAYER_CANNOT_SURVIVE_ON);
 
 
-
         // add mc
         tag(BlockTags.CEILING_HANGING_SIGNS).add(BlockRegistry.season_quest_ceiling_hanging_sign.get());
         tag(BlockTags.WALL_HANGING_SIGNS).add(BlockRegistry.season_quest_wall_hanging_sign.get());
@@ -105,7 +105,13 @@ public final class ESBlockTagProvider extends BlockTagsProvider {
                 BlockRegistry.summer_greenhouse_core.get(),
                 BlockRegistry.autumn_greenhouse_core.get(),
                 BlockRegistry.winter_greenhouse_core.get(),
-                BlockRegistry.greenhouse_core_container.get());
+                BlockRegistry.greenhouse_core_container.get(),
+                BlockRegistry.ice_cauldron.get(),
+                BlockRegistry.snow_cauldron.get());
+
+        tag(BlockTags.CAULDRONS).add(BlockRegistry.ice_cauldron.get(),
+                BlockRegistry.snow_cauldron.get());
+
     }
 
 

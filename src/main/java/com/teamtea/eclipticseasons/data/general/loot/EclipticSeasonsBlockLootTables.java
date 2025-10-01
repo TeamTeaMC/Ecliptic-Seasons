@@ -54,10 +54,9 @@ public class EclipticSeasonsBlockLootTables extends BlockLootSubProvider {
     protected void generate() {
         Set<Block> blocks = BuiltInRegistries.BLOCK.stream()
                 .filter(block -> EclipticSeasonsApi.MODID.equals(BuiltInRegistries.BLOCK.getKey(block).getNamespace()))
-                .filter(block -> ! block.getLootTable().equals( BuiltInLootTables.EMPTY))
-                .filter(block -> block.asItem()!= Items.AIR)
-                .collect(Collectors.toSet())
-                ;
+                .filter(block -> !block.getLootTable().equals(BuiltInLootTables.EMPTY))
+                .filter(block -> block.asItem() != Items.AIR)
+                .collect(Collectors.toSet());
 
         dropSelfWithContents(blocks);
 
@@ -68,12 +67,14 @@ public class EclipticSeasonsBlockLootTables extends BlockLootSubProvider {
         createCoreDrop(BlockRegistry.autumn_greenhouse_core.get(), ItemRegistry.autumn_greenhouse_essence_item.get());
         createCoreDrop(BlockRegistry.winter_greenhouse_core.get(), ItemRegistry.winter_greenhouse_essence_item.get());
 
+        dropOther(BlockRegistry.snow_cauldron.get(), Blocks.CAULDRON);
+        dropOther(BlockRegistry.ice_cauldron.get(), Blocks.CAULDRON);
     }
 
     protected void createCoreDrop(Block pBlock, Item pItem) {
-       add(pBlock, createSilkTouchDispatchTable(pBlock,
-               // HAS_SILK_TOUCH,
-               this.applyExplosionDecay(pBlock, LootItem.lootTableItem(pItem).apply(SetItemCountFunction.setCount(ConstantValue.exactly(1)))))
+        add(pBlock, createSilkTouchDispatchTable(pBlock,
+                // HAS_SILK_TOUCH,
+                this.applyExplosionDecay(pBlock, LootItem.lootTableItem(pItem).apply(SetItemCountFunction.setCount(ConstantValue.exactly(1)))))
         );
     }
 

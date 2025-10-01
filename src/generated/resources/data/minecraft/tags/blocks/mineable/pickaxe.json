@@ -5,6 +5,8 @@
     "eclipticseasons:summer_greenhouse_core",
     "eclipticseasons:autumn_greenhouse_core",
     "eclipticseasons:winter_greenhouse_core",
-    "eclipticseasons:greenhouse_core_container"
+    "eclipticseasons:greenhouse_core_container",
+    "eclipticseasons:ice_cauldron",
+    "eclipticseasons:snow_cauldron"
   ]
 }

@@ -1,6 +1,7 @@
 package com.teamtea.eclipticseasons;
 
 
+import com.teamtea.eclipticseasons.common.block.IceOrSnowCauldronBlock;
 import com.teamtea.eclipticseasons.common.registry.*;
 import com.teamtea.eclipticseasons.compat.CompatModule;
 import com.teamtea.eclipticseasons.config.ClientConfig;
@@ -138,6 +139,7 @@ public class EclipticSeasons {
     public void FMLCommonSetup(final FMLCommonSetupEvent event) {
         event.enqueueWork(SimpleNetworkHandler::init);
         event.enqueueWork(CompatModule::setup);
+        event.enqueueWork(IceOrSnowCauldronBlock::init);
     }
 
     public void gatherData(final GatherDataEvent event) {

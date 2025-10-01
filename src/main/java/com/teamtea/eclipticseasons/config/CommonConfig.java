@@ -94,6 +94,7 @@ public class CommonConfig {
         public static ForgeConfigSpec.BooleanValue disableSnowOverlayControlTag;
         public static ForgeConfigSpec.BooleanValue disableChunkCacheCleaner;
         public static ForgeConfigSpec.BooleanValue disableUniqueRebindingBiomeTags;
+        public static ForgeConfigSpec.BooleanValue disableIceOrSnowCauldron;
 
         private static void load(ForgeConfigSpec.Builder builder) {
             builder.push("Debug");
@@ -112,6 +113,8 @@ public class CommonConfig {
                     .define("DisableChunkCacheCleaner", false);
             disableUniqueRebindingBiomeTags = builder.comment("Disable unique rebinding for biome tags. Note that after disabling, tags may overlap.")
                     .define("DisableUniqueBiomeTagsRebinding", false);
+            disableIceOrSnowCauldron = builder.comment("Disable cauldron enhancement, they will no longer turn into snow-filled or ice-filled cauldrons when it snows.")
+                    .define("DisableIceOrSnowCauldron", false);
             builder.pop();
         }
     }

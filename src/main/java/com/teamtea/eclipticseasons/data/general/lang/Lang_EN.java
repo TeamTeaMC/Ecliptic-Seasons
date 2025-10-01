@@ -61,6 +61,9 @@ public class Lang_EN extends LangHelper {
         add(ItemRegistry.snowless_hometown.get(),"Snowless Homeland");
         add(ItemRegistry.snowless_hometown.get().getDescriptionId() + ".desc", "Beishanwei & Orange Soda (feat. Others)");
 
+        add(BlockRegistry.snow_cauldron.get(),"Snow Cauldron");
+        add(BlockRegistry.ice_cauldron.get(),"Ice Cauldron");
+
         add("info.eclipticseasons.environment.temperature.under_freezing", "Under Freezing");
         add("info.eclipticseasons.environment.temperature.freezing", "Freezing");
         add("info.eclipticseasons.environment.temperature.cold", "Cold");
@@ -416,6 +419,7 @@ public class Lang_EN extends LangHelper {
     private void addJade() {
         add("config.jade.plugin_eclipticseasons.crop", "Crop");
         add("config.jade.plugin_eclipticseasons.animal", "Animal");
+        add("config.jade.plugin_eclipticseasons.cauldron", "Cauldron");
 
         add("config.jade.plugin_eclipticseasons.crop.shift_hint", "Shift Key Hint");
         add("hint.jade.plugin_eclipticseasons.crop.show", "§o<..Hold %s§o to see more..>");
@@ -458,7 +462,8 @@ public class Lang_EN extends LangHelper {
 
         add("info.eclipticseasons.seasonal_prayer_scroll.use", "Activate a hanging sign as a seasonal quest sign for timed quests");
 
-
+        add("info.eclipticseasons.snow_cauldron.extraction","§7§oUse a shovel to obtain Snow Balls");
+        add("info.eclipticseasons.ice_cauldron.extraction","§7§oUse a pickaxe to obtain Ice");
     }
 
     private void addAdvancements() {
