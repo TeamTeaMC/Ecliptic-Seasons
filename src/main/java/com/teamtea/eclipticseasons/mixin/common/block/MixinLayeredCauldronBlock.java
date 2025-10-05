@@ -15,7 +15,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 
 @Mixin(LayeredCauldronBlock.class)
-public class MixinCauldronBlock {
+public class MixinLayeredCauldronBlock {
 
     @Shadow
     @Final
@@ -24,12 +24,12 @@ public class MixinCauldronBlock {
     @ModifyExpressionValue(at = {@At(value = "INVOKE",
             target = "Lnet/minecraft/world/level/block/state/BlockState;getValue(Lnet/minecraft/world/level/block/state/properties/Property;)Ljava/lang/Comparable;")},
             method = {"handlePrecipitation"})
-    public Comparable<?> mixin_randomTick(Comparable<?> original,
-                                          @Local(argsOnly = true) BlockState state,
-                                          @Local(argsOnly = true) Level level,
-                                          @Local(argsOnly = true) BlockPos pos,
-                                          @Local(argsOnly = true) Biome.Precipitation precipitation) {
-        if (original instanceof Integer i && i == MAX_FILL_LEVEL) {
+    public Comparable<?> eclipticseasons$handlePrecipitation(Comparable<?> original,
+                                                             @Local(argsOnly = true) BlockState state,
+                                                             @Local(argsOnly = true) Level level,
+                                                             @Local(argsOnly = true) BlockPos pos,
+                                                             @Local(argsOnly = true) Biome.Precipitation precipitation) {
+        if (original.equals(MAX_FILL_LEVEL)) {
             IceOrSnowCauldronBlock.handleChange(state, level, pos, precipitation);
         }
         return original;
