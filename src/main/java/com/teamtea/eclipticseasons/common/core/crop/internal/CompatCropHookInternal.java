@@ -187,7 +187,7 @@ public class CompatCropHookInternal {
                     if (orDefault == null) return Stream.of();
                     return p.getSecond().stream().map(h -> Map.entry(h.value(), orDefault));
                 })
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (a, b) -> b, HashMap::new));
     }
 
     public static CropHumidityType mapSeasonToHumidity(CropSeasonType seasonType) {

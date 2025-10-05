@@ -1,3 +1,11 @@
+### 0.12.0-z-3
+
+- Now, when it’s snowing, a cauldron filled with water will turn into an ice-filled cauldron,
+and a cauldron filled with powder snow will turn into a snow-filled cauldron.
+- Fixed a potential world initialization crash that could occur when SereneSeasonsCropTag is enabled and an agriculture mod provides both Forge and c namespace tags for the same seed.
+- Blocks containing water are no longer affected by the Frozen Water feature.
+And the Frozen Water feature is now affected by light levels.
+
 ### 0.12.0-z-2
 
 - Fixed an issue where the calendar displayed incorrectly in Next mode when it was the last solar term of the year.
