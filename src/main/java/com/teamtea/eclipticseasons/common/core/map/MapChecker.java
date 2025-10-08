@@ -7,6 +7,7 @@ import com.teamtea.eclipticseasons.api.data.season.SnowDefinition;
 import com.teamtea.eclipticseasons.api.misc.IBiomeTagHolder;
 import com.teamtea.eclipticseasons.api.misc.IBlockStateFlagger;
 import com.teamtea.eclipticseasons.api.misc.IChunkBiomeHolder;
+import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.snow.SnowChecker;
@@ -574,7 +575,7 @@ public class MapChecker {
     }
 
     public static boolean shouldSnowAt(@Nonnull Level level, BlockPos pos, BlockState state, RandomSource random, long seed) {
-        if (SnowyMapChecker.shouldCheckSnowyStatus(level, pos)) {
+        if (SnowyMapChecker.shouldCheckSnowyStatus(level, pos) && notWater(state)) {
             return SnowyMapChecker.isSnowyBlock(level, pos);
         }
 
@@ -590,7 +591,7 @@ public class MapChecker {
 
 
     public static boolean shouldSnowAt(@Nonnull Level level, BlockPos pos, int biomeId, BlockState state, @Nullable RandomSource random, long seed) {
-        if (SnowyMapChecker.shouldCheckSnowyStatus(level, pos)) {
+        if (SnowyMapChecker.shouldCheckSnowyStatus(level, pos) && notWater(state)) {
             return SnowyMapChecker.isSnowyBlock(level, pos);
         }
 
@@ -602,6 +603,10 @@ public class MapChecker {
         }
         if (isSnowy) isSnowy = notLightAbove(level, pos, 4);
         return isSnowy;
+    }
+
+    public static boolean notWater(BlockState state) {
+        return state == null || !state.is(Blocks.WATER);
     }
 
 
@@ -685,7 +690,7 @@ public class MapChecker {
         if (chunkAt instanceof IChunkBiomeHolder iChunkBiomeHolder) {
             BiomeHolder biomeHolder = iChunkBiomeHolder.eclipticseasons$getBiomeHolder();
             if (biomeHolder != null
-                    && biomeHolder.version() == SolarHolders.getSaveData(level).getBiomeDataVersion()) {
+                    && biomeHolder.version() == EclipticUtil.getBiomeDataVersion(level)) {
                 // BiomeHolder biomeHolder = chunkAt.getData(ModContents.BIOME_HOLDER);
                 return getSurfaceBiome(level, pos, biomeHolder);
             }
@@ -697,7 +702,7 @@ public class MapChecker {
         if (chunkAt instanceof IChunkBiomeHolder iChunkBiomeHolder) {
             BiomeHolder biomeHolder = iChunkBiomeHolder.eclipticseasons$getBiomeHolder();
             if (biomeHolder != null
-                    && biomeHolder.version() == SolarHolders.getSaveData(level).getBiomeDataVersion()) {
+                    && biomeHolder.version() == EclipticUtil.getBiomeDataVersion(level)) {
                 // BiomeHolder biomeHolder = chunkAt.getData(ModContents.BIOME_HOLDER);
                 return getSurfaceBiome(level, pos, biomeHolder);
             }
@@ -1075,8 +1080,7 @@ public class MapChecker {
     // todo 这里注意用接口走set
     public static @NotNull BiomeHolder getOrUpdateChunkBiomeData(ServerLevel serverLevel, ChunkAccess
             chunk, ChunkPos chunkPos) {
-        SolarDataManager data = SolarHolders.getSaveData(serverLevel);
-        int biomeDataVersion = data == null ? 0 : data.getBiomeDataVersion();
+        int biomeDataVersion = EclipticUtil.getBiomeDataVersion(serverLevel);
         BiomeHolder biomeHolder;
         if (!chunk.hasData(AttachmentRegistry.BIOME_HOLDER)) {
             biomeHolder = BiomeHolder

@@ -7,6 +7,7 @@ import com.teamtea.eclipticseasons.common.core.map.SnowyRemover;
 import com.teamtea.eclipticseasons.common.core.snow.SnowyStatusHandler;
 import com.teamtea.eclipticseasons.common.core.snow.SnowyStatusKeeper;
 import com.teamtea.eclipticseasons.common.core.snow.WeatherStatusKeeper;
+import it.unimi.dsi.fastutil.objects.Object2IntLinkedOpenHashMap;
 import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
@@ -26,7 +27,7 @@ public class AttachmentRegistry {
             () -> AttachmentType.builder(SnowyRemover::empty).serialize(new SnowyRemover.Serializer()).build());
     public static final Supplier<AttachmentType<SolarTermsRecord>> SOLAR_TERMS_RECORD = ATTACHMENT_TYPES.register(
             "solar_terms_record",
-            () -> AttachmentType.builder(() -> new SolarTermsRecord(new ArrayList<>())).serialize(SolarTermsRecord.CODEC).build());
+            () -> AttachmentType.builder(() -> new SolarTermsRecord(new Object2IntLinkedOpenHashMap<>())).serialize(SolarTermsRecord.CODEC).build());
 
     public static final Supplier<AttachmentType<SnowyStatusKeeper>> SNOWY_STATUS_KEEPER = ATTACHMENT_TYPES.register(
             "snowy_status",

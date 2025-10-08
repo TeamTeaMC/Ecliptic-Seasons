@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/powder_snow_cauldron_full",
+  "textures": {
+    "content": "minecraft:block/snow"
+  }
+}

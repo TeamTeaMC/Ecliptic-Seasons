@@ -3,6 +3,7 @@ package com.teamtea.eclipticseasons.common.block.blockentity;
 import com.mojang.serialization.DynamicOps;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.data.craft.HumidityControl;
+import com.teamtea.eclipticseasons.api.data.misc.ESSortInfo;
 import com.teamtea.eclipticseasons.api.data.misc.PosAndBlockStateCheck;
 import com.teamtea.eclipticseasons.common.block.blockentity.base.SyncBlockEntity;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
@@ -10,7 +11,6 @@ import com.teamtea.eclipticseasons.common.core.crop.HumidityControlProvider;
 import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
 import com.teamtea.eclipticseasons.common.registry.BlockEntityRegistry;
 import com.teamtea.eclipticseasons.common.registry.ESRegistries;
-import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -115,7 +115,7 @@ public class HumidityControlBlockEntity extends SyncBlockEntity {
 
     protected void searchRecipe() {
         if (humidityControl == null) {
-            for (HumidityControl humidityControl : level.registryAccess().registryOrThrow(ESRegistries.HUMIDITY_CONTROL)) {
+            for (HumidityControl humidityControl : ESSortInfo.sorted2(level.registryAccess().registryOrThrow(ESRegistries.HUMIDITY_CONTROL))) {
                 if (isRecipeCacheValid(humidityControl)
                 ) {
                     this.humidityControl = humidityControl;

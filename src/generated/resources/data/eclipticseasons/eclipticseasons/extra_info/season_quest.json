@@ -1,0 +1,10 @@
+{
+  "registry": "eclipticseasons:season_quest",
+  "target": [
+    "eclipticseasons:spring_core",
+    "eclipticseasons:summer_core",
+    "eclipticseasons:autumn_core",
+    "eclipticseasons:winter_core"
+  ],
+  "priority": 800
+}

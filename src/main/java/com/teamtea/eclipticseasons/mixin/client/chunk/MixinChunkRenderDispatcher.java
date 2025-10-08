@@ -11,6 +11,7 @@ import com.teamtea.eclipticseasons.api.misc.client.ISeedProvider;
 import com.teamtea.eclipticseasons.client.core.ExtraModelManager;
 import com.teamtea.eclipticseasons.client.core.ExtraRendererContext;
 import com.teamtea.eclipticseasons.client.render.SnowRenderer;
+import com.teamtea.eclipticseasons.client.render.chunk.IceKeeper;
 import com.teamtea.eclipticseasons.compat.vanilla.ExtendBlockView;
 import com.teamtea.eclipticseasons.compat.vanilla.IExtendBlockView;
 import com.teamtea.eclipticseasons.config.ClientConfig;
@@ -23,6 +24,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.FluidState;
 import net.neoforged.neoforge.client.event.AddSectionGeometryEvent;
 import net.neoforged.neoforge.client.model.data.ModelData;
 import org.spongepowered.asm.mixin.Mixin;
@@ -120,7 +122,7 @@ public abstract class MixinChunkRenderDispatcher {
         if (!original && snowModel != null) {
             original = false;
             ((ExtendBlockView) renderchunkregion).setShouldCollectBakeQuads(false);
-            eclipticseasons$renderModel(snowModel, pChunkBufferBuilderPack, blockpos2, blockstate, posestack, renderchunkregion, randomsource, ((ISeedProvider) renderchunkregion).getCacheSeed(), renderTypeBufferBuilderMap,rendererHolder.getModelData());
+            eclipticseasons$renderModel(snowModel, pChunkBufferBuilderPack, blockpos2, blockstate, posestack, renderchunkregion, randomsource, ((ISeedProvider) renderchunkregion).getCacheSeed(), renderTypeBufferBuilderMap, rendererHolder.getModelData());
             ((ExtendBlockView) renderchunkregion).cleanAfterRender();
             eclipticseasons$countModel++;
         }
@@ -132,12 +134,41 @@ public abstract class MixinChunkRenderDispatcher {
         return original;
     }
 
+    @Inject(
+            method = "compile(Lnet/minecraft/core/SectionPos;Lnet/minecraft/client/renderer/chunk/RenderChunkRegion;Lcom/mojang/blaze3d/vertex/VertexSorting;Lnet/minecraft/client/renderer/SectionBufferBuilderPack;Ljava/util/List;)Lnet/minecraft/client/renderer/chunk/SectionCompiler$Results;",
+            at = @At(value = "INVOKE",
+                    // shift = At.Shift.AFTER,
+                    // ordinal = 1,
+                    target = "Lnet/minecraft/client/renderer/block/BlockRenderDispatcher;renderLiquid(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/BlockAndTintGetter;Lcom/mojang/blaze3d/vertex/VertexConsumer;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/material/FluidState;)V")
+    )
+    private void eclipticseasons$renderFrozenWaterIce(
+            SectionPos sectionPos,
+            RenderChunkRegion region,
+            VertexSorting vertexSorting,
+            SectionBufferBuilderPack sectionBufferBuilderPack,
+            List<AddSectionGeometryEvent.AdditionalSectionRenderer> additionalRenderers,
+            CallbackInfoReturnable<SectionCompiler.Results> cir,
+            @Local(argsOnly = true) SectionBufferBuilderPack pChunkBufferBuilderPack,
+            @Local(ordinal = 2) BlockPos blockpos2,
+            @Local BlockState blockstate,
+            @Local FluidState fluidState,
+            @Local PoseStack posestack,
+            @Local(argsOnly = true) RenderChunkRegion renderchunkregion,
+            @Local RandomSource randomsource,
+            @Local Map<RenderType, BufferBuilder> renderTypeBufferBuilderMap
+    ) {
+
+        if (!IceKeeper.notFrozen(region, blockpos2, blockstate, fluidState)) {
+            eclipticseasons$renderModel(IceKeeper.getIceModel(blockstate, fluidState), pChunkBufferBuilderPack, blockpos2, IceKeeper.getFakeState(blockstate, fluidState), posestack, renderchunkregion, randomsource, ((ISeedProvider) renderchunkregion).getCacheSeed(), renderTypeBufferBuilderMap, ModelData.EMPTY);
+        }
+    }
+
 
     @Unique
     private void eclipticseasons$renderModel(BakedModel bakedModel, SectionBufferBuilderPack pChunkBufferBuilderPack, BlockPos pos, BlockState state, PoseStack posestack, RenderChunkRegion renderchunkregion, RandomSource random, long seed, Map<RenderType, BufferBuilder> renderTypeSet, ModelData modelData) {
         RenderType renderType = ExtraModelManager.getRenderType(state);
         BufferBuilder bufferbuilder2 = getOrBeginLayer(renderTypeSet, pChunkBufferBuilderPack, renderType);
-        SnowRenderer.renderSnowyBlock(bakedModel, bufferbuilder2, pos, state, posestack, renderchunkregion, random, seed, renderType,modelData);
+        SnowRenderer.renderSnowyBlock(bakedModel, bufferbuilder2, pos, state, posestack, renderchunkregion, random, seed, renderType, modelData);
     }
 
 

@@ -2,6 +2,7 @@ package com.teamtea.eclipticseasons.common;
 
 
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
+import com.teamtea.eclipticseasons.api.data.misc.ESSortInfo;
 import com.teamtea.eclipticseasons.api.event.CanPlantGrowEvent;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
@@ -46,6 +47,7 @@ public class AllListener {
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void onTagsUpdatedEventEarly(TagsUpdatedEvent tagsUpdatedEvent) {
+        ESSortInfo.resetUpdate(tagsUpdatedEvent.getRegistryAccess(), tagsUpdatedEvent.getUpdateCause() == TagsUpdatedEvent.UpdateCause.SERVER_DATA_LOAD);
         BiomeClimateManager.resetBiomeTags(tagsUpdatedEvent.getRegistryAccess(), tagsUpdatedEvent.getUpdateCause() == TagsUpdatedEvent.UpdateCause.SERVER_DATA_LOAD);
     }
 
@@ -75,6 +77,7 @@ public class AllListener {
         NaturalPlantHandler.clearOnClientExitOrServerClose();
         BiomeClimateManager.clearOnClientExitOrServerClose();
         SnowChecker.clearOnClientExitOrServerClose();
+        ESSortInfo.clearOnClientExitOrServerClose();
     }
 
     @SubscribeEvent
@@ -181,6 +184,12 @@ public class AllListener {
             }
         }
         MapChecker.tickLevel(level);
+    }
+
+    @SubscribeEvent
+    public static void onLevelTickPre(LevelTickEvent.Pre event) {
+        if (event.getLevel() instanceof ServerLevel)
+            WeatherManager.tickAverageWeather(event.getLevel());
     }
 
 
@@ -295,8 +304,8 @@ public class AllListener {
         if (event.getLevel() instanceof Level level) {
             ChunkInfoMap chunkInfoMap = MapChecker.forceChunkUpdateHeight(level, chunk);
 
-            if (biomeHolder != null&& level instanceof ServerLevel serverLevel) {
-                int biomeDataVersion = SolarHolders.getSaveData(level).getBiomeDataVersion();
+            if (EclipticUtil.canSnowyBlockInteract() && biomeHolder != null && level instanceof ServerLevel serverLevel) {
+                int biomeDataVersion = EclipticUtil.getBiomeDataVersion(level);
                 if (biomeHolder.version() != biomeDataVersion || !biomeHolder.hasUpdated()) biomeHolder = null;
                 if (biomeHolder != null) {
                     SnowyMapChecker.forceChunkUpdateHeight(serverLevel, chunk, chunkInfoMap, biomeHolder, true);

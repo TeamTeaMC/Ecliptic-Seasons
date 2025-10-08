@@ -3,6 +3,7 @@ package com.teamtea.eclipticseasons;
 
 import com.mojang.serialization.JsonOps;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
+import com.teamtea.eclipticseasons.common.block.IceOrSnowCauldronBlock;
 import com.teamtea.eclipticseasons.common.registry.*;
 import com.teamtea.eclipticseasons.compat.CompatModule;
 import com.teamtea.eclipticseasons.config.ClientConfig;
@@ -79,6 +80,7 @@ public class EclipticSeasons {
         // SimpleNetworkHandler.init();
         // CompatModule.init();
         event.enqueueWork(CompatModule::setup);
+        event.enqueueWork(IceOrSnowCauldronBlock::init);
     }
 
 

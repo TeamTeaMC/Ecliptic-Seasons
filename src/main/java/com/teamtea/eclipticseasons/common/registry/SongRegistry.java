@@ -34,6 +34,6 @@ public class SongRegistry {
     }
 
     public static void bootstrap(BootstrapContext<JukeboxSong> context) {
-        register2(context, SNOWLESS_HOMETOWN, SoundEventsRegistry.snowless_hometown, 243, 14);
+        register2(context, SNOWLESS_HOMETOWN, SoundEventsRegistry.snowless_hometown, 103, 14);
     }
 }

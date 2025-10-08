@@ -4,6 +4,7 @@ import com.mojang.serialization.DynamicOps;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.data.climate.AgroClimaticZone;
+import com.teamtea.eclipticseasons.api.data.misc.ESSortInfo;
 import com.teamtea.eclipticseasons.api.data.quest.SeasonQuest;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
@@ -179,7 +180,7 @@ public class QuestHangingSignBlockEntity extends SignBlockEntity {
                     Holder<AgroClimaticZone> agroClimaticZoneHolder = CropGrowthHandler.getclimateTypeHolder(CropGrowthHandler.getCropBiome(level, getBlockPos()));
                     List<SeasonQuest> seasonQuestList = new ArrayList<>();
                     int totalWeight = 0;
-                    for (Map.Entry<ResourceKey<SeasonQuest>, SeasonQuest> entry : seasonQuests.entrySet()) {
+                    for (Map.Entry<ResourceKey<SeasonQuest>, SeasonQuest> entry : ESSortInfo.sorted(seasonQuests.entrySet())) {
                         SeasonQuest quest = entry.getValue();
                         if (isInvalidQuest(quest, nowSolarTerm, agroClimaticZoneHolder)) continue;
                         // this.seasonQuest = quest;

@@ -4,7 +4,9 @@ package com.teamtea.eclipticseasons.client;
 import com.mojang.blaze3d.vertex.*;
 import com.mojang.brigadier.CommandDispatcher;
 import com.teamtea.eclipticseasons.EclipticSeasons;
+import com.teamtea.eclipticseasons.api.data.misc.ESSortInfo;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
+import com.teamtea.eclipticseasons.client.render.chunk.IceKeeper;
 import com.teamtea.eclipticseasons.client.util.ClientRef;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
@@ -62,6 +64,7 @@ import net.neoforged.neoforge.event.TagsUpdatedEvent;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 import net.neoforged.neoforge.event.level.ChunkEvent;
 import net.neoforged.neoforge.event.level.LevelEvent;
+import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 
 import java.awt.*;
@@ -166,6 +169,7 @@ public final class ClientEventHandler {
             ClientCon.setUseLevel(null);
             ClientWeatherChecker.unloadLevel(clientLevel);
             CompilerCollector.clearAll();
+            IceKeeper.clearAll();
         }
     }
 
@@ -179,6 +183,7 @@ public final class ClientEventHandler {
             SnowChecker.clearOnClientExitOrServerClose();
             ClientRef.onClientPlayerExit();
             ClientCon.onClientPlayerExit();
+            ESSortInfo.clearOnClientExitOrServerClose();
         }
     }
 
@@ -201,6 +206,12 @@ public final class ClientEventHandler {
         }
     }
 
+    @SubscribeEvent
+    public static void onPlayerTick(EntityTickEvent.Post event) {
+        if (event.getEntity().level() instanceof ClientLevel)
+            IceKeeper.checkIfPlayerStepInFrozenWater(event.getEntity());
+    }
+
     private static long lastFreshTime = -1;
 
     @SubscribeEvent
@@ -209,8 +220,8 @@ public final class ClientEventHandler {
             ClientWeatherChecker.tickAllCheck(clientLevel);
             ClientCon.tick(clientLevel);
 
-            if ((!EclipticUtil.canSnowyBlockInteract()||ClientConfig.Renderer.enhancementChunkRenderUpdate.get())
-                    &&ClientConfig.Renderer.forceChunkRenderUpdate.get()) {
+            if ((!EclipticUtil.canSnowyBlockInteract() || ClientConfig.Renderer.enhancementChunkRenderUpdate.get())
+                    && ClientConfig.Renderer.forceChunkRenderUpdate.get()) {
                 if (clientLevel.getGameTime() - lastFreshTime > 80
                         || clientLevel.getGameTime() < lastFreshTime - 1) {
                     lastFreshTime = clientLevel.getGameTime();

@@ -66,7 +66,7 @@ public class ESSodiumContext extends net.caffeinemc.mods.sodium.client.render.fr
     }
 
     @Override
-    protected void processQuad(MutableQuadViewImpl mutableQuadView) {
+    protected void processQuad(net.caffeinemc.mods.sodium.client.render.frapi.mesh.MutableQuadViewImpl mutableQuadView) {
         if (mutableQuadView.cullFace() != Direction.UP) {
             SpriteFinder spriteFinder = SpriteFinder.get(Minecraft.getInstance().getModelManager().getAtlas(TextureAtlas.LOCATION_BLOCKS));
             getQuadViews().add(mutableQuadView.toBakedQuad(spriteFinder.find(mutableQuadView)));

@@ -1,0 +1,12 @@
+{
+  "registry": "eclipticseasons:snow_definitions",
+  "target": [
+    "eclipticseasons:snowy_grass_block",
+    "eclipticseasons:snowy_sweet_berry_bush",
+    "eclipticseasons:snowy_dead_bush",
+    "eclipticseasons:snowy_sugar_cane",
+    "eclipticseasons:snowy_bamboo",
+    "eclipticseasons:snowy_bamboo_sapling"
+  ],
+  "priority": 800
+}

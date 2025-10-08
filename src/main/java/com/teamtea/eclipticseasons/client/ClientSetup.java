@@ -112,6 +112,8 @@ public class ClientSetup {
             event.register(flowerOnGrass);
         }
 
+        event.register(ExtraModelManager.ice);
+
     }
 
     @SubscribeEvent

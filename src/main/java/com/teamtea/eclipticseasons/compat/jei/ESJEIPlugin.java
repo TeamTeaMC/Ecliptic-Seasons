@@ -2,6 +2,7 @@ package com.teamtea.eclipticseasons.compat.jei;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.data.craft.HumidityControl;
+import com.teamtea.eclipticseasons.api.data.misc.ESSortInfo;
 import com.teamtea.eclipticseasons.common.registry.BlockRegistry;
 import com.teamtea.eclipticseasons.common.registry.ESRegistries;
 import mezz.jei.api.IModPlugin;
@@ -14,7 +15,6 @@ import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.neoforged.fml.loading.FMLEnvironment;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
@@ -55,6 +55,6 @@ public class ESJEIPlugin implements IModPlugin {
         Optional<Registry<HumidityControl>> humidityControls = level.registryAccess().registry(
                 ESRegistries.HUMIDITY_CONTROL
         );
-        humidityControls.ifPresent(controls -> registration.addRecipes(HUMIDITY_CONTROL_RECIPE_TYPE, controls.stream().toList()));
+        humidityControls.ifPresent(controls -> registration.addRecipes(HUMIDITY_CONTROL_RECIPE_TYPE, ESSortInfo.sorted2(controls)));
     }
 }

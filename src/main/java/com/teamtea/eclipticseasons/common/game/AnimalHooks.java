@@ -26,6 +26,7 @@ import net.minecraft.world.level.biome.Biome;
 import net.neoforged.neoforge.common.Tags;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 public class AnimalHooks {
@@ -111,7 +112,7 @@ public class AnimalHooks {
 
     public static boolean cancelBeePollinate(Bee bee) {
         if (!CommonConfig.Animal.enableBee.get()) return false;
-        List<Season> seasons = (List<Season>) CommonConfig.Animal.beePollinateSeasons.get();
+        List<Season> seasons = CommonConfig.castSeasonList(CommonConfig.Animal.beePollinateSeasons.get());
         Season season = getUseSeason(bee.level(), bee);
         return !seasons.contains(season)
                 && (!CommonConfig.Animal.enableCoreWork.get() || withoutSeasonBonus(bee.level(), bee.blockPosition(), seasons));
@@ -119,14 +120,14 @@ public class AnimalHooks {
 
     public static boolean cancelBeeOut(Level level, BlockPos blockPos) {
         if (!CommonConfig.Animal.enableBee.get()) return false;
-        List<Season> seasons = (List<Season>) CommonConfig.Animal.beeActiveSeasons.get();
+        List<Season> seasons = CommonConfig.castSeasonList(CommonConfig.Animal.beeActiveSeasons.get());
         Season season = getUseSeason(level, blockPos);
         if (!seasons.contains(season)) {
-            if (EclipticSeasonsApi.getInstance().getPrecipitationAt(level, blockPos)== Biome.Precipitation.SNOW) {
+            if (EclipticSeasonsApi.getInstance().getPrecipitationAt(level, blockPos) == Biome.Precipitation.SNOW) {
                 return !CommonConfig.Animal.enableCoreWork.get() || withoutSeasonBonus(level, blockPos, seasons);
             }
         }
-        List<Season> seasons2 = (List<Season>) CommonConfig.Animal.beePollinateSeasons.get();
+        List<Season> seasons2 = CommonConfig.castSeasonList(CommonConfig.Animal.beePollinateSeasons.get());
 
         return (!seasons2.contains(season) && (level.getRandom().nextBoolean()
                 || (!CommonConfig.Animal.enableCoreWork.get() || withoutSeasonBonus(level, blockPos, seasons2))));

@@ -191,12 +191,6 @@ dependencies {
 //    onlyMainRuntimeOnly("curse.maven:immersive-portals-for-forge-355440:5828143")
 //    onlyMainRuntimeOnly("curse.maven:cloth-config-348521:5729127")
 
-//    onlyMainRuntimeOnly("curse.maven:architectury-api-419699:5786327")
-//    onlyMainRuntimeOnly("curse.maven:do-api-864599:5730908")
-//    onlyMainRuntimeOnly("curse.maven:lets-do-farm-charm-1038103:5731181")
-//    onlyMainRuntimeOnly("curse.maven:lets-do-vinery-704465:5730909")
-
-
     // Example optional mod dependency with JEI
     // The JEI API is declared for compile time use, while the full JEI artifact is used at runtime
     // compileOnly "mezz.jei:jei-${mc_version}-common-api:${jei_version}"

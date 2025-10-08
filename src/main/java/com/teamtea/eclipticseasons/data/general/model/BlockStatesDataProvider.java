@@ -9,6 +9,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.LayeredCauldronBlock;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.neoforged.neoforge.client.model.generators.BlockStateProvider;
 import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
@@ -43,6 +44,15 @@ public class BlockStatesDataProvider extends BlockStateProvider {
                             .texture("1", resourceBlock(holder.getId().getPath() + "_light_" + HygrometerBlock.getHumidityLevelFromPower(state.getValue(HygrometerBlock.POWER))))
                     )
                     .rotationY(getRotateYByFacing(state.getValue(BlockStateProperties.HORIZONTAL_FACING)))
+                    .build());
+        }
+
+        for (DeferredHolder<Block, Block> holder : List.of(BlockRegistry.ice_cauldron, BlockRegistry.snow_cauldron)) {
+            getVariantBuilder(holder.get()).forAllStatesExcept(state -> ConfiguredModel.builder()
+                    .modelFile(models()
+                            .withExistingParent(resourceBlock(holder.getId().getPath()).getPath(), "minecraft:block/powder_snow_cauldron_full")
+                            .texture("content", holder == BlockRegistry.ice_cauldron ? "minecraft:block/ice" : "minecraft:block/snow")
+                    )
                     .build());
         }
 

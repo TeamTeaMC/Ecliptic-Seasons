@@ -28,6 +28,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.Arrays;
 import java.util.IdentityHashMap;
 import java.util.Map;
 
@@ -172,7 +173,7 @@ public abstract class MixinLevelSlice implements IMapSlice, IExtraRendererContex
 
                                 snowys[index] = snowyRemover.blockWatcher()[x][z];
 
-                                solidHeights[index]=snowyGetter.getSolidHeightMap().getHighestTaken(x,z);
+                                solidHeights[index] = snowyGetter.getSolidHeightMap().getHighestTaken(x, z);
                             }
                         }
                     } else {
@@ -272,7 +273,7 @@ public abstract class MixinLevelSlice implements IMapSlice, IExtraRendererContex
         SnowyStatusKeeper lightArrays = this.SNOWY_STATUS_MAP[eclipticseasons$getLocalSectionIndex(
                 relBlockX >> 4,
                 relBlockZ >> 4)];
-        return lightArrays.isSnowyBlock(pos);
+        return lightArrays != null && lightArrays.isSnowyBlock(pos);
     }
 
     @Unique
@@ -292,9 +293,7 @@ public abstract class MixinLevelSlice implements IMapSlice, IExtraRendererContex
     )
     private void eclipticseasons$release(CallbackInfo ci) {
         eclipticseasons$rendererHolder.resetAll();
-        for (int sectionIndex = 0; sectionIndex < SECTION_ARRAY_LENGTH; ++sectionIndex) {
-            this.SNOWY_STATUS_MAP[sectionIndex] = null;
-        }
+        Arrays.fill(SNOWY_STATUS_MAP, null);
     }
 
     @Unique

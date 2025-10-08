@@ -62,6 +62,9 @@ public class BlockRegistry {
             .sound(SoundType.BAMBOO_WOOD)
             .mapColor(MapColor.WOOD)));
 
+    public static final DeferredHolder<Block, Block> snow_cauldron = BLOCK_DEFERRED_REGISTER.register("snow_cauldron", () -> new IceOrSnowCauldronBlock(BlockBehaviour.Properties.ofLegacyCopy(Blocks.CAULDRON)));
+    public static final DeferredHolder<Block, Block> ice_cauldron = BLOCK_DEFERRED_REGISTER.register("ice_cauldron", () -> new IceOrSnowCauldronBlock(BlockBehaviour.Properties.ofLegacyCopy(Blocks.CAULDRON)));
+
     public static DeferredHolder<Block, Block> snowyLeaves = BLOCK_DEFERRED_REGISTER.register("snowy_leaves", () -> new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.SNOW_BLOCK).dynamicShape().noOcclusion()));
     public static DeferredHolder<Block, Block> snowyBlock = BLOCK_DEFERRED_REGISTER.register("snowy_block", () -> new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.SNOW_BLOCK).dynamicShape().noOcclusion()));
     public static DeferredHolder<Block, Block> snowyStairs = BLOCK_DEFERRED_REGISTER.register("snowy_stairs", () -> new StairBlock(Blocks.OAK_PLANKS.defaultBlockState(), BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_STAIRS).dynamicShape().noOcclusion()));

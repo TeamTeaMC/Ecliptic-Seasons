@@ -8,6 +8,7 @@
     "common.block.MixinBlockState",
     "common.block.MixinBlockStateBase",
     "common.block.MixinBubbleColumnBlock",
+    "common.block.MixinLayeredCauldronBlock",
     "common.block.MixinCopperGrateBlock",
     "common.block.MixinFireBlock",
     "common.block.MixinGrassBlock",
@@ -49,7 +50,6 @@
     "game.MixinFishingHook"
   ],
   "client": [
-    "client.biome.MixinClientBiome",
     "client.MixinClientClientLevel",
     "client.MixinClientLevel",
     "client.MixinClientLevelChunk",
@@ -57,6 +57,7 @@
     "client.MixinLevelRender",
     "client.MixinLocalPlayer",
     "client.animal.MixinClientPanda",
+    "client.biome.MixinClientBiome",
     "client.block.MixinBlockColors",
     "client.block.MixinClientBlockState",
     "client.block.MixinLeavesBlock",

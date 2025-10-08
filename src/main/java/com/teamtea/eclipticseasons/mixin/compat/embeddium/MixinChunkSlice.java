@@ -243,7 +243,7 @@ public abstract class MixinChunkSlice implements IMapSlice, IExtraRendererContex
         SnowyStatusKeeper lightArrays = this.SNOWY_STATUS_MAP[eclipticseasons$getLocalSectionIndex(
                 relBlockX >> 4,
                 relBlockZ >> 4)];
-        return lightArrays.isSnowyBlock(pos);
+        return lightArrays != null && lightArrays.isSnowyBlock(pos);
     }
 
     @Unique
@@ -263,9 +263,7 @@ public abstract class MixinChunkSlice implements IMapSlice, IExtraRendererContex
     )
     private void eclipticseasons$release(CallbackInfo ci) {
         eclipticseasons$rendererHolder.resetAll();
-        for (int sectionIndex = 0; sectionIndex < SECTION_ARRAY_LENGTH; ++sectionIndex) {
-            this.SNOWY_STATUS_MAP[sectionIndex] = null;
-        }
+        Arrays.fill(SNOWY_STATUS_MAP, null);
     }
 
 

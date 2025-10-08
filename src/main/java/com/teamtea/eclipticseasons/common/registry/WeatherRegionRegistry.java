@@ -8,8 +8,12 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.biome.Biomes;
+import net.neoforged.neoforge.common.conditions.ModLoadedCondition;
 import net.neoforged.neoforge.registries.holdersets.AndHolderSet;
 import net.neoforged.neoforge.registries.holdersets.OrHolderSet;
+
+import java.util.List;
+import java.util.Optional;
 
 public class WeatherRegionRegistry {
     public static final ResourceKey<WeatherRegion> PLAINS = createKey("plains");
@@ -41,7 +45,9 @@ public class WeatherRegionRegistry {
                 getter.getOrThrow(Biomes.FOREST),
                 HolderSet.direct(Holder.Reference.createStandAlone(BIOME_REGISTRY_LOOKUP, Biomes.FLOWER_FOREST),
                         Holder.Reference.createStandAlone(BIOME_REGISTRY_LOOKUP, Biomes.DARK_FOREST),
-                        Holder.Reference.createStandAlone(BIOME_REGISTRY_LOOKUP, Biomes.BIRCH_FOREST))
+                        Holder.Reference.createStandAlone(BIOME_REGISTRY_LOOKUP, Biomes.BIRCH_FOREST)),
+                1000,
+                List.of(new ModLoadedCondition("xxxx"))
         ));
     }
 }

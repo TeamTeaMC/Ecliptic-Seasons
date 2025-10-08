@@ -51,10 +51,9 @@ public class EclipticSeasonsBlockLootTables extends BlockLootSubProvider {
     protected void generate() {
         Set<Block> blocks = BuiltInRegistries.BLOCK.stream()
                 .filter(block -> EclipticSeasonsApi.MODID.equals(BuiltInRegistries.BLOCK.getKey(block).getNamespace()))
-                .filter(block -> ! block.getLootTable().equals( BuiltInLootTables.EMPTY))
-                .filter(block -> block.asItem()!= Items.AIR)
-                .collect(Collectors.toSet())
-                ;
+                .filter(block -> !block.getLootTable().equals(BuiltInLootTables.EMPTY))
+                .filter(block -> block.asItem() != Items.AIR)
+                .collect(Collectors.toSet());
 
         dropSelfWithContents(blocks);
 
@@ -73,6 +72,9 @@ public class EclipticSeasonsBlockLootTables extends BlockLootSubProvider {
         dropOther(BlockRegistry.block_in_waxed_exposed_copper_grate_block.get(), Blocks.WAXED_EXPOSED_COPPER_GRATE);
         dropOther(BlockRegistry.block_in_waxed_weathered_copper_grate_block.get(), Blocks.WAXED_WEATHERED_COPPER_GRATE);
         dropOther(BlockRegistry.block_in_waxed_oxidized_copper_grate_block.get(), Blocks.WAXED_OXIDIZED_COPPER_GRATE);
+
+        dropOther(BlockRegistry.snow_cauldron.get(), Blocks.CAULDRON);
+        dropOther(BlockRegistry.ice_cauldron.get(), Blocks.CAULDRON);
 
     }
 

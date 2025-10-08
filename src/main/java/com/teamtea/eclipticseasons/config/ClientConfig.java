@@ -24,7 +24,8 @@ public class ClientConfig {
         public static ModConfigSpec.BooleanValue debugInfo;
         public static ModConfigSpec.BooleanValue smoothSnowyEdges;
         public static ModConfigSpec.IntValue minChunkCompileWarningTime;
-
+        public static ModConfigSpec.BooleanValue frozenWater;
+        public static ModConfigSpec.BooleanValue frozenWaterBreakable;
         private static void load(ModConfigSpec.Builder builder) {
             builder.push("Debug");
 
@@ -34,6 +35,10 @@ public class ClientConfig {
                     .define("SmoothSnowyEdges", false);
             minChunkCompileWarningTime = builder.comment("If the game takes too long to load a chunk for render, a warning will be shown in the log.")
                     .defineInRange("MinChunkCompileWarningTime", 100, 5, 2000);
+            frozenWater = builder
+                    .define("FrozenWater", false);
+            frozenWaterBreakable = builder
+                    .define("FrozenWaterBreakable", true);
             builder.pop();
         }
     }

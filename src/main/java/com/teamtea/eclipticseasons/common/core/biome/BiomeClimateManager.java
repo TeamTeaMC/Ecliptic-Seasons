@@ -8,6 +8,7 @@ import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.constant.tag.ClimateTypeBiomeTags;
 import com.teamtea.eclipticseasons.api.constant.tag.ClimateTypeFilters;
 import com.teamtea.eclipticseasons.api.data.climate.BiomesClimateSettings;
+import com.teamtea.eclipticseasons.api.data.misc.ESSortInfo;
 import com.teamtea.eclipticseasons.api.data.season.SeasonPhase;
 import com.teamtea.eclipticseasons.api.data.weather.CustomRain;
 import com.teamtea.eclipticseasons.api.data.weather.CustomSnowTerm;
@@ -170,6 +171,8 @@ public class BiomeClimateManager {
                 entries = new LinkedHashSet<>(sortedEntries);
             }
 
+            entries = ESSortInfo.sorted(entries);
+
             for (var entry : entries) {
                 var pair = biomeTransfer.apply(entry.getValue());
                 for (Holder<Biome> next : pair.getFirst()) {
@@ -191,7 +194,7 @@ public class BiomeClimateManager {
         BiomeClimateSettings biomeClimateSettings = isServer ?
                 BIOME_CLIMATE_MAP.get(biome) :
                 CLIENT_CLIMATE_MAP.get(biome);
-        return biomeClimateSettings==null?EMPTY:biomeClimateSettings;
+        return biomeClimateSettings == null ? EMPTY : biomeClimateSettings;
     }
 
     public static Map<SolarTerm, CustomRain> getCustomRain(Biome biome, boolean isServer) {

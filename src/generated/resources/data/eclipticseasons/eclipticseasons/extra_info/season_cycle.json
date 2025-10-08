@@ -1,0 +1,9 @@
+{
+  "registry": "eclipticseasons:season_cycle",
+  "target": [
+    "eclipticseasons:monsoon",
+    "eclipticseasons:cold",
+    "eclipticseasons:hot"
+  ],
+  "priority": 800
+}

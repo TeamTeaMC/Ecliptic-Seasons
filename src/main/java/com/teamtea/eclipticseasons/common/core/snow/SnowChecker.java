@@ -1,6 +1,7 @@
 package com.teamtea.eclipticseasons.common.core.snow;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
+import com.teamtea.eclipticseasons.api.data.misc.ESSortInfo;
 import com.teamtea.eclipticseasons.api.data.season.SnowDefinition;
 import com.teamtea.eclipticseasons.api.util.SimpleUtil;
 import com.teamtea.eclipticseasons.common.registry.ESRegistries;
@@ -10,7 +11,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nullable;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
@@ -66,7 +66,7 @@ public class SnowChecker {
             SimpleUtil.warningForModWrongCalling(ESRegistries.SNOW_DEFINITIONS);
         } else {
             SNOW_DEFINITION_MAP.clear();
-            for (SnowDefinition snowDefinition : snowDefinitions.get()) {
+            for (SnowDefinition snowDefinition : ESSortInfo.sorted2(snowDefinitions.get())) {
                 snowDefinition.fillMap(SNOW_DEFINITION_MAP);
             }
             EclipticSeasons.logger("Has registered extra snow definitions with size %s.".formatted(SNOW_DEFINITION_MAP.size()));

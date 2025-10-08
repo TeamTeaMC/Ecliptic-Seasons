@@ -17,23 +17,31 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public class SnowDefinitionsRegistry {
-    public static final ResourceKey<SnowDefinition> OVERLAY = createKey("test/overlay");
+    private static final ResourceKey<SnowDefinition> OVERLAY = createKey("test/overlay");
     public static final ResourceKey<SnowDefinition> SNOWY_GRASS_BLOCK = createKey("snowy_grass_block");
+
+    public static final ResourceKey<SnowDefinition> SNOWY_SWEET_BERRY_BUSH = createKey("snowy_sweet_berry_bush");
+    public static final ResourceKey<SnowDefinition> SNOWY_DEAD_BUSH = createKey("snowy_dead_bush");
+    public static final ResourceKey<SnowDefinition> SNOWY_SUGAR_CANE = createKey("snowy_sugar_cane");
+    public static final ResourceKey<SnowDefinition> SNOWY_BAMBOO = createKey("snowy_bamboo");
+    public static final ResourceKey<SnowDefinition> SNOWY_BAMBOO_SAPLING = createKey("snowy_bamboo_sapling");
 
     private static ResourceKey<SnowDefinition> createKey(String name) {
         return ResourceKey.create(ESRegistries.SNOW_DEFINITIONS, EclipticSeasons.rl(name));
     }
 
     private static ResourceKey<SnowDefinition> createKey(Block block) {
-        return ResourceKey.create(ESRegistries.SNOW_DEFINITIONS, EclipticSeasons.rl("snowy_" + block.builtInRegistryHolder().getKey().location().getPath()));
+        return ResourceKey.create(ESRegistries.SNOW_DEFINITIONS, EclipticSeasons.rl("snowy_" + block.builtInRegistryHolder().key().location().getPath()));
     }
 
-    public static void bootstrap(BootstrapContext<SnowDefinition> context) {
-
+    public static void bootstrap2(BootstrapContext<SnowDefinition> context) {
         context.register(OVERLAY, SnowDefinition.builder()
                 .blocks(HolderSet.empty())
                 .info(SnowDefinition.Info.builder().mid(ClientModelDefinitions.OVERLAY).build())
                 .build());
+    }
+
+    public static void bootstrap(BootstrapContext<SnowDefinition> context) {
         context.register(SNOWY_GRASS_BLOCK, SnowDefinition.builder()
                 .blocks(set(Blocks.GRASS_BLOCK))
                 .info(SnowDefinition.Info.builder().mid(ClientModelDefinitions.SNOWY_GRASS_BLOCK_OVERLAY).build())

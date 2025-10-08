@@ -9,7 +9,7 @@ import com.seibel.distanthorizons.core.level.DhClientServerLevel;
 import com.seibel.distanthorizons.core.level.IDhClientLevel;
 import com.seibel.distanthorizons.core.pos.DhSectionPos;
 import com.seibel.distanthorizons.core.pos.blockPos.DhBlockPos;
-import com.seibel.distanthorizons.core.pos.blockPos.DhBlockPos2D;
+import com.seibel.distanthorizons.core.pos.blockPos.DhBlockPosMutable;
 import com.seibel.distanthorizons.core.render.LodQuadTree;
 import com.seibel.distanthorizons.core.render.LodRenderSection;
 import com.seibel.distanthorizons.core.util.FullDataPointUtil;
@@ -20,8 +20,8 @@ import com.seibel.distanthorizons.core.wrapperInterfaces.IWrapperFactory;
 import com.seibel.distanthorizons.core.wrapperInterfaces.block.IBlockStateWrapper;
 import com.seibel.distanthorizons.core.wrapperInterfaces.world.IBiomeWrapper;
 import com.seibel.distanthorizons.core.wrapperInterfaces.world.IClientLevelWrapper;
-import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
+import com.teamtea.eclipticseasons.config.ClientConfig;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import com.teamtea.eclipticseasons.mixin.compat.distanthorizons.MixinQuadTree;
 import it.unimi.dsi.fastutil.longs.LongArrayList;
@@ -35,13 +35,16 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LightBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.material.MapColor;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.Collectors;
 
 public class DHTool {
 
@@ -160,7 +163,7 @@ public class DHTool {
                     var holderKey = ResourceKey.create(Registries.BIOME, ResourceLocation.parse(iBiomeWrapper.getSerialString()));
                     if ((clientLevelWrapper.getLevel().registryAccess().holder(holderKey).orElse(null)
                             instanceof Holder.Reference<Biome> holder)) {
-                        if (MapChecker.shouldSnowAtBiome(level, holder.value(), blockState, level.getRandom(), blockState.getSeed(mcPos),mcPos))
+                        if (MapChecker.shouldSnowAtBiome(level, holder.value(), blockState, level.getRandom(), blockState.getSeed(mcPos), mcPos))
                         //     return mapColor.col;
                         {
                             HashSet<IBlockStateWrapper> blockStatesToIgnore = WRAPPER_FACTORY.getRendererIgnoredBlocks(instance.getLevelWrapper());
@@ -248,5 +251,28 @@ public class DHTool {
                 && clientWorld.getLevel(clientLevelWrapper) instanceof IDhClientLevel clientLevel) {
             clientLevel.clearRenderCache();
         }
+    }
+
+    public static IBlockStateWrapper shouldFrozen(IDhClientLevel clientLevel, IBiomeWrapper biomeWrapper, DhBlockPosMutable dhBlockPosMutable, BlockState blockState, FullDataPointIdMap fullDataMapping, LongArrayList fullColumnData, int index) {
+        if (ClientConfig.Debug.frozenWater.get()
+                && biomeWrapper.getWrappedMcObject() instanceof Holder<?> holder
+                && holder.value() instanceof Biome biome
+                && clientLevel.getLevelWrapper().getWrappedMcObject() instanceof Level level
+                && blockState.is(Blocks.WATER)
+                && blockState.getFluidState().isSourceOfType(Fluids.WATER)) {
+            if (index > 0 && index < fullColumnData.size() - 1) {
+                try {
+                    int id = FullDataPointUtil.getId(fullColumnData.getLong(index - 1));
+                    if (!fullDataMapping.getBlockStateWrapper(id).isAir())
+                        return null;
+                } catch (IndexOutOfBoundsException ignored) {
+                }
+            }
+            var mcPos = McObjectConverter.Convert(dhBlockPosMutable);
+            if (MapChecker.shouldSnowAtBiome(level, biome, blockState, level.getRandom(), blockState.getSeed(mcPos), mcPos)) {
+                return BlockStateWrapper.fromBlockState(Blocks.ICE.defaultBlockState(), clientLevel.getLevelWrapper());
+            }
+        }
+        return null;
     }
 }

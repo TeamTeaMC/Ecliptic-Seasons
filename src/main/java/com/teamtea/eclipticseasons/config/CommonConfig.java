@@ -2,6 +2,7 @@ package com.teamtea.eclipticseasons.config;
 
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
+import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.compat.CompatModule;
 import lombok.Getter;
@@ -18,7 +19,7 @@ import java.util.*;
 import java.util.stream.Stream;
 
 public class CommonConfig {
-    public static final ModConfigSpec COMMON_CONFIG = new ModConfigSpec.Builder().configure(CommonConfig::new).getRight();
+    public static final ModConfigSpec COMMON_CONFIG = new ModConfigSpec.Builder().configure(com.teamtea.eclipticseasons.config.CommonConfig::new).getRight();
 
     protected CommonConfig(ModConfigSpec.Builder builder) {
         Season.load(builder);
@@ -42,6 +43,8 @@ public class CommonConfig {
         public static ModConfigSpec.BooleanValue disableChunkCacheCleaner;
         public static ModConfigSpec.BooleanValue disableUniqueRebindingBiomeTags;
 
+        public static ModConfigSpec.BooleanValue disableIceOrSnowCauldron;
+
         private static void load(ModConfigSpec.Builder builder) {
             builder.push("Debug");
             logIllegalUse = builder.comment("“Enable logging for illegal function usage.")
@@ -60,6 +63,9 @@ public class CommonConfig {
                     .define("DisableChunkCacheCleaner", false);
             disableUniqueRebindingBiomeTags = builder.comment("Disable unique rebinding for biome tags. Note that after disabling, tags may overlap.")
                     .define("DisableUniqueBiomeTagsRebinding", false);
+
+            disableIceOrSnowCauldron = builder.comment("Disable cauldron enhancement, they will no longer turn into snow-filled or ice-filled cauldrons when it snows.")
+                    .define("DisableIceOrSnowCauldron", false);
             builder.pop();
         }
     }
@@ -217,7 +223,7 @@ public class CommonConfig {
             registerCropDefaultValue = builder.comment("[Deprecated]If a crop is not registered for a season or humid type, default values will be used.")
                     .define("RegisterCropDefaultValue", false);
             forceCompatMode = builder.comment("Force all crops to use compatibility mode for growth control, not just those tagged as eclipticseasons:natural_plants.")
-                    .define("ForceCompatMode", false);
+                    .define("ForceCompatMode", true);
 
             saveChunkEnvironmentalHumidity = builder.comment("Save environmental humidity modifiers to chunk file.")
                     .define("SaveChunkEnvironmentalHumidity", true);
@@ -230,11 +236,11 @@ public class CommonConfig {
 
         public static ModConfigSpec.BooleanValue enableBreed;
         public static ModConfigSpec.BooleanValue enableBee;
-        public static ModConfigSpec.ConfigValue<List<? extends com.teamtea.eclipticseasons.api.constant.solar.Season>> beePollinateSeasons;
-        public static ModConfigSpec.ConfigValue<List<? extends com.teamtea.eclipticseasons.api.constant.solar.Season>> beeActiveSeasons;
+        public static ModConfigSpec.ConfigValue<List<? extends String>> beePollinateSeasons;
+        public static ModConfigSpec.ConfigValue<List<? extends String>> beeActiveSeasons;
 
         public static ModConfigSpec.BooleanValue enableFishing;
-        public static ModConfigSpec.ConfigValue<List<? extends com.teamtea.eclipticseasons.api.constant.solar.Season>> fishingSeasons;
+        public static ModConfigSpec.ConfigValue<List<? extends String>> fishingSeasons;
         public static ModConfigSpec.BooleanValue lessFishInThunder;
         public static ModConfigSpec.BooleanValue enableCoreWork;
 
@@ -248,20 +254,20 @@ public class CommonConfig {
             beePollinateSeasons = builder.comment("Seasons in which bees are able to pollinate crops and flowers.",
                     "Default: [SPRING]").defineListAllowEmpty("BeePollinateSeasons",
                     () -> List.of(
-                            com.teamtea.eclipticseasons.api.constant.solar.Season.SPRING
+                            com.teamtea.eclipticseasons.api.constant.solar.Season.SPRING.toString()
                     ),
-                    () -> com.teamtea.eclipticseasons.api.constant.solar.Season.SPRING,
-                    Animal::validSeason);
+                    com.teamtea.eclipticseasons.api.constant.solar.Season.SPRING::toString,
+                    CommonConfig::validSeason);
 
             beeActiveSeasons = builder.comment("Seasons in which bees are generally active outside the hive.",
                     "Default: [SPRING, SUMMER, AUTUMN]").defineListAllowEmpty("BeeActiveSeasons",
                     () -> List.of(
-                            com.teamtea.eclipticseasons.api.constant.solar.Season.SPRING,
-                            com.teamtea.eclipticseasons.api.constant.solar.Season.SUMMER,
-                            com.teamtea.eclipticseasons.api.constant.solar.Season.AUTUMN
+                            com.teamtea.eclipticseasons.api.constant.solar.Season.SPRING.toString(),
+                            com.teamtea.eclipticseasons.api.constant.solar.Season.SUMMER.toString(),
+                            com.teamtea.eclipticseasons.api.constant.solar.Season.AUTUMN.toString()
                     ),
-                    () -> com.teamtea.eclipticseasons.api.constant.solar.Season.SPRING,
-                    Animal::validSeason);
+                    com.teamtea.eclipticseasons.api.constant.solar.Season.SPRING::toString,
+                    CommonConfig::validSeason);
 
             enableFishing = builder.comment("Enable seasonal fishing behavior, let enjoy summer.")
                     .define("EnableSeasonalFishing", false);
@@ -270,10 +276,10 @@ public class CommonConfig {
                     "Default: [SUMMER]"
             ).defineListAllowEmpty("FishingSeasons",
                     () -> List.of(
-                            com.teamtea.eclipticseasons.api.constant.solar.Season.SUMMER
+                            com.teamtea.eclipticseasons.api.constant.solar.Season.SUMMER.toString()
                     ),
-                    () -> com.teamtea.eclipticseasons.api.constant.solar.Season.SUMMER,
-                    Animal::validSeason);
+                    com.teamtea.eclipticseasons.api.constant.solar.Season.SUMMER::toString,
+                    CommonConfig::validSeason);
 
             lessFishInThunder = builder.comment("Reduce fish availability during thunderstorms.")
                     .define("LessFishInThunder", false);
@@ -282,17 +288,60 @@ public class CommonConfig {
                     .define("SeasonCoreAffectsAnimals", true);
             builder.pop();
         }
+    }
 
-        private static boolean validSeason(Object o) {
-            if (o instanceof String s) {
-                try {
-                    com.teamtea.eclipticseasons.api.constant.solar.Season.valueOf(s);
-                    return true;
-                } catch (IllegalArgumentException ignored) {
-                }
+    public static boolean validSeason(Object o) {
+        if (o instanceof String s) {
+            try {
+                com.teamtea.eclipticseasons.api.constant.solar.Season.valueOf(s);
+                return true;
+            } catch (IllegalArgumentException ignored) {
             }
-            return o instanceof com.teamtea.eclipticseasons.api.constant.solar.Season;
         }
+        return o instanceof com.teamtea.eclipticseasons.api.constant.solar.Season;
+    }
+
+    public static boolean validSolarTerm(Object o) {
+        if (o instanceof String s) {
+            try {
+                com.teamtea.eclipticseasons.api.constant.solar.SolarTerm.valueOf(s);
+                return true;
+            } catch (IllegalArgumentException ignored) {
+            }
+        }
+        return o instanceof com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
+    }
+
+    public static Set<com.teamtea.eclipticseasons.api.constant.solar.Season> castSeasons(List<? extends String> strings) {
+        var es1 = EnumSet.noneOf(com.teamtea.eclipticseasons.api.constant.solar.Season.class);
+        for (String string : strings) {
+            es1.add(com.teamtea.eclipticseasons.api.constant.solar.Season.valueOf(string));
+        }
+        return es1;
+    }
+
+    public static List<com.teamtea.eclipticseasons.api.constant.solar.Season> castSeasonList(List<? extends String> strings) {
+        var es1 = new ArrayList<com.teamtea.eclipticseasons.api.constant.solar.Season>();
+        for (String string : strings) {
+            es1.add(com.teamtea.eclipticseasons.api.constant.solar.Season.valueOf(string));
+        }
+        return es1;
+    }
+
+    public static Set<com.teamtea.eclipticseasons.api.constant.solar.SolarTerm> castSolarTerms(List<? extends String> strings) {
+        var es1 = EnumSet.noneOf(com.teamtea.eclipticseasons.api.constant.solar.SolarTerm.class);
+        for (String string : strings) {
+            es1.add(com.teamtea.eclipticseasons.api.constant.solar.SolarTerm.valueOf(string));
+        }
+        return es1;
+    }
+
+    public static List<com.teamtea.eclipticseasons.api.constant.solar.SolarTerm> castSolarTermList(List<? extends String> strings) {
+        var es1 = new ArrayList<com.teamtea.eclipticseasons.api.constant.solar.SolarTerm>();
+        for (String string : strings) {
+            es1.add(com.teamtea.eclipticseasons.api.constant.solar.SolarTerm.valueOf(string));
+        }
+        return es1;
     }
 
     public static class Weather {

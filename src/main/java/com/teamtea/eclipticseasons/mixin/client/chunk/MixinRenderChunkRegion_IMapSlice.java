@@ -198,14 +198,14 @@ public abstract class MixinRenderChunkRegion_IMapSlice implements IMapSlice, IEx
 
         SnowyStatusKeeper lightArrays = this.SNOWY_STATUS_MAP[index(minChunkX, minChunkZ, relBlockX, relBlockZ)];
 
-        return lightArrays.isSnowyBlock(pos);
+        return lightArrays != null && lightArrays.isSnowyBlock(pos);
     }
 
     /* ======================================== MODEL PART ===================================== */
 
 
     @Unique
-    private ExtraRendererContext eclipticseasons$rendererHolder =new ExtraRendererContext();
+    private ExtraRendererContext eclipticseasons$rendererHolder = new ExtraRendererContext();
 
     @Override
     public ExtraRendererContext eclipticseasons$getContext() {

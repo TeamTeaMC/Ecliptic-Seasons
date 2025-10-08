@@ -4,60 +4,83 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.objects.Object2IntLinkedOpenHashMap;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 
-import java.util.ArrayList;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
-public record SolarTermsRecord(ArrayList<SolarTerm> solarTerm) {
-    public static final int size = SolarTerm.collectValues().length - 1;
+public record SolarTermsRecord(Object2IntLinkedOpenHashMap<SolarTerm> solarTerms) {
+    public static final int size = SolarTerm.collectValues().length;
     public static final Codec<SolarTermsRecord> CODEC = Codec.lazyInitialized(
             () -> RecordCodecBuilder.create(
                     solarHolderInstance ->
                             solarHolderInstance.group(Codec.INT.sizeLimitedListOf(size)
-                                            .fieldOf("solar_terms").forGetter(solarHolder -> solarHolder
-                                                    .solarTerm()
-                                                    .stream()
-                                                    .map(Enum::ordinal)
-                                                    .toList()
-                                            )
-
+                                                    .fieldOf("solar_terms").forGetter(solarHolder -> solarHolder
+                                                            .solarTerms()
+                                                            .keySet()
+                                                            .stream()
+                                                            .map(Enum::ordinal)
+                                                            .toList()
+                                                    ),
+                                            Codec.INT.sizeLimitedListOf(size)
+                                                    .optionalFieldOf("solar_terms_counter").forGetter(solarHolder ->
+                                                            Optional.of(solarHolder
+                                                                    .solarTerms()
+                                                                    .values()
+                                                                    .stream().toList())
+                                                    )
                                     )
-                                    .apply(solarHolderInstance, ss ->
-                                            new SolarTermsRecord(new ArrayList<>(ss.stream().map(i -> SolarTerm.collectValues()[i])
-                                                    .toList()))
+                                    .apply(solarHolderInstance, (intArray, counter) ->
+                                            {
+                                                final Object2IntLinkedOpenHashMap<SolarTerm> solarTerms = new Object2IntLinkedOpenHashMap<>();
+
+                                                for (int i = 0, intArrayLength = intArray.size(); i < intArrayLength; i++) {
+                                                    int id = intArray.get(i);
+                                                    int finalI = i;
+                                                    solarTerms.put(
+                                                            SolarTerm.collectValues()[id], (int) counter.map(c -> c.get(finalI)).orElse(1)
+                                                    );
+                                                }
+                                                return new SolarTermsRecord(solarTerms);
+                                            }
                                     )
             )
     );
     public static final StreamCodec<RegistryFriendlyByteBuf, SolarTermsRecord> STREAM_CODEC = new StreamCodec<>() {
         public SolarTermsRecord decode(RegistryFriendlyByteBuf byteBuf) {
-            var intlist = byteBuf.readIntIdList();
-            return new SolarTermsRecord(new ArrayList<>(intlist.stream().map(i -> SolarTerm.collectValues()[i])
-                    .toList()));
+            var intArray = byteBuf.readIntIdList();
+            var counter = byteBuf.readIntIdList();
+
+            final Object2IntLinkedOpenHashMap<SolarTerm> solarTerms = new Object2IntLinkedOpenHashMap<>();
+
+            for (int i = 0, intArrayLength = intArray.size(); i < intArrayLength; i++) {
+                int id = intArray.getInt(i);
+                solarTerms.put(
+                        SolarTerm.collectValues()[id], counter.getInt(i)
+                );
+            }
+            return new SolarTermsRecord(solarTerms);
         }
 
         public void encode(RegistryFriendlyByteBuf byteBuf, SolarTermsRecord solarHolder) {
 
-            var intlist = solarHolder
-                    .solarTerm()
-                    .stream()
-                    .map(Enum::ordinal)
-                    .toList();
+            byteBuf.writeIntIdList(solarHolder.solarTerms
+                    .keySet().stream().map(Enum::ordinal)
+                    .collect(Collectors.toCollection(IntArrayList::new))
+            );
 
-            byteBuf.writeIntIdList(new IntArrayList(intlist));
+            byteBuf.writeIntIdList(solarHolder.solarTerms
+                    .values().stream()
+                    .collect(Collectors.toCollection(IntArrayList::new))
+            );
 
         }
     };
 
-    @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof SolarTermsRecord solarHolder)
-            return solarTerm.equals(solarHolder.solarTerm);
-        return false;
-    }
-
-    @Override
-    public int hashCode() {
-        return solarTerm.hashCode();
+    public boolean addAndCheck(SolarTerm st) {
+        solarTerms.addTo(st, 1);
+        return solarTerms.size() < 24;
     }
 }

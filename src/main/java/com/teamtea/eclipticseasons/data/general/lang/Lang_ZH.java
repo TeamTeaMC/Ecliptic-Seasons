@@ -65,8 +65,12 @@ public class Lang_ZH extends LangHelper {
 
         add(BlockRegistry.block_in_wooden_grate_block.get(), "湿度调节木格栅");
 
-        add(ItemRegistry.snowless_hometown.get(),"无雪的故乡");
+        add(ItemRegistry.snowless_hometown.get(), "无雪的故乡");
         add(SongRegistry.toLangKey(SongRegistry.SNOWLESS_HOMETOWN), "北山薇 & 橙子苏打 等");
+
+        add(BlockRegistry.snow_cauldron.get(),"装有雪的炼药锅");
+        add(BlockRegistry.ice_cauldron.get(),"装有冰块的炼药锅");
+
 
         add("info.eclipticseasons.environment.temperature.under_freezing", "严寒");
         add("info.eclipticseasons.environment.temperature.freezing", "冰冻");
@@ -422,6 +426,7 @@ public class Lang_ZH extends LangHelper {
     private void addJade() {
         add("config.jade.plugin_eclipticseasons.crop", "作物");
         add("config.jade.plugin_eclipticseasons.animal", "动物");
+        add("config.jade.plugin_eclipticseasons.cauldron", "炼药锅");
 
         add("config.jade.plugin_eclipticseasons.crop.shift_hint", "Shift按键提示");
         add("hint.jade.plugin_eclipticseasons.crop.show", "§o<..按住%s§o以查看更多..>");
@@ -461,6 +466,9 @@ public class Lang_ZH extends LangHelper {
         add("info.eclipticseasons.greenhouse_essence.source", "完成%1$s季进度或者任务获取");
 
         add("info.eclipticseasons.seasonal_prayer_scroll.use", "激活悬挂式告示牌为季节任务栏，完成限时任务");
+
+        add("info.eclipticseasons.snow_cauldron.extraction","§7§o使用锹可以获取雪球");
+        add("info.eclipticseasons.ice_cauldron.extraction","§7§o使用镐可以获取冰块");
     }
 
     private void addAdvancements() {
@@ -735,6 +743,10 @@ public class Lang_ZH extends LangHelper {
         add("eclipticseasons.configuration.WeatherVotePercent", "天气投票百分比");
 
         add("eclipticseasons.configuration.ClearAfterSleep", "醒后天晴");
+
+        add("eclipticseasons.configuration.Iris", "Iris");
+        add("eclipticseasons.configuration.UnifiedSnowyBlockShading", "统一覆雪方块表面反射");
+        add("eclipticseasons.configuration.UnifiedSnowyBlockSides", "统一覆雪方块侧面反射");
 
     }
 

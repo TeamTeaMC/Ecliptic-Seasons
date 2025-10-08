@@ -60,10 +60,10 @@ public class MultiBlockSelector implements IChangeSelector {
 
     @Override
     public boolean place(ServerLevel level, BlockPos pos, ISeasonChangeContext context) {
-        List<Part> get = multiBlocks;
+        List<MultiBlockSelector.Part> get = multiBlocks;
         int count = 0;
         for (int j = 0, getSize = get.size(); j < getSize; j++) {
-            Part part = get.get(j);
+            MultiBlockSelector.Part part = get.get(j);
             BlockState newState = part.state;
             BlockPos newpos = part.offset.map(pos::offset).orElse(pos);
             if (part.replace.isEmpty()) {

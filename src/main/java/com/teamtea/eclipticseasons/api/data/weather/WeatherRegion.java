@@ -7,18 +7,26 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.biome.Biome;
+import net.neoforged.neoforge.common.conditions.ConditionalOps;
+import net.neoforged.neoforge.common.conditions.ICondition;
+import net.neoforged.neoforge.common.conditions.TrueCondition;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+import java.util.Optional;
+
 public record WeatherRegion(Holder<Biome> core, HolderSet<Biome> sub,
-                            int priority) implements Comparable<WeatherRegion> {
+                            int priority,
+                            List<ICondition> iCondition) implements Comparable<WeatherRegion> {
     public WeatherRegion(Holder<Biome> core, HolderSet<Biome> sub) {
-        this(core, sub, 1000);
+        this(core, sub, 1000, List.of());
     }
 
     public static final Codec<WeatherRegion> CODEC = RecordCodecBuilder.create(ins -> ins.group(
             CodecUtil.holderCodec(Registries.BIOME).fieldOf("core").forGetter(WeatherRegion::core),
             CodecUtil.holderSetCodec(Registries.BIOME).fieldOf("sub").forGetter(WeatherRegion::sub),
-            Codec.INT.optionalFieldOf("priority", 1000).forGetter(WeatherRegion::priority)
+            Codec.INT.optionalFieldOf("priority", 1000).forGetter(WeatherRegion::priority),
+            ICondition.LIST_CODEC.optionalFieldOf(ConditionalOps.DEFAULT_CONDITIONS_KEY, List.of()).forGetter(WeatherRegion::iCondition)
     ).apply(ins, WeatherRegion::new));
 
     @Override

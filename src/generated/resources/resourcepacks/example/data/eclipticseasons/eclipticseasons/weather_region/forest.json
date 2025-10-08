@@ -4,5 +4,11 @@
     "minecraft:flower_forest",
     "minecraft:dark_forest",
     "minecraft:birch_forest"
+  ],
+  "neoforge:conditions": [
+    {
+      "modid": "xxxx",
+      "type": "neoforge:mod_loaded"
+    }
   ]
 }

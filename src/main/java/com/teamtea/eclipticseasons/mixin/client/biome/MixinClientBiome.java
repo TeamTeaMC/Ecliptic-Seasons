@@ -21,6 +21,27 @@ public abstract class MixinClientBiome implements IBiomeColorHolder {
         if (returnValue != skyColor) cir.setReturnValue(skyColor);
     }
 
+    @Inject(at = {@At("RETURN")}, method = {"getWaterColor"}, cancellable = true)
+    public void eclipticseasons$getWaterColor(CallbackInfoReturnable<Integer> cir) {
+        int returnValue = cir.getReturnValue();
+        int waterColor = BiomeColorsHandler.getWaterColor((Biome) (Object) this, returnValue);
+        if (returnValue != waterColor) cir.setReturnValue(waterColor);
+    }
+
+    @Inject(at = {@At("RETURN")}, method = {"getWaterFogColor"}, cancellable = true)
+    public void eclipticseasons$getWaterFogColor(CallbackInfoReturnable<Integer> cir) {
+        int returnValue = cir.getReturnValue();
+        int waterFogColor = BiomeColorsHandler.getWaterFogColor((Biome) (Object) this, returnValue);
+        if (returnValue != waterFogColor) cir.setReturnValue(waterFogColor);
+    }
+
+    @Inject(at = {@At("RETURN")}, method = {"getFogColor"}, cancellable = true)
+    public void eclipticseasons$getFogColor(CallbackInfoReturnable<Integer> cir) {
+        int returnValue = cir.getReturnValue();
+        int fogColor = BiomeColorsHandler.getFogColor((Biome) (Object) this, returnValue);
+        if (returnValue != fogColor) cir.setReturnValue(fogColor);
+    }
+
 
     // ======================================================
 

@@ -26,6 +26,7 @@ public class DatapackRegistryGenerator extends DatapackBuiltinEntriesProvider {
             .add(ESRegistries.SEASON_PHASE, SeasonPhaseRegistry::bootstrap)
             .add(ESRegistries.SEASON_CYCLE, SeasonCycleRegistry::bootstrap)
             .add(Registries.JUKEBOX_SONG, SongRegistry::bootstrap)
+            .add(ESRegistries.EXTRA_INFO, ESSortInfoRegistry::bootstrap)
             ;
 
     public DatapackRegistryGenerator(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {

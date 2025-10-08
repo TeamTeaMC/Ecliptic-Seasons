@@ -78,6 +78,7 @@ public class ExtraModelManager {
     public static ModelResourceLocation snowySlabBottom = new ModelResourceLocation(BlockRegistry.snowySlab.getId(), "type=bottom,waterlogged=false");
     public static ModelResourceLocation snowOverlayBlock = new ModelResourceLocation(BlockRegistry.snowyBlock.getId(), "");
 
+    public static ModelResourceLocation ice = mrl("block/ice");
 
     public static ModelResourceLocation snowy_custom = mrl("block/snowy_custom");
     public static ModelResourceLocation snowy_custom_ao = mrl("block/snowy_custom_ao");
@@ -692,26 +693,8 @@ public class ExtraModelManager {
                     && maySnowyAt(level, mapSlice, state, checkPos, null, seed)
             ) {
                 isSnowy = true;
-
-                if (CommonConfig.Snow.notSnowyNearGlowingBlock.get()
-                        && !EclipticUtil.canSnowyBlockInteract()) {
-                    if (mapSlice != null
-                            && mapSlice.getSnowyStatus(checkPos) == SnowyRemover.SNOWY) {
-                        checkPos.set(pos.getX(), pos.getY() + 1 - offset, pos.getZ());
-                        if (blockAndTintGetter.getBrightness(LightLayer.BLOCK, checkPos) >=
-                                CommonConfig.Snow.notSnowyNearGlowingBlockLevel.getAsInt()) {
-                            isSnowy = false;
-                        }
-                    }
-
-                    if (mapSlice == null) {
-                        checkPos.set(pos.getX(), pos.getY() + 1 - offset, pos.getZ());
-                        if (blockAndTintGetter.getBrightness(LightLayer.BLOCK, checkPos) >=
-                                CommonConfig.Snow.notSnowyNearGlowingBlockLevel.getAsInt()) {
-                            isSnowy = false;
-                        }
-                    }
-                }
+                checkPos.set(pos.getX(), pos.getY() + 1 - offset, pos.getZ());
+                isSnowy = notTooBright(blockAndTintGetter, mapSlice, checkPos);
             }
 
         }
@@ -727,12 +710,35 @@ public class ExtraModelManager {
             if (snowyStatus == SnowyRemover.SnowyFlag.NONE_SNOWY.ordinal()) {
                 return false;
             }
-            if (EclipticUtil.canSnowyBlockInteract()) return mapSlice.isSnowyBlock(checkPos);
-
+            if (EclipticUtil.canSnowyBlockInteract() && MapChecker.notWater(state))
+                return mapSlice.isSnowyBlock(checkPos);
             return MapChecker.shouldSnowAt(level, checkPos, mapSlice.getSurfaceFaceBiomeId(checkPos), state, random, seed);
         } else {
             return MapChecker.shouldSnowAt(level, checkPos, state, random, seed);
         }
+    }
+
+
+    public static boolean notTooBright(BlockAndTintGetter blockAndTintGetter, IMapSlice mapSlice, BlockPos checkPos) {
+        boolean isSnowy = true;
+        if (CommonConfig.Snow.notSnowyNearGlowingBlock.get()
+                && !EclipticUtil.canSnowyBlockInteract()) {
+            if (mapSlice != null
+                    && mapSlice.getSnowyStatus(checkPos) == SnowyRemover.SNOWY) {
+                if (blockAndTintGetter.getBrightness(LightLayer.BLOCK, checkPos) >=
+                        CommonConfig.Snow.notSnowyNearGlowingBlockLevel.getAsInt()) {
+                    isSnowy = false;
+                }
+            }
+
+            if (mapSlice == null) {
+                if (blockAndTintGetter.getBrightness(LightLayer.BLOCK, checkPos) >=
+                        CommonConfig.Snow.notSnowyNearGlowingBlockLevel.getAsInt()) {
+                    isSnowy = false;
+                }
+            }
+        }
+        return isSnowy;
     }
 
 
@@ -945,25 +951,8 @@ public class ExtraModelManager {
             ) {
                 isSnowy = true;
 
-                if (CommonConfig.Snow.notSnowyNearGlowingBlock.get()
-                        && !EclipticUtil.canSnowyBlockInteract()) {
-                    if (mapSlice != null
-                            && mapSlice.getSnowyStatus(checkPos) == SnowyRemover.SNOWY) {
-                        checkPos.set(pos.getX(), pos.getY() + 1 - offset, pos.getZ());
-                        if (blockAndTintGetter.getBrightness(LightLayer.BLOCK, checkPos) >=
-                                CommonConfig.Snow.notSnowyNearGlowingBlockLevel.getAsInt()) {
-                            isSnowy = false;
-                        }
-                    }
-
-                    if (mapSlice == null) {
-                        checkPos.set(pos.getX(), pos.getY() + 1 - offset, pos.getZ());
-                        if (blockAndTintGetter.getBrightness(LightLayer.BLOCK, checkPos) >=
-                                CommonConfig.Snow.notSnowyNearGlowingBlockLevel.getAsInt()) {
-                            isSnowy = false;
-                        }
-                    }
-                }
+                checkPos.set(pos.getX(), pos.getY() + 1 - offset, pos.getZ());
+                isSnowy = notTooBright(blockAndTintGetter, mapSlice, checkPos);
 
 
                 if (isSnowy) {

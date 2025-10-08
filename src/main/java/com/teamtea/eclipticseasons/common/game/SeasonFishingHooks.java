@@ -24,7 +24,7 @@ public class SeasonFishingHooks {
             boolean badWeather = WeatherManager.isThunderAt(level, blockPos)
                     && !CommonConfig.Animal.lessFishInThunder.get();
             Season season = AnimalHooks.getUseSeason(level, entity);
-            List<Season> seasons = (List<Season>) CommonConfig.Animal.fishingSeasons.get();
+            List<Season> seasons = CommonConfig.castSeasonList(CommonConfig.Animal.fishingSeasons.get());
             if ((!seasons.contains(season)
                     && (!CommonConfig.Animal.enableCoreWork.get() || AnimalHooks.withoutSeasonBonus(level, blockPos, seasons)))
                     || badWeather) {

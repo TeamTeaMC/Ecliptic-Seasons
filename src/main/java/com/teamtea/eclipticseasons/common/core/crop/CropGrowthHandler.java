@@ -18,6 +18,7 @@ import com.teamtea.eclipticseasons.api.data.crop.CropGrow;
 import com.teamtea.eclipticseasons.api.data.crop.CropGrowControl;
 import com.teamtea.eclipticseasons.api.data.crop.CropGrowControlBuilder;
 import com.teamtea.eclipticseasons.api.data.crop.GrowParameter;
+import com.teamtea.eclipticseasons.api.data.misc.ESSortInfo;
 import com.teamtea.eclipticseasons.api.data.misc.PosAndBlockStateCheck;
 import com.teamtea.eclipticseasons.api.event.CanPlantGrowEvent;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
@@ -48,7 +49,6 @@ import net.minecraft.world.level.*;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.pattern.BlockInWorld;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.chunk.LevelChunkSection;
@@ -130,7 +130,7 @@ public final class CropGrowthHandler {
             Optional<Registry<WetterStructure>> structures = registryAccess.registry(ESRegistries.WETTER);
             if (structures.isPresent()) {
                 wetterStructures.clear();
-                for (WetterStructure structure : structures.get()) {
+                for (WetterStructure structure : ESSortInfo.sorted2(structures.get())) {
                     HolderSet<Block> holders = structure.core().isPresent()
                             && structure.core().get().blocks().isPresent() ?
                             structure.core().get().blocks().get() : HolderSet.direct(Blocks.AIR.builtInRegistryHolder());
@@ -167,7 +167,7 @@ public final class CropGrowthHandler {
 
 
         Registry<AgroClimaticZone> cropClimateTypeRegistry = agroClimaticZones.get();
-        for (Holder.Reference<AgroClimaticZone> agroClimaticZoneReference : cropClimateTypeRegistry.holders().toList()) {
+        for (Holder.Reference<AgroClimaticZone> agroClimaticZoneReference : ESSortInfo.sorted(cropClimateTypeRegistry.holders().toList())) {
             if (!agroClimaticZoneReference.isBound()) continue;
             HolderSet<Biome> biomes = agroClimaticZoneReference.value().biomes();
             for (int i = 0; i < biomes.size(); i++) {
@@ -179,7 +179,7 @@ public final class CropGrowthHandler {
 
         Registry<Item> itemRegistry = registryAccess.registryOrThrow(Registries.ITEM);
         Registry<Block> blockRegistry = registryAccess.registryOrThrow(Registries.BLOCK);
-        for (Map.Entry<ResourceKey<CropGrowControlBuilder>, CropGrowControlBuilder> entry : cropGrowControlBuilders.get().entrySet()) {
+        for (Map.Entry<ResourceKey<CropGrowControlBuilder>, CropGrowControlBuilder> entry : ESSortInfo.sorted(cropGrowControlBuilders.get().entrySet())) {
             CropGrowControlBuilder builder = entry.getValue();
             CropGrowControlBuilder.put(entry.getKey().location(), builder);
             Optional<HolderSet<Block>> blocks = builder.applyTarget().blocks();

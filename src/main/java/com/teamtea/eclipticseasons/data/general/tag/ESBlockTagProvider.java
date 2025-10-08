@@ -10,6 +10,7 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.block.Blocks;
+import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.data.BlockTagsProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
@@ -82,9 +83,6 @@ public final class ESBlockTagProvider extends BlockTagsProvider {
                 .addTag(BlockTags.SNOW_LAYER_CANNOT_SURVIVE_ON);
 
 
-
-
-
         // add mc
         tag(BlockTags.CEILING_HANGING_SIGNS).add(BlockRegistry.season_quest_ceiling_hanging_sign.get());
         tag(BlockTags.WALL_HANGING_SIGNS).add(BlockRegistry.season_quest_wall_hanging_sign.get());
@@ -113,7 +111,15 @@ public final class ESBlockTagProvider extends BlockTagsProvider {
                 BlockRegistry.block_in_waxed_copper_grate_block.get(),
                 BlockRegistry.block_in_waxed_exposed_copper_grate_block.get(),
                 BlockRegistry.block_in_waxed_weathered_copper_grate_block.get(),
-                BlockRegistry.block_in_waxed_oxidized_copper_grate_block.get());
+                BlockRegistry.block_in_waxed_oxidized_copper_grate_block.get(),
+                BlockRegistry.ice_cauldron.get(),
+                BlockRegistry.snow_cauldron.get());
+
+        tag(BlockTags.CAULDRONS).add(BlockRegistry.ice_cauldron.get(),
+                BlockRegistry.snow_cauldron.get());
+
+        tag(Tags.Blocks.VILLAGER_JOB_SITES).add(BlockRegistry.ice_cauldron.get(),
+                BlockRegistry.snow_cauldron.get());
     }
 
     public ResourceLocation srl(String croptopia, String name) {

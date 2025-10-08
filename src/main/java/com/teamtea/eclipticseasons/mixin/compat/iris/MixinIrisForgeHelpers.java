@@ -6,6 +6,7 @@ import com.teamtea.eclipticseasons.client.core.ExtraModelManager;
 import com.teamtea.eclipticseasons.client.model.ISnowyReplaceModel;
 import com.teamtea.eclipticseasons.client.model.SnowyBakedModelWrapper;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
+import com.teamtea.eclipticseasons.compat.CompatModule;
 import com.teamtea.eclipticseasons.compat.sodium.SodiumStatus;
 import net.caffeinemc.mods.sodium.client.render.chunk.compile.pipeline.BlockRenderer;
 import net.caffeinemc.mods.sodium.client.render.frapi.render.AbstractBlockRenderContext;
@@ -43,16 +44,19 @@ public abstract class MixinIrisForgeHelpers {
     private void eclipticseasons$bufferDefaultModel_aftergetBlockAppearance(BakedModel model, BlockState state, CallbackInfo ci, @Local Direction cullFace) {
         if ((Object) this instanceof BlockRenderer r) {
             if (this instanceof SodiumStatus sodiumStatus
-                    && sodiumStatus.getSnowModel() instanceof ISnowyReplaceModel snowyBakedModelWrapper) {
+                    && sodiumStatus.getSnowModel() instanceof ISnowyReplaceModel snowyBakedModelWrapper
+                    && CompatModule.ClientConfig.unifiedSnowyBlockShading.isTrue()) {
                 if (WorldRenderingSettings.INSTANCE.getBlockStateIds() != null && cullFace != null) {
                     // BlockState appearance = null;
                     // appearance = IrisPlatformHelpers.getInstance().getBlockAppearance(this.level, state, cullFace, this.pos);
                     // if (EclipticSeasonsApi.getInstance().isSnowyBlock(Minecraft.getInstance().level, state, pos)) {
                     //     appearance = Blocks.SNOW.defaultBlockState();
                     // }
+                    if (CompatModule.ClientConfig.unifiedSnowyBlockSides.isFalse() && cullFace != Direction.UP)
+                        return;
 
                     if (ExtraModelManager.renderAsSnowInShader(state, level, pos)) {
-                        ((BlockSensitiveBufferBuilder) ((BlockRendererAccessor) r).getBuffers()).overrideBlock(WorldRenderingSettings.INSTANCE.getBlockStateIds().getInt(Blocks.SNOW.defaultBlockState()));
+                        ((BlockSensitiveBufferBuilder) ((BlockRendererAccessor) r).getBuffers()).overrideBlock(WorldRenderingSettings.INSTANCE.getBlockStateIds().getInt(Blocks.SNOW_BLOCK.defaultBlockState()));
                     }
                 }
             }

@@ -29,7 +29,7 @@ import java.awt.*;
 public final class DebugInfoRenderer {
     private final Minecraft mc;
     private long delay = 0;
-    private Holder<Biome> biomeHolder;
+    private net.minecraft.core.Holder<Biome> biomeHolder;
 
     public DebugInfoRenderer(Minecraft mc) {
 

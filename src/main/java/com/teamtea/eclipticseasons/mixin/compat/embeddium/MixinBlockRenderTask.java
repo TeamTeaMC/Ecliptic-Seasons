@@ -9,10 +9,12 @@ import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import com.teamtea.eclipticseasons.api.misc.client.IExtraRendererContextOwner;
 import com.teamtea.eclipticseasons.client.core.ExtraModelManager;
 import com.teamtea.eclipticseasons.client.core.ExtraRendererContext;
+import com.teamtea.eclipticseasons.client.render.chunk.IceKeeper;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.FluidState;
 import net.neoforged.neoforge.client.model.data.ModelData;
 import org.embeddedt.embeddium.api.render.chunk.BlockRenderContext;
 import org.embeddedt.embeddium.impl.render.chunk.compile.ChunkBuildBuffers;
@@ -121,6 +123,37 @@ public abstract class MixinBlockRenderTask {
             rendererHolder.resetAll();
         }
         return original;
+    }
+
+    @Inject(
+            method = "execute(Lorg/embeddedt/embeddium/impl/render/chunk/compile/ChunkBuildContext;Lorg/embeddedt/embeddium/impl/util/task/CancellationToken;)Lorg/embeddedt/embeddium/impl/render/chunk/compile/ChunkBuildOutput;",
+            remap = false,
+            at = @At(value = "INVOKE", target = "Lorg/embeddedt/embeddium/impl/render/chunk/compile/pipeline/FluidRenderer;render(Lorg/embeddedt/embeddium/impl/world/WorldSlice;Lnet/minecraft/world/level/material/FluidState;Lnet/minecraft/core/BlockPos;Lnet/minecraft/core/BlockPos;Lorg/embeddedt/embeddium/impl/render/chunk/compile/ChunkBuildBuffers;)V")
+    )
+    private void eclipticseasons$renderFrozenWaterIce(ChunkBuildContext buildContext,
+                                                      CancellationToken cancellationToken,
+                                                      CallbackInfoReturnable<ChunkBuildOutput> cir,
+                                                      @Local BlockRenderContext ctx,
+                                                      @Local ChunkBuildBuffers buffers,
+                                                      @Local FluidState fluidState,
+                                                      @Local BlockState blockState,
+                                                      @Local(ordinal = 0) BlockPos.MutableBlockPos blockPos,
+                                                      @Local(ordinal = 1) BlockPos.MutableBlockPos modelOffset) {
+
+
+        if (IceKeeper.notFrozen(buildContext.cache.getWorldSlice(), blockPos, blockState, fluidState)) return;
+        BakedModel model = IceKeeper.getIceModel(blockState, fluidState);
+        if (model != null) {
+            BlockState fakeState = IceKeeper.getFakeState(blockState, fluidState);
+            ctx.update(blockPos,
+                    modelOffset,
+                    fakeState,
+                    model,
+                    blockState.getSeed(blockPos),
+                    ModelData.EMPTY,
+                    ExtraModelManager.getRenderType(fakeState));
+            buildContext.cache.getBlockRenderer().renderModel(ctx, buffers);
+        }
     }
 
 }

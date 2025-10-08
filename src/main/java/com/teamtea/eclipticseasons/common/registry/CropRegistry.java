@@ -35,8 +35,6 @@ import java.util.Optional;
 
 public class CropRegistry {
 
-    public static final ResourceKey<CropGrowControlBuilder> base = createKey("templates/wheat");
-    public static final ResourceKey<CropGrowControlBuilder> base2 = createKey("wheat2");
 
     public static final ResourceKey<CropGrowControlBuilder> SPRING = createKey(CropSeasonType.SPRING);
     public static final ResourceKey<CropGrowControlBuilder> SUMMER = createKey(CropSeasonType.SUMMER);
