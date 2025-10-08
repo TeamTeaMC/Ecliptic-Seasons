@@ -1,3 +1,9 @@
+### 0.12.0 - *First Official Release – Anniversary Edition*
+
+> On this special anniversary, we proudly present our first official release! While there may be no significant content changes, this version sets the stage for stability and marks the beginning of a long-lasting experience. Moving forward, expect fewer frequent content updates, focusing instead on maintaining and refining what we’ve built.
+
+- **Spring After Autumn** achievement now unlocks a commemorative reward: **Snowless Hometown**—a symbol of warmth and the passage of time.
+
 ### 0.12.0-z-3
 
 - Now, when it’s snowing, a cauldron filled with water will turn into an ice-filled cauldron,
