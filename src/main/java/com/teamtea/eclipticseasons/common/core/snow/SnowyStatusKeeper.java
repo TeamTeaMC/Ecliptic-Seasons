@@ -154,7 +154,7 @@ public class SnowyStatusKeeper implements Cloneable {
             weatherStatusKeeper.getBiomeUse().add(biome);
 
             BlockState state = chunk.getBlockState(checkPos);
-            int flag = MapChecker.getBlockTypeFlag(level, checkPos, state);
+            int flag = MapChecker.getDefaultBlockTypeFlag(state);
             WeatherManager.SnowRenderStatus snowStatus =
                     flag == MapChecker.FLAG_NONE ?
                             WeatherManager.SnowRenderStatus.SNOW_MELT :

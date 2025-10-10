@@ -23,7 +23,7 @@ public class WildGooseParticle extends RisingParticle {
 
     @Override
     public ParticleRenderType getRenderType() {
-        return ParticleRenderType.PARTICLE_SHEET_TRANSLUCENT;
+        return ParticleRenderType.PARTICLE_SHEET_OPAQUE;
     }
 
     @Override

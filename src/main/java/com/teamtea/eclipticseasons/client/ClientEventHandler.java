@@ -176,7 +176,6 @@ public final class ClientEventHandler {
     @SubscribeEvent
     public static void onPlayerExit(ClientPlayerNetworkEvent.LoggingOut event) {
         if (Minecraft.getInstance().player != null) {
-            MapChecker.blockTypeCache.clear();
             CropGrowthHandler.clearOnClientExitOrServerClose();
             NaturalPlantHandler.clearOnClientExitOrServerClose();
             BiomeClimateManager.clearOnClientExitOrServerClose();

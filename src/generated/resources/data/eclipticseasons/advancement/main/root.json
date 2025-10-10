@@ -1,12 +1,11 @@
 {
-    },
-    "icon": {
-      "count": 1,
-      "id": "eclipticseasons:bamboo_wind_chimes"
-    },
-    "title": {
-      "translate": "advancement.eclipticseasons.root"
-    }
+	"icon": {
+		"count": 1,
+		"id": "eclipticseasons:bamboo_wind_chimes"
+	},
+	"title": {
+		"translate": "advancement.eclipticseasons.root"
+	},
 	"parent": "eclipticseasons:main/base",
 	"criteria": {
 		"solar_terms": {

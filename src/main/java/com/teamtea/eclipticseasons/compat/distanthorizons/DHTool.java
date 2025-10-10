@@ -201,7 +201,7 @@ public class DHTool {
                                     // boolean colorBelowWithAvoidedBlocks = Config.Client.Advanced.Graphics.Quality.tintWithAvoidedBlocks.get();
 
                                     if (bottomY + instance.getMinY() == dhBlockPos.getY() &&
-                                            (MapChecker.getBlockTypeFlag(level, mcPos, blockStateWrapper_NowQuery.blockState) != 0
+                                            (MapChecker.getDefaultBlockTypeFlag(blockStateWrapper_NowQuery.blockState) != 0
                                                     // || (blockStateWrapper1.blockState.is(BlockTags.FLOWERS))
                                                     || (!blockStateWrapper_NowQuery.isSolid() && !blockStateWrapper_NowQuery.isLiquid())
                                             )) {
