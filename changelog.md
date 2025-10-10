@@ -1,3 +1,10 @@
+### 0.12.0.2
+
+- When querying a block’s snowy type, a null (empty) object is now used by default to maintain consistency.
+  This also helps prevent certain Fabric mods using connectors from triggering queries at incorrect times (such as when
+  a chunk is not fully loaded), which could otherwise cause chunk reload loops and server deadlocks.
+- Slightly optimized particle effect rendering and generation performance.
+
 ### 0.12.0 - *First Official Release – Anniversary Edition*
 
 > On this special anniversary, we proudly present our first official release! While there may be no significant content changes, this version sets the stage for stability and marks the beginning of a long-lasting experience. Moving forward, expect fewer frequent content updates, focusing instead on maintaining and refining what we’ve built.

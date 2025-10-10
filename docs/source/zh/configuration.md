@@ -4,7 +4,6 @@
 
 * `ForceChunkRenderUpdate`: 低性能影响。由于默认设置里，节气落雪是不直接存储为世界方块的。因此需要强制更新部分客户端区块渲染。
 * `EnhancementChunkRenderUpdate`: 默认关闭。仅当电脑性能充足时开启，强制地表所有区块。
-* `RealisticSnowyChange`: 默认开启。为了避免额外较重的数据负担，节气落雪是实时推演的外观效果。开启此选项可以实现一些动态变化效果，如方块放下后不会立即覆雪。此外，当关卡或者区块卸载时，数据会清空。
 
 ### Particle
 
@@ -25,6 +24,8 @@
 * `InitialSolarTermIndex`: 设置初始的节气序号，默认为春分。
 * `DynamicDaylightDuration`: 使得日照时间随季节变化。
 * `ValidDimensions`: 应用季节的维度，注意在1.20该选项不会同步给客户端，需要服务器自行同步。
+
+### Snow
 * `SnowyWinter`: 可能会有玩家以为这个设置是客户端的，实际上覆雪计算需要考虑服务器端需求。
 
 ### Weather
@@ -41,7 +42,6 @@
 ### Map
 
 * `ChangeMapColor`: 修改地图颜色，如MC地图上颜色，部分地图模组可能不支持。
-* `ServerRealisticSnowyChange`: 顾名思义，服务器端的真实雪景变化，仅供娱乐，目前暂不存储到数据中，默认不开启。
 
 ### Resource
 

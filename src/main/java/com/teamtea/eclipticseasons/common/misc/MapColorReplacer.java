@@ -1,13 +1,11 @@
 package com.teamtea.eclipticseasons.common.misc;
 
-import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.core.snow.SnowyMapChecker;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
@@ -41,7 +39,7 @@ public class MapColorReplacer {
 
         boolean isLight = false;
 
-        int flag = MapChecker.getBlockTypeFlag(level, pos, state);
+        int flag = MapChecker.getDefaultBlockTypeFlag(state);
 
         int offset = MapChecker.getSnowOffset(state, flag);
 

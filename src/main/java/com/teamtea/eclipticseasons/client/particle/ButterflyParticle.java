@@ -34,32 +34,53 @@ public class ButterflyParticle extends FireflyParticle {
         return ParticleRenderType.PARTICLE_SHEET_OPAQUE;
     }
 
-    @Override
-    public void render(VertexConsumer vertexConsumer, Camera camera, float patialTicks) {
 
-        Vec3 vec3 = camera.getPosition();
-        float f = (float) (Mth.lerp(patialTicks, this.xo, this.x) - vec3.x());
-        float f1 = (float) (Mth.lerp(patialTicks, this.yo, this.y) - vec3.y());
-        float f2 = (float) (Mth.lerp(patialTicks, this.zo, this.z) - vec3.z());
-        Quaternionf quaternionf;
-        if (this.roll == 0.0F) {
-            try {
-                quaternionf = (Quaternionf) camera.rotation().clone();
-            } catch (CloneNotSupportedException e) {
-                throw new RuntimeException(e);
-            }
-        } else {
-            quaternionf = new Quaternionf(camera.rotation());
-            quaternionf.rotateZ(Mth.lerp(patialTicks, this.oRoll, this.roll));
+    @Override
+    public void render(VertexConsumer buffer, Camera renderInfo, float partialTicks) {
+        Quaternionf quaternionf = new Quaternionf();
+//        this.getFacingCameraMode().setRotation(quaternionf, renderInfo, partialTicks);
+//        quaternionf.set(renderInfo.rotation());
+        if (this.roll != 0.0F) {
+            quaternionf.rotateZ(Mth.lerp(partialTicks, this.oRoll, this.roll));
         }
 
-        float f3 = this.getQuadSize(patialTicks);
+        this.renderRotatedQuad(buffer, renderInfo, quaternionf, partialTicks);
+    }
 
-        float f6 = this.getU0();
-        float f7 = this.getU1();
-        float f4 = this.getV0();
-        float f5 = this.getV1();
-        int j = this.getLightColor(patialTicks);
+    protected void renderRotatedQuad(VertexConsumer buffer, Camera camera, Quaternionf quaternion, float partialTicks) {
+        Vec3 vec3 = camera.getPosition();
+        float f = (float) (Mth.lerp(partialTicks, this.xo, this.x) - vec3.x());
+        float f1 = (float) (Mth.lerp(partialTicks, this.yo, this.y) - vec3.y());
+        float f2 = (float) (Mth.lerp(partialTicks, this.zo, this.z) - vec3.z());
+        this.renderRotatedQuad(buffer, quaternion, f, f1, f2, partialTicks);
+    }
+
+    protected void renderRotatedQuad(VertexConsumer pBuffer, Quaternionf pQuaternion, float pX, float pY, float pZ, float pPartialTicks) {
+        float f = this.getQuadSize(pPartialTicks);
+        float u0 = this.getU0();
+        float u1 = this.getU1();
+        float v0 = this.getV0();
+        float v1 = this.getV1();
+        int i = this.getLightColor(pPartialTicks);
+        // i = 15728880;
+        // if (this.age >= this.lifetime * 0.8) {
+        //     i = this.getLightColor(pPartialTicks);
+        // }
+
+        float ff = System.currentTimeMillis() % 4000;
+
+        ff = 1 - (Math.abs((ff - 2000) / 2000f));
+
+
+        // pQuaternion=pQuaternion.rotateXYZ(0,0,-Mth.DEG_TO_RAD*90);
+        // 主要问题在于枢纽点，后续更换纹理需要更新xoffse和yoffeset
+        // pQuaternion = pQuaternion.rotateAxis(ff*45*Mth.DEG_TO_RAD,1,0,0);
+
+        float pXOffset1 = 1.f;
+        float pXOffset0 = -1.f;
+        float pYOffset1 = 1.f;
+        float pYOffset0 = -1.f;
+        // pQuaternion=new Quaternionf();
 
         boolean revex = true;
         if (Minecraft.getInstance().getCameraEntity() != null) {
@@ -70,31 +91,54 @@ public class ButterflyParticle extends FireflyParticle {
 
             // 浮点数要防抖
             if (crossY < 0.01f) {
-                float ut = f7;
-                f7 = f6;
-                f6 = ut;
+                float ut = u0;
+                u0 = u1;
+                u1 = ut;
                 revex = false;
             }
         }
-        float ff = System.currentTimeMillis() % 4000;
 
-        ff = 1 - (Math.abs((ff - 2000) / 2000f));
-        Vector3f[] avector3f = new Vector3f[]{
-                new Vector3f(-1.0F, -1.0F, 0.0F),
-                new Vector3f(-1.0F, 1.0F, 0.0F),
-                new Vector3f(1.0F, 1.0F, 0.0F),
-                new Vector3f(1.0F, -1.0F, 0.0F)};
-        for (int i = 0; i < 4; ++i) {
-            Vector3f vector3f = avector3f[i];
-            vector3f.rotate(quaternionf);
-            vector3f.mul(f3);
-            vector3f.add(f, f1, f2);
-        }
-        vertexConsumer.vertex(avector3f[0].x(), avector3f[0].y(), avector3f[0].z()).uv(f7, f5).color(this.rCol, this.gCol, this.bCol, this.alpha).uv2(j).endVertex();
-        vertexConsumer.vertex(avector3f[1].x(), avector3f[1].y(), avector3f[1].z()).uv(f7, f4).color(this.rCol, this.gCol, this.bCol, this.alpha).uv2(j).endVertex();
-        vertexConsumer.vertex(avector3f[2].x(), avector3f[2].y(), avector3f[2].z()).uv(f6, f4).color(this.rCol, this.gCol, this.bCol, this.alpha).uv2(j).endVertex();
-        vertexConsumer.vertex(avector3f[3].x(), avector3f[3].y(), avector3f[3].z()).uv(f6, f5).color(this.rCol, this.gCol, this.bCol, this.alpha).uv2(j).endVertex();
+        pQuaternion =
+                revex ?
+                        pQuaternion.rotateAxis(ff * 70 * Mth.DEG_TO_RAD, 1, 1, 0)
+                        : pQuaternion.rotateAxis(ff * 70 * Mth.DEG_TO_RAD, -1, 1, 0);
+        this.renderVertex(pBuffer, pQuaternion, pX, pY, pZ, pXOffset1, pYOffset0, f, u1, v1, i, 1f);
+        this.renderVertex(pBuffer, pQuaternion, pX, pY, pZ, pXOffset1, pYOffset1, f, u1, v0, i, 1f);
+        this.renderVertex(pBuffer, pQuaternion, pX, pY, pZ, pXOffset0, pYOffset1, f, u0, v0, i, 1f);
+        this.renderVertex(pBuffer, pQuaternion, pX, pY, pZ, pXOffset0, pYOffset0, f, u0, v1, i, 1f);
 
+
+        pQuaternion = revex ?
+                pQuaternion.rotateAxis(ff * -140 * Mth.DEG_TO_RAD, 1, 1, 0)
+                : pQuaternion.rotateAxis(ff * -140 * Mth.DEG_TO_RAD, -1, 1, 0);
+        this.renderVertex(pBuffer, pQuaternion, pX, pY, pZ, pXOffset1, pYOffset0, f, u1, v1, i, 1f);
+        this.renderVertex(pBuffer, pQuaternion, pX, pY, pZ, pXOffset1, pYOffset1, f, u1, v0, i, 1f);
+        this.renderVertex(pBuffer, pQuaternion, pX, pY, pZ, pXOffset0, pYOffset1, f, u0, v0, i, 1f);
+        this.renderVertex(pBuffer, pQuaternion, pX, pY, pZ, pXOffset0, pYOffset0, f, u0, v1, i, 1f);
+// super.renderRotatedQuad(pBuffer, pQuaternion, pX, pY, pZ, pPartialTicks);
+    }
+
+    private void renderVertex(
+            VertexConsumer buffer,
+            Quaternionf quaternion,
+            float x,
+            float y,
+            float z,
+            float xOffset,
+            float yOffset,
+            float quadSize,
+            float u,
+            float v,
+            int packedLight,
+            float alpha
+    ) {
+        Vector3f vector3f = new Vector3f(xOffset, yOffset, 0.0F)
+                .rotate(quaternion).mul(quadSize).add(x, y, z);
+        buffer.vertex(vector3f.x(), vector3f.y(), vector3f.z())
+                .uv(u, v)
+                .color(rCol, gCol, bCol, alpha)
+                .uv2(packedLight)
+                .endVertex();
     }
 
     @Override

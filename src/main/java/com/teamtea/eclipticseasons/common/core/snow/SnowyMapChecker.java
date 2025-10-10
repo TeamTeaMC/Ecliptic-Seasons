@@ -4,7 +4,6 @@ import com.mojang.datafixers.util.Pair;
 import com.teamtea.eclipticseasons.api.misc.IChunkBiomeHolder;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
-import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.map.BiomeHolder;
 import com.teamtea.eclipticseasons.common.core.map.ChunkInfoMap;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
@@ -143,11 +142,11 @@ public class SnowyMapChecker {
                     checkPos.setZ(j);
                     int k = chunkMap.getHeight(i, j);
                     checkPos.setY(k);
-                    checkIfBiomeCacheAnyMore = SnowyMapChecker.isCheckIfBiomeCacheAnyMore(level, chunk, biomeHolder, biomeSnowyUpdate, checkPos, keeper,weatherStatusKeeper, k);
+                    checkIfBiomeCacheAnyMore = SnowyMapChecker.isCheckIfBiomeCacheAnyMore(level, chunk, biomeHolder, biomeSnowyUpdate, checkPos, keeper, weatherStatusKeeper, k);
                 }
             }
         }
-        SnowyMapChecker.postAfterChunkUpdate(level, chunk, keeper,weatherStatusKeeper, checkIfBiomeCacheAnyMore, loadingChunk);
+        SnowyMapChecker.postAfterChunkUpdate(level, chunk, keeper, weatherStatusKeeper, checkIfBiomeCacheAnyMore, loadingChunk);
     }
 
 
@@ -170,7 +169,7 @@ public class SnowyMapChecker {
                 for (int posH = solidHeight; posH <= heightSurface; posH++) {
                     checkPos.setY(posH);
                     BlockState state = chunk.getBlockState(checkPos);
-                    int flag = MapChecker.getBlockTypeFlag(level, checkPos, state);
+                    int flag = MapChecker.getDefaultBlockTypeFlag(state);
                     if (flag != MapChecker.FLAG_NONE) {
                         if (isTooLight(level, checkPos, state, flag)) {
                             keeper.set(checkPos, SnowyStatusKeeper.FLAG_NONE);
@@ -270,7 +269,7 @@ public class SnowyMapChecker {
         if (!CommonConfig.Snow.stepMelt.get()) return;
 
         if (level instanceof ServerLevel serverLevel
-                && MapChecker.getBlockTypeFlag(level, pos, blockstate) != MapChecker.FLAG_NONE
+                && MapChecker.getDefaultBlockTypeFlag(blockstate) != MapChecker.FLAG_NONE
                 && level.getGameTime() % 8 == 0
                 // && level.getRandom().nextInt(15) == 0
                 // && MapChecker.getHeight(level, pos) <= pos.getY()
@@ -287,7 +286,7 @@ public class SnowyMapChecker {
                 above.setY(pos.getY() + count);
                 BlockState stateAbove = chunkAt.getBlockState(above);
                 if (stateAbove.isAir()) break;
-                int flagAbove = MapChecker.getBlockTypeFlag(level, above, stateAbove);
+                int flagAbove = MapChecker.getDefaultBlockTypeFlag(stateAbove);
                 if (flagAbove == MapChecker.FLAG_NONE) break;
                 // SnowyMapChecker.removeSnowyStatus(serverLevel, chunkAt, above);
                 keeper.stepAndCheck(above);

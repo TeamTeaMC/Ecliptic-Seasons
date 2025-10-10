@@ -6,9 +6,6 @@
   stored as world blocks, this forces updates to certain client chunk rendering.
 * `EnhancementChunkRenderUpdate`: Disabled by default. Enable only if the computer performance is sufficient; it forces
   rendering of all surface chunks.
-* `RealisticSnowyChange`: Enabled by default. To avoid extra heavy data load, solar term snowfall is a real-time
-  simulated visual effect. Enabling this option allows some dynamic changes, such as blocks placed not being immediately
-  covered in snow. Also, when levels or chunks unload, the data will be cleared.
 
 ### Particle
 
@@ -32,6 +29,8 @@ If you find strange raindrop sounds annoying, it is generally recommended to use
 * `DynamicDaylightDuration`: Makes daylight duration vary with the season.
 * `ValidDimensions`: Dimensions where the season applies. Note that in 1.20 this option will not synchronize to clients
   and must be synced by the server itself.
+
+### Snow
 * `SnowyWinter`: Some players may think this is a client setting, but snow cover calculations need to consider
   server-side requirements.
 
@@ -50,7 +49,6 @@ If you find strange raindrop sounds annoying, it is generally recommended to use
 
 ### Map
 
-* `ChangeMapColor`: Changes map colors, such as colors on the vanilla map. Some map mods may not support this.
 * `ServerRealisticSnowyChange`: As the name implies, realistic snowy changes on the server side, for fun only.
   Currently, it is not saved to data and is disabled by default.
 

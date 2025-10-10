@@ -8,15 +8,12 @@ import com.teamtea.eclipticseasons.api.misc.IBiomeTagHolder;
 import com.teamtea.eclipticseasons.api.misc.IBlockStateFlagger;
 import com.teamtea.eclipticseasons.api.misc.IChunkBiomeHolder;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
-import com.teamtea.eclipticseasons.api.util.SimpleUtil;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
 import com.teamtea.eclipticseasons.common.core.snow.SnowChecker;
 import com.teamtea.eclipticseasons.common.core.snow.SnowyMapChecker;
-import com.teamtea.eclipticseasons.common.core.snow.SnowyStatusHandler;
-import com.teamtea.eclipticseasons.common.core.snow.SnowyStatusKeeper;
 import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
 import com.teamtea.eclipticseasons.common.misc.SimplePair;
 import com.teamtea.eclipticseasons.common.network.SimpleNetworkHandler;
@@ -33,6 +30,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.EmptyBlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.*;
 import net.minecraft.world.level.block.*;
@@ -42,7 +40,6 @@ import net.minecraft.world.level.block.state.properties.Half;
 import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.ChunkStatus;
-import net.minecraft.world.level.chunk.ImposterProtoChunk;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.levelgen.Heightmap;
 import org.jetbrains.annotations.NotNull;
@@ -50,8 +47,6 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class MapChecker {
     public static final int ChunkSize = 16 * 32;
@@ -884,33 +879,9 @@ public class MapChecker {
         return biome;
     }
 
-    public static Map<BlockState, Integer> blockTypeCache = new IdentityHashMap<>(4096);
-
-    public static int getBlockTypeFlag(BlockGetter blockGetter, BlockPos pos, BlockState state) {
-
-        IBlockStateFlagger flagger = (IBlockStateFlagger) state;
-        int flag = flagger.getBlockTypeFlag();
-        if (flag < 0) {
-
-            SnowDefinition.Info uncacheSnow = SnowChecker.getUncacheSnow(state); // es patch
-
-            if (CommonConfig.getForceBlocksNotSnowy().contains(state.getBlock())) {
-                flag = FLAG_NONE;
-            } else {
-                flag = uncacheSnow.isValid() ?
-                        uncacheSnow.getFlag() : getBlockType(state, blockGetter, pos);
-            }
-
-            flagger.setBlockTypeFlag(flag);
-        }
-        return flag;
-        // return state.getBlockTypeFlag(blockGetter, pos);
-    }
-
     public static int getBlockType(BlockState state, BlockGetter level, BlockPos pos) {
         int flag = FLAG_NONE;
         // 不知道为啥这里会有null
-
         Block onBlock = state.getBlock();
         if (!CommonConfig.Debug.snowOverlayGlowingBlock.get()
                 && state.getLightEmission(level, pos) > 0) {
@@ -933,9 +904,7 @@ public class MapChecker {
             flag = FLAG_GRASS_LARGE;
         } else if (onBlock instanceof VineBlock) {
             flag = FLAG_VINE;
-        } else if ((
-                onBlock instanceof FarmBlock ||
-                        onBlock instanceof DirtPathBlock)) {
+        } else if ((onBlock instanceof FarmBlock || onBlock instanceof DirtPathBlock)) {
             flag = FLAG_FARMLAND;
         } else if (onBlock instanceof TrapDoorBlock ||
                 (onBlock instanceof DoorBlock && state.getValue(DoorBlock.HALF) == DoubleBlockHalf.UPPER) ||
@@ -945,69 +914,27 @@ public class MapChecker {
                 onBlock instanceof BellBlock ||
                 onBlock instanceof ComposterBlock ||
                 (onBlock instanceof CampfireBlock && !state.getValue(CampfireBlock.LIT)) ||
-                // onBlock instanceof CauldronBlock ||
-                // onBlock instanceof DaylightDetectorBlock||
-                // onBlock instanceof AnvilBlock||
-                // onBlock instanceof BasePressurePlateBlock||
-                // onBlock instanceof HoneyBlock ||
                 onBlock instanceof IronBarsBlock ||
                 onBlock instanceof LightningRodBlock ||
-                // onBlock instanceof LecternBlock ||
-                // onBlock instanceof SlimeBlock ||
                 onBlock instanceof AzaleaBlock) {
             flag = FLAG_CUSTOM;
         } else {
-            Integer realFlag = blockTypeCache.getOrDefault(state, FLAG_NONE - 1);
-            if (realFlag == null) {
-                if (CommonConfig.Debug.logIllegalUse.get())
-                    EclipticSeasons.logger("Null number get from %s".formatted(state));
-                blockTypeCache.remove(state);
-            } else {
-                flag = realFlag;
-            }
-            if (flag < FLAG_NONE) {
-                flag = FLAG_NONE;
-
-                ResourceLocation blockName = BuiltInRegistries.BLOCK.getKey(onBlock);
-                if (state.isSolidRender(level, pos)) {
-                    flag = FLAG_BLOCK;
-                } else if (onBlock instanceof SlabBlock) {
-                    SlabType value = state.getValue(SlabBlock.TYPE);
-                    if (value == SlabType.TOP) {
-                        flag = FLAG_STAIRS_TOP;
-                    } else if (value == SlabType.BOTTOM) {
-                        flag = FLAG_SLAB;
-                    } else flag = FLAG_BLOCK;
-                    // flag = FLAG_CUSTOM;
-                } else if (onBlock instanceof StairBlock) {
-                    if (state.getValue(StairBlock.HALF) == Half.TOP)
-                        flag = FLAG_STAIRS_TOP;
-                    else flag = FLAG_STAIRS;
-                    // flag = FLAG_CUSTOM;
-                } else {
-                    // if ((
-                    //         // blockName.getPath().endsWith("wall")
-                    //                 || blockName.getPath().endsWith("table")
-                    //                 // || blockName.getPath().endsWith("aqueduct")
-                    //                 // || blockName.getPath().endsWith("field")
-                    //                 // || blockName.getPath().endsWith("lattice")
-                    //                 // || blockName.getPath().endsWith("_trellis")
-                    //                 // || blockName.getPath().endsWith("_vine")
-                    //                 // || blockName.getPath().endsWith("fence")
-                    //                 // || blockName.getPath().startsWith("ramp")
-                    // )
-                    // ) {
-                    //     flag = FLAG_CUSTOM;
-                    // }
-                }
-
+            ResourceLocation blockName = onBlock.builtInRegistryHolder().key().location();
+            if (state.isSolidRender(level, pos)) {
+                flag = FLAG_BLOCK;
+            } else if (onBlock instanceof SlabBlock) {
+                SlabType value = state.getValue(SlabBlock.TYPE);
+                if (value == SlabType.TOP) {
+                    flag = FLAG_STAIRS_TOP;
+                } else if (value == SlabType.BOTTOM) {
+                    flag = FLAG_SLAB;
+                } else flag = FLAG_BLOCK;
                 if (blockName.toString().equals("xkdeco:dirt_path_slab"))
                     flag = FLAG_CUSTOM;
-
-                Integer otherFlag = blockTypeCache.putIfAbsent(state, flag);
-                if (otherFlag != null && otherFlag != flag) {
-                    EclipticSeasons.logger("WARNING state %s expected %s but found %s".formatted(state, flag, otherFlag));
-                }
+            } else if (onBlock instanceof StairBlock) {
+                if (state.getValue(StairBlock.HALF) == Half.TOP)
+                    flag = FLAG_STAIRS_TOP;
+                else flag = FLAG_STAIRS;
             }
         }
         return flag;
@@ -1040,6 +967,45 @@ public class MapChecker {
                 offset = 1;
         }
         return offset;
+    }
+
+    public static int getDefaultBlockTypeFlag(BlockState state) {
+        IBlockStateFlagger flagger = (IBlockStateFlagger) state;
+        int flag = flagger.getBlockTypeFlag();
+        if (flag < 0) {
+
+            SnowDefinition.Info uncacheSnow = SnowChecker.getUncacheSnow(state); // es patch
+
+            if (CommonConfig.getForceBlocksNotSnowy().contains(state.getBlock())) {
+                flag = FLAG_NONE;
+            } else {
+                if (uncacheSnow.isValid()) flag = uncacheSnow.getFlag();
+                else {
+                    try {
+                        flag = getBlockType(state, EmptyBlockGetter.INSTANCE, BlockPos.ZERO);
+                    } catch (Exception e) {
+                        flag = FLAG_NONE;
+                        EclipticSeasons.logger(e);
+                    }
+                }
+            }
+            flagger.setBlockTypeFlag(flag);
+        }
+        return flag;
+    }
+
+    @Deprecated(forRemoval = true)
+    public static int getBlockTypeFlag(BlockGetter blockGetter, BlockPos pos, BlockState state) {
+        IBlockStateFlagger flagger = (IBlockStateFlagger) state;
+        int flag;
+        if (CommonConfig.getForceBlocksNotSnowy().contains(state.getBlock())) {
+            flag = FLAG_NONE;
+        } else {
+            SnowDefinition.Info uncacheSnow = SnowChecker.getUncacheSnow(state); // es patch
+            flag = uncacheSnow.isValid() ?
+                    uncacheSnow.getFlag() : getBlockType(state, blockGetter, pos);
+        }
+        return flag;
     }
 
     public static List<Holder<Biome>> getBiomes(Level level, BlockPos pos) {

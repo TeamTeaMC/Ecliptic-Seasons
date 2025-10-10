@@ -79,7 +79,8 @@ public class ParticleUtil {
 
         boolean isLeaf = false;
         Block block = blockstate.getBlock();
-        List<Pair<LeafColor.InstanceHolder, LeafColor.Instance>> pairs = ClientRef.leaveColors.get(block);
+        List<Pair<LeafColor.InstanceHolder, LeafColor.Instance>> pairs =
+                !blockstate.isAir() ?null: ClientRef.leaveColors.get(block);
         if (pairs != null) {
             for (Pair<LeafColor.InstanceHolder, LeafColor.Instance> pair : pairs) {
                 if (pair.getFirst().matches(clientLevel, i, j, k, random, blockstate)) {
@@ -132,7 +133,8 @@ public class ParticleUtil {
                 && ClientCon.nowSolarTerm.getSeason() == Season.SPRING
                 && ClientCon.isDay
         ) {
-            if (blockstate.is(EclipticBlockTags.HABITAT_BUTTERFLY)
+            if (!blockstate.isAir()
+                    && blockstate.is(EclipticBlockTags.HABITAT_BUTTERFLY)
                     && !EclipticSeasonsApi.getInstance().isRainOrSnowAt(clientLevel, blockpos$mutableblockpos)
                     && clientLevel.canSeeSky(blockpos$mutableblockpos)
                     && random.nextInt((int) (1024 * (ClientConfig.Particle.butterflySpawnWeight.get() * 0.1f))) == 0
@@ -144,7 +146,8 @@ public class ParticleUtil {
                 && ClientCon.nowSolarTerm.getSeason() == Season.SUMMER
                 && ClientCon.isEvening
         ) {
-            if (blockstate.is(EclipticBlockTags.HABITAT_FIREFLY)
+            if (!blockstate.isAir()
+                    && blockstate.is(EclipticBlockTags.HABITAT_FIREFLY)
                     && !EclipticSeasonsApi.getInstance().isRainOrSnowAt(clientLevel, blockpos$mutableblockpos)
                     && clientLevel.canSeeSky(blockpos$mutableblockpos)
                     && random.nextInt((int) (160 * (ClientConfig.Particle.fireflySpawnWeight.get() * 0.1f))) == 0

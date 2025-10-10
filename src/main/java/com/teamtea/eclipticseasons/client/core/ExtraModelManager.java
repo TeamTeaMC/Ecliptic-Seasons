@@ -266,7 +266,7 @@ public class ExtraModelManager {
             var snowModel = rendererHolder.getExtraModel();
 
             if (snowModel instanceof SnowyBakedModelWrapper) {
-                int blockType = MapChecker.getBlockTypeFlag(blockAndTintGetter, pos, state);
+                int blockType = MapChecker.getDefaultBlockTypeFlag(state);
                 if (MapChecker.customBuiltin(blockType))
                     return original;
                 if (direction == Direction.UP) {
@@ -294,7 +294,7 @@ public class ExtraModelManager {
         if (bakedModel instanceof SnowyBakedModelWrapper<?> snowyBakedModelWrapper) {
             int blockType = snowyBakedModelWrapper.getBindBlockType() > MapChecker.FLAG_IGNORE ?
                     snowyBakedModelWrapper.getBindBlockType() :
-                    MapChecker.getBlockTypeFlag(blockAndTintGetter, pos, state);
+                    MapChecker.getDefaultBlockTypeFlag(state);
             if (MapChecker.customBuiltin(blockType)) {
                 original = new ArrayList<>();
             }
@@ -404,7 +404,7 @@ public class ExtraModelManager {
         //     return null;
         Level level = Minecraft.getInstance().level;
         if (level == null) return false;
-        int flag = MapChecker.getBlockTypeFlag(blockAndTintGetter, pos, state);
+        int flag = MapChecker.getDefaultBlockTypeFlag(state);
         var onBlock = state.getBlock();
         List<SnowDefinition> snowDefClientOverlay = ClientRef.snowClientDef.get(onBlock);
 
@@ -558,7 +558,7 @@ public class ExtraModelManager {
         //     return null;
         Level level = Minecraft.getInstance().level;
         if (level == null) return null;
-        int flag = MapChecker.getBlockTypeFlag(blockAndTintGetter, pos, state);
+        int flag = MapChecker.getDefaultBlockTypeFlag(state);
         List<SeasonBlockDefinition> seasonDefCache = null;
         List<SnowDefinition> snowDefClientOverlay = null;
         var onBlock = state.getBlock();
@@ -831,7 +831,7 @@ public class ExtraModelManager {
                         BlockState neighSate = blockAndTintGetter.getBlockState(checkPos);
                         long neighSateSeed = neighSate.getSeed(checkPos);
 
-                        if (!(neighSate.is(Blocks.GRASS_BLOCK) || MapChecker.getBlockTypeFlag(blockAndTintGetter, checkPos, neighSate) == MapChecker.FLAG_BLOCK)) {
+                        if (!(neighSate.is(Blocks.GRASS_BLOCK) || MapChecker.getDefaultBlockTypeFlag(neighSate) == MapChecker.FLAG_BLOCK)) {
                             continue directionChecks;
                         }
                         if (originalCache == null)
@@ -966,7 +966,7 @@ public class ExtraModelManager {
     public static boolean isModelReplaceable(BlockState state, BlockGetter blockAndTintGetter, BlockPos pos, BakedModel bakedModel) {
         return (bakedModel instanceof IESReplaceModel model
                 && model.isReplace())
-                || isModelReplaceable(MapChecker.getBlockTypeFlag(blockAndTintGetter, pos, state));
+                || isModelReplaceable(MapChecker.getDefaultBlockTypeFlag(state));
     }
 
     public static boolean isModelReplaceable(BakedModel bakedModel, int flag) {
@@ -981,7 +981,7 @@ public class ExtraModelManager {
     }
 
     public static boolean renderAsSnowInShader(BlockState state, BlockGetter blockAndTintGetter, BlockPos pos) {
-        int blockType = MapChecker.getBlockTypeFlag(blockAndTintGetter, pos, state);
+        int blockType = MapChecker.getDefaultBlockTypeFlag(state);
         return switch (blockType) {
             case MapChecker.FLAG_BLOCK,
                  MapChecker.FLAG_SLAB,
