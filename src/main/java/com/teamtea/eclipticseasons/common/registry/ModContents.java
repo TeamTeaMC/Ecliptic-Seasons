@@ -25,6 +25,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.repository.Pack;
 import net.minecraft.server.packs.repository.PackSource;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
@@ -107,6 +108,13 @@ public class ModContents {
                             EclipticSeasons.rl("extra_snow"), modFile,
                             Component.translatable(EclipticSeasons.rl("extra_snow").toLanguageKey("pack")),
                             event.getPackType(), PackSource.BUILT_IN, true);
+                }
+                if (event.getPackType() == PackType.CLIENT_RESOURCES) {
+                    FakeResourceManagerHelperUtil.registerBuiltinResourcePack(
+                            event,
+                            EclipticSeasons.MODID, "EclipticSeasonsLegacySnowyBlock", modFile,
+                            Component.translatable(EclipticSeasons.rl("legacy_snowy_block").toLanguageKey("pack")),
+                            event.getPackType(), PackSource.FEATURE, Pack.Position.TOP, false);
                 }
             } catch (Exception e) {
                 EclipticSeasons.logger(e);

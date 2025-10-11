@@ -1,0 +1,22 @@
+{
+	"credit": "Made by Snownee",
+	"render_type": "cutout_mipped",
+	"textures": {
+		"0": "eclipticseasons:block/snow_overlay",
+		"1": "block/snow",
+		"particle": "eclipticseasons:block/snow_overlay"
+	},
+	"elements": [
+		{
+			"from": [-0.009, -0.05, -0.009],
+			"to": [16.009, 8.05, 16.009],
+			"faces": {
+				"north": {"uv": [0, 0, 16, 8], "texture": "#0", "cullface": "north"},
+				"east": {"uv": [0, 0, 16, 8], "texture": "#0", "cullface": "east"},
+				"south": {"uv": [0, 0, 16, 8], "texture": "#0", "cullface": "south"},
+				"west": {"uv": [0, 0, 16, 8], "texture": "#0", "cullface": "west"},
+				"up": {"uv": [0, 0, 16, 16], "texture": "#1"}
+			}
+		}
+	]
+}

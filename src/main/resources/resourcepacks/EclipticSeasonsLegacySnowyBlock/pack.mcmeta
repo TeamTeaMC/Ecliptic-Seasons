@@ -1,0 +1,6 @@
+{
+  "pack": {
+    "pack_format": 15,
+    "description": "§bThe old snow model is slightly offset from the original one, preventing it from being affected by special model variants such as CTM. However, at long distances, it may flicker due to floating-point precision issues. It is recommended to enable CullTopFaceWithSnow when using it."
+  }
+}

@@ -1,3 +1,7 @@
+### 0.12.0.3
+
+- Provided an optional classic-style snowy block resource pack to prevent Z-fighting issues when used together with CTM models.
+
 ### 0.12.0.2.1
 
 - Adjusted the model settings of the Snowy Grass Block to be compatible with resource packs like Open Lower Grass.
