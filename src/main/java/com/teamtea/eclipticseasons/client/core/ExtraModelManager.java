@@ -28,6 +28,7 @@ import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.BlockModel;
+import net.minecraft.client.renderer.block.model.FaceBakery;
 import net.minecraft.client.renderer.texture.SpriteContents;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
@@ -385,6 +386,10 @@ public class ExtraModelManager {
                     // else {
                     //     retexturedBakedQuad = new BakedQuadRetextured(bakedQuad, spriteUse);
                     // }
+
+//                    retexturedBakedQuad = new BakedQuadRetextured(bakedQuad,
+//                            QuadFixer.getDirectionQuickly(bakedQuad) == Direction.UP ?
+//                                    snow_sprite : snow_overlay_sprite);
 
                     original.add(retexturedBakedQuad);
                 }
