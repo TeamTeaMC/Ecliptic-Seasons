@@ -1,36 +1,36 @@
 {
-	"parent": "eclipticseasons:main/base",
-	"criteria": {
-		"solar_terms": {
-			"conditions": {},
-			"trigger": "eclipticseasons:solar_terms"
-		}
-	},
-	"display": {
-		"announce_to_chat": true,
-		"background": "minecraft:textures/block/bricks.png",
-		"description": {
-			"translate": "advancement.eclipticseasons.root.desc"
-		},
-		"frame": "task",
-		"hidden": false,
-		"icon": {
-			"item": "eclipticseasons:bamboo_wind_chimes"
-		},
-		"show_toast": true,
-		"title": {
-			"translate": "advancement.eclipticseasons.root"
-		}
-	},
-	"requirements": [
-		[
-			"solar_terms"
-		]
-	],
-	"rewards": {
-		"loot": [
-			"eclipticseasons:gifts/snowless_hometown"
-		]
-	},
-	"sends_telemetry_event": true
+  "parent": "eclipticseasons:main/base",
+  "criteria": {
+    "solar_terms": {
+      "conditions": {},
+      "trigger": "eclipticseasons:solar_terms"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "background": "minecraft:textures/block/bricks.png",
+    "description": {
+      "translate": "advancement.eclipticseasons.root.desc"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "eclipticseasons:bamboo_wind_chimes"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancement.eclipticseasons.root"
+    }
+  },
+  "requirements": [
+    [
+      "solar_terms"
+    ]
+  ],
+  "rewards": {
+    "loot": [
+      "eclipticseasons:gifts/snowless_hometown"
+    ]
+  },
+  "sends_telemetry_event": true
 }

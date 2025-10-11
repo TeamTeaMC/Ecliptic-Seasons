@@ -57,6 +57,16 @@ public class EclipticSeasonsGiftLootTables implements LootTableSubProvider{
                         )
         );
 
+        output.accept(
+                ESLootTables.snowless_hometown,
+                LootTable.lootTable()
+                        .withPool(
+                                LootPool.lootPool()
+                                        .setRolls(ConstantValue.exactly(1.0F))
+                                        .add(LootItem.lootTableItem(ItemRegistry.snowless_hometown.get()).setWeight(10))
+                        )
+        );
+
     }
 
 

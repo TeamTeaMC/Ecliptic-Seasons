@@ -1,19 +1,6 @@
 {
-  "parent": "minecraft:block/block",
-  "children": {
-    "snowy_grass_block_no_top": {
-      "parent": "minecraft:block/grass_block_snow",
-      "textures": {
-        "top": "minecraft:block/air"
-      }
-    },
-    "top_snow": {
-      "parent": "eclipticseasons:block/grass_block_overlay"
-    }
-  },
-  "item_render_order": [
-    "snowy_grass_block_no_top",
-    "top_snow"
-  ],
-  "loader": "forge:composite"
+  "parent": "minecraft:block/grass_block_snow",
+  "textures": {
+    "top": "minecraft:block/snow"
+  }
 }

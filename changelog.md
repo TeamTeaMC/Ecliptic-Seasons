@@ -1,3 +1,7 @@
+### 0.12.0.2.1
+
+- Adjusted the model settings of the Snowy Grass Block to be compatible with resource packs like Open Lower Grass.
+
 ### 0.12.0.2
 
 - When querying a block’s snowy type, a null (empty) object is now used by default to maintain consistency.

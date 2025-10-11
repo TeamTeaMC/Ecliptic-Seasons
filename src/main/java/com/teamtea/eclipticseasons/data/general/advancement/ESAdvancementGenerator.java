@@ -55,6 +55,7 @@ public class ESAdvancementGenerator implements ForgeAdvancementProvider.Advancem
                         FrameType.TASK, true, true, false)
                 .addCriterion("solar_terms", SolarTermsCriterion.TriggerInstance.simple())
                 .requirements(RequirementsStrategy.AND)
+                .rewards(AdvancementRewards.Builder.loot(ESLootTables.snowless_hometown))
                 .save(consumer, getNameId("main/root"));
 
         Advancement heatStroke = Advancement.Builder.advancement()
