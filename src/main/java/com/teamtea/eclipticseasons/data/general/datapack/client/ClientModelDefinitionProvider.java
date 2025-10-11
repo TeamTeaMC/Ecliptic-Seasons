@@ -48,12 +48,14 @@ public class ClientModelDefinitionProvider extends AbstractModelDefinitionProvid
 
         addModelDefinition(ClientModelDefinitions.SNOWY_GRASS_BLOCK_OVERLAY)
                 .replace(true)
-                .variant(variant(models().withExistingParent("snowy_grass_block", "block/block")
-                        .customLoader(CompositeModelBuilder::begin)
-                        .child("snowy_grass_block_no_top",models().withExistingParent("snowy_grass_block_no_top", "grass_block_snow",true)
-                                .texture("top", ResourceLocation.withDefaultNamespace("block/air")))
-                        .child("top_snow",getModel("grass_block_overlay"))
-                        .end()).build())
+                .variant(variant(models().withExistingParent("snowy_grass_block", "block/grass_block_snow")
+                        .texture("top", ResourceLocation.withDefaultNamespace("block/snow"))
+//                        .customLoader(CompositeModelBuilder::begin)
+//                        .child("snowy_grass_block_no_top",models().withExistingParent("snowy_grass_block_no_top", "grass_block_snow",true)
+//                                .texture("top", ResourceLocation.withDefaultNamespace("block/air")))
+//                        .child("top_snow",getModel("grass_block_overlay"))
+//                        .end()
+                ).build())
         // .multiPart(condition(GrassBlock.SNOWY, false), variant(ClientModelDefinitions.GRASS_BLOCK_SNOW).rotationY(0).build(),
         //         variant(ClientModelDefinitions.GRASS_BLOCK_SNOW).rotationY(90).build(),
         //         variant(ClientModelDefinitions.GRASS_BLOCK_SNOW).rotationY(180).build(),

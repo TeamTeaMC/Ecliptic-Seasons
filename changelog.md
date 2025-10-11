@@ -1,15 +1,37 @@
+### 0.12.0.2.1
+
+- Adjusted the model settings of the Snowy Grass Block to be compatible with resource packs like Open Lower Grass.
+
+### 0.12.0.2
+
+- When querying a block’s snowy type, a null (empty) object is now used by default to maintain consistency.
+  This also helps prevent certain Fabric mods using connectors from triggering queries at incorrect times (such as when
+  a chunk is not fully loaded), which could otherwise cause chunk reload loops and server deadlocks.
+- Slightly optimized particle effect rendering and generation performance.
+
+- ### 0.12.0 - *First Official Release – Anniversary Edition*
+
+  > On this special anniversary, we proudly present our first official release! While there may be no significant
+  content changes, this version sets the stage for stability and marks the beginning of a long-lasting experience.
+  Moving forward, expect fewer frequent content updates, focusing instead on maintaining and refining what we’ve built.
+
+    - **Spring After Autumn** achievement now unlocks a commemorative reward: **Snowless Hometown**—a symbol of warmth
+      and the passage of time.
+
 ### 0.12.0-z-3
 
 - Now, when it’s snowing, a cauldron filled with water will turn into an ice-filled cauldron,
   and a cauldron filled with powder snow will turn into a snow-filled cauldron.
-- Fixed a potential world initialization crash that could occur when SereneSeasonsCropTag is enabled and an agriculture mod provides both Forge and c namespace tags for the same seed.
+- Fixed a potential world initialization crash that could occur when SereneSeasonsCropTag is enabled and an agriculture
+  mod provides both Forge and c namespace tags for the same seed.
 - Blocks containing water are no longer affected by the Frozen Water feature.
   And the Frozen Water feature is now affected by light levels.
 
 ### 0.12.0-z-2
 
 - Fixed an issue where the calendar displayed incorrectly in Next mode when it was the last solar term of the year.
-- Added a more complete built-in compatibility system for crop growth conditions. Note that humidity requirements are now included; if you encounter errors, you can disable this feature in the settings.
+- Added a more complete built-in compatibility system for crop growth conditions. Note that humidity requirements are
+  now included; if you encounter errors, you can disable this feature in the settings.
 
 ### 0.12.0-z
 

@@ -51,6 +51,7 @@ public class ESAdvancementGenerator implements AdvancementProvider.AdvancementGe
                         AdvancementType.TASK, true, true, false)
                 .addCriterion("solar_terms", SolarTermsCriterion.TriggerInstance.simple())
                 .requirements(AdvancementRequirements.Strategy.AND)
+                .rewards(AdvancementRewards.Builder.loot(ESLootTables.snowless_hometown))
                 .save(consumer, getNameId("main/root"));
 
         AdvancementHolder heatStroke = Advancement.Builder.advancement()
@@ -68,7 +69,7 @@ public class ESAdvancementGenerator implements AdvancementProvider.AdvancementGe
         AdvancementHolder green_house = buildAdvancementHolder(seasons, ItemRegistry.growth_detector.get(),
                 Component.translatable("advancement.eclipticseasons.green_house"),
                 Component.translatable("advancement.eclipticseasons.green_house.desc"),
-                "core_require",  InventoryChangeTrigger.TriggerInstance.hasItems(ItemRegistry.growth_detector.get()),
+                "core_require", InventoryChangeTrigger.TriggerInstance.hasItems(ItemRegistry.growth_detector.get()),
                 consumer, "main/green_house");
 
         AdvancementHolder greenhouse_core_container = buildAdvancementHolder(green_house, ItemRegistry.greenhouse_core_container_item.get(),
