@@ -991,7 +991,7 @@ public class MapChecker {
             }
             flagger.setBlockTypeFlag(flag);
         }
-        return FLAG_CUSTOM;
+        return flag;
     }
 
     @Deprecated(forRemoval = true)

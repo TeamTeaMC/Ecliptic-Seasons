@@ -24,6 +24,7 @@ public class ClientConfig {
         public static ForgeConfigSpec.BooleanValue smoothSnowyEdges;
         public static ForgeConfigSpec.BooleanValue frozenWater;
         public static ForgeConfigSpec.BooleanValue frozenWaterBreakable;
+        public static ForgeConfigSpec.BooleanValue frozenWaterCheckLight;
 
         private static void load(ForgeConfigSpec.Builder builder) {
             builder.push("Debug");
@@ -36,6 +37,8 @@ public class ClientConfig {
                     .define("FrozenWater", false);
             frozenWaterBreakable = builder
                     .define("FrozenWaterBreakable", true);
+            frozenWaterCheckLight = builder
+                    .define("frozenWaterCheckLight", true);
 
             builder.pop();
         }
