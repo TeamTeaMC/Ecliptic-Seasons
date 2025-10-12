@@ -31,6 +31,7 @@ import loaderCommon.neoforge.com.seibel.distanthorizons.common.wrappers.block.Bi
 import loaderCommon.neoforge.com.seibel.distanthorizons.common.wrappers.block.BlockStateWrapper;
 import loaderCommon.neoforge.com.seibel.distanthorizons.common.wrappers.world.ClientLevelWrapper;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
@@ -151,7 +152,7 @@ public class DHTool {
         }
     }
 
-    public static MapColor computeBaseColor(IDhClientLevel instance, DhBlockPos dhBlockPos, IBiomeWrapper iBiomeWrapper, IBlockStateWrapper iBlockStateWrapper, FullDataPointIdMap fullDataMapping, LongArrayList fullColumnData, IWrapperFactory WRAPPER_FACTORY) {
+    public static MapColor computeBaseColor(IClientLevelWrapper instance, DhBlockPos dhBlockPos, IBiomeWrapper iBiomeWrapper, IBlockStateWrapper iBlockStateWrapper, FullDataPointIdMap fullDataMapping, LongArrayList fullColumnData, IWrapperFactory WRAPPER_FACTORY) {
         if (CommonConfig.isSnowyWinter()) {
             if (!dhBlockPos.equals(DhBlockPos.ZERO) && iBlockStateWrapper instanceof BlockStateWrapper blockStateWrapper
                     && !blockStateWrapper.isAir()) {
@@ -159,14 +160,17 @@ public class DHTool {
                 var level = Minecraft.getInstance().level;
                 var blockState = blockStateWrapper.blockState;
                 // 当给的pos未加载时，读取的是虚空，这并不好。
-                if (instance.getClientLevelWrapper() instanceof ClientLevelWrapper clientLevelWrapper) {
-                    var holderKey = ResourceKey.create(Registries.BIOME, ResourceLocation.parse(iBiomeWrapper.getSerialString()));
-                    if ((clientLevelWrapper.getLevel().registryAccess().holder(holderKey).orElse(null)
-                            instanceof Holder.Reference<Biome> holder)) {
-                        if (MapChecker.shouldSnowAtBiome(level, holder.value(), blockState, level.getRandom(), blockState.getSeed(mcPos), mcPos))
+                if (instance instanceof ClientLevelWrapper clientLevelWrapper) {
+                    var holderKey = ResourceKey.create(Registries.BIOME,  ResourceLocation.parse(iBiomeWrapper.getSerialString()));
+                    Holder.Reference<Biome> holder = clientLevelWrapper.getLevel().registryAccess().registryOrThrow(Registries.BIOME).getHolderOrThrow(holderKey);
+                    // if ((holderOrThrow
+                    //         instanceof Holder.Reference<Biome> holder))
+                    {
+
+                        if (MapChecker.shouldSnowAtBiome(level, holder.value(), blockState, level.getRandom(), blockState.getSeed(mcPos),mcPos))
                         //     return mapColor.col;
                         {
-                            HashSet<IBlockStateWrapper> blockStatesToIgnore = WRAPPER_FACTORY.getRendererIgnoredBlocks(instance.getLevelWrapper());
+                            HashSet<IBlockStateWrapper> blockStatesToIgnore = WRAPPER_FACTORY.getRendererIgnoredBlocks(instance);
                             for (int i = 0; i < fullColumnData.size(); i++) {
                                 long fullData = fullColumnData.getLong(i);
                                 int id = FullDataPointUtil.getId(fullData);
@@ -192,15 +196,8 @@ public class DHTool {
                                         && !iBlockStateWrapper_NowQuery.isAir()
                                         && !blockStatesToIgnore.contains(iBlockStateWrapper_NowQuery)
                                 ) {
-                                    // TODO:后续需要研究哪些方块是被DH跳过渲染的，实际上草是不渲染的，但是樱花树林的粉色小花却渲染
-                                    // 此为错误结论，原因是上面被跳过的方块会给下面的染色，比如上面是花，那么下面就可以被染色粉色
-                                    // 以及直接跳过流体下方的渲染
-                                    // 那么还是要研究谁会被跳过渲染
-                                    // 目前猜测是无生物碰撞的
-                                    // 以及双层的植物需要继续向下，看是否需要处理
-                                    // boolean colorBelowWithAvoidedBlocks = Config.Client.Advanced.Graphics.Quality.tintWithAvoidedBlocks.get();
 
-                                    if (bottomY + instance.getMinY() == dhBlockPos.getY() &&
+                                    if (bottomY + instance.getMinHeight() == dhBlockPos.getY() &&
                                             (MapChecker.getDefaultBlockTypeFlag(blockStateWrapper_NowQuery.blockState) != 0
                                                     // || (blockStateWrapper1.blockState.is(BlockTags.FLOWERS))
                                                     || (!blockStateWrapper_NowQuery.isSolid() && !blockStateWrapper_NowQuery.isLiquid())
@@ -214,7 +211,7 @@ public class DHTool {
                                             // 暂时不处理多层需要跳过的方块，实际上也许保留一点颜色会更好看
                                             if (i + 1 < fullColumnData.size()) {
                                                 int belowBottomY = FullDataPointUtil.getBottomY(fullColumnData.getLong(i + 1));
-                                                if (belowBottomY + instance.getMinY() == dhBlockPos.getY())
+                                                if (belowBottomY + instance.getMinHeight() == dhBlockPos.getY())
                                                     return MapColor.SNOW;
                                             }
                                             break;
@@ -253,11 +250,10 @@ public class DHTool {
         }
     }
 
-    public static IBlockStateWrapper shouldFrozen(IDhClientLevel clientLevel, IBiomeWrapper biomeWrapper, DhBlockPosMutable dhBlockPosMutable, BlockState blockState, FullDataPointIdMap fullDataMapping, LongArrayList fullColumnData, int index) {
+    public static IBlockStateWrapper shouldFrozen(ClientLevelWrapper instance, IBiomeWrapper biomeWrapper, DhBlockPosMutable dhBlockPosMutable, BlockState blockState, FullDataPointIdMap fullDataMapping, LongArrayList fullColumnData, int index) {
         if (ClientConfig.Debug.frozenWater.get()
                 && biomeWrapper.getWrappedMcObject() instanceof Holder<?> holder
                 && holder.value() instanceof Biome biome
-                && clientLevel.getLevelWrapper().getWrappedMcObject() instanceof Level level
                 && blockState.is(Blocks.WATER)
                 && blockState.getFluidState().isSourceOfType(Fluids.WATER)) {
             if (index > 0 && index < fullColumnData.size() - 1) {
@@ -269,10 +265,12 @@ public class DHTool {
                 }
             }
             var mcPos = McObjectConverter.Convert(dhBlockPosMutable);
+            ClientLevel level = instance.getLevel();
             if (MapChecker.shouldSnowAtBiome(level, biome, blockState, level.getRandom(), blockState.getSeed(mcPos), mcPos)) {
-                return BlockStateWrapper.fromBlockState(Blocks.ICE.defaultBlockState(), clientLevel.getLevelWrapper());
+                return BlockStateWrapper.fromBlockState(Blocks.ICE.defaultBlockState(), instance);
             }
         }
         return null;
     }
+
 }

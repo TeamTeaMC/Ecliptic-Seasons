@@ -62,6 +62,21 @@ public class FakeResourceManagerHelperUtil {
         }
     }
 
+    public static void registerBuiltinResourcePack(AddPackFindersEvent event, String namespace, String pack, ModFile modFile, MutableComponent translate, PackType packType, PackSource source, PackSelectionConfig selectionConfig) {
+        if (event.getPackType() == packType) {
+            String packIdLanguageKey = namespace + "_" + packType.getSerializedName();
+            var packLocationInfo = new PackLocationInfo(
+                    packIdLanguageKey, translate, source, Optional.of(knowPack(packIdLanguageKey)
+            ));
+            event.addRepositorySource(consumer -> consumer.accept(
+                    Pack.readMetaAndCreate(packLocationInfo,
+                            new ESModFilePackResources.PathResourcesSupplier(modFile, Path.of("resourcepacks/" + pack)),
+                            packType,
+                            selectionConfig
+                    )));
+        }
+    }
+
     public static void registerBuiltinDataPack(AddPackFindersEvent event, ModFile modContainer, String packId) {
         FakeResourceManagerHelperUtil.registerBuiltinResourcePack(
                 event,

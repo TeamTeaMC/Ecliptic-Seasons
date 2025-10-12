@@ -1,3 +1,12 @@
+### 0.12.0.4
+
+- Upgrade Distant Horizons compatibility to version 2.3.5-b.
+- Fixed an issue where, with the FrozenWater experimental feature enabled and lighting checks turned on, breaking thin ice would incorrectly trigger cracking sounds due to inverted lighting check results.
+
+### 0.12.0.3
+
+- Provided an optional classic-style snowy block resource pack to prevent Z-fighting issues when used together with CTM models.
+
 ### 0.12.0.2.1
 
 - Adjusted the model settings of the Snowy Grass Block to be compatible with resource packs like Open Lower Grass.

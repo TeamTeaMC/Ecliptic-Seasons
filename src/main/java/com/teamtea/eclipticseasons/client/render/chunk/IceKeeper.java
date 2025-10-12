@@ -44,7 +44,7 @@ public class IceKeeper {
 
         if (!ICE_SHOULD_BE_IGNORED.contains(blockPos.asLong())) {
             BlockPos above = blockPos.above();
-            if (ExtraModelManager.notTooBright(level, null, blockPos))
+            if (ClientConfig.Debug.frozenWaterCheckLight.get() && !ExtraModelManager.notTooBright(level, null, blockPos))
                 return;
             ICE_SHOULD_BE_IGNORED.add(blockPos.asLong());
             try {
@@ -89,7 +89,7 @@ public class IceKeeper {
         if (mapSlice.getBlockHeight(blockPos) != blockPos.getY()) return true;
         if (!ExtraModelManager.maySnowyAt(ClientCon.getUseLevel(), mapSlice, blockState, blockPos, null, blockState.getSeed(blockPos)))
             return true;
-        if (!ExtraModelManager.notTooBright(worldSlice, mapSlice, blockPos))
+        if (ClientConfig.Debug.frozenWaterCheckLight.get() && !ExtraModelManager.notTooBright(worldSlice, mapSlice, blockPos))
             return true;
         return ClientConfig.Debug.frozenWaterBreakable.get() && ICE_SHOULD_BE_IGNORED.contains(blockPos.asLong());
     }

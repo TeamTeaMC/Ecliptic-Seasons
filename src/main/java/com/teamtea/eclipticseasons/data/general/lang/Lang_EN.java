@@ -467,6 +467,8 @@ public class Lang_EN extends LangHelper {
 
         add("info.eclipticseasons.snow_cauldron.extraction","§7§oUse a shovel to obtain Snow Balls");
         add("info.eclipticseasons.ice_cauldron.extraction","§7§oUse a pickaxe to obtain Ice");
+
+        add("pack.eclipticseasons.legacy_snowy_block", "Legacy Snowy Block");
     }
 
     private void addAdvancements() {

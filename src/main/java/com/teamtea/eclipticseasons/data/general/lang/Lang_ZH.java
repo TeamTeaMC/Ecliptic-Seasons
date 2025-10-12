@@ -469,6 +469,9 @@ public class Lang_ZH extends LangHelper {
 
         add("info.eclipticseasons.snow_cauldron.extraction","§7§o使用锹可以获取雪球");
         add("info.eclipticseasons.ice_cauldron.extraction","§7§o使用镐可以获取冰块");
+
+        add("pack.eclipticseasons.legacy_snowy_block", "经典覆雪方块模型资源包");
+
     }
 
     private void addAdvancements() {

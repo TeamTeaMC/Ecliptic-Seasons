@@ -26,6 +26,7 @@ public class ClientConfig {
         public static ModConfigSpec.IntValue minChunkCompileWarningTime;
         public static ModConfigSpec.BooleanValue frozenWater;
         public static ModConfigSpec.BooleanValue frozenWaterBreakable;
+        public static ModConfigSpec.BooleanValue frozenWaterCheckLight;
         private static void load(ModConfigSpec.Builder builder) {
             builder.push("Debug");
 
@@ -39,6 +40,8 @@ public class ClientConfig {
                     .define("FrozenWater", false);
             frozenWaterBreakable = builder
                     .define("FrozenWaterBreakable", true);
+            frozenWaterCheckLight = builder
+                    .define("frozenWaterCheckLight", true);
             builder.pop();
         }
     }

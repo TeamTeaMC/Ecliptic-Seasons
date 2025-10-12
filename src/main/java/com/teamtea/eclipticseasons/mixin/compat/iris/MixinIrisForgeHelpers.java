@@ -5,6 +5,7 @@ import com.llamalad7.mixinextras.sugar.Local;
 import com.teamtea.eclipticseasons.client.core.ExtraModelManager;
 import com.teamtea.eclipticseasons.client.model.ISnowyReplaceModel;
 import com.teamtea.eclipticseasons.client.model.SnowyBakedModelWrapper;
+import com.teamtea.eclipticseasons.client.render.chunk.IceKeeper;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.compat.CompatModule;
 import com.teamtea.eclipticseasons.compat.sodium.SodiumStatus;
@@ -60,6 +61,9 @@ public abstract class MixinIrisForgeHelpers {
                     }
                 }
             }
+//            else if (state.getBlock()==Blocks.ICE) {
+//                ((BlockSensitiveBufferBuilder) ((BlockRendererAccessor) r).getBuffers()).overrideBlock(WorldRenderingSettings.INSTANCE.getBlockStateIds().getInt(Blocks.ICE.defaultBlockState()));
+//            }
         }
 
     }

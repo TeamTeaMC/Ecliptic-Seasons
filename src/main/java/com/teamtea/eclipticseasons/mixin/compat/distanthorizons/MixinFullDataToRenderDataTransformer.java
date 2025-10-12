@@ -6,6 +6,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
 import com.seibel.distanthorizons.core.dataObjects.fullData.FullDataPointIdMap;
+import com.seibel.distanthorizons.core.dataObjects.fullData.sources.FullDataSourceV2;
 import com.seibel.distanthorizons.core.dataObjects.render.columnViews.ColumnArrayView;
 import com.seibel.distanthorizons.core.dataObjects.transformers.FullDataToRenderDataTransformer;
 import com.seibel.distanthorizons.core.level.IDhClientLevel;
@@ -14,8 +15,10 @@ import com.seibel.distanthorizons.core.pos.blockPos.DhBlockPosMutable;
 import com.seibel.distanthorizons.core.wrapperInterfaces.IWrapperFactory;
 import com.seibel.distanthorizons.core.wrapperInterfaces.block.IBlockStateWrapper;
 import com.seibel.distanthorizons.core.wrapperInterfaces.world.IBiomeWrapper;
+import com.seibel.distanthorizons.core.wrapperInterfaces.world.IClientLevelWrapper;
 import com.teamtea.eclipticseasons.compat.distanthorizons.DHTool;
 import it.unimi.dsi.fastutil.longs.LongArrayList;
+import loaderCommon.neoforge.com.seibel.distanthorizons.common.wrappers.world.ClientLevelWrapper;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MapColor;
 import org.spongepowered.asm.mixin.Final;
@@ -37,46 +40,48 @@ public abstract class MixinFullDataToRenderDataTransformer {
     private static IWrapperFactory WRAPPER_FACTORY;
 
 
-    // 如果有时间，可以优化效率
     @WrapOperation(
             remap = false,
             require = 0,
             method = "setRenderColumnView",
-            at = @At(value = "INVOKE", target = "Lcom/seibel/distanthorizons/core/level/IDhClientLevel;computeBaseColor(Lcom/seibel/distanthorizons/core/pos/blockPos/DhBlockPos;Lcom/seibel/distanthorizons/core/wrapperInterfaces/world/IBiomeWrapper;Lcom/seibel/distanthorizons/core/wrapperInterfaces/block/IBlockStateWrapper;)I")
+            at = @At(value = "INVOKE", target = "Lcom/seibel/distanthorizons/core/wrapperInterfaces/world/IClientLevelWrapper;getBlockColor(Lcom/seibel/distanthorizons/core/pos/blockPos/DhBlockPos;Lcom/seibel/distanthorizons/core/wrapperInterfaces/world/IBiomeWrapper;Lcom/seibel/distanthorizons/core/dataObjects/fullData/sources/FullDataSourceV2;Lcom/seibel/distanthorizons/core/wrapperInterfaces/block/IBlockStateWrapper;)I")
     )
-    private static int eclipticseasons$setRenderColumnView_computeBaseColor(IDhClientLevel instance,
+    private static int eclipticseasons$setRenderColumnView_computeBaseColor(IClientLevelWrapper instance,
                                                                             DhBlockPos dhBlockPos,
                                                                             IBiomeWrapper iBiomeWrapper,
+                                                                            FullDataSourceV2 fullDataSourceV2,
                                                                             IBlockStateWrapper iBlockStateWrapper,
                                                                             Operation<Integer> original,
-                                                                            @Local(argsOnly = true) FullDataPointIdMap fullDataMapping,
+                                                                            @Local FullDataPointIdMap fullDataMapping,
                                                                             @Local(argsOnly = true) LongArrayList fullColumnData) {
         MapColor mapColor = DHTool.computeBaseColor(instance, dhBlockPos, iBiomeWrapper, iBlockStateWrapper, fullDataMapping, fullColumnData, WRAPPER_FACTORY);
         if (mapColor == MapColor.SNOW)
             // 不知道为什么，不能用这个值
             return Color.WHITE.getRGB();
-        return original.call(instance, dhBlockPos, iBiomeWrapper, iBlockStateWrapper);
+        return original.call(instance, dhBlockPos, iBiomeWrapper, fullDataSourceV2, iBlockStateWrapper);
     }
+
 
     @WrapOperation(
             remap = false,
-            method = "setRenderColumnView",
             require = 0,
+            method = "setRenderColumnView",
             at = @At(value = "INVOKE", target = "Lcom/seibel/distanthorizons/core/dataObjects/fullData/FullDataPointIdMap;getBlockStateWrapper(I)Lcom/seibel/distanthorizons/core/wrapperInterfaces/block/IBlockStateWrapper;")
     )
     private static IBlockStateWrapper eclipticseasons$setRenderColumnView_fixIce(
             FullDataPointIdMap instance,
             int id,
             Operation<IBlockStateWrapper> original,
-            @Local(argsOnly = true) IDhClientLevel clientLevel,
-            @Local(argsOnly = true) FullDataPointIdMap fullDataMapping,
+            @Local(argsOnly = true) IClientLevelWrapper clientLevel,
+            @Local FullDataPointIdMap fullDataMapping,
             @Local(argsOnly = true) LongArrayList fullColumnData,
             @Local DhBlockPosMutable dhBlockPosMutable,
             @Local IBiomeWrapper biomeWrapper,
             @Local(name = "fullDataIndex") LocalIntRef localIntRef) {
         IBlockStateWrapper call = original.call(instance, id);
-        if (call.isLiquid() && call.getWrappedMcObject() instanceof BlockState blockState) {
-            IBlockStateWrapper warp = DHTool.shouldFrozen(clientLevel, biomeWrapper, dhBlockPosMutable, blockState,fullDataMapping, fullColumnData,localIntRef.get());
+        if (call.isLiquid() && call.getWrappedMcObject() instanceof BlockState blockState
+                && clientLevel instanceof ClientLevelWrapper clientLevelWrapper) {
+            IBlockStateWrapper warp = DHTool.shouldFrozen(clientLevelWrapper, biomeWrapper, dhBlockPosMutable, blockState, fullDataMapping, fullColumnData, localIntRef.get());
             if (warp != null) call = warp;
         }
         return call;

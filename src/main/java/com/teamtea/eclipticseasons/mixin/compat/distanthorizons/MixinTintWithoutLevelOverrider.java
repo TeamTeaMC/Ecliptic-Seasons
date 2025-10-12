@@ -3,7 +3,6 @@ package com.teamtea.eclipticseasons.mixin.compat.distanthorizons;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.client.util.ClientRef;
-import loaderCommon.neoforge.com.seibel.distanthorizons.common.wrappers.block.TintWithoutLevelOverrider;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -15,24 +14,24 @@ import java.util.Map;
 @Mixin({ClientRef.class})
 public abstract class MixinTintWithoutLevelOverrider {
 
-    @Inject(
-            remap = false,
-            method = "onClientPlayerExit",
-            at = @At(value = "TAIL")
-    )
-    private static void eclipticseasons$distanthorizons$onClientPlayerExit(CallbackInfo ci) {
-        // 也不知道为什么DH不重置
-        try {
-            Field field = TintWithoutLevelOverrider.class.getDeclaredField("BIOME_BY_RESOURCE_STRING");
-            field.setAccessible(true);
-            Object map = field.get(null);
-            if (map instanceof Map<?, ?>) {
-                ((Map<?, ?>) map).clear();
-            }
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            EclipticSeasons.logger(e);
-        }
-    }
+//    @Inject(
+//            remap = false,
+//            method = "onClientPlayerExit",
+//            at = @At(value = "TAIL")
+//    )
+//    private static void eclipticseasons$distanthorizons$onClientPlayerExit(CallbackInfo ci) {
+//        // 也不知道为什么DH不重置
+//        try {
+//            Field field = BiomeWrapper.class.getDeclaredField("WRAPPER_BY_RESOURCE_LOCATION");
+//            field.setAccessible(true);
+//            Object map = field.get(null);
+//            if (map instanceof Map<?, ?>) {
+//                ((Map<?, ?>) map).clear();
+//            }
+//        } catch (NoSuchFieldException | IllegalAccessException e) {
+//            EclipticSeasons.logger(e);
+//        }
+//    }
 
 
     // @WrapOperation(
