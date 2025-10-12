@@ -1,15 +1,8 @@
 package com.teamtea.eclipticseasons.mixin.compat.distanthorizons;
 
 
-import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.client.util.ClientRef;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import java.lang.reflect.Field;
-import java.util.Map;
 
 @Mixin({ClientRef.class})
 public abstract class MixinTintWithoutLevelOverrider {
