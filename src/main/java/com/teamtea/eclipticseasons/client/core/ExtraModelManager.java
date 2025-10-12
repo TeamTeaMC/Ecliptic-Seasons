@@ -43,6 +43,7 @@ import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.level.*;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraftforge.client.ChunkRenderTypeSet;
 import net.minecraftforge.client.model.data.ModelData;
@@ -90,6 +91,8 @@ public class ExtraModelManager {
     public static ResourceLocation snow_overlay_leaves = textureRL("snow_overlay_leaves");
     public static ResourceLocation snow_overlay_tiny = textureRL("snow_overlay_tiny");
 
+    public static ResourceLocation extra_slope_overlay = textureRL("extra/slope_overlay");
+    public static ResourceLocation extra_slope_overlay_2 = textureRL("extra/slope_overlay_2");
 
     public static ResourceLocation textureRL(String s) {
         return EclipticSeasons.rl("block/" + s);
@@ -349,6 +352,9 @@ public class ExtraModelManager {
             TextureAtlasSprite snow_overlay_sprite = getSprite(snow_overlay);
             TextureAtlasSprite snow_overlay_tiny_sprite = getSprite(snow_overlay_tiny);
             TextureAtlasSprite snow_sprite = getSprite(snow);
+//            TextureAtlasSprite snow_extra_slope_overlay = getSprite(extra_slope_overlay);
+//            TextureAtlasSprite snow_extra_slope_overlay_2 = getSprite(extra_slope_overlay_2);
+
             float offset = 0.5f;
             boolean isSlabDown = false;
             original = new ArrayList<>(quadsCTM.size());
@@ -387,9 +393,21 @@ public class ExtraModelManager {
                     //     retexturedBakedQuad = new BakedQuadRetextured(bakedQuad, spriteUse);
                     // }
 
+//                    Direction directionQuickly = QuadFixer.getDirectionQuickly2(bakedQuad);
+////                      || directionQuickly == Direction.WEST
+//                    boolean slope = state.hasProperty(BlockStateProperties.HORIZONTAL_FACING)
+//                            && state.getValue(BlockStateProperties.HORIZONTAL_FACING).getOpposite()
+//                            == directionQuickly;
+//                    boolean slope2 = state.hasProperty(BlockStateProperties.HORIZONTAL_FACING)
+//                            && state.getValue(BlockStateProperties.HORIZONTAL_FACING).getClockWise()
+//                            == directionQuickly;
 //                    retexturedBakedQuad = new BakedQuadRetextured(bakedQuad,
-//                            QuadFixer.getDirectionQuickly(bakedQuad) == Direction.UP ?
-//                                    snow_sprite : snow_overlay_sprite);
+//                            directionQuickly == Direction.UP
+//                                    ?
+//                                    snow_sprite :
+//                                    slope ? snow_extra_slope_overlay :
+//                                            slope2 ? snow_extra_slope_overlay_2 :
+//                                                    snow_overlay_sprite);
 
                     original.add(retexturedBakedQuad);
                 }
