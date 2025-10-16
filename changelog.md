@@ -1,3 +1,8 @@
+### 0.12.0.5
+
+- When a WeatherRegion's weather subgroup contains a reference to its own Core, it will no longer copy itself repeatedly.
+- Added a fallback mechanism for the sequence table corresponding to built-in Biome IDs; if a Biome does not exist, it will return the ID of the Plains biome.
+
 ### 0.12.0.4
 
 - Upgrade Distant Horizons compatibility to version 2.3.5-b.

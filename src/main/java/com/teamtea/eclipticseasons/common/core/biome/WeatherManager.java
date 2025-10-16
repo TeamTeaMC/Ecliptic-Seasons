@@ -506,7 +506,7 @@ public class WeatherManager {
             Holder<Biome> onwer = BiomeClimateManager.getWeatherRegionOnwer(biomeWeather.biomeHolder.value());
             if (onwer != null) {
                 BiomeWeather ownerBiomeWeather = getBiomeWeather(level, onwer);
-                if (ownerBiomeWeather != null) {
+            if (onwer != null&& !onwer.equals(biomeWeather.biomeHolder)) {
                     biomeWeather.rainTime = ownerBiomeWeather.rainTime;
                     biomeWeather.thunderTime = ownerBiomeWeather.thunderTime;
                     biomeWeather.clearTime = ownerBiomeWeather.clearTime;

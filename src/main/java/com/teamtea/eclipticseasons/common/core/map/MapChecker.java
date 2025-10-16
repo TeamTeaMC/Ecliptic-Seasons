@@ -634,11 +634,16 @@ public class MapChecker {
             int id = iBiomeTagHolder.eclipticseasons$getBindId();
             if (id > -1) return id;
         }
-        return level.registryAccess().registryOrThrow(Registries.BIOME).getId(b);
+        return biomeToId(level.registryAccess().registryOrThrow(Registries.BIOME), b);
     }
 
     public static int biomeToId(Registry<Biome> biomes, Biome b) {
-        return biomes.getId(b);
+        int id = biomes.getId(b);
+        if (id <0) {
+            Biome plainsBiome = biomes.get(Biomes.PLAINS); 
+            id = biomes.getId(plainsBiome);
+        }
+        return id;
     }
 
     public static final SimplePair<Direction, Direction>[] SMALL_OFFSET_DIRECTIONS = new SimplePair[]{
