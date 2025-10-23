@@ -42,7 +42,7 @@ import java.util.*;
 
 
 @Data
-public class WeatherStatusKeeper implements  ICapabilityProvider, INBTSerializable<CompoundTag> {
+public class WeatherStatusKeeper implements ICapabilityProvider, INBTSerializable<CompoundTag> {
 
     public static final Codec<WeatherStatusKeeper> CODEC = RecordCodecBuilder.create(ins -> ins.group(
             CodecUtil.holderCodec(Registries.BIOME).listOf().optionalFieldOf("biomes", List.of())
@@ -102,6 +102,7 @@ public class WeatherStatusKeeper implements  ICapabilityProvider, INBTSerializab
         if (serverLevel.getRandom().nextInt(20) == 0) {
             for (Holder<Biome> biomeHolder : biomeUse) {
                 WeatherManager.BiomeWeather biomeWeather = WeatherManager.getBiomeWeather(serverLevel, biomeHolder);
+                if (biomeWeather == null) continue;
                 int snowDepth = biomeWeather.snowDepth;
                 long lastRainTime = biomeWeather.lastRainTime;
                 IntLongMutablePair orDefault = snowDepthRecord.getOrDefault(biomeHolder, null);
@@ -153,6 +154,7 @@ public class WeatherStatusKeeper implements  ICapabilityProvider, INBTSerializab
                 int weatherTickFactor = WeatherManager.getWeatherTickFactor(level) >> 2;
                 snowDepthRecord.forEach((biome, pair) -> {
                     WeatherManager.BiomeWeather biomeWeather = WeatherManager.getBiomeWeather(level, biome);
+                    if (biomeWeather == null) return;
                     int snowDepthAtBiome = biomeWeather.snowDepth;
                     long lastRainTime = biomeWeather.lastRainTime;
                     int snowDepthIncrease = snowDepthAtBiome - pair.leftInt();
@@ -225,7 +227,7 @@ public class WeatherStatusKeeper implements  ICapabilityProvider, INBTSerializab
     @Override
     public void deserializeNBT(CompoundTag nbt) {
         if (!EclipticUtil.canSnowyBlockInteract()) return;
-        if(!biomeUse.isEmpty()) return;
+        if (!biomeUse.isEmpty()) return;
         Level level = WeatherManager.fetchLevelIfNull(null);
         if (level != null) {
             RegistryOps<Tag> registryOps = RegistryOps.create(NbtOps.INSTANCE, level.registryAccess());

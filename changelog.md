@@ -1,3 +1,7 @@
+### 0.12.0.5.1
+
+- Prevent crashes caused by the illegal repeated triggering of chunk loading events when the Create mod's deployer uses items while SnowInWorld is enabled.
+
 ### 0.12.0.5
 
 - When a WeatherRegion's weather subgroup contains a reference to its own Core, it will no longer copy itself repeatedly.

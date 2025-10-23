@@ -85,11 +85,13 @@ public class WeatherManager {
         return size;
     }
 
+    @Nullable
     public static BiomeWeather getBiomeWeather(Level level, Holder<Biome> biomeHolder) {
         if (biomeHolder == null) return null;
         return getBiomeWeather(level, biomeHolder.value());
     }
 
+    @Nullable
     public static BiomeWeather getBiomeWeather(Level level, Biome biome) {
         BiomeWeather weather = null;
         // var weatherQueryListOrDefault = BIOME_WEATHER_QUERY_LIST.getOrDefault(level, null);
