@@ -107,6 +107,7 @@ public class WeatherStatusKeeper  {
         if (serverLevel.getRandom().nextInt(20) == 0) {
             for (Holder<Biome> biomeHolder : biomeUse) {
                 WeatherManager.BiomeWeather biomeWeather = WeatherManager.getBiomeWeather(serverLevel, biomeHolder);
+                if (biomeWeather == null) continue;
                 int snowDepth = biomeWeather.snowDepth;
                 long lastRainTime = biomeWeather.lastRainTime;
                 IntLongMutablePair orDefault = snowDepthRecord.getOrDefault(biomeHolder, null);
@@ -158,6 +159,7 @@ public class WeatherStatusKeeper  {
                 int weatherTickFactor = WeatherManager.getWeatherTickFactor(level) >> 2;
                 snowDepthRecord.forEach((biome, pair) -> {
                     WeatherManager.BiomeWeather biomeWeather = WeatherManager.getBiomeWeather(level, biome);
+                    if (biomeWeather == null) return;
                     int snowDepthAtBiome = biomeWeather.snowDepth;
                     long lastRainTime = biomeWeather.lastRainTime;
                     int snowDepthIncrease = snowDepthAtBiome - pair.leftInt();

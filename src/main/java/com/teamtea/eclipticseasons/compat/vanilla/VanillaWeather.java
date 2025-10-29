@@ -6,6 +6,7 @@ import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.constant.tag.ClimateTypeBiomeTags;
 import com.teamtea.eclipticseasons.api.misc.IBiomeTagHolder;
+import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
@@ -79,8 +80,9 @@ public class VanillaWeather {
                     Biome.Precipitation.SNOW :
                     Biome.Precipitation.RAIN;
 
-            var snowTerm = SolarTerm.getSnowTerm(biome);
-            boolean flag_cold = snowTerm.maySnow(solarTerm, biome, pos, level instanceof ServerLevel);
+            boolean isServer= level instanceof ServerLevel;
+            var snowTerm = SolarTerm.getSnowTerm(biome,isServer, EclipticUtil.getSnowTempChange(level));
+            boolean flag_cold = snowTerm.maySnow(solarTerm, biome, pos, isServer);
             if (resultPrecipitation == Biome.Precipitation.RAIN) {
                 if (flag_cold) {
                     resultPrecipitation = Biome.Precipitation.SNOW;

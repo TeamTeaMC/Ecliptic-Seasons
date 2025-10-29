@@ -94,11 +94,13 @@ public class WeatherManager {
         return level != null ? level : getMainServerLevel();
     }
 
+    @Nullable
     public static BiomeWeather getBiomeWeather(Level level, Holder<Biome> biomeHolder) {
         if (biomeHolder == null) return null;
         return getBiomeWeather(level, biomeHolder.value());
     }
 
+    @Nullable
     public static BiomeWeather getBiomeWeather(Level level, Biome biome) {
         BiomeWeather weather = null;
         // var weatherQueryListOrDefault = BIOME_WEATHER_QUERY_LIST.getOrDefault(level, null);
@@ -537,7 +539,7 @@ public class WeatherManager {
         WeatherMode weatherMode = EclipticUtil.getWeatherMode(level);
         if (weatherMode == WeatherMode.REGION) {
             Holder<Biome> onwer = BiomeClimateManager.getWeatherRegionOnwer(biomeWeather.biomeHolder.value());
-            if (onwer != null) {
+            if (onwer != null&& !onwer.equals(biomeWeather.biomeHolder)) {
                 BiomeWeather ownerBiomeWeather = getBiomeWeather(level, onwer);
                 if (ownerBiomeWeather != null) {
                     biomeWeather.rainTime = ownerBiomeWeather.rainTime;

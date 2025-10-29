@@ -1,5 +1,6 @@
 package com.teamtea.eclipticseasons.client.render;
 
+import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.common.registry.EffectRegistry;
 import com.teamtea.eclipticseasons.client.ClientEventHandler;
 import com.teamtea.eclipticseasons.config.CommonConfig;
@@ -64,8 +65,8 @@ public class WorldRenderer {
                     {
 
                         // 我们写的shader好像有问题？
-                        // gameRenderer.loadEffect(EclipticSeasonsMod.rl("shaders/post/fade_in_blur.json"));
-                        gameRenderer.loadEffect(ResourceLocation.withDefaultNamespace("shaders/post/blur.json"));
+                         gameRenderer.loadEffect(EclipticSeasons.rl("shaders/post/box_blur.json"));
+//                        gameRenderer.loadEffect(ResourceLocation.withDefaultNamespace("shaders/post/blur.json"));
                     }
                 }
 

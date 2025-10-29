@@ -44,7 +44,8 @@ import java.util.Optional;
 
 public class GreenHouseCoreBlock extends SimpleEntityBlock {
     public static final IntegerProperty POWER = BlockStateProperties.POWER;
-
+    public static final IntegerProperty AGE = BlockStateProperties.AGE_2;
+    public static final int MAX_STAGE = 2;
     public static final MapCodec<GreenHouseCoreBlock> CODEC = RecordCodecBuilder.mapCodec(
             blockInstance -> blockInstance.group(
                             ESExtraCodec.SEASON.fieldOf("season").forGetter(GreenHouseCoreBlock::getSeason),
@@ -56,13 +57,17 @@ public class GreenHouseCoreBlock extends SimpleEntityBlock {
 
     public GreenHouseCoreBlock(Season season, Properties properties) {
         super(properties);
-        registerDefaultState(defaultBlockState().setValue(POWER, 0));
+        registerDefaultState(defaultBlockState().setValue(POWER, 0).setValue(AGE, MAX_STAGE));
         this.season = season;
     }
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        super.createBlockStateDefinition(builder.add(POWER));
+        super.createBlockStateDefinition(builder.add(POWER, AGE));
+    }
+
+    public boolean isValid(BlockState state) {
+        return state.getValue(AGE) == MAX_STAGE;
     }
 
     @Override
@@ -84,6 +89,8 @@ public class GreenHouseCoreBlock extends SimpleEntityBlock {
     public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
         super.animateTick(state, level, pos, random);
         if (!ClientConfig.Particle.seasonGreenhouse.get()) return;
+        if (!isValid(state)) return;
+
         int count = ClientConfig.Particle.SeasonGreenhouseParticleSpawnCount.get();
 
         Direction direction = Direction.DOWN;

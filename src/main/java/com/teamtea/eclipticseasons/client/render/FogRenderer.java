@@ -8,6 +8,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
+import com.teamtea.eclipticseasons.client.core.ClientWeatherChecker;
 import net.minecraft.client.Camera;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
@@ -33,6 +34,8 @@ import java.io.IOException;
  * 如果需要把事件订阅并入 ClientEventHandler
  * 请按需把单例改为静态
  * */
+@Deprecated
+@SuppressWarnings("removal")
 @EventBusSubscriber(value = Dist.CLIENT, modid = EclipticSeasonsApi.MODID, bus = EventBusSubscriber.Bus.GAME)
 public class FogRenderer {
 
@@ -57,6 +60,7 @@ public class FogRenderer {
     private float mWindSpeed;
 
     private boolean bufferInitialized = false;
+
 
     /*
      * 需要在 render thread 进行初始化, 最好在 Tesselator 初始化后进行
@@ -166,8 +170,8 @@ public class FogRenderer {
                 this.uNoiseScale
         );
         Shader.uFogData.set(
-                this.uTerrainFogDensity,
-                this.uSkyFogDensity,
+                this.uTerrainFogDensity / 10f * ClientWeatherChecker.lastBiomeRainLevel,
+                this.uSkyFogDensity * 20 * ClientWeatherChecker.lastBiomeRainLevel,
                 this.uFadeTransition, this.uNearClarity
         );
         Shader.uFogBaseColor.set(this.uFogColor);

@@ -27,6 +27,7 @@ public class ClientConfig {
         public static ModConfigSpec.BooleanValue frozenWater;
         public static ModConfigSpec.BooleanValue frozenWaterBreakable;
         public static ModConfigSpec.BooleanValue frozenWaterCheckLight;
+        public static ModConfigSpec.BooleanValue fogWeather;
         private static void load(ModConfigSpec.Builder builder) {
             builder.push("Debug");
 
@@ -41,7 +42,9 @@ public class ClientConfig {
             frozenWaterBreakable = builder
                     .define("FrozenWaterBreakable", true);
             frozenWaterCheckLight = builder
-                    .define("frozenWaterCheckLight", true);
+                    .define("FrozenWaterCheckLight", true);
+            fogWeather = builder
+                    .define("FogWeather", false);
             builder.pop();
         }
     }
