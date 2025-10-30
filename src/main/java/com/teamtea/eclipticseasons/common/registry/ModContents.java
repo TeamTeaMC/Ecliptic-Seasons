@@ -18,6 +18,7 @@ import com.teamtea.eclipticseasons.api.data.weather.CustomSnowTerm;
 import com.teamtea.eclipticseasons.api.data.weather.WeatherRegion;
 import com.teamtea.eclipticseasons.common.block.BlockInCopperGrateBlock;
 import com.teamtea.eclipticseasons.common.resource.FakeResourceManagerHelperUtil;
+import com.teamtea.eclipticseasons.config.CommonConfig;
 import com.teamtea.eclipticseasons.config.StartConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -146,6 +147,18 @@ public class ModContents {
                         EclipticSeasonsApi.MODID, "EclipticSeasonsLegacySnowyBlock", modFile,
                         Component.translatable(EclipticSeasons.rl("legacy_snowy_block").toLanguageKey("pack")),
                         event.getPackType(), PackSource.FEATURE, new PackSelectionConfig(false, Pack.Position.TOP, false));
+            }
+            if (event.getPackType() == PackType.SERVER_DATA) {
+                if (CommonConfig.Resource.RainTogether.get()) FakeResourceManagerHelperUtil.registerBuiltinResourcePack(
+                        event,
+                        EclipticSeasonsApi.MODID, "Rain Together", modFile,
+                        Component.translatable(EclipticSeasons.rl("rain_together").toLanguageKey("pack")),
+                        PackType.SERVER_DATA, PackSource.FEATURE, new PackSelectionConfig(true, Pack.Position.BOTTOM, false));
+                if (CommonConfig.Resource.SnowTogether.get()) FakeResourceManagerHelperUtil.registerBuiltinResourcePack(
+                        event,
+                        EclipticSeasonsApi.MODID, "Snow Together", modFile,
+                        Component.translatable(EclipticSeasons.rl("snow_together").toLanguageKey("pack")),
+                        PackType.SERVER_DATA, PackSource.FEATURE, new PackSelectionConfig(true, Pack.Position.BOTTOM, false));
             }
         }
     }

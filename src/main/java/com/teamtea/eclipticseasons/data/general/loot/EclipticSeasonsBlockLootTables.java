@@ -1,8 +1,10 @@
 package com.teamtea.eclipticseasons.data.general.loot;
 
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
+import com.teamtea.eclipticseasons.common.block.GreenHouseCoreBlock;
 import com.teamtea.eclipticseasons.common.registry.BlockRegistry;
 import com.teamtea.eclipticseasons.common.registry.ItemRegistry;
+import net.minecraft.advancements.critereon.StatePropertiesPredicate;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.loot.BlockLootSubProvider;
@@ -12,8 +14,11 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.storage.loot.BuiltInLootTables;
+import net.minecraft.world.level.storage.loot.LootPool;
+import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
+import net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePropertyCondition;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 
 
@@ -80,9 +85,14 @@ public class EclipticSeasonsBlockLootTables extends BlockLootSubProvider {
 
 
     protected void createCoreDrop(Block pBlock, Item pItem) {
-        add(pBlock, createSilkTouchDispatchTable(pBlock,
-                // HAS_SILK_TOUCH,
-                this.applyExplosionDecay(pBlock, LootItem.lootTableItem(pItem).apply(SetItemCountFunction.setCount(ConstantValue.exactly(1)))))
+        add(pBlock,
+                LootTable.lootTable()
+                        .withPool(LootPool.lootPool()
+                                .setRolls(ConstantValue.exactly(1.0F))
+                                .when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(pBlock)
+                                        .setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(GreenHouseCoreBlock.AGE,GreenHouseCoreBlock.MAX_STAGE)))
+                                .add(LootItem.lootTableItem(pBlock)
+                                        .when(this.hasSilkTouch()).otherwise(LootItem.lootTableItem(pItem).apply(SetItemCountFunction.setCount(ConstantValue.exactly(1))))))
         );
     }
 

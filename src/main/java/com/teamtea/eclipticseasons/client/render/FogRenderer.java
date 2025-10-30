@@ -9,6 +9,7 @@ import com.mojang.blaze3d.vertex.*;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.client.core.ClientWeatherChecker;
+import com.teamtea.eclipticseasons.client.util.ClientCon;
 import net.minecraft.client.Camera;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
@@ -16,11 +17,13 @@ import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FastColor;
+import net.minecraft.world.level.LightLayer;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RegisterShadersEvent;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
+import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 import net.neoforged.neoforge.event.GameShuttingDownEvent;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
@@ -67,8 +70,11 @@ public class FogRenderer {
      * 如果后续需要改为静态类, 最好把那几个final去掉, 然后把这个构造器改为 init()
      * */
     FogRenderer() {
-        Window window = Minecraft.getInstance().getWindow();
-        this.tempTarget = new TextureTarget(window.getWidth(), window.getHeight(), true, true);
+
+        if (Minecraft.getInstance() != null) {
+            Window window = Minecraft.getInstance().getWindow();
+            this.tempTarget = new TextureTarget(window.getWidth(), window.getHeight(), true, true);
+        } else this.tempTarget = null;
 
         this.mWindDirection = new Vector2f(0.0f, 0.0f);
         this.uFogColor = new Vector4f(0.8f, 0.8f, 0.8f, 1.0f);
@@ -78,6 +84,11 @@ public class FogRenderer {
 
     @SubscribeEvent
     public static void onRenderLevelStage(final RenderLevelStageEvent event) {
+
+        if (Minecraft.getInstance().cameraEntity == null
+                || Minecraft.getInstance().cameraEntity.getEyeInFluidType() != net.neoforged.neoforge.common.NeoForgeMod.EMPTY_TYPE.value())
+            return;
+
         RenderLevelStageEvent.Stage stage = event.getStage();
 
         if (stage == RenderLevelStageEvent.Stage.AFTER_WEATHER) {
@@ -169,9 +180,11 @@ public class FogRenderer {
                 this.uNoiseAmplifier,
                 this.uNoiseScale
         );
+        float rate = 0.5f + 0.5f * ClientCon.getUseLevel().getBrightness(LightLayer.SKY, ClientCon.agent.getCameraEntity().blockPosition()) / 15f;
+        rate *= (ClientWeatherChecker.lastBiomeRainLevel * ClientWeatherChecker.lastBiomeRainLevel);
         Shader.uFogData.set(
-                this.uTerrainFogDensity / 10f * ClientWeatherChecker.lastBiomeRainLevel,
-                this.uSkyFogDensity * 20 * ClientWeatherChecker.lastBiomeRainLevel,
+                rate * this.uTerrainFogDensity / 10f,
+                rate * this.uSkyFogDensity * 20,
                 this.uFadeTransition, this.uNearClarity
         );
         Shader.uFogBaseColor.set(this.uFogColor);

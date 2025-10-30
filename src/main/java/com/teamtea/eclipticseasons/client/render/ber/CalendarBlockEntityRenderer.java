@@ -6,6 +6,7 @@ import com.mojang.datafixers.util.Pair;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.constant.solar.ISolarTerm;
+import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.common.block.CalendarBlock;
 import com.teamtea.eclipticseasons.common.block.base.SimpleHorizontalEntityBlock;
@@ -91,6 +92,8 @@ public class CalendarBlockEntityRenderer implements BlockEntityRenderer<Calendar
                                 remain = iSolarTermOriginal == nextPair.getSecond() ? 0 : remain;
                                 string = Component.translatable("info.eclipticseasons.environment.solar_term.hint3", remain).getString();
                             }
+                            case DAY ->
+                                    string = Component.translatable("info.eclipticseasons.environment.solar_term.hint4", EclipticUtil.getNowSolarDay(blockEntity.getLevel())).getString();
                             default -> string = seasonPhaseUsed.getTittleTranslation().getString();
                         }
                         drawText(2, string, Color.GRAY.getRGB(), matrixStackIn, multiBufferSource);

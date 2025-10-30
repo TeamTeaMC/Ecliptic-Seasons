@@ -2,7 +2,6 @@ package com.teamtea.eclipticseasons.config;
 
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
-import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.compat.CompatModule;
 import lombok.Getter;
@@ -31,7 +30,7 @@ public class CommonConfig {
         Snow.load(builder);
         CompatModule.CommonConfig.load(builder);
         Debug.load(builder);
-
+        Resource.load(builder);
     }
 
     public static class Debug {
@@ -44,6 +43,7 @@ public class CommonConfig {
         public static ModConfigSpec.BooleanValue disableUniqueRebindingBiomeTags;
 
         public static ModConfigSpec.BooleanValue disableIceOrSnowCauldron;
+        public static ModConfigSpec.BooleanValue disableSeasonalPrayerRitual;
 
         private static void load(ModConfigSpec.Builder builder) {
             builder.push("Debug");
@@ -66,6 +66,9 @@ public class CommonConfig {
 
             disableIceOrSnowCauldron = builder.comment("Disable cauldron enhancement, they will no longer turn into snow-filled or ice-filled cauldrons when it snows.")
                     .define("DisableIceOrSnowCauldron", false);
+
+            disableSeasonalPrayerRitual = builder.comment("Disable seasonal core prayer ritual.")
+                    .define("DisableSeasonalPrayerRitual", false);
             builder.pop();
         }
     }
@@ -191,6 +194,8 @@ public class CommonConfig {
         public static ModConfigSpec.BooleanValue boneMealConsumeOnFailure;
 
         public static ModConfigSpec.BooleanValue saveChunkEnvironmentalHumidity;
+        public static ModConfigSpec.IntValue seasonalPrayerRitualCropBonusReduction;
+        public static ModConfigSpec.DoubleValue seasonalPrayerRitualTimeCost;
 
         private static void load(ModConfigSpec.Builder builder) {
             builder.push("Crop");
@@ -227,7 +232,14 @@ public class CommonConfig {
 
             saveChunkEnvironmentalHumidity = builder.comment("Save environmental humidity modifiers to chunk file.")
                     .define("SaveChunkEnvironmentalHumidity", true);
-
+            seasonalPrayerRitualCropBonusReduction=builder
+                    .comment("Inverse factor controlling how much the Seasonal Prayer Ritual boosts crop growth and animal breeding.\n" +
+                            "The higher the value, the weaker the bonus effect.")
+                    .defineInRange("SeasonalPrayerRitualCropBonusReduction",500,5,Integer.MAX_VALUE);
+            seasonalPrayerRitualTimeCost=builder
+                    .comment("Approximate time cost for each stage of the Seasonal Prayer Ritual.\n" +
+                            "The unit is relative to the duration of one solar term.")
+                    .defineInRange("SeasonalPrayerRitualTimeCost",2,0.00001d,5000);
             builder.pop();
         }
     }
@@ -457,6 +469,19 @@ public class CommonConfig {
         }
     }
 
+    public static class Resource {
+        public static ModConfigSpec.BooleanValue SnowTogether;
+        public static ModConfigSpec.BooleanValue RainTogether;
+
+        private static void load(ModConfigSpec.Builder builder) {
+            builder.push("Resource");
+            RainTogether = builder.comment("Enable RainTogether datapack for game.")
+                    .define("RainTogether", false);
+            SnowTogether = builder.comment("Enable SnowTogether datapack for game.")
+                    .define("SnowTogether", false);
+            builder.pop();
+        }
+    }
 
     @Getter
     private static boolean seasonDefinition = false;

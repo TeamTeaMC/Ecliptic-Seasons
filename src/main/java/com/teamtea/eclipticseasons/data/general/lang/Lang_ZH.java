@@ -34,7 +34,7 @@ public class Lang_ZH extends LangHelper {
         add(ItemRegistry.hyetometer.get(), "雨量计");
         add(BlockRegistry.hygrometer.get(), "湿度计");
 
-        add(BlockRegistry.greenhouse_core_container.get(), "温室之心室");
+        add(BlockRegistry.greenhouse_core_container.get(), "温室之心容器");
 
         add(BlockRegistry.spring_greenhouse_core.get(), "春季温室之心");
         add(BlockRegistry.summer_greenhouse_core.get(), "夏季温室之心");
@@ -180,6 +180,7 @@ public class Lang_ZH extends LangHelper {
 
     private void addExtraEnvInfo() {
         add("info.eclipticseasons.environment.solar_term.hint2", "第 %s 年:");
+        add("info.eclipticseasons.environment.solar_term.hint4", "第 %s 天:");
         add("info.eclipticseasons.environment.solar_term.hint3", "自 %s 日后:");
         add("info.eclipticseasons.environment.solar_term.hint", "今日节气:");
 
@@ -427,6 +428,7 @@ public class Lang_ZH extends LangHelper {
         add("config.jade.plugin_eclipticseasons.crop", "作物");
         add("config.jade.plugin_eclipticseasons.animal", "动物");
         add("config.jade.plugin_eclipticseasons.cauldron", "炼药锅");
+        add("config.jade.plugin_eclipticseasons.greenhouse_core", "温室核心");
 
         add("config.jade.plugin_eclipticseasons.crop.shift_hint", "Shift按键提示");
         add("hint.jade.plugin_eclipticseasons.crop.show", "§o<..按住%s§o以查看更多..>");
@@ -456,6 +458,7 @@ public class Lang_ZH extends LangHelper {
         add("info.eclipticseasons.calendar.model.normal", "一般");
         add("info.eclipticseasons.calendar.model.year", "年份");
         add("info.eclipticseasons.calendar.model.next", "下一节气");
+        add("info.eclipticseasons.calendar.model.day", "日期");
 
         add("pack.eclipticseasons.extra_snow", "额外覆雪方块资源包");
 
@@ -465,13 +468,17 @@ public class Lang_ZH extends LangHelper {
         add("info.eclipticseasons.show.shift", "§o<..按住shift..>");
         add("info.eclipticseasons.greenhouse_essence.source", "完成%1$s季进度或者任务获取");
 
-        add("info.eclipticseasons.seasonal_prayer_scroll.use", "激活悬挂式告示牌为季节任务栏，完成限时任务");
+        add("info.eclipticseasons.seasonal_prayer_scroll.use", "§7§o激活温室心室进行季节仪式，或者悬挂式告示牌为季节任务栏");
 
         add("info.eclipticseasons.snow_cauldron.extraction","§7§o使用锹可以获取雪球");
         add("info.eclipticseasons.ice_cauldron.extraction","§7§o使用镐可以获取冰块");
 
         add("pack.eclipticseasons.legacy_snowy_block", "经典覆雪方块模型资源包");
+        add("pack.eclipticseasons.rain_together", "一起下雨");
+        add("pack.eclipticseasons.snow_together", "一起下雪");
 
+        add("info.eclipticseasons.greenhouse_core.prayer_progress", "当前祈愿进度为%s%%");
+        add("info.eclipticseasons.calendar.use", "§7§o放置在墙上，潜行可以切换日历显示模式");
     }
 
     private void addAdvancements() {
@@ -751,6 +758,17 @@ public class Lang_ZH extends LangHelper {
         add("eclipticseasons.configuration.UnifiedSnowyBlockShading", "统一覆雪方块表面反射");
         add("eclipticseasons.configuration.UnifiedSnowyBlockSides", "统一覆雪方块侧面反射");
 
+        add("eclipticseasons.configuration.RainTogether", "一起下雨");
+        add("eclipticseasons.configuration.SnowTogether", "一起下雪");
+        add("eclipticseasons.configuration.SeasonalPrayerRitualCropBonusReduction", "季节祈祷仪式的作物加成反因子");
+        add("eclipticseasons.configuration.SeasonalPrayerRitualTimeCost", "季节祈祷仪式的时间消耗");
+        add("eclipticseasons.configuration.DisableSeasonalPrayerRitual", "禁用季节祈祷仪式");
+        add("eclipticseasons.configuration.DisableIceOrSnowCauldron", "禁用炼药锅收集冰雪");
+
+        add("eclipticseasons.configuration.FrozenWater", "看起来冻结的水");
+        add("eclipticseasons.configuration.FrozenWaterBreakable", "看起来冻结的水可以被打破");
+        add("eclipticseasons.configuration.FrozenWaterCheckLight", "看起来冻结的水受到光照影响");
+        add("eclipticseasons.configuration.FoggyWeather", "大雾天");
     }
 
 

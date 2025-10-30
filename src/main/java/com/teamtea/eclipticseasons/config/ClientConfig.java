@@ -28,6 +28,7 @@ public class ClientConfig {
         public static ModConfigSpec.BooleanValue frozenWaterBreakable;
         public static ModConfigSpec.BooleanValue frozenWaterCheckLight;
         public static ModConfigSpec.BooleanValue fogWeather;
+
         private static void load(ModConfigSpec.Builder builder) {
             builder.push("Debug");
 
@@ -37,14 +38,17 @@ public class ClientConfig {
                     .define("SmoothSnowyEdges", false);
             minChunkCompileWarningTime = builder.comment("If the game takes too long to load a chunk for render, a warning will be shown in the log.")
                     .defineInRange("MinChunkCompileWarningTime", 100, 5, 2000);
-            frozenWater = builder
+
+            frozenWater = builder.comment("When it snows, surface water will appear covered by a thin ice layer, making it look as if it has frozen.")
                     .define("FrozenWater", false);
-            frozenWaterBreakable = builder
+            frozenWaterBreakable = builder.comment("The thin ice formed by freezing water can be easily broken.")
                     .define("FrozenWaterBreakable", true);
-            frozenWaterCheckLight = builder
+            frozenWaterCheckLight = builder.comment("Water will not appear frozen under strong light.")
                     .define("FrozenWaterCheckLight", true);
-            fogWeather = builder
-                    .define("FogWeather", false);
+
+            fogWeather = builder.comment("Experimental feature: enables foggy weather during rainfall.")
+                    .define("FoggyWeather", false);
+
             builder.pop();
         }
     }

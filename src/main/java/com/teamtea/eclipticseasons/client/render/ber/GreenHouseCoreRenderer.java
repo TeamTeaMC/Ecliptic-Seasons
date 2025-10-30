@@ -19,18 +19,21 @@ import org.joml.Vector3f;
 public class GreenHouseCoreRenderer implements BlockEntityRenderer<GreenHouseCoreBlockEntity> {
 
     private ModelPart modelPart;
+    private ModelPart modelPart_Age1;
 
     private static final Vector3f ANIMATION_VECTOR_CACHE = new Vector3f();
 
     public GreenHouseCoreRenderer(BlockEntityRendererProvider.Context pContext) {
         modelPart = TryModel.createBodyLayer().bakeRoot().getChild("All");
+        modelPart_Age1 = TryModel.createBodyLayer_age1().bakeRoot().getChild("All");
     }
 
 
     @Override
     public void render(GreenHouseCoreBlockEntity blockEntity, float partialTicks, PoseStack poseStack, MultiBufferSource bufferIn, int combinedLight, int combinedOverlay) {
+        int stage = blockEntity.getBlockState().getValue(GreenHouseCoreBlock.AGE);
 
-        ModelPart useModel = modelPart;
+        ModelPart useModel = stage == 1 ? modelPart_Age1 : modelPart;
         float size = 1f;
 
 
@@ -45,13 +48,11 @@ public class GreenHouseCoreRenderer implements BlockEntityRenderer<GreenHouseCor
 
         renderTicks = renderTicks * 3000 / 2000;
         GreenHouseCoreBlock block = (GreenHouseCoreBlock) blockEntity.getBlockState().getBlock();
-        // Integer value = blockEntity.getBlockState().getValue(GreenHouseCoreBlock.POWER);
-        // combinedLight = value>0?LightTexture.pack(value,15):TryModel.getLightFromBlock(block);
-        combinedLight = TryModel.getLightFromBlock(block);
-        VertexConsumer vertexconsumer2 = TryModel.getMaterialFromBlock(block).buffer(bufferIn, RenderType::itemEntityTranslucentCull);
+        combinedLight = TryModel.getLightFromBlock(block, stage);
+        VertexConsumer vertexconsumer2 = TryModel.getMaterialFromBlock(block, stage).buffer(bufferIn, RenderType::itemEntityTranslucentCull);
         TryKeyframe.animate(useModel, TryModel.animation, renderTicks, size, ANIMATION_VECTOR_CACHE);
         poseStack.translate(0, 0.5, 0);
-        useModel.x+=1;
+        useModel.x += 1;
         useModel.render(poseStack, vertexconsumer2, combinedLight, combinedOverlay);
 
 

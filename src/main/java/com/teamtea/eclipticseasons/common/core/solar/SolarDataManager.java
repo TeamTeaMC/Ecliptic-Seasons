@@ -6,6 +6,7 @@ import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.event.SolarTermChangeEvent;
 import com.teamtea.eclipticseasons.api.util.SimpleUtil;
+import com.teamtea.eclipticseasons.common.block.blockentity.GreenHouseCoreBlockEntity;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
 import com.teamtea.eclipticseasons.common.core.crop.GreenHouseCoreProvider;
@@ -386,6 +387,10 @@ public class SolarDataManager extends SavedData {
                     if (dx == -r || dx == r || dz == -r || dz == r) {
                         ChunkPos currentChunkPos = new ChunkPos(chunkPos.x + dx, chunkPos.z + dz);
                         GreenHouseCoreProvider greenHouseCoreProvider = checkSeasonProviderInChunk(seasons, currentChunkPos, center);
+                        if (greenHouseCoreProvider instanceof GreenHouseCoreBlockEntity.Consumer consumer) {
+                            consumer.addEnergy(1);
+                            return null;
+                        }
                         if (greenHouseCoreProvider != null) return greenHouseCoreProvider;
                     }
                 }
@@ -461,7 +466,7 @@ public class SolarDataManager extends SavedData {
                     SimpleNetworkHandler.send(player, new UpdateTempChangeMessage(getSolarTempChange()));
                 }
                 if (changeSolarTerm) {
-                    WeatherManager.tickPlayerForSeasonCheck(player,solarTerm);
+                    WeatherManager.tickPlayerForSeasonCheck(player, solarTerm);
                 }
             }
         }

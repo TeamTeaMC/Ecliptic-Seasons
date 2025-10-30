@@ -1,3 +1,20 @@
+### 0.12.1
+
+- Added seasonal ritual: after crafting the Greenhouse Core Container, it can be activated with a Seasonal Prayer Scroll to begin the ritual and obtain the Seasonal Greenhouse Core. Be careful not to place it directly on the ground.
+- Added an experimental fog rendering feature, currently appearing during rain when enabled.
+- Added a new display mode for the calendar that shows the current solar term day.
+- Added optional datapacks “Rain Together” and “Snow Together” to synchronize weather across biomes, requiring configuration to be enabled.
+
+### 0.12.0.5.1
+
+- Prevent crashes caused by the illegal repeated triggering of chunk loading events when the Create mod's deployer uses items while SnowInWorld is enabled.
+
+### 0.12.0.5
+
+- Fixed an issue where the Snow Term was not correctly calculated when Solar Weather was disabled.
+- When a WeatherRegion's weather subgroup contains a reference to its own Core, it will no longer copy itself repeatedly.
+- Added a fallback mechanism for the sequence table corresponding to built-in Biome IDs; if a Biome does not exist, it will return the ID of the Plains biome.
+
 ### 0.12.0.4
 
 - Upgrade Distant Horizons compatibility to version 2.3.5-b.
