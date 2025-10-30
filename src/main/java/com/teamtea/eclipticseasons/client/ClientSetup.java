@@ -65,6 +65,9 @@ public class ClientSetup {
         event.registerSpriteSet(ParticleRegistry.FALLEN_LEAVES, (p_277215_) ->
                 (particleType, level, x, y, z, p_277222_, p_277223_, p_277224_) ->
                         new FallenLeavesParticle(level, x, y, z, p_277222_, p_277223_, p_277224_, particleType, p_277215_));
+        event.registerSpriteSet(ParticleRegistry.FLYING_BLOOM, (p_277215_) ->
+                (particleType, level, x, y, z, p_277222_, p_277223_, p_277224_) ->
+                        new FallenLeavesParticle(level, x, y, z, p_277222_, p_277223_, p_277224_, particleType, p_277215_));
         event.registerSpriteSet(ParticleRegistry.GREENHOUSE, (p_277215_) ->
                 (particleType, level, x, y, z, p_277222_, p_277223_, p_277224_) ->
                         new GreenHouseParticle(level, x, y, z, p_277222_, p_277223_, p_277224_, particleType, p_277215_));

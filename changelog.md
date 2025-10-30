@@ -1,3 +1,9 @@
+### 0.12.1
+
+- Added seasonal ritual: after crafting the Greenhouse Core Container, it can be activated with a Seasonal Prayer Scroll to begin the ritual and obtain the Seasonal Greenhouse Core. Be careful not to place it directly on the ground.
+- Added a new display mode for the calendar that shows the current solar term day.
+- Added optional datapacks “Rain Together” and “Snow Together” to synchronize weather across biomes, requiring configuration to be enabled.
+
 ### 0.12.0.5.1
 
 - Prevent crashes caused by the illegal repeated triggering of chunk loading events when the Create mod's deployer uses items while SnowInWorld is enabled.

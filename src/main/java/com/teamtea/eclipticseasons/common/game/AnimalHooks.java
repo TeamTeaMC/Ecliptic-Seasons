@@ -76,15 +76,18 @@ public class AnimalHooks {
         }
 
         if (breedSeasonType != null) {
+            List<Season> seasons = new ArrayList<>();
+            for (Season collectValidValue : Season.collectValidValues()) {
+                if (breedSeasonType.getInfo().isSuitable(collectValidValue))
+                    seasons.add(collectValidValue);
+            }
             if (!breedSeasonType.getInfo().isSuitable(season)) {
-                List<Season> seasons = new ArrayList<>();
-                for (Season collectValidValue : Season.collectValidValues()) {
-                    if (breedSeasonType.getInfo().isSuitable(collectValidValue))
-                        seasons.add(collectValidValue);
-                }
-
                 if (!CommonConfig.Animal.enableCoreWork.get() || withoutSeasonBonus(animal.level(), animal.blockPosition(), seasons))
                     return true;
+            } else {
+                if (CommonConfig.Animal.enableCoreWork.get()) {
+                    withoutSeasonBonus(animal.level(), animal.blockPosition(), seasons);
+                }
             }
 
             boolean isDay = EclipticSeasonsApi.getInstance().isDay(animal.level());

@@ -70,7 +70,7 @@
     },
     {
       "type": "patchouli:text",
-      "text": "By default, seasonal essences are obtained by completing advancements or seasonal quests; if in mod packs, follow the quest instructions.$(br)$(br)Sometimes the humidity may still be unsuitable. In that case, you can place a grate block, then right-click to insert a sponge or wet sponge (requires a soft heat source block such as a campfire) to adjust the area’s humidity. For more information, check the JEI mod.$(br)$(br)Using a growth detector can help check whether crops are suitable for this greenhouse."
+      "text": "By default, seasonal essences are obtained by completing advancements or seasonal quests, but it can also be gained through seasonal rituals using a Seasonal Prayer Scroll; if in mod packs, follow the quest instructions.$(br)$(br)Sometimes the humidity may still be unsuitable. In that case, you can place a grate block, then right-click to insert a sponge or wet sponge (requires a soft heat source block such as a campfire) to adjust the area’s humidity. For more information, check the JEI mod.$(br)$(br)Using a growth detector can help check whether crops are suitable for this greenhouse."
     },
     {
       "type": "patchouli:text",
@@ -80,17 +80,26 @@
     {
       "type": "patchouli:crafting",
       "recipe": "eclipticseasons:greenhouse_core_container",
-      "recipe2": "eclipticseasons:spring_greenhouse_core"
+      "recipe2": "eclipticseasons:seasonal_prayer_scroll"
     },
     {
       "type": "patchouli:crafting",
-      "recipe": "eclipticseasons:summer_greenhouse_core",
-      "recipe2": "eclipticseasons:autumn_greenhouse_core"
+      "recipe": "eclipticseasons:spring_greenhouse_core",
+      "recipe2": "eclipticseasons:summer_greenhouse_core"
     },
     {
       "type": "patchouli:crafting",
-      "recipe": "eclipticseasons:winter_greenhouse_core",
+      "recipe": "eclipticseasons:autumn_greenhouse_core",
+      "recipe2": "eclipticseasons:winter_greenhouse_core"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "eclipticseasons:hygrometer",
       "recipe2": "eclipticseasons:block_in_wooden_grate_block"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "eclipticseasons:growth_detector"
     }
   ]
 }

@@ -19,7 +19,6 @@ public class Lang_EN extends LangHelper {
     protected void addTranslations() {
 
 
-
         add("itemGroup." + EclipticSeasonsApi.MODID + ".core", "Ecliptic Seasons");
 
         add(BlockRegistry.calendar.get(), "Calendar");
@@ -58,11 +57,11 @@ public class Lang_EN extends LangHelper {
 
         add(ItemRegistry.seasonal_prayer_scroll_item.get(), "Seasonal Prayer Scroll");
 
-        add(ItemRegistry.snowless_hometown.get(),"Snowless Homeland");
+        add(ItemRegistry.snowless_hometown.get(), "Snowless Homeland");
         add(ItemRegistry.snowless_hometown.get().getDescriptionId() + ".desc", "Beishanwei & Orange Soda (feat. Others)");
 
-        add(BlockRegistry.snow_cauldron.get(),"Snow Cauldron");
-        add(BlockRegistry.ice_cauldron.get(),"Ice Cauldron");
+        add(BlockRegistry.snow_cauldron.get(), "Snow Cauldron");
+        add(BlockRegistry.ice_cauldron.get(), "Ice Cauldron");
 
         add("info.eclipticseasons.environment.temperature.under_freezing", "Under Freezing");
         add("info.eclipticseasons.environment.temperature.freezing", "Freezing");
@@ -173,6 +172,7 @@ public class Lang_EN extends LangHelper {
 
     private void addExtraEnvInfo() {
         add("info.eclipticseasons.environment.solar_term.hint2", "Year %s :");
+        add("info.eclipticseasons.environment.solar_term.hint4", "Day %s :");
         add("info.eclipticseasons.environment.solar_term.hint3", "In %s days:");
         add("info.eclipticseasons.environment.solar_term.hint", "Term Today:");
 
@@ -420,6 +420,7 @@ public class Lang_EN extends LangHelper {
         add("config.jade.plugin_eclipticseasons.crop", "Crop");
         add("config.jade.plugin_eclipticseasons.animal", "Animal");
         add("config.jade.plugin_eclipticseasons.cauldron", "Cauldron");
+        add("config.jade.plugin_eclipticseasons.greenhouse_core", "Greenhouse Core");
 
         add("config.jade.plugin_eclipticseasons.crop.shift_hint", "Shift Key Hint");
         add("hint.jade.plugin_eclipticseasons.crop.show", "§o<..Hold %s§o to see more..>");
@@ -450,8 +451,9 @@ public class Lang_EN extends LangHelper {
         add("info.eclipticseasons.calendar.model.normal", "default");
         add("info.eclipticseasons.calendar.model.year", "year");
         add("info.eclipticseasons.calendar.model.next", "next");
+        add("info.eclipticseasons.calendar.model.day", "day");
 
-        add("pack.eclipticseasons.extra_snow","Extra Snow Resourcepack");
+        add("pack.eclipticseasons.extra_snow", "Extra Snow Resourcepack");
 
 
         add("info.eclipticseasons.config.inactive", "§7Not work under the current configuration.");
@@ -460,12 +462,17 @@ public class Lang_EN extends LangHelper {
         add("info.eclipticseasons.show.shift", "§o<..Hold shift..>");
         add("info.eclipticseasons.greenhouse_essence.source", "Obtained by completing %1$s advancements or quests");
 
-        add("info.eclipticseasons.seasonal_prayer_scroll.use", "Activate a hanging sign as a seasonal quest sign for timed quests");
+        add("info.eclipticseasons.seasonal_prayer_scroll.use", "Activate the Greenhouse Core to perform a seasonal ritual, or a hanging sign as a seasonal quest sign");
 
-        add("info.eclipticseasons.snow_cauldron.extraction","§7§oUse a shovel to obtain Snow Balls");
-        add("info.eclipticseasons.ice_cauldron.extraction","§7§oUse a pickaxe to obtain Ice");
+        add("info.eclipticseasons.snow_cauldron.extraction", "§7§oUse a shovel to obtain Snow Balls");
+        add("info.eclipticseasons.ice_cauldron.extraction", "§7§oUse a pickaxe to obtain Ice");
 
         add("pack.eclipticseasons.legacy_snowy_block", "Legacy Snowy Block");
+        add("pack.eclipticseasons.rain_together", "Rain together");
+        add("pack.eclipticseasons.snow_together", "Snow Together");
+
+        add("info.eclipticseasons.greenhouse_core.prayer_progress", "Current prayer progress: %s%%");
+        add("info.eclipticseasons.calendar.use", "§7§oPlace on a wall; sneak to switch calendar display modes");
 
     }
 

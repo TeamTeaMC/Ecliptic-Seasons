@@ -33,12 +33,12 @@ public class ClientConfig {
             smoothSnowyEdges = builder.comment("Render snow edge overlay on neighbors for smoother snowy transitions.")
                     .define("SmoothSnowyEdges", false);
 
-            frozenWater = builder
+            frozenWater = builder.comment("When it snows, surface water will appear covered by a thin ice layer, making it look as if it has frozen.")
                     .define("FrozenWater", false);
-            frozenWaterBreakable = builder
+            frozenWaterBreakable = builder.comment("The thin ice formed by freezing water can be easily broken.")
                     .define("FrozenWaterBreakable", true);
-            frozenWaterCheckLight = builder
-                    .define("frozenWaterCheckLight", true);
+            frozenWaterCheckLight = builder.comment("Water will not appear frozen under strong light.")
+                    .define("FrozenWaterCheckLight", true);
 
             builder.pop();
         }
