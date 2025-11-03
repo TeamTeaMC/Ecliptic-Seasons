@@ -17,6 +17,7 @@ import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FastColor;
+import net.minecraft.util.Mth;
 import net.minecraft.world.level.LightLayer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RegisterShadersEvent;
@@ -176,8 +177,13 @@ public final class FogRenderer {
         final Vector3f position = camera.getPosition().toVector3f();
 
         // inverse view matrix without translation
-        final Matrix4f invViewMatrix = new Matrix4f()
-                .rotation(camera.rotation());
+        final float xRot = camera.getXRot() * Mth.DEG_TO_RAD;
+        final float yRot = camera.getYRot() * Mth.DEG_TO_RAD;
+        final Matrix4f invViewMatrix = new Matrix4f().rotateYXZ(
+                Mth.PI - yRot,
+                -xRot,
+                0.0f
+        );
 
         Shader.uNoiseData.set(
                 this.mWindDirection.x() * this.mTimer,
