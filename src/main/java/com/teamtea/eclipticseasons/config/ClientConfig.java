@@ -25,6 +25,7 @@ public class ClientConfig {
         public static ForgeConfigSpec.BooleanValue frozenWater;
         public static ForgeConfigSpec.BooleanValue frozenWaterBreakable;
         public static ForgeConfigSpec.BooleanValue frozenWaterCheckLight;
+        public static ForgeConfigSpec.BooleanValue fogWeather;
 
         private static void load(ForgeConfigSpec.Builder builder) {
             builder.push("Debug");
@@ -39,7 +40,8 @@ public class ClientConfig {
                     .define("FrozenWaterBreakable", true);
             frozenWaterCheckLight = builder.comment("Water will not appear frozen under strong light.")
                     .define("FrozenWaterCheckLight", true);
-
+            fogWeather = builder.comment("Experimental feature: enables foggy weather during rainfall.")
+                    .define("FoggyWeather", false);
             builder.pop();
         }
     }

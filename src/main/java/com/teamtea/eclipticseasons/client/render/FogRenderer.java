@@ -9,6 +9,7 @@ import com.mojang.blaze3d.vertex.*;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.client.core.ClientWeatherChecker;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
+import com.teamtea.eclipticseasons.config.ClientConfig;
 import jdk.jfr.Experimental;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
@@ -85,7 +86,7 @@ public final class FogRenderer {
         if (Minecraft.getInstance().cameraEntity == null
                 || Minecraft.getInstance().cameraEntity.getEyeInFluidType() != net.minecraftforge.common.ForgeMod.EMPTY_TYPE.get())
             return;
-//        if (true) return;
+        if (!ClientConfig.Debug.fogWeather.get()) return;
 
         RenderLevelStageEvent.Stage stage = event.getStage();
 
@@ -176,8 +177,7 @@ public final class FogRenderer {
 
         // inverse view matrix without translation
         final Matrix4f invViewMatrix = new Matrix4f()
-                .rotation(camera.rotation())
-                ;
+                .rotation(camera.rotation());
 
         Shader.uNoiseData.set(
                 this.mWindDirection.x() * this.mTimer,
