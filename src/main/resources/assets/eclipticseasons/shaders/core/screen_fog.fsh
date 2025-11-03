@@ -69,7 +69,7 @@ void main() {
     skyFog.a *= skyFogFactor;
 
     #if DEBUG == 1
-    fragColor = vec4(vec3(darkness), 1.0);
+    fragColor = vec4(relativePos, 1.0);
     #else
     fragColor = mix(skyFog, terrainFog, isTerrain);
     fragColor.a *= fogFactor;

@@ -20,10 +20,7 @@ import net.minecraftforge.client.event.RenderLevelStageEvent;
 import net.minecraftforge.event.GameShuttingDownEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import org.joml.Matrix4f;
-import org.joml.Vector2f;
-import org.joml.Vector3f;
-import org.joml.Vector4f;
+import org.joml.*;
 import org.lwjgl.opengl.GL30;
 
 import java.io.IOException;
@@ -162,8 +159,13 @@ public final class FogRenderer {
         final Vector3f position = camera.getPosition().toVector3f();
 
         // inverse view matrix without translation
-        final Matrix4f invViewMatrix = new Matrix4f()
-                .rotation(camera.rotation());
+        final float xRot = camera.getXRot() * Mth.DEG_TO_RAD;
+        final float yRot = camera.getYRot() * Mth.DEG_TO_RAD;
+        final Matrix4f invViewMatrix = new Matrix4f().rotateYXZ(
+                        Mth.PI - yRot,
+                        -xRot,
+                        0.0f
+                );
 
         Shader.uNoiseData.set(
                 this.mWindDirection.x() * this.mTimer,
