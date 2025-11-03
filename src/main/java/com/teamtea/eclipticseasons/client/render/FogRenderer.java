@@ -85,7 +85,7 @@ public final class FogRenderer {
         if (Minecraft.getInstance().cameraEntity == null
                 || Minecraft.getInstance().cameraEntity.getEyeInFluidType() != net.minecraftforge.common.ForgeMod.EMPTY_TYPE.get())
             return;
-        if (true) return;
+//        if (true) return;
 
         RenderLevelStageEvent.Stage stage = event.getStage();
 
@@ -174,13 +174,9 @@ public final class FogRenderer {
         final Matrix4f invProjectionMatrix = new Matrix4f(projectionMatrix).invert();
         final Vector3f position = camera.getPosition().toVector3f();
 
-        Camera cam = Minecraft.getInstance().gameRenderer.getMainCamera();
         // inverse view matrix without translation
         final Matrix4f invViewMatrix = new Matrix4f()
                 .rotation(camera.rotation())
-//                .translate((float) -cam.getPosition().x,
-//                        (float) -cam.getPosition().y,
-//                        (float) -cam.getPosition().z)
                 ;
 
         Shader.uNoiseData.set(
