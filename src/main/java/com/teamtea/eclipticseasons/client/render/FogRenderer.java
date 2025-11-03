@@ -7,28 +7,36 @@ import com.mojang.blaze3d.shaders.AbstractUniform;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.teamtea.eclipticseasons.EclipticSeasons;
+import com.teamtea.eclipticseasons.client.core.ClientWeatherChecker;
+import com.teamtea.eclipticseasons.client.util.ClientCon;
+import com.teamtea.eclipticseasons.config.ClientConfig;
+import jdk.jfr.Experimental;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FastColor;
-import net.minecraft.util.Mth;
+import net.minecraft.world.level.LightLayer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RegisterShadersEvent;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
 import net.minecraftforge.event.GameShuttingDownEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import org.joml.*;
+import org.joml.Matrix4f;
+import org.joml.Vector2f;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
 import org.lwjgl.opengl.GL30;
 
 import java.io.IOException;
 
 /*
-* 如果需要把 FORGE bus 的事件订阅并入 ClientEventHandler
-* 请按需把单例改为静态
-* */
+ * 如果需要把 FORGE bus 的事件订阅并入 ClientEventHandler
+ * 请按需把单例改为静态
+ * */
+@Experimental
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = EclipticSeasons.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public final class FogRenderer {
 
@@ -55,12 +63,15 @@ public final class FogRenderer {
     private boolean bufferInitialized = false;
 
     /*
-    * 需要在 render thread 进行初始化, 最好在 Tesselator 初始化后进行
-    * 如果后续需要改为静态类, 最好把那几个final去掉, 然后把这个构造器改为 init()
-    * */
+     * 需要在 render thread 进行初始化, 最好在 Tesselator 初始化后进行
+     * 如果后续需要改为静态类, 最好把那几个final去掉, 然后把这个构造器改为 init()
+     * */
     FogRenderer() {
-        Window window = Minecraft.getInstance().getWindow();
-        this.tempTarget = new TextureTarget(window.getWidth(), window.getHeight(), true, true);
+
+        if (Minecraft.getInstance() != null) {
+            Window window = Minecraft.getInstance().getWindow();
+            this.tempTarget = new TextureTarget(window.getWidth(), window.getHeight(), true, true);
+        } else this.tempTarget = null;
 
         this.mWindDirection = new Vector2f(0.0f, 0.0f);
         this.uFogColor = new Vector4f(0.8f, 0.8f, 0.8f, 1.0f);
@@ -71,6 +82,12 @@ public final class FogRenderer {
 
     @SubscribeEvent
     public static void onRenderLevelStage(final RenderLevelStageEvent event) {
+
+        if (Minecraft.getInstance().cameraEntity == null
+                || Minecraft.getInstance().cameraEntity.getEyeInFluidType() != net.minecraftforge.common.ForgeMod.EMPTY_TYPE.get())
+            return;
+        if (!ClientConfig.Debug.fogWeather.get()) return;
+
         RenderLevelStageEvent.Stage stage = event.getStage();
 
         if (stage == RenderLevelStageEvent.Stage.AFTER_WEATHER) {
@@ -88,8 +105,8 @@ public final class FogRenderer {
     }
 
     /*
-    * 测试的初始化值
-    * */
+     * 测试的初始化值
+     * */
     public void debugInit() {
         this.setFogColor(0.8f, 0.8f, 0.8f, 1.0f);
         this.setTerrainFogDensity(94.3f);
@@ -159,13 +176,8 @@ public final class FogRenderer {
         final Vector3f position = camera.getPosition().toVector3f();
 
         // inverse view matrix without translation
-        final float xRot = camera.getXRot() * Mth.DEG_TO_RAD;
-        final float yRot = camera.getYRot() * Mth.DEG_TO_RAD;
-        final Matrix4f invViewMatrix = new Matrix4f().rotateYXZ(
-                        Mth.PI - yRot,
-                        -xRot,
-                        0.0f
-                );
+        final Matrix4f invViewMatrix = new Matrix4f()
+                .rotation(camera.rotation());
 
         Shader.uNoiseData.set(
                 this.mWindDirection.x() * this.mTimer,
@@ -173,9 +185,11 @@ public final class FogRenderer {
                 this.uNoiseAmplifier,
                 this.uNoiseScale
         );
+        float rate = 0.5f + 0.5f * ClientCon.getUseLevel().getBrightness(LightLayer.SKY, ClientCon.agent.getCameraEntity().blockPosition()) / 15f;
+        rate *= (ClientWeatherChecker.lastBiomeRainLevel * ClientWeatherChecker.lastBiomeRainLevel);
         Shader.uFogData.set(
-                this.uTerrainFogDensity,
-                this.uSkyFogDensity,
+                rate * this.uTerrainFogDensity / 10f,
+                rate * this.uSkyFogDensity * 20,
                 this.uFadeTransition, this.uNearClarity
         );
         Shader.uFogBaseColor.set(this.uFogColor);
@@ -293,7 +307,7 @@ public final class FogRenderer {
 
     public void cleanup() {
         tempTarget.destroyBuffers();
-        quad.close();
+        if (quad != null) quad.close();
     }
 
     // fast quad draw

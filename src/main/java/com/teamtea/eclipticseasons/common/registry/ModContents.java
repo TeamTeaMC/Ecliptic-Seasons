@@ -119,6 +119,19 @@ public class ModContents {
             } catch (Exception e) {
                 EclipticSeasons.logger(e);
             }
+
+            if (event.getPackType() == PackType.SERVER_DATA) {
+                if (CommonConfig.Resource.RainTogether.get()) FakeResourceManagerHelperUtil.registerBuiltinResourcePack(
+                        event,
+                        EclipticSeasonsApi.MODID, "Rain Together", modFile,
+                        Component.translatable(EclipticSeasons.rl("rain_together").toLanguageKey("pack")),
+                        PackType.SERVER_DATA, PackSource.FEATURE,  Pack.Position.BOTTOM, false);
+                if (CommonConfig.Resource.SnowTogether.get()) FakeResourceManagerHelperUtil.registerBuiltinResourcePack(
+                        event,
+                        EclipticSeasonsApi.MODID, "Snow Together", modFile,
+                        Component.translatable(EclipticSeasons.rl("snow_together").toLanguageKey("pack")),
+                        PackType.SERVER_DATA, PackSource.FEATURE,  Pack.Position.BOTTOM, false);
+            }
         }
     }
 }

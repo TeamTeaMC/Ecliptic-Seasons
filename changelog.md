@@ -1,20 +1,37 @@
+### 0.12.1.0.1
+
+- Added an experimental fog rendering feature, currently appearing during rain when enabled.
+
+### 0.12.1
+
+- Added seasonal ritual: after crafting the Greenhouse Core Container, it can be activated with a Seasonal Prayer Scroll
+  to begin the ritual and obtain the Seasonal Greenhouse Core. Be careful not to place it directly on the ground.
+- Added a new display mode for the calendar that shows the current solar term day.
+- Added optional datapacks “Rain Together” and “Snow Together” to synchronize weather across biomes, requiring
+  configuration to be enabled.
+
 ### 0.12.0.5.1
 
-- Prevent crashes caused by the illegal repeated triggering of chunk loading events when the Create mod's deployer uses items while SnowInWorld is enabled.
+- Prevent crashes caused by the illegal repeated triggering of chunk loading events when the Create mod's deployer uses
+  items while SnowInWorld is enabled.
 
 ### 0.12.0.5
 
-- When a WeatherRegion's weather subgroup contains a reference to its own Core, it will no longer copy itself repeatedly.
-- Added a fallback mechanism for the sequence table corresponding to built-in Biome IDs; if a Biome does not exist, it will return the ID of the Plains biome.
+- When a WeatherRegion's weather subgroup contains a reference to its own Core, it will no longer copy itself
+  repeatedly.
+- Added a fallback mechanism for the sequence table corresponding to built-in Biome IDs; if a Biome does not exist, it
+  will return the ID of the Plains biome.
 
 ### 0.12.0.4
 
 - Upgrade Distant Horizons compatibility to version 2.3.5-b.
-- Fixed an issue where, with the FrozenWater experimental feature enabled and lighting checks turned on, breaking thin ice would incorrectly trigger cracking sounds due to inverted lighting check results.
+- Fixed an issue where, with the FrozenWater experimental feature enabled and lighting checks turned on, breaking thin
+  ice would incorrectly trigger cracking sounds due to inverted lighting check results.
 
 ### 0.12.0.3
 
-- Provided an optional classic-style snowy block resource pack to prevent Z-fighting issues when used together with CTM models.
+- Provided an optional classic-style snowy block resource pack to prevent Z-fighting issues when used together with CTM
+  models.
 
 ### 0.12.0.2.1
 
@@ -29,22 +46,27 @@
 
 ### 0.12.0 - *First Official Release – Anniversary Edition*
 
-> On this special anniversary, we proudly present our first official release! While there may be no significant content changes, this version sets the stage for stability and marks the beginning of a long-lasting experience. Moving forward, expect fewer frequent content updates, focusing instead on maintaining and refining what we’ve built.
+> On this special anniversary, we proudly present our first official release! While there may be no significant content
+> changes, this version sets the stage for stability and marks the beginning of a long-lasting experience. Moving forward,
+> expect fewer frequent content updates, focusing instead on maintaining and refining what we’ve built.
 
-- **Spring After Autumn** achievement now unlocks a commemorative reward: **Snowless Hometown**—a symbol of warmth and the passage of time.
+- **Spring After Autumn** achievement now unlocks a commemorative reward: **Snowless Hometown**—a symbol of warmth and
+  the passage of time.
 
 ### 0.12.0-z-3
 
 - Now, when it’s snowing, a cauldron filled with water will turn into an ice-filled cauldron,
-and a cauldron filled with powder snow will turn into a snow-filled cauldron.
-- Fixed a potential world initialization crash that could occur when SereneSeasonsCropTag is enabled and an agriculture mod provides both Forge and c namespace tags for the same seed.
+  and a cauldron filled with powder snow will turn into a snow-filled cauldron.
+- Fixed a potential world initialization crash that could occur when SereneSeasonsCropTag is enabled and an agriculture
+  mod provides both Forge and c namespace tags for the same seed.
 - Blocks containing water are no longer affected by the Frozen Water feature.
-And the Frozen Water feature is now affected by light levels.
+  And the Frozen Water feature is now affected by light levels.
 
 ### 0.12.0-z-2
 
 - Fixed an issue where the calendar displayed incorrectly in Next mode when it was the last solar term of the year.
-- Added a more complete built-in compatibility system for crop growth conditions. Note that humidity requirements are now included; if you encounter errors, you can disable this feature in the settings.
+- Added a more complete built-in compatibility system for crop growth conditions. Note that humidity requirements are
+  now included; if you encounter errors, you can disable this feature in the settings.
 
 ### 0.12.0-z
 

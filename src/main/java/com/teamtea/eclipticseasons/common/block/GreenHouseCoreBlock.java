@@ -1,8 +1,8 @@
 package com.teamtea.eclipticseasons.common.block;
 
+import com.mojang.datafixers.util.Pair;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.client.particle.ColorParticleOptions;
-import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.common.block.base.SimpleEntityBlock;
 import com.teamtea.eclipticseasons.common.block.blockentity.GreenHouseCoreBlockEntity;
 import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
@@ -13,7 +13,8 @@ import com.teamtea.eclipticseasons.common.registry.ParticleRegistry;
 import com.teamtea.eclipticseasons.config.ClientConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.HolderSet;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -46,19 +47,26 @@ import java.util.Optional;
 
 public class GreenHouseCoreBlock extends SimpleEntityBlock {
     public static final IntegerProperty POWER = BlockStateProperties.POWER;
+    public static final IntegerProperty AGE = BlockStateProperties.AGE_3;
+    public static final int MAX_STAGE = 3;
 
     private final Season season;
 
     public GreenHouseCoreBlock(Season season, Properties properties) {
         super(properties);
-        registerDefaultState(defaultBlockState().setValue(POWER, 0));
+        registerDefaultState(defaultBlockState().setValue(POWER, 0).setValue(AGE, MAX_STAGE));
         this.season = season;
     }
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        super.createBlockStateDefinition(builder.add(POWER));
+        super.createBlockStateDefinition(builder.add(POWER, AGE));
     }
+
+    public static boolean isPowered(BlockState state) {
+        return state.getValue(AGE) == MAX_STAGE;
+    }
+
 
     @Override
     public @Nullable BlockEntity newBlockEntity(BlockPos pPos, BlockState pState) {
@@ -76,15 +84,60 @@ public class GreenHouseCoreBlock extends SimpleEntityBlock {
         if (!ClientConfig.Particle.seasonGreenhouse.get()) return;
         int count = ClientConfig.Particle.SeasonGreenhouseParticleSpawnCount.get();
 
-        Direction direction = Direction.DOWN;
-
         Integer color = getSeason().getColor().getColor();
         float r = FastColor.ARGB32.red(color) / 255.0F;
         float g = FastColor.ARGB32.green(color) / 255.0F;
         float b = FastColor.ARGB32.blue(color) / 255.0F;
+
+        if (!isPowered(state)) {
+            Season current = getSeason();
+            Pair<Season, Integer> currentSeason = GreenHouseCoreBlockEntity.getCurrentSeason(level, pos);
+
+            boolean active = currentSeason.getFirst() == current
+                    && !level.getBlockState(pos.below()).isSolidRender(level, pos)
+                    && !CropGrowthHandler.isInRoom(level, pos, state, Optional.empty());
+
+            if (!active) {
+                return;
+            }
+
+            double centerX = pos.getX() + 0.5;
+            double centerY = pos.getY() + 0.8;
+            double centerZ = pos.getZ() + 0.5;
+
+            ColorParticleOptions particle = new ColorParticleOptions(new Vector3f(r, g, b), 1.0f);
+            particle.updateType(ParticleRegistry.FLYING_BLOOM);
+
+            double time = (level.getGameTime() % 360) / 10.0;
+//            int count = 8;
+            count /= 2;
+            double radius = 0.5;
+            int stage = state.getValue(AGE);
+            for (int i = 0; i < count; i++) {
+                int seed = random.nextInt(count * 4);
+                if (seed > stage) continue;
+
+                double angle = Math.toRadians(i * (360.0 / count)) + time * 0.1;
+                double offsetX = Math.cos(angle) * radius;
+                double offsetZ = Math.sin(angle) * radius;
+                double y = centerY + Math.sin(time * 0.05 + i * 0.5) * 0.1;
+
+
+                level.addParticle(particle,
+                        centerX + offsetX,
+                        y + 0.8f,
+                        centerZ + offsetZ,
+                        -offsetX, -50D, -offsetX);
+            }
+            return;
+        }
+
+
+        Direction direction = Direction.DOWN;
+
+
         ColorParticleOptions colorParticleOption = new ColorParticleOptions(new Vector3f(r, g, b), 1.0f);
         colorParticleOption.updateType(ParticleRegistry.GREENHOUSE);
-
         for (int i = 0; i < count; i++) {
             double d0 = pos.getX() + (random.nextDouble() * 32.0 - 16.0);
             double d1 = pos.getY() - 0.5 - (random.nextDouble() * 10.0) + 2;
@@ -101,7 +154,7 @@ public class GreenHouseCoreBlock extends SimpleEntityBlock {
                 BlockPos blockPos = new BlockPos((int) x, (int) y, (int) z);
                 boolean inRoom =
                         level.isEmptyBlock(blockPos) &&
-                                CropGrowthHandler.isInRoom(level, blockPos, Blocks.AIR.defaultBlockState(), Optional.of(HolderSet.direct()));
+                                CropGrowthHandler.isInRoom(level, blockPos, Blocks.AIR.defaultBlockState(), Optional.empty());
                 if (inRoom)
                     level.addParticle(
                             // ParticleTypes.END_ROD,
@@ -115,6 +168,7 @@ public class GreenHouseCoreBlock extends SimpleEntityBlock {
         }
 
     }
+
 
     public Season getSeason() {
         return season;
@@ -130,12 +184,11 @@ public class GreenHouseCoreBlock extends SimpleEntityBlock {
 
     @Override
     public int getSignal(BlockState blockState, BlockGetter blockAccess, BlockPos pos, Direction side) {
-        return blockState.getValue(POWER);
+        return isPowered(blockState) ? blockState.getValue(POWER) : 0;
     }
 
-    @Override
-    public @NotNull InteractionResult use(@NotNull BlockState pState, @NotNull Level level, @NotNull BlockPos pos, Player pPlayer, @NotNull InteractionHand pHand, @NotNull BlockHitResult pHit) {
-        if (pPlayer.isShiftKeyDown() && pPlayer.getItemInHand(pHand).isEmpty()) {
+    public @NotNull InteractionResult use(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, Player pPlayer, @NotNull InteractionHand hand, @NotNull BlockHitResult pHit) {
+        if (pPlayer.isShiftKeyDown() && pPlayer.getItemInHand(hand).isEmpty() && isPowered(state)) {
             if (level instanceof ServerLevel) {
                 level.playSound(null, pos, SoundEvents.SMALL_AMETHYST_BUD_BREAK, SoundSource.BLOCKS);
                 Item item = switch (getSeason()) {
@@ -150,6 +203,7 @@ public class GreenHouseCoreBlock extends SimpleEntityBlock {
             }
             return InteractionResult.SUCCESS;
         }
-        return super.use(pState, level, pos, pPlayer, pHand, pHit);
+        return super.use(state, level, pos, pPlayer, hand, pHit);
     }
+
 }

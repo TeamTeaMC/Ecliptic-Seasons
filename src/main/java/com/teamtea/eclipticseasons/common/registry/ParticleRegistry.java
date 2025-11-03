@@ -20,6 +20,7 @@ public final class ParticleRegistry {
     public static final SimpleParticleType BUTTERFLY = new SimpleParticleType(false);
     public static final ParticleType<ColorParticleOptions> FALLEN_LEAVES = create(false, ColorParticleOptions.DESERIALIZER, (p_123819_) -> ColorParticleOptions.CODEC);
     public static final ParticleType<ColorParticleOptions> GREENHOUSE =  create(false, ColorParticleOptions.DESERIALIZER,  (p_123819_) -> ColorParticleOptions.CODEC);
+    public static final ParticleType<ColorParticleOptions> FLYING_BLOOM = create(false, ColorParticleOptions.DESERIALIZER,  (p_123819_) -> ColorParticleOptions.CODEC);
 
     @SubscribeEvent
     public static void blockRegister(RegisterEvent event) {
@@ -28,6 +29,7 @@ public final class ParticleRegistry {
             particleTypeRegisterHelper.register(EclipticSeasons.rl("wild_goose"), WILD_GOOSE);
             particleTypeRegisterHelper.register(EclipticSeasons.rl("butterfly"), BUTTERFLY);
             particleTypeRegisterHelper.register(EclipticSeasons.rl("fallen_leaves"), FALLEN_LEAVES);
+            particleTypeRegisterHelper.register(EclipticSeasons.rl("flying_bloom"), FLYING_BLOOM);
             particleTypeRegisterHelper.register(EclipticSeasons.rl("greenhouse"), GREENHOUSE);
         });
     }

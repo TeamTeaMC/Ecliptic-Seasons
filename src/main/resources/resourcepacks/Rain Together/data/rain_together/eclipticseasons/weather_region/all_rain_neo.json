@@ -1,0 +1,24 @@
+{
+	"core": "minecraft:plains",
+	"sub": {
+		"values": [
+			{
+				"values": [
+					"#minecraft:is_overworld"
+				],
+				"type": "neoforge:or"
+			},
+			{
+				"value": "minecraft:plains",
+				"type": "neoforge:not"
+			}
+		],
+		"type": "neoforge:and"
+	},
+	"forge:conditions": [
+		{
+			"modid": "neoforge",
+			"type": "forge:mod_loaded"
+		}
+	]
+}

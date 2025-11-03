@@ -2,9 +2,10 @@ package com.teamtea.eclipticseasons.common.core.crop;
 
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 
-public final class GreenHouseCoreProvider {
+public class GreenHouseCoreProvider {
+
     private final Season season;
-    private int availCost;
+    protected int availCost;
 
     public GreenHouseCoreProvider(
             Season season,
