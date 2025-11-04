@@ -37,14 +37,14 @@ import java.io.IOException;
  * 如果需要把 FORGE bus 的事件订阅并入 ClientEventHandler
  * 请按需把单例改为静态
  * */
-@Experimental
+@Deprecated
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = EclipticSeasons.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public final class FogRenderer {
 
     public static final FogRenderer INSTANCE = new FogRenderer();
     static final ResourceLocation NOISE = EclipticSeasons.rl("textures/noise/perlin_256x_r.png");
 
-    private final RenderTarget tempTarget;
+    private RenderTarget tempTarget;
     private VertexBuffer quad;
 
     // uniforms
@@ -68,11 +68,6 @@ public final class FogRenderer {
      * 如果后续需要改为静态类, 最好把那几个final去掉, 然后把这个构造器改为 init()
      * */
     FogRenderer() {
-
-        if (Minecraft.getInstance() != null) {
-            Window window = Minecraft.getInstance().getWindow();
-            this.tempTarget = new TextureTarget(window.getWidth(), window.getHeight(), true, true);
-        } else this.tempTarget = null;
 
         this.mWindDirection = new Vector2f(0.0f, 0.0f);
         this.uFogColor = new Vector4f(0.8f, 0.8f, 0.8f, 1.0f);
@@ -123,6 +118,12 @@ public final class FogRenderer {
     }
 
     public void prepareBuffer() {
+
+        if (this.tempTarget == null) {
+            Window window = Minecraft.getInstance().getWindow();
+            this.tempTarget = new TextureTarget(window.getWidth(), window.getHeight(), true, true);
+        }
+
         this.tempTarget.clear(Minecraft.ON_OSX);
         RenderTarget src = Minecraft.getInstance().getMainRenderTarget();
 
@@ -152,7 +153,7 @@ public final class FogRenderer {
             }
         }
 
-        if (this.uTerrainFogDensity < 1e-6) {
+        if (this.uTerrainFogDensity < 1e-6 || tempTarget == null) {
             return;
         }
 
@@ -308,11 +309,12 @@ public final class FogRenderer {
 
     //
     public void resize(int width, int height) {
-        tempTarget.resize(width, height, true);
+        if (width > 0 && height > 0 && tempTarget != null)
+            tempTarget.resize(width, height, true);
     }
 
     public void cleanup() {
-        tempTarget.destroyBuffers();
+        if (tempTarget != null) tempTarget.destroyBuffers();
         if (quad != null) quad.close();
     }
 

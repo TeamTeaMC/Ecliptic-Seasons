@@ -3,10 +3,12 @@ package com.teamtea.eclipticseasons.common.command;
 import com.mojang.brigadier.arguments.FloatArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import com.mojang.datafixers.util.Either;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.climate.BiomeRain;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
+import com.teamtea.eclipticseasons.api.data.weather.special_effect.WeatherEffect;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.api.util.SimpleUtil;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
@@ -18,10 +20,12 @@ import com.teamtea.eclipticseasons.common.misc.MapExporter;
 import com.teamtea.eclipticseasons.common.network.SimpleNetworkHandler;
 import com.teamtea.eclipticseasons.common.network.message.EmptyMessage;
 import com.teamtea.eclipticseasons.common.network.message.UpdateTempChangeMessage;
+import com.teamtea.eclipticseasons.common.registry.ESRegistries;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.commands.arguments.ResourceKeyArgument;
 import net.minecraft.commands.arguments.ResourceOrTagArgument;
 import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
 import net.minecraft.core.Holder;
@@ -48,6 +52,11 @@ import java.util.stream.Collectors;
 
 @Mod.EventBusSubscriber(modid = EclipticSeasons.MODID)
 public class CommandHandler {
+
+    private static final DynamicCommandExceptionType ERROR_WEATHER_EFFECT = new DynamicCommandExceptionType(
+            p_304101_ -> Component.translatable("commands.weather_effect.invalid", p_304101_)
+    );
+
     @SubscribeEvent
     public static void onRegisterCommands(RegisterCommandsEvent event) {
         var dispatcher = event.getDispatcher();
@@ -147,6 +156,9 @@ public class CommandHandler {
                                         .then(Commands.argument("depth", IntegerArgumentType.integer(0, 100))
                                                 .executes((commandContext) -> setSnowDepth(commandContext.getSource(), ResourceOrTagArgument.getResourceOrTag(commandContext, "biome", Registries.BIOME), IntegerArgumentType.getInteger(commandContext, "depth"))))
                                 )
+                                .then(Commands.literal("effect")
+                                        .then(Commands.argument("effect", ResourceKeyArgument.key(ESRegistries.WEATHER_EFFECT))
+                                                .executes((commandContext) -> setEffect(commandContext.getSource(), ResourceOrTagArgument.getResourceOrTag(commandContext, "biome", Registries.BIOME), ResourceKeyArgument.resolveKey(commandContext,"effect",ESRegistries.WEATHER_EFFECT, ERROR_WEATHER_EFFECT)))))
                         )
                 )
                 .then(Commands.literal("export")
@@ -191,6 +203,28 @@ public class CommandHandler {
                 )
         );
     }
+
+    private static int setEffect(CommandSourceStack sourceStack, ResourceOrTagArgument.Result<Biome> result, Holder<WeatherEffect> effect) {
+        ServerLevel level = sourceStack.getLevel();
+        var levelBiomeWeather = WeatherManager.getBiomeList(level);
+        if (levelBiomeWeather != null) {
+            boolean found = false;
+            for (WeatherManager.BiomeWeather biomeWeather : levelBiomeWeather) {
+                if (result.test(biomeWeather.biomeHolder)) {
+                    biomeWeather.effect = effect;
+                    biomeWeather.lastRainTime= level.getGameTime();
+                    found = true;
+                }
+            }
+            if (found) {
+                WeatherManager.sendBiomePacket(levelBiomeWeather, level.players());
+                SnowyMapChecker.updateAllChunks(level);
+                SimpleNetworkHandler.send(level.players(), new EmptyMessage());
+            }
+        }
+        return 0;
+    }
+
 
     public static int setSnowDepth(CommandSourceStack sourceStack, ResourceOrTagArgument.Result<Biome> result, int depth) {
         ServerLevel level = sourceStack.getLevel();

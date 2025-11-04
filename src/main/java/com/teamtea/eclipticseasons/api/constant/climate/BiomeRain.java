@@ -2,6 +2,8 @@ package com.teamtea.eclipticseasons.api.constant.climate;
 
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
+import com.teamtea.eclipticseasons.api.data.weather.special_effect.WeatherEffect;
+import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
@@ -12,7 +14,7 @@ public interface BiomeRain {
     float DEFAULT_RAIN_CHANE = 0;
     float DEFAULT_THUNDER_CHANCE = 0;
 
-    @Deprecated(forRemoval = true,since = "0.12")
+    @Deprecated(forRemoval = true, since = "0.12")
     public default float getRainChane() {
         return DEFAULT_RAIN_CHANE;
     }
@@ -53,4 +55,11 @@ public interface BiomeRain {
         return ServerLevel.THUNDER_DELAY.sample(random);
     }
 
+    public default boolean hasSpecialEffect() {
+        return false;
+    }
+
+    public default Holder<WeatherEffect> getSpecialEffect() {
+        return null;
+    }
 }

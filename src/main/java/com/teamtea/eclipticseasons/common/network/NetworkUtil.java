@@ -1,6 +1,7 @@
 package com.teamtea.eclipticseasons.common.network;
 
 import com.teamtea.eclipticseasons.api.data.craft.HumidityControl;
+import com.teamtea.eclipticseasons.api.data.weather.special_effect.WeatherEffect;
 import com.teamtea.eclipticseasons.api.misc.IChunkBiomeHolder;
 import com.teamtea.eclipticseasons.client.color.season.BiomeColorsHandler;
 import com.teamtea.eclipticseasons.client.core.ClientWeatherChecker;
@@ -15,6 +16,7 @@ import com.teamtea.eclipticseasons.common.network.message.*;
 import com.teamtea.eclipticseasons.common.registry.ESRegistries;
 import com.teamtea.eclipticseasons.config.ClientConfig;
 import net.minecraft.client.Minecraft;
+import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.SectionPos;
 import net.minecraft.world.entity.LivingEntity;
@@ -63,6 +65,8 @@ public class NetworkUtil {
         {
 
             if (context.get().getDirection() == NetworkDirection.PLAY_TO_CLIENT) {
+                Level level =NetworkUtil.getClient();
+                Registry<WeatherEffect> weatherEffects = level.registryAccess().registryOrThrow(ESRegistries.WEATHER_EFFECT);
                 var lists = WeatherManager.getBiomeList(NetworkUtil.getClient());
                 if (lists != null) {
                     for (WeatherManager.BiomeWeather biomeWeather : lists) {
@@ -74,6 +78,7 @@ public class NetworkUtil {
                         biomeWeather.clearTime = biomeWeatherMessage.clear[biomeWeather.id] * 10000;
                         biomeWeather.thunderTime = biomeWeatherMessage.thuder[biomeWeather.id] * 10000;
                         biomeWeather.snowDepth = biomeWeatherMessage.snowDepth[biomeWeather.id];
+                        biomeWeather.effect = weatherEffects.getHolder(biomeWeatherMessage.special[biomeWeather.id]).orElse(null);
                     }
                 }
             }
