@@ -15,6 +15,7 @@ import com.teamtea.eclipticseasons.api.data.quest.SeasonQuest;
 import com.teamtea.eclipticseasons.api.data.weather.CustomRainBuilder;
 import com.teamtea.eclipticseasons.api.data.weather.CustomSnowTerm;
 import com.teamtea.eclipticseasons.api.data.weather.WeatherRegion;
+import com.teamtea.eclipticseasons.api.data.weather.special_effect.WeatherEffect;
 import net.minecraft.Util;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
@@ -52,6 +53,8 @@ public class ESRegistries {
     public static final ResourceKey<Registry<WeatherRegion>> WEATHER_REGION = ResourceKey.createRegistryKey(EclipticSeasons.rl("weather_region"));
 
     public static final ResourceKey<Registry<ESSortInfo>> EXTRA_INFO = ResourceKey.createRegistryKey(EclipticSeasons.rl("extra_info"));
+
+    public static final ResourceKey<Registry<WeatherEffect>> WEATHER_EFFECT = ResourceKey.createRegistryKey(EclipticSeasons.rl("biome_rain_effect"));
 
     public static <T> String createLangKey(ResourceKey<Registry<T>> registryResourceKey, ResourceLocation resourceLocation) {
         // return resourceLocation.toLanguageKey(registryResourceKey.location().getPath());

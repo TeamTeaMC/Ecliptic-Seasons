@@ -4,6 +4,8 @@ import com.teamtea.eclipticseasons.api.constant.climate.BiomeRain;
 import com.teamtea.eclipticseasons.api.constant.climate.FlatRain;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.constant.solar.TimePeriod;
+import com.teamtea.eclipticseasons.api.data.weather.special_effect.WeatherEffect;
+import net.minecraft.core.Holder;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.valueproviders.IntProvider;
 import net.minecraft.world.level.Level;
@@ -77,7 +79,8 @@ public record CustomRain(int ordinal,
             Optional<IntProvider> thunderDelay,
             float rainChance,
             float thunderChance,
-            List<TimePeriod> timePeriod
+            List<TimePeriod> timePeriod,
+            Optional<Holder<WeatherEffect>> specialEffect
     ) implements BiomeRain {
 
         public static Weather of(SolarTerm solarTerm, CustomRainBuilder.Weather weather) {
@@ -89,7 +92,8 @@ public record CustomRain(int ordinal,
                     weather.thunderDelay(),
                     weather.rainChance(),
                     weather.thunderChance(),
-                    weather.timePeriod()
+                    weather.timePeriod(),
+                    weather.specialEffect()
             );
         }
 
@@ -127,5 +131,14 @@ public record CustomRain(int ordinal,
                     .orElseGet(() -> BiomeRain.super.getThunderDelay(random));
         }
 
+        @Override
+        public boolean hasSpecialEffect() {
+            return specialEffect.isPresent();
+        }
+
+        @Override
+        public Holder<WeatherEffect> getSpecialEffect() {
+            return specialEffect.orElseGet(BiomeRain.super::getSpecialEffect);
+        }
     }
 }

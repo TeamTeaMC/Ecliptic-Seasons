@@ -1,0 +1,43 @@
+{
+  "biomes": "#c:is_temperate/overworld",
+  "weathers": {
+    "solar_terms": {
+      "rain_water": [
+        {
+          "rain_chance": 0.5,
+          "time_periods": [
+            "midnight",
+            "day",
+            "dusk",
+            "night"
+          ]
+        },
+        {
+          "rain_chance": 0.5,
+          "time_periods": [
+            "dawn"
+          ],
+          "special_effect": "eclipticseasons:just_fog"
+        }
+      ],
+      "light_snow": [
+        {
+          "rain_chance": 0.4,
+          "time_periods": [
+            "dawn",
+            "day",
+            "dusk",
+            "night"
+          ]
+        },
+        {
+          "rain_chance": 0.4,
+          "time_periods": [
+            "midnight"
+          ],
+          "special_effect": "eclipticseasons:snow"
+        }
+      ]
+    }
+  }
+}

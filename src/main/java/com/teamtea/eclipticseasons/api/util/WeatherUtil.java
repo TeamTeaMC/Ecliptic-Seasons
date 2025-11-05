@@ -1,12 +1,16 @@
 package com.teamtea.eclipticseasons.api.util;
 
+import com.teamtea.eclipticseasons.api.data.weather.special_effect.WeatherEffect;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 public class WeatherUtil {
@@ -33,31 +37,21 @@ public class WeatherUtil {
         //         after != Biome.Precipitation.NONE;
         // return entity.isInWaterOrRain();
         return WeatherManager.isRainingOrSnowAt(entity.level(), blockPos)
-                ||WeatherManager.isRainingOrSnowAt(entity.level(), pos2);
+                || WeatherManager.isRainingOrSnowAt(entity.level(), pos2);
     }
 
 
-    // @Deprecated(forRemoval = true)
-    // public static float getTempAt(Level level, BlockPos pos) {
-    //     var biome = level.getBiome(pos);
-    //     float bt = biome.value().getModifiedClimateSettings().temperature();
-    //     bt += EclipticUtil.getNowSolarTerm(level).getTemperatureChange();
-    //     return bt;
-    // }
-    //
-    // @Deprecated(forRemoval = true)
-    // public static float getBiomeDownFall(Level level, BlockPos pos) {
-    //     var biome = level.getBiome(pos);
-    //     float bt = biome.value().getModifiedClimateSettings().downfall();
-    //     return bt;
-    // }
-    //
-    // @Deprecated(forRemoval = true)
-    // public static float getHumidityAt(Level level, BlockPos pos) {
-    //     var biome = level.getBiome(pos);
-    //     float bt = biome.value().getModifiedClimateSettings().downfall();
-    //     float bt2 = biome.value().getModifiedClimateSettings().temperature();
-    //     bt2 += EclipticUtil.getNowSolarTerm(level).getTemperatureChange();
-    //     return Mth.clamp(bt, 0.0F, 1.0F) * Mth.clamp(bt2, 0.0F, 1.0F);
-    // }
+    public static @Nullable WeatherEffect getWeatherEffectByEntity(Entity entity) {
+        if (entity == null) return null;
+        Level level = entity.level();
+        if (EclipticUtil.hasLocalWeather(level)) {
+            BlockPos containing = BlockPos.containing(entity.getEyePosition());
+            WeatherManager.BiomeWeather biomeWeather =
+                    WeatherManager.getBiomeWeather(level, MapChecker.getSurfaceBiome(level, containing));
+            if (biomeWeather != null && biomeWeather.effect != null) {
+                return biomeWeather.effect.value();
+            }
+        }
+        return null;
+    }
 }

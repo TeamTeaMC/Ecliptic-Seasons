@@ -87,9 +87,10 @@ public class SolarDataManager extends SavedData {
     }
 
     protected void setLevelData(CompoundTag nbt) {
-        if (levelWeakReference.get() != null) {
+        Level level = levelWeakReference.get();
+        if (level != null) {
             var listTag = nbt.getList("biomes", Tag.TAG_COMPOUND);
-            var biomeWeathers = WeatherManager.getBiomeList(levelWeakReference.get());
+            var biomeWeathers = WeatherManager.getBiomeList(level);
             int countCheck = 0;
             for (int i = 0; i < listTag.size(); i++) {
                 CompoundTag compound = listTag.getCompound(i);
@@ -98,7 +99,7 @@ public class SolarDataManager extends SavedData {
                     for (int j = 0; j < biomeWeathers.size(); j++) {
                         WeatherManager.BiomeWeather biomeWeather = biomeWeathers.get(j);
                         if (location.equals(biomeWeather.location.toString())) {
-                            biomeWeather.deserializeNBT(compound);
+                            biomeWeather.deserializeNBT(compound, level.registryAccess());
                             // 这里必须要id相等，不然缓存全部失效
                             if (i == j) {
                                 countCheck++;

@@ -1,5 +1,6 @@
 package com.teamtea.eclipticseasons.common.network;
 
+import com.teamtea.eclipticseasons.api.data.weather.special_effect.WeatherEffect;
 import com.teamtea.eclipticseasons.common.registry.AttachmentRegistry;
 import com.teamtea.eclipticseasons.client.color.season.BiomeColorsHandler;
 import com.teamtea.eclipticseasons.client.core.ClientWeatherChecker;
@@ -11,10 +12,13 @@ import com.teamtea.eclipticseasons.common.core.map.BiomeHolder;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.core.map.SnowyRemover;
 import com.teamtea.eclipticseasons.common.network.message.*;
+import com.teamtea.eclipticseasons.common.registry.ESRegistries;
 import com.teamtea.eclipticseasons.config.ClientConfig;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.core.Registry;
 import net.minecraft.core.SectionPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.LivingEntity;
@@ -70,6 +74,9 @@ public class NetworkUtil {
         context.enqueueWork(() -> {
             var lists = WeatherManager.getBiomeList(context.player().level());
             if (lists != null) {
+                Level level = context.player().level();
+                Registry<WeatherEffect> weatherEffects = level.registryAccess().registryOrThrow(ESRegistries.WEATHER_EFFECT);
+
                 boolean update = false;
                 for (WeatherManager.BiomeWeather biomeWeather : lists) {
                     if (biomeWeatherMessage.rain[biomeWeather.id] == 0 && biomeWeather.rainTime > 0) {
@@ -81,6 +88,7 @@ public class NetworkUtil {
                     biomeWeather.clearTime = biomeWeatherMessage.clear[biomeWeather.id] * 10000;
                     biomeWeather.thunderTime = biomeWeatherMessage.thuder[biomeWeather.id] * 10000;
                     biomeWeather.snowDepth = biomeWeatherMessage.snowDepth[biomeWeather.id];
+                    biomeWeather.effect = weatherEffects.getHolder(biomeWeatherMessage.special[biomeWeather.id]).orElse(null);
                 }
                 // if (update
                 //         && ClientCon.agent.getCameraEntity() != null

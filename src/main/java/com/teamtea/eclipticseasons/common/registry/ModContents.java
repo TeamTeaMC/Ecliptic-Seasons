@@ -16,6 +16,7 @@ import com.teamtea.eclipticseasons.api.data.quest.SeasonQuest;
 import com.teamtea.eclipticseasons.api.data.weather.CustomRainBuilder;
 import com.teamtea.eclipticseasons.api.data.weather.CustomSnowTerm;
 import com.teamtea.eclipticseasons.api.data.weather.WeatherRegion;
+import com.teamtea.eclipticseasons.api.data.weather.special_effect.WeatherEffect;
 import com.teamtea.eclipticseasons.common.block.BlockInCopperGrateBlock;
 import com.teamtea.eclipticseasons.common.resource.FakeResourceManagerHelperUtil;
 import com.teamtea.eclipticseasons.config.CommonConfig;
@@ -24,7 +25,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.RegistryDataLoader;
 import net.minecraft.server.packs.PackSelectionConfig;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.repository.Pack;
@@ -78,7 +78,6 @@ public class ModContents {
             });
     }
 
-    @SuppressWarnings("removal")
     @SubscribeEvent
     public static void onNewRegistry(DataPackRegistryEvent.NewRegistry event) {
         event.dataPackRegistry(ESRegistries.WETTER, WetterStructure.CODEC, WetterStructure.CODEC);
@@ -90,12 +89,14 @@ public class ModContents {
         event.dataPackRegistry(ESRegistries.SNOW_DEFINITIONS, SnowDefinition.CODEC, SnowDefinition.CODEC);
         event.dataPackRegistry(ESRegistries.SEASON_PHASE, SeasonPhase.CODEC, SeasonPhase.CODEC);
         event.dataPackRegistry(ESRegistries.SEASON_CYCLE, SeasonCycle.CODEC, SeasonCycle.CODEC);
-        event.dataPackRegistry(ESRegistries.BIOME_RAIN, CustomRainBuilder.CODEC, CustomRainBuilder.CODEC);
         event.dataPackRegistry(ESRegistries.SNOW_TERM, CustomSnowTerm.CODEC, CustomSnowTerm.CODEC);
         event.dataPackRegistry(ESRegistries.SEASON_DEFINITION, SeasonDefinition.CODEC, SeasonDefinition.CODEC);
         event.dataPackRegistry(ESRegistries.WEATHER_REGION, WeatherRegion.CODEC, WeatherRegion.CODEC);
         event.dataPackRegistry(ESRegistries.EXTRA_INFO, ESSortInfo.CODEC, ESSortInfo.CODEC);
+        event.dataPackRegistry(ESRegistries.WEATHER_EFFECT, WeatherEffect.CODEC, WeatherEffect.CODEC);
+        event.dataPackRegistry(ESRegistries.BIOME_RAIN, CustomRainBuilder.CODEC, CustomRainBuilder.CODEC);
     }
+
 
     @SubscribeEvent
     public static void onRegisterCapabilitiesEvent(RegisterCapabilitiesEvent event) {

@@ -8,11 +8,16 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
+import com.teamtea.eclipticseasons.api.data.weather.special_effect.FogEffect;
+import com.teamtea.eclipticseasons.api.data.weather.special_effect.WeatherEffect;
+import com.teamtea.eclipticseasons.api.util.WeatherUtil;
 import com.teamtea.eclipticseasons.client.core.ClientWeatherChecker;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
+import com.teamtea.eclipticseasons.config.ClientConfig;
 import net.minecraft.client.Camera;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.resources.ResourceLocation;
@@ -25,6 +30,7 @@ import net.neoforged.neoforge.client.event.RegisterShadersEvent;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 import net.neoforged.neoforge.event.GameShuttingDownEvent;
+import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
@@ -45,7 +51,7 @@ public class FogRenderer {
     public static final FogRenderer INSTANCE = new FogRenderer();
     static final ResourceLocation NOISE = EclipticSeasons.rl("textures/noise/perlin_256x_r.png");
 
-    private final RenderTarget tempTarget;
+    private RenderTarget tempTarget;
     private VertexBuffer quad;
 
     private float uTerrainFogDensity;
@@ -71,11 +77,6 @@ public class FogRenderer {
      * */
     FogRenderer() {
 
-        if (Minecraft.getInstance() != null) {
-            Window window = Minecraft.getInstance().getWindow();
-            this.tempTarget = new TextureTarget(window.getWidth(), window.getHeight(), true, true);
-        } else this.tempTarget = null;
-
         this.mWindDirection = new Vector2f(0.0f, 0.0f);
         this.uFogColor = new Vector4f(0.8f, 0.8f, 0.8f, 1.0f);
 
@@ -88,6 +89,8 @@ public class FogRenderer {
         if (Minecraft.getInstance().cameraEntity == null
                 || Minecraft.getInstance().cameraEntity.getEyeInFluidType() != net.neoforged.neoforge.common.NeoForgeMod.EMPTY_TYPE.value())
             return;
+        if (!ClientConfig.Debug.fogWeather.get()) return;
+        if (fogDensity <= 0) return;
 
         RenderLevelStageEvent.Stage stage = event.getStage();
 
@@ -101,6 +104,20 @@ public class FogRenderer {
     @SubscribeEvent
     public static void onShutdown(final GameShuttingDownEvent event) {
         INSTANCE.cleanup();
+    }
+
+    static float fogDensity = 0f;
+
+    @SubscribeEvent
+    public static void onLevelTick(LevelTickEvent.Post event) {
+        if (event.getLevel() instanceof ClientLevel clientLevel) {
+            WeatherEffect effect = WeatherUtil.getWeatherEffectByEntity(ClientCon.agent.getCameraEntity());
+            float target = 0f;
+            if (effect instanceof FogEffect fogEffect) {
+                target = fogEffect.getDensity();
+            }
+            fogDensity += (target - fogDensity) * 0.05f;
+        }
     }
 
     /*
@@ -121,6 +138,12 @@ public class FogRenderer {
     }
 
     public void prepareBuffer() {
+
+        if (this.tempTarget == null) {
+            Window window = Minecraft.getInstance().getWindow();
+            this.tempTarget = new TextureTarget(window.getWidth(), window.getHeight(), true, true);
+        }
+
         this.tempTarget.clear(Minecraft.ON_OSX);
         RenderTarget src = Minecraft.getInstance().getMainRenderTarget();
 
@@ -147,7 +170,7 @@ public class FogRenderer {
             this.mTimer -= 256.0f;
         }
 
-        if (this.uTerrainFogDensity < 1e-6) {
+        if (this.uTerrainFogDensity < 1e-6 || tempTarget == null) {
             return;
         }
 
@@ -182,6 +205,7 @@ public class FogRenderer {
         );
         float rate = 0.5f + 0.5f * ClientCon.getUseLevel().getBrightness(LightLayer.SKY, ClientCon.agent.getCameraEntity().blockPosition()) / 15f;
         rate *= (ClientWeatherChecker.lastBiomeRainLevel * ClientWeatherChecker.lastBiomeRainLevel);
+        rate *= fogDensity;
         Shader.uFogData.set(
                 rate * this.uTerrainFogDensity / 10f,
                 rate * this.uSkyFogDensity * 20,
@@ -296,12 +320,13 @@ public class FogRenderer {
     }
 
     public void resize(int width, int height) {
-        tempTarget.resize(width, height, true);
+        if (width > 0 && height > 0 && tempTarget != null)
+            tempTarget.resize(width, height, true);
     }
 
     public void cleanup() {
-        tempTarget.destroyBuffers();
-        quad.close();
+        if (tempTarget != null) tempTarget.destroyBuffers();
+        if (quad != null) quad.close();
     }
 
     private void draw() {

@@ -15,12 +15,14 @@ public class BiomeWeatherMessage  implements CustomPacketPayload {
     public final byte[] thuder;
     public final byte[] clear;
     public final byte[] snowDepth;
+    public final int[] special;
 
-    public BiomeWeatherMessage(byte[] rain, byte[] thuder, byte[] clear, byte[] snowDepth) {
+    public BiomeWeatherMessage(byte[] rain, byte[] thuder, byte[] clear, byte[] snowDepth, int[] special) {
         this.rain = rain;
         this.thuder = thuder;
         this.clear = clear;
         this.snowDepth = snowDepth;
+        this.special = special;
     }
 
     public static final Type<BiomeWeatherMessage> TYPE = new Type<>(EclipticSeasons.rl("biomes_weather"));
@@ -38,6 +40,8 @@ public class BiomeWeatherMessage  implements CustomPacketPayload {
             solarTermsMessage -> solarTermsMessage.clear,
             ByteBufCodecs.byteArray(1024),
             solarTermsMessage -> solarTermsMessage.snowDepth,
+            MessageCodec.intArrayStreamCodec,
+            solarTermsMessage -> solarTermsMessage.special,
             BiomeWeatherMessage::new
     );
 
