@@ -320,17 +320,32 @@ public class WeatherManager {
     public static Biome.Precipitation getRainOrSnow(Level level, Biome biome, BlockPos pos) {
         if (hasNonePrecipitation(biome)) return Biome.Precipitation.NONE;
 
-        var biomeWeather = getBiomeWeather(level, biome);
+        BiomeWeather biomeWeather = getBiomeWeather(level, biome);
         if (biomeWeather != null) {
             if (biomeWeather.shouldClear()) return Biome.Precipitation.NONE;
+
+            // check attach
+            // SnowyRemover snowyRemover = level.getChunk(pos).getData(EclipticSeasons.ModContents.SNOWY_REMOVER);
+            // if (snowyRemover != null) {
+            //     SnowyRemover.SnowyFlag snowyFlag = snowyRemover.getSnowyFlag(pos);
+            //     if (snowyFlag == SnowyRemover.SnowyFlag.NONE_SNOWY)
+            //         return Biome.Precipitation.RAIN;
+            //     else if (snowyFlag == SnowyRemover.SnowyFlag.SNOWY_ALWAYS)
+            //         return Biome.Precipitation.SNOW;
+            // }
+
             var solarTerm = EclipticUtil.getNowSolarTerm(level);
             var snowTerm = SolarTerm.getSnowTerm(biome, level instanceof ServerLevel, EclipticUtil.getSnowTempChange(level));
             boolean flag_cold = snowTerm.maySnow(solarTerm, biome, pos, level instanceof ServerLevel);
-            return flag_cold
-                    // || BiomeClimateManager.getDefaultTemperature(biome, level instanceof ServerLevel) <= BiomeClimateManager.SNOW_LEVEL
+            Biome.Precipitation precipitation = flag_cold
+                    // || BiomeClimateManager.getDefaultTemperature(biome, levelNull instanceof ServerLevel) <= BiomeClimateManager.SNOW_LEVEL
                     ?
                     Biome.Precipitation.SNOW : Biome.Precipitation.RAIN;
+            if (biomeWeather.effect != null && biomeWeather.effect.value().shouldChangePrecipitation(level, biome, pos, false,precipitation))
+                precipitation = biomeWeather.effect.value().getModifiedPrecipitation(level, biome, pos,false, precipitation);
+            return precipitation;
         }
+
         return Biome.Precipitation.NONE;
     }
 
@@ -355,7 +370,15 @@ public class WeatherManager {
             var solarTerm = EclipticUtil.getNowSolarTerm(level);
             var snowTerm = SolarTerm.getSnowTerm(biome, level instanceof ServerLevel, EclipticUtil.getSnowTempChange(level));
             boolean flag_cold = snowTerm.maySnow(solarTerm, biome, pos, level instanceof ServerLevel);
-            return flag_cold ? Biome.Precipitation.SNOW : Biome.Precipitation.RAIN;
+            Biome.Precipitation precipitation = flag_cold
+                    // || BiomeClimateManager.getDefaultTemperature(biome, levelNull instanceof ServerLevel) <= BiomeClimateManager.SNOW_LEVEL
+                    ?
+                    Biome.Precipitation.SNOW : Biome.Precipitation.RAIN;
+            if (biomeWeather.effect != null && biomeWeather.effect.value().shouldChangePrecipitation(level, biome, pos, true, precipitation))
+                precipitation = biomeWeather.effect.value().getModifiedPrecipitation(level, biome, pos, true, precipitation);
+            // if (biomeWeather.shouldClear())
+            //     return Biome.Precipitation.NONE;
+            return precipitation;
         }
         return Biome.Precipitation.NONE;
     }

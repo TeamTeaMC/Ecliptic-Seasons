@@ -1,7 +1,6 @@
 package com.teamtea.eclipticseasons.api.data.weather.special_effect;
 
 
-import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import lombok.Builder;
@@ -13,29 +12,24 @@ import net.minecraft.world.level.biome.Biome;
 
 @Builder
 @Data
-public class FogEffect implements WeatherEffect {
+public class SnowEffect implements WeatherEffect {
 
-    public static final MapCodec<FogEffect> CODEC = RecordCodecBuilder.mapCodec(ins -> ins.group(
-            Codec.FLOAT.optionalFieldOf("density", 0.5f).forGetter(o -> o.density),
-            Codec.BOOL.optionalFieldOf("replace", false).forGetter(o -> o.replace)
-    ).apply(ins, FogEffect::new));
+    public static final MapCodec<SnowEffect> CODEC = RecordCodecBuilder.mapCodec(ins -> ins.stable(new SnowEffect()));
 
-    private final float density;
-    private final boolean replace;
 
     @Override
     public boolean shouldChangePrecipitation(Level level, Biome biome, BlockPos pos, boolean isPrecipitation, Biome.Precipitation original) {
-        return !isPrecipitation && replace;
+        return true;
     }
 
     @Override
     public Biome.Precipitation getModifiedPrecipitation(Level level, Biome biome, BlockPos pos, boolean isPrecipitation, Biome.Precipitation original) {
-        return isPrecipitation ? original : Biome.Precipitation.NONE;
+        return Biome.Precipitation.SNOW;
     }
 
     @Override
     public ResourceLocation getType() {
-        return WeatherEffects.FOG;
+        return WeatherEffects.SNOW;
     }
 
     @Override

@@ -1,3 +1,9 @@
+### 0.12.2-beta
+
+- Added the `special_effect` property to the `biome_rain` datapack, which can be used to specify special effects applied during weather events.
+- Added the `biome_rain_effect` datapack, which currently includes the types `none` and `fog`; the `snow` and `rain` types will be introduced in version 0.12.2.
+- Debugged certain initialization methods of Fog rendering to avoid issues under specific startup conditions.
+
 ### 0.12.1.0.1
 
 - Added an experimental fog rendering feature, currently appearing during rain when enabled.

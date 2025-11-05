@@ -9,6 +9,8 @@ import com.teamtea.eclipticseasons.api.data.weather.special_effect.WeatherEffect
 import com.teamtea.eclipticseasons.api.util.codec.CodecUtil;
 import com.teamtea.eclipticseasons.api.util.fast.Enum2ObjectMap;
 import com.teamtea.eclipticseasons.common.registry.ESRegistries;
+import lombok.Builder;
+import lombok.Data;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.Registries;
@@ -56,43 +58,41 @@ public record CustomRainBuilder(
                 );
     }
 
-    public record Weather(
-            // float rainLevel, float thunderLevel,
-            // Biome.Precipitation precipitation,
-            // WeatherManager.SnowStatus snowStatus,
-            Optional<IntProvider> rain,
-            Optional<IntProvider> rainDelay,
-            Optional<IntProvider> thunder,
-            Optional<IntProvider> thunderDelay,
-            float rainChance,
-            float thunderChance,
-            List<TimePeriod> timePeriod,
-            Optional<Holder<WeatherEffect>> specialEffect
-    ) {
+    @Builder
+    @Data
+    public static class Weather {
 
-        public Weather(
-                Optional<IntProvider> rain,
-                Optional<IntProvider> rainDelay,
-                Optional<IntProvider> thunder,
-                float rainChance,
-                float thunderChance,
-                List<TimePeriod> timePeriod) {
-            this(rain, rainDelay, thunder, Optional.empty(),
-                    rainChance, thunderChance, timePeriod, Optional.empty());
+
+        public Optional<IntProvider> rain() {
+            return rain;
         }
 
-        public Weather(
-                float rainChance,
-                float thunderChance,
-                List<TimePeriod> timePeriod) {
-            this(Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(),
-                    rainChance, thunderChance, timePeriod, Optional.empty());
+        public Optional<IntProvider> rainDelay() {
+            return rainDelay;
         }
 
-        public Weather(
-                float rainChance,
-                float thunderChance) {
-            this(rainChance, thunderChance, List.of());
+        public Optional<IntProvider> thunder() {
+            return thunder;
+        }
+
+        public Optional<IntProvider> thunderDelay() {
+            return thunderDelay;
+        }
+
+        public float rainChance() {
+            return rainChance;
+        }
+
+        public float thunderChance() {
+            return thunderChance;
+        }
+
+        public List<TimePeriod> timePeriod() {
+            return timePeriod;
+        }
+
+        public Optional<Holder<WeatherEffect>> specialEffect() {
+            return specialEffect;
         }
 
         public static final Codec<Weather> CODEC = RecordCodecBuilder.create(ins -> ins.group(
@@ -109,6 +109,25 @@ public record CustomRainBuilder(
                 StringRepresentable.fromEnum(TimePeriod::collectValues).listOf().optionalFieldOf("time_periods", List.of()).forGetter(Weather::timePeriod),
                 CodecUtil.holderCodec(ESRegistries.WEATHER_EFFECT).optionalFieldOf("special_effect").forGetter(Weather::specialEffect)
         ).apply(ins, Weather::new));
+
+        @Builder.Default
+        private final Optional<IntProvider> rain = Optional.empty();
+        @Builder.Default
+        private final Optional<IntProvider> rainDelay = Optional.empty();
+        @Builder.Default
+        private final Optional<IntProvider> thunder = Optional.empty();
+        @Builder.Default
+        private final Optional<IntProvider> thunderDelay = Optional.empty();
+        @Builder.Default
+        private final float rainChance = 0;
+        @Builder.Default
+        private final float thunderChance = 0;
+        @Builder.Default
+        private final List<TimePeriod> timePeriod = List.of();
+        @Builder.Default
+        private final Optional<Holder<WeatherEffect>> specialEffect = Optional.empty();
+
+
     }
 
 
