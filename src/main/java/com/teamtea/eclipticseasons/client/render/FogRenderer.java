@@ -7,14 +7,19 @@ import com.mojang.blaze3d.shaders.AbstractUniform;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.teamtea.eclipticseasons.EclipticSeasons;
+import com.teamtea.eclipticseasons.api.data.weather.special_effect.FogEffect;
+import com.teamtea.eclipticseasons.api.data.weather.special_effect.WeatherEffect;
+import com.teamtea.eclipticseasons.api.util.WeatherUtil;
 import com.teamtea.eclipticseasons.client.core.ClientWeatherChecker;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.config.ClientConfig;
 import jdk.jfr.Experimental;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.client.renderer.texture.AbstractTexture;
+import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FastColor;
 import net.minecraft.util.Mth;
@@ -23,6 +28,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RegisterShadersEvent;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
 import net.minecraftforge.event.GameShuttingDownEvent;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.joml.Matrix4f;
@@ -98,6 +104,21 @@ public final class FogRenderer {
     @SubscribeEvent
     public static void onShutdown(final GameShuttingDownEvent event) {
         INSTANCE.cleanup();
+    }
+
+    static float fogDensity = 0f;
+
+    @SubscribeEvent
+    public static void onLevelTick(TickEvent.LevelTickEvent event) {
+        if (event.phase == TickEvent.Phase.END && event.level instanceof ClientLevel clientLevel) {
+            WeatherEffect effect = WeatherUtil.getWeatherEffectByEntity(ClientCon.agent.getCameraEntity());
+            float target = 0f;
+            if (effect != null && effect.withFog()) {
+                BlockPos containing = BlockPos.containing(ClientCon.agent.getCameraEntity().getEyePosition());
+                target = effect.getFogDensity(clientLevel, containing);
+            }
+            fogDensity += (target - fogDensity) * 0.05f;
+        }
     }
 
     /*
@@ -194,6 +215,7 @@ public final class FogRenderer {
         );
         float rate = 0.5f + 0.5f * ClientCon.getUseLevel().getBrightness(LightLayer.SKY, ClientCon.agent.getCameraEntity().blockPosition()) / 15f;
         rate *= (ClientWeatherChecker.lastBiomeRainLevel * ClientWeatherChecker.lastBiomeRainLevel);
+        rate *= fogDensity;
         Shader.uFogData.set(
                 rate * this.uTerrainFogDensity / 10f,
                 rate * this.uSkyFogDensity * 20,

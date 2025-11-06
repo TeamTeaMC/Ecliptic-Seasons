@@ -14,7 +14,7 @@ public class WeatherEffects {
     public static final ResourceLocation FOG = EclipticSeasons.rl("fog");
     public static final ResourceLocation SNOW = EclipticSeasons.rl("snow");
     public static final ResourceLocation RAIN = EclipticSeasons.rl("rain");
-
+    public static final ResourceLocation COMPOSITE = EclipticSeasons.rl("composite");
 
     public static void register(ResourceLocation id, MapCodec<? extends WeatherEffect> codec) {
         EFFECTS.put(id, codec);
@@ -25,5 +25,6 @@ public class WeatherEffects {
         register(FOG, FogEffect.CODEC);
         register(SNOW, SnowEffect.CODEC);
         register(RAIN, RainEffect.CODEC);
+        register(COMPOSITE, CompositeEffect.CODEC);
     }
 }

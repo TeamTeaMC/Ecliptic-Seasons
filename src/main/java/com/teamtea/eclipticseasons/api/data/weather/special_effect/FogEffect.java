@@ -43,5 +43,13 @@ public class FogEffect implements WeatherEffect {
         return CODEC;
     }
 
+    @Override
+    public boolean withFog() {
+        return true;
+    }
 
+    @Override
+    public float getFogDensity(Level level, BlockPos pos) {
+        return density;
+    }
 }

@@ -4,16 +4,17 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
+import com.teamtea.eclipticseasons.api.util.codec.CodecUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 
 public interface WeatherEffect {
-    Codec<WeatherEffect> CODEC = Codec.STRING
+    Codec<WeatherEffect> CODEC = CodecUtil.lazyInitialized(() -> Codec.STRING
             .xmap(s -> s.contains(":") ? ResourceLocation.tryParse(s) : EclipticSeasons.rl(s),
                     r -> r.getNamespace().equals(EclipticSeasonsApi.MODID) ? r.getPath() : r.toString())
-            .dispatch("type", WeatherEffect::getType, c-> WeatherEffects.EFFECTS.get(c).codec());
+            .dispatch("type", WeatherEffect::getType, c -> WeatherEffects.EFFECTS.get(c).codec()));
 
     ResourceLocation getType();
 
@@ -29,4 +30,11 @@ public interface WeatherEffect {
         return original;
     }
 
+    default boolean withFog() {
+        return false;
+    }
+
+    default float getFogDensity(Level level, BlockPos pos) {
+        return 0f;
+    }
 }
