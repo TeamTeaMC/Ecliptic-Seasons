@@ -236,6 +236,8 @@ dependencies {
 
     implementation fg.deobf("curse.maven:patchouli-306770:6164575")
 
+    compileOnly fg.deobf("curse.maven:kubejs-238086:5853326")
+
     compileOnly fg.deobf("libs:fabric-renderer-api-v1:3.2.1+cf68abbe77")
     compileOnly fg.deobf("libs:fabric-renderer-indigo:1.5.2+b5b2da4177")
 
