@@ -71,6 +71,16 @@ public record CustomRain(int ordinal,
         return selectList.get(level.getRandom().nextInt(selectList.size()));
     }
 
+    @Override
+    public boolean isResolvable() {
+        return true;
+    }
+
+    @Override
+    public List<BiomeRain> resolveOrderedList() {
+        return new ArrayList<>(weatherList);
+    }
+
     public record Weather(
             int ordinal,
             Optional<IntProvider> rain,
@@ -139,6 +149,11 @@ public record CustomRain(int ordinal,
         @Override
         public Holder<WeatherEffect> getSpecialEffect() {
             return specialEffect.orElseGet(BiomeRain.super::getSpecialEffect);
+        }
+
+        @Override
+        public boolean isDynamic() {
+            return true;
         }
     }
 }

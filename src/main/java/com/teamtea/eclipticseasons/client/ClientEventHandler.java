@@ -125,7 +125,7 @@ public final class ClientEventHandler {
     public static void onPlayerExit(ClientPlayerNetworkEvent.LoggingOut event) {
         if (Minecraft.getInstance().player != null) {
             CropGrowthHandler.clearOnClientExitOrServerClose();
-            BiomeClimateManager.clearOnClientExitOrServerClose();
+            BiomeClimateManager.clearOnClientExitOrServerClose(false);
             ClientCon.onClientPlayerExit();
             ClientRef.onClientPlayerExit();
             SnowChecker.clearOnClientExitOrServerClose();

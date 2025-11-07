@@ -273,6 +273,7 @@ public class CommandHandler {
                     biomeWeather.rainTime = setRain ? biomeRain.getRainDuration(level.getRandom()) / size : 0;
                     biomeWeather.lastRainTime = setRain ? level.getGameTime() : biomeWeather.lastRainTime;
                     biomeWeather.thunderTime = isThunder ? biomeRain.getThunderDuration(level.getRandom()) / size : 0;
+                    biomeWeather.setBiomeRain(biomeRain);
 
                     found = true;
                 }

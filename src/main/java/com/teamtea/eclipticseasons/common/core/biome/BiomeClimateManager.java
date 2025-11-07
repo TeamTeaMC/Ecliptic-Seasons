@@ -148,6 +148,9 @@ public class BiomeClimateManager {
                     (biome, map) -> map
             );
 
+            BiomeRainDispatcher.init(registryAccess.registry(Registries.BIOME).orElse(null)
+                    ,isServer);
+
             setSnowLine(registryAccess, SNOW_LINE_MAP);
         }
     }
@@ -421,7 +424,7 @@ public class BiomeClimateManager {
     }
 
 
-    public static void clearOnClientExitOrServerClose() {
+    public static void clearOnClientExitOrServerClose(boolean serverCause) {
         BiomeClimateManager.WEATHER_REGION_MAP.clear();
         BiomeClimateManager.BIOME_CLIMATE_MAP.clear();
         BiomeClimateManager.SMALL_BIOME_MAP.clear();
@@ -430,5 +433,8 @@ public class BiomeClimateManager {
         BiomeClimateManager.SEASON_PHASE_MAP.clear();
         BiomeClimateManager.CUSTOME_BIOME_RAIN_MAP.clear();
         BiomeClimateManager.CUSTOM_SNOW_TERM_MAP.clear();
+
+        BiomeRainDispatcher.clearOnClientExitOrServerClose(serverCause);
+
     }
 }

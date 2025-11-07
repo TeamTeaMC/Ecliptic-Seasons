@@ -6,6 +6,7 @@ import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.event.SolarTermChangeEvent;
 import com.teamtea.eclipticseasons.api.util.SimpleUtil;
 import com.teamtea.eclipticseasons.common.block.blockentity.GreenHouseCoreBlockEntity;
+import com.teamtea.eclipticseasons.common.core.biome.BiomeRainDispatcher;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
 import com.teamtea.eclipticseasons.common.core.crop.GreenHouseCoreProvider;
@@ -87,6 +88,8 @@ public class SolarDataManager extends SavedData {
             var listTag = nbt.getList("biomes", Tag.TAG_COMPOUND);
             var biomeWeathers = WeatherManager.getBiomeList(level);
             int countCheck = 0;
+            long hash = nbt.getLong("BiomeRainHashRecord");
+
             for (int i = 0; i < listTag.size(); i++) {
                 CompoundTag compound = listTag.getCompound(i);
                 var location = compound.getString("biome");
@@ -94,7 +97,7 @@ public class SolarDataManager extends SavedData {
                     for (int j = 0; j < biomeWeathers.size(); j++) {
                         WeatherManager.BiomeWeather biomeWeather = biomeWeathers.get(j);
                         if (location.equals(biomeWeather.location.toString())) {
-                            biomeWeather.deserializeNBT(compound, level.registryAccess());
+                            biomeWeather.deserializeNBT(compound, level.registryAccess(),hash);
                             // 这里必须要id相等，不然缓存全部失效
                             if (i == j) {
                                 countCheck++;
@@ -127,6 +130,7 @@ public class SolarDataManager extends SavedData {
             }
         }
         compound.put("biomes", listTag);
+        compound.putLong("BiomeRainHashRecord", BiomeRainDispatcher.hash_cache);
         return compound;
     }
 

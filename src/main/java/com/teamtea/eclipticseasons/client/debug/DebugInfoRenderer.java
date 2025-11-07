@@ -78,7 +78,7 @@ public final class DebugInfoRenderer {
                                 if (saveData != null) {
                                     var solarTerm = saveData.getSolarTerm();
                                     String solarTermS = "Solar Term: " + solarTerm.getTranslation().getString();
-                                    String biomeRainS = "Biome Rain: " + solarTerm.getBiomeRain(biomeWeather.biomeHolder);
+                                    String biomeRainS = "Biome Rain: " + biomeWeather.getBiomeRain();
                                     String snowTermS = "Snow Term: " + SolarTerm.getSnowTerm(biomeWeather.biomeHolder.value(), true, EclipticUtil.getSnowTempChange(level));
                                     drawInfo(matrixStack, screenWidth, screenHeight, "", index++);
                                     drawInfo(matrixStack, screenWidth, screenHeight, solarTermS, index++);

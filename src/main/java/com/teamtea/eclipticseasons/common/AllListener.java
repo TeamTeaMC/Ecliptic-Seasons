@@ -56,6 +56,7 @@ import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
 import net.minecraftforge.event.entity.player.SleepingTimeCheckEvent;
 import net.minecraftforge.event.level.*;
 import net.minecraftforge.event.server.ServerAboutToStartEvent;
+import net.minecraftforge.event.server.ServerStoppedEvent;
 import net.minecraftforge.event.server.ServerStoppingEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -92,10 +93,10 @@ public class AllListener {
     }
 
     @SubscribeEvent
-    public static void onServerStoppingEvent(ServerStoppingEvent event) {
+    public static void onServerStoppingEvent(ServerStoppedEvent event) {
         CropGrowthHandler.clearOnClientExitOrServerClose();
         NaturalPlantHandler.clearOnClientExitOrServerClose();
-        BiomeClimateManager.clearOnClientExitOrServerClose();
+        BiomeClimateManager.clearOnClientExitOrServerClose(true);
         SnowChecker.clearOnClientExitOrServerClose();
         ESSortInfo.clearOnClientExitOrServerClose();
     }

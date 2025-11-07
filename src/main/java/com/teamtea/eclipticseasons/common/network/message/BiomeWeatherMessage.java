@@ -9,6 +9,7 @@ public class BiomeWeatherMessage {
     public final byte[] clear;
     public final byte[] snowDepth;
     public final int[] special;
+    public final int[] weather;
 
     public BiomeWeatherMessage(FriendlyByteBuf buf) {
         rain = buf.readByteArray();
@@ -16,14 +17,16 @@ public class BiomeWeatherMessage {
         clear = buf.readByteArray();
         snowDepth = buf.readByteArray();
         special = buf.readVarIntArray();
+        weather = buf.readVarIntArray();
     }
 
-    public BiomeWeatherMessage(byte[] rain, byte[] thuder, byte[] clear, byte[] snowDepth, int[] special) {
+    public BiomeWeatherMessage(byte[] rain, byte[] thuder, byte[] clear, byte[] snowDepth, int[] special, int[] weather) {
         this.rain = rain;
         this.thuder = thuder;
         this.clear = clear;
         this.snowDepth = snowDepth;
         this.special = special;
+        this.weather = weather;
     }
 
 
@@ -33,6 +36,7 @@ public class BiomeWeatherMessage {
         buf.writeByteArray(clear);
         buf.writeByteArray(snowDepth);
         buf.writeVarIntArray(special);
+        buf.writeVarIntArray(weather);
     }
 
 }
