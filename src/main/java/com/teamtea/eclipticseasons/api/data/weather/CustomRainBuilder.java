@@ -107,7 +107,8 @@ public record CustomRainBuilder(
                 Codec.FLOAT.fieldOf("rain_chance").forGetter(Weather::rainChance),
                 Codec.FLOAT.optionalFieldOf("thunder_chance", 0f).forGetter(Weather::thunderChance),
                 StringRepresentable.fromEnum(TimePeriod::collectValues).listOf().optionalFieldOf("time_periods", List.of()).forGetter(Weather::timePeriod),
-                CodecUtil.holderCodec(ESRegistries.WEATHER_EFFECT).optionalFieldOf("special_effect").forGetter(Weather::specialEffect)
+                CodecUtil.holderCodec(ESRegistries.WEATHER_EFFECT).optionalFieldOf("special_effect").forGetter(Weather::specialEffect),
+                Codec.intRange(1, Integer.MAX_VALUE).optionalFieldOf("weight", 10).forGetter(Weather::getWeight)
         ).apply(ins, Weather::new));
 
         @Builder.Default
@@ -127,7 +128,8 @@ public record CustomRainBuilder(
         @Builder.Default
         private final Optional<Holder<WeatherEffect>> specialEffect = Optional.empty();
 
-
+        @Builder.Default
+        private final int weight = 10;
     }
 
 
