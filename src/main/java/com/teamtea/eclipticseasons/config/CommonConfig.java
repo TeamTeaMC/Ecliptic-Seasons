@@ -276,14 +276,14 @@ public class CommonConfig {
 
             saveChunkEnvironmentalHumidity = builder.comment("Save environmental humidity modifiers to chunk file.")
                     .define("SaveChunkEnvironmentalHumidity", true);
-            seasonalPrayerRitualCropBonusReduction=builder
+            seasonalPrayerRitualCropBonusReduction = builder
                     .comment("Inverse factor controlling how much the Seasonal Prayer Ritual boosts crop growth and animal breeding.\n" +
                             "The higher the value, the weaker the bonus effect.")
-                    .defineInRange("SeasonalPrayerRitualCropBonusReduction",500,5,Integer.MAX_VALUE);
-            seasonalPrayerRitualTimeCost=builder
+                    .defineInRange("SeasonalPrayerRitualCropBonusReduction", 500, 5, Integer.MAX_VALUE);
+            seasonalPrayerRitualTimeCost = builder
                     .comment("Approximate time cost for each stage of the Seasonal Prayer Ritual.\n" +
                             "The unit is relative to the duration of one solar term.")
-                    .defineInRange("SeasonalPrayerRitualTimeCost",2,0.00001d,5000);
+                    .defineInRange("SeasonalPrayerRitualTimeCost", 2, 0.00001d, 5000);
             builder.pop();
         }
     }
@@ -360,7 +360,7 @@ public class CommonConfig {
             enableWeatherRegion = builder.comment("Enable weather regions, linking specific biomes to particular weather to prevent scattered patterns.")
                     .define("EnableWeatherRegion", true);
             notRainInDesert = builder.comment("Prevent rain from occurring in biomes without precipitation like desert.")
-                    .define("NotRainInDesert", false);
+                    .define("NotRainInDesert", true);
             shouldInitWeather = builder.comment("Set it true to initialize weather and snow when loading the mod or level for the first time.")
                     .define("ShouldInitWeather", false);
             rainChanceMultiplier = builder.comment("Multiplier (0-1000) affecting the chance of rain. Higher values make rain more likely.")

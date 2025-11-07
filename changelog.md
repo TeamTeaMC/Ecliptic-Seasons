@@ -1,3 +1,12 @@
+### 0.12.3-beta
+
+
+- Added **composite-type weather effects**, which can be used to combine multiple weather effects.
+- Added **none** weather effect to **cancel precipitation**.
+- Added **persistent caching and random weighting** for `BiomeRain` calculations.
+- Added **special KubeJS bindings**; you can now use both `EclipticSeasonsApi` and `EclipticSeasonsBindings` api.
+- Fixed an issue where the `NotRainInDesert` option would not prevent rain in deserts, while keeping it **enabled by default**.
+
 ### 0.12.2-beta
 
 - Added the `special_effect` property to the `biome_rain` datapack, which can be used to specify special effects applied during weather events.
