@@ -55,7 +55,7 @@ public class BiomeRainRegistry {
         var solarTermValueMap2 = SolarTermValueMap.<List<CustomRainBuilder.Weather>>builder().solarTermMap(new Enum2ObjectMap<>(SolarTerm.class)).build();
         solarTermValueMap2.solarTermMap().get().put(SolarTerm.LIGHT_SNOW, List.of(
                 CustomRainBuilder.Weather.builder().rainChance(TemperateRain.LIGHT_SNOW.getRainChance())
-                        .timePeriod(List.of(TimePeriod.DAWN, TimePeriod.DAY, TimePeriod.DUSK, TimePeriod.NIGHT))
+                        .weight(8)
                         .build(),
                 CustomRainBuilder.Weather.builder().rainChance(TemperateRain.LIGHT_SNOW.getRainChance())
                         .timePeriod(List.of(TimePeriod.MIDNIGHT))
@@ -64,7 +64,7 @@ public class BiomeRainRegistry {
         ));
         solarTermValueMap2.solarTermMap().get().put(SolarTerm.RAIN_WATER, List.of(
                 CustomRainBuilder.Weather.builder().rainChance(TemperateRain.RAIN_WATER.getRainChance())
-                        .timePeriod(List.of(TimePeriod.MIDNIGHT, TimePeriod.DAY, TimePeriod.DUSK, TimePeriod.NIGHT))
+                        .weight(8)
                         .build(),
                 CustomRainBuilder.Weather.builder().rainChance(TemperateRain.RAIN_WATER.getRainChance())
                         .timePeriod(List.of(TimePeriod.DAWN))

@@ -206,7 +206,7 @@ public class CommonConfig {
 
 
             dynamicSnowTerm = builder.comment("The timing of snowfall now varies within a certain range each year.")
-                    .define("DynamicSnowTerm", true);
+                    .define("DynamicSnowTerm", false);
 
             builder.pop();
         }

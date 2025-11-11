@@ -854,7 +854,7 @@ public class WeatherManager {
 
         if (pos >= 0 && levelBiomeWeather != null && pos < levelBiomeWeather.size()) {
             int size = getWeatherTickFactor(level);
-            var biomeWeather = getBiomeList(level).get(pos);
+            var biomeWeather = levelBiomeWeather.get(pos);
 
             runWeather(level, biomeWeather, random, size);
 
