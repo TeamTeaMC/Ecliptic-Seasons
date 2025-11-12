@@ -260,7 +260,8 @@ dependencies {
 //    compileOnly fg.deobf("curse.maven:distant-horizons-508933:6791186")
     compileOnly fg.deobf("curse.maven:distant-horizons-508933:7097100")
 //    onlyMainRuntimeOnly fg.deobf("curse.maven:distant-horizons-508933:7097100")
-
+    compileOnly fg.deobf("curse.maven:improperui-forged-1209983:6362682")
+    implementation fg.deobf("curse.maven:modern-ui-352491:6956345")
 //    onlyMainRuntimeOnly fg.deobf("curse.maven:cloth-config-348521:5729105")
 //    onlyMainRuntimeOnly fg.deobf("curse.maven:architectury-api-419699:5137938")
 //    onlyMainRuntimeOnly fg.deobf("curse.maven:stevesrealisticsleep-616330:5962707")

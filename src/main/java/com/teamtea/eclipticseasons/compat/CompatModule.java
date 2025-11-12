@@ -3,9 +3,11 @@ package com.teamtea.eclipticseasons.compat;
 
 import com.teamtea.eclipticseasons.compat.theoneprobe.TOPReflector;
 import lombok.Getter;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
+import net.minecraftforge.fml.loading.FMLLoader;
 
 import java.util.List;
 
@@ -16,12 +18,17 @@ public class CompatModule {
     @Getter
     private static boolean oculus = false;
 
+    @Getter
+    private static boolean iui_forge = false;
+    @Getter
+    private static boolean modernui = false;
+
     /**
      * Used for mod init detect.
      **/
     public static void init() {
-        // dynamictrees = Platform.isModLoaded("dynamictrees");
-        // cold_sweat = Platform.isModLoaded("cold_sweat");
+        iui_forge = Platform.isModLoaded("iui_forge");
+        modernui = Platform.isModLoaded("modernui");
         oculus = Platform.isModLoaded("oculus");
     }
 
@@ -29,6 +36,26 @@ public class CompatModule {
      * Used for mod init event register.
      **/
     public static void register(IEventBus gameBus, IEventBus modBus) {
+        if (isIui_forge() && FMLLoader.getDist() == Dist.CLIENT) {
+            try {
+                Class<?> iuiHandlerClass = Class.forName("com.teamtea.eclipticseasons.compat.iui_forge.IUIHandler");
+                Class<?> iuiSetupClass = Class.forName("com.teamtea.eclipticseasons.compat.iui_forge.IUISetup");
+                gameBus.register(iuiHandlerClass.getField("INSTANCE").get(null));
+                modBus.register(iuiSetupClass.getField("INSTANCE").get(null));
+            } catch (ClassNotFoundException | IllegalAccessException | NoSuchFieldException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        if (isModernui() && FMLLoader.getDist() == Dist.CLIENT) {
+            try {
+                Class<?> iuiHandlerClass = Class.forName("com.teamtea.eclipticseasons.compat.modernui.MUIHandler");
+                Class<?> iuiSetupClass = Class.forName("com.teamtea.eclipticseasons.compat.modernui.MUISetup");
+                gameBus.register(iuiHandlerClass.getField("INSTANCE").get(null));
+                modBus.register(iuiSetupClass.getField("INSTANCE").get(null));
+            } catch (ClassNotFoundException | IllegalAccessException | NoSuchFieldException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
     public static void onInterModEnqueue(final InterModEnqueueEvent event) {

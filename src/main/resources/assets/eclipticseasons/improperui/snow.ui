@@ -1,0 +1,70 @@
+
+div #background {
+    size: 100%
+    background-color: gray
+    opacity: 0.25
+}
+
+div #main {
+    size: 350 90%
+    background-color: black
+    opacity: 0.5
+    border-radius: 5
+    shadow-distance: 5
+    background-image: eclipticseasons:textures/winter_to_spring2.png
+    center: both
+    scrollable: true
+    child-align: grid
+    grid-columns: 1
+    background-clip: padding
+
+    div #title2 {
+            size: 100% 20
+            inner-text: "节气"
+            text-scale: 2
+            text-shadow: true
+            text-color: #ffff5050
+            text-align: center
+            background-color: #00000000
+        }
+
+
+    div #mini-world {
+        size: 80% 140
+        background-color: none
+        child-align: grid
+        grid-columns: 2
+
+
+        label #title3 {
+                size: 20
+                inner-text: "群系"
+                text-shadow: true
+                text-color: #ffff5050
+                background-color: #00000000
+                        on-click: handleMouseCallbacks
+                        on-key: printSelf
+            }
+
+            textbox #bti {
+                        size: 90% 20
+                        text-scale:2
+                        text-shadow: true
+                        text-color: #ffff5050
+                        text-align: center
+                        background-color: #00000000
+                        on-key: printSelf
+                    }
+
+            div #dd{size: 100% 20
+        scrollable: true
+
+        child-align: grid
+        grid-columns: 4
+                                            text-scale:2
+                                            text-shadow: true
+                                            text-color: #ffff5050
+                                            text-align: center
+                                            background-color: #00000000}
+        }
+}

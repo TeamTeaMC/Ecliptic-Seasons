@@ -26,6 +26,7 @@ import com.teamtea.eclipticseasons.common.core.snow.SnowyStatusKeeper;
 import com.teamtea.eclipticseasons.common.core.solar.ClientSolarDataManager;
 import com.teamtea.eclipticseasons.common.game.AnimalHooks;
 import com.teamtea.eclipticseasons.common.misc.MapExporter;
+import com.teamtea.eclipticseasons.common.registry.SoundEventsRegistry;
 import com.teamtea.eclipticseasons.config.ClientConfig;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.client.Minecraft;
@@ -34,7 +35,13 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.core.SectionPos;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.sounds.Music;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
@@ -59,7 +66,14 @@ public final class ClientEventHandler {
 
     @SubscribeEvent
     public static void onRenderTick(TickEvent.RenderTickEvent event) {
+
         if (event.phase == TickEvent.Phase.END && Minecraft.getInstance().player != null) {
+            //Holder.Reference<SoundEvent> holderOrThrow = ClientCon.getUseLevel().registryAccess().registryOrThrow(Registries.SOUND_EVENT).getHolderOrThrow(ResourceKey.create(Registries.SOUND_EVENT, SoundEventsRegistry.snowless_hometown.getLocation()));
+            //Music music = new Music(
+            //        holderOrThrow, 12000, 24000, false);
+            //if (!Minecraft.getInstance().getMusicManager().isPlayingMusic(music))
+            //    Minecraft.getInstance().getMusicManager().startPlaying(new Music(
+            //            holderOrThrow, 12000, 24000, false));
             WorldRenderer.applyEffect(Minecraft.getInstance().gameRenderer, Minecraft.getInstance().player);
         }
     }
@@ -157,10 +171,11 @@ public final class ClientEventHandler {
 
     /**
      * Forge don't provide an entity tick event, so we need to make it self.
-     * **/
+     *
+     **/
     @SubscribeEvent
     public static void onPlayerTick(ESClientEntityTickEvent event) {
-       IceKeeper.checkIfPlayerStepInFrozenWater(event.getEntity());
+        IceKeeper.checkIfPlayerStepInFrozenWater(event.getEntity());
     }
 
     private static long lastFreshTime = -1;

@@ -7,5 +7,5 @@
   "pamphlet": true,
   "model": "eclipticseasons:seasons_chronicle",
   "index_icon":"eclipticseasons:textures/item/seasons_chronicle.png",
-  "filler_texture": "eclipticseasons:textures/show_ccc.png"
+  "filler_texture": "eclipticseasons:textures/winter_to_spring2.png"
 }
