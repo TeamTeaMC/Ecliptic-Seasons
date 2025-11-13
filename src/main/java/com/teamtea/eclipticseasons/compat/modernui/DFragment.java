@@ -8,11 +8,14 @@ package com.teamtea.eclipticseasons.compat.modernui;
 import com.teamtea.eclipticseasons.api.data.season.SnowDefinition;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
 import icyllis.arc3d.core.Color;
+import icyllis.modernui.R;
+import icyllis.modernui.TestFragment;
 import icyllis.modernui.annotation.NonNull;
 import icyllis.modernui.annotation.Nullable;
 import icyllis.modernui.fragment.Fragment;
 import icyllis.modernui.graphics.drawable.ColorDrawable;
 import icyllis.modernui.text.TextWatcher;
+import icyllis.modernui.util.AttributeSet;
 import icyllis.modernui.util.DataSet;
 import icyllis.modernui.view.LayoutInflater;
 import icyllis.modernui.view.View;
@@ -35,39 +38,59 @@ public class DFragment extends Fragment {
 
 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable DataSet savedInstanceState) {
-        GridLayout layout = new GridLayout(this.requireContext());
-        layout.setColumnCount(3);
-        layout.setOrientation(0);
+        LinearLayout layout = new LinearLayout(this.requireContext());
+        //layout.setColumnCount(3);
+        //layout.setOrientation(0);
+        layout.setOrientation(1);
+        layout.setGravity(17);
 
         makeSelectLine(layout, "群系", Registries.BIOME);
         makeSelectLine(layout, "方块", Registries.BLOCK);
 
-        makeTextLine(layout,"模型");
-        makeTextLine(layout,"模型（非顶层）");
+        makeTextLine(layout, "模型");
+        makeTextLine(layout, "模型（非顶层）");
 
         //ScrollView s0 = new ScrollView(requireContext());
         //layout.addView(s0);
         TextView pre = new TextView(this.requireContext());
-        layout.addView(pre, new ViewGroup.LayoutParams(-2, -2));
+        layout.addView(pre, new LinearLayout.LayoutParams(-2, -2));
         pre.setText("属性检测器");
-        Button button = new Button(this.requireContext());
+        Button button = new Button(this.requireContext(), null, R.attr.buttonOutlinedStyle);
         button.setText("+");
         layout.addView(button);
         layout.addView(new View(this.requireContext()));
 
-        GridLayout innerlayout = new GridLayout(this.requireContext());
-        innerlayout.setColumnCount(3);
-        innerlayout.setOrientation(0);
+        //GridLayout innerlayout = new GridLayout(this.requireContext());
+        //innerlayout.setColumnCount(3);
+        //innerlayout.setOrientation(0);
+
         button.setOnClickListener(view -> {
-            makeTextLine(innerlayout,"名字");
-            makeCheckBox(innerlayout,"是否反转");
+            makeTextLine(layout, "名字");
+            makeCheckBox(layout, "是否反转");
+
+            TabLayout tabLayout = new TabLayout(requireContext());
+            TabLayout.Tab tab = tabLayout.newTab();
+            LinearLayout gl1 = new LinearLayout(requireContext());
+            makeTextLine(gl1, "精确值");
+            tab.setCustomView(gl1);
+            tab.setText("唯一值");
+            tabLayout.addTab(tab);
+
+            TabLayout.Tab tab2 = tabLayout.newTab();
+            LinearLayout gl2 = new LinearLayout(requireContext());
+            makeTextLine(gl2, "最大值");
+            makeTextLine(gl2, "最小值");
+            tab2.setCustomView(gl2).setText("范围");
+            tabLayout.addTab(tab2);
+
+            layout.addView(tabLayout);
         });
-        layout.addView(innerlayout, new ViewGroup.LayoutParams(-2, -2));
+        //layout.addView(innerlayout, new ViewGroup.LayoutParams(-2, -2));
 
 
-        Button button2 = new Button(this.requireContext());
-        button2.setText("提交");
-        layout.addView(button2);
+        //Button button2 = new Button(this.requireContext());
+        //button2.setText("提交");
+        //layout.addView(button2);
 
         ScrollView scrollView = new ScrollView(requireContext());
         scrollView.addView(layout);
@@ -76,47 +99,48 @@ public class DFragment extends Fragment {
 
     private void makeTextLine(ViewGroup layout, String label) {
         TextView pre = new TextView(this.requireContext());
-        layout.addView(pre, new ViewGroup.LayoutParams(-2, -2));
+        layout.addView(pre, new ViewGroup.LayoutParams(-1, -1));
         pre.setText(label);
 
         EditText input = new EditText(this.requireContext());
         input.setBackground(new ColorDrawable(Color.GRAY));
         //input.setPadding(20,0,10,20);
-        layout.addView(input, new ViewGroup.LayoutParams(400, 20));
+        layout.addView(input, new ViewGroup.LayoutParams(-1, -1));
         layout.addView(new View(requireContext()));
     }
 
     private void makeCheckBox(ViewGroup layout, String label) {
         TextView pre = new TextView(this.requireContext());
-        layout.addView(pre, new ViewGroup.LayoutParams(-2, -2));
+        layout.addView(pre, new ViewGroup.LayoutParams(-1, -1));
         pre.setText(label);
 
         CheckBox input = new CheckBox(this.requireContext());
-        layout.addView(input, new ViewGroup.LayoutParams(-2, -2));
+        layout.addView(input, new ViewGroup.LayoutParams(-1, -1));
         layout.addView(new View(requireContext()));
     }
 
     private void makeSelectLine(ViewGroup layout, String label, ResourceKey<? extends Registry<?>> key) {
         TextView pre = new TextView(this.requireContext());
-        layout.addView(pre, new ViewGroup.LayoutParams(-2, -2));
+        layout.addView(pre, new ViewGroup.LayoutParams(-1, -1));
         pre.setText(label);
 
         EditText input = new EditText(this.requireContext());
         input.setBackground(new ColorDrawable(Color.GRAY));
-        layout.addView(input, new ViewGroup.LayoutParams(400, 20));
+        layout.addView(input, new ViewGroup.LayoutParams(-1, -1));
 
         Spinner spinner = new Spinner(this.requireContext());
         ArrayAdapter<AP> apArrayAdapter = setSpinner(spinner, "", key);
+
+        layout.addView(spinner, new ViewGroup.LayoutParams(-1, -1));
+
+        input.addTextChangedListener((SimpleTextChangedListener) editable ->
+                resetSpinner(apArrayAdapter, editable, key));
         spinner.setOnItemSelectedListener((adapterView, view, i, l) -> {
             if (adapterView.getItemAtPosition(i) instanceof AP ap) {
                 input.setText(ap.resourceLocation.toString());
                 input.getText();
             }
         });
-        layout.addView(spinner, new ViewGroup.LayoutParams(-2, -2));
-
-        input.addTextChangedListener((SimpleTextChangedListener) editable ->
-                resetSpinner(apArrayAdapter, editable, key));
 
     }
 
@@ -129,7 +153,7 @@ public class DFragment extends Fragment {
 
     private ArrayAdapter<AP> resetSpinner(ArrayAdapter<AP> adapter, Object editable, ResourceKey<? extends Registry<?>> key) {
         adapter.clear();
-        adapter.addAll(collectAps(key,editable.toString()));
+        adapter.addAll(collectAps(key, editable.toString()));
         return adapter;
     }
 
