@@ -45,6 +45,7 @@
     "client.MixinClientClientLevel",
     "client.MixinClientLevel",
     "client.MixinMinecraftClient",
+    "client.biome.MixinBiomeColors",
     "client.biome.MixinClientBiome",
     "client.block.MixinLeavesBlock",
     "client.block.MixinLightningRodBlock",

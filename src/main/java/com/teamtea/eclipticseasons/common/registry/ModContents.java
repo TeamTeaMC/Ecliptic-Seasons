@@ -128,12 +128,12 @@ public class ModContents {
                         event,
                         EclipticSeasonsApi.MODID, "Rain Together", modFile,
                         Component.translatable(EclipticSeasons.rl("rain_together").toLanguageKey("pack")),
-                        PackType.SERVER_DATA, PackSource.FEATURE,  Pack.Position.BOTTOM, false);
+                        PackType.SERVER_DATA, PackSource.FEATURE,  Pack.Position.BOTTOM, true);
                 if (CommonConfig.Resource.SnowTogether.get()) FakeResourceManagerHelperUtil.registerBuiltinResourcePack(
                         event,
                         EclipticSeasonsApi.MODID, "Snow Together", modFile,
                         Component.translatable(EclipticSeasons.rl("snow_together").toLanguageKey("pack")),
-                        PackType.SERVER_DATA, PackSource.FEATURE,  Pack.Position.BOTTOM, false);
+                        PackType.SERVER_DATA, PackSource.FEATURE,  Pack.Position.BOTTOM, true);
             }
         }
     }
