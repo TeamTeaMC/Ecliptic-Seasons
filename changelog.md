@@ -1,5 +1,6 @@
 ### 0.12.3.1
 
+- Add condition `is_snowy` for the seasonal variation data pack.
 - After enabling the "Snow Together" and "Rain Together" settings, they are no longer optional but are now forced enabled. If you wish to disable them, you can set the configuration to false.
 - The experimental feature "FoggyWeather" now has its default value changed to true.
 - The default value for "DynamicSnowTerm" has been changed to false to prevent players who are experiencing this mod for the first time from being confused by snowless winters.
