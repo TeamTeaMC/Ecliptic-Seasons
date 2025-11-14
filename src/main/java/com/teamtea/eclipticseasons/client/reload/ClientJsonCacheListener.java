@@ -16,6 +16,7 @@ import com.teamtea.eclipticseasons.api.data.client.model.ESModelLoadedJson;
 import com.teamtea.eclipticseasons.api.data.client.model.seasonal.SeasonBlockDefinition;
 import com.teamtea.eclipticseasons.api.data.client.model.seasonal.SeasonalTexture;
 import com.teamtea.eclipticseasons.api.data.season.SnowDefinition;
+import lombok.Getter;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.FileToIdConverter;
 import net.minecraft.resources.RegistryOps;
@@ -29,16 +30,16 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.io.Reader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Executor;
+import java.util.function.Supplier;
 
 public class ClientJsonCacheListener<T> extends SimpleJsonResourceReloadListener {
+    public static final Map<String, Supplier<Set<ResourceLocation>>> ALL_MAP = new HashMap<>();
+
     private final Map<ResourceLocation, JsonElement> elementMap = new HashMap<>();
     private static final Gson GSON = new GsonBuilder().setLenient()
             // .registerTypeHierarchyAdapter(Component.class, new Component.Serializer())
@@ -67,9 +68,11 @@ public class ClientJsonCacheListener<T> extends SimpleJsonResourceReloadListener
     public static final ClientJsonCacheListener<SeasonBlockDefinition> seasonDefCache = new ClientJsonCacheListener<>(GSON, DIRECTORY_SEASON_DEFINITION);
     private final String directory;
 
+
     public ClientJsonCacheListener(Gson gson, String directory) {
         super(gson, directory);
         this.directory = directory;
+        ALL_MAP.put(directory, () -> getElementMap().keySet());
     }
 
     @Override
