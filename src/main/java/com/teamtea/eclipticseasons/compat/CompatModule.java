@@ -49,9 +49,7 @@ public class CompatModule {
         if (isModernui() && FMLLoader.getDist() == Dist.CLIENT) {
             try {
                 Class<?> iuiHandlerClass = Class.forName("com.teamtea.eclipticseasons.compat.modernui.MUIHandler");
-                Class<?> iuiSetupClass = Class.forName("com.teamtea.eclipticseasons.compat.modernui.MUISetup");
                 gameBus.register(iuiHandlerClass.getField("INSTANCE").get(null));
-                modBus.register(iuiSetupClass.getField("INSTANCE").get(null));
             } catch (ClassNotFoundException | IllegalAccessException | NoSuchFieldException e) {
                 throw new RuntimeException(e);
             }

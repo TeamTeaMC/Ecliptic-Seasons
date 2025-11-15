@@ -5,26 +5,22 @@
 
 package com.teamtea.eclipticseasons.compat.modernui;
 
-import com.teamtea.eclipticseasons.api.data.season.SnowDefinition;
 import com.teamtea.eclipticseasons.client.reload.ClientJsonCacheListener;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import icyllis.arc3d.core.Color;
 import icyllis.modernui.R;
-import icyllis.modernui.TestFragment;
 import icyllis.modernui.annotation.NonNull;
 import icyllis.modernui.annotation.Nullable;
 import icyllis.modernui.core.Context;
 import icyllis.modernui.fragment.Fragment;
 import icyllis.modernui.graphics.drawable.ColorDrawable;
 import icyllis.modernui.graphics.drawable.GradientDrawable;
-import icyllis.modernui.graphics.drawable.ShapeDrawable;
-import icyllis.modernui.mc.ui.CenterFragment2;
 import icyllis.modernui.mc.ui.ThemeControl;
+import icyllis.modernui.text.Editable;
 import icyllis.modernui.text.InputFilter;
 import icyllis.modernui.text.TextWatcher;
 import icyllis.modernui.text.method.DigitsInputFilter;
-import icyllis.modernui.util.AttributeSet;
 import icyllis.modernui.util.DataSet;
 import icyllis.modernui.view.Gravity;
 import icyllis.modernui.view.LayoutInflater;
@@ -241,11 +237,11 @@ public class DFragment extends Fragment {
                 ViewGroup.LayoutParams.WRAP_CONTENT));
         pre.setText(label);
 
-        EditText input = new EditText(this.requireContext());
-        input.setBackground(new ColorDrawable(Color.GRAY));
-        input.setMinimumWidth(400);
-        input.setTag(label);
-        gridLayout.addView(input, new ViewGroup.MarginLayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
+        EditText editText = new EditText(this.requireContext());
+        editText.setBackground(new ColorDrawable(Color.GRAY));
+        editText.setMinimumWidth(400);
+        editText.setTag(label);
+        gridLayout.addView(editText, new ViewGroup.MarginLayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT));
 
         Spinner spinner = new Spinner(this.requireContext());
@@ -255,19 +251,27 @@ public class DFragment extends Fragment {
                 ViewGroup.LayoutParams.WRAP_CONTENT));
 
 
-        spinner.setOnItemSelectedListener((adapterView, view, i, l) -> {
+        //spinner.setOnItemSelectedListener((adapterView, view, i, l) -> {
+        //    if (adapterView.getSelectedItem() instanceof AP ap) {
+        //        editText.setText(ap.getText());
+        //    }
+        //});
+
+        spinner.setOnItemClickListener((adapterView, view, i, l) -> {
             if (adapterView.getSelectedItem() instanceof AP ap) {
-                input.setText(ap.getText());
+                editText.setText(ap.getText());
             }
         });
 
-        input.addTextChangedListener((SimpleTextChangedListener) editable ->
-                resetSpinner(apArrayAdapter, editable, apFunction));
+        editText.addTextChangedListener(
+                (SimpleTextChangedListener) (charSequence, i, i1, i2) ->
+                        resetSpinner(apArrayAdapter, charSequence, apFunction)
+        );
 
         layout.addView(gridLayout, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT));
 
-        editTexts.add(input);
+        editTexts.add(editText);
     }
 
     private ArrayAdapter<AP> setSpinner(Spinner spinner, Object editable, Function<Object, List<AP>> apFunction) {
@@ -351,8 +355,8 @@ public class DFragment extends Fragment {
             properties.retainAll(properties1);
         }
         return properties.stream().map(
-                p -> new AP(p.getName(), p.getName()))
-                        .collect(Collectors.toCollection(ArrayList::new));
+                        p -> new AP(p.getName(), p.getName()))
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     private static String getTypeKey(ResourceKey<? extends Registry<?>> key) {
@@ -387,7 +391,10 @@ public class DFragment extends Fragment {
     @FunctionalInterface
     public interface SimpleTextChangedListener extends TextWatcher {
         @Override
-        default void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+        void onTextChanged(CharSequence charSequence, int i, int i1, int i2);
+
+        @Override
+        default void afterTextChanged(Editable editable) {
         }
 
         @Override
