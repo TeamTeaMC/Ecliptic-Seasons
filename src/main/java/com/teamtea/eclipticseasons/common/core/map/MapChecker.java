@@ -20,7 +20,6 @@ import com.teamtea.eclipticseasons.common.network.SimpleNetworkHandler;
 import com.teamtea.eclipticseasons.common.network.message.ChunkBiomeUpdateMessage;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.core.*;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ChunkHolder;
@@ -639,8 +638,8 @@ public class MapChecker {
 
     public static int biomeToId(Registry<Biome> biomes, Biome b) {
         int id = biomes.getId(b);
-        if (id <0) {
-            Biome plainsBiome = biomes.get(Biomes.PLAINS); 
+        if (id < 0) {
+            Biome plainsBiome = biomes.get(Biomes.PLAINS);
             id = biomes.getId(plainsBiome);
         }
         return id;
@@ -1078,6 +1077,23 @@ public class MapChecker {
             }
         }
         return biomeHolder;
+    }
+
+    public static void resetBiomeHolder(ServerLevel serverLevel, BlockPos pos) {
+        int biomeDataVersion = EclipticUtil.getBiomeDataVersion(serverLevel);
+        ChunkAccess chunk = serverLevel.getChunk(pos);
+        if (chunk instanceof IChunkBiomeHolder chunkBiomeHolder) {
+            ChunkPos chunkPos = new ChunkPos(pos);
+            var biomeHolder = BiomeHolder
+                    .prepareBiomes(serverLevel, chunkPos, biomeDataVersion, true);
+            chunkBiomeHolder.eclipticseasons$setBiomeHolder(biomeHolder);
+
+            if (chunk instanceof LevelChunk levelChunk) {
+                for (ServerPlayer player : serverLevel.getChunkSource().chunkMap.getPlayers(chunkPos, false)) {
+                    MapChecker.sendChunkLoginInfo(serverLevel, levelChunk, chunkPos, player);
+                }
+            }
+        }
     }
 
     public static ChunkInfoMap forceChunkUpdateHeight(Level level, ChunkAccess chunk) {

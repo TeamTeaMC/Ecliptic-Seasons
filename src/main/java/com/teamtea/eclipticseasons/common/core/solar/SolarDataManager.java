@@ -97,7 +97,7 @@ public class SolarDataManager extends SavedData {
                     for (int j = 0; j < biomeWeathers.size(); j++) {
                         WeatherManager.BiomeWeather biomeWeather = biomeWeathers.get(j);
                         if (location.equals(biomeWeather.location.toString())) {
-                            biomeWeather.deserializeNBT(compound, level.registryAccess(),hash);
+                            biomeWeather.deserializeNBT(compound, level.registryAccess(), hash);
                             // 这里必须要id相等，不然缓存全部失效
                             if (i == j) {
                                 countCheck++;
@@ -108,7 +108,7 @@ public class SolarDataManager extends SavedData {
                 }
             }
             if (countCheck != listTag.size()) {
-                this.biomeDataVersion++;
+                updateBiomeVersion();
                 EclipticSeasons.logger("Warning for biome date need to be update with", listTag.size(), biomeWeathers == null ? 0 : biomeWeathers.size(), " new version is", biomeDataVersion);
             }
         }
@@ -228,6 +228,10 @@ public class SolarDataManager extends SavedData {
     public void setSolarTempChange(float solarTempChange) {
         this.solarTempChange = solarTempChange;
         setDirty();
+    }
+
+    public void updateBiomeVersion() {
+        this.biomeDataVersion++;
     }
 
     public void addHumidityControlProvider(BlockPos pos, HumidityControlProvider humidityControlProvider) {

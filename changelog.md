@@ -1,3 +1,8 @@
+### 0.12.3.2
+
+* Added the command `/ecliptic debug reset surface_biome_cache` to reset the global or specified-location biome cache. Note that chunk reload is required.
+* Added an optional feature (disabled by default): during autumn, grass blocks under trees will appear in a more withered-leaf color.
+
 ### 0.12.3.1
 
 - Add condition `is_snowy` for the seasonal variation data pack.
