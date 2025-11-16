@@ -4,6 +4,7 @@ import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.data.extend.example.*;
 import com.teamtea.eclipticseasons.data.extend.extra_snow.DatapackRegistryGeneratorExtra;
 import com.teamtea.eclipticseasons.data.extend.extra_snow.ExtraClientModelDefinitionProvider;
+import com.teamtea.eclipticseasons.data.extend.regional_snow.DatapackRegistryGeneratorExtra2;
 import com.teamtea.eclipticseasons.data.general.advancement.Advancements;
 import com.teamtea.eclipticseasons.data.api.MutablePackOutput;
 import com.teamtea.eclipticseasons.data.general.datapack.DatapackRegistryGenerator;
@@ -23,6 +24,8 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.data.metadata.PackMetadataGenerator;
+import net.minecraft.network.chat.Component;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.data.event.GatherDataEvent;
 
@@ -109,5 +112,12 @@ public class start {
             generator.addProvider(event.includeClient(), new ClientSnowDefinitionProvider(packOutput,MODID, helper,lookupProvider));
         }
 
+
+        // Regional Snow
+        packOutput = packOutput.move(Path.of("resourcepacks", "Regional Snow"));
+        if (event.includeServer()) {
+            generator.addProvider(event.includeServer(), PackMetadataGenerator.forFeaturePack(packOutput, Component.translatable("pack.eclipticseasons.regional_snow_term.description")));
+            generator.addProvider(event.includeServer(), new DatapackRegistryGeneratorExtra2(packOutput, lookupProvider));
+        }
     }
 }

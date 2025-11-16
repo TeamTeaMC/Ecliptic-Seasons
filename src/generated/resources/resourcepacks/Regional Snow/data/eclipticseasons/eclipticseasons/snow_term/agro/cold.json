@@ -1,0 +1,32 @@
+{
+  "biomes": "#eclipticseasons:agro/cold",
+  "end": "beginning_of_summer",
+  "events": [
+    {
+      "end": "grain_in_ear",
+      "start": "summer_solstice",
+      "temp_offset": -0.1
+    },
+    {
+      "end": "beginning_of_summer",
+      "start": "lesser_heat",
+      "temp_offset": 0.0
+    },
+    {
+      "end": "grain_rain",
+      "start": "greater_heat",
+      "temp_offset": 0.05
+    },
+    {
+      "end": "fresh_green",
+      "start": "beginning_of_autumn",
+      "temp_offset": 0.1
+    },
+    {
+      "end": "insects_awakening",
+      "start": "white_dew",
+      "temp_offset": 0.3
+    }
+  ],
+  "start": "lesser_heat"
+}

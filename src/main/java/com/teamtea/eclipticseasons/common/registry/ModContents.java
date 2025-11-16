@@ -31,6 +31,7 @@ import net.minecraft.server.packs.repository.PackSource;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.event.AddPackFindersEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -124,17 +125,22 @@ public class ModContents {
             }
 
             if (event.getPackType() == PackType.SERVER_DATA) {
-                if (CommonConfig.Resource.RainTogether.get()) FakeResourceManagerHelperUtil.registerBuiltinResourcePack(
-                        event,
-                        EclipticSeasonsApi.MODID, "Rain Together", modFile,
-                        Component.translatable(EclipticSeasons.rl("rain_together").toLanguageKey("pack")),
-                        PackType.SERVER_DATA, PackSource.FEATURE,  Pack.Position.BOTTOM, true);
-                if (CommonConfig.Resource.SnowTogether.get()) FakeResourceManagerHelperUtil.registerBuiltinResourcePack(
-                        event,
-                        EclipticSeasonsApi.MODID, "Snow Together", modFile,
-                        Component.translatable(EclipticSeasons.rl("snow_together").toLanguageKey("pack")),
-                        PackType.SERVER_DATA, PackSource.FEATURE,  Pack.Position.BOTTOM, true);
+                addPackIfEnabled(event, modFile,
+                        CommonConfig.Resource.RainTogether, "Rain Together", "rain_together");
+                addPackIfEnabled(event, modFile,
+                        CommonConfig.Resource.SnowTogether, "Rain Together", "snow_together");
+                addPackIfEnabled(event, modFile,
+                        CommonConfig.Resource.RegionalSnow, "Regional Snow", "regional_snow");
             }
         }
+    }
+
+    private static void addPackIfEnabled(AddPackFindersEvent event, ModFile modFile, ForgeConfigSpec.BooleanValue booleanValue, String path, String pack_id) {
+        if (booleanValue.get())
+            FakeResourceManagerHelperUtil.registerBuiltinResourcePack(
+                    event,
+                    EclipticSeasonsApi.MODID, path, modFile,
+                    Component.translatable(EclipticSeasons.rl(pack_id).toLanguageKey("pack")),
+                    PackType.SERVER_DATA, PackSource.FEATURE,  Pack.Position.BOTTOM, true);
     }
 }

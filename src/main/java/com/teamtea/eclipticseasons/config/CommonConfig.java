@@ -462,6 +462,7 @@ public class CommonConfig {
 
         public static ForgeConfigSpec.BooleanValue SnowTogether;
         public static ForgeConfigSpec.BooleanValue RainTogether;
+        public static ForgeConfigSpec.BooleanValue RegionalSnow;
 
         private static void load(ForgeConfigSpec.Builder builder) {
             builder.push("Resource");
@@ -471,6 +472,8 @@ public class CommonConfig {
                     .define("RainTogether", false);
             SnowTogether = builder.comment("Enable SnowTogether datapack for game.")
                     .define("SnowTogether", false);
+            RegionalSnow = builder.comment("Enable RegionalSnow datapack for game.")
+                    .define("RegionalSnow", false);
             builder.pop();
         }
     }
