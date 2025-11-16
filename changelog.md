@@ -1,3 +1,8 @@
+### 0.12.3.3
+
+- Added the option `WaterFreezesInFrozenBiomes`, enabled by default, to preserve vanilla behavior where water blocks freeze into ice in cold biomes.
+- Added the biome tag `eclipticseasons:extreme_cold` to mark biomes where above feature is active.
+
 ### 0.12.3.2
 
 * Added the command `/ecliptic debug reset surface_biome_cache` to reset the global or specified-location biome cache. Note that chunk reload is required.

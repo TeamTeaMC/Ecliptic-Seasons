@@ -256,17 +256,14 @@ public class BiomeClimateManager {
 
 
     public static @Nullable Holder<Biome> getHolder(RegistryAccess registryAccess, Biome biome) {
-        return registryAccess.registryOrThrow(Registries.BIOME)
-                .holders()
-                .filter(biomeReference -> biomeReference.value() == biome)
-                .findFirst().orElse(null);
+        Registry<Biome> biomes = registryAccess.registryOrThrow(Registries.BIOME);
+        Optional<Holder.Reference<Biome>> holder = biomes.getHolder(biomes.getId(biome));
+        return holder.orElse(null);
     }
 
-    public static @Nullable Holder<Biome> getHolder(Registry<Biome> registryAccess, Biome biome) {
-        return registryAccess
-                .holders()
-                .filter(biomeReference -> biomeReference.value() == biome)
-                .findFirst().orElse(null);
+    public static @Nullable Holder<Biome> getHolder(Registry<Biome> biomes, Biome biome) {
+        Optional<Holder.Reference<Biome>> holder = biomes.getHolder(biomes.getId(biome));
+        return holder.orElse(null);
     }
 
     public static TagKey<Biome> getTag(Biome biome) {

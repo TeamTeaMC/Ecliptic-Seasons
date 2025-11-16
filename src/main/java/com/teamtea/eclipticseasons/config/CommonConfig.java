@@ -128,6 +128,7 @@ public class CommonConfig {
         public static ForgeConfigSpec.BooleanValue heatStroke;
         public static ForgeConfigSpec.BooleanValue iceMelt;
         public static ForgeConfigSpec.BooleanValue snowDown;
+        public static ForgeConfigSpec.BooleanValue waterFreezesInFrozenBiomes;
 
         private static void load(ForgeConfigSpec.Builder builder) {
             builder.push("Temperature");
@@ -135,6 +136,8 @@ public class CommonConfig {
                     .define("IceAndSnowMelt", false);
             snowDown = builder.comment("It will snow in cold time.")
                     .define("IceAndSnow", false);
+            waterFreezesInFrozenBiomes = builder.comment("If enabled, water placed in frozen biomes will behave as in vanilla and freeze into ice.")
+                    .define("WaterFreezesInFrozenBiomes", true);
             heatStroke = builder.comment("Add heat stroke effect in summer noon while in hot biome.")
                     .define("HeatStroke", true);
             builder.pop();
@@ -184,19 +187,19 @@ public class CommonConfig {
                             () -> List.of(10500, 11000, 11500, 12000, 12500, 13000),
                             o -> o instanceof Integer i && (i >= 0 && i <= 24000));
             summerDayTimes = builder.comment("Day time length of summer, divided into six periods according to the solar term table.")
-                    .defineList(List.of("SummerDayTimes"),
+                    .defineListAllowEmpty(List.of("SummerDayTimes"),
                             () -> List.of(13500, 14000, 14500, 15000, 14500, 14000),
                             o -> o instanceof Integer i && (i >= 0 && i <= 24000));
             autumnDayTimes = builder.comment("Day time length of autumn, divided into six periods according to the solar term table.")
-                    .defineList(List.of("AutumnDayTimes"),
+                    .defineListAllowEmpty(List.of("AutumnDayTimes"),
                             () -> List.of(13500, 13000, 12500, 12000, 11500, 11000),
                             o -> o instanceof Integer i && (i >= 0 && i <= 24000));
             winterDayTimes = builder.comment("Day time length of winter, divided into six periods according to the solar term table.")
-                    .defineList(List.of("WinterDayTimes"),
+                    .defineListAllowEmpty(List.of("WinterDayTimes"),
                             () -> List.of(10500, 10000, 9500, 9000, 9500, 10000),
                             o -> o instanceof Integer i && (i >= 0 && i <= 24000));
             noneDayTimes = builder.comment("Day time length of none season, divided into six periods according to the solar term table.")
-                    .defineList(List.of("NoneDayTimes"),
+                    .defineListAllowEmpty(List.of("NoneDayTimes"),
                             () -> List.of(12000),
                             o -> o instanceof Integer i && (i >= 0 && i <= 24000));
             validDimensions = builder.comment("List of dimensions where season effects apply. Must be natural worlds with a day-night cycle.")

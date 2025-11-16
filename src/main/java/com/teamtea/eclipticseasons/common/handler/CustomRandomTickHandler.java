@@ -1,11 +1,14 @@
 package com.teamtea.eclipticseasons.common.handler;
 
 
+import com.teamtea.eclipticseasons.api.constant.tag.ClimateTypeBiomeTags;
 import com.teamtea.eclipticseasons.api.misc.CustomRandomTick2;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
+import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.LightLayer;
@@ -98,6 +101,12 @@ public final class CustomRandomTickHandler {
     }
 
     public static boolean checkExtraFreezeCondition(ServerLevel level, Biome biomeHolder, BlockPos water) {
+        if (CommonConfig.Temperature.waterFreezesInFrozenBiomes.get()) {
+            Holder<Biome> holder = BiomeClimateManager.getHolder(level.registryAccess(), biomeHolder);
+            if (holder != null && holder.is(ClimateTypeBiomeTags.EXTREME_COLD)) {
+                return biomeHolder.shouldFreeze(level, water);
+            }
+        }
         if (CommonConfig.Temperature.snowDown.get()
                 && WeatherManager.getSnowStatus(level, biomeHolder, water, EclipticUtil.isRainingOrSnowingWithSurfaceBiome(level, biomeHolder, water)) == WeatherManager.SnowRenderStatus.SNOW) {
             if (water.getY() >= level.getMinBuildHeight()
