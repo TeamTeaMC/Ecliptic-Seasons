@@ -130,7 +130,7 @@ public class ModContents {
                 addPackIfEnabled(event, modFile,
                         CommonConfig.Resource.SnowTogether, "Rain Together", "snow_together");
                 addPackIfEnabled(event, modFile,
-                        CommonConfig.Resource.RegionalSnow, "Regional Snow Time", "regional_snow");
+                        CommonConfig.Resource.RegionalSnowTime, "Regional Snow Time", "regional_snow");
                 addPackIfEnabled(event, modFile,
                         CommonConfig.Resource.VanillaBiomeClimateSettings, "Vanilla Biome Climate Settings", "vanilla_biome_climate_settings");
             }

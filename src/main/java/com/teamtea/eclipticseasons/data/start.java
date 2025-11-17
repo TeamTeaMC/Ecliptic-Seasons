@@ -4,7 +4,7 @@ import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.data.extend.example.*;
 import com.teamtea.eclipticseasons.data.extend.extra_snow.DatapackRegistryGeneratorExtra;
 import com.teamtea.eclipticseasons.data.extend.extra_snow.ExtraClientModelDefinitionProvider;
-import com.teamtea.eclipticseasons.data.extend.regional_snow.DatapackRegistryGeneratorExtra2;
+import com.teamtea.eclipticseasons.data.extend.regional_snow_time.RegionalSnowTimeProvider;
 import com.teamtea.eclipticseasons.data.general.advancement.Advancements;
 import com.teamtea.eclipticseasons.data.api.MutablePackOutput;
 import com.teamtea.eclipticseasons.data.general.datapack.DatapackRegistryGenerator;
@@ -117,7 +117,7 @@ public class start {
         packOutput = packOutput.move(Path.of("resourcepacks", "Regional Snow Time"));
         if (event.includeServer()) {
             generator.addProvider(event.includeServer(), PackMetadataGenerator.forFeaturePack(packOutput, Component.translatable("pack.eclipticseasons.regional_snow_time.description")));
-            generator.addProvider(event.includeServer(), new DatapackRegistryGeneratorExtra2(packOutput, lookupProvider));
+            generator.addProvider(event.includeServer(), new RegionalSnowTimeProvider(packOutput, lookupProvider));
         }
     }
 }

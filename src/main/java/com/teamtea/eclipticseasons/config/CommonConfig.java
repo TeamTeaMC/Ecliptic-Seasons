@@ -462,7 +462,7 @@ public class CommonConfig {
 
         public static ForgeConfigSpec.BooleanValue SnowTogether;
         public static ForgeConfigSpec.BooleanValue RainTogether;
-        public static ForgeConfigSpec.BooleanValue RegionalSnow;
+        public static ForgeConfigSpec.BooleanValue RegionalSnowTime;
         public static ForgeConfigSpec.BooleanValue VanillaBiomeClimateSettings;
 
         private static void load(ForgeConfigSpec.Builder builder) {
@@ -473,7 +473,7 @@ public class CommonConfig {
                     .define("RainTogether", false);
             SnowTogether = builder.comment("Enable Snow Together datapack for game.")
                     .define("SnowTogether", false);
-            RegionalSnow = builder.comment("Enable Regional Snow datapack for game.")
+            RegionalSnowTime = builder.comment("Enable Regional Snow datapack for game.")
                     .define("RegionalSnowTime", false);
             VanillaBiomeClimateSettings = builder.comment("Enable Vanilla Biome Climate Settings datapack for game.")
                     .define("VanillaBiomeClimateSettings", true);

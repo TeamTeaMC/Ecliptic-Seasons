@@ -1,4 +1,4 @@
-package com.teamtea.eclipticseasons.data.extend.regional_snow;
+package com.teamtea.eclipticseasons.data.extend.regional_snow_time;
 
 
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
-public class DatapackRegistryGeneratorExtra2 extends DatapackBuiltinEntriesProvider {
+public class RegionalSnowTimeProvider extends DatapackBuiltinEntriesProvider {
 
     public static final RegistrySetBuilder REGISTRY_SET_BUILDER = new RegistrySetBuilder()
             .add(ESRegistries.SNOW_TERM, (context -> {
@@ -31,7 +31,7 @@ public class DatapackRegistryGeneratorExtra2 extends DatapackBuiltinEntriesProvi
                                 .end(SnowTerm.T000.getEnd())
                                 .tempEvents(List.of(
                                         CustomSnowTerm.TempEvent.builder()
-                                                .tempOffset(-0.1f)
+                                                .tempOffset(-0.18f)
                                                 .start(SnowTerm.TN.getStart())
                                                 .end(SnowTerm.TN.getEnd())
                                                 .build(),
@@ -110,7 +110,7 @@ public class DatapackRegistryGeneratorExtra2 extends DatapackBuiltinEntriesProvi
                                 .build());
             }));
 
-    public DatapackRegistryGeneratorExtra2(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
+    public RegionalSnowTimeProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
         super(output, registries, REGISTRY_SET_BUILDER, Set.of(EclipticSeasonsApi.MODID));
     }
 
