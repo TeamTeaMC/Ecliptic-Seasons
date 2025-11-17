@@ -1,0 +1,8 @@
+{
+  "pack": {
+    "description": {
+      "translate": "This data pack keeps vanilla biomes’ temperature and downfall consistent with Mojang’s settings, preventing unwanted changes from other mods."
+    },
+    "pack_format": 15
+  }
+}

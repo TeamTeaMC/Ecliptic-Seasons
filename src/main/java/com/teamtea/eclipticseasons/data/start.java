@@ -114,9 +114,9 @@ public class start {
 
 
         // Regional Snow
-        packOutput = packOutput.move(Path.of("resourcepacks", "Regional Snow"));
+        packOutput = packOutput.move(Path.of("resourcepacks", "Regional Snow Time"));
         if (event.includeServer()) {
-            generator.addProvider(event.includeServer(), PackMetadataGenerator.forFeaturePack(packOutput, Component.translatable("pack.eclipticseasons.regional_snow_term.description")));
+            generator.addProvider(event.includeServer(), PackMetadataGenerator.forFeaturePack(packOutput, Component.translatable("pack.eclipticseasons.regional_snow_time.description")));
             generator.addProvider(event.includeServer(), new DatapackRegistryGeneratorExtra2(packOutput, lookupProvider));
         }
     }

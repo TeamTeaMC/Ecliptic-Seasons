@@ -42,11 +42,15 @@ public class FakeResourceManagerHelperUtil {
         }
     }
 
-    public static void registerBuiltinResourcePack(AddPackFindersEvent event, String namespace, String pack, ModFile modFile, MutableComponent translate, PackType packType, PackSource source,Pack.Position position, boolean require) {
+    public static void registerBuiltinResourcePack(AddPackFindersEvent event, String namespace, String pack, ModFile modFile, MutableComponent translate, PackType packType, PackSource source, Pack.Position position, boolean require) {
+        registerBuiltinResourcePack(event, "", namespace, pack, modFile, translate, packType, source, position, require);
+    }
+
+    public static void registerBuiltinResourcePack(AddPackFindersEvent event, String prefix, String namespace, String pack, ModFile modFile, MutableComponent translate, PackType packType, PackSource source, Pack.Position position, boolean require) {
         if (event.getPackType() == packType) {
             event.addRepositorySource(consumer -> consumer.accept(
                     Pack.readMetaAndCreate(pack, translate, require,
-                            id -> new ESModFilePackResources(namespace, pack, modFile, "resourcepacks/" + pack), packType,
+                            id -> new ESModFilePackResources(namespace, prefix + pack, modFile, "resourcepacks/" + pack), packType,
                             position, source)));
         }
     }

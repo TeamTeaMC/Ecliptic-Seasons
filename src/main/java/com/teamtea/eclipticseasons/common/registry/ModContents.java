@@ -130,7 +130,9 @@ public class ModContents {
                 addPackIfEnabled(event, modFile,
                         CommonConfig.Resource.SnowTogether, "Rain Together", "snow_together");
                 addPackIfEnabled(event, modFile,
-                        CommonConfig.Resource.RegionalSnow, "Regional Snow", "regional_snow");
+                        CommonConfig.Resource.RegionalSnow, "Regional Snow Time", "regional_snow");
+                addPackIfEnabled(event, modFile,
+                        CommonConfig.Resource.VanillaBiomeClimateSettings, "Vanilla Biome Climate Settings", "vanilla_biome_climate_settings");
             }
         }
     }
@@ -138,9 +140,9 @@ public class ModContents {
     private static void addPackIfEnabled(AddPackFindersEvent event, ModFile modFile, ForgeConfigSpec.BooleanValue booleanValue, String path, String pack_id) {
         if (booleanValue.get())
             FakeResourceManagerHelperUtil.registerBuiltinResourcePack(
-                    event,
+                    event, EclipticSeasonsApi.MODID + "/",
                     EclipticSeasonsApi.MODID, path, modFile,
                     Component.translatable(EclipticSeasons.rl(pack_id).toLanguageKey("pack")),
-                    PackType.SERVER_DATA, PackSource.FEATURE,  Pack.Position.BOTTOM, true);
+                    PackType.SERVER_DATA, PackSource.FEATURE, Pack.Position.BOTTOM, true);
     }
 }
