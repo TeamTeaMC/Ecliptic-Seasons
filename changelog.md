@@ -1,3 +1,11 @@
+### 0.12.3.4
+
+- Added the “Regional Snow Time” built-in data pack option (disabled by default), which assigns snowfall duration based
+  on the Overworld agricultural zone tags.
+- Added the “Vanilla Biome Climate Settings” built-in data pack option (enabled by default) to prevent mods such as WWOO
+  and WWEE from freely modifying biome temperature and downfall, which would otherwise affect humidity and weather
+  behavior.
+
 ### 0.12.3.3
 
 - Added the option `WaterFreezesInFrozenBiomes`, enabled by default, to preserve vanilla behavior where water blocks freeze into ice in cold biomes.
