@@ -464,6 +464,7 @@ public class CommonConfig {
         public static ForgeConfigSpec.BooleanValue RainTogether;
         public static ForgeConfigSpec.BooleanValue RegionalSnowTime;
         public static ForgeConfigSpec.BooleanValue VanillaBiomeClimateSettings;
+        public static ForgeConfigSpec.BooleanValue NotIgnoreRiver;
 
         private static void load(ForgeConfigSpec.Builder builder) {
             builder.push("Resource");
@@ -477,6 +478,8 @@ public class CommonConfig {
                     .define("RegionalSnowTime", false);
             VanillaBiomeClimateSettings = builder.comment("Enable Vanilla Biome Climate Settings datapack for game.")
                     .define("VanillaBiomeClimateSettings", true);
+            NotIgnoreRiver = builder.comment("Enable Not Ignore River datapack for climatic query.")
+                    .define("NotIgnoreRiver", false);
             builder.pop();
         }
     }

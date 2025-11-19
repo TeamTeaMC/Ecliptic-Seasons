@@ -133,6 +133,8 @@ public class ModContents {
                         CommonConfig.Resource.RegionalSnowTime, "Regional Snow Time", "regional_snow");
                 addPackIfEnabled(event, modFile,
                         CommonConfig.Resource.VanillaBiomeClimateSettings, "Vanilla Biome Climate Settings", "vanilla_biome_climate_settings");
+                addPackIfEnabled(event, modFile,
+                        CommonConfig.Resource.NotIgnoreRiver, "Not Ignore River", "not_ignore_river");
             }
         }
     }

@@ -1,0 +1,8 @@
+{
+  "pack": {
+    "description": {
+      "translate": "Rivers are not suitable for defining climate-based biomes because they are too narrow and traverse different biomes, from deserts to forests.\nHowever, using approximate solutions as substitutes can easily lead to chunk loading deadlocks due to environmental issues and the inherently high demand for queries."
+    },
+    "pack_format": 15
+  }
+}

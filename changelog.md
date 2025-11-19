@@ -1,3 +1,11 @@
+### 0.12.3.5
+
+- Added an optional datapack `Not Ignore River` for climatic query.
+
+Rivers are not suitable for defining climate-based biomes because they are too narrow and traverse different biomes, from deserts to forests.
+
+However, using approximate solutions as substitutes can easily lead to chunk loading deadlocks due to environmental issues and the inherently high demand for queries.
+
 ### 0.12.3.4
 
 - Added the “Regional Snow Time” built-in data pack option (disabled by default), which assigns snowfall duration based
