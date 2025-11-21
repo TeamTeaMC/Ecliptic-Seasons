@@ -7,9 +7,11 @@ import com.teamtea.eclipticseasons.api.constant.tag.ESEnchantmentTags;
 import com.teamtea.eclipticseasons.api.constant.tag.ESItemTags;
 import com.teamtea.eclipticseasons.api.constant.tag.ESMobEffectTags;
 import com.teamtea.eclipticseasons.api.data.weather.special_effect.WeatherEffect;
+import com.teamtea.eclipticseasons.api.event.BeforeCheckSnowStatusEvent;
 import com.teamtea.eclipticseasons.api.misc.IBiomeTagHolder;
 import com.teamtea.eclipticseasons.api.misc.IBiomeWeatherProvider;
 import com.teamtea.eclipticseasons.common.core.snow.SnowyMapChecker;
+import com.teamtea.eclipticseasons.common.hook.ESEventHook;
 import com.teamtea.eclipticseasons.common.network.message.UpdateTempChangeMessage;
 import com.teamtea.eclipticseasons.common.registry.ESRegistries;
 import com.teamtea.eclipticseasons.common.registry.EffectRegistry;
@@ -914,6 +916,9 @@ public class WeatherManager {
     public static SnowRenderStatus getSnowStatus(ServerLevel level, Biome biome, BlockPos pos, boolean rain) {
         var status = SnowRenderStatus.NONE;
         if (biome.hasPrecipitation()) {
+            BeforeCheckSnowStatusEvent result = ESEventHook.modifySnowStatus(level, biome, pos, rain);
+            if (result.getStatus() != null) return result.getStatus();
+            rain = result.isRain();
             Biome.Precipitation precipitation = getPrecipitationAt(level, biome, pos);
             if (precipitation == Biome.Precipitation.SNOW) {
                 if (rain) status = SnowRenderStatus.SNOW;

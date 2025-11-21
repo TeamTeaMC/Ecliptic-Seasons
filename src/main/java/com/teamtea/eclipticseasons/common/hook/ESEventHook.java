@@ -1,10 +1,14 @@
 package com.teamtea.eclipticseasons.common.hook;
 
+import com.teamtea.eclipticseasons.api.event.BeforeCheckSnowStatusEvent;
 import com.teamtea.eclipticseasons.api.event.CanPlantGrowEvent;
 import com.teamtea.eclipticseasons.api.event.ESClientEntityTickEvent;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Event;
@@ -28,5 +32,17 @@ public class ESEventHook {
 
     public static void onClientEntityTick(Entity entity) {
         MinecraftForge.EVENT_BUS.post(new ESClientEntityTickEvent(entity));
+    }
+
+    public static BeforeCheckSnowStatusEvent modifySnowStatus(ServerLevel level, Biome biome, BlockPos pos, boolean rain) {
+        var ev = BeforeCheckSnowStatusEvent.builder()
+                .level(level)
+                .pos(pos)
+                .biome(biome)
+                .rain(rain)
+                .status(null)
+                .build();
+        MinecraftForge.EVENT_BUS.post(ev);
+        return ev;
     }
 }

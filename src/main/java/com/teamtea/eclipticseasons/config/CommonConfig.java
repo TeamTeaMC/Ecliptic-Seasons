@@ -398,6 +398,7 @@ public class CommonConfig {
 
         public static ForgeConfigSpec.BooleanValue snowInWorld;
         public static ForgeConfigSpec.BooleanValue forceChunkUpdate;
+        public static ForgeConfigSpec.BooleanValue forceChunkUpdateOnlyWhenMelt;
         public static ForgeConfigSpec.BooleanValue snowyUnderSnowLike;
         public static ForgeConfigSpec.BooleanValue stepMelt;
 
@@ -449,6 +450,8 @@ public class CommonConfig {
                     .define("SnowInWorld", false);
             forceChunkUpdate = builder.comment("When SnowInWorld is enabled, update chunk state on load based on differences from previous state records.")
                     .define("ForceSnowyChunkUpdate", true);
+            forceChunkUpdateOnlyWhenMelt = builder.comment("Only force updating the status of chunk when snow should melt.")
+                    .define("ForceChunkUpdateOnlyWhenMelt", false);
             snowyUnderSnowLike = builder.comment("When SnowInWorld is enabled, blocks like full blocks under snow layers will have a snowy appearance.")
                     .define("SnowCoverUnderBlocks", true);
             stepMelt = builder.comment("When SnowInWorld is enabled, snow may melt when stepped on due to heat.")

@@ -1,3 +1,8 @@
+### 0.12.3.6
+
+- Added an option `ForceChunkUpdateOnlyWhenMelt`.
+- Added an event `BeforeCheckSnowStatusEvent`.
+
 ### 0.12.3.5
 
 - Added an optional datapack `Not Ignore River` for climatic query.
