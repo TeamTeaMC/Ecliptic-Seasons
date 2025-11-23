@@ -9,6 +9,8 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 
+import java.util.List;
+
 public interface BiomeRain {
     int ordinal();
 
@@ -62,6 +64,19 @@ public interface BiomeRain {
 
     public default Holder<WeatherEffect> getSpecialEffect() {
         return null;
+    }
+
+    public default boolean isDynamic() {
+        return false;
+    }
+
+
+    public default boolean isResolvable() {
+        return false;
+    }
+
+    public default List<BiomeRain> resolveOrderedList() {
+        return List.of(this);
     }
 
 }

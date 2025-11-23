@@ -21,7 +21,8 @@ public class PrecipitationCondition implements IChangeCondition {
     ).apply(ins, PrecipitationCondition::new));
 
 
-    private final Biome.Precipitation precipitation;
+    @Builder.Default
+    private final Biome.Precipitation precipitation = Biome.Precipitation.RAIN;
 
     @Override
     public ResourceLocation getType() {

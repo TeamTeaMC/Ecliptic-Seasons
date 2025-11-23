@@ -1,34 +1,95 @@
+### 0.12.4
+
+- Introduces JEI support for Environmental Humidity, Season Quests, Cauldron Snow Transformation, and Season Ritual with new categories.
+- Refactors datapack sorting logic for improved internal organization.
+
+### 0.12.3.6
+
+- Added an option `ForceChunkUpdateOnlyWhenMelt`.
+- Added an event `BeforeCheckSnowStatusEvent`.
+
+### 0.12.3.5
+
+- Added an optional datapack `Not Ignore River` for climatic query.
+
+### 0.12.3.4
+
+- Fixed a bug where multiple built-in data packs could not be enabled at the same time due to naming conflicts.
+- Added the “Regional Snow Time” built-in data pack option (disabled by default), which assigns snowfall duration based
+  on the Overworld agricultural zone tags.
+- Added the “Vanilla Biome Climate Settings” built-in data pack option (enabled by default) to prevent mods such as WWOO
+  and WWEE from freely modifying biome temperature and downfall, which would otherwise affect humidity and weather
+  behavior.
+
+### 0.12.3.3
+
+- Added the option `WaterFreezesInFrozenBiomes`, enabled by default, to preserve vanilla behavior where water blocks
+  freeze into ice in cold biomes.
+- Added the biome tag `eclipticseasons:extreme_cold` to mark biomes where above feature is active.
+
+### 0.12.3.2
+
+* Added the command `/ecliptic debug reset surface_biome_cache` to reset the global or specified-location biome cache.
+  Note that chunk reload is required.
+* Added an optional feature (disabled by default): during autumn, grass blocks under trees will appear in a more
+  withered-leaf color.
+
+### 0.12.3.1
+
+- Add condition `is_snowy` for the seasonal variation data pack.
+- The experimental feature "FoggyWeather" now has its default value changed to true.
+- The default value for "DynamicSnowTerm" has been changed to false to prevent players who are experiencing this mod for
+  the first time from being confused by snowless winters.
+
+### 0.12.3-beta
+
+- Added **composite-type weather effects**, which can be used to combine multiple weather effects.
+- Added **none** weather effect to **cancel precipitation**.
+- Added **persistent caching and random weighting** for `BiomeRain` calculations.
+- Added **special KubeJS bindings**; you can now use both `EclipticSeasonsApi` and `EclipticSeasonsBindings` api.
+- Fixed an issue where the `NotRainInDesert` option would not prevent rain in deserts, while keeping it **enabled by
+  default**.
+
 ### 0.12.2-beta
 
-- Added the `special_effect` property to the `biome_rain` datapack, which can be used to specify special effects applied during weather events.
-- Added the `biome_rain_effect` datapack, which currently includes the types `none` and `fog`; the `snow` and `rain` types will be introduced in version 0.12.2.
+- Added the `special_effect` property to the `biome_rain` datapack, which can be used to specify special effects applied
+  during weather events.
+- Added the `biome_rain_effect` datapack, which currently includes the types `none` and `fog`; the `snow` and `rain`
+  types will be introduced in version 0.12.2.
 - Debugged certain initialization methods of Fog rendering to avoid issues under specific startup conditions.
 
 ### 0.12.1
 
-- Added seasonal ritual: after crafting the Greenhouse Core Container, it can be activated with a Seasonal Prayer Scroll to begin the ritual and obtain the Seasonal Greenhouse Core. Be careful not to place it directly on the ground.
+- Added seasonal ritual: after crafting the Greenhouse Core Container, it can be activated with a Seasonal Prayer Scroll
+  to begin the ritual and obtain the Seasonal Greenhouse Core. Be careful not to place it directly on the ground.
 - Added an experimental fog rendering feature, currently appearing during rain when enabled.
 - Added a new display mode for the calendar that shows the current solar term day.
-- Added optional datapacks “Rain Together” and “Snow Together” to synchronize weather across biomes, requiring configuration to be enabled.
+- Added optional datapacks “Rain Together” and “Snow Together” to synchronize weather across biomes, requiring
+  configuration to be enabled.
 
 ### 0.12.0.5.1
 
-- Prevent crashes caused by the illegal repeated triggering of chunk loading events when the Create mod's deployer uses items while SnowInWorld is enabled.
+- Prevent crashes caused by the illegal repeated triggering of chunk loading events when the Create mod's deployer uses
+  items while SnowInWorld is enabled.
 
 ### 0.12.0.5
 
 - Fixed an issue where the Snow Term was not correctly calculated when Solar Weather was disabled.
-- When a WeatherRegion's weather subgroup contains a reference to its own Core, it will no longer copy itself repeatedly.
-- Added a fallback mechanism for the sequence table corresponding to built-in Biome IDs; if a Biome does not exist, it will return the ID of the Plains biome.
+- When a WeatherRegion's weather subgroup contains a reference to its own Core, it will no longer copy itself
+  repeatedly.
+- Added a fallback mechanism for the sequence table corresponding to built-in Biome IDs; if a Biome does not exist, it
+  will return the ID of the Plains biome.
 
 ### 0.12.0.4
 
 - Upgrade Distant Horizons compatibility to version 2.3.5-b.
-- Fixed an issue where, with the FrozenWater experimental feature enabled and lighting checks turned on, breaking thin ice would incorrectly trigger cracking sounds due to inverted lighting check results.
+- Fixed an issue where, with the FrozenWater experimental feature enabled and lighting checks turned on, breaking thin
+  ice would incorrectly trigger cracking sounds due to inverted lighting check results.
 
 ### 0.12.0.3
 
-- Provided an optional classic-style snowy block resource pack to prevent Z-fighting issues when used together with CTM models.
+- Provided an optional classic-style snowy block resource pack to prevent Z-fighting issues when used together with CTM
+  models.
 
 ### 0.12.0.2.1
 

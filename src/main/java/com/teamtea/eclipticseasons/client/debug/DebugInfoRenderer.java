@@ -83,8 +83,8 @@ public final class DebugInfoRenderer {
                 String biomesSS = "E-Biome: " + Component.translatable(Util.makeDescriptionId("biome", ResourceLocation.parse(MapChecker.getSurfaceBiome(level1, pos).getRegisteredName()))).getString();
 
                 String solarTermS = "Solar Term: " + solarTerm.getTranslation().getString();
-                String biomeRainS = "Biome Rain: " + solarTerm.getBiomeRain(biomeWeather.biomeHolder);
-                String snowTermS = "Snow Term: " + SolarTerm.getSnowTerm(biomeWeather.biomeHolder.value(), true,EclipticUtil.getSnowTempChange(level1));
+                String biomeRainS = "Biome Rain: " + biomeWeather.getBiomeRain();
+                String snowTermS = "Snow Term: " + SolarTerm.getSnowTerm(biomeWeather.biomeHolder.value(), false,EclipticUtil.getSnowTempChange(level1));
                 drawInfo(matrixStack, screenWidth, screenHeight, "", index++);
                 drawInfo(matrixStack, screenWidth, screenHeight, biomesS, index++);
                 drawInfo(matrixStack, screenWidth, screenHeight, biomesSS, index++);

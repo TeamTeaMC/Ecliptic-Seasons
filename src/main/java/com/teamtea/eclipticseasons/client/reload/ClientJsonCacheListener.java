@@ -15,6 +15,7 @@ import com.teamtea.eclipticseasons.api.data.client.SeasonalBiomeAmbient;
 import com.teamtea.eclipticseasons.api.data.client.model.ESModelLoadedJson;
 import com.teamtea.eclipticseasons.api.data.client.model.seasonal.SeasonBlockDefinition;
 import com.teamtea.eclipticseasons.api.data.client.model.seasonal.SeasonalTexture;
+import com.teamtea.eclipticseasons.api.data.client.ui.UIParser;
 import com.teamtea.eclipticseasons.api.data.season.SnowDefinition;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.FileToIdConverter;
@@ -28,18 +29,18 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.io.Reader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Executor;
+import java.util.function.Supplier;
 
 public class ClientJsonCacheListener<T> extends SimpleJsonResourceReloadListener {
+    public static final Map<String, Supplier<Set<ResourceLocation>>> ALL_MAP = new HashMap<>();
+
     private final Map<ResourceLocation, JsonElement> elementMap = new HashMap<>();
-    private static final Gson GSON = new GsonBuilder().setLenient()
+    public static final Gson GSON = new GsonBuilder().setLenient()
             // .registerTypeHierarchyAdapter(Component.class, new Component.Serializer())
             .create();
 
@@ -53,6 +54,9 @@ public class ClientJsonCacheListener<T> extends SimpleJsonResourceReloadListener
     public static final String DIRECTORY_SEASON_DEFINITION = EclipticSeasonsApi.MODID + "/season_definitions";
 
     public static final String DIRECTORY_SEASON_TEXTURES = EclipticSeasonsApi.MODID + "/season_textures";
+
+    public static final String DIRECTORY_UI_PARSER = EclipticSeasonsApi.MODID + "/ui_parser";
+
     // Async
     public static final ClientJsonCacheListener<ESModelLoadedJson> modelDefCache = new ClientJsonCacheListener<>(GSON, DIRECTORY_MODEL_DEFINITION);
     public static final ClientJsonCacheListener<SeasonalTexture> textureReMappingsCache = new ClientJsonCacheListener<>(GSON, DIRECTORY_SEASON_TEXTURES);
@@ -63,12 +67,14 @@ public class ClientJsonCacheListener<T> extends SimpleJsonResourceReloadListener
     public static final ClientJsonCacheListener<SnowDefinition> snowDefOverrideCache = new ClientJsonCacheListener<>(GSON, DIRECTORY_SNOW_DEFINITION);
     public static final ClientJsonCacheListener<SeasonalBiomeAmbient> ambientCache = new ClientJsonCacheListener<>(GSON, DIRECTORY_AMBIENT);
     public static final ClientJsonCacheListener<SeasonBlockDefinition> seasonDefCache = new ClientJsonCacheListener<>(GSON, DIRECTORY_SEASON_DEFINITION);
+    public static final ClientJsonCacheListener<UIParser> uiParserCache = new ClientJsonCacheListener<>(GSON, DIRECTORY_UI_PARSER);
+
+
     private final String directory;
-
-
     public ClientJsonCacheListener(Gson gson, String directory) {
         super(gson, directory);
         this.directory = directory;
+        ALL_MAP.put(directory, () -> getElementMap().keySet());
     }
 
     @Override

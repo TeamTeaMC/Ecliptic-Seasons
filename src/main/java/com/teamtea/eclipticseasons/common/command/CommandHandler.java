@@ -14,6 +14,7 @@ import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.api.util.SimpleUtil;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
+import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.core.snow.SnowyMapChecker;
 import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
@@ -69,148 +70,166 @@ public class CommandHandler {
                         .then(Commands.literal("night")
                                 .executes((source) -> TimeCommand.setTime(source.getSource(), EclipticUtil.getNightTime(source.getSource().getLevel()))))));
 
-
-        dispatcher.register(Commands.literal(EclipticSeasonsApi.SMODID).
-                then(Commands.literal("solar")
-                        .requires((source) -> source.hasPermission(2))
-                        .then(Commands.literal("set")
-                                .then(Commands.argument("day", IntegerArgumentType.integer())
-                                        .executes(commandContext -> setDay(commandContext.getSource(), IntegerArgumentType.getInteger(commandContext, "day")))))
-                        .then(Commands.literal("get")
-                                .executes(commandContext -> {
-                                    int solar = EclipticUtil.getNowSolarDay(commandContext.getSource().getLevel());
-                                    commandContext.getSource().sendSuccess(() -> Component.literal("" + solar), true);
-                                    return 0;
-                                })
-                        )
-                        .then(Commands.literal("setSnowTempChange")
-                                .then(Commands.argument("tempChange", FloatArgumentType.floatArg(-0.25f, 0.25f))
-                                        .executes(commandContext -> setTempChange(commandContext.getSource(), FloatArgumentType.getFloat(commandContext, "tempChange")))))
-                        .then(Commands.literal("getSnowTempChange")
-                                .executes(commandContext -> {
-                                    float snowTempChange = EclipticUtil.getSnowTempChange(commandContext.getSource().getLevel());
-                                    commandContext.getSource().sendSuccess(() -> Component.literal("" + snowTempChange), true);
-                                    return 0;
-                                })
-                        )
-                        .then(Commands.literal("setTerm")
-                                .then(Commands.argument("term", StringArgumentType.greedyString()).suggests((context, builder) -> {
-                                            String pre = "";
-                                            try {
-                                                pre = context.getArgument("term", String.class);
-                                            } catch (IllegalArgumentException e) {
-                                                // e.printStackTrace();
-                                            }
-                                            String finalPre = pre;
-                                            for (SolarTerm solarTerm : SolarTerm.collectValues()) {
-                                                if (solarTerm != SolarTerm.NONE) {
-                                                    MutableComponent translation = solarTerm.getTranslation();
-                                                    String s = solarTerm.getName();
-                                                    if (s.contains(finalPre.toLowerCase(Locale.ROOT))) {
-                                                        builder.suggest(s, Component.translatable("%s%s%s%s",
-                                                                Component.literal("[").withStyle(ChatFormatting.WHITE),
-                                                                translation.withStyle(solarTerm.getSeason().getColor()).withStyle(ChatFormatting.WHITE),
-                                                                Component.literal("] ").withStyle(ChatFormatting.WHITE)
-                                                                , solarTerm.getAlternationText()));
+        for (String modId : List.of(EclipticSeasonsApi.SMODID, EclipticSeasonsApi.MODID, "season")) {
+            dispatcher.register(Commands.literal(modId)
+                    .then(Commands.literal("debug")
+                            .requires((source) -> source.hasPermission(2))
+                            .then(Commands.literal("reset")
+                                    .then(Commands.literal("surface_biome_cache")
+                                            .executes(context -> {
+                                                SolarHolders.getSaveDataLazy(context.getSource().getLevel())
+                                                        .ifPresent(SolarDataManager::updateBiomeVersion);
+                                                return 0;
+                                            })
+                                            .then(Commands.argument("pos", BlockPosArgument.blockPos()).executes((context) ->
+                                            {
+                                                MapChecker.resetBiomeHolder(context.getSource().getLevel(), BlockPosArgument.getLoadedBlockPos(context, "pos"));
+                                                return 0;
+                                            }))
+                                    )
+                            )
+                    )
+                    .then(Commands.literal("solar")
+                            .requires((source) -> source.hasPermission(2))
+                            .then(Commands.literal("set")
+                                    .then(Commands.argument("day", IntegerArgumentType.integer())
+                                            .executes(commandContext -> setDay(commandContext.getSource(), IntegerArgumentType.getInteger(commandContext, "day")))))
+                            .then(Commands.literal("get")
+                                    .executes(commandContext -> {
+                                        int solar = EclipticUtil.getNowSolarDay(commandContext.getSource().getLevel());
+                                        commandContext.getSource().sendSuccess(() -> Component.literal("" + solar), true);
+                                        return 0;
+                                    })
+                            )
+                            .then(Commands.literal("setSnowTempChange")
+                                    .then(Commands.argument("tempChange", FloatArgumentType.floatArg(-0.25f, 0.25f))
+                                            .executes(commandContext -> setTempChange(commandContext.getSource(), FloatArgumentType.getFloat(commandContext, "tempChange")))))
+                            .then(Commands.literal("getSnowTempChange")
+                                    .executes(commandContext -> {
+                                        float snowTempChange = EclipticUtil.getSnowTempChange(commandContext.getSource().getLevel());
+                                        commandContext.getSource().sendSuccess(() -> Component.literal("" + snowTempChange), true);
+                                        return 0;
+                                    })
+                            )
+                            .then(Commands.literal("setTerm")
+                                    .then(Commands.argument("term", StringArgumentType.greedyString()).suggests((context, builder) -> {
+                                                String pre = "";
+                                                try {
+                                                    pre = context.getArgument("term", String.class);
+                                                } catch (IllegalArgumentException e) {
+                                                    // e.printStackTrace();
+                                                }
+                                                String finalPre = pre;
+                                                for (SolarTerm solarTerm : SolarTerm.collectValues()) {
+                                                    if (solarTerm != SolarTerm.NONE) {
+                                                        MutableComponent translation = solarTerm.getTranslation();
+                                                        String s = solarTerm.getName();
+                                                        if (s.contains(finalPre.toLowerCase(Locale.ROOT))) {
+                                                            builder.suggest(s, Component.translatable("%s%s%s%s",
+                                                                    Component.literal("[").withStyle(ChatFormatting.WHITE),
+                                                                    translation.withStyle(solarTerm.getSeason().getColor()).withStyle(ChatFormatting.WHITE),
+                                                                    Component.literal("] ").withStyle(ChatFormatting.WHITE)
+                                                                    , solarTerm.getAlternationText()));
+                                                        }
                                                     }
                                                 }
-                                            }
 
-                                            return builder.buildFuture();
-                                        })
-                                        .executes(commandContext -> {
-                                            String s = StringArgumentType.getString(commandContext, "term");
-                                            SolarTerm ss = null;
-                                            for (SolarTerm solarTerm : SolarTerm.collectValues()) {
-                                                if (solarTerm.getName().equals(s)) {
-                                                    ss = solarTerm;
-                                                    break;
+                                                return builder.buildFuture();
+                                            })
+                                            .executes(commandContext -> {
+                                                String s = StringArgumentType.getString(commandContext, "term");
+                                                SolarTerm ss = null;
+                                                for (SolarTerm solarTerm : SolarTerm.collectValues()) {
+                                                    if (solarTerm.getName().equals(s)) {
+                                                        ss = solarTerm;
+                                                        break;
+                                                    }
                                                 }
-                                            }
-                                            int day = ss.ordinal() * CommonConfig.Season.lastingDaysOfEachTerm.get();
-                                            return setDay(commandContext.getSource(), day);
-                                        })))
-                        .then(Commands.literal("getTerm")
-                                .executes(commandContext -> {
-                                    var solar = EclipticUtil.getNowSolarTerm(commandContext.getSource().getLevel());
-                                    commandContext.getSource().sendSuccess(solar::getTranslation, true);
-                                    return 0;
-                                })
-                        )
-                        .then(Commands.literal("add")
-                                .then(Commands.argument("day", IntegerArgumentType.integer()).executes(commandContext -> addDay(commandContext.getSource(), IntegerArgumentType.getInteger(commandContext, "day"))))))
-                .then(Commands.literal("weather")
-                        .requires((source) -> source.hasPermission(2))
-                        .then(Commands.argument("biome", ResourceOrTagArgument.resourceOrTag(event.getBuildContext(), Registries.BIOME))
-                                .then(Commands.literal("rain")
-                                        .executes((commandContext) -> setBiomeRain(commandContext.getSource(), ResourceOrTagArgument.getResourceOrTag(commandContext, "biome", Registries.BIOME), true, false))
-                                        .then(Commands.argument("effect", ResourceKeyArgument.key(ESRegistries.WEATHER_EFFECT))
-                                                .executes((commandContext) -> {
-                                                    setBiomeRain(commandContext.getSource(), ResourceOrTagArgument.getResourceOrTag(commandContext, "biome", Registries.BIOME), true, false);
-                                                    return setEffect(commandContext.getSource(), ResourceOrTagArgument.getResourceOrTag(commandContext, "biome", Registries.BIOME), ResourceKeyArgument.resolveKey(commandContext, "effect", ESRegistries.WEATHER_EFFECT, ERROR_WEATHER_EFFECT));
-                                                }))
-                                )
-                                .then(Commands.literal("thunder")
-                                        .executes((commandContext) -> setBiomeRain(commandContext.getSource(), ResourceOrTagArgument.getResourceOrTag(commandContext, "biome", Registries.BIOME), true, true))
-                                        .then(Commands.argument("effect", ResourceKeyArgument.key(ESRegistries.WEATHER_EFFECT))
-                                                .executes((commandContext) -> {
-                                                    setBiomeRain(commandContext.getSource(), ResourceOrTagArgument.getResourceOrTag(commandContext, "biome", Registries.BIOME), true, true);
-                                                    return setEffect(commandContext.getSource(), ResourceOrTagArgument.getResourceOrTag(commandContext, "biome", Registries.BIOME), ResourceKeyArgument.resolveKey(commandContext, "effect", ESRegistries.WEATHER_EFFECT, ERROR_WEATHER_EFFECT));
-                                                }))
-                                )
-                                .then(Commands.literal("clear")
-                                        .executes((commandContext) -> setBiomeRain(commandContext.getSource(), ResourceOrTagArgument.getResourceOrTag(commandContext, "biome", Registries.BIOME), false, false)))
-                                .then(Commands.literal("snow_depth")
-                                        .then(Commands.argument("depth", IntegerArgumentType.integer(0, 100))
-                                                .executes((commandContext) -> setSnowDepth(commandContext.getSource(), ResourceOrTagArgument.getResourceOrTag(commandContext, "biome", Registries.BIOME), IntegerArgumentType.getInteger(commandContext, "depth"))))
-                                ).then(Commands.literal("effect")
-                                        .then(Commands.argument("effect", ResourceKeyArgument.key(ESRegistries.WEATHER_EFFECT))
-                                                .executes((commandContext) -> setEffect(commandContext.getSource(), ResourceOrTagArgument.getResourceOrTag(commandContext, "biome", Registries.BIOME), ResourceKeyArgument.resolveKey(commandContext, "effect", ESRegistries.WEATHER_EFFECT, ERROR_WEATHER_EFFECT))))
-                                )
-                        )
-                )
-                .then(Commands.literal("export")
-                        .requires((source) -> source.hasPermission(2))
-                        .then(Commands.literal("biome_map")
-                                .then(Commands.argument("pos", BlockPosArgument.blockPos()).executes((stackCommandContext) ->
-                                        MapExporter.exportMap(stackCommandContext.getSource(), BlockPosArgument.getLoadedBlockPos(stackCommandContext, "pos")))))
+                                                int day = ss.ordinal() * CommonConfig.Season.lastingDaysOfEachTerm.get();
+                                                return setDay(commandContext.getSource(), day);
+                                            })))
+                            .then(Commands.literal("getTerm")
+                                    .executes(commandContext -> {
+                                        var solar = EclipticUtil.getNowSolarTerm(commandContext.getSource().getLevel());
+                                        commandContext.getSource().sendSuccess(solar::getTranslation, true);
+                                        return 0;
+                                    })
+                            )
+                            .then(Commands.literal("add")
+                                    .then(Commands.argument("day", IntegerArgumentType.integer()).executes(commandContext -> addDay(commandContext.getSource(), IntegerArgumentType.getInteger(commandContext, "day"))))))
+                    .then(Commands.literal("weather")
+                            .requires((source) -> source.hasPermission(2))
+                            .then(Commands.argument("biome", ResourceOrTagArgument.resourceOrTag(event.getBuildContext(), Registries.BIOME))
+                                    .then(Commands.literal("rain")
+                                            .executes((commandContext) -> setBiomeRain(commandContext.getSource(), ResourceOrTagArgument.getResourceOrTag(commandContext, "biome", Registries.BIOME), true, false))
+                                            .then(Commands.argument("effect", ResourceKeyArgument.key(ESRegistries.WEATHER_EFFECT))
+                                                    .executes((commandContext) -> {
+                                                        setBiomeRain(commandContext.getSource(), ResourceOrTagArgument.getResourceOrTag(commandContext, "biome", Registries.BIOME), true, false);
+                                                        return setEffect(commandContext.getSource(), ResourceOrTagArgument.getResourceOrTag(commandContext, "biome", Registries.BIOME), ResourceKeyArgument.resolveKey(commandContext, "effect", ESRegistries.WEATHER_EFFECT, ERROR_WEATHER_EFFECT));
+                                                    }))
+                                    )
+                                    .then(Commands.literal("thunder")
+                                            .executes((commandContext) -> setBiomeRain(commandContext.getSource(), ResourceOrTagArgument.getResourceOrTag(commandContext, "biome", Registries.BIOME), true, true))
+                                            .then(Commands.argument("effect", ResourceKeyArgument.key(ESRegistries.WEATHER_EFFECT))
+                                                    .executes((commandContext) -> {
+                                                        setBiomeRain(commandContext.getSource(), ResourceOrTagArgument.getResourceOrTag(commandContext, "biome", Registries.BIOME), true, true);
+                                                        return setEffect(commandContext.getSource(), ResourceOrTagArgument.getResourceOrTag(commandContext, "biome", Registries.BIOME), ResourceKeyArgument.resolveKey(commandContext, "effect", ESRegistries.WEATHER_EFFECT, ERROR_WEATHER_EFFECT));
+                                                    }))
+                                    )
+                                    .then(Commands.literal("clear")
+                                            .executes((commandContext) -> setBiomeRain(commandContext.getSource(), ResourceOrTagArgument.getResourceOrTag(commandContext, "biome", Registries.BIOME), false, false)))
+                                    .then(Commands.literal("snow_depth")
+                                            .then(Commands.argument("depth", IntegerArgumentType.integer(0, 100))
+                                                    .executes((commandContext) -> setSnowDepth(commandContext.getSource(), ResourceOrTagArgument.getResourceOrTag(commandContext, "biome", Registries.BIOME), IntegerArgumentType.getInteger(commandContext, "depth"))))
+                                    ).then(Commands.literal("effect")
+                                            .then(Commands.argument("effect", ResourceKeyArgument.key(ESRegistries.WEATHER_EFFECT))
+                                                    .executes((commandContext) -> setEffect(commandContext.getSource(), ResourceOrTagArgument.getResourceOrTag(commandContext, "biome", Registries.BIOME), ResourceKeyArgument.resolveKey(commandContext, "effect", ESRegistries.WEATHER_EFFECT, ERROR_WEATHER_EFFECT))))
+                                    )
+                            )
+                    )
+                    .then(Commands.literal("export")
+                            .requires((source) -> source.hasPermission(2))
+                            .then(Commands.literal("biome_map")
+                                    .then(Commands.argument("pos", BlockPosArgument.blockPos()).executes((stackCommandContext) ->
+                                            MapExporter.exportMap(stackCommandContext.getSource(), BlockPosArgument.getLoadedBlockPos(stackCommandContext, "pos")))))
 
-                        .then(Commands.literal("humid_charts")
-                                .then(Commands.argument("namespace", StringArgumentType.word())
-                                        .suggests((context, builder) -> {
-                                            String pre = "";
-                                            try {
-                                                pre = context.getArgument("namespace", String.class);
-                                            } catch (IllegalArgumentException e) {
-                                                // e.printStackTrace();
-                                            }
-                                            Registry<Biome> biomes = context.getSource().getLevel().registryAccess().registryOrThrow(Registries.BIOME);
-                                            Set<String> collect = biomes.keySet().stream().map(ResourceLocation::getNamespace).collect(Collectors.toSet());
-
-                                            for (String s : collect) {
-                                                if (s.contains(pre)) {
-                                                    builder.suggest(s);
+                            .then(Commands.literal("humid_charts")
+                                    .then(Commands.argument("namespace", StringArgumentType.word())
+                                            .suggests((context, builder) -> {
+                                                String pre = "";
+                                                try {
+                                                    pre = context.getArgument("namespace", String.class);
+                                                } catch (IllegalArgumentException e) {
+                                                    // e.printStackTrace();
                                                 }
-                                            }
+                                                Registry<Biome> biomes = context.getSource().getLevel().registryAccess().registryOrThrow(Registries.BIOME);
+                                                Set<String> collect = biomes.keySet().stream().map(ResourceLocation::getNamespace).collect(Collectors.toSet());
 
-                                            return builder.buildFuture();
-                                        }).executes((stackCommandContext) ->
-                                        {
-                                            try {
-                                                String s = StringArgumentType.getString(stackCommandContext, "namespace");
-                                                SimpleUtil.exportHumidityChart(stackCommandContext.getSource().getLevel(), s);
-                                                stackCommandContext.getSource().sendSuccess(() ->
-                                                                Component.literal("Can find them in " + "%s/humid/%s".formatted(EclipticSeasonsApi.MODID, s))
-                                                        , true);
-                                            } catch (Exception e) {
-                                                stackCommandContext.getSource().sendFailure(Component.literal(e.getMessage()));
-                                                return 1;
-                                            }
+                                                for (String s : collect) {
+                                                    if (s.contains(pre)) {
+                                                        builder.suggest(s);
+                                                    }
+                                                }
 
-                                            return 0;
-                                        })))
-                )
-        );
+                                                return builder.buildFuture();
+                                            }).executes((stackCommandContext) ->
+                                            {
+                                                try {
+                                                    String s = StringArgumentType.getString(stackCommandContext, "namespace");
+                                                    SimpleUtil.exportHumidityChart(stackCommandContext.getSource().getLevel(), s);
+                                                    stackCommandContext.getSource().sendSuccess(() ->
+                                                                    Component.literal("Can find them in " + "%s/humid/%s".formatted(EclipticSeasonsApi.MODID, s))
+                                                            , true);
+                                                } catch (Exception e) {
+                                                    stackCommandContext.getSource().sendFailure(Component.literal(e.getMessage()));
+                                                    return 1;
+                                                }
+
+                                                return 0;
+                                            })))
+                    )
+            );
+        }
     }
 
     private static int setEffect(CommandSourceStack sourceStack, ResourceOrTagArgument.Result<Biome> result, Holder<WeatherEffect> effect) {
@@ -270,7 +289,7 @@ public class CommandHandler {
                     biomeWeather.rainTime = setRain ? biomeRain.getRainDuration(level.getRandom()) / size : 0;
                     biomeWeather.lastRainTime = setRain ? level.getGameTime() : biomeWeather.lastRainTime;
                     biomeWeather.thunderTime = isThunder ? biomeRain.getThunderDuration(level.getRandom()) / size : 0;
-
+                    biomeWeather.setBiomeRain(biomeRain);
                     found = true;
                 }
             }

@@ -1,11 +1,11 @@
 package com.teamtea.eclipticseasons.compat.jei;
 
 
-import com.mojang.blaze3d.platform.Lighting;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.data.craft.HumidityControl;
 import com.teamtea.eclipticseasons.api.data.misc.PosAndBlockStateCheck;
 import com.teamtea.eclipticseasons.client.render.ber.XYZ;
+import com.teamtea.eclipticseasons.client.util.BlockGuiRenderUtil;
 import com.teamtea.eclipticseasons.common.registry.BlockRegistry;
 import com.teamtea.eclipticseasons.common.registry.ItemRegistry;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
@@ -22,7 +22,6 @@ import mezz.jei.api.recipe.category.IRecipeCategory;
 import mezz.jei.api.runtime.IIngredientManager;
 import mezz.jei.api.runtime.IJeiRuntime;
 import mezz.jei.common.Internal;
-import mezz.jei.gui.overlay.bookmarks.IngredientsTooltipComponent;
 import mezz.jei.library.gui.ingredients.TagContentTooltipComponent;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -33,16 +32,12 @@ import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.Holder;
-import net.minecraft.core.HolderSet;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
@@ -216,9 +211,7 @@ public class JEIHumidityControlCategory implements IRecipeCategory<HumidityContr
                         guiGraphics.pose().scale(0.625f, 0.625f, 0.625f);
 
                         // Lighting.setupLevel();
-                        blockRenderer.renderSingleBlock(blockState,
-                                guiGraphics.pose(),
-                                guiGraphics.bufferSource(), LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
+                        BlockGuiRenderUtil.renderBlockInGui(guiGraphics, blockState);
                         // guiGraphics.flush();
 
                     } catch (Throwable throwable) {

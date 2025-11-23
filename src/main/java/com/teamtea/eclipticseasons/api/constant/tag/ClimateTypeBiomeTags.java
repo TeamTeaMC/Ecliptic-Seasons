@@ -42,6 +42,8 @@ public class ClimateTypeBiomeTags {
 
     public static final TagKey<Biome> IS_SMALL = ClimateTypeBiomeTags.create("is_small");
 
+    public static final TagKey<Biome> EXTREME_COLD = ClimateTypeBiomeTags.create("extreme_cold");
+
     public static TagKey<Biome> create(String s) {
         return TagKey.create(Registries.BIOME, EclipticSeasons.rl(s));
     }

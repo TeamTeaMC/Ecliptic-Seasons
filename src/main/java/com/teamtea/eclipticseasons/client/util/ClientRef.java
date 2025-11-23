@@ -1,11 +1,11 @@
 package com.teamtea.eclipticseasons.client.util;
 
 import com.mojang.datafixers.util.Pair;
-import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.data.client.BiomeColor;
 import com.teamtea.eclipticseasons.api.data.client.LeafColor;
 import com.teamtea.eclipticseasons.api.data.client.SeasonalBiomeAmbient;
 import com.teamtea.eclipticseasons.api.data.client.model.seasonal.SeasonBlockDefinition;
+import com.teamtea.eclipticseasons.api.data.client.ui.UIParser;
 import com.teamtea.eclipticseasons.api.data.season.SnowDefinition;
 import com.teamtea.eclipticseasons.api.misc.client.IBiomeColorHolder;
 import com.teamtea.eclipticseasons.api.misc.util.HolderMappable;
@@ -36,23 +36,32 @@ public class ClientRef {
     public static final Map<Block, List<SeasonBlockDefinition>> seasonDef = new IdentityHashMap<>();
     public static final Map<Block, List<SnowDefinition>> snowClientDef = new IdentityHashMap<>();
 
+    public static final List<UIParser> uiParsers = new ArrayList<>();
+
     public static void updateClientSide(RegistryAccess registryAccess) {
         biomeColors.clear();
         leaveColors.clear();
         sounds.clear();
         seasonDef.clear();
         snowClientDef.clear();
+        uiParsers.clear();
         buildBiomeColors(registryAccess);
         buildLeafColors(registryAccess);
         buildSeasonalSounds(registryAccess);
         buildSeasonalModels(registryAccess);
         buildOverrideSnowModels(registryAccess);
+        buildUIParsers(registryAccess);
     }
 
 
     private static void buildSeasonalSounds(RegistryAccess registryAccess) {
         sounds.addAll(ClientJsonCacheListener.ambientCache
                 .build(SeasonalBiomeAmbient.CODEC, registryAccess).values());
+    }
+
+    private static void buildUIParsers(RegistryAccess registryAccess) {
+        uiParsers.addAll(ClientJsonCacheListener.uiParserCache
+                .build(UIParser.CODEC, registryAccess).values());
     }
 
     private static void buildOverrideSnowModels(RegistryAccess registryAccess) {
@@ -168,5 +177,6 @@ public class ClientRef {
         sounds.clear();
         seasonDef.clear();
         snowClientDef.clear();
+        uiParsers.clear();
     }
 }

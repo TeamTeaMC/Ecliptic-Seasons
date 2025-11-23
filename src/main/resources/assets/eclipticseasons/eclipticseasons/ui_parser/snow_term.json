@@ -1,0 +1,217 @@
+{
+  "sever_data": true,
+  "key": "eclipticseasons:snow_term",
+  "fields": [
+    {
+      "id": "biomes",
+      "type": "auto_completion",
+      "provide": "holder_set",
+      "key": "worldgen/biome"
+    },
+    {
+      "id": "start",
+      "type": "auto_completion",
+      "provide": "extra",
+      "extra_info": [
+        {
+          "value": "beginning_of_spring",
+          "display": "info.eclipticseasons.environment.solar_term.beginning_of_spring"
+        },
+        {
+          "value": "rain_water",
+          "display": "info.eclipticseasons.environment.solar_term.rain_water"
+        },
+        {
+          "value": "insects_awakening",
+          "display": "info.eclipticseasons.environment.solar_term.insects_awakening"
+        },
+        {
+          "value": "spring_equinox",
+          "display": "info.eclipticseasons.environment.solar_term.spring_equinox"
+        },
+        {
+          "value": "fresh_green",
+          "display": "info.eclipticseasons.environment.solar_term.fresh_green"
+        },
+        {
+          "value": "grain_rain",
+          "display": "info.eclipticseasons.environment.solar_term.grain_rain"
+        },
+        {
+          "value": "beginning_of_summer",
+          "display": "info.eclipticseasons.environment.solar_term.beginning_of_summer"
+        },
+        {
+          "value": "lesser_fullness",
+          "display": "info.eclipticseasons.environment.solar_term.lesser_fullness"
+        },
+        {
+          "value": "grain_in_ear",
+          "display": "info.eclipticseasons.environment.solar_term.grain_in_ear"
+        },
+        {
+          "value": "summer_solstice",
+          "display": "info.eclipticseasons.environment.solar_term.summer_solstice"
+        },
+        {
+          "value": "lesser_heat",
+          "display": "info.eclipticseasons.environment.solar_term.lesser_heat"
+        },
+        {
+          "value": "greater_heat",
+          "display": "info.eclipticseasons.environment.solar_term.greater_heat"
+        },
+        {
+          "value": "beginning_of_autumn",
+          "display": "info.eclipticseasons.environment.solar_term.beginning_of_autumn"
+        },
+        {
+          "value": "end_of_heat",
+          "display": "info.eclipticseasons.environment.solar_term.end_of_heat"
+        },
+        {
+          "value": "white_dew",
+          "display": "info.eclipticseasons.environment.solar_term.white_dew"
+        },
+        {
+          "value": "autumnal_equinox",
+          "display": "info.eclipticseasons.environment.solar_term.autumnal_equinox"
+        },
+        {
+          "value": "cold_dew",
+          "display": "info.eclipticseasons.environment.solar_term.cold_dew"
+        },
+        {
+          "value": "first_frost",
+          "display": "info.eclipticseasons.environment.solar_term.first_frost"
+        },
+        {
+          "value": "beginning_of_winter",
+          "display": "info.eclipticseasons.environment.solar_term.beginning_of_winter"
+        },
+        {
+          "value": "light_snow",
+          "display": "info.eclipticseasons.environment.solar_term.light_snow"
+        },
+        {
+          "value": "heavy_snow",
+          "display": "info.eclipticseasons.environment.solar_term.heavy_snow"
+        },
+        {
+          "value": "winter_solstice",
+          "display": "info.eclipticseasons.environment.solar_term.winter_solstice"
+        },
+        {
+          "value": "lesser_cold",
+          "display": "info.eclipticseasons.environment.solar_term.lesser_cold"
+        },
+        {
+          "value": "greater_cold",
+          "display": "info.eclipticseasons.environment.solar_term.greater_cold"
+        }
+      ]
+    },
+    {
+      "id": "end",
+      "type": "auto_completion",
+      "provide": "extra",
+      "extra_info": [
+        {
+          "value": "beginning_of_spring",
+          "display": "info.eclipticseasons.environment.solar_term.beginning_of_spring"
+        },
+        {
+          "value": "rain_water",
+          "display": "info.eclipticseasons.environment.solar_term.rain_water"
+        },
+        {
+          "value": "insects_awakening",
+          "display": "info.eclipticseasons.environment.solar_term.insects_awakening"
+        },
+        {
+          "value": "spring_equinox",
+          "display": "info.eclipticseasons.environment.solar_term.spring_equinox"
+        },
+        {
+          "value": "fresh_green",
+          "display": "info.eclipticseasons.environment.solar_term.fresh_green"
+        },
+        {
+          "value": "grain_rain",
+          "display": "info.eclipticseasons.environment.solar_term.grain_rain"
+        },
+        {
+          "value": "beginning_of_summer",
+          "display": "info.eclipticseasons.environment.solar_term.beginning_of_summer"
+        },
+        {
+          "value": "lesser_fullness",
+          "display": "info.eclipticseasons.environment.solar_term.lesser_fullness"
+        },
+        {
+          "value": "grain_in_ear",
+          "display": "info.eclipticseasons.environment.solar_term.grain_in_ear"
+        },
+        {
+          "value": "summer_solstice",
+          "display": "info.eclipticseasons.environment.solar_term.summer_solstice"
+        },
+        {
+          "value": "lesser_heat",
+          "display": "info.eclipticseasons.environment.solar_term.lesser_heat"
+        },
+        {
+          "value": "greater_heat",
+          "display": "info.eclipticseasons.environment.solar_term.greater_heat"
+        },
+        {
+          "value": "beginning_of_autumn",
+          "display": "info.eclipticseasons.environment.solar_term.beginning_of_autumn"
+        },
+        {
+          "value": "end_of_heat",
+          "display": "info.eclipticseasons.environment.solar_term.end_of_heat"
+        },
+        {
+          "value": "white_dew",
+          "display": "info.eclipticseasons.environment.solar_term.white_dew"
+        },
+        {
+          "value": "autumnal_equinox",
+          "display": "info.eclipticseasons.environment.solar_term.autumnal_equinox"
+        },
+        {
+          "value": "cold_dew",
+          "display": "info.eclipticseasons.environment.solar_term.cold_dew"
+        },
+        {
+          "value": "first_frost",
+          "display": "info.eclipticseasons.environment.solar_term.first_frost"
+        },
+        {
+          "value": "beginning_of_winter",
+          "display": "info.eclipticseasons.environment.solar_term.beginning_of_winter"
+        },
+        {
+          "value": "light_snow",
+          "display": "info.eclipticseasons.environment.solar_term.light_snow"
+        },
+        {
+          "value": "heavy_snow",
+          "display": "info.eclipticseasons.environment.solar_term.heavy_snow"
+        },
+        {
+          "value": "winter_solstice",
+          "display": "info.eclipticseasons.environment.solar_term.winter_solstice"
+        },
+        {
+          "value": "lesser_cold",
+          "display": "info.eclipticseasons.environment.solar_term.lesser_cold"
+        },
+        {
+          "value": "greater_cold",
+          "display": "info.eclipticseasons.environment.solar_term.greater_cold"
+        }
+      ]}
+  ]
+}

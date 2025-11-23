@@ -128,6 +128,49 @@ configurations {
     runtimeClasspath.extendsFrom localRuntime
 }
 
+tasks.named('processResources', Copy) {
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+
+    doFirst {
+        def langDir = file('src/main/resources/assets/eclipticseasons/lang')
+        def genDir = file('src/generated/resources/assets/eclipticseasons/lang')
+
+        def langFiles = ['en_us.json', 'zh_cn.json']
+
+        project.ext.originalJsonMap = [:]
+
+        langFiles.each { fileName ->
+            def mainFile = new File(langDir, fileName)
+            def genFile = new File(genDir, fileName)
+
+            project.ext.originalJsonMap[fileName] = genFile.exists() ? genFile.text : null
+
+            def mergedMap = [:]
+            [mainFile, genFile].each { f ->
+                if (f.exists()) mergedMap.putAll(new groovy.json.JsonSlurper().parse(f))
+            }
+
+            if (genFile.exists()) {
+                genFile.text = groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson(mergedMap))
+            }
+        }
+    }
+
+    doLast {
+        def genDir = file('src/generated/resources/assets/eclipticseasons/lang')
+        def langFiles = ['en_us.json', 'zh_cn.json']
+
+        langFiles.each { fileName ->
+            def genFile = new File(genDir, fileName)
+            if (project.ext.originalJsonMap[fileName] != null) {
+                genFile.text = project.ext.originalJsonMap[fileName]
+            }
+        }
+    }
+}
+
+
+
 
 dependencies {
     // Specify the version of Minecraft to use.
@@ -139,7 +182,7 @@ dependencies {
     implementation "net.neoforged:neoforge:${neo_version}"
 
 
-    implementation("curse.maven:jei-238222:6614392")
+    implementation "curse.maven:jei-238222:7181665"
     implementation "curse.maven:jade-324717:6291517"
     compileOnly("curse.maven:the-one-probe-245211:6106998")
 //    runtimeOnly("curse.maven:the-one-probe-245211:6106998")
@@ -161,9 +204,8 @@ dependencies {
 
 
 //    onlyMainRuntimeOnly ("maven.modrinth:distanthorizons:2.2.1-a-1.21.1")
-//    compileOnly("curse.maven:distant-horizons-508933:6251735")
-    compileOnly("curse.maven:distant-horizons-508933:6791190")
-//    onlyMainRuntimeOnly ("curse.maven:distant-horizons-508933:6791190")
+    compileOnly "curse.maven:distant-horizons-508933:7097104"
+//    onlyMainRuntimeOnly "curse.maven:distant-horizons-508933:7097104"
 
     onlyMainRuntimeOnly("curse.maven:spark-361579:5434153")
     onlyMainRuntimeOnly "curse.maven:t88-663112:6138989"
@@ -172,6 +214,8 @@ dependencies {
 //    onlyMainRuntimeOnly "curse.maven:euphoria-patches-915902:6137784"
 
     implementation "curse.maven:patchouli-306770:6842247"
+    implementation "curse.maven:kubejs-238086:7143884"
+    implementation "curse.maven:rhino-416294:7104526"
 
     println("----Scan onlyMainRuntimeOnly libs begin----")
     fileTree(dir: 'libs', include: ['*.jar']).each { File file ->
@@ -183,7 +227,9 @@ dependencies {
     }
     println("----Scan onlyMainRuntimeOnly libs end----")
 
-
+    compileOnly "curse.maven:modern-ui-352491:6956436"
+    onlyMainRuntimeOnly "curse.maven:modern-ui-352491:6956436"
+//    onlyMainRuntimeOnly "curse.maven:simply-improved-terrain-472872:6112229"
     // others
     // https://mvnrepository.com/artifact/org.projectlombok/lombok
     compileOnly 'org.projectlombok:lombok:1.18.38'

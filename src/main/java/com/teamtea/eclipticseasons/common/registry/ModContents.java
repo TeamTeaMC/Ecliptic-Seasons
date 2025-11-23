@@ -43,6 +43,7 @@ import net.neoforged.fml.loading.FMLLoader;
 import net.neoforged.fml.loading.moddiscovery.ModFile;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+import net.neoforged.neoforge.common.ModConfigSpec;
 import net.neoforged.neoforge.event.AddPackFindersEvent;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import net.neoforged.neoforge.registries.*;
@@ -150,17 +151,26 @@ public class ModContents {
                         event.getPackType(), PackSource.FEATURE, new PackSelectionConfig(false, Pack.Position.TOP, false));
             }
             if (event.getPackType() == PackType.SERVER_DATA) {
-                if (CommonConfig.Resource.RainTogether.get()) FakeResourceManagerHelperUtil.registerBuiltinResourcePack(
-                        event,
-                        EclipticSeasonsApi.MODID, "Rain Together", modFile,
-                        Component.translatable(EclipticSeasons.rl("rain_together").toLanguageKey("pack")),
-                        PackType.SERVER_DATA, PackSource.FEATURE, new PackSelectionConfig(true, Pack.Position.BOTTOM, false));
-                if (CommonConfig.Resource.SnowTogether.get()) FakeResourceManagerHelperUtil.registerBuiltinResourcePack(
-                        event,
-                        EclipticSeasonsApi.MODID, "Snow Together", modFile,
-                        Component.translatable(EclipticSeasons.rl("snow_together").toLanguageKey("pack")),
-                        PackType.SERVER_DATA, PackSource.FEATURE, new PackSelectionConfig(true, Pack.Position.BOTTOM, false));
+                addPackIfEnabled(event, modFile,
+                        CommonConfig.Resource.RainTogether, "Rain Together", "rain_together");
+                addPackIfEnabled(event, modFile,
+                        CommonConfig.Resource.SnowTogether, "Rain Together", "snow_together");
+                addPackIfEnabled(event, modFile,
+                        CommonConfig.Resource.RegionalSnowTime, "Regional Snow Time", "regional_snow_time");
+                addPackIfEnabled(event, modFile,
+                        CommonConfig.Resource.VanillaBiomeClimateSettings, "Vanilla Biome Climate Settings", "vanilla_biome_climate_settings");
+                addPackIfEnabled(event, modFile,
+                        CommonConfig.Resource.NotIgnoreRiver, "Not Ignore River", "not_ignore_river");
             }
         }
+    }
+
+    private static void addPackIfEnabled(AddPackFindersEvent event, ModFile modFile, ModConfigSpec.BooleanValue booleanValue, String name, String pack_id) {
+        if (booleanValue.get())
+            FakeResourceManagerHelperUtil.registerBuiltinResourcePack(
+                    event, EclipticSeasonsApi.MODID + "/",
+                    EclipticSeasonsApi.MODID, name, modFile,
+                    Component.translatable(EclipticSeasons.rl(pack_id).toLanguageKey("pack")),
+                    PackType.SERVER_DATA, PackSource.FEATURE, new PackSelectionConfig(true, Pack.Position.BOTTOM, false));
     }
 }

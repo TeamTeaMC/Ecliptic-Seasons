@@ -20,6 +20,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.client.renderer.texture.AbstractTexture;
+import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FastColor;
 import net.minecraft.world.level.LightLayer;
@@ -113,8 +114,9 @@ public class FogRenderer {
         if (event.getLevel() instanceof ClientLevel clientLevel) {
             WeatherEffect effect = WeatherUtil.getWeatherEffectByEntity(ClientCon.agent.getCameraEntity());
             float target = 0f;
-            if (effect instanceof FogEffect fogEffect) {
-                target = fogEffect.getDensity();
+            if (effect != null && effect.withFog()) {
+                BlockPos containing = BlockPos.containing(ClientCon.agent.getCameraEntity().getEyePosition());
+                target = effect.getFogDensity(clientLevel,containing);
             }
             fogDensity += (target - fogDensity) * 0.05f;
         }

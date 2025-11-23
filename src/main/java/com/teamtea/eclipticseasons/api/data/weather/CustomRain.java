@@ -62,13 +62,33 @@ public record CustomRain(int ordinal,
         if (weatherList.isEmpty()) return FlatRain.NONE;
         TimePeriod timePeriod = TimePeriod.fromTimeOfDay(level.getTimeOfDay(1));
         List<Weather> selectList = new ArrayList<>();
+        int allWeights = 0;
         for (var weather : weatherList) {
             if (weather.timePeriod().isEmpty() || weather.timePeriod().contains(timePeriod)) {
                 selectList.add(weather);
+                allWeights += weather.weight();
             }
         }
         if (selectList.isEmpty()) return FlatRain.NONE;
-        return selectList.get(level.getRandom().nextInt(selectList.size()));
+        if (selectList.size() == 1) return selectList.getFirst();
+        int result = level.getRandom().nextInt(allWeights);
+        for (Weather weather : selectList) {
+            result -= weather.weight();
+            if (result <= 0) {
+                return weather;
+            }
+        }
+        return FlatRain.NONE;
+    }
+
+    @Override
+    public boolean isResolvable() {
+        return true;
+    }
+
+    @Override
+    public List<BiomeRain> resolveOrderedList() {
+        return new ArrayList<>(weatherList);
     }
 
     public record Weather(
@@ -80,8 +100,8 @@ public record CustomRain(int ordinal,
             float rainChance,
             float thunderChance,
             List<TimePeriod> timePeriod,
-            Optional<Holder<WeatherEffect>> specialEffect
-    ) implements BiomeRain {
+            Optional<Holder<WeatherEffect>> specialEffect,
+            int weight) implements BiomeRain {
 
         public static Weather of(SolarTerm solarTerm, CustomRainBuilder.Weather weather) {
             return new Weather(
@@ -93,7 +113,8 @@ public record CustomRain(int ordinal,
                     weather.rainChance(),
                     weather.thunderChance(),
                     weather.timePeriod(),
-                    weather.specialEffect()
+                    weather.specialEffect(),
+                    weather.getWeight()
             );
         }
 
@@ -139,6 +160,11 @@ public record CustomRain(int ordinal,
         @Override
         public Holder<WeatherEffect> getSpecialEffect() {
             return specialEffect.orElseGet(BiomeRain.super::getSpecialEffect);
+        }
+
+        @Override
+        public boolean isDynamic() {
+            return true;
         }
     }
 }

@@ -63,10 +63,14 @@ public class FakeResourceManagerHelperUtil {
     }
 
     public static void registerBuiltinResourcePack(AddPackFindersEvent event, String namespace, String pack, ModFile modFile, MutableComponent translate, PackType packType, PackSource source, PackSelectionConfig selectionConfig) {
+        registerBuiltinResourcePack(event, "", namespace, pack, modFile, translate, packType, source, selectionConfig);
+    }
+
+    public static void registerBuiltinResourcePack(AddPackFindersEvent event, String prefix, String namespace, String pack, ModFile modFile, MutableComponent translate, PackType packType, PackSource source, PackSelectionConfig selectionConfig) {
         if (event.getPackType() == packType) {
-            String packIdLanguageKey = namespace + "_" + packType.getSerializedName();
+            String packIdLanguageKey = namespace + ":" + prefix + pack + "_" + packType.getSerializedName();
             var packLocationInfo = new PackLocationInfo(
-                    packIdLanguageKey, translate, source, Optional.of(knowPack(packIdLanguageKey)
+                    prefix + pack, translate, source, Optional.of(knowPack(packIdLanguageKey)
             ));
             event.addRepositorySource(consumer -> consumer.accept(
                     Pack.readMetaAndCreate(packLocationInfo,

@@ -32,6 +32,9 @@ import java.util.List;
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod(EclipticSeasonsApi.MODID)
 public class EclipticSeasons {
+    public static final String MODID = EclipticSeasonsApi.MODID;
+    public static final String SMODID =EclipticSeasonsApi.SMODID;
+
     // Directly reference a log4j logger.
     public static final Logger LOGGER = LogManager.getLogger(EclipticSeasonsApi.MODID);
     public static final String NETWORK_VERSION = "1.0";

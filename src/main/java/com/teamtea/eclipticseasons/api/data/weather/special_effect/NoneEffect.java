@@ -3,9 +3,10 @@ package com.teamtea.eclipticseasons.api.data.weather.special_effect;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import io.netty.buffer.ByteBuf;
-import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.biome.Biome;
 
 
 public class NoneEffect implements WeatherEffect {
@@ -25,5 +26,13 @@ public class NoneEffect implements WeatherEffect {
         return CODEC;
     }
 
+    @Override
+    public boolean shouldChangePrecipitation(Level level, Biome biome, BlockPos pos, boolean isPrecipitation, Biome.Precipitation original) {
+        return true;
+    }
 
+    @Override
+    public Biome.Precipitation getModifiedPrecipitation(Level level, Biome biome, BlockPos pos, boolean isPrecipitation, Biome.Precipitation original) {
+        return Biome.Precipitation.NONE;
+    }
 }

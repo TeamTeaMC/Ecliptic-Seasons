@@ -178,7 +178,7 @@ public final class ClientEventHandler {
         if (Minecraft.getInstance().player != null) {
             CropGrowthHandler.clearOnClientExitOrServerClose();
             NaturalPlantHandler.clearOnClientExitOrServerClose();
-            BiomeClimateManager.clearOnClientExitOrServerClose();
+            BiomeClimateManager.clearOnClientExitOrServerClose(false);
             SnowChecker.clearOnClientExitOrServerClose();
             ClientRef.onClientPlayerExit();
             ClientCon.onClientPlayerExit();

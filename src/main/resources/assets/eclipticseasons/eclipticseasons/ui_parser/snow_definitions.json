@@ -1,0 +1,70 @@
+{
+  "sever_data": true,
+  "key": "eclipticseasons:snow_definitions",
+  "fields": [
+    {
+      "id": "blocks",
+      "type": "auto_completion",
+      "provide": "holder_set",
+      "key": "block"
+    },
+    {
+      "id": "mid",
+      "type": "auto_completion",
+      "provide": "client_resource",
+      "key": "eclipticseasons:model_definitions"
+    },
+    {
+      "id": "mid2",
+      "type": "auto_completion",
+      "provide": "client_resource",
+      "key": "eclipticseasons:model_definitions"
+    },
+    {
+      "id": "flag",
+      "provide": "builtin",
+      "key": "snowy_block_flag",
+      "type": "auto_completion"
+    },
+    {
+      "id": "snow_passable",
+      "type": "bool"
+    },
+    {
+      "id": "offset",
+      "type": "number"
+    },
+    {
+      "id": "properties",
+      "type": "list",
+      "items": [
+        {
+          "id": "properties_inner",
+          "type": "list",
+          "map": true,
+          "items": [
+            {
+              "id": "name",
+              "type": "text"
+            },
+            {
+              "id": "reverse",
+              "type": "bool"
+            },
+            {
+              "id": "matcher",
+              "type": "list",
+              "map": true,
+              "items": [
+                {
+                  "id": "value",
+                  "type": "text"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

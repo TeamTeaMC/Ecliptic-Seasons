@@ -285,6 +285,7 @@ public class ClientSetup {
         event.registerReloadListener(ClientJsonCacheListener.ambientCache);
         // event.registerReloadListener(ClientJsonCacheListener.modelDefCache);
         event.registerReloadListener(ClientJsonCacheListener.seasonDefCache);
+        event.registerReloadListener(ClientJsonCacheListener.uiParserCache);
     }
 
     @SubscribeEvent

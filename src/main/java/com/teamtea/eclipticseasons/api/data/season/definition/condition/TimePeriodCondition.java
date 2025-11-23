@@ -28,7 +28,8 @@ public class TimePeriodCondition implements IChangeCondition {
     ).apply(ins, TimePeriodCondition::new));
 
 
-    private final HashSet<TimePeriod> periods;
+    @Builder.Default
+    private final HashSet<TimePeriod> periods = new HashSet<>();
 
     @Override
     public ResourceLocation getType() {

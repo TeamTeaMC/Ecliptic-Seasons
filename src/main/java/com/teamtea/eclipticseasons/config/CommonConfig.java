@@ -77,6 +77,7 @@ public class CommonConfig {
         public static ModConfigSpec.BooleanValue heatStroke;
         public static ModConfigSpec.BooleanValue iceMelt;
         public static ModConfigSpec.BooleanValue snowDown;
+        public static ModConfigSpec.BooleanValue waterFreezesInFrozenBiomes;
 
         private static void load(ModConfigSpec.Builder builder) {
             builder.push("Temperature");
@@ -84,6 +85,8 @@ public class CommonConfig {
                     .define("IceAndSnowMelt", false);
             snowDown = builder.comment("It will snow in cold time.")
                     .define("IceAndSnow", false);
+            waterFreezesInFrozenBiomes = builder.comment("If enabled, water placed in frozen biomes will behave as in vanilla and freeze into ice.")
+                    .define("WaterFreezesInFrozenBiomes", true);
             heatStroke = builder.comment("Add heat stroke effect in summer noon while in hot biome.")
                     .define("HeatStroke", true);
             builder.pop();
@@ -170,7 +173,7 @@ public class CommonConfig {
                             o -> o instanceof Integer i && (i >= 0 && i <= 24000),
                             ModConfigSpec.Range.of(1, 1));
             dynamicSnowTerm = builder.comment("The timing of snowfall now varies within a certain range each year.")
-                    .define("DynamicSnowTerm", true);
+                    .define("DynamicSnowTerm", false);
             builder.pop();
         }
     }
@@ -373,7 +376,7 @@ public class CommonConfig {
             enableWeatherRegion = builder.comment("Enable weather regions, linking specific biomes to particular weather to prevent scattered patterns.")
                     .define("EnableWeatherRegion", true);
             notRainInDesert = builder.comment("Prevent rain from occurring in biomes without precipitation like desert.")
-                    .define("NotRainInDesert", false);
+                    .define("NotRainInDesert", true);
             shouldInitWeather = builder.comment("Set it true to initialize weather and snow when loading the mod or level for the first time.")
                     .define("ShouldInitWeather", false);
             rainChanceMultiplier = builder.comment("Multiplier (0-1000) affecting the chance of rain. Higher values make rain more likely.")
@@ -407,6 +410,7 @@ public class CommonConfig {
 
         public static ModConfigSpec.BooleanValue snowInWorld;
         public static ModConfigSpec.BooleanValue forceChunkUpdate;
+        public static ModConfigSpec.BooleanValue forceChunkUpdateOnlyWhenMelt;
         public static ModConfigSpec.BooleanValue snowyUnderSnowLike;
         public static ModConfigSpec.BooleanValue stepMelt;
 
@@ -461,6 +465,8 @@ public class CommonConfig {
                     .define("SnowInWorld", false);
             forceChunkUpdate = builder.comment("When SnowInWorld is enabled, update chunk state on load based on differences from previous state records.")
                     .define("ForceSnowyChunkUpdate", true);
+            forceChunkUpdateOnlyWhenMelt = builder.comment("Only force updating the status of chunk when snow should melt.")
+                    .define("ForceChunkUpdateOnlyWhenMelt", false);
             snowyUnderSnowLike = builder.comment("When SnowInWorld is enabled, blocks like full blocks under snow layers will have a snowy appearance.")
                     .define("SnowCoverUnderBlocks", true);
             stepMelt = builder.comment("When SnowInWorld is enabled, snow may melt when stepped on due to heat.")
@@ -472,13 +478,22 @@ public class CommonConfig {
     public static class Resource {
         public static ModConfigSpec.BooleanValue SnowTogether;
         public static ModConfigSpec.BooleanValue RainTogether;
+        public static ModConfigSpec.BooleanValue RegionalSnowTime;
+        public static ModConfigSpec.BooleanValue VanillaBiomeClimateSettings;
+        public static ModConfigSpec.BooleanValue NotIgnoreRiver;
 
         private static void load(ModConfigSpec.Builder builder) {
             builder.push("Resource");
-            RainTogether = builder.comment("Enable RainTogether datapack for game.")
+            RainTogether = builder.comment("Enable Rain Together datapack for game.")
                     .define("RainTogether", false);
-            SnowTogether = builder.comment("Enable SnowTogether datapack for game.")
+            SnowTogether = builder.comment("Enable Snow Together datapack for game.")
                     .define("SnowTogether", false);
+            RegionalSnowTime = builder.comment("Enable Regional Snow Time datapack for game.")
+                    .define("RegionalSnowTime", false);
+            VanillaBiomeClimateSettings = builder.comment("Enable Vanilla Biome Climate Settings datapack for game.")
+                    .define("VanillaBiomeClimateSettings", true);
+            NotIgnoreRiver = builder.comment("Enable Not Ignore River datapack for climatic query.")
+                    .define("NotIgnoreRiver", false);
             builder.pop();
         }
     }

@@ -1,6 +1,8 @@
 package com.teamtea.eclipticseasons.common.network;
 
+import com.teamtea.eclipticseasons.api.constant.climate.FlatRain;
 import com.teamtea.eclipticseasons.api.data.weather.special_effect.WeatherEffect;
+import com.teamtea.eclipticseasons.common.core.biome.BiomeRainDispatcher;
 import com.teamtea.eclipticseasons.common.registry.AttachmentRegistry;
 import com.teamtea.eclipticseasons.client.color.season.BiomeColorsHandler;
 import com.teamtea.eclipticseasons.client.core.ClientWeatherChecker;
@@ -21,6 +23,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.SectionPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.chunk.ChunkAccess;
@@ -89,6 +92,9 @@ public class NetworkUtil {
                     biomeWeather.thunderTime = biomeWeatherMessage.thuder[biomeWeather.id] * 10000;
                     biomeWeather.snowDepth = biomeWeatherMessage.snowDepth[biomeWeather.id];
                     biomeWeather.effect = weatherEffects.getHolder(biomeWeatherMessage.special[biomeWeather.id]).orElse(null);
+
+                    biomeWeather.setBiomeRain(BiomeRainDispatcher.getBiomeRain(
+                            level instanceof ServerLevel, biomeWeatherMessage.weather[biomeWeather.id]));
                 }
                 // if (update
                 //         && ClientCon.agent.getCameraEntity() != null

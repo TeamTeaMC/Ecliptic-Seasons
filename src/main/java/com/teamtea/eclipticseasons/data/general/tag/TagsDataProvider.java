@@ -32,7 +32,7 @@ public class TagsDataProvider extends TagsProvider<Biome> {
 
 
         for (TagKey<Biome> biomeType : ClimateTypeBiomeTags.BIOME_TYPES) {
-            TagKey<Biome> oldTag = ClimateTypeBiomeTags.create(biomeType.location().getPath().replace("rain/",""));
+            TagKey<Biome> oldTag = ClimateTypeBiomeTags.create(biomeType.location().getPath().replace("rain/", ""));
             tag(oldTag);
             tag(biomeType).addTag(oldTag);
         }
@@ -43,6 +43,7 @@ public class TagsDataProvider extends TagsProvider<Biome> {
 
         tag(ClimateTypeBiomeTags.IS_SMALL).addTags(Tags.Biomes.IS_RIVER);
 
+        tag(ClimateTypeBiomeTags.EXTREME_COLD).addTags(Tags.Biomes.IS_ICY, Tags.Biomes.IS_SNOWY);
         // tag(ClimateTypeBiomeTags.SEASONAL).addTags(Tags.Biomes.IS_OVERWORLD, Tags.Biomes.IS_VOID);
         // tag(ClimateTypeBiomeTags.SEASONAL_HOT).addTags(Tags.Biomes.IS_HOT_OVERWORLD);
         // tag(ClimateTypeBiomeTags.SEASONAL_COLD).addTags(Tags.Biomes.IS_MOUNTAIN_PEAK, Tags.Biomes.IS_SNOWY, Tags.Biomes.IS_ICY);

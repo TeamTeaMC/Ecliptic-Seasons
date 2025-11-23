@@ -116,6 +116,9 @@ public class BiomeClimateManager {
                 (biome, map) -> map
         );
 
+        BiomeRainDispatcher.init(registryAccess.registry(Registries.BIOME).orElse(null)
+            ,isServer);
+
         setSnowLine(registryAccess, isServer ? SNOW_LINE_MAP : CLIENT_SNOW_LINE_MAP);
     }
 
@@ -253,17 +256,14 @@ public class BiomeClimateManager {
 
 
     public static @Nullable Holder<Biome> getHolder(RegistryAccess registryAccess, Biome biome) {
-        return registryAccess.registryOrThrow(Registries.BIOME)
-                .holders()
-                .filter(biomeReference -> biomeReference.value() == biome)
-                .findFirst().orElse(null);
+        Registry<Biome> biomes = registryAccess.registryOrThrow(Registries.BIOME);
+        Optional<Holder.Reference<Biome>> holder = biomes.getHolder(biomes.getId(biome));
+        return holder.orElse(null);
     }
 
-    public static @Nullable Holder<Biome> getHolder(Registry<Biome> registryAccess, Biome biome) {
-        return registryAccess
-                .holders()
-                .filter(biomeReference -> biomeReference.value() == biome)
-                .findFirst().orElse(null);
+    public static @Nullable Holder<Biome> getHolder(Registry<Biome> biomes, Biome biome) {
+        Optional<Holder.Reference<Biome>> holder = biomes.getHolder(biomes.getId(biome));
+        return holder.orElse(null);
     }
 
     public static TagKey<Biome> getTag(Biome biome) {
@@ -426,7 +426,7 @@ public class BiomeClimateManager {
         biomeRegistry.bindTags(biomeMap);
     }
 
-    public static void clearOnClientExitOrServerClose() {
+    public static void clearOnClientExitOrServerClose(boolean serverCause) {
         BiomeClimateManager.WEATHER_REGION_MAP.clear();
         BiomeClimateManager.BIOME_CLIMATE_MAP.clear();
         BiomeClimateManager.SMALL_BIOME_MAP.clear();
@@ -441,6 +441,8 @@ public class BiomeClimateManager {
         BiomeClimateManager.CLIENT_CUSTOM_SNOW_TERM_MAP.clear();
         BiomeClimateManager.BIOME_COLOR_TAG_KEY_MAP.clear();
         BiomeClimateManager.CLIENT_BIOME_COLOR_TAG_KEY_MAP.clear();
+
+        BiomeRainDispatcher.clearOnClientExitOrServerClose(serverCause);
     }
 
     public static boolean isServerInstance(Biome value) {

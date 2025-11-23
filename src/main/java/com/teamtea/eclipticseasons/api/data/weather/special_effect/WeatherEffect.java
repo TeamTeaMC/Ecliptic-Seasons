@@ -10,10 +10,11 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 
 public interface WeatherEffect {
-    Codec<WeatherEffect> CODEC = Codec.STRING
-            .xmap(s -> s.contains(":") ? ResourceLocation.parse(s) : EclipticSeasons.rl(s),
-                    r -> r.getNamespace().equals(EclipticSeasonsApi.MODID) ? r.getPath() : r.toString())
-            .dispatch("type", WeatherEffect::getType, WeatherEffects.EFFECTS::get);
+    Codec<WeatherEffect> CODEC = Codec.lazyInitialized(() ->
+            Codec.STRING
+                    .xmap(s -> s.contains(":") ? ResourceLocation.parse(s) : EclipticSeasons.rl(s),
+                            r -> r.getNamespace().equals(EclipticSeasonsApi.MODID) ? r.getPath() : r.toString())
+                    .dispatch("type", WeatherEffect::getType, WeatherEffects.EFFECTS::get));
 
     ResourceLocation getType();
 
@@ -29,5 +30,11 @@ public interface WeatherEffect {
         return original;
     }
 
+    default boolean withFog() {
+        return false;
+    }
 
+    default float getFogDensity(Level level, BlockPos pos) {
+        return 0f;
+    }
 }

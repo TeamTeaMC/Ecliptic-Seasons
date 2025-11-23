@@ -1,28 +1,28 @@
 package com.teamtea.eclipticseasons.common.network.message;
 
 
-
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import org.jetbrains.annotations.NotNull;
 
-public class BiomeWeatherMessage  implements CustomPacketPayload {
+public class BiomeWeatherMessage implements CustomPacketPayload {
     public final byte[] rain;
     public final byte[] thuder;
     public final byte[] clear;
     public final byte[] snowDepth;
     public final int[] special;
+    public final int[] weather;
 
-    public BiomeWeatherMessage(byte[] rain, byte[] thuder, byte[] clear, byte[] snowDepth, int[] special) {
+    public BiomeWeatherMessage(byte[] rain, byte[] thuder, byte[] clear, byte[] snowDepth, int[] special, int[] weather) {
         this.rain = rain;
         this.thuder = thuder;
         this.clear = clear;
         this.snowDepth = snowDepth;
         this.special = special;
+        this.weather = weather;
     }
 
     public static final Type<BiomeWeatherMessage> TYPE = new Type<>(EclipticSeasons.rl("biomes_weather"));
@@ -42,6 +42,8 @@ public class BiomeWeatherMessage  implements CustomPacketPayload {
             solarTermsMessage -> solarTermsMessage.snowDepth,
             MessageCodec.intArrayStreamCodec,
             solarTermsMessage -> solarTermsMessage.special,
+            MessageCodec.intArrayStreamCodec,
+            solarTermsMessage -> solarTermsMessage.weather,
             BiomeWeatherMessage::new
     );
 

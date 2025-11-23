@@ -58,6 +58,7 @@
     "client.MixinLocalPlayer",
     "client.MixinMinecraftClient",
     "client.animal.MixinClientPanda",
+    "client.biome.MixinBiomeColors",
     "client.biome.MixinClientBiome",
     "client.block.MixinBlockColors",
     "client.block.MixinClientBlockState",

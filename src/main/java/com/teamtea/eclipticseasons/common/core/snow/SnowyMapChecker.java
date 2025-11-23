@@ -115,6 +115,10 @@ public class SnowyMapChecker {
                                               @Nullable BiomeHolder biomeHolder,
                                               boolean loadingChunk) {
         if (!EclipticUtil.canSnowyBlockInteract() || !CommonConfig.Snow.forceChunkUpdate.get()) return;
+        if (CommonConfig.Snow.forceChunkUpdateOnlyWhenMelt.get()) {
+            forceUpdateChunkOnlyNotSnow(level, chunk, chunk.getPos(), chunkMap, biomeHolder, loadingChunk);
+            return;
+        }
 
         ChunkPos chunkPos = chunk.getPos();
         BlockPos.MutableBlockPos checkPos = new BlockPos.MutableBlockPos(chunkPos.getMinBlockX(), 0, chunkPos.getMinBlockZ());
@@ -213,6 +217,45 @@ public class SnowyMapChecker {
         }
     }
 
+    public static void forceUpdateChunkOnlyNotSnow(ServerLevel level, ChunkAccess chunk, ChunkPos chunkPos,
+                                                   ChunkInfoMap chunkMap,
+                                                   @Nullable BiomeHolder biomeHolder,
+                                                   boolean loadingChunk) {
+        if (EclipticUtil.canSnowyBlockInteract() && chunkMap != null) {
+            if (biomeHolder != null) {
+                SnowyStatusKeeper keeper = SnowyMapChecker.getSnowyStatusKeeper(chunk);
+                if (keeper.getPosMap().isEmpty()) return;
+                WeatherStatusKeeper weatherStatusKeeper = SnowyMapChecker.getWeatherStatusKeeper(chunk);
+                Pair<Map<Holder<Biome>, IntIntImmutablePair>, Map<Holder<Biome>, Long>> mapMapPair = weatherStatusKeeper.collectSnowyUpdate(level, biomeHolder);
+                BlockPos.MutableBlockPos checkPos = new BlockPos.MutableBlockPos(chunkPos.getMinBlockX(), 0, chunkPos.getMinBlockZ());
+                Map<Holder<Biome>, IntIntImmutablePair> first = mapMapPair.getFirst();
+                if (first != null && chunk instanceof LevelChunk levelChunk) {
+                    boolean shouldUpdate = false;
+                    for (int i = chunkPos.getMinBlockX(); i <= chunkPos.getMaxBlockX(); ++i) {
+                        for (int j = chunkPos.getMinBlockZ(); j <= chunkPos.getMaxBlockZ(); ++j) {
+                            checkPos.setX(i);
+                            checkPos.setZ(j);
+                            int solidHeight = chunkMap.getHeight(i, j);
+                            checkPos.setY(solidHeight);
+                            IntIntImmutablePair pair = first.getOrDefault(MapChecker.getSurfaceBiome(level, checkPos, biomeHolder), null);
+                            if (pair != null && pair.leftInt() <= 0) {
+                                int heightSurface = chunk.getHeight(Heightmap.Types.WORLD_SURFACE, checkPos.getX(), checkPos.getZ());
+                                for (int posH = solidHeight; posH <= heightSurface; ++posH) {
+                                    checkPos.setY(posH);
+                                    if (keeper.isSnowyBlock(checkPos)) {
+                                        keeper.set(checkPos, SnowyStatusKeeper.FLAG_NONE);
+                                    }
+                                    shouldUpdate = true;
+                                }
+                            }
+                        }
+                    }
+                    if (shouldUpdate)
+                        keeper.updateAndSend(level, levelChunk);
+                }
+            }
+        }
+    }
 
     public static boolean isTooLight(BlockAndTintGetter level, BlockPos pos, BlockState state, int blockType) {
         return isTooLight(level, pos, null, state, blockType);

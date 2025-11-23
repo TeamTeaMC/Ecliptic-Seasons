@@ -6,6 +6,7 @@ import com.teamtea.eclipticseasons.data.api.MutablePackOutput;
 import com.teamtea.eclipticseasons.data.extend.example.*;
 import com.teamtea.eclipticseasons.data.extend.extra_snow.DatapackRegistryGeneratorExtra;
 import com.teamtea.eclipticseasons.data.extend.extra_snow.ExtraClientModelDefinitionProvider;
+import com.teamtea.eclipticseasons.data.extend.regional_snow_time.RegionalSnowTimeProvider;
 import com.teamtea.eclipticseasons.data.general.advancement.Advancements;
 import com.teamtea.eclipticseasons.data.general.datapack.DatapackRegistryGenerator;
 import com.teamtea.eclipticseasons.data.general.datapack.ESDataMapProvider;
@@ -25,6 +26,8 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.data.metadata.PackMetadataGenerator;
+import net.minecraft.network.chat.Component;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 
@@ -109,7 +112,13 @@ public class start {
             generator.addProvider(event.includeClient(), new BiomeColorProvider(packOutput,MODID, helper,lookupProvider));
             generator.addProvider(event.includeClient(), new LeafColorProvider(packOutput,MODID, helper,lookupProvider));
             generator.addProvider(event.includeClient(), new ClientSnowDefinitionProvider(packOutput,MODID, helper,lookupProvider));
+        }
 
+        // Regional Snow
+        packOutput = packOutput.move(Path.of("resourcepacks", "Regional Snow Time"));
+        if (event.includeServer()) {
+            generator.addProvider(event.includeServer(), PackMetadataGenerator.forFeaturePack(packOutput, Component.translatable("pack.eclipticseasons.regional_snow_time.description")));
+            generator.addProvider(event.includeServer(), new RegionalSnowTimeProvider(packOutput, lookupProvider));
         }
     }
 }

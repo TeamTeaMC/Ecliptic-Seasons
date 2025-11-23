@@ -13,10 +13,12 @@ public class ChangeConditions {
     public static final ResourceLocation EMPTY_ABOVE = EclipticSeasons.rl("empty_above");
     public static final ResourceLocation PRECIPITATION = EclipticSeasons.rl("precipitation");
     public static final ResourceLocation TIME_PERIOD = EclipticSeasons.rl("time_period");
+    public static final ResourceLocation IS_SNOWY = EclipticSeasons.rl("is_snowy");
 
     static {
         CONDITIONS.put(EMPTY_ABOVE, EmptyAboveCondition.CODEC);
         CONDITIONS.put(PRECIPITATION, PrecipitationCondition.CODEC);
         CONDITIONS.put(TIME_PERIOD, TimePeriodCondition.CODEC);
+        CONDITIONS.put(IS_SNOWY, SnowyBlockCondition.CODEC);
     }
 }

@@ -34,4 +34,9 @@ public abstract class MixinChunkAccess implements IChunkBiomeHolder {
         }
         return this.eclipticseasons$biomeHolder;
     }
+
+    @Override
+    public void eclipticseasons$resetBiomeHolder() {
+        this.eclipticseasons$biomeHolder = null;
+    }
 }

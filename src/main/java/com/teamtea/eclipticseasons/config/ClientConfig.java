@@ -47,7 +47,7 @@ public class ClientConfig {
                     .define("FrozenWaterCheckLight", true);
 
             fogWeather = builder.comment("Experimental feature: enables foggy weather during rainfall.")
-                    .define("FoggyWeather", false);
+                    .define("FoggyWeather", true);
 
             builder.pop();
         }
@@ -80,6 +80,7 @@ public class ClientConfig {
         public static ModConfigSpec.BooleanValue seasonalGrassColorChange;
         public static ModConfigSpec.BooleanValue seasonalColorChangeExtend;
         public static ModConfigSpec.BooleanValue smootherSeasonalGrassColorChange;
+        public static ModConfigSpec.BooleanValue foliageUnderTree;
 
 
         public static ModConfigSpec.BooleanValue snowUnderFence;
@@ -109,6 +110,8 @@ public class ClientConfig {
                     .define("SeasonalGrassColorChange", true);
             seasonalColorChangeExtend = builder.comment("Birch, spruce, and mangrove leaves colors also have seasonal changes.")
                     .define("SeasonalColorChangeExtend", true);
+            foliageUnderTree = builder.comment("Brownish grass block under trees in autumn.")
+                    .define("FoliageUnderTree", false);
 
             smootherSeasonalGrassColorChange = builder.comment("When applying changes, perform mean calculation based on the percentage progress of the solar term instead of using a fixed value.")
                     .define("SmootherSeasonalGrassColorChange", true);

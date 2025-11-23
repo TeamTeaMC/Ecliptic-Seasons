@@ -7,6 +7,7 @@ import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.event.SolarTermChangeEvent;
 import com.teamtea.eclipticseasons.api.util.SimpleUtil;
 import com.teamtea.eclipticseasons.common.block.blockentity.GreenHouseCoreBlockEntity;
+import com.teamtea.eclipticseasons.common.core.biome.BiomeRainDispatcher;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
 import com.teamtea.eclipticseasons.common.core.crop.GreenHouseCoreProvider;
@@ -92,6 +93,7 @@ public class SolarDataManager extends SavedData {
             var listTag = nbt.getList("biomes", Tag.TAG_COMPOUND);
             var biomeWeathers = WeatherManager.getBiomeList(level);
             int countCheck = 0;
+            long hash = nbt.getLong("BiomeRainHashRecord");
             for (int i = 0; i < listTag.size(); i++) {
                 CompoundTag compound = listTag.getCompound(i);
                 var location = compound.getString("biome");
@@ -99,7 +101,7 @@ public class SolarDataManager extends SavedData {
                     for (int j = 0; j < biomeWeathers.size(); j++) {
                         WeatherManager.BiomeWeather biomeWeather = biomeWeathers.get(j);
                         if (location.equals(biomeWeather.location.toString())) {
-                            biomeWeather.deserializeNBT(compound, level.registryAccess());
+                            biomeWeather.deserializeNBT(compound, level.registryAccess(), hash);
                             // 这里必须要id相等，不然缓存全部失效
                             if (i == j) {
                                 countCheck++;
@@ -110,7 +112,7 @@ public class SolarDataManager extends SavedData {
                 }
             }
             if (countCheck != listTag.size()) {
-                this.biomeDataVersion++;
+                updateBiomeVersion();
                 EclipticSeasons.logger("Warning for biome date need to be update with", listTag.size(), biomeWeathers == null ? 0 : biomeWeathers.size(), " new version is", biomeDataVersion);
             }
         }
@@ -214,6 +216,10 @@ public class SolarDataManager extends SavedData {
     public void setSolarTempChange(float solarTempChange) {
         this.solarTempChange = solarTempChange;
         setDirty();
+    }
+
+    public void updateBiomeVersion() {
+        this.biomeDataVersion++;
     }
 
     public void addHumidityControlProvider(BlockPos pos, HumidityControlProvider humidityControlProvider) {
@@ -490,55 +496,7 @@ public class SolarDataManager extends SavedData {
         }
         compound.put("biomes", listTag);
         compound.putInt("BiomeDataVersion", biomeDataVersion);
-
-        // // TODO：这里为将来写缓存做准备
-        // if (false) {
-        //     CompoundTag test = new CompoundTag();
-        //     long a = System.currentTimeMillis();
-        //     if (levelWeakReference.get() instanceof ServerLevel serverLevel) {
-        //         serverLevel.getChunkSource().chunkMap.getChunks().forEach(chunkHolder ->
-        //         {
-        //             ChunkAccess latestChunk = chunkHolder.getLatestChunk();
-        //             if (latestChunk != null) {
-        //                 ChunkPos chunkPos = latestChunk.getPos();
-        //                 String vs = chunkPos.toString();
-        //                 CompoundTag chunk = new CompoundTag();
-        //                 int[] biomes = new int[256];
-        //                 Object2IntArrayMap<ResourceLocation> platte = new Object2IntArrayMap<>();
-        //                 int idn = 0;
-        //                 for (int i = chunkPos.getMinBlockX(); i <= chunkPos.getMaxBlockX(); i++) {
-        //                     for (int j = chunkPos.getMinBlockZ(); j <= chunkPos.getMaxBlockZ(); j++) {
-        //                         int y = serverLevel.getHeight(Heightmap.Types.MOTION_BLOCKING,
-        //                                 i, j);
-        //                         Holder<Biome> biome = serverLevel.getBiome(new BlockPos(i, y, j));
-        //                         ResourceLocation location = biome.getKey().location();
-        //                         if (!platte.containsKey(location)) {
-        //                             platte.put(location, idn);
-        //                             idn++;
-        //                         }
-        //                         int id = platte.getInt(location);
-        //                         biomes[(i & 15) * 16 + (j & 15)] = id;
-        //                     }
-        //                 }
-        //                 ListTag platteTag = new ListTag();
-        //
-        //                 for (ResourceLocation resourceLocation : platte.object2IntEntrySet().stream().map(
-        //                         Map.Entry::getKey
-        //                 ).toList()) {
-        //                     CompoundTag ss = new CompoundTag();
-        //                     ss.putString("id", resourceLocation.toString());
-        //                     platteTag.add(ss);
-        //                 }
-        //                 chunk.putIntArray("matrix", biomes);
-        //                 chunk.put("platte", platteTag);
-        //                 test.put(vs, chunk);
-        //             }
-        //         });
-        //     }
-        //     compound.put("test", test);
-        //     long c = System.currentTimeMillis();
-        //     EclipticSeasons.logger("Test Biome data backup", c - a);
-        // }
+        compound.putLong("BiomeRainHashRecord", BiomeRainDispatcher.hash_cache);
         return compound;
     }
 

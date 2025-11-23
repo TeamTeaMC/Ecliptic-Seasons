@@ -1,0 +1,23 @@
+{
+  "sever_data": true,
+  "stack": true,
+  "file": "minecraft:tags/block/leaves.json",
+  "fields": [
+    {
+      "id": "replace",
+      "type": "bool"
+    },
+    {
+      "id": "values",
+      "type": "list",
+      "items": [
+        {
+          "id": "tag_entry",
+          "type": "auto_completion",
+          "provide": "holder_set",
+          "key": "block"
+        }
+      ]
+    }
+  ]
+}

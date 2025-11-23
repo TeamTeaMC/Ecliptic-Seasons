@@ -6,6 +6,7 @@ import com.teamtea.eclipticseasons.api.constant.climate.ISnowTerm;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.util.codec.CodecUtil;
 import com.teamtea.eclipticseasons.api.util.codec.ESExtraCodec;
+import lombok.Builder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.biome.Biome;
@@ -13,6 +14,7 @@ import net.minecraft.world.level.biome.Biome;
 import java.util.List;
 
 
+@Builder
 public record CustomSnowTerm(
         HolderSet<Biome> biomes,
         SolarTerm start,
@@ -48,6 +50,7 @@ public record CustomSnowTerm(
     }
 
 
+    @Builder
     public record TempEvent(float tempOffset, SolarTerm start, SolarTerm end) implements ISnowTerm {
         public static final Codec<TempEvent> CODEC = RecordCodecBuilder.create(ins -> ins.group(
                 Codec.FLOAT.fieldOf("temp_offset").forGetter(TempEvent::tempOffset),

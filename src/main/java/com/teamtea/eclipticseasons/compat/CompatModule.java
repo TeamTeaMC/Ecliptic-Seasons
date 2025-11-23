@@ -3,8 +3,10 @@ package com.teamtea.eclipticseasons.compat;
 
 import com.teamtea.eclipticseasons.compat.theoneprobe.TOPHook;
 import lombok.Getter;
+import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.event.lifecycle.InterModEnqueueEvent;
+import net.neoforged.fml.loading.FMLLoader;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
 import java.util.List;
@@ -20,7 +22,8 @@ public class CompatModule {
     private static boolean sodium = false;
     @Getter
     private static boolean iris = false;
-
+    @Getter
+    private static boolean modernui = false;
     /**
      * Used for mod init detect.
      **/
@@ -30,13 +33,21 @@ public class CompatModule {
         fabric_renderer_indigo = Platform.isModLoaded("fabric_renderer_indigo");
         sodium = Platform.isModLoaded("sodium");
         iris = Platform.isModLoaded("iris");
+        modernui = Platform.isModLoaded("modernui");
     }
 
     /**
      * Used for mod init event register.
      **/
     public static void register(IEventBus gameBus, IEventBus modBus) {
-
+        if (isModernui() && FMLLoader.getDist() == Dist.CLIENT) {
+            try {
+                Class<?> iuiHandlerClass = Class.forName("com.teamtea.eclipticseasons.compat.modernui.MUIHandler");
+                gameBus.register(iuiHandlerClass.getField("INSTANCE").get(null));
+            } catch (ClassNotFoundException | IllegalAccessException | NoSuchFieldException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
 

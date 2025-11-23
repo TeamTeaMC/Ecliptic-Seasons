@@ -1,6 +1,7 @@
 package com.teamtea.eclipticseasons.common.handler;
 
 
+import com.teamtea.eclipticseasons.api.constant.tag.ClimateTypeBiomeTags;
 import com.teamtea.eclipticseasons.api.misc.CustomRandomTick2;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
@@ -98,6 +99,10 @@ public final class CustomRandomTickHandler {
     }
 
     public static boolean checkExtraFreezeCondition(ServerLevel level, Holder<Biome> biomeHolder, BlockPos water) {
+        if (CommonConfig.Temperature.waterFreezesInFrozenBiomes.get()
+                && biomeHolder.is(ClimateTypeBiomeTags.EXTREME_COLD)) {
+            return biomeHolder.value().shouldFreeze(level, water);
+        }
         if (CommonConfig.Temperature.snowDown.get()
                 && WeatherManager.getSnowStatus(level, biomeHolder, water, EclipticUtil.isRainingOrSnowingWithSurfaceBiome(level, biomeHolder, water)) == WeatherManager.SnowRenderStatus.SNOW) {
             if (water.getY() >= level.getMinBuildHeight()

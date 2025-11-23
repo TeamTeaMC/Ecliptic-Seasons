@@ -31,6 +31,8 @@ public record ESSortInfo(
     private static final Map<ResourceLocation, Map<ResourceLocation, Integer>> PRIORITY_MAP = new HashMap<>();
     public static boolean hasUpdated = false;
 
+    private static final int INTERNAL_PRIORITY_MUL = 1000;
+
     public static void resetUpdate(RegistryAccess registryAccess, boolean isServer) {
         if (hasUpdated) return;
         Optional<Registry<ESSortInfo>> registry1 = registryAccess.registry(ESRegistries.EXTRA_INFO);
@@ -40,9 +42,11 @@ public record ESSortInfo(
                 List<ResourceLocation> resourceLocations = REMOVE_MAP.computeIfAbsent(esDataSorted.registry, (cc) -> new ArrayList<>());
                 resourceLocations.addAll(esDataSorted.target());
             } else {
-                var resourceLocations = PRIORITY_MAP.computeIfAbsent(esDataSorted.registry, (cc) -> new HashMap<>());
-                for (ResourceLocation holder : esDataSorted.target()) {
-                    resourceLocations.put(holder, esDataSorted.priority());
+                var resourceLocations = PRIORITY_MAP.computeIfAbsent(esDataSorted.registry, (cc) -> new LinkedHashMap<>());
+                List<ResourceLocation> targeted = esDataSorted.target();
+                for (int i = 0, targetedSize = targeted.size(); i < targetedSize; i++) {
+                    ResourceLocation holder = targeted.get(i);
+                    resourceLocations.put(holder, esDataSorted.priority() * INTERNAL_PRIORITY_MUL + i);
                 }
             }
         }
@@ -71,7 +75,7 @@ public record ESSortInfo(
 
         return oldMap.entrySet().stream().sorted(
                         Comparator.comparingInt(a ->
-                                priorityMap.getOrDefault(a.getKey(), 1000)))
+                                priorityMap.getOrDefault(a.getKey(), 1000 * INTERNAL_PRIORITY_MUL)))
                 .map(Map.Entry::getValue)
                 .collect(Collectors.toSet());
     }
@@ -86,7 +90,7 @@ public record ESSortInfo(
         original = new ArrayList<>(original);
         original.removeIf(e -> removemap2.contains(e.key().location()));
         original.sort(Comparator.comparingInt(a ->
-                priorityMap.getOrDefault(a.key().location(), 1000)));
+                priorityMap.getOrDefault(a.key().location(), 1000 * INTERNAL_PRIORITY_MUL)));
         return original;
     }
 
