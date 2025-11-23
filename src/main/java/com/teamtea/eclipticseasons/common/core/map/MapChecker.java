@@ -388,77 +388,56 @@ public class MapChecker {
     // Level is not Nullable but we can not sure
     public static int getSurfaceOrUpdate(Level level, BlockPos pos, boolean forceUpdate, int type) {
         if (level == null) return 0;
-        // Note 这里存在一个设计问题，即维度有效否。考虑到切换问题，我们不应该阻止
-        // if (!isValidDimension(level)) {
-        //     switch (type) {
-        //         case ChunkInfoMap.TYPE_BIOME -> {
-        //             return 0;
-        //         }
-        //         case ChunkInfoMap.TYPE_HEIGHT -> {
-        //             return level.getMinBuildHeight() - 1;
-        //         }
-        //     }
-        // }
 
         int x = blockToRegionCoord(pos.getX());
         int z = blockToRegionCoord(pos.getZ());
         List<ChunkInfoMap> mapsList = getMapsList(level);
-        ChunkInfoMap map = getChunkMap(mapsList, x, z);
 
-        int value = 0;
-        if (map != null) {
-            if (type == ChunkInfoMap.TYPE_HEIGHT) {
-                value = map.getHeight(pos);
-                if (value <= map.minY || forceUpdate) {
-                    var rh = getMCHeightWithCheck(level, pos, value);
-                    map.updateHeight(pos, rh);
-                    value = rh;
-                }
-            } else if (type == ChunkInfoMap.TYPE_BIOME) {
-                value = map.getBiome(pos);
-                if (value == -1 || forceUpdate) {
-                    value = biomeToId(level, level.getBiome(pos).value());
-                    if (isLoadNearBy(level, pos)) {
-                        map.updateBiome(pos, value);
-                    }
-                }
-            }
-        } else {
-            // updateLock = true;
+        ChunkInfoMap map;
+
+        map = getChunkMap(mapsList, x, z);
+
+        // 只在无锁时启动创建
+        if (map == null) {
             synchronized (mapsList) {
-                boolean hasBuild = false;
-                for (ChunkInfoMap chunkHeightMap : mapsList) {
-                    if (chunkHeightMap.x == x && chunkHeightMap.z == z) {
-                        hasBuild = true;
-                        map = chunkHeightMap;
-                        break;
-                    }
-                }
-                if (!hasBuild) {
-                    // level.registryAccess().registry(Registries.BIOME).get().getId(Biomes.THE_VOID)
+                // 再次检查是否已被其他线程创建
+                map = getChunkMap(mapsList, x, z);
+                if (map == null) {
                     map = new ChunkInfoMap(x, z, level.getMinBuildHeight() - 1, level.isClientSide);
                     mapsList.add(map);
                 }
             }
-            // updateLock = false;
+        }
 
-            if (type == ChunkInfoMap.TYPE_HEIGHT) {
-                value = getMCHeightWithCheck(level, pos);
-                map.updateHeight(pos, value);
-            } else if (type == ChunkInfoMap.TYPE_BIOME) {
-                value = biomeToId(level, level.getBiome(pos).value());
+
+        int value = 0;
+
+        if (type == ChunkInfoMap.TYPE_HEIGHT) {
+            value = map.getHeight(pos);
+
+            // 无值或者强制更新
+            if (value <= map.minY || forceUpdate) {
+                int newHeight = getMCHeightWithCheck(level, pos, value);
+                map.updateHeight(pos, newHeight);
+                value = newHeight;
+            }
+
+        } else if (type == ChunkInfoMap.TYPE_BIOME) {
+            value = map.getBiome(pos);
+
+            if (value == -1 || forceUpdate) {
+                int biomeId = biomeToId(level, level.getBiome(pos).value());
+                value = biomeId;
+
                 if (isLoadNearBy(level, pos)) {
-                    map.updateBiome(pos, value);
+                    map.updateBiome(pos, biomeId);
                 }
             }
         }
-        // if (type == ChunkInfoMap.TYPE_BIOME && idToBiome(level, value).is(Biomes.PLAINS)) {
-        //     // return 0;
-        //     EclipticSeasons.logger(pos, isLoadNearBy(level, pos), WorldRenderer.isSectionLoad(SectionPos.of(pos), 2));
-        // }
 
         return value;
     }
+
 
     public static @Nullable ChunkInfoMap getChunkInfoMapOrCreate(Level level, BlockPos pos) {
         if (level == null)
