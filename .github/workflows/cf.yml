@@ -56,7 +56,7 @@ jobs:
         with:
           curseforge-id: 1118306
           curseforge-token: "${{ env.CURSEFORGE_TOKEN }}"
-          version-type: beta
+          version-type: release
           changelog-file: changelog.md
           loaders: forge
           game-versions: "${{ env.MINECRAFT_VERSION }}"
