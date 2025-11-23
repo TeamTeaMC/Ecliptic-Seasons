@@ -53,7 +53,16 @@ public class MapChecker {
     public static final int ChunkSizeAxis = 4 + 5;
 
     public static final List<Level> validDimension = new ArrayList<>();
-    public static final Map<Level, List<ChunkInfoMap>> REGION_LIST_COLLECTOR = new IdentityHashMap<>();
+
+
+
+    // public static final Map<Level, List<ChunkInfoMap>> REGION_LIST_COLLECTOR = new IdentityHashMap<>();
+
+    // 用于支持混端的多线程并发
+    public static final Map<Level, List<ChunkInfoMap>> REGION_LIST_COLLECTOR =
+            new java.util.concurrent.ConcurrentHashMap<>();
+
+
     public static List<ChunkInfoMap> CLIENT_REGION_LIST = new ArrayList<>();
     public static final int FLAG_IGNORE = -1;
     public static final int FLAG_NONE = 0;
@@ -179,8 +188,13 @@ public class MapChecker {
     }
 
 
+    //public static List<ChunkInfoMap> getMapsListOrCreate(Level level) {
+    //    return REGION_LIST_COLLECTOR.computeIfAbsent(level, level1 -> new ArrayList<>());
+    //}
     public static List<ChunkInfoMap> getMapsListOrCreate(Level level) {
-        return REGION_LIST_COLLECTOR.computeIfAbsent(level, level1 -> new ArrayList<>());
+        return REGION_LIST_COLLECTOR.computeIfAbsent(level, l ->
+                Collections.synchronizedList(new ArrayList<>())
+        );
     }
 
     public static List<ChunkInfoMap> getMapsList(Level level) {
@@ -212,9 +226,22 @@ public class MapChecker {
         return map;
     }
 
+    //public static @Nullable ChunkAccess getChunkView(Level level, BlockPos pos) {
+    //    return level.getChunk(SectionPos.blockToSectionCoord(pos.getX()),
+    //            SectionPos.blockToSectionCoord(pos.getZ()), ChunkStatus.SURFACE, false);
+    //}
+
     public static @Nullable ChunkAccess getChunkView(Level level, BlockPos pos) {
-        return level.getChunk(SectionPos.blockToSectionCoord(pos.getX()),
-                SectionPos.blockToSectionCoord(pos.getZ()), ChunkStatus.SURFACE, false);
+        try {
+            return level.getChunk(
+                    SectionPos.blockToSectionCoord(pos.getX()),
+                    SectionPos.blockToSectionCoord(pos.getZ()),
+                    ChunkStatus.SURFACE,
+                    false
+            );
+        } catch (Throwable ignored) {
+            return null;
+        }
     }
 
     public static int getVanillaSolidHeightOrSelf(Level level, BlockPos pos) {
@@ -228,14 +255,46 @@ public class MapChecker {
         return getMCHeightWithCheck(level, pos, null);
     }
 
-    public static int getMCHeightWithCheck(Level level, BlockPos pos, @Nullable Integer oldY) {
-        ChunkAccess chunkAt = getChunkView(level, pos);
+
+
+
+    //public static int getMCHeightWithCheck(Level level, BlockPos pos, @Nullable Integer oldY) {
+     //   ChunkAccess chunkAt = getChunkView(level, pos);
         // SnowyRemover snowyRemover = null;
         // if (chunkAt != null && chunkAt.hasData(AttachmentRegistry.SNOWY_REMOVER)) {
         //     snowyRemover = chunkAt.getData(AttachmentRegistry.SNOWY_REMOVER);
         // }
-        return chunkAt == null ? pos.getY() :
-                getMCHeightWithCheck(level, pos, chunkAt, null, null, oldY);
+     //   return chunkAt == null ? pos.getY() :
+      //          getMCHeightWithCheck(level, pos, chunkAt, null, null, oldY);
+    //}
+
+    public static int getMCHeightWithCheck(Level level, BlockPos pos, @Nullable Integer oldY) {
+
+        ChunkAccess chunkAt = getChunkView(level, pos);
+        if (chunkAt == null) {
+            return pos.getY();
+        }
+
+        int x = pos.getX();
+        int z = pos.getZ();
+
+        int height;
+
+        try {
+            Heightmap.Types type = level.isClientSide || !CommonConfig.Snow.snowyTree.get()
+                    ? Heightmap.Types.MOTION_BLOCKING
+                    : Heightmap.Types.MOTION_BLOCKING_NO_LEAVES;
+
+            height = chunkAt.getHeight(type, x, z);
+        } catch (Throwable e) {
+            return pos.getY();
+        }
+
+        // 防止越界
+        if (height < chunkAt.getMinBuildHeight()) height = chunkAt.getMinBuildHeight();
+        if (height > chunkAt.getMaxBuildHeight()) height = chunkAt.getMaxBuildHeight();
+
+        return height;
     }
 
     @SuppressWarnings("removal")
