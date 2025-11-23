@@ -1,3 +1,8 @@
+### 0.12.4
+
+- Introduces JEI support for Environmental Humidity, Season Quests, Cauldron Snow Transformation, and Season Ritual with new categories.
+- Refactors datapack sorting logic for improved internal organization.
+
 ### 0.12.3.6
 
 - Added an option `ForceChunkUpdateOnlyWhenMelt`.
