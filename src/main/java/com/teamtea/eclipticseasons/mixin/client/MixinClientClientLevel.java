@@ -37,6 +37,11 @@ public abstract class MixinClientClientLevel {
         ParticleUtil.createParticle((ClientLevel) (Object) this, x, y, z);
     }
 
+    @Inject(at = {@At("RETURN")}, method = {"addDestroyBlockEffect"})
+    private void eclipticseasons$addDestroyBlockEffect(BlockPos pos, BlockState state, CallbackInfo ci) {
+        ParticleUtil.attachSnowyParticle((ClientLevel) (Object) this, pos, state);
+    }
+
     @WrapOperation(at = {@At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/Block;animateTick(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/util/RandomSource;)V")}, method = {"doAnimateTick"})
     private void eclipticseasons$doAnimateTick(
             Block instance,

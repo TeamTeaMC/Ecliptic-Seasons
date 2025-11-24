@@ -6,6 +6,7 @@ import com.teamtea.eclipticseasons.api.data.client.ColorMode;
 import com.teamtea.eclipticseasons.api.data.client.LeafColor;
 import com.teamtea.eclipticseasons.client.util.ClientRef;
 import com.teamtea.eclipticseasons.client.util.ColorHelper;
+import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.registry.ParticleRegistry;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.tag.EclipticBlockTags;
@@ -30,6 +31,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -347,6 +349,13 @@ public class ParticleUtil {
             ignore.printStackTrace();
         }
         return Pair.of(c, -1);
+    }
+
+
+    public static void attachSnowyParticle(ClientLevel clientLevel, BlockPos pos, BlockState state) {
+        if (ClientConfig.Particle.snowLeafParticles.get() && MapChecker.leaveLike(MapChecker.getDefaultBlockTypeFlag(state))) {
+            Minecraft.getInstance().particleEngine.destroy(pos, Blocks.SNOW.defaultBlockState());
+        }
     }
 
 }

@@ -1,3 +1,9 @@
+### 0.12.5
+
+- Improved chunk handling thanks to Pink_Cats’s suggestion in #117, fixing rare cases where river-biome climate refill
+  could freeze the game when certain world-gen mods load chunks slowly or use unusual multithreading.
+- Snow-covered leaves now release snow particles when broken.
+
 ### 0.12.4.1
 
 * Added `RealWorldSolarTerms` option to synchronize in-game solar terms with the real world.
