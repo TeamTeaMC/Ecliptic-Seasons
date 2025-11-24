@@ -19,6 +19,7 @@ import com.teamtea.eclipticseasons.config.CommonConfig;
 import it.unimi.dsi.fastutil.Pair;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -136,14 +137,21 @@ public class SolarDataManager extends SavedData {
 
     public static SolarDataManager get(ServerLevel serverLevel) {
         DimensionDataStorage storage = serverLevel.getDataStorage();
-        return storage.computeIfAbsent((compoundTag) -> new SolarDataManager(serverLevel, compoundTag),
-                () -> {
-                    SolarDataManager manager = new SolarDataManager(serverLevel);
-                    WeatherManager.initNewWorldWeather(serverLevel, serverLevel.random, manager.getSolarTerm());
-                    return manager;
-                }, EclipticSeasons.MODID);
+        return storage.computeIfAbsent((compoundTag) -> load(serverLevel, compoundTag),
+                () -> create(serverLevel), EclipticSeasons.MODID);
     }
 
+    private static SolarDataManager load(ServerLevel serverLevel, CompoundTag compoundTag) {
+        return CommonConfig.Season.realWorldSolarTerms.get() ?
+                new FixedSolarDataManager(serverLevel, compoundTag) : new SolarDataManager(serverLevel, compoundTag);
+    }
+
+    private static SolarDataManager create(ServerLevel serverLevel) {
+        SolarDataManager manager = CommonConfig.Season.realWorldSolarTerms.get() ?
+                new FixedSolarDataManager(serverLevel) : new SolarDataManager(serverLevel);
+        WeatherManager.initNewWorldWeather(serverLevel, serverLevel.random, manager.getSolarTerm());
+        return manager;
+    }
 
     public void updateTicks(ServerLevel world) {
         solarTermsTicks++;

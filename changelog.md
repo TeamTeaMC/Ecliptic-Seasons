@@ -1,3 +1,16 @@
+### 0.12.4.1
+
+* Added `RealWorldSolarTerms` option to synchronize in-game solar terms with the real world.
+* Added `EnableTimeBreed` option to remove the restriction of animal breeding to daytime or nighttime.
+* Fixed an issue where custom `SnowTerm` datapacks with `events` would trigger even if `DynamicSnowTerm` was not
+  enabled.
+
+### 0.12.4
+
+- Introduces JEI support for Environmental Humidity, Season Quests, Cauldron Snow Transformation, and Season Ritual with
+  new categories.
+- Refactors datapack sorting logic for improved internal organization.
+
 ### 0.12.3.6
 
 - Added an option `ForceChunkUpdateOnlyWhenMelt`.
@@ -7,9 +20,11 @@
 
 - Added an optional datapack `Not Ignore River` for climatic query.
 
-Rivers are not suitable for defining climate-based biomes because they are too narrow and traverse different biomes, from deserts to forests.
+Rivers are not suitable for defining climate-based biomes because they are too narrow and traverse different biomes,
+from deserts to forests.
 
-However, using approximate solutions as substitutes can easily lead to chunk loading deadlocks due to environmental issues and the inherently high demand for queries.
+However, using approximate solutions as substitutes can easily lead to chunk loading deadlocks due to environmental
+issues and the inherently high demand for queries.
 
 ### 0.12.3.4
 
@@ -21,20 +36,25 @@ However, using approximate solutions as substitutes can easily lead to chunk loa
 
 ### 0.12.3.3
 
-- Added the option `WaterFreezesInFrozenBiomes`, enabled by default, to preserve vanilla behavior where water blocks freeze into ice in cold biomes.
+- Added the option `WaterFreezesInFrozenBiomes`, enabled by default, to preserve vanilla behavior where water blocks
+  freeze into ice in cold biomes.
 - Added the biome tag `eclipticseasons:extreme_cold` to mark biomes where above feature is active.
 
 ### 0.12.3.2
 
-* Added the command `/ecliptic debug reset surface_biome_cache` to reset the global or specified-location biome cache. Note that chunk reload is required.
-* Added an optional feature (disabled by default): during autumn, grass blocks under trees will appear in a more withered-leaf color.
+* Added the command `/ecliptic debug reset surface_biome_cache` to reset the global or specified-location biome cache.
+  Note that chunk reload is required.
+* Added an optional feature (disabled by default): during autumn, grass blocks under trees will appear in a more
+  withered-leaf color.
 
 ### 0.12.3.1
 
 - Add condition `is_snowy` for the seasonal variation data pack.
-- After enabling the "Snow Together" and "Rain Together" settings, they are no longer optional but are now forced enabled. If you wish to disable them, you can set the configuration to false.
+- After enabling the "Snow Together" and "Rain Together" settings, they are no longer optional but are now forced
+  enabled. If you wish to disable them, you can set the configuration to false.
 - The experimental feature "FoggyWeather" now has its default value changed to true.
-- The default value for "DynamicSnowTerm" has been changed to false to prevent players who are experiencing this mod for the first time from being confused by snowless winters.
+- The default value for "DynamicSnowTerm" has been changed to false to prevent players who are experiencing this mod for
+  the first time from being confused by snowless winters.
 
 ### 0.12.3-beta
 
@@ -42,12 +62,15 @@ However, using approximate solutions as substitutes can easily lead to chunk loa
 - Added **none** weather effect to **cancel precipitation**.
 - Added **persistent caching and random weighting** for `BiomeRain` calculations.
 - Added **special KubeJS bindings**; you can now use both `EclipticSeasonsApi` and `EclipticSeasonsBindings` api.
-- Fixed an issue where the `NotRainInDesert` option would not prevent rain in deserts, while keeping it **enabled by default**.
+- Fixed an issue where the `NotRainInDesert` option would not prevent rain in deserts, while keeping it **enabled by
+  default**.
 
 ### 0.12.2-beta
 
-- Added the `special_effect` property to the `biome_rain` datapack, which can be used to specify special effects applied during weather events.
-- Added the `biome_rain_effect` datapack, which currently includes the types `none` and `fog`; the `snow` and `rain` types will be introduced in version 0.12.2.
+- Added the `special_effect` property to the `biome_rain` datapack, which can be used to specify special effects applied
+  during weather events.
+- Added the `biome_rain_effect` datapack, which currently includes the types `none` and `fog`; the `snow` and `rain`
+  types will be introduced in version 0.12.2.
 - Debugged certain initialization methods of Fog rendering to avoid issues under specific startup conditions.
 
 ### 0.12.1.0.1
@@ -99,7 +122,8 @@ However, using approximate solutions as substitutes can easily lead to chunk loa
 ### 0.12.0 - *First Official Release – Anniversary Edition*
 
 > On this special anniversary, we proudly present our first official release! While there may be no significant content
-> changes, this version sets the stage for stability and marks the beginning of a long-lasting experience. Moving forward,
+> changes, this version sets the stage for stability and marks the beginning of a long-lasting experience. Moving
+> forward,
 > expect fewer frequent content updates, focusing instead on maintaining and refining what we’ve built.
 
 - **Spring After Autumn** achievement now unlocks a commemorative reward: **Snowless Hometown**—a symbol of warmth and

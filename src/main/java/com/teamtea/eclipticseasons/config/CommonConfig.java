@@ -163,6 +163,7 @@ public class CommonConfig {
 
         public static ForgeConfigSpec.BooleanValue dynamicSnowTerm;
         public static ForgeConfigSpec.BooleanValue seasonDefinition;
+        public static ForgeConfigSpec.BooleanValue realWorldSolarTerms;
 
         private static void load(ForgeConfigSpec.Builder builder) {
             builder.push("Season");
@@ -210,7 +211,9 @@ public class CommonConfig {
 
             dynamicSnowTerm = builder.comment("The timing of snowfall now varies within a certain range each year.")
                     .define("DynamicSnowTerm", false);
-
+            realWorldSolarTerms = builder
+                    .comment("The in-game solar terms will be synchronized with the real world. Note: due to limitations of the old mechanism, enabling this may cause the day display function of this mod or other compatible mods to be confusing.")
+                    .define("RealWorldSolarTerms", false);
             builder.pop();
         }
     }
@@ -294,6 +297,8 @@ public class CommonConfig {
     public static class Animal {
 
         public static ForgeConfigSpec.BooleanValue enableBreed;
+        public static ForgeConfigSpec.BooleanValue enableTimeBreed;
+
         public static ForgeConfigSpec.BooleanValue enableBee;
         public static ForgeConfigSpec.ConfigValue<List<? extends String>> beePollinateSeasons;
         public static ForgeConfigSpec.ConfigValue<List<? extends String>> beeActiveSeasons;
@@ -307,6 +312,9 @@ public class CommonConfig {
             builder.push("Animal");
             enableBreed = builder.comment("Enable seasonal animal breed.")
                     .define("EnableSeasonalBreed", false);
+            enableTimeBreed = builder
+                    .comment("Restrict animal breeding to a specific time of day (daytime or nighttime).")
+                    .define("EnableTimeBreed", false);
 
             enableBee = builder.comment("Enable seasonal bee behavior, bee would like spring and not like winter and cold.")
                     .define("EnableSeasonalBee", false);

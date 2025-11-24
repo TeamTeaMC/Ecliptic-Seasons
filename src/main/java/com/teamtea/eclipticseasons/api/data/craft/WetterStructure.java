@@ -5,6 +5,8 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.teamtea.eclipticseasons.api.data.misc.PosAndBlockStateCheck;
 import com.teamtea.eclipticseasons.api.util.backport.FakeBlockPredicate;
 import net.minecraft.advancements.critereon.BlockPredicate;
+import net.minecraft.core.Vec3i;
+import net.minecraftforge.common.util.ConcatenatedListView;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.List;
@@ -40,4 +42,15 @@ public record WetterStructure(
             Codec.INT.fieldOf("lasting_time").forGetter(WetterStructure::lastingTime),
             Codec.BOOL.optionalFieldOf("air_check", true).forGetter(WetterStructure::enableAirCheck)
     ).apply(builder, (aFloat, aFloat2, integer, aBoolean) -> new WetterStructure(aFloat, aFloat2, integer, aBoolean, Optional.empty(), List.of())));
+
+    public List<PosAndBlockStateCheck> checks() {
+        return ConcatenatedListView.of(core
+                        .map(e -> List.of(new PosAndBlockStateCheck(Vec3i.ZERO, e)))
+                        .orElse(List.of())
+                , blockStatePredicate);
+    }
+
+    public long lasting_time() {
+        return lastingTime;
+    }
 }
