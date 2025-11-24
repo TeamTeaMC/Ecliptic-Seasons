@@ -232,16 +232,23 @@ public class MapChecker {
     //}
 
     public static @Nullable ChunkAccess getChunkView(Level level, BlockPos pos) {
-        try {
-            return level.getChunk(
-                    SectionPos.blockToSectionCoord(pos.getX()),
-                    SectionPos.blockToSectionCoord(pos.getZ()),
-                    ChunkStatus.SURFACE,
-                    false
-            );
-        } catch (Throwable ignored) {
+        if (level == null) return null;
+
+        int cx = SectionPos.blockToSectionCoord(pos.getX());
+        int cz = SectionPos.blockToSectionCoord(pos.getZ());
+
+        // get access chunk with safe
+        ChunkAccess chunk = level.getChunkSource().getChunkNow(cx, cz);
+        if (chunk == null) {
             return null;
         }
+
+        // chunk is generating load will lock server
+        if (!chunk.getStatus().isOrAfter(ChunkStatus.SURFACE)) {
+            return null;
+        }
+
+        return chunk;
     }
 
     public static int getVanillaSolidHeightOrSelf(Level level, BlockPos pos) {
