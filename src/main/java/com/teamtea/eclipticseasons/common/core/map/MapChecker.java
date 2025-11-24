@@ -46,6 +46,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.function.Predicate;
 
 public class MapChecker {
     public static final int ChunkSize = 16 * 32;
@@ -212,9 +213,18 @@ public class MapChecker {
         return map;
     }
 
+    //public static @Nullable ChunkAccess getChunkView(Level level, BlockPos pos) {
+    //    return level.getChunk(SectionPos.blockToSectionCoord(pos.getX()),
+    //            SectionPos.blockToSectionCoord(pos.getZ()), ChunkStatus.SURFACE, false);
+    //}
+
     public static @Nullable ChunkAccess getChunkView(Level level, BlockPos pos) {
-        return level.getChunk(SectionPos.blockToSectionCoord(pos.getX()),
-                SectionPos.blockToSectionCoord(pos.getZ()), ChunkStatus.SURFACE, false);
+        if (level == null) return null;
+        int cx = SectionPos.blockToSectionCoord(pos.getX());
+        int cz = SectionPos.blockToSectionCoord(pos.getZ());
+        ChunkAccess chunk = level.getChunkSource().getChunkNow(cx, cz);
+        return chunk != null && chunk.getStatus().isOrAfter(ChunkStatus.SURFACE) ?
+                chunk : null;
     }
 
     public static int getVanillaSolidHeightOrSelf(Level level, BlockPos pos) {
@@ -729,7 +739,9 @@ public class MapChecker {
         int i = 0;
         int last_ii = 0;
         boolean shouldBreak = false;
+
         while (isSmallBiome(biome)) {
+
             // if(true)break;
             if (relative == null) {
                 relative = new BlockPos.MutableBlockPos(
