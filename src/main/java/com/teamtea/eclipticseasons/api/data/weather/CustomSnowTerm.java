@@ -6,6 +6,7 @@ import com.teamtea.eclipticseasons.api.constant.climate.ISnowTerm;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.util.codec.CodecUtil;
 import com.teamtea.eclipticseasons.api.util.codec.ESExtraCodec;
+import com.teamtea.eclipticseasons.config.CommonConfig;
 import lombok.Builder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.Registries;
@@ -46,11 +47,12 @@ public record CustomSnowTerm(
 
     @Override
     public ISnowTerm cast(float tempChange) {
-        for (TempEvent tempEvent : tempEvents) {
-            if (tempEvent.tempOffset > tempChange) {
-                return tempEvent;
+        if (CommonConfig.Season.dynamicSnowTerm.get())
+            for (TempEvent tempEvent : tempEvents) {
+                if (tempEvent.tempOffset > tempChange) {
+                    return tempEvent;
+                }
             }
-        }
         return this;
     }
 

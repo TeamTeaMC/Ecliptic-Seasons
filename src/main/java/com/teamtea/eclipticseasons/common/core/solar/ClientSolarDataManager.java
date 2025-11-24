@@ -13,18 +13,8 @@ public class ClientSolarDataManager extends SolarDataManager {
         this.levelWeakReference = new WeakReference<>(level);
     }
 
-
-    public static ClientSolarDataManager get(Level level) {
-        if (level instanceof ClientLevel clientLevel) {
-            return get(clientLevel);
-        }
-        return null;
-    }
-
-
-    public static ClientSolarDataManager get(ClientLevel clientLevel) {
+    public static SolarDataManager get(ClientLevel clientLevel) {
         return new ClientSolarDataManager(clientLevel);
     }
-
 
 }
