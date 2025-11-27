@@ -1,3 +1,9 @@
+### 0.12.5.1
+
+- Removed entity collision for the windmill.
+- Added the tag `eclipticseasons:crops/not_killed_by_climate`, which provides a higher-priority way to prevent certain
+  plants—if configured in crop datapacks—from dying due to incorrect seasons or humidity.
+
 ### 0.12.5
 
 - Improved chunk handling thanks to Pink_Cats’s suggestion in #117, fixing rare cases where river-biome climate refill

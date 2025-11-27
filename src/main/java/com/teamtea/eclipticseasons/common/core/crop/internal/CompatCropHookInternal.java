@@ -287,5 +287,10 @@ public class CompatCropHookInternal {
                 }
             }
         });
+        blocks.flatMap(blocks1 -> blocks.get().getTag(SERENE_SEASONS_UNBREAKABLE_FERTILE_CROPS)).ifPresent(blocksG -> {
+            for (Holder<Block> blockHolder : blocksG.stream().toList()) {
+                CropInfoManager.CROPS_WOULD_NOT_KILLED_BY_CLIMATE.put(blockHolder.value(), blockHolder);
+            }
+        });
     }
 }
