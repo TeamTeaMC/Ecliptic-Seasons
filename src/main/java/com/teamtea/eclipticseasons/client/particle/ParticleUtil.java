@@ -353,7 +353,9 @@ public class ParticleUtil {
 
 
     public static void attachSnowyParticle(ClientLevel clientLevel, BlockPos pos, BlockState state) {
-        if (ClientConfig.Particle.snowLeafParticles.get() && MapChecker.leaveLike(MapChecker.getDefaultBlockTypeFlag(state))) {
+        if (ClientConfig.Particle.snowLeafParticles.get()
+                && MapChecker.leaveLike(MapChecker.getDefaultBlockTypeFlag(state))
+                && EclipticSeasonsApi.getInstance().isSnowyBlock(clientLevel, state, pos)) {
             Minecraft.getInstance().particleEngine.destroy(pos, Blocks.SNOW.defaultBlockState());
         }
     }

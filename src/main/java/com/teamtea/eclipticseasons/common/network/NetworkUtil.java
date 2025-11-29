@@ -67,7 +67,7 @@ public class NetworkUtil {
         {
 
             if (context.get().getDirection() == NetworkDirection.PLAY_TO_CLIENT) {
-                Level level =NetworkUtil.getClient();
+                Level level = NetworkUtil.getClient();
                 Registry<WeatherEffect> weatherEffects = level.registryAccess().registryOrThrow(ESRegistries.WEATHER_EFFECT);
                 var lists = WeatherManager.getBiomeList(NetworkUtil.getClient());
                 if (lists != null) {
@@ -186,7 +186,7 @@ public class NetworkUtil {
                 if (!(chunkAt.isEmpty())
                         && chunkAt instanceof IChunkBiomeHolder chunkBiomeHolder) {
                     chunkBiomeHolder.eclipticseasons$setBiomeHolder(new BiomeHolder(chunkBiomeUpdateMessage.biomes, true, chunkBiomeUpdateMessage.version));
-                }else {
+                } else {
                     BiomeHolder.BIOME_HOLDER_MAP.put(chunkBiomeUpdateMessage.chunkPos,
                             new BiomeHolder(chunkBiomeUpdateMessage.biomes, true, chunkBiomeUpdateMessage.version));
                 }

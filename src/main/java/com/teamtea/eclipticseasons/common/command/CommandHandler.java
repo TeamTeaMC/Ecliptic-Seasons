@@ -4,7 +4,6 @@ import com.mojang.brigadier.arguments.FloatArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
-import com.mojang.datafixers.util.Either;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.climate.BiomeRain;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
@@ -30,13 +29,10 @@ import net.minecraft.commands.arguments.ResourceKeyArgument;
 import net.minecraft.commands.arguments.ResourceOrTagArgument;
 import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
 import net.minecraft.core.Holder;
-import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.commands.TimeCommand;
 import net.minecraft.server.level.ServerLevel;
@@ -45,7 +41,6 @@ import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import com.teamtea.eclipticseasons.EclipticSeasons;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.function.Predicate;
@@ -249,7 +244,7 @@ public class CommandHandler {
                 }
             }
             if (found) {
-                WeatherManager.sendBiomePacket(levelBiomeWeather, level.players());
+                WeatherManager.sendBiomePacket(level,levelBiomeWeather, level.players());
                 SnowyMapChecker.updateAllChunks(level);
                 SimpleNetworkHandler.send(level.players(), new EmptyMessage());
             }
@@ -271,7 +266,7 @@ public class CommandHandler {
                 }
             }
             if (found) {
-                WeatherManager.sendBiomePacket(levelBiomeWeather, level.players());
+                WeatherManager.sendBiomePacket(level, levelBiomeWeather, level.players());
                 SnowyMapChecker.updateAllChunks(level);
                 SimpleNetworkHandler.send(level.players(), new EmptyMessage());
             }
@@ -300,7 +295,7 @@ public class CommandHandler {
                 }
             }
             if (found) {
-                WeatherManager.sendBiomePacket(levelBiomeWeather, level.players());
+                WeatherManager.sendBiomePacket(level, levelBiomeWeather, level.players());
             }
         }
         return 0;

@@ -1,3 +1,7 @@
+### 0.12.5.2
+
+- Fixed #121
+
 ### 0.12.5.1
 
 - Removed entity collision for the windmill.
