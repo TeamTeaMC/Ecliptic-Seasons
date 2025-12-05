@@ -2,6 +2,7 @@ package com.teamtea.eclipticseasons.common.core.solar;
 
 
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
+import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
@@ -20,7 +21,9 @@ public class SolarAngelHelper {
             SolarDataManager data = SolarHolders.getSaveData(level);
             if (data != null) {
 
-                int dayLevelTime = Math.toIntExact((worldTime + 18000) % 24000); // 0 for noon; 6000 for sunset; 18000 for sunrise.
+                int dayLengthInMinecraft = EclipticUtil.getDayLengthInMinecraft(level);
+
+                int dayLevelTime = Math.toIntExact((worldTime + 18000) % dayLengthInMinecraft); // 0 for noon; 6000 for sunset; 18000 for sunrise.
 
                 // 这里必须要等于，因为0时刻还没切换到下一天。
                 // Must be equal here, as the time 0 tick has not transitioned to the next day.
@@ -29,25 +32,25 @@ public class SolarAngelHelper {
                                 data.getNextSolarTerm().getDayTime() :
                                 data.getSolarTerm().getDayTime();
 
-                int sunrise = 24000 - dayTime / 2;
+                int sunrise = dayLengthInMinecraft - dayTime / 2;
                 int sunset = dayTime / 2;
                 int solarAngelTime;
                 if (0 <= dayLevelTime && dayLevelTime <= sunset) {
                     solarAngelTime = 6000 + dayLevelTime * 6000 / sunset;
                 } else if (dayLevelTime > sunset && dayLevelTime <= sunrise) {
-                    solarAngelTime = 12000 + (dayLevelTime - sunset) * 12000 / (24000 - dayTime);
+                    solarAngelTime = 12000 + (dayLevelTime - sunset) * 12000 / (dayLengthInMinecraft - dayTime);
                 } else {
-                    solarAngelTime = (dayLevelTime - sunrise) * 6000 / (24000 - sunrise);
+                    solarAngelTime = (dayLevelTime - sunrise) * 6000 / (dayLengthInMinecraft - sunrise);
                 }
 
                 return solarAngelTime;
             }
         }
-        return Math.toIntExact(worldTime % 24000);
+        return Math.toIntExact(worldTime % EclipticUtil.getDayLengthInMinecraftStatic());
     }
 
     public static float getCelestialAngle(long worldTime) {
-        double d0 = Mth.frac((double) worldTime / 24000.0D - 0.25D);
+        double d0 = Mth.frac((double) worldTime / ((double) EclipticUtil.getDayLengthInMinecraftStatic()) - 0.25D);
         double d1 = 0.5D - Math.cos(d0 * Math.PI) / 2.0D;
         return (float) (d0 * 2.0D + d1) / 3.0F;
     }

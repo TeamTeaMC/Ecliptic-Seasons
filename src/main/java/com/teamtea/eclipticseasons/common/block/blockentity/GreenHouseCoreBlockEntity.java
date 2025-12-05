@@ -113,7 +113,7 @@ public class GreenHouseCoreBlockEntity extends SyncBlockEntity {
                         }
                     }
                     if (level.getRandom().nextInt(CommonConfig.Crop.seasonalPrayerRitualCropBonusReduction.get()) < extra || level.getRandom().nextDouble() < 100.0 / (
-                            EclipticSeasonsApi.getInstance().getLastingDaysOfEachTerm(level) * CommonConfig.Crop.seasonalPrayerRitualTimeCost.get() * 24000)) {
+                            EclipticSeasonsApi.getInstance().getLastingDaysOfEachTerm(level) * CommonConfig.Crop.seasonalPrayerRitualTimeCost.get() * EclipticUtil.getDayLengthInMinecraft(level))) {
                         extra = extra > 0 ? extra - 1 : 0;
                         Pair<Season, Integer> currentSeason = getCurrentSeason(level, blockPos);
                         if (currentSeason.getFirst() == greenHouseCoreBlock.getSeason()

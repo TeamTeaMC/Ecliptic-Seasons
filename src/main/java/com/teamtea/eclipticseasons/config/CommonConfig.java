@@ -2,6 +2,7 @@ package com.teamtea.eclipticseasons.config;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
+import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.compat.CompatModule;
 import lombok.Getter;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -186,23 +187,23 @@ public class CommonConfig {
             springDayTimes = builder.comment("Day time length of spring, divided into six periods according to the solar term table.")
                     .defineList(List.of("SpringDayTimes"),
                             () -> List.of(10500, 11000, 11500, 12000, 12500, 13000),
-                            o -> o instanceof Integer i && (i >= 0 && i <= 24000));
+                            o -> o instanceof Integer i && (i >= 0 && i <= EclipticUtil.getDayLengthInMinecraftStatic()));
             summerDayTimes = builder.comment("Day time length of summer, divided into six periods according to the solar term table.")
                     .defineListAllowEmpty(List.of("SummerDayTimes"),
                             () -> List.of(13500, 14000, 14500, 15000, 14500, 14000),
-                            o -> o instanceof Integer i && (i >= 0 && i <= 24000));
+                            o -> o instanceof Integer i && (i >= 0 && i <= EclipticUtil.getDayLengthInMinecraftStatic()));
             autumnDayTimes = builder.comment("Day time length of autumn, divided into six periods according to the solar term table.")
                     .defineListAllowEmpty(List.of("AutumnDayTimes"),
                             () -> List.of(13500, 13000, 12500, 12000, 11500, 11000),
-                            o -> o instanceof Integer i && (i >= 0 && i <= 24000));
+                            o -> o instanceof Integer i && (i >= 0 && i <= EclipticUtil.getDayLengthInMinecraftStatic()));
             winterDayTimes = builder.comment("Day time length of winter, divided into six periods according to the solar term table.")
                     .defineListAllowEmpty(List.of("WinterDayTimes"),
                             () -> List.of(10500, 10000, 9500, 9000, 9500, 10000),
-                            o -> o instanceof Integer i && (i >= 0 && i <= 24000));
+                            o -> o instanceof Integer i && (i >= 0 && i <= EclipticUtil.getDayLengthInMinecraftStatic()));
             noneDayTimes = builder.comment("Day time length of none season, divided into six periods according to the solar term table.")
                     .defineListAllowEmpty(List.of("NoneDayTimes"),
                             () -> List.of(12000),
-                            o -> o instanceof Integer i && (i >= 0 && i <= 24000));
+                            o -> o instanceof Integer i && (i >= 0 && i <= EclipticUtil.getDayLengthInMinecraftStatic()));
             validDimensions = builder.comment("List of dimensions where season effects apply. Must be natural worlds with a day-night cycle.")
                     .defineListAllowEmpty("ValidDimensions",
                             () -> List.of(Level.OVERWORLD.location().toString()),

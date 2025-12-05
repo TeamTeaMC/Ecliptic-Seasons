@@ -4,6 +4,7 @@ import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.event.SolarTermChangeEvent;
+import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.api.util.SimpleUtil;
 import com.teamtea.eclipticseasons.common.block.blockentity.GreenHouseCoreBlockEntity;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeRainDispatcher;
@@ -153,16 +154,16 @@ public class SolarDataManager extends SavedData {
         return manager;
     }
 
-    public void updateTicks(ServerLevel world) {
+    public void updateTicks(ServerLevel level) {
         solarTermsTicks++;
-        int dayTime = Math.toIntExact(world.getDayTime() % 24000);
+        int dayTime = Math.toIntExact(level.getDayTime() % EclipticUtil.getDayLengthInMinecraft(level));
         // 这里是当累计计数，dayTime会重置接近0，但是solarTermsTicks不会，因此有所差异
         if (solarTermsTicks > dayTime + 100)
         // if (dayTime % 100 == 0)
         {
             solarTermsDay++;
 
-            sendAndUpdate(world);
+            sendAndUpdate(level);
         }
         solarTermsTicks = dayTime;
 

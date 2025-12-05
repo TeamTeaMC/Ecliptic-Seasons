@@ -71,7 +71,7 @@ public class ClientCon {
             isNoon = EclipticUtil.isNoon(clientLevel);
             SolarDataManager saveData = SolarHolders.getSaveData(clientLevel);
             if (saveData != null) {
-                ClientCon.progress = Mth.clamp(Mth.floor(((saveData.getSolarTermDaysInPeriod() + (Mth.floor((clientLevel.getDayTime() + 24000) % 24000L / 24000f * 10)) / 10f) * 100 / saveData.getSolarTermLastingDays())), 0, 100);
+                ClientCon.progress = Mth.clamp(Mth.floor(((saveData.getSolarTermDaysInPeriod() + (Mth.floor((clientLevel.getDayTime() + EclipticUtil.getDayLengthInMinecraft(clientLevel)) % ((long) EclipticUtil.getDayLengthInMinecraft(clientLevel)) / ((float) EclipticUtil.getDayLengthInMinecraft(clientLevel)) * 10)) / 10f) * 100 / saveData.getSolarTermLastingDays())), 0, 100);
             }
             ClientCon.nowSolarYear = EclipticUtil.getNowSolarYear(clientLevel);
         } else {
