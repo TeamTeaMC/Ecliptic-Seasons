@@ -1,6 +1,11 @@
+### 0.12.5.3
+
+- Improved compatibility when FoliageUnderTree is enabled, avoiding log errors when used with Xaero Maps Mod.
+- Slightly adjusted the winter LOD check logic for DH and provided an option to disable it.
+
 ### 0.12.5.2
 
-- Fixed #121
+- Fixed #121 Snow leaf particles without snow layer.
 
 ### 0.12.5.1
 

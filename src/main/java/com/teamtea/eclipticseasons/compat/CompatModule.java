@@ -23,6 +23,8 @@ public class CompatModule {
     @Getter
     private static boolean modernui = false;
 
+    @Getter
+    private static boolean distanthorizons = false;
     /**
      * Used for mod init detect.
      **/
@@ -30,6 +32,7 @@ public class CompatModule {
         iui_forge = Platform.isModLoaded("iui_forge");
         modernui = Platform.isModLoaded("modernui");
         oculus = Platform.isModLoaded("oculus");
+        distanthorizons = Platform.isModLoaded("distanthorizons");
     }
 
     /**
@@ -75,6 +78,7 @@ public class CompatModule {
         public static ForgeConfigSpec.ConfigValue<List<? extends String>> modsWithoutSereneSeasonBasedHumidity;
         public static ForgeConfigSpec.BooleanValue fixBiome;
         public static ForgeConfigSpec.DoubleValue weatherVotePercent;
+        public static ForgeConfigSpec.BooleanValue DistantHorizonsWinterLOD;
 
         public static void load(ForgeConfigSpec.Builder builder) {
             builder.push("Compat");
@@ -103,6 +107,9 @@ public class CompatModule {
             weatherVotePercent = builder.comment("When a mod tries to query global weather parameters directly instead of using our API, " +
                             "Solar Weather will determine the result based on a weighted vote from the areas around players.")
                     .defineInRange("WeatherVotePercent", 0.5f, 0, 1d);
+            if (isDistanthorizons())
+                DistantHorizonsWinterLOD = builder.comment("Provides winter LOD for Distant Horizons.")
+                        .define("DistantHorizonsWinterLOD", true);
             builder.pop();
         }
     }

@@ -310,40 +310,39 @@ public class BiomeColorsHandler {
 
     public static boolean shouldSetFallenLeaves(BlockAndTintGetter pLevel, BlockPos pBlockPos) {
         if (!ClientConfig.Renderer.foliageUnderTree.get()) return false;
-        BlockPos.MutableBlockPos mutable = pBlockPos.mutable();
-        mutable.setY(mutable.getY() + 1);
-        int brightness = pLevel.getBrightness(LightLayer.SKY, mutable);
-        //if (brightness < 15)
-        //    return true;
-        if (brightness > 0 && brightness < 15
-                && pLevel instanceof IMapSlice mapSlice) {
-            int solidBlockHeight = mapSlice.getSolidBlockHeight(pBlockPos);
-            int blockHeight = mapSlice.getBlockHeight(pBlockPos);
-            if (solidBlockHeight == blockHeight) return false;
-            if (blockHeight > pBlockPos.getY()) return false;
-            try {
-                if (EclipticSeasonsApi.getInstance().getAgroSeason(ClientCon.getUseLevel(), mutable) != Season.AUTUMN)
+        if (pLevel instanceof IMapSlice mapSlice) {
+            BlockPos.MutableBlockPos mutable = pBlockPos.mutable();
+            mutable.setY(mutable.getY() + 1);
+            int brightness = pLevel.getBrightness(LightLayer.SKY, mutable);
+            if (brightness > 0 && brightness < 15) {
+                int solidBlockHeight = mapSlice.getSolidBlockHeight(pBlockPos);
+                int blockHeight = mapSlice.getBlockHeight(pBlockPos);
+                if (solidBlockHeight == blockHeight) return false;
+                if (blockHeight > pBlockPos.getY()) return false;
+                try {
+                    if (EclipticSeasonsApi.getInstance().getAgroSeason(ClientCon.getUseLevel(), mutable) != Season.AUTUMN)
+                        return false;
+                    BlockPos heightmapPos = ClientCon.getUseLevel().getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, pBlockPos).below();
+                    BlockState blockState = ClientCon.getUseLevel().getBlockState(heightmapPos);
+                    if (blockState.is(BlockTags.LEAVES) || blockState.is(BlockTags.LOGS)) {
+                        return true;
+                    }
+                } catch (CancellationException e) {
                     return false;
-                BlockPos heightmapPos = ClientCon.getUseLevel().getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, pBlockPos).below();
-                BlockState blockState = ClientCon.getUseLevel().getBlockState(heightmapPos);
-                if (blockState.is(BlockTags.LEAVES) || blockState.is(BlockTags.LOGS)) {
-                    return true;
                 }
-            } catch (CancellationException e) {
-                return false;
+                //
+                //while (solidBlockHeight >= mutable.getY()) {
+                //    mutable.setY(mutable.getY() + 1);
+                //    try {
+                //        BlockState blockState = ClientCon.getUseLevel().getBlockState(mutable);
+                //        if (blockState.is(BlockTags.LEAVES) || blockState.is(BlockTags.LOGS)) {
+                //            return true;
+                //        }
+                //    } catch (CancellationException e) {
+                //        return false;
+                //    }
+                //}
             }
-            //
-            //while (solidBlockHeight >= mutable.getY()) {
-            //    mutable.setY(mutable.getY() + 1);
-            //    try {
-            //        BlockState blockState = ClientCon.getUseLevel().getBlockState(mutable);
-            //        if (blockState.is(BlockTags.LEAVES) || blockState.is(BlockTags.LOGS)) {
-            //            return true;
-            //        }
-            //    } catch (CancellationException e) {
-            //        return false;
-            //    }
-            //}
         }
         return false;
     }
