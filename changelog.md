@@ -1,3 +1,14 @@
+### 0.12.5.4
+
+- If IceAndSnowMelt and WaterFreezesInFrozenBiomes are enabled, ice blocks in cold biomes will not melt even if they are
+  not outside the Snowy season.
+- Added the option SnowKeepInSnowyBiomes to reconcile the previous behavior of snow blocks.
+- Marked mountains as freezing biomes as well.
+- Adjusted all 24000 variable values used in the code to now call `EclipticUtil.getDayLengthInMinecraft(level)` to
+  improve compatibility with time mods in the future.
+- Prevented the renderer from crashing when an empty level is passed in during level unloading if FoliageUnderTree is
+  enabled.
+
 ### 0.12.5.3
 
 - Improved compatibility when FoliageUnderTree is enabled, avoiding log errors when used with Xaero Maps Mod.
