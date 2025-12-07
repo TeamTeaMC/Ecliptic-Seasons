@@ -1,5 +1,6 @@
 {
   "values": [
-    "#forge:is_snowy"
+    "#forge:is_snowy",
+    "#forge:is_peak"
   ]
 }

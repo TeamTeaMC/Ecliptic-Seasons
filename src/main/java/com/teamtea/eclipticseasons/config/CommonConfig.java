@@ -130,6 +130,7 @@ public class CommonConfig {
         public static ForgeConfigSpec.BooleanValue iceMelt;
         public static ForgeConfigSpec.BooleanValue snowDown;
         public static ForgeConfigSpec.BooleanValue waterFreezesInFrozenBiomes;
+        public static ForgeConfigSpec.BooleanValue snowKeepInSnowyBiomes;
 
         private static void load(ForgeConfigSpec.Builder builder) {
             builder.push("Temperature");
@@ -139,6 +140,8 @@ public class CommonConfig {
                     .define("IceAndSnow", false);
             waterFreezesInFrozenBiomes = builder.comment("If enabled, water placed in frozen biomes will behave as in vanilla and freeze into ice.")
                     .define("WaterFreezesInFrozenBiomes", true);
+            snowKeepInSnowyBiomes = builder.comment("If enabled and IceAndSnowMelt same enabled, snow placed in snowy biomes would not melt if in hot time.")
+                    .define("SnowKeepInSnowyBiomes", true);
             heatStroke = builder.comment("Add heat stroke effect in summer noon while in hot biome.")
                     .define("HeatStroke", true);
             builder.pop();

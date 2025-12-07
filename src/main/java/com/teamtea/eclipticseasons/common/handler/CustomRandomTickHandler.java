@@ -11,6 +11,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
@@ -23,12 +24,23 @@ import net.minecraft.world.level.material.Fluids;
 
 
 public final class CustomRandomTickHandler {
+
+    public static boolean isColdBiome(Level level, Biome biome) {
+        if (CommonConfig.Temperature.waterFreezesInFrozenBiomes.get()) {
+            Holder<Biome> holder = BiomeClimateManager.getHolder(level.registryAccess(), biome);
+            return holder != null && holder.is(ClimateTypeBiomeTags.EXTREME_COLD);
+        }
+        return false;
+    }
+
     public static final CustomRandomTick2 SNOW_MELT_2 = (level, biomeHolder, pos) ->
     {
         if (WeatherManager.getSnowStatus(level, biomeHolder, pos, EclipticUtil.isRainingOrSnowingWithSurfaceBiome(level, biomeHolder, pos)) == WeatherManager.SnowRenderStatus.SNOW_MELT) {
             // snow melt
             BlockState topState = level.getBlockState(pos);
-            if (topState.is(Blocks.SNOW)) {
+            if (topState.is(Blocks.SNOW)
+                    && ((!(CommonConfig.Temperature.snowKeepInSnowyBiomes.get() && isColdBiome(level, biomeHolder))
+                    || !biomeHolder.shouldSnow(level, pos)))) {
                 int layer = topState.getValue(SnowLayerBlock.LAYERS);
                 level.setBlockAndUpdate(pos, layer <= 2 ?
                         Blocks.AIR.defaultBlockState() :
@@ -36,10 +48,13 @@ public final class CustomRandomTickHandler {
             }
 
             // ice melt
-            BlockState belowState = level.getBlockState(pos.below());
-            if (belowState.is(Blocks.ICE)) {
-                if (level.dimensionType().ultraWarm()) level.removeBlock(pos, false);
-                else level.setBlockAndUpdate(pos.below(), Blocks.WATER.defaultBlockState());
+            BlockPos belowPos = pos.below();
+            BlockState belowState = level.getBlockState(belowPos);
+            if (belowState.is(Blocks.ICE)
+                    && ((!(CommonConfig.Temperature.waterFreezesInFrozenBiomes.get() && isColdBiome(level,biomeHolder))
+                    || !biomeHolder.shouldFreeze(level, belowPos, false)))) {
+                if (level.dimensionType().ultraWarm()) level.removeBlock(belowPos, false);
+                else level.setBlockAndUpdate(belowPos, Blocks.WATER.defaultBlockState());
             }
         }
     };
@@ -101,11 +116,8 @@ public final class CustomRandomTickHandler {
     }
 
     public static boolean checkExtraFreezeCondition(ServerLevel level, Biome biomeHolder, BlockPos water) {
-        if (CommonConfig.Temperature.waterFreezesInFrozenBiomes.get()) {
-            Holder<Biome> holder = BiomeClimateManager.getHolder(level.registryAccess(), biomeHolder);
-            if (holder != null && holder.is(ClimateTypeBiomeTags.EXTREME_COLD)) {
-                return biomeHolder.shouldFreeze(level, water);
-            }
+        if (CommonConfig.Temperature.waterFreezesInFrozenBiomes.get() && isColdBiome(level, biomeHolder)) {
+            return biomeHolder.shouldFreeze(level, water);
         }
         if (CommonConfig.Temperature.snowDown.get()
                 && WeatherManager.getSnowStatus(level, biomeHolder, water, EclipticUtil.isRainingOrSnowingWithSurfaceBiome(level, biomeHolder, water)) == WeatherManager.SnowRenderStatus.SNOW) {

@@ -327,7 +327,7 @@ public class BiomeColorsHandler {
                     if (blockState.is(BlockTags.LEAVES) || blockState.is(BlockTags.LOGS)) {
                         return true;
                     }
-                } catch (CancellationException e) {
+                } catch (Exception e) {
                     return false;
                 }
                 //
