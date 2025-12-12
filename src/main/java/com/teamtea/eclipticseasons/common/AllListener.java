@@ -24,6 +24,7 @@ import com.teamtea.eclipticseasons.common.core.crop.NaturalPlantHandler;
 import com.teamtea.eclipticseasons.common.core.map.BiomeHolder;
 import com.teamtea.eclipticseasons.common.core.map.ChunkInfoMap;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
+import com.teamtea.eclipticseasons.common.core.map.NoneSnowArea;
 import com.teamtea.eclipticseasons.common.core.snow.SnowChecker;
 import com.teamtea.eclipticseasons.common.core.snow.SnowyMapChecker;
 import com.teamtea.eclipticseasons.common.core.snow.SnowyStatusKeeper;
@@ -352,6 +353,7 @@ public class AllListener {
             event.addCapability(EclipticSeasons.rl("biomes_holder"), BiomeHolder.empty());
             event.addCapability(EclipticSeasons.rl("snowy_status"), SnowyStatusKeeper.create());
             event.addCapability(EclipticSeasons.rl("weather_status"), WeatherStatusKeeper.create());
+            event.addCapability(EclipticSeasons.rl("none_snow_area"), NoneSnowArea.empty());
         }
     }
 
