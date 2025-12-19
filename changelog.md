@@ -192,202 +192,1657 @@ issues and the inherently high demand for queries.
 - Optimized the snow reflection parameter object during Iris loading, now aligned with the snow block rather than the
   snow layer, fixing distant transparency issues in certain shaders (e.g., Complementary Shaders Unbound).
 
-## 0.12-preview
+### 0.12.0-pre19-1-2
 
-#### Core Mod & Compatibility
+- Fixed a deserialization error in the Crop datapack’s NbtPredicate, which could cause crop requirements to be displayed
+  incorrectly on the client.
 
-- Moved non-core Mixin compatibility to the Multi Patch mod; Ecliptic Seasons will be developed as the core seasonal
-  framework mod.
-- Optimized compatibility with DH.
-- When other mods query global weather, it now returns a player-location-based voted result instead of a fixed null
-  value, improving compatibility, especially in single-player.
+### 0.12.0-pre19-1
 
-#### Gameplay Mechanics
+- Fixed an issue where deserialization of specified seasons in the animal class configuration file was not working.
 
-- Creative mode players are no longer affected by heatstroke.
-- Animals are now affected by seasons according to biome and can benefit from the seasonal - core without requiring a
-  greenhouse.
-- Now allows setting weather to clear when players wake up.
-- Added experimental feature FrozenWater, which renders a thin layer of ice on water surfaces after snow.
+### 0.12.0-pre19
 
-#### Crops & Agriculture
+- Fixed a crash that occurred when entering a dimension without seasons while SnowInWorld was enabled.
 
-- Items without corresponding blocks will still display crop growth condition information.
-  Optimized growth rates for some crops.
-- Added agricultural season query methods to the API.
-- Added climate parameters to some resource and data packs to specify agricultural climate zones under seasonal
-  conditions.
-- Added eclipticseasons:crops/unaffected_by_seasons and eclipticseasons:crops/unaffected_by_humidity tags to remove
-  certain mod-added seasonal crop labels.
+### 0.12.0-pre18-1
 
-#### Biomes & Climate
+- Added the option FrozenWaterBreakable, which can be used to disable the ability for entities to break thin ice layers.
+- Added compatibility between the DH mod and FrozenWater.
+- Temporarily removed the restriction that prevented FrozenWater from being used when SnowInWorld is enabled.
 
-- Surface biome checks are no longer limited by chunk loading status, preventing deadlocks when querying biomes outside
-  the loaded area.
-- Optimized agricultural climate zones: Overworld biomes are now divided into cold, warm, and hot regions, with
-  independent seasonal update prompts and more reasonable biome color transitions.
-- Biome tags are now categorized into biome weather, biome colors, and biome agricultural season zones, allowing
-  individual customization.
-- Added yearly snow timing variation.
-- Added a weather_region data pack for sharing weather status among certain sub-biomes.
-- Added NotRainInDesert setting to ensure certain vanilla dry biomes remain rain-free, - accommodating mods that
-  generate sandstorm weather.
-- Now allows setting a snowline to control at what height snowy block always appears.
+### 0.12.0-pre18
 
-#### Seasons & Visuals
+- Added support for water_colors, water_fog_colors, fog_colors, etc. in Biome Color resource packs, allowing seasonal
+  variation adjustments.
+- Added null-safety checks when querying BiomeDataVersion related to levels, to prevent null pointers in special mod
+  environments (e.g., when the Level does not exist during chunk loading or no corresponding cache is available).
+- Added a preview feature option FrozenWater: rivers will form a thin ice layer during snowfall, which breaks when
+  entities step on it. (WIP — since Water blocks have no Snow Type, this will have no effect when SnowInWorld is
+  enabled.)
 
-- Added smoother seasonal transitions for biome colors.
-- Added SnowInWorld setting, enabling interaction with snow in the world.
-- Added experimental snowy edge feature for smoother transitions between snowy blocks and regular blocks.
-- Added more dimensional support for biome color data packs.
-- Added the season_definitions data pack to allow blocks to experience actual seasonal changes, with code-based
-  extensibility.
+### 0.12.0-pre17-1-4
 
-#### Resources & Data Packs
+- When the player is not holding Shift as the sneak key, modify the crop tooltips in Jade or TOP.
 
-- Added an extra snow-covered resource pack, which can be enabled in settings.
-- Optimized the built-in data pack tag system to reduce the need for pack authors to set replace when assigning biome
-  tags.
-- Reorganized and standardized some configuration options.
+### 0.12.0-pre17-1-3
 
-#### Guides & Documentation
+- Added a new option `ClearAfterSleep`.
 
-- Added the "Seasons Chronicle" Patchouli handbook.
+### 0.12.0-pre17-1-2
 
-#### Performance & Optimization
+- Add tag `eclipticseasons:crops/unaffected_by_seasons`,`eclipticseasons:crops/unaffected_by_humidity` to remove the
+  crop info of some blocks at the end of data build.
 
-- Optimized biome and chunk height map caching.
-- Significantly optimized rendering performance.
+### 0.12.0-pre17-1
 
-#### Special Thanks
+- Add a sky_colors field to the biome color resource pack, which can be used to modify biome colors.
 
+### 0.12.0-pre17
+
+> This version mainly organizes configuration names and some comments.
+> Please pay attention to the updates and adjustments.
+
+**Particle**
+
+- SeasonParticle → SeasonalParticles
+- butterflySpawnWeight → ButterflySpawnDelay
+- FallenLeavesDropWeight → FallenLeavesDropDelay
+- FireflySpawnWeight → FireflySpawnDelay
+- WildGooseSpawnWeight → WildGooseSpawnDelay
+
+**Renderer**
+
+- TopFaceCulling → CullTopFaceWithSnow
+- UseVanillaSnowCheck → UseVanillaLightCheckForSnow
+
+**Debug**
+
+- SnowyEdges → SmoothSnowyEdges
+- MinChunkCompileWaringTime → MinChunkCompileWarningTime
+
+**Snow**
+
+- StepMelt → SnowStepMelt
+- SnowyUnderSnowLike → SnowCoverUnderBlocks
+
+**Crop**
+
+- DarkGreenhouseFailChance → LowLightGreenhouseFailChance
+
+**Animal**
+
+- EnableCoreWork → SeasonCoreAffectsAnimals
+
+### 0.12.0-pre16
+
+- Added configurable biome snow lines.
+- Removed `isRainingAtBiome` and `isSnowingAtBiome` from class `WeatherManager`, as they are no longer compatible with
+  the current version’s mechanics.
+- Introduced additional data serialization tag caching, significantly reducing serialization and deserialization
+  overhead, especially for chunk surface biome caches.
+- Split chunk snow status into two separate additional data groups: snow records and weather status, optimizing
+  serialization overhead when `SnowInWorld` is enabled and it is raining.
+
+### 0.12.0-pre15-1
+
+- Fixed an issue where the snow flag could not be set on blocks by SnowDefinition datapack in certain cases.
+
+### 0.12.0-pre15
+
+- Optimized the tick calculation multiplier for weather.
+- The Snowy Edge model is no longer wrapped as a snowy model to avoid conflicts with the TopFaceCulling setting.
+- Fixed the issue where Enum2ObjectMap did not implement link traversal and the equals method.
+- Fixed the issue where a single Block object could not apply multiple SnowDefinition data packs for splitting.
+
+### 0.12.0-pre14-1
+
+- Fixed #89 _Rare random rendering crash when snowy edge is enabled_
+- Removed a deprecated option: Client.Render.snowUnderTree.
+
+### 0.12.0-pre14
+
+- Slightly improved chunk rendering performance.
+- Optimized snowy models of the Custom type, enhancing handling of slopes and other irregular surfaces.
+- Refined global weather queries and internal function calls: when other mods attempt to call vanilla weather functions
+  while Solar Weather is enabled, the system will now perform checks based on the areas around players instead of
+  returning null. If no players are present, the spawn point parameters will be applied. For mods that set weather
+  parameters for specific levels, the latter will be applied to all biomes where rain can occur.
+
+### 0.12.0-pre13-3-1
+
+- Set the default start time to the Spring Equinox.
+- Optimized the way the 1.20 client receives additional chunk packets: if the corresponding chunk is not loaded, the
+  effect is applied with a delay. Some mods may interfere, causing the additional chunk data to arrive at the client
+  before the initially sent chunk data, which can prevent the optimization from being applied correctly (this may result
+  in client lag when loading new chunks due to repeated biome queries, and SnowInWorld may not take effect).
+
+### 0.12.0-pre13-3
+
+- Fixed an issue where the Ice Wand could not forcibly prevent certain chunks from being covered with snow.
+- Optimized client-side rendering: when SnowInWorld is enabled, fixed a rare case where block updates could briefly go
+  out of sync.
+- Optimized the StepMelt feature to make it more performance-friendly and with more stable detection conditions.
+- Fixed an issue where negative surface heights could cause incorrect random tick calculations in additional chunks.
+
+### 0.12.0-pre13-2
+
+- Optimized broom usage: when clearing snowy grass, it now removes the snow status of grass plant directly instead of
+  affecting the grass block underneath.
+- Added the Snow → StepMelt setting: when SnowInWorld is enabled, creatures stepping on snowy blocks now have a chance
+  to remove the snow cover, revealing paths in the snow.
+
+### 0.12.0-pre13-1
+
+- Fixed an issue where the game could fail to load when SnowInWorld was disabled due to empty network packets being sent
+  incorrectly.
+- Other minor optimizations.
+
+### 0.12.0-pre13
+
+- Slightly optimized the issue where snow cover rate was affected by the number of biomes.
+- Fixed an issue where disabling Solar Weather and enabling vanilla snowing might not work.
+- Fixed an issue where, with Solar Weather enabled, the vanilla precipitation update mechanism was not applied to
+  surface biomes.
+- Moved several snow-related options from the **Season** section into a dedicated **Snow** section.
+- Relocated the **EnableSeasonDefinition** option from the **Debug** section to the **Season** section.
+- Removed the **SnowyFullCollisionShape** configuration due to compatibility issues, as it can now be fully replaced
+  with datapacks.
+- Added the **SnowInWorld** configuration series, which stores actual snowfall in chunks and updates with chunk ticks,
+  providing precise behavior. Brooms will work under this configuration. You can also clear snowfall states via block
+  updates — for example, to
+  create a clean boulevard.
+- When **SnowInWorld** is enabled, if only **ForceChunkRenderUpdate** is enabled but **EnhancementChunkRenderUpdate** is
+  not, the mod will no longer attempt to refresh the chunk, since chunk updates are now more targeted.
+
+### 0.12.0-pre12
+
+- For the sake of code structure and data stability, `RealisticSnowyChange` and broom usage have been temporarily
+  removed. As a result, we no longer need to intervene in the internal implementation of the lighting engine.
+- The biome caching mode has been adjusted to stay closer to 1.21, with the missing capability acquisition part from
+  Forge now supplemented.
+- Further optimizations have been made to the conversion between BlockState and Block Snowy Type queries.
+- The default snow-covered grass block model has been adjusted to a composite overlay model, in order to avoid false
+  positives from Fusion-style connected-texture mods that rely on model detection.
+- Internal use of EnumMap has been revised wherever possible in favor of our custom implementation Enum2ObjectMap.
+- Fixed an issue when rendering extra models, might not have correctly applied precise offset position checks.
 - Special thanks to Beishanwei and Orangesoda for their special authorization to carry and adapt the song “Snowless
-  Hometown” in this mod.
+  Hometown” in this mod. Due to scheduling constraints for the arrangement, the acquisition method is not open at this
+  time.
 
-## 0.11
+### 0.12.0-pre11-4
 
-- Added seasonal texture switching for models with optional tint disabling, allowing visual changes according to the
-  current season. Add Biome Color resource pack for customizable biome color changes.
-- Introduced seasonal loot conditions, crop growth conditions with block state checks, animal breeding seasons, bee
-  hibernation mechanics, and fishing control. Added Jade and The One Probe support for displaying breeding season
-  information.
-- Balanced crop growth and climate simulation: humidity smoothing to reduce boundary effects, adjusted greenhouse core
-  working range, and improved crop growth mapping for non-temperate regions.
-- Improved snow coverage: realistic snowy changes, expanded snow-covered block support, better handling of bamboo and
-  leaf blocks, and synchronized snow appearance across players.
-- Refined rainfall and humidity calculations on both client and server, preventing errors from unloaded chunk queries.
-- Animals now have seasonal breeding periods and behaviors.
-- Enhanced API and configuration options: query weather, daylight duration, precipitation, snow coverage, and force
-  blocks to not be snowy.
-- Overall improvements: fixed legacy issues, enhanced stability for singleplayer and multiplayer, and extended support
-  for data packs and resource packs.
+- Fixed a bug where snow fall but blocks within view were not covered with snow. This issue may have been introduced
+  since version 0.12.0-pre11-1.
+- Fixed a bug where textures could be missing from the season_textures resource pack.
+- Optimized object lookup when sending data with the broom and ice wand.
 
-## 0.11-preview
+### 0.12.0-pre11-3
 
-- Custom Seasonal & Snow-Covered Models: Define seasonal block variants and snow-covered blocks using model_definitions
-  and snow_definitions. Supports smooth seasonal transitions, biome-specific appearances, and optional model
-  replacement.
-- Particles & Ambient Sounds: Fallen leaf particles customizable per block, season, biome, texture, color, and weight;
-  ambient sounds configurable by time, season, biome, and rainfall.
-- Seasonal Greenhouses & Cores: Configurable Season Core radius, adjustable or disabled particle effects, and Box
-  Distance (Manhattan-style) calculation for greenhouse range.
-- Hygrometer Improvements: Easier detection and real-time greenhouse readings.
-- Grate Humidifiers: Interact with other blocks like hoppers, support JEI integration, and can optionally avoid
-  consuming source blocks.
-- Humidity System Optimization: Expanded effective sponge range and simplified configuration via data packs.
-- Visual & Rendering Enhancements: Correct overlay of snow-covered and seasonal models, new transition models for
-  granular block appearances, improved OptiFine compatibility, and slight rendering performance optimizations.
-- Miscellaneous Enhancements: Mitigated map mod and chunk-loading issues, client-side FlowerOnGrass option retained, and
-  added logging hints for debugging resource packs and models.
+- Added a config option `SeasonalColorChangeExtend` to disable seasonal color changes for birch and other two trees.
+- Backported wind chimes and pinwheels from 1.21 to 1.20.
+- Various other optimizations.
 
-## 0.10
+### 0.12.0-pre11-2
 
-### Seasonal Crop System
+- Optimized several configuration options related to seasonal animal behaviors.
+- For the season_definitions datapack, if the biomes parameter is not set, it will now default to applying to all
+  biomes.
+- The two deprecated configuration options, CropGrowChanceInWrongSeason and CropGrowChanceInWrongHumidity, have been
+  removed.
 
-* Fully redesigned seasonal greenhouse mechanics.
-* **Greenhouse Cores** added; crops must be within core radius to receive growth bonuses.
-* **Humidity Regulator Blocks** allow localized moisture control; effects stack when multiple blocks are nearby.
-* Simple greenhouse mode supported (without cores or humidity modifiers).
-* Crops thriving in dark conditions now recognized (`dark_grow_plants` tag).
-* **Growth Detector** added to monitor crop progress.
-* Seasonal questline added; completing quests rewards greenhouse cores and materials.
-* Achievements and progression system overhauled for clearer guidance.
-* New plant/crop tags: `volatile_plants`, `natural_plants`, `dark_grow_plants`.
-* Compatibility mode can be forced for crops, supporting mods without native Forge/Fabric event support.
+### 0.12.0-pre11-1
 
-### Other Optimizations
+- Added a `NotRainInDesert` option in `Common.Weather`  to prevent rain in desert and other biomes where it does not
+  rain in vanilla game. It is disabled by default and must be enabled manually.
 
-* Hygrometer can be wall-mounted, displays local humidity, and outputs redstone signal.
-* JEI support for humidity adjustment module.
-* Jade / The One Probe displays crop and snowy block states.
-* Map color modification can be disabled to avoid conflicts with other mods.
-* Optimized chunk info caching and LOD updates to reduce performance impact.
-* Calendar placement improved for diagonal surfaces.
-* Multiplayer data pack synchronization improved for better 1.21 backport compatibility.
-* Game now starts at **Spring Equinox** for a more natural initial climate.
-* Seasonal visual updates: snow on winter leaves, clovers on summer grass, etc.
+### 0.12.0-pre11
 
-## 0.10-preview
+⚠️ **Note:** This version is not fully compatible with the `season_definitions` datapack structure from **pre10**,
+except for the basic place methods.
 
-- Added climate detection meters at player position
-- Support for Snowy Spirit (skiing, Christmas holiday)
-- Support for Haunted Harvest (Halloween holiday)
-- Support for InControl to check four seasons
-- Greenhouse detection improvements
-- Legacy snow/melting mechanics as optional config
-- Agricultural climate zones for crop growth (cold, temperate, hot, desert, nether, end), with datapack support
-- Fake player and maid support for cleaning snow overlays
-- Initialization of biome-related weather data at world start or player join
-- Greenhouse configuration options
-- SolarDay can be negative (BCE-style calendar)
-- Fire resistance grants immunity to heatstroke
-- Increased ambient temperature threshold for heatstroke
-- Improved dimension and weather interaction with more stable configs
+- The main change in this release is a complete rewrite of datapack extensibility.
+  It now allows addons to introduce their own placement condition checks and placement methods.
 
-## 0.9
+### 0.12.0-pre10-1
 
-- Added two events (solar term change event, crop info modification/registration event via API)
-- Added greenhouse mechanism to protect crops from seasonal and humidity changes
-- Added humidity raising mechanism (bubble columns with magma blocks, rain in open air)
+- Added the `copy_state` field to objects inside the place section of the `season_definitions` datapack, which
+  determines whether the old block state should be copied to the new one.
+- Added the `copy_state_properties` field to restrict the range of properties to be copied.
+
+### 0.12.0-pre10
+
+- Added the `season_definitions` datapack, which is used to define the actual seasonal block changes. Note that since
+  this
+  datapack affects the world, it is currently placed under the Debug configuration and must be enabled before use.
+- Seasonal block models are no longer restricted to surface-only placement.
+- Various other optimizations.
+
+### 0.12.0-pre9
+
+**Bug Fixes:**
+
+- Fixed an issue where disabling Solar Weather caused infinite biome precipitation queries. This bug was unintentionally
+  introduced in version 0.12.0-pre8-3.
+
+**Changes / Improvements:**
+
+- Refactored the biome tag system: old biome tags have been reorganized into categories. Tags affecting Biome Rain have
+  been moved to the rain directory.
+- Added new tags for Overworld Agro Climatic biomes and simplified nested tags used in `agro_climate` and `season_cycle`
+  data packs.
+- The biome tag system for the mod now uses a three-layer structure. Biomes can be assigned tags directly without
+  `replace` field. Unassigned biomes are automatically allocated via internal logic.
+- Removed the built-in demo snow-covered oak leaves block definition.
+
+### 0.12.0-pre8-5
+
+- Fixed an issue where level 0 light checks did not support custom snow-covered blocks.
+- Changed the built-in snow-covered model for grass blocks to use Multivariant instead of the demo MultiPart model. It
+  also no longer applies random rotation. Variant-type models require fewer checks and combinations, resulting in faster
+  rendering.
+- Removed the built-in client resource pack override file for the snow-covered cobblestone definition.
+
+### 0.12.0-pre8-4
+
+- Backported the extra rendering acceleration from 1.21 to 1.20, greatly reducing rendering performance loss.
+- Currently supports three renderers: Minecraft, Embeddium, and OptiFine.
+
+### 0.12.0-pre8-3
+
+- Added transition textures between snow-covered blocks and normal blocks, which can be enabled in the Debug options.
+- Introduced chunk surface biome cache to speed up biome queries.
+- Other miscellaneous optimizations.
+
+### 0.12.0-pre8-2
+
+- Now, if a mod tries to query biome precipitation using the raw method instead of ours, corrections will only be
+  applied when the biome is a small biome, with an added config option to disable this behavior. At the same time, when
+  completing the Level parameter, assignment will be done based on threads (only in 1.20) to reduce related queries to
+  ServerLevel, since server level involves slower chunk lookups, especially in single player mode. However, we also need
+  to properly distinguish between mods attempting to query biome precipitation via `getPrecipitationAt` for chunk
+  generation or chunk ticks, and those related to client-side weather effects.
+- Optimized chunk extra information lookups by adding some optimistic limits against multithreaded access to prevent
+  null pointers or out-of-bounds queries caused by thread synchronization, while minimizing performance loss.
+  Additionally, specifically optimized client queries for faster lookups.
+- Fixed an issue where the `snow_tint` parameter in the `season_textures` resource pack was not working.
+- Fixed an issue where disabling tinting caused the original model to lose its tint data.
+- Fixed an issue where, when using season only, the transition parameters in the `season_definitions` and
+  `season_textures`
+  resource packs were not applied exclusively at the start of a season as intended.
+- Optimized the loot condition `eclipticseasons:season`: if only the season parameter is provided and no fixed season
+  type is specified via climate, it will now apply the Agro season.
+
+### 0.12.0-pre8-1
+
+**Description:**
+A new `eclipticseasons:weather_region` datapack has been added. When **Solar Weather** is enabled, it allows you to bind
+similar biomes to share the same weather, reducing fragmented biome transitions.
+
+**Example JSON:**
+
+```json
+{
+  "core": "minecraft:forest",
+  "sub": [
+    "minecraft:flower_forest",
+    "minecraft:dark_forest",
+    "minecraft:birch_forest"
+  ]
+}
+```
+
+* `core` specifies the main biome ID.
+* `sub` is a list of associated biomes (as `HolderSet`).
+* You can also use the optional `priority` parameter (integer) to adjust application order, preventing conflicts when
+  using tags.
+
+**Fix**
+
+Fixed an issue in single-player mode where the weather server logic incorrectly used client-side biome variables, which
+may cause unexpected errors.
+
+### 0.12.0-pre8
+
+- Fixed an issue where the `snow_tint` parameter in the `season_textures` resource pack was not working.**
+- Added local season conversion support for all data packs and resource packs using the `SolarTermValueMap` structure,
+  including `biome_colors`, `particles/fallen_leaves` resource packs, and `biome_climate_setting`, `season_cycle`,
+  `biome_rain` data packs. When initialized with the `seasons` parameter, you can adjust season mappings to more
+  accurate intervals by using entries such as `"climate": "eclipticseasons:cold"` (AGRO).
+- Provided the same parameter for `season_definitions`, `season_textures`, and `ambient` resource packs. Note that this
+  is a top-level parameter.
+- The same parameter is also supported for the loot condition `eclipticseasons:season`. Note that it is a sub-parameter
+  under `require`.
+- For the `agro_climate` data pack definition, `seasonal_signal_durations` does not need to be provided. If omitted, it
+  defaults to `none`.
+
+### 0.12.0-pre7-3
+
+- Fixed an issue where the annual snowfall duration parameter was not saved when unloading levels.
+- Added a dynamic clean-up mechanism for the chunk extra info cache, which can be disabled in Debug configuration.
+- Removed the peer access lock from the chunk extra info cache.
+- These two changes will save long-distance explorers (players who travel across hundreds or thousands of blocks)
+  100–200 MB or more of memory usage.
+- Backported the multidimensional chunk info caching method from 1.21 to 1.20, improving server-side query efficiency
+  and fixing potential cache errors.
+- Biome information is no longer cached immediately on chunk load. Instead, results are stored after random access,
+  preventing potential stutters caused by instant caching.
+
+### 0.12.0-pre7-2
+
+- Added snow-covered variants to the `season_textures` resource pack.** You can now prefix the original key with `snow_`
+  to use them. Additionally, if no specific season is set, the textures will apply to all seasons.
+  Example:
+
+  ```json
+  {
+    "target": [
+      "biomeswevegone:block/amaranth"
+    ],
+    "slices": [
+      {
+        "snow_textures": [
+          {
+            "cross": "biomeswevegone:block/snowy_amaranth"
+          }
+        ]
+      }
+    ]
+  }
+  ```
+
+- Fixed an issue where `season_textures` resource packs could not inherit the render type from the original model JSON.
+- Optimized the duplicate baking issue of identical models in `season_textures`.
+- Adjusted the required crop quantities for seasonal tasks.
+
+### 0.12.0-pre7-1
+
+- Optimized the annual snow timing variation calculation method to improve central stability.
+- Optimized the surface biome caching mechanism, as well as buffering operations involving small biomes such as rivers,
+  removing server-side cache restrictions on border chunks.
+- Removed restrictions on querying or correcting surface biomes in border or unloaded chunks, improving result for
+  weather- and rainfall-related operations such as ticking and mob spawning in these.
+
+### 0.12.0-pre7
+
+- The snowfall timing now varies within a certain range each year and can be adjusted via configuration toggle or
+  command. Changes to the Snow Term datapack can be referenced from the built-in example.
+
+### 0.12.0-pre6-1-0-1
+
+- Due to limitations of the Forge configuration system in 1.20, the Extra Snow resource pack is now forced to load;
+  however, the actual content loaded into the game still depends on the configuration.
+
+### 0.12.0-pre6-1
+
+- Moved Resource configuration from Common Config to Start Config to avoid cases where some mods cause the built-in
+  resource pack to register too early, preventing configuration access (1.21 only).
+- Optimized client-side snow definitions override, allowing the use of custom flag for real-time model generation during
+  rendering.
+
+### 0.12.0-pre6
+
+- Added smooth transitions within solar terms for biome grass and foliage colors, which can be disabled in settings.
+- Other performance improvements and optimizations.
+
+### 0.12.0-pre5-1
+
+- Animals can now benefit from the power of the Season Core, even though they do not require a greenhouse for breeding.
+- Environmental humidity modifier structures can now be set to save along with chunk data.
+
+### 0.12.0-pre5
+
+- Optimized the environmental passive as a humidity adjustment mechanism, now by default adding magma bubble columns
+  that can randomly increase humidity. Developers can refer to the wetter datapack for details.
+- Added the `eclipticseasons:volatile` tag to mark non-plant blocks that require random ticks to be enabled (can be used
+  in conjunction with environmental passive adjustment).
+- The humidity control datapack now also supports state checks, similar to the crop datapack.
+
+### 0.12.0-pre4-3
+
+- Added a new Patchouli guide, the _Seasons Chronicle_, craftable with seeds and a book.
+  It provides a brief introduction to the mod’s seasons, agriculture, regional differences, and explanations of certain
+  terms.
+- Cauldrons, honey blocks, slime blocks, and composters are no longer treated as blocks that snow can pass through by
+  default.
+
+### 0.12.0-pre4-2
+
+- Split the tags used for Biome Rain and Biome Color (these can also be customized via resource packs or data packs).
+- Adjusted the default seasonal biome colors and biome rain for cold and hot regions.
+
+### 0.12.0-pre4-1
+
+- Enabling the EnhancementChunkRenderUpdate option while using DH may cause slow generation of DH fake chunks. This
+  potential issue has been optimized.
+- Added registration for crop data converting `sereneseasons:year_round_crops` tag to `eclipticseasons:all_seasons`.
+- **Developer related:**
+    - Renamed `useDefaultValue` field in `CommonConfig$Crop` to `registerCropDefaultValue` for consistency with 1.21.
+    - Added API method `getAgroSeason` to query the locally applied season based on agricultural zones, avoiding biome
+      characteristics being overlooked due to global season limitations.
+
+### 0.12.0-pre4
+
+**Main Changes:**
+
+- Adjustments to the **default built-in data pack**, especially biome and seasonal definitions.
+  Feedback is welcome.
+
+**Biome Classification:**
+
+- Replaced “Tropical / Temperate / Cold” zones with **Hot / Warm / Cold regions** for overworld biome classification.
+- **Hot** regions no longer defaults to eternal summer. They now feature **all four seasons**, with **summer lasting
+  over half the cycle**.
+- **Cold region coverage reduced**. Upper threshold lowered — e.g., *Windswept Forest* is no longer considered cold — to
+  **reduce player confusion**.
+
+**Seasonal Info (Optional Setting):**
+
+- When `EnableLocalInfoAndCalendar` is enabled:
+
+    - **New inform content** added for **Hot regions**.
+    - **Desert, Jungle**, and similar biomes **no longer have custom informs/calendar** — they now follow **Hot region**
+      templates.
+
+#### 0.12.0-pre-3-1-3
+
+- Fixed an issue where using RegisterCropDefaultValue would add crop information to all blocks.
+
+#### 0.12.0-pre-3-1
+
+- Surface biome lookup no longer depends on neighboring chunk load state.
+
+### 0.12.0-pre-3
+
+- Mixins or compatibilities for Cold Sweat, InControl, and patch for Dynamic Trees are no longer included. Please use
+  Ecliptic Seasons: MultiMod Patch instead.
+
+#### 0.12.0-pre-2-4
+
+- Fixed excessively low growth rates for `eclipticseasons:crops/all_seasons` tagged crops during winter.
+
+#### 0.12.0-pre-2-3
+
+- Now if an item crop tag is added without a corresponding block, the tooltip information will also be displayed.
+
+#### 0.12.0-pre-2-2
+
+- Fixed a crash that could occur when biome registries were modified during world reload, due to outdated
+  deserialization mappings.
+
+#### 0.12.0-pre-2-1
+
+- Added gameplay tips for some greenhouse-related items to help players understand how to build a proper greenhouse.
+
+### 0.12.0-pre-2
+
+- Completed the additional snow overlay resource pack for vanilla plants, which needs to be enabled in the settings.
+- Added crafting recipes for the Seasonal Greenhouse Core. It is now also possible to extract the essence from the core.
+
+### 0.12.0-pre-1
+
+- Move mixins for Simple Clouds to Ecliptic Seasons: MultiMod Patch.
+- Players in creative or spectator mode will no longer suffer from heatstroke.
+
+### 0.12.0-pre
+
+- Mixins or compatibilities for JourneyMap, Snowy Spirit, Haunted Harvest, and Touhou Little Maid are no longer
+  included. Please use
+  Ecliptic Seasons: MultiMod Patch instead.
+  Ecliptic Seasons will now serve solely as a core mod.
+- The default value of `Realistic Snowy Change` is now set to false; the functionality remains unchanged.
+
+#### 0.11.8.4.3.0.2
+
+- Optimized the use of BlockPos objects and random seed calculations during model rendering.
+
+#### 0.11.8.4.3
+
+- _Thanks to GuaiJieYo for providing the test device._
+- Fixed an issue in 1.20 LAN multiplayer, where index information could change due to the dedicated client patcher for
+  dynamic registries running on a non-dedicated host server. This issue has existed since 0.11.7-rebind.
+  Singleplayer clients and players on dedicated servers were not affected.
+
+#### 0.11.8.4.2
+
+-Added additional checks to certain server-side biome-related queries to prevent them from being called by mods during
+world generation.
+
+#### 0.11.8.4.1
+
+-Improved the color calculation for leaf particles to enhance compatibility with a wider range of mods and resource
+packs.
+
+### 0.11.8.4
+
+- Add a control condition named `eclipticseasons:season` for loot, which can be used to specify loot tables by season.
+
+```json
+{
+  "condition": "eclipticseasons:season",
+  "require": {
+    "start": "autumnal_equinox",
+    "end": "beginning_of_winter"
+  }
+}
+  ```
+
+### 0.11.8.3
+
+- Improved biome ID deserialization to reduce null returns.
+- added null checks for sub-biome detection.
+- switched DH 2.3.3b-specific optimization to reflection.
+
+### 0.11.8.2
+
+- Fix #74 in GitHub issues.
+- Apply seasonal settings from Agro Climatic Zone to animal hooks.
+
+### 0.11.8.1
+
+- Ported the animal breeding season control system, bee hibernation mechanism, and fishing control mechanics to 1.20.
+  These features need to be manually enabled in the config.
+- Added Jade and The One Probe support to show breeding season information for animals.
+- Added spawn egg tooltip support to display breeding season info.
+- Other miscellaneous issues.
+
+## 0.11.8
+
+- It is now possible to seasonally switch the textures of specified models and disable tinting. You can refer to the
+  implementation in the season_textures section under
+  `src\generated\resources\resourcepacks\example\assets\minecraft\eclipticseasons` in the GitHub source code.
+- The Biome Color resource pack from version 1.21 has been ported to 1.20. Modpack authors can use it to define biome
+  color changes.
+- Fixed an issue with reloading data packs that could cause agro climate zone information to be lost.
+
+### 0.11.7.1
+
+- Update the compatibility code for DH v2.3.3b.
+
+## 0.11.7
+
+- Added smoothing calculation for humidity, reducing the impact of boundary conditions on humidity transitions. This
+  makes humidity levels smoother between similar adjacent solar terms. This behavior can be disabled in the settings.
+
+- Adjusted the seasonal greenhouse core's working way: If the work radius is set larger than the width of a chunk,
+  it now uses a square-based neighboring chunk querying mechanism.
+
+- Fixed an issue in automatic mapping of growth conditions for agricultural zones. This may affect crop growth
+  outside temperate regions. For example, spring crops may grow later in colder climates compared to temperate areas.
+
+- Officially added support for BlockState checks in Crop data packs. You can now define the target like this:
+
+  ```json
+  {
+    "parent": [
+      "eclipticseasons:seasons/spring_summer",
+      "eclipticseasons:humidity/average_moist"
+    ],
+    "apply_target": {
+      "blocks": "minecraft:wheat",
+      "state": {
+        "age": "0"
+      }
+    },
+    "climate": "eclipticseasons:temperate"
+  }
+  ```
+
+  to limit the application target.
+
+- Migrated tooltip behavior to be based on Crop data packs instead of solely relying on tags, in order to
+  accommodate changes.
+
+- In humidity condition checks, if growth fails, a death judgment will now be applied instead of being ignored.
+
+- Added a command to set the snow coverage percentage for a biome set.
+
+- A test option named `Map->ServerRealisticSnowyChange` has been added. When enabled, it synchronizes delayed changes to
+  snowy block appearances among players on the server. Additionally, there is a chance to obtain a snowball when
+  sweeping
+  away snow with a broom.
+
+- Others.
+
+## 0.11.6
+
+- Optimized updates for additional heightmaps.
+- Improved block snow covering behavior when Realistic Snowy Change is enabled to better fit the current heightmap
+  structure.
+- Bamboo is now treated as one of the built-in snow-covered blocks (driven by data pack).
+- Added some optional extra snow-covered block variants (can be enabled in the settings; note that this feature is
+  currently incomplete and will be updated further).
+- Removed the built-in desert type from the agro climatic zones, as the humidity control options are now sufficient. In
+  the Overworld, climate regions are now categorized only into temperate, warmer, and colder zones for agricultural
+  calculations (to be further optimized in the future).
+- Rebalanced crop growth conditions for both seasonal and humidity factors. Significantly increased default growth speed
+  during appropriate seasons and humidity levels to reduce reliance on greenhouses, and adjusted some out-of-season
+  growth probabilities. (For data pack creators: note that the current version only builds in default mode, so some
+  parameters are omitted. The data packs you made remain working, as all four growth parameters are optional).
+- Moved the data packs for Biome Rain and Snow Term to the example resource pack unused.
+
+---
+A few additional notes:
+
+Upcoming versions will primarily focus on balance adjustments and data standardization, such as more precise tuning of
+biome tags.
+
+Some content that may not be suitable to include in the core mod might be split into separate addons.
+
+If you have any suggestions, feel free to share them with us.
+
+We're getting ready to release an official version—thank you all for your support over the past year!
+
+### 0.11.5.1
+
+- Fixed an issue where humidity values were not correctly calculated when using a custom BiomeRain.
+- Optimized the calculation method when the snowUnderTree option is enabled.
+- Fixed an issue where snow would not cover the bottom of a cauldron when it contained contents.
+
+## 0.11.5
+
+- Adjusted the detection and display logic for the top-layer block of snow-covered leaves.
+
+### 0.11.4.1
+
+- Fixed an issue where custom snow-covered blocks marked with `WITH_TOP_LEAVES` 1101 flag were not
+  automatically treated as passable snow blocks.
+
+### 0.11.4.0.1
+
+- Bamboo saplings have been added to the natural_plants block tag, since they do not emit block events.
+
+## 0.11.4
+
+- Corrected a typo in the getRainChance function of the BiomeRain interface, now allowing players to define custom
+  BiomeRain data packs, including support for probability and timing.
+- Added a forced override data pack for Snow Term. For developers, the old Snow Term now implements a new ISnowTerm
+  interface—variable usage may need to be updated.
+- Added a compatibility patch for the Cold Sweat mod to fix an issue where, when used together with Solar Weather, rain
+  detection still relied on the global state.
+
+### 0.11.3.1
+
+- Fixed issues with detection and rendering of snow-covered leaves.
+- Adjusted how fallen leaf particles calculate color when necessary.
+
+## 0.11.3
+
+- A new data pack has been added to control seasonal prompts and log display. It allows customization of which solar
+  terms are shown and what text is displayed. Disabled by default; can be enabled in the Season settings.
+  The data pack consists of two parts:
+  Season Cycle: Used for biome-to-season mapping.
+  Season Phase: Stores the actual display information.
+- Two new display modes have been added to the calendar, allowing it to show either the current year or a preview of the
+  upcoming solar term.
+
+### 0.11.2.1.1
+
+- Add an api function to query the current precipitation of biome.
+
+### 0.11.2.1
+
+- Fix an issue where creating a new map cache on the server could cause the server to freeze.
+  All players using version 0.11.1 or above are recommended to update to this version.
+
+## 0.11.2
+
+- Improved smoothing of weather calculations for rain at specific locations on the client side.
+- Add two configuration options for client weather calculations.
+- Adjusted the calculation method for the mod’s built-in height map.
+- Moved the snowyTree configuration to the server side.
+- Improved the detection mechanism for cases where other mods attempt to call Biome#getPrecipitationAt on server-side
+  unloaded chunks, which would otherwise bypass chunk load checks and trigger Ecliptic Seasons’ surface biome correction
+  logic.
+
+### 0.11.1
+
+- Added configuration support for adjusting sunlight duration.
+- Fixed an issue where an exception occurred when loading a MultiVariant model with control conditions.
+- Enhanced `AbstractModelDefinitionProvider` with more complete functions, and ensured the output JSON uses full UTF-8
+  encoding directly.
+- Added functions to `EclipticSeasonsApi` for querying day and weather information.
+- Added three new snow-covered plant models, which can be configured through data packs.
+- Added the 'ForceBlocksNotSnowy' configuration for mod packs or players to customize which blocks should not be covered
+  in
+  snow. A world reload may be required for changes to take effect.
+
+### 0.11.0.1
+
+- Adjusted the mechanism for obtaining the level used during biome weather precipitation in autocomplete queries. This
+  may help improve performance when running alongside certain mods that are not fully compatible with Ecliptic Seasons.
+- Added a version requirement for Legendary Survival Overhaul to prevent players from using outdated versions. Support
+  for Ecliptic Seasons has already been integrated into the latest versions of LSO (note: make sure to adjust the
+  temperature
+  settings in LSO's configuration).
+- Renamed the `ModelManager` class used by Ecliptic Seasons to `ExtraModelManager` to avoid confusion for developers (in
+  case they
+  intend to use this mod's version instead of Mojang's, although method access to Minecraft's ModelManager typically
+  doesn't conflict with this mod).
+
+## Version 0.11.0 (Build 0.11.0-z)
+
+Since the initial development plan for this version has been completed, it is now entering the **non-preview** stage.
+
+Special thanks to **ZakoFish** for providing test assistance with problematic machines in the following two issues:
+
+- Fixed the timing issue when registering custom model resource packs.
+- Adjusted the render type handling for custom models.
+
+Others:
+
+- Custom model loading has been optimized to fully asynchronous loading.
+- A new option named `"require"` has been added to the **Model Definition** file, which controls whether specific mods
+  are required to be loaded. The value can be either a JSON string or a string array, for example:
+
+```json
+{
+  "require": [
+    "eclipticseasons",
+    "minecraft"
+  ],
+  "....": "...."
+}
+```
+
+### **0.11.0-pre8-1**
+
+- Adjusted the detection mechanism of the hygrometer block to make it more convenient.
+
+## **0.11.0-pre8**
+
+- Starting from version 2.3.13 in Minecraft 1.20, Legendary Survival Overhaul will include built-in support for Ecliptic
+  Seasons. Therefore, we will remove our compatibility code starting from version 0.11.0-pre8, as it was too tightly
+  coupled.
+- Provided capability support for the Grate Humidifier and related Grate blocks, allowing them to interact with blocks
+  like hoppers.
+- The client-side FlowerOnGrass config option will continue to take effect. Disabling it will temporarily remove the
+  built-in resource pack, preventing the rendering of additional flowers and plants on grass.
+
+### **0.11.0-pre7-5**
+
+- Implemented preventive handling for map mods that are not yet fully supported, especially those using the Forgified
+  Fabric API's chunk load events. These mods may not correctly handle whether a chunk is fully loaded, which can lead to
+  a circular deadlock when the server-side Minecraft code assumes the chunk exists but encounters issues during getChunk
+  calls.
+
+### **0.11.0-pre7-4**
+
+- BiomeClimateSettings' fake temperature adjustment now affects snowfall timing. This option can be used to force
+  non-snowy biomes to synchronize their snowfall periods.
+- If a mod attempts to query the biome precipitation of an unloaded chunk, Ecliptic Seasons will no longer apply biome
+  corrections. This prevents server chunk generation deadlocks when players load mods that don't support Ecliptic
+  Seasons, such as SnowUnderTrees. Note that such mods still need to move beyond the Serene Seasons mindset, since under
+  default configuration, winter chunk handling is not required.
+
+### **0.11.0-pre7-3**
+
+- Only display a warning when bone meal is guaranteed to have no effect.
+- Fixed a design oversight where crops with a growth probability greater than 1 would not apply additional growth checks
+  as expected.
+- Added extra verification for sound playback to prevent abnormal behavior caused by desynchronization.
+
+### **0.11.0-pre7-2**
+
+- Allow not consuming bone meal for failed using. It's optional.
+
+### **0.11.0-pre7-1**
+
+- Add failure message for bone meal using. It's optional.
+
+## **0.11.0-pre7**
+
+- Added two new API methods to check whether a dimension has seasons and to get the current length of daytime (defaults
+  to 24000 ticks per day if no other time-modifying mods are present).
+- The working radius of the Season Core block is now configurable instead of being fixed at 15 blocks.
+- Seasonal greenhouse particle effects emitted by the Season Core block can now be disabled or have their density
+  adjusted.
+- Miscellaneous minor fixes.
+
+### **0.11.0-pre6-2**
+
+- Optimized the dynamic humidity calculation method. The maximum adjustable humidity range via data pack is now 16.
+  By default, the effective range for sponge and wet sponge in grates has been increased to 5 blocks.
+- Some other minor fixes.
+
+### **0.11.0-pre6-1-1**
+
+- Added four new methods to the API:
+  for checking whether it's raining or thundering in a biome region or across the entire level (when Solar Weather is
+  disabled),
+  and for retrieving both static and dynamically changing humidity values.
+
+### **0.11.0-pre6-1**
+
+- A targeted fix was implemented for a rare issue: a check was added to handle cases where chunk unloading may lag
+  behind level unloading, or where certain mods create special levels.
+- Some leftover type-casting code in the crop growth control system was cleaned up to prevent potential problems if a
+  mod dispatches the check event incorrectly.
+
+## **0.11.0-pre6**
+
+- No longer logs cache hints for newly constructed chunks to latest.log.
+- Optimized the query method for custom block snow covering, improving rendering performance.
+- Refined advancement progression: completing the autumn task no longer requires eating a pumpkin pie, and the
+  greenhouse construction task now completes upon crafting a Growth Detector.
+- Accessing dynamic registries query outside the data loading or game stage no longer throws an exception directly;
+  instead, a warning is issued to prevent game startup failures caused by mods dispatching events incorrectly.
+
+### **0.11.0-pre5-3-hotfix**
+
+- If you are using preview version 0.11 or above on a server and are using the Snow Definitions data pack or a mod that
+  provides it, and it uses BlockTags, please update to this version to avoid being unable to join the server.
+
+### **0.11.0-pre5-3**
+
+- By default, the top face of the snowy model is no longer culled. This behavior is now deprecated and may lead to
+  negative optimization. It can be enabled in the settings.
+- An AbstractModelDefinitionProvider is provided for developers to facilitate automatic model generation.
+
+### **0.11.0-pre5-2**
+
+- Fix a bug in ambient sound configuration.
+
+### **0.11.0-pre5-1**
+
+- Force stop ambient when remove from cache list.
+- Enable properties matcher for snow definitions.
+
+## **0.11.0-pre5**
+
+- Added item tags `eclipticseasons:cooling_items` and `eclipticseasons:heat_protective_helmets`, and armor enchantment
+  tag `eclipticseasons:heatstroke_resistant`. A `eclipticseasons:heatstroke_resistant` mob effect tag is also introduced
+  to control heatstroke behavior. You can tag your own straw hat to provide heatstroke resistance.
+- Greenhouses now use Box Distance by default to determine their working radius.
+- Adjusted the humidity control data pack. By default, sponges and wet sponges will no longer be consumed. Data pack
+  authors can still configure the lasting time manually.
+- Fixed an issue where the hygrometer could not detect greenhouse humidity in greenhouse in real time.
+- Fixed an issue where Silk Touch enchantment could not harvest the greenhouse core block.
+
+### **0.11.0-pre4-8**
+
+- Adjusted the cache path structure for additional models during game loading to accommodate potential special cases in
+  the future.
+
+### **0.11.0-pre4-7**
+
+- Fixed a potential crash that could occur when using a resource pack with custom seasons/snow cover models from
+  Ecliptic Seasons alongside Embeddium, especially when Multipart models are involved.
+
+### **0.11.0-pre4-6**
+
+- The snow_definitions in the resource pack can now override the offset used during model calculation, and it will no
+  longer skip evaluation if not defined on the data pack side.
+  This allows for purely resource-pack-based visual changes for snow-covered blocks—even though, from the server's
+  perspective, they are not actually considered snow-covered blocks.
+
+### **0.11.0-pre4-5**
+
+- Other mods are not supposed to call level.isRaining() frequently when solar weather is enabled , but since some might
+  still do so, we must defensively optimize this query just in case.
+
+### **0.11.0-pre4-4**
+
+- Temporarily Fixed an issue where would cause that certain moving block models lose their top parts.
+- Fixed an issue where the adjustment to the In Terms mechanism in version 0.11.0-pre3 prevented snowfall in cold
+  regions.
+
+### **0.11.0-pre4-2**
+
+- Fixed an issue with height checks during rendering.
+
+### **0.11.0-pre4-1**
+
+- Added logging hints for custom resources to help pinpoint errors.
+
+## **0.11.0-pre4**
+
+- Now the falling leaf particles allow setting `replace` to completely disable the original particle rendering, but only
+  when the seasonal particle texture provided for the set season exists.
+- The particle color string key has been changed from `sColor` to `color_string` to better align with the overall naming
+  style. Unless someone has been digging deep into the code, it's unlikely this was being used yet.
+- Snow-covered models can now correctly overlay seasonal models. If the snow-covered model has the `replace` attribute,
+  the seasonal model will be ignored.
+- Fixed a Codec decoding error in non-trivial cases within MultiPart models.
+
+## **0.11.0-pre3**
+
+- Added a transition_models field to the Season Model to enable more granular block appearance changes beyond just
+  seasonal transitions.
+- Added a Box Distance option, allowing greenhouse blocks to use Manhattan distance instead of Euclidean distance when
+  calculating their effective range.
+
+## **0.11.0-pre3**
+
+- Added a transition_models field to the Season Model to enable more granular block appearance changes beyond just
+  seasonal transitions.
+- Added a Box Distance option, allowing greenhouse blocks to use Manhattan distance instead of Euclidean distance when
+  calculating their effective range.
+
+### **0.11.0-pre2-5**
+
+- When using OptiFine, compatibility has been improved: snow-covered models are no longer incorrectly overridden by
+  certain overlay layers and now support the latest model rendering methods. Additionally, forced changes to the model
+  render type that previously caused visual issues are no longer necessary.
+- Fixed an issue where grass blocks beneath snow-leaking blocks such as walls and fences were not covered with snow.
+
+### **0.11.0-pre2-4**
+
+- Removed the erroneous code that incorrectly kept Ecliptic Seasons JEI plugin from loading in production environments.
+
+### **0.11.0-pre2-3**
+
+- Fixed the flag use in the test snowy leave definition file.
+
+### **0.11.0-pre2-2**
+
+- Fixed a compatibility configuration error related to Embeddium that was introduced in version 0.11.0-pre2.
+
+### **0.11.0-pre2-1**
+
+- CanPlantGrowEvent not extends from CropGrowEvent anymore to avoid some incorrect listeners.
+
+## **0.11.0-pre2**
+
+- Added support for seasonal and snow-covered model replacements for Embeddium and 1.20. To disable the original model
+  rendering, simply add an entry with replace=true in the model_definitions file.
+- Slightly optimized rendering performance.
+
+## Ecliptic Seasons v0.11 Preview Update
+
+> ⚠️ **Note: This is a preview update.**
+
+The **0.11 update** brings us one step closer to the official release. We're excited to announce that **Ecliptic Seasons
+** has made further progress with a **dual-drive system based on data packs and resource packs**.
+
+---
+
+### ❄️ Custom Snow-Covered Block Types
+
+You can now customize the **snow-covered state of blocks** via a two-step definition:
+
+1. **Model definition file** — written in standard Minecraft BlockStates JSON format.
+
+2. **Placement path**:
+
+   ```
+   resources/assets/<namespace>/eclipticseasons/model_definitions
+   ```
+
+   This system allows you to combine and randomize models to enhance visual richness.
+
+For snow-covered types (which are calculated both client- and server-side), define them under:
+
+```
+resources/data/<namespace>/eclipticseasons/snow_definitions
+```
+
+At minimum, provide:
+
+- A block ID
+- A model definition file ID
+
+Resource packs can also supply snow definitions, but with limited property control (model reference only).
+
+> ⚠️ `model_definitions` currently have limited support for replacing vanilla models. This must be **manually enabled**,
+> and is only available in **Minecraft 1.21 with Sodium** (support for 1.20 and Embeddium is planned). If you want to
+> completely suppress default block rendering, you can try overriding the original block’s blockstate model definition.
+
+---
+
+### 🌸 Seasonal Appearance for Blocks
+
+Blocks can now have **seasonal model variants**. To define these:
+
+- Use the `season_definitions` directory
+- Variants can be defined per **block type**, **biome**, and **season**
+- Supports seamless seasonal transitions by combining models
+
+Model files are still placed under:
+
+```
+resources/assets/<namespace>/eclipticseasons/model_definitions
+```
+
+---
+
+### 🍂 Custom Fallen Leaves Particle Effects
+
+You can now define **block-specific falling leaf particle effects** with rich customization:
+
+```
+resources/assets/<namespace>/eclipticseasons/particles/fallen_leaves
+```
+
+You can configure it by:
+
+- Season
+- Biome
+- Block
+- Weight
+- Texture
+- Color source
+- And more
+
+---
+
+### 🎵 Seasonal Ambient Sounds
+
+Ambient sound settings can now be customized in the `ambient` directory.
+
+Options include:
+
+- Time of day
+- Season
+- Biome
+- Rainfall conditions
+- And more
+
+---
+
+### 💧 Humidity Control Block Updates
+
+For the **Grate Block**:
+
+- Now supports an option to **not consume the source block**
+- **Relaxed restrictions** on extracting contents
+- Enhanced **JEI integration**, clearly showing valid blocks for construction
+
+---
+
+### 📖 Documentation
+
+We will update the **Wiki** soon with more detailed instructions. In the meantime, refer to the **example files included
+** in this preview build.
+
+---
+
+Thank you for testing and supporting *Ecliptic Seasons*!
+
+___
+___
+___
+
+## **0.10.11**
+
+- Added JEI support for the humidity adjustment module.
+- Added the tag `eclipticseasons:volatile_plants` to mark blocks that require forced additional random ticks for
+  seasonal changes.
+- Adjusted the naming of certain functions and fields in `SolarDataManager` and optimized its internal query speed.
+- Fixed an issue where the humidity adjustment effect might take a long time to disappear if the sponge was removed
+  midway from the humidity adjustment block.
+- Merged Pull Request [#50](https://github.com/joe-vettek/Ecliptic-Seasons/issues/50), adding Russian localization
+  contributed by Korben.
+
+## **0.10.10**
+
+- The hygrometer can now be placed on walls. After a period of measurement, it will also update the humidity display and
+  emit a redstone signal.
+- The configuration option `ShouldInitWeather` has been moved from `Common.Season` to `Common.Weather`, and its default
+  value is now disabled. If manually enabled, players may see lingering early spring snow in certain regions. This
+  change is intended to ensure players experience a proper spring when they first log in, avoiding confusion caused by
+  snow in springtime.
+- The configuration option `InitialSolarTermIndex` has been adjusted to "Spring Equinox" instead of "Beginning of
+  Spring." This makes the start of the game less cold when survival mods are installed and also helps reduce early
+  spring snow in some biomes (if `ShouldInitWeather` is enabled).
+- Fixed an issue where the `SnowyWinter` configuration was not properly enabled on the server side.
+- Added a new configuration option `ChangeMapColor` under `Common.Map`, allowing players to disable block map color
+  modifications. This prevents thread deadlocks caused by Fabric mods caching map colors at inappropriate times.
+- Lowered forge version requirement to 47.1.3.
+
+## **0.10.9**
+
+- Fixed an issue in version 0.10.8 where optimized chunk info initialization cached incorrect surface height, which
+  could cause snowy leaves to display incorrectly.
+- Added snowy state display for blocks in Jade and The One Probe to help new players understand block states.
+- Added clovers to grass block in summer. Their distribution changes with the solar terms.
+- Most snowy block variants no longer have different reflection behavior from their base blocks when used with shaders
+  that simulate surface reflections.
+
+### **0.10.8**
+
+- Optimized the initialization of chunk information caching to better adapt to certain utility or optimization mods that
+  modify initialization behavior, which could otherwise lead to performance degradation from frequent early-phase
+  queries.
+- Refined the advancement progression system to provide clearer guidance for players when constructing greenhouses.
+
+## **0.10.7.2**
+
+- Fixed incorrect night brightness levels caused by adjustments from 0.10.7
+- Addressed inability to sleep during thunderstorms
+- Optimized thunderstorm generation mechanics
+
+## **0.10.7.1**
+
+- Added some missing Crop Tags
+- Greenhouse integrity check now includes water source blocks
+
+## **0.10.7**
+
+- Fixed the issue of abnormal mob spawning during rainy weather.
+- Add supports for Jade and TOP to check the growth conditions of crops.
+- Allow to choose if play in simple greenhouse mode without core blocks and humidity modifiers.
+- Temporarily treat water and water-containing blocks as greenhouse interior space blocks.
+
+## **0.10.6**
+
+- Added `eclipticseasons:natural_plants` tag to identify Blocks that require growth control via compatibility mode —
+  typically used for mods that do not natively support the Forge Event Bus or are added via Sinytra Connector (Fabric
+  mods).
+- Added a config entry named as ForceCompatMode: forces all crops to use compatibility mode for growth control, not just
+  those tagged with `eclipticseasons:natural_plants`. Note native support offers significantly better performance.
+- Added missing tags for season quest blocks.
+- Include unused but extendable Crop tags in the resource folder for easy handling.
+- Refined serval English localization strings. Thanks to Korben.
+
+### **0.10.5.2.2**
+
+- Added a configuration option to control whether weather and snow status should be initialized.
+
+### **0.10.5.2.1**
+
+- Fix daylight cycle if in an invalid dimension.
+
+## **0.10.5.2**
+
+- Added snowy tree and snow under tree, with optional legacy versions for both.
+- Fixed an issue where setting the weight too high (with a value less than 10) would cause precision errors in particle
+  spawn probability calculation.
+
+## **0.10.5.1.5**
+
+- Added null checks to greenhouse core to avoid null results from incorrectly tagged biomes and then crash (e.g.,
+  overworld biomes missing "is_overworld" tag).
+
+## **0.10.5.1.4.1**
+
+- Fixed an issue where the achievement "Spring After Autumn" was being unlocked at incorrect times.
+
+## **0.10.5.1.4**
+
+- When Distant Horizons is installed and 'EnhancementChunkRenderUpdate' is not enabled, LOD rendering will no longer
+  reset after sleeping for season update.
+
+## **0.10.5.1.3**
+
+- Fixed the issue where the duration of seasonal day/night cycles was not affected by valid dimensions.
+
+## **0.10.5.1.2**
+
+- Fixed an issue where saplings could not grow into trees via bone meal acceleration based on the growth probability
+  when they had seasonal data but lacked humidity information.
+
+## **0.10.5.1**
+
+- Fixed an issue where the growth speed of crops in non-temperate area could not be properly checked when datapack
+  information was incomplete.
+- Fixed an issue where leaves crop blocks were incorrectly identified as being in a greenhouse.
+
+## **0.10.5.0.1**
+
+- Fixed an issue where snow-covered hedges were incorrectly colored when using Embeddium and Quark.
+
+## **0.10.5**
+
+- Thermometers and hyetometers have been hidden.
+
+To avoid player confusion regarding the concepts of thermometer and hyetometer, thermometers and hyetometers are no
+longer displayed by default in the creative mode inventory (including JEI). Additionally, their recipe unlock condition
+has been adjusted to require obtaining them at least once. Meanwhile, the recipe for the hygrometer has been modified to
+allow direct one-step crafting.
+
+Thermometers and hyetometers are essentially more like debug items—ordinary players don’t need to overly concern
+themselves with the specific numerical values of temperature and rainfall. Players only need to adjust based on the
+current humidity status.
+
+- The hygrometer can now also measure the humidity status at the player's current location, rather than just displaying
+  the base value.
+- Added the `eclipticseasons:dark_grow_plants` tag to identify crops that can quickly thrive in dark greenhouse
+  conditions.
+- Greenhouses are no longer directly set as invalid during summer noons, but instead indirectly affect humidity
+  calculations.
+- Fixed naming ambiguity: GreenHouseMaxDiameter (horizontal radius) and GreenHouseMaxHeight (vertical limit) are now
+  properly distinguished in configs.
+- Added greenhouse wall material controls, allowing the configuration of walls disliked by crops to restrict growth. In
+  the default settings, this only affects iceblock greenhouses for non-winter crops.
+- Other minor changes and fixes.
+
+## **0.10.4.1**
+
+- Additional processing has been applied to the ripening event to cancel consecutively triggered events. For example,
+  when ripening a mushroom into a giant mushroom, duplicate checks will no longer occur across two consecutive events.
+- The renderer update logic has been adjusted. By default, the renderer will no longer forcibly reset after sleep
+  completion.
+
+## **0.10.4.0.1**
+
+- Fixed incorrect packet processing timing for biome climate settings on multiplayer clients.
+
+## **0.10.4.0.1**
+
+- Fixed incorrect packet processing timing for biome climate settings on multiplayer clients.
+
+## **0.10.4**
+
+- Added a biome control temperature and downfall data pack to adjust biome humidity changes without modifying the biome
+  JSON definitions, avoiding conflicts with terrain generation control systems like WWOO, which modify temperature and
+  downfall solely based on terrain considerations.
+- Adjusted some humidity calculation methods.
+
+## **0.10.3.1.2**
+
+- Fixed an issue where wet sponges would be ejected from the humidifier during level reloading if they were present and
+  the conditions below met the soft heat source activation criteria.
+- Fixed an issue where seasonal quest notices could lose their assigned quests after reloading.
+
+## **0.10.3.1.1**
+
+- Fixed the missing translation for "Season Wall Quest Sign" that was incorrectly overwriting the "Air" entry.
+
+## **0.10.3.1**
+
+- Fixed an issue with crop growth errors when incomplete crop growth information was registered.
+
+## **0.10.3-hotfix**
+
+- Fixed an issue where putting a greenhouse essence into the greenhouse container would not consume the item.
+
+## **0.10.2.2**
+
+- Optimized the LOD (Level of Detail) update mechanism in Distant Horizons' compatibility module when both
+  ForceChunkRenderUpdate and EnhancementChunkRenderUpdate are enabled.
+
+## **0.10.2.1**
+
+- Since the mod uses some methods backported by Forge from version 1.21, the version requirements have been raised to
+  avoid misunderstandings. This aligns with the mainstream mods.
+- Fixed an issue where players might be unable to join multiplayer games. The current data pack system was migrated from
+  version 1.21, while Minecraft's 1.20 data pack network synchronization mechanism was somewhat unstable. We sincerely
+  apologize for the inadequate coordination during this transition.
+
+## **0.10.2**
+
+- Optimized the placement experience of the calendar, allowing it to be placed even when clicking on diagonal surfaces.
+- Fixed a bug related to whether Biome has weather precipitation.
+
+## **0.10.1**
+
+- Updated the texture of the Wooden Grate.
+- Fixed a potential item duplication issue.
+- Optimized the rendering speed of greenhouse items.
+
+## **0.10**
+
+This version, ported from 1.21, features comprehensive reworks to seasonal greenhouse mechanics:
+
+- Fixed the built-in compatibility handling for the Serene Seasons tag data pack. Due to significant modifications in
+  the underlying logic of data packs in version 0.10-pre8, data conversion issues existed prior to the new version.
+- Reworked Greenhouse Construction: Completely redesigned seasonal greenhouse building system.
+- Growth Detector: Added a monitoring device to track crop growth progress.
+- Greenhouse Core System: Introduced Seasonal Greenhouse Core blocks and related components. Crops now require placement
+  within the core's operational radius to receive greenhouse growth bonuses.
+- Humidity Control: Implemented Humidity Regulator Blocks for localized moisture adjustment. Multiple regulators create
+  stacked effects when working in proximity.
+- Seasonal Questline: Added themed quests and associated items. Greenhouse Cores can now be obtained by completing
+  introductory seasonal missions.
+- Progression Optimization: Overhauled achievement system and quest guidance. Completing basic seasonal quests now
+  grants material rewards for crafting Greenhouse Cores.
+- Other simple fixes.
+
+## **0.10-pre12**
+
+- Optimized temperature calculation method.
+- Optimized the interaction performance of this mod with dimensions and weather, making its configuration items more
+  stable and reserving room for expansion.
+- The ambient temperature required to induce heatstroke has been increased.
+
+## **0.10-pre11-2**
+
+- The default global probability coefficients of thunder and rain have been reduced.
+- Fire resistance grants immunity to heatstroke as well.
+- Adjusted subsequent check limits for ValidDimension.
+- Added some missing translations for calendar.
+
+## **0.10-pre11**
+
+### Fixes
+
+- Fixed an issue in the 0.10-pre6 update where biome temperature adjustments during world generation could prevent snow
+  from generating in cold biomes in multiplayer games.
+- Resolved a problem where special creature particles and related sound effects would appear during snow in some cold
+  biomes during spring and summer.
+
+### Additions
+
+- Added initialization of biome-related weather data during world initialization or when joining a mod for the first
+  time. Now, if certain biomes can snow or have just ended a snow cycle upon login, snow overlay decorations will be
+  visible. Additionally, the probability of initial weather being sunny has been increased.
+- Added two configurations related to greenhouse determination.
+- `SolarDay` can now be set to a negative value, potentially offering an experience akin to BCE (Before Common Era).
+- Replaced some recipe `Item` references with `Item Tag` to improve compatibility.
+
+### Removals
+
+- Removed redundant temperature checks in weather calculations.
+
+---
+
+## **0.10-pre10-3**
+
+- Use toLowerCase(Locale.ROOT) to avoid locale conversion.
+- Fixed an issue where `setThunder` might not function correctly when `SolarWeather` is not in use.
+- Fixed an issue with thundering weather when it's not raining.
+- Adjusted greenhouses in summer so that they only become inoperable at noon, rather than throughout the day.
+- Adjusted the ResourceOrTagArgument.Result used by Ecliptic Seasons when issuing the proxy weather command to be
+  dynamically created and return a non-null value.
+
+## **0.10-pre10-2**
+
+- fix an issue with single player world data cache being lost due to clearing the cache at the wrong time.
+
+## **0.10-pre10**
+
+- Fixed a server sync error in 0.10-pre8 caused by using a data pack that met the 1.21 requirements but was not designed
+  for 1.20.
+  Dynamic data registration types cannot be accessed in the 1.20 login registration data package synchronization, and
+  also the tag data has not yet been synchronized to the client.
+- clear some cache which might cause memory leak on client exit or server close
+
+## **0.10-pre9**
+
+- Resolved a bug in IceAndSnow(Melt) config, and related functions to ensure they meet standard expectations.
+- Enhanced chunk-level weather calculations for improved realism.
+- Optimized rendering performance during heat stroke conditions to maintain a stable frame rate.
+
+## **0.10-pre8**
+
+- Revert a change to improve map color calculation speed for brute force map mods
+- Test crop growth control data pack.
+
+Ported from version 1.21. Now, different biomes are divided into distinct argo climatic zones, initially set as cold,
+temperate, hot, desert, nether, and end. You can configure growth parameter mappings or default values as needed.
+Different crops will apply various growth parameters over time based on their agricultural climate zone. Existing crop
+tags still work, and you can also create your own blockset to apply different crops and climate zones. Currently, if a
+crop fails to grow and a death probability is set, there is a chance it may die. Fertilization probability can also be
+configured, but for now defualt is set to always succeed.
+
+This may sound a bit complex, but the mod provides some basic conveniences. You can use the existing crop growth control
+tags without having to write detailed datapacks. If you need to edit datapacks, you can flexibly use blocksets to adjust
+target objects. Since different climate zones require different growth parameters, a mapping method to temperate is
+provided (except for the temperate zone itself) to simplify the setup. Moreover, it is not necessary to set time down to
+the solar term—configuring by season is also allowed.
+
+## **0.10-pre7**
+
+fix leaves particles color
+add snow overlay not like tag
+test maid support to clean snow overlay
+add fake player support to clean snow overlay such as Deployer in Create
+
+---
+
+## **0.10-pre6**
+
+- Fixed an issue where the morning sun would move instantly when the solar term was about to change.
+- Fix zombie would burn in some case like just snow locally in the day.
+- Changed the default chunk rendering update strategy to prevent chunk rendering delays and performance impact.
+- Moved Snowy Winter and related options to Common Config. Now Snowy detection can be performed on both ends.
+- If RealisticSnowyChange is enabled, snow overlay that has been melted by light will no longer be replaced immediately,
+  even if the light source is removed.
+- Fixed an issue with unexpected snow blocks appearing when exploring the Biome in winter.
+- Added legacy snow/melting mechanics as a configurable optional feature, and they are separate
+
+---
+
+## **0.10-pre5**
+
+- Add support for InControl to check four seasons
+- fix a remap issue with Snowy Spirit
+
+---
+
+**0.10-pre4**
+
+- Add support for Snowy Spirit, let enjoy skiing and Christmas Holiday
+- Add support for Haunted Harvest, let enjoy Halloween Holiday
+
+---
+
+**0.10-pre3**
+
+- Added a null pointer check for model detector to prevent crash from some mod releasing the render context prematurely
+- Provided colored foliage particle compatibility for resource packs that change foliage textures.
+
+--
+
+**0.10-pre2**
+
+- Rendering Pipeline Compatibility Optimization:
+  Resolved the issue where Embeddium and FF API,
+  when loaded simultaneously,
+  caused Fabric Models to use the Fabric rendering pipeline while Forge Models continued to use the legacy pipeline.
+  Continuity forced conversion of all models to Fabric Models if it's not a CTM model,
+  resulted in occasional face flickering in Ecliptic Seasons' snow model rendering due to smooth lighting.
+  This update addresses the issue, ensuring consistent rendering.
+
+- Greenhouse Detection Mechanism Improvement:
+  Optimized the detection logic for greenhouses,
+  enhancing detection speed and accuracy for more efficient performance.
+
+- Slowed down the rate of growth in the wrong season.
+
+---
+
+**0.10-pre**
+
+### Critical Fixes:
+
+- Fixed an issue where certain mods could not obtain correct rainfall prediction information when using biome queries.
+  This was due to the lack of Level input and no interaction with the mod. These mods will now receive query results
+  related to the Overworld.
+- Fixed an issue regarding the run of solar terms system when informs are disabled.
+- The light check of handheld maps for snow-covered blocks is temporarily disabled to avoid erroneous calls that could
+  cause server disconnects.
+
+### Improvements:
+
+- Refactored and organized the registration-related code due to the increasing amount of registration information.
+- When players walk on snow-covered blocks, the sound will now resemble footsteps on snow.
+- Now counts days beyond a year instead of resetting to zero.
+- Add there meters to detect the climate info at the stand position.
+
+### Minor Updates:
+
+- Added translation support for "Rainfall."
+- Optimized the display method for some non-critical warning messages.
+
+0.9
+
+### Things changes:
+
+*Please proceed with this update carefully, as it requires feedback from players.
+Especially for the greenhouse mechanism, it is currently only a test version, and further mechanism optimization and
+content expansion may occur in the future.*
+
+**Add two event.**
+
+Now, when the solar term changes, the Game Bus will be notified, please check it in the API package.
+
+At the same time, you can use events to modify and register crop information.
+
+**Add greenhouse and humidity raising mechanism.**
+
+You can now build greenhouses to protect against seasonal and humidity changes. You can build glass greenhouses or other
+enclosed greenhouses, each suitable for different seasons. With convenience comes challenges. Winters in cold biomes are
+now slightly longer for crops, while summers in hot biomes are similarly changed.
+
+In addition, in a greenhouse, bubble columns exposed to air will slightly increase the humidity of the surrounding area
+if activated by magma blocks below. Rain has a similar effect for open air environments.
+
+### Performance Optimization：
+
+add config cache
+
+faster the weather query time
+
+faster the small biome check time
+
+### Bug Fixes:
+
+fix thunder level in client check
+fix sound in desert summer
+clean necessary biome cache (not need for 1.20)
+
+0.8.4.1
+fix a very small probability of occasional crash
+make spruce trees no longer drop leaves particles
+
+0.8.4
+Fixed an issue with weather rendering errors when switching dimensions
+Fixed an issue where starting a world for the first time would trigger weather transition effects
+
+0.8.3
+fix the issue that crops would grow faster when the humidity level was not suitable
+add config to adjust the base probability of when humidity level is not suitable
+
+## 0.8.2
+
+### Changes:
+
+- **Optimize the rendering performance and rendering performance when using SolarWeather and raining**
+  This will greatly reduce the rendering performance at this stage in most cases, but it will increase in some cases,
+  such as near large river areas, in order to avoid treating biomes such as rivers as an independent climate
+  distribution.
+- Fixed a bug that caused abnormal temperature in Cold Sweat.
+
+0.8.1
+add support for journeymap
+add two advancements
+show a message when use the calendar (need open in config)
+
+support latest version of Cold Sweat
+fix advancements problem
+adjust the way seasonal temperatures are calculated when the Cold Sweat mod is enabled
 
 ## 0.8
 
-- Added solar term icons
-- Added calendar (with optional message on use) and related advancements
-- Added config for valid seasonal dimensions
-- Added support for DH
-- Added support for Journeymap
-- Added config to adjust crop growth probability when humidity is unsuitable
-- Provided dedicated temperature modification configs for Cold Sweat and Legendary Survival Overhaul
+add solar term icons
+add calendar
+add a config to set valid dimensions
+repair an issue from outbound biome query due to biome noise
+add support for DH 2.2.0+
+fix single instance of biome precipitation of Oculus
+provide dedicated temperature modification configurations for Cold Sweat and Legendary Survival Overhaul
 
-## 0.7
+- fix the names of some configuration items
 
-- Interactable snowy blocks (client-side effect), thin snow layer disappears when snowy block is broken
-- Expanded snow-covered support (fences, walls, more models)
-- Config options: dynamic daylight duration, light controls snow cover, enhanced seasonal rendering refresh, hide crop
-  planting info
-- Support for Serene Seasons crop tags
-- /setTerm command suggestion tooltip
-- More ways to resist heat stroke (special enchantments, ice, snow)
+```
+Debug.Debug -> Debug.LogIllegalUse
+Temperature.IceAndSnowMelt -> Debug.LegacySnowAndMelt
+Crop.UseDefaultValue -> Crop.RegisterCropDefaultValue
+```
 
-## 0.6
+* fix the light problem of other block entities when use calendar
+  ** fix remap problem with Oculus
 
-- Support to disable Solar Weather and use vanilla weather
+0.7.6
+fix using ReplayMod would not rain in replay
+fix /setTerm command setting error term if the config "LastingDaysOfEachTerm" is not 7
+fix temperature mapping error for Legendary Survival Overhaul compatibility layers
+add a suggestion tooltip for /setTerm command
+*** expand means of resisting heat stroke with some special enchantments, and also ice and snow
+*** fix the crash if a tree sapling tried to grow in wrong season and was denied by Ecliptic Seasons
 
-## 0.5
+0.7.5
+improved snow-covered effect support for more models, such as fences, walls and more
+reduce the limitation of humidity on crop growth
+allow config not use dynamic daylight duration change
+allow use config to set whether the light controls the snow cover
+add enum values cache for some class
+allow config use enhanced seasonal rendering refresh
+optimize some solar term calculation performance
+fix an issue with biome grass colors
 
-- More blocks support snowy effect (e.g., glass and more)
+0.7.4
+support season crop tag for Serene Seasons
 
-## 0.4
+0.7.3
+add a config to hide crop planting info
+fix where incorrectly tagged biomes were marked as impossible to rain.
+fix grass flower model
+fix snowy block render when not in fancy render
+fix rain drop in biome which would never rain if using command
+fix snow term in hot biomes if close to the baseline
 
-- Updated textures and render methods
-- More leaf colors
-- Added API instance
-- Sapling growth control
-- Updated weather check and transition
+0.7.2
+optimize particle spawn
+optimize chunk renderer query efficiency
 
-## 0.3
+* fix snowy simple glass renderer
+* fix cache problem with simple snowy block when reload resource
 
-- Compatibility with Cold Sweat, Legendary Survival Overhaul
-- Config options for crop humidity and seasonal growth chance
+0.7.1
+optimized performance consumption when rain
 
+* fix a simple render with some special mods slabs
+  ** fix some codes
+  ** fix sync problem if player die in other dimension
+  ** fix bee
+
+0.7.0
+snowy blocks can now be interacted with (client-side effect only, not saveable)
+when you break the snowy block, the thin snow layer will disappear until it starts to fall again
+fix an issue with snowy blocks flickering at long distances
+
+0.6.1
+you can use vanilla weather by close Solar Weather
+fix the color of fallen leaves
+fix debug info
+
+0.6
+fix mixin crash
+update config
+update api package
+
+* fix crash with Simple Cloud
+
+0.5.2
+fix snowy block renderer
+** fix the render of flower on grass block
+
+0.5.1
+fix offset of snowy grass
+
+0.5
+more snowy block with more compatibility(such as glass and more)
+fix birch leaves color
+
+0.4
+update textures
+add more leaves color
+add api instance
+update weather check
+update render method
+add sapling grow control
+
+* update weather transition
+* fix level check
+
+0.3.16
+add compat for cold_sweat
+fix compat for embeddium
+
+* fix desert tag
+* add small biome check
+* fix biome of bound rain and snow
+  ** fix model cache problem with ModernFix
+  ** close fog weather which is used for test
+
+0.3.15
+add a config for crop humidity
+add a config for crop season growth chance
+fix #3 for use EclipticTagClientTool in server method
+
+0.3.14
+add compat for legendarysurvivaloverhaul
+fix the sound in the rain and water
