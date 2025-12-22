@@ -5,7 +5,7 @@ import com.teamtea.eclipticseasons.common.util.time4jUtil;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
 
-
+@Deprecated(forRemoval = true)
 public class FixedSolarDataManager extends SolarDataManager {
 
     public FixedSolarDataManager(Level level, CompoundTag nbt) {

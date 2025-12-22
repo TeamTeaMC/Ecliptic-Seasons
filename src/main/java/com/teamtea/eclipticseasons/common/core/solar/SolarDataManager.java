@@ -144,12 +144,12 @@ public class SolarDataManager extends SavedData {
 
     private static SolarDataManager load(ServerLevel serverLevel, CompoundTag compoundTag) {
         return CommonConfig.Season.realWorldSolarTerms.get() ?
-                new FixedSolarDataManager(serverLevel, compoundTag) : new SolarDataManager(serverLevel, compoundTag);
+                new FixedSolarDataManagerLocal(serverLevel, compoundTag) : new SolarDataManager(serverLevel, compoundTag);
     }
 
     private static SolarDataManager create(ServerLevel serverLevel) {
         SolarDataManager manager = CommonConfig.Season.realWorldSolarTerms.get() ?
-                new FixedSolarDataManager(serverLevel) : new SolarDataManager(serverLevel);
+                new FixedSolarDataManagerLocal(serverLevel) : new SolarDataManager(serverLevel);
         WeatherManager.initNewWorldWeather(serverLevel, serverLevel.random, manager.getSolarTerm());
         return manager;
     }

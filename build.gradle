@@ -322,9 +322,11 @@ dependencies {
 //    compileOnly "libs:OptiFine:1.20.1_HD_U_I6"
 //    compileOnly project(':sub')
 
-    implementation(jarJar("net.time4j:time4j-base:5.9.4")) {
-        jarJar.ranged(it, "[5.9.4,)")
-    }
+    // https://mvnrepository.com/artifact/net.time4j/time4j-base
+    compile("net.time4j:time4j-base:5.9.4")
+//    implementation(jarJar("net.time4j:time4j-base:5.9.4")) {
+//        jarJar.ranged(it, "[5.9.4,)")
+//    }
 
     compileOnly project(':sub')
 
