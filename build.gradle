@@ -323,7 +323,7 @@ dependencies {
 //    compileOnly project(':sub')
 
     // https://mvnrepository.com/artifact/net.time4j/time4j-base
-    compile("net.time4j:time4j-base:5.9.4")
+    compileOnly("net.time4j:time4j-base:5.9.4")
 //    implementation(jarJar("net.time4j:time4j-base:5.9.4")) {
 //        jarJar.ranged(it, "[5.9.4,)")
 //    }
