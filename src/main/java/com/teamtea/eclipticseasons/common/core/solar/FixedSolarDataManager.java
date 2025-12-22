@@ -1,31 +1,19 @@
 package com.teamtea.eclipticseasons.common.core.solar;
 
-import com.ibm.icu.impl.CalendarAstronomer;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
+import com.teamtea.eclipticseasons.common.util.time4jUtil;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
 
-import java.util.Calendar;
-import java.util.Date;
 
 public class FixedSolarDataManager extends SolarDataManager {
-    protected final CalendarAstronomer astro = new CalendarAstronomer();
 
     public FixedSolarDataManager(Level level, CompoundTag nbt) {
         super(level, nbt);
-        initTimeCounter();
     }
 
     public FixedSolarDataManager(Level level) {
         super(level);
-        initTimeCounter();
-    }
-
-    private void initTimeCounter() {
-        if (!isValidDimension) return;
-        Date nextSolarTermByDay = getNextSolarTermByDay(astro);
-        Date now = new Date();
-        astro.setDate(now);
     }
 
     @Override
@@ -35,13 +23,13 @@ public class FixedSolarDataManager extends SolarDataManager {
 
     @Override
     public int getSolarTermIndex() {
-        return getIndex(astro);
+        return time4jUtil.getCurrent().ordinal();
     }
 
 
     @Override
     public int getSolarYear() {
-        return Calendar.getInstance().get(Calendar.YEAR) - 190;
+        return time4jUtil.getYear();
     }
 
     @Override
@@ -51,47 +39,13 @@ public class FixedSolarDataManager extends SolarDataManager {
 
     @Override
     public int getSolarTermDaysInPeriod() {
-        double sunLongitudeDeg = Math.toDegrees(astro.getSunLongitude());
-        sunLongitudeDeg = (sunLongitudeDeg + 360) % 360;
-        return (int) (sunLongitudeDeg % 15 * getSolarTermLastingDays() / 15);
+        return (int) (time4jUtil.getSolarTermProgress() * getSolarTermLastingDays());
     }
+
 
     @Override
     public boolean isTodayLastDay() {
         return false;
-    }
-
-
-    private static int getIndex(CalendarAstronomer astro) {
-        double sunLongitudeDeg = Math.toDegrees(astro.getSunLongitude());
-        sunLongitudeDeg = (sunLongitudeDeg + 360) % 360;
-        int index = (int) (sunLongitudeDeg / 15 + 3);
-        index = Math.floorMod(index, 24);
-        return index;
-    }
-
-    public Date getNextSolarTermByDay(CalendarAstronomer astro) {
-        Date current = new Date();
-        astro.setDate(current);
-
-        int currentIndex = getIndex(astro);
-        int nextIndex = (currentIndex + 1 + 21) % 24;
-        double nextLongitude = nextIndex * 15;
-
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(current);
-
-        while (true) {
-            astro.setDate(cal.getTime());
-            double sunDeg = Math.toDegrees(astro.getSunLongitude());
-            sunDeg = (sunDeg + 360) % 360;
-            if (sunDeg >= nextLongitude) {
-                break;
-            }
-            cal.add(Calendar.DAY_OF_MONTH, 1);
-        }
-
-        return cal.getTime();
     }
 
 }

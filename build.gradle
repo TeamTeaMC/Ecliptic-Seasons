@@ -321,6 +321,11 @@ dependencies {
     // Examples using mod jars from ./libs
 //    compileOnly "libs:OptiFine:1.20.1_HD_U_I6"
 //    compileOnly project(':sub')
+
+    implementation(jarJar("net.time4j:time4j-base:5.9.4")) {
+        jarJar.ranged(it, "[5.9.4,)")
+    }
+
     compileOnly project(':sub')
 
     println("----Scan onlymain libs begin----")
