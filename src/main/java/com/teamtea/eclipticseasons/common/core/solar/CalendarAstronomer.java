@@ -18,7 +18,6 @@ import java.util.Date;
  *
  * @author Laura Werner
  * @author Alan Liu
- * @internal
  */
 public class CalendarAstronomer {
 

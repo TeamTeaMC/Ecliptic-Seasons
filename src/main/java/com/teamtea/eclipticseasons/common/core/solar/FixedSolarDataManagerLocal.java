@@ -1,6 +1,7 @@
 package com.teamtea.eclipticseasons.common.core.solar;
 
 //import com.ibm.icu.impl.CalendarAstronomer;
+
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
@@ -13,19 +14,25 @@ public class FixedSolarDataManagerLocal extends SolarDataManager {
 
     public FixedSolarDataManagerLocal(Level level, CompoundTag nbt) {
         super(level, nbt);
-        initTimeCounter();
+        updateTimeCounter();
     }
 
     public FixedSolarDataManagerLocal(Level level) {
         super(level);
-        initTimeCounter();
+        updateTimeCounter();
     }
 
-    private void initTimeCounter() {
+    private void updateTimeCounter() {
         if (!isValidDimension) return;
-        Date nextSolarTermByDay = getNextSolarTermByDay(astro);
-        Date now = new Date();
-        astro.setDate(now);
+        //Date nextSolarTermByDay = getNextSolarTermByDay(astro);
+        astro.setDate(new Date());
+    }
+
+
+    @Override
+    public void tickLevel(Level level) {
+        super.tickLevel(level);
+        updateTimeCounter();
     }
 
     @Override
@@ -41,12 +48,13 @@ public class FixedSolarDataManagerLocal extends SolarDataManager {
 
     @Override
     public int getSolarYear() {
-        return Calendar.getInstance().get(Calendar.YEAR) - 190;
+        return Calendar.getInstance().get(Calendar.YEAR);
     }
 
     @Override
     public int getSolarTermsDay() {
-        return (getSolarTermIndex() * getSolarTermLastingDays()) + getSolarTermDaysInPeriod();
+        return Calendar.getInstance().get(Calendar.DAY_OF_YEAR);
+        //return (getSolarTermIndex() * getSolarTermLastingDays()) + getSolarTermDaysInPeriod();
     }
 
     @Override

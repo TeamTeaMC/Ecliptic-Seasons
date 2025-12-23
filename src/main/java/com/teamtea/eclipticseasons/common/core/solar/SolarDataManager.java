@@ -477,10 +477,12 @@ public class SolarDataManager extends SavedData {
     }
 
 
-    public void tickLevel(ServerLevel level) {
-        this.skipNextCheckInTickPosMap.clear();
-        if (MapChecker.isValidDimension(level)) {
-            this.updateTicks(level);
+    public void tickLevel(Level level) {
+        if (level instanceof ServerLevel serverLevel) {
+            this.skipNextCheckInTickPosMap.clear();
+            if (MapChecker.isValidDimension(serverLevel)) {
+                this.updateTicks(serverLevel);
+            }
         }
     }
 
