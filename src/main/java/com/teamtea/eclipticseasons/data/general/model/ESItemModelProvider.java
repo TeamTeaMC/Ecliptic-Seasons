@@ -44,6 +44,7 @@ public class ESItemModelProvider extends ItemModelProvider {
 
         addSimple(ItemRegistry.broom.value());
         addSimple(ItemRegistry.ice_wand.value());
+        addSimple(ItemRegistry.salt_wand.value());
 
         addSimple(ItemRegistry.seasonal_prayer_scroll_item.value());
         addSimple(ItemRegistry.growth_detector.value());

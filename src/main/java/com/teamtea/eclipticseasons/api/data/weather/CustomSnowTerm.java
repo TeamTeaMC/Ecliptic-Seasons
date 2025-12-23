@@ -6,10 +6,12 @@ import com.teamtea.eclipticseasons.api.constant.climate.ISnowTerm;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.util.codec.CodecUtil;
 import com.teamtea.eclipticseasons.api.util.codec.ESExtraCodec;
+import com.teamtea.eclipticseasons.config.CommonConfig;
 import lombok.Builder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.biome.Biome;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -41,14 +43,23 @@ public record CustomSnowTerm(
 
     @Override
     public ISnowTerm cast(float tempChange) {
-        for (TempEvent tempEvent : tempEvents) {
-            if (tempEvent.tempOffset > tempChange) {
-                return tempEvent;
+        if (CommonConfig.Season.dynamicSnowTerm.get())
+            for (TempEvent tempEvent : tempEvents) {
+                if (tempEvent.tempOffset > tempChange) {
+                    return tempEvent;
+                }
             }
-        }
         return this;
     }
 
+    @Override
+    public @NotNull String toString() {
+        return "CustomSnowTerm{" +
+                "biomes=" + biomes +
+                ", start=" + start +
+                ", end=" + end +
+                '}';
+    }
 
     @Builder
     public record TempEvent(float tempOffset, SolarTerm start, SolarTerm end) implements ISnowTerm {

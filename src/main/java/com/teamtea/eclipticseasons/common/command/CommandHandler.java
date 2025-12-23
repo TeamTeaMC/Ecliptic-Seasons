@@ -245,7 +245,7 @@ public class CommandHandler {
                 }
             }
             if (found) {
-                WeatherManager.sendBiomePacket(levelBiomeWeather, level.players());
+                WeatherManager.sendBiomePacket(level,levelBiomeWeather, level.players());
                 SnowyMapChecker.updateAllChunks(level);
                 SimpleNetworkHandler.send(level.players(), new EmptyMessage());
             }
@@ -266,7 +266,7 @@ public class CommandHandler {
                 }
             }
             if (found) {
-                WeatherManager.sendBiomePacket(levelBiomeWeather, level.players());
+                WeatherManager.sendBiomePacket(level, levelBiomeWeather, level.players());
                 SnowyMapChecker.updateAllChunks(level);
                 SimpleNetworkHandler.send(level.players(), new EmptyMessage());
             }
@@ -294,7 +294,7 @@ public class CommandHandler {
                 }
             }
             if (found) {
-                WeatherManager.sendBiomePacket(levelBiomeWeather, level.players());
+                WeatherManager.sendBiomePacket(level, levelBiomeWeather, level.players());
             }
         }
         return 0;

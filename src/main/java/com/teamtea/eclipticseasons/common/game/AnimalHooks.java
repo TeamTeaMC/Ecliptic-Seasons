@@ -87,16 +87,18 @@ public class AnimalHooks {
                 }
             }
 
-            boolean isDay = EclipticSeasonsApi.getInstance().isDay(animal.level());
-            if (animal.getType().is(AnimalBehaviorTag.DAY)) {
-                return !isDay;
-            } else if (animal.getType().is(AnimalBehaviorTag.NIGHT)) {
-                return isDay;
-            } else if (animal.getType().is(AnimalBehaviorTag.ALL_TIME)) {
-                return false;
-            } else return !isDay;
+            if (CommonConfig.Animal.enableTimeBreed.get()) {
+                boolean isDay = EclipticSeasonsApi.getInstance().isDay(animal.level());
+                if (animal.getType().is(AnimalBehaviorTag.DAY)) {
+                    return !isDay;
+                } else if (animal.getType().is(AnimalBehaviorTag.NIGHT)) {
+                    return isDay;
+                } else if (animal.getType().is(AnimalBehaviorTag.ALL_TIME)) {
+                    return false;
+                } else return !isDay;
+            } else return false;
         }
-        return true;
+        return false;
     }
 
 

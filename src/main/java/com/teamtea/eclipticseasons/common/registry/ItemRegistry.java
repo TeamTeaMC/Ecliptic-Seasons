@@ -15,7 +15,8 @@ public class ItemRegistry {
     public static final DeferredRegister<Item> ITEM_DEFERRED_REGISTER = DeferredRegister.create(Registries.ITEM, EclipticSeasonsApi.MODID);
 
     public static final DeferredHolder<Item, Item> broom = ITEM_DEFERRED_REGISTER.register("broom", () -> new BroomItem(new Item.Properties().durability(256)));
-    public static final DeferredHolder<Item, Item> ice_wand = ITEM_DEFERRED_REGISTER.register("ice_wand", () -> new IceWandItem(new Item.Properties()));
+    public static final DeferredHolder<Item, Item> ice_wand = ITEM_DEFERRED_REGISTER.register("ice_wand", () -> new IceWandItem(new Item.Properties().stacksTo(1).rarity(Rarity.EPIC)));
+    public static final DeferredHolder<Item, Item> salt_wand = ITEM_DEFERRED_REGISTER.register("salt_wand", () -> new SaltWandItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE).durability(4096)));
 
     public static final DeferredHolder<Item, Item> hyetometer = ITEM_DEFERRED_REGISTER.register("hyetometer", () -> new MeterItem(new Item.Properties()));
     public static final DeferredHolder<Item, Item> thermometer = ITEM_DEFERRED_REGISTER.register("thermometer", () -> new MeterItem(new Item.Properties()));

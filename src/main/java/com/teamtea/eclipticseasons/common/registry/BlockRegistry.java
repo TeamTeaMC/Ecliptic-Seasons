@@ -26,8 +26,8 @@ public class BlockRegistry {
     public static final DeferredHolder<Block, Block> wind_chimes = BLOCK_DEFERRED_REGISTER.register("wind_chimes", () -> new WindChimesBlock(BlockBehaviour.Properties.of().strength(0.5f).sound(SoundType.WOOD).noOcclusion().pushReaction(PushReaction.DESTROY).randomTicks()));
 
     // paper_wind_mill 纸风车
-    public static final DeferredHolder<Block, Block> pinwheel_orange = BLOCK_DEFERRED_REGISTER.register("pinwheel_orange", () -> new PinWheelBlock(BlockBehaviour.Properties.of().strength(0.5f).sound(SoundType.WOOD).noOcclusion().pushReaction(PushReaction.DESTROY).randomTicks()));
-    public static final DeferredHolder<Block, Block> pinwheel_lime = BLOCK_DEFERRED_REGISTER.register("pinwheel_lime", () -> new PinWheelBlock(BlockBehaviour.Properties.of().strength(0.5f).sound(SoundType.WOOD).noOcclusion().pushReaction(PushReaction.DESTROY).randomTicks()));
+    public static final DeferredHolder<Block, Block> pinwheel_orange = BLOCK_DEFERRED_REGISTER.register("pinwheel_orange", () -> new PinWheelBlock(BlockBehaviour.Properties.of().strength(0.5f).sound(SoundType.WOOD).noOcclusion().pushReaction(PushReaction.DESTROY)));
+    public static final DeferredHolder<Block, Block> pinwheel_lime = BLOCK_DEFERRED_REGISTER.register("pinwheel_lime", () -> new PinWheelBlock(BlockBehaviour.Properties.of().strength(0.5f).sound(SoundType.WOOD).noOcclusion().pushReaction(PushReaction.DESTROY)));
     public static final DeferredHolder<Block, Block> pinwheel_blue = BLOCK_DEFERRED_REGISTER.register("pinwheel_blue", () -> new PinWheelBlock(BlockBehaviour.Properties.of().strength(0.5f).sound(SoundType.WOOD).noOcclusion().pushReaction(PushReaction.DESTROY)));
 
     // calendar 日历

@@ -23,5 +23,7 @@
   "info.eclipticseasons.recipe_category.wetter": "环境湿度",
   "info.eclipticseasons.recipe_category.season_quest": "季节任务",
   "info.eclipticseasons.recipe_category.season_quest.time": "可完成时间：",
-  "info.eclipticseasons.recipe_category.season_quest.time.period": "%s - %s"
+  "info.eclipticseasons.recipe_category.season_quest.time.period": "%s - %s",
+  "info.eclipticseasons.item.sal_wand.select_first": "选择第一个点 %s, %s, %s",
+  "info.eclipticseasons.item.sal_wand.apply": "共应用到%s个位置"
 }

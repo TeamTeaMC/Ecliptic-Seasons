@@ -209,13 +209,17 @@ dependencies {
 
     onlyMainRuntimeOnly("curse.maven:spark-361579:5434153")
     onlyMainRuntimeOnly "curse.maven:t88-663112:6138989"
+
+    onlyMainRuntimeOnly "curse.maven:neocontinuity-1377279:7178602"
+    onlyMainRuntimeOnly "curse.maven:fusion-connected-textures-854949:7058347"
+
 //    onlyMainRuntimeOnly "curse.maven:minecraft-add-1090474:6167550"
 
 //    onlyMainRuntimeOnly "curse.maven:euphoria-patches-915902:6137784"
 
     implementation "curse.maven:patchouli-306770:6842247"
-    implementation "curse.maven:kubejs-238086:7143884"
-    implementation "curse.maven:rhino-416294:7104526"
+    compileOnly "curse.maven:kubejs-238086:7143884"
+//    implementation "curse.maven:rhino-416294:7104526"
 
     println("----Scan onlyMainRuntimeOnly libs begin----")
     fileTree(dir: 'libs', include: ['*.jar']).each { File file ->
@@ -234,6 +238,18 @@ dependencies {
     // https://mvnrepository.com/artifact/org.projectlombok/lombok
     compileOnly 'org.projectlombok:lombok:1.18.38'
     annotationProcessor 'org.projectlombok:lombok:1.18.38'
+
+    // https://mvnrepository.com/artifact/net.time4j/time4j-base
+    compileOnly ("net.time4j:time4j-base:5.9.4")
+//    implementation(jarJar("net.time4j:time4j-base:5.9.4")) {
+//        jarJar.ranged(it, "[5.9.4,)")
+//    }
+
+//    // https://mvnrepository.com/artifact/com.github.ben-manes.caffeine/caffeine
+//    implementation(jarJar("com.github.ben-manes.caffeine:caffeine:3.2.3")) {
+//        jarJar.ranged(it, "[3.2.3,)")
+//    }
+
 //    onlyMainRuntimeOnly("curse.maven:immersive-portals-for-forge-355440:5828143")
 //    onlyMainRuntimeOnly("curse.maven:cloth-config-348521:5729127")
 

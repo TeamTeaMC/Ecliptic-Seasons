@@ -28,6 +28,7 @@ public class Lang_ZH extends LangHelper {
         add(BlockRegistry.pinwheel_lime.get(), "淡绿色纸风车");
         add(BlockRegistry.pinwheel_orange.get(), "橘色纸风车");
         add(ItemRegistry.ice_wand.get(), "冰晶法杖");
+        add(ItemRegistry.salt_wand.get(), "盐石法杖");
         add(ItemRegistry.broom.get(), "扫帚");
 
         add(ItemRegistry.thermometer.get(), "温度计");

@@ -11,6 +11,7 @@ import com.teamtea.eclipticseasons.api.event.RegisterAndModifyCropInfoEvent;
 import com.teamtea.eclipticseasons.common.core.crop.internal.CompatCropHookInternal;
 import com.teamtea.eclipticseasons.compat.CompatModule;
 import com.teamtea.eclipticseasons.config.CommonConfig;
+import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -24,6 +25,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.*;
 
+import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.TagsUpdatedEvent;
 
@@ -37,6 +39,7 @@ public final class CropInfoManager {
     final static Map<Item, CropHumidityInfo> ITEM_CROP_HUMIDITY_INFO = new HashMap<>();
     final static Map<Item, CropSeasonInfo> ITEM_CROP_SEASON_INFO = new HashMap<>();
 
+    public final static Map<Block, Holder<Block>> CROPS_WOULD_NOT_KILLED_BY_CLIMATE = new IdentityHashMap<>();
 
     public static TagKey<Item> createItemTag(String modId, String path) {
         return ItemTags.create(ResourceLocation.fromNamespaceAndPath(modId, path));
@@ -66,11 +69,20 @@ public final class CropInfoManager {
     public static void init(TagsUpdatedEvent event) {
         CROP_HUMIDITY_INFO.clear();
         CROP_SEASON_INFO.clear();
+        CROPS_WOULD_NOT_KILLED_BY_CLIMATE.clear();
 
         Optional<Registry<Item>> items = event.getRegistryAccess().registry(Registries.ITEM);
         Optional<Registry<Block>> blocks = event.getRegistryAccess().registry(Registries.BLOCK);
 
         if (blocks.isPresent()) {
+            blocks.get().getTag(EclipticBlockTags.NOT_KILLED_BY_CLIMATE).ifPresent(
+                    blocksG -> {
+                        for (Holder<Block> blockHolder : blocksG.stream().toList()) {
+                            CROPS_WOULD_NOT_KILLED_BY_CLIMATE.put(blockHolder.value(), blockHolder);
+                        }
+                    }
+            );
+
             for (CropHumidityType cropHumidityType : CropHumidityType.collectValues()) {
                 var tagBlocks = blocks.get().getTag(cropHumidityType.getBlockTag());
                 tagBlocks.ifPresent(holders -> holders.stream().forEach(action -> {
@@ -105,7 +117,7 @@ public final class CropInfoManager {
         if (CompatModule.CommonConfig.sereneSeasons.getAsBoolean()) {
             CompatCropHookInternal.registerForSS(items, Registries.ITEM);
             CompatCropHookInternal.registerForSS(blocks, Registries.BLOCK);
-            CompatCropHookInternal.registerForSSALL(items,blocks);
+            CompatCropHookInternal.registerForSSALL(items, blocks);
 
         }
 
@@ -187,6 +199,10 @@ public final class CropInfoManager {
                 CROP_SEASON_INFO.put(block, info.getInfo());
             }
         }
+    }
+
+    public static boolean mayKilledByClimate(BlockState blockState) {
+        return !CROPS_WOULD_NOT_KILLED_BY_CLIMATE.containsKey(blockState.getBlock());
     }
 
     public static Collection<Block> getHumidityCrops() {

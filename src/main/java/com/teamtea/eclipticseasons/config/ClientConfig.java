@@ -147,6 +147,8 @@ public class ClientConfig {
         public static ModConfigSpec.BooleanValue seasonGreenhouse;
         public static ModConfigSpec.IntValue SeasonGreenhouseParticleSpawnCount;
 
+        public static ModConfigSpec.BooleanValue snowLeafParticles;
+
         private static void load(ModConfigSpec.Builder builder) {
             builder.push("Particle");
             seasonParticle = builder.comment("See butterflies in the spring, fireflies in the summer, and fallen leaves.")
@@ -178,6 +180,8 @@ public class ClientConfig {
             SeasonGreenhouseParticleSpawnCount = builder.comment("Number of particles emitted by the season greenhouse effect. The higher the value, the denser the effect.")
                     .defineInRange("SeasonGreenhouseParticleSpawnCount", 30, 0, 160);
 
+            snowLeafParticles = builder.comment("Snow-covered leaves will drop snow particles when broken.")
+                    .define("SnowLeafParticles", true);
 
             builder.pop();
         }

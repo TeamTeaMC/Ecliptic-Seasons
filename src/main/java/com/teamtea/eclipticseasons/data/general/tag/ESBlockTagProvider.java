@@ -4,6 +4,7 @@ package com.teamtea.eclipticseasons.data.general.tag;
 import com.teamtea.eclipticseasons.api.constant.crop.CropHumidityType;
 import com.teamtea.eclipticseasons.api.constant.crop.CropSeasonType;
 import com.teamtea.eclipticseasons.api.constant.tag.EclipticBlockTags;
+import com.teamtea.eclipticseasons.common.core.crop.internal.CompatCropHookInternal;
 import com.teamtea.eclipticseasons.common.registry.BlockRegistry;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
@@ -37,6 +38,7 @@ public final class ESBlockTagProvider extends BlockTagsProvider {
         tag(EclipticBlockTags.VOLATILE_PLANTS);
         tag(EclipticBlockTags.UNAFFECTED_BY_HUMIDITY);
         tag(EclipticBlockTags.UNAFFECTED_BY_SEASONS);
+        tag(EclipticBlockTags.NOT_KILLED_BY_CLIMATE);
 
         // add crop info
         tag(CropSeasonType.SUMMER.getBlockTag()).add(Blocks.MELON_STEM, Blocks.COCOA, Blocks.CACTUS);

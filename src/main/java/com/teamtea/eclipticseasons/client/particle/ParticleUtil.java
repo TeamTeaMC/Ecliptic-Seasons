@@ -7,6 +7,7 @@ import com.teamtea.eclipticseasons.api.data.client.ColorMode;
 import com.teamtea.eclipticseasons.api.data.client.LeafColor;
 import com.teamtea.eclipticseasons.client.util.ClientRef;
 import com.teamtea.eclipticseasons.client.util.ColorHelper;
+import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.registry.ItemRegistry;
 import com.teamtea.eclipticseasons.common.registry.AttachmentRegistry;
 import com.teamtea.eclipticseasons.common.registry.ParticleRegistry;
@@ -34,6 +35,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
@@ -90,7 +92,7 @@ public class ParticleUtil {
         boolean isLeaf = false;
 
         List<Pair<LeafColor.InstanceHolder, LeafColor.Instance>> pairs =
-                !blockstate.isAir() ?null: ClientRef.leaveColors.get(block);
+                !blockstate.isAir() ? null : ClientRef.leaveColors.get(block);
         if (pairs != null) {
             for (Pair<LeafColor.InstanceHolder, LeafColor.Instance> pair : pairs) {
                 if (pair.getFirst().matches(clientLevel, i, j, k, random, blockstate)) {
@@ -401,5 +403,13 @@ public class ParticleUtil {
             c = new Color((int) ColorHelper.getAvg(rlist), (int) ColorHelper.getAvg(glist), (int) ColorHelper.getAvg(blist));
         }
         return c;
+    }
+
+    public static void attachSnowyParticle(ClientLevel clientLevel, BlockPos pos, BlockState state) {
+        if (ClientConfig.Particle.snowLeafParticles.get()
+                && MapChecker.leaveLike(MapChecker.getDefaultBlockTypeFlag(state))
+                && EclipticSeasonsApi.getInstance().isSnowyBlock(clientLevel, state, pos)) {
+            Minecraft.getInstance().particleEngine.destroy(pos, Blocks.SNOW.defaultBlockState());
+        }
     }
 }

@@ -3,6 +3,7 @@ package com.teamtea.eclipticseasons.config;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
+import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.compat.CompatModule;
 import lombok.Getter;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -78,6 +79,7 @@ public class CommonConfig {
         public static ModConfigSpec.BooleanValue iceMelt;
         public static ModConfigSpec.BooleanValue snowDown;
         public static ModConfigSpec.BooleanValue waterFreezesInFrozenBiomes;
+        public static ModConfigSpec.BooleanValue snowKeepInSnowyBiomes;
 
         private static void load(ModConfigSpec.Builder builder) {
             builder.push("Temperature");
@@ -87,6 +89,8 @@ public class CommonConfig {
                     .define("IceAndSnow", false);
             waterFreezesInFrozenBiomes = builder.comment("If enabled, water placed in frozen biomes will behave as in vanilla and freeze into ice.")
                     .define("WaterFreezesInFrozenBiomes", true);
+            snowKeepInSnowyBiomes = builder.comment("If enabled and IceAndSnowMelt same enabled, snow placed in snowy biomes would not melt if in hot time.")
+                    .define("SnowKeepInSnowyBiomes", true);
             heatStroke = builder.comment("Add heat stroke effect in summer noon while in hot biome.")
                     .define("HeatStroke", true);
             builder.pop();
@@ -113,6 +117,8 @@ public class CommonConfig {
 
         public static ModConfigSpec.BooleanValue dynamicSnowTerm;
         public static ModConfigSpec.BooleanValue seasonDefinition;
+
+        public static ModConfigSpec.BooleanValue realWorldSolarTerms;
 
         private static void load(ModConfigSpec.Builder builder) {
             builder.push("Season");
@@ -146,34 +152,39 @@ public class CommonConfig {
                     .defineList(List.of("SpringDayTimes"),
                             () -> List.of(10500, 11000, 11500, 12000, 12500, 13000),
                             () -> 12000,
-                            o -> o instanceof Integer i && (i >= 0 && i <= 24000),
+                            o -> o instanceof Integer i && (i >= 0 && i <= EclipticUtil.getDayLengthInMinecraftStatic()),
                             ModConfigSpec.Range.of(6, 6));
             summerDayTimes = builder.comment("Day time length of summer, divided into six periods according to the solar term table.")
                     .defineList(List.of("SummerDayTimes"),
                             () -> List.of(13500, 14000, 14500, 15000, 14500, 14000),
                             () -> 12000,
-                            o -> o instanceof Integer i && (i >= 0 && i <= 24000),
+                            o -> o instanceof Integer i && (i >= 0 && i <= EclipticUtil.getDayLengthInMinecraftStatic()),
                             ModConfigSpec.Range.of(6, 6));
             autumnDayTimes = builder.comment("Day time length of autumn, divided into six periods according to the solar term table.")
                     .defineList(List.of("AutumnDayTimes"),
                             () -> List.of(13500, 13000, 12500, 12000, 11500, 11000),
                             () -> 12000,
-                            o -> o instanceof Integer i && (i >= 0 && i <= 24000),
+                            o -> o instanceof Integer i && (i >= 0 && i <= EclipticUtil.getDayLengthInMinecraftStatic()),
                             ModConfigSpec.Range.of(6, 6));
             winterDayTimes = builder.comment("Day time length of winter, divided into six periods according to the solar term table.")
                     .defineList(List.of("WinterDayTimes"),
                             () -> List.of(10500, 10000, 9500, 9000, 9500, 10000),
                             () -> 12000,
-                            o -> o instanceof Integer i && (i >= 0 && i <= 24000),
+                            o -> o instanceof Integer i && (i >= 0 && i <= EclipticUtil.getDayLengthInMinecraftStatic()),
                             ModConfigSpec.Range.of(6, 6));
             noneDayTimes = builder.comment("Day time length of none season, divided into six periods according to the solar term table.")
                     .defineList(List.of("NoneDayTimes"),
                             () -> List.of(12000),
                             () -> 12000,
-                            o -> o instanceof Integer i && (i >= 0 && i <= 24000),
+                            o -> o instanceof Integer i && (i >= 0 && i <= EclipticUtil.getDayLengthInMinecraftStatic()),
                             ModConfigSpec.Range.of(1, 1));
             dynamicSnowTerm = builder.comment("The timing of snowfall now varies within a certain range each year.")
                     .define("DynamicSnowTerm", false);
+
+            realWorldSolarTerms = builder
+                    .comment("The in-game solar terms will be synchronized with the real world. Note: due to limitations of the old mechanism, enabling this may cause the day display function of this mod or other compatible mods to be confusing.")
+                    .define("RealWorldSolarTerms", false);
+
             builder.pop();
         }
     }
@@ -250,6 +261,7 @@ public class CommonConfig {
     public static class Animal {
 
         public static ModConfigSpec.BooleanValue enableBreed;
+        public static ModConfigSpec.BooleanValue enableTimeBreed;
         public static ModConfigSpec.BooleanValue enableBee;
         public static ModConfigSpec.ConfigValue<List<? extends String>> beePollinateSeasons;
         public static ModConfigSpec.ConfigValue<List<? extends String>> beeActiveSeasons;
@@ -263,6 +275,10 @@ public class CommonConfig {
             builder.push("Animal");
             enableBreed = builder.comment("Enable seasonal animal breed.")
                     .define("EnableSeasonalBreed", false);
+
+            enableTimeBreed = builder
+                    .comment("Restrict animal breeding to a specific time of day (daytime or nighttime).")
+                    .define("EnableTimeBreed", false);
 
             enableBee = builder.comment("Enable seasonal bee behavior, bee would like spring and not like winter and cold.")
                     .define("EnableSeasonalBee", false);

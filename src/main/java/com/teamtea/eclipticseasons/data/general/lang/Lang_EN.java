@@ -27,6 +27,7 @@ public class Lang_EN extends LangHelper {
         add(BlockRegistry.pinwheel_lime.get(), "Lime Pinwheel");
         add(BlockRegistry.pinwheel_orange.get(), "Orange Pinwheel");
         add(ItemRegistry.ice_wand.get(), "Ice Wand");
+        add(ItemRegistry.salt_wand.get(), "Salt Wand");
         add(ItemRegistry.broom.get(), "Broom");
 
         add(ItemRegistry.thermometer.get(), "Thermometer");

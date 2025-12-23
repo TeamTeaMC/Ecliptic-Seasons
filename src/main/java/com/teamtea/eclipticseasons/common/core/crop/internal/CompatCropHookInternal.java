@@ -3,6 +3,7 @@ package com.teamtea.eclipticseasons.common.core.crop.internal;
 import com.teamtea.eclipticseasons.api.constant.crop.CropHumidityType;
 import com.teamtea.eclipticseasons.api.constant.crop.CropSeasonInfo;
 import com.teamtea.eclipticseasons.api.constant.crop.CropSeasonType;
+import com.teamtea.eclipticseasons.api.constant.tag.EclipticBlockTags;
 import com.teamtea.eclipticseasons.common.core.crop.CropInfoManager;
 import com.teamtea.eclipticseasons.compat.CompatModule;
 import com.teamtea.eclipticseasons.config.CommonConfig;
@@ -271,7 +272,7 @@ public class CompatCropHookInternal {
     }
 
 
-    private static final TagKey<Block> SERENE_SEASONS_UNBREAKABLE_FERTILE_CROPS = createBlockTag("sereneseasons", "unbreakable_infertile_crops");
+    public static final TagKey<Block> SERENE_SEASONS_UNBREAKABLE_FERTILE_CROPS = createBlockTag("sereneseasons", "unbreakable_infertile_crops");
     private static final TagKey<Block> SERENE_SEASONS_YEAR_ROUND_CROPS = createBlockTag("sereneseasons", "year_round_crops");
     private static final TagKey<Item> ITEM_SERENE_SEASONS_YEAR_ROUND_CROPS = createItemTag("sereneseasons", "year_round_crops");
 
@@ -291,6 +292,11 @@ public class CompatCropHookInternal {
                 if (CommonConfig.Crop.registerCropDefaultValue.get()) {
                     CropInfoManager.registerCropHumidityInfo(itemHolder.value(), CropHumidityType.AVERAGE_MOIST);
                 }
+            }
+        });
+        blocks.flatMap(blocks1 -> blocks.get().getTag(SERENE_SEASONS_UNBREAKABLE_FERTILE_CROPS)).ifPresent(blocksG -> {
+            for (Holder<Block> blockHolder : blocksG.stream().toList()) {
+                CropInfoManager.CROPS_WOULD_NOT_KILLED_BY_CLIMATE.put(blockHolder.value(), blockHolder);
             }
         });
     }

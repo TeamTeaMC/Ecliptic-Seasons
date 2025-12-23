@@ -13,6 +13,7 @@ import net.neoforged.neoforge.network.event.RegisterConfigurationTasksEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
+import java.util.Collection;
 import java.util.List;
 
 @SuppressWarnings("removal")
@@ -84,7 +85,7 @@ public final class SimpleNetworkHandler {
         PacketDistributor.sendToPlayer(player, msg);
     }
 
-    public static <MSG extends CustomPacketPayload> void send(List<ServerPlayer> players, MSG msg) {
+    public static <MSG extends CustomPacketPayload> void send(Collection<ServerPlayer> players, MSG msg) {
         players.forEach(player -> send(player, msg));
     }
 

@@ -23,6 +23,9 @@ public class EclipticBlockTags {
     public static final TagKey<Block> UNAFFECTED_BY_SEASONS = create(("crops/unaffected_by_seasons"));
     public static final TagKey<Block> UNAFFECTED_BY_HUMIDITY = create(("crops/unaffected_by_humidity"));
 
+    public static final TagKey<Block> NOT_KILLED_BY_CLIMATE = create(("crops/not_killed_by_climate"));
+
+
     public static TagKey<Block> create(String s) {
         return TagKey.create(Registries.BLOCK, EclipticSeasons.rl(s));
     }

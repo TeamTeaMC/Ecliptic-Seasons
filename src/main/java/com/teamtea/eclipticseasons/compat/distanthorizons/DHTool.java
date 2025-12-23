@@ -21,6 +21,7 @@ import com.seibel.distanthorizons.core.wrapperInterfaces.block.IBlockStateWrappe
 import com.seibel.distanthorizons.core.wrapperInterfaces.world.IBiomeWrapper;
 import com.seibel.distanthorizons.core.wrapperInterfaces.world.IClientLevelWrapper;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
+import com.teamtea.eclipticseasons.compat.CompatModule;
 import com.teamtea.eclipticseasons.config.ClientConfig;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import com.teamtea.eclipticseasons.mixin.compat.distanthorizons.MixinQuadTree;
@@ -36,7 +37,6 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LightBlock;
@@ -50,6 +50,8 @@ import java.util.concurrent.atomic.AtomicReference;
 public class DHTool {
 
     public static void forceReloadAll() {
+        if (!CompatModule.CommonConfig.DistantHorizonsWinterLOD.get()) return;
+
         IDhClientWorld clientWorld = SharedApi.getIDhClientWorld();
         if (Minecraft.getInstance().level != null
                 && ClientLevelWrapper.getWrapper(Minecraft.getInstance().level) instanceof ClientLevelWrapper clientLevelWrapper
@@ -152,22 +154,27 @@ public class DHTool {
         }
     }
 
-    public static MapColor computeBaseColor(IClientLevelWrapper instance, DhBlockPos dhBlockPos, IBiomeWrapper iBiomeWrapper, IBlockStateWrapper iBlockStateWrapper, FullDataPointIdMap fullDataMapping, LongArrayList fullColumnData, IWrapperFactory WRAPPER_FACTORY) {
+    public static MapColor computeBaseColor(IClientLevelWrapper instance, DhBlockPos dhBlockPos, IBiomeWrapper iBiomeWrapper, IBlockStateWrapper iBlockStateWrapper, FullDataPointIdMap fullDataMapping, LongArrayList fullColumnData, IWrapperFactory WRAPPER_FACTORY, int skyLight) {
+        if (!CompatModule.CommonConfig.DistantHorizonsWinterLOD.get()) return null;
+
         if (CommonConfig.isSnowyWinter()) {
-            if (!dhBlockPos.equals(DhBlockPos.ZERO) && iBlockStateWrapper instanceof BlockStateWrapper blockStateWrapper
-                    && !blockStateWrapper.isAir()) {
+            if (!dhBlockPos.equals(DhBlockPos.ZERO)
+                    && iBlockStateWrapper instanceof BlockStateWrapper blockStateWrapper
+                    && !blockStateWrapper.isAir()
+                    && skyLight > 0
+            ) {
                 var mcPos = McObjectConverter.Convert(dhBlockPos);
                 var level = Minecraft.getInstance().level;
                 var blockState = blockStateWrapper.blockState;
                 // 当给的pos未加载时，读取的是虚空，这并不好。
                 if (instance instanceof ClientLevelWrapper clientLevelWrapper) {
-                    var holderKey = ResourceKey.create(Registries.BIOME,  ResourceLocation.parse(iBiomeWrapper.getSerialString()));
+                    var holderKey = ResourceKey.create(Registries.BIOME, ResourceLocation.parse(iBiomeWrapper.getSerialString()));
                     Holder.Reference<Biome> holder = clientLevelWrapper.getLevel().registryAccess().registryOrThrow(Registries.BIOME).getHolderOrThrow(holderKey);
                     // if ((holderOrThrow
                     //         instanceof Holder.Reference<Biome> holder))
                     {
 
-                        if (MapChecker.shouldSnowAtBiome(level, holder.value(), blockState, level.getRandom(), blockState.getSeed(mcPos),mcPos))
+                        if (MapChecker.shouldSnowAtBiome(level, holder.value(), blockState, level.getRandom(), blockState.getSeed(mcPos), mcPos))
                         //     return mapColor.col;
                         {
                             HashSet<IBlockStateWrapper> blockStatesToIgnore = WRAPPER_FACTORY.getRendererIgnoredBlocks(instance);
@@ -192,6 +199,7 @@ public class DHTool {
                                             break;
                                     }
                                 }
+
                                 if (iBlockStateWrapper_NowQuery instanceof BlockStateWrapper blockStateWrapper_NowQuery
                                         && !iBlockStateWrapper_NowQuery.isAir()
                                         && !blockStatesToIgnore.contains(iBlockStateWrapper_NowQuery)
@@ -230,6 +238,7 @@ public class DHTool {
     }
 
     public static Biome recoverBiomeObject(BiomeWrapper biomeWrapper, IClientLevelWrapper iClientLevelWrapper) {
+        if (!CompatModule.CommonConfig.DistantHorizonsWinterLOD.get()) return null;
         // if (iClientLevelWrapper instanceof ClientLevelWrapper clientLevelWrapper) {
         //     var holderKey = ResourceKey.create(Registries.BIOME, ResourceLocation.parse(biomeWrapper.getSerialString()));
         //     if ((clientLevelWrapper.getLevel().registryAccess().holder(holderKey).orElse(null)
@@ -242,6 +251,7 @@ public class DHTool {
     }
 
     public static void clearRenderCache() {
+        if (!CompatModule.CommonConfig.DistantHorizonsWinterLOD.get()) return;
         IDhClientWorld clientWorld = SharedApi.getIDhClientWorld();
         if (Minecraft.getInstance().level != null
                 && ClientLevelWrapper.getWrapper(Minecraft.getInstance().level) instanceof ClientLevelWrapper clientLevelWrapper
@@ -251,6 +261,8 @@ public class DHTool {
     }
 
     public static IBlockStateWrapper shouldFrozen(ClientLevelWrapper instance, IBiomeWrapper biomeWrapper, DhBlockPosMutable dhBlockPosMutable, BlockState blockState, FullDataPointIdMap fullDataMapping, LongArrayList fullColumnData, int index) {
+        if (!CompatModule.CommonConfig.DistantHorizonsWinterLOD.get()) return null;
+
         if (ClientConfig.Debug.frozenWater.get()
                 && biomeWrapper.getWrappedMcObject() instanceof Holder<?> holder
                 && holder.value() instanceof Biome biome

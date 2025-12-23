@@ -53,8 +53,9 @@ public abstract class MixinFullDataToRenderDataTransformer {
                                                                             IBlockStateWrapper iBlockStateWrapper,
                                                                             Operation<Integer> original,
                                                                             @Local FullDataPointIdMap fullDataMapping,
-                                                                            @Local(argsOnly = true) LongArrayList fullColumnData) {
-        MapColor mapColor = DHTool.computeBaseColor(instance, dhBlockPos, iBiomeWrapper, iBlockStateWrapper, fullDataMapping, fullColumnData, WRAPPER_FACTORY);
+                                                                            @Local(argsOnly = true) LongArrayList fullColumnData,
+                                                                            @Local(name = "skyLight") LocalIntRef localIntRef) {
+        MapColor mapColor = DHTool.computeBaseColor(instance, dhBlockPos, iBiomeWrapper, iBlockStateWrapper, fullDataMapping, fullColumnData, WRAPPER_FACTORY,localIntRef.get());
         if (mapColor == MapColor.SNOW)
             // 不知道为什么，不能用这个值
             return Color.WHITE.getRGB();

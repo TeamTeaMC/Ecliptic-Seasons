@@ -15,7 +15,28 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MessageCodec {
-   public static final StreamCodec<ByteBuf, List<Integer>> intlistStreamCodec = new StreamCodec<>() {
+
+    public static final StreamCodec<ByteBuf, List<Long>> longlistStreamCodec = new StreamCodec<>() {
+        @Override
+        public void encode(ByteBuf pBuffer, List<Long> pValue) {
+            pBuffer.writeInt(pValue.size());
+            for (Long i : pValue) {
+                pBuffer.writeLong(i);
+            }
+        }
+
+        @Override
+        public @NotNull List<Long> decode(ByteBuf pBuffer) {
+            int size = pBuffer.readInt();
+            ArrayList<Long> list = new ArrayList<>(size);
+            for (int i = 0; i < size; i++) {
+                list.add(pBuffer.readLong());
+            }
+            return list;
+        }
+    };
+
+    public static final StreamCodec<ByteBuf, List<Integer>> intlistStreamCodec = new StreamCodec<>() {
         @Override
         public void encode(ByteBuf pBuffer, List<Integer> pValue) {
             pBuffer.writeInt(pValue.size());
@@ -55,21 +76,21 @@ public class MessageCodec {
         }
     };
 
-    public static final StreamCodec<ByteBuf,List< ResourceKey<Level>>> dimensionKeysStreamCodec = new StreamCodec<>() {
+    public static final StreamCodec<ByteBuf, List<ResourceKey<Level>>> dimensionKeysStreamCodec = new StreamCodec<>() {
         @Override
         public void encode(ByteBuf pBuffer, List<ResourceKey<Level>> pValue) {
             pBuffer.writeInt(pValue.size());
-            for ( ResourceKey<Level> i : pValue) {
-                ResourceKey.streamCodec(Registries.DIMENSION).encode(pBuffer,i);
+            for (ResourceKey<Level> i : pValue) {
+                ResourceKey.streamCodec(Registries.DIMENSION).encode(pBuffer, i);
             }
         }
 
         @Override
-        public @NotNull List< ResourceKey<Level>> decode(ByteBuf pBuffer) {
+        public @NotNull List<ResourceKey<Level>> decode(ByteBuf pBuffer) {
             int size = pBuffer.readInt();
-            ArrayList< ResourceKey<Level>> list = new ArrayList<>(size);
+            ArrayList<ResourceKey<Level>> list = new ArrayList<>(size);
             for (int i = 0; i < size; i++) {
-                list.add( ResourceKey.streamCodec(Registries.DIMENSION).decode(pBuffer));
+                list.add(ResourceKey.streamCodec(Registries.DIMENSION).decode(pBuffer));
             }
             return list;
         }
@@ -90,7 +111,7 @@ public class MessageCodec {
             int[] list = new int[size];
             for (int i = 0; i < size; i++) {
                 // ByteBufCodecs.VAR_INT.apply(ByteBufCodecs.list())
-                list[i]=ByteBufCodecs.VAR_INT.decode(pBuffer);
+                list[i] = ByteBufCodecs.VAR_INT.decode(pBuffer);
             }
             return list;
         }

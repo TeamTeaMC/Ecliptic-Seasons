@@ -49,7 +49,7 @@ public final class DebugInfoRenderer {
         String dayS = "Day Time: " + dayTime;
         String envS = "Env Temp: " + env;
         String solarTimeS = "Solar Time: " + solarTime;
-        Holder<Biome> biome = clientLevel.getBiome(player.getOnPos());
+        //Holder<Biome> biome = clientLevel.getBiome(player.getOnPos());
 
         String dS = "Downfall: " + EclipticUtil.getRainfallAt(clientLevel, pos);
         String jS = "Humidity: " + EclipticUtil.getHumidityAt(clientLevel, pos) + "\n" + EclipticUtil.getHumidityLevelAt(player.level(), player.blockPosition());

@@ -11,7 +11,10 @@ import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.common.block.CalendarBlock;
 import com.teamtea.eclipticseasons.common.block.base.SimpleHorizontalEntityBlock;
 import com.teamtea.eclipticseasons.common.block.blockentity.CalendarBlockEntity;
+import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
+import com.teamtea.eclipticseasons.common.core.solar.CalendarAstronomer;
+import com.teamtea.eclipticseasons.common.core.solar.FixedSolarDataManagerLocal;
 import com.teamtea.eclipticseasons.common.core.solar.SolarTermHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -35,6 +38,11 @@ import org.joml.Matrix4f;
 import org.joml.Vector3d;
 
 import java.awt.Color;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -85,11 +93,24 @@ public class CalendarBlockEntityRenderer implements BlockEntityRenderer<Calendar
                                     string = Component.translatable("info.eclipticseasons.environment.solar_term.hint2", ClientCon.nowSolarYear).getString();
                             case NEXT -> {
                                 Pair<SolarTerm, ISolarTerm> nextPair = SolarTermHelper.getNextTermAndStart(blockEntity.getBiome(), st);
-                                int lastingDaysOfEachTerm = EclipticSeasonsApi.getInstance().getLastingDaysOfEachTerm(blockEntity.getLevel());
-                                int remain = Mth.floor(((1 - ClientCon.progress / 100f) * lastingDaysOfEachTerm));
-                                remain += lastingDaysOfEachTerm * (
-                                        ((nextPair.getFirst().ordinal() - st.getNextSolarTerm().ordinal() + 24) % 24));
-                                remain = iSolarTermOriginal == nextPair.getSecond() ? 0 : remain;
+                                int remain;
+                                if (SolarHolders.getSaveData(blockEntity.getLevel()) instanceof FixedSolarDataManagerLocal fsl) {
+                                    Date next = fsl.getNextSolarTermByDay(new CalendarAstronomer());
+                                    LocalDate nextDay = Instant.ofEpochMilli(next.getTime())
+                                            .atZone(ZoneId.systemDefault())
+                                            .toLocalDate();
+
+                                    LocalDate today = Instant.ofEpochMilli(new Date().getTime())
+                                            .atZone(ZoneId.systemDefault())
+                                            .toLocalDate();
+                                    remain = Math.toIntExact(ChronoUnit.DAYS.between(today, nextDay));
+                                } else {
+                                    int lastingDaysOfEachTerm = EclipticSeasonsApi.getInstance().getLastingDaysOfEachTerm(blockEntity.getLevel());
+                                    remain = Mth.floor(((1 - ClientCon.progress / 100f) * lastingDaysOfEachTerm));
+                                    remain += lastingDaysOfEachTerm * (
+                                            ((nextPair.getFirst().ordinal() - st.getNextSolarTerm().ordinal() + 24) % 24));
+                                    remain = iSolarTermOriginal == nextPair.getSecond() ? 0 : remain;
+                                }
                                 string = Component.translatable("info.eclipticseasons.environment.solar_term.hint3", remain).getString();
                             }
                             case DAY ->

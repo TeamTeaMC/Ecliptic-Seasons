@@ -52,6 +52,7 @@ public class EclipticSeasons {
         BlockEntityRegistry.BLOCK_ENTITY_TYPE_DEFERRED_REGISTER.register(modEventBus);
         ModAdvancements.TRIGGER_DEFERRED_REGISTER.register(modEventBus);
         AttachmentRegistry.ATTACHMENT_TYPES.register(modEventBus);
+        DataComponentTypeRegistry.DATA_COMPONENT_TYPE_DEFERRED_REGISTER.register(modEventBus);
 
         TestContents.weathers.register(modEventBus);
 

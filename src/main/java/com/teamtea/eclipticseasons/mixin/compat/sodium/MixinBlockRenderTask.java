@@ -5,6 +5,7 @@ import com.llamalad7.mixinextras.sugar.Local;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 
 import com.teamtea.eclipticseasons.client.render.chunk.IceKeeper;
+import com.teamtea.eclipticseasons.compat.CompatModule;
 import com.teamtea.eclipticseasons.compat.sodium.SodiumBoard;
 import com.teamtea.eclipticseasons.compat.sodium.SodiumStatus;
 import com.teamtea.eclipticseasons.config.ClientConfig;
@@ -85,12 +86,12 @@ public abstract class MixinBlockRenderTask extends ChunkBuilderTask<ChunkBuildOu
             at = @At(value = "INVOKE", target = "Lnet/caffeinemc/mods/sodium/client/render/chunk/compile/pipeline/FluidRenderer;render(Lnet/caffeinemc/mods/sodium/client/world/LevelSlice;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/material/FluidState;Lnet/minecraft/core/BlockPos;Lnet/minecraft/core/BlockPos;Lnet/caffeinemc/mods/sodium/client/render/chunk/translucent_sorting/TranslucentGeometryCollector;Lnet/caffeinemc/mods/sodium/client/render/chunk/compile/ChunkBuildBuffers;)V")
     )
     private void eclipticseasons$renderFrozenWaterIce(ChunkBuildContext buildContext, CancellationToken cancellationToken, CallbackInfoReturnable<ChunkBuildOutput> cir,
-                                             @Local FluidState fluidState,
-                                             @Local BlockState blockState,
-                                             @Local(ordinal = 0) BlockPos.MutableBlockPos blockPos,
-                                             @Local(ordinal = 1) BlockPos.MutableBlockPos modelOffset) {
-
-        if (IceKeeper.notFrozen(buildContext.cache.getWorldSlice(), blockPos, blockState, fluidState)) return;
+                                                      @Local FluidState fluidState,
+                                                      @Local BlockState blockState,
+                                                      @Local(ordinal = 0) BlockPos.MutableBlockPos blockPos,
+                                                      @Local(ordinal = 1) BlockPos.MutableBlockPos modelOffset) {
+        if (IceKeeper.notFrozen(buildContext.cache.getWorldSlice(), blockPos, blockState, fluidState))
+            return;
         BakedModel model = IceKeeper.getIceModel(blockState, fluidState);
         if (model != null) {
             buildContext.cache.getBlockRenderer().renderModel(model, IceKeeper.getFakeState(blockState, fluidState), blockPos, modelOffset);

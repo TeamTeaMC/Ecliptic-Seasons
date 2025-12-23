@@ -1,5 +1,6 @@
 package com.teamtea.eclipticseasons.common.core.solar;
 
+import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.world.level.Level;
 
@@ -13,18 +14,9 @@ public class ClientSolarDataManager extends SolarDataManager {
         this.levelWeakReference = new WeakReference<>(level);
     }
 
-
-    public static ClientSolarDataManager get(Level level) {
-        if (level instanceof ClientLevel clientLevel) {
-            return get(clientLevel);
-        }
-        return null;
+    public static SolarDataManager get(ClientLevel clientLevel) {
+        return CommonConfig.Season.realWorldSolarTerms.get() ?
+                new FixedSolarDataManagerLocal(clientLevel) : new ClientSolarDataManager(clientLevel);
     }
-
-
-    public static ClientSolarDataManager get(ClientLevel clientLevel) {
-        return new ClientSolarDataManager(clientLevel);
-    }
-
 
 }

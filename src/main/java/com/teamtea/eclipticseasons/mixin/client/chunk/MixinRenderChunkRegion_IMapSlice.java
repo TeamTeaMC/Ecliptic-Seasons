@@ -4,14 +4,11 @@ package com.teamtea.eclipticseasons.mixin.client.chunk;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.misc.client.IExtraRendererContextOwner;
 import com.teamtea.eclipticseasons.client.core.ExtraRendererContext;
+import com.teamtea.eclipticseasons.common.core.map.*;
 import com.teamtea.eclipticseasons.common.core.snow.SnowyMapChecker;
 import com.teamtea.eclipticseasons.common.core.snow.SnowyStatusKeeper;
 import com.teamtea.eclipticseasons.common.registry.AttachmentRegistry;
 import com.teamtea.eclipticseasons.api.misc.client.IMapSlice;
-import com.teamtea.eclipticseasons.common.core.map.BiomeHolder;
-import com.teamtea.eclipticseasons.common.core.map.ChunkInfoMap;
-import com.teamtea.eclipticseasons.common.core.map.MapChecker;
-import com.teamtea.eclipticseasons.common.core.map.SnowyRemover;
 import net.minecraft.client.renderer.chunk.RenderChunk;
 import net.minecraft.client.renderer.chunk.RenderChunkRegion;
 import net.minecraft.core.BlockPos;
@@ -71,6 +68,9 @@ public abstract class MixinRenderChunkRegion_IMapSlice implements IMapSlice, IEx
     @Unique
     private SnowyStatusKeeper[] SNOWY_STATUS_MAP;
 
+    @Unique
+    private NoneSnowArea[] NONE_SNOW_AREA_MAP;
+
     @Inject(
             remap = false,
             method = "<init>(Lnet/minecraft/world/level/Level;II[Lnet/minecraft/client/renderer/chunk/RenderChunk;Lit/unimi/dsi/fastutil/longs/Long2ObjectFunction;)V",
@@ -82,6 +82,7 @@ public abstract class MixinRenderChunkRegion_IMapSlice implements IMapSlice, IEx
         SNOWY_MAP = new int[SIZE * SIZE][MAP_BLOCK_COUNT];
         SOLID_HEIGHT_MAP = new int[SIZE * SIZE][MAP_BLOCK_COUNT];
         SNOWY_STATUS_MAP = new SnowyStatusKeeper[SIZE * SIZE];
+        NONE_SNOW_AREA_MAP = new NoneSnowArea[SIZE * SIZE];
     }
 
     @Override
@@ -103,6 +104,7 @@ public abstract class MixinRenderChunkRegion_IMapSlice implements IMapSlice, IEx
                     int[] snowys = SNOWY_MAP[localSectionIndex];
                     int[] solidHeights = SOLID_HEIGHT_MAP[localSectionIndex];
                     SNOWY_STATUS_MAP[localSectionIndex] = SnowyMapChecker.getSnowyStatusKeeperCopy(wrapped);
+                    NONE_SNOW_AREA_MAP[localSectionIndex] = wrapped.getData(AttachmentRegistry.NONE_SNOW_AREA);
 
                     int startX = chunkPos.getMinBlockX();
                     int startZ = chunkPos.getMinBlockZ();
@@ -184,6 +186,10 @@ public abstract class MixinRenderChunkRegion_IMapSlice implements IMapSlice, IEx
     public int getSnowyStatus(BlockPos pos) {
         int relBlockX = SectionPos.blockToSectionCoord(pos.getX());
         int relBlockZ = SectionPos.blockToSectionCoord(pos.getZ());
+
+        NoneSnowArea lightArrays0 = this.NONE_SNOW_AREA_MAP[index(minChunkX, minChunkZ, relBlockX, relBlockZ)];
+        if (lightArrays0 != null && lightArrays0.neverSnowyAt(pos))
+            return SnowyRemover.NONE_SNOWY;
 
         int[] lightArrays = this.SNOWY_MAP[index(minChunkX, minChunkZ, relBlockX, relBlockZ)];
         int localBlockX = pos.getX() & 15;

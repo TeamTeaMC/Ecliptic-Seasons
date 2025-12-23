@@ -23,7 +23,6 @@ import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.biome.Biome;
@@ -33,6 +32,15 @@ import net.minecraft.world.level.levelgen.Heightmap;
 import java.util.Optional;
 
 public class EclipticUtil {
+
+    public static int getDayLengthInMinecraftStatic() {
+        return Level.TICKS_PER_DAY;
+    }
+
+    public static int getDayLengthInMinecraft(Level level) {
+        return getDayLengthInMinecraftStatic();
+    }
+
     public static SolarTerm getNowSolarTerm(Level level) {
         var sd = SolarHolders.getSaveData(level);
         if (sd != null) return sd.getSolarTerm();
@@ -77,7 +85,7 @@ public class EclipticUtil {
         long halfTermTime = termTime / 2;
         if (termTime <= 12000) {
             return 6000 - (halfTermTime) < dayTime && dayTime < 6000 + (halfTermTime);
-        } else return dayTime >= 24000 + (6000 - (halfTermTime))
+        } else return dayTime >= EclipticUtil.getDayLengthInMinecraft(level) + (6000 - (halfTermTime))
                 || dayTime <= 6000 + (halfTermTime);
     }
 
@@ -175,7 +183,7 @@ public class EclipticUtil {
                         && CommonConfig.Season.daylightChange.get()
                         && SolarHolders.getSaveData(level) instanceof SolarDataManager data) {
                     long worldTime = level.getDayTime();
-                    int dayLevelTime = Math.toIntExact((worldTime + 18000) % 24000); // 0 for noon; 6000 for sunset; 18000 for sunrise.
+                    int dayLevelTime = Math.toIntExact((worldTime + 18000) % EclipticUtil.getDayLengthInMinecraft(level)); // 0 for noon; 6000 for sunset; 18000 for sunrise.
                     return dayLevelTime > 12000 && dayLevelTime <= 18000 && data.isTodayLastDay() ?
                             data.getNextSolarTerm().getDayTime() :
                             data.getSolarTerm().getDayTime();

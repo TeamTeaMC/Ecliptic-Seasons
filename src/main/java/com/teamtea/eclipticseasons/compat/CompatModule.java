@@ -24,6 +24,9 @@ public class CompatModule {
     private static boolean iris = false;
     @Getter
     private static boolean modernui = false;
+    @Getter
+    private static boolean distanthorizons = false;
+
     /**
      * Used for mod init detect.
      **/
@@ -34,6 +37,7 @@ public class CompatModule {
         sodium = Platform.isModLoaded("sodium");
         iris = Platform.isModLoaded("iris");
         modernui = Platform.isModLoaded("modernui");
+        distanthorizons = Platform.isModLoaded("distanthorizons");
     }
 
     /**
@@ -71,6 +75,7 @@ public class CompatModule {
         public static ModConfigSpec.ConfigValue<List<? extends String>> modsWithoutSereneSeasonBasedHumidity;
         public static ModConfigSpec.BooleanValue fixBiome;
         public static ModConfigSpec.DoubleValue weatherVotePercent;
+        public static ModConfigSpec.BooleanValue DistantHorizonsWinterLOD;
 
         public static void load(ModConfigSpec.Builder builder) {
             builder.push("Compat");
@@ -98,6 +103,9 @@ public class CompatModule {
             weatherVotePercent = builder.comment("When a mod tries to query global weather parameters directly instead of using our API, " +
                             "Solar Weather will determine the result based on a weighted vote from the areas around players.")
                     .defineInRange("WeatherVotePercent", 0.5f, 0, 1d);
+            if (isDistanthorizons())
+                DistantHorizonsWinterLOD = builder.comment("Provides winter LOD for Distant Horizons.")
+                        .define("DistantHorizonsWinterLOD", true);
             builder.pop();
         }
     }
@@ -105,6 +113,7 @@ public class CompatModule {
     public static class ClientConfig {
         public static ModConfigSpec.BooleanValue unifiedSnowyBlockShading;
         public static ModConfigSpec.BooleanValue unifiedSnowyBlockSides;
+        public static ModConfigSpec.BooleanValue unifiedFrozenWater;
 
         public static void load(ModConfigSpec.Builder builder) {
             builder.push("Compat");
@@ -114,6 +123,9 @@ public class CompatModule {
                         .define("UnifiedSnowyBlockShading", true);
                 unifiedSnowyBlockSides = builder.comment("Whether to also unify the shading on the sides of snow-covered blocks.")
                         .define("UnifiedSnowyBlockSides", true);
+                unifiedFrozenWater = builder
+                        .comment("Adjusts the rendering of thin ice so that the block it occupies is not treated as a water type during shader post-processing.")
+                        .define("UnifiedFrozenWater", false);
                 builder.pop();
             }
             builder.pop();

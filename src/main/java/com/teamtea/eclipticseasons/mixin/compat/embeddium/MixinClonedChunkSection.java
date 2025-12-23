@@ -2,10 +2,7 @@ package com.teamtea.eclipticseasons.mixin.compat.embeddium;
 
 
 import com.teamtea.eclipticseasons.api.misc.client.ISnowyGetter;
-import com.teamtea.eclipticseasons.common.core.map.BiomeHolder;
-import com.teamtea.eclipticseasons.common.core.map.ChunkInfoMap;
-import com.teamtea.eclipticseasons.common.core.map.MapChecker;
-import com.teamtea.eclipticseasons.common.core.map.SnowyRemover;
+import com.teamtea.eclipticseasons.common.core.map.*;
 import com.teamtea.eclipticseasons.common.core.snow.SnowyMapChecker;
 import com.teamtea.eclipticseasons.common.core.snow.SnowyStatusKeeper;
 import com.teamtea.eclipticseasons.common.registry.AttachmentRegistry;
@@ -38,6 +35,8 @@ public abstract class MixinClonedChunkSection implements ISnowyGetter {
 
     @Unique
     SnowyStatusKeeper eclipticseasons$snowyStatusKeeper;
+    @Unique
+    NoneSnowArea eclipticseasons$noneSnowArea;
 
     @Inject(
             method = "<init>",
@@ -49,6 +48,7 @@ public abstract class MixinClonedChunkSection implements ISnowyGetter {
         eclipticseasons$heightmap = chunk.getOrCreateHeightmapUnprimed(Heightmap.Types.MOTION_BLOCKING);
         eclipticseasons$chunkInfoMap = MapChecker.getChunkInfoMapOrCreate(level, chunk.getPos().getMiddleBlockPosition(64));
         eclipticseasons$snowyStatusKeeper = SnowyMapChecker.getSnowyStatusKeeperCopy(chunk);
+        eclipticseasons$noneSnowArea = chunk.getData(AttachmentRegistry.NONE_SNOW_AREA);
     }
 
     @Override
@@ -74,5 +74,11 @@ public abstract class MixinClonedChunkSection implements ISnowyGetter {
     @Override
     public SnowyStatusKeeper getSnowyStatusKeeper() {
         return eclipticseasons$snowyStatusKeeper;
+    }
+
+
+    @Override
+    public NoneSnowArea getNoneSnowArea() {
+        return eclipticseasons$noneSnowArea;
     }
 }

@@ -2,6 +2,7 @@ package com.teamtea.eclipticseasons.common;
 
 
 import com.mojang.datafixers.util.Pair;
+import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.data.misc.ESSortInfo;
 import com.teamtea.eclipticseasons.api.event.CanPlantGrowEvent;
@@ -23,19 +24,31 @@ import com.teamtea.eclipticseasons.common.core.snow.WeatherStatusKeeper;
 import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
 import com.teamtea.eclipticseasons.common.network.SimpleNetworkHandler;
 import com.teamtea.eclipticseasons.common.network.message.HumidModifyMessage;
+import com.teamtea.eclipticseasons.common.registry.AttachmentRegistry;
 import com.teamtea.eclipticseasons.common.registry.ModAdvancements;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import it.unimi.dsi.fastutil.ints.IntIntImmutablePair;
+import it.unimi.dsi.fastutil.ints.IntLongMutablePair;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraft.world.level.chunk.LevelChunkSection;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -46,6 +59,7 @@ import net.neoforged.neoforge.event.entity.player.CanContinueSleepingEvent;
 import net.neoforged.neoforge.event.entity.player.CanPlayerSleepEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.level.*;
+import net.neoforged.neoforge.event.level.LevelEvent;
 import net.neoforged.neoforge.event.level.block.CropGrowEvent;
 import net.neoforged.neoforge.event.server.ServerAboutToStartEvent;
 import net.neoforged.neoforge.event.server.ServerStoppedEvent;
@@ -190,11 +204,9 @@ public class AllListener {
     @SubscribeEvent
     public static void onLevelTick(LevelTickEvent.Post event) {
         Level level = event.getLevel();
-        if (level instanceof ServerLevel serverLevel) {
-            SolarDataManager data = SolarHolders.getSaveData(serverLevel);
-            if (data != null) {
-                data.tickLevel(serverLevel);
-            }
+        SolarDataManager data = SolarHolders.getSaveData(level);
+        if (data != null) {
+            data.tickLevel(level);
         }
         MapChecker.tickLevel(level);
     }
@@ -325,10 +337,112 @@ public class AllListener {
                 }
             }
         }
+
+        updateChunk(event.getLevel(), chunk);
     }
 
     @SubscribeEvent
     public static void onNeighborNotifyEvent(BlockEvent.NeighborNotifyEvent event) {
+    }
+
+    @SubscribeEvent
+    public static void onNeighborNotifyEvent(ChunkDataEvent.Load event) {
+    }
+
+    private static void updateChunk(LevelAccessor levelAccessor, ChunkAccess chunk) {
+        if (!(levelAccessor instanceof ServerLevel level)) return;
+        if (!CommonConfig.Temperature.snowDown.get() || !CommonConfig.Temperature.iceMelt.get()) return;
+        if (!CommonConfig.Snow.forceChunkUpdate.get()) return;
+        long l = System.currentTimeMillis();
+        //boolean skip = true;
+        //for (Tag sections : event.getData().getList("sections", Tag.TAG_COMPOUND)) {
+        //    CompoundTag section = (CompoundTag) sections;
+        //    CompoundTag blockStates = section.getCompound("block_states");
+        //    for (Tag tag : blockStates.getList("palette", Tag.TAG_COMPOUND)) {
+        //        CompoundTag p = (CompoundTag) tag;
+        //        if (((CompoundTag) tag).getString("Name").equals("minecraft:snow")) {
+        //            p.putString("Name", "minecraft:air");
+        //            p.remove("Properties");
+        //            skip = false;
+        //        }
+        //    }
+        //}
+
+        //
+        //if (skip) return;
+        BlockPos.MutableBlockPos worldPosition = chunk.getPos().getWorldPosition().mutable();
+        WeatherStatusKeeper weatherStatusKeeper = SnowyMapChecker.getWeatherStatusKeeper(chunk);
+        //Map<Holder<Biome>, IntLongMutablePair> snowDepthRecord = weatherStatusKeeper.getSnowDepthRecord();
+        BiomeHolder biomeHolder = chunk.getData(AttachmentRegistry.BIOME_HOLDER);
+        Pair<Map<Holder<Biome>, IntIntImmutablePair>, Map<Holder<Biome>, Long>> mapMapPair = weatherStatusKeeper.collectSnowyUpdate(level, biomeHolder, true);
+        Map<Holder<Biome>, IntIntImmutablePair> first = mapMapPair.getFirst();
+        if (first.isEmpty()) return;
+
+        //event.getChunk().getSection(0).getStates().data.palette().valueFor(0)
+        int x = worldPosition.getX();
+        int z = worldPosition.getZ();
+        for (int i = x; i < x + 16; i++) {
+            for (int j = z; j < z + 16; j++) {
+                int surface_height = chunk.getHeight(Heightmap.Types.WORLD_SURFACE, i, j);
+                worldPosition.set(i, surface_height, j);
+                Holder<Biome> surfaceBiome = MapChecker.idToBiome(level, biomeHolder.getBiomeId(worldPosition));
+                if (surfaceBiome == null) continue;
+
+                var intLongMutablePair = first.get(surfaceBiome);
+                if (intLongMutablePair == null) continue;
+
+                boolean snow = intLongMutablePair.leftInt() > Math.abs(Mth.getSeed(worldPosition)) % 100;
+                //snow=true;
+                if (!snow) {
+                    BlockState blockState = chunk.getBlockState(worldPosition);
+                    if (blockState.is(Blocks.SNOW)) {
+                        //chunk.setBlockState(worldPosition, Blocks.AIR.defaultBlockState(), false);
+                        level.setBlock(worldPosition, Blocks.AIR.defaultBlockState(), Block.UPDATE_CLIENTS | Block.UPDATE_KNOWN_SHAPE);
+                        BlockState supportBlock = chunk.getBlockState(worldPosition.setY(surface_height - 1));
+                        if ((supportBlock.getBlock() instanceof SnowyDirtBlock)) {
+                            BlockState blockState2 = supportBlock.updateShape(Direction.UP,
+                                    Blocks.AIR.defaultBlockState(),
+                                    levelAccessor, worldPosition.immutable(), worldPosition.setY(surface_height).immutable());
+                            if (blockState2 != supportBlock) {
+                                chunk.setBlockState(worldPosition.setY(surface_height - 1), blockState2, false);
+                            }
+                        }
+                    }
+                } else {
+                    int solid_height = chunk.getHeight(Heightmap.Types.MOTION_BLOCKING, i, j);
+                    int above_height = solid_height + 1;
+                    var supportBlock = chunk.getBlockState(worldPosition.setY(solid_height));
+                    boolean canSurvive = false;
+                    if (!supportBlock.is(BlockTags.SNOW_LAYER_CANNOT_SURVIVE_ON)) {
+                        canSurvive = supportBlock.is(BlockTags.SNOW_LAYER_CAN_SURVIVE_ON)
+                                || Block.isFaceFull(supportBlock.getCollisionShape(level, worldPosition), Direction.UP)
+                                || supportBlock.is(Blocks.SNOW) && supportBlock.getValue(SnowLayerBlock.LAYERS) == 8;
+                    }
+                    if (!canSurvive) continue;
+                    BlockState blockState = chunk.getBlockState(worldPosition.setY(above_height));
+
+                    if (!blockState.is(Blocks.SNOW) && blockState.isAir()) {
+                        BlockPos base = worldPosition.setY(solid_height).immutable();
+                        BlockPos above = worldPosition.setY(above_height).immutable();
+                        //chunk.setBlockState(above, Blocks.SNOW.defaultBlockState(), false);
+                        level.setBlock(above, Blocks.SNOW.defaultBlockState(), Block.UPDATE_CLIENTS | Block.UPDATE_KNOWN_SHAPE);
+                        if ((supportBlock.getBlock() instanceof SnowyDirtBlock)) {
+                            BlockState blockState2 = supportBlock.updateShape(Direction.UP,
+                                    Blocks.SNOW.defaultBlockState(), levelAccessor, base, above);
+                            if (blockState2 != supportBlock) {
+                                chunk.setBlockState(base, blockState2, false);
+                            }
+                        }
+                    }
+                }
+
+
+            }
+        }
+
+        long l1 = System.currentTimeMillis();
+        long l2 = l1 - l;
+        EclipticSeasons.logger(l2);
     }
 
 

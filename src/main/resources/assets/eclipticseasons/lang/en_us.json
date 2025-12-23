@@ -25,5 +25,7 @@
   "info.eclipticseasons.recipe_category.wetter": "Environmental Humidity",
   "info.eclipticseasons.recipe_category.season_quest": "Season Quest",
   "info.eclipticseasons.recipe_category.season_quest.time": "Available Time: ",
-  "info.eclipticseasons.recipe_category.season_quest.time.period": "%s - %s"
+  "info.eclipticseasons.recipe_category.season_quest.time.period": "%s - %s",
+  "info.eclipticseasons.item.sal_wand.select_first": "Selected the first point at %s, %s, %s",
+  "info.eclipticseasons.item.sal_wand.apply": "Applied to %s positions in total"
 }

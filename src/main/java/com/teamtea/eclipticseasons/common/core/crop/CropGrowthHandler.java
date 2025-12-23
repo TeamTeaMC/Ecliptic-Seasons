@@ -555,7 +555,8 @@ public final class CropGrowthHandler {
         baseGrowthChance = notCancel ? baseGrowthChance : 0;
         if (!notCancel) {
             setResult(event, CANCEL, growParameter);
-            if (randomKey < growParameter.death_chance() * 1000) {
+            if (CropInfoManager.mayKilledByClimate(blockState)
+                    && randomKey < growParameter.death_chance() * 1000) {
                 level.setBlockAndUpdate(pos,
                         growParameter.deadState().isPresent() ?
                                 growParameter.deadState().get() :
@@ -619,7 +620,8 @@ public final class CropGrowthHandler {
                     }
                 }
                 setResult(event, flag, growParameter);
-                if (flag == CANCEL && randomKey < growParameter.death_chance() * 1000) {
+                if (flag == CANCEL && CropInfoManager.mayKilledByClimate(blockState)
+                        && randomKey < growParameter.death_chance() * 1000) {
                     level.setBlockAndUpdate(pos,
                             growParameter.deadState().isPresent() ?
                                     growParameter.deadState().get() :
@@ -980,7 +982,7 @@ public final class CropGrowthHandler {
             //     saveData.removeHumidityControlProvider(pos);
             // }
             saveData.addHumidityControlProvider(pos, new HumidityControlProvider(
-                    needAdd.level(), needAdd.range() * needAdd.range(), needAdd.lastingTime(),true
+                    needAdd.level(), needAdd.range() * needAdd.range(), needAdd.lastingTime(), true
             ));
             // level.scheduleTick(pos, state.getBlock(), needAdd.lastingTime());
         }

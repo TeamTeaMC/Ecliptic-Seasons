@@ -236,9 +236,18 @@ public class MapChecker {
         return map;
     }
 
+    //public static @Nullable ChunkAccess getChunkView(Level level, BlockPos pos) {
+    //    return level.getChunk(SectionPos.blockToSectionCoord(pos.getX()),
+    //            SectionPos.blockToSectionCoord(pos.getZ()), ChunkStatus.SURFACE, false);
+    //}
+
     public static @Nullable ChunkAccess getChunkView(Level level, BlockPos pos) {
-        return level.getChunk(SectionPos.blockToSectionCoord(pos.getX()),
-                SectionPos.blockToSectionCoord(pos.getZ()), ChunkStatus.SURFACE, false);
+        if (level == null) return null;
+        int cx = SectionPos.blockToSectionCoord(pos.getX());
+        int cz = SectionPos.blockToSectionCoord(pos.getZ());
+        ChunkAccess chunk = level.getChunkSource().getChunkNow(cx, cz);
+        return chunk != null && chunk.getPersistedStatus().isOrAfter(ChunkStatus.SURFACE) ?
+                chunk : null;
     }
 
     public static int getVanillaSolidHeightOrSelf(Level level, BlockPos pos) {
@@ -542,6 +551,15 @@ public class MapChecker {
             map.updateHeight(setPos, y);
     }
 
+    public static boolean withoutSaltWandAffect(Level level, BlockPos pos) {
+        if (isLoadedOnlyServer(level, pos)) {
+            LevelChunk chunkAt = level.getChunkAt(pos);
+            NoneSnowArea snowArea = chunkAt.getExistingDataOrNull(AttachmentRegistry.NONE_SNOW_AREA);
+            return !(snowArea != null && snowArea.neverSnowyAt(pos));
+        }
+        return true;
+    }
+
 
     public static boolean notLightAbove(Level level, BlockPos pos, int times) {
         if (!CommonConfig.Debug.notLightAbove.get()) return true;
@@ -574,6 +592,10 @@ public class MapChecker {
         return pos > BiomeClimateManager.getSnowLine(biome, isServer);
     }
 
+    /**
+     * Checks whether snow can cover this block.
+     * Used only for regular queries.
+     */
     public static boolean shouldSnowAt(@Nonnull Level level, BlockPos pos, BlockState state, RandomSource random, long seed) {
         if (SnowyMapChecker.shouldCheckSnowyStatus(level, pos) && notWater(state)) {
             return SnowyMapChecker.isSnowyBlock(level, pos);
@@ -586,10 +608,15 @@ public class MapChecker {
             isSnowy = isAboveSnowLine(level, biome, pos);
         }
         if (isSnowy) isSnowy = notLightAbove(level, pos, 4);
+
+        if (isSnowy) isSnowy = withoutSaltWandAffect(level, pos);
         return isSnowy;
     }
 
-
+    /**
+     * Checks whether this block can be covered with snow.
+     * Used only during accelerated rendering.
+     */
     public static boolean shouldSnowAt(@Nonnull Level level, BlockPos pos, int biomeId, BlockState state, @Nullable RandomSource random, long seed) {
         if (SnowyMapChecker.shouldCheckSnowyStatus(level, pos) && notWater(state)) {
             return SnowyMapChecker.isSnowyBlock(level, pos);
@@ -602,6 +629,7 @@ public class MapChecker {
             isSnowy = isAboveSnowLine(level, biome, pos);
         }
         if (isSnowy) isSnowy = notLightAbove(level, pos, 4);
+
         return isSnowy;
     }
 
@@ -610,6 +638,10 @@ public class MapChecker {
     }
 
 
+    /**
+     * Checks whether this block can be covered with snow.
+     * Used only when positional information is unavailable.
+     */
     public static boolean shouldSnowAtBiome(@Nonnull Level level, Biome biome, BlockState state, RandomSource random, long seed, BlockPos mcPos) {
         if (isAboveSnowLine(level, biome, mcPos)) {
             return true;
@@ -1088,7 +1120,7 @@ public class MapChecker {
         }
         if (chunk instanceof LevelChunk levelChunk) {
             for (ServerPlayer player : serverLevel.getChunkSource().chunkMap.getPlayers(chunkPos, false)) {
-                MapChecker.sendChunkLoginInfo(serverLevel,levelChunk, chunkPos, player);
+                MapChecker.sendChunkLoginInfo(serverLevel, levelChunk, chunkPos, player);
             }
         }
     }

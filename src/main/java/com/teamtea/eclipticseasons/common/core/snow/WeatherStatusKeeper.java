@@ -47,7 +47,7 @@ import java.util.*;
 
 
 @Data
-public class WeatherStatusKeeper  {
+public class WeatherStatusKeeper {
 
     public static final Codec<WeatherStatusKeeper> CODEC = RecordCodecBuilder.create(ins -> ins.group(
             CodecUtil.holderCodec(Registries.BIOME).listOf().optionalFieldOf("biomes", List.of())
@@ -130,11 +130,15 @@ public class WeatherStatusKeeper  {
     }
 
     public Pair<Map<Holder<Biome>, IntIntImmutablePair>, Map<Holder<Biome>, Long>> collectSnowyUpdate(ServerLevel level, @Nullable BiomeHolder biomeHolder) {
+        return collectSnowyUpdate(level, biomeHolder, EclipticUtil.canSnowyBlockInteract());
+    }
+
+    public Pair<Map<Holder<Biome>, IntIntImmutablePair>, Map<Holder<Biome>, Long>> collectSnowyUpdate(ServerLevel level, @Nullable BiomeHolder biomeHolder, boolean shouldQuery) {
         Map<Holder<Biome>, IntIntImmutablePair> biomeSnowyUpdate = new IdentityHashMap<>();
         Map<Holder<Biome>, Long> biomeRainUpdate;
-        if (EclipticUtil.canSnowyBlockInteract()) {
+        if (shouldQuery) {
             // a chunk never tick without any record
-            if (snowDepthRecord.isEmpty()) {
+            if (snowDepthRecord.isEmpty() || !EclipticUtil.canSnowyBlockInteract()) {
                 biomeRainUpdate = null;
                 Set<Holder<Biome>> biomeDetect = new ReferenceLinkedOpenHashSet<>();
                 if (biomeHolder != null) {

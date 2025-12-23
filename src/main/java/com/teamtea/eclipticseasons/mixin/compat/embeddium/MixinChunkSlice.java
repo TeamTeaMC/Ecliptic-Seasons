@@ -6,10 +6,7 @@ import com.teamtea.eclipticseasons.api.misc.client.IExtraRendererContextOwner;
 import com.teamtea.eclipticseasons.api.misc.client.IMapSlice;
 import com.teamtea.eclipticseasons.api.misc.client.ISnowyGetter;
 import com.teamtea.eclipticseasons.client.core.ExtraRendererContext;
-import com.teamtea.eclipticseasons.common.core.map.BiomeHolder;
-import com.teamtea.eclipticseasons.common.core.map.ChunkInfoMap;
-import com.teamtea.eclipticseasons.common.core.map.MapChecker;
-import com.teamtea.eclipticseasons.common.core.map.SnowyRemover;
+import com.teamtea.eclipticseasons.common.core.map.*;
 import com.teamtea.eclipticseasons.common.core.snow.SnowyStatusKeeper;
 import com.teamtea.eclipticseasons.compat.vanilla.IExtendBlockView;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -50,6 +47,9 @@ public abstract class MixinChunkSlice implements IMapSlice, IExtraRendererContex
 
     @Unique
     private SnowyStatusKeeper[] SNOWY_STATUS_MAP;
+
+    @Unique
+    private NoneSnowArea[] NONE_SNOW_AREA_MAP;
 
     @Shadow
     @Final
@@ -97,6 +97,7 @@ public abstract class MixinChunkSlice implements IMapSlice, IExtraRendererContex
         BIOME_MAP = new int[MAP_ARRAY_SIZE][MAP_BLOCK_COUNT];
         SNOWY_MAP = new int[MAP_ARRAY_SIZE][MAP_BLOCK_COUNT];
         SNOWY_STATUS_MAP = new SnowyStatusKeeper[MAP_ARRAY_SIZE];
+        NONE_SNOW_AREA_MAP = new NoneSnowArea[MAP_ARRAY_SIZE];
     }
 
 
@@ -126,6 +127,7 @@ public abstract class MixinChunkSlice implements IMapSlice, IExtraRendererContex
                     int[] solidHeights = SOLID_HEIGHT_MAP[localSectionIndex];
                     int[] snowys = SNOWY_MAP[localSectionIndex];
                     SNOWY_STATUS_MAP[localSectionIndex] = snowyGetter.getSnowyStatusKeeper();
+                    NONE_SNOW_AREA_MAP[localSectionIndex] = snowyGetter.getNoneSnowArea();
                     mutableBlockPos.setX(startX);
                     mutableBlockPos.setZ(startZ);
                     ChunkInfoMap chunkMap = snowyGetter.getChunkInfoMap();
@@ -224,6 +226,13 @@ public abstract class MixinChunkSlice implements IMapSlice, IExtraRendererContex
         } else {
             int relBlockX = pos.getX() - this.originX;
             int relBlockZ = pos.getZ() - this.originZ;
+
+            NoneSnowArea lightArrays0 = this.NONE_SNOW_AREA_MAP[eclipticseasons$getLocalSectionIndex(
+                    relBlockX >> 4,
+                    relBlockZ >> 4)];
+            if (lightArrays0 != null && lightArrays0.neverSnowyAt(pos))
+                return SnowyRemover.NONE_SNOWY;
+
             int[] lightArrays = this.SNOWY_MAP[eclipticseasons$getLocalSectionIndex(
                     relBlockX >> 4,
                     relBlockZ >> 4)];
@@ -264,6 +273,7 @@ public abstract class MixinChunkSlice implements IMapSlice, IExtraRendererContex
     private void eclipticseasons$release(CallbackInfo ci) {
         eclipticseasons$rendererHolder.resetAll();
         Arrays.fill(SNOWY_STATUS_MAP, null);
+        Arrays.fill(NONE_SNOW_AREA_MAP, null);
     }
 
 

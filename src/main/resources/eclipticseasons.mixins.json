@@ -92,6 +92,7 @@
     "compat.fabric_renderer_indigo.MixinFabricVanillaModelEncoder",
     "compat.iris.MixinBiomeUniforms",
     "compat.iris.MixinIrisForgeHelpers",
+    "compat.iris.MixinBlockRenderTask",
     "compat.iris_test.MixinBlockRenderTask",
     "compat.iris_test.MixinDefaultFluidRenderer",
     "compat.optifine.MixinItemBlockRenderTypes",

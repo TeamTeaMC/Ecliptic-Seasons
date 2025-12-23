@@ -5,6 +5,7 @@ import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.event.SolarTermChangeEvent;
+import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.api.util.SimpleUtil;
 import com.teamtea.eclipticseasons.common.block.blockentity.GreenHouseCoreBlockEntity;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeRainDispatcher;
@@ -128,22 +129,24 @@ public class SolarDataManager extends SavedData {
     }
 
     private static SolarDataManager load(ServerLevel serverLevel, CompoundTag compoundTag, HolderLookup.Provider provider) {
-        return new SolarDataManager(serverLevel, compoundTag);
+        return CommonConfig.Season.realWorldSolarTerms.get() ?
+                new FixedSolarDataManagerLocal(serverLevel, compoundTag) : new SolarDataManager(serverLevel, compoundTag);
     }
 
     private static SolarDataManager create(ServerLevel serverLevel) {
-        SolarDataManager manager = new SolarDataManager(serverLevel);
+        SolarDataManager manager = CommonConfig.Season.realWorldSolarTerms.get() ?
+                new FixedSolarDataManagerLocal(serverLevel) : new SolarDataManager(serverLevel);
         WeatherManager.initNewWorldWeather(serverLevel, serverLevel.random, manager.getSolarTerm());
         return manager;
     }
 
 
-    public void updateTicks(ServerLevel world) {
+    public void updateTicks(ServerLevel level) {
         solarTermsTicks++;
-        int dayTime = Math.toIntExact(world.getDayTime() % 24000);
+        int dayTime = Math.toIntExact(level.getDayTime() % EclipticUtil.getDayLengthInMinecraft(level));
         if (solarTermsTicks > dayTime + 100) {
             setSolarTermsDay((getSolarTermsDay() + 1));
-            sendAndUpdate(world);
+            sendAndUpdate(level);
         }
         solarTermsTicks = dayTime;
 
@@ -506,10 +509,12 @@ public class SolarDataManager extends SavedData {
     }
 
 
-    public void tickLevel(ServerLevel level) {
-        this.skipNextCheckInTickPosMap.clear();
-        if (MapChecker.isValidDimension(level)) {
-            this.updateTicks(level);
+    public void tickLevel(Level level) {
+        if (level instanceof ServerLevel serverLevel) {
+            this.skipNextCheckInTickPosMap.clear();
+            if (MapChecker.isValidDimension(serverLevel)) {
+                this.updateTicks(serverLevel);
+            }
         }
     }
 

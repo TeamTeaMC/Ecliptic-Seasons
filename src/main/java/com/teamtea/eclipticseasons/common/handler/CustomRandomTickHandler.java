@@ -24,10 +24,13 @@ import net.minecraft.world.level.material.Fluids;
 public final class CustomRandomTickHandler {
     public static final CustomRandomTick2 SNOW_MELT_2 = (level, biomeHolder, pos) ->
     {
-        if (WeatherManager.getSnowStatus(level, biomeHolder, pos, EclipticUtil.isRainingOrSnowingWithSurfaceBiome(level, biomeHolder, pos)) == WeatherManager.SnowRenderStatus.SNOW_MELT) {
+        if (WeatherManager.getSnowStatus(level, biomeHolder, pos, EclipticUtil.isRainingOrSnowingWithSurfaceBiome(level, biomeHolder, pos)) == WeatherManager.SnowRenderStatus.SNOW_MELT)
+        {
             // snow melt
             BlockState topState = level.getBlockState(pos);
-            if (topState.is(Blocks.SNOW)) {
+            if (topState.is(Blocks.SNOW)
+                    && ((!(CommonConfig.Temperature.snowKeepInSnowyBiomes.get() && biomeHolder.is(ClimateTypeBiomeTags.EXTREME_COLD))
+                    || !biomeHolder.value().shouldSnow(level, pos)))) {
                 int layer = topState.getValue(SnowLayerBlock.LAYERS);
                 level.setBlockAndUpdate(pos, layer <= 2 ?
                         Blocks.AIR.defaultBlockState() :
@@ -35,10 +38,13 @@ public final class CustomRandomTickHandler {
             }
 
             // ice melt
-            BlockState belowState = level.getBlockState(pos.below());
-            if (belowState.is(Blocks.ICE)) {
-                if (level.dimensionType().ultraWarm()) level.removeBlock(pos, false);
-                else level.setBlockAndUpdate(pos.below(), Blocks.WATER.defaultBlockState());
+            BlockPos belowPos = pos.below();
+            BlockState belowState = level.getBlockState(belowPos);
+            if (belowState.is(Blocks.ICE)
+                    && ((!(CommonConfig.Temperature.waterFreezesInFrozenBiomes.get() && biomeHolder.is(ClimateTypeBiomeTags.EXTREME_COLD))
+                    || !biomeHolder.value().shouldFreeze(level, belowPos, false)))) {
+                if (level.dimensionType().ultraWarm()) level.removeBlock(belowPos, false);
+                else level.setBlockAndUpdate(belowPos, Blocks.WATER.defaultBlockState());
             }
         }
     };

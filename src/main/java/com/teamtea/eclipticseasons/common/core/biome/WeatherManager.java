@@ -718,7 +718,7 @@ public class WeatherManager {
                 }
 
                 if (!level.players().isEmpty()) {
-                    WeatherManager.sendBiomePacket(ws, level.players());
+                    WeatherManager.sendBiomePacket(level, ws, level.players());
                 }
 
                 SnowyMapChecker.updateAllChunks(level);
@@ -742,7 +742,8 @@ public class WeatherManager {
             }
             SimpleNetworkHandler.send(serverPlayer, new UpdateTempChangeMessage(t.getSolarTempChange()));
         });
-        WeatherManager.sendBiomePacket(WeatherManager.getBiomeList(serverPlayer.level()), List.of(serverPlayer));
+        if (serverPlayer.level() instanceof ServerLevel serverLevel)
+            WeatherManager.sendBiomePacket(serverLevel, WeatherManager.getBiomeList(serverPlayer.level()), List.of(serverPlayer));
     }
 
     public static boolean testWeatherCheck(LootContext pContext, WeatherCheck weatherCheck) {
@@ -898,16 +899,15 @@ public class WeatherManager {
         // Ecliptic.logger(level.getGameTime(),level.getGameTime() & 100);
         if (levelBiomeWeather != null && (level.getGameTime() % 100) == 0 && !level.players().isEmpty()) {
             // EclipticSeasonsMod.logger(level.getGameTime());
-            sendBiomePacket(levelBiomeWeather, level.players());
+            sendBiomePacket(level, levelBiomeWeather, level.players());
         }
 
         NEXT_CHECK_BIOME_MAP.put(level, pos);
         return true;
     }
 
-    public static void sendBiomePacket(ArrayList<BiomeWeather> levelBiomeWeather, List<ServerPlayer> players) {
+    public static void sendBiomePacket(ServerLevel level, ArrayList<BiomeWeather> levelBiomeWeather, List<ServerPlayer> players) {
         if (players.isEmpty()) return;
-        Level level = players.getFirst().level();
         Registry<WeatherEffect> weatherEffects = level.registryAccess().registryOrThrow(ESRegistries.WEATHER_EFFECT);
         byte[] rains = new byte[levelBiomeWeather.size()];
         byte[] thunders = new byte[levelBiomeWeather.size()];
