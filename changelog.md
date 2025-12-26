@@ -1,3 +1,7 @@
+### 0.12.5.8
+
+- Added an option `DistantHorizonsWinterLODForceUpdateAll`, default false since it cause more performance time cost.
+
 ### 0.12.5.4
 
 - If IceAndSnowMelt and WaterFreezesInFrozenBiomes are enabled, ice blocks in cold biomes will not melt even if they are

@@ -52,6 +52,7 @@ public class DHTool {
 
     public static void forceReloadAll() {
         if (!CompatModule.CommonConfig.DistantHorizonsWinterLOD.get()) return;
+        if (!CompatModule.ClientConfig.DistantHorizonsWinterLODForceUpdateAll.get()) return;
 
         IDhClientWorld clientWorld = SharedApi.getIDhClientWorld();
         if (Minecraft.getInstance().level != null

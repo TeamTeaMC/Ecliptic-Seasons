@@ -116,6 +116,7 @@ public class CompatModule {
 
     public static class ClientConfig {
         public static ForgeConfigSpec.BooleanValue unifiedSnowyBlockShading;
+        public static ForgeConfigSpec.BooleanValue DistantHorizonsWinterLODForceUpdateAll;
 
         public static void load(ForgeConfigSpec.Builder builder) {
             builder.push("Compat");
@@ -124,6 +125,14 @@ public class CompatModule {
                 unifiedSnowyBlockShading = builder.comment("Unify the shading and surface parameters of snow-covered blocks.")
                         .define("UnifiedSnowyBlockShading", true);
                 builder.pop();
+            }
+            if(isDistanthorizons()){
+                DistantHorizonsWinterLODForceUpdateAll= builder
+                        .comment("""
+                                        Force Distant Horizons to refresh all LODs timely.
+                                        WARNING: Enabling this may cause a full LOD rebuild and significant lag spikes.""".strip()
+                        ).define("DistantHorizonsWinterLODForceUpdateAll", false);
+
             }
             builder.pop();
         }
