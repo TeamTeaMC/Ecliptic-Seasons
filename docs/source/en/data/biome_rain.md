@@ -152,3 +152,57 @@ to 0 if not specified.
   }
 }
 ```
+
+---
+
+### Weather Effects
+
+Sometimes you may need to define special weather types.
+These are JSON files, which should be placed in the root of your resource pack at
+`data/<namespace>/eclipticseasons/biome_rain_effect`.
+
+For example, we can define a snow storm as follows:
+
+```json
+{
+  "contents": [
+    {
+      "type": "snow"
+    },
+    {
+      "density": 0.52,
+      "type": "fog"
+    }
+  ],
+  "type": "composite"
+}
+```
+
+You can also define a fog type, and use the `replace` field to cancel rainfall:
+
+```json
+{
+  "density": 0.2,
+  "replace": true,
+  "type": "fog"
+}
+```
+
+These weather effects should be included in the `biome_rain` datapack.
+Below is an example for a biome with ID `example:colder_plains`.
+Following the cold-climate rules, it will trigger a blizzard during winter:
+
+```json
+{
+  "biomes": "minecraft:plains",
+  "weathers": {
+    "climate": "eclipticseasons:cold",
+    "seasons": {
+      "winter": {
+        "rain_chance": 0.5,
+        "special_effect": "eclipticseasons:snow_storm"
+      }
+    }
+  }
+}
+```

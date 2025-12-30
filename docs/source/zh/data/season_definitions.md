@@ -1,4 +1,4 @@
-> 需要启用`Common->Debug->EnableSeasonDefinition`。
+> 需要启用`Common->EnableSeasonDefinition`。
 
 ## 基本说明
 

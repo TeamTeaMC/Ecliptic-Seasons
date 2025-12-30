@@ -68,6 +68,8 @@ nav:
               - 季节任务: 'zh/data/season_quest.md'
               - 战利品表与季节条件: 'zh/data/loot.md'
               - 天气区: 'zh/data/weather_region.md'
+              - 季节定义: 'zh/data/season_definitions.md'
+              - 加湿结构: 'zh/data/wetter.md'
 
 
 markdown_extensions:

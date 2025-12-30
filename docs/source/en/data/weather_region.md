@@ -3,7 +3,7 @@
 By default, the Ecliptic Seasons mod assigns different weather to different biomes. However, due to fragmented biome distribution, you may sometimes want to merge the weather behavior of several biomes to smooth transitions.&#x20;
 
 This feature is defined with JSON files placed at:
-`data/<namespace>/eclipticseasons/weather_region`.&#x20;
+`data/<namespace>/eclipticseasons/weather_region`.
 
 # File Contents
 
