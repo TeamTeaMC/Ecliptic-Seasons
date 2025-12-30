@@ -1,4 +1,4 @@
-> Need enable`Common->Debug->EnableSeasonDefinition`.
+> Need enable`EnableSeasonDefinition`.
 ![bfxes4.gif](../../_static/image/bfxes4.gif)
 ## Basic Description
 

@@ -1,4 +1,4 @@
-> 需要启用`Common->EnableSeasonDefinition`。
+> 需要启用`EnableSeasonDefinition`。
 
 
 ![bfxes4.gif](../../_static/image/bfxes4.gif)

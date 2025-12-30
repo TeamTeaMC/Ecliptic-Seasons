@@ -1,3 +1,30 @@
+## From Serene Seasons to Ecliptic Seasons
+
+### Code Compatibility
+
+This is a rather complicated topic. At one point, I considered implementing a hook-based middleware layer. However, I
+later realized that some existing mods might already be compatible with Ecliptic Seasons, and introducing such a layer
+could actually create new issues.
+
+In practice, occasional differences at the code level are not a major problem. Therefore, I ultimately chose to provide
+a separate compatibility mod:
+Ecliptic Seasons: MultiMod Patch  
+https://legacy.curseforge.com/minecraft/mc-mods/ecliptic-seasons-multimod-patch
+
+This mod proactively supplies compatibility fixes to address the most common and fundamental issues.
+
+### Tag Compatibility
+
+This part is much more straightforward. You can refer to the section on Seasonal Crops and Humidity Conditions in the
+Datapack Basics chapter.
+
+If a mod already provides Serene Seasons tags, seasonal behavior will work automatically. However, if you are a modpack
+author, it is still recommended to use Ecliptic Seasons’ own season tags for better compatibility. This is because, in
+some cases, only Ecliptic Seasons tags are queried for condition checks.
+
+Regardless of the approach, humidity conditions must always be defined manually. Fortunately, this is usually very
+simple to do.
+
 ## Detect Problem
 
 ### Detect Server Freeze Issues

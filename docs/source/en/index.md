@@ -2,7 +2,7 @@
 
 “节气”是Minecraft的一个中国风模组，关于四季。
 
-Ecliptic Seasons is a Chinese mod about seasons and weather.
+Ecliptic Seasons is a Chinese mod about seasons, crops, weathers and more.
 
 ### LICENSE
 *   For code: BSD-3
@@ -14,7 +14,6 @@ Ecliptic Seasons is a Chinese mod about seasons and weather.
 
 As the name suggests, this mod brings a new seasonal experience to Minecraft, also known as "Solar Terms."
 It is an ancient Chinese calendar that divides the year into 24 periods, each with its unique characteristics.
-By understanding the right time and following the seasons, one can achieve harmony between humans and nature, the so-called "Unity of Heaven and Man."
 
 ## 2.Does Ecliptic Seasons overlap with mods like Serene Seasons, or can they work together?
 

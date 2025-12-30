@@ -2,7 +2,7 @@
 
 “节气”是Minecraft的一个中国风模组，关于四季。
 
-Ecliptic Seasons is a Chinese mod about seasons and weather.
+Ecliptic Seasons is a Chinese mod about seasons, crops, weathers and more.
 
 ### LICENSE
 *   For code: BSD-3
