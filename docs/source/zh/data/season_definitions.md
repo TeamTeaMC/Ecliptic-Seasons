@@ -1,5 +1,8 @@
 > 需要启用`Common->EnableSeasonDefinition`。
 
+
+![bfxes4.gif](../../_static/image/bfxes4.gif)
+
 ## 基本说明
 
 本配置用于定义在特定群系（不写则为忽略群系判定）中，随季节变化而发生的方块替换、掉落或生成规则。

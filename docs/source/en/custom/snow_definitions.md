@@ -54,7 +54,7 @@ Some special blocks need this property.
 | 1101           | Snow-covered leaves (bottom layer).                            |
 | 1200           | Snow-covered vines, etc., no height offset calculation needed. |
 
-This may change in the future. If you want to be a bit lazy with some magic, you can set the flag to 999 or other
+This may change in the future. If you want to be a bit lazy with some magic, you can set the flag to 999, 998 (with AO) or other
 built-in values, and we will automatically generate snow-covered models without you writing them by hand.
 
 Of course, the best way is to provide your own model, which looks best.
