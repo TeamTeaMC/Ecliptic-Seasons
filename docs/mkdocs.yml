@@ -40,8 +40,8 @@ nav:
               - Season Quests: 'en/data/season_quest.md'
               - Loot with Seasons: 'en/data/loot.md'
               - Weather Region: 'en/data/weather_region.md'
-              - Season Definitions: 'zh/data/season_definitions.md'
-              - Wetter Structure: 'zh/data/wetter.md'
+              - Season Definitions: 'en/data/season_definitions.md'
+              - Wetter Structure: 'en/data/wetter.md'
       - 中文:
           - 首页: 'zh/index.md'
           - 季节: 'zh/season.md'
