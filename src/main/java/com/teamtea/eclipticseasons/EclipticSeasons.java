@@ -1,6 +1,7 @@
 package com.teamtea.eclipticseasons;
 
 
+import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.teamtea.eclipticseasons.common.block.IceOrSnowCauldronBlock;
 import com.teamtea.eclipticseasons.common.registry.*;
 import com.teamtea.eclipticseasons.compat.CompatModule;
@@ -17,10 +18,12 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.loading.FMLPaths;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.List;
+import java.util.Locale;
 // import xueluoanping.fluiddrawerslegacy.handler.ControllerFluidCapabilityHandler;
 
 // The value here should match an entry in the META-INF/mods.toml file
@@ -123,6 +126,11 @@ public class EclipticSeasons {
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, CommonConfig.COMMON_CONFIG);
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ClientConfig.CLIENT_CONFIG);
 
+        CommentedFileConfig oldConfig =CommentedFileConfig.builder(FMLPaths.CONFIGDIR.get().resolve(defaultConfigName(ModConfig.Type.COMMON,MODID)))
+                .preserveInsertionOrder().build();
+        oldConfig.load();
+        int LastingDaysOfEachTerm = oldConfig.getOrElse("Season.LastingDaysOfEachTerm", 5);
+
 
         // CompatModule.init();
 
@@ -130,7 +138,10 @@ public class EclipticSeasons {
 
         ModAdvancements.register();
     }
-
+    private static String defaultConfigName(ModConfig.Type type, String modId) {
+        // config file name would be "forge-client.toml" and "forge-server.toml"
+        return String.format(Locale.ROOT, "%s-%s.toml", modId, type.extension());
+    }
 
     public static ResourceLocation rl(String id) {
         return new ResourceLocation(MODID, id);
