@@ -1,3 +1,12 @@
+### 0.12.5.8
+
+- Added an option `DistantHorizonsWinterLODForceUpdateAll`, default false since it cause more performance time cost.
+
+### 0.12.5.7.1
+
+- Disabled an incorrectly enabled internal experimental feature. When IceAndSnow is used together with
+  ForceSnowyChunkUpdate, it now synchronizes the actual vanilla snow states and outputs performance timing statistics.
+
 ### 0.12.5.4
 
 - If IceAndSnowMelt and WaterFreezesInFrozenBiomes are enabled, ice blocks in cold biomes will not melt even if they are

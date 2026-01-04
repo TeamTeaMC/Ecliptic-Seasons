@@ -58,7 +58,10 @@ public class EclipticSeasons {
 
         LootItemConditionRegistry.LOOT_ITEM_CONDITION_TYPE_DEFERRED_REGISTER.register(modEventBus);
 
+        modContainer.registerConfig(ModConfig.Type.COMMON, CommonConfig.COMMON_CONFIG2,EclipticSeasonsApi.MODID+"/test.toml");
+
         modContainer.registerConfig(ModConfig.Type.COMMON, CommonConfig.COMMON_CONFIG);
+
         modContainer.registerConfig(ModConfig.Type.CLIENT, ClientConfig.CLIENT_CONFIG);
 
         modContainer.registerConfig(ModConfig.Type.STARTUP, StartConfig.START_CONFIG);

@@ -20,6 +20,8 @@ import java.util.stream.Stream;
 
 public class CommonConfig {
     public static final ModConfigSpec COMMON_CONFIG = new ModConfigSpec.Builder().configure(com.teamtea.eclipticseasons.config.CommonConfig::new).getRight();
+    public static final ModConfigSpec COMMON_CONFIG2 = new ModConfigSpec.Builder().configure(b->b.comment("“Enable logging for illegal function usage.")
+            .define("LogIllegalUse", false)).getRight();
 
     protected CommonConfig(ModConfigSpec.Builder builder) {
         Season.load(builder);

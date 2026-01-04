@@ -114,6 +114,7 @@ public class CompatModule {
         public static ModConfigSpec.BooleanValue unifiedSnowyBlockShading;
         public static ModConfigSpec.BooleanValue unifiedSnowyBlockSides;
         public static ModConfigSpec.BooleanValue unifiedFrozenWater;
+        public static ModConfigSpec.BooleanValue DistantHorizonsWinterLODForceUpdateAll;
 
         public static void load(ModConfigSpec.Builder builder) {
             builder.push("Compat");
@@ -126,6 +127,15 @@ public class CompatModule {
                 unifiedFrozenWater = builder
                         .comment("Adjusts the rendering of thin ice so that the block it occupies is not treated as a water type during shader post-processing.")
                         .define("UnifiedFrozenWater", false);
+                builder.pop();
+            }
+            if(isDistanthorizons()){
+                builder.push("DistantHorizons");
+                DistantHorizonsWinterLODForceUpdateAll= builder
+                        .comment("""
+                                        Force Distant Horizons to refresh all LODs timely.
+                                        WARNING: Enabling this may cause a full LOD rebuild and significant lag spikes.""".strip()
+                        ).define("DistantHorizonsWinterLODForceUpdateAll", false);
                 builder.pop();
             }
             builder.pop();

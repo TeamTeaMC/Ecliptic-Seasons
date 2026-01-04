@@ -721,9 +721,9 @@ public class MapChecker {
     // level.getHeight(Heightmap.Types.MOTION_BLOCKING, pos.getX(), pos.getZ()) 也会卡死，因为要full了
     // 继续优化缓存
     public static Holder<Biome> getSurfaceBiome(Level level, BlockPos pos) {
-        int x = SectionPos.blockToSectionCoord(pos.getX());
-        int z = SectionPos.blockToSectionCoord(pos.getZ());
-        ChunkAccess chunkAt = level.getChunk(x, z, ChunkStatus.BIOMES, false);
+        //int x = SectionPos.blockToSectionCoord(pos.getX());
+        //int z = SectionPos.blockToSectionCoord(pos.getZ());
+        ChunkAccess chunkAt = getChunkView(level, pos);
         if (chunkAt instanceof IChunkBiomeHolder iChunkBiomeHolder) {
             BiomeHolder biomeHolder = iChunkBiomeHolder.eclipticseasons$getBiomeHolder();
             if (biomeHolder != null
@@ -824,16 +824,23 @@ public class MapChecker {
                     int z = blockToRegionCoord(relative.getZ());
                     if (chunkMap.getX() == x && chunkMap.getZ() == z)
                         bid = chunkMap.getBiome(relative);
+                    if (bid > -1) biome = idToBiome(level, bid);
                 }
-                if (bid < 0) {
+                if (i > 20 && level instanceof ServerLevel serverLevel && !isLoadNearBy(level, relative)) {
+                    BiomeSource biomeSource = serverLevel.getChunkSource().getGenerator().getBiomeSource();
+                    int qx = QuartPos.fromBlock(relative.getX());
+                    int qy = QuartPos.fromBlock(relative.getY());
+                    int qz = QuartPos.fromBlock(relative.getZ());
+                    biome = biomeSource.getNoiseBiome(qx, qy, qz, serverLevel.getChunkSource().randomState().sampler());
+                } else if (bid < 0) {
                     y = getHeightSafe(level, relative) + 1;
                     if (y > maxBuildHeight || y <= minBuildHeight) {
                         y = getVanillaSolidHeightOrSelf(level, relative);
                     }
                     relative.setY(y);
                     bid = getSurfaceOrUpdate(level, relative, false, ChunkInfoMap.TYPE_BIOME);
+                    biome = idToBiome(level, bid);
                 }
-                biome = idToBiome(level, bid);
                 if (!isSmallBiome(biome)) {
                     // 不再保存，避免累进。
                     // ChunkInfoMap chunkMap = getChunkMap(level, pos);

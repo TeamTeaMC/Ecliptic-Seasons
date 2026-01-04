@@ -353,6 +353,8 @@ public class AllListener {
         if (!(levelAccessor instanceof ServerLevel level)) return;
         if (!CommonConfig.Temperature.snowDown.get() || !CommonConfig.Temperature.iceMelt.get()) return;
         if (!CommonConfig.Snow.forceChunkUpdate.get()) return;
+        if (true)return;
+
         long l = System.currentTimeMillis();
         //boolean skip = true;
         //for (Tag sections : event.getData().getList("sections", Tag.TAG_COMPOUND)) {
