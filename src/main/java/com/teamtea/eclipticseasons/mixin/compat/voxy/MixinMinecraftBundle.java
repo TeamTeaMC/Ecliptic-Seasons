@@ -66,7 +66,6 @@ public class MixinMinecraftBundle {
 
     @Mixin(BlockStateParser.class)
     public abstract static class MixinVoxyBlockStateParser {
-        private final Map<Property<?>, Comparable<?>> properties = Maps.newHashMap();
         @WrapOperation(
                 method = "parseForBlock(Lnet/minecraft/core/HolderLookup;Lcom/mojang/brigadier/StringReader;Z)Lnet/minecraft/commands/arguments/blocks/BlockStateParser$BlockResult;",
                 at = @At(value = "INVOKE", target = "Lnet/minecraft/commands/arguments/blocks/BlockStateParser;parse()V")

@@ -6,7 +6,6 @@ import com.teamtea.eclipticseasons.common.core.map.ChunkInfoMap;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.compat.CompatModule;
 import com.teamtea.eclipticseasons.mixin.compat.voxy.MixinMinecraftBundle;
-import com.teamtea.eclipticseasons.mixin.compat.voxy.MixinModelTextureBakery;
 import me.cortex.voxy.client.core.model.bakery.ModelTextureBakery;
 import me.cortex.voxy.client.core.model.bakery.ReuseVertexConsumer;
 import net.minecraft.client.renderer.RenderType;
