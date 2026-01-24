@@ -1,13 +1,17 @@
 package com.teamtea.eclipticseasons.compat;
 
 
+import com.electronwill.nightconfig.core.file.CommentedFileConfig;
+import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.compat.theoneprobe.TOPReflector;
 import lombok.Getter;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.loading.FMLLoader;
+import net.minecraftforge.fml.loading.FMLPaths;
 
 import java.util.List;
 
@@ -25,6 +29,11 @@ public class CompatModule {
 
     @Getter
     private static boolean distanthorizons = false;
+    @Getter
+    private static boolean voxy = false;
+    @Getter
+    private static boolean voxyTest = false;
+
     /**
      * Used for mod init detect.
      **/
@@ -33,6 +42,14 @@ public class CompatModule {
         modernui = Platform.isModLoaded("modernui");
         oculus = Platform.isModLoaded("oculus");
         distanthorizons = Platform.isModLoaded("distanthorizons");
+        voxy = Platform.isModLoaded("voxy");
+        if (isVoxy()) {
+            CommentedFileConfig oldConfig = CommentedFileConfig.builder(FMLPaths.CONFIGDIR.get().resolve(EclipticSeasons.defaultConfigName(ModConfig.Type.CLIENT, EclipticSeasons.MODID)))
+                    .preserveInsertionOrder().build();
+            oldConfig.load();
+            voxyTest = oldConfig.getOrElse("Compat.VoxyTest", false);
+            oldConfig.close();
+        }
     }
 
     /**
@@ -117,6 +134,7 @@ public class CompatModule {
     public static class ClientConfig {
         public static ForgeConfigSpec.BooleanValue unifiedSnowyBlockShading;
         public static ForgeConfigSpec.BooleanValue DistantHorizonsWinterLODForceUpdateAll;
+        private static ForgeConfigSpec.BooleanValue voxyTest;
 
         public static void load(ForgeConfigSpec.Builder builder) {
             builder.push("Compat");
@@ -126,12 +144,22 @@ public class CompatModule {
                         .define("UnifiedSnowyBlockShading", true);
                 builder.pop();
             }
-            if(isDistanthorizons()){
-                DistantHorizonsWinterLODForceUpdateAll= builder
+            if (isDistanthorizons()) {
+                DistantHorizonsWinterLODForceUpdateAll = builder
                         .comment("""
-                                        Force Distant Horizons to refresh all LODs timely.
-                                        WARNING: Enabling this may cause a full LOD rebuild and significant lag spikes.""".strip()
+                                Force Distant Horizons to refresh all LODs timely.
+                                WARNING: Enabling this may cause a full LOD rebuild and significant lag spikes.""".strip()
                         ).define("DistantHorizonsWinterLODForceUpdateAll", false);
+
+            }
+            if (isVoxy()) {
+                voxyTest = builder
+                        .worldRestart()
+                        .comment("""
+                                .
+                                Just for test.
+                                .""".strip()
+                        ).define("VoxyTest", false);
 
             }
             builder.pop();

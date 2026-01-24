@@ -41,7 +41,7 @@ public class ClientConfig {
             frozenWaterCheckLight = builder.comment("Water will not appear frozen under strong light.")
                     .define("FrozenWaterCheckLight", true);
             fogWeather = builder.comment("Experimental feature: enables foggy weather during rainfall.")
-                    .define("FoggyWeather", true);
+                    .define("FoggyWeather", false);
             builder.pop();
         }
     }

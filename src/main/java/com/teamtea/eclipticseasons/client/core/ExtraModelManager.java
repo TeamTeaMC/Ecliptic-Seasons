@@ -26,6 +26,7 @@ import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.block.BlockModelShaper;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.renderer.block.model.FaceBakery;
@@ -44,6 +45,7 @@ import net.minecraft.world.level.*;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraftforge.client.ChunkRenderTypeSet;
 import net.minecraftforge.client.model.data.ModelData;
@@ -58,9 +60,12 @@ import java.util.stream.IntStream;
 public class ExtraModelManager {
 
     public static Map<ResourceLocation, BakedModel> models;
-    public static ModelResourceLocation snowOverlayLeaves = new ModelResourceLocation(BlockRegistry.snowyLeaves.getId(), "");
-    public static ModelResourceLocation snowySlabBottom = new ModelResourceLocation(BlockRegistry.snowySlab.getId(), "type=bottom,waterlogged=false");
-    public static ModelResourceLocation snowOverlayBlock = new ModelResourceLocation(BlockRegistry.snowyBlock.getId(), "");
+    public static ModelResourceLocation snowOverlayLeaves;
+    //= new ModelResourceLocation(BlockRegistry.snowyLeaves.getId(), "");
+    public static ModelResourceLocation snowySlabBottom;
+    //= new ModelResourceLocation(BlockRegistry.snowySlab.getId(), "type=bottom,waterlogged=false");
+    public static ModelResourceLocation snowOverlayBlock;
+    //= new ModelResourceLocation(BlockRegistry.snowyBlock.getId(), "");
 
     public static ResourceLocation ice = EclipticSeasons.rl("block/ice");
 
@@ -137,7 +142,7 @@ public class ExtraModelManager {
     public static Map<BlockState, BakedModel> snowyModelsCache2 = new IdentityHashMap<>();
 
 
-    public static BakedModel getSnowyModel(BlockState state, BlockState snowState, int flag, int offset) {
+    public static @Nullable BakedModel getSnowyModel(BlockState state, BlockState snowState, int flag, int offset) {
 
         boolean notSpecialLeaves = !(
                 (MapChecker.leaveLike(flag))
@@ -1023,6 +1028,12 @@ public class ExtraModelManager {
         if (ClientCon.getUseLevel() != null) {
             ClientRef.updateClientSide(ClientCon.getUseLevel().registryAccess());
         }
+        snowOverlayLeaves = BlockModelShaper.stateToModelLocation(BlockRegistry.snowyLeaves.get().defaultBlockState());
+        snowySlabBottom = BlockModelShaper.stateToModelLocation(BlockRegistry.snowySlab.get().defaultBlockState()
+                .setValue(SlabBlock.TYPE, SlabType.BOTTOM)
+                .setValue(SlabBlock.WATERLOGGED, false)
+        );
+        snowOverlayBlock = BlockModelShaper.stateToModelLocation(BlockRegistry.snowyBlock.get().defaultBlockState());
     }
 
     public static final Map<ResourceLocation, ESModelLoadedJson> extraSnowModels = new HashMap<>(1024);

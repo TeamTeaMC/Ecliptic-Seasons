@@ -283,6 +283,9 @@ dependencies {
     compileOnly fg.deobf("libs:fabric-renderer-api-v1:3.2.1+cf68abbe77")
     compileOnly fg.deobf("libs:fabric-renderer-indigo:1.5.2+b5b2da4177")
 
+//    compileOnly fg.deobf("libs:voxy:0.2.7-alpha")
+//    compileOnly fg.deobf("libs:BigGlobe:5.2.0-MC1.20.1")
+
     compileOnly fg.deobf("curse.maven:embeddium-908741:5681725")
     compileOnly fg.deobf("curse.maven:oculus-581495:6020952")
 

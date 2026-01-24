@@ -138,7 +138,7 @@ public class EclipticSeasons {
 
         ModAdvancements.register();
     }
-    private static String defaultConfigName(ModConfig.Type type, String modId) {
+    public static String defaultConfigName(ModConfig.Type type, String modId) {
         // config file name would be "forge-client.toml" and "forge-server.toml"
         return String.format(Locale.ROOT, "%s-%s.toml", modId, type.extension());
     }
