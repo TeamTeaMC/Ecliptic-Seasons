@@ -2,6 +2,7 @@ package com.teamtea.eclipticseasons;
 
 
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
+import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.common.block.IceOrSnowCauldronBlock;
 import com.teamtea.eclipticseasons.common.registry.*;
 import com.teamtea.eclipticseasons.compat.CompatModule;
@@ -126,21 +127,21 @@ public class EclipticSeasons {
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, CommonConfig.COMMON_CONFIG);
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ClientConfig.CLIENT_CONFIG);
 
-        CommentedFileConfig oldConfig =CommentedFileConfig.builder(FMLPaths.CONFIGDIR.get().resolve(defaultConfigName(ModConfig.Type.COMMON,MODID)))
-                .preserveInsertionOrder().build();
-        oldConfig.load();
-        int LastingDaysOfEachTerm = oldConfig.getOrElse("Season.LastingDaysOfEachTerm", 5);
-
-
         // CompatModule.init();
 
         CompatModule.register(MinecraftForge.EVENT_BUS, modEventBus);
 
         ModAdvancements.register();
     }
+
     public static String defaultConfigName(ModConfig.Type type, String modId) {
         // config file name would be "forge-client.toml" and "forge-server.toml"
         return String.format(Locale.ROOT, "%s-%s.toml", modId, type.extension());
+    }
+
+    public static String configName(String type) {
+        // config file name would be "forge-client.toml" and "forge-server.toml"
+        return String.format(Locale.ROOT, "%s/%s.toml", EclipticSeasonsApi.MODID, type);
     }
 
     public static ResourceLocation rl(String id) {

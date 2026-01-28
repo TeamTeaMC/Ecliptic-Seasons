@@ -1,5 +1,6 @@
 package com.teamtea.eclipticseasons.common.registry;
 
+import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.teamtea.eclipticseasons.EclipticSeasons;
@@ -21,6 +22,7 @@ import com.teamtea.eclipticseasons.api.data.weather.WeatherRegion;
 import com.teamtea.eclipticseasons.api.data.weather.special_effect.WeatherEffect;
 import com.teamtea.eclipticseasons.common.resource.FakeResourceManagerHelperUtil;
 import com.teamtea.eclipticseasons.config.CommonConfig;
+import joptsimple.internal.Strings;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -35,7 +37,9 @@ import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.event.AddPackFindersEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.loading.FMLLoader;
+import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
 import net.minecraftforge.registries.DataPackRegistryEvent;
 import net.minecraftforge.registries.RegisterEvent;
@@ -104,24 +108,32 @@ public class ModContents {
         Optional<ModFile> modContainer = Optional.ofNullable(FMLLoader.getLoadingModList().getModFileById(EclipticSeasons.MODID).getFile());
         if (modContainer.isPresent()) {
             ModFile modFile = modContainer.get();
+
+            boolean extraSnow;
             try {
-                if (event.getPackType() == PackType.CLIENT_RESOURCES
-                        || CommonConfig.Resource.extraSnow.get()) {
-                    FakeResourceManagerHelperUtil.registerBuiltinResourcePack(
-                            event,
-                            EclipticSeasons.rl("extra_snow"), modFile,
-                            Component.translatable(EclipticSeasons.rl("extra_snow").toLanguageKey("pack")),
-                            event.getPackType(), PackSource.BUILT_IN, true);
-                }
-                if (event.getPackType() == PackType.CLIENT_RESOURCES) {
-                    FakeResourceManagerHelperUtil.registerBuiltinResourcePack(
-                            event,
-                            EclipticSeasons.MODID, "EclipticSeasonsLegacySnowyBlock", modFile,
-                            Component.translatable(EclipticSeasons.rl("legacy_snowy_block").toLanguageKey("pack")),
-                            event.getPackType(), PackSource.FEATURE, Pack.Position.TOP, false);
-                }
-            } catch (Exception e) {
-                EclipticSeasons.logger(e);
+                extraSnow = CommonConfig.Resource.extraSnow.get();
+            } catch (java.lang.IllegalStateException illegalStateException) {
+                CommentedFileConfig oldConfig = CommentedFileConfig.builder(FMLPaths.CONFIGDIR.get().resolve(EclipticSeasons.defaultConfigName(ModConfig.Type.COMMON, EclipticSeasonsApi.MODID)))
+                        .preserveInsertionOrder().build();
+                oldConfig.load();
+                extraSnow = oldConfig.getOrElse(Strings.join(CommonConfig.Resource.extraSnow.getPath(), "."), false);
+                oldConfig.close();
+            }
+
+            if (extraSnow) {
+                FakeResourceManagerHelperUtil.registerBuiltinResourcePack(
+                        event,
+                        EclipticSeasons.rl("extra_snow"), modFile,
+                        Component.translatable(EclipticSeasons.rl("extra_snow").toLanguageKey("pack")),
+                        event.getPackType(), PackSource.BUILT_IN, true);
+            }
+
+            if (event.getPackType() == PackType.CLIENT_RESOURCES) {
+                FakeResourceManagerHelperUtil.registerBuiltinResourcePack(
+                        event,
+                        EclipticSeasons.MODID, "EclipticSeasonsLegacySnowyBlock", modFile,
+                        Component.translatable(EclipticSeasons.rl("legacy_snowy_block").toLanguageKey("pack")),
+                        event.getPackType(), PackSource.FEATURE, Pack.Position.TOP, false);
             }
 
             if (event.getPackType() == PackType.SERVER_DATA) {

@@ -64,4 +64,12 @@ public class FakeResourceManagerHelperUtil {
                 PackType.SERVER_DATA,
                 PackSource.BUILT_IN);
     }
+
+    public static void addPackForExtra(AddPackFindersEvent event, ModFile modFile, String modid, String path, String pack_id) {
+            FakeResourceManagerHelperUtil.registerBuiltinResourcePack(
+                    event, modid + "/",
+                    modid, path, modFile,
+                    Component.translatable(EclipticSeasons.rl(pack_id).toLanguageKey("pack")),
+                    event.getPackType(), PackSource.FEATURE, Pack.Position.BOTTOM, true);
+    }
 }

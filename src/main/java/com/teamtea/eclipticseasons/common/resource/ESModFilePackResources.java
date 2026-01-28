@@ -60,18 +60,18 @@ public class ESModFilePackResources extends PathPackResources {
         }
     }
 
-    @Override
-    public void listResources(PackType type, String namespace, String path, ResourceOutput resourceOutput) {
-        if (type == PackType.CLIENT_RESOURCES && sourcePath.equals("resourcepacks/extra_snow")) {
-            try {
-                if (!CommonConfig.Resource.extraSnow.get()) {
-                    return;
-                }
-            } catch (Exception e) {
-                EclipticSeasons.logger(e);
-            }
-        }
-        super.listResources(type, namespace, path, resourceOutput);
-    }
+    //@Override
+    //public void listResources(PackType type, String namespace, String path, ResourceOutput resourceOutput) {
+    //    if (type == PackType.CLIENT_RESOURCES && sourcePath.equals("resourcepacks/extra_snow")) {
+    //        try {
+    //            if (!CommonConfig.Resource.extraSnow.get()) {
+    //                return;
+    //            }
+    //        } catch (Exception e) {
+    //            EclipticSeasons.logger(e);
+    //        }
+    //    }
+    //    super.listResources(type, namespace, path, resourceOutput);
+    //}
 
 }
