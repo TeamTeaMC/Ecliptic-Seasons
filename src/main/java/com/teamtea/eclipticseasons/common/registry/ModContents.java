@@ -108,7 +108,6 @@ public class ModContents {
         Optional<ModFile> modContainer = Optional.ofNullable(FMLLoader.getLoadingModList().getModFileById(EclipticSeasons.MODID).getFile());
         if (modContainer.isPresent()) {
             ModFile modFile = modContainer.get();
-
             boolean extraSnow;
             try {
                 extraSnow = CommonConfig.Resource.extraSnow.get();
