@@ -4,6 +4,7 @@ package com.teamtea.eclipticseasons.compat.eclipticseasons_bundles;
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.common.resource.FakeResourceManagerHelperUtil;
+import com.teamtea.eclipticseasons.compat.Platform;
 import net.minecraft.server.packs.PackType;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.event.AddPackFindersEvent;
@@ -13,6 +14,7 @@ import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
+import net.minecraftforge.forgespi.locating.IModFile;
 
 import java.util.Locale;
 import java.util.Optional;
@@ -22,9 +24,9 @@ public class ModContents {
 
     @SubscribeEvent
     public static void registerBuiltinResourcePacks(AddPackFindersEvent event) {
-        Optional<ModFile> modContainer = Optional.ofNullable(FMLLoader.getLoadingModList().getModFileById(EclipticSeasonsBundles.MODID).getFile());
+        Optional<IModFile> modContainer = Optional.ofNullable(Platform.getModFile(EclipticSeasonsBundles.MODID));
         if (modContainer.isPresent()) {
-            ModFile modFile = modContainer.get();
+            IModFile modFile = modContainer.get();
 
             CommentedFileConfig oldConfig = CommentedFileConfig.builder(FMLPaths.CONFIGDIR.get().resolve(EclipticSeasons.defaultConfigName(ModConfig.Type.COMMON, EclipticSeasonsBundles.MODID)))
                     .preserveInsertionOrder().build();

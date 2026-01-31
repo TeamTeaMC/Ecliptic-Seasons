@@ -9,9 +9,10 @@ import net.minecraft.server.packs.repository.Pack;
 import net.minecraft.server.packs.repository.PackSource;
 import net.minecraftforge.event.AddPackFindersEvent;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
+import net.minecraftforge.forgespi.locating.IModFile;
 
 public class FakeResourceManagerHelperUtil {
-    public static void registerBuiltinResourcePack(AddPackFindersEvent event, ResourceLocation packId, ModFile modFile, PackSource source) {
+    public static void registerBuiltinResourcePack(AddPackFindersEvent event, ResourceLocation packId, IModFile modFile, PackSource source) {
         String languageKey = packId.toLanguageKey("pack");
         registerBuiltinResourcePack(event,
                 packId,
@@ -20,7 +21,7 @@ public class FakeResourceManagerHelperUtil {
                 source);
     }
 
-    public static void registerBuiltinResourcePack(AddPackFindersEvent event, ResourceLocation packId, ModFile modFile, Component translate, PackSource source) {
+    public static void registerBuiltinResourcePack(AddPackFindersEvent event, ResourceLocation packId, IModFile modFile, Component translate, PackSource source) {
         String packIdLanguageKey = packId.toLanguageKey();
         event.addRepositorySource(consumer -> consumer.accept(
                 Pack.readMetaAndCreate(packIdLanguageKey, translate, false,
@@ -28,11 +29,11 @@ public class FakeResourceManagerHelperUtil {
                         Pack.Position.BOTTOM, source)));
     }
 
-    public static void registerBuiltinResourcePack(AddPackFindersEvent event, ResourceLocation packId, ModFile modFile, MutableComponent translate, PackType packType, PackSource source) {
+    public static void registerBuiltinResourcePack(AddPackFindersEvent event, ResourceLocation packId, IModFile modFile, MutableComponent translate, PackType packType, PackSource source) {
         registerBuiltinResourcePack(event, packId, modFile, translate, packType, source, true);
     }
 
-    public static void registerBuiltinResourcePack(AddPackFindersEvent event, ResourceLocation packId, ModFile modFile, MutableComponent translate, PackType packType, PackSource source, boolean require) {
+    public static void registerBuiltinResourcePack(AddPackFindersEvent event, ResourceLocation packId, IModFile modFile, MutableComponent translate, PackType packType, PackSource source, boolean require) {
         if (event.getPackType() == packType) {
             String packIdLanguageKey = packId.toLanguageKey();
             event.addRepositorySource(consumer -> consumer.accept(
@@ -42,11 +43,11 @@ public class FakeResourceManagerHelperUtil {
         }
     }
 
-    public static void registerBuiltinResourcePack(AddPackFindersEvent event, String namespace, String pack, ModFile modFile, MutableComponent translate, PackType packType, PackSource source, Pack.Position position, boolean require) {
+    public static void registerBuiltinResourcePack(AddPackFindersEvent event, String namespace, String pack, IModFile modFile, MutableComponent translate, PackType packType, PackSource source, Pack.Position position, boolean require) {
         registerBuiltinResourcePack(event, "", namespace, pack, modFile, translate, packType, source, position, require);
     }
 
-    public static void registerBuiltinResourcePack(AddPackFindersEvent event, String prefix, String namespace, String pack, ModFile modFile, MutableComponent translate, PackType packType, PackSource source, Pack.Position position, boolean require) {
+    public static void registerBuiltinResourcePack(AddPackFindersEvent event, String prefix, String namespace, String pack, IModFile modFile, MutableComponent translate, PackType packType, PackSource source, Pack.Position position, boolean require) {
         if (event.getPackType() == packType) {
             event.addRepositorySource(consumer -> consumer.accept(
                     Pack.readMetaAndCreate(pack, translate, require,
@@ -65,7 +66,7 @@ public class FakeResourceManagerHelperUtil {
                 PackSource.BUILT_IN);
     }
 
-    public static void addPackForExtra(AddPackFindersEvent event, ModFile modFile, String modid, String path, String pack_id, boolean priorityLoading) {
+    public static void addPackForExtra(AddPackFindersEvent event, IModFile modFile, String modid, String path, String pack_id, boolean priorityLoading) {
         FakeResourceManagerHelperUtil.registerBuiltinResourcePack(
                 event, modid + "/",
                 modid, path, modFile,

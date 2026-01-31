@@ -4,6 +4,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.loading.FMLLoader;
+import net.minecraftforge.forgespi.language.IModFileInfo;
 import net.minecraftforge.forgespi.locating.IModFile;
 import net.minecraftforge.server.ServerLifecycleHooks;
 
@@ -33,7 +34,9 @@ public class Platform {
     }
 
     public static IModFile getModFile(String s) {
-        return ModList.get().getModFileById(s).getFile();
+        IModFileInfo modFileById = ModList.get().getModFileById(s);
+        if (modFileById == null) return null;
+        return modFileById.getFile();
     }
 
 }
