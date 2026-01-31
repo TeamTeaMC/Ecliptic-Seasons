@@ -1,3 +1,9 @@
+### 0.12.7
+
+- Adds the foundational code for split and cross-version support in Ecliptic Seasons: Bundles.
+  Ecliptic Seasons: Bundles provides basic DataPack and resource pack support for other biome or crop mods.
+  Contributions to add or merge additional support are welcome and greatly appreciated.
+
 ### 0.12.6
 
 - Due to bloom conflicts between foggy weather and certain shader packs (such as newer versions of Photon) under

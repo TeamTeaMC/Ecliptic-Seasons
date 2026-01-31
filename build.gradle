@@ -167,8 +167,8 @@ tasks.named('processResources', Copy) {
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
 
     doFirst {
-        def langDir = file('src/main/resources/assets/eclipticseasons/lang')
-        def genDir = file('src/generated/resources/assets/eclipticseasons/lang')
+        def langDir = file("src/main/resources/assets/${mod_id}/lang")
+        def genDir = file("src/generated/resources/assets/${mod_id}/lang")
 
         def langFiles = ['en_us.json', 'zh_cn.json']
 
@@ -192,7 +192,7 @@ tasks.named('processResources', Copy) {
     }
 
     doLast {
-        def genDir = file('src/generated/resources/assets/eclipticseasons/lang')
+        def genDir = file("src/generated/resources/assets/${mod_id}/lang")
         def langFiles = ['en_us.json', 'zh_cn.json']
 
         langFiles.each { fileName ->

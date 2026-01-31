@@ -4,6 +4,8 @@ package com.teamtea.eclipticseasons.compat.eclipticseasons_bundles;
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.common.resource.FakeResourceManagerHelperUtil;
+import net.minecraft.server.packs.PackType;
+import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.event.AddPackFindersEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -30,17 +32,32 @@ public class ModContents {
 
             for (var stringBooleanValueEntry : General.enableList.entrySet()) {
                 String name = stringBooleanValueEntry.getKey();
-                var booleanValue = stringBooleanValueEntry.getValue();
-                if (oldConfig.getOrElse(booleanValue.getKey().getPath(), false)) {
-                    FakeResourceManagerHelperUtil.addPackForExtra(
-                            event, modFile,
-                            EclipticSeasonsBundles.MODID,
-                            name, normalizeId(name)
-                    );
+                var packController = stringBooleanValueEntry.getValue();
+                Optional<Boolean> serverOnly = packController.config().getServerOnly();
+                if (serverOnly.isEmpty()
+                        || serverOnly.get() == (event.getPackType() == PackType.SERVER_DATA)) {
+                    if (isShouldLoad(oldConfig, packController.enable())) {
+                        FakeResourceManagerHelperUtil.addPackForExtra(
+                                event, modFile,
+                                EclipticSeasonsBundles.MODID,
+                                name, packController.config().getId(),
+                                isShouldLoad(oldConfig, packController.priorityLoading())
+                        );
+                    }
                 }
             }
             oldConfig.close();
         }
+    }
+
+    private static boolean isShouldLoad(CommentedFileConfig oldConfig, ForgeConfigSpec.BooleanValue booleanValue) {
+        boolean shouldLoad;
+        try {
+            shouldLoad = booleanValue.get();
+        } catch (IllegalStateException illegalStateException) {
+            shouldLoad = oldConfig.getOrElse(booleanValue.getPath(), false);
+        }
+        return shouldLoad;
     }
 
     public static String normalizeId(String raw) {

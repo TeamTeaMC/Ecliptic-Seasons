@@ -1,9 +1,14 @@
 package com.teamtea.eclipticseasons.compat.eclipticseasons_bundles;
 
-import com.google.gson.Gson;
-import com.teamtea.eclipticseasons.common.misc.SimplePair;
+import com.google.gson.JsonElement;
+import com.mojang.serialization.DynamicOps;
+import com.mojang.serialization.JsonOps;
+import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.compat.Platform;
+import net.minecraft.util.GsonHelper;
 import net.minecraftforge.common.ForgeConfigSpec;
+import org.apache.maven.artifact.versioning.ArtifactVersion;
+import org.apache.maven.artifact.versioning.VersionRange;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -12,15 +17,31 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class General {
+    public record PackController(
+            ForgeConfigSpec.BooleanValue enable,
+            ForgeConfigSpec.BooleanValue priorityLoading,
+            BundleConfig config
+    ) {
+        public static PackController of(ForgeConfigSpec.BooleanValue enable,
+                                        ForgeConfigSpec.BooleanValue priorityLoading,
+                                        BundleConfig config) {
+            return new PackController(enable, priorityLoading, config);
+        }
+    }
+
     public static ForgeConfigSpec COMMON_CONFIG;
 
     // public static ForgeConfigSpec.ConfigValue<String> order;
-    public static Map<String, SimplePair<ForgeConfigSpec.BooleanValue, BundleConfig>> enableList = new HashMap<>();
+    public static Map<String, PackController> enableList = new HashMap<>();
 
     static {
+        DynamicOps<JsonElement> dynamicops = JsonOps.INSTANCE;
+        ArtifactVersion minecraft = Platform.getModFile("minecraft").getModFileInfo().getMods().get(0).getVersion();
+        LangUtil.tryLoadLang(EclipticSeasonsBundles.MODID, false);
+
         ForgeConfigSpec.Builder COMMON_BUILDER = new ForgeConfigSpec.Builder();
 
-        COMMON_BUILDER.comment("Compat settings");
+        //COMMON_BUILDER.comment("Compat settings");
         var basePath = Platform.getModFile(EclipticSeasonsBundles.MODID).findResource("resourcepacks");
         try (var fileList = Files.list(basePath)) {
             bsp:
@@ -35,26 +56,77 @@ public class General {
                     String json = Files.readString(configPath);
                     if (json.isEmpty()) continue;
 
-                    BundleConfig config = new Gson().fromJson(json, BundleConfig.class);
+                    JsonElement jsonElement = GsonHelper.parse(json);
+                    BundleConfig config = BundleConfig.CODEC
+                            .parse(dynamicops, jsonElement)
+                            .resultOrPartial(x ->
+                                    {
+                                        String formatted = ("Invalid JSON in " + configPath);
+                                        EclipticSeasons.LOGGER.warn(formatted);
+                                    }
+                            ).orElse(null);
+
+                    if (config == null) continue bsp;
 
                     System.out.println("Loaded config for " + config.getId());
 
 
-                    for (String require : config.getRequire()) {
-                        if (!Platform.isModLoaded(require)) {
+                    if (!config.getRequire().isEmpty()) {
+                        boolean anyLoaded = false;
+
+                        for (String require : config.getRequire()) {
+                            if (Platform.isModLoaded(require)) {
+                                anyLoaded = true;
+                                if (!config.isRequireAll()) break;
+                            } else {
+                                if (config.isRequireAll()) {
+                                    continue bsp;
+                                }
+                            }
+                        }
+
+                        if (!config.isRequireAll() && !anyLoaded) {
                             continue bsp;
                         }
                     }
 
-                    ForgeConfigSpec.BooleanValue enable = COMMON_BUILDER
+                    if (!config.getMcVersion().isEmpty()) {
+                        boolean matched = config.getMcVersion().stream().anyMatch(spec -> {
+                            try {
+                                if (!spec.contains(")") && !spec.contains("]") && !spec.contains("[")) {
+                                    spec = "[%s,%s]".formatted(spec, spec);
+                                }
+                                return VersionRange.createFromVersionSpec(spec)
+                                        .containsVersion(minecraft);
+                            } catch (Exception ignored) {
+                                return false;
+                            }
+                        });
+                        if (!matched) continue bsp;
+                    }
+
+                    COMMON_BUILDER.comment(LangUtil.parseI18n(config.getDescription().isEmpty() ?
+                            EclipticSeasons.erl(EclipticSeasonsBundles.MODID, config.getId()).toLanguageKey("pack_description") :
+                            config.getDescription()
+                    ));
+                    COMMON_BUILDER.translation(
+                            EclipticSeasons.erl(EclipticSeasonsBundles.MODID, config.getId()).toLanguageKey("pack")
+                    ).push(config.getId());
+                    var enable = COMMON_BUILDER
                             .comment(String.format("Enable compat package %s", config.getId()))
+                            .translation(packageName)
+                            .define("Enable", config.isEnable());
+
+                    var priorityLoading = COMMON_BUILDER
+                            .comment("This package will be loaded first.")
                             //.translation(packageName)
-                            .define(config.getId(), config.isEnable());
-                    enableList.put(packageName, SimplePair.of(enable, config));
+                            .define("PriorityLoading", config.isTop());
+                    enableList.put(packageName, PackController.of(enable, priorityLoading, config));
+                    COMMON_BUILDER.pop();
 
                 } catch (IOException e) {
                     e.printStackTrace();
-                } catch (com.google.gson.JsonSyntaxException e) {
+                } catch (com.google.gson.JsonParseException e) {
                     System.err.println("Invalid JSON in " + configPath + ": " + e.getMessage());
                 }
             }

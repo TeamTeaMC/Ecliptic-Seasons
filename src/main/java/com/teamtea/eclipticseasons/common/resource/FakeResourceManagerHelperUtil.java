@@ -65,11 +65,11 @@ public class FakeResourceManagerHelperUtil {
                 PackSource.BUILT_IN);
     }
 
-    public static void addPackForExtra(AddPackFindersEvent event, ModFile modFile, String modid, String path, String pack_id) {
-            FakeResourceManagerHelperUtil.registerBuiltinResourcePack(
-                    event, modid + "/",
-                    modid, path, modFile,
-                    Component.translatable(EclipticSeasons.rl(pack_id).toLanguageKey("pack")),
-                    event.getPackType(), PackSource.FEATURE, Pack.Position.BOTTOM, true);
+    public static void addPackForExtra(AddPackFindersEvent event, ModFile modFile, String modid, String path, String pack_id, boolean priorityLoading) {
+        FakeResourceManagerHelperUtil.registerBuiltinResourcePack(
+                event, modid + "/",
+                modid, path, modFile,
+                Component.translatable(EclipticSeasons.erl(modid, pack_id).toLanguageKey("pack")),
+                event.getPackType(), PackSource.FEATURE, priorityLoading ? Pack.Position.TOP : Pack.Position.BOTTOM, true);
     }
 }

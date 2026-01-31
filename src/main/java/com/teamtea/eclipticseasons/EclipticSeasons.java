@@ -149,6 +149,10 @@ public class EclipticSeasons {
         return new ResourceLocation(MODID, id);
     }
 
+    public static ResourceLocation erl(String modid, String id) {
+        return new ResourceLocation(modid, id);
+    }
+
     public void FMLCommonSetup(final FMLCommonSetupEvent event) {
         event.enqueueWork(SimpleNetworkHandler::init);
         event.enqueueWork(CompatModule::setup);

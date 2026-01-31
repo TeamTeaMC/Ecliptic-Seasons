@@ -19,6 +19,7 @@ public class EclipticSeasonsBundles {
         if (modContainer instanceof ModContainer
                 && General.COMMON_CONFIG != null) {
             modContainer.addConfig(new ModConfig(ModConfig.Type.COMMON, General.COMMON_CONFIG, modContainer));
+            LangUtil.tryLoadLang(MODID, true);
         }
     }
 }
