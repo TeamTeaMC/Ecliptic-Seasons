@@ -10,9 +10,11 @@ import com.teamtea.eclipticseasons.api.misc.client.IExtraRendererContextOwner;
 import com.teamtea.eclipticseasons.client.core.ExtraModelManager;
 import com.teamtea.eclipticseasons.client.core.ExtraRendererContext;
 import com.teamtea.eclipticseasons.client.render.chunk.IceKeeper;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
 import net.neoforged.neoforge.client.model.data.ModelData;
@@ -123,6 +125,41 @@ public abstract class MixinBlockRenderTask {
             rendererHolder.resetAll();
         }
         return original;
+    }
+
+
+    @Inject(
+            remap = false,
+            method = "execute(Lorg/embeddedt/embeddium/impl/render/chunk/compile/ChunkBuildContext;Lorg/embeddedt/embeddium/impl/util/task/CancellationToken;)Lorg/embeddedt/embeddium/impl/render/chunk/compile/ChunkBuildOutput;",
+            at = @At(value = "INVOKE",
+                    // shift = At.Shift.AFTER,
+                    target = "Lnet/minecraft/world/level/block/state/BlockState;isSolidRender(Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;)Z")
+    )
+    private void eclipticseasons$renderSnowLayerIn(
+            ChunkBuildContext buildContext,
+            CancellationToken cancellationToken,
+            CallbackInfoReturnable<ChunkBuildOutput> cir,
+            @Local BlockRenderContext ctx,
+            @Local ChunkBuildBuffers buffers,
+            @Local BlockRenderCache cache,
+            @Local(ordinal = 0) BlockPos.MutableBlockPos mutableBlockPos,
+            @Local(ordinal = 1) BlockPos.MutableBlockPos mutableBlockPos2,
+            @Local(ordinal = 0) BlockState state
+    ) {
+        BakedModel bm = ExtraModelManager.shouldRenderedWithSnowInside(ctx.world(), mutableBlockPos, state, null);
+        if (bm != null) {
+            //if (this instanceof IIrisShaderAccesor iIrisShaderAccesor) {
+            //    iIrisShaderAccesor.eclipticseasons$reset(buildContext);
+            //}
+            ctx.update(mutableBlockPos,
+                    mutableBlockPos2,
+                    Blocks.SNOW.defaultBlockState(),
+                    bm,
+                    state.getSeed(mutableBlockPos),
+                    ModelData.EMPTY,
+                    RenderType.solid());
+            cache.getBlockRenderer().renderModel(ctx, buffers);
+        }
     }
 
     @Inject(

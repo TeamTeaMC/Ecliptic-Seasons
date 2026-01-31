@@ -24,6 +24,9 @@ repositories {
     flatDir {
         dirs("libs")
     }
+    flatDir {
+        dirs("sub")
+    }
     maven {
         url "https://cursemaven.com"
         content {
@@ -39,9 +42,6 @@ repositories {
     }
     maven {
         url "https://maven.su5ed.dev/releases"
-    }
-    maven {
-        url "https://harleyoconnor.com/maven"
     }
 }
 
@@ -132,8 +132,8 @@ tasks.named('processResources', Copy) {
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
 
     doFirst {
-        def langDir = file('src/main/resources/assets/eclipticseasons/lang')
-        def genDir = file('src/generated/resources/assets/eclipticseasons/lang')
+        def langDir = file("src/main/resources/assets/${mod_id}/lang")
+        def genDir = file("src/generated/resources/assets/${mod_id}/lang")
 
         def langFiles = ['en_us.json', 'zh_cn.json']
 
@@ -157,7 +157,8 @@ tasks.named('processResources', Copy) {
     }
 
     doLast {
-        def genDir = file('src/generated/resources/assets/eclipticseasons/lang')
+        def genDir = file("src/generated/resources/assets/${mod_id}/lang")
+
         def langFiles = ['en_us.json', 'zh_cn.json']
 
         langFiles.each { fileName ->
@@ -185,6 +186,8 @@ dependencies {
     implementation "curse.maven:jei-238222:7181665"
     implementation "curse.maven:jade-324717:6291517"
     compileOnly("curse.maven:the-one-probe-245211:6106998")
+
+    compileOnly("sub:Sub:1.20.1-forge-0.0")
 //    runtimeOnly("curse.maven:the-one-probe-245211:6106998")
 
     compileOnly("curse.maven:embeddium-908741:5556146")

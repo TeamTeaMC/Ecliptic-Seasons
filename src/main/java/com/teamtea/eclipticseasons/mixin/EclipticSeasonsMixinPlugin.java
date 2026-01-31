@@ -34,7 +34,12 @@ public class EclipticSeasonsMixinPlugin implements IMixinConfigPlugin {
         int st = mixinClassName.indexOf(MIXIN_COMPAT_PACKAGE);
         if (st > -1) {
             String sub = Arrays.stream(mixinClassName.split(MIXIN_COMPAT_PACKAGE)).toList().get(1);
-            String modid = Arrays.stream(sub.split("\\.")).toList().get(0);
+            List<String> strings = Arrays.stream(sub.split("\\.")).toList();
+            String modid = strings.get(0);
+            if (strings.size() > 2) {
+                if (FMLLoader.getLoadingModList().getModFileById(strings.get(1)) == null)
+                    return false;
+            }
             return FMLLoader.getLoadingModList().getModFileById(modid) != null;
         }
         return true;

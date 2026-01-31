@@ -1,3 +1,24 @@
+#### 0.12.7.1
+
+- New Feature with option `SnowInFence`: Vegetation Snow Allows snow to accumulate inside fences and grass, seamlessly matching surrounding
+  terrain height for enhanced winter immersion.
+
+### 0.12.7
+
+- Adds the foundational code for split and cross-version support in Ecliptic Seasons: Bundles.
+  Ecliptic Seasons: Bundles provides basic DataPack and resource pack support for other biome or crop mods.
+  Contributions to add or merge additional support are welcome and greatly appreciated.
+
+### 0.12.6
+
+- Due to bloom conflicts between foggy weather and certain shader packs (such as newer versions of Photon) under
+  specific conditions, Foggy Weather is now disabled by default.
+- Experimental compatibility with Voxy has been added. This feature must be enabled in the settings and requires a
+  restart.
+  Because Voxy’s design philosophy does not allow seasonal systems to directly intervene in its rendering pipeline, a
+  special workaround is used. Please back up your world and modpack before enabling this option.
+- Fixed an initialization issue with BigGlobe when Voxy compatibility is enabled.
+
 ### 0.12.5.8
 
 - Added an option `DistantHorizonsWinterLODForceUpdateAll`, default false since it cause more performance time cost.

@@ -5,6 +5,7 @@ import net.neoforged.fml.ModList;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.fml.loading.FMLLoader;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
+import net.neoforged.neoforgespi.language.IModFileInfo;
 import net.neoforged.neoforgespi.locating.IModFile;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.apache.maven.artifact.versioning.VersionRange;
@@ -36,7 +37,9 @@ public class Platform {
     }
 
     public static IModFile getModFile(String s) {
-        return ModList.get().getModFileById(s).getFile();
+        IModFileInfo modFileById = ModList.get().getModFileById(s);
+        if (modFileById == null) return null;
+        return modFileById.getFile();
     }
 
 }

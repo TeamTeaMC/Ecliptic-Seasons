@@ -1,11 +1,11 @@
 package com.teamtea.eclipticseasons;
 
 
-import com.mojang.serialization.JsonOps;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.common.block.IceOrSnowCauldronBlock;
 import com.teamtea.eclipticseasons.common.registry.*;
 import com.teamtea.eclipticseasons.compat.CompatModule;
+import com.teamtea.eclipticseasons.compat.eclipticseasons_bundles.EclipticSeasonsBundles;
 import com.teamtea.eclipticseasons.config.ClientConfig;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import com.teamtea.eclipticseasons.config.StartConfig;
@@ -27,7 +27,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.List;
-// import xueluoanping.fluiddrawerslegacy.handler.ControllerFluidCapabilityHandler;
+import java.util.Locale;
 
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod(EclipticSeasonsApi.MODID)
@@ -71,11 +71,21 @@ public class EclipticSeasons {
             modContainer.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
 
         CompatModule.register(NeoForge.EVENT_BUS, modEventBus);
+
+        EclipticSeasonsBundles.init();
     }
 
+    public static String defaultConfigName(ModConfig.Type type, String modId) {
+        // config file name would be "forge-client.toml" and "forge-server.toml"
+        return String.format(Locale.ROOT, "%s-%s.toml", modId, type.extension());
+    }
 
     public static ResourceLocation rl(String id) {
         return ResourceLocation.fromNamespaceAndPath(EclipticSeasonsApi.MODID, id);
+    }
+
+    public static ResourceLocation erl(String modid, String id) {
+        return ResourceLocation.fromNamespaceAndPath(modid, id);
     }
 
     public static ResourceLocation parse(String id) {

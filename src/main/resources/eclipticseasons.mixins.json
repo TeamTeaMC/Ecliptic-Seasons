@@ -38,6 +38,13 @@
     "common.level.MixinServerLevel",
     "common.loot.MixinWeatherCheck",
     "common.worldgen.MixinSurfaceSystem",
+    "compat.voxy.MixinMinecraftBundle$MixinVoxyBlock",
+    "compat.voxy.MixinMinecraftBundle$MixinVoxyBlockCache",
+    "compat.voxy.MixinMinecraftBundle$MixinVoxyBlockStateBase",
+    "compat.voxy.MixinMinecraftBundle$MixinVoxyBlockStateParser",
+    "compat.voxy.MixinMinecraftBundle$MixinVoxyBlockStateParserAccessor",
+    "compat.voxy.MixinMinecraftBundle$MixinVoxyChunkLoad",
+    "compat.voxy.bigglobe.MixinBGBlockStates",
     "data.MixinsDataProvider",
     "data.MixinsDelegatingOps",
     "data.MixinsDynamicOps",
@@ -91,8 +98,8 @@
     "compat.fabric_renderer_indigo.MixinBlockRenderer",
     "compat.fabric_renderer_indigo.MixinFabricVanillaModelEncoder",
     "compat.iris.MixinBiomeUniforms",
-    "compat.iris.MixinIrisForgeHelpers",
     "compat.iris.MixinBlockRenderTask",
+    "compat.iris.MixinIrisForgeHelpers",
     "compat.iris_test.MixinBlockRenderTask",
     "compat.iris_test.MixinDefaultFluidRenderer",
     "compat.optifine.MixinItemBlockRenderTypes",
@@ -101,7 +108,8 @@
     "compat.sodium.MixinBlockRenderTask",
     "compat.sodium.MixinClonedChunkSection",
     "compat.sodium.MixinLevelSlice",
-    "compat.sodium.MixinNeoForgeModelAccess"
+    "compat.sodium.MixinNeoForgeModelAccess",
+    "compat.voxy.MixinModelTextureBakery"
   ],
   "injectors": {
     "defaultRequire": 1

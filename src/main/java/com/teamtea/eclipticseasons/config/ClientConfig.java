@@ -47,7 +47,7 @@ public class ClientConfig {
                     .define("FrozenWaterCheckLight", true);
 
             fogWeather = builder.comment("Experimental feature: enables foggy weather during rainfall.")
-                    .define("FoggyWeather", true);
+                    .define("FoggyWeather", false);
 
             builder.pop();
         }
@@ -84,6 +84,7 @@ public class ClientConfig {
 
 
         public static ModConfigSpec.BooleanValue snowUnderFence;
+        public static ModConfigSpec.BooleanValue snowInFence;
 
         private static void load(ModConfigSpec.Builder builder) {
             builder.push("Renderer");
@@ -101,10 +102,10 @@ public class ClientConfig {
                     .define("UseVanillaSnowCheck", false);
 
 
-            // realisticSnowyChange = builder.comment("Snow cover updates with a delay after block changes, making it look more natural. This uses more performance. Do not enable if the common config’s 'RealisticSnowyChange' is also enabled.")
-            //         .define("RealisticSnowyChange", false);
             snowUnderFence = builder.comment("Blocks underneath solid blocks etc. may also be covered with snow.")
                     .define("SnowUnderShadow", false);
+            snowInFence = builder.comment("[Sodium/Embeddium] Enables seamless snow accumulation inside non-full blocks like fences and vegetation by rendering a matching virtual snow layer.")
+                    .define("SnowInFence", true);
 
             seasonalGrassColorChange = builder.comment("Changes grass and leaf colors with seasons visually.")
                     .define("SeasonalGrassColorChange", true);
