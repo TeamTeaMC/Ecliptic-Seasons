@@ -1,5 +1,6 @@
 package com.teamtea.eclipticseasons.client.core;
 
+import com.teamtea.eclipticseasons.api.constant.tag.EclipticBlockTags;
 import com.teamtea.eclipticseasons.api.data.client.model.ESModelLoadedJson;
 import com.teamtea.eclipticseasons.api.data.client.model.ModelResolver;
 import com.teamtea.eclipticseasons.api.data.client.model.ModelTester;
@@ -963,6 +964,64 @@ public class ExtraModelManager {
         }
 
         return replace;
+    }
+
+    private static final Direction[] SNOW_LAYER_DIRECTIONS_TO_CHECK = {Direction.NORTH, Direction.SOUTH, Direction.EAST, Direction.WEST};
+
+    public static BakedModel shouldRenderedWithSnowInside(
+            BlockAndTintGetter blockAndTintGetter, BlockPos pos, BlockState state,
+            @Nullable BlockPos.MutableBlockPos checkPos) {
+
+        if (!ClientConfig.Renderer.snowInFence.get()) return null;
+
+        if (checkPos == null) checkPos = posToMutable(pos);
+        else checkPos.set(pos.getX(), pos.getY(), pos.getZ());
+
+        checkPos.setY(pos.getY() + 1);
+        if (blockAndTintGetter.getBrightness(LightLayer.SKY, checkPos) == 0) {
+            return null;
+        }
+
+        if (state.isAir() || !state.getFluidState().isEmpty() || state.is(EclipticBlockTags.SNOW_LAYER_CANNOT_SURVIVE_ON))
+            return null;
+
+        int snowNearbyCount = 0;
+        int minLayers = 8;
+
+        for (Direction dir : SNOW_LAYER_DIRECTIONS_TO_CHECK) {
+            checkPos.set(pos.getX() + dir.getStepX(), pos.getY() + dir.getStepY(), pos.getZ() + dir.getStepZ());
+            BlockState neighborState = blockAndTintGetter.getBlockState(checkPos);
+
+            int currentNeighborLayers = 0;
+            if (neighborState.getBlock() == Blocks.SNOW) {
+                currentNeighborLayers = neighborState.getValue(SnowLayerBlock.LAYERS);
+            } else if (neighborState.getBlock() == Blocks.SNOW_BLOCK) {
+                currentNeighborLayers = 8;
+            }
+
+            if (currentNeighborLayers > 0) {
+                snowNearbyCount++;
+                if (currentNeighborLayers < minLayers) {
+                    minLayers = currentNeighborLayers;
+                }
+            }
+        }
+
+        if (snowNearbyCount >= 2) {
+            if (state.isCollisionShapeFullBlock(blockAndTintGetter, pos)
+                    || state.isFaceSturdy(blockAndTintGetter, pos, Direction.DOWN)) return null;
+
+            return getSnowLayerModel(minLayers);
+        }
+
+        return null;
+    }
+
+
+    private static BakedModel getSnowLayerModel(int layers) {
+        int clampedLayers = Mth.clamp(layers, 1, 8);
+        BlockState snowState = Blocks.SNOW.defaultBlockState().setValue(SnowLayerBlock.LAYERS, clampedLayers);
+        return models.get(BlockModelShaper.stateToModelLocation(snowState));
     }
 
     public static RenderType getRenderType(BlockState state) {

@@ -12,6 +12,7 @@ public class EclipticBlockTags {
     public static final TagKey<Block> HABITAT_FIREFLY = create("habitat/firefly");
 
     public static final TagKey<Block> SNOW_OVERLAY_CANNOT_SURVIVE_ON = create("snow_overlay_cannot_survive_on");
+    public static final TagKey<Block> SNOW_LAYER_CANNOT_SURVIVE_ON =  create("snow_layer_cannot_survive_on");
 
     public static final TagKey<Block> SOFT_HEAT_SOURCES = create("soft_heat_sources");
 

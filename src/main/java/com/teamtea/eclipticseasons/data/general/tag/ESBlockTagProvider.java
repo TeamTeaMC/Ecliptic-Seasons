@@ -84,6 +84,8 @@ public final class ESBlockTagProvider extends BlockTagsProvider {
                 .addTag(BlockTags.ICE)
                 .addTag(BlockTags.SNOW_LAYER_CANNOT_SURVIVE_ON);
 
+        tag(EclipticBlockTags.SNOW_LAYER_CANNOT_SURVIVE_ON)
+                .addTag(EclipticBlockTags.SNOW_OVERLAY_CANNOT_SURVIVE_ON);
 
         // add mc
         tag(BlockTags.CEILING_HANGING_SIGNS).add(BlockRegistry.season_quest_ceiling_hanging_sign.get());

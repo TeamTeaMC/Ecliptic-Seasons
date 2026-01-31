@@ -1,3 +1,8 @@
+#### 0.12.7.1
+
+- New Feature with option `SnowInFence`: Vegetation Snow Allows snow to accumulate inside fences and grass, seamlessly matching surrounding
+  terrain height for enhanced winter immersion.
+
 ### 0.12.7
 
 - Adds the foundational code for split and cross-version support in Ecliptic Seasons: Bundles.

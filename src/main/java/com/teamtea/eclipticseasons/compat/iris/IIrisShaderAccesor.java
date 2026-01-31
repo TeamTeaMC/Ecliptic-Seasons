@@ -5,4 +5,6 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public interface IIrisShaderAccesor {
     void eclipticseasons$setSnowy(ChunkBuildContext renderContext, BlockState blockState);
+
+    void eclipticseasons$reset(ChunkBuildContext buildContext);
 }

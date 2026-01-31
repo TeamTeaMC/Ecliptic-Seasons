@@ -70,6 +70,7 @@ public class ClientConfig {
         public static ForgeConfigSpec.BooleanValue useVanillaCheck;
 
         public static ForgeConfigSpec.BooleanValue snowUnderFence;
+        public static ForgeConfigSpec.BooleanValue snowInFence;
 
         public static ForgeConfigSpec.BooleanValue seasonalGrassColorChange;
         public static ForgeConfigSpec.BooleanValue seasonalColorChangeExtend;
@@ -96,6 +97,8 @@ public class ClientConfig {
 
             snowUnderFence = builder.comment("Blocks underneath solid blocks etc. may also be covered with snow.")
                     .define("SnowUnderShadow", false);
+            snowInFence = builder.comment("[Sodium/Embeddium] Enables seamless snow accumulation inside non-full blocks like fences and vegetation by rendering a matching virtual snow layer.")
+                    .define("SnowInFence", true);
 
             seasonalGrassColorChange = builder.comment("Changes grass and leaf colors with seasons visually.")
                     .define("SeasonalGrassColorChange", true);
