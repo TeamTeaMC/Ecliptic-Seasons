@@ -14,7 +14,6 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import org.lwjgl.opengl.GL11;
@@ -91,7 +90,7 @@ public final class DebugInfoRenderer {
                 String rainTimeS = "Rain Time: " + biomeWeather.rainTime;
                 String clearTimeS = "Clear Time: " + biomeWeather.clearTime;
                 String thunderTimeS = "Thunder Time: " + biomeWeather.thunderTime;
-                String snowDepthS = "Snow Depth: " + biomeWeather.snowDepth;
+                String snowDepthS = "Snow Depth: " + biomeWeather.getSnowDepth();
 
                 drawInfo(matrixStack, screenWidth, screenHeight, rainTimeS, index++);
                 drawInfo(matrixStack, screenWidth, screenHeight, clearTimeS, index++);

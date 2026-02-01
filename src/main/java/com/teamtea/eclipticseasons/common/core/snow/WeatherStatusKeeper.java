@@ -17,7 +17,6 @@ import it.unimi.dsi.fastutil.objects.ReferenceLinkedOpenHashSet;
 import lombok.*;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
@@ -103,7 +102,7 @@ public class WeatherStatusKeeper implements ICapabilityProvider, INBTSerializabl
             for (Holder<Biome> biomeHolder : biomeUse) {
                 WeatherManager.BiomeWeather biomeWeather = WeatherManager.getBiomeWeather(serverLevel, biomeHolder);
                 if (biomeWeather == null) continue;
-                int snowDepth = biomeWeather.snowDepth;
+                int snowDepth = biomeWeather.getSnowDepth();
                 long lastRainTime = biomeWeather.lastRainTime;
                 IntLongMutablePair orDefault = snowDepthRecord.getOrDefault(biomeHolder, null);
                 if (orDefault == null || orDefault.leftInt() != snowDepth || orDefault.rightLong() != lastRainTime) {
@@ -145,7 +144,7 @@ public class WeatherStatusKeeper implements ICapabilityProvider, INBTSerializabl
                     for (Holder<Biome> holder : biomeDetect) {
                         WeatherManager.BiomeWeather biomeWeather = WeatherManager.getBiomeWeather(level, holder);
                         if (biomeWeather != null) {
-                            biomeSnowyUpdate.put(holder, IntIntImmutablePair.of(biomeWeather.snowDepth, 0));
+                            biomeSnowyUpdate.put(holder, IntIntImmutablePair.of(biomeWeather.getSnowDepth(), 0));
                         }
                     }
                 }
@@ -155,7 +154,7 @@ public class WeatherStatusKeeper implements ICapabilityProvider, INBTSerializabl
                 snowDepthRecord.forEach((biome, pair) -> {
                     WeatherManager.BiomeWeather biomeWeather = WeatherManager.getBiomeWeather(level, biome);
                     if (biomeWeather == null) return;
-                    int snowDepthAtBiome = biomeWeather.snowDepth;
+                    int snowDepthAtBiome = biomeWeather.getSnowDepth();
                     long lastRainTime = biomeWeather.lastRainTime;
                     int snowDepthIncrease = snowDepthAtBiome - pair.leftInt();
                     int offsetAbs = Mth.abs(snowDepthIncrease);

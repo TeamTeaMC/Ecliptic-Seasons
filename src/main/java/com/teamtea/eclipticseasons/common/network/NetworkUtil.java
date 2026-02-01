@@ -11,8 +11,6 @@ import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeRainDispatcher;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.core.map.BiomeHolder;
-import com.teamtea.eclipticseasons.common.core.map.ChunkInfoMap;
-import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.network.message.*;
 import com.teamtea.eclipticseasons.common.registry.ESRegistries;
 import com.teamtea.eclipticseasons.config.ClientConfig;
@@ -23,10 +21,7 @@ import net.minecraft.core.SectionPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.chunk.ChunkAccess;
-import net.minecraft.world.level.chunk.ChunkStatus;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkEvent;
@@ -79,7 +74,7 @@ public class NetworkUtil {
                         biomeWeather.rainTime = biomeWeatherMessage.rain[biomeWeather.id] * 10000;
                         biomeWeather.clearTime = biomeWeatherMessage.clear[biomeWeather.id] * 10000;
                         biomeWeather.thunderTime = biomeWeatherMessage.thuder[biomeWeather.id] * 10000;
-                        biomeWeather.snowDepth = biomeWeatherMessage.snowDepth[biomeWeather.id];
+                        biomeWeather.setSnowDepth(biomeWeatherMessage.snowDepth[biomeWeather.id]);
                         biomeWeather.effect = weatherEffects.getHolder(biomeWeatherMessage.special[biomeWeather.id]).orElse(null);
                         biomeWeather.setBiomeRain(BiomeRainDispatcher.getBiomeRain(
                                 level instanceof ServerLevel, biomeWeatherMessage.weather[biomeWeather.id]));

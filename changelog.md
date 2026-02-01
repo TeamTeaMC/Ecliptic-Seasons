@@ -1,3 +1,12 @@
+### 0.12.8
+
+- Smart Fence Snow Rendering: Improved snow rendering within fences. It now intelligently detects cliff edges to adjust
+  visuals accordingly, with new configuration options for precision.
+- Dynamic Accumulation & Melting: Biome-specific snow accumulation and melt speeds are now supported. Global multipliers
+  have also been added for easier overall balance control.
+- Internal Refactoring: Direct access to BiomeWeather.snowDepth is now restricted; please use the provided getter/setter
+  methods for improved data consistency.
+
 #### 0.12.7.1
 
 - New Feature with option `SnowInFence`: Vegetation Snow Allows snow to accumulate inside fences and grass, seamlessly matching surrounding

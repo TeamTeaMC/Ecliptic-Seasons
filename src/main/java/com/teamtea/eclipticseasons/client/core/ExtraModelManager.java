@@ -30,7 +30,6 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.BlockModelShaper;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.BlockModel;
-import net.minecraft.client.renderer.block.model.FaceBakery;
 import net.minecraft.client.renderer.texture.SpriteContents;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
@@ -966,31 +965,66 @@ public class ExtraModelManager {
         return replace;
     }
 
-    private static final Direction[] SNOW_LAYER_DIRECTIONS_TO_CHECK = {Direction.NORTH, Direction.SOUTH, Direction.EAST, Direction.WEST};
+    private static final Direction[] SNOW_LAYER_DIRECTIONS_TO_CHECK = {
+            Direction.NORTH, Direction.SOUTH, Direction.EAST, Direction.WEST};
+    private static final BlockPos[] SNOW_LAYER_DIRECTIONS_TO_CHECK_4 = {
+            new BlockPos(1, 0, 0),
+            new BlockPos(-1, 0, 0),
+            new BlockPos(0, 0, 1),
+            new BlockPos(0, 0, -1)
+    };
+
+    private static final BlockPos[] SNOW_LAYER_DIRECTIONS_TO_CHECK_8 = {
+            new BlockPos(1, 0, 0),
+            new BlockPos(-1, 0, 0),
+            new BlockPos(0, 0, 1),
+            new BlockPos(0, 0, -1),
+            new BlockPos(1, 0, 1),
+            new BlockPos(1, 0, -1),
+            new BlockPos(-1, 0, 1),
+            new BlockPos(-1, 0, -1)
+    };
 
     public static BakedModel shouldRenderedWithSnowInside(
             BlockAndTintGetter blockAndTintGetter, BlockPos pos, BlockState state,
             @Nullable BlockPos.MutableBlockPos checkPos) {
 
         if (!ClientConfig.Renderer.snowInFence.get()) return null;
+        if (!(blockAndTintGetter instanceof IMapSlice mapSlice)
+                || ClientCon.getUseLevel() == null) return null;
+        if (blockAndTintGetter.getBrightness(LightLayer.SKY, pos) == 0) {
+            return null;
+        }
 
         if (checkPos == null) checkPos = posToMutable(pos);
         else checkPos.set(pos.getX(), pos.getY(), pos.getZ());
 
-        checkPos.setY(pos.getY() + 1);
-        if (blockAndTintGetter.getBrightness(LightLayer.SKY, checkPos) == 0) {
-            return null;
-        }
+        //checkPos.move(Direction.UP);
 
         if (state.isAir() || !state.getFluidState().isEmpty() || state.is(EclipticBlockTags.SNOW_LAYER_CANNOT_SURVIVE_ON))
             return null;
+        if (!maySnowyAt(ClientCon.getUseLevel(), mapSlice, state, pos, ClientCon.getUseLevel().getRandom(), state.getSeed(pos))) {
+            return null;
+        }
 
         int snowNearbyCount = 0;
+        int airNeighborCount = 0;
         int minLayers = 8;
 
-        for (Direction dir : SNOW_LAYER_DIRECTIONS_TO_CHECK) {
-            checkPos.set(pos.getX() + dir.getStepX(), pos.getY() + dir.getStepY(), pos.getZ() + dir.getStepZ());
+        var directions = ClientConfig.Renderer.snowInFenceDirection.get() ?
+                SNOW_LAYER_DIRECTIONS_TO_CHECK_8 : SNOW_LAYER_DIRECTIONS_TO_CHECK_4;
+
+        for (var dir : directions) {
+            checkPos.set(pos.getX() + dir.getX(), pos.getY() + dir.getY(), pos.getZ() + dir.getZ());
             BlockState neighborState = blockAndTintGetter.getBlockState(checkPos);
+
+            if (neighborState.isAir()) {
+                checkPos.move(Direction.DOWN);
+                if (!blockAndTintGetter.getBlockState(checkPos).blocksMotion()) {
+                    airNeighborCount++;
+                }
+                continue;
+            }
 
             int currentNeighborLayers = 0;
             if (neighborState.getBlock() == Blocks.SNOW) {
@@ -1007,7 +1041,10 @@ public class ExtraModelManager {
             }
         }
 
-        if (snowNearbyCount >= 2) {
+        int baseRequired = ClientConfig.Renderer.snowInFenceCount.get();
+        int dynamicRequired = Math.max(1, baseRequired - airNeighborCount);
+
+        if (snowNearbyCount >= dynamicRequired) {
             if (state.isCollisionShapeFullBlock(blockAndTintGetter, pos)
                     || state.isFaceSturdy(blockAndTintGetter, pos, Direction.DOWN)) return null;
 
@@ -1021,7 +1058,26 @@ public class ExtraModelManager {
     private static BakedModel getSnowLayerModel(int layers) {
         int clampedLayers = Mth.clamp(layers, 1, 8);
         BlockState snowState = Blocks.SNOW.defaultBlockState().setValue(SnowLayerBlock.LAYERS, clampedLayers);
-        return models.get(BlockModelShaper.stateToModelLocation(snowState));
+        return Minecraft.getInstance().getModelManager().getBlockModelShaper().getBlockModel(snowState);
+    }
+
+
+    public static BlockState shouldBlockAsSnowyState(BlockState state, BlockAndTintGetter blockAndTintGetter, BlockPos.MutableBlockPos mutableBlockPos) {
+        if (!ClientConfig.Renderer.snowInFence.get()) return state;
+        //if (!state.blocksMotion() || !state.getFluidState().isEmpty())
+        //    return state;
+        if (!(state.getBlock() instanceof SnowyDirtBlock)) return state;
+        int y = mutableBlockPos.getY();
+        mutableBlockPos.setY(y + 1);
+        BlockState blockState = blockAndTintGetter.getBlockState(mutableBlockPos);
+        BakedModel bm = ExtraModelManager.shouldRenderedWithSnowInside(blockAndTintGetter, mutableBlockPos, blockState, null);
+        if (bm != null) {
+            if (state.hasProperty(BlockStateProperties.SNOWY)) {
+                state = state.setValue(BlockStateProperties.SNOWY, true);
+            }
+        }
+        mutableBlockPos.setY(y);
+        return state;
     }
 
     public static RenderType getRenderType(BlockState state) {

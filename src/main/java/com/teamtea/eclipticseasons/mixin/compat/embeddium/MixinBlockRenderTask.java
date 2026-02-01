@@ -3,6 +3,7 @@ package com.teamtea.eclipticseasons.mixin.compat.embeddium;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;
+import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import com.teamtea.eclipticseasons.api.misc.client.IExtraRendererContextOwner;
 import com.teamtea.eclipticseasons.client.core.ExtraRendererContext;
 import com.teamtea.eclipticseasons.client.core.ExtraModelManager;
@@ -126,6 +127,26 @@ public abstract class MixinBlockRenderTask {
             rendererHolder.resetAll();
         }
         return original;
+    }
+
+    @Inject(
+            remap = false,
+            method = "execute(Lme/jellysquid/mods/sodium/client/render/chunk/compile/ChunkBuildContext;Lme/jellysquid/mods/sodium/client/util/task/CancellationToken;)Lme/jellysquid/mods/sodium/client/render/chunk/compile/ChunkBuildOutput;",
+            at = @At(value = "INVOKE",
+                    // shift = At.Shift.AFTER,
+                    target = "Lme/jellysquid/mods/sodium/client/render/chunk/compile/pipeline/BlockRenderCache;getBlockModels()Lnet/minecraft/client/renderer/block/BlockModelShaper;")
+    )
+    private void eclipticseasons$renderSnowLayerIn_below(
+            ChunkBuildContext buildContext,
+            CancellationToken cancellationToken,
+            CallbackInfoReturnable<ChunkBuildOutput> cir,
+            @Local BlockRenderContext ctx,
+            @Local(ordinal = 0) BlockPos.MutableBlockPos mutableBlockPos,
+            @Local LocalRef<BlockState> stateLocalRef
+    ) {
+        var state = ExtraModelManager.shouldBlockAsSnowyState(stateLocalRef.get(), ctx.localSlice(), mutableBlockPos);
+        if (state != stateLocalRef.get())
+            stateLocalRef.set(state);
     }
 
     @Inject(
