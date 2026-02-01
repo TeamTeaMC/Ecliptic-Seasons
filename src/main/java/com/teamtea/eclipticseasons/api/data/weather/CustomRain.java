@@ -5,6 +5,8 @@ import com.teamtea.eclipticseasons.api.constant.climate.FlatRain;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.constant.solar.TimePeriod;
 import com.teamtea.eclipticseasons.api.data.weather.special_effect.WeatherEffect;
+import lombok.Data;
+import lombok.Getter;
 import net.minecraft.core.Holder;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.valueproviders.IntProvider;
@@ -18,7 +20,21 @@ public record CustomRain(int ordinal,
                          List<Weather> weatherList,
                          Optional<BiomeRain> defaultWeather,
                          float rainChance,
-                         float thunderChance) implements BiomeRain {
+                         float thunderChance,
+                         float snowAccumulationSpeed,
+                         float snowMeltSpeed) implements BiomeRain {
+    @Override
+    public float getSnowAccumulationSpeed() {
+        return defaultWeather.map(BiomeRain::getSnowAccumulationSpeed)
+                .orElseGet(this::snowAccumulationSpeed);
+    }
+
+    @Override
+    public float getSnowMeltSpeed() {
+        return defaultWeather.map(BiomeRain::getSnowMeltSpeed)
+                .orElseGet(this::snowMeltSpeed);
+    }
+
     @Override
     public float getRainChance() {
         return defaultWeather.map(BiomeRain::getRainChance)
@@ -101,20 +117,24 @@ public record CustomRain(int ordinal,
             float thunderChance,
             List<TimePeriod> timePeriod,
             Optional<Holder<WeatherEffect>> specialEffect,
-            int weight) implements BiomeRain {
+            int weight,
+            float snowAccumulationSpeed,
+            float snowMeltSpeed) implements BiomeRain {
 
         public static Weather of(SolarTerm solarTerm, CustomRainBuilder.Weather weather) {
             return new Weather(
                     solarTerm.ordinal(),
-                    weather.rain(),
-                    weather.rainDelay(),
-                    weather.thunder(),
-                    weather.thunderDelay(),
-                    weather.rainChance(),
-                    weather.thunderChance(),
-                    weather.timePeriod(),
-                    weather.specialEffect(),
-                    weather.getWeight()
+                    weather.getRain(),
+                    weather.getRainDelay(),
+                    weather.getThunder(),
+                    weather.getThunderDelay(),
+                    weather.getRainChance(),
+                    weather.getThunderChance(),
+                    weather.getTimePeriod(),
+                    weather.getSpecialEffect(),
+                    weather.getWeight(),
+                    weather.getSnowAccumulationSpeed(),
+                    weather.getSnowMeltSpeed()
             );
         }
 
@@ -126,6 +146,16 @@ public record CustomRain(int ordinal,
         @Override
         public float getRainChance() {
             return rainChance();
+        }
+
+        @Override
+        public float getSnowAccumulationSpeed() {
+            return snowAccumulationSpeed();
+        }
+
+        @Override
+        public float getSnowMeltSpeed() {
+            return snowMeltSpeed();
         }
 
         @Override

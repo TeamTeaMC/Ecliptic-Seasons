@@ -20,7 +20,6 @@ import net.minecraft.world.level.biome.Biome;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -46,7 +45,9 @@ public record CustomRainBuilder(
                                             weatherList,
                                             weatherList.size() == 1 && weatherList.getFirst().timePeriod().isEmpty() ? Optional.of(weatherList.getFirst()) : Optional.empty(),
                                             (float) weatherList.stream().mapToDouble(CustomRain.Weather::getRainChance).average().orElse(0),
-                                            (float) weatherList.stream().mapToDouble(CustomRain.Weather::getThunderChance).average().orElse(0)
+                                            (float) weatherList.stream().mapToDouble(CustomRain.Weather::getThunderChance).average().orElse(0),
+                                            (float) weatherList.stream().mapToDouble(CustomRain.Weather::getSnowAccumulationSpeed).average().orElse(1),
+                                            (float) weatherList.stream().mapToDouble(CustomRain.Weather::getSnowMeltSpeed).average().orElse(1)
                                     );
                                 },
                                 (a, b) -> b,
@@ -59,53 +60,18 @@ public record CustomRainBuilder(
     @Data
     public static class Weather {
 
-
-        public Optional<IntProvider> rain() {
-            return rain;
-        }
-
-        public Optional<IntProvider> rainDelay() {
-            return rainDelay;
-        }
-
-        public Optional<IntProvider> thunder() {
-            return thunder;
-        }
-
-        public Optional<IntProvider> thunderDelay() {
-            return thunderDelay;
-        }
-
-        public float rainChance() {
-            return rainChance;
-        }
-
-        public float thunderChance() {
-            return thunderChance;
-        }
-
-        public List<TimePeriod> timePeriod() {
-            return timePeriod;
-        }
-
-        public Optional<Holder<WeatherEffect>> specialEffect() {
-            return specialEffect;
-        }
-
         public static final Codec<Weather> CODEC = RecordCodecBuilder.create(ins -> ins.group(
-                // Codec.FLOAT.fieldOf("rain_level").forGetter(Weather::rainLevel),
-                // Codec.FLOAT.fieldOf("thunder_level").forGetter(Weather::thunderLevel),
-                // Biome.Precipitation.CODEC.fieldOf("precipitation").forGetter(Weather::precipitation),
-                // WeatherManager.SnowStatus.CODEC.fieldOf("snow_status").forGetter(Weather::snowStatus),
-                IntProvider.POSITIVE_CODEC.optionalFieldOf("rain").forGetter(Weather::rain),
-                IntProvider.POSITIVE_CODEC.optionalFieldOf("rain_delay").forGetter(Weather::rainDelay),
-                IntProvider.POSITIVE_CODEC.optionalFieldOf("thunder").forGetter(Weather::thunder),
-                IntProvider.POSITIVE_CODEC.optionalFieldOf("thunder_delay").forGetter(Weather::thunderDelay),
-                Codec.FLOAT.fieldOf("rain_chance").forGetter(Weather::rainChance),
-                Codec.FLOAT.optionalFieldOf("thunder_chance", 0f).forGetter(Weather::thunderChance),
-                StringRepresentable.fromEnum(TimePeriod::collectValues).listOf().optionalFieldOf("time_periods", List.of()).forGetter(Weather::timePeriod),
-                CodecUtil.holderCodec(ESRegistries.WEATHER_EFFECT).optionalFieldOf("special_effect").forGetter(Weather::specialEffect),
-                Codec.intRange(1, Integer.MAX_VALUE).optionalFieldOf("weight", 10).forGetter(Weather::getWeight)
+                IntProvider.POSITIVE_CODEC.optionalFieldOf("rain").forGetter(Weather::getRain),
+                IntProvider.POSITIVE_CODEC.optionalFieldOf("rain_delay").forGetter(Weather::getRainDelay),
+                IntProvider.POSITIVE_CODEC.optionalFieldOf("thunder").forGetter(Weather::getThunder),
+                IntProvider.POSITIVE_CODEC.optionalFieldOf("thunder_delay").forGetter(Weather::getThunderDelay),
+                Codec.FLOAT.fieldOf("rain_chance").forGetter(Weather::getRainChance),
+                Codec.FLOAT.optionalFieldOf("thunder_chance", 0f).forGetter(Weather::getThunderChance),
+                StringRepresentable.fromEnum(TimePeriod::collectValues).listOf().optionalFieldOf("time_periods", List.of()).forGetter(Weather::getTimePeriod),
+                CodecUtil.holderCodec(ESRegistries.WEATHER_EFFECT).optionalFieldOf("special_effect").forGetter(Weather::getSpecialEffect),
+                Codec.intRange(1, Integer.MAX_VALUE).optionalFieldOf("weight", 10).forGetter(Weather::getWeight),
+                Codec.floatRange(0, 100).optionalFieldOf("snow_accumulation_speed", 1f).forGetter(Weather::getSnowAccumulationSpeed),
+                Codec.floatRange(0, 100).optionalFieldOf("snow_melt_speed", 1f).forGetter(Weather::getSnowMeltSpeed)
         ).apply(ins, Weather::new));
 
         @Builder.Default
@@ -126,6 +92,10 @@ public record CustomRainBuilder(
         private final Optional<Holder<WeatherEffect>> specialEffect = Optional.empty();
         @Builder.Default
         private final int weight = 10;
+        @Builder.Default
+        private final float snowAccumulationSpeed = 1;
+        @Builder.Default
+        private final float snowMeltSpeed = 1;
 
     }
 

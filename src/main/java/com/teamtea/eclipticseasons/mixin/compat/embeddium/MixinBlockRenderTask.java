@@ -127,9 +127,28 @@ public abstract class MixinBlockRenderTask {
         return original;
     }
 
-
     @Inject(
             remap = false,
+            method = "execute(Lorg/embeddedt/embeddium/impl/render/chunk/compile/ChunkBuildContext;Lorg/embeddedt/embeddium/impl/util/task/CancellationToken;)Lorg/embeddedt/embeddium/impl/render/chunk/compile/ChunkBuildOutput;",
+            at = @At(value = "INVOKE",
+                    // shift = At.Shift.AFTER,
+                    target = "Lorg/embeddedt/embeddium/impl/render/chunk/compile/pipeline/BlockRenderCache;getBlockModels()Lnet/minecraft/client/renderer/block/BlockModelShaper;")
+    )
+    private void eclipticseasons$renderSnowLayerIn_below(
+            ChunkBuildContext buildContext,
+            CancellationToken cancellationToken,
+            CallbackInfoReturnable<ChunkBuildOutput> cir,
+            @Local BlockRenderContext ctx,
+            @Local(ordinal = 0) BlockPos.MutableBlockPos mutableBlockPos,
+            @Local LocalRef<BlockState> stateLocalRef
+    ) {
+        var state = ExtraModelManager.shouldBlockAsSnowyState(stateLocalRef.get(), ctx.localSlice(), mutableBlockPos);
+        if (state != stateLocalRef.get())
+            stateLocalRef.set(state);
+    }
+
+    @Inject(
+            //remap = false,
             method = "execute(Lorg/embeddedt/embeddium/impl/render/chunk/compile/ChunkBuildContext;Lorg/embeddedt/embeddium/impl/util/task/CancellationToken;)Lorg/embeddedt/embeddium/impl/render/chunk/compile/ChunkBuildOutput;",
             at = @At(value = "INVOKE",
                     // shift = At.Shift.AFTER,

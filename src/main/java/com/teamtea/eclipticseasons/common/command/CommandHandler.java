@@ -260,7 +260,7 @@ public class CommandHandler {
             boolean found = false;
             for (WeatherManager.BiomeWeather biomeWeather : levelBiomeWeather) {
                 if (result.test(biomeWeather.biomeHolder)) {
-                    biomeWeather.snowDepth = (byte) depth;
+                    biomeWeather.setSnowDepth((byte) depth);
                     biomeWeather.lastRainTime = level.getGameTime();
                     found = true;
                 }

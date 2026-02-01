@@ -1,15 +1,13 @@
 package com.teamtea.eclipticseasons.client.debug;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.teamtea.eclipticseasons.api.constant.biome.Humidity;
-import com.teamtea.eclipticseasons.api.constant.climate.BiomeRain;
+import com.teamtea.eclipticseasons.api.constant.climate.WeatherMode;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
-import com.teamtea.eclipticseasons.common.core.SolarHolders;
+import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
-import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
+import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -18,110 +16,130 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.level.Level;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.biome.Biome;
-import org.lwjgl.opengl.GL11;
 
-import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 public final class DebugInfoRenderer {
     private final Minecraft mc;
-    private long delay = 0;
-    private net.minecraft.core.Holder<Biome> biomeHolder;
+    private int delay = 0;
+    private Holder<Biome> cachedBiome;
+    private Holder<Biome> e_cachedBiome;
 
     public DebugInfoRenderer(Minecraft mc) {
-
         this.mc = mc;
     }
 
-    public void renderStatusBar(GuiGraphics matrixStack, int screenWidth, int screenHeight, ClientLevel clientLevel, LocalPlayer player, String solar, long dayTime, double env, int solarTime) {
-
+    public void renderStatusBar(GuiGraphics guiGraphics, int screenWidth, int screenHeight, ClientLevel level, LocalPlayer player, String solarDay, long dayTime, double envTemp, int solarTime) {
         BlockPos pos = player.blockPosition();
 
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        // RenderSystem.enableAlphaTest();
-        RenderSystem.enableBlend();
-        RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        if (delay <= 0) {
+            cachedBiome = level.getBiome(pos);
+            e_cachedBiome = MapChecker.getSurfaceBiome(level, pos);
+            delay = 20;
+        } else {
+            delay--;
+        }
 
-        String solarS = "Solar Terms Day: " + solar;
-        String dayS = "Day Time: " + dayTime;
-        String envS = "Env Temp: " + env;
-        String solarTimeS = "Solar Time: " + solarTime;
-        //Holder<Biome> biome = clientLevel.getBiome(player.getOnPos());
+        List<String> infoLines = new ArrayList<>();
+        infoLines.add("§6[Ecliptic Debug]§r");
+        infoLines.add(String.format("Solar Day: §e%s§r", solarDay));
+        infoLines.add(String.format("Solar Time: §b%d§r | Day Time: %d", solarTime, dayTime));
+        infoLines.add(String.format("Humidity: §9%.2f§r", EclipticUtil.getHumidityLevelAt(level, pos)));
+        infoLines.add(String.format("Rainfall: %s | Temp: §a%.2f§r", EclipticUtil.getRainfallAt(level, pos).getTranslation().getString(), envTemp));
 
-        String dS = "Downfall: " + EclipticUtil.getRainfallAt(clientLevel, pos);
-        String jS = "Humidity: " + EclipticUtil.getHumidityAt(clientLevel, pos) + "\n" + EclipticUtil.getHumidityLevelAt(player.level(), player.blockPosition());
-        String ys = "y: " + MapChecker.getHeight(clientLevel, pos);
+        WeatherManager.BiomeWeather biomeWeather = WeatherManager.getBiomeWeather(level, cachedBiome);
+        if (biomeWeather != null) {
+            SolarTerm currentTerm = ClientCon.nowSolarTerm;
+            infoLines.add("");
+            infoLines.add("Biome: " + getBiomeName(cachedBiome) + " (%s)".formatted(cachedBiome.unwrapKey().map(ResourceKey::location).orElse(null)));
+            infoLines.add("Surface Biome: " + (e_cachedBiome != null ? (getBiomeName(e_cachedBiome) + " (%s)".formatted(cachedBiome.unwrapKey().map(ResourceKey::location).orElse(null))) : "Unknown"));
+            infoLines.add("Snow Term: " + SolarTerm.getSnowTerm(biomeWeather.biomeHolder.value(), false, EclipticUtil.getSnowTempChange(level)));
+            infoLines.add("Solar Term:§r §d" + currentTerm.getTranslation().getString() + "§r");
+            infoLines.add(String.format("R/C/T Time: %d / %d / %d", biomeWeather.rainTime, biomeWeather.clearTime, biomeWeather.thunderTime));
+            infoLines.add("Snow Depth: " + biomeWeather.getSnowDepth());
+            infoLines.add("Map Height (y): " + MapChecker.getHeight(level, pos));
 
-        int index = 0;
+            infoLines.add("");
+            //infoLines.add("§l[Weather Logic]");
 
-        drawInfo(matrixStack, screenWidth, screenHeight, solarS, index++);
-        drawInfo(matrixStack, screenWidth, screenHeight, dayS, index++);
-        drawInfo(matrixStack, screenWidth, screenHeight, envS, index++);
-        drawInfo(matrixStack, screenWidth, screenHeight, dS, index++);
-        drawInfo(matrixStack, screenWidth, screenHeight, jS, index++);
-        drawInfo(matrixStack, screenWidth, screenHeight, solarTimeS, index++);
-        drawInfo(matrixStack, screenWidth, screenHeight, ys, index++);
-
-        Level level1;
-
-        // level1 = level1 != null ? level1 : Minecraft.getInstance().level;
-        level1 = Minecraft.getInstance().level;
-        {
-            Holder<Biome> standBiome =
-                    biomeHolder == null || delay == 0 ?
-                            level1.getBiome(player.getOnPos()) : biomeHolder;
-            if (delay == 0) {
-                delay = 100;
+            WeatherMode weatherMode = EclipticUtil.getWeatherMode(level);
+            Holder<Biome> owner = null;
+            if (weatherMode == WeatherMode.REGION) {
+                owner = BiomeClimateManager.getWeatherRegionOnwer(biomeWeather.biomeHolder.value());
             }
-            WeatherManager.BiomeWeather biomeWeather = WeatherManager.getBiomeWeather(level1, standBiome);
-            if (biomeWeather != null) {
-                SolarTerm solarTerm = ClientCon.nowSolarTerm;
-                String biomesS = "Biome: " + Component.translatable(Util.makeDescriptionId("biome", ResourceLocation.parse(standBiome.getRegisteredName()))).getString();
-                String biomesSS = "E-Biome: " + Component.translatable(Util.makeDescriptionId("biome", ResourceLocation.parse(MapChecker.getSurfaceBiome(level1, pos).getRegisteredName()))).getString();
 
-                String solarTermS = "Solar Term: " + solarTerm.getTranslation().getString();
-                String biomeRainS = "Biome Rain: " + biomeWeather.getBiomeRain();
-                String snowTermS = "Snow Term: " + SolarTerm.getSnowTerm(biomeWeather.biomeHolder.value(), false,EclipticUtil.getSnowTempChange(level1));
-                drawInfo(matrixStack, screenWidth, screenHeight, "", index++);
-                drawInfo(matrixStack, screenWidth, screenHeight, biomesS, index++);
-                drawInfo(matrixStack, screenWidth, screenHeight, biomesSS, index++);
+            Holder<Biome> targetBiome = (owner != null) ? owner : e_cachedBiome;
+            boolean isSlave = owner != null && !owner.equals(e_cachedBiome);
 
-                drawInfo(matrixStack, screenWidth, screenHeight, solarTermS, index++);
-                drawInfo(matrixStack, screenWidth, screenHeight, biomeRainS, index++);
-                drawInfo(matrixStack, screenWidth, screenHeight, snowTermS, index++);
+            if (!EclipticUtil.hasLocalWeather(level)) {
+                infoLines.add("Mode: §cVanilla Sync§r");
+            } else {
 
-                drawInfo(matrixStack, screenWidth, screenHeight, "", index++);
 
-                String rainTimeS = "Rain Time: " + biomeWeather.rainTime;
-                String clearTimeS = "Clear Time: " + biomeWeather.clearTime;
-                String thunderTimeS = "Thunder Time: " + biomeWeather.thunderTime;
-                String snowDepthS = "Snow Depth: " + biomeWeather.snowDepth;
+                WeatherManager.BiomeWeather weatherTarget = WeatherManager.getBiomeWeather(level, targetBiome);
+                int size = Optional.ofNullable(WeatherManager.getBiomeList(level)).map(List::size).orElse(64);
+                if (weatherTarget != null) {
+                    infoLines.add("Biome Rain: " + weatherTarget.getBiomeRain().toString());
+                    if (isSlave) {
+                        infoLines.add("Owner: §e" + getBiomeName(owner) + "§r");
+                    }
+                    //if (biomeWeather.shouldRain()) {
+                    //    infoLines.add("Rain: §aRaining§r");
+                    //} else
+                    {
+                        float downfall = EclipticUtil.getDownfallFloatConstant(currentTerm, targetBiome.value(), false);
+                        float rainWeight = weatherTarget.getBiomeRain().getRainChance()
+                                * Math.max(0.01f, downfall)
+                                * (CommonConfig.Weather.rainChanceMultiplier.get() / 100f);
+                        infoLines.add(String.format("Rain Chance: §b%.2f%%§r", Math.min(rainWeight * 100, 100)));
+                    }
 
-                drawInfo(matrixStack, screenWidth, screenHeight, rainTimeS, index++);
-                drawInfo(matrixStack, screenWidth, screenHeight, clearTimeS, index++);
-                drawInfo(matrixStack, screenWidth, screenHeight, thunderTimeS, index++);
-                drawInfo(matrixStack, screenWidth, screenHeight, snowDepthS, index++);
+                    //if (biomeWeather.shouldThunder()) {
+                    //    infoLines.add("Thunder: §eThundering§r");
+                    //} else
+                    if (biomeWeather.shouldRain()) {
+                        float thunderWeight = weatherTarget.getBiomeRain().getThunderChance()
+                                * (CommonConfig.Weather.thunderChanceMultiplier.get() / 100f)
+                                * size / 3000f;
+                        infoLines.add(String.format("Thunder Chance: §e%.2f%%§r", Math.min(thunderWeight * 10000, 100)));
+                    } else {
+                        infoLines.add("Thunder: §8Waiting Rain§r");
+                    }
+                }
             }
         }
 
-
-        RenderSystem.enableBlend();
-        // RenderSystem.disableAlphaTest();
-        // mc.getTextureManager().bindForSetup(OverlayEventHandler.DEFAULT);
-
+        renderList(guiGraphics, infoLines);
     }
 
-    private void drawInfo(GuiGraphics matrixStack, int screenWidth, int screenHeight, String s, int index) {
-        if (s.isEmpty()) return;
-        // matrixStack.fill(screenWidth / 2 - mc.font.width(s) / 2 - 2,
-        //         index * 9 + 3,
-        //         screenWidth / 2 + mc.font.width(s) / 2 + 2,
-        //         index * 9 + 3 + mc.font.lineHeight,
-        //         Color.decode("#baccd9").getRGB());
-        matrixStack.drawString(mc.font, s, screenWidth / 2 - mc.font.width(s) / 2, index * 9 + 3, 0xFFFFFF);
+    private void renderList(GuiGraphics guiGraphics, List<String> lines) {
+        int x = 6;
+        int y = 6;
+        int bgPadding = 2;
+        int alphaBackground = 0x90000000;
+
+        for (String line : lines) {
+            if (line.isEmpty()) {
+                y += 5;
+                continue;
+            }
+
+            int textWidth = mc.font.width(line);
+            int textHeight = mc.font.lineHeight;
+
+            guiGraphics.fill(x - bgPadding, y - bgPadding + 1, x + textWidth + bgPadding, y + textHeight, alphaBackground);
+
+            guiGraphics.drawString(mc.font, line, x, y, 0xFFFFFF, true);
+
+            y += textHeight + 2;
+        }
     }
 
+    private String getBiomeName(Holder<Biome> biomeHolder) {
+        return Component.translatable(Util.makeDescriptionId("biome", biomeHolder.unwrapKey().map(ResourceKey::location).orElse(null))).getString();
+    }
 }

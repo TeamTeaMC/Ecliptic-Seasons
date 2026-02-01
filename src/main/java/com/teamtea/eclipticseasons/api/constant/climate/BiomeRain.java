@@ -30,6 +30,14 @@ public interface BiomeRain {
         return DEFAULT_THUNDER_CHANCE;
     }
 
+    public default float getSnowAccumulationSpeed() {
+        return 1;
+    }
+
+    public default float getSnowMeltSpeed() {
+        return 1;
+    }
+
     public default SolarTerm getSolarTerm() {
         return SolarTerm.collectValues()[this.ordinal()];
     }

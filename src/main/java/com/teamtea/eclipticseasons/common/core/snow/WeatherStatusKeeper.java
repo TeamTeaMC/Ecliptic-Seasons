@@ -8,20 +8,13 @@ import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.api.util.codec.CodecUtil;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.core.map.BiomeHolder;
-import com.teamtea.eclipticseasons.common.core.map.ChunkInfoMap;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
-import com.teamtea.eclipticseasons.common.registry.AttachmentRegistry;
-import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntIntImmutablePair;
 import it.unimi.dsi.fastutil.ints.IntLongMutablePair;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
-import it.unimi.dsi.fastutil.longs.Long2IntLinkedOpenHashMap;
-import it.unimi.dsi.fastutil.longs.LongArrayList;
-import it.unimi.dsi.fastutil.longs.LongIterator;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ReferenceLinkedOpenHashSet;
 import lombok.*;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
@@ -30,14 +23,9 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
-import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.LevelChunk;
-import net.minecraft.world.level.levelgen.Heightmap;
 import net.neoforged.neoforge.attachment.IAttachmentHolder;
 import net.neoforged.neoforge.attachment.IAttachmentSerializer;
 import org.jetbrains.annotations.NotNull;
@@ -108,7 +96,7 @@ public class WeatherStatusKeeper {
             for (Holder<Biome> biomeHolder : biomeUse) {
                 WeatherManager.BiomeWeather biomeWeather = WeatherManager.getBiomeWeather(serverLevel, biomeHolder);
                 if (biomeWeather == null) continue;
-                int snowDepth = biomeWeather.snowDepth;
+                int snowDepth = biomeWeather.getSnowDepth();
                 long lastRainTime = biomeWeather.lastRainTime;
                 IntLongMutablePair orDefault = snowDepthRecord.getOrDefault(biomeHolder, null);
                 if (orDefault == null || orDefault.leftInt() != snowDepth || orDefault.rightLong() != lastRainTime) {
@@ -154,7 +142,7 @@ public class WeatherStatusKeeper {
                     for (Holder<Biome> holder : biomeDetect) {
                         WeatherManager.BiomeWeather biomeWeather = WeatherManager.getBiomeWeather(level, holder);
                         if (biomeWeather != null) {
-                            biomeSnowyUpdate.put(holder, IntIntImmutablePair.of(biomeWeather.snowDepth, 0));
+                            biomeSnowyUpdate.put(holder, IntIntImmutablePair.of(biomeWeather.getSnowDepth(), 0));
                         }
                     }
                 }
@@ -164,7 +152,7 @@ public class WeatherStatusKeeper {
                 snowDepthRecord.forEach((biome, pair) -> {
                     WeatherManager.BiomeWeather biomeWeather = WeatherManager.getBiomeWeather(level, biome);
                     if (biomeWeather == null) return;
-                    int snowDepthAtBiome = biomeWeather.snowDepth;
+                    int snowDepthAtBiome = biomeWeather.getSnowDepth();
                     long lastRainTime = biomeWeather.lastRainTime;
                     int snowDepthIncrease = snowDepthAtBiome - pair.leftInt();
                     int offsetAbs = Mth.abs(snowDepthIncrease);

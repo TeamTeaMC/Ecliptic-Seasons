@@ -25,7 +25,7 @@ repositories {
         dirs("libs")
     }
     flatDir {
-        dirs("sub")
+        dirs("zlib")
     }
     maven {
         url "https://cursemaven.com"
@@ -187,7 +187,7 @@ dependencies {
     implementation "curse.maven:jade-324717:6291517"
     compileOnly("curse.maven:the-one-probe-245211:6106998")
 
-    compileOnly("sub:Sub:1.20.1-forge-0.0")
+    compileOnly("zlib:Sub:1.20.1-forge-0.0")
 //    runtimeOnly("curse.maven:the-one-probe-245211:6106998")
 
     compileOnly("curse.maven:embeddium-908741:5556146")

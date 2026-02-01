@@ -1,6 +1,5 @@
 package com.teamtea.eclipticseasons.common.network;
 
-import com.teamtea.eclipticseasons.api.constant.climate.FlatRain;
 import com.teamtea.eclipticseasons.api.data.weather.special_effect.WeatherEffect;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeRainDispatcher;
 import com.teamtea.eclipticseasons.common.registry.AttachmentRegistry;
@@ -11,15 +10,12 @@ import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.core.map.BiomeHolder;
-import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.core.map.SnowyRemover;
 import com.teamtea.eclipticseasons.common.network.message.*;
 import com.teamtea.eclipticseasons.common.registry.ESRegistries;
 import com.teamtea.eclipticseasons.config.ClientConfig;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.client.Minecraft;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.SectionPos;
 import net.minecraft.network.chat.Component;
@@ -29,13 +25,10 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.chunk.status.ChunkStatus;
-import net.minecraft.world.level.levelgen.Heightmap;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class NetworkUtil {
 
@@ -86,11 +79,11 @@ public class NetworkUtil {
                         ClientWeatherChecker.addLastRainyBiome(biomeWeather.biomeHolder.value(), (long) (1 / ClientWeatherChecker.getRate()));
                     }
                     if (!update && biomeWeather.rainTime + biomeWeather.clearTime + biomeWeather.thunderTime > 0)
-                        update = biomeWeather.snowDepth == biomeWeatherMessage.snowDepth[biomeWeather.id];
+                        update = biomeWeather.getSnowDepth() == biomeWeatherMessage.snowDepth[biomeWeather.id];
                     biomeWeather.rainTime = biomeWeatherMessage.rain[biomeWeather.id] * 10000;
                     biomeWeather.clearTime = biomeWeatherMessage.clear[biomeWeather.id] * 10000;
                     biomeWeather.thunderTime = biomeWeatherMessage.thuder[biomeWeather.id] * 10000;
-                    biomeWeather.snowDepth = biomeWeatherMessage.snowDepth[biomeWeather.id];
+                    biomeWeather.setSnowDepth(biomeWeatherMessage.snowDepth[biomeWeather.id]);
                     biomeWeather.effect = weatherEffects.getHolder(biomeWeatherMessage.special[biomeWeather.id]).orElse(null);
 
                     biomeWeather.setBiomeRain(BiomeRainDispatcher.getBiomeRain(

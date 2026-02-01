@@ -85,6 +85,8 @@ public class ClientConfig {
 
         public static ModConfigSpec.BooleanValue snowUnderFence;
         public static ModConfigSpec.BooleanValue snowInFence;
+        public static ModConfigSpec.IntValue snowInFenceCount;
+        public static ModConfigSpec.BooleanValue snowInFenceDirection;
 
         private static void load(ModConfigSpec.Builder builder) {
             builder.push("Renderer");
@@ -106,6 +108,10 @@ public class ClientConfig {
                     .define("SnowUnderShadow", false);
             snowInFence = builder.comment("[Sodium/Embeddium] Enables seamless snow accumulation inside non-full blocks like fences and vegetation by rendering a matching virtual snow layer.")
                     .define("SnowInFence", true);
+            snowInFenceCount = builder.comment("[Sodium/Embeddium] How much snow is needed around it?")
+                    .defineInRange("SnowInFenceCount", 2, 1, 8);
+            snowInFenceDirection = builder.comment("[Sodium/Embeddium] Use eight directions for inspection instead of four.")
+                    .define("SnowInFenceDirection", false);
 
             seasonalGrassColorChange = builder.comment("Changes grass and leaf colors with seasons visually.")
                     .define("SeasonalGrassColorChange", true);
