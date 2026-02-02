@@ -121,7 +121,8 @@ public class EclipticUtil {
     public static WeatherMode getWeatherMode(Level level) {
         if (!useSolarWeather()) return WeatherMode.DEFAULT;
         return MapChecker.isValidDimension(level) ?
-                (CommonConfig.isEnableWeatherRegion() ? WeatherMode.REGION : WeatherMode.BIOME)
+                WeatherMode.REGION
+                //(CommonConfig.isEnableWeatherRegion() ? WeatherMode.REGION : WeatherMode.BIOME)
                 : WeatherMode.DEFAULT;
     }
 

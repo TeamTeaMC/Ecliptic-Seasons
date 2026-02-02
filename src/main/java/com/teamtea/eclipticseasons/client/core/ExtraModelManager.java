@@ -33,7 +33,6 @@ import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.block.BlockModelShaper;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.renderer.texture.SpriteContents;
@@ -1170,7 +1169,8 @@ public class ExtraModelManager {
 
         if (state.isAir() || !state.getFluidState().isEmpty() || state.is(EclipticBlockTags.SNOW_LAYER_CANNOT_SURVIVE_ON))
             return null;
-        if (!maySnowyAt(ClientCon.getUseLevel(), mapSlice, state, pos, ClientCon.getUseLevel().getRandom(), state.getSeed(pos))) {
+        if (ClientConfig.Renderer.snowInFenceOnlySnowy.get()
+                && !maySnowyAt(ClientCon.getUseLevel(), mapSlice, state, pos, ClientCon.getUseLevel().getRandom(), state.getSeed(pos))) {
             return null;
         }
 

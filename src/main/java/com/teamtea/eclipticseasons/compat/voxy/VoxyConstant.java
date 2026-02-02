@@ -57,6 +57,6 @@ public class VoxyConstant {
     }
 
     public static VoxelShape getShape(BlockState blockState) {
-        return Shapes.empty();
+        return Shapes.block();
     }
 }

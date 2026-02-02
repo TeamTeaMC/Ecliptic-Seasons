@@ -76,7 +76,7 @@ public class MixinMinecraftBundle {
         }
     }
 
-    @Mixin(targets = {"net.minecraft.world.level.block.state.BlockBehaviour.BlockStateBase.Cache"})
+    @Mixin(targets = {"net.minecraft.world.level.block.state.BlockBehaviour$BlockStateBase$Cache"})
     public abstract static class MixinVoxyBlockCache {
         @ModifyExpressionValue(
                 method = "<init>",

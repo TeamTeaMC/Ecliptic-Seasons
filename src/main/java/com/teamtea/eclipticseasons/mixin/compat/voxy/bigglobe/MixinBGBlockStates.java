@@ -13,14 +13,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class MixinBGBlockStates {
 
 
-    //@Inject(
-    //        remap = false,
-    //        method = "of",
-    //        at = @At(value = "HEAD"),
-    //        cancellable = true)
-    //private static void eclipticseasons$voxy_bigglobe_of(String name, CallbackInfoReturnable<BlockState> cir) {
-    //    VoxyTool.fixBigGlobeOfBlockStates(name,cir);
-    //}
+    @Inject(
+            remap = false,
+            method = "of",
+            at = @At(value = "HEAD"),
+            cancellable = true)
+    private static void eclipticseasons$voxy_bigglobe_of(String name, CallbackInfoReturnable<BlockState> cir) {
+        VoxyTool.fixBigGlobeOfBlockStates(name,cir);
+    }
 
 
 }

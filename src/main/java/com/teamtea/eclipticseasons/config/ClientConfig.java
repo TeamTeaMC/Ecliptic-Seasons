@@ -2,6 +2,7 @@ package com.teamtea.eclipticseasons.config;
 
 
 import com.teamtea.eclipticseasons.compat.CompatModule;
+import lombok.Getter;
 import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
@@ -32,21 +33,21 @@ public class ClientConfig {
         private static void load(ModConfigSpec.Builder builder) {
             builder.push("Debug");
 
-            debugInfo = builder.comment("Info used for development shown in GUI.")
+            debugInfo = builder.comment("Show development-related metrics in the on-screen display.")
                     .define("DebugInfo", false);
-            smoothSnowyEdges = builder.comment("Render snow edge overlay on neighbors for smoother snowy transitions.")
+            smoothSnowyEdges = builder.comment("Renders decorative snow edges on adjacent blocks for seamless terrain transitions.")
                     .define("SmoothSnowyEdges", false);
-            minChunkCompileWarningTime = builder.comment("If the game takes too long to load a chunk for render, a warning will be shown in the log.")
+            minChunkCompileWarningTime = builder.comment("Sets the threshold (in ms) for chunk compilation before logging a performance warning.")
                     .defineInRange("MinChunkCompileWarningTime", 100, 5, 2000);
 
-            frozenWater = builder.comment("When it snows, surface water will appear covered by a thin ice layer, making it look as if it has frozen.")
+            frozenWater = builder.comment("Visual effect: Surface water appears to be covered by a thin, cosmetic layer of ice.")
                     .define("FrozenWater", false);
-            frozenWaterBreakable = builder.comment("The thin ice formed by freezing water can be easily broken.")
+            frozenWaterBreakable = builder.comment("If true, the thin ice layer on water can be broken by players/entities.")
                     .define("FrozenWaterBreakable", true);
-            frozenWaterCheckLight = builder.comment("Water will not appear frozen under strong light.")
+            frozenWaterCheckLight = builder.comment("Prevents the visual frozen water effect in areas with high light levels.")
                     .define("FrozenWaterCheckLight", true);
 
-            fogWeather = builder.comment("Experimental feature: enables foggy weather during rainfall.")
+            fogWeather = builder.comment("Experimental: Adds a cinematic fog effect during rainfall.")
                     .define("FoggyWeather", false);
 
             builder.pop();
@@ -59,9 +60,9 @@ public class ClientConfig {
 
         private static void load(ModConfigSpec.Builder builder) {
             builder.push("GUI");
-            agriculturalInformation = builder.comment("Displays the season and humidity levels suitable for growing crops.")
+            agriculturalInformation = builder.comment("Show tooltips for ideal seasons and humidity levels on crop items.")
                     .define("AgriculturalInformation", true);
-            itemInformation = builder.comment("Displays the use or source of a item.")
+            itemInformation = builder.comment("Show additional information regarding item usage or origins.")
                     .define("ItemInformation", true);
             builder.pop();
         }
@@ -87,42 +88,46 @@ public class ClientConfig {
         public static ModConfigSpec.BooleanValue snowInFence;
         public static ModConfigSpec.IntValue snowInFenceCount;
         public static ModConfigSpec.BooleanValue snowInFenceDirection;
+        public static ModConfigSpec.BooleanValue snowInFenceOnlySnowy;
 
         private static void load(ModConfigSpec.Builder builder) {
             builder.push("Renderer");
-            forceChunkRenderUpdate = builder.comment("When enabled, chunks will be reloaded regularly to fix rendering glitches, but this may impact performance.")
+            forceChunkRenderUpdate = builder.comment("Periodically force-reloads chunk rendering to fix visual glitches (may impact FPS).")
                     .define("ForceChunkRenderUpdate", true);
-            enhancementChunkRenderUpdate = builder.comment("Enhanced reload, which will refresh all sections periodically.")
+            enhancementChunkRenderUpdate = builder.comment("(ForceChunkRenderUpdate) A more thorough reload that refreshes all chunk sections periodically.")
                     .define("EnhancementChunkRenderUpdate", false);
-            topFaceCulling = builder.comment("Cull the top face if snowy model is applied.")
+            topFaceCulling = builder.comment("Optimized rendering: Cull the top face of a block if it is hidden by a snow model.")
                     .define("CullTopFaceWithSnow", false);
 
-            resetRendererAfterSleep = builder.comment("Whether to reset the renderer after waking up.")
+            resetRendererAfterSleep = builder.comment("Refreshes the renderer state immediately after the player wakes up.")
                     .define("ResetRendererAfterSleep", false);
 
-            useVanillaCheck = builder.comment("Use Minecraft’s default lighting rules to decide if snow should fall.")
+            useVanillaCheck = builder.comment("Use standard Vanilla light/sky rules to determine if snow should fall in a location.")
                     .define("UseVanillaSnowCheck", false);
 
 
-            snowUnderFence = builder.comment("Blocks underneath solid blocks etc. may also be covered with snow.")
+            snowUnderFence = builder.comment("Allow decorative snow overlays to appear under solid blocks (e.g., in shadows or under eaves).")
                     .define("SnowUnderShadow", false);
-            snowInFence = builder.comment("[Sodium/Embeddium] Enables seamless snow accumulation inside non-full blocks like fences and vegetation by rendering a matching virtual snow layer.")
+            snowInFence = builder.comment("[Sodium/Embeddium] Renders a virtual snow layer inside fences and tall grass for a seamless look.")
                     .define("SnowInFence", true);
-            snowInFenceCount = builder.comment("[Sodium/Embeddium] How much snow is needed around it?")
+            snowInFenceCount = builder.comment("[Sodium/Embeddium] Minimum number of adjacent snow-covered blocks required to trigger the effect.")
                     .defineInRange("SnowInFenceCount", 2, 1, 8);
-            snowInFenceDirection = builder.comment("[Sodium/Embeddium] Use eight directions for inspection instead of four.")
+            snowInFenceDirection = builder.comment("[Sodium/Embeddium] Check all eight surrounding directions instead of just the cardinal four.")
                     .define("SnowInFenceDirection", false);
+            snowInFenceOnlySnowy = builder.comment("[Sodium/Embeddium] Render snow layers inside snow-connected fences only when in a snowy state.")
+                    .define("SnowInFenceOnlySnowy", true);
 
-            seasonalGrassColorChange = builder.comment("Changes grass and leaf colors with seasons visually.")
+
+            seasonalGrassColorChange = builder.comment("Apply seasonal color shifts to grass and leaf textures.")
                     .define("SeasonalGrassColorChange", true);
-            seasonalColorChangeExtend = builder.comment("Birch, spruce, and mangrove leaves colors also have seasonal changes.")
+            seasonalColorChangeExtend = builder.comment("Extend seasonal color shifts to birch, spruce, and mangrove leaves.")
                     .define("SeasonalColorChangeExtend", true);
-            foliageUnderTree = builder.comment("Brownish grass block under trees in autumn.")
+            foliageUnderTree = builder.comment("Visual detail: Adds a brownish, withered foliage effect under trees during Autumn.")
                     .define("FoliageUnderTree", false);
 
-            smootherSeasonalGrassColorChange = builder.comment("When applying changes, perform mean calculation based on the percentage progress of the solar term instead of using a fixed value.")
+            smootherSeasonalGrassColorChange = builder.comment("Calculate seasonal color shifts based on exact solar term progress for smoother transitions.")
                     .define("SmootherSeasonalGrassColorChange", true);
-            flowerOnGrass = builder.comment("In spring, grass blocks will occasionally have small flowers on them.")
+            flowerOnGrass = builder.comment("Visual detail: Occasionally adds small, decorative flowers to grass blocks in Spring.")
                     .define("FlowerOnGrass", true);
             builder.pop();
         }
@@ -133,7 +138,7 @@ public class ClientConfig {
 
         private static void load(ModConfigSpec.Builder builder) {
             builder.push("Sound");
-            naturalSound = builder.comment("Listen to the sounds of nature.")
+            naturalSound = builder.comment("Enable ambient environmental sounds (birds, wind, etc.) based on the season.")
                     .define("NaturalSound", true);
             builder.pop();
         }
@@ -158,36 +163,36 @@ public class ClientConfig {
 
         private static void load(ModConfigSpec.Builder builder) {
             builder.push("Particle");
-            seasonParticle = builder.comment("See butterflies in the spring, fireflies in the summer, and fallen leaves.")
+            seasonParticle = builder.comment("Enable seasonal particles like butterflies, fireflies, and falling leaves.")
                     .define("SeasonalParticles", true);
 
-            butterfly = builder.comment("In spring, butterflies fly over the flowers.")
+            butterfly = builder.comment("Spawns butterflies over flowers during Spring.")
                     .define("Butterfly", true);
-            butterflySpawnWeight = builder.comment("The interval/delay of butterfly particles. Higher values make butterflies appear less frequently.")
+            butterflySpawnWeight = builder.comment("Density between butterfly spawns. Higher values result in fewer butterflies.")
                     .defineInRange("ButterflySpawnDelay", 10, 1, 10000);
 
-            fallenLeaves = builder.comment("Leaf blocks will drop leaves, and most frequently in the fall.")
+            fallenLeaves = builder.comment("Leaf blocks will drop falling leaf particles, peaking in frequency during Autumn.")
                     .define("FallenLeaves", true);
-            fallenLeavesDropWeight = builder.comment("The interval/delay of fallen leaf particles. Higher values make butterflies appear less frequently.")
+            fallenLeavesDropWeight = builder.comment("Density between leaf particles. Higher values result in fewer leaves falling.")
                     .defineInRange("FallenLeavesDropDelay", 10, 1, 10000);
 
-            firefly = builder.comment("In the summer evenings, you can see fireflies beside the flowers.")
+            firefly = builder.comment("Spawns fireflies near flowers during Summer evenings.")
                     .define("Firefly", true);
-            fireflySpawnWeight = builder.comment("The interval/delay of firefly particles. Higher values make butterflies appear less frequently.")
+            fireflySpawnWeight = builder.comment("Density between firefly spawns. Higher values result in fewer fireflies.")
                     .defineInRange("FireflySpawnDelay", 10, 1, 10000);
 
-            wildGoose = builder.comment("When the grass and trees turn yellow, the wild geese fly south.")
+            wildGoose = builder.comment("Visual effect: Displays wild geese flying south during autumnal transitions.")
                     .define("WildGoose", true);
-            wildGooseSpawnWeight = builder.comment("The interval/delay of wild goose particles. Higher values make butterflies appear less frequently.")
+            wildGooseSpawnWeight = builder.comment("Density between wild goose sightings. Higher values result in fewer sightings.")
                     .defineInRange("WildGooseSpawnDelay", 10, 1, 10000);
 
 
-            seasonGreenhouse = builder.comment("When the season core block is active, emits soft light particles to indicate the growth environment.")
+            seasonGreenhouse = builder.comment("Emits soft ambient particles when the Season Core or Greenhouse is active.")
                     .define("SeasonGreenhouse", true);
-            SeasonGreenhouseParticleSpawnCount = builder.comment("Number of particles emitted by the season greenhouse effect. The higher the value, the denser the effect.")
+            SeasonGreenhouseParticleSpawnCount = builder.comment("Density of particles emitted by the Greenhouse effect.")
                     .defineInRange("SeasonGreenhouseParticleSpawnCount", 30, 0, 160);
 
-            snowLeafParticles = builder.comment("Snow-covered leaves will drop snow particles when broken.")
+            snowLeafParticles = builder.comment("Breaking snow-covered leaves will release a burst of snow particles.")
                     .define("SnowLeafParticles", true);
 
             builder.pop();
@@ -201,23 +206,20 @@ public class ClientConfig {
 
         private static void load(ModConfigSpec.Builder builder) {
             builder.push("Weather");
-            weatherBufferDistance = builder.comment("Radius (in blocks) around the player within which weather is sampled and averaged to create smoother local weather transitions.")
+            weatherBufferDistance = builder.comment("The radius (in blocks) used to sample and blend weather patterns for smooth transitions.")
                     .defineInRange("WeatherBufferDistance", 6, 1, 80);
             weatherTransitionSpeed = builder.comment(
-                            "Speed at which local weather transitions occur. Higher values mean faster transitions.")
+                            "How quickly local weather conditions change. Higher values mean faster shifts.")
                     .defineInRange("WeatherTransitionSpeed", 0.008d, 0.0008d, 0.08d);
             weatherFrontBias = builder.comment(
-                            "Whether to apply stronger sampling weight in the direction the player is facing.")
+                            "Prioritize weather sampling in the direction the player is currently facing.")
                     .define("WeatherFrontBias", true);
             builder.pop();
         }
     }
 
+    @Getter
     private static boolean topFaceCulling = false;
-
-    public static boolean isTopFaceCulling() {
-        return topFaceCulling;
-    }
 
     public static void UpdateConfig(ModConfigEvent modConfigEvent) {
         if (!(modConfigEvent instanceof ModConfigEvent.Unloading)

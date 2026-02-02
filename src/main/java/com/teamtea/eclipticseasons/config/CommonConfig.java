@@ -20,8 +20,6 @@ import java.util.stream.Stream;
 
 public class CommonConfig {
     public static final ModConfigSpec COMMON_CONFIG = new ModConfigSpec.Builder().configure(com.teamtea.eclipticseasons.config.CommonConfig::new).getRight();
-    public static final ModConfigSpec COMMON_CONFIG2 = new ModConfigSpec.Builder().configure(b->b.comment("“Enable logging for illegal function usage.")
-            .define("LogIllegalUse", false)).getRight();
 
     protected CommonConfig(ModConfigSpec.Builder builder) {
         Season.load(builder);
@@ -41,37 +39,30 @@ public class CommonConfig {
         public static ModConfigSpec.BooleanValue notLightAbove;
         public static ModConfigSpec.BooleanValue snowOverlayGlowingBlock;
 
-        public static ModConfigSpec.BooleanValue disableSnowOverlayControlTag;
         public static ModConfigSpec.BooleanValue disableChunkCacheCleaner;
         public static ModConfigSpec.BooleanValue disableUniqueRebindingBiomeTags;
 
         public static ModConfigSpec.BooleanValue disableIceOrSnowCauldron;
-        public static ModConfigSpec.BooleanValue disableSeasonalPrayerRitual;
 
         private static void load(ModConfigSpec.Builder builder) {
             builder.push("Debug");
-            logIllegalUse = builder.comment("“Enable logging for illegal function usage.")
+            logIllegalUse = builder.comment("Log errors when internal functions are used incorrectly.")
                     .define("LogIllegalUse", false);
-            notLightAbove = builder.comment("Disable snowy blocks beneath light sources with light level 0.")
+            notLightAbove = builder.comment("Prevent snow overlays from rendering under blocks with zero light emission.")
                     .define("NoSnowyUnderLight0", false);
 
-            snowOverlayGlowingBlock = builder.comment("Snow can cover the block which would lights.")
+            snowOverlayGlowingBlock = builder.comment("Allow snow overlays to cover light-emitting blocks.")
                     .define("SnowOverlayGlowingBlock", false);
 
-
-            disableSnowOverlayControlTag = builder.comment("Set to false to disable tag which stops block from snowy is tagged with \"eclipticseasons:snow_overlay_cannot_survive_on\".")
-                    .define("DisableSnowOverlayControlTag", false);
-
-            disableChunkCacheCleaner = builder.comment("Disable chunk extra info cache cleanup.")
+            disableChunkCacheCleaner = builder.comment("Keep chunk extra info in memory (disables the cache cleaner).")
                     .define("DisableChunkCacheCleaner", false);
-            disableUniqueRebindingBiomeTags = builder.comment("Disable unique rebinding for biome tags. Note that after disabling, tags may overlap.")
+
+            disableUniqueRebindingBiomeTags = builder.comment("Prevent biome tags from being rebound (may lead to tag overlapping).")
                     .define("DisableUniqueBiomeTagsRebinding", false);
 
-            disableIceOrSnowCauldron = builder.comment("Disable cauldron enhancement, they will no longer turn into snow-filled or ice-filled cauldrons when it snows.")
+            disableIceOrSnowCauldron = builder.comment("Cauldrons will no longer collect snow or ice during winter weather.")
                     .define("DisableIceOrSnowCauldron", false);
 
-            disableSeasonalPrayerRitual = builder.comment("Disable seasonal core prayer ritual.")
-                    .define("DisableSeasonalPrayerRitual", false);
             builder.pop();
         }
     }
@@ -84,16 +75,17 @@ public class CommonConfig {
         public static ModConfigSpec.BooleanValue snowKeepInSnowyBiomes;
 
         private static void load(ModConfigSpec.Builder builder) {
+            builder.comment("This module governs how seasonal temperature shifts affect the physical world and the player.");
             builder.push("Temperature");
-            iceMelt = builder.comment("Ice or snow layer will melt in warm time.")
+            iceMelt = builder.comment("Allow accumulated snow layers and ice to melt as the temperature rises.")
                     .define("IceAndSnowMelt", false);
-            snowDown = builder.comment("It will snow in cold time.")
+            snowDown = builder.comment("Allow natural snowfall and snow accumulation during cold periods.")
                     .define("IceAndSnow", false);
-            waterFreezesInFrozenBiomes = builder.comment("If enabled, water placed in frozen biomes will behave as in vanilla and freeze into ice.")
+            waterFreezesInFrozenBiomes = builder.comment("If enabled, water in frozen biomes follows vanilla behavior and turns into ice.")
                     .define("WaterFreezesInFrozenBiomes", true);
-            snowKeepInSnowyBiomes = builder.comment("If enabled and IceAndSnowMelt same enabled, snow placed in snowy biomes would not melt if in hot time.")
+            snowKeepInSnowyBiomes = builder.comment("Prevents physical snow from melting in naturally snowy biomes, even during hot seasons.")
                     .define("SnowKeepInSnowyBiomes", true);
-            heatStroke = builder.comment("Add heat stroke effect in summer noon while in hot biome.")
+            heatStroke = builder.comment("Apply a 'Heatstroke' status effect if players stay in hot biomes during Summer noon.")
                     .define("HeatStroke", true);
             builder.pop();
         }
@@ -118,73 +110,70 @@ public class CommonConfig {
         public static ModConfigSpec.ConfigValue<List<? extends Integer>> noneDayTimes;
 
         public static ModConfigSpec.BooleanValue dynamicSnowTerm;
-        public static ModConfigSpec.BooleanValue seasonDefinition;
 
         public static ModConfigSpec.BooleanValue realWorldSolarTerms;
 
         private static void load(ModConfigSpec.Builder builder) {
             builder.push("Season");
-            lastingDaysOfEachTerm = builder.comment("The lasting days of each term, while 4 seasons in 1 year, 6 terms in 1 season.")
+            lastingDaysOfEachTerm = builder.comment("The duration of a single Solar Term in Minecraft days.\nLogic: 1 Year = 4 Seasons | 1 Season = 6 Solar Terms.")
                     .defineInRange("LastingDaysOfEachTerm", 7, 1, 5000);
-            initialSolarTermIndex = builder.comment("The index of the initial solar term, and note it only can be used to first start the world with the mod.")
+            initialSolarTermIndex = builder.comment("The index of the Solar Term when the world is first created (1-24).")
                     .defineInRange("InitialSolarTermIndex", 4, 1, 24);
 
-            seasonDefinition = builder.comment("Enable the season definitions system.")
-                    .define("EnableSeasonDefinition", false);
 
-            enableInform = builder.comment("Enable solar term change inform.")
+            enableInform = builder.comment("Display a chat message whenever the Solar Term changes.")
                     .define("EnableInform", true);
-            enableInformIcon = builder.comment("Whether send inform with icon.")
+            enableInformIcon = builder.comment("Include a custom icon in the change notification for better visibility.")
                     .define("EnableInformIcon", true);
-            enableLocalInfoCalendar = builder.comment("Enable local calendar and local info synchronization.")
+            enableLocalInfoCalendar = builder.comment("Synchronize the in-game calendar and seasonal data with the server/client local time.")
                     .define("EnableLocalInfoAndCalendar", false);
-            calendarItemHint = builder.comment("Whether to pop up the solar term reminder when the calendar item cannot be placed.")
+            calendarItemHint = builder.comment("Show a tooltip or message if a calendar item cannot be placed in the current location.")
                     .define("CalendarItemHint", false);
 
 
-            daylightChange = builder.comment("In summer, the days are long and the nights are short, while in winter, the days are short and the nights are long.")
+            daylightChange = builder.comment("Adjust daylight duration based on the time of year (longer in Summer, shorter in Winter).")
                     .define("DynamicDaylightDuration", true);
 
-            validDimensions = builder.comment("List of dimensions where season effects apply. Must be natural worlds with a day-night cycle.")
+            validDimensions = builder.comment("List of dimension IDs where seasonal effects should be active.")
                     .defineListAllowEmpty("ValidDimensions",
                             () -> List.of(Level.OVERWORLD.location().toString()),
                             () -> Level.OVERWORLD.location().toString(),
                             o -> o instanceof String s && ResourceLocation.tryParse(s) != null);
-            springDayTimes = builder.comment("Day time length of spring, divided into six periods according to the solar term table.")
+            springDayTimes = builder.comment("Daylight length in Ticks for each of the 6 Solar Terms in Spring.")
                     .defineList(List.of("SpringDayTimes"),
                             () -> List.of(10500, 11000, 11500, 12000, 12500, 13000),
                             () -> 12000,
                             o -> o instanceof Integer i && (i >= 0 && i <= EclipticUtil.getDayLengthInMinecraftStatic()),
                             ModConfigSpec.Range.of(6, 6));
-            summerDayTimes = builder.comment("Day time length of summer, divided into six periods according to the solar term table.")
+            summerDayTimes = builder.comment("Daylight length in Ticks for each of the 6 Solar Terms in Summer.")
                     .defineList(List.of("SummerDayTimes"),
                             () -> List.of(13500, 14000, 14500, 15000, 14500, 14000),
                             () -> 12000,
                             o -> o instanceof Integer i && (i >= 0 && i <= EclipticUtil.getDayLengthInMinecraftStatic()),
                             ModConfigSpec.Range.of(6, 6));
-            autumnDayTimes = builder.comment("Day time length of autumn, divided into six periods according to the solar term table.")
+            autumnDayTimes = builder.comment("Daylight length in Ticks for each of the 6 Solar Terms in Autumn.")
                     .defineList(List.of("AutumnDayTimes"),
                             () -> List.of(13500, 13000, 12500, 12000, 11500, 11000),
                             () -> 12000,
                             o -> o instanceof Integer i && (i >= 0 && i <= EclipticUtil.getDayLengthInMinecraftStatic()),
                             ModConfigSpec.Range.of(6, 6));
-            winterDayTimes = builder.comment("Day time length of winter, divided into six periods according to the solar term table.")
+            winterDayTimes = builder.comment("Daylight length in Ticks for each of the 6 Solar Terms in Winter.")
                     .defineList(List.of("WinterDayTimes"),
                             () -> List.of(10500, 10000, 9500, 9000, 9500, 10000),
                             () -> 12000,
                             o -> o instanceof Integer i && (i >= 0 && i <= EclipticUtil.getDayLengthInMinecraftStatic()),
                             ModConfigSpec.Range.of(6, 6));
-            noneDayTimes = builder.comment("Day time length of none season, divided into six periods according to the solar term table.")
+            noneDayTimes = builder.comment("Default daylight length in Ticks when no seasonal effects are active.")
                     .defineList(List.of("NoneDayTimes"),
                             () -> List.of(12000),
                             () -> 12000,
                             o -> o instanceof Integer i && (i >= 0 && i <= EclipticUtil.getDayLengthInMinecraftStatic()),
                             ModConfigSpec.Range.of(1, 1));
-            dynamicSnowTerm = builder.comment("The timing of snowfall now varies within a certain range each year.")
+            dynamicSnowTerm = builder.comment("Introduces random yearly variations to the snowfall date for unpredictability.")
                     .define("DynamicSnowTerm", false);
 
             realWorldSolarTerms = builder
-                    .comment("The in-game solar terms will be synchronized with the real world. Note: due to limitations of the old mechanism, enabling this may cause the day display function of this mod or other compatible mods to be confusing.")
+                    .comment("Sync in-game seasons with the real-world date.\nWarning: May cause day-counter or calendar conflicts with other mods.")
                     .define("RealWorldSolarTerms", false);
 
             builder.pop();
@@ -215,47 +204,45 @@ public class CommonConfig {
 
         private static void load(ModConfigSpec.Builder builder) {
             builder.push("Crop");
-            enableCrop = builder.comment("Enable crop season control.")
+            enableCrop = builder.comment("Restrict plant growth based on their compatible seasons or humidity.")
                     .define("EnableSeasonalCrop", true);
-            enableCropHumidityControl = builder.comment("Enable crop humidity control.")
+            enableCropHumidityControl = builder.comment("Restrict plant growth based on local soil/environmental humidity.")
                     .define("EnableCropHumidityControl", true);
-            cropHumidityTransition = builder.comment("If enabled, humidity check will transition smoothly instead of snapping.")
+            cropHumidityTransition = builder.comment("Smooths out humidity changes between different areas or time periods.")
                     .define("CropHumidityTransition", true);
-            boneMealFailureMessage = builder.comment("Send message to player if failed to use bone meal on crop.")
+            boneMealFailureMessage = builder.comment("Show a message if bone meal fails to work due to incorrect season or humidity.")
                     .define("BoneMealFailureMessage", true);
-            boneMealConsumeOnFailure = builder.comment("Consume anyway if failed to use bone meal on crop.")
+            boneMealConsumeOnFailure = builder.comment("Consume the bone meal item even if the growth attempt fails.")
                     .define("BoneMealConsumeOnFailure", true);
-            greenHouseMaxDiameter = builder.comment("The maximum effective diameter of the greenhouse.")
+            greenHouseMaxDiameter = builder.comment("The horizontal detection radius for the Greenhouse.")
                     .defineInRange("GreenHouseMaxDiameter", 32, 5, 256);
-            greenHouseMaxHeight = builder.comment("The maximum effective height of the greenhouse.")
+            greenHouseMaxHeight = builder.comment("The vertical detection height for the Greenhouse.")
                     .defineInRange("GreenHouseMaxHeight", 10, 3, 128);
-            darkGreenhouseFailChance = builder.comment("Chance that crops fail to grow inside the greenhouse due to insufficient light. Higher values make failure more likely.")
+            darkGreenhouseFailChance = builder.comment("Probability (per tick) that greenhouse crops fail to grow due to low light levels.")
                     .defineInRange("LowLightGreenhouseFailChance", 2000, 0, 10000);
-            simpleGreenHouse = builder.comment("Build a simple greenhouse without core blocks and humidity modifiers.")
+            simpleGreenHouse = builder.comment("Simplifies greenhouse logic, removing the need for core blocks or humidity modifiers.")
                     .define("SimpleGreenHouseMode", false);
-            noCostHumidifier = builder.comment("If true, the Humidifier block will no longer consume blocks during conversion.")
+            noCostHumidifier = builder.comment("If true, the Humidifier block will not consume resources during operation.")
                     .define("NoCostHumidifier", false);
-            seasonCoreRange = builder.comment("The working range of the Season Core block.")
+            seasonCoreRange = builder.comment("The effective radius of the 'Season Core' block.")
                     .defineInRange("SeasonCoreRange", 15, 4, 31);
-            complexGreenHouseCheck = builder.comment("Whether to enable complex shape checking.")
+            complexGreenHouseCheck = builder.comment("Enables more precise shape detection for greenhouse structures.")
                     .define("ComplexGreenHouseCheck", true);
-            useBoxDistance = builder.comment("Calculate the working range of the greenhouse block by box distance and not Euclidean range.")
+            useBoxDistance = builder.comment("Use Manhattan distance (square) instead of Euclidean (circle) for greenhouse range.")
                     .define("UseBoxDistance", true);
-            registerCropDefaultValue = builder.comment("[Deprecated]If a crop is not registered for a season or humid type, default values will be used.")
+            registerCropDefaultValue = builder.comment("[Deprecated] Use default seasonal/humidity values for unregistered crops.")
                     .define("RegisterCropDefaultValue", false);
-            forceCompatMode = builder.comment("Force all crops to use compatibility mode for growth control, not just those tagged as eclipticseasons:natural_plants.")
+            forceCompatMode = builder.comment("Force all plants to follow growth rules, even those without specific mod tags.")
                     .define("ForceCompatMode", true);
 
-            saveChunkEnvironmentalHumidity = builder.comment("Save environmental humidity modifiers to chunk file.")
+            saveChunkEnvironmentalHumidity = builder.comment("Saves local humidity data to chunk files for persistent tracking.")
                     .define("SaveChunkEnvironmentalHumidity", true);
-            seasonalPrayerRitualCropBonusReduction=builder
-                    .comment("Inverse factor controlling how much the Seasonal Prayer Ritual boosts crop growth and animal breeding.\n" +
-                            "The higher the value, the weaker the bonus effect.")
-                    .defineInRange("SeasonalPrayerRitualCropBonusReduction",500,5,Integer.MAX_VALUE);
-            seasonalPrayerRitualTimeCost=builder
-                    .comment("Approximate time cost for each stage of the Seasonal Prayer Ritual.\n" +
-                            "The unit is relative to the duration of one solar term.")
-                    .defineInRange("SeasonalPrayerRitualTimeCost",2,0.00001d,5000);
+            seasonalPrayerRitualCropBonusReduction = builder
+                    .comment("Adjusts the power of the Seasonal Prayer Ritual. Higher values result in lower bonuses.")
+                    .defineInRange("SeasonalPrayerRitualCropBonusReduction", 500, 5, Integer.MAX_VALUE);
+            seasonalPrayerRitualTimeCost = builder
+                    .comment("The duration required for the Prayer Ritual (relative to one Solar Term).")
+                    .defineInRange("SeasonalPrayerRitualTimeCost", 2, 0.00001d, 5000);
             builder.pop();
         }
     }
@@ -275,16 +262,16 @@ public class CommonConfig {
 
         private static void load(ModConfigSpec.Builder builder) {
             builder.push("Animal");
-            enableBreed = builder.comment("Enable seasonal animal breed.")
+            enableBreed = builder.comment("Limit animal breeding to their natural, compatible seasons.")
                     .define("EnableSeasonalBreed", false);
 
             enableTimeBreed = builder
-                    .comment("Restrict animal breeding to a specific time of day (daytime or nighttime).")
+                    .comment("Restrict breeding to specific hours of the day.")
                     .define("EnableTimeBreed", false);
 
-            enableBee = builder.comment("Enable seasonal bee behavior, bee would like spring and not like winter and cold.")
+            enableBee = builder.comment("Bees become inactive during cold seasons and active during warm ones.")
                     .define("EnableSeasonalBee", false);
-            beePollinateSeasons = builder.comment("Seasons in which bees are able to pollinate crops and flowers.",
+            beePollinateSeasons = builder.comment("List of seasons where bees are allowed to pollinate plants.",
                     "Default: [SPRING]").defineListAllowEmpty("BeePollinateSeasons",
                     () -> List.of(
                             com.teamtea.eclipticseasons.api.constant.solar.Season.SPRING.toString()
@@ -292,7 +279,7 @@ public class CommonConfig {
                     com.teamtea.eclipticseasons.api.constant.solar.Season.SPRING::toString,
                     CommonConfig::validSeason);
 
-            beeActiveSeasons = builder.comment("Seasons in which bees are generally active outside the hive.",
+            beeActiveSeasons = builder.comment("List of seasons where bees will leave the hive to fly around.",
                     "Default: [SPRING, SUMMER, AUTUMN]").defineListAllowEmpty("BeeActiveSeasons",
                     () -> List.of(
                             com.teamtea.eclipticseasons.api.constant.solar.Season.SPRING.toString(),
@@ -302,10 +289,10 @@ public class CommonConfig {
                     com.teamtea.eclipticseasons.api.constant.solar.Season.SPRING::toString,
                     CommonConfig::validSeason);
 
-            enableFishing = builder.comment("Enable seasonal fishing behavior, let enjoy summer.")
+            enableFishing = builder.comment("Modify fishing mechanics based on the current season (e.g., Summer bonuses).")
                     .define("EnableSeasonalFishing", false);
 
-            fishingSeasons = builder.comment("Seasons during which fishing is allowed or more effective.",
+            fishingSeasons = builder.comment("List of seasons where fishing is most effective.",
                     "Default: [SUMMER]"
             ).defineListAllowEmpty("FishingSeasons",
                     () -> List.of(
@@ -314,10 +301,10 @@ public class CommonConfig {
                     com.teamtea.eclipticseasons.api.constant.solar.Season.SUMMER::toString,
                     CommonConfig::validSeason);
 
-            lessFishInThunder = builder.comment("Reduce fish availability during thunderstorms.")
+            lessFishInThunder = builder.comment("Decrease the bite rate significantly during active thunderstorms.")
                     .define("LessFishInThunder", false);
 
-            enableCoreWork = builder.comment("Season Core affects animals even without a greenhouse.")
+            enableCoreWork = builder.comment("Allow the Season Core to provide breeding bonuses to animals without a greenhouse.")
                     .define("SeasonCoreAffectsAnimals", true);
             builder.pop();
         }
@@ -380,7 +367,6 @@ public class CommonConfig {
     public static class Weather {
 
         public static ModConfigSpec.BooleanValue useSolarWeather;
-        public static ModConfigSpec.BooleanValue enableWeatherRegion;
         public static ModConfigSpec.BooleanValue notRainInDesert;
         public static ModConfigSpec.IntValue rainChanceMultiplier;
         public static ModConfigSpec.IntValue thunderChanceMultiplier;
@@ -391,23 +377,23 @@ public class CommonConfig {
 
         private static void load(ModConfigSpec.Builder builder) {
             builder.push("Weather");
-            useSolarWeather = builder.comment("Enable the Ecliptic local weather system that adapts weather to each biome.")
+            useSolarWeather = builder.comment("Enable localized weather patterns where rain or sun is determined per-biome.")
                     .define("UseSolarWeather", true);
-            enableWeatherRegion = builder.comment("Enable weather regions, linking specific biomes to particular weather to prevent scattered patterns.")
-                    .define("EnableWeatherRegion", true);
-            notRainInDesert = builder.comment("Prevent rain from occurring in biomes without precipitation like desert.")
+            notRainInDesert = builder.comment("Disable rain/snow in biomes with no natural precipitation (e.g., Deserts).")
                     .define("NotRainInDesert", true);
-            shouldInitWeather = builder.comment("Set it true to initialize weather and snow when loading the mod or level for the first time.")
+            shouldInitWeather = builder.comment("Force initialize weather and snow states when the mod or world is first loaded.")
                     .define("ShouldInitWeather", false);
-            rainChanceMultiplier = builder.comment("Multiplier (0-1000) affecting the chance of rain. Higher values make rain more likely.")
+            rainChanceMultiplier = builder.comment("Adjust the overall frequency of rain.")
                     .defineInRange("RainChancePercentMultiplier", 40, 0, 1000);
-            thunderChanceMultiplier = builder.comment("Multiplier (0-1000) affecting the chance of thunder. Higher values make thunder more likely.")
+            thunderChanceMultiplier = builder.comment("Adjust the overall frequency of thunder.")
                     .defineInRange("ThunderChancePercentMultiplier", 20, 0, 1000);
-            snowAccumulationSpeedMultiplier = builder.comment("Multiplier (0-20) affecting the speed of snow accumulate.")
-                    .defineInRange("SnowAccumulationSpeedMultiplier", 1d, 0, 20d);
-            snowMeltSpeedMultiplier = builder.comment("Multiplier (0-20) affecting the speed of snow melt.")
-                    .defineInRange("SnowMeltSpeedMultiplier", 1d, 0, 20d);
-            clearAfterSleep = builder.comment("Clear rain or thunder status after the player sleeps.")
+            snowAccumulationSpeedMultiplier = builder
+                    .comment("Adjusts the spread rate of atmospheric snow overlays across the ground.")
+                    .defineInRange("SnowAccumulationSpeedMultiplier", 1.0, 0.0, 20.0);
+            snowMeltSpeedMultiplier = builder
+                    .comment("Adjusts the recession speed of atmospheric snow overlays during warmer periods.")
+                    .defineInRange("SnowMeltSpeedMultiplier", 1.0, 0.0, 20.0);
+            clearAfterSleep = builder.comment("Automatically reset weather to clear after the player wakes up from a bed.")
                     .define("ClearAfterSleep", false);
             builder.pop();
         }
@@ -418,7 +404,7 @@ public class CommonConfig {
 
         private static void load(ModConfigSpec.Builder builder) {
             builder.push("Map");
-            changeMapColor = builder.comment("The map color of blocks will change during snow.")
+            changeMapColor = builder.comment("Synchronize map colors to reflect atmospheric snow overlays.")
                     .define("ChangeMapColor", true);
             builder.pop();
         }
@@ -464,36 +450,37 @@ public class CommonConfig {
         }
 
         private static void load(ModConfigSpec.Builder builder) {
+            builder.comment("Snow overlays are visual, atmospheric effects and are distinct from physical snow blocks.");
             builder.push("Snow");
-
-            snowyWinter = builder.comment("If snow falls during cold weather in warm biomes, it will gradually cover all solid blocks and grass.")
+            snowyWinter = builder.comment("Controls atmospheric snow overlays during cold weather. "
+                            + "Visual snow gradually covers solid blocks and grass, even in warmer biomes.")
                     .define("SnowyWinter", true);
-            snowyTree = builder.comment("Not just the top layer, now even the leaves below are dusted with frost and snow.")
+            snowyTree = builder.comment("Apply frost and snow overlays to the undersides of leaves and tree branches.")
                     .define("SnowyTree", true);
-            notSnowyNearGlowingBlock = builder.comment("Snow will not appear in overly bright areas, here define restriction levels.")
+            notSnowyNearGlowingBlock = builder.comment("Prevents snow overlays from building up near blocks that emit significant light.")
                     .define("NotSnowyNearGlowingBlock", true);
-            notSnowyNearGlowingBlockLevel = builder.comment("Snow will not appear in overly bright areas.")
+            notSnowyNearGlowingBlockLevel = builder.comment("The minimum light level required to prevent snow accumulation.")
                     .defineInRange("NotSnowyNearGlowingBlockLevel", 10, 1, 15);
-            blocksNotSnowy = builder.comment("Specify block IDs here to prevent those blocks from being covered by snow.")
+            blocksNotSnowy = builder.comment("List of Block IDs that will never be covered by snow overlays.")
                     .defineListAllowEmpty("ForceBlocksNotSnowy",
                             List::of,
                             () -> "",
                             o -> o instanceof String s && ResourceLocation.tryParse(s) != null);
-            biomeSnowLines = builder.comment("Snow Line Height, define like [\"#c:is_cold/overworld\", 200].")
+            biomeSnowLines = builder.comment("Set custom snow-line altitudes for biomes (e.g., [\"#c:is_cold\", 200]).")
                     .defineListAllowEmpty("BiomeSnowLines",
                             List.of(),
                             List::of,
                             Snow::testLList);
 
-            snowInWorld = builder.comment("Snowfall is now bound to world position rather than only to biomes. This allows for more location-based operations, such as snow sweeping and localized snowfall events.")
+            snowInWorld = builder.comment("Track snow based on exact world coordinates (allows for localized snow clearing).")
                     .define("SnowInWorld", false);
-            forceChunkUpdate = builder.comment("When SnowInWorld is enabled, update chunk state on load based on differences from previous state records.")
+            forceChunkUpdate = builder.comment("(SnowInWorld) Sync chunk snow overlay states immediately when they are loaded.")
                     .define("ForceSnowyChunkUpdate", true);
-            forceChunkUpdateOnlyWhenMelt = builder.comment("Only force updating the status of chunk when snow should melt.")
+            forceChunkUpdateOnlyWhenMelt = builder.comment("(SnowInWorld) Only force chunk snow overlays sync when the weather is warm enough for snow to melt.")
                     .define("ForceChunkUpdateOnlyWhenMelt", false);
-            snowyUnderSnowLike = builder.comment("When SnowInWorld is enabled, blocks like full blocks under snow layers will have a snowy appearance.")
+            snowyUnderSnowLike = builder.comment("(SnowInWorld) Render snow overlays on the sides of blocks located beneath a snow layer block.")
                     .define("SnowCoverUnderBlocks", true);
-            stepMelt = builder.comment("When SnowInWorld is enabled, snow may melt when stepped on due to heat.")
+            stepMelt = builder.comment("(SnowInWorld) Snow layers have a chance to melt when entities walk over them.")
                     .define("SnowStepMelt", false);
             builder.pop();
         }
@@ -508,27 +495,29 @@ public class CommonConfig {
 
         private static void load(ModConfigSpec.Builder builder) {
             builder.push("Resource");
-            RainTogether = builder.comment("Enable Rain Together datapack for game.")
+
+            RainTogether = builder.comment("Synchronizes weather states across all Overworld biomes, ensuring global rainfall.")
                     .define("RainTogether", false);
-            SnowTogether = builder.comment("Enable Snow Together datapack for game.")
+
+            SnowTogether = builder.comment("Synchronizes the snowfall schedule for all Overworld biomes.")
                     .define("SnowTogether", false);
-            RegionalSnowTime = builder.comment("Enable Regional Snow Time datapack for game.")
+
+            RegionalSnowTime = builder.comment("Aligns snowfall schedules based on three broad climate zones (Warm, Temperate, and Cold) instead of per-biome.")
                     .define("RegionalSnowTime", false);
-            VanillaBiomeClimateSettings = builder.comment("Enable Vanilla Biome Climate Settings datapack for game.")
+
+            VanillaBiomeClimateSettings = builder.comment("Enforces original Vanilla temperature and precipitation settings to prevent other mods from creating extreme environmental values.")
                     .define("VanillaBiomeClimateSettings", true);
-            NotIgnoreRiver = builder.comment("Enable Not Ignore River datapack for climatic query.")
+
+            NotIgnoreRiver = builder.comment("When enabled, rivers are no longer treated as ignored climate zones. This reduces performance overhead but may result in less natural weather transitions near riverbanks.")
                     .define("NotIgnoreRiver", false);
+
             builder.pop();
         }
     }
 
-    @Getter
-    private static boolean seasonDefinition = false;
 
     @Getter
     private static boolean useSolarWeather = true;
-    @Getter
-    private static boolean enableWeatherRegion = true;
 
     @Getter
     private static boolean forceCropCompatMode = false;
@@ -551,11 +540,9 @@ public class CommonConfig {
         if (!(modConfigEvent instanceof ModConfigEvent.Unloading)
                 && modConfigEvent.getConfig().getSpec() == COMMON_CONFIG) {
             useSolarWeather = Weather.useSolarWeather.get();
-            enableWeatherRegion = Weather.enableWeatherRegion.get();
             forceCropCompatMode = Crop.forceCompatMode.get();
             snowyWinter = Snow.snowyWinter.get();
             snowInWorld = Snow.snowInWorld.get() && snowyWinter;
-            seasonDefinition = Season.seasonDefinition.get();
             cropHumidityTransition = Crop.cropHumidityTransition.get();
             int[] ints = Stream.of(Season.springDayTimes, Season.summerDayTimes, Season.autumnDayTimes, Season.winterDayTimes, Season.noneDayTimes)
                     .map(ModConfigSpec.ConfigValue::get)

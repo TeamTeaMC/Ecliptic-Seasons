@@ -1,12 +1,19 @@
+### 0.12.10
+
+- All configuration comments have been improved to help players better understand the purpose of each option.
+  Renaming of configuration entries will be carried out once the configuration migration system is ready.
+- Fixed an issue in version 1.21 where Mixin targets failed to resolve when used alongside Voxy.
+
+> Unfortunately, my available time for mod development will be significantly reduced in the near future. I hope these
+> recent updates can improve a large part of the overall experience.
+> If you encounter issues or compatibility problems, please provide accurate testing results and isolated test cases
+> when
+> reporting them; otherwise, I may not have sufficient time to investigate and resolve the issue.
+
 ### 0.12.9
 
 - The debug information interface has been updated and refined. It has been moved to the top-left corner of the screen,
   with a reorganized layout and the addition of rainfall probability prediction data.
-
-> Unfortunately, my available time for mod development will be significantly reduced in the near future. I hope these
-> recent updates can improve a large part of the overall experience.
-> If you encounter issues or compatibility problems, please provide accurate testing results and isolated test cases when
-> reporting them; otherwise, I may not have sufficient time to investigate and resolve the issue.
 
 ### 0.12.8
 
