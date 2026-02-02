@@ -87,7 +87,7 @@ public class GreenHouseFrameBlock extends SimpleEntityBlock {
     }
 
     private static boolean tryActivate(Level level, BlockPos pos) {
-        if (CommonConfig.Debug.disableSeasonalPrayerRitual.get()) return false;
+        //if (CommonConfig.Debug.disableSeasonalPrayerRitual.get()) return false;
 
         Season agroSeason = EclipticSeasonsApi.getInstance().getAgroSeason(level, pos);
         Block block = switch (agroSeason) {

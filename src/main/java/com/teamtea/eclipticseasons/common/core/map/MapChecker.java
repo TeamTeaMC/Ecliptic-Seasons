@@ -912,8 +912,7 @@ public class MapChecker {
         if (!CommonConfig.Debug.snowOverlayGlowingBlock.get()
                 && state.getLightEmission(level, pos) > 0) {
             flag = FLAG_NONE;
-        } else if (!CommonConfig.Debug.disableSnowOverlayControlTag.get()
-                && state.is(EclipticBlockTags.SNOW_OVERLAY_CANNOT_SURVIVE_ON)) {
+        } else if (state.is(EclipticBlockTags.SNOW_OVERLAY_CANNOT_SURVIVE_ON)) {
             flag = FLAG_NONE;
         } else if (state.getBlock().builtInRegistryHolder().key().location().getNamespace().equals("snowrealmagic"))
             return MapChecker.FLAG_NONE;

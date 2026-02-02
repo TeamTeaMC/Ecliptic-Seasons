@@ -88,16 +88,16 @@ public class AnimalHooks {
                 }
             }
 
-            boolean isDay = EclipticSeasonsApi.getInstance().isDay(animal.level());
-
-            if (animal.getType().is(AnimalBehaviorTag.DAY)) {
-                return !isDay;
-            } else if (animal.getType().is(AnimalBehaviorTag.NIGHT)) {
-                return isDay;
-            } else if (animal.getType().is(AnimalBehaviorTag.ALL_TIME)) {
-                return false;
-            } else return !isDay;
-
+            if (CommonConfig.Animal.enableTimeBreed.get()) {
+                boolean isDay = EclipticSeasonsApi.getInstance().isDay(animal.level());
+                if (animal.getType().is(AnimalBehaviorTag.DAY)) {
+                    return !isDay;
+                } else if (animal.getType().is(AnimalBehaviorTag.NIGHT)) {
+                    return isDay;
+                } else if (animal.getType().is(AnimalBehaviorTag.ALL_TIME)) {
+                    return false;
+                } else return !isDay;
+            } else return false;
 
         }
 
@@ -127,7 +127,7 @@ public class AnimalHooks {
 
         Season season = getUseSeason(level, blockPos);
         if (!seasons.contains(season)) {
-            if (EclipticSeasonsApi.getInstance().getPrecipitationAt(level, blockPos)== Biome.Precipitation.SNOW) {
+            if (EclipticSeasonsApi.getInstance().getPrecipitationAt(level, blockPos) == Biome.Precipitation.SNOW) {
                 return !CommonConfig.Animal.enableCoreWork.get() || withoutSeasonBonus(level, blockPos, seasons);
             }
         }
