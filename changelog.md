@@ -1,3 +1,11 @@
+#### 0.12.10.1
+
+- Fix the issue where low-light plants are restricted even in dark environments.
+- Adjust the greenhouse dark-light detection logic from "sky-light only" to include "supplementary light."
+
+> As the ecosystem for 1.20.1 begins to wind down with major mods like Create moving on, we are also transitioning into
+> the final maintenance phase for our mod on this version.
+
 ### 0.12.10
 
 - All configuration comments have been improved to help players better understand the purpose of each option.
