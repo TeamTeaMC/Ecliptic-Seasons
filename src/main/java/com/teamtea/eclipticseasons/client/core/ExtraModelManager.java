@@ -1302,6 +1302,13 @@ public class ExtraModelManager {
         if (ClientCon.getUseLevel() != null) {
             ClientRef.updateClientSide(ClientCon.getUseLevel().registryAccess());
         }
+
+        snowOverlayLeaves = BlockModelShaper.stateToModelLocation(BlockRegistry.snowyLeaves.get().defaultBlockState());
+        snowySlabBottom = BlockModelShaper.stateToModelLocation(BlockRegistry.snowySlab.get().defaultBlockState()
+                .setValue(SlabBlock.TYPE, SlabType.BOTTOM)
+                .setValue(SlabBlock.WATERLOGGED, false)
+        );
+        snowOverlayBlock = BlockModelShaper.stateToModelLocation(BlockRegistry.snowyBlock.get().defaultBlockState());
     }
 
 
