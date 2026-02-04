@@ -1,8 +1,11 @@
+#### 0.12.10.1
+
+- Adjust the greenhouse dark-light detection logic from "sky-light only" to include "supplementary light."
+
 ### 0.12.10
 
 - All configuration comments have been improved to help players better understand the purpose of each option.
   Renaming of configuration entries will be carried out once the configuration migration system is ready.
-- Fixed an issue in version 1.21 where Mixin targets failed to resolve when used alongside Voxy.
 
 > Unfortunately, my available time for mod development will be significantly reduced in the near future. I hope these
 > recent updates can improve a large part of the overall experience.

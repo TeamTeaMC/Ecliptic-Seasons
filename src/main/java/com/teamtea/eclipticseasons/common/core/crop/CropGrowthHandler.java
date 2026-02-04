@@ -850,7 +850,8 @@ public final class CropGrowthHandler {
     public static boolean isInRoom(LevelAccessor level, BlockPos pos, BlockState state, Optional<HolderSet<Block>> notCheck) {
         // if (state.getFluidState().isSource()) return false;
 
-        boolean isInLight = level.getBrightness(LightLayer.SKY, pos.above()) > 12;
+        BlockPos abovePos = pos.above();
+        boolean isInLight = level.getBrightness(LightLayer.SKY, abovePos) > 12;
         if (isInLight) {
             int height = level.getHeight(Heightmap.Types.MOTION_BLOCKING, pos.getX(), pos.getZ());
             if (height < pos.getY()) return false;
@@ -897,7 +898,8 @@ public final class CropGrowthHandler {
 
         if (isConnected && !isInLight) {
             if (level.getRandom().nextInt(10000) <= CommonConfig.Crop.darkGreenhouseFailChance.get()) {
-                isConnected = state.is(EclipticBlockTags.DARK_GROW_PLANTS);
+                isConnected = state.is(EclipticBlockTags.DARK_GROW_PLANTS)
+                        || level.getRawBrightness(abovePos, 0) > 12;
             }
         }
         return isConnected;
