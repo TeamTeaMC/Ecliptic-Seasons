@@ -1,3 +1,7 @@
+#### 0.12.10.3
+
+- Move the Voxy test compatibility control option from Client to Common
+
 #### 0.12.10.2
 
 - Updated the code for voxy compablity.

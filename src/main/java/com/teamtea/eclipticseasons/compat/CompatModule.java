@@ -44,7 +44,7 @@ public class CompatModule {
         distanthorizons = Platform.isModLoaded("distanthorizons");
         voxy = Platform.isModLoaded("voxy");
         if (isVoxy()) {
-            CommentedFileConfig oldConfig = CommentedFileConfig.builder(FMLPaths.CONFIGDIR.get().resolve(EclipticSeasons.defaultConfigName(ModConfig.Type.CLIENT, EclipticSeasons.MODID)))
+            CommentedFileConfig oldConfig = CommentedFileConfig.builder(FMLPaths.CONFIGDIR.get().resolve(EclipticSeasons.defaultConfigName(ModConfig.Type.COMMON, EclipticSeasons.MODID)))
                     .preserveInsertionOrder().build();
             oldConfig.load();
             voxyTest = oldConfig.getOrElse("Compat.VoxyTest", false);
@@ -96,6 +96,7 @@ public class CompatModule {
         public static ForgeConfigSpec.BooleanValue fixBiome;
         public static ForgeConfigSpec.DoubleValue weatherVotePercent;
         public static ForgeConfigSpec.BooleanValue DistantHorizonsWinterLOD;
+        private static ForgeConfigSpec.BooleanValue voxyTest;
 
         public static void load(ForgeConfigSpec.Builder builder) {
             builder.push("Compat");
@@ -123,6 +124,17 @@ public class CompatModule {
             if (isDistanthorizons())
                 DistantHorizonsWinterLOD = builder.comment("Enables winter-themed Level of Detail (LOD) textures for Distant Horizons to ensure visual consistency at long distances.")
                         .define("DistantHorizonsWinterLOD", true);
+
+            if (isVoxy()) {
+                voxyTest = builder
+                        .worldRestart()
+                        .comment("""
+                                .
+                                Just for test.
+                                .""".strip()
+                        ).define("VoxyTest", false);
+
+            }
             builder.pop();
         }
     }
@@ -132,7 +144,6 @@ public class CompatModule {
         //public static ForgeConfigSpec.BooleanValue unifiedSnowyBlockSides;
         //public static ForgeConfigSpec.BooleanValue unifiedFrozenWater;
         public static ForgeConfigSpec.BooleanValue DistantHorizonsWinterLODForceUpdateAll;
-        private static ForgeConfigSpec.BooleanValue voxyTest;
 
         public static void load(ForgeConfigSpec.Builder builder) {
             builder.push("Compat");
@@ -155,16 +166,6 @@ public class CompatModule {
                                 WARNING: Enabling this may cause a full LOD rebuild and significant lag spikes.""".strip()
                         ).define("DistantHorizonsWinterLODForceUpdateAll", false);
                 builder.pop();
-            }
-            if (isVoxy()) {
-                voxyTest = builder
-                        .worldRestart()
-                        .comment("""
-                                .
-                                Just for test.
-                                .""".strip()
-                        ).define("VoxyTest", false);
-
             }
             builder.pop();
         }
