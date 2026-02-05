@@ -95,13 +95,14 @@ public class VoxyTool {
 
     public static void registerExtraProperties(Block instance, BlockBehaviour.Properties pProperties, StateDefinition.Builder<Block, BlockState> pBuilder) {
         if (!CompatModule.isVoxyTest()) return;
-        if (VoxyConstant.shouldSkipCheck(instance)) return;
-
+        if (VoxyConstant.shouldSkipCheck(instance, false)) return;
         try {
             //if (!defaultBlockState().isAir())
             {
                 pBuilder = pBuilder.add(VoxyConstant.SNOWY);
                 //defaultBlockState().setValue(BlockStateProperties.SNOWY, false);
+                if (instance instanceof IVoxyFlagger iVoxyFlagger)
+                    iVoxyFlagger.eclipticseasons$setVoxyBlock(true);
             }
         } catch (Exception e) {
         }
@@ -115,7 +116,7 @@ public class VoxyTool {
     }
 
     public static void fixBigGlobeOfBlockStates(String name, CallbackInfoReturnable<BlockState> cir) {
-		if (!CompatModule.isVoxyTest()) return;
+        if (!CompatModule.isVoxyTest()) return;
         try {
             BlockStateParser.BlockResult result = BlockStateParser.parseForBlock(BuiltInRegistries.BLOCK.asLookup(), name, false);
             Set<Property<?>> remaining = new HashSet<>(result.blockState().getProperties());

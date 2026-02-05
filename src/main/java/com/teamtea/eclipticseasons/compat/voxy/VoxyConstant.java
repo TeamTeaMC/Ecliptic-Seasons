@@ -10,53 +10,61 @@ public class VoxyConstant {
     public static final BooleanProperty SNOWY = BooleanProperty.create("voxy_snowy");
 
     public static boolean shouldSkipCheck(Block block) {
-        return block instanceof LiquidBlock
-                || block instanceof AirBlock
-                || block instanceof BarrierBlock
-                || block instanceof BaseFireBlock
-                || block instanceof AbstractChestBlock
-                || block instanceof BedBlock
+        return shouldSkipCheck(block, true);
+    }
 
-                || block instanceof AbstractBannerBlock
-                || block instanceof AbstractCandleBlock
-                || block instanceof HalfTransparentBlock
-                || block instanceof AbstractSkullBlock
-                || block instanceof BaseRailBlock
-                || block instanceof BeaconBlock
+    public static boolean shouldSkipCheck(Block block, boolean shouldCheck) {
+        if (shouldCheck && block instanceof IVoxyFlagger voxyFlagger
+                && !voxyFlagger.eclipticseasons$isVoxyBlock())
+            return true;
+        return
+                block instanceof LiquidBlock
+                        || block instanceof AirBlock
+                        || block instanceof BarrierBlock
+                        || block instanceof BaseFireBlock
+                        || block instanceof AbstractChestBlock
+                        || block instanceof BedBlock
 
-                || block instanceof BellBlock
-                || block instanceof LanternBlock
-                || block instanceof TorchBlock
-                || block instanceof ChainBlock
-                || block instanceof SignBlock
-                || block instanceof EnchantmentTableBlock
+                        || block instanceof AbstractBannerBlock
+                        || block instanceof AbstractCandleBlock
+                        || block instanceof HalfTransparentBlock
+                        || block instanceof AbstractSkullBlock
+                        || block instanceof BaseRailBlock
+                        || block instanceof BeaconBlock
 
-                || block instanceof EndPortalBlock
-                || block instanceof EndPortalFrameBlock
-                || block instanceof EndGatewayBlock
-                || block instanceof EndRodBlock
-                //|| block instanceof FallingBlock
-                || block instanceof FrogspawnBlock
-                || block instanceof KelpBlock
-                || block instanceof KelpPlantBlock
-                || block instanceof LadderBlock
-                || block instanceof AbstractCauldronBlock
+                        || block instanceof BellBlock
+                        || block instanceof LanternBlock
+                        || block instanceof TorchBlock
+                        || block instanceof ChainBlock
+                        || block instanceof SignBlock
+                        || block instanceof EnchantingTableBlock
 
-                || block instanceof LightBlock
-                || block instanceof NetherPortalBlock
-                || block instanceof NoteBlock
-                || block instanceof RedStoneWireBlock
-                || block instanceof SeagrassBlock
-                || block instanceof StructureVoidBlock
-                || block instanceof TripWireBlock
-                || block instanceof TripWireHookBlock
-                || block instanceof WebBlock
-                || block == Blocks.SNOW_BLOCK
-                || block instanceof SnowLayerBlock
-                || block instanceof PowderSnowBlock;
+                        || block instanceof EndPortalBlock
+                        || block instanceof EndPortalFrameBlock
+                        || block instanceof EndGatewayBlock
+                        || block instanceof EndRodBlock
+                        //|| block instanceof FallingBlock
+                        || block instanceof FrogspawnBlock
+                        || block instanceof KelpBlock
+                        || block instanceof KelpPlantBlock
+                        || block instanceof LadderBlock
+                        || block instanceof AbstractCauldronBlock
+
+                        || block instanceof LightBlock
+                        || block instanceof NetherPortalBlock
+                        || block instanceof NoteBlock
+                        || block instanceof RedStoneWireBlock
+                        || block instanceof SeagrassBlock
+                        || block instanceof StructureVoidBlock
+                        || block instanceof TripWireBlock
+                        || block instanceof TripWireHookBlock
+                        || block instanceof WebBlock
+                        || block == Blocks.SNOW_BLOCK
+                        || block instanceof SnowLayerBlock
+                        || block instanceof PowderSnowBlock;
     }
 
     public static VoxelShape getShape(BlockState blockState) {
-        return Shapes.empty();
+        return Shapes.block();
     }
 }

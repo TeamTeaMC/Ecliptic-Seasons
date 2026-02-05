@@ -1,6 +1,5 @@
 package com.teamtea.eclipticseasons.mixin.compat.voxy;
 
-import com.google.common.collect.Maps;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
@@ -37,7 +36,7 @@ import java.util.Map;
 public class MixinMinecraftBundle {
 
     @Mixin(Block.class)
-    public abstract static class MixinVoxyBlock {
+    public abstract static class MixinVoxyBlock implements IVoxyFlagger {
         @Shadow
         public abstract BlockState defaultBlockState();
 
@@ -51,6 +50,19 @@ public class MixinMinecraftBundle {
                                                                      @Local(argsOnly = true) BlockBehaviour.Properties pProperties) {
             original.call(instance, pBuilder);
             VoxyTool.registerExtraProperties(instance, pProperties, pBuilder);
+        }
+
+        @Unique
+        boolean eclipticseasons$voxyBlock = false;
+
+        @Unique
+        public void eclipticseasons$setVoxyBlock(boolean voxyBlock) {
+            this.eclipticseasons$voxyBlock = voxyBlock;
+        }
+
+        @Unique
+        public boolean eclipticseasons$isVoxyBlock() {
+            return eclipticseasons$voxyBlock;
         }
     }
 

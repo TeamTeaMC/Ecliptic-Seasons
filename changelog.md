@@ -1,3 +1,7 @@
+#### 0.12.10.2
+
+- Updated the code for voxy compablity.
+
 #### 0.12.10.1
 
 - Adjust the greenhouse dark-light detection logic from "sky-light only" to include "supplementary light."
