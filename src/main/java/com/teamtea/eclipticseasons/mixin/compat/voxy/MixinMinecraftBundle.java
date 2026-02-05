@@ -57,13 +57,14 @@ public class MixinMinecraftBundle {
         @Unique
         int eclipticseasons$voxyBlock = 0;
 
-        @Unique
-        public void eclipticseasons$setVoxyBlock() {
-            this.eclipticseasons$voxyBlock = 2;
-        }
 
         @Unique
         public boolean eclipticseasons$isVoxyBlock() {
+            if (eclipticseasons$voxyBlock == 0
+                    && defaultBlockState() != null) {
+                eclipticseasons$voxyBlock =
+                        defaultBlockState().getProperties().contains(VoxyConstant.SNOWY) ? 2 : 1;
+            }
             return eclipticseasons$voxyBlock == 2;
         }
     }
