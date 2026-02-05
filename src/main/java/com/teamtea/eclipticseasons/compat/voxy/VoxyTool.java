@@ -102,7 +102,7 @@ public class VoxyTool {
                 pBuilder = pBuilder.add(VoxyConstant.SNOWY);
                 //defaultBlockState().setValue(BlockStateProperties.SNOWY, false);
                 if (instance instanceof IVoxyFlagger iVoxyFlagger)
-                    iVoxyFlagger.eclipticseasons$setVoxyBlock(true);
+                    iVoxyFlagger.eclipticseasons$setVoxyBlock();
             }
         } catch (Exception e) {
         }

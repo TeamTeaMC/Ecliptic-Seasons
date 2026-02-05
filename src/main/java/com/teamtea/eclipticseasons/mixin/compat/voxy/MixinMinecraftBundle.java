@@ -55,16 +55,16 @@ public class MixinMinecraftBundle {
         }
 
         @Unique
-        boolean eclipticseasons$voxyBlock = false;
+        int eclipticseasons$voxyBlock = 0;
 
         @Unique
-        public void eclipticseasons$setVoxyBlock(boolean voxyBlock) {
-            this.eclipticseasons$voxyBlock = voxyBlock;
+        public void eclipticseasons$setVoxyBlock() {
+            this.eclipticseasons$voxyBlock = 2;
         }
 
         @Unique
         public boolean eclipticseasons$isVoxyBlock() {
-            return eclipticseasons$voxyBlock;
+            return eclipticseasons$voxyBlock == 2;
         }
     }
 
@@ -151,7 +151,7 @@ public class MixinMinecraftBundle {
 
             if (!CompatModule.isVoxyTest()) return;
             if (!(event.getLevel() instanceof Level level)) return;
-            VoxyTool.updateChunk(level,chunk,chunkMap);
+            VoxyTool.updateChunk(level, chunk, chunkMap);
         }
     }
 }
