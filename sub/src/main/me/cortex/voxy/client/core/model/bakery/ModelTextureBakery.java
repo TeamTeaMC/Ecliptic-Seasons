@@ -29,4 +29,8 @@ public class ModelTextureBakery {
 
         }
     }
+
+    public int renderToStream(BlockState state, int streamBuffer, int streamOffset) {
+        return 0;
+    }
 }

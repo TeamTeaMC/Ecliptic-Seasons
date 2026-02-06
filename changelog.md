@@ -1,3 +1,10 @@
+### 0.12.11
+
+- Optimized Voxy compatibility code again, resolving some runtime conflicts and significantly improving performance.
+
+> Note that this update may affect Voxy data. Please back up your Voxy database. If you enable the compatibility option
+> and later wish to disable or uninstall this mod, make sure to reset the Voxy database.
+
 #### 0.12.10.3
 
 - Move the Voxy test compatibility control option from Client to Common

@@ -31,8 +31,8 @@ public class CompatModule {
     private static boolean distanthorizons = false;
     @Getter
     private static boolean voxy = false;
-    @Getter
-    private static boolean voxyTest = false;
+    //@Getter
+    //private static boolean voxyTest = false;
 
     /**
      * Used for mod init detect.
@@ -43,13 +43,13 @@ public class CompatModule {
         oculus = Platform.isModLoaded("oculus");
         distanthorizons = Platform.isModLoaded("distanthorizons");
         voxy = Platform.isModLoaded("voxy");
-        if (isVoxy()) {
-            CommentedFileConfig oldConfig = CommentedFileConfig.builder(FMLPaths.CONFIGDIR.get().resolve(EclipticSeasons.defaultConfigName(ModConfig.Type.COMMON, EclipticSeasons.MODID)))
-                    .preserveInsertionOrder().build();
-            oldConfig.load();
-            voxyTest = oldConfig.getOrElse("Compat.VoxyTest", false);
-            oldConfig.close();
-        }
+        //if (isVoxy()) {
+        //    CommentedFileConfig oldConfig = CommentedFileConfig.builder(FMLPaths.CONFIGDIR.get().resolve(EclipticSeasons.defaultConfigName(ModConfig.Type.COMMON, EclipticSeasons.MODID)))
+        //            .preserveInsertionOrder().build();
+        //    oldConfig.load();
+        //    voxyTest = oldConfig.getOrElse("Compat.VoxyTest", false);
+        //    oldConfig.close();
+        //}
     }
 
     /**
@@ -96,7 +96,7 @@ public class CompatModule {
         public static ForgeConfigSpec.BooleanValue fixBiome;
         public static ForgeConfigSpec.DoubleValue weatherVotePercent;
         public static ForgeConfigSpec.BooleanValue DistantHorizonsWinterLOD;
-        private static ForgeConfigSpec.BooleanValue voxyTest;
+        public static ForgeConfigSpec.BooleanValue voxyTest;
 
         public static void load(ForgeConfigSpec.Builder builder) {
             builder.push("Compat");
