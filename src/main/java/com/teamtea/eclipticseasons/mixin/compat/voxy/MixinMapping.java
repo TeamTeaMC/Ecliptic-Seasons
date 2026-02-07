@@ -17,15 +17,8 @@ public abstract class MixinMapping {
             method = "getBlockStateOpacity(I)I",
             at = @At(value = "INVOKE", target = "Lit/unimi/dsi/fastutil/objects/ObjectArrayList;get(I)Ljava/lang/Object;")
     )
-    private static <K> K eclipticseasons$getBlockStateOpacity(ObjectArrayList<K> instance, int index, Operation<K> original) {
-        try {
-            return original.call(instance, index);
-        } catch (Exception e) {
-            int maxBlockId = 0xFFFFF;
-            return original.call(instance,
-                    VoxyTool.isVoxyTest() ? maxBlockId - index : index);
-        }
+    private <K> K eclipticseasons$getBlockStateOpacity_fixId(ObjectArrayList<K> instance, int index, Operation<K> original) {
+        return original.call(instance, VoxyTool.fixId((Mapper) (Object) this, index));
     }
-
 
 }

@@ -1,6 +1,7 @@
 package com.teamtea.eclipticseasons.mixin.compat.distanthorizons;
 
 
+import com.teamtea.eclipticseasons.compat.distanthorizons.DHClientTool;
 import com.teamtea.eclipticseasons.compat.distanthorizons.DHTool;
 import com.teamtea.eclipticseasons.config.ClientConfig;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -31,7 +32,7 @@ public abstract class MixinClientLevel extends Level {
         if (ClientConfig.Renderer.forceChunkRenderUpdate.get() &&
                 ClientConfig.Renderer.enhancementChunkRenderUpdate.get()) {
             if (getGameTime() % (20 * 15) == 0) {
-                DHTool.forceReloadAll();
+                DHClientTool.forceReloadAll();
             }
         }
     }

@@ -51,6 +51,7 @@ import net.minecraftforge.client.ChunkRenderTypeSet;
 import net.minecraftforge.client.model.data.ModelData;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.BiConsumer;
@@ -257,8 +258,12 @@ public class ExtraModelManager {
         return Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(resourceLocation);
     }
 
-    public static List<BakedQuad> cancelTop(BakedModel bakedModel, BlockAndTintGetter blockAndTintGetter, BlockState state, BlockPos pos, Direction direction, RandomSource random, long seed, List<BakedQuad> original) {
-        ExtraRendererContext rendererHolder = IExtraRendererContextOwner.of(blockAndTintGetter);
+    public static List<BakedQuad> cancelTop(@Nullable BakedModel bakedModel, @Nonnull BlockAndTintGetter blockAndTintGetter, @Nonnull BlockState state, @Nonnull BlockPos pos, @Nullable Direction direction, @Nonnull RandomSource random, long seed, @Nonnull List<BakedQuad> original) {
+        return cancelTop(IExtraRendererContextOwner.of(blockAndTintGetter), bakedModel, blockAndTintGetter, state, pos, direction, random, seed, original);
+    }
+
+    // TODO：关于覆盖cutout面的问题，似乎可以给纹理加一个半透明像素，然后用cutout渲染就能正常覆盖了
+    public static List<BakedQuad> cancelTop(@Nonnull ExtraRendererContext rendererHolder, @Nullable BakedModel bakedModel, @Nonnull BlockAndTintGetter blockAndTintGetter, @Nonnull BlockState state, @Nonnull BlockPos pos, @Nullable Direction direction, @Nonnull RandomSource random, long seed, @Nonnull List<BakedQuad> original) {
         if (rendererHolder.getExtraModel() == null) return original;
 
         if (bakedModel != null
@@ -1116,7 +1121,7 @@ public class ExtraModelManager {
                 || isModelReplaceable(flag);
     }
 
-    private static boolean isModelReplaceable(int flag) {
+    public static boolean isModelReplaceable(int flag) {
         return flag == MapChecker.FLAG_GRASS
                 || flag == MapChecker.FLAG_GRASS_LARGE;
     }

@@ -3,7 +3,7 @@ package com.teamtea.eclipticseasons.mixin.compat.voxy;
 import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import com.teamtea.eclipticseasons.compat.voxy.IVoxyModelController;
-import com.teamtea.eclipticseasons.compat.voxy.VoxyTool;
+import com.teamtea.eclipticseasons.compat.voxy.VoxyClientTool;
 import me.cortex.voxy.client.core.model.bakery.ModelTextureBakery;
 import me.cortex.voxy.client.core.model.bakery.ReuseVertexConsumer;
 import net.minecraft.client.renderer.RenderType;
@@ -24,11 +24,6 @@ public abstract class MixinModelTextureBakery implements IVoxyModelController {
     @Final
     private ReuseVertexConsumer vc;
 
-    //@Shadow(remap = false)
-    //public static int getMetaFromLayer(RenderType layer) {
-    //    return 0;
-    //}
-
     @Inject(
             remap = false,
             method = "bakeBlockModel",
@@ -36,7 +31,7 @@ public abstract class MixinModelTextureBakery implements IVoxyModelController {
     )
     private void eclipticseasons$bakeBlockModel_pre(BlockState state, RenderType layer, CallbackInfo ci, @Share("snowy_model") LocalRef<BakedModel> modelLocalRef) {
         if (isSnowyBlock())
-            VoxyTool.renderToStream(state, layer, vc);
+            VoxyClientTool.renderToStream(state, layer, vc);
     }
 
 
