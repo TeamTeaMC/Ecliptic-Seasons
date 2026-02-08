@@ -1,6 +1,10 @@
 > As the ecosystem for 1.20.1 begins to wind down with major mods like Create moving on, we are also transitioning into
 > the final maintenance phase for our mod on this version.
 
+#### 0.12.11.5
+
+- Add option `VoxyReloadWhenSeasonChanged` to auto clean voxy cache when solar term changes.
+
 #### 0.12.11.4
 
 - Added the SimpleSeasonHud option, extracted from our debug information, intended for players who do not want to

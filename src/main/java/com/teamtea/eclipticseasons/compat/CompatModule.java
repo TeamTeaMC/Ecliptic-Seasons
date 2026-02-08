@@ -74,6 +74,14 @@ public class CompatModule {
                 throw new RuntimeException(e);
             }
         }
+        if (isVoxy() && FMLLoader.getDist() == Dist.CLIENT) {
+            try {
+                Class<?> handler = Class.forName("com.teamtea.eclipticseasons.compat.voxy.VoxyEsHandler");
+                gameBus.register(handler.getField("INSTANCE").get(null));
+            } catch (ClassNotFoundException | IllegalAccessException | NoSuchFieldException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
     public static void onInterModEnqueue(final InterModEnqueueEvent event) {
@@ -98,6 +106,7 @@ public class CompatModule {
         public static ForgeConfigSpec.BooleanValue DistantHorizonsWinterLOD;
         public static ForgeConfigSpec.BooleanValue voxyTest;
         public static ForgeConfigSpec.BooleanValue voxyLODAutoReload;
+        public static ForgeConfigSpec.BooleanValue voxyReloadWhenSeasonChanged;
 
         public static void load(ForgeConfigSpec.Builder builder) {
             builder.push("Compat");
@@ -142,6 +151,14 @@ public class CompatModule {
                                 Just for test.
                                 .""".strip()
                         ).define("VoxyLODAutoReload", false);
+
+                voxyReloadWhenSeasonChanged = builder
+                        //.worldRestart()
+                        .comment("""
+                                .
+                                Just for test.
+                                .""".strip()
+                        ).define("VoxyReloadWhenSeasonChanged", false);
             }
             builder.pop();
         }
