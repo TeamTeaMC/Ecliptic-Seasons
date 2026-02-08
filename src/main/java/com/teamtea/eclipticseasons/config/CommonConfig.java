@@ -492,7 +492,7 @@ public class CommonConfig {
                     .define("SnowTogether", false);
 
             RegionalSnowTime = builder.comment("Aligns snowfall schedules based on three broad climate zones (Warm, Temperate, and Cold) instead of per-biome.")
-                    .define("RegionalSnowTime", false);
+                    .define("RegionalSnowTime", true);
 
             VanillaBiomeClimateSettings = builder.comment("Enforces original Vanilla temperature and precipitation settings to prevent other mods from creating extreme environmental values.")
                     .define("VanillaBiomeClimateSettings", true);

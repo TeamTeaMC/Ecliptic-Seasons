@@ -1,6 +1,11 @@
 > As the ecosystem for 1.20.1 begins to wind down with major mods like Create moving on, we are also transitioning into
 > the final maintenance phase for our mod on this version.
 
+#### 0.12.11.5.1
+
+- Default enable datapack option `RegionalSnowTime` to align snowfall schedules based on three broad climate zones (
+  Warm, Temperate, and Cold) instead of per-biome.
+
 #### 0.12.11.5
 
 - Add option `VoxyReloadWhenSeasonChanged` to auto clean voxy cache when solar term changes.
