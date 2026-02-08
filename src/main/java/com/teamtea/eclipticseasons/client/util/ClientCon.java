@@ -21,6 +21,7 @@ import com.teamtea.eclipticseasons.common.misc.ClientAgent;
 import com.teamtea.eclipticseasons.common.network.message.DataPackEventMessage;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.longs.LongBooleanImmutablePair;
+import lombok.Getter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
@@ -54,6 +55,7 @@ public class ClientCon {
     public static DataPackEventMessage<CustomSnowTerm> snowTermCache;
     public static DataPackEventMessage<AgroClimaticZone> aczCache;
     public static DataPackEventMessage<CropGrowControlBuilder> cropCache;
+    @Getter
     public static ClientAgent agent = new ClientAgent() {
     };
 

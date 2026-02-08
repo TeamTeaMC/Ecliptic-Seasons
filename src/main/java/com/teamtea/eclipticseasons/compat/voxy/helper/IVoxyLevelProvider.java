@@ -1,4 +1,4 @@
-package com.teamtea.eclipticseasons.compat.voxy;
+package com.teamtea.eclipticseasons.compat.voxy.helper;
 
 import net.minecraft.world.level.Level;
 

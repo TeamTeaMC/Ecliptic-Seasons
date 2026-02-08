@@ -6,7 +6,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
-import com.teamtea.eclipticseasons.compat.voxy.IVoxyLevelProvider;
+import com.teamtea.eclipticseasons.compat.voxy.helper.IVoxyLevelProvider;
 import com.teamtea.eclipticseasons.compat.voxy.VoxyTool;
 import me.cortex.voxy.common.voxelization.VoxelizedSection;
 import me.cortex.voxy.common.world.service.VoxelIngestService;

@@ -2,7 +2,7 @@ package com.teamtea.eclipticseasons.mixin.compat.voxy;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-import com.teamtea.eclipticseasons.compat.voxy.IVoxyModelController;
+import com.teamtea.eclipticseasons.compat.voxy.helper.IVoxyModelController;
 import com.teamtea.eclipticseasons.compat.voxy.VoxyTool;
 import me.cortex.voxy.client.core.model.ModelFactory;
 import me.cortex.voxy.client.core.model.bakery.ModelTextureBakery;

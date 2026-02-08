@@ -40,6 +40,7 @@
     "compat.voxy.MixinModelFactory",
     "compat.voxy.MixinVoxelIngestService",
     "compat.voxy.MixinWorldConversionFactory",
+    "compat.voxy.MixinWorldImporter",
     "data.MixinsRegistriesDatapackGenerator",
     "data.RegistrySetBuilderMixin",
     "game.MixinBee_BeePollinateGoal",
@@ -88,6 +89,7 @@
     "compat.optifine.MixinRebuildTask",
     "compat.optifine_test.MixinBlockModelCustomizer",
     "compat.optifine_test.MixinItemBlockRenderTypes",
+    "compat.voxy.MixinClientLevel",
     "compat.voxy.MixinModelTextureBakery"
   ],
   "injectors": {

@@ -1,3 +1,16 @@
+#### 0.12.11.2
+
+* Fixed an issue where some runtime-built snow-covered models (such as snow-covered fences) were not generated correctly
+  in Voxy rendering.
+* Added the option **VoxyLODAutoReload**. This option now determines whether to automatically refresh LOD appearances
+  based on changes in weather-related snow coverage. When enabled, colors will no longer change due to seasonal
+  variation.
+* The essence of this compatibility is invoking Voxy’s world import process. Voxy currently stores LOD build results in
+  its database, which makes direct modification of that data difficult. Adjusting the generation process of the build
+  results is comparatively easier. Therefore, LODs can now also be updated manually by running
+  `/voxy import world <world_name>` instead of relying on automatic updates. This approach reduces performance
+  requirements and mitigates update overhead for very large worlds.
+
 ### 0.12.11
 
 - Optimized Voxy compatibility code again, resolving some runtime conflicts and significantly improving performance.
@@ -19,7 +32,6 @@
 
 > As the ecosystem for 1.20.1 begins to wind down with major mods like Create moving on, we are also transitioning into
 > the final maintenance phase for our mod on this version.
-
 
 ### 0.12.10
 

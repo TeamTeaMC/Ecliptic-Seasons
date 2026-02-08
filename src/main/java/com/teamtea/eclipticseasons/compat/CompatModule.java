@@ -97,6 +97,7 @@ public class CompatModule {
         public static ForgeConfigSpec.DoubleValue weatherVotePercent;
         public static ForgeConfigSpec.BooleanValue DistantHorizonsWinterLOD;
         public static ForgeConfigSpec.BooleanValue voxyTest;
+        public static ForgeConfigSpec.BooleanValue voxyLODAutoReload;
 
         public static void load(ForgeConfigSpec.Builder builder) {
             builder.push("Compat");
@@ -134,6 +135,13 @@ public class CompatModule {
                                 .""".strip()
                         ).define("VoxyTest", false);
 
+                voxyLODAutoReload = builder
+                        //.worldRestart()
+                        .comment("""
+                                .
+                                Just for test.
+                                .""".strip()
+                        ).define("VoxyLODAutoReload", false);
             }
             builder.pop();
         }

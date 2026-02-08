@@ -8,6 +8,10 @@ public class Mapper {
         return 0;
     }
 
+    public static int getLightId(long blockId) {
+        return 0;
+    }
+
     public BlockState getBlockStateFromBlockId(int blockId) {
         return null;
     }
@@ -22,7 +26,16 @@ public class Mapper {
         return this.blockId2stateEntry.get(blockId).opacity;
     }
 
+    public BiomeEntry[] getBiomeEntries() {
+
+        return null;
+    }
+
     public static final class StateEntry {
-        int opacity;
+        public int opacity;
+    }
+
+    public static final class BiomeEntry {
+        public String biome;
     }
 }

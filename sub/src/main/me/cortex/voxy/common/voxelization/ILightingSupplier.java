@@ -1,4 +1,5 @@
 package me.cortex.voxy.common.voxelization;
 
-public class ILightingSupplier {
+public interface ILightingSupplier {
+    byte supply(int x, int y, int z);
 }

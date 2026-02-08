@@ -1,6 +1,6 @@
 package com.teamtea.eclipticseasons.mixin.compat.voxy;
 
-import com.teamtea.eclipticseasons.compat.voxy.IVoxyLevelProvider;
+import com.teamtea.eclipticseasons.compat.voxy.helper.IVoxyLevelProvider;
 import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;

@@ -21,11 +21,11 @@ public abstract class MixinWorldConversionFactory {
     )
     private static long eclipticseasons$convert(
             byte light, int blockId, int biomeId, Operation<Long> original,
-            @Local(argsOnly = true) Mapper stateMapper,
+            @Local(argsOnly = true) Mapper mapper,
             @Local(argsOnly = true) ILightingSupplier lightSupplier,
             @Local(name = "i") int i,
             @Local(argsOnly = true) VoxelizedSection section) {
-        blockId = VoxyTool.changeBlockId(blockId, stateMapper, i, section);
+        blockId = VoxyTool.changeBlockId(blockId, mapper, i, section,lightSupplier,biomeId);
         return original.call(light, blockId, biomeId);
     }
 

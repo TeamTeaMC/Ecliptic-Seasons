@@ -1,4 +1,4 @@
-package com.teamtea.eclipticseasons.compat.voxy;
+package com.teamtea.eclipticseasons.compat.voxy.helper;
 
 public interface IVoxyModelController {
     boolean isSnowyBlock();

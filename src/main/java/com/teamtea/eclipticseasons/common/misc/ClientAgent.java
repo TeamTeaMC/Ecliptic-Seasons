@@ -24,4 +24,15 @@ public interface ClientAgent {
 
     default void setChunkDirty(SectionPos chunkPos) {
     }
+
+    default void setChange(boolean change) {
+    }
+
+    default boolean isChange() {
+        return false;
+    }
+
+    default String getCurrentWorldName() {
+        return "world";
+    }
 }

@@ -66,11 +66,16 @@ public class NetworkUtil {
                 Registry<WeatherEffect> weatherEffects = level.registryAccess().registryOrThrow(ESRegistries.WEATHER_EFFECT);
                 var lists = WeatherManager.getBiomeList(NetworkUtil.getClient());
                 if (lists != null) {
+                    boolean update = false;
                     for (WeatherManager.BiomeWeather biomeWeather : lists) {
                         if (biomeWeatherMessage.rain[biomeWeather.id] == 0
                                 && biomeWeather.rainTime > 0) {
                             ClientWeatherChecker.addLastRainyBiome(biomeWeather.biomeHolder.value(), (long) (1 / ClientWeatherChecker.getRate()));
                         }
+                        if (!update
+                            //&& biomeWeather.rainTime + biomeWeather.clearTime + biomeWeather.thunderTime > 0
+                        )
+                            update = biomeWeather.getSnowDepth() != biomeWeatherMessage.snowDepth[biomeWeather.id];
                         biomeWeather.rainTime = biomeWeatherMessage.rain[biomeWeather.id] * 10000;
                         biomeWeather.clearTime = biomeWeatherMessage.clear[biomeWeather.id] * 10000;
                         biomeWeather.thunderTime = biomeWeatherMessage.thuder[biomeWeather.id] * 10000;
@@ -79,6 +84,8 @@ public class NetworkUtil {
                         biomeWeather.setBiomeRain(BiomeRainDispatcher.getBiomeRain(
                                 level instanceof ServerLevel, biomeWeatherMessage.weather[biomeWeather.id]));
                     }
+                    if (update)
+                        ClientCon.agent.setChange(true);
                 }
             }
         });
