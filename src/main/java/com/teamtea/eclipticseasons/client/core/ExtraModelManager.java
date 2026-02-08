@@ -38,6 +38,7 @@ import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.inventory.InventoryMenu;
@@ -1011,6 +1012,16 @@ public class ExtraModelManager {
         if (ClientConfig.Renderer.snowInFenceOnlySnowy.get()
                 && !maySnowyAt(ClientCon.getUseLevel(), mapSlice, state, pos, ClientCon.getUseLevel().getRandom(), state.getSeed(pos))) {
             return null;
+        }
+
+        BlockState belowState = blockAndTintGetter.getBlockState(checkPos.setY(pos.getY() - 1));
+        if (belowState.is(BlockTags.SNOW_LAYER_CANNOT_SURVIVE_ON)) {
+            return null;
+        } else {
+            if (!belowState.is(BlockTags.SNOW_LAYER_CAN_SURVIVE_ON)
+                    && !(Block.isFaceFull(belowState.getCollisionShape(blockAndTintGetter, checkPos), Direction.UP)
+                    || belowState.is(Blocks.SNOW) && belowState.getValue(SnowLayerBlock.LAYERS) == 8))
+                return null;
         }
 
         int snowNearbyCount = 0;
