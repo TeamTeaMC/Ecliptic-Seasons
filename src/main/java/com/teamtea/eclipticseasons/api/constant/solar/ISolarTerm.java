@@ -18,4 +18,5 @@ public interface ISolarTerm {
     int getIconAtlasSize();
     int getIconWidth();
     int getIconHeight();
+    Season getSeason();
 }

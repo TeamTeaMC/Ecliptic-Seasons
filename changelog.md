@@ -1,3 +1,13 @@
+> As the ecosystem for 1.20.1 begins to wind down with major mods like Create moving on, we are also transitioning into
+> the final maintenance phase for our mod on this version.
+
+#### 0.12.11.4
+
+- Added the SimpleSeasonHud option, extracted from our debug information, intended for players who do not want to
+  install additional HUD mods. As part of maintaining a healthy community ecosystem, no extra configuration options are
+  provided.
+- Optimized the biome color update logic.
+
 #### 0.12.11.3
 
 - Fixed an issue where **SolarTermChangeEvent** could not be received on the client logic thread.
@@ -38,9 +48,6 @@
 #### 0.12.10.1
 
 - Adjust the greenhouse dark-light detection logic from "sky-light only" to include "supplementary light."
-
-> As the ecosystem for 1.20.1 begins to wind down with major mods like Create moving on, we are also transitioning into
-> the final maintenance phase for our mod on this version.
 
 ### 0.12.10
 

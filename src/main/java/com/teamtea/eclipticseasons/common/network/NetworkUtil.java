@@ -7,7 +7,6 @@ import com.teamtea.eclipticseasons.api.event.SolarTermChangeEvent;
 import com.teamtea.eclipticseasons.api.misc.IChunkBiomeHolder;
 import com.teamtea.eclipticseasons.client.color.season.BiomeColorsHandler;
 import com.teamtea.eclipticseasons.client.core.ClientWeatherChecker;
-import com.teamtea.eclipticseasons.client.render.WorldRenderer;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeRainDispatcher;
@@ -16,12 +15,9 @@ import com.teamtea.eclipticseasons.common.core.map.BiomeHolder;
 import com.teamtea.eclipticseasons.common.network.message.*;
 import com.teamtea.eclipticseasons.common.registry.ESRegistries;
 import com.teamtea.eclipticseasons.config.ClientConfig;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.core.SectionPos;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.chunk.LevelChunk;
@@ -35,11 +31,12 @@ import java.util.function.Supplier;
 public class NetworkUtil {
 
     public static Level getClient() {
-        return Minecraft.getInstance().level;
+        return ClientCon.getUseLevel();
     }
 
     public static Player getPlayer() {
-        return Minecraft.getInstance().player;
+        return ClientCon.getAgent().getCameraEntity() instanceof Player player ?
+                player : null;
     }
 
     public static boolean processSolarTermsMessage(SolarTermsMessage solarTermsMessage, Supplier<NetworkEvent.Context> context) {
@@ -59,6 +56,9 @@ public class NetworkUtil {
                             // BiomeClimateManager.updateTemperature(NetworkUtil.getClient(), data.getSolarTerm());
                             BiomeColorsHandler.needRefresh = true;
                             ClientCon.tick(getClient());
+                            if (solarTerm != old) {
+                                ClientCon.getAgent().setAllChunkDirty();
+                            }
                         }
                 );
             }
@@ -105,12 +105,10 @@ public class NetworkUtil {
         context.get().enqueueWork(() ->
         {
             if (context.get().getDirection() == NetworkDirection.PLAY_TO_CLIENT) {
-                // note 观察是否更新正常
                 if (ClientConfig.Renderer.resetRendererAfterSleep.get()) {
-                    Minecraft.getInstance().levelRenderer.allChanged();
+                    ClientCon.getAgent().setAllRendererChanged();
                 } else {
-                    if (Minecraft.getInstance().cameraEntity instanceof LivingEntity livingEntity)
-                        WorldRenderer.setAllDirty(SectionPos.of(livingEntity.getOnPos()));
+                    ClientCon.getAgent().setAllChunkDirty();
                 }
             }
 

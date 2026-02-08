@@ -57,6 +57,7 @@ public class ClientConfig {
     public static class GUI {
         public static ForgeConfigSpec.BooleanValue agriculturalInformation;
         public static ForgeConfigSpec.BooleanValue itemInformation;
+        public static ForgeConfigSpec.BooleanValue simpleSeasonHud;
 
         private static void load(ForgeConfigSpec.Builder builder) {
             builder.push("GUI");
@@ -64,6 +65,8 @@ public class ClientConfig {
                     .define("AgriculturalInformation", true);
             itemInformation = builder.comment("Show additional information regarding item usage or origins.")
                     .define("ItemInformation", true);
+            simpleSeasonHud = builder.comment("Whether to enable a simplified HUD overlay that displays the current season and solar term on the screen.")
+                    .define("SimpleSeasonHud", false);
             builder.pop();
         }
     }

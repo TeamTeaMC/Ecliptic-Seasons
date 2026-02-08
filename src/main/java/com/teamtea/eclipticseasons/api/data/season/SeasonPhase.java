@@ -7,6 +7,7 @@ import com.teamtea.eclipticseasons.api.constant.solar.ISolarTerm;
 import com.teamtea.eclipticseasons.api.util.codec.ESExtraCodec;
 import com.teamtea.eclipticseasons.common.misc.SimplePair;
 import com.teamtea.eclipticseasons.common.registry.ESRegistries;
+import lombok.Getter;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -16,6 +17,7 @@ import net.minecraft.util.StringRepresentable;
 import java.util.Locale;
 import java.util.Optional;
 
+
 public record SeasonPhase(
         Season season,
         ResourceLocation name,
@@ -23,6 +25,11 @@ public record SeasonPhase(
         Optional<Icon> icon,
         FontIcon fontIcon
 ) implements ISolarTerm {
+
+    @Override
+    public Season getSeason() {
+        return season;
+    }
 
     public static final Codec<SeasonPhase> CODEC = RecordCodecBuilder.create(ins -> ins.group(
             ESExtraCodec.SEASON.fieldOf("season").forGetter(SeasonPhase::season),

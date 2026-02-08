@@ -23,7 +23,7 @@ public final class OverlayEventHandler {
         var level = mc.level;
 
         if (player != null && level != null && !mc.options.hideGui) {
-            if (ClientConfig.Debug.debugInfo.get()) {
+            if (ClientConfig.Debug.debugInfo.get() || ClientConfig.GUI.simpleSeasonHud.get()) {
                 BlockPos pos = player.blockPosition();
 
                 var solarTermsDay = EclipticUtil.getNowSolarDay(level);

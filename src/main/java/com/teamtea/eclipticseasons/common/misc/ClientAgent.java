@@ -25,6 +25,12 @@ public interface ClientAgent {
     default void setChunkDirty(SectionPos chunkPos) {
     }
 
+    default void setAllChunkDirty() {
+    }
+
+    default void setAllRendererChanged() {
+    }
+
     default void setChange(boolean change) {
     }
 

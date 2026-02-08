@@ -1,8 +1,11 @@
 package com.teamtea.eclipticseasons.client.render;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
+import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.registry.EffectRegistry;
 import com.teamtea.eclipticseasons.config.CommonConfig;
+import it.unimi.dsi.fastutil.ints.IntArraySet;
+import it.unimi.dsi.fastutil.ints.IntIterator;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
@@ -11,6 +14,7 @@ import net.minecraft.client.renderer.PostPass;
 import net.minecraft.core.SectionPos;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.chunk.ChunkStatus;
+import net.minecraft.world.level.levelgen.Heightmap;
 
 public class WorldRenderer {
     public static long reMainTick = 0;
@@ -122,14 +126,29 @@ public class WorldRenderer {
 
 
     public static void setAllDirty(SectionPos centerPos) {
+        ClientLevel level = Minecraft.getInstance().level;
+        if (level == null) return;
         int pSectionX = centerPos.x();
-        int pSectionY = centerPos.y();
+        //int pSectionY = centerPos.y();
         int pSectionZ = centerPos.z();
         int d = (int) Minecraft.getInstance().levelRenderer.getLastViewDistance();
         for (int j = pSectionZ - d; j <= pSectionZ + d; j++) {
             for (int i = pSectionX - d; i <= pSectionX + d; i++) {
-                for (int k = pSectionY - 3; k <= pSectionY + 1; k++) {
-                    setSectionDirty(SectionPos.of(i, k, j));
+                var chunk = MapChecker.getChunkView(level, i, j);
+                if (chunk != null) {
+                    IntArraySet set = new IntArraySet();
+                    for (int x = 0; x < 16; x++) {
+                        for (int z = 0; z < 16; z++) {
+                            set.add(SectionPos.posToSectionCoord(chunk.getHeight(Heightmap.Types.WORLD_SURFACE,x,z)));
+                        }
+                    }
+                    for (IntIterator it = set.iterator(); it.hasNext(); ) {
+                        int pSectionY = it.nextInt();
+                        setSectionDirty(SectionPos.of(i, pSectionY, j));
+                    }
+                    //for (int k = pSectionY - 3; k <= pSectionY + 1; k++) {
+                    //    setSectionDirty(SectionPos.of(i, k, j));
+                    //}
                 }
             }
         }
