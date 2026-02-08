@@ -1,10 +1,19 @@
+#### 0.12.11.3
+
+- Fixed an issue where **SolarTermChangeEvent** could not be received on the client logic thread.
+- Aligned DH’s LOD update determination logic with that of **Voxy**.
+- Season changes now also trigger LOD updates when the relevant option is enabled.
+
+#### 0.12.11.2.1
+
+- Optimized some rendering logic for vanilla blocks such as snow connecting to fences.
+
 #### 0.12.11.2
 
 * Fixed an issue where some runtime-built snow-covered models (such as snow-covered fences) were not generated correctly
   in Voxy rendering.
 * Added the option **VoxyLODAutoReload**. This option now determines whether to automatically refresh LOD appearances
-  based on changes in weather-related snow coverage. When enabled, colors will no longer change due to seasonal
-  variation.
+  based on changes in weather-related snow coverage.
 * The essence of this compatibility is invoking Voxy’s world import process. Voxy currently stores LOD build results in
   its database, which makes direct modification of that data difficult. Adjusting the generation process of the build
   results is comparatively easier. Therefore, LODs can now also be updated manually by running

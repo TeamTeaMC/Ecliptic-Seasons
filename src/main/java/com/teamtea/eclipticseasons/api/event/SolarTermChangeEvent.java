@@ -2,12 +2,14 @@ package com.teamtea.eclipticseasons.api.event;
 
 
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
+import lombok.Getter;
 import net.minecraft.world.level.Level;
 
 
 /**
  * The event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}
  * **/
+@Getter
 public class SolarTermChangeEvent extends net.minecraftforge.eventbus.api.Event implements IESEvent {
     private final SolarTerm oldSolarTerm;
     private final SolarTerm newSolarTerm;
@@ -21,19 +23,4 @@ public class SolarTermChangeEvent extends net.minecraftforge.eventbus.api.Event 
         this.solarDays = solarDays;
     }
 
-    public Level getLevel() {
-        return level;
-    }
-
-    public SolarTerm getNewSolarTerm() {
-        return newSolarTerm;
-    }
-
-    public SolarTerm getOldSolarTerm() {
-        return oldSolarTerm;
-    }
-
-    public int getSolarDays() {
-        return solarDays;
-    }
 }

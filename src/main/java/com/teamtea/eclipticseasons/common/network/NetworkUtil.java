@@ -1,7 +1,9 @@
 package com.teamtea.eclipticseasons.common.network;
 
+import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.data.craft.HumidityControl;
 import com.teamtea.eclipticseasons.api.data.weather.special_effect.WeatherEffect;
+import com.teamtea.eclipticseasons.api.event.SolarTermChangeEvent;
 import com.teamtea.eclipticseasons.api.misc.IChunkBiomeHolder;
 import com.teamtea.eclipticseasons.client.color.season.BiomeColorsHandler;
 import com.teamtea.eclipticseasons.client.core.ClientWeatherChecker;
@@ -23,6 +25,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkEvent;
 
@@ -46,7 +49,13 @@ public class NetworkUtil {
 
                 SolarHolders.getSaveDataLazy(NetworkUtil.getClient()).ifPresent(data ->
                         {
+                            SolarTerm old = data.getSolarTerm();
                             data.setSolarTermsDay(solarTermsMessage.solarDay);
+                            SolarTerm solarTerm = data.getSolarTerm();
+                            if (solarTerm != old) {
+                                MinecraftForge.EVENT_BUS.post(new SolarTermChangeEvent(old, solarTerm, getClient(), data.getSolarTermsDay()));
+                                ClientCon.getAgent().setChange(true);
+                            }
                             // BiomeClimateManager.updateTemperature(NetworkUtil.getClient(), data.getSolarTerm());
                             BiomeColorsHandler.needRefresh = true;
                             ClientCon.tick(getClient());

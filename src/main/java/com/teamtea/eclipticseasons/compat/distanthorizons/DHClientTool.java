@@ -12,6 +12,7 @@ import com.seibel.distanthorizons.core.render.LodRenderSection;
 import com.seibel.distanthorizons.core.util.gridList.MovableGridRingList;
 import com.seibel.distanthorizons.core.util.objects.quadTree.QuadNode;
 import com.seibel.distanthorizons.core.world.IDhClientWorld;
+import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.compat.CompatModule;
 import com.teamtea.eclipticseasons.mixin.compat.distanthorizons.MixinQuadTree;
 import it.unimi.dsi.fastutil.longs.LongLinkedOpenHashSet;
@@ -31,8 +32,11 @@ public class DHClientTool {
 
         IDhClientWorld clientWorld = SharedApi.getIDhClientWorld();
         if (Minecraft.getInstance().level != null
+                && ClientCon.getAgent().isChange()
                 && ClientLevelWrapper.getWrapper(Minecraft.getInstance().level) instanceof ClientLevelWrapper clientLevelWrapper
                 && clientWorld.getLevel(clientLevelWrapper) instanceof IDhClientLevel clientLevel) {
+
+            ClientCon.getAgent().setChange(false);
 
             AtomicReference<ClientLevelModule.ClientRenderState> clientRenderStateAtomicReference = null;
             if (clientLevel instanceof DhClientServerLevel dhClientServerLevel) {
