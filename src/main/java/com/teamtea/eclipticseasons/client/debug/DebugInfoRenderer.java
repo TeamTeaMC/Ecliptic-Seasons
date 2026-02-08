@@ -83,25 +83,23 @@ public class DebugInfoRenderer {
 
         InfoList infoLines = new InfoList();
 
-        if (showSimple) {
-            ISolarTerm currentTerm = SolarTermHelper.get(level, pos);
-            MutableComponent termName = currentTerm.getTranslation().copy().withStyle(currentTerm.getColor())
-                    .append(" (")
-                    .append(currentTerm.getSeason().getTranslation())
-                    .append(") ");
+        ISolarTerm currentTerm = SolarTermHelper.get(level, pos);
+        MutableComponent termName = currentTerm.getTranslation().copy().withStyle(currentTerm.getColor())
+                .append(" (")
+                .append(currentTerm.getSeason().getTranslation())
+                .append(") ");
 
-            MutableComponent iconAndTerm = SimpleUtil.addSolarIconBefore(currentTerm, termName);
+        MutableComponent iconAndTerm = SimpleUtil.addSolarIconBefore(currentTerm, termName);
 
-            MutableComponent fullLine = iconAndTerm
-                    .append(Component.literal(", ").withStyle(DEFAULT).withStyle(ChatFormatting.GRAY))
-                    .append(Component.translatable("ui.info.eclipticseasons.days", solarDay).withStyle(DEFAULT).withStyle(ChatFormatting.YELLOW));
+        MutableComponent fullLine = iconAndTerm
+                .append(Component.literal(", ").withStyle(DEFAULT).withStyle(ChatFormatting.GRAY))
+                .append(Component.translatable("ui.info.eclipticseasons.days", solarDay).withStyle(DEFAULT).withStyle(ChatFormatting.YELLOW));
 
-            infoLines.addComponent(fullLine);
+        infoLines.addComponent(fullLine);
 
-            if (showDebug) {
-                infoLines.addEmpty();
-                infoLines.addEmpty();
-            }
+        if (showDebug) {
+            infoLines.addEmpty();
+            infoLines.addEmpty();
         }
 
         if (showDebug) {
