@@ -486,7 +486,7 @@ public class CommonConfig {
                     .define("ExtraSnowDefinitions", false);
 
             RainTogether = builder.comment("Synchronizes weather states across all Overworld biomes, ensuring global rainfall.")
-                    .define("RainTogether", false);
+                    .define("RainTogether", true);
 
             SnowTogether = builder.comment("Synchronizes the snowfall schedule for all Overworld biomes.")
                     .define("SnowTogether", false);
