@@ -1,16 +1,16 @@
 package com.teamtea.eclipticseasons.mixin;
 
 
+import com.electronwill.nightconfig.core.file.CommentedFileConfig;
+import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.compat.CompatModule;
 import net.minecraftforge.fml.loading.FMLLoader;
+import net.minecraftforge.fml.loading.FMLPaths;
 import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 
 public class EclipticSeasonsMixinPlugin implements IMixinConfigPlugin {
@@ -26,6 +26,7 @@ public class EclipticSeasonsMixinPlugin implements IMixinConfigPlugin {
     @Override
     public void onLoad(String mixinPackage) {
         CompatModule.init();
+        PreloadedConfig.onLoad(mixinPackage);
     }
 
     @Override
@@ -35,6 +36,7 @@ public class EclipticSeasonsMixinPlugin implements IMixinConfigPlugin {
 
     @Override
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
+        boolean shouldApply = true;
 
         if (isOptLoad == 0) {
             try {
@@ -52,11 +54,11 @@ public class EclipticSeasonsMixinPlugin implements IMixinConfigPlugin {
             String modid = strings.get(0);
             if (strings.size() > 2) {
                 if (FMLLoader.getLoadingModList().getModFileById(strings.get(1)) == null)
-                    return false;
+                    shouldApply = false;
+            } else {
+                shouldApply = FMLLoader.getLoadingModList().getModFileById(modid) != null
+                        || (Objects.equals(modid, "optifine") && isOptLoad == 1);
             }
-
-            return FMLLoader.getLoadingModList().getModFileById(modid) != null
-                    || (Objects.equals(modid, "optifine") && isOptLoad == 1);
         }
         if (
                 (
@@ -67,9 +69,12 @@ public class EclipticSeasonsMixinPlugin implements IMixinConfigPlugin {
                         && isOptLoad == 1
         ) {
 
-            return false;
+            shouldApply = false;
         }
-        return true;
+
+        if (shouldApply && !PreloadedConfig.shouldApply(mixinClassName))
+            shouldApply = false;
+        return shouldApply;
     }
 
     @Override
@@ -90,5 +95,34 @@ public class EclipticSeasonsMixinPlugin implements IMixinConfigPlugin {
     @Override
     public void postApply(String targetClassName, ClassNode targetClass, String mixinClassName, IMixinInfo mixinInfo) {
 
+    }
+
+    public static class PreloadedConfig {
+        private static CommentedFileConfig config;
+
+        public static void onLoad(String mixinPackage) {
+            var path = FMLPaths.CONFIGDIR.get().resolve(String.format(Locale.ROOT, "%s-mixins.toml", EclipticSeasons.MODID));
+            config = CommentedFileConfig.builder(path)
+                    .sync()
+                    .preserveInsertionOrder()
+                    .autosave()
+                    .build();
+            config.load();
+        }
+
+        public static boolean shouldApply(String mixinClassName) {
+            String[] parts = mixinClassName.split("\\.");
+            if (parts.length <= 4) return true;
+
+            List<String> pathList = Arrays.stream(parts).skip(4).toList();
+
+            if (!config.contains(pathList)) {
+                config.set(String.join(".", pathList), true);
+                config.save();
+                return true;
+            }
+
+            return config.get(pathList);
+        }
     }
 }

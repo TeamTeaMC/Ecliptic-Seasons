@@ -1,6 +1,14 @@
 > As the ecosystem for 1.20.1 begins to wind down with major mods like Create moving on, we are also transitioning into
 > the final maintenance phase for our mod on this version.
 
+#### 0.12.12
+
+Update: Mixin Control Support
+
+- New Feature: Added a dedicated configuration file for Mixins.
+- Toggleable Mixins: You can now freely enable or disable specific Mixins to improve compatibility or customize your
+  experience.
+
 #### 0.12.11.5.1
 
 - Default enable datapack option `RegionalSnowTime` to align snowfall schedules based on three broad climate zones (
