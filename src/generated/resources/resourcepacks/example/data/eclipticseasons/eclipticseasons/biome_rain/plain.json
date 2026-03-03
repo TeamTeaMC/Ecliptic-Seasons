@@ -6,16 +6,21 @@
         "rain_chance": 0.3
       },
       "rain_water": {
-        "rain_chance": 0.5,
-        "thunder_chance": 0.08
+        "thunder_chance": 0.08,
+        "rain_chance": 0.5
       },
       "insects_awakening": {
-        "rain_chance": 0.55,
-        "thunder_chance": 0.15
+        "thunder_chance": 0.15,
+        "rain_chance": 0.55
       },
       "spring_equinox": {
-        "rain_chance": 0.5,
         "thunder_chance": 0.1,
+        "thunder": {
+          "min_inclusive": 3600,
+          "max_inclusive": 15600,
+          "type": "minecraft:uniform"
+        },
+        "rain_chance": 0.5,
         "rain": {
           "min_inclusive": 12000,
           "max_inclusive": 24000,
@@ -25,16 +30,11 @@
           "min_inclusive": 12000,
           "max_inclusive": 180000,
           "type": "minecraft:uniform"
-        },
-        "thunder": {
-          "min_inclusive": 3600,
-          "max_inclusive": 15600,
-          "type": "minecraft:uniform"
         }
       },
       "fresh_green": {
-        "rain_chance": 0.65,
-        "thunder_chance": 0.05
+        "thunder_chance": 0.05,
+        "rain_chance": 0.65
       },
       "grain_rain": {
         "rain_chance": 0.75
@@ -43,24 +43,24 @@
         "rain_chance": 0.9
       },
       "lesser_fullness": {
-        "rain_chance": 0.7,
-        "thunder_chance": 0.1
+        "thunder_chance": 0.1,
+        "rain_chance": 0.7
       },
       "grain_in_ear": {
-        "rain_chance": 0.6,
-        "thunder_chance": 0.15
+        "thunder_chance": 0.15,
+        "rain_chance": 0.6
       },
       "summer_solstice": {
-        "rain_chance": 0.7,
-        "thunder_chance": 0.25
+        "thunder_chance": 0.25,
+        "rain_chance": 0.7
       },
       "lesser_heat": {
-        "rain_chance": 0.65,
-        "thunder_chance": 0.2
+        "thunder_chance": 0.2,
+        "rain_chance": 0.65
       },
       "greater_heat": {
-        "rain_chance": 0.5,
-        "thunder_chance": 0.05
+        "thunder_chance": 0.05,
+        "rain_chance": 0.5
       },
       "beginning_of_autumn": {
         "rain_chance": 0.42
@@ -84,8 +84,8 @@
         "rain_chance": 0.3
       },
       "light_snow": {
-        "rain_chance": 0.4,
-        "thunder_chance": 0.05
+        "thunder_chance": 0.05,
+        "rain_chance": 0.4
       },
       "heavy_snow": {
         "rain_chance": 0.5

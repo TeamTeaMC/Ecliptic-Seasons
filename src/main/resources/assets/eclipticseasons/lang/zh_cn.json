@@ -1,4 +1,5 @@
 {
+  "ui.info.eclipticseasons.days": "第%s日",
   "ui.label.eclipticseasons.submit": "提交",
   "ui.label.eclipticseasons.tag_entry": "标签项目",
   "ui.label.eclipticseasons.biomes": "群系",
@@ -26,7 +27,6 @@
   "info.eclipticseasons.recipe_category.season_quest.time.period": "%s - %s",
   "info.eclipticseasons.item.sal_wand.select_first": "选择第一个点 %s, %s, %s",
   "info.eclipticseasons.item.sal_wand.apply": "共应用到%s个位置",
-
   "eclipticseasons.configuration.SnowInFenceDirection": "栅栏内积雪全向检测",
   "eclipticseasons.configuration.NotIgnoreRiver": "降水查询不忽略河流",
   "eclipticseasons.configuration.ModsWithoutSereneSeasonBasedHumidity": "湿度自动分配黑名单",
@@ -49,5 +49,8 @@
   "eclipticseasons.configuration.DistantHorizonsWinterLOD": "Distant Horizons 冬季 LOD",
   "eclipticseasons.configuration.DistantHorizonsWinterLODForceUpdateAll": "强制刷新 DH 远景贴图 (警告：会导致卡顿)",
   "eclipticseasons.configuration.UnifiedFrozenWater": "光影薄冰渲染修复",
-  "eclipticseasons.configuration.VoxyTest": "Voxy 兼容性测试"
+  "eclipticseasons.configuration.VoxyTest": "Voxy 兼容性测试",
+  "eclipticseasons.configuration.VoxyLODAutoReload": "Voxy LOD 自动重载",
+  "eclipticseasons.configuration.VoxyReloadWhenSeasonChanged": "在节气变化时重载Voxy缓存",
+  "eclipticseasons.configuration.SimpleSeasonHud": "简单的节气GUI提示"
 }

@@ -1,132 +1,197 @@
 package com.teamtea.eclipticseasons.compat.voxy;
 
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import com.teamtea.eclipticseasons.client.core.ExtraModelManager;
-import com.teamtea.eclipticseasons.common.core.map.ChunkInfoMap;
+import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
+import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.compat.CompatModule;
-import com.teamtea.eclipticseasons.mixin.compat.voxy.MixinMinecraftBundle;
-import me.cortex.voxy.client.core.model.bakery.ModelTextureBakery;
-import me.cortex.voxy.client.core.model.bakery.ReuseVertexConsumer;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.commands.arguments.blocks.BlockStateParser;
+import com.teamtea.eclipticseasons.compat.voxy.helper.IVoxyAboveLightingSupplier;
+import com.teamtea.eclipticseasons.compat.voxy.helper.IVoxyLevelProvider;
+import com.teamtea.eclipticseasons.compat.voxy.helper.VoxyESImportManager;
+import com.teamtea.eclipticseasons.config.CommonConfig;
+import me.cortex.voxy.common.voxelization.ILightingSupplier;
+import me.cortex.voxy.common.voxelization.VoxelizedSection;
+import me.cortex.voxy.common.world.WorldEngine;
+import me.cortex.voxy.common.world.WorldSection;
+import me.cortex.voxy.common.world.other.Mapper;
+import me.cortex.voxy.commonImpl.ImportManager;
+import me.cortex.voxy.commonImpl.VoxyCommon;
+import me.cortex.voxy.commonImpl.VoxyInstance;
+import me.cortex.voxy.commonImpl.WorldIdentifier;
+import me.cortex.voxy.commonImpl.importers.WorldImporter;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.world.level.ChunkPos;
+import net.minecraft.core.Holder;
+import net.minecraft.core.SectionPos;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.LeavesBlock;
-import net.minecraft.world.level.block.RenderShape;
-import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.state.properties.Property;
-import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.levelgen.Heightmap;
-import net.minecraft.world.level.levelgen.SingleThreadedRandomSource;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.io.File;
+import java.nio.file.Path;
+import java.util.function.IntConsumer;
 
 public class VoxyTool {
+    public static boolean isVoxyTest() {
+        return CompatModule.CommonConfig.voxyTest.get();
+    }
 
 
-    public static void updateChunk(Level level, ChunkAccess chunk, ChunkInfoMap chunkMap) {
-        ChunkPos chunkPos = chunk.getPos();
-        BlockPos.MutableBlockPos checkPos = new BlockPos.MutableBlockPos(chunkPos.getMinBlockX(), 0, chunkPos.getMinBlockZ());        // MapChecker.updatePosForce(level, checkPos , level.getMinBuildHeight() - 1);
+    public static int changeBlockId(int blockId, Mapper stateMapper, int i, VoxelizedSection section, ILightingSupplier lightSupplier, int biomeId) {
+        if (!isVoxyTest()) return blockId;
+        int maxBlockId = 0xFFFFF;
+        BlockState state = stateMapper.getBlockStateFromBlockId(blockId);
+        if (MapChecker.getDefaultBlockTypeFlag(state)
+                > MapChecker.FLAG_NONE) {
+            BlockPos offset = SectionPos.of(section.x, section.y, section.z).origin()
+                    .offset(i & 15, (i >> 8 & 15), i >> 4 & 15);
 
-        if (chunkMap != null) {
-            for (int i = chunkPos.getMinBlockX(); i <= chunkPos.getMaxBlockX(); i++) {
-                for (int j = chunkPos.getMinBlockZ(); j <= chunkPos.getMaxBlockZ(); j++) {
-                    checkPos.setX(i);
-                    checkPos.setZ(j);
-                    int max_y = chunk.getHeight(Heightmap.Types.WORLD_SURFACE, i, j);
-                    int k = chunkMap.getHeight(checkPos);
-                    for (int l = k; l <= max_y; l++) {
-                        checkPos.setY(l);
-                        BlockState blockState = chunk.getBlockState(checkPos);
-                        if (VoxyConstant.shouldSkipCheck(blockState.getBlock())) continue;
-                        if (MapChecker.getDefaultBlockTypeFlag(blockState) > MapChecker.FLAG_NONE) {
-                            BlockState newState =
-                                    MapChecker.shouldSnowAtBiome(level, MapChecker.getSurfaceBiome(level, checkPos).value(), blockState, level.getRandom(), blockState.getSeed(checkPos), checkPos) ?
-                                            blockState.setValue(VoxyConstant.SNOWY, false) :
-                                            blockState.setValue(VoxyConstant.SNOWY, true);
-                            if (newState != blockState) {
-                                chunk.setBlockState(checkPos, newState, false);
+            Level level = ClientCon.getUseLevel();
+            if (section instanceof IVoxyLevelProvider iVoxyLevelProvider) {
+                Level levelBind = iVoxyLevelProvider.getLevelBind();
+                if (levelBind != null) level = levelBind;
+            }
+            if (level != null) {
+                if (MapChecker.isLoaded(level, section.x, section.z)) {
+                    if (EclipticSeasonsApi.getInstance().isSnowyBlock(level,
+                            state, offset)) {
+                        blockId = maxBlockId - blockId;
+                    }
+                } else if (lightSupplier instanceof IVoxyAboveLightingSupplier supplier) {
+                    byte supply = supplier.supply(i & 15, (i >> 8 & 15) + 1, i >> 4 & 15);
+                    int skyLight = (supply & 0xFF) & 0x0F;
+                    if (skyLight > 9 &&
+                            (!CommonConfig.Snow.notSnowyNearGlowingBlock.get() ||
+                                    (((supply & 0xFF) >> 4) & 0x0F) < CommonConfig.Snow.notSnowyNearGlowingBlockLevel.getAsInt())) {
+                        BlockState aboveState = supplier.getBlockState(i & 15, (i >> 8 & 15) + 1, i >> 4 & 15);
+                        boolean isLight = true;
+                        int flag = MapChecker.getDefaultBlockTypeFlag(state);
+                        if (MapChecker.leaveLike(flag)) {
+
+                            boolean specialLeaves = aboveState.is(state.getBlock())
+                                    && (Heightmap.Types.MOTION_BLOCKING_NO_LEAVES.isOpaque().test(aboveState) ||
+                                    MapChecker.extraSnowPassable(aboveState));
+                            if (specialLeaves) {
+                                isLight = CommonConfig.Snow.snowyTree.get();
+                            }
+                        } else {
+                            if (MapChecker.extraSnowPassable(state)) {
+                                isLight = !MapChecker.extraSnowPassable(aboveState);
+                            }
+                        }
+                        if (isLight) {
+                            String biome = stateMapper.getBiomeEntries()[biomeId].biome;
+                            var holderKey = ResourceKey.create(Registries.BIOME, ResourceLocation.parse(biome));
+                            Holder<Biome> holder = level.registryAccess().registryOrThrow(Registries.BIOME).getHolderOrThrow(holderKey);
+                            if (MapChecker.shouldSnowAtBiome(level, holder.value(), state, level.getRandom(), state.getSeed(offset), offset)) {
+                                blockId = maxBlockId - blockId;
                             }
                         }
                     }
                 }
             }
         }
+        return blockId;
     }
 
-    public static void renderToStream(BlockState state, RenderType layer, ReuseVertexConsumer vc) {
-        if (!CompatModule.isVoxyTest()) return;
-        if (VoxyConstant.shouldSkipCheck(state.getBlock())) return;
+    private static final int maxBlockId = 0xFFFFF;
 
-        if (state.getRenderShape() != RenderShape.INVISIBLE) {
-            //if (state.is(BlockTags.LOGS)) return;
-            if (state.getValue(VoxyConstant.SNOWY)) return;
-            int defaultBlockTypeFlag = MapChecker.getDefaultBlockTypeFlag(state);
-            BakedModel model = ExtraModelManager.getSnowyModel(state, null, defaultBlockTypeFlag, MapChecker.getSnowOffset(state, defaultBlockTypeFlag));
-            if (model == null) {
-                //modelLocalRef.set(sm);
-                return;
-            }
-            int meta = ModelTextureBakery.getMetaFromLayer(state.getBlock() instanceof LeavesBlock ?
-                    layer :
-                    ExtraModelManager.getRenderType(state));
-            for (Direction direction : new Direction[]{Direction.DOWN, Direction.UP, Direction.NORTH, Direction.SOUTH, Direction.WEST, Direction.EAST, null}) {
-                //int SNOW_FLAG = 1 << 30;
+    public static int fixId(Mapper mapper, int blockId) {
+        return fixId(mapper, blockId, VoxyTool::emptyConsumer);
+    }
 
-                for (BakedQuad quad : model.getQuads(state, direction, new SingleThreadedRandomSource(42L))) {
-                    int quadMeta = meta | (quad.isTinted() ? 4 : 0);
-                    //quadMeta |= SNOW_FLAG;
-                    vc.quad(quad, quadMeta);
-                }
-            }
+    private static void emptyConsumer(int i) {
+    }
+
+    public static int fixId(Mapper mapper, int blockId, IntConsumer consumer) {
+        int blockStateCount = mapper.getBlockStateCount();
+        if (blockId < blockStateCount) return blockId;
+        blockId = maxBlockId - blockId;
+        if (blockId < blockStateCount) {
+            consumer.accept(blockId);
+            return blockId;
         }
+        return maxBlockId - blockId;
     }
 
-    public static void registerExtraProperties(Block instance, BlockBehaviour.Properties pProperties, StateDefinition.Builder<Block, BlockState> pBuilder) {
-        if (!CompatModule.isVoxyTest()) return;
-        if (VoxyConstant.shouldSkipCheck(instance)) return;
 
-        try {
-            //if (!defaultBlockState().isAir())
-            {
-                pBuilder = pBuilder.add(VoxyConstant.SNOWY);
-                //defaultBlockState().setValue(BlockStateProperties.SNOWY, false);
-            }
-        } catch (Exception e) {
-        }
+    public static WorldEngine getWorld(Level level) {
+        return VoxyCommon.getInstance().getNullable(WorldIdentifier.of(level));
     }
 
-    public static void parseForBlockExtraProperties(BlockStateParser instance) {
-        if (!CompatModule.isVoxyTest()) return;
-        if (VoxyConstant.shouldSkipCheck(((MixinMinecraftBundle.MixinVoxyBlockStateParserAccessor) instance).eclipticseasons$voxy_getState().getBlock()))
+    public static Mapper getMapper(Level level) {
+        WorldEngine world = getWorld(level);
+        return world == null ? null : world.getMapper();
+    }
+
+    public static int getSkyLightFromBlockId(long blockId) {
+        //return (Mapper.getLightId(blockId) & 0xFF) & 0x0F;
+        return (Mapper.getLightId(blockId) % 16);
+    }
+
+    public static WorldSection getWorldSection(WorldEngine into, SectionPos section) {
+        int lvl = 0;
+        return into.acquireIfExists(lvl, section.x() >> lvl + 1, section.y() >> lvl + 1, section.z() >> lvl + 1);
+    }
+
+    public static WorldSection getWorldSection(Level level, SectionPos section) {
+        WorldEngine world = getWorld(level);
+        return world == null ? null : getWorldSection(world, section);
+    }
+
+
+
+    public static ImportManager esImporter;
+
+    public static void releaseImporter() {
+        VoxyTool.esImporter = null;
+    }
+
+    public static void tryUpdate() {
+        if (!isVoxyTest()) return;
+        if (!CompatModule.CommonConfig.voxyLODAutoReload.get()) return;
+
+        Level level = ClientCon.getUseLevel();
+        if (level == null || level.getGameTime() % (20 * 15) == 0
+                || !ClientCon.getAgent().isChange()
+                || !MapChecker.isValidDimension(level)
+                || esImporter != null)
             return;
-        ((MixinMinecraftBundle.MixinVoxyBlockStateParserAccessor) instance).eclipticseasons$voxy_getProperties().putIfAbsent(VoxyConstant.SNOWY, true);
-    }
 
-    public static void fixBigGlobeOfBlockStates(String name, CallbackInfoReturnable<BlockState> cir) {
-		if (!CompatModule.isVoxyTest()) return;
-        try {
-            BlockStateParser.BlockResult result = BlockStateParser.parseForBlock(BuiltInRegistries.BLOCK.asLookup(), name, false);
-            Set<Property<?>> remaining = new HashSet<>(result.blockState().getProperties());
-            remaining.removeAll(result.properties().keySet());
-            //remaining.remove(VoxyConstant.SNOWY);
-            if (!remaining.isEmpty()) {
-                throw new IllegalArgumentException("22Missing properties for state " + name + ": " + remaining);
+        //if (!(VoxyCommon.getInstance() instanceof VoxyClientInstance instance)) {
+        //    return;
+        //}
+        VoxyInstance instance = VoxyCommon.getInstance();
+        if (instance == null) return;
+
+        var engine = WorldIdentifier.ofEngine(level);
+        if (engine == null) return;
+
+        ClientCon.agent.setChange(false);
+
+        esImporter = new VoxyESImportManager();
+
+        //MixinAccessorModelFactory factory = (MixinAccessorModelFactory) ((MixinAccessorVoxyRenderSystem) ((IGetVoxyRenderSystem)
+        //        Minecraft.getInstance().levelRenderer)
+        //        .getVoxyRenderSystem()).getModelBakerySubsystem()
+        //        .factory;
+        //
+        //Arrays.fill(factory.getIdMappings(), -1);
+        //factory.getModelTexture2id().clear();
+
+
+
+        esImporter.makeAndRunIfNone(engine, () -> {
+            var importer = new WorldImporter(engine, level, instance.getServiceManager(), instance.savingServiceRateLimiter);
+            String worldName = ClientCon.getAgent().getCurrentWorldName();
+            Path file = (new File("saves")).toPath().resolve(worldName);
+            if (!worldName.endsWith("region")) {
+                file = file.resolve("region");
             }
-            cir.setReturnValue(result.blockState());
-        } catch (CommandSyntaxException e) {
-            throw new IllegalArgumentException("22Invalid block specifier: " + name, e);
-        }
+            importer.importRegionDirectoryAsync(file.toFile());
+            return importer;
+        });
     }
 }

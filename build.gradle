@@ -171,8 +171,6 @@ tasks.named('processResources', Copy) {
 }
 
 
-
-
 dependencies {
     // Specify the version of Minecraft to use.
     // Depending on the plugin applied there are several options. We will assume you applied the userdev plugin as shown above.
@@ -187,7 +185,9 @@ dependencies {
     implementation "curse.maven:jade-324717:6291517"
     compileOnly("curse.maven:the-one-probe-245211:6106998")
 
-    compileOnly("zlib:Sub:1.20.1-forge-0.0")
+//    compileOnly("zlib:voxy:0.2.7-alpha_mapped_moj_1.21.1")
+    compileOnly("zlib:voxy_slim:1")
+
 //    runtimeOnly("curse.maven:the-one-probe-245211:6106998")
 
     compileOnly("curse.maven:embeddium-908741:5556146")
@@ -235,7 +235,7 @@ dependencies {
     println("----Scan onlyMainRuntimeOnly libs end----")
 
     compileOnly "curse.maven:modern-ui-352491:6956436"
-    onlyMainRuntimeOnly "curse.maven:modern-ui-352491:6956436"
+//    onlyMainRuntimeOnly "curse.maven:modern-ui-352491:6956436"
 //    onlyMainRuntimeOnly "curse.maven:simply-improved-terrain-472872:6112229"
     // others
     // https://mvnrepository.com/artifact/org.projectlombok/lombok
@@ -243,7 +243,7 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok:1.18.38'
 
     // https://mvnrepository.com/artifact/net.time4j/time4j-base
-    compileOnly ("net.time4j:time4j-base:5.9.4")
+    compileOnly("net.time4j:time4j-base:5.9.4")
 //    implementation(jarJar("net.time4j:time4j-base:5.9.4")) {
 //        jarJar.ranged(it, "[5.9.4,)")
 //    }

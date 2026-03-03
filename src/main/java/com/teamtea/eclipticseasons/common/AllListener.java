@@ -139,11 +139,6 @@ public class AllListener {
             long newTime = event.getNewTime(),
                     oldDayTime = level.getDayTime();
             WeatherManager.updateAfterSleep(level, newTime, oldDayTime);
-            // if (!serverLevel.isRaining() && serverLevel.getRandom().nextFloat() > 0.8) {
-            //     serverLevel.setWeatherParameters(0,
-            //             ServerLevel.RAIN_DURATION.sample(serverLevel.getRandom()),
-            //             true, false);
-            // }
         }
 
     }
@@ -353,7 +348,7 @@ public class AllListener {
         if (!(levelAccessor instanceof ServerLevel level)) return;
         if (!CommonConfig.Temperature.snowDown.get() || !CommonConfig.Temperature.iceMelt.get()) return;
         if (!CommonConfig.Snow.forceChunkUpdate.get()) return;
-        if (true)return;
+        if (true) return;
 
         long l = System.currentTimeMillis();
         //boolean skip = true;

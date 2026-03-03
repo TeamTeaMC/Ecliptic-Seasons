@@ -451,23 +451,23 @@ public class SolarDataManager extends SavedData {
         }
     }
 
-    public void sendAndUpdate(ServerLevel world) {
+    public void sendAndUpdate(ServerLevel level) {
         boolean changeSolarTerm = getSolarTermsDay() % CommonConfig.Season.lastingDaysOfEachTerm.get() == 0;
         boolean updateTempChange = false;
         SolarTerm solarTerm = getSolarTerm();
         if (changeSolarTerm) {
             // note 不再需要更新
-            // BiomeClimateManager.updateTemperature(world, getSolarTerm());
+            // BiomeClimateManager.updateTemperature(level, getSolarTerm());
             SolarTerm old = SolarTerm.collectValues()[(getSolarTermIndex() + 24) % 24];
-            NeoForge.EVENT_BUS.post(new SolarTermChangeEvent(old, solarTerm, world, solarTermsDay));
+            NeoForge.EVENT_BUS.post(new SolarTermChangeEvent(old, solarTerm, level, solarTermsDay));
             if (solarTerm == SolarTerm.SUMMER_SOLSTICE) {
-                setSolarTempChange(createTempChange(world));
+                setSolarTempChange(createTempChange(level));
                 updateTempChange = true;
             }
         }
 
         if (solarTerm != SolarTerm.NONE) {
-            for (ServerPlayer player : world.players()) {
+            for (ServerPlayer player : level.players()) {
                 SimpleNetworkHandler.send(player, new SolarTermsMessage(this.getSolarTermsDay()));
                 if (changeSolarTerm && CommonConfig.Season.enableInform.get()) {
                     SimpleUtil.sendSolarTermMessage(player, solarTerm, false);

@@ -23,6 +23,10 @@ public record SeasonPhase(
         Optional<Icon> icon,
         FontIcon fontIcon
 ) implements ISolarTerm {
+    @Override
+    public Season getSeason() {
+        return season;
+    }
 
     public static final Codec<SeasonPhase> CODEC = RecordCodecBuilder.create(ins -> ins.group(
             ESExtraCodec.SEASON.fieldOf("season").forGetter(SeasonPhase::season),

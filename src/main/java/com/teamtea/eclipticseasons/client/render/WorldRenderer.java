@@ -1,12 +1,16 @@
 package com.teamtea.eclipticseasons.client.render;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
+import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.registry.EffectRegistry;
 import com.teamtea.eclipticseasons.client.ClientEventHandler;
 import com.teamtea.eclipticseasons.config.CommonConfig;
+import it.unimi.dsi.fastutil.ints.IntArraySet;
+import it.unimi.dsi.fastutil.ints.IntIterator;
 import net.minecraft.Util;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.PostPass;
@@ -19,9 +23,13 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.chunk.status.ChunkStatus;
+import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.material.FogType;
 import net.neoforged.neoforge.client.event.ViewportEvent;
+
+import java.util.ArrayList;
 
 public class WorldRenderer {
     public static long reMainTick = 0;
@@ -65,7 +73,7 @@ public class WorldRenderer {
                     {
 
                         // 我们写的shader好像有问题？
-                         gameRenderer.loadEffect(EclipticSeasons.rl("shaders/post/box_blur.json"));
+                        gameRenderer.loadEffect(EclipticSeasons.rl("shaders/post/box_blur.json"));
 //                        gameRenderer.loadEffect(ResourceLocation.withDefaultNamespace("shaders/post/blur.json"));
                     }
                 }
@@ -220,14 +228,29 @@ public class WorldRenderer {
 
 
     public static void setAllDirty(SectionPos centerPos) {
+        ClientLevel level = Minecraft.getInstance().level;
+        if (level == null) return;
         int pSectionX = centerPos.x();
-        int pSectionY = centerPos.y();
+        //int pSectionY = centerPos.y();
         int pSectionZ = centerPos.z();
         int d = (int) Minecraft.getInstance().levelRenderer.getLastViewDistance();
         for (int j = pSectionZ - d; j <= pSectionZ + d; j++) {
             for (int i = pSectionX - d; i <= pSectionX + d; i++) {
-                for (int k = pSectionY - 3; k <= pSectionY + 1; k++) {
-                    setSectionDirty(SectionPos.of(i, k, j));
+                var chunk = MapChecker.getChunkView(level, i, j);
+                if (chunk != null) {
+                    IntArraySet set = new IntArraySet();
+                    for (int x = 0; x < 16; x++) {
+                        for (int z = 0; z < 16; z++) {
+                            set.add(SectionPos.posToSectionCoord(chunk.getHeight(Heightmap.Types.WORLD_SURFACE,x,z)));
+                        }
+                    }
+                    for (IntIterator it = set.iterator(); it.hasNext(); ) {
+                        int pSectionY = it.nextInt();
+                        setSectionDirty(SectionPos.of(i, pSectionY, j));
+                    }
+                    //for (int k = pSectionY - 3; k <= pSectionY + 1; k++) {
+                    //    setSectionDirty(SectionPos.of(i, k, j));
+                    //}
                 }
             }
         }

@@ -1,16 +1,12 @@
 package com.teamtea.eclipticseasons.compat;
 
 
-import com.electronwill.nightconfig.core.file.CommentedFileConfig;
-import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.compat.theoneprobe.TOPHook;
 import lombok.Getter;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
-import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.InterModEnqueueEvent;
 import net.neoforged.fml.loading.FMLLoader;
-import net.neoforged.fml.loading.FMLPaths;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
 import java.util.List;
@@ -33,8 +29,9 @@ public class CompatModule {
 
     @Getter
     private static boolean voxy = false;
-    @Getter
-    private static boolean voxyTest = false;
+    //@Getter
+    //private static boolean voxyTest = false;
+
 
     /**
      * Used for mod init detect.
@@ -48,13 +45,13 @@ public class CompatModule {
         modernui = Platform.isModLoaded("modernui");
         distanthorizons = Platform.isModLoaded("distanthorizons");
         voxy = Platform.isModLoaded("voxy");
-        if (isVoxy()) {
-            CommentedFileConfig oldConfig = CommentedFileConfig.builder(FMLPaths.CONFIGDIR.get().resolve(EclipticSeasons.defaultConfigName(ModConfig.Type.CLIENT, EclipticSeasons.MODID)))
-                    .preserveInsertionOrder().build();
-            oldConfig.load();
-            voxyTest = oldConfig.getOrElse("Compat.VoxyTest", false);
-            oldConfig.close();
-        }
+        //if (isVoxy()) {
+        //    CommentedFileConfig oldConfig = CommentedFileConfig.builder(FMLPaths.CONFIGDIR.get().resolve(EclipticSeasons.defaultConfigName(ModConfig.Type.COMMON, EclipticSeasons.MODID)))
+        //            .preserveInsertionOrder().build();
+        //    oldConfig.load();
+        //    voxyTest = oldConfig.getOrElse("Compat.VoxyTest", false);
+        //    oldConfig.close();
+        //}
     }
 
     /**
@@ -65,6 +62,14 @@ public class CompatModule {
             try {
                 Class<?> iuiHandlerClass = Class.forName("com.teamtea.eclipticseasons.compat.modernui.MUIHandler");
                 gameBus.register(iuiHandlerClass.getField("INSTANCE").get(null));
+            } catch (ClassNotFoundException | IllegalAccessException | NoSuchFieldException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        if (isVoxy() && FMLLoader.getDist() == Dist.CLIENT) {
+            try {
+                Class<?> handler = Class.forName("com.teamtea.eclipticseasons.compat.voxy.VoxyEsHandler");
+                gameBus.register(handler.getField("INSTANCE").get(null));
             } catch (ClassNotFoundException | IllegalAccessException | NoSuchFieldException e) {
                 throw new RuntimeException(e);
             }
@@ -93,6 +98,9 @@ public class CompatModule {
         public static ModConfigSpec.BooleanValue fixBiome;
         public static ModConfigSpec.DoubleValue weatherVotePercent;
         public static ModConfigSpec.BooleanValue DistantHorizonsWinterLOD;
+        public static ModConfigSpec.BooleanValue voxyTest;
+        public static ModConfigSpec.BooleanValue voxyLODAutoReload;
+        public static ModConfigSpec.BooleanValue voxyReloadWhenSeasonChanged;
 
         public static void load(ModConfigSpec.Builder builder) {
             builder.push("Compat");
@@ -120,6 +128,33 @@ public class CompatModule {
             if (isDistanthorizons())
                 DistantHorizonsWinterLOD = builder.comment("Enables winter-themed Level of Detail (LOD) textures for Distant Horizons to ensure visual consistency at long distances.")
                         .define("DistantHorizonsWinterLOD", true);
+
+            if (isVoxy()) {
+                voxyTest = builder
+                        .worldRestart()
+                        .comment("""
+                                .
+                                Just for test.
+                                .""".strip()
+                        ).define("VoxyTest", false);
+
+                voxyLODAutoReload = builder
+                        //.worldRestart()
+                        .comment("""
+                                .
+                                Just for test.
+                                .""".strip()
+                        ).define("VoxyLODAutoReload", false);
+
+
+                voxyReloadWhenSeasonChanged = builder
+                        //.worldRestart()
+                        .comment("""
+                                .
+                                Just for test.
+                                .""".strip()
+                        ).define("VoxyReloadWhenSeasonChanged", false);
+            }
             builder.pop();
         }
     }
@@ -129,7 +164,6 @@ public class CompatModule {
         public static ModConfigSpec.BooleanValue unifiedSnowyBlockSides;
         public static ModConfigSpec.BooleanValue unifiedFrozenWater;
         public static ModConfigSpec.BooleanValue DistantHorizonsWinterLODForceUpdateAll;
-        private static ModConfigSpec.BooleanValue voxyTest;
 
         public static void load(ModConfigSpec.Builder builder) {
             builder.push("Compat");
@@ -152,16 +186,6 @@ public class CompatModule {
                                 WARNING: Enabling this may cause a full LOD rebuild and significant lag spikes.""".strip()
                         ).define("DistantHorizonsWinterLODForceUpdateAll", false);
                 builder.pop();
-            }
-            if (isVoxy()) {
-                voxyTest = builder
-                        .gameRestart()
-                        .comment("""
-                                .
-                                Just for test.
-                                .""".strip()
-                        ).define("VoxyTest", false);
-
             }
             builder.pop();
         }

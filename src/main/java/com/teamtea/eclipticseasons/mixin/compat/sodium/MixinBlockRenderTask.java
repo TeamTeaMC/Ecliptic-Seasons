@@ -20,6 +20,7 @@ import net.caffeinemc.mods.sodium.client.world.cloned.ChunkRenderContext;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
 import org.joml.Vector3dc;
@@ -121,8 +122,7 @@ public abstract class MixinBlockRenderTask extends ChunkBuilderTask<ChunkBuildOu
 
     @Inject(
             method = "execute(Lnet/caffeinemc/mods/sodium/client/render/chunk/compile/ChunkBuildContext;Lnet/caffeinemc/mods/sodium/client/util/task/CancellationToken;)Lnet/caffeinemc/mods/sodium/client/render/chunk/compile/ChunkBuildOutput;",
-            remap = false,
-            at = @At(value = "INVOKE", target = "Lnet/caffeinemc/mods/sodium/client/render/chunk/compile/pipeline/BlockRenderer;renderModel(Lnet/minecraft/client/resources/model/BakedModel;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/BlockPos;Lnet/minecraft/core/BlockPos;)V")
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;getFluidState()Lnet/minecraft/world/level/material/FluidState;")
     )
     private void eclipticseasons$renderSnowLayerIn(ChunkBuildContext buildContext,
                                                    CancellationToken cancellationToken,
@@ -130,6 +130,7 @@ public abstract class MixinBlockRenderTask extends ChunkBuilderTask<ChunkBuildOu
                                                    @Local BlockState blockState,
                                                    @Local(ordinal = 0) BlockPos.MutableBlockPos blockPos,
                                                    @Local(ordinal = 1) BlockPos.MutableBlockPos modelOffset) {
+        if (blockState.getRenderShape() == RenderShape.INVISIBLE) return;
         BakedModel bm = ExtraModelManager.shouldRenderedWithSnowInside(buildContext.cache.getWorldSlice(), blockPos, blockState, null);
         if (bm != null) {
             buildContext.cache.getBlockRenderer().renderModel(bm, Blocks.SNOW.defaultBlockState(), blockPos, modelOffset);

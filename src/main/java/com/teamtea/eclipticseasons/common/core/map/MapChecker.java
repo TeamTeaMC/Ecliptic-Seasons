@@ -250,6 +250,13 @@ public class MapChecker {
                 chunk : null;
     }
 
+    public static @Nullable ChunkAccess getChunkView(Level level, int cx, int cz) {
+        if (level == null) return null;
+        ChunkAccess chunk = level.getChunkSource().getChunkNow(cx, cz);
+        return chunk != null && chunk.getPersistedStatus().isOrAfter(ChunkStatus.SURFACE) ?
+                chunk : null;
+    }
+
     public static int getVanillaSolidHeightOrSelf(Level level, BlockPos pos) {
         ChunkAccess biomeChunk = getChunkView(level, pos);
         return biomeChunk != null ?

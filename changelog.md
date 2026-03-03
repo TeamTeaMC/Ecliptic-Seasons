@@ -1,10 +1,68 @@
+#### 0.12.12
+
+Update: Mixin Control Support
+
+- New Feature: Added a dedicated configuration file for Mixins.
+- Toggleable Mixins: You can now freely enable or disable specific Mixins to improve compatibility or customize your
+  experience.
+
+#### 0.12.11.5.1
+
+- Default enable datapack option `RegionalSnowTime` to align snowfall schedules based on three broad climate zones (
+  Warm, Temperate, and Cold) instead of per-biome.
+
+#### 0.12.11.5
+
+- Add option `VoxyReloadWhenSeasonChanged` to auto clean voxy cache when solar term changes.
+
+#### 0.12.11.4
+
+- Added the SimpleSeasonHud option, extracted from our debug information, intended for players who do not want to
+  install additional HUD mods. As part of maintaining a healthy community ecosystem, no extra configuration options are
+  provided.
+- Optimized the biome color update logic.
+
+#### 0.12.11.3
+
+- Fixed an issue where **SolarTermChangeEvent** could not be received on the client logic thread.
+- Aligned DH’s LOD update determination logic with that of **Voxy**.
+- Season changes now also trigger LOD updates when the relevant option is enabled.
+
+#### 0.12.11.2.1
+
+- Optimized some rendering logic for vanilla blocks such as snow connecting to fences.
+
+#### 0.12.11.2
+
+* Fixed an issue where some runtime-built snow-covered models (such as snow-covered fences) were not generated correctly
+  in Voxy rendering.
+* Added the option **VoxyLODAutoReload**. This option now determines whether to automatically refresh LOD appearances
+  based on changes in weather-related snow coverage.
+* The essence of this compatibility is invoking Voxy’s world import process. Voxy currently stores LOD build results in
+  its database, which makes direct modification of that data difficult. Adjusting the generation process of the build
+  results is comparatively easier. Therefore, LODs can now also be updated manually by running
+  `/voxy import world <world_name>` instead of relying on automatic updates. This approach reduces performance
+  requirements and mitigates update overhead for very large worlds.
+
+### 0.12.11
+
+- Optimized Voxy compatibility code again, resolving some runtime conflicts and significantly improving performance.
+
+> Note that this update may affect Voxy data. Please back up your Voxy database. If you enable the compatibility option
+> and later wish to disable or uninstall this mod, make sure to reset the Voxy database.
+
+#### 0.12.10.3
+
+- Move the Voxy test compatibility control option from Client to Common
+
+#### 0.12.10.2
+
+- Updated the code for voxy compablity.
+
 #### 0.12.10.1
 
 - Fix the issue where low-light plants are restricted even in dark environments.
 - Adjust the greenhouse dark-light detection logic from "sky-light only" to include "supplementary light."
-
-> As the ecosystem for 1.20.1 begins to wind down with major mods like Create moving on, we are also transitioning into
-> the final maintenance phase for our mod on this version.
 
 ### 0.12.10
 

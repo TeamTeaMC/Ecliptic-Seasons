@@ -33,6 +33,7 @@ import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.block.BlockModelShaper;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.renderer.texture.SpriteContents;
@@ -43,6 +44,7 @@ import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.inventory.InventoryMenu;
@@ -51,6 +53,7 @@ import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.Half;
+import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraft.world.level.block.state.properties.StairsShape;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.neoforged.neoforge.client.ChunkRenderTypeSet;
@@ -296,9 +299,12 @@ public class ExtraModelManager {
 
     private final static List<BakedQuad> EMPTY = List.of();
 
-    // TODO：关于覆盖cutout面的问题，似乎可以给纹理加一个半透明像素，然后用cutout渲染就能正常覆盖了
     public static List<BakedQuad> cancelTop(@Nullable BakedModel bakedModel, @Nonnull BlockAndTintGetter blockAndTintGetter, @Nonnull BlockState state, @Nonnull BlockPos pos, @Nullable Direction direction, @Nonnull RandomSource random, long seed, @Nonnull List<BakedQuad> original, @Nullable List<BakedQuad> cache) {
-        ExtraRendererContext rendererHolder = IExtraRendererContextOwner.of(blockAndTintGetter);
+        return cancelTop(IExtraRendererContextOwner.of(blockAndTintGetter), bakedModel, blockAndTintGetter, state, pos, direction, random, seed, original, cache);
+    }
+
+    // TODO：关于覆盖cutout面的问题，似乎可以给纹理加一个半透明像素，然后用cutout渲染就能正常覆盖了
+    public static List<BakedQuad> cancelTop(@Nonnull ExtraRendererContext rendererHolder, @Nullable BakedModel bakedModel, @Nonnull BlockAndTintGetter blockAndTintGetter, @Nonnull BlockState state, @Nonnull BlockPos pos, @Nullable Direction direction, @Nonnull RandomSource random, long seed, @Nonnull List<BakedQuad> original, @Nullable List<BakedQuad> cache) {
         if (rendererHolder.getExtraModel() == null) return original;
 
         if (bakedModel != null
@@ -1174,6 +1180,17 @@ public class ExtraModelManager {
             return null;
         }
 
+        BlockState belowState = blockAndTintGetter.getBlockState(checkPos.setY(pos.getY() - 1));
+        if (belowState.is(BlockTags.SNOW_LAYER_CANNOT_SURVIVE_ON)) {
+            return null;
+        } else {
+            if (!belowState.is(BlockTags.SNOW_LAYER_CAN_SURVIVE_ON)
+                    && !(Block.isFaceFull(belowState.getCollisionShape(blockAndTintGetter, checkPos), Direction.UP)
+                    || belowState.is(Blocks.SNOW) && belowState.getValue(SnowLayerBlock.LAYERS) == 8))
+                return null;
+        }
+
+
         int snowNearbyCount = 0;
         int airNeighborCount = 0;
         int minLayers = 8;
@@ -1213,6 +1230,7 @@ public class ExtraModelManager {
 
         if (snowNearbyCount >= dynamicRequired) {
             if (state.isCollisionShapeFullBlock(blockAndTintGetter, pos)
+                    || state.isFaceSturdy(blockAndTintGetter, pos, Direction.DOWN)
                     || state.isFaceSturdy(blockAndTintGetter, pos, Direction.DOWN)) return null;
 
             return getSnowLayerModel(minLayers);
@@ -1274,7 +1292,7 @@ public class ExtraModelManager {
                 || isModelReplaceable(MapChecker.getDefaultBlockTypeFlag(state));
     }
 
-    private static boolean isModelReplaceable(int flag) {
+    public static boolean isModelReplaceable(int flag) {
         return flag == MapChecker.FLAG_GRASS
                 || flag == MapChecker.FLAG_GRASS_LARGE;
     }

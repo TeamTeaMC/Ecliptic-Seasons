@@ -38,13 +38,16 @@
     "common.level.MixinServerLevel",
     "common.loot.MixinWeatherCheck",
     "common.worldgen.MixinSurfaceSystem",
-    "compat.voxy.MixinMinecraftBundle$MixinVoxyBlock",
-    "compat.voxy.MixinMinecraftBundle$MixinVoxyBlockCache",
-    "compat.voxy.MixinMinecraftBundle$MixinVoxyBlockStateBase",
-    "compat.voxy.MixinMinecraftBundle$MixinVoxyBlockStateParser",
-    "compat.voxy.MixinMinecraftBundle$MixinVoxyBlockStateParserAccessor",
-    "compat.voxy.MixinMinecraftBundle$MixinVoxyChunkLoad",
-    "compat.voxy.bigglobe.MixinBGBlockStates",
+    "compat.voxy.MixinAccessorModelFactory",
+    "compat.voxy.MixinAccessorVoxyRenderSystem",
+    "compat.voxy.MixinIngestSection",
+    "compat.voxy.MixinMapping",
+    "compat.voxy.MixinModelBakerySubsystem",
+    "compat.voxy.MixinModelFactory",
+    "compat.voxy.MixinVoxelIngestService",
+    "compat.voxy.MixinWorldConversionFactory",
+    "compat.voxy.MixinWorldImporter",
+    "compat.voxy.MixinWorldUpdater",
     "data.MixinsDataProvider",
     "data.MixinsDelegatingOps",
     "data.MixinsDynamicOps",
@@ -87,7 +90,6 @@
     "client.sound.MixinMusicManager",
     "compat.distanthorizons.MixinClientLevel",
     "compat.distanthorizons.MixinFullDataToRenderDataTransformer",
-    "compat.distanthorizons.MixinNetworkUtil",
     "compat.distanthorizons.MixinQuadTree",
     "compat.distanthorizons.MixinTintWithoutLevelOverrider",
     "compat.embeddium.MixinBlockRender2",
@@ -109,11 +111,15 @@
     "compat.sodium.MixinClonedChunkSection",
     "compat.sodium.MixinLevelSlice",
     "compat.sodium.MixinNeoForgeModelAccess",
+    "compat.voxy.MixinClientLevel",
     "compat.voxy.MixinModelTextureBakery"
   ],
   "injectors": {
     "defaultRequire": 1
   },
   "plugin": "com.teamtea.eclipticseasons.mixin.EclipticSeasonsMixinPlugin",
-  "minVersion": "0.8"
+  "minVersion": "0.8",
+  "mixinextras": {
+    "minVersion": "0.5.0"
+  }
 }

@@ -10,6 +10,7 @@ import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
 import com.teamtea.eclipticseasons.common.misc.ClientAgent;
 import it.unimi.dsi.fastutil.longs.*;
+import lombok.Getter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
@@ -36,6 +37,7 @@ public class ClientCon {
     // Use for export
     public static String ServerName = "client";
 
+    @Getter
     public static ClientAgent agent = new ClientAgent() {
     };
 

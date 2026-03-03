@@ -1,6 +1,8 @@
 package com.teamtea.eclipticseasons.common.network;
 
+import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.data.weather.special_effect.WeatherEffect;
+import com.teamtea.eclipticseasons.api.event.SolarTermChangeEvent;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeRainDispatcher;
 import com.teamtea.eclipticseasons.common.registry.AttachmentRegistry;
 import com.teamtea.eclipticseasons.client.color.season.BiomeColorsHandler;
@@ -15,16 +17,15 @@ import com.teamtea.eclipticseasons.common.network.message.*;
 import com.teamtea.eclipticseasons.common.registry.ESRegistries;
 import com.teamtea.eclipticseasons.config.ClientConfig;
 import com.teamtea.eclipticseasons.config.CommonConfig;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.Registry;
 import net.minecraft.core.SectionPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.chunk.status.ChunkStatus;
+import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import java.util.ArrayList;
@@ -36,12 +37,21 @@ public class NetworkUtil {
     public static void processSolarTermsMessage2(SolarTermsMessage solarTermsMessage, IPayloadContext context) {
         context.enqueueWork(() -> {
             SolarHolders.getSaveDataLazy(context.player().level()).ifPresent(data -> {
+                SolarTerm old = data.getSolarTerm();
                 data.setSolarTermsDay(solarTermsMessage.solarDay);
+                SolarTerm solarTerm = data.getSolarTerm();
+                if (solarTerm != old) {
+                    NeoForge.EVENT_BUS.post(new SolarTermChangeEvent(old, solarTerm, context.player().level(), data.getSolarTermsDay()));
+                    ClientCon.getAgent().setChange(true);
+                }
                 // note 不再需要更新
                 // BiomeClimateManager.updateTemperature(context.player().level(), data.getSolarTerm());
                 BiomeColorsHandler.needRefresh = true;
                 ClientCon.tick(context.player().level());
                 BiomeColorsHandler.reloadColors();
+                if (solarTerm != old) {
+                    ClientCon.getAgent().setAllChunkDirty();
+                }
             });
         }).exceptionally(e -> {
             // Handle exception
@@ -52,12 +62,10 @@ public class NetworkUtil {
 
     public static void processEmptyMessage(EmptyMessage emptyMessage, IPayloadContext context) {
         context.enqueueWork(() -> {
-            // note 观察是否更新正常
             if (ClientConfig.Renderer.resetRendererAfterSleep.get()) {
-                Minecraft.getInstance().levelRenderer.allChanged();
+                ClientCon.getAgent().setAllRendererChanged();
             } else {
-                if (Minecraft.getInstance().cameraEntity instanceof LivingEntity livingEntity)
-                    WorldRenderer.setAllDirty(SectionPos.of(livingEntity.getOnPos()));
+                ClientCon.getAgent().setAllChunkDirty();
             }
         }).exceptionally(e -> {
             // Handle exception
@@ -78,8 +86,10 @@ public class NetworkUtil {
                     if (biomeWeatherMessage.rain[biomeWeather.id] == 0 && biomeWeather.rainTime > 0) {
                         ClientWeatherChecker.addLastRainyBiome(biomeWeather.biomeHolder.value(), (long) (1 / ClientWeatherChecker.getRate()));
                     }
-                    if (!update && biomeWeather.rainTime + biomeWeather.clearTime + biomeWeather.thunderTime > 0)
-                        update = biomeWeather.getSnowDepth() == biomeWeatherMessage.snowDepth[biomeWeather.id];
+                    if (!update
+                        //&& biomeWeather.rainTime + biomeWeather.clearTime + biomeWeather.thunderTime > 0
+                    )
+                        update = biomeWeather.getSnowDepth() != biomeWeatherMessage.snowDepth[biomeWeather.id];
                     biomeWeather.rainTime = biomeWeatherMessage.rain[biomeWeather.id] * 10000;
                     biomeWeather.clearTime = biomeWeatherMessage.clear[biomeWeather.id] * 10000;
                     biomeWeather.thunderTime = biomeWeatherMessage.thuder[biomeWeather.id] * 10000;
@@ -89,6 +99,9 @@ public class NetworkUtil {
                     biomeWeather.setBiomeRain(BiomeRainDispatcher.getBiomeRain(
                             level instanceof ServerLevel, biomeWeatherMessage.weather[biomeWeather.id]));
                 }
+
+                if (update)
+                    ClientCon.agent.setChange(true);
                 // if (update
                 //         && ClientCon.agent.getCameraEntity() != null
                 //         && ClientConfig.Renderer.forceChunkRenderUpdate.get()) {

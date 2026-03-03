@@ -1,4 +1,5 @@
 {
+  "ui.info.eclipticseasons.days": "Days %s",
   "ui.label.eclipticseasons.submit": "Submit",
   "ui.label.eclipticseasons.namespace": "Namespace",
   "ui.label.eclipticseasons.path": "Path",
@@ -28,7 +29,6 @@
   "info.eclipticseasons.recipe_category.season_quest.time.period": "%s - %s",
   "info.eclipticseasons.item.sal_wand.select_first": "Selected the first point at %s, %s, %s",
   "info.eclipticseasons.item.sal_wand.apply": "Applied to %s positions in total",
-
   "eclipticseasons.configuration.SnowInFenceDirection": "Snow in Fence 8-Directional Check",
   "eclipticseasons.configuration.NotIgnoreRiver": "Do Not Ignore Rivers for Weather",
   "eclipticseasons.configuration.ModsWithoutSereneSeasonBasedHumidity": "Humidity Mapping Blacklist",
@@ -51,5 +51,8 @@
   "eclipticseasons.configuration.DistantHorizonsWinterLOD": "Distant Horizons Winter LOD",
   "eclipticseasons.configuration.DistantHorizonsWinterLODForceUpdateAll": "DH LOD Force Refresh (Lag Warning!)",
   "eclipticseasons.configuration.UnifiedFrozenWater": "Shader Thin Ice Fix",
-  "eclipticseasons.configuration.VoxyTest": "Voxy Compatibility Test"
+  "eclipticseasons.configuration.VoxyTest": "Voxy Compatibility Test",
+  "eclipticseasons.configuration.VoxyLODAutoReload": "Voxy LOD Auto Reload",
+  "eclipticseasons.configuration.VoxyReloadWhenSeasonChanged": "Voxy Cache Reload When Season Changed",
+  "eclipticseasons.configuration.SimpleSeasonHud": "Simple Season Hud"
 }
