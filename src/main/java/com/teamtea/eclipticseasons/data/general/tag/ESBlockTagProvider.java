@@ -88,7 +88,8 @@ public final class ESBlockTagProvider extends BlockTagsProvider {
                 .addTags(EclipticBlockTags.SNOW_OVERLAY_CANNOT_SURVIVE_ON,
                         BlockTags.DOORS, BlockTags.TRAPDOORS,
                         BlockTags.BUTTONS,
-                        BlockTags.CANDLE_CAKES
+                        BlockTags.CANDLE_CAKES,
+                        BlockTags.BEDS
                 );
 
         // add mc

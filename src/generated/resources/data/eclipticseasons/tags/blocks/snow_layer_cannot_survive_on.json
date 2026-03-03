@@ -4,6 +4,7 @@
     "#minecraft:doors",
     "#minecraft:trapdoors",
     "#minecraft:buttons",
-    "#minecraft:candle_cakes"
+    "#minecraft:candle_cakes",
+    "#minecraft:beds"
   ]
 }
