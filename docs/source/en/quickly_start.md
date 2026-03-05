@@ -1,4 +1,4 @@
-## **Ecliptic Seasons Player Guide**
+# **Ecliptic Seasons Player Guide**
 *A Player Guide to Seasonal Worlds*
 
 ------
@@ -1133,7 +1133,7 @@ When you enter a region with a different climate, the weather gradually shifts r
 
 ------
 
-### 11. Why do modpacks recommend this mod as a replacement for Serene Seasons?
+### 11. Why do modpacks recommend this mod?
 
 Common reasons include:
 

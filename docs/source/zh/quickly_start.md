@@ -1144,7 +1144,7 @@ Ecliptic Seasons 使用 **局部天气系统**。
 
 ------
 
-### 11. 为什么整合包推荐使用这个模组替代 Serene Seasons？
+### 11. 为什么整合包推荐使用这个模组？
 
 Ecliptic Seasons 的优势包括：
 
