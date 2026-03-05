@@ -1,4 +1,4 @@
-**# Ecliptic Seasons Player Guide**
+# **Ecliptic Seasons Player Guide**
 *A Player Guide to Seasonal Worlds*
 
 ------
