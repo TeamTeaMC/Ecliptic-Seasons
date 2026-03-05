@@ -1,9 +1,9 @@
-# **Ecliptic Seasons Player Guide**
+## **Ecliptic Seasons Player Guide**
 *A Player Guide to Seasonal Worlds*
 
 ------
 
-# 1. Introduction
+## 1. Introduction
 
 The world of Minecraft is normally an environment that changes very little over time.
 Day and night repeat in a constant cycle, weather occasionally shifts, but the environment itself rarely evolves in a noticeable way as time passes.
@@ -29,7 +29,7 @@ Within this system, solar terms influence not only how the environment looks but
 
 ------
 
-# 2. A Solar-Term World
+## 2. A Solar-Term World
 
 Ecliptic Seasons uses the **Twenty-Four Solar Terms** as its primary unit of time.
 
@@ -52,7 +52,7 @@ This cycle length can be adjusted in the configuration file to suit different se
 
 ------
 
-## Day–Night Changes
+### Day–Night Changes
 
 As seasons progress, the length of day and night will also change.
 
@@ -67,7 +67,7 @@ For example:
 
 ------
 
-## Solar Term Notifications
+### Solar Term Notifications
 
 When the world enters a new solar term, the system automatically displays a notification in the chat.
 
@@ -82,7 +82,7 @@ Players can use these indicators to anticipate environmental changes, such as wh
 
 ------
 
-## Real-Time Synchronization (Optional)
+### Real-Time Synchronization (Optional)
 
 Ecliptic Seasons also provides an optional feature that synchronizes in-game solar terms with real-world calendar dates.
 
@@ -101,7 +101,7 @@ This feature can enhance immersion on long-running servers. However, it may conf
 
 ------
 
-# 3. Weather and Climate System
+## 3. Weather and Climate System
 
 The weather system in Ecliptic Seasons differs significantly from vanilla Minecraft.
 
@@ -111,7 +111,7 @@ Ecliptic Seasons instead uses a **seasonal biome-based climate model**.
 
 ------
 
-## Localized Weather
+### Localized Weather
 
 Because of the biome climate system, different regions of the world may experience different weather conditions at the same time.
 
@@ -133,7 +133,7 @@ This behavior is part of the climate system and is not an error.
 
 ------
 
-## Precipitation Probability
+### Precipitation Probability
 
 Precipitation probability changes with solar terms.
 
@@ -156,7 +156,7 @@ Final weather conditions are influenced by multiple factors:
 
 ------
 
-## Unified Weather (Optional)
+### Unified Weather (Optional)
 
 Some servers or modpacks may prefer the traditional **global weather** behavior.
 
@@ -173,7 +173,7 @@ In this mode, weather behavior becomes closer to vanilla Minecraft. Proper biome
 
 ------
 
-## Weather Transitions
+### Weather Transitions
 
 To prevent weather changes from feeling abrupt, Ecliptic Seasons introduces a **weather transition system**.
 
@@ -190,7 +190,7 @@ These parameters define the transition range and speed.
 
 ------
 
-## Weather Voting Mechanism
+### Weather Voting Mechanism
 
 In some cases, other mods may bypass the Ecliptic Seasons weather API and read global precipitation data directly.
 
@@ -208,7 +208,7 @@ This helps avoid weather logic conflicts in complex mod environments.
 
 ------
 
-# 4. Agriculture and Humidity System
+## 4. Agriculture and Humidity System
 
 Ecliptic Seasons significantly expands the agricultural mechanics.
 
@@ -223,7 +223,7 @@ This design simulates real agricultural conditions and introduces more strategic
 
 ------
 
-## Seasonal Crops
+### Seasonal Crops
 
 When seasonal agriculture is enabled, crops no longer grow equally in every season.
 
@@ -253,7 +253,7 @@ Unlike typical seasonal mods, Ecliptic Seasons also allows **different growth pr
 
 ------
 
-## Humidity Environment
+### Humidity Environment
 
 In addition to seasonality, crops are influenced by **environmental humidity**.
 
@@ -276,7 +276,7 @@ When enabled, the system continuously monitors chunk environments and calculates
 
 ------
 
-## Humidity Transition
+### Humidity Transition
 
 To prevent sudden humidity changes from destabilizing farming behavior, the system provides a humidity transition mechanism.
 
@@ -290,7 +290,7 @@ This option allows humidity values to change **gradually rather than discretely*
 
 ------
 
-## Bone Meal Restrictions
+### Bone Meal Restrictions
 
 When seasonal agriculture is enabled, bone meal does not always succeed.
 
@@ -298,7 +298,7 @@ If a crop is in the wrong season or lacks sufficient humidity, bone meal may fai
 
 ------
 
-## Forced Compatibility Mode
+### Forced Compatibility Mode
 
 Many crop-adding mods in Minecraft do not support the NeoForge/Forge event pipeline.
 
@@ -312,7 +312,7 @@ When enabled, all plants registered with the appropriate tags will follow the ba
 
 ------
 
-# 5. Greenhouse System
+## 5. Greenhouse System
 
 The **greenhouse** is one of the key agricultural mechanics in Ecliptic Seasons.
 
@@ -326,7 +326,7 @@ The greenhouse system consists of several components:
 
 ------
 
-## Greenhouse Detection
+### Greenhouse Detection
 
 The core mechanism of the greenhouse system is **enclosed structure detection**.
 
@@ -350,7 +350,7 @@ If the structure meets the enclosure conditions, the area is treated as a greenh
 
 ------
 
-## Light Limitations
+### Light Limitations
 
 Greenhouses cannot completely ignore lighting conditions.
 
@@ -368,7 +368,7 @@ Proper lighting design is therefore still necessary.
 
 ------
 
-## Simplified Greenhouse Mode
+### Simplified Greenhouse Mode
 
 For players who prefer less complex farming mechanics, a simplified mode is available.
 
@@ -386,7 +386,7 @@ This mode is suitable for lightweight modpacks.
 
 ------
 
-## Season Core
+### Season Core
 
 The **Season Core** is the central component of the greenhouse system.
 
@@ -406,7 +406,7 @@ Players can place multiple cores to cover large farms.
 
 ------
 
-## Seasonal Prayer Ritual
+### Seasonal Prayer Ritual
 
 The Season Core also supports a special mechanic: the **Seasonal Prayer Ritual**.
 
@@ -414,7 +414,7 @@ This ritual allows a greenhouse container without a core to generate a Season Co
 
 ------
 
-## Humidity Devices
+### Humidity Devices
 
 Humidity devices regulate the internal environment of the greenhouse.
 
@@ -422,7 +422,7 @@ When enabled, they can significantly improve crop growth stability. Details can 
 
 ------
 
-# 6. Temperature and Survival Environment
+## 6. Temperature and Survival Environment
 
 In addition to weather and agriculture systems, Ecliptic Seasons introduces **environmental temperature effects**.
 
@@ -430,7 +430,7 @@ The goal is not to fully replace survival-temperature mods but to provide more r
 
 ------
 
-## Seasonal Temperature Changes
+### Seasonal Temperature Changes
 
 As seasons progress, the overall world temperature changes.
 
@@ -447,7 +447,7 @@ For example:
 
 ------
 
-## Seasonal Ice and Snow
+### Seasonal Ice and Snow
 
 During colder seasons, certain areas may accumulate snow or freeze water.
 
@@ -467,7 +467,7 @@ When enabled:
 
 ------
 
-## Cold Biomes
+### Cold Biomes
 
 Some biomes are considered **permanently cold regions**.
 
@@ -486,7 +486,7 @@ This ensures that environments such as high mountains or ice plains remain cold.
 
 ------
 
-## Heatstroke Mechanic
+### Heatstroke Mechanic
 
 During hot seasons, players may experience **heatstroke**.
 
@@ -508,7 +508,7 @@ The system is not intended to create extreme survival pressure but rather to rei
 
 ----
 
-# 7. Environmental Effects
+## 7. Environmental Effects
 
 To make seasonal changes more visible, Ecliptic Seasons introduces a wide range of environmental visual effects.
 
@@ -516,7 +516,7 @@ These effects are primarily **decorative environmental feedback** and do not alt
 
 ------
 
-## Snow Cover System
+### Snow Cover System
 
 One of the most noticeable changes is the **snow cover effect**.
 
@@ -539,7 +539,7 @@ Because of this, players cannot collect these snow layers using a shovel.
 
 ------
 
-## Snow on Trees
+### Snow on Trees
 
 Trees can also display snow-covered visuals during winter, especially on leaves.
 
@@ -558,7 +558,7 @@ This feature is mainly intended to enhance visual atmosphere.
 
 ------
 
-## Lighting Influence
+### Lighting Influence
 
 To maintain a natural appearance, snow does not accumulate near strong light sources.
 
@@ -576,7 +576,7 @@ For example, snow usually will not appear near:
 
 ------
 
-## Grass and Leaf Color Changes
+### Grass and Leaf Color Changes
 
 Vegetation colors change gradually with the seasons.
 
@@ -600,7 +600,7 @@ These gradual changes help the world appear more natural.
 
 ------
 
-## Spring Flowers
+### Spring Flowers
 
 During spring, random flowers may appear across grassy areas.
 
@@ -614,7 +614,7 @@ This effect simulates natural spring and summer vegetation growth.
 
 ------
 
-## Seasonal Particles
+### Seasonal Particles
 
 The mod also adds several environmental particles to enhance atmosphere.
 
@@ -635,7 +635,7 @@ These particles are primarily decorative and generally have minimal performance 
 
 ------
 
-## Natural Ambient Sounds
+### Natural Ambient Sounds
 
 Different seasons also introduce different ambient environmental sounds.
 
@@ -655,9 +655,9 @@ These sounds change automatically with the season.
 
 ------
 
-# 8. Configuration Guide
+## 8. Configuration Guide
 
-## Common Configuration Options
+### Common Configuration Options
 
 Ecliptic Seasons provides a wide range of configuration options that allow players and server administrators to customize how the seasonal system behaves.
 
@@ -667,7 +667,7 @@ The following are the most commonly modified configuration options.
 
 ------
 
-## Season Length
+### Season Length
 
 The duration of each solar term determines the speed of seasonal progression.
 
@@ -692,7 +692,7 @@ In server environments, longer seasonal cycles are often preferred. A common rec
 
 ------
 
-## Initial Solar Term
+### Initial Solar Term
 
 When a new world is created, the system begins from a specified solar term.
 
@@ -719,7 +719,7 @@ Changing this value allows a world to begin in a different season.
 
 ------
 
-## Weather Synchronization
+### Weather Synchronization
 
 By default, weather follows the **localized climate system**.
 
@@ -739,7 +739,7 @@ This mode may be easier to manage on some servers.
 
 ------
 
-## Rain Probability
+### Rain Probability
 
 Rain frequency can be adjusted through multipliers.
 
@@ -755,7 +755,7 @@ Higher values result in:
 
 ------
 
-## Seasonal Agriculture
+### Seasonal Agriculture
 
 The seasonal crop system can be completely disabled.
 
@@ -772,7 +772,7 @@ This option is useful for lightweight modpacks.
 
 ------
 
-## Humidity Control
+### Humidity Control
 
 The humidity system governs agricultural environments.
 
@@ -789,7 +789,7 @@ This option is recommended only when simplified gameplay is desired.
 
 ------
 
-## Simplified Greenhouse Mode
+### Simplified Greenhouse Mode
 
 The greenhouse system can be simplified.
 
@@ -807,7 +807,7 @@ This makes greenhouse construction much easier.
 
 ------
 
-## Dynamic Day–Night Cycle
+### Dynamic Day–Night Cycle
 
 Day and night length variation is controlled by:
 
@@ -824,7 +824,7 @@ This option may be useful in certain technical modpacks.
 
 ------
 
-## Particles and Visual Effects
+### Particles and Visual Effects
 
 If players encounter performance issues, some visual effects can be disabled.
 
@@ -839,7 +839,7 @@ These features mainly enhance atmosphere and do not affect core gameplay mechani
 
 ------
 
-# 9. Migrating from Serene Seasons
+## 9. Migrating from Serene Seasons
 
 Many players first encounter seasonal mods through **Serene Seasons**.
 Ecliptic Seasons is not intended as a simple replacement but rather as a more flexible and extensible seasonal system.
@@ -848,7 +848,7 @@ Understanding the differences between the two is important when migrating modpac
 
 ------
 
-## Core Design Differences
+### Core Design Differences
 
 Serene Seasons follows a more traditional seasonal model, focusing mainly on:
 
@@ -870,7 +870,7 @@ Because of this, the design philosophies differ significantly.
 
 ------
 
-## Snow System Differences
+### Snow System Differences
 
 Serene Seasons uses **actual snow layers**, meaning:
 
@@ -892,7 +892,7 @@ Advantages include:
 
 ------
 
-## Weather System Differences
+### Weather System Differences
 
 Serene Seasons uses a **global weather system**.
 
@@ -912,7 +912,7 @@ SnowTogether = true
 
 ------
 
-## Crop System Differences
+### Crop System Differences
 
 Serene Seasons mainly relies on crop tags to control seasonal growth.
 
@@ -926,7 +926,7 @@ This makes farming mechanics more complex but also more strategic.
 
 ------
 
-## API Compatibility
+### API Compatibility
 
 Many existing mods still rely on the **Serene Seasons API**.
 
@@ -941,7 +941,7 @@ This allows mods that depend on Serene Seasons to continue functioning normally.
 
 ------
 
-## Migration Suggestions
+### Migration Suggestions
 
 If players wish to migrate from Serene Seasons, the usual steps are:
 
@@ -957,7 +957,7 @@ In most cases, existing world saves remain unaffected, since Ecliptic Seasons do
 
 ------
 
-## When Migration May Not Be Recommended
+### When Migration May Not Be Recommended
 
 Migration should be considered carefully in the following situations:
 
@@ -969,7 +969,7 @@ In such cases, testing with a new world before migration is recommended.
 
 ------
 
-# Guide Summary
+## Guide Summary
 
 The core goal of **Ecliptic Seasons** is to introduce a more realistic sense of time and climate progression into Minecraft.
 
@@ -990,13 +990,13 @@ These seasonal changes make the Minecraft world feel more dynamic and alive.
 
 ----
 
-# Ecliptic Seasons FAQ
+## Ecliptic Seasons FAQ
 
-## Frequently Asked Questions
+### Frequently Asked Questions
 
 ------
 
-## 1. Why do I hear thunder but it isn’t raining?
+### 1. Why do I hear thunder but it isn’t raining?
 
 Ecliptic Seasons uses a **localized weather system**.
 
@@ -1015,7 +1015,7 @@ RainTogether = true
 
 ------
 
-## 2. Why does it sometimes snow in spring?
+### 2. Why does it sometimes snow in spring?
 
 The solar-term calendar is not a simple “four seasons switch.”
 
@@ -1035,19 +1035,19 @@ So seeing snow in early spring is normal.
 
 ------
 
-## 3. Why aren’t my crops growing?
+### 3. Why aren’t my crops growing?
 
 There are usually three reasons:
 
-### (1) The season is not suitable
+#### (1) The season is not suitable
 
 Some crops grow well only in specific seasons.
 
-### (2) Humidity is too low
+#### (2) Humidity is too low
 
 Crops require an appropriate **environmental humidity** level.
 
-### (3) Light level is too low
+#### (3) Light level is too low
 
 This is especially common inside greenhouses.
 
@@ -1055,7 +1055,7 @@ If bone meal does not work, it usually means the environmental conditions are no
 
 ------
 
-## 4. Why isn’t my greenhouse working?
+### 4. Why isn’t my greenhouse working?
 
 The greenhouse system requires certain structural conditions.
 
@@ -1076,7 +1076,7 @@ If the structure is too large, some areas may not be recognized as part of the g
 
 ------
 
-## 5. Do I always need a Season Core for a greenhouse?
+### 5. Do I always need a Season Core for a greenhouse?
 
 Not necessarily.
 
@@ -1090,7 +1090,7 @@ Then a greenhouse only needs to be an enclosed structure.
 
 ------
 
-## 6. Why does it sometimes rain in winter instead of snow?
+### 6. Why does it sometimes rain in winter instead of snow?
 
 The precipitation type depends on:
 
@@ -1101,13 +1101,13 @@ If the temperature is still high enough, it may rain instead of snow even during
 
 ------
 
-## 7. Why does the weather look strange near rivers?
+### 7. Why does the weather look strange near rivers?
 
 The biomes on each side of a river can be different, so the weather can differ across the riverbanks as well.
 
 ------
 
-## 8. Why do I get heatstroke in summer?
+### 8. Why do I get heatstroke in summer?
 
 In hot biomes, if you stay exposed under the midday sun for too long during summer, **Heatstroke** may trigger.
 
@@ -1119,13 +1119,13 @@ HeatStroke = false
 
 ------
 
-## 9. Why do some modded crops have no seasonal restrictions?
+### 9. Why do some modded crops have no seasonal restrictions?
 
 Not all modded crops register the required seasonal tags, so they may not be affected by seasonal crop rules.
 
 ------
 
-## 10. Why does the weather change when I move around?
+### 10. Why does the weather change when I move around?
 
 Weather includes a **transition system**.
 
@@ -1133,7 +1133,7 @@ When you enter a region with a different climate, the weather gradually shifts r
 
 ------
 
-## 11. Why do modpacks recommend this mod as a replacement for Serene Seasons?
+### 11. Why do modpacks recommend this mod as a replacement for Serene Seasons?
 
 Common reasons include:
 
@@ -1145,7 +1145,7 @@ Common reasons include:
 
 ------
 
-## 12. How can mods that depend on Serene Seasons continue to work?
+### 12. How can mods that depend on Serene Seasons continue to work?
 
 Use **Serene Seasons API Stub (Ecliptic Seasons Bridge)**.
 
