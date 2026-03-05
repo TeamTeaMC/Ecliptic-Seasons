@@ -466,7 +466,7 @@ public class WeatherManager {
         if (player.isCreative() || player.isSpectator() ||
                 !CommonConfig.Temperature.heatStroke.get()) return;
         var level = player.level();
-        if (level.getRandom().nextInt(150) == 0)
+        if (level.getRandom().nextInt(1500) == 0)
             SolarHolders.getSaveDataLazy(level).ifPresent(solarDataManager -> {
                 if (EclipticUtil.getNowSolarTerm(level).isInTerms(SolarTerm.BEGINNING_OF_SUMMER, SolarTerm.BEGINNING_OF_AUTUMN)) {
                     Biome b = level.getBiome(player.blockPosition()).value();

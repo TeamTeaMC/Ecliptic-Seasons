@@ -14,6 +14,7 @@ nav:
   - Home:
       - English:
           - Index: 'en/index.md'
+          - Quickly learn about this mod: 'en/quickly_start.md'
           - Season: 'en/season.md'
           - Climate: 'en/climate.md'
           - Crop: 'en/crop.md'
@@ -44,6 +45,7 @@ nav:
               - Wetter Structure: 'en/data/wetter.md'
       - 中文:
           - 首页: 'zh/index.md'
+          - 新手须知: 'zh/quickly_start.md'
           - 季节: 'zh/season.md'
           - 气候: 'zh/climate.md'
           - 作物: 'zh/crop.md'
