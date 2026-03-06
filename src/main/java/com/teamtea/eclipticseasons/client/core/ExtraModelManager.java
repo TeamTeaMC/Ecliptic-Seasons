@@ -1102,17 +1102,20 @@ public class ExtraModelManager {
     }
 
     public static int getLayer(BlockAndTintGetter blockAndTintGetter, BlockPos.MutableBlockPos pos, BlockState state, BakedModel snowModel, long seed) {
-        if (!(blockAndTintGetter instanceof IMapSlice mapSlice) || !ClientConfig.Renderer.extraSnowLayer.get()) return 0;
+        if (!(blockAndTintGetter instanceof IMapSlice mapSlice))
+            return 0;
         Level useLevel = ClientCon.getUseLevel();
         if (useLevel == null) return 0;
 
         if (!(state.isSolidRender(blockAndTintGetter, pos) || state.getBlock() instanceof LeavesBlock)) return 0;
         if (!state.getFluidState().isEmpty()) return 0;
 
-        BlockPos abovePos = pos.setY(pos.getY()+1);
+        BlockPos abovePos = pos.setY(pos.getY() + 1);
         BlockState aboveState = blockAndTintGetter.getBlockState(abovePos);
-        if (aboveState.getBlock() instanceof LeavesBlock || aboveState.isFaceSturdy(blockAndTintGetter, abovePos, Direction.DOWN) || aboveState.is(EclipticBlockTags.SNOW_LAYER_CANNOT_SURVIVE_IN)) return 0;
-        if (!((snowModel != null && !ISnowyReplaceModel.isInvalid(snowModel)) || maySnowyAt(useLevel, mapSlice, state, pos, null, seed))) return 0;
+        if (aboveState.getBlock() instanceof LeavesBlock || aboveState.isFaceSturdy(blockAndTintGetter, abovePos, Direction.DOWN) || aboveState.is(EclipticBlockTags.SNOW_LAYER_CANNOT_SURVIVE_IN))
+            return 0;
+        if (!((snowModel != null && !ISnowyReplaceModel.isInvalid(snowModel)) || maySnowyAt(useLevel, mapSlice, state, pos, null, seed)))
+            return 0;
 
         var biome = MapChecker.idToBiome(useLevel, mapSlice.getSurfaceFaceBiomeId(pos));
         if (biome == null) return 0;
@@ -1127,19 +1130,24 @@ public class ExtraModelManager {
         int noiseInt = (int) (h & 0x7FFFFFFF) % 100;
 
         int maxLayers = (state.getBlock() instanceof LeavesBlock) ? 1 : 2;
-        int totalScale = snowDepth * maxLayers;
-        int base = totalScale / 100;
-        int frac = totalScale % 100;
+        int base = 0;
+        int chance;
 
-        if (noiseInt < frac) {
-            base++;
+        if (snowDepth < 50) {
+            chance = (snowDepth > 40) ? 1 : 0;
+        } else if (snowDepth <= 65) {
+            int x = snowDepth - 49;
+            chance = (x * x * x * x) / 1050;
+        } else if (snowDepth <= 85) {
+            base = 1;
+            chance = (snowDepth - 65) / 2;
+        } else {
+            base = 1;
+            int x = snowDepth - 85;
+            chance = 10 + (x * x * 90) / 225;
         }
 
-        //if (snowDepth == 100 && noiseInt > 97) {
-        //    base--;
-        //} else if (snowDepth < 5 && noiseInt > snowDepth * 2) {
-        //    base = 0;
-        //}
+        if (noiseInt < chance) base++;
 
         return Mth.clamp(base, 0, maxLayers);
     }
