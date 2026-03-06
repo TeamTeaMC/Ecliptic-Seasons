@@ -1104,6 +1104,8 @@ public class ExtraModelManager {
     public static int getLayer(BlockAndTintGetter blockAndTintGetter, BlockPos.MutableBlockPos pos, BlockState state, BakedModel snowModel, long seed) {
         if (!(blockAndTintGetter instanceof IMapSlice mapSlice) || !ClientConfig.Renderer.extraSnowLayer.get())
             return 0;
+        if (MapChecker.getDefaultBlockTypeFlag(state) <= MapChecker.FLAG_NONE) return 0;
+
         Level useLevel = ClientCon.getUseLevel();
         if (useLevel == null) return 0;
 
