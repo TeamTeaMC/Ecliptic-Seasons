@@ -1,5 +1,5 @@
 {
-  "biomes": "minecraft:the_void",
+  "biomes": "minecraft:plains",
   "changes": {
     "seasons": {
       "spring": {
@@ -21,6 +21,61 @@
             "block": {
               "Name": "minecraft:grass"
             }
+          },
+          {
+            "conditions": {
+              "above": true,
+              "type": "empty_above"
+            },
+            "offset": [
+              0,
+              1,
+              0
+            ],
+            "parts": [
+              {
+                "block": {
+                  "Properties": {
+                    "age": "7"
+                  },
+                  "Name": "minecraft:pumpkin_stem"
+                }
+              },
+              {
+                "block": {
+                  "Name": "minecraft:pumpkin"
+                }
+              }
+            ],
+            "type": "multi_blocks"
+          },
+          {
+            "conditions": {
+              "above": true,
+              "type": "empty_above"
+            },
+            "offset": [
+              0,
+              1,
+              0
+            ],
+            "feature": "minecraft:patch_pumpkin",
+            "weight": 1,
+            "type": "feature"
+          },
+          {
+            "conditions": {
+              "above": true,
+              "type": "empty_above"
+            },
+            "offset": [
+              0,
+              1,
+              0
+            ],
+            "feature": "minecraft:bamboo_vegetation",
+            "weight": 1,
+            "type": "feature"
           },
           {
             "weight": 1,

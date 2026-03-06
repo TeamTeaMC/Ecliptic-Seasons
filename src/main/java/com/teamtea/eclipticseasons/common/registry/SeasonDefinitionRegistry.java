@@ -6,6 +6,7 @@ import com.teamtea.eclipticseasons.api.data.misc.SolarTermValueMap;
 import com.teamtea.eclipticseasons.api.data.season.definition.*;
 import com.teamtea.eclipticseasons.api.data.season.definition.condition.EmptyAboveCondition;
 import com.teamtea.eclipticseasons.api.data.season.definition.selector.BlockSelector;
+import com.teamtea.eclipticseasons.api.data.season.definition.selector.FeatureSelector;
 import com.teamtea.eclipticseasons.api.data.season.definition.selector.MultiBlockSelector;
 import com.teamtea.eclipticseasons.api.util.backport.FakeBlockPredicate;
 import com.teamtea.eclipticseasons.api.util.backport.FakeStatePropertiesPredicate;
@@ -13,12 +14,16 @@ import net.minecraft.core.HolderSet;
 import net.minecraft.core.Vec3i;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstapContext;
+import net.minecraft.data.worldgen.features.VegetationFeatures;
+import net.minecraft.data.worldgen.placement.VegetationPlacements;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.DoublePlantBlock;
+import net.minecraft.world.level.block.StemBlock;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
+import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 
 import java.util.List;
 import java.util.Optional;
@@ -30,11 +35,12 @@ public class SeasonDefinitionRegistry {
         return ResourceKey.create(ESRegistries.SEASON_DEFINITION, EclipticSeasons.rl(name));
     }
 
-    
+
     public static void bootstrap2(BootstapContext<SeasonDefinition> context) {
         var holderGetter = context.lookup(Registries.BIOME);
+        var placedFeatureHolderGetter = context.lookup(Registries.CONFIGURED_FEATURE);
 
-        HolderSet.Direct<Biome> plains = HolderSet.direct(holderGetter.getOrThrow(Biomes.THE_VOID));
+        HolderSet.Direct<Biome> plains = HolderSet.direct(holderGetter.getOrThrow(Biomes.PLAINS));
         Vec3i above = new Vec3i(0, 1, 0);
         List<EmptyAboveCondition> condition = List.of(EmptyAboveCondition.builder().above(true).build());
         context.register(test, new SeasonDefinition(
@@ -45,7 +51,20 @@ public class SeasonDefinitionRegistry {
                                         .original(FakeBlockPredicate.Builder.block().of(Blocks.GRASS_BLOCK).build())
                                         .fixedSeed(true)
                                         .chance(1 / 16f)
-                                        .selector(BlockSelector.builder().conditions(condition).state(Optional.of(Blocks.GRASS.defaultBlockState())).weight(22).offset(Optional.of(above)).build())
+                                        .selector(BlockSelector.builder().conditions(condition)
+                                                .state(Optional.of(Blocks.GRASS.defaultBlockState())).weight(22).offset(Optional.of(above)).build())
+                                        .selector(MultiBlockSelector.builder()
+                                                .conditions(condition)
+                                                .multiBlock(MultiBlockSelector.Part.builder()
+                                                        .state(Blocks.PUMPKIN_STEM.defaultBlockState().setValue(StemBlock.AGE, StemBlock.MAX_AGE))
+                                                        .build())
+                                                .multiBlock(MultiBlockSelector.Part.builder()
+                                                        .state(Blocks.PUMPKIN.defaultBlockState())
+                                                        .build())
+                                                .offset(Optional.of(above))
+                                                .build())
+                                        .selector(FeatureSelector.builder().conditions(condition).feature(placedFeatureHolderGetter.getOrThrow(VegetationFeatures.PATCH_PUMPKIN)).weight(1).offset(Optional.of(above)).build())
+                                        .selector(FeatureSelector.builder().conditions(condition).feature(placedFeatureHolderGetter.getOrThrow(VegetationFeatures.BAMBOO_VEGETATION)).weight(1).offset(Optional.of(above)).build())
                                         .selector(BlockSelector.builder().conditions(condition).state(Optional.of(Blocks.DANDELION.defaultBlockState())).weight(1).offset(Optional.of(above)).build())
                                         .selector(BlockSelector.builder().conditions(condition).state(Optional.of(Blocks.OXEYE_DAISY.defaultBlockState())).weight(1).offset(Optional.of(above)).build())
                                         .build()
@@ -58,10 +77,10 @@ public class SeasonDefinitionRegistry {
                                         .selector(MultiBlockSelector.builder()
                                                 .conditions(condition)
                                                 .multiBlock(MultiBlockSelector.Part.builder()
-                                                        .state( Blocks.TALL_GRASS.defaultBlockState().setValue(DoublePlantBlock.HALF, DoubleBlockHalf.UPPER))
+                                                        .state(Blocks.TALL_GRASS.defaultBlockState().setValue(DoublePlantBlock.HALF, DoubleBlockHalf.UPPER))
                                                         .build())
                                                 .multiBlock(MultiBlockSelector.Part.builder()
-                                                        .state( Blocks.TALL_GRASS.defaultBlockState().setValue(DoublePlantBlock.HALF, DoubleBlockHalf.LOWER))
+                                                        .state(Blocks.TALL_GRASS.defaultBlockState().setValue(DoublePlantBlock.HALF, DoubleBlockHalf.LOWER))
                                                         .build())
                                                 .build())
                                         .build()

@@ -153,6 +153,9 @@ minecraft {
             property 'forgegradle.runs.runData', 'true'
             property 'forgegradle.runs.dev', 'true'
 
+
+            property 'eclipticseasons.runs.runData', 'true'
+
             mods {
                 "${mod_id}" {
                     source sourceSets.main

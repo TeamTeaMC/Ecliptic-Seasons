@@ -996,8 +996,9 @@ public class ExtraModelManager {
             @Nullable BlockPos.MutableBlockPos checkPos) {
 
         if (!ClientConfig.Renderer.snowInFence.get()) return null;
+        Level useLevel = ClientCon.getUseLevel();
         if (!(blockAndTintGetter instanceof IMapSlice mapSlice)
-                || ClientCon.getUseLevel() == null) return null;
+                || useLevel == null) return null;
         if (blockAndTintGetter.getBrightness(LightLayer.SKY, pos) == 0) {
             return null;
         }
@@ -1010,7 +1011,7 @@ public class ExtraModelManager {
         if (state.isAir() || !state.getFluidState().isEmpty() || state.is(EclipticBlockTags.SNOW_LAYER_CANNOT_SURVIVE_ON))
             return null;
         if (ClientConfig.Renderer.snowInFenceOnlySnowy.get()
-                && !maySnowyAt(ClientCon.getUseLevel(), mapSlice, state, pos, ClientCon.getUseLevel().getRandom(), state.getSeed(pos))) {
+                && !maySnowyAt(useLevel, mapSlice, state, pos, useLevel.getRandom(), state.getSeed(pos))) {
             return null;
         }
 

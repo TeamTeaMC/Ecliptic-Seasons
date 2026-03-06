@@ -58,13 +58,13 @@ public class MultiBlockSelector implements IChangeSelector {
     }
 
     @Override
-    public boolean place(ServerLevel level, BlockPos pos, ISeasonChangeContext context) {
+    public boolean place(ServerLevel level, BlockPos origin, ISeasonChangeContext context) {
         List<Part> get = multiBlocks;
         int count = 0;
         for (int j = 0, getSize = get.size(); j < getSize; j++) {
             Part part = get.get(j);
             BlockState newState = part.state;
-            BlockPos newpos = part.offset.map(pos::offset).orElse(pos);
+            BlockPos newpos = part.offset.map(origin::offset).orElse(origin);
             if (part.replace.isEmpty()) {
                 BlockState oldState = level.getBlockState(newpos);
                 if (oldState.canBeReplaced(Fluids.EMPTY)) {

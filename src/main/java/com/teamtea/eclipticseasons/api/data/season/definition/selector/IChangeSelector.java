@@ -22,13 +22,13 @@ public interface IChangeSelector {
     @SuppressWarnings("unchecked")
     Codec<IChangeSelector> CCODEC =
             Codec.either(
-                            BlockSelector.CODEC.codec(),
                             Codec.STRING
                                     .xmap(s -> s.contains(":") ? new ResourceLocation(s) : EclipticSeasons.rl(s),
                                             r -> r.getNamespace().equals(EclipticSeasonsApi.MODID) ? r.getPath() : r.toString())
-                                    .dispatch("type", IChangeSelector::getType, id -> (Codec<IChangeSelector>) ChangeSelectors.CONDITIONS.get(id).codec()))
-                    .xmap(e -> e.left().map((bs -> (IChangeSelector) bs)).orElseGet(() -> e.right().orElseThrow()),
-                            ics -> ics instanceof BlockSelector bs ? Either.left(bs) : Either.right(ics));
+                                    .dispatch("type", IChangeSelector::getType, id -> (Codec<IChangeSelector>) ChangeSelectors.CONDITIONS.get(id).codec()),
+                            BlockSelector.CODEC.codec())
+                    .xmap(e -> e.right().map((bs -> (IChangeSelector) bs)).orElseGet(() -> e.left().orElseThrow()),
+                            ics -> ics instanceof BlockSelector bs ? Either.right(bs) : Either.left(ics));
 
     int DEFAULT_WEIGHT = 10;
 
@@ -36,7 +36,7 @@ public interface IChangeSelector {
 
     MapCodec<? extends IChangeSelector> codec();
 
-    boolean place(ServerLevel level, BlockPos pos, ISeasonChangeContext context);
+    boolean place(ServerLevel level, BlockPos origin, ISeasonChangeContext context);
 
 
     default int getWeight() {
