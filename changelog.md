@@ -1,6 +1,14 @@
 > As the ecosystem for 1.20.1 begins to wind down with major mods like Create moving on, we are also transitioning into
 > the final maintenance phase for our mod on this version.
 
+### 0.12.15
+
+- Added an optional **Extra Snow Layer** visual feature. When enabled, snowy blocks may render a thin additional snow
+  layer based on the biome’s current snow depth, making snow accumulation appear more gradual and natural across the
+  terrain. This effect works with **Sodium** and **Embeddium**.
+- Renamed the internal block tag **`snow_layer_cannot_survive_on`** to **`snow_layer_cannot_survive_in`** to better
+  reflect its purpose.
+
 ### 0.12.14
 
 - Fixed several issues in Season Definitions, including deserialization errors, incorrect rule evaluation, and some

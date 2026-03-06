@@ -93,6 +93,8 @@ public class ClientConfig {
         public static ForgeConfigSpec.BooleanValue snowInFenceDirection;
         public static ForgeConfigSpec.BooleanValue snowInFenceOnlySnowy;
 
+        public static ForgeConfigSpec.BooleanValue extraSnowLayer;
+
         private static void load(ForgeConfigSpec.Builder builder) {
             builder.push("Renderer");
             forceChunkRenderUpdate = builder.comment("Periodically force-reloads chunk rendering to fix visual glitches (may impact FPS).")
@@ -119,7 +121,9 @@ public class ClientConfig {
                     .define("SnowInFenceDirection", false);
             snowInFenceOnlySnowy = builder.comment("[Sodium/Embeddium] Render snow layers inside snow-connected fences only when in a snowy state.")
                     .define("SnowInFenceOnlySnowy", true);
-
+            extraSnowLayer = builder
+                    .comment("[Sodium/Embeddium] Render an additional snow layer on blocks that already use the snowy model.")
+                    .define("ExtraSnowLayer", false);
 
             seasonalGrassColorChange = builder.comment("Apply seasonal color shifts to grass and leaf textures.")
                     .define("SeasonalGrassColorChange", true);

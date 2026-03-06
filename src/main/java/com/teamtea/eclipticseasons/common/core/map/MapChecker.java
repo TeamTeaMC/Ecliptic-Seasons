@@ -947,8 +947,10 @@ public class MapChecker {
                 onBlock instanceof ComposterBlock ||
                 (onBlock instanceof CampfireBlock && !state.getValue(CampfireBlock.LIT)) ||
                 onBlock instanceof IronBarsBlock ||
-                onBlock instanceof LightningRodBlock ||
-                onBlock instanceof AzaleaBlock) {
+                onBlock instanceof LightningRodBlock
+                //||
+                //onBlock instanceof AzaleaBlock
+        ) {
             flag = FLAG_CUSTOM;
         } else {
             ResourceLocation blockName = onBlock.builtInRegistryHolder().key().location();

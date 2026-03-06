@@ -16,6 +16,7 @@ import com.teamtea.eclipticseasons.client.model.unbake.SolarBlockModel;
 import com.teamtea.eclipticseasons.client.reload.ClientJsonCacheListener;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.client.util.ClientRef;
+import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.core.snow.SnowChecker;
 import com.teamtea.eclipticseasons.common.registry.BlockRegistry;
 import com.teamtea.eclipticseasons.client.model.*;
@@ -24,6 +25,7 @@ import com.teamtea.eclipticseasons.compat.Platform;
 import com.teamtea.eclipticseasons.config.ClientConfig;
 
 import com.teamtea.eclipticseasons.config.CommonConfig;
+import it.unimi.dsi.fastutil.HashCommon;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
@@ -1008,7 +1010,7 @@ public class ExtraModelManager {
 
         //checkPos.move(Direction.UP);
 
-        if (state.isAir() || !state.getFluidState().isEmpty() || state.is(EclipticBlockTags.SNOW_LAYER_CANNOT_SURVIVE_ON))
+        if (state.isAir() || !state.getFluidState().isEmpty() || state.is(EclipticBlockTags.SNOW_LAYER_CANNOT_SURVIVE_IN))
             return null;
         if (ClientConfig.Renderer.snowInFenceOnlySnowy.get()
                 && !maySnowyAt(useLevel, mapSlice, state, pos, useLevel.getRandom(), state.getSeed(pos))) {
@@ -1073,7 +1075,8 @@ public class ExtraModelManager {
     }
 
 
-    private static BakedModel getSnowLayerModel(int layers) {
+    public static BakedModel getSnowLayerModel(int layers) {
+        //if(true) return Minecraft.getInstance().getModelManager().getBlockModelShaper().getBlockModel(Blocks.AIR.defaultBlockState());
         int clampedLayers = Mth.clamp(layers, 1, 8);
         BlockState snowState = Blocks.SNOW.defaultBlockState().setValue(SnowLayerBlock.LAYERS, clampedLayers);
         return Minecraft.getInstance().getModelManager().getBlockModelShaper().getBlockModel(snowState);
@@ -1097,6 +1100,50 @@ public class ExtraModelManager {
         mutableBlockPos.setY(y);
         return state;
     }
+
+    public static int getLayer(BlockAndTintGetter blockAndTintGetter, BlockPos.MutableBlockPos pos, BlockState state, BakedModel snowModel, long seed) {
+        if (!(blockAndTintGetter instanceof IMapSlice mapSlice) || !ClientConfig.Renderer.extraSnowLayer.get()) return 0;
+        Level useLevel = ClientCon.getUseLevel();
+        if (useLevel == null) return 0;
+
+        if (!(state.isSolidRender(blockAndTintGetter, pos) || state.getBlock() instanceof LeavesBlock)) return 0;
+        if (!state.getFluidState().isEmpty()) return 0;
+
+        BlockPos abovePos = pos.setY(pos.getY()+1);
+        BlockState aboveState = blockAndTintGetter.getBlockState(abovePos);
+        if (aboveState.getBlock() instanceof LeavesBlock || aboveState.isFaceSturdy(blockAndTintGetter, abovePos, Direction.DOWN) || aboveState.is(EclipticBlockTags.SNOW_LAYER_CANNOT_SURVIVE_IN)) return 0;
+        if (!((snowModel != null && !ISnowyReplaceModel.isInvalid(snowModel)) || maySnowyAt(useLevel, mapSlice, state, pos, null, seed))) return 0;
+
+        var biome = MapChecker.idToBiome(useLevel, mapSlice.getSurfaceFaceBiomeId(pos));
+        if (biome == null) return 0;
+
+        int snowDepth = Mth.clamp(WeatherManager.getSnowDepthAtBiome(useLevel, biome.value()), 0, 100);
+        if (snowDepth <= 0) return 0;
+
+        final long posLong = pos.asLong();
+        long h = (posLong ^ seed) * 0x5DEECE66DL + 0xBL;
+        h = (h ^ (h >>> 16)) * 0x27D4EB2DL;
+        h = h ^ (h >>> 15);
+        int noiseInt = (int) (h & 0x7FFFFFFF) % 100;
+
+        int maxLayers = (state.getBlock() instanceof LeavesBlock) ? 1 : 2;
+        int totalScale = snowDepth * maxLayers;
+        int base = totalScale / 100;
+        int frac = totalScale % 100;
+
+        if (noiseInt < frac) {
+            base++;
+        }
+
+        //if (snowDepth == 100 && noiseInt > 97) {
+        //    base--;
+        //} else if (snowDepth < 5 && noiseInt > snowDepth * 2) {
+        //    base = 0;
+        //}
+
+        return Mth.clamp(base, 0, maxLayers);
+    }
+
 
     public static RenderType getRenderType(BlockState state) {
         // if (!Minecraft.useFancyGraphics()) return RenderType.solid();

@@ -10,7 +10,6 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.data.BlockTagsProvider;
 import net.minecraftforge.common.data.ExistingFileHelper;
 
@@ -84,9 +83,8 @@ public final class ESBlockTagProvider extends BlockTagsProvider {
                 .addTag(BlockTags.ICE)
                 .addTag(BlockTags.SNOW_LAYER_CANNOT_SURVIVE_ON);
 
-        tag(EclipticBlockTags.SNOW_LAYER_CANNOT_SURVIVE_ON)
-                .addTags(EclipticBlockTags.SNOW_OVERLAY_CANNOT_SURVIVE_ON,
-                        BlockTags.DOORS, BlockTags.TRAPDOORS,
+        tag(EclipticBlockTags.SNOW_LAYER_CANNOT_SURVIVE_IN)
+                .addTags(BlockTags.DOORS, BlockTags.TRAPDOORS,
                         BlockTags.BUTTONS,
                         BlockTags.CANDLE_CAKES,
                         BlockTags.BEDS

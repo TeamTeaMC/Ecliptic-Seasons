@@ -4,12 +4,19 @@ package com.teamtea.eclipticseasons.mixin.compat.embeddium;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
+import com.teamtea.eclipticseasons.api.constant.tag.EclipticBlockTags;
 import com.teamtea.eclipticseasons.api.misc.client.IExtraRendererContextOwner;
+import com.teamtea.eclipticseasons.api.misc.client.IMapSlice;
 import com.teamtea.eclipticseasons.client.core.ExtraRendererContext;
 import com.teamtea.eclipticseasons.client.core.ExtraModelManager;
+import com.teamtea.eclipticseasons.client.model.ISnowyReplaceModel;
 import com.teamtea.eclipticseasons.client.render.chunk.IceKeeper;
+import com.teamtea.eclipticseasons.client.util.ClientCon;
+import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
+import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.compat.iris.IIrisShaderAccesor;
 import com.teamtea.eclipticseasons.compat.vanilla.IExtendBlockView;
+import it.unimi.dsi.fastutil.HashCommon;
 import me.jellysquid.mods.sodium.client.render.chunk.compile.ChunkBuildBuffers;
 import me.jellysquid.mods.sodium.client.render.chunk.compile.ChunkBuildContext;
 import me.jellysquid.mods.sodium.client.render.chunk.compile.ChunkBuildOutput;
@@ -20,9 +27,12 @@ import me.jellysquid.mods.sodium.client.util.task.CancellationToken;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraftforge.client.model.data.ModelData;
@@ -113,14 +123,31 @@ public abstract class MixinBlockRenderTask {
                     iIrisShaderAccesor.eclipticseasons$setSnowy(buildContext, Blocks.SNOW_BLOCK.defaultBlockState());
             }
             original = false;
+            long seed = state.getSeed(mutableBlockPos);
             ctx.update(mutableBlockPos,
                     mutableBlockPos2,
                     state,
                     snowModel,
-                    state.getSeed(mutableBlockPos),
+                    seed,
                     rendererHolder.getModelData(),
                     ExtraModelManager.getRenderType(state));
             cache.getBlockRenderer().renderModel(ctx, buffers);
+
+
+            int y = mutableBlockPos.getY();
+            int layer = ExtraModelManager.getLayer(ctx.localSlice(), mutableBlockPos, state, snowModel, seed);
+            if (layer > 0) {
+                ctx.update(mutableBlockPos,
+                        mutableBlockPos2.setY(mutableBlockPos2.getY() + 1),
+                        state,
+                        ExtraModelManager.getSnowLayerModel(layer),
+                        seed,
+                        rendererHolder.getModelData(),
+                        ExtraModelManager.getRenderType(state));
+                cache.getBlockRenderer().renderModel(ctx, buffers);
+                mutableBlockPos2.setY(mutableBlockPos2.getY() - 1);
+            }
+            mutableBlockPos.setY(y);
         }
 
         if (!original) {
@@ -128,6 +155,7 @@ public abstract class MixinBlockRenderTask {
         }
         return original;
     }
+
 
     @Inject(
             remap = false,
