@@ -1,4 +1,5 @@
 # **Ecliptic Seasons Player Guide**
+
 *A Player Guide to Seasonal Worlds*
 
 ------
@@ -6,11 +7,14 @@
 ## 1. Introduction
 
 The world of Minecraft is normally an environment that changes very little over time.
-Day and night repeat in a constant cycle, weather occasionally shifts, but the environment itself rarely evolves in a noticeable way as time passes.
+Day and night repeat in a constant cycle, weather occasionally shifts, but the environment itself rarely evolves in a
+noticeable way as time passes.
 
 **Ecliptic Seasons** aims to change this.
 
-The mod introduces a seasonal system based on the **Twenty-Four Solar Terms**, allowing the world to evolve in a way that more closely resembles a natural climate cycle. As time progresses, players will gradually observe environmental changes such as:
+The mod introduces a seasonal system based on the **Twenty-Four Solar Terms**, allowing the world to evolve in a way
+that more closely resembles a natural climate cycle. As time progresses, players will gradually observe environmental
+changes such as:
 
 - Day and night lengths changing with the seasons
 - Climate gradually becoming colder or warmer
@@ -18,7 +22,8 @@ The mod introduces a seasonal system based on the **Twenty-Four Solar Terms**, a
 - Different plant and crop growth conditions
 - Seasonal adjustments in animal behavior and environmental atmosphere
 
-Unlike many seasonal mods that focus primarily on visual changes, **Ecliptic Seasons** is designed to build a **climate system**.
+Unlike many seasonal mods that focus primarily on visual changes, **Ecliptic Seasons** is designed to build a **climate
+system**.
 
 Within this system, solar terms influence not only how the environment looks but also gradually affect:
 
@@ -48,7 +53,9 @@ Therefore, a full annual cycle becomes:
 24 Solar Terms × 7 Days = 168 Days
 ```
 
-This cycle length can be adjusted in the configuration file to suit different servers or modpacks. For long-running servers, it is recommended to set each solar term to **36–72 days** so that the seasonal progression better aligns with real-world time, since one Minecraft day lasts only 20 minutes.
+This cycle length can be adjusted in the configuration file to suit different servers or modpacks. For long-running
+servers, it is recommended to set each solar term to **36–72 days** so that the seasonal progression better aligns with
+real-world time, since one Minecraft day lasts only 20 minutes.
 
 ------
 
@@ -56,12 +63,13 @@ This cycle length can be adjusted in the configuration file to suit different se
 
 As seasons progress, the length of day and night will also change.
 
-During summer, daytime becomes longer, while in winter the nights become longer. This effect is achieved through dynamic adjustments to the daylight cycle.
+During summer, daytime becomes longer, while in winter the nights become longer. This effect is achieved through dynamic
+adjustments to the daylight cycle.
 
 For example:
 
 | Season | Day Length |
-| ------ | ---------- |
+|--------|------------|
 | Summer | Longer     |
 | Winter | Shorter    |
 
@@ -78,7 +86,8 @@ This helps players understand the current seasonal phase of the world. Example s
 - Autumn Equinox
 - Winter Solstice
 
-Players can use these indicators to anticipate environmental changes, such as when snowfall begins or when certain crops become suitable for planting.
+Players can use these indicators to anticipate environmental changes, such as when snowfall begins or when certain crops
+become suitable for planting.
 
 ------
 
@@ -97,7 +106,8 @@ For example:
 - Real-world **Beginning of Spring** → In-game Beginning of Spring
 - Real-world **Winter Solstice** → In-game Winter Solstice
 
-This feature can enhance immersion on long-running servers. However, it may conflict with other time-related mods, so it is disabled by default.
+This feature can enhance immersion on long-running servers. However, it may conflict with other time-related mods, so it
+is disabled by default.
 
 ------
 
@@ -105,7 +115,8 @@ This feature can enhance immersion on long-running servers. However, it may conf
 
 The weather system in Ecliptic Seasons differs significantly from vanilla Minecraft.
 
-In vanilla Minecraft, weather is **globally uniform**: once rain begins, the entire world experiences rain simultaneously.
+In vanilla Minecraft, weather is **globally uniform**: once rain begins, the entire world experiences rain
+simultaneously.
 
 Ecliptic Seasons instead uses a **seasonal biome-based climate model**.
 
@@ -113,12 +124,13 @@ Ecliptic Seasons instead uses a **seasonal biome-based climate model**.
 
 ### Localized Weather
 
-Because of the biome climate system, different regions of the world may experience different weather conditions at the same time.
+Because of the biome climate system, different regions of the world may experience different weather conditions at the
+same time.
 
 For example:
 
 | Biome     | Weather          |
-| --------- | ---------------- |
+|-----------|------------------|
 | Plains    | Rain             |
 | Mountains | Snow             |
 | Desert    | No precipitation |
@@ -146,7 +158,8 @@ RainChancePercentMultiplier
 ThunderChancePercentMultiplier
 ```
 
-It should be noted that these values only modify **global probability multipliers** and do not directly determine the final weather outcome.
+It should be noted that these values only modify **global probability multipliers** and do not directly determine the
+final weather outcome.
 
 Final weather conditions are influenced by multiple factors:
 
@@ -160,7 +173,8 @@ Final weather conditions are influenced by multiple factors:
 
 Some servers or modpacks may prefer the traditional **global weather** behavior.
 
-Ecliptic Seasons provides an optional configuration that allows all overworld biomes to share the same precipitation event.
+Ecliptic Seasons provides an optional configuration that allows all overworld biomes to share the same precipitation
+event.
 
 Enable the following settings:
 
@@ -169,7 +183,8 @@ RainTogether = true
 SnowTogether = true
 ```
 
-In this mode, weather behavior becomes closer to vanilla Minecraft. Proper biome tagging and precipitation-enabled biomes are required for this to work correctly.
+In this mode, weather behavior becomes closer to vanilla Minecraft. Proper biome tagging and precipitation-enabled
+biomes are required for this to work correctly.
 
 ------
 
@@ -177,7 +192,9 @@ In this mode, weather behavior becomes closer to vanilla Minecraft. Proper biome
 
 To prevent weather changes from feeling abrupt, Ecliptic Seasons introduces a **weather transition system**.
 
-When players move between regions with different climates, weather transitions gradually rather than changing instantly. For example, when entering a rainy region from a clear area, rainfall will gradually intensify instead of beginning immediately.
+When players move between regions with different climates, weather transitions gradually rather than changing instantly.
+For example, when entering a rainy region from a clear area, rainfall will gradually intensify instead of beginning
+immediately.
 
 This behavior is controlled by:
 
@@ -230,7 +247,7 @@ When seasonal agriculture is enabled, crops no longer grow equally in every seas
 Different crops have preferred seasons. For example:
 
 | Crop Type | Preferred Season |
-| --------- | ---------------- |
+|-----------|------------------|
 | Wheat     | Spring / Summer  |
 | Pumpkin   | Summer           |
 | Beetroot  | Autumn           |
@@ -249,7 +266,9 @@ EnableSeasonalCrop = true
 
 If disabled, crops revert to vanilla behavior.
 
-Unlike typical seasonal mods, Ecliptic Seasons also allows **different growth probabilities across both biomes and solar terms**. For instance, a crop suited for spring may grow differently during *Beginning of Spring* versus *Spring Equinox*.
+Unlike typical seasonal mods, Ecliptic Seasons also allows **different growth probabilities across both biomes and solar
+terms**. For instance, a crop suited for spring may grow differently during *Beginning of Spring* versus *Spring
+Equinox*.
 
 ------
 
@@ -278,7 +297,8 @@ When enabled, the system continuously monitors chunk environments and calculates
 
 ### Humidity Transition
 
-To prevent sudden humidity changes from destabilizing farming behavior, the system provides a humidity transition mechanism.
+To prevent sudden humidity changes from destabilizing farming behavior, the system provides a humidity transition
+mechanism.
 
 ```
 CropHumidityTransition = true
@@ -286,7 +306,8 @@ CropHumidityTransition = true
 
 Biome humidity in Ecliptic Seasons is influenced by several factors and may fluctuate seasonally.
 
-This option allows humidity values to change **gradually rather than discretely**, improving planting stability in certain biomes.
+This option allows humidity values to change **gradually rather than discretely**, improving planting stability in
+certain biomes.
 
 ------
 
@@ -316,7 +337,8 @@ When enabled, all plants registered with the appropriate tags will follow the ba
 
 The **greenhouse** is one of the key agricultural mechanics in Ecliptic Seasons.
 
-This system allows players to grow crops even during unsuitable seasons or humidity conditions by simulating a controlled agricultural environment.
+This system allows players to grow crops even during unsuitable seasons or humidity conditions by simulating a
+controlled agricultural environment.
 
 The greenhouse system consists of several components:
 
@@ -330,7 +352,8 @@ The greenhouse system consists of several components:
 
 The core mechanism of the greenhouse system is **enclosed structure detection**.
 
-The system checks building structures within a certain range around crops to determine whether a greenhouse environment exists. The detection logic is simple: it verifies whether the space forms a closed structure.
+The system checks building structures within a certain range around crops to determine whether a greenhouse environment
+exists. The detection logic is simple: it verifies whether the space forms a closed structure.
 
 Detection range is controlled by:
 
@@ -342,7 +365,7 @@ GreenHouseMaxHeight
 Default values:
 
 | Parameter        | Default |
-| ---------------- | ------- |
+|------------------|---------|
 | Maximum Diameter | 32      |
 | Maximum Height   | 10      |
 
@@ -426,7 +449,8 @@ When enabled, they can significantly improve crop growth stability. Details can 
 
 In addition to weather and agriculture systems, Ecliptic Seasons introduces **environmental temperature effects**.
 
-The goal is not to fully replace survival-temperature mods but to provide more realistic environmental feedback so that seasonal changes influence gameplay rather than being purely visual.
+The goal is not to fully replace survival-temperature mods but to provide more realistic environmental feedback so that
+seasonal changes influence gameplay rather than being purely visual.
 
 ------
 
@@ -434,7 +458,8 @@ The goal is not to fully replace survival-temperature mods but to provide more r
 
 As seasons progress, the overall world temperature changes.
 
-The system does not directly modify vanilla biome temperature values. Instead, it simulates climate shifts through **seasonal modifiers**.
+The system does not directly modify vanilla biome temperature values. Instead, it simulates climate shifts through *
+*seasonal modifiers**.
 
 Snowfall depends on biome temperature or specific configuration rules.
 
@@ -451,7 +476,8 @@ For example:
 
 During colder seasons, certain areas may accumulate snow or freeze water.
 
-By default, this feature is disabled and replaced with **winter atmosphere effects**, which provide better server performance.
+By default, this feature is disabled and replaced with **winter atmosphere effects**, which provide better server
+performance.
 
 Configuration:
 
@@ -490,7 +516,8 @@ This ensures that environments such as high mountains or ice plains remain cold.
 
 During hot seasons, players may experience **heatstroke**.
 
-If players remain too long in high-temperature biomes—especially around midday in summer—the system may apply negative effects.
+If players remain too long in high-temperature biomes—especially around midday in summer—the system may apply negative
+effects.
 
 Configuration:
 
@@ -528,7 +555,8 @@ Configuration:
 SnowyWinter = true
 ```
 
-This system differs from traditional snow layers. It does **not generate actual snow blocks**, but instead renders a visual snow overlay on the terrain.
+This system differs from traditional snow layers. It does **not generate actual snow blocks**, but instead renders a
+visual snow overlay on the terrain.
 
 This design provides two major advantages:
 
@@ -590,7 +618,7 @@ SeasonalColorChangeExtend = true
 Example seasonal color transitions:
 
 | Season | Vegetation Color   |
-| ------ | ------------------ |
+|--------|--------------------|
 | Spring | Bright green       |
 | Summer | Deep green         |
 | Autumn | Yellowish or brown |
@@ -659,9 +687,11 @@ These sounds change automatically with the season.
 
 ### Common Configuration Options
 
-Ecliptic Seasons provides a wide range of configuration options that allow players and server administrators to customize how the seasonal system behaves.
+Ecliptic Seasons provides a wide range of configuration options that allow players and server administrators to
+customize how the seasonal system behaves.
 
-In most situations, the default configuration provides a stable and balanced experience. However, in certain server environments or modpacks, adjusting some parameters can significantly improve gameplay.
+In most situations, the default configuration provides a stable and balanced experience. However, in certain server
+environments or modpacks, adjusting some parameters can significantly improve gameplay.
 
 The following are the most commonly modified configuration options.
 
@@ -688,7 +718,9 @@ LastingDaysOfEachTerm = 10
 
 This extends the year to **240 Minecraft days**.
 
-In server environments, longer seasonal cycles are often preferred. A common recommendation is allowing one solar term to change every **one or two real-world days**, such as setting it to **72 Minecraft days**, so players have more time to experience each season.
+In server environments, longer seasonal cycles are often preferred. A common recommendation is allowing one solar term
+to change every **one or two real-world days**, such as setting it to **72 Minecraft days**, so players have more time
+to experience each season.
 
 ------
 
@@ -709,7 +741,7 @@ Solar term indices range from:
 Examples:
 
 | Index | Solar Term          |
-| ----- | ------------------- |
+|-------|---------------------|
 | 1     | Beginning of Spring |
 | 7     | Beginning of Summer |
 | 13    | Beginning of Autumn |
@@ -948,9 +980,9 @@ If players wish to migrate from Serene Seasons, the usual steps are:
 1. Remove Serene Seasons
 2. Install Ecliptic Seasons
 3. Optionally install
-   - **Serene Seasons API Stub (Ecliptic Seasons Bridge)**
-   - **Ecliptic Seasons: Bundles**
-   - **Ecliptic Seasons: MultiMod Patch**
+    - **Serene Seasons API Stub (Ecliptic Seasons Bridge)**
+    - **Ecliptic Seasons: Bundles**
+    - **Ecliptic Seasons: MultiMod Patch**
 4. Adjust agricultural configurations if necessary
 
 In most cases, existing world saves remain unaffected, since Ecliptic Seasons does not modify vanilla block data.
@@ -971,9 +1003,11 @@ In such cases, testing with a new world before migration is recommended.
 
 ## Guide Summary
 
-The core goal of **Ecliptic Seasons** is to introduce a more realistic sense of time and climate progression into Minecraft.
+The core goal of **Ecliptic Seasons** is to introduce a more realistic sense of time and climate progression into
+Minecraft.
 
-Through the integration of solar terms, climate simulation, and environmental feedback, players experience a world that evolves over time.
+Through the integration of solar terms, climate simulation, and environmental feedback, players experience a world that
+evolves over time.
 
 Whether it is:
 
@@ -1000,7 +1034,8 @@ These seasonal changes make the Minecraft world feel more dynamic and alive.
 
 Ecliptic Seasons uses a **localized weather system**.
 
-Whether precipitation occurs depends not only on the world’s weather state, but also on the climate rules of the biome you are currently in. So situations like the following can happen:
+Whether precipitation occurs depends not only on the world’s weather state, but also on the climate rules of the biome
+you are currently in. So situations like the following can happen:
 
 - A nearby biome is experiencing a thunderstorm
 - Your current biome does not meet the conditions for precipitation
@@ -1068,7 +1103,7 @@ Common problems include:
 Default detection limits:
 
 | Parameter | Default |
-| --------- | ------- |
+|-----------|---------|
 | Diameter  | 32      |
 | Height    | 10      |
 
@@ -1158,3 +1193,12 @@ This allows many mods that previously depended on Serene Seasons to keep working
 
 ----
 
+### 13. Snow-covered models may not work properly with some resource packs (e.g., FastGrass) and can cause Z-fighting
+
+These resource packs modify the face geometry of vanilla block models, which may lead to rendering conflicts.
+
+It is recommended to enable **`LegacySnowyBlock`** in the resource pack.
+Additionally, enable **`CullTopFaceWithSnow`** in the client settings to cull the top faces of those models when snow is
+present.
+
+----

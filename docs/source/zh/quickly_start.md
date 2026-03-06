@@ -1169,4 +1169,11 @@ Ecliptic Seasons 的优势包括：
 
 ------
 
+### 13. 看起来覆雪模型不支持某些资源包，如FastGrass，会出现z-index问题
+
+这些资源包修改了原版的方块模型面，因此推荐在资源包里打开LegacySnowyBlock。
+同时在客户端设置中找到`CullTopFaceWithSnow`进行开启以剔除这些模型的表层面。
+
+------
+
   
