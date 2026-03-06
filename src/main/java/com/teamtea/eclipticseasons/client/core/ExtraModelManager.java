@@ -1104,6 +1104,7 @@ public class ExtraModelManager {
     public static int getLayer(BlockAndTintGetter blockAndTintGetter, BlockPos.MutableBlockPos pos, BlockState state, BakedModel snowModel, long seed) {
         if (!(blockAndTintGetter instanceof IMapSlice mapSlice) || !ClientConfig.Renderer.extraSnowLayer.get())
             return 0;
+        if (mapSlice.getBlockHeight(pos) > pos.getY()) return 0;
         if (MapChecker.getDefaultBlockTypeFlag(state) <= MapChecker.FLAG_NONE) return 0;
 
         Level useLevel = ClientCon.getUseLevel();
@@ -1115,6 +1116,9 @@ public class ExtraModelManager {
         BlockPos abovePos = pos.setY(pos.getY() + 1);
         BlockState aboveState = blockAndTintGetter.getBlockState(abovePos);
         if (!aboveState.getFluidState().isEmpty()) return 0;
+
+        if (!MapChecker.extraSnowPassable(state)) return 0;
+
         if (aboveState.getBlock() instanceof LeavesBlock || aboveState.isFaceSturdy(blockAndTintGetter, abovePos, Direction.DOWN) || aboveState.is(EclipticBlockTags.SNOW_LAYER_CANNOT_SURVIVE_IN))
             return 0;
         if (!((snowModel != null && !ISnowyReplaceModel.isInvalid(snowModel)) || maySnowyAt(useLevel, mapSlice, state, pos, null, seed)))

@@ -89,7 +89,8 @@ public final class ESBlockTagProvider extends BlockTagsProvider {
                         BlockTags.CANDLE_CAKES,
                         BlockTags.BEDS,
                         BlockTags.RAILS,
-                        BlockTags.ANVIL
+                        BlockTags.ANVIL,
+                        BlockTags.PRESSURE_PLATES
                 );
 
         // add mc

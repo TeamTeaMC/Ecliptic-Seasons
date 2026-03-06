@@ -6,6 +6,7 @@
     "#minecraft:candle_cakes",
     "#minecraft:beds",
     "#minecraft:rails",
-    "#minecraft:anvil"
+    "#minecraft:anvil",
+    "#minecraft:pressure_plates"
   ]
 }
