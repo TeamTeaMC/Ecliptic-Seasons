@@ -13,6 +13,7 @@ import com.teamtea.eclipticseasons.api.misc.IBiomeTagHolder;
 import com.teamtea.eclipticseasons.api.misc.IBiomeWeatherProvider;
 import com.teamtea.eclipticseasons.common.core.snow.SnowyMapChecker;
 import com.teamtea.eclipticseasons.common.hook.ESEventHook;
+import com.teamtea.eclipticseasons.common.misc.HeatStrokeTicker;
 import com.teamtea.eclipticseasons.common.network.message.UpdateTempChangeMessage;
 import com.teamtea.eclipticseasons.common.registry.ESRegistries;
 import com.teamtea.eclipticseasons.common.registry.EffectRegistry;
@@ -57,6 +58,7 @@ import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraftforge.common.util.FakePlayer;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.server.ServerLifecycleHooks;
 
@@ -466,67 +468,12 @@ public class WeatherManager {
         if (player.isCreative() || player.isSpectator() ||
                 !CommonConfig.Temperature.heatStroke.get()) return;
         var level = player.level();
-        if (level.getRandom().nextInt(1500) == 0)
-            SolarHolders.getSaveDataLazy(level).ifPresent(solarDataManager -> {
-                if (EclipticUtil.getNowSolarTerm(level).isInTerms(SolarTerm.BEGINNING_OF_SUMMER, SolarTerm.BEGINNING_OF_AUTUMN)) {
-                    Biome b = level.getBiome(player.blockPosition()).value();
-                    if (EclipticUtil.getTemperatureFloat(level, b, player.blockPosition()) > 0.85f) {
-                        if (!player.isInWaterOrRain()
-                                && ((EclipticUtil.isNoon(level) && (level.canSeeSky(player.blockPosition()))))
-                        ) {
-                            boolean isColdHe = false;
-                            armorChecks:
-                            for (ItemStack itemstack : player.getArmorSlots()) {
-                                Item item = itemstack.getItem();
-                                if (item instanceof Equipable equipable) {
-                                    if (equipable.getEquipmentSlot() == EquipmentSlot.HEAD) {
-                                        if (itemstack.is(ESItemTags.HEAT_PROTECTIVE_HELMETS)) {
-                                            isColdHe = true;
-                                            break;
-                                        }
-                                        Map<Enchantment, Integer> allEnchantments = itemstack.getAllEnchantments();
-                                        if (!allEnchantments.isEmpty()) {
-                                            for (Enchantment enchantment : allEnchantments.keySet()) {
-                                                Optional<Holder<Enchantment>> holder = ForgeRegistries.ENCHANTMENTS.getHolder(enchantment);
-                                                if (holder.isPresent() && holder.get().is(ESEnchantmentTags.HEATSTROKE_RESISTANT)) {
-                                                    isColdHe = true;
-                                                    break armorChecks;
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                            if (!isColdHe) {
-                                NonNullList<ItemStack> items = player.getInventory().items;
-                                int selectionSize = Inventory.getSelectionSize();
-                                for (int i = 0, itemsSize = items.size(); i < itemsSize && i < selectionSize; i++) {
-                                    ItemStack itemstack = items.get(i);
-                                    if (itemstack.is(ESItemTags.COOLING_ITEMS)) {
-                                        isColdHe = true;
-                                        break;
-                                    }
-                                }
-                            }
-                            if (!isColdHe) {
-                                isColdHe = player.hasEffect(MobEffects.FIRE_RESISTANCE);
-                                for (MobEffectInstance activeEffect : player.getActiveEffects()) {
-                                    Optional<Holder<MobEffect>> holder = ForgeRegistries.MOB_EFFECTS.getHolder(activeEffect.getEffect());
-                                    if (holder.isPresent() && holder.get().is(ESMobEffectTags.HEATSTROKE_RESISTANT)) {
-                                        isColdHe = true;
-                                        break;
-                                    }
-                                }
-                            }
-
-                            if (!player.hasEffect(EffectRegistry.HEAT_STROKE) && !isColdHe) {
-                                player.addEffect(new MobEffectInstance(EffectRegistry.HEAT_STROKE, 600));
-                                ModAdvancements.heatStrokeCriterion.trigger(player);
-                            }
-                        }
-                    }
-                }
-            });
+        if (level.getRandom().nextInt(150) == 0) {
+            Optional<HeatStrokeTicker> capability = player.getCapability(HeatStrokeTicker.HEAT_STROKE_TICKER_CAPABILITY).resolve();
+            if (capability.isEmpty()) return;
+            HeatStrokeTicker heatStrokeTicker = capability.get();
+            heatStrokeTicker.tickPlayer(player, level);
+        }
     }
 
     public static void runWeather(ServerLevel level, BiomeWeather biomeWeather, RandomSource random, int size) {
