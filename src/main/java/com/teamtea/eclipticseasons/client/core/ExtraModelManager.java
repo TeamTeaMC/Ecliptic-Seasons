@@ -1112,10 +1112,13 @@ public class ExtraModelManager {
 
         BlockPos abovePos = pos.setY(pos.getY() + 1);
         BlockState aboveState = blockAndTintGetter.getBlockState(abovePos);
+        if (!aboveState.getFluidState().isEmpty()) return 0;
         if (aboveState.getBlock() instanceof LeavesBlock || aboveState.isFaceSturdy(blockAndTintGetter, abovePos, Direction.DOWN) || aboveState.is(EclipticBlockTags.SNOW_LAYER_CANNOT_SURVIVE_IN))
             return 0;
         if (!((snowModel != null && !ISnowyReplaceModel.isInvalid(snowModel)) || maySnowyAt(useLevel, mapSlice, state, pos, null, seed)))
             return 0;
+
+        if (!notTooBright(blockAndTintGetter, mapSlice, pos)) return 0;
 
         var biome = MapChecker.idToBiome(useLevel, mapSlice.getSurfaceFaceBiomeId(pos));
         if (biome == null) return 0;
