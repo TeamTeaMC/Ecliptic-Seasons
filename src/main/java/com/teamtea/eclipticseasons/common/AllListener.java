@@ -30,6 +30,7 @@ import com.teamtea.eclipticseasons.common.core.snow.SnowyMapChecker;
 import com.teamtea.eclipticseasons.common.core.snow.SnowyStatusKeeper;
 import com.teamtea.eclipticseasons.common.core.snow.WeatherStatusKeeper;
 import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
+import com.teamtea.eclipticseasons.common.misc.HeatStrokeTicker;
 import com.teamtea.eclipticseasons.common.network.SimpleNetworkHandler;
 import com.teamtea.eclipticseasons.common.network.message.DataPackEventMessage;
 import com.teamtea.eclipticseasons.common.network.message.HumidModifyMessage;
@@ -343,6 +344,7 @@ public class AllListener {
     public static void onAttachCapabilitiesEvent(AttachCapabilitiesEvent<Entity> event) {
         if (event.getObject() instanceof Player) {
             event.addCapability(EclipticSeasons.rl("solar_term_holder"), new SolarTermsRecord());
+            event.addCapability(EclipticSeasons.rl("heat_stroke_ticker"), new HeatStrokeTicker());
         }
     }
 

@@ -9,6 +9,7 @@ import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.registry.EffectRegistry;
 import com.teamtea.eclipticseasons.common.registry.ModAdvancements;
 import lombok.Data;
+import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.NonNullList;
 import net.minecraft.server.level.ServerPlayer;
@@ -26,15 +27,29 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.capabilities.CapabilityToken;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.registries.ForgeRegistries;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 import java.util.Optional;
 
 @Data
-public class HeatStrokeTicker {
+public class HeatStrokeTicker implements ICapabilityProvider {
     public static final Capability<HeatStrokeTicker> HEAT_STROKE_TICKER_CAPABILITY = CapabilityManager.get(new CapabilityToken<>() {
     });
+
+    private LazyOptional<HeatStrokeTicker> lazyOptional = LazyOptional.of(() -> this);
+
+    @Override
+    public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
+        if (cap == HEAT_STROKE_TICKER_CAPABILITY) {
+            return lazyOptional.cast();
+        }
+        return LazyOptional.empty();
+    }
 
     public int tick = 0;
 
@@ -123,4 +138,5 @@ public class HeatStrokeTicker {
             tick = level.getRandom().nextInt(MAX_TICK_COUNT);
         }
     }
+
 }
