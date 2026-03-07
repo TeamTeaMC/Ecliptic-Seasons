@@ -1,6 +1,10 @@
 > As the ecosystem for 1.20.1 begins to wind down with major mods like Create moving on, we are also transitioning into
 > the final maintenance phase for our mod on this version.
 
+### 0.12.17
+
+- Added model-like face culling for snow inside fences and extra snow layers, reducing z-fighting at long distances.
+
 ### 0.12.16
 
 - Added an automatic configuration synchronization system that syncs all Common config files between the server and

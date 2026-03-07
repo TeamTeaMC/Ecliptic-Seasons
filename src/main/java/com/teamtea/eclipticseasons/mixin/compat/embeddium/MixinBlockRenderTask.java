@@ -33,6 +33,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LeavesBlock;
+import net.minecraft.world.level.block.SnowLayerBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraftforge.client.model.data.ModelData;
@@ -137,14 +138,16 @@ public abstract class MixinBlockRenderTask {
             int y = mutableBlockPos.getY();
             int layer = ExtraModelManager.getLayer(ctx.localSlice(), mutableBlockPos, state, snowModel, seed);
             if (layer > 0) {
+                BlockState snowState = Blocks.SNOW.defaultBlockState()
+                        .setValue(SnowLayerBlock.LAYERS, layer);
                 if (this instanceof IIrisShaderAccesor iIrisShaderAccesor) {
-                    iIrisShaderAccesor.eclipticseasons$setSnowy(buildContext, Blocks.SNOW.defaultBlockState());
+                    iIrisShaderAccesor.eclipticseasons$setSnowy(buildContext, snowState);
                 }
                 ctx.update(mutableBlockPos,
                         mutableBlockPos2.setY(mutableBlockPos2.getY() + 1),
-                        state,
+                        snowState,
                         ExtraModelManager.getSnowLayerModel(layer),
-                        seed,
+                        snowState.getSeed(mutableBlockPos),
                         rendererHolder.getModelData(),
                         ExtraModelManager.getRenderType(state));
                 cache.getBlockRenderer().renderModel(ctx, buffers);

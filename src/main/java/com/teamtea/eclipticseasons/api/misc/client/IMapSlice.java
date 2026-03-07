@@ -6,7 +6,7 @@ import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockAndTintGetter;
 
-public interface IMapSlice extends IMapSliceProvider, BlockAndTintGetter, IExtendBlockView {
+public interface IMapSlice extends IMapSliceProvider, BlockAndTintGetter, IExtendBlockView, IFakeSnowHolder {
     default void forceMapSliceUpdate(int[][] heights, int[][] solidHeights, int[][] biomes, int SIZE_X, int SIZE_Z, SnowyStatusKeeper[] statusKeepers) {
     }
 

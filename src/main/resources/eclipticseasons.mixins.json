@@ -78,6 +78,7 @@
     "compat.embeddium.MixinBlockRenderTask",
     "compat.embeddium.MixinChunkSlice",
     "compat.embeddium.MixinClonedChunkSection",
+    "compat.embeddium.MixinBlockOcclusionCache",
     "compat.fabric_renderer_indigo.MixinBlockRenderer",
     "compat.fabric_renderer_indigo.MixinFabricVanillaModelEncoder",
     "compat.oculus.MixinBiomeUniforms",

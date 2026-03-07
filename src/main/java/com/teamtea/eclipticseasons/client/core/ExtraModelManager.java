@@ -8,6 +8,7 @@ import com.teamtea.eclipticseasons.api.data.client.model.seasonal.SeasonBlockDef
 import com.teamtea.eclipticseasons.api.data.client.model.seasonal.SeasonalTexture;
 import com.teamtea.eclipticseasons.api.data.season.SnowDefinition;
 import com.teamtea.eclipticseasons.api.misc.client.IExtraRendererContextOwner;
+import com.teamtea.eclipticseasons.api.misc.client.IFakeSnowHolder;
 import com.teamtea.eclipticseasons.api.misc.client.IMapSlice;
 import com.teamtea.eclipticseasons.api.misc.client.IMapSliceProvider;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
@@ -1001,6 +1002,9 @@ public class ExtraModelManager {
         Level useLevel = ClientCon.getUseLevel();
         if (!(blockAndTintGetter instanceof IMapSlice mapSlice)
                 || useLevel == null) return null;
+
+        mapSlice.setLevelForFakeSnow(pos, 0);
+
         if (blockAndTintGetter.getBrightness(LightLayer.SKY, pos) == 0) {
             return null;
         }
@@ -1026,6 +1030,7 @@ public class ExtraModelManager {
                     || belowState.is(Blocks.SNOW) && belowState.getValue(SnowLayerBlock.LAYERS) == 8))
                 return null;
         }
+
 
         int snowNearbyCount = 0;
         int airNeighborCount = 0;
@@ -1068,6 +1073,7 @@ public class ExtraModelManager {
             if (state.isCollisionShapeFullBlock(blockAndTintGetter, pos)
                     || state.isFaceSturdy(blockAndTintGetter, pos, Direction.DOWN)) return null;
 
+            mapSlice.setLevelForFakeSnow(pos, minLayers);
             return getSnowLayerModel(minLayers);
         }
 
@@ -1105,6 +1111,14 @@ public class ExtraModelManager {
         if (!(blockAndTintGetter instanceof IMapSlice mapSlice) || !ClientConfig.Renderer.extraSnowLayer.get())
             return 0;
         if (mapSlice.getBlockHeight(pos) > pos.getY()) return 0;
+
+        int realY = pos.getY() + 1;
+
+        // Avoid cache lookup here;
+        // Coordinate traversal makes snow priority undefined and may break face culling.
+
+        mapSlice.setLevelForFakeSnow(pos.getX(), realY, pos.getZ(), 0);
+
         if (MapChecker.getDefaultBlockTypeFlag(state) <= MapChecker.FLAG_NONE) return 0;
         Level useLevel = ClientCon.getUseLevel();
         if (useLevel == null) return 0;
@@ -1154,7 +1168,54 @@ public class ExtraModelManager {
 
         if (noiseInt < chance) base++;
 
-        return Mth.clamp(base, 0, maxLayers);
+        int minLayers = Mth.clamp(base, 0, maxLayers);
+        mapSlice.setLevelForFakeSnow(pos.getX(), realY, pos.getZ(), minLayers);
+        return minLayers;
+    }
+
+    public static BlockState getFakeBlockState(BlockState original, BlockState selfState, BlockGetter view, BlockPos.MutableBlockPos otherPos, BlockPos selfPos, Direction facing) {
+        if (facing == Direction.DOWN
+                || !(view instanceof BlockAndTintGetter getter)
+                || !(view instanceof IMapSlice mapSlice)
+                || mapSlice.getBlockHeight(selfPos) > selfPos.getY()) return original;
+
+        boolean snowInFence = ClientConfig.Renderer.snowInFence.get();
+        boolean extraSnowLayer = ClientConfig.Renderer.extraSnowLayer.get();
+        if (!snowInFence && !extraSnowLayer) return original;
+
+
+        boolean notUp = facing != Direction.UP;
+        boolean snowSelf = !selfState.is(Blocks.SNOW);
+
+        if (snowSelf || notUp) {
+
+            int cacheLevel = mapSlice.getLevelForFakeSnow(otherPos);
+            if (cacheLevel > IFakeSnowHolder.NONE_CHECK_FAKE_SNOW_LEVEL)
+                return cacheLevel == 0 ? original :
+                        Blocks.SNOW.defaultBlockState().setValue(SnowLayerBlock.LAYERS, cacheLevel);
+
+            int y = otherPos.getY();
+            if (snowInFence) {
+                int x = otherPos.getX();
+                int z = otherPos.getZ();
+                boolean snowInside = ExtraModelManager.shouldRenderedWithSnowInside(getter, otherPos, original, null) != null;
+                otherPos.set(x, y, z);
+                if (snowInside) {
+                    return selfState;
+                }
+                otherPos.set(x, y, z);
+            }
+
+            if (extraSnowLayer) {
+                otherPos.setY(y - 1);
+                BlockState belowState = !notUp ? selfState : view.getBlockState(otherPos);
+                int layer = ExtraModelManager.getLayer(getter, otherPos, belowState, null, belowState.getSeed(otherPos));
+                otherPos.setY(y);
+                if (layer > 0)
+                    return Blocks.SNOW.defaultBlockState().setValue(SnowLayerBlock.LAYERS, layer);
+            }
+        }
+        return original;
     }
 
 

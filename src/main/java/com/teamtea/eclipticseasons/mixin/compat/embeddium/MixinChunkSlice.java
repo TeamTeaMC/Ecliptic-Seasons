@@ -3,6 +3,7 @@ package com.teamtea.eclipticseasons.mixin.compat.embeddium;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.misc.client.IExtraRendererContextOwner;
+import com.teamtea.eclipticseasons.api.misc.client.IFakeSnowHolder;
 import com.teamtea.eclipticseasons.api.misc.client.IMapSlice;
 import com.teamtea.eclipticseasons.api.misc.client.ISnowyGetter;
 import com.teamtea.eclipticseasons.client.core.ExtraRendererContext;
@@ -10,6 +11,7 @@ import com.teamtea.eclipticseasons.common.core.map.BiomeHolder;
 import com.teamtea.eclipticseasons.common.core.map.ChunkInfoMap;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.core.snow.SnowyStatusKeeper;
+import it.unimi.dsi.fastutil.longs.Long2IntOpenHashMap;
 import me.jellysquid.mods.sodium.client.world.WorldSlice;
 import me.jellysquid.mods.sodium.client.world.cloned.ChunkRenderContext;
 import me.jellysquid.mods.sodium.client.world.cloned.ClonedChunkSection;
@@ -46,6 +48,10 @@ public abstract class MixinChunkSlice implements IMapSlice, IExtraRendererContex
 
     @Unique
     private SnowyStatusKeeper[] SNOWY_STATUS_MAP;
+
+    @Unique
+    private Long2IntOpenHashMap FAKE_SNOW_LEVEL_MAP;
+
 
     @Shadow(remap = false)
     @Final
@@ -92,6 +98,8 @@ public abstract class MixinChunkSlice implements IMapSlice, IExtraRendererContex
         SOLID_HEIGHT_MAP = new int[MAP_ARRAY_SIZE][MAP_BLOCK_COUNT];
         BIOME_MAP = new int[MAP_ARRAY_SIZE][MAP_BLOCK_COUNT];
         SNOWY_STATUS_MAP = new SnowyStatusKeeper[MAP_ARRAY_SIZE];
+        FAKE_SNOW_LEVEL_MAP = new Long2IntOpenHashMap();
+        FAKE_SNOW_LEVEL_MAP.defaultReturnValue(IFakeSnowHolder.NONE_CHECK_FAKE_SNOW_LEVEL);
     }
 
 
@@ -223,6 +231,18 @@ public abstract class MixinChunkSlice implements IMapSlice, IExtraRendererContex
         return lightArrays != null && lightArrays.isSnowyBlock(pos);
     }
 
+
+    @Override
+    public void setLevelForFakeSnow(long pos, int level) {
+        FAKE_SNOW_LEVEL_MAP.put(pos, level);
+    }
+
+    @Override
+    public int getLevelForFakeSnow(long pos) {
+        return FAKE_SNOW_LEVEL_MAP.get(pos);
+    }
+
+
     @Unique
     private BlockPos.MutableBlockPos eclipticseasons$checkPos = new BlockPos.MutableBlockPos();
 
@@ -241,6 +261,7 @@ public abstract class MixinChunkSlice implements IMapSlice, IExtraRendererContex
     private void eclipticseasons$release(CallbackInfo ci) {
         eclipticseasons$rendererHolder.resetAll();
         Arrays.fill(SNOWY_STATUS_MAP, null);
+        FAKE_SNOW_LEVEL_MAP.clear();
     }
 
     @Unique
