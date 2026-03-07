@@ -11,6 +11,8 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.event.RegisterConfigurationTasksEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
+import net.neoforged.neoforge.network.handlers.ClientPayloadHandler;
+import net.neoforged.neoforge.network.payload.ConfigFilePayload;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
 import java.util.Collection;
@@ -25,11 +27,6 @@ public final class SimpleNetworkHandler {
         // Sets the current network version
         final PayloadRegistrar registrar = event.registrar(EclipticSeasons.NETWORK_VERSION);
 
-        registrar
-                .configurationToClient(
-                        ConfigMessage.TYPE,
-                        ConfigMessage.STREAM_CODEC,
-                        NetworkUtil::handleConfigMessage);
 
         registrar.playToClient(
                 SolarTermsMessage.TYPE,
@@ -73,6 +70,12 @@ public final class SimpleNetworkHandler {
                 UpdateTempChangeMessage.STREAM_CODEC,
                 NetworkUtil::processUpdateTempChangeMessage
         );
+
+
+        registrar.configurationToClient(
+                ESConfigFilePayload.TYPE,
+                ESConfigFilePayload.STREAM_CODEC,
+                NetworkUtil::handle);
     }
 
     @SubscribeEvent

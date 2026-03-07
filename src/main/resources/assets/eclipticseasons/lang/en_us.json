@@ -54,5 +54,7 @@
   "eclipticseasons.configuration.VoxyTest": "Voxy Compatibility Test",
   "eclipticseasons.configuration.VoxyLODAutoReload": "Voxy LOD Auto Reload",
   "eclipticseasons.configuration.VoxyReloadWhenSeasonChanged": "Voxy Cache Reload When Season Changed",
-  "eclipticseasons.configuration.SimpleSeasonHud": "Simple Season Hud"
+  "eclipticseasons.configuration.SimpleSeasonHud": "Simple Season Hud",
+  "eclipticseasons.configuration.ExtraSnowLayer": "Extra Snow Layer",
+  "eclipticseasons.configuration.ForceServerConfig": "Force Server Config"
 }

@@ -17,6 +17,7 @@ import com.teamtea.eclipticseasons.common.network.message.*;
 import com.teamtea.eclipticseasons.common.registry.ESRegistries;
 import com.teamtea.eclipticseasons.config.ClientConfig;
 import com.teamtea.eclipticseasons.config.CommonConfig;
+import com.teamtea.eclipticseasons.config.ESConfigSync;
 import net.minecraft.core.Registry;
 import net.minecraft.core.SectionPos;
 import net.minecraft.network.chat.Component;
@@ -26,7 +27,9 @@ import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.chunk.status.ChunkStatus;
 import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.network.ConfigSync;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
+import net.neoforged.neoforge.network.payload.ConfigFilePayload;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -148,14 +151,6 @@ public class NetworkUtil {
     }
 
 
-    public static void handleConfigMessage(ConfigMessage configMessage, IPayloadContext iPayloadContext) {
-        iPayloadContext.enqueueWork(() -> {
-            CommonConfig.Season.validDimensions.set(configMessage.SeasonalDimensions().stream().map(
-                    k -> k.location().toString()
-            ).toList());
-        });
-    }
-
     public static void processChunkBiomeUpdateMessage(ChunkBiomeUpdateMessage chunkBiomeUpdateMessage, IPayloadContext iPayloadContext) {
         iPayloadContext.enqueueWork(() -> {
             if (ClientCon.getUseLevel() != null) {
@@ -192,5 +187,9 @@ public class NetworkUtil {
             context.disconnect(Component.translatable("eclipticseasons.networking.failed", e.getMessage()));
             return null;
         });
+    }
+
+    public static void handle(ESConfigFilePayload payload, IPayloadContext context) {
+        ESConfigSync.INSTANCE.receiveSyncedConfig(payload.contents(), payload.fileName());
     }
 }

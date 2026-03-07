@@ -16,7 +16,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.level.Level;
+import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 import net.minecraft.world.level.storage.loot.LootTable;
 
@@ -28,7 +28,7 @@ import java.util.Optional;
 public class FeatureSelector implements IChangeSelector {
 
     public static final MapCodec<FeatureSelector> CODEC = RecordCodecBuilder.mapCodec(ins -> ins.group(
-            CodecUtil.holderCodec(Registries.PLACED_FEATURE).fieldOf("feature").forGetter(o -> o.feature),
+            CodecUtil.holderCodec(Registries.CONFIGURED_FEATURE).fieldOf("feature").forGetter(o -> o.feature),
             Codec.INT.optionalFieldOf("weight", IChangeSelector.DEFAULT_WEIGHT).forGetter(o -> o.weight),
             CodecUtil.listFrom(IChangeCondition.CODEC).optionalFieldOf("conditions",List.of()).forGetter(o -> o.conditions),
             Vec3i.CODEC.optionalFieldOf("offset").forGetter(o -> o.offset),
@@ -36,7 +36,7 @@ public class FeatureSelector implements IChangeSelector {
     ).apply(ins, FeatureSelector::new));
 
 
-    private final Holder<PlacedFeature> feature;
+    private final Holder<ConfiguredFeature<?, ?>> feature;
 
     @Builder.Default
     private final int weight = IChangeSelector.DEFAULT_WEIGHT;
@@ -58,7 +58,8 @@ public class FeatureSelector implements IChangeSelector {
     }
 
     @Override
-    public boolean place(ServerLevel level, BlockPos pos, ISeasonChangeContext context) {
-        return feature.value().place(level, level.getChunkSource().getGenerator(), level.getRandom(), pos);
+    public boolean place(ServerLevel level, BlockPos origin, ISeasonChangeContext context) {
+        return feature.value().place(level, level.getChunkSource().getGenerator(), level.getRandom(),
+                offset.map(origin::offset).orElse(origin));
     }
 }

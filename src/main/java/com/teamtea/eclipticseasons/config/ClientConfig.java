@@ -38,7 +38,7 @@ public class ClientConfig {
             smoothSnowyEdges = builder.comment("Renders decorative snow edges on adjacent blocks for seamless terrain transitions.")
                     .define("SmoothSnowyEdges", false);
             minChunkCompileWarningTime = builder.comment("Sets the threshold (in ms) for chunk compilation before logging a performance warning.")
-                    .defineInRange("MinChunkCompileWarningTime", 100, 5, 2000);
+                    .defineInRange("MinChunkCompileWarningTime", 1000, 5, 20000);
 
             frozenWater = builder.comment("Visual effect: Surface water appears to be covered by a thin, cosmetic layer of ice.")
                     .define("FrozenWater", false);
@@ -93,6 +93,8 @@ public class ClientConfig {
         public static ModConfigSpec.BooleanValue snowInFenceDirection;
         public static ModConfigSpec.BooleanValue snowInFenceOnlySnowy;
 
+        public static ModConfigSpec.BooleanValue extraSnowLayer;
+
         private static void load(ModConfigSpec.Builder builder) {
             builder.push("Renderer");
             forceChunkRenderUpdate = builder.comment("Periodically force-reloads chunk rendering to fix visual glitches (may impact FPS).")
@@ -119,6 +121,10 @@ public class ClientConfig {
                     .define("SnowInFenceDirection", false);
             snowInFenceOnlySnowy = builder.comment("[Sodium/Embeddium] Render snow layers inside snow-connected fences only when in a snowy state.")
                     .define("SnowInFenceOnlySnowy", true);
+
+            extraSnowLayer = builder
+                    .comment("[Sodium/Embeddium] Render an additional snow layer on blocks that already use the snowy model.")
+                    .define("ExtraSnowLayer", false);
 
 
             seasonalGrassColorChange = builder.comment("Apply seasonal color shifts to grass and leaf textures.")

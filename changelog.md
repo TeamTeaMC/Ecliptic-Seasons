@@ -1,3 +1,25 @@
+### 0.12.15
+
+- Added an optional **Extra Snow Layer** visual feature. When enabled, snowy blocks may render a thin additional snow
+  layer based on the biome’s current snow depth, making snow accumulation appear more gradual and natural across the
+  terrain. This effect works with **Sodium** and **Embeddium**.
+- Renamed the internal block tag **`snow_layer_cannot_survive_on`** to **`snow_layer_cannot_survive_in`** to better
+  reflect its purpose.
+
+### 0.12.14
+
+- Fixed several issues in Season Definitions, including deserialization errors, incorrect rule evaluation, and some
+  feature placement problems.
+
+#### 0.12.13
+
+- HeatStroke has been adjusted to a progressive count, so you won't get heatstroke immediately or for long periods of
+  time in the sun of summer.
+
+#### 0.12.12.1
+
+- Change the default for `RainTogether` in CommonConfig from false to true
+
 #### 0.12.12
 
 Update: Mixin Control Support
@@ -5,6 +27,12 @@ Update: Mixin Control Support
 - New Feature: Added a dedicated configuration file for Mixins.
 - Toggleable Mixins: You can now freely enable or disable specific Mixins to improve compatibility or customize your
   experience.
+
+### 0.12.16
+
+- Added an automatic configuration synchronization system that syncs all Common config files between the server and
+  client. If the client does not want their original settings to be restored after leaving a world, the enforcement
+  option can be disabled in the configuration.
 
 #### 0.12.11.5.1
 

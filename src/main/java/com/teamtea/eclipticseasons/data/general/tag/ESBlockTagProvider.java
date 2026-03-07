@@ -4,7 +4,6 @@ package com.teamtea.eclipticseasons.data.general.tag;
 import com.teamtea.eclipticseasons.api.constant.crop.CropHumidityType;
 import com.teamtea.eclipticseasons.api.constant.crop.CropSeasonType;
 import com.teamtea.eclipticseasons.api.constant.tag.EclipticBlockTags;
-import com.teamtea.eclipticseasons.common.core.crop.internal.CompatCropHookInternal;
 import com.teamtea.eclipticseasons.common.registry.BlockRegistry;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
@@ -84,11 +83,14 @@ public final class ESBlockTagProvider extends BlockTagsProvider {
                 .addTag(BlockTags.ICE)
                 .addTag(BlockTags.SNOW_LAYER_CANNOT_SURVIVE_ON);
 
-        tag(EclipticBlockTags.SNOW_LAYER_CANNOT_SURVIVE_ON)
-                .addTags(EclipticBlockTags.SNOW_OVERLAY_CANNOT_SURVIVE_ON,
-                        BlockTags.DOORS, BlockTags.TRAPDOORS,
+        tag(EclipticBlockTags.SNOW_LAYER_CANNOT_SURVIVE_IN)
+                .addTags(BlockTags.DOORS, BlockTags.TRAPDOORS,
                         BlockTags.BUTTONS,
-                        BlockTags.CANDLE_CAKES
+                        BlockTags.CANDLE_CAKES,
+                        BlockTags.BEDS,
+                        BlockTags.RAILS,
+                        BlockTags.ANVIL,
+                        BlockTags.PRESSURE_PLATES
                 );
 
         // add mc

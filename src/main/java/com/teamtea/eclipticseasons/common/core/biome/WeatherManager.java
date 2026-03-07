@@ -482,67 +482,10 @@ public class WeatherManager {
                 !CommonConfig.Temperature.heatStroke.get()) return;
         Level level = player.level();
         if (MapChecker.isValidDimension(level)
-                && level.getRandom().nextInt(150) == 0)
-            SolarHolders.getSaveDataLazy(level).ifPresent(solarDataManager -> {
-                if (EclipticUtil.getNowSolarTerm(level).isInTerms(SolarTerm.BEGINNING_OF_SUMMER, SolarTerm.BEGINNING_OF_AUTUMN)) {
-                    Biome biome = level.getBiome(player.blockPosition()).value();
-                    if (EclipticUtil.getTemperatureFloat(level, biome, player.blockPosition()) > 0.85f) {
-                        if (!player.isInWaterOrRain()
-                                && ((EclipticUtil.isNoon(level)
-                                && (level.canSeeSky(player.blockPosition()))))
-                        ) {
-                            boolean isColdHe = false;
-                            armorChecks:
-                            for (ItemStack itemstack : player.getArmorSlots()) {
-                                Item item = itemstack.getItem();
-                                if (item instanceof Equipable equipable) {
-                                    if (equipable.getEquipmentSlot() == EquipmentSlot.HEAD) {
-                                        if (itemstack.is(ESItemTags.HEAT_PROTECTIVE_HELMETS)) {
-                                            isColdHe = true;
-                                            break;
-                                        }
-                                        ItemEnchantments allEnchantments = itemstack.getAllEnchantments(level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT));
-                                        Set<Holder<Enchantment>> keySet = allEnchantments.keySet();
-                                        if (!keySet.isEmpty()) {
-                                            for (Holder<Enchantment> enchantment : keySet) {
-                                                if (enchantment.is(ESEnchantmentTags.HEATSTROKE_RESISTANT)) {
-                                                    isColdHe = true;
-                                                    break armorChecks;
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                            if (!isColdHe) {
-                                NonNullList<ItemStack> items = player.getInventory().items;
-                                int selectionSize = Inventory.getSelectionSize();
-                                for (int i = 0, itemsSize = items.size(); i < itemsSize && i < selectionSize; i++) {
-                                    ItemStack itemstack = items.get(i);
-                                    if (itemstack.is(ESItemTags.COOLING_ITEMS)) {
-                                        isColdHe = true;
-                                        break;
-                                    }
-                                }
-                            }
-                            if (!isColdHe) {
-                                isColdHe = player.hasEffect(MobEffects.FIRE_RESISTANCE);
-                                for (MobEffectInstance activeEffect : player.getActiveEffects()) {
-                                    if (activeEffect.getEffect().is(ESMobEffectTags.HEATSTROKE_RESISTANT)) {
-                                        isColdHe = true;
-                                        break;
-                                    }
-                                }
-                            }
-                            if (!isColdHe) {
-                                var heatStroke = BuiltInRegistries.MOB_EFFECT.getHolder(EffectRegistry.Effects.HEAT_STROKE).get();
-                                player.addEffect(new MobEffectInstance(heatStroke, 600));
-                                ModAdvancements.heatStrokeCriterion.get().trigger(player);
-                            }
-                        }
-                    }
-                }
-            });
+                && level.getRandom().nextInt(150) == 0) {
+            var capability = player.getData(AttachmentRegistry.HEAT_STROKE_TICKER);
+            capability.tickPlayer(player, level);
+        }
     }
 
     public static void runWeather(ServerLevel level, BiomeWeather biomeWeather, RandomSource random, int size) {

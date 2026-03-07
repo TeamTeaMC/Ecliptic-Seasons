@@ -71,15 +71,16 @@ public class BlockSelector implements IChangeSelector {
     }
 
     @Override
-    public boolean place(ServerLevel level, BlockPos newpos, ISeasonChangeContext context) {
+    public boolean place(ServerLevel level, BlockPos origin, ISeasonChangeContext context) {
         boolean applied = false;
         if (state.isEmpty()) {
-            applied = level.removeBlock(newpos, false);
+            origin = offset.isEmpty() ? origin : origin.offset(offset.get());
+            applied = level.removeBlock(origin, false);
         } else {
             BlockState newState = state.get();
-            newpos = offset.isEmpty() ? newpos : newpos.offset(offset.get());
+            origin = offset.isEmpty() ? origin : origin.offset(offset.get());
             if (offset.isEmpty()) {
-                BlockState oldState = level.getBlockState(newpos);
+                BlockState oldState = level.getBlockState(origin);
                 if (copyState) {
                     Set<String> propertyNameList = copyStateProperties.map(HashSet::new).orElse(null);
                     for (Property<?> property : oldState.getProperties()) {
@@ -88,13 +89,13 @@ public class BlockSelector implements IChangeSelector {
                         }
                     }
                 }
-                applied = NaturalPlantHandler.setBlockAndSelfCheck(level, newpos, newState, oldState);
+                applied = NaturalPlantHandler.setBlockAndSelfCheck(level, origin, newState, oldState);
             } else if (replace.isEmpty()) {
-                BlockState oldState = level.getBlockState(newpos);
+                BlockState oldState = level.getBlockState(origin);
                 if (oldState.canBeReplaced(Fluids.EMPTY))
-                    applied = NaturalPlantHandler.setBlockAndSelfCheck(level, newpos, newState);
-            } else if (replace.get() || level.isEmptyBlock(newpos)) {
-                applied = NaturalPlantHandler.setBlockAndSelfCheck(level, newpos, newState);
+                    applied = NaturalPlantHandler.setBlockAndSelfCheck(level, origin, newState);
+            } else if (replace.get() || level.isEmptyBlock(origin)) {
+                applied = NaturalPlantHandler.setBlockAndSelfCheck(level, origin, newState);
             }
         }
         return applied;

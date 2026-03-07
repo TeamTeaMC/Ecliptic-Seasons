@@ -5,6 +5,7 @@ import com.teamtea.eclipticseasons.api.constant.biome.Humidity;
 import com.teamtea.eclipticseasons.api.constant.biome.Rainfall;
 import com.teamtea.eclipticseasons.api.constant.biome.Temperature;
 import com.teamtea.eclipticseasons.api.constant.climate.BiomeRain;
+import com.teamtea.eclipticseasons.api.constant.climate.ISnowTerm;
 import com.teamtea.eclipticseasons.api.constant.climate.WeatherMode;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
@@ -483,5 +484,11 @@ public class EclipticUtil {
         float r = (getDownfallFloat(level, solarTerm, standBiome, pos, serverSide) * 1.5f + biomeRain.getRainChance() * 0.5f) / 2f;
         return Humidity.getFloatHumidLevel(r, t);
     }
-
+    public static boolean maySnow(Level level, BlockPos pos) {
+        Biome biome = MapChecker.getSurfaceBiome(level, pos).value();
+        boolean server = level instanceof ServerLevel;
+        ISnowTerm snowTerm = SolarTerm.getSnowTerm(biome, server, EclipticUtil.getSnowTempChange(level));
+        SolarTerm solarTerm = EclipticSeasonsApi.getInstance().getSolarTerm(level);
+        return snowTerm.maySnow(solarTerm, biome, pos, server);
+    }
 }

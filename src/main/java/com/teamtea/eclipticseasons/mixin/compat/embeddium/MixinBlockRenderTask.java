@@ -119,6 +119,21 @@ public abstract class MixinBlockRenderTask {
                     rendererHolder.getModelData(),
                     ExtraModelManager.getRenderType(state));
             cache.getBlockRenderer().renderModel(ctx, buffers);
+
+            int y = mutableBlockPos.getY();
+            int layer = ExtraModelManager.getLayer(ctx.localSlice(), mutableBlockPos, state, snowModel, seed);
+            if (layer > 0) {
+                ctx.update(mutableBlockPos,
+                        mutableBlockPos2.setY(mutableBlockPos2.getY() + 1),
+                        state,
+                        ExtraModelManager.getSnowLayerModel(layer),
+                        seed,
+                        rendererHolder.getModelData(),
+                        ExtraModelManager.getRenderType(state));
+                cache.getBlockRenderer().renderModel(ctx, buffers);
+                mutableBlockPos2.setY(mutableBlockPos2.getY() - 1);
+            }
+            mutableBlockPos.setY(y);
         }
 
         if (!original) {

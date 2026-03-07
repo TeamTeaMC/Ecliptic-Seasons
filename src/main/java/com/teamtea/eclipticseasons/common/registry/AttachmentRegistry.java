@@ -11,6 +11,7 @@ import com.teamtea.eclipticseasons.common.core.snow.SnowyStatusHandler;
 import com.teamtea.eclipticseasons.common.core.snow.SnowyStatusKeeper;
 import com.teamtea.eclipticseasons.common.core.snow.WeatherStatusKeeper;
 import com.teamtea.eclipticseasons.common.item.attachment.ClickPos;
+import com.teamtea.eclipticseasons.common.misc.HeatStrokeTicker;
 import it.unimi.dsi.fastutil.objects.Object2IntLinkedOpenHashMap;
 import net.minecraft.core.BlockPos;
 import net.neoforged.neoforge.attachment.AttachmentType;
@@ -52,4 +53,8 @@ public class AttachmentRegistry {
                     .build());
 
 
+    public static final Supplier<AttachmentType<HeatStrokeTicker>> HEAT_STROKE_TICKER = ATTACHMENT_TYPES.register(
+            "heat_stroke_ticker",
+            () -> AttachmentType.builder(HeatStrokeTicker::empty)
+                    .build());
 }

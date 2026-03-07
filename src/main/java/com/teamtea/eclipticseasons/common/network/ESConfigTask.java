@@ -1,8 +1,8 @@
 package com.teamtea.eclipticseasons.common.network;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
-import com.teamtea.eclipticseasons.common.network.message.ConfigMessage;
 import com.teamtea.eclipticseasons.config.CommonConfig;
+import com.teamtea.eclipticseasons.config.ESConfigSync;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceKey;
@@ -24,11 +24,9 @@ class ESConfigTask implements ICustomConfigurationTask {
 
     @Override
     public void run(@NotNull Consumer<CustomPacketPayload> sender) {
-        sender.accept(new ConfigMessage(
-                CommonConfig.Season.validDimensions.get().stream()
-                        .map(s -> ResourceKey.create(Registries.DIMENSION, ResourceLocation.parse(s)))
-                        .toList()
-        ));
+        for (ESConfigFilePayload syncConfig : ESConfigSync.INSTANCE.syncConfigs(false)) {
+            sender.accept(syncConfig);
+        }
         event.getListener().finishCurrentTask(type());
     }
 

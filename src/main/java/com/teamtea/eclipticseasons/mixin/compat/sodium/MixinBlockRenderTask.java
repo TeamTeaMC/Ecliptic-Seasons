@@ -21,6 +21,7 @@ import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.SnowLayerBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
 import org.joml.Vector3dc;
@@ -134,6 +135,17 @@ public abstract class MixinBlockRenderTask extends ChunkBuilderTask<ChunkBuildOu
         BakedModel bm = ExtraModelManager.shouldRenderedWithSnowInside(buildContext.cache.getWorldSlice(), blockPos, blockState, null);
         if (bm != null) {
             buildContext.cache.getBlockRenderer().renderModel(bm, Blocks.SNOW.defaultBlockState(), blockPos, modelOffset);
+        }
+
+        if (buildContext.cache.getBlockRenderer() instanceof SodiumStatus sodiumStatus) {
+            int y = blockPos.getY();
+            int layer = ExtraModelManager.getLayer(buildContext.cache.getWorldSlice(), blockPos, blockState, null, blockState.getSeed(blockPos));
+            if (layer > 0) {
+                buildContext.cache.getBlockRenderer().renderModel(ExtraModelManager.getSnowLayerModel(layer), Blocks.SNOW.defaultBlockState()
+                        .setValue(SnowLayerBlock.LAYERS, layer), blockPos, modelOffset.offset(0, 1, 0));
+                modelOffset.offset(0, -1, 0);
+                blockPos.setY(y);
+            }
         }
     }
 

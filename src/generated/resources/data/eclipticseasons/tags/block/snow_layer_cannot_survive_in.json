@@ -1,0 +1,12 @@
+{
+  "values": [
+    "#minecraft:doors",
+    "#minecraft:trapdoors",
+    "#minecraft:buttons",
+    "#minecraft:candle_cakes",
+    "#minecraft:beds",
+    "#minecraft:rails",
+    "#minecraft:anvil",
+    "#minecraft:pressure_plates"
+  ]
+}

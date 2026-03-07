@@ -30,6 +30,7 @@ import com.teamtea.eclipticseasons.config.CommonConfig;
 import com.teamtea.eclipticseasons.common.core.crop.CropInfoManager;
 import com.teamtea.eclipticseasons.api.constant.crop.CropSeasonInfo;
 import com.teamtea.eclipticseasons.api.constant.crop.CropHumidityInfo;
+import com.teamtea.eclipticseasons.config.ESConfigSync;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -184,6 +185,8 @@ public final class ClientEventHandler {
             ClientCon.onClientPlayerExit();
             ESSortInfo.clearOnClientExitOrServerClose();
         }
+
+        ESConfigSync.INSTANCE.onClientPlayerExit();
     }
 
     @SubscribeEvent
@@ -242,26 +245,6 @@ public final class ClientEventHandler {
         }
 
 
-    }
-
-
-    public static float prevFogDensity = -1f;
-    public static long prevFogTick = -1L;
-
-    public static float r = 0.0f;
-    public static float g = 0.0f;
-    public static float b = 0.0f;
-
-    @SubscribeEvent
-    public static void onFogEvent(ViewportEvent.ComputeFogColor event) {
-        if (true) return;
-        WorldRenderer.renderFogColors(event.getCamera(), (float) event.getPartialTick(), event);
-    }
-
-    @SubscribeEvent
-    public static void onFogEvent(ViewportEvent.RenderFog event) {
-        if (true) return;
-        WorldRenderer.renderFogDensity(event.getCamera(), event);
     }
 
     @SubscribeEvent
