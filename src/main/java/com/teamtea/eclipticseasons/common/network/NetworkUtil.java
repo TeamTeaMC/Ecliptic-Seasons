@@ -15,6 +15,7 @@ import com.teamtea.eclipticseasons.common.core.map.BiomeHolder;
 import com.teamtea.eclipticseasons.common.network.message.*;
 import com.teamtea.eclipticseasons.common.registry.ESRegistries;
 import com.teamtea.eclipticseasons.config.ClientConfig;
+import com.teamtea.eclipticseasons.config.ESConfigSync;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.server.level.ServerLevel;
@@ -22,6 +23,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.network.HandshakeHandler;
+import net.minecraftforge.network.HandshakeMessages;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkEvent;
 
@@ -204,4 +207,24 @@ public class NetworkUtil {
         return true;
     }
 
+    public static boolean processConfigSync(SimpleNetworkHandler.S2CConfigData msg, Supplier<NetworkEvent.Context> contextSupplier) {
+        contextSupplier.get().enqueueWork(() -> {
+            ESConfigSync.INSTANCE.receiveSyncedConfig(msg, contextSupplier);
+            contextSupplier.get().setPacketHandled(true);
+            SimpleNetworkHandler.CHANNEL.reply(new SimpleNetworkHandler.C2SAcknowledge(), contextSupplier.get());
+        });
+        return true;
+    }
+
+
+    //public static boolean handleClientAck2(SimpleNetworkHandler.C2SAcknowledge c2SAcknowledge, Supplier<NetworkEvent.Context> contextSupplier) {
+    //    contextSupplier.get().enqueueWork(() -> {
+    //        contextSupplier.get().setPacketHandled(true);
+    //    });
+    //    return true;
+    //}
+
+    public static void handleClientAck(HandshakeHandler handshakeHandler, SimpleNetworkHandler.C2SAcknowledge c2SAcknowledge, Supplier<NetworkEvent.Context> contextSupplier) {
+        contextSupplier.get().setPacketHandled(true);
+    }
 }

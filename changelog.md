@@ -1,6 +1,13 @@
 > As the ecosystem for 1.20.1 begins to wind down with major mods like Create moving on, we are also transitioning into
 > the final maintenance phase for our mod on this version.
 
+### 0.12.16
+
+- Added an automatic configuration synchronization system that syncs all Common config files between the server and
+  client. If the client does not want their original settings to be restored after leaving a world, the enforcement
+  option can be disabled in the configuration.
+- Fixed several legacy issues.
+
 ### 0.12.15
 
 - Added an optional **Extra Snow Layer** visual feature. When enabled, snowy blocks may render a thin additional snow

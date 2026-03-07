@@ -4,14 +4,19 @@ package com.teamtea.eclipticseasons.common.network;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.common.core.snow.SnowyStatusHandler;
 import com.teamtea.eclipticseasons.common.network.message.*;
+import com.teamtea.eclipticseasons.config.ESConfigSync;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.loading.FMLLoader;
+import net.minecraftforge.network.HandshakeHandler;
+import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.network.simple.SimpleChannel;
 
 import java.util.List;
+import java.util.function.IntSupplier;
 
 public final class SimpleNetworkHandler {
     public static final SimpleChannel CHANNEL = NetworkRegistry.ChannelBuilder
@@ -88,21 +93,22 @@ public final class SimpleNetworkHandler {
         if (FMLLoader.getDist() == Dist.CLIENT)
             j.consumerNetworkThread(NetworkUtil::processChunkBiomeUpdateMessage);
         j.add();
+
+        CHANNEL.messageBuilder(S2CConfigData.class, id++, NetworkDirection.LOGIN_TO_CLIENT).
+                loginIndex(LoginIndexedMessage::getLoginIndex, LoginIndexedMessage::setLoginIndex).
+                decoder(S2CConfigData::decode).
+                encoder(S2CConfigData::encode).
+                buildLoginPacketList(ESConfigSync.INSTANCE::syncConfigs).
+                consumerNetworkThread(NetworkUtil::processConfigSync).
+                add();
+
+        CHANNEL.messageBuilder(C2SAcknowledge.class, 99, NetworkDirection.LOGIN_TO_SERVER).
+                loginIndex(LoginIndexedMessage::getLoginIndex, LoginIndexedMessage::setLoginIndex).
+                decoder(C2SAcknowledge::decode).
+                encoder(C2SAcknowledge::encode).
+                consumerNetworkThread(HandshakeHandler.indexFirst(NetworkUtil::handleClientAck)).
+                add();
     }
-
-    private static void registerMessage(int i, Class<BiomeWeatherMessage> biomeWeatherMessageClass, Object o) {
-    }
-
-    // private static <T extends INormalMessage> void registerMessage(int index, Class<T> messageType, Function<FriendlyByteBuf, T> decoder) {
-    //     CHANNEL.registerMessage(index, messageType, INormalMessage::toBytes, decoder, (message, context) ->
-    //     {
-    //
-    //
-    //         message.process(context);
-    //         context.get().setPacketHandled(true);
-    //     });
-    // }
-
 
     public static <MSG> void send(ServerPlayer player, MSG msg) {
         SimpleNetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), msg);
@@ -115,5 +121,60 @@ public final class SimpleNetworkHandler {
                 send(player, msg);
             }
         });
+    }
+
+
+    static class LoginIndexedMessage implements IntSupplier {
+        private int loginIndex;
+
+        void setLoginIndex(final int loginIndex) {
+            this.loginIndex = loginIndex;
+        }
+
+        int getLoginIndex() {
+            return loginIndex;
+        }
+
+        @Override
+        public int getAsInt() {
+            return getLoginIndex();
+        }
+    }
+
+    public static class S2CConfigData extends LoginIndexedMessage {
+        private final String fileName;
+        private final byte[] fileData;
+
+        public S2CConfigData(final String configFileName, final byte[] configFileData) {
+            this.fileName = configFileName;
+            this.fileData = configFileData;
+        }
+
+        void encode(final FriendlyByteBuf buffer) {
+            buffer.writeUtf(this.fileName);
+            buffer.writeByteArray(this.fileData);
+        }
+
+        public static S2CConfigData decode(final FriendlyByteBuf buffer) {
+            return new S2CConfigData(buffer.readUtf(32767), buffer.readByteArray());
+        }
+
+        public String getFileName() {
+            return fileName;
+        }
+
+        public byte[] getBytes() {
+            return fileData;
+        }
+    }
+
+    public static class C2SAcknowledge extends LoginIndexedMessage {
+        public void encode(FriendlyByteBuf buf) {
+
+        }
+
+        public static C2SAcknowledge decode(FriendlyByteBuf buf) {
+            return new C2SAcknowledge();
+        }
     }
 }

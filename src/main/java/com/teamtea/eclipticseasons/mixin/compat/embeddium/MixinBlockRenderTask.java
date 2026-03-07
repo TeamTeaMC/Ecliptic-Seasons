@@ -137,6 +137,9 @@ public abstract class MixinBlockRenderTask {
             int y = mutableBlockPos.getY();
             int layer = ExtraModelManager.getLayer(ctx.localSlice(), mutableBlockPos, state, snowModel, seed);
             if (layer > 0) {
+                if (this instanceof IIrisShaderAccesor iIrisShaderAccesor) {
+                    iIrisShaderAccesor.eclipticseasons$setSnowy(buildContext, Blocks.SNOW.defaultBlockState());
+                }
                 ctx.update(mutableBlockPos,
                         mutableBlockPos2.setY(mutableBlockPos2.getY() + 1),
                         state,

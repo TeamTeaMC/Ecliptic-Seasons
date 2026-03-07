@@ -43,9 +43,17 @@ public class CommonConfig {
         public static ForgeConfigSpec.BooleanValue disableUniqueRebindingBiomeTags;
 
         public static ForgeConfigSpec.BooleanValue disableIceOrSnowCauldron;
+        public static ForgeConfigSpec.BooleanValue forceServerConfig;
 
         private static void load(ForgeConfigSpec.Builder builder) {
             builder.push("Debug");
+            forceServerConfig = builder
+                    .comment(
+                            "Force using server synchronized config when joining a multiplayer server.",
+                            "If disabled, client keeps its own local config when exit."
+                    )
+                    .define("ForceServerConfig", true);
+
             logIllegalUse = builder.comment("Log errors when internal functions are used incorrectly.")
                     .define("LogIllegalUse", false);
             notLightAbove = builder.comment("Prevent snow overlays from rendering under blocks with zero light emission.")

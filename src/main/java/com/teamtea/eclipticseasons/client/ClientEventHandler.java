@@ -29,6 +29,7 @@ import com.teamtea.eclipticseasons.common.misc.MapExporter;
 import com.teamtea.eclipticseasons.common.registry.SoundEventsRegistry;
 import com.teamtea.eclipticseasons.config.ClientConfig;
 import com.teamtea.eclipticseasons.config.CommonConfig;
+import com.teamtea.eclipticseasons.config.ESConfigSync;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.commands.CommandSourceStack;
@@ -145,6 +146,8 @@ public final class ClientEventHandler {
             SnowChecker.clearOnClientExitOrServerClose();
             ESSortInfo.clearOnClientExitOrServerClose();
         }
+
+        ESConfigSync.INSTANCE.onClientPlayerExit();
     }
 
     @SubscribeEvent
