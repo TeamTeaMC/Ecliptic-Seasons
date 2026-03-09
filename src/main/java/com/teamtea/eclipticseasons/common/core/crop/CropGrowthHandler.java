@@ -51,6 +51,7 @@ import net.minecraft.world.level.*;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.*;
 import net.minecraft.world.level.levelgen.Heightmap;
@@ -715,6 +716,20 @@ public final class CropGrowthHandler {
                                 true
                         );
                     }
+                }
+            }
+
+            if (flag == CANCEL
+                    && event instanceof CanPlantGrowEvent canPlantGrowEvent
+                    && CommonConfig.Crop.cropLeavesPatch.get()
+                    && canPlantGrowEvent.getLevel() instanceof ServerLevel level){
+                BlockState state = canPlantGrowEvent.getState();
+                if (state.getBlock() instanceof LeavesBlock
+                        && !state.getValue(LeavesBlock.PERSISTENT)
+                        && state.getValue(LeavesBlock.DISTANCE) == 7) {
+                    BlockPos pos = canPlantGrowEvent.getPos();
+                    Block.dropResources(state, level, pos);
+                    level.removeBlock(pos, false);
                 }
             }
         }

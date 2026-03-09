@@ -1,6 +1,13 @@
 > As the ecosystem for 1.20.1 begins to wind down with major mods like Create moving on, we are also transitioning into
 > the final maintenance phase for our mod on this version.
 
+### 0.12.18.1
+
+* When **forced compatibility** is enabled for modded leaves that do not support Forge events, and a **random tick event
+  ** is triggered but the seasonal check fails, the leaves will now proceed with the **decay process**.
+* Fixed an issue where the **`season_textures` resource pack** did not properly support the `start_season` field.
+* Improved the **ParticleIcon detection logic** for models defined in the `season_textures` resource pack.
+
 ### 0.12.18
 
 * Fixed an issue where **seasonal texture models** would not apply if in snowy status.

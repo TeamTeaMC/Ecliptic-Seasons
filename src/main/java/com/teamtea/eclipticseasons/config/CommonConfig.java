@@ -188,6 +188,7 @@ public class CommonConfig {
         public static ForgeConfigSpec.BooleanValue complexGreenHouseCheck;
         public static ForgeConfigSpec.BooleanValue registerCropDefaultValue;
         public static ForgeConfigSpec.BooleanValue forceCompatMode;
+        public static ForgeConfigSpec.BooleanValue cropLeavesPatch;
         public static ForgeConfigSpec.BooleanValue simpleGreenHouse;
         public static ForgeConfigSpec.BooleanValue noCostHumidifier;
         public static ForgeConfigSpec.BooleanValue useBoxDistance;
@@ -231,6 +232,8 @@ public class CommonConfig {
                     .define("RegisterCropDefaultValue", false);
             forceCompatMode = builder.comment("Force all plants to follow growth rules, even those without specific mod tags.")
                     .define("ForceCompatMode", true);
+            cropLeavesPatch = builder.comment("Apply patch withering code for crop leave blocks if tick failed.")
+                    .define("CropLeavesPatch", true);
 
             saveChunkEnvironmentalHumidity = builder.comment("Saves local humidity data to chunk files for persistent tracking.")
                     .define("SaveChunkEnvironmentalHumidity", true);

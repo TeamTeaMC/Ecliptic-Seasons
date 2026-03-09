@@ -64,7 +64,7 @@ public class SeasonalTexture {
             SolarTerm start = slice.start.isValid() ? slice.start :
                     slice.solarTerm.isValid() ? slice.solarTerm :
                             slice.season.isValid() ? slice.season.getFirstSolarTerm(climate) :
-                                    slice.startSeason.isValid() ? slice.endSeason.getFirstSolarTerm(climate) : null;
+                                    slice.startSeason.isValid() ? slice.startSeason.getFirstSolarTerm(climate) : null;
 
             SolarTerm end = slice.end.isValid() ? slice.end :
                     slice.solarTerm.isValid() ? slice.solarTerm :

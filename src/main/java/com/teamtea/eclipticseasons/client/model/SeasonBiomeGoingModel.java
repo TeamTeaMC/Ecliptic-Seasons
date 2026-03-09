@@ -9,6 +9,7 @@ import com.teamtea.eclipticseasons.compat.vanilla.IExtendBlockView;
 import lombok.Getter;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -20,6 +21,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.model.BakedModelWrapper;
 import net.minecraftforge.client.model.data.ModelData;
 import net.minecraftforge.client.model.data.ModelProperty;
+import net.minecraftforge.client.model.data.MultipartModelData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -37,15 +39,34 @@ public class SeasonBiomeGoingModel<T extends BakedModel> extends BakedModelWrapp
 
     @Override
     public @NotNull List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, RandomSource rand, ModelData extraData, @Nullable RenderType renderType) {
+        extraData = MultipartModelData.resolve(extraData, this);
+        BakedModel useModel = getUsedModel(extraData);
+        return useModel != null ?
+                useModel.getQuads(state, side, rand, extraData, renderType) :
+                super.getQuads(state, side, rand, extraData, renderType);
+    }
+
+
+    @Override
+    public @NotNull TextureAtlasSprite getParticleIcon(ModelData extraData) {
+        extraData = MultipartModelData.resolve(extraData, this);
+        BakedModel useModel = getUsedModel(extraData);
+        return useModel != null ?
+                useModel.getParticleIcon(extraData) :
+                super.getParticleIcon(extraData);
+    }
+
+    public BakedModel getUsedModel(ModelData extraData) {
+        BakedModel useModel = null;
         if (extraData.has(BIOME_PROPERTY)) {
             Holder<Biome> biomeHolder = extraData.get(BIOME_PROPERTY);
             for (Pair<BiomeHolderPredicate, SeasonGoingModel<T>> model : models) {
                 if (model.getFirst().test(biomeHolder)) {
-                    return model.getSecond().getQuads(state, side, rand, extraData, renderType);
+                    useModel = model.getSecond();
                 }
             }
         }
-        return super.getQuads(state, side, rand, extraData, renderType);
+        return useModel;
     }
 
     @Override
