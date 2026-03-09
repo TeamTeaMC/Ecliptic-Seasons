@@ -2,6 +2,7 @@ package com.teamtea.eclipticseasons.compat.eclipticseasons_bundles;
 
 
 import com.teamtea.eclipticseasons.compat.Platform;
+import com.teamtea.eclipticseasons.config.ESConfigSync;
 import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.config.ModConfig;
@@ -19,6 +20,7 @@ public class EclipticSeasonsBundles {
         if (modContainer instanceof ModContainer
                 && General.COMMON_CONFIG != null) {
             modContainer.addConfig(new ModConfig(ModConfig.Type.COMMON, General.COMMON_CONFIG, modContainer));
+            ESConfigSync.specShouldSync.add(General.COMMON_CONFIG);
             LangUtil.tryLoadLang(MODID, true);
         }
     }

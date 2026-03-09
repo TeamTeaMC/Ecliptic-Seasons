@@ -574,12 +574,21 @@ public class WeatherManager {
     }
 
     public static void initNewWorldWeather(ServerLevel level, RandomSource random, SolarTerm solarTerm) {
-        if (!CommonConfig.Weather.shouldInitWeather.get()
-                || level.isClientSide() || !MapChecker.isValidDimension(level)) {
+        ArrayList<BiomeWeather> biomeList = getBiomeList(level);
+        if (biomeList == null || level.isClientSide() || !MapChecker.isValidDimension(level)) return;
+
+        if (CommonConfig.Weather.shouldInitSnowForExtremeColdBiomes.get()) {
+            for (BiomeWeather biomeWeather : biomeList) {
+                if (biomeWeather.biomeHolder == null
+                        || !biomeWeather.biomeHolder.is(ClimateTypeBiomeTags.EXTREME_COLD))
+                    continue;
+                biomeWeather.setSnowDepth(100);
+            }
+        }
+
+        if (!CommonConfig.Weather.shouldInitWeather.get()) {
             return;
         }
-        ArrayList<BiomeWeather> biomeList = getBiomeList(level);
-        if (biomeList == null) return;
 
         int size = getWeatherTickFactor(level);
         SolarTerm lastSolarTerm =

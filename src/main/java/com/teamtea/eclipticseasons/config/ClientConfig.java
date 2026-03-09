@@ -94,6 +94,7 @@ public class ClientConfig {
         public static ForgeConfigSpec.BooleanValue snowInFenceOnlySnowy;
 
         public static ForgeConfigSpec.BooleanValue extraSnowLayer;
+        public static ForgeConfigSpec.BooleanValue extraSnowLayerCulling;
 
         private static void load(ForgeConfigSpec.Builder builder) {
             builder.push("Renderer");
@@ -114,16 +115,19 @@ public class ClientConfig {
             snowUnderFence = builder.comment("Allow decorative snow overlays to appear under solid blocks (e.g., in shadows or under eaves).")
                     .define("SnowUnderShadow", false);
             snowInFence = builder.comment("[Sodium/Embeddium] Renders a virtual snow layer inside fences and tall grass for a seamless look.")
-                    .define("SnowInFence", true);
+                    .define("SnowInFence", false);
             snowInFenceCount = builder.comment("[Sodium/Embeddium] Minimum number of adjacent snow-covered blocks required to trigger the effect.")
                     .defineInRange("SnowInFenceCount", 2, 1, 8);
             snowInFenceDirection = builder.comment("[Sodium/Embeddium] Check all eight surrounding directions instead of just the cardinal four.")
                     .define("SnowInFenceDirection", false);
             snowInFenceOnlySnowy = builder.comment("[Sodium/Embeddium] Render snow layers inside snow-connected fences only when in a snowy state.")
-                    .define("SnowInFenceOnlySnowy", true);
+                    .define("SnowInFenceOnlySnowy", false);
             extraSnowLayer = builder
                     .comment("[Sodium/Embeddium] Render an additional snow layer on blocks that already use the snowy model.")
                     .define("ExtraSnowLayer", false);
+            extraSnowLayerCulling = builder
+                    .comment("[Sodium/Embeddium] Culling extra fake snow layer for necessary.")
+                    .define("ExtraSnowLayerCulling", true);
 
             seasonalGrassColorChange = builder.comment("Apply seasonal color shifts to grass and leaf textures.")
                     .define("SeasonalGrassColorChange", true);

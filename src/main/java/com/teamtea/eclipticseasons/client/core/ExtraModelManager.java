@@ -1110,7 +1110,9 @@ public class ExtraModelManager {
     public static int getLayer(BlockAndTintGetter blockAndTintGetter, BlockPos.MutableBlockPos pos, BlockState state, BakedModel snowModel, long seed) {
         if (!(blockAndTintGetter instanceof IMapSlice mapSlice) || !ClientConfig.Renderer.extraSnowLayer.get())
             return 0;
-        if (mapSlice.getBlockHeight(pos) > pos.getY()) return 0;
+        if (mapSlice.getBlockHeight(pos) != pos.getY()
+                && mapSlice.getSolidBlockHeight(pos) != pos.getY()) return 0;
+        //if (mapSlice.getBlockHeight(pos) > pos.getY()) return 0;
 
         int realY = pos.getY() + 1;
 
@@ -1177,6 +1179,7 @@ public class ExtraModelManager {
         if (facing == Direction.DOWN
                 || !(view instanceof BlockAndTintGetter getter)
                 || !(view instanceof IMapSlice mapSlice)
+                || !(ClientConfig.Renderer.extraSnowLayerCulling.get())
                 || mapSlice.getBlockHeight(selfPos) > selfPos.getY()) return original;
 
         boolean snowInFence = ClientConfig.Renderer.snowInFence.get();

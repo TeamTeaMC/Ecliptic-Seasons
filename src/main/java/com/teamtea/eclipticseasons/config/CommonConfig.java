@@ -367,6 +367,7 @@ public class CommonConfig {
         public static ForgeConfigSpec.DoubleValue snowAccumulationSpeedMultiplier;
         public static ForgeConfigSpec.DoubleValue snowMeltSpeedMultiplier;
         public static ForgeConfigSpec.BooleanValue shouldInitWeather;
+        public static ForgeConfigSpec.BooleanValue shouldInitSnowForExtremeColdBiomes;
         public static ForgeConfigSpec.BooleanValue clearAfterSleep;
 
         private static void load(ForgeConfigSpec.Builder builder) {
@@ -377,6 +378,8 @@ public class CommonConfig {
                     .define("NotRainInDesert", true);
             shouldInitWeather = builder.comment("Force initialize weather and snow states when the mod or world is first loaded.")
                     .define("ShouldInitWeather", false);
+            shouldInitSnowForExtremeColdBiomes = builder.comment("Force initialize snow states for extreme cold biomes when the mod or world is first loaded.")
+                    .define("ShouldInitSnowDepthForExtremeColdBiomes", true);
             rainChanceMultiplier = builder.comment("Adjust the overall frequency of rain.")
                     .defineInRange("RainChancePercentMultiplier", 40, 0, 1000);
             thunderChanceMultiplier = builder.comment("Adjust the overall frequency of thunder.")

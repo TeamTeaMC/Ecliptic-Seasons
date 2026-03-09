@@ -1,6 +1,19 @@
 > As the ecosystem for 1.20.1 begins to wind down with major mods like Create moving on, we are also transitioning into
 > the final maintenance phase for our mod on this version.
 
+### 0.12.18
+
+* Fixed an issue where **seasonal texture models** would not apply if in snowy status.
+* Extra snow layer rendering on leaves now only applies to the **top side of leaves**, aligning more closely with
+  vanilla behavior.
+* Snow state is now initialized by default in **extremely cold biomes**.
+
+Configuration:
+
+* Added a new option: **ExtraSnowLayerCulling**.
+* **SnowInFence** and **SnowInFenceOnlySnowy** are now **disabled by default**.
+* Added compatibility **common config synchronization support** for **EclipticSeasonsBundles**.
+
 ### 0.12.17
 
 - Added model-like face culling for snow inside fences and extra snow layers, reducing z-fighting at long distances.

@@ -37,7 +37,11 @@ public class SeasonGoingModel<T extends BakedModel> extends BakedModelWrapper<T>
     @Override
     public @NotNull List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, RandomSource rand, ModelData extraData, @Nullable RenderType renderType) {
         if (state != null) {
-            List<Pair<T, T>> bakedModels = (extraData.has(SNOW_PROPERTY) ? snowModels : models).get(ClientCon.nowSolarTerm);
+            boolean snowy_block = extraData.has(SNOW_PROPERTY);
+            List<Pair<T, T>> bakedModels = (snowy_block ? snowModels : models).get(ClientCon.nowSolarTerm);
+            if (snowy_block && (bakedModels == null || bakedModels.isEmpty())) {
+                bakedModels = models.get(ClientCon.nowSolarTerm);
+            }
             if (bakedModels != null && !bakedModels.isEmpty()) {
                 Pair<T, T> pair = bakedModels.size() == 1 ? bakedModels.get(0) : bakedModels.get(rand.nextInt(bakedModels.size()));
                 if (pair.getFirst() == pair.getSecond())
