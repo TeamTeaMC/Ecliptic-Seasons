@@ -94,6 +94,8 @@ public class ClientConfig {
         public static ForgeConfigSpec.BooleanValue snowInFenceOnlySnowy;
 
         public static ForgeConfigSpec.BooleanValue extraSnowLayer;
+        public static ForgeConfigSpec.IntValue extraSnowLayerMaxLayers;
+        public static ForgeConfigSpec.IntValue extraSnowLayerMaxLayersOnLeaves;
         public static ForgeConfigSpec.BooleanValue extraSnowLayerCulling;
 
         private static void load(ForgeConfigSpec.Builder builder) {
@@ -125,6 +127,10 @@ public class ClientConfig {
             extraSnowLayer = builder
                     .comment("[Sodium/Embeddium] Render an additional snow layer on blocks that already use the snowy model.")
                     .define("ExtraSnowLayer", false);
+            extraSnowLayerMaxLayers = builder.comment("[Sodium/Embeddium] Maxmum number of additional snow layer on blocks.")
+                    .defineInRange("ExtraSnowLayerMaxLayers", 2, 0, 8);
+            extraSnowLayerMaxLayersOnLeaves = builder.comment("[Sodium/Embeddium] Maxmum number of additional snow layer on leave blocks.")
+                    .defineInRange("ExtraSnowLayerMaxLayersOnLeaves", 1, 0, 8);
             extraSnowLayerCulling = builder
                     .comment("[Sodium/Embeddium] Culling extra fake snow layer for necessary.")
                     .define("ExtraSnowLayerCulling", true);
