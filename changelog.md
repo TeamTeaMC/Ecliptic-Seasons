@@ -1,6 +1,14 @@
 > As the ecosystem for 1.20.1 begins to wind down with major mods like Create moving on, we are also transitioning into
 > the final maintenance phase for our mod on this version.
 
+### 0.12.18.3
+
+* Fixed an issue where rendered snow could unexpectedly melt in cold biomes without rainfall.
+
+### 0.12.18.2
+
+* Optimized several rendering settings related to the extra snow layer.
+
 ### 0.12.18.1
 
 * When **forced compatibility** is enabled for modded leaves that do not support Forge events, and a **random tick event

@@ -494,7 +494,7 @@ public class WeatherManager {
                 }
             }
         }
-        if (!biomeWeather.biomeHolder.value().hasPrecipitation())
+        if (!hasNonePrecipitation(biomeWeather.biomeHolder.value()))
             return;
         boolean isEcliptic = EclipticUtil.hasLocalWeather(level);
 
@@ -596,7 +596,7 @@ public class WeatherManager {
                         SolarTerm.collectValues()[(solarTerm.ordinal() - 1 + 24) % 24];
         boolean weatherLocal = EclipticUtil.hasLocalWeather(level);
         for (BiomeWeather biomeWeather : biomeList) {
-            if (!biomeWeather.biomeHolder.value().hasPrecipitation())
+            if (!hasNonePrecipitation(biomeWeather.biomeHolder.value()))
                 continue;
             if (weatherLocal) {
                 float ramdomKey = level.getRandom().nextInt(1000) / 1000.f * 3;
@@ -782,7 +782,7 @@ public class WeatherManager {
 
     public static SnowRenderStatus getSnowStatus(ServerLevel level, Biome biome, BlockPos pos, boolean rain) {
         var status = SnowRenderStatus.NONE;
-        if (biome.hasPrecipitation()) {
+        if (!hasNonePrecipitation(biome)) {
             BeforeCheckSnowStatusEvent result = ESEventHook.modifySnowStatus(level, biome, pos, rain);
             if (result.getStatus() != null) return result.getStatus();
             rain = result.isRain();
