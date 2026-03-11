@@ -1,6 +1,7 @@
 package com.teamtea.eclipticseasons.client.model;
 
 import com.mojang.datafixers.util.Pair;
+import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.misc.BiomeHolderPredicate;
 import com.teamtea.eclipticseasons.client.core.ExtraModelManager;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
@@ -14,9 +15,12 @@ import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.model.BakedModelWrapper;
 import net.minecraftforge.client.model.data.ModelData;
@@ -35,6 +39,20 @@ public class SeasonBiomeGoingModel<T extends BakedModel> extends BakedModelWrapp
     public SeasonBiomeGoingModel(T originalModel, List<Pair<BiomeHolderPredicate, SeasonGoingModel<T>>> models) {
         super(originalModel);
         this.models = models;
+    }
+
+    @Override
+    public @NotNull List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, RandomSource rand) {
+        Level useLevel = ClientCon.getUseLevel();
+        BakedModel useModel = null;
+        if (useLevel != null) {
+            try {
+                useModel = getUsedModel(ModelData.builder().with(BIOME_PROPERTY, useLevel.registryAccess().registryOrThrow(Registries.BIOME).getHolderOrThrow(Biomes.PLAINS)).build());
+            } catch (Exception e) {
+                EclipticSeasons.logger(e);
+            }
+        }
+        return useModel != null ? useModel.getQuads(state, side, rand) : super.getQuads(state, side, rand);
     }
 
     @Override

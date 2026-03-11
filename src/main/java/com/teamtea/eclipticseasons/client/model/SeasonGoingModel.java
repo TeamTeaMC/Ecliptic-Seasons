@@ -13,6 +13,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.model.BakedModelWrapper;
 import net.minecraftforge.client.model.data.ModelData;
@@ -34,6 +35,16 @@ public class SeasonGoingModel<T extends BakedModel> extends BakedModelWrapper<T>
         super(originalModel);
         this.models = models;
         this.snowModels = snowModels;
+    }
+
+    @Override
+    public @NotNull List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, RandomSource rand) {
+        Level useLevel = ClientCon.getUseLevel();
+        BakedModel useModel = null;
+        if (useLevel != null) {
+            useModel = getUsedModel(null, ModelData.EMPTY);
+        }
+        return useModel != null ? useModel.getQuads(state, side, rand) : super.getQuads(state, side, rand);
     }
 
     @Override
