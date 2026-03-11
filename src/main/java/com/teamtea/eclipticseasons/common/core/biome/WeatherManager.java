@@ -494,8 +494,13 @@ public class WeatherManager {
                 }
             }
         }
-        if (!hasNonePrecipitation(biomeWeather.biomeHolder.value()))
+
+        if (biomeWeather.getBiomeRain() == FlatRain.NONE) {
+            biomeWeather.setBiomeRain(getBiomeRain(level, EclipticUtil.getNowSolarTerm(level), biomeWeather.biomeHolder));
+        }
+        if (hasNonePrecipitation(biomeWeather.biomeHolder.value()))
             return;
+
         boolean isEcliptic = EclipticUtil.hasLocalWeather(level);
 
 
@@ -596,7 +601,7 @@ public class WeatherManager {
                         SolarTerm.collectValues()[(solarTerm.ordinal() - 1 + 24) % 24];
         boolean weatherLocal = EclipticUtil.hasLocalWeather(level);
         for (BiomeWeather biomeWeather : biomeList) {
-            if (!hasNonePrecipitation(biomeWeather.biomeHolder.value()))
+            if (hasNonePrecipitation(biomeWeather.biomeHolder.value()))
                 continue;
             if (weatherLocal) {
                 float ramdomKey = level.getRandom().nextInt(1000) / 1000.f * 3;
