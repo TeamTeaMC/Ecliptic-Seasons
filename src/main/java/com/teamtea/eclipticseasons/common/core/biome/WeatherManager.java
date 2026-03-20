@@ -406,6 +406,8 @@ public class WeatherManager {
         }
         {
             var biomes = level.registryAccess().registry(Registries.BIOME);
+            if (biomes.isEmpty())
+                throw new IllegalStateException("[%s] Minecraft cannot work without Biome registry!".formatted(level.dimension()));
             if (biomes.isPresent()) {
                 for (Biome biome : biomes.get()) {
                     var loc = biomes.get().getKey(biome);
