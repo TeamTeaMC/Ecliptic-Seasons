@@ -109,7 +109,8 @@ public abstract class MixinChunkSlice implements IMapSlice, IExtraRendererContex
             at = @At(value = "TAIL")
     )
     private void eclipticseasons$copySectionData(ChunkRenderContext context, CallbackInfo ci) {
-        if (MapChecker.isValidDimension(world)) {
+        // if (MapChecker.isValidDimension(world))
+        {
             BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos();
             int maxH = world.getMaxBuildHeight();
             for (int sectionX = 0; sectionX < SECTION_ARRAY_LENGTH; ++sectionX) {

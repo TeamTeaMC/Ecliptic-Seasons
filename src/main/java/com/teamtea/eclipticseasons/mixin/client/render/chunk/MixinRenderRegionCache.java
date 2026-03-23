@@ -44,7 +44,8 @@ public class MixinRenderRegionCache {
             int[][] SOLID_HEIGHT_MAP = null;
             int[][] BIOME_MAP = null;
             SnowyStatusKeeper[] SNOWY_STATUS_MAP = null;
-            if (MapChecker.isValidDimension(level)) {
+            // if (MapChecker.isValidDimension(level))
+            {
                 BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos();
                 int maxH = level.getMaxBuildHeight();
 
