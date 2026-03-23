@@ -123,7 +123,7 @@ public class DebugInfoRenderer {
                 ISnowTerm snowTerm = SolarTerm.getSnowTerm(biomeWeather.biomeHolder.value(), false, EclipticUtil.getSnowTempChange(level));
                 SolarTerm start = snowTerm.getStart();
                 SolarTerm end = snowTerm.getEnd();
-                infoLines.addKV("Snow Term", "%s - %s".formatted(start.getTranslation().getString(), end.getTranslation().getString()), "§f");
+                infoLines.addKV("Snow Term", "[%s → %s]".formatted(start.getTranslation().getString(), end.getTranslation().getString()), "§f");
                 infoLines.addKV("Snow Depth", biomeWeather.getSnowDepth(), "§f");
                 infoLines.addKV("Map Height", MapChecker.getHeight(level, pos), "");
 
