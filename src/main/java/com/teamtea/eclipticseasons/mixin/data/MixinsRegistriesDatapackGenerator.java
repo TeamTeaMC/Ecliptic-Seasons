@@ -46,19 +46,23 @@ public abstract class MixinsRegistriesDatapackGenerator {
 
     @Inject(at = {@At("HEAD")}, method = {"lambda$dumpRegistryCap$5"}, cancellable = true)
     private void eclipticseasons$lambda$dumpRegistryCap$11(PackOutput.PathProvider packoutput$pathprovider, CachedOutput output, DynamicOps ops, Codec conditionalCodec, Holder.Reference p_256105_, CallbackInfoReturnable<CompletableFuture> cir) {
-        if ((Object) this instanceof DatapackRegistryGenerator||(Object) this instanceof DatapackRegistryGeneratorExample)
+        if (
+                //(Object) this instanceof DatapackRegistryGenerator
+                //||(Object) this instanceof DatapackRegistryGeneratorExample
+        "true".equals(System.getProperty("eclipticseasons.runs.runData"))
+        )
             cir.setReturnValue(dumpValue2(
                     packoutput$pathprovider.json(p_256105_.key().location()),
                     output,
                     ops,
                     conditionalCodec,
-                    Optional.of(new net.neoforged.neoforge.common.conditions.WithConditions<>(conditions.getOrDefault(p_256105_.key(), List.of()), p_256105_.value()))
+                    Optional.of(new net.neoforged.neoforge.common.conditions.WithConditions<>(conditions.getOrDefault(p_256105_.key(), java.util.List.of()), p_256105_.value()))
             ));
     }
 
     @Unique
     private static <E> CompletableFuture<?> dumpValue2(
-            Path p_255678_, CachedOutput p_256438_, DynamicOps<JsonElement> p_256127_, Encoder<Optional<WithConditions<E>>> p_255938_, Optional<net.neoforged.neoforge.common.conditions.WithConditions<E>> p_256590_
+            Path p_255678_, CachedOutput p_256438_, DynamicOps<JsonElement> p_256127_, Encoder<Optional<WithConditions<E>>> p_255938_, java.util.Optional<net.neoforged.neoforge.common.conditions.WithConditions<E>> p_256590_
     ) {
         return p_255938_.encodeStart(p_256127_, p_256590_)
                 .mapOrElse(

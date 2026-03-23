@@ -19,7 +19,7 @@ import java.util.*;
 import java.util.stream.Stream;
 
 public class CommonConfig {
-    public static final ModConfigSpec COMMON_CONFIG = new ModConfigSpec.Builder().configure(CommonConfig::new).getRight();
+    public static final ModConfigSpec COMMON_CONFIG = new ModConfigSpec.Builder().configure(com.teamtea.eclipticseasons.config.CommonConfig::new).getRight();
 
     protected CommonConfig(ModConfigSpec.Builder builder) {
         Season.load(builder);
@@ -201,6 +201,7 @@ public class CommonConfig {
         public static ModConfigSpec.BooleanValue complexGreenHouseCheck;
         public static ModConfigSpec.BooleanValue registerCropDefaultValue;
         public static ModConfigSpec.BooleanValue forceCompatMode;
+        public static ModConfigSpec.BooleanValue cropLeavesPatch;
         public static ModConfigSpec.BooleanValue simpleGreenHouse;
         public static ModConfigSpec.BooleanValue noCostHumidifier;
         public static ModConfigSpec.BooleanValue useBoxDistance;
@@ -244,6 +245,8 @@ public class CommonConfig {
                     .define("RegisterCropDefaultValue", false);
             forceCompatMode = builder.comment("Force all plants to follow growth rules, even those without specific mod tags.")
                     .define("ForceCompatMode", true);
+            cropLeavesPatch = builder.comment("Apply patch withering code for crop leave blocks if tick failed.")
+                    .define("CropLeavesPatch", true);
 
             saveChunkEnvironmentalHumidity = builder.comment("Saves local humidity data to chunk files for persistent tracking.")
                     .define("SaveChunkEnvironmentalHumidity", true);
@@ -334,12 +337,12 @@ public class CommonConfig {
     public static boolean validSolarTerm(Object o) {
         if (o instanceof String s) {
             try {
-                SolarTerm.valueOf(s);
+                com.teamtea.eclipticseasons.api.constant.solar.SolarTerm.valueOf(s);
                 return true;
             } catch (IllegalArgumentException ignored) {
             }
         }
-        return o instanceof SolarTerm;
+        return o instanceof com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
     }
 
     public static Set<com.teamtea.eclipticseasons.api.constant.solar.Season> castSeasons(List<? extends String> strings) {
@@ -358,18 +361,18 @@ public class CommonConfig {
         return es1;
     }
 
-    public static Set<SolarTerm> castSolarTerms(List<? extends String> strings) {
-        var es1 = EnumSet.noneOf(SolarTerm.class);
+    public static Set<com.teamtea.eclipticseasons.api.constant.solar.SolarTerm> castSolarTerms(List<? extends String> strings) {
+        var es1 = EnumSet.noneOf(com.teamtea.eclipticseasons.api.constant.solar.SolarTerm.class);
         for (String string : strings) {
-            es1.add(SolarTerm.valueOf(string));
+            es1.add(com.teamtea.eclipticseasons.api.constant.solar.SolarTerm.valueOf(string));
         }
         return es1;
     }
 
-    public static List<SolarTerm> castSolarTermList(List<? extends String> strings) {
-        var es1 = new ArrayList<SolarTerm>();
+    public static List<com.teamtea.eclipticseasons.api.constant.solar.SolarTerm> castSolarTermList(List<? extends String> strings) {
+        var es1 = new ArrayList<com.teamtea.eclipticseasons.api.constant.solar.SolarTerm>();
         for (String string : strings) {
-            es1.add(SolarTerm.valueOf(string));
+            es1.add(com.teamtea.eclipticseasons.api.constant.solar.SolarTerm.valueOf(string));
         }
         return es1;
     }
@@ -383,6 +386,7 @@ public class CommonConfig {
         public static ModConfigSpec.DoubleValue snowAccumulationSpeedMultiplier;
         public static ModConfigSpec.DoubleValue snowMeltSpeedMultiplier;
         public static ModConfigSpec.BooleanValue shouldInitWeather;
+        public static ModConfigSpec.BooleanValue shouldInitSnowForExtremeColdBiomes;
         public static ModConfigSpec.BooleanValue clearAfterSleep;
 
         private static void load(ModConfigSpec.Builder builder) {
@@ -393,6 +397,8 @@ public class CommonConfig {
                     .define("NotRainInDesert", true);
             shouldInitWeather = builder.comment("Force initialize weather and snow states when the mod or world is first loaded.")
                     .define("ShouldInitWeather", false);
+            shouldInitSnowForExtremeColdBiomes = builder.comment("Force initialize snow states for extreme cold biomes when the mod or world is first loaded.")
+                    .define("ShouldInitSnowForExtremeColdBiomes", true);
             rainChanceMultiplier = builder.comment("Adjust the overall frequency of rain.")
                     .defineInRange("RainChancePercentMultiplier", 40, 0, 1000);
             thunderChanceMultiplier = builder.comment("Adjust the overall frequency of thunder.")

@@ -1,6 +1,6 @@
 {
   "blocks": "minecraft:mangrove_propagule",
-  "flag": 1001,
+  "offset": 1,
   "mid": "eclipticseasons:snowy/mangrove_propagule",
-  "offset": 1
+  "flag": 1001
 }

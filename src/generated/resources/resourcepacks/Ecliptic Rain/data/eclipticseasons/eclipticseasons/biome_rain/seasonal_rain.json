@@ -1,0 +1,248 @@
+{
+  "biomes": "minecraft:plains",
+  "weathers": {
+    "solar_terms": {
+      "beginning_of_spring": {
+        "rain_chance": 0.3,
+        "rain": {
+          "min_inclusive": 500,
+          "max_inclusive": 1000,
+          "type": "minecraft:uniform"
+        },
+        "rain_delay": {
+          "min_inclusive": 30000,
+          "max_inclusive": 60000,
+          "type": "minecraft:uniform"
+        }
+      },
+      "rain_water": {
+        "rain_chance": 0.5,
+        "rain": {
+          "min_inclusive": 1500,
+          "max_inclusive": 3000,
+          "type": "minecraft:uniform"
+        },
+        "rain_delay": {
+          "min_inclusive": 8000,
+          "max_inclusive": 12000,
+          "type": "minecraft:uniform"
+        }
+      },
+      "insects_awakening": {
+        "thunder_chance": 0.3,
+        "thunder": {
+          "min_inclusive": 1000,
+          "max_inclusive": 3000,
+          "type": "minecraft:uniform"
+        },
+        "rain_chance": 0.55,
+        "rain": {
+          "min_inclusive": 2500,
+          "max_inclusive": 4500,
+          "type": "minecraft:uniform"
+        },
+        "rain_delay": {
+          "min_inclusive": 10000,
+          "max_inclusive": 20000,
+          "type": "minecraft:uniform"
+        }
+      },
+      "spring_equinox": {
+        "rain_chance": 0.6,
+        "rain": {
+          "min_inclusive": 3000,
+          "max_inclusive": 5500,
+          "type": "minecraft:uniform"
+        },
+        "rain_delay": {
+          "min_inclusive": 6000,
+          "max_inclusive": 15000,
+          "type": "minecraft:uniform"
+        }
+      },
+      "fresh_green": {
+        "time_periods": [
+          "dawn"
+        ],
+        "special_effect": "eclipticseasons:thin_fog",
+        "rain_chance": 0.75,
+        "rain": {
+          "min_inclusive": 1000,
+          "max_inclusive": 2500,
+          "type": "minecraft:uniform"
+        },
+        "rain_delay": {
+          "min_inclusive": 4000,
+          "max_inclusive": 8000,
+          "type": "minecraft:uniform"
+        }
+      },
+      "grain_rain": {
+        "rain_chance": 0.85,
+        "rain": {
+          "min_inclusive": 5000,
+          "max_inclusive": 8500,
+          "type": "minecraft:uniform"
+        },
+        "rain_delay": {
+          "min_inclusive": 3000,
+          "max_inclusive": 7000,
+          "type": "minecraft:uniform"
+        }
+      },
+      "beginning_of_summer": {
+        "rain_chance": 0.45,
+        "rain": {
+          "min_inclusive": 5000,
+          "max_inclusive": 8000,
+          "type": "minecraft:uniform"
+        },
+        "rain_delay": {
+          "min_inclusive": 15000,
+          "max_inclusive": 30000,
+          "type": "minecraft:uniform"
+        }
+      },
+      "lesser_fullness": {
+        "rain_chance": 0.65,
+        "rain": {
+          "min_inclusive": 8000,
+          "max_inclusive": 12000,
+          "type": "minecraft:uniform"
+        },
+        "rain_delay": {
+          "min_inclusive": 8000,
+          "max_inclusive": 15000,
+          "type": "minecraft:uniform"
+        }
+      },
+      "grain_in_ear": {
+        "thunder_chance": 0.4,
+        "thunder": {
+          "min_inclusive": 5000,
+          "max_inclusive": 10000,
+          "type": "minecraft:uniform"
+        },
+        "rain_chance": 0.8,
+        "rain": {
+          "min_inclusive": 10000,
+          "max_inclusive": 18000,
+          "type": "minecraft:uniform"
+        },
+        "rain_delay": {
+          "min_inclusive": 3000,
+          "max_inclusive": 6000,
+          "type": "minecraft:uniform"
+        }
+      },
+      "summer_solstice": {
+        "thunder_chance": 0.85,
+        "thunder": {
+          "min_inclusive": 20000,
+          "max_inclusive": 40000,
+          "type": "minecraft:uniform"
+        },
+        "rain_chance": 0.95,
+        "rain": {
+          "min_inclusive": 25000,
+          "max_inclusive": 45000,
+          "type": "minecraft:uniform"
+        },
+        "rain_delay": {
+          "min_inclusive": 2000,
+          "max_inclusive": 5000,
+          "type": "minecraft:uniform"
+        }
+      },
+      "lesser_heat": {
+        "rain_chance": 0.6,
+        "rain": {
+          "min_inclusive": 15000,
+          "max_inclusive": 30000,
+          "type": "minecraft:uniform"
+        },
+        "rain_delay": {
+          "min_inclusive": 10000,
+          "max_inclusive": 20000,
+          "type": "minecraft:uniform"
+        }
+      },
+      "greater_heat": {
+        "rain_chance": 0.7,
+        "rain": {
+          "min_inclusive": 12000,
+          "max_inclusive": 25000,
+          "type": "minecraft:uniform"
+        },
+        "rain_delay": {
+          "min_inclusive": 12000,
+          "max_inclusive": 25000,
+          "type": "minecraft:uniform"
+        }
+      },
+      "beginning_of_autumn": {
+        "rain_chance": 0.45,
+        "rain": {
+          "min_inclusive": 4000,
+          "max_inclusive": 8000,
+          "type": "minecraft:uniform"
+        },
+        "rain_delay": {
+          "min_inclusive": 25000,
+          "max_inclusive": 50000,
+          "type": "minecraft:uniform"
+        }
+      },
+      "white_dew": {
+        "time_periods": [
+          "dawn"
+        ],
+        "rain_chance": 0.15
+      },
+      "autumnal_equinox": {
+        "rain_chance": 0.3,
+        "rain": {
+          "min_inclusive": 1000,
+          "max_inclusive": 3000,
+          "type": "minecraft:uniform"
+        },
+        "rain_delay": {
+          "min_inclusive": 40000,
+          "max_inclusive": 80000,
+          "type": "minecraft:uniform"
+        }
+      },
+      "cold_dew": {
+        "rain_chance": 0.1
+      },
+      "first_frost": {
+        "rain_chance": 0.01
+      },
+      "beginning_of_winter": {
+        "rain_chance": 0.05,
+        "rain_delay": {
+          "min_inclusive": 100000,
+          "max_inclusive": 200000,
+          "type": "minecraft:uniform"
+        }
+      },
+      "heavy_snow": {
+        "rain_chance": 0.35
+      },
+      "winter_solstice": {
+        "rain_chance": 0.0
+      },
+      "lesser_cold": {
+        "rain_chance": 0.05
+      },
+      "greater_cold": {
+        "rain_chance": 0.1,
+        "rain": {
+          "min_inclusive": 200,
+          "max_inclusive": 800,
+          "type": "minecraft:uniform"
+        }
+      }
+    }
+  }
+}

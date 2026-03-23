@@ -3,12 +3,14 @@ package com.teamtea.eclipticseasons.mixin.compat.embeddium;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.misc.client.IExtraRendererContextOwner;
+import com.teamtea.eclipticseasons.api.misc.client.IFakeSnowHolder;
 import com.teamtea.eclipticseasons.api.misc.client.IMapSlice;
 import com.teamtea.eclipticseasons.api.misc.client.ISnowyGetter;
 import com.teamtea.eclipticseasons.client.core.ExtraRendererContext;
 import com.teamtea.eclipticseasons.common.core.map.*;
 import com.teamtea.eclipticseasons.common.core.snow.SnowyStatusKeeper;
 import com.teamtea.eclipticseasons.compat.vanilla.IExtendBlockView;
+import it.unimi.dsi.fastutil.longs.Long2IntOpenHashMap;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.ChunkPos;
@@ -50,6 +52,9 @@ public abstract class MixinChunkSlice implements IMapSlice, IExtraRendererContex
 
     @Unique
     private NoneSnowArea[] NONE_SNOW_AREA_MAP;
+
+    @Unique
+    private Long2IntOpenHashMap FAKE_SNOW_LEVEL_MAP;
 
     @Shadow
     @Final
@@ -98,6 +103,8 @@ public abstract class MixinChunkSlice implements IMapSlice, IExtraRendererContex
         SNOWY_MAP = new int[MAP_ARRAY_SIZE][MAP_BLOCK_COUNT];
         SNOWY_STATUS_MAP = new SnowyStatusKeeper[MAP_ARRAY_SIZE];
         NONE_SNOW_AREA_MAP = new NoneSnowArea[MAP_ARRAY_SIZE];
+        FAKE_SNOW_LEVEL_MAP = new Long2IntOpenHashMap();
+        FAKE_SNOW_LEVEL_MAP.defaultReturnValue(IFakeSnowHolder.NONE_CHECK_FAKE_SNOW_LEVEL);
     }
 
 
@@ -107,7 +114,8 @@ public abstract class MixinChunkSlice implements IMapSlice, IExtraRendererContex
             at = @At(value = "TAIL")
     )
     private void eclipticseasons$copySectionData(ChunkRenderContext context, CallbackInfo ci) {
-        if (MapChecker.isValidDimension(world)) {
+        // if (MapChecker.isValidDimension(world))
+        {
             BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos();
             int maxH = world.getMaxBuildHeight();
             for (int sectionX = 0; sectionX < SECTION_ARRAY_LENGTH; ++sectionX) {
@@ -255,6 +263,17 @@ public abstract class MixinChunkSlice implements IMapSlice, IExtraRendererContex
         return lightArrays != null && lightArrays.isSnowyBlock(pos);
     }
 
+
+    @Override
+    public void setLevelForFakeSnow(long pos, int level) {
+        FAKE_SNOW_LEVEL_MAP.put(pos, level);
+    }
+
+    @Override
+    public int getLevelForFakeSnow(long pos) {
+        return FAKE_SNOW_LEVEL_MAP.get(pos);
+    }
+
     @Unique
     private BlockPos.MutableBlockPos eclipticseasons$checkPos = new BlockPos.MutableBlockPos();
 
@@ -274,6 +293,7 @@ public abstract class MixinChunkSlice implements IMapSlice, IExtraRendererContex
         eclipticseasons$rendererHolder.resetAll();
         Arrays.fill(SNOWY_STATUS_MAP, null);
         Arrays.fill(NONE_SNOW_AREA_MAP, null);
+        FAKE_SNOW_LEVEL_MAP.clear();
     }
 
 

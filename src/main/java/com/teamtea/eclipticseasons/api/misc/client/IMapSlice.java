@@ -4,9 +4,8 @@ import com.teamtea.eclipticseasons.common.core.map.SnowyRemover;
 import com.teamtea.eclipticseasons.compat.vanilla.IExtendBlockView;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockAndTintGetter;
-import org.jetbrains.annotations.ApiStatus;
 
-public interface IMapSlice extends BlockAndTintGetter, IMapSliceProvider, IExtendBlockView {
+public interface IMapSlice extends BlockAndTintGetter, IMapSliceProvider, IExtendBlockView, IFakeSnowHolder {
     int getBlockHeight(BlockPos pos);
 
     int getSurfaceFaceBiomeId(BlockPos pos);

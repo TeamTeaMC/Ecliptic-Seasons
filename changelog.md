@@ -1,3 +1,40 @@
+### 0.12.18.5
+
+* Removed the restriction that additional snow rendering could not be referenced without a seasonal dimension,
+  maintaining better appearance consistency.
+
+### 0.12.18.4
+
+* Fixed an issue where rendered snow could unexpectedly melt in cold biomes without rainfall.
+
+### 0.12.18.2
+
+* Optimized several rendering settings related to the extra snow layer.
+
+### 0.12.18.1
+
+* When **forced compatibility** is enabled for modded leaves that do not support Forge events, and a **random tick event
+  ** is triggered but the seasonal check fails, the leaves will now proceed with the **decay process**.
+* Fixed an issue where the **`season_textures` resource pack** did not properly support the `start_season` field.
+* Improved the **ParticleIcon detection logic** for models defined in the `season_textures` resource pack.
+
+### 0.12.18
+
+* Fixed an issue where **seasonal texture models** would not apply if in snowy status.
+* Extra snow layer rendering on leaves now only applies to the **top side of leaves**, aligning more closely with
+  vanilla behavior.
+* Snow state is now initialized by default in **extremely cold biomes**.
+
+Configuration:
+
+* Added a new option: **ExtraSnowLayerCulling**.
+* **SnowInFence** and **SnowInFenceOnlySnowy** are now **disabled by default**.
+* Added compatibility **common config synchronization support** for **EclipticSeasonsBundles**.
+
+### 0.12.17
+
+- Added model-like face culling for snow inside fences and extra snow layers, reducing z-fighting at long distances.
+
 ### 0.12.16
 
 - Added an automatic configuration synchronization system that syncs all Common config files between the server and

@@ -1,8 +1,8 @@
 package com.teamtea.eclipticseasons.compat.eclipticseasons_bundles;
 
 
-import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.compat.Platform;
+import com.teamtea.eclipticseasons.config.ESConfigSync;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.ModContainer;
@@ -25,6 +25,7 @@ public class EclipticSeasonsBundles {
         if (modContainer instanceof ModContainer
                 && General.COMMON_CONFIG != null) {
             modContainer.registerConfig(ModConfig.Type.COMMON, General.COMMON_CONFIG);
+            ESConfigSync.specShouldSync.add(General.COMMON_CONFIG);
             if (FMLLoader.getDist() == Dist.CLIENT)
                 modContainer.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
             LangUtil.tryLoadLang(MODID, true);

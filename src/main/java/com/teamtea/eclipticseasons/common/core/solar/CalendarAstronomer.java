@@ -108,7 +108,7 @@ public class CalendarAstronomer {
      * January 1, 1970 AD (Gregorian).
      *
 
-     * @see Date#getTime()
+     * @see java.util.Date#getTime()
      */
     public CalendarAstronomer(long aTime) {
         time = aTime;

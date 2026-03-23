@@ -1,6 +1,6 @@
 {
   "blocks": "minecraft:cornflower",
-  "flag": 1001,
+  "offset": 1,
   "mid": "eclipticseasons:snowy/cornflower",
-  "offset": 1
+  "flag": 1001
 }

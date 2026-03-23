@@ -1,6 +1,6 @@
 {
   "blocks": "minecraft:potatoes",
-  "flag": 1001,
+  "offset": 1,
   "mid": "eclipticseasons:snowy/potatoes",
-  "offset": 1
+  "flag": 1001
 }

@@ -56,5 +56,9 @@
   "eclipticseasons.configuration.VoxyReloadWhenSeasonChanged": "Voxy Cache Reload When Season Changed",
   "eclipticseasons.configuration.SimpleSeasonHud": "Simple Season Hud",
   "eclipticseasons.configuration.ExtraSnowLayer": "Extra Snow Layer",
-  "eclipticseasons.configuration.ForceServerConfig": "Force Server Config"
+  "eclipticseasons.configuration.ForceServerConfig": "Force Server Config",
+  "eclipticseasons.configuration.ExtraSnowLayerCulling": "Extra Snow Layer Culling",
+  "eclipticseasons.configuration.ShouldInitSnowForExtremeColdBiomes": "Should Init Snow Status for Extreme Cold Biomes",
+  "eclipticseasons.configuration.ExtraSnowLayerMaxLayers": "Extra Snow Layer Max Layers",
+  "eclipticseasons.configuration.ExtraSnowLayerMaxLayersOnLeaves": "Extra Snow Layer Max Layers on Leaves"
 }

@@ -3,12 +3,14 @@ package com.teamtea.eclipticseasons.api.data.weather.special_effect;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import lombok.Builder;
+import lombok.Data;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 
-
+@Builder
 public class NoneEffect implements WeatherEffect {
     public static final NoneEffect INSTANCE = new NoneEffect();
 

@@ -1,0 +1,32 @@
+package com.teamtea.eclipticseasons.mixin.compat.embeddium;
+
+
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import com.llamalad7.mixinextras.sugar.Local;
+import com.teamtea.eclipticseasons.client.core.ExtraModelManager;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.block.state.BlockState;
+import org.embeddedt.embeddium.impl.render.chunk.compile.pipeline.BlockOcclusionCache;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+
+@Mixin({BlockOcclusionCache.class})
+public abstract class MixinBlockOcclusionCache {
+
+    @ModifyExpressionValue(
+            method = "shouldDrawSide",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/BlockGetter;getBlockState(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/block/state/BlockState;")
+    )
+    private BlockState eclipticseasons$skip_if_fake_snow(BlockState original,
+                                                         @Local(argsOnly = true) BlockState selfState,
+                                                         @Local(argsOnly = true) BlockGetter view,
+                                                         @Local(name = "adjPos") BlockPos.MutableBlockPos otherPos,
+                                                         @Local(argsOnly = true) BlockPos selfPos,
+                                                         @Local(argsOnly = true) Direction facing) {
+        return ExtraModelManager.getFakeBlockState(original, selfState, view, otherPos, selfPos, facing);
+    }
+
+
+}

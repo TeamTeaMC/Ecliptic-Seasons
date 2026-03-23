@@ -54,5 +54,9 @@
   "eclipticseasons.configuration.VoxyReloadWhenSeasonChanged": "在节气变化时重载Voxy缓存",
   "eclipticseasons.configuration.SimpleSeasonHud": "简单的节气GUI提示",
   "eclipticseasons.configuration.ExtraSnowLayer": "额外的雪层",
-  "eclipticseasons.configuration.ForceServerConfig": "强制使用服务器配置"
+  "eclipticseasons.configuration.ForceServerConfig": "强制使用服务器配置",
+  "eclipticseasons.configuration.ExtraSnowLayerCulling": "给额外雪层应用剔面机制",
+  "eclipticseasons.configuration.ShouldInitSnowForExtremeColdBiomes": "为寒冷群系初始化雪状态",
+  "eclipticseasons.configuration.ExtraSnowLayerMaxLayers": "额外的雪层数",
+  "eclipticseasons.configuration.ExtraSnowLayerMaxLayersOnLeaves": "额外的雪层数（树叶）"
 }

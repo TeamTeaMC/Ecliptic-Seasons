@@ -1,6 +1,6 @@
 {
   "blocks": "minecraft:torchflower",
-  "flag": 1001,
+  "offset": 1,
   "mid": "eclipticseasons:snowy/torchflower",
-  "offset": 1
+  "flag": 1001
 }

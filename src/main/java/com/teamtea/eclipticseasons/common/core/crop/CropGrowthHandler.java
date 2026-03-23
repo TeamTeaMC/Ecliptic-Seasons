@@ -691,6 +691,19 @@ public final class CropGrowthHandler {
                     }
                 }
             }
+            if (flag == CANCEL
+                    && event instanceof CanPlantGrowEvent canPlantGrowEvent
+                    && CommonConfig.Crop.cropLeavesPatch.get()
+                    && canPlantGrowEvent.getLevel() instanceof ServerLevel level) {
+                BlockState state = canPlantGrowEvent.getState();
+                if (state.getBlock() instanceof LeavesBlock
+                        && !state.getValue(LeavesBlock.PERSISTENT)
+                        && state.getValue(LeavesBlock.DISTANCE) == 7) {
+                    BlockPos pos = canPlantGrowEvent.getPos();
+                    Block.dropResources(state, level, pos);
+                    level.removeBlock(pos, false);
+                }
+            }
         }
     }
 

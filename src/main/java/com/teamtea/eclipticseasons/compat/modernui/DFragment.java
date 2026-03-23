@@ -183,7 +183,7 @@ public class DFragment extends BaseF {
                 Files.createDirectories(out);
 
                 Path file = out.resolve(fileName);
-                Files.writeString((Path) file, ClientJsonCacheListener.GSON.toJson(root), StandardCharsets.UTF_8);
+                Files.writeString((java.nio.file.Path) file, ClientJsonCacheListener.GSON.toJson(root), StandardCharsets.UTF_8);
 
                 // 5. 提示用户
                 ClientCon.agent.getCameraEntity().sendSystemMessage(Component.literal(

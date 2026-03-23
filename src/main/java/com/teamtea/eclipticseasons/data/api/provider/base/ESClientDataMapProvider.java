@@ -107,7 +107,7 @@ public abstract class ESClientDataMapProvider<T> implements DataProvider {
 
                 try (JsonWriter jsonwriter = new JsonWriter(new OutputStreamWriter(hashingoutputstream, StandardCharsets.UTF_8))) {
                     jsonwriter.setSerializeNulls(false);
-                    jsonwriter.setIndent(" ".repeat(Math.max(0, INDENT_WIDTH.get()))); // Neo: Allow changing the indent width without needing to mixin this lambda.
+                    jsonwriter.setIndent(" ".repeat(java.lang.Math.max(0, INDENT_WIDTH.get()))); // Neo: Allow changing the indent width without needing to mixin this lambda.
                     Gson gson = new GsonBuilder()
                             .disableHtmlEscaping()
                             .create();

@@ -7,6 +7,7 @@ import com.teamtea.eclipticseasons.data.extend.example.*;
 import com.teamtea.eclipticseasons.data.extend.extra_snow.DatapackRegistryGeneratorExtra;
 import com.teamtea.eclipticseasons.data.extend.extra_snow.ExtraClientModelDefinitionProvider;
 import com.teamtea.eclipticseasons.data.extend.regional_snow_time.RegionalSnowTimeProvider;
+import com.teamtea.eclipticseasons.data.extend.solar_rain.SolarRainProvider;
 import com.teamtea.eclipticseasons.data.general.advancement.Advancements;
 import com.teamtea.eclipticseasons.data.general.datapack.DatapackRegistryGenerator;
 import com.teamtea.eclipticseasons.data.general.datapack.ESDataMapProvider;
@@ -28,6 +29,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.metadata.PackMetadataGenerator;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 
@@ -119,6 +121,13 @@ public class start {
         if (event.includeServer()) {
             generator.addProvider(event.includeServer(), PackMetadataGenerator.forFeaturePack(packOutput, Component.translatable("pack.eclipticseasons.regional_snow_time.description")));
             generator.addProvider(event.includeServer(), new RegionalSnowTimeProvider(packOutput, lookupProvider));
+        }
+
+        // Ecliptic Rain
+        packOutput = packOutput.move(Path.of("resourcepacks", "Ecliptic Rain"));
+        if (event.includeServer()) {
+            //generator.addProvider(event.includeServer(), PackMetadataGenerator.forFeaturePack(packOutput, Component.translatable("pack.eclipticseasons.ecliptic_rain.description")));
+            generator.addProvider(event.includeServer(), new SolarRainProvider(packOutput, lookupProvider));
         }
     }
 }

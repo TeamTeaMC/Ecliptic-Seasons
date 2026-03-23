@@ -1,5 +1,6 @@
 package com.teamtea.eclipticseasons.client.debug;
 
+import com.teamtea.eclipticseasons.api.constant.climate.ISnowTerm;
 import com.teamtea.eclipticseasons.api.constant.climate.WeatherMode;
 import com.teamtea.eclipticseasons.api.constant.solar.ISolarTerm;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
@@ -120,7 +121,10 @@ public class DebugInfoRenderer {
                 infoLines.add("Surface: " + (e_cachedBiome != null ? (getBiomeName(e_cachedBiome) + " §2(" + getBiomeId(e_cachedBiome) + ")§r") : "Unknown"));
                 infoLines.add(String.format("R/C/T Time: §e%d§r / §e%d§r / §e%d§r",
                         biomeWeather.rainTime, biomeWeather.clearTime, biomeWeather.thunderTime));
-                infoLines.addKV("Snow Term", SolarTerm.getSnowTerm(biomeWeather.biomeHolder.value(), false, EclipticUtil.getSnowTempChange(level)), "§f");
+                ISnowTerm snowTerm = SolarTerm.getSnowTerm(biomeWeather.biomeHolder.value(), false, EclipticUtil.getSnowTempChange(level));
+                SolarTerm start = snowTerm.getStart();
+                SolarTerm end = snowTerm.getEnd();
+                infoLines.addKV("Snow Term", "[%s → %s]".formatted(start.getTranslation().getString(), end.getTranslation().getString()), "§f");
                 infoLines.addKV("Snow Depth", biomeWeather.getSnowDepth(), "§f");
                 infoLines.addKV("Map Height", MapChecker.getHeight(level, pos), "");
 

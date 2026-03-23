@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
 @Mixin(BlockState.class)
-public abstract class MixinClientBlockState  implements ISnowyBlockState {
+public abstract class MixinClientBlockState implements ISnowyBlockState {
 
     @Unique
     public BakedModel eclipticseasons$cacheSnowyBakedModel = null;
@@ -32,9 +32,9 @@ public abstract class MixinClientBlockState  implements ISnowyBlockState {
     }
 
     @Override
-    public void setSnowyModel(BakedModel bakedModel,int loadVersion) {
+    public void setSnowyModel(BakedModel bakedModel, int loadVersion) {
         this.eclipticseasons$cacheSnowyBakedModel = bakedModel;
-        this.eclipticseasons$loadVersion=loadVersion;
+        this.eclipticseasons$loadVersion = loadVersion;
     }
 
     @Override
@@ -46,9 +46,9 @@ public abstract class MixinClientBlockState  implements ISnowyBlockState {
     }
 
     @Override
-    public void setSnowyModel2(BakedModel bakedModel,int loadVersion) {
+    public void setSnowyModel2(BakedModel bakedModel, int loadVersion) {
         this.eclipticseasons$cacheSnowyBakedModel2 = bakedModel;
-        this.eclipticseasons$loadVersion2=loadVersion;
+        this.eclipticseasons$loadVersion2 = loadVersion;
     }
 
 }
