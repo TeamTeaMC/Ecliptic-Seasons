@@ -1,9 +1,15 @@
 > As the ecosystem for 1.20.1 begins to wind down with major mods like Create moving on, we are also transitioning into
 > the final maintenance phase for our mod on this version.
 
+### 0.12.18.6
+
+- Optimized the snowfall schedule for `Regional Snow Time` datapack.
+- Fixed a bug where the `Snow Together` data packet was not being applied.
+
 ### 0.12.18.5
 
-* Removed the restriction that additional snow rendering could not be referenced without a seasonal dimension, maintaining better appearance consistency.
+* Removed the restriction that additional snow rendering could not be referenced without a seasonal dimension,
+  maintaining better appearance consistency.
 
 ### 0.12.18.4
 

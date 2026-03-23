@@ -1,6 +1,6 @@
 {
   "biomes": "minecraft:sunflower_plains",
-  "start": "winter_solstice",
+  "start": "light_snow",
   "end": "greater_cold",
   "events": [
     {

@@ -9,6 +9,7 @@ public enum SnowTerm implements ISnowTerm {
     T1(SolarTerm.NONE, SolarTerm.NONE, 1f),
     T095(SolarTerm.GREATER_COLD, SolarTerm.GREATER_COLD, 0.95f),
     T08(SolarTerm.WINTER_SOLSTICE, SolarTerm.GREATER_COLD, 0.8f),
+    T07(SolarTerm.HEAVY_SNOW, SolarTerm.GREATER_COLD, 0.7f),
     T06(SolarTerm.LIGHT_SNOW, SolarTerm.GREATER_COLD, 0.6f),
     T05(SolarTerm.BEGINNING_OF_WINTER, SolarTerm.GREATER_COLD, 0.5f),
     T04(SolarTerm.FIRST_FROST, SolarTerm.GREATER_COLD, 0.4f),
