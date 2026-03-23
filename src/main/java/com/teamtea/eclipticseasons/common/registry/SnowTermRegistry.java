@@ -23,13 +23,13 @@ public class SnowTermRegistry {
         var holderGetter = context.lookup(Registries.BIOME);
         context.register(PLAIN, new CustomSnowTerm(
                 HolderSet.direct(holderGetter.getOrThrow(Biomes.PLAINS)),
-                SnowTerm.T08.getStart(), SnowTerm.T08.getEnd(),
+                SnowTerm.T07.getStart(), SnowTerm.T07.getEnd(),
                 List.of()
         ));
 
         context.register(SUNFLOWER_PLAINS, new CustomSnowTerm(
                 HolderSet.direct(holderGetter.getOrThrow(Biomes.SUNFLOWER_PLAINS)),
-                SnowTerm.T08.getStart(), SnowTerm.T08.getEnd(),
+                SnowTerm.T07.getStart(), SnowTerm.T07.getEnd(),
                 List.of(new CustomSnowTerm.TempEvent(0.1f, SnowTerm.T1.getStart(), SnowTerm.T1.getEnd()))
         ));
     }

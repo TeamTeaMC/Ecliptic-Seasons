@@ -60,8 +60,8 @@ public class RegionalSnowTimeProvider extends DatapackBuiltinEntriesProvider {
 
                 context.register(ResourceKey.create(ESRegistries.SNOW_TERM, ClimateTypeBiomeTags.WARM_REGION.location()),
                         CustomSnowTerm.builder().biomes(lookup.getOrThrow(ClimateTypeBiomeTags.WARM_REGION))
-                                .start(SnowTerm.T08.getStart())
-                                .end(SnowTerm.T08.getEnd())
+                                .start(SnowTerm.T07.getStart())
+                                .end(SnowTerm.T07.getEnd())
                                 .tempEvents(List.of(
                                         CustomSnowTerm.TempEvent.builder()
                                                 .tempOffset(-0.1f)

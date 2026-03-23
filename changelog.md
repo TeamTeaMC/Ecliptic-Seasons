@@ -1,3 +1,8 @@
+### 0.12.18.6
+
+- Optimized the snowfall schedule for `Regional Snow Time` datapack.
+- Fixed a bug where the `Snow Together` data packet was not being applied.
+
 ### 0.12.18.5
 
 * Removed the restriction that additional snow rendering could not be referenced without a seasonal dimension,
