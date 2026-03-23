@@ -49,7 +49,7 @@ public class QuestSignRenderer extends HangingSignRenderer {
                 .collect(
                         ImmutableMap.toImmutableMap(
                                 p_249901_ -> p_249901_,
-                                p_251956_ -> new HangingSignRenderer.HangingSignModel(context.bakeLayer(ModelLayers.createHangingSignModelName(p_251956_)))
+                                p_251956_ -> new HangingSignModel(context.bakeLayer(ModelLayers.createHangingSignModelName(p_251956_)))
                         )
                 );
         this.font = context.getFont();
@@ -64,7 +64,7 @@ public class QuestSignRenderer extends HangingSignRenderer {
             BlockState blockstate = blockEntity.getBlockState();
             SignBlock signblock = (SignBlock) blockstate.getBlock();
             WoodType woodtype = questHangingSignBlockEntity.getSignType().type();
-            HangingSignRenderer.HangingSignModel hangingsignrenderer$hangingsignmodel = this.hangingSignModels.get(woodtype);
+            HangingSignModel hangingsignrenderer$hangingsignmodel = this.hangingSignModels.get(woodtype);
             hangingsignrenderer$hangingsignmodel.evaluateVisibleParts(blockstate);
             this.renderSignWithText(questHangingSignBlockEntity, poseStack, bufferSource, packedLight, packedOverlay, blockstate, signblock, woodtype, hangingsignrenderer$hangingsignmodel);
         }
@@ -127,7 +127,7 @@ public class QuestSignRenderer extends HangingSignRenderer {
 
 
     void renderSignModel(PoseStack poseStack, int packedLight, int packedOverlay, Model model, VertexConsumer vertexConsumer) {
-        HangingSignRenderer.HangingSignModel hangingsignrenderer$hangingsignmodel = (HangingSignRenderer.HangingSignModel) model;
+        HangingSignModel hangingsignrenderer$hangingsignmodel = (HangingSignModel) model;
         hangingsignrenderer$hangingsignmodel.root.render(poseStack, vertexConsumer, packedLight, packedOverlay);
     }
 

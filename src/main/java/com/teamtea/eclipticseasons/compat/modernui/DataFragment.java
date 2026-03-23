@@ -145,7 +145,7 @@ public class DataFragment extends BaseF {
             LinearLayout listHolder = new LinearLayout(requireContext());
             listHolder.setOrientation(LinearLayout.VERTICAL);
             GradientDrawable gradientDrawable = new GradientDrawable();
-            gradientDrawable.setStroke(1, java.awt.Color.PINK.getRGB());
+            gradientDrawable.setStroke(1, Color.PINK.getRGB());
             listHolder.setBackground(gradientDrawable);
             ViewGroup.MarginLayoutParams marginLayoutParams = new ViewGroup.MarginLayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);

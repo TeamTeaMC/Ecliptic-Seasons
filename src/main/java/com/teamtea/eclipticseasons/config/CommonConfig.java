@@ -19,7 +19,7 @@ import java.util.*;
 import java.util.stream.Stream;
 
 public class CommonConfig {
-    public static final ModConfigSpec COMMON_CONFIG = new ModConfigSpec.Builder().configure(com.teamtea.eclipticseasons.config.CommonConfig::new).getRight();
+    public static final ModConfigSpec COMMON_CONFIG = new ModConfigSpec.Builder().configure(CommonConfig::new).getRight();
 
     protected CommonConfig(ModConfigSpec.Builder builder) {
         Season.load(builder);
@@ -337,12 +337,12 @@ public class CommonConfig {
     public static boolean validSolarTerm(Object o) {
         if (o instanceof String s) {
             try {
-                com.teamtea.eclipticseasons.api.constant.solar.SolarTerm.valueOf(s);
+                SolarTerm.valueOf(s);
                 return true;
             } catch (IllegalArgumentException ignored) {
             }
         }
-        return o instanceof com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
+        return o instanceof SolarTerm;
     }
 
     public static Set<com.teamtea.eclipticseasons.api.constant.solar.Season> castSeasons(List<? extends String> strings) {
@@ -361,18 +361,18 @@ public class CommonConfig {
         return es1;
     }
 
-    public static Set<com.teamtea.eclipticseasons.api.constant.solar.SolarTerm> castSolarTerms(List<? extends String> strings) {
-        var es1 = EnumSet.noneOf(com.teamtea.eclipticseasons.api.constant.solar.SolarTerm.class);
+    public static Set<SolarTerm> castSolarTerms(List<? extends String> strings) {
+        var es1 = EnumSet.noneOf(SolarTerm.class);
         for (String string : strings) {
-            es1.add(com.teamtea.eclipticseasons.api.constant.solar.SolarTerm.valueOf(string));
+            es1.add(SolarTerm.valueOf(string));
         }
         return es1;
     }
 
-    public static List<com.teamtea.eclipticseasons.api.constant.solar.SolarTerm> castSolarTermList(List<? extends String> strings) {
-        var es1 = new ArrayList<com.teamtea.eclipticseasons.api.constant.solar.SolarTerm>();
+    public static List<SolarTerm> castSolarTermList(List<? extends String> strings) {
+        var es1 = new ArrayList<SolarTerm>();
         for (String string : strings) {
-            es1.add(com.teamtea.eclipticseasons.api.constant.solar.SolarTerm.valueOf(string));
+            es1.add(SolarTerm.valueOf(string));
         }
         return es1;
     }

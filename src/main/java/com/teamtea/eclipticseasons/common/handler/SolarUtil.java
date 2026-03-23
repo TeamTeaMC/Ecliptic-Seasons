@@ -13,7 +13,7 @@ import javax.annotation.Nullable;
 /**
  * SolarDataManager is an inner class should not use.
  * <p>
- * For season and solar term query, use {@link com.teamtea.eclipticseasons.api.EclipticSeasonsApi} instead
+ * For season and solar term query, use {@link EclipticSeasonsApi} instead
  * **/
 @Deprecated(forRemoval = true,since = "0.8")
 public class SolarUtil {
