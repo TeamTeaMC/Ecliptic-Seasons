@@ -1,3 +1,7 @@
+### 0.12.18.7
+
+- Fixed a bug that would cause the time period to be judged as dusk at the beginning of the day.
+
 ### 0.12.18.6
 
 - Optimized the snowfall schedule for `Regional Snow Time` datapack.
