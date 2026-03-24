@@ -1,6 +1,10 @@
 > As the ecosystem for 1.20.1 begins to wind down with major mods like Create moving on, we are also transitioning into
 > the final maintenance phase for our mod on this version.
 
+### 0.12.18.7
+
+- Fixed a bug that would cause the time period to be judged as dusk at the beginning of the day.
+
 ### 0.12.18.6
 
 - Optimized the snowfall schedule for `Regional Snow Time` datapack.
