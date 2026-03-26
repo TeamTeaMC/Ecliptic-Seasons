@@ -7,7 +7,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import lombok.Builder;
 import lombok.Data;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.StringRepresentable;
 import org.jetbrains.annotations.NotNull;
 
@@ -21,7 +21,7 @@ public class AutoCompletionElement implements UIElement {
     public static final MapCodec<AutoCompletionElement> CODEC = RecordCodecBuilder.mapCodec(ins -> ins.group(
             Codec.STRING.fieldOf("id").forGetter(o -> o.id),
             Provide.CODEC.fieldOf("provide").forGetter(o -> o.provide),
-            Codec.STRING.optionalFieldOf("key", Registries.BLOCK.location().toString()).forGetter(o -> o.key),
+            Codec.STRING.optionalFieldOf("key", Registries.BLOCK.identifier().toString()).forGetter(o -> o.key),
             (Codec.either(ExtraInfoHolder.CODEC,Codec.STRING))
                     .xmap(
                             e->e.left().orElse(new ExtraInfoHolder(e.right().orElse(""),e.right().orElse(""))),
@@ -36,7 +36,7 @@ public class AutoCompletionElement implements UIElement {
     private final List<ExtraInfoHolder> extraInfo;
 
     @Override
-    public ResourceLocation getType() {
+    public Identifier getType() {
         return UIElements.AUTO_COMPLETION;
     }
 

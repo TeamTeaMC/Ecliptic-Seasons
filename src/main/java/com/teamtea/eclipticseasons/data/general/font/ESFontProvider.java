@@ -11,8 +11,8 @@ import net.minecraft.client.gui.font.providers.GlyphProviderDefinition;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
-import net.minecraft.resources.ResourceLocation;
-import net.neoforged.neoforge.common.data.ExistingFileHelper;
+import net.minecraft.resources.Identifier;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
@@ -27,15 +27,13 @@ public class ESFontProvider implements DataProvider {
 
     private final PackOutput output;
     protected final String modid;
-    public final ExistingFileHelper helper;
 
-    protected final Map<ResourceLocation, FontManager.FontDefinitionFile> outMap = new HashMap<>();
+    protected final Map<Identifier, FontManager.FontDefinitionFile> outMap = new HashMap<>();
 
 
-    public ESFontProvider(PackOutput output, String modid, ExistingFileHelper helper) {
+    public ESFontProvider(PackOutput output, String modid) {
         this.output = output;
         this.modid = modid;
-        this.helper = helper;
     }
 
 
@@ -88,7 +86,7 @@ public class ESFontProvider implements DataProvider {
         )));
     }
 
-    private GlyphProviderDefinition.@NotNull Conditional buildFont(ResourceLocation iconCollection,List<String> a) {
+    private GlyphProviderDefinition.@NotNull Conditional buildFont(Identifier iconCollection,List<String> a) {
         return new GlyphProviderDefinition.Conditional(new BitmapProvider.Definition(
                 iconCollection.withSuffix(".png"),
                 9,

@@ -16,6 +16,8 @@
   "ui.label.eclipticseasons.snow_passable": "Snow Passable",
   "ui.label.eclipticseasons.offset": "Offset",
   "ui.label.eclipticseasons.properties": "Properties",
+  "debug_info.eclipticseasons.snow_term": "[%1$s → %2$s%3$s]",
+  "debug_info.eclipticseasons.snow_term.second_year": " (next year)",
   "info.eclipticseasons.recipe_category.greenhouse_ritual": "Season Ritual",
   "info.eclipticseasons.recipe_category.greenhouse_ritual.not_in_room": "Not in room",
   "info.eclipticseasons.recipe_category.greenhouse_ritual.crop_bonus": "Crop growth can slightly accelerate",

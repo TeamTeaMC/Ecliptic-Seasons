@@ -6,6 +6,7 @@ import com.teamtea.eclipticseasons.common.registry.BlockRegistry;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.cauldron.CauldronInteraction;
+import net.minecraft.core.cauldron.CauldronInteractions;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -13,7 +14,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -23,17 +24,15 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.AbstractCauldronBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.LayeredCauldronBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.HitResult;
-import net.neoforged.neoforge.fluids.capability.wrappers.CauldronWrapper;
-import net.neoforged.neoforge.items.ItemHandlerHelper;
 import org.jetbrains.annotations.NotNull;
 
 public class IceOrSnowCauldronBlock extends AbstractCauldronBlock {
-    public static final CauldronInteraction.InteractionMap EMPTY = CauldronInteraction.newInteractionMap(EclipticSeasons.rl("empty").toString());
+    public static final CauldronInteraction.Dispatcher EMPTY =
+            CauldronInteractions.newDispatcher(EclipticSeasons.rl("empty").toString())
+    ;
 
     public IceOrSnowCauldronBlock(Properties properties) {
         super(properties, EMPTY);
@@ -42,7 +41,7 @@ public class IceOrSnowCauldronBlock extends AbstractCauldronBlock {
 
 
     @Override
-    public ItemStack getCloneItemStack(BlockState state, HitResult target, LevelReader level, BlockPos pos, Player player) {
+    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state, boolean includeData, Player player) {
         return Items.CAULDRON.getDefaultInstance();
     }
 
@@ -52,14 +51,14 @@ public class IceOrSnowCauldronBlock extends AbstractCauldronBlock {
     }
 
     @Override
-    protected @NotNull ItemInteractionResult useItemOn(@NotNull ItemStack stack, BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hitResult) {
+    protected @NotNull InteractionResult useItemOn(@NotNull ItemStack stack, BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hitResult) {
         Block block = state.getBlock();
         if (block == BlockRegistry.snow_cauldron.get() && stack.is(ItemTags.SHOVELS)) {
             return givePlayerResult(stack, new ItemStack(Items.SNOWBALL, 4), Blocks.SNOW.defaultBlockState(), level, pos, player);
         } else if (block == BlockRegistry.ice_cauldron.get() && stack.is(ItemTags.PICKAXES)) {
             return givePlayerResult(stack, new ItemStack(Items.ICE), Blocks.ICE.defaultBlockState(), level, pos, player);
         }
-        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        return InteractionResult.PASS;
     }
 
     @Override
@@ -67,9 +66,9 @@ public class IceOrSnowCauldronBlock extends AbstractCauldronBlock {
         return true;
     }
 
-    protected static @NotNull ItemInteractionResult givePlayerResult(ItemStack stack, ItemStack result, BlockState state, Level level, BlockPos pos, Player player) {
-        if (!level.isClientSide) {
-            ItemHandlerHelper.giveItemToPlayer(player, result);
+    protected static @NotNull InteractionResult givePlayerResult(ItemStack stack, ItemStack result, BlockState state, Level level, BlockPos pos, Player player) {
+        if (!level.isClientSide()) {
+            player.getInventory().add(result);
             player.awardStat(Stats.USE_CAULDRON);
             player.awardStat(Stats.ITEM_USED.get(stack.getItem()));
             level.setBlockAndUpdate(pos, Blocks.CAULDRON.defaultBlockState());
@@ -77,7 +76,7 @@ public class IceOrSnowCauldronBlock extends AbstractCauldronBlock {
                     .getHitSound(), SoundSource.BLOCKS, 1.0F, 1.0F);
             level.gameEvent(null, GameEvent.FLUID_PICKUP, pos);
         }
-        return ItemInteractionResult.sidedSuccess(level.isClientSide);
+        return InteractionResult.SUCCESS_SERVER;
     }
 
     public static void handleChange(BlockState state, Level level, BlockPos pos, Biome.Precipitation precipitation) {
@@ -97,21 +96,22 @@ public class IceOrSnowCauldronBlock extends AbstractCauldronBlock {
     }
 
     public static void init() {
-        CauldronInteraction.EMPTY.map()
+
+        CauldronInteractions.EMPTY
                 .put(Items.SNOW_BLOCK, (state, level, pos, player, hand, stack) -> {
                     fillEmptyCauldron(level, pos, player, hand, stack, BlockRegistry.snow_cauldron.get().defaultBlockState(), SoundEvents.SNOW_PLACE);
-                    return ItemInteractionResult.sidedSuccess(level.isClientSide());
+                    return InteractionResult.SUCCESS_SERVER;
                 });
-        CauldronInteraction.EMPTY.map()
+        CauldronInteractions.EMPTY
                 .put(Items.ICE, (state, level, pos, player, hand, stack) -> {
                     fillEmptyCauldron(level, pos, player, hand, stack, BlockRegistry.ice_cauldron.get().defaultBlockState(), SoundEvents.GLASS_PLACE);
-                    return ItemInteractionResult.sidedSuccess(level.isClientSide());
+                    return InteractionResult.SUCCESS_SERVER;
                 });
     }
 
     protected static void fillEmptyCauldron(Level level, BlockPos pos, Player player, InteractionHand hand, ItemStack filledStack, BlockState state, SoundEvent soundEvent) {
         if (CommonConfig.Debug.disableIceOrSnowCauldron.get()) return;
-        if (!level.isClientSide) {
+        if (!level.isClientSide()) {
             filledStack.consume(1, player);
             player.awardStat(Stats.FILL_CAULDRON);
             player.awardStat(Stats.ITEM_USED.get(filledStack.getItem()));

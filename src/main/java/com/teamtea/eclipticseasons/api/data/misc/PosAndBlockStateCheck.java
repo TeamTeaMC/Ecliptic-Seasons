@@ -2,7 +2,7 @@ package com.teamtea.eclipticseasons.api.data.misc;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.advancements.critereon.BlockPredicate;
+import net.minecraft.advancements.criterion.BlockPredicate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
 import net.minecraft.server.level.ServerLevel;

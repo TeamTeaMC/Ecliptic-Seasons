@@ -2,7 +2,10 @@
 	"credit": "Made by Joe Vettek",
     "textures": {
 		"0": "eclipticseasons:block/snow_overlay_leaves",
-		"1": "block/snow",
+		"1": {
+			"force_translucent": true,
+			"sprite": "minecraft:block/snow"
+		},
 		"particle": "eclipticseasons:block/snow_overlay_leaves"
 	},
 	"elements": [

@@ -1,0 +1,810 @@
+{
+  "clock": "minecraft:overworld",
+  "period_ticks": 4032000,
+  "tracks": {
+    "eclipticseasons:seasonal_world": {
+      "keyframes": [
+        {
+          "ticks": 0,
+          "value": true
+        }
+      ]
+    },
+    "eclipticseasons:solar_day": {
+      "keyframes": [
+        {
+          "ticks": 1,
+          "value": 0
+        },
+        {
+          "ticks": 24001,
+          "value": 1
+        },
+        {
+          "ticks": 48001,
+          "value": 2
+        },
+        {
+          "ticks": 72001,
+          "value": 3
+        },
+        {
+          "ticks": 96001,
+          "value": 4
+        },
+        {
+          "ticks": 120001,
+          "value": 5
+        },
+        {
+          "ticks": 144001,
+          "value": 6
+        },
+        {
+          "ticks": 168001,
+          "value": 7
+        },
+        {
+          "ticks": 192001,
+          "value": 8
+        },
+        {
+          "ticks": 216001,
+          "value": 9
+        },
+        {
+          "ticks": 240001,
+          "value": 10
+        },
+        {
+          "ticks": 264001,
+          "value": 11
+        },
+        {
+          "ticks": 288001,
+          "value": 12
+        },
+        {
+          "ticks": 312001,
+          "value": 13
+        },
+        {
+          "ticks": 336001,
+          "value": 14
+        },
+        {
+          "ticks": 360001,
+          "value": 15
+        },
+        {
+          "ticks": 384001,
+          "value": 16
+        },
+        {
+          "ticks": 408001,
+          "value": 17
+        },
+        {
+          "ticks": 432001,
+          "value": 18
+        },
+        {
+          "ticks": 456001,
+          "value": 19
+        },
+        {
+          "ticks": 480001,
+          "value": 20
+        },
+        {
+          "ticks": 504001,
+          "value": 21
+        },
+        {
+          "ticks": 528001,
+          "value": 22
+        },
+        {
+          "ticks": 552001,
+          "value": 23
+        },
+        {
+          "ticks": 576001,
+          "value": 24
+        },
+        {
+          "ticks": 600001,
+          "value": 25
+        },
+        {
+          "ticks": 624001,
+          "value": 26
+        },
+        {
+          "ticks": 648001,
+          "value": 27
+        },
+        {
+          "ticks": 672001,
+          "value": 28
+        },
+        {
+          "ticks": 696001,
+          "value": 29
+        },
+        {
+          "ticks": 720001,
+          "value": 30
+        },
+        {
+          "ticks": 744001,
+          "value": 31
+        },
+        {
+          "ticks": 768001,
+          "value": 32
+        },
+        {
+          "ticks": 792001,
+          "value": 33
+        },
+        {
+          "ticks": 816001,
+          "value": 34
+        },
+        {
+          "ticks": 840001,
+          "value": 35
+        },
+        {
+          "ticks": 864001,
+          "value": 36
+        },
+        {
+          "ticks": 888001,
+          "value": 37
+        },
+        {
+          "ticks": 912001,
+          "value": 38
+        },
+        {
+          "ticks": 936001,
+          "value": 39
+        },
+        {
+          "ticks": 960001,
+          "value": 40
+        },
+        {
+          "ticks": 984001,
+          "value": 41
+        },
+        {
+          "ticks": 1008001,
+          "value": 42
+        },
+        {
+          "ticks": 1032001,
+          "value": 43
+        },
+        {
+          "ticks": 1056001,
+          "value": 44
+        },
+        {
+          "ticks": 1080001,
+          "value": 45
+        },
+        {
+          "ticks": 1104001,
+          "value": 46
+        },
+        {
+          "ticks": 1128001,
+          "value": 47
+        },
+        {
+          "ticks": 1152001,
+          "value": 48
+        },
+        {
+          "ticks": 1176001,
+          "value": 49
+        },
+        {
+          "ticks": 1200001,
+          "value": 50
+        },
+        {
+          "ticks": 1224001,
+          "value": 51
+        },
+        {
+          "ticks": 1248001,
+          "value": 52
+        },
+        {
+          "ticks": 1272001,
+          "value": 53
+        },
+        {
+          "ticks": 1296001,
+          "value": 54
+        },
+        {
+          "ticks": 1320001,
+          "value": 55
+        },
+        {
+          "ticks": 1344001,
+          "value": 56
+        },
+        {
+          "ticks": 1368001,
+          "value": 57
+        },
+        {
+          "ticks": 1392001,
+          "value": 58
+        },
+        {
+          "ticks": 1416001,
+          "value": 59
+        },
+        {
+          "ticks": 1440001,
+          "value": 60
+        },
+        {
+          "ticks": 1464001,
+          "value": 61
+        },
+        {
+          "ticks": 1488001,
+          "value": 62
+        },
+        {
+          "ticks": 1512001,
+          "value": 63
+        },
+        {
+          "ticks": 1536001,
+          "value": 64
+        },
+        {
+          "ticks": 1560001,
+          "value": 65
+        },
+        {
+          "ticks": 1584001,
+          "value": 66
+        },
+        {
+          "ticks": 1608001,
+          "value": 67
+        },
+        {
+          "ticks": 1632001,
+          "value": 68
+        },
+        {
+          "ticks": 1656001,
+          "value": 69
+        },
+        {
+          "ticks": 1680001,
+          "value": 70
+        },
+        {
+          "ticks": 1704001,
+          "value": 71
+        },
+        {
+          "ticks": 1728001,
+          "value": 72
+        },
+        {
+          "ticks": 1752001,
+          "value": 73
+        },
+        {
+          "ticks": 1776001,
+          "value": 74
+        },
+        {
+          "ticks": 1800001,
+          "value": 75
+        },
+        {
+          "ticks": 1824001,
+          "value": 76
+        },
+        {
+          "ticks": 1848001,
+          "value": 77
+        },
+        {
+          "ticks": 1872001,
+          "value": 78
+        },
+        {
+          "ticks": 1896001,
+          "value": 79
+        },
+        {
+          "ticks": 1920001,
+          "value": 80
+        },
+        {
+          "ticks": 1944001,
+          "value": 81
+        },
+        {
+          "ticks": 1968001,
+          "value": 82
+        },
+        {
+          "ticks": 1992001,
+          "value": 83
+        },
+        {
+          "ticks": 2016001,
+          "value": 84
+        },
+        {
+          "ticks": 2040001,
+          "value": 85
+        },
+        {
+          "ticks": 2064001,
+          "value": 86
+        },
+        {
+          "ticks": 2088001,
+          "value": 87
+        },
+        {
+          "ticks": 2112001,
+          "value": 88
+        },
+        {
+          "ticks": 2136001,
+          "value": 89
+        },
+        {
+          "ticks": 2160001,
+          "value": 90
+        },
+        {
+          "ticks": 2184001,
+          "value": 91
+        },
+        {
+          "ticks": 2208001,
+          "value": 92
+        },
+        {
+          "ticks": 2232001,
+          "value": 93
+        },
+        {
+          "ticks": 2256001,
+          "value": 94
+        },
+        {
+          "ticks": 2280001,
+          "value": 95
+        },
+        {
+          "ticks": 2304001,
+          "value": 96
+        },
+        {
+          "ticks": 2328001,
+          "value": 97
+        },
+        {
+          "ticks": 2352001,
+          "value": 98
+        },
+        {
+          "ticks": 2376001,
+          "value": 99
+        },
+        {
+          "ticks": 2400001,
+          "value": 100
+        },
+        {
+          "ticks": 2424001,
+          "value": 101
+        },
+        {
+          "ticks": 2448001,
+          "value": 102
+        },
+        {
+          "ticks": 2472001,
+          "value": 103
+        },
+        {
+          "ticks": 2496001,
+          "value": 104
+        },
+        {
+          "ticks": 2520001,
+          "value": 105
+        },
+        {
+          "ticks": 2544001,
+          "value": 106
+        },
+        {
+          "ticks": 2568001,
+          "value": 107
+        },
+        {
+          "ticks": 2592001,
+          "value": 108
+        },
+        {
+          "ticks": 2616001,
+          "value": 109
+        },
+        {
+          "ticks": 2640001,
+          "value": 110
+        },
+        {
+          "ticks": 2664001,
+          "value": 111
+        },
+        {
+          "ticks": 2688001,
+          "value": 112
+        },
+        {
+          "ticks": 2712001,
+          "value": 113
+        },
+        {
+          "ticks": 2736001,
+          "value": 114
+        },
+        {
+          "ticks": 2760001,
+          "value": 115
+        },
+        {
+          "ticks": 2784001,
+          "value": 116
+        },
+        {
+          "ticks": 2808001,
+          "value": 117
+        },
+        {
+          "ticks": 2832001,
+          "value": 118
+        },
+        {
+          "ticks": 2856001,
+          "value": 119
+        },
+        {
+          "ticks": 2880001,
+          "value": 120
+        },
+        {
+          "ticks": 2904001,
+          "value": 121
+        },
+        {
+          "ticks": 2928001,
+          "value": 122
+        },
+        {
+          "ticks": 2952001,
+          "value": 123
+        },
+        {
+          "ticks": 2976001,
+          "value": 124
+        },
+        {
+          "ticks": 3000001,
+          "value": 125
+        },
+        {
+          "ticks": 3024001,
+          "value": 126
+        },
+        {
+          "ticks": 3048001,
+          "value": 127
+        },
+        {
+          "ticks": 3072001,
+          "value": 128
+        },
+        {
+          "ticks": 3096001,
+          "value": 129
+        },
+        {
+          "ticks": 3120001,
+          "value": 130
+        },
+        {
+          "ticks": 3144001,
+          "value": 131
+        },
+        {
+          "ticks": 3168001,
+          "value": 132
+        },
+        {
+          "ticks": 3192001,
+          "value": 133
+        },
+        {
+          "ticks": 3216001,
+          "value": 134
+        },
+        {
+          "ticks": 3240001,
+          "value": 135
+        },
+        {
+          "ticks": 3264001,
+          "value": 136
+        },
+        {
+          "ticks": 3288001,
+          "value": 137
+        },
+        {
+          "ticks": 3312001,
+          "value": 138
+        },
+        {
+          "ticks": 3336001,
+          "value": 139
+        },
+        {
+          "ticks": 3360001,
+          "value": 140
+        },
+        {
+          "ticks": 3384001,
+          "value": 141
+        },
+        {
+          "ticks": 3408001,
+          "value": 142
+        },
+        {
+          "ticks": 3432001,
+          "value": 143
+        },
+        {
+          "ticks": 3456001,
+          "value": 144
+        },
+        {
+          "ticks": 3480001,
+          "value": 145
+        },
+        {
+          "ticks": 3504001,
+          "value": 146
+        },
+        {
+          "ticks": 3528001,
+          "value": 147
+        },
+        {
+          "ticks": 3552001,
+          "value": 148
+        },
+        {
+          "ticks": 3576001,
+          "value": 149
+        },
+        {
+          "ticks": 3600001,
+          "value": 150
+        },
+        {
+          "ticks": 3624001,
+          "value": 151
+        },
+        {
+          "ticks": 3648001,
+          "value": 152
+        },
+        {
+          "ticks": 3672001,
+          "value": 153
+        },
+        {
+          "ticks": 3696001,
+          "value": 154
+        },
+        {
+          "ticks": 3720001,
+          "value": 155
+        },
+        {
+          "ticks": 3744001,
+          "value": 156
+        },
+        {
+          "ticks": 3768001,
+          "value": 157
+        },
+        {
+          "ticks": 3792001,
+          "value": 158
+        },
+        {
+          "ticks": 3816001,
+          "value": 159
+        },
+        {
+          "ticks": 3840001,
+          "value": 160
+        },
+        {
+          "ticks": 3864001,
+          "value": 161
+        },
+        {
+          "ticks": 3888001,
+          "value": 162
+        },
+        {
+          "ticks": 3912001,
+          "value": 163
+        },
+        {
+          "ticks": 3936001,
+          "value": 164
+        },
+        {
+          "ticks": 3960001,
+          "value": 165
+        },
+        {
+          "ticks": 3984001,
+          "value": 166
+        },
+        {
+          "ticks": 4008001,
+          "value": 167
+        }
+      ]
+    },
+    "eclipticseasons:solar_term": {
+      "keyframes": [
+        {
+          "ticks": 1,
+          "value": "beginning_of_spring"
+        },
+        {
+          "ticks": 168001,
+          "value": "rain_water"
+        },
+        {
+          "ticks": 336001,
+          "value": "insects_awakening"
+        },
+        {
+          "ticks": 504001,
+          "value": "spring_equinox"
+        },
+        {
+          "ticks": 672001,
+          "value": "fresh_green"
+        },
+        {
+          "ticks": 840001,
+          "value": "grain_rain"
+        },
+        {
+          "ticks": 1008001,
+          "value": "beginning_of_summer"
+        },
+        {
+          "ticks": 1176001,
+          "value": "lesser_fullness"
+        },
+        {
+          "ticks": 1344001,
+          "value": "grain_in_ear"
+        },
+        {
+          "ticks": 1512001,
+          "value": "summer_solstice"
+        },
+        {
+          "ticks": 1680001,
+          "value": "lesser_heat"
+        },
+        {
+          "ticks": 1848001,
+          "value": "greater_heat"
+        },
+        {
+          "ticks": 2016001,
+          "value": "beginning_of_autumn"
+        },
+        {
+          "ticks": 2184001,
+          "value": "end_of_heat"
+        },
+        {
+          "ticks": 2352001,
+          "value": "white_dew"
+        },
+        {
+          "ticks": 2520001,
+          "value": "autumnal_equinox"
+        },
+        {
+          "ticks": 2688001,
+          "value": "cold_dew"
+        },
+        {
+          "ticks": 2856001,
+          "value": "first_frost"
+        },
+        {
+          "ticks": 3024001,
+          "value": "beginning_of_winter"
+        },
+        {
+          "ticks": 3192001,
+          "value": "light_snow"
+        },
+        {
+          "ticks": 3360001,
+          "value": "heavy_snow"
+        },
+        {
+          "ticks": 3528001,
+          "value": "winter_solstice"
+        },
+        {
+          "ticks": 3696001,
+          "value": "lesser_cold"
+        },
+        {
+          "ticks": 3864001,
+          "value": "greater_cold"
+        }
+      ]
+    },
+    "eclipticseasons:season": {
+      "keyframes": [
+        {
+          "ticks": 1,
+          "value": "spring"
+        },
+        {
+          "ticks": 1008001,
+          "value": "summer"
+        },
+        {
+          "ticks": 2016001,
+          "value": "autumn"
+        },
+        {
+          "ticks": 3024001,
+          "value": "winter"
+        }
+      ]
+    }
+  }
+}

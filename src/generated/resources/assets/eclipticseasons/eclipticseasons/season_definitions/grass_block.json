@@ -21,59 +21,59 @@
   },
   "slices": [
     {
-      "mid": "eclipticseasons:flower_on_grass_beginning_of_spring",
-      "solar_term": "beginning_of_spring"
+      "solar_term": "beginning_of_spring",
+      "mid": "eclipticseasons:flower_on_grass_beginning_of_spring"
     },
     {
-      "mid": "eclipticseasons:flower_on_grass_rain_water",
-      "solar_term": "rain_water"
+      "solar_term": "rain_water",
+      "mid": "eclipticseasons:flower_on_grass_rain_water"
     },
     {
-      "mid": "eclipticseasons:flower_on_grass_insects_awakening",
-      "solar_term": "insects_awakening"
+      "solar_term": "insects_awakening",
+      "mid": "eclipticseasons:flower_on_grass_insects_awakening"
     },
     {
-      "mid": "eclipticseasons:flower_on_grass_spring_equinox",
-      "solar_term": "spring_equinox"
+      "solar_term": "spring_equinox",
+      "mid": "eclipticseasons:flower_on_grass_spring_equinox"
     },
     {
-      "mid": "eclipticseasons:flower_on_grass_fresh_green",
-      "solar_term": "fresh_green"
+      "solar_term": "fresh_green",
+      "mid": "eclipticseasons:flower_on_grass_fresh_green"
     },
     {
-      "mid": "eclipticseasons:flower_on_grass_grain_rain",
-      "solar_term": "grain_rain"
+      "solar_term": "grain_rain",
+      "mid": "eclipticseasons:flower_on_grass_grain_rain"
     },
     {
-      "mid": "eclipticseasons:fourleaf_clovers_lesser_fullness",
-      "solar_term": "lesser_fullness"
+      "solar_term": "lesser_fullness",
+      "mid": "eclipticseasons:fourleaf_clovers_lesser_fullness"
     },
     {
-      "mid": "eclipticseasons:fourleaf_clovers_grain_in_ear",
-      "solar_term": "grain_in_ear"
+      "solar_term": "grain_in_ear",
+      "mid": "eclipticseasons:fourleaf_clovers_grain_in_ear"
     },
     {
-      "mid": "eclipticseasons:fourleaf_clovers_summer_solstice",
-      "solar_term": "summer_solstice"
+      "solar_term": "summer_solstice",
+      "mid": "eclipticseasons:fourleaf_clovers_summer_solstice"
     },
     {
-      "mid": "eclipticseasons:fourleaf_clovers_lesser_heat",
-      "solar_term": "lesser_heat"
+      "solar_term": "lesser_heat",
+      "mid": "eclipticseasons:fourleaf_clovers_lesser_heat"
     },
     {
-      "mid": "eclipticseasons:fourleaf_clovers_greater_heat",
-      "solar_term": "greater_heat"
+      "solar_term": "greater_heat",
+      "mid": "eclipticseasons:fourleaf_clovers_greater_heat"
     },
     {
-      "mid": "eclipticseasons:fourleaf_clovers_beginning_of_autumn",
-      "solar_term": "beginning_of_autumn"
+      "solar_term": "beginning_of_autumn",
+      "mid": "eclipticseasons:fourleaf_clovers_beginning_of_autumn"
     },
     {
+      "solar_term": "beginning_of_summer",
       "transition_models": [
         "eclipticseasons:flower_on_grass_beginning_of_summer",
         "eclipticseasons:fourleaf_clovers_beginning_of_summer"
-      ],
-      "solar_term": "beginning_of_summer"
+      ]
     }
   ]
 }

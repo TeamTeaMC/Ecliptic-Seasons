@@ -8,7 +8,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import org.jetbrains.annotations.NotNull;
@@ -31,7 +31,7 @@ public class SnowDefinitionsRegistry {
     }
 
     private static ResourceKey<SnowDefinition> createKey(Block block) {
-        return ResourceKey.create(ESRegistries.SNOW_DEFINITIONS, EclipticSeasons.rl("snowy_" + block.builtInRegistryHolder().key().location().getPath()));
+        return ResourceKey.create(ESRegistries.SNOW_DEFINITIONS, EclipticSeasons.rl("snowy_" + block.builtInRegistryHolder().key().identifier().getPath()));
     }
 
     public static void bootstrap2(BootstrapContext<SnowDefinition> context) {
@@ -94,19 +94,19 @@ public class SnowDefinitionsRegistry {
     }
 
     public static @NotNull String path(Block block) {
-        return block.builtInRegistryHolder().key().location().getPath();
+        return block.builtInRegistryHolder().key().identifier().getPath();
     }
 
-    public static @NotNull ResourceLocation getSnowModelPath(String path) {
+    public static @NotNull Identifier getSnowModelPath(String path) {
         return EclipticSeasons.rl("snowy/" + path);
     }
 
-    public static @NotNull ResourceLocation getSnowModelPath(Block block) {
+    public static @NotNull Identifier getSnowModelPath(Block block) {
         return EclipticSeasons.rl("snowy/" + path(block));
     }
 
-    public static @NotNull ResourceLocation getSnowModelPath(String modid, Block block) {
-        return ResourceLocation.fromNamespaceAndPath(modid, "snowy/" + path(block));
+    public static @NotNull Identifier getSnowModelPath(String modid, Block block) {
+        return Identifier.fromNamespaceAndPath(modid, "snowy/" + path(block));
     }
 
     public static void bootstrap_extra(BootstrapContext<SnowDefinition> context) {

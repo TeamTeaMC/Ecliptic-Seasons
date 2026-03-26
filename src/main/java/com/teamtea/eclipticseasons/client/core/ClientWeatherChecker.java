@@ -255,9 +255,9 @@ public class ClientWeatherChecker {
         // return pPitch;
     }
 
-    public static int modifyRainAmount(int originalNum, Level level) {
+    public static float modifyRainAmount(float originalNum, Level level) {
         if (level == null) return originalNum;
-        return (int) (originalNum * level.getRainLevel(1.0f) * 0.6f);
+        return  (originalNum  * 0.6f);
     }
 
     public static void unloadLevel(Level clientLevel) {
@@ -271,6 +271,12 @@ public class ClientWeatherChecker {
         updateRainLevel(clientLevel);
         updateThunderLevel(clientLevel);
         tickLastRainyBiome(clientLevel);
+
+        tickSolarAngle(clientLevel);
+    }
+
+    public static void tickSolarAngle(Level clientLevel) {
+        // clientLevel.environmentAttributes().
     }
 
     public static void addLastRainyBiome(Biome biome, long gameTime) {

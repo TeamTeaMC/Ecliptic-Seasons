@@ -10,13 +10,12 @@ import com.teamtea.eclipticseasons.common.core.map.SnowyRemover;
 import com.teamtea.eclipticseasons.common.core.snow.SnowyStatusHandler;
 import com.teamtea.eclipticseasons.common.core.snow.SnowyStatusKeeper;
 import com.teamtea.eclipticseasons.common.core.snow.WeatherStatusKeeper;
-import com.teamtea.eclipticseasons.common.item.attachment.ClickPos;
 import com.teamtea.eclipticseasons.common.misc.HeatStrokeTicker;
 import it.unimi.dsi.fastutil.objects.Object2IntLinkedOpenHashMap;
-import net.minecraft.core.BlockPos;
 import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Supplier;
 
@@ -49,11 +48,11 @@ public class AttachmentRegistry {
             "none_snow_area",
             () -> AttachmentType.builder(NoneSnowArea::empty)
                     .sync((a, b) -> !EclipticUtil.canSnowyBlockInteract(), NoneSnowArea.STREAM_CODEC)
-                    .serialize(new ESCommonSerializer<>(NoneSnowArea.CODEC, NoneSnowArea::empty))
+                    .serialize(new ESCommonSerializer<>("none_snow_area", NoneSnowArea.CODEC, NoneSnowArea::empty))
                     .build());
 
 
-    public static final Supplier<AttachmentType<HeatStrokeTicker>> HEAT_STROKE_TICKER = ATTACHMENT_TYPES.register(
+    public static final Supplier<AttachmentType<@NotNull HeatStrokeTicker>> HEAT_STROKE_TICKER = ATTACHMENT_TYPES.register(
             "heat_stroke_ticker",
             () -> AttachmentType.builder(HeatStrokeTicker::empty)
                     .build());

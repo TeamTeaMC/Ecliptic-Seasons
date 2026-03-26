@@ -2,13 +2,14 @@ package com.teamtea.eclipticseasons.client.render.chunk;
 
 import com.teamtea.eclipticseasons.api.misc.client.IMapSlice;
 import com.teamtea.eclipticseasons.client.core.ExtraModelManager;
+import com.teamtea.eclipticseasons.client.core.ExtraRenderDispatcher;
 import com.teamtea.eclipticseasons.client.render.WorldRenderer;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.config.ClientConfig;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
-import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.SectionPos;
@@ -16,7 +17,7 @@ import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SimpleWaterloggedBlock;
@@ -39,12 +40,12 @@ public class IceKeeper {
         if (MapChecker.getHeight(level, blockPos) != blockPos.getY()) return;
         BlockState water = Blocks.WATER.defaultBlockState();
         if (water.getBlock() instanceof SimpleWaterloggedBlock) return;
-        if (!ExtraModelManager.maySnowyAt(level, null, water, blockPos, level.getRandom(), water.getSeed(blockPos)))
+        if (!ExtraRenderDispatcher.maySnowyAt(level, null, water, blockPos, level.getRandom(), water.getSeed(blockPos)))
             return;
 
         if (!ICE_SHOULD_BE_IGNORED.contains(blockPos.asLong())) {
             BlockPos above = blockPos.above();
-            if (ClientConfig.Debug.frozenWaterCheckLight.get() && !ExtraModelManager.notTooBright(level, null, blockPos))
+            if (ClientConfig.Debug.frozenWaterCheckLight.get() && !ExtraRenderDispatcher.notTooBright(level, null, blockPos))
                 return;
             ICE_SHOULD_BE_IGNORED.add(blockPos.asLong());
             try {
@@ -87,15 +88,16 @@ public class IceKeeper {
         if (blockState.getBlock() instanceof SimpleWaterloggedBlock) return true;
         if (!(worldSlice instanceof IMapSlice mapSlice)) return true;
         if (mapSlice.getBlockHeight(blockPos) != blockPos.getY()) return true;
-        if (!ExtraModelManager.maySnowyAt(ClientCon.getUseLevel(), mapSlice, blockState, blockPos, null, blockState.getSeed(blockPos)))
+        if (!ExtraRenderDispatcher.maySnowyAt(ClientCon.getUseLevel(), mapSlice, blockState, blockPos, null, blockState.getSeed(blockPos)))
             return true;
-        if (ClientConfig.Debug.frozenWaterCheckLight.get() && !ExtraModelManager.notTooBright(worldSlice, mapSlice, blockPos))
+        if (ClientConfig.Debug.frozenWaterCheckLight.get() && !ExtraRenderDispatcher.notTooBright(worldSlice, mapSlice, blockPos))
             return true;
         return ClientConfig.Debug.frozenWaterBreakable.get() && ICE_SHOULD_BE_IGNORED.contains(blockPos.asLong());
     }
 
-    public static BakedModel getIceModel(BlockState state, FluidState fluidState) {
-        return ExtraModelManager.models.get(ExtraModelManager.ice);
+    public static BlockStateModel getIceModel(BlockState state, FluidState fluidState) {
+        //return ExtraModelManager.models.get(ExtraModelManager.ice);
+        return ExtraModelManager.models.standaloneModels().get(ExtraModelManager.ice);
     }
 
     public static BlockState getFakeState(BlockState state, FluidState fluidState) {

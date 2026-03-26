@@ -13,11 +13,9 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.InsideBlockEffectApplier;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.*;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -52,12 +50,11 @@ public class WindChimesBlock extends SimpleHorizontalEntityBlock {
     }
 
     @Override
-    protected BlockState updateShape(BlockState pState, Direction pDirection, BlockState pNeighborState, LevelAccessor pLevel, BlockPos pPos, BlockPos pNeighborPos) {
-        if (pDirection == Direction.UP && pNeighborState.isAir())
+    protected BlockState updateShape(BlockState state, LevelReader level, ScheduledTickAccess ticks, BlockPos pos, Direction directionToNeighbour, BlockPos neighbourPos, BlockState neighbourState, RandomSource random) {
+        if (directionToNeighbour == Direction.UP && neighbourState.isAir())
             return Blocks.AIR.defaultBlockState();
-        return super.updateShape(pState, pDirection, pNeighborState, pLevel, pPos, pNeighborPos);
+        return super.updateShape(state, level, ticks, pos, directionToNeighbour, neighbourPos, neighbourState, random);
     }
-
 
     @Override
     public @Nullable BlockEntity newBlockEntity(BlockPos pPos, BlockState pState) {
@@ -66,7 +63,7 @@ public class WindChimesBlock extends SimpleHorizontalEntityBlock {
 
     @Override
     public RenderShape getRenderShape(BlockState state) {
-        return RenderShape.ENTITYBLOCK_ANIMATED;
+        return RenderShape.MODEL;
     }
 
     @Override
@@ -81,8 +78,8 @@ public class WindChimesBlock extends SimpleHorizontalEntityBlock {
     }
 
     @Override
-    protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
-        super.entityInside(state, level, pos, entity);
+    protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity, InsideBlockEffectApplier effectApplier, boolean isPrecise) {
+        super.entityInside(state, level, pos, entity, effectApplier, isPrecise);
         if (entity instanceof LivingEntity livingEntity) {
             Vec3 deltaMovement = livingEntity.getDeltaMovement();
             Direction facing = state.getValue(FACING);
@@ -96,6 +93,7 @@ public class WindChimesBlock extends SimpleHorizontalEntityBlock {
             }
         }
     }
+
 
     // @Override
     // public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {

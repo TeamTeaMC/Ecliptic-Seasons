@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "group": "greenhouse_core_frame",
+  "key": {
+    "x": "#c:glass_blocks/tinted",
+    "z": "#c:ingots/copper"
+  },
+  "pattern": [
+    "zxz",
+    "x x",
+    "zxz"
+  ],
+  "result": {
+    "id": "eclipticseasons:greenhouse_core_container"
+  }
+}

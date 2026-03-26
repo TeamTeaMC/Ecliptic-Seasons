@@ -6,7 +6,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.teamtea.eclipticseasons.common.game.AnimalHooks;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.entity.animal.Bee;
+import net.minecraft.world.entity.animal.bee.Bee;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
 
@@ -25,7 +25,7 @@ public class MixinBee_BeePollinateGoal {
     private int eclipticseasons$season_checkTime = 0;
 
 
-    @WrapOperation(at = {@At(value = "INVOKE", target = "Lnet/minecraft/world/entity/animal/Bee$BeePollinateGoal;findNearbyFlower()Ljava/util/Optional;")}, method = {"canBeeUse"})
+    @WrapOperation(at = {@At(value = "INVOKE", target = "Lnet/minecraft/world/entity/animal/bee/Bee$BeePollinateGoal;findNearbyFlower()Ljava/util/Optional;")}, method = {"canBeeUse"})
     public Optional<BlockPos> eclipticseasons$canBeeUse(Bee.BeePollinateGoal instance, Operation<Optional<BlockPos>> original) {
         if (eclipticseasons$season_checkTime >= 0) {
             eclipticseasons$season_checkTime--;

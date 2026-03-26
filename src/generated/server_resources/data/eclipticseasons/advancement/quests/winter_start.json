@@ -1,0 +1,33 @@
+{
+  "parent": "eclipticseasons:main/quest",
+  "criteria": {
+    "core_require": {
+      "conditions": {
+        "items": [
+          {
+            "items": "eclipticseasons:broom"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancement.eclipticseasons.winter_start.desc"
+    },
+    "icon": {
+      "id": "eclipticseasons:broom"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "advancement.eclipticseasons.winter_start"
+    }
+  },
+  "requirements": [
+    [
+      "core_require"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

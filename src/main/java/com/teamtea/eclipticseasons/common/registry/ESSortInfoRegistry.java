@@ -5,7 +5,7 @@ import com.teamtea.eclipticseasons.api.data.misc.ESSortInfo;
 import net.minecraft.core.Registry;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -14,11 +14,11 @@ import java.util.List;
 public class ESSortInfoRegistry {
 
     private static ResourceKey<ESSortInfo> createKey(ResourceKey<? extends Registry<?>> name) {
-        return ResourceKey.create(ESRegistries.EXTRA_INFO, name.location());
+        return ResourceKey.create(ESRegistries.EXTRA_INFO, name.identifier());
     }
 
-    public static List<ResourceLocation> getAllKeys(Class<?> classType) {
-        List<ResourceLocation> keys = new ArrayList<>();
+    public static List<Identifier> getAllKeys(Class<?> classType) {
+        List<Identifier> keys = new ArrayList<>();
         try {
             for (Field field : classType.getDeclaredFields()) {
                 if (java.lang.reflect.Modifier.isStatic(field.getModifiers())
@@ -26,7 +26,7 @@ public class ESSortInfoRegistry {
                         && ResourceKey.class.isAssignableFrom(field.getType())) {
                     Object value = field.get(null);
                     if (value instanceof ResourceKey<?> key) {
-                        keys.add(key.location());
+                        keys.add(key.identifier());
                     }
                 }
             }
@@ -48,7 +48,7 @@ public class ESSortInfoRegistry {
     private static void add(BootstrapContext<ESSortInfo> context, ResourceKey<? extends Registry<?>> name, Class<?> classType) {
         context.register(createKey(name),
                 new ESSortInfo(
-                        name.location(),
+                        name.identifier(),
                         getAllKeys(classType),
                         800,
                         false

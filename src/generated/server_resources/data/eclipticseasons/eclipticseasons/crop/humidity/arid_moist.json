@@ -1,0 +1,24 @@
+{
+  "humidity": {
+    "arid": {
+      "grow_chance": 0.9
+    },
+    "dry": {
+      "grow_chance": 0.97
+    },
+    "average": {
+      "grow_chance": 1.025
+    },
+    "moist": {
+      "grow_chance": 0.9
+    },
+    "humid": {
+      "grow_chance": 0.35
+    }
+  },
+  "climate": "#eclipticseasons:all",
+  "parent": [],
+  "apply_target": {
+    "blocks": "#eclipticseasons:crops/arid_moist"
+  }
+}

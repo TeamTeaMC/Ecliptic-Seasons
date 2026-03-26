@@ -1,0 +1,82 @@
+{
+  "solar_terms": {
+    "beginning_of_spring": {
+      "grow_chance": 0.5
+    },
+    "rain_water": {
+      "grow_chance": 0.6
+    },
+    "insects_awakening": {
+      "grow_chance": 0.7
+    },
+    "spring_equinox": {
+      "grow_chance": 0.9
+    },
+    "fresh_green": {
+      "grow_chance": 0.95
+    },
+    "grain_rain": {
+      "grow_chance": 0.85
+    },
+    "beginning_of_summer": {
+      "grow_chance": 0.9
+    },
+    "lesser_fullness": {
+      "grow_chance": 1.01
+    },
+    "grain_in_ear": {
+      "grow_chance": 1.025
+    },
+    "summer_solstice": {},
+    "lesser_heat": {
+      "grow_chance": 0.8
+    },
+    "greater_heat": {
+      "grow_chance": 0.7
+    },
+    "beginning_of_autumn": {
+      "grow_chance": 0.2
+    },
+    "end_of_heat": {
+      "grow_chance": 0.2
+    },
+    "white_dew": {
+      "grow_chance": 0.1
+    },
+    "autumnal_equinox": {
+      "grow_chance": 0.05
+    },
+    "cold_dew": {
+      "grow_chance": 0.05
+    },
+    "first_frost": {
+      "grow_chance": 0.05
+    },
+    "beginning_of_winter": {
+      "grow_chance": 0.05
+    },
+    "light_snow": {
+      "grow_chance": 0.0
+    },
+    "heavy_snow": {
+      "grow_chance": 0.0
+    },
+    "winter_solstice": {
+      "grow_chance": 0.0
+    },
+    "lesser_cold": {
+      "grow_chance": 0.0
+    },
+    "greater_cold": {
+      "grow_chance": 0.0
+    }
+  },
+  "climate": "eclipticseasons:temperate",
+  "unlike_greenhouse_material": {
+    "blocks": "#minecraft:ice"
+  },
+  "parent": [],
+  "apply_target": {
+    "blocks": "#eclipticseasons:crops/spring_summer"
+  }
+}

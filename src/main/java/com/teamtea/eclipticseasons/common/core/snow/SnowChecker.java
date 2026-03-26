@@ -5,6 +5,7 @@ import com.teamtea.eclipticseasons.api.data.misc.ESSortInfo;
 import com.teamtea.eclipticseasons.api.data.season.SnowDefinition;
 import com.teamtea.eclipticseasons.api.util.SimpleUtil;
 import com.teamtea.eclipticseasons.common.registry.ESRegistries;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.world.level.block.Block;
@@ -59,9 +60,9 @@ public class SnowChecker {
 
     // we don't care if we are in a server or client mode now, because block is not syncable
     // there keeps only one copy of block registry in the process
-    public static void resetUpdate(RegistryAccess registryAccess, boolean isServer) {
+    public static void resetUpdate(HolderLookup.Provider registryAccess, boolean isServer) {
         statemap.clear();
-        Optional<Registry<SnowDefinition>> snowDefinitions = registryAccess.registry(ESRegistries.SNOW_DEFINITIONS);
+        var snowDefinitions = registryAccess.lookup(ESRegistries.SNOW_DEFINITIONS);
         if (snowDefinitions.isEmpty()) {
             SimpleUtil.warningForModWrongCalling(ESRegistries.SNOW_DEFINITIONS);
         } else {

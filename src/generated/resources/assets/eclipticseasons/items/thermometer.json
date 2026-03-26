@@ -1,0 +1,52 @@
+{
+  "model": {
+    "type": "minecraft:range_dispatch",
+    "entries": [
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "eclipticseasons:item/thermometer_stage_1"
+        },
+        "threshold": 0.2
+      },
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "eclipticseasons:item/thermometer_stage_2"
+        },
+        "threshold": 0.4
+      },
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "eclipticseasons:item/thermometer_stage_3"
+        },
+        "threshold": 0.6
+      },
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "eclipticseasons:item/thermometer_stage_4"
+        },
+        "threshold": 0.8
+      },
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "eclipticseasons:item/thermometer_stage_5"
+        },
+        "threshold": 1.0
+      },
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "eclipticseasons:item/thermometer_stage_0"
+        },
+        "threshold": 0.0
+      }
+    ],
+    "max_length": 6.0,
+    "property": "eclipticseasons:meter",
+    "query": "thermometer"
+  }
+}

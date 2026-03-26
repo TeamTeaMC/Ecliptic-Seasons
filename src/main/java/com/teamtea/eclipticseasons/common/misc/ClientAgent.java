@@ -3,7 +3,7 @@ package com.teamtea.eclipticseasons.common.misc;
 import com.teamtea.eclipticseasons.common.block.blockentity.WindChimesBlockEntity;
 import net.minecraft.core.SectionPos;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.HitResult;
 
 import javax.annotation.Nullable;
@@ -41,4 +41,11 @@ public interface ClientAgent {
     default String getCurrentWorldName() {
         return "world";
     }
+
+    default int getSkyFlashTime(Level level) {
+        return 0;
+    }
+
+    ClientAgent EMPTY = new ClientAgent() {
+    };
 }

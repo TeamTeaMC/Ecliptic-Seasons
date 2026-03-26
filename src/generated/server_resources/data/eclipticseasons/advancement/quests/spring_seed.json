@@ -1,0 +1,42 @@
+{
+  "parent": "eclipticseasons:quests/spring_feed",
+  "criteria": {
+    "core_require": {
+      "conditions": {
+        "items": [
+          {
+            "items": "minecraft:wheat_seeds"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "parent_need": {
+      "conditions": {
+        "parent": "eclipticseasons:quests/spring_feed"
+      },
+      "trigger": "eclipticseasons:parent"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancement.eclipticseasons.spring_seed.desc"
+    },
+    "icon": {
+      "id": "minecraft:wheat_seeds"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "advancement.eclipticseasons.spring_seed"
+    }
+  },
+  "requirements": [
+    [
+      "parent_need"
+    ],
+    [
+      "core_require"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

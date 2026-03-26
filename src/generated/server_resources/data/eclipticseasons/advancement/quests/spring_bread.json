@@ -1,0 +1,42 @@
+{
+  "parent": "eclipticseasons:quests/spring_seed",
+  "criteria": {
+    "core_require": {
+      "conditions": {
+        "items": [
+          {
+            "items": "minecraft:bread"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "parent_need": {
+      "conditions": {
+        "parent": "eclipticseasons:quests/spring_seed"
+      },
+      "trigger": "eclipticseasons:parent"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancement.eclipticseasons.spring_bread.desc"
+    },
+    "icon": {
+      "id": "minecraft:bread"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "advancement.eclipticseasons.spring_bread"
+    }
+  },
+  "requirements": [
+    [
+      "parent_need"
+    ],
+    [
+      "core_require"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

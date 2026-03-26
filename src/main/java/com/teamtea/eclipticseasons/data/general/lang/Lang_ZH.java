@@ -4,12 +4,11 @@ package com.teamtea.eclipticseasons.data.general.lang;
 import com.teamtea.eclipticseasons.common.registry.*;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import net.minecraft.data.PackOutput;
-import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
 
 public class Lang_ZH extends LangHelper {
-    public Lang_ZH(PackOutput gen, ExistingFileHelper helper) {
-        super(gen, helper, EclipticSeasonsApi.MODID, "zh_cn");
+    public Lang_ZH(PackOutput gen) {
+        super(gen, EclipticSeasonsApi.MODID, "zh_cn");
     }
 
 
@@ -69,8 +68,8 @@ public class Lang_ZH extends LangHelper {
         add(ItemRegistry.snowless_hometown.get(), "无雪的故乡");
         add(SongRegistry.toLangKey(SongRegistry.SNOWLESS_HOMETOWN), "北山薇 & 橙子苏打 等");
 
-        add(BlockRegistry.snow_cauldron.get(),"装有雪的炼药锅");
-        add(BlockRegistry.ice_cauldron.get(),"装有冰块的炼药锅");
+        add(BlockRegistry.snow_cauldron.get(), "装有雪的炼药锅");
+        add(BlockRegistry.ice_cauldron.get(), "装有冰块的炼药锅");
 
 
         add("info.eclipticseasons.environment.temperature.under_freezing", "严寒");
@@ -471,8 +470,8 @@ public class Lang_ZH extends LangHelper {
 
         add("info.eclipticseasons.seasonal_prayer_scroll.use", "§7§o激活温室心室进行季节仪式，或者悬挂式告示牌为季节任务栏");
 
-        add("info.eclipticseasons.snow_cauldron.extraction","§7§o使用锹可以获取雪球");
-        add("info.eclipticseasons.ice_cauldron.extraction","§7§o使用镐可以获取冰块");
+        add("info.eclipticseasons.snow_cauldron.extraction", "§7§o使用锹可以获取雪球");
+        add("info.eclipticseasons.ice_cauldron.extraction", "§7§o使用镐可以获取冰块");
 
         add("pack.eclipticseasons.legacy_snowy_block", "经典覆雪方块模型资源包");
         add("pack.eclipticseasons.rain_together", "一起下雨");

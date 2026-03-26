@@ -1,6 +1,5 @@
 package com.teamtea.eclipticseasons.common.core.biome;
 
-import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.constant.climate.BiomeRain;
 import com.teamtea.eclipticseasons.api.constant.climate.FlatRain;
 import com.teamtea.eclipticseasons.api.constant.climate.MonsoonRain;
@@ -9,7 +8,8 @@ import com.teamtea.eclipticseasons.api.constant.climate.seasonal.ColdRain;
 import com.teamtea.eclipticseasons.api.constant.climate.seasonal.HotRain;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.data.weather.CustomRain;
-import net.minecraft.core.Registry;
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.world.level.biome.Biome;
 
 import javax.annotation.Nullable;
@@ -28,7 +28,7 @@ public class BiomeRainDispatcher {
 
     public static long hash_cache = 0;
 
-    public static void init(@Nullable Registry<Biome> biomeRegistry,
+    public static void init(@Nullable HolderLookup.RegistryLookup<Biome> biomeRegistry,
                             boolean isServer) {
         if (biomeRegistry == null) return;
         clearOnClientExitOrServerClose(isServer);
@@ -43,7 +43,7 @@ public class BiomeRainDispatcher {
         rains.addAll(Arrays.stream(TemperateRain.values()).toList());
 
 
-        for (Biome biome : biomeRegistry) {
+        for (Biome biome : biomeRegistry.listElements().map(Holder::value).toList()) {
             Map<SolarTerm, CustomRain> customRains = BiomeClimateManager.getCustomRain(biome, isServer);
             customRains.forEach((solarTerm, customRain) -> {
                 if (customRain != null) {

@@ -1,0 +1,6 @@
+{
+  "parent": "eclipticseasons:block/grass_flower",
+  "textures": {
+    "1": "eclipticseasons:block/grass_flower/flower_4"
+  }
+}

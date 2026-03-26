@@ -3,12 +3,10 @@ package com.teamtea.eclipticseasons.common.core.crop;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.neoforged.neoforge.common.util.INBTSerializable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnknownNullability;
 
-// TODO 距离衰减等级
-public final class HumidityControlProvider implements INBTSerializable<CompoundTag> {
+public final class HumidityControlProvider {
     private float range;
     private float level;
     private int remainTime;
@@ -57,8 +55,7 @@ public final class HumidityControlProvider implements INBTSerializable<CompoundT
         return save;
     }
 
-    @Override
-    public @UnknownNullability CompoundTag serializeNBT(HolderLookup.@NotNull Provider provider) {
+    public CompoundTag serializeNBT(HolderLookup.@NotNull Provider provider) {
         CompoundTag compoundTag = new CompoundTag();
         compoundTag.putInt("remain_time", getRemainTime());
         compoundTag.putFloat("range", getRange());
@@ -66,10 +63,9 @@ public final class HumidityControlProvider implements INBTSerializable<CompoundT
         return compoundTag;
     }
 
-    @Override
     public void deserializeNBT(HolderLookup.@NotNull Provider provider, CompoundTag nbt) {
-        this.remainTime = nbt.getInt("remain_time");
-        this.range = nbt.getFloat("range");
-        this.level = nbt.getFloat("level");
+        this.remainTime = nbt.getIntOr("remain_time", 0);
+        this.range = nbt.getFloatOr("range", 0);
+        this.level = nbt.getFloatOr("level", 0);
     }
 }

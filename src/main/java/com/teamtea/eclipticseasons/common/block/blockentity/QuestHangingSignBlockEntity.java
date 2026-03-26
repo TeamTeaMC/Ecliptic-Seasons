@@ -1,7 +1,5 @@
 package com.teamtea.eclipticseasons.common.block.blockentity;
 
-import com.mojang.serialization.DynamicOps;
-import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.data.climate.AgroClimaticZone;
 import com.teamtea.eclipticseasons.api.data.misc.ESSortInfo;
@@ -10,21 +8,16 @@ import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
 import com.teamtea.eclipticseasons.common.registry.BlockEntityRegistry;
 import com.teamtea.eclipticseasons.common.registry.ESRegistries;
-import net.minecraft.advancements.critereon.ItemPredicate;
-import net.minecraft.advancements.critereon.ItemSubPredicate;
+import net.minecraft.advancements.criterion.ItemPredicate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.HolderSet;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtOps;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -32,9 +25,9 @@ import net.minecraft.world.level.block.SignBlock;
 import net.minecraft.world.level.block.entity.SignBlockEntity;
 import net.minecraft.world.level.block.entity.SignText;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.client.model.data.ModelData;
-import net.neoforged.neoforge.client.model.data.ModelProperty;
-import net.neoforged.neoforge.items.ItemHandlerHelper;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.neoforged.neoforge.model.data.ModelData;
+import net.neoforged.neoforge.model.data.ModelProperty;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -54,10 +47,9 @@ public class QuestHangingSignBlockEntity extends SignBlockEntity {
         super(BlockEntityRegistry.season_quest_hanging_sign_entity_type.get(), pos, blockState);
     }
 
-    public static void popSign(Level level, BlockPos pos) {
-        if (level.getBlockEntity(pos) instanceof QuestHangingSignBlockEntity blockEntity
-                && blockEntity.sign != null) {
-            Block.popResource(level, pos, blockEntity.getSignType().asItem().getDefaultInstance());
+    public void popSign(Level level, BlockPos pos) {
+        if (this.sign != null) {
+            Block.popResource(level, pos, this.getSignType().asItem().getDefaultInstance());
         }
     }
 
@@ -68,40 +60,45 @@ public class QuestHangingSignBlockEntity extends SignBlockEntity {
     }
 
     @Override
-    protected void saveAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
-        super.saveAdditional(tag, registries);
-
-        tag.putString("sign_type", BuiltInRegistries.BLOCK.getKey(getSignType()).toString());
-        if (seasonQuest != null) {
-            DynamicOps<Tag> dynamicops = registries.createSerializationContext(NbtOps.INSTANCE);
-            SeasonQuest.CODEC
-                    .encodeStart(dynamicops, seasonQuest)
-                    .resultOrPartial(EclipticSeasons::logger)
-                    .ifPresent(tag1 -> tag.put("season_quest", tag1));
-        }
+    protected void saveAdditional(ValueOutput output) {
+        super.saveAdditional(output);
     }
 
-    @Override
-    protected void loadAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
-        super.loadAdditional(tag, registries);
-        if (tag.contains("sign_type")) {
-            Block block = BuiltInRegistries.BLOCK.get(EclipticSeasons.parse(tag.getString("sign_type")));
-            if (block instanceof SignBlock signBlock)
-                this.sign = signBlock;
-        }
-        if (tag.contains("season_quest")) {
-            DynamicOps<Tag> dynamicops = registries.createSerializationContext(NbtOps.INSTANCE);
-            SeasonQuest.CODEC
-                    .parse(dynamicops, tag.get("season_quest"))
-                    .resultOrPartial(EclipticSeasons::logger)
-                    .ifPresent(seasonQuest1 -> {
-                        this.seasonQuest = seasonQuest1;
-                    });
-        } else {
-            seasonQuest = null;
-        }
-
-    }
+    //@Override
+    //protected void saveAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
+    //    super.saveAdditional(tag, registries);
+    //
+    //    tag.putString("sign_type", BuiltInRegistries.BLOCK.getKey(getSignType()).toString());
+    //    if (seasonQuest != null) {
+    //        DynamicOps<Tag> dynamicops = registries.createSerializationContext(NbtOps.INSTANCE);
+    //        SeasonQuest.CODEC
+    //                .encodeStart(dynamicops, seasonQuest)
+    //                .resultOrPartial(EclipticSeasons::logger)
+    //                .ifPresent(tag1 -> tag.put("season_quest", tag1));
+    //    }
+    //}
+    //
+    //@Override
+    //protected void loadAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
+    //    super.loadAdditional(tag, registries);
+    //    if (tag.contains("sign_type")) {
+    //        Block block = BuiltInRegistries.BLOCK.get(EclipticSeasons.parse(tag.getString("sign_type")));
+    //        if (block instanceof SignBlock signBlock)
+    //            this.sign = signBlock;
+    //    }
+    //    if (tag.contains("season_quest")) {
+    //        DynamicOps<Tag> dynamicops = registries.createSerializationContext(NbtOps.INSTANCE);
+    //        SeasonQuest.CODEC
+    //                .parse(dynamicops, tag.get("season_quest"))
+    //                .resultOrPartial(EclipticSeasons::logger)
+    //                .ifPresent(seasonQuest1 -> {
+    //                    this.seasonQuest = seasonQuest1;
+    //                });
+    //    } else {
+    //        seasonQuest = null;
+    //    }
+    //
+    //}
 
     protected void inventoryChanged() {
         super.setChanged();
@@ -174,7 +171,7 @@ public class QuestHangingSignBlockEntity extends SignBlockEntity {
 
 
     public void createSeasonalQuest() {
-        level.registryAccess().registry(ESRegistries.SEASON_QUEST).ifPresent(
+        level.registryAccess().lookup(ESRegistries.SEASON_QUEST).ifPresent(
                 seasonQuests -> {
                     SolarTerm nowSolarTerm = EclipticUtil.getNowSolarTerm(level);
                     Holder<AgroClimaticZone> agroClimaticZoneHolder = CropGrowthHandler.getclimateTypeHolder(CropGrowthHandler.getCropBiome(level, getBlockPos()));
@@ -234,11 +231,11 @@ public class QuestHangingSignBlockEntity extends SignBlockEntity {
             } else if (!predicate.components().test(stack)) {
                 return false;
             } else {
-                for (ItemSubPredicate itemsubpredicate : predicate.subPredicates().values()) {
-                    if (!itemsubpredicate.matches(stack)) {
-                        return false;
-                    }
-                }
+                //for (ItemSubPredicate itemsubpredicate : predicate.subPredicates().values()) {
+                //    if (!itemsubpredicate.matches(stack)) {
+                //        return false;
+                //    }
+                //}
                 return true;
             }
         }
@@ -288,8 +285,9 @@ public class QuestHangingSignBlockEntity extends SignBlockEntity {
                 for (ItemPredicate itemPredicate : quest.need()) {
                     questMatcher.setPredicate(itemPredicate).consume(player);
                 }
-                for (ItemStack stack : quest.award()) {
-                    ItemHandlerHelper.giveItemToPlayer(player, stack.copy());
+                for (ItemStackTemplate stack : quest.award()) {
+                    player.getInventory().add(stack.create());
+                    //ItemHandlerHelper.giveItemToPlayer(player, stack.copy());
                 }
                 resetQuest();
             }
@@ -316,5 +314,14 @@ public class QuestHangingSignBlockEntity extends SignBlockEntity {
     @Override
     public @NotNull ModelData getModelData() {
         return ModelData.builder().with(SIGN_BLOCK_MODEL_PROPERTY, getSignType()).build();
+    }
+
+
+    @Override
+    public void preRemoveSideEffects(BlockPos pos, BlockState state) {
+        if (!level.isClientSide()) {
+            popSign(level, pos);
+        }
+        super.preRemoveSideEffects(pos, state);
     }
 }

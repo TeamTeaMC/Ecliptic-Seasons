@@ -1,0 +1,33 @@
+{
+  "parent": "eclipticseasons:main/root",
+  "criteria": {
+    "core_require": {
+      "conditions": {
+        "items": [
+          {
+            "items": "eclipticseasons:growth_detector"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancement.eclipticseasons.green_house.desc"
+    },
+    "icon": {
+      "id": "eclipticseasons:growth_detector"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "advancement.eclipticseasons.green_house"
+    }
+  },
+  "requirements": [
+    [
+      "core_require"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

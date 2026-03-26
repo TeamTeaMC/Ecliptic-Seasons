@@ -10,7 +10,7 @@ import com.teamtea.eclipticseasons.config.ClientConfig;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import com.teamtea.eclipticseasons.config.StartConfig;
 import com.teamtea.eclipticseasons.data.start;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
@@ -33,7 +33,7 @@ import java.util.Locale;
 @Mod(EclipticSeasonsApi.MODID)
 public class EclipticSeasons {
     public static final String MODID = EclipticSeasonsApi.MODID;
-    public static final String SMODID =EclipticSeasonsApi.SMODID;
+    public static final String SMODID = EclipticSeasonsApi.SMODID;
 
     // Directly reference a log4j logger.
     public static final Logger LOGGER = LogManager.getLogger(EclipticSeasonsApi.MODID);
@@ -46,6 +46,7 @@ public class EclipticSeasons {
         modEventBus.addListener(this::FMLCommonSetup);
         modEventBus.addListener(this::FMLCommonSetup);
         modEventBus.addListener(this::gatherData);
+        modEventBus.addListener(this::gatherData2);
         modEventBus.addListener(CompatModule::onInterModEnqueue);
         BlockRegistry.BLOCK_DEFERRED_REGISTER.register(modEventBus);
         ItemRegistry.ITEM_DEFERRED_REGISTER.register(modEventBus);
@@ -53,6 +54,9 @@ public class EclipticSeasons {
         ModAdvancements.TRIGGER_DEFERRED_REGISTER.register(modEventBus);
         AttachmentRegistry.ATTACHMENT_TYPES.register(modEventBus);
         DataComponentTypeRegistry.DATA_COMPONENT_TYPE_DEFERRED_REGISTER.register(modEventBus);
+
+        AttributeTypeRegistry.ATTRIBUTE_TYPES.register(modEventBus);
+        EnvironmentAttributeRegistry.ENVIRONMENT_ATTRIBUTES.register(modEventBus);
 
         TestContents.weathers.register(modEventBus);
 
@@ -67,7 +71,7 @@ public class EclipticSeasons {
         modContainer.registerConfig(ModConfig.Type.STARTUP, StartConfig.START_CONFIG);
 
 
-        if (FMLLoader.getDist() == Dist.CLIENT)
+        if (FMLLoader.getCurrent().getDist() == Dist.CLIENT)
             modContainer.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
 
         CompatModule.register(NeoForge.EVENT_BUS, modEventBus);
@@ -80,16 +84,16 @@ public class EclipticSeasons {
         return String.format(Locale.ROOT, "%s-%s.toml", modId, type.extension());
     }
 
-    public static ResourceLocation rl(String id) {
-        return ResourceLocation.fromNamespaceAndPath(EclipticSeasonsApi.MODID, id);
+    public static Identifier rl(String id) {
+        return Identifier.fromNamespaceAndPath(EclipticSeasonsApi.MODID, id);
     }
 
-    public static ResourceLocation erl(String modid, String id) {
-        return ResourceLocation.fromNamespaceAndPath(modid, id);
+    public static Identifier erl(String modid, String id) {
+        return Identifier.fromNamespaceAndPath(modid, id);
     }
 
-    public static ResourceLocation parse(String id) {
-        return ResourceLocation.parse(id);
+    public static Identifier parse(String id) {
+        return Identifier.parse(id);
     }
 
 
@@ -101,7 +105,11 @@ public class EclipticSeasons {
     }
 
 
-    public void gatherData(final GatherDataEvent event) {
+    public void gatherData(final GatherDataEvent.Client event) {
+        start.dataGen(event);
+    }
+
+    public void gatherData2(final GatherDataEvent.Server event) {
         start.dataGen(event);
     }
 

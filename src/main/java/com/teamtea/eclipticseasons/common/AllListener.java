@@ -6,6 +6,7 @@ import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.data.misc.ESSortInfo;
 import com.teamtea.eclipticseasons.api.event.CanPlantGrowEvent;
+import com.teamtea.eclipticseasons.api.event.SolarTermChangeEvent;
 import com.teamtea.eclipticseasons.api.misc.IChunkBiomeHolder;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
@@ -21,7 +22,9 @@ import com.teamtea.eclipticseasons.common.core.snow.SnowChecker;
 import com.teamtea.eclipticseasons.common.core.snow.SnowyMapChecker;
 import com.teamtea.eclipticseasons.common.core.snow.SnowyStatusKeeper;
 import com.teamtea.eclipticseasons.common.core.snow.WeatherStatusKeeper;
+import com.teamtea.eclipticseasons.common.core.solar.SolarAngelHelper;
 import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
+import com.teamtea.eclipticseasons.common.environment.SolarTime;
 import com.teamtea.eclipticseasons.common.network.SimpleNetworkHandler;
 import com.teamtea.eclipticseasons.common.network.message.HumidModifyMessage;
 import com.teamtea.eclipticseasons.common.registry.AttachmentRegistry;
@@ -35,10 +38,12 @@ import net.minecraft.core.Holder;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
+import net.minecraft.world.clock.*;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
@@ -66,27 +71,30 @@ import net.neoforged.neoforge.event.server.ServerStoppedEvent;
 import net.neoforged.neoforge.event.server.ServerStoppingEvent;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
+import org.jetbrains.annotations.NotNull;
 
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Optional;
 
 @EventBusSubscriber(modid = EclipticSeasonsApi.MODID)
 public class AllListener {
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void onTagsUpdatedEventEarly(TagsUpdatedEvent tagsUpdatedEvent) {
-        ESSortInfo.resetUpdate(tagsUpdatedEvent.getRegistryAccess(), tagsUpdatedEvent.getUpdateCause() == TagsUpdatedEvent.UpdateCause.SERVER_DATA_LOAD);
-        BiomeClimateManager.resetBiomeTags(tagsUpdatedEvent.getRegistryAccess(), tagsUpdatedEvent.getUpdateCause() == TagsUpdatedEvent.UpdateCause.SERVER_DATA_LOAD);
+        ESSortInfo.resetUpdate(tagsUpdatedEvent.getLookupProvider(), tagsUpdatedEvent.getUpdateCause() == TagsUpdatedEvent.UpdateCause.SERVER_DATA_LOAD);
+        BiomeClimateManager.resetBiomeTags(tagsUpdatedEvent.getLookupProvider(), tagsUpdatedEvent.getUpdateCause() == TagsUpdatedEvent.UpdateCause.SERVER_DATA_LOAD);
     }
 
     // TagsUpdatedEvent invoke before ServerAboutToStartEvent
     @SubscribeEvent
     public static void onTagsUpdatedEvent(TagsUpdatedEvent tagsUpdatedEvent) {
-        BiomeClimateManager.resetBiomeTemps(tagsUpdatedEvent.getRegistryAccess(), tagsUpdatedEvent.getUpdateCause() == TagsUpdatedEvent.UpdateCause.SERVER_DATA_LOAD);
-        WeatherManager.informUpdateBiomes(tagsUpdatedEvent.getRegistryAccess(), tagsUpdatedEvent.getUpdateCause() == TagsUpdatedEvent.UpdateCause.SERVER_DATA_LOAD);
+        BiomeClimateManager.resetBiomeTemps(tagsUpdatedEvent.getLookupProvider(), tagsUpdatedEvent.getUpdateCause() == TagsUpdatedEvent.UpdateCause.SERVER_DATA_LOAD);
+        WeatherManager.informUpdateBiomes(tagsUpdatedEvent.getLookupProvider(), tagsUpdatedEvent.getUpdateCause() == TagsUpdatedEvent.UpdateCause.SERVER_DATA_LOAD);
         CropInfoManager.init(tagsUpdatedEvent);
-        CropGrowthHandler.resetUpdate(tagsUpdatedEvent.getRegistryAccess(), tagsUpdatedEvent.getUpdateCause() == TagsUpdatedEvent.UpdateCause.SERVER_DATA_LOAD);
-        NaturalPlantHandler.resetUpdate(tagsUpdatedEvent.getRegistryAccess(), tagsUpdatedEvent.getUpdateCause() == TagsUpdatedEvent.UpdateCause.SERVER_DATA_LOAD);
-        SnowChecker.resetUpdate(tagsUpdatedEvent.getRegistryAccess(), tagsUpdatedEvent.getUpdateCause() == TagsUpdatedEvent.UpdateCause.SERVER_DATA_LOAD);
+        CropGrowthHandler.resetUpdate(tagsUpdatedEvent.getLookupProvider(), tagsUpdatedEvent.getUpdateCause() == TagsUpdatedEvent.UpdateCause.SERVER_DATA_LOAD);
+        NaturalPlantHandler.resetUpdate(tagsUpdatedEvent.getLookupProvider(), tagsUpdatedEvent.getUpdateCause() == TagsUpdatedEvent.UpdateCause.SERVER_DATA_LOAD);
+        SnowChecker.resetUpdate(tagsUpdatedEvent.getLookupProvider(), tagsUpdatedEvent.getUpdateCause() == TagsUpdatedEvent.UpdateCause.SERVER_DATA_LOAD);
     }
 
 
@@ -108,8 +116,8 @@ public class AllListener {
     }
 
     @SubscribeEvent
-    public static void onSleepFinishedTimeEvent(CanPlayerSleepEvent event) {
-        if (event.getVanillaProblem() == Player.BedSleepingProblem.NOT_POSSIBLE_NOW) {
+    public static void onCanPlayerSleepEvent(CanPlayerSleepEvent event) {
+        if (event.getVanillaProblem() == Player.BedSleepingProblem.OTHER_PROBLEM) {
             BlockPos pos = event.getPos();
             Level level = event.getLevel();
             if (EclipticUtil.hasLocalWeather(level)
@@ -120,9 +128,9 @@ public class AllListener {
     }
 
     @SubscribeEvent
-    public static void onSleepFinishedTimeEvent(CanContinueSleepingEvent event) {
+    public static void onCanContinueSleepingEvent(CanContinueSleepingEvent event) {
         if (!event.mayContinueSleeping()
-                && event.getProblem() == Player.BedSleepingProblem.NOT_POSSIBLE_NOW) {
+                && event.getProblem() == Player.BedSleepingProblem.OTHER_PROBLEM) {
             BlockPos pos = event.getEntity().getSleepingPos().orElse(null);
             Level level = event.getEntity().level();
             if (pos != null && EclipticUtil.hasLocalWeather(level)
@@ -134,10 +142,17 @@ public class AllListener {
 
     @SubscribeEvent
     public static void onSleepFinishedTimeEvent(SleepFinishedTimeEvent event) {
-        if (event.getLevel() instanceof ServerLevel level) {
+        if (event.getLevel() instanceof ServerLevel level
+                && level.dimensionType().defaultClock().isPresent()) {
 
-            long newTime = event.getNewTime(),
-                    oldDayTime = level.getDayTime();
+            long newTime = level.getDefaultClockTime(),
+                    oldDayTime = newTime;
+            ServerClockManager.ClockInstance instance = level.clockManager().getInstance(level.dimensionType().defaultClock().get());
+            ClockTimeMarker timeMarker = instance.timeMarkers.get(ClockTimeMarkers.WAKE_UP_FROM_SLEEP);
+            if (timeMarker != null) {
+                newTime = timeMarker.resolveTimeToMoveTo(instance.totalTicks);
+            }
+
             WeatherManager.updateAfterSleep(level, newTime, oldDayTime);
         }
 
@@ -147,11 +162,12 @@ public class AllListener {
     @SubscribeEvent
     public static void onLevelLoad(LevelEvent.Load event) {
         if (event.getLevel() instanceof ServerLevel level) {
-            if (CommonConfig.Season.validDimensions.get().contains(level.dimension().location().toString()))
+            if (CommonConfig.Season.validDimensions.get().contains(level.dimension().identifier().toString()))
                 MapChecker.validDimension.add(level);
 
             WeatherManager.createLevelBiomeWeatherList(level);
             SolarHolders.createSaveData(level, SolarDataManager.get(level));
+            SolarTime.updateTimeMarks(level);
         }
     }
 
@@ -162,6 +178,7 @@ public class AllListener {
             WeatherManager.NEXT_CHECK_BIOME_MAP.remove(level);
             WeatherManager.BIOME_WEATHER_QUERY_LIST.remove(level);
             SolarHolders.DATA_MANAGER_MAP.remove(level);
+            SolarHolders.remove(level);
             MapChecker.unloadLevel(level);
             MapChecker.validDimension.removeIf(l -> l.equals(level));
         }
@@ -170,7 +187,7 @@ public class AllListener {
     // 如果是客户端，即使是混合型客户端，我们也只应该清理一次，单人世界时只看一次client会更好
     @SubscribeEvent
     public static void onChunkUnloadEvent(ChunkEvent.Unload event) {
-        // if ((FMLLoader.getDist() == Dist.CLIENT) == event.getLevel().isClientSide()
+        // if ((FMLLoader.getCurrent().getDist() == Dist.CLIENT) == event.getLevel().isClientSide()
         // ) {
         //     MapChecker.clearChunk(event.getChunk().getLevel(),event.getChunk().getPos());
         // }
@@ -344,6 +361,11 @@ public class AllListener {
     public static void onNeighborNotifyEvent(ChunkDataEvent.Load event) {
     }
 
+    @SubscribeEvent
+    public static void onSolarTermChangeEvent(SolarTermChangeEvent event) {
+        SolarTime.updateTimeMarks(event.getLevel());
+    }
+
     private static void updateChunk(LevelAccessor levelAccessor, ChunkAccess chunk) {
         if (!(levelAccessor instanceof ServerLevel level)) return;
         if (!CommonConfig.Temperature.snowDown.get() || !CommonConfig.Temperature.iceMelt.get()) return;
@@ -351,8 +373,8 @@ public class AllListener {
         if (true) return;
 
         long l = System.currentTimeMillis();
-        //boolean skip = true;
-        //for (Tag sections : event.getData().getList("sections", Tag.TAG_COMPOUND)) {
+        // boolean skip = true;
+        // for (Tag sections : event.getData().getList("sections", Tag.TAG_COMPOUND)) {
         //    CompoundTag section = (CompoundTag) sections;
         //    CompoundTag blockStates = section.getCompound("block_states");
         //    for (Tag tag : blockStates.getList("palette", Tag.TAG_COMPOUND)) {
@@ -366,16 +388,16 @@ public class AllListener {
         //}
 
         //
-        //if (skip) return;
+        // if (skip) return;
         BlockPos.MutableBlockPos worldPosition = chunk.getPos().getWorldPosition().mutable();
         WeatherStatusKeeper weatherStatusKeeper = SnowyMapChecker.getWeatherStatusKeeper(chunk);
-        //Map<Holder<Biome>, IntLongMutablePair> snowDepthRecord = weatherStatusKeeper.getSnowDepthRecord();
+        // Map<Holder<Biome>, IntLongMutablePair> snowDepthRecord = weatherStatusKeeper.getSnowDepthRecord();
         BiomeHolder biomeHolder = chunk.getData(AttachmentRegistry.BIOME_HOLDER);
         Pair<Map<Holder<Biome>, IntIntImmutablePair>, Map<Holder<Biome>, Long>> mapMapPair = weatherStatusKeeper.collectSnowyUpdate(level, biomeHolder, true);
         Map<Holder<Biome>, IntIntImmutablePair> first = mapMapPair.getFirst();
         if (first.isEmpty()) return;
 
-        //event.getChunk().getSection(0).getStates().data.palette().valueFor(0)
+        // event.getChunk().getSection(0).getStates().data.palette().valueFor(0)
         int x = worldPosition.getX();
         int z = worldPosition.getZ();
         for (int i = x; i < x + 16; i++) {
@@ -389,19 +411,21 @@ public class AllListener {
                 if (intLongMutablePair == null) continue;
 
                 boolean snow = intLongMutablePair.leftInt() > Math.abs(Mth.getSeed(worldPosition)) % 100;
-                //snow=true;
+                // snow=true;
                 if (!snow) {
                     BlockState blockState = chunk.getBlockState(worldPosition);
                     if (blockState.is(Blocks.SNOW)) {
-                        //chunk.setBlockState(worldPosition, Blocks.AIR.defaultBlockState(), false);
+                        // chunk.setBlockState(worldPosition, Blocks.AIR.defaultBlockState(), false);
                         level.setBlock(worldPosition, Blocks.AIR.defaultBlockState(), Block.UPDATE_CLIENTS | Block.UPDATE_KNOWN_SHAPE);
                         BlockState supportBlock = chunk.getBlockState(worldPosition.setY(surface_height - 1));
-                        if ((supportBlock.getBlock() instanceof SnowyDirtBlock)) {
-                            BlockState blockState2 = supportBlock.updateShape(Direction.UP,
-                                    Blocks.AIR.defaultBlockState(),
-                                    levelAccessor, worldPosition.immutable(), worldPosition.setY(surface_height).immutable());
+                        if ((supportBlock.getBlock() instanceof SnowyBlock)) {
+                            BlockState blockState2 = supportBlock.updateShape(levelAccessor,
+                                    level, worldPosition.immutable(),
+                                    Direction.UP,
+                                    worldPosition.setY(surface_height).immutable(),
+                                    Blocks.AIR.defaultBlockState(), level.getRandom());
                             if (blockState2 != supportBlock) {
-                                chunk.setBlockState(worldPosition.setY(surface_height - 1), blockState2, false);
+                                chunk.setBlockState(worldPosition.setY(surface_height - 1), blockState2, Block.UPDATE_CLIENTS | Block.UPDATE_KNOWN_SHAPE);
                             }
                         }
                     }
@@ -410,8 +434,8 @@ public class AllListener {
                     int above_height = solid_height + 1;
                     var supportBlock = chunk.getBlockState(worldPosition.setY(solid_height));
                     boolean canSurvive = false;
-                    if (!supportBlock.is(BlockTags.SNOW_LAYER_CANNOT_SURVIVE_ON)) {
-                        canSurvive = supportBlock.is(BlockTags.SNOW_LAYER_CAN_SURVIVE_ON)
+                    if (!supportBlock.is(BlockTags.CANNOT_SUPPORT_SNOW_LAYER)) {
+                        canSurvive = supportBlock.is(BlockTags.SUPPORT_OVERRIDE_SNOW_LAYER)
                                 || Block.isFaceFull(supportBlock.getCollisionShape(level, worldPosition), Direction.UP)
                                 || supportBlock.is(Blocks.SNOW) && supportBlock.getValue(SnowLayerBlock.LAYERS) == 8;
                     }
@@ -421,13 +445,15 @@ public class AllListener {
                     if (!blockState.is(Blocks.SNOW) && blockState.isAir()) {
                         BlockPos base = worldPosition.setY(solid_height).immutable();
                         BlockPos above = worldPosition.setY(above_height).immutable();
-                        //chunk.setBlockState(above, Blocks.SNOW.defaultBlockState(), false);
+                        // chunk.setBlockState(above, Blocks.SNOW.defaultBlockState(), false);
                         level.setBlock(above, Blocks.SNOW.defaultBlockState(), Block.UPDATE_CLIENTS | Block.UPDATE_KNOWN_SHAPE);
-                        if ((supportBlock.getBlock() instanceof SnowyDirtBlock)) {
-                            BlockState blockState2 = supportBlock.updateShape(Direction.UP,
-                                    Blocks.SNOW.defaultBlockState(), levelAccessor, base, above);
+                        if ((supportBlock.getBlock() instanceof SnowyBlock)) {
+                            BlockState blockState2 = supportBlock.updateShape(
+                                    levelAccessor,
+                                    level, base, Direction.UP, above,
+                                    Blocks.SNOW.defaultBlockState(), level.getRandom());
                             if (blockState2 != supportBlock) {
-                                chunk.setBlockState(base, blockState2, false);
+                                chunk.setBlockState(base, blockState2, Block.UPDATE_CLIENTS | Block.UPDATE_KNOWN_SHAPE);
                             }
                         }
                     }

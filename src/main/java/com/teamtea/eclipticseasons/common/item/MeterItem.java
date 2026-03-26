@@ -7,8 +7,7 @@ import com.teamtea.eclipticseasons.common.registry.ItemRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.entity.Entity;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -19,11 +18,15 @@ public class MeterItem extends Item {
         super(properties);
     }
 
+    @Override
+    public boolean useOnRelease(ItemStack itemStack) {
+        return super.useOnRelease(itemStack);
+    }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand usedHand) {
-        sendInfo(this,level, player);
-        return InteractionResultHolder.sidedSuccess(player.getItemInHand(usedHand), level.isClientSide());
+    public InteractionResult use(Level level, Player player, InteractionHand usedHand) {
+        sendInfo(this, level, player);
+        return InteractionResult.CONSUME;
     }
 
     public static void sendInfo(Item meterItem, Level level, Player player) {
@@ -41,12 +44,8 @@ public class MeterItem extends Item {
             }
 
             if (!component.getString().isEmpty())
-                player.displayClientMessage(component, true);
+                player.sendSystemMessage(component);
         }
-    }
-
-    @Override
-    public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
     }
 
 }

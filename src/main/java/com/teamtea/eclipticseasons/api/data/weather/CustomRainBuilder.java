@@ -16,6 +16,7 @@ import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.util.valueproviders.IntProvider;
+import net.minecraft.util.valueproviders.IntProviders;
 import net.minecraft.world.level.biome.Biome;
 
 import java.util.List;
@@ -23,7 +24,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Builder
 public record CustomRainBuilder(
         HolderSet<Biome> biomes,
         SolarTermValueMap<List<Weather>> weathers
@@ -62,10 +62,10 @@ public record CustomRainBuilder(
     public static class Weather {
 
         public static final Codec<Weather> CODEC = RecordCodecBuilder.create(ins -> ins.group(
-                IntProvider.POSITIVE_CODEC.optionalFieldOf("rain").forGetter(Weather::getRain),
-                IntProvider.POSITIVE_CODEC.optionalFieldOf("rain_delay").forGetter(Weather::getRainDelay),
-                IntProvider.POSITIVE_CODEC.optionalFieldOf("thunder").forGetter(Weather::getThunder),
-                IntProvider.POSITIVE_CODEC.optionalFieldOf("thunder_delay").forGetter(Weather::getThunderDelay),
+                IntProviders.POSITIVE_CODEC.optionalFieldOf("rain").forGetter(Weather::getRain),
+                IntProviders.POSITIVE_CODEC.optionalFieldOf("rain_delay").forGetter(Weather::getRainDelay),
+                IntProviders.POSITIVE_CODEC.optionalFieldOf("thunder").forGetter(Weather::getThunder),
+                IntProviders.POSITIVE_CODEC.optionalFieldOf("thunder_delay").forGetter(Weather::getThunderDelay),
                 Codec.FLOAT.fieldOf("rain_chance").forGetter(Weather::getRainChance),
                 Codec.FLOAT.optionalFieldOf("thunder_chance", 0f).forGetter(Weather::getThunderChance),
                 StringRepresentable.fromEnum(TimePeriod::collectValues).listOf().optionalFieldOf("time_periods", List.of()).forGetter(Weather::getTimePeriod),

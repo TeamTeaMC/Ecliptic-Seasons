@@ -3,7 +3,7 @@ package com.teamtea.eclipticseasons.api.constant.crop;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
@@ -26,9 +26,9 @@ public enum CropSeasonType {
     ALL(new CropSeasonInfo(15), EclipticSeasons.rl("crops/all_seasons"));
 
     private final CropSeasonInfo info;
-    private final ResourceLocation res;
+    private final Identifier res;
 
-    CropSeasonType(CropSeasonInfo info, ResourceLocation res) {
+    CropSeasonType(CropSeasonInfo info, Identifier res) {
         this.info = info;
         this.res = res;
     }
@@ -37,7 +37,7 @@ public enum CropSeasonType {
         return info;
     }
 
-    public ResourceLocation getRes() {
+    public Identifier getRes() {
         return res;
     }
 

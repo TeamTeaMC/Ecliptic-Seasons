@@ -1,0 +1,22 @@
+{
+  "end": "beginning_of_summer",
+  "start": "spring_equinox",
+  "need": [
+    {
+      "items": "minecraft:wheat",
+      "count": 192
+    }
+  ],
+  "award": [
+    {
+      "id": "eclipticseasons:spring_greenhouse_essence"
+    }
+  ],
+  "tittle": {
+    "translate": "season_quest.eclipticseasons.spring_core"
+  },
+  "climate": "#eclipticseasons:all",
+  "weight": 10,
+  "glowing": true,
+  "color": 43520
+}

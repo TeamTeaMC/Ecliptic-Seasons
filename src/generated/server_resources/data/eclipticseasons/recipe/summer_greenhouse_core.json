@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "group": "summer_greenhouse_core",
+  "ingredients": [
+    "eclipticseasons:summer_greenhouse_essence",
+    "eclipticseasons:greenhouse_core_container"
+  ],
+  "result": {
+    "id": "eclipticseasons:summer_greenhouse_core"
+  }
+}

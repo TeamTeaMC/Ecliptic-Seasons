@@ -2,24 +2,20 @@ package com.teamtea.eclipticseasons.common.network;
 
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
-import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.common.network.message.*;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.network.protocol.configuration.ServerConfigurationPacketListener;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.event.RegisterConfigurationTasksEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
-import net.neoforged.neoforge.network.handlers.ClientPayloadHandler;
-import net.neoforged.neoforge.network.payload.ConfigFilePayload;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
 import java.util.Collection;
-import java.util.List;
 
-@SuppressWarnings("removal")
-@EventBusSubscriber(modid = EclipticSeasonsApi.MODID, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber
 public final class SimpleNetworkHandler {
 
     @SubscribeEvent
@@ -71,16 +67,14 @@ public final class SimpleNetworkHandler {
                 NetworkUtil::processUpdateTempChangeMessage
         );
 
-
-        registrar.configurationToClient(
-                ESConfigFilePayload.TYPE,
-                ESConfigFilePayload.STREAM_CODEC,
-                NetworkUtil::handle);
     }
 
     @SubscribeEvent
     public static void onRegisterConfigurationTasksEvent(RegisterConfigurationTasksEvent event) {
-        event.register(new ESConfigTask(event));
+        ServerConfigurationPacketListener listener = event.getListener();
+        if (listener.hasChannel(ESConfigFilePayload.TYPE)) {
+            event.register(new ESConfigTask(listener));
+        }
     }
 
 

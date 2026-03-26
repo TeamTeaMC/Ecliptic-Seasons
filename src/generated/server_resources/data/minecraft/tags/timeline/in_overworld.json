@@ -1,0 +1,8 @@
+{
+  "values": [
+    {
+      "id": "eclipticseasons:season_going",
+      "required": false
+    }
+  ]
+}

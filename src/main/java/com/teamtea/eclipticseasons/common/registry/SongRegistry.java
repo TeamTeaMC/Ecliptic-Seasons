@@ -1,7 +1,7 @@
 package com.teamtea.eclipticseasons.common.registry;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
-import net.minecraft.Util;
+import net.minecraft.util.Util;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstrapContext;
@@ -25,12 +25,12 @@ public class SongRegistry {
     ) {
         context.register(
                 key,
-                new JukeboxSong(BuiltInRegistries.SOUND_EVENT.getHolderOrThrow(BuiltInRegistries.SOUND_EVENT.getResourceKey(soundEvent).get()), Component.translatable(toLangKey(key)), (float) lengthInSeconds, comparatorOutput)
+                new JukeboxSong(BuiltInRegistries.SOUND_EVENT.getOrThrow(BuiltInRegistries.SOUND_EVENT.getResourceKey(soundEvent).get()), Component.translatable(toLangKey(key)), (float) lengthInSeconds, comparatorOutput)
         );
     }
 
     public static @NotNull String toLangKey(ResourceKey<JukeboxSong> key) {
-        return Util.makeDescriptionId("jukebox_song", key.location());
+        return Util.makeDescriptionId("jukebox_song", key.identifier());
     }
 
     public static void bootstrap(BootstrapContext<JukeboxSong> context) {

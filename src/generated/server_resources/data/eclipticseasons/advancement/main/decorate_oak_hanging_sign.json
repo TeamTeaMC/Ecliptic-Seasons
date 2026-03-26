@@ -1,0 +1,54 @@
+{
+  "parent": "eclipticseasons:main/seasonal_prayer_scroll",
+  "criteria": {
+    "core_require": {
+      "conditions": {
+        "location": [
+          {
+            "condition": "minecraft:location_check",
+            "predicate": {
+              "block": {
+                "blocks": [
+                  "eclipticseasons:season_quest_wall_hanging_sign",
+                  "eclipticseasons:season_quest_ceiling_hanging_sign"
+                ]
+              }
+            }
+          },
+          {
+            "condition": "minecraft:match_tool",
+            "predicate": {}
+          }
+        ]
+      },
+      "trigger": "minecraft:item_used_on_block"
+    },
+    "parent_need": {
+      "conditions": {
+        "parent": "eclipticseasons:main/seasonal_prayer_scroll"
+      },
+      "trigger": "eclipticseasons:parent"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancement.eclipticseasons.decorate_oak_hanging_sign.desc"
+    },
+    "icon": {
+      "id": "minecraft:oak_hanging_sign"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "advancement.eclipticseasons.decorate_oak_hanging_sign"
+    }
+  },
+  "requirements": [
+    [
+      "parent_need"
+    ],
+    [
+      "core_require"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

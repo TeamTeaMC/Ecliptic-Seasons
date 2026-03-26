@@ -5,9 +5,9 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.teamtea.eclipticseasons.common.registry.ModAdvancements;
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.advancements.Criterion;
-import net.minecraft.advancements.critereon.ContextAwarePredicate;
-import net.minecraft.advancements.critereon.SimpleCriterionTrigger;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.advancements.criterion.ContextAwarePredicate;
+import net.minecraft.advancements.criterion.SimpleCriterionTrigger;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.ServerAdvancementManager;
 import net.minecraft.server.level.ServerPlayer;
@@ -25,7 +25,7 @@ public class ParentNeedCriterion extends SimpleCriterionTrigger<ParentNeedCriter
     }
 
     public void trigger(ServerPlayer player) {
-        MinecraftServer server = player.getServer();
+        MinecraftServer server = player.level().getServer();
         if (server != null) {
             this.trigger(player, (t) -> t.test(player, server.getAdvancements()));
         }
@@ -35,14 +35,14 @@ public class ParentNeedCriterion extends SimpleCriterionTrigger<ParentNeedCriter
     public static final class TriggerInstance implements SimpleInstance {
         public static final Codec<TriggerInstance> CODEC = RecordCodecBuilder.create(
                 builder -> builder.group(
-                                ResourceLocation.CODEC.optionalFieldOf("parent").forGetter(TriggerInstance::parent))
+                                Identifier.CODEC.optionalFieldOf("parent").forGetter(TriggerInstance::parent))
                         .apply(builder, TriggerInstance::new)
         );
-        private final Optional<ResourceLocation> parent;
+        private final Optional<Identifier> parent;
         private WeakReference<AdvancementHolder> advancementHolderWeakReference = new WeakReference<>(null);
 
         public TriggerInstance(
-                Optional<ResourceLocation> parent) {
+                Optional<Identifier> parent) {
             this.parent = parent;
         }
 
@@ -52,9 +52,9 @@ public class ParentNeedCriterion extends SimpleCriterionTrigger<ParentNeedCriter
             );
         }
 
-        public static Criterion<TriggerInstance> simple(ResourceLocation resourceLocation) {
+        public static Criterion<TriggerInstance> simple(Identifier Identifier) {
             return ModAdvancements.parentNeedCriterion.get().createCriterion(
-                    new TriggerInstance(Optional.of(resourceLocation))
+                    new TriggerInstance(Optional.of(Identifier))
             );
         }
 
@@ -74,7 +74,7 @@ public class ParentNeedCriterion extends SimpleCriterionTrigger<ParentNeedCriter
             return Optional.empty();
         }
 
-        public Optional<ResourceLocation> parent() {
+        public Optional<Identifier> parent() {
             return parent;
         }
 

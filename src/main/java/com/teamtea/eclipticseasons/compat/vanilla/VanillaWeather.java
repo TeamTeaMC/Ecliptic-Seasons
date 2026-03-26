@@ -16,6 +16,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
+import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.neoforged.api.distmarker.Dist;
@@ -76,7 +77,7 @@ public class VanillaWeather {
         boolean hasPrecipitation = hasPrecipitation(level, biome);
 
         if (hasPrecipitation) {
-            resultPrecipitation = biome.coldEnoughToSnow(pos) ?
+            resultPrecipitation = biome.coldEnoughToSnow(pos,level.getSeaLevel()) ?
                     Biome.Precipitation.SNOW :
                     Biome.Precipitation.RAIN;
 
@@ -107,7 +108,7 @@ public class VanillaWeather {
     }
 
     public static boolean isOnServerThread(Biome biome) {
-        if (FMLLoader.getDist() == Dist.DEDICATED_SERVER)
+        if (FMLLoader.getCurrent().getDist() == Dist.DEDICATED_SERVER)
             return true;
         return BiomeClimateManager.BIOME_TAG_KEY_MAP.containsKey(biome);
     }
@@ -125,16 +126,16 @@ public class VanillaWeather {
     public static int replaceThunderDelay(Level level, Integer call) {
         switch (EclipticSeasonsApi.getInstance().getSolarTerm(level).getSeason()) {
             case SPRING -> {
-                return Mth.clamp(call - 10000, 0, ServerLevel.THUNDER_DELAY.getMaxValue());
+                return Mth.clamp(call - 10000, 0, ServerLevel.THUNDER_DELAY.maxInclusive());
             }
             case SUMMER -> {
-                return Mth.clamp(call - 20000, 0, ServerLevel.THUNDER_DELAY.getMaxValue());
+                return Mth.clamp(call - 20000, 0, ServerLevel.THUNDER_DELAY.maxInclusive());
             }
             case AUTUMN -> {
-                return Mth.clamp(call + 20000, 0, ServerLevel.THUNDER_DELAY.getMaxValue() + 20000);
+                return Mth.clamp(call + 20000, 0, ServerLevel.THUNDER_DELAY.maxInclusive() + 20000);
             }
             case WINTER -> {
-                return Mth.clamp(call + 50000, 0, ServerLevel.THUNDER_DELAY.getMaxValue() + 50000);
+                return Mth.clamp(call + 50000, 0, ServerLevel.THUNDER_DELAY.maxInclusive() + 50000);
             }
             default -> {
                 return call;
@@ -145,16 +146,16 @@ public class VanillaWeather {
     public static int replaceRainDelay(Level level, Integer call) {
         switch (EclipticSeasonsApi.getInstance().getSolarTerm(level).getSeason()) {
             case SPRING -> {
-                return Mth.clamp(call - 20000, 0, ServerLevel.RAIN_DELAY.getMaxValue());
+                return Mth.clamp(call - 20000, 0, ServerLevel.RAIN_DELAY.maxInclusive());
             }
             case SUMMER -> {
-                return Mth.clamp(call - 10000, 0, ServerLevel.RAIN_DELAY.getMaxValue());
+                return Mth.clamp(call - 10000, 0, ServerLevel.RAIN_DELAY.maxInclusive());
             }
             case AUTUMN -> {
-                return Mth.clamp(call + 5000, 0, ServerLevel.RAIN_DELAY.getMaxValue());
+                return Mth.clamp(call + 5000, 0, ServerLevel.RAIN_DELAY.maxInclusive());
             }
             case WINTER -> {
-                return Mth.clamp(call + 20000, 0, ServerLevel.RAIN_DELAY.getMaxValue() + 20000);
+                return Mth.clamp(call + 20000, 0, ServerLevel.RAIN_DELAY.maxInclusive() + 20000);
             }
             default -> {
                 return call;

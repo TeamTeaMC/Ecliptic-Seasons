@@ -1,0 +1,42 @@
+{
+  "parent": "eclipticseasons:quests/winter_start",
+  "criteria": {
+    "core_require": {
+      "conditions": {
+        "items": [
+          {
+            "items": "minecraft:powder_snow_bucket"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "parent_need": {
+      "conditions": {
+        "parent": "eclipticseasons:quests/winter_start"
+      },
+      "trigger": "eclipticseasons:parent"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancement.eclipticseasons.winter_harvest.desc"
+    },
+    "icon": {
+      "id": "minecraft:powder_snow_bucket"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "advancement.eclipticseasons.winter_harvest"
+    }
+  },
+  "requirements": [
+    [
+      "parent_need"
+    ],
+    [
+      "core_require"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

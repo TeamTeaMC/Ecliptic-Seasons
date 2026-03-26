@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "group": "thermometer",
+  "key": {
+    "x": "#c:dusts/redstone",
+    "y": {
+      "neoforge:ingredient_type": "neoforge:components",
+      "components": {
+        "minecraft:potion_contents": {
+          "potion": "minecraft:water"
+        }
+      },
+      "items": "minecraft:potion"
+    }
+  },
+  "pattern": [
+    " x",
+    "y "
+  ],
+  "result": {
+    "id": "eclipticseasons:thermometer"
+  }
+}

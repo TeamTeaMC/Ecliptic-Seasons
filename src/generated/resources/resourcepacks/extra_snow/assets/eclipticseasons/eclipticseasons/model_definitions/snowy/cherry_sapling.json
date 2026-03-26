@@ -1,8 +1,0 @@
-{
-  "replace": true,
-  "variants": {
-    "": {
-      "model": "eclipticseasons:block/snowy/cherry_sapling"
-    }
-  }
-}

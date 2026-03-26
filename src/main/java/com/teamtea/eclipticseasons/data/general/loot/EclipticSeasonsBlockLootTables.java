@@ -4,24 +4,28 @@ import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.common.block.GreenHouseCoreBlock;
 import com.teamtea.eclipticseasons.common.registry.BlockRegistry;
 import com.teamtea.eclipticseasons.common.registry.ItemRegistry;
-import net.minecraft.advancements.critereon.StatePropertiesPredicate;
+import net.minecraft.advancements.criterion.StatePropertiesPredicate;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.loot.BlockLootSubProvider;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.storage.loot.BuiltInLootTables;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
 import net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePropertyCondition;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
+import org.jspecify.annotations.NonNull;
 
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -31,17 +35,30 @@ public class EclipticSeasonsBlockLootTables extends BlockLootSubProvider {
         super(Set.of(), FeatureFlags.REGISTRY.allFlags(), provider);
     }
 
+    private final Map<ResourceKey<LootTable>, LootTable.Builder> map = new HashMap<>();
+
     @Override
-    protected Iterable<Block> getKnownBlocks() {
-        return map.entrySet()
+    protected @NonNull Iterable<Block> getKnownBlocks() {
+        return map.keySet()
                 .stream()
-                .map(e -> BuiltInRegistries.BLOCK.stream()
-                        .filter(block -> block.getLootTable().equals(e.getKey()))
-                        .findFirst()
-                        .get())
+                .map(lootTableResourceKey -> BuiltInRegistries.BLOCK.stream()
+                        .filter(block ->
+                        {
+                            Optional<ResourceKey<LootTable>> lootTable = block.getLootTable();
+                            return lootTable.isPresent() && lootTable.get().equals(lootTableResourceKey);
+                        })
+                        .findFirst())
+                .filter(Optional::isPresent)
+                .map(Optional::get)
                 .toList();
     }
 
+    @Override
+    protected void add(@NonNull Block block, LootTable.@NonNull Builder builder) {
+        super.add(block, builder);
+        // Copy
+        this.map.put(block.getLootTable().orElseThrow(() -> new IllegalStateException("Block " + block + " does not have loot table")), builder);
+    }
 
     protected void dropSelfWithContents(Set<Block> blocks) {
         for (Block block : blocks) {
@@ -56,7 +73,7 @@ public class EclipticSeasonsBlockLootTables extends BlockLootSubProvider {
     protected void generate() {
         Set<Block> blocks = BuiltInRegistries.BLOCK.stream()
                 .filter(block -> EclipticSeasonsApi.MODID.equals(BuiltInRegistries.BLOCK.getKey(block).getNamespace()))
-                .filter(block -> !block.getLootTable().equals(BuiltInLootTables.EMPTY))
+                .filter(block -> block.getLootTable().isPresent())
                 .filter(block -> block.asItem() != Items.AIR)
                 .collect(Collectors.toSet());
 
@@ -90,7 +107,7 @@ public class EclipticSeasonsBlockLootTables extends BlockLootSubProvider {
                         .withPool(LootPool.lootPool()
                                 .setRolls(ConstantValue.exactly(1.0F))
                                 .when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(pBlock)
-                                        .setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(GreenHouseCoreBlock.AGE,GreenHouseCoreBlock.MAX_STAGE)))
+                                        .setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(GreenHouseCoreBlock.AGE, GreenHouseCoreBlock.MAX_STAGE)))
                                 .add(LootItem.lootTableItem(pBlock)
                                         .when(this.hasSilkTouch()).otherwise(LootItem.lootTableItem(pItem).apply(SetItemCountFunction.setCount(ConstantValue.exactly(1))))))
         );

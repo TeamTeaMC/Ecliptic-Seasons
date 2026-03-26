@@ -12,11 +12,12 @@ import com.teamtea.eclipticseasons.common.core.crop.internal.CompatCropHookInter
 import com.teamtea.eclipticseasons.compat.CompatModule;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.core.Holder;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
@@ -42,11 +43,11 @@ public final class CropInfoManager {
     public final static Map<Block, Holder<Block>> CROPS_WOULD_NOT_KILLED_BY_CLIMATE = new IdentityHashMap<>();
 
     public static TagKey<Item> createItemTag(String modId, String path) {
-        return ItemTags.create(ResourceLocation.fromNamespaceAndPath(modId, path));
+        return ItemTags.create(Identifier.fromNamespaceAndPath(modId, path));
     }
 
     public static TagKey<Block> createBlockTag(String modId, String path) {
-        return BlockTags.create(ResourceLocation.fromNamespaceAndPath(modId, path));
+        return BlockTags.create(Identifier.fromNamespaceAndPath(modId, path));
     }
 
     public static CropSeasonType getCropSeasonTypeFrom(CropSeasonInfo cropSeasonInfo) {
@@ -71,11 +72,11 @@ public final class CropInfoManager {
         CROP_SEASON_INFO.clear();
         CROPS_WOULD_NOT_KILLED_BY_CLIMATE.clear();
 
-        Optional<Registry<Item>> items = event.getRegistryAccess().registry(Registries.ITEM);
-        Optional<Registry<Block>> blocks = event.getRegistryAccess().registry(Registries.BLOCK);
+        var items = event.getLookupProvider().lookup(Registries.ITEM);
+        var blocks = event.getLookupProvider().lookup(Registries.BLOCK);
 
         if (blocks.isPresent()) {
-            blocks.get().getTag(EclipticBlockTags.NOT_KILLED_BY_CLIMATE).ifPresent(
+            blocks.get().get(EclipticBlockTags.NOT_KILLED_BY_CLIMATE).ifPresent(
                     blocksG -> {
                         for (Holder<Block> blockHolder : blocksG.stream().toList()) {
                             CROPS_WOULD_NOT_KILLED_BY_CLIMATE.put(blockHolder.value(), blockHolder);
@@ -84,13 +85,13 @@ public final class CropInfoManager {
             );
 
             for (CropHumidityType cropHumidityType : CropHumidityType.collectValues()) {
-                var tagBlocks = blocks.get().getTag(cropHumidityType.getBlockTag());
+                var tagBlocks = blocks.get().get(cropHumidityType.getBlockTag());
                 tagBlocks.ifPresent(holders -> holders.stream().forEach(action -> {
                     registerCropHumidityInfo(action.value(), cropHumidityType, true);
                 }));
             }
             for (CropSeasonType cropSeasonType : CropSeasonType.collectValues()) {
-                var tagBlocks = blocks.get().getTag(cropSeasonType.getBlockTag());
+                var tagBlocks = blocks.get().get(cropSeasonType.getBlockTag());
                 tagBlocks.ifPresent(holders -> holders.stream().forEach(action -> {
                     registerCropSeasonInfo(action.value(), cropSeasonType, true);
                 }));
@@ -99,20 +100,20 @@ public final class CropInfoManager {
 
         if (items.isPresent()) {
             for (CropHumidityType cropHumidityType : CropHumidityType.collectValues()) {
-                var tagItems = items.get().getTag(cropHumidityType.getTag());
+                var tagItems = items.get().get(cropHumidityType.getTag());
                 tagItems.ifPresent(holders -> holders.stream().forEach(action -> {
                     registerCropHumidityInfo(action.value(), cropHumidityType);
                 }));
             }
             for (CropSeasonType cropSeasonType : CropSeasonType.collectValues()) {
-                var tagItems = items.get().getTag(cropSeasonType.getTag());
+                var tagItems = items.get().get(cropSeasonType.getTag());
                 tagItems.ifPresent(holders -> holders.stream().forEach(action -> {
                     registerCropSeasonInfo(action.value(), cropSeasonType);
                 }));
             }
         }
 
-        // event.getRegistryAccess().registry(Registries.BLOCK).get().getTagNames().toList();
+        // event.getRegistryAccess().registry(Registries.BLOCK).get().getNames().toList();
 
         if (CompatModule.CommonConfig.sereneSeasons.getAsBoolean()) {
             CompatCropHookInternal.registerForSS(items, Registries.ITEM);
@@ -136,18 +137,18 @@ public final class CropInfoManager {
         removeBlockAndItemShouldBeIgnored(blocks, items);
     }
 
-    private static void removeBlockAndItemShouldBeIgnored(Optional<Registry<Block>> blocks, Optional<Registry<Item>> items) {
+    private static void removeBlockAndItemShouldBeIgnored(Optional<? extends HolderLookup.RegistryLookup<Block>> blocks, Optional<? extends HolderLookup.RegistryLookup<Item>> items) {
         if (blocks.isPresent() && items.isPresent()) {
             // Block → Item
-            blocks.get().getTag(EclipticBlockTags.UNAFFECTED_BY_SEASONS).ifPresent(tag ->
+            blocks.get().get(EclipticBlockTags.UNAFFECTED_BY_SEASONS).ifPresent(tag ->
                     tag.forEach(holder -> clearCropInfo(holder.value(), holder.value().asItem())));
-            blocks.get().getTag(EclipticBlockTags.UNAFFECTED_BY_HUMIDITY).ifPresent(tag ->
+            blocks.get().get(EclipticBlockTags.UNAFFECTED_BY_HUMIDITY).ifPresent(tag ->
                     tag.forEach(holder -> clearCropInfo(holder.value(), holder.value().asItem())));
 
             // Item → Block
-            items.get().getTag(ESItemTags.UNAFFECTED_BY_SEASONS).ifPresent(tag ->
+            items.get().get(ESItemTags.UNAFFECTED_BY_SEASONS).ifPresent(tag ->
                     tag.forEach(holder -> clearCropInfo(Block.byItem(holder.value()), holder.value())));
-            items.get().getTag(ESItemTags.UNAFFECTED_BY_HUMIDITY).ifPresent(tag ->
+            items.get().get(ESItemTags.UNAFFECTED_BY_HUMIDITY).ifPresent(tag ->
                     tag.forEach(holder -> clearCropInfo(Block.byItem(holder.value()), holder.value())));
         }
     }

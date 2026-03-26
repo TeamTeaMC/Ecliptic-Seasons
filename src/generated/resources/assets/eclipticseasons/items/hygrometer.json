@@ -1,0 +1,45 @@
+{
+  "model": {
+    "type": "minecraft:range_dispatch",
+    "entries": [
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "eclipticseasons:item/hygrometer_stage_1"
+        },
+        "threshold": 0.25
+      },
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "eclipticseasons:item/hygrometer_stage_2"
+        },
+        "threshold": 0.5
+      },
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "eclipticseasons:item/hygrometer_stage_3"
+        },
+        "threshold": 0.75
+      },
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "eclipticseasons:item/hygrometer_stage_4"
+        },
+        "threshold": 1.0
+      },
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "eclipticseasons:item/hygrometer_stage_0"
+        },
+        "threshold": 0.0
+      }
+    ],
+    "max_length": 5.0,
+    "property": "eclipticseasons:meter",
+    "query": "hygrometer"
+  }
+}

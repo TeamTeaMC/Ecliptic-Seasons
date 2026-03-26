@@ -18,7 +18,7 @@ import net.neoforged.neoforge.registries.RegistryBuilder;
  * **/
 @Deprecated
 @SuppressWarnings("removal")
-@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber
 public class TestContents {
     public static final ResourceKey<Registry<BasicWeather>> WEATHER = createRegistryKey("weather");
     public static final Registry<BasicWeather> BASIC_WEATHERS = new RegistryBuilder<>(WEATHER).sync(true).create();
@@ -26,7 +26,7 @@ public class TestContents {
 
     static {
         // ByteBufCodecs.registry(Registries.ENTITY_TYPE).encode(p_320192_, this.type);
-        if (FMLLoader.getDist() == Dist.CLIENT) {
+        if (FMLLoader.getCurrent().getDist() == Dist.CLIENT) {
             weathers.register("test", () -> new BasicWeather() {
                 @Override
                 protected Object clone() {

@@ -11,13 +11,13 @@ import com.teamtea.eclipticseasons.api.data.climate.AgroClimaticZone;
 import com.teamtea.eclipticseasons.api.util.codec.CodecUtil;
 import com.teamtea.eclipticseasons.api.util.codec.ESExtraCodec;
 import com.teamtea.eclipticseasons.api.util.fast.Enum2ObjectMap;
-import com.teamtea.eclipticseasons.client.model.LocalSeasonStatusModel;
+import com.teamtea.eclipticseasons.client.model.block.LocalSeasonStatusModel;
 import com.teamtea.eclipticseasons.common.registry.ESRegistries;
 import lombok.Builder;
 import lombok.Data;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.biome.Biome;
 
@@ -29,15 +29,15 @@ import java.util.*;
 public class SeasonalTexture {
 
     public static final Codec<SeasonalTexture> CODEC = RecordCodecBuilder.create(ins -> ins.group(
-            CodecUtil.listFrom(ResourceLocation.CODEC).optionalFieldOf("target", List.of()).forGetter(o -> o.parent),
+            CodecUtil.listFrom(Identifier.CODEC).optionalFieldOf("target", List.of()).forGetter(o -> o.parent),
             CodecUtil.holderCodec(ESRegistries.AGRO_CLIMATE).optionalFieldOf("climate").forGetter(o -> o.climate),
-            Codec.either(CodecUtil.listFrom(ResourceLocation.CODEC), TagKey.hashedCodec(Registries.BIOME)).optionalFieldOf("biomes").forGetter(o -> o.biomes),
+            Codec.either(CodecUtil.listFrom(Identifier.CODEC), TagKey.hashedCodec(Registries.BIOME)).optionalFieldOf("biomes").forGetter(o -> o.biomes),
             Slice.CODEC.listOf().fieldOf("slices").forGetter(o -> o.slices)
     ).apply(ins, SeasonalTexture::new));
 
-    private final List<ResourceLocation> parent;
+    private final List<Identifier> parent;
     private final Optional<Holder<AgroClimaticZone>> climate;
-    private final Optional<Either<List<ResourceLocation>, TagKey<Biome>>> biomes;
+    private final Optional<Either<List<Identifier>, TagKey<Biome>>> biomes;
     private final List<Slice> slices;
 
     private Enum2ObjectMap<SolarTerm, FlatSliceHolder> flatSliceEnumMap = null;
@@ -46,7 +46,7 @@ public class SeasonalTexture {
         return flatSliceEnumMap != null;
     }
 
-    public SeasonalTexture build(ResourceLocation resourceLocation) {
+    public SeasonalTexture build(Identifier Identifier) {
         flatSliceEnumMap = new Enum2ObjectMap<>(SolarTerm.class);
         for (Slice slice : slices) {
             FlatSlice flatSlice = new FlatSlice(
@@ -61,7 +61,7 @@ public class SeasonalTexture {
             SolarTerm start = slice.start.isValid() ? slice.start :
                     slice.solarTerm.isValid() ? slice.solarTerm :
                             slice.season.isValid() ? slice.season.getFirstSolarTerm(climate) :
-                                    slice.startSeason.isValid() ? slice.startSeason.getFirstSolarTerm(climate) : null;
+                                    slice.startSeason.isValid() ? slice.endSeason.getFirstSolarTerm(climate) : null;
 
             SolarTerm end = slice.end.isValid() ? slice.end :
                     slice.solarTerm.isValid() ? slice.solarTerm :
@@ -97,9 +97,9 @@ public class SeasonalTexture {
     @Builder
     @Data
     public static class Slice {
-        public static final Pair<ResourceLocation, ResourceLocation> EMPTY_PAIR = Pair.of(LocalSeasonStatusModel.EMPTY, LocalSeasonStatusModel.EMPTY);
+        public static final Pair<Identifier, Identifier> EMPTY_PAIR = Pair.of(LocalSeasonStatusModel.EMPTY, LocalSeasonStatusModel.EMPTY);
 
-        public static final Codec<Map<String, ResourceLocation>> MATERIALS = CodecUtil.mapCodec(Codec.STRING, ResourceLocation.CODEC);
+        public static final Codec<Map<String, Identifier>> MATERIALS = CodecUtil.mapCodec(Codec.STRING, Identifier.CODEC);
         public static final Codec<Slice> CODEC = RecordCodecBuilder.create(ins -> ins.group(
                 ESExtraCodec.SOLAR_TERM.optionalFieldOf("start", SolarTerm.NONE).forGetter(o -> o.start),
                 ESExtraCodec.SOLAR_TERM.optionalFieldOf("end", SolarTerm.NONE).forGetter(o -> o.end),
@@ -130,13 +130,13 @@ public class SeasonalTexture {
         @Builder.Default
         private final Season season = Season.NONE;
         @Builder.Default
-        private final List<Map<String, ResourceLocation>> textures = List.of();
+        private final List<Map<String, Identifier>> textures = List.of();
         @Builder.Default
-        private final List<Pair<Map<String, ResourceLocation>, Map<String, ResourceLocation>>> transitionMaterials = List.of();
+        private final List<Pair<Map<String, Identifier>, Map<String, Identifier>>> transitionMaterials = List.of();
         @Builder.Default
-        private final List<Map<String, ResourceLocation>> snowTextures = List.of();
+        private final List<Map<String, Identifier>> snowTextures = List.of();
         @Builder.Default
-        private final List<Pair<Map<String, ResourceLocation>, Map<String, ResourceLocation>>> snowTransitionMaterials = List.of();
+        private final List<Pair<Map<String, Identifier>, Map<String, Identifier>>> snowTransitionMaterials = List.of();
         @Builder.Default
         private final Map<String, Integer> tintMap = Map.of();
         @Builder.Default
@@ -150,8 +150,8 @@ public class SeasonalTexture {
     }
 
 
-    public record FlatSlice(@Nullable List<Map<String, ResourceLocation>> mid, Map<String, Integer> tintMap,
-                            @Nullable List<Pair<Map<String, ResourceLocation>, Map<String, ResourceLocation>>> transitionModels) {
+    public record FlatSlice(@Nullable List<Map<String, Identifier>> mid, Map<String, Integer> tintMap,
+                            @Nullable List<Pair<Map<String, Identifier>, Map<String, Identifier>>> transitionModels) {
     }
 
 

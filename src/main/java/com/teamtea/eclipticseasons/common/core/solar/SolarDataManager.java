@@ -1,7 +1,8 @@
 package com.teamtea.eclipticseasons.common.core.solar;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
 import com.teamtea.eclipticseasons.EclipticSeasons;
-import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.event.SolarTermChangeEvent;
@@ -14,6 +15,7 @@ import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
 import com.teamtea.eclipticseasons.common.core.crop.GreenHouseCoreProvider;
 import com.teamtea.eclipticseasons.common.core.crop.HumidityControlProvider;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
+import com.teamtea.eclipticseasons.common.core.solar.extra.FixedSolarDataManagerLocal;
 import com.teamtea.eclipticseasons.common.network.SimpleNetworkHandler;
 import com.teamtea.eclipticseasons.common.network.message.SolarTermsMessage;
 import com.teamtea.eclipticseasons.common.network.message.UpdateTempChangeMessage;
@@ -22,30 +24,42 @@ import it.unimi.dsi.fastutil.Pair;
 import it.unimi.dsi.fastutil.longs.Long2LongOpenHashMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.SectionPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
+import net.minecraft.util.datafix.DataFixTypes;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraft.world.level.chunk.storage.SerializableChunkData;
 import net.minecraft.world.level.saveddata.SavedData;
-import net.minecraft.world.level.storage.DimensionDataStorage;
+import net.minecraft.world.level.saveddata.SavedDataType;
+import net.minecraft.world.level.storage.SavedDataStorage;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.common.NeoForge;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.Nullable;
 
 import java.lang.ref.WeakReference;
 import java.util.*;
 
 
 public class SolarDataManager extends SavedData {
+
+    public static final SavedDataType<SolarDataManager> TYPE = new SavedDataType<>(
+            EclipticSeasons.rl("solar_manager"), SolarDataManager::new, SolarDataManager::makeCodec, DataFixTypes.LEVEL
+    );
+
+    private static Codec<SolarDataManager> makeCodec(@Nullable ServerLevel level) {
+        return CompoundTag.CODEC.flatXmap(
+                tag -> DataResult.success(load(level, tag)),
+                data -> DataResult.success(data.save(new CompoundTag())));
+    }
 
     protected final int startSolarTermsDay = (CommonConfig.Season.initialSolarTermIndex.get() - 1) * CommonConfig.Season.lastingDaysOfEachTerm.get();
     protected int solarTermsDay = startSolarTermsDay;
@@ -79,25 +93,25 @@ public class SolarDataManager extends SavedData {
 
     public SolarDataManager(Level level, CompoundTag nbt) {
         this(level);
-        setSolarTermsDay(nbt.getInt("SolarTermsDay"));
-        setSolarTermsTicks(nbt.getInt("SolarTermsTicks"));
+        setSolarTermsDay(nbt.getIntOr("SolarTermsDay", 0));
+        setSolarTermsTicks(nbt.getIntOr("SolarTermsTicks", 0));
         if (nbt.contains("SolarTempChange")) {
-            setSolarTempChange(nbt.getFloat("SolarTempChange"));
+            setSolarTempChange(nbt.getFloatOr("SolarTempChange", 0));
         }
-        this.biomeDataVersion = nbt.getInt("BiomeDataVersion");
+        this.biomeDataVersion = nbt.getIntOr("BiomeDataVersion", 0);
         setLevelData(nbt);
     }
 
     protected void setLevelData(CompoundTag nbt) {
         Level level = levelWeakReference.get();
         if (level != null) {
-            var listTag = nbt.getList("biomes", Tag.TAG_COMPOUND);
+            var listTag = nbt.getListOrEmpty("biomes");
             var biomeWeathers = WeatherManager.getBiomeList(level);
             int countCheck = 0;
-            long hash = nbt.getLong("BiomeRainHashRecord");
+            long hash = nbt.getLongOr("BiomeRainHashRecord", -1);
             for (int i = 0; i < listTag.size(); i++) {
-                CompoundTag compound = listTag.getCompound(i);
-                var location = compound.getString("biome");
+                CompoundTag compound = listTag.getCompoundOrEmpty(i);
+                var location = compound.getStringOr("biome", "");
                 if (biomeWeathers != null) {
                     for (int j = 0; j < biomeWeathers.size(); j++) {
                         WeatherManager.BiomeWeather biomeWeather = biomeWeathers.get(j);
@@ -121,14 +135,16 @@ public class SolarDataManager extends SavedData {
 
 
     public static SolarDataManager get(ServerLevel serverLevel) {
-        DimensionDataStorage storage = serverLevel.getDataStorage();
+        SavedDataStorage storage = serverLevel.getDataStorage();
         return storage.computeIfAbsent(
-                new Factory<>(() -> create(serverLevel),
-                        ((compoundTag, provider) -> load(serverLevel, compoundTag, provider))),
-                EclipticSeasonsApi.MODID);
+                TYPE
+                // new Factory<>(() -> create(serverLevel),
+                //        ((compoundTag, provider) -> load(serverLevel, compoundTag, provider))),
+                // EclipticSeasonsApi.MODID
+        );
     }
 
-    private static SolarDataManager load(ServerLevel serverLevel, CompoundTag compoundTag, HolderLookup.Provider provider) {
+    private static SolarDataManager load(ServerLevel serverLevel, CompoundTag compoundTag) {
         return CommonConfig.Season.realWorldSolarTerms.get() ?
                 new FixedSolarDataManagerLocal(serverLevel, compoundTag) : new SolarDataManager(serverLevel, compoundTag);
     }
@@ -136,14 +152,14 @@ public class SolarDataManager extends SavedData {
     private static SolarDataManager create(ServerLevel serverLevel) {
         SolarDataManager manager = CommonConfig.Season.realWorldSolarTerms.get() ?
                 new FixedSolarDataManagerLocal(serverLevel) : new SolarDataManager(serverLevel);
-        WeatherManager.initNewWorldWeather(serverLevel, serverLevel.random, manager.getSolarTerm());
+        WeatherManager.initNewWorldWeather(serverLevel, serverLevel.getRandom(), manager.getSolarTerm());
         return manager;
     }
 
 
     public void updateTicks(ServerLevel level) {
         solarTermsTicks++;
-        int dayTime = Math.toIntExact(level.getDayTime() % EclipticUtil.getDayLengthInMinecraft(level));
+        int dayTime = Math.toIntExact(level.getDefaultClockTime() % EclipticUtil.getDayLengthInMinecraft(level));
         if (solarTermsTicks > dayTime + 100) {
             setSolarTermsDay((getSolarTermsDay() + 1));
             sendAndUpdate(level);
@@ -151,6 +167,12 @@ public class SolarDataManager extends SavedData {
         solarTermsTicks = dayTime;
 
         setDirty();
+    }
+
+    public int getDayCycleTicks() {
+        Level level = levelWeakReference.get();
+        return level == null ? EclipticUtil.getDayLengthInMinecraftStatic() :
+                EclipticUtil.getDayLengthInMinecraft(level);
     }
 
     public boolean isValidDimension() {
@@ -226,11 +248,11 @@ public class SolarDataManager extends SavedData {
     }
 
     public void addHumidityControlProvider(BlockPos pos, HumidityControlProvider humidityControlProvider) {
-        ChunkPos chunkPos = new ChunkPos(pos);
-        List<Pair<BlockPos, HumidityControlProvider>> blockPosBlockStateMap = this.humidityCoreMap.get(chunkPos.toLong());
+        ChunkPos chunkPos = ChunkPos.containing(pos);
+        List<Pair<BlockPos, HumidityControlProvider>> blockPosBlockStateMap = this.humidityCoreMap.get(chunkPos.pack());
         if (blockPosBlockStateMap == null) {
             blockPosBlockStateMap = new ArrayList<>();
-            this.humidityCoreMap.put(chunkPos.toLong(), blockPosBlockStateMap);
+            this.humidityCoreMap.put(chunkPos.pack(), blockPosBlockStateMap);
         }
 
         for (int i = 0; i < blockPosBlockStateMap.size(); i++) {
@@ -253,10 +275,10 @@ public class SolarDataManager extends SavedData {
     @ApiStatus.Experimental
     private void addGreenHouseCoreProvider(BlockPos pos, GreenHouseCoreProvider provider, int chunkX, int chunkZ) {
         ChunkPos chunkPos = new ChunkPos(chunkX, chunkZ);
-        List<Pair<BlockPos, GreenHouseCoreProvider>> blockPosBlockStateMap = this.greenHouseCoreMap.get(chunkPos.toLong());
+        List<Pair<BlockPos, GreenHouseCoreProvider>> blockPosBlockStateMap = this.greenHouseCoreMap.get(chunkPos.pack());
         if (blockPosBlockStateMap == null) {
             blockPosBlockStateMap = new ArrayList<>();
-            this.greenHouseCoreMap.put(chunkPos.toLong(), blockPosBlockStateMap);
+            this.greenHouseCoreMap.put(chunkPos.pack(), blockPosBlockStateMap);
         }
 
         for (int i = 0; i < blockPosBlockStateMap.size(); i++) {
@@ -272,14 +294,14 @@ public class SolarDataManager extends SavedData {
     }
 
     public void unloadChunk(ChunkPos chunkPos) {
-        this.humidityCoreMap.remove(chunkPos.toLong());
-        this.greenHouseCoreMap.remove(chunkPos.toLong());
-        this.needTickMap.remove(chunkPos.toLong());
+        this.humidityCoreMap.remove(chunkPos.pack());
+        this.greenHouseCoreMap.remove(chunkPos.pack());
+        this.needTickMap.remove(chunkPos.pack());
     }
 
     public HumidityControlProvider queryHumidityControlProvider(BlockPos blockPos) {
-        ChunkPos chunkPos = new ChunkPos(blockPos);
-        List<Pair<BlockPos, HumidityControlProvider>> lis = this.humidityCoreMap.getOrDefault(chunkPos.toLong(), null);
+        ChunkPos chunkPos = ChunkPos.containing(blockPos);
+        List<Pair<BlockPos, HumidityControlProvider>> lis = this.humidityCoreMap.getOrDefault(chunkPos.pack(), null);
         if (lis != null) {
             for (int i = 0, lisSize = lis.size(); i < lisSize; i++) {
                 Pair<BlockPos, HumidityControlProvider> p = lis.get(i);
@@ -292,15 +314,15 @@ public class SolarDataManager extends SavedData {
     }
 
     public HumidityControlProvider removeHumidityControlProvider(BlockPos blockPos) {
-        ChunkPos chunkPos = new ChunkPos(blockPos);
-        List<Pair<BlockPos, HumidityControlProvider>> lis = this.humidityCoreMap.getOrDefault(chunkPos.toLong(), null);
+        ChunkPos chunkPos = ChunkPos.containing(blockPos);
+        List<Pair<BlockPos, HumidityControlProvider>> lis = this.humidityCoreMap.getOrDefault(chunkPos.pack(), null);
         if (lis != null) {
             for (int i = 0, lisSize = lis.size(); i < lisSize; i++) {
                 Pair<BlockPos, HumidityControlProvider> p = lis.get(i);
                 if (p.first().equals(blockPos)) {
                     lis.remove(i);
                     if (lis.isEmpty()) {
-                        greenHouseCoreMap.remove(chunkPos.toLong());
+                        greenHouseCoreMap.remove(chunkPos.pack());
                     }
                     return p.second();
                 }
@@ -314,9 +336,9 @@ public class SolarDataManager extends SavedData {
     }
 
     public float calculateHumidityModification(BlockPos blockPos, boolean growPlus) {
-        ChunkPos chunkPos = new ChunkPos(blockPos);
+        ChunkPos chunkPos = ChunkPos.containing(blockPos);
         // if (growPlus) {
-        //     needTickMap.put(chunkPos.toLong(), levelWeakReference.get() != null ?
+        //     needTickMap.put(chunkPos.pack(), levelWeakReference.get() != null ?
         //             levelWeakReference.get().getGameTime() : 0);
         // }
 
@@ -333,8 +355,8 @@ public class SolarDataManager extends SavedData {
         float result = 0f;
         for (int dx = isLeftBorder ? -1 : 0; dx <= (isRightBorder ? 1 : 0); dx++) {
             for (int dz = isFrontBorder ? -1 : 0; dz <= (isBackBorder ? 1 : 0); dz++) {
-                ChunkPos currentChunkPos = new ChunkPos(chunkPos.x + dx, chunkPos.z + dz);
-                List<Pair<BlockPos, HumidityControlProvider>> lis = this.humidityCoreMap.getOrDefault(currentChunkPos.toLong(), null);
+                ChunkPos currentChunkPos = new ChunkPos(chunkPos.x() + dx, chunkPos.z() + dz);
+                List<Pair<BlockPos, HumidityControlProvider>> lis = this.humidityCoreMap.getOrDefault(currentChunkPos.pack(), null);
 
                 if (lis != null) {
                     for (Pair<BlockPos, HumidityControlProvider> p : lis) {
@@ -355,8 +377,8 @@ public class SolarDataManager extends SavedData {
     }
 
     public GreenHouseCoreProvider queryGreenHouseProvider(BlockPos blockPos) {
-        ChunkPos chunkPos = new ChunkPos(blockPos);
-        List<Pair<BlockPos, GreenHouseCoreProvider>> lis = this.greenHouseCoreMap.getOrDefault(chunkPos.toLong(), null);
+        ChunkPos chunkPos = ChunkPos.containing(blockPos);
+        List<Pair<BlockPos, GreenHouseCoreProvider>> lis = this.greenHouseCoreMap.getOrDefault(chunkPos.pack(), null);
         if (lis != null) {
             for (int i = 0, lisSize = lis.size(); i < lisSize; i++) {
                 Pair<BlockPos, GreenHouseCoreProvider> p = lis.get(i);
@@ -369,15 +391,15 @@ public class SolarDataManager extends SavedData {
     }
 
     public GreenHouseCoreProvider removeGreenHouseProvider(BlockPos blockPos) {
-        ChunkPos chunkPos = new ChunkPos(blockPos);
-        List<Pair<BlockPos, GreenHouseCoreProvider>> lis = this.greenHouseCoreMap.getOrDefault(chunkPos.toLong(), null);
+        ChunkPos chunkPos = ChunkPos.containing(blockPos);
+        List<Pair<BlockPos, GreenHouseCoreProvider>> lis = this.greenHouseCoreMap.getOrDefault(chunkPos.pack(), null);
         if (lis != null) {
             for (int i = 0, lisSize = lis.size(); i < lisSize; i++) {
                 Pair<BlockPos, GreenHouseCoreProvider> p = lis.get(i);
                 if (p.first().equals(blockPos)) {
                     lis.remove(i);
                     if (lis.isEmpty()) {
-                        greenHouseCoreMap.remove(chunkPos.toLong());
+                        greenHouseCoreMap.remove(chunkPos.pack());
                     }
                     return p.second();
                 }
@@ -387,7 +409,7 @@ public class SolarDataManager extends SavedData {
     }
 
     public GreenHouseCoreProvider findNearGreenHouseProvider(BlockPos blockPos, List<Season> seasons) {
-        ChunkPos chunkPos = new ChunkPos(blockPos);
+        ChunkPos chunkPos = ChunkPos.containing(blockPos);
         Vec3 center = blockPos.getCenter();
         int d = CommonConfig.Crop.seasonCoreRange.get() / 16 + 1;
 
@@ -395,7 +417,7 @@ public class SolarDataManager extends SavedData {
             for (int dx = -r; dx <= r; dx++) {
                 for (int dz = -r; dz <= r; dz++) {
                     if (dx == -r || dx == r || dz == -r || dz == r) {
-                        ChunkPos currentChunkPos = new ChunkPos(chunkPos.x + dx, chunkPos.z + dz);
+                        ChunkPos currentChunkPos = new ChunkPos(chunkPos.x() + dx, chunkPos.z() + dz);
                         GreenHouseCoreProvider greenHouseCoreProvider = checkSeasonProviderInChunk(seasons, currentChunkPos, center);
                         if (greenHouseCoreProvider instanceof GreenHouseCoreBlockEntity.Consumer consumer) {
                             consumer.addEnergy(1);
@@ -412,7 +434,7 @@ public class SolarDataManager extends SavedData {
 
     protected GreenHouseCoreProvider checkSeasonProviderInChunk(List<Season> seasons, ChunkPos currentChunkPos, Vec3 center) {
         GreenHouseCoreProvider greenHouseCoreProvider = null;
-        List<Pair<BlockPos, GreenHouseCoreProvider>> lis = this.greenHouseCoreMap.getOrDefault(currentChunkPos.toLong(), null);
+        List<Pair<BlockPos, GreenHouseCoreProvider>> lis = this.greenHouseCoreMap.getOrDefault(currentChunkPos.pack(), null);
         if (lis != null) {
             int seasonCoreRange = CommonConfig.Crop.seasonCoreRange.get();
             for (Pair<BlockPos, GreenHouseCoreProvider> p : lis) {
@@ -428,7 +450,7 @@ public class SolarDataManager extends SavedData {
 
     public void tickChunk(LevelChunk chunk) {
         // if (!this.needTickMap.isEmpty()) {
-        //     long longPos = chunk.getPos().toLong();
+        //     long longPos = chunk.getPos().pack();
         //     long startTime = needTickMap.get(longPos);
         //     if (startTime > 1)
         //         needTickMap.put(longPos, startTime - 1);
@@ -436,7 +458,7 @@ public class SolarDataManager extends SavedData {
         // }
         if (this.humidityCoreMap.isEmpty()) return;
         ChunkPos pos = chunk.getPos();
-        List<Pair<BlockPos, HumidityControlProvider>> list = this.humidityCoreMap.get(pos.toLong());
+        List<Pair<BlockPos, HumidityControlProvider>> list = this.humidityCoreMap.get(pos.pack());
         if (list != null) {
             for (int i = 0; i < list.size(); i++) {
                 Pair<BlockPos, HumidityControlProvider> pair = list.get(i);
@@ -447,7 +469,7 @@ public class SolarDataManager extends SavedData {
                     pair.second().addRemainTime(-1);
                 }
             }
-            if (list.isEmpty()) this.humidityCoreMap.remove(pos.toLong());
+            if (list.isEmpty()) this.humidityCoreMap.remove(pos.pack());
         }
     }
 
@@ -483,8 +505,7 @@ public class SolarDataManager extends SavedData {
     }
 
 
-    @Override
-    public @NotNull CompoundTag save(CompoundTag compound, HolderLookup.@NotNull Provider pRegistries) {
+    public @NotNull CompoundTag save(CompoundTag compound) {
         compound.putInt("SolarTermsDay", getSolarTermsDay());
         compound.putInt("SolarTermsTicks", getSolarTermsTicks());
         compound.putFloat("SolarTempChange", getSolarTempChange());
@@ -505,7 +526,7 @@ public class SolarDataManager extends SavedData {
 
 
     public boolean shouldTickChunk(ChunkPos chunkPos) {
-        return this.needTickMap.containsKey(chunkPos.toLong());
+        return this.needTickMap.containsKey(chunkPos.pack());
     }
 
 
@@ -528,40 +549,41 @@ public class SolarDataManager extends SavedData {
 
     public static final String KEY_ATTACH_SOLAR_DATA = EclipticSeasons.rl("attach_solar_data").toString();
 
-    public void saveChunk(ChunkPos pos, CompoundTag data) {
+    public void saveChunk(ChunkPos pos, SerializableChunkData data) {
         Level level = levelWeakReference.get();
         if (level == null) return;
         if (!CommonConfig.Crop.saveChunkEnvironmentalHumidity.get()) return;
 
-        List<Pair<BlockPos, HumidityControlProvider>> list = this.humidityCoreMap.getOrDefault(pos.toLong(), null);
-        if (list != null) {
-            ListTag compoundTag = new ListTag();
-            for (Pair<BlockPos, HumidityControlProvider> pair : list) {
-                if (!pair.right().shouldSave()) continue;
-                CompoundTag ct = new CompoundTag();
-                ct.putLong("pos", pair.left().asLong());
-                ct.put("humidity_modifiers", pair.right().serializeNBT(level.registryAccess()));
-                compoundTag.add(ct);
-            }
-            if (!compoundTag.isEmpty())
-                data.put(KEY_ATTACH_SOLAR_DATA, compoundTag);
-        }
+        // List<Pair<BlockPos, HumidityControlProvider>> list = this.humidityCoreMap.getOrDefault(pos.pack(), null);
+        // if (list != null) {
+        //    ListTag compoundTag = new ListTag();
+        //    for (Pair<BlockPos, HumidityControlProvider> pair : list) {
+        //        if (!pair.right().shouldSave()) continue;
+        //        CompoundTag ct = new CompoundTag();
+        //        ct.putLong("pos", pair.left().asLong());
+        //        ct.put("humidity_modifiers", pair.right().serializeNBT(level.registryAccess()));
+        //        compoundTag.add(ct);
+        //    }
+        //    if (!compoundTag.isEmpty())
+        //        data.put(KEY_ATTACH_SOLAR_DATA, compoundTag);
+        //}
     }
 
-    public void loadChunk(ChunkPos pos, CompoundTag data) {
+    public void loadChunk(ChunkPos pos, SerializableChunkData data) {
         Level level = levelWeakReference.get();
         if (level == null) return;
-        if (!data.contains(KEY_ATTACH_SOLAR_DATA)) return;
-        ListTag attachSolarData = data.getList(KEY_ATTACH_SOLAR_DATA, Tag.TAG_COMPOUND);
-        for (Tag attachSolarDatum : attachSolarData) {
-            CompoundTag compoundTag = (CompoundTag) attachSolarDatum;
-            long aLong = compoundTag.getLong("pos");
-            BlockPos blockPos = BlockPos.of(aLong);
-            CompoundTag humidity_modifier = compoundTag.getCompound("humidity_modifiers");
-            if (humidity_modifier.isEmpty()) continue;
-            HumidityControlProvider humidityControlProvider = new HumidityControlProvider(0, 0, 0, true);
-            humidityControlProvider.deserializeNBT(level.registryAccess(), humidity_modifier);
-            addHumidityControlProvider(blockPos, humidityControlProvider);
-        }
+
+        // if (!data.contains(KEY_ATTACH_SOLAR_DATA)) return;
+        // ListTag attachSolarData = data.getListOrEmpty(KEY_ATTACH_SOLAR_DATA);
+        // for (Tag attachSolarDatum : attachSolarData) {
+        //    CompoundTag compoundTag = (CompoundTag) attachSolarDatum;
+        //    long aLong = compoundTag.getLongOr("pos",0);
+        //    BlockPos blockPos = BlockPos.of(aLong);
+        //    CompoundTag humidity_modifier = compoundTag.getCompoundOrEmpty("humidity_modifiers");
+        //    if (humidity_modifier.isEmpty()) continue;
+        //    HumidityControlProvider humidityControlProvider = new HumidityControlProvider(0, 0, 0, true);
+        //    humidityControlProvider.deserializeNBT(level.registryAccess(), humidity_modifier);
+        //    addHumidityControlProvider(blockPos, humidityControlProvider);
+        //}
     }
 }

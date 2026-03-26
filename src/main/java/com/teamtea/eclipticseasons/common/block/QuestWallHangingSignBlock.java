@@ -5,20 +5,17 @@ import com.teamtea.eclipticseasons.common.block.blockentity.QuestHangingSignBloc
 import com.teamtea.eclipticseasons.common.registry.BlockEntityRegistry;
 import com.teamtea.eclipticseasons.common.registry.ItemRegistry;
 import com.teamtea.eclipticseasons.common.registry.ParticleRegistry;
-import net.minecraft.Util;
+import net.minecraft.util.ARGB;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ColorParticleOption;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.util.FastColor;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.WallHangingSignBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
@@ -26,8 +23,6 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.WoodType;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.HitResult;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class QuestWallHangingSignBlock extends WallHangingSignBlock {
@@ -38,15 +33,7 @@ public class QuestWallHangingSignBlock extends WallHangingSignBlock {
     }
 
     @Override
-    public @NotNull String getDescriptionId() {
-        if (this.descriptionId == null) {
-            this.descriptionId = Util.makeDescriptionId("block", BuiltInRegistries.BLOCK.getKey(this));
-        }
-        return this.descriptionId;
-    }
-
-    @Override
-    public ItemStack getCloneItemStack(BlockState state, HitResult target, LevelReader level, BlockPos pos, Player player) {
+    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state, boolean includeData, Player player) {
         return ItemRegistry.seasonal_prayer_scroll_item.get().getDefaultInstance();
     }
 
@@ -66,7 +53,7 @@ public class QuestWallHangingSignBlock extends WallHangingSignBlock {
             if (!level.isClientSide()&& player instanceof ServerPlayer serverPlayer) {
                 questHangingSignBlockEntity.finishSeasonQuest(serverPlayer);
             }
-            return InteractionResult.sidedSuccess(level.isClientSide());
+            return InteractionResult.SUCCESS_SERVER;
         } else {
             return InteractionResult.PASS;
         }
@@ -82,9 +69,9 @@ public class QuestWallHangingSignBlock extends WallHangingSignBlock {
     public static void addSeasonalParticle(BlockState state, Level level, BlockPos pos, RandomSource random) {
         Direction direction = Direction.DOWN;
         int color = Season.collectValues()[random.nextInt(Season.collectValues().length)].getColor().getColor();
-        float r = FastColor.ARGB32.red(color) / 255.0F;
-        float g = FastColor.ARGB32.green(color) / 255.0F;
-        float b = FastColor.ARGB32.blue(color) / 255.0F;
+        float r = ARGB.red(color) / 255.0F;
+        float g = ARGB.green(color) / 255.0F;
+        float b = ARGB.blue(color) / 255.0F;
         ColorParticleOption colorParticleOption = ColorParticleOption.create(ParticleRegistry.GREENHOUSE, r, g, b);
 
         for (int i = 0; i < 2; i++)
@@ -130,11 +117,5 @@ public class QuestWallHangingSignBlock extends WallHangingSignBlock {
         return blockState;
     }
 
-    @Override
-    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
-        if (!movedByPiston && !level.isClientSide()&& !newState.is(this)) {
-            QuestHangingSignBlockEntity.popSign(level, pos);
-        }
-        super.onRemove(state, level, pos, newState, movedByPiston);
-    }
+
 }

@@ -42,7 +42,7 @@ public class General {
         ModConfigSpec.Builder COMMON_BUILDER = new ModConfigSpec.Builder();
 
         //COMMON_BUILDER.comment("Compat settings");
-        var basePath = Platform.getModFile(EclipticSeasonsBundles.MODID).findResource("resourcepacks");
+        var basePath = Platform.getModFile(EclipticSeasonsBundles.MODID).getContents().getPrimaryPath().getFileName().resolve("resourcepacks");
         try (var fileList = Files.list(basePath)) {
             bsp:
             for (Path path : fileList.toList()) {

@@ -14,6 +14,8 @@
   "ui.label.eclipticseasons.snow_passable": "雪可以穿过",
   "ui.label.eclipticseasons.offset": "偏移值",
   "ui.label.eclipticseasons.properties": "属性",
+  "debug_info.eclipticseasons.snow_term": "[%1$s → %3$s%2$s]",
+  "debug_info.eclipticseasons.snow_term.second_year": "次年",
   "info.eclipticseasons.recipe_category.greenhouse_ritual": "季节仪式",
   "info.eclipticseasons.recipe_category.greenhouse_ritual.not_in_room": "不可以在室内进行",
   "info.eclipticseasons.recipe_category.greenhouse_ritual.crop_bonus": "作物生长可以略微加速",

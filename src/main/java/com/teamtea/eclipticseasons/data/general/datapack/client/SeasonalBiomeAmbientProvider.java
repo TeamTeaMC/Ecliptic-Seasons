@@ -16,13 +16,13 @@ import net.minecraft.tags.BiomeTags;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biomes;
 import net.neoforged.neoforge.common.Tags;
-import net.neoforged.neoforge.common.data.ExistingFileHelper;
+
 
 import java.util.concurrent.CompletableFuture;
 
 public class SeasonalBiomeAmbientProvider extends ESClientBiomeDataMapProvider<SeasonalBiomeAmbient> {
-    public SeasonalBiomeAmbientProvider(PackOutput output, String modid, ExistingFileHelper helper, CompletableFuture<HolderLookup.Provider> registries) {
-        super(output, modid, helper, registries, ClientJsonCacheListener.DIRECTORY_AMBIENT, SeasonalBiomeAmbient.CODEC);
+    public SeasonalBiomeAmbientProvider(PackOutput output, String modid,  CompletableFuture<HolderLookup.Provider> registries) {
+        super(output, modid,  registries, ClientJsonCacheListener.DIRECTORY_AMBIENT, SeasonalBiomeAmbient.CODEC);
     }
 
     @Override
@@ -74,6 +74,6 @@ public class SeasonalBiomeAmbientProvider extends ESClientBiomeDataMapProvider<S
     }
 
     protected Holder<SoundEvent> getSoundHolder(HolderLookup.RegistryLookup<SoundEvent> lookup, SoundEvent soundEvent) {
-        return lookup.getOrThrow(ResourceKey.create(Registries.SOUND_EVENT, soundEvent.getLocation()));
+        return lookup.getOrThrow(ResourceKey.create(Registries.SOUND_EVENT, soundEvent.location()));
     }
 }

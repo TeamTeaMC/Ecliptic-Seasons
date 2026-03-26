@@ -1,0 +1,22 @@
+{
+  "end": "beginning_of_spring",
+  "start": "winter_solstice",
+  "need": [
+    {
+      "items": "minecraft:sweet_berries",
+      "count": 96
+    }
+  ],
+  "award": [
+    {
+      "id": "eclipticseasons:winter_greenhouse_essence"
+    }
+  ],
+  "tittle": {
+    "translate": "season_quest.eclipticseasons.winter_core"
+  },
+  "climate": "#eclipticseasons:all",
+  "weight": 10,
+  "glowing": true,
+  "color": 5592575
+}

@@ -5,9 +5,11 @@ import com.teamtea.eclipticseasons.api.constant.climate.FlatRain;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.constant.solar.TimePeriod;
 import com.teamtea.eclipticseasons.api.data.weather.special_effect.WeatherEffect;
+import com.teamtea.eclipticseasons.api.util.SimpleUtil;
 import lombok.Data;
 import lombok.Getter;
 import net.minecraft.core.Holder;
+import net.minecraft.server.commands.TimeCommand;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.valueproviders.IntProvider;
 import net.minecraft.world.level.Level;
@@ -76,7 +78,7 @@ public record CustomRain(int ordinal,
         if (defaultWeather.isPresent())
             return defaultWeather.get();
         if (weatherList.isEmpty()) return FlatRain.NONE;
-        TimePeriod timePeriod = TimePeriod.fromTimeOfDay(level.getTimeOfDay(1));
+        TimePeriod timePeriod = TimePeriod.fromTimeOfDay(SimpleUtil.getTimeOfDay(level));
         List<Weather> selectList = new ArrayList<>();
         int allWeights = 0;
         for (var weather : weatherList) {

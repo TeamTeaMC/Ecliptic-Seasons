@@ -18,19 +18,20 @@ import com.teamtea.eclipticseasons.api.util.SimpleUtil;
 import com.teamtea.eclipticseasons.api.util.fast.Enum2ObjectMap;
 import com.teamtea.eclipticseasons.common.registry.ESRegistries;
 import com.teamtea.eclipticseasons.config.CommonConfig;
-import net.minecraft.core.Holder;
-import net.minecraft.core.HolderSet;
-import net.minecraft.core.Registry;
-import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.*;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
+import net.minecraft.tags.TagLoader;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
+import net.neoforged.neoforge.registries.BaseMappedRegistry;
 
 import javax.annotation.Nullable;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.Collectors;
@@ -63,13 +64,13 @@ public class BiomeClimateManager {
     public static final Map<Biome, Integer> SNOW_LINE_MAP = new IdentityHashMap<>();
     public static final Map<Biome, Integer> CLIENT_SNOW_LINE_MAP = new IdentityHashMap<>();
 
-    public static void resetBiomeTags(RegistryAccess registryAccess, boolean isServer) {
+    public static void resetBiomeTags(HolderLookup.Provider registryAccess, boolean isServer) {
         putTag(registryAccess, isServer);
         putColorTag(registryAccess, isServer);
         resetAgroTag(registryAccess, isServer);
     }
 
-    public static void resetBiomeTemps(RegistryAccess registryAccess, boolean isServer) {
+    public static void resetBiomeTemps(HolderLookup.Provider registryAccess, boolean isServer) {
         // resetBiomeClimateMap(registryAccess, isServer ? BIOME_CLIMATE_MAP : CLIENT_CLIMATE_MAP);
         // resetSeasonPhaseMap(registryAccess, isServer ? SEASON_PHASE_MAP : CLIENT_SEASON_PHASE_MAP);
         if (isServer) {
@@ -116,29 +117,29 @@ public class BiomeClimateManager {
                 (biome, map) -> map
         );
 
-        BiomeRainDispatcher.init(registryAccess.registry(Registries.BIOME).orElse(null)
-            ,isServer);
+        BiomeRainDispatcher.init(registryAccess.lookup(Registries.BIOME).orElse(null)
+                , isServer);
 
         setSnowLine(registryAccess, isServer ? SNOW_LINE_MAP : CLIENT_SNOW_LINE_MAP);
     }
 
-    public static void setSnowLine(RegistryAccess registryAccess, Map<Biome, Integer> biomeIntegerMap) {
-        Optional<Registry<Biome>> biomeRegistry = registryAccess.registry(Registries.BIOME);
+    public static void setSnowLine(HolderLookup.Provider registryAccess, Map<Biome, Integer> biomeIntegerMap) {
+        var biomeRegistry = registryAccess.lookup(Registries.BIOME);
         if (biomeRegistry.isPresent()) {
             biomeIntegerMap.clear();
             for (var serializable : CommonConfig.Snow.biomeSnowLines.get()) {
                 String biomeOrTag = serializable.get(0) + "";
                 int snowLineHeight = Integer.parseInt(serializable.get(1) + "");
                 if (biomeOrTag.startsWith("#")) {
-                    TagKey<Biome> biomeTagKey = TagKey.create(Registries.BIOME, ResourceLocation.parse(biomeOrTag.substring(1, biomeOrTag.length() - 1)));
-                    Optional<HolderSet.Named<Biome>> tag = biomeRegistry.get().getTag(biomeTagKey);
+                    TagKey<Biome> biomeTagKey = TagKey.create(Registries.BIOME, Identifier.parse(biomeOrTag.substring(1, biomeOrTag.length() - 1)));
+                    Optional<HolderSet.Named<Biome>> tag = biomeRegistry.get().get(biomeTagKey);
                     if (tag.isPresent()) {
                         for (Holder<Biome> biomeHolder : tag.get()) {
                             biomeIntegerMap.putIfAbsent(biomeHolder.value(), snowLineHeight);
                         }
                     }
                 } else {
-                    Optional<Holder.Reference<Biome>> holder = biomeRegistry.get().getHolder(ResourceKey.create(Registries.BIOME, ResourceLocation.parse(biomeOrTag)));
+                    Optional<Holder.Reference<Biome>> holder = biomeRegistry.get().get(ResourceKey.create(Registries.BIOME, Identifier.parse(biomeOrTag)));
                     if (holder.isPresent()) {
                         biomeIntegerMap.putIfAbsent(holder.get().value(), snowLineHeight);
                     }
@@ -148,7 +149,7 @@ public class BiomeClimateManager {
     }
 
 
-    public static <T, U, R, S> void resetSomeMap(RegistryAccess registryAccess,
+    public static <T, U, R, S> void resetSomeMap(HolderLookup.Provider registryAccess,
                                                  ResourceKey<Registry<T>> resourceKey,
                                                  Map<Biome, S> useMap,
                                                  Function<T, Pair<HolderSet<Biome>, U>> biomeTransfer,
@@ -158,15 +159,16 @@ public class BiomeClimateManager {
         useMap.clear();
         Map<Biome, R> biomeUIdentityHashMap = new IdentityHashMap<>();
 
-        var registry = registryAccess.registry(resourceKey);
+        var registry = registryAccess.lookup(resourceKey);
         if (registry.isEmpty()) {
             SimpleUtil.warningForModWrongCalling(resourceKey);
         } else {
-            Registry<T> biomesClimateSettings = registry.get();
-            Set<Map.Entry<ResourceKey<T>, T>> entries = biomesClimateSettings.entrySet();
+            HolderLookup.RegistryLookup<T> biomesClimateSettings = registry.get();
+            Set<Map.Entry<ResourceKey<T>, T>> entries = biomesClimateSettings.listElements()
+                    .map(h -> Map.entry(h.key(), h.value())).collect(Collectors.toSet());
 
             // sort
-            Optional<Holder.Reference<T>> holder = biomesClimateSettings.getHolder(0);
+            Optional<Holder.Reference<T>> holder = biomesClimateSettings.listElements().findFirst();
             if (holder.isPresent() && holder.get().value() instanceof Comparable<?>) {
                 List<Map.Entry<ResourceKey<T>, T>> sortedEntries = entries.stream()
                         .sorted(Comparator.comparing(e -> (Comparable) e.getValue()))
@@ -184,10 +186,10 @@ public class BiomeClimateManager {
                 }
             }
         }
-        Optional<Registry<Biome>> biomes = registryAccess.registry(Registries.BIOME);
+        var biomes = registryAccess.lookup(Registries.BIOME);
         var objects = emptyInstance.get();
-        biomes.ifPresent(biomeRegistry -> biomeRegistry.forEach(biome ->
-                useMap.put(biome, mapSaver.apply(biome, biomeUIdentityHashMap.getOrDefault(biome, objects))))
+        biomes.ifPresent(biomeRegistry -> biomeRegistry.listElements().forEach(biome ->
+                useMap.put(biome.value(), mapSaver.apply(biome.value(), biomeUIdentityHashMap.getOrDefault(biome.value(), objects))))
         );
     }
 
@@ -255,19 +257,19 @@ public class BiomeClimateManager {
     }
 
 
-    public static @Nullable Holder<Biome> getHolder(RegistryAccess registryAccess, Biome biome) {
-        Registry<Biome> biomes = registryAccess.registryOrThrow(Registries.BIOME);
-        Optional<Holder.Reference<Biome>> holder = biomes.getHolder(biomes.getId(biome));
+    public static @Nullable Holder<Biome> getHolder(HolderLookup.Provider registryAccess, Biome biome) {
+        var biomes = registryAccess.get(Registries.BIOME).get().value();
+        Optional<Holder.Reference<Biome>> holder = biomes.get(biomes.getKey(biome));
         return holder.orElse(null);
     }
 
     public static @Nullable Holder<Biome> getHolder(Registry<Biome> biomes, Biome biome) {
-        Optional<Holder.Reference<Biome>> holder = biomes.getHolder(biomes.getId(biome));
+        Optional<Holder.Reference<Biome>> holder = biomes.get(biomes.getId(biome));
         return holder.orElse(null);
     }
 
     public static TagKey<Biome> getTag(Biome biome) {
-        // return getTag(WeatherManager.getMainServerLevel(), biome);
+        // return get(WeatherManager.getMainServerLevel(), biome);
         TagKey<Biome> biomeTagKey = CLIENT_BIOME_TAG_KEY_MAP.getOrDefault(biome, null);
         if (biomeTagKey != null) return biomeTagKey;
         return BIOME_TAG_KEY_MAP.getOrDefault(biome, ClimateTypeBiomeTags.RAINLESS);
@@ -283,7 +285,7 @@ public class BiomeClimateManager {
         return WEATHER_REGION_MAP.getOrDefault(biome, null);
     }
 
-    public static void resetAgroTag(RegistryAccess registryAccess, boolean isServer) {
+    public static void resetAgroTag(HolderLookup.Provider registryAccess, boolean isServer) {
         applyBiomeTags(
                 registryAccess,
                 new HashSet<>(ClimateTypeBiomeTags.OVERWORLD_AGRO_BIOME_TYPES),
@@ -291,7 +293,7 @@ public class BiomeClimateManager {
         );
     }
 
-    public static void putColorTag(RegistryAccess registryAccess, boolean isServer) {
+    public static void putColorTag(HolderLookup.Provider registryAccess, boolean isServer) {
         applyBiomeTags(
                 registryAccess,
                 isServer ? BIOME_COLOR_TAG_KEY_MAP : CLIENT_BIOME_COLOR_TAG_KEY_MAP,
@@ -302,14 +304,14 @@ public class BiomeClimateManager {
         );
     }
 
-    public static void putTag(RegistryAccess registryAccess, boolean isServer) {
+    public static void putTag(HolderLookup.Provider registryAccess, boolean isServer) {
         // set small
         for (Biome biome : SMALL_BIOME_MAP.entrySet().stream().filter(entry -> entry.getValue() == isServer).map(Map.Entry::getKey).toList()) {
             SMALL_BIOME_MAP.remove(biome);
         }
-        var biomeRegistry = registryAccess.registry(Registries.BIOME);
+        var biomeRegistry = registryAccess.lookup(Registries.BIOME);
         if (biomeRegistry.isPresent()) {
-            Optional<HolderSet.Named<Biome>> biomeNamed = biomeRegistry.get().getTag(ClimateTypeBiomeTags.IS_SMALL);
+            Optional<HolderSet.Named<Biome>> biomeNamed = biomeRegistry.get().get(ClimateTypeBiomeTags.IS_SMALL);
             if (biomeNamed.isPresent()) {
                 for (var holder : biomeNamed.get()) {
                     SMALL_BIOME_MAP.put(holder.value(), isServer);
@@ -320,12 +322,12 @@ public class BiomeClimateManager {
 
             for (TagKey<Biome> biomeType : ClimateTypeBiomeTags.BIOME_TYPES) {
                 TagKey<Biome> oldTag = ClimateTypeBiomeTags.create(biomeType.location().getPath().replace("rain/", ""));
-                Optional<HolderSet.Named<Biome>> oldTagApplied = biomeRegistry.get().getTag(oldTag);
+                Optional<HolderSet.Named<Biome>> oldTagApplied = biomeRegistry.get().get(oldTag);
                 if (oldTagApplied.isPresent() && oldTagApplied.get().size() > 0) {
                     String message = "[%s] was deprecated now, please use [%s] instead.".formatted(
                             oldTag.location(), biomeType.location());
                     message += "\nBiome list: " + String.join(",", oldTagApplied.get().stream()
-                            .map(h -> h.unwrapKey().map(ResourceKey::location).map(ResourceLocation::toString).orElse(null))
+                            .map(h -> h.unwrapKey().map(ResourceKey::identifier).map(Identifier::toString).orElse(null))
                             .filter(Objects::nonNull)
                             .toList());
                     EclipticSeasons.LOGGER.error(message);
@@ -350,7 +352,7 @@ public class BiomeClimateManager {
     }
 
     public static void applyBiomeTags(
-            RegistryAccess registryAccess,
+            HolderLookup.Provider registryAccess,
             Set<TagKey<Biome>> knownTags,
             Map<TagKey<Biome>, RegistryFilter<Biome>> filters
     ) {
@@ -366,7 +368,7 @@ public class BiomeClimateManager {
     }
 
     public static void applyBiomeTags(
-            RegistryAccess registryAccess,
+            HolderLookup.Provider registryAccess,
             Map<Biome, TagKey<Biome>> useMap,
             Set<TagKey<Biome>> knownTags,
             Map<TagKey<Biome>, RegistryFilter<Biome>> filters,
@@ -374,12 +376,13 @@ public class BiomeClimateManager {
             BiConsumer<Biome, TagKey<Biome>> callback
     ) {
         useMap.clear();
-        var biomeRegistry = registryAccess.registry(Registries.BIOME);
+        var biomeRegistry = registryAccess.lookup(Registries.BIOME);
         if (biomeRegistry.isEmpty()) return;
-        Registry<Biome> registry = biomeRegistry.get();
+
+        var registry = biomeRegistry.get();
         Set<Holder<Biome>> biomeNotSet = new HashSet<>();
 
-        for (var holder : registry.holders().toList()) {
+        for (var holder : registry.listElements().toList()) {
             var tag = knownTags.stream().filter(holder::is).findFirst();
             if (tag.isPresent()) {
                 useMap.put(holder.value(), tag.get());
@@ -402,18 +405,31 @@ public class BiomeClimateManager {
 
         useMap.forEach(callback);
 
-        updateTagInVanilla(knownTags, useMap, registry);
+        if ((biomeRegistry.get() instanceof HolderLookup.RegistryLookup.Delegate<Biome> delegate
+                && delegate.parent() instanceof MappedRegistry<Biome> br))
+            updateTagInVanilla(knownTags, useMap, br);
+        else if (biomeRegistry.get() instanceof MappedRegistry<Biome> br)
+            updateTagInVanilla(knownTags, useMap, br);
     }
 
 
-    public static void updateTagInVanilla(Set<TagKey<Biome>> biomeTypes, Map<Biome, TagKey<Biome>> useMap, Registry<Biome> biomeRegistry) {
+    public static void updateTagInVanilla(Set<TagKey<Biome>> biomeTypes, Map<Biome, TagKey<Biome>> useMap, MappedRegistry<Biome> biomeRegistry) {
         if (CommonConfig.Debug.disableUniqueRebindingBiomeTags.get()) return;
 
-        Map<TagKey<Biome>, List<Holder<Biome>>> biomeMap = biomeRegistry.getTags()
-                .filter(p -> !biomeTypes.contains(p.getFirst()))
+        Map<TagKey<Biome>, List<Holder<Biome>>> biomeMap = biomeRegistry.listTags()
+                .filter(p -> !biomeTypes.contains(p))
                 .collect(Collectors.toMap(
-                        Pair::getFirst,
-                        p -> p.getSecond().stream().toList()
+                        HolderSet.Named::key,
+                        p -> {
+                            try {
+                                Method m = HolderSet.ListBacked.class.getDeclaredMethod("contents");
+                                m.setAccessible(true);
+                                return new ArrayList<>((List<Holder<Biome>>) m.invoke(p));
+                            } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException |
+                                     ClassCastException e) {
+                                return new ArrayList<>();
+                            }
+                        }
                 ));
 
         useMap.forEach((biome, biomeTagKey) -> {
@@ -423,7 +439,15 @@ public class BiomeClimateManager {
                 holders.add(holder);
             }
         });
-        biomeRegistry.bindTags(biomeMap);
+
+        // biomeRegistry.prepareTagReload(new TagLoader.LoadResult<>(Registries.BIOME, biomeMap));
+        // if (biomeRegistry instanceof MappedRegistry<Biome> mappedRegistry)
+            // mappedRegistry.bindTags(new TagLoader.LoadResult<>(Registries.BIOME, biomeMap));
+        {
+            biomeRegistry.unfreeze(false);
+            biomeRegistry.bindTags(biomeMap);
+            biomeRegistry.freeze();
+        }
     }
 
     public static void clearOnClientExitOrServerClose(boolean serverCause) {

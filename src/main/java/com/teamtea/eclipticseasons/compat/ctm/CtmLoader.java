@@ -2,8 +2,8 @@ package com.teamtea.eclipticseasons.compat.ctm;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import it.unimi.dsi.fastutil.Pair;
-import net.minecraft.ResourceLocationException;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.IdentifierException;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.PackResources;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -16,7 +16,7 @@ public class CtmLoader {
 
     private final ResourceManager resourceManager;
     public Map<Block, CtmProperties> ctmStates = new IdentityHashMap<>();
-    public Map<ResourceLocation, Void> ctmTiles = new HashMap<>();
+    public Map<Identifier, Void> ctmTiles = new HashMap<>();
 
     public CtmLoader(ResourceManager resourceManager) {
         this.resourceManager = resourceManager;
@@ -64,17 +64,17 @@ public class CtmLoader {
                                 String[] split = s.split(" ");
                                 for (String string : split) {
                                     try {
-                                        ResourceLocation parse = EclipticSeasons.parse(string);
+                                        Identifier parse = EclipticSeasons.parse(string);
                                         String[] split1 = parse.getPath().split("textures/");
 
                                         // 如果不以textures开头，那么就是自动补全纹理，由于存储在内存中没有这个前缀，所以我们只需要加上block就好
-                                        ctmTiles.putIfAbsent(ResourceLocation.fromNamespaceAndPath(
+                                        ctmTiles.putIfAbsent(Identifier.fromNamespaceAndPath(
                                                 parse.getNamespace(), split1.length == 2 ? split1[1] : "block/" + parse.getPath()
                                         ), null);
-                                        // ctmTiles.putIfAbsent(ResourceLocation.fromNamespaceAndPath(
+                                        // ctmTiles.putIfAbsent(Identifier.fromNamespaceAndPath(
                                         //         parse.getNamespace(), split1.length == 2 ? split1[1] : parse.getPath()
                                         // ), null);
-                                    } catch (ResourceLocationException ignore) {
+                                    } catch (IdentifierException ignore) {
                                     }
                                 }
                             }
@@ -100,9 +100,9 @@ public class CtmLoader {
 
     public static class CTMLoadingResult {
         public Map<Block, CtmProperties> ctmStates;
-        public Map<ResourceLocation, Void> ctmTiles;
+        public Map<Identifier, Void> ctmTiles;
 
-        public CTMLoadingResult(Map<Block, CtmProperties> ctmStates, Map<ResourceLocation, Void> ctmTiles) {
+        public CTMLoadingResult(Map<Block, CtmProperties> ctmStates, Map<Identifier, Void> ctmTiles) {
             this.ctmStates = ctmStates;
             this.ctmTiles = ctmTiles;
 

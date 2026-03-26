@@ -10,7 +10,7 @@ import com.teamtea.eclipticseasons.common.registry.ESRegistries;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.StringRepresentable;
 
 import java.util.Locale;
@@ -18,7 +18,7 @@ import java.util.Optional;
 
 public record SeasonPhase(
         Season season,
-        ResourceLocation name,
+        Identifier name,
         ChatFormatting color,
         Optional<Icon> icon,
         FontIcon fontIcon
@@ -30,14 +30,14 @@ public record SeasonPhase(
 
     public static final Codec<SeasonPhase> CODEC = RecordCodecBuilder.create(ins -> ins.group(
             ESExtraCodec.SEASON.fieldOf("season").forGetter(SeasonPhase::season),
-            ResourceLocation.CODEC.fieldOf("name").forGetter(SeasonPhase::name),
+            Identifier.CODEC.fieldOf("name").forGetter(SeasonPhase::name),
             StringRepresentable.fromEnum(ChatFormatting::values).fieldOf("color").forGetter(SeasonPhase::color),
             Icon.CODEC.optionalFieldOf("icon").forGetter(SeasonPhase::icon),
             FontIcon.CODEC.fieldOf("font").forGetter(SeasonPhase::fontIcon)
     ).apply(ins, SeasonPhase::new));
 
     public record Icon(
-            ResourceLocation texture,
+            Identifier texture,
             int width,
             int height,
             int size,
@@ -45,12 +45,12 @@ public record SeasonPhase(
             int y
     ) {
 
-        public Icon(ResourceLocation texture) {
+        public Icon(Identifier texture) {
             this(texture, 30, 30, 30, 0, 0);
         }
 
         public static final Codec<Icon> CODEC = RecordCodecBuilder.create(ins -> ins.group(
-                ResourceLocation.CODEC.fieldOf("texture").forGetter(Icon::texture),
+                Identifier.CODEC.fieldOf("texture").forGetter(Icon::texture),
                 Codec.INT.optionalFieldOf("width", 30).forGetter(Icon::width),
                 Codec.INT.optionalFieldOf("height", 30).forGetter(Icon::height),
                 Codec.INT.optionalFieldOf("size", 30).forGetter(Icon::size),
@@ -60,11 +60,11 @@ public record SeasonPhase(
     }
 
     public record FontIcon(
-            ResourceLocation font,
+            Identifier font,
             String label
     ) {
         public static final Codec<FontIcon> CODEC = RecordCodecBuilder.create(ins -> ins.group(
-                ResourceLocation.CODEC.fieldOf("id").forGetter(FontIcon::font),
+                Identifier.CODEC.fieldOf("id").forGetter(FontIcon::font),
                 Codec.STRING.fieldOf("label").forGetter(FontIcon::label)
         ).apply(ins, FontIcon::new));
     }
@@ -103,14 +103,14 @@ public record SeasonPhase(
     }
 
     @Override
-    public ResourceLocation getIconFont() {
+    public Identifier getIconFont() {
         return fontIcon().font();
     }
 
     @Override
-    public ResourceLocation getIcon() {
+    public Identifier getIcon() {
         return icon().isPresent() ? icon().get().texture() :
-                name().withPrefix(ESRegistries.SEASON_PHASE.location().getPath() + "/");
+                name().withPrefix(ESRegistries.SEASON_PHASE.identifier().getPath() + "/");
     }
 
     @Override

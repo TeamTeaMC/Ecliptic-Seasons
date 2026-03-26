@@ -1,5 +1,5 @@
 {
-  "sound": "eclipticseasons:ambient.spring_forest",
+  "season": "spring",
   "biomes": {
     "values": [
       {
@@ -24,5 +24,5 @@
     ],
     "type": "neoforge:and"
   },
-  "season": "spring"
+  "sound": "eclipticseasons:ambient.spring_forest"
 }

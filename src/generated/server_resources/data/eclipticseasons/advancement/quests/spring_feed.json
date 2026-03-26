@@ -1,0 +1,85 @@
+{
+  "parent": "eclipticseasons:quests/spring_harvest",
+  "criteria": {
+    "parent": {
+      "conditions": {
+        "parent": "eclipticseasons:quests/spring_harvest"
+      },
+      "trigger": "eclipticseasons:parent"
+    },
+    "core_require_chicken": {
+      "conditions": {
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "minecraft:chicken"
+            }
+          }
+        ],
+        "item": {
+          "items": "#minecraft:chicken_food"
+        }
+      },
+      "trigger": "minecraft:player_interacted_with_entity"
+    },
+    "core_require_cow": {
+      "conditions": {
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "minecraft:cow"
+            }
+          }
+        ],
+        "item": {
+          "items": "#minecraft:cow_food"
+        }
+      },
+      "trigger": "minecraft:player_interacted_with_entity"
+    },
+    "core_require_sheep": {
+      "conditions": {
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "minecraft:sheep"
+            }
+          }
+        ],
+        "item": {
+          "items": "#minecraft:sheep_food"
+        }
+      },
+      "trigger": "minecraft:player_interacted_with_entity"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancement.eclipticseasons.spring_feed.desc"
+    },
+    "icon": {
+      "id": "minecraft:white_wool"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "advancement.eclipticseasons.spring_feed"
+    }
+  },
+  "requirements": [
+    [
+      "core_require_sheep",
+      "core_require_cow",
+      "core_require_chicken"
+    ],
+    [
+      "parent"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

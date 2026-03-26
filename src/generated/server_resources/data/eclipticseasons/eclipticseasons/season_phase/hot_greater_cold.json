@@ -1,0 +1,16 @@
+{
+  "season": "winter",
+  "name": "eclipticseasons:hot_greater_cold",
+  "color": "blue",
+  "icon": {
+    "texture": "eclipticseasons:font/seasons_icons",
+    "width": 180,
+    "height": 120,
+    "i": 5,
+    "j": 3
+  },
+  "font": {
+    "id": "eclipticseasons:solar_icons",
+    "label": "x"
+  }
+}

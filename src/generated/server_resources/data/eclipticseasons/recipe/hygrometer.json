@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "group": "hygrometer",
+  "key": {
+    "c": "minecraft:calcite",
+    "g": "#c:glass_panes",
+    "x": "#c:gems/amethyst",
+    "y": "#c:ingots/copper",
+    "z": "#c:dusts/redstone"
+  },
+  "pattern": [
+    "yxy",
+    "gcg",
+    "czc"
+  ],
+  "result": {
+    "id": "eclipticseasons:hygrometer"
+  }
+}

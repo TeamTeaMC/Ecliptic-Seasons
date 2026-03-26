@@ -10,7 +10,7 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.biome.Biome;
-import net.neoforged.neoforge.common.data.ExistingFileHelper;
+
 import net.neoforged.neoforge.registries.holdersets.AndHolderSet;
 import net.neoforged.neoforge.registries.holdersets.NotHolderSet;
 import net.neoforged.neoforge.registries.holdersets.OrHolderSet;
@@ -18,8 +18,8 @@ import net.neoforged.neoforge.registries.holdersets.OrHolderSet;
 import java.util.concurrent.CompletableFuture;
 
 public abstract class ESClientBiomeDataMapProvider<C> extends ESClientDataMapProvider<C> {
-    public ESClientBiomeDataMapProvider(PackOutput output, String modid, ExistingFileHelper helper, CompletableFuture<HolderLookup.Provider> registries, String type, Codec<C> codec) {
-        super(output, modid, helper, registries, type, codec);
+    public ESClientBiomeDataMapProvider(PackOutput output, String modid,  CompletableFuture<HolderLookup.Provider> registries, String type, Codec<C> codec) {
+        super(output, modid,  registries, type, codec);
     }
 
     @SafeVarargs

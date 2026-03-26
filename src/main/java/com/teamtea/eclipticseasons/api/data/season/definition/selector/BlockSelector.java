@@ -15,8 +15,8 @@ import lombok.Singular;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
@@ -61,7 +61,7 @@ public class BlockSelector implements IChangeSelector {
 
 
     @Override
-    public ResourceLocation getType() {
+    public Identifier getType() {
         return ChangeSelectors.BLOCK;
     }
 

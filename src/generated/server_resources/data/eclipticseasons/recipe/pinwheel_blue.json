@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "pinwheel",
+  "key": {
+    "x": "minecraft:paper",
+    "y": "minecraft:blue_dye",
+    "z": "#c:rods/wooden"
+  },
+  "pattern": [
+    "xy",
+    "z "
+  ],
+  "result": {
+    "id": "eclipticseasons:pinwheel_blue"
+  }
+}

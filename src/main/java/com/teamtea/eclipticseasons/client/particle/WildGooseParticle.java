@@ -9,7 +9,7 @@ public class WildGooseParticle extends RisingParticle {
     private final SpriteSet spriteSet;
 
     public WildGooseParticle(ClientLevel world, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed, SpriteSet spriteSet) {
-        super(world, x, y, z, xSpeed, ySpeed, zSpeed);
+        super(world, x, y, z, xSpeed, ySpeed, zSpeed, spriteSet.first());
         this.spriteSet = spriteSet;
         this.scale(2.8F);
         this.lifetime = 200;
@@ -20,10 +20,9 @@ public class WildGooseParticle extends RisingParticle {
         this.setParticleSpeed(0, 0, 0);
     }
 
-
     @Override
-    public ParticleRenderType getRenderType() {
-        return ParticleRenderType.PARTICLE_SHEET_OPAQUE;
+    protected Layer getLayer() {
+        return Layer.OPAQUE;
     }
 
     @Override

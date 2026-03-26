@@ -1,0 +1,22 @@
+{
+  "end": "beginning_of_autumn",
+  "start": "summer_solstice",
+  "need": [
+    {
+      "items": "minecraft:melon",
+      "count": 48
+    }
+  ],
+  "award": [
+    {
+      "id": "eclipticseasons:summer_greenhouse_essence"
+    }
+  ],
+  "tittle": {
+    "translate": "season_quest.eclipticseasons.summer_core"
+  },
+  "climate": "#eclipticseasons:all",
+  "weight": 10,
+  "glowing": true,
+  "color": 16733525
+}

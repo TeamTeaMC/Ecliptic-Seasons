@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "group": "seasonal_prayer_scroll",
+  "key": {
+    "x": "#c:seeds",
+    "y": "minecraft:paper"
+  },
+  "pattern": [
+    "xx",
+    "xy"
+  ],
+  "result": {
+    "id": "eclipticseasons:seasonal_prayer_scroll"
+  }
+}

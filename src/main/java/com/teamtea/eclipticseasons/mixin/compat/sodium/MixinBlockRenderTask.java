@@ -1,11 +1,13 @@
 package com.teamtea.eclipticseasons.mixin.compat.sodium;
 
 
+import com.google.common.annotations.Beta;
+
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import com.teamtea.eclipticseasons.EclipticSeasons;
-
 import com.teamtea.eclipticseasons.client.core.ExtraModelManager;
+import com.teamtea.eclipticseasons.client.core.ExtraRenderDispatcher;
 import com.teamtea.eclipticseasons.client.render.chunk.IceKeeper;
 import com.teamtea.eclipticseasons.compat.sodium.SodiumBoard;
 import com.teamtea.eclipticseasons.compat.sodium.SodiumStatus;
@@ -17,11 +19,10 @@ import net.caffeinemc.mods.sodium.client.render.chunk.compile.tasks.ChunkBuilder
 import net.caffeinemc.mods.sodium.client.render.chunk.compile.tasks.ChunkBuilderTask;
 import net.caffeinemc.mods.sodium.client.util.task.CancellationToken;
 import net.caffeinemc.mods.sodium.client.world.cloned.ChunkRenderContext;
-import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.RenderShape;
-import net.minecraft.world.level.block.SnowLayerBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
 import org.joml.Vector3dc;
@@ -33,8 +34,13 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+@Beta
+
 @Mixin({ChunkBuilderMeshingTask.class})
 public abstract class MixinBlockRenderTask extends ChunkBuilderTask<ChunkBuildOutput> implements SodiumBoard {
+    public MixinBlockRenderTask(RenderSection render, int time, Vector3dc absoluteCameraPos) {
+        super(render, time, absoluteCameraPos);
+    }
 
     @Shadow
     @Final
@@ -43,10 +49,6 @@ public abstract class MixinBlockRenderTask extends ChunkBuilderTask<ChunkBuildOu
     private long eclipticseasons$time = 0;
     @Unique
     private long eclipticseasons$countModel = 0;
-
-    public MixinBlockRenderTask(RenderSection render, int time, Vector3dc absoluteCameraPos) {
-        super(render, time, absoluteCameraPos);
-    }
 
     @Inject(
             method = "execute(Lnet/caffeinemc/mods/sodium/client/render/chunk/compile/ChunkBuildContext;Lnet/caffeinemc/mods/sodium/client/util/task/CancellationToken;)Lnet/caffeinemc/mods/sodium/client/render/chunk/compile/ChunkBuildOutput;",
@@ -89,14 +91,17 @@ public abstract class MixinBlockRenderTask extends ChunkBuilderTask<ChunkBuildOu
             remap = false,
             at = @At(value = "INVOKE", target = "Lnet/caffeinemc/mods/sodium/client/render/chunk/compile/pipeline/FluidRenderer;render(Lnet/caffeinemc/mods/sodium/client/world/LevelSlice;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/material/FluidState;Lnet/minecraft/core/BlockPos;Lnet/minecraft/core/BlockPos;Lnet/caffeinemc/mods/sodium/client/render/chunk/translucent_sorting/TranslucentGeometryCollector;Lnet/caffeinemc/mods/sodium/client/render/chunk/compile/ChunkBuildBuffers;)V")
     )
-    private void eclipticseasons$renderFrozenWaterIce(ChunkBuildContext buildContext, CancellationToken cancellationToken, CallbackInfoReturnable<ChunkBuildOutput> cir,
-                                                      @Local FluidState fluidState,
-                                                      @Local BlockState blockState,
-                                                      @Local(ordinal = 0) BlockPos.MutableBlockPos blockPos,
-                                                      @Local(ordinal = 1) BlockPos.MutableBlockPos modelOffset) {
+    private void eclipticseasons$renderFrozenWaterIce(
+            ChunkBuildContext buildContext,
+            CancellationToken cancellationToken,
+            CallbackInfoReturnable<ChunkBuildOutput> cir,
+            @Local(name = "fluidState") FluidState fluidState,
+            @Local(name = "blockState") BlockState blockState,
+            @Local(name = "blockPos") BlockPos.MutableBlockPos blockPos,
+            @Local(name = "modelOffset") BlockPos.MutableBlockPos modelOffset) {
         if (IceKeeper.notFrozen(buildContext.cache.getWorldSlice(), blockPos, blockState, fluidState))
             return;
-        BakedModel model = IceKeeper.getIceModel(blockState, fluidState);
+        var model = IceKeeper.getIceModel(blockState, fluidState);
         if (model != null) {
             buildContext.cache.getBlockRenderer().renderModel(model, IceKeeper.getFakeState(blockState, fluidState), blockPos, modelOffset);
         }
@@ -107,7 +112,7 @@ public abstract class MixinBlockRenderTask extends ChunkBuilderTask<ChunkBuildOu
             method = "execute(Lnet/caffeinemc/mods/sodium/client/render/chunk/compile/ChunkBuildContext;Lnet/caffeinemc/mods/sodium/client/util/task/CancellationToken;)Lnet/caffeinemc/mods/sodium/client/render/chunk/compile/ChunkBuildOutput;",
             at = @At(value = "INVOKE",
                     // shift = At.Shift.AFTER,
-                    target = "Lnet/caffeinemc/mods/sodium/client/render/chunk/compile/pipeline/BlockRenderCache;getBlockModels()Lnet/minecraft/client/renderer/block/BlockModelShaper;")
+                    target = "Lnet/caffeinemc/mods/sodium/client/render/chunk/compile/pipeline/BlockRenderCache;getBlockModels()Lnet/minecraft/client/renderer/block/BlockStateModelSet;")
     )
     private void eclipticseasons$renderSnowLayerIn_below(
             ChunkBuildContext buildContext,
@@ -116,7 +121,7 @@ public abstract class MixinBlockRenderTask extends ChunkBuilderTask<ChunkBuildOu
             @Local(ordinal = 0) BlockPos.MutableBlockPos mutableBlockPos,
             @Local LocalRef<BlockState> stateLocalRef
     ) {
-        var state = ExtraModelManager.shouldBlockAsSnowyState(stateLocalRef.get(), buildContext.cache.getWorldSlice(), mutableBlockPos);
+        var state = ExtraRenderDispatcher.shouldBlockAsSnowyState(stateLocalRef.get(), buildContext.cache.getWorldSlice(), mutableBlockPos);
         if (state != stateLocalRef.get())
             stateLocalRef.set(state);
     }
@@ -132,20 +137,9 @@ public abstract class MixinBlockRenderTask extends ChunkBuilderTask<ChunkBuildOu
                                                    @Local(ordinal = 0) BlockPos.MutableBlockPos blockPos,
                                                    @Local(ordinal = 1) BlockPos.MutableBlockPos modelOffset) {
         if (blockState.getRenderShape() == RenderShape.INVISIBLE) return;
-        BakedModel bm = ExtraModelManager.shouldRenderedWithSnowInside(buildContext.cache.getWorldSlice(), blockPos, blockState, null);
+        BlockStateModel bm = ExtraRenderDispatcher.shouldRenderedWithSnowInside(buildContext.cache.getWorldSlice(), blockPos, blockState, null);
         if (bm != null) {
             buildContext.cache.getBlockRenderer().renderModel(bm, Blocks.SNOW.defaultBlockState(), blockPos, modelOffset);
-        }
-
-        if (buildContext.cache.getBlockRenderer() instanceof SodiumStatus sodiumStatus) {
-            int y = blockPos.getY();
-            int layer = ExtraModelManager.getLayer(buildContext.cache.getWorldSlice(), blockPos, blockState, null, blockState.getSeed(blockPos));
-            if (layer > 0) {
-                buildContext.cache.getBlockRenderer().renderModel(ExtraModelManager.getSnowLayerModel(layer), Blocks.SNOW.defaultBlockState()
-                        .setValue(SnowLayerBlock.LAYERS, layer), blockPos, modelOffset.offset(0, 1, 0));
-                modelOffset.offset(0, -1, 0);
-                blockPos.setY(y);
-            }
         }
     }
 

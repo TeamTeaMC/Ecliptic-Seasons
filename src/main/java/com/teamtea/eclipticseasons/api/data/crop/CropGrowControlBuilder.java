@@ -12,8 +12,8 @@ import com.teamtea.eclipticseasons.api.util.codec.ESExtraCodec;
 import com.teamtea.eclipticseasons.api.util.fast.Enum2ObjectMap;
 import com.teamtea.eclipticseasons.common.misc.SimplePair;
 import com.teamtea.eclipticseasons.common.registry.ESRegistries;
-import net.minecraft.ResourceLocationException;
-import net.minecraft.advancements.critereon.BlockPredicate;
+import net.minecraft.IdentifierException;
+import net.minecraft.advancements.criterion.BlockPredicate;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.util.StringRepresentable;
@@ -38,8 +38,8 @@ public record CropGrowControlBuilder(
             .comapFlatMap(s -> {
                 try {
                     return DataResult.success(SolarTerm.valueOf(s.toUpperCase()));
-                } catch (ResourceLocationException resourcelocationexception) {
-                    return DataResult.error(() -> "Not a valid solar term: " + s + " " + resourcelocationexception.getMessage());
+                } catch (IdentifierException Identifierexception) {
+                    return DataResult.error(() -> "Not a valid solar term: " + s + " " + Identifierexception.getMessage());
                 }
             }, SolarTerm::getName)
             .stable();

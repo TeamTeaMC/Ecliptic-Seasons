@@ -2,9 +2,9 @@ package com.teamtea.eclipticseasons.data.general.sound;
 
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
-import net.neoforged.neoforge.common.data.ExistingFileHelper;
+
 import net.neoforged.neoforge.common.data.SoundDefinition;
 import net.neoforged.neoforge.common.data.SoundDefinitionsProvider;
 
@@ -12,25 +12,25 @@ public class ESSoundDefinitionsProvider extends SoundDefinitionsProvider {
 
     private final String modId;
 
-    public ESSoundDefinitionsProvider(PackOutput output, String modId, ExistingFileHelper helper) {
-        super(output, modId, helper);
+    public ESSoundDefinitionsProvider(PackOutput output, String modId) {
+        super(output, modId);
         this.modId=modId;
     }
 
     @Override
     public void registerSounds() {
-        BuiltInRegistries.SOUND_EVENT.stream().filter(soundEvent -> soundEvent.getLocation().getNamespace().equals(modId)).forEach(
+        BuiltInRegistries.SOUND_EVENT.stream().filter(soundEvent -> soundEvent.location().getNamespace().equals(modId)).forEach(
                 this::add
         );
     }
 
-    public ResourceLocation fixPath(ResourceLocation input){
-        return ResourceLocation.fromNamespaceAndPath(input.getNamespace(),input.getPath().replaceAll("\\.","/"));
+    public Identifier fixPath(Identifier input){
+        return Identifier.fromNamespaceAndPath(input.getNamespace(),input.getPath().replaceAll("\\.","/"));
     }
 
     public void add(SoundEvent soundEvent){
         add(soundEvent, SoundDefinition.definition().with(SoundDefinition.Sound.sound(
-                fixPath(soundEvent.getLocation()), SoundDefinition.SoundType.SOUND
+                fixPath(soundEvent.location()), SoundDefinition.SoundType.SOUND
         ).stream(true)));
     }
 }

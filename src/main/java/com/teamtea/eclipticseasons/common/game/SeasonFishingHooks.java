@@ -37,7 +37,7 @@ public class SeasonFishingHooks {
     public static ObjectArrayList<ItemStack> modify(LootParams pParams, ObjectArrayList<ItemStack> original) {
         if (CommonConfig.Animal.enableFishing.get()) {
             ServerLevel level = pParams.getLevel();
-            Entity entity = pParams.getParameter(LootContextParams.THIS_ENTITY);
+            Entity entity = pParams.contextMap().getOrThrow(LootContextParams.THIS_ENTITY);
             BlockPos blockPos = entity.getOnPos().above();
             boolean badWeather = isBadWeatherNow(level, blockPos);
             boolean notFishingSeason = !isFishingSeason(level, blockPos);

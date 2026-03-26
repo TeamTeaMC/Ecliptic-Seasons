@@ -17,7 +17,8 @@ public class Platform {
     // VersionRange.createFromVersionSpec("[0.11.0-z,)").containsVersion(new DefaultArtifactVersion("0.11.0.1"))
 
     public static boolean isModLoaded(String id) {
-        return FMLLoader.getLoadingModList().getModFileById(id) != null;
+        if (FMLLoader.getCurrentOrNull() == null) return false;
+        return FMLLoader.getCurrentOrNull().getLoadingModList().getModFileById(id) != null;
     }
 
     public static boolean isModsLoaded(List<String> ids) {
@@ -25,7 +26,7 @@ public class Platform {
     }
 
     public static boolean isPhysicalClient() {
-        return FMLEnvironment.dist.isClient();
+        return FMLEnvironment.getDist().isClient();
     }
 
     public static MinecraftServer getServer() {
@@ -33,7 +34,7 @@ public class Platform {
     }
 
     public static boolean isProduction() {
-        return FMLEnvironment.production;
+        return FMLEnvironment.isProduction();
     }
 
     public static IModFile getModFile(String s) {

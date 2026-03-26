@@ -27,7 +27,7 @@ public class QuestCeilingHangingSignBlock extends CeilingHangingSignBlock {
     }
 
     @Override
-    public ItemStack getCloneItemStack(BlockState state, HitResult target, LevelReader level, BlockPos pos, Player player) {
+    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state, boolean includeData, Player player) {
         return ItemRegistry.seasonal_prayer_scroll_item.get().getDefaultInstance();
     }
 
@@ -47,7 +47,7 @@ public class QuestCeilingHangingSignBlock extends CeilingHangingSignBlock {
             if (!level.isClientSide() && player instanceof ServerPlayer serverPlayer) {
                 questHangingSignBlockEntity.finishSeasonQuest(serverPlayer);
             }
-            return InteractionResult.sidedSuccess(level.isClientSide());
+            return InteractionResult.SUCCESS_SERVER;
         } else {
             return InteractionResult.PASS;
         }
@@ -77,11 +77,5 @@ public class QuestCeilingHangingSignBlock extends CeilingHangingSignBlock {
         return blockState;
     }
 
-    @Override
-    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
-        if (!movedByPiston && !level.isClientSide() && !newState.is(this)) {
-            QuestHangingSignBlockEntity.popSign(level, pos);
-        }
-        super.onRemove(state, level, pos, newState, movedByPiston);
-    }
+
 }

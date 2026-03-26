@@ -1,5 +1,6 @@
 {
-  "sound": "eclipticseasons:ambient.garden_wind",
+  "season": "summer",
+  "ignore_time": false,
   "biomes": {
     "values": [
       "minecraft:cherry_grove",
@@ -9,6 +10,5 @@
     ],
     "type": "neoforge:or"
   },
-  "ignore_time": false,
-  "season": "summer"
+  "sound": "eclipticseasons:ambient.garden_wind"
 }

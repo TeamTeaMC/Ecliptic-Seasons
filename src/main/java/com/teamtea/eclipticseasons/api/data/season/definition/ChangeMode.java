@@ -6,8 +6,8 @@ import com.teamtea.eclipticseasons.api.data.season.definition.selector.IChangeSe
 import com.teamtea.eclipticseasons.api.util.codec.CodecUtil;
 import lombok.Builder;
 import lombok.Singular;
-import net.minecraft.advancements.critereon.BlockPredicate;
-import net.minecraft.advancements.critereon.NbtPredicate;
+import net.minecraft.advancements.criterion.BlockPredicate;
+import net.minecraft.advancements.criterion.NbtPredicate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;

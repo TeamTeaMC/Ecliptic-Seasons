@@ -4,7 +4,7 @@ import com.google.common.annotations.Beta;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.teamtea.eclipticseasons.api.data.misc.PosAndBlockStateCheck;
-import net.minecraft.advancements.critereon.BlockPredicate;
+import net.minecraft.advancements.criterion.BlockPredicate;
 import net.minecraft.core.Vec3i;
 import net.neoforged.neoforge.common.util.ConcatenatedListView;
 import org.jetbrains.annotations.ApiStatus;

@@ -1,22 +1,23 @@
 package com.teamtea.eclipticseasons.mixin.compat.sodium;
 
 
+import com.google.common.annotations.Beta;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.teamtea.eclipticseasons.EclipticSeasons;
-import com.teamtea.eclipticseasons.client.core.ExtraModelManager;
-import com.teamtea.eclipticseasons.client.model.ISnowyReplaceModel;
+import com.teamtea.eclipticseasons.client.core.ExtraRenderDispatcher;
+import com.teamtea.eclipticseasons.client.model.block.ISnowyReplaceModel;
 import com.teamtea.eclipticseasons.compat.ctm.CTMSpriteChecker;
 import com.teamtea.eclipticseasons.compat.sodium.SodiumStatus;
-import net.caffeinemc.mods.sodium.client.render.frapi.render.AbstractBlockRenderContext;
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.resources.model.BakedModel;
+import net.caffeinemc.mods.sodium.client.render.model.AbstractBlockRenderContext;
+import net.caffeinemc.mods.sodium.client.render.model.MutableQuadViewImpl;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
+import net.minecraft.client.resources.model.geometry.BakedQuad;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -24,15 +25,12 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.List;
-import java.util.function.Supplier;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 
+@Beta
 @Mixin({AbstractBlockRenderContext.class})
 public abstract class MixinAbstractBlockRenderContext {
-    @Shadow
-    protected long randomSeed;
-    @Shadow
-    @Final
-    protected Supplier<RandomSource> randomSupplier;
     @Shadow
     protected RandomSource random;
 
@@ -46,70 +44,55 @@ public abstract class MixinAbstractBlockRenderContext {
     protected BlockState state;
 
     @ModifyExpressionValue(
-            remap = false,
-            method = "bufferDefaultModel",
-            at = @At(value = "INVOKE", target = "Lnet/caffeinemc/mods/sodium/client/services/PlatformModelAccess;getQuads(Lnet/minecraft/world/level/BlockAndTintGetter;Lnet/minecraft/core/BlockPos;Lnet/minecraft/client/resources/model/BakedModel;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/Direction;Lnet/minecraft/util/RandomSource;Lnet/minecraft/client/renderer/RenderType;Lnet/caffeinemc/mods/sodium/client/services/SodiumModelData;)Ljava/util/List;")
+           remap = false,
+           method = "bufferDefaultModel",
+           at = @At(value = "INVOKE", target = "Lnet/caffeinemc/mods/sodium/client/services/PlatformModelAccess;getQuads(Lnet/minecraft/client/renderer/block/BlockAndTintGetter;Lnet/minecraft/core/BlockPos;Lnet/minecraft/client/renderer/block/dispatch/BlockStateModelPart;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/Direction;Lnet/minecraft/util/RandomSource;)Ljava/util/List;")
     )
     private List<BakedQuad> eclipticseasons$bufferDefaultModel_getQuads(
-            List<BakedQuad> original,
-            @Local(argsOnly = true) BakedModel bakedModel,
-            @Local(argsOnly = true) BlockState state,
-            @Local Direction side,
-            @Local RandomSource rand) {
-        if (this instanceof SodiumStatus sodiumStatus && sodiumStatus.getSnowModel() != null)
-            return ExtraModelManager.cancelTop(bakedModel, level, state, pos, side, rand, randomSeed, original, sodiumStatus.getCacheBakeQuad());
-        return original;
+           List<BakedQuad> original,
+           @Local(argsOnly = true) BlockStateModelPart part,
+           @Local Direction side) {
+       if (this instanceof SodiumStatus sodiumStatus && sodiumStatus.getSnowModel() != null)
+           return ExtraRenderDispatcher.cancelTop(part, level, state, pos, side, random, original, sodiumStatus.getCacheBakeQuad());
+       return original;
     }
 
     @Inject(
-            remap = false,
-            method = "bufferDefaultModel",
-            at = @At(value = "INVOKE", target = "Lnet/caffeinemc/mods/sodium/client/render/frapi/mesh/MutableQuadViewImpl;fromVanilla(Lnet/minecraft/client/renderer/block/model/BakedQuad;Lnet/fabricmc/fabric/api/renderer/v1/material/RenderMaterial;Lnet/minecraft/core/Direction;)Lnet/caffeinemc/mods/sodium/client/render/frapi/mesh/MutableQuadViewImpl;")
+           remap = false,
+           method = "bufferDefaultModel",
+           at = @At(value = "INVOKE", target = "Lnet/caffeinemc/mods/sodium/client/render/model/MutableQuadViewImpl;fromBakedQuad(Lnet/minecraft/client/resources/model/geometry/BakedQuad;)Lnet/caffeinemc/mods/sodium/client/render/model/MutableQuadViewImpl;")
     )
     private void eclipticseasons$bufferDefaultModel_cache(
-            BakedModel model, BlockState state, CallbackInfo ci,
-            @Local(argsOnly = true) BakedModel bakedModel,
-            @Local BakedQuad bakedQuad,
-            @Local Direction side,
-            @Local RandomSource rand) {
-        if (this instanceof SodiumStatus sodiumStatus
-                && sodiumStatus.getSnowModel() != null
-                && !(ISnowyReplaceModel.isInvalid(bakedModel))
-                && !sodiumStatus.shouldCollect()) {
-            try {
-                if (bakedQuad.getSprite() != null
-                        && bakedQuad.getSprite() instanceof CTMSpriteChecker ctmSpriteChecker
-                        && ctmSpriteChecker.isCTMSprite()) {
-                    sodiumStatus.setShouldCollect(true);
-                }
-            } catch (Exception exception) {
-                EclipticSeasons.logger(exception);
-            }
-        }
+            BlockStateModelPart part,
+            Predicate<Direction> cullTest,
+            Consumer<MutableQuadViewImpl> emitter,
+            CallbackInfo ci,
+            @Local(name = "q") BakedQuad bakedQuad,
+            @Local(name = "cullFace") Direction side) {
+       if (this instanceof SodiumStatus sodiumStatus
+               && sodiumStatus.getSnowModel() != null
+               && !(ISnowyReplaceModel.isInvalid(part))
+               && !sodiumStatus.shouldCollect()) {
+           try {
+               if (bakedQuad.materialInfo().sprite() instanceof CTMSpriteChecker ctmSpriteChecker
+                       && ctmSpriteChecker.isCTMSprite()) {
+                   sodiumStatus.setShouldCollect(true);
+               }
+           } catch (Exception exception) {
+               EclipticSeasons.logger(exception);
+           }
+       }
     }
 
-    // @ModifyExpressionValue(
-    //         remap = false,
-    //         method = "renderQuad",
-    //         at = @At(value = "INVOKE", target = "Lnet/caffeinemc/mods/sodium/client/render/frapi/render/AbstractBlockRenderContext;transform(Lnet/fabricmc/fabric/api/renderer/v1/mesh/MutableQuadView;)Z")
-    // )
-    // private boolean eclipticseasons$renderQuad(boolean original,@Local(argsOnly = true) MutableQuadViewImpl quad){
-    //     if (YuushyaChecker.isyuushyaBlock(state)) {
-    //         EclipticSeasons.logger(original,ModelManager.getBakeQuadInfo(
-    //                 quad.toBakedQuad(quad.sprite(SpriteFinderCache.forBlockAtlas()))));
-    //     }
-    //     return original;
-    // }
-
-
-    // @WrapOperation(
-    //         remap = false,
-    //         method = "renderModel",
-    //         at = @At(value = "INVOKE", target = "Lme/jellysquid/mods/sodium/client/render/chunk/compile/pipeline/BlockRenderer;isFaceVisible(Lme/jellysquid/mods/sodium/client/render/chunk/compile/pipeline/BlockRenderContext;Lnet/minecraft/core/Direction;)Z")
-    // )
-    // private boolean mixin$renderModel_isFaceVisible(BlockRenderer blockRenderer, BlockRenderContext ctx, Direction face, Operation<Boolean> original) {
-    //     return ModelManager.shouldisFaceVisible(blockRenderer,ctx,face,original);
-    // }
+    @ModifyExpressionValue(
+           method = "shouldDrawSide",
+           at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/block/BlockAndTintGetter;getBlockState(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/block/state/BlockState;")
+    )
+    private BlockState eclipticseasons$skip_if_fake_snow(BlockState original,
+                                                        @Local(name = "neighborPos") BlockPos.MutableBlockPos otherPos,
+                                                        @Local(argsOnly = true) Direction facing) {
+       return ExtraRenderDispatcher.getFakeBlockState(original, state, level, otherPos, pos, facing);
+    }
 
 
 }

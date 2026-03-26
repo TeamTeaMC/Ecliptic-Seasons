@@ -33,12 +33,12 @@ public abstract class MixinLivingEntity extends Entity {
     // }
 
     @WrapOperation(at = {@At(value = "NEW",
-            target = "(Lnet/minecraft/core/particles/ParticleType;Lnet/minecraft/world/level/block/state/BlockState;)Lnet/minecraft/core/particles/BlockParticleOption;")},
+            target = "(Lnet/minecraft/core/particles/ParticleType;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/BlockPos;)Lnet/minecraft/core/particles/BlockParticleOption;")},
             method = {"checkFallDamage"})
-    public BlockParticleOption eclipticseasons$checkFallDamage_snow(ParticleType<BlockParticleOption> type, BlockState state, Operation<BlockParticleOption> original, @Local(argsOnly = true) BlockPos pos) {
+    public BlockParticleOption eclipticseasons$checkFallDamage_snow(ParticleType<?> type, BlockState state, BlockPos pos, Operation<BlockParticleOption> original) {
         if (EclipticSeasonsApi.getInstance().isSnowyBlock(level(), state, pos)) {
             state = Blocks.SNOW.defaultBlockState();
         }
-        return original.call(type, state);
+        return original.call(type, state, pos);
     }
 }

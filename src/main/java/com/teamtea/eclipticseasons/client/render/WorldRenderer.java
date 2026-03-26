@@ -7,16 +7,17 @@ import com.teamtea.eclipticseasons.client.ClientEventHandler;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import it.unimi.dsi.fastutil.ints.IntArraySet;
 import it.unimi.dsi.fastutil.ints.IntIterator;
-import net.minecraft.Util;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.LevelTargetBundle;
+import net.minecraft.client.renderer.PostChain;
 import net.minecraft.client.renderer.PostPass;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
@@ -50,7 +51,7 @@ public class WorldRenderer {
 
         if (Minecraft.getInstance().isPaused()) {
             if (oldBlurStatus == ON_BLUR || reMainTick > 0) {
-                gameRenderer.shutdownEffect();
+                gameRenderer.clearPostEffect();
                 oldBlurStatus = NONE_BLUR;
                 reMainTick = 0;
                 updateUniform("RadiusMultiplier", 0f);
@@ -73,8 +74,8 @@ public class WorldRenderer {
                     {
 
                         // 我们写的shader好像有问题？
-                        gameRenderer.loadEffect(EclipticSeasons.rl("shaders/post/box_blur.json"));
-//                        gameRenderer.loadEffect(ResourceLocation.withDefaultNamespace("shaders/post/blur.json"));
+                        gameRenderer.setPostEffect(EclipticSeasons.rl("shaders/post/box_blur.json"));
+//                        gameRenderer.loadEffect(Identifier.withDefaultNamespace("shaders/post/blur.json"));
                     }
                 }
 
@@ -95,7 +96,7 @@ public class WorldRenderer {
                 if (reMainTick <= 0) {
                     oldBlurStatus = blurStatus;
                     if (oldBlurStatus == NONE_BLUR) {
-                        gameRenderer.shutdownEffect();
+                        gameRenderer.clearPostEffect();
                     }
                     reMainTick = 0;
                 }
@@ -104,15 +105,17 @@ public class WorldRenderer {
     }
 
     public static void updateUniform(String name, float value) {
-        var postChain = Minecraft.getInstance().gameRenderer.currentEffect();
-        if (postChain != null)
-            for (PostPass postPass : postChain.passes) {
-                var uniform = postPass.getEffect().getUniform(name);
-                if (uniform != null) {
-                    uniform.set(value);
-                }
-            }
+        //PostChain postChain = Minecraft.getInstance().getShaderManager().getPostChain(Minecraft.getInstance().gameRenderer.currentPostEffect(), LevelTargetBundle.MAIN_TARGETS);
+        //
+        //if (postChain != null)
+        //    for (PostPass postPass : postChain.passes) {
+        //        var uniform = postPass.getEffect().getUniform(name);
+        //        if (uniform != null) {
+        //            uniform.set(value);
+        //        }
+        //    }
     }
+
 
 
     public static boolean isSectionLoad(SectionPos sectionPos) {
@@ -149,7 +152,7 @@ public class WorldRenderer {
 
     public static void setSectionDirtyRandomly(SectionPos sectionPos) {
         if (Minecraft.getInstance().level != null) {
-            RandomSource random = Minecraft.getInstance().level.random;
+            RandomSource random = Minecraft.getInstance().level.getRandom();
             int lastViewDistance = (int) (Minecraft.getInstance().levelRenderer.getLastViewDistance() - 1);
             for (int i = 0; i < random.nextInt(8) + 4; i++) {
                 {

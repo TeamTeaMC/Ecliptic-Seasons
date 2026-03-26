@@ -1,0 +1,15 @@
+{
+  "season": "summer",
+  "name": "eclipticseasons:hot_beginning_of_summer",
+  "color": "red",
+  "icon": {
+    "texture": "eclipticseasons:font/seasons_icons",
+    "width": 180,
+    "height": 120,
+    "j": 1
+  },
+  "font": {
+    "id": "eclipticseasons:solar_icons",
+    "label": "g"
+  }
+}

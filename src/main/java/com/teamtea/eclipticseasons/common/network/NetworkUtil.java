@@ -27,9 +27,7 @@ import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.chunk.status.ChunkStatus;
 import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.network.ConfigSync;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
-import net.neoforged.neoforge.network.payload.ConfigFilePayload;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -82,7 +80,7 @@ public class NetworkUtil {
             var lists = WeatherManager.getBiomeList(context.player().level());
             if (lists != null) {
                 Level level = context.player().level();
-                Registry<WeatherEffect> weatherEffects = level.registryAccess().registryOrThrow(ESRegistries.WEATHER_EFFECT);
+                Registry<WeatherEffect> weatherEffects = level.registryAccess().lookupOrThrow(ESRegistries.WEATHER_EFFECT);
 
                 boolean update = false;
                 for (WeatherManager.BiomeWeather biomeWeather : lists) {
@@ -97,7 +95,7 @@ public class NetworkUtil {
                     biomeWeather.clearTime = biomeWeatherMessage.clear[biomeWeather.id] * 10000;
                     biomeWeather.thunderTime = biomeWeatherMessage.thuder[biomeWeather.id] * 10000;
                     biomeWeather.setSnowDepth(biomeWeatherMessage.snowDepth[biomeWeather.id]);
-                    biomeWeather.effect = weatherEffects.getHolder(biomeWeatherMessage.special[biomeWeather.id]).orElse(null);
+                    biomeWeather.effect = weatherEffects.get(biomeWeatherMessage.special[biomeWeather.id]).orElse(null);
 
                     biomeWeather.setBiomeRain(BiomeRainDispatcher.getBiomeRain(
                             level instanceof ServerLevel, biomeWeatherMessage.weather[biomeWeather.id]));
@@ -151,6 +149,14 @@ public class NetworkUtil {
     }
 
 
+//    public static void handleConfigMessage(ConfigMessage configMessage, IPayloadContext iPayloadContext) {
+//        iPayloadContext.enqueueWork(() -> {
+//            CommonConfig.Season.validDimensions.set(configMessage.SeasonalDimensions().stream().map(
+//                    k -> k.identifier().toString()
+//            ).toList());
+//        });
+//    }
+
     public static void processChunkBiomeUpdateMessage(ChunkBiomeUpdateMessage chunkBiomeUpdateMessage, IPayloadContext iPayloadContext) {
         iPayloadContext.enqueueWork(() -> {
             if (ClientCon.getUseLevel() != null) {
@@ -192,4 +198,5 @@ public class NetworkUtil {
     public static void handle(ESConfigFilePayload payload, IPayloadContext context) {
         ESConfigSync.INSTANCE.receiveSyncedConfig(payload.contents(), payload.fileName());
     }
+
 }

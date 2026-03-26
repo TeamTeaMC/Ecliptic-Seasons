@@ -15,6 +15,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -64,15 +65,15 @@ public class IceWandItem extends Item {
     }
 
     @Override
-    public boolean canAttackBlock(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer) {
-        ItemStack itemInHand = pPlayer.getItemInHand(InteractionHand.MAIN_HAND);
+    public boolean canDestroyBlock(ItemStack itemStack, BlockState state, Level level, BlockPos pos, LivingEntity user) {
+        ItemStack itemInHand = user.getItemInHand(InteractionHand.MAIN_HAND);
         if (itemInHand.is(this)) {
             CustomData customData = itemInHand.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY);
-            CompoundTag unsafe = customData.getUnsafe();
+            CompoundTag unsafe = customData.copyTag();
 
-            SimplePair<MakerMode, Integer> simplePair = tryParse(unsafe.getString("range"));
-            int mode = unsafe.getInt("mode");
-            if (!pPlayer.isShiftKeyDown()) {
+            SimplePair<MakerMode, Integer> simplePair = tryParse(unsafe.getStringOr("range", ""));
+            int mode = unsafe.getIntOr("mode", 0);
+            if (!user.isShiftKeyDown()) {
                 int index = preModels.indexOf(simplePair);
                 int nextIndex = index > -1 && index < preModels.size() - 1 ? (index + 1) : 0;
                 simplePair = preModels.get(nextIndex);
@@ -89,7 +90,7 @@ public class IceWandItem extends Item {
                     simplePair.getValue(), simplePair.getValue()));
             mutableComponent.append(SnowyRemover.SnowyFlag.values()[mode].toString().toLowerCase(Locale.ROOT));
 
-            if (pPlayer instanceof ServerPlayer serverPlayer) {
+            if (user instanceof ServerPlayer serverPlayer) {
                 serverPlayer.sendSystemMessage(mutableComponent, true);
             }
 
@@ -109,15 +110,15 @@ public class IceWandItem extends Item {
 
 
             CustomData customData = itemInHand.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY);
-            CompoundTag unsafe = customData.getUnsafe();
-            SnowyRemover.SnowyFlag type = SnowyRemover.SnowyFlag.values()[unsafe.getInt("mode")];
-            SimplePair<MakerMode, Integer> simplePair = tryParse(unsafe.getString("range"));
+            CompoundTag unsafe = customData.copyTag();
+            SnowyRemover.SnowyFlag type = SnowyRemover.SnowyFlag.values()[unsafe.getIntOr("mode", 0)];
+            SimplePair<MakerMode, Integer> simplePair = tryParse(unsafe.getStringOr("range", ""));
             MakerMode makerMode = simplePair.getKey();
             int range = simplePair.getValue();
 
 
             if (makerMode == MakerMode.CHUNK) {
-                Stream<ChunkPos> chunkPosStream = ChunkPos.rangeClosed(new ChunkPos(clickedPos), (range - 1) / 2);
+                Stream<ChunkPos> chunkPosStream = ChunkPos.rangeClosed(ChunkPos.containing(clickedPos), (range - 1) / 2);
                 chunkPosStream.forEach(
                         chunkPos -> modifySnowyBlocks(level, contextPlayer, chunkPos, type)
                 );
@@ -133,7 +134,7 @@ public class IceWandItem extends Item {
 
             }
             ;
-            return InteractionResult.sidedSuccess(level.isClientSide);
+            return InteractionResult.SUCCESS_SERVER;
         }
         return super.useOn(pContext);
     }
@@ -149,7 +150,7 @@ public class IceWandItem extends Item {
         )
         ) {
             if (level instanceof ServerLevel serverLevel) {
-                var chunk = serverLevel.getChunk(chunkPos.x, chunkPos.z);
+                var chunk = serverLevel.getChunk(chunkPos.x(), chunkPos.z());
                 if (!chunk.hasData(AttachmentRegistry.SNOWY_REMOVER)) {
                     chunk.setData(AttachmentRegistry.SNOWY_REMOVER, new SnowyRemover(new int[16][16]));
                 }
@@ -170,8 +171,8 @@ public class IceWandItem extends Item {
                 //                 * 16;
                 // var players = serverLevel.getPlayers(
                 //         serverPlayer -> {
-                //             // var onPos = new ChunkPos(serverPlayer.getOnPos());
-                //             // return Mth.sqrt(Mth.square(chunkPos.x - onPos.x) + Mth.square(chunkPos.z - onPos.z))
+                //             // var onPos = ChunkPos.containing(serverPlayer.getOnPos());
+                //             // return Mth.sqrt(Mth.square(chunkPos.x() - onPos.x) + Mth.square(chunkPos.z() - onPos.z))
                 //             //         < distance + 0.1f;
                 //             return !(serverPlayer instanceof FakePlayer)
                 //                     && serverPlayer.getChunkTrackingView().contains(chunkPos);
@@ -197,11 +198,12 @@ public class IceWandItem extends Item {
                 if (data.allSnowAble()) {
                     chunk.removeData(AttachmentRegistry.SNOWY_REMOVER);
                 }
-                chunk.setUnsaved(true);
+                chunk.markUnsaved();
+                ;
 
             } else {
 
-                var data = level.getChunk(chunkPos.x, chunkPos.z).getData(AttachmentRegistry.SNOWY_REMOVER);
+                var data = level.getChunk(chunkPos.x(), chunkPos.z()).getData(AttachmentRegistry.SNOWY_REMOVER);
                 for (int i = chunkPos.getMinBlockX(); i <= chunkPos.getMaxBlockX(); i++) {
                     for (int j = chunkPos.getMinBlockZ(); j <= chunkPos.getMaxBlockZ(); j++) {
                         var notSnowyAtBefore = data.getSnowyFlag(new BlockPos(i, 64, j));
@@ -224,13 +226,13 @@ public class IceWandItem extends Item {
 
             }
 
-            return InteractionResult.sidedSuccess(level.isClientSide);
+            return InteractionResult.SUCCESS_SERVER;
         }
         return null;
     }
 
     private InteractionResult modifySnowyBlocks(Level level, Player contextPlayer, BlockPos clickedPos, SnowyRemover.SnowyFlag type) {
-        var chunkPos = new ChunkPos(clickedPos);
+        var chunkPos = ChunkPos.containing(clickedPos);
         var sectionPos = SectionPos.of(clickedPos);
         if (level.isLoaded(clickedPos)
                 && (contextPlayer == null
@@ -275,7 +277,8 @@ public class IceWandItem extends Item {
                     chunk.removeData(AttachmentRegistry.SNOWY_REMOVER);
                 }
 
-                chunk.setUnsaved(true);
+                chunk.markUnsaved();
+                ;
                 // serverLevel.sendParticles(ParticleTypes.SNOWFLAKE,
                 //         clickedPos.getX() + 0.5d,
                 //         clickedPos.getY() + 1.2d,
@@ -306,7 +309,7 @@ public class IceWandItem extends Item {
                 }
             }
 
-            return InteractionResult.sidedSuccess(level.isClientSide);
+            return InteractionResult.SUCCESS_SERVER;
         }
         return null;
     }

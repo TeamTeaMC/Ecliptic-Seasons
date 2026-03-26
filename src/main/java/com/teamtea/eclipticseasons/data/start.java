@@ -5,9 +5,7 @@ import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.data.api.MutablePackOutput;
 import com.teamtea.eclipticseasons.data.extend.example.*;
 import com.teamtea.eclipticseasons.data.extend.extra_snow.DatapackRegistryGeneratorExtra;
-import com.teamtea.eclipticseasons.data.extend.extra_snow.ExtraClientModelDefinitionProvider;
 import com.teamtea.eclipticseasons.data.extend.regional_snow_time.RegionalSnowTimeProvider;
-import com.teamtea.eclipticseasons.data.extend.solar_rain.SolarRainProvider;
 import com.teamtea.eclipticseasons.data.general.advancement.Advancements;
 import com.teamtea.eclipticseasons.data.general.datapack.DatapackRegistryGenerator;
 import com.teamtea.eclipticseasons.data.general.datapack.ESDataMapProvider;
@@ -16,21 +14,17 @@ import com.teamtea.eclipticseasons.data.general.font.ESFontProvider;
 import com.teamtea.eclipticseasons.data.general.lang.Lang_EN;
 import com.teamtea.eclipticseasons.data.general.lang.Lang_ZH;
 import com.teamtea.eclipticseasons.data.general.loot.EclipticSeasonsLootTableProvider;
-import com.teamtea.eclipticseasons.data.general.model.BlockStatesDataProvider;
-import com.teamtea.eclipticseasons.data.general.model.ESBlockModelProvider;
-import com.teamtea.eclipticseasons.data.general.model.ESItemModelProvider;
+import com.teamtea.eclipticseasons.data.general.model.ES2ModelProvider;
 import com.teamtea.eclipticseasons.data.general.recipe.ESRecipeProvider;
 import com.teamtea.eclipticseasons.data.general.sound.ESSoundDefinitionsProvider;
 import com.teamtea.eclipticseasons.data.general.tag.*;
-import net.minecraft.Util;
+import net.minecraft.util.Util;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.metadata.PackMetadataGenerator;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
-import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 
 
@@ -43,91 +37,87 @@ public class start {
 
     public static void dataGen(GatherDataEvent event) {
         DataGenerator generator = event.getGenerator();
-        ExistingFileHelper helper = event.getExistingFileHelper();
+
         MutablePackOutput packOutput = new MutablePackOutput(generator.getPackOutput());
         CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
-        if (event.includeServer()) {
+        if (event instanceof GatherDataEvent.Server) {
             EclipticSeasons.logger("Generate We Data!!!");
 
-            generator.addProvider(event.includeServer(), new TagsDataProvider(packOutput, lookupProvider, MODID, helper));
+            generator.addProvider(true, new TagsDataProvider(packOutput, lookupProvider, MODID));
 
             RegistryAccess.Frozen registryaccess$frozen = RegistryAccess.fromRegistryOfRegistries(BuiltInRegistries.REGISTRY);
             HolderLookup.Provider modProvider = DatapackRegistryGenerator.REGISTRY_SET_BUILDER.build(registryaccess$frozen);
             CompletableFuture<HolderLookup.Provider> modFuture = CompletableFuture.supplyAsync(() -> modProvider, Util.backgroundExecutor());
-            generator.addProvider(event.includeServer(), new CropClimateTagsDataProvider(packOutput, modFuture, MODID, helper));
+            generator.addProvider(true, new CropClimateTagsDataProvider(packOutput, modFuture, MODID));
+            generator.addProvider(true, new TimeLineTagDataProvider(packOutput, modFuture, MODID));
 
-            generator.addProvider(event.includeServer(), new EffectTagsDataProvider(packOutput, lookupProvider, MODID, helper));
-            generator.addProvider(event.includeServer(), new EnhancementTagsDataProvider(packOutput, lookupProvider, MODID, helper));
+            generator.addProvider(true, new EffectTagsDataProvider(packOutput, lookupProvider, MODID));
+            generator.addProvider(true, new EnhancementTagsDataProvider(packOutput, lookupProvider, MODID));
 
-            var esb = new ESBlockTagProvider(packOutput, lookupProvider, MODID, helper);
-            generator.addProvider(event.includeServer(), esb);
-            generator.addProvider(event.includeServer(), new ESItemTagProvider(packOutput, lookupProvider, esb.contentsGetter()));
-            generator.addProvider(event.includeServer(), new ESEntityTypeTagsProvider(packOutput, lookupProvider, MODID, helper));
+            var esb = new ESBlockTagProvider(packOutput, lookupProvider, MODID);
+            generator.addProvider(true, esb);
+            generator.addProvider(true, new ESItemTagProvider(packOutput, lookupProvider));
+            generator.addProvider(true, new ESEntityTypeTagsProvider(packOutput, lookupProvider, MODID));
 
-            generator.addProvider(event.includeServer(), new ESRecipeProvider(packOutput, lookupProvider));
+            generator.addProvider(true, new ESRecipeProvider.Runner(packOutput, lookupProvider));
 
-            generator.addProvider(event.includeServer(), new Advancements(packOutput, lookupProvider, helper));
-            generator.addProvider(event.includeServer(), new EclipticSeasonsLootTableProvider(packOutput, lookupProvider));
+            generator.addProvider(true, new Advancements(packOutput, lookupProvider));
+            generator.addProvider(true, new EclipticSeasonsLootTableProvider(packOutput, lookupProvider));
 
-            generator.addProvider(event.includeServer(), new DatapackRegistryGenerator(packOutput, lookupProvider));
+            generator.addProvider(true, new DatapackRegistryGenerator(packOutput, lookupProvider));
 
-            generator.addProvider(event.includeServer(), new ESDataMapProvider(packOutput, lookupProvider));
+            generator.addProvider(true, new ESDataMapProvider(packOutput, lookupProvider));
+
 
         }
-        if (event.includeClient()) {
-            generator.addProvider(event.includeClient(), new Lang_EN(packOutput, helper));
-            generator.addProvider(event.includeClient(), new Lang_ZH(packOutput, helper));
+        if (event instanceof GatherDataEvent.Client) {
+            generator.addProvider(true, new Lang_EN(packOutput));
+            generator.addProvider(true, new Lang_ZH(packOutput));
 
-            generator.addProvider(event.includeClient(), new ESBlockModelProvider(packOutput, MODID, helper));
-            generator.addProvider(event.includeClient(), new BlockStatesDataProvider(packOutput, helper));
-            generator.addProvider(event.includeClient(), new ESItemModelProvider(packOutput, MODID, helper));
+            generator.addProvider(true, new ES2ModelProvider(packOutput, MODID));
+            //generator.addProvider(true, new ESBlockModelProvider(packOutput, MODID));
+            //generator.addProvider(true, new BlockStatesDataProvider(packOutput));
+            //generator.addProvider(true, new ESItemModelProvider(packOutput, MODID));
 
-            generator.addProvider(event.includeClient(), new ESFontProvider(packOutput, MODID, helper));
+            generator.addProvider(true, new ESFontProvider(packOutput, MODID));
 
-            generator.addProvider(event.includeClient(), new ESSoundDefinitionsProvider(packOutput, MODID, helper));
+            generator.addProvider(true, new ESSoundDefinitionsProvider(packOutput, MODID));
 
 
-            generator.addProvider(event.includeClient(), new SeasonalBiomeAmbientProvider(packOutput,MODID, helper,lookupProvider));
-            generator.addProvider(event.includeClient(), new ClientModelDefinitionProvider(packOutput,MODID, helper,lookupProvider));
-            generator.addProvider(event.includeClient(), new ClientTestProvider(packOutput,MODID, helper,lookupProvider));
-            generator.addProvider(event.includeClient(), new ClientSeasonModelDefinitionProvider(packOutput,MODID, helper,lookupProvider));
+            generator.addProvider(true, new SeasonalBiomeAmbientProvider(packOutput, MODID, lookupProvider));
+            //generator.addProvider(true, new ClientModelDefinitionProvider(packOutput, MODID, lookupProvider));
+            //generator.addProvider(true, new ClientTestProvider(packOutput, MODID, lookupProvider));
+            generator.addProvider(true, new ClientSeasonModelDefinitionProvider(packOutput, MODID, lookupProvider));
 
         }
 
         // Extra Snow
         packOutput = packOutput.move(Path.of("resourcepacks", "extra_snow"));
-        if (event.includeServer()) {
-            generator.addProvider(event.includeServer(), new DatapackRegistryGeneratorExtra(packOutput, lookupProvider));
+        if (event instanceof GatherDataEvent.Server) {
+            generator.addProvider(true, new DatapackRegistryGeneratorExtra(packOutput, lookupProvider));
         }
-        if (event.includeClient()) {
-            generator.addProvider(event.includeClient(), new ExtraClientModelDefinitionProvider(packOutput, MODID, helper, lookupProvider));
+        if (event instanceof GatherDataEvent.Client) {
+            //generator.addProvider(true, new ExtraClientModelDefinitionProvider(packOutput, MODID, lookupProvider));
         }
 
         // Example
         packOutput = packOutput.move(Path.of("resourcepacks", "example"));
-        if (event.includeServer()) {
-            generator.addProvider(event.includeServer(), new DatapackRegistryGeneratorExample(packOutput, lookupProvider));
-            generator.addProvider(event.includeServer(), new ExampleLootTableProvider(packOutput, lookupProvider));
+        if (event instanceof GatherDataEvent.Server) {
+            generator.addProvider(true, new DatapackRegistryGeneratorExample(packOutput, lookupProvider));
+            generator.addProvider(true, new ExampleLootTableProvider(packOutput, lookupProvider));
         }
-        if(event.includeClient()){
-            generator.addProvider(event.includeClient(), new SeasonTextureProvider(packOutput,MODID, helper,lookupProvider));
-            generator.addProvider(event.includeClient(), new BiomeColorProvider(packOutput,MODID, helper,lookupProvider));
-            generator.addProvider(event.includeClient(), new LeafColorProvider(packOutput,MODID, helper,lookupProvider));
-            generator.addProvider(event.includeClient(), new ClientSnowDefinitionProvider(packOutput,MODID, helper,lookupProvider));
+        if (event instanceof GatherDataEvent.Client) {
+            generator.addProvider(true, new SeasonTextureProvider(packOutput, MODID, lookupProvider));
+            generator.addProvider(true, new BiomeColorProvider(packOutput, MODID, lookupProvider));
+            generator.addProvider(true, new LeafColorProvider(packOutput, MODID, lookupProvider));
+            generator.addProvider(true, new ClientSnowDefinitionProvider(packOutput, MODID, lookupProvider));
         }
 
         // Regional Snow
         packOutput = packOutput.move(Path.of("resourcepacks", "Regional Snow Time"));
-        if (event.includeServer()) {
-            generator.addProvider(event.includeServer(), PackMetadataGenerator.forFeaturePack(packOutput, Component.translatable("pack.eclipticseasons.regional_snow_time.description")));
-            generator.addProvider(event.includeServer(), new RegionalSnowTimeProvider(packOutput, lookupProvider));
-        }
-
-        // Ecliptic Rain
-        packOutput = packOutput.move(Path.of("resourcepacks", "Ecliptic Rain"));
-        if (event.includeServer()) {
-            //generator.addProvider(event.includeServer(), PackMetadataGenerator.forFeaturePack(packOutput, Component.translatable("pack.eclipticseasons.ecliptic_rain.description")));
-            generator.addProvider(event.includeServer(), new SolarRainProvider(packOutput, lookupProvider));
+        if (event instanceof GatherDataEvent.Server) {
+            generator.addProvider(true, PackMetadataGenerator.forFeaturePack(packOutput, Component.translatable("pack.eclipticseasons.regional_snow_time.description")));
+            generator.addProvider(true, new RegionalSnowTimeProvider(packOutput, lookupProvider));
         }
     }
 }

@@ -1,0 +1,9 @@
+{
+  "season": "summer",
+  "name": "eclipticseasons:wet_end",
+  "color": "dark_green",
+  "font": {
+    "id": "eclipticseasons:monsoon_icons",
+    "label": "i"
+  }
+}

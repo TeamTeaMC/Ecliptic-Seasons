@@ -1,0 +1,12 @@
+{
+  "pack": {
+    "description": {
+      "translate": "pack.eclipticseasons.regional_snow_time.description"
+    },
+    "max_format": 101,
+    "min_format": [
+      101,
+      1
+    ]
+  }
+}

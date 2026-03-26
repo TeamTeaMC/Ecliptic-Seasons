@@ -7,7 +7,7 @@ import com.teamtea.eclipticseasons.api.data.season.definition.ISeasonChangeConte
 import lombok.Builder;
 import lombok.Data;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.Level;
 
 
@@ -23,7 +23,7 @@ public class EmptyAboveCondition implements IChangeCondition {
     private final boolean above;
 
     @Override
-    public ResourceLocation getType() {
+    public Identifier getType() {
         return ChangeConditions.EMPTY_ABOVE;
     }
 

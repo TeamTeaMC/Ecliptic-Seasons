@@ -1,6 +1,7 @@
 package com.teamtea.eclipticseasons.common.block.blockentity;
 
 import com.mojang.datafixers.util.Pair;
+import com.mojang.serialization.Codec;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.data.climate.AgroClimaticZone;
@@ -27,6 +28,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 import java.util.List;
 import java.util.Optional;
@@ -43,16 +46,17 @@ public class GreenHouseCoreBlockEntity extends SyncBlockEntity {
     @Getter
     private int progress;
 
+
     @Override
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.loadAdditional(tag, registries);
-        progress = tag.getInt("progress");
+    protected void saveAdditional(ValueOutput output) {
+        super.saveAdditional(output);
+        output.store("progress", Codec.INT, progress);
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.saveAdditional(tag, registries);
-        tag.putInt("progress", progress);
+    protected void loadAdditional(ValueInput input) {
+        super.loadAdditional(input);
+        progress = input.read("progress", Codec.INT).orElse(0);
     }
 
     public void updateProgress(int addition) {
@@ -177,7 +181,7 @@ public class GreenHouseCoreBlockEntity extends SyncBlockEntity {
                         extra = extra > 0 ? extra - 1 : 0;
                         Pair<Season, Integer> currentSeason = getCurrentSeason(level, blockPos);
                         if (currentSeason.getFirst() == greenHouseCoreBlock.getSeason()
-                                && !level.getBlockState(blockPos.below()).isSolidRender(level, blockPos)
+                                && !level.getBlockState(blockPos.below()).isSolidRender()
                                 && !CropGrowthHandler.isInRoom(level, blockPos, blockState, Optional.empty())) {
                             boolean nextStage = blockEntity.progress == 100;
                             blockEntity.updateProgress(nextStage ? -100 : 1 + extra);

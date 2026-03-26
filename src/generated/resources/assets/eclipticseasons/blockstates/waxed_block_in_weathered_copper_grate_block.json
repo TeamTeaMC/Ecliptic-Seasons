@@ -1,7 +1,7 @@
 {
   "variants": {
     "": {
-      "model": "eclipticseasons:block/waxed_block_in_weathered_copper_grate_block"
+      "model": "minecraft:block/waxed_weathered_copper_grate"
     }
   }
 }

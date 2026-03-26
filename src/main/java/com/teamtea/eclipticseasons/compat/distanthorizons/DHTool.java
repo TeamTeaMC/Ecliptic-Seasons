@@ -21,7 +21,7 @@ import loaderCommon.neoforge.com.seibel.distanthorizons.common.wrappers.world.Cl
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Blocks;
@@ -48,8 +48,8 @@ public class DHTool {
                 var blockState = blockStateWrapper.blockState;
                 // 当给的pos未加载时，读取的是虚空，这并不好。
                 if (instance instanceof ClientLevelWrapper clientLevelWrapper) {
-                    var holderKey = ResourceKey.create(Registries.BIOME, ResourceLocation.parse(iBiomeWrapper.getSerialString()));
-                    Holder.Reference<Biome> holder = clientLevelWrapper.getLevel().registryAccess().registryOrThrow(Registries.BIOME).getHolderOrThrow(holderKey);
+                    var holderKey = ResourceKey.create(Registries.BIOME, Identifier.parse(iBiomeWrapper.getSerialString()));
+                    Holder.Reference<Biome> holder = clientLevelWrapper.getLevel().registryAccess().lookupOrThrow(Registries.BIOME).getOrThrow(holderKey);
                     // if ((holderOrThrow
                     //         instanceof Holder.Reference<Biome> holder))
                     {
@@ -120,7 +120,7 @@ public class DHTool {
     public static Biome recoverBiomeObject(BiomeWrapper biomeWrapper, IClientLevelWrapper iClientLevelWrapper) {
         if (!CompatModule.CommonConfig.DistantHorizonsWinterLOD.get()) return null;
         // if (iClientLevelWrapper instanceof ClientLevelWrapper clientLevelWrapper) {
-        //     var holderKey = ResourceKey.create(Registries.BIOME, ResourceLocation.parse(biomeWrapper.getSerialString()));
+        //     var holderKey = ResourceKey.create(Registries.BIOME, Identifier.parse(biomeWrapper.getSerialString()));
         //     if ((clientLevelWrapper.getLevel().registryAccess().holder(holderKey).orElse(null)
         //             instanceof Holder.Reference<Biome> holder)) {
         //         // if (BiomeWrapper.getBiomeWrapper(holder, clientLevelWrapper) instanceof BiomeWrapper biomeWrapper1)

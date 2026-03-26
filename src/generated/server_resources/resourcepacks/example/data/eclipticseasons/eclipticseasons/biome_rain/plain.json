@@ -1,0 +1,107 @@
+{
+  "biomes": "minecraft:plains",
+  "weathers": {
+    "solar_terms": {
+      "beginning_of_spring": {
+        "rain_chance": 0.3
+      },
+      "rain_water": {
+        "rain_chance": 0.5,
+        "thunder_chance": 0.08
+      },
+      "insects_awakening": {
+        "rain_chance": 0.55,
+        "thunder_chance": 0.15
+      },
+      "spring_equinox": {
+        "rain": {
+          "min_inclusive": 12000,
+          "max_inclusive": 24000,
+          "type": "minecraft:uniform"
+        },
+        "rain_delay": {
+          "min_inclusive": 12000,
+          "max_inclusive": 180000,
+          "type": "minecraft:uniform"
+        },
+        "thunder": {
+          "min_inclusive": 3600,
+          "max_inclusive": 15600,
+          "type": "minecraft:uniform"
+        },
+        "rain_chance": 0.5,
+        "thunder_chance": 0.1
+      },
+      "fresh_green": {
+        "rain_chance": 0.65,
+        "thunder_chance": 0.05
+      },
+      "grain_rain": {
+        "rain_chance": 0.75
+      },
+      "beginning_of_summer": {
+        "rain_chance": 0.9
+      },
+      "lesser_fullness": {
+        "rain_chance": 0.7,
+        "thunder_chance": 0.1
+      },
+      "grain_in_ear": {
+        "rain_chance": 0.6,
+        "thunder_chance": 0.15
+      },
+      "summer_solstice": {
+        "rain_chance": 0.7,
+        "thunder_chance": 0.25
+      },
+      "lesser_heat": {
+        "rain_chance": 0.65,
+        "thunder_chance": 0.2
+      },
+      "greater_heat": {
+        "rain_chance": 0.5,
+        "thunder_chance": 0.05
+      },
+      "beginning_of_autumn": {
+        "rain_chance": 0.42
+      },
+      "end_of_heat": {
+        "rain_chance": 0.4
+      },
+      "white_dew": {
+        "rain_chance": 0.35
+      },
+      "autumnal_equinox": {
+        "rain_chance": 0.32
+      },
+      "cold_dew": {
+        "rain_chance": 0.3
+      },
+      "first_frost": {
+        "rain_chance": 0.25
+      },
+      "beginning_of_winter": {
+        "rain_chance": 0.3
+      },
+      "light_snow": {
+        "rain_chance": 0.4,
+        "thunder_chance": 0.05
+      },
+      "heavy_snow": {
+        "rain_chance": 0.5
+      },
+      "winter_solstice": {
+        "rain_chance": 0.45
+      },
+      "lesser_cold": {
+        "rain_chance": 0.4
+      },
+      "greater_cold": {
+        "rain_chance": 0.2
+      },
+      "none": {
+        "rain_chance": 0.0
+      }
+    }
+  }
+}

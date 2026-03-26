@@ -1,7 +1,6 @@
 package com.teamtea.eclipticseasons.mixin.client;
 
 import com.mojang.blaze3d.platform.Window;
-import com.teamtea.eclipticseasons.client.render.FogRenderer;
 import net.minecraft.client.Minecraft;
 import net.neoforged.neoforge.common.NeoForge;
 import org.spongepowered.asm.mixin.Final;
@@ -19,11 +18,11 @@ public class MixinMinecraftClient {
     private Window window;
 
     @Inject(
-            method = "resizeDisplay",
+            method = "resizeGui",
             at = @At("RETURN")
     )
     private void experiment$resize(CallbackInfo ci) {
-        FogRenderer.INSTANCE.resize(window.getWidth(), window.getHeight());
+        //FogRenderer.INSTANCE.resize(window.getWidth(), window.getHeight());
     }
 
 }

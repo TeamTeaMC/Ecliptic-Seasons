@@ -1,8 +1,8 @@
 {
 	"credit": "Made by Joe Vettek",
 	"textures": {
-		"1": "block/snow",
-		"particle": "block/snow"
+		"1": "minecraft:block/snow",
+		"particle": "minecraft:block/snow"
 	},
 	"elements": [
 		{

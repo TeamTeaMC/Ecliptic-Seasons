@@ -2,6 +2,7 @@ package com.teamtea.eclipticseasons.common.core.snow;
 
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
@@ -27,6 +28,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.neoforged.neoforge.attachment.IAttachmentHolder;
 import net.neoforged.neoforge.attachment.IAttachmentSerializer;
 import org.jetbrains.annotations.NotNull;
@@ -51,7 +54,7 @@ public class SnowyStatusKeeper implements Cloneable {
     public static final int FLAG_SNOW = 1;
     public static final int FLAG_NOT_RECORD = -1;
 
-    public static final Codec<SnowyStatusKeeper> CODEC = RecordCodecBuilder.create(ins -> ins.group(
+    public static final MapCodec<SnowyStatusKeeper> MAP_CODEC = RecordCodecBuilder.mapCodec(ins -> ins.group(
             Codec.LONG.listOf()
                     .fieldOf("map")
                     .forGetter(o -> new ArrayList<>(o.posMap.keySet())),
@@ -59,6 +62,8 @@ public class SnowyStatusKeeper implements Cloneable {
                     .optionalFieldOf("status", List.of())
                     .forGetter(o -> o.posMap.values().stream().map(Integer::byteValue).toList())
     ).apply(ins, SnowyStatusKeeper::new));
+
+    public static final Codec<SnowyStatusKeeper> CODEC = MAP_CODEC.codec();
 
     protected SnowyStatusKeeper() {
         this(List.of(), List.of());
@@ -124,7 +129,8 @@ public class SnowyStatusKeeper implements Cloneable {
     public void updateAndSend(ServerLevel serverLevel, LevelChunk chunk) {
         if (EclipticUtil.canSnowyBlockInteract()) {
             if (change) {
-                chunk.setUnsaved(true);
+                chunk.markUnsaved();
+                ;
                 if (!posListUpdate.isEmpty()) {
                     chunk.syncData(AttachmentRegistry.SNOWY_STATUS_KEEPER);
                     posListUpdate.clear();
@@ -195,8 +201,8 @@ public class SnowyStatusKeeper implements Cloneable {
         int startZ = chunkPos.getMinBlockZ();
         int endX = chunkPos.getMaxBlockX();
         int endZ = chunkPos.getMaxBlockZ();
-        int minBuildHeight = chunk.getMinBuildHeight();
-        int maxBuildHeight = chunk.getMaxBuildHeight();
+        int minBuildHeight = chunk.getMinY();
+        int maxBuildHeight = chunk.getMaxY();
 
         LongIterator it = getPosMap().keySet().longIterator();
         while (it.hasNext()) {
@@ -233,26 +239,36 @@ public class SnowyStatusKeeper implements Cloneable {
     @Getter(AccessLevel.NONE)
     private transient CompoundTag cacheTag = null;
 
-    public static class Serializer implements IAttachmentSerializer<Tag, SnowyStatusKeeper> {
+    public static class Serializer implements IAttachmentSerializer<SnowyStatusKeeper> {
 
         @Override
-        public @NotNull SnowyStatusKeeper read(@NotNull IAttachmentHolder holder, @NotNull Tag tag, HolderLookup.@NotNull Provider provider) {
+        public SnowyStatusKeeper read(IAttachmentHolder holder, ValueInput input) {
             if (!EclipticUtil.canSnowyBlockInteract()) return create();
-            Optional<SnowyStatusKeeper> result = CODEC.parse(provider.createSerializationContext(NbtOps.INSTANCE), tag).result();
-            return result.orElseGet(SnowyStatusKeeper::create);
+            Optional<SnowyStatusKeeper> snowyStatus = input.read("snowy_status", CODEC);
+            return snowyStatus.orElseGet(SnowyStatusKeeper::create);
         }
 
         @Override
-        public Tag write(@NotNull SnowyStatusKeeper attachment, HolderLookup.@NotNull Provider provider) {
-            if (!EclipticUtil.canSnowyBlockInteract()) new CompoundTag();
-            if (attachment.cacheTag != null)
-                return attachment.cacheTag;
-            Optional<Tag> result = CODEC.encodeStart(provider.createSerializationContext(NbtOps.INSTANCE), attachment).result();
-            if (result.orElse(null) instanceof CompoundTag compoundTag) {
-                attachment.cacheTag = compoundTag;
-                return compoundTag;
-            }
-            return new CompoundTag();
+        public boolean write(SnowyStatusKeeper attachment, ValueOutput output) {
+            if (!EclipticUtil.canSnowyBlockInteract()) return false;
+            output.storeNullable("snowy_status", CODEC, attachment);
+            return false;
         }
+
+        //
+        //@Override
+        //public Tag write(@NotNull SnowyStatusKeeper attachment, HolderLookup.@NotNull Provider provider) {
+        //    if (!EclipticUtil.canSnowyBlockInteract()) new CompoundTag();
+        //    if (attachment.cacheTag != null)
+        //        return attachment.cacheTag;
+        //    Optional<Tag> result = CODEC.encodeStart(provider.createSerializationContext(NbtOps.INSTANCE), attachment).result();
+        //    if (result.orElse(null) instanceof CompoundTag compoundTag) {
+        //        attachment.cacheTag = compoundTag;
+        //        return compoundTag;
+        //    }
+        //    return new CompoundTag();
+        //}
+
+
     }
 }

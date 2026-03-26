@@ -3,42 +3,65 @@ package com.teamtea.eclipticseasons.data.extend.example;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.constant.solar.color.base.TemperateSolarTermColors;
-import com.teamtea.eclipticseasons.api.constant.solar.color.base.seasonal.ColdSolarTermColors;
 import com.teamtea.eclipticseasons.api.data.client.BiomeColor;
 import com.teamtea.eclipticseasons.api.data.client.ColorMode;
+import com.teamtea.eclipticseasons.api.data.climate.AgroClimaticZone;
 import com.teamtea.eclipticseasons.api.data.misc.SolarTermValueMap;
 import com.teamtea.eclipticseasons.client.reload.ClientJsonCacheListener;
-import com.teamtea.eclipticseasons.common.registry.AgroClimateRegistry;
-import com.teamtea.eclipticseasons.common.registry.ESRegistries;
+import com.teamtea.eclipticseasons.common.registry.*;
 import com.teamtea.eclipticseasons.data.api.provider.base.ESClientDataMapProvider;
-import com.teamtea.eclipticseasons.data.general.datapack.DatapackRegistryGenerator;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.core.HolderSet;
-import net.minecraft.core.RegistrySetBuilder;
+import net.minecraft.core.*;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.registries.RegistryPatchGenerator;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biomes;
 import net.neoforged.neoforge.common.Tags;
-import net.neoforged.neoforge.common.data.ExistingFileHelper;
+import org.jspecify.annotations.NonNull;
+
 
 import java.awt.*;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 public class BiomeColorProvider extends ESClientDataMapProvider<BiomeColor> {
-    public BiomeColorProvider(PackOutput output, String modid, ExistingFileHelper helper, CompletableFuture<HolderLookup.Provider> registries) {
-        super(output, modid, helper, registries, ClientJsonCacheListener.DIRECTORY_BIOME, BiomeColor.CODEC);
-        CompletableFuture<RegistrySetBuilder.PatchedRegistries> lookup = RegistryPatchGenerator.createLookup(registries, DatapackRegistryGenerator.REGISTRY_SET_BUILDER);
+    public BiomeColorProvider(PackOutput output, String modid, CompletableFuture<HolderLookup.Provider> registries) {
+        super(output, modid, registries, ClientJsonCacheListener.DIRECTORY_BIOME, BiomeColor.CODEC);
+        CompletableFuture<RegistrySetBuilder.PatchedRegistries> lookup = RegistryPatchGenerator
+                .createLookup(registries,
+                        new RegistrySetBuilder()
+                                .add(ESRegistries.AGRO_CLIMATE, (c) -> {
+                                })
+                        // .add(ESRegistries.WEATHER_REGION, WeatherRegionRegistry::bootstrap2)
+                        // .add(ESRegistries.SEASON_DEFINITION, SeasonDefinitionRegistry::bootstrap2)
+                        // .add(ESRegistries.SNOW_DEFINITIONS, SnowDefinitionsRegistry::bootstrap2)
+                        // .add(ESRegistries.WEATHER_EFFECT, WeatherEffectRegistry::bootstrap2)
+                        // .add(ESRegistries.BIOME_RAIN, BiomeRainRegistry::bootstrap2)
+                );
         lookup.thenApply(RegistrySetBuilder.PatchedRegistries::patches);
         this.registries = lookup.thenApply(RegistrySetBuilder.PatchedRegistries::full);
+    }
+
+    public static record xx<T>(
+            RegistryLookup<T> parent
+    ) implements HolderLookup.RegistryLookup.Delegate<T> {
+
+        // @Override
+        // public @NonNull RegistryLookup<T> parent() {
+        //     return null;
+        // }
+
+        @Override
+        public boolean canSerializeIn(@NonNull HolderOwner<T> context) {
+            return true;
+        }
     }
 
     @Override
     protected void gather(HolderLookup.Provider provider) {
         HolderLookup.RegistryLookup<Biome> biomeRegistryLookup = provider.lookupOrThrow(Registries.BIOME);
-        var aThrow = provider.lookupOrThrow(ESRegistries.AGRO_CLIMATE);
+        HolderLookup.RegistryLookup<AgroClimaticZone> aThrow = new xx<>(provider.lookupOrThrow(ESRegistries.AGRO_CLIMATE));
+
 
         add("plains", new BiomeColor(
                 biomeRegistryLookup.getOrThrow(Tags.Biomes.IS_PLAINS),
@@ -67,7 +90,7 @@ public class BiomeColorProvider extends ESClientDataMapProvider<BiomeColor> {
                 .putSeason(Season.AUTUMN, new ColorMode(Optional.of(Color.ORANGE.getRGB()), Optional.empty(), Optional.empty()))
                 .putSeason(Season.WINTER, new ColorMode(Optional.of(Color.BLUE.getRGB()), Optional.empty(), Optional.empty()))
                 .putSeason(Season.NONE, new ColorMode(Optional.of(Color.WHITE.getRGB()), Optional.empty(), Optional.empty()));
-        builder2.climate(aThrow.getOrThrow(AgroClimateRegistry.COLD));
+        builder2.climate(Holder.Reference.createStandAlone(aThrow, AgroClimateRegistry.COLD));
         add("snowy_plains", new BiomeColor(
                 HolderSet.direct(biomeRegistryLookup.getOrThrow(Biomes.SNOWY_PLAINS)),
                 Optional.empty(), builder2.ofBuild()

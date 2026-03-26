@@ -1,25 +1,23 @@
 package com.teamtea.eclipticseasons.client.particle;
 
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.particle.ParticleRenderType;
+import net.minecraft.client.particle.SingleQuadParticle;
 import net.minecraft.client.particle.SpriteSet;
-import net.minecraft.client.particle.TextureSheetParticle;
+import net.minecraft.client.renderer.state.level.QuadParticleRenderState;
 import net.minecraft.core.BlockPos;
-import net.minecraft.util.Mth;
+import net.minecraft.util.ARGB;
+import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.NaturalSpawner;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
-import org.joml.Vector4f;
 
 import java.util.List;
 
-public class FireflyParticle extends TextureSheetParticle {
+public class FireflyParticle extends SingleQuadParticle {
 
 
     private final SpriteSet spriteSet;
@@ -27,37 +25,30 @@ public class FireflyParticle extends TextureSheetParticle {
     private Vec3 nextPos;
 
     public FireflyParticle(ClientLevel level, double x, double y, double z, SpriteSet spriteSet) {
-        super(level, x, y, z);
+        super(level, x, y, z, spriteSet.first());
         this.lifetime = 800;
         this.gravity = 1E-4f;
         this.spriteSet = spriteSet;
 
         this.isBlink = false;
         setSpriteFromAge(this.spriteSet);
-
     }
 
     @Override
-    public ParticleRenderType getRenderType() {
-        return ParticleRenderType.PARTICLE_SHEET_OPAQUE;
+    protected Layer getLayer() {
+        return Layer.TRANSLUCENT;
     }
 
-    public void render(VertexConsumer vertexConsumer, Camera camera, float patialTicks) {
-        super.render(vertexConsumer, camera, patialTicks);
-    }
-
-    // 萤火虫是头部发光，但是不好看
     @Override
-    protected void renderRotatedQuad(VertexConsumer pBuffer, Quaternionf pQuaternion, float pX, float pY, float pZ, float pPartialTicks) {
-        float quadSize1 = this.getQuadSize(pPartialTicks);
+    protected void extractRotatedQuad(QuadParticleRenderState particleTypeRenderState, Quaternionf rotation, float x, float y, float z, float partialTickTime) {
+        float quadSize1 = this.getQuadSize(partialTickTime);
         float u0 = this.getU0();
         float u1 = this.getU1();
         float v0 = this.getV0();
         float v1 = this.getV1();
-        int i = this.getLightColor(pPartialTicks);
-        i = 15728880;
+        int i = LightCoordsUtil.FULL_BRIGHT;
         if (this.age >= this.lifetime * 0.8) {
-            i = this.getLightColor(pPartialTicks);
+            i = this.getLightCoords(partialTickTime);
         }
 
         double crossY = 0;
@@ -74,10 +65,10 @@ public class FireflyParticle extends TextureSheetParticle {
         }
 
         // 如果想左右旋转粒子，那我们可以调换u0和u1
-        this.renderVertex(pBuffer, pQuaternion, pX, pY, pZ, 1.0F, -1.0F, quadSize1, u1, v1, i, 1f);
-        this.renderVertex(pBuffer, pQuaternion, pX, pY, pZ, 1.0F, 1.0F, quadSize1, u1, v0, i, 1f);
-        this.renderVertex(pBuffer, pQuaternion, pX, pY, pZ, -1.0F, 1.0F, quadSize1, u0, v0, i, 1f);
-        this.renderVertex(pBuffer, pQuaternion, pX, pY, pZ, -1.0F, -1.0F, quadSize1, u0, v1, i, 1f);
+        this.renderVertex(particleTypeRenderState, rotation, x, y, z, 1.0F, -1.0F, quadSize1, u0, v0, u1, v1, i, 1f, partialTickTime);
+        // this.renderVertex(particleTypeRenderState, rotation, x, y, z, 1.0F, 1.0F, quadSize1, u1, v0, i, 1f, partialTickTime);
+        // this.renderVertex(particleTypeRenderState, rotation, x, y, z, -1.0F, 1.0F, quadSize1, u0, v0, i, 1f, partialTickTime);
+        // this.renderVertex(particleTypeRenderState, rotation, x, y, z, -1.0F, -1.0F, quadSize1, u0, v1, i, 1f, partialTickTime);
 
         if (isBlink) {
             var sp1 = spriteSet.get(1, 1);
@@ -91,35 +82,58 @@ public class FireflyParticle extends TextureSheetParticle {
                 u0 = u1;
                 u1 = ut;
             }
-            this.renderVertex(pBuffer, pQuaternion, pX, pY, pZ, 1.0F, -1.0F, quadSize1, u1, v1, i, 0.5f);
-            this.renderVertex(pBuffer, pQuaternion, pX, pY, pZ, 1.0F, 1.0F, quadSize1, u1, v0, i, 0.5f);
-            this.renderVertex(pBuffer, pQuaternion, pX, pY, pZ, -1.0F, 1.0F, quadSize1, u0, v0, i, 0.5f);
-            this.renderVertex(pBuffer, pQuaternion, pX, pY, pZ, -1.0F, -1.0F, quadSize1, u0, v1, i, 0.5f);
+            this.renderVertex(particleTypeRenderState, rotation, x, y, z, 1.0F, -1.0F, quadSize1,
+                    u0, v0,
+                    u1, v1, i, 0.5f, partialTickTime);
+            // this.renderVertex(particleTypeRenderState, rotation, x, y, z, 1.0F, 1.0F, quadSize1, u1, v0, i, 0.5f, partialTickTime);
+            // this.renderVertex(particleTypeRenderState, rotation, x, y, z, -1.0F, 1.0F, quadSize1, u0, v0, i, 0.5f, partialTickTime);
+            // this.renderVertex(particleTypeRenderState, rotation, x, y, z, -1.0F, -1.0F, quadSize1, u0, v1, i, 0.5f, partialTickTime);
         }
     }
 
     protected void renderVertex(
-            VertexConsumer pBuffer,
-            Quaternionf pQuaternion,
+            QuadParticleRenderState particleTypeRenderState,
+            Quaternionf rotation,
             float pX,
             float pY,
             float pZ,
             float pXOffset,
             float pYOffset,
             float pQuadSize,
-            float pU,
-            float pV,
+            float pU0,
+            float pV0,
+            float pU1,
+            float pV1,
             int pPackedLight,
-            float alpha
+            float alpha,
+            float partialTickTime
     ) {
         Vector3f vector3f = new Vector3f(pXOffset, pYOffset, 0.0F)
                 // .rotateY(180*Mth.DEG_TO_RAD)
-                .rotate(pQuaternion).mul(pQuadSize).add(pX, pY, pZ);
-        pBuffer.addVertex(vector3f.x(), vector3f.y(), vector3f.z())
-                .setUv(pU, pV)
-                .setColor(this.rCol, this.gCol, this.bCol, alpha)
-                // .setNormal(0,-1,0)
-                .setLight(pPackedLight);
+                .rotate(rotation).mul(pQuadSize).add(pX, pY, pZ);
+        // pBuffer.addVertex(vector3f.x(), vector3f.y(), vector3f.z())
+        //        .setUv(pU, pV)
+        //        .setColor(this.rCol, this.gCol, this.bCol, alpha)
+        //        // .setNormal(0,-1,0)
+        //        .setLight(pPackedLight);
+
+        particleTypeRenderState.add(
+                this.getLayer(),
+                vector3f.x(),
+                vector3f.y(),
+                vector3f.z(),
+                rotation.x,
+                rotation.y,
+                rotation.z,
+                rotation.w,
+                this.getQuadSize(partialTickTime),
+                pU0,
+                pU1,
+                pV0,
+                pV1,
+                ARGB.colorFromFloat(alpha, this.rCol, this.gCol, this.bCol),
+                pPackedLight
+        );
     }
 
     @Override
@@ -139,7 +153,7 @@ public class FireflyParticle extends TextureSheetParticle {
             Vec3 vec3 = Entity.collideBoundingBox((Entity) null, new Vec3(xd, yd, zd), this.getBoundingBox(), this.level, List.of());
             if (this.nextPos != null &&
                     (!NaturalSpawner.isValidEmptySpawnBlock(level, targetPosition, level.getBlockState(targetPosition), level.getFluidState(targetPosition), EntityType.BAT)
-                            || targetPosition.getY() <= level.getMinBuildHeight()
+                            || targetPosition.getY() <= level.getMinY()
                             || Math.abs(vec3.y) < (double) 1.0E-5F
                             || this.onGround
                             || level.getNearestPlayer(x + xd, y + yd, z + zd, 1f, false) != null
@@ -186,4 +200,5 @@ public class FireflyParticle extends TextureSheetParticle {
 
         return blockpos$mutableblockpos;
     }
+
 }

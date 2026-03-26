@@ -1,5 +1,6 @@
 package com.teamtea.eclipticseasons.common.block.blockentity;
 
+import com.mojang.serialization.Codec;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.common.registry.BlockEntityRegistry;
 import com.teamtea.eclipticseasons.common.block.blockentity.base.SyncBlockEntity;
@@ -7,6 +8,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 public class WindChimesBlockEntity extends SyncBlockEntity {
 
@@ -16,16 +19,17 @@ public class WindChimesBlockEntity extends SyncBlockEntity {
         super(BlockEntityRegistry.wind_chimes_entity_type.get(), pos, state);
     }
 
+
     @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.saveAdditional(tag, registries);
-        tag.putBoolean("shaking", shaking);
+    protected void saveAdditional(ValueOutput output) {
+        super.saveAdditional(output);
+        output.store("shaking", Codec.BOOL, shaking);
     }
 
     @Override
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.loadAdditional(tag, registries);
-        shaking = tag.getBoolean("shaking");
+    protected void loadAdditional(ValueInput input) {
+        super.loadAdditional(input);
+        shaking = input.read("shaking", Codec.BOOL).orElse(false);
     }
 
     public boolean isShaking() {

@@ -7,7 +7,7 @@ import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.compat.CompatModule;
 import lombok.Getter;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -146,9 +146,9 @@ public class CommonConfig {
 
             validDimensions = builder.comment("List of dimension IDs where seasonal effects should be active.")
                     .defineListAllowEmpty("ValidDimensions",
-                            () -> List.of(Level.OVERWORLD.location().toString()),
-                            () -> Level.OVERWORLD.location().toString(),
-                            o -> o instanceof String s && ResourceLocation.tryParse(s) != null);
+                            () -> List.of(Level.OVERWORLD.identifier().toString()),
+                            () -> Level.OVERWORLD.identifier().toString(),
+                            o -> o instanceof String s && Identifier.tryParse(s) != null);
             springDayTimes = builder.comment("Daylight length in Ticks for each of the 6 Solar Terms in Spring.")
                     .defineList(List.of("SpringDayTimes"),
                             () -> List.of(10500, 11000, 11500, 12000, 12500, 13000),
@@ -398,7 +398,7 @@ public class CommonConfig {
             shouldInitWeather = builder.comment("Force initialize weather and snow states when the mod or world is first loaded.")
                     .define("ShouldInitWeather", false);
             shouldInitSnowForExtremeColdBiomes = builder.comment("Force initialize snow states for extreme cold biomes when the mod or world is first loaded.")
-                    .define("ShouldInitSnowForExtremeColdBiomes", true);
+                    .define("ShouldInitSnowDepthForExtremeColdBiomes", true);
             rainChanceMultiplier = builder.comment("Adjust the overall frequency of rain.")
                     .defineInRange("RainChancePercentMultiplier", 40, 0, 1000);
             thunderChanceMultiplier = builder.comment("Adjust the overall frequency of thunder.")
@@ -451,7 +451,7 @@ public class CommonConfig {
                     if (innerChildren.get(0) instanceof String s) {
                         try {
                             s = s.startsWith("#") ? s.substring(1, s.length() - 1) : s;
-                            ResourceLocation.parse(s);
+                            Identifier.parse(s);
                         } catch (Exception e) {
                             EclipticSeasons.logger(e);
                             return false;
@@ -481,7 +481,7 @@ public class CommonConfig {
                     .defineListAllowEmpty("ForceBlocksNotSnowy",
                             List::of,
                             () -> "",
-                            o -> o instanceof String s && ResourceLocation.tryParse(s) != null);
+                            o -> o instanceof String s && Identifier.tryParse(s) != null);
             biomeSnowLines = builder.comment("Set custom snow-line altitudes for biomes (e.g., [\"#c:is_cold\", 200]).")
                     .defineListAllowEmpty("BiomeSnowLines",
                             List.of(),
@@ -582,7 +582,7 @@ public class CommonConfig {
 
             forceBlocksNotSnowy.clear();
             for (String s : Snow.blocksNotSnowy.get()) {
-                Block block = BuiltInRegistries.BLOCK.get(ResourceLocation.parse(s));
+                Block block = BuiltInRegistries.BLOCK.get(Identifier.parse(s)).get().value();
                 if (block != Blocks.AIR) {
                     forceBlocksNotSnowy.add(block);
                 }

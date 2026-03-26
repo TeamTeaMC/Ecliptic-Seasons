@@ -1,0 +1,20 @@
+{
+  "level": 0.75,
+  "range": 4.0,
+  "lasting_time": 600,
+  "core": {
+    "blocks": "minecraft:bubble_column"
+  },
+  "require": [
+    {
+      "offset": [
+        0,
+        -1,
+        0
+      ],
+      "block": {
+        "blocks": "minecraft:magma_block"
+      }
+    }
+  ]
+}

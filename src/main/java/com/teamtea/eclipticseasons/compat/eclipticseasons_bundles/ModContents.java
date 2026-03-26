@@ -17,8 +17,7 @@ import net.neoforged.neoforgespi.locating.IModFile;
 import java.util.Locale;
 import java.util.Optional;
 
-@SuppressWarnings("removal")
-@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber
 public class ModContents {
 
     @SubscribeEvent

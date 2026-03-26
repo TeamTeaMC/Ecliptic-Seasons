@@ -7,7 +7,6 @@ import com.teamtea.eclipticseasons.api.data.client.ColorMode;
 import com.teamtea.eclipticseasons.api.data.client.LeafColor;
 import com.teamtea.eclipticseasons.client.util.ClientRef;
 import com.teamtea.eclipticseasons.client.util.ColorHelper;
-import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.registry.ItemRegistry;
 import com.teamtea.eclipticseasons.common.registry.AttachmentRegistry;
 import com.teamtea.eclipticseasons.common.registry.ParticleRegistry;
@@ -17,30 +16,33 @@ import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.common.core.map.SnowyRemover;
 import com.teamtea.eclipticseasons.config.ClientConfig;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.color.block.BlockTintSource;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.renderer.ItemBlockRenderTypes;
-import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.block.BlockModelResolver;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
+import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.resources.model.geometry.BakedQuad;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ColorParticleOption;
 import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.neoforged.neoforge.client.model.data.ModelData;
+
+import net.neoforged.fml.loading.FMLEnvironment;
 import org.jetbrains.annotations.TestOnly;
 
 import javax.imageio.ImageIO;
@@ -83,6 +85,9 @@ public class ParticleUtil {
     // can refer TerrainParticle
     public static boolean doAnimateTick(ClientLevel clientLevel, int x, int y, int z, int b, RandomSource random, BlockPos.MutableBlockPos blockpos$mutableblockpos, BlockState blockstate) {
         if (!ClientConfig.Particle.seasonParticle.get()) return false;
+
+        // if (FMLEnvironment.isProduction()) return false;
+
         int i = blockpos$mutableblockpos.getX();
         int j = blockpos$mutableblockpos.getY();
         int k = blockpos$mutableblockpos.getZ();
@@ -153,7 +158,7 @@ public class ParticleUtil {
                     && clientLevel.canSeeSky(blockpos$mutableblockpos)
                     && random.nextInt((int) (1024 * (ClientConfig.Particle.butterflySpawnWeight.get() * 0.1f))) == 0
             ) {
-                clientLevel.addParticle(ParticleRegistry.BUTTERFLY, false, i + 0.5, j + 0.8, k + 0.5, 0.0D, 5.0E-4D, 0.0D);
+                clientLevel.addParticle(ParticleRegistry.BUTTERFLY, false, false, i + 0.5, j + 0.8, k + 0.5, 0.0D, 5.0E-4D, 0.0D);
             }
         }
         if (ClientConfig.Particle.firefly.get()
@@ -166,7 +171,7 @@ public class ParticleUtil {
                     && clientLevel.canSeeSky(blockpos$mutableblockpos)
                     && random.nextInt((int) (160 * (ClientConfig.Particle.fireflySpawnWeight.get() * 0.1f))) == 0
             ) {
-                clientLevel.addParticle(ParticleRegistry.FIREFLY, false, i + 0.5, j + 0.8, k + 0.5, 0.0D, 5.0E-4D, 0.0D);
+                clientLevel.addParticle(ParticleRegistry.FIREFLY, false, false, i + 0.5, j + 0.8, k + 0.5, 0.0D, 5.0E-4D, 0.0D);
             }
         }
 
@@ -178,7 +183,7 @@ public class ParticleUtil {
                 && !EclipticSeasonsApi.getInstance().isRainAt(clientLevel, blockpos$mutableblockpos)
                 && clientLevel.getBiome(blockpos$mutableblockpos).value().getBaseTemperature() < 0.95f
                 && random.nextInt((int) (2295 * (ClientConfig.Particle.wildGooseSpawnWeight.get() * 0.1f))) == 0) {
-            clientLevel.addParticle(ParticleRegistry.WILD_GOOSE, false, x + random.nextInt(16, 16 * 2) * (random.nextBoolean() ? -1 : 1), y + random.nextInt(15, 16 * 2), z + random.nextInt(16, 16 * 2) * (random.nextBoolean() ? -1 : 1), 0.0D, 5.0E-4D, 0.0D);
+            clientLevel.addParticle(ParticleRegistry.WILD_GOOSE, false, false, x + random.nextInt(16, 16 * 2) * (random.nextBoolean() ? -1 : 1), y + random.nextInt(15, 16 * 2), z + random.nextInt(16, 16 * 2) * (random.nextBoolean() ? -1 : 1), 0.0D, 5.0E-4D, 0.0D);
         }
 
         if (random.nextInt(b) == 0 &&
@@ -189,7 +194,7 @@ public class ParticleUtil {
             ParticleOptions indicatorParticleOptions = snowyFlag.getIndicatorParticleOptions(random);
             if (indicatorParticleOptions != null) {
                 j = clientLevel.getHeight(Heightmap.Types.MOTION_BLOCKING, i, k);
-                clientLevel.addParticle(indicatorParticleOptions,
+                clientLevel.addParticle(indicatorParticleOptions, false,
                         false, i + 0.5, j + 0.3, k + 0.5, 0.0D, -0.0001, 0.0D);
 
                 // clientLevel.addParticle(ParticleTypes.SMOKE, false, i + 0.5, j + 0.1, k + 0.5, 0.0D, -0.0001, 0.0D);
@@ -210,10 +215,15 @@ public class ParticleUtil {
                 Pair<Color, Integer> pair = getOrCreateColor(state);
                 color = pair.getFirst().getRGB();
                 if (pair.getSecond() != -1) {
-                    int blockColor = Minecraft.getInstance().getBlockColors().getColor(state, level, pos, pair.getSecond());
-                    if (blockColor != -1) {
-                        color = color == -1 ? blockColor :
-                                ColorHelper.simplyMixColor(color, 0.25f, blockColor, 0.75f);
+                    BlockTintSource tintSource = Minecraft.getInstance().getBlockColors()
+                            .getTintSource(state, pair.getSecond());
+                    if (tintSource != null) {
+                        int blockColor = tintSource
+                                .colorInWorld(state, level, pos);
+                        if (blockColor != -1) {
+                            color = color == -1 ? blockColor :
+                                    ColorHelper.simplyMixColor(color, 0.25f, blockColor, 0.75f);
+                        }
                     }
                 }
                 if (color == -1) {
@@ -222,12 +232,16 @@ public class ParticleUtil {
             } else {
                 color = switch (leafInfo.colorSource()) {
                     case MAP -> state.getMapColor(level, pos).col;
-                    case BLOCK -> Minecraft.getInstance().getBlockColors().getColor(state, level, pos, 0);
+                    case BLOCK -> Optional.ofNullable(Minecraft.getInstance().getBlockColors()
+                                    .getTintSource(state, 0))
+                            .map(c -> c.colorInWorld(state, level, pos)).orElse(-1);
                     case TEXTURE -> {
                         Pair<Color, Integer> pair = getOrCreateColor(state);
                         int textureColor = pair.getFirst().getRGB();
                         if (pair.getSecond() != -1) {
-                            int color2 = Minecraft.getInstance().getBlockColors().getColor(state, level, pos, 0);
+                            int color2 = Optional.ofNullable(Minecraft.getInstance().getBlockColors()
+                                            .getTintSource(state, 0))
+                                    .map(c -> c.colorInWorld(state, level, pos)).orElse(-1);
                             if (color2 != -1) {
                                 textureColor = textureColor == -1 ? color2 :
                                         ColorHelper.simplyMixColor(textureColor, 0.25f, color2, 0.75f);
@@ -241,7 +255,7 @@ public class ParticleUtil {
                     }
                 };
             }
-            // Minecraft.getInstance().particleEngine.textureAtlas.getSprite(ResourceLocation.parse("minecraft:big_smoke_4"))
+            // Minecraft.getInstance().particleEngine.textureAtlas.getSprite(Identifier.parse("minecraft:big_smoke_4"))
             VoxelShape voxelshape = state.getShape(level, pos);
             double d0 = 0.25D;
             int finalColor = color;
@@ -278,10 +292,10 @@ public class ParticleUtil {
                                         Mth.clamp(d6 - 0.5D, -0.25f, 0.25f)
                                 );
                             } else {
-                                List<ResourceLocation> resourceLocations = leafInfo.sprites().get(ClientCon.nowSolarTerm);
-                                if (!resourceLocations.isEmpty()) {
+                                List<Identifier> Identifiers = leafInfo.sprites().get(ClientCon.nowSolarTerm);
+                                if (!Identifiers.isEmpty()) {
                                     TextureAtlas textureAtlas = (TextureAtlas) Minecraft.getInstance().getTextureManager().getTexture(TextureAtlas.LOCATION_PARTICLES);
-                                    ResourceLocation resourceLocation = resourceLocations.get(random.nextInt(resourceLocations.size()));
+                                    Identifier Identifier = Identifiers.get(random.nextInt(Identifiers.size()));
                                     Minecraft.getInstance().particleEngine.add(
                                             new FallenLeavesParticle(level,
                                                     (double) pos.getX() + d7,
@@ -291,7 +305,7 @@ public class ParticleUtil {
                                                     (d5 - 0.5D) * 0.75,
                                                     Mth.clamp(d6 - 0.5D, -0.25f, 0.25f),
                                                     ColorParticleOption.create(ParticleRegistry.FALLEN_LEAVES, finalColor1),
-                                                    textureAtlas.getSprite(resourceLocation)));
+                                                    textureAtlas.getSprite(Identifier)));
                                 }
                             }
 
@@ -317,21 +331,27 @@ public class ParticleUtil {
         try {
             Pair<Color, Integer> orDefault = LEAVES_COLOR_MAP.getOrDefault(state, null);
             if (orDefault != null) {
-                // return orDefault;
+                return orDefault;
             }
-            BakedModel blockModel = mc.getBlockRenderer().getBlockModel(state);
+            BlockStateModel blockModel = mc.getModelManager().getBlockStateModelSet().get(state);
+            ArrayList<BlockStateModelPart> parts = new ArrayList<>();
+            blockModel.collectParts(RandomSource.create(42L),parts);
             int tintIndex = -1;
-            for (Direction direction : new Direction[]{Direction.UP, Direction.DOWN, Direction.SOUTH, Direction.EAST, Direction.NORTH, Direction.WEST, null}) {
-                List<BakedQuad> quads = blockModel.getQuads(state, direction, mc.level.getRandom(), ModelData.EMPTY, ItemBlockRenderTypes.getChunkRenderType(state));
-                for (BakedQuad quad : quads) {
-                    if (quad.getTintIndex() != -1) {
-                        tintIndex = quad.getTintIndex();
-                        break;
+            for (BlockStateModelPart part : parts) {
+                for (Direction direction : new Direction[]{Direction.UP, Direction.DOWN, Direction.SOUTH, Direction.EAST, Direction.NORTH, Direction.WEST, null}) {
+                    List<BakedQuad> quads = part.getQuads(direction);
+                    for (BakedQuad quad : quads) {
+                        int tintedIndex = quad.materialInfo().tintIndex();
+                        if (tintedIndex != -1) {
+                            tintIndex = tintedIndex;
+                            break;
+                        }
                     }
                 }
             }
             {
-                TextureAtlasSprite texture = blockModel.getParticleIcon(ModelData.EMPTY);
+                TextureAtlasSprite texture = blockModel
+                        .particleMaterial().sprite();
                 ArrayList<Integer> rlist = new ArrayList<>();
                 ArrayList<Integer> glist = new ArrayList<>();
                 ArrayList<Integer> blist = new ArrayList<>();
@@ -372,7 +392,7 @@ public class ParticleUtil {
         } catch (Exception exception) {
             EclipticSeasons.logger(exception);
         }
-        return Pair.of(c, -1);
+        return Pair.of(Color.WHITE, -1);
     }
 
 
@@ -405,11 +425,11 @@ public class ParticleUtil {
         return c;
     }
 
-    public static void attachSnowyParticle(ClientLevel clientLevel, BlockPos pos, BlockState state) {
-        if (ClientConfig.Particle.snowLeafParticles.get()
-                && MapChecker.leaveLike(MapChecker.getDefaultBlockTypeFlag(state))
-                && EclipticSeasonsApi.getInstance().isSnowyBlock(clientLevel, state, pos)) {
-            Minecraft.getInstance().particleEngine.destroy(pos, Blocks.SNOW.defaultBlockState());
-        }
-    }
+    // public static void attachSnowyParticle(ClientLevel clientLevel, BlockPos pos, BlockState state) {
+    //    if (ClientConfig.Particle.snowLeafParticles.get()
+    //            && MapChecker.leaveLike(MapChecker.getDefaultBlockTypeFlag(state))
+    //            && EclipticSeasonsApi.getInstance().isSnowyBlock(clientLevel, state, pos)) {
+    //        Minecraft.getInstance().particleEngine.destroy(pos, Blocks.SNOW.defaultBlockState());
+    //    }
+    //}
 }

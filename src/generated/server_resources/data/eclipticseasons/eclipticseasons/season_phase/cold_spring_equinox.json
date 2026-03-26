@@ -1,0 +1,15 @@
+{
+  "season": "spring",
+  "name": "eclipticseasons:cold_spring_equinox",
+  "color": "dark_green",
+  "icon": {
+    "texture": "eclipticseasons:font/seasons_icons",
+    "width": 180,
+    "height": 120,
+    "i": 3
+  },
+  "font": {
+    "id": "eclipticseasons:solar_icons",
+    "label": "d"
+  }
+}

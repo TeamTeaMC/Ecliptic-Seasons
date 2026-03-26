@@ -9,6 +9,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -73,13 +74,13 @@ public class CalendarBlock extends WallPlacedBlock {
             if (level instanceof ServerLevel) {
                 BlockState cycle = state.cycle(MODE);
                 level.setBlock(pos, cycle, Block.UPDATE_CLIENTS);
-                player.displayClientMessage(
+                ((ServerPlayer)player).sendSystemMessage(
                         Component.translatable("info.eclipticseasons.calendar.model",
                                 Component.translatable("info.eclipticseasons.calendar.model." + cycle.getValue(MODE).getSerializedName())),
                         true
                 );
             }
-            return InteractionResult.SUCCESS_NO_ITEM_USED;
+            return InteractionResult.CONSUME;
         } else if (level.isClientSide()
                 && level.getBlockEntity(pos) instanceof CalendarBlockEntity calendarBlockEntity) {
             Holder<Biome> cropBiome = CropGrowthHandler.getCropBiome(level, pos);

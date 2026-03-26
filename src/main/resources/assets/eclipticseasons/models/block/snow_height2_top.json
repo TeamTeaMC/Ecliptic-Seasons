@@ -2,7 +2,7 @@
 	"render_type": "cutout",
 	"textures": {
 		"0": "eclipticseasons:block/snow_overlay",
-		"1": "block/snow",
+		"1": "minecraft:block/snow",
 		"particle": "eclipticseasons:block/snow_overlay"
 	},
 	"elements": [

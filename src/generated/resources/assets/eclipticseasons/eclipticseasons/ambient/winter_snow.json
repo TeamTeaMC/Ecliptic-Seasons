@@ -1,6 +1,5 @@
 {
-  "sound": "eclipticseasons:ambient.winter_forest",
-  "priority": 950,
+  "season": "winter",
   "rain": true,
   "biomes": {
     "values": [
@@ -18,5 +17,6 @@
     ],
     "type": "neoforge:and"
   },
-  "season": "winter"
+  "sound": "eclipticseasons:ambient.winter_forest",
+  "priority": 950
 }

@@ -1,6 +1,8 @@
 package com.teamtea.eclipticseasons.mixin.common.biome;
 
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.teamtea.eclipticseasons.api.constant.tag.ClimateTypeBiomeTags;
 import com.teamtea.eclipticseasons.api.misc.IBiomeTagHolder;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
@@ -11,7 +13,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.biome.Biome;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -19,13 +20,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin({Biome.class})
 public abstract class MixinBiome implements IBiomeTagHolder {
-
-    @Shadow
-    @Deprecated
-    public abstract float getTemperature(BlockPos pos);
-
     @Inject(at = {@At("HEAD")}, method = {"getPrecipitationAt"}, cancellable = true)
-    public void eclipticseasons$getPrecipitationAt(BlockPos pos, CallbackInfoReturnable<Biome.Precipitation> cir) {
+    public void eclipticseasons$getPrecipitationAt(BlockPos pos, int seaLevel, CallbackInfoReturnable<Biome.Precipitation> cir) {
         if (EclipticUtil.useSolarWeather()) {
             cir.setReturnValue(WeatherManager.getPrecipitationAt((Biome) (Object) this, pos));
         } else {
@@ -44,44 +40,17 @@ public abstract class MixinBiome implements IBiomeTagHolder {
         }
     }
 
-    //
-    // @Inject(at = {@At("HEAD")}, method = {"getBaseTemperature"}, cancellable = true)
-    // public void eclipticseasons$getBaseTemperature(CallbackInfoReturnable<Float> cir) {
-    //     cir.setReturnValue(BiomeClimateManager.agent$GetBaseTemperature((Biome) (Object) this));
-    // }
-    //
-    //
+
+    // Since now mojang use PrecipitationAt not coldEnoughToSnow, so something is changed
+    @WrapOperation(at = {@At(value = "INVOKE",
+            target = "Lnet/minecraft/world/level/biome/Biome;getPrecipitationAt(Lnet/minecraft/core/BlockPos;I)Lnet/minecraft/world/level/biome/Biome$Precipitation;")},
+            method = {"shouldSnow"})
+    public Biome.Precipitation eclipticseasons$shouldSnow_getPrecipitationAt(Biome instance, BlockPos pos, int seaLevel, Operation<Biome.Precipitation> original) {
+        return instance.hasPrecipitation() && instance.coldEnoughToSnow(pos, seaLevel) ? Biome.Precipitation.SNOW : Biome.Precipitation.RAIN;
+    }
 
 
-
-    //
-    // @ModifyExpressionValue(at = {@At(value = "INVOKE",
-    //         target = "Lnet/minecraft/world/level/biome/Biome;getTemperature(Lnet/minecraft/core/BlockPos;)F")},
-    //         method = {"warmEnoughToRain"})
-    // public float eclipticseasons$warmEnoughToRain(float original) {
-    //     Level level = WeatherManager.fetchLevelIfNull(null, (Biome) (Object) this);
-    //     if (level != null)
-    //         original = BiomeClimateManager.fixTemp(level, (Biome) (Object) this, original);
-    //     return original;
-    // }
-    //
-    // @WrapOperation(at = {@At(value = "INVOKE",
-    //         target = "Lnet/minecraft/world/level/biome/Biome;warmEnoughToRain(Lnet/minecraft/core/BlockPos;)Z")},
-    //         method = {"shouldSnow", "shouldFreeze(Lnet/minecraft/world/level/LevelReader;Lnet/minecraft/core/BlockPos;Z)Z"})
-    // public boolean eclipticseasons$fixTempWithoutSeason(Biome instance, BlockPos pPos, Operation<Boolean> original, @Local(argsOnly = true) LevelReader levelReader) {
-    //     Level level = null;
-    //     if (levelReader instanceof WorldGenLevel worldGenLevel) {
-    //         level = worldGenLevel.getLevel();
-    //     } else if (levelReader instanceof Level level1) {
-    //         level = level1;
-    //     } else {
-    //         level = WeatherManager.fetchLevelIfNull(null, (Biome) (Object) this);
-    //     }
-    //     if (level != null) {
-    //         return BiomeClimateManager.fixTemp(level, (Biome) (Object) this, getTemperature(pPos)) >= BiomeClimateManager.SNOW_LEVEL;
-    //     }
-    //     return original.call(instance, pPos);
-    // }
+    // ============================
 
 
     @Unique
@@ -107,7 +76,7 @@ public abstract class MixinBiome implements IBiomeTagHolder {
 
     @Override
     public void eclipticseasons$setColorTag(TagKey<Biome> tag) {
-        this.eclipticseasons$biomeColorTagKey=tag;
+        this.eclipticseasons$biomeColorTagKey = tag;
     }
 
     @Override

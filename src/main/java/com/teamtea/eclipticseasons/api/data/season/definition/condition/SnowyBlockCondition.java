@@ -9,7 +9,7 @@ import lombok.Builder;
 import lombok.Data;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 
@@ -30,7 +30,7 @@ public class SnowyBlockCondition implements IChangeCondition {
     private final boolean reverse = false;
 
     @Override
-    public ResourceLocation getType() {
+    public Identifier getType() {
         return ChangeConditions.IS_SNOWY;
     }
 

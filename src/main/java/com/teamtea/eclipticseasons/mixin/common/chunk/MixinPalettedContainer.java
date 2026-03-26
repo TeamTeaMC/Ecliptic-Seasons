@@ -12,9 +12,6 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin({PalettedContainer.class})
 public abstract class MixinPalettedContainer<T> implements IUnpackablePalettedContainer<T> {
 
-    @Shadow
-    @Final
-    private PalettedContainer.Strategy strategy;
 
     @Shadow
     private volatile PalettedContainer.Data<T> data;

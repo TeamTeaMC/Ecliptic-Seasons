@@ -3,9 +3,7 @@
   "biomes": "#eclipticseasons:rain/seasonal",
   "slices": [
     {
-      "tint": {
-        "#all": -1
-      },
+      "season": "spring",
       "textures": [
         {
           "all": "minecraft:block/cherry_leaves"
@@ -14,7 +12,9 @@
           "all": "minecraft:block/spruce_leaves"
         }
       ],
-      "season": "spring"
+      "tint": {
+        "#all": -1
+      }
     }
   ]
 }

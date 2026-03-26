@@ -11,9 +11,9 @@ public final class TheOneProbeProvide implements Function<ITheOneProbe, Void> {
     @Override
     public Void apply(@Nullable ITheOneProbe probe) {
         if (probe != null) {
-            probe.registerProvider(new TOPCropProvider());
-            probe.registerProvider(new TOPCauldronProvider());
-            probe.registerProvider(new TOPGreenHouseCoreProvider());
+            //probe.registerProvider(new TOPCropProvider());
+            //probe.registerProvider(new TOPCauldronProvider());
+            //probe.registerProvider(new TOPGreenHouseCoreProvider());
             probe.registerEntityProvider(new TOPAnimalProvider());
         }
         return null;

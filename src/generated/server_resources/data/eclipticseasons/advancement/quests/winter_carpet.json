@@ -1,0 +1,42 @@
+{
+  "parent": "eclipticseasons:quests/winter_milk",
+  "criteria": {
+    "core_require": {
+      "conditions": {
+        "items": [
+          {
+            "items": "#minecraft:wool_carpets"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "parent_need": {
+      "conditions": {
+        "parent": "eclipticseasons:quests/winter_milk"
+      },
+      "trigger": "eclipticseasons:parent"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancement.eclipticseasons.winter_carpet.desc"
+    },
+    "icon": {
+      "id": "minecraft:white_carpet"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "advancement.eclipticseasons.winter_carpet"
+    }
+  },
+  "requirements": [
+    [
+      "parent_need"
+    ],
+    [
+      "core_require"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

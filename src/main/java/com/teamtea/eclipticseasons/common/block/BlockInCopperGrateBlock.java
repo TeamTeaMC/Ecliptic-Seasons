@@ -10,7 +10,7 @@ import com.teamtea.eclipticseasons.common.registry.BlockRegistry;
 import com.teamtea.eclipticseasons.common.registry.ESRegistries;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
@@ -22,7 +22,6 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.HitResult;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -33,7 +32,7 @@ public class BlockInCopperGrateBlock extends WeatheringCopperGrateBlock implemen
     }
 
     @Override
-    public ItemStack getCloneItemStack(BlockState state, HitResult target, LevelReader level, BlockPos pos, Player player) {
+    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state, boolean includeData, Player player) {
         return BlockRegistry.getOriginalCopperGrateBlock(this).asItem().getDefaultInstance();
     }
 
@@ -44,7 +43,7 @@ public class BlockInCopperGrateBlock extends WeatheringCopperGrateBlock implemen
 
     public static Pair<BlockItem, HumidityControl> getItemMatch(Level level, ItemStack stack) {
         if (stack.getItem() instanceof BlockItem blockItem) {
-            for (HumidityControl humidityControl : ESSortInfo.sorted2(level.registryAccess().registryOrThrow(ESRegistries.HUMIDITY_CONTROL))) {
+            for (HumidityControl humidityControl : ESSortInfo.sorted2(level.registryAccess().lookupOrThrow(ESRegistries.HUMIDITY_CONTROL))) {
                 if (humidityControl.ingredient().test(stack)) {
                     return Pair.of(blockItem, humidityControl);
                 }
@@ -53,11 +52,11 @@ public class BlockInCopperGrateBlock extends WeatheringCopperGrateBlock implemen
         return null;
     }
 
-    public static ItemInteractionResult getItemInteractionResult(ItemStack stack, Level level, BlockPos pos, BlockState state) {
+    public static InteractionResult getInteractionResult(ItemStack stack, Level level, BlockPos pos, BlockState state) {
         Pair<BlockItem, HumidityControl> itemMatch = getItemMatch(level, stack);
         if (itemMatch != null) {
             setNewBlock(level, pos, state, itemMatch.getFirst());
-            return ItemInteractionResult.sidedSuccess(level.isClientSide());
+            return InteractionResult.SUCCESS_SERVER;
         }
         return null;
     }
@@ -74,7 +73,7 @@ public class BlockInCopperGrateBlock extends WeatheringCopperGrateBlock implemen
         }
     }
 
-    public static @Nullable ItemInteractionResult getItemInteractionResult(ItemStack stack, Level level, BlockPos pos) {
+    public static @Nullable InteractionResult getInteractionResult(ItemStack stack, Level level, BlockPos pos) {
         Pair<BlockItem, HumidityControl> itemMatch = getItemMatch(level, stack);
         if (itemMatch != null) {
             if (!level.isClientSide()) {
@@ -82,7 +81,7 @@ public class BlockInCopperGrateBlock extends WeatheringCopperGrateBlock implemen
                     blockEntity.setInnerBlock(itemMatch.getFirst().getBlock());
                 }
             }
-            return ItemInteractionResult.sidedSuccess(level.isClientSide());
+            return InteractionResult.SUCCESS_SERVER;
         }
         if (stack.isEmpty()) {
             if (!level.isClientSide()) {
@@ -90,15 +89,15 @@ public class BlockInCopperGrateBlock extends WeatheringCopperGrateBlock implemen
                     blockEntity.setInnerBlock(null);
                 }
             }
-            return ItemInteractionResult.sidedSuccess(level.isClientSide());
+            return InteractionResult.SUCCESS_SERVER;
         }
         return null;
     }
 
     @Override
-    protected @NotNull ItemInteractionResult useItemOn(@NotNull ItemStack stack, @NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hitResult) {
-        ItemInteractionResult result = getItemInteractionResult(stack, level, pos);
-        if (result == ItemInteractionResult.sidedSuccess(level.isClientSide())) {
+    protected InteractionResult useItemOn(@NotNull ItemStack stack, @NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hitResult) {
+        InteractionResult result = getInteractionResult(stack, level, pos);
+        if (result == InteractionResult.SUCCESS_SERVER) {
             if (!player.isCreative()) stack.shrink(1);
         }
         if (result != null) return result;
@@ -115,7 +114,7 @@ public class BlockInCopperGrateBlock extends WeatheringCopperGrateBlock implemen
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level worldIn, @NotNull BlockState state, @NotNull BlockEntityType<T> blockEntityType) {
         // return null;
-        return !worldIn.isClientSide ?
+        return !worldIn.isClientSide()?
                 SimpleEntityBlock.createTickerHelper(blockEntityType, BlockEntityRegistry.block_in_copper_grate_block_entity_type.get(), BlockInCopperGrateBlockEntity::tick) : null;
     }
 
@@ -134,11 +133,4 @@ public class BlockInCopperGrateBlock extends WeatheringCopperGrateBlock implemen
         return blockState;
     }
 
-    @Override
-    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
-        if (!movedByPiston && !level.isClientSide() && !newState.is(this)) {
-            BlockInCopperGrateBlockEntity.popResource(level, pos);
-        }
-        super.onRemove(state, level, pos, newState, movedByPiston);
-    }
 }

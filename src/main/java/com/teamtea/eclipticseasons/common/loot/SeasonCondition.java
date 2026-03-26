@@ -18,7 +18,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
-import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
@@ -29,10 +28,10 @@ public record SeasonCondition(Slice require) implements LootItemCondition {
                     .apply(instance, SeasonCondition::new)
     );
 
+
     @Override
-    public @NotNull LootItemConditionType getType() {
-        // return LootItemConditions.RANDOM_CHANCE;
-        return LootItemConditionRegistry.SEASON.get();
+    public MapCodec<? extends LootItemCondition> codec() {
+        return CODEC;
     }
 
     @Override
@@ -59,7 +58,7 @@ public record SeasonCondition(Slice require) implements LootItemCondition {
         Season startSeason = require.season.isValid() ? require.season : require.startSeason;
         Season endSeason = require.season.isValid() ? require.season : require.endSeason;
         if (startSeason.isValid() && endSeason.isValid()) {
-            var vec3 = context.getParamOrNull(LootContextParams.ORIGIN);
+            var vec3 = context.getOptionalParameter(LootContextParams.ORIGIN);
             BlockPos pos = vec3 == null ? null : BlockPos.containing(vec3);
             if (pos != null) {
                 Season agroSeason = EclipticSeasonsApi.getInstance().getAgroSeason(level, pos);
@@ -68,6 +67,7 @@ public record SeasonCondition(Slice require) implements LootItemCondition {
         }
         return false;
     }
+
 
     @lombok.Builder
     @Data

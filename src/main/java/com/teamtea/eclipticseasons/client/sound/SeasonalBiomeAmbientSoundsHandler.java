@@ -1,10 +1,12 @@
 package com.teamtea.eclipticseasons.client.sound;
 
+import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.constant.solar.TimePeriod;
 import com.teamtea.eclipticseasons.api.data.client.SeasonalBiomeAmbient;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
+import com.teamtea.eclipticseasons.api.util.SimpleUtil;
 import com.teamtea.eclipticseasons.client.util.ClientRef;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
@@ -15,7 +17,7 @@ import net.minecraft.client.resources.sounds.*;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
@@ -78,7 +80,7 @@ public class SeasonalBiomeAmbientSoundsHandler implements AmbientSoundHandler {
             if (MapChecker.isValidDimension(level)) {
 
                 boolean raining = level.isRaining();
-                TimePeriod timePeriod = TimePeriod.fromTimeOfDay(level.getTimeOfDay(1f));
+                TimePeriod timePeriod = TimePeriod.fromTimeOfDay(SimpleUtil.getTimeOfDay(level));
                 boolean inWater = player.isInWater();
                 List<SeasonalBiomeAmbient> seasonalBiomeAmbientList = new ArrayList<>();
                 for (SeasonalBiomeAmbient sound : ClientRef.sounds) {
@@ -160,8 +162,8 @@ public class SeasonalBiomeAmbientSoundsHandler implements AmbientSoundHandler {
                 boolean needAdd = true;
 
                 for (LoopSeasonalSoundInstance soundInstance : this.loopSounds) {
-                    ResourceLocation key = soundInstance.getLocation();
-                    boolean isTargetSound = key.equals(soundEvent.getLocation());
+                    Identifier key = soundInstance.getIdentifier();
+                    boolean isTargetSound = key.equals(soundEvent.location());
                     if (isTargetSound) {
                         if (indoor) {
                             soundInstance.fadeOut();

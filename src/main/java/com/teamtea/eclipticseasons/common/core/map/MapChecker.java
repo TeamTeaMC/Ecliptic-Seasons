@@ -22,7 +22,7 @@ import com.teamtea.eclipticseasons.common.registry.AttachmentRegistry;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.core.*;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ChunkHolder;
 import net.minecraft.server.level.ServerChunkCache;
 import net.minecraft.server.level.ServerLevel;
@@ -127,7 +127,7 @@ public class MapChecker {
         //     //     }
         //     // }
         //     // if (shouldRemove) {
-        //     //     if (level.isClientSide) {
+        //     //     if (level.isClientSide()) {
         //     //         CLIENT_REGION_LIST.remove(map);
         //     //     } else {
         //     //         List<ChunkInfoMap> mapsList = getMapsList(level);
@@ -208,7 +208,7 @@ public class MapChecker {
     }
 
     public static List<ChunkInfoMap> getMapsList(Level level) {
-        return level.isClientSide ?
+        return level.isClientSide() ?
                 (CLIENT_REGION_LIST == null ? new ArrayList<>() : CLIENT_REGION_LIST) :
                 getMapsListOrCreate(level);
     }
@@ -284,30 +284,30 @@ public class MapChecker {
                                            @Nullable BlockPos.MutableBlockPos checkPos,
                                            @Nullable Integer oldHeight) {
         if (oldHeight != null
-                && (oldHeight <= level.getMaxBuildHeight()
-                && oldHeight >= level.getMinBuildHeight())) {
+                && (oldHeight <= level.getMaxY()
+                && oldHeight >= level.getMinY())) {
             if (pos.getY() <= oldHeight - 2) return oldHeight;
         }
         if (snowyRemover != null && snowyRemover.notSnowyAt(pos)) {
-            return level.getMaxBuildHeight() + 1;
+            return level.getMaxY() + 1;
         }
         int posX = pos.getX();
         int posZ = pos.getZ();
 
-        Heightmap.Types typesUse = level.isClientSide || !CommonConfig.Snow.snowyTree.get() ?
+        Heightmap.Types typesUse = level.isClientSide() || !CommonConfig.Snow.snowyTree.get() ?
                 Heightmap.Types.MOTION_BLOCKING : Heightmap.Types.MOTION_BLOCKING_NO_LEAVES;
         int height = chunkAt.getHeight(typesUse, posX, posZ);
         if (checkPos == null) checkPos = new BlockPos.MutableBlockPos(posX, height, posZ);
         else checkPos.setY(height);
         // else checkPos = checkPos;
-        while (height >= chunkAt.getMinBuildHeight()
+        while (height >= chunkAt.getMinY()
                 && chunkAt.getBlockState(checkPos) instanceof BlockState state
                 && (!solidTest(state))) {
             height--;
             checkPos.setY(height);
         }
-        if (height < chunkAt.getMinBuildHeight()) {
-            height = chunkAt.getMinBuildHeight();
+        if (height < chunkAt.getMinY()) {
+            height = chunkAt.getMinY();
         }
         return height;
     }
@@ -353,7 +353,7 @@ public class MapChecker {
         if (chunkMap != null) {
             return chunkMap.getHeight(pos);
         }
-        return level.getMinBuildHeight() - 1;
+        return level.getMinY() - 1;
     }
 
     public static int getHeight(Level levelNull, BlockPos pos) {
@@ -375,7 +375,7 @@ public class MapChecker {
         //             return 0;
         //         }
         //         case ChunkInfoMap.TYPE_HEIGHT -> {
-        //             return level.getMinBuildHeight() - 1;
+        //             return level.getMinY() - 1;
         //         }
         //     }
         // }
@@ -416,7 +416,7 @@ public class MapChecker {
                 }
                 if (!hasBuild) {
                     // level.registryAccess().registry(Registries.BIOME).get().getId(Biomes.THE_VOID)
-                    map = new ChunkInfoMap(x, z, level.getMinBuildHeight() - 1, level.isClientSide);
+                    map = new ChunkInfoMap(x, z, level.getMinY() - 1, level.isClientSide());
                     mapsList.add(map);
                 }
             }
@@ -453,8 +453,8 @@ public class MapChecker {
         if (level == null)
             return null;
 
-        int x = chunkToRegionCoord(pos.x);
-        int z = chunkToRegionCoord(pos.z);
+        int x = chunkToRegionCoord(pos.x());
+        int z = chunkToRegionCoord(pos.z());
         return getChunkInfoMapOrCreate(level, x, z);
     }
 
@@ -477,7 +477,7 @@ public class MapChecker {
                 }
                 if (!hasBuild) {
                     // level.registryAccess().registry(Registries.BIOME).get().getId(Biomes.THE_VOID)
-                    map = new ChunkInfoMap(regionX, regionZ, level.getMinBuildHeight() - 1, level.isClientSide);
+                    map = new ChunkInfoMap(regionX, regionZ, level.getMinY() - 1, level.isClientSide());
                     mapsList.add(map);
                 }
             }
@@ -500,7 +500,7 @@ public class MapChecker {
     public static boolean isLoaded(Level level, int chunkX, int chunkZ) {
         if (level.getChunkSource() instanceof ServerChunkCache serverChunkCache) {
             ChunkHolder visibleChunkIfPresent =
-                    serverChunkCache.getVisibleChunkIfPresent(ChunkPos.asLong(chunkX, chunkZ));
+                    serverChunkCache.getVisibleChunkIfPresent(ChunkPos.pack(chunkX, chunkZ));
             if (visibleChunkIfPresent == null) return false;
             var completablefuture = visibleChunkIfPresent.getFullChunkFuture();
             var either = completablefuture.getNow(null);
@@ -673,22 +673,22 @@ public class MapChecker {
                     list.get(id).biomeHolder;
             if (biomeHolder != null) return biomeHolder;
         }
-        Optional<Registry<Biome>> biomeRegistry = level.registryAccess().registry(Registries.BIOME);
+        Optional<Registry<Biome>> biomeRegistry = level.registryAccess().get(Registries.BIOME).map(Holder::value);
         if (biomeRegistry.isPresent()) {
-            Optional<Holder.Reference<Biome>> holder = biomeRegistry.get().getHolder(id);
+            Optional<Holder.Reference<Biome>> holder = biomeRegistry.get().get(id);
             if (holder.isPresent()) return holder.get();
             EclipticSeasons.extraLogger(true, "Unknown id with level", level, id);
-            return biomeRegistry.get().getHolder(Biomes.PLAINS).orElse(null);
+            return biomeRegistry.get().get(Biomes.PLAINS).orElse(null);
         }
         EclipticSeasons.extraLogger(true, "Unknown id with level", level, id);
         return null;
     }
 
     public static Holder<Biome> idToBiome(Registry<Biome> biomes, int id) {
-        Optional<Holder.Reference<Biome>> holder = biomes.getHolder(id);
+        Optional<Holder.Reference<Biome>> holder = biomes.get(id);
         if (holder.isPresent()) return holder.get();
         EclipticSeasons.extraLogger(true, "Unknown id for biome", id);
-        return biomes.getHolder(Biomes.PLAINS).orElse(null);
+        return biomes.get(Biomes.PLAINS).orElse(null);
     }
 
     public static int biomeToId(Level level, Biome b) {
@@ -697,13 +697,13 @@ public class MapChecker {
             int id = iBiomeTagHolder.eclipticseasons$getBindId();
             if (id > -1) return id;
         }
-        return biomeToId(level.registryAccess().registryOrThrow(Registries.BIOME), b);
+        return biomeToId(level.registryAccess().lookupOrThrow(Registries.BIOME), b);
     }
 
     public static int biomeToId(Registry<Biome> biomes, Biome b) {
         int id = biomes.getId(b);
         if (id < 0) {
-            Biome plainsBiome = biomes.get(Biomes.PLAINS);
+            Biome plainsBiome = biomes.getValueOrThrow(Biomes.PLAINS);
             id = biomes.getId(plainsBiome);
         }
         return biomes.getId(b);
@@ -760,8 +760,8 @@ public class MapChecker {
     }
 
     public static Holder<Biome> getUnCachedSurfaceBiome(Level level, BlockPos pos) {
-        int maxBuildHeight = level.getMaxBuildHeight();
-        int minBuildHeight = level.getMinBuildHeight();
+        int maxBuildHeight = level.getMaxY();
+        int minBuildHeight = level.getMinY();
         // fix the pos to surface
         ChunkInfoMap chunkMap = getChunkMap(level, pos);
         Holder<Biome> biome = null;
@@ -910,7 +910,7 @@ public class MapChecker {
             flag = FLAG_NONE;
         } else if (state.is(EclipticBlockTags.SNOW_OVERLAY_CANNOT_SURVIVE_ON)) {
             flag = FLAG_NONE;
-        } else if (state.getBlock().builtInRegistryHolder().getKey().location().getNamespace().equals("snowrealmagic"))
+        } else if (state.getBlock().builtInRegistryHolder().getKey().identifier().getNamespace().equals("snowrealmagic"))
             return MapChecker.FLAG_NONE;
         else if (onBlock instanceof LeavesBlock) {
             flag = FLAG_LEAVES;
@@ -925,7 +925,7 @@ public class MapChecker {
             flag = FLAG_GRASS_LARGE;
         } else if (onBlock instanceof VineBlock) {
             flag = FLAG_VINE;
-        } else if ((onBlock instanceof FarmBlock || onBlock instanceof DirtPathBlock)) {
+        } else if ((onBlock instanceof FarmlandBlock || onBlock instanceof DirtPathBlock)) {
             flag = FLAG_FARMLAND;
         } else if (onBlock instanceof TrapDoorBlock ||
                 (onBlock instanceof DoorBlock && state.getValue(DoorBlock.HALF) == DoubleBlockHalf.UPPER) ||
@@ -940,8 +940,8 @@ public class MapChecker {
                 onBlock instanceof AzaleaBlock) {
             flag = FLAG_CUSTOM;
         } else {
-            ResourceLocation blockName = onBlock.builtInRegistryHolder().key().location();
-            if (state.isSolidRender(level, pos)) {
+            Identifier blockName = onBlock.builtInRegistryHolder().key().identifier();
+            if (state.isSolidRender()) {
                 flag = FLAG_BLOCK;
             } else if (onBlock instanceof SlabBlock) {
                 SlabType value = state.getValue(SlabBlock.TYPE);
@@ -1031,11 +1031,11 @@ public class MapChecker {
 
     public static List<Holder<Biome>> getBiomes(Level level, BlockPos pos) {
         var mPos = new BlockPos.MutableBlockPos(pos.getX(),
-                level.getMaxBuildHeight(),
+                level.getMaxY(),
                 pos.getZ());
 
         var list = new ArrayList<Holder<Biome>>();
-        while (mPos.getY() >= level.getMinBuildHeight()) {
+        while (mPos.getY() >= level.getMinY()) {
             list.add(level.getBiome(mPos));
             mPos = mPos.move(Direction.DOWN);
         }
@@ -1080,7 +1080,7 @@ public class MapChecker {
                 }
             }
         }
-        SimpleNetworkHandler.send(player, new ChunkUpdateMessage(bytes, chunk.getPos().x, chunk.getPos().z, section_y, clickedPos));
+        SimpleNetworkHandler.send(player, new ChunkUpdateMessage(bytes, chunk.getPos().x(), chunk.getPos().z(), section_y, clickedPos));
     }
 
     public static void sendChunkLoginInfo(ServerLevel serverLevel, LevelChunk chunk, ChunkPos
@@ -1089,7 +1089,7 @@ public class MapChecker {
         BiomeHolder biomeHolder = getOrUpdateChunkBiomeData(serverLevel, chunk, chunkPos);
 
         if (biomeHolder != null && biomeHolder.hasUpdated()) {
-            SimpleNetworkHandler.send(player, new ChunkBiomeUpdateMessage(biomeHolder.biomes(), chunk.getPos().x, chunk.getPos().z, biomeHolder.version()));
+            SimpleNetworkHandler.send(player, new ChunkBiomeUpdateMessage(biomeHolder.biomes(), chunk.getPos().x(), chunk.getPos().z(), biomeHolder.version()));
         }
         // chunk.removeData(ModContents.BIOME_HOLDER);
 
@@ -1123,7 +1123,7 @@ public class MapChecker {
 
     public static void resetBiomeHolder(ServerLevel serverLevel, BlockPos pos) {
         int biomeDataVersion = EclipticUtil.getBiomeDataVersion(serverLevel);
-        ChunkPos chunkPos = new ChunkPos(pos);
+        ChunkPos chunkPos = ChunkPos.containing(pos);
         var biomeHolder = BiomeHolder
                 .prepareBiomes(serverLevel, chunkPos, biomeDataVersion, true);
         ChunkAccess chunk = serverLevel.getChunk(pos);

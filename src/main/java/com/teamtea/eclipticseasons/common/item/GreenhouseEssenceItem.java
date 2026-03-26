@@ -9,11 +9,13 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.loading.FMLLoader;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.function.Consumer;
 
 public class GreenhouseEssenceItem extends Item {
     public GreenhouseEssenceItem(Properties properties) {
@@ -21,9 +23,9 @@ public class GreenhouseEssenceItem extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
-        if (FMLLoader.getDist() != Dist.CLIENT || !ClientConfig.GUI.itemInformation.get()) return;
+    public void appendHoverText(ItemStack itemStack, TooltipContext context, TooltipDisplay display, Consumer<Component> builder, TooltipFlag tooltipFlag) {
+        super.appendHoverText(itemStack, context, display, builder, tooltipFlag);
+        if (FMLLoader.getCurrent().getDist() != Dist.CLIENT || !ClientConfig.GUI.itemInformation.get()) return;
 
         // if (tooltipFlag.hasShiftDown())
         {
@@ -32,10 +34,9 @@ public class GreenhouseEssenceItem extends Item {
                             this == ItemRegistry.autumn_greenhouse_essence_item.get() ? Season.AUTUMN :
                                     this == ItemRegistry.winter_greenhouse_essence_item.get() ? Season.WINTER :
                                             Season.NONE;
-            tooltipComponents.add(Component.translatable("info.eclipticseasons.greenhouse_essence.source", season.getTranslation().getString().toLowerCase(Locale.ROOT)).withStyle(ChatFormatting.GRAY));
+            builder.accept(Component.translatable("info.eclipticseasons.greenhouse_essence.source", season.getTranslation().getString().toLowerCase(Locale.ROOT)).withStyle(ChatFormatting.GRAY));
         }
-        // else {
-        //     tooltipComponents.add(Component.translatable("info.eclipticseasons.show.shift").withStyle(ChatFormatting.GRAY));
-        // }
     }
+
+
 }

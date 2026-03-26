@@ -38,13 +38,15 @@ public class MixinClientLevel {
         }
     }
 
-    @Inject(at = {@At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;getBiome(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/core/Holder;")}, method = {"isRainingAt"}, cancellable = true)
-    private void eclipticseasons$client$isRainingAt_endBiomeCheck(BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
+    @Inject(at = {@At(value = "INVOKE",
+            target = "Lnet/minecraft/world/level/Level;getBiome(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/core/Holder;")},
+            method = {"precipitationAt"}, cancellable = true)
+    private void eclipticseasons$client$precipitationAt_endBiomeCheck(BlockPos pos, CallbackInfoReturnable<Biome.Precipitation> cir) {
         if ((Object) this instanceof ClientLevel level) {
             if (EclipticUtil.hasLocalWeather(level)) {
                 Biome biome = MapChecker.getSurfaceBiome(level, pos).value();
-                Biome.Precipitation precipitation = EclipticUtil.getRainOrSnow(level,biome,pos);
-                cir.setReturnValue(precipitation == Biome.Precipitation.RAIN);
+                Biome.Precipitation precipitation = EclipticUtil.getRainOrSnow(level, biome, pos);
+                cir.setReturnValue(precipitation);
             }
         }
     }

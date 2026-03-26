@@ -58,7 +58,7 @@ public class CompatModule {
      * Used for mod init event register.
      **/
     public static void register(IEventBus gameBus, IEventBus modBus) {
-        if (isModernui() && FMLLoader.getDist() == Dist.CLIENT) {
+        if (isModernui() && FMLLoader.getCurrent().getDist() == Dist.CLIENT) {
             try {
                 Class<?> iuiHandlerClass = Class.forName("com.teamtea.eclipticseasons.compat.modernui.MUIHandler");
                 gameBus.register(iuiHandlerClass.getField("INSTANCE").get(null));
@@ -66,7 +66,7 @@ public class CompatModule {
                 throw new RuntimeException(e);
             }
         }
-        if (isVoxy() && FMLLoader.getDist() == Dist.CLIENT) {
+        if (isVoxy() && FMLLoader.getCurrent().getDist() == Dist.CLIENT) {
             try {
                 Class<?> handler = Class.forName("com.teamtea.eclipticseasons.compat.voxy.VoxyEsHandler");
                 gameBus.register(handler.getField("INSTANCE").get(null));

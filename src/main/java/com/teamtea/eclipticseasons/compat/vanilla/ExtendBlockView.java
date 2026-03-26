@@ -1,8 +1,6 @@
 package com.teamtea.eclipticseasons.compat.vanilla;
 
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.core.BlockPos;
+import net.minecraft.client.resources.model.geometry.BakedQuad;
 
 import java.util.List;
 

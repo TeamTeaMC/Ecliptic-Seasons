@@ -15,7 +15,7 @@ import lombok.Data;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
@@ -62,8 +62,8 @@ public class SnowDefinition implements MapFiller<Block, SnowDefinition>, HolderM
                 Codec.BOOL.optionalFieldOf("snow_passable", false).forGetter(o -> o.snowPassable),
                 Codec.BOOL.optionalFieldOf("ignore_offset", false).forGetter(o -> o.ignoreOffset),
                 Codec.INT.optionalFieldOf("offset", 0).forGetter(o -> o.offset),
-                ResourceLocation.CODEC.optionalFieldOf("mid", ClientModelDefinitions.EMPTY).forGetter(o -> o.mid),
-                ResourceLocation.CODEC.optionalFieldOf("mid2", ClientModelDefinitions.EMPTY).forGetter(o -> o.mid2)
+                Identifier.CODEC.optionalFieldOf("mid", ClientModelDefinitions.EMPTY).forGetter(o -> o.mid),
+                Identifier.CODEC.optionalFieldOf("mid2", ClientModelDefinitions.EMPTY).forGetter(o -> o.mid2)
         ).apply(ins, Info::new));
         public static final Codec<Info> CODEC = MAP_CODEC.codec();
 
@@ -78,9 +78,9 @@ public class SnowDefinition implements MapFiller<Block, SnowDefinition>, HolderM
         @Builder.Default
         private final int offset = 0;
         @Builder.Default
-        private final ResourceLocation mid = ClientModelDefinitions.OVERLAY;
+        private final Identifier mid = ClientModelDefinitions.OVERLAY;
         @Builder.Default
-        private final ResourceLocation mid2 = ClientModelDefinitions.EMPTY;
+        private final Identifier mid2 = ClientModelDefinitions.EMPTY;
 
         public boolean isValid() {
             return this.flag != MapChecker.FLAG_IGNORE;

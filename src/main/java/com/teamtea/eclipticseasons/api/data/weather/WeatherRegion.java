@@ -9,11 +9,9 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.biome.Biome;
 import net.neoforged.neoforge.common.conditions.ConditionalOps;
 import net.neoforged.neoforge.common.conditions.ICondition;
-import net.neoforged.neoforge.common.conditions.TrueCondition;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.Optional;
 
 public record WeatherRegion(Holder<Biome> core, HolderSet<Biome> sub,
                             int priority,

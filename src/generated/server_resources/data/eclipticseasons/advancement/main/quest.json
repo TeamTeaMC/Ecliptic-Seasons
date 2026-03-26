@@ -1,0 +1,27 @@
+{
+  "parent": "eclipticseasons:main/root",
+  "criteria": {
+    "tick": {
+      "trigger": "minecraft:tick"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "advancement.eclipticseasons.quest.desc"
+    },
+    "icon": {
+      "id": "eclipticseasons:pinwheel_lime"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "advancement.eclipticseasons.quest"
+    }
+  },
+  "requirements": [
+    [
+      "tick"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

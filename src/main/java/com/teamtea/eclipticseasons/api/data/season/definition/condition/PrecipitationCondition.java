@@ -7,7 +7,7 @@ import com.teamtea.eclipticseasons.api.data.season.definition.ISeasonChangeConte
 import lombok.Builder;
 import lombok.Data;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 
@@ -25,7 +25,7 @@ public class PrecipitationCondition implements IChangeCondition {
     private final Biome.Precipitation precipitation = Biome.Precipitation.RAIN;
 
     @Override
-    public ResourceLocation getType() {
+    public Identifier getType() {
         return ChangeConditions.PRECIPITATION;
     }
 

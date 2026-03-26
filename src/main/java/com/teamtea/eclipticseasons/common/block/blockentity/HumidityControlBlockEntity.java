@@ -1,5 +1,6 @@
 package com.teamtea.eclipticseasons.common.block.blockentity;
 
+import com.mojang.serialization.Codec;
 import com.mojang.serialization.DynamicOps;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.data.craft.HumidityControl;
@@ -20,48 +21,32 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.jetbrains.annotations.NotNull;
 
 public class HumidityControlBlockEntity extends SyncBlockEntity {
     protected HumidityControl humidityControl;
     protected int time = 0;
 
-    public HumidityControlBlockEntity(BlockPos pos, BlockState state) {
-        super(BlockEntityRegistry.humidity_control_entity_type.get(), pos, state);
-    }
 
     public HumidityControlBlockEntity(BlockEntityType<?> blockEntityType, BlockPos pos, BlockState state) {
         super(blockEntityType, pos, state);
     }
 
+
     @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.saveAdditional(tag, registries);
-        tag.putInt("time", time);
-        if (humidityControl != null) {
-            DynamicOps<Tag> dynamicops = registries.createSerializationContext(NbtOps.INSTANCE);
-            HumidityControl.CODEC
-                    .encodeStart(dynamicops, humidityControl)
-                    .resultOrPartial(EclipticSeasons::logger)
-                    .ifPresent(tag1 -> tag.put("humidity_control", tag1));
-        }
+    protected void saveAdditional(ValueOutput output) {
+        super.saveAdditional(output);
+        output.store("time", Codec.INT, time);
+        output.storeNullable("humidity_control", HumidityControl.CODEC, humidityControl);
     }
 
     @Override
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.loadAdditional(tag, registries);
-        time = tag.getInt("time");
-        if (tag.contains("humidity_control")) {
-            DynamicOps<Tag> dynamicops = registries.createSerializationContext(NbtOps.INSTANCE);
-            HumidityControl.CODEC
-                    .parse(dynamicops, tag.get("humidity_control"))
-                    .resultOrPartial(EclipticSeasons::logger)
-                    .ifPresent(humidityControl -> {
-                        this.humidityControl = humidityControl;
-                    });
-        } else {
-            this.humidityControl = null;
-        }
+    protected void loadAdditional(ValueInput input) {
+        super.loadAdditional(input);
+        time = input.read("time", Codec.INT).orElse(0);
+        humidityControl = input.read("humidity_control", HumidityControl.CODEC).orElse(null);
     }
 
     @Override
@@ -115,7 +100,7 @@ public class HumidityControlBlockEntity extends SyncBlockEntity {
 
     protected void searchRecipe() {
         if (humidityControl == null) {
-            for (HumidityControl humidityControl : ESSortInfo.sorted2(level.registryAccess().registryOrThrow(ESRegistries.HUMIDITY_CONTROL))) {
+            for (HumidityControl humidityControl : ESSortInfo.sorted2(level.registryAccess().lookupOrThrow(ESRegistries.HUMIDITY_CONTROL))) {
                 if (isRecipeCacheValid(humidityControl)
                 ) {
                     this.humidityControl = humidityControl;

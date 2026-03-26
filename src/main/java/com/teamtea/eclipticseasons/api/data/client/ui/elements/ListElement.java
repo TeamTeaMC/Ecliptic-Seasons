@@ -5,7 +5,7 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import lombok.Builder;
 import lombok.Data;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.List;
 
@@ -25,7 +25,7 @@ public class ListElement implements UIElement {
     private final List<UIElement> items;
 
     @Override
-    public ResourceLocation getType() {
+    public Identifier getType() {
         return UIElements.LIST;
     }
 

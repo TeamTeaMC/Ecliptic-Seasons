@@ -1,6 +1,7 @@
 package com.teamtea.eclipticseasons.common.misc;
 
 
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.LivingEntity;
@@ -18,14 +19,8 @@ public class HeatStrokeEffect extends MobEffect {
         return false;
     }
 
-
     @Override
-    public boolean applyEffectTick(LivingEntity entityLivingBaseIn, int amplifier) {
-        // if (entityLivingBaseIn.getHealth() > 0.1F)
-        {
-            // need a damage tag is bypasses_armor
-            // entityLivingBaseIn.hurt(entityLivingBaseIn.damageSources().generic(), Math.minTime(entityLivingBaseIn.getHealth() * 0.025f,0.1f) + 0.001f);
-        }
+    public boolean applyEffectTick(ServerLevel serverLevel, LivingEntity mob, int amplification) {
         return true;
     }
 

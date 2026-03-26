@@ -12,8 +12,9 @@ import com.teamtea.eclipticseasons.api.constant.tag.CropClimateTags;
 import com.teamtea.eclipticseasons.api.data.climate.AgroClimaticZone;
 import com.teamtea.eclipticseasons.api.data.crop.*;
 import com.teamtea.eclipticseasons.api.util.fast.Enum2ObjectMap;
-import net.minecraft.advancements.critereon.BlockPredicate;
-import net.minecraft.advancements.critereon.StatePropertiesPredicate;
+import net.minecraft.advancements.criterion.BlockPredicate;
+import net.minecraft.advancements.criterion.DataComponentMatchers;
+import net.minecraft.core.HolderGetter;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstrapContext;
@@ -21,16 +22,8 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.CropBlock;
-import net.minecraft.world.level.block.DoublePlantBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
-import net.neoforged.neoforge.registries.holdersets.AndHolderSet;
-import net.neoforged.neoforge.registries.holdersets.OrHolderSet;
 
-import java.util.EnumMap;
 import java.util.Optional;
 
 public class CropRegistry {
@@ -120,11 +113,12 @@ public class CropRegistry {
     }
 
     private static TagKey<Block> createTagKey(ResourceKey<CropGrowControlBuilder> templateName) {
-        return TagKey.create(Registries.BLOCK, EclipticSeasons.rl("crops/" + templateName.location().getPath().split("/")[1]));
+        return TagKey.create(Registries.BLOCK, EclipticSeasons.rl("crops/" + templateName.identifier().getPath().split("/")[1]));
     }
 
-    private static BlockPredicate createTagPredicate(ResourceKey<CropGrowControlBuilder> templateName) {
-        return BlockPredicate.Builder.block().of(createTagKey(templateName))
+    private static BlockPredicate createTagPredicate(HolderGetter<Block> blockHolderGetter, ResourceKey<CropGrowControlBuilder> templateName) {
+        return BlockPredicate.Builder.block().of(blockHolderGetter,
+                        createTagKey(templateName))
                 // .setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(BlockStateProperties.AGE_3,1))
                 .build();
     }
@@ -149,11 +143,11 @@ public class CropRegistry {
         HolderSet.Direct<AgroClimaticZone> temperate = HolderSet.direct(cropClimateTypeHolderGetter.getOrThrow(AgroClimateRegistry.TEMPERATE));
 
         // OrHolderSet<Block> snowAndIce = new OrHolderSet<>(blockHolderGetter.getOrThrow(BlockTags.ICE), blockHolderGetter.getOrThrow(BlockTags.SNOW));
-        Optional<BlockPredicate> icePredicate = Optional.of(new BlockPredicate(Optional.of(blockHolderGetter.getOrThrow(BlockTags.ICE)), Optional.empty(), Optional.empty()));
+        Optional<BlockPredicate> icePredicate = Optional.of(new BlockPredicate(Optional.of(blockHolderGetter.getOrThrow(BlockTags.ICE)), Optional.empty(), Optional.empty(), DataComponentMatchers.ANY));
 
         context.register(SPRING, new CropGrowControlBuilder(
                 temperate,
-                createTagPredicate(SPRING),
+                createTagPredicate(blockHolderGetter, SPRING),
                 HolderSet.empty(), emptyGP, emptyGP2,
                 new Enum2ObjectMap<>(of(
                         SolarTerm.BEGINNING_OF_SPRING, GrowParameter.builder().growChance(0.7f).end(),
@@ -191,7 +185,7 @@ public class CropRegistry {
 
         context.register(SUMMER, new CropGrowControlBuilder(
                 temperate,
-                createTagPredicate(SUMMER),
+                createTagPredicate(blockHolderGetter, SUMMER),
                 HolderSet.empty(), emptyGP, emptyGP2,
                 new Enum2ObjectMap<>(of(
                         SolarTerm.BEGINNING_OF_SPRING, GrowParameter.builder().growChance(0.0f).end(),
@@ -229,7 +223,7 @@ public class CropRegistry {
 
         context.register(AUTUMN, new CropGrowControlBuilder(
                 temperate,
-                createTagPredicate(AUTUMN),
+                createTagPredicate(blockHolderGetter, AUTUMN),
                 HolderSet.empty(), emptyGP, emptyGP2,
                 new Enum2ObjectMap<>(of(
                         SolarTerm.BEGINNING_OF_SPRING, GrowParameter.builder().growChance(0.0f).end(),
@@ -267,7 +261,7 @@ public class CropRegistry {
 
         context.register(WINTER, new CropGrowControlBuilder(
                 temperate,
-                createTagPredicate(WINTER),
+                createTagPredicate(blockHolderGetter,WINTER),
                 HolderSet.empty(), emptyGP, emptyGP2,
                 new Enum2ObjectMap<>(of(
                         SolarTerm.BEGINNING_OF_SPRING, GrowParameter.builder().growChance(0.3f).end(),
@@ -305,7 +299,7 @@ public class CropRegistry {
 
         context.register(SP_SU, new CropGrowControlBuilder(
                 temperate,
-                createTagPredicate(SP_SU),
+                createTagPredicate(blockHolderGetter, SP_SU),
                 HolderSet.empty(), emptyGP, emptyGP2,
                 new Enum2ObjectMap<>(of(
                         SolarTerm.BEGINNING_OF_SPRING, GrowParameter.builder().growChance(0.5f).end(),
@@ -343,7 +337,7 @@ public class CropRegistry {
 
         context.register(SP_AU, new CropGrowControlBuilder(
                 temperate,
-                createTagPredicate(SP_AU),
+                createTagPredicate(blockHolderGetter, SP_AU),
                 HolderSet.empty(), emptyGP, emptyGP2,
                 new Enum2ObjectMap<>(of(
                         SolarTerm.BEGINNING_OF_SPRING, GrowParameter.builder().growChance(0.5f).end(),
@@ -381,7 +375,7 @@ public class CropRegistry {
 
         context.register(SP_WI, new CropGrowControlBuilder(
                 temperate,
-                createTagPredicate(SP_WI),
+                createTagPredicate(blockHolderGetter, SP_WI),
                 HolderSet.empty(), emptyGP, emptyGP2,
                 new Enum2ObjectMap<>(of(
                         SolarTerm.BEGINNING_OF_SPRING, GrowParameter.builder().growChance(0.64f).end(),
@@ -419,7 +413,7 @@ public class CropRegistry {
 
         context.register(SU_AU, new CropGrowControlBuilder(
                 temperate,
-                createTagPredicate(SU_AU),
+                createTagPredicate(blockHolderGetter, SU_AU),
                 HolderSet.empty(), emptyGP, emptyGP2,
                 new Enum2ObjectMap<>(of(
                         SolarTerm.BEGINNING_OF_SPRING, GrowParameter.builder().growChance(0.1f).end(),
@@ -457,7 +451,7 @@ public class CropRegistry {
 
         context.register(SU_WI, new CropGrowControlBuilder(
                 temperate,
-                createTagPredicate(SU_WI),
+                createTagPredicate(blockHolderGetter, SU_WI),
                 HolderSet.empty(), emptyGP, emptyGP2,
                 new Enum2ObjectMap<>(of(
                         SolarTerm.BEGINNING_OF_SPRING, GrowParameter.builder().growChance(0.3f).end(),
@@ -495,7 +489,7 @@ public class CropRegistry {
 
         context.register(AU_WI, new CropGrowControlBuilder(
                 temperate,
-                createTagPredicate(AU_WI),
+                createTagPredicate(blockHolderGetter, AU_WI),
                 HolderSet.empty(), emptyGP, emptyGP2,
                 new Enum2ObjectMap<>(of(
                         SolarTerm.BEGINNING_OF_SPRING, GrowParameter.builder().growChance(0.5f).end(),
@@ -533,7 +527,7 @@ public class CropRegistry {
 
         context.register(SP_SU_AU, new CropGrowControlBuilder(
                 temperate,
-                createTagPredicate(SP_SU_AU),
+                createTagPredicate(blockHolderGetter, SP_SU_AU),
                 HolderSet.empty(), emptyGP, emptyGP2,
                 new Enum2ObjectMap<>(of(
                         SolarTerm.BEGINNING_OF_SPRING, GrowParameter.builder().growChance(0.35f).end(),
@@ -571,7 +565,7 @@ public class CropRegistry {
 
         context.register(SP_SU_WI, new CropGrowControlBuilder(
                 temperate,
-                createTagPredicate(SP_SU_WI),
+                createTagPredicate(blockHolderGetter, SP_SU_WI),
                 HolderSet.empty(), emptyGP, emptyGP2,
                 new Enum2ObjectMap<>(of(
                         SolarTerm.BEGINNING_OF_SPRING, GrowParameter.builder().growChance(0.8f).end(),
@@ -609,7 +603,7 @@ public class CropRegistry {
 
         context.register(SP_AU_WI, new CropGrowControlBuilder(
                 temperate,
-                createTagPredicate(SP_AU_WI),
+                createTagPredicate(blockHolderGetter, SP_AU_WI),
                 HolderSet.empty(), emptyGP, emptyGP2,
                 new Enum2ObjectMap<>(of(
                         SolarTerm.BEGINNING_OF_SPRING, GrowParameter.builder().growChance(0.7f).end(),
@@ -647,7 +641,7 @@ public class CropRegistry {
 
         context.register(SU_AU_WI, new CropGrowControlBuilder(
                 temperate,
-                createTagPredicate(SU_AU_WI),
+                createTagPredicate(blockHolderGetter, SU_AU_WI),
                 HolderSet.empty(), emptyGP, emptyGP2,
                 new Enum2ObjectMap<>(of(
                         SolarTerm.BEGINNING_OF_SPRING, GrowParameter.builder().growChance(0.0f).end(),
@@ -686,7 +680,7 @@ public class CropRegistry {
 
         context.register(ALL, new CropGrowControlBuilder(
                 temperate,
-                createTagPredicate(ALL),
+                createTagPredicate(blockHolderGetter, ALL),
                 HolderSet.empty(), emptyGP, emptyGP2,
                 new Enum2ObjectMap<>(of(
                         SolarTerm.BEGINNING_OF_SPRING, GrowParameter.builder().growChance(0.45f).end(),
@@ -725,7 +719,7 @@ public class CropRegistry {
         HolderSet.Named<AgroClimaticZone> allHolderSet = cropClimateTypeHolderGetter.get(CropClimateTags.ALL).get();
         context.register(ARID, new CropGrowControlBuilder(
                 allHolderSet,
-                createTagPredicate(ARID),
+                createTagPredicate(blockHolderGetter, ARID),
                 HolderSet.empty(), emptyGP, emptyGP2,
                 solarTermListEmpty,
                 seasonListEmpty,
@@ -741,7 +735,7 @@ public class CropRegistry {
 
         context.register(ARID_DRY, new CropGrowControlBuilder(
                 allHolderSet,
-                createTagPredicate(ARID_DRY),
+                createTagPredicate(blockHolderGetter, ARID_DRY),
                 HolderSet.empty(), emptyGP, emptyGP2,
                 solarTermListEmpty,
                 seasonListEmpty,
@@ -757,7 +751,7 @@ public class CropRegistry {
 
         context.register(ARID_AVERAGE, new CropGrowControlBuilder(
                 allHolderSet,
-                createTagPredicate(ARID_AVERAGE),
+                createTagPredicate(blockHolderGetter, ARID_AVERAGE),
                 HolderSet.empty(), emptyGP, emptyGP2,
                 solarTermListEmpty,
                 seasonListEmpty,
@@ -773,7 +767,7 @@ public class CropRegistry {
 
         context.register(ARID_MOIST, new CropGrowControlBuilder(
                 allHolderSet,
-                createTagPredicate(ARID_MOIST),
+                createTagPredicate(blockHolderGetter, ARID_MOIST),
                 HolderSet.empty(), emptyGP, emptyGP2,
                 solarTermListEmpty,
                 seasonListEmpty,
@@ -789,7 +783,7 @@ public class CropRegistry {
 
         context.register(ARID_HUMID, new CropGrowControlBuilder(
                 allHolderSet,
-                createTagPredicate(ARID_HUMID),
+                createTagPredicate(blockHolderGetter, ARID_HUMID),
                 HolderSet.empty(), emptyGP, emptyGP2,
                 solarTermListEmpty,
                 seasonListEmpty,
@@ -805,7 +799,7 @@ public class CropRegistry {
 
         context.register(DRY, new CropGrowControlBuilder(
                 allHolderSet,
-                createTagPredicate(DRY),
+                createTagPredicate(blockHolderGetter, DRY),
                 HolderSet.empty(), emptyGP, emptyGP2,
                 solarTermListEmpty,
                 seasonListEmpty,
@@ -821,7 +815,7 @@ public class CropRegistry {
 
         context.register(DRY_AVERAGE, new CropGrowControlBuilder(
                 allHolderSet,
-                createTagPredicate(DRY_AVERAGE),
+                createTagPredicate(blockHolderGetter, DRY_AVERAGE),
                 HolderSet.empty(), emptyGP, emptyGP2,
                 solarTermListEmpty,
                 seasonListEmpty,
@@ -837,7 +831,7 @@ public class CropRegistry {
 
         context.register(DRY_MOIST, new CropGrowControlBuilder(
                 allHolderSet,
-                createTagPredicate(DRY_MOIST),
+                createTagPredicate(blockHolderGetter, DRY_MOIST),
                 HolderSet.empty(), emptyGP, emptyGP2,
                 solarTermListEmpty,
                 seasonListEmpty,
@@ -853,7 +847,7 @@ public class CropRegistry {
 
         context.register(DRY_HUMID, new CropGrowControlBuilder(
                 allHolderSet,
-                createTagPredicate(DRY_HUMID),
+                createTagPredicate(blockHolderGetter, DRY_HUMID),
                 HolderSet.empty(), emptyGP, emptyGP2,
                 solarTermListEmpty,
                 seasonListEmpty,
@@ -869,7 +863,7 @@ public class CropRegistry {
 
         context.register(AVERAGE, new CropGrowControlBuilder(
                 allHolderSet,
-                createTagPredicate(AVERAGE),
+                createTagPredicate(blockHolderGetter, AVERAGE),
                 HolderSet.empty(), emptyGP, emptyGP2,
                 solarTermListEmpty,
                 seasonListEmpty,
@@ -885,7 +879,7 @@ public class CropRegistry {
 
         context.register(AVERAGE_MOIST, new CropGrowControlBuilder(
                 allHolderSet,
-                createTagPredicate(AVERAGE_MOIST),
+                createTagPredicate(blockHolderGetter, AVERAGE_MOIST),
                 HolderSet.empty(), emptyGP, emptyGP2,
                 solarTermListEmpty,
                 seasonListEmpty,
@@ -901,7 +895,7 @@ public class CropRegistry {
 
         context.register(AVERAGE_HUMID, new CropGrowControlBuilder(
                 allHolderSet,
-                createTagPredicate(AVERAGE_HUMID),
+                createTagPredicate(blockHolderGetter, AVERAGE_HUMID),
                 HolderSet.empty(), emptyGP, emptyGP2,
                 solarTermListEmpty,
                 seasonListEmpty,
@@ -917,7 +911,7 @@ public class CropRegistry {
 
         context.register(MOIST, new CropGrowControlBuilder(
                 allHolderSet,
-                createTagPredicate(MOIST),
+                createTagPredicate(blockHolderGetter, MOIST),
                 HolderSet.empty(), emptyGP, emptyGP2,
                 solarTermListEmpty,
                 seasonListEmpty,
@@ -933,7 +927,7 @@ public class CropRegistry {
 
         context.register(MOIST_HUMID, new CropGrowControlBuilder(
                 allHolderSet,
-                createTagPredicate(MOIST_HUMID),
+                createTagPredicate(blockHolderGetter, MOIST_HUMID),
                 HolderSet.empty(), emptyGP, emptyGP2,
                 solarTermListEmpty,
                 seasonListEmpty,
@@ -949,7 +943,7 @@ public class CropRegistry {
 
         context.register(HUMID, new CropGrowControlBuilder(
                 allHolderSet,
-                createTagPredicate(HUMID),
+                createTagPredicate(blockHolderGetter, HUMID),
                 HolderSet.empty(), emptyGP, emptyGP2,
                 solarTermListEmpty,
                 seasonListEmpty,

@@ -7,7 +7,7 @@ import com.teamtea.eclipticseasons.api.data.season.SeasonPhase;
 import net.minecraft.ChatFormatting;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.Optional;
 
@@ -88,7 +88,7 @@ public class SeasonPhaseRegistry {
 
     public static void bootstrap(BootstrapContext<SeasonPhase> context) {
 
-        ResourceLocation monsoonIcons = EclipticSeasons.rl("monsoon_icons");
+        Identifier monsoonIcons = EclipticSeasons.rl("monsoon_icons");
 
         context.register(DRY_START, new SeasonPhase(Season.SUMMER,
                 EclipticSeasons.rl("dry_start"),
@@ -158,31 +158,31 @@ public class SeasonPhaseRegistry {
         // context.register(DRY, new SeasonPhase(Season.SUMMER,
         //         EclipticSeasons.rl("dry"),
         //         ChatFormatting.GOLD,
-        //         Optional.of(new SeasonPhase.Icon(EclipticSeasons.rl("dry_middle").withPrefix(ESRegistries.SEASON_PHASE.location().getPath() + "/"))),
+        //         Optional.of(new SeasonPhase.Icon(EclipticSeasons.rl("dry_middle").withPrefix(ESRegistries.SEASON_PHASE.identifier().getPath() + "/"))),
         //         new SeasonPhase.FontIcon(monsoonIcons, "b")
         // ));
         //
         // context.register(RAIN, new SeasonPhase(Season.SUMMER,
         //         EclipticSeasons.rl("rain"),
         //         ChatFormatting.BLUE,
-        //         Optional.of(new SeasonPhase.Icon(EclipticSeasons.rl("rain_middle").withPrefix(ESRegistries.SEASON_PHASE.location().getPath() + "/"))),
+        //         Optional.of(new SeasonPhase.Icon(EclipticSeasons.rl("rain_middle").withPrefix(ESRegistries.SEASON_PHASE.identifier().getPath() + "/"))),
         //         new SeasonPhase.FontIcon(monsoonIcons, "e")
         // ));
         //
         // context.register(WET, new SeasonPhase(Season.SUMMER,
         //         EclipticSeasons.rl("wet"),
         //         ChatFormatting.GREEN,
-        //         Optional.of(new SeasonPhase.Icon(EclipticSeasons.rl("wet_middle").withPrefix(ESRegistries.SEASON_PHASE.location().getPath() + "/"))),
+        //         Optional.of(new SeasonPhase.Icon(EclipticSeasons.rl("wet_middle").withPrefix(ESRegistries.SEASON_PHASE.identifier().getPath() + "/"))),
         //         new SeasonPhase.FontIcon(monsoonIcons, "h")
         // ));
 
-        ResourceLocation solarIcons = EclipticSeasons.rl("solar_icons");
-        ResourceLocation seasonsIcons = EclipticSeasons.rl("seasons_icons").withPrefix("font/");
+        Identifier solarIcons = EclipticSeasons.rl("solar_icons");
+        Identifier seasonsIcons = EclipticSeasons.rl("seasons_icons").withPrefix("font/");
 
         for (SolarTerm solarTerm : SolarTerm.collectValidValues()) {
             ResourceKey<SeasonPhase> coldKey = createKey("cold_" + solarTerm.getName());
             context.register(coldKey, new SeasonPhase(solarTerm.getSeason(),
-                    coldKey.location(),
+                    coldKey.identifier(),
                     solarTerm.getSeason().getColor(),
                     Optional.of(new SeasonPhase.Icon(
                             seasonsIcons,
@@ -197,7 +197,7 @@ public class SeasonPhaseRegistry {
 
             ResourceKey<SeasonPhase> hotKey = createKey("hot_" + solarTerm.getName());
             context.register(hotKey, new SeasonPhase(solarTerm.getSeason(),
-                    hotKey.location(),
+                    hotKey.identifier(),
                     solarTerm.getSeason().getColor(),
                     Optional.of(new SeasonPhase.Icon(
                             seasonsIcons,

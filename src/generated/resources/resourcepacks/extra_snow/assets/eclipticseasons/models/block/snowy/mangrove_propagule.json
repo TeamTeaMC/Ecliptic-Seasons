@@ -1,6 +1,0 @@
-{
-  "parent": "minecraft:block/mangrove_propagule",
-  "textures": {
-    "sapling": "eclipticseasons:block/snowy/mangrove_propagule"
-  }
-}

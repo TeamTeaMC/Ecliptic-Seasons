@@ -4,7 +4,7 @@ package com.teamtea.eclipticseasons.api.constant.crop;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.constant.biome.Humidity;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
@@ -28,9 +28,9 @@ public enum CropHumidityType
     HUMID(new CropHumidityInfo(Humidity.HUMID), EclipticSeasons.rl("crops/humid_humid"));
 
     private final CropHumidityInfo info;
-    private final ResourceLocation res;
+    private final Identifier res;
 
-    CropHumidityType(CropHumidityInfo info, ResourceLocation res)
+    CropHumidityType(CropHumidityInfo info, Identifier res)
     {
         this.info = info;
         this.res = res;
@@ -41,7 +41,7 @@ public enum CropHumidityType
         return info;
     }
 
-    public ResourceLocation getRes()
+    public Identifier getRes()
     {
         return res;
     }

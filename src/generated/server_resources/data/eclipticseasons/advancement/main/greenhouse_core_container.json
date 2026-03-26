@@ -1,0 +1,42 @@
+{
+  "parent": "eclipticseasons:main/green_house",
+  "criteria": {
+    "core_require": {
+      "conditions": {
+        "items": [
+          {
+            "items": "eclipticseasons:greenhouse_core_container"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "parent_need": {
+      "conditions": {
+        "parent": "eclipticseasons:main/green_house"
+      },
+      "trigger": "eclipticseasons:parent"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancement.eclipticseasons.greenhouse_core_container.desc"
+    },
+    "icon": {
+      "id": "eclipticseasons:greenhouse_core_container"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "advancement.eclipticseasons.greenhouse_core_container"
+    }
+  },
+  "requirements": [
+    [
+      "parent_need"
+    ],
+    [
+      "core_require"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

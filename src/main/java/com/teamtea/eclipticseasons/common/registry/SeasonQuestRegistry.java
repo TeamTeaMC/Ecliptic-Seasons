@@ -5,9 +5,12 @@ import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.constant.tag.CropClimateTags;
 import com.teamtea.eclipticseasons.api.data.quest.SeasonQuest;
+import net.minecraft.core.HolderGetter;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 
 public class SeasonQuestRegistry {
@@ -22,11 +25,12 @@ public class SeasonQuestRegistry {
 
     public static void bootstrap(BootstrapContext<SeasonQuest> context) {
         var cropClimateTypeHolderGetter = context.lookup(ESRegistries.AGRO_CLIMATE);
+        HolderGetter<Item> itemHolderGetter = context.lookup(Registries.ITEM);
         context.register(SPRING_CORE, SeasonQuest.builder()
                 .setTittle(Component.translatable(ESRegistries.createLangKey(SPRING_CORE)))
                 .setStart(SolarTerm.SPRING_EQUINOX)
                 .setEnd(SolarTerm.BEGINNING_OF_SUMMER)
-                .addNeed(Items.WHEAT, 3 * 64)
+                .addNeed(itemHolderGetter, Items.WHEAT, 3 * 64)
                 .addAward(ItemRegistry.spring_greenhouse_essence_item.get())
                 .setClimate(cropClimateTypeHolderGetter.getOrThrow(CropClimateTags.ALL))
                 .setWeight(10)
@@ -37,7 +41,7 @@ public class SeasonQuestRegistry {
                 .setTittle(Component.translatable(ESRegistries.createLangKey(SUMMER_CORE)))
                 .setStart(SolarTerm.SUMMER_SOLSTICE)
                 .setEnd(SolarTerm.BEGINNING_OF_AUTUMN)
-                .addNeed(Items.MELON, 48)
+                .addNeed(itemHolderGetter, Items.MELON, 48)
                 .addAward(ItemRegistry.summer_greenhouse_essence_item.get())
                 .setClimate(cropClimateTypeHolderGetter.getOrThrow(CropClimateTags.ALL))
                 .setWeight(10)
@@ -48,9 +52,9 @@ public class SeasonQuestRegistry {
                 .setTittle(Component.translatable(ESRegistries.createLangKey(AUTUMN_CORE)))
                 .setStart(SolarTerm.AUTUMNAL_EQUINOX)
                 .setEnd(SolarTerm.BEGINNING_OF_WINTER)
-                .addNeed(Items.PUMPKIN, 96)
-                .addNeed(Items.CARROT, 64)
-                .addNeed(Items.BEETROOT, 64)
+                .addNeed(itemHolderGetter, Items.PUMPKIN, 96)
+                .addNeed(itemHolderGetter, Items.CARROT, 64)
+                .addNeed(itemHolderGetter, Items.BEETROOT, 64)
                 .addAward(ItemRegistry.autumn_greenhouse_essence_item.get())
                 .setClimate(cropClimateTypeHolderGetter.getOrThrow(CropClimateTags.ALL))
                 .setWeight(10)
@@ -61,7 +65,7 @@ public class SeasonQuestRegistry {
                 .setTittle(Component.translatable(ESRegistries.createLangKey(WINTER_CORE)))
                 .setStart(SolarTerm.WINTER_SOLSTICE)
                 .setEnd(SolarTerm.BEGINNING_OF_SPRING)
-                .addNeed(Items.SWEET_BERRIES, 96)
+                .addNeed(itemHolderGetter, Items.SWEET_BERRIES, 96)
                 .addAward(ItemRegistry.winter_greenhouse_essence_item.get())
                 .setClimate(cropClimateTypeHolderGetter.getOrThrow(CropClimateTags.ALL))
                 .setWeight(10)

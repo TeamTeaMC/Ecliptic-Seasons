@@ -6,6 +6,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.teamtea.eclipticseasons.api.misc.IBiomeWeatherProvider;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
+import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import com.teamtea.eclipticseasons.compat.vanilla.VanillaWeather;
 import net.minecraft.core.BlockPos;
@@ -56,17 +57,17 @@ public class MixinLevel implements IBiomeWeatherProvider {
         }
     }
 
-    @WrapOperation(at = {@At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;isRaining()Z")}, method = {"isRainingAt"})
-    private boolean eclipticseasons$isRainingAt_skipRainCheck(Level instance, Operation<Boolean> original) {
+    @WrapOperation(at = {@At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;isRaining()Z")}, method = {"precipitationAt"})
+    private boolean eclipticseasons$precipitationAt_skipRainCheck(Level instance, Operation<Boolean> original) {
         return (EclipticUtil.hasLocalWeather(instance)
                 && instance instanceof ServerLevel) || original.call(instance);
     }
 
-    @Inject(at = {@At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;getBiome(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/core/Holder;")}, method = {"isRainingAt"}, cancellable = true)
-    private void eclipticseasons$isRainingAt_endBiomeCheck(BlockPos p_46759_, CallbackInfoReturnable<Boolean> cir) {
+    @Inject(at = {@At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;getBiome(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/core/Holder;")}, method = {"precipitationAt"}, cancellable = true)
+    private void eclipticseasons$precipitationAt_endBiomeCheck(BlockPos pos, CallbackInfoReturnable<Biome.Precipitation> cir) {
         if ((Object) this instanceof ServerLevel level) {
             if (EclipticUtil.hasLocalWeather(level)) {
-                cir.setReturnValue(WeatherManager.isRainingUnderSky(level, p_46759_));
+                cir.setReturnValue(WeatherManager.getRainOrSnow(level, MapChecker.getSurfaceBiome(level,pos).value(), pos));
             }
         }
     }
@@ -75,11 +76,11 @@ public class MixinLevel implements IBiomeWeatherProvider {
      * 当使用原版天气时需要判断
      **/
     @WrapOperation(
-            method = "isRainingAt",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/biome/Biome;getPrecipitationAt(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/biome/Biome$Precipitation;")
+            method = "precipitationAt",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/biome/Biome;getPrecipitationAt(Lnet/minecraft/core/BlockPos;I)Lnet/minecraft/world/level/biome/Biome$Precipitation;")
     )
-    private Biome.Precipitation eclipticseasons$isRainingAt_getPrecipitationAt(Biome biome, BlockPos pos, Operation<Biome.Precipitation> original) {
-        return VanillaWeather.handlePrecipitationAt((Level) (Object) this, biome, pos);
+    private Biome.Precipitation eclipticseasons$isRainingAt_getPrecipitationAt(Biome instance, BlockPos pos, int seaLevel, Operation<Biome.Precipitation> original) {
+        return VanillaWeather.handlePrecipitationAt((Level) (Object) this, instance, pos);
     }
 
     @Inject(at = {@At("HEAD")}, method = {"isThundering"}, cancellable = true)

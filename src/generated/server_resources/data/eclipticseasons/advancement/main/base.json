@@ -1,0 +1,27 @@
+{
+  "criteria": {
+    "tick": {
+      "trigger": "minecraft:tick"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "background": "minecraft:gui/advancements/backgrounds/husbandry",
+    "description": {
+      "translate": "advancement.eclipticseasons.base.desc"
+    },
+    "icon": {
+      "id": "eclipticseasons:calendar"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "advancement.eclipticseasons.base"
+    }
+  },
+  "requirements": [
+    [
+      "tick"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

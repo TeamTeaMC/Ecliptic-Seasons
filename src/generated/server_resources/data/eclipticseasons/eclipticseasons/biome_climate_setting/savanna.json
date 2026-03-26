@@ -1,0 +1,19 @@
+{
+  "downfall_changes": {
+    "solar_terms": {
+      "beginning_of_summer": 0.2,
+      "lesser_fullness": 0.333,
+      "grain_in_ear": 0.467,
+      "summer_solstice": 0.533,
+      "lesser_heat": 0.633,
+      "greater_heat": 0.533,
+      "beginning_of_autumn": 0.467,
+      "end_of_heat": 0.4,
+      "white_dew": 0.333,
+      "autumnal_equinox": 0.267,
+      "cold_dew": 0.2,
+      "first_frost": 0.167
+    }
+  },
+  "biomes": "#c:is_savanna"
+}

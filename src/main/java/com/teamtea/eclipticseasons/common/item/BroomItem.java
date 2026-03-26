@@ -24,6 +24,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.*;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
@@ -36,9 +37,11 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.loading.FMLLoader;
+import net.neoforged.neoforge.common.ItemAbility;
 import net.neoforged.neoforge.common.util.FakePlayer;
 
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 
@@ -67,8 +70,8 @@ public class BroomItem extends Item {
     }
 
     @Override
-    public UseAnim getUseAnimation(ItemStack pStack) {
-        return UseAnim.BRUSH;
+    public ItemUseAnimation getUseAnimation(ItemStack pStack) {
+        return ItemUseAnimation.BRUSH;
     }
 
     @Override
@@ -111,7 +114,7 @@ public class BroomItem extends Item {
 
                     if (!level.isClientSide() && pickState.is(Blocks.SNOW)) {
                         level.destroyBlock(pickPos, true, pLivingEntity);
-                        pStack.hurtAndBreak(pLivingEntity instanceof Player player && player.isCreative() ? 0 : 1, pLivingEntity, LivingEntity.getSlotForHand(pLivingEntity.getUsedItemHand()));
+                        pStack.hurtAndBreak(pLivingEntity instanceof Player player && player.isCreative() ? 0 : 1, pLivingEntity, pLivingEntity.getUsedItemHand());
                     }
 
                     level.playSound(pLivingEntity, blockpos, soundevent, SoundSource.BLOCKS, 1f, 1f);
@@ -189,22 +192,20 @@ public class BroomItem extends Item {
     }
 
     @Override
-    public boolean canPerformAction(ItemStack stack, net.neoforged.neoforge.common.ItemAbility itemAbility) {
+    public boolean canPerformAction(ItemInstance stack, ItemAbility itemAbility) {
         return net.neoforged.neoforge.common.ItemAbilities.DEFAULT_BRUSH_ACTIONS.contains(itemAbility);
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
-        if (FMLLoader.getDist() != Dist.CLIENT || !ClientConfig.GUI.itemInformation.get()) return;
+    public void appendHoverText(ItemStack itemStack, TooltipContext context, TooltipDisplay display, Consumer<Component> builder, TooltipFlag tooltipFlag) {
+        super.appendHoverText(itemStack, context, display, builder, tooltipFlag);
 
-        // boolean use = FMLEnvironment.dist == Dist.CLIENT ?
-        //         ClientConfig.Renderer.realisticSnowyChange.get() : false;
-        // use |= CommonConfig.Map.delayedUpdates.get();
+        if (FMLLoader.getCurrent().getDist() != Dist.CLIENT || !ClientConfig.GUI.itemInformation.get()) return;
 
         if (!EclipticUtil.canSnowyBlockInteract()) {
-            tooltipComponents.add(Component.translatable("info.eclipticseasons.config.inactive")
+            builder.accept(Component.translatable("info.eclipticseasons.config.inactive")
             );
         }
     }
+
 }

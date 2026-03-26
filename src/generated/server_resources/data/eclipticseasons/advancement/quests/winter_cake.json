@@ -1,0 +1,47 @@
+{
+  "parent": "eclipticseasons:quests/winter_carpet",
+  "criteria": {
+    "core_require": {
+      "conditions": {
+        "items": [
+          {
+            "items": "minecraft:cake"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "parent_need": {
+      "conditions": {
+        "parent": "eclipticseasons:quests/winter_carpet"
+      },
+      "trigger": "eclipticseasons:parent"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancement.eclipticseasons.winter_cake.desc"
+    },
+    "icon": {
+      "id": "minecraft:cake"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "advancement.eclipticseasons.winter_cake"
+    }
+  },
+  "requirements": [
+    [
+      "parent_need"
+    ],
+    [
+      "core_require"
+    ]
+  ],
+  "rewards": {
+    "loot": [
+      "eclipticseasons:gifts/winter_greenhouse_essence"
+    ]
+  },
+  "sends_telemetry_event": true
+}

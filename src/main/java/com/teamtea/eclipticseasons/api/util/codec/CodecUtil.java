@@ -4,10 +4,6 @@ import com.mojang.datafixers.util.Either;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.*;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import com.teamtea.eclipticseasons.api.data.client.model.multipart.AndConditionLike;
-import com.teamtea.eclipticseasons.api.data.client.model.multipart.ConditionLike;
-import com.teamtea.eclipticseasons.api.data.client.model.multipart.KeyValueConditionLike;
-import com.teamtea.eclipticseasons.api.data.client.model.multipart.OrConditionLike;
 import com.teamtea.eclipticseasons.api.util.fast.Enum2ObjectMap;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;
@@ -120,9 +116,9 @@ public class CodecUtil {
         return RegistryCodecs.homogeneousList(registryKey, false);
     }
 
-    public static <E> Codec<E> empty(E e) {
-        return Codec.unit(e);
-    }
+    //public static <E> Codec<E> empty(E e) {
+    //    return Codec.unit(e);
+    //}
 
 
     public static <I, F extends I, S extends I> Codec<I> either(final Codec<F> first, final Codec<S> second, Class<F> fClass, Class<S> sClass) {
@@ -142,10 +138,10 @@ public class CodecUtil {
     }
 
     // static {
-    //     Codec<Item> dispatch = ResourceLocation.CODEC.dispatch("type",
+    //     Codec<Item> dispatch = Identifier.CODEC.dispatch("type",
     //             BuiltInRegistries.ITEM::getKey,
-    //             resourceLocation ->
-    //                     MapCodec.unit(BuiltInRegistries.ITEM.get(resourceLocation))
+    //             Identifier ->
+    //                     MapCodec.unit(BuiltInRegistries.ITEM.get(Identifier))
     //     );
     // }
 }

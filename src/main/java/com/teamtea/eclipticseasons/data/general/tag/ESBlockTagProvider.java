@@ -7,20 +7,19 @@ import com.teamtea.eclipticseasons.api.constant.tag.EclipticBlockTags;
 import com.teamtea.eclipticseasons.common.registry.BlockRegistry;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.block.Blocks;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.data.BlockTagsProvider;
-import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
-import javax.annotation.Nullable;
+
 import java.util.concurrent.CompletableFuture;
 
 
 public final class ESBlockTagProvider extends BlockTagsProvider {
-    public ESBlockTagProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, String modId, @Nullable ExistingFileHelper existingFileHelper) {
-        super(output, lookupProvider, modId, existingFileHelper);
+    public ESBlockTagProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, String modId) {
+        super(output, lookupProvider, modId);
     }
 
     @Override
@@ -29,8 +28,9 @@ public final class ESBlockTagProvider extends BlockTagsProvider {
         tag(EclipticBlockTags.DARK_GROW_PLANTS)
                 .add(Blocks.BROWN_MUSHROOM_BLOCK)
                 .add(Blocks.RED_MUSHROOM_BLOCK)
-                .addOptional(fd_rl("brown_mushroom_colony"))
-                .addOptional(fd_rl("red_mushroom_colony"));
+                //.addOptional(fd_rl("brown_mushroom_colony"))
+                //.addOptional(fd_rl("red_mushroom_colony"))
+        ;
 
         tag(EclipticBlockTags.NATURAL_PLANTS).add(Blocks.BAMBOO_SAPLING);
         tag(EclipticBlockTags.VOLATILE).add(Blocks.BUBBLE_COLUMN).addTag(EclipticBlockTags.VOLATILE_PLANTS);
@@ -58,8 +58,8 @@ public final class ESBlockTagProvider extends BlockTagsProvider {
         tag(CropHumidityType.MOIST_HUMID.getBlockTag()).add(Blocks.BAMBOO).add(Blocks.BAMBOO_SAPLING).add(Blocks.BROWN_MUSHROOM, Blocks.RED_MUSHROOM);
 
         // others
-        tag(CropHumidityType.AVERAGE_MOIST.getBlockTag()).addOptional(fd_rl("tomatoes")).addOptional(fd_rl("budding_tomatoes")).addOptional(fd_rl("cabbages")).addOptional(fd_rl("onions"));
-        tag(CropHumidityType.MOIST_HUMID.getBlockTag()).addOptional(fd_rl("rice")).addOptional(fd_rl("rice_panicles")).addOptional(fd_rl("brown_mushroom_colony")).addOptional(fd_rl("red_mushroom_colony"));
+        //tag(CropHumidityType.AVERAGE_MOIST.getBlockTag()).addOptional(fd_rl("tomatoes")).addOptional(fd_rl("budding_tomatoes")).addOptional(fd_rl("cabbages")).addOptional(fd_rl("onions"));
+        //tag(CropHumidityType.MOIST_HUMID.getBlockTag()).addOptional(fd_rl("rice")).addOptional(fd_rl("rice_panicles")).addOptional(fd_rl("brown_mushroom_colony")).addOptional(fd_rl("red_mushroom_colony"));
 
 
         // stand
@@ -81,7 +81,7 @@ public final class ESBlockTagProvider extends BlockTagsProvider {
         tag(EclipticBlockTags.SNOW_OVERLAY_CANNOT_SURVIVE_ON)
                 .addTag(BlockTags.SNOW)
                 .addTag(BlockTags.ICE)
-                .addTag(BlockTags.SNOW_LAYER_CANNOT_SURVIVE_ON);
+                .addTag(BlockTags.CANNOT_SUPPORT_SNOW_LAYER);
 
         tag(EclipticBlockTags.SNOW_LAYER_CANNOT_SURVIVE_IN)
                 .addTags(BlockTags.DOORS, BlockTags.TRAPDOORS,
@@ -132,11 +132,11 @@ public final class ESBlockTagProvider extends BlockTagsProvider {
                 BlockRegistry.snow_cauldron.get());
     }
 
-    public ResourceLocation srl(String croptopia, String name) {
-        return ResourceLocation.fromNamespaceAndPath(croptopia, name);
+    public Identifier srl(String croptopia, String name) {
+        return Identifier.fromNamespaceAndPath(croptopia, name);
     }
 
-    public ResourceLocation fd_rl(String name) {
+    public Identifier fd_rl(String name) {
         return srl("farmersdelight", name);
     }
 }

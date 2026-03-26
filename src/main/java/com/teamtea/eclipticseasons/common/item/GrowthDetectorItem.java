@@ -15,12 +15,13 @@ import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
 import com.teamtea.eclipticseasons.common.core.crop.GreenHouseCoreProvider;
 import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
 import com.teamtea.eclipticseasons.config.CommonConfig;
-import net.minecraft.advancements.critereon.BlockPredicate;
+import net.minecraft.advancements.criterion.BlockPredicate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -107,9 +108,10 @@ public class GrowthDetectorItem extends Item {
                     }
                     component.append(Component.translatable("item.eclipticseasons.growth_detector.hint.grow_chance_" + chose, chance));
                     // component.append(","+chance);
-                    player.sendSystemMessage(component);
+                    if (player instanceof ServerPlayer serverPlayer)
+                        serverPlayer.sendSystemMessage(component);
                 }
-                return InteractionResult.sidedSuccess(level.isClientSide());
+                return InteractionResult.SUCCESS_SERVER;
             }
         }
         return super.useOn(context);

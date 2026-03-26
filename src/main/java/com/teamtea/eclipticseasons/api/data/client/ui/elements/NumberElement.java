@@ -5,7 +5,7 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import lombok.Builder;
 import lombok.Data;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.StringRepresentable;
 import org.jetbrains.annotations.NotNull;
 
@@ -23,7 +23,7 @@ public class NumberElement implements UIElement {
     private final String id;
 
     @Override
-    public ResourceLocation getType() {
+    public Identifier getType() {
         return UIElements.NUMBER;
     }
 

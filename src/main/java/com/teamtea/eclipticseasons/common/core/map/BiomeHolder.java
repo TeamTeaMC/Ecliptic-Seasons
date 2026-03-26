@@ -15,6 +15,8 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.neoforged.neoforge.attachment.IAttachmentHolder;
 import net.neoforged.neoforge.attachment.IAttachmentSerializer;
 import org.jetbrains.annotations.NotNull;
@@ -76,7 +78,7 @@ public class BiomeHolder {
     public static BiomeHolder prepareBiomes(Level serverLevel, ChunkPos chunkPos, int biomeDataVersion, boolean registryUpdate) {
         int[] newBiomes = new int[256];
         boolean near = true;
-        Registry<Biome> biomeRegistry = serverLevel.registryAccess().registryOrThrow(Registries.BIOME);
+        Registry<Biome> biomeRegistry = serverLevel.registryAccess().lookupOrThrow(Registries.BIOME);
         BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos();
         for (int i = 0; i < 16; i++) {
             for (int j = 0; j < 16; j++) {
@@ -146,27 +148,35 @@ public class BiomeHolder {
     @Getter(AccessLevel.NONE)
     private transient CompoundTag cacheTag = null;
 
-    public static class Serializer implements IAttachmentSerializer<Tag, BiomeHolder> {
+    public static class Serializer implements IAttachmentSerializer<BiomeHolder> {
 
         @Override
-        public @NotNull BiomeHolder read(@NotNull IAttachmentHolder holder, @NotNull Tag tag, HolderLookup.@NotNull Provider provider) {
-            Optional<BiomeHolder> result = CODEC.parse(provider.createSerializationContext(NbtOps.INSTANCE), tag).result();
-            return result.orElseGet(BiomeHolder::empty);
+        public BiomeHolder read(IAttachmentHolder holder, ValueInput input) {
+            var snowyStatus = input.read("biome_holder", CODEC);
+            return snowyStatus.orElseGet(BiomeHolder::empty);
         }
 
         @Override
-        public Tag write(@NotNull BiomeHolder attachment, HolderLookup.@NotNull Provider provider) {
-            if (attachment.cacheUpdate == attachment.hasUpdated && attachment.cacheVersion == attachment.version && attachment.cacheTag != null) {
-                return attachment.cacheTag;
-            }
-            Optional<Tag> result = CODEC.encodeStart(provider.createSerializationContext(NbtOps.INSTANCE), attachment).result();
-            if (result.orElse(null) instanceof CompoundTag compoundTag) {
-                attachment.cacheTag = compoundTag;
-                attachment.cacheUpdate = attachment.hasUpdated;
-                attachment.cacheVersion = attachment.version;
-                return compoundTag;
-            }
-            return new CompoundTag();
+        public boolean write(BiomeHolder attachment, ValueOutput output) {
+            output.storeNullable("biome_holder", CODEC, attachment);
+            return false;
         }
+
+        //
+        //@Override
+        //public Tag write(@NotNull BiomeHolder attachment, HolderLookup.@NotNull Provider provider) {
+        //    if (attachment.cacheUpdate == attachment.hasUpdated && attachment.cacheVersion == attachment.version && attachment.cacheTag != null) {
+        //        return attachment.cacheTag;
+        //    }
+        //    Optional<Tag> result = CODEC.encodeStart(provider.createSerializationContext(NbtOps.INSTANCE), attachment).result();
+        //    if (result.orElse(null) instanceof CompoundTag compoundTag) {
+        //        attachment.cacheTag = compoundTag;
+        //        attachment.cacheUpdate = attachment.hasUpdated;
+        //        attachment.cacheVersion = attachment.version;
+        //        return compoundTag;
+        //    }
+        //    return new CompoundTag();
+        //}
+
     }
 }

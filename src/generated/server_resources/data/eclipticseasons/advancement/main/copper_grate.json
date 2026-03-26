@@ -1,0 +1,45 @@
+{
+  "parent": "eclipticseasons:main/green_house",
+  "criteria": {
+    "core_require": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "minecraft:copper_grate",
+              "eclipticseasons:block_in_wooden_grate_block"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "parent_need": {
+      "conditions": {
+        "parent": "eclipticseasons:main/green_house"
+      },
+      "trigger": "eclipticseasons:parent"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancement.eclipticseasons.copper_grate.desc"
+    },
+    "icon": {
+      "id": "minecraft:copper_grate"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "advancement.eclipticseasons.copper_grate"
+    }
+  },
+  "requirements": [
+    [
+      "parent_need"
+    ],
+    [
+      "core_require"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

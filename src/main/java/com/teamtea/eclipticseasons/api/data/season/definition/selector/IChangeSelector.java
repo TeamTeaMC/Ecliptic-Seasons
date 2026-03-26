@@ -8,8 +8,8 @@ import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.data.season.definition.ISeasonChangeContext;
 import com.teamtea.eclipticseasons.api.data.season.definition.condition.IChangeCondition;
 import net.minecraft.core.BlockPos;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.LootTable;
@@ -34,7 +34,7 @@ public interface IChangeSelector {
             Codec.either(
 
                             Codec.STRING
-                                    .xmap(s -> s.contains(":") ? ResourceLocation.parse(s) : EclipticSeasons.rl(s),
+                                    .xmap(s -> s.contains(":") ? Identifier.parse(s) : EclipticSeasons.rl(s),
                                             r -> r.getNamespace().equals(EclipticSeasonsApi.MODID) ? r.getPath() : r.toString())
                                     .dispatch("type", IChangeSelector::getType, id -> (MapCodec<IChangeSelector>) ChangeSelectors.CONDITIONS.get(id)),
                             BlockSelector.CODEC.codec())
@@ -43,7 +43,7 @@ public interface IChangeSelector {
 
     int DEFAULT_WEIGHT = 10;
 
-    ResourceLocation getType();
+    Identifier getType();
 
     MapCodec<? extends IChangeSelector> codec();
 

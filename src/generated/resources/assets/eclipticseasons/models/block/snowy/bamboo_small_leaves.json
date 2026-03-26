@@ -1,6 +1,0 @@
-{
-  "parent": "minecraft:block/bamboo_small_leaves",
-  "textures": {
-    "texture": "eclipticseasons:block/snowy/bamboo_small_leaves"
-  }
-}

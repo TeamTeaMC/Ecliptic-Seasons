@@ -14,7 +14,7 @@ import net.caffeinemc.mods.sodium.client.render.chunk.compile.tasks.ChunkBuilder
 import net.caffeinemc.mods.sodium.client.util.task.CancellationToken;
 import net.irisshaders.iris.shaderpack.materialmap.WorldRenderingSettings;
 import net.irisshaders.iris.vertices.BlockSensitiveBufferBuilder;
-import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -45,11 +45,18 @@ public abstract class MixinBlockRenderTask extends ChunkBuilderTask<ChunkBuildOu
                                                                   @Local(ordinal = 1) BlockPos.MutableBlockPos modelOffset,
                                                                   @Local ChunkBuildBuffers buffers) {
 
-        if (!CompatModule.ClientConfig.unifiedFrozenWater.get() || IceKeeper.notFrozen(buildContext.cache.getWorldSlice(), blockPos, blockState, fluidState))
-            return;
-        if (WorldRenderingSettings.INSTANCE.getBlockStateIds() != null) {
-            ((BlockSensitiveBufferBuilder) buffers).beginBlock(WorldRenderingSettings.INSTANCE.getBlockStateIds().getInt(Blocks.ICE.defaultBlockState()), (byte) 0, (byte) blockState.getLightEmission(), blockPos.getX(), blockPos.getY(), blockPos.getZ());
-            //((BlockSensitiveBufferBuilder)buffers).beginBlock(WorldRenderingSettings.INSTANCE.getBlockStateIds().getInt(fluidState.createLegacyBlock()), (byte)1, (byte)blockState.getLightEmission(), blockPos.getX(), blockPos.getY(), blockPos.getZ());
+
+        try {
+            if (!CompatModule.ClientConfig.unifiedFrozenWater.get() || IceKeeper.notFrozen
+                    (
+                            buildContext.cache.getWorldSlice(), blockPos, blockState, fluidState))
+                return;
+            if (WorldRenderingSettings.INSTANCE.getBlockStateIds() != null) {
+                ((BlockSensitiveBufferBuilder) buffers).beginBlock(WorldRenderingSettings.INSTANCE.getBlockStateIds().getInt(Blocks.ICE.defaultBlockState()), (byte) 0, (byte) blockState.getLightEmission(), blockPos.getX(), blockPos.getY(), blockPos.getZ());
+                //((BlockSensitiveBufferBuilder)buffers).beginBlock(WorldRenderingSettings.INSTANCE.getBlockStateIds().getInt(fluidState.createLegacyBlock()), (byte)1, (byte)blockState.getLightEmission(), blockPos.getX(), blockPos.getY(), blockPos.getZ());
+            }
+        } catch (Exception e) {
+            throw new UnsupportedOperationException("Please reported it to eclipticseasons.");
         }
         //((BlockSensitiveBufferBuilder)buffers).overrideBlock(WorldRenderingSettings.INSTANCE.getBlockStateIds().getInt(fluidState.createLegacyBlock()));
     }

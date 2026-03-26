@@ -21,11 +21,10 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.item.Equipable;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
+import net.minecraft.world.item.equipment.Equippable;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.neoforged.neoforge.attachment.IAttachmentHolder;
@@ -59,10 +58,10 @@ public class HeatStrokeTicker {
                     ) {
                         boolean isColdHe = false;
                         armorChecks:
-                        for (ItemStack itemstack : player.getArmorSlots()) {
-                            Item item = itemstack.getItem();
-                            if (item instanceof Equipable equipable) {
-                                if (equipable.getEquipmentSlot() == EquipmentSlot.HEAD) {
+                        for (EquipmentSlot slot : EquipmentSlot.values()) {
+                            ItemStack itemstack = player.getItemBySlot(slot);
+                            if (itemstack.get(DataComponents.EQUIPPABLE) instanceof Equippable equippable) {
+                                if (equippable.slot() == EquipmentSlot.HEAD) {
                                     if (itemstack.is(ESItemTags.HEAT_PROTECTIVE_HELMETS)) {
                                         isColdHe = true;
                                         break;
@@ -81,7 +80,7 @@ public class HeatStrokeTicker {
                             }
                         }
                         if (!isColdHe) {
-                            NonNullList<ItemStack> items = player.getInventory().items;
+                            NonNullList<ItemStack> items = player.getInventory().getNonEquipmentItems();
                             int selectionSize = Inventory.getSelectionSize();
                             for (int i = 0, itemsSize = items.size(); i < itemsSize && i < selectionSize; i++) {
                                 ItemStack itemstack = items.get(i);
@@ -101,7 +100,7 @@ public class HeatStrokeTicker {
                             }
                         }
 
-                        var heatStroke = BuiltInRegistries.MOB_EFFECT.getHolder(EffectRegistry.Effects.HEAT_STROKE).get();
+                        var heatStroke = BuiltInRegistries.MOB_EFFECT.get(EffectRegistry.Effects.HEAT_STROKE).get();
                         if (!player.hasEffect(heatStroke) && !isColdHe) {
                             tryApply(level, player, heatStroke);
                         } else if (isColdHe) {
@@ -126,6 +125,6 @@ public class HeatStrokeTicker {
     }
 
     public static HeatStrokeTicker empty(IAttachmentHolder iAttachmentHolder) {
-        return new HeatStrokeTicker();
+       return new HeatStrokeTicker();
     }
 }

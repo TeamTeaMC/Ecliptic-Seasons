@@ -8,12 +8,13 @@ import com.teamtea.eclipticseasons.common.misc.ClientAgent;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.server.IntegratedServer;
 import net.minecraft.core.SectionPos;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.LevelResource;
 import net.minecraft.world.phys.HitResult;
 
@@ -63,5 +64,10 @@ public class ClientClientAgent implements ClientAgent {
         IntegratedServer singleplayerServer = Minecraft.getInstance().getSingleplayerServer();
         if (singleplayerServer == null) return "world";
         return singleplayerServer.getWorldPath(LevelResource.ROOT).getParent().getFileName().toString();
+    }
+
+    @Override
+    public int getSkyFlashTime(Level level) {
+        return level instanceof ClientLevel cl ? cl.getSkyFlashTime() : 0;
     }
 }

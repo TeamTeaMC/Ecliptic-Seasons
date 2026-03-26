@@ -2,9 +2,10 @@ package com.teamtea.eclipticseasons.compat.ctm;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import it.unimi.dsi.fastutil.Pair;
-import net.minecraft.ResourceLocationException;
+import net.minecraft.IdentifierException;
+import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.PackResources;
 import net.minecraft.server.packs.resources.IoSupplier;
 import net.minecraft.server.packs.resources.Resource;
@@ -30,7 +31,7 @@ import java.util.stream.Collectors;
 
 public final class CtmProperties {
     private final Properties properties;
-    private final ResourceLocation resourceId;
+    private final Identifier resourceId;
     private final PackResources pack;
     private final int packPriority;
     private final ResourceManager resourceManager;
@@ -39,7 +40,7 @@ public final class CtmProperties {
      final IdentityHashMap<BlockState, Integer> blockStates = new IdentityHashMap<>();
 
     public CtmProperties(Properties properties,
-                         ResourceLocation resourceId,
+                         Identifier resourceId,
                          PackResources pack,
                          int packPriority,
                          ResourceManager resourceManager,
@@ -60,7 +61,7 @@ public final class CtmProperties {
         return properties;
     }
 
-    public ResourceLocation getResourceId() {
+    public Identifier getResourceId() {
         return resourceId;
     }
 
@@ -86,7 +87,7 @@ public final class CtmProperties {
     }
 
     // 我们暂时不去考虑优先级问题
-    public static List<Pair<Block, CtmProperties>> parse(ResourceLocation resourceLocation, IoSupplier<InputStream> resource, Properties properties) {
+    public static List<Pair<Block, CtmProperties>> parse(Identifier Identifier, IoSupplier<InputStream> resource, Properties properties) {
         List<Pair<Block, CtmProperties>> pairResult = new ArrayList<>();
 
 
@@ -97,11 +98,11 @@ public final class CtmProperties {
                 String matchBlocks = properties.getProperty("matchBlocks", null);
                 if (matchBlocks != null) {
                     try {
-                        List<Pair<Block, List<BlockState>>> pairs = parseBlockStates(properties, "matchBlocks", resourceLocation);
+                        List<Pair<Block, List<BlockState>>> pairs = parseBlockStates(properties, "matchBlocks", Identifier);
                         if (pairs != null) {
                             for (Pair<Block, List<BlockState>> pair : pairs) {
                                 CtmProperties ctmProperties = new CtmProperties(
-                                        properties, resourceLocation,
+                                        properties, Identifier,
                                         null, 0, null, method
                                 );
                                 for (BlockState blockState : pair.second()) {
@@ -110,7 +111,7 @@ public final class CtmProperties {
                                 pairResult.add(Pair.of(pair.first(), ctmProperties));
                             }
                         }
-                    } catch (ResourceLocationException|IndexOutOfBoundsException ignore) {
+                    } catch (IdentifierException|IndexOutOfBoundsException ignore) {
                         EclipticSeasons.logger(matchBlocks, "can not parse CTM properties");
                     }
                 }
@@ -129,7 +130,7 @@ public final class CtmProperties {
         return properties;
     }
 
-    public static @Nullable List<Pair<Block, List<BlockState>>> parseBlockStates(Properties properties, String propertyKey, ResourceLocation resourceId) {
+    public static @Nullable List<Pair<Block, List<BlockState>>> parseBlockStates(Properties properties, String propertyKey, Identifier resourceId) {
         String blockStatesStr = properties.getProperty(propertyKey);
         List<Pair<Block, List<BlockState>>> pairs = null;
         if (blockStatesStr == null) {
@@ -142,7 +143,7 @@ public final class CtmProperties {
                     String blockStateStr = blockStateStrs[i].strip();
                     Pair<String, List<Pair<String, Set<String>>>> parseBlockStates = parseBlockState(blockStateStr);
 
-                    Block block1 = BuiltInRegistries.BLOCK.get(EclipticSeasons.parse(parseBlockStates.first()));
+                    Block block1 = BuiltInRegistries.BLOCK.get(EclipticSeasons.parse(parseBlockStates.first())).map(Holder::value).orElse(Blocks.AIR);
                     if (block1 != Blocks.AIR) {
                         boolean checkState = !parseBlockStates.value().isEmpty();
                         // 如果不检查state的话，那么我们直接跳过就可以了

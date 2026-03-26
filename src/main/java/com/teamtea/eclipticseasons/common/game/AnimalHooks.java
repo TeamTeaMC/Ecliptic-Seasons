@@ -18,7 +18,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.animal.Animal;
-import net.minecraft.world.entity.animal.Bee;
+import net.minecraft.world.entity.animal.bee.Bee;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 
@@ -67,7 +67,7 @@ public class AnimalHooks {
 
         BreedSeasonType breedSeasonType = null;
         for (BreedSeasonType seasonType : BreedSeasonType.values()) {
-            if (animal.getType().is(seasonType.getTag())) {
+            if (animal.getType().builtInRegistryHolder().is(seasonType.getTag())) {
                 breedSeasonType = seasonType;
                 break;
             }
@@ -89,11 +89,11 @@ public class AnimalHooks {
 
             if (CommonConfig.Animal.enableTimeBreed.get()) {
                 boolean isDay = EclipticSeasonsApi.getInstance().isDay(animal.level());
-                if (animal.getType().is(AnimalBehaviorTag.DAY)) {
+                if (animal.getType().builtInRegistryHolder().is(AnimalBehaviorTag.DAY)) {
                     return !isDay;
-                } else if (animal.getType().is(AnimalBehaviorTag.NIGHT)) {
+                } else if (animal.getType().builtInRegistryHolder().is(AnimalBehaviorTag.NIGHT)) {
                     return isDay;
-                } else if (animal.getType().is(AnimalBehaviorTag.ALL_TIME)) {
+                } else if (animal.getType().builtInRegistryHolder().is(AnimalBehaviorTag.ALL_TIME)) {
                     return false;
                 } else return !isDay;
             } else return false;
@@ -144,7 +144,7 @@ public class AnimalHooks {
 
         BreedSeasonType breedSeasonType = null;
         for (BreedSeasonType seasonType : BreedSeasonType.values()) {
-            if (entity.is(seasonType.getTag())) {
+            if (entity.builtInRegistryHolder().is(seasonType.getTag())) {
                 breedSeasonType = seasonType;
                 break;
             }

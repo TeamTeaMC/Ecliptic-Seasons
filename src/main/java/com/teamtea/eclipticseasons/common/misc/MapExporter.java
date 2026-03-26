@@ -4,7 +4,7 @@ import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.common.core.map.ChunkInfoMap;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
-import net.minecraft.Util;
+import net.minecraft.util.Util;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -89,13 +89,13 @@ public class MapExporter {
         int i = 0;
         for (Map.Entry<Holder<Biome>, Color> holderColorEntry : hashSet.entrySet()) {
             // graphics2D.setColor(Color.WHITE);
-            // graphics2D.drawString( holderColorEntry.getKey().getRegisteredName()+","+ Component.translatable(Util.makeDescriptionId("biome", holderColorEntry.getKey().getKey().location())).getString(),4,
+            // graphics2D.drawString( holderColorEntry.getKey().getRegisteredName()+","+ Component.translatable(Util.makeDescriptionId("biome", holderColorEntry.getKey().getKey().identifier())).getString(),4,
             //         20*(++i)-1);
             graphics2D.setColor(holderColorEntry.getValue());
             // List<String> sss= new ArrayList<>();
             // sss.add("s");
             graphics2D.drawString(
-                    holderColorEntry.getKey() == null ? "not load" : holderColorEntry.getKey().getRegisteredName() + "," + Component.translatable(Util.makeDescriptionId("biome", holderColorEntry.getKey().getKey().location())).getString(), 5,
+                    holderColorEntry.getKey() == null ? "not load" : holderColorEntry.getKey().getRegisteredName() + "," + Component.translatable(Util.makeDescriptionId("biome", holderColorEntry.getKey().getKey().identifier())).getString(), 5,
                     20 * (++i));
         }
         // graphics2D.fillArc(ChunkInfoMap.getChunkValue(source.getPlayer().getBlockX()) - 5,
@@ -111,7 +111,7 @@ public class MapExporter {
                     serverLevel.toString().split("\\[")[1].split("]")[0] :
                     ServerLifecycleHooks.getCurrentServer() == null ? ClientCon.ServerName :
                             ServerLifecycleHooks.getCurrentServer().getMotd();
-            s += "~" + level.dimension().location().toString().replace(":", "_");
+            s += "~" + level.dimension().identifier().toString().replace(":", "_");
             if (!new File(EclipticSeasonsApi.MODID + "/" + s).exists()) {
                 new File(EclipticSeasonsApi.MODID + "/" + s).mkdir();
             }

@@ -9,12 +9,12 @@ import com.teamtea.eclipticseasons.api.misc.util.HolderMappable;
 import com.teamtea.eclipticseasons.api.misc.util.Mergable;
 import com.teamtea.eclipticseasons.api.util.fast.Enum2IntMap;
 import com.teamtea.eclipticseasons.api.util.fast.Enum2ObjectMap;
-import net.minecraft.advancements.critereon.BlockPredicate;
-import net.minecraft.advancements.critereon.LocationPredicate;
+import net.minecraft.advancements.criterion.BlockPredicate;
+import net.minecraft.advancements.criterion.LocationPredicate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.level.Level;
@@ -34,7 +34,7 @@ public record LeafColor(
         BlockPredicate blockPredicate,
         Optional<LocationPredicate> locationPredicate,
         Optional<SolarTermValueMap<ColorMode>> colors,
-        Optional<SolarTermValueMap<List<ResourceLocation>>> sprites,
+        Optional<SolarTermValueMap<List<Identifier>>> sprites,
         Optional<SolarTermValueMap<Integer>> weights,
         Optional<Boolean> replace
 ) implements HolderMappable<HolderSet<Block>, Pair<LeafColor.InstanceHolder, LeafColor.Instance>> {
@@ -43,7 +43,7 @@ public record LeafColor(
             BlockPredicate.CODEC.fieldOf("block").forGetter(LeafColor::blockPredicate),
             LocationPredicate.CODEC.optionalFieldOf("location").forGetter(LeafColor::locationPredicate),
             SolarTermValueMap.codec(ColorMode.CODEC).optionalFieldOf("colors").forGetter(LeafColor::colors),
-            SolarTermValueMap.codec(ResourceLocation.CODEC.listOf()).optionalFieldOf("sprites").forGetter(LeafColor::sprites),
+            SolarTermValueMap.codec(Identifier.CODEC.listOf()).optionalFieldOf("sprites").forGetter(LeafColor::sprites),
             SolarTermValueMap.codec(Codec.INT).optionalFieldOf("weights").forGetter(LeafColor::weights),
             Codec.BOOL.optionalFieldOf("replace").forGetter(LeafColor::replace)
     ).apply(ins, LeafColor::new));
@@ -52,7 +52,7 @@ public record LeafColor(
     private static final SolarTermValueMap<ColorMode> EMPTY_MODE_MAP = new SolarTermValueMap<>(
             Optional.empty(), Optional.empty(), Optional.empty(),Optional.empty()
     );
-    private static final SolarTermValueMap<List<ResourceLocation>> EMPTY_LIST_MAP = new SolarTermValueMap<>(
+    private static final SolarTermValueMap<List<Identifier>> EMPTY_LIST_MAP = new SolarTermValueMap<>(
             Optional.empty(), Optional.empty(), Optional.empty(),Optional.empty()
     );
     private static final SolarTermValueMap<Integer> EMPTY_INTEGER_MAP = new SolarTermValueMap<>(
@@ -66,11 +66,11 @@ public record LeafColor(
 
     public @NotNull Pair<InstanceHolder, Instance> toInstance() {
         Enum2ObjectMap<SolarTerm, ColorMode> colorMap = colors.orElse(EMPTY_MODE_MAP).combine();
-        Enum2ObjectMap<SolarTerm, List<ResourceLocation>> spriteMap = sprites.orElse(EMPTY_LIST_MAP).combine();
+        Enum2ObjectMap<SolarTerm, List<Identifier>> spriteMap = sprites.orElse(EMPTY_LIST_MAP).combine();
         Enum2ObjectMap<SolarTerm, Integer> weightMap = weights.orElse(EMPTY_INTEGER_MAP).combine();
 
         Enum2ObjectMap<SolarTerm, ColorMode.Instance> colorsE = SolarTermValueMap.convertToEnum2ObjectMap(SolarTerm.class,colorMap, ColorMode::toInstance);
-        Enum2ObjectMap<SolarTerm, List<ResourceLocation>> spritesE = SolarTermValueMap.convertToEnum2ObjectMap(SolarTerm.class,spriteMap, Function.identity());
+        Enum2ObjectMap<SolarTerm, List<Identifier>> spritesE = SolarTermValueMap.convertToEnum2ObjectMap(SolarTerm.class,spriteMap, Function.identity());
         Enum2IntMap<SolarTerm> weightsE = new Enum2IntMap<>(SolarTerm.class);
         weightMap.forEach(weightsE::put);
 
@@ -98,7 +98,7 @@ public record LeafColor(
     public record Instance(
             ColorSource colorSource,
             Enum2ObjectMap<SolarTerm, ColorMode.Instance> colors,
-            Enum2ObjectMap<SolarTerm, List<ResourceLocation>> sprites,
+            Enum2ObjectMap<SolarTerm, List<Identifier>> sprites,
             Enum2IntMap<SolarTerm> weights,
             boolean replace
     ) implements Mergable<Instance> {
@@ -112,7 +112,7 @@ public record LeafColor(
         @Override
         public Instance merge(Instance next) {
             Enum2ObjectMap<SolarTerm, ColorMode.Instance> newColors = new Enum2ObjectMap<>(SolarTerm.class);
-            Enum2ObjectMap<SolarTerm, List<ResourceLocation>> newSprites = new Enum2ObjectMap<>(SolarTerm.class);
+            Enum2ObjectMap<SolarTerm, List<Identifier>> newSprites = new Enum2ObjectMap<>(SolarTerm.class);
             Enum2IntMap<SolarTerm> newWeights = new Enum2IntMap<>(SolarTerm.class);
             newColors.putAll(colors);
             newColors.putAll(next.colors);
@@ -135,7 +135,7 @@ public record LeafColor(
                 BlockPredicate predicate = blockPredicate.get();
 
                 if (predicate.blocks().isPresent() &&
-                        !predicate.blocks().get().contains(blockstate.getBlockHolder())) {
+                        !predicate.blocks().get().contains(blockstate.typeHolder())) {
                     return false;
                 }
 

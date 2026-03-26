@@ -12,17 +12,18 @@ import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.data.client.BiomeColor;
 import com.teamtea.eclipticseasons.api.data.client.LeafColor;
 import com.teamtea.eclipticseasons.api.data.client.SeasonalBiomeAmbient;
-import com.teamtea.eclipticseasons.api.data.client.model.ESModelLoadedJson;
 import com.teamtea.eclipticseasons.api.data.client.model.seasonal.SeasonBlockDefinition;
 import com.teamtea.eclipticseasons.api.data.client.model.seasonal.SeasonalTexture;
 import com.teamtea.eclipticseasons.api.data.client.ui.UIParser;
 import com.teamtea.eclipticseasons.api.data.season.SnowDefinition;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.FileToIdConverter;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
+import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.util.profiling.ProfilerFiller;
 import org.jetbrains.annotations.NotNull;
@@ -36,10 +37,10 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Executor;
 import java.util.function.Supplier;
 
-public class ClientJsonCacheListener<T> extends SimpleJsonResourceReloadListener {
-    public static final Map<String, Supplier<Set<ResourceLocation>>> ALL_MAP = new HashMap<>();
+public class ClientJsonCacheListener<T> extends SimplePreparableReloadListener<Map<Identifier, JsonElement>> {
+    public static final Map<String, Supplier<Set<Identifier>>> ALL_MAP = new HashMap<>();
 
-    private final Map<ResourceLocation, JsonElement> elementMap = new HashMap<>();
+    private final Map<Identifier, JsonElement> elementMap = new HashMap<>();
     public static final Gson GSON = new GsonBuilder().setLenient()
             // .registerTypeHierarchyAdapter(Component.class, new Component.Serializer())
             .create();
@@ -58,7 +59,7 @@ public class ClientJsonCacheListener<T> extends SimpleJsonResourceReloadListener
     public static final String DIRECTORY_UI_PARSER = EclipticSeasonsApi.MODID + "/ui_parser";
 
     // Async
-    public static final ClientJsonCacheListener<ESModelLoadedJson> modelDefCache = new ClientJsonCacheListener<>(GSON, DIRECTORY_MODEL_DEFINITION);
+    // public static final ClientJsonCacheListener<ESModelLoadedJson> modelDefCache = new ClientJsonCacheListener<>(GSON, DIRECTORY_MODEL_DEFINITION);
     public static final ClientJsonCacheListener<SeasonalTexture> textureReMappingsCache = new ClientJsonCacheListener<>(GSON, DIRECTORY_SEASON_TEXTURES);
 
     // normal
@@ -71,27 +72,62 @@ public class ClientJsonCacheListener<T> extends SimpleJsonResourceReloadListener
 
 
     private final String directory;
+
     public ClientJsonCacheListener(Gson gson, String directory) {
-        super(gson, directory);
         this.directory = directory;
         ALL_MAP.put(directory, () -> getElementMap().keySet());
     }
 
     @Override
-    protected Map<ResourceLocation, JsonElement> prepare(ResourceManager resourceManager, ProfilerFiller profiler) {
-        Map<ResourceLocation, JsonElement> prepare = super.prepare(resourceManager, profiler);
+    protected Map<Identifier, JsonElement> prepare(ResourceManager manager, ProfilerFiller profiler) {
+        Map<Identifier, JsonElement> prepared = scanDirectorySync(manager, this.directory, GSON);
         this.elementMap.clear();
-        this.elementMap.putAll(prepare);
-        return prepare;
+        this.elementMap.putAll(prepared);
+        return elementMap;
     }
+
+    public static Map<Identifier, JsonElement> scanDirectorySync(ResourceManager resourceManager, String name, Gson gson) {
+        FileToIdConverter fileToIdConverter = FileToIdConverter.json(name);
+        Map<Identifier, Resource> matching = fileToIdConverter.listMatchingResources(resourceManager);
+        Map<Identifier, JsonElement> output = new HashMap<>();
+
+        for (Map.Entry<Identifier, Resource> entry : matching.entrySet()) {
+            Identifier file = entry.getKey();
+            Identifier id = fileToIdConverter.fileToId(file);
+            Resource resource = entry.getValue();
+
+            try (Reader reader = resource.openAsReader()) {
+                JsonElement element = GsonHelper.fromJson(gson, reader, JsonElement.class);
+                JsonElement previous = output.putIfAbsent(id, element);
+                if (previous != null) {
+                    throw new IllegalStateException("Duplicate data file ignored with ID " + id);
+                }
+            } catch (IllegalArgumentException | IOException | JsonParseException e) {
+                EclipticSeasons.LOGGER.error("Couldn't parse data file {} from {}", id, file, e);
+            }
+        }
+
+        return output;
+    }
+
+    // @Override
+    // protected Map<Identifier, JsonElement> prepare(ResourceManager manager, ProfilerFiller profiler) {
+    //     Map<Identifier, JsonElement> prepare = prepareAsync(manager, profiler, (e) -> {
+    //     }).join();
+    //     this.elementMap.clear();
+    //     this.elementMap.putAll(prepare);
+    //     return prepare;
+    // }
 
     @Override
-    protected void apply(Map<ResourceLocation, JsonElement> object, ResourceManager resourceManager, ProfilerFiller profiler) {
+    protected void apply(Map<Identifier, JsonElement> preparations, ResourceManager manager, ProfilerFiller profiler) {
+
     }
 
-    public CompletableFuture<Map<ResourceLocation, JsonElement>> prepareAsync(ResourceManager resourceManager, ProfilerFiller profiler, Executor executor) {
+
+    public CompletableFuture<Map<Identifier, JsonElement>> prepareAsync(ResourceManager resourceManager, ProfilerFiller profiler, Executor executor) {
         return CompletableFuture.supplyAsync(() -> {
-            ConcurrentMap<ResourceLocation, JsonElement> prepare = new ConcurrentHashMap<>();
+            ConcurrentMap<Identifier, JsonElement> prepare = new ConcurrentHashMap<>();
             scanDirectoryAsync(resourceManager, this.directory, GSON, prepare, executor).join();
             this.elementMap.clear();
             this.elementMap.putAll(prepare);
@@ -99,15 +135,15 @@ public class ClientJsonCacheListener<T> extends SimpleJsonResourceReloadListener
         }, executor);
     }
 
-    public static CompletableFuture<Void> scanDirectoryAsync(ResourceManager resourceManager, String name, Gson gson, ConcurrentMap<ResourceLocation, JsonElement> output, Executor executor) {
+    public static CompletableFuture<Void> scanDirectoryAsync(ResourceManager resourceManager, String name, Gson gson, ConcurrentMap<Identifier, JsonElement> output, Executor executor) {
         FileToIdConverter fileToIdConverter = FileToIdConverter.json(name);
-        Map<ResourceLocation, Resource> matching = fileToIdConverter.listMatchingResources(resourceManager);
+        Map<Identifier, Resource> matching = fileToIdConverter.listMatchingResources(resourceManager);
 
         List<CompletableFuture<Void>> futures = new ArrayList<>();
 
-        for (Map.Entry<ResourceLocation, Resource> entry : matching.entrySet()) {
-            ResourceLocation file = entry.getKey();
-            ResourceLocation id = fileToIdConverter.fileToId(file);
+        for (Map.Entry<Identifier, Resource> entry : matching.entrySet()) {
+            Identifier file = entry.getKey();
+            Identifier id = fileToIdConverter.fileToId(file);
             Resource resource = entry.getValue();
 
             CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
@@ -129,44 +165,44 @@ public class ClientJsonCacheListener<T> extends SimpleJsonResourceReloadListener
     }
 
     // @Override
-    // protected void apply(@NotNull Map<ResourceLocation, JsonElement> object, @NotNull ResourceManager resourceManager, @NotNull ProfilerFiller profiler) {
+    // protected void apply(@NotNull Map<Identifier, JsonElement> object, @NotNull ResourceManager resourceManager, @NotNull ProfilerFiller profiler) {
     //     this.elementMap.clear();
     //     this.elementMap.putAll(object);
     // }
 
-    public Map<ResourceLocation, JsonElement> getElementMap() {
+    public Map<Identifier, JsonElement> getElementMap() {
         return elementMap;
     }
 
 
-    public Map<ResourceLocation, T> build(Codec<T> codec, RegistryAccess registryAccess) {
-        return getResourceLocationTMap(codec, registryAccess.createSerializationContext(JsonOps.INSTANCE));
+    public Map<Identifier, T> build(Codec<T> codec, HolderLookup.Provider registryAccess) {
+        return getIdentifierTMap(codec, registryAccess.createSerializationContext(JsonOps.INSTANCE));
     }
 
-    public Map<ResourceLocation, T> build(Codec<T> codec) {
+    public Map<Identifier, T> build(Codec<T> codec) {
         DynamicOps<JsonElement> dynamicops = JsonOps.INSTANCE;
-        return getResourceLocationTMap(codec, dynamicops);
+        return getIdentifierTMap(codec, dynamicops);
     }
 
-    private @NotNull Map<ResourceLocation, T> getResourceLocationTMap(Codec<T> codec, DynamicOps<JsonElement> dynamicops) {
-        Map<ResourceLocation, T> map = new HashMap<>();
+    private @NotNull Map<Identifier, T> getIdentifierTMap(Codec<T> codec, DynamicOps<JsonElement> dynamicops) {
+        Map<Identifier, T> map = new HashMap<>();
         this.elementMap.forEach(
-                (resourceLocation, jsonElement) -> {
+                (Identifier, jsonElement) -> {
                     try {
                         codec
                                 .parse(dynamicops, jsonElement)
                                 .resultOrPartial(x ->
                                         {
-                                            String formatted = "Unable to load %s: '%s' due to: %s".formatted(getName().replace(EclipticSeasonsApi.MODID+"/",""), resourceLocation, x);
+                                            String formatted = "Unable to load %s: '%s' due to: %s".formatted(getName().replace(EclipticSeasonsApi.MODID + "/", ""), Identifier, x);
                                             EclipticSeasons.LOGGER.warn(formatted);
                                         }
                                 )
                                 .ifPresent(t -> {
-                                    map.put(resourceLocation, t);
+                                    map.put(Identifier, t);
                                 });
                     } catch (Exception e) {
                         // EclipticSeasons.logger(e);
-                        String formatted = "Unable to load %s with exception: '%s' due to: %s".formatted(getName().replace(EclipticSeasonsApi.MODID+"/",""), resourceLocation, e);
+                        String formatted = "Unable to load %s with exception: '%s' due to: %s".formatted(getName().replace(EclipticSeasonsApi.MODID + "/", ""), Identifier, e);
                         EclipticSeasons.LOGGER.warn(formatted);
                     }
                 }

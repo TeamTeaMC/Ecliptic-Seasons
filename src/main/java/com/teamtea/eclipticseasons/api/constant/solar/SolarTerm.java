@@ -17,7 +17,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.biome.Biome;
 
@@ -110,16 +110,16 @@ public enum SolarTerm implements ITranslatableWithPlaceholder, ISolarTerm {
     }
 
     @Override
-    public ResourceLocation getIconFont() {
+    public Identifier getIconFont() {
         return EclipticSeasons.rl("solar_icons");
     }
 
     @Override
-    public ResourceLocation getIcon() {
+    public Identifier getIcon() {
         return getFullIcon();
     }
 
-    public static ResourceLocation getFont() {
+    public static Identifier getFont() {
         return EclipticSeasons.rl("solar_icons");
     }
 
@@ -129,11 +129,11 @@ public enum SolarTerm implements ITranslatableWithPlaceholder, ISolarTerm {
         return String.valueOf((char) (ordinal() + 97));
     }
 
-    public static ResourceLocation getFullIcon() {
+    public static Identifier getFullIcon() {
         return EclipticSeasons.rl("font/" + "seasons_icons");
     }
 
-    public static ResourceLocation getFontIcon() {
+    public static Identifier getFontIcon() {
         return EclipticSeasons.rl("font/" + "seasons_icons_font");
     }
 

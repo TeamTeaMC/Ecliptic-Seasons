@@ -4,23 +4,21 @@ import com.teamtea.eclipticseasons.api.constant.tag.ClimateTypeBiomeTags;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
+import net.minecraft.data.tags.KeyTagProvider;
 import net.minecraft.data.tags.TagsProvider;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.biome.Biome;
 
-import net.minecraft.world.level.biome.Biomes;
 import net.neoforged.neoforge.common.Tags;
-import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.CompletableFuture;
 
-public class TagsDataProvider extends TagsProvider<Biome> {
+public class TagsDataProvider extends KeyTagProvider<Biome> {
 
 
-    public TagsDataProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, String modId, @Nullable ExistingFileHelper existingFileHelper) {
-        super(output, Registries.BIOME, lookupProvider, modId, existingFileHelper);
+    public TagsDataProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, String modId) {
+        super(output, Registries.BIOME, lookupProvider, modId);
     }
 
     @Override

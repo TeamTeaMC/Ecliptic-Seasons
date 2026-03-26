@@ -36,9 +36,11 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.commands.TimeCommand;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.permissions.LevelBasedPermissionSet;
+import net.minecraft.server.permissions.PermissionSet;
 import net.minecraft.world.level.biome.Biome;
 
 import net.neoforged.bus.api.SubscribeEvent;
@@ -65,15 +67,16 @@ public class CommandHandler {
         var dispatcher = event.getDispatcher();
         CommandBuildContext buildContext = event.getBuildContext();
         // Reset time command
-        dispatcher.register(Commands.literal("time").requires((sourceStack) -> sourceStack.hasPermission(2))
-                .then(Commands.literal("set")
-                        .then(Commands.literal("night")
-                                .executes((source) -> TimeCommand.setTime(source.getSource(), EclipticUtil.getNightTime(source.getSource().getLevel()))))));
+        //dispatcher.register(Commands.literal("time")
+        //        .requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))
+        //        .then(Commands.literal("set")
+        //                .then(Commands.literal("night")
+        //                        .executes((source) -> TimeCommand.setTime(source.getSource(), EclipticUtil.getNightTime(source.getSource().getLevel()))))));
 
         for (String modId : List.of(EclipticSeasonsApi.SMODID, EclipticSeasonsApi.MODID, "season")) {
             dispatcher.register(Commands.literal(modId)
                     .then(Commands.literal("debug")
-                            .requires((source) -> source.hasPermission(2))
+                            .requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))
                             .then(Commands.literal("reset")
                                     .then(Commands.literal("surface_biome_cache")
                                             .executes(context -> {
@@ -90,7 +93,7 @@ public class CommandHandler {
                             )
                     )
                     .then(Commands.literal("solar")
-                            .requires((source) -> source.hasPermission(2))
+                            .requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))
                             .then(Commands.literal("set")
                                     .then(Commands.argument("day", IntegerArgumentType.integer())
                                             .executes(commandContext -> setDay(commandContext.getSource(), IntegerArgumentType.getInteger(commandContext, "day")))))
@@ -158,7 +161,7 @@ public class CommandHandler {
                             .then(Commands.literal("add")
                                     .then(Commands.argument("day", IntegerArgumentType.integer()).executes(commandContext -> addDay(commandContext.getSource(), IntegerArgumentType.getInteger(commandContext, "day"))))))
                     .then(Commands.literal("weather")
-                            .requires((source) -> source.hasPermission(2))
+                            .requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))
                             .then(Commands.argument("biome", ResourceOrTagArgument.resourceOrTag(event.getBuildContext(), Registries.BIOME))
                                     .then(Commands.literal("rain")
                                             .executes((commandContext) -> setBiomeRain(commandContext.getSource(), ResourceOrTagArgument.getResourceOrTag(commandContext, "biome", Registries.BIOME), true, false))
@@ -188,7 +191,7 @@ public class CommandHandler {
                             )
                     )
                     .then(Commands.literal("export")
-                            .requires((source) -> source.hasPermission(2))
+                            .requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))
                             .then(Commands.literal("biome_map")
                                     .then(Commands.argument("pos", BlockPosArgument.blockPos()).executes((stackCommandContext) ->
                                             MapExporter.exportMap(stackCommandContext.getSource(), BlockPosArgument.getLoadedBlockPos(stackCommandContext, "pos")))))
@@ -202,8 +205,8 @@ public class CommandHandler {
                                                 } catch (IllegalArgumentException e) {
                                                     // e.printStackTrace();
                                                 }
-                                                Registry<Biome> biomes = context.getSource().getLevel().registryAccess().registryOrThrow(Registries.BIOME);
-                                                Set<String> collect = biomes.keySet().stream().map(ResourceLocation::getNamespace).collect(Collectors.toSet());
+                                                Registry<Biome> biomes = context.getSource().getLevel().registryAccess().lookupOrThrow(Registries.BIOME);
+                                                Set<String> collect = biomes.keySet().stream().map(Identifier::getNamespace).collect(Collectors.toSet());
 
                                                 for (String s : collect) {
                                                     if (s.contains(pre)) {
@@ -344,8 +347,8 @@ public class CommandHandler {
 
 
     public static ResourceOrTagArgument.Result<Biome> createAllResult(RegistryAccess registryAccess) {
-        Registry<Biome> biomes = registryAccess.registryOrThrow(Registries.BIOME);
-        return new crs(biomes.getHolder(0).orElse(null));
+        Registry<Biome> biomes = registryAccess.lookupOrThrow(Registries.BIOME);
+        return new crs(biomes.get(0).orElse(null));
     }
 
     private record crs(Holder.Reference<Biome> biomeReference) implements ResourceOrTagArgument.Result<Biome> {

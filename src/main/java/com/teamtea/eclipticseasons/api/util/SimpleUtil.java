@@ -10,23 +10,25 @@ import com.teamtea.eclipticseasons.common.core.solar.SolarTermHelper;
 import com.teamtea.eclipticseasons.common.misc.SimplePair;
 import com.teamtea.eclipticseasons.common.misc.SolarTermHumidityChart;
 import com.teamtea.eclipticseasons.config.CommonConfig;
-import net.minecraft.Util;
+import net.minecraft.network.chat.*;
+import net.minecraft.util.Mth;
+import net.minecraft.util.Util;
 import net.minecraft.core.*;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BiomeTags;
+import net.minecraft.world.clock.WorldClock;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Climate;
 import net.minecraft.world.level.biome.OverworldBiomeBuilder;
+import net.minecraft.world.timeline.Timeline;
+import net.minecraft.world.timeline.Timelines;
 import net.neoforged.fml.loading.FMLLoader;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.net.URL;
@@ -58,11 +60,11 @@ public class SimpleUtil {
                     .map(CodeSource::getLocation)
                     .map(URL::getFile)
                     .map(it -> new File(it.split("%23")[0]).getAbsolutePath())
-                    .map(i -> FMLLoader.getLoadingModList().getModFiles()
+                    .map(i -> FMLLoader.getCurrentOrNull().getLoadingModList().getModFiles()
                             .stream()
                             .filter(modFileInfo ->
                                     new File(modFileInfo.getFile().getFilePath().toString()).getAbsolutePath().equals(i)).findFirst().get())
-                    .map(modFileInfo -> modFileInfo.getFile().getModFileInfo().moduleName())
+                    .map(modFileInfo -> modFileInfo.getFile().getModFileInfo().getMods().getFirst().getDisplayName())
                     .get();
         } catch (Exception e) {
         }
@@ -96,8 +98,8 @@ public class SimpleUtil {
 
         Style noBitstyle = mutableComponent.getStyle()
                 .withFont(mutableComponent.getStyle().getFont());
-        Style aDefault = Style.EMPTY.withFont(ResourceLocation.withDefaultNamespace("default"));
-        Style style = Style.EMPTY.withFont(SolarTerm.getFont());
+        Style aDefault = DEFAULT;
+        Style style = Style.EMPTY.withFont(new FontDescription.Resource(solarTerm.getIconFont()));
 
         return Component.literal(solarTerm.getFontLabel())
                 .withStyle(style.withColor(TextColor.fromRgb(-1)))
@@ -110,12 +112,14 @@ public class SimpleUtil {
 
     }
 
+    private static final Style DEFAULT = Style.EMPTY.withFont(new FontDescription.Resource(Identifier.withDefaultNamespace("default")));
+
     public static MutableComponent addSolarIconBefore(ISolarTerm solarTerm, MutableComponent mutableComponent) {
 
         // Style noBitstyle = mutableComponent.getStyle()
         //         .withFont(mutableComponent.getStyle().getFont());
-        Style aDefault = Style.EMPTY.withFont(ResourceLocation.withDefaultNamespace("default"));
-        Style style = Style.EMPTY.withFont(solarTerm.getIconFont());
+        Style aDefault = DEFAULT;
+        Style style = Style.EMPTY.withFont(new FontDescription.Resource(solarTerm.getIconFont()));
 
         return Component.literal(solarTerm.getFontLabel())
                 .withStyle(style.withColor(TextColor.fromRgb(-1)))
@@ -139,8 +143,8 @@ public class SimpleUtil {
                 ));
     }
 
-    public static void sendSolarTermMessage(ServerPlayer player, SolarTerm solarTerm,boolean ignoreChangeCheck) {
-        ISolarTerm iSolarTerm = SolarTermHelper.isChangedAndGet(player.level(), player.blockPosition(), solarTerm, solarTerm.getLastSolarTerm(),ignoreChangeCheck);
+    public static void sendSolarTermMessage(ServerPlayer player, SolarTerm solarTerm, boolean ignoreChangeCheck) {
+        ISolarTerm iSolarTerm = SolarTermHelper.isChangedAndGet(player.level(), player.blockPosition(), solarTerm, solarTerm.getLastSolarTerm(), ignoreChangeCheck);
         if (iSolarTerm != null) {
             MutableComponent translatable = Component.translatable("info.eclipticseasons.environment.solar_term.message",
                     CommonConfig.Season.enableInformIcon.get() ?
@@ -153,28 +157,28 @@ public class SimpleUtil {
 
 
     public static void printHumidityTable(Level level) {
-        Registry<Biome> biomes = level.registryAccess().registryOrThrow(Registries.BIOME);
-        // List<String> list = biomes.entrySet().stream().map(e -> e.getKey().location().toString()).sorted().toList();
+        Registry<Biome> biomes = level.registryAccess().lookupOrThrow(Registries.BIOME);
+        // List<String> list = biomes.entrySet().stream().map(e -> e.getKey().identifier().toString()).sorted().toList();
         List<Map.Entry<ResourceKey<Biome>, Biome>> collect = biomes.entrySet().stream()
                 .sorted(Map.Entry.comparingByKey())
                 .toList();
         List<List<String>> ss = new ArrayList<>();
-        List<SimplePair<ResourceLocation, Humidity>> pairs = new ArrayList<>();
+        List<SimplePair<Identifier, Humidity>> pairs = new ArrayList<>();
 
         for (Map.Entry<ResourceKey<Biome>, Biome> e : collect) {
             Humidity humid = Humidity.getHumid(e.getValue().getModifiedClimateSettings().downfall(),
                     e.getValue().getModifiedClimateSettings().temperature());
-            if (biomes.getHolderOrThrow(e.getKey()).is(BiomeTags.IS_OVERWORLD)
+            if (biomes.getOrThrow(e.getKey()).is(BiomeTags.IS_OVERWORLD)
                     // biomeswevegone,biomesoplenty,natures_spirit, minecraft
-                    && e.getKey().location().getNamespace().contains("natures_spirit")
+                    && e.getKey().identifier().getNamespace().contains("natures_spirit")
             ) {
                 List<String> s2 = new ArrayList<>();
-                s2.add(Component.translatable(Util.makeDescriptionId("biome", e.getKey().location())).getString());
-                s2.add(e.getKey().location().toString());
+                s2.add(Component.translatable(Util.makeDescriptionId("biome", e.getKey().identifier())).getString());
+                s2.add(e.getKey().identifier().toString());
                 s2.add(humid.getTranslation().getString());
                 s2.add(humid.toString());
                 ss.add(s2);
-                pairs.add(SimplePair.of(e.getKey().location(), humid));
+                pairs.add(SimplePair.of(e.getKey().identifier(), humid));
             }
         }
         pairs.sort(Comparator.comparing(SimplePair::getValue));
@@ -184,7 +188,7 @@ public class SimpleUtil {
         //             "|%s|%s|%s|%s|".formatted(s.get(0), s.get(1), s.get(2), s.get(3)));
         // }
         StringBuilder stringBuilder = new StringBuilder("\n");
-        for (SimplePair<ResourceLocation, Humidity> pair : pairs) {
+        for (SimplePair<Identifier, Humidity> pair : pairs) {
             stringBuilder.append(
                     "\n|%s|%s|%s|%s|".formatted(Component.translatable(Util.makeDescriptionId("biome", pair.getKey())).getString(),
                             pair.getKey(), pair.getValue().getTranslation().getString(), pair.getValue().getName()));
@@ -195,15 +199,15 @@ public class SimpleUtil {
 
     public static void exportHumidityChart(Level level, String namespace) {
         printHumidityTable(level);
-        Registry<Biome> biomes = level.registryAccess().registryOrThrow(Registries.BIOME);
-        // List<String> list = biomes.entrySet().stream().map(e -> e.getKey().location().toString()).sorted().toList();
+        Registry<Biome> biomes = level.registryAccess().lookupOrThrow(Registries.BIOME);
+        // List<String> list = biomes.entrySet().stream().map(e -> e.getKey().identifier().toString()).sorted().toList();
         List<Map.Entry<ResourceKey<Biome>, Biome>> collect = biomes.entrySet().stream()
                 .sorted(Map.Entry.comparingByKey())
                 .toList();
 
         for (Map.Entry<ResourceKey<Biome>, Biome> e : collect) {
-            if (biomes.getHolderOrThrow(e.getKey()).is(BiomeTags.IS_OVERWORLD)
-                    && e.getKey().location().getNamespace().contains(namespace)
+            if (biomes.getOrThrow(e.getKey()).is(BiomeTags.IS_OVERWORLD)
+                    && e.getKey().identifier().getNamespace().contains(namespace)
             ) {
                 var biomeHolder = BiomeClimateManager.getHolder(level.registryAccess(), e.getValue());
                 double[] humidities = new double[24];
@@ -211,7 +215,7 @@ public class SimpleUtil {
                     SolarTerm solarTerm = SolarTerm.collectValues()[i];
                     humidities[i] = EclipticUtil.getHumidityConstantFloat(solarTerm, biomeHolder, !level.isClientSide());
                 }
-                String biomeName = Component.translatable(Util.makeDescriptionId("biome", e.getKey().location())).getString();
+                String biomeName = Component.translatable(Util.makeDescriptionId("biome", e.getKey().identifier())).getString();
                 SolarTermHumidityChart chart = new SolarTermHumidityChart(biomeName, humidities);
                 if (!new File(EclipticSeasonsApi.MODID).exists()) {
                     new File(EclipticSeasonsApi.MODID).mkdir();
@@ -252,5 +256,41 @@ public class SimpleUtil {
         OverworldBiomeBuilder overworldBiomeBuilder = new OverworldBiomeBuilder();
 
         return 0;
+    }
+
+
+    public static float getTimeOfDay(Level level) {
+        // if (false) {
+        //     double d0 = Mth.frac((double) level.getDefaultClockTime() / 24000.0 - 0.25);
+        //     double d1 = 0.5 - Math.cos(d0 * Math.PI) / 2.0;
+        //     return (float) (d0 * 2.0 + d1) / 3.0F;
+        // }
+        Optional<Holder<@NotNull WorldClock>> worldClockHolder = level.dimensionType().defaultClock();
+        if (worldClockHolder.isEmpty()) return 0;
+        var timelines = level.dimensionType().timelines()
+                .stream().filter((t) -> t.value().clock() == worldClockHolder.get()).findFirst();
+        if (timelines.isEmpty()) return 0;
+        Holder<@NotNull Timeline> timelineHolder = timelines.get();
+        long defaultClockTime = level.getDefaultClockTime();
+        long periodTicks = timelineHolder.value().periodTicks().orElse(0);
+        if (periodTicks == 0) return 0;
+        // return ((float) (defaultClockTime % periodTicks)) / (float) periodTicks;
+        double d0 = Mth.frac((double) defaultClockTime / periodTicks - 0.25);
+        double d1 = 0.5 - Math.cos(d0 * Math.PI) / 2.0;
+        return (float) (d0 * 2.0 + d1) / 3.0F;
+    }
+
+
+    public static long getDayTick(Level level) {
+        return level.getDefaultClockTime();
+    }
+
+    public static int getMCDay(Level level) {
+        int currentDay = level
+                .registryAccess()
+                .get(Timelines.OVERWORLD_DAY)
+                .map(timeline -> timeline.value().getPeriodCount(level.clockManager()))
+                .orElse(0);
+        return currentDay;
     }
 }

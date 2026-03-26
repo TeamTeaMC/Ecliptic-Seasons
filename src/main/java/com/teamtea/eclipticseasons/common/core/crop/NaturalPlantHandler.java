@@ -35,10 +35,10 @@ public class NaturalPlantHandler {
 
     public final static Map<Block, EnumMap<SolarTerm, List<Pair<BiomeHolderPredicate, ChangeMode>>>> SEASON_DEFINITIONS = new IdentityHashMap<>();
 
-    public static void resetUpdate(RegistryAccess registryAccess, boolean isServer) {
+    public static void resetUpdate(HolderLookup.Provider registryAccess, boolean isServer) {
         if (isServer) {
             SEASON_DEFINITIONS.clear();
-            var registry = registryAccess.registry(ESRegistries.SEASON_DEFINITION);
+            var registry = registryAccess.lookup(ESRegistries.SEASON_DEFINITION);
             if (registry.isEmpty()) {
                 SimpleUtil.warningForModWrongCalling(ESRegistries.SEASON_DEFINITION);
             } else {
@@ -145,7 +145,7 @@ public class NaturalPlantHandler {
                                     var blockStatePlaced = selectorsed.get(j);
                                     if (!blockStatePlaced.shouldApply(level, pos, context)) continue;
                                     weightIndex -= blockStatePlaced.getWeight();
-                                    if (weightIndex < 0) {
+                                    if (weightIndex <= 0) {
                                         chosen = blockStatePlaced;
                                         break;
                                     }

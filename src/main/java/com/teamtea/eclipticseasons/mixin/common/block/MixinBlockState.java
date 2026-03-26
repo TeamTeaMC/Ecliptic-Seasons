@@ -15,6 +15,9 @@ import org.spongepowered.asm.mixin.Unique;
 
 @Mixin(BlockState.class)
 public abstract class MixinBlockState extends BlockBehaviour.BlockStateBase implements IBlockStateFlagger {
+    protected MixinBlockState(Block owner, Property<?>[] propertyKeys, Comparable<?>[] propertyValues) {
+        super(owner, propertyKeys, propertyValues);
+    }
 
     // @Shadow
     // protected abstract BlockState asState();
@@ -22,9 +25,7 @@ public abstract class MixinBlockState extends BlockBehaviour.BlockStateBase impl
     @Shadow
     protected abstract @NotNull BlockState asState();
 
-    protected MixinBlockState(Block owner, Reference2ObjectArrayMap<Property<?>, Comparable<?>> values, MapCodec<BlockState> propertiesCodec) {
-        super(owner, values, propertiesCodec);
-    }
+
 
 
     @Unique

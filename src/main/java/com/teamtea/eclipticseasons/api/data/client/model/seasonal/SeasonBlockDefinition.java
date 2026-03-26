@@ -12,14 +12,14 @@ import com.teamtea.eclipticseasons.api.misc.util.HolderMappable;
 import com.teamtea.eclipticseasons.api.util.codec.CodecUtil;
 import com.teamtea.eclipticseasons.api.util.codec.ESExtraCodec;
 import com.teamtea.eclipticseasons.api.util.fast.Enum2ObjectMap;
-import com.teamtea.eclipticseasons.client.model.LocalSeasonStatusModel;
+import com.teamtea.eclipticseasons.client.model.block.LocalSeasonStatusModel;
 import com.teamtea.eclipticseasons.common.registry.ESRegistries;
 import lombok.Builder;
 import lombok.Data;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 
@@ -32,7 +32,7 @@ import java.util.Optional;
 @Data
 public class SeasonBlockDefinition implements HolderMappable<HolderSet<Block>, SeasonBlockDefinition> {
 
-    public static final ResourceLocation GRASS_BLOCK = EclipticSeasons.rl("grass_block");
+    public static final Identifier GRASS_BLOCK = EclipticSeasons.rl("grass_block");
 
     public static final Codec<SeasonBlockDefinition> CODEC = RecordCodecBuilder.create(ins -> ins.group(
             CodecUtil.holderSetCodec(Registries.BLOCK).fieldOf("blocks").forGetter(o -> o.blocks),
@@ -116,7 +116,7 @@ public class SeasonBlockDefinition implements HolderMappable<HolderSet<Block>, S
     @Builder
     @Data
     public static class Slice {
-        public static final Pair<ResourceLocation, ResourceLocation> EMPTY_PAIR = Pair.of(LocalSeasonStatusModel.EMPTY, LocalSeasonStatusModel.EMPTY);
+        public static final Pair<Identifier, Identifier> EMPTY_PAIR = Pair.of(LocalSeasonStatusModel.EMPTY, LocalSeasonStatusModel.EMPTY);
 
         public static final Codec<Slice> CODEC = RecordCodecBuilder.create(ins -> ins.group(
                 ESExtraCodec.SOLAR_TERM.optionalFieldOf("start", SolarTerm.NONE).forGetter(o -> o.start),
@@ -125,8 +125,8 @@ public class SeasonBlockDefinition implements HolderMappable<HolderSet<Block>, S
                 ESExtraCodec.SEASON.optionalFieldOf("start_season", Season.NONE).forGetter(o -> o.startSeason),
                 ESExtraCodec.SEASON.optionalFieldOf("end_season", Season.NONE).forGetter(o -> o.endSeason),
                 ESExtraCodec.SEASON.optionalFieldOf("season", Season.NONE).forGetter(o -> o.season),
-                ResourceLocation.CODEC.optionalFieldOf("mid", LocalSeasonStatusModel.EMPTY).forGetter(o -> o.mid),
-                CodecUtil.pairCodec(ResourceLocation::parse, ResourceLocation::parse).optionalFieldOf("transition_models", EMPTY_PAIR).forGetter(o -> o.transitionModels),
+                Identifier.CODEC.optionalFieldOf("mid", LocalSeasonStatusModel.EMPTY).forGetter(o -> o.mid),
+                CodecUtil.pairCodec(Identifier::parse, Identifier::parse).optionalFieldOf("transition_models", EMPTY_PAIR).forGetter(o -> o.transitionModels),
                 Codec.BOOL.optionalFieldOf("empty_above", true).forGetter(o -> o.emptyAbove)
         ).apply(ins, Slice::new));
 
@@ -143,9 +143,9 @@ public class SeasonBlockDefinition implements HolderMappable<HolderSet<Block>, S
         @Builder.Default
         private final Season season = Season.NONE;
         @Builder.Default
-        private final ResourceLocation mid = LocalSeasonStatusModel.EMPTY;
+        private final Identifier mid = LocalSeasonStatusModel.EMPTY;
         @Builder.Default
-        private final Pair<ResourceLocation, ResourceLocation> transitionModels = EMPTY_PAIR;
+        private final Pair<Identifier, Identifier> transitionModels = EMPTY_PAIR;
         @Builder.Default
         private final boolean emptyAbove = true;
     }
@@ -156,8 +156,8 @@ public class SeasonBlockDefinition implements HolderMappable<HolderSet<Block>, S
     }
 
 
-    public record FlatSlice(@Nullable ResourceLocation mid, boolean emptyAbove,
-                            @Nullable Pair<ResourceLocation, ResourceLocation> transitionModels) {
+    public record FlatSlice(@Nullable Identifier mid, boolean emptyAbove,
+                            @Nullable Pair<Identifier, Identifier> transitionModels) {
     }
 
 

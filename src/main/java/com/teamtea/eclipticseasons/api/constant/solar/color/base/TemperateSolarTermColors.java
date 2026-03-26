@@ -49,7 +49,7 @@ public enum TemperateSolarTermColors  implements SolarTermColor
     {
         this.temperateColor = temperateColorIn;
         this.temperateMix = temperateMixIn;
-        this.birchColor = ColorHelper.simplyMixColor(birchColorIn, birchAlphaIn, FoliageColor.getDefaultColor(), 1.0F - birchAlphaIn);
+        this.birchColor = ColorHelper.simplyMixColor(birchColorIn, birchAlphaIn,FoliageColor.FOLIAGE_DEFAULT, 1.0F - birchAlphaIn);
     }
     
 
@@ -58,7 +58,7 @@ public enum TemperateSolarTermColors  implements SolarTermColor
         this.temperateColor = temperateColorIn;
         this.temperateMix = temperateMix;
         // this.birchColor = FoliageColor.getBirchColor();
-        this.birchColor = FoliageColor.getDefaultColor();
+        this.birchColor =FoliageColor.FOLIAGE_DEFAULT;
     }
     
     

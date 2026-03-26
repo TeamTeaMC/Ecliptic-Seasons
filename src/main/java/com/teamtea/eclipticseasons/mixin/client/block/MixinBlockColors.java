@@ -1,28 +1,29 @@
 package com.teamtea.eclipticseasons.mixin.client.block;
 
-import com.teamtea.eclipticseasons.client.color.season.BiomeColorsHandler;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.teamtea.eclipticseasons.client.color.season.FoliageColorSource;
 import net.minecraft.client.color.block.BlockColors;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.BlockAndTintGetter;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.client.color.block.BlockTintSource;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin({BlockColors.class})
 public class MixinBlockColors {
 
-    @Inject(at = {@At(value = "HEAD")},
-            method = {"lambda$createDefault$3"}, cancellable = true)
-    private static void eclipticseasons$lambda$createDefault$3_SPRUCE_LEAVES(BlockState p_92636_, BlockAndTintGetter p_92637_, BlockPos p_92638_, int p_92639_, CallbackInfoReturnable<Integer> cir) {
-        cir.setReturnValue(BiomeColorsHandler.getSpruceColor(p_92636_,p_92637_,p_92638_,p_92639_));
+    @WrapOperation(at = {@At(value = "INVOKE",
+            ordinal = 0,
+            target = "Lnet/minecraft/client/color/block/BlockTintSources;constant(I)Lnet/minecraft/client/color/block/BlockTintSource;")},
+            method = {"createDefault"})
+    private static BlockTintSource eclipticseasons$lambda$createDefault$3_SPRUCE_LEAVES(int color, Operation<BlockTintSource> original) {
+        return new FoliageColorSource();
     }
-
-    @Inject(at = {@At(value = "HEAD")},
-            method = {"lambda$createDefault$4"}, cancellable = true)
-    private static void eclipticseasons$lambda$createDefault$4_BIRCH_LEAVES(BlockState p_92636_, BlockAndTintGetter p_92637_, BlockPos p_92638_, int p_92639_, CallbackInfoReturnable<Integer> cir) {
-        cir.setReturnValue(BiomeColorsHandler.getBirchColor(p_92636_,p_92637_,p_92638_,p_92639_));
+    @WrapOperation(at = {@At(value = "INVOKE",
+            ordinal = 1,
+            target = "Lnet/minecraft/client/color/block/BlockTintSources;constant(I)Lnet/minecraft/client/color/block/BlockTintSource;")},
+            method = {"createDefault"})
+    private static BlockTintSource eclipticseasons$lambda$createDefault$4_BIRCH_LEAVES(int color, Operation<BlockTintSource> original) {
+        return new FoliageColorSource();
     }
 
 }

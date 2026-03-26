@@ -1,0 +1,81 @@
+{
+  "solar_terms": {
+    "beginning_of_spring": {
+      "grow_chance": 0.64
+    },
+    "rain_water": {
+      "grow_chance": 0.75
+    },
+    "insects_awakening": {
+      "grow_chance": 0.8
+    },
+    "spring_equinox": {
+      "grow_chance": 0.95
+    },
+    "fresh_green": {
+      "grow_chance": 1.025
+    },
+    "grain_rain": {
+      "grow_chance": 0.95
+    },
+    "beginning_of_summer": {
+      "grow_chance": 0.2
+    },
+    "lesser_fullness": {
+      "grow_chance": 0.0
+    },
+    "grain_in_ear": {
+      "grow_chance": 0.0
+    },
+    "summer_solstice": {
+      "grow_chance": 0.0
+    },
+    "lesser_heat": {
+      "grow_chance": 0.0
+    },
+    "greater_heat": {
+      "grow_chance": 0.0
+    },
+    "beginning_of_autumn": {
+      "grow_chance": 0.1
+    },
+    "end_of_heat": {
+      "grow_chance": 0.1
+    },
+    "white_dew": {
+      "grow_chance": 0.12
+    },
+    "autumnal_equinox": {
+      "grow_chance": 0.15
+    },
+    "cold_dew": {
+      "grow_chance": 0.15
+    },
+    "first_frost": {
+      "grow_chance": 0.25
+    },
+    "beginning_of_winter": {
+      "grow_chance": 0.7
+    },
+    "light_snow": {
+      "grow_chance": 0.85
+    },
+    "heavy_snow": {
+      "grow_chance": 0.95
+    },
+    "winter_solstice": {
+      "grow_chance": 0.9
+    },
+    "lesser_cold": {
+      "grow_chance": 0.7
+    },
+    "greater_cold": {
+      "grow_chance": 0.6
+    }
+  },
+  "climate": "eclipticseasons:temperate",
+  "parent": [],
+  "apply_target": {
+    "blocks": "#eclipticseasons:crops/spring_winter"
+  }
+}

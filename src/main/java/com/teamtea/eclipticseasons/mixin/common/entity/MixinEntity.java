@@ -5,19 +5,14 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
-import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.core.snow.SnowyMapChecker;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleType;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
@@ -25,6 +20,8 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import java.util.List;
 
 @Mixin({Entity.class})
 public abstract class MixinEntity {
@@ -36,30 +33,31 @@ public abstract class MixinEntity {
     public abstract Level level();
 
     @WrapOperation(at = {@At(value = "INVOKE",
-            target = "Lnet/minecraft/world/level/block/state/BlockState;getSoundType(Lnet/minecraft/world/level/LevelReader;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/entity/Entity;)Lnet/minecraft/world/level/block/SoundType;")},
+            target = "Lnet/minecraft/world/level/block/state/BlockState;playStepSound(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/entity/Entity;FF)V")},
             method = {"playStepSound"})
-    public SoundType eclipticseasons$playStepSound(BlockState instance, LevelReader levelReader, BlockPos blockPos, Entity entity, Operation<SoundType> original, @Local(argsOnly = true) BlockPos pos, @Local(argsOnly = true) BlockState state) {
-        if (EclipticSeasonsApi.getInstance().isSnowyBlock(this.level, state, pos))
-            return Blocks.SNOW.defaultBlockState().getSoundType(this.level, pos, entity);
-        return original.call(instance, levelReader, blockPos, entity);
+    public void eclipticseasons$playStepSound(BlockState instance, Level level, BlockPos blockPos, Entity entity, float volumeMultiplier, float pitchMultiplier, Operation<Void> original) {
+        if (EclipticSeasonsApi.getInstance().isSnowyBlock(this.level, instance, blockPos))
+            instance = Blocks.SNOW.defaultBlockState();
+        original.call(instance, level, blockPos, entity, volumeMultiplier, pitchMultiplier);
     }
 
     @WrapOperation(at = {@At(value = "NEW",
-            target = "(Lnet/minecraft/core/particles/ParticleType;Lnet/minecraft/world/level/block/state/BlockState;)Lnet/minecraft/core/particles/BlockParticleOption;")},
+            target = "(Lnet/minecraft/core/particles/ParticleType;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/BlockPos;)Lnet/minecraft/core/particles/BlockParticleOption;")},
             method = {"spawnSprintParticle"})
-    public BlockParticleOption eclipticseasons$spawnSprintParticle_snow(ParticleType<BlockParticleOption> type, BlockState state, Operation<BlockParticleOption> original, @Local(ordinal = 0) BlockPos pos) {
+    public BlockParticleOption eclipticseasons$spawnSprintParticle_snow(ParticleType<?> type, BlockState state, BlockPos pos, Operation<BlockParticleOption> original) {
         if (EclipticSeasonsApi.getInstance().isSnowyBlock(level, state, pos)) {
             state = Blocks.SNOW.defaultBlockState();
         }
-        return original.call(type, state);
+        return original.call(type, state, pos);
     }
 
     @Inject(at = {@At(value = "INVOKE",
             target = "Lnet/minecraft/world/level/block/Block;stepOn(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/entity/Entity;)V")},
-            method = {"move"})
-    public void eclipticseasons$move_stepOn(MoverType type, Vec3 vec3, CallbackInfo ci,
+            method = "applyEffectsFromBlocks(Ljava/util/List;)V")
+    public void eclipticseasons$move_stepOn(List movements,
+                                            CallbackInfo ci,
                                             @Local BlockPos pos,
                                             @Local BlockState blockstate) {
-        SnowyMapChecker.onEntityStepOn((Entity)(Object) this,level,pos, blockstate);
+        SnowyMapChecker.onEntityStepOn((Entity) (Object) this, level, pos, blockstate);
     }
 }

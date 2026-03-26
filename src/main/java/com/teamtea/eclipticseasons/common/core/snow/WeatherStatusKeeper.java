@@ -26,6 +26,8 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.neoforged.neoforge.attachment.IAttachmentHolder;
 import net.neoforged.neoforge.attachment.IAttachmentSerializer;
 import org.jetbrains.annotations.NotNull;
@@ -85,7 +87,8 @@ public class WeatherStatusKeeper {
         if (EclipticUtil.canSnowyBlockInteract()) {
             updateBiomeWhenEndTick(serverLevel);
             if (change) {
-                chunk.setUnsaved(true);
+                chunk.markUnsaved();
+                ;
             }
         }
         change = false;
@@ -130,7 +133,7 @@ public class WeatherStatusKeeper {
                 biomeRainUpdate = null;
                 Set<Holder<Biome>> biomeDetect = new ReferenceLinkedOpenHashSet<>();
                 if (biomeHolder != null) {
-                    Registry<Biome> biomes = level.registryAccess().registryOrThrow(Registries.BIOME);
+                    Registry<Biome> biomes = level.registryAccess().lookupOrThrow(Registries.BIOME);
                     IntOpenHashSet ids = new IntOpenHashSet(biomeHolder.biomes());
                     for (int i : ids.toIntArray()) {
                         biomeDetect.add(MapChecker.idToBiome(biomes, i));
@@ -184,25 +187,40 @@ public class WeatherStatusKeeper {
     @Getter(AccessLevel.NONE)
     private transient CompoundTag cacheTag = null;
 
-    public static class Serializer implements IAttachmentSerializer<Tag, WeatherStatusKeeper> {
+    public static class Serializer implements IAttachmentSerializer<WeatherStatusKeeper> {
 
         @Override
-        public @NotNull WeatherStatusKeeper read(@NotNull IAttachmentHolder holder, @NotNull Tag tag, HolderLookup.@NotNull Provider provider) {
+        public WeatherStatusKeeper read(IAttachmentHolder holder, ValueInput input) {
             if (!EclipticUtil.canSnowyBlockInteract()) return create();
-            Optional<WeatherStatusKeeper> result = CODEC.parse(provider.createSerializationContext(NbtOps.INSTANCE), tag).result();
-            return result.orElseGet(WeatherStatusKeeper::create);
+            Optional<WeatherStatusKeeper> snowyStatus = input.read("weather_status", CODEC);
+            return snowyStatus.orElseGet(WeatherStatusKeeper::create);
         }
 
         @Override
-        public Tag write(@NotNull WeatherStatusKeeper attachment, HolderLookup.@NotNull Provider provider) {
-            if (!EclipticUtil.canSnowyBlockInteract()) new CompoundTag();
-            if (attachment.cacheTag != null) return attachment.cacheTag;
-            Optional<Tag> result = CODEC.encodeStart(provider.createSerializationContext(NbtOps.INSTANCE), attachment).result();
-            if (result.orElse(null) instanceof CompoundTag compoundTag) {
-                attachment.cacheTag = compoundTag;
-                return compoundTag;
-            }
-            return new CompoundTag();
+        public boolean write(WeatherStatusKeeper attachment, ValueOutput output) {
+            if (!EclipticUtil.canSnowyBlockInteract()) return false;
+            output.storeNullable("weather_status", CODEC, attachment);
+            return false;
         }
+
+        //@Override
+        //public @NotNull WeatherStatusKeeper read(@NotNull IAttachmentHolder holder, @NotNull Tag tag, HolderLookup.@NotNull Provider provider) {
+        //    if (!EclipticUtil.canSnowyBlockInteract()) return create();
+        //    Optional<WeatherStatusKeeper> result = CODEC.parse(provider.createSerializationContext(NbtOps.INSTANCE), tag).result();
+        //    return result.orElseGet(WeatherStatusKeeper::create);
+        //}
+        //
+        //@Override
+        //public Tag write(@NotNull WeatherStatusKeeper attachment, HolderLookup.@NotNull Provider provider) {
+        //    if (!EclipticUtil.canSnowyBlockInteract()) new CompoundTag();
+        //    if (attachment.cacheTag != null) return attachment.cacheTag;
+        //    Optional<Tag> result = CODEC.encodeStart(provider.createSerializationContext(NbtOps.INSTANCE), attachment).result();
+        //    if (result.orElse(null) instanceof CompoundTag compoundTag) {
+        //        attachment.cacheTag = compoundTag;
+        //        return compoundTag;
+        //    }
+        //    return new CompoundTag();
+        //}
+
     }
 }

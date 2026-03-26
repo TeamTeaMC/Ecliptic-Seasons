@@ -1,0 +1,16 @@
+{
+  "season": "summer",
+  "name": "eclipticseasons:hot_grain_in_ear",
+  "color": "red",
+  "icon": {
+    "texture": "eclipticseasons:font/seasons_icons",
+    "width": 180,
+    "height": 120,
+    "i": 2,
+    "j": 1
+  },
+  "font": {
+    "id": "eclipticseasons:solar_icons",
+    "label": "i"
+  }
+}

@@ -7,17 +7,17 @@ import com.teamtea.eclipticseasons.api.data.climate.AgroClimaticZone;
 import com.teamtea.eclipticseasons.api.util.codec.CodecUtil;
 import com.teamtea.eclipticseasons.api.util.codec.ESExtraCodec;
 import com.teamtea.eclipticseasons.common.registry.ESRegistries;
-import net.minecraft.advancements.critereon.ItemPredicate;
-import net.minecraft.advancements.critereon.MinMaxBounds;
+import net.minecraft.advancements.criterion.ItemPredicate;
+import net.minecraft.advancements.criterion.MinMaxBounds;
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderGetter;
 import net.minecraft.core.HolderSet;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.tags.TagKey;
-import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.storage.loot.LootTable;
-import org.jetbrains.annotations.TestOnly;
+import net.minecraft.world.item.ItemStackTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +27,7 @@ public record SeasonQuest(
         Optional<SolarTerm> end,
         Optional<SolarTerm> start,
         List<ItemPredicate> need,
-        List<ItemStack> award,
+        List<ItemStackTemplate> award,
         Optional<Component> tittle,
         Optional<List<Component>> description,
         Optional<HolderSet<AgroClimaticZone>> climate,
@@ -43,7 +43,7 @@ public record SeasonQuest(
             ESExtraCodec.SOLAR_TERM.optionalFieldOf("end").forGetter(SeasonQuest::end),
             ESExtraCodec.SOLAR_TERM.optionalFieldOf("start").forGetter(SeasonQuest::start),
             ItemPredicate.CODEC.listOf().fieldOf("need").forGetter(SeasonQuest::need),
-            ItemStack.CODEC.listOf().fieldOf("award").forGetter(SeasonQuest::award),
+            ItemStackTemplate.CODEC.listOf().fieldOf("award").forGetter(SeasonQuest::award),
             ComponentSerialization.CODEC.optionalFieldOf("tittle").forGetter(SeasonQuest::tittle),
             ComponentSerialization.CODEC.listOf().optionalFieldOf("description").forGetter(SeasonQuest::description),
             CodecUtil.holderSetCodec(ESRegistries.AGRO_CLIMATE).optionalFieldOf("climate").forGetter(SeasonQuest::climate),
@@ -64,7 +64,7 @@ public record SeasonQuest(
         private SolarTerm end;
         private SolarTerm start;
         private List<ItemPredicate> need = new ArrayList<>();
-        private List<ItemStack> award = new ArrayList<>();
+        private List<ItemStackTemplate> award = new ArrayList<>();
         private Component tittle;
         private List<Component> description = new ArrayList<>();
         private HolderSet<AgroClimaticZone> climate;
@@ -92,23 +92,18 @@ public record SeasonQuest(
             return this;
         }
 
-        public Builder addNeed(Item need, int count) {
-            this.need.add(ItemPredicate.Builder.item().of(need).withCount(MinMaxBounds.Ints.exactly(count)).build());
+        public Builder addNeed(HolderGetter<Item> lookup, Item need, int count) {
+            this.need.add(ItemPredicate.Builder.item().of(lookup, need).withCount(MinMaxBounds.Ints.exactly(count)).build());
             return this;
         }
 
-        public Builder addNeed(TagKey<Item> need, int count) {
-            this.need.add(ItemPredicate.Builder.item().of(need).withCount(MinMaxBounds.Ints.exactly(count)).build());
-            return this;
-        }
-
-        public Builder addAward(ItemStack award) {
-            this.award.add(award);
+        public Builder addNeed(HolderGetter<Item> lookup, TagKey<Item> need, int count) {
+            this.need.add(ItemPredicate.Builder.item().of(lookup, need).withCount(MinMaxBounds.Ints.exactly(count)).build());
             return this;
         }
 
         public Builder addAward(Item award) {
-            this.award.add(award.getDefaultInstance());
+            this.award.add(new ItemStackTemplate(award));
             return this;
         }
 

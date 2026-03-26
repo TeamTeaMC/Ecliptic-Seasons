@@ -11,6 +11,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.neoforged.neoforge.attachment.IAttachmentHolder;
 import net.neoforged.neoforge.attachment.IAttachmentSerializer;
 import org.jetbrains.annotations.NotNull;
@@ -130,25 +132,38 @@ public class SnowyRemover {
     @Getter(AccessLevel.NONE)
     private transient CompoundTag cacheTag = null;
 
-    public static class Serializer implements IAttachmentSerializer<Tag, SnowyRemover> {
+    public static class Serializer implements IAttachmentSerializer<SnowyRemover> {
 
         @Override
-        public @NotNull SnowyRemover read(@NotNull IAttachmentHolder holder, @NotNull Tag tag, HolderLookup.@NotNull Provider provider) {
-            Optional<SnowyRemover> result = CODEC.parse(provider.createSerializationContext(NbtOps.INSTANCE), tag).result();
-            return result.orElseGet(SnowyRemover::empty);
+        public SnowyRemover read(IAttachmentHolder holder, ValueInput input) {
+            var snowyStatus = input.read("snowy_remover", CODEC);
+            return snowyStatus.orElseGet(SnowyRemover::empty);
         }
 
         @Override
-        public Tag write(@NotNull SnowyRemover attachment, HolderLookup.@NotNull Provider provider) {
-            if (attachment.cacheTag != null) {
-                return attachment.cacheTag;
-            }
-            Optional<Tag> result = CODEC.encodeStart(provider.createSerializationContext(NbtOps.INSTANCE), attachment).result();
-            if (result.orElse(null) instanceof CompoundTag compoundTag) {
-                attachment.cacheTag = compoundTag;
-                return compoundTag;
-            }
-            return new CompoundTag();
+        public boolean write(SnowyRemover attachment, ValueOutput output) {
+            output.storeNullable("snowy_remover", CODEC, attachment);
+            return false;
         }
+
+        //@Override
+        //public @NotNull SnowyRemover read(@NotNull IAttachmentHolder holder, @NotNull Tag tag, HolderLookup.@NotNull Provider provider) {
+        //    Optional<SnowyRemover> result = CODEC.parse(provider.createSerializationContext(NbtOps.INSTANCE), tag).result();
+        //    return result.orElseGet(SnowyRemover::empty);
+        //}
+        //
+        //@Override
+        //public Tag write(@NotNull SnowyRemover attachment, HolderLookup.@NotNull Provider provider) {
+        //    if (attachment.cacheTag != null) {
+        //        return attachment.cacheTag;
+        //    }
+        //    Optional<Tag> result = CODEC.encodeStart(provider.createSerializationContext(NbtOps.INSTANCE), attachment).result();
+        //    if (result.orElse(null) instanceof CompoundTag compoundTag) {
+        //        attachment.cacheTag = compoundTag;
+        //        return compoundTag;
+        //    }
+        //    return new CompoundTag();
+        //}
+
     }
 }

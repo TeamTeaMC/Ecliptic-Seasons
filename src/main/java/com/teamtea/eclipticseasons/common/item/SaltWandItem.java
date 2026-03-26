@@ -15,6 +15,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -47,7 +48,7 @@ public class SaltWandItem extends Item {
                 itemInHand.remove(DataComponentTypeRegistry.CLICK_POS);
                 doPos(serverLevel, last, clickedPos, itemInHand, player, shiftKeyDown, false);
             } else {
-                if (player != null) player.displayClientMessage(
+                if (player != null) ((ServerPlayer)player).sendSystemMessage(
                         Component.translatable("info.eclipticseasons.item.sal_wand.select_first", clickedPos.getX(), clickedPos.getY(), clickedPos.getZ()), false
                 );
                 itemInHand.set(DataComponentTypeRegistry.CLICK_POS, new ClickPos(clickedPos));
@@ -67,12 +68,12 @@ public class SaltWandItem extends Item {
                 continue;
             }
 
-            ChunkPos chunkPos = new ChunkPos(blockPos);
-            long aLong = chunkPos.toLong();
+            ChunkPos chunkPos =  ChunkPos.containing(blockPos);
+            long aLong = chunkPos.pack();
             NoneSnowArea noneSnowArea;
             if (map.containsKey(aLong)) noneSnowArea = map.get(aLong);
             else {
-                int x = chunkPos.x, z = chunkPos.z;
+                int x = chunkPos.x(), z = chunkPos.z();
                 LevelChunk levelChunk = level.getChunk(x, z);
                 noneSnowArea = levelChunk.getData(AttachmentRegistry.NONE_SNOW_AREA);
                 map.put(aLong, noneSnowArea);
@@ -85,7 +86,7 @@ public class SaltWandItem extends Item {
         if (!EclipticUtil.canSnowyBlockInteract()) {
             HashSet<ServerPlayer> players = new HashSet<>();
             for (LevelChunk levelChunk : chunkPosSet) {
-                levelChunk.setUnsaved(true);
+                levelChunk.markUnsaved();
                 levelChunk.syncData(AttachmentRegistry.NONE_SNOW_AREA);
                 players.addAll(level.getChunkSource().chunkMap.getPlayers(levelChunk.getPos(), false));
             }
@@ -93,7 +94,7 @@ public class SaltWandItem extends Item {
         }
         chunkPosSet.clear();
         map.clear();
-        if (player != null && !silent) player.displayClientMessage(
+        if (player != null && !silent) ((ServerPlayer)player).sendSystemMessage(
                 Component.translatable("info.eclipticseasons.item.sal_wand.apply", count), false
         );
         if (player == null || !player.isCreative())
@@ -101,12 +102,13 @@ public class SaltWandItem extends Item {
     }
 
 
+
     @Override
-    public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
-        super.inventoryTick(stack, level, entity, slotId, isSelected);
-        if (entity instanceof ServerPlayer serverPlayer
+    public void inventoryTick(ItemStack itemStack, ServerLevel level, Entity owner, @org.jspecify.annotations.Nullable EquipmentSlot slot) {
+        super.inventoryTick(itemStack, level, owner, slot);
+        if (owner instanceof ServerPlayer serverPlayer
                 && level instanceof ServerLevel serverLevel) {
-            doPos(serverLevel, serverPlayer.getOnPos(), serverPlayer.getOnPos().above(2), stack, serverPlayer, serverPlayer.isShiftKeyDown(), true);
+            doPos(serverLevel, serverPlayer.getOnPos(), serverPlayer.getOnPos().above(2), itemStack, serverPlayer, serverPlayer.isShiftKeyDown(), true);
         }
     }
 }

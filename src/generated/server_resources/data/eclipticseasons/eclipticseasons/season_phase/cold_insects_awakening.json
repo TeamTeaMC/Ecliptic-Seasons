@@ -1,0 +1,15 @@
+{
+  "season": "spring",
+  "name": "eclipticseasons:cold_insects_awakening",
+  "color": "dark_green",
+  "icon": {
+    "texture": "eclipticseasons:font/seasons_icons",
+    "width": 180,
+    "height": 120,
+    "i": 2
+  },
+  "font": {
+    "id": "eclipticseasons:solar_icons",
+    "label": "c"
+  }
+}

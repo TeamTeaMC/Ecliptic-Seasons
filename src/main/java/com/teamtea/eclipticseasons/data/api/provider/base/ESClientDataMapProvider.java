@@ -8,14 +8,13 @@ import com.google.gson.JsonElement;
 import com.google.gson.stream.JsonWriter;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
-import net.minecraft.Util;
+import net.minecraft.util.Util;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.RegistryOps;
-import net.minecraft.resources.ResourceLocation;
-import net.neoforged.neoforge.common.data.ExistingFileHelper;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.ByteArrayOutputStream;
@@ -32,17 +31,15 @@ public abstract class ESClientDataMapProvider<T> implements DataProvider {
 
     private final PackOutput output;
     protected final String modid;
-    public final ExistingFileHelper helper;
 
-    protected final Map<ResourceLocation, Supplier<T>> outMap;
+    protected final Map<Identifier, Supplier<T>> outMap;
     private final String type;
     private final Codec<T> codec;
-    protected   CompletableFuture<HolderLookup.Provider> registries;
+    protected CompletableFuture<HolderLookup.Provider> registries;
 
-    public ESClientDataMapProvider(PackOutput output, String modid, ExistingFileHelper helper, CompletableFuture<HolderLookup.Provider> registries, String type, Codec<T> codec) {
+    public ESClientDataMapProvider(PackOutput output, String modid, CompletableFuture<HolderLookup.Provider> registries, String type, Codec<T> codec) {
         this.output = output;
         this.modid = modid;
-        this.helper = helper;
         outMap = new HashMap<>();
         this.type = type;
         this.codec = codec;
@@ -52,23 +49,23 @@ public abstract class ESClientDataMapProvider<T> implements DataProvider {
     protected abstract void gather(HolderLookup.Provider provider);
 
     protected void add(String path, T t) {
-        this.outMap.put(ResourceLocation.fromNamespaceAndPath(modid, path), () -> t);
+        this.outMap.put(Identifier.fromNamespaceAndPath(modid, path), () -> t);
     }
 
-    protected void add(ResourceLocation path, T t) {
+    protected void add(Identifier path, T t) {
         this.outMap.put(path, () -> t);
     }
 
     protected void add(String path, Supplier<T> t) {
-        this.outMap.put(ResourceLocation.fromNamespaceAndPath(modid, path), t);
+        this.outMap.put(Identifier.fromNamespaceAndPath(modid, path), t);
     }
 
-    protected void add(ResourceLocation path, Supplier<T> t) {
+    protected void add(Identifier path, Supplier<T> t) {
         this.outMap.put(path, t);
     }
 
 
-    protected Path resolvePath(ResourceLocation id) {
+    protected Path resolvePath(Identifier id) {
         return this.output.getOutputFolder(PackOutput.Target.RESOURCE_PACK)
                 .resolve(id.getNamespace())
                 .resolve(type)

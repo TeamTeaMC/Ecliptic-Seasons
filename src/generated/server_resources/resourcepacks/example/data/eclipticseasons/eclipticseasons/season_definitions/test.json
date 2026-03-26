@@ -1,0 +1,190 @@
+{
+  "biomes": "minecraft:plains",
+  "changes": {
+    "seasons": {
+      "spring": {
+        "target": {
+          "blocks": "minecraft:grass_block"
+        },
+        "place": [
+          {
+            "block": {
+              "Name": "minecraft:short_grass"
+            },
+            "weight": 22,
+            "conditions": {
+              "above": true,
+              "type": "empty_above"
+            },
+            "offset": [
+              0,
+              1,
+              0
+            ]
+          },
+          {
+            "parts": [
+              {
+                "block": {
+                  "Properties": {
+                    "age": "7"
+                  },
+                  "Name": "minecraft:pumpkin_stem"
+                }
+              },
+              {
+                "block": {
+                  "Name": "minecraft:pumpkin"
+                }
+              }
+            ],
+            "conditions": {
+              "above": true,
+              "type": "empty_above"
+            },
+            "offset": [
+              0,
+              1,
+              0
+            ],
+            "type": "multi_blocks"
+          },
+          {
+            "feature": "minecraft:pumpkin",
+            "weight": 1,
+            "conditions": {
+              "above": true,
+              "type": "empty_above"
+            },
+            "offset": [
+              0,
+              1,
+              0
+            ],
+            "type": "feature"
+          },
+          {
+            "feature": "minecraft:bamboo_vegetation",
+            "weight": 1,
+            "conditions": {
+              "above": true,
+              "type": "empty_above"
+            },
+            "offset": [
+              0,
+              1,
+              0
+            ],
+            "type": "feature"
+          },
+          {
+            "block": {
+              "Name": "minecraft:dandelion"
+            },
+            "weight": 1,
+            "conditions": {
+              "above": true,
+              "type": "empty_above"
+            },
+            "offset": [
+              0,
+              1,
+              0
+            ]
+          },
+          {
+            "block": {
+              "Name": "minecraft:oxeye_daisy"
+            },
+            "weight": 1,
+            "conditions": {
+              "above": true,
+              "type": "empty_above"
+            },
+            "offset": [
+              0,
+              1,
+              0
+            ]
+          }
+        ],
+        "fixed_seed": true
+      },
+      "summer": {
+        "target": {
+          "blocks": "minecraft:short_grass"
+        },
+        "place": {
+          "parts": [
+            {
+              "block": {
+                "Properties": {
+                  "half": "upper"
+                },
+                "Name": "minecraft:tall_grass"
+              }
+            },
+            {
+              "block": {
+                "Properties": {
+                  "half": "lower"
+                },
+                "Name": "minecraft:tall_grass"
+              }
+            }
+          ],
+          "conditions": {
+            "above": true,
+            "type": "empty_above"
+          },
+          "type": "multi_blocks"
+        },
+        "fixed_seed": true
+      },
+      "autumn": [
+        {
+          "target": {
+            "blocks": "minecraft:tall_grass",
+            "state": {
+              "half": "lower"
+            }
+          },
+          "place": {
+            "block": {
+              "Name": "minecraft:short_grass"
+            }
+          }
+        },
+        {
+          "target": {
+            "blocks": "minecraft:tall_grass",
+            "state": {
+              "half": "upper"
+            }
+          },
+          "place": {}
+        }
+      ],
+      "winter": [
+        {
+          "target": {
+            "blocks": "minecraft:short_grass"
+          },
+          "place": []
+        },
+        {
+          "target": {
+            "blocks": "minecraft:dandelion"
+          },
+          "place": []
+        },
+        {
+          "target": {
+            "blocks": "minecraft:oxeye_daisy"
+          },
+          "place": []
+        }
+      ]
+    }
+  }
+}

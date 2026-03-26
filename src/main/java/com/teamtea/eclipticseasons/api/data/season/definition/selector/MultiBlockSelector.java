@@ -13,8 +13,8 @@ import lombok.Singular;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
@@ -49,7 +49,7 @@ public class MultiBlockSelector implements IChangeSelector {
     private final Optional<ResourceKey<LootTable>> loot = Optional.empty();
 
     @Override
-    public ResourceLocation getType() {
+    public Identifier getType() {
         return ChangeSelectors.MULTI_BLOCKS;
     }
 

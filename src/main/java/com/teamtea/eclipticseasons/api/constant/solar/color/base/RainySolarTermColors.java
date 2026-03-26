@@ -47,20 +47,20 @@ public enum RainySolarTermColors implements SolarTermColor {
     RainySolarTermColors(int rainyColorIn, float rainyMixIn, int birchColorIn, float birchAlphaIn) {
         this.rainyColor = rainyColorIn;
         this.rainyMix = rainyMixIn;
-        this.birchColor = ColorHelper.simplyMixColor(birchColorIn, birchAlphaIn, FoliageColor.getDefaultColor(), 1.0F - birchAlphaIn);
+        this.birchColor = ColorHelper.simplyMixColor(birchColorIn, birchAlphaIn, FoliageColor.FOLIAGE_DEFAULT, 1.0F - birchAlphaIn);
     }
 
     RainySolarTermColors(int rainyColorIn, float rainyMixIn) {
         this.rainyColor = rainyColorIn;
         this.rainyMix = rainyMixIn;
-        this.birchColor = FoliageColor.getDefaultColor();
+        this.birchColor = FoliageColor.FOLIAGE_DEFAULT;
     }
 
     RainySolarTermColors() {
 
         this.rainyColor = 0;
         this.rainyMix = 0;
-        this.birchColor = FoliageColor.getDefaultColor();
+        this.birchColor = FoliageColor.FOLIAGE_DEFAULT;
     }
 
 

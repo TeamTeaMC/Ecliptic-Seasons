@@ -9,13 +9,13 @@ import com.teamtea.eclipticseasons.api.constant.climate.ISnowTerm;
 import com.teamtea.eclipticseasons.api.constant.climate.WeatherMode;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
+import com.teamtea.eclipticseasons.api.constant.solar.TimePeriod;
 import com.teamtea.eclipticseasons.client.core.ClientWeatherChecker;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
-import com.teamtea.eclipticseasons.common.core.solar.SolarAngelHelper;
 import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
 import com.teamtea.eclipticseasons.common.game.AnimalHooks;
 import com.teamtea.eclipticseasons.common.misc.MapColorReplacer;
@@ -24,22 +24,39 @@ import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.clock.WorldClock;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.timeline.Timeline;
+import net.minecraft.world.timeline.Timelines;
 
 import java.util.Optional;
 
 public class EclipticUtil {
 
     public static int getDayLengthInMinecraftStatic() {
-        return Level.TICKS_PER_DAY;
+        // Timelines
+        return 24000;
     }
 
     public static int getDayLengthInMinecraft(Level level) {
-        return getDayLengthInMinecraftStatic();
+        if (true)
+            return level
+                    .registryAccess()
+                    .get(Timelines.OVERWORLD_DAY)
+                    .map(Holder::value)
+                    .flatMap(Timeline::periodTicks)
+                    .orElse(getDayLengthInMinecraftStatic());
+        Optional<Holder<WorldClock>> worldClockHolder = level.dimensionType().defaultClock();
+        if (worldClockHolder.isEmpty()) return getDayLengthInMinecraftStatic();
+        var timelines = level.dimensionType().timelines()
+                .stream().filter((t) -> t.value().clock() == worldClockHolder.get()).findFirst();
+        if (timelines.isEmpty()) return getDayLengthInMinecraftStatic();
+        Holder<Timeline> timelineHolder = timelines.get();
+        return timelineHolder.value().periodTicks().orElse(getDayLengthInMinecraftStatic());
     }
 
     public static SolarTerm getNowSolarTerm(Level level) {
@@ -81,13 +98,8 @@ public class EclipticUtil {
     }
 
     public static boolean isDay(Level level) {
-        long dayTime = level.dimensionType().fixedTime().orElse(SolarAngelHelper.getSolarAngelTime(level, level.getDayTime()));
-        long termTime = getNowSolarTerm(level).getDayTime();
-        long halfTermTime = termTime / 2;
-        if (termTime <= 12000) {
-            return 6000 - (halfTermTime) < dayTime && dayTime < 6000 + (halfTermTime);
-        } else return dayTime >= EclipticUtil.getDayLengthInMinecraft(level) + (6000 - (halfTermTime))
-                || dayTime <= 6000 + (halfTermTime);
+        TimePeriod timePeriod = TimePeriod.fromTimeOfDay(SimpleUtil.getTimeOfDay(level));
+        return timePeriod.ordinal() < TimePeriod.DUSK.ordinal();
     }
 
     public static boolean isNight(Level level) {
@@ -100,15 +112,15 @@ public class EclipticUtil {
     }
 
     public static boolean isNoon(Level level) {
-        long dayTime = level.dimensionType().fixedTime().orElse(SolarAngelHelper.getSolarAngelTime(level, level.getDayTime()));
+        // long dayTime = level.dimensionType().fixedTime().orElse(SolarAngelHelper.getSolarAngelTime(level, level.getDayTime()));
+        long dayTime = level.getDefaultClockTime();
         long termTime = getNowSolarTerm(level).getDayTime();
         return 6000 - (termTime / 6) < dayTime && dayTime < 6000 + (termTime / 4);
     }
 
     public static boolean isEvening(Level level) {
-        long dayTime = level.dimensionType().fixedTime().orElse(SolarAngelHelper.getSolarAngelTime(level, level.getDayTime()));
-        long termTime = getNowSolarTerm(level).getDayTime();
-        return 6000 + (termTime * 2 / 5) < dayTime && dayTime < 6000 + (termTime / 2) + (24000 - termTime) * 3 / 4;
+        TimePeriod timePeriod = TimePeriod.fromTimeOfDay(SimpleUtil.getTimeOfDay(level));
+        return timePeriod == TimePeriod.DUSK || timePeriod == TimePeriod.NIGHT;
     }
 
     public static boolean useSolarWeather() {
@@ -184,7 +196,8 @@ public class EclipticUtil {
                 if (MapChecker.isValidDimension(level)
                         && CommonConfig.Season.daylightChange.get()
                         && SolarHolders.getSaveData(level) instanceof SolarDataManager data) {
-                    long worldTime = level.getDayTime();
+                    // long worldTime = level.getDayTime();
+                    long worldTime = level.getDefaultClockTime();
                     int dayLevelTime = Math.toIntExact((worldTime + 18000) % EclipticUtil.getDayLengthInMinecraft(level)); // 0 for noon; 6000 for sunset; 18000 for sunrise.
                     return dayLevelTime > 12000 && dayLevelTime <= 18000 && data.isTodayLastDay() ?
                             data.getNextSolarTerm().getDayTime() :
@@ -400,7 +413,7 @@ public class EclipticUtil {
                 && isNoon(level)
                 && level.getBrightness(LightLayer.SKY, blockPos.above()) > 12 ?
                 solarTerm.getTemperatureChange() / 2 : 0;
-        return biome.getTemperature(blockPos) +
+        return biome.getTemperature(blockPos, level.getSeaLevel()) +
                 BiomeClimateManager.getBiomeClimateSettings(biome, isServer).getTemperatureChange(solarTerm) + modify;
     }
 
@@ -484,6 +497,7 @@ public class EclipticUtil {
         float r = (getDownfallFloat(level, solarTerm, standBiome, pos, serverSide) * 1.5f + biomeRain.getRainChance() * 0.5f) / 2f;
         return Humidity.getFloatHumidLevel(r, t);
     }
+
     public static boolean maySnow(Level level, BlockPos pos) {
         Biome biome = MapChecker.getSurfaceBiome(level, pos).value();
         boolean server = level instanceof ServerLevel;

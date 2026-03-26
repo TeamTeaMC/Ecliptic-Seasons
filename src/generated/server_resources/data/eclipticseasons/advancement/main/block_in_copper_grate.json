@@ -1,0 +1,61 @@
+{
+  "parent": "eclipticseasons:main/copper_grate",
+  "criteria": {
+    "core_require": {
+      "conditions": {
+        "location": [
+          {
+            "condition": "minecraft:location_check",
+            "predicate": {
+              "block": {
+                "blocks": [
+                  "eclipticseasons:block_in_copper_grate_block",
+                  "eclipticseasons:block_in_exposed_copper_grate_block",
+                  "eclipticseasons:block_in_weathered_copper_grate_block",
+                  "eclipticseasons:block_in_oxidized_copper_grate_block",
+                  "eclipticseasons:waxed_block_in_copper_grate_block",
+                  "eclipticseasons:waxed_block_in_exposed_copper_grate_block",
+                  "eclipticseasons:waxed_block_in_weathered_copper_grate_block",
+                  "eclipticseasons:waxed_block_in_oxidized_copper_grate_block",
+                  "eclipticseasons:block_in_wooden_grate_block"
+                ]
+              }
+            }
+          },
+          {
+            "condition": "minecraft:match_tool",
+            "predicate": {}
+          }
+        ]
+      },
+      "trigger": "minecraft:item_used_on_block"
+    },
+    "parent_need": {
+      "conditions": {
+        "parent": "eclipticseasons:main/copper_grate"
+      },
+      "trigger": "eclipticseasons:parent"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancement.eclipticseasons.block_in_copper_grate.desc"
+    },
+    "icon": {
+      "id": "minecraft:sponge"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "advancement.eclipticseasons.block_in_copper_grate"
+    }
+  },
+  "requirements": [
+    [
+      "parent_need"
+    ],
+    [
+      "core_require"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

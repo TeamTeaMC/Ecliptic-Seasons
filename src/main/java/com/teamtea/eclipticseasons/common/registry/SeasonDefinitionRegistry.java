@@ -9,8 +9,8 @@ import com.teamtea.eclipticseasons.api.data.season.definition.condition.EmptyAbo
 import com.teamtea.eclipticseasons.api.data.season.definition.selector.BlockSelector;
 import com.teamtea.eclipticseasons.api.data.season.definition.selector.FeatureSelector;
 import com.teamtea.eclipticseasons.api.data.season.definition.selector.MultiBlockSelector;
-import net.minecraft.advancements.critereon.BlockPredicate;
-import net.minecraft.advancements.critereon.StatePropertiesPredicate;
+import net.minecraft.advancements.criterion.BlockPredicate;
+import net.minecraft.advancements.criterion.StatePropertiesPredicate;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.Vec3i;
 import net.minecraft.core.registries.Registries;
@@ -36,6 +36,7 @@ public class SeasonDefinitionRegistry {
 
     public static void bootstrap2(BootstrapContext<SeasonDefinition> context) {
         var holderGetter = context.lookup(Registries.BIOME);
+        var blockHolderGetter = context.lookup(Registries.BLOCK);
         var placedFeatureHolderGetter = context.lookup(Registries.CONFIGURED_FEATURE);
 
         HolderSet.Direct<Biome> plains = HolderSet.direct(holderGetter.getOrThrow(Biomes.PLAINS));
@@ -46,7 +47,7 @@ public class SeasonDefinitionRegistry {
                 SolarTermValueMap.<List<ChangeMode>>builder()
                         .putSeason(Season.SPRING, List.of(
                                 ChangeMode.builder()
-                                        .original(BlockPredicate.Builder.block().of(Blocks.GRASS_BLOCK).build())
+                                        .original(BlockPredicate.Builder.block().of(blockHolderGetter,Blocks.GRASS_BLOCK).build())
                                         .fixedSeed(true)
                                         .chance(1 / 16f)
                                         .selector(BlockSelector.builder().conditions(condition)
@@ -61,7 +62,7 @@ public class SeasonDefinitionRegistry {
                                                         .build())
                                                 .offset(Optional.of(above))
                                                 .build())
-                                        .selector(FeatureSelector.builder().conditions(condition).feature(placedFeatureHolderGetter.getOrThrow(VegetationFeatures.PATCH_PUMPKIN)).weight(1).offset(Optional.of(above)).build())
+                                        .selector(FeatureSelector.builder().conditions(condition).feature(placedFeatureHolderGetter.getOrThrow(VegetationFeatures.PUMPKIN)).weight(1).offset(Optional.of(above)).build())
                                         .selector(FeatureSelector.builder().conditions(condition).feature(placedFeatureHolderGetter.getOrThrow(VegetationFeatures.BAMBOO_VEGETATION)).weight(1).offset(Optional.of(above)).build())
                                         .selector(BlockSelector.builder().conditions(condition).state(Optional.of(Blocks.DANDELION.defaultBlockState())).weight(1).offset(Optional.of(above)).build())
                                         .selector(BlockSelector.builder().conditions(condition).state(Optional.of(Blocks.OXEYE_DAISY.defaultBlockState())).weight(1).offset(Optional.of(above)).build())
@@ -69,7 +70,7 @@ public class SeasonDefinitionRegistry {
                         ))
                         .putSeason(Season.SUMMER, List.of(
                                 ChangeMode.builder()
-                                        .original(BlockPredicate.Builder.block().of(Blocks.SHORT_GRASS).build())
+                                        .original(BlockPredicate.Builder.block().of(blockHolderGetter,Blocks.SHORT_GRASS).build())
                                         .fixedSeed(true)
                                         .chance(1 / 16f)
                                         .selector(MultiBlockSelector.builder()
@@ -85,13 +86,13 @@ public class SeasonDefinitionRegistry {
                         ))
                         .putSeason(Season.AUTUMN, List.of(
                                 ChangeMode.builder()
-                                        .original(BlockPredicate.Builder.block().of(Blocks.TALL_GRASS).setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(DoublePlantBlock.HALF, DoubleBlockHalf.LOWER)).build())
+                                        .original(BlockPredicate.Builder.block().of(blockHolderGetter,Blocks.TALL_GRASS).setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(DoublePlantBlock.HALF, DoubleBlockHalf.LOWER)).build())
                                         .fixedSeed(false)
                                         .chance(1 / 16f)
                                         .selector(BlockSelector.builder().state(Optional.of(Blocks.SHORT_GRASS.defaultBlockState())).build())
                                         .build(),
                                 ChangeMode.builder()
-                                        .original(BlockPredicate.Builder.block().of(Blocks.TALL_GRASS).setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(DoublePlantBlock.HALF, DoubleBlockHalf.UPPER)).build())
+                                        .original(BlockPredicate.Builder.block().of(blockHolderGetter,Blocks.TALL_GRASS).setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(DoublePlantBlock.HALF, DoubleBlockHalf.UPPER)).build())
                                         .fixedSeed(false)
                                         .chance(1 / 16f)
                                         .selector(BlockSelector.builder().build())
@@ -99,17 +100,17 @@ public class SeasonDefinitionRegistry {
                         )
                         .putSeason(Season.WINTER, List.of(
                                 ChangeMode.builder()
-                                        .original(BlockPredicate.Builder.block().of(Blocks.SHORT_GRASS).build())
+                                        .original(BlockPredicate.Builder.block().of(blockHolderGetter,Blocks.SHORT_GRASS).build())
                                         .fixedSeed(false)
                                         .chance(1 / 16f)
                                         .build(),
                                 ChangeMode.builder()
-                                        .original(BlockPredicate.Builder.block().of(Blocks.DANDELION).build())
+                                        .original(BlockPredicate.Builder.block().of(blockHolderGetter,Blocks.DANDELION).build())
                                         .fixedSeed(false)
                                         .chance(1 / 16f)
                                         .build(),
                                 ChangeMode.builder()
-                                        .original(BlockPredicate.Builder.block().of(Blocks.OXEYE_DAISY).build())
+                                        .original(BlockPredicate.Builder.block().of(blockHolderGetter,Blocks.OXEYE_DAISY).build())
                                         .fixedSeed(false)
                                         .chance(1 / 16f)
                                         .build()

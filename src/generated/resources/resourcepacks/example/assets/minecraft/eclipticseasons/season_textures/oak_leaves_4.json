@@ -3,6 +3,7 @@
   "biomes": "#eclipticseasons:rain/seasonal",
   "slices": [
     {
+      "season": "spring",
       "transition_textures": [
         [
           {
@@ -20,8 +21,7 @@
             "all": "minecraft:block/spruce_leaves"
           }
         ]
-      ],
-      "season": "spring"
+      ]
     }
   ]
 }

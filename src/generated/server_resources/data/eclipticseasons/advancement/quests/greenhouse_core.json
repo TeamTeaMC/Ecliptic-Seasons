@@ -1,0 +1,102 @@
+{
+  "parent": "eclipticseasons:main/greenhouse_core_container",
+  "criteria": {
+    "core_require_autumn": {
+      "conditions": {
+        "location": [
+          {
+            "condition": "minecraft:location_check",
+            "predicate": {
+              "block": {
+                "blocks": "eclipticseasons:autumn_greenhouse_core"
+              }
+            }
+          },
+          {
+            "condition": "minecraft:match_tool",
+            "predicate": {}
+          }
+        ]
+      },
+      "trigger": "minecraft:item_used_on_block"
+    },
+    "core_require_spring": {
+      "conditions": {
+        "location": [
+          {
+            "condition": "minecraft:location_check",
+            "predicate": {
+              "block": {
+                "blocks": "eclipticseasons:spring_greenhouse_core"
+              }
+            }
+          },
+          {
+            "condition": "minecraft:match_tool",
+            "predicate": {}
+          }
+        ]
+      },
+      "trigger": "minecraft:item_used_on_block"
+    },
+    "core_require_summer": {
+      "conditions": {
+        "location": [
+          {
+            "condition": "minecraft:location_check",
+            "predicate": {
+              "block": {
+                "blocks": "eclipticseasons:summer_greenhouse_core"
+              }
+            }
+          },
+          {
+            "condition": "minecraft:match_tool",
+            "predicate": {}
+          }
+        ]
+      },
+      "trigger": "minecraft:item_used_on_block"
+    },
+    "core_require_winter": {
+      "conditions": {
+        "location": [
+          {
+            "condition": "minecraft:location_check",
+            "predicate": {
+              "block": {
+                "blocks": "eclipticseasons:winter_greenhouse_core"
+              }
+            }
+          },
+          {
+            "condition": "minecraft:match_tool",
+            "predicate": {}
+          }
+        ]
+      },
+      "trigger": "minecraft:item_used_on_block"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancement.eclipticseasons.greenhouse_core.desc"
+    },
+    "icon": {
+      "id": "eclipticseasons:spring_greenhouse_essence"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "advancement.eclipticseasons.greenhouse_core"
+    }
+  },
+  "requirements": [
+    [
+      "core_require_spring",
+      "core_require_summer",
+      "core_require_autumn",
+      "core_require_winter"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

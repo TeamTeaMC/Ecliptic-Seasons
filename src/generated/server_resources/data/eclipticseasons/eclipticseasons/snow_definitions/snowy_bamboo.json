@@ -1,0 +1,7 @@
+{
+  "blocks": "minecraft:bamboo",
+  "flag": 1100,
+  "snow_passable": true,
+  "mid": "eclipticseasons:snowy/bamboo_top",
+  "mid2": "eclipticseasons:snowy/bamboo"
+}

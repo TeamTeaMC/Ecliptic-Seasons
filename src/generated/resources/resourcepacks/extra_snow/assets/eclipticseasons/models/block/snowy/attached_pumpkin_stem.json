@@ -1,7 +1,0 @@
-{
-  "parent": "eclipticseasons:block/snowy/template/stem_fruit",
-  "textures": {
-    "stem": "eclipticseasons:block/snowy/stem",
-    "upperstem": "eclipticseasons:block/snowy/attached_stem"
-  }
-}

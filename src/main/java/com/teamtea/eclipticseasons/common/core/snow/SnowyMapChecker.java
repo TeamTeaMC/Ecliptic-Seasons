@@ -16,7 +16,8 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
+import net.minecraft.world.level.BlockAndLightGetter;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
@@ -25,6 +26,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraft.world.level.chunk.status.ChunkStatus;
 import net.minecraft.world.level.levelgen.Heightmap;
 import org.jetbrains.annotations.NotNull;
 
@@ -74,7 +76,7 @@ public class SnowyMapChecker {
         if (!EclipticUtil.canSnowyBlockInteract()) return;
 
         int biomeDataVersion = EclipticUtil.getBiomeDataVersion(level);
-        for (ChunkHolder chunk : level.getChunkSource().chunkMap.getChunks()) {
+        for (ChunkHolder chunk : level.getChunkSource().chunkMap.allChunksWithAtLeastStatus(ChunkStatus.FULL).toList()) {
             ChunkAccess latestChunk = chunk.getLatestChunk();
             if (latestChunk instanceof IChunkBiomeHolder chunkBiomeHolder) {
                 BiomeHolder biomeHolder = chunkBiomeHolder.eclipticseasons$getBiomeHolder();
@@ -95,7 +97,7 @@ public class SnowyMapChecker {
     public static void removeSnowyStatus(Level level, LevelChunk chunk, BlockPos pos) {
         if (EclipticUtil.canSnowyBlockInteract()) {
             SnowyStatusKeeper keeper = getSnowyStatusKeeper(chunk);
-            if (level.isClientSide) keeper.set(pos.asLong(), SnowyStatusKeeper.FLAG_NONE);
+            if (level.isClientSide()) keeper.set(pos.asLong(), SnowyStatusKeeper.FLAG_NONE);
             else keeper.set(pos, SnowyStatusKeeper.FLAG_NONE);
         }
     }
@@ -103,7 +105,7 @@ public class SnowyMapChecker {
     public static void setSnowyStatus(Level level, LevelChunk chunk, BlockPos pos) {
         if (EclipticUtil.canSnowyBlockInteract()) {
             SnowyStatusKeeper keeper = getSnowyStatusKeeper(chunk);
-            if (level.isClientSide) keeper.set(pos.asLong(), SnowyStatusKeeper.FLAG_SNOW);
+            if (level.isClientSide()) keeper.set(pos.asLong(), SnowyStatusKeeper.FLAG_SNOW);
             else keeper.set(pos, SnowyStatusKeeper.FLAG_SNOW);
         }
     }
@@ -257,11 +259,11 @@ public class SnowyMapChecker {
         }
     }
 
-    public static boolean isTooLight(BlockAndTintGetter level, BlockPos pos, BlockState state, int blockType) {
+    public static boolean isTooLight(BlockAndLightGetter level, BlockPos pos, BlockState state, int blockType) {
         return isTooLight(level, pos, null, state, blockType);
     }
 
-    public static boolean isTooLight(BlockAndTintGetter level, BlockPos pos, @Nullable BlockPos.MutableBlockPos mutableBlockPos, BlockState state, int blockType) {
+    public static boolean isTooLight(BlockAndLightGetter level, BlockPos pos, @Nullable BlockPos.MutableBlockPos mutableBlockPos, BlockState state, int blockType) {
         if (CommonConfig.Snow.notSnowyNearGlowingBlock.get()) {
             int aboveOffset = 1 - MapChecker.getSnowOffset(state, blockType);
             if (mutableBlockPos != null) {

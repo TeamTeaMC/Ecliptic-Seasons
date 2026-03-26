@@ -16,10 +16,10 @@ import com.teamtea.eclipticseasons.api.data.weather.CustomRainBuilder;
 import com.teamtea.eclipticseasons.api.data.weather.CustomSnowTerm;
 import com.teamtea.eclipticseasons.api.data.weather.WeatherRegion;
 import com.teamtea.eclipticseasons.api.data.weather.special_effect.WeatherEffect;
-import net.minecraft.Util;
+import net.minecraft.util.Util;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 
 public class ESRegistries {
@@ -56,13 +56,13 @@ public class ESRegistries {
 
     public static final ResourceKey<Registry<WeatherEffect>> WEATHER_EFFECT = ResourceKey.createRegistryKey(EclipticSeasons.rl("biome_rain_effect"));
 
-    public static <T> String createLangKey(ResourceKey<Registry<T>> registryResourceKey, ResourceLocation resourceLocation) {
-        // return resourceLocation.toLanguageKey(registryResourceKey.location().getPath());
-        return Util.makeDescriptionId(registryResourceKey.location().getPath(), resourceLocation);
+    public static <T> String createLangKey(ResourceKey<Registry<T>> registryResourceKey, Identifier Identifier) {
+        // return Identifier.toLanguageKey(registryResourceKey.identifier().getPath());
+        return Util.makeDescriptionId(registryResourceKey.identifier().getPath(), Identifier);
     }
 
-    public static <T> String createLangKey(ResourceKey<T> resourceLocation) {
-        // return resourceLocation.location().toLanguageKey(resourceLocation.registryKey().location().getPath());
-        return Util.makeDescriptionId(resourceLocation.registryKey().location().getPath(), resourceLocation.location());
+    public static <T> String createLangKey(ResourceKey<T> Identifier) {
+        // return Identifier.identifier().toLanguageKey(Identifier.registryKey().identifier().getPath());
+        return Util.makeDescriptionId(Identifier.registryKey().identifier().getPath(), Identifier.identifier());
     }
 }

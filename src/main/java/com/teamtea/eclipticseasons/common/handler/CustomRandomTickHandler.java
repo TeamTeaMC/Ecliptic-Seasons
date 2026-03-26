@@ -9,7 +9,7 @@ import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.level.GameRules;
+import net.minecraft.world.attribute.EnvironmentAttributes;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
@@ -17,6 +17,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.SnowLayerBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 
@@ -43,7 +44,7 @@ public final class CustomRandomTickHandler {
             if (belowState.is(Blocks.ICE)
                     && ((!(CommonConfig.Temperature.waterFreezesInFrozenBiomes.get() && biomeHolder.is(ClimateTypeBiomeTags.EXTREME_COLD))
                     || !biomeHolder.value().shouldFreeze(level, belowPos, false)))) {
-                if (level.dimensionType().ultraWarm()) level.removeBlock(belowPos, false);
+                if (level.environmentAttributes().getValue(EnvironmentAttributes.WATER_EVAPORATES, pos)) level.removeBlock(belowPos, false);
                 else level.setBlockAndUpdate(belowPos, Blocks.WATER.defaultBlockState());
             }
         }
@@ -55,8 +56,8 @@ public final class CustomRandomTickHandler {
         if (WeatherManager.getSnowStatus(level, biomeHolder, pos, EclipticUtil.isRainingOrSnowingWithSurfaceBiome(level, biomeHolder, pos)) == WeatherManager.SnowRenderStatus.SNOW) {
 
             // place snow
-            if (pos.getY() >= level.getMinBuildHeight() && pos.getY() < level.getMaxBuildHeight() && level.getBrightness(LightLayer.BLOCK, pos) < 10) {
-                int layers = level.getGameRules().getInt(GameRules.RULE_SNOW_ACCUMULATION_HEIGHT);
+            if (pos.getY() >= level.getMinY() && pos.getY() < level.getMaxY() && level.getBrightness(LightLayer.BLOCK, pos) < 10) {
+                int layers = level.getGameRules().get(GameRules.MAX_SNOW_ACCUMULATION_HEIGHT);
                 if (layers > 0) {
                     BlockState blockstate = level.getBlockState(pos);
                     if (blockstate.is(Blocks.SNOW)) {
@@ -74,7 +75,7 @@ public final class CustomRandomTickHandler {
 
             // place ice
             BlockPos below = pos.below();
-            if (below.getY() >= level.getMinBuildHeight() && below.getY() < level.getMaxBuildHeight() && level.getBrightness(LightLayer.BLOCK, below) < 10) {
+            if (below.getY() >= level.getMinY() && below.getY() < level.getMaxY() && level.getBrightness(LightLayer.BLOCK, below) < 10) {
                 BlockState blockstate = level.getBlockState(below);
                 FluidState fluidstate = level.getFluidState(below);
                 if (fluidstate.getType() == Fluids.WATER && blockstate.getBlock() instanceof LiquidBlock) {
@@ -91,8 +92,8 @@ public final class CustomRandomTickHandler {
     public static boolean checkExtraSnowCondition(ServerLevel level, Holder<Biome> biomeHolder, BlockPos pos) {
         if (CommonConfig.Temperature.snowDown.get()
                 && WeatherManager.getSnowStatus(level, biomeHolder, pos, EclipticUtil.isRainingOrSnowingWithSurfaceBiome(level, biomeHolder, pos)) == WeatherManager.SnowRenderStatus.SNOW) {
-            if (pos.getY() >= level.getMinBuildHeight()
-                    && pos.getY() < level.getMaxBuildHeight()
+            if (pos.getY() >= level.getMinY()
+                    && pos.getY() < level.getMaxY()
                     && level.getBrightness(LightLayer.BLOCK, pos) < 10) {
                 BlockState blockstate = level.getBlockState(pos);
                 if ((blockstate.isAir() || blockstate.is(Blocks.SNOW)) && Blocks.SNOW.defaultBlockState().canSurvive(level, pos)) {
@@ -111,8 +112,8 @@ public final class CustomRandomTickHandler {
         }
         if (CommonConfig.Temperature.snowDown.get()
                 && WeatherManager.getSnowStatus(level, biomeHolder, water, EclipticUtil.isRainingOrSnowingWithSurfaceBiome(level, biomeHolder, water)) == WeatherManager.SnowRenderStatus.SNOW) {
-            if (water.getY() >= level.getMinBuildHeight()
-                    && water.getY() < level.getMaxBuildHeight()
+            if (water.getY() >= level.getMinY()
+                    && water.getY() < level.getMaxY()
                     && level.getBrightness(LightLayer.BLOCK, water) < 10) {
                 BlockState blockstate = level.getBlockState(water);
                 FluidState fluidstate = level.getFluidState(water);

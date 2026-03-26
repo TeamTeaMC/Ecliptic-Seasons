@@ -26,7 +26,9 @@ public abstract class MixinLevelChunk {
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/levelgen/Heightmap;update(IIILnet/minecraft/world/level/block/state/BlockState;)Z", ordinal = 2),
             method = "setBlockState"
     )
-    public void eclipticseasons$server_setBlockState(BlockPos pos, BlockState state, boolean isMoving, CallbackInfoReturnable<BlockState> cir,
+    public void eclipticseasons$server_setBlockState(BlockPos pos, BlockState state,
+                                                     int flags,
+                                                     CallbackInfoReturnable<BlockState> cir,
                                                      @Local(ordinal = 1) BlockState oldState,
                                                      @Local Block block) {
         if (level != null) {

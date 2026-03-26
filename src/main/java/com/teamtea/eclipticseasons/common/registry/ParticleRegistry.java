@@ -16,7 +16,7 @@ import net.neoforged.neoforge.registries.RegisterEvent;
 import java.util.function.Function;
 
 @SuppressWarnings("removal")
-@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber
 public final class ParticleRegistry {
     public static final SimpleParticleType FIREFLY = new SimpleParticleType(false);
     public static final SimpleParticleType WILD_GOOSE = new SimpleParticleType(false);

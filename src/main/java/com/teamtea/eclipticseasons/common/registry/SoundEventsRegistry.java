@@ -8,7 +8,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.registries.RegisterEvent;
 
 @SuppressWarnings("removal")
-@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber
 public class SoundEventsRegistry {
     public final static SoundEvent spring_forest = SoundEvent.createVariableRangeEvent(EclipticSeasons.rl("ambient.spring_forest"));
     public final static SoundEvent garden_wind = SoundEvent.createVariableRangeEvent(EclipticSeasons.rl("ambient.garden_wind"));
@@ -26,16 +26,16 @@ public class SoundEventsRegistry {
     public static void blockRegister(RegisterEvent event) {
         // MultiPackResourceManager
         event.register(Registries.SOUND_EVENT, soundEventRegisterHelper -> {
-            soundEventRegisterHelper.register(spring_forest.getLocation(), spring_forest);
-            soundEventRegisterHelper.register(garden_wind.getLocation(), garden_wind);
-            soundEventRegisterHelper.register(night_river.getLocation(), night_river);
-            soundEventRegisterHelper.register(windy_leave.getLocation(), windy_leave);
-            soundEventRegisterHelper.register(winter_forest.getLocation(), winter_forest);
-            soundEventRegisterHelper.register(winter_cold.getLocation(), winter_cold);
-            soundEventRegisterHelper.register(wind_chimes.getLocation(), wind_chimes);
-            soundEventRegisterHelper.register(bamboo_wind_chimes.getLocation(), bamboo_wind_chimes);
-            soundEventRegisterHelper.register(paper_wind_chimes.getLocation(), paper_wind_chimes);
-            soundEventRegisterHelper.register(snowless_hometown.getLocation(), snowless_hometown);
+            soundEventRegisterHelper.register(spring_forest.location(), spring_forest);
+            soundEventRegisterHelper.register(garden_wind.location(), garden_wind);
+            soundEventRegisterHelper.register(night_river.location(), night_river);
+            soundEventRegisterHelper.register(windy_leave.location(), windy_leave);
+            soundEventRegisterHelper.register(winter_forest.location(), winter_forest);
+            soundEventRegisterHelper.register(winter_cold.location(), winter_cold);
+            soundEventRegisterHelper.register(wind_chimes.location(), wind_chimes);
+            soundEventRegisterHelper.register(bamboo_wind_chimes.location(), bamboo_wind_chimes);
+            soundEventRegisterHelper.register(paper_wind_chimes.location(), paper_wind_chimes);
+            soundEventRegisterHelper.register(snowless_hometown.location(), snowless_hometown);
         });
     }
 }

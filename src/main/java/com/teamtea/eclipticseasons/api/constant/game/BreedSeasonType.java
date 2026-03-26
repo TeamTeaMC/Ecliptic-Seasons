@@ -3,7 +3,7 @@ package com.teamtea.eclipticseasons.api.constant.game;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
 
@@ -25,9 +25,9 @@ public enum BreedSeasonType {
     ALL(new BreedSeasonInfo(15), EclipticSeasons.rl("breed/all_seasons"));
 
     private final BreedSeasonInfo info;
-    private final ResourceLocation res;
+    private final Identifier res;
 
-    BreedSeasonType(BreedSeasonInfo info, ResourceLocation res) {
+    BreedSeasonType(BreedSeasonInfo info, Identifier res) {
         this.info = info;
         this.res = res;
     }
@@ -36,7 +36,7 @@ public enum BreedSeasonType {
         return info;
     }
 
-    public ResourceLocation getRes() {
+    public Identifier getRes() {
         return res;
     }
 

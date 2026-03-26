@@ -9,9 +9,10 @@ import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
 import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
 import com.teamtea.eclipticseasons.common.misc.SimpleVoxelShapeUtils;
-import net.minecraft.advancements.critereon.BlockPredicate;
+import net.minecraft.advancements.criterion.BlockPredicate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -112,7 +113,8 @@ public class HygrometerBlock extends WallPlacedBlock {
             BlockPos checkPos = pos.relative(state.getValue(FACING));
             float chance = 0;
             for (int i = 0; i < 20; i++) {
-                chance += CropGrowthHandler.isInRoom(level, checkPos, level.getBlockState(checkPos), Optional.of(BlockPredicate.Builder.block().of(state.getBlock()).build())) ? 1 : 0;
+                chance += CropGrowthHandler.isInRoom(level, checkPos, level.getBlockState(checkPos), Optional.of(BlockPredicate.Builder.block().of(
+                        level.registryAccess().lookupOrThrow(Registries.BLOCK),state.getBlock()).build())) ? 1 : 0;
             }
             float humidityAt = EclipticUtil.getHumidityLevelAt(level, data.getSolarTerm(), CropGrowthHandler.getCropBiome(level, pos), pos, !level.isClientSide());
             if (chance > 8) {

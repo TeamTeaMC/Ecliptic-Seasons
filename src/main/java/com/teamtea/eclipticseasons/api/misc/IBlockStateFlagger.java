@@ -2,7 +2,7 @@ package com.teamtea.eclipticseasons.api.misc;
 
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.ApiStatus;
 

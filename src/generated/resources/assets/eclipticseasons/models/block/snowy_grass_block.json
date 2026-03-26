@@ -1,6 +1,0 @@
-{
-  "parent": "minecraft:block/grass_block_snow",
-  "textures": {
-    "top": "minecraft:block/snow"
-  }
-}

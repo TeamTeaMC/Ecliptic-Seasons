@@ -1,0 +1,27 @@
+{
+  "parent": "eclipticseasons:main/root",
+  "criteria": {
+    "heat_stroke": {
+      "trigger": "eclipticseasons:heat_stroke"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "advancement.eclipticseasons.heat_stroke.desc"
+    },
+    "hidden": true,
+    "icon": {
+      "id": "minecraft:magma_block"
+    },
+    "title": {
+      "translate": "advancement.eclipticseasons.heat_stroke"
+    }
+  },
+  "requirements": [
+    [
+      "heat_stroke"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

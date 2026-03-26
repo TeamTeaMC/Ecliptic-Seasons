@@ -6,10 +6,9 @@ import com.teamtea.eclipticseasons.api.misc.client.IExtraRendererContextOwner;
 import com.teamtea.eclipticseasons.api.misc.client.IFakeSnowHolder;
 import com.teamtea.eclipticseasons.api.misc.client.IMapSlice;
 import com.teamtea.eclipticseasons.api.misc.client.ISnowyGetter;
-import com.teamtea.eclipticseasons.client.core.ExtraRendererContext;
+import com.teamtea.eclipticseasons.client.core.context.ExtraRendererContext;
 import com.teamtea.eclipticseasons.common.core.map.*;
 import com.teamtea.eclipticseasons.common.core.snow.SnowyStatusKeeper;
-import it.unimi.dsi.fastutil.longs.Long2IntArrayMap;
 import it.unimi.dsi.fastutil.longs.Long2IntOpenHashMap;
 import net.caffeinemc.mods.sodium.client.world.LevelSlice;
 import net.caffeinemc.mods.sodium.client.world.cloned.ChunkRenderContext;
@@ -131,9 +130,8 @@ public abstract class MixinLevelSlice implements IMapSlice, IExtraRendererContex
     private void eclipticseasons$copySectionData(ChunkRenderContext context,
                                                  CallbackInfo ci) {
         // 注意别切到没有的维度了
-        // if (MapChecker.isValidDimension(level))
-        {
-            int maxH = level.getMaxBuildHeight();
+        if (MapChecker.isValidDimension(level)) {
+            int maxH = level.getMaxY();
             BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos();
             // SnowyRemover snowyRemover = level.getChunk(context.getOrigin().x(), context.getOrigin().z()).getData(EclipticSeasons.ModContents.SNOWY_REMOVER.get());
 
@@ -201,7 +199,7 @@ public abstract class MixinLevelSlice implements IMapSlice, IExtraRendererContex
     @Override
     public int getBlockHeight(BlockPos pos) {
         if (!this.volume.isInside(pos.getX(), pos.getY(), pos.getZ())) {
-            return level.getMaxBuildHeight() + 1;
+            return level.getMaxY() + 1;
         } else {
             int relBlockX = pos.getX() - this.originBlockX;
             int relBlockZ = pos.getZ() - this.originBlockZ;
@@ -217,7 +215,7 @@ public abstract class MixinLevelSlice implements IMapSlice, IExtraRendererContex
     @Override
     public int getSolidBlockHeight(BlockPos pos) {
         if (!this.volume.isInside(pos.getX(), pos.getY(), pos.getZ())) {
-            return level.getMaxBuildHeight() + 1;
+            return level.getMaxY() + 1;
         } else {
             int relBlockX = pos.getX() - this.originBlockX;
             int relBlockZ = pos.getZ() - this.originBlockZ;

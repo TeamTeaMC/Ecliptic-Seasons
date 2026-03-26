@@ -1,6 +1,0 @@
-{
-  "parent": "minecraft:block/potatoes_stage0",
-  "textures": {
-    "crop": "eclipticseasons:block/snowy/potatoes_stage0"
-  }
-}

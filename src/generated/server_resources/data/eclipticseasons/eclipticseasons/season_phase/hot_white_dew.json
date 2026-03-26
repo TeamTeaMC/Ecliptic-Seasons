@@ -1,0 +1,16 @@
+{
+  "season": "autumn",
+  "name": "eclipticseasons:hot_white_dew",
+  "color": "gold",
+  "icon": {
+    "texture": "eclipticseasons:font/seasons_icons",
+    "width": 180,
+    "height": 120,
+    "i": 2,
+    "j": 2
+  },
+  "font": {
+    "id": "eclipticseasons:solar_icons",
+    "label": "o"
+  }
+}

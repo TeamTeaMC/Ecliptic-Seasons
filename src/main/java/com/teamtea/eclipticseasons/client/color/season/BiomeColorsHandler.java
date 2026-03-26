@@ -20,6 +20,7 @@ import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.client.util.ColorHelper;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.config.ClientConfig;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
@@ -154,6 +155,56 @@ public class BiomeColorsHandler {
         return originColor;
     };
 
+    public static final ColorResolver DRY_FOLIAGE_COLOR = (biome, posX, posZ) ->
+    {
+        int originColor = biome.getDryFoliageColor();
+        if (ClientConfig.Renderer.seasonalGrassColorChange.get()) {
+            BiomeColor.Instance biomeColor = getBiomeColor(biome, originColor);
+            if (biomeColor != null) {
+                ColorMode.Instance instance = biomeColor.foliageColor().get(ClientCon.nowSolarTerm);
+                if (instance != null) {
+                    int color = ColorHelper.simplyMixColor(instance.value(), instance.mix(), originColor, Math.abs(1 - instance.mix()));
+                    if (ClientConfig.Renderer.smootherSeasonalGrassColorChange.get()) {
+                        ColorMode.Instance instance2 = biomeColor.foliageColor().get(ClientCon.nowSolarTerm.getLastSolarTerm());
+                        if (instance2 != null && !instance.equals(instance2)) {
+                            int color2 = ColorHelper.simplyMixColor(instance2.value(), instance2.mix(), originColor, Math.abs(1 - instance2.mix()));
+                            float progressFloat = ClientCon.progress / 100f;
+                            return ColorHelper.simplyMixColor(color, progressFloat, color2, 1 - progressFloat);
+                        }
+                    }
+                    return color;
+                }
+            }
+            TagKey<Biome> biomeTagKey = ((IBiomeTagHolder) (Object) biome).eclipticseasons$getBindColorTag();
+            if (ClientConfig.Renderer.smootherSeasonalGrassColorChange.get()) {
+                SolarTermColor colorInfo = ClientCon.nowSolarTerm.getSolarTermColor(biomeTagKey);
+                SolarTermColor colorInfo2 = ClientCon.nowSolarTerm.getLastSolarTerm().getSolarTermColor(biomeTagKey);
+                int color = ColorHelper.simplyMixColor(colorInfo.getLeaveColor(), colorInfo.getMix(), originColor, 1 - colorInfo.getMix());
+                int color2 = ColorHelper.simplyMixColor(colorInfo2.getLeaveColor(), colorInfo2.getMix(), originColor, 1 - colorInfo2.getMix());
+                float progressFloat = ClientCon.progress / 100f;
+                return ColorHelper.simplyMixColor(color, progressFloat, color2, 1 - progressFloat);
+            }
+            // if (needRefresh) {
+            //     reloadColors();
+            // }
+            double temperature = Mth.clamp(biome.getModifiedClimateSettings().temperature(), 0.0F, 1.0F);
+            double humidity = Mth.clamp(biome.getModifiedClimateSettings().downfall(), 0.0F, 1.0F);
+            humidity = humidity * temperature;
+            int i = (int) ((1.0D - temperature) * 255.0D);
+            int j = (int) ((1.0D - humidity) * 255.0D);
+            int k = j << 8 | i;
+            // TagKey<Biome> biomeTagKey = ((IBiomeTagHolder) (Object) biome).eclipticseasons$getBindColorTag();
+            int[] newFoliageBuffer = newFoliageBufferMap.getOrDefault(biomeTagKey, FoliageColor.pixels);
+            int color = k > newFoliageBuffer.length ? originColor : newFoliageBuffer[k];
+            // if (biomeTagKey != ClimateTypeBiomeTags.SEASONAL
+            //         && biomeTagKey != ClimateTypeBiomeTags.MONSOONAL) {
+            //     color = ColorHelper.simplyMixColor(color, 0.1f, originColor, 0.9f);
+            // }
+            return color;
+        }
+        return originColor;
+    };
+
     public static void reloadColors() {
         {
             for (TagKey<Biome> biomeTagKey : ClimateTypeBiomeTags.BIOME_COLOR_TYPES) {
@@ -192,18 +243,18 @@ public class BiomeColorsHandler {
     }
 
     // 当天气变得寒冷时，云杉可能会显得稍微暗淡一些。
-    public static int getSpruceColor(BlockState state, BlockAndTintGetter blockAndTintGetter, BlockPos pos, int tintIndex) {
-        return getLeavesColor(FoliageColor.getEvergreenColor(), SpruceLeavesColor.collectValues(), pos);
+    public static int getSpruceColor(BlockState state, BlockAndTintGetter blockAndTintGetter, BlockPos pos) {
+        return getLeavesColor(FoliageColor.FOLIAGE_EVERGREEN, SpruceLeavesColor.collectValues(), pos);
     }
 
     // 白桦在秋季通常会变色。它的叶子从绿色变成黄色或金色，有时甚至带有橙色的色调
-    public static int getBirchColor(BlockState state, BlockAndTintGetter blockAndTintGetter, BlockPos pos, int tintIndex) {
-        return getLeavesColor(FoliageColor.getBirchColor(), BirchLeavesColor.collectValues(), pos);
+    public static int getBirchColor(BlockState state, BlockAndTintGetter blockAndTintGetter, BlockPos pos) {
+        return getLeavesColor(FoliageColor.FOLIAGE_BIRCH, BirchLeavesColor.collectValues(), pos);
     }
 
     // 通常不会经历明显的季节性颜色变化，但是红树很难接受低温，这里因此可以改一下颜色,暗绿色或带棕色调
-    public static int getMangroveColor(BlockState state, BlockAndTintGetter blockAndTintGetter, BlockPos pos, int tintIndex) {
-        return getLeavesColor(FoliageColor.getMangroveColor(), MangroveLeavesColor.collectValues(), pos);
+    public static int getMangroveColor(BlockState state, BlockAndTintGetter blockAndTintGetter, BlockPos pos) {
+        return getLeavesColor(FoliageColor.FOLIAGE_MANGROVE, MangroveLeavesColor.collectValues(), pos);
     }
 
 
@@ -223,9 +274,9 @@ public class BiomeColorsHandler {
                     int color2 = ColorHelper.simplyMixColor(fixColor(values, pos, solarTerm2, leaveColor2.getColor()), leaveColor2.getMix(),
                             base, 1 - leaveColor2.getMix());
                     float progressFloat = ClientCon.progress / 100f;
-                    return ColorHelper.simplyMixColor(color, progressFloat, color2, 1 - progressFloat);
+                    return 0xff000000 | ColorHelper.simplyMixColor(color, progressFloat, color2, 1 - progressFloat);
                 }
-                return color;
+                return 0xff000000 | color;
             }
         }
         return base;
@@ -251,12 +302,15 @@ public class BiomeColorsHandler {
     public static int getSkyColor(Biome biome, int originColor) {
         return getBiomeColorInternal(biome, originColor, BiomeColorsHandler::getSkyColorMap);
     }
+
     public static int getWaterColor(Biome biome, int originColor) {
         return getBiomeColorInternal(biome, originColor, BiomeColorsHandler::getWaterColorMap);
     }
+
     public static int getWaterFogColor(Biome biome, int originColor) {
         return getBiomeColorInternal(biome, originColor, BiomeColorsHandler::getWaterFogColorMap);
     }
+
     public static int getFogColor(Biome biome, int originColor) {
         return getBiomeColorInternal(biome, originColor, BiomeColorsHandler::getFogColorMap);
     }
@@ -264,12 +318,15 @@ public class BiomeColorsHandler {
     public static Enum2ObjectMap<SolarTerm, ColorMode.Instance> getSkyColorMap(BiomeColor.Instance instance) {
         return instance.skyColor();
     }
+
     public static Enum2ObjectMap<SolarTerm, ColorMode.Instance> getWaterColorMap(BiomeColor.Instance instance) {
         return instance.waterColor();
     }
+
     public static Enum2ObjectMap<SolarTerm, ColorMode.Instance> getWaterFogColorMap(BiomeColor.Instance instance) {
         return instance.waterFogColor();
     }
+
     public static Enum2ObjectMap<SolarTerm, ColorMode.Instance> getFogColorMap(BiomeColor.Instance instance) {
         return instance.fogColor();
     }
@@ -319,7 +376,7 @@ public class BiomeColorsHandler {
                     return false;
                 }
                 //
-                //while (solidBlockHeight >= mutable.getY()) {
+                // while (solidBlockHeight >= mutable.getY()) {
                 //    mutable.setY(mutable.getY() + 1);
                 //    try {
                 //        BlockState blockState = ClientCon.getUseLevel().getBlockState(mutable);

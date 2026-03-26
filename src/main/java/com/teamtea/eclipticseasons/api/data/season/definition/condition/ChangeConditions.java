@@ -2,18 +2,18 @@ package com.teamtea.eclipticseasons.api.data.season.definition.condition;
 
 import com.mojang.serialization.MapCodec;
 import com.teamtea.eclipticseasons.EclipticSeasons;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class ChangeConditions {
 
-    public static final Map<ResourceLocation, MapCodec<? extends IChangeCondition>> CONDITIONS = new HashMap<>();
-    public static final ResourceLocation EMPTY_ABOVE = EclipticSeasons.rl("empty_above");
-    public static final ResourceLocation PRECIPITATION = EclipticSeasons.rl("precipitation");
-    public static final ResourceLocation TIME_PERIOD = EclipticSeasons.rl("time_period");
-    public static final ResourceLocation IS_SNOWY = EclipticSeasons.rl("is_snowy");
+    public static final Map<Identifier, MapCodec<? extends IChangeCondition>> CONDITIONS = new HashMap<>();
+    public static final Identifier EMPTY_ABOVE = EclipticSeasons.rl("empty_above");
+    public static final Identifier PRECIPITATION = EclipticSeasons.rl("precipitation");
+    public static final Identifier TIME_PERIOD = EclipticSeasons.rl("time_period");
+    public static final Identifier IS_SNOWY = EclipticSeasons.rl("is_snowy");
 
     static {
         CONDITIONS.put(EMPTY_ABOVE, EmptyAboveCondition.CODEC);

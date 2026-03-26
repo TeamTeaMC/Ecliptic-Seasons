@@ -5,7 +5,6 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.util.codec.ESExtraCodec;
-import com.teamtea.eclipticseasons.client.particle.FallenLeavesParticle;
 import com.teamtea.eclipticseasons.common.block.base.SimpleEntityBlock;
 import com.teamtea.eclipticseasons.common.block.blockentity.GreenHouseCoreBlockEntity;
 import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
@@ -14,17 +13,13 @@ import com.teamtea.eclipticseasons.common.registry.BlockRegistry;
 import com.teamtea.eclipticseasons.common.registry.ItemRegistry;
 import com.teamtea.eclipticseasons.common.registry.ParticleRegistry;
 import com.teamtea.eclipticseasons.config.ClientConfig;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ColorParticleOption;
-import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.FastColor;
-import net.minecraft.util.Mth;
+import net.minecraft.util.ARGB;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -87,7 +82,7 @@ public class GreenHouseCoreBlock extends SimpleEntityBlock {
 
     @Override
     public RenderShape getRenderShape(BlockState state) {
-        return RenderShape.ENTITYBLOCK_ANIMATED;
+        return RenderShape.INVISIBLE;
     }
 
     @Override
@@ -97,9 +92,9 @@ public class GreenHouseCoreBlock extends SimpleEntityBlock {
         int count = ClientConfig.Particle.SeasonGreenhouseParticleSpawnCount.get();
 
         Integer color = getSeason().getColor().getColor();
-        float r = FastColor.ARGB32.red(color) / 255.0F;
-        float g = FastColor.ARGB32.green(color) / 255.0F;
-        float b = FastColor.ARGB32.blue(color) / 255.0F;
+        float r = ARGB.red(color) / 255.0F;
+        float g = ARGB.green(color) / 255.0F;
+        float b = ARGB.blue(color) / 255.0F;
 
         if (!isPowered(state)) {
             Season current = getSeason();
@@ -107,7 +102,7 @@ public class GreenHouseCoreBlock extends SimpleEntityBlock {
             Pair<Season, Integer> currentSeason = GreenHouseCoreBlockEntity.getCurrentSeason(level, pos);
 
             boolean active = currentSeason.getFirst() == current
-                    && !level.getBlockState(pos.below()).isSolidRender(level, pos)
+                    && !level.getBlockState(pos.below()).isSolidRender()
                     && !CropGrowthHandler.isInRoom(level, pos, state, Optional.empty());
 
             if (!active) {
@@ -187,7 +182,7 @@ public class GreenHouseCoreBlock extends SimpleEntityBlock {
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level worldIn, BlockState state, BlockEntityType<T> blockEntityType) {
         // return null;
-        return !worldIn.isClientSide ?
+        return !worldIn.isClientSide() ?
                 createTickerHelper(blockEntityType, BlockEntityRegistry.greenhouse_core_entity_type.get(), GreenHouseCoreBlockEntity::tick) : null;
     }
 

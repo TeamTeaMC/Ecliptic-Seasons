@@ -13,10 +13,7 @@ import com.teamtea.eclipticseasons.api.misc.util.Mergable;
 import com.teamtea.eclipticseasons.api.util.SimpleUtil;
 import com.teamtea.eclipticseasons.client.reload.ClientJsonCacheListener;
 import com.teamtea.eclipticseasons.config.ClientConfig;
-import net.minecraft.core.Holder;
-import net.minecraft.core.HolderSet;
-import net.minecraft.core.Registry;
-import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.*;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.biome.Biome;
@@ -38,7 +35,7 @@ public class ClientRef {
 
     public static final List<UIParser> uiParsers = new ArrayList<>();
 
-    public static void updateClientSide(RegistryAccess registryAccess) {
+    public static void updateClientSide(HolderLookup.Provider registryAccess) {
         biomeColors.clear();
         leaveColors.clear();
         sounds.clear();
@@ -54,17 +51,17 @@ public class ClientRef {
     }
 
 
-    private static void buildSeasonalSounds(RegistryAccess registryAccess) {
+    private static void buildSeasonalSounds(HolderLookup.Provider registryAccess) {
         sounds.addAll(ClientJsonCacheListener.ambientCache
                 .build(SeasonalBiomeAmbient.CODEC, registryAccess).values());
     }
 
-    private static void buildUIParsers(RegistryAccess registryAccess) {
+    private static void buildUIParsers(HolderLookup.Provider registryAccess) {
         uiParsers.addAll(ClientJsonCacheListener.uiParserCache
                 .build(UIParser.CODEC, registryAccess).values());
     }
 
-    private static void buildOverrideSnowModels(RegistryAccess registryAccess) {
+    private static void buildOverrideSnowModels(HolderLookup.Provider registryAccess) {
         ArrayList<Pair<HolderSet<Block>, SnowDefinition>> collect = ClientJsonCacheListener.snowDefOverrideCache
                 .build(SnowDefinition.CODEC, registryAccess).values()
                 .stream()
@@ -75,12 +72,12 @@ public class ClientRef {
         snowClientDef.putAll(biomeListMap);
     }
 
-    private static void buildSeasonalModels(RegistryAccess registryAccess) {
+    private static void buildSeasonalModels(HolderLookup.Provider registryAccess) {
         ArrayList<Pair<HolderSet<Block>, SeasonBlockDefinition>> collect = ClientJsonCacheListener.seasonDefCache
                 .build(SeasonBlockDefinition.CODEC, registryAccess)
                 .entrySet()
-                .stream().filter(r->
-                        ClientConfig.Renderer.flowerOnGrass.get()||! r.getKey().equals(SeasonBlockDefinition.GRASS_BLOCK))
+                .stream().filter(r ->
+                        ClientConfig.Renderer.flowerOnGrass.get() || !r.getKey().equals(SeasonBlockDefinition.GRASS_BLOCK))
                 .map(Map.Entry::getValue)
                 .map(HolderMappable::asHolderMapping)
                 .collect(Collectors.toCollection(ArrayList::new));
@@ -88,7 +85,7 @@ public class ClientRef {
         seasonDef.putAll(biomeListMap);
     }
 
-    private static void buildLeafColors(RegistryAccess registryAccess) {
+    private static void buildLeafColors(HolderLookup.Provider registryAccess) {
         ArrayList<Pair<HolderSet<Block>, Pair<LeafColor.InstanceHolder, LeafColor.Instance>>> collect = ClientJsonCacheListener.leafCache
                 .build(LeafColor.CODEC, registryAccess).values()
                 .stream().map(HolderMappable::asHolderMapping)
@@ -102,7 +99,7 @@ public class ClientRef {
         );
     }
 
-    private static void buildBiomeColors(RegistryAccess registryAccess) {
+    private static void buildBiomeColors(HolderLookup.Provider registryAccess) {
         ArrayList<Pair<HolderSet<Biome>, BiomeColor.Instance>> collect = ClientJsonCacheListener.biomeCache
                 .build(BiomeColor.CODEC, registryAccess).values()
                 .stream().map(HolderMappable::asHolderMapping)
@@ -136,13 +133,19 @@ public class ClientRef {
         return resultMap;
     }
 
-    public static <E> ArrayList<Holder<E>> getHolders(RegistryAccess registryAccess, ResourceKey<? extends Registry<? extends E>> registryKey) {
-        Optional<Registry<E>> registry = registryAccess.registry(registryKey);
+    public static <E> ArrayList<Holder<E>> getHolders(HolderLookup.Provider registryAccess, ResourceKey<? extends Registry<? extends E>> registryKey) {
+        var registry = registryAccess.lookup(registryKey);
         if (registry.isEmpty()) {
             SimpleUtil.warningForModWrongCalling(registryKey);
             return new ArrayList<>();
         }
-        return registry.get().holders().collect(Collectors.toCollection(ArrayList::new));
+        return registry.get().listElements()
+                .map(e -> {
+                    @SuppressWarnings("unchecked")
+                    Holder<E> casted = (Holder<E>) (Holder<?>) e;
+                    return casted;
+                })
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     private static <T extends Mergable<T>> T mergeList(List<T> instances) {

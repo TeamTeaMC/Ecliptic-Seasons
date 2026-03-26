@@ -1,6 +1,0 @@
-{
-  "parent": "minecraft:block/bamboo2_age0",
-  "textures": {
-    "all": "eclipticseasons:block/snowy/bamboo_stalk"
-  }
-}

@@ -1,15 +1,10 @@
 package com.teamtea.eclipticseasons.common.block.blockentity;
 
-import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.data.craft.HumidityControl;
-import com.teamtea.eclipticseasons.api.data.misc.PosAndBlockStateCheck;
 import com.teamtea.eclipticseasons.common.block.BlockInCopperGrateBlock;
 import com.teamtea.eclipticseasons.common.registry.BlockEntityRegistry;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -18,6 +13,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
 
@@ -30,10 +27,16 @@ public class BlockInCopperGrateBlockEntity extends HumidityControlBlockEntity {
         super(BlockEntityRegistry.block_in_copper_grate_block_entity_type.get(), pos, state);
     }
 
-    public static void popResource(Level level, BlockPos pos) {
-        if (level.getBlockEntity(pos) instanceof BlockInCopperGrateBlockEntity blockEntity) {
-            blockEntity.popBlock(level, pos);
+    public void popResource(Level level, BlockPos pos) {
+        this.popBlock(level, pos);
+    }
+
+    @Override
+    public void preRemoveSideEffects(BlockPos pos, BlockState state) {
+        if (!level.isClientSide()) {
+            popResource(level, pos);
         }
+        super.preRemoveSideEffects(pos, state);
     }
 
     public static void removeBlock(Level level, BlockPos pos) {
@@ -56,21 +59,19 @@ public class BlockInCopperGrateBlockEntity extends HumidityControlBlockEntity {
     }
 
     @Override
-    protected void saveAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
-        super.saveAdditional(tag, registries);
-        tag.putString("inner_block", BuiltInRegistries.BLOCK.getKey(getInnerBlock()).toString());
+    protected void saveAdditional(ValueOutput output) {
+        super.saveAdditional(output);
+        output.store("inner_block", BuiltInRegistries.BLOCK.byNameCodec(), getInnerBlock());
     }
 
     @Override
-    protected void loadAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
-        super.loadAdditional(tag, registries);
-        if (tag.contains("inner_block")) {
-            Block block = BuiltInRegistries.BLOCK.get(EclipticSeasons.parse(tag.getString("inner_block")));
-            if (!block.defaultBlockState().isAir())
-                setBlockAndItemNotSync(block);
-            else {
-                setBlockAndItemNotSync(null);
-            }
+    protected void loadAdditional(ValueInput input) {
+        super.loadAdditional(input);
+        Block block = input.read("inner_block", BuiltInRegistries.BLOCK.byNameCodec()).orElse(Blocks.AIR);
+        if (!block.defaultBlockState().isAir())
+            setBlockAndItemNotSync(block);
+        else {
+            setBlockAndItemNotSync(null);
         }
     }
 
@@ -112,7 +113,7 @@ public class BlockInCopperGrateBlockEntity extends HumidityControlBlockEntity {
     @Override
     protected void endRecipe() {
         if (!hasNoRecipe() && this.time <= 0) {
-            Item item = humidityControl.result().getItem();
+            Item item = humidityControl.result().item().value();
             if (item instanceof BlockItem blockItem)
                 setInnerBlock(blockItem.getBlock());
         }
@@ -130,6 +131,7 @@ public class BlockInCopperGrateBlockEntity extends HumidityControlBlockEntity {
         return this.itemStackHandler;
     }
 
+    @SuppressWarnings("removal")
     public class GrateItemStackHandler extends ItemStackHandler {
         public GrateItemStackHandler() {
             super(1);

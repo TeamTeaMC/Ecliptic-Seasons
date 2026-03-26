@@ -13,7 +13,7 @@ import com.teamtea.eclipticseasons.api.util.codec.ESExtraCodec;
 import com.teamtea.eclipticseasons.common.registry.ESRegistries;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.state.BlockState;
@@ -153,8 +153,8 @@ public record AgroClimaticZone(HolderSet<Biome> biomes,
         return growParameterResult;
     }
 
-    public static String getDescriptionId(@NotNull ResourceLocation resourceLocation) {
-        return ESRegistries.createLangKey(ESRegistries.AGRO_CLIMATE, resourceLocation);
+    public static String getDescriptionId(@NotNull Identifier Identifier) {
+        return ESRegistries.createLangKey(ESRegistries.AGRO_CLIMATE, Identifier);
     }
 
 

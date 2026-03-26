@@ -8,11 +8,12 @@ import com.teamtea.eclipticseasons.common.core.crop.CropInfoManager;
 import com.teamtea.eclipticseasons.compat.CompatModule;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.core.Holder;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -185,12 +186,12 @@ public class CompatCropHookInternal {
         CompatCropHookInternal.TAG_HUMIDITY_MAP = builder;
     }
 
-    public static Map<Item, CropHumidityType> getBultinHumidityTypeMap(Registry<Item> registry) {
-        return registry.getTags()
+    public static Map<Item, CropHumidityType> getBultinHumidityTypeMap(HolderLookup.RegistryLookup<Item> registry) {
+        return registry.listTags()
                 .flatMap(p -> {
-                    CropHumidityType orDefault = TAG_HUMIDITY_MAP.getOrDefault(p.getFirst(), null);
+                    CropHumidityType orDefault = TAG_HUMIDITY_MAP.getOrDefault(p.key(), null);
                     if (orDefault == null) return Stream.of();
-                    return p.getSecond().stream().map(h -> Map.entry(h.value(), orDefault));
+                    return p.stream().map(h -> Map.entry(h.value(), orDefault));
                 })
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue
                         , (a, b) -> b, HashMap::new
@@ -204,31 +205,31 @@ public class CompatCropHookInternal {
         return CropHumidityType.AVERAGE;
     }
 
-    public static <T> void registerForSS(Optional<Registry<T>> tRegistry, ResourceKey<Registry<T>> registryResourceKey) {
+    public static <T> void registerForSS(Optional<? extends HolderLookup.RegistryLookup<T>> tRegistry, ResourceKey<Registry<T>> registryResourceKey) {
 
         Set<String> blackMods = Set.copyOf(CompatModule.CommonConfig.modsWithoutSereneSeasonBasedHumidity.get());
 
         tRegistry.ifPresent(registry -> {
-            List<List<T>> nameBlockList = new ArrayList<>();
+            List<List<Holder<T>>> nameBlockList = new ArrayList<>();
 
             List<TagKey<T>> useTag = registryResourceKey.equals(Registries.BLOCK) ?
                     (List) ss_blockList : (List) ss_itemList;
             for (TagKey<T> blockTagKey : useTag) {
                 Optional<HolderSet.Named<T>> tag = Optional.empty();
-                tag = registry.getTag(blockTagKey);
-                tag.ifPresent(holders -> nameBlockList.add(holders.stream().map(Holder::value).toList()));
+                tag = registry.get(blockTagKey);
+                tag.ifPresent(holders -> nameBlockList.add(holders.stream().toList()));
             }
 
-            List<T> nameBlockSet = new ArrayList<>(new HashSet<>(nameBlockList.stream()
+            List<Holder<T>> nameBlockSet = new ArrayList<>(new HashSet<>(nameBlockList.stream()
                     .flatMap(Collection::stream)
                     .toList()));
 
             Map<Item, CropHumidityType> bultinHumidityTypeMap = Map.of();
             if (registry.key().equals(Registries.ITEM)) {
-                bultinHumidityTypeMap = getBultinHumidityTypeMap((Registry<Item>) registry);
+                bultinHumidityTypeMap = getBultinHumidityTypeMap((HolderLookup.RegistryLookup<Item>) registry);
             }
 
-            for (T t : nameBlockSet) {
+            for (Holder<T> t : nameBlockSet) {
                 int season = 0;
                 for (int i = 0; i < nameBlockList.size(); i++) {
                     if (nameBlockList.get(i).contains(t)) {
@@ -238,13 +239,13 @@ public class CompatCropHookInternal {
 
                 CropSeasonType cropSeasonTypeFrom = CropInfoManager.getCropSeasonTypeFrom(new CropSeasonInfo(season));
                 boolean isWaterPlant = false;
-                if (t instanceof Block block) {
+                if (t.value() instanceof Block block) {
                     if (block instanceof SaplingBlock
                             && CompatModule.CommonConfig.sereneSeasonsIgnoreSapling.get())
                         continue;
                     CropInfoManager.registerCropSeasonInfo(block, cropSeasonTypeFrom, true);
                     isWaterPlant = block instanceof LiquidBlockContainer;
-                } else if (t instanceof Item item) {
+                } else if (t.value() instanceof Item item) {
                     if (item instanceof BlockItem blockItem && blockItem.getBlock() instanceof SaplingBlock
                             && CompatModule.CommonConfig.sereneSeasonsIgnoreSapling.get())
                         continue;
@@ -254,15 +255,15 @@ public class CompatCropHookInternal {
 
                 if (!CompatModule.CommonConfig.sereneSeasonBasedHumidity.get()) continue;
 
-                ResourceLocation key = registry.getKey(t);
+                Identifier key = t.getKey().identifier();
                 if (key != null)
                     if (!blackMods.contains(key.getNamespace())) {
                         CropHumidityType humid =
                                 isWaterPlant ? CropHumidityType.MOIST_HUMID :
                                         mapSeasonToHumidity(cropSeasonTypeFrom);
-                        if (t instanceof Block block) {
+                        if (t.value() instanceof Block block) {
                             CropInfoManager.registerCropHumidityInfo(block, humid, true);
-                        } else if (t instanceof Item item) {
+                        } else if (t.value() instanceof Item item) {
                             humid = bultinHumidityTypeMap.getOrDefault(item, humid);
                             CropInfoManager.registerCropHumidityInfo(item, humid);
                         }
@@ -277,8 +278,8 @@ public class CompatCropHookInternal {
     private static final TagKey<Item> ITEM_SERENE_SEASONS_YEAR_ROUND_CROPS = createItemTag("sereneseasons", "year_round_crops");
 
 
-    public static void registerForSSALL(Optional<Registry<Item>> items, Optional<Registry<Block>> blocks) {
-        blocks.flatMap(br -> br.getTag(SERENE_SEASONS_YEAR_ROUND_CROPS)).ifPresent(nblocks -> {
+    public static void registerForSSALL(Optional<? extends HolderLookup.RegistryLookup<Item>> items, Optional<? extends HolderLookup.RegistryLookup<Block>> blocks) {
+        blocks.flatMap(br -> br.get(SERENE_SEASONS_YEAR_ROUND_CROPS)).ifPresent(nblocks -> {
             for (Holder<Block> nblock : nblocks) {
                 CropInfoManager.registerCropSeasonInfo(nblock.value(), CropSeasonType.ALL, true);
                 if (CommonConfig.Crop.registerCropDefaultValue.getAsBoolean()) {
@@ -286,7 +287,7 @@ public class CompatCropHookInternal {
                 }
             }
         });
-        items.flatMap(br -> br.getTag(ITEM_SERENE_SEASONS_YEAR_ROUND_CROPS)).ifPresent(itemNamed -> {
+        items.flatMap(br -> br.get(ITEM_SERENE_SEASONS_YEAR_ROUND_CROPS)).ifPresent(itemNamed -> {
             for (Holder<Item> itemHolder : itemNamed) {
                 CropInfoManager.registerCropSeasonInfo(itemHolder.value(), CropSeasonType.ALL);
                 if (CommonConfig.Crop.registerCropDefaultValue.get()) {
@@ -294,7 +295,7 @@ public class CompatCropHookInternal {
                 }
             }
         });
-        blocks.flatMap(blocks1 -> blocks.get().getTag(SERENE_SEASONS_UNBREAKABLE_FERTILE_CROPS)).ifPresent(blocksG -> {
+        blocks.flatMap(blocks1 -> blocks.get().get(SERENE_SEASONS_UNBREAKABLE_FERTILE_CROPS)).ifPresent(blocksG -> {
             for (Holder<Block> blockHolder : blocksG.stream().toList()) {
                 CropInfoManager.CROPS_WOULD_NOT_KILLED_BY_CLIMATE.put(blockHolder.value(), blockHolder);
             }

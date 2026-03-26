@@ -1,0 +1,11 @@
+{
+  "model": {
+    "type": "minecraft:special",
+    "base": "eclipticseasons:block/block_in_wooden_grate_block",
+    "model": {
+      "type": "eclipticseasons:spring_greenhouse_core",
+      "is_core": true,
+      "texture": "eclipticseasons:textures/block/green_house_core_spring.png"
+    }
+  }
+}

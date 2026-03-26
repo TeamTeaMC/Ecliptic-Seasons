@@ -1,0 +1,30 @@
+{
+  "parent": "eclipticseasons:main/base",
+  "criteria": {
+    "solar_terms": {
+      "trigger": "eclipticseasons:solar_terms"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancement.eclipticseasons.root.desc"
+    },
+    "icon": {
+      "id": "eclipticseasons:bamboo_wind_chimes"
+    },
+    "title": {
+      "translate": "advancement.eclipticseasons.root"
+    }
+  },
+  "requirements": [
+    [
+      "solar_terms"
+    ]
+  ],
+  "rewards": {
+    "loot": [
+      "eclipticseasons:gifts/snowless_hometown"
+    ]
+  },
+  "sends_telemetry_event": true
+}

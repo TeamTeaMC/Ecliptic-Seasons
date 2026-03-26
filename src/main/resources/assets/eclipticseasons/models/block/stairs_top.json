@@ -3,9 +3,8 @@
 	"render_type": "cutout_mipped",
 	"textures": {
 		"0": "eclipticseasons:block/snow_overlay",
-		"1": "block/snow",
-		"particle": "eclipticseasons:block/snow_overlay"
-	},
+		"1": "minecraft:block/snow",
+		"particle": "eclipticseasons:block/snow_overlay"},
 	"elements": [
 		{
 			"from": [0, 8, 0],

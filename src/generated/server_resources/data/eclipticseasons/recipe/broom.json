@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "group": "broom",
+  "key": {
+    "h": "minecraft:hay_block",
+    "r": "#c:rods/wooden"
+  },
+  "pattern": [
+    " h",
+    "r "
+  ],
+  "result": {
+    "id": "eclipticseasons:broom"
+  }
+}

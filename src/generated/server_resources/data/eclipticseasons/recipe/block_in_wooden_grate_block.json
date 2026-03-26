@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "group": "block_in_wooden_grate_block",
+  "key": {
+    "r": "#minecraft:logs"
+  },
+  "pattern": [
+    " r ",
+    "r r",
+    " r "
+  ],
+  "result": {
+    "count": 4,
+    "id": "eclipticseasons:block_in_wooden_grate_block"
+  }
+}

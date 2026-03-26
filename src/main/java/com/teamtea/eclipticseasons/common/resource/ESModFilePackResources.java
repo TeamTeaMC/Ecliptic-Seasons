@@ -1,22 +1,23 @@
 package com.teamtea.eclipticseasons.common.resource;
 
 
-import net.minecraft.DetectedVersion;
 import net.minecraft.server.packs.*;
-import net.minecraft.server.packs.metadata.MetadataSectionSerializer;
+import net.minecraft.server.packs.metadata.MetadataSectionType;
+import net.minecraft.server.packs.metadata.pack.PackFormat;
 import net.minecraft.server.packs.metadata.pack.PackMetadataSection;
 import net.minecraft.server.packs.repository.Pack;
 import net.minecraft.server.packs.resources.IoSupplier;
+import net.minecraft.server.packs.resources.ResourceMetadata;
+import net.minecraft.util.InclusiveRange;
 import net.neoforged.neoforgespi.locating.IModFile;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public class ESModFilePackResources extends PathPackResources {
     protected final IModFile modFile;
@@ -25,24 +26,35 @@ public class ESModFilePackResources extends PathPackResources {
 
 
     public ESModFilePackResources(PackLocationInfo locationInfo, IModFile modFile, String sourcePath) {
-        super(locationInfo, modFile.findResource(sourcePath));
+        super(locationInfo, Path.of(modFile.getContents().findFile(sourcePath+"/pack.mcmeta").get().resolve(".")));
         this.modFile = modFile;
         this.sourcePath = sourcePath;
         this.bindSection = new PackMetadataSection(locationInfo.title(),
-                DetectedVersion.BUILT_IN.getPackVersion(PackType.CLIENT_RESOURCES),
-                Optional.empty());
+                InclusiveRange.create(PackFormat.of(0),PackFormat.of(100)).getOrThrow());
     }
 
+    private @Nullable ResourceMetadata metadata;
 
     @Override
-    public @Nullable <T> T getMetadataSection(@NotNull MetadataSectionSerializer<T> pDeserializer) throws IOException {
-        IoSupplier<InputStream> iosupplier = this.getRootResource("pack.mcmeta");
-        if (iosupplier == null) {
-            return pDeserializer == PackMetadataSection.TYPE ? (T) bindSection : null;
+    public <T> @Nullable T getMetadataSection(MetadataSectionType<T> metadataSerializer) throws IOException {
+        if (this.metadata == null) {
+            this.metadata = loadMetadata(this);
+        }
+
+        return this.metadata.getSection(metadataSerializer).orElse(null);
+    }
+
+    public static ResourceMetadata loadMetadata(PackResources packResources) throws IOException {
+        IoSupplier<InputStream> metadata = packResources.getRootResource("pack.mcmeta");
+        if (metadata == null) {
+            return ResourceMetadata.EMPTY;
         } else {
-            try (InputStream inputstream = iosupplier.get()) {
-                return getMetadataFromStream(pDeserializer, inputstream);
+            ResourceMetadata var3;
+            try (InputStream resource = metadata.get()) {
+                var3 = ResourceMetadata.fromJsonStream(resource);
             }
+
+            return var3;
         }
     }
 

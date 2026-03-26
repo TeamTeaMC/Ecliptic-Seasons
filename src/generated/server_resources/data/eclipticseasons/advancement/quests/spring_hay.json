@@ -1,0 +1,47 @@
+{
+  "parent": "eclipticseasons:quests/spring_bread",
+  "criteria": {
+    "core_require": {
+      "conditions": {
+        "items": [
+          {
+            "items": "minecraft:hay_block"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "parent_need": {
+      "conditions": {
+        "parent": "eclipticseasons:quests/spring_bread"
+      },
+      "trigger": "eclipticseasons:parent"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancement.eclipticseasons.spring_hay.desc"
+    },
+    "icon": {
+      "id": "minecraft:hay_block"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "advancement.eclipticseasons.spring_hay"
+    }
+  },
+  "requirements": [
+    [
+      "parent_need"
+    ],
+    [
+      "core_require"
+    ]
+  ],
+  "rewards": {
+    "loot": [
+      "eclipticseasons:gifts/spring_greenhouse_essence"
+    ]
+  },
+  "sends_telemetry_event": true
+}

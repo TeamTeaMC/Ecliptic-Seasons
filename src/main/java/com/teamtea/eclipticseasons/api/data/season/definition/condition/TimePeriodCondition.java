@@ -4,13 +4,14 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.teamtea.eclipticseasons.api.constant.solar.TimePeriod;
 import com.teamtea.eclipticseasons.api.data.season.definition.ISeasonChangeContext;
+import com.teamtea.eclipticseasons.api.util.SimpleUtil;
 import com.teamtea.eclipticseasons.api.util.codec.CodecUtil;
 import com.teamtea.eclipticseasons.api.util.codec.ESExtraCodec;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Singular;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.Level;
 
 import java.util.ArrayList;
@@ -32,13 +33,13 @@ public class TimePeriodCondition implements IChangeCondition {
     private final HashSet<TimePeriod> periods = new HashSet<>();
 
     @Override
-    public ResourceLocation getType() {
+    public Identifier getType() {
         return ChangeConditions.TIME_PERIOD;
     }
 
     @Override
     public boolean test(Level level, BlockPos pos, ISeasonChangeContext context) {
-        TimePeriod timePeriod = TimePeriod.fromTimeOfDay(level.getTimeOfDay(1f));
+        TimePeriod timePeriod = TimePeriod.fromTimeOfDay(SimpleUtil.getTimeOfDay(level));
         return periods.contains(timePeriod);
     }
 

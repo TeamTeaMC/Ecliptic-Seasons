@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "group": "growth_detector",
+  "key": {
+    "x": "#c:glass_panes",
+    "y": "#c:glass_blocks",
+    "z": "#c:rods/wooden"
+  },
+  "pattern": [
+    "  x",
+    " y ",
+    "z  "
+  ],
+  "result": {
+    "id": "eclipticseasons:growth_detector"
+  }
+}

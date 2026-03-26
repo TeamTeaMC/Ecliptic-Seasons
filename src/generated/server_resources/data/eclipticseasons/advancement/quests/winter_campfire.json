@@ -1,0 +1,42 @@
+{
+  "parent": "eclipticseasons:quests/winter_harvest",
+  "criteria": {
+    "core_require": {
+      "conditions": {
+        "items": [
+          {
+            "items": "minecraft:campfire"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "parent_need": {
+      "conditions": {
+        "parent": "eclipticseasons:quests/winter_harvest"
+      },
+      "trigger": "eclipticseasons:parent"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancement.eclipticseasons.winter_campfire.desc"
+    },
+    "icon": {
+      "id": "minecraft:campfire"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "advancement.eclipticseasons.winter_campfire"
+    }
+  },
+  "requirements": [
+    [
+      "parent_need"
+    ],
+    [
+      "core_require"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

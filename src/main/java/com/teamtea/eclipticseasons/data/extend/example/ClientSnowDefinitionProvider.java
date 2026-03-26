@@ -10,13 +10,12 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
 import java.util.concurrent.CompletableFuture;
 
 public class ClientSnowDefinitionProvider extends ESClientDataMapProvider<SnowDefinition> {
-    public ClientSnowDefinitionProvider(PackOutput output, String modid, ExistingFileHelper helper, CompletableFuture<HolderLookup.Provider> registries) {
-        super(output, modid, helper, registries, ClientJsonCacheListener.DIRECTORY_SNOW_DEFINITION, SnowDefinition.CODEC);
+    public ClientSnowDefinitionProvider(PackOutput output, String modid, CompletableFuture<HolderLookup.Provider> registries) {
+        super(output, modid,  registries, ClientJsonCacheListener.DIRECTORY_SNOW_DEFINITION, SnowDefinition.CODEC);
     }
 
     @Override

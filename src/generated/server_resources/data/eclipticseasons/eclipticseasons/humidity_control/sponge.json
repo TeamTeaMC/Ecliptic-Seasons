@@ -1,0 +1,13 @@
+{
+  "ingredient": {
+    "ingredient": "minecraft:sponge",
+    "count": 1
+  },
+  "result": {
+    "id": "minecraft:wet_sponge"
+  },
+  "range": 5,
+  "level": -1,
+  "checks": [],
+  "infinity": true
+}

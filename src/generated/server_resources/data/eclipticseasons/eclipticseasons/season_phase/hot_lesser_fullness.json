@@ -1,0 +1,16 @@
+{
+  "season": "summer",
+  "name": "eclipticseasons:hot_lesser_fullness",
+  "color": "red",
+  "icon": {
+    "texture": "eclipticseasons:font/seasons_icons",
+    "width": 180,
+    "height": 120,
+    "i": 1,
+    "j": 1
+  },
+  "font": {
+    "id": "eclipticseasons:solar_icons",
+    "label": "h"
+  }
+}

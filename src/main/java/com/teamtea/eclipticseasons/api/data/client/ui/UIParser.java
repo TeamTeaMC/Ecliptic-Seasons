@@ -7,7 +7,7 @@ import com.teamtea.eclipticseasons.api.data.client.ui.elements.UIElement;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Singular;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,8 +18,8 @@ public class UIParser {
     public static final Codec<UIParser> CODEC = RecordCodecBuilder.create(ins -> ins.group(
             Codec.BOOL.optionalFieldOf("sever_data",true).forGetter(o -> o.severData),
             Codec.BOOL.optionalFieldOf("stack", false).forGetter(o -> o.stack),
-            ResourceLocation.CODEC.optionalFieldOf("key").forGetter(o -> o.key),
-            ResourceLocation.CODEC.optionalFieldOf("file").forGetter(o -> o.file),
+            Identifier.CODEC.optionalFieldOf("key").forGetter(o -> o.key),
+            Identifier.CODEC.optionalFieldOf("file").forGetter(o -> o.file),
             UIElement.CODEC.listOf().fieldOf("fields").forGetter(o -> o.fields)
     ).apply(ins, UIParser::new));
 
@@ -27,8 +27,8 @@ public class UIParser {
     private final boolean severData = true;
     private final boolean stack;
 
-    private final Optional<ResourceLocation> key;
-    private final Optional<ResourceLocation> file;
+    private final Optional<Identifier> key;
+    private final Optional<Identifier> file;
 
     @Singular
     private final List<UIElement> fields;

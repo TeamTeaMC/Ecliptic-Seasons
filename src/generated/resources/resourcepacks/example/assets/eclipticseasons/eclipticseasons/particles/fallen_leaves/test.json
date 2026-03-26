@@ -1,4 +1,11 @@
 {
+  "source": "custom",
+  "block": {
+    "blocks": "minecraft:pumpkin"
+  },
+  "location": {
+    "biomes": "minecraft:plains"
+  },
   "colors": {
     "seasons": {
       "spring": {
@@ -26,12 +33,5 @@
   "weights": {
     "default": 100000
   },
-  "replace": false,
-  "source": "custom",
-  "block": {
-    "blocks": "minecraft:pumpkin"
-  },
-  "location": {
-    "biomes": "minecraft:plains"
-  }
+  "replace": false
 }

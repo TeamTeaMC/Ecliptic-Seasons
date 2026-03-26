@@ -30,13 +30,13 @@ import com.teamtea.eclipticseasons.common.registry.AgroClimateRegistry;
 import com.teamtea.eclipticseasons.common.registry.CropRegistry;
 import com.teamtea.eclipticseasons.common.registry.ESRegistries;
 import com.teamtea.eclipticseasons.config.CommonConfig;
-import net.minecraft.advancements.critereon.BlockPredicate;
-import net.minecraft.advancements.critereon.StatePropertiesPredicate;
+import net.minecraft.advancements.criterion.BlockPredicate;
+import net.minecraft.advancements.criterion.StatePropertiesPredicate;
 import net.minecraft.core.*;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.ItemTags;
@@ -118,16 +118,16 @@ public final class CropGrowthHandler {
     // private final static List<WetterStructure> wetterStructures = new ArrayList<>();
     private final static Map<Block, List<WetterStructure>> wetterStructures = new IdentityHashMap<>();
     private final static Map<Biome, Holder<AgroClimaticZone>> cropClimateTypeMap = new IdentityHashMap<>();
-    private final static Map<ResourceLocation, CropGrowControlBuilder> CropGrowControlBuilder = new HashMap<>();
+    private final static Map<Identifier, CropGrowControlBuilder> CropGrowControlBuilder = new HashMap<>();
     private final static Map<Block, Map<Holder<AgroClimaticZone>, CropGrowControl>> CROP_GROW_MAP = new IdentityHashMap<>();
 
     private final static IdentityHashMap<Boolean, Holder<AgroClimaticZone>> DefaultCropClimateType = new IdentityHashMap<>();
 
 
-    public static void resetUpdate(RegistryAccess registryAccess, boolean isServer) {
+    public static void resetUpdate(HolderLookup.Provider registryAccess, boolean isServer) {
         if (isServer) {
 
-            Optional<Registry<WetterStructure>> structures = registryAccess.registry(ESRegistries.WETTER);
+            var structures = registryAccess.lookup(ESRegistries.WETTER);
             if (structures.isPresent()) {
                 wetterStructures.clear();
                 for (WetterStructure structure : ESSortInfo.sorted2(structures.get())) {
@@ -146,8 +146,8 @@ public final class CropGrowthHandler {
             }
         }
 
-        Optional<Registry<AgroClimaticZone>> agroClimaticZones = registryAccess.registry(ESRegistries.AGRO_CLIMATE);
-        Optional<Registry<CropGrowControlBuilder>> cropGrowControlBuilders = registryAccess.registry(ESRegistries.CROP);
+        Optional<? extends HolderLookup.RegistryLookup<AgroClimaticZone>> agroClimaticZones = registryAccess.lookup(ESRegistries.AGRO_CLIMATE);
+        Optional<? extends HolderLookup.RegistryLookup<CropGrowControlBuilder>> cropGrowControlBuilders = registryAccess.lookup(ESRegistries.CROP);
         if (agroClimaticZones.isEmpty()) {
             SimpleUtil.warningForModWrongCalling(ESRegistries.AGRO_CLIMATE);
             return;
@@ -166,8 +166,8 @@ public final class CropGrowthHandler {
         }
 
 
-        Registry<AgroClimaticZone> cropClimateTypeRegistry = agroClimaticZones.get();
-        for (Holder.Reference<AgroClimaticZone> agroClimaticZoneReference : ESSortInfo.sorted(cropClimateTypeRegistry.holders().toList())) {
+        HolderLookup.RegistryLookup<AgroClimaticZone> cropClimateTypeRegistry = agroClimaticZones.get();
+        for (Holder.Reference<AgroClimaticZone> agroClimaticZoneReference : ESSortInfo.sorted(cropClimateTypeRegistry.listElements().toList())) {
             if (!agroClimaticZoneReference.isBound()) continue;
             HolderSet<Biome> biomes = agroClimaticZoneReference.value().biomes();
             for (int i = 0; i < biomes.size(); i++) {
@@ -175,13 +175,13 @@ public final class CropGrowthHandler {
             }
         }
 
-        DefaultCropClimateType.put(isServer, cropClimateTypeRegistry.getHolder(AgroClimateRegistry.TEMPERATE).orElse(null));
+        DefaultCropClimateType.put(isServer, cropClimateTypeRegistry.get(AgroClimateRegistry.TEMPERATE).orElse(null));
 
-        Registry<Item> itemRegistry = registryAccess.registryOrThrow(Registries.ITEM);
-        Registry<Block> blockRegistry = registryAccess.registryOrThrow(Registries.BLOCK);
-        for (Map.Entry<ResourceKey<CropGrowControlBuilder>, CropGrowControlBuilder> entry : ESSortInfo.sorted(cropGrowControlBuilders.get().entrySet())) {
-            CropGrowControlBuilder builder = entry.getValue();
-            CropGrowControlBuilder.put(entry.getKey().location(), builder);
+        var itemRegistry = registryAccess.lookupOrThrow(Registries.ITEM);
+        var blockRegistry = registryAccess.lookupOrThrow(Registries.BLOCK);
+        for (var entry : ESSortInfo.sorted(cropGrowControlBuilders.get().listElements().toList())) {
+            CropGrowControlBuilder builder = entry.value();
+            CropGrowControlBuilder.put(entry.getKey().identifier(), builder);
             Optional<HolderSet<Block>> blocks = builder.applyTarget().blocks();
             Optional<StatePropertiesPredicate> properties = builder.applyTarget().properties();
             if (blocks.isEmpty()) continue;
@@ -237,12 +237,17 @@ public final class CropGrowthHandler {
                 if (blockTagKey.isPresent() && blockTagKey.get().location().getNamespace().equals(EclipticSeasonsApi.MODID)) {
                     TagKey<Item> itemTagKey = ItemTags.create(blockTagKey.get().location());
                     {
-                        Optional<HolderSet.Named<Item>> itemNamed = itemRegistry.getTag(itemTagKey);
+                        Optional<HolderSet.Named<Item>> itemNamed = itemRegistry.get(itemTagKey);
                         if (itemNamed.isPresent()) {
                             ArrayList<Holder<Block>> holderArrayList = new ArrayList<>(holders.stream().toList());
                             for (Holder<Item> blockHolder : itemNamed.get()) {
                                 if (blockHolder.value() instanceof BlockItem blockItem)
-                                    holderArrayList.add(blockRegistry.getHolderOrThrow(blockRegistry.getResourceKey(blockItem.getBlock()).get()));
+                                    try {
+                                        holderArrayList.add(blockRegistry.getOrThrow(blockRegistry
+                                                .filterElements(block -> block == blockItem.getBlock())
+                                                .listElements().findAny().get().key()));
+                                    } catch (Exception _) {
+                                    }
                             }
                             if (!holderArrayList.isEmpty())
                                 holders = HolderSet.direct(holderArrayList);
@@ -294,7 +299,7 @@ public final class CropGrowthHandler {
 
                         Holder<AgroClimaticZone> cropClimateTypeHolder = builder.cropClimateType().get(j);
                         if (cropClimateTypeHolder.getKey() != null) {
-                            c.compute(cropClimateTypeHolder, (resourceLocation, oldControl) -> {
+                            c.compute(cropClimateTypeHolder, (Identifier, oldControl) -> {
                                 if (oldControl == null) return newControlCache;
                                 return oldControl.merge(newControlCache);
                             });
@@ -308,7 +313,7 @@ public final class CropGrowthHandler {
             // if (CROP_GROW_MAP.containsKey(block)) return;
             CropSeasonType name = CropInfoManager.getCropSeasonTypeFrom(cropSeasonInfo);
             if (name != null) {
-                ResourceLocation location = CropRegistry.createKey(name).location();
+                Identifier location = CropRegistry.createKey(name).identifier();
                 generateInfoForTag(block, location);
             }
         });
@@ -316,7 +321,7 @@ public final class CropGrowthHandler {
             // if (CROP_GROW_MAP.containsKey(block)) return;
             CropHumidityType name = CropInfoManager.getCropHumidityTypeFrom(cropHumidityInfo);
             if (name != null) {
-                ResourceLocation location = CropRegistry.createKey(name).location();
+                Identifier location = CropRegistry.createKey(name).identifier();
                 generateInfoForTag(block, location);
             }
         });
@@ -325,7 +330,7 @@ public final class CropGrowthHandler {
         );
     }
 
-    private static void generateInfoForTag(Block block, ResourceLocation location) {
+    private static void generateInfoForTag(Block block, Identifier location) {
         Map<Holder<AgroClimaticZone>, CropGrowControl> blockClimateMap;
         CropGrowControlBuilder builder = CropGrowControlBuilder.getOrDefault(location, null);
         if (builder != null) {
@@ -344,7 +349,7 @@ public final class CropGrowthHandler {
             for (int j = 0; j < builder.cropClimateType().size(); j++) {
                 Holder<AgroClimaticZone> cropClimateTypeHolder = builder.cropClimateType().get(j);
                 if (cropClimateTypeHolder.getKey() != null) {
-                    blockClimateMap.compute(cropClimateTypeHolder, (resourceLocation, oldControl) -> {
+                    blockClimateMap.compute(cropClimateTypeHolder, (Identifier, oldControl) -> {
                         if (oldControl == null) return newControlCache;
                         return oldControl.merge(newControlCache);
                     });
@@ -760,7 +765,7 @@ public final class CropGrowthHandler {
             int y = SectionPos.blockToSectionCoord(pos.getY());
             for (int i = 0, size = this.chunkAccessList.size(); i < size; i++) {
                 ChunkAccess chunkAccess = this.chunkAccessList.get(i);
-                if (chunkAccess.getPos().x == x && chunkAccess.getPos().z == z) {
+                if (chunkAccess.getPos().x() == x && chunkAccess.getPos().z() == z) {
                     return chunkAccess.getBlockState(pos);
                 }
             }
@@ -842,7 +847,7 @@ public final class CropGrowthHandler {
                 clipContext.release();
                 if (notCheck.isPresent()
                         && notCheck.get().blocks().isPresent()) {
-                    if (notCheck.get().blocks().get().contains(blockstate.getBlockHolder())) {
+                    if (notCheck.get().blocks().get().contains(blockstate.typeHolder())) {
                         blockHitResult = BlockHitResult.miss(blockHitResult.getLocation(), blockHitResult.getDirection(), pos);
                     }
                 }
@@ -858,7 +863,7 @@ public final class CropGrowthHandler {
         public BlockHitResult apply(SectionClipContext clipContext) {
             clipContext.release();
             Vec3 vec3 = clipContext.getFrom().subtract(clipContext.getTo());
-            return BlockHitResult.miss(clipContext.getTo(), Direction.getNearest(vec3.x, vec3.y, vec3.z), BlockPos.containing(clipContext.getTo()));
+            return BlockHitResult.miss(clipContext.getTo(), Optional.ofNullable(Direction.getNearest((int) vec3.x, (int) vec3.y, (int) vec3.z, null)).orElse(Direction.DOWN), BlockPos.containing(clipContext.getTo()));
         }
     }
 
@@ -960,7 +965,7 @@ public final class CropGrowthHandler {
             boolean needSkip = false;
             //         structure.core().isEmpty()
             //         || (structure.core().get().blocks().isEmpty())
-            //         || (!structure.core().get().blocks().get().contains(state.getBlockHolder()));
+            //         || (!structure.core().get().blocks().get().contains(state.typeHolder()));
             // if (!needSkip) {
             //     // HumidityControlProvider humidityControlProvider = saveData.queryHumidityControlProvider(pos);
             //     // if (humidityControlProvider != null) needSkip = true;
@@ -1014,7 +1019,7 @@ public final class CropGrowthHandler {
             ) {
                 BlockPredicate blockPredicate = wetterStructure.core().get();
                 HolderSet<Block> holders = blockPredicate.blocks().get();
-                if (holders.contains(state.getBlockHolder())
+                if (holders.contains(state.typeHolder())
                         && (blockPredicate.properties().isEmpty() || blockPredicate.properties().get().matches(state))) {
                     use = true;
                 }

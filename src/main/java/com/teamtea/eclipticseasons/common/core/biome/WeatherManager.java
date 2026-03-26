@@ -4,13 +4,18 @@ import com.mojang.serialization.Codec;
 import com.teamtea.eclipticseasons.api.constant.climate.FlatRain;
 import com.teamtea.eclipticseasons.api.constant.climate.WeatherMode;
 import com.teamtea.eclipticseasons.api.constant.tag.ClimateTypeBiomeTags;
+import com.teamtea.eclipticseasons.api.constant.tag.ESEnchantmentTags;
+import com.teamtea.eclipticseasons.api.constant.tag.ESItemTags;
+import com.teamtea.eclipticseasons.api.constant.tag.ESMobEffectTags;
 import com.teamtea.eclipticseasons.api.data.weather.special_effect.WeatherEffect;
 import com.teamtea.eclipticseasons.api.event.BeforeCheckSnowStatusEvent;
 import com.teamtea.eclipticseasons.api.misc.ITranslatable;
 import com.teamtea.eclipticseasons.common.core.snow.SnowyMapChecker;
 import com.teamtea.eclipticseasons.common.hook.ESEventHook;
+import com.teamtea.eclipticseasons.common.misc.HeatStrokeTicker;
 import com.teamtea.eclipticseasons.common.network.message.UpdateTempChangeMessage;
 import com.teamtea.eclipticseasons.common.registry.ESRegistries;
+import com.teamtea.eclipticseasons.common.registry.EffectRegistry;
 import com.teamtea.eclipticseasons.common.registry.ModAdvancements;
 import com.teamtea.eclipticseasons.common.registry.AttachmentRegistry;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
@@ -31,20 +36,30 @@ import com.teamtea.eclipticseasons.compat.CompatModule;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import lombok.Setter;
 import net.minecraft.core.*;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.StringRepresentable;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.ItemEnchantments;
+import net.minecraft.world.item.equipment.Equippable;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
@@ -170,7 +185,7 @@ public class WeatherManager {
             }
         }
 
-        return function.test(getBiomeWeather(level, MapChecker.getSurfaceBiome(level, level.getSharedSpawnPos()))) ? 1f : 0;
+        return function.test(getBiomeWeather(level, MapChecker.getSurfaceBiome(level, level.getLevelData().getRespawnData().pos()))) ? 1f : 0;
     }
 
 
@@ -400,50 +415,50 @@ public class WeatherManager {
     }
 
     public static void createLevelBiomeWeatherList(Level level) {
-        var biomes = level.registryAccess().registry(Registries.BIOME);
+        var biomes = level.registryAccess().lookup(Registries.BIOME);
         if (biomes.isEmpty())
             throw new IllegalStateException("[%s] Minecraft cannot work without Biome registry!".formatted(level.dimension()));
-        Registry<Biome> biomes1 = biomes.get();
-        var biomesWeathers = new ArrayList<BiomeWeather>(biomes1.size());
-        var biomesWeathersArray = new BiomeWeather[biomes1.size()];
-        for (Biome biome : biomes1) {
-            // biomes.get().holders().toList().getFirst().getDelegate()
-            ResourceLocation loc = biomes1.getKey(biome);
-            int id = biomes1.getId(biome);
-            Optional<Holder.Reference<Biome>> biomesHolder = biomes1.getHolder(loc);
-            if (biomesHolder.isPresent()) {
-                var biomeWeather = new BiomeWeather(biomesHolder.get());
-                biomeWeather.location = loc;
-                biomeWeather.id = id;
-                // biomesWeathers.set(id, biomeWeather);
-                biomesWeathersArray[id] = biomeWeather;
-                ((IBiomeTagHolder) (Object) biome).eclipticseasons$setBindId(id);
+        if (biomes.isPresent()) {
+            var registryReference = biomes.get();
+            var biomesWeathers = new ArrayList<BiomeWeather>(registryReference.size());
+            var biomesWeathersArray = new BiomeWeather[registryReference.size()];
+            for (Biome biome : registryReference) {
+                Identifier loc = registryReference.getKey(biome);
+                int id = registryReference.getId(biome);
+                Optional<Holder.Reference<Biome>> biomesHolder = registryReference.get(loc);
+                if (biomesHolder.isPresent()) {
+                    var biomeWeather = new BiomeWeather(biomesHolder.get());
+                    biomeWeather.location = loc;
+                    biomeWeather.id = id;
+                    // biomesWeathers.set(id, biomeWeather);
+                    biomesWeathersArray[id] = biomeWeather;
+                    ((IBiomeTagHolder) (Object) biome).eclipticseasons$setBindId(id);
+                }
             }
-        }
-        biomesWeathers = new ArrayList<>(Arrays.stream(biomesWeathersArray).toList());
-        WeatherManager.BIOME_WEATHER_LIST.put(level, biomesWeathers);
+            biomesWeathers = new ArrayList<>(Arrays.stream(biomesWeathersArray).toList());
+            WeatherManager.BIOME_WEATHER_LIST.put(level, biomesWeathers);
 
-        if (level instanceof IBiomeWeatherProvider iBiomeWeatherProvider) {
-            iBiomeWeatherProvider.es$set(biomesWeathers);
-        }
+            if (level instanceof IBiomeWeatherProvider iBiomeWeatherProvider) {
+                iBiomeWeatherProvider.es$set(biomesWeathers);
+            }
 
-        // add copy
-        Map<Biome, BiomeWeather> biomeBiomeWeatherMap = new IdentityHashMap<>();
-        for (BiomeWeather biomesWeather : biomesWeathers) {
-            biomeBiomeWeatherMap.put(biomesWeather.biomeHolder.value(), biomesWeather);
+            // add copy
+            Map<Biome, BiomeWeather> biomeBiomeWeatherMap = new IdentityHashMap<>();
+            for (BiomeWeather biomesWeather : biomesWeathers) {
+                biomeBiomeWeatherMap.put(biomesWeather.biomeHolder.value(), biomesWeather);
+            }
+            WeatherManager.BIOME_WEATHER_QUERY_LIST.put(level, biomeBiomeWeatherMap);
         }
-        WeatherManager.BIOME_WEATHER_QUERY_LIST.put(level, biomeBiomeWeatherMap);
     }
 
-    public static void informUpdateBiomes(RegistryAccess registryAccess, boolean isServer) {
-
+    public static void informUpdateBiomes(HolderLookup.Provider registryAccess, boolean isServer) {
         WeatherManager.BIOME_WEATHER_LIST.forEach((key, biomeWeathers) -> {
             if ((key instanceof ServerLevel) == isServer) {
-                registryAccess.registry(Registries.BIOME)
+                key.registryAccess().lookup(Registries.BIOME)
                         .ifPresent(biomeRegistry -> biomeRegistry
-                                .holders().forEach(biomeHolder ->
+                                .listElements().forEach(biomeHolder ->
                                 {
-                                    ResourceLocation loc = biomeHolder.key().location();
+                                    Identifier loc = biomeHolder.key().identifier();
                                     var id = biomeRegistry.getId(biomeHolder.value());
                                     boolean inList = false;
                                     for (BiomeWeather biomeWeather : biomeWeathers) {
@@ -501,6 +516,7 @@ public class WeatherManager {
         }
         if (hasNonePrecipitation(biomeWeather.biomeHolder.value()))
             return;
+
         boolean isEcliptic = EclipticUtil.hasLocalWeather(level);
 
 
@@ -511,7 +527,7 @@ public class WeatherManager {
                 if (biomeWeather.shouldRain()) {
                     biomeWeather.rainTime--;
                     if (!biomeWeather.shouldThunder()) {
-                        //SolarTerm solarTerm = EclipticUtil.getNowSolarTerm(level);
+                        // SolarTerm solarTerm = EclipticUtil.getNowSolarTerm(level);
                         BiomeRain biomeRain = biomeWeather.getBiomeRain();
                         float weight = biomeRain.getThunderChance()
                                 * ((CommonConfig.Weather.thunderChanceMultiplier.get() * 1f) / 100f)
@@ -520,7 +536,7 @@ public class WeatherManager {
                             biomeWeather.thunderTime = biomeRain.getThunderDuration(random) / size;
                         }
 
-                        //biomeWeather.setBiomeRain(biomeRain);
+                        // biomeWeather.setBiomeRain(biomeRain);
                     }
                 } else {
                     SolarTerm solarTerm = EclipticUtil.getNowSolarTerm(level);
@@ -578,21 +594,12 @@ public class WeatherManager {
     }
 
     public static void initNewWorldWeather(ServerLevel level, RandomSource random, SolarTerm solarTerm) {
-        ArrayList<BiomeWeather> biomeList = getBiomeList(level);
-        if (biomeList == null || level.isClientSide() || !MapChecker.isValidDimension(level)) return;
-
-        if (CommonConfig.Weather.shouldInitSnowForExtremeColdBiomes.get()) {
-            for (BiomeWeather biomeWeather : biomeList) {
-                if (biomeWeather.biomeHolder == null
-                        || !biomeWeather.biomeHolder.is(ClimateTypeBiomeTags.EXTREME_COLD))
-                    continue;
-                biomeWeather.setSnowDepth(100);
-            }
-        }
-
-        if (!CommonConfig.Weather.shouldInitWeather.get()) {
+        if (!CommonConfig.Weather.shouldInitWeather.get()
+                || level.isClientSide() || !MapChecker.isValidDimension(level)) {
             return;
         }
+        ArrayList<BiomeWeather> biomeList = getBiomeList(level);
+        if (biomeList == null) return;
 
         int size = getWeatherTickFactor(level);
         SolarTerm lastSolarTerm =
@@ -697,7 +704,7 @@ public class WeatherManager {
         boolean needThunder = weatherCheck.isThundering().isPresent();
         boolean needRain = weatherCheck.isRaining().isPresent();
         if (needThunder) {
-            var pos = pContext.getParamOrNull(LootContextParams.ORIGIN);
+            var pos = pContext.getOptionalParameter(LootContextParams.ORIGIN);
             if (pos != null) {
                 boolean isThunderAt = isThunderAt(pContext.getLevel(), new BlockPos((int) pos.x, (int) pos.y + 1, (int) pos.z));
                 if (weatherCheck.isThundering().get() != isThunderAt) {
@@ -706,7 +713,7 @@ public class WeatherManager {
             }
         }
         if (needRain) {
-            var pos = pContext.getParamOrNull(LootContextParams.ORIGIN);
+            var pos = pContext.getOptionalParameter(LootContextParams.ORIGIN);
             if (pos != null) {
                 boolean isRainingAt = pContext.getLevel().isRainingAt(new BlockPos((int) pos.x, (int) pos.y + 1, (int) pos.z));
                 if (weatherCheck.isRaining().get() != isRainingAt) {
@@ -768,7 +775,7 @@ public class WeatherManager {
 
     public static void sendBiomePacket(ServerLevel level, ArrayList<BiomeWeather> levelBiomeWeather, List<ServerPlayer> players) {
         if (players.isEmpty()) return;
-        Registry<WeatherEffect> weatherEffects = level.registryAccess().registryOrThrow(ESRegistries.WEATHER_EFFECT);
+        Registry<WeatherEffect> weatherEffects = level.registryAccess().lookupOrThrow(ESRegistries.WEATHER_EFFECT);
         byte[] rains = new byte[levelBiomeWeather.size()];
         byte[] thunders = new byte[levelBiomeWeather.size()];
         byte[] clears = new byte[levelBiomeWeather.size()];
@@ -839,7 +846,7 @@ public class WeatherManager {
         public Holder<Biome> biomeHolder;
         public int id;
 
-        public ResourceLocation location;
+        public Identifier location;
         public int rainTime = 0;
         public int thunderTime = 0;
         public int clearTime = 0;
@@ -898,26 +905,26 @@ public class WeatherManager {
             tag.putInt("clearTime", clearTime);
             tag.putFloat("snowDepth", snowDepth);
             if (effect != null)
-                tag.putString("specialEffect", effect.getKey().location().toString());
+                tag.putString("specialEffect", effect.getKey().identifier().toString());
             tag.putInt("biomeRain", BiomeRainDispatcher.indexOf(true, biomeRain));
             return tag;
         }
 
 
         public void deserializeNBT(CompoundTag nbt, HolderLookup.Provider pRegistries, long oldData) {
-            location = ResourceLocation.parse(nbt.getString("biome"));
-            rainTime = nbt.getInt("rainTime");
-            lastRainTime = nbt.getLong("lastRainTime");
-            thunderTime = nbt.getInt("thunderTime");
-            clearTime = nbt.getInt("clearTime");
-            //snowDepth = nbt.getFloat("snowDepth");
-            setSnowDepth(nbt.getFloat("snowDepth"));
+            location = Identifier.parse(nbt.getStringOr("biome", Biomes.PLAINS.identifier().toString()));
+            rainTime = nbt.getIntOr("rainTime", 0);
+            lastRainTime = nbt.getLongOr("lastRainTime", 0);
+            thunderTime = nbt.getIntOr("thunderTime", 0);
+            clearTime = nbt.getIntOr("clearTime", 0);
+            // snowDepth = nbt.getFloat("snowDepth");
+            setSnowDepth(nbt.getFloatOr("snowDepth", 0));
             if (nbt.contains("specialEffect")) {
-                effect = pRegistries.holder(ResourceKey.create(ESRegistries.WEATHER_EFFECT, ResourceLocation.parse(nbt.getString("specialEffect"))))
+                effect = pRegistries.holder(ResourceKey.create(ESRegistries.WEATHER_EFFECT, Identifier.parse(nbt.getStringOr("specialEffect", "null"))))
                         .orElse(null);
             }
             if (nbt.contains("biomeRain")) {
-                this.biomeRain = BiomeRainDispatcher.getBiomeRain(true, nbt.getInt("biomeRain"));
+                this.biomeRain = BiomeRainDispatcher.getBiomeRain(true, nbt.getIntOr("biomeRain", 0));
             }
         }
     }

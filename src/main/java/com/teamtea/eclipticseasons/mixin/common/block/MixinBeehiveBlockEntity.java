@@ -16,15 +16,15 @@ import org.spongepowered.asm.mixin.injection.At;
 @Mixin(BeehiveBlockEntity.class)
 public class MixinBeehiveBlockEntity {
 
-    @WrapOperation(
-            method = "releaseOccupant",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;isRaining()Z")
-    )
-    private static boolean mixin$releaseOccupantCheckRain(Level level, Operation<Boolean> original, @Local(ordinal = 0) BlockPos blockPos) {
-        if (EclipticUtil.hasLocalWeather(level))
-            return WeatherUtil.isBlockInRainOrSnow(level, blockPos);
-        else return original.call(level);
-    }
+    // @WrapOperation(
+    //         method = "releaseOccupant",
+    //         at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;isRaining()Z")
+    // )
+    // private static boolean mixin$releaseOccupantCheckRain(Level level, Operation<Boolean> original, @Local(ordinal = 0) BlockPos blockPos) {
+    //     if (EclipticUtil.hasLocalWeather(level))
+    //         return WeatherUtil.isBlockInRainOrSnow(level, blockPos);
+    //     else return original.call(level);
+    // }
 
 
 }

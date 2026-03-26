@@ -1,0 +1,184 @@
+{
+  "biomes": "#eclipticseasons:agro/cold",
+  "mappings": {
+    "beginning_of_spring": [
+      {
+        "greater_cold": 0.8
+      }
+    ],
+    "rain_water": [
+      {
+        "winter_solstice": 0.95
+      }
+    ],
+    "insects_awakening": [
+      {
+        "winter_solstice": 1.0
+      }
+    ],
+    "spring_equinox": [
+      {
+        "winter_solstice": 0.8
+      },
+      {
+        "beginning_of_spring": 0.2
+      }
+    ],
+    "fresh_green": [
+      {
+        "beginning_of_spring": 0.7
+      },
+      {
+        "spring_equinox": 0.3
+      }
+    ],
+    "grain_rain": [
+      {
+        "beginning_of_spring": 0.5
+      },
+      {
+        "spring_equinox": 0.5
+      }
+    ],
+    "beginning_of_summer": [
+      {
+        "spring_equinox": 1.0
+      }
+    ],
+    "lesser_fullness": [
+      {
+        "spring_equinox": 0.8
+      },
+      {
+        "beginning_of_summer": 0.2
+      }
+    ],
+    "grain_in_ear": [
+      {
+        "spring_equinox": 0.6
+      },
+      {
+        "beginning_of_summer": 0.4
+      }
+    ],
+    "summer_solstice": [
+      {
+        "spring_equinox": 0.4
+      },
+      {
+        "beginning_of_summer": 0.4
+      },
+      {
+        "summer_solstice": 0.2
+      }
+    ],
+    "lesser_heat": [
+      {
+        "summer_solstice": 0.4
+      },
+      {
+        "beginning_of_autumn": 0.6
+      }
+    ],
+    "greater_heat": [
+      {
+        "beginning_of_autumn": 1.0
+      }
+    ],
+    "beginning_of_autumn": [
+      {
+        "autumnal_equinox": 1.0
+      }
+    ],
+    "end_of_heat": [
+      {
+        "autumnal_equinox": 0.4
+      },
+      {
+        "beginning_of_winter": 0.6
+      }
+    ],
+    "white_dew": [
+      {
+        "beginning_of_winter": 1.0
+      }
+    ],
+    "autumnal_equinox": [
+      {
+        "beginning_of_winter": 0.8
+      },
+      {
+        "winter_solstice": 0.2
+      }
+    ],
+    "cold_dew": [
+      {
+        "beginning_of_winter": 0.4
+      },
+      {
+        "winter_solstice": 0.6
+      }
+    ],
+    "first_frost": [
+      {
+        "winter_solstice": 0.8
+      },
+      {
+        "greater_cold": 0.2
+      }
+    ],
+    "beginning_of_winter": [
+      {
+        "summer_solstice": 1.0
+      }
+    ],
+    "light_snow": [
+      {
+        "summer_solstice": 0.6
+      },
+      {
+        "greater_cold": 0.4
+      }
+    ],
+    "heavy_snow": [
+      {
+        "summer_solstice": 0.4
+      },
+      {
+        "greater_cold": 0.6
+      }
+    ],
+    "winter_solstice": [
+      {
+        "greater_cold": 1.0
+      }
+    ],
+    "lesser_cold": [
+      {
+        "greater_cold": 0.8
+      }
+    ],
+    "greater_cold": [
+      {
+        "greater_cold": 0.55
+      }
+    ]
+  },
+  "seasonal_signal_durations": [
+    {
+      "winter": 3
+    },
+    {
+      "spring": 4
+    },
+    {
+      "summer": 3
+    },
+    {
+      "autumn": 4
+    },
+    {
+      "winter": 10
+    }
+  ]
+}

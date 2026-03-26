@@ -38,8 +38,7 @@ public class ClientCon {
     public static String ServerName = "client";
 
     @Getter
-    public static ClientAgent agent = new ClientAgent() {
-    };
+    public static ClientAgent agent = ClientAgent.EMPTY;
 
     public static void tick(Level clientLevel) {
         if (MapChecker.isValidDimension(clientLevel)) {
@@ -52,7 +51,7 @@ public class ClientCon {
             ClientCon.isNoon = EclipticUtil.isNoon(clientLevel);
             SolarDataManager saveData = SolarHolders.getSaveData(clientLevel);
             if (saveData != null) {
-                ClientCon.progress = Mth.clamp(Mth.floor(((saveData.getSolarTermDaysInPeriod() + (Mth.floor((clientLevel.getDayTime() + EclipticUtil.getDayLengthInMinecraft(clientLevel)) % ((long) EclipticUtil.getDayLengthInMinecraft(clientLevel)) / ((float) EclipticUtil.getDayLengthInMinecraft(clientLevel)) * 10)) / 10f) * 100 / saveData.getSolarTermLastingDays())), 0, 100);
+                ClientCon.progress = Mth.clamp(Mth.floor(((saveData.getSolarTermDaysInPeriod() + (Mth.floor((clientLevel.getDefaultClockTime() + EclipticUtil.getDayLengthInMinecraft(clientLevel)) % ((long) EclipticUtil.getDayLengthInMinecraft(clientLevel)) / ((float) EclipticUtil.getDayLengthInMinecraft(clientLevel)) * 10)) / 10f) * 100 / saveData.getSolarTermLastingDays())), 0, 100);
             }
             ClientCon.nowSolarYear = EclipticUtil.getNowSolarYear(clientLevel);
         } else {

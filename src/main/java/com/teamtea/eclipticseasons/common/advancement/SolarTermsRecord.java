@@ -1,6 +1,7 @@
 package com.teamtea.eclipticseasons.common.advancement;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
@@ -13,40 +14,39 @@ import java.util.stream.Collectors;
 
 public record SolarTermsRecord(Object2IntLinkedOpenHashMap<SolarTerm> solarTerms) {
     public static final int size = SolarTerm.collectValues().length;
-    public static final Codec<SolarTermsRecord> CODEC = Codec.lazyInitialized(
-            () -> RecordCodecBuilder.create(
-                    solarHolderInstance ->
-                            solarHolderInstance.group(Codec.INT.sizeLimitedListOf(size)
-                                                    .fieldOf("solar_terms").forGetter(solarHolder -> solarHolder
-                                                            .solarTerms()
-                                                            .keySet()
-                                                            .stream()
-                                                            .map(Enum::ordinal)
-                                                            .toList()
-                                                    ),
-                                            Codec.INT.sizeLimitedListOf(size)
-                                                    .optionalFieldOf("solar_terms_counter").forGetter(solarHolder ->
-                                                            Optional.of(solarHolder
-                                                                    .solarTerms()
-                                                                    .values()
-                                                                    .stream().toList())
-                                                    )
-                                    )
-                                    .apply(solarHolderInstance, (intArray, counter) ->
-                                            {
-                                                final Object2IntLinkedOpenHashMap<SolarTerm> solarTerms = new Object2IntLinkedOpenHashMap<>();
 
-                                                for (int i = 0, intArrayLength = intArray.size(); i < intArrayLength; i++) {
-                                                    int id = intArray.get(i);
-                                                    int finalI = i;
-                                                    solarTerms.put(
-                                                            SolarTerm.collectValues()[id], (int) counter.map(c -> c.get(finalI)).orElse(1)
-                                                    );
-                                                }
-                                                return new SolarTermsRecord(solarTerms);
-                                            }
-                                    )
-            )
+    public static final MapCodec<SolarTermsRecord> CODEC = RecordCodecBuilder.mapCodec(
+            solarHolderInstance ->
+                    solarHolderInstance.group(Codec.INT.sizeLimitedListOf(size)
+                                            .fieldOf("solar_terms").forGetter(solarHolder -> solarHolder
+                                                    .solarTerms()
+                                                    .keySet()
+                                                    .stream()
+                                                    .map(Enum::ordinal)
+                                                    .toList()
+                                            ),
+                                    Codec.INT.sizeLimitedListOf(size)
+                                            .optionalFieldOf("solar_terms_counter").forGetter(solarHolder ->
+                                                    Optional.of(solarHolder
+                                                            .solarTerms()
+                                                            .values()
+                                                            .stream().toList())
+                                            )
+                            )
+                            .apply(solarHolderInstance, (intArray, counter) ->
+                                    {
+                                        final Object2IntLinkedOpenHashMap<SolarTerm> solarTerms = new Object2IntLinkedOpenHashMap<>();
+
+                                        for (int i = 0, intArrayLength = intArray.size(); i < intArrayLength; i++) {
+                                            int id = intArray.get(i);
+                                            int finalI = i;
+                                            solarTerms.put(
+                                                    SolarTerm.collectValues()[id], (int) counter.map(c -> c.get(finalI)).orElse(1)
+                                            );
+                                        }
+                                        return new SolarTermsRecord(solarTerms);
+                                    }
+                            )
     );
     public static final StreamCodec<RegistryFriendlyByteBuf, SolarTermsRecord> STREAM_CODEC = new StreamCodec<>() {
         public SolarTermsRecord decode(RegistryFriendlyByteBuf byteBuf) {

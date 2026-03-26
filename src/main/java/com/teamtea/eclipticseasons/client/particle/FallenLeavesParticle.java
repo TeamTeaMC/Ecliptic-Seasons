@@ -2,8 +2,9 @@ package com.teamtea.eclipticseasons.client.particle;
 
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.ParticleRenderType;
+import net.minecraft.client.particle.SimpleAnimatedParticle;
+import net.minecraft.client.particle.SingleQuadParticle;
 import net.minecraft.client.particle.SpriteSet;
-import net.minecraft.client.particle.TextureSheetParticle;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.particles.ColorParticleOption;
 import net.minecraft.util.Mth;
@@ -12,7 +13,7 @@ import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
 
-public class FallenLeavesParticle extends TextureSheetParticle {
+public class FallenLeavesParticle extends SingleQuadParticle {
 
     private static final float ACCELERATION_SCALE = 0.0025F;
     private static final int INITIAL_LIFETIME = 300;
@@ -25,7 +26,7 @@ public class FallenLeavesParticle extends TextureSheetParticle {
 
 
     public FallenLeavesParticle(ClientLevel clientLevel, double pX, double pY, double pZ, double pXSpeed, double pYSpeed, double pZSpeed, ColorParticleOption colorParticleOption, SpriteSet spriteSet) {
-        super(clientLevel, pX, pY, pZ, pXSpeed, pYSpeed, pZSpeed);
+        super(clientLevel, pX, pY, pZ, spriteSet.first());
         this.rotSpeed = (float) Math.toRadians(this.random.nextBoolean() ? -30.0D : 30.0D);
         this.particleRandom = this.random.nextFloat();
         this.spinAcceleration = (float) Math.toRadians(this.random.nextBoolean() ? -5.0D : 5.0D);
@@ -42,7 +43,7 @@ public class FallenLeavesParticle extends TextureSheetParticle {
     }
 
     public FallenLeavesParticle(ClientLevel clientLevel, double pX, double pY, double pZ, double pXSpeed, double pYSpeed, double pZSpeed, ColorParticleOption colorParticleOption, TextureAtlasSprite sprite) {
-        super(clientLevel, pX, pY, pZ, pXSpeed, pYSpeed, pZSpeed);
+        super(clientLevel, pX, pY, pZ, sprite);
         this.rotSpeed = (float) Math.toRadians(this.random.nextBoolean() ? -30.0D : 30.0D);
         this.particleRandom = this.random.nextFloat();
         this.spinAcceleration = (float) Math.toRadians(this.random.nextBoolean() ? -5.0D : 5.0D);
@@ -64,8 +65,8 @@ public class FallenLeavesParticle extends TextureSheetParticle {
     }
 
     @Override
-    public ParticleRenderType getRenderType() {
-        return ParticleRenderType.PARTICLE_SHEET_OPAQUE;
+    protected Layer getLayer() {
+        return SingleQuadParticle.Layer.OPAQUE;
     }
 
     @Override
@@ -78,7 +79,7 @@ public class FallenLeavesParticle extends TextureSheetParticle {
             this.remove();
         }
 
-        if (this.onGround ) {
+        if (this.onGround) {
             this.remove();
             // this.lifetime -= 5;
         } else if (!this.removed) {
@@ -121,7 +122,7 @@ public class FallenLeavesParticle extends TextureSheetParticle {
             if (this.hasPhysics
                     && (pX != 0.0 || pY != 0.0 || pZ != 0.0)
                     && pX * pX + pY * pY + pZ * pZ < MAXIMUM_COLLISION_VELOCITY_SQUARED
-                    // && !(nextState.getBlock() instanceof LeavesBlock)
+                // && !(nextState.getBlock() instanceof LeavesBlock)
             ) {
                 Vec3 vec3 = Entity.collideBoundingBox(null, new Vec3(pX, pY, pZ), this.getBoundingBox(), this.level, List.of());
                 pX = vec3.x;

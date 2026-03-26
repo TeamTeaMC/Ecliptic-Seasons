@@ -3,12 +3,11 @@ package com.teamtea.eclipticseasons.data.general.lang;
 import com.teamtea.eclipticseasons.common.registry.*;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import net.minecraft.data.PackOutput;
-import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
 
 public class Lang_EN extends LangHelper {
-    public Lang_EN(PackOutput gen, ExistingFileHelper helper) {
-        super(gen, helper, EclipticSeasonsApi.MODID, "en_us");
+    public Lang_EN(PackOutput gen) {
+        super(gen,  EclipticSeasonsApi.MODID, "en_us");
     }
 
 

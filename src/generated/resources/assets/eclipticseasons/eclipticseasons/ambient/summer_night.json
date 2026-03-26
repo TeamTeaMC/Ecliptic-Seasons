@@ -1,5 +1,7 @@
 {
-  "sound": "eclipticseasons:ambient.night_river",
+  "season": "summer",
+  "ignore_time": false,
+  "day": false,
   "biomes": {
     "value": {
       "values": [
@@ -14,7 +16,5 @@
     },
     "type": "neoforge:not"
   },
-  "ignore_time": false,
-  "day": false,
-  "season": "summer"
+  "sound": "eclipticseasons:ambient.night_river"
 }

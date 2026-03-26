@@ -1,0 +1,43 @@
+{
+  "parent": "eclipticseasons:main/root",
+  "criteria": {
+    "core_require": {
+      "conditions": {
+        "items": [
+          {
+            "items": "eclipticseasons:spring_greenhouse_essence"
+          },
+          {
+            "items": "eclipticseasons:summer_greenhouse_essence"
+          },
+          {
+            "items": "eclipticseasons:autumn_greenhouse_essence"
+          },
+          {
+            "items": "eclipticseasons:winter_greenhouse_essence"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancement.eclipticseasons.seasonal_prayer_scroll.desc"
+    },
+    "hidden": true,
+    "icon": {
+      "id": "eclipticseasons:seasonal_prayer_scroll"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "advancement.eclipticseasons.seasonal_prayer_scroll"
+    }
+  },
+  "requirements": [
+    [
+      "core_require"
+    ]
+  ],
+  "sends_telemetry_event": true
+}
