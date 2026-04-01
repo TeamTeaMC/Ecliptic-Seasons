@@ -192,8 +192,8 @@ dependencies {
     implementation "net.neoforged:neoforge:${neo_version}"
 
 
-    compileOnly "curse.maven:jei-238222:7181665"
-    implementation "curse.maven:jade-324717:7815579"
+    implementation "curse.maven:jei-238222:7850293"
+    implementation "curse.maven:jade-324717:7817285"
     compileOnly("curse.maven:the-one-probe-245211:6106998")
 
 
@@ -332,8 +332,8 @@ tasks.withType(JavaCompile).configureEach {
 idea {
     module {
 //        change it if use
-        downloadSources = false
-        downloadJavadoc = false
+        downloadSources = true
+        downloadJavadoc = true
     }
 }
 

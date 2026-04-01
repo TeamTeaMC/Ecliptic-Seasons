@@ -15,7 +15,9 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
-import net.neoforged.neoforge.items.ItemStackHandler;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.neoforged.neoforge.transfer.item.ItemStacksResourceHandler;
 import org.jetbrains.annotations.NotNull;
 
 public class BlockInCopperGrateBlockEntity extends HumidityControlBlockEntity {
@@ -127,41 +129,40 @@ public class BlockInCopperGrateBlockEntity extends HumidityControlBlockEntity {
     }
 
 
-    public GrateItemStackHandler getItemStackHandler() {
+    public ResourceHandler<ItemResource> getItemStackHandler() {
         return this.itemStackHandler;
     }
 
-    @SuppressWarnings("removal")
-    public class GrateItemStackHandler extends ItemStackHandler {
+    public class GrateItemStackHandler extends ItemStacksResourceHandler {
         public GrateItemStackHandler() {
             super(1);
         }
 
         @Override
-        public boolean isItemValid(int slot, ItemStack stack) {
-            return BlockInCopperGrateBlock.getItemMatch(level, stack) != null;
+        public boolean isValid(int index, ItemResource resource) {
+            return BlockInCopperGrateBlock.getItemMatch(level, resource.toStack()) != null;
         }
 
         @Override
-        public int getSlotLimit(int slot) {
+        protected int getCapacity(int index, ItemResource resource) {
             return 1;
         }
 
         @Override
-        protected void onContentsChanged(int slot) {
-            super.onContentsChanged(slot);
-            setBlockNotSync(Block.byItem(getStackInSlot(0).getItem()));
+        protected void onContentsChanged(int index, ItemStack previousContents) {
+            super.onContentsChanged(index, previousContents);
+            setBlockNotSync(Block.byItem(getResource(0).getItem()));
             inventoryChanged();
         }
 
         public void setStackInSlotNotSync(int slot, @NotNull ItemStack stack) {
-            this.validateSlotIndex(slot);
+            // this.validateSlotIndex(slot);
             this.stacks.set(slot, stack);
         }
-
-        @Override
-        public @NotNull ItemStack getStackInSlot(int slot) {
-            return super.getStackInSlot(slot);
-        }
+        //
+        // @Override
+        // public @NotNull ItemStack getStackInSlot(int slot) {
+        //     return super.getStackInSlot(slot);
+        // }
     }
 }

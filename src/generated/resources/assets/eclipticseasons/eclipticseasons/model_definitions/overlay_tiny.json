@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "": {
+      "model": "eclipticseasons:block/overlay_tiny"
+    }
+  },
+  "require": "eclipticseasons"
+}

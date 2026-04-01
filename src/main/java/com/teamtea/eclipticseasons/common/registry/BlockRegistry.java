@@ -45,7 +45,7 @@ public class BlockRegistry {
 
     // season_quest_sign 季节任务
     public static final DeferredHolder<Block, Block> season_quest_ceiling_hanging_sign = BLOCK_DEFERRED_REGISTER.registerBlock("season_quest_ceiling_hanging_sign", QuestCeilingHangingSignBlock::new, () -> (BlockBehaviour.Properties.of().strength(0.5f).sound(SoundType.WOOD).noOcclusion().pushReaction(PushReaction.DESTROY)));
-    public static final DeferredHolder<Block, Block> season_quest_wall_hanging_sign = BLOCK_DEFERRED_REGISTER.registerBlock("season_quest_wall_hanging_sign", QuestCeilingHangingSignBlock::new, () -> (BlockBehaviour.Properties.of().strength(0.5f).sound(SoundType.WOOD).noOcclusion().pushReaction(PushReaction.DESTROY)));
+    public static final DeferredHolder<Block, Block> season_quest_wall_hanging_sign = BLOCK_DEFERRED_REGISTER.registerBlock("season_quest_wall_hanging_sign", QuestWallHangingSignBlock::new, () -> (BlockBehaviour.Properties.of().strength(0.5f).sound(SoundType.WOOD).noOcclusion().pushReaction(PushReaction.DESTROY)));
 
     // humidity_control 湿度调节
     public static final DeferredHolder<Block, Block> block_in_copper_grate_block = BLOCK_DEFERRED_REGISTER.registerBlock("block_in_copper_grate_block", (p) -> new BlockInCopperGrateBlock((WeatheringCopperGrateBlock) Blocks.COPPER_GRATE, p), () -> BlockBehaviour.Properties.ofFullCopy(Blocks.COPPER_GRATE));
@@ -107,6 +107,19 @@ public class BlockRegistry {
     public static Block getOriginalCopperGrateBlock(Block transformed) {
         if (REVERSE_COPPER_GRATE_MAP == null) initCopperGrateMap();
         return REVERSE_COPPER_GRATE_MAP.getOrDefault(transformed, () -> Blocks.AIR).get();
+    }
+
+    public static Block getOriginalCopperGrateBlockNotWaxed(Block transformed) {
+        Block block = getOriginalCopperGrateBlock(transformed);
+        if (block == Blocks.WAXED_COPPER_GRATE)
+            block = Blocks.COPPER_GRATE;
+        else if (block == Blocks.WAXED_EXPOSED_COPPER_GRATE)
+            block = Blocks.EXPOSED_COPPER_GRATE;
+        else if (block == Blocks.WAXED_WEATHERED_COPPER_GRATE)
+            block = Blocks.WEATHERED_COPPER_GRATE;
+        else if (block == Blocks.WAXED_OXIDIZED_COPPER_GRATE)
+            block = Blocks.OXIDIZED_COPPER_GRATE;
+        return block;
     }
 
     public static List<Block> getAllChangedGrateBlocks() {

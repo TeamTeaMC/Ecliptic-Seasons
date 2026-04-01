@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cross",
+  "textures": {
+    "cross": "eclipticseasons:block/snowy/sweet_berry_bush_stage2"
+  }
+}

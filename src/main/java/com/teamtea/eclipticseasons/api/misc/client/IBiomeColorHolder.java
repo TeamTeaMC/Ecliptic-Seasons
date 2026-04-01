@@ -6,4 +6,6 @@ public interface IBiomeColorHolder {
     BiomeColor.Instance getBiomeColor();
 
     void setBiomeColor(BiomeColor.Instance biomeColor);
+
+    void setSeasonChanged();
 }

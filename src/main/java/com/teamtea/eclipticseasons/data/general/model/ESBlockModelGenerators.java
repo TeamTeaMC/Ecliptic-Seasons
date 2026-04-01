@@ -129,7 +129,7 @@ public class ESBlockModelGenerators {
 
 
     public void addCopperGrate(Block block) {
-        addSimple(block, BlockRegistry.getOriginalCopperGrateBlock(block));
+        addSimple(block, BlockRegistry.getOriginalCopperGrateBlockNotWaxed(block));
     }
 
     public void addCauldron(Block block, Block content) {

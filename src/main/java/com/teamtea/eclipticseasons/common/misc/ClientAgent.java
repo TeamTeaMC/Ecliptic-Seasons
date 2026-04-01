@@ -2,6 +2,7 @@ package com.teamtea.eclipticseasons.common.misc;
 
 import com.teamtea.eclipticseasons.common.block.blockentity.WindChimesBlockEntity;
 import net.minecraft.core.SectionPos;
+import net.minecraft.world.attribute.EnvironmentAttributeSystem;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.HitResult;
@@ -48,4 +49,8 @@ public interface ClientAgent {
 
     ClientAgent EMPTY = new ClientAgent() {
     };
+
+    default void attachEnvironment(Level level, EnvironmentAttributeSystem.Builder environmentAttributes){
+
+    }
 }

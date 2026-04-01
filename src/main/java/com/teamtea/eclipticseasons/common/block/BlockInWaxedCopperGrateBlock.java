@@ -4,10 +4,12 @@ import com.teamtea.eclipticseasons.common.block.base.SimpleEntityBlock;
 import com.teamtea.eclipticseasons.common.block.blockentity.BlockInCopperGrateBlockEntity;
 import com.teamtea.eclipticseasons.common.registry.BlockEntityRegistry;
 import com.teamtea.eclipticseasons.common.registry.BlockRegistry;
+import com.teamtea.eclipticseasons.common.registry.ItemRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
@@ -26,6 +28,12 @@ public class BlockInWaxedCopperGrateBlock extends WaterloggedTransparentBlock im
         super(properties);
     }
 
+    @Override
+    public Item asItem() {
+        if(this==BlockRegistry.block_in_wooden_grate_block.get())
+            return ItemRegistry.block_in_wooden_grate_block_item.get();
+        return BlockRegistry.getOriginalCopperGrateBlock(this).asItem();
+    }
 
     @Override
     public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state, boolean includeData, Player player) {

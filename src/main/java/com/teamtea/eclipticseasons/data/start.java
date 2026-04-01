@@ -5,6 +5,7 @@ import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.data.api.MutablePackOutput;
 import com.teamtea.eclipticseasons.data.extend.example.*;
 import com.teamtea.eclipticseasons.data.extend.extra_snow.DatapackRegistryGeneratorExtra;
+import com.teamtea.eclipticseasons.data.extend.extra_snow.ExtraClientModelDefinitionProvider;
 import com.teamtea.eclipticseasons.data.extend.regional_snow_time.RegionalSnowTimeProvider;
 import com.teamtea.eclipticseasons.data.general.advancement.Advancements;
 import com.teamtea.eclipticseasons.data.general.datapack.DatapackRegistryGenerator;
@@ -85,7 +86,7 @@ public class start {
 
 
             generator.addProvider(true, new SeasonalBiomeAmbientProvider(packOutput, MODID, lookupProvider));
-            //generator.addProvider(true, new ClientModelDefinitionProvider(packOutput, MODID, lookupProvider));
+            generator.addProvider(true, new ClientModelDefinitionProvider(packOutput, MODID, lookupProvider));
             //generator.addProvider(true, new ClientTestProvider(packOutput, MODID, lookupProvider));
             generator.addProvider(true, new ClientSeasonModelDefinitionProvider(packOutput, MODID, lookupProvider));
 
@@ -97,7 +98,7 @@ public class start {
             generator.addProvider(true, new DatapackRegistryGeneratorExtra(packOutput, lookupProvider));
         }
         if (event instanceof GatherDataEvent.Client) {
-            //generator.addProvider(true, new ExtraClientModelDefinitionProvider(packOutput, MODID, lookupProvider));
+            generator.addProvider(true, new ExtraClientModelDefinitionProvider(packOutput, MODID, lookupProvider));
         }
 
         // Example

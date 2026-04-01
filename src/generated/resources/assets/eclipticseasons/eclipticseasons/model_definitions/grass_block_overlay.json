@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "": {
+      "model": "eclipticseasons:block/snowy_grass_block"
+    }
+  },
+  "replace": true
+}

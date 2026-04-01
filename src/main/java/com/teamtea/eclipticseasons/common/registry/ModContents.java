@@ -17,27 +17,39 @@ import com.teamtea.eclipticseasons.api.data.weather.CustomRainBuilder;
 import com.teamtea.eclipticseasons.api.data.weather.CustomSnowTerm;
 import com.teamtea.eclipticseasons.api.data.weather.WeatherRegion;
 import com.teamtea.eclipticseasons.api.data.weather.special_effect.WeatherEffect;
+import com.teamtea.eclipticseasons.common.block.BlockInCopperGrateBlock;
 import com.teamtea.eclipticseasons.common.resource.FakeResourceManagerHelperUtil;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import com.teamtea.eclipticseasons.config.StartConfig;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.packs.PackSelectionConfig;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.repository.Pack;
 import net.minecraft.server.packs.repository.PackSource;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.loading.FMLLoader;
 import net.neoforged.fml.loading.moddiscovery.ModFile;
+import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.common.ModConfigSpec;
 import net.neoforged.neoforge.event.AddPackFindersEvent;
 import net.neoforged.neoforge.registries.*;
+import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.neoforged.neoforge.transfer.item.ItemStacksResourceHandler;
 
+import javax.annotation.Nullable;
 import java.util.Optional;
 
 @SuppressWarnings("removal")
@@ -90,29 +102,31 @@ public class ModContents {
 
     @SubscribeEvent
     public static void onRegisterCapabilitiesEvent(RegisterCapabilitiesEvent event) {
+        event.registerBlockEntity(Capabilities.Item.BLOCK, BlockEntityRegistry.block_in_copper_grate_block_entity_type.get(),
+                (blockEntity, context) -> blockEntity.isRemoved() ? null :
+                        (blockEntity.getItemStackHandler())
+        );
 
-        //event.registerBlockEntity(Capabilities.Item.BLOCK, BlockEntityRegistry.block_in_copper_grate_block_entity_type.get(),
-        //        (blockEntity, direction) -> blockEntity.isRemoved() ? null :
-        //                (blockEntity.getItemStackHandler()));
-        //
-        //event.registerBlock(Capabilities.Item.BLOCK, (Level level, BlockPos pos, BlockState state, @Nullable BlockEntity blockEntity, Direction side) -> new ItemStackHandler(1) {
-        //    @Override
-        //    public int getSlotLimit(int slot) {
-        //        return 1;
-        //    }
-        //
-        //    @Override
-        //    public boolean isItemValid(int slot, ItemStack stack) {
-        //        return BlockInCopperGrateBlock.validItemAndBlock(level, stack, state);
-        //    }
-        //
-        //    @Override
-        //    protected void onContentsChanged(int slot) {
-        //        if (slot == 0 && getStackInSlot(0).getItem() instanceof BlockItem blockItem) {
-        //            BlockInCopperGrateBlock.setNewBlock(level, pos, state, blockItem);
-        //        }
-        //    }
-        //}, BlockRegistry.getAllGrateBlocks().toArray(Block[]::new));
+        event.registerBlock(Capabilities.Item.BLOCK, (Level level, BlockPos pos, BlockState state, @Nullable BlockEntity blockEntity, Direction side) -> new ItemStacksResourceHandler(1) {
+
+            @Override
+            protected int getCapacity(int index, ItemResource resource) {
+                return 1;
+            }
+
+            @Override
+            public boolean isValid(int index, ItemResource resource) {
+                return BlockInCopperGrateBlock.validItemAndBlock(level, resource.toStack(), state);
+            }
+
+            @Override
+            protected void onContentsChanged(int index, ItemStack previousContents) {
+                if (index == 0 && getResource(0).getItem() instanceof BlockItem blockItem) {
+                    BlockInCopperGrateBlock.setNewBlock(level, pos, state, blockItem);
+                }
+            }
+
+        }, BlockRegistry.getAllGrateBlocks().toArray(Block[]::new));
     }
 
     @SubscribeEvent

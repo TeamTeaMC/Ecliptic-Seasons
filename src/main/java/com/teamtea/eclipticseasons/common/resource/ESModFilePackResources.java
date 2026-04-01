@@ -1,6 +1,9 @@
 package com.teamtea.eclipticseasons.common.resource;
 
 
+import com.teamtea.eclipticseasons.EclipticSeasons;
+import net.minecraft.SharedConstants;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.*;
 import net.minecraft.server.packs.metadata.MetadataSectionType;
 import net.minecraft.server.packs.metadata.pack.PackFormat;
@@ -8,29 +11,40 @@ import net.minecraft.server.packs.metadata.pack.PackMetadataSection;
 import net.minecraft.server.packs.repository.Pack;
 import net.minecraft.server.packs.resources.IoSupplier;
 import net.minecraft.server.packs.resources.ResourceMetadata;
+import net.minecraft.util.FileUtil;
 import net.minecraft.util.InclusiveRange;
+import net.minecraft.util.Util;
 import net.neoforged.neoforgespi.locating.IModFile;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
+import java.net.URI;
+import java.net.URLEncoder;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.*;
+import java.util.stream.Stream;
 
-public class ESModFilePackResources extends PathPackResources {
+public class ESModFilePackResources extends AbstractPackResources {
     protected final IModFile modFile;
     protected final String sourcePath;
     private final PackMetadataSection bindSection;
-
+    // private final URI root;
+    private final String packdir;
 
     public ESModFilePackResources(PackLocationInfo locationInfo, IModFile modFile, String sourcePath) {
-        super(locationInfo, Path.of(modFile.getContents().findFile(sourcePath+"/pack.mcmeta").get().resolve(".")));
+        super(locationInfo);
+        packdir = sourcePath.replace("\\", "/") + "/";
+        // URI not supported blank
+        // this.root = modFile.getContents().findFile(packdir+ "pack.mcmeta").get().resolve(".");
         this.modFile = modFile;
         this.sourcePath = sourcePath;
         this.bindSection = new PackMetadataSection(locationInfo.title(),
-                InclusiveRange.create(PackFormat.of(0),PackFormat.of(100)).getOrThrow());
+                InclusiveRange.create(PackFormat.of(0), PackFormat.of(100)).getOrThrow());
     }
 
     private @Nullable ResourceMetadata metadata;
@@ -44,11 +58,17 @@ public class ESModFilePackResources extends PathPackResources {
         return this.metadata.getSection(metadataSerializer).orElse(null);
     }
 
+    @Override
+    public void close() {
+
+    }
+
     public static ResourceMetadata loadMetadata(PackResources packResources) throws IOException {
         IoSupplier<InputStream> metadata = packResources.getRootResource("pack.mcmeta");
         if (metadata == null) {
             return ResourceMetadata.EMPTY;
         } else {
+            // System.out.println(new String(metadata.get().readAllBytes(), java.nio.charset.StandardCharsets.UTF_8));
             ResourceMetadata var3;
             try (InputStream resource = metadata.get()) {
                 var3 = ResourceMetadata.fromJsonStream(resource);
@@ -56,6 +76,96 @@ public class ESModFilePackResources extends PathPackResources {
 
             return var3;
         }
+    }
+
+    @Override
+    public @Nullable IoSupplier<InputStream> getRootResource(String... path) {
+        String relativePath = packdir + String.join("/", path);
+        return modFile.getContents().containsFile(relativePath)
+                ? () -> modFile.getContents().openFile(relativePath)
+                : null;
+    }
+
+    @Override
+    public @Nullable IoSupplier<InputStream> getResource(PackType type, Identifier location) {
+        return FileUtil.decomposePath(location.getPath()).mapOrElse(parts -> {
+            String relativePath = buildResourcePath(type, location.getNamespace(), parts);
+            return modFile.getContents().containsFile(relativePath)
+                    ? () -> modFile.getContents().openFile(relativePath)
+                    : null;
+        }, _ -> null);
+    }
+
+    @Override
+    public void listResources(PackType type, String namespace, String directory, ResourceOutput output) {
+        FileUtil.decomposePath(directory).ifSuccess(parts -> {
+            String namespaceRoot = type.getDirectory() + "/" + namespace + "/";
+            int startIndex = packdir.length() + namespaceRoot.length();
+            String scanPrefix = buildResourcePath(type, namespace, parts);
+
+            modFile.getContents().visitContent(scanPrefix, (relativePath, resource) -> {
+                if (!relativePath.contains(namespaceRoot)) {
+                    return;
+                }
+
+                if (!modFile.getContents().containsFile(relativePath)) {
+                    return;
+                }
+
+                String resourcePath = relativePath.substring(startIndex);
+                Identifier identifier = Identifier.tryBuild(namespace, resourcePath);
+                if (identifier == null) {
+                    Util.logAndPauseIfInIde(String.format(
+                            Locale.ROOT,
+                            "Invalid path in pack: %s:%s, ignoring",
+                            namespace,
+                            resourcePath
+                    ));
+                    return;
+                }
+
+                output.accept(identifier, () -> modFile.getContents().openFile(relativePath));
+            });
+        }).ifError(error -> EclipticSeasons.LOGGER.error("Invalid path {}: {}", directory, error.message()));
+    }
+
+    @Override
+    public @NonNull Set<String> getNamespaces(PackType type) {
+        Set<String> namespaces = new HashSet<>();
+        String rootPrefix = packdir + type.getDirectory() + "/";
+
+        modFile.getContents().visitContent(rootPrefix, (relativePath, resource) -> {
+            if (!relativePath.contains(rootPrefix)) {
+                return;
+            }
+
+            if (!modFile.getContents().containsFile(relativePath)) {
+                return;
+            }
+
+            String rest = relativePath.substring(rootPrefix.length());
+            int slash = rest.indexOf('/');
+            if (slash <= 0) {
+                return;
+            }
+
+            String namespace = rest.substring(0, slash);
+            if (Identifier.isValidNamespace(namespace)) {
+                namespaces.add(namespace);
+            }
+        });
+        return namespaces;
+    }
+
+    private String buildResourcePath(PackType type, String namespace, List<String> parts) {
+        StringBuilder sb = new StringBuilder(packdir);
+        sb.append(type.getDirectory()).append('/').append(namespace);
+        for (String part : parts) {
+            if (!part.isEmpty()) {
+                sb.append('/').append(part);
+            }
+        }
+        return sb.toString();
     }
 
     public static class PathResourcesSupplier implements Pack.ResourcesSupplier {

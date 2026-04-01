@@ -1,0 +1,9 @@
+{
+  "parent": "minecraft:block/sunflower_top",
+  "textures": {
+    "back": "eclipticseasons:block/snowy/sunflower_back",
+    "cross": "eclipticseasons:block/snowy/sunflower_top",
+    "front": "eclipticseasons:block/snowy/sunflower_front",
+    "particle": "eclipticseasons:block/snowy/sunflower_front"
+  }
+}

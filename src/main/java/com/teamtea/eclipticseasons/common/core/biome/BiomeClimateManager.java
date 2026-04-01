@@ -444,7 +444,7 @@ public class BiomeClimateManager {
         // if (biomeRegistry instanceof MappedRegistry<Biome> mappedRegistry)
             // mappedRegistry.bindTags(new TagLoader.LoadResult<>(Registries.BIOME, biomeMap));
         {
-            biomeRegistry.unfreeze(false);
+            biomeRegistry.unfreeze(true);
             biomeRegistry.bindTags(biomeMap);
             biomeRegistry.freeze();
         }

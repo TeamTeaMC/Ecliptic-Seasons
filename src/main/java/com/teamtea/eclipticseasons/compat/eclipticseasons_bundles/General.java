@@ -6,15 +6,19 @@ import com.mojang.serialization.JsonOps;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.compat.Platform;
 import net.minecraft.util.GsonHelper;
+import net.neoforged.fml.jarcontents.JarContents;
 import net.neoforged.neoforge.common.ModConfigSpec;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.VersionRange;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public class General {
     public record PackController(
@@ -41,19 +45,30 @@ public class General {
 
         ModConfigSpec.Builder COMMON_BUILDER = new ModConfigSpec.Builder();
 
-        //COMMON_BUILDER.comment("Compat settings");
-        var basePath = Platform.getModFile(EclipticSeasonsBundles.MODID).getContents().getPrimaryPath().getFileName().resolve("resourcepacks");
-        try (var fileList = Files.list(basePath)) {
+        // COMMON_BUILDER.comment("Compat settings");
+
+        JarContents jarContents = Platform.getModFile(EclipticSeasonsBundles.MODID).getContents();
+
+        Set<String> topDirs = new HashSet<>();
+        jarContents.visitContent("resourcepacks", (relativePath, resource) -> {
+            String path = relativePath.replace("\\", "/");
+            if (path.endsWith("/bundle.cfg")) {
+                String[] parts= path.substring("resourcepacks/".length()).split("/");
+                if (parts.length >= 2) {
+                    topDirs.add(parts[0]);
+                }
+            }
+        });
+
+        {
             bsp:
-            for (Path path : fileList.toList()) {
-                String packageName = path.getFileName().toString();
-
-
-                Path configPath = path.resolve("bundle.cfg");
-                if (Files.notExists(configPath)) continue;
-
+            for (String packageName : topDirs) {
+                String configPath = "resourcepacks/"+packageName + "/bundle.cfg";
+                if (!jarContents.containsFile(configPath)) continue;
                 try {
-                    String json = Files.readString(configPath);
+                    InputStream inputStream = jarContents.openFile(configPath);
+                    if (inputStream == null) continue;
+                    String json = new String(inputStream.readAllBytes(), java.nio.charset.StandardCharsets.UTF_8);
                     if (json.isEmpty()) continue;
 
                     JsonElement jsonElement = GsonHelper.parse(json);
@@ -65,7 +80,7 @@ public class General {
                                         EclipticSeasons.LOGGER.warn(formatted);
                                     }
                             ).orElse(null);
-                    if (config == null) continue bsp;
+                    if (config == null) continue;
 
                     System.out.println("Loaded config for " + config.getId());
 
@@ -85,7 +100,7 @@ public class General {
                         }
 
                         if (!config.isRequireAll() && !anyLoaded) {
-                            continue bsp;
+                            continue;
                         }
                     }
 
@@ -102,7 +117,7 @@ public class General {
                                 return false;
                             }
                         });
-                        if (!matched) continue bsp;
+                        if (!matched) continue;
                     }
 
 
@@ -131,8 +146,6 @@ public class General {
                     System.err.println("Invalid JSON in " + configPath + ": " + e.getMessage());
                 }
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
 
 

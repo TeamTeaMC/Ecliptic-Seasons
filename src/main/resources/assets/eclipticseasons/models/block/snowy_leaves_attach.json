@@ -1,7 +1,8 @@
 {
 	"credit": "Made by Joe Vettek",
 	"textures": {
-		"2": "eclipticseasons:block/snow_spot_overlay_leaves"
+		"2": "eclipticseasons:block/snow_spot_overlay_leaves",
+		"particle": "eclipticseasons:block/snow_spot_overlay_leaves"
 	},
 	"elements": [
 		{

@@ -1,0 +1,100 @@
+{
+  "variants": {
+    "": [
+      {
+        "model": "eclipticseasons:block/grass_flower/flower_1"
+      },
+      {
+        "model": "eclipticseasons:block/grass_flower/flower_1",
+        "y": 270
+      },
+      {
+        "model": "eclipticseasons:block/grass_flower/flower_1",
+        "y": 90
+      },
+      {
+        "model": "eclipticseasons:block/grass_flower/flower_1",
+        "y": 180
+      },
+      {
+        "model": "eclipticseasons:block/grass_flower/flower_2"
+      },
+      {
+        "model": "eclipticseasons:block/grass_flower/flower_2",
+        "y": 270
+      },
+      {
+        "model": "eclipticseasons:block/grass_flower/flower_2",
+        "y": 90
+      },
+      {
+        "model": "eclipticseasons:block/grass_flower/flower_2",
+        "y": 180
+      },
+      {
+        "model": "eclipticseasons:block/grass_flower/flower_3"
+      },
+      {
+        "model": "eclipticseasons:block/grass_flower/flower_3",
+        "y": 270
+      },
+      {
+        "model": "eclipticseasons:block/grass_flower/flower_3",
+        "y": 90
+      },
+      {
+        "model": "eclipticseasons:block/grass_flower/flower_3",
+        "y": 180
+      },
+      {
+        "model": "eclipticseasons:block/grass_flower/flower_4"
+      },
+      {
+        "model": "eclipticseasons:block/grass_flower/flower_4",
+        "y": 270
+      },
+      {
+        "model": "eclipticseasons:block/grass_flower/flower_4",
+        "y": 90
+      },
+      {
+        "model": "eclipticseasons:block/grass_flower/flower_4",
+        "y": 180
+      },
+      {
+        "model": "eclipticseasons:block/grass_flower/flower_5"
+      },
+      {
+        "model": "eclipticseasons:block/grass_flower/flower_5",
+        "y": 270
+      },
+      {
+        "model": "eclipticseasons:block/grass_flower/flower_5",
+        "y": 90
+      },
+      {
+        "model": "eclipticseasons:block/grass_flower/flower_5",
+        "y": 180
+      },
+      {
+        "model": "eclipticseasons:block/grass_flower/flower_6"
+      },
+      {
+        "model": "eclipticseasons:block/grass_flower/flower_6",
+        "y": 270
+      },
+      {
+        "model": "eclipticseasons:block/grass_flower/flower_6",
+        "y": 90
+      },
+      {
+        "model": "eclipticseasons:block/grass_flower/flower_6",
+        "y": 180
+      },
+      {
+        "model": "minecraft:block/air",
+        "weight": 896
+      }
+    ]
+  }
+}

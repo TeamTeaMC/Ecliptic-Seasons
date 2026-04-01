@@ -1,9 +1,14 @@
 package com.teamtea.eclipticseasons.client;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
+import com.teamtea.eclipticseasons.api.data.client.model.ESBlockModelDefinition;
 import com.teamtea.eclipticseasons.client.color.season.BiomeColorsHandler;
 import com.teamtea.eclipticseasons.client.color.season.FoliageColorSource;
 import com.teamtea.eclipticseasons.client.core.ExtraModelManager;
+import com.teamtea.eclipticseasons.client.gui.GuiBlockRenderState;
+import com.teamtea.eclipticseasons.client.gui.GuiBlockRenderer;
+import com.teamtea.eclipticseasons.client.gui.GuiFluidRenderState;
+import com.teamtea.eclipticseasons.client.gui.GuiFluidRenderer;
 import com.teamtea.eclipticseasons.client.itemproperties.CounterModelProperty;
 import com.teamtea.eclipticseasons.client.particle.*;
 import com.teamtea.eclipticseasons.client.reload.ClientJsonCacheListener;
@@ -38,6 +43,17 @@ public class ClientSetup {
     @SubscribeEvent
     public static void addRegisterRangeSelectItemModelPropertyEvent(RegisterRangeSelectItemModelPropertyEvent event) {
         event.register(EclipticSeasons.rl("meter"), CounterModelProperty.MAP_CODEC);
+    }
+
+    @SubscribeEvent
+    public static void addRegisterBlockStateModels(RegisterBlockStateModels event) {
+        event.registerDefinition(EclipticSeasons.rl("model_definitions"), ESBlockModelDefinition.CODEC);
+    }
+
+    @SubscribeEvent
+    public static void addRegisterPictureInPictureRenderersEvent(RegisterPictureInPictureRenderersEvent event) {
+        event.register(GuiBlockRenderState.class, GuiBlockRenderer::new);
+        event.register(GuiFluidRenderState.class, GuiFluidRenderer::new);
     }
 
     @SubscribeEvent
@@ -89,7 +105,7 @@ public class ClientSetup {
         event.registerBlockEntityRenderer(BlockEntityRegistry.greenhouse_core_container_entity_type.get(), GreenHouseCoreFrameRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.greenhouse_core_entity_type.get(), GreenHouseCoreRenderer::new);
 
-        // event.registerBlockEntityRenderer(BlockEntityRegistry.season_quest_hanging_sign_entity_type.get(), QuestSignRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntityRegistry.season_quest_hanging_sign_entity_type.get(), QuestSignRenderer::new);
 
         event.registerBlockEntityRenderer(BlockEntityRegistry.block_in_copper_grate_block_entity_type.get(), BlockInBlockRender::new);
 
@@ -138,6 +154,8 @@ public class ClientSetup {
 
     @SubscribeEvent
     public static void registerExtraModels(ModelEvent.RegisterStandalone event) {
+        ExtraModelManager.registerExtraSnowyModels(event::register);
+        // event.register();
         // Minecraft.getInstance().getResourceManager().listPacks().toList().get(0).getResource(PackType.CLIENT_RESOURCES, ResourceLocation.withDefaultNamespace("textures/block/snow.png")).get()
         // IOUtils.toString(Minecraft.getInstance().getResourceManager().listPacks().toList().get(0).getResource(PackType.SERVER_DATA, ResourceLocation.withDefaultNamespace("recipe/yellow_terracotta.json")).get(), StandardCharsets.UTF_8)        event.register(ModelManager.snowy_fern);
         registerStandalone(event, ExtraModelManager.snowy_custom);
@@ -251,7 +269,8 @@ public class ClientSetup {
         event.addListener(EclipticSeasons.rl(ClientJsonCacheListener.DIRECTORY_LEAF.substring(16)), ClientJsonCacheListener.leafCache);
         event.addListener(EclipticSeasons.rl(ClientJsonCacheListener.DIRECTORY_SNOW_DEFINITION.substring(16)), ClientJsonCacheListener.snowDefOverrideCache);
         event.addListener(EclipticSeasons.rl(ClientJsonCacheListener.DIRECTORY_AMBIENT.substring(16)), ClientJsonCacheListener.ambientCache);
-        // event.registerReloadListener(ClientJsonCacheListener.modelDefCache);
+        event.addListener(EclipticSeasons.rl(ClientJsonCacheListener.DIRECTORY_MODEL_DEFINITION.substring(16)), ClientJsonCacheListener.modelDefCache);
+        event.addListener(EclipticSeasons.rl(ClientJsonCacheListener.DIRECTORY_SEASON_TEXTURES.substring(16)), ClientJsonCacheListener.textureReMappingsCache);
         event.addListener(EclipticSeasons.rl(ClientJsonCacheListener.DIRECTORY_SEASON_DEFINITION.substring(16)), ClientJsonCacheListener.seasonDefCache);
         event.addListener(EclipticSeasons.rl(ClientJsonCacheListener.DIRECTORY_UI_PARSER.substring(16)), ClientJsonCacheListener.uiParserCache);
     }

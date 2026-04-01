@@ -13,6 +13,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
@@ -29,6 +30,11 @@ public class BlockInCopperGrateBlock extends WeatheringCopperGrateBlock implemen
 
     public BlockInCopperGrateBlock(WeatheringCopperGrateBlock weatherState, Properties properties) {
         super(weatherState.getAge(), properties);
+    }
+
+    @Override
+    public Item asItem() {
+        return BlockRegistry.getOriginalCopperGrateBlock(this).asItem();
     }
 
     @Override

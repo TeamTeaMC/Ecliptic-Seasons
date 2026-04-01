@@ -8,10 +8,12 @@ import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
 import com.teamtea.eclipticseasons.common.registry.BlockEntityRegistry;
 import com.teamtea.eclipticseasons.common.registry.ESRegistries;
+import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.criterion.ItemPredicate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerPlayer;
@@ -25,11 +27,14 @@ import net.minecraft.world.level.block.SignBlock;
 import net.minecraft.world.level.block.entity.SignBlockEntity;
 import net.minecraft.world.level.block.entity.SignText;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.neoforged.neoforge.model.data.ModelData;
 import net.neoforged.neoforge.model.data.ModelProperty;
 import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -60,45 +65,22 @@ public class QuestHangingSignBlockEntity extends SignBlockEntity {
     }
 
     @Override
-    protected void saveAdditional(ValueOutput output) {
+    protected void saveAdditional(@NonNull ValueOutput output) {
         super.saveAdditional(output);
+        output.store("sign_type", BuiltInRegistries.BLOCK.byNameCodec(), sign);
+        if (seasonQuest != null)
+            output.store("season_quest", SeasonQuest.CODEC, seasonQuest);
     }
 
-    //@Override
-    //protected void saveAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
-    //    super.saveAdditional(tag, registries);
-    //
-    //    tag.putString("sign_type", BuiltInRegistries.BLOCK.getKey(getSignType()).toString());
-    //    if (seasonQuest != null) {
-    //        DynamicOps<Tag> dynamicops = registries.createSerializationContext(NbtOps.INSTANCE);
-    //        SeasonQuest.CODEC
-    //                .encodeStart(dynamicops, seasonQuest)
-    //                .resultOrPartial(EclipticSeasons::logger)
-    //                .ifPresent(tag1 -> tag.put("season_quest", tag1));
-    //    }
-    //}
-    //
-    //@Override
-    //protected void loadAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
-    //    super.loadAdditional(tag, registries);
-    //    if (tag.contains("sign_type")) {
-    //        Block block = BuiltInRegistries.BLOCK.get(EclipticSeasons.parse(tag.getString("sign_type")));
-    //        if (block instanceof SignBlock signBlock)
-    //            this.sign = signBlock;
-    //    }
-    //    if (tag.contains("season_quest")) {
-    //        DynamicOps<Tag> dynamicops = registries.createSerializationContext(NbtOps.INSTANCE);
-    //        SeasonQuest.CODEC
-    //                .parse(dynamicops, tag.get("season_quest"))
-    //                .resultOrPartial(EclipticSeasons::logger)
-    //                .ifPresent(seasonQuest1 -> {
-    //                    this.seasonQuest = seasonQuest1;
-    //                });
-    //    } else {
-    //        seasonQuest = null;
-    //    }
-    //
-    //}
+    @Override
+    protected void loadAdditional(@NonNull ValueInput input) {
+        super.loadAdditional(input);
+        var sign = input.read("sign_type", BuiltInRegistries.BLOCK.byNameCodec()).orElse(null);
+        if (sign instanceof SignBlock) {
+            this.sign = (SignBlock) sign;
+        }
+        this.seasonQuest = input.read("season_quest", SeasonQuest.CODEC).orElse(null);
+    }
 
     protected void inventoryChanged() {
         super.setChanged();
@@ -144,12 +126,19 @@ public class QuestHangingSignBlockEntity extends SignBlockEntity {
         SeasonQuest signSeasonQuest = getSeasonQuest();
         if (signSeasonQuest != null) {
             SignText signText = new SignText();
+            int color = signSeasonQuest.color().orElse(Color.BLACK.getRGB());
             Component title = signSeasonQuest.tittle().orElse(Component.translatable("block.eclipticseasons.season_quest_ceiling_hanging_sign"));
-            signText = signText.setMessage(0, title);
-
+            signText = signText.setMessage(0, title.copy()
+                    .withColor(color)
+                    .withStyle(ChatFormatting.BOLD));
             if (signSeasonQuest.description().isPresent()) {
                 for (int i = 0; i < signSeasonQuest.description().get().size() && i < 3; i++) {
-                    signText = signText.setMessage(i + 1, signSeasonQuest.description().get().get(i));
+                    signText = signText.setMessage(i + 1, signSeasonQuest.description().get().get(i).copy()
+                                    .withColor(signSeasonQuest.start().map(
+                                            SolarTerm::getColor
+                                    ).map(ChatFormatting::getColor).orElse(color))
+                            // .withStyle(ChatFormatting.BOLD)
+                    );
                 }
             } else {
                 if (!signSeasonQuest.need().isEmpty()) {
@@ -159,11 +148,15 @@ public class QuestHangingSignBlockEntity extends SignBlockEntity {
                         if (holders.size() > 0) {
                             Item value = holders.get(0).value();
                             Component c = Component.translatable("eclipticseasons.season_quest.hint.item_count", value.getName(value.getDefaultInstance()), itemPredicate.count().max().orElse(itemPredicate.count().min().orElse(0)));
-                            signText = signText.setMessage(i + 1, c);
+                            signText = signText.setMessage(i + 1, c.copy()
+                                            .withColor(color)
+                                    // .withStyle(ChatFormatting.BOLD)
+                            );
                         }
                     }
                 }
             }
+            signText = signText.setHasGlowingText(true);
             setText(signText, true);
         }
 
@@ -231,7 +224,7 @@ public class QuestHangingSignBlockEntity extends SignBlockEntity {
             } else if (!predicate.components().test(stack)) {
                 return false;
             } else {
-                //for (ItemSubPredicate itemsubpredicate : predicate.subPredicates().values()) {
+                // for (ItemSubPredicate itemsubpredicate : predicate.subPredicates().values()) {
                 //    if (!itemsubpredicate.matches(stack)) {
                 //        return false;
                 //    }
@@ -287,7 +280,7 @@ public class QuestHangingSignBlockEntity extends SignBlockEntity {
                 }
                 for (ItemStackTemplate stack : quest.award()) {
                     player.getInventory().add(stack.create());
-                    //ItemHandlerHelper.giveItemToPlayer(player, stack.copy());
+                    // ItemHandlerHelper.giveItemToPlayer(player, stack.copy());
                 }
                 resetQuest();
             }

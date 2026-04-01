@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/rose_bush_bottom",
+  "textures": {
+    "cross": "eclipticseasons:block/snowy/rose_bush_bottom"
+  }
+}

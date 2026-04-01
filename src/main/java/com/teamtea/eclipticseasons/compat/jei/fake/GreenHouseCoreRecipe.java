@@ -5,17 +5,17 @@ import com.teamtea.eclipticseasons.common.registry.BlockRegistry;
 import com.teamtea.eclipticseasons.common.registry.ItemRegistry;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
-import net.neoforged.neoforge.common.util.Lazy;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 public record GreenHouseCoreRecipe(
         ItemStack input,
         Season season,
         Block end
 ) {
-    public static Lazy<List<GreenHouseCoreRecipe>> lazy = Lazy.of(() -> {
+    public static Supplier<List<GreenHouseCoreRecipe>> Recipes = () -> {
         ArrayList<GreenHouseCoreRecipe> objects = new ArrayList<>();
 
         objects.add(new GreenHouseCoreRecipe(
@@ -43,5 +43,5 @@ public record GreenHouseCoreRecipe(
         ));
 
         return objects;
-    });
+    };
 }

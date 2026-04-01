@@ -1,0 +1,11 @@
+{
+  "replace": true,
+  "variants": {
+    "age=1": {
+      "model": "eclipticseasons:block/snowy/torchflower_crop_stage1"
+    },
+    "age=0": {
+      "model": "eclipticseasons:block/snowy/torchflower_crop_stage0"
+    }
+  }
+}

@@ -25,14 +25,20 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
+import net.minecraft.world.attribute.EnvironmentAttribute;
+import net.minecraft.world.attribute.EnvironmentAttributeMap;
+import net.minecraft.world.attribute.EnvironmentAttributes;
 import net.minecraft.world.level.*;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
+import org.jspecify.annotations.NonNull;
 
 import java.awt.*;
 import java.util.IdentityHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 
 public class BiomeColorsHandler {
@@ -390,5 +396,33 @@ public class BiomeColorsHandler {
             }
         }
         return false;
+    }
+
+
+
+    public static EnvironmentAttributeMap buildEnvironmentAttributeMap(EnvironmentAttributeMap attributeMap,Biome biome) {
+        Map<EnvironmentAttribute<Integer>, Integer> colorMap = new IdentityHashMap<>();
+        for (EnvironmentAttribute<Integer> attribute : List.of(EnvironmentAttributes.SKY_COLOR,
+                EnvironmentAttributes.FOG_COLOR,
+                EnvironmentAttributes.WATER_FOG_COLOR)) {
+            int originalColor = getOriginalColor(attributeMap, EnvironmentAttributes.SKY_COLOR);
+            int newColor = BiomeColorsHandler.getSkyColor(biome, originalColor);
+            if (originalColor != newColor) {
+                colorMap.put(attribute, newColor);
+            }
+        }
+        if (!colorMap.isEmpty()) {
+            EnvironmentAttributeMap.Builder builder = EnvironmentAttributeMap.builder().putAll(attributeMap);
+            colorMap.forEach(builder::set);
+            return builder.build();
+        }
+        return null;
+    }
+
+    public static @NonNull Integer getOriginalColor(EnvironmentAttributeMap returnValue, EnvironmentAttribute<Integer> attribute) {
+        return Optional.ofNullable(returnValue.get(attribute))
+                .map(EnvironmentAttributeMap.Entry::argument)
+                .map(o -> o instanceof Integer i ? i : -1)
+                .orElse(-1);
     }
 }

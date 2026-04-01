@@ -1,0 +1,6 @@
+{
+  "parent": "eclipticseasons:block/snowy/template/stem_growth6",
+  "textures": {
+    "stem": "eclipticseasons:block/snowy/stem"
+  }
+}

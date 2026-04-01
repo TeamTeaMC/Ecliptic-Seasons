@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/pitcher_crop_top_stage_4",
+  "textures": {
+    "stage_4_top": "eclipticseasons:block/snowy/pitcher_crop_top_stage_4"
+  }
+}

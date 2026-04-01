@@ -12,21 +12,21 @@ import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.data.client.BiomeColor;
 import com.teamtea.eclipticseasons.api.data.client.LeafColor;
 import com.teamtea.eclipticseasons.api.data.client.SeasonalBiomeAmbient;
+import com.teamtea.eclipticseasons.api.data.client.model.ESModelLoadedJson;
 import com.teamtea.eclipticseasons.api.data.client.model.seasonal.SeasonBlockDefinition;
 import com.teamtea.eclipticseasons.api.data.client.model.seasonal.SeasonalTexture;
 import com.teamtea.eclipticseasons.api.data.client.ui.UIParser;
 import com.teamtea.eclipticseasons.api.data.season.SnowDefinition;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.FileToIdConverter;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.util.profiling.ProfilerFiller;
 import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -40,7 +40,7 @@ import java.util.function.Supplier;
 public class ClientJsonCacheListener<T> extends SimplePreparableReloadListener<Map<Identifier, JsonElement>> {
     public static final Map<String, Supplier<Set<Identifier>>> ALL_MAP = new HashMap<>();
 
-    private final Map<Identifier, JsonElement> elementMap = new HashMap<>();
+    private final Map<Identifier, JsonElement> elementMap;
     public static final Gson GSON = new GsonBuilder().setLenient()
             // .registerTypeHierarchyAdapter(Component.class, new Component.Serializer())
             .create();
@@ -59,8 +59,8 @@ public class ClientJsonCacheListener<T> extends SimplePreparableReloadListener<M
     public static final String DIRECTORY_UI_PARSER = EclipticSeasonsApi.MODID + "/ui_parser";
 
     // Async
-    // public static final ClientJsonCacheListener<ESModelLoadedJson> modelDefCache = new ClientJsonCacheListener<>(GSON, DIRECTORY_MODEL_DEFINITION);
-    public static final ClientJsonCacheListener<SeasonalTexture> textureReMappingsCache = new ClientJsonCacheListener<>(GSON, DIRECTORY_SEASON_TEXTURES);
+    public static final ClientJsonCacheListener<ESModelLoadedJson> modelDefCache = new ClientJsonCacheListener<>(GSON, DIRECTORY_MODEL_DEFINITION, true);
+    public static final ClientJsonCacheListener<SeasonalTexture> textureReMappingsCache = new ClientJsonCacheListener<>(GSON, DIRECTORY_SEASON_TEXTURES, true);
 
     // normal
     public static final ClientJsonCacheListener<BiomeColor> biomeCache = new ClientJsonCacheListener<>(GSON, DIRECTORY_BIOME);
@@ -72,18 +72,35 @@ public class ClientJsonCacheListener<T> extends SimplePreparableReloadListener<M
 
 
     private final String directory;
+    private final boolean async;
 
     public ClientJsonCacheListener(Gson gson, String directory) {
-        this.directory = directory;
-        ALL_MAP.put(directory, () -> getElementMap().keySet());
+        this(gson, directory, false);
     }
 
+    public ClientJsonCacheListener(Gson gson, String directory, boolean async) {
+        this.directory = directory;
+        ALL_MAP.put(directory, () -> getElementMap().keySet());
+        this.async = async;
+        this.elementMap = async ? new ConcurrentHashMap<>() : new HashMap<>();
+    }
+
+
     @Override
-    protected Map<Identifier, JsonElement> prepare(ResourceManager manager, ProfilerFiller profiler) {
+    public Map<Identifier, JsonElement> prepare(@NonNull ResourceManager manager, @NonNull ProfilerFiller profiler) {
+        if (!async) {
+            Map<Identifier, JsonElement> prepared = scanDirectorySync(manager, this.directory, GSON);
+            this.elementMap.clear();
+            this.elementMap.putAll(prepared);
+        }
+        return elementMap;
+    }
+
+    // we need it since standalone models not load after model loads
+    public void prepareAsync(ResourceManager manager) {
         Map<Identifier, JsonElement> prepared = scanDirectorySync(manager, this.directory, GSON);
         this.elementMap.clear();
         this.elementMap.putAll(prepared);
-        return elementMap;
     }
 
     public static Map<Identifier, JsonElement> scanDirectorySync(ResourceManager resourceManager, String name, Gson gson) {
@@ -110,27 +127,19 @@ public class ClientJsonCacheListener<T> extends SimplePreparableReloadListener<M
         return output;
     }
 
-    // @Override
-    // protected Map<Identifier, JsonElement> prepare(ResourceManager manager, ProfilerFiller profiler) {
-    //     Map<Identifier, JsonElement> prepare = prepareAsync(manager, profiler, (e) -> {
-    //     }).join();
-    //     this.elementMap.clear();
-    //     this.elementMap.putAll(prepare);
-    //     return prepare;
-    // }
 
     @Override
     protected void apply(Map<Identifier, JsonElement> preparations, ResourceManager manager, ProfilerFiller profiler) {
 
     }
 
-
-    public CompletableFuture<Map<Identifier, JsonElement>> prepareAsync(ResourceManager resourceManager, ProfilerFiller profiler, Executor executor) {
+    public CompletableFuture<Map<Identifier, JsonElement>> prepareAsync(ResourceManager resourceManager, Executor executor) {
         return CompletableFuture.supplyAsync(() -> {
             ConcurrentMap<Identifier, JsonElement> prepare = new ConcurrentHashMap<>();
             scanDirectoryAsync(resourceManager, this.directory, GSON, prepare, executor).join();
             this.elementMap.clear();
             this.elementMap.putAll(prepare);
+            EclipticSeasons.logger("ssss", elementMap.size(), directory);
             return prepare;
         }, executor);
     }

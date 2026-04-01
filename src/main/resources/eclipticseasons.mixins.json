@@ -32,6 +32,7 @@
     "common.level.MixinServerLevel",
     "common.loot.MixinWeatherCheck",
     "common.worldgen.MixinSurfaceSystem",
+    "compat.neoforge.BlockStateModelHooksAccessor",
     "data.MixinsRegistriesDatapackGenerator",
     "data.RegistrySetBuilderMixin",
     "game.MixinBee_BeePollinateGoal",

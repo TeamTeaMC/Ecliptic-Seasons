@@ -1,0 +1,115 @@
+{
+  "variants": {
+    "": [
+      {
+        "model": "eclipticseasons:block/fourleaf_clover/fourleaf_clover_0"
+      },
+      {
+        "model": "eclipticseasons:block/fourleaf_clover/fourleaf_clover_0",
+        "y": 270
+      },
+      {
+        "model": "eclipticseasons:block/fourleaf_clover/fourleaf_clover_0",
+        "y": 90
+      },
+      {
+        "model": "eclipticseasons:block/fourleaf_clover/fourleaf_clover_0",
+        "y": 180
+      },
+      {
+        "model": "eclipticseasons:block/fourleaf_clover/fourleaf_clover_1"
+      },
+      {
+        "model": "eclipticseasons:block/fourleaf_clover/fourleaf_clover_1",
+        "y": 270
+      },
+      {
+        "model": "eclipticseasons:block/fourleaf_clover/fourleaf_clover_1",
+        "y": 90
+      },
+      {
+        "model": "eclipticseasons:block/fourleaf_clover/fourleaf_clover_1",
+        "y": 180
+      },
+      {
+        "model": "eclipticseasons:block/fourleaf_clover/fourleaf_clover_2"
+      },
+      {
+        "model": "eclipticseasons:block/fourleaf_clover/fourleaf_clover_2",
+        "y": 270
+      },
+      {
+        "model": "eclipticseasons:block/fourleaf_clover/fourleaf_clover_2",
+        "y": 90
+      },
+      {
+        "model": "eclipticseasons:block/fourleaf_clover/fourleaf_clover_2",
+        "y": 180
+      },
+      {
+        "model": "eclipticseasons:block/fourleaf_clover/fourleaf_clover_3"
+      },
+      {
+        "model": "eclipticseasons:block/fourleaf_clover/fourleaf_clover_3",
+        "y": 270
+      },
+      {
+        "model": "eclipticseasons:block/fourleaf_clover/fourleaf_clover_3",
+        "y": 90
+      },
+      {
+        "model": "eclipticseasons:block/fourleaf_clover/fourleaf_clover_3",
+        "y": 180
+      },
+      {
+        "model": "eclipticseasons:block/fourleaf_clover/fourleaf_clover_4"
+      },
+      {
+        "model": "eclipticseasons:block/fourleaf_clover/fourleaf_clover_4",
+        "y": 270
+      },
+      {
+        "model": "eclipticseasons:block/fourleaf_clover/fourleaf_clover_4",
+        "y": 90
+      },
+      {
+        "model": "eclipticseasons:block/fourleaf_clover/fourleaf_clover_4",
+        "y": 180
+      },
+      {
+        "model": "eclipticseasons:block/fourleaf_clover/fourleaf_clover_5"
+      },
+      {
+        "model": "eclipticseasons:block/fourleaf_clover/fourleaf_clover_5",
+        "y": 270
+      },
+      {
+        "model": "eclipticseasons:block/fourleaf_clover/fourleaf_clover_5",
+        "y": 90
+      },
+      {
+        "model": "eclipticseasons:block/fourleaf_clover/fourleaf_clover_5",
+        "y": 180
+      },
+      {
+        "model": "eclipticseasons:block/fourleaf_clover/fourleaf_clover_6"
+      },
+      {
+        "model": "eclipticseasons:block/fourleaf_clover/fourleaf_clover_6",
+        "y": 270
+      },
+      {
+        "model": "eclipticseasons:block/fourleaf_clover/fourleaf_clover_6",
+        "y": 90
+      },
+      {
+        "model": "eclipticseasons:block/fourleaf_clover/fourleaf_clover_6",
+        "y": 180
+      },
+      {
+        "model": "minecraft:block/air",
+        "weight": 1008
+      }
+    ]
+  }
+}

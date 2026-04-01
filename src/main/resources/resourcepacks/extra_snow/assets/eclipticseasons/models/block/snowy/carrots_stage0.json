@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/carrots_stage0",
+  "textures": {
+    "crop": "eclipticseasons:block/snowy/carrots_stage0"
+  }
+}

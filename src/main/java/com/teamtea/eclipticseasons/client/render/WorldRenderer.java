@@ -74,7 +74,7 @@ public class WorldRenderer {
                     {
 
                         // 我们写的shader好像有问题？
-                        gameRenderer.setPostEffect(EclipticSeasons.rl("shaders/post/box_blur.json"));
+                        gameRenderer.setPostEffect(EclipticSeasons.rl("blur"));
 //                        gameRenderer.loadEffect(Identifier.withDefaultNamespace("shaders/post/blur.json"));
                     }
                 }
@@ -105,17 +105,18 @@ public class WorldRenderer {
     }
 
     public static void updateUniform(String name, float value) {
-        //PostChain postChain = Minecraft.getInstance().getShaderManager().getPostChain(Minecraft.getInstance().gameRenderer.currentPostEffect(), LevelTargetBundle.MAIN_TARGETS);
-        //
-        //if (postChain != null)
-        //    for (PostPass postPass : postChain.passes) {
-        //        var uniform = postPass.getEffect().getUniform(name);
-        //        if (uniform != null) {
-        //            uniform.set(value);
-        //        }
-        //    }
-    }
+        Identifier identifier = Minecraft.getInstance().gameRenderer.currentPostEffect();
+        if (identifier == null) return;
+        PostChain postChain = Minecraft.getInstance().getShaderManager().getPostChain(identifier, LevelTargetBundle.MAIN_TARGETS);
 
+        if (postChain != null)
+           for (PostPass postPass : postChain.passes) {
+               // var uniform = postPass.getEffect().getUniform(name);
+               // if (uniform != null) {
+               //     uniform.set(value);
+               // }
+           }
+    }
 
 
     public static boolean isSectionLoad(SectionPos sectionPos) {
@@ -169,7 +170,7 @@ public class WorldRenderer {
         ClientLevel level = Minecraft.getInstance().level;
         if (level == null) return;
         int pSectionX = centerPos.x();
-        //int pSectionY = centerPos.y();
+        // int pSectionY = centerPos.y();
         int pSectionZ = centerPos.z();
         int d = (int) Minecraft.getInstance().levelRenderer.getLastViewDistance();
         for (int j = pSectionZ - d; j <= pSectionZ + d; j++) {
@@ -179,14 +180,14 @@ public class WorldRenderer {
                     IntArraySet set = new IntArraySet();
                     for (int x = 0; x < 16; x++) {
                         for (int z = 0; z < 16; z++) {
-                            set.add(SectionPos.posToSectionCoord(chunk.getHeight(Heightmap.Types.WORLD_SURFACE,x,z)));
+                            set.add(SectionPos.posToSectionCoord(chunk.getHeight(Heightmap.Types.WORLD_SURFACE, x, z)));
                         }
                     }
                     for (IntIterator it = set.iterator(); it.hasNext(); ) {
                         int pSectionY = it.nextInt();
                         setSectionDirty(SectionPos.of(i, pSectionY, j));
                     }
-                    //for (int k = pSectionY - 3; k <= pSectionY + 1; k++) {
+                    // for (int k = pSectionY - 3; k <= pSectionY + 1; k++) {
                     //    setSectionDirty(SectionPos.of(i, k, j));
                     //}
                 }

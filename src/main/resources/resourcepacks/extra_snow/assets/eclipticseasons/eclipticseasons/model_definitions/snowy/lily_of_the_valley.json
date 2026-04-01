@@ -1,0 +1,8 @@
+{
+  "replace": true,
+  "variants": {
+    "": {
+      "model": "eclipticseasons:block/snowy/lily_of_the_valley"
+    }
+  }
+}

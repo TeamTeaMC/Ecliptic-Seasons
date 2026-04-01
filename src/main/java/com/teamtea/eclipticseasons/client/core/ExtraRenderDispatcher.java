@@ -14,6 +14,7 @@ import com.teamtea.eclipticseasons.api.misc.client.IMapSliceProvider;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.client.model.block.IESReplaceModel;
 import com.teamtea.eclipticseasons.client.model.block.ISnowyReplaceModel;
+import com.teamtea.eclipticseasons.client.model.block.ReplacingBlockStateModel;
 import com.teamtea.eclipticseasons.client.model.block.part.SimpleBlockModelPart;
 import com.teamtea.eclipticseasons.client.model.block.quad.DirectionMask;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
@@ -277,6 +278,7 @@ public class ExtraRenderDispatcher {
 
                     if (snowModel != null) {
                         first = snowModel;
+                        shouldReplace = ReplacingBlockStateModel.replace(snowModel);
                     }
                 }
 
@@ -353,10 +355,12 @@ public class ExtraRenderDispatcher {
                                             if (to_replace != null) {
                                                 if (first != null) {
                                                     second = to_replace;
-                                                    shouldReplace = mmrl.replace();
+                                                    if (mmrl.replace())
+                                                        shouldReplace = true;
                                                 } else {
                                                     first = to_replace;
-                                                    shouldReplace = mmrl.replace();
+                                                    if (mmrl.replace())
+                                                        shouldReplace = true;
                                                 }
                                             }
                                         }
@@ -391,23 +395,23 @@ public class ExtraRenderDispatcher {
                         }
                     }
                 }
-                if (first == null && solarTerm.isInTerms(SolarTerm.BEGINNING_OF_SUMMER, SolarTerm.BEGINNING_OF_AUTUMN)) {
-                    int weight = Math.abs(solarTerm.ordinal() - 7) + 1;
-                    if ((seed % (weight * 3)) == 0
-                            && blockAndTintGetter.getBlockState(checkPos).isAir()
-                            && (mapSlice == null || ((IBiomeTagHolder) (Object) MapChecker.idToBiome(level, mapSlice.getSurfaceFaceBiomeId(checkPos)).value()).eclipticseasons$getBindTag() == ClimateTypeBiomeTags.SEASONAL)) {
-                        {
-                            int index = Math.abs(((int) (seed + pos.getX())) % ExtraModelManager.fourleaf_clovers.size());
-                            // index=2;
-                            // first = getModel(ExtraModelManager.fourleaf_clovers.get(index));
-                            if (first == null)
-                                first = getModel(ExtraModelManager.fourleaf_clovers.get(index));
-                            else {
-                                second = getModel(ExtraModelManager.fourleaf_clovers.get(index));
-                            }
-                        }
-                    }
-                }
+                // if (first == null && solarTerm.isInTerms(SolarTerm.BEGINNING_OF_SUMMER, SolarTerm.BEGINNING_OF_AUTUMN)) {
+                //     int weight = Math.abs(solarTerm.ordinal() - 7) + 1;
+                //     if ((seed % (weight * 3)) == 0
+                //             && blockAndTintGetter.getBlockState(checkPos).isAir()
+                //             && (mapSlice == null || ((IBiomeTagHolder) (Object) MapChecker.idToBiome(level, mapSlice.getSurfaceFaceBiomeId(checkPos)).value()).eclipticseasons$getBindTag() == ClimateTypeBiomeTags.SEASONAL)) {
+                //         {
+                //             int index = Math.abs(((int) (seed + pos.getX())) % ExtraModelManager.fourleaf_clovers.size());
+                //             // index=2;
+                //             // first = getModel(ExtraModelManager.fourleaf_clovers.get(index));
+                //             if (first == null)
+                //                 first = getModel(ExtraModelManager.fourleaf_clovers.get(index));
+                //             else {
+                //                 second = getModel(ExtraModelManager.fourleaf_clovers.get(index));
+                //             }
+                //         }
+                //     }
+                // }
             }
         }
 

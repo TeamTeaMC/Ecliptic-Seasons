@@ -3,6 +3,8 @@ package com.teamtea.eclipticseasons.client;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.teamtea.eclipticseasons.api.data.misc.ESSortInfo;
+import com.teamtea.eclipticseasons.api.event.SolarTermChangeEvent;
+import com.teamtea.eclipticseasons.api.misc.client.IBiomeColorHolder;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.client.render.chunk.IceKeeper;
 import com.teamtea.eclipticseasons.client.util.ClientRef;
@@ -35,9 +37,11 @@ import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.SpawnEggItem;
+import net.minecraft.world.level.biome.Biome;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -61,6 +65,15 @@ public final class ClientEventHandler {
             BiomeColorsHandler.reloadColors();
         }
 
+    }
+
+    @SubscribeEvent
+    public static void onRenderTick(SolarTermChangeEvent event) {
+        if (event.getLevel().isClientSide()) {
+            for (Biome biome : event.getLevel().registryAccess().lookupOrThrow(Registries.BIOME)) {
+                if (((Object) biome) instanceof IBiomeColorHolder colorHolder) colorHolder.setSeasonChanged();
+            }
+        }
     }
 
     @SubscribeEvent
@@ -217,7 +230,7 @@ public final class ClientEventHandler {
     }
 
     @SubscribeEvent
-    public static void onRegisterClientCommandsEvent(ClientPlayerNetworkEvent.LoggingIn event) {
+    public static void onLoggingIn(ClientPlayerNetworkEvent.LoggingIn event) {
         ClientCon.ServerName =
                 event.getPlayer().connection.getServerData() == null ? "Client" :
                         event.getPlayer().connection.getServerData().name;
