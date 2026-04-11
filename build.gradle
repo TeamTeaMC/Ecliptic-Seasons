@@ -223,6 +223,7 @@ dependencies {
 //    onlyMainRuntimeOnly "curse.maven:euphoria-patches-915902:6137784"
 
     implementation "curse.maven:patchouli-306770:6842247"
+    implementation "curse.maven:ageratum-1500610:7854451"
     compileOnly "curse.maven:kubejs-238086:7143884"
 //    implementation "curse.maven:rhino-416294:7104526"
 
