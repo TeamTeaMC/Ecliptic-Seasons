@@ -43,9 +43,9 @@ public class DHClientTool {
                 MixinAbstractDhTintGetter.getBiomeColorCache().clear();
             }
 
-            if (!ClientCon.getAgent().isSnowChange()) {
-                return;
-            }
+            // if (!ClientCon.getAgent().isSnowChange()) {
+            //     return;
+            // }
 
             ClientCon.getAgent().setSnowChange(false);
 
