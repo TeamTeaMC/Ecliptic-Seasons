@@ -306,7 +306,7 @@ dependencies {
     compileOnly fg.deobf("curse.maven:farmers-delight-398521:5051242")
 
     compileOnly fg.deobf("curse.maven:distant-horizons-508933:7375280")
-    onlyMainRuntimeOnly fg.deobf("curse.maven:distant-horizons-508933:7375280")
+//    onlyMainRuntimeOnly fg.deobf("curse.maven:distant-horizons-508933:7375280")
 
     compileOnly fg.deobf("curse.maven:improperui-forged-1209983:6362682")
 
