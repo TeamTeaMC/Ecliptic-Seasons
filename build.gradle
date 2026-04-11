@@ -210,7 +210,7 @@ dependencies {
 
 //    onlyMainRuntimeOnly ("maven.modrinth:distanthorizons:2.2.1-a-1.21.1")
     compileOnly "curse.maven:distant-horizons-508933:7375285"
-    onlyMainRuntimeOnly "curse.maven:distant-horizons-508933:7375285"
+//    onlyMainRuntimeOnly "curse.maven:distant-horizons-508933:7375285"
 
     onlyMainRuntimeOnly("curse.maven:spark-361579:5434153")
     onlyMainRuntimeOnly "curse.maven:t88-663112:6138989"
