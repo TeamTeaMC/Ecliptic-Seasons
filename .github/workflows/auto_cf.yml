@@ -97,6 +97,10 @@ jobs:
       - name: Publish (CurseForge)
         uses: Kir-Antipov/mc-publish@v3.3
         with:
+          modrinth-id: ecliptic-seasons
+          modrinth-featured: true
+          modrinth-unfeature-mode: subset
+          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
           curseforge-id: 1118306
           curseforge-token: "${{ env.CURSEFORGE_TOKEN }}"
           version-type: release
