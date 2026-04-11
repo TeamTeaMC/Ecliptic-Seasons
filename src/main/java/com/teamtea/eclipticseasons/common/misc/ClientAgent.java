@@ -32,9 +32,27 @@ public interface ClientAgent {
     }
 
     default void setChange(boolean change) {
+        if (!change) {
+            setSnowChange(false);
+            setTermChange(false);
+        }
     }
 
     default boolean isChange() {
+        return isSnowChange() || isTermChange();
+    }
+
+    default void setSnowChange(boolean change) {
+    }
+
+    default boolean isSnowChange() {
+        return false;
+    }
+
+    default void setTermChange(boolean change) {
+    }
+
+    default boolean isTermChange() {
         return false;
     }
 

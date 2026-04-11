@@ -1,6 +1,10 @@
 > As the ecosystem for 1.20.1 begins to wind down with major mods like Create moving on, we are also transitioning into
 > the final maintenance phase for our mod on this version.
 
+### 0.12.18.9
+
+- For distant-horizons 2.4.5-b.
+
 ### 0.12.18.8
 
 - For voxy 0.2.13-alpha.

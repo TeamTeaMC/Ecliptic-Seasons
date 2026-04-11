@@ -14,10 +14,12 @@ import com.seibel.distanthorizons.core.util.objects.quadTree.QuadNode;
 import com.seibel.distanthorizons.core.world.IDhClientWorld;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.compat.CompatModule;
+import com.teamtea.eclipticseasons.mixin.compat.distanthorizons.MixinAbstractDhTintGetter;
 import com.teamtea.eclipticseasons.mixin.compat.distanthorizons.MixinQuadTree;
 import it.unimi.dsi.fastutil.longs.LongLinkedOpenHashSet;
 import loaderCommon.forge.com.seibel.distanthorizons.common.wrappers.world.ClientLevelWrapper;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,14 +31,23 @@ public class DHClientTool {
     public static void forceReloadAll() {
         if (!CompatModule.CommonConfig.DistantHorizonsWinterLOD.get()) return;
         if (!CompatModule.ClientConfig.DistantHorizonsWinterLODForceUpdateAll.get()) return;
-
-        IDhClientWorld clientWorld = SharedApi.getIDhClientWorld();
-        if (Minecraft.getInstance().level != null
-                && ClientCon.getAgent().isChange()
-                && ClientLevelWrapper.getWrapper(Minecraft.getInstance().level) instanceof ClientLevelWrapper clientLevelWrapper
+        ClientLevel level = Minecraft.getInstance().level;
+        if (level == null || (level.getGameTime() % (20 * 15)) != 0) return;
+        IDhClientWorld clientWorld = SharedApi.tryGetDhClientWorld();
+        if (ClientCon.getAgent().isChange()
+                && ClientLevelWrapper.getWrapper(level) instanceof ClientLevelWrapper clientLevelWrapper
                 && clientWorld.getLevel(clientLevelWrapper) instanceof IDhClientLevel clientLevel) {
 
-            ClientCon.getAgent().setChange(false);
+            if (ClientCon.getAgent().isTermChange()) {
+                ClientCon.getAgent().setTermChange(false);
+                MixinAbstractDhTintGetter.getBiomeColorCache().clear();
+            }
+
+            if (!ClientCon.getAgent().isSnowChange()) {
+                return;
+            }
+
+            ClientCon.getAgent().setSnowChange(false);
 
             AtomicReference<ClientLevelModule.ClientRenderState> clientRenderStateAtomicReference = null;
             if (clientLevel instanceof DhClientServerLevel dhClientServerLevel) {
@@ -105,7 +116,7 @@ public class DHClientTool {
                     if (setsLong.contains(pos)) continue;
                     quadtree.reloadPos(pos);
                     setsLong.add(pos);
-                    for (EDhDirection direction : EDhDirection.ADJ_DIRECTIONS) {
+                    for (EDhDirection direction : EDhDirection.CARDINAL_COMPASS) {
                         long adjacentPos = DhSectionPos.getAdjacentPos(pos, direction);
                         setsLong.add(adjacentPos);
                     }

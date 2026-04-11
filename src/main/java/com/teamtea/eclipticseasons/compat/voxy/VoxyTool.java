@@ -148,8 +148,7 @@ public class VoxyTool {
 
         Level level = ClientCon.getUseLevel();
         if (level == null || level.getGameTime() % (20 * 15) == 0
-                || !ClientCon.getAgent().isChange()
-                || !MapChecker.isValidDimension(level)
+                || !ClientCon.getAgent().isSnowChange()
                 || esImporter != null)
             return;
 
@@ -162,7 +161,7 @@ public class VoxyTool {
         var engine = WorldIdentifier.ofEngine(level);
         if (engine == null) return;
 
-        ClientCon.agent.setChange(false);
+        ClientCon.agent.setSnowChange(false);
 
         esImporter = new VoxyESImportManager();
 

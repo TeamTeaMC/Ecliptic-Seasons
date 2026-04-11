@@ -55,8 +55,11 @@ public class ClientClientAgent implements ClientAgent {
 
     @Getter
     @Setter
-    boolean change = false;
+    boolean termChange = false;
 
+    @Getter
+    @Setter
+    boolean snowChange = false;
 
     @Override
     public String getCurrentWorldName() {

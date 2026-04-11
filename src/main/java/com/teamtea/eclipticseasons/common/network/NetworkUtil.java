@@ -54,7 +54,7 @@ public class NetworkUtil {
                             SolarTerm solarTerm = data.getSolarTerm();
                             if (solarTerm != old) {
                                 MinecraftForge.EVENT_BUS.post(new SolarTermChangeEvent(old, solarTerm, getClient(), data.getSolarTermsDay()));
-                                ClientCon.getAgent().setChange(true);
+                                ClientCon.getAgent().setTermChange(true);
                             }
                             // BiomeClimateManager.updateTemperature(NetworkUtil.getClient(), data.getSolarTerm());
                             BiomeColorsHandler.needRefresh = true;
@@ -97,7 +97,7 @@ public class NetworkUtil {
                                 level instanceof ServerLevel, biomeWeatherMessage.weather[biomeWeather.id]));
                     }
                     if (update)
-                        ClientCon.agent.setChange(true);
+                        ClientCon.agent.setSnowChange(true);
                 }
             }
         });
