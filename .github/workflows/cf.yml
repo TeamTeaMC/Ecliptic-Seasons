@@ -65,5 +65,6 @@ jobs:
           loaders: forge
           game-versions: "${{ env.MINECRAFT_VERSION }}"
           name: "${{env.RELEASE_NAME}}"
+          dependencies: ""
           files: |
             build/libs/${{ env.RELEASE_NAME }}
