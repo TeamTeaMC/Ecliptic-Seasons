@@ -1,3 +1,7 @@
+### 0.12.18.9
+
+- For distant-horizons 2.4.5-b.
+
 ### 0.12.18.7
 
 - Fixed a bug that would cause the time period to be judged as dusk at the beginning of the day.

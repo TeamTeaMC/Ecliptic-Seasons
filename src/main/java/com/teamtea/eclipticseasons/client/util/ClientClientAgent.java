@@ -53,9 +53,14 @@ public class ClientClientAgent implements ClientAgent {
         Minecraft.getInstance().levelRenderer.allChanged();
     }
 
+
     @Getter
     @Setter
-    boolean change = false;
+    boolean termChange = false;
+
+    @Getter
+    @Setter
+    boolean snowChange = false;
 
 
     @Override
