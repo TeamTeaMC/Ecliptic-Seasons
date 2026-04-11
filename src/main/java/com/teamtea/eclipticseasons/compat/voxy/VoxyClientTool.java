@@ -4,7 +4,6 @@ import com.teamtea.eclipticseasons.client.core.ExtraModelManager;
 import com.teamtea.eclipticseasons.client.core.ExtraRendererContext;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
-import me.cortex.voxy.client.core.model.bakery.ModelTextureBakery;
 import me.cortex.voxy.client.core.model.bakery.ReuseVertexConsumer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
@@ -19,7 +18,7 @@ import net.minecraft.world.level.levelgen.SingleThreadedRandomSource;
 
 public class VoxyClientTool {
 
-    public static void renderToStream(BlockState state, RenderType layer, ReuseVertexConsumer vc) {
+    public static void renderToStream(BlockState state, RenderType renderType, supplier supplier, ReuseVertexConsumer vc) {
         if (!VoxyTool.isVoxyTest()) return;
 
         if (state.getRenderShape() != RenderShape.INVISIBLE) {
@@ -34,11 +33,11 @@ public class VoxyClientTool {
                     .setOriginalModel(Minecraft.getInstance().getModelManager().getBlockModelShaper().getBlockModel(state))
             ;
 
-            int meta = ModelTextureBakery.getMetaFromLayer(state.getBlock() instanceof LeavesBlock ?
-                    layer :
+            int meta = supplier.getMetaFromLayer(state.getBlock() instanceof LeavesBlock ?
+                    renderType :
                     ExtraModelManager.getRenderType(state));
             for (Direction direction : new Direction[]{Direction.DOWN, Direction.UP, Direction.NORTH, Direction.SOUTH, Direction.WEST, Direction.EAST, null}) {
-                //int SNOW_FLAG = 1 << 30;
+                // int SNOW_FLAG = 1 << 30;
 
                 for (BakedQuad quad :
                         ExtraModelManager.cancelTop(context, model, ClientCon.getUseLevel(),
@@ -46,10 +45,15 @@ public class VoxyClientTool {
                                 ClientCon.getUseLevel().getRandom(), 42L,
                                 model.getQuads(state, direction, new SingleThreadedRandomSource(42L)))) {
                     int quadMeta = meta | (quad.isTinted() ? 4 : 0);
-                    //quadMeta |= SNOW_FLAG;
+                    // quadMeta |= SNOW_FLAG;
                     vc.quad(quad, quadMeta);
                 }
             }
         }
+    }
+
+    @FunctionalInterface
+    public interface supplier {
+        int getMetaFromLayer(RenderType layer);
     }
 }
