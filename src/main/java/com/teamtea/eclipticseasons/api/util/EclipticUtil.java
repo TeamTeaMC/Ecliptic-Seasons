@@ -326,7 +326,7 @@ public class EclipticUtil {
             public boolean isThundering(Level level, BlockPos pos) {
                 if (hasLocalWeather(level))
                     return WeatherManager.isThunderAtBiome(level, MapChecker.getSurfaceBiome(level, pos));
-                return level.isRaining();
+                return level.isThundering();
             }
 
             @Override
