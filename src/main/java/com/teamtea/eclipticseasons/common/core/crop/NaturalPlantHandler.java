@@ -120,6 +120,7 @@ public class NaturalPlantHandler {
                                     hasCheckFixedSeed = true;
                                 }
                                 if (!testChance(fixedSeedValue, changeMode.chance())) continue;
+                                if (level.getRandom().nextFloat() > 0.00001f) continue;
                             } else if (level.getRandom().nextFloat() >= changeMode.chance()) continue;
 
                             if (changeMode.matches(state, level, pos)) {
