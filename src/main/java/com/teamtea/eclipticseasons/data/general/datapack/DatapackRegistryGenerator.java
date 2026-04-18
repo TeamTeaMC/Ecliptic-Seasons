@@ -28,6 +28,7 @@ public class DatapackRegistryGenerator extends DatapackBuiltinEntriesProvider {
             .add(Registries.JUKEBOX_SONG, SongRegistry::bootstrap)
             .add(ESRegistries.EXTRA_INFO, ESSortInfoRegistry::bootstrap)
             .add(Registries.TIMELINE, TimeLineRegistry::bootstrap)
+            // .add(ESRegistries.WEATHER_DIMENSION, WeatherDimensionRegistry::bootstrap)
             ;
 
     public DatapackRegistryGenerator(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {

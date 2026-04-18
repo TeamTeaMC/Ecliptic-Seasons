@@ -15,7 +15,7 @@ import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.neoforged.neoforge.attachment.IAttachmentHolder;
 import net.neoforged.neoforge.attachment.IAttachmentSerializer;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.Arrays;
 import java.util.Optional;
@@ -147,13 +147,13 @@ public class SnowyRemover {
         }
 
         //@Override
-        //public @NotNull SnowyRemover read(@NotNull IAttachmentHolder holder, @NotNull Tag tag, HolderLookup.@NotNull Provider provider) {
+        //public @NonNull SnowyRemover read(@NonNull IAttachmentHolder holder, @NonNull Tag tag, HolderLookup.@NonNull Provider provider) {
         //    Optional<SnowyRemover> result = CODEC.parse(provider.createSerializationContext(NbtOps.INSTANCE), tag).result();
         //    return result.orElseGet(SnowyRemover::empty);
         //}
         //
         //@Override
-        //public Tag write(@NotNull SnowyRemover attachment, HolderLookup.@NotNull Provider provider) {
+        //public Tag write(@NonNull SnowyRemover attachment, HolderLookup.@NonNull Provider provider) {
         //    if (attachment.cacheTag != null) {
         //        return attachment.cacheTag;
         //    }

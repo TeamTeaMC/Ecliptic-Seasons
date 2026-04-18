@@ -1,7 +1,6 @@
-package com.teamtea.eclipticseasons.api.constant.climate;
+package com.teamtea.eclipticseasons.api.data.climate;
 
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
-import com.teamtea.eclipticseasons.api.data.climate.BiomesClimateSettings;
 import com.teamtea.eclipticseasons.api.util.fast.Enum2FloatMap;
 import net.minecraft.world.level.biome.Biome;
 

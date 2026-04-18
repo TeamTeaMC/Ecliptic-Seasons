@@ -14,7 +14,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.levelgen.Heightmap;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -219,7 +219,7 @@ public class ClientWeatherChecker {
     }
 
 
-    public static boolean isRainingAt(@NotNull Level clientLevel, BlockPos blockPos) {
+    public static boolean isRainingAt(@NonNull Level clientLevel, BlockPos blockPos) {
         if (!clientLevel.canSeeSky(blockPos)) {
             return false;
         } else if (clientLevel.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, blockPos).getY() > blockPos.getY()) {

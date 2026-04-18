@@ -7,7 +7,7 @@ import net.minecraft.client.renderer.block.model.BlockDisplayContext;
 import net.minecraft.client.renderer.state.gui.pip.PictureInPictureRenderState;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 public class BlockGuiRenderUtil {
     public static final BlockDisplayContext BLOCK_DISPLAY_CONTEXT = BlockDisplayContext.create();
@@ -29,7 +29,7 @@ public class BlockGuiRenderUtil {
     }
 
 
-    public static void renderFluidInGui(@NotNull GuiGraphicsExtractor guiGraphics, FluidState state, int x0, int y0, float v, float v1) {
+    public static void renderFluidInGui(@NonNull GuiGraphicsExtractor guiGraphics, FluidState state, int x0, int y0, float v, float v1) {
         guiGraphics.submitPictureInPictureRenderState(new GuiFluidRenderState(
                 state, x0, y0, x0 + 32, y0 + 32, 1f, PictureInPictureRenderState.IDENTITY_POSE,
                 guiGraphics.peekScissorStack()

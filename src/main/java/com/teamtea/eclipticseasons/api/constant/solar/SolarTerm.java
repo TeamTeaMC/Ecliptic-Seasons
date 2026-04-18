@@ -1,20 +1,14 @@
 package com.teamtea.eclipticseasons.api.constant.solar;
 
+import com.mojang.datafixers.util.Pair;
 import com.teamtea.eclipticseasons.EclipticSeasons;
-import com.teamtea.eclipticseasons.api.constant.climate.*;
-import com.teamtea.eclipticseasons.api.constant.climate.seasonal.ColdRain;
-import com.teamtea.eclipticseasons.api.constant.climate.seasonal.HotRain;
 import com.teamtea.eclipticseasons.api.constant.solar.color.base.*;
 import com.teamtea.eclipticseasons.api.constant.solar.color.base.seasonal.ColdSolarTermColors;
 import com.teamtea.eclipticseasons.api.constant.solar.color.base.seasonal.HotSolarTermColors;
 import com.teamtea.eclipticseasons.api.constant.tag.ClimateTypeBiomeTags;
-import com.teamtea.eclipticseasons.api.data.weather.CustomRain;
 import com.teamtea.eclipticseasons.api.misc.ITranslatableWithPlaceholder;
-import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
-import com.teamtea.eclipticseasons.common.misc.SimplePair;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.ChatFormatting;
-import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.Identifier;
@@ -23,7 +17,6 @@ import net.minecraft.world.level.biome.Biome;
 
 import java.util.Arrays;
 import java.util.Locale;
-import java.util.Map;
 
 public enum SolarTerm implements ITranslatableWithPlaceholder, ISolarTerm {
     // Spring Solar Terms
@@ -138,8 +131,8 @@ public enum SolarTerm implements ITranslatableWithPlaceholder, ISolarTerm {
     }
 
     @Override
-    public SimplePair<Integer, Integer> getIconPosition() {
-        return SimplePair.of(this.ordinal() % 6, this.ordinal() / 6);
+    public Pair<Integer, Integer> getIconPosition() {
+        return Pair.of(this.ordinal() % 6, this.ordinal() / 6);
     }
 
     @Override
@@ -214,72 +207,6 @@ public enum SolarTerm implements ITranslatableWithPlaceholder, ISolarTerm {
 
     public Season getSeason() {
         return Season.collectValues()[this.ordinal() / 6];
-    }
-
-
-    public BiomeRain getBiomeRain(Holder<Biome> biomeHolder) {
-        Map<SolarTerm, CustomRain> customRainMap = BiomeClimateManager.getCustomRain(biomeHolder.value(), BiomeClimateManager.isServerInstance(biomeHolder.value()));
-        CustomRain customRain = customRainMap.getOrDefault(this, null);
-        if (customRain != null) return customRain;
-
-        TagKey<Biome> tag = BiomeClimateManager.getTag(biomeHolder.value());
-        if (tag == ClimateTypeBiomeTags.RAINLESS)
-            return FlatRain.RAINLESS;
-        if (tag == ClimateTypeBiomeTags.ARID)
-            return FlatRain.ARID;
-        if (tag == ClimateTypeBiomeTags.DROUGHTY)
-            return FlatRain.DROUGHTY;
-        if (tag == ClimateTypeBiomeTags.SOFT)
-            return FlatRain.SOFT;
-        if (tag == ClimateTypeBiomeTags.RAINY)
-            return FlatRain.RAINY;
-        if (tag == ClimateTypeBiomeTags.MONSOONAL)
-            return MonsoonRain.collectValues()[this.ordinal()];
-        if (tag == ClimateTypeBiomeTags.SEASONAL_HOT)
-            return HotRain.collectValues()[this.ordinal()];
-        if (tag == ClimateTypeBiomeTags.SEASONAL_COLD)
-            return ColdRain.collectValues()[this.ordinal()];
-        return TemperateRain.collectValues()[this.ordinal()];
-
-        // if (!biomeHolder.is(BiomeTags.IS_OVERWORLD) || biomeHolder.is(ClimateTypeBiomeTags.RAINLESS)) {
-        //     return FlatRain.RAINLESS;
-        // } else if (biomeHolder.is(ClimateTypeBiomeTags.ARID)) {
-        //     return FlatRain.ARID;
-        // } else if (biomeHolder.is(ClimateTypeBiomeTags.DROUGHTY)) {
-        //     return FlatRain.DROUGHTY;
-        // } else if (biomeHolder.is(ClimateTypeBiomeTags.SOFT)) {
-        //     return FlatRain.SOFT;
-        // } else if (biomeHolder.is(ClimateTypeBiomeTags.RAINY)) {
-        //     return FlatRain.RAINY;
-        // } else if (biomeHolder.is(ClimateTypeBiomeTags.MONSOONAL)) {
-        //     return MonsoonRain.collectValues()[this.ordinal()];
-        // } else {
-        //     return TemperateRain.collectValues()[this.ordinal()];
-        // }
-    }
-
-    public static ISnowTerm getSnowTerm(Biome biome) {
-        if (biome == null) return SnowTerm.T05;
-        boolean serverInstance = BiomeClimateManager.isServerInstance(biome);
-        return getSnowTerm(biome, serverInstance);
-    }
-
-    @Deprecated(forRemoval = true, since = "0.12.0")
-    public static ISnowTerm getSnowTerm(Biome biome, boolean isServer) {
-        return getSnowTerm(biome, isServer, 0);
-    }
-
-    public static ISnowTerm getSnowTerm(Biome biome, boolean isServer, float tempChange) {
-        if (biome == null) return SnowTerm.T05;
-        ISnowTerm customSnowTerm = BiomeClimateManager.getCustomSnowTerm(biome, isServer);
-        if (customSnowTerm != null) return customSnowTerm.cast(tempChange);
-        // float t = BiomeClimateManager.getDefaultTemperature(biome, isServer);
-        float t = biome.getModifiedClimateSettings().temperature();
-
-        BiomeClimateSettings biomeClimateSettings = BiomeClimateManager.getBiomeClimateSettings(biome, isServer);
-        t = biomeClimateSettings == BiomeClimateManager.EMPTY ? t : biomeClimateSettings.getTemperature();
-
-        return SnowTerm.get(t, tempChange);
     }
 
 

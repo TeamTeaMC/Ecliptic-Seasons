@@ -19,9 +19,9 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
-import javax.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -34,7 +34,7 @@ public class SnowDefinition implements MapFiller<Block, SnowDefinition>, HolderM
             PropertyTester.CODEC.listOf().optionalFieldOf("properties", List.of()).forGetter(o -> o.map),
             Info.MAP_CODEC.forGetter(o -> o.info)
     ).apply(ins, SnowDefinition::new));
-    @NotNull
+    @NonNull
     private final HolderSet<Block> blocks;
     @Builder.Default
     private final List<PropertyTester> map = new ArrayList<>();
@@ -98,11 +98,11 @@ public class SnowDefinition implements MapFiller<Block, SnowDefinition>, HolderM
         ).apply(ins, PropertyTester::new));
 
 
-        @NotNull
+        @NonNull
         private final String name;
         @Builder.Default
         private final boolean reverse = false;
-        @NotNull
+        @NonNull
         private final PropertyMatcher matcher;
 
         public boolean matches(BlockState blockState) {
@@ -124,7 +124,7 @@ public class SnowDefinition implements MapFiller<Block, SnowDefinition>, HolderM
                 Codec.STRING.fieldOf("value").forGetter(o -> o.value)
         ).apply(ins, ExactMatcher::new));
 
-        @NotNull
+        @NonNull
         private final String value;
 
         @Override

@@ -5,9 +5,9 @@ import com.google.common.annotations.Beta;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.teamtea.eclipticseasons.EclipticSeasons;
-import com.teamtea.eclipticseasons.client.core.ExtraRenderDispatcher;
+import com.teamtea.eclipticseasons.client.core.AttachRenderDispatcher;
 import com.teamtea.eclipticseasons.client.model.block.ISnowyReplaceModel;
-import com.teamtea.eclipticseasons.compat.ctm.CTMSpriteChecker;
+import com.teamtea.eclipticseasons.api.misc.client.ISpriteChecker;
 import com.teamtea.eclipticseasons.compat.sodium.SodiumStatus;
 import net.caffeinemc.mods.sodium.client.render.model.AbstractBlockRenderContext;
 import net.caffeinemc.mods.sodium.client.render.model.MutableQuadViewImpl;
@@ -53,7 +53,7 @@ public abstract class MixinAbstractBlockRenderContext {
            @Local(argsOnly = true) BlockStateModelPart part,
            @Local Direction side) {
        if (this instanceof SodiumStatus sodiumStatus && sodiumStatus.getSnowModel() != null)
-           return ExtraRenderDispatcher.cancelTop(part, level, state, pos, side, random, original, sodiumStatus.getCacheBakeQuad());
+           return AttachRenderDispatcher.cancelTop(part, level, state, pos, side, random, original, sodiumStatus.getCacheBakeQuad());
        return original;
     }
 
@@ -74,8 +74,8 @@ public abstract class MixinAbstractBlockRenderContext {
                && !(ISnowyReplaceModel.isInvalid(part))
                && !sodiumStatus.shouldCollect()) {
            try {
-               if (bakedQuad.materialInfo().sprite() instanceof CTMSpriteChecker ctmSpriteChecker
-                       && ctmSpriteChecker.isCTMSprite()) {
+               if (bakedQuad.materialInfo().sprite() instanceof ISpriteChecker iSpriteChecker
+                       && iSpriteChecker.isCTMSprite()) {
                    sodiumStatus.setShouldCollect(true);
                }
            } catch (Exception exception) {
@@ -91,7 +91,7 @@ public abstract class MixinAbstractBlockRenderContext {
     private BlockState eclipticseasons$skip_if_fake_snow(BlockState original,
                                                         @Local(name = "neighborPos") BlockPos.MutableBlockPos otherPos,
                                                         @Local(argsOnly = true) Direction facing) {
-       return ExtraRenderDispatcher.getFakeBlockState(original, state, level, otherPos, pos, facing);
+       return AttachRenderDispatcher.getFakeBlockState(original, state, level, otherPos, pos, facing);
     }
 
 

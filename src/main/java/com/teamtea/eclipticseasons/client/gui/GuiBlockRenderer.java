@@ -46,7 +46,6 @@ public class GuiBlockRenderer extends PictureInPictureRenderer<GuiBlockRenderSta
         // poseStack.last().normal().rotate(LIGHT_FIX_ROT);
         // poseStack.translate(-.5, -.5, -.5);
 
-
         BlockQuadOutput output = (x, y, z, quad, instance) -> putBakedQuad(poseStack, bufferSource, x, y, z, quad, instance, quad.materialInfo().layer());
         BlockQuadOutput solidOutput = (x, y, z, quad, instance) -> putBakedQuad(poseStack, bufferSource, x, y, z, quad, instance, ChunkSectionLayer.SOLID);
         BlockQuadOutput blockQuadOutput = ModelBlockRenderer.forceOpaque(Minecraft.getInstance().options.cutoutLeaves().get(), state) ? output : solidOutput;

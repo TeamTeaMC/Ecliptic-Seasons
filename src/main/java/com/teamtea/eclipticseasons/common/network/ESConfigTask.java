@@ -6,7 +6,7 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.network.protocol.configuration.ServerConfigurationPacketListener;
 import net.neoforged.neoforge.network.configuration.ICustomConfigurationTask;
 import net.neoforged.neoforge.network.event.RegisterConfigurationTasksEvent;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.function.Consumer;
 
@@ -20,7 +20,7 @@ class ESConfigTask implements ICustomConfigurationTask {
     }
 
     @Override
-    public void run(@NotNull Consumer<CustomPacketPayload> sender) {
+    public void run(@NonNull Consumer<CustomPacketPayload> sender) {
         for (ESConfigFilePayload syncConfig : ESConfigSync.INSTANCE.syncConfigs(false)) {
             sender.accept(syncConfig);
         }
@@ -28,7 +28,7 @@ class ESConfigTask implements ICustomConfigurationTask {
     }
 
     @Override
-    public @NotNull Type type() {
+    public @NonNull Type type() {
         return this.configTask;
     }
 }

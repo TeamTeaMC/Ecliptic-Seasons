@@ -1,6 +1,6 @@
 package com.teamtea.eclipticseasons.client.model.block;
 
-import com.teamtea.eclipticseasons.client.core.ExtraModelManager;
+import com.teamtea.eclipticseasons.client.core.AttachModelManager;
 import com.teamtea.eclipticseasons.client.model.block.part.SimpleBlockModelPart;
 import com.teamtea.eclipticseasons.client.model.block.quad.ReUVBakedQuad;
 import com.teamtea.eclipticseasons.client.model.block.quad.QuadFilter;
@@ -35,22 +35,28 @@ public class DerivedSnowyBlockStateModel implements BlockStateModel {
 
     @Override
     public void collectParts(BlockAndTintGetter level, BlockPos pos, BlockState state, RandomSource random, List<BlockStateModelPart> parts) {
+        if (parts.isEmpty()) {
+            BlockStateModel blockStateModel = AttachModelManager.models.blockStateModels().get(state);
+            if (blockStateModel != null) {
+                blockStateModel.collectParts(level, pos, state, random, parts);
+            }
+        }
         changeSprite(state, parts);
     }
 
     @Override
     public void collectParts(@NonNull RandomSource random, @NonNull List<BlockStateModelPart> output) {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("Only use in terrain renderer.");
     }
 
     @Override
     public Material.@NonNull Baked particleMaterial() {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("Only use in terrain renderer.");
     }
 
     @Override
     public @BakedQuad.MaterialFlags int materialFlags() {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("Only use in terrain renderer.");
     }
 
     private static final Direction[] DIRECTIONS_TO_CHECK = {
@@ -118,9 +124,9 @@ public class DerivedSnowyBlockStateModel implements BlockStateModel {
 
     public static List<BakedQuad> makeSnowyBakedQuads(ReUVBakedQuad bqr, List<BakedQuad> quadsCTM, boolean tooTiny) {
 
-        TextureAtlasSprite snow_overlay_sprite = ExtraModelManager.getSprite(ExtraModelManager.snow_overlay);
-        TextureAtlasSprite snow_overlay_tiny_sprite = ExtraModelManager.getSprite(ExtraModelManager.snow_overlay_tiny);
-        TextureAtlasSprite snow_sprite = ExtraModelManager.getSprite(ExtraModelManager.snow);
+        TextureAtlasSprite snow_overlay_sprite = AttachModelManager.getSprite(AttachModelManager.snow_overlay);
+        TextureAtlasSprite snow_overlay_tiny_sprite = AttachModelManager.getSprite(AttachModelManager.snow_overlay_tiny);
+        TextureAtlasSprite snow_sprite = AttachModelManager.getSprite(AttachModelManager.snow);
 
         float offset = 0.5f;
         boolean isSlabDown = false;

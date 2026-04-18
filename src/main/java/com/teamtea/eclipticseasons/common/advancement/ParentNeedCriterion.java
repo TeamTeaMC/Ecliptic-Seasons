@@ -11,7 +11,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.ServerAdvancementManager;
 import net.minecraft.server.level.ServerPlayer;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.lang.ref.WeakReference;
 import java.util.Objects;
@@ -20,7 +20,7 @@ import java.util.Optional;
 public class ParentNeedCriterion extends SimpleCriterionTrigger<ParentNeedCriterion.TriggerInstance> {
 
     @Override
-    public @NotNull Codec<TriggerInstance> codec() {
+    public @NonNull Codec<TriggerInstance> codec() {
         return TriggerInstance.CODEC;
     }
 
@@ -70,7 +70,7 @@ public class ParentNeedCriterion extends SimpleCriterionTrigger<ParentNeedCriter
         }
 
         @Override
-        public @NotNull Optional<ContextAwarePredicate> player() {
+        public @NonNull Optional<ContextAwarePredicate> player() {
             return Optional.empty();
         }
 

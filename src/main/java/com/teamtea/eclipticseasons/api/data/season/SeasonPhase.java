@@ -1,5 +1,6 @@
 package com.teamtea.eclipticseasons.api.data.season;
 
+import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
@@ -119,10 +120,10 @@ public record SeasonPhase(
     }
 
     @Override
-    public SimplePair<Integer, Integer> getIconPosition() {
+    public Pair<Integer, Integer> getIconPosition() {
         return icon().isPresent() ?
-                SimplePair.of(icon().get().x, icon().get().y) :
-                SimplePair.of(0, 0)
+                Pair.of(icon().get().x, icon().get().y) :
+                Pair.of(0, 0)
                 ;
     }
 

@@ -1,6 +1,6 @@
 package com.teamtea.eclipticseasons.api.util.fast;
 
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.*;
 
@@ -111,7 +111,7 @@ public class Enum2ObjectMap<K extends Enum<K>, V> implements Map<K, V> {
     }
 
     @Override
-    public @NotNull Set<K> keySet() {
+    public @NonNull Set<K> keySet() {
         Set<K> keys = EnumSet.noneOf(keyType);
         for (K key : keyType.getEnumConstants()) {
             if (this.values[key.ordinal()] != defaultValue) {
@@ -122,7 +122,7 @@ public class Enum2ObjectMap<K extends Enum<K>, V> implements Map<K, V> {
     }
 
     @Override
-    public @NotNull Collection<V> values() {
+    public @NonNull Collection<V> values() {
         List<V> vals = new ArrayList<>();
         for (int i = 0; i < values.length; i++) {
             if (this.values[i] != defaultValue) {
@@ -133,7 +133,7 @@ public class Enum2ObjectMap<K extends Enum<K>, V> implements Map<K, V> {
     }
 
     @Override
-    public @NotNull Set<Entry<K, V>> entrySet() {
+    public @NonNull Set<Entry<K, V>> entrySet() {
         Set<Entry<K, V>> entries = new LinkedHashSet<>();
         for (K key : keyType.getEnumConstants()) {
             if (this.values[key.ordinal()] != defaultValue) {

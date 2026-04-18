@@ -4,7 +4,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.loot.LootTableProvider;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 import java.util.Set;
@@ -26,7 +26,7 @@ public class ExampleLootTableProvider extends LootTableProvider {
     }
 
     @Override
-    public @NotNull String getName() {
+    public @NonNull String getName() {
         return "Example " + super.getName();
     }
 }

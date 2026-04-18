@@ -2,7 +2,7 @@ package com.teamtea.eclipticseasons.api.misc;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.StringRepresentable;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.Locale;
 
@@ -16,7 +16,7 @@ public interface ITranslatable extends StringRepresentable {
     int ordinal();
 
     @Override
-    default @NotNull String getSerializedName() {
+    default @NonNull String getSerializedName() {
         return getName();
     }
 }

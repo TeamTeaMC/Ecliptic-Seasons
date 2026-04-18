@@ -1,11 +1,10 @@
 package com.teamtea.eclipticseasons.mixin.compat.sodium;
 
 
-import net.caffeinemc.mods.sodium.client.world.LevelSlice;
-// import net.caffeinemc.mods.sodium.neoforge.model.NeoForgeModelAccess;
+import net.caffeinemc.mods.sodium.neoforge.model.NeoForgeModelAccess;
 import org.spongepowered.asm.mixin.Mixin;
 
-@Mixin({LevelSlice.class})
+@Mixin({NeoForgeModelAccess.class})
 public abstract class MixinNeoForgeModelAccess {
 
 

@@ -2,6 +2,7 @@ package com.teamtea.eclipticseasons.client;
 
 
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.teamtea.eclipticseasons.api.data.misc.ESSortInfo;
 import com.teamtea.eclipticseasons.api.event.SolarTermChangeEvent;
 import com.teamtea.eclipticseasons.api.misc.client.IBiomeColorHolder;
@@ -68,7 +69,7 @@ public final class ClientEventHandler {
     }
 
     @SubscribeEvent
-    public static void onRenderTick(SolarTermChangeEvent event) {
+    public static void onSolarTermChangeEvent(SolarTermChangeEvent event) {
         if (event.getLevel().isClientSide()) {
             for (Biome biome : event.getLevel().registryAccess().lookupOrThrow(Registries.BIOME)) {
                 if (((Object) biome) instanceof IBiomeColorHolder colorHolder) colorHolder.setSeasonChanged();
@@ -220,13 +221,23 @@ public final class ClientEventHandler {
     @SubscribeEvent
     public static void onRegisterClientCommandsEvent(RegisterClientCommandsEvent event) {
         CommandDispatcher<CommandSourceStack> dispatcher = event.getDispatcher();
-        dispatcher.register(Commands.literal(EclipticSeasonsApi.SMODID)
-                .then(Commands.literal("c_export")
-                        .requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))
-                        .then(Commands.argument("pos", BlockPosArgument.blockPos()).executes((stackCommandContext) ->
-                                MapExporter.exportMap(stackCommandContext.getSource(), BlockPosArgument.getBlockPos(stackCommandContext, "pos"))))
-                )
-        );
+        for (String modid : EclipticSeasonsApi.MODID_LIST) {
+            dispatcher.register(Commands.literal(modid)
+                    .then(Commands.literal("c_export")
+                            .requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))
+                            .then(Commands.argument("pos", BlockPosArgument.blockPos()).executes((stackCommandContext) ->
+                                    MapExporter.exportMap(stackCommandContext.getSource(), BlockPosArgument.getBlockPos(stackCommandContext, "pos"))))
+                    )
+                    .then(Commands.literal("debug")
+                            .then(Commands.literal("info_hud")
+                                    .then(Commands.argument("info_enable", BoolArgumentType.bool()).executes((stackCommandContext) -> {
+                                        ClientConfig.Debug.debugInfo.set(BoolArgumentType.getBool(stackCommandContext, "info_enable"));
+                                        return 0;
+                                    }))
+                            )
+                    )
+            );
+        }
     }
 
     @SubscribeEvent

@@ -9,7 +9,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.biome.Biome;
 import net.neoforged.neoforge.common.conditions.ConditionalOps;
 import net.neoforged.neoforge.common.conditions.ICondition;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 
@@ -28,7 +28,7 @@ public record WeatherRegion(Holder<Biome> core, HolderSet<Biome> sub,
     ).apply(ins, WeatherRegion::new));
 
     @Override
-    public int compareTo(@NotNull WeatherRegion c) {
+    public int compareTo(@NonNull WeatherRegion c) {
         return Integer.compare(priority(), c.priority());
     }
 }

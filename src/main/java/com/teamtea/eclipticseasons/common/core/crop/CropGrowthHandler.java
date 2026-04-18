@@ -42,6 +42,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
+import net.minecraft.util.TriState;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -63,9 +64,9 @@ import net.neoforged.neoforge.common.util.FakePlayer;
 import net.neoforged.neoforge.event.entity.player.BonemealEvent;
 import net.neoforged.neoforge.event.level.BlockGrowFeatureEvent;
 import net.neoforged.neoforge.event.level.block.CropGrowEvent;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
-import javax.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -387,7 +388,7 @@ public final class CropGrowthHandler {
     }
 
     @Deprecated(forRemoval = true, since = "0.12")
-    public static @NotNull List<Season> getLikeSeasonsInTemperate(Map<Holder<AgroClimaticZone>, CropGrowControl> controlMap,
+    public static @NonNull List<Season> getLikeSeasonsInTemperate(Map<Holder<AgroClimaticZone>, CropGrowControl> controlMap,
                                                                   Holder<AgroClimaticZone> agentClimateTypeHolder) {
         return getLikeSeasonsInTemperate(null, controlMap, agentClimateTypeHolder);
     }
@@ -418,7 +419,7 @@ public final class CropGrowthHandler {
     }
 
 
-    public static @NotNull List<Season> getLikeSeasonsInTemperate(BlockState state,
+    public static @NonNull List<Season> getLikeSeasonsInTemperate(BlockState state,
                                                                   Map<Holder<AgroClimaticZone>, CropGrowControl> controlMap,
                                                                   Holder<AgroClimaticZone> agentClimateTypeHolder) {
         List<Season> seasons = new ArrayList<>();
@@ -435,7 +436,7 @@ public final class CropGrowthHandler {
         return seasons;
     }
 
-    public static @NotNull List<Humidity> getLikeHumidityInTemperate(BlockState state,
+    public static @NonNull List<Humidity> getLikeHumidityInTemperate(BlockState state,
                                                                      Map<Holder<AgroClimaticZone>, CropGrowControl> controlMap,
                                                                      Holder<AgroClimaticZone> agentClimateTypeHolder) {
         List<Humidity> humidities = new ArrayList<>();
@@ -652,7 +653,7 @@ public final class CropGrowthHandler {
             if (event instanceof CropGrowEvent.Pre cropGrowEvent) {
                 cropGrowEvent.setResult(CropGrowEvent.Pre.Result.DO_NOT_GROW);
             } else if (event instanceof CanPlantGrowEvent cropGrowEvent) {
-                cropGrowEvent.setResult(CropGrowEvent.Pre.Result.DO_NOT_GROW);
+                cropGrowEvent.setResult(TriState.FALSE);
             } else if (event instanceof BlockGrowFeatureEvent blockGrowFeatureEvent) {
                 blockGrowFeatureEvent.setCanceled(true);
             } else if (event instanceof BonemealEvent bonemealEvent) {
@@ -663,13 +664,13 @@ public final class CropGrowthHandler {
             if (event instanceof CropGrowEvent.Pre cropGrowEvent) {
                 cropGrowEvent.setResult(CropGrowEvent.Pre.Result.DEFAULT);
             } else if (event instanceof CanPlantGrowEvent cropGrowEvent) {
-                cropGrowEvent.setResult(CropGrowEvent.Pre.Result.DEFAULT);
+                cropGrowEvent.setResult(TriState.DEFAULT);
             }
         } else if (flag == GROW) {
             if (event instanceof CropGrowEvent.Pre cropGrowEvent) {
                 cropGrowEvent.setResult(CropGrowEvent.Pre.Result.GROW);
             } else if (event instanceof CanPlantGrowEvent cropGrowEvent) {
-                cropGrowEvent.setResult(CropGrowEvent.Pre.Result.GROW);
+                cropGrowEvent.setResult(TriState.TRUE);
             }
         }
 

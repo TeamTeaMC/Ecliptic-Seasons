@@ -28,7 +28,7 @@ import net.minecraft.world.level.biome.OverworldBiomeBuilder;
 import net.minecraft.world.timeline.Timeline;
 import net.minecraft.world.timeline.Timelines;
 import net.neoforged.fml.loading.FMLLoader;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.io.File;
 import java.net.URL;
@@ -265,12 +265,12 @@ public class SimpleUtil {
         //     double d1 = 0.5 - Math.cos(d0 * Math.PI) / 2.0;
         //     return (float) (d0 * 2.0 + d1) / 3.0F;
         // }
-        Optional<Holder<@NotNull WorldClock>> worldClockHolder = level.dimensionType().defaultClock();
+        Optional<Holder<@NonNull WorldClock>> worldClockHolder = level.dimensionType().defaultClock();
         if (worldClockHolder.isEmpty()) return 0;
         var timelines = level.dimensionType().timelines()
                 .stream().filter((t) -> t.value().clock() == worldClockHolder.get()).findFirst();
         if (timelines.isEmpty()) return 0;
-        Holder<@NotNull Timeline> timelineHolder = timelines.get();
+        Holder<@NonNull Timeline> timelineHolder = timelines.get();
         long defaultClockTime = level.getDefaultClockTime();
         long periodTicks = timelineHolder.value().periodTicks().orElse(0);
         if (periodTicks == 0) return 0;

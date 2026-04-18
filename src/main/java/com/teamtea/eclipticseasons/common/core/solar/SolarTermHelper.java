@@ -15,8 +15,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import org.jetbrains.annotations.ApiStatus;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import java.util.Map;
 
 @ApiStatus.Experimental
@@ -27,7 +27,7 @@ public class SolarTermHelper {
                 .get(biome);
     }
 
-    public static @Nonnull ISolarTerm get(Level level, BlockPos pos) {
+    public static @NonNull ISolarTerm get(Level level, BlockPos pos) {
         SolarTerm nowSolarTerm = EclipticUtil.getNowSolarTerm(level);
         Biome biome = CropGrowthHandler.getCropBiome(level, pos).value();
         Map<SolarTerm, Holder<SeasonPhase>> solarTermHolderMap = getSolarTermHolderMap(biome, level instanceof ServerLevel);
@@ -35,24 +35,24 @@ public class SolarTermHelper {
     }
 
 
-    public static @Nonnull ISolarTerm get(Level level, BlockPos pos, SolarTerm nowSolarTerm) {
+    public static @NonNull ISolarTerm get(Level level, BlockPos pos, SolarTerm nowSolarTerm) {
         Biome biome = CropGrowthHandler.getCropBiome(level, pos).value();
         Map<SolarTerm, Holder<SeasonPhase>> solarTermHolderMap = getSolarTermHolderMap(biome, level instanceof ServerLevel);
         return get(solarTermHolderMap, nowSolarTerm);
     }
 
-    public static @Nonnull ISolarTerm get(Holder<Biome> biome, SolarTerm nowSolarTerm) {
+    public static @NonNull ISolarTerm get(Holder<Biome> biome, SolarTerm nowSolarTerm) {
         Map<SolarTerm, Holder<SeasonPhase>> solarTermHolderMap = getSolarTermHolderMap(biome.value(), BiomeClimateManager.isServerInstance(biome.value()));
         return get(solarTermHolderMap, nowSolarTerm);
     }
 
-    public static @Nonnull ISolarTerm get(Map<SolarTerm, Holder<SeasonPhase>> solarTermHolderMap, SolarTerm nowSolarTerm) {
+    public static @NonNull ISolarTerm get(Map<SolarTerm, Holder<SeasonPhase>> solarTermHolderMap, SolarTerm nowSolarTerm) {
         return CommonConfig.Season.enableLocalInfoCalendar.get() && solarTermHolderMap != null && solarTermHolderMap.containsKey(nowSolarTerm) ?
                 solarTermHolderMap.get(nowSolarTerm).value() :
                 nowSolarTerm;
     }
 
-    public static @Nonnull ISolarTerm getNext(Holder<Biome> biome, SolarTerm nowSolarTerm) {
+    public static @NonNull ISolarTerm getNext(Holder<Biome> biome, SolarTerm nowSolarTerm) {
         return getNextTermAndStart(biome, nowSolarTerm).getSecond();
     }
 

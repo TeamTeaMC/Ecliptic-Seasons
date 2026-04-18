@@ -14,7 +14,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.BufferedReader;
@@ -121,7 +121,7 @@ public final class CtmProperties {
         return pairResult;
     }
 
-    public static @NotNull Properties parseProperties(Resource resource) {
+    public static @NonNull Properties parseProperties(Resource resource) {
         Properties properties = new Properties();
         try (BufferedReader br = resource.openAsReader()) {
             properties.load(br);

@@ -3,20 +3,16 @@ package com.teamtea.eclipticseasons.compat.vanilla;
 
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
-import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.constant.tag.ClimateTypeBiomeTags;
 import com.teamtea.eclipticseasons.api.misc.IBiomeTagHolder;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
+import com.teamtea.eclipticseasons.api.util.SolarUtil;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
-import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
-import net.minecraft.util.RandomSource;
-import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.neoforged.api.distmarker.Dist;
@@ -82,7 +78,7 @@ public class VanillaWeather {
                     Biome.Precipitation.RAIN;
 
             boolean isServer= level instanceof ServerLevel;
-            var snowTerm = SolarTerm.getSnowTerm(biome,isServer, EclipticUtil.getSnowTempChange(level));
+            var snowTerm = SolarUtil.getSnowTerm(biome,isServer, EclipticUtil.getSnowTempChange(level));
             boolean flag_cold = snowTerm.maySnow(solarTerm, biome, pos, isServer);
             if (resultPrecipitation == Biome.Precipitation.RAIN) {
                 if (flag_cold) {

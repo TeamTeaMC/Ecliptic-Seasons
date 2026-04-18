@@ -10,7 +10,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.biome.Biome;
 
 import net.neoforged.neoforge.common.Tags;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -22,7 +22,7 @@ public class TagsDataProvider extends KeyTagProvider<Biome> {
     }
 
     @Override
-    protected void addTags(HolderLookup.@NotNull Provider provider) {
+    protected void addTags(HolderLookup.@NonNull Provider provider) {
 
         for (TagKey<Biome> biomeType : ClimateTypeBiomeTags.OVERWORLD_AGRO_BIOME_TYPES) {
             tag(biomeType);

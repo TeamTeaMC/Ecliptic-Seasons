@@ -3,7 +3,7 @@ package com.teamtea.eclipticseasons.compat.theoneprobe;
 import mcjty.theoneprobe.api.ITheOneProbe;
 import net.neoforged.fml.InterModComms;
 
-import javax.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.function.Function;
 
 public final class TheOneProbeProvide implements Function<ITheOneProbe, Void> {

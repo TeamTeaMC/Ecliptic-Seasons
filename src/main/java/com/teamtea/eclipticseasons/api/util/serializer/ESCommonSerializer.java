@@ -5,17 +5,17 @@ import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.neoforged.neoforge.attachment.IAttachmentHolder;
 import net.neoforged.neoforge.attachment.IAttachmentSerializer;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.Optional;
 import java.util.function.Supplier;
 
 public record ESCommonSerializer<T extends SerializerHolder>
-        (String id, Codec<T> codec, Supplier<T> empty) implements IAttachmentSerializer<@NotNull T> {
+        (String id, Codec<T> codec, Supplier<T> empty) implements IAttachmentSerializer<@NonNull T> {
 
 
     @Override
-    public T read(@NotNull IAttachmentHolder holder, ValueInput input) {
+    public T read(@NonNull IAttachmentHolder holder, ValueInput input) {
         Optional<T> snowyStatus = input.read(id, codec);
         return snowyStatus.orElseGet(empty);
     }
@@ -27,13 +27,13 @@ public record ESCommonSerializer<T extends SerializerHolder>
     }
 
     //@Override
-    //public @NotNull T read(@NotNull IAttachmentHolder holder, @NotNull Tag tag, HolderLookup.@NotNull Provider provider) {
+    //public @NonNull T read(@NonNull IAttachmentHolder holder, @NonNull Tag tag, HolderLookup.@NonNull Provider provider) {
     //    Optional<T> result = codec.parse(provider.createSerializationContext(NbtOps.INSTANCE), tag).result();
     //    return result.orElseGet(empty);
     //}
     //
     //@Override
-    //public Tag write(@NotNull T attachment, HolderLookup.@NotNull Provider provider) {
+    //public Tag write(@NonNull T attachment, HolderLookup.@NonNull Provider provider) {
     //    if (attachment.getCacheTag() != null) {
     //        return attachment.getCacheTag();
     //    }

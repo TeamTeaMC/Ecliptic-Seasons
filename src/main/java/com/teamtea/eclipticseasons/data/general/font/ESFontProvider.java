@@ -13,7 +13,7 @@ import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.Identifier;
 
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -86,7 +86,7 @@ public class ESFontProvider implements DataProvider {
         )));
     }
 
-    private GlyphProviderDefinition.@NotNull Conditional buildFont(Identifier iconCollection,List<String> a) {
+    private GlyphProviderDefinition.@NonNull Conditional buildFont(Identifier iconCollection,List<String> a) {
         return new GlyphProviderDefinition.Conditional(new BitmapProvider.Definition(
                 iconCollection.withSuffix(".png"),
                 9,
@@ -103,7 +103,7 @@ public class ESFontProvider implements DataProvider {
 
 
     @Override
-    public @NotNull String getName() {
+    public @NonNull String getName() {
         return "ES Font Provider";
     }
 }

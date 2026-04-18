@@ -69,6 +69,7 @@ public class General {
                     InputStream inputStream = jarContents.openFile(configPath);
                     if (inputStream == null) continue;
                     String json = new String(inputStream.readAllBytes(), java.nio.charset.StandardCharsets.UTF_8);
+                    inputStream.close();
                     if (json.isEmpty()) continue;
 
                     JsonElement jsonElement = GsonHelper.parse(json);

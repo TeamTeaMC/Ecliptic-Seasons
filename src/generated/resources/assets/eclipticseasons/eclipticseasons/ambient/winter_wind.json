@@ -1,9 +1,6 @@
 {
   "season": "winter",
   "rain": true,
-  "biomes": {
-    "value": "#c:is_cave",
-    "type": "neoforge:not"
-  },
+  "ignored_biomes": "#c:is_cave",
   "sound": "eclipticseasons:ambient.winter_cold"
 }

@@ -14,7 +14,7 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.biome.Biome;
 import net.neoforged.neoforge.common.data.DatapackBuiltinEntriesProvider;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 import java.util.Set;
@@ -115,7 +115,7 @@ public class RegionalSnowTimeProvider extends DatapackBuiltinEntriesProvider {
     }
 
     @Override
-    public @NotNull String getName() {
+    public @NonNull String getName() {
         return super.getName() + " Extra2";
     }
 }

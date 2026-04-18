@@ -31,7 +31,7 @@ import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.neoforged.neoforge.model.data.ModelData;
 import net.neoforged.neoforge.model.data.ModelProperty;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.NonNull;
 
 import java.awt.*;
@@ -305,7 +305,7 @@ public class QuestHangingSignBlockEntity extends SignBlockEntity {
     }
 
     @Override
-    public @NotNull ModelData getModelData() {
+    public @NonNull ModelData getModelData() {
         return ModelData.builder().with(SIGN_BLOCK_MODEL_PROPERTY, getSignType()).build();
     }
 

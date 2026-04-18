@@ -9,8 +9,8 @@ import net.minecraft.advancements.criterion.BlockPredicate;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.ApiStatus;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.IdentityHashMap;
 import java.util.List;
@@ -23,7 +23,7 @@ public record CropGrowControl(
         Optional<BlockPredicate> notGreenHouse
 ) implements Mergable<CropGrowControl> {
 
-    public @Nonnull CropGrow getCropGrow(@Nullable BlockState state) {
+    public @NonNull CropGrow getCropGrow(@Nullable BlockState state) {
         if (state == null || blocks().isEmpty() || blocks().get().isEmpty()) {
             return this.base();
         }

@@ -4,6 +4,7 @@ import com.teamtea.eclipticseasons.api.event.BeforeCheckSnowStatusEvent;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.TriState;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.state.BlockState;
@@ -25,7 +26,7 @@ public class ESEventHook {
     public static boolean canExtraCropGrow(Level level, BlockPos pos, BlockState state, boolean def) {
         var ev = new CanPlantGrowEvent(level, pos, state);
         NeoForge.EVENT_BUS.post(ev);
-        return (ev.getResult() == CropGrowEvent.Pre.Result.GROW || (ev.getResult() == CropGrowEvent.Pre.Result.DEFAULT && def));
+        return (ev.getResult() == TriState.TRUE || (ev.getResult() == TriState.DEFAULT && def));
     }
 
     public static BeforeCheckSnowStatusEvent modifySnowStatus(ServerLevel level, Holder<Biome> biome, BlockPos pos, boolean rain) {

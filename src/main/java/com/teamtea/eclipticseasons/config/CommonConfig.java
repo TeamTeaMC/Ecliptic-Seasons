@@ -508,6 +508,7 @@ public class CommonConfig {
         public static ModConfigSpec.BooleanValue RegionalSnowTime;
         public static ModConfigSpec.BooleanValue VanillaBiomeClimateSettings;
         public static ModConfigSpec.BooleanValue NotIgnoreRiver;
+        public static ModConfigSpec.BooleanValue springGrass;
 
         private static void load(ModConfigSpec.Builder builder) {
             builder.push("Resource");
@@ -526,6 +527,9 @@ public class CommonConfig {
 
             NotIgnoreRiver = builder.comment("When enabled, rivers are no longer treated as ignored climate zones. This reduces performance overhead but may result in less natural weather transitions near riverbanks.")
                     .define("NotIgnoreRiver", false);
+
+            springGrass = builder.comment("Spring brings life to grass and flowers, while autumn marks the fading.")
+                    .define("SpringGrass", false);
 
             builder.pop();
         }

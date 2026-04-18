@@ -14,6 +14,7 @@ import com.teamtea.eclipticseasons.api.data.crop.CropGrowControlBuilder;
 import com.teamtea.eclipticseasons.api.data.quest.SeasonQuest;
 import com.teamtea.eclipticseasons.api.data.weather.CustomRainBuilder;
 import com.teamtea.eclipticseasons.api.data.weather.CustomSnowTerm;
+import com.teamtea.eclipticseasons.api.data.weather.WeatherDimension;
 import com.teamtea.eclipticseasons.api.data.weather.WeatherRegion;
 import com.teamtea.eclipticseasons.api.data.weather.special_effect.WeatherEffect;
 import net.minecraft.util.Util;
@@ -55,6 +56,8 @@ public class ESRegistries {
     public static final ResourceKey<Registry<ESSortInfo>> EXTRA_INFO = ResourceKey.createRegistryKey(EclipticSeasons.rl("extra_info"));
 
     public static final ResourceKey<Registry<WeatherEffect>> WEATHER_EFFECT = ResourceKey.createRegistryKey(EclipticSeasons.rl("biome_rain_effect"));
+
+    public static final ResourceKey<Registry<WeatherDimension>> WEATHER_DIMENSION = ResourceKey.createRegistryKey(EclipticSeasons.rl("weather_dimension"));
 
     public static <T> String createLangKey(ResourceKey<Registry<T>> registryResourceKey, Identifier Identifier) {
         // return Identifier.toLanguageKey(registryResourceKey.identifier().getPath());

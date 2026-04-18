@@ -6,15 +6,16 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
-import com.teamtea.eclipticseasons.api.misc.client.IExtraRendererContextOwner;
+import com.teamtea.eclipticseasons.api.misc.client.IAttachRendererContextOwner;
 import com.teamtea.eclipticseasons.api.misc.client.IMapSlice;
-import com.teamtea.eclipticseasons.client.core.ExtraModelManager;
-import com.teamtea.eclipticseasons.client.core.ExtraRenderDispatcher;
-import com.teamtea.eclipticseasons.client.core.context.ExtraRendererContext;
-import com.teamtea.eclipticseasons.common.core.map.MapChecker;
+import com.teamtea.eclipticseasons.client.core.AttachModelManager;
+import com.teamtea.eclipticseasons.client.core.AttachRenderDispatcher;
+import com.teamtea.eclipticseasons.client.core.context.AttachRendererContext;
+import com.teamtea.eclipticseasons.api.misc.client.ISpriteChecker;
 import com.teamtea.eclipticseasons.compat.sodium.SodiumBoard;
 import com.teamtea.eclipticseasons.compat.sodium.SodiumStatus;
 import net.caffeinemc.mods.sodium.client.render.chunk.compile.pipeline.BlockRenderer;
+import net.caffeinemc.mods.sodium.client.render.chunk.terrain.DefaultTerrainRenderPasses;
 import net.caffeinemc.mods.sodium.client.render.chunk.terrain.TerrainRenderPass;
 import net.caffeinemc.mods.sodium.client.render.chunk.terrain.material.Material;
 import net.caffeinemc.mods.sodium.client.render.model.AbstractBlockRenderContext;
@@ -54,8 +55,8 @@ public abstract class MixinBlockRenderer extends AbstractBlockRenderContext impl
     @Unique
     private List<BakedQuad> eclipticseasons$bakedQuads = new ArrayList<>();
 
-    @Unique
-    private BlockStateModel eclipticseasons$snowModel = null;
+    // @Unique
+    // private BlockStateModel eclipticseasons$snowModel = null;
 
     @Unique
     private boolean eclipticseasons$shouldCollectBakeQuads = false;
@@ -93,34 +94,38 @@ public abstract class MixinBlockRenderer extends AbstractBlockRenderContext impl
             Operation<Void> original
     ) {
 
-        if (!eclipticseasons$shouldReplaceOriginalGrassModel && eclipticseasons$snowModel != null)
-            original.call(instance, blockStateModel, directionPredicate, mutableQuadView, randomSource, blockAndTintGetter, blockPos, blockState, bufferer);
-
-        if (eclipticseasons$snowModel != null) {
+        if (IAttachRendererContextOwner.of(slice).shouldApply())
             eclipticseasons$cancelDowngradedPass = true;
-            eclipticseasons$shouldCollectBakeQuads = false;
-            // this.type = ExtraModelManager.getRenderType(state);
-            original.call(instance, eclipticseasons$snowModel, directionPredicate, mutableQuadView, randomSource, blockAndTintGetter, blockPos, blockState, bufferer);
-        }
+
+        // if (!eclipticseasons$shouldReplaceOriginalGrassModel || eclipticseasons$snowModel == null)
+        original.call(instance, blockStateModel, directionPredicate, mutableQuadView, randomSource, blockAndTintGetter, blockPos, blockState, bufferer);
+        // PlatformModelEmitter.getInstance().emitModel(blockStateModel, this::isFaceCulled, this.getForEmitting(), this.random, this.level, pos, state, this::bufferDefaultModel);
+
+        // if (eclipticseasons$snowModel != null) {
+        //     eclipticseasons$cancelDowngradedPass = true;
+        //     eclipticseasons$shouldCollectBakeQuads = false;
+        //     // this.type = ExtraModelManager.getRenderType(state);
+        //     // original.call(instance, eclipticseasons$snowModel, directionPredicate, mutableQuadView, randomSource, blockAndTintGetter, blockPos, blockState, bufferer);
+        //     PlatformModelEmitter.getInstance().emitModel(eclipticseasons$snowModel, this::isFaceCulled, this.getForEmitting(), this.random, this.level, pos, state, this::bufferDefaultModel);
+        // }
 
     }
 
-    // TODO: 如果以后使用shouldCollectBakeQuads去渲染的话，可能需要
-    // 不要写太前面了，这里还得初始化
     @Inject(
             method = "renderModel",
             at = @At(value = "INVOKE", target = "Lnet/caffeinemc/mods/sodium/client/services/PlatformModelEmitter;emitModel(Lnet/minecraft/client/renderer/block/dispatch/BlockStateModel;Ljava/util/function/Predicate;Lnet/caffeinemc/mods/sodium/client/render/model/MutableQuadViewImpl;Lnet/minecraft/util/RandomSource;Lnet/minecraft/client/renderer/block/BlockAndTintGetter;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Lnet/caffeinemc/mods/sodium/client/services/PlatformModelEmitter$Bufferer;)V")
     )
     private void eclipticseasons$renderModel_start(BlockStateModel model, BlockState state, BlockPos pos, BlockPos origin, CallbackInfo ci) {
         // this.allowDowngrade = false;
-        eclipticseasons$snowModel = ExtraRenderDispatcher.findModel(
-                (IMapSlice) (Object) slice, pos, state, random, state.getSeed(pos), eclipticseasons$mutableBlockPos, null);
+        AttachRendererContext attachRendererContext = IAttachRendererContextOwner.of(slice);
+        AttachRenderDispatcher.findModel
+                (attachRendererContext,
+                        (IMapSlice) (Object) slice, pos, state, random, state.getSeed(pos), eclipticseasons$mutableBlockPos, null);
 
-        if (eclipticseasons$snowModel != null) {
-            eclipticseasons$shouldReplaceOriginalGrassModel =
-                    ExtraModelManager.isModelReplaceable(MapChecker.getDefaultBlockTypeFlag(state));
+        if (attachRendererContext.shouldApply()) {
+            eclipticseasons$shouldReplaceOriginalGrassModel = attachRendererContext.isReplace();
             if (!eclipticseasons$shouldReplaceOriginalGrassModel) {
-                boolean ctmBlock = ExtraModelManager.isSpecialCTMBlock(state);
+                boolean ctmBlock = AttachModelManager.isSpecialCTMBlock(state);
                 if (ctmBlock) {
                     eclipticseasons$shouldCollectBakeQuads = true;
                 }
@@ -130,11 +135,12 @@ public abstract class MixinBlockRenderer extends AbstractBlockRenderContext impl
             eclipticseasons$shouldCollectBakeQuads = false;
         }
 
-        IExtraRendererContextOwner.of(slice)
+        attachRendererContext
                 .setModelData(ModelData.EMPTY)
                 .setOriginalModel(model)
-                .setExtraModel(eclipticseasons$snowModel)
-                .setReplace(eclipticseasons$shouldReplaceOriginalGrassModel);
+                // .setExtraModels(eclipticseasons$snowModel)
+                // .setReplace(eclipticseasons$shouldReplaceOriginalGrassModel)
+        ;
 
         if (eclipticseasons$chunkBuilderMeshingTask != null)
             eclipticseasons$chunkBuilderMeshingTask.eclipticseasons$addCount();
@@ -148,7 +154,7 @@ public abstract class MixinBlockRenderer extends AbstractBlockRenderContext impl
     )
     private void eclipticseasons$renderModel_useAmbientOcclusion(BlockStateModel model, BlockState state, BlockPos pos, BlockPos origin, CallbackInfo ci) {
         TriState modelForAmbientOcclusion =
-                ExtraRendererContext.
+                AttachRendererContext.
                         getModelForAmbientOcclusion(slice, state,
                                 ModelData.EMPTY, ChunkSectionLayer.CUTOUT);
         if (modelForAmbientOcclusion != null && modelForAmbientOcclusion.isTrue()) {
@@ -166,21 +172,12 @@ public abstract class MixinBlockRenderer extends AbstractBlockRenderContext impl
         }
         eclipticseasons$shouldReplaceOriginalGrassModel = false;
         eclipticseasons$shouldCollectBakeQuads = false;
-        eclipticseasons$snowModel = null;
+        // eclipticseasons$snowModel = null;
         eclipticseasons$cancelDowngradedPass = false;
 
-        IExtraRendererContextOwner.of(slice).resetAll();
+        IAttachRendererContextOwner.of(slice).resetAll();
     }
 
-    @Inject(
-            method = "release",
-            at = @At(value = "TAIL")
-    )
-    private void eclipticseasons$release_end(CallbackInfo ci) {
-        // eclipticseasons$esContext = null;
-    }
-
-    // TODO:这里缓存xyz顶点和光照信息，然后交给下一级构建，或者想办法还原bakequad。
     @Inject(
             method = "processQuad",
             at = @At(value = "HEAD")
@@ -201,15 +198,34 @@ public abstract class MixinBlockRenderer extends AbstractBlockRenderContext impl
     )
     private void eclipticseasons$bufferQuad_cancelAttemptPassDowngrade(
             MutableQuadViewImpl quad, float[] brightnesses, Material material, CallbackInfo ci,
-            @Local(name = "pass") LocalRef<TerrainRenderPass> terrainRenderPassLocalRef) {
-        if (eclipticseasons$cancelDowngradedPass) {
-            terrainRenderPassLocalRef.set(null);
+            @Local(name = "pass") LocalRef<TerrainRenderPass> terrainRenderPassLocalRef,
+            @Local(name = "atlasSprite") TextureAtlasSprite atlasSprite) {
+        if (eclipticseasons$cancelDowngradedPass
+                && atlasSprite instanceof ISpriteChecker spriteChecker
+                && spriteChecker.isSnowyTexture()
+        ) {
+            terrainRenderPassLocalRef.set(DefaultTerrainRenderPasses.CUTOUT);
         }
+    }
+
+    @Inject(
+            method = "release",
+            at = @At(value = "TAIL")
+    )
+    private void eclipticseasons$release_end(CallbackInfo ci) {
+        eclipticseasons$chunkBuilderMeshingTask = null;
+    }
+
+    // =============================
+
+    @Override
+    public void eclipticseasons$bindCounter(SodiumBoard sodiumBoard) {
+        this.eclipticseasons$chunkBuilderMeshingTask = sodiumBoard;
     }
 
     @Override
     public BlockStateModel getSnowModel() {
-        return eclipticseasons$snowModel;
+        return IAttachRendererContextOwner.of(slice).getSnowyModel();
     }
 
     @Override
@@ -227,8 +243,4 @@ public abstract class MixinBlockRenderer extends AbstractBlockRenderContext impl
         return eclipticseasons$bakedQuads;
     }
 
-    @Override
-    public void eclipticseasons$bindCounter(SodiumBoard sodiumBoard) {
-        this.eclipticseasons$chunkBuilderMeshingTask = sodiumBoard;
-    }
 }

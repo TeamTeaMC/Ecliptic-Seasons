@@ -4,13 +4,14 @@ import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.data.client.model.ESBlockModelDefinition;
 import com.teamtea.eclipticseasons.client.color.season.BiomeColorsHandler;
 import com.teamtea.eclipticseasons.client.color.season.FoliageColorSource;
-import com.teamtea.eclipticseasons.client.core.ExtraModelManager;
+import com.teamtea.eclipticseasons.client.core.AttachModelManager;
 import com.teamtea.eclipticseasons.client.gui.GuiBlockRenderState;
 import com.teamtea.eclipticseasons.client.gui.GuiBlockRenderer;
 import com.teamtea.eclipticseasons.client.gui.GuiFluidRenderState;
 import com.teamtea.eclipticseasons.client.gui.GuiFluidRenderer;
 import com.teamtea.eclipticseasons.client.itemproperties.CounterModelProperty;
 import com.teamtea.eclipticseasons.client.particle.*;
+import com.teamtea.eclipticseasons.client.registry.KeyMappingRegistry;
 import com.teamtea.eclipticseasons.client.reload.ClientJsonCacheListener;
 import com.teamtea.eclipticseasons.client.render.ber.*;
 import com.teamtea.eclipticseasons.client.render.item.GreenHouseCoreSpecialRenderer;
@@ -57,11 +58,17 @@ public class ClientSetup {
     }
 
     @SubscribeEvent
+    public static void onRegisterKeyMappingsEvent(RegisterKeyMappingsEvent event) {
+        event.registerCategory(KeyMappingRegistry.MAIN);
+        event.register(KeyMappingRegistry.DEBUG_KEY);
+    }
+
+    @SubscribeEvent
     public static void addTooltips(RegisterClientTooltipComponentFactoriesEvent event) {
     }
 
     @SubscribeEvent
-    public static void blockRegister(RegisterParticleProvidersEvent event) {
+    public static void onParticleProviderRegistry(RegisterParticleProvidersEvent event) {
         event.registerSpriteSet(ParticleRegistry.FIREFLY, (spriteSet) ->
                 (particleType, level, x, y, z, xAux, yAux, zAux, random) ->
                         new FireflyParticle(level, x, y, z, spriteSet));
@@ -116,74 +123,48 @@ public class ClientSetup {
     public static void registerSpecialRenderers(RegisterSpecialModelRendererEvent event) {
         event.register(
                 // The name to reference as the type
-                EclipticSeasons.rl("spring_greenhouse_core"),
-
+                EclipticSeasons.rl("greenhouse_core"),
                 // The map codec
                 GreenHouseCoreSpecialRenderer.Unbaked.MAP_CODEC
         );
     }
 
-    // For rendering a block in an item-like context
-// Assume some DeferredBlock<ExampleBlock> EXAMPLE_BLOCK
-//     @SubscribeEvent // on the mod event bus only on the physical client
-//     public static void registerSpecialBlockRenderers(RegisterSpecialBlockModelRendererEvent event) {
-//         event.register(
-//                 ItemRegistry.spring_greenhouse_core_item.get()
-//                 , ItemRegistry.summer_greenhouse_core_item.get()
-//                 , ItemRegistry.autumn_greenhouse_core_item.get()
-//                 , ItemRegistry.winter_greenhouse_core_item.get(),
-//                 new ExampleSpecialRenderer.Unbaked(Identifier.fromNamespaceAndPath("examplemod", "entity/example_special"))
-//         );
-//     }
-
     @SubscribeEvent
     public static void onClientEvent(RegisterClientExtensionsEvent event) {
-        // event.registerItem(new ClientGreenHouseItem(new GreenHouseCoreItemRenderer(Minecraft.getInstance().getBlockEntityRenderDispatcher(), Minecraft.getInstance().getEntityModels()))
-        //        , ItemRegistry.spring_greenhouse_core_item.get()
-        //        , ItemRegistry.summer_greenhouse_core_item.get()
-        //        , ItemRegistry.autumn_greenhouse_core_item.get()
-        //        , ItemRegistry.winter_greenhouse_core_item.get());
-        // event.registerItem(new ClientGreenHouseItem(new GreenHouseCoreCoreItemRenderer(Minecraft.getInstance().getBlockEntityRenderDispatcher(), Minecraft.getInstance().getEntityModels()))
-        //        , ItemRegistry.spring_greenhouse_essence_item.get()
-        //        , ItemRegistry.summer_greenhouse_essence_item.get()
-        //        , ItemRegistry.autumn_greenhouse_essence_item.get()
-        //        , ItemRegistry.winter_greenhouse_essence_item.get());
-        // event.registerItem(new ClientGreenHouseItem(new GreenHouseCoreFrameItemRenderer(Minecraft.getInstance().getBlockEntityRenderDispatcher(), Minecraft.getInstance().getEntityModels()))
-        //        , ItemRegistry.greenhouse_core_container_item.get());
     }
 
     @SubscribeEvent
     public static void registerExtraModels(ModelEvent.RegisterStandalone event) {
-        ExtraModelManager.registerExtraSnowyModels(event::register);
+        AttachModelManager.registerExtraSnowyModels(event::register);
         // event.register();
         // Minecraft.getInstance().getResourceManager().listPacks().toList().get(0).getResource(PackType.CLIENT_RESOURCES, ResourceLocation.withDefaultNamespace("textures/block/snow.png")).get()
         // IOUtils.toString(Minecraft.getInstance().getResourceManager().listPacks().toList().get(0).getResource(PackType.SERVER_DATA, ResourceLocation.withDefaultNamespace("recipe/yellow_terracotta.json")).get(), StandardCharsets.UTF_8)        event.register(ModelManager.snowy_fern);
-        registerStandalone(event, ExtraModelManager.snowy_custom);
-        registerStandalone(event, ExtraModelManager.snowy_custom_ao);
+        registerStandalone(event, AttachModelManager.snowy_custom);
+        registerStandalone(event, AttachModelManager.snowy_custom_ao);
 
-        registerStandalone(event, ExtraModelManager.stairs_top);
-        registerStandalone(event, ExtraModelManager.snowy_leaves_attach);
-        registerStandalone(event, ExtraModelManager.snowy_leaves_top);
-        registerStandalone(event, ExtraModelManager.snowy_fern);
-        registerStandalone(event, ExtraModelManager.snowy_grass);
-        registerStandalone(event, ExtraModelManager.snowy_tall_grass_top);
-        registerStandalone(event, ExtraModelManager.snowy_tall_grass_bottom);
-        registerStandalone(event, ExtraModelManager.snowy_large_fern_top);
+        registerStandalone(event, AttachModelManager.stairs_top);
+        registerStandalone(event, AttachModelManager.snowy_leaves_attach);
+        registerStandalone(event, AttachModelManager.snowy_leaves_top);
+        registerStandalone(event, AttachModelManager.snowy_fern);
+        registerStandalone(event, AttachModelManager.snowy_grass);
+        registerStandalone(event, AttachModelManager.snowy_tall_grass_top);
+        registerStandalone(event, AttachModelManager.snowy_tall_grass_bottom);
+        registerStandalone(event, AttachModelManager.snowy_large_fern_top);
         // 注意这里使用地址和model地址效果不同，后者需要写blockstate
-        registerStandalone(event, ExtraModelManager.snowy_large_fern_bottom);
-        registerStandalone(event, ExtraModelManager.overlay_2);
-        registerStandalone(event, ExtraModelManager.snow_height2);
-        registerStandalone(event, ExtraModelManager.snow_height2_top);
-        registerStandalone(event, ExtraModelManager.grass_flower);
+        registerStandalone(event, AttachModelManager.snowy_large_fern_bottom);
+        registerStandalone(event, AttachModelManager.overlay_2);
+        registerStandalone(event, AttachModelManager.snow_height2);
+        registerStandalone(event, AttachModelManager.snow_height2_top);
+        registerStandalone(event, AttachModelManager.grass_flower);
 
-        for (var flowerOnGrass : ConcatenatedListView.of(ExtraModelManager.flower_on_grass,
-                ExtraModelManager.fourleaf_clovers,
-                ExtraModelManager.snow_edge_overlays,
-                ExtraModelManager.leaf_piles)) {
+        for (var flowerOnGrass : ConcatenatedListView.of(AttachModelManager.flower_on_grass,
+                AttachModelManager.fourleaf_clovers,
+                AttachModelManager.snow_edge_overlays,
+                AttachModelManager.leaf_piles)) {
             registerStandalone(event, flowerOnGrass);
         }
 
-        registerStandalone(event, ExtraModelManager.ice);
+        registerStandalone(event, AttachModelManager.ice);
     }
 
     private static void registerStandalone(ModelEvent.RegisterStandalone event, StandaloneModelKey<BlockStateModel> snowyCustom) {
@@ -196,25 +177,25 @@ public class ClientSetup {
         ParticleUtil.onReloadResource();
 
         var modelRegistry = event.getBakingResult();
-        ExtraModelManager.clearForRebaked(modelRegistry);
+        AttachModelManager.clearForRebaked(modelRegistry);
 
         List<StandaloneModelKey<BlockStateModel>> bakedModels =
                 new ArrayList<>(List.of(
-                        ExtraModelManager.snowy_custom,
-                        ExtraModelManager.snowy_custom_ao,
-                        ExtraModelManager.stairs_top,
-                        ExtraModelManager.snowy_leaves_attach,
-                        ExtraModelManager.snowy_leaves_top,
-                        ExtraModelManager.stairs_top,
-                        ExtraModelManager.snowy_fern,
-                        ExtraModelManager.snowy_grass,
-                        ExtraModelManager.snowy_tall_grass_top,
-                        ExtraModelManager.snowy_tall_grass_bottom,
-                        ExtraModelManager.snowy_large_fern_top,
-                        ExtraModelManager.snowy_large_fern_bottom,
-                        ExtraModelManager.overlay_2,
-                        ExtraModelManager.snow_height2,
-                        ExtraModelManager.snow_height2_top
+                        AttachModelManager.snowy_custom,
+                        AttachModelManager.snowy_custom_ao,
+                        AttachModelManager.stairs_top,
+                        AttachModelManager.snowy_leaves_attach,
+                        AttachModelManager.snowy_leaves_top,
+                        AttachModelManager.stairs_top,
+                        AttachModelManager.snowy_fern,
+                        AttachModelManager.snowy_grass,
+                        AttachModelManager.snowy_tall_grass_top,
+                        AttachModelManager.snowy_tall_grass_bottom,
+                        AttachModelManager.snowy_large_fern_top,
+                        AttachModelManager.snowy_large_fern_bottom,
+                        AttachModelManager.overlay_2,
+                        AttachModelManager.snow_height2,
+                        AttachModelManager.snow_height2_top
                         // ,
                         // ExtraModelManager.snowOverlayLeaves,
                         // ExtraModelManager.snowySlabBottom,
@@ -231,23 +212,6 @@ public class ClientSetup {
         //         modelRegistry.put(modelResourceLocation, new SnowyBakedModelWrapper<>(bakedModel1));
         //     } else {
         //         EclipticSeasons.logger("Missing Model", modelResourceLocation);
-        //     }
-        // }
-
-        // for (var holder : List.of(
-        //         ItemRegistry.greenhouse_core_container_item,
-        //         ItemRegistry.spring_greenhouse_core_item,
-        //         ItemRegistry.summer_greenhouse_core_item,
-        //         ItemRegistry.autumn_greenhouse_core_item,
-        //         ItemRegistry.winter_greenhouse_core_item,
-        //         ItemRegistry.spring_greenhouse_essence_item,
-        //         ItemRegistry.summer_greenhouse_essence_item,
-        //         ItemRegistry.autumn_greenhouse_essence_item,
-        //         ItemRegistry.winter_greenhouse_essence_item)) {
-        //     ModelResourceLocation inventory = ModelResourceLocation.inventory(holder.getId());
-        //     BakedModel itemModel = modelRegistry.getOrDefault(inventory, null);
-        //     if (itemModel != null) {
-        //         modelRegistry.put(inventory, new ItemRenderModel<>(itemModel));
         //     }
         // }
 

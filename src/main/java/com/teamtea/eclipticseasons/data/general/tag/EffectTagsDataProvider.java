@@ -9,7 +9,7 @@ import net.minecraft.data.tags.TagsProvider;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffects;
 
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.CompletableFuture;
@@ -22,7 +22,7 @@ public class EffectTagsDataProvider extends KeyTagProvider<MobEffect> {
     }
 
     @Override
-    protected void addTags(HolderLookup.@NotNull Provider provider) {
+    protected void addTags(HolderLookup.@NonNull Provider provider) {
         tag(ESMobEffectTags.HEATSTROKE_RESISTANT).add(MobEffects.FIRE_RESISTANCE.getKey());
     }
 }

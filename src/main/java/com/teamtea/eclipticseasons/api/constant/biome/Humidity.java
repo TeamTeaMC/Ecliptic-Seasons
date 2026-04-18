@@ -93,14 +93,14 @@ public enum Humidity implements ITranslatable {
         return Humidity.getHumid(Rainfall.getRainfallLevel(rainfall), Temperature.getTemperatureLevel(temperature));
     }
 
-    public static Humidity getHumid(SolarTerm solarTerm, Holder<Biome> biomeHolder) {
-        Biome biome = biomeHolder.value();
-        boolean ignore = true;
-        float t = EclipticUtil.getTemperatureFloatConstant(solarTerm, biome, ignore);
-        BiomeRain biomeRain = solarTerm.getBiomeRain(biomeHolder);
-        float r = (EclipticUtil.getDownfallFloatConstant(solarTerm, biome, ignore) * 1.5f + biomeRain.getRainChance() * 0.5f) / 2f;
-        return Humidity.getHumid(r, t);
-    }
+    // public static Humidity getHumid(SolarTerm solarTerm, Holder<Biome> biomeHolder) {
+    //     Biome biome = biomeHolder.value();
+    //     boolean ignore = true;
+    //     float t = EclipticUtil.getTemperatureFloatConstant(solarTerm, biome, ignore);
+    //     BiomeRain biomeRain = solarTerm.getBiomeRain(biomeHolder);
+    //     float r = (EclipticUtil.getDownfallFloatConstant(solarTerm, biome, ignore) * 1.5f + biomeRain.getRainChance() * 0.5f) / 2f;
+    //     return Humidity.getHumid(r, t);
+    // }
 
     public static float getFloatHumidLevel(float rainfall, float temperature) {
         if (!CommonConfig.isCropHumidityTransition())

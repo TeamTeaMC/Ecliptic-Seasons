@@ -9,7 +9,7 @@ import lombok.Data;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.StringRepresentable;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 import java.util.Locale;
@@ -52,7 +52,7 @@ public class AutoCompletionElement implements UIElement {
         public static final Codec<Provide> CODEC = StringRepresentable.fromEnum(Provide::values);
 
         @Override
-        public @NotNull String getSerializedName() {
+        public @NonNull String getSerializedName() {
             return toString().toLowerCase(Locale.ROOT);
         }
     }

@@ -19,7 +19,7 @@ import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.neoforged.neoforge.attachment.IAttachmentHolder;
 import net.neoforged.neoforge.attachment.IAttachmentSerializer;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -164,7 +164,7 @@ public class BiomeHolder {
 
         //
         //@Override
-        //public Tag write(@NotNull BiomeHolder attachment, HolderLookup.@NotNull Provider provider) {
+        //public Tag write(@NonNull BiomeHolder attachment, HolderLookup.@NonNull Provider provider) {
         //    if (attachment.cacheUpdate == attachment.hasUpdated && attachment.cacheVersion == attachment.version && attachment.cacheTag != null) {
         //        return attachment.cacheTag;
         //    }

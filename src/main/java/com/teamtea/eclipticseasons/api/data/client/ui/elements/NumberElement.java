@@ -7,7 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.StringRepresentable;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.Locale;
 

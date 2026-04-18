@@ -7,7 +7,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.HitResult;
 
-import javax.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public interface ClientAgent {
     default void loadWindChime(WindChimesBlockEntity windChimesBlockEntity) {
@@ -33,9 +33,27 @@ public interface ClientAgent {
     }
 
     default void setChange(boolean change) {
+        if (!change) {
+            setSnowChange(false);
+            setTermChange(false);
+        }
     }
 
     default boolean isChange() {
+        return isSnowChange() || isTermChange();
+    }
+
+    default void setSnowChange(boolean change) {
+    }
+
+    default boolean isSnowChange() {
+        return false;
+    }
+
+    default void setTermChange(boolean change) {
+    }
+
+    default boolean isTermChange() {
         return false;
     }
 

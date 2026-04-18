@@ -10,7 +10,7 @@ import net.minecraft.world.clock.ClockTimeMarker;
 import net.minecraft.world.clock.ClockTimeMarkers;
 import net.minecraft.world.clock.WorldClock;
 
-import javax.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 
 public class SolarAngelHelper {

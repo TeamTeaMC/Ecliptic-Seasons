@@ -181,6 +181,10 @@ tasks.named('processResources', Copy) {
     }
 }
 
+configurations {
+    sodiumOuter
+    sodiumJarJar
+}
 
 dependencies {
     // Specify the version of Minecraft to use.
@@ -192,7 +196,7 @@ dependencies {
     implementation "net.neoforged:neoforge:${neo_version}"
 
 
-    implementation "curse.maven:jei-238222:7850293"
+    compileOnly "curse.maven:jei-238222:7850293"
     implementation "curse.maven:jade-324717:7817285"
     compileOnly("curse.maven:the-one-probe-245211:6106998")
 
@@ -200,8 +204,15 @@ dependencies {
     compileOnly "org.sinytra.forgified-fabric-api:fabric-renderer-api-v1:3.4.0+acb05a39d1"
     compileOnly "org.sinytra.forgified-fabric-api:fabric-renderer-indigo:1.7.0+acb05a39d1"
 
-    compileOnly "maven.modrinth:sodium:mc26.1-0.8.7-fabric"
-    compileOnly("curse.maven:irisshaders-455508:6117625")
+    sodiumOuter "maven.modrinth:sodium:mc26.1.1-0.8.9-neoforge"
+
+    implementation "maven.modrinth:sodium:mc26.1.1-0.8.9-neoforge"
+    compileOnly "maven.modrinth:iris:1.10.9+26.1-neoforge"
+
+    compileOnly "maven.modrinth:voxy:0.2.14-alpha"
+
+//    onlyMainRuntimeOnly "maven.modrinth:sodium:mc26.1.1-0.8.9-neoforge"
+//    onlyMainRuntimeOnly "maven.modrinth:iris:1.10.9+26.1-neoforge"
 
 //    onlyMainRuntimeOnly("curse.maven:irisshaders-455508:6213632")
 //    onlyMainRuntimeOnly "maven.modrinth:sodium:mc1.21.1-0.6.13-neoforge"
@@ -210,7 +221,8 @@ dependencies {
 
 
 //    onlyMainRuntimeOnly ("maven.modrinth:distanthorizons:2.2.1-a-1.21.1")
-    compileOnly "curse.maven:distant-horizons-508933:7097104"
+    compileOnly "curse.maven:distant-horizons-508933:7375296"
+
     onlyMainRuntimeOnly "curse.maven:journeymap-32274:7812823"
 
     onlyMainRuntimeOnly("curse.maven:spark-361579:7815877")
@@ -276,6 +288,31 @@ dependencies {
     // For more info:
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
+}
+
+def sodiumJarJarDir = layout.buildDirectory.dir("generated/sodium-jarjar")
+
+tasks.register("extractSodiumJarJar", Copy) {
+    from({
+        configurations.sodiumOuter.resolve().collect { zipTree(it) }
+    }) {
+        include "META-INF/jarjar/**/*.jar"
+        eachFile { details -> details.path = details.name}
+        includeEmptyDirs = false
+    }
+    into(sodiumJarJarDir)
+    inputs.files(configurations.sodiumOuter)
+}
+
+tasks.named("compileJava").configure {
+    dependsOn("extractSodiumJarJar")
+}
+
+dependencies {
+    compileOnly(files({
+        def dir = sodiumJarJarDir.get().asFile
+        return dir.exists() ? fileTree(dir).matching { include "*.jar" }.files : []
+    }))
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.

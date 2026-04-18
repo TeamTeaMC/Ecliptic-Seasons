@@ -1,23 +1,7 @@
 package com.teamtea.eclipticseasons.mixin.client.model;
 
 
-import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
-import com.llamalad7.mixinextras.sugar.Local;
-import com.teamtea.eclipticseasons.api.data.client.model.seasonal.SeasonalTexture;
-import com.teamtea.eclipticseasons.client.core.ExtraModelManager;
-import com.teamtea.eclipticseasons.client.reload.ClientJsonCacheListener;
-import net.minecraft.client.resources.model.BlockStateModelLoader;
-import net.minecraft.resources.Identifier;
-import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraft.util.profiling.ProfilerFiller;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
 
 @Mixin(net.minecraft.client.resources.model.ModelManager.class)
 public abstract class MixinModelManager {

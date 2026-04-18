@@ -24,7 +24,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.neoforged.neoforge.client.ClientTooltipFlag;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 
@@ -43,12 +43,12 @@ public class JEISeasonQuestCategory implements IRecipeCategory<SeasonQuest> {
    }
 
    @Override
-   public @NotNull IRecipeType<SeasonQuest> getRecipeType() {
+   public @NonNull IRecipeType<SeasonQuest> getRecipeType() {
        return ESJEIPlugin.SEASON_QUEST_TYPE;
    }
 
    @Override
-   public @NotNull Component getTitle() {
+   public @NonNull Component getTitle() {
        return Component.translatable("info.eclipticseasons.recipe_category.season_quest");
    }
 
@@ -62,7 +62,7 @@ public class JEISeasonQuestCategory implements IRecipeCategory<SeasonQuest> {
         return 28;
     }
 
-    public @NotNull IDrawable getBackground() {
+    public @NonNull IDrawable getBackground() {
        return blankDrawable;
    }
 

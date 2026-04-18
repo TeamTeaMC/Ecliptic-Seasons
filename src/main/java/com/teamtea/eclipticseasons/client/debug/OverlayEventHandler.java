@@ -2,8 +2,10 @@ package com.teamtea.eclipticseasons.client.debug;
 
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
+import com.teamtea.eclipticseasons.client.registry.KeyMappingRegistry;
 import com.teamtea.eclipticseasons.common.core.solar.SolarAngelHelper;
 import com.teamtea.eclipticseasons.config.ClientConfig;
+import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
@@ -24,11 +26,15 @@ public final class OverlayEventHandler {
         var level = mc.level;
 
         if (player != null && level != null && !mc.options.hideGui) {
+            if (KeyMappingRegistry.DEBUG_KEY.consumeClick()) {
+                ClientConfig.Debug.debugInfo.set(!ClientConfig.Debug.debugInfo.getAsBoolean());
+            }
+
             if (ClientConfig.Debug.debugInfo.get() || ClientConfig.GUI.simpleSeasonHud.get()) {
                 BlockPos pos = player.blockPosition();
 
                 var solarTermsDay = EclipticUtil.getNowSolarDay(level);
-                long dayTime = Math.floorMod(level.getDefaultClockTime(),EclipticUtil.getDayLengthInMinecraft(level));
+                long dayTime = Math.floorMod(level.getDefaultClockTime(), EclipticUtil.getDayLengthInMinecraft(level));
                 double envTemp = EclipticUtil.getTemperatureFloat(level, level.getBiome(pos).value(), pos);
                 int solarTime = -1;
                 solarTime = level.dimensionType().defaultClock().<Integer>map(

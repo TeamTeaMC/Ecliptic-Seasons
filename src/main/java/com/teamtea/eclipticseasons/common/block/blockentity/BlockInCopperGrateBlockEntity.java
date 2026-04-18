@@ -18,7 +18,7 @@ import net.minecraft.world.level.storage.ValueOutput;
 import net.neoforged.neoforge.transfer.ResourceHandler;
 import net.neoforged.neoforge.transfer.item.ItemResource;
 import net.neoforged.neoforge.transfer.item.ItemStacksResourceHandler;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 public class BlockInCopperGrateBlockEntity extends HumidityControlBlockEntity {
 
@@ -103,7 +103,7 @@ public class BlockInCopperGrateBlockEntity extends HumidityControlBlockEntity {
     }
 
     @Override
-    protected boolean isRecipeCacheValid(@NotNull HumidityControl humidityControl) {
+    protected boolean isRecipeCacheValid(@NonNull HumidityControl humidityControl) {
         if (innerBlock == null
                 || !humidityControl.ingredient().test(innerBlock.asItem().getDefaultInstance()))
             return false;
@@ -155,13 +155,13 @@ public class BlockInCopperGrateBlockEntity extends HumidityControlBlockEntity {
             inventoryChanged();
         }
 
-        public void setStackInSlotNotSync(int slot, @NotNull ItemStack stack) {
+        public void setStackInSlotNotSync(int slot, @NonNull ItemStack stack) {
             // this.validateSlotIndex(slot);
             this.stacks.set(slot, stack);
         }
         //
         // @Override
-        // public @NotNull ItemStack getStackInSlot(int slot) {
+        // public @NonNull ItemStack getStackInSlot(int slot) {
         //     return super.getStackInSlot(slot);
         // }
     }

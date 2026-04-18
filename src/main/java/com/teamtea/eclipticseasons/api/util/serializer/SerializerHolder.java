@@ -2,7 +2,7 @@ package com.teamtea.eclipticseasons.api.util.serializer;
 
 import net.minecraft.nbt.CompoundTag;
 
-import javax.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public interface SerializerHolder {
     @Nullable

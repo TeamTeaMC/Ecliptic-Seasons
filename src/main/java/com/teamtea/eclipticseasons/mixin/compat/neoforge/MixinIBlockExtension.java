@@ -1,4 +1,4 @@
-package com.teamtea.eclipticseasons.mixin.common.block;
+package com.teamtea.eclipticseasons.mixin.compat.neoforge;
 
 
 import com.teamtea.eclipticseasons.common.misc.MapColorReplacer;

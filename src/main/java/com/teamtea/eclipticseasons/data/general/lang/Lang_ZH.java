@@ -1,6 +1,7 @@
 package com.teamtea.eclipticseasons.data.general.lang;
 
 
+import com.teamtea.eclipticseasons.client.registry.KeyMappingRegistry;
 import com.teamtea.eclipticseasons.common.registry.*;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import net.minecraft.data.PackOutput;
@@ -176,6 +177,9 @@ public class Lang_ZH extends LangHelper {
         addTouhouLittleMaid();
 
         addExtraEnvInfo();
+
+        add(KeyMappingRegistry.MAIN.id().toLanguageKey("key.category"), "节气");
+        add(KeyMappingRegistry.DEBUG_KEY.getName(), "调试界面信息");
     }
 
     private void addExtraEnvInfo() {

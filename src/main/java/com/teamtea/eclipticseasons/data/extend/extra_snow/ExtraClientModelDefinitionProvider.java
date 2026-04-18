@@ -12,7 +12,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SnowyBlock;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 import java.util.Map;
@@ -31,7 +31,7 @@ public class ExtraClientModelDefinitionProvider extends AbstractModelDefinitionP
 
 
     @Override
-    public @NotNull String getName() {
+    public @NonNull String getName() {
         return super.getName() + "(Extra Version)";
     }
 }

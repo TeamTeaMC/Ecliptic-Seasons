@@ -24,9 +24,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeManager;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
-import javax.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.*;
 
 public class SeasonalBiomeAmbientSoundsHandler implements AmbientSoundHandler {
@@ -99,7 +99,8 @@ public class SeasonalBiomeAmbientSoundsHandler implements AmbientSoundHandler {
                         }
                     }
                     if (sound.isInwater() != inWater) continue;
-                    if (!sound.getBiomes().contains(biome)) continue;
+                    if (sound.getBiomes().size() > 0 && !sound.getBiomes().contains(biome)) continue;
+                    if (sound.getIgnored_biomes().contains(biome)) continue;
                     if (sound.getSeed() > 0 && level.getRandom().nextInt(sound.getSeed()) > 0) continue;
                     seasonalBiomeAmbientList.add(sound);
                 }
@@ -201,7 +202,7 @@ public class SeasonalBiomeAmbientSoundsHandler implements AmbientSoundHandler {
         }
     }
 
-    private @NotNull Holder<Biome> getBiome() {
+    private @NonNull Holder<Biome> getBiome() {
         return this.biomeManager.getNoiseBiomeAtPosition(this.player.getX(), this.player.getY(), this.player.getZ());
     }
 

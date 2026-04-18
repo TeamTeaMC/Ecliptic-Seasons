@@ -7,7 +7,7 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.KeyTagProvider;
 import net.minecraft.tags.TimelineTags;
 import net.minecraft.world.timeline.Timeline;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -18,7 +18,7 @@ public class TimeLineTagDataProvider extends KeyTagProvider<Timeline> {
     }
 
     @Override
-    protected void addTags(HolderLookup.@NotNull Provider provider) {
+    protected void addTags(HolderLookup.@NonNull Provider provider) {
         tag(TimelineTags.IN_OVERWORLD)
                 .addOptional(TimeLineRegistry.SEASON_GOING);
     }

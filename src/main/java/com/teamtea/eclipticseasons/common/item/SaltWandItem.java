@@ -23,7 +23,7 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.chunk.LevelChunk;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
@@ -34,7 +34,7 @@ public class SaltWandItem extends Item {
     }
 
     @Override
-    public @NotNull InteractionResult useOn(@NotNull UseOnContext context) {
+    public @NonNull InteractionResult useOn(@NonNull UseOnContext context) {
         BlockPos clickedPos = context.getClickedPos();
         Level level = context.getLevel();
         ItemStack itemInHand = context.getItemInHand();

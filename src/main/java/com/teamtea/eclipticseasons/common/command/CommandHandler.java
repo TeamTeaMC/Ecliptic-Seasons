@@ -46,7 +46,7 @@ import net.minecraft.world.level.biome.Biome;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 import java.util.Locale;
@@ -73,7 +73,7 @@ public class CommandHandler {
         //                .then(Commands.literal("night")
         //                        .executes((source) -> TimeCommand.setTime(source.getSource(), EclipticUtil.getNightTime(source.getSource().getLevel()))))));
 
-        for (String modId : List.of(EclipticSeasonsApi.SMODID, EclipticSeasonsApi.MODID, "season")) {
+        for (String modId : EclipticSeasonsApi.MODID_LIST) {
             dispatcher.register(Commands.literal(modId)
                     .then(Commands.literal("debug")
                             .requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))
@@ -358,7 +358,7 @@ public class CommandHandler {
         }
 
         @Override
-        public @NotNull Either<Holder.Reference<Biome>, HolderSet.Named<Biome>> unwrap() {
+        public @NonNull Either<Holder.Reference<Biome>, HolderSet.Named<Biome>> unwrap() {
             try {
                 throw new IllegalCallerException("Should not call the method because it just use for internal.");
             } catch (IllegalCallerException e) {
@@ -368,12 +368,12 @@ public class CommandHandler {
         }
 
         @Override
-        public <E> @NotNull Optional<ResourceOrTagArgument.Result<E>> cast(@NotNull ResourceKey<? extends Registry<E>> p_249572_) {
+        public <E> @NonNull Optional<ResourceOrTagArgument.Result<E>> cast(@NonNull ResourceKey<? extends Registry<E>> p_249572_) {
             return Optional.empty();
         }
 
         @Override
-        public @NotNull String asPrintable() {
+        public @NonNull String asPrintable() {
             return EclipticSeasons.rl("all").toLanguageKey("ResourceOrTagArgument.Result");
         }
     }

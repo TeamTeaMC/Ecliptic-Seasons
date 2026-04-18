@@ -18,7 +18,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.Optional;
 
@@ -111,7 +111,7 @@ public record SeasonCondition(Slice require) implements LootItemCondition {
         }
 
         @Override
-        public @NotNull LootItemCondition build() {
+        public @NonNull LootItemCondition build() {
             return new SeasonCondition(this.require);
         }
     }

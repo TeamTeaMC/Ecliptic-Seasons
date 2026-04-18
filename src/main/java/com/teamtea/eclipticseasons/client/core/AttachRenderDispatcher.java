@@ -1,17 +1,15 @@
 package com.teamtea.eclipticseasons.client.core;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
-import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
-import com.teamtea.eclipticseasons.api.constant.tag.ClimateTypeBiomeTags;
 import com.teamtea.eclipticseasons.api.constant.tag.EclipticBlockTags;
 import com.teamtea.eclipticseasons.api.data.client.model.ModelResolver;
 import com.teamtea.eclipticseasons.api.data.client.model.seasonal.SeasonBlockDefinition;
 import com.teamtea.eclipticseasons.api.data.season.SnowDefinition;
-import com.teamtea.eclipticseasons.api.misc.IBiomeTagHolder;
 import com.teamtea.eclipticseasons.api.misc.client.IFakeSnowHolder;
 import com.teamtea.eclipticseasons.api.misc.client.IMapSlice;
 import com.teamtea.eclipticseasons.api.misc.client.IMapSliceProvider;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
+import com.teamtea.eclipticseasons.client.core.context.AttachRendererContext;
 import com.teamtea.eclipticseasons.client.model.block.IESReplaceModel;
 import com.teamtea.eclipticseasons.client.model.block.ISnowyReplaceModel;
 import com.teamtea.eclipticseasons.client.model.block.ReplacingBlockStateModel;
@@ -48,18 +46,20 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.neoforged.neoforge.client.model.quad.MutableQuad;
 import net.neoforged.neoforge.client.model.standalone.StandaloneModelKey;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
-import javax.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.teamtea.eclipticseasons.client.core.ExtraModelManager.models;
+import static com.teamtea.eclipticseasons.client.core.AttachModelManager.isModelReplaceable;
+import static com.teamtea.eclipticseasons.client.core.AttachModelManager.models;
 
 
-public class ExtraRenderDispatcher {
+public class AttachRenderDispatcher {
 
     public static void appendModels(IMapSlice mapSlice, BlockState blockState, RandomSource random, BlockPos pos, List<BlockStateModelPart> parts) {
         if (canSnowy(mapSlice, pos, blockState, blockState.getSeed(pos), mapSlice.getModelCheckPos())) {
@@ -83,10 +83,10 @@ public class ExtraRenderDispatcher {
                 snowState = BlockRegistry.snowyLeaves.get().defaultBlockState();
             }
 
-            BlockStateModel blockStateModel = ExtraModelManager.getSnowyModel(blockState, snowState, flag, offset);
+            BlockStateModel blockStateModel = AttachModelManager.getSnowyModel(blockState, snowState, flag, offset);
             if (blockStateModel != null) {
 
-                if (ExtraModelManager.isModelReplaceable(flag)) {
+                if (AttachModelManager.isModelReplaceable(blockStateModel, flag)) {
                     parts.clear();
                 }
                 // net.neoforged.neoforge.client.model.quad.MutableQuad
@@ -132,11 +132,19 @@ public class ExtraRenderDispatcher {
         // return new BlockPos.MutableBlockPos(pos.getX(), pos.getY(), pos.getZ());
     }
 
-    public static BlockStateModel findModel(@NotNull IMapSlice mapSlice, BlockPos pos, BlockState state, RandomSource random, long seed, @Nullable BlockPos.MutableBlockPos checkPos, List<BlockStateModelPart> parts) {
-        // if (!state.is(Blocks.LILY_PAD))
-        //     return null;
+    public static AttachRendererContext findModel(
+            @NonNull AttachRendererContext context,
+            @NonNull IMapSlice mapSlice,
+            BlockPos pos,
+            BlockState state,
+            RandomSource random,
+            long seed,
+            BlockPos.@Nullable MutableBlockPos checkPos,
+            List<BlockStateModelPart> parts) {
+
         Level level = Minecraft.getInstance().level;
-        if (level == null) return null;
+        if (level == null) return context;
+
         BlockAndTintGetter blockAndTintGetter = mapSlice;
         int flag = MapChecker.getDefaultBlockTypeFlag(state);
         List<SeasonBlockDefinition> seasonDefCache = null;
@@ -149,7 +157,7 @@ public class ExtraRenderDispatcher {
             if (snowDefClientOverlay != null
                     && snowDefClientOverlay.isEmpty()) snowDefClientOverlay = null;
             if (seasonDefCache == null && snowDefClientOverlay == null)
-                return null;
+                return context;
         }
 
         boolean extendCheck = false;
@@ -172,7 +180,7 @@ public class ExtraRenderDispatcher {
         if (!leavesOrVine) {
             int cut = mapSlice.getBlockHeight(pos) - pos.getY();
             if (cut > 1 && !ClientConfig.Renderer.snowUnderFence.get() && !extendCheck)
-                return null;
+                return context;
         }
 
         int offset = snowDefClientOverlay == null ?
@@ -242,8 +250,8 @@ public class ExtraRenderDispatcher {
             if (!isLight) specialLeaves = false;
         }
 
+        boolean isSnowy = false;
         if (isLight || extendCheck) {
-            boolean isSnowy = false;
             checkPos.setY(pos.getY());
             if (CommonConfig.isSnowyWinter()
                     && isLight
@@ -274,7 +282,7 @@ public class ExtraRenderDispatcher {
                     } else if (leaveLike && !specialLeaves) {
                         snowState = BlockRegistry.snowyLeaves.get().defaultBlockState();
                     }
-                    BlockStateModel snowModel = ExtraModelManager.getSnowyModel(state, snowState, flag, offset);
+                    BlockStateModel snowModel = AttachModelManager.getSnowyModel(state, snowState, flag, offset);
 
                     if (snowModel != null) {
                         first = snowModel;
@@ -322,7 +330,7 @@ public class ExtraRenderDispatcher {
                 }
                 if (index > -1) {
                     index = indexs[index];
-                    first = getModel(ExtraModelManager.snow_edge_overlays.get(index));
+                    first = getModel(AttachModelManager.snow_edge_overlays.get(index));
                     isSnowy = true;
                 }
             }
@@ -347,18 +355,20 @@ public class ExtraRenderDispatcher {
                                             flatSlice.mid() :
                                             Mth.abs(((int) (seed + pos.getX()))) % 100 > ClientCon.progress ?
                                                     flatSlice.transitionModels().getFirst() : flatSlice.transitionModels().getSecond();
-                                    ModelResolver smr = ExtraModelManager.extraSnowModelBuilds.get(cinfo);
+                                    ModelResolver smr = AttachModelManager.extraSnowModelBuilds.get(cinfo);
                                     if (smr != null) {
                                         var mmrl = smr.tryFind(state);
                                         if (mmrl != null) {
-                                            var to_replace = getModel(mmrl.modelIdentifier());
-                                            if (to_replace != null) {
+                                            var seasonModel = getModel(mmrl.modelIdentifier());
+                                            if (seasonModel != null) {
                                                 if (first != null) {
-                                                    second = to_replace;
+                                                    var tps = first;
+                                                    first = seasonModel;
+                                                    second = tps;
                                                     if (mmrl.replace())
                                                         shouldReplace = true;
                                                 } else {
-                                                    first = to_replace;
+                                                    first = seasonModel;
                                                     if (mmrl.replace())
                                                         shouldReplace = true;
                                                 }
@@ -372,59 +382,64 @@ public class ExtraRenderDispatcher {
                 }
 
 
-            if (ClientConfig.Renderer.flowerOnGrass.get() && state.getBlock() instanceof GrassBlock
-                    && (seed % 14) == 0)
-            // && random.nextInt(15) == 0)
-            {
-                var solarTerm = ClientCon.nowSolarTerm;
-
-                checkPos.set(pos.getX(), pos.getY() + 1, pos.getZ());
-                if (solarTerm.isInTerms(SolarTerm.BEGINNING_OF_SPRING, SolarTerm.BEGINNING_OF_SUMMER)) {
-                    int weight = Math.abs(solarTerm.ordinal() - 3) + 1;
-                    if ((seed % (weight * 4)) == 0
-                            && blockAndTintGetter.getBlockState(checkPos).isAir()
-                            && (mapSlice == null || ((IBiomeTagHolder) (Object) MapChecker.idToBiome(level, mapSlice.getSurfaceFaceBiomeId(checkPos)).value()).eclipticseasons$getBindTag() == ClimateTypeBiomeTags.SEASONAL)) {
-                        {
-                            int index = Math.abs(((int) (seed + pos.getX())) % ExtraModelManager.flower_on_grass.size());
-                            // index=random.nextInt(flower_on_grass.size());
-                            if (first == null)
-                                first = getModel(ExtraModelManager.flower_on_grass.get(index));
-                            else {
-                                second = getModel(ExtraModelManager.flower_on_grass.get(index));
-                            }
-                        }
-                    }
-                }
-                // if (first == null && solarTerm.isInTerms(SolarTerm.BEGINNING_OF_SUMMER, SolarTerm.BEGINNING_OF_AUTUMN)) {
-                //     int weight = Math.abs(solarTerm.ordinal() - 7) + 1;
-                //     if ((seed % (weight * 3)) == 0
-                //             && blockAndTintGetter.getBlockState(checkPos).isAir()
-                //             && (mapSlice == null || ((IBiomeTagHolder) (Object) MapChecker.idToBiome(level, mapSlice.getSurfaceFaceBiomeId(checkPos)).value()).eclipticseasons$getBindTag() == ClimateTypeBiomeTags.SEASONAL)) {
-                //         {
-                //             int index = Math.abs(((int) (seed + pos.getX())) % ExtraModelManager.fourleaf_clovers.size());
-                //             // index=2;
-                //             // first = getModel(ExtraModelManager.fourleaf_clovers.get(index));
-                //             if (first == null)
-                //                 first = getModel(ExtraModelManager.fourleaf_clovers.get(index));
-                //             else {
-                //                 second = getModel(ExtraModelManager.fourleaf_clovers.get(index));
-                //             }
-                //         }
-                //     }
-                // }
-            }
+            // if (ClientConfig.Renderer.flowerOnGrass.get() && state.getBlock() instanceof GrassBlock
+            //         && (seed % 14) == 0)
+            // // && random.nextInt(15) == 0)
+            // {
+            //     var solarTerm = ClientCon.nowSolarTerm;
+            //
+            //     checkPos.set(pos.getX(), pos.getY() + 1, pos.getZ());
+            //     if (solarTerm.isInTerms(SolarTerm.BEGINNING_OF_SPRING, SolarTerm.BEGINNING_OF_SUMMER)) {
+            //         int weight = Math.abs(solarTerm.ordinal() - 3) + 1;
+            //         if ((seed % (weight * 4)) == 0
+            //                 && blockAndTintGetter.getBlockState(checkPos).isAir()
+            //                 && (mapSlice == null || ((IBiomeTagHolder) (Object) MapChecker.idToBiome(level, mapSlice.getSurfaceFaceBiomeId(checkPos)).value()).eclipticseasons$getBindTag() == ClimateTypeBiomeTags.SEASONAL)) {
+            //             {
+            //                 int index = Math.abs(((int) (seed + pos.getX())) % ExtraModelManager.flower_on_grass.size());
+            //                 // index=random.nextInt(flower_on_grass.size());
+            //                 if (first == null)
+            //                     first = getModel(ExtraModelManager.flower_on_grass.get(index));
+            //                 else {
+            //                     second = getModel(ExtraModelManager.flower_on_grass.get(index));
+            //                 }
+            //             }
+            //         }
+            //     }
+            //     if (first == null && solarTerm.isInTerms(SolarTerm.BEGINNING_OF_SUMMER, SolarTerm.BEGINNING_OF_AUTUMN)) {
+            //         int weight = Math.abs(solarTerm.ordinal() - 7) + 1;
+            //         if ((seed % (weight * 3)) == 0
+            //                 && blockAndTintGetter.getBlockState(checkPos).isAir()
+            //                 && (mapSlice == null || ((IBiomeTagHolder) (Object) MapChecker.idToBiome(level, mapSlice.getSurfaceFaceBiomeId(checkPos)).value()).eclipticseasons$getBindTag() == ClimateTypeBiomeTags.SEASONAL)) {
+            //             {
+            //                 int index = Math.abs(((int) (seed + pos.getX())) % ExtraModelManager.fourleaf_clovers.size());
+            //                 // index=2;
+            //                 // first = getModel(ExtraModelManager.fourleaf_clovers.get(index));
+            //                 if (first == null)
+            //                     first = getModel(ExtraModelManager.fourleaf_clovers.get(index));
+            //                 else {
+            //                     second = getModel(ExtraModelManager.fourleaf_clovers.get(index));
+            //                 }
+            //             }
+            //         }
+            //     }
+            // }
         }
 
-        if (parts != null) {
-            if (shouldReplace) {
-                parts.clear();
-            }
-            if (first != null)
-                first.collectParts(mapSlice, pos, state, random, parts);
-            if (second != null)
-                second.collectParts(mapSlice, pos, state, random, parts);
-        }
-        return first;
+        // if (parts != null) {
+        //     if (shouldReplace) {
+        //         parts.clear();
+        //     }
+        //     if (first != null)
+        //         first.collectParts(mapSlice, pos, state, random, parts);
+        //     if (second != null)
+        //         second.collectParts(mapSlice, pos, state, random, parts);
+        // }
+
+        context.setReplace(shouldReplace | isModelReplaceable(first, flag));
+        context.add(first);
+        context.add(second);
+        if (isSnowy) context.setSnowyModel(second == null ? first : second);
+        return context;
     }
 
     private static @Nullable BlockStateModel getModel(StandaloneModelKey<BlockStateModel> index) {
@@ -453,14 +468,14 @@ public class ExtraRenderDispatcher {
 
     public static BlockStateModel shouldRenderedWithSnowInside(
             BlockAndTintGetter blockAndTintGetter, BlockPos pos, BlockState state,
-            @Nullable BlockPos.MutableBlockPos checkPos) {
+            BlockPos.@Nullable MutableBlockPos checkPos) {
         int layers = getRenderedLevelWithSnowInside(blockAndTintGetter, pos, state, checkPos);
-        return layers > 0 ? ExtraModelManager.getSnowLayerModel(layers) : null;
+        return layers > 0 ? AttachModelManager.getSnowLayerModel(layers) : null;
     }
 
     public static int getRenderedLevelWithSnowInside(
             BlockAndTintGetter blockAndTintGetter, BlockPos pos, BlockState state,
-            @Nullable BlockPos.MutableBlockPos checkPos) {
+            BlockPos.@Nullable MutableBlockPos checkPos) {
 
         if (!ClientConfig.Renderer.snowInFence.get()) return 0;
         Level useLevel = ClientCon.getUseLevel();
@@ -678,7 +693,7 @@ public class ExtraRenderDispatcher {
         return original;
     }
 
-    public static boolean canSnowy(BlockAndTintGetter blockAndTintGetter, BlockPos pos, BlockState state, long seed, @Nullable BlockPos.MutableBlockPos checkPos) {
+    public static boolean canSnowy(BlockAndTintGetter blockAndTintGetter, BlockPos pos, BlockState state, long seed, BlockPos.@Nullable MutableBlockPos checkPos) {
         // if (!state.is(Blocks.LILY_PAD))
         //     return null;
         Level level = Minecraft.getInstance().level;
@@ -715,7 +730,7 @@ public class ExtraRenderDispatcher {
 
 
         boolean isLight = false;
-        if (checkPos == null) checkPos = ExtraModelManager.posToMutable(pos);
+        if (checkPos == null) checkPos = AttachModelManager.posToMutable(pos);
         else checkPos.set(pos.getX(), pos.getY(), pos.getZ());
 
         if (ClientConfig.Renderer.useVanillaCheck.get()) {

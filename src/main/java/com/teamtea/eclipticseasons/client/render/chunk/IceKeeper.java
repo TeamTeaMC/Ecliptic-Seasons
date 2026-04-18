@@ -1,8 +1,8 @@
 package com.teamtea.eclipticseasons.client.render.chunk;
 
 import com.teamtea.eclipticseasons.api.misc.client.IMapSlice;
-import com.teamtea.eclipticseasons.client.core.ExtraModelManager;
-import com.teamtea.eclipticseasons.client.core.ExtraRenderDispatcher;
+import com.teamtea.eclipticseasons.client.core.AttachModelManager;
+import com.teamtea.eclipticseasons.client.core.AttachRenderDispatcher;
 import com.teamtea.eclipticseasons.client.render.WorldRenderer;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
@@ -40,12 +40,12 @@ public class IceKeeper {
         if (MapChecker.getHeight(level, blockPos) != blockPos.getY()) return;
         BlockState water = Blocks.WATER.defaultBlockState();
         if (water.getBlock() instanceof SimpleWaterloggedBlock) return;
-        if (!ExtraRenderDispatcher.maySnowyAt(level, null, water, blockPos, level.getRandom(), water.getSeed(blockPos)))
+        if (!AttachRenderDispatcher.maySnowyAt(level, null, water, blockPos, level.getRandom(), water.getSeed(blockPos)))
             return;
 
         if (!ICE_SHOULD_BE_IGNORED.contains(blockPos.asLong())) {
             BlockPos above = blockPos.above();
-            if (ClientConfig.Debug.frozenWaterCheckLight.get() && !ExtraRenderDispatcher.notTooBright(level, null, blockPos))
+            if (ClientConfig.Debug.frozenWaterCheckLight.get() && !AttachRenderDispatcher.notTooBright(level, null, blockPos))
                 return;
             ICE_SHOULD_BE_IGNORED.add(blockPos.asLong());
             try {
@@ -88,16 +88,16 @@ public class IceKeeper {
         if (blockState.getBlock() instanceof SimpleWaterloggedBlock) return true;
         if (!(worldSlice instanceof IMapSlice mapSlice)) return true;
         if (mapSlice.getBlockHeight(blockPos) != blockPos.getY()) return true;
-        if (!ExtraRenderDispatcher.maySnowyAt(ClientCon.getUseLevel(), mapSlice, blockState, blockPos, null, blockState.getSeed(blockPos)))
+        if (!AttachRenderDispatcher.maySnowyAt(ClientCon.getUseLevel(), mapSlice, blockState, blockPos, null, blockState.getSeed(blockPos)))
             return true;
-        if (ClientConfig.Debug.frozenWaterCheckLight.get() && !ExtraRenderDispatcher.notTooBright(worldSlice, mapSlice, blockPos))
+        if (ClientConfig.Debug.frozenWaterCheckLight.get() && !AttachRenderDispatcher.notTooBright(worldSlice, mapSlice, blockPos))
             return true;
         return ClientConfig.Debug.frozenWaterBreakable.get() && ICE_SHOULD_BE_IGNORED.contains(blockPos.asLong());
     }
 
     public static BlockStateModel getIceModel(BlockState state, FluidState fluidState) {
         //return ExtraModelManager.models.get(ExtraModelManager.ice);
-        return ExtraModelManager.models.standaloneModels().get(ExtraModelManager.ice);
+        return AttachModelManager.models.standaloneModels().get(AttachModelManager.ice);
     }
 
     public static BlockState getFakeState(BlockState state, FluidState fluidState) {

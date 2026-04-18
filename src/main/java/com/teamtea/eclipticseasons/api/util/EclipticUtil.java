@@ -99,7 +99,7 @@ public class EclipticUtil {
 
     public static boolean isDay(Level level) {
         TimePeriod timePeriod = TimePeriod.fromTimeOfDay(SimpleUtil.getTimeOfDay(level));
-        return timePeriod.ordinal() < TimePeriod.DUSK.ordinal();
+        return timePeriod.ordinal() < TimePeriod.NIGHT.ordinal();
     }
 
     public static boolean isNight(Level level) {
@@ -466,7 +466,7 @@ public class EclipticUtil {
     public static Humidity getHumidityConstant(SolarTerm solarTerm, Holder<Biome> biomeHolder, boolean serverSide) {
         Biome standBiome = biomeHolder.value();
         float t = getTemperatureFloatConstant(solarTerm, standBiome, serverSide);
-        BiomeRain biomeRain = solarTerm.getBiomeRain(biomeHolder);
+        BiomeRain biomeRain = SolarUtil.getBiomeRain(solarTerm, biomeHolder);
         float r = (getDownfallFloatConstant(solarTerm, standBiome, serverSide) * 1.5f + biomeRain.getRainChance() * 0.5f) / 2f;
         return Humidity.getHumid(r, t);
     }
@@ -474,7 +474,7 @@ public class EclipticUtil {
     public static float getHumidityConstantFloat(SolarTerm solarTerm, Holder<Biome> biomeHolder, boolean serverSide) {
         Biome standBiome = biomeHolder.value();
         float t = getTemperatureFloatConstant(solarTerm, standBiome, serverSide);
-        BiomeRain biomeRain = solarTerm.getBiomeRain(biomeHolder);
+        BiomeRain biomeRain = SolarUtil.getBiomeRain(solarTerm, biomeHolder);
         float r = (getDownfallFloatConstant(solarTerm, standBiome, serverSide) * 1.5f + biomeRain.getRainChance() * 0.5f) / 2f;
         return Humidity.getFloatHumidLevel(r, t);
     }
@@ -493,7 +493,7 @@ public class EclipticUtil {
     public static float getHumidityLevelAt(Level level, SolarTerm solarTerm, Holder<Biome> biome, BlockPos pos, boolean serverSide) {
         Biome standBiome = biome.value();
         float t = getTemperatureFloat(level, solarTerm, standBiome, pos, serverSide);
-        BiomeRain biomeRain = solarTerm.getBiomeRain(biome);
+        BiomeRain biomeRain = SolarUtil.getBiomeRain(solarTerm, biome);
         float r = (getDownfallFloat(level, solarTerm, standBiome, pos, serverSide) * 1.5f + biomeRain.getRainChance() * 0.5f) / 2f;
         return Humidity.getFloatHumidLevel(r, t);
     }
@@ -501,7 +501,7 @@ public class EclipticUtil {
     public static boolean maySnow(Level level, BlockPos pos) {
         Biome biome = MapChecker.getSurfaceBiome(level, pos).value();
         boolean server = level instanceof ServerLevel;
-        ISnowTerm snowTerm = SolarTerm.getSnowTerm(biome, server, EclipticUtil.getSnowTempChange(level));
+        ISnowTerm snowTerm = SolarUtil.getSnowTerm(biome, server, EclipticUtil.getSnowTempChange(level));
         SolarTerm solarTerm = EclipticSeasonsApi.getInstance().getSolarTerm(level);
         return snowTerm.maySnow(solarTerm, biome, pos, server);
     }

@@ -13,675 +13,675 @@
     "eclipticseasons:solar_day": {
       "keyframes": [
         {
-          "ticks": 1,
+          "ticks": 0,
           "value": 0
         },
         {
-          "ticks": 24001,
+          "ticks": 24000,
           "value": 1
         },
         {
-          "ticks": 48001,
+          "ticks": 48000,
           "value": 2
         },
         {
-          "ticks": 72001,
+          "ticks": 72000,
           "value": 3
         },
         {
-          "ticks": 96001,
+          "ticks": 96000,
           "value": 4
         },
         {
-          "ticks": 120001,
+          "ticks": 120000,
           "value": 5
         },
         {
-          "ticks": 144001,
+          "ticks": 144000,
           "value": 6
         },
         {
-          "ticks": 168001,
+          "ticks": 168000,
           "value": 7
         },
         {
-          "ticks": 192001,
+          "ticks": 192000,
           "value": 8
         },
         {
-          "ticks": 216001,
+          "ticks": 216000,
           "value": 9
         },
         {
-          "ticks": 240001,
+          "ticks": 240000,
           "value": 10
         },
         {
-          "ticks": 264001,
+          "ticks": 264000,
           "value": 11
         },
         {
-          "ticks": 288001,
+          "ticks": 288000,
           "value": 12
         },
         {
-          "ticks": 312001,
+          "ticks": 312000,
           "value": 13
         },
         {
-          "ticks": 336001,
+          "ticks": 336000,
           "value": 14
         },
         {
-          "ticks": 360001,
+          "ticks": 360000,
           "value": 15
         },
         {
-          "ticks": 384001,
+          "ticks": 384000,
           "value": 16
         },
         {
-          "ticks": 408001,
+          "ticks": 408000,
           "value": 17
         },
         {
-          "ticks": 432001,
+          "ticks": 432000,
           "value": 18
         },
         {
-          "ticks": 456001,
+          "ticks": 456000,
           "value": 19
         },
         {
-          "ticks": 480001,
+          "ticks": 480000,
           "value": 20
         },
         {
-          "ticks": 504001,
+          "ticks": 504000,
           "value": 21
         },
         {
-          "ticks": 528001,
+          "ticks": 528000,
           "value": 22
         },
         {
-          "ticks": 552001,
+          "ticks": 552000,
           "value": 23
         },
         {
-          "ticks": 576001,
+          "ticks": 576000,
           "value": 24
         },
         {
-          "ticks": 600001,
+          "ticks": 600000,
           "value": 25
         },
         {
-          "ticks": 624001,
+          "ticks": 624000,
           "value": 26
         },
         {
-          "ticks": 648001,
+          "ticks": 648000,
           "value": 27
         },
         {
-          "ticks": 672001,
+          "ticks": 672000,
           "value": 28
         },
         {
-          "ticks": 696001,
+          "ticks": 696000,
           "value": 29
         },
         {
-          "ticks": 720001,
+          "ticks": 720000,
           "value": 30
         },
         {
-          "ticks": 744001,
+          "ticks": 744000,
           "value": 31
         },
         {
-          "ticks": 768001,
+          "ticks": 768000,
           "value": 32
         },
         {
-          "ticks": 792001,
+          "ticks": 792000,
           "value": 33
         },
         {
-          "ticks": 816001,
+          "ticks": 816000,
           "value": 34
         },
         {
-          "ticks": 840001,
+          "ticks": 840000,
           "value": 35
         },
         {
-          "ticks": 864001,
+          "ticks": 864000,
           "value": 36
         },
         {
-          "ticks": 888001,
+          "ticks": 888000,
           "value": 37
         },
         {
-          "ticks": 912001,
+          "ticks": 912000,
           "value": 38
         },
         {
-          "ticks": 936001,
+          "ticks": 936000,
           "value": 39
         },
         {
-          "ticks": 960001,
+          "ticks": 960000,
           "value": 40
         },
         {
-          "ticks": 984001,
+          "ticks": 984000,
           "value": 41
         },
         {
-          "ticks": 1008001,
+          "ticks": 1008000,
           "value": 42
         },
         {
-          "ticks": 1032001,
+          "ticks": 1032000,
           "value": 43
         },
         {
-          "ticks": 1056001,
+          "ticks": 1056000,
           "value": 44
         },
         {
-          "ticks": 1080001,
+          "ticks": 1080000,
           "value": 45
         },
         {
-          "ticks": 1104001,
+          "ticks": 1104000,
           "value": 46
         },
         {
-          "ticks": 1128001,
+          "ticks": 1128000,
           "value": 47
         },
         {
-          "ticks": 1152001,
+          "ticks": 1152000,
           "value": 48
         },
         {
-          "ticks": 1176001,
+          "ticks": 1176000,
           "value": 49
         },
         {
-          "ticks": 1200001,
+          "ticks": 1200000,
           "value": 50
         },
         {
-          "ticks": 1224001,
+          "ticks": 1224000,
           "value": 51
         },
         {
-          "ticks": 1248001,
+          "ticks": 1248000,
           "value": 52
         },
         {
-          "ticks": 1272001,
+          "ticks": 1272000,
           "value": 53
         },
         {
-          "ticks": 1296001,
+          "ticks": 1296000,
           "value": 54
         },
         {
-          "ticks": 1320001,
+          "ticks": 1320000,
           "value": 55
         },
         {
-          "ticks": 1344001,
+          "ticks": 1344000,
           "value": 56
         },
         {
-          "ticks": 1368001,
+          "ticks": 1368000,
           "value": 57
         },
         {
-          "ticks": 1392001,
+          "ticks": 1392000,
           "value": 58
         },
         {
-          "ticks": 1416001,
+          "ticks": 1416000,
           "value": 59
         },
         {
-          "ticks": 1440001,
+          "ticks": 1440000,
           "value": 60
         },
         {
-          "ticks": 1464001,
+          "ticks": 1464000,
           "value": 61
         },
         {
-          "ticks": 1488001,
+          "ticks": 1488000,
           "value": 62
         },
         {
-          "ticks": 1512001,
+          "ticks": 1512000,
           "value": 63
         },
         {
-          "ticks": 1536001,
+          "ticks": 1536000,
           "value": 64
         },
         {
-          "ticks": 1560001,
+          "ticks": 1560000,
           "value": 65
         },
         {
-          "ticks": 1584001,
+          "ticks": 1584000,
           "value": 66
         },
         {
-          "ticks": 1608001,
+          "ticks": 1608000,
           "value": 67
         },
         {
-          "ticks": 1632001,
+          "ticks": 1632000,
           "value": 68
         },
         {
-          "ticks": 1656001,
+          "ticks": 1656000,
           "value": 69
         },
         {
-          "ticks": 1680001,
+          "ticks": 1680000,
           "value": 70
         },
         {
-          "ticks": 1704001,
+          "ticks": 1704000,
           "value": 71
         },
         {
-          "ticks": 1728001,
+          "ticks": 1728000,
           "value": 72
         },
         {
-          "ticks": 1752001,
+          "ticks": 1752000,
           "value": 73
         },
         {
-          "ticks": 1776001,
+          "ticks": 1776000,
           "value": 74
         },
         {
-          "ticks": 1800001,
+          "ticks": 1800000,
           "value": 75
         },
         {
-          "ticks": 1824001,
+          "ticks": 1824000,
           "value": 76
         },
         {
-          "ticks": 1848001,
+          "ticks": 1848000,
           "value": 77
         },
         {
-          "ticks": 1872001,
+          "ticks": 1872000,
           "value": 78
         },
         {
-          "ticks": 1896001,
+          "ticks": 1896000,
           "value": 79
         },
         {
-          "ticks": 1920001,
+          "ticks": 1920000,
           "value": 80
         },
         {
-          "ticks": 1944001,
+          "ticks": 1944000,
           "value": 81
         },
         {
-          "ticks": 1968001,
+          "ticks": 1968000,
           "value": 82
         },
         {
-          "ticks": 1992001,
+          "ticks": 1992000,
           "value": 83
         },
         {
-          "ticks": 2016001,
+          "ticks": 2016000,
           "value": 84
         },
         {
-          "ticks": 2040001,
+          "ticks": 2040000,
           "value": 85
         },
         {
-          "ticks": 2064001,
+          "ticks": 2064000,
           "value": 86
         },
         {
-          "ticks": 2088001,
+          "ticks": 2088000,
           "value": 87
         },
         {
-          "ticks": 2112001,
+          "ticks": 2112000,
           "value": 88
         },
         {
-          "ticks": 2136001,
+          "ticks": 2136000,
           "value": 89
         },
         {
-          "ticks": 2160001,
+          "ticks": 2160000,
           "value": 90
         },
         {
-          "ticks": 2184001,
+          "ticks": 2184000,
           "value": 91
         },
         {
-          "ticks": 2208001,
+          "ticks": 2208000,
           "value": 92
         },
         {
-          "ticks": 2232001,
+          "ticks": 2232000,
           "value": 93
         },
         {
-          "ticks": 2256001,
+          "ticks": 2256000,
           "value": 94
         },
         {
-          "ticks": 2280001,
+          "ticks": 2280000,
           "value": 95
         },
         {
-          "ticks": 2304001,
+          "ticks": 2304000,
           "value": 96
         },
         {
-          "ticks": 2328001,
+          "ticks": 2328000,
           "value": 97
         },
         {
-          "ticks": 2352001,
+          "ticks": 2352000,
           "value": 98
         },
         {
-          "ticks": 2376001,
+          "ticks": 2376000,
           "value": 99
         },
         {
-          "ticks": 2400001,
+          "ticks": 2400000,
           "value": 100
         },
         {
-          "ticks": 2424001,
+          "ticks": 2424000,
           "value": 101
         },
         {
-          "ticks": 2448001,
+          "ticks": 2448000,
           "value": 102
         },
         {
-          "ticks": 2472001,
+          "ticks": 2472000,
           "value": 103
         },
         {
-          "ticks": 2496001,
+          "ticks": 2496000,
           "value": 104
         },
         {
-          "ticks": 2520001,
+          "ticks": 2520000,
           "value": 105
         },
         {
-          "ticks": 2544001,
+          "ticks": 2544000,
           "value": 106
         },
         {
-          "ticks": 2568001,
+          "ticks": 2568000,
           "value": 107
         },
         {
-          "ticks": 2592001,
+          "ticks": 2592000,
           "value": 108
         },
         {
-          "ticks": 2616001,
+          "ticks": 2616000,
           "value": 109
         },
         {
-          "ticks": 2640001,
+          "ticks": 2640000,
           "value": 110
         },
         {
-          "ticks": 2664001,
+          "ticks": 2664000,
           "value": 111
         },
         {
-          "ticks": 2688001,
+          "ticks": 2688000,
           "value": 112
         },
         {
-          "ticks": 2712001,
+          "ticks": 2712000,
           "value": 113
         },
         {
-          "ticks": 2736001,
+          "ticks": 2736000,
           "value": 114
         },
         {
-          "ticks": 2760001,
+          "ticks": 2760000,
           "value": 115
         },
         {
-          "ticks": 2784001,
+          "ticks": 2784000,
           "value": 116
         },
         {
-          "ticks": 2808001,
+          "ticks": 2808000,
           "value": 117
         },
         {
-          "ticks": 2832001,
+          "ticks": 2832000,
           "value": 118
         },
         {
-          "ticks": 2856001,
+          "ticks": 2856000,
           "value": 119
         },
         {
-          "ticks": 2880001,
+          "ticks": 2880000,
           "value": 120
         },
         {
-          "ticks": 2904001,
+          "ticks": 2904000,
           "value": 121
         },
         {
-          "ticks": 2928001,
+          "ticks": 2928000,
           "value": 122
         },
         {
-          "ticks": 2952001,
+          "ticks": 2952000,
           "value": 123
         },
         {
-          "ticks": 2976001,
+          "ticks": 2976000,
           "value": 124
         },
         {
-          "ticks": 3000001,
+          "ticks": 3000000,
           "value": 125
         },
         {
-          "ticks": 3024001,
+          "ticks": 3024000,
           "value": 126
         },
         {
-          "ticks": 3048001,
+          "ticks": 3048000,
           "value": 127
         },
         {
-          "ticks": 3072001,
+          "ticks": 3072000,
           "value": 128
         },
         {
-          "ticks": 3096001,
+          "ticks": 3096000,
           "value": 129
         },
         {
-          "ticks": 3120001,
+          "ticks": 3120000,
           "value": 130
         },
         {
-          "ticks": 3144001,
+          "ticks": 3144000,
           "value": 131
         },
         {
-          "ticks": 3168001,
+          "ticks": 3168000,
           "value": 132
         },
         {
-          "ticks": 3192001,
+          "ticks": 3192000,
           "value": 133
         },
         {
-          "ticks": 3216001,
+          "ticks": 3216000,
           "value": 134
         },
         {
-          "ticks": 3240001,
+          "ticks": 3240000,
           "value": 135
         },
         {
-          "ticks": 3264001,
+          "ticks": 3264000,
           "value": 136
         },
         {
-          "ticks": 3288001,
+          "ticks": 3288000,
           "value": 137
         },
         {
-          "ticks": 3312001,
+          "ticks": 3312000,
           "value": 138
         },
         {
-          "ticks": 3336001,
+          "ticks": 3336000,
           "value": 139
         },
         {
-          "ticks": 3360001,
+          "ticks": 3360000,
           "value": 140
         },
         {
-          "ticks": 3384001,
+          "ticks": 3384000,
           "value": 141
         },
         {
-          "ticks": 3408001,
+          "ticks": 3408000,
           "value": 142
         },
         {
-          "ticks": 3432001,
+          "ticks": 3432000,
           "value": 143
         },
         {
-          "ticks": 3456001,
+          "ticks": 3456000,
           "value": 144
         },
         {
-          "ticks": 3480001,
+          "ticks": 3480000,
           "value": 145
         },
         {
-          "ticks": 3504001,
+          "ticks": 3504000,
           "value": 146
         },
         {
-          "ticks": 3528001,
+          "ticks": 3528000,
           "value": 147
         },
         {
-          "ticks": 3552001,
+          "ticks": 3552000,
           "value": 148
         },
         {
-          "ticks": 3576001,
+          "ticks": 3576000,
           "value": 149
         },
         {
-          "ticks": 3600001,
+          "ticks": 3600000,
           "value": 150
         },
         {
-          "ticks": 3624001,
+          "ticks": 3624000,
           "value": 151
         },
         {
-          "ticks": 3648001,
+          "ticks": 3648000,
           "value": 152
         },
         {
-          "ticks": 3672001,
+          "ticks": 3672000,
           "value": 153
         },
         {
-          "ticks": 3696001,
+          "ticks": 3696000,
           "value": 154
         },
         {
-          "ticks": 3720001,
+          "ticks": 3720000,
           "value": 155
         },
         {
-          "ticks": 3744001,
+          "ticks": 3744000,
           "value": 156
         },
         {
-          "ticks": 3768001,
+          "ticks": 3768000,
           "value": 157
         },
         {
-          "ticks": 3792001,
+          "ticks": 3792000,
           "value": 158
         },
         {
-          "ticks": 3816001,
+          "ticks": 3816000,
           "value": 159
         },
         {
-          "ticks": 3840001,
+          "ticks": 3840000,
           "value": 160
         },
         {
-          "ticks": 3864001,
+          "ticks": 3864000,
           "value": 161
         },
         {
-          "ticks": 3888001,
+          "ticks": 3888000,
           "value": 162
         },
         {
-          "ticks": 3912001,
+          "ticks": 3912000,
           "value": 163
         },
         {
-          "ticks": 3936001,
+          "ticks": 3936000,
           "value": 164
         },
         {
-          "ticks": 3960001,
+          "ticks": 3960000,
           "value": 165
         },
         {
-          "ticks": 3984001,
+          "ticks": 3984000,
           "value": 166
         },
         {
-          "ticks": 4008001,
+          "ticks": 4008000,
           "value": 167
         }
       ]
@@ -689,99 +689,99 @@
     "eclipticseasons:solar_term": {
       "keyframes": [
         {
-          "ticks": 1,
+          "ticks": 0,
           "value": "beginning_of_spring"
         },
         {
-          "ticks": 168001,
+          "ticks": 168000,
           "value": "rain_water"
         },
         {
-          "ticks": 336001,
+          "ticks": 336000,
           "value": "insects_awakening"
         },
         {
-          "ticks": 504001,
+          "ticks": 504000,
           "value": "spring_equinox"
         },
         {
-          "ticks": 672001,
+          "ticks": 672000,
           "value": "fresh_green"
         },
         {
-          "ticks": 840001,
+          "ticks": 840000,
           "value": "grain_rain"
         },
         {
-          "ticks": 1008001,
+          "ticks": 1008000,
           "value": "beginning_of_summer"
         },
         {
-          "ticks": 1176001,
+          "ticks": 1176000,
           "value": "lesser_fullness"
         },
         {
-          "ticks": 1344001,
+          "ticks": 1344000,
           "value": "grain_in_ear"
         },
         {
-          "ticks": 1512001,
+          "ticks": 1512000,
           "value": "summer_solstice"
         },
         {
-          "ticks": 1680001,
+          "ticks": 1680000,
           "value": "lesser_heat"
         },
         {
-          "ticks": 1848001,
+          "ticks": 1848000,
           "value": "greater_heat"
         },
         {
-          "ticks": 2016001,
+          "ticks": 2016000,
           "value": "beginning_of_autumn"
         },
         {
-          "ticks": 2184001,
+          "ticks": 2184000,
           "value": "end_of_heat"
         },
         {
-          "ticks": 2352001,
+          "ticks": 2352000,
           "value": "white_dew"
         },
         {
-          "ticks": 2520001,
+          "ticks": 2520000,
           "value": "autumnal_equinox"
         },
         {
-          "ticks": 2688001,
+          "ticks": 2688000,
           "value": "cold_dew"
         },
         {
-          "ticks": 2856001,
+          "ticks": 2856000,
           "value": "first_frost"
         },
         {
-          "ticks": 3024001,
+          "ticks": 3024000,
           "value": "beginning_of_winter"
         },
         {
-          "ticks": 3192001,
+          "ticks": 3192000,
           "value": "light_snow"
         },
         {
-          "ticks": 3360001,
+          "ticks": 3360000,
           "value": "heavy_snow"
         },
         {
-          "ticks": 3528001,
+          "ticks": 3528000,
           "value": "winter_solstice"
         },
         {
-          "ticks": 3696001,
+          "ticks": 3696000,
           "value": "lesser_cold"
         },
         {
-          "ticks": 3864001,
+          "ticks": 3864000,
           "value": "greater_cold"
         }
       ]
@@ -789,19 +789,19 @@
     "eclipticseasons:season": {
       "keyframes": [
         {
-          "ticks": 1,
+          "ticks": 0,
           "value": "spring"
         },
         {
-          "ticks": 1008001,
+          "ticks": 1008000,
           "value": "summer"
         },
         {
-          "ticks": 2016001,
+          "ticks": 2016000,
           "value": "autumn"
         },
         {
-          "ticks": 3024001,
+          "ticks": 3024000,
           "value": "winter"
         }
       ]

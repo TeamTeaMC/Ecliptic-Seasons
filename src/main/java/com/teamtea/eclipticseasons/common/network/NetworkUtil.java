@@ -42,8 +42,8 @@ public class NetworkUtil {
                 data.setSolarTermsDay(solarTermsMessage.solarDay);
                 SolarTerm solarTerm = data.getSolarTerm();
                 if (solarTerm != old) {
-                    NeoForge.EVENT_BUS.post(new SolarTermChangeEvent(old, solarTerm, context.player().level(), data.getSolarTermsDay()));
-                    ClientCon.getAgent().setChange(true);
+                    NeoForge.EVENT_BUS.post(new SolarTermChangeEvent(old, solarTerm, context.player().level(),solarTermsMessage.solarDay));
+                    ClientCon.getAgent().setTermChange(true);
                 }
                 // note 不再需要更新
                 // BiomeClimateManager.updateTemperature(context.player().level(), data.getSolarTerm());
@@ -102,7 +102,7 @@ public class NetworkUtil {
                 }
 
                 if (update)
-                    ClientCon.agent.setChange(true);
+                    ClientCon.agent.setSnowChange(true);
                 // if (update
                 //         && ClientCon.agent.getCameraEntity() != null
                 //         && ClientConfig.Renderer.forceChunkRenderUpdate.get()) {

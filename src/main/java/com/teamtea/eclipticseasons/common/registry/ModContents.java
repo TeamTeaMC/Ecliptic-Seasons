@@ -15,24 +15,27 @@ import com.teamtea.eclipticseasons.api.data.crop.CropGrowControlBuilder;
 import com.teamtea.eclipticseasons.api.data.quest.SeasonQuest;
 import com.teamtea.eclipticseasons.api.data.weather.CustomRainBuilder;
 import com.teamtea.eclipticseasons.api.data.weather.CustomSnowTerm;
+import com.teamtea.eclipticseasons.api.data.weather.WeatherDimension;
 import com.teamtea.eclipticseasons.api.data.weather.WeatherRegion;
 import com.teamtea.eclipticseasons.api.data.weather.special_effect.WeatherEffect;
 import com.teamtea.eclipticseasons.common.block.BlockInCopperGrateBlock;
+import com.teamtea.eclipticseasons.common.block.IceOrSnowCauldronBlock;
 import com.teamtea.eclipticseasons.common.resource.FakeResourceManagerHelperUtil;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import com.teamtea.eclipticseasons.config.StartConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.cauldron.CauldronInteractions;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.PackSelectionConfig;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.repository.Pack;
 import net.minecraft.server.packs.repository.PackSource;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.item.*;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -45,11 +48,12 @@ import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.common.ModConfigSpec;
 import net.neoforged.neoforge.event.AddPackFindersEvent;
+import net.neoforged.neoforge.event.RegisterCauldronInteractionEvent;
 import net.neoforged.neoforge.registries.*;
 import net.neoforged.neoforge.transfer.item.ItemResource;
 import net.neoforged.neoforge.transfer.item.ItemStacksResourceHandler;
 
-import javax.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.Optional;
 
 @SuppressWarnings("removal")
@@ -81,6 +85,25 @@ public class ModContents {
     }
 
     @SubscribeEvent
+    public static void onNewRegistryCauldronInteraction(RegisterCauldronInteractionEvent.Dispatcher event) {
+        event.register(IceOrSnowCauldronBlock.empty, IceOrSnowCauldronBlock.EMPTY);
+    }
+
+    @SubscribeEvent
+    public static void onNewRegistryCauldronInteraction(RegisterCauldronInteractionEvent.Interaction event) {
+        event.register(Identifier.withDefaultNamespace("empty"),
+                Items.ICE, (state, level, pos, player, hand, stack) -> {
+                    IceOrSnowCauldronBlock.fillEmptyCauldron(level, pos, player, hand, stack, BlockRegistry.ice_cauldron.get().defaultBlockState(), SoundEvents.GLASS_PLACE);
+                    return InteractionResult.SUCCESS_SERVER;
+                });
+        event.register(Identifier.withDefaultNamespace("empty"),
+                Items.SNOW_BLOCK, (state, level, pos, player, hand, stack) -> {
+                    IceOrSnowCauldronBlock.fillEmptyCauldron(level, pos, player, hand, stack, BlockRegistry.snow_cauldron.get().defaultBlockState(), SoundEvents.SNOW_PLACE);
+                    return InteractionResult.SUCCESS_SERVER;
+                });
+    }
+
+    @SubscribeEvent
     public static void onNewRegistry(DataPackRegistryEvent.NewRegistry event) {
         event.dataPackRegistry(ESRegistries.WETTER, WetterStructure.CODEC, WetterStructure.CODEC);
         event.dataPackRegistry(ESRegistries.BIOME_CLIMATE_SETTING, BiomesClimateSettings.CODEC, BiomesClimateSettings.CODEC);
@@ -97,6 +120,7 @@ public class ModContents {
         event.dataPackRegistry(ESRegistries.EXTRA_INFO, ESSortInfo.CODEC, ESSortInfo.CODEC);
         event.dataPackRegistry(ESRegistries.WEATHER_EFFECT, WeatherEffect.CODEC, WeatherEffect.CODEC);
         event.dataPackRegistry(ESRegistries.BIOME_RAIN, CustomRainBuilder.CODEC, CustomRainBuilder.CODEC);
+        event.dataPackRegistry(ESRegistries.WEATHER_DIMENSION, WeatherDimension.CODEC, WeatherDimension.CODEC);
     }
 
 
@@ -164,6 +188,8 @@ public class ModContents {
                         CommonConfig.Resource.VanillaBiomeClimateSettings, "Vanilla Biome Climate Settings", "vanilla_biome_climate_settings");
                 addPackIfEnabled(event, modFile,
                         CommonConfig.Resource.NotIgnoreRiver, "Not Ignore River", "not_ignore_river");
+                addPackIfEnabled(event, modFile,
+                        CommonConfig.Resource.springGrass, "spring_grass", "spring_grass");
             }
         }
     }

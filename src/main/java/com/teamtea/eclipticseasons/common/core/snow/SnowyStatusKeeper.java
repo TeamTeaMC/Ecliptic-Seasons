@@ -16,10 +16,7 @@ import it.unimi.dsi.fastutil.longs.LongIterator;
 import lombok.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtOps;
-import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.ChunkPos;
@@ -32,7 +29,6 @@ import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.neoforged.neoforge.attachment.IAttachmentHolder;
 import net.neoforged.neoforge.attachment.IAttachmentSerializer;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -168,7 +164,7 @@ public class SnowyStatusKeeper implements Cloneable {
 
             boolean forceMelt = false;
             if (snowStatus != WeatherManager.SnowRenderStatus.SNOW_MELT) {
-                if (SnowyMapChecker.isTooLight(level, checkPos, state, flag)) {
+                if (SnowLightChecker.isTooLight(level, checkPos, state, flag)) {
                     snowStatus = WeatherManager.SnowRenderStatus.SNOW_MELT;
                     forceMelt = true;
                 }
@@ -257,7 +253,7 @@ public class SnowyStatusKeeper implements Cloneable {
 
         //
         //@Override
-        //public Tag write(@NotNull SnowyStatusKeeper attachment, HolderLookup.@NotNull Provider provider) {
+        //public Tag write(@NonNull SnowyStatusKeeper attachment, HolderLookup.@NonNull Provider provider) {
         //    if (!EclipticUtil.canSnowyBlockInteract()) new CompoundTag();
         //    if (attachment.cacheTag != null)
         //        return attachment.cacheTag;

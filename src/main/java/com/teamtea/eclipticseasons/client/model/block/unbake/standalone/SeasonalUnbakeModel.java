@@ -9,6 +9,7 @@ import com.teamtea.eclipticseasons.api.data.client.model.seasonal.SeasonalTextur
 import com.teamtea.eclipticseasons.client.model.block.unbake.SolarBlockModel;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.client.resources.model.ModelBaker;
+import net.minecraft.client.resources.model.ModelDebugName;
 import net.minecraft.resources.Identifier;
 import net.neoforged.neoforge.client.model.standalone.UnbakedStandaloneModel;
 import org.jspecify.annotations.NonNull;
@@ -22,6 +23,10 @@ public record SeasonalUnbakeModel<T>(
 
 
     @Override
+    public T bake(@NonNull ModelBaker baker, @NonNull ModelDebugName name) {
+        return bake(baker);
+    }
+
     public T bake(@NonNull ModelBaker baker) {
         BlockStateModel bake = SolarBlockModel.bake(baker, baker.getModel(baseModel), seasonalTextures);
         T t = (T) bake;

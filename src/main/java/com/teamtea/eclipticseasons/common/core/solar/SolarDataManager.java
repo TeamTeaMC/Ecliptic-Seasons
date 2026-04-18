@@ -42,7 +42,7 @@ import net.minecraft.world.level.storage.SavedDataStorage;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.common.NeoForge;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 import java.lang.ref.WeakReference;
@@ -505,7 +505,7 @@ public class SolarDataManager extends SavedData {
     }
 
 
-    public @NotNull CompoundTag save(CompoundTag compound) {
+    public @NonNull CompoundTag save(CompoundTag compound) {
         compound.putInt("SolarTermsDay", getSolarTermsDay());
         compound.putInt("SolarTermsTicks", getSolarTermsTicks());
         compound.putFloat("SolarTempChange", getSolarTempChange());

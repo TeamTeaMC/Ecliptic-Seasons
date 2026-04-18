@@ -11,7 +11,7 @@ import lombok.Builder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.biome.Biome;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 
@@ -53,7 +53,7 @@ public record CustomSnowTerm(
     }
 
     @Override
-    public @NotNull String toString() {
+    public @NonNull String toString() {
         return "CustomSnowTerm{" +
                 "biomes=" + biomes +
                 ", start=" + start +

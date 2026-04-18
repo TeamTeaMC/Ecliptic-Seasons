@@ -13,6 +13,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.dimension.DimensionType;
 import org.jetbrains.annotations.ApiStatus;
 
+import java.util.List;
+
 /**
  * This API code exists for other mods to query the solar term status or other situations.
  * Please try not to use other internal APIs directly, as they are likely to change.
@@ -25,6 +27,8 @@ public interface EclipticSeasonsApi {
     String MODID = "eclipticseasons";
     String SMODID = "ecliptic";
 
+    List<String> MODID_LIST = List.of(EclipticSeasonsApi.SMODID, EclipticSeasonsApi.MODID, "season");
+
     /**
      * Use this static method to get an API instance.
      */
@@ -35,10 +39,10 @@ public interface EclipticSeasonsApi {
     /**
      * Get the solar term.
      * Or use it to get the season{@link SolarTerm#getSeason()},
-     * or get the climate classification of the biome{@link SolarTerm#getBiomeRain(Holder)},
+     * or get the climate classification of the biome{@link com.teamtea.eclipticseasons.api.util.SolarUtil#getBiomeRain(SolarTerm, Holder)},
      * and which solar terms of the biome snow{@link SolarTerm#getSnowTerm(Biome)}.
      *
-     * <p>Only dimensions marked as {@linkplain DimensionType#natural()  natural} have solar term changes.</p>
+     * <p>Only dimensions marked as {@linkplain com.teamtea.eclipticseasons.config.CommonConfig.Season#validDimensions} have solar term changes.</p>
      */
     SolarTerm getSolarTerm(Level level);
 

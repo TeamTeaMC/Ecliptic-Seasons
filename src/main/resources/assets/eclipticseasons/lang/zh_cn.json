@@ -60,5 +60,6 @@
   "eclipticseasons.configuration.ExtraSnowLayerCulling": "给额外雪层应用剔面机制",
   "eclipticseasons.configuration.ShouldInitSnowForExtremeColdBiomes": "为寒冷群系初始化雪状态",
   "eclipticseasons.configuration.ExtraSnowLayerMaxLayers": "额外的雪层数",
-  "eclipticseasons.configuration.ExtraSnowLayerMaxLayersOnLeaves": "额外的雪层数（树叶）"
+  "eclipticseasons.configuration.ExtraSnowLayerMaxLayersOnLeaves": "额外的雪层数（树叶）",
+  "eclipticseasons.configuration.SpringGrass": "春草与野花"
 }

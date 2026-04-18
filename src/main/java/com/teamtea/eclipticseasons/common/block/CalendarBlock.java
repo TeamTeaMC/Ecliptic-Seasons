@@ -26,7 +26,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Locale;
@@ -94,7 +94,7 @@ public class CalendarBlock extends WallPlacedBlock {
         NORMAL, YEAR, NEXT, DAY;
 
         @Override
-        public @NotNull String getSerializedName() {
+        public @NonNull String getSerializedName() {
             return toString().toLowerCase(Locale.ROOT);
         }
     }

@@ -9,7 +9,7 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +26,7 @@ public class MessageCodec {
         }
 
         @Override
-        public @NotNull List<Long> decode(ByteBuf pBuffer) {
+        public @NonNull List<Long> decode(ByteBuf pBuffer) {
             int size = pBuffer.readInt();
             ArrayList<Long> list = new ArrayList<>(size);
             for (int i = 0; i < size; i++) {
@@ -46,7 +46,7 @@ public class MessageCodec {
         }
 
         @Override
-        public @NotNull List<Integer> decode(ByteBuf pBuffer) {
+        public @NonNull List<Integer> decode(ByteBuf pBuffer) {
             int size = pBuffer.readInt();
             ArrayList<Integer> list = new ArrayList<>(size);
             for (int i = 0; i < size; i++) {
@@ -66,7 +66,7 @@ public class MessageCodec {
         }
 
         @Override
-        public @NotNull List<BlockPos> decode(ByteBuf pBuffer) {
+        public @NonNull List<BlockPos> decode(ByteBuf pBuffer) {
             int size = pBuffer.readInt();
             ArrayList<BlockPos> list = new ArrayList<>(size);
             for (int i = 0; i < size; i++) {
@@ -86,7 +86,7 @@ public class MessageCodec {
         }
 
         @Override
-        public @NotNull List<ResourceKey<Level>> decode(ByteBuf pBuffer) {
+        public @NonNull List<ResourceKey<Level>> decode(ByteBuf pBuffer) {
             int size = pBuffer.readInt();
             ArrayList<ResourceKey<Level>> list = new ArrayList<>(size);
             for (int i = 0; i < size; i++) {
@@ -106,7 +106,7 @@ public class MessageCodec {
         }
 
         @Override
-        public int @NotNull [] decode(ByteBuf pBuffer) {
+        public int @NonNull [] decode(ByteBuf pBuffer) {
             int size = pBuffer.readInt();
             int[] list = new int[size];
             for (int i = 0; i < size; i++) {

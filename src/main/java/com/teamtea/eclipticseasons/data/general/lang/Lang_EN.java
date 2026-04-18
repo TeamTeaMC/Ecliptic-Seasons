@@ -1,5 +1,6 @@
 package com.teamtea.eclipticseasons.data.general.lang;
 
+import com.teamtea.eclipticseasons.client.registry.KeyMappingRegistry;
 import com.teamtea.eclipticseasons.common.registry.*;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import net.minecraft.data.PackOutput;
@@ -68,6 +69,11 @@ public class Lang_EN extends LangHelper {
 
         add(BlockRegistry.snow_cauldron.get(), "Snow Cauldron");
         add(BlockRegistry.ice_cauldron.get(), "Ice Cauldron");
+
+
+        add(KeyMappingRegistry.DEBUG_KEY.getName(),"Debug Info HUD");
+        add(KeyMappingRegistry.MAIN.id().toLanguageKey("key.category"), "Ecliptic Seasons");
+
 
         add("info.eclipticseasons.environment.temperature.under_freezing", "Under Freezing");
         add("info.eclipticseasons.environment.temperature.freezing", "Freezing");

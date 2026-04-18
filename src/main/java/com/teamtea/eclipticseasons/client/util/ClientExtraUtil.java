@@ -1,18 +1,17 @@
 package com.teamtea.eclipticseasons.client.util;
 
-import com.teamtea.eclipticseasons.api.constant.biome.Humidity;
 import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
 import it.unimi.dsi.fastutil.longs.LongBooleanImmutablePair;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 
 import java.util.Optional;
 
 public class ClientExtraUtil {
-    public static float modifyHumidity(Level level, BlockPos pos, float  original) {
+    public static float modifyHumidity(Level level, BlockPos pos, float original) {
         if (ClientCon.humidityModificationLevel != 0
-                && pos.closerThan(Minecraft.getInstance().player.blockPosition(), 2)) {
+                && ClientCon.getAgent().getCameraEntity() != null
+                && pos.closerThan(ClientCon.getAgent().getCameraEntity().blockPosition(), 2)) {
             long aLong = pos.asLong();
             LongBooleanImmutablePair orDefault = ClientCon.roomCache.getOrDefault(aLong, null);
             if (orDefault == null) {

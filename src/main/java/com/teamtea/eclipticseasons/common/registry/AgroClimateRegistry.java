@@ -20,7 +20,7 @@ import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.registries.holdersets.AndHolderSet;
 import net.neoforged.neoforge.registries.holdersets.NotHolderSet;
 import net.neoforged.neoforge.registries.holdersets.OrHolderSet;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -218,37 +218,37 @@ public class AgroClimateRegistry {
             HolderGetter<Biome> biomeHolderGetter) implements HolderLookup.RegistryLookup<Biome> {
 
         @Override
-        public @NotNull Optional<Holder.Reference<Biome>> get(@NotNull ResourceKey<Biome> pResourceKey) {
+        public @NonNull Optional<Holder.Reference<Biome>> get(@NonNull ResourceKey<Biome> pResourceKey) {
             return biomeHolderGetter.get(pResourceKey);
         }
 
         @Override
-        public @NotNull Optional<HolderSet.Named<Biome>> get(@NotNull TagKey<Biome> pTagKey) {
+        public @NonNull Optional<HolderSet.Named<Biome>> get(@NonNull TagKey<Biome> pTagKey) {
             return biomeHolderGetter.get(pTagKey);
         }
 
         @Override
-        public @NotNull Stream<Holder.Reference<Biome>> listElements() {
+        public @NonNull Stream<Holder.Reference<Biome>> listElements() {
             return Stream.empty();
         }
 
         @Override
-        public @NotNull Stream<HolderSet.Named<Biome>> listTags() {
+        public @NonNull Stream<HolderSet.Named<Biome>> listTags() {
             return Stream.empty();
         }
 
         @Override
-        public @NotNull ResourceKey<? extends Registry<? extends Biome>> key() {
+        public @NonNull ResourceKey<? extends Registry<? extends Biome>> key() {
             return Registries.BIOME;
         }
 
         @Override
-        public boolean canSerializeIn(@NotNull HolderOwner<Biome> pOwner) {
+        public boolean canSerializeIn(@NonNull HolderOwner<Biome> pOwner) {
             return true;
         }
 
         @Override
-        public @NotNull Lifecycle registryLifecycle() {
+        public @NonNull Lifecycle registryLifecycle() {
             return Lifecycle.stable();
         }
     }

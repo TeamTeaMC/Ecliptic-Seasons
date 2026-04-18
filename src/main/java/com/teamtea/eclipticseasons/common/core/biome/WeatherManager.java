@@ -4,18 +4,16 @@ import com.mojang.serialization.Codec;
 import com.teamtea.eclipticseasons.api.constant.climate.FlatRain;
 import com.teamtea.eclipticseasons.api.constant.climate.WeatherMode;
 import com.teamtea.eclipticseasons.api.constant.tag.ClimateTypeBiomeTags;
-import com.teamtea.eclipticseasons.api.constant.tag.ESEnchantmentTags;
-import com.teamtea.eclipticseasons.api.constant.tag.ESItemTags;
-import com.teamtea.eclipticseasons.api.constant.tag.ESMobEffectTags;
+import com.teamtea.eclipticseasons.api.data.misc.ESSortInfo;
+import com.teamtea.eclipticseasons.api.data.weather.WeatherDimension;
 import com.teamtea.eclipticseasons.api.data.weather.special_effect.WeatherEffect;
 import com.teamtea.eclipticseasons.api.event.BeforeCheckSnowStatusEvent;
 import com.teamtea.eclipticseasons.api.misc.ITranslatable;
+import com.teamtea.eclipticseasons.api.util.SolarUtil;
 import com.teamtea.eclipticseasons.common.core.snow.SnowyMapChecker;
 import com.teamtea.eclipticseasons.common.hook.ESEventHook;
-import com.teamtea.eclipticseasons.common.misc.HeatStrokeTicker;
 import com.teamtea.eclipticseasons.common.network.message.UpdateTempChangeMessage;
 import com.teamtea.eclipticseasons.common.registry.ESRegistries;
-import com.teamtea.eclipticseasons.common.registry.EffectRegistry;
 import com.teamtea.eclipticseasons.common.registry.ModAdvancements;
 import com.teamtea.eclipticseasons.common.registry.AttachmentRegistry;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
@@ -36,8 +34,6 @@ import com.teamtea.eclipticseasons.compat.CompatModule;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import lombok.Setter;
 import net.minecraft.core.*;
-import net.minecraft.core.component.DataComponents;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -48,15 +44,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.StringRepresentable;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.*;
-import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.ItemEnchantments;
-import net.minecraft.world.item.equipment.Equippable;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biomes;
@@ -66,7 +54,7 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.WeatherCheck;
 import net.neoforged.neoforge.common.util.FakePlayer;
 
-import javax.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.*;
 
 public class WeatherManager {
@@ -315,7 +303,7 @@ public class WeatherManager {
             // }
 
             var solarTerm = EclipticUtil.getNowSolarTerm(level);
-            var snowTerm = SolarTerm.getSnowTerm(biome, level instanceof ServerLevel, EclipticUtil.getSnowTempChange(level));
+            var snowTerm = SolarUtil.getSnowTerm(biome, level instanceof ServerLevel, EclipticUtil.getSnowTempChange(level));
             boolean flag_cold = snowTerm.maySnow(solarTerm, biome, pos, level instanceof ServerLevel);
             Biome.Precipitation precipitation = flag_cold
                     // || BiomeClimateManager.getDefaultTemperature(biome, levelNull instanceof ServerLevel) <= BiomeClimateManager.SNOW_LEVEL
@@ -382,7 +370,7 @@ public class WeatherManager {
         // Not add 'has' check because we have checked it
         if (level != null) {
             var solarTerm = EclipticUtil.getNowSolarTerm(level);
-            var snowTerm = SolarTerm.getSnowTerm(biome, levelNull instanceof ServerLevel, EclipticUtil.getSnowTempChange(level));
+            var snowTerm = SolarUtil.getSnowTerm(biome, levelNull instanceof ServerLevel, EclipticUtil.getSnowTempChange(level));
             boolean flag_cold = snowTerm.maySnow(solarTerm, biome, pos, level instanceof ServerLevel);
             // var biomes = level.registryAccess().registry(Registries.BIOME).get();
             // var loc = biomes.getKey(biome);
@@ -440,6 +428,14 @@ public class WeatherManager {
 
             if (level instanceof IBiomeWeatherProvider iBiomeWeatherProvider) {
                 iBiomeWeatherProvider.es$set(biomesWeathers);
+
+                iBiomeWeatherProvider.es$setCoreBiome(null);
+                for (WeatherDimension weatherDimension : ESSortInfo.sorted2(level.registryAccess().lookupOrThrow(ESRegistries.WEATHER_DIMENSION))) {
+                    if (weatherDimension.dimension().equals(level.dimension())) {
+                        iBiomeWeatherProvider.es$setCoreBiome(weatherDimension.core());
+                        break;
+                    }
+                }
             }
 
             // add copy
@@ -496,7 +492,8 @@ public class WeatherManager {
     public static void runWeather(ServerLevel level, BiomeWeather biomeWeather, RandomSource random, int size) {
         WeatherMode weatherMode = EclipticUtil.getWeatherMode(level);
         if (weatherMode == WeatherMode.REGION) {
-            Holder<Biome> onwer = BiomeClimateManager.getWeatherRegionOnwer(biomeWeather.biomeHolder.value());
+
+            Holder<Biome> onwer = getOnwer(level, biomeWeather.biomeHolder);
             if (onwer != null && !onwer.equals(biomeWeather.biomeHolder)) {
                 BiomeWeather ownerBiomeWeather = getBiomeWeather(level, onwer);
                 if (ownerBiomeWeather != null) {
@@ -570,6 +567,12 @@ public class WeatherManager {
         }
     }
 
+    public static @Nullable Holder<Biome> getOnwer(Level level, Holder<Biome> biomeHolder) {
+        return level instanceof IBiomeWeatherProvider ibwp && ibwp.es$getCoreBiome() != null ?
+                ibwp.es$getCoreBiome() :
+                BiomeClimateManager.getWeatherRegionOnwer(biomeHolder.value());
+    }
+
     protected static void updateSnowOrMelt(ServerLevel level, BiomeWeather biomeWeather, RandomSource randomSource, int size, boolean rain) {
         if (rain) biomeWeather.lastRainTime = level.getGameTime();
         if ((rain || randomSource.nextInt(5) > 1)) {
@@ -589,8 +592,8 @@ public class WeatherManager {
         return getBiomeRain(solarTerm, biomeWeather).resolve(level);
     }
 
-    public static BiomeRain getBiomeRain(SolarTerm solarTerm, Holder<Biome> biomeWeather) {
-        return solarTerm.getBiomeRain(biomeWeather);
+    public static BiomeRain getBiomeRain(SolarTerm solarTerm, Holder<Biome> biomeHolder) {
+        return SolarUtil.getBiomeRain(solarTerm, biomeHolder);
     }
 
     public static void initNewWorldWeather(ServerLevel level, RandomSource random, SolarTerm solarTerm) {
@@ -633,7 +636,7 @@ public class WeatherManager {
                 }
             }
 
-            var snowTerm = SolarTerm.getSnowTerm(biomeWeather.biomeHolder.value(), !level.isClientSide(), EclipticUtil.getSnowTempChange(level));
+            var snowTerm = SolarUtil.getSnowTerm(biomeWeather.biomeHolder.value(), !level.isClientSide(), EclipticUtil.getSnowTempChange(level));
             boolean flag_cold = snowTerm.maySnow(solarTerm);
             boolean flag_little_cold = snowTerm.maySnow(lastSolarTerm);
             SnowRenderStatus snow = flag_cold ? SnowRenderStatus.SNOW :

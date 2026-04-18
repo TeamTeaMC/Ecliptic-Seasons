@@ -7,8 +7,8 @@ import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.data.climate.AgroClimaticZone;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.api.util.SimpleUtil;
+import com.teamtea.eclipticseasons.api.util.SolarUtil;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
-import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
@@ -18,11 +18,9 @@ import com.teamtea.eclipticseasons.config.ClientConfig;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
-import net.minecraft.client.renderer.state.gui.BlitRenderState;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.FontDescription;
-import net.minecraft.server.commands.TimeCommand;
 import net.minecraft.util.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -35,7 +33,6 @@ import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.block.Blocks;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -138,10 +135,10 @@ public class DebugInfoRenderer {
                 }
                 infoLines.add(String.format("R/C/T Time: §e%d§r / §e%d§r / §e%d§r",
                         biomeWeather.rainTime, biomeWeather.clearTime, biomeWeather.thunderTime));
-                ISnowTerm snowTerm = SolarTerm.getSnowTerm(biomeWeather.biomeHolder.value(), false, EclipticUtil.getSnowTempChange(level));
+                ISnowTerm snowTerm = SolarUtil.getSnowTerm(e_cachedBiome != null ? e_cachedBiome.value() : biomeWeather.biomeHolder.value(), false, EclipticUtil.getSnowTempChange(level));
                 SolarTerm start = snowTerm.getStart();
                 SolarTerm end = snowTerm.getEnd();
-                infoLines.addComponent(Component.literal("Snow Term: ")
+                infoLines.addComponent(Component.literal("Snow Term%s: ".formatted(e_cachedBiome==cachedBiome?"":" (Surface) "))
                         .append(Component.translatable("debug_info.eclipticseasons.snow_term",
                                 start.getTranslation().withStyle(start.getColor()),
                                 end.getTranslation().withStyle(end.getColor()),
@@ -151,12 +148,11 @@ public class DebugInfoRenderer {
                 infoLines.addKV("Map Height", MapChecker.getHeight(level, pos), "");
 
                 infoLines.addEmpty();
-
                 WeatherMode weatherMode = EclipticUtil.getWeatherMode(level);
                 if (!EclipticUtil.hasLocalWeather(level)) {
                     infoLines.addKV("Mode", "Vanilla Sync", "§c");
                 } else {
-                    Holder<Biome> owner = (weatherMode == WeatherMode.REGION) ? BiomeClimateManager.getWeatherRegionOnwer(biomeWeather.biomeHolder.value()) : null;
+                    Holder<Biome> owner = (weatherMode == WeatherMode.REGION) ? WeatherManager.getOnwer(ClientCon.getUseLevel(), biomeWeather.biomeHolder) : null;
                     Holder<Biome> targetBiome = (owner != null) ? owner : e_cachedBiome;
                     WeatherManager.BiomeWeather weatherTarget = WeatherManager.getBiomeWeather(level, targetBiome);
 

@@ -3,7 +3,7 @@ package com.teamtea.eclipticseasons.common.core.crop;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import org.jetbrains.annotations.UnknownNullability;
 
 public final class HumidityControlProvider {
@@ -55,7 +55,7 @@ public final class HumidityControlProvider {
         return save;
     }
 
-    public CompoundTag serializeNBT(HolderLookup.@NotNull Provider provider) {
+    public CompoundTag serializeNBT(HolderLookup.@NonNull Provider provider) {
         CompoundTag compoundTag = new CompoundTag();
         compoundTag.putInt("remain_time", getRemainTime());
         compoundTag.putFloat("range", getRange());
@@ -63,7 +63,7 @@ public final class HumidityControlProvider {
         return compoundTag;
     }
 
-    public void deserializeNBT(HolderLookup.@NotNull Provider provider, CompoundTag nbt) {
+    public void deserializeNBT(HolderLookup.@NonNull Provider provider, CompoundTag nbt) {
         this.remainTime = nbt.getIntOr("remain_time", 0);
         this.range = nbt.getFloatOr("range", 0);
         this.level = nbt.getFloatOr("level", 0);

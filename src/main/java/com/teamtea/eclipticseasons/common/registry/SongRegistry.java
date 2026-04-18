@@ -9,7 +9,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.item.JukeboxSong;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 public class SongRegistry {
     public static final ResourceKey<JukeboxSong> SNOWLESS_HOMETOWN = createKey("snowless_hometown");
@@ -29,7 +29,7 @@ public class SongRegistry {
         );
     }
 
-    public static @NotNull String toLangKey(ResourceKey<JukeboxSong> key) {
+    public static @NonNull String toLangKey(ResourceKey<JukeboxSong> key) {
         return Util.makeDescriptionId("jukebox_song", key.identifier());
     }
 

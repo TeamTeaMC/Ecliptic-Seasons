@@ -21,7 +21,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.display.SlotDisplay;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.awt.*;
 
@@ -46,12 +46,12 @@ public class CauldronRecipeCategory implements IRecipeCategory<CauldronRecipe> {
     }
 
     @Override
-    public @NotNull IRecipeType<CauldronRecipe> getRecipeType() {
+    public @NonNull IRecipeType<CauldronRecipe> getRecipeType() {
         return ESJEIPlugin.CAULDRON_RECIPE_TYPE;
     }
 
     @Override
-    public @NotNull Component getTitle() {
+    public @NonNull Component getTitle() {
         return Component.translatable("info.eclipticseasons.recipe_category.cauldron_snow_transform");
     }
 
@@ -65,7 +65,7 @@ public class CauldronRecipeCategory implements IRecipeCategory<CauldronRecipe> {
         return 40;
     }
 
-    public @NotNull IDrawable getBackground() {
+    public @NonNull IDrawable getBackground() {
         return blankDrawable;
     }
 

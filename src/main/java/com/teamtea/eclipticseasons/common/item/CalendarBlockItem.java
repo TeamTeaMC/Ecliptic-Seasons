@@ -17,7 +17,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.loading.FMLLoader;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -28,7 +28,7 @@ public class CalendarBlockItem extends BlockItem {
     }
 
     @Override
-    public InteractionResult use(@NotNull Level level, @NotNull Player pPlayer, @NotNull InteractionHand pUsedHand) {
+    public InteractionResult use(@NonNull Level level, @NonNull Player pPlayer, @NonNull InteractionHand pUsedHand) {
         if (showHint(level, pPlayer)) {
             return InteractionResult.CONSUME;
         }
@@ -36,7 +36,7 @@ public class CalendarBlockItem extends BlockItem {
     }
 
     @Override
-    public @NotNull InteractionResult place(@NotNull BlockPlaceContext context) {
+    public @NonNull InteractionResult place(@NonNull BlockPlaceContext context) {
         InteractionResult interactionResult = super.place(context);
         if (interactionResult == InteractionResult.FAIL) {
             if (showHint(context.getLevel(), context.getPlayer()))

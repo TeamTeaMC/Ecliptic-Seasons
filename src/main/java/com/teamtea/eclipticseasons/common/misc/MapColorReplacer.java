@@ -1,6 +1,7 @@
 package com.teamtea.eclipticseasons.common.misc;
 
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
+import com.teamtea.eclipticseasons.common.core.snow.SnowLightChecker;
 import com.teamtea.eclipticseasons.common.core.snow.SnowyMapChecker;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.core.BlockPos;
@@ -54,7 +55,7 @@ public class MapColorReplacer {
                 && state.getBlock() != Blocks.SNOW_BLOCK
                 && (!forceCheckLoad || MapChecker.isLoadNearByOnlyServer(level, pos))
                 && MapChecker.shouldSnowAt(level, pos.below(offset), state, level.getRandom(), state.getSeed(pos))
-                && (ignoreLight || !SnowyMapChecker.isTooLight(level, pos, state, flag))
+                && (ignoreLight || !SnowLightChecker.isTooLight(level, pos, state, flag))
         ;
 
         if (isLight) {

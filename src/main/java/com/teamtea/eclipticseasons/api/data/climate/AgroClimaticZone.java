@@ -17,7 +17,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -153,7 +153,7 @@ public record AgroClimaticZone(HolderSet<Biome> biomes,
         return growParameterResult;
     }
 
-    public static String getDescriptionId(@NotNull Identifier Identifier) {
+    public static String getDescriptionId(@NonNull Identifier Identifier) {
         return ESRegistries.createLangKey(ESRegistries.AGRO_CLIMATE, Identifier);
     }
 

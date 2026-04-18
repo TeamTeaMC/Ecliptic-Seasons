@@ -1,8 +1,9 @@
 package com.teamtea.eclipticseasons.mixin.client.chunk;
 
 
+import com.teamtea.eclipticseasons.api.misc.client.IAttachRendererContextOwner;
 import com.teamtea.eclipticseasons.api.misc.client.IMapSlice;
-import com.teamtea.eclipticseasons.client.core.ExtraRenderDispatcher;
+import com.teamtea.eclipticseasons.client.core.AttachRenderDispatcher;
 import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.client.renderer.block.BlockQuadOutput;
 import net.minecraft.client.renderer.block.ModelBlockRenderer;
@@ -45,13 +46,15 @@ public abstract class MixinModelBlockRenderer {
             BlockStateModel model, long seed,
             CallbackInfo ci) {
         if (level instanceof IMapSlice mapSlice) {
-            ExtraRenderDispatcher.findModel(mapSlice,
-                    pos,
-                    blockState,
-                    this.random,
-                    blockState.getSeed(pos),
-                    mapSlice.getModelCheckPos(),
-                    this.parts);
+            AttachRenderDispatcher.findModel(IAttachRendererContextOwner.of(mapSlice), mapSlice,
+                            pos,
+                            blockState,
+                            this.random,
+                            blockState.getSeed(pos),
+                            mapSlice.getModelCheckPos(),
+                            this.parts)
+                    .apply(level, pos, blockState, random, this.parts)
+                    .resetAll();
         }
     }
 

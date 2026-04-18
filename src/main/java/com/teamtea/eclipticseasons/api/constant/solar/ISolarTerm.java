@@ -1,5 +1,6 @@
 package com.teamtea.eclipticseasons.api.constant.solar;
 
+import com.mojang.datafixers.util.Pair;
 import com.teamtea.eclipticseasons.common.misc.SimplePair;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.MutableComponent;
@@ -14,7 +15,7 @@ public interface ISolarTerm {
     Identifier getIconFont();
     Identifier getIcon();
     String getFontLabel();
-    SimplePair<Integer, Integer> getIconPosition();
+    Pair<Integer, Integer> getIconPosition();
     int getIconAtlasSize();
     int getIconWidth();
     int getIconHeight();

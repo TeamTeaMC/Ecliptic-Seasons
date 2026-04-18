@@ -11,7 +11,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -59,7 +59,7 @@ public class SnowDefinitionsRegistry {
                         .mid(getSnowModelPath(b).withSuffix("_top")).build()));
     }
 
-    private static HolderSet.@NotNull Direct<Block> set(Block bamboo) {
+    private static HolderSet.@NonNull Direct<Block> set(Block bamboo) {
         return HolderSet.direct(bamboo.builtInRegistryHolder());
     }
 
@@ -81,31 +81,31 @@ public class SnowDefinitionsRegistry {
                 .build());
     }
 
-    private static @NotNull ResourceKey<SnowDefinition> createSnowyKey(String path) {
+    private static @NonNull ResourceKey<SnowDefinition> createSnowyKey(String path) {
         return createKey(
                 "snowy_" + path
         );
     }
 
-    private static @NotNull ResourceKey<SnowDefinition> createSnowyKey(Block block) {
+    private static @NonNull ResourceKey<SnowDefinition> createSnowyKey(Block block) {
         return createKey(
                 "snowy_" + path(block)
         );
     }
 
-    public static @NotNull String path(Block block) {
+    public static @NonNull String path(Block block) {
         return block.builtInRegistryHolder().key().identifier().getPath();
     }
 
-    public static @NotNull Identifier getSnowModelPath(String path) {
+    public static @NonNull Identifier getSnowModelPath(String path) {
         return EclipticSeasons.rl("snowy/" + path);
     }
 
-    public static @NotNull Identifier getSnowModelPath(Block block) {
+    public static @NonNull Identifier getSnowModelPath(Block block) {
         return EclipticSeasons.rl("snowy/" + path(block));
     }
 
-    public static @NotNull Identifier getSnowModelPath(String modid, Block block) {
+    public static @NonNull Identifier getSnowModelPath(String modid, Block block) {
         return Identifier.fromNamespaceAndPath(modid, "snowy/" + path(block));
     }
 

@@ -59,8 +59,7 @@ public class GuiFluidRenderer extends PictureInPictureRenderer<GuiFluidRenderSta
         poseStack.translate(-.5, -.5, -.5);
         FluidModel fluidModel = Minecraft.getInstance().getModelManager()
                 .getFluidStateModelSet().get(state);
-
-        TextureAtlasSprite sprite = fluidModel.stillMaterial().sprite();
+        // TextureAtlasSprite sprite = fluidModel.stillMaterial().sprite();
         // FluidRenderer.Output fluidOutput = this::getOrBeginLayer;
         renderFluidInGui(poseStack, state,
                 fluidModel, 1f,
@@ -91,7 +90,7 @@ public class GuiFluidRenderer extends PictureInPictureRenderer<GuiFluidRenderSta
                                  FluidModel model,
                                  float fluidHeight,
                                  float x, float y, float size) {
-        Minecraft mc = Minecraft.getInstance();
+        // Minecraft mc = Minecraft.getInstance();
 
         TextureAtlasSprite sprite = model.stillMaterial().sprite();
         int color = model.fluidTintSource() == null ? -1 : model.fluidTintSource().color(state);

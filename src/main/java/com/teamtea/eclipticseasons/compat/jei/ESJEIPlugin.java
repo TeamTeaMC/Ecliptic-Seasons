@@ -24,7 +24,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 @JeiPlugin
 public class ESJEIPlugin implements IModPlugin {
@@ -47,7 +47,7 @@ public class ESJEIPlugin implements IModPlugin {
    }
 
    @Override
-   public @NotNull Identifier getPluginUid() {
+   public @NonNull Identifier getPluginUid() {
        return PLUGIN_ID;
    }
 
@@ -61,7 +61,7 @@ public class ESJEIPlugin implements IModPlugin {
    }
 
    @Override
-   public void registerRecipeCatalysts(@NotNull IRecipeCatalystRegistration registration) {
+   public void registerRecipeCatalysts(@NonNull IRecipeCatalystRegistration registration) {
        for (Block block : BlockRegistry.getAllGrateBlocks()) {
            registration.addCraftingStation(HUMIDITY_CONTROL_RECIPE_TYPE, block);
        }
@@ -72,7 +72,7 @@ public class ESJEIPlugin implements IModPlugin {
    }
 
    @Override
-   public void registerRecipes(@NotNull IRecipeRegistration registration) {
+   public void registerRecipes(@NonNull IRecipeRegistration registration) {
        Level level = Minecraft.getInstance().level;
        if (level == null) return;
        level.registryAccess()

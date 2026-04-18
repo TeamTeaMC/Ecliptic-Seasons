@@ -16,11 +16,8 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.client.renderer.block.BlockAndTintGetter;
-import net.minecraft.world.level.BlockAndLightGetter;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -28,22 +25,22 @@ import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.chunk.status.ChunkStatus;
 import net.minecraft.world.level.levelgen.Heightmap;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
-import javax.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.Map;
 
 public class SnowyMapChecker {
 
-    public static @NotNull WeatherStatusKeeper getWeatherStatusKeeper(ChunkAccess chunk) {
+    public static @NonNull WeatherStatusKeeper getWeatherStatusKeeper(ChunkAccess chunk) {
         return chunk.getData(AttachmentRegistry.WEATHER_STATUS_KEEPER);
     }
 
-    public static @NotNull SnowyStatusKeeper getSnowyStatusKeeper(ChunkAccess chunk) {
+    public static @NonNull SnowyStatusKeeper getSnowyStatusKeeper(ChunkAccess chunk) {
         return chunk.getData(AttachmentRegistry.SNOWY_STATUS_KEEPER);
     }
 
-    public static @NotNull SnowyStatusKeeper getSnowyStatusKeeperCopy(LevelChunk chunk) {
+    public static @NonNull SnowyStatusKeeper getSnowyStatusKeeperCopy(LevelChunk chunk) {
         if (!EclipticUtil.canSnowyBlockInteract()) return SnowyStatusKeeper.EMPTY;
         return getSnowyStatusKeeper(chunk);
     }
@@ -165,7 +162,7 @@ public class SnowyMapChecker {
                     BlockState state = chunk.getBlockState(checkPos);
                     int flag = MapChecker.getDefaultBlockTypeFlag(state);
                     if (flag != MapChecker.FLAG_NONE) {
-                        if (isTooLight(level, checkPos, state, flag)) {
+                        if (SnowLightChecker.isTooLight(level, checkPos, state, flag)) {
                             keeper.set(checkPos, SnowyStatusKeeper.FLAG_NONE);
                         } else if (snowDepthUse == null) {
                             if (MapChecker.isAboveSnowLine(level, biome.value(), checkPos)) {
@@ -257,23 +254,6 @@ public class SnowyMapChecker {
                 }
             }
         }
-    }
-
-    public static boolean isTooLight(BlockAndLightGetter level, BlockPos pos, BlockState state, int blockType) {
-        return isTooLight(level, pos, null, state, blockType);
-    }
-
-    public static boolean isTooLight(BlockAndLightGetter level, BlockPos pos, @Nullable BlockPos.MutableBlockPos mutableBlockPos, BlockState state, int blockType) {
-        if (CommonConfig.Snow.notSnowyNearGlowingBlock.get()) {
-            int aboveOffset = 1 - MapChecker.getSnowOffset(state, blockType);
-            if (mutableBlockPos != null) {
-                mutableBlockPos.setY(pos.getY() + aboveOffset);
-                pos = mutableBlockPos;
-            } else pos = pos.above(aboveOffset);
-            return level.getBrightness(LightLayer.BLOCK, pos) >=
-                    CommonConfig.Snow.notSnowyNearGlowingBlockLevel.get();
-        }
-        return false;
     }
 
     public static boolean shouldCheckSnowyStatus(Level level, BlockPos pos) {

@@ -12,7 +12,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.world.level.biome.Biome;
 
-import javax.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.*;
 
 public class BiomeRainDispatcher {
@@ -28,7 +28,7 @@ public class BiomeRainDispatcher {
 
     public static long hash_cache = 0;
 
-    public static void init(@Nullable HolderLookup.RegistryLookup<Biome> biomeRegistry,
+    public static void init(HolderLookup.@Nullable RegistryLookup<Biome> biomeRegistry,
                             boolean isServer) {
         if (biomeRegistry == null) return;
         clearOnClientExitOrServerClose(isServer);

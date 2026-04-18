@@ -8,6 +8,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.cauldron.CauldronInteraction;
 import net.minecraft.core.cauldron.CauldronInteractions;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -16,6 +17,7 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
@@ -27,21 +29,25 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.BlockHitResult;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.NonNull;
 
 public class IceOrSnowCauldronBlock extends AbstractCauldronBlock {
-    public static final CauldronInteraction.Dispatcher EMPTY =
-            CauldronInteractions.newDispatcher(EclipticSeasons.rl("empty").toString())
-    ;
+    public static final CauldronInteraction.Dispatcher EMPTY = new CauldronInteraction.Dispatcher();
+    public static final Identifier empty = EclipticSeasons.rl("empty");
 
     public IceOrSnowCauldronBlock(Properties properties) {
         super(properties, EMPTY);
         registerDefaultState(defaultBlockState());
     }
 
+    @Override
+    public @NonNull Item asItem() {
+        return Items.CAULDRON;
+    }
 
     @Override
-    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state, boolean includeData, Player player) {
+    public @NonNull ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state, boolean includeData, Player player) {
         return Items.CAULDRON.getDefaultInstance();
     }
 
@@ -51,7 +57,7 @@ public class IceOrSnowCauldronBlock extends AbstractCauldronBlock {
     }
 
     @Override
-    protected @NotNull InteractionResult useItemOn(@NotNull ItemStack stack, BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hitResult) {
+    protected @NonNull InteractionResult useItemOn(@NonNull ItemStack stack, BlockState state, @NonNull Level level, @NonNull BlockPos pos, @NonNull Player player, @NonNull InteractionHand hand, @NonNull BlockHitResult hitResult) {
         Block block = state.getBlock();
         if (block == BlockRegistry.snow_cauldron.get() && stack.is(ItemTags.SHOVELS)) {
             return givePlayerResult(stack, new ItemStack(Items.SNOWBALL, 4), Blocks.SNOW.defaultBlockState(), level, pos, player);
@@ -66,7 +72,7 @@ public class IceOrSnowCauldronBlock extends AbstractCauldronBlock {
         return true;
     }
 
-    protected static @NotNull InteractionResult givePlayerResult(ItemStack stack, ItemStack result, BlockState state, Level level, BlockPos pos, Player player) {
+    protected static @NonNull InteractionResult givePlayerResult(ItemStack stack, ItemStack result, BlockState state, Level level, BlockPos pos, Player player) {
         if (!level.isClientSide()) {
             player.getInventory().add(result);
             player.awardStat(Stats.USE_CAULDRON);
@@ -109,7 +115,7 @@ public class IceOrSnowCauldronBlock extends AbstractCauldronBlock {
                 });
     }
 
-    protected static void fillEmptyCauldron(Level level, BlockPos pos, Player player, InteractionHand hand, ItemStack filledStack, BlockState state, SoundEvent soundEvent) {
+    public static void fillEmptyCauldron(Level level, BlockPos pos, Player player, InteractionHand hand, ItemStack filledStack, BlockState state, SoundEvent soundEvent) {
         if (CommonConfig.Debug.disableIceOrSnowCauldron.get()) return;
         if (!level.isClientSide()) {
             filledStack.consume(1, player);

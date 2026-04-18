@@ -21,7 +21,7 @@ import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.item.crafting.Ingredient;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.awt.*;
 
@@ -40,12 +40,12 @@ public class GreenHouseCoreRecipeCategory implements IRecipeCategory<GreenHouseC
    }
 
    @Override
-   public @NotNull IRecipeType<GreenHouseCoreRecipe> getRecipeType() {
+   public @NonNull IRecipeType<GreenHouseCoreRecipe> getRecipeType() {
        return ESJEIPlugin.GREENHOUSE_CORE_TYPE;
    }
 
    @Override
-   public @NotNull Component getTitle() {
+   public @NonNull Component getTitle() {
        return Component.translatable("info.eclipticseasons.recipe_category.greenhouse_ritual");
    }
 
@@ -59,7 +59,7 @@ public class GreenHouseCoreRecipeCategory implements IRecipeCategory<GreenHouseC
         return 45;
     }
 
-    public @NotNull IDrawable getBackground() {
+    public @NonNull IDrawable getBackground() {
        return blankDrawable;
    }
 

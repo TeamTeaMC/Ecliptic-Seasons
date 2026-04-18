@@ -13,7 +13,7 @@ import net.minecraft.core.HolderSet;
 import net.minecraft.core.RegistryCodecs;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.biome.Biome;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.Optional;
 
@@ -46,7 +46,7 @@ public record BiomeColor(
     );
 
 
-    public @NotNull Instance toInstance() {
+    public @NonNull Instance toInstance() {
         Enum2ObjectMap<SolarTerm, ColorMode> grassMap = grassColor.orElse(EMPTY_MODE_MAP).combine();
         Enum2ObjectMap<SolarTerm, ColorMode> foliageMap = foliageColor.orElse(EMPTY_MODE_MAP).combine();
         Enum2ObjectMap<SolarTerm, ColorMode> skyMap = skyColor.orElse(EMPTY_MODE_MAP).combine();

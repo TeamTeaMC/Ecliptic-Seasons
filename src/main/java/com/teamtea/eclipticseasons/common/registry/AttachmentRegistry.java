@@ -15,7 +15,7 @@ import it.unimi.dsi.fastutil.objects.Object2IntLinkedOpenHashMap;
 import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.function.Supplier;
 
@@ -52,7 +52,7 @@ public class AttachmentRegistry {
                     .build());
 
 
-    public static final Supplier<AttachmentType<@NotNull HeatStrokeTicker>> HEAT_STROKE_TICKER = ATTACHMENT_TYPES.register(
+    public static final Supplier<AttachmentType<@NonNull HeatStrokeTicker>> HEAT_STROKE_TICKER = ATTACHMENT_TYPES.register(
             "heat_stroke_ticker",
             () -> AttachmentType.builder(HeatStrokeTicker::empty)
                     .build());

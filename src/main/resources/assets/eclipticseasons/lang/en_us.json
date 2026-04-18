@@ -62,5 +62,6 @@
   "eclipticseasons.configuration.ExtraSnowLayerCulling": "Extra Snow Layer Culling",
   "eclipticseasons.configuration.ShouldInitSnowForExtremeColdBiomes": "Should Init Snow Status for Extreme Cold Biomes",
   "eclipticseasons.configuration.ExtraSnowLayerMaxLayers": "Extra Snow Layer Max Layers",
-  "eclipticseasons.configuration.ExtraSnowLayerMaxLayersOnLeaves": "Extra Snow Layer Max Layers on Leaves"
+  "eclipticseasons.configuration.ExtraSnowLayerMaxLayersOnLeaves": "Extra Snow Layer Max Layers on Leaves",
+  "eclipticseasons.configuration.SpringGrass": "Spring grass and wildflowers"
 }

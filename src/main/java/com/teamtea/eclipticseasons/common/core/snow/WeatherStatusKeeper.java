@@ -30,9 +30,9 @@ import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.neoforged.neoforge.attachment.IAttachmentHolder;
 import net.neoforged.neoforge.attachment.IAttachmentSerializer;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
-import javax.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.*;
 
 
@@ -204,14 +204,14 @@ public class WeatherStatusKeeper {
         }
 
         //@Override
-        //public @NotNull WeatherStatusKeeper read(@NotNull IAttachmentHolder holder, @NotNull Tag tag, HolderLookup.@NotNull Provider provider) {
+        //public @NonNull WeatherStatusKeeper read(@NonNull IAttachmentHolder holder, @NonNull Tag tag, HolderLookup.@NonNull Provider provider) {
         //    if (!EclipticUtil.canSnowyBlockInteract()) return create();
         //    Optional<WeatherStatusKeeper> result = CODEC.parse(provider.createSerializationContext(NbtOps.INSTANCE), tag).result();
         //    return result.orElseGet(WeatherStatusKeeper::create);
         //}
         //
         //@Override
-        //public Tag write(@NotNull WeatherStatusKeeper attachment, HolderLookup.@NotNull Provider provider) {
+        //public Tag write(@NonNull WeatherStatusKeeper attachment, HolderLookup.@NonNull Provider provider) {
         //    if (!EclipticUtil.canSnowyBlockInteract()) new CompoundTag();
         //    if (attachment.cacheTag != null) return attachment.cacheTag;
         //    Optional<Tag> result = CODEC.encodeStart(provider.createSerializationContext(NbtOps.INSTANCE), attachment).result();

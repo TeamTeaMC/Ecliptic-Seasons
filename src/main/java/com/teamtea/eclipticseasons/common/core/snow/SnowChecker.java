@@ -10,7 +10,7 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.IdentityHashMap;
 import java.util.List;
@@ -23,7 +23,7 @@ public class SnowChecker {
 
     public static final Map<BlockState, SnowDefinition.Info> statemap = new IdentityHashMap<>(4096);
 
-    public static @NotNull SnowDefinition.Info getUncacheSnow(BlockState blockState) {
+    public static SnowDefinition.@NonNull Info getUncacheSnow(BlockState blockState) {
         SnowDefinition.Info sno = statemap.get(blockState);
         if (sno == null) {
             SnowDefinition snowDefinition = null;

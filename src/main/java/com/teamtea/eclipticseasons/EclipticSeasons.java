@@ -44,7 +44,6 @@ public class EclipticSeasons {
         modEventBus.addListener(CommonConfig::UpdateConfig);
         modEventBus.addListener(ClientConfig::UpdateConfig);
         modEventBus.addListener(this::FMLCommonSetup);
-        modEventBus.addListener(this::FMLCommonSetup);
         modEventBus.addListener(this::gatherData);
         modEventBus.addListener(this::gatherData2);
         modEventBus.addListener(CompatModule::onInterModEnqueue);
@@ -101,7 +100,7 @@ public class EclipticSeasons {
         // SimpleNetworkHandler.init();
         // CompatModule.init();
         event.enqueueWork(CompatModule::setup);
-        event.enqueueWork(IceOrSnowCauldronBlock::init);
+        // event.enqueueWork(IceOrSnowCauldronBlock::init);
     }
 
 

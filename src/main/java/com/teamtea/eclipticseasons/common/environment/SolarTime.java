@@ -4,6 +4,7 @@ import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.solar.TimePeriod;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.api.util.SimpleUtil;
+import com.teamtea.eclipticseasons.api.util.WeatherUtil;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.core.solar.SolarAngelHelper;
@@ -53,7 +54,11 @@ public class SolarTime {
                 }
         );
 
-        ClientCon.getAgent().attachEnvironment(level,environmentAttributes);
+        ClientCon.getAgent().attachEnvironment(level, environmentAttributes);
+
+        environmentAttributes.addPositionalLayer(EnvironmentAttributes.BEES_STAY_IN_HIVE, (baseValue, pos, biomeInterpolator) ->
+                EclipticSeasonsApi.getInstance().isNight(level)
+                        || WeatherUtil.isBlockInRainOrSnow(level, BlockPos.containing(pos)));
     }
 
 
@@ -95,7 +100,7 @@ public class SolarTime {
                     Timeline.TimeMarkerInfo timeMarkerInfo = timeline.timeMarkers.get(key);
                     if (timeMarkerInfo == null) continue;
                     // int ticks = SolarAngelHelper.getSolarAngelTime(clock, value.ticks(), periodTicks);
-                    int ticks = SolarAngelHelper.getDayTimeFromSolarAngelTime(clock, timeMarkerInfo.ticks(), periodTicks,key);
+                    int ticks = SolarAngelHelper.getDayTimeFromSolarAngelTime(clock, timeMarkerInfo.ticks(), periodTicks, key);
                     ClockTimeMarker clockTimeMarker = new ClockTimeMarker(value.clock(), ticks, value.periodTicks(), value.showInCommands());
                     timeMarkers.put(key, clockTimeMarker);
                 }

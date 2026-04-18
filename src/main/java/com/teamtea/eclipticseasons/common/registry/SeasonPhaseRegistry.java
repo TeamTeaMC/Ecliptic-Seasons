@@ -189,8 +189,8 @@ public class SeasonPhaseRegistry {
                             solarTerm.getIconWidth(),
                             solarTerm.getIconHeight(),
                             solarTerm.getIconAtlasSize(),
-                            solarTerm.getIconPosition().getKey(),
-                            solarTerm.getIconPosition().getValue()
+                            solarTerm.getIconPosition().getFirst(),
+                            solarTerm.getIconPosition().getSecond()
                     )),
                     new SeasonPhase.FontIcon(solarIcons, solarTerm.getFontLabel())
             ));
@@ -204,8 +204,8 @@ public class SeasonPhaseRegistry {
                             solarTerm.getIconWidth(),
                             solarTerm.getIconHeight(),
                             solarTerm.getIconAtlasSize(),
-                            solarTerm.getIconPosition().getKey(),
-                            solarTerm.getIconPosition().getValue()
+                            solarTerm.getIconPosition().getFirst(),
+                            solarTerm.getIconPosition().getSecond()
                     )),
                     new SeasonPhase.FontIcon(solarIcons, solarTerm.getFontLabel())
             ));

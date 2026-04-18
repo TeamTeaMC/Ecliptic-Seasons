@@ -25,7 +25,7 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.*;
 import java.util.stream.Stream;
@@ -100,7 +100,7 @@ public class IceWandItem extends Item {
 
 
     @Override
-    public @NotNull InteractionResult useOn(UseOnContext pContext) {
+    public @NonNull InteractionResult useOn(UseOnContext pContext) {
 
         if (pContext.getHand() == InteractionHand.MAIN_HAND) {
             var level = pContext.getLevel();

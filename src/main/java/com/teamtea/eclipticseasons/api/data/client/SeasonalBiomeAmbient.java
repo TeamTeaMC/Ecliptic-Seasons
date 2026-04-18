@@ -17,7 +17,7 @@ import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.level.biome.Biome;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.Optional;
 
@@ -36,6 +36,7 @@ public class SeasonalBiomeAmbient {
             Codec.BOOL.optionalFieldOf("rain", false).forGetter(o -> o.rain),
             CodecUtil.holderCodec(ESRegistries.AGRO_CLIMATE).optionalFieldOf("climate").forGetter(o -> o.climate),
             CodecUtil.holderSetCodec(Registries.BIOME).optionalFieldOf("biomes", HolderSet.empty()).forGetter(o -> o.biomes),
+            CodecUtil.holderSetCodec(Registries.BIOME).optionalFieldOf("ignored_biomes", HolderSet.empty()).forGetter(o -> o.ignored_biomes),
             CodecUtil.holderCodec(Registries.SOUND_EVENT).fieldOf("sound").forGetter(o -> o.sound),
             Codec.BOOL.optionalFieldOf("loop", true).forGetter(o -> o.loop),
             Codec.INT.optionalFieldOf("seed", -1).forGetter(o -> o.seed),
@@ -65,7 +66,9 @@ public class SeasonalBiomeAmbient {
     private final Optional<Holder<AgroClimaticZone>> climate = Optional.empty();
     @Builder.Default
     private final HolderSet<Biome> biomes = HolderSet.empty();
-    @NotNull
+    @Builder.Default
+    private final HolderSet<Biome> ignored_biomes = HolderSet.empty();
+    @NonNull
     private final Holder<SoundEvent> sound;
     @Builder.Default
     private final boolean loop = true;

@@ -21,7 +21,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.EnumMap;
 import java.util.List;
@@ -64,7 +64,7 @@ public record LeafColor(
         return Pair.of(blockPredicate().blocks().orElse(HolderSet.empty()), toInstance());
     }
 
-    public @NotNull Pair<InstanceHolder, Instance> toInstance() {
+    public @NonNull Pair<InstanceHolder, Instance> toInstance() {
         Enum2ObjectMap<SolarTerm, ColorMode> colorMap = colors.orElse(EMPTY_MODE_MAP).combine();
         Enum2ObjectMap<SolarTerm, List<Identifier>> spriteMap = sprites.orElse(EMPTY_LIST_MAP).combine();
         Enum2ObjectMap<SolarTerm, Integer> weightMap = weights.orElse(EMPTY_INTEGER_MAP).combine();
@@ -90,7 +90,7 @@ public record LeafColor(
         }
 
         @Override
-        public @NotNull String getSerializedName() {
+        public @NonNull String getSerializedName() {
             return toString().toLowerCase(Locale.ROOT);
         }
     }

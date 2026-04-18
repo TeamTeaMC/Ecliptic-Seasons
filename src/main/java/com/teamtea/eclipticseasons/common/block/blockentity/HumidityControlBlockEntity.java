@@ -23,7 +23,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 public class HumidityControlBlockEntity extends SyncBlockEntity {
     protected HumidityControl humidityControl;
@@ -58,7 +58,7 @@ public class HumidityControlBlockEntity extends SyncBlockEntity {
         super.setRemoved();
     }
 
-    protected boolean isRecipeCacheValid(@NotNull HumidityControl humidityControl) {
+    protected boolean isRecipeCacheValid(@NonNull HumidityControl humidityControl) {
         if (level instanceof ServerLevel serverLevel) {
             for (PosAndBlockStateCheck c : humidityControl.checks()) {
                 if (!c.matches(serverLevel, getBlockPos())) {

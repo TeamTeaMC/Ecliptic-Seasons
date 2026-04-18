@@ -576,6 +576,8 @@
   "item.eclipticseasons.winter_greenhouse_essence": "冬季温室心髓",
   "itemGroup.eclipticseasons.core": "节气",
   "jukebox_song.eclipticseasons.snowless_hometown": "北山薇 & 橙子苏打 等",
+  "key.category.eclipticseasons.main": "节气",
+  "keys.eclipticseasons.main/debug": "调试界面信息",
   "pack.eclipticseasons.extra_snow": "额外覆雪方块资源包",
   "pack.eclipticseasons.legacy_snowy_block": "经典覆雪方块模型资源包",
   "pack.eclipticseasons.rain_together": "一起下雨",

@@ -31,7 +31,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -68,12 +68,12 @@ public class JEIHumidityControlCategory implements IRecipeCategory<HumidityContr
 
 
    @Override
-   public @NotNull IRecipeType<HumidityControl> getRecipeType() {
+   public @NonNull IRecipeType<HumidityControl> getRecipeType() {
        return ESJEIPlugin.HUMIDITY_CONTROL_RECIPE_TYPE;
    }
 
    @Override
-   public @NotNull Component getTitle() {
+   public @NonNull Component getTitle() {
        return Component.translatable("info.eclipticseasons.humidity_control");
    }
 
@@ -87,7 +87,7 @@ public class JEIHumidityControlCategory implements IRecipeCategory<HumidityContr
         return 60;
     }
 
-   public @NotNull IDrawable getBackground() {
+   public @NonNull IDrawable getBackground() {
        return blankDrawable;
    }
 
@@ -98,7 +98,7 @@ public class JEIHumidityControlCategory implements IRecipeCategory<HumidityContr
 
 
    @Override
-   public void setRecipe(IRecipeLayoutBuilder builder, HumidityControl recipe, @NotNull IFocusGroup ingredients) {
+   public void setRecipe(IRecipeLayoutBuilder builder, HumidityControl recipe, @NonNull IFocusGroup ingredients) {
 
        builder.addSlot(RecipeIngredientRole.INPUT, 16, 8)
                .add(recipe.ingredient().ingredient());
@@ -158,7 +158,7 @@ public class JEIHumidityControlCategory implements IRecipeCategory<HumidityContr
    }
 
    @Override
-   public void draw(HumidityControl recipe, @NotNull IRecipeSlotsView recipeSlotsView, @NotNull GuiGraphicsExtractor
+   public void draw(HumidityControl recipe, @NonNull IRecipeSlotsView recipeSlotsView, @NonNull GuiGraphicsExtractor
            guiGraphics, double mouseX, double mouseY) {
        int startX = (int) (guiGraphics.pose().m20());
        int startY = (int) (guiGraphics.pose().m21());

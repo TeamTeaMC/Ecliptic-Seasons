@@ -7,7 +7,7 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.EntityTypeTagsProvider;
 import net.minecraft.world.entity.EntityType;
 
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.CompletableFuture;
@@ -18,7 +18,7 @@ public class ESEntityTypeTagsProvider extends EntityTypeTagsProvider {
     }
 
     @Override
-    public void addTags(HolderLookup.@NotNull Provider lookupProvider) {
+    public void addTags(HolderLookup.@NonNull Provider lookupProvider) {
 
         for (BreedSeasonType value : BreedSeasonType.values()) {
             tag(value.getTag());

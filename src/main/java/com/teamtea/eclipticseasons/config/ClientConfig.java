@@ -38,7 +38,7 @@ public class ClientConfig {
             smoothSnowyEdges = builder.comment("Renders decorative snow edges on adjacent blocks for seamless terrain transitions.")
                     .define("SmoothSnowyEdges", false);
             minChunkCompileWarningTime = builder.comment("Sets the threshold (in ms) for chunk compilation before logging a performance warning.")
-                    .defineInRange("MinChunkCompileWarningTime", 100, 5, 2000);
+                    .defineInRange("MinChunkCompileWarningTime", 1000, 5, 2000);
 
             frozenWater = builder.comment("Visual effect: Surface water appears to be covered by a thin, cosmetic layer of ice.")
                     .define("FrozenWater", false);

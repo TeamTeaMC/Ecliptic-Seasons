@@ -12,7 +12,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.neoforged.neoforge.attachment.AttachmentSyncHandler;
 import net.neoforged.neoforge.attachment.IAttachmentHolder;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
@@ -28,7 +28,7 @@ public class SnowyStatusHandler implements AttachmentSyncHandler<SnowyStatusKeep
     }
 
     @Override
-    public void write(@NotNull RegistryFriendlyByteBuf buf, @NotNull SnowyStatusKeeper attachment, boolean initialSync) {
+    public void write(@NonNull RegistryFriendlyByteBuf buf, @NonNull SnowyStatusKeeper attachment, boolean initialSync) {
         if (!EclipticUtil.canSnowyBlockInteract()) return;
 
         buf.writeBoolean(initialSync);
@@ -54,7 +54,7 @@ public class SnowyStatusHandler implements AttachmentSyncHandler<SnowyStatusKeep
     }
 
     @Override
-    public @Nullable SnowyStatusKeeper read(@NotNull IAttachmentHolder holder, @NotNull RegistryFriendlyByteBuf buf, @Nullable SnowyStatusKeeper previousValue) {
+    public @Nullable SnowyStatusKeeper read(@NonNull IAttachmentHolder holder, @NonNull RegistryFriendlyByteBuf buf, @Nullable SnowyStatusKeeper previousValue) {
         if (!EclipticUtil.canSnowyBlockInteract()) return previousValue;
         boolean initialSync = buf.readBoolean();
         int size = buf.readVarInt();

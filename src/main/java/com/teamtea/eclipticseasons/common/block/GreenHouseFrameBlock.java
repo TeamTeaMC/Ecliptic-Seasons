@@ -28,7 +28,7 @@ import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import org.jetbrains.annotations.Nullable;
 
 public class GreenHouseFrameBlock extends SimpleEntityBlock {
@@ -39,7 +39,7 @@ public class GreenHouseFrameBlock extends SimpleEntityBlock {
 
 
     @Override
-    protected @NotNull MapCodec<? extends BaseEntityBlock> codec() {
+    protected @NonNull MapCodec<? extends BaseEntityBlock> codec() {
         return simpleCodec(GreenHouseFrameBlock::new);
     }
 

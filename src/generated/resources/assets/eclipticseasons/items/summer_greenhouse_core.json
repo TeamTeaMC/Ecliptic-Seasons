@@ -3,7 +3,7 @@
     "type": "minecraft:special",
     "base": "eclipticseasons:block/block_in_wooden_grate_block",
     "model": {
-      "type": "eclipticseasons:spring_greenhouse_core",
+      "type": "eclipticseasons:greenhouse_core",
       "texture": "eclipticseasons:textures/block/green_house_core_summer.png"
     }
   }

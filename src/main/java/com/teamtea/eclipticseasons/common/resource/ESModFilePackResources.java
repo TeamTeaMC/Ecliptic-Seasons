@@ -16,7 +16,7 @@ import net.minecraft.util.InclusiveRange;
 import net.minecraft.util.Util;
 import net.neoforged.neoforgespi.locating.IModFile;
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
@@ -178,12 +178,12 @@ public class ESModFilePackResources extends AbstractPackResources {
         }
 
         @Override
-        public @NotNull ESModFilePackResources openPrimary(@NotNull PackLocationInfo pLocation) {
+        public @NonNull ESModFilePackResources openPrimary(@NonNull PackLocationInfo pLocation) {
             return new ESModFilePackResources(pLocation, this.modFile, this.content.toString());
         }
 
         @Override
-        public @NotNull PackResources openFull(@NotNull PackLocationInfo pLocation, Pack.Metadata pMetadata) {
+        public @NonNull PackResources openFull(@NonNull PackLocationInfo pLocation, Pack.Metadata pMetadata) {
             ESModFilePackResources packResources = this.openPrimary(pLocation);
             List<String> list = pMetadata.overlays();
             if (list.isEmpty()) {

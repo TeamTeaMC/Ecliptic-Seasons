@@ -10,6 +10,7 @@ import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import com.teamtea.eclipticseasons.compat.vanilla.VanillaWeather;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
@@ -67,7 +68,7 @@ public class MixinLevel implements IBiomeWeatherProvider {
     private void eclipticseasons$precipitationAt_endBiomeCheck(BlockPos pos, CallbackInfoReturnable<Biome.Precipitation> cir) {
         if ((Object) this instanceof ServerLevel level) {
             if (EclipticUtil.hasLocalWeather(level)) {
-                cir.setReturnValue(WeatherManager.getRainOrSnow(level, MapChecker.getSurfaceBiome(level,pos).value(), pos));
+                cir.setReturnValue(WeatherManager.getRainOrSnow(level, MapChecker.getSurfaceBiome(level, pos).value(), pos));
             }
         }
     }
@@ -142,6 +143,19 @@ public class MixinLevel implements IBiomeWeatherProvider {
     @Override
     public float es$getAverageThunderLevel(float delta) {
         return es$averageThunderLevel;
+    }
+
+    @Unique
+    Holder<Biome> es$coreBiome;
+
+    @Override
+    public Holder<Biome> es$getCoreBiome() {
+        return es$coreBiome;
+    }
+
+    @Override
+    public void es$setCoreBiome(Holder<Biome> biomeHolder) {
+        this.es$coreBiome = biomeHolder;
     }
 
     @Override

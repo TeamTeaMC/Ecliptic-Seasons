@@ -25,7 +25,7 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.util.profiling.ProfilerFiller;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.NonNull;
 
 import java.io.IOException;
@@ -174,7 +174,7 @@ public class ClientJsonCacheListener<T> extends SimplePreparableReloadListener<M
     }
 
     // @Override
-    // protected void apply(@NotNull Map<Identifier, JsonElement> object, @NotNull ResourceManager resourceManager, @NotNull ProfilerFiller profiler) {
+    // protected void apply(@NonNull Map<Identifier, JsonElement> object, @NonNull ResourceManager resourceManager, @NonNull ProfilerFiller profiler) {
     //     this.elementMap.clear();
     //     this.elementMap.putAll(object);
     // }
@@ -193,7 +193,7 @@ public class ClientJsonCacheListener<T> extends SimplePreparableReloadListener<M
         return getIdentifierTMap(codec, dynamicops);
     }
 
-    private @NotNull Map<Identifier, T> getIdentifierTMap(Codec<T> codec, DynamicOps<JsonElement> dynamicops) {
+    private @NonNull Map<Identifier, T> getIdentifierTMap(Codec<T> codec, DynamicOps<JsonElement> dynamicops) {
         Map<Identifier, T> map = new HashMap<>();
         this.elementMap.forEach(
                 (Identifier, jsonElement) -> {
@@ -220,7 +220,7 @@ public class ClientJsonCacheListener<T> extends SimplePreparableReloadListener<M
     }
 
     @Override
-    public @NotNull String getName() {
+    public @NonNull String getName() {
         return directory;
     }
 }

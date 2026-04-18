@@ -34,7 +34,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -72,12 +72,12 @@ public class JEIWetterCategory implements IRecipeCategory<WetterStructure> {
 
 
     @Override
-    public @NotNull IRecipeType<WetterStructure> getRecipeType() {
+    public @NonNull IRecipeType<WetterStructure> getRecipeType() {
         return ESJEIPlugin.WETTER_TYPE;
     }
 
     @Override
-    public @NotNull Component getTitle() {
+    public @NonNull Component getTitle() {
         return Component.translatable("info.eclipticseasons.recipe_category.wetter");
     }
 
@@ -92,7 +92,7 @@ public class JEIWetterCategory implements IRecipeCategory<WetterStructure> {
     }
 
 
-    public @NotNull IDrawable getBackground() {
+    public @NonNull IDrawable getBackground() {
         return blankDrawable;
     }
 
@@ -103,7 +103,7 @@ public class JEIWetterCategory implements IRecipeCategory<WetterStructure> {
 
 
     @Override
-    public void setRecipe(IRecipeLayoutBuilder builder, WetterStructure recipe, @NotNull IFocusGroup ingredients) {
+    public void setRecipe(IRecipeLayoutBuilder builder, WetterStructure recipe, @NonNull IFocusGroup ingredients) {
         for (PosAndBlockStateCheck check : recipe.checks()) {
             if (check.block().blocks().isPresent() && check.block().blocks().get().size() > 0) {
                 for (Holder<Block> blockHolder : check.block().blocks().get()) {
@@ -155,7 +155,7 @@ public class JEIWetterCategory implements IRecipeCategory<WetterStructure> {
     }
 
     @Override
-    public void draw(WetterStructure recipe, @NotNull IRecipeSlotsView recipeSlotsView, @NotNull GuiGraphicsExtractor
+    public void draw(WetterStructure recipe, @NonNull IRecipeSlotsView recipeSlotsView, @NonNull GuiGraphicsExtractor
             guiGraphics, double mouseX, double mouseY) {
 
         int startX = (int) (guiGraphics.pose().m20());

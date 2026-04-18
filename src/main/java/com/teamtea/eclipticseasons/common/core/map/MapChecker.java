@@ -42,10 +42,10 @@ import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.chunk.status.ChunkStatus;
 import net.minecraft.world.level.levelgen.Heightmap;
-import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+
 import java.util.*;
 
 public class MapChecker {
@@ -279,9 +279,9 @@ public class MapChecker {
     }
 
     public static int getMCHeightWithCheck(Level level, BlockPos pos,
-                                           @Nonnull ChunkAccess chunkAt,
+                                           @NonNull ChunkAccess chunkAt,
                                            @Nullable SnowyRemover snowyRemover,
-                                           @Nullable BlockPos.MutableBlockPos checkPos,
+                                           BlockPos.@Nullable MutableBlockPos checkPos,
                                            @Nullable Integer oldHeight) {
         if (oldHeight != null
                 && (oldHeight <= level.getMaxY()
@@ -348,7 +348,7 @@ public class MapChecker {
         );
     }
 
-    public static int getHeightSafe(@NotNull Level level, BlockPos pos) {
+    public static int getHeightSafe(@NonNull Level level, BlockPos pos) {
         ChunkInfoMap chunkMap = getChunkMap(level, pos);
         if (chunkMap != null) {
             return chunkMap.getHeight(pos);
@@ -458,7 +458,7 @@ public class MapChecker {
         return getChunkInfoMapOrCreate(level, x, z);
     }
 
-    public static @NotNull ChunkInfoMap getChunkInfoMapOrCreate(@NotNull Level level, int regionX, int regionZ) {
+    public static @NonNull ChunkInfoMap getChunkInfoMapOrCreate(@NonNull Level level, int regionX, int regionZ) {
 
         List<ChunkInfoMap> mapsList = getMapsListOrCreate(level);
         ChunkInfoMap map = getChunkMap(mapsList, regionX, regionZ);
@@ -591,7 +591,7 @@ public class MapChecker {
         return true;
     }
 
-    public static boolean isAboveSnowLine(@NotNull Level level, Biome biome, BlockPos pos) {
+    public static boolean isAboveSnowLine(@NonNull Level level, Biome biome, BlockPos pos) {
         return isAboveSnowLine(biome, pos.getY(), level instanceof ServerLevel);
     }
 
@@ -603,7 +603,7 @@ public class MapChecker {
      * Checks whether snow can cover this block.
      * Used only for regular queries.
      */
-    public static boolean shouldSnowAt(@Nonnull Level level, BlockPos pos, BlockState state, RandomSource random, long seed) {
+    public static boolean shouldSnowAt(@NonNull Level level, BlockPos pos, BlockState state, RandomSource random, long seed) {
         if (SnowyMapChecker.shouldCheckSnowyStatus(level, pos) && notWater(state)) {
             return SnowyMapChecker.isSnowyBlock(level, pos);
         }
@@ -624,7 +624,7 @@ public class MapChecker {
      * Checks whether this block can be covered with snow.
      * Used only during accelerated rendering.
      */
-    public static boolean shouldSnowAt(@Nonnull Level level, BlockPos pos, int biomeId, BlockState state, @Nullable RandomSource random, long seed) {
+    public static boolean shouldSnowAt(@NonNull Level level, BlockPos pos, int biomeId, BlockState state, @Nullable RandomSource random, long seed) {
         if (SnowyMapChecker.shouldCheckSnowyStatus(level, pos) && notWater(state)) {
             return SnowyMapChecker.isSnowyBlock(level, pos);
         }
@@ -649,19 +649,19 @@ public class MapChecker {
      * Checks whether this block can be covered with snow.
      * Used only when positional information is unavailable.
      */
-    public static boolean shouldSnowAtBiome(@Nonnull Level level, Biome biome, BlockState state, RandomSource random, long seed, BlockPos mcPos) {
+    public static boolean shouldSnowAtBiome(@NonNull Level level, Biome biome, BlockState state, RandomSource random, long seed, BlockPos mcPos) {
         if (isAboveSnowLine(level, biome, mcPos)) {
             return true;
         }
         return WeatherManager.getSnowDepthAtBiome(level, biome) > Math.abs(seed % 100);
     }
 
-    public static boolean isSmallBiome(@Nonnull Holder<Biome> biomeHolder) {
+    public static boolean isSmallBiome(@NonNull Holder<Biome> biomeHolder) {
         // return BiomeClimateManager.SMALL_BIOME_MAP.containsKey(biomeHolder.value());
         return biomeHolder != null && isSmallBiome(biomeHolder.value());
     }
 
-    public static boolean isSmallBiome(@Nonnull Biome biomeHolder) {
+    public static boolean isSmallBiome(@NonNull Biome biomeHolder) {
         return ((IBiomeTagHolder) (Object) biomeHolder).eclipticseasons$isSmallBiome();
     }
 
@@ -1098,7 +1098,7 @@ public class MapChecker {
     }
 
     // todo 这里注意用接口走set
-    public static @NotNull BiomeHolder getOrUpdateChunkBiomeData(ServerLevel serverLevel, ChunkAccess
+    public static @NonNull BiomeHolder getOrUpdateChunkBiomeData(ServerLevel serverLevel, ChunkAccess
             chunk, ChunkPos chunkPos) {
         int biomeDataVersion = EclipticUtil.getBiomeDataVersion(serverLevel);
         BiomeHolder biomeHolder;

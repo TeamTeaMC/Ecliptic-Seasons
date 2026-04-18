@@ -22,7 +22,8 @@ import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.core.snow.SnowChecker;
 import com.teamtea.eclipticseasons.common.registry.BlockRegistry;
 import com.teamtea.eclipticseasons.compat.Platform;
-import com.teamtea.eclipticseasons.compat.ctm.CTMSpriteChecker;
+import com.teamtea.eclipticseasons.compat.ctm.CtmLoader;
+import com.teamtea.eclipticseasons.compat.ctm.CtmProperties;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Sheets;
@@ -31,6 +32,7 @@ import net.minecraft.client.renderer.block.dispatch.BlockStateModelDispatcher;
 import net.minecraft.client.renderer.block.dispatch.multipart.MultiPartModel;
 import net.minecraft.client.renderer.block.dispatch.multipart.Selector;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
+import net.minecraft.client.renderer.texture.SpriteContents;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelDebugName;
@@ -39,7 +41,7 @@ import net.minecraft.client.resources.model.sprite.SpriteId;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
-import net.minecraft.util.profiling.Profiler;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SlabBlock;
@@ -56,7 +58,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-public class ExtraModelManager {
+public class AttachModelManager {
     public static int loadVersion = 0;
     public static ModelBakery.BakingResult models;
 
@@ -64,22 +66,51 @@ public class ExtraModelManager {
         return new BlockPos.MutableBlockPos(pos.getX(), pos.getY(), pos.getZ());
     }
 
-    public static boolean isModelReplaceable(int flag) {
+    public static boolean isModelReplaceable(BlockStateModel snowOverlay, int flag) {
+        if (snowOverlay instanceof ReplacingBlockStateModel rp)
+            return rp.replace();
         return flag == MapChecker.FLAG_GRASS
                 || flag == MapChecker.FLAG_GRASS_LARGE;
     }
 
-    public static boolean isSpecialCTMSprite(TextureAtlasSprite textureAtlasSprite) {
-        return textureAtlasSprite instanceof CTMSpriteChecker checker && checker.isCTMSprite();
+    public static Map<Block, CtmProperties> ctmStates = new IdentityHashMap<>();
+    public static Map<Identifier, Void> ctmTiles = new HashMap<>();
+
+    public static boolean isSpecialCTMBlock(BlockState blockState) {
+        if (ctmStates.isEmpty()) return false;
+        CtmProperties orDefault = ctmStates.getOrDefault(blockState.getBlock(), null);
+        return orDefault != null && orDefault.matches(blockState);
     }
 
+    public static boolean isSpecialCTMSprite(TextureAtlasSprite sprite) {
+        if (ctmTiles.isEmpty()) return false;
+        try {
+            SpriteContents spriteContents = sprite.contents();
+            return ctmTiles.containsKey(spriteContents.name());
+        } catch (Exception exception) {
+            EclipticSeasons.logger(exception);
+        }
+        return false;
+    }
+
+    public static void initCTMDetected() {
+        long l = System.currentTimeMillis();
+        ctmStates.clear();
+        ctmTiles.clear();
+
+        CtmLoader.CTMLoadingResult ctmLoadingResult = CtmLoader.loadAll(Minecraft.getInstance().getResourceManager());
+        ctmStates = ctmLoadingResult.ctmStates;
+        ctmTiles = ctmLoadingResult.ctmTiles;
+
+        EclipticSeasons.logger("CTM detector cost %s ms".formatted(System.currentTimeMillis() - l));
+    }
     // public static final Map<Identifier, ESModelLoadedJson> extraSnowModels = HashMap.newHashMap(1024);
 
     public static final Map<Identifier, ModelResolver> extraSnowModelBuilds = HashMap.newHashMap(1024);
 
 
     public static void clearForRebaked(ModelBakery.BakingResult modelRegistry) {
-        ExtraModelManager.models = modelRegistry;
+        AttachModelManager.models = modelRegistry;
 
         for (Identifier identifier : SEASONAL_TEXTURE_HASH_MAP.keySet()) {
             Set<BlockState> blockStates = MyResolver.INSTANCE.getUsedModel().getOrDefault(identifier, Set.of());
@@ -100,7 +131,7 @@ public class ExtraModelManager {
         DerivedSnowyBlockStateModel.PART_CACHE_MAP.clear();
 
         loadVersion++;
-        // initCTMDetected();
+        initCTMDetected();
         if (ClientCon.getUseLevel() != null) {
             ClientRef.updateClientSide(ClientCon.getUseLevel().registryAccess());
         }
@@ -115,18 +146,18 @@ public class ExtraModelManager {
 
     public static void prepareTextureMapping() {
         ClientJsonCacheListener.textureReMappingsCache.prepareAsync(Minecraft.getInstance().getResourceManager());
-        ExtraModelManager.SEASONAL_TEXTURE_HASH_MAP.clear();
+        AttachModelManager.SEASONAL_TEXTURE_HASH_MAP.clear();
         Map<Identifier, SeasonalTexture> build = ClientJsonCacheListener.textureReMappingsCache.build(SeasonalTexture.CODEC);
         build.forEach(
                 (Identifier, seasonalTexture) -> {
                     seasonalTexture = seasonalTexture.build(Identifier);
                     if (seasonalTexture.getParent().isEmpty()) {
-                        List<SeasonalTexture> seasonalTextures = ExtraModelManager.SEASONAL_TEXTURE_HASH_MAP.computeIfAbsent(
+                        List<SeasonalTexture> seasonalTextures = AttachModelManager.SEASONAL_TEXTURE_HASH_MAP.computeIfAbsent(
                                 Identifier.withPrefix("block/"), (xx) -> new ArrayList<>());
                         seasonalTextures.add(seasonalTexture);
                     } else {
                         for (Identifier location : seasonalTexture.getParent()) {
-                            List<SeasonalTexture> seasonalTextures = ExtraModelManager.SEASONAL_TEXTURE_HASH_MAP.computeIfAbsent(
+                            List<SeasonalTexture> seasonalTextures = AttachModelManager.SEASONAL_TEXTURE_HASH_MAP.computeIfAbsent(
                                     location, (xx) -> new ArrayList<>());
                             seasonalTextures.add(seasonalTexture);
                         }
@@ -159,7 +190,7 @@ public class ExtraModelManager {
                     }
                     if (loadedJson.getMultiPart().isPresent()) {
                         BlockStateModelDispatcher.MultiPartDefinition multiPartDefinition = loadedJson.getMultiPart().get();
-                        StandaloneModelKey<BlockStateModel> mrl = ExtraModelManager.extra_mrl(resourceLocation, "0");
+                        StandaloneModelKey<BlockStateModel> mrl = AttachModelManager.extra_mrl(resourceLocation, "0");
                         // registerModelAndDependenceMethod.accept(mrl, loadedJson.getMultiPart().get());
                         registerModelAndDependenceMethod.accept(
                                 mrl,
@@ -190,7 +221,7 @@ public class ExtraModelManager {
 
                         loadedJson.getVariants().get().models().forEach(
                                 (va, multiVariant) -> {
-                                    StandaloneModelKey<BlockStateModel> mrl = ExtraModelManager.extra_mrl(resourceLocation, va.replaceAll("=", "_").replace(",", "_"));
+                                    StandaloneModelKey<BlockStateModel> mrl = AttachModelManager.extra_mrl(resourceLocation, va.replaceAll("=", "_").replace(",", "_"));
 
                                     registerModelAndDependenceMethod.accept(
                                             mrl,
@@ -289,6 +320,10 @@ public class ExtraModelManager {
     // Can not hash
     public static StandaloneModelKey<BlockStateModel> extra_mrl(Identifier Identifier, String v) {
         return new StandaloneModelKey<>(new ModelIDHolder(Identifier.withPrefix("extra/" + (v.isEmpty() ? "" : v + "/"))));
+    }
+
+    public static boolean isSpecialSnowySprite(TextureAtlasSprite textureAtlasSprite) {
+        return textureAtlasSprite.contents().name().toString().contains("snow");
     }
 
     public record ModelIDHolder(Identifier id) implements ModelDebugName {
@@ -460,10 +495,6 @@ public class ExtraModelManager {
     }
 
 
-    public static boolean isSpecialCTMBlock(BlockState state) {
-        return false;
-    }
-
     public static BlockStateModel getSnowLayerModel(int layers) {
         int clampedLayers = Mth.clamp(layers, 1, 8);
         BlockState snowState = Blocks.SNOW.defaultBlockState().setValue(SnowLayerBlock.LAYERS, clampedLayers);
@@ -483,5 +514,21 @@ public class ExtraModelManager {
             return SEASONAL_TEXTURE_HASH_MAP.get(resourceLocation);
         }
         return null;
+    }
+
+    public static boolean renderAsSnowInShader(BlockState state, BlockGetter blockAndTintGetter, BlockPos pos) {
+        int blockType = MapChecker.getDefaultBlockTypeFlag(state);
+        return switch (blockType) {
+            case MapChecker.FLAG_BLOCK,
+                 MapChecker.FLAG_SLAB,
+                 MapChecker.FLAG_STAIRS,
+                 MapChecker.FLAG_STAIRS_TOP,
+                 MapChecker.FLAG_FARMLAND,
+                 MapChecker.FLAG_CUSTOM,
+                 MapChecker.FLAG_CUSTOM_AO,
+                 MapChecker.FLAG_CUSTOM_JSON,
+                 MapChecker.FLAG_CUSTOM_JSON_WITH_TOP -> true;
+            default -> false;
+        };
     }
 }

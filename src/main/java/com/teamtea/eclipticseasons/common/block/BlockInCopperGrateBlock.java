@@ -23,7 +23,7 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import org.jetbrains.annotations.Nullable;
 
 public class BlockInCopperGrateBlock extends WeatheringCopperGrateBlock implements EntityBlock {
@@ -101,7 +101,7 @@ public class BlockInCopperGrateBlock extends WeatheringCopperGrateBlock implemen
     }
 
     @Override
-    protected InteractionResult useItemOn(@NotNull ItemStack stack, @NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hitResult) {
+    protected InteractionResult useItemOn(@NonNull ItemStack stack, @NonNull BlockState state, @NonNull Level level, @NonNull BlockPos pos, @NonNull Player player, @NonNull InteractionHand hand, @NonNull BlockHitResult hitResult) {
         InteractionResult result = getInteractionResult(stack, level, pos);
         if (result == InteractionResult.SUCCESS_SERVER) {
             if (!player.isCreative()) stack.shrink(1);
@@ -112,13 +112,13 @@ public class BlockInCopperGrateBlock extends WeatheringCopperGrateBlock implemen
 
 
     @Override
-    public @Nullable BlockEntity newBlockEntity(@NotNull BlockPos pos, @NotNull BlockState state) {
+    public @Nullable BlockEntity newBlockEntity(@NonNull BlockPos pos, @NonNull BlockState state) {
         return BlockEntityRegistry.block_in_copper_grate_block_entity_type.get().create(pos, state);
     }
 
     @Nullable
     @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level worldIn, @NotNull BlockState state, @NotNull BlockEntityType<T> blockEntityType) {
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level worldIn, @NonNull BlockState state, @NonNull BlockEntityType<T> blockEntityType) {
         // return null;
         return !worldIn.isClientSide()?
                 SimpleEntityBlock.createTickerHelper(blockEntityType, BlockEntityRegistry.block_in_copper_grate_block_entity_type.get(), BlockInCopperGrateBlockEntity::tick) : null;
@@ -126,7 +126,7 @@ public class BlockInCopperGrateBlock extends WeatheringCopperGrateBlock implemen
 
     // note 这里必须要手动处理，因为NeoForge的datamap在此时不可用
     @Override
-    protected boolean isRandomlyTicking(@NotNull BlockState state) {
+    protected boolean isRandomlyTicking(@NonNull BlockState state) {
         return state.getBlock() != BlockRegistry.block_in_oxidized_copper_grate_block.get();
     }
 

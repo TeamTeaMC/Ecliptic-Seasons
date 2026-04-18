@@ -101,8 +101,8 @@ public class CalendarBlockEntityRenderer implements BlockEntityRenderer<Calendar
                             seasonPhaseUsed.getIconWidth(),
                             seasonPhaseUsed.getIconHeight(),
                             seasonPhaseUsed.getIconAtlasSize(),
-                            seasonPhaseUsed.getIconPosition().getKey(),
-                            seasonPhaseUsed.getIconPosition().getValue(),
+                            seasonPhaseUsed.getIconPosition().getFirst(),
+                            seasonPhaseUsed.getIconPosition().getSecond(),
                             matrixStackIn, multiBufferSource, combinedLightIn);
 
                     drawText(1, seasonPhaseUsed.getPatternTranslation().getString(), Optional.ofNullable(seasonPhaseUsed.getColor().getColor()).orElse(-1), matrixStackIn, multiBufferSource);

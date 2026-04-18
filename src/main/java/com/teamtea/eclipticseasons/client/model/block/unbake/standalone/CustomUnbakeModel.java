@@ -8,6 +8,7 @@ package com.teamtea.eclipticseasons.client.model.block.unbake.standalone;
 import java.util.function.BiFunction;
 
 import net.minecraft.client.resources.model.ModelBaker;
+import net.minecraft.client.resources.model.ModelDebugName;
 import net.minecraft.client.resources.model.ResolvableModel;
 import net.neoforged.neoforge.client.model.standalone.UnbakedStandaloneModel;
 import org.jspecify.annotations.NonNull;
@@ -22,9 +23,14 @@ public class CustomUnbakeModel<T> implements UnbakedStandaloneModel<T> {
         this.bake = bake;
     }
 
-    @Override
+
     public T bake(@NonNull ModelBaker baker) {
         return bake.apply(unbaked, baker);
+    }
+
+    @Override
+    public T bake(@NonNull ModelBaker baker, @NonNull ModelDebugName name) {
+        return bake(baker);
     }
 
     @Override

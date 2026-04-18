@@ -28,7 +28,7 @@ import net.minecraft.world.item.equipment.Equippable;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.neoforged.neoforge.attachment.IAttachmentHolder;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.Set;
 
@@ -114,7 +114,7 @@ public class HeatStrokeTicker {
     }
 
 
-    protected void tryApply(Level level, ServerPlayer player, Holder<@NotNull MobEffect> heatStroke) {
+    protected void tryApply(Level level, ServerPlayer player, Holder<@NonNull MobEffect> heatStroke) {
         lastTime = level.getGameTime();
         if (tick < MAX_TICK_COUNT) tick++;
         else {

@@ -1,7 +1,7 @@
 package com.teamtea.eclipticseasons.data.api;
 
 import net.minecraft.data.PackOutput;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.nio.file.Path;
 
@@ -36,7 +36,7 @@ public class MutablePackOutput extends PackOutput {
     }
 
     @Override
-    public @NotNull Path getOutputFolder() {
+    public @NonNull Path getOutputFolder() {
         return outputFolder;
     }
 
