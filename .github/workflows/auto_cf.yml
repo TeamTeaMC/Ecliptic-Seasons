@@ -103,7 +103,7 @@ jobs:
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
           curseforge-id: 1118306
           curseforge-token: "${{ env.CURSEFORGE_TOKEN }}"
-          version-type: release
+          version-type: beta
           changelog-file: changelog.md
           loaders: forge
           game-versions: "${{ env.MINECRAFT_VERSION }}"
