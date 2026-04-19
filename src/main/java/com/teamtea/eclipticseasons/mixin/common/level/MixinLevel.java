@@ -1,14 +1,9 @@
 package com.teamtea.eclipticseasons.mixin.common.level;
 
 
-import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
-import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.teamtea.eclipticseasons.api.misc.IBiomeWeatherProvider;
-import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
-import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.core.BlockPos;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -22,85 +17,13 @@ import java.util.ArrayList;
 public class MixinLevel implements IBiomeWeatherProvider {
 
 
-    @Inject(at = {@At("HEAD")}, method = {"isRaining"}, cancellable = true)
-    private void eclipticseasons$isRaining(CallbackInfoReturnable<Boolean> cir) {
-        if ((Object) this instanceof ServerLevel serverLevel) {
-            if (EclipticUtil.hasLocalWeather(serverLevel)) {
-                if (CommonConfig.Debug.logIllegalUse.get()) {
-                    try {
-                        throw new IllegalCallerException("Use isRainAt to check if rain");
-                    } catch (IllegalCallerException e) {
-                        e.printStackTrace();
-                    }
-                }
-                cir.setReturnValue(WeatherManager.isEffectiveRaining(serverLevel));
-            }
-        }
-    }
-
-    @Inject(at = {@At("HEAD")}, method = {"getRainLevel"}, cancellable = true)
-    private void eclipticseasons$getRainLevel(float p_46723_, CallbackInfoReturnable<Float> cir) {
-        if ((Object) this instanceof ServerLevel serverLevel) {
-            if (EclipticUtil.hasLocalWeather(serverLevel)) {
-                if (CommonConfig.Debug.logIllegalUse.get()) {
-                    try {
-                        throw new IllegalCallerException("Shouldn't call getRainLevel now");
-                    } catch (IllegalCallerException e) {
-                        e.printStackTrace();
-                    }
-                }
-                cir.setReturnValue(WeatherManager.getAverageRainLevel(serverLevel, p_46723_));
-            }
-        }
-    }
-
-    @WrapOperation(at = {@At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;isRaining()Z")}, method = {"isRainingAt"})
-    private boolean eclipticseasons$isRainingAt_skipRainCheck(Level instance, Operation<Boolean> original) {
-        return (EclipticUtil.hasLocalWeather(instance)
-                && instance instanceof ServerLevel) || original.call(instance);
-    }
-
     @Inject(at = {@At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;getBiome(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/core/Holder;")}, method = {"isRainingAt"}, cancellable = true)
     private void eclipticseasons$isRainingAt_endBiomeCheck(BlockPos p_46759_, CallbackInfoReturnable<Boolean> cir) {
-        if ((Object) this instanceof ServerLevel level) {
-            if (EclipticUtil.hasLocalWeather(level)) {
-                cir.setReturnValue(WeatherManager.isRainingUnderSky(level, p_46759_));
-            }
+        if ((Object) this instanceof Level level) {
+            cir.setReturnValue(WeatherManager.isRainingUnderSky(level, p_46759_));
         }
     }
 
-
-    @Inject(at = {@At("HEAD")}, method = {"isThundering"}, cancellable = true)
-    private void eclipticseasons$isThundering(CallbackInfoReturnable<Boolean> cir) {
-        if ((Object) this instanceof ServerLevel serverLevel) {
-            if (EclipticUtil.hasLocalWeather(serverLevel)) {
-                if (CommonConfig.Debug.logIllegalUse.get()) {
-                    try {
-                        throw new IllegalCallerException("Use isThunderingAt to check if rain");
-                    } catch (IllegalCallerException e) {
-                        e.printStackTrace();
-                    }
-                }
-                cir.setReturnValue(WeatherManager.isEffectiveThundering(serverLevel));
-            }
-        }
-    }
-
-    @Inject(at = {@At("HEAD")}, method = {"getThunderLevel"}, cancellable = true)
-    private void eclipticseasons$getThunderLevel(float p_46723_, CallbackInfoReturnable<Float> cir) {
-        if ((Object) this instanceof ServerLevel serverLevel) {
-            if (EclipticUtil.hasLocalWeather(serverLevel)) {
-                if (CommonConfig.Debug.logIllegalUse.get()) {
-                    try {
-                        throw new IllegalCallerException("Shouldn't call getThunderLevel now");
-                    } catch (IllegalCallerException e) {
-                        e.printStackTrace();
-                    }
-                }
-                cir.setReturnValue(WeatherManager.getAverageThunderLevel(serverLevel, p_46723_));
-            }
-        }
-    }
 
     @Unique
     private ArrayList<WeatherManager.BiomeWeather> eclipticseasons$biomeWeathers;
@@ -113,30 +36,5 @@ public class MixinLevel implements IBiomeWeatherProvider {
     @Override
     public void es$set(ArrayList<WeatherManager.BiomeWeather> biomeWeathers) {
         this.eclipticseasons$biomeWeathers = biomeWeathers;
-    }
-
-    @Unique
-    float es$averageRainLevel;
-    @Unique
-    float es$averageThunderLevel;
-
-    @Override
-    public float es$getAverageRainLevel(float delta) {
-        return es$averageRainLevel;
-    }
-
-    @Override
-    public float es$getAverageThunderLevel(float delta) {
-        return es$averageThunderLevel;
-    }
-
-    @Override
-    public void es$setAverageRainLevel(float value) {
-        this.es$averageRainLevel = value;
-    }
-
-    @Override
-    public void es$setAverageThunderLevel(float value) {
-        this.es$averageThunderLevel = value;
     }
 }

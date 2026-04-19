@@ -214,7 +214,7 @@ public final class FogRenderer {
                 this.uNoiseScale
         );
         float rate = 0.5f + 0.5f * ClientCon.getUseLevel().getBrightness(LightLayer.SKY, ClientCon.agent.getCameraEntity().blockPosition()) / 15f;
-        rate *= (ClientWeatherChecker.lastBiomeRainLevel * ClientWeatherChecker.lastBiomeRainLevel);
+        rate *= (ClientCon.getUseLevel().getRainLevel(0) * ClientCon.getUseLevel().getRainLevel(0));
         rate *= fogDensity;
         Shader.uFogData.set(
                 rate * this.uTerrainFogDensity / 10f,

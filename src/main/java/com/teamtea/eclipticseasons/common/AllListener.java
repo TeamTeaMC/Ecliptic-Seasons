@@ -104,30 +104,6 @@ public class AllListener {
     }
 
     @SubscribeEvent
-    public static void onSleepFinishedTimeEvent(PlayerSleepInBedEvent event) {
-        if (event.getResultStatus() == Player.BedSleepingProblem.NOT_POSSIBLE_NOW) {
-            BlockPos pos = event.getPos();
-            Level level = event.getEntity().level();
-            if (pos != null && EclipticUtil.hasLocalWeather(level)
-                    && WeatherManager.isThunderAtBiome(level, pos)) {
-                event.setResult((Player.BedSleepingProblem) null);
-            }
-        }
-    }
-
-    @SubscribeEvent
-    public static void onSleepFinishedTimeEvent(SleepingTimeCheckEvent event) {
-        if (event.getResult() == Event.Result.DEFAULT) {
-            BlockPos pos = event.getSleepingLocation().orElse(null);
-            Level level = event.getEntity().level();
-            if (pos != null && EclipticUtil.hasLocalWeather(level)
-                    && WeatherManager.isThunderAtBiome(level, pos)) {
-                event.setResult(Event.Result.ALLOW);
-            }
-        }
-    }
-
-    @SubscribeEvent
     public static void onSleepFinishedTimeEvent(SleepFinishedTimeEvent event) {
         if (event.getLevel() instanceof ServerLevel level) {
             long newTime = event.getNewTime(), oldDayTime = level.getDayTime();
@@ -233,12 +209,6 @@ public class AllListener {
 
             MapChecker.tickLevel(event.level);
         }
-    }
-
-    @SubscribeEvent
-    public static void onLevelTickPre(TickEvent.LevelTickEvent event) {
-        if (event.phase.equals(TickEvent.Phase.START)&&event.level instanceof ServerLevel)
-            WeatherManager.tickAverageWeather(event.level);
     }
 
     @SubscribeEvent

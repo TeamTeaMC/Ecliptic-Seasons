@@ -19,12 +19,10 @@ import com.teamtea.eclipticseasons.common.core.solar.SolarAngelHelper;
 import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
 import com.teamtea.eclipticseasons.common.game.AnimalHooks;
 import com.teamtea.eclipticseasons.common.misc.MapColorReplacer;
-import com.teamtea.eclipticseasons.compat.vanilla.VanillaWeather;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.biome.Biome;
@@ -108,17 +106,17 @@ public class EclipticUtil {
         return !useSolarWeather();
     }
 
-    public static WeatherMode getWeatherMode(Level level) {
-        if (!useSolarWeather()) return WeatherMode.DEFAULT;
-        return MapChecker.isValidDimension(level) ?
-                WeatherMode.REGION
-                //(CommonConfig.isEnableWeatherRegion() ? WeatherMode.REGION : WeatherMode.BIOME)
-                : WeatherMode.DEFAULT;
-    }
-
-    public static boolean hasLocalWeather(Level level) {
-        return getWeatherMode(level) != WeatherMode.DEFAULT;
-    }
+    // public static WeatherMode getWeatherMode(Level level) {
+    //     if (!useSolarWeather()) return WeatherMode.DEFAULT;
+    //     return MapChecker.isValidDimension(level) ?
+    //             WeatherMode.REGION
+    //             //(CommonConfig.isEnableWeatherRegion() ? WeatherMode.REGION : WeatherMode.BIOME)
+    //             : WeatherMode.DEFAULT;
+    // }
+    //
+    // public static boolean hasLocalWeather(Level level) {
+    //     return getWeatherMode(level) != WeatherMode.DEFAULT;
+    // }
 
     public static boolean canSnowyBlockInteract() {
         return CommonConfig.isSnowInWorld();
@@ -165,7 +163,7 @@ public class EclipticUtil {
 
             @Override
             public boolean hasLocalWeather(Level level) {
-                return EclipticUtil.hasLocalWeather(level);
+                return false;
             }
 
             @Override
@@ -247,14 +245,8 @@ public class EclipticUtil {
 
             @Override
             public boolean isSnowAt(Level level, BlockPos pos) {
-                if (hasLocalWeather(level)) {
-                    if (getRainOrSnow(level, MapChecker.getSurfaceBiome(level, pos).value(), pos) == Biome.Precipitation.NONE) {
-                        return false;
-                    }
-                } else {
-                    if (!level.isRaining() || VanillaWeather.handlePrecipitationAt(level, MapChecker.getSurfaceBiome(level, pos).value(), pos) != Biome.Precipitation.SNOW) {
-                        return false;
-                    }
+                if (getRainOrSnow(level, MapChecker.getSurfaceBiome(level, pos).value(), pos) == Biome.Precipitation.NONE) {
+                    return false;
                 }
                 if (!level.canSeeSky(pos)) {
                     return false;
@@ -280,16 +272,12 @@ public class EclipticUtil {
 
             @Override
             public Biome.Precipitation getPrecipitationAt(Level level, BlockPos pos) {
-                if (hasLocalWeather(level))
-                    return WeatherManager.getPrecipitationAt(level, MapChecker.getSurfaceBiome(level, pos).value(), pos);
-                return VanillaWeather.handlePrecipitationAt(level, MapChecker.getSurfaceBiome(level, pos).value(), pos);
+                return WeatherManager.getPrecipitationAt(level, MapChecker.getSurfaceBiome(level, pos).value(), pos);
             }
 
             @Override
             public Biome.Precipitation getCurrentPrecipitationAt(Level level, BlockPos pos) {
-                if (hasLocalWeather(level))
-                    return EclipticUtil.getRainOrSnow(level, MapChecker.getSurfaceBiome(level, pos).value(), pos);
-                return VanillaWeather.getRainOrSnow(level, MapChecker.getSurfaceBiome(level, pos).value(), pos);
+                return EclipticUtil.getRainOrSnow(level, MapChecker.getSurfaceBiome(level, pos).value(), pos);
             }
 
             @Override
@@ -365,9 +353,7 @@ public class EclipticUtil {
     }
 
     public static boolean isRainingOrSnowingWithSurfaceBiome(Level level, Biome biome, BlockPos pos) {
-        if (hasLocalWeather(level))
-            return getRainOrSnow(level, biome, pos) != Biome.Precipitation.NONE;
-        return level.isRaining();
+        return getRainOrSnow(level, biome, pos) != Biome.Precipitation.NONE;
     }
 
     public static boolean isHereWithSnow(Level level, BlockPos pos) {
@@ -375,10 +361,7 @@ public class EclipticUtil {
     }
 
     public static Biome.Precipitation getRainOrSnow(Level level, Biome biome, BlockPos pos) {
-        return level.isClientSide() && ClientWeatherChecker.isBiomeRainyLast(biome) ?
-                WeatherManager.getPrecipitationAt(level, biome, pos) :
-                WeatherManager.getRainOrSnow(level, biome, pos)
-                ;
+        return WeatherManager.getRainOrSnow(level, biome, pos);
     }
 
     public static boolean isHereSunny(Level level, BlockPos pos) {

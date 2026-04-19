@@ -126,7 +126,6 @@ public final class ClientEventHandler {
     public static void onLevelUnloadEvent(LevelEvent.Unload event) {
         if (event.getLevel() instanceof ClientLevel clientLevel) {
             MapChecker.unloadLevel(clientLevel);
-            ClientWeatherChecker.unloadLevel(clientLevel);
             ClientCon.setUseLevel(null);
             IceKeeper.clearAll();
 
@@ -187,7 +186,6 @@ public final class ClientEventHandler {
     public static void onLevelTick(TickEvent.LevelTickEvent event) {
         if (event.level instanceof ClientLevel clientLevel
                 && event.phase.equals(TickEvent.Phase.END)) {
-            ClientWeatherChecker.tickAllCheck(clientLevel);
             ClientCon.tick(clientLevel);
 
             if ((!EclipticUtil.canSnowyBlockInteract() || ClientConfig.Renderer.enhancementChunkRenderUpdate.get())

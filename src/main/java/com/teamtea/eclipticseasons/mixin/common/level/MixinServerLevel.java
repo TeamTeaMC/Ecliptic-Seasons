@@ -1,12 +1,10 @@
 package com.teamtea.eclipticseasons.mixin.common.level;
 
 
-import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.Share;
-import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
@@ -17,17 +15,15 @@ import com.teamtea.eclipticseasons.common.core.snow.SnowyMapChecker;
 import com.teamtea.eclipticseasons.common.core.snow.SnowyStatusKeeper;
 import com.teamtea.eclipticseasons.common.core.snow.WeatherStatusKeeper;
 import com.teamtea.eclipticseasons.common.handler.CustomRandomTickHandler;
-import com.teamtea.eclipticseasons.compat.vanilla.VanillaWeather;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.util.RandomSource;
 import net.minecraft.util.profiling.ProfilerFiller;
-import net.minecraft.util.valueproviders.IntProvider;
 import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.biome.Biome;
@@ -52,56 +48,30 @@ public abstract class MixinServerLevel extends Level {
         super(pLevelData, pDimension, pRegistryAccess, pDimensionTypeRegistration, pProfiler, pIsClientSide, pIsDebug, pBiomeZoomSeed, pMaxChainedNeighborUpdates);
     }
 
-    @Inject(at = {@At("HEAD")}, method = {"setWeatherParameters"}, cancellable = true)
+    @Inject(at = {@At("TAIL")}, method = {"setWeatherParameters"})
     public void eclipticseasons$setWeatherParameters(int pClearTime, int pWeatherTime, boolean pIsRaining, boolean pIsThundering, CallbackInfo ci) {
-        if (EclipticUtil.hasLocalWeather(this)) {
-            WeatherManager.onSetWeatherParameters(getLevel(), pClearTime, pWeatherTime, pIsRaining, pIsThundering);
-            ci.cancel();
-        }
+        WeatherManager.onSetWeatherParameters(getLevel(), pClearTime, pWeatherTime, pIsRaining, pIsThundering);
     }
 
     @Inject(at = {@At("HEAD")}, method = {"resetWeatherCycle"}, cancellable = true)
     public void eclipticseasons$resetWeatherCycle(CallbackInfo ci) {
-        if (EclipticUtil.hasLocalWeather(this))
+        if (!CommonConfig.Weather.clearAfterSleep.get())
             ci.cancel();
     }
 
-    @Inject(at = {@At("HEAD")}, method = {"advanceWeatherCycle"}, cancellable = true)
+    @WrapOperation(at = {@At(value = "INVOKE", target = "Lnet/minecraft/world/level/GameRules;getBoolean(Lnet/minecraft/world/level/GameRules$Key;)Z")},
+            method = {"advanceWeatherCycle"})
+    private boolean eclipticseasons$wether(GameRules instance, GameRules.Key<GameRules.BooleanValue> pKey, Operation<Boolean> original) {
+        if (pKey == GameRules.RULE_WEATHER_CYCLE)
+            return !EclipticUtil.useSolarWeather();
+        return original.call(instance, pKey);
+    }
+
+    @Inject(at = {@At("HEAD")}, method = {"advanceWeatherCycle"})
     public void eclipticseasons$advanceWeatherCycle(CallbackInfo ci) {
-        boolean cancel = WeatherManager.agentAdvanceWeatherCycle(getLevel(), (getLevel()).getRandom());
-        if (cancel && EclipticUtil.hasLocalWeather(this))
-            ci.cancel();
+        if (EclipticUtil.useSolarWeather())
+            WeatherManager.agentAdvanceWeatherCycle(getLevel(), random);
     }
-
-    @WrapOperation(
-            method = "advanceWeatherCycle",
-            at = @At(value = "INVOKE", ordinal = 1, target = "Lnet/minecraft/util/valueproviders/IntProvider;sample(Lnet/minecraft/util/RandomSource;)I")
-    )
-    private int eclipticseasons$advanceWeatherCycle_sample_THUNDER_DELAY(IntProvider intProvider, RandomSource randomSource, Operation<Integer> original) {
-        if (!EclipticUtil.hasLocalWeather(this)) {
-            return VanillaWeather.replaceThunderDelay(this, original.call(intProvider, randomSource));
-        }
-        return original.call(intProvider, randomSource);
-    }
-
-    @WrapOperation(
-            method = "advanceWeatherCycle",
-            at = @At(value = "INVOKE", ordinal = 3, target = "Lnet/minecraft/util/valueproviders/IntProvider;sample(Lnet/minecraft/util/RandomSource;)I")
-    )
-    private int eclipticseasons$advanceWeatherCycle_sample_RAIN_DELAY(IntProvider intProvider, RandomSource randomSource, Operation<Integer> original) {
-        if (!EclipticUtil.hasLocalWeather(this)) {
-            return VanillaWeather.replaceRainDelay(this, original.call(intProvider, randomSource));
-        }
-        return original.call(intProvider, randomSource);
-    }
-
-    // @Inject(
-    //         method = "tickChunk",
-    //         at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/material/FluidState;isRandomlyTicking()Z")
-    // )
-    // private void eclipticseasons$tickChunk_handleRandomTick(LevelChunk chunk, int randomTickSpeed, CallbackInfo ci, @Local BlockState blockState, @Local BlockPos blockPos) {
-    //     CropGrowthHandler.handleRandomTick(this, chunk, blockPos, blockState);
-    // }
 
     @Inject(
             method = "tickChunk",
@@ -118,7 +88,7 @@ public abstract class MixinServerLevel extends Level {
                     target = "Lnet/minecraft/server/level/ServerLevel;getBiome(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/core/Holder;")
     )
     private Holder<Biome> eclipticseasons$tickPrecipitation_setBiome(ServerLevel instance, BlockPos pos, Operation<Holder<Biome>> original, @Local(ordinal = 1) BlockPos posAbove) {
-        Holder<Biome> surfaceBiome = EclipticUtil.hasLocalWeather(this) ? MapChecker.getSurfaceBiome(this, posAbove) : null;
+        Holder<Biome> surfaceBiome = MapChecker.getSurfaceBiome(this, posAbove) ;
         if (surfaceBiome == null) {
             surfaceBiome = (original.call(instance, pos));
         }
@@ -130,55 +100,18 @@ public abstract class MixinServerLevel extends Level {
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/biome/Biome;getPrecipitationAt(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/biome/Biome$Precipitation;")
     )
     private Biome.Precipitation eclipticseasons$tickChunk_getPrecipitationAt(Biome biome, BlockPos pos, Operation<Biome.Precipitation> original) {
-        if (EclipticUtil.hasLocalWeather(this))
-            return WeatherManager.getPrecipitationAt(this, biome, pos);
-        return VanillaWeather.handlePrecipitationAt(this, biome, pos);
+        return WeatherManager.getPrecipitationAt(this, biome, pos);
     }
 
 
-    @WrapOperation(
-            method = "tickChunk",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;isThundering()Z")
-    )
-    private boolean eclipticseasons$tickChunk_initIfThunder(ServerLevel serverLevel, Operation<Boolean> original) {
-        if (EclipticUtil.hasLocalWeather(this)) {
-            return true;
-        }
-        return original.call(serverLevel);
-    }
-
-    @ModifyExpressionValue(
-            method = "tickChunk",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;isRainingAt(Lnet/minecraft/core/BlockPos;)Z")
-    )
-    private boolean eclipticseasons$tickChunk_setIfThunder(boolean original, @Local(ordinal = 0) BlockPos blockPos) {
-        if (original && EclipticUtil.hasLocalWeather(this)) {
-            original = WeatherManager.isThunderAt(getLevel(), blockPos);
-        }
-        return original;
-    }
-
-    @WrapOperation(
-            method = "tickChunk",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;isRaining()Z")
-    )
-    private boolean eclipticseasons$tickChunk_initIfRain(ServerLevel serverLevel, Operation<Boolean> original) {
-        if (EclipticUtil.hasLocalWeather(this)) {
-            return true;
-        }
-        return original.call(serverLevel);
-    }
-
-    @Inject(
-            remap = false,
-            method = "tickChunk",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;isAreaLoaded(Lnet/minecraft/core/BlockPos;I)Z")
-    )
-    private void eclipticseasons$tickChunk_setIfRain(LevelChunk pChunk, int pRandomTickSpeed, CallbackInfo ci, @Local(ordinal = 0) BlockPos blockPos, @Local Biome biome, @Local LocalBooleanRef booleanRef) {
-        if (EclipticUtil.hasLocalWeather(this)) {
-            booleanRef.set(WeatherManager.getRainOrSnow(getLevel(), biome, blockPos) != Biome.Precipitation.NONE);
-        }
-    }
+    // @Inject(
+    //         remap = false,
+    //         method = "tickChunk",
+    //         at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;isAreaLoaded(Lnet/minecraft/core/BlockPos;I)Z")
+    // )
+    // private void eclipticseasons$tickChunk_setIfRain(LevelChunk pChunk, int pRandomTickSpeed, CallbackInfo ci, @Local(ordinal = 0) BlockPos blockPos, @Local Biome biome, @Local LocalBooleanRef booleanRef) {
+    //     booleanRef.set(WeatherManager.getRainOrSnow(getLevel(), biome, blockPos) != Biome.Precipitation.NONE);
+    // }
 
     @Inject(
             remap = false,

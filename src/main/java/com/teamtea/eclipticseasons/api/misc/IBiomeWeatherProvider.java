@@ -9,11 +9,4 @@ public interface IBiomeWeatherProvider {
 
     void es$set(ArrayList<WeatherManager.BiomeWeather> biomeWeathers);
 
-    float es$getAverageRainLevel(float delta);
-
-    void es$setAverageRainLevel(float value);
-
-    void es$setAverageThunderLevel(float value);
-
-    float es$getAverageThunderLevel(float delta);
 }

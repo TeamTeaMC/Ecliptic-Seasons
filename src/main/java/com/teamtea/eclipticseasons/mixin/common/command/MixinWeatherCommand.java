@@ -2,7 +2,6 @@ package com.teamtea.eclipticseasons.mixin.common.command;
 
 
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.common.command.CommandHandler;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.server.commands.WeatherCommand;
@@ -11,47 +10,33 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.util.function.Predicate;
-
 @Mixin(WeatherCommand.class)
 public class MixinWeatherCommand {
 
-    @Inject(method = "setClear", at = @At(value = "HEAD"), cancellable = true)
-    private static void mixin$setClear(CommandSourceStack sourceStack, int p_139174_, CallbackInfoReturnable<Integer> cir) {
-        if (EclipticUtil.hasLocalWeather(sourceStack.getLevel())) {
-            try {
-                CommandHandler.setBiomeRain(sourceStack, bh->true, false, false);
-                cir.setReturnValue(0);
-            } catch (CommandSyntaxException e) {
-                e.printStackTrace();
-                cir.setReturnValue(1);
-            }
+    @Inject(method = "setClear", at = @At(value = "TAIL"))
+    private static void es$setClear(CommandSourceStack sourceStack, int i, CallbackInfoReturnable<Integer> cir) {
+        try {
+            CommandHandler.setBiomeRain(sourceStack, bh->true, false, false);
+        } catch (CommandSyntaxException e) {
+            e.printStackTrace();
         }
     }
 
-    @Inject(method = "setRain", at = @At(value = "HEAD"), cancellable = true)
-    private static void mixin$setRain(CommandSourceStack sourceStack, int p_139174_, CallbackInfoReturnable<Integer> cir) {
-        if (EclipticUtil.hasLocalWeather(sourceStack.getLevel())) {
-            try {
-                CommandHandler.setBiomeRain(sourceStack, bh->true, true, false);
-                cir.setReturnValue(0);
-            } catch (CommandSyntaxException e) {
-                e.printStackTrace();
-                cir.setReturnValue(1);
-            }
+    @Inject(method = "setRain", at = @At(value = "TAIL"))
+    private static void es$setRain(CommandSourceStack sourceStack, int i, CallbackInfoReturnable<Integer> cir) {
+        try {
+            CommandHandler.setBiomeRain(sourceStack,bh->true, true, false);
+        } catch (CommandSyntaxException e) {
+            e.printStackTrace();
         }
     }
 
-    @Inject(method = "setThunder", at = @At(value = "HEAD"), cancellable = true)
-    private static void mixin$setThunder(CommandSourceStack sourceStack, int p_139174_, CallbackInfoReturnable<Integer> cir) {
-        if (EclipticUtil.hasLocalWeather(sourceStack.getLevel())) {
-            try {
-                CommandHandler.setBiomeRain(sourceStack, bh->true, true, true);
-                cir.setReturnValue(0);
-            } catch (CommandSyntaxException e) {
-                e.printStackTrace();
-                cir.setReturnValue(1);
-            }
+    @Inject(method = "setThunder", at = @At(value = "TAIL"))
+    private static void es$setThunder(CommandSourceStack sourceStack, int i, CallbackInfoReturnable<Integer> cir) {
+        try {
+            CommandHandler.setBiomeRain(sourceStack, bh->true, true, true);
+        } catch (CommandSyntaxException e) {
+            e.printStackTrace();
         }
     }
 }
