@@ -6,7 +6,6 @@ import com.teamtea.eclipticseasons.api.misc.IBiomeTagHolder;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
-import com.teamtea.eclipticseasons.compat.vanilla.VanillaWeather;
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.biome.Biome;
@@ -26,22 +25,12 @@ public abstract class MixinBiome implements IBiomeTagHolder {
 
     @Inject(at = {@At("HEAD")}, method = {"getPrecipitationAt"}, cancellable = true)
     public void eclipticseasons$getPrecipitationAt(BlockPos pos, CallbackInfoReturnable<Biome.Precipitation> cir) {
-        if (EclipticUtil.useSolarWeather()) {
-            cir.setReturnValue(WeatherManager.getPrecipitationAt((Biome) (Object) this, pos));
-        } else {
-            cir.setReturnValue(VanillaWeather.handlePrecipitationAt((Biome) (Object) this, pos));
-        }
+        cir.setReturnValue(WeatherManager.getPrecipitationAt((Biome) (Object) this, pos));
     }
 
     @Inject(at = {@At("HEAD")}, method = {"hasPrecipitation"}, cancellable = true)
     public void eclipticseasons$hasPrecipitation(CallbackInfoReturnable<Boolean> cir) {
-        if (EclipticUtil.useSolarWeather())
-            cir.setReturnValue(BiomeClimateManager.agent$hasPrecipitation((Biome) (Object) this));
-        else {
-            if (BiomeClimateManager.getTag((Biome) (Object) this).equals(ClimateTypeBiomeTags.MONSOONAL)) {
-                cir.setReturnValue(VanillaWeather.hasMonsoonalPrecipitation((Biome) (Object) this));
-            }
-        }
+        cir.setReturnValue(BiomeClimateManager.agent$hasPrecipitation((Biome) (Object) this));
     }
 
     //

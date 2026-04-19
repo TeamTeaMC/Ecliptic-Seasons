@@ -86,16 +86,10 @@ public class NetworkUtil {
 
                 boolean update = false;
                 for (WeatherManager.BiomeWeather biomeWeather : lists) {
-                    if (biomeWeatherMessage.rain[biomeWeather.id] == 0 && biomeWeather.rainTime > 0) {
-                        ClientWeatherChecker.addLastRainyBiome(biomeWeather.biomeHolder.value(), (long) (1 / ClientWeatherChecker.getRate()));
-                    }
                     if (!update
                         //&& biomeWeather.rainTime + biomeWeather.clearTime + biomeWeather.thunderTime > 0
                     )
                         update = biomeWeather.getSnowDepth() != biomeWeatherMessage.snowDepth[biomeWeather.id];
-                    biomeWeather.rainTime = biomeWeatherMessage.rain[biomeWeather.id] * 10000;
-                    biomeWeather.clearTime = biomeWeatherMessage.clear[biomeWeather.id] * 10000;
-                    biomeWeather.thunderTime = biomeWeatherMessage.thuder[biomeWeather.id] * 10000;
                     biomeWeather.setSnowDepth(biomeWeatherMessage.snowDepth[biomeWeather.id]);
                     biomeWeather.effect = weatherEffects.getHolder(biomeWeatherMessage.special[biomeWeather.id]).orElse(null);
 
