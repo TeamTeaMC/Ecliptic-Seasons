@@ -1,5 +1,6 @@
 package com.teamtea.eclipticseasons.compat.distanthorizons;
 
+import com.seibel.distanthorizons.common.wrappers.world.ClientLevelWrapper_neoforge;
 import com.seibel.distanthorizons.core.api.internal.SharedApi;
 import com.seibel.distanthorizons.core.enums.EDhDirection;
 import com.seibel.distanthorizons.core.level.ClientLevelModule;
@@ -7,8 +8,8 @@ import com.seibel.distanthorizons.core.level.DhClientLevel;
 import com.seibel.distanthorizons.core.level.DhClientServerLevel;
 import com.seibel.distanthorizons.core.level.IDhClientLevel;
 import com.seibel.distanthorizons.core.pos.DhSectionPos;
-import com.seibel.distanthorizons.core.render.LodQuadTree;
-import com.seibel.distanthorizons.core.render.LodRenderSection;
+import com.seibel.distanthorizons.core.render.QuadTree.LodQuadTree;
+import com.seibel.distanthorizons.core.render.QuadTree.LodRenderSection;
 import com.seibel.distanthorizons.core.util.gridList.MovableGridRingList;
 import com.seibel.distanthorizons.core.util.objects.quadTree.QuadNode;
 import com.seibel.distanthorizons.core.world.IDhClientWorld;
@@ -17,7 +18,6 @@ import com.teamtea.eclipticseasons.compat.CompatModule;
 import com.teamtea.eclipticseasons.mixin.compat.distanthorizons.MixinAbstractDhTintGetter;
 import com.teamtea.eclipticseasons.mixin.compat.distanthorizons.MixinQuadTree;
 import it.unimi.dsi.fastutil.longs.LongLinkedOpenHashSet;
-import loaderCommon.neoforge.com.seibel.distanthorizons.common.wrappers.world.ClientLevelWrapper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 
@@ -36,7 +36,7 @@ public class DHClientTool {
         if (level == null || (level.getGameTime() % (20 * 15)) != 0) return;
         IDhClientWorld clientWorld = SharedApi.tryGetDhClientWorld();
         if (ClientCon.getAgent().isChange()
-                && ClientLevelWrapper.getWrapper(Minecraft.getInstance().level) instanceof ClientLevelWrapper clientLevelWrapper
+                && ClientLevelWrapper_neoforge.getWrapper(Minecraft.getInstance().level) instanceof ClientLevelWrapper_neoforge clientLevelWrapper
                 && clientWorld.getLevel(clientLevelWrapper) instanceof IDhClientLevel clientLevel) {
 
 
@@ -112,7 +112,7 @@ public class DHClientTool {
                 Set<Long> setsLong = new LongLinkedOpenHashSet();
                 for (long pos : reloadList) {
                     if (setsLong.contains(pos)) continue;
-                    quadtree.reloadPos(pos);
+                    quadtree.queuePosToReload(pos);
                     setsLong.add(pos);
                     for (EDhDirection direction : EDhDirection.CARDINAL_COMPASS) {
                         long adjacentPos = DhSectionPos.getAdjacentPos(pos, direction);

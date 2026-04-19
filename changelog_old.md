@@ -1,3 +1,15 @@
+### 0.12.18.13
+
+- For distant-horizons 3.0.1-b.
+
+### 0.12.18.12
+
+- Because season-definitions data pack tend to grow too quickly when using the fixed_seed parameter, a built-in rate limit has been added.
+
+### 0.12.18.11
+
+- Fixed a bug that forced the requirement of LOD mods as a dependency.
+
 ### 0.12.18.10
 
 - Fixed a bug that forced the requirement of LOD mods as a dependency.

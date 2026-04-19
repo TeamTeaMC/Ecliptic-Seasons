@@ -89,7 +89,7 @@ file="META-INF/accesstransformer.cfg"
     modId="distanthorizons"
     type="optional"
     mandatory=false
-    versionRange="[2.4.5-b,)"
+    versionRange="[3.0.0-b,)"
     ordering="NONE"
     side="BOTH"
 

@@ -92,7 +92,6 @@
     "compat.distanthorizons.MixinFullDataToRenderDataTransformer",
     "compat.distanthorizons.MixinQuadTree",
     "compat.distanthorizons.MixinAbstractDhTintGetter",
-    "compat.distanthorizons.MixinTintWithoutLevelOverrider",
     "compat.embeddium.MixinBlockOcclusionCache",
     "compat.embeddium.MixinBlockRender2",
     "compat.embeddium.MixinBlockRenderTask",
