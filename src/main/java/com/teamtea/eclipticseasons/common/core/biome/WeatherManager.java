@@ -118,7 +118,7 @@ public class WeatherManager {
         int weatherTickFactor = getWeatherTickFactor(level);
         ((ServerLevelData) (level.getLevelData())).setClearWeatherTime(pClearTime / weatherTickFactor);
         ((ServerLevelData) (level.getLevelData())).setRainTime(pWeatherTime / weatherTickFactor);
-        ((ServerLevelData) (level.getLevelData())).setThunderTime(pWeatherTime / weatherTickFactor);
+        ((ServerLevelData) (level.getLevelData())).setThunderTime(pIsThundering ? pWeatherTime / weatherTickFactor : 0);
         ArrayList<BiomeWeather> biomeList = getBiomeList(level);
         if (biomeList != null) {
             for (BiomeWeather biomeWeather : biomeList) {
