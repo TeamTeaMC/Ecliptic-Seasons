@@ -35,7 +35,6 @@ public final class OverlayEventHandler {
 
                 var solarTermsDay = EclipticUtil.getNowSolarDay(level);
                 long dayTime = Math.floorMod(level.getDefaultClockTime(), EclipticUtil.getDayLengthInMinecraft(level));
-                double envTemp = EclipticUtil.getTemperatureFloat(level, level.getBiome(pos).value(), pos);
                 int solarTime = -1;
                 solarTime = level.dimensionType().defaultClock().<Integer>map(
                         clockHolder ->
@@ -50,7 +49,7 @@ public final class OverlayEventHandler {
                         player,
                         String.valueOf(solarTermsDay),
                         dayTime,
-                        envTemp,
+                        0,
                         solarTime
                 );
             }

@@ -95,7 +95,7 @@ file="META-INF/accesstransformer.cfg"
 [[dependencies.${mod_id}]]
     modId="distanthorizons"
     type="optional"
-    versionRange="[2.4.5-b,)"
+    versionRange="[3.0.0-b,)"
     ordering="NONE"
     side="BOTH"
 

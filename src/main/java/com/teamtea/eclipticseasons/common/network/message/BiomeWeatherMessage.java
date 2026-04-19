@@ -9,17 +9,11 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import org.jspecify.annotations.NonNull;
 
 public class BiomeWeatherMessage implements CustomPacketPayload {
-    public final byte[] rain;
-    public final byte[] thuder;
-    public final byte[] clear;
     public final byte[] snowDepth;
     public final int[] special;
     public final int[] weather;
 
-    public BiomeWeatherMessage(byte[] rain, byte[] thuder, byte[] clear, byte[] snowDepth, int[] special, int[] weather) {
-        this.rain = rain;
-        this.thuder = thuder;
-        this.clear = clear;
+    public BiomeWeatherMessage( byte[] snowDepth, int[] special, int[] weather) {
         this.snowDepth = snowDepth;
         this.special = special;
         this.weather = weather;
@@ -32,12 +26,6 @@ public class BiomeWeatherMessage implements CustomPacketPayload {
     // 'age' will be encoded and decoded as an integer
     // The final parameter takes in the previous parameters in the order they are provided to construct the payload object
     public static final StreamCodec<ByteBuf, BiomeWeatherMessage> STREAM_CODEC = StreamCodec.composite(
-            ByteBufCodecs.byteArray(1024),
-            solarTermsMessage -> solarTermsMessage.rain,
-            ByteBufCodecs.byteArray(1024),
-            solarTermsMessage -> solarTermsMessage.thuder,
-            ByteBufCodecs.byteArray(1024),
-            solarTermsMessage -> solarTermsMessage.clear,
             ByteBufCodecs.byteArray(1024),
             solarTermsMessage -> solarTermsMessage.snowDepth,
             MessageCodec.intArrayStreamCodec,

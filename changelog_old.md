@@ -1,7 +1,14 @@
+## 0.13.0-beta-14
+
+- Migrated biome-specific rain to a dimension-based system. This change improves performance by reducing location-based
+  biome checks and ensures better compatibility with other mods.
+
 ## 0.13.0-beta-13
 
 - Some internal API adjustments are underway.
 - Add field `ignored_biomes` for Ambient resource pack.
+- Adjust the rendering method of additional models to the modern version.
+- Updated for DH 3.0.0-b.
 
 ## 0.13.0-beta-12
 

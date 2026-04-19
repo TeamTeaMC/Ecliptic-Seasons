@@ -56,9 +56,9 @@ public class SolarTime {
 
         ClientCon.getAgent().attachEnvironment(level, environmentAttributes);
 
-        environmentAttributes.addPositionalLayer(EnvironmentAttributes.BEES_STAY_IN_HIVE, (baseValue, pos, biomeInterpolator) ->
-                EclipticSeasonsApi.getInstance().isNight(level)
-                        || WeatherUtil.isBlockInRainOrSnow(level, BlockPos.containing(pos)));
+        // environmentAttributes.addPositionalLayer(EnvironmentAttributes.BEES_STAY_IN_HIVE, (baseValue, pos, biomeInterpolator) ->
+        //         EclipticSeasonsApi.getInstance().isNight(level)
+        //                 || WeatherUtil.isBlockInRainOrSnow(level, BlockPos.containing(pos)));
     }
 
 

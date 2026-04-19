@@ -410,7 +410,7 @@ public class CommonConfig {
                     .comment("Adjusts the recession speed of atmospheric snow overlays during warmer periods.")
                     .defineInRange("SnowMeltSpeedMultiplier", 1.0, 0.0, 20.0);
             clearAfterSleep = builder.comment("Automatically reset weather to clear after the player wakes up from a bed.")
-                    .define("ClearAfterSleep", false);
+                    .define("ClearAfterSleep", true);
             builder.pop();
         }
     }

@@ -1,3 +1,2 @@
-- Some internal API adjustments are underway.
-- Add field `ignored_biomes` for Ambient resource pack.
-- Adjust the rendering method of additional models to the modern version.
+- Migrated biome-specific rain to a dimension-based system. This change improves performance by reducing location-based
+  biome checks and ensures better compatibility with other mods.

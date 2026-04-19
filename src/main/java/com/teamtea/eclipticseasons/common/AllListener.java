@@ -116,31 +116,6 @@ public class AllListener {
     }
 
     @SubscribeEvent
-    public static void onCanPlayerSleepEvent(CanPlayerSleepEvent event) {
-        if (event.getVanillaProblem() == Player.BedSleepingProblem.OTHER_PROBLEM) {
-            BlockPos pos = event.getPos();
-            Level level = event.getLevel();
-            if (EclipticUtil.hasLocalWeather(level)
-                    && WeatherManager.isThunderAtBiome(level, pos)) {
-                event.setProblem(null);
-            }
-        }
-    }
-
-    @SubscribeEvent
-    public static void onCanContinueSleepingEvent(CanContinueSleepingEvent event) {
-        if (!event.mayContinueSleeping()
-                && event.getProblem() == Player.BedSleepingProblem.OTHER_PROBLEM) {
-            BlockPos pos = event.getEntity().getSleepingPos().orElse(null);
-            Level level = event.getEntity().level();
-            if (pos != null && EclipticUtil.hasLocalWeather(level)
-                    && WeatherManager.isThunderAtBiome(level, pos)) {
-                event.setContinueSleeping(true);
-            }
-        }
-    }
-
-    @SubscribeEvent
     public static void onSleepFinishedTimeEvent(SleepFinishedTimeEvent event) {
         if (event.getLevel() instanceof ServerLevel level
                 && level.dimensionType().defaultClock().isPresent()) {

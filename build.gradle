@@ -221,7 +221,8 @@ dependencies {
 
 
 //    onlyMainRuntimeOnly ("maven.modrinth:distanthorizons:2.2.1-a-1.21.1")
-    compileOnly "curse.maven:distant-horizons-508933:7375296"
+    compileOnly "curse.maven:distant-horizons-508933:7948188"
+//    onlyMainRuntimeOnly "curse.maven:distant-horizons-508933:7948188"
 
     onlyMainRuntimeOnly "curse.maven:journeymap-32274:7812823"
 
