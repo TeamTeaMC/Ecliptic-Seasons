@@ -229,14 +229,8 @@ public class EclipticUtil {
 
             @Override
             public boolean isRainOrSnowAt(Level level, BlockPos pos) {
-                if (hasLocalWeather(level)) {
-                    if (getRainOrSnow(level, MapChecker.getSurfaceBiome(level, pos).value(), pos) == Biome.Precipitation.NONE) {
-                        return false;
-                    }
-                } else {
-                    if (!level.isRaining()) {
-                        return false;
-                    }
+                if (getRainOrSnow(level, MapChecker.getSurfaceBiome(level, pos).value(), pos) == Biome.Precipitation.NONE) {
+                    return false;
                 }
                 if (!level.canSeeSky(pos)) {
                     return false;
@@ -263,8 +257,6 @@ public class EclipticUtil {
 
             @Override
             public boolean isThunderAt(Level level, BlockPos pos) {
-                if (hasLocalWeather(level))
-                    return WeatherManager.isThunderAt(level, pos);
                 // use this to check if underground
                 if (!level.isThundering()) {
                     return false;
@@ -287,15 +279,11 @@ public class EclipticUtil {
 
             @Override
             public boolean isRainingOrSnowing(Level level, BlockPos pos) {
-                if (hasLocalWeather(level))
-                    return getRainOrSnow(level, MapChecker.getSurfaceBiome(level, pos).value(), pos) != Biome.Precipitation.NONE;
                 return level.isRaining();
             }
 
             @Override
             public boolean isThundering(Level level, BlockPos pos) {
-                if (hasLocalWeather(level))
-                    return WeatherManager.isThunderAtBiome(level, MapChecker.getSurfaceBiome(level, pos));
                 return level.isThundering();
             }
 
