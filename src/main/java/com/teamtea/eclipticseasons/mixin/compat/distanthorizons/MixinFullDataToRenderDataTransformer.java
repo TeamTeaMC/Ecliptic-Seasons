@@ -5,6 +5,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
+import com.seibel.distanthorizons.common.wrappers.world.ClientLevelWrapper_forge;
 import com.seibel.distanthorizons.core.dataObjects.fullData.FullDataPointIdMap;
 import com.seibel.distanthorizons.core.dataObjects.fullData.sources.FullDataSourceV2;
 import com.seibel.distanthorizons.core.dataObjects.transformers.FullDataToRenderDataTransformer;
@@ -16,7 +17,6 @@ import com.seibel.distanthorizons.core.wrapperInterfaces.world.IBiomeWrapper;
 import com.seibel.distanthorizons.core.wrapperInterfaces.world.IClientLevelWrapper;
 import com.teamtea.eclipticseasons.compat.distanthorizons.DHTool;
 import it.unimi.dsi.fastutil.longs.LongArrayList;
-import loaderCommon.forge.com.seibel.distanthorizons.common.wrappers.world.ClientLevelWrapper;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MapColor;
 import org.spongepowered.asm.mixin.Final;
@@ -75,7 +75,7 @@ public abstract class MixinFullDataToRenderDataTransformer {
             @Local(name = "fullDataIndex") LocalIntRef localIntRef) {
         IBlockStateWrapper call = original.call(instance, id);
         if (call.isLiquid() && call.getWrappedMcObject() instanceof BlockState blockState
-                && clientLevel instanceof ClientLevelWrapper clientLevelWrapper) {
+                && clientLevel instanceof ClientLevelWrapper_forge clientLevelWrapper) {
             IBlockStateWrapper warp = DHTool.shouldFrozen(clientLevelWrapper, biomeWrapper, dhBlockPosMutable, blockState, fullDataMapping, fullColumnData, localIntRef.get());
             if (warp != null) call = warp;
         }

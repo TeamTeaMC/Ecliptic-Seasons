@@ -1,16 +1,14 @@
 package com.teamtea.eclipticseasons.mixin.compat.distanthorizons;
 
 
+import com.seibel.distanthorizons.common.wrappers.block.AbstractDhTintGetter_forge;
 import com.seibel.distanthorizons.core.dataObjects.BlockBiomeWrapperPair;
-import com.seibel.distanthorizons.core.util.gridList.MovableGridRingList;
-import com.seibel.distanthorizons.core.util.objects.quadTree.QuadNode;
-import loaderCommon.forge.com.seibel.distanthorizons.common.wrappers.block.AbstractDhTintGetter;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
 import java.util.concurrent.ConcurrentHashMap;
 
-@Mixin(AbstractDhTintGetter.class)
+@Mixin(AbstractDhTintGetter_forge.class)
 public interface MixinAbstractDhTintGetter {
 
     @Accessor(value = "COLOR_BY_BLOCK_BIOME_PAIR", remap = false)

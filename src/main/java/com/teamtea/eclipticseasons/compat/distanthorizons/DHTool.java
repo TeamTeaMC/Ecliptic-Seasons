@@ -1,5 +1,9 @@
 package com.teamtea.eclipticseasons.compat.distanthorizons;
 
+import com.seibel.distanthorizons.common.wrappers.McObjectConverter_forge;
+import com.seibel.distanthorizons.common.wrappers.block.BiomeWrapper_forge;
+import com.seibel.distanthorizons.common.wrappers.block.BlockStateWrapper_forge;
+import com.seibel.distanthorizons.common.wrappers.world.ClientLevelWrapper_forge;
 import com.seibel.distanthorizons.core.dataObjects.fullData.FullDataPointIdMap;
 import com.seibel.distanthorizons.core.pos.blockPos.DhBlockPos;
 import com.seibel.distanthorizons.core.pos.blockPos.DhBlockPosMutable;
@@ -14,10 +18,7 @@ import com.teamtea.eclipticseasons.compat.CompatModule;
 import com.teamtea.eclipticseasons.config.ClientConfig;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import it.unimi.dsi.fastutil.longs.LongArrayList;
-import loaderCommon.forge.com.seibel.distanthorizons.common.wrappers.McObjectConverter;
-import loaderCommon.forge.com.seibel.distanthorizons.common.wrappers.block.BiomeWrapper;
-import loaderCommon.forge.com.seibel.distanthorizons.common.wrappers.block.BlockStateWrapper;
-import loaderCommon.forge.com.seibel.distanthorizons.common.wrappers.world.ClientLevelWrapper;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
@@ -39,15 +40,15 @@ public class DHTool {
 
         if (CommonConfig.isSnowyWinter()) {
             if (!dhBlockPos.equals(DhBlockPos.ZERO)
-                    && iBlockStateWrapper instanceof BlockStateWrapper blockStateWrapper
+                    && iBlockStateWrapper instanceof BlockStateWrapper_forge blockStateWrapper
                     && !blockStateWrapper.isAir()
                     && skyLight > 0
             ) {
-                var mcPos = McObjectConverter.Convert(dhBlockPos);
+                var mcPos = McObjectConverter_forge.Convert(dhBlockPos);
                 var level = ClientCon.getUseLevel();
                 var blockState = blockStateWrapper.blockState;
                 // 当给的pos未加载时，读取的是虚空，这并不好。
-                if (instance instanceof ClientLevelWrapper clientLevelWrapper) {
+                if (instance instanceof ClientLevelWrapper_forge clientLevelWrapper) {
                     var holderKey = ResourceKey.create(Registries.BIOME, new ResourceLocation(iBiomeWrapper.getSerialString()));
                     Holder.Reference<Biome> holder = clientLevelWrapper.getLevel().registryAccess().registryOrThrow(Registries.BIOME).getHolderOrThrow(holderKey);
                     // if ((holderOrThrow
@@ -57,7 +58,7 @@ public class DHTool {
                         if (MapChecker.shouldSnowAtBiome(level, holder.value(), blockState, level.getRandom(), blockState.getSeed(mcPos), mcPos))
                         //     return mapColor.col;
                         {
-                            HashSet<IBlockStateWrapper> blockStatesToIgnore = WRAPPER_FACTORY.getRendererIgnoredBlocks(instance);
+                            ObjectOpenHashSet<IBlockStateWrapper> blockStatesToIgnore = WRAPPER_FACTORY.getRendererIgnoredBlocks(instance);
                             for (int i = 0; i < fullColumnData.size(); i++) {
                                 long fullData = fullColumnData.getLong(i);
                                 int id = FullDataPointUtil.getId(fullData);
@@ -71,7 +72,7 @@ public class DHTool {
                                 int blockHeight = FullDataPointUtil.getHeight(fullData);
                                 int topY = bottomY + blockHeight;
                                 if (CommonConfig.Debug.notLightAbove.get()
-                                        && iBlockStateWrapper_NowQuery instanceof BlockStateWrapper blockStateWrapper_NowQuery) {
+                                        && iBlockStateWrapper_NowQuery instanceof BlockStateWrapper_forge blockStateWrapper_NowQuery) {
                                     if (blockStateWrapper_NowQuery.blockState != null &&
                                             blockStateWrapper_NowQuery.blockState.getBlock() instanceof LightBlock) {
                                         if (blockStateWrapper_NowQuery.blockState.hasProperty(LightBlock.LEVEL)
@@ -80,7 +81,7 @@ public class DHTool {
                                     }
                                 }
 
-                                if (iBlockStateWrapper_NowQuery instanceof BlockStateWrapper blockStateWrapper_NowQuery
+                                if (iBlockStateWrapper_NowQuery instanceof BlockStateWrapper_forge blockStateWrapper_NowQuery
                                         && !iBlockStateWrapper_NowQuery.isAir()
                                         && !blockStatesToIgnore.contains(iBlockStateWrapper_NowQuery)
                                 ) {
@@ -117,7 +118,7 @@ public class DHTool {
         return null;
     }
 
-    public static Biome recoverBiomeObject(BiomeWrapper biomeWrapper, IClientLevelWrapper iClientLevelWrapper) {
+    public static Biome recoverBiomeObject(BiomeWrapper_forge biomeWrapper, IClientLevelWrapper iClientLevelWrapper) {
         if (!CompatModule.CommonConfig.DistantHorizonsWinterLOD.get()) return null;
         // if (iClientLevelWrapper instanceof ClientLevelWrapper clientLevelWrapper) {
         //     var holderKey = ResourceKey.create(Registries.BIOME, ResourceLocation.parse(biomeWrapper.getSerialString()));
@@ -140,7 +141,7 @@ public class DHTool {
     //    }
     //}
 
-    public static IBlockStateWrapper shouldFrozen(ClientLevelWrapper instance, IBiomeWrapper biomeWrapper, DhBlockPosMutable dhBlockPosMutable, BlockState blockState, FullDataPointIdMap fullDataMapping, LongArrayList fullColumnData, int index) {
+    public static IBlockStateWrapper shouldFrozen(ClientLevelWrapper_forge instance, IBiomeWrapper biomeWrapper, DhBlockPosMutable dhBlockPosMutable, BlockState blockState, FullDataPointIdMap fullDataMapping, LongArrayList fullColumnData, int index) {
         if (!CompatModule.CommonConfig.DistantHorizonsWinterLOD.get()) return null;
 
         if (ClientConfig.Debug.frozenWater.get()
@@ -156,10 +157,10 @@ public class DHTool {
                 } catch (IndexOutOfBoundsException ignored) {
                 }
             }
-            var mcPos = McObjectConverter.Convert(dhBlockPosMutable);
+            var mcPos = McObjectConverter_forge.Convert(dhBlockPosMutable);
             Level level = instance.getLevel();
             if (MapChecker.shouldSnowAtBiome(level, biome, blockState, level.getRandom(), blockState.getSeed(mcPos), mcPos)) {
-                return BlockStateWrapper.fromBlockState(Blocks.ICE.defaultBlockState(), instance);
+                return BlockStateWrapper_forge.fromBlockState(Blocks.ICE.defaultBlockState(), instance);
             }
         }
         return null;

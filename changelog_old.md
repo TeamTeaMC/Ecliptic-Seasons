@@ -1,6 +1,14 @@
 > As the ecosystem for 1.20.1 begins to wind down with major mods like Create moving on, we are also transitioning into
 > the final maintenance phase for our mod on this version.
 
+### 0.12.18.11
+
+- For distant-horizons 3.0.1-b.
+
+### 0.12.18.10
+
+- Because season-definitions data pack tend to grow too quickly when using the fixed_seed parameter, a built-in rate limit has been added.
+
 ### 0.12.18.9
 
 - For distant-horizons 2.4.5-b.
