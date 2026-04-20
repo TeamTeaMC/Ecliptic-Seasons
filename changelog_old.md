@@ -1,6 +1,10 @@
 > As the ecosystem for 1.20.1 begins to wind down with major mods like Create moving on, we are also transitioning into
 > the final maintenance phase for our mod on this version.
 
+## 0.13.0-beta-1-1
+
+- For voxy 0.2.14-alpha.
+
 ## 0.13.0-beta-1
 
 - Migrated biome-specific rain to a dimension-based system. This change improves performance by reducing location-based

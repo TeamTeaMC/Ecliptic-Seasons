@@ -16,7 +16,7 @@ public abstract class MixinModelBakerySubsystem {
             at = @At(value = "INVOKE", target = "Lme/cortex/voxy/common/world/other/Mapper;getBlockStateCount()I")
     )
     private int eclipticseasons$requestBlockBake(int original, @Local(argsOnly = true) int blockId) {
-        if (original < blockId && VoxyTool.isVoxyTest()) {
+        if (original <= blockId && VoxyTool.isVoxyTest()) {
             original = blockId + 1;
         }
         return original;

@@ -13,6 +13,15 @@ public class WorldConversionFactory {
                                            PalettedContainer<BlockState> blockContainer,
                                            PalettedContainerRO<Holder<Biome>> biomeContainer,
                                            ILightingSupplier lightSupplier) {
+        return convert(section, stateMapper, blockContainer, biomeContainer, lightSupplier, false, 0);
+    }
+    public static VoxelizedSection convert(VoxelizedSection section,
+                                           Mapper stateMapper,
+                                           PalettedContainer<BlockState> blockContainer,
+                                           PalettedContainerRO<Holder<Biome>> biomeContainer,
+                                           ILightingSupplier lightSupplier,
+                                           boolean shouldZoom,
+                                           long zoomSeed) {
         int i=0;
         Mapper.composeMappingId((byte) 0, 0, 0);
         return null;

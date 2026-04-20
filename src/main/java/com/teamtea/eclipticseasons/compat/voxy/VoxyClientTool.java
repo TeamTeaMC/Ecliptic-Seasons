@@ -11,6 +11,7 @@ import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockState;
@@ -18,7 +19,7 @@ import net.minecraft.world.level.levelgen.SingleThreadedRandomSource;
 
 public class VoxyClientTool {
 
-    public static void renderToStream(BlockState state, RenderType renderType, supplier supplier, ReuseVertexConsumer vc) {
+    public static void renderToStream(BlockState state, RenderType renderType, ReuseVertexConsumer opaqueVC, ReuseVertexConsumer translucentVC) {
         if (!VoxyTool.isVoxyTest()) return;
 
         if (state.getRenderShape() != RenderShape.INVISIBLE) {
@@ -33,7 +34,7 @@ public class VoxyClientTool {
                     .setOriginalModel(Minecraft.getInstance().getModelManager().getBlockModelShaper().getBlockModel(state))
             ;
 
-            int meta = supplier.getMetaFromLayer(state.getBlock() instanceof LeavesBlock ?
+            RenderType layer = (state.getBlock() instanceof LeavesBlock ?
                     renderType :
                     ExtraModelManager.getRenderType(state));
             for (Direction direction : new Direction[]{Direction.DOWN, Direction.UP, Direction.NORTH, Direction.SOUTH, Direction.WEST, Direction.EAST, null}) {
@@ -44,16 +45,10 @@ public class VoxyClientTool {
                                 state, BlockPos.ZERO, direction,
                                 ClientCon.getUseLevel().getRandom(), 42L,
                                 model.getQuads(state, direction, new SingleThreadedRandomSource(42L)))) {
-                    int quadMeta = meta | (quad.isTinted() ? 4 : 0);
-                    // quadMeta |= SNOW_FLAG;
-                    vc.quad(quad, quadMeta);
+                    (layer == RenderType.translucent() ? translucentVC : opaqueVC)
+                            .quad(quad, state.is(BlockTags.LEAVES), layer);
                 }
             }
         }
-    }
-
-    @FunctionalInterface
-    public interface supplier {
-        int getMetaFromLayer(RenderType layer);
     }
 }

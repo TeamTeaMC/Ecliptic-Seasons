@@ -16,7 +16,7 @@ public abstract class MixinWorldConversionFactory {
 
     @WrapOperation(
             remap = false,
-            method = "convert",
+            method = "convert(Lme/cortex/voxy/common/voxelization/VoxelizedSection;Lme/cortex/voxy/common/world/other/Mapper;Lnet/minecraft/world/level/chunk/PalettedContainer;Lnet/minecraft/world/level/chunk/PalettedContainerRO;Lme/cortex/voxy/common/voxelization/ILightingSupplier;ZJ)Lme/cortex/voxy/common/voxelization/VoxelizedSection;",
             at = @At(value = "INVOKE", target = "Lme/cortex/voxy/common/world/other/Mapper;composeMappingId(BII)J")
     )
     private static long eclipticseasons$convert(

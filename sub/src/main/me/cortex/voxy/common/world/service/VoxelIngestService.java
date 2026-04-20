@@ -31,11 +31,7 @@ public class VoxelIngestService {
             PalettedContainerRO<Holder<Biome>> biomeContainer = null;
             ILightingSupplier lightSupplier = null;
             VoxelizedSection csec = WorldConversionFactory.convert(
-                    section,
-                    stateMapper,
-                    blockContainer,
-                    biomeContainer,
-                    lightSupplier
+                    null,null,null,null,null,false,0
             );
         }
     }

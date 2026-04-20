@@ -21,8 +21,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class MixinModelTextureBakery implements IVoxyModelController {
 
     @Shadow(remap = false)
-    @Final
-    private ReuseVertexConsumer vc;
+    private final ReuseVertexConsumer opaqueVC = new ReuseVertexConsumer();
+    @Shadow(remap = false)
+    private final ReuseVertexConsumer translucentVC = new ReuseVertexConsumer();
 
     @Inject(
             remap = false,
@@ -31,7 +32,7 @@ public abstract class MixinModelTextureBakery implements IVoxyModelController {
     )
     private void eclipticseasons$bakeBlockModel_pre(BlockState state, RenderType layer, CallbackInfo ci, @Share("snowy_model") LocalRef<BakedModel> modelLocalRef) {
         if (isSnowyBlock()) {
-            VoxyClientTool.renderToStream(state, layer, SoftwareModelTextureBakery::getMetaFromLayer, vc);
+            VoxyClientTool.renderToStream(state, layer, opaqueVC,translucentVC);
         }
     }
 

@@ -13,7 +13,7 @@ public class Mapper {
     }
 
     public BlockState getBlockStateFromBlockId(int blockId) {
-        return null;
+        return this.blockId2stateEntry.get(blockId).state;
     }
 
     public int getBlockStateCount() {
@@ -33,6 +33,7 @@ public class Mapper {
 
     public static final class StateEntry {
         public int opacity;
+        public BlockState state;
     }
 
     public static final class BiomeEntry {
