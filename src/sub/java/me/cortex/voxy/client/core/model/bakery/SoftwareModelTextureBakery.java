@@ -9,7 +9,7 @@ import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.SingleThreadedRandomSource;
 
-public class ModelTextureBakery {
+public class SoftwareModelTextureBakery {
     private final ReuseVertexConsumer vc = new ReuseVertexConsumer();
 
     public static int getMetaFromLayer(RenderType layer) {

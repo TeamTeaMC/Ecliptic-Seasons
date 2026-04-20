@@ -6,7 +6,7 @@ public class ModelBakerySubsystem {
     private final Mapper mapper = null;
 
     public void requestBlockBake(int blockId) {
-        if (this.mapper.getBlockStateCount() < blockId) {
+        if (this.mapper.getBlockStateCount() <= blockId) {
             return;
         }
     }
