@@ -1,6 +1,10 @@
 > As the ecosystem for 1.20.1 begins to wind down with major mods like Create moving on, we are also transitioning into
 > the final maintenance phase for our mod on this version.
 
+## 0.13.0-beta-2
+
+- Removed the Voxy compatibility plugin and make it a standalone mod [Ecliptic Seasons : Voxy Compact](https://legacy.curseforge.com/minecraft/mc-mods/ecliptic-seasons-voxy-compact).
+
 ## 0.13.0-beta-1-1
 
 - For voxy 0.2.14-alpha.

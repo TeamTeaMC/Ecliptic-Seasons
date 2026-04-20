@@ -21,14 +21,6 @@
     "common.level.MixinLevelTimeAccess",
     "common.level.MixinServerLevel",
     "common.wg.MixinSurfaceSystem",
-    "compat.voxy.MixinIngestSection",
-    "compat.voxy.MixinIngestSection2",
-    "compat.voxy.MixinMapping",
-    "compat.voxy.MixinModelBakerySubsystem",
-    "compat.voxy.MixinModelFactory",
-    "compat.voxy.MixinVoxelIngestService",
-    "compat.voxy.MixinWorldConversionFactory",
-    "compat.voxy.MixinWorldImporter",
     "data.MixinsRegistriesDatapackGenerator",
     "data.RegistrySetBuilderMixin",
     "game.MixinBee_BeePollinateGoal",
@@ -72,9 +64,7 @@
     "compat.optifine.MixinModelRenderer",
     "compat.optifine.MixinRebuildTask",
     "compat.optifine_test.MixinBlockModelCustomizer",
-    "compat.optifine_test.MixinItemBlockRenderTypes",
-    "compat.voxy.MixinClientLevel",
-    "compat.voxy.MixinModelTextureBakery"
+    "compat.optifine_test.MixinItemBlockRenderTypes"
   ],
   "injectors": {
     "defaultRequire": 1

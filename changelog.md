@@ -1,1 +1,1 @@
-- For voxy 0.2.14-alpha.
+- Removed the Voxy compatibility plugin and make it a standalone mod [Ecliptic Seasons : Voxy Compact](https://legacy.curseforge.com/minecraft/mc-mods/ecliptic-seasons-voxy-compact).
