@@ -20,7 +20,12 @@ public class SnowRenderer {
         // long seed = state.getSeed(pos);
         posestack.pushPose();
         posestack.translate((float) (pos.getX() & 15), (float) (pos.getY() & 15), (float) (pos.getZ() & 15));
-        if (!CompatModule.isFabric_renderer_indigo()) {
+
+
+        boolean notFabric = !CompatModule.isFabric_renderer_indigo()
+                || !FabricRender.render(renderchunkregion, state, pos, bakedModel, posestack, modelData, renderType);
+
+        if (notFabric) {
             Minecraft.getInstance().getBlockRenderer().getModelRenderer()
                     .tesselateBlock(renderchunkregion,
                             bakedModel,
@@ -34,8 +39,6 @@ public class SnowRenderer {
                             OverlayTexture.NO_OVERLAY,
                             modelData,
                             renderType);
-        } else {
-            FabricRender.render(renderchunkregion, state, pos, bakedModel, posestack, modelData, renderType);
         }
 
         posestack.popPose();
