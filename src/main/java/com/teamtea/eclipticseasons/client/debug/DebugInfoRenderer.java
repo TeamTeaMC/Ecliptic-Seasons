@@ -4,13 +4,16 @@ import com.teamtea.eclipticseasons.api.constant.climate.ISnowTerm;
 import com.teamtea.eclipticseasons.api.constant.climate.WeatherMode;
 import com.teamtea.eclipticseasons.api.constant.solar.ISolarTerm;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
+import com.teamtea.eclipticseasons.api.data.climate.AgroClimaticZone;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.api.util.SimpleUtil;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
+import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.core.solar.SolarTermHelper;
+import com.teamtea.eclipticseasons.common.registry.ESRegistries;
 import com.teamtea.eclipticseasons.config.ClientConfig;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.ChatFormatting;
@@ -21,6 +24,8 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
@@ -110,18 +115,27 @@ public class DebugInfoRenderer {
             infoLines.addKV("Day Time", dayTime, "§e");
             infoLines.addKV("Humidity", String.format("%.2f", EclipticUtil.getHumidityLevelAt(level, pos)), "§9");
             infoLines.addDoubleKV(
-                    "Rainfall", EclipticUtil.getRainfallAt(level, pos).getTranslation().getString(), "§b",
-                    "Temp", String.format("%.2f", envTemp), "§a"
+                    "Rainfall", String.format("%.2f", EclipticUtil.getDownfallFloat(level,cachedBiome.value(), pos)), "§b",
+                    "Temp", String.format("%.2f", EclipticUtil.getTemperatureFloat(level,cachedBiome.value(), pos)), "§a"
             );
 
             WeatherManager.BiomeWeather biomeWeather = WeatherManager.getBiomeWeather(level, cachedBiome);
             if (biomeWeather != null) {
                 infoLines.addEmpty();
-                infoLines.add("Biome: " + getBiomeName(cachedBiome) + " §2(" + getBiomeId(cachedBiome) + ")§r");
-                infoLines.add("Surface: " + (e_cachedBiome != null ? (getBiomeName(e_cachedBiome) + " §2(" + getBiomeId(e_cachedBiome) + ")§r") : "Unknown"));
+                var agroClimaticZones = level.registryAccess().registry(ESRegistries.AGRO_CLIMATE);
+                if (agroClimaticZones.isPresent()) {
+                    Holder<AgroClimaticZone> agroClimaticZoneHolder = CropGrowthHandler.getclimateTypeHolder(cachedBiome);
+                    infoLines.add("Agro: " + (agroClimaticZoneHolder != null ? (getBiomeName(agroClimaticZoneHolder, agroClimaticZones.get()) + " §2(" + getBiomeId(agroClimaticZoneHolder) + ")§r") : "Unknown"));
+                }
+
+                var biomes = level.registryAccess().registry(Registries.BIOME);
+                if (biomes.isPresent()) {
+                    infoLines.add("Biome: " + getBiomeName(cachedBiome, biomes.get()) + " §2(" + getBiomeId(cachedBiome) + ")§r");
+                    infoLines.add("Surface: " + (e_cachedBiome != null ? (getBiomeName(e_cachedBiome, biomes.get()) + " §2(" + getBiomeId(e_cachedBiome) + ")§r") : "Unknown"));
+                }
                 // infoLines.add(String.format("R/C/T Time: §e%d§r / §e%d§r / §e%d§r",
                 //         biomeWeather.rainTime, biomeWeather.clearTime, biomeWeather.thunderTime));
-                ISnowTerm snowTerm = SolarTerm.getSnowTerm(biomeWeather.biomeHolder.value(), false, EclipticUtil.getSnowTempChange(level));
+                ISnowTerm snowTerm = SolarTerm.getSnowTerm(e_cachedBiome != null ? e_cachedBiome.value() : biomeWeather.biomeHolder.value(), false, EclipticUtil.getSnowTempChange(level));
                 SolarTerm start = snowTerm.getStart();
                 SolarTerm end = snowTerm.getEnd();
                 infoLines.addComponent(Component.literal("Snow Term%s: ".formatted(e_cachedBiome==cachedBiome?"":" (Surface) "))
@@ -134,19 +148,18 @@ public class DebugInfoRenderer {
                 infoLines.addKV("Map Height", MapChecker.getHeight(level, pos), "");
 
                 infoLines.addEmpty();
-
                 // WeatherMode weatherMode = EclipticUtil.getWeatherMode(level);
                 // if (!EclipticUtil.hasLocalWeather(level)) {
                 //     infoLines.addKV("Mode", "Vanilla Sync", "§c");
                 // } else {
-                //     Holder<Biome> owner = (weatherMode == WeatherMode.REGION) ? BiomeClimateManager.getWeatherRegionOnwer(biomeWeather.biomeHolder.value()) : null;
+                //     Holder<Biome> owner = (weatherMode == WeatherMode.REGION) ? WeatherManager.getOwner(ClientCon.getUseLevel(), biomeWeather.biomeHolder) : null;
                 //     Holder<Biome> targetBiome = (owner != null) ? owner : e_cachedBiome;
                 //     WeatherManager.BiomeWeather weatherTarget = WeatherManager.getBiomeWeather(level, targetBiome);
                 //
                 //     if (weatherTarget != null) {
                 //         infoLines.addKV("Biome Rain", weatherTarget.getBiomeRain(), "§f");
-                //         if (owner != null && !owner.equals(e_cachedBiome)) {
-                //             infoLines.addKV("Owner", getBiomeName(owner), "§e");
+                //         if (owner != null && !owner.equals(e_cachedBiome) && biomes.isPresent()) {
+                //             infoLines.addKV("Owner", getBiomeName(owner, biomes.get()), "§e");
                 //         }
                 //
                 //         float downfall = EclipticUtil.getDownfallFloatConstant(ClientCon.nowSolarTerm, targetBiome.value(), false);
@@ -177,7 +190,8 @@ public class DebugInfoRenderer {
         int y = 6;
         int bgPadding = 2;
 
-        for (Object obj : lines) {
+        for (int i = 0; i < lines.size(); i++) {
+            Object obj = lines.get(i);
             if (obj instanceof String s && s.isEmpty()) {
                 y += 5;
                 continue;
@@ -189,23 +203,28 @@ public class DebugInfoRenderer {
             int textHeight = mc.font.lineHeight;
 
             guiGraphics.pose().pushPose();
-            if (!(obj instanceof Component)) {
+            if (!(obj instanceof Component) || i > 5) {
                 guiGraphics.fill(x - bgPadding, y - bgPadding + 1, x + textWidth + bgPadding, y + textHeight, 0x90000000);
             } else {
-                guiGraphics.pose().scale(0.9f, 0.9f, 0.9f);
+                guiGraphics.pose().scale(0.9f,0.9f, 0.9f);
             }
-            guiGraphics.drawString(mc.font, lineComponent.getVisualOrderText(), x, y, 0xFFFFFF, true);
+            guiGraphics.drawString(mc.font, lineComponent.getVisualOrderText(), x, y, 0xFFFFFFFF, true);
+
             guiGraphics.pose().popPose();
 
             y += textHeight + 2;
         }
     }
 
-    private String getBiomeName(Holder<Biome> biomeHolder) {
-        return Component.translatable(Util.makeDescriptionId("biome", biomeHolder.unwrapKey().map(ResourceKey::location).orElse(null))).getString();
+    private <T> String getBiomeName(Holder<T> biomeHolder, Registry<T> type) {
+        // if (true) {
+        //     return Util.makeDescriptionId(type, biomeHolder.value());
+        // }
+        String[] split = type.key().location().getPath().split("/");
+        return Component.translatable(Util.makeDescriptionId(split[split.length - 1], biomeHolder.unwrapKey().map(ResourceKey::location).orElse(null))).getString();
     }
 
-    private String getBiomeId(Holder<Biome> biomeHolder) {
+    private <T> String getBiomeId(Holder<T> biomeHolder) {
         return biomeHolder.unwrapKey().map(key -> key.location().toString()).orElse("null");
     }
 }
