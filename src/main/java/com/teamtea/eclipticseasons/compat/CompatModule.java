@@ -27,8 +27,6 @@ public class CompatModule {
     @Getter
     private static boolean distanthorizons = false;
 
-    @Getter
-    private static boolean voxy = false;
     //@Getter
     //private static boolean voxyTest = false;
 
@@ -44,7 +42,6 @@ public class CompatModule {
         iris = Platform.isModLoaded("iris");
         modernui = Platform.isModLoaded("modernui");
         distanthorizons = Platform.isModLoaded("distanthorizons");
-        voxy = Platform.isModLoaded("voxy");
         //if (isVoxy()) {
         //    CommentedFileConfig oldConfig = CommentedFileConfig.builder(FMLPaths.CONFIGDIR.get().resolve(EclipticSeasons.defaultConfigName(ModConfig.Type.COMMON, EclipticSeasons.MODID)))
         //            .preserveInsertionOrder().build();
@@ -62,14 +59,6 @@ public class CompatModule {
             try {
                 Class<?> iuiHandlerClass = Class.forName("com.teamtea.eclipticseasons.compat.modernui.MUIHandler");
                 gameBus.register(iuiHandlerClass.getField("INSTANCE").get(null));
-            } catch (ClassNotFoundException | IllegalAccessException | NoSuchFieldException e) {
-                throw new RuntimeException(e);
-            }
-        }
-        if (isVoxy() && FMLLoader.getDist() == Dist.CLIENT) {
-            try {
-                Class<?> handler = Class.forName("com.teamtea.eclipticseasons.compat.voxy.VoxyEsHandler");
-                gameBus.register(handler.getField("INSTANCE").get(null));
             } catch (ClassNotFoundException | IllegalAccessException | NoSuchFieldException e) {
                 throw new RuntimeException(e);
             }
@@ -129,32 +118,7 @@ public class CompatModule {
                 DistantHorizonsWinterLOD = builder.comment("Enables winter-themed Level of Detail (LOD) textures for Distant Horizons to ensure visual consistency at long distances.")
                         .define("DistantHorizonsWinterLOD", true);
 
-            if (isVoxy()) {
-                voxyTest = builder
-                        .worldRestart()
-                        .comment("""
-                                .
-                                Just for test.
-                                .""".strip()
-                        ).define("VoxyTest", false);
 
-                voxyLODAutoReload = builder
-                        //.worldRestart()
-                        .comment("""
-                                .
-                                Just for test.
-                                .""".strip()
-                        ).define("VoxyLODAutoReload", false);
-
-
-                voxyReloadWhenSeasonChanged = builder
-                        //.worldRestart()
-                        .comment("""
-                                .
-                                Just for test.
-                                .""".strip()
-                        ).define("VoxyReloadWhenSeasonChanged", false);
-            }
             builder.pop();
         }
     }

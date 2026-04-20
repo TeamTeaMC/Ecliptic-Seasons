@@ -25,14 +25,6 @@
     "common.level.MixinLevelTimeAccess",
     "common.level.MixinServerLevel",
     "common.worldgen.MixinSurfaceSystem",
-    "compat.voxy.MixinIngestSection",
-    "compat.voxy.MixinMapping",
-    "compat.voxy.MixinModelBakerySubsystem",
-    "compat.voxy.MixinModelFactory",
-    "compat.voxy.MixinVoxelIngestService",
-    "compat.voxy.MixinWorldConversionFactory",
-    "compat.voxy.MixinWorldImporter",
-    "compat.voxy.MixinWorldUpdater",
     "data.MixinsDataProvider",
     "data.MixinsDelegatingOps",
     "data.MixinsDynamicOps",
@@ -93,9 +85,7 @@
     "compat.sodium.MixinBlockRenderTask",
     "compat.sodium.MixinClonedChunkSection",
     "compat.sodium.MixinLevelSlice",
-    "compat.sodium.MixinNeoForgeModelAccess",
-    "compat.voxy.MixinClientLevel",
-    "compat.voxy.MixinModelTextureBakery"
+    "compat.sodium.MixinNeoForgeModelAccess"
   ],
   "injectors": {
     "defaultRequire": 1
