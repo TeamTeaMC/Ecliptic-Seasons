@@ -124,7 +124,12 @@ public class DebugInfoRenderer {
                 ISnowTerm snowTerm = SolarTerm.getSnowTerm(biomeWeather.biomeHolder.value(), false, EclipticUtil.getSnowTempChange(level));
                 SolarTerm start = snowTerm.getStart();
                 SolarTerm end = snowTerm.getEnd();
-                infoLines.addKV("Snow Term", "[%s → %s]".formatted(start.getTranslation().getString(), end.getTranslation().getString()), "§f");
+                infoLines.addComponent(Component.literal("Snow Term%s: ".formatted(e_cachedBiome==cachedBiome?"":" (Surface) "))
+                        .append(Component.translatable("debug_info.eclipticseasons.snow_term",
+                                start.getTranslation().withStyle(start.getColor()),
+                                end.getTranslation().withStyle(end.getColor()),
+                                !start.isValid() || start.ordinal() < end.ordinal() ? Component.empty() :
+                                        Component.translatable("debug_info.eclipticseasons.snow_term.second_year").withStyle(end.getColor()))));
                 infoLines.addKV("Snow Depth", biomeWeather.getSnowDepth(), "§f");
                 infoLines.addKV("Map Height", MapChecker.getHeight(level, pos), "");
 

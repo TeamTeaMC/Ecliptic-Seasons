@@ -26,7 +26,6 @@
     "common.level.MixinServerLevel",
     "common.worldgen.MixinSurfaceSystem",
     "compat.voxy.MixinAccessorModelFactory",
-    "compat.voxy.MixinAccessorVoxyRenderSystem",
     "compat.voxy.MixinIngestSection",
     "compat.voxy.MixinMapping",
     "compat.voxy.MixinModelBakerySubsystem",

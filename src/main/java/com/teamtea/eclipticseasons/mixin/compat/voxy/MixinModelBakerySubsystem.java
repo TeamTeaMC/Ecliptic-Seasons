@@ -6,14 +6,14 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.teamtea.eclipticseasons.compat.voxy.VoxyTool;
-import me.cortex.voxy.client.core.model.ModelBakerySubsystem;
+import me.cortex.voxy.client.core.model.SoftwareModelTextureBakery;
 import me.cortex.voxy.common.world.other.Mapper;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 
-@Mixin({ModelBakerySubsystem.class})
+@Mixin({SoftwareModelTextureBakery.class})
 public abstract class MixinModelBakerySubsystem {
 
 
@@ -23,7 +23,7 @@ public abstract class MixinModelBakerySubsystem {
 
     @Definition(id = "mapper", field = "Lme/cortex/voxy/client/core/model/ModelBakerySubsystem;mapper:Lme/cortex/voxy/common/world/other/Mapper;")
     @Definition(id = "getBlockStateCount", method = "Lme/cortex/voxy/common/world/other/Mapper;getBlockStateCount()I")
-    @Expression("this.mapper.getBlockStateCount()<?")
+    @Expression("this.mapper.getBlockStateCount()<=?")
     @WrapOperation(
             remap = false,
             method = "requestBlockBake",

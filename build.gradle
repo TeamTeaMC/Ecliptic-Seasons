@@ -187,7 +187,7 @@ dependencies {
     implementation "curse.maven:jade-324717:6291517"
     compileOnly("curse.maven:the-one-probe-245211:6106998")
 
-//    compileOnly("zlib:voxy:0.2.7-alpha_mapped_moj_1.21.1")
+//    compileOnly("zlib:voxy:0.2.14-alpha_mapped_moj_1.21.1")
     compileOnly("zlib:voxy_slim:1")
 
 //    runtimeOnly("curse.maven:the-one-probe-245211:6106998")

@@ -17,8 +17,8 @@ public class VoxyEsHandler {
             try {
                 IGetVoxyRenderSystem levelRenderer = (IGetVoxyRenderSystem)
                         Minecraft.getInstance().levelRenderer;
-                levelRenderer.shutdownRenderer();
-                levelRenderer.createRenderer();
+                levelRenderer.voxy$shutdownRenderer();
+                levelRenderer.voxy$createRenderer();
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }

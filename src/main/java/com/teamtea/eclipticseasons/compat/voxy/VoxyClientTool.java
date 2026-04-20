@@ -4,7 +4,6 @@ import com.teamtea.eclipticseasons.client.core.ExtraModelManager;
 import com.teamtea.eclipticseasons.client.core.ExtraRendererContext;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
-import me.cortex.voxy.client.core.model.bakery.ModelTextureBakery;
 import me.cortex.voxy.client.core.model.bakery.ReuseVertexConsumer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
@@ -12,6 +11,7 @@ import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockState;
@@ -21,7 +21,7 @@ import java.util.List;
 
 public class VoxyClientTool {
 
-    public static void renderToStream(BlockState state, RenderType layer, ReuseVertexConsumer vc) {
+    public static void renderToStream(BlockState state, RenderType layer, ReuseVertexConsumer translucentVC, ReuseVertexConsumer opaqueVC) {
         if (!VoxyTool.isVoxyTest()) return;
 
         if (state.getRenderShape() != RenderShape.INVISIBLE) {
@@ -36,9 +36,9 @@ public class VoxyClientTool {
                     .setOriginalModel(Minecraft.getInstance().getModelManager().getBlockModelShaper().getBlockModel(state))
             ;
 
-            int meta = ModelTextureBakery.getMetaFromLayer(state.getBlock() instanceof LeavesBlock ?
+            RenderType type = state.getBlock() instanceof LeavesBlock ?
                     layer :
-                    ExtraModelManager.getRenderType(state));
+                    ExtraModelManager.getRenderType(state);
             for (Direction direction : new Direction[]{Direction.DOWN, Direction.UP, Direction.NORTH, Direction.SOUTH, Direction.WEST, Direction.EAST, null}) {
 
                 for (BakedQuad quad :
@@ -47,8 +47,7 @@ public class VoxyClientTool {
                                 ClientCon.getUseLevel().getRandom(), 42L,
                                 model.getQuads(state, direction, new SingleThreadedRandomSource(42L)),
                                 List.of())) {
-                    int quadMeta = meta | (quad.isTinted() ? 4 : 0);
-                    vc.quad(quad, quadMeta);
+                    (type == RenderType.translucent() ? translucentVC : opaqueVC).quad(quad, state.is(BlockTags.LEAVES), layer);
                 }
             }
         }

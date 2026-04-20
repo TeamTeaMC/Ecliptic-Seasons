@@ -1,3 +1,11 @@
+### 0.13.0-beta-1-3
+
+- Adjust Voxy’s supported version constraint to **0.2.14-alpha**.
+
+### 0.13.0-beta-1-3
+
+- For voxy 0.2.13-alpha+.
+
 ## 0.13.0-beta-1
 
 - Migrated biome-specific rain to a dimension-based system. This change improves performance by reducing location-based

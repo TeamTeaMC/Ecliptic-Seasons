@@ -28,8 +28,10 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.lang.reflect.Method;
 import java.nio.file.Path;
 import java.util.function.IntConsumer;
 
@@ -118,7 +120,7 @@ public class VoxyTool {
 
 
     public static WorldEngine getWorld(Level level) {
-        return VoxyCommon.getInstance().getNullable(WorldIdentifier.of(level));
+        return getVoxyInstance().getNullable(WorldIdentifier.of(level));
     }
 
     public static Mapper getMapper(Level level) {
@@ -127,7 +129,7 @@ public class VoxyTool {
     }
 
     public static int getSkyLightFromBlockId(long blockId) {
-        //return (Mapper.getLightId(blockId) & 0xFF) & 0x0F;
+        // return (Mapper.getLightId(blockId) & 0xFF) & 0x0F;
         return (Mapper.getLightId(blockId) % 16);
     }
 
@@ -140,7 +142,6 @@ public class VoxyTool {
         WorldEngine world = getWorld(level);
         return world == null ? null : getWorldSection(world, section);
     }
-
 
 
     public static ImportManager esImporter;
@@ -160,10 +161,7 @@ public class VoxyTool {
                 || esImporter != null)
             return;
 
-        //if (!(VoxyCommon.getInstance() instanceof VoxyClientInstance instance)) {
-        //    return;
-        //}
-        VoxyInstance instance = VoxyCommon.getInstance();
+        VoxyInstance instance = getVoxyInstance();
         if (instance == null) return;
 
         var engine = WorldIdentifier.ofEngine(level);
@@ -173,14 +171,13 @@ public class VoxyTool {
 
         esImporter = new VoxyESImportManager();
 
-        //MixinAccessorModelFactory factory = (MixinAccessorModelFactory) ((MixinAccessorVoxyRenderSystem) ((IGetVoxyRenderSystem)
+        // MixinAccessorModelFactory factory = (MixinAccessorModelFactory) ((MixinAccessorVoxyRenderSystem) ((IGetVoxyRenderSystem)
         //        Minecraft.getInstance().levelRenderer)
         //        .getVoxyRenderSystem()).getModelBakerySubsystem()
         //        .factory;
         //
-        //Arrays.fill(factory.getIdMappings(), -1);
-        //factory.getModelTexture2id().clear();
-
+        // Arrays.fill(factory.getIdMappings(), -1);
+        // factory.getModelTexture2id().clear();
 
 
         esImporter.makeAndRunIfNone(engine, () -> {
@@ -193,5 +190,16 @@ public class VoxyTool {
             importer.importRegionDirectoryAsync(file.toFile());
             return importer;
         });
+    }
+
+    private static @Nullable VoxyInstance getVoxyInstance() {
+        VoxyInstance instance = null;
+        try {
+            Class<?> clazz = Class.forName("me.cortex.voxy.commonImpl.VoxyCommon");
+            Method method = clazz.getDeclaredMethod("getInstance");
+            instance = (VoxyInstance) method.invoke(null);
+        } catch (Exception ignored) {
+        }
+        return instance;
     }
 }

@@ -86,6 +86,14 @@ file="META-INF/accesstransformer.cfg"
     side="BOTH"
 
 [[dependencies.${mod_id}]]
+    modId="voxy"
+    type="optional"
+    mandatory=false
+    versionRange="[0.2.14-alpha,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.${mod_id}]]
     modId="distanthorizons"
     type="optional"
     mandatory=false
