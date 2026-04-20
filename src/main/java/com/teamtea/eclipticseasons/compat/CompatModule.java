@@ -87,9 +87,6 @@ public class CompatModule {
         public static ModConfigSpec.BooleanValue fixBiome;
         public static ModConfigSpec.DoubleValue weatherVotePercent;
         public static ModConfigSpec.BooleanValue DistantHorizonsWinterLOD;
-        public static ModConfigSpec.BooleanValue voxyTest;
-        public static ModConfigSpec.BooleanValue voxyLODAutoReload;
-        public static ModConfigSpec.BooleanValue voxyReloadWhenSeasonChanged;
 
         public static void load(ModConfigSpec.Builder builder) {
             builder.push("Compat");
