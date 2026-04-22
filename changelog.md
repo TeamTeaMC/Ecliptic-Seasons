@@ -1,1 +1,1 @@
-- Removed the Voxy compatibility plugin and make it a standalone mod [Ecliptic Seasons : Voxy Compact](https://legacy.curseforge.com/minecraft/mc-mods/ecliptic-seasons-voxy-compact).
+- Added weather effect data pack modifier option, which can be used to adjust particle textures when it rains.

@@ -168,6 +168,7 @@ public final class ClientEventHandler {
     public static void onLevelUnloadEvent(LevelEvent.Unload event) {
         if (event.getLevel() instanceof ClientLevel clientLevel) {
             ClientCon.setUseLevel(null);
+            ClientWeatherChecker.unload(clientLevel);
             CompilerCollector.clearAll();
             IceKeeper.clearAll();
         }
@@ -219,6 +220,7 @@ public final class ClientEventHandler {
     public static void onLevelTick(LevelTickEvent.Post event) {
         if (event.getLevel() instanceof ClientLevel clientLevel) {
             ClientCon.tick(clientLevel);
+            ClientWeatherChecker.tickLevel(clientLevel);
 
             if ((!EclipticUtil.canSnowyBlockInteract() || ClientConfig.Renderer.enhancementChunkRenderUpdate.get())
                     && ClientConfig.Renderer.forceChunkRenderUpdate.get()) {

@@ -13,11 +13,13 @@ import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.biome.Biome;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -34,6 +36,10 @@ public abstract class MixinLevelRender {
     @Nullable
     public ClientLevel level;
 
+
+    @Shadow
+    @Final
+    private static ResourceLocation RAIN_LOCATION;
 
     @WrapOperation(
             method = {"tickRain"},
@@ -65,13 +71,12 @@ public abstract class MixinLevelRender {
     }
 
 
-
     @Inject(
             method = "renderSnowAndRain",
             at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderSystem;depthMask(Z)V")
     )
     private void eclipticseasons$renderSnowAndRain_ModifySnowAmount(LightTexture pLightTexture, float pPartialTick, double pCamX, double pCamY, double pCamZ, CallbackInfo ci, @Local(ordinal = 3) LocalIntRef integerLocalRef) {
-            integerLocalRef.set(ClientWeatherChecker.ModifySnowAmount(integerLocalRef.get(), pPartialTick, level));
+        integerLocalRef.set(ClientWeatherChecker.ModifySnowAmount(integerLocalRef.get(), pPartialTick, level));
     }
 
     @WrapOperation(
@@ -89,6 +94,15 @@ public abstract class MixinLevelRender {
     )
     private int eclipticseasons$tickRain_modifyAmount(int originalNum) {
         return (int) ClientWeatherChecker.modifyRainAmount(originalNum, level);
+    }
+
+    @WrapOperation(
+            method = {"renderSnowAndRain"},
+            at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderSystem;setShaderTexture(ILnet/minecraft/resources/ResourceLocation;)V")
+    )
+    private void eclipticseasons$renderSnowAndRain_rebindingTexture(
+            int shaderTexture, ResourceLocation textureId, Operation<Void> original) {
+        original.call(shaderTexture, ClientWeatherChecker.modifyRainAmount3(textureId, textureId == RAIN_LOCATION));
     }
 
     // @Inject(
