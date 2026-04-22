@@ -118,8 +118,8 @@ public class DebugInfoRenderer {
                 infoLines.addEmpty();
                 infoLines.add("Biome: " + getBiomeName(cachedBiome) + " §2(" + getBiomeId(cachedBiome) + ")§r");
                 infoLines.add("Surface: " + (e_cachedBiome != null ? (getBiomeName(e_cachedBiome) + " §2(" + getBiomeId(e_cachedBiome) + ")§r") : "Unknown"));
-                // infoLines.add(String.format("R/C/T Time: §e%d§r / §e%d§r / §e%d§r",
-                //         biomeWeather.rainTime, biomeWeather.clearTime, biomeWeather.thunderTime));
+                infoLines.add(String.format("R/C/T Time: §e%d§r / §e%d§r / §e%d§r",
+                        level.isRaining() ? 10000 : 0, level.isRaining() ? 0 : 10000,  level.isThundering() ? 10000 : 0));
                 ISnowTerm snowTerm = SolarTerm.getSnowTerm(biomeWeather.biomeHolder.value(), false, EclipticUtil.getSnowTempChange(level));
                 SolarTerm start = snowTerm.getStart();
                 SolarTerm end = snowTerm.getEnd();

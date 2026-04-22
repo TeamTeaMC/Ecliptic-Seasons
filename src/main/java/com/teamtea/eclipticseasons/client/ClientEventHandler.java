@@ -127,6 +127,7 @@ public final class ClientEventHandler {
         if (event.getLevel() instanceof ClientLevel clientLevel) {
             MapChecker.unloadLevel(clientLevel);
             ClientCon.setUseLevel(null);
+            ClientWeatherChecker.unload(clientLevel);
             IceKeeper.clearAll();
 
             // 1.20.1 patch for lazy chunk load
@@ -187,6 +188,7 @@ public final class ClientEventHandler {
         if (event.level instanceof ClientLevel clientLevel
                 && event.phase.equals(TickEvent.Phase.END)) {
             ClientCon.tick(clientLevel);
+            ClientWeatherChecker.tickLevel(clientLevel);
 
             if ((!EclipticUtil.canSnowyBlockInteract() || ClientConfig.Renderer.enhancementChunkRenderUpdate.get())
                     && ClientConfig.Renderer.forceChunkRenderUpdate.get()) {

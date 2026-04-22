@@ -70,4 +70,22 @@ public class CompositeEffect implements WeatherEffect {
         }
         return count > 0 ? result / count : result;
     }
+
+    @Override
+    public boolean shouldChangeTexture(boolean rain) {
+        for (WeatherEffect content : contents) {
+            if (content.shouldChangeTexture(rain))
+                return true;
+        }
+        return false;
+    }
+
+
+    @Override
+    public ResourceLocation onTextureBinding(ResourceLocation original, boolean rain) {
+        for (WeatherEffect content : contents) {
+            original = content.onTextureBinding(original, rain);
+        }
+        return original;
+    }
 }

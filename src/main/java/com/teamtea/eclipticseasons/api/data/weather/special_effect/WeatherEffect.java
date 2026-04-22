@@ -9,6 +9,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
+import org.jetbrains.annotations.ApiStatus;
 
 public interface WeatherEffect {
     Codec<WeatherEffect> CODEC = CodecUtil.lazyInitialized(() -> Codec.STRING
@@ -36,5 +37,16 @@ public interface WeatherEffect {
 
     default float getFogDensity(Level level, BlockPos pos) {
         return 0f;
+    }
+
+
+    @ApiStatus.Experimental
+    default boolean shouldChangeTexture(boolean rain) {
+        return false;
+    }
+
+    @ApiStatus.Experimental
+    default ResourceLocation onTextureBinding(ResourceLocation original, boolean rain) {
+        return original;
     }
 }

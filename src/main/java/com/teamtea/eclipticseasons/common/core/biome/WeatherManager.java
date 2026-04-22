@@ -149,7 +149,9 @@ public class WeatherManager {
     }
 
     public static void setBiomeWeather(ServerLevel level, BiomeWeather biomeWeather, int rainTime) {
-        biomeWeather.lastRainTime = rainTime > 0 ? level.getGameTime() : biomeWeather.lastRainTime;
+        boolean rain = rainTime > 0;
+        biomeWeather.lastRainTime = rain ? level.getGameTime() : biomeWeather.lastRainTime;
+        biomeWeather.effect = rain && biomeWeather.biomeRain.hasSpecialEffect() ? biomeWeather.biomeRain.getSpecialEffect() : null;
     }
 
     public static boolean isThunderAtBiome(Level level, BlockPos pos) {
@@ -432,6 +434,7 @@ public class WeatherManager {
         int thunderTime = weatherData.getThunderTime();
 
         boolean raining = weatherData.isRaining();
+        boolean oldRaining = raining;
         boolean thundering = weatherData.isThundering();
 
         if (clearTime > 0) {
@@ -481,10 +484,10 @@ public class WeatherManager {
 
         biomeWeather.setBiomeRain(biomeRain);
 
-        if (weatherData.isRaining()) {
+        if (!oldRaining && raining) {
             biomeWeather.effect = biomeWeather.biomeRain.hasSpecialEffect() ?
                     biomeWeather.biomeRain.getSpecialEffect() : null;
-        } else {
+        } else if (oldRaining && !raining) {
             biomeWeather.effect = null;
         }
 
