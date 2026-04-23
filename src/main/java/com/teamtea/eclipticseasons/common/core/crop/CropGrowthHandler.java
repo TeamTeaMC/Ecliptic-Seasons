@@ -797,8 +797,9 @@ public final class CropGrowthHandler {
                     return chunkAccess.getSecond().getBlockState(pos.getX() & 15, pos.getY() & 15, pos.getZ() & 15);
                 }
             }
-            ChunkAccess chunk1 = levelAccessor.getChunk(x, z);
-            int sectionIndex = chunk1.getSectionIndex(pos.getY());
+            ChunkAccess chunkAccess = levelAccessor instanceof ServerLevel serverLevel ?
+                    serverLevel.getChunkSource().getChunkNow(x, z) : null;
+            ChunkAccess chunk1 = chunkAccess == null ? levelAccessor.getChunk(x, z) : chunkAccess;            int sectionIndex = chunk1.getSectionIndex(pos.getY());
             LevelChunkSection[] sections = chunk1.getSections();
             if (sectionIndex < 0 || sectionIndex >= sections.length)
                 return Blocks.AIR.defaultBlockState();
