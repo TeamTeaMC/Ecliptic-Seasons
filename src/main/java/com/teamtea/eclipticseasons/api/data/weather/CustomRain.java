@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 public record CustomRain(int ordinal,
+                         String name,
                          List<Weather> weatherList,
                          Optional<BiomeRain> defaultWeather,
                          float rainChance,
@@ -107,6 +108,7 @@ public record CustomRain(int ordinal,
 
     public record Weather(
             int ordinal,
+            String name,
             Optional<IntProvider> rain,
             Optional<IntProvider> rainDelay,
             Optional<IntProvider> thunder,
@@ -119,9 +121,10 @@ public record CustomRain(int ordinal,
             float snowAccumulationSpeed,
             float snowMeltSpeed) implements BiomeRain {
 
-        public static Weather of(SolarTerm solarTerm, CustomRainBuilder.Weather weather) {
+        public static Weather of(SolarTerm solarTerm, String name,CustomRainBuilder.Weather weather) {
             return new Weather(
                     solarTerm.ordinal(),
+                    name,
                     weather.getRain(),
                     weather.getRainDelay(),
                     weather.getThunder(),

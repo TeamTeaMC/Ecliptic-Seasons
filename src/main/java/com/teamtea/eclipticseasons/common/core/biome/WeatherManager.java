@@ -88,7 +88,7 @@ public class WeatherManager {
 
     public static int getWeatherTickFactor(Level level) {
         ArrayList<BiomeWeather> biomeList = getBiomeList(level);
-        int size = biomeList == null ? 1 : biomeList.size();
+        int size = biomeList == null ? 64 : biomeList.size();
         size = (int) (size * (Mth.clamp(7f / EclipticSeasonsApi.getInstance().getLastingDaysOfEachTerm(level), 0.8f, 3f)));
         size = Math.max(1, size);
         return size;
@@ -143,7 +143,7 @@ public class WeatherManager {
         ArrayList<BiomeWeather> biomeList = getBiomeList(level);
         if (biomeList != null) {
             for (BiomeWeather biomeWeather : biomeList) {
-                setBiomeWeather(level, biomeWeather, pClearTime);
+                setBiomeWeather(level, biomeWeather, pWeatherTime);
             }
         }
     }
@@ -151,7 +151,7 @@ public class WeatherManager {
     public static void setBiomeWeather(ServerLevel level, BiomeWeather biomeWeather, int rainTime) {
         boolean rain = rainTime > 0;
         biomeWeather.lastRainTime = rain ? level.getGameTime() : biomeWeather.lastRainTime;
-        biomeWeather.effect = rain && biomeWeather.biomeRain.hasSpecialEffect() ? biomeWeather.biomeRain.getSpecialEffect() : null;
+        biomeWeather.effect = rain && biomeWeather.biomeRain.hasSpecialEffect() ? biomeWeather.biomeRain.getSpecialEffect() : biomeWeather.effect;
     }
 
     public static boolean isThunderAtBiome(Level level, BlockPos pos) {
@@ -448,8 +448,11 @@ public class WeatherManager {
                             * size / 3000f;
                     if (level.getRandom().nextInt(1000) / 1000.f < weight) {
                         thunderTime = biomeRain.getThunderDuration(random) / size;
+                        thundering = true;
+                    } else {
+                        thunderTime = biomeRain.getThunderDelay(random) / size;
+                        thundering = false;
                     }
-
                 }
             } else {
                 float downfall = EclipticUtil.getDownfallFloatConstant(solarTerm, biomeWeather.biomeHolder.value(), !level.isClientSide());
@@ -472,7 +475,6 @@ public class WeatherManager {
             }
         }
 
-        thundering = thunderTime > 0;
         raining = clearTime == 0 && rainTime > 0;
 
 
@@ -484,10 +486,11 @@ public class WeatherManager {
 
         biomeWeather.setBiomeRain(biomeRain);
 
-        if (!oldRaining && raining) {
-            biomeWeather.effect = biomeWeather.biomeRain.hasSpecialEffect() ?
-                    biomeWeather.biomeRain.getSpecialEffect() : null;
-        } else if (oldRaining && !raining) {
+        if (raining) {
+            if (biomeWeather.effect == null)
+                biomeWeather.effect = biomeWeather.biomeRain.hasSpecialEffect() ?
+                        biomeWeather.biomeRain.getSpecialEffect() : null;
+        } else if (biomeWeather.effect != null && level.getRainLevel(0) < 0.0001f) {
             biomeWeather.effect = null;
         }
 

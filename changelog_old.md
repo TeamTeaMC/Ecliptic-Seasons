@@ -1,6 +1,14 @@
 > As the ecosystem for 1.20.1 begins to wind down with major mods like Create moving on, we are also transitioning into
 > the final maintenance phase for our mod on this version.
 
+### 0.13.0-beta-4
+
+- Formally removed the Weather Region datapack, as it is now obsolete.
+- Optimized the content display on the DebugInfo screen.
+- Refined the thunder execution logic; fixed a bug where rain would always trigger lightning in certain seasons.
+- Fixed an issue where rain commands failed to set weather effects correctly.
+- Optimized the update logic for weather effects.
+
 ## 0.13.0-beta-3
 
 - Added weather effect data pack modifier option, which can be used to adjust particle textures when it rains.

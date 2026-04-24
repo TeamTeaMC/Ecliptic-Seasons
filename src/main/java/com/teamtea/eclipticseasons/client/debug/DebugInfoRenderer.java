@@ -109,8 +109,8 @@ public class DebugInfoRenderer {
             infoLines.addKV("Day Time", dayTime, "§e");
             infoLines.addKV("Humidity", String.format("%.2f", EclipticUtil.getHumidityLevelAt(level, pos)), "§9");
             infoLines.addDoubleKV(
-                    "Rainfall", EclipticUtil.getRainfallAt(level, pos).getTranslation().getString(), "§b",
-                    "Temp", String.format("%.2f", envTemp), "§a"
+                    "Rainfall", String.format("%.2f", EclipticUtil.getDownfallFloat(level, cachedBiome.value(), pos)), "§b",
+                    "Temp", String.format("%.2f", EclipticUtil.getTemperatureFloat(level, cachedBiome.value(), pos)), "§a"
             );
 
             WeatherManager.BiomeWeather biomeWeather = WeatherManager.getBiomeWeather(level, cachedBiome);
@@ -129,37 +129,41 @@ public class DebugInfoRenderer {
 
                 infoLines.addEmpty();
 
-                // WeatherMode weatherMode = EclipticUtil.getWeatherMode(level);
+// WeatherMode weatherMode = EclipticUtil.getWeatherMode(level);
                 // if (!EclipticUtil.hasLocalWeather(level)) {
                 //     infoLines.addKV("Mode", "Vanilla Sync", "§c");
-                // } else {
-                //     Holder<Biome> owner = (weatherMode == WeatherMode.REGION) ? BiomeClimateManager.getWeatherRegionOnwer(biomeWeather.biomeHolder.value()) : null;
-                //     Holder<Biome> targetBiome = (owner != null) ? owner : e_cachedBiome;
-                //     WeatherManager.BiomeWeather weatherTarget = WeatherManager.getBiomeWeather(level, targetBiome);
-                //
-                //     if (weatherTarget != null) {
-                //         infoLines.addKV("Biome Rain", weatherTarget.getBiomeRain(), "§f");
-                //         if (owner != null && !owner.equals(e_cachedBiome)) {
-                //             infoLines.addKV("Owner", getBiomeName(owner), "§e");
-                //         }
-                //
-                //         float downfall = EclipticUtil.getDownfallFloatConstant(ClientCon.nowSolarTerm, targetBiome.value(), false);
-                //         float rainChance = weatherTarget.getBiomeRain().getRainChance()
-                //                 * Math.max(0.01f, downfall)
-                //                 * (CommonConfig.Weather.rainChanceMultiplier.get() / 100f);
-                //         infoLines.addKV("Rain Chance", String.format("%.2f%%", Math.min(rainChance * 100, 100)), "§b");
-                //
-                //         if (biomeWeather.shouldRain()) {
-                //             int size = Optional.ofNullable(WeatherManager.getBiomeList(level)).map(List::size).orElse(64);
-                //             float thunderChance = weatherTarget.getBiomeRain().getThunderChance()
-                //                     * (CommonConfig.Weather.thunderChanceMultiplier.get() / 100f)
-                //                     * size / 3000f;
-                //             infoLines.addKV("Thunder Chance", String.format("%.2f%%", Math.min(thunderChance * 10000, 100)), "§e");
-                //         } else {
-                //             infoLines.addKV("Thunder", "Waiting Rain", "");
-                //         }
-                //     }
-                // }
+                // } else
+                {
+                    Holder<Biome> owner = WeatherManager.getOwner(ClientCon.getUseLevel(), biomeWeather.biomeHolder);
+                    Holder<Biome> targetBiome = (owner != null) ? owner : e_cachedBiome;
+                    WeatherManager.BiomeWeather weatherTarget = WeatherManager.getBiomeWeather(level, targetBiome);
+
+                    if (weatherTarget != null) {
+                        // infoLines.addKV("Biome Rain", weatherTarget.getBiomeRain().name(), "§f");
+                        infoLines.add("Biome Rain: §2" + weatherTarget.getBiomeRain().name() + " §3(" + (weatherTarget.getBiomeRain().ordinal() + 1) + ")§r");
+                        if (weatherTarget.effect != null && weatherTarget.effect.unwrapKey().isPresent())
+                            infoLines.add("Weather Effect: §2" + weatherTarget.effect.unwrapKey().get().location());
+                        if (owner != null && !owner.equals(e_cachedBiome) ) {
+                            infoLines.addKV("Owner", getBiomeName(owner), "§e");
+                        }
+
+                        float downfall = EclipticUtil.getDownfallFloatConstant(ClientCon.nowSolarTerm, targetBiome.value(), false);
+                        float rainChance = weatherTarget.getBiomeRain().getRainChance()
+                                * Math.max(0.01f, downfall)
+                                * (CommonConfig.Weather.rainChanceMultiplier.get() / 100f);
+                        infoLines.addKV("Rain Chance", String.format("%.2f%%", Math.min(rainChance * 100, 100)), "§b");
+
+                        if (level.isRaining()) {
+                            int size = WeatherManager.getWeatherTickFactor(level);
+                            float thunderChance = weatherTarget.getBiomeRain().getThunderChance()
+                                    * (CommonConfig.Weather.thunderChanceMultiplier.get() / 100f)
+                                    * size / 3000f;
+                            infoLines.addKV("Thunder Chance", String.format("%.2f%%", Math.min(thunderChance * 10000, 100)), "§e");
+                        } else {
+                            infoLines.addKV("Thunder", "Waiting Rain", "");
+                        }
+                    }
+                }
             }
         }
 

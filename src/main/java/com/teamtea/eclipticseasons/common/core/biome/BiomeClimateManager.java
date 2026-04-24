@@ -53,7 +53,6 @@ public class BiomeClimateManager {
     // snow term
     public static final Map<Biome, ISnowTerm> CUSTOM_SNOW_TERM_MAP = new IdentityHashMap<>();
 
-    public static final Map<Biome, Holder<Biome>> WEATHER_REGION_MAP = new IdentityHashMap<>();
 
     // snow line
     public static final Map<Biome, Integer> SNOW_LINE_MAP = new IdentityHashMap<>();
@@ -75,7 +74,6 @@ public class BiomeClimateManager {
         var registry3 = registryAccess.registry(ESRegistries.SEASON_CYCLE);
         var registry4 = registryAccess.registry(ESRegistries.BIOME_RAIN);
         var registry5 = registryAccess.registry(ESRegistries.SNOW_TERM);
-        var registry6 = isServer ? registryAccess.registry(ESRegistries.WEATHER_REGION) : null;
         if (registry.isEmpty()) {
             SimpleUtil.warningForModWrongCalling(ESRegistries.BIOME_CLIMATE_SETTING);
         } else if (registry2.isEmpty()) {
@@ -86,18 +84,7 @@ public class BiomeClimateManager {
             SimpleUtil.warningForModWrongCalling(ESRegistries.BIOME_RAIN);
         } else if (registry5.isEmpty()) {
             SimpleUtil.warningForModWrongCalling(ESRegistries.SNOW_TERM);
-        } else if (registry6 != null && registry6.isEmpty()) {
-            SimpleUtil.warningForModWrongCalling(ESRegistries.WEATHER_REGION);
         } else {
-            if (isServer) {
-                resetSomeMap(registryAccess, registry6.get(),
-                        WEATHER_REGION_MAP,
-                        (customRainBuilder -> Pair.of(customRainBuilder.sub(), customRainBuilder.core())),
-                        (map, pair) -> map.put(pair.getFirst().value(), pair.getSecond()),
-                        () -> (Holder<Biome>) null,
-                        (biome, map) -> map
-                );
-            }
 
             if (!isServer && ClientCon.biomeDataPackCache != null) {
                 ClientCon.biomeDataPackCache.build(registryAccess, BiomesClimateSettings.class);
@@ -131,7 +118,7 @@ public class BiomeClimateManager {
             }
             resetSomeMap(registryAccess, registry4.get(),
                     CUSTOME_BIOME_RAIN_MAP,
-                    (customRainBuilder -> Pair.of(customRainBuilder.biomes(), customRainBuilder.build())),
+                    ((key, customRainBuilder) -> Pair.of(customRainBuilder.biomes(), customRainBuilder.build(key.location().toString()))),
                     (map, pair) -> map.put(pair.getFirst().value(), pair.getSecond()),
                     Map::<SolarTerm, CustomRain>of,
                     (biome, map) -> map
@@ -149,7 +136,7 @@ public class BiomeClimateManager {
             );
 
             BiomeRainDispatcher.init(registryAccess.registry(Registries.BIOME).orElse(null)
-                    ,isServer);
+                    , isServer);
 
             setSnowLine(registryAccess, SNOW_LINE_MAP);
         }
@@ -162,11 +149,22 @@ public class BiomeClimateManager {
                                                  BiConsumer<Map<Biome, R>, Pair<Holder<Biome>, U>> singleDeal,
                                                  Supplier<R> emptyInstance,
                                                  BiFunction<Biome, R, S> mapSaver) {
+        resetSomeMap(registryAccess, registry, useMap, ((key, t) -> biomeTransfer.apply(t)),
+                singleDeal, emptyInstance, mapSaver);
+    }
+
+    public static <T, U, R, S> void resetSomeMap(RegistryAccess registryAccess,
+                                                 Registry<T> registry,
+                                                 Map<Biome, S> useMap,
+                                                 BiFunction<ResourceKey<T>, T, Pair<HolderSet<Biome>, U>> biomeTransfer,
+                                                 BiConsumer<Map<Biome, R>, Pair<Holder<Biome>, U>> singleDeal,
+                                                 Supplier<R> emptyInstance,
+                                                 BiFunction<Biome, R, S> mapSaver) {
         useMap.clear();
         Map<Biome, R> biomeUIdentityHashMap = new IdentityHashMap<>();
 
-        for (var value : ESSortInfo.sorted2(registry)) {
-            var pair = biomeTransfer.apply(value);
+        for (var value : ESSortInfo.sorted(registry.holders().toList())) {
+            var pair = biomeTransfer.apply(value.key(), value.value());
             for (Holder<Biome> next : pair.getFirst()) {
                 singleDeal.accept(biomeUIdentityHashMap, Pair.of(next, pair.getSecond()));
                 // biomeUIdentityHashMap.put(next.value(), singleDeal.apply(pair));
@@ -273,10 +271,6 @@ public class BiomeClimateManager {
 
     public static TagKey<Biome> getColorTag(Biome biome) {
         return BIOME_COLOR_TAG_KEY_MAP.getOrDefault(biome, ClimateTypeBiomeTags.NONE_COLOR_CHANGE);
-    }
-
-    public static Holder<Biome> getWeatherRegionOnwer(Biome biome) {
-        return WEATHER_REGION_MAP.getOrDefault(biome, null);
     }
 
     public static void resetAgroTag(RegistryAccess registryAccess, boolean isServer) {
@@ -422,7 +416,6 @@ public class BiomeClimateManager {
 
 
     public static void clearOnClientExitOrServerClose(boolean serverCause) {
-        BiomeClimateManager.WEATHER_REGION_MAP.clear();
         BiomeClimateManager.BIOME_CLIMATE_MAP.clear();
         BiomeClimateManager.SMALL_BIOME_MAP.clear();
         BiomeClimateManager.BIOME_TAG_KEY_MAP.clear();

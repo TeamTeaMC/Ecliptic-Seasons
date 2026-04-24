@@ -94,7 +94,6 @@ public class ModContents {
         event.dataPackRegistry(ESRegistries.SNOW_TERM, CustomSnowTerm.CODEC, CustomSnowTerm.DIRECT_CODEC);
 
         // not sync
-        event.dataPackRegistry(ESRegistries.WEATHER_REGION, WeatherRegion.CODEC);
         event.dataPackRegistry(ESRegistries.SEASON_DEFINITION, SeasonDefinition.CODEC);
 
         // sync safely
