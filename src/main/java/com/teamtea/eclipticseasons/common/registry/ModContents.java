@@ -15,7 +15,6 @@ import com.teamtea.eclipticseasons.api.data.crop.CropGrowControlBuilder;
 import com.teamtea.eclipticseasons.api.data.quest.SeasonQuest;
 import com.teamtea.eclipticseasons.api.data.weather.CustomRainBuilder;
 import com.teamtea.eclipticseasons.api.data.weather.CustomSnowTerm;
-import com.teamtea.eclipticseasons.api.data.weather.WeatherRegion;
 import com.teamtea.eclipticseasons.api.data.weather.special_effect.WeatherEffect;
 import com.teamtea.eclipticseasons.common.block.BlockInCopperGrateBlock;
 import com.teamtea.eclipticseasons.common.resource.FakeResourceManagerHelperUtil;
@@ -92,7 +91,6 @@ public class ModContents {
         event.dataPackRegistry(ESRegistries.SEASON_CYCLE, SeasonCycle.CODEC, SeasonCycle.CODEC);
         event.dataPackRegistry(ESRegistries.SNOW_TERM, CustomSnowTerm.CODEC, CustomSnowTerm.CODEC);
         event.dataPackRegistry(ESRegistries.SEASON_DEFINITION, SeasonDefinition.CODEC, SeasonDefinition.CODEC);
-        event.dataPackRegistry(ESRegistries.WEATHER_REGION, WeatherRegion.CODEC, WeatherRegion.CODEC);
         event.dataPackRegistry(ESRegistries.EXTRA_INFO, ESSortInfo.CODEC, ESSortInfo.CODEC);
         event.dataPackRegistry(ESRegistries.WEATHER_EFFECT, WeatherEffect.CODEC, WeatherEffect.CODEC);
         event.dataPackRegistry(ESRegistries.BIOME_RAIN, CustomRainBuilder.CODEC, CustomRainBuilder.CODEC);

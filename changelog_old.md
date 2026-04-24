@@ -1,9 +1,19 @@
+### 0.13.0-beta-4
+
+- Formally removed the Weather Region datapack, as it is now obsolete.
+- Optimized the content display on the DebugInfo screen.
+- Refined the thunder execution logic; fixed a bug where rain would always trigger lightning in certain seasons.
+- Fixed an issue where rain commands failed to set weather effects correctly.
+- Optimized the update logic for weather effects.
+
 ### 0.13.0-beta-3
 
 - Added weather effect data pack modifier option, which can be used to adjust particle textures when it rains.
 
 ### 0.13.0-beta-2
-- Removed the Voxy compatibility plugin and make it a standalone mod [Ecliptic Seasons : Voxy Compact](https://legacy.curseforge.com/minecraft/mc-mods/ecliptic-seasons-voxy-compact).
+
+- Removed the Voxy compatibility plugin and make it a standalone
+  mod [Ecliptic Seasons : Voxy Compact](https://legacy.curseforge.com/minecraft/mc-mods/ecliptic-seasons-voxy-compact).
 
 ### 0.13.0-beta-1-6
 
@@ -24,7 +34,8 @@
 
 ### 0.12.18.12
 
-- Because season-definitions data pack tend to grow too quickly when using the fixed_seed parameter, a built-in rate limit has been added.
+- Because season-definitions data pack tend to grow too quickly when using the fixed_seed parameter, a built-in rate
+  limit has been added.
 
 ### 0.12.18.11
 
