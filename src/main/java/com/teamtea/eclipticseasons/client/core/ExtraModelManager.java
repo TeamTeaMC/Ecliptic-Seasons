@@ -358,6 +358,7 @@ public class ExtraModelManager {
             yuushyaBlock &= blockType != MapChecker.FLAG_LEAVES && blockType != MapChecker.FLAG_VINE;
             boolean sodiumStairs = ((blockType == MapChecker.FLAG_STAIRS || blockType == MapChecker.FLAG_STAIRS_TOP)
                     && CompatModule.isSodium() && state.getBlock() instanceof StairBlock);
+            sodiumStairs = false;
             if (MapChecker.customBuiltin(blockType)
                     || yuushyaBlock
                     || sodiumStairs
@@ -1179,7 +1180,7 @@ public class ExtraModelManager {
         if (checkPos == null) checkPos = posToMutable(pos);
         else checkPos.set(pos.getX(), pos.getY(), pos.getZ());
 
-        //checkPos.move(Direction.UP);
+        // checkPos.move(Direction.UP);
 
         if (state.isAir() || !state.getFluidState().isEmpty() || state.is(EclipticBlockTags.SNOW_LAYER_CANNOT_SURVIVE_IN))
             return 0;
@@ -1257,7 +1258,7 @@ public class ExtraModelManager {
 
     public static BlockState shouldBlockAsSnowyState(BlockState state, BlockAndTintGetter blockAndTintGetter, BlockPos.MutableBlockPos mutableBlockPos) {
         if (!ClientConfig.Renderer.snowInFence.get()) return state;
-        //if (!state.blocksMotion() || !state.getFluidState().isEmpty())
+        // if (!state.blocksMotion() || !state.getFluidState().isEmpty())
         //    return state;
         if (!(state.getBlock() instanceof SnowyDirtBlock)) return state;
         int y = mutableBlockPos.getY();
@@ -1278,7 +1279,7 @@ public class ExtraModelManager {
             return 0;
         if (mapSlice.getBlockHeight(pos) != pos.getY()
                 && mapSlice.getSolidBlockHeight(pos) != pos.getY()) return 0;
-        //if (mapSlice.getBlockHeight(pos) > pos.getY()) return 0;
+        // if (mapSlice.getBlockHeight(pos) > pos.getY()) return 0;
 
         int realY = pos.getY() + 1;
 

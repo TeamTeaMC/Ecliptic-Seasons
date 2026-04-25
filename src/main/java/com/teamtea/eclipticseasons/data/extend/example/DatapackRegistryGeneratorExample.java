@@ -17,8 +17,6 @@ public class DatapackRegistryGeneratorExample extends DatapackBuiltinEntriesProv
             .add(ESRegistries.SNOW_TERM, SnowTermRegistry::bootstrap2)
             .add(ESRegistries.SEASON_DEFINITION, SeasonDefinitionRegistry::bootstrap2)
             .add(ESRegistries.SNOW_DEFINITIONS, SnowDefinitionsRegistry::bootstrap2)
-            .add(ESRegistries.WEATHER_EFFECT, WeatherEffectRegistry::bootstrap2)
-            .add(ESRegistries.BIOME_RAIN, BiomeRainRegistry::bootstrap2)
             ;
 
     public DatapackRegistryGeneratorExample(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {

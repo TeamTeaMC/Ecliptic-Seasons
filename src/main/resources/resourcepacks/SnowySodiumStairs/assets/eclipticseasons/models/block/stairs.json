@@ -1,0 +1,52 @@
+{
+	"format_version": "1.21.11",
+	"credit": "Made by Joe Vettek",
+	"parent": "block/block",
+	"textures": {
+		"particle": "block/snow",
+		"top": "block/snow",
+		"side": "eclipticseasons:block/snow_overlay",
+		"left": "eclipticseasons:block/snow_overlay_half_left"
+	},
+	"elements": [
+		{
+			"from": [0, 0, 0],
+			"to": [16, 16, 16],
+			"faces": {
+				"east": {"uv": [0, 0, 16, 16], "texture": "#side", "cullface": "east"}
+			}
+		},
+		{
+			"from": [0, 0, 0],
+			"to": [8, 8, 16],
+			"faces": {
+				"north": {"uv": [8, 0, 16, 8], "texture": "#side", "cullface": "north"},
+				"west": {"uv": [0, 0, 16, 8], "texture": "#side", "cullface": "west"},
+				"up": {"uv": [0, 0, 8, 16], "texture": "#top"}
+			}
+		},
+		{
+			"from": [8, 8, 0],
+			"to": [16, 16, 16],
+			"faces": {
+				"south": {"uv": [8, 0, 16, 8], "texture": "#side", "cullface": "south"},
+				"west": {"uv": [0, 0, 16, 8], "texture": "#side"},
+				"up": {"uv": [8, 0, 16, 16], "texture": "#top", "cullface": "up"}
+			}
+		},
+		{
+			"from": [8, 0, 0],
+			"to": [16, 16, 0],
+			"faces": {
+				"north": {"uv": [0, 0, 8, 16], "texture": "#side", "cullface": "north"}
+			}
+		},
+		{
+			"from": [0, 0, 16],
+			"to": [16, 8, 16],
+			"faces": {
+				"south": {"uv": [0, 0, 16, 8], "texture": "#left", "cullface": "south"}
+			}
+		}
+	]
+}

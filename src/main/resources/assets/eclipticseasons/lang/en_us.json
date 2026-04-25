@@ -18,6 +18,7 @@
   "ui.label.eclipticseasons.properties": "Properties",
   "debug_info.eclipticseasons.snow_term": "[%1$s → %2$s%3$s]",
   "debug_info.eclipticseasons.snow_term.second_year": " (next year)",
+  "pack.eclipticseasons.snowy_sodium_stairs": "Snowy Stairs for Sodium",
   "info.eclipticseasons.recipe_category.greenhouse_ritual": "Season Ritual",
   "info.eclipticseasons.recipe_category.greenhouse_ritual.not_in_room": "Not in room",
   "info.eclipticseasons.recipe_category.greenhouse_ritual.crop_bonus": "Crop growth can slightly accelerate",
@@ -62,5 +63,6 @@
   "eclipticseasons.configuration.ExtraSnowLayerCulling": "Extra Snow Layer Culling",
   "eclipticseasons.configuration.ShouldInitSnowForExtremeColdBiomes": "Should Init Snow Status for Extreme Cold Biomes",
   "eclipticseasons.configuration.ExtraSnowLayerMaxLayers": "Extra Snow Layer Max Layers",
-  "eclipticseasons.configuration.ExtraSnowLayerMaxLayersOnLeaves": "Extra Snow Layer Max Layers on Leaves"
+  "eclipticseasons.configuration.ExtraSnowLayerMaxLayersOnLeaves": "Extra Snow Layer Max Layers on Leaves",
+  "eclipticseasons.configuration.SpringGrass": "Spring grass and wildflowers"
 }

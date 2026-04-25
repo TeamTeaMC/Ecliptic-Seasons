@@ -18,6 +18,7 @@ import com.teamtea.eclipticseasons.api.data.weather.CustomSnowTerm;
 import com.teamtea.eclipticseasons.api.data.weather.special_effect.WeatherEffect;
 import com.teamtea.eclipticseasons.common.block.BlockInCopperGrateBlock;
 import com.teamtea.eclipticseasons.common.resource.FakeResourceManagerHelperUtil;
+import com.teamtea.eclipticseasons.compat.CompatModule;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import com.teamtea.eclipticseasons.config.StartConfig;
 import net.minecraft.core.BlockPos;
@@ -147,6 +148,13 @@ public class ModContents {
                         EclipticSeasonsApi.MODID, "EclipticSeasonsLegacySnowyBlock", modFile,
                         Component.translatable(EclipticSeasons.rl("legacy_snowy_block").toLanguageKey("pack")),
                         event.getPackType(), PackSource.FEATURE, new PackSelectionConfig(false, Pack.Position.TOP, false));
+                if (CompatModule.isSodium()) {
+                    FakeResourceManagerHelperUtil.registerBuiltinResourcePack(
+                            event,
+                            EclipticSeasonsApi.MODID, "SnowySodiumStairs", modFile,
+                            Component.translatable(EclipticSeasons.rl("snowy_sodium_stairs").toLanguageKey("pack")),
+                            event.getPackType(), PackSource.BUILT_IN, new PackSelectionConfig(true, Pack.Position.TOP, false));
+                }
             }
             if (event.getPackType() == PackType.SERVER_DATA) {
                 addPackIfEnabled(event, modFile,

@@ -29,6 +29,7 @@
   "info.eclipticseasons.recipe_category.season_quest.time.period": "%s - %s",
   "info.eclipticseasons.item.sal_wand.select_first": "选择第一个点 %s, %s, %s",
   "info.eclipticseasons.item.sal_wand.apply": "共应用到%s个位置",
+  "pack.eclipticseasons.snowy_sodium_stairs": "覆雪的楼梯 x Sodium",
   "eclipticseasons.configuration.SnowInFenceDirection": "栅栏内积雪全向检测",
   "eclipticseasons.configuration.NotIgnoreRiver": "降水查询不忽略河流",
   "eclipticseasons.configuration.ModsWithoutSereneSeasonBasedHumidity": "湿度自动分配黑名单",
@@ -60,5 +61,6 @@
   "eclipticseasons.configuration.ExtraSnowLayerCulling": "给额外雪层应用剔面机制",
   "eclipticseasons.configuration.ShouldInitSnowForExtremeColdBiomes": "为寒冷群系初始化雪状态",
   "eclipticseasons.configuration.ExtraSnowLayerMaxLayers": "额外的雪层数",
-  "eclipticseasons.configuration.ExtraSnowLayerMaxLayersOnLeaves": "额外的雪层数（树叶）"
+  "eclipticseasons.configuration.ExtraSnowLayerMaxLayersOnLeaves": "额外的雪层数（树叶）",
+  "eclipticseasons.configuration.SpringGrass": "春草与野花"
 }
