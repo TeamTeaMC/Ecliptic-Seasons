@@ -48,4 +48,14 @@ public interface WeatherEffect {
     default ResourceLocation onTextureBinding(ResourceLocation original, boolean rain) {
         return original;
     }
+
+    @ApiStatus.Experimental
+    default boolean shouldChangeAmount(boolean rain) {
+        return false;
+    }
+
+    @ApiStatus.Experimental
+    default float getModifiedAmount(float amount, boolean rain) {
+        return amount;
+    }
 }
