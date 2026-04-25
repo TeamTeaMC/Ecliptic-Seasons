@@ -182,6 +182,7 @@ public class CommandHandler {
                                                     .executes((commandContext) -> setSnowDepth(commandContext.getSource(), ResourceOrTagArgument.getResourceOrTag(commandContext, "biome", Registries.BIOME), IntegerArgumentType.getInteger(commandContext, "depth"))))
                                     )
                                     .then(Commands.literal("effect")
+                                            .then(Commands.literal("clear").executes(context -> setEffect(context.getSource(), ResourceOrTagArgument.getResourceOrTag(context, "biome", Registries.BIOME), null)))
                                             .then(Commands.argument("effect", ResourceKeyArgument.key(ESRegistries.WEATHER_EFFECT))
                                                     .executes((commandContext) -> setEffect(commandContext.getSource(), ResourceOrTagArgument.getResourceOrTag(commandContext, "biome", Registries.BIOME), ResourceKeyArgument.resolveKey(commandContext, "effect", ESRegistries.WEATHER_EFFECT, ERROR_WEATHER_EFFECT)))))
                             )

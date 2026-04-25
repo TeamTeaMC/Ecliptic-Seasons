@@ -39,7 +39,6 @@ public interface WeatherEffect {
         return 0f;
     }
 
-
     @ApiStatus.Experimental
     default boolean shouldChangeTexture(boolean rain) {
         return false;
@@ -48,5 +47,15 @@ public interface WeatherEffect {
     @ApiStatus.Experimental
     default ResourceLocation onTextureBinding(ResourceLocation original, boolean rain) {
         return original;
+    }
+
+    @ApiStatus.Experimental
+    default boolean shouldChangeAmount(boolean rain) {
+        return false;
+    }
+
+    @ApiStatus.Experimental
+    default float getModifiedAmount(float amount, boolean rain) {
+        return amount;
     }
 }
