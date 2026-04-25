@@ -1,0 +1,17 @@
+{
+  "contents": [
+    {
+      "amount": 0.45,
+      "type": "amount"
+    },
+    {
+      "texture": "eclipticseasons:textures/environment/middle_rain.png",
+      "type": "rain_texture"
+    },
+    {
+      "texture": "eclipticseasons:textures/environment/middle_snow.png",
+      "type": "snow_texture"
+    }
+  ],
+  "type": "composite"
+}

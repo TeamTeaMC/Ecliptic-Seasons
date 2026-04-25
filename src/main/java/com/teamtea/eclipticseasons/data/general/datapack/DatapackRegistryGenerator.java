@@ -28,6 +28,8 @@ public class DatapackRegistryGenerator extends DatapackBuiltinEntriesProvider {
             .add(ESRegistries.SEASON_PHASE, SeasonPhaseRegistry::bootstrap)
             .add(ESRegistries.SEASON_CYCLE, SeasonCycleRegistry::bootstrap)
             .add(ESRegistries.EXTRA_INFO, ESSortInfoRegistry::bootstrap)
+            .add(ESRegistries.WEATHER_EFFECT, WeatherEffectRegistry::bootstrap)
+            .add(ESRegistries.BIOME_RAIN, BiomeRainRegistry::bootstrap)
             ;
 
     public DatapackRegistryGenerator(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {

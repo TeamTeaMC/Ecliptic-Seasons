@@ -1,9 +1,7 @@
 package com.teamtea.eclipticseasons.common.registry;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
-import com.teamtea.eclipticseasons.api.constant.climate.TemperateRain;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
-import com.teamtea.eclipticseasons.api.constant.solar.TimePeriod;
 import com.teamtea.eclipticseasons.api.data.misc.SolarTermValueMap;
 import com.teamtea.eclipticseasons.api.data.weather.CustomRainBuilder;
 import com.teamtea.eclipticseasons.api.util.fast.Enum2ObjectMap;
@@ -11,68 +9,215 @@ import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstapContext;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.level.biome.Biomes;
 import net.minecraftforge.common.Tags;
 
-import java.util.EnumMap;
 import java.util.List;
 import java.util.Optional;
 
 public class BiomeRainRegistry {
-    public static final ResourceKey<CustomRainBuilder> PLAIN = createKey("plain");
     public static final ResourceKey<CustomRainBuilder> BETTER_PLAINS = createKey("better_plains");
 
     private static ResourceKey<CustomRainBuilder> createKey(String name) {
         return ResourceKey.create(ESRegistries.BIOME_RAIN, EclipticSeasons.rl(name));
     }
 
-    public static void bootstrap2(BootstapContext<CustomRainBuilder> context) {
+    public static void bootstrap(BootstapContext<CustomRainBuilder> context) {
         var holderGetter = context.lookup(Registries.BIOME);
+
         var holderGetter2 = context.lookup(ESRegistries.WEATHER_EFFECT);
-        var solarTermValueMap = SolarTermValueMap.<List<CustomRainBuilder.Weather>>builder().solarTermMap(new Enum2ObjectMap<>(SolarTerm.class)).build();
-        for (int i = 0; i < TemperateRain.collectValues().length; i++) {
-            TemperateRain temperateRain = TemperateRain.collectValues()[i];
-            SolarTerm solarTerm = temperateRain.getSolarTerm();
-            boolean isSpring = solarTerm == SolarTerm.SPRING_EQUINOX;
-            solarTermValueMap.solarTermMap().get().put(
-                    solarTerm, List.of(
-                            CustomRainBuilder.Weather.builder()
-                                    .rainChance(temperateRain.getRainChance())
-                                    .thunderChance(temperateRain.getThunderChance())
-                                    .rainDelay(isSpring ? Optional.of(ServerLevel.RAIN_DELAY) : Optional.empty())
-                                    .rain(isSpring ? Optional.of(ServerLevel.RAIN_DURATION) : Optional.empty())
-                                    .thunder(isSpring ? Optional.of(ServerLevel.THUNDER_DURATION) : Optional.empty())
-                                    .build()
-                    )
-            );
-        }
-        context.register(PLAIN, new CustomRainBuilder(
-                HolderSet.direct(holderGetter.getOrThrow(Biomes.PLAINS)),
-                solarTermValueMap
-        ));
 
         var solarTermValueMap2 = SolarTermValueMap.<List<CustomRainBuilder.Weather>>builder().solarTermMap(new Enum2ObjectMap<>(SolarTerm.class)).build();
-        solarTermValueMap2.solarTermMap().get().put(SolarTerm.LIGHT_SNOW, List.of(
-                CustomRainBuilder.Weather.builder().rainChance(TemperateRain.LIGHT_SNOW.getRainChance())
-                        .weight(8)
-                        .build(),
-                CustomRainBuilder.Weather.builder().rainChance(TemperateRain.LIGHT_SNOW.getRainChance())
-                        .timePeriod(List.of(TimePeriod.MIDNIGHT))
-                        .specialEffect(Optional.of(holderGetter2.get(WeatherEffectRegistry.SNOW).get()))
-                        .build()
+        Enum2ObjectMap<SolarTerm, List<CustomRainBuilder.Weather>> map = solarTermValueMap2.solarTermMap().get();
+        // map.put(SolarTerm.LIGHT_SNOW, List.of(
+        //         CustomRainBuilder.Weather.builder().rainChance(TemperateRain.LIGHT_SNOW.getRainChance())
+        //                 .weight(8)
+        //                 .build(),
+        //         CustomRainBuilder.Weather.builder().rainChance(TemperateRain.LIGHT_SNOW.getRainChance())
+        //                 .timePeriod(List.of(TimePeriod.MIDNIGHT))
+        //                 .specialEffect(Optional.of(holderGetter2.get(WeatherEffectRegistry.SNOW).get()))
+        //                 .build()
+        // ));
+        // map.put(SolarTerm.RAIN_WATER, List.of(
+        //         CustomRainBuilder.Weather.builder().rainChance(TemperateRain.RAIN_WATER.getRainChance())
+        //                 .weight(8)
+        //                 .build(),
+        //         CustomRainBuilder.Weather.builder().rainChance(TemperateRain.RAIN_WATER.getRainChance())
+        //                 .timePeriod(List.of(TimePeriod.DAWN))
+        //                 .specialEffect(Optional.of(holderGetter2.get(WeatherEffectRegistry.JUST_FOG).get()))
+        //                 .build()
+        // ));
+
+        // Spring
+        map.put(SolarTerm.BEGINNING_OF_SPRING, List.of(
+                CustomRainBuilder.Weather.builder().rainChance(0.3F).thunderChance(0.0F).weight(10)
+                        .rain(Optional.of(UniformInt.of(12000, 20000)))
+                        .rainDelay(Optional.of(UniformInt.of(40000, 72000)))
+                        .snowMeltSpeed(0.75f)
+                        .specialEffect(Optional.of(holderGetter2.get(WeatherEffectRegistry.LIGHT_RAIN_SNOW).orElseThrow())).build()
         ));
-        solarTermValueMap2.solarTermMap().get().put(SolarTerm.RAIN_WATER, List.of(
-                CustomRainBuilder.Weather.builder().rainChance(TemperateRain.RAIN_WATER.getRainChance())
-                        .weight(8)
-                        .build(),
-                CustomRainBuilder.Weather.builder().rainChance(TemperateRain.RAIN_WATER.getRainChance())
-                        .timePeriod(List.of(TimePeriod.DAWN))
-                        .specialEffect(Optional.of(holderGetter2.get(WeatherEffectRegistry.JUST_FOG).get()))
-                        .build()
+        map.put(SolarTerm.RAIN_WATER, List.of(
+                CustomRainBuilder.Weather.builder().rainChance(0.5F).thunderChance(0.32F).weight(10)
+                        .rain(Optional.of(UniformInt.of(16000, 24000)))
+                        .rainDelay(Optional.of(UniformInt.of(32000, 50000)))
+                        .thunder(Optional.of(UniformInt.of(6000, 12000)))
+                        .snowMeltSpeed(0.85f)
+                        .specialEffect(Optional.of(holderGetter2.get(WeatherEffectRegistry.LIGHT_RAIN_SNOW).orElseThrow())).build()
         ));
+        map.put(SolarTerm.INSECTS_AWAKENING, List.of(
+                CustomRainBuilder.Weather.builder().rainChance(0.55F).thunderChance(0.6F).weight(10)
+                        .rain(Optional.of(UniformInt.of(12000, 18000)))
+                        .rainDelay(Optional.of(UniformInt.of(24000, 48000)))
+                        .thunder(Optional.of(UniformInt.of(12000, 20000)))
+                        .specialEffect(Optional.of(holderGetter2.get(WeatherEffectRegistry.MODERATE_RAIN_SNOW).orElseThrow())).build()
+        ));
+        map.put(SolarTerm.SPRING_EQUINOX, List.of(
+                CustomRainBuilder.Weather.builder().rainChance(0.5F).thunderChance(0.4F).weight(10)
+                        .rain(Optional.of(UniformInt.of(12000, 24000)))
+                        .rainDelay(Optional.of(UniformInt.of(32000, 64000)))
+                        .thunder(Optional.of(UniformInt.of(6000, 12000)))
+                        .specialEffect(Optional.of(holderGetter2.get(WeatherEffectRegistry.LIGHT_RAIN_SNOW).orElseThrow())).build()
+        ));
+
+        map.put(SolarTerm.FRESH_GREEN, List.of(
+                CustomRainBuilder.Weather.builder().rainChance(0.65F).thunderChance(0.2F).weight(10)
+                        .rain(Optional.of(UniformInt.of(24000, 48000)))
+                        .rainDelay(Optional.of(UniformInt.of(1200, 3600)))
+                        .thunder(Optional.of(UniformInt.of(4000, 8000)))
+                        .specialEffect(Optional.of(holderGetter2.get(WeatherEffectRegistry.LIGHT_RAIN_SNOW).orElseThrow())).build()
+        ));
+        map.put(SolarTerm.GRAIN_RAIN, List.of(
+                CustomRainBuilder.Weather.builder().rainChance(0.75F).thunderChance(0.0F).weight(10)
+                        .rain(Optional.of(UniformInt.of(32000, 60000)))
+                        .rainDelay(Optional.of(UniformInt.of(2400, 4800)))
+                        .specialEffect(Optional.of(holderGetter2.get(WeatherEffectRegistry.MODERATE_RAIN_SNOW).orElseThrow())).build()
+        ));
+
+        // Summer
+        map.put(SolarTerm.BEGINNING_OF_SUMMER, List.of(
+                CustomRainBuilder.Weather.builder().rainChance(0.9F).thunderChance(0.0F).weight(10)
+                        .rain(Optional.of(UniformInt.of(32000, 64000)))
+                        .rainDelay(Optional.of(UniformInt.of(12000, 24000)))
+                        .snowMeltSpeed(1.2f)
+                        .specialEffect(Optional.of(holderGetter2.get(WeatherEffectRegistry.MODERATE_RAIN_SNOW).orElseThrow())).build()
+        ));
+        map.put(SolarTerm.LESSER_FULLNESS, List.of(
+                CustomRainBuilder.Weather.builder().rainChance(0.7F).thunderChance(0.4F).weight(10)
+                        .rain(Optional.of(UniformInt.of(24000, 48000)))
+                        .rainDelay(Optional.of(UniformInt.of(16000, 32000)))
+                        .snowMeltSpeed(1.2f)
+                        .thunder(Optional.of(UniformInt.of(12000, 24000))).build()
+        ));
+        map.put(SolarTerm.GRAIN_IN_EAR, List.of(
+                CustomRainBuilder.Weather.builder().rainChance(0.6F).thunderChance(0.6F).weight(10)
+                        .rain(Optional.of(UniformInt.of(16000, 32000)))
+                        .rainDelay(Optional.of(UniformInt.of(24000, 48000)))
+                        .snowMeltSpeed(1.2f)
+                        .thunder(Optional.of(UniformInt.of(16000, 32000))).build()
+        ));
+        map.put(SolarTerm.SUMMER_SOLSTICE, List.of(
+                CustomRainBuilder.Weather.builder().rainChance(0.7F).thunderChance(1F).weight(10)
+                        .rain(Optional.of(UniformInt.of(12000, 24000)))
+                        .rainDelay(Optional.of(UniformInt.of(24000, 48000)))
+                        .snowMeltSpeed(1.2f)
+                        .thunder(Optional.of(UniformInt.of(20000, 40000))).build()
+        ));
+        map.put(SolarTerm.LESSER_HEAT, List.of(
+                CustomRainBuilder.Weather.builder().rainChance(0.65F).thunderChance(0.8F).weight(10)
+                        .rain(Optional.of(UniformInt.of(16000, 32000)))
+                        .rainDelay(Optional.of(UniformInt.of(32000, 64000)))
+                        .snowMeltSpeed(1.25f)
+                        .thunder(Optional.of(UniformInt.of(16000, 32000))).build()
+        ));
+        map.put(SolarTerm.GREATER_HEAT, List.of(
+                CustomRainBuilder.Weather.builder().rainChance(0.5F).thunderChance(0.2F).weight(10)
+                        .rain(Optional.of(UniformInt.of(12000, 24000)))
+                        .rainDelay(Optional.of(UniformInt.of(48000, 96000)))
+                        .snowMeltSpeed(1.35f)
+                        .thunder(Optional.of(UniformInt.of(8000, 16000))).build()
+        ));
+
+        // Autumn
+        map.put(SolarTerm.BEGINNING_OF_AUTUMN, List.of(
+                CustomRainBuilder.Weather.builder().rainChance(0.42F).thunderChance(0.0F).weight(10)
+                        .rain(Optional.of(UniformInt.of(8000, 16000)))
+                        .rainDelay(Optional.of(UniformInt.of(64000, 128000)))
+                        .snowMeltSpeed(1.05f)
+                        .specialEffect(Optional.of(holderGetter2.get(WeatherEffectRegistry.MODERATE_RAIN_SNOW).orElseThrow())).build()
+        ));
+        map.put(SolarTerm.END_OF_HEAT, List.of(
+                CustomRainBuilder.Weather.builder().rainChance(0.4F).thunderChance(0.0F).weight(10)
+                        .rain(Optional.of(UniformInt.of(6000, 12000)))
+                        .rainDelay(Optional.of(UniformInt.of(72000, 144000)))
+                        .specialEffect(Optional.of(holderGetter2.get(WeatherEffectRegistry.LIGHT_RAIN_SNOW).orElseThrow())).build()
+        ));
+        map.put(SolarTerm.WHITE_DEW, List.of(
+                CustomRainBuilder.Weather.builder().rainChance(0.35F).thunderChance(0.0F).weight(10)
+                        .rain(Optional.of(UniformInt.of(4000, 8000)))
+                        .rainDelay(Optional.of(UniformInt.of(96000, 150000)))
+                        .specialEffect(Optional.of(holderGetter2.get(WeatherEffectRegistry.MODERATE_RAIN_SNOW).orElseThrow())).build()
+        ));
+        map.put(SolarTerm.AUTUMNAL_EQUINOX, List.of(
+                CustomRainBuilder.Weather.builder().rainChance(0.32F).thunderChance(0.0F).weight(10)
+                        .rain(Optional.of(UniformInt.of(4000, 8000)))
+                        .rainDelay(Optional.of(UniformInt.of(96000, 150000)))
+                        .specialEffect(Optional.of(holderGetter2.get(WeatherEffectRegistry.LIGHT_RAIN_SNOW).orElseThrow())).build()
+        ));
+        map.put(SolarTerm.COLD_DEW, List.of(
+                CustomRainBuilder.Weather.builder().rainChance(0.3F).thunderChance(0.0F).weight(10)
+                        .rain(Optional.of(UniformInt.of(2000, 6000)))
+                        .rainDelay(Optional.of(UniformInt.of(100000, 140000)))
+                        .specialEffect(Optional.of(holderGetter2.get(WeatherEffectRegistry.LIGHT_RAIN_SNOW).orElseThrow())).build()
+        ));
+        map.put(SolarTerm.FIRST_FROST, List.of(
+                CustomRainBuilder.Weather.builder().rainChance(0.25F).thunderChance(0.0F).weight(10)
+                        .rain(Optional.of(UniformInt.of(2000, 4000)))
+                        .rainDelay(Optional.of(UniformInt.of(120000, 150000)))
+                        .specialEffect(Optional.of(holderGetter2.get(WeatherEffectRegistry.LIGHT_RAIN_SNOW).orElseThrow())).build()
+        ));
+
+        // winter
+        map.put(SolarTerm.BEGINNING_OF_WINTER, List.of(
+                CustomRainBuilder.Weather.builder().rainChance(0.3F).thunderChance(0.0F).weight(10)
+                        .rain(Optional.of(UniformInt.of(2000, 4000)))
+                        .rainDelay(Optional.of(UniformInt.of(90000, 120000)))
+                        .specialEffect(Optional.of(holderGetter2.get(WeatherEffectRegistry.LIGHT_RAIN_SNOW).orElseThrow())).build()
+        ));
+        map.put(SolarTerm.LIGHT_SNOW, List.of(
+                CustomRainBuilder.Weather.builder().rainChance(0.4F).thunderChance(0.2F).weight(10)
+                        .rain(Optional.of(UniformInt.of(8000, 16000)))
+                        .rainDelay(Optional.of(UniformInt.of(72000, 90000)))
+                        .specialEffect(Optional.of(holderGetter2.get(WeatherEffectRegistry.LIGHT_RAIN_SNOW).orElseThrow())).build()
+        ));
+        map.put(SolarTerm.HEAVY_SNOW, List.of(
+                CustomRainBuilder.Weather.builder().rainChance(0.5F).thunderChance(0.0F).weight(10)
+                        .rain(Optional.of(UniformInt.of(16000, 32000)))
+                        .rainDelay(Optional.of(UniformInt.of(48000, 80000)))
+                        .snowAccumulationSpeed(0.85f)
+                        .specialEffect(Optional.of(holderGetter2.get(WeatherEffectRegistry.MODERATE_RAIN_SNOW).orElseThrow())).build()
+        ));
+        map.put(SolarTerm.WINTER_SOLSTICE, List.of(
+                CustomRainBuilder.Weather.builder().rainChance(0.45F).thunderChance(0.0F).weight(10)
+                        .rain(Optional.of(UniformInt.of(8000, 16000)))
+                        .rainDelay(Optional.of(UniformInt.of(72000, 96000))).build()
+        ));
+        map.put(SolarTerm.LESSER_COLD, List.of(
+                CustomRainBuilder.Weather.builder().rainChance(0.4F).thunderChance(0.0F).weight(10)
+                        .rain(Optional.of(UniformInt.of(4000, 8000)))
+                        .rainDelay(Optional.of(UniformInt.of(72000, 96000)))
+                        .specialEffect(Optional.of(holderGetter2.get(WeatherEffectRegistry.MODERATE_RAIN_SNOW).orElseThrow())).build()
+        ));
+        map.put(SolarTerm.GREATER_COLD, List.of(
+                CustomRainBuilder.Weather.builder().rainChance(0.2F).thunderChance(0.0F).weight(10)
+                        .rain(Optional.of(UniformInt.of(2000, 5000)))
+                        .rainDelay(Optional.of(UniformInt.of(96000, 144000)))
+                        .snowAccumulationSpeed(0.85f)
+                        .specialEffect(Optional.of(holderGetter2.get(WeatherEffectRegistry.LIGHT_RAIN_SNOW).orElseThrow())).build()
+        ));
+
         context.register(BETTER_PLAINS, new CustomRainBuilder(
-                holderGetter.getOrThrow(Tags.Biomes.IS_DESERT),
+                HolderSet.direct(holderGetter.getOrThrow(Biomes.PLAINS)),
                 solarTermValueMap2
         ));
     }
