@@ -1,9 +1,8 @@
 plugins {
     id 'java-library'
-    id 'eclipse'
     id 'idea'
     id 'maven-publish'
-    id 'net.neoforged.gradle.userdev' version '7.0.192'
+    id 'net.neoforged.moddev' version '2.0.141'
 }
 
 
@@ -55,7 +54,7 @@ base {
 // Mojang ships Java 21 to end users starting in 1.20.5, so mods should target Java 21.
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
-minecraft.accessTransformers.file rootProject.file('src/main/resources/META-INF/accesstransformer.cfg')
+//minecraft.accessTransformers.file rootProject.file('src/main/resources/META-INF/accesstransformer.cfg')
 //minecraft.accessTransformers.entry public net.minecraft.client.Minecraft textureManager # textureManager
 sourceSets {
     onlyMain {
@@ -63,58 +62,80 @@ sourceSets {
 }
 // Default run configurations.
 // These can be tweaked, removed, or duplicated as needed.
-runs {
-    // applies to all the run configs below
-    configureEach {
-        // Recommended logging data for a userdev environment
-        // The markers can be added/remove as needed separated by commas.
-        // "SCAN": For mods scan.
-        // "REGISTRIES": For firing of registry events.
-        // "REGISTRYDUMP": For getting the contents of all registries.
-        systemProperty 'forge.logging.markers', 'REGISTRIES'
+neoForge {
+    // Specify the version of NeoForge to use.
+    version = project.neo_version
 
-        // Recommended logging level for the console
-        // You can set various levels here.
-        // Please read: https://stackoverflow.com/questions/2031163/when-to-use-the-different-log-levels
-        systemProperty 'forge.logging.console.level', 'debug'
-
-        modSource project.sourceSets.main
+    parchment {
+        mappingsVersion = project.parchment_mappings_version
+        minecraftVersion = project.parchment_minecraft_version
     }
 
-    client {
-        // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
-        systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
-        modSource project.sourceSets.onlyMain
-        jvmArguments = [
+    // This line is optional. Access Transformers are automatically detected
+     accessTransformers = project.files('src/main/resources/META-INF/accesstransformer.cfg')
+
+    // Default run configurations.
+    // These can be tweaked, removed, or duplicated as needed.
+    runs {
+        client {
+            client()
+
+            // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
+            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+
+            jvmArguments = [
 //                '-XX:TieredStopAtLevel=3',
 //                "-XX:+AllowEnhancedClassRedefinition",
-'-Dmixin.debug.export=true',
-"-Xmx2548M"]
+'-Dmixin.debug.export=true']
+        }
 
+        server {
+            server()
+            programArgument '--nogui'
+            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+        }
+
+        // This run config launches GameTestServer and runs all registered gametests, then exits.
+        // By default, the server will crash when no gametests are provided.
+        // The gametest system is also enabled by default for other run configs under the /test command.
+        gameTestServer {
+            type = "gameTestServer"
+            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+        }
+
+        data {
+            data()
+
+            // example of overriding the workingDirectory set in configureEach above, uncomment if you want to use it
+            // gameDirectory = project.file('run-data')
+
+            // Specify the modid for data generation, where to output the resulting resource, and where to look for existing resources.
+            programArguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
+        }
+
+        // applies to all the run configs above
+        configureEach {
+            // Recommended logging data for a userdev environment
+            // The markers can be added/remove as needed separated by commas.
+            // "SCAN": For mods scan.
+            // "REGISTRIES": For firing of registry events.
+            // "REGISTRYDUMP": For getting the contents of all registries.
+            systemProperty 'forge.logging.markers', 'REGISTRIES'
+
+            // Recommended logging level for the console
+            // You can set various levels here.
+            // Please read: https://stackoverflow.com/questions/2031163/when-to-use-the-different-log-levels
+            logLevel = org.slf4j.event.Level.DEBUG
+        }
     }
 
-    server {
-        systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
-        modSource project.sourceSets.onlyMain
-
-//        programArgument '--nogui'
-    }
-
-    // This run config launches GameTestServer and runs all registered gametests, then exits.
-    // By default, the server will crash when no gametests are provided.
-    // The gametest system is also enabled by default for other run configs under the /test command.
-    gameTestServer {
-        systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
-    }
-
-    data {
-        // example of overriding the workingDirectory set in configureEach above, uncomment if you want to use it
-        // workingDirectory project.file('run-data')
-
-        systemProperty 'eclipticseasons.runs.runData', 'true'
-
-        // Specify the modid for data generation, where to output the resulting resource, and where to look for existing resources.
-        programArguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
+    mods {
+        // define mod <-> source bindings
+        // these are used to tell the game which sources are for which mod
+        // multi mod projects should define one per mod
+        "${mod_id}" {
+            sourceSet(sourceSets.main)
+        }
     }
 }
 
@@ -133,40 +154,62 @@ configurations {
 tasks.named('processResources', Copy) {
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
 
+    def modIdValue = project.mod_id.toString()
+    def langDirPath = project.layout.projectDirectory.dir("src/main/resources/assets/${modIdValue}/lang")
+    def genDirPath = project.layout.projectDirectory.dir("src/generated/resources/assets/${modIdValue}/lang")
+
+    def originalJsonContents = [:]
+
     doFirst {
-        def langDir = file("src/main/resources/assets/${mod_id}/lang")
-        def genDir = file("src/generated/resources/assets/${mod_id}/lang")
-
+        def langDir = langDirPath.asFile
+        def genDir = genDirPath.asFile
         def langFiles = ['en_us.json', 'zh_cn.json']
-
-        project.ext.originalJsonMap = [:]
+        def slurper = new groovy.json.JsonSlurper()
 
         langFiles.each { fileName ->
             def mainFile = new File(langDir, fileName)
             def genFile = new File(genDir, fileName)
 
-            project.ext.originalJsonMap[fileName] = genFile.exists() ? genFile.text : null
+            if (genFile.exists()) {
+                originalJsonContents[fileName] = genFile.text
+            }
 
             def mergedMap = [:]
             [mainFile, genFile].each { f ->
-                if (f.exists()) mergedMap.putAll(new groovy.json.JsonSlurper().parse(f))
+                if (f.exists()) {
+                    try {
+                        def content = f.getText("UTF-8").replace("\0", "").trim()
+                        if (!content.isEmpty()) {
+                            mergedMap.putAll(slurper.parseText(content))
+                        }
+                    } catch (Exception e) {
+                        logger.error("Failed to parse JSON: ${f.absolutePath}", e)
+                    }
+                }
             }
 
-            if (genFile.exists()) {
-                genFile.text = groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson(mergedMap))
+            if (genFile.exists() && !mergedMap.isEmpty()) {
+                def prettyJson = groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson(mergedMap))
+
+                def unescapedJson = prettyJson.replaceAll($/\\u([0-9a-fA-F]{4})/$) { String m, String c ->
+                    return (char) Integer.parseInt(c, 16)
+                }
+
+                genFile.withWriter("UTF-8") { writer ->
+                    writer.write(unescapedJson)
+                }
             }
         }
     }
-
     doLast {
-        def genDir = file("src/generated/resources/assets/${mod_id}/lang")
-
+        def genDir = genDirPath.asFile
         def langFiles = ['en_us.json', 'zh_cn.json']
 
         langFiles.each { fileName ->
             def genFile = new File(genDir, fileName)
-            if (project.ext.originalJsonMap[fileName] != null) {
-                genFile.text = project.ext.originalJsonMap[fileName]
+            def originalContent = originalJsonContents[fileName]
+            if (originalContent != null) {
+                genFile.text = originalContent
             }
         }
     }
@@ -200,8 +243,8 @@ dependencies {
     compileOnly "maven.modrinth:sodium:mc1.21.1-0.6.13-neoforge"
     compileOnly("curse.maven:irisshaders-455508:6117625")
 
-    onlyMainRuntimeOnly("curse.maven:irisshaders-455508:6213632")
-    onlyMainRuntimeOnly "maven.modrinth:sodium:mc1.21.1-0.6.13-neoforge"
+    runtimeOnly("curse.maven:irisshaders-455508:6213632")
+    runtimeOnly "maven.modrinth:sodium:mc1.21.1-0.6.13-neoforge"
 //    find what's happens bettwen 0.6.5 and 0.6.9
 //    onlyMainRuntimeOnly "maven.modrinth:sodium:mc1.21.1-0.6.5-neoforge"
 
