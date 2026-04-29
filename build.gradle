@@ -169,39 +169,62 @@ minecraft {
 tasks.named('processResources', Copy) {
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
 
+    def modIdValue = project.mod_id.toString()
+    def langDirPath = project.layout.projectDirectory.dir("src/main/resources/assets/${modIdValue}/lang")
+    def genDirPath = project.layout.projectDirectory.dir("src/generated/resources/assets/${modIdValue}/lang")
+
+    def originalJsonContents = [:]
+
     doFirst {
-        def langDir = file("src/main/resources/assets/${mod_id}/lang")
-        def genDir = file("src/generated/resources/assets/${mod_id}/lang")
-
+        def langDir = langDirPath.asFile
+        def genDir = genDirPath.asFile
         def langFiles = ['en_us.json', 'zh_cn.json']
-
-        project.ext.originalJsonMap = [:]
+        def slurper = new groovy.json.JsonSlurper()
 
         langFiles.each { fileName ->
             def mainFile = new File(langDir, fileName)
             def genFile = new File(genDir, fileName)
 
-            project.ext.originalJsonMap[fileName] = genFile.exists() ? genFile.text : null
+            if (genFile.exists()) {
+                originalJsonContents[fileName] = genFile.text
+            }
 
             def mergedMap = [:]
             [mainFile, genFile].each { f ->
-                if (f.exists()) mergedMap.putAll(new groovy.json.JsonSlurper().parse(f))
+                if (f.exists()) {
+                    try {
+                        def content = f.getText("UTF-8").replace("\0", "").trim()
+                        if (!content.isEmpty()) {
+                            mergedMap.putAll(slurper.parseText(content))
+                        }
+                    } catch (Exception e) {
+                        logger.error("Failed to parse JSON: ${f.absolutePath}", e)
+                    }
+                }
             }
 
-            if (genFile.exists()) {
-                genFile.text = groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson(mergedMap))
+            if (genFile.exists() && !mergedMap.isEmpty()) {
+                def prettyJson = groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson(mergedMap))
+
+                def unescapedJson = prettyJson.replaceAll($/\\u([0-9a-fA-F]{4})/$) { String m, String c ->
+                    return (char) Integer.parseInt(c, 16)
+                }
+
+                genFile.withWriter("UTF-8") { writer ->
+                    writer.write(unescapedJson)
+                }
             }
         }
     }
-
     doLast {
-        def genDir = file("src/generated/resources/assets/${mod_id}/lang")
+        def genDir = genDirPath.asFile
         def langFiles = ['en_us.json', 'zh_cn.json']
 
         langFiles.each { fileName ->
             def genFile = new File(genDir, fileName)
-            if (project.ext.originalJsonMap[fileName] != null) {
-                genFile.text = project.ext.originalJsonMap[fileName]
+            def originalContent = originalJsonContents[fileName]
+            if (originalContent != null) {
+                genFile.text = originalContent
             }
         }
     }
