@@ -42,8 +42,11 @@ jobs:
         if: ${{ runner.os != 'Windows' }}
         run: chmod +x ./gradlew
 
+      - name: Build with Gradle
+        uses: gradle/actions/setup-gradle@v4.3.1
+
       - name: Build
-        run: ./gradlew clean build
+        run: ./gradlew build
 
       - name: Set Release Name Environment Variable
         id: set_release_name
