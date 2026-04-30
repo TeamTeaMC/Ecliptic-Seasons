@@ -6,6 +6,7 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.data.misc.ESSortInfo;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
+import com.teamtea.eclipticseasons.client.gui.ESModConfigScreen;
 import com.teamtea.eclipticseasons.client.render.chunk.IceKeeper;
 import com.teamtea.eclipticseasons.client.util.ClientRef;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
@@ -353,11 +354,19 @@ public final class ClientEventHandler {
                         .then(Commands.argument("pos", BlockPosArgument.blockPos()).executes((stackCommandContext) ->
                                 MapExporter.exportMap(stackCommandContext.getSource(), BlockPosArgument.getBlockPos(stackCommandContext, "pos"))))
                 )
+                .then(Commands.literal("config")
+                        .executes(context -> {
+                            Minecraft.getInstance().execute(() -> {
+                                Minecraft.getInstance().setScreen(new ESModConfigScreen(null));
+                            });
+                            return 1;
+                        })
+                )
         );
     }
 
     @SubscribeEvent
-    public static void onRegisterClientCommandsEvent(ClientPlayerNetworkEvent.LoggingIn event) {
+    public static void onLoggingIn(ClientPlayerNetworkEvent.LoggingIn event) {
         ClientCon.ServerName =
                 event.getPlayer().connection.getServerData() == null ? "Client" :
                         event.getPlayer().connection.getServerData().name;
