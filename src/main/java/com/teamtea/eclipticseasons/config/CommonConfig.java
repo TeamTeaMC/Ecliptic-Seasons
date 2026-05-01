@@ -582,7 +582,7 @@ public class CommonConfig {
 
             forceBlocksNotSnowy.clear();
             for (String s : Snow.blocksNotSnowy.get()) {
-                Block block = BuiltInRegistries.BLOCK.get(ResourceLocation.parse(s));
+                Block block = BuiltInRegistries.BLOCK.get(ResourceLocation.tryParse(s));
                 if (block != Blocks.AIR) {
                     forceBlocksNotSnowy.add(block);
                 }
