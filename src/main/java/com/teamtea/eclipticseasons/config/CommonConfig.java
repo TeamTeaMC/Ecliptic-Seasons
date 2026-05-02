@@ -417,11 +417,16 @@ public class CommonConfig {
 
     public static class Map {
         public static ModConfigSpec.BooleanValue changeMapColor;
+        public static ModConfigSpec.BooleanValue changeMapColorMapItem;
 
         private static void load(ModConfigSpec.Builder builder) {
             builder.push("Map");
-            changeMapColor = builder.comment("Synchronize map colors to reflect atmospheric snow overlays.")
-                    .define("ChangeMapColor", true);
+            changeMapColor = builder.comment(
+                    "Synchronize all map color rendering with visual snow overlays. May affect compatibility with other mods."
+            ).define("ChangeMapColorIfSnowy", false);
+            changeMapColorMapItem = builder.comment(
+                    "Only adjust map item colors to reflect visual snow overlays. Safer for mod compatibility."
+            ).define("ChangeMapColorMapItem", true);
             builder.pop();
         }
     }
