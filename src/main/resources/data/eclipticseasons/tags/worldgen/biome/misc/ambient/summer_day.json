@@ -1,0 +1,8 @@
+{
+  "values": [
+    "minecraft:cherry_grove",
+    "#minecraft:is_forest",
+    "#c:is_plains",
+    "#c:is_river"
+  ]
+}

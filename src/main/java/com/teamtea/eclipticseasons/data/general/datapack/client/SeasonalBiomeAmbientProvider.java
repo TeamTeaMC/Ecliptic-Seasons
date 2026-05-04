@@ -1,5 +1,6 @@
 package com.teamtea.eclipticseasons.data.general.datapack.client;
 
+import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.data.client.SeasonalBiomeAmbient;
 import com.teamtea.eclipticseasons.client.reload.ClientJsonCacheListener;
@@ -11,8 +12,10 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.BiomeTags;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biomes;
 import net.neoforged.neoforge.common.Tags;
@@ -30,50 +33,48 @@ public class SeasonalBiomeAmbientProvider extends ESClientBiomeDataMapProvider<S
 
         HolderLookup.RegistryLookup<SoundEvent> slp = provider.lookupOrThrow(Registries.SOUND_EVENT);
 
-        add("spring", SeasonalBiomeAmbient.builder().season(Season.SPRING).biomes(
-                        and(or(get(Biomes.CHERRY_GROVE),
-                                        get(BiomeTags.IS_FOREST),
-                                        get(Tags.Biomes.IS_PLAINS)),
-                                not(or(get(Tags.Biomes.IS_COLD), get(Tags.Biomes.IS_BEACH), get(Tags.Biomes.IS_OCEAN))))
-                )
+        add("spring", SeasonalBiomeAmbient.builder().season(Season.SPRING)
+                .biomes(get(TagKey.create(Registries.BIOME,
+                        EclipticSeasons.rl("misc/ambient/spring"))))
+                .ignored_biomes(get(TagKey.create(Registries.BIOME,
+                        EclipticSeasons.rl("misc/ambient/spring_negate"))))
                 .sound(getSoundHolder(slp, SoundEventsRegistry.spring_forest)).build());
 
-        add("summer_day", SeasonalBiomeAmbient.builder().season(Season.SUMMER).biomes(
-                or(get(Biomes.CHERRY_GROVE),
-                        get(BiomeTags.IS_FOREST),
-                        get(Tags.Biomes.IS_PLAINS),
-                        get(Tags.Biomes.IS_RIVER))
-        ).ignore_time(false).day(true).sound(getSoundHolder(slp, SoundEventsRegistry.garden_wind)).build());
+        add("summer_day", SeasonalBiomeAmbient.builder().season(Season.SUMMER)
+                .biomes(get(TagKey.create(Registries.BIOME,
+                        EclipticSeasons.rl("misc/ambient/summer_day"))))
+                .ignore_time(false).day(true).sound(getSoundHolder(slp, SoundEventsRegistry.garden_wind)).build());
 
-        add("summer_night", SeasonalBiomeAmbient.builder().season(Season.SUMMER).biomes(
-                not(or(get(BiomeTags.IS_SAVANNA),
-                        get(Tags.Biomes.IS_CAVE),
-                        get(Tags.Biomes.IS_DESERT),
-                        get(Tags.Biomes.IS_BADLANDS),
-                        get(Tags.Biomes.IS_MOUNTAIN_PEAK),
-                        get(Tags.Biomes.IS_OCEAN)))
-        ).ignore_time(false).day(false).sound(getSoundHolder(slp, SoundEventsRegistry.night_river)).day(false).build());
+        add("summer_night", SeasonalBiomeAmbient.builder().season(Season.SUMMER)
+                .ignored_biomes(get(TagKey.create(Registries.BIOME,
+                        EclipticSeasons.rl("misc/ambient/summer_night_negate"))))
+                .ignore_time(false).day(false).sound(getSoundHolder(slp, SoundEventsRegistry.night_river)).day(false).build());
 
-        add("autumn", SeasonalBiomeAmbient.builder().season(Season.AUTUMN).biomes(
-                or(get(Biomes.CHERRY_GROVE),
-                        get(BiomeTags.IS_FOREST))
-        ).sound(getSoundHolder(slp, SoundEventsRegistry.windy_leave)).build());
+        add("autumn", SeasonalBiomeAmbient.builder().season(Season.AUTUMN)
+                .biomes(get(TagKey.create(Registries.BIOME,
+                        EclipticSeasons.rl("misc/ambient/autumn"))))
+                .sound(getSoundHolder(slp, SoundEventsRegistry.windy_leave)).build());
 
 
-        add("winter_snow", SeasonalBiomeAmbient.builder().season(Season.WINTER).biomes(
-                and(not(get(Tags.Biomes.IS_CAVE)),
-                        or(get(Biomes.CHERRY_GROVE),
-                                get(BiomeTags.IS_FOREST)))
-        ).sound(getSoundHolder(slp, SoundEventsRegistry.winter_forest)).rain(true).priority(950).build());
+        add("winter_snow", SeasonalBiomeAmbient.builder().season(Season.WINTER)
+                .biomes(get(TagKey.create(Registries.BIOME,
+                        EclipticSeasons.rl("misc/ambient/winter_snow"))))
+                .ignored_biomes(get(Tags.Biomes.IS_CAVE))
+                .sound(getSoundHolder(slp, SoundEventsRegistry.winter_forest)).rain(true).priority(950).build());
 
-        add("winter_wind", SeasonalBiomeAmbient.builder().season(Season.WINTER).biomes(
-                not(get(Tags.Biomes.IS_CAVE))
-        ).rain(true).sound(getSoundHolder(slp, SoundEventsRegistry.winter_cold)).build());
+        add("winter_wind", SeasonalBiomeAmbient.builder().season(Season.WINTER)
+                .ignored_biomes(get(Tags.Biomes.IS_CAVE))
+                .rain(true).sound(getSoundHolder(slp, SoundEventsRegistry.winter_cold)).build());
+
 
 
     }
 
-    protected Holder<SoundEvent> getSoundHolder(HolderLookup.RegistryLookup<SoundEvent> lookup, SoundEvent soundEvent) {
-        return lookup.getOrThrow(ResourceKey.create(Registries.SOUND_EVENT, soundEvent.getLocation()));
+    // protected Holder<SoundEvent> getSoundHolder(HolderLookup.RegistryLookup<SoundEvent> lookup, SoundEvent soundEvent) {
+    //     return lookup.getOrThrow(ResourceKey.create(Registries.SOUND_EVENT, soundEvent.getLocation()));
+    // }
+
+    protected ResourceLocation getSoundHolder(HolderLookup.RegistryLookup<SoundEvent> lookup, SoundEvent soundEvent) {
+        return soundEvent.getLocation();
     }
 }

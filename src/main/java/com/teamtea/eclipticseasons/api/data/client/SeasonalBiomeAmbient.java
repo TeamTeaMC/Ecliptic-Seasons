@@ -15,9 +15,9 @@ import lombok.Data;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.level.biome.Biome;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
@@ -36,11 +36,13 @@ public class SeasonalBiomeAmbient {
             Codec.BOOL.optionalFieldOf("rain", false).forGetter(o -> o.rain),
             CodecUtil.holderCodec(ESRegistries.AGRO_CLIMATE).optionalFieldOf("climate").forGetter(o -> o.climate),
             CodecUtil.holderSetCodec(Registries.BIOME).optionalFieldOf("biomes", HolderSet.empty()).forGetter(o -> o.biomes),
-            CodecUtil.holderCodec(Registries.SOUND_EVENT).fieldOf("sound").forGetter(o -> o.sound),
+            CodecUtil.holderSetCodec(Registries.BIOME).optionalFieldOf("ignored_biomes", HolderSet.empty()).forGetter(o -> o.ignored_biomes),
+            ResourceLocation.CODEC.fieldOf("sound").forGetter(o -> o.sound),
             Codec.BOOL.optionalFieldOf("loop", true).forGetter(o -> o.loop),
             Codec.INT.optionalFieldOf("seed", -1).forGetter(o -> o.seed),
             Codec.INT.optionalFieldOf("priority", 1000).forGetter(o -> o.priority)
-    ).apply(ins, SeasonalBiomeAmbient::new));
+    ).apply(ins, (start1, end1, season1, indoor1, ignore_time1, day1, timePeriod1, inwater1, rain1, climate1, biomes1, ignored_biomes1, sound1, loop1, seed1, priority1) ->
+            new SeasonalBiomeAmbient(start1, end1, season1, indoor1, ignore_time1, day1, timePeriod1, inwater1, rain1, climate1, biomes1, ignored_biomes1, sound1, Holder.direct(SoundEvent.createVariableRangeEvent(sound1)), loop1, seed1, priority1)));
 
 
     @Builder.Default
@@ -65,8 +67,10 @@ public class SeasonalBiomeAmbient {
     private final Optional<Holder<AgroClimaticZone>> climate = Optional.empty();
     @Builder.Default
     private final HolderSet<Biome> biomes = HolderSet.empty();
-    @NotNull
-    private final Holder<SoundEvent> sound;
+    @Builder.Default
+    private final HolderSet<Biome> ignored_biomes = HolderSet.empty();
+    private final ResourceLocation sound;
+    private Holder<SoundEvent> soundEventHolder;
     @Builder.Default
     private final boolean loop = true;
     @Builder.Default
