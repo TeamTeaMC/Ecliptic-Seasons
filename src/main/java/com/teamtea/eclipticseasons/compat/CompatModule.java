@@ -31,7 +31,8 @@ public class CompatModule {
     private static boolean distanthorizons = false;
     //@Getter
     //private static boolean voxyTest = false;
-
+    @Getter
+    private static boolean configured = false;
     /**
      * Used for mod init detect.
      **/
@@ -40,6 +41,7 @@ public class CompatModule {
         modernui = Platform.isModLoaded("modernui");
         oculus = Platform.isModLoaded("oculus");
         distanthorizons = Platform.isModLoaded("distanthorizons");
+        configured = Platform.isModLoaded("configured");
     }
 
     /**

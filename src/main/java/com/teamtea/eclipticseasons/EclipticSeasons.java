@@ -2,6 +2,7 @@ package com.teamtea.eclipticseasons;
 
 
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
+import com.teamtea.eclipticseasons.client.gui.screen.ESModConfigScreen;
 import com.teamtea.eclipticseasons.common.block.IceOrSnowCauldronBlock;
 import com.teamtea.eclipticseasons.common.registry.*;
 import com.teamtea.eclipticseasons.compat.CompatModule;
@@ -11,6 +12,8 @@ import com.teamtea.eclipticseasons.config.CommonConfig;
 import com.teamtea.eclipticseasons.data.start;
 import com.teamtea.eclipticseasons.compat.eclipticseasons_bundles.EclipticSeasonsBundles;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.ConfigScreenHandler;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -19,6 +22,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.loading.FMLLoader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -133,6 +137,9 @@ public class EclipticSeasons {
         ModAdvancements.register();
 
         EclipticSeasonsBundles.init();
+
+        if (FMLLoader.getDist() == Dist.CLIENT)
+            ModLoadingContext.get().registerExtensionPoint(ConfigScreenHandler.ConfigScreenFactory.class, () -> (new ConfigScreenHandler.ConfigScreenFactory(ESModConfigScreen::new)));
     }
 
     public static String defaultConfigName(ModConfig.Type type, String modId) {

@@ -1,5 +1,6 @@
 package com.teamtea.eclipticseasons.data.general.lang;
 
+import com.teamtea.eclipticseasons.client.registry.KeyMappingRegistry;
 import com.teamtea.eclipticseasons.common.registry.AgroClimateRegistry;
 import com.teamtea.eclipticseasons.common.registry.BlockRegistry;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
@@ -18,6 +19,10 @@ public class Lang_EN extends LangHelper {
     @Override
     protected void addTranslations() {
 
+        add(KeyMappingRegistry.DEBUG_KEY.getName(),"Debug Info HUD Core");
+        add(KeyMappingRegistry.DEBUG_KEY_1.getName(),"Debug Info HUD Sub");
+        add(KeyMappingRegistry.DEBUG_KEY.getCategory(), "Ecliptic Seasons");
+        add("eclipticseasons.options.configured_uninstalled", "Configured Uninstalled");
 
         add("itemGroup." + EclipticSeasonsApi.MODID + ".core", "Ecliptic Seasons");
 

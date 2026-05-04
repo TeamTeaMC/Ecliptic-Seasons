@@ -1,6 +1,7 @@
 package com.teamtea.eclipticseasons.data.general.lang;
 
 
+import com.teamtea.eclipticseasons.client.registry.KeyMappingRegistry;
 import com.teamtea.eclipticseasons.common.registry.AgroClimateRegistry;
 import com.teamtea.eclipticseasons.common.registry.BlockRegistry;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
@@ -18,6 +19,10 @@ public class Lang_ZH extends LangHelper {
 
     @Override
     protected void addTranslations() {
+        add(KeyMappingRegistry.DEBUG_KEY.getName(), "调试界面第二键");
+        add(KeyMappingRegistry.DEBUG_KEY_1.getName(), "调试界面第一键");
+        add(KeyMappingRegistry.DEBUG_KEY.getCategory(), "节气");
+        add("eclipticseasons.options.configured_uninstalled", "配置界面未安装");
 
         add("itemGroup." + EclipticSeasonsApi.MODID + ".core", "节气");
 
@@ -62,8 +67,8 @@ public class Lang_ZH extends LangHelper {
         add(ItemRegistry.snowless_hometown.get(), "无雪的故乡");
         add(ItemRegistry.snowless_hometown.get().getDescriptionId() + ".desc", "北山薇 & 橙子苏打 等");
 
-        add(BlockRegistry.snow_cauldron.get(),"装有雪的炼药锅");
-        add(BlockRegistry.ice_cauldron.get(),"装有冰块的炼药锅");
+        add(BlockRegistry.snow_cauldron.get(), "装有雪的炼药锅");
+        add(BlockRegistry.ice_cauldron.get(), "装有冰块的炼药锅");
 
         add("info.eclipticseasons.environment.temperature.under_freezing", "严寒");
         add("info.eclipticseasons.environment.temperature.freezing", "冰冻");
@@ -464,8 +469,8 @@ public class Lang_ZH extends LangHelper {
 
         add("info.eclipticseasons.seasonal_prayer_scroll.use", "§7§o激活温室心室进行季节仪式，或者悬挂式告示牌为季节任务栏");
 
-        add("info.eclipticseasons.snow_cauldron.extraction","§7§o使用锹可以获取雪球");
-        add("info.eclipticseasons.ice_cauldron.extraction","§7§o使用镐可以获取冰块");
+        add("info.eclipticseasons.snow_cauldron.extraction", "§7§o使用锹可以获取雪球");
+        add("info.eclipticseasons.ice_cauldron.extraction", "§7§o使用镐可以获取冰块");
 
         add("pack.eclipticseasons.legacy_snowy_block", "经典覆雪方块模型资源包");
 

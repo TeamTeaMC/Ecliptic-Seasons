@@ -107,6 +107,8 @@ public class CommonConfig {
 
         public static ForgeConfigSpec.IntValue lastingDaysOfEachTerm;
         public static ForgeConfigSpec.IntValue initialSolarTermIndex;
+        public static ForgeConfigSpec.IntValue monthOffset;
+        public static ForgeConfigSpec.IntValue dayOffset;
 
         public static ForgeConfigSpec.ConfigValue<List<? extends String>> validDimensions;
 
@@ -127,7 +129,10 @@ public class CommonConfig {
                     .defineInRange("LastingDaysOfEachTerm", 7, 1, 5000);
             initialSolarTermIndex = builder.comment("The index of the Solar Term when the world is first created (1-24).")
                     .defineInRange("InitialSolarTermIndex", 4, 1, 24);
-
+            monthOffset = builder.comment("Shifts the displayed month index. This does NOT affect internal solar term calculations.")
+                    .defineInRange("MonthOffset", 1, -11, 11);
+            dayOffset = builder.comment("Shifts the calendar day relative to solar terms. Example: 2 means solar day 0 appears as the 3rd day of the month.")
+                    .defineInRange("DayOffset", 2, -64, 64);
 
             enableInform = builder.comment("Display a chat message whenever the Solar Term changes.")
                     .define("EnableInform", true);
@@ -544,9 +549,13 @@ public class CommonConfig {
     @Getter
     private static final Set<Block> forceBlocksNotSnowy = new HashSet<>();
 
+    @Getter
+    private static boolean vanillaSnowAndIce = false;
+
     public static void UpdateConfig(ModConfigEvent modConfigEvent) {
         if (!(modConfigEvent instanceof ModConfigEvent.Unloading)
                 && modConfigEvent.getConfig().getSpec() == COMMON_CONFIG) {
+            vanillaSnowAndIce = Temperature.iceMelt.get() && Temperature.snowDown.get();
             useSolarWeather = Weather.useSolarWeather.get();
             forceCropCompatMode = Crop.forceCompatMode.get();
             snowyWinter = Snow.snowyWinter.get();

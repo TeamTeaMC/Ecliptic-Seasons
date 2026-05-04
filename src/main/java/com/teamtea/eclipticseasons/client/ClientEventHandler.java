@@ -9,6 +9,7 @@ import com.teamtea.eclipticseasons.api.event.ESClientEntityTickEvent;
 import com.teamtea.eclipticseasons.api.misc.IChunkBiomeHolder;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.client.core.ClientWeatherChecker;
+import com.teamtea.eclipticseasons.client.gui.screen.ESModConfigScreen;
 import com.teamtea.eclipticseasons.client.render.WorldRenderer;
 import com.teamtea.eclipticseasons.client.render.chunk.IceKeeper;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
@@ -309,6 +310,14 @@ public final class ClientEventHandler {
                         .requires((source) -> source.hasPermission(2))
                         .then(Commands.argument("pos", BlockPosArgument.blockPos()).executes((stackCommandContext) ->
                                 MapExporter.exportMap(stackCommandContext.getSource(), BlockPosArgument.getBlockPos(stackCommandContext, "pos"))))
+                )
+                .then(Commands.literal("config")
+                        .executes(context -> {
+                            Minecraft.getInstance().execute(() -> {
+                                Minecraft.getInstance().setScreen(new ESModConfigScreen(null));
+                            });
+                            return 0;
+                        })
                 )
         );
     }

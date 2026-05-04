@@ -2,6 +2,7 @@ package com.teamtea.eclipticseasons.client.debug;
 
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
+import com.teamtea.eclipticseasons.client.registry.KeyMappingRegistry;
 import com.teamtea.eclipticseasons.common.core.solar.SolarAngelHelper;
 import com.teamtea.eclipticseasons.config.ClientConfig;
 import net.minecraft.client.Minecraft;
@@ -23,6 +24,11 @@ public final class OverlayEventHandler {
         var level = mc.level;
 
         if (player != null && level != null && !mc.options.hideGui) {
+            if (KeyMappingRegistry.DEBUG_KEY.consumeClick() && KeyMappingRegistry.DEBUG_KEY_1.isDown()) {
+                // long cut = System.currentTimeMillis() - use;
+                // if (cut < 500)
+                ClientConfig.Debug.debugInfo.set(!ClientConfig.Debug.debugInfo.get());
+            }
             if (ClientConfig.Debug.debugInfo.get() || ClientConfig.GUI.simpleSeasonHud.get()) {
                 BlockPos pos = player.blockPosition();
 

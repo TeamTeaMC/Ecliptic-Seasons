@@ -9,6 +9,7 @@ import com.teamtea.eclipticseasons.client.color.season.FoliageColorSource;
 import com.teamtea.eclipticseasons.client.itemproperties.CounterItemProperty;
 import com.teamtea.eclipticseasons.client.model.ItemRenderModel;
 import com.teamtea.eclipticseasons.client.particle.*;
+import com.teamtea.eclipticseasons.client.registry.KeyMappingRegistry;
 import com.teamtea.eclipticseasons.client.reload.ClientJsonCacheListener;
 import com.teamtea.eclipticseasons.client.render.ber.*;
 import com.teamtea.eclipticseasons.client.util.ClientClientAgent;
@@ -51,6 +52,12 @@ import java.util.Map;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class ClientSetup {
+
+    @SubscribeEvent
+    public static void onRegisterKeyMappingsEvent(RegisterKeyMappingsEvent event) {
+        event.register(KeyMappingRegistry.DEBUG_KEY);
+        event.register(KeyMappingRegistry.DEBUG_KEY_1);
+    }
 
     @SubscribeEvent
     public static void blockRegister(RegisterParticleProvidersEvent event) {

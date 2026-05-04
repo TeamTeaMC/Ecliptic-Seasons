@@ -3,6 +3,7 @@
   "changes": {
     "seasons": {
       "spring": {
+        "fixed_seed": true,
         "target": {
           "blocks": "minecraft:grass_block"
         },
@@ -107,10 +108,10 @@
               "Name": "minecraft:oxeye_daisy"
             }
           }
-        ],
-        "fixed_seed": true
+        ]
       },
       "summer": {
+        "fixed_seed": true,
         "target": {
           "blocks": "minecraft:grass"
         },
@@ -138,8 +139,7 @@
             }
           ],
           "type": "multi_blocks"
-        },
-        "fixed_seed": true
+        }
       },
       "autumn": [
         {
