@@ -1,10 +1,13 @@
 package com.teamtea.eclipticseasons.config;
 
 
+import com.teamtea.eclipticseasons.client.color.season.FoliageColorSourceDefault;
 import com.teamtea.eclipticseasons.compat.CompatModule;
 import lombok.Getter;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
+
+import java.util.List;
 
 public class ClientConfig {
 
@@ -84,6 +87,7 @@ public class ClientConfig {
         public static ForgeConfigSpec.BooleanValue seasonalGrassColorChange;
         public static ForgeConfigSpec.BooleanValue seasonalColorChangeExtend;
         public static ForgeConfigSpec.BooleanValue smootherSeasonalGrassColorChange;
+        public static ForgeConfigSpec.ConfigValue<List<? extends String>> seasonalColorOverrides;
         public static ForgeConfigSpec.BooleanValue foliageUnderTree;
 
 
@@ -141,7 +145,18 @@ public class ClientConfig {
                     .define("SeasonalColorChangeExtend", true);
             foliageUnderTree = builder.comment("Visual detail: Adds a brownish, withered foliage effect under trees during Autumn.")
                     .define("FoliageUnderTree", false);
-
+            seasonalColorOverrides = builder.comment(
+                            "Custom seasonal colors for single-tint blocks only.",
+                            "Format: \"block_id@color1,color2,...,colorN,placeholder_color,base_color\"",
+                            "The number of colors (N) must be a factor of 24 (e.g., 4, 12, or 24).",
+                            "- 4 colors: Seasonal (6 terms each)",
+                            "- 12 colors: Monthly (2 terms each)",
+                            "The 'placeholder_color' maps to index 24; 'base_color' is the final reference hex."
+                    )
+                    .defineListAllowEmpty("SeasonalColorOverrides",
+                            FoliageColorSourceDefault::createConfig,
+                            // FoliageColorSourceDefault::createSingle,
+                            o -> o instanceof String s && FoliageColorSourceDefault.isValid(s));
             smootherSeasonalGrassColorChange = builder.comment("Calculate seasonal color shifts based on exact solar term progress for smoother transitions.")
                     .define("SmootherSeasonalGrassColorChange", true);
             flowerOnGrass = builder.comment("Visual detail: Occasionally adds small, decorative flowers to grass blocks in Spring.")
