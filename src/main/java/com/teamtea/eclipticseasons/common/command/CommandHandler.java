@@ -8,8 +8,10 @@ import com.mojang.datafixers.util.Either;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.climate.BiomeRain;
+import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.data.weather.special_effect.WeatherEffect;
+import com.teamtea.eclipticseasons.api.misc.ITranslatable;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.api.util.SimpleUtil;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
@@ -39,6 +41,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.commands.TimeCommand;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.biome.Biome;
 
 import net.neoforged.bus.api.SubscribeEvent;
@@ -152,6 +155,42 @@ public class CommandHandler {
                                     .executes(commandContext -> {
                                         var solar = EclipticUtil.getNowSolarTerm(commandContext.getSource().getLevel());
                                         commandContext.getSource().sendSuccess(solar::getTranslation, true);
+                                        return 0;
+                                    })
+                            )
+                            .then(Commands.literal("getSeasonSignal")
+                                    .executes(commandContext -> {
+                                        Entity entity = commandContext.getSource().getEntity();
+                                        Season season = EclipticSeasonsApi.getInstance().getAgroSeason(commandContext.getSource().getLevel(), entity == null ? BlockPos.ZERO : entity.getOnPos());
+                                        commandContext.getSource().sendSuccess(season::getTranslation, true);
+                                        return 0;
+                                    })
+                            )
+                            .then(Commands.literal("getSubSeason")
+                                    .executes(commandContext -> {
+                                        Season.Sub sub = Season.Sub.of(EclipticSeasonsApi.getInstance().getSolarTerm(commandContext.getSource().getLevel()));
+                                        commandContext.getSource().sendSuccess(sub::getTranslation, true);
+                                        return 0;
+                                    })
+                            )
+                            .then(Commands.literal("getMonth")
+                                    .executes(commandContext -> {
+                                        ITranslatable sub = (EclipticSeasonsApi.getInstance().getStanardMonth(commandContext.getSource().getLevel()));
+                                        commandContext.getSource().sendSuccess(sub::getTranslation, true);
+                                        return 0;
+                                    })
+                            )
+                            .then(Commands.literal("getSpecialDay")
+                                    .executes(commandContext -> {
+                                        Entity entity = commandContext.getSource().getEntity();
+                                        var specialDays = EclipticSeasonsApi.getInstance().getSpecialDays(commandContext.getSource().getLevel(), entity == null ? BlockPos.ZERO : entity.getOnPos());
+                                        if (specialDays.isEmpty())
+                                            commandContext.getSource().sendSuccess(Component::empty, true);
+                                        else {
+                                            var first = specialDays.getFirst().getKey();
+                                            if (first != null)
+                                                commandContext.getSource().sendSuccess(() -> Component.literal(first.location().toString()), true);
+                                        }
                                         return 0;
                                     })
                             )

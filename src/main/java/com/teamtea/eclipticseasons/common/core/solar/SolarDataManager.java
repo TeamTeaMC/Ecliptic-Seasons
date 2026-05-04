@@ -4,6 +4,7 @@ import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
+import com.teamtea.eclipticseasons.api.data.season.SpecialDays;
 import com.teamtea.eclipticseasons.api.event.SolarTermChangeEvent;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.api.util.SimpleUtil;
@@ -14,6 +15,7 @@ import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
 import com.teamtea.eclipticseasons.common.core.crop.GreenHouseCoreProvider;
 import com.teamtea.eclipticseasons.common.core.crop.HumidityControlProvider;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
+import com.teamtea.eclipticseasons.common.core.solar.extra.SpecialDaysManager;
 import com.teamtea.eclipticseasons.common.network.SimpleNetworkHandler;
 import com.teamtea.eclipticseasons.common.network.message.SolarTermsMessage;
 import com.teamtea.eclipticseasons.common.network.message.UpdateTempChangeMessage;
@@ -22,6 +24,7 @@ import it.unimi.dsi.fastutil.Pair;
 import it.unimi.dsi.fastutil.longs.Long2LongOpenHashMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.SectionPos;
 import net.minecraft.nbt.CompoundTag;
@@ -55,6 +58,8 @@ public class SolarDataManager extends SavedData {
     protected float solarTempChange = 0;
 
     protected WeakReference<Level> levelWeakReference;
+    protected List<Holder<SpecialDays>> CACHE;
+    protected long lastSpecialDaysQueryTime;
 
     // Long2ObjectOpenHashMap<List<T>>
     private final Long2ObjectOpenHashMap<List<Pair<BlockPos, HumidityControlProvider>>> humidityCoreMap;
@@ -219,6 +224,15 @@ public class SolarDataManager extends SavedData {
     public void setSolarTempChange(float solarTempChange) {
         this.solarTempChange = solarTempChange;
         setDirty();
+    }
+
+    public List<Holder<SpecialDays>> getSpecialDays(Level level, BlockPos pos) {
+        long gameTime = level.getGameTime();
+        if (gameTime - lastSpecialDaysQueryTime > 40) {
+            CACHE = SpecialDaysManager.getSpecialDays(level, pos);
+            lastSpecialDaysQueryTime = gameTime;
+        }
+        return CACHE == null ? List.of() : CACHE;
     }
 
     public void updateBiomeVersion() {

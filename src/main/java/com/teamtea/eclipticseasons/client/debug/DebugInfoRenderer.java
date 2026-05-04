@@ -1,10 +1,13 @@
 package com.teamtea.eclipticseasons.client.debug;
 
+import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.climate.ISnowTerm;
 import com.teamtea.eclipticseasons.api.constant.climate.WeatherMode;
 import com.teamtea.eclipticseasons.api.constant.solar.ISolarTerm;
+import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.data.climate.AgroClimaticZone;
+import com.teamtea.eclipticseasons.api.data.season.SpecialDays;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.api.util.SimpleUtil;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
@@ -111,6 +114,16 @@ public class DebugInfoRenderer {
 
         if (showDebug) {
             infoLines.addHeader("Ecliptic Debug");
+            Season.Sub subSeason = EclipticSeasonsApi.getInstance().getSubSeason(level);
+            infoLines.addKV("Sub Season", subSeason.getTranslation().getString(), subSeason.getSeason().getColor().toString());
+            infoLines.addKV("Month", EclipticSeasonsApi.getInstance().getStanardMonth(level).getTranslation().getString() + " " + (EclipticSeasonsApi.getInstance().getDayOfMonth(level)), "§e");
+            StringBuilder specialDays = new StringBuilder();
+            for (Holder<SpecialDays> specialDay : EclipticSeasonsApi.getInstance().getSpecialDays(level, pos)) {
+                specialDays.append(getBiomeName(specialDay, level.registryAccess().registryOrThrow(ESRegistries.SPECIAL_DAYS)));
+            }
+            if (!specialDays.isEmpty()) {
+                infoLines.addKV("SpecialDays", specialDays.toString(), "§g");
+            }
             infoLines.addKV("Solar Time", solarTime, "§b");
             infoLines.addKV("Day Time", dayTime, "§e");
             infoLines.addKV("Humidity", String.format("%.2f", EclipticUtil.getHumidityLevelAt(level, pos)), "§9");

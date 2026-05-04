@@ -14,6 +14,7 @@ import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
 import com.teamtea.eclipticseasons.common.core.crop.NaturalPlantHandler;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.core.snow.SnowChecker;
+import com.teamtea.eclipticseasons.common.core.solar.extra.SpecialDaysManager;
 import com.teamtea.eclipticseasons.common.game.AnimalHooks;
 import com.teamtea.eclipticseasons.common.registry.BlockRegistry;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
@@ -181,6 +182,7 @@ public final class ClientEventHandler {
             CropGrowthHandler.clearOnClientExitOrServerClose();
             NaturalPlantHandler.clearOnClientExitOrServerClose();
             BiomeClimateManager.clearOnClientExitOrServerClose(false);
+            SpecialDaysManager.clearOnClientExitOrServerClose(false);
             SnowChecker.clearOnClientExitOrServerClose();
             ClientRef.onClientPlayerExit();
             ClientCon.onClientPlayerExit();

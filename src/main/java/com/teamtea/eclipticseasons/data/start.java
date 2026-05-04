@@ -112,6 +112,7 @@ public class start {
             generator.addProvider(event.includeClient(), new BiomeColorProvider(packOutput,MODID, helper,lookupProvider));
             generator.addProvider(event.includeClient(), new LeafColorProvider(packOutput,MODID, helper,lookupProvider));
             generator.addProvider(event.includeClient(), new ClientSnowDefinitionProvider(packOutput,MODID, helper,lookupProvider));
+            generator.addProvider(true, new SeasonalBackgroundMusicProvider(packOutput, MODID,helper, lookupProvider));
         }
 
         // Regional Snow

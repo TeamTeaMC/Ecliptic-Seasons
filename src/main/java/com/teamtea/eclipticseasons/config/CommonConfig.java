@@ -109,6 +109,8 @@ public class CommonConfig {
 
         public static ModConfigSpec.IntValue lastingDaysOfEachTerm;
         public static ModConfigSpec.IntValue initialSolarTermIndex;
+        public static ModConfigSpec.IntValue monthOffset;
+        public static ModConfigSpec.IntValue dayOffset;
 
         public static ModConfigSpec.ConfigValue<List<? extends String>> validDimensions;
 
@@ -129,7 +131,10 @@ public class CommonConfig {
                     .defineInRange("LastingDaysOfEachTerm", 7, 1, 5000);
             initialSolarTermIndex = builder.comment("The index of the Solar Term when the world is first created (1-24).")
                     .defineInRange("InitialSolarTermIndex", 4, 1, 24);
-
+            monthOffset = builder.comment("Shifts the displayed month index. This does NOT affect internal solar term calculations.")
+                    .defineInRange("MonthOffset", 1, -11, 11);
+            dayOffset = builder.comment("Shifts the calendar day relative to solar terms. Example: 2 means solar day 0 appears as the 3rd day of the month.")
+                    .defineInRange("DayOffset", 2, -64, 64);
 
             enableInform = builder.comment("Display a chat message whenever the Solar Term changes.")
                     .define("EnableInform", true);

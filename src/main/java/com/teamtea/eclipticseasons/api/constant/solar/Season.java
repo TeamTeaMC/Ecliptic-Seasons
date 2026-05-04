@@ -108,4 +108,58 @@ public enum Season implements ITranslatableWithPlaceholder {
         }
         return SolarTerm.NONE;
     }
+
+    public enum Sub implements ITranslatableWithPlaceholder {
+        EARLY_SPRING, MID_SPRING, LATE_SPRING,
+        EARLY_SUMMER, MID_SUMMER, LATE_SUMMER,
+        EARLY_AUTUMN, MID_AUTUMN, LATE_AUTUMN,
+        EARLY_WINTER, MID_WINTER, LATE_WINTER,
+        NONE;
+
+        @Override
+        public String getName() {
+            return this.toString().toLowerCase(Locale.ROOT);
+        }
+
+        @Override
+        public boolean isValid() {
+            return this != NONE;
+        }
+
+        @Override
+        public Component getTranslation() {
+            return Component.translatable("info.eclipticseasons.environment.sub_season." + getName()).withStyle(getSeason().color);
+        }
+
+        public Season getSeason() {
+            return isValid() ? Season.collectValidValues()[ordinal() / 3] : Season.NONE;
+        }
+
+        public static Sub of(SolarTerm solarTerm) {
+            return solarTerm.isValid() ? collectValidValues()[solarTerm.ordinal() / 2] : NONE;
+        }
+
+        private static final Sub[] values = Sub.values();
+
+        public static Sub[] collectValues() {
+            return values;
+        }
+
+
+        private static final Sub[] validValues = Arrays.stream(Sub.values())
+                .filter(Sub::isValid).toArray(Sub[]::new);
+
+        public static Sub[] collectValidValues() {
+            return validValues;
+        }
+
+        public SolarTerm getFirstSolarTerm() {
+            return isValid() ? SolarTerm.get(ordinal() * 2) : SolarTerm.NONE;
+        }
+
+        public SolarTerm getEndSolarTerm() {
+            return isValid() ? SolarTerm.get(ordinal() * 2 + 1) : SolarTerm.NONE;
+        }
+
+    }
 }
