@@ -946,7 +946,7 @@ public class MapChecker {
                 onBlock instanceof BellBlock ||
                 onBlock instanceof ComposterBlock ||
                 (onBlock instanceof CampfireBlock && !state.getValue(CampfireBlock.LIT)) ||
-                onBlock instanceof IronBarsBlock ||
+                onBlock == Blocks.IRON_BARS ||
                 onBlock instanceof LightningRodBlock
                 //||
                 //onBlock instanceof AzaleaBlock
