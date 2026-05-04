@@ -218,7 +218,8 @@ public class ESModConfigScreen extends Screen {
         );
 
         put(WEATHER,
-                CommonConfig.Weather.notRainInDesert
+                CommonConfig.Weather.notRainInDesert,
+                ClientConfig.Debug.fogWeather
         );
 
         put(RENDER,

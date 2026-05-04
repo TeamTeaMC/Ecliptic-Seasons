@@ -361,7 +361,7 @@ public final class ClientEventHandler {
                             Minecraft.getInstance().execute(() -> {
                                 Minecraft.getInstance().setScreen(new ESModConfigScreen(null));
                             });
-                            return 1;
+                            return 0;
                         })
                 )
         );
