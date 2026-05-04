@@ -6,6 +6,7 @@ import com.teamtea.eclipticseasons.api.constant.biome.Rainfall;
 import com.teamtea.eclipticseasons.api.constant.biome.Temperature;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.client.color.season.BiomeColorsHandler;
+import com.teamtea.eclipticseasons.client.color.season.FoliageColorSource;
 import com.teamtea.eclipticseasons.client.itemproperties.CounterItemProperty;
 import com.teamtea.eclipticseasons.client.model.ItemRenderModel;
 import com.teamtea.eclipticseasons.client.model.SnowyBakedModelWrapper;
@@ -24,6 +25,7 @@ import com.teamtea.eclipticseasons.common.registry.BlockEntityRegistry;
 import com.teamtea.eclipticseasons.common.registry.BlockRegistry;
 import com.teamtea.eclipticseasons.common.registry.ItemRegistry;
 import com.teamtea.eclipticseasons.common.registry.ParticleRegistry;
+import com.teamtea.eclipticseasons.config.ClientConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
@@ -252,20 +254,20 @@ public class ClientSetup {
 
     @SubscribeEvent
     public static void onRegisterColorHandlersEvent_Block(RegisterColorHandlersEvent.Block event) {
-        // BlockState birchLeaves = Blocks.BIRCH_LEAVES.defaultBlockState();
-        // BlockColors blockColors = event.getBlockColors();
-
-        event.register((state, blockAndTintGetter, pos, i) -> {
-            if (i == 1) {
-                return blockAndTintGetter != null && pos != null ? BiomeColors.getAverageGrassColor(blockAndTintGetter, pos) : GrassColor.getDefaultColor();
-            } else {
-                return -1;
-            }
-        }, Blocks.DANDELION);
-
         event.register(BiomeColorsHandler::getSpruceColor, Blocks.SPRUCE_LEAVES);
         event.register(BiomeColorsHandler::getBirchColor, Blocks.BIRCH_LEAVES);
         event.register(BiomeColorsHandler::getMangroveColor, Blocks.MANGROVE_LEAVES);
+
+        try {
+            for (String s : ClientConfig.Renderer.seasonalColorOverrides.get()) {
+                FoliageColorSource.Impl parse = FoliageColorSource.createOrNull(s);
+                if (parse != null) {
+                    event.register(parse, parse.content().block());
+                }
+            }
+        } catch (Exception e) {
+            EclipticSeasons.logger(e);
+        }
     }
 
     @SubscribeEvent

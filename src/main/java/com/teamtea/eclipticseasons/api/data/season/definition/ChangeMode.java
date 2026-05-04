@@ -34,7 +34,8 @@ public class ChangeMode {
     private final List<IChangeSelector> selectors;
     private final float chance;
     private final boolean fixedSeed;
-    private final float fixedSeedChance;
+    @Builder.Default
+    private final float fixedSeedChance = 0.0001f;
 
     public static final Codec<ChangeMode> CODEC = RecordCodecBuilder.create(ins -> ins.group(
             BlockPredicate.CODEC.fieldOf("target").forGetter(ChangeMode::original),
