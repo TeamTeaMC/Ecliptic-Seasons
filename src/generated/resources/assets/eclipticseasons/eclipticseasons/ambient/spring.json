@@ -1,28 +1,6 @@
 {
   "sound": "eclipticseasons:ambient.spring_forest",
-  "biomes": {
-    "values": [
-      {
-        "values": [
-          "minecraft:cherry_grove",
-          "#minecraft:is_forest",
-          "#forge:is_plains"
-        ],
-        "type": "forge:or"
-      },
-      {
-        "value": {
-          "values": [
-            "#forge:is_cold",
-            "#minecraft:is_ocean",
-            "#minecraft:is_beach"
-          ],
-          "type": "forge:or"
-        },
-        "type": "forge:not"
-      }
-    ],
-    "type": "forge:and"
-  },
+  "biomes": "#eclipticseasons:misc/ambient/spring",
+  "ignored_biomes": "#eclipticseasons:misc/ambient/spring_negate",
   "season": "spring"
 }

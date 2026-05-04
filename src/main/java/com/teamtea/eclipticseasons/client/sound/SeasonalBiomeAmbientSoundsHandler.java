@@ -90,7 +90,8 @@ public class SeasonalBiomeAmbientSoundsHandler implements AmbientSoundHandler {
                         }
                     }
                     if (sound.isInwater() != inWater) continue;
-                    if (!sound.getBiomes().contains(biome)) continue;
+                    if (sound.getBiomes().size() > 0 && !sound.getBiomes().contains(biome)) continue;
+                    if (sound.getIgnored_biomes().contains(biome)) continue;
                     if (sound.getSeed() > 0 && level.getRandom().nextInt(sound.getSeed()) > 0) continue;
                     seasonalBiomeAmbientList.add(sound);
                 }
@@ -98,7 +99,7 @@ public class SeasonalBiomeAmbientSoundsHandler implements AmbientSoundHandler {
                     seasonalBiomeAmbientList.sort(Comparator.comparing(SeasonalBiomeAmbient::getPriority));
                 }
                 soundEvent = seasonalBiomeAmbientList.isEmpty() ? null :
-                        seasonalBiomeAmbientList.get(0).getSound().value();
+                        seasonalBiomeAmbientList.get(0).getSoundEventHolder().value();
                 // switch (season) {
                 //     case SPRING -> {
                 //         if (!player.isInWaterOrRain()

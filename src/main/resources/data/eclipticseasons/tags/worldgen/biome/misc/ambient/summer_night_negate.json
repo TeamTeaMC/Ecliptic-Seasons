@@ -1,0 +1,10 @@
+{
+  "values": [
+    "#minecraft:is_savanna",
+    "#forge:is_cave",
+    "#forge:is_desert",
+    "#minecraft:is_badlands",
+    "#forge:is_peak",
+    "#minecraft:is_ocean"
+  ]
+}

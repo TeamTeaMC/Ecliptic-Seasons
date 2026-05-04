@@ -13,7 +13,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
-import net.neoforged.neoforge.common.ModConfigSpec;
 
 import java.io.Serializable;
 import java.util.*;
@@ -404,7 +403,7 @@ public class CommonConfig {
         public static ForgeConfigSpec.BooleanValue changeMapColor;
         public static ForgeConfigSpec.BooleanValue changeMapColorMapItem;
 
-        private static void load(ModConfigSpec.Builder builder) {
+        private static void load(ForgeConfigSpec.Builder builder) {
             builder.push("Map");
             changeMapColor = builder.comment(
                     "Synchronize all map color rendering with visual snow overlays. May affect compatibility with other mods."

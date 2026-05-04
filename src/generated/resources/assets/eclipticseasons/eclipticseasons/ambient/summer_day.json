@@ -1,19 +1,7 @@
 {
   "sound": "eclipticseasons:ambient.garden_wind",
-  "biomes": {
-    "values": [
-      {
-        "values": [
-          "minecraft:cherry_grove",
-          "#minecraft:is_forest",
-          "#forge:is_plains",
-          "#minecraft:is_river"
-        ],
-        "type": "forge:or"
-      }
-    ],
-    "type": "forge:and"
-  },
+  "biomes": "#eclipticseasons:misc/ambient/summer_day",
+  "ignored_biomes": [],
   "ignore_time": false,
   "season": "summer"
 }
