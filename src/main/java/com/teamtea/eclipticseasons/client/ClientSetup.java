@@ -12,6 +12,7 @@ import com.teamtea.eclipticseasons.client.model.ItemRenderModel;
 import com.teamtea.eclipticseasons.client.model.SnowyBakedModelWrapper;
 import com.teamtea.eclipticseasons.client.model.loader.SnowOverlayModel;
 import com.teamtea.eclipticseasons.client.particle.*;
+import com.teamtea.eclipticseasons.client.registry.KeyMappingRegistry;
 import com.teamtea.eclipticseasons.client.reload.ClientJsonCacheListener;
 import com.teamtea.eclipticseasons.client.render.ber.*;
 import com.teamtea.eclipticseasons.client.render.item.ClientGreenHouseItem;
@@ -59,6 +60,12 @@ public class ClientSetup {
     @SubscribeEvent
     public static void addTooltips(RegisterClientTooltipComponentFactoriesEvent event) {
         event.register(ClientEventHandler.mccc.class, ClientEventHandler.ccc::new);
+    }
+
+    @SubscribeEvent
+    public static void onRegisterKeyMappingsEvent(RegisterKeyMappingsEvent event) {
+        event.register(KeyMappingRegistry.DEBUG_KEY);
+        event.register(KeyMappingRegistry.DEBUG_KEY_1);
     }
 
     @SubscribeEvent

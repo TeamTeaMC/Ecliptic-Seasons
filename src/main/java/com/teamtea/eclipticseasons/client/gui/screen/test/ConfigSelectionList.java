@@ -1,4 +1,4 @@
-package com.teamtea.eclipticseasons.client.gui;
+package com.teamtea.eclipticseasons.client.gui.screen.test;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.AbstractWidget;

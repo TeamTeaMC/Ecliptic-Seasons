@@ -1,14 +1,11 @@
-package com.teamtea.eclipticseasons.client.gui;
+package com.teamtea.eclipticseasons.client.gui.screen.test;
 
-import com.teamtea.eclipticseasons.config.CommonConfig;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.ContainerObjectSelectionList;
 import net.minecraft.client.gui.components.StringWidget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
-import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;

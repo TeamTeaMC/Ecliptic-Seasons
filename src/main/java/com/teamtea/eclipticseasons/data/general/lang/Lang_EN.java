@@ -1,5 +1,7 @@
 package com.teamtea.eclipticseasons.data.general.lang;
 
+import com.teamtea.eclipticseasons.EclipticSeasons;
+import com.teamtea.eclipticseasons.client.registry.KeyMappingRegistry;
 import com.teamtea.eclipticseasons.common.registry.*;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import net.minecraft.data.PackOutput;
@@ -15,6 +17,10 @@ public class Lang_EN extends LangHelper {
     @Override
     protected void addTranslations() {
         addAdvancements();
+
+        add(KeyMappingRegistry.DEBUG_KEY.getName(),"Debug Info HUD Core");
+        add(KeyMappingRegistry.DEBUG_KEY_1.getName(),"Debug Info HUD Sub");
+        add(KeyMappingRegistry.DEBUG_KEY.getCategory(), "Ecliptic Seasons");
 
         add("itemGroup." + EclipticSeasonsApi.MODID + ".core", "Ecliptic Seasons");
 

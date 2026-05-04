@@ -2,6 +2,7 @@ package com.teamtea.eclipticseasons;
 
 
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
+import com.teamtea.eclipticseasons.client.gui.screen.ESModConfigScreen;
 import com.teamtea.eclipticseasons.common.block.IceOrSnowCauldronBlock;
 import com.teamtea.eclipticseasons.common.registry.*;
 import com.teamtea.eclipticseasons.compat.CompatModule;
@@ -68,7 +69,7 @@ public class EclipticSeasons {
 
 
         if (FMLLoader.getDist() == Dist.CLIENT)
-            modContainer.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
+            modContainer.registerExtensionPoint(IConfigScreenFactory.class, ESModConfigScreen::new);
 
         CompatModule.register(NeoForge.EVENT_BUS, modEventBus);
 

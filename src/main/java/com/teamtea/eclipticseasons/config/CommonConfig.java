@@ -562,9 +562,13 @@ public class CommonConfig {
     @Getter
     private static final Set<Block> forceBlocksNotSnowy = new HashSet<>();
 
+    @Getter
+    private static boolean vanillaSnowAndIce = false;
+
     public static void UpdateConfig(ModConfigEvent modConfigEvent) {
         if (!(modConfigEvent instanceof ModConfigEvent.Unloading)
                 && modConfigEvent.getConfig().getSpec() == COMMON_CONFIG) {
+            vanillaSnowAndIce = Temperature.iceMelt.get() && Temperature.snowDown.get();
             useSolarWeather = Weather.useSolarWeather.get();
             forceCropCompatMode = Crop.forceCompatMode.get();
             snowyWinter = Snow.snowyWinter.get();

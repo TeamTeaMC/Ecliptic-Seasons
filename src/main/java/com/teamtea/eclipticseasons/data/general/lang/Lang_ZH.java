@@ -1,6 +1,7 @@
 package com.teamtea.eclipticseasons.data.general.lang;
 
 
+import com.teamtea.eclipticseasons.client.registry.KeyMappingRegistry;
 import com.teamtea.eclipticseasons.common.registry.*;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import net.minecraft.data.PackOutput;
@@ -16,6 +17,10 @@ public class Lang_ZH extends LangHelper {
     @Override
     protected void addTranslations() {
         addAdvancements();
+
+        add(KeyMappingRegistry.DEBUG_KEY.getName(),"调试界面第二键");
+        add(KeyMappingRegistry.DEBUG_KEY_1.getName(),"调试界面第一键");
+        add(KeyMappingRegistry.DEBUG_KEY.getCategory(),  "节气");
 
         add("itemGroup." + EclipticSeasonsApi.MODID + ".core", "节气");
 

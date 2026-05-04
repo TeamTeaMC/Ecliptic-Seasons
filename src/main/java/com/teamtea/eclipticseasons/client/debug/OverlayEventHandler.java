@@ -2,6 +2,7 @@ package com.teamtea.eclipticseasons.client.debug;
 
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
+import com.teamtea.eclipticseasons.client.registry.KeyMappingRegistry;
 import com.teamtea.eclipticseasons.config.ClientConfig;
 import com.teamtea.eclipticseasons.common.core.solar.SolarAngelHelper;
 import net.minecraft.client.Minecraft;
@@ -15,6 +16,7 @@ import net.neoforged.neoforge.client.event.RenderGuiEvent;
 @EventBusSubscriber(value = Dist.CLIENT, modid = EclipticSeasonsApi.MODID)
 public final class OverlayEventHandler {
     private final static DebugInfoRenderer RENDERER = new DebugInfoRenderer(Minecraft.getInstance());
+    // private static long use = -1;
 
     @SubscribeEvent
     public static void onEvent(RenderGuiEvent.Post event) {
@@ -23,6 +25,14 @@ public final class OverlayEventHandler {
         var level = mc.level;
 
         if (player != null && level != null && !mc.options.hideGui) {
+            // if (KeyMappingRegistry.DEBUG_KEY_1.isDown())
+            //     use = System.currentTimeMillis();
+
+            if (KeyMappingRegistry.DEBUG_KEY.consumeClick() && KeyMappingRegistry.DEBUG_KEY_1.isDown()) {
+                // long cut = System.currentTimeMillis() - use;
+                // if (cut < 500)
+                ClientConfig.Debug.debugInfo.set(!ClientConfig.Debug.debugInfo.getAsBoolean());
+            }
             if (ClientConfig.Debug.debugInfo.get() || ClientConfig.GUI.simpleSeasonHud.get()) {
                 BlockPos pos = player.blockPosition();
 

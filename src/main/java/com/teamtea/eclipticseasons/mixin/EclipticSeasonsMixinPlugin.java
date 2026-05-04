@@ -3,6 +3,7 @@ package com.teamtea.eclipticseasons.mixin;
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.compat.CompatModule;
+import lombok.Getter;
 import net.neoforged.fml.loading.FMLLoader;
 import net.neoforged.fml.loading.FMLPaths;
 import org.objectweb.asm.tree.ClassNode;
@@ -76,6 +77,7 @@ public class EclipticSeasonsMixinPlugin implements IMixinConfigPlugin {
 
 
     public static class PreloadedConfig {
+        @Getter
         private static CommentedFileConfig config;
 
         public static void onLoad(String mixinPackage) {
