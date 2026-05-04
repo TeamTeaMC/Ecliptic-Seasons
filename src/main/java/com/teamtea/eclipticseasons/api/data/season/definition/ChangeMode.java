@@ -5,7 +5,9 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.teamtea.eclipticseasons.api.data.season.definition.selector.IChangeSelector;
 import com.teamtea.eclipticseasons.api.util.codec.CodecUtil;
 import lombok.Builder;
+import lombok.Data;
 import lombok.Singular;
+import lombok.experimental.Accessors;
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.advancements.critereon.NbtPredicate;
 import net.minecraft.core.BlockPos;
@@ -16,27 +18,30 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-/**
- * 这里我有一个特殊的想法，根据关卡种子、位置和天数进展、年份固定生成种子
- **/
+
 @Builder
-public record ChangeMode(BlockPredicate original,
-                         @Singular
-                         List<IChangeSelector> selectors,
-                         float chance,
-                         boolean fixedSeed) {
+@Data
+@Accessors(fluent = true)
+public class ChangeMode {
+
+    private final BlockPredicate original;
+    @Singular
+    private final List<IChangeSelector> selectors;
+    private final float chance;
+    private final boolean fixedSeed;
+    private final float fixedSeedChance;
 
     public static final Codec<ChangeMode> CODEC = RecordCodecBuilder.create(ins -> ins.group(
             BlockPredicate.CODEC.fieldOf("target").forGetter(ChangeMode::original),
             CodecUtil.listFrom(IChangeSelector.CCODEC).fieldOf("place").forGetter(ChangeMode::selectors),
             Codec.FLOAT.optionalFieldOf("chance", 1 / 16f).forGetter(ChangeMode::chance),
-            Codec.BOOL.optionalFieldOf("fixed_seed", false).forGetter(ChangeMode::fixedSeed)
+            Codec.BOOL.optionalFieldOf("fixed_seed", false).forGetter(ChangeMode::fixedSeed),
+            Codec.FLOAT.optionalFieldOf("fixed_seed_chance", 0.0001f).forGetter(ChangeMode::fixedSeedChance)
     ).apply(ins, ChangeMode::new));
 
     public List<BlockState> getPossibleStates() {
