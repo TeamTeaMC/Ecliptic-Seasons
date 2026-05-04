@@ -20,6 +20,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Blocks;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
+import java.lang.ref.WeakReference;
 import java.util.*;
 
 public class SuggestedListStringEntry extends ConfigEntry.SpecEntry<List<? extends String>> {
@@ -166,17 +167,19 @@ public class SuggestedListStringEntry extends ConfigEntry.SpecEntry<List<? exten
     }
 
     private class FocuseListnerEditBox extends EditBox {
-        private final ESModConfigScreen screen;
+        private final WeakReference<ESModConfigScreen> screen;
 
         public FocuseListnerEditBox(ESModConfigScreen screen, int width) {
             super(screen.getFont(), width * 2 / 3, 20, Component.empty());
-            this.screen = screen;
+            this.screen = new WeakReference<>(screen);
         }
 
         @Override
         public void setFocused(boolean focused) {
             super.setFocused(focused);
-            SuggestWidget suggestWidget = screen.getGlobalSuggestWidget();
+            ESModConfigScreen esModConfigScreen = screen.get();
+            if (esModConfigScreen == null) return;
+            SuggestWidget suggestWidget = esModConfigScreen.getGlobalSuggestWidget();
             if (!focused) {
                 suggestWidget.setSuggestions(Collections.emptyList());
                 suggestWidget.setEditBox(null);
