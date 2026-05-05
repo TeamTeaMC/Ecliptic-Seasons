@@ -44,14 +44,14 @@ public class SeasonCycleRegistry {
         return new OrHolderSet<>(Arrays.stream(values).toList());
     }
 
-    private static HolderSet<Biome> not(AgroClimateRegistry.BiomeRegistryLookup biomeRegistryLookup, HolderSet<Biome> value) {
+    private static HolderSet<Biome> not(AgroClimateRegistry.BiomeRegistryLookup<Biome> biomeRegistryLookup, HolderSet<Biome> value) {
         return new NotHolderSet<>(biomeRegistryLookup, value);
     }
 
     public static void bootstrap(BootstapContext<SeasonCycle> context) {
         HolderGetter<Biome> getter = context.lookup(Registries.BIOME);
         HolderGetter<SeasonPhase> lookuped = context.lookup(ESRegistries.SEASON_PHASE);
-        AgroClimateRegistry.BiomeRegistryLookup lazyLookup = new AgroClimateRegistry.BiomeRegistryLookup(getter);
+        AgroClimateRegistry.BiomeRegistryLookup<Biome> lazyLookup = new AgroClimateRegistry.BiomeRegistryLookup<>(getter,Registries.BIOME);
 
         context.register(MONSOON, new SeasonCycle(
                 // and( getter.getOrThrow(Tags.Biomes.IS_HOT_OVERWORLD),

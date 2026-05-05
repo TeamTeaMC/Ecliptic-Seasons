@@ -27,6 +27,8 @@ public class ESExtraCodec {
 
     public static final StringRepresentable.EnumCodec<TimePeriod> TIME_PERIOD = StringRepresentable.fromEnum(TimePeriod::collectValues);
 
+    public static final StringRepresentable.EnumCodec<Season.Sub> SUB_SEASON = StringRepresentable.fromEnum(Season.Sub::collectValues);
+
 
     public static final Codec<HolderSet<Block>> BLOCK_HOLDER_SET_CODEC = RecordCodecBuilder.create(
             instance -> instance.group(

@@ -16,12 +16,23 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+// todo we need a season mapping
 public record SolarTermValueMap<T>(
         Optional<T> defaultValue,
         Optional<Enum2ObjectMap<SolarTerm, T>> solarTermMap,
         Optional<Holder<AgroClimaticZone>> climate,
-        Optional<Enum2ObjectMap<Season, T>> seasonMap
+        Optional<Enum2ObjectMap<Season, T>> seasonMap,
+        Optional<Enum2ObjectMap<Season.Sub, T>> subSeasonMap
 ) {
+
+    public SolarTermValueMap(
+            Optional<T> defaultValue,
+            Optional<Enum2ObjectMap<SolarTerm, T>> solarTermMap,
+            Optional<Holder<AgroClimaticZone>> climate,
+            Optional<Enum2ObjectMap<Season, T>> seasonMap
+    ) {
+        this(defaultValue, solarTermMap, climate, seasonMap, Optional.empty());
+    }
 
     public static final Codec<SolarTermValueMap<Float>> FLOAT_CODEC = codec(Codec.FLOAT);
     public static final Codec<SolarTermValueMap<Integer>> INT_CODEC = codec(Codec.INT);
@@ -34,7 +45,9 @@ public record SolarTermValueMap<T>(
                 CodecUtil.holderCodec(ESRegistries.AGRO_CLIMATE)
                         .optionalFieldOf("climate").forGetter(SolarTermValueMap::climate),
                 CodecUtil.enum2ObjectMapCodec(ESExtraCodec.SEASON, codec, Season.class)
-                        .optionalFieldOf("seasons").forGetter(SolarTermValueMap::seasonMap)
+                        .optionalFieldOf("seasons").forGetter(SolarTermValueMap::seasonMap),
+                CodecUtil.enum2ObjectMapCodec(ESExtraCodec.SUB_SEASON, codec, Season.Sub.class)
+                        .optionalFieldOf("sub_seasons").forGetter(SolarTermValueMap::subSeasonMap)
         ).apply(ins, SolarTermValueMap::new));
     }
 
@@ -47,6 +60,22 @@ public record SolarTermValueMap<T>(
         Enum2ObjectMap<SolarTerm, T> map = new Enum2ObjectMap<>(SolarTerm.class);
         if (solarTermMap().isPresent()) {
             map.putAll(solarTermMap().get());
+        }
+        if (subSeasonMap().isPresent()) {
+            Enum2ObjectMap<Season.Sub, T> subMap = subSeasonMap().get();
+            for (Season.Sub subSeason : Season.Sub.collectValues()) {
+                T value = subMap.get(subSeason);
+                if (value != null) {
+                    if (subSeason.isValid()) {
+                        SolarTerm start = subSeason.getFirstSolarTerm();
+                        SolarTerm end = subSeason.getEndSolarTerm();
+                        map.putIfAbsent(start, value);
+                        map.putIfAbsent(end, value);
+                    } else {
+                        map.putIfAbsent(SolarTerm.NONE, value);
+                    }
+                }
+            }
         }
         if (seasonMap().isPresent()) {
             Enum2ObjectMap<Season, List<SolarTerm>> usemap;
@@ -116,6 +145,7 @@ public record SolarTermValueMap<T>(
         private T defaultValue;
         private Enum2ObjectMap<SolarTerm, T> solarTermMap;
         private Enum2ObjectMap<Season, T> seasonMap;
+        private Enum2ObjectMap<Season.Sub, T> subSeasonMap;
         private Holder<AgroClimaticZone> climate;
 
         private Builder() {
@@ -152,6 +182,14 @@ public record SolarTermValueMap<T>(
             return this;
         }
 
+        public Builder<T> putSeason(Season.Sub season, T value) {
+            if (this.subSeasonMap == null) {
+                this.subSeasonMap = new Enum2ObjectMap<>(Season.Sub.class);
+            }
+            this.subSeasonMap.put(season, value);
+            return this;
+        }
+
         public void climate(Holder<AgroClimaticZone> climate) {
             this.climate = climate;
         }
@@ -161,18 +199,13 @@ public record SolarTermValueMap<T>(
                     Optional.ofNullable(defaultValue),
                     Optional.ofNullable(solarTermMap),
                     Optional.ofNullable(climate),
-                    Optional.ofNullable(seasonMap)
+                    Optional.ofNullable(seasonMap),
+                    Optional.ofNullable(subSeasonMap)
             );
         }
 
         public Optional<SolarTermValueMap<T>> ofBuild() {
-            return Optional.of(new SolarTermValueMap<>(
-                    Optional.ofNullable(defaultValue),
-                    Optional.ofNullable(solarTermMap),
-                    Optional.ofNullable(climate),
-                    Optional.ofNullable(seasonMap)
-            ));
+            return Optional.of(build());
         }
     }
-
 }

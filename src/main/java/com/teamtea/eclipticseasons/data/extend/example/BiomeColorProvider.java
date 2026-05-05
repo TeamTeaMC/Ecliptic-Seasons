@@ -35,7 +35,7 @@ public class BiomeColorProvider extends ESClientDataMapProvider<BiomeColor> {
     @Override
     protected void gather(HolderLookup.Provider provider) {
         HolderLookup.RegistryLookup<Biome> biomeRegistryLookup = provider.lookupOrThrow(Registries.BIOME);
-        var BIOME_REGISTRY_LOOKUP = new AgroClimateRegistry.BiomeRegistryLookup(biomeRegistryLookup);
+        var BIOME_REGISTRY_LOOKUP = new AgroClimateRegistry.BiomeRegistryLookup<>(biomeRegistryLookup,Registries.BIOME);
         var aThrow = provider.lookupOrThrow(ESRegistries.AGRO_CLIMATE);
 
         add("plains", new BiomeColor(

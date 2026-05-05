@@ -174,6 +174,9 @@ public enum SolarTerm implements ITranslatableWithPlaceholder, ISolarTerm {
         return collectValues()[index];
     }
 
+    public static SolarTerm getValid(int index) {
+        return collectValidValues()[index % 24];
+    }
 
     public RainySolarTermColors getColorInfo() {
         return RainySolarTermColors.collectValues()[this.ordinal()];

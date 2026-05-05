@@ -110,6 +110,7 @@ public class start {
             generator.addProvider(event.includeClient(), new SeasonTextureProvider(packOutput, MODID, helper, lookupProvider));
             generator.addProvider(event.includeClient(), new LeafColorProvider(packOutput, MODID, helper, lookupProvider));
             generator.addProvider(event.includeClient(), new ClientSnowDefinitionProvider(packOutput,MODID, helper,lookupProvider));
+            generator.addProvider(event.includeClient(), new SeasonalBackgroundMusicProvider(packOutput,MODID, helper,lookupProvider));
         }
 
 

@@ -25,6 +25,7 @@ import com.teamtea.eclipticseasons.common.core.snow.SnowChecker;
 import com.teamtea.eclipticseasons.common.core.snow.SnowyStatusHandler;
 import com.teamtea.eclipticseasons.common.core.snow.SnowyStatusKeeper;
 import com.teamtea.eclipticseasons.common.core.solar.ClientSolarDataManager;
+import com.teamtea.eclipticseasons.common.core.solar.extra.SpecialDaysManager;
 import com.teamtea.eclipticseasons.common.game.AnimalHooks;
 import com.teamtea.eclipticseasons.common.misc.MapExporter;
 import com.teamtea.eclipticseasons.common.registry.SoundEventsRegistry;
@@ -142,6 +143,7 @@ public final class ClientEventHandler {
         if (Minecraft.getInstance().player != null) {
             CropGrowthHandler.clearOnClientExitOrServerClose();
             BiomeClimateManager.clearOnClientExitOrServerClose(false);
+            SpecialDaysManager.clearOnClientExitOrServerClose(false);
             ClientCon.onClientPlayerExit();
             ClientRef.onClientPlayerExit();
             SnowChecker.clearOnClientExitOrServerClose();

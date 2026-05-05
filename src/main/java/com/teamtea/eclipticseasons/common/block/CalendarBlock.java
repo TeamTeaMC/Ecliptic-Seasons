@@ -90,7 +90,7 @@ public class CalendarBlock extends WallPlacedBlock {
 
 
     public enum DisplayMode implements StringRepresentable {
-        NORMAL, YEAR, NEXT, DAY;
+        NORMAL, YEAR, NEXT, DAY, SUB_SEASON, MONTH;
 
         @Override
         public @NotNull String getSerializedName() {
