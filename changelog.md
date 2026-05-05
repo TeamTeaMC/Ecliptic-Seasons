@@ -47,7 +47,7 @@ If no issues are reported, it will eventually be marked as a stable release.
     - Snowline
     - Custom block seasonal color overrides
 
-![GUI Shown](https://github.com/user-attachments/assets/7266da45-392e-4e55-a3c8-8ec64e73f372)
+![GUI Shown](https://media.forgecdn.net/attachments/1665/963/config.png)
 
 - Added festival system `eclipticseasons:special_days`
   - Includes built-in festivals:
@@ -62,7 +62,7 @@ If no issues are reported, it will eventually be marked as a stable release.
   - Can be overridden via datapacks or disabled via `eclipticseasons:extra_info`
   - Supports querying current festivals via API or commands
 
-![Specials Days and Music](https://github.com/user-attachments/assets/7a80254e-e896-461d-a295-4f427ebe1892)
+![Specials Days and Music](https://media.forgecdn.net/attachments/1665/964/specialdays.png)
 
 - Added seasonal music system `eclipticseasons:background_music`
   - Supports playback only during specific festivals
@@ -193,7 +193,7 @@ Example:
         * Duration, frequency, and intensity vary by solar term
         * Fixed issue where thunderstorms always triggered in certain seasons
 
-![Solar Terms and Rain](https://github.com/user-attachments/assets/45544d05-fa91-4aff-8d55-1e9a71661c54)
+![Solar Terms and Rain](https://media.forgecdn.net/attachments/1665/966/weather.png)
 
 #### Fixes and Optimizations
 

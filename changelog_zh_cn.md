@@ -47,7 +47,7 @@
         - 雪线
         - 自定义方块季节颜色覆盖
 
-![配置界面显示](https://github.com/user-attachments/assets/7266da45-392e-4e55-a3c8-8ec64e73f372)
+![配置界面显示](https://media.forgecdn.net/attachments/1665/963/config.png)
 
 - 新增了节日系统`eclipticseasons:special_days`
     - 内置了部分节日
@@ -62,7 +62,7 @@
     - 可以通过数据包覆盖调整或`eclipticseasons:extra_info`数据包取消这些节日
     - 支持通过API或者命令查询当前节日
 
-![节日与音乐](https://github.com/user-attachments/assets/7a80254e-e896-461d-a295-4f427ebe1892)
+![节日与音乐](https://media.forgecdn.net/attachments/1665/964/specialdays.png)
 
 - 新增了季节音乐系统`eclipticseasons:background_music`
     - 支持仅在指定节日播放
@@ -232,7 +232,7 @@
     - 不同节气下的降雨时长、频率与强度存在明显差异
     - 修复部分季节中降雨必定触发雷电的问题
 
-![节气与雨](https://github.com/user-attachments/assets/45544d05-fa91-4aff-8d55-1e9a71661c54)
+![节气与雨](https://media.forgecdn.net/attachments/1665/964/specialdays.png)
 
 #### 问题与优化
 
