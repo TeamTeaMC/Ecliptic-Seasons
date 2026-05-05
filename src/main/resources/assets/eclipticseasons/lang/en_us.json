@@ -56,6 +56,7 @@
   "ui.label.eclipticseasons.properties": "Properties",
   "debug_info.eclipticseasons.snow_term": "[%1$s → %2$s%3$s]",
   "debug_info.eclipticseasons.snow_term.second_year": " (next year)",
+  "debug_info.eclipticseasons.stanard_year_month_day": "%2$s %3$s, %1$s",
   "pack.eclipticseasons.snowy_sodium_stairs": "Snowy Stairs for Sodium",
   "info.eclipticseasons.recipe_category.greenhouse_ritual": "Season Ritual",
   "info.eclipticseasons.recipe_category.greenhouse_ritual.not_in_room": "Not in room",

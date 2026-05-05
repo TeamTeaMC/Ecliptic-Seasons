@@ -108,7 +108,11 @@ public class DebugInfoRenderer {
             infoLines.addHeader("Ecliptic Debug");
             Season.Sub subSeason = EclipticSeasonsApi.getInstance().getSubSeason(level);
             infoLines.addKV("Sub Season", subSeason.getTranslation().getString(), subSeason.getSeason().getColor().toString());
-            infoLines.addKV("Month", EclipticSeasonsApi.getInstance().getStandardMonth(level).getTranslation().getString() + " " + (EclipticSeasonsApi.getInstance().getDayOfMonth(level)), "§e");
+            infoLines.addKV("Month", Component.translatable("debug_info.eclipticseasons.stanard_year_month_day",
+                    EclipticSeasonsApi.getInstance().getStandardSolarYears(level),
+                    EclipticSeasonsApi.getInstance().getStandardMonth(level).getTranslation().getString(),
+                    EclipticSeasonsApi.getInstance().getDayOfMonth(level)
+            ).getString(), "§e");
             StringBuilder specialDays = new StringBuilder();
             for (Holder<SpecialDays> specialDay : EclipticSeasonsApi.getInstance().getSpecialDays(level, pos)) {
                 specialDays.append(getBiomeName(specialDay, level.registryAccess().registryOrThrow(ESRegistries.SPECIAL_DAYS)));

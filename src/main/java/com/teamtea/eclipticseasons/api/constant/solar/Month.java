@@ -49,6 +49,14 @@ public enum Month implements ITranslatableWithPlaceholder {
         return dayInYear % monthLength + 1;
     }
 
+
+    public static int toYear(int solarDays, int lastingDaysOfTerm, int dayOffset, int monthOffset) {
+        if (lastingDaysOfTerm <= 0) return 0;
+        int yearLength = lastingDaysOfTerm * 24;
+        int totalDays = solarDays + monthOffset * (lastingDaysOfTerm * 2) + dayOffset;
+        return Math.floorDiv(totalDays, yearLength) + 1;
+    }
+
     private static final Month[] values = Month.values();
 
     public static Month[] collectValues() {
