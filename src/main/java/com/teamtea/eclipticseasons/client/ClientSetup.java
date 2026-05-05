@@ -4,7 +4,7 @@ import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.data.client.model.ESBlockModelDefinition;
 import com.teamtea.eclipticseasons.client.color.season.BiomeColorsHandler;
 import com.teamtea.eclipticseasons.client.color.season.FoliageColorSource;
-import com.teamtea.eclipticseasons.client.core.AttachModelManager;
+import com.teamtea.eclipticseasons.client.core.SeasonModelManager;
 import com.teamtea.eclipticseasons.client.gui.GuiBlockRenderState;
 import com.teamtea.eclipticseasons.client.gui.GuiBlockRenderer;
 import com.teamtea.eclipticseasons.client.gui.GuiFluidRenderState;
@@ -19,6 +19,7 @@ import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.client.util.ClientClientAgent;
 import com.teamtea.eclipticseasons.common.registry.BlockEntityRegistry;
 import com.teamtea.eclipticseasons.common.registry.ParticleRegistry;
+import com.teamtea.eclipticseasons.config.ClientConfig;
 import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.resources.Identifier;
@@ -135,36 +136,36 @@ public class ClientSetup {
 
     @SubscribeEvent
     public static void registerExtraModels(ModelEvent.RegisterStandalone event) {
-        AttachModelManager.registerExtraSnowyModels(event::register);
+        SeasonModelManager.registerExtraSnowyModels(event::register);
         // event.register();
         // Minecraft.getInstance().getResourceManager().listPacks().toList().get(0).getResource(PackType.CLIENT_RESOURCES, ResourceLocation.withDefaultNamespace("textures/block/snow.png")).get()
         // IOUtils.toString(Minecraft.getInstance().getResourceManager().listPacks().toList().get(0).getResource(PackType.SERVER_DATA, ResourceLocation.withDefaultNamespace("recipe/yellow_terracotta.json")).get(), StandardCharsets.UTF_8)        event.register(ModelManager.snowy_fern);
-        registerStandalone(event, AttachModelManager.snowy_custom);
-        registerStandalone(event, AttachModelManager.snowy_custom_ao);
+        registerStandalone(event, SeasonModelManager.snowy_custom);
+        registerStandalone(event, SeasonModelManager.snowy_custom_ao);
 
-        registerStandalone(event, AttachModelManager.stairs_top);
-        registerStandalone(event, AttachModelManager.snowy_leaves_attach);
-        registerStandalone(event, AttachModelManager.snowy_leaves_top);
-        registerStandalone(event, AttachModelManager.snowy_fern);
-        registerStandalone(event, AttachModelManager.snowy_grass);
-        registerStandalone(event, AttachModelManager.snowy_tall_grass_top);
-        registerStandalone(event, AttachModelManager.snowy_tall_grass_bottom);
-        registerStandalone(event, AttachModelManager.snowy_large_fern_top);
+        registerStandalone(event, SeasonModelManager.stairs_top);
+        registerStandalone(event, SeasonModelManager.snowy_leaves_attach);
+        registerStandalone(event, SeasonModelManager.snowy_leaves_top);
+        registerStandalone(event, SeasonModelManager.snowy_fern);
+        registerStandalone(event, SeasonModelManager.snowy_grass);
+        registerStandalone(event, SeasonModelManager.snowy_tall_grass_top);
+        registerStandalone(event, SeasonModelManager.snowy_tall_grass_bottom);
+        registerStandalone(event, SeasonModelManager.snowy_large_fern_top);
         // 注意这里使用地址和model地址效果不同，后者需要写blockstate
-        registerStandalone(event, AttachModelManager.snowy_large_fern_bottom);
-        registerStandalone(event, AttachModelManager.overlay_2);
-        registerStandalone(event, AttachModelManager.snow_height2);
-        registerStandalone(event, AttachModelManager.snow_height2_top);
-        registerStandalone(event, AttachModelManager.grass_flower);
+        registerStandalone(event, SeasonModelManager.snowy_large_fern_bottom);
+        registerStandalone(event, SeasonModelManager.overlay_2);
+        registerStandalone(event, SeasonModelManager.snow_height2);
+        registerStandalone(event, SeasonModelManager.snow_height2_top);
+        registerStandalone(event, SeasonModelManager.grass_flower);
 
-        for (var flowerOnGrass : ConcatenatedListView.of(AttachModelManager.flower_on_grass,
-                AttachModelManager.fourleaf_clovers,
-                AttachModelManager.snow_edge_overlays,
-                AttachModelManager.leaf_piles)) {
+        for (var flowerOnGrass : ConcatenatedListView.of(SeasonModelManager.flower_on_grass,
+                SeasonModelManager.fourleaf_clovers,
+                SeasonModelManager.snow_edge_overlays,
+                SeasonModelManager.leaf_piles)) {
             registerStandalone(event, flowerOnGrass);
         }
 
-        registerStandalone(event, AttachModelManager.ice);
+        registerStandalone(event, SeasonModelManager.ice);
     }
 
     private static void registerStandalone(ModelEvent.RegisterStandalone event, StandaloneModelKey<BlockStateModel> snowyCustom) {
@@ -177,25 +178,25 @@ public class ClientSetup {
         ParticleUtil.onReloadResource();
 
         var modelRegistry = event.getBakingResult();
-        AttachModelManager.clearForRebaked(modelRegistry);
+        SeasonModelManager.clearForRebaked(modelRegistry);
 
         List<StandaloneModelKey<BlockStateModel>> bakedModels =
                 new ArrayList<>(List.of(
-                        AttachModelManager.snowy_custom,
-                        AttachModelManager.snowy_custom_ao,
-                        AttachModelManager.stairs_top,
-                        AttachModelManager.snowy_leaves_attach,
-                        AttachModelManager.snowy_leaves_top,
-                        AttachModelManager.stairs_top,
-                        AttachModelManager.snowy_fern,
-                        AttachModelManager.snowy_grass,
-                        AttachModelManager.snowy_tall_grass_top,
-                        AttachModelManager.snowy_tall_grass_bottom,
-                        AttachModelManager.snowy_large_fern_top,
-                        AttachModelManager.snowy_large_fern_bottom,
-                        AttachModelManager.overlay_2,
-                        AttachModelManager.snow_height2,
-                        AttachModelManager.snow_height2_top
+                        SeasonModelManager.snowy_custom,
+                        SeasonModelManager.snowy_custom_ao,
+                        SeasonModelManager.stairs_top,
+                        SeasonModelManager.snowy_leaves_attach,
+                        SeasonModelManager.snowy_leaves_top,
+                        SeasonModelManager.stairs_top,
+                        SeasonModelManager.snowy_fern,
+                        SeasonModelManager.snowy_grass,
+                        SeasonModelManager.snowy_tall_grass_top,
+                        SeasonModelManager.snowy_tall_grass_bottom,
+                        SeasonModelManager.snowy_large_fern_top,
+                        SeasonModelManager.snowy_large_fern_bottom,
+                        SeasonModelManager.overlay_2,
+                        SeasonModelManager.snow_height2,
+                        SeasonModelManager.snow_height2_top
                         // ,
                         // ExtraModelManager.snowOverlayLeaves,
                         // ExtraModelManager.snowySlabBottom,
@@ -224,6 +225,16 @@ public class ClientSetup {
                 Blocks.SPRUCE_LEAVES,
                 Blocks.BIRCH_LEAVES,
                 Blocks.MANGROVE_LEAVES);
+        try {
+            for (String s : ClientConfig.Renderer.seasonalColorOverrides.get()) {
+                FoliageColorSource.Impl parse = FoliageColorSource.createOrNull(s);
+                if (parse != null) {
+                    event.register(List.of(parse), parse.content().block());
+                }
+            }
+        } catch (Exception e) {
+            EclipticSeasons.logger(e);
+        }
     }
 
 
@@ -237,6 +248,8 @@ public class ClientSetup {
         event.addListener(EclipticSeasons.rl(ClientJsonCacheListener.DIRECTORY_SEASON_TEXTURES.substring(16)), ClientJsonCacheListener.textureReMappingsCache);
         event.addListener(EclipticSeasons.rl(ClientJsonCacheListener.DIRECTORY_SEASON_DEFINITION.substring(16)), ClientJsonCacheListener.seasonDefCache);
         event.addListener(EclipticSeasons.rl(ClientJsonCacheListener.DIRECTORY_UI_PARSER.substring(16)), ClientJsonCacheListener.uiParserCache);
+        event.addListener(EclipticSeasons.rl(ClientJsonCacheListener.DIRECTORY_BACKGROUND_MUSIC.substring(16)), ClientJsonCacheListener.backgroundMusicCache);
+
     }
 
 }

@@ -1,6 +1,5 @@
 package com.teamtea.eclipticseasons.api.util.codec;
 
-import com.mojang.serialization.Codec;
 import com.teamtea.eclipticseasons.api.constant.biome.Humidity;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
@@ -17,5 +16,7 @@ public class ESExtraCodec {
     public static final StringRepresentable.EnumCodec<Humidity> HUMIDITY = StringRepresentable.fromEnum(Humidity::collectValues);
 
     public static final StringRepresentable.EnumCodec<TimePeriod> TIME_PERIOD = StringRepresentable.fromEnum(TimePeriod::collectValues);
+
+    public static final StringRepresentable.EnumCodec<Season.Sub> SUB_SEASON = StringRepresentable.fromEnum(Season.Sub::collectValues);
 
 }

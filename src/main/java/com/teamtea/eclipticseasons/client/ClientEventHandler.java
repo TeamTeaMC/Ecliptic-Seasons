@@ -7,6 +7,8 @@ import com.teamtea.eclipticseasons.api.data.misc.ESSortInfo;
 import com.teamtea.eclipticseasons.api.event.SolarTermChangeEvent;
 import com.teamtea.eclipticseasons.api.misc.client.IBiomeColorHolder;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
+import com.teamtea.eclipticseasons.client.core.ClientWeatherChecker;
+import com.teamtea.eclipticseasons.client.gui.screen.ESModConfigScreen;
 import com.teamtea.eclipticseasons.client.render.chunk.IceKeeper;
 import com.teamtea.eclipticseasons.client.util.ClientRef;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
@@ -14,10 +16,10 @@ import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
 import com.teamtea.eclipticseasons.common.core.crop.NaturalPlantHandler;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.core.snow.SnowChecker;
+import com.teamtea.eclipticseasons.common.core.solar.extra.SpecialDaysManager;
 import com.teamtea.eclipticseasons.common.game.AnimalHooks;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.client.color.season.BiomeColorsHandler;
-import com.teamtea.eclipticseasons.client.core.ClientWeatherChecker;
 import com.teamtea.eclipticseasons.client.render.WorldRenderer;
 import com.teamtea.eclipticseasons.client.render.chunk.CompilerCollector;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
@@ -134,6 +136,7 @@ public final class ClientEventHandler {
     public static void onLevelUnloadEvent(LevelEvent.Unload event) {
         if (event.getLevel() instanceof ClientLevel clientLevel) {
             ClientCon.setUseLevel(null);
+            ClientWeatherChecker.unload(clientLevel);
             CompilerCollector.clearAll();
             IceKeeper.clearAll();
         }
@@ -145,6 +148,7 @@ public final class ClientEventHandler {
             CropGrowthHandler.clearOnClientExitOrServerClose();
             NaturalPlantHandler.clearOnClientExitOrServerClose();
             BiomeClimateManager.clearOnClientExitOrServerClose(false);
+            SpecialDaysManager.clearOnClientExitOrServerClose(false);
             SnowChecker.clearOnClientExitOrServerClose();
             ClientRef.onClientPlayerExit();
             ClientCon.onClientPlayerExit();
@@ -185,6 +189,7 @@ public final class ClientEventHandler {
     public static void onLevelTick(LevelTickEvent.Post event) {
         if (event.getLevel() instanceof ClientLevel clientLevel) {
             ClientCon.tick(clientLevel);
+            ClientWeatherChecker.tickLevel(clientLevel);
 
             if ((!EclipticUtil.canSnowyBlockInteract() || ClientConfig.Renderer.enhancementChunkRenderUpdate.get())
                     && ClientConfig.Renderer.forceChunkRenderUpdate.get()) {
@@ -233,6 +238,14 @@ public final class ClientEventHandler {
                                         return 0;
                                     }))
                             )
+                    )
+                    .then(Commands.literal("config")
+                            .executes(context -> {
+                                Minecraft.getInstance().execute(() -> {
+                                    Minecraft.getInstance().setScreen(new ESModConfigScreen(null));
+                                });
+                                return 0;
+                            })
                     )
             );
         }

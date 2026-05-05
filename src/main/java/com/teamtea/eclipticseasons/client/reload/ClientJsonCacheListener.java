@@ -12,6 +12,7 @@ import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.data.client.BiomeColor;
 import com.teamtea.eclipticseasons.api.data.client.LeafColor;
 import com.teamtea.eclipticseasons.api.data.client.SeasonalBiomeAmbient;
+import com.teamtea.eclipticseasons.api.data.client.SeasonalBackgroundMusic;
 import com.teamtea.eclipticseasons.api.data.client.model.ESModelLoadedJson;
 import com.teamtea.eclipticseasons.api.data.client.model.seasonal.SeasonBlockDefinition;
 import com.teamtea.eclipticseasons.api.data.client.model.seasonal.SeasonalTexture;
@@ -25,7 +26,6 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.util.profiling.ProfilerFiller;
-import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.NonNull;
 
 import java.io.IOException;
@@ -51,6 +51,7 @@ public class ClientJsonCacheListener<T> extends SimplePreparableReloadListener<M
     public static final String DIRECTORY_LEAF = EclipticSeasonsApi.MODID + "/particles/fallen_leaves";
     public static final String DIRECTORY_SNOW_DEFINITION = EclipticSeasonsApi.MODID + "/snow_definitions";
     public static final String DIRECTORY_AMBIENT = EclipticSeasonsApi.MODID + "/ambient";
+    public static final String DIRECTORY_BACKGROUND_MUSIC = EclipticSeasonsApi.MODID + "/background_music";
     public static final String DIRECTORY_MODEL_DEFINITION = EclipticSeasonsApi.MODID + "/model_definitions";
     public static final String DIRECTORY_SEASON_DEFINITION = EclipticSeasonsApi.MODID + "/season_definitions";
 
@@ -69,6 +70,7 @@ public class ClientJsonCacheListener<T> extends SimplePreparableReloadListener<M
     public static final ClientJsonCacheListener<SeasonalBiomeAmbient> ambientCache = new ClientJsonCacheListener<>(GSON, DIRECTORY_AMBIENT);
     public static final ClientJsonCacheListener<SeasonBlockDefinition> seasonDefCache = new ClientJsonCacheListener<>(GSON, DIRECTORY_SEASON_DEFINITION);
     public static final ClientJsonCacheListener<UIParser> uiParserCache = new ClientJsonCacheListener<>(GSON, DIRECTORY_UI_PARSER);
+    public static final ClientJsonCacheListener<SeasonalBackgroundMusic> backgroundMusicCache = new ClientJsonCacheListener<>(GSON, DIRECTORY_BACKGROUND_MUSIC);
 
 
     private final String directory;

@@ -167,6 +167,10 @@ public enum SolarTerm implements ITranslatableWithPlaceholder, ISolarTerm {
         return collectValues()[index];
     }
 
+    public static SolarTerm getValid(int index) {
+        return collectValidValues()[index % 24];
+    }
+
 
     public RainySolarTermColors getColorInfo() {
         return RainySolarTermColors.collectValues()[this.ordinal()];
@@ -208,7 +212,6 @@ public enum SolarTerm implements ITranslatableWithPlaceholder, ISolarTerm {
     public Season getSeason() {
         return Season.collectValues()[this.ordinal() / 6];
     }
-
 
     public boolean isInTerms(SolarTerm start, SolarTerm end) {
         if (start == NONE || end == NONE) return false;

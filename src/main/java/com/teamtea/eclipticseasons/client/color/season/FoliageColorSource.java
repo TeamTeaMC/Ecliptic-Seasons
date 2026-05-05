@@ -10,6 +10,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jspecify.annotations.NonNull;
 
 public record FoliageColorSource() implements BlockTintSource {
+
+
     @Override
     public int color(@NonNull BlockState state) {
         Block block = state.getBlock();
@@ -37,8 +39,22 @@ public record FoliageColorSource() implements BlockTintSource {
         return color(state);
     }
 
-    @FunctionalInterface
-    public interface Impl {
-        int colorInWorld(BlockState state, BlockAndTintGetter level, BlockPos pos);
+    public static Impl createOrNull(String s) {
+        FoliageColorSourceDefault.ColorHolder parse = FoliageColorSourceDefault.parse(s);
+        return parse == null ? null : new Impl(parse);
     }
+
+
+    public record Impl(FoliageColorSourceDefault.ColorHolder content) implements BlockTintSource {
+        @Override
+        public int color(@NonNull BlockState state) {
+            return content.base();
+        }
+
+        @Override
+        public int colorInWorld(@NonNull BlockState state, @NonNull BlockAndTintGetter level, @NonNull BlockPos pos) {
+            return BiomeColorsHandler.getLeavesColor(content.base(), content.values(), pos);
+        }
+    }
+
 }

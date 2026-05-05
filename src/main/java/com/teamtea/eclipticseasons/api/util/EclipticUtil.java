@@ -7,10 +7,11 @@ import com.teamtea.eclipticseasons.api.constant.biome.Temperature;
 import com.teamtea.eclipticseasons.api.constant.climate.BiomeRain;
 import com.teamtea.eclipticseasons.api.constant.climate.ISnowTerm;
 import com.teamtea.eclipticseasons.api.constant.climate.WeatherMode;
+import com.teamtea.eclipticseasons.api.constant.solar.Month;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.constant.solar.TimePeriod;
-import com.teamtea.eclipticseasons.client.core.ClientWeatherChecker;
+import com.teamtea.eclipticseasons.api.data.season.SpecialDays;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
@@ -31,7 +32,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.timeline.Timeline;
 import net.minecraft.world.timeline.Timelines;
+import org.jspecify.annotations.Nullable;
 
+import java.util.List;
 import java.util.Optional;
 
 public class EclipticUtil {
@@ -157,6 +160,21 @@ public class EclipticUtil {
             }
 
             @Override
+            public Season getSeason(Level level) {
+                return EclipticUtil.getNowSolarTerm(level).getSeason();
+            }
+
+            @Override
+            public Season.Sub getSubSeason(Level level) {
+                return Season.Sub.of(EclipticUtil.getNowSolarTerm(level));
+            }
+
+            @Override
+            public Month getStandardMonth(Level level) {
+                return Month.of(getSolarDays(level), getLastingDaysOfEachTerm(level),CommonConfig.Season.dayOffset.get(),CommonConfig.Season.monthOffset.get());
+            }
+
+            @Override
             public int getSolarDays(Level level) {
                 return EclipticUtil.getNowSolarDay(level);
             }
@@ -177,6 +195,11 @@ public class EclipticUtil {
             }
 
             @Override
+            public int getDayOfMonth(Level level) {
+                return Month.ofDay(getSolarDays(level), getLastingDaysOfEachTerm(level), CommonConfig.Season.dayOffset.get());
+            }
+
+            @Override
             public boolean isSeasonEnabled(Level level) {
                 return MapChecker.isValidDimension(level);
             }
@@ -192,7 +215,6 @@ public class EclipticUtil {
                 if (MapChecker.isValidDimension(level)
                         && CommonConfig.Season.daylightChange.get()
                         && SolarHolders.getSaveData(level) instanceof SolarDataManager data) {
-                    // long worldTime = level.getDayTime();
                     long worldTime = level.getDefaultClockTime();
                     int dayLevelTime = Math.toIntExact((worldTime + 18000) % EclipticUtil.getDayLengthInMinecraft(level)); // 0 for noon; 6000 for sunset; 18000 for sunrise.
                     return dayLevelTime > 12000 && dayLevelTime <= 18000 && data.isTodayLastDay() ?
@@ -328,6 +350,11 @@ public class EclipticUtil {
                 return Humidity.getHumid(humidity);
             }
 
+            @Override
+            public List<Holder<SpecialDays>> getSpecialDays(Level level, BlockPos pos) {
+                SolarDataManager saveData = SolarHolders.getSaveData(level);
+                return saveData == null ? List.of() : saveData.getSpecialDays(level, pos);
+            }
         };
     }
 

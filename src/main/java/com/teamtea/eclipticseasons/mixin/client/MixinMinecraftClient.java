@@ -21,7 +21,7 @@ public class MixinMinecraftClient {
             method = "resizeGui",
             at = @At("RETURN")
     )
-    private void experiment$resize(CallbackInfo ci) {
+    private void eclipticseasons$resize(CallbackInfo ci) {
         //FogRenderer.INSTANCE.resize(window.getWidth(), window.getHeight());
     }
 

@@ -69,7 +69,7 @@ public class AgroClimateRegistry {
 
     public static void bootstrap(BootstrapContext<AgroClimaticZone> context) {
         BIOME_HOLDER_GETTER = context.lookup(Registries.BIOME);
-        BIOME_REGISTRY_LOOKUP = new BiomeRegistryLookup(BIOME_HOLDER_GETTER);
+        BIOME_REGISTRY_LOOKUP = new BiomeRegistryLookup(BIOME_HOLDER_GETTER, Registries.BIOME);
 
         context.register(TEMPERATE, AgroClimaticZone.builder((
                         get(ClimateTypeBiomeTags.WARM_REGION)))
@@ -214,36 +214,37 @@ public class AgroClimateRegistry {
         return map;
     }
 
-    public static record BiomeRegistryLookup(
-            HolderGetter<Biome> biomeHolderGetter) implements HolderLookup.RegistryLookup<Biome> {
+    public static record BiomeRegistryLookup<T>(
+            HolderGetter<T> biomeHolderGetter,
+            ResourceKey<? extends Registry<? extends T>> key) implements HolderLookup.RegistryLookup<T> {
 
         @Override
-        public @NonNull Optional<Holder.Reference<Biome>> get(@NonNull ResourceKey<Biome> pResourceKey) {
-            return biomeHolderGetter.get(pResourceKey);
+        public @NonNull Optional<Holder.Reference<T>> get(@NonNull ResourceKey<T> pResourceKey) {
+            return Optional.of(Holder.Reference.createStandAlone(this,pResourceKey));
         }
 
         @Override
-        public @NonNull Optional<HolderSet.Named<Biome>> get(@NonNull TagKey<Biome> pTagKey) {
+        public @NonNull Optional<HolderSet.Named<T>> get(@NonNull TagKey<T> pTagKey) {
             return biomeHolderGetter.get(pTagKey);
         }
 
         @Override
-        public @NonNull Stream<Holder.Reference<Biome>> listElements() {
+        public @NonNull Stream<Holder.Reference<T>> listElements() {
             return Stream.empty();
         }
 
         @Override
-        public @NonNull Stream<HolderSet.Named<Biome>> listTags() {
+        public @NonNull Stream<HolderSet.Named<T>> listTags() {
             return Stream.empty();
         }
 
         @Override
-        public @NonNull ResourceKey<? extends Registry<? extends Biome>> key() {
-            return Registries.BIOME;
+        public @NonNull ResourceKey<? extends Registry<? extends T>> key() {
+            return key;
         }
 
         @Override
-        public boolean canSerializeIn(@NonNull HolderOwner<Biome> pOwner) {
+        public boolean canSerializeIn(@NonNull HolderOwner<T> pOwner) {
             return true;
         }
 

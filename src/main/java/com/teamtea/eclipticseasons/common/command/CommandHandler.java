@@ -8,8 +8,10 @@ import com.mojang.datafixers.util.Either;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.climate.BiomeRain;
+import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.data.weather.special_effect.WeatherEffect;
+import com.teamtea.eclipticseasons.api.misc.ITranslatable;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.api.util.SimpleUtil;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
@@ -37,10 +39,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
-import net.minecraft.server.commands.TimeCommand;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.permissions.LevelBasedPermissionSet;
-import net.minecraft.server.permissions.PermissionSet;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.biome.Biome;
 
 import net.neoforged.bus.api.SubscribeEvent;
@@ -67,7 +67,7 @@ public class CommandHandler {
         var dispatcher = event.getDispatcher();
         CommandBuildContext buildContext = event.getBuildContext();
         // Reset time command
-        //dispatcher.register(Commands.literal("time")
+        // dispatcher.register(Commands.literal("time")
         //        .requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))
         //        .then(Commands.literal("set")
         //                .then(Commands.literal("night")
@@ -158,6 +158,42 @@ public class CommandHandler {
                                         return 0;
                                     })
                             )
+                            .then(Commands.literal("getSeasonSignal")
+                                    .executes(commandContext -> {
+                                        Entity entity = commandContext.getSource().getEntity();
+                                        Season season = EclipticSeasonsApi.getInstance().getAgroSeason(commandContext.getSource().getLevel(), entity == null ? BlockPos.ZERO : entity.getOnPos());
+                                        commandContext.getSource().sendSuccess(season::getTranslation, true);
+                                        return 0;
+                                    })
+                            )
+                            .then(Commands.literal("getSubSeason")
+                                    .executes(commandContext -> {
+                                        Season.Sub sub = Season.Sub.of(EclipticSeasonsApi.getInstance().getSolarTerm(commandContext.getSource().getLevel()));
+                                        commandContext.getSource().sendSuccess(sub::getTranslation, true);
+                                        return 0;
+                                    })
+                            )
+                            .then(Commands.literal("getMonth")
+                                    .executes(commandContext -> {
+                                        ITranslatable sub = (EclipticSeasonsApi.getInstance().getStandardMonth(commandContext.getSource().getLevel()));
+                                        commandContext.getSource().sendSuccess(sub::getTranslation, true);
+                                        return 0;
+                                    })
+                            )
+                            .then(Commands.literal("getSpecialDay")
+                                    .executes(commandContext -> {
+                                        Entity entity = commandContext.getSource().getEntity();
+                                        var specialDays = EclipticSeasonsApi.getInstance().getSpecialDays(commandContext.getSource().getLevel(), entity == null ? BlockPos.ZERO : entity.getOnPos());
+                                        if (specialDays.isEmpty())
+                                            commandContext.getSource().sendSuccess(Component::empty, true);
+                                        else {
+                                            var first = specialDays.getFirst().getKey();
+                                            if (first != null)
+                                                commandContext.getSource().sendSuccess(() -> Component.literal(first.identifier().toString()), true);
+                                        }
+                                        return 0;
+                                    })
+                            )
                             .then(Commands.literal("add")
                                     .then(Commands.argument("day", IntegerArgumentType.integer()).executes(commandContext -> addDay(commandContext.getSource(), IntegerArgumentType.getInteger(commandContext, "day"))))))
                     .then(Commands.literal("weather")
@@ -185,6 +221,7 @@ public class CommandHandler {
                                             .then(Commands.argument("depth", IntegerArgumentType.integer(0, 100))
                                                     .executes((commandContext) -> setSnowDepth(commandContext.getSource(), ResourceOrTagArgument.getResourceOrTag(commandContext, "biome", Registries.BIOME), IntegerArgumentType.getInteger(commandContext, "depth"))))
                                     ).then(Commands.literal("effect")
+                                            .then(Commands.literal("clear").executes(context -> setEffect(context.getSource(), ResourceOrTagArgument.getResourceOrTag(context, "biome", Registries.BIOME), null)))
                                             .then(Commands.argument("effect", ResourceKeyArgument.key(ESRegistries.WEATHER_EFFECT))
                                                     .executes((commandContext) -> setEffect(commandContext.getSource(), ResourceOrTagArgument.getResourceOrTag(commandContext, "biome", Registries.BIOME), ResourceKeyArgument.resolveKey(commandContext, "effect", ESRegistries.WEATHER_EFFECT, ERROR_WEATHER_EFFECT))))
                                     )
@@ -248,7 +285,7 @@ public class CommandHandler {
                 }
             }
             if (found) {
-                WeatherManager.sendBiomePacket(level,levelBiomeWeather, level.players());
+                WeatherManager.sendBiomePacket(level, levelBiomeWeather, level.players());
                 SnowyMapChecker.updateAllChunks(level);
                 SimpleNetworkHandler.send(level.players(), new EmptyMessage());
             }

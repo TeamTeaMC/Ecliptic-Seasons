@@ -76,9 +76,9 @@ public class start {
             generator.addProvider(true, new Lang_ZH(packOutput));
 
             generator.addProvider(true, new ES2ModelProvider(packOutput, MODID));
-            //generator.addProvider(true, new ESBlockModelProvider(packOutput, MODID));
-            //generator.addProvider(true, new BlockStatesDataProvider(packOutput));
-            //generator.addProvider(true, new ESItemModelProvider(packOutput, MODID));
+            // generator.addProvider(true, new ESBlockModelProvider(packOutput, MODID));
+            // generator.addProvider(true, new BlockStatesDataProvider(packOutput));
+            // generator.addProvider(true, new ESItemModelProvider(packOutput, MODID));
 
             generator.addProvider(true, new ESFontProvider(packOutput, MODID));
 
@@ -87,7 +87,7 @@ public class start {
 
             generator.addProvider(true, new SeasonalBiomeAmbientProvider(packOutput, MODID, lookupProvider));
             generator.addProvider(true, new ClientModelDefinitionProvider(packOutput, MODID, lookupProvider));
-            //generator.addProvider(true, new ClientTestProvider(packOutput, MODID, lookupProvider));
+            // generator.addProvider(true, new ClientTestProvider(packOutput, MODID, lookupProvider));
             generator.addProvider(true, new ClientSeasonModelDefinitionProvider(packOutput, MODID, lookupProvider));
 
         }
@@ -112,6 +112,7 @@ public class start {
             generator.addProvider(true, new BiomeColorProvider(packOutput, MODID, lookupProvider));
             generator.addProvider(true, new LeafColorProvider(packOutput, MODID, lookupProvider));
             generator.addProvider(true, new ClientSnowDefinitionProvider(packOutput, MODID, lookupProvider));
+            generator.addProvider(true, new SeasonalBackgroundMusicProvider(packOutput, MODID, lookupProvider));
         }
 
         // Regional Snow

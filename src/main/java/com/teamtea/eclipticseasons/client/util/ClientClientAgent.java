@@ -1,8 +1,7 @@
 package com.teamtea.eclipticseasons.client.util;
 
-import com.teamtea.eclipticseasons.api.util.EclipticUtil;
-import com.teamtea.eclipticseasons.client.color.season.BiomeColorsHandler;
 import com.teamtea.eclipticseasons.client.render.WorldRenderer;
+import com.teamtea.eclipticseasons.client.sound.SeasonalBackgroundMusicSelectManager;
 import com.teamtea.eclipticseasons.client.sound.WindChimeSoundInstance;
 import com.teamtea.eclipticseasons.common.block.WindChimesBlock;
 import com.teamtea.eclipticseasons.common.block.blockentity.WindChimesBlockEntity;
@@ -84,5 +83,9 @@ public class ClientClientAgent implements ClientAgent {
         //         BiomeColorsHandler.getWaterFogColor(level.getBiome(BlockPos.containing(pos)).value(), baseValue));
         // environmentAttributes.addPositionalLayer(EnvironmentAttributes.FOG_COLOR, (baseValue, pos, biomeInterpolator) ->
         //         BiomeColorsHandler.getFogColor(level.getBiome(BlockPos.containing(pos)).value(), baseValue));
+        environmentAttributes.addPositionalLayer(EnvironmentAttributes.BACKGROUND_MUSIC, (baseValue, pos, biomeInterpolator) ->
+        {
+           return SeasonalBackgroundMusicSelectManager.getMusic(baseValue,BlockPos.containing(pos));
+        });
     }
 }

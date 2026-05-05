@@ -1,7 +1,7 @@
 package com.teamtea.eclipticseasons.compat.voxy;
 
-import com.teamtea.eclipticseasons.client.core.AttachModelManager;
-import com.teamtea.eclipticseasons.client.core.context.AttachRendererContext;
+import com.teamtea.eclipticseasons.client.core.SeasonModelManager;
+import com.teamtea.eclipticseasons.client.core.context.SeasonRendererContext;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import me.cortex.voxy.client.core.model.bakery.ReuseVertexConsumer;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
@@ -24,14 +24,14 @@ public class VoxyClientTool {
 
         if (state.getRenderShape() != RenderShape.INVISIBLE) {
             int defaultBlockTypeFlag = MapChecker.getDefaultBlockTypeFlag(state);
-            BlockStateModel model = AttachModelManager.getSnowyModel(state, null, defaultBlockTypeFlag, MapChecker.getSnowOffset(state, defaultBlockTypeFlag));
+            BlockStateModel model = SeasonModelManager.getSnowyModel(state, null, defaultBlockTypeFlag, MapChecker.getSnowOffset(state, defaultBlockTypeFlag));
             if (model == null) {
                 return;
             }
-            AttachRendererContext context = new AttachRendererContext();
-            context.setReplace(AttachModelManager.isModelReplaceable(model, defaultBlockTypeFlag))
+            SeasonRendererContext context = new SeasonRendererContext();
+            context.setReplace(SeasonModelManager.isModelReplaceable(model, defaultBlockTypeFlag))
                     .add(model)
-                    .setOriginalModel(AttachModelManager.models.getBlockStateModel(state))
+                    .setOriginalModel(SeasonModelManager.models.getBlockStateModel(state))
             ;
 
             List<BlockStateModelPart> out = new ArrayList<>();

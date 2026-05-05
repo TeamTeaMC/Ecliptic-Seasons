@@ -3,7 +3,7 @@ package com.teamtea.eclipticseasons.mixin.compat.iris;
 
 import com.google.common.annotations.Beta;
 import com.llamalad7.mixinextras.sugar.Local;
-import com.teamtea.eclipticseasons.client.core.AttachModelManager;
+import com.teamtea.eclipticseasons.client.core.SeasonModelManager;
 import com.teamtea.eclipticseasons.compat.CompatModule;
 import com.teamtea.eclipticseasons.compat.iris.IrisAttachSnowyShader;
 import com.teamtea.eclipticseasons.compat.sodium.SodiumStatus;
@@ -58,7 +58,7 @@ public abstract class MixinAbstractBlockRenderContext implements IrisAttachSnowy
                 if (WorldRenderingSettings.INSTANCE.getBlockStateIds() != null && cullFace != null) {
                     if (CompatModule.ClientConfig.unifiedSnowyBlockSides.isFalse() && cullFace != Direction.UP)
                         return;
-                    if (AttachModelManager.renderAsSnowInShader(state, level, pos)) {
+                    if (SeasonModelManager.renderAsSnowInShader(state, level, pos)) {
                         // ((BlockSensitiveBufferBuilder) ((BlockRendererAccessor) r).getBuffers()).overrideBlock(WorldRenderingSettings.INSTANCE.getBlockStateIds().getInt(Blocks.SNOW_BLOCK.defaultBlockState()));
                         ((VertexEncoderInterface) r).overrideBlock(WorldRenderingSettings.INSTANCE.getBlockStateIds().getInt(Blocks.SNOW_BLOCK.defaultBlockState()));
                     }

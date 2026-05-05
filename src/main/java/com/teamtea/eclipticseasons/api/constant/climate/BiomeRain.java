@@ -14,6 +14,10 @@ import java.util.List;
 public interface BiomeRain {
     int ordinal();
 
+    default String name() {
+        return toString();
+    }
+
     float DEFAULT_RAIN_CHANE = 0;
     float DEFAULT_THUNDER_CHANCE = 0;
 

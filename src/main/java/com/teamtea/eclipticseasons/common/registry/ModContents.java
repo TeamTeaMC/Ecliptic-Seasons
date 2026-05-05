@@ -4,6 +4,7 @@ import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.data.misc.ESSortInfo;
 import com.teamtea.eclipticseasons.api.data.season.SeasonCycle;
+import com.teamtea.eclipticseasons.api.data.season.SpecialDays;
 import com.teamtea.eclipticseasons.api.data.season.definition.SeasonDefinition;
 import com.teamtea.eclipticseasons.api.data.season.SeasonPhase;
 import com.teamtea.eclipticseasons.api.data.season.SnowDefinition;
@@ -16,16 +17,16 @@ import com.teamtea.eclipticseasons.api.data.quest.SeasonQuest;
 import com.teamtea.eclipticseasons.api.data.weather.CustomRainBuilder;
 import com.teamtea.eclipticseasons.api.data.weather.CustomSnowTerm;
 import com.teamtea.eclipticseasons.api.data.weather.WeatherDimension;
-import com.teamtea.eclipticseasons.api.data.weather.WeatherRegion;
 import com.teamtea.eclipticseasons.api.data.weather.special_effect.WeatherEffect;
 import com.teamtea.eclipticseasons.common.block.BlockInCopperGrateBlock;
 import com.teamtea.eclipticseasons.common.block.IceOrSnowCauldronBlock;
 import com.teamtea.eclipticseasons.common.resource.FakeResourceManagerHelperUtil;
+import com.teamtea.eclipticseasons.compat.CompatModule;
+import com.teamtea.eclipticseasons.compat.Platform;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import com.teamtea.eclipticseasons.config.StartConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.cauldron.CauldronInteractions;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -54,6 +55,7 @@ import net.neoforged.neoforge.transfer.item.ItemResource;
 import net.neoforged.neoforge.transfer.item.ItemStacksResourceHandler;
 
 import org.jspecify.annotations.Nullable;
+
 import java.util.Optional;
 
 @SuppressWarnings("removal")
@@ -116,11 +118,11 @@ public class ModContents {
         event.dataPackRegistry(ESRegistries.SEASON_CYCLE, SeasonCycle.CODEC, SeasonCycle.CODEC);
         event.dataPackRegistry(ESRegistries.SNOW_TERM, CustomSnowTerm.CODEC, CustomSnowTerm.CODEC);
         event.dataPackRegistry(ESRegistries.SEASON_DEFINITION, SeasonDefinition.CODEC, SeasonDefinition.CODEC);
-        event.dataPackRegistry(ESRegistries.WEATHER_REGION, WeatherRegion.CODEC, WeatherRegion.CODEC);
         event.dataPackRegistry(ESRegistries.EXTRA_INFO, ESSortInfo.CODEC, ESSortInfo.CODEC);
         event.dataPackRegistry(ESRegistries.WEATHER_EFFECT, WeatherEffect.CODEC, WeatherEffect.CODEC);
         event.dataPackRegistry(ESRegistries.BIOME_RAIN, CustomRainBuilder.CODEC, CustomRainBuilder.CODEC);
         event.dataPackRegistry(ESRegistries.WEATHER_DIMENSION, WeatherDimension.CODEC, WeatherDimension.CODEC);
+        event.dataPackRegistry(ESRegistries.SPECIAL_DAYS, SpecialDays.CODEC, SpecialDays.CODEC);
     }
 
 
@@ -176,10 +178,18 @@ public class ModContents {
                         EclipticSeasonsApi.MODID, "EclipticSeasonsLegacySnowyBlock", modFile,
                         Component.translatable(EclipticSeasons.rl("legacy_snowy_block").toLanguageKey("pack")),
                         event.getPackType(), PackSource.FEATURE, new PackSelectionConfig(false, Pack.Position.TOP, false));
+                if (CompatModule.isSodium()) {
+                    FakeResourceManagerHelperUtil.registerBuiltinResourcePack(
+                            event,
+                            EclipticSeasonsApi.MODID, "SnowySodiumStairs", modFile,
+                            Component.translatable(EclipticSeasons.rl("snowy_sodium_stairs").toLanguageKey("pack")),
+                            event.getPackType(), PackSource.BUILT_IN, new PackSelectionConfig(true, Pack.Position.TOP, false));
+                }
             }
+
             if (event.getPackType() == PackType.SERVER_DATA) {
                 addPackIfEnabled(event, modFile,
-                        CommonConfig.Resource.RainTogether, "Rain Together", "rain_together");
+                        "Rain Together", "rain_together");
                 addPackIfEnabled(event, modFile,
                         CommonConfig.Resource.RegionalSnowTime, "Regional Snow Time", "regional_snow_time");
                 addPackIfEnabled(event, modFile,
@@ -196,10 +206,14 @@ public class ModContents {
 
     private static void addPackIfEnabled(AddPackFindersEvent event, ModFile modFile, ModConfigSpec.BooleanValue booleanValue, String name, String pack_id) {
         if (booleanValue.get())
-            FakeResourceManagerHelperUtil.registerBuiltinResourcePack(
-                    event, EclipticSeasonsApi.MODID + "/",
-                    EclipticSeasonsApi.MODID, name, modFile,
-                    Component.translatable(EclipticSeasons.rl(pack_id).toLanguageKey("pack")),
-                    PackType.SERVER_DATA, PackSource.FEATURE, new PackSelectionConfig(true, Pack.Position.BOTTOM, false));
+            addPackIfEnabled(event, modFile, name, pack_id);
+    }
+
+    private static void addPackIfEnabled(AddPackFindersEvent event, ModFile modFile, String name, String pack_id) {
+        FakeResourceManagerHelperUtil.registerBuiltinResourcePack(
+                event, EclipticSeasonsApi.MODID + "/",
+                EclipticSeasonsApi.MODID, name, modFile,
+                Component.translatable(EclipticSeasons.rl(pack_id).toLanguageKey("pack")),
+                PackType.SERVER_DATA, PackSource.FEATURE, new PackSelectionConfig(true, Pack.Position.BOTTOM, false));
     }
 }

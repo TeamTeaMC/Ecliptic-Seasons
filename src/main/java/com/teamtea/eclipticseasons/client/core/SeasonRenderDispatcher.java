@@ -9,7 +9,7 @@ import com.teamtea.eclipticseasons.api.misc.client.IFakeSnowHolder;
 import com.teamtea.eclipticseasons.api.misc.client.IMapSlice;
 import com.teamtea.eclipticseasons.api.misc.client.IMapSliceProvider;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
-import com.teamtea.eclipticseasons.client.core.context.AttachRendererContext;
+import com.teamtea.eclipticseasons.client.core.context.SeasonRendererContext;
 import com.teamtea.eclipticseasons.client.model.block.IESReplaceModel;
 import com.teamtea.eclipticseasons.client.model.block.ISnowyReplaceModel;
 import com.teamtea.eclipticseasons.client.model.block.ReplacingBlockStateModel;
@@ -55,11 +55,11 @@ import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.teamtea.eclipticseasons.client.core.AttachModelManager.isModelReplaceable;
-import static com.teamtea.eclipticseasons.client.core.AttachModelManager.models;
+import static com.teamtea.eclipticseasons.client.core.SeasonModelManager.isModelReplaceable;
+import static com.teamtea.eclipticseasons.client.core.SeasonModelManager.models;
 
 
-public class AttachRenderDispatcher {
+public class SeasonRenderDispatcher {
 
     public static void appendModels(IMapSlice mapSlice, BlockState blockState, RandomSource random, BlockPos pos, List<BlockStateModelPart> parts) {
         if (canSnowy(mapSlice, pos, blockState, blockState.getSeed(pos), mapSlice.getModelCheckPos())) {
@@ -83,10 +83,10 @@ public class AttachRenderDispatcher {
                 snowState = BlockRegistry.snowyLeaves.get().defaultBlockState();
             }
 
-            BlockStateModel blockStateModel = AttachModelManager.getSnowyModel(blockState, snowState, flag, offset);
+            BlockStateModel blockStateModel = SeasonModelManager.getSnowyModel(blockState, snowState, flag, offset);
             if (blockStateModel != null) {
 
-                if (AttachModelManager.isModelReplaceable(blockStateModel, flag)) {
+                if (SeasonModelManager.isModelReplaceable(blockStateModel, flag)) {
                     parts.clear();
                 }
                 // net.neoforged.neoforge.client.model.quad.MutableQuad
@@ -132,8 +132,8 @@ public class AttachRenderDispatcher {
         // return new BlockPos.MutableBlockPos(pos.getX(), pos.getY(), pos.getZ());
     }
 
-    public static AttachRendererContext findModel(
-            @NonNull AttachRendererContext context,
+    public static SeasonRendererContext findModel(
+            @NonNull SeasonRendererContext context,
             @NonNull IMapSlice mapSlice,
             BlockPos pos,
             BlockState state,
@@ -282,7 +282,7 @@ public class AttachRenderDispatcher {
                     } else if (leaveLike && !specialLeaves) {
                         snowState = BlockRegistry.snowyLeaves.get().defaultBlockState();
                     }
-                    BlockStateModel snowModel = AttachModelManager.getSnowyModel(state, snowState, flag, offset);
+                    BlockStateModel snowModel = SeasonModelManager.getSnowyModel(state, snowState, flag, offset);
 
                     if (snowModel != null) {
                         first = snowModel;
@@ -330,7 +330,7 @@ public class AttachRenderDispatcher {
                 }
                 if (index > -1) {
                     index = indexs[index];
-                    first = getModel(AttachModelManager.snow_edge_overlays.get(index));
+                    first = getModel(SeasonModelManager.snow_edge_overlays.get(index));
                     isSnowy = true;
                 }
             }
@@ -355,7 +355,7 @@ public class AttachRenderDispatcher {
                                             flatSlice.mid() :
                                             Mth.abs(((int) (seed + pos.getX()))) % 100 > ClientCon.progress ?
                                                     flatSlice.transitionModels().getFirst() : flatSlice.transitionModels().getSecond();
-                                    ModelResolver smr = AttachModelManager.extraSnowModelBuilds.get(cinfo);
+                                    ModelResolver smr = SeasonModelManager.extraSnowModelBuilds.get(cinfo);
                                     if (smr != null) {
                                         var mmrl = smr.tryFind(state);
                                         if (mmrl != null) {
@@ -470,7 +470,7 @@ public class AttachRenderDispatcher {
             BlockAndTintGetter blockAndTintGetter, BlockPos pos, BlockState state,
             BlockPos.@Nullable MutableBlockPos checkPos) {
         int layers = getRenderedLevelWithSnowInside(blockAndTintGetter, pos, state, checkPos);
-        return layers > 0 ? AttachModelManager.getSnowLayerModel(layers) : null;
+        return layers > 0 ? SeasonModelManager.getSnowLayerModel(layers) : null;
     }
 
     public static int getRenderedLevelWithSnowInside(
@@ -730,7 +730,7 @@ public class AttachRenderDispatcher {
 
 
         boolean isLight = false;
-        if (checkPos == null) checkPos = AttachModelManager.posToMutable(pos);
+        if (checkPos == null) checkPos = SeasonModelManager.posToMutable(pos);
         else checkPos.set(pos.getX(), pos.getY(), pos.getZ());
 
         if (ClientConfig.Renderer.useVanillaCheck.get()) {

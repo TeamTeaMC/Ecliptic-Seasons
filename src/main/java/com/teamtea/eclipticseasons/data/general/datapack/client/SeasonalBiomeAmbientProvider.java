@@ -11,6 +11,7 @@ import net.minecraft.core.HolderGetter;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.BiomeTags;
@@ -23,8 +24,8 @@ import net.neoforged.neoforge.common.Tags;
 import java.util.concurrent.CompletableFuture;
 
 public class SeasonalBiomeAmbientProvider extends ESClientBiomeDataMapProvider<SeasonalBiomeAmbient> {
-    public SeasonalBiomeAmbientProvider(PackOutput output, String modid,  CompletableFuture<HolderLookup.Provider> registries) {
-        super(output, modid,  registries, ClientJsonCacheListener.DIRECTORY_AMBIENT, SeasonalBiomeAmbient.CODEC);
+    public SeasonalBiomeAmbientProvider(PackOutput output, String modid, CompletableFuture<HolderLookup.Provider> registries) {
+        super(output, modid, registries, ClientJsonCacheListener.DIRECTORY_AMBIENT, SeasonalBiomeAmbient.CODEC);
     }
 
     @Override
@@ -34,7 +35,7 @@ public class SeasonalBiomeAmbientProvider extends ESClientBiomeDataMapProvider<S
 
         add("spring", SeasonalBiomeAmbient.builder().season(Season.SPRING)
                 .biomes(get(TagKey.create(Registries.BIOME,
-                               EclipticSeasons.rl("misc/ambient/spring"))))
+                        EclipticSeasons.rl("misc/ambient/spring"))))
                 .ignored_biomes(get(TagKey.create(Registries.BIOME,
                         EclipticSeasons.rl("misc/ambient/spring_negate"))))
                 .sound(getSoundHolder(slp, SoundEventsRegistry.spring_forest)).build());
@@ -68,7 +69,8 @@ public class SeasonalBiomeAmbientProvider extends ESClientBiomeDataMapProvider<S
 
     }
 
-    protected Holder<SoundEvent> getSoundHolder(HolderLookup.RegistryLookup<SoundEvent> lookup, SoundEvent soundEvent) {
-        return lookup.getOrThrow(ResourceKey.create(Registries.SOUND_EVENT, soundEvent.location()));
+    protected Identifier getSoundHolder(HolderLookup.RegistryLookup<SoundEvent> lookup, SoundEvent soundEvent) {
+        // return lookup.getOrThrow(ResourceKey.create(Registries.SOUND_EVENT, soundEvent.location()));
+        return soundEvent.location();
     }
 }

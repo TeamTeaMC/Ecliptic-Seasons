@@ -5,7 +5,7 @@ import com.google.common.annotations.Beta;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.teamtea.eclipticseasons.EclipticSeasons;
-import com.teamtea.eclipticseasons.client.core.AttachRenderDispatcher;
+import com.teamtea.eclipticseasons.client.core.SeasonRenderDispatcher;
 import com.teamtea.eclipticseasons.client.model.block.ISnowyReplaceModel;
 import com.teamtea.eclipticseasons.api.misc.client.ISpriteChecker;
 import com.teamtea.eclipticseasons.compat.sodium.SodiumStatus;
@@ -53,7 +53,7 @@ public abstract class MixinAbstractBlockRenderContext {
            @Local(argsOnly = true) BlockStateModelPart part,
            @Local Direction side) {
        if (this instanceof SodiumStatus sodiumStatus && sodiumStatus.getSnowModel() != null)
-           return AttachRenderDispatcher.cancelTop(part, level, state, pos, side, random, original, sodiumStatus.getCacheBakeQuad());
+           return SeasonRenderDispatcher.cancelTop(part, level, state, pos, side, random, original, sodiumStatus.getCacheBakeQuad());
        return original;
     }
 
@@ -91,7 +91,7 @@ public abstract class MixinAbstractBlockRenderContext {
     private BlockState eclipticseasons$skip_if_fake_snow(BlockState original,
                                                         @Local(name = "neighborPos") BlockPos.MutableBlockPos otherPos,
                                                         @Local(argsOnly = true) Direction facing) {
-       return AttachRenderDispatcher.getFakeBlockState(original, state, level, otherPos, pos, facing);
+       return SeasonRenderDispatcher.getFakeBlockState(original, state, level, otherPos, pos, facing);
     }
 
 

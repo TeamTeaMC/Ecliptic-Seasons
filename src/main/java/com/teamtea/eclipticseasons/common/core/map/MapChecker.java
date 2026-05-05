@@ -236,7 +236,7 @@ public class MapChecker {
         return map;
     }
 
-    //public static @Nullable ChunkAccess getChunkView(Level level, BlockPos pos) {
+    // public static @Nullable ChunkAccess getChunkView(Level level, BlockPos pos) {
     //    return level.getChunk(SectionPos.blockToSectionCoord(pos.getX()),
     //            SectionPos.blockToSectionCoord(pos.getZ()), ChunkStatus.SURFACE, false);
     //}
@@ -728,8 +728,8 @@ public class MapChecker {
     // level.getHeight(Heightmap.Types.MOTION_BLOCKING, pos.getX(), pos.getZ()) 也会卡死，因为要full了
     // 继续优化缓存
     public static Holder<Biome> getSurfaceBiome(Level level, BlockPos pos) {
-        //int x = SectionPos.blockToSectionCoord(pos.getX());
-        //int z = SectionPos.blockToSectionCoord(pos.getZ());
+        // int x = SectionPos.blockToSectionCoord(pos.getX());
+        // int z = SectionPos.blockToSectionCoord(pos.getZ());
         ChunkAccess chunkAt = getChunkView(level, pos);
         if (chunkAt instanceof IChunkBiomeHolder iChunkBiomeHolder) {
             BiomeHolder biomeHolder = iChunkBiomeHolder.eclipticseasons$getBiomeHolder();
@@ -935,7 +935,7 @@ public class MapChecker {
                 onBlock instanceof BellBlock ||
                 onBlock instanceof ComposterBlock ||
                 (onBlock instanceof CampfireBlock && !state.getValue(CampfireBlock.LIT)) ||
-                onBlock instanceof IronBarsBlock ||
+                onBlock == Blocks.IRON_BARS ||
                 onBlock instanceof LightningRodBlock ||
                 onBlock instanceof AzaleaBlock) {
             flag = FLAG_CUSTOM;
@@ -1110,7 +1110,7 @@ public class MapChecker {
             biomeHolder = chunk.getData(AttachmentRegistry.BIOME_HOLDER);
             if (biomeHolder.hasUpdated() && biomeHolder.version() == BiomeHolder.FLAG_FILL_SMALL) {
                 biomeHolder = BiomeHolder
-                        .fillSmallBiomes(serverLevel, chunkPos, biomeHolder, biomeDataVersion);
+                        .fillSmallBiomes(serverLevel, chunk, biomeHolder, biomeDataVersion);
                 chunk.setData(AttachmentRegistry.BIOME_HOLDER, biomeHolder);
             } else if (!biomeHolder.hasUpdated() || biomeHolder.version() != biomeDataVersion) {
                 biomeHolder = BiomeHolder

@@ -1,6 +1,6 @@
 package com.teamtea.eclipticseasons.client.model.block;
 
-import com.teamtea.eclipticseasons.client.core.AttachModelManager;
+import com.teamtea.eclipticseasons.client.core.SeasonModelManager;
 import com.teamtea.eclipticseasons.client.model.block.part.SimpleBlockModelPart;
 import com.teamtea.eclipticseasons.client.model.block.quad.ReUVBakedQuad;
 import com.teamtea.eclipticseasons.client.model.block.quad.QuadFilter;
@@ -36,7 +36,7 @@ public class DerivedSnowyBlockStateModel implements BlockStateModel {
     @Override
     public void collectParts(BlockAndTintGetter level, BlockPos pos, BlockState state, RandomSource random, List<BlockStateModelPart> parts) {
         if (parts.isEmpty()) {
-            BlockStateModel blockStateModel = AttachModelManager.models.blockStateModels().get(state);
+            BlockStateModel blockStateModel = SeasonModelManager.models.blockStateModels().get(state);
             if (blockStateModel != null) {
                 blockStateModel.collectParts(level, pos, state, random, parts);
             }
@@ -124,9 +124,9 @@ public class DerivedSnowyBlockStateModel implements BlockStateModel {
 
     public static List<BakedQuad> makeSnowyBakedQuads(ReUVBakedQuad bqr, List<BakedQuad> quadsCTM, boolean tooTiny) {
 
-        TextureAtlasSprite snow_overlay_sprite = AttachModelManager.getSprite(AttachModelManager.snow_overlay);
-        TextureAtlasSprite snow_overlay_tiny_sprite = AttachModelManager.getSprite(AttachModelManager.snow_overlay_tiny);
-        TextureAtlasSprite snow_sprite = AttachModelManager.getSprite(AttachModelManager.snow);
+        TextureAtlasSprite snow_overlay_sprite = SeasonModelManager.getSprite(SeasonModelManager.snow_overlay);
+        TextureAtlasSprite snow_overlay_tiny_sprite = SeasonModelManager.getSprite(SeasonModelManager.snow_overlay_tiny);
+        TextureAtlasSprite snow_sprite = SeasonModelManager.getSprite(SeasonModelManager.snow);
 
         float offset = 0.5f;
         boolean isSlabDown = false;

@@ -34,15 +34,15 @@ public record CustomRainBuilder(
             SolarTermValueMap.codec(CodecUtil.listFrom(Weather.CODEC)).fieldOf("weathers").forGetter(CustomRainBuilder::weathers)
     ).apply(ins, CustomRainBuilder::new));
 
-    public Map<SolarTerm, CustomRain> build() {
+    public Map<SolarTerm, CustomRain> build(String name) {
         return weathers.combine().entrySet().stream()
                 .collect(
                         Collectors.toMap(
                                 Map.Entry::getKey,
                                 e -> {
-                                    List<CustomRain.Weather> weatherList = e.getValue().stream().map(w -> CustomRain.Weather.of(e.getKey(), w)).toList();
+                                    List<CustomRain.Weather> weatherList = e.getValue().stream().map(w -> CustomRain.Weather.of(e.getKey(), name, w)).toList();
                                     return new CustomRain(
-                                            e.getKey().ordinal(),
+                                            e.getKey().ordinal(), name,
                                             weatherList,
                                             weatherList.size() == 1 && weatherList.getFirst().timePeriod().isEmpty() ? Optional.of(weatherList.getFirst()) : Optional.empty(),
                                             (float) weatherList.stream().mapToDouble(CustomRain.Weather::getRainChance).average().orElse(0),

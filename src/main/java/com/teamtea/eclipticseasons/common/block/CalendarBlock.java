@@ -74,13 +74,13 @@ public class CalendarBlock extends WallPlacedBlock {
             if (level instanceof ServerLevel) {
                 BlockState cycle = state.cycle(MODE);
                 level.setBlock(pos, cycle, Block.UPDATE_CLIENTS);
-                ((ServerPlayer)player).sendSystemMessage(
+                ((ServerPlayer) player).sendSystemMessage(
                         Component.translatable("info.eclipticseasons.calendar.model",
                                 Component.translatable("info.eclipticseasons.calendar.model." + cycle.getValue(MODE).getSerializedName())),
                         true
                 );
             }
-            return InteractionResult.CONSUME;
+            return InteractionResult.SUCCESS;
         } else if (level.isClientSide()
                 && level.getBlockEntity(pos) instanceof CalendarBlockEntity calendarBlockEntity) {
             Holder<Biome> cropBiome = CropGrowthHandler.getCropBiome(level, pos);
@@ -91,7 +91,7 @@ public class CalendarBlock extends WallPlacedBlock {
     }
 
     public enum DisplayMode implements StringRepresentable {
-        NORMAL, YEAR, NEXT, DAY;
+        NORMAL, YEAR, NEXT, DAY, SUB_SEASON, MONTH;
 
         @Override
         public @NonNull String getSerializedName() {

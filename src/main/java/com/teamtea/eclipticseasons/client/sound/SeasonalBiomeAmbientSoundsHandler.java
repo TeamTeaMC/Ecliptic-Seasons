@@ -108,7 +108,7 @@ public class SeasonalBiomeAmbientSoundsHandler implements AmbientSoundHandler {
                     seasonalBiomeAmbientList.sort(Comparator.comparing(SeasonalBiomeAmbient::getPriority));
                 }
                 soundEvent = seasonalBiomeAmbientList.isEmpty() ? null :
-                        seasonalBiomeAmbientList.getFirst().getSound().value();
+                        seasonalBiomeAmbientList.getFirst().getSoundEventHolder().value();
                 // switch (season) {
                 //     case SPRING -> {
                 //         if (!player.isInWaterOrRain()

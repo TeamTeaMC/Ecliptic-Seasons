@@ -1,10 +1,13 @@
 package com.teamtea.eclipticseasons.config;
 
 
+import com.teamtea.eclipticseasons.client.color.season.FoliageColorSourceDefault;
 import com.teamtea.eclipticseasons.compat.CompatModule;
 import lombok.Getter;
 import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.neoforge.common.ModConfigSpec;
+
+import java.util.List;
 
 public class ClientConfig {
 
@@ -84,6 +87,7 @@ public class ClientConfig {
         public static ModConfigSpec.BooleanValue seasonalGrassColorChange;
         public static ModConfigSpec.BooleanValue seasonalColorChangeExtend;
         public static ModConfigSpec.BooleanValue smootherSeasonalGrassColorChange;
+        public static ModConfigSpec.ConfigValue<List<? extends String>> seasonalColorOverrides;
         public static ModConfigSpec.BooleanValue foliageUnderTree;
 
 
@@ -145,6 +149,19 @@ public class ClientConfig {
 
             smootherSeasonalGrassColorChange = builder.comment("Calculate seasonal color shifts based on exact solar term progress for smoother transitions.")
                     .define("SmootherSeasonalGrassColorChange", true);
+
+            seasonalColorOverrides = builder.comment(
+                            "Custom seasonal colors for single-tint blocks only.",
+                            "Format: \"block_id@color1,color2,...,colorN,placeholder_color,base_color\"",
+                            "The number of colors (N) must be a factor of 24 (e.g., 4, 12, or 24).",
+                            "- 4 colors: Seasonal (6 terms each)",
+                            "- 12 colors: Monthly (2 terms each)",
+                            "The 'placeholder_color' maps to index 24; 'base_color' is the final reference hex."
+                    ).gameRestart()
+                    .defineListAllowEmpty("SeasonalColorOverrides",
+                            FoliageColorSourceDefault::createConfig,
+                            FoliageColorSourceDefault::createSingle,
+                            o -> o instanceof String s && FoliageColorSourceDefault.isValid(s));
             flowerOnGrass = builder.comment("Visual detail: Occasionally adds small, decorative flowers to grass blocks in Spring.")
                     .define("FlowerOnGrass", true);
             builder.pop();

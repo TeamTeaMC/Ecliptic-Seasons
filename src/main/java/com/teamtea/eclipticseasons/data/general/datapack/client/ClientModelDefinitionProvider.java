@@ -4,7 +4,7 @@ import com.mojang.math.Quadrant;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.data.client.model.ESModelLoadedJson;
-import com.teamtea.eclipticseasons.client.core.AttachModelManager;
+import com.teamtea.eclipticseasons.client.core.SeasonModelManager;
 import com.teamtea.eclipticseasons.common.core.snow.ClientModelDefinitions;
 import com.teamtea.eclipticseasons.common.registry.SnowDefinitionsRegistry;
 import com.teamtea.eclipticseasons.data.api.provider.AbstractModelDefinitionProvider;
@@ -90,7 +90,7 @@ public class ClientModelDefinitionProvider extends AbstractModelDefinitionProvid
                         ESModelLoadedJson.builder().variants(
                                 Optional.of(new BlockStateModelDispatcher.SimpleModelSelectors(
                                         Map.of(ESModelLoadedJson.ALL_VARIANT,
-                                                buildMultiVariantLikeFromList(AttachModelManager.flower_on_grass, weight)
+                                                buildMultiVariantLikeFromList(SeasonModelManager.flower_on_grass, weight)
                                         )
                                 ))
                         ).build());
@@ -99,7 +99,7 @@ public class ClientModelDefinitionProvider extends AbstractModelDefinitionProvid
                 int weight = (Math.abs(solarTerm.ordinal() - 7) + 1) * 42 * 2;
                 add(getPath(EclipticSeasons.rl("fourleaf_clovers_" + solarTerm.getName())),
                         ESModelLoadedJson.builder().variants(Optional.of(new BlockStateModelDispatcher.SimpleModelSelectors(
-                                Map.of(ESModelLoadedJson.ALL_VARIANT, buildMultiVariantLikeFromList(AttachModelManager.fourleaf_clovers, weight))))).build());
+                                Map.of(ESModelLoadedJson.ALL_VARIANT, buildMultiVariantLikeFromList(SeasonModelManager.fourleaf_clovers, weight))))).build());
             }
         }
 

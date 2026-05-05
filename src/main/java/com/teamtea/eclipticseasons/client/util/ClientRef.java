@@ -4,6 +4,7 @@ import com.mojang.datafixers.util.Pair;
 import com.teamtea.eclipticseasons.api.data.client.BiomeColor;
 import com.teamtea.eclipticseasons.api.data.client.LeafColor;
 import com.teamtea.eclipticseasons.api.data.client.SeasonalBiomeAmbient;
+import com.teamtea.eclipticseasons.api.data.client.SeasonalBackgroundMusic;
 import com.teamtea.eclipticseasons.api.data.client.model.seasonal.SeasonBlockDefinition;
 import com.teamtea.eclipticseasons.api.data.client.ui.UIParser;
 import com.teamtea.eclipticseasons.api.data.season.SnowDefinition;
@@ -35,6 +36,9 @@ public class ClientRef {
 
     public static final List<UIParser> uiParsers = new ArrayList<>();
 
+    public static final List<SeasonalBackgroundMusic> musics = new ArrayList<>();
+
+
     public static void updateClientSide(HolderLookup.Provider registryAccess) {
         biomeColors.clear();
         leaveColors.clear();
@@ -42,14 +46,20 @@ public class ClientRef {
         seasonDef.clear();
         snowClientDef.clear();
         uiParsers.clear();
+        musics.clear();
         buildBiomeColors(registryAccess);
         buildLeafColors(registryAccess);
         buildSeasonalSounds(registryAccess);
         buildSeasonalModels(registryAccess);
         buildOverrideSnowModels(registryAccess);
         buildUIParsers(registryAccess);
+        buildSeasonalMusics(registryAccess);
     }
 
+    private static void buildSeasonalMusics(HolderLookup.Provider registryAccess) {
+        musics.addAll(ClientJsonCacheListener.backgroundMusicCache
+                .build(SeasonalBackgroundMusic.CODEC, registryAccess).values());
+    }
 
     private static void buildSeasonalSounds(HolderLookup.Provider registryAccess) {
         sounds.addAll(ClientJsonCacheListener.ambientCache
@@ -181,5 +191,6 @@ public class ClientRef {
         seasonDef.clear();
         snowClientDef.clear();
         uiParsers.clear();
+        musics.clear();
     }
 }

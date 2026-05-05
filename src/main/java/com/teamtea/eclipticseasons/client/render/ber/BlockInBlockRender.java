@@ -1,7 +1,7 @@
 package com.teamtea.eclipticseasons.client.render.ber;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.teamtea.eclipticseasons.client.core.AttachModelManager;
+import com.teamtea.eclipticseasons.client.core.SeasonModelManager;
 import com.teamtea.eclipticseasons.client.render.ber.state.BlockContainerState;
 import com.teamtea.eclipticseasons.common.block.blockentity.BlockInCopperGrateBlockEntity;
 import net.minecraft.client.Minecraft;
@@ -45,7 +45,7 @@ public class BlockInBlockRender implements BlockEntityRenderer<@NonNull BlockInC
         poseStack.scale(.75f, .75f, .75f);
         // Minecraft.getInstance().getBlockRenderer()
         //        .renderSingleBlock(state.getInnerBlock().defaultBlockState(), poseStack, submitNodeCollector, state.lightCoords, packedOverlay);
-        BlockStateModel blockStateModel = AttachModelManager.models.blockStateModels()
+        BlockStateModel blockStateModel = SeasonModelManager.models.blockStateModels()
                 .get(state.getInnerBlock().defaultBlockState());
         if (blockStateModel != null) {
             ArrayList<BlockStateModelPart> objects = new ArrayList<>();

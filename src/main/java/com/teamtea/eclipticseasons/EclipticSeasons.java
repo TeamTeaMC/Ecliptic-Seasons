@@ -2,7 +2,7 @@ package com.teamtea.eclipticseasons;
 
 
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
-import com.teamtea.eclipticseasons.common.block.IceOrSnowCauldronBlock;
+import com.teamtea.eclipticseasons.client.gui.screen.ESModConfigScreen;
 import com.teamtea.eclipticseasons.common.registry.*;
 import com.teamtea.eclipticseasons.compat.CompatModule;
 import com.teamtea.eclipticseasons.compat.eclipticseasons_bundles.EclipticSeasonsBundles;
@@ -19,7 +19,6 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.fml.loading.FMLLoader;
-import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
@@ -40,7 +39,6 @@ public class EclipticSeasons {
     public static final String NETWORK_VERSION = "1.0";
 
     public EclipticSeasons(IEventBus modEventBus, ModContainer modContainer) {
-
         modEventBus.addListener(CommonConfig::UpdateConfig);
         modEventBus.addListener(ClientConfig::UpdateConfig);
         modEventBus.addListener(this::FMLCommonSetup);
@@ -61,7 +59,7 @@ public class EclipticSeasons {
 
         LootItemConditionRegistry.LOOT_ITEM_CONDITION_TYPE_DEFERRED_REGISTER.register(modEventBus);
 
-        //modContainer.registerConfig(ModConfig.Type.COMMON, CommonConfig.COMMON_CONFIG2,EclipticSeasonsApi.MODID+"/test.toml");
+        // modContainer.registerConfig(ModConfig.Type.COMMON, CommonConfig.COMMON_CONFIG2,EclipticSeasonsApi.MODID+"/test.toml");
 
         modContainer.registerConfig(ModConfig.Type.COMMON, CommonConfig.COMMON_CONFIG);
 
@@ -71,7 +69,7 @@ public class EclipticSeasons {
 
 
         if (FMLLoader.getCurrent().getDist() == Dist.CLIENT)
-            modContainer.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
+            modContainer.registerExtensionPoint(IConfigScreenFactory.class, ESModConfigScreen::new);
 
         CompatModule.register(NeoForge.EVENT_BUS, modEventBus);
 

@@ -2,7 +2,7 @@ package com.teamtea.eclipticseasons.mixin.client.block;
 
 
 import com.teamtea.eclipticseasons.api.misc.client.ISnowyBlockState;
-import com.teamtea.eclipticseasons.client.core.AttachModelManager;
+import com.teamtea.eclipticseasons.client.core.SeasonModelManager;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
@@ -18,10 +18,10 @@ public abstract class MixinClientBlockState implements ISnowyBlockState {
     public BlockStateModel eclipticseasons$cacheSnowyBakedModel2 = null;
 
     @Unique
-    public int eclipticseasons$loadVersion = AttachModelManager.loadVersion;
+    public int eclipticseasons$loadVersion = SeasonModelManager.loadVersion;
 
     @Unique
-    public int eclipticseasons$loadVersion2 = AttachModelManager.loadVersion;
+    public int eclipticseasons$loadVersion2 = SeasonModelManager.loadVersion;
 
     @Override
     public BlockStateModel getSnowyModel(int loadVersion) {

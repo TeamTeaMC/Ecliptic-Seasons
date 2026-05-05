@@ -5,30 +5,39 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.util.codec.ESExtraCodec;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NonNull;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.resources.Identifier;
 
 @Data
+@Builder
 public class SpecialDays {
 
     public static final Codec<SpecialDays> CODEC = RecordCodecBuilder.create(ins -> ins.group(
-            Codec.FLOAT.optionalFieldOf("start",0f).forGetter(o -> o.start),
-            Codec.FLOAT.optionalFieldOf("end", 0f).forGetter(o -> o.end),
+            Codec.floatRange(0, 1).optionalFieldOf("start", 0f).forGetter(o -> o.start),
+            Codec.floatRange(0, 1).optionalFieldOf("end", 0f).forGetter(o -> o.end),
             Codec.INT.optionalFieldOf("lasting_days", 0).forGetter(o -> o.lastingDays),
             ESExtraCodec.SOLAR_TERM.fieldOf("term").forGetter(o -> o.term),
-            Identifier.CODEC.fieldOf("icon").forGetter(o -> o.icon),
-            ComponentSerialization.CODEC.fieldOf("tittle").forGetter(o -> o.tittle),
+            ComponentSerialization.CODEC.fieldOf("title").forGetter(o -> o.title),
             ComponentSerialization.CODEC.optionalFieldOf("alternation", Component.empty()).forGetter(o -> o.alternation)
     ).apply(ins, SpecialDays::new));
 
-    public final float start;
-    public final float end;
-    public final int lastingDays;
+    @Builder.Default
+    public final float start = 0;
+    @Builder.Default
+    public final float end = 0;
+    @Builder.Default
+    public final int lastingDays = 0;
+    @NonNull
     public final SolarTerm term;
-    public final Identifier icon;
-    public final Component tittle;
-    public final Component alternation;
+    // @NonNull
+    // public final Identifier icon;
+    @Builder.Default
+    public final Component title = Component.empty();
+    @Builder.Default
+    public final Component alternation = Component.empty();
 
 }

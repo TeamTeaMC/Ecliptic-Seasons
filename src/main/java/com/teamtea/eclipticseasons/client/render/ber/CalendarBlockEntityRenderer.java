@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.datafixers.util.Pair;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
+import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.constant.solar.ISolarTerm;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
@@ -33,10 +34,9 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.Identifier;
-import net.minecraft.util.FormattedCharSequence;
-import net.minecraft.util.LightCoordsUtil;
-import net.minecraft.util.Mth;
+import net.minecraft.util.*;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
@@ -105,7 +105,13 @@ public class CalendarBlockEntityRenderer implements BlockEntityRenderer<Calendar
                             seasonPhaseUsed.getIconPosition().getSecond(),
                             matrixStackIn, multiBufferSource, combinedLightIn);
 
-                    drawText(1, seasonPhaseUsed.getPatternTranslation().getString(), Optional.ofNullable(seasonPhaseUsed.getColor().getColor()).orElse(-1), matrixStackIn, multiBufferSource);
+                    if (displayMode == CalendarBlock.DisplayMode.SUB_SEASON) {
+                        Season.Sub subSeason = EclipticSeasonsApi.getInstance().getSubSeason(ClientCon.getUseLevel());
+                        MutableComponent translatable = Component.translatable("info.eclipticseasons.environment.solar_term.hint5", subSeason.getTranslation());
+                        drawText(1, translatable.getString(), new Color(Optional.ofNullable(subSeason.getSeason().getColor().getColor()).orElse(-1)).getRGB(), matrixStackIn, multiBufferSource);
+                    } else {
+                        drawText(1, seasonPhaseUsed.getPatternTranslation().getString(), new Color(Optional.ofNullable(seasonPhaseUsed.getColor().getColor()).orElse(-1)).getRGB(), matrixStackIn, multiBufferSource);
+                    }
 
                     if (st != SolarTerm.NONE) {
                         String string = "";
@@ -136,6 +142,9 @@ public class CalendarBlockEntityRenderer implements BlockEntityRenderer<Calendar
                             }
                             case DAY ->
                                     string = Component.translatable("info.eclipticseasons.environment.solar_term.hint4", EclipticUtil.getNowSolarDay(ClientCon.getUseLevel())).getString();
+                            // case SUB_SEASON -> string = "";
+                            case SUB_SEASON,MONTH ->
+                                    string = Component.translatable("info.eclipticseasons.environment.solar_term.hint6", EclipticSeasonsApi.getInstance().getStandardMonth(ClientCon.getUseLevel()).getTranslation(), EclipticSeasonsApi.getInstance().getDayOfMonth(ClientCon.getUseLevel())).getString();
                             default -> string = seasonPhaseUsed.getTittleTranslation().getString();
                         }
                         drawText(2, string, Color.GRAY.getRGB(), matrixStackIn, multiBufferSource);

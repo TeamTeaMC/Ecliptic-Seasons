@@ -1,8 +1,10 @@
 package com.teamtea.eclipticseasons.api;
 
 import com.teamtea.eclipticseasons.api.constant.biome.Humidity;
+import com.teamtea.eclipticseasons.api.constant.solar.Month;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
+import com.teamtea.eclipticseasons.api.data.season.SpecialDays;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -10,7 +12,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.dimension.DimensionType;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.List;
@@ -52,6 +53,11 @@ public interface EclipticSeasonsApi {
      */
     Season getAgroSeason(Level level, BlockPos pos);
 
+    Season getSeason(Level level);
+    Season.Sub getSubSeason(Level level);
+
+    Month getStandardMonth(Level level);
+
     int getSolarDays(Level level);
 
     int getSolarYears(Level level);
@@ -63,6 +69,7 @@ public interface EclipticSeasonsApi {
      */
     int getTimeInTerm(Level level);
 
+    int getDayOfMonth(Level level);
     /**
      * Checks whether the seasonal system is enabled for the given level.
      */
@@ -157,4 +164,5 @@ public interface EclipticSeasonsApi {
     @ApiStatus.Experimental
     Humidity getAdjustedHumidity(ServerLevel level, BlockPos pos);
 
+    List<Holder<SpecialDays>> getSpecialDays(Level level, BlockPos pos);
 }

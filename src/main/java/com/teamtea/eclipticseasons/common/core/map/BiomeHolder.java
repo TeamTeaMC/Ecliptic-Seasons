@@ -2,29 +2,20 @@ package com.teamtea.eclipticseasons.common.core.map;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import com.teamtea.eclipticseasons.api.util.EclipticUtil;
-import com.teamtea.eclipticseasons.common.core.snow.SnowyStatusKeeper;
-import com.teamtea.eclipticseasons.common.misc.SimplePair;
 import it.unimi.dsi.fastutil.ints.IntList;
 import lombok.*;
 import net.minecraft.core.*;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtOps;
-import net.minecraft.nbt.Tag;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.chunk.ChunkAccess;
+import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.neoforged.neoforge.attachment.IAttachmentHolder;
 import net.neoforged.neoforge.attachment.IAttachmentSerializer;
-import org.jspecify.annotations.NonNull;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
 
 @Data
 public class BiomeHolder {
@@ -98,18 +89,20 @@ public class BiomeHolder {
         return new BiomeHolder(newBiomes, near, biomeDataVersion);
     }
 
-    public static BiomeHolder fillSmallBiomes(Level serverLevel, ChunkPos chunkPos, BiomeHolder oldHolder, int biomeDataVersion) {
+    public static BiomeHolder fillSmallBiomes(Level serverLevel, ChunkAccess chunk, BiomeHolder oldHolder, int biomeDataVersion) {
         int[] newBiomes = new int[256];
         boolean near = true;
         int[] oldBiomes = oldHolder.biomes;
         BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos();
+
+        ChunkPos chunkPos = chunk.getPos();
         for (int i = 0; i < 16; i++) {
             for (int j = 0; j < 16; j++) {
                 Holder<Biome> biomeHolder = MapChecker.idToBiome(serverLevel, oldBiomes[i * 16 + j]);
                 if (MapChecker.isSmallBiome(biomeHolder)) {
                     int xm = chunkPos.getBlockX(i);
                     int zm = chunkPos.getBlockZ(j);
-                    mutableBlockPos.set(xm, 0, zm);
+                    mutableBlockPos.set(xm, chunk.getHeight(Heightmap.Types.WORLD_SURFACE_WG, i, j) + 1, zm);
 
                     newBiomes[i * 16 + j] =
                             MapChecker.biomeToId(serverLevel, MapChecker.getUnCachedSurfaceBiome(serverLevel, mutableBlockPos).value());

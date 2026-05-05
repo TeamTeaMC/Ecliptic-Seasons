@@ -1,7 +1,7 @@
 package com.teamtea.eclipticseasons.data.general.model;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
-import com.teamtea.eclipticseasons.client.core.AttachModelManager;
+import com.teamtea.eclipticseasons.client.core.SeasonModelManager;
 import com.teamtea.eclipticseasons.common.block.HygrometerBlock;
 import com.teamtea.eclipticseasons.common.registry.BlockRegistry;
 import lombok.Builder;
@@ -148,15 +148,15 @@ public class ESBlockModelGenerators {
 
     protected void generateFlowers() {
         for (var flowerOnGrass : ConcatenatedListView.of(
-                AttachModelManager.flower_on_grass,
-                AttachModelManager.snow_edge_overlays
+                SeasonModelManager.flower_on_grass,
+                SeasonModelManager.snow_edge_overlays
         )) {
             makeStandAloneModel(flowerOnGrass, GRASS_FLOWER);
         }
 
         for (var flowerOnGrass : ConcatenatedListView.of(
-                AttachModelManager.fourleaf_clovers,
-                AttachModelManager.leaf_piles
+                SeasonModelManager.fourleaf_clovers,
+                SeasonModelManager.leaf_piles
         )) {
             makeStandAloneModel(flowerOnGrass, TINTED_GRASS_FLOWER);
         }

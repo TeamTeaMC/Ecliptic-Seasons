@@ -6,10 +6,7 @@ import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.constant.solar.TimePeriod;
 import com.teamtea.eclipticseasons.api.data.weather.special_effect.WeatherEffect;
 import com.teamtea.eclipticseasons.api.util.SimpleUtil;
-import lombok.Data;
-import lombok.Getter;
 import net.minecraft.core.Holder;
-import net.minecraft.server.commands.TimeCommand;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.valueproviders.IntProvider;
 import net.minecraft.world.level.Level;
@@ -19,6 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 public record CustomRain(int ordinal,
+                         String name,
                          List<Weather> weatherList,
                          Optional<BiomeRain> defaultWeather,
                          float rainChance,
@@ -111,6 +109,7 @@ public record CustomRain(int ordinal,
 
     public record Weather(
             int ordinal,
+            String name,
             Optional<IntProvider> rain,
             Optional<IntProvider> rainDelay,
             Optional<IntProvider> thunder,
@@ -123,9 +122,10 @@ public record CustomRain(int ordinal,
             float snowAccumulationSpeed,
             float snowMeltSpeed) implements BiomeRain {
 
-        public static Weather of(SolarTerm solarTerm, CustomRainBuilder.Weather weather) {
+        public static Weather of(SolarTerm solarTerm, String name, CustomRainBuilder.Weather weather) {
             return new Weather(
                     solarTerm.ordinal(),
+                    name,
                     weather.getRain(),
                     weather.getRainDelay(),
                     weather.getThunder(),

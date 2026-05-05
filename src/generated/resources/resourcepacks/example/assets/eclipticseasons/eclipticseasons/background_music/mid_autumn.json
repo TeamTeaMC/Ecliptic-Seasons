@@ -1,0 +1,14 @@
+{
+  "special_days": "eclipticseasons:mid_autumn",
+  "ignore_time": false,
+  "day": false,
+  "biomes": "#eclipticseasons:misc/ambient/spring",
+  "ignored_biomes": "#eclipticseasons:misc/ambient/spring_negate",
+  "music": {
+    "default": {
+      "sound": "eclipticseasons:music.mid_autumn",
+      "min_delay": 1000,
+      "max_delay": 25000
+    }
+  }
+}

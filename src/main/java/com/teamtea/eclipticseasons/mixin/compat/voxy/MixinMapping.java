@@ -21,4 +21,12 @@ public abstract class MixinMapping {
         return original.call(instance, VoxyTool.fixId((Mapper) (Object) this, index));
     }
 
+    @WrapOperation(
+            remap = false,
+            method = "getBlockStateFromBlockId",
+            at = @At(value = "INVOKE", target = "Lit/unimi/dsi/fastutil/objects/ObjectArrayList;get(I)Ljava/lang/Object;")
+    )
+    private <K> K eclipticseasons$getBlockStateFromBlockId_fixId(ObjectArrayList<K> instance, int index, Operation<K> original) {
+        return original.call(instance, VoxyTool.fixId((Mapper) (Object) this, index));
+    }
 }

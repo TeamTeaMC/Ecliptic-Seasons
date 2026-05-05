@@ -51,7 +51,7 @@ public abstract class ESClientBiomeDataMapProvider<C> extends ESClientDataMapPro
     @Override
     protected void gather(HolderLookup.Provider provider) {
         BIOME_HOLDER_GETTER = provider.lookupOrThrow(Registries.BIOME);
-        BIOME_REGISTRY_LOOKUP = new AgroClimateRegistry.BiomeRegistryLookup(BIOME_HOLDER_GETTER);
+        BIOME_REGISTRY_LOOKUP = new AgroClimateRegistry.BiomeRegistryLookup(BIOME_HOLDER_GETTER, Registries.BIOME);
         gather(provider,BIOME_HOLDER_GETTER);
         BIOME_HOLDER_GETTER = null;
         BIOME_REGISTRY_LOOKUP = null;

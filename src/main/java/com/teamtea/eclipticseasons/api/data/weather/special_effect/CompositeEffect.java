@@ -11,6 +11,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 
 import java.util.List;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 @Builder
 @Data
@@ -69,5 +71,46 @@ public class CompositeEffect implements WeatherEffect {
             }
         }
         return count > 0 ? result / count : result;
+    }
+
+    @Override
+    public boolean shouldChangeTexture(boolean rain) {
+        return anyApply(WeatherEffect::shouldChangeTexture, rain);
+    }
+
+    @Override
+    public Identifier onTextureBinding(Identifier original, boolean rain) {
+        return apply(original, WeatherEffect::shouldChangeTexture, WeatherEffect::onTextureBinding, rain);
+    }
+
+    @Override
+    public boolean shouldChangeAmount(boolean rain) {
+        return anyApply(WeatherEffect::shouldChangeAmount, rain);
+    }
+
+    @Override
+    public float getModifiedAmount(float amount, boolean rain) {
+        return apply(amount, WeatherEffect::shouldChangeAmount, WeatherEffect::getModifiedAmount, rain);
+    }
+
+    public boolean anyApply(BiFunction<WeatherEffect, Boolean, Boolean> apply, boolean rain) {
+        for (WeatherEffect content : contents) {
+            if (apply.apply(content, rain))
+                return true;
+        }
+        return false;
+    }
+
+    public <T> T apply(T original, BiFunction<WeatherEffect, Boolean, Boolean> should, BBiFunction<WeatherEffect, T, Boolean, T> apply, boolean rain) {
+        for (WeatherEffect content : contents) {
+            if (should.apply(content, rain))
+                original = apply.apply(content, original, rain);
+        }
+        return original;
+    }
+
+    @FunctionalInterface
+    public interface BBiFunction<T, U, E, R> {
+        R apply(T t, U u, E e);
     }
 }

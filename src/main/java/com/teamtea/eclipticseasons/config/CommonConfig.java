@@ -6,6 +6,7 @@ import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.compat.CompatModule;
 import lombok.Getter;
+import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.Level;
@@ -109,6 +110,8 @@ public class CommonConfig {
 
         public static ModConfigSpec.IntValue lastingDaysOfEachTerm;
         public static ModConfigSpec.IntValue initialSolarTermIndex;
+        public static ModConfigSpec.IntValue monthOffset;
+        public static ModConfigSpec.IntValue dayOffset;
 
         public static ModConfigSpec.ConfigValue<List<? extends String>> validDimensions;
 
@@ -129,7 +132,11 @@ public class CommonConfig {
                     .defineInRange("LastingDaysOfEachTerm", 7, 1, 5000);
             initialSolarTermIndex = builder.comment("The index of the Solar Term when the world is first created (1-24).")
                     .defineInRange("InitialSolarTermIndex", 4, 1, 24);
+            monthOffset = builder.comment("Shifts the displayed month index. This does NOT affect internal solar term calculations.")
+                    .defineInRange("MonthOffset", 1, -11, 11);
 
+            dayOffset = builder.comment("Shifts the calendar day relative to solar terms. Example: 2 means solar day 0 appears as the 3rd day of the month.")
+                    .defineInRange("DayOffset", 2, -64, 64);
 
             enableInform = builder.comment("Display a chat message whenever the Solar Term changes.")
                     .define("EnableInform", true);
@@ -417,11 +424,16 @@ public class CommonConfig {
 
     public static class Map {
         public static ModConfigSpec.BooleanValue changeMapColor;
+        public static ModConfigSpec.BooleanValue changeMapColorMapItem;
 
         private static void load(ModConfigSpec.Builder builder) {
             builder.push("Map");
-            changeMapColor = builder.comment("Synchronize map colors to reflect atmospheric snow overlays.")
-                    .define("ChangeMapColor", true);
+            changeMapColor = builder.comment(
+                    "Synchronize all map color rendering with visual snow overlays. May affect compatibility with other mods."
+            ).define("ChangeMapColorIfSnowy", false);
+            changeMapColorMapItem = builder.comment(
+                    "Only adjust map item colors to reflect visual snow overlays. Safer for mod compatibility."
+            ).define("ChangeMapColorMapItem", true);
             builder.pop();
         }
     }
@@ -504,7 +516,7 @@ public class CommonConfig {
 
     public static class Resource {
         public static ModConfigSpec.BooleanValue SnowTogether;
-        public static ModConfigSpec.BooleanValue RainTogether;
+        // public static ModConfigSpec.BooleanValue RainTogether;
         public static ModConfigSpec.BooleanValue RegionalSnowTime;
         public static ModConfigSpec.BooleanValue VanillaBiomeClimateSettings;
         public static ModConfigSpec.BooleanValue NotIgnoreRiver;
@@ -513,8 +525,8 @@ public class CommonConfig {
         private static void load(ModConfigSpec.Builder builder) {
             builder.push("Resource");
 
-            RainTogether = builder.comment("Synchronizes weather states across all Overworld biomes, ensuring global rainfall.")
-                    .define("RainTogether", true);
+            // RainTogether = builder.comment("Synchronizes weather states across all Overworld biomes, ensuring global rainfall.")
+            //         .define("RainTogether", true);
 
             SnowTogether = builder.comment("Synchronizes the snowfall schedule for all Overworld biomes.")
                     .define("SnowTogether", false);
@@ -556,9 +568,13 @@ public class CommonConfig {
     @Getter
     private static final Set<Block> forceBlocksNotSnowy = new HashSet<>();
 
+    @Getter
+    private static boolean vanillaSnowAndIce = false;
+
     public static void UpdateConfig(ModConfigEvent modConfigEvent) {
         if (!(modConfigEvent instanceof ModConfigEvent.Unloading)
                 && modConfigEvent.getConfig().getSpec() == COMMON_CONFIG) {
+            vanillaSnowAndIce = Temperature.iceMelt.get() && Temperature.snowDown.get();
             useSolarWeather = Weather.useSolarWeather.get();
             forceCropCompatMode = Crop.forceCompatMode.get();
             snowyWinter = Snow.snowyWinter.get();
@@ -586,7 +602,9 @@ public class CommonConfig {
 
             forceBlocksNotSnowy.clear();
             for (String s : Snow.blocksNotSnowy.get()) {
-                Block block = BuiltInRegistries.BLOCK.get(Identifier.parse(s)).get().value();
+                Optional<Holder.Reference<Block>> blockReference = BuiltInRegistries.BLOCK.get(Identifier.parse(s));
+                if (blockReference.isEmpty()) continue;
+                Block block = blockReference.get().value();
                 if (block != Blocks.AIR) {
                     forceBlocksNotSnowy.add(block);
                 }

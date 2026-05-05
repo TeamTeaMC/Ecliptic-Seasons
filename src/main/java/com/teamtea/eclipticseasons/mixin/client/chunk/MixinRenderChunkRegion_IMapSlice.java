@@ -2,9 +2,9 @@ package com.teamtea.eclipticseasons.mixin.client.chunk;
 
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
-import com.teamtea.eclipticseasons.api.misc.client.IAttachRendererContextOwner;
+import com.teamtea.eclipticseasons.api.misc.client.ISeasonRendererContextOwner;
 import com.teamtea.eclipticseasons.api.misc.client.IMapSlice;
-import com.teamtea.eclipticseasons.client.core.context.AttachRendererContext;
+import com.teamtea.eclipticseasons.client.core.context.SeasonRendererContext;
 import com.teamtea.eclipticseasons.common.core.map.*;
 import com.teamtea.eclipticseasons.common.core.snow.SnowyMapChecker;
 import com.teamtea.eclipticseasons.common.core.snow.SnowyStatusKeeper;
@@ -27,7 +27,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin({RenderSectionRegion.class})
-public abstract class MixinRenderChunkRegion_IMapSlice implements IMapSlice, IAttachRendererContextOwner {
+public abstract class MixinRenderChunkRegion_IMapSlice implements IMapSlice, ISeasonRendererContextOwner {
 
     @Shadow
     @Final
@@ -224,10 +224,10 @@ public abstract class MixinRenderChunkRegion_IMapSlice implements IMapSlice, IAt
 
 
     @Unique
-    private AttachRendererContext eclipticseasons$rendererHolder = new AttachRendererContext();
+    private SeasonRendererContext eclipticseasons$rendererHolder = new SeasonRendererContext();
 
     @Override
-    public AttachRendererContext eclipticseasons$getContext() {
+    public SeasonRendererContext eclipticseasons$getContext() {
         return eclipticseasons$rendererHolder;
     }
 

@@ -41,9 +41,7 @@ public record BiomeColor(
             SolarTermValueMap.codec(ColorMode.CODEC).optionalFieldOf("fog_colors").forGetter(BiomeColor::fogColor)
     ).apply(ins, BiomeColor::new));
 
-    private static final SolarTermValueMap<ColorMode> EMPTY_MODE_MAP = new SolarTermValueMap<>(
-            Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty()
-    );
+    private static final SolarTermValueMap<ColorMode> EMPTY_MODE_MAP = SolarTermValueMap.<ColorMode>builder().build();
 
 
     public @NonNull Instance toInstance() {
