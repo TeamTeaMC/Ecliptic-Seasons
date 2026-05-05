@@ -61,7 +61,7 @@ public interface EclipticSeasonsApi {
 
     int getSolarYears(Level level);
 
-    int getStandardSolarYears(Level level);
+    int getStandardYear(Level level);
 
     int getLastingDaysOfEachTerm(Level level);
 
