@@ -1,16 +1,17 @@
 package com.teamtea.eclipticseasons.compat;
 
-import net.minecraft.server.MinecraftServer;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.fml.loading.FMLLoader;
-import net.neoforged.neoforge.server.ServerLifecycleHooks;
+import net.neoforged.fml.loading.moddiscovery.ModFileInfo;
 import net.neoforged.neoforgespi.language.IModFileInfo;
+import net.neoforged.neoforgespi.language.IModInfo;
 import net.neoforged.neoforgespi.locating.IModFile;
+import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
-import org.apache.maven.artifact.versioning.VersionRange;
 
 import java.util.List;
+import java.util.Optional;
 
 public class Platform {
 
@@ -28,9 +29,9 @@ public class Platform {
         return FMLEnvironment.dist.isClient();
     }
 
-    public static MinecraftServer getServer() {
-        return ServerLifecycleHooks.getCurrentServer();
-    }
+    // public static MinecraftServer getServer() {
+    //     return ServerLifecycleHooks.getCurrentServer();
+    // }
 
     public static boolean isProduction() {
         return FMLEnvironment.production;
@@ -42,4 +43,17 @@ public class Platform {
         return modFileById.getFile();
     }
 
+    public static boolean isVersionSatisfied(String modId, String require) {
+        return Optional.of(FMLLoader.getLoadingModList())
+                .map(c->c.getModFileById(modId))
+                .map(ModFileInfo::getMods)
+                .filter(modInfoList->!modInfoList.isEmpty())
+                .map(List::getFirst)
+                .map(IModInfo::getVersion)
+                .map(currentVersion -> {
+                    ArtifactVersion required = new DefaultArtifactVersion(require);
+                    return currentVersion.compareTo(required) >= 0;
+                })
+                .orElse(false);
+    }
 }

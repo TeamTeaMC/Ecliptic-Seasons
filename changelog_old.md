@@ -1,40 +1,21 @@
-### 0.13.0-beta-5
+## 0.13.0-rc
 
-- Replaced hardcoded weather generation with a built-in datapack system.
-- Adjusted the vanilla rain particle density for certain solar terms.
-- Rainfall now varies significantly across solar terms in terms of duration, frequency, and intensity.
-- Added a compatibility resource pack for Sodium’s vanilla model replacement, including snow-covered models; this
-  provides some performance improvements in winter scenes with many stairs.
-
-### 0.13.0-beta-4
-
-- Formally removed the Weather Region datapack, as it is now obsolete.
-- Optimized the content display on the DebugInfo screen.
-- Refined the thunder execution logic; fixed a bug where rain would always trigger lightning in certain seasons.
-- Fixed an issue where rain commands failed to set weather effects correctly.
-- Optimized the update logic for weather effects.
-
-### 0.13.0-beta-3
-
-- Added weather effect data pack modifier option, which can be used to adjust particle textures when it rains.
-
-### 0.13.0-beta-2
-
-- Removed the Voxy compatibility plugin and make it a standalone
-  mod [Ecliptic Seasons : Voxy Compact](https://legacy.curseforge.com/minecraft/mc-mods/ecliptic-seasons-voxy-compact).
-
-### 0.13.0-beta-1-6
-
-- Adjust Voxy’s supported version constraint to **0.2.14-alpha**.
-
-### 0.13.0-beta-1-3
-
-- For voxy 0.2.13-alpha+.
-
-## 0.13.0-beta-1
-
-- Migrated biome-specific rain to a dimension-based system. This change improves performance by reducing location-based
-  biome checks and ensures better compatibility with other mods.
+* Added a full in-game configuration GUI (no dependencies required)
+* Introduced a festival system (`eclipticseasons:special_days`)
+* Added a seasonal background music system
+* Expanded the calendar system with sub-seasons, months, and day tracking
+* Added seasonal color support for single-tint block models
+* Removed biome-based local weather; replaced with dimension-level weather (API remains backward-compatible)
+* Reworked the weather system to be fully data-driven via datapacks
+  * Seasonal variation in rain (frequency, duration, intensity)
+  * Fixed incorrect thunder triggering
+* Improved snow map color handling
+* Fixed ambient sound loading (now supports vanilla `sounds.json`) and add field `ignored_biomes`
+* Fixed snow cover issues on certain blocks (e.g., glass panes)
+* Added debug tools and keybind support
+* General performance and compatibility optimizations (e.g., Platform class loading)
+* Moved Voxy support (1.20.1 / 1.21.1) to a separate compatibility mod
+* Relaxed version requirements for Distant Horizons
 
 ### 0.12.18.13
 

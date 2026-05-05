@@ -84,4 +84,8 @@ public class ESConfigSync {
 
         LOCAL_CONFIG_BACKUP.clear();
     }
+
+    public void notBackup(ModConfig modConfig) {
+        LOCAL_CONFIG_BACKUP.remove(modConfig.getFileName());
+    }
 }

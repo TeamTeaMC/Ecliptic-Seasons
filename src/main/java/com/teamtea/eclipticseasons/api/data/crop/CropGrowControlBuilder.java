@@ -77,18 +77,16 @@ public record CropGrowControlBuilder(
             Enum2ObjectMap<Season.Sub, GrowParameter> subMap,
             HolderSet<AgroClimaticZone> cropClimateType) {
         if (!subMap.isEmpty()) {
-            AgroClimaticZone zone = cropClimateType.size() > 0 ? cropClimateType.get(0).value() : null;
-            for (Season.Sub subSeason : Season.Sub.collectValidValues()) {
+            for (Season.Sub subSeason : Season.Sub.collectValues()) {
                 GrowParameter value = subMap.get(subSeason);
                 if (value != null) {
-                    SolarTerm start = subSeason.getFirstSolarTerm();
-                    SolarTerm end = subSeason.getEndSolarTerm();
-                    if (start.isValid() && end.isValid()) {
-                        int startIdx = start.ordinal();
-                        int endIdx = end.ordinal();
-                        for (int i = startIdx; i <= endIdx; i++) {
-                            solarTermList.putIfAbsent(SolarTerm.getValid(i), value);
-                        }
+                    if (subSeason.isValid()) {
+                        SolarTerm start = subSeason.getFirstSolarTerm();
+                        SolarTerm end = subSeason.getEndSolarTerm();
+                        solarTermList.putIfAbsent(start, value);
+                        solarTermList.putIfAbsent(end, value);
+                    } else {
+                        solarTermList.putIfAbsent(SolarTerm.NONE, value);
                     }
                 }
             }

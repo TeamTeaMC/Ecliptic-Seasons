@@ -157,7 +157,7 @@ public class EclipticUtil {
             }
 
             @Override
-            public Month getStanardMonth(Level level) {
+            public Month getStandardMonth(Level level) {
                 return Month.of(getSolarDays(level), getLastingDaysOfEachTerm(level), CommonConfig.Season.dayOffset.get(), CommonConfig.Season.monthOffset.get());
             }
 

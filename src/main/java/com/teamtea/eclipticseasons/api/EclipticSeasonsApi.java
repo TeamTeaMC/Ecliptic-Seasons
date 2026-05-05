@@ -55,7 +55,7 @@ public interface EclipticSeasonsApi {
     Season getSeason(Level level);
     Season.Sub getSubSeason(Level level);
 
-    Month getStanardMonth(Level level);
+    Month getStandardMonth(Level level);
 
     int getSolarDays(Level level);
 

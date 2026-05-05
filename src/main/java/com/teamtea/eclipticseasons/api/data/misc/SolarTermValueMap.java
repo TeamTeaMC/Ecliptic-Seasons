@@ -63,17 +63,16 @@ public record SolarTermValueMap<T>(
         }
         if (subSeasonMap().isPresent()) {
             Enum2ObjectMap<Season.Sub, T> subMap = subSeasonMap().get();
-            for (Season.Sub subSeason : Season.Sub.collectValidValues()) {
+            for (Season.Sub subSeason : Season.Sub.collectValues()) {
                 T value = subMap.get(subSeason);
                 if (value != null) {
-                    SolarTerm start = subSeason.getFirstSolarTerm();
-                    SolarTerm end = subSeason.getEndSolarTerm();
-                    if (start.isValid() && end.isValid()) {
-                        int startIdx = start.ordinal();
-                        int endIdx = end.ordinal();
-                        for (int i = startIdx; i <= endIdx; i++) {
-                            map.putIfAbsent(SolarTerm.getValid(i), value);
-                        }
+                    if (subSeason.isValid()) {
+                        SolarTerm start = subSeason.getFirstSolarTerm();
+                        SolarTerm end = subSeason.getEndSolarTerm();
+                        map.putIfAbsent(start, value);
+                        map.putIfAbsent(end, value);
+                    } else {
+                        map.putIfAbsent(SolarTerm.NONE, value);
                     }
                 }
             }
