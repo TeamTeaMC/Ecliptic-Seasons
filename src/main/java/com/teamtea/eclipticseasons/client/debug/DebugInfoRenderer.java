@@ -2,7 +2,6 @@ package com.teamtea.eclipticseasons.client.debug;
 
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.climate.ISnowTerm;
-import com.teamtea.eclipticseasons.api.constant.climate.WeatherMode;
 import com.teamtea.eclipticseasons.api.constant.solar.ISolarTerm;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
@@ -10,7 +9,6 @@ import com.teamtea.eclipticseasons.api.data.season.SpecialDays;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.api.util.SimpleUtil;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
-import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.core.solar.SolarTermHelper;
@@ -34,8 +32,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.biome.Biome;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 public class DebugInfoRenderer {
     private final Style DEFAULT = Style.EMPTY.withFont(new ResourceLocation("default"));
@@ -112,7 +108,7 @@ public class DebugInfoRenderer {
             infoLines.addHeader("Ecliptic Debug");
             Season.Sub subSeason = EclipticSeasonsApi.getInstance().getSubSeason(level);
             infoLines.addKV("Sub Season", subSeason.getTranslation().getString(), subSeason.getSeason().getColor().toString());
-            infoLines.addKV("Month", EclipticSeasonsApi.getInstance().getStanardMonth(level).getTranslation().getString() + " " + (EclipticSeasonsApi.getInstance().getDayOfMonth(level)), "§e");
+            infoLines.addKV("Month", EclipticSeasonsApi.getInstance().getStandardMonth(level).getTranslation().getString() + " " + (EclipticSeasonsApi.getInstance().getDayOfMonth(level)), "§e");
             StringBuilder specialDays = new StringBuilder();
             for (Holder<SpecialDays> specialDay : EclipticSeasonsApi.getInstance().getSpecialDays(level, pos)) {
                 specialDays.append(getBiomeName(specialDay, level.registryAccess().registryOrThrow(ESRegistries.SPECIAL_DAYS)));

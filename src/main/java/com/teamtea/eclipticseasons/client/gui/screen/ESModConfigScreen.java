@@ -2,6 +2,7 @@ package com.teamtea.eclipticseasons.client.gui.screen;
 
 import com.electronwill.nightconfig.core.Config;
 import com.electronwill.nightconfig.core.UnmodifiableConfig;
+import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.client.gui.screen.entry.base.CallbackEntry;
 import com.teamtea.eclipticseasons.client.gui.screen.entry.base.ConfigEntry;
@@ -12,6 +13,7 @@ import com.teamtea.eclipticseasons.compat.CompatModule;
 import com.teamtea.eclipticseasons.compat.configured.ConfiguredUtil;
 import com.teamtea.eclipticseasons.config.ClientConfig;
 import com.teamtea.eclipticseasons.config.CommonConfig;
+import com.teamtea.eclipticseasons.config.ESConfigSync;
 import com.teamtea.eclipticseasons.mixin.EclipticSeasonsMixinPlugin;
 import lombok.Getter;
 import net.minecraft.ChatFormatting;
@@ -29,8 +31,13 @@ import net.minecraft.util.Mth;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModList;
+import net.minecraftforge.fml.config.ConfigTracker;
+import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.loading.FMLPaths;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
+import java.nio.file.Files;
 import java.util.*;
 import java.util.stream.Stream;
 
@@ -41,7 +48,7 @@ public class ESModConfigScreen extends Screen {
     private ModContainer mod;
     @Getter
     private SuggestWidget globalSuggestWidget;
-
+    public boolean saveOnClose = true;
     public final Map<Object, Component> configTabs = new IdentityHashMap<>();
 
     public final Map<Component, Tab> tabs = new LinkedHashMap<>();
@@ -75,6 +82,7 @@ public class ESModConfigScreen extends Screen {
     @SuppressWarnings({"raw_use"})
     public ESModConfigScreen(Screen parent) {
         super(Component.literal("Ecliptic Seasons"));
+        initConfigCache();
         this.parent = parent;
 
         tabs.put(HOT, new Tab(HOT, new LinkedHashMap<>()));
@@ -319,7 +327,7 @@ public class ESModConfigScreen extends Screen {
 
         Button adOption = Button.builder(Component.translatable(CompatModule.isConfigured() ?
                 "eclipticseasons.options.advance" : "eclipticseasons.options.configured_uninstalled"), (button) -> {
-            Screen configurationScreen = ConfiguredUtil.getSafe(ESModConfigScreen.this);
+            Screen configurationScreen = ConfiguredUtil.getSafe(ESModConfigScreen.this.parent);
             if (configurationScreen != null)
                 Minecraft.getInstance().setScreen(configurationScreen);
         }).width(TAB_BUTTON_WIDTH).build();
@@ -391,7 +399,16 @@ public class ESModConfigScreen extends Screen {
         ScrollableLayout scrollableLayout = new ScrollableLayout(this.minecraft, gridLayout, this.layout.getHeight() - this.layout.getFooterHeight() - this.layout.getHeaderHeight());
 
         layout.addToContents(scrollableLayout);
-        layout.addToFooter(Button.builder(CommonComponents.GUI_DONE, (button) -> this.onClose()).width(200).build());
+
+
+        LinearLayout footer = new LinearLayout(0, 0, LinearLayout.Orientation.HORIZONTAL);
+        footer.defaultChildLayoutSetting().paddingHorizontal(TAB_SPACING);
+        footer.addChild(Button.builder(CommonComponents.GUI_BACK, (button) -> {
+            ESModConfigScreen.this.saveOnClose = false;
+            this.onClose();
+        }).width(buttonWidth).build());
+        footer.addChild(Button.builder(CommonComponents.GUI_DONE, (button) -> this.onClose()).width(buttonWidth).build());
+        layout.addToFooter(footer);
         layout.visitWidgets(this::addRenderableWidget);
 
         this.addRenderableWidget(this.globalSuggestWidget);
@@ -427,9 +444,41 @@ public class ESModConfigScreen extends Screen {
         super.resize(pMinecraft, pWidth, pHeight);
     }
 
+    protected Map<String, byte[]> configCache = new HashMap<>();
+
+    public void initConfigCache() {
+        for (ModConfig modConfig : Stream.of(ModConfig.Type.COMMON, ModConfig.Type.CLIENT)
+                .map(c -> ConfigTracker.INSTANCE.getConfigFileName(EclipticSeasonsApi.MODID, c))
+                .map(s -> ConfigTracker.INSTANCE.fileMap().get(s))
+                .filter(Objects::nonNull)
+                .toList()) {
+            try {
+                configCache.put(modConfig.getFileName(), Files.readAllBytes(FMLPaths.CONFIGDIR.get().resolve(modConfig.getFileName())));
+            } catch (IOException e) {
+                EclipticSeasons.logger(e);
+            }
+        }
+    }
+
+    public void backupConfigCache() {
+        for (Map.Entry<String, byte[]> entry : configCache.entrySet()) {
+            ModConfig modConfig = ConfigTracker.INSTANCE.fileMap().get(entry.getKey());
+            if (modConfig != null) {
+                modConfig.acceptSyncedConfig(entry.getValue());
+            }
+        }
+    }
+
     @Override
     public void onClose() {
         super.onClose();
+        if (!saveOnClose) {
+            backupConfigCache();
+            Objects.requireNonNull(this.minecraft).setScreen(this.parent);
+            return;
+        }
+        var file = ConfigTracker.INSTANCE.fileMap().get(ConfigTracker.INSTANCE.getConfigFileName(EclipticSeasonsApi.MODID, ModConfig.Type.COMMON));
+        ESConfigSync.INSTANCE.notBackup(file);
         CommonConfig.COMMON_CONFIG.save();
         ClientConfig.CLIENT_CONFIG.save();
         EclipticSeasonsMixinPlugin.PreloadedConfig.getConfig().save();

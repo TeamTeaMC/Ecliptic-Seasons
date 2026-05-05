@@ -4,6 +4,7 @@ package com.teamtea.eclipticseasons.mixin;
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.compat.CompatModule;
+import com.teamtea.eclipticseasons.compat.Platform;
 import lombok.Getter;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.loading.FMLPaths;
@@ -54,13 +55,15 @@ public class EclipticSeasonsMixinPlugin implements IMixinConfigPlugin {
             List<String> strings = Arrays.stream(sub.split("\\.")).toList();
             String modid = strings.get(0);
             if (strings.size() > 2) {
-                if (FMLLoader.getLoadingModList().getModFileById(strings.get(1)) == null)
-                    shouldApply = false;
+                shouldApply = Platform.isModLoaded(strings.get(1)) && Platform.isModLoaded(strings.get(0));
             } else {
-                shouldApply = FMLLoader.getLoadingModList().getModFileById(modid) != null
-                        || (Objects.equals(modid, "optifine") && isOptLoad == 1);
+                shouldApply = Objects.equals(modid, "distanthorizons") ?
+                        Platform.isVersionSatisfied(modid, "3.0.0-b") :
+                        Objects.equals(modid, "optifine") ? isOptLoad == 1 :
+                                Platform.isModLoaded(modid);
             }
         }
+
         if (
                 (
                         //         targetClassName.endsWith("ModelBlockRenderer")
