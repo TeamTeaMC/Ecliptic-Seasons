@@ -172,7 +172,7 @@ public class EclipticUtil {
             }
 
             @Override
-            public int getStandardSolarYears(Level level) {
+            public int getStandardYear(Level level) {
                 return Month.toYear(getSolarDays(level), getLastingDaysOfEachTerm(level), CommonConfig.Season.dayOffset.get(), CommonConfig.Season.monthOffset.get());
             }
 
