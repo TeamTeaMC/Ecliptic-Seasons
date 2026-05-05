@@ -1,7 +1,7 @@
 {
   "values": [
     "#forge:is_cold",
-    "#forge:is_beach",
-    "#forge:is_ocean"
+    "#minecraft:is_beach",
+    "#minecraft:is_ocean"
   ]
 }

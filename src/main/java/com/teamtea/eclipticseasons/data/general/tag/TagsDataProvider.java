@@ -1,5 +1,6 @@
 package com.teamtea.eclipticseasons.data.general.tag;
 
+import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.constant.tag.ClimateTypeBiomeTags;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
@@ -67,5 +68,7 @@ public class TagsDataProvider extends TagsProvider<Biome> {
         // tag(ClimateTypeBiomeTags.SLIGHTLY_COLOR_CHANGE).addTags(BiomeTags.IS_BEACH, BiomeTags.IS_OCEAN).add(Biomes.JUNGLE);
 
 
+        // tag(TagKey.create(Registries.BIOME,
+        //         EclipticSeasons.rl("misc/ambient/spring_negate"))).addTags(Tags.Biomes.IS_R);
     }
 }
