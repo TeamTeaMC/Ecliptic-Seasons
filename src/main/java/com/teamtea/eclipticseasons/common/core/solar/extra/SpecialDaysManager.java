@@ -44,7 +44,7 @@ public class SpecialDaysManager {
         List<Holder<SpecialDays>> holders = map.get(solarTerm);
         if (holders == null) return List.of();
         List<Holder<SpecialDays>> sp = new ArrayList<>();
-        int timeInTerm = EclipticSeasonsApi.getInstance().getTimeInTerm(level);
+        int timeInTerm = EclipticSeasonsApi.getInstance().getDayInTerm(level);
         int lastingDaysOfEachTerm = EclipticSeasonsApi.getInstance().getLastingDaysOfEachTerm(level);
         float progress = timeInTerm / (float) lastingDaysOfEachTerm;
         for (Holder<SpecialDays> holder : holders) {

@@ -14,7 +14,6 @@ import com.teamtea.eclipticseasons.api.data.weather.CustomRainBuilder;
 import com.teamtea.eclipticseasons.api.data.weather.CustomSnowTerm;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
-import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
 import com.teamtea.eclipticseasons.common.misc.ClientAgent;
@@ -66,7 +65,7 @@ public class ClientCon {
     public static void tick(Level clientLevel) {
         if (MapChecker.isValidDimension(clientLevel)) {
             nowSolarTerm = EclipticUtil.getNowSolarTerm(clientLevel);
-            ClientCon.nowSeason = EclipticSeasonsApi.getInstance().getAgroSeason(clientLevel,
+            ClientCon.nowSeason = EclipticSeasonsApi.getInstance().getSeasonSignal(clientLevel,
                     agent.getCameraEntity() == null ? BlockPos.ZERO :
                             agent.getCameraEntity().blockPosition());
             isDay = EclipticUtil.isDay(clientLevel);

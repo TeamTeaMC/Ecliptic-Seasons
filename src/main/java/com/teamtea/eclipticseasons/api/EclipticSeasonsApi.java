@@ -1,9 +1,9 @@
 package com.teamtea.eclipticseasons.api;
 
 import com.teamtea.eclipticseasons.api.constant.biome.Humidity;
-import com.teamtea.eclipticseasons.api.constant.solar.gregorian.GregorianMonth;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
+import com.teamtea.eclipticseasons.api.constant.solar.gregorian.GregorianMonth;
 import com.teamtea.eclipticseasons.api.data.season.SpecialDays;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import net.minecraft.core.BlockPos;
@@ -12,7 +12,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.dimension.DimensionType;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.List;
@@ -24,10 +23,12 @@ import java.util.List;
  * Another reason is that this API implements automatic switching based on the configuration.
  * If you use the API directly, it's easy to run under an incorrect configuration.
  */
-public interface EclipticSeasonsApi {
+public interface EclipticSeasonsApi extends ESApiLegacy {
 
     String MODID = "eclipticseasons";
     String SMODID = "ecliptic";
+
+    List<String> MODID_LIST = List.of(EclipticSeasonsApi.SMODID, EclipticSeasonsApi.MODID, "season");
 
     /**
      * Use this static method to get an API instance.
@@ -36,13 +37,18 @@ public interface EclipticSeasonsApi {
         return EclipticUtil.INSTANCE;
     }
 
+    @Override
+    default EclipticSeasonsApi asSelf() {
+        return this;
+    }
+
     /**
      * Get the solar term.
      * Or use it to get the season{@link SolarTerm#getSeason()},
-     * or get the climate classification of the biome{@link SolarTerm#getBiomeRain(Holder)},
-     * and which solar terms of the biome snow{@link SolarTerm#getSnowTerm(Biome, boolean, float)}.
+     * or get the climate classification of the biome{@link com.teamtea.eclipticseasons.api.util.SolarUtil#getBiomeRain(SolarTerm, Holder)},
+     * and which solar terms of the biome snow{@link SolarTerm#getSnowTerm(Biome)}.
      *
-     * <p>Only dimensions marked as {@linkplain DimensionType#natural()  natural} have solar term changes.</p>
+     * <p>Only dimensions marked as {@linkplain com.teamtea.eclipticseasons.config.CommonConfig.Season#validDimensions} have solar term changes.</p>
      */
     SolarTerm getSolarTerm(Level level);
 
@@ -50,16 +56,17 @@ public interface EclipticSeasonsApi {
      * Returns the localized (Agro) season at the given position.
      * Unlike the global season, this considers regional climate.
      */
-    Season getAgroSeason(Level level, BlockPos pos);
+    Season getSeasonSignal(Level level, BlockPos pos);
 
     Season getSeason(Level level);
+
     Season.Sub getSubSeason(Level level);
 
     GregorianMonth getGregorianMonth(Level level);
 
     int getSolarDays(Level level);
 
-    int getSolarYears(Level level);
+    int getSolarYear(Level level);
 
     int getGregorianYear(Level level);
 
@@ -68,7 +75,7 @@ public interface EclipticSeasonsApi {
     /**
      * Day index within the current solar term, from 0 to (lastingDays - 1).
      */
-    int getTimeInTerm(Level level);
+    int getDayInTerm(Level level);
 
     int getDayOfMonth(Level level);
 
@@ -113,7 +120,7 @@ public interface EclipticSeasonsApi {
 
     /**
      * Checks if the surface should be snowy.
-     * Note that the position may be off {@linkplain tip if the snow cover is not high enough},
+     * Note that the id may be off {@linkplain tip if the snow cover is not high enough},
      * but will not be miscalculated if the surface is fully snow covered or not covered.
      */
     @Deprecated

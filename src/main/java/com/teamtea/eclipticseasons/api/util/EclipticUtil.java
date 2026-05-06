@@ -133,7 +133,7 @@ public class EclipticUtil {
             }
 
             @Override
-            public Season getAgroSeason(Level level, BlockPos pos) {
+            public Season getSeasonSignal(Level level, BlockPos pos) {
                 return AnimalHooks.getUseSeason(level, pos);
             }
 
@@ -158,7 +158,7 @@ public class EclipticUtil {
             }
 
             @Override
-            public int getSolarYears(Level level) {
+            public int getSolarYear(Level level) {
                 return EclipticUtil.getNowSolarYear(level);
             }
 
@@ -173,7 +173,7 @@ public class EclipticUtil {
             }
 
             @Override
-            public int getTimeInTerm(Level level) {
+            public int getDayInTerm(Level level) {
                 return EclipticUtil.getTimeInSolarTerm(level);
             }
 

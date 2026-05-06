@@ -109,7 +109,7 @@ public class DebugInfoRenderer {
             Season.Sub subSeason = EclipticSeasonsApi.getInstance().getSubSeason(level);
             infoLines.addKV("Sub Season", subSeason.getTranslation().getString(), subSeason.getSeason().getColor().toString());
             infoLines.addKV("Month", Component.translatable("debug_info.eclipticseasons.standard_year_month_day",
-                    ClientConfig.GUI.showGregorianYear.get() ? EclipticSeasonsApi.getInstance().getGregorianYear(level) : EclipticSeasonsApi.getInstance().getSolarYears(level),
+                    ClientConfig.GUI.showGregorianYear.get() ? EclipticSeasonsApi.getInstance().getGregorianYear(level) : EclipticSeasonsApi.getInstance().getSolarYear(level),
                     EclipticSeasonsApi.getInstance().getGregorianMonth(level).getTranslation().getString(),
                     EclipticSeasonsApi.getInstance().getDayOfMonth(level)
             ).getString(), "§e");

@@ -8,7 +8,6 @@ import com.teamtea.eclipticseasons.common.registry.BlockEntityRegistry;
 import com.teamtea.eclipticseasons.common.registry.BlockRegistry;
 import com.teamtea.eclipticseasons.common.registry.ItemRegistry;
 import com.teamtea.eclipticseasons.common.registry.ParticleRegistry;
-import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -89,7 +88,7 @@ public class GreenHouseFrameBlock extends SimpleEntityBlock {
     private static boolean tryActivate(Level level, BlockPos pos) {
         //if (CommonConfig.Debug.disableSeasonalPrayerRitual.get()) return false;
 
-        Season agroSeason = EclipticSeasonsApi.getInstance().getAgroSeason(level, pos);
+        Season agroSeason = EclipticSeasonsApi.getInstance().getSeasonSignal(level, pos);
         Block block = switch (agroSeason) {
             case SPRING -> BlockRegistry.spring_greenhouse_core.get();
             case SUMMER -> BlockRegistry.summer_greenhouse_core.get();
