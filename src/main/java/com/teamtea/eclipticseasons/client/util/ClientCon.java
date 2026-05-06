@@ -44,7 +44,7 @@ public class ClientCon {
     public static void tick(Level clientLevel) {
         if (MapChecker.isValidDimension(clientLevel)) {
             ClientCon.nowSolarTerm = EclipticUtil.getNowSolarTerm(clientLevel);
-            ClientCon.nowSeason = EclipticSeasonsApi.getInstance().getAgroSeason(clientLevel,
+            ClientCon.nowSeason = EclipticSeasonsApi.getInstance().getSeasonSignal(clientLevel,
                     agent.getCameraEntity() == null ? BlockPos.ZERO :
                             agent.getCameraEntity().blockPosition());
             ClientCon.isDay = EclipticUtil.isDay(clientLevel);

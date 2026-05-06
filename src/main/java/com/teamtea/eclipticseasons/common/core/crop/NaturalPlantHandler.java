@@ -12,7 +12,6 @@ import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.api.util.SimpleUtil;
 import com.teamtea.eclipticseasons.api.misc.BiomeHolderPredicate;
 import com.teamtea.eclipticseasons.common.registry.ESRegistries;
-import com.teamtea.eclipticseasons.config.CommonConfig;
 import it.unimi.dsi.fastutil.HashCommon;
 import net.minecraft.core.*;
 import net.minecraft.resources.ResourceKey;
@@ -114,7 +113,7 @@ public class NaturalPlantHandler {
                                     // fixedSeedValue ^= HashCommon.mix(pos.getZ());
                                     fixedSeedValue ^= HashCommon.mix(state.getSeed(pos));
                                     fixedSeedValue ^= HashCommon.mix(EclipticSeasonsApi.getInstance().getSolarDays(level));
-                                    fixedSeedValue ^= HashCommon.mix(EclipticSeasonsApi.getInstance().getTimeInTerm(level));
+                                    fixedSeedValue ^= HashCommon.mix(EclipticSeasonsApi.getInstance().getDayInTerm(level));
                                     fixedSeedValue ^= HashCommon.mix(EclipticSeasonsApi.getInstance().getLastingDaysOfEachTerm(level));
                                     // fixedSeedValue ^= HashCommon.mix(TimePeriod.fromTimeOfDay(level.getTimeOfDay(1f)).ordinal() * 100);
                                     hasCheckFixedSeed = true;
