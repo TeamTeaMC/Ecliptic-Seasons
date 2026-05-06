@@ -1,3 +1,7 @@
+## 0.13.0-rc-2
+
+* Various additional optimizations and improvements.
+
 ## 0.13.0-rc
 
 * Added a full in-game configuration GUI (no dependencies required)
@@ -7,8 +11,8 @@
 * Added seasonal color support for single-tint block models
 * Removed biome-based local weather; replaced with dimension-level weather (API remains backward-compatible)
 * Reworked the weather system to be fully data-driven via datapacks
-  * Seasonal variation in rain (frequency, duration, intensity)
-  * Fixed incorrect thunder triggering
+    * Seasonal variation in rain (frequency, duration, intensity)
+    * Fixed incorrect thunder triggering
 * Improved snow map color handling
 * Fixed ambient sound loading (now supports vanilla `sounds.json`) and add field `ignored_biomes`
 * Fixed snow cover issues on certain blocks (e.g., glass panes)

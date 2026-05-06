@@ -1,7 +1,7 @@
 package com.teamtea.eclipticseasons.api;
 
 import com.teamtea.eclipticseasons.api.constant.biome.Humidity;
-import com.teamtea.eclipticseasons.api.constant.solar.Month;
+import com.teamtea.eclipticseasons.api.constant.solar.gregorian.GregorianMonth;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.data.season.SpecialDays;
@@ -55,13 +55,13 @@ public interface EclipticSeasonsApi {
     Season getSeason(Level level);
     Season.Sub getSubSeason(Level level);
 
-    Month getStandardMonth(Level level);
+    GregorianMonth getGregorianMonth(Level level);
 
     int getSolarDays(Level level);
 
     int getSolarYears(Level level);
 
-    int getStandardYear(Level level);
+    int getGregorianYear(Level level);
 
     int getLastingDaysOfEachTerm(Level level);
 

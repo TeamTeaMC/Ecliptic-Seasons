@@ -17,6 +17,7 @@ import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
 import com.teamtea.eclipticseasons.common.core.solar.CalendarAstronomer;
 import com.teamtea.eclipticseasons.common.core.solar.FixedSolarDataManagerLocal;
 import com.teamtea.eclipticseasons.common.core.solar.SolarTermHelper;
+import com.teamtea.eclipticseasons.config.ClientConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.player.LocalPlayer;
@@ -98,7 +99,7 @@ public class CalendarBlockEntityRenderer implements BlockEntityRenderer<Calendar
                         String string = "";
                         switch (displayMode) {
                             case YEAR ->
-                                    string = Component.translatable("info.eclipticseasons.environment.solar_term.hint2", ClientCon.nowSolarYear).getString();
+                                    string = Component.translatable("info.eclipticseasons.environment.solar_term.hint2", ClientConfig.GUI.showGregorianYear.getAsBoolean() ? ClientCon.nowGregorianYear : ClientCon.nowSolarYear).getString();
                             case NEXT -> {
                                 Pair<SolarTerm, ISolarTerm> nextPair = SolarTermHelper.getNextTermAndStart(blockEntity.getBiome(), st);
                                 int remain;
@@ -124,7 +125,7 @@ public class CalendarBlockEntityRenderer implements BlockEntityRenderer<Calendar
                             case DAY ->
                                     string = Component.translatable("info.eclipticseasons.environment.solar_term.hint4", EclipticUtil.getNowSolarDay(blockEntity.getLevel())).getString();
                             case SUB_SEASON, MONTH ->
-                                    string = Component.translatable("info.eclipticseasons.environment.solar_term.hint6", EclipticSeasonsApi.getInstance().getStandardMonth(ClientCon.getUseLevel()).getTranslation(), EclipticSeasonsApi.getInstance().getDayOfMonth(ClientCon.getUseLevel())).getString();
+                                    string = Component.translatable("info.eclipticseasons.environment.solar_term.hint6", EclipticSeasonsApi.getInstance().getGregorianMonth(ClientCon.getUseLevel()).getTranslation(), EclipticSeasonsApi.getInstance().getDayOfMonth(ClientCon.getUseLevel())).getString();
                             default -> string = seasonPhaseUsed.getTittleTranslation().getString();
                         }
                         drawText(2, string, Color.GRAY.getRGB(), matrixStackIn, multiBufferSource);

@@ -175,7 +175,7 @@ public class CommandHandler {
                             )
                             .then(Commands.literal("getMonth")
                                     .executes(commandContext -> {
-                                        ITranslatable sub = (EclipticSeasonsApi.getInstance().getStandardMonth(commandContext.getSource().getLevel()));
+                                        ITranslatable sub = (EclipticSeasonsApi.getInstance().getGregorianMonth(commandContext.getSource().getLevel()));
                                         commandContext.getSource().sendSuccess(sub::getTranslation, true);
                                         return 0;
                                     })

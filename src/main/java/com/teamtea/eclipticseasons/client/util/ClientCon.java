@@ -27,11 +27,11 @@ public class ClientCon {
     public static Season nowSeason = Season.NONE;
 
     public static int nowSolarYear = 0;
+    public static int nowGregorianYear = 0;
     public static boolean isDay = false;
     public static boolean isEvening = false;
     public static boolean isNoon = false;
 
-    // todo 也许未来应该根据位置提供一个noise的season或者节气
     public static int progress = 0;
 
     // Use for export
@@ -55,6 +55,7 @@ public class ClientCon {
                 ClientCon.progress = Mth.clamp(Mth.floor(((saveData.getSolarTermDaysInPeriod() + (Mth.floor((clientLevel.getDayTime() + EclipticUtil.getDayLengthInMinecraft(clientLevel)) % ((long) EclipticUtil.getDayLengthInMinecraft(clientLevel)) / ((float) EclipticUtil.getDayLengthInMinecraft(clientLevel)) * 10)) / 10f) * 100 / saveData.getSolarTermLastingDays())), 0, 100);
             }
             ClientCon.nowSolarYear = EclipticUtil.getNowSolarYear(clientLevel);
+            ClientCon.nowGregorianYear = EclipticSeasonsApi.getInstance().getGregorianYear(clientLevel);
         } else {
             ClientCon.nowSolarTerm = SolarTerm.NONE;
             ClientCon.nowSeason = Season.NONE;
@@ -63,6 +64,7 @@ public class ClientCon {
             ClientCon.isNoon = false;
             ClientCon.progress = 0;
             ClientCon.nowSolarYear = 0;
+            ClientCon.nowGregorianYear = 0;
         }
 
         if (!roomCache.isEmpty()) {

@@ -98,28 +98,62 @@ public class ESModConfigScreen extends Screen {
         registerBuiltinConfigTabs();
 
         // entries.add(new TitleEntry("Hot Selections"));
-        addToHotTab(new CallbackEntry("eclipticseasons.configuration.RenderedSnow", CommonConfig.Snow.snowyWinter.get(), (bt, b) -> {
-            CommonConfig.Snow.snowyWinter.set(b);
-        }));
-        addToHotTab(new CallbackEntry("eclipticseasons.configuration.BlockSnow", CommonConfig.isVanillaSnowAndIce(), (bt, b) -> {
-            CommonConfig.Temperature.snowDown.set(b);
-            CommonConfig.Temperature.iceMelt.set(b);
-        }));
-        addToHotTab(new CallbackEntry("eclipticseasons.configuration.DebugInfo", ClientConfig.Debug.debugInfo.get(), (bt, b) -> {
-            ClientConfig.Debug.debugInfo.set(b);
-        }));
-        addToHotTab(new CallbackEntry("eclipticseasons.configuration.NaturalSound", ClientConfig.Sound.naturalSound.get(), (bt, b) -> {
-            ClientConfig.Sound.naturalSound.set(b);
-        }));
-        addToHotTab(new CallbackEntry("eclipticseasons.configuration.ExtraSnowLayer", ClientConfig.Renderer.extraSnowLayer.get(), (bt, b) -> {
-            ClientConfig.Renderer.extraSnowLayer.set(b);
-        }));
-        addToHotTab(new CallbackEntry("eclipticseasons.configuration.ExtraSnowDefinitions", StartConfig.Resource.extraSnow.get(), (bt, b) -> {
-            StartConfig.Resource.extraSnow.set(b);
-        }));
-        addToHotTab(new CallbackEntry("eclipticseasons.configuration.FrozenWater", ClientConfig.Debug.frozenWater.get(), (bt, b) -> {
-            ClientConfig.Debug.frozenWater.set(b);
-        }));
+        addToHotTab(new CallbackEntry(
+                "eclipticseasons.configuration.RenderedSnow",
+                "eclipticseasons.configuration.RenderedSnow.tooltip",
+                CommonConfig.Snow.snowyWinter.get(),
+                (bt, b) -> {
+                    CommonConfig.Snow.snowyWinter.set(b);
+                }));
+
+        addToHotTab(new CallbackEntry(
+                "eclipticseasons.configuration.BlockSnow",
+                "eclipticseasons.configuration.BlockSnow.tooltip",
+                CommonConfig.isVanillaSnowAndIce(),
+                (bt, b) -> {
+                    CommonConfig.Temperature.snowDown.set(b);
+                    CommonConfig.Temperature.iceMelt.set(b);
+                }));
+
+        addToHotTab(new CallbackEntry(
+                "eclipticseasons.configuration.DebugInfo",
+                "eclipticseasons.configuration.DebugInfo.tooltip",
+                ClientConfig.Debug.debugInfo.get(),
+                (bt, b) -> {
+                    ClientConfig.Debug.debugInfo.set(b);
+                }));
+
+        addToHotTab(new CallbackEntry(
+                "eclipticseasons.configuration.NaturalSound",
+                "eclipticseasons.configuration.NaturalSound.tooltip",
+                ClientConfig.Sound.naturalSound.get(),
+                (bt, b) -> {
+                    ClientConfig.Sound.naturalSound.set(b);
+                }));
+
+        addToHotTab(new CallbackEntry(
+                "eclipticseasons.configuration.ExtraSnowLayer",
+                "eclipticseasons.configuration.ExtraSnowLayer.tooltip",
+                ClientConfig.Renderer.extraSnowLayer.get(),
+                (bt, b) -> {
+                    ClientConfig.Renderer.extraSnowLayer.set(b);
+                }));
+
+        addToHotTab(new CallbackEntry(
+                "eclipticseasons.configuration.ExtraSnowDefinitions",
+                "eclipticseasons.configuration.ExtraSnowDefinitions.tooltip",
+                StartConfig.Resource.extraSnow.get(),
+                (bt, b) -> {
+                    StartConfig.Resource.extraSnow.set(b);
+                }));
+
+        addToHotTab(new CallbackEntry(
+                "eclipticseasons.configuration.FrozenWater",
+                "eclipticseasons.configuration.FrozenWater.tooltip",
+                ClientConfig.Debug.frozenWater.get(),
+                (bt, b) -> {
+                    ClientConfig.Debug.frozenWater.set(b);
+                }));
 
 
         for (UnmodifiableConfig.Entry entry :
@@ -183,6 +217,7 @@ public class ESModConfigScreen extends Screen {
                 CommonConfig.Season.initialSolarTermIndex,
                 CommonConfig.Season.monthOffset,
                 CommonConfig.Season.dayOffset,
+                ClientConfig.GUI.showGregorianYear,
                 CommonConfig.Season.daylightChange,
                 CommonConfig.Season.springDayTimes,
                 CommonConfig.Season.summerDayTimes,
