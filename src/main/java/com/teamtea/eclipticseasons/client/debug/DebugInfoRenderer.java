@@ -109,8 +109,8 @@ public class DebugInfoRenderer {
             Season.Sub subSeason = EclipticSeasonsApi.getInstance().getSubSeason(level);
             infoLines.addKV("Sub Season", subSeason.getTranslation().getString(), subSeason.getSeason().getColor().toString());
             infoLines.addKV("Month", Component.translatable("debug_info.eclipticseasons.standard_year_month_day",
-                    EclipticSeasonsApi.getInstance().getStandardYear(level),
-                    EclipticSeasonsApi.getInstance().getStandardMonth(level).getTranslation().getString(),
+                    ClientConfig.GUI.showGregorianYear.get() ? EclipticSeasonsApi.getInstance().getGregorianYear(level) : EclipticSeasonsApi.getInstance().getSolarYears(level),
+                    EclipticSeasonsApi.getInstance().getGregorianMonth(level).getTranslation().getString(),
                     EclipticSeasonsApi.getInstance().getDayOfMonth(level)
             ).getString(), "§e");
             StringBuilder specialDays = new StringBuilder();
@@ -166,14 +166,14 @@ public class DebugInfoRenderer {
                         float rainChance = weatherTarget.getBiomeRain().getRainChance()
                                 * Math.max(0.01f, downfall)
                                 * (CommonConfig.Weather.rainChanceMultiplier.get() / 100f);
-                        infoLines.addKV("Rain Chance", String.format("%.2f%%", Math.min(rainChance * 100, 100)), "§b");
+                        infoLines.addKV("Rain Chance", String.format("%.2f%%", rainChance * 100), "§b");
 
                         if (level.isRaining()) {
                             int size = WeatherManager.getWeatherTickFactor(level);
                             float thunderChance = weatherTarget.getBiomeRain().getThunderChance()
                                     * (CommonConfig.Weather.thunderChanceMultiplier.get() / 100f)
                                     * size / 3000f;
-                            infoLines.addKV("Thunder Chance", String.format("%.2f%%", Math.min(thunderChance * 10000, 100)), "§e");
+                            infoLines.addKV("Thunder Chance", String.format("%.2f%%", thunderChance * 100), "§e");
                         } else {
                             infoLines.addKV("Thunder", "Waiting Rain", "");
                         }
