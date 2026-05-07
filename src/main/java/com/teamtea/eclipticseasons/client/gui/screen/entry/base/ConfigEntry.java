@@ -102,7 +102,7 @@ public abstract class ConfigEntry {
             RestartTypeUtil.RestartType restartType = RestartTypeUtil.get(spec);
             return switch (restartType) {
                 case WORLD -> inGame;
-                case GAME -> !inGame;
+                case GAME -> true;
                 default -> false;
             };
         }

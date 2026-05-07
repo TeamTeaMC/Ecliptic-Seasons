@@ -38,7 +38,7 @@ public class CallbackEntry extends ConfigEntry {
     public boolean shouldRestart(boolean inGame) {
         return switch (restartType) {
             case WORLD -> inGame;
-            case GAME -> !inGame;
+            case GAME -> true;
             default -> false;
         };
     }
