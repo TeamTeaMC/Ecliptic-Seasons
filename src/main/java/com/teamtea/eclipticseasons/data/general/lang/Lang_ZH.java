@@ -24,6 +24,15 @@ public class Lang_ZH extends LangHelper {
         add(KeyMappingRegistry.DEBUG_KEY.getCategory(), "节气");
         add("eclipticseasons.options.configured_uninstalled", "配置界面未安装");
 
+        add("eclipticseasons.configuration.uitext.restart.game.title", "需要重启游戏");
+        add("eclipticseasons.configuration.uitext.restart.server.title", "需要重启世界");
+
+        add("eclipticseasons.configuration.uitext.restart.server.text", "部分配置需要重新启动单人世界后生效。");
+        add("eclipticseasons.configuration.uitext.restart.game.text", "部分配置需要重新启动游戏后生效。");
+
+        add("eclipticseasons.configuration.uitext.restart.return", "返回");
+        add("eclipticseasons.configuration.uitext.restart.return.tooltip", "部分修改可能不会立即生效。");
+
         add("itemGroup." + EclipticSeasonsApi.MODID + ".core", "节气");
 
 

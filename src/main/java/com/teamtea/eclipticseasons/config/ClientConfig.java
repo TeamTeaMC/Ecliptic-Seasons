@@ -157,6 +157,7 @@ public class ClientConfig {
                             "- 12 colors: Monthly (2 terms each)",
                             "The 'placeholder_color' maps to index 24; 'base_color' is the final reference hex."
                     )
+                    .worldRestart()
                     .defineListAllowEmpty("SeasonalColorOverrides",
                             FoliageColorSourceDefault::createConfig,
                             // FoliageColorSourceDefault::createSingle,
@@ -175,7 +176,7 @@ public class ClientConfig {
         private static void load(ForgeConfigSpec.Builder builder) {
             builder.push("Sound");
             sound = builder.comment("Enable ambient environmental sounds (birds, wind, etc.) based on the season.")
-                    .define("NaturalSound", true);
+                    .worldRestart().define("NaturalSound", true);
             builder.pop();
         }
     }

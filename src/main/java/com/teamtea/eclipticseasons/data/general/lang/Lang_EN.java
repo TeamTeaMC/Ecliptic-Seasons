@@ -24,6 +24,15 @@ public class Lang_EN extends LangHelper {
         add(KeyMappingRegistry.DEBUG_KEY.getCategory(), "Ecliptic Seasons");
         add("eclipticseasons.options.configured_uninstalled", "Configured Uninstalled");
 
+        add("eclipticseasons.configuration.uitext.restart.game.title", "Game Restart Required");
+        add("eclipticseasons.configuration.uitext.restart.server.title", "Server Restart Required");
+
+        add("eclipticseasons.configuration.uitext.restart.server.text", "Some changes require restarting the integrated server to take effect.");
+        add("eclipticseasons.configuration.uitext.restart.game.text", "Some changes require restarting the game to take effect.");
+
+        add("eclipticseasons.configuration.uitext.restart.return", "Return");
+        add("eclipticseasons.configuration.uitext.restart.return.tooltip", "Some changes may not apply until restart.");
+
         add("itemGroup." + EclipticSeasonsApi.MODID + ".core", "Ecliptic Seasons");
 
         add(BlockRegistry.calendar.get(), "Calendar");

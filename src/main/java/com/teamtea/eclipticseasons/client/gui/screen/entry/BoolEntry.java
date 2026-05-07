@@ -21,7 +21,7 @@ public class BoolEntry extends ConfigEntry.SpecEntry<Boolean> {
 
         CycleButton<Boolean> booleanCycleButton = CycleButton.onOffBuilder(spec.get())
                 .create(0, 0, width, 20, this.label, (button, value) -> spec.set(value));
-        booleanCycleButton.setTooltip(Tooltip.create(Component.translatable("eclipticseasons.configuration." + spec.getPath().get(spec.getPath().size()-1)).withStyle(ChatFormatting.BOLD).append(Component.translatable("\n\n" + SpecUtil.getSpec(spec).getComment() + "")).withStyle(ChatFormatting.RESET)));
+        // booleanCycleButton.setTooltip(Tooltip.create(Component.translatable("eclipticseasons.configuration." + spec.getPath().get(spec.getPath().size()-1)).withStyle(ChatFormatting.BOLD).append(Component.translatable("\n\n" + SpecUtil.getSpec(spec).getComment() + "")).withStyle(ChatFormatting.RESET)));
         return booleanCycleButton;
     }
 
