@@ -101,7 +101,7 @@ public abstract class ConfigEntry {
             ModConfigSpec.RestartType restartType = spec.getSpec().restartType();
             return switch (restartType) {
                 case WORLD -> inGame;
-                case GAME -> !inGame;
+                case GAME -> true;
                 default -> false;
             };
         }
