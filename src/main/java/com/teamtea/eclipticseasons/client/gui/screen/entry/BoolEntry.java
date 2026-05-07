@@ -18,7 +18,7 @@ public class BoolEntry extends ConfigEntry.SpecEntry<Boolean> {
     public AbstractWidget buildModConfigSpec(ESModConfigScreen screen, int x, int y, int width) {
         CycleButton<Boolean> booleanCycleButton = CycleButton.onOffBuilder(spec.get())
                 .create(x, y, width, 20, this.label, (button, value) -> spec.set(value));
-        booleanCycleButton.setTooltip(Tooltip.create(Component.translatable("eclipticseasons.configuration." + spec.getPath().getLast()).withStyle(ChatFormatting.BOLD).append(Component.translatable("\n\n" + spec.getSpec().getComment() + "")).withStyle(ChatFormatting.RESET)));
+        // booleanCycleButton.setTooltip(Tooltip.create(Component.translatable("eclipticseasons.configuration." + spec.getPath().getLast()).withStyle(ChatFormatting.BOLD).append(Component.translatable("\n\n" + spec.getSpec().getComment() + "")).withStyle(ChatFormatting.RESET)));
         return booleanCycleButton;
     }
 

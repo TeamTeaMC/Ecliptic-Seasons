@@ -6,6 +6,7 @@ import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.compat.CompatModule;
 import lombok.Getter;
+import lombok.Setter;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
@@ -150,7 +151,7 @@ public class CommonConfig {
                     .define("DynamicDaylightDuration", true);
 
             validDimensions = builder.comment("List of dimension IDs where seasonal effects should be active.")
-                    .defineListAllowEmpty("ValidDimensions",
+                    .worldRestart().defineListAllowEmpty("ValidDimensions",
                             () -> List.of(Level.OVERWORLD.location().toString()),
                             () -> Level.OVERWORLD.location().toString(),
                             o -> o instanceof String s && ResourceLocation.tryParse(s) != null);
@@ -488,7 +489,7 @@ public class CommonConfig {
             notSnowyNearGlowingBlockLevel = builder.comment("The minimum light level required to prevent snow accumulation.")
                     .defineInRange("NotSnowyNearGlowingBlockLevel", 10, 1, 15);
             blocksNotSnowy = builder.comment("List of Block IDs that will never be covered by snow overlays.")
-                    .defineListAllowEmpty("ForceBlocksNotSnowy",
+                    .worldRestart().defineListAllowEmpty("ForceBlocksNotSnowy",
                             List::of,
                             () -> "",
                             o -> o instanceof String s && ResourceLocation.tryParse(s) != null);
@@ -514,28 +515,37 @@ public class CommonConfig {
 
     public static class Resource {
         public static ModConfigSpec.BooleanValue SnowTogether;
-        public static ModConfigSpec.BooleanValue RainTogether;
+        // public static ModConfigSpec.BooleanValue RainTogether;
         public static ModConfigSpec.BooleanValue RegionalSnowTime;
         public static ModConfigSpec.BooleanValue VanillaBiomeClimateSettings;
         public static ModConfigSpec.BooleanValue NotIgnoreRiver;
+        // public static ModConfigSpec.BooleanValue springGrass;
 
         private static void load(ModConfigSpec.Builder builder) {
             builder.push("Resource");
 
-            RainTogether = builder.comment("Synchronizes weather states across all Overworld biomes, ensuring global rainfall.")
-                    .define("RainTogether", true);
+            // RainTogether = builder.comment("Synchronizes weather states across all Overworld biomes, ensuring global rainfall.")
+            //         .define("RainTogether", true);
 
             SnowTogether = builder.comment("Synchronizes the snowfall schedule for all Overworld biomes.")
+                    .worldRestart()
                     .define("SnowTogether", false);
 
             RegionalSnowTime = builder.comment("Aligns snowfall schedules based on three broad climate zones (Warm, Temperate, and Cold) instead of per-biome.")
+                    .worldRestart()
                     .define("RegionalSnowTime", true);
 
             VanillaBiomeClimateSettings = builder.comment("Enforces original Vanilla temperature and precipitation settings to prevent other mods from creating extreme environmental values.")
+                    .worldRestart()
                     .define("VanillaBiomeClimateSettings", true);
 
             NotIgnoreRiver = builder.comment("When enabled, rivers are no longer treated as ignored climate zones. This reduces performance overhead but may result in less natural weather transitions near riverbanks.")
+                    .worldRestart()
                     .define("NotIgnoreRiver", false);
+
+            // springGrass = builder.comment("Spring brings life to grass and flowers, while autumn marks the fading.")
+            //         .worldRestart()
+            //         .define("SpringGrass", false);
 
             builder.pop();
         }
@@ -563,6 +573,7 @@ public class CommonConfig {
     private static final Set<Block> forceBlocksNotSnowy = new HashSet<>();
 
     @Getter
+    @Setter
     private static boolean vanillaSnowAndIce = false;
 
     public static void UpdateConfig(ModConfigEvent modConfigEvent) {

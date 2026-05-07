@@ -160,7 +160,7 @@ public class ModContents {
             }
             if (event.getPackType() == PackType.SERVER_DATA) {
                 addPackIfEnabled(event, modFile,
-                        CommonConfig.Resource.RainTogether, "Rain Together", "rain_together");
+                        "Rain Together", "rain_together");
                 addPackIfEnabled(event, modFile,
                         CommonConfig.Resource.SnowTogether, "Rain Together", "snow_together");
                 addPackIfEnabled(event, modFile,
@@ -175,10 +175,15 @@ public class ModContents {
 
     private static void addPackIfEnabled(AddPackFindersEvent event, ModFile modFile, ModConfigSpec.BooleanValue booleanValue, String name, String pack_id) {
         if (booleanValue.get())
-            FakeResourceManagerHelperUtil.registerBuiltinResourcePack(
-                    event, EclipticSeasonsApi.MODID + "/",
-                    EclipticSeasonsApi.MODID, name, modFile,
-                    Component.translatable(EclipticSeasons.rl(pack_id).toLanguageKey("pack")),
-                    PackType.SERVER_DATA, PackSource.FEATURE, new PackSelectionConfig(true, Pack.Position.BOTTOM, false));
+            addPackIfEnabled(event, modFile, name, pack_id);
+    }
+
+
+    private static void addPackIfEnabled(AddPackFindersEvent event, ModFile modFile, String name, String pack_id) {
+        FakeResourceManagerHelperUtil.registerBuiltinResourcePack(
+                event, EclipticSeasonsApi.MODID + "/",
+                EclipticSeasonsApi.MODID, name, modFile,
+                Component.translatable(EclipticSeasons.rl(pack_id).toLanguageKey("pack")),
+                PackType.SERVER_DATA, PackSource.FEATURE, new PackSelectionConfig(true, Pack.Position.BOTTOM, false));
     }
 }

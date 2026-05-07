@@ -7,6 +7,7 @@ import com.teamtea.eclipticseasons.client.gui.screen.entry.FixedIntegerListEntry
 import com.teamtea.eclipticseasons.client.gui.screen.entry.NumberEntry;
 import com.teamtea.eclipticseasons.client.gui.screen.entry.SuggestedListStringEntry;
 import com.teamtea.eclipticseasons.config.CommonConfig;
+import lombok.Getter;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.MultiLineTextWidget;
@@ -14,6 +15,7 @@ import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.layouts.LayoutElement;
 import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
@@ -26,6 +28,14 @@ public abstract class ConfigEntry {
 
     public ConfigEntry(String translationKey) {
         this.label = Component.translatable(translationKey);
+    }
+
+    public boolean isValueChanged() {
+        return false;
+    }
+
+    public boolean shouldRestart(boolean inGame) {
+        return false;
     }
 
     public int getPosition() {
@@ -56,7 +66,8 @@ public abstract class ConfigEntry {
         throw new UnsupportedOperationException(spec.getPath().getLast());
     }
 
-    public  static MultiLineTextWidget getMultiLineTextWidget(Component label, ESModConfigScreen screen, int width) {
+    public
+    static MultiLineTextWidget getMultiLineTextWidget(Component label, ESModConfigScreen screen, int width) {
         Component label1 = label;
         int width1 = screen.getFont().width(label1.getString());
         if (width1 > width - 20) {
@@ -71,29 +82,52 @@ public abstract class ConfigEntry {
     }
 
     public abstract static class SpecEntry<T> extends ConfigEntry {
+        @Getter
         protected final ModConfigSpec.ConfigValue<T> spec;
+        protected final long hashValueCache;
 
         public SpecEntry(ModConfigSpec.ConfigValue<T> spec) {
             super("eclipticseasons.configuration." + spec.getPath().getLast());
             this.spec = spec;
+            this.hashValueCache = spec.get().hashCode();
+        }
+
+        public boolean isValueChanged() {
+            spec.clearCache();
+            return spec.get().hashCode() != hashValueCache;
+        }
+
+        public boolean shouldRestart(boolean inGame) {
+            ModConfigSpec.RestartType restartType = spec.getSpec().restartType();
+            return switch (restartType) {
+                case WORLD -> inGame;
+                case GAME -> !inGame;
+                default -> false;
+            };
         }
 
         @Override
         public LayoutElement build(ESModConfigScreen screen, int x, int y, int width) {
             screen.configRegistered.add(spec);
+            spec.clearCache();
 
             LayoutElement layoutElement = buildLayout(screen, x, y, width);
 
             MutableComponent title = Component.translatable("eclipticseasons.configuration." + spec.getPath().getLast())
                     .withStyle(ChatFormatting.BOLD);
 
+            String commentKey = "eclipticseasons.configuration." + spec.getPath().getLast() + ".tooltip";
             MutableComponent comment = Component.literal("\n\n")
                     .withStyle(Style.EMPTY.withBold(false))
-                    .append(Component.translatable(spec.getSpec().getComment() + ""));
+                    .append(Language.getInstance().has(commentKey) ?
+                            Component.translatable(commentKey) :
+                            Component.literal(spec.getSpec().getComment() + ""));
 
             layoutElement.visitWidgets(aw -> {
-                if (aw.tooltip.get() == null)
-                    aw.setTooltip(Tooltip.create(title.copy().append(comment)));
+                if (aw.tooltip.get() == null) {
+                    // aw.setTooltip(Tooltip.create(title.copy().append(comment)));
+                    aw.setTooltip(Tooltip.create(title.copy().withStyle(ChatFormatting.BOLD).append(comment.withStyle(style -> style.withBold(false)))));
+                }
             });
             // layoutElement.setTooltip(Tooltip.create(title.append(comment)));
             return layoutElement;
