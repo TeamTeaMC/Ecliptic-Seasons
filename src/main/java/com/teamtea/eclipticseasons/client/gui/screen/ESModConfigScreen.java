@@ -497,6 +497,7 @@ public class ESModConfigScreen extends Screen {
         }
 
         boolean needRestart = false;
+        boolean needGameRestart = false;
         boolean isChanged = false;
         boolean inGame = Minecraft.getInstance().level != null;
         for (Map.Entry<Component, Tab> componentTabEntry : tabs.entrySet()) {
@@ -505,6 +506,7 @@ public class ESModConfigScreen extends Screen {
                     boolean valueChange = configEntry.isValueChanged();
                     isChanged |= valueChange;
                     needRestart |= valueChange && configEntry.shouldRestart(inGame);
+                    needGameRestart |= valueChange && configEntry.shouldRestart(false);
                     if (valueChange && configEntry instanceof ConfigEntry.SpecEntry<?> specEntry) {
                         specEntry.getSpec().clearCache();
                     }
@@ -523,8 +525,8 @@ public class ESModConfigScreen extends Screen {
             EclipticSeasonsMixinPlugin.PreloadedConfig.getConfig().save();
         }
 
-        if (needRestart) {
-            var restartType = inGame ? ModConfigSpec.RestartType.WORLD : ModConfigSpec.RestartType.GAME;
+        if (needRestart || needGameRestart) {
+            var restartType = inGame && !needGameRestart ? ModConfigSpec.RestartType.WORLD : ModConfigSpec.RestartType.GAME;
             switch (restartType) {
                 case GAME -> {
                     minecraft.setScreen(new TooltipConfirmScreen(b -> {
