@@ -493,7 +493,7 @@ public class ESModConfigScreen extends Screen {
 
     public void initConfigCache() {
         for (ModConfig modConfig : Stream.of(ModConfig.Type.COMMON, ModConfig.Type.CLIENT)
-                .map(c -> ConfigTracker.INSTANCE.getConfigFileName(EclipticSeasonsApi.MODID, c))
+                .map(c -> EclipticSeasons.defaultConfigName(ModConfig.Type.COMMON, EclipticSeasonsApi.MODID))
                 .map(s -> ConfigTracker.INSTANCE.fileMap().get(s))
                 .filter(Objects::nonNull)
                 .toList()) {
@@ -524,6 +524,7 @@ public class ESModConfigScreen extends Screen {
         }
 
         boolean needRestart = false;
+        boolean needGameRestart = false;
         boolean isChanged = false;
         boolean inGame = Minecraft.getInstance().level != null;
         for (Map.Entry<Component, Tab> componentTabEntry : tabs.entrySet()) {
@@ -532,6 +533,7 @@ public class ESModConfigScreen extends Screen {
                     boolean valueChange = configEntry.isValueChanged();
                     isChanged |= valueChange;
                     needRestart |= valueChange && configEntry.shouldRestart(inGame);
+                    needGameRestart |= valueChange && configEntry.shouldRestart(false);
                     if (valueChange && configEntry instanceof ConfigEntry.SpecEntry<?> specEntry) {
                         specEntry.getSpec().clearCache();
                     }
@@ -541,15 +543,15 @@ public class ESModConfigScreen extends Screen {
         }
 
         if (isChanged) {
-            var file = ConfigTracker.INSTANCE.fileMap().get( new File(ConfigTracker.INSTANCE.getConfigFileName(EclipticSeasonsApi.MODID, ModConfig.Type.COMMON)).getName());
+            var file = ConfigTracker.INSTANCE.fileMap().get(EclipticSeasons.defaultConfigName(ModConfig.Type.COMMON, EclipticSeasonsApi.MODID));
             ESConfigSync.INSTANCE.notBackup(file);
             CommonConfig.COMMON_CONFIG.save();
             ClientConfig.CLIENT_CONFIG.save();
             EclipticSeasonsMixinPlugin.PreloadedConfig.getConfig().save();
         }
 
-        if (needRestart) {
-            var restartType = inGame ? RestartTypeUtil.RestartType.WORLD : RestartTypeUtil.RestartType.GAME;
+        if (needRestart || needGameRestart) {
+            var restartType = inGame && !needGameRestart ? RestartTypeUtil.RestartType.WORLD : RestartTypeUtil.RestartType.GAME;
             switch (restartType) {
                 case GAME -> {
                     minecraft.setScreen(new TooltipConfirmScreen(b -> {

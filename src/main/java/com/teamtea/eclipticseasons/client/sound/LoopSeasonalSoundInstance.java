@@ -58,7 +58,7 @@ public class LoopSeasonalSoundInstance extends AbstractTickableSoundInstance {
     }
 
     public void checkIfForceStop() {
-        if (lastTickTime - System.currentTimeMillis() > 1000 * 5) {
+        if (System.currentTimeMillis() - lastTickTime > 1000 * 5) {
             this.stop();
         }
     }
