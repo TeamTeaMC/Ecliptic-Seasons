@@ -4,11 +4,9 @@ import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.electronwill.nightconfig.core.io.ParsingMode;
 import com.electronwill.nightconfig.toml.TomlFormat;
 import com.teamtea.eclipticseasons.EclipticSeasons;
-import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.common.network.SimpleNetworkHandler;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import com.teamtea.eclipticseasons.mixin.EclipticSeasonsMixinPlugin;
-import net.minecraft.client.Minecraft;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
@@ -18,7 +16,6 @@ import net.neoforged.fml.config.IConfigSpec;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.config.ModConfigs;
 import net.neoforged.fml.loading.FMLPaths;
-import net.neoforged.neoforge.event.entity.player.PermissionsChangedEvent;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
 
 import java.io.ByteArrayInputStream;
@@ -61,7 +58,8 @@ public class ESConfigSync {
     private final Map<String, byte[]> LOCAL_CONFIG_BACKUP = new ConcurrentHashMap<>();
 
     public void receiveSyncedConfig(final byte[] contents, final String fileName) {
-        if (Minecraft.getInstance().isLocalServer()) {
+        if (ServerLifecycleHooks.getCurrentServer() == null
+                || ServerLifecycleHooks.getCurrentServer().isSingleplayer()) {
             return;
         }
 
@@ -96,7 +94,8 @@ public class ESConfigSync {
     }
 
     public void onClientPlayerExit() {
-        if (Minecraft.getInstance().isLocalServer()) {
+        if (ServerLifecycleHooks.getCurrentServer() == null
+                || ServerLifecycleHooks.getCurrentServer().isSingleplayer()) {
             LOCAL_CONFIG_BACKUP.clear();
             return;
         }

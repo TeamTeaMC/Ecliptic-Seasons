@@ -7,10 +7,10 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.network.codec.NeoForgeStreamCodecs;
-import org.jetbrains.annotations.NotNull;
 
-public record ESConfigFilePayload(String fileName, byte[] contents) implements CustomPacketPayload {
+public record ESConfigFilePayload(String fileName, byte[] contents) implements CustomPacketPayload, IESConfigMessage {
     public static final Type<ESConfigFilePayload> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(EclipticSeasonsApi.MODID, "config_file"));
+
     public static final StreamCodec<FriendlyByteBuf, ESConfigFilePayload> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.STRING_UTF8,
             ESConfigFilePayload::fileName,
@@ -19,7 +19,7 @@ public record ESConfigFilePayload(String fileName, byte[] contents) implements C
             ESConfigFilePayload::new);
 
     @Override
-    public @NotNull Type<ESConfigFilePayload> type() {
+    public Type<ESConfigFilePayload> type() {
         return TYPE;
     }
 }
