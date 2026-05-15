@@ -2,7 +2,7 @@
 	"credit": "Made with Blockbench",
 	"textures": {
 		"3": "eclipticseasons:block/windring3",
-		"particle": "eclipticseasons:block/windring"
+		"particle": "eclipticseasons:block/windring3"
 	},
 	"elements": [
 		{
