@@ -2,8 +2,9 @@ package com.teamtea.eclipticseasons.client.gui.screen.entry.base;
 
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.client.gui.screen.ESModConfigScreen;
-import com.teamtea.eclipticseasons.client.gui.screen.RestartTypeUtil;
-import com.teamtea.eclipticseasons.client.gui.screen.SpecUtil;
+import com.teamtea.eclipticseasons.config.sync.SyncType;
+import com.teamtea.eclipticseasons.config.util.RestartTypeUtil;
+import com.teamtea.eclipticseasons.config.util.SpecUtil;
 import com.teamtea.eclipticseasons.client.gui.screen.entry.BoolEntry;
 import com.teamtea.eclipticseasons.client.gui.screen.entry.FixedIntegerListEntry;
 import com.teamtea.eclipticseasons.client.gui.screen.entry.NumberEntry;
@@ -15,7 +16,6 @@ import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.MultiLineTextWidget;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.layouts.LayoutElement;
-import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
@@ -38,6 +38,10 @@ public abstract class ConfigEntry {
 
     public boolean shouldRestart(boolean inGame) {
         return false;
+    }
+
+    public SyncType getSyncType() {
+        return SyncType.NONE;
     }
 
     public int getPosition() {
@@ -87,10 +91,14 @@ public abstract class ConfigEntry {
         protected final ForgeConfigSpec.ConfigValue<T> spec;
         protected final long hashValueCache;
 
+        @Getter
+        protected final SyncType syncType;
+
         public SpecEntry(ForgeConfigSpec.ConfigValue<T> spec) {
             super("eclipticseasons.configuration." + spec.getPath().get(spec.getPath().size() - 1));
             this.spec = spec;
             this.hashValueCache = spec.get().hashCode();
+            syncType = SyncType.getTypeFrom(spec);
         }
 
         public boolean isValueChanged() {

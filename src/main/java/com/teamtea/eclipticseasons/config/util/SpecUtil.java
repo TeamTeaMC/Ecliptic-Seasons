@@ -1,4 +1,4 @@
-package com.teamtea.eclipticseasons.client.gui.screen;
+package com.teamtea.eclipticseasons.config.util;
 
 import lombok.Getter;
 import net.minecraftforge.common.ForgeConfigSpec;

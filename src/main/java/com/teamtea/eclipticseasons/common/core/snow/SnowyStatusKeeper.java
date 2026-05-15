@@ -253,7 +253,7 @@ public class SnowyStatusKeeper implements Cloneable, ICapabilityProvider, INBTSe
 
     @Override
     public CompoundTag serializeNBT() {
-        if (!EclipticUtil.canSnowyBlockInteract()) new CompoundTag();
+        if (!EclipticUtil.canSnowyBlockInteract()) return new CompoundTag();
         if (cacheTag != null) return cacheTag;
         Level level = WeatherManager.fetchLevelIfNull(null);
         if (level != null) {

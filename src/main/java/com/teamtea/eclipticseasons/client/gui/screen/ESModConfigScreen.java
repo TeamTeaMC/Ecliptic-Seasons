@@ -10,16 +10,19 @@ import com.teamtea.eclipticseasons.client.gui.screen.entry.base.ConfigEntry;
 import com.teamtea.eclipticseasons.client.gui.screen.entry.base.SimpleBoolEntry;
 import com.teamtea.eclipticseasons.client.gui.screen.entry.base.TitleEntry;
 import com.teamtea.eclipticseasons.client.gui.screen.tab.Tab;
+import com.teamtea.eclipticseasons.common.network.SimpleNetworkHandler;
 import com.teamtea.eclipticseasons.compat.CompatModule;
 import com.teamtea.eclipticseasons.compat.configured.ConfiguredUtil;
 import com.teamtea.eclipticseasons.config.ClientConfig;
 import com.teamtea.eclipticseasons.config.CommonConfig;
-import com.teamtea.eclipticseasons.config.ESConfigSync;
+import com.teamtea.eclipticseasons.config.sync.ESConfigSync;
+import com.teamtea.eclipticseasons.config.sync.ESConfigToServerPayload;
+import com.teamtea.eclipticseasons.config.sync.SyncType;
+import com.teamtea.eclipticseasons.config.util.RestartTypeUtil;
 import com.teamtea.eclipticseasons.mixin.EclipticSeasonsMixinPlugin;
 import it.unimi.dsi.fastutil.booleans.BooleanConsumer;
 import lombok.Getter;
 import net.minecraft.ChatFormatting;
-import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -28,18 +31,17 @@ import net.minecraft.client.gui.components.StringWidget;
 import net.minecraft.client.gui.layouts.*;
 import net.minecraft.client.gui.screens.*;
 import net.minecraft.client.gui.screens.multiplayer.JoinMultiplayerScreen;
-import net.minecraft.client.multiplayer.ServerData;
+import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.ModContainer;
-import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.config.ConfigTracker;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.loading.FMLPaths;
+import net.minecraftforge.network.PacketDistributor;
 
-import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.nio.file.Files;
@@ -131,7 +133,7 @@ public class ESModConfigScreen extends Screen {
                 () -> ClientConfig.Debug.debugInfo.get(),
                 (bt, b) -> {
                     ClientConfig.Debug.debugInfo.set(b);
-                }));
+                }).setSyncType(SyncType.CLIENT));
 
         addToHotTab(new CallbackEntry(
                 "eclipticseasons.configuration.NaturalSound",
@@ -140,7 +142,8 @@ public class ESModConfigScreen extends Screen {
                 (bt, b) -> {
                     ClientConfig.Sound.sound.set(b);
                     ClientConfig.Sound.sound.clearCache();
-                }).setRestartType(RestartTypeUtil.RestartType.WORLD));
+                }).setRestartType(RestartTypeUtil.RestartType.WORLD)
+                .setSyncType(SyncType.CLIENT));
 
         addToHotTab(new CallbackEntry(
                 "eclipticseasons.configuration.ExtraSnowLayer",
@@ -148,7 +151,8 @@ public class ESModConfigScreen extends Screen {
                 () -> ClientConfig.Renderer.extraSnowLayer.get(),
                 (bt, b) -> {
                     ClientConfig.Renderer.extraSnowLayer.set(b);
-                }));
+                })
+                .setSyncType(SyncType.CLIENT));
 
         addToHotTab(new CallbackEntry(
                 "eclipticseasons.configuration.ExtraSnowDefinitions",
@@ -165,7 +169,7 @@ public class ESModConfigScreen extends Screen {
                 () -> ClientConfig.Debug.frozenWater.get(),
                 (bt, b) -> {
                     ClientConfig.Debug.frozenWater.set(b);
-                }));
+                }).setSyncType(SyncType.CLIENT));
 
 
         for (UnmodifiableConfig.Entry entry :
@@ -278,6 +282,7 @@ public class ESModConfigScreen extends Screen {
 
         put(WEATHER,
                 CommonConfig.Weather.notRainInDesert,
+                CommonConfig.Weather.rainChanceMultiplier,
                 ClientConfig.Debug.fogWeather
         );
 
@@ -527,6 +532,8 @@ public class ESModConfigScreen extends Screen {
         boolean needGameRestart = false;
         boolean isChanged = false;
         boolean inGame = Minecraft.getInstance().level != null;
+
+        Set<SyncType> syncTypes = new HashSet<>();
         for (Map.Entry<Component, Tab> componentTabEntry : tabs.entrySet()) {
             for (Map.Entry<Component, List<ConfigEntry>> componentListEntry : componentTabEntry.getValue().configShown().entrySet()) {
                 for (ConfigEntry configEntry : componentListEntry.getValue()) {
@@ -537,17 +544,41 @@ public class ESModConfigScreen extends Screen {
                     if (valueChange && configEntry instanceof ConfigEntry.SpecEntry<?> specEntry) {
                         specEntry.getSpec().clearCache();
                     }
+                    if (valueChange) {
+                        syncTypes.add(configEntry.getSyncType());
+                    }
                     // if (needRestart) break;
                 }
             }
         }
 
         if (isChanged) {
-            var file = ConfigTracker.INSTANCE.fileMap().get(EclipticSeasons.defaultConfigName(ModConfig.Type.COMMON, EclipticSeasonsApi.MODID));
-            ESConfigSync.INSTANCE.notBackup(file);
-            CommonConfig.COMMON_CONFIG.save();
-            ClientConfig.CLIENT_CONFIG.save();
-            EclipticSeasonsMixinPlugin.PreloadedConfig.getConfig().save();
+            ModConfig commonModConfig = ConfigTracker.INSTANCE.fileMap().get(SyncType.COMMON.configName(EclipticSeasonsApi.MODID));
+            if (syncTypes.contains(SyncType.COMMON)) {
+                CommonConfig.COMMON_CONFIG.save();
+                ESConfigSync.INSTANCE.notBackup(commonModConfig);
+            }
+            if (syncTypes.contains(SyncType.CLIENT)) ClientConfig.CLIENT_CONFIG.save();
+            if (syncTypes.contains(SyncType.MIXINS)) EclipticSeasonsMixinPlugin.PreloadedConfig.getConfig().save();
+
+            if (Minecraft.getInstance().getConnection() != null
+                    && !Minecraft.getInstance().isLocalServer()
+                    && Minecraft.getInstance().player.hasPermissions(Commands.LEVEL_ADMINS)
+            ) {
+                try {
+                    if (syncTypes.contains(SyncType.COMMON)) {
+                        byte[] bytes = Files.readAllBytes(FMLPaths.CONFIGDIR.get().resolve(commonModConfig.getFileName()));
+                        SimpleNetworkHandler.CHANNEL.send(PacketDistributor.SERVER.noArg(), new ESConfigToServerPayload(commonModConfig.getFileName(), needRestart, SyncType.of(commonModConfig.getType()), bytes));
+                    }
+
+                    if (syncTypes.contains(SyncType.MIXINS)) {
+                        byte[] bytes = Files.readAllBytes(FMLPaths.CONFIGDIR.get().resolve(SyncType.MIXINS.configName(EclipticSeasonsApi.MODID)));
+                        SimpleNetworkHandler.CHANNEL.send(PacketDistributor.SERVER.noArg(), new ESConfigToServerPayload(SyncType.MIXINS.configName(EclipticSeasonsApi.MODID), true, SyncType.MIXINS, bytes));
+                    }
+                } catch (IOException e) {
+                    EclipticSeasons.logger(e);
+                }
+            }
         }
 
         if (needRestart || needGameRestart) {

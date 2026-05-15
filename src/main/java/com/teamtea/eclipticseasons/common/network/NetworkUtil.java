@@ -6,7 +6,6 @@ import com.teamtea.eclipticseasons.api.data.weather.special_effect.WeatherEffect
 import com.teamtea.eclipticseasons.api.event.SolarTermChangeEvent;
 import com.teamtea.eclipticseasons.api.misc.IChunkBiomeHolder;
 import com.teamtea.eclipticseasons.client.color.season.BiomeColorsHandler;
-import com.teamtea.eclipticseasons.client.core.ClientWeatherChecker;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeRainDispatcher;
@@ -15,7 +14,8 @@ import com.teamtea.eclipticseasons.common.core.map.BiomeHolder;
 import com.teamtea.eclipticseasons.common.network.message.*;
 import com.teamtea.eclipticseasons.common.registry.ESRegistries;
 import com.teamtea.eclipticseasons.config.ClientConfig;
-import com.teamtea.eclipticseasons.config.ESConfigSync;
+import com.teamtea.eclipticseasons.config.sync.ESConfigFilePayload;
+import com.teamtea.eclipticseasons.config.sync.ESConfigSync;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.server.level.ServerLevel;
@@ -24,7 +24,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.network.HandshakeHandler;
-import net.minecraftforge.network.HandshakeMessages;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkEvent;
 
@@ -219,5 +218,10 @@ public class NetworkUtil {
 
     public static void handleClientAck(HandshakeHandler handshakeHandler, SimpleNetworkHandler.C2SAcknowledge c2SAcknowledge, Supplier<NetworkEvent.Context> contextSupplier) {
         contextSupplier.get().setPacketHandled(true);
+    }
+
+    public static boolean processConfigInGame(ESConfigFilePayload payload, Supplier<NetworkEvent.Context> contextSupplier) {
+        ESConfigSync.INSTANCE.receiveSyncedConfig(payload, contextSupplier);
+        return true;
     }
 }

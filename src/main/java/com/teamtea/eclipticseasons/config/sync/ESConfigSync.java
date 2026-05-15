@@ -1,15 +1,27 @@
-package com.teamtea.eclipticseasons.config;
+package com.teamtea.eclipticseasons.config.sync;
 
+import com.electronwill.nightconfig.core.CommentedConfig;
+import com.electronwill.nightconfig.core.file.CommentedFileConfig;
+import com.electronwill.nightconfig.core.io.ParsingMode;
+import com.electronwill.nightconfig.toml.TomlFormat;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.common.network.SimpleNetworkHandler;
+import com.teamtea.eclipticseasons.config.CommonConfig;
+import com.teamtea.eclipticseasons.mixin.EclipticSeasonsMixinPlugin;
 import net.minecraft.client.Minecraft;
+import net.minecraft.commands.Commands;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.fml.config.ConfigTracker;
 import net.minecraftforge.fml.config.IConfigSpec;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.network.NetworkEvent;
+import net.minecraftforge.server.ServerLifecycleHooks;
 import org.apache.commons.lang3.tuple.Pair;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.*;
@@ -74,6 +86,19 @@ public class ESConfigSync {
         modConfig.acceptSyncedConfig(msg.getBytes());
     }
 
+
+    protected static void receiveSyncedMixinsConfig(byte[] contents) {
+        CommentedFileConfig config = EclipticSeasonsMixinPlugin.PreloadedConfig.getConfig();
+        // config.bulkCommentedUpdate(view -> {
+        //     TomlFormat.instance().createParser().parse(new ByteArrayInputStream(contents), view, ParsingMode.REPLACE);
+        // });
+        TomlFormat.instance()
+                .createParser()
+                .parse(new ByteArrayInputStream(contents), config, ParsingMode.REPLACE);
+        config.save();
+    }
+
+
     public void onClientPlayerExit() {
         if (Minecraft.getInstance().isLocalServer()) {
             LOCAL_CONFIG_BACKUP.clear();
@@ -92,5 +117,37 @@ public class ESConfigSync {
 
     public void notBackup(ModConfig modConfig) {
         LOCAL_CONFIG_BACKUP.remove(modConfig.getFileName());
+    }
+
+    public void syncToSever(ESConfigToServerPayload configFilePayload, ServerPlayer serverPlayer) {
+        if (!serverPlayer.hasPermissions(Commands.LEVEL_ADMINS)) {
+            return;
+        }
+
+        MinecraftServer currentServer = ServerLifecycleHooks.getCurrentServer();
+        if (currentServer != null && currentServer.isSingleplayer()) {
+            return;
+        }
+        if (currentServer != null) {
+            currentServer.getPlayerList().broadcastSystemMessage(Component.translatable(
+                    configFilePayload.restart() ? "eclipticseasons.configuration.server_restart.hint" : "eclipticseasons.configuration.server_update.hint",
+                    serverPlayer.getDisplayName(), configFilePayload.syncType().extension()), false);
+            // currentServer.getPlayerList().broadcastChatMessage(PlayerChatMessage.unsigned(serverPlayer.getUUID(),
+            //         "eclipticseasons.configuration.server_restart.hint"), serverPlayer, ChatType.bind(ChatType.CHAT, serverPlayer));
+        }
+        if (!configFilePayload.syncType().custom()) {
+            ModConfig modConfig = tracker.fileMap().get(configFilePayload.fileName());
+            if (modConfig != null) {
+                modConfig.acceptSyncedConfig(configFilePayload.contents());
+            }
+        } else if (configFilePayload.syncType() == SyncType.MIXINS) {
+            receiveSyncedMixinsConfig(configFilePayload.contents());
+        }
+        if (currentServer != null) {
+            for (ServerPlayer player : currentServer.getPlayerList().getPlayers()) {
+                if (player == serverPlayer) continue;
+                SimpleNetworkHandler.send(player, new ESConfigFilePayload(configFilePayload.fileName(), configFilePayload.contents()));
+            }
+        }
     }
 }

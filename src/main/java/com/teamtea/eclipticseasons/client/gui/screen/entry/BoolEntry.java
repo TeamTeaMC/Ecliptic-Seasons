@@ -1,14 +1,9 @@
 package com.teamtea.eclipticseasons.client.gui.screen.entry;
 
 import com.teamtea.eclipticseasons.client.gui.screen.ESModConfigScreen;
-import com.teamtea.eclipticseasons.client.gui.screen.SpecUtil;
 import com.teamtea.eclipticseasons.client.gui.screen.entry.base.ConfigEntry;
-import com.teamtea.eclipticseasons.config.CommonConfig;
-import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.CycleButton;
-import net.minecraft.client.gui.components.Tooltip;
-import net.minecraft.network.chat.Component;
 import net.minecraftforge.common.ForgeConfigSpec;
 
 public class BoolEntry extends ConfigEntry.SpecEntry<Boolean> {

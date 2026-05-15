@@ -1,7 +1,7 @@
 package com.teamtea.eclipticseasons.client.gui.screen.entry;
 
 import com.teamtea.eclipticseasons.client.gui.screen.ESModConfigScreen;
-import com.teamtea.eclipticseasons.client.gui.screen.SpecUtil;
+import com.teamtea.eclipticseasons.config.util.SpecUtil;
 import com.teamtea.eclipticseasons.client.gui.screen.entry.base.ConfigEntry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.OptionInstance;

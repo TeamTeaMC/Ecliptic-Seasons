@@ -4,9 +4,14 @@ package com.teamtea.eclipticseasons.common.network;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.common.core.snow.SnowyStatusHandler;
 import com.teamtea.eclipticseasons.common.network.message.*;
-import com.teamtea.eclipticseasons.config.ESConfigSync;
+import com.teamtea.eclipticseasons.config.sync.ESConfigFilePayload;
+import com.teamtea.eclipticseasons.config.sync.ESConfigSync;
+import com.teamtea.eclipticseasons.config.sync.ESConfigToServerPayload;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.network.HandshakeHandler;
@@ -94,6 +99,23 @@ public final class SimpleNetworkHandler {
             j.consumerNetworkThread(NetworkUtil::processChunkBiomeUpdateMessage);
         j.add();
 
+        var k = CHANNEL.messageBuilder(ESConfigFilePayload.class, id++)
+                .encoder(ESConfigFilePayload::encode)
+                .decoder(ESConfigFilePayload::decodeExtend);
+        if (FMLLoader.getDist() == Dist.CLIENT)
+            k.consumerNetworkThread(NetworkUtil::processConfigInGame);
+        k.add();
+
+        CHANNEL.messageBuilder(ESConfigToServerPayload.class, id++)
+                .encoder(ESConfigToServerPayload::encode)
+                .decoder(ESConfigToServerPayload::decode)
+                .consumerNetworkThread((x, xy) -> {
+                    Player player = xy.get().getSender();
+                    if (player instanceof ServerPlayer serverPlayer)
+                        ESConfigSync.INSTANCE.syncToSever(x, serverPlayer);
+                })
+                .add();
+
         CHANNEL.messageBuilder(S2CConfigData.class, id++, NetworkDirection.LOGIN_TO_CLIENT).
                 loginIndex(LoginIndexedMessage::getLoginIndex, LoginIndexedMessage::setLoginIndex).
                 decoder(S2CConfigData::decode).
@@ -124,16 +146,9 @@ public final class SimpleNetworkHandler {
     }
 
 
-    static class LoginIndexedMessage implements IntSupplier {
-        private int loginIndex;
-
-        void setLoginIndex(final int loginIndex) {
-            this.loginIndex = loginIndex;
-        }
-
-        int getLoginIndex() {
-            return loginIndex;
-        }
+    @Data
+    public static class LoginIndexedMessage implements IntSupplier {
+        protected int loginIndex;
 
         @Override
         public int getAsInt() {
@@ -141,30 +156,19 @@ public final class SimpleNetworkHandler {
         }
     }
 
+    @EqualsAndHashCode(callSuper = true)
+    @Data
     public static class S2CConfigData extends LoginIndexedMessage {
-        private final String fileName;
-        private final byte[] fileData;
+        protected final String fileName;
+        protected final byte[] bytes;
 
-        public S2CConfigData(final String configFileName, final byte[] configFileData) {
-            this.fileName = configFileName;
-            this.fileData = configFileData;
-        }
-
-        void encode(final FriendlyByteBuf buffer) {
+        public void encode(final FriendlyByteBuf buffer) {
             buffer.writeUtf(this.fileName);
-            buffer.writeByteArray(this.fileData);
+            buffer.writeByteArray(this.bytes);
         }
 
         public static S2CConfigData decode(final FriendlyByteBuf buffer) {
             return new S2CConfigData(buffer.readUtf(32767), buffer.readByteArray());
-        }
-
-        public String getFileName() {
-            return fileName;
-        }
-
-        public byte[] getBytes() {
-            return fileData;
         }
     }
 
@@ -177,4 +181,5 @@ public final class SimpleNetworkHandler {
             return new C2SAcknowledge();
         }
     }
+
 }

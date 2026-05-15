@@ -2,7 +2,7 @@ package com.teamtea.eclipticseasons.compat.eclipticseasons_bundles;
 
 
 import com.teamtea.eclipticseasons.compat.Platform;
-import com.teamtea.eclipticseasons.config.ESConfigSync;
+import com.teamtea.eclipticseasons.config.sync.ESConfigSync;
 import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.config.ModConfig;
