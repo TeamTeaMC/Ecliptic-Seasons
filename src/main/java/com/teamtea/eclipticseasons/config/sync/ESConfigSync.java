@@ -1,6 +1,5 @@
 package com.teamtea.eclipticseasons.config.sync;
 
-import com.electronwill.nightconfig.core.CommentedConfig;
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.electronwill.nightconfig.core.io.ParsingMode;
 import com.electronwill.nightconfig.toml.TomlFormat;
@@ -8,7 +7,6 @@ import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.common.network.SimpleNetworkHandler;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import com.teamtea.eclipticseasons.mixin.EclipticSeasonsMixinPlugin;
-import net.minecraft.client.Minecraft;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
@@ -56,7 +54,7 @@ public class ESConfigSync {
     }
 
 
-    //public void receiveSyncedConfig(final SimpleNetworkHandler.S2CConfigData s2CConfigData, final Supplier<NetworkEvent.Context> contextSupplier) {
+    // public void receiveSyncedConfig(final SimpleNetworkHandler.S2CConfigData s2CConfigData, final Supplier<NetworkEvent.Context> contextSupplier) {
     //    if (!Minecraft.getInstance().isLocalServer()) {
     //        Optional.ofNullable(tracker.fileMap().get(s2CConfigData.getFileName())).ifPresent(mc -> mc.acceptSyncedConfig(s2CConfigData.getBytes()));
     //    }
@@ -65,7 +63,8 @@ public class ESConfigSync {
 
     public void receiveSyncedConfig(final SimpleNetworkHandler.S2CConfigData msg,
                                     final Supplier<NetworkEvent.Context> contextSupplier) {
-        if (Minecraft.getInstance().isLocalServer()) {
+        if (ServerLifecycleHooks.getCurrentServer() == null
+                || ServerLifecycleHooks.getCurrentServer().isSingleplayer()) {
             return;
         }
 
@@ -100,7 +99,8 @@ public class ESConfigSync {
 
 
     public void onClientPlayerExit() {
-        if (Minecraft.getInstance().isLocalServer()) {
+        if (ServerLifecycleHooks.getCurrentServer() == null
+                || ServerLifecycleHooks.getCurrentServer().isSingleplayer()) {
             LOCAL_CONFIG_BACKUP.clear();
             return;
         }
