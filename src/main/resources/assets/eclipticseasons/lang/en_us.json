@@ -286,5 +286,7 @@
   "eclipticseasons.configuration.ExtraSnowLayer.tooltip": "Renders an additional snow layer on top of full blocks when using snow-covered models",
   "eclipticseasons.configuration.ExtraSnowDefinitions.tooltip": "Provides snow-covered models and definitions for more vanilla blocks. Requires restart",
   "eclipticseasons.configuration.FrozenWater.tooltip": "Experimental feature that renders a thin ice layer on river surfaces during snowfall",
-  "eclipticseasons.configuration.SpringGrass.tooltip": "Affects temperate biomes. Grasslands will grow short grass and wildflowers in spring, tall grass in summer, then gradually wither through autumn and winter"
+  "eclipticseasons.configuration.SpringGrass.tooltip": "Affects temperate biomes. Grasslands will grow short grass and wildflowers in spring, tall grass in summer, then gradually wither through autumn and winter",
+  "eclipticseasons.configuration.server_restart.hint": "§e[Ecliptic Seasons] §7Admin §f%s §7updated the §b%s §7config. §cRestart the server to apply changes.",
+  "eclipticseasons.configuration.server_update.hint": "§e[Ecliptic Seasons] §7Admin §f%s §7updated the §b%s §7config. "
 }

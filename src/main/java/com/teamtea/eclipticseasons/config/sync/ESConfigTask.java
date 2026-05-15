@@ -1,19 +1,14 @@
-package com.teamtea.eclipticseasons.common.network;
+package com.teamtea.eclipticseasons.config.sync;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
-import com.teamtea.eclipticseasons.config.CommonConfig;
-import com.teamtea.eclipticseasons.config.ESConfigSync;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.network.configuration.ICustomConfigurationTask;
 import net.neoforged.neoforge.network.event.RegisterConfigurationTasksEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
 
-class ESConfigTask implements ICustomConfigurationTask {
+public class ESConfigTask implements ICustomConfigurationTask {
 
     private final Type configTask = new Type(EclipticSeasons.rl("config_task"));
     private final RegisterConfigurationTasksEvent event;

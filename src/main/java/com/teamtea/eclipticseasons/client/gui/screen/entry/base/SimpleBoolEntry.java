@@ -1,6 +1,7 @@
 package com.teamtea.eclipticseasons.client.gui.screen.entry.base;
 
 import com.teamtea.eclipticseasons.client.gui.screen.ESModConfigScreen;
+import com.teamtea.eclipticseasons.config.sync.SyncType;
 import net.minecraft.client.gui.components.CycleButton;
 import net.minecraft.client.gui.layouts.LayoutElement;
 
@@ -19,6 +20,11 @@ public class SimpleBoolEntry extends ConfigEntry {
         this.value = value;
         this.setter = setter;
         this.oldValue = value.getAsBoolean();
+    }
+
+    @Override
+    public SyncType getSyncType() {
+        return SyncType.MIXINS;
     }
 
     @Override

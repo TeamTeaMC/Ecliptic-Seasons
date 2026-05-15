@@ -152,6 +152,8 @@ public abstract class MixinServerLevel extends Level {
     )
     private void eclipticseasons$tickChunk_prepare(LevelChunk chunk, int randomTickSpeed, CallbackInfo ci, @Share("snowy_status") LocalRef<SnowyStatusKeeper> keeper,
                                                    @Share("weather_status") LocalRef<WeatherStatusKeeper> keeperWeather, @Share("chunk_info_map") LocalRef<ChunkInfoMap> mapLocalRef) {
+        if (!EclipticUtil.canSnowyBlockInteract()) return;
+
         keeper.set(SnowyMapChecker.getSnowyStatusKeeper(chunk));
         mapLocalRef.set(MapChecker.getChunkInfoMapOrCreate(getLevel(), chunk.getPos()));
         keeperWeather.set(SnowyMapChecker.getWeatherStatusKeeper(chunk));
@@ -165,6 +167,8 @@ public abstract class MixinServerLevel extends Level {
     )
     private BlockPos eclipticseasons$tickChunk_our_snow(BlockPos original, @Local(argsOnly = true) LevelChunk chunk, @Local ChunkPos chunkPos, @Share("snowy_status") LocalRef<SnowyStatusKeeper> keeper,
                                                         @Share("weather_status") LocalRef<WeatherStatusKeeper> keeperWeather, @Share("chunk_info_map") LocalRef<ChunkInfoMap> mapLocalRef) {
+        if (!EclipticUtil.canSnowyBlockInteract()) return original;
+
         SnowyStatusKeeper data = keeper.get();
         WeatherStatusKeeper weatherStatusKeeper = keeperWeather.get();
         if (data != null) {
@@ -181,6 +185,8 @@ public abstract class MixinServerLevel extends Level {
     )
     private void eclipticseasons$tickChunk_sync(LevelChunk chunk, int randomTickSpeed, CallbackInfo ci, @Share("snowy_status") LocalRef<SnowyStatusKeeper> keeper,
                                                 @Share("weather_status") LocalRef<WeatherStatusKeeper> keeperWeather) {
+        if (!EclipticUtil.canSnowyBlockInteract()) return;
+
         WeatherStatusKeeper weatherStatusKeeper = keeperWeather.get();
         if (weatherStatusKeeper != null) {
             weatherStatusKeeper.updateAndSend(getLevel(), chunk);

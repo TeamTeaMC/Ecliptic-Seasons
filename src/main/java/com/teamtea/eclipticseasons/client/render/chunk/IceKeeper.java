@@ -42,10 +42,12 @@ public class IceKeeper {
         if (!ExtraModelManager.maySnowyAt(level, null, water, blockPos, level.getRandom(), water.getSeed(blockPos)))
             return;
 
+
         if (!ICE_SHOULD_BE_IGNORED.contains(blockPos.asLong())) {
             BlockPos above = blockPos.above();
             if (ClientConfig.Debug.frozenWaterCheckLight.get() && !ExtraModelManager.notTooBright(level, null, blockPos))
                 return;
+            if (!level.getBlockState(blockPos).getFluidState().isSource()) return;
             ICE_SHOULD_BE_IGNORED.add(blockPos.asLong());
             try {
                 WorldRenderer.setSectionDirtyWithNeighbors(SectionPos.of(player));

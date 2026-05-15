@@ -283,5 +283,7 @@
   "eclipticseasons.configuration.ExtraSnowLayer.tooltip": "渲染覆雪模型时，在完整方块顶部渲染一层额外的雪层",
   "eclipticseasons.configuration.ExtraSnowDefinitions.tooltip": "为更多原版方块提供覆雪模型和定义，需要重启",
   "eclipticseasons.configuration.FrozenWater.tooltip": "实验特性，会在下雪时将河流表面渲染一层薄冰",
-  "eclipticseasons.configuration.SpringGrass.tooltip": "对温带群系生效，春天时草地上会长出矮草和野花，夏天时长出高草，随后在秋冬时渐渐凋零"
+  "eclipticseasons.configuration.SpringGrass.tooltip": "对温带群系生效，春天时草地上会长出矮草和野花，夏天时长出高草，随后在秋冬时渐渐凋零",
+  "eclipticseasons.configuration.server_restart.hint": "§e[节气] §7管理员 §f%1$s §7更新了 §b%2$s §7配置。§c建议重启服务器以使更改生效。",
+  "eclipticseasons.configuration.server_update.hint": "§e[节气] §7管理员 §f%1$s §7更新了 §b%2$s §7配置。 "
 }

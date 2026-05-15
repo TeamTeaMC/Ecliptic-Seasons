@@ -195,7 +195,7 @@ public class WeatherStatusKeeper {
 
         @Override
         public Tag write(@NotNull WeatherStatusKeeper attachment, HolderLookup.@NotNull Provider provider) {
-            if (!EclipticUtil.canSnowyBlockInteract()) new CompoundTag();
+            if (!EclipticUtil.canSnowyBlockInteract()) return new CompoundTag();
             if (attachment.cacheTag != null) return attachment.cacheTag;
             Optional<Tag> result = CODEC.encodeStart(provider.createSerializationContext(NbtOps.INSTANCE), attachment).result();
             if (result.orElse(null) instanceof CompoundTag compoundTag) {

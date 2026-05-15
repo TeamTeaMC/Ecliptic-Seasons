@@ -4,19 +4,21 @@ package com.teamtea.eclipticseasons.common.network;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.common.network.message.*;
+import com.teamtea.eclipticseasons.config.sync.ESConfigFilePayload;
+import com.teamtea.eclipticseasons.config.sync.ESConfigSync;
+import com.teamtea.eclipticseasons.config.sync.ESConfigTask;
+import com.teamtea.eclipticseasons.config.sync.ESConfigToServerPayload;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.event.RegisterConfigurationTasksEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
-import net.neoforged.neoforge.network.handlers.ClientPayloadHandler;
-import net.neoforged.neoforge.network.payload.ConfigFilePayload;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
 import java.util.Collection;
-import java.util.List;
 
 @SuppressWarnings("removal")
 @EventBusSubscriber(modid = EclipticSeasonsApi.MODID, bus = EventBusSubscriber.Bus.MOD)
@@ -76,6 +78,16 @@ public final class SimpleNetworkHandler {
                 ESConfigFilePayload.TYPE,
                 ESConfigFilePayload.STREAM_CODEC,
                 NetworkUtil::handle);
+
+        registrar.playToServer(
+                ESConfigToServerPayload.TYPE,
+                ESConfigToServerPayload.STREAM_CODEC,
+                (x, xy) -> {
+                    Player player = xy.player();
+                    if (player instanceof ServerPlayer serverPlayer)
+                        ESConfigSync.INSTANCE.syncToSever(x, serverPlayer);
+                }
+        );
     }
 
     @SubscribeEvent

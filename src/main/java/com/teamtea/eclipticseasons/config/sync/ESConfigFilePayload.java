@@ -1,4 +1,4 @@
-package com.teamtea.eclipticseasons.common.network;
+package com.teamtea.eclipticseasons.config.sync;
 
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import net.minecraft.network.FriendlyByteBuf;

@@ -7,6 +7,7 @@ import com.teamtea.eclipticseasons.client.gui.screen.entry.FixedIntegerListEntry
 import com.teamtea.eclipticseasons.client.gui.screen.entry.NumberEntry;
 import com.teamtea.eclipticseasons.client.gui.screen.entry.SuggestedListStringEntry;
 import com.teamtea.eclipticseasons.config.CommonConfig;
+import com.teamtea.eclipticseasons.config.sync.SyncType;
 import lombok.Getter;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -36,6 +37,10 @@ public abstract class ConfigEntry {
 
     public boolean shouldRestart(boolean inGame) {
         return false;
+    }
+
+    public SyncType getSyncType() {
+        return SyncType.NONE;
     }
 
     public int getPosition() {
@@ -85,11 +90,14 @@ public abstract class ConfigEntry {
         @Getter
         protected final ModConfigSpec.ConfigValue<T> spec;
         protected final long hashValueCache;
+        @Getter
+        protected final SyncType syncType;
 
         public SpecEntry(ModConfigSpec.ConfigValue<T> spec) {
             super("eclipticseasons.configuration." + spec.getPath().getLast());
             this.spec = spec;
             this.hashValueCache = spec.get().hashCode();
+            syncType = SyncType.getTypeFrom(spec);
         }
 
         public boolean isValueChanged() {
