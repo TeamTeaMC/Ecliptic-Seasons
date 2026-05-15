@@ -3,7 +3,7 @@
 	"textures": {
 		"1": "eclipticseasons:block/windring2",
 		"2": "eclipticseasons:block/windring2_strings",
-		"particle": "eclipticseasons:block/windring"
+		"particle": "eclipticseasons:block/windring2"
 	},
 	"elements": [
 		{
