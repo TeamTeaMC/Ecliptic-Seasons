@@ -237,20 +237,20 @@ public class ClientConfig {
     }
 
     public static class Weather {
-        public static ForgeConfigSpec.IntValue weatherBufferDistance;
-        public static ForgeConfigSpec.DoubleValue weatherTransitionSpeed;
-        public static ForgeConfigSpec.BooleanValue weatherFrontBias;
+        // public static ForgeConfigSpec.IntValue weatherBufferDistance;
+        // public static ForgeConfigSpec.DoubleValue weatherTransitionSpeed;
+        // public static ForgeConfigSpec.BooleanValue weatherFrontBias;
 
         private static void load(ForgeConfigSpec.Builder builder) {
             builder.push("Weather");
-            weatherBufferDistance = builder.comment("The radius (in blocks) used to sample and blend weather patterns for smooth transitions.")
-                    .defineInRange("WeatherBufferDistance", 6, 1, 80);
-            weatherTransitionSpeed = builder.comment(
-                            "How quickly local weather conditions change. Higher values mean faster shifts.")
-                    .defineInRange("WeatherTransitionSpeed", 0.008d, 0.0008d, 0.08d);
-            weatherFrontBias = builder.comment(
-                            "Prioritize weather sampling in the direction the player is currently facing.")
-                    .define("WeatherFrontBias", true);
+            // weatherBufferDistance = builder.comment("The radius (in blocks) used to sample and blend weather patterns for smooth transitions.")
+            //         .defineInRange("WeatherBufferDistance", 6, 1, 80);
+            // weatherTransitionSpeed = builder.comment(
+            //                 "How quickly local weather conditions change. Higher values mean faster shifts.")
+            //         .defineInRange("WeatherTransitionSpeed", 0.008d, 0.0008d, 0.08d);
+            // weatherFrontBias = builder.comment(
+            //                 "Prioritize weather sampling in the direction the player is currently facing.")
+            //         .define("WeatherFrontBias", true);
             builder.pop();
         }
     }
