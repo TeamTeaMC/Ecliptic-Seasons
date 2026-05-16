@@ -58,7 +58,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-public class SeasonModelManager {
+public class ExtraModelManager {
     public static int loadVersion = 0;
     public static ModelBakery.BakingResult models;
 
@@ -110,7 +110,7 @@ public class SeasonModelManager {
 
 
     public static void clearForRebaked(ModelBakery.BakingResult modelRegistry) {
-        SeasonModelManager.models = modelRegistry;
+        ExtraModelManager.models = modelRegistry;
 
         for (Identifier identifier : SEASONAL_TEXTURE_HASH_MAP.keySet()) {
             Set<BlockState> blockStates = MyResolver.INSTANCE.getUsedModel().getOrDefault(identifier, Set.of());
@@ -146,18 +146,18 @@ public class SeasonModelManager {
 
     public static void prepareTextureMapping() {
         ClientJsonCacheListener.textureReMappingsCache.prepareAsync(Minecraft.getInstance().getResourceManager());
-        SeasonModelManager.SEASONAL_TEXTURE_HASH_MAP.clear();
+        ExtraModelManager.SEASONAL_TEXTURE_HASH_MAP.clear();
         Map<Identifier, SeasonalTexture> build = ClientJsonCacheListener.textureReMappingsCache.build(SeasonalTexture.CODEC);
         build.forEach(
                 (Identifier, seasonalTexture) -> {
                     seasonalTexture = seasonalTexture.build(Identifier);
                     if (seasonalTexture.getParent().isEmpty()) {
-                        List<SeasonalTexture> seasonalTextures = SeasonModelManager.SEASONAL_TEXTURE_HASH_MAP.computeIfAbsent(
+                        List<SeasonalTexture> seasonalTextures = ExtraModelManager.SEASONAL_TEXTURE_HASH_MAP.computeIfAbsent(
                                 Identifier.withPrefix("block/"), (xx) -> new ArrayList<>());
                         seasonalTextures.add(seasonalTexture);
                     } else {
                         for (Identifier location : seasonalTexture.getParent()) {
-                            List<SeasonalTexture> seasonalTextures = SeasonModelManager.SEASONAL_TEXTURE_HASH_MAP.computeIfAbsent(
+                            List<SeasonalTexture> seasonalTextures = ExtraModelManager.SEASONAL_TEXTURE_HASH_MAP.computeIfAbsent(
                                     location, (xx) -> new ArrayList<>());
                             seasonalTextures.add(seasonalTexture);
                         }
@@ -190,7 +190,7 @@ public class SeasonModelManager {
                     }
                     if (loadedJson.getMultiPart().isPresent()) {
                         BlockStateModelDispatcher.MultiPartDefinition multiPartDefinition = loadedJson.getMultiPart().get();
-                        StandaloneModelKey<BlockStateModel> mrl = SeasonModelManager.extra_mrl(resourceLocation, "0");
+                        StandaloneModelKey<BlockStateModel> mrl = ExtraModelManager.extra_mrl(resourceLocation, "0");
                         // registerModelAndDependenceMethod.accept(mrl, loadedJson.getMultiPart().get());
                         registerModelAndDependenceMethod.accept(
                                 mrl,
@@ -221,7 +221,7 @@ public class SeasonModelManager {
 
                         loadedJson.getVariants().get().models().forEach(
                                 (va, multiVariant) -> {
-                                    StandaloneModelKey<BlockStateModel> mrl = SeasonModelManager.extra_mrl(resourceLocation, va.replaceAll("=", "_").replace(",", "_"));
+                                    StandaloneModelKey<BlockStateModel> mrl = ExtraModelManager.extra_mrl(resourceLocation, va.replaceAll("=", "_").replace(",", "_"));
 
                                     registerModelAndDependenceMethod.accept(
                                             mrl,

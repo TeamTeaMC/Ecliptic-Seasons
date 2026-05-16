@@ -4,7 +4,7 @@ import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.data.client.model.ESBlockModelDefinition;
 import com.teamtea.eclipticseasons.client.color.season.BiomeColorsHandler;
 import com.teamtea.eclipticseasons.client.color.season.FoliageColorSource;
-import com.teamtea.eclipticseasons.client.core.SeasonModelManager;
+import com.teamtea.eclipticseasons.client.core.ExtraModelManager;
 import com.teamtea.eclipticseasons.client.gui.GuiBlockRenderState;
 import com.teamtea.eclipticseasons.client.gui.GuiBlockRenderer;
 import com.teamtea.eclipticseasons.client.gui.GuiFluidRenderState;
@@ -136,36 +136,36 @@ public class ClientSetup {
 
     @SubscribeEvent
     public static void registerExtraModels(ModelEvent.RegisterStandalone event) {
-        SeasonModelManager.registerExtraSnowyModels(event::register);
+        ExtraModelManager.registerExtraSnowyModels(event::register);
         // event.register();
         // Minecraft.getInstance().getResourceManager().listPacks().toList().get(0).getResource(PackType.CLIENT_RESOURCES, ResourceLocation.withDefaultNamespace("textures/block/snow.png")).get()
         // IOUtils.toString(Minecraft.getInstance().getResourceManager().listPacks().toList().get(0).getResource(PackType.SERVER_DATA, ResourceLocation.withDefaultNamespace("recipe/yellow_terracotta.json")).get(), StandardCharsets.UTF_8)        event.register(ModelManager.snowy_fern);
-        registerStandalone(event, SeasonModelManager.snowy_custom);
-        registerStandalone(event, SeasonModelManager.snowy_custom_ao);
+        registerStandalone(event, ExtraModelManager.snowy_custom);
+        registerStandalone(event, ExtraModelManager.snowy_custom_ao);
 
-        registerStandalone(event, SeasonModelManager.stairs_top);
-        registerStandalone(event, SeasonModelManager.snowy_leaves_attach);
-        registerStandalone(event, SeasonModelManager.snowy_leaves_top);
-        registerStandalone(event, SeasonModelManager.snowy_fern);
-        registerStandalone(event, SeasonModelManager.snowy_grass);
-        registerStandalone(event, SeasonModelManager.snowy_tall_grass_top);
-        registerStandalone(event, SeasonModelManager.snowy_tall_grass_bottom);
-        registerStandalone(event, SeasonModelManager.snowy_large_fern_top);
+        registerStandalone(event, ExtraModelManager.stairs_top);
+        registerStandalone(event, ExtraModelManager.snowy_leaves_attach);
+        registerStandalone(event, ExtraModelManager.snowy_leaves_top);
+        registerStandalone(event, ExtraModelManager.snowy_fern);
+        registerStandalone(event, ExtraModelManager.snowy_grass);
+        registerStandalone(event, ExtraModelManager.snowy_tall_grass_top);
+        registerStandalone(event, ExtraModelManager.snowy_tall_grass_bottom);
+        registerStandalone(event, ExtraModelManager.snowy_large_fern_top);
         // 注意这里使用地址和model地址效果不同，后者需要写blockstate
-        registerStandalone(event, SeasonModelManager.snowy_large_fern_bottom);
-        registerStandalone(event, SeasonModelManager.overlay_2);
-        registerStandalone(event, SeasonModelManager.snow_height2);
-        registerStandalone(event, SeasonModelManager.snow_height2_top);
-        registerStandalone(event, SeasonModelManager.grass_flower);
+        registerStandalone(event, ExtraModelManager.snowy_large_fern_bottom);
+        registerStandalone(event, ExtraModelManager.overlay_2);
+        registerStandalone(event, ExtraModelManager.snow_height2);
+        registerStandalone(event, ExtraModelManager.snow_height2_top);
+        registerStandalone(event, ExtraModelManager.grass_flower);
 
-        for (var flowerOnGrass : ConcatenatedListView.of(SeasonModelManager.flower_on_grass,
-                SeasonModelManager.fourleaf_clovers,
-                SeasonModelManager.snow_edge_overlays,
-                SeasonModelManager.leaf_piles)) {
+        for (var flowerOnGrass : ConcatenatedListView.of(ExtraModelManager.flower_on_grass,
+                ExtraModelManager.fourleaf_clovers,
+                ExtraModelManager.snow_edge_overlays,
+                ExtraModelManager.leaf_piles)) {
             registerStandalone(event, flowerOnGrass);
         }
 
-        registerStandalone(event, SeasonModelManager.ice);
+        registerStandalone(event, ExtraModelManager.ice);
     }
 
     private static void registerStandalone(ModelEvent.RegisterStandalone event, StandaloneModelKey<BlockStateModel> snowyCustom) {
@@ -178,25 +178,25 @@ public class ClientSetup {
         ParticleUtil.onReloadResource();
 
         var modelRegistry = event.getBakingResult();
-        SeasonModelManager.clearForRebaked(modelRegistry);
+        ExtraModelManager.clearForRebaked(modelRegistry);
 
         List<StandaloneModelKey<BlockStateModel>> bakedModels =
                 new ArrayList<>(List.of(
-                        SeasonModelManager.snowy_custom,
-                        SeasonModelManager.snowy_custom_ao,
-                        SeasonModelManager.stairs_top,
-                        SeasonModelManager.snowy_leaves_attach,
-                        SeasonModelManager.snowy_leaves_top,
-                        SeasonModelManager.stairs_top,
-                        SeasonModelManager.snowy_fern,
-                        SeasonModelManager.snowy_grass,
-                        SeasonModelManager.snowy_tall_grass_top,
-                        SeasonModelManager.snowy_tall_grass_bottom,
-                        SeasonModelManager.snowy_large_fern_top,
-                        SeasonModelManager.snowy_large_fern_bottom,
-                        SeasonModelManager.overlay_2,
-                        SeasonModelManager.snow_height2,
-                        SeasonModelManager.snow_height2_top
+                        ExtraModelManager.snowy_custom,
+                        ExtraModelManager.snowy_custom_ao,
+                        ExtraModelManager.stairs_top,
+                        ExtraModelManager.snowy_leaves_attach,
+                        ExtraModelManager.snowy_leaves_top,
+                        ExtraModelManager.stairs_top,
+                        ExtraModelManager.snowy_fern,
+                        ExtraModelManager.snowy_grass,
+                        ExtraModelManager.snowy_tall_grass_top,
+                        ExtraModelManager.snowy_tall_grass_bottom,
+                        ExtraModelManager.snowy_large_fern_top,
+                        ExtraModelManager.snowy_large_fern_bottom,
+                        ExtraModelManager.overlay_2,
+                        ExtraModelManager.snow_height2,
+                        ExtraModelManager.snow_height2_top
                         // ,
                         // ExtraModelManager.snowOverlayLeaves,
                         // ExtraModelManager.snowySlabBottom,

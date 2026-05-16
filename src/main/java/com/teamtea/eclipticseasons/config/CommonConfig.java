@@ -6,6 +6,7 @@ import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.compat.CompatModule;
 import lombok.Getter;
+import lombok.Setter;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
@@ -152,6 +153,7 @@ public class CommonConfig {
                     .define("DynamicDaylightDuration", true);
 
             validDimensions = builder.comment("List of dimension IDs where seasonal effects should be active.")
+                    .worldRestart()
                     .defineListAllowEmpty("ValidDimensions",
                             () -> List.of(Level.OVERWORLD.identifier().toString()),
                             () -> Level.OVERWORLD.identifier().toString(),
@@ -490,6 +492,7 @@ public class CommonConfig {
             notSnowyNearGlowingBlockLevel = builder.comment("The minimum light level required to prevent snow accumulation.")
                     .defineInRange("NotSnowyNearGlowingBlockLevel", 10, 1, 15);
             blocksNotSnowy = builder.comment("List of Block IDs that will never be covered by snow overlays.")
+                    .worldRestart()
                     .defineListAllowEmpty("ForceBlocksNotSnowy",
                             List::of,
                             () -> "",
@@ -529,18 +532,23 @@ public class CommonConfig {
             //         .define("RainTogether", true);
 
             SnowTogether = builder.comment("Synchronizes the snowfall schedule for all Overworld biomes.")
+                    .worldRestart()
                     .define("SnowTogether", false);
 
             RegionalSnowTime = builder.comment("Aligns snowfall schedules based on three broad climate zones (Warm, Temperate, and Cold) instead of per-biome.")
+                    .worldRestart()
                     .define("RegionalSnowTime", true);
 
             VanillaBiomeClimateSettings = builder.comment("Enforces original Vanilla temperature and precipitation settings to prevent other mods from creating extreme environmental values.")
+                    .worldRestart()
                     .define("VanillaBiomeClimateSettings", true);
 
             NotIgnoreRiver = builder.comment("When enabled, rivers are no longer treated as ignored climate zones. This reduces performance overhead but may result in less natural weather transitions near riverbanks.")
+                    .worldRestart()
                     .define("NotIgnoreRiver", false);
 
             springGrass = builder.comment("Spring brings life to grass and flowers, while autumn marks the fading.")
+                    .worldRestart()
                     .define("SpringGrass", false);
 
             builder.pop();
@@ -569,6 +577,7 @@ public class CommonConfig {
     private static final Set<Block> forceBlocksNotSnowy = new HashSet<>();
 
     @Getter
+    @Setter
     private static boolean vanillaSnowAndIce = false;
 
     public static void UpdateConfig(ModConfigEvent modConfigEvent) {

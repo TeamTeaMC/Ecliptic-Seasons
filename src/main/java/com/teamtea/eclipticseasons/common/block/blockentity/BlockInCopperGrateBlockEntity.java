@@ -16,6 +16,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.ResourceHandlerUtil;
 import net.neoforged.neoforge.transfer.item.ItemResource;
 import net.neoforged.neoforge.transfer.item.ItemStacksResourceHandler;
 import org.jspecify.annotations.NonNull;
@@ -38,6 +39,7 @@ public class BlockInCopperGrateBlockEntity extends HumidityControlBlockEntity {
         if (!level.isClientSide()) {
             popResource(level, pos);
         }
+        // ResourceHandlerUtil.isEmpty()
         super.preRemoveSideEffects(pos, state);
     }
 

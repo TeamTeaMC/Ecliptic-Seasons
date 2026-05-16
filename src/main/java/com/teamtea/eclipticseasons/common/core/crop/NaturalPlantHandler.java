@@ -3,6 +3,7 @@ package com.teamtea.eclipticseasons.common.core.crop;
 import com.mojang.datafixers.util.Pair;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
+import com.teamtea.eclipticseasons.api.constant.tag.EclipticBlockTags;
 import com.teamtea.eclipticseasons.api.data.misc.ESSortInfo;
 import com.teamtea.eclipticseasons.api.data.season.definition.ChangeMode;
 import com.teamtea.eclipticseasons.api.data.season.definition.ISeasonChangeContext;
@@ -12,12 +13,13 @@ import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.api.util.SimpleUtil;
 import com.teamtea.eclipticseasons.api.misc.BiomeHolderPredicate;
 import com.teamtea.eclipticseasons.common.registry.ESRegistries;
-import com.teamtea.eclipticseasons.config.CommonConfig;
 import it.unimi.dsi.fastutil.HashCommon;
 import net.minecraft.core.*;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
@@ -33,6 +35,25 @@ import net.minecraft.world.phys.Vec3;
 import java.util.*;
 
 public class NaturalPlantHandler {
+
+
+    public static void initCache(HolderLookup.Provider lookupProvider, boolean isSever) {
+        if (!isSever) return;
+        HolderLookup.RegistryLookup<Block> blocks = lookupProvider.lookupOrThrow(Registries.BLOCK);
+        initTag(blocks,EclipticBlockTags.NATURAL_PLANTS);
+        initTag(blocks,EclipticBlockTags.VOLATILE);
+    }
+
+    private static void initTag(HolderLookup.RegistryLookup<Block> blocks, TagKey<Block> naturalPlants) {
+        Optional<HolderSet.Named<Block>> n = blocks.get(naturalPlants);
+        if (n.isPresent()) {
+            for (Holder<Block> blockHolder : n.get()) {
+                for (BlockState possibleState : blockHolder.value().getStateDefinition().getPossibleStates()) {
+                    possibleState.initCache();
+                }
+            }
+        }
+    }
 
     public final static Map<Block, EnumMap<SolarTerm, List<Pair<BiomeHolderPredicate, ChangeMode>>>> SEASON_DEFINITIONS = new IdentityHashMap<>();
 
@@ -91,7 +112,7 @@ public class NaturalPlantHandler {
             ThreadLocal.withInitial(ISeasonChangeContext::of);
 
     public static void tickBlock(ServerLevel level, BlockPos pos, BlockState state) {
-        //if (CommonConfig.isSeasonDefinition())
+        // if (CommonConfig.isSeasonDefinition())
         {
             SolarTerm nowSolarTerm = EclipticUtil.getNowSolarTerm(level);
             if (nowSolarTerm.isValid()) {
@@ -115,7 +136,7 @@ public class NaturalPlantHandler {
                                     // fixedSeedValue ^= HashCommon.mix(pos.getZ());
                                     fixedSeedValue ^= HashCommon.mix(state.getSeed(pos));
                                     fixedSeedValue ^= HashCommon.mix(EclipticSeasonsApi.getInstance().getSolarDays(level));
-                                    fixedSeedValue ^= HashCommon.mix(EclipticSeasonsApi.getInstance().getTimeInTerm(level));
+                                    fixedSeedValue ^= HashCommon.mix(EclipticSeasonsApi.getInstance().getDayInTerm(level));
                                     fixedSeedValue ^= HashCommon.mix(EclipticSeasonsApi.getInstance().getLastingDaysOfEachTerm(level));
                                     // fixedSeedValue ^= HashCommon.mix(TimePeriod.fromTimeOfDay(level.getTimeOfDay(1f)).ordinal() * 100);
                                     hasCheckFixedSeed = true;

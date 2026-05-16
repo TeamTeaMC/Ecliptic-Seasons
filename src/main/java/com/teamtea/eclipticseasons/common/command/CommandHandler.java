@@ -161,7 +161,7 @@ public class CommandHandler {
                             .then(Commands.literal("getSeasonSignal")
                                     .executes(commandContext -> {
                                         Entity entity = commandContext.getSource().getEntity();
-                                        Season season = EclipticSeasonsApi.getInstance().getAgroSeason(commandContext.getSource().getLevel(), entity == null ? BlockPos.ZERO : entity.getOnPos());
+                                        Season season = EclipticSeasonsApi.getInstance().getSeasonSignal(commandContext.getSource().getLevel(), entity == null ? BlockPos.ZERO : entity.getOnPos());
                                         commandContext.getSource().sendSuccess(season::getTranslation, true);
                                         return 0;
                                     })
@@ -175,7 +175,7 @@ public class CommandHandler {
                             )
                             .then(Commands.literal("getMonth")
                                     .executes(commandContext -> {
-                                        ITranslatable sub = (EclipticSeasonsApi.getInstance().getStandardMonth(commandContext.getSource().getLevel()));
+                                        ITranslatable sub = (EclipticSeasonsApi.getInstance().getGregorianMonth(commandContext.getSource().getLevel()));
                                         commandContext.getSource().sendSuccess(sub::getTranslation, true);
                                         return 0;
                                     })

@@ -3,9 +3,11 @@ package com.teamtea.eclipticseasons.common.network;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.common.network.message.*;
+import com.teamtea.eclipticseasons.config.sync.*;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.network.protocol.configuration.ServerConfigurationPacketListener;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -65,6 +67,22 @@ public final class SimpleNetworkHandler {
                 UpdateTempChangeMessage.TYPE,
                 UpdateTempChangeMessage.STREAM_CODEC,
                 NetworkUtil::processUpdateTempChangeMessage
+        );
+
+        registrar.playToClient(
+                ESConfigToClientPayload.TYPE,
+                ESConfigToClientPayload.STREAM_CODEC,
+                NetworkUtil::handleConfig
+        );
+
+        registrar.playToServer(
+                ESConfigToServerPayload.TYPE,
+                ESConfigToServerPayload.STREAM_CODEC,
+                (payload, context) -> {
+                    Player player = context.player();
+                    if (player instanceof ServerPlayer serverPlayer)
+                        ESConfigSync.INSTANCE.syncToSever(payload, serverPlayer);
+                }
         );
 
     }

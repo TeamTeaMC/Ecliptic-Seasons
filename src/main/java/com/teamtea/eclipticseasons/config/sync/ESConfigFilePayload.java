@@ -1,4 +1,4 @@
-package com.teamtea.eclipticseasons.common.network;
+package com.teamtea.eclipticseasons.config.sync;
 
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import net.minecraft.network.FriendlyByteBuf;
@@ -9,8 +9,9 @@ import net.minecraft.resources.Identifier;
 import net.neoforged.neoforge.network.codec.NeoForgeStreamCodecs;
 import org.jspecify.annotations.NonNull;
 
-public record ESConfigFilePayload(String fileName, byte[] contents) implements CustomPacketPayload {
+public record ESConfigFilePayload(String fileName, byte[] contents) implements CustomPacketPayload, IESConfigMessage {
     public static final Type<ESConfigFilePayload> TYPE = new Type<>(Identifier.fromNamespaceAndPath(EclipticSeasonsApi.MODID, "config_file"));
+
     public static final StreamCodec<FriendlyByteBuf, ESConfigFilePayload> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.STRING_UTF8,
             ESConfigFilePayload::fileName,

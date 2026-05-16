@@ -1,6 +1,6 @@
 package com.teamtea.eclipticseasons.client.core.context;
 
-import com.teamtea.eclipticseasons.api.misc.client.ISeasonRendererContextOwner;
+import com.teamtea.eclipticseasons.api.misc.client.IExtraRendererContextOwner;
 import com.teamtea.eclipticseasons.client.model.block.ISnowyReplaceModel;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import lombok.Data;
@@ -23,12 +23,12 @@ import java.util.List;
 
 /**
  *
- * Get from {@link  ISeasonRendererContextOwner#of(Object)}.
+ * Get from {@link  IExtraRendererContextOwner#of(Object)}.
  * <p> Object is usually a {@link  com.teamtea.eclipticseasons.api.misc.client.IMapSlice}.
  * **/
 @Data
 @Accessors(chain = true)
-public class SeasonRendererContext {
+public class ExtraRendererContext {
 
     BlockStateModel originalModel = null;
     @NonNull
@@ -38,7 +38,7 @@ public class SeasonRendererContext {
     ModelData modelData = ModelData.EMPTY;
     boolean replace = false;
 
-    public SeasonRendererContext add(BlockStateModel model) {
+    public ExtraRendererContext add(BlockStateModel model) {
         if (model != null)
             this.extraModels.add(model);
         return this;
@@ -56,7 +56,7 @@ public class SeasonRendererContext {
         return !extraModels.isEmpty();
     }
 
-    public SeasonRendererContext apply(BlockAndTintGetter level, BlockPos pos, BlockState state, RandomSource random, List<BlockStateModelPart> parts) {
+    public ExtraRendererContext apply(BlockAndTintGetter level, BlockPos pos, BlockState state, RandomSource random, List<BlockStateModelPart> parts) {
         if (this.shouldApply()) {
             if (this.isReplace()) parts.clear();
             List<BlockStateModel> extraModels = this.getExtraModels();
@@ -68,11 +68,11 @@ public class SeasonRendererContext {
         return this;
     }
 
-    public static final SeasonRendererContext EMPTY = new SeasonRendererContext();
+    public static final ExtraRendererContext EMPTY = new ExtraRendererContext();
 
 
     public static TriState getModelForAmbientOcclusion(Object context, BlockState state, ModelData modelData, ChunkSectionLayer renderType) {
-        SeasonRendererContext rendererHolder = ISeasonRendererContextOwner.of(context);
+        ExtraRendererContext rendererHolder = IExtraRendererContextOwner.of(context);
         if (rendererHolder.getExtraModels() instanceof ISnowyReplaceModel snowyBakedModelWrapper) {
             if (snowyBakedModelWrapper.getBindBlockType() == MapChecker.FLAG_CUSTOM_AO) {
                 return TriState.TRUE;

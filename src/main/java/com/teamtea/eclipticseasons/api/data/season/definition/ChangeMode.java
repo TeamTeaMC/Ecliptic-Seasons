@@ -38,15 +38,16 @@ public class ChangeMode {
     private final List<IChangeSelector> selectors;
     private final float chance;
     private final boolean fixedSeed;
+    public static final float DEFAULT_FIXED_SEED_CHANCE = 0.015f;
     @Builder.Default
-    private final float fixedSeedChance = 0.0001f;
+    private final float fixedSeedChance = DEFAULT_FIXED_SEED_CHANCE;
 
     public static final Codec<ChangeMode> CODEC = RecordCodecBuilder.create(ins -> ins.group(
             BlockPredicate.CODEC.fieldOf("target").forGetter(ChangeMode::original),
             CodecUtil.listFrom(IChangeSelector.CCODEC).fieldOf("place").forGetter(ChangeMode::selectors),
             Codec.FLOAT.optionalFieldOf("chance", 1 / 16f).forGetter(ChangeMode::chance),
             Codec.BOOL.optionalFieldOf("fixed_seed", false).forGetter(ChangeMode::fixedSeed),
-            Codec.FLOAT.optionalFieldOf("fixed_seed_chance", 0.0001f).forGetter(ChangeMode::fixedSeedChance)
+            Codec.FLOAT.optionalFieldOf("fixed_seed_chance", DEFAULT_FIXED_SEED_CHANCE).forGetter(ChangeMode::fixedSeedChance)
     ).apply(ins, ChangeMode::new));
 
     public List<BlockState> getPossibleStates() {

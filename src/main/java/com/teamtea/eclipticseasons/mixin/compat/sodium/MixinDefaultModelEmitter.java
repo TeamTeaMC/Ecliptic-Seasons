@@ -3,7 +3,7 @@ package com.teamtea.eclipticseasons.mixin.compat.sodium;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;
-import com.teamtea.eclipticseasons.api.misc.client.ISeasonRendererContextOwner;
+import com.teamtea.eclipticseasons.api.misc.client.IExtraRendererContextOwner;
 import net.caffeinemc.mods.sodium.client.services.DefaultModelEmitter;
 import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
@@ -32,7 +32,7 @@ public abstract class MixinDefaultModelEmitter {
             @Local(argsOnly = true) BlockPos pos,
             @Local(argsOnly = true) BlockState state,
             @Local(argsOnly = true) RandomSource random) {
-        ISeasonRendererContextOwner.of(blockAndTintGetter)
+        IExtraRendererContextOwner.of(blockAndTintGetter)
                 .apply(blockAndTintGetter, pos, state, random, original);
         return original;
     }

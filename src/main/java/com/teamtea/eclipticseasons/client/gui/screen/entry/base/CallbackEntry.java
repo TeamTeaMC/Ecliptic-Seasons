@@ -1,30 +1,72 @@
 package com.teamtea.eclipticseasons.client.gui.screen.entry.base;
 
+import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.client.gui.screen.ESModConfigScreen;
+import com.teamtea.eclipticseasons.config.sync.SyncType;
 import it.unimi.dsi.fastutil.booleans.BooleanConsumer;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.CycleButton;
 import net.minecraft.client.gui.components.StringWidget;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.network.chat.Component;
+import net.neoforged.neoforge.common.ModConfigSpec;
 
+import java.util.function.BooleanSupplier;
 import java.util.function.Function;
 
 public class CallbackEntry extends ConfigEntry {
     CycleButton.OnValueChange<Boolean> consumer;
-    boolean base;
+    final BooleanSupplier base;
+    protected final Component hoveredInfo;
+    @Accessors(chain = true)
+    @Setter
+    protected ModConfigSpec.RestartType restartType = ModConfigSpec.RestartType.NONE;
+    @Accessors(chain = true)
+    @Setter
+    @Getter
+    protected SyncType syncType = SyncType.COMMON;
+    boolean nowValue;
 
-    public CallbackEntry(String text, Boolean base, CycleButton.OnValueChange<Boolean> consumer) {
+    public CallbackEntry(String text, String hoveredText, BooleanSupplier base, CycleButton.OnValueChange<Boolean> consumer) {
         super(text);
         this.consumer = consumer;
         this.base = base;
+        this.hoveredInfo = Component.translatable(hoveredText);
+        this.nowValue = base.getAsBoolean();
+    }
+
+    @Override
+    public boolean isValueChanged() {
+        return base.getAsBoolean() != nowValue;
+    }
+
+    @Override
+    public boolean shouldRestart(boolean inGame) {
+        return switch (restartType) {
+            case WORLD -> inGame;
+            case GAME -> true;
+            default -> false;
+        };
     }
 
     @Override
     public AbstractWidget build(ESModConfigScreen screen, int x, int y, int width) {
-        CycleButton<Boolean> booleanCycleButton = CycleButton.onOffBuilder(base)
-                .create(x, y, width, 20, this.label, consumer);
+        CycleButton.Builder<Boolean> booleanBuilder = CycleButton.onOffBuilder(nowValue);
+        if (syncType == SyncType.CLIENT) {
+            booleanBuilder.withSprite(
+                    (cycleButton, aBoolean) ->
+                            CLIENT_SPRITES.get(cycleButton.isActive(), cycleButton.isHoveredOrFocused()));
+        }
+        CycleButton<Boolean> booleanCycleButton = booleanBuilder
+                .create(x, y, width, 20, this.label, (b, v) -> {
+                    this.nowValue = v;
+                    consumer.onValueChange(b, v);
+                });
+        booleanCycleButton.setTooltip(Tooltip.create(label.copy().withStyle(ChatFormatting.BOLD).append("\n\n").append(hoveredInfo.copy().withStyle(style -> style.withBold(false)))));
         return booleanCycleButton;
     }
 }

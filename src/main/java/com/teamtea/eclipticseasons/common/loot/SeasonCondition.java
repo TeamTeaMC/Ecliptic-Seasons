@@ -10,7 +10,6 @@ import com.teamtea.eclipticseasons.api.data.climate.AgroClimaticZone;
 import com.teamtea.eclipticseasons.api.util.codec.CodecUtil;
 import com.teamtea.eclipticseasons.api.util.codec.ESExtraCodec;
 import com.teamtea.eclipticseasons.common.registry.ESRegistries;
-import com.teamtea.eclipticseasons.common.registry.LootItemConditionRegistry;
 import lombok.Data;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -61,7 +60,7 @@ public record SeasonCondition(Slice require) implements LootItemCondition {
             var vec3 = context.getOptionalParameter(LootContextParams.ORIGIN);
             BlockPos pos = vec3 == null ? null : BlockPos.containing(vec3);
             if (pos != null) {
-                Season agroSeason = EclipticSeasonsApi.getInstance().getAgroSeason(level, pos);
+                Season agroSeason = EclipticSeasonsApi.getInstance().getSeasonSignal(level, pos);
                 return agroSeason.isInTerms(startSeason, endSeason);
             }
         }

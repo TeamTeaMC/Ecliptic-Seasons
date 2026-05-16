@@ -371,7 +371,7 @@ public class BiomeColorsHandler {
                 if (solidBlockHeight == blockHeight) return false;
                 if (blockHeight > pBlockPos.getY()) return false;
                 try {
-                    if (EclipticSeasonsApi.getInstance().getAgroSeason(ClientCon.getUseLevel(), mutable) != Season.AUTUMN)
+                    if (EclipticSeasonsApi.getInstance().getSeasonSignal(ClientCon.getUseLevel(), mutable) != Season.AUTUMN)
                         return false;
                     BlockPos heightmapPos = ClientCon.getUseLevel().getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, pBlockPos).below();
                     BlockState blockState = ClientCon.getUseLevel().getBlockState(heightmapPos);

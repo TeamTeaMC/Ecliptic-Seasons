@@ -7,7 +7,7 @@ import com.teamtea.eclipticseasons.api.constant.biome.Temperature;
 import com.teamtea.eclipticseasons.api.constant.climate.BiomeRain;
 import com.teamtea.eclipticseasons.api.constant.climate.ISnowTerm;
 import com.teamtea.eclipticseasons.api.constant.climate.WeatherMode;
-import com.teamtea.eclipticseasons.api.constant.solar.Month;
+import com.teamtea.eclipticseasons.api.constant.solar.gregorian.GregorianMonth;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.constant.solar.TimePeriod;
@@ -32,7 +32,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.timeline.Timeline;
 import net.minecraft.world.timeline.Timelines;
-import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 import java.util.Optional;
@@ -155,7 +154,7 @@ public class EclipticUtil {
             }
 
             @Override
-            public Season getAgroSeason(Level level, BlockPos pos) {
+            public Season getSeasonSignal(Level level, BlockPos pos) {
                 return AnimalHooks.getUseSeason(level, pos);
             }
 
@@ -170,8 +169,8 @@ public class EclipticUtil {
             }
 
             @Override
-            public Month getStandardMonth(Level level) {
-                return Month.of(getSolarDays(level), getLastingDaysOfEachTerm(level),CommonConfig.Season.dayOffset.get(),CommonConfig.Season.monthOffset.get());
+            public GregorianMonth getGregorianMonth(Level level) {
+                return GregorianMonth.of(getSolarDays(level), getLastingDaysOfEachTerm(level),CommonConfig.Season.dayOffset.get(),CommonConfig.Season.monthOffset.get());
             }
 
             @Override
@@ -180,8 +179,13 @@ public class EclipticUtil {
             }
 
             @Override
-            public int getSolarYears(Level level) {
+            public int getSolarYear(Level level) {
                 return EclipticUtil.getNowSolarYear(level);
+            }
+
+            @Override
+            public int getGregorianYear(Level level) {
+                return GregorianMonth.toYear(getSolarDays(level), getLastingDaysOfEachTerm(level), CommonConfig.Season.dayOffset.get(), CommonConfig.Season.monthOffset.get());
             }
 
             @Override
@@ -190,13 +194,13 @@ public class EclipticUtil {
             }
 
             @Override
-            public int getTimeInTerm(Level level) {
+            public int getDayInTerm(Level level) {
                 return EclipticUtil.getTimeInSolarTerm(level);
             }
 
             @Override
             public int getDayOfMonth(Level level) {
-                return Month.ofDay(getSolarDays(level), getLastingDaysOfEachTerm(level), CommonConfig.Season.dayOffset.get());
+                return GregorianMonth.ofDay(getSolarDays(level), getLastingDaysOfEachTerm(level), CommonConfig.Season.dayOffset.get());
             }
 
             @Override

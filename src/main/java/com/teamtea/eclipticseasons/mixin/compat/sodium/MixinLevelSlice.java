@@ -2,11 +2,11 @@ package com.teamtea.eclipticseasons.mixin.compat.sodium;
 
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
-import com.teamtea.eclipticseasons.api.misc.client.ISeasonRendererContextOwner;
+import com.teamtea.eclipticseasons.api.misc.client.IExtraRendererContextOwner;
 import com.teamtea.eclipticseasons.api.misc.client.IFakeSnowHolder;
 import com.teamtea.eclipticseasons.api.misc.client.IMapSlice;
 import com.teamtea.eclipticseasons.api.misc.client.ISnowyGetter;
-import com.teamtea.eclipticseasons.client.core.context.SeasonRendererContext;
+import com.teamtea.eclipticseasons.client.core.context.ExtraRendererContext;
 import com.teamtea.eclipticseasons.common.core.map.*;
 import com.teamtea.eclipticseasons.common.core.snow.SnowyStatusKeeper;
 import it.unimi.dsi.fastutil.longs.Long2IntOpenHashMap;
@@ -27,7 +27,7 @@ import java.util.Arrays;
 
 
 @Mixin({LevelSlice.class})
-public abstract class MixinLevelSlice implements IMapSlice, ISeasonRendererContextOwner {
+public abstract class MixinLevelSlice implements IMapSlice, IExtraRendererContextOwner {
 
     @Unique
     private static final int MAP_BLOCK_COUNT = 16 * 16;
@@ -319,10 +319,10 @@ public abstract class MixinLevelSlice implements IMapSlice, ISeasonRendererConte
     }
 
     @Unique
-    private SeasonRendererContext eclipticseasons$rendererHolder = new SeasonRendererContext();
+    private ExtraRendererContext eclipticseasons$rendererHolder = new ExtraRendererContext();
 
     @Override
-    public SeasonRendererContext eclipticseasons$getContext() {
+    public ExtraRendererContext eclipticseasons$getContext() {
         return eclipticseasons$rendererHolder;
     }
 

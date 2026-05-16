@@ -96,7 +96,7 @@ public class CompatModule {
         public static ModConfigSpec.BooleanValue sereneSeasonBasedHumidity;
         public static ModConfigSpec.ConfigValue<List<? extends String>> modsWithoutSereneSeasonBasedHumidity;
         public static ModConfigSpec.BooleanValue fixBiome;
-        public static ModConfigSpec.DoubleValue weatherVotePercent;
+        // public static ModConfigSpec.DoubleValue weatherVotePercent;
         public static ModConfigSpec.BooleanValue DistantHorizonsWinterLOD;
         public static ModConfigSpec.BooleanValue voxyTest;
         public static ModConfigSpec.BooleanValue voxyLODAutoReload;
@@ -122,9 +122,9 @@ public class CompatModule {
             );
             fixBiome = builder.comment("Intercepts raw biome precipitation queries to ensure small biomes (like rivers) do not disrupt large-scale weather logic.")
                     .define("FixBiomePrecipitation", true);
-            weatherVotePercent = builder.comment("Determines global weather state based on player locations when external mods bypass our API.\n" +
-                            "This represents the weighted threshold required to trigger a specific weather condition.")
-                    .defineInRange("WeatherVotePercent", 0.5f, 0, 1.0d);
+            // weatherVotePercent = builder.comment("Determines global weather state based on player locations when external mods bypass our API.\n" +
+            //                 "This represents the weighted threshold required to trigger a specific weather condition.")
+            //         .defineInRange("WeatherVotePercent", 0.5f, 0, 1.0d);
             if (isDistanthorizons())
                 DistantHorizonsWinterLOD = builder.comment("Enables winter-themed Level of Detail (LOD) textures for Distant Horizons to ensure visual consistency at long distances.")
                         .define("DistantHorizonsWinterLOD", true);

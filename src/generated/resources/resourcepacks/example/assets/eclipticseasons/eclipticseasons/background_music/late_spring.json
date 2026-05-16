@@ -1,0 +1,11 @@
+{
+  "start": "fresh_green",
+  "end": "grain_rain",
+  "music": {
+    "default": {
+      "sound": "eclipticseasons:music.late_spring",
+      "min_delay": 2000,
+      "max_delay": 25000
+    }
+  }
+}

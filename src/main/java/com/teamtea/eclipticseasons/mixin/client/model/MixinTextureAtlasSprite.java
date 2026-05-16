@@ -1,7 +1,7 @@
 package com.teamtea.eclipticseasons.mixin.client.model;
 
 
-import com.teamtea.eclipticseasons.client.core.SeasonModelManager;
+import com.teamtea.eclipticseasons.client.core.ExtraModelManager;
 import com.teamtea.eclipticseasons.api.misc.client.ISpriteChecker;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import org.spongepowered.asm.mixin.Mixin;
@@ -20,7 +20,7 @@ public abstract class MixinTextureAtlasSprite implements ISpriteChecker {
     @Override
     public boolean isCTMSprite() {
         if (!eclipticseasons$hasCheck) {
-            eclipticseasons$isCTMSprite = SeasonModelManager.isSpecialCTMSprite((TextureAtlasSprite) (Object) this);
+            eclipticseasons$isCTMSprite = ExtraModelManager.isSpecialCTMSprite((TextureAtlasSprite) (Object) this);
             eclipticseasons$hasCheck = true;
         }
         return this.eclipticseasons$isCTMSprite;
@@ -35,7 +35,7 @@ public abstract class MixinTextureAtlasSprite implements ISpriteChecker {
     @Override
     public boolean isSnowyTexture() {
         if (!eclipticseasons$hasCheckSnowy) {
-            eclipticseasons$isSnowySprite = SeasonModelManager.isSpecialSnowySprite((TextureAtlasSprite) (Object) this);
+            eclipticseasons$isSnowySprite = ExtraModelManager.isSpecialSnowySprite((TextureAtlasSprite) (Object) this);
             eclipticseasons$hasCheckSnowy = true;
         }
         return this.eclipticseasons$isSnowySprite;

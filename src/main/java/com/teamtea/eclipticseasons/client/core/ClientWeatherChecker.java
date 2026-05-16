@@ -19,7 +19,8 @@ public class ClientWeatherChecker {
     }
 
     public static float getRate() {
-        return ClientConfig.Weather.weatherTransitionSpeed.get().floatValue();
+        // return ClientConfig.Weather.weatherTransitionSpeed.get().floatValue();
+        return 0;
     }
 
     // 0-》15

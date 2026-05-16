@@ -30,8 +30,9 @@ public class LoopSeasonalSoundInstance extends AbstractTickableSoundInstance {
     public void tick() {
         if (isStopped()) return;
         Set<LoopSeasonalSoundInstance> loopSeasonalSoundInstances = loopSounds.get();
-        if (loopSeasonalSoundInstances != null && !loopSeasonalSoundInstances.contains(this)) {
-            this.fadeDirection = -1;
+        if (loopSeasonalSoundInstances == null || !loopSeasonalSoundInstances.contains(this)) {
+            this.stop();
+            return;
         }
         if (this.fade < 0) {
             this.stop();
@@ -58,7 +59,7 @@ public class LoopSeasonalSoundInstance extends AbstractTickableSoundInstance {
     }
 
     public void checkIfForceStop() {
-        if (lastTickTime - System.currentTimeMillis() > 1000 * 5) {
+        if (System.currentTimeMillis() - lastTickTime > 1000 * 5) {
             this.stop();
         }
     }

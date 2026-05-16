@@ -1,6 +1,6 @@
 package com.teamtea.eclipticseasons.client.model.block;
 
-import com.teamtea.eclipticseasons.client.core.SeasonModelManager;
+import com.teamtea.eclipticseasons.client.core.ExtraModelManager;
 import com.teamtea.eclipticseasons.client.model.block.part.SimpleBlockModelPart;
 import com.teamtea.eclipticseasons.client.model.block.quad.ReUVBakedQuad;
 import com.teamtea.eclipticseasons.client.model.block.quad.QuadFilter;
@@ -9,7 +9,6 @@ import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.geometry.BakedQuad;
-import net.minecraft.client.resources.model.geometry.QuadCollection;
 import net.minecraft.client.resources.model.sprite.Material;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -36,7 +35,7 @@ public class DerivedSnowyBlockStateModel implements BlockStateModel {
     @Override
     public void collectParts(BlockAndTintGetter level, BlockPos pos, BlockState state, RandomSource random, List<BlockStateModelPart> parts) {
         if (parts.isEmpty()) {
-            BlockStateModel blockStateModel = SeasonModelManager.models.blockStateModels().get(state);
+            BlockStateModel blockStateModel = ExtraModelManager.models.blockStateModels().get(state);
             if (blockStateModel != null) {
                 blockStateModel.collectParts(level, pos, state, random, parts);
             }
@@ -71,19 +70,22 @@ public class DerivedSnowyBlockStateModel implements BlockStateModel {
         }
 
         Map<Direction, List<BakedQuad>> map = new IdentityHashMap<>();
-        QuadCollection.Builder quadCollection = new QuadCollection.Builder();
+        // QuadCollection.Builder quadCollection = new QuadCollection.Builder();
+        List<BakedQuad> quadNew = new ArrayList<>();
         for (BlockStateModelPart object : parts) {
             for (Direction value : DIRECTIONS_TO_CHECK) {
                 List<BakedQuad> quads = object.getQuads(value);
                 if (quads.isEmpty()) continue;
-                for (BakedQuad quad : quads) {
-                    quadCollection = value == null ?
-                            quadCollection.addUnculledFace(quad) :
-                            quadCollection.addCulledFace(value, quad);
-                }
+                // for (BakedQuad quad : quads) {
+                //     // quadCollection = value == null ?
+                //     //         quadCollection.addUnculledFace(quad) :
+                //     //         quadCollection.addCulledFace(value, quad);
+                //     quadNew.add(quad);
+                // }
+                quadNew.addAll(quads);
             }
         }
-        QuadCollection build = quadCollection.build();
+        // QuadCollection build = quadCollection.build();
 
         boolean tooTiny = false;
         Block block = state.getBlock();
@@ -110,7 +112,8 @@ public class DerivedSnowyBlockStateModel implements BlockStateModel {
         //     }
         // }
 
-        List<BakedQuad> quads = new ArrayList<>(build.getAll());
+        // List<BakedQuad> quads = new ArrayList<>(build.getAll());
+        List<BakedQuad> quads = quadNew;
         if (!tooTiny)
             quads = QuadFilter.fixQuadCTM(quads);
         map.put(Direction.UP, makeSnowyBakedQuads(bqr, quads, tooTiny));
@@ -124,9 +127,9 @@ public class DerivedSnowyBlockStateModel implements BlockStateModel {
 
     public static List<BakedQuad> makeSnowyBakedQuads(ReUVBakedQuad bqr, List<BakedQuad> quadsCTM, boolean tooTiny) {
 
-        TextureAtlasSprite snow_overlay_sprite = SeasonModelManager.getSprite(SeasonModelManager.snow_overlay);
-        TextureAtlasSprite snow_overlay_tiny_sprite = SeasonModelManager.getSprite(SeasonModelManager.snow_overlay_tiny);
-        TextureAtlasSprite snow_sprite = SeasonModelManager.getSprite(SeasonModelManager.snow);
+        TextureAtlasSprite snow_overlay_sprite = ExtraModelManager.getSprite(ExtraModelManager.snow_overlay);
+        TextureAtlasSprite snow_overlay_tiny_sprite = ExtraModelManager.getSprite(ExtraModelManager.snow_overlay_tiny);
+        TextureAtlasSprite snow_sprite = ExtraModelManager.getSprite(ExtraModelManager.snow);
 
         float offset = 0.5f;
         boolean isSlabDown = false;

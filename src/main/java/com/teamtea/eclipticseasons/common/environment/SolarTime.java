@@ -4,7 +4,6 @@ import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.solar.TimePeriod;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.api.util.SimpleUtil;
-import com.teamtea.eclipticseasons.api.util.WeatherUtil;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.core.solar.SolarAngelHelper;
@@ -16,7 +15,6 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.attribute.EnvironmentAttributeLayer;
 import net.minecraft.world.attribute.EnvironmentAttributeSystem;
-import net.minecraft.world.attribute.EnvironmentAttributes;
 import net.minecraft.world.clock.ClockManager;
 import net.minecraft.world.clock.ClockTimeMarker;
 import net.minecraft.world.clock.ServerClockManager;
@@ -38,7 +36,7 @@ public class SolarTime {
                 EclipticSeasonsApi.getInstance().getSolarTerm(level));
 
         environmentAttributes.addPositionalLayer(EnvironmentAttributeRegistry.SEASON_ATTRIBUTE, (baseValue, pos, biomeInterpolator) ->
-                EclipticSeasonsApi.getInstance().getAgroSeason(level, BlockPos.containing(pos)));
+                EclipticSeasonsApi.getInstance().getSeasonSignal(level, BlockPos.containing(pos)));
 
 
         environmentAttributes.addPositionalLayer(EnvironmentAttributeRegistry.HUMIDITY_ATTRIBUTE, (baseValue, pos, biomeInterpolator) ->

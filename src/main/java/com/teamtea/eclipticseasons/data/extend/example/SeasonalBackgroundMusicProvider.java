@@ -1,6 +1,7 @@
 package com.teamtea.eclipticseasons.data.extend.example;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
+import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.data.client.SeasonalBackgroundMusic;
 import com.teamtea.eclipticseasons.client.reload.ClientJsonCacheListener;
 import com.teamtea.eclipticseasons.common.registry.AgroClimateRegistry;
@@ -37,7 +38,7 @@ public class SeasonalBackgroundMusicProvider extends ESClientBiomeDataMapProvide
         var slp = new AgroClimateRegistry.BiomeRegistryLookup<>(provider.lookupOrThrow(Registries.SOUND_EVENT), Registries.SOUND_EVENT);
         var cck = new AgroClimateRegistry.BiomeRegistryLookup<>(provider.lookupOrThrow(ESRegistries.SPECIAL_DAYS), ESRegistries.SPECIAL_DAYS);
 
-        add("mid_autumn", SeasonalBackgroundMusic.builder()
+        add("mid_autumn_day", SeasonalBackgroundMusic.builder()
                 // .season(Season.SPRING)
                 .biomes(get(TagKey.create(Registries.BIOME,
                         EclipticSeasons.rl("misc/ambient/spring"))))
@@ -57,7 +58,15 @@ public class SeasonalBackgroundMusicProvider extends ESClientBiomeDataMapProvide
                         EclipticSeasons.rl("misc/ambient/spring_negate"))))
                 .specialDays(HolderSet.direct(cck.getOrThrow(SpecialDaysRegistry.CHRISTMAS)))
                 .music(new SeasonalBackgroundMusic.BackgroundMusicBuilder(new SeasonalBackgroundMusic.MusicBuilder(EclipticSeasons.rl("music.gacha_bells"), 1000, 25000, false))).build());
-
+        for (Season.Sub sub : Season.Sub.collectValidValues()) {
+            add(sub.getName(), SeasonalBackgroundMusic.builder()
+                    .start(sub.getFirstSolarTerm())
+                    .end(sub.getEndSolarTerm())
+                    .music(new SeasonalBackgroundMusic.BackgroundMusicBuilder(new SeasonalBackgroundMusic.MusicBuilder(
+                            EclipticSeasons.rl("music." + sub.getName()), 2000, 25000, false
+                    )))
+                    .build());
+        }
     }
 
     private static ResourceKey<SoundEvent> createKey(String name) {

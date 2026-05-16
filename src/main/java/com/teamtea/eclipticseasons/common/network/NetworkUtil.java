@@ -15,7 +15,9 @@ import com.teamtea.eclipticseasons.common.core.map.SnowyRemover;
 import com.teamtea.eclipticseasons.common.network.message.*;
 import com.teamtea.eclipticseasons.common.registry.ESRegistries;
 import com.teamtea.eclipticseasons.config.ClientConfig;
-import com.teamtea.eclipticseasons.config.ESConfigSync;
+import com.teamtea.eclipticseasons.config.sync.ESConfigFilePayload;
+import com.teamtea.eclipticseasons.config.sync.ESConfigSync;
+import com.teamtea.eclipticseasons.config.sync.IESConfigMessage;
 import net.minecraft.core.Registry;
 import net.minecraft.core.SectionPos;
 import net.minecraft.network.chat.Component;
@@ -188,7 +190,7 @@ public class NetworkUtil {
         });
     }
 
-    public static void handle(ESConfigFilePayload payload, IPayloadContext context) {
+    public static void handleConfig(IESConfigMessage payload, IPayloadContext context) {
         ESConfigSync.INSTANCE.receiveSyncedConfig(payload.contents(), payload.fileName());
     }
 

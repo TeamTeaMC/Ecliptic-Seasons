@@ -17,6 +17,7 @@ public class StartConfig {
         private static void load(ModConfigSpec.Builder builder) {
             builder.push("Resource");
             extraSnow = builder.comment("Enable extra built-in snow definitions resourcepack for game.")
+                    .gameRestart()
                     .define("ExtraSnowDefinitions", false);
             builder.pop();
         }
