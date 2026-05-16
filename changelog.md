@@ -3,7 +3,5 @@ For more detailed information, please refer to the changelog for `0.13.0-rc` and
 
 #### Improvements
 
-- Now server administrators can sync Common configurations and Mixin configurations to the server. Note that Mixin
-  configurations will not be redistributed to online players.
-- Optimized the sound of ice breaking when stepping on flowing water while experimental features are enabled.
-- Optimized some known issues to improve server runtime performance.
+- Improved the naming and organization of configuration options.
+- Fixed several other known issues.

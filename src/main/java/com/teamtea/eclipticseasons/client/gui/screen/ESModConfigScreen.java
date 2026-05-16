@@ -265,7 +265,7 @@ public class ESModConfigScreen extends Screen {
                 CommonConfig.Snow.snowInWorld,
                 CommonConfig.Resource.SnowTogether,
                 CommonConfig.Resource.RegionalSnowTime,
-                CommonConfig.Map.changeMapColor,
+                // CommonConfig.Map.changeMapColor,
                 StartConfig.Resource.extraSnow
         );
 
@@ -292,7 +292,11 @@ public class ESModConfigScreen extends Screen {
 
         put(WEATHER,
                 CommonConfig.Weather.notRainInDesert,
+                CommonConfig.Weather.shouldInitSnowForExtremeColdBiomes,
                 CommonConfig.Weather.rainChanceMultiplier,
+                CommonConfig.Weather.thunderChanceMultiplier,
+                CommonConfig.Weather.snowAccumulationSpeedMultiplier,
+                CommonConfig.Weather.snowMeltSpeedMultiplier,
                 ClientConfig.Debug.fogWeather
         );
 
