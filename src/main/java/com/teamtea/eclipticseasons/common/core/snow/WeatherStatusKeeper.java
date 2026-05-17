@@ -207,9 +207,11 @@ public class WeatherStatusKeeper implements ICapabilityProvider, INBTSerializabl
     private transient CompoundTag cacheTag = null;
 
 
+    final CompoundTag EMPTY_TAG = new CompoundTag();
+
     @Override
     public CompoundTag serializeNBT() {
-        if (!EclipticUtil.canSnowyBlockInteract()) return new CompoundTag();
+        if (!EclipticUtil.canSnowyBlockInteract()) return EMPTY_TAG;
         if (cacheTag != null) return cacheTag;
         Level level = WeatherManager.fetchLevelIfNull(null);
         if (level != null) {
@@ -220,7 +222,7 @@ public class WeatherStatusKeeper implements ICapabilityProvider, INBTSerializabl
                 return compoundTag;
             }
         }
-        return new CompoundTag();
+        return compoundTag1;
     }
 
     @Override

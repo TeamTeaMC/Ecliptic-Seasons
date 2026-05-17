@@ -87,6 +87,8 @@ public class WeatherManager {
     }
 
     public static int getWeatherTickFactor(Level level) {
+        if (level instanceof IBiomeWeatherProvider ip)
+            return ip.es$getWeatherTickFactor();
         ArrayList<BiomeWeather> biomeList = getBiomeList(level);
         int size = biomeList == null ? 64 : biomeList.size();
         size = (int) (size * (Mth.clamp(7f / EclipticSeasonsApi.getInstance().getLastingDaysOfEachTerm(level), 0.8f, 3f)));
@@ -498,11 +500,8 @@ public class WeatherManager {
     }
 
     public static @Nullable Holder<Biome> getOwner(Level level, Holder<Biome> biomeHolder) {
-        return level.registryAccess().registryOrThrow(Registries.BIOME).getHolderOrThrow(Biomes.PLAINS);
-        // return
-        //         // level instanceof IBiomeWeatherProvider ibwp && ibwp.es$getCoreBiome() != null ?
-        //         // ibwp.es$getCoreBiome() :
-        //         BiomeClimateManager.getWeatherRegionOnwer(biomeHolder.value());
+        return level instanceof IBiomeWeatherProvider ibwp && ibwp.es$getCoreBiome() != null ?
+                ibwp.es$getCoreBiome() : level.registryAccess().registryOrThrow(Registries.BIOME).getHolderOrThrow(Biomes.PLAINS);
     }
 
     protected static void updateSnowOrMelt(ServerLevel level, BiomeWeather biomeWeather, RandomSource randomSource, int size, boolean rain) {
@@ -631,31 +630,26 @@ public class WeatherManager {
 
 
     public static boolean agentAdvanceWeatherCycle(ServerLevel level, RandomSource random) {
-
         // if (!MapChecker.isValidDimension(level)) {
         //     return true;
         // }
-        int pos = NEXT_CHECK_BIOME_MAP.getOrDefault(level, -1);
+        if (!level.dimensionType().hasSkyLight()) return false;
 
+        IBiomeWeatherProvider ip = level instanceof IBiomeWeatherProvider ips ? ips : null;
+        if (ip == null) return false;
         var levelBiomeWeather = getBiomeList(level);
+        if (levelBiomeWeather == null) return false;
 
-        if (pos >= 0 && levelBiomeWeather != null && pos < levelBiomeWeather.size()) {
-            int size = getWeatherTickFactor(level);
-            var biomeWeather = levelBiomeWeather.get(pos);
+        int pos = ip.es$getTickBiome();
+        int size = getWeatherTickFactor(level);
+        var biomeWeather = levelBiomeWeather.get(pos);
 
-            runWeather(level, biomeWeather, random, size);
+        runWeather(level, biomeWeather, random, size);
 
-            pos++;
-        } else {
-            pos = 0;
-        }
-        // Ecliptic.logger(level.getGameTime(),level.getGameTime() & 100);
-        if (levelBiomeWeather != null && (level.getGameTime() % 100) == 0 && !level.players().isEmpty()) {
-            // Ecliptic.logger(level.getGameTime());
+        if (level.getGameTime() % 100 == 0 && !level.players().isEmpty()) {
             sendBiomePacket(level, levelBiomeWeather, level.players());
         }
 
-        NEXT_CHECK_BIOME_MAP.put(level, pos);
         return true;
     }
 

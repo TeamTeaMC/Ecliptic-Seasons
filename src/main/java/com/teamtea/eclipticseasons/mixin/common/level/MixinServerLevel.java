@@ -1,6 +1,7 @@
 package com.teamtea.eclipticseasons.mixin.common.level;
 
 
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
@@ -113,19 +114,33 @@ public abstract class MixinServerLevel extends Level {
     //     booleanRef.set(WeatherManager.getRainOrSnow(getLevel(), biome, blockPos) != Biome.Precipitation.NONE);
     // }
 
-    @Inject(
+    @ModifyExpressionValue(
+            remap = false,
+            method = "tickChunk",
+            at = @At(value = "INVOKE",
+                    target = "Lnet/minecraft/server/level/ServerLevel;getBiome(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/core/Holder;")
+    )
+    private Holder<Biome> eclipticseasons$tickChunk_getBiome(Holder<Biome> original, @Share("eclipticseasons$biome") LocalRef<Holder<Biome>> biome) {
+        biome.set(original);
+        return original;
+    }
+
+    @ModifyExpressionValue(
             remap = false,
             method = "tickChunk",
             at = @At(value = "INVOKE",
                     target = "Lnet/minecraft/server/level/ServerLevel;isAreaLoaded(Lnet/minecraft/core/BlockPos;I)Z")
     )
-    private void eclipticseasons$tickChunk_melt(LevelChunk pChunk, int pRandomTickSpeed, CallbackInfo ci, @Local Biome biome, @Local(ordinal = 0) BlockPos blockPos) {
-        if (CommonConfig.Temperature.iceMelt.get()) {
+    private boolean eclipticseasons$tickChunk_melt(boolean original, @Share("eclipticseasons$biome") LocalRef<Holder<Biome>> biome, @Local(ordinal = 0) BlockPos blockPos) {
+        if (original && CommonConfig.Temperature.iceMelt.get()) {
             // if((getLevel()).isAreaLoaded(blockPos, 1))
             {
-                CustomRandomTickHandler.SNOW_MELT_2.tick(getLevel(), biome, blockPos);
+                Holder<Biome> biomeHolder = biome.get();
+                if (biomeHolder != null)
+                    CustomRandomTickHandler.SNOW_MELT_2.tick(getLevel(), biomeHolder, blockPos);
             }
         }
+        return original;
     }
 
     @WrapOperation(
@@ -133,9 +148,9 @@ public abstract class MixinServerLevel extends Level {
             at = @At(value = "INVOKE",
                     target = "Lnet/minecraft/world/level/biome/Biome;shouldFreeze(Lnet/minecraft/world/level/LevelReader;Lnet/minecraft/core/BlockPos;)Z")
     )
-    private boolean eclipticseasons$tickChunk_freeze(Biome instance, LevelReader pLevel, BlockPos pPos, Operation<Boolean> original) {
-        return CustomRandomTickHandler.checkExtraFreezeCondition(getLevel(), instance, pPos);
-
+    private boolean eclipticseasons$tickChunk_freeze(Biome instance, LevelReader pLevel, BlockPos pPos, Operation<Boolean> original, @Share("eclipticseasons$biome") LocalRef<Holder<Biome>> biome) {
+        Holder<Biome> biomeHolder = biome.get();
+        return biomeHolder != null ? CustomRandomTickHandler.checkExtraFreezeCondition(getLevel(), biomeHolder, pPos) : original.call(instance, pLevel, pPos);
     }
 
     @WrapOperation(
