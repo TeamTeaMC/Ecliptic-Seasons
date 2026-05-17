@@ -242,9 +242,11 @@ public class SnowyStatusKeeper implements Cloneable {
             return result.orElseGet(SnowyStatusKeeper::create);
         }
 
+        final CompoundTag EMPTY_TAG = new CompoundTag();
+
         @Override
         public Tag write(@NotNull SnowyStatusKeeper attachment, HolderLookup.@NotNull Provider provider) {
-            if (!EclipticUtil.canSnowyBlockInteract()) return new CompoundTag();
+            if (!EclipticUtil.canSnowyBlockInteract()) return EMPTY_TAG;
             if (attachment.cacheTag != null)
                 return attachment.cacheTag;
             Optional<Tag> result = CODEC.encodeStart(provider.createSerializationContext(NbtOps.INSTANCE), attachment).result();
@@ -252,7 +254,7 @@ public class SnowyStatusKeeper implements Cloneable {
                 attachment.cacheTag = compoundTag;
                 return compoundTag;
             }
-            return new CompoundTag();
+            return EMPTY_TAG;
         }
     }
 }
