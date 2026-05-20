@@ -266,7 +266,7 @@ public class SnowyStatusKeeper implements Cloneable, ICapabilityProvider, INBTSe
                 return compoundTag;
             }
         }
-        return new CompoundTag();
+        return EMPTY_TAG;
     }
 
     @Override

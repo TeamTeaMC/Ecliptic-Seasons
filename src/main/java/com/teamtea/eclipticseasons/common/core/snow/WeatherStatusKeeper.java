@@ -222,7 +222,7 @@ public class WeatherStatusKeeper implements ICapabilityProvider, INBTSerializabl
                 return compoundTag;
             }
         }
-        return compoundTag1;
+        return EMPTY_TAG;
     }
 
     @Override
