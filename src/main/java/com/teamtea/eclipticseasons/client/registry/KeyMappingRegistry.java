@@ -7,7 +7,7 @@ import net.minecraft.client.KeyMapping;
 public class KeyMappingRegistry {
     public static final KeyMapping DEBUG_KEY = new KeyMapping(
             EclipticSeasons.rl("main/debug").toLanguageKey("keys"),
-            InputConstants.KEY_NUMPAD5, EclipticSeasons.rl("main").toLanguageKey("key.category")
+            InputConstants.KEY_I, EclipticSeasons.rl("main").toLanguageKey("key.category")
     );
     public static final KeyMapping DEBUG_KEY_1 = new KeyMapping(
             EclipticSeasons.rl("main/debug_1").toLanguageKey("keys"),
