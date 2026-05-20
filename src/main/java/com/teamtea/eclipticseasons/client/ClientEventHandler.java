@@ -12,6 +12,8 @@ import com.teamtea.eclipticseasons.client.core.ClientWeatherChecker;
 import com.teamtea.eclipticseasons.client.gui.screen.ESModConfigScreen;
 import com.teamtea.eclipticseasons.client.render.WorldRenderer;
 import com.teamtea.eclipticseasons.client.render.chunk.IceKeeper;
+import com.teamtea.eclipticseasons.client.render.worldui.GrowthInfoClientCache;
+import com.teamtea.eclipticseasons.client.render.worldui.GrowthWorldUiRenderer;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.client.util.ClientRef;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
@@ -121,6 +123,7 @@ public final class ClientEventHandler {
             ClientCon.setUseLevel(null);
             ClientWeatherChecker.unload(clientLevel);
             IceKeeper.clearAll();
+            GrowthInfoClientCache.clear();
 
             // 1.20.1 patch for lazy chunk load
             BiomeHolder.BIOME_HOLDER_MAP.clear();
@@ -207,6 +210,15 @@ public final class ClientEventHandler {
 
     }
 
+
+    @SubscribeEvent
+    public static void onRenderLevelStage(RenderLevelStageEvent event) {
+        if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS) {
+            return;
+        }
+
+        GrowthWorldUiRenderer.renderLevelStage(event);
+    }
 
     @SubscribeEvent
     public static void onRenderLevelStageEvent(RenderLevelStageEvent event) {

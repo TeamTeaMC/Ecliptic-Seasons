@@ -42,7 +42,7 @@ public class GrowthDetectorItem extends Item {
     @Override
     public InteractionResult useOn(UseOnContext context) {
         Player player = context.getPlayer();
-        if (player != null) {
+        if (player != null && CommonConfig.Crop.growthDetectorClassicMode.get()) {
             Level level = context.getLevel();
             BlockPos clickedPos = context.getClickedPos();
             BlockState state = level.getBlockState(clickedPos);
