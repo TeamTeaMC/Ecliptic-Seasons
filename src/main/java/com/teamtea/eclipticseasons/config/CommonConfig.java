@@ -219,6 +219,8 @@ public class CommonConfig {
         public static ModConfigSpec.IntValue seasonalPrayerRitualCropBonusReduction;
         public static ModConfigSpec.DoubleValue seasonalPrayerRitualTimeCost;
 
+        public static ModConfigSpec.BooleanValue growthDetectorClassicMode;
+
         private static void load(ModConfigSpec.Builder builder) {
             builder.push("Crop");
             enableCrop = builder.comment("Restrict plant growth based on their compatible seasons or humidity.")
@@ -262,6 +264,10 @@ public class CommonConfig {
             seasonalPrayerRitualTimeCost = builder
                     .comment("The duration required for the Prayer Ritual (relative to one Solar Term).")
                     .defineInRange("SeasonalPrayerRitualTimeCost", 2, 0.00001d, 5000);
+
+            growthDetectorClassicMode = builder
+                    .comment("Uses the classic chat-message display for the growth detector instead of the new in-world UI.")
+                    .define("GrowthDetectorClassicMode", false);
             builder.pop();
         }
     }

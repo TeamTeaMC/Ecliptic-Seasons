@@ -8,6 +8,8 @@ import com.teamtea.eclipticseasons.api.data.misc.ESSortInfo;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.client.gui.screen.ESModConfigScreen;
 import com.teamtea.eclipticseasons.client.render.chunk.IceKeeper;
+import com.teamtea.eclipticseasons.client.render.worldui.GrowthInfoClientCache;
+import com.teamtea.eclipticseasons.client.render.worldui.GrowthWorldUiRenderer;
 import com.teamtea.eclipticseasons.client.util.ClientRef;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
@@ -173,6 +175,7 @@ public final class ClientEventHandler {
             ClientWeatherChecker.unload(clientLevel);
             CompilerCollector.clearAll();
             IceKeeper.clearAll();
+            GrowthInfoClientCache.clear();
         }
     }
 
@@ -248,6 +251,15 @@ public final class ClientEventHandler {
         }
 
 
+    }
+
+    @SubscribeEvent
+    public static void onRenderLevelStage(RenderLevelStageEvent event) {
+        if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS) {
+            return;
+        }
+
+        GrowthWorldUiRenderer.renderLevelStage(event);
     }
 
     @SubscribeEvent

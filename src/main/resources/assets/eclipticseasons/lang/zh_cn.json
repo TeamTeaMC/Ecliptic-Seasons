@@ -52,6 +52,13 @@
   "ui.label.eclipticseasons.snow_passable": "雪可以穿过",
   "ui.label.eclipticseasons.offset": "偏移值",
   "ui.label.eclipticseasons.properties": "属性",
+  "ui.eclipticseasons.growth_chance": "生长概率：%s",
+  "ui.eclipticseasons.issue.needs_season_core": "需要季节核心",
+  "ui.eclipticseasons.issue.humidity_mismatch": "湿度不适宜",
+  "ui.eclipticseasons.issue.all_conditions_met": "条件适宜",
+  "ui.eclipticseasons.greenhouse_1": "温室：有效",
+  "ui.eclipticseasons.greenhouse_2": "温室：部分有效",
+  "ui.eclipticseasons.greenhouse_3": "温室：无效",
   "debug_info.eclipticseasons.snow_term": "[%1$s → %3$s%2$s]",
   "debug_info.eclipticseasons.snow_term.second_year": "次年",
   "debug_info.eclipticseasons.standard_year_month_day": "第%1$s年，%2$s%3$s日",
@@ -420,5 +427,9 @@
   "eclipticseasons.configuration.UnifiedSnowyBlockSides.tooltip": "将统一阴影扩展到覆雪方块的侧面。",
   "eclipticseasons.configuration.UnifiedFrozenWater.tooltip": "着色器修复：防止薄冰在后处理中被错误识别为“水”。",
   "eclipticseasons.configuration.DistantHorizonsWinterLODForceUpdateAll.tooltip": "强制 Distant Horizons 及时刷新所有 LOD。\n警告：启用后可能导致完整 LOD 重建并产生明显卡顿。",
-  "eclipticseasons.configuration.ShouldInitSnowDepthForExtremeColdBiomes": "初始化寒冷群系雪景"
+  "eclipticseasons.configuration.ShouldInitSnowDepthForExtremeColdBiomes": "初始化寒冷群系雪景",
+  "eclipticseasons.configuration.GrowthDetectorClassicMode": "经典生长检测器模式",
+  "eclipticseasons.configuration.GrowthDetectorClassicMode.tooltip": "使用经典聊天消息显示生长检测器结果，而不是新的世界内 UI。",
+  "eclipticseasons.configuration.CropLeavesPatch": "作物叶片枯萎兼容",
+  "eclipticseasons.configuration.CropLeavesPatch.tooltip": "兼容模式下，当作物生长 tick 检定失败时，使应该凋零的叶片方块枯萎。"
 }

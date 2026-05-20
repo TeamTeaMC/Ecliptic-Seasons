@@ -92,7 +92,7 @@ public final class GrowthInfoResolver {
             if (!likedSeasons.isEmpty()
                     && saveData != null
                     && saveData.findNearGreenHouseProvider(pos, likedSeasons) == null) {
-                needsSeasonCore = true;
+                needsSeasonCore = !likedSeasons.contains(EclipticSeasonsApi.getInstance().getSeasonSignal(level, pos));
             }
 
             likedHumidity = CropGrowthHandler.getLikeHumidityInTemperate(
