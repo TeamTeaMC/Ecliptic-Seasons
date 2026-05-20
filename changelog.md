@@ -3,5 +3,6 @@ For more detailed information, please refer to the changelog for `0.13.0-rc` and
 
 #### Improvements
 
-- Improved the naming and organization of configuration options.
-- Fixed several other known issues.
+- Fixed an issue where the growth detector used incorrect checks under Simple Greenhouse mode.
+- Optimized weather simulation performance.
+- Optimized chunk tick performance.

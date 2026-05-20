@@ -143,8 +143,7 @@ public class GrowthDetectorItem extends Item {
             result *= growParameter.grow_chance();
             if (result < 1) {
                 if (roomStatus == CropGrowthHandler.RoomStatus.GREEN_HOUSE) {
-                    if (CommonConfig.Crop.simpleGreenHouse.get() ||
-                            CropGrowthHandler.getGreenHouseProvider(level, pos, blockState, controlMap, agentClimateTypeHolder) != null) {
+                    if (CropGrowthHandler.getGreenHouseProvider(level, pos, blockState, controlMap, agentClimateTypeHolder) != null) {
                         result = 1;
                     }
                 }
@@ -155,6 +154,11 @@ public class GrowthDetectorItem extends Item {
             float env = EclipticUtil.getHumidityLevelAt(level, solarTerm, biomeHolder, pos, !level.isClientSide());
             result *= getHumidityGrowChance(level, growControl != null ? growControl : agentGrowControl, env, roomStatus, pos, blockState, season, false);
         }
+        
+        if (result < 1 && CommonConfig.Crop.simpleGreenHouse.get() && roomStatus == CropGrowthHandler.RoomStatus.GREEN_HOUSE) {
+            result = 1;
+        }
+
         return result;
     }
 
