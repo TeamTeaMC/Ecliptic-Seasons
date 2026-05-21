@@ -1,6 +1,7 @@
 package com.teamtea.eclipticseasons.client.render.worldui.state;
 
 import com.teamtea.eclipticseasons.common.item.info.GrowthInfo;
+import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 
@@ -31,12 +32,14 @@ public record GrowthWorldUiState(
                 "ui.eclipticseasons.greenhouse_" + info.greenhouseLevel()
         ));
 
-        if (info.needsSeasonCore()) {
-            lines.add(Component.translatable("ui.eclipticseasons.issue.needs_season_core"));
-        } else if (info.humidityMismatch()) {
-            lines.add(Component.translatable("ui.eclipticseasons.issue.humidity_mismatch"));
-        } else {
-            lines.add(Component.translatable("ui.eclipticseasons.issue.all_conditions_met"));
+        if (!CommonConfig.Crop.simpleGreenHouse.get()) {
+            if (info.needsSeasonCore()) {
+                lines.add(Component.translatable("ui.eclipticseasons.issue.needs_season_core"));
+            } else if (info.humidityMismatch()) {
+                lines.add(Component.translatable("ui.eclipticseasons.issue.humidity_mismatch"));
+            } else {
+                lines.add(Component.translatable("ui.eclipticseasons.issue.all_conditions_met"));
+            }
         }
 
         return new GrowthWorldUiState(

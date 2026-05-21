@@ -1,6 +1,13 @@
 > As the ecosystem for 1.20.1 begins to wind down with major mods like Create moving on, we are also transitioning into
 > the final maintenance phase for our mod on this version.
 
+## 0.13.1
+
+- Added an in-world UI for the Growth Detector to display information.
+- Planned adjustments to the Season Quest Board design. Existing placed quest board blocks will not be removed, but the
+  JEI page has been hidden, and new season quest sign blocks can no longer be created using Seasonal Prayer Scrolls.
+- Improved the Season Prayer Ritual experience and greatly reduced the time required to nurture a Season Core.
+
 ## 0.13.0-rc-2
 
 * Various additional optimizations and improvements.
