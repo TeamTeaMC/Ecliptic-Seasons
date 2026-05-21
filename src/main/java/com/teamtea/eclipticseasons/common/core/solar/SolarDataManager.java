@@ -424,6 +424,29 @@ public class SolarDataManager extends SavedData {
         return null;
     }
 
+
+    public GreenHouseCoreProvider findNearGreenHouseConsumer(BlockPos blockPos, List<Season> seasons) {
+        ChunkPos chunkPos = new ChunkPos(blockPos);
+        Vec3 center = blockPos.getCenter();
+        int d = CommonConfig.Crop.seasonCoreRange.get() / 16 + 1;
+
+        for (int r = 0; r <= d; r++) {
+            for (int dx = -r; dx <= r; dx++) {
+                for (int dz = -r; dz <= r; dz++) {
+                    if (dx == -r || dx == r || dz == -r || dz == r) {
+                        ChunkPos currentChunkPos = new ChunkPos(chunkPos.x + dx, chunkPos.z + dz);
+                        GreenHouseCoreProvider greenHouseCoreProvider = checkSeasonProviderInChunk(seasons, currentChunkPos, center);
+                        if (greenHouseCoreProvider instanceof GreenHouseCoreBlockEntity.Consumer consumer) {
+                            return consumer;
+                        }
+                        if (greenHouseCoreProvider != null) return null;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
     protected GreenHouseCoreProvider checkSeasonProviderInChunk(List<Season> seasons, ChunkPos currentChunkPos, Vec3 center) {
         GreenHouseCoreProvider greenHouseCoreProvider = null;
         List<Pair<BlockPos, GreenHouseCoreProvider>> lis = this.greenHouseCoreMap.getOrDefault(currentChunkPos.toLong(), null);

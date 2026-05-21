@@ -63,7 +63,7 @@
   "debug_info.eclipticseasons.snow_term.second_year": "次年",
   "debug_info.eclipticseasons.standard_year_month_day": "第%1$s年，%2$s%3$s日",
   "info.eclipticseasons.recipe_category.greenhouse_ritual": "季节仪式",
-  "info.eclipticseasons.recipe_category.greenhouse_ritual.not_in_room": "不可以在室内进行",
+  "info.eclipticseasons.recipe_category.greenhouse_ritual.not_in_room": "放置在室外且不接触地面",
   "info.eclipticseasons.recipe_category.greenhouse_ritual.crop_bonus": "作物生长可以略微加速",
   "info.eclipticseasons.recipe_category.greenhouse_ritual.stage": "一共%s个阶段",
   "info.eclipticseasons.recipe_category.greenhouse_ritual.time_cost": "预计需要%s天",

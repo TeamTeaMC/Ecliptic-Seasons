@@ -66,7 +66,7 @@
   "debug_info.eclipticseasons.standard_year_month_day": "%2$s %3$s, %1$s",
   "pack.eclipticseasons.snowy_sodium_stairs": "Snowy Stairs for Sodium",
   "info.eclipticseasons.recipe_category.greenhouse_ritual": "Season Ritual",
-  "info.eclipticseasons.recipe_category.greenhouse_ritual.not_in_room": "Not in room",
+  "info.eclipticseasons.recipe_category.greenhouse_ritual.not_in_room": "Place outdoors and not in contact with the ground",
   "info.eclipticseasons.recipe_category.greenhouse_ritual.crop_bonus": "Crop growth can slightly accelerate",
   "info.eclipticseasons.recipe_category.greenhouse_ritual.stage": "Total %s stages",
   "info.eclipticseasons.recipe_category.greenhouse_ritual.time_cost": "Estimated %s days",

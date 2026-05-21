@@ -24,6 +24,7 @@ import com.teamtea.eclipticseasons.api.event.CanPlantGrowEvent;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.api.util.SimpleUtil;
 import com.teamtea.eclipticseasons.api.util.fast.Enum2ObjectMap;
+import com.teamtea.eclipticseasons.common.block.blockentity.GreenHouseCoreBlockEntity;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
 import com.teamtea.eclipticseasons.common.registry.AgroClimateRegistry;
@@ -61,6 +62,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.bus.api.Event;
 import net.neoforged.neoforge.common.util.FakePlayer;
 import net.neoforged.neoforge.event.entity.player.BonemealEvent;
+import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.level.BlockGrowFeatureEvent;
 import net.neoforged.neoforge.event.level.block.CropGrowEvent;
 import org.jetbrains.annotations.NotNull;
@@ -677,6 +679,23 @@ public final class CropGrowthHandler {
                     && bonemealEvent.getLevel() instanceof ServerLevel serverLevel
                     && SolarHolders.getSaveData(serverLevel) instanceof SolarDataManager solarDataManager) {
                 solarDataManager.addSkipNextCheck(bonemealEvent.getPos(), bonemealEvent.getState());
+            }
+
+            BlockPos pos = event instanceof BonemealEvent bonemealEvent ? bonemealEvent.getPos() :
+                    event instanceof BlockEvent blockEvent ? blockEvent.getPos() : null;
+            BlockState state = event instanceof BonemealEvent bonemealEvent ? bonemealEvent.getState() :
+                    event instanceof BlockEvent blockEvent ? blockEvent.getState() : null;
+            Level level = event instanceof BonemealEvent bonemealEvent ? bonemealEvent.getLevel() :
+                    event instanceof BlockEvent blockEvent ? blockEvent.getLevel() instanceof Level level1 ? level1 : null : null;
+            if (state != null && level != null) {
+                List<Season> seasons = getLikeSeasonsInTemperate(state, getControlMap(state.getBlock()), getDefaultAgroClimaticZoneHolder(level));
+                if (!seasons.isEmpty()) {
+                    SolarDataManager saveData = SolarHolders.getSaveData(level);
+                    if (saveData != null
+                            && saveData.findNearGreenHouseConsumer(pos, seasons) instanceof GreenHouseCoreBlockEntity.Consumer consumer) {
+                        consumer.addEnergy(flag == GROW ? 2 : 1);
+                    }
+                }
             }
         } else {
             if (event instanceof BonemealEvent bonemealEvent) {
