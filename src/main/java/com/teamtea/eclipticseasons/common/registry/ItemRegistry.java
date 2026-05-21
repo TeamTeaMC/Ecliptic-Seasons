@@ -20,7 +20,7 @@ public class ItemRegistry {
 
     public static final DeferredHolder<Item, Item> hyetometer = ITEM_DEFERRED_REGISTER.register("hyetometer", () -> new MeterItem(new Item.Properties()));
     public static final DeferredHolder<Item, Item> thermometer = ITEM_DEFERRED_REGISTER.register("thermometer", () -> new MeterItem(new Item.Properties()));
-    public static final DeferredHolder<Item, Item> hygrometer = ITEM_DEFERRED_REGISTER.register("hygrometer", () -> new MeterBlockItem(BlockRegistry.hygrometer.get(),new Item.Properties()));
+    public static final DeferredHolder<Item, Item> hygrometer = ITEM_DEFERRED_REGISTER.register("hygrometer", () -> new MeterBlockItem(BlockRegistry.hygrometer.get(), new Item.Properties()));
 
     public static final DeferredHolder<Item, Item> growth_detector = ITEM_DEFERRED_REGISTER.register("growth_detector", () -> new GrowthDetectorItem(new Item.Properties()));
 
@@ -53,4 +53,5 @@ public class ItemRegistry {
 
     public static final DeferredHolder<Item, Item> snowless_hometown = ITEM_DEFERRED_REGISTER.register("snowless_hometown", () -> new Item(new Item.Properties().stacksTo(1).rarity(Rarity.RARE).jukeboxPlayable(SongRegistry.SNOWLESS_HOMETOWN)));
 
+    public static final DeferredHolder<Item, BlockItem> humidity_tank_item = ITEM_DEFERRED_REGISTER.register("humidity_tank",() -> new BlockItem(BlockRegistry.humidity_tank.get(), new Item.Properties()));
 }

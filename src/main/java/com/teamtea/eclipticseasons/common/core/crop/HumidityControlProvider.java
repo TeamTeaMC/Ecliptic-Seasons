@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnknownNullability;
 
 // TODO 距离衰减等级
-public final class HumidityControlProvider implements INBTSerializable<CompoundTag> {
+public class HumidityControlProvider implements INBTSerializable<CompoundTag> {
     private float range;
     private float level;
     private int remainTime;

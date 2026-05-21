@@ -71,6 +71,15 @@ public class BlockRegistry {
     public static DeferredHolder<Block, Block> snowySlab = BLOCK_DEFERRED_REGISTER.register("snowy_slab", () -> new SlabBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_SLAB).dynamicShape().noOcclusion()));
     public static DeferredHolder<Block, Block> snowyVine = BLOCK_DEFERRED_REGISTER.register("snowy_vine", () -> new VineBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.VINE).dynamicShape().noOcclusion()));
 
+    public static DeferredHolder<Block, Block> humidity_tank = BLOCK_DEFERRED_REGISTER.register(
+            "humidity_tank",
+            () -> new HumidityTankBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.WOOD)
+                    .strength(2.0F, 3.0F)
+                    .sound(SoundType.WOOD)
+                    .randomTicks()
+                    .noOcclusion())
+    );
 
     private static Map<Block, Supplier<Block>> COPPER_GRATE_MAP;
 

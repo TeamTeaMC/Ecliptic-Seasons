@@ -77,6 +77,7 @@ public class Lang_ZH extends LangHelper {
         add(BlockRegistry.snow_cauldron.get(),"装有雪的炼药锅");
         add(BlockRegistry.ice_cauldron.get(),"装有冰块的炼药锅");
 
+        add(BlockRegistry.humidity_tank.get(), "恒湿水箱");
 
         add("info.eclipticseasons.environment.temperature.under_freezing", "严寒");
         add("info.eclipticseasons.environment.temperature.freezing", "冰冻");

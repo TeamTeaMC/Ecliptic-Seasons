@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "B": {
+      "tag": "minecraft:planks"
+    },
+    "C": {
+      "item": "minecraft:water_bucket"
+    },
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "S": {
+      "tag": "minecraft:wooden_slabs"
+    }
+  },
+  "pattern": [
+    "SBS",
+    "BCB",
+    "SIS"
+  ],
+  "result": {
+    "count": 1,
+    "id": "eclipticseasons:humidity_tank"
+  }
+}

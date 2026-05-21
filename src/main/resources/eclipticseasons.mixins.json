@@ -7,7 +7,6 @@
     "common.block.MixinBlockState",
     "common.block.MixinBlockStateBase",
     "common.block.MixinBubbleColumnBlock",
-    "common.block.MixinCopperGrateBlock",
     "common.block.MixinFallingBlock",
     "common.block.MixinIBlockExtension",
     "common.block.MixinLayeredCauldronBlock",
