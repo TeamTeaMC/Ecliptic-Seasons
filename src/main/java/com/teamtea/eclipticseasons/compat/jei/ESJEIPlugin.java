@@ -39,7 +39,7 @@ public class ESJEIPlugin implements IModPlugin {
     public static final RecipeType<CauldronRecipe> CAULDRON_RECIPE_TYPE = getType(CAULDRON, CauldronRecipe.class);
     public static final RecipeType<GreenHouseCoreRecipe> GREENHOUSE_CORE_TYPE = getType(GREENHOUSE_CORE, GreenHouseCoreRecipe.class);
     public static final RecipeType<WetterStructure> WETTER_TYPE = getType(WETTER, WetterStructure.class);
-    public static final RecipeType<SeasonQuest> SEASON_QUEST_TYPE = getType(SEASON_QUEST, SeasonQuest.class);
+    // public static final RecipeType<SeasonQuest> SEASON_QUEST_TYPE = getType(SEASON_QUEST, SeasonQuest.class);
 
     public static <T> RecipeType<T> getType(ResourceLocation rs, Class<? extends T> recipeClass) {
         return RecipeType.create(rs.getNamespace(), rs.getPath(), recipeClass);
@@ -56,7 +56,7 @@ public class ESJEIPlugin implements IModPlugin {
         registry.addRecipeCategories(new CauldronRecipeCategory(registry.getJeiHelpers().getGuiHelper()));
         registry.addRecipeCategories(new GreenHouseCoreRecipeCategory(registry.getJeiHelpers().getGuiHelper()));
         registry.addRecipeCategories(new JEIWetterCategory(registry.getJeiHelpers().getGuiHelper()));
-        registry.addRecipeCategories(new JEISeasonQuestCategory(registry.getJeiHelpers().getGuiHelper()));
+        // registry.addRecipeCategories(new JEISeasonQuestCategory(registry.getJeiHelpers().getGuiHelper()));
     }
 
     @Override
@@ -67,7 +67,7 @@ public class ESJEIPlugin implements IModPlugin {
         registration.addRecipeCatalyst(Items.CAULDRON, CAULDRON_RECIPE_TYPE);
         registration.addRecipeCatalysts(GREENHOUSE_CORE_TYPE, ItemRegistry.seasonal_prayer_scroll_item.get().getDefaultInstance(),
                 ItemRegistry.greenhouse_core_container_item.get().getDefaultInstance());
-        registration.addRecipeCatalyst(ItemRegistry.seasonal_prayer_scroll_item.get(), SEASON_QUEST_TYPE);
+        // registration.addRecipeCatalyst(ItemRegistry.seasonal_prayer_scroll_item.get(), SEASON_QUEST_TYPE);
     }
 
     @Override
@@ -78,10 +78,10 @@ public class ESJEIPlugin implements IModPlugin {
                 .ifPresent(controls -> registration.addRecipes(HUMIDITY_CONTROL_RECIPE_TYPE, ESSortInfo.sorted2(controls)));
         level.registryAccess().registry(ESRegistries.WETTER)
                 .ifPresent(controls -> registration.addRecipes(WETTER_TYPE, ESSortInfo.sorted2(controls)));
-        level.registryAccess().registry(ESRegistries.SEASON_QUEST)
-                .ifPresent(controls -> registration.addRecipes(SEASON_QUEST_TYPE,
-                        ESSortInfo.sorted2(controls)
-                ));
+        // level.registryAccess().registry(ESRegistries.SEASON_QUEST)
+        //         .ifPresent(controls -> registration.addRecipes(SEASON_QUEST_TYPE,
+        //                 ESSortInfo.sorted2(controls)
+        //         ));
 
         registration.addRecipes(CAULDRON_RECIPE_TYPE, CauldronRecipe.caldronRecipeList.get());
         registration.addRecipes(GREENHOUSE_CORE_TYPE, GreenHouseCoreRecipe.lazy.get());
