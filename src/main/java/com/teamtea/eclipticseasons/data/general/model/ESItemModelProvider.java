@@ -51,6 +51,8 @@ public class ESItemModelProvider extends ItemModelProvider {
         withExistingParent(itemName(ItemRegistry.autumn_greenhouse_essence_item.get()), resourceItem("empty"));
         withExistingParent(itemName(ItemRegistry.winter_greenhouse_essence_item.get()), resourceItem("empty"));
 
+        withExistingParent(resourceItem(ItemRegistry.humidity_tank_item.getId().getPath()).getPath(),
+                resourceBlock(ItemRegistry.humidity_tank_item.getId().getPath()));
     }
 
     public void addSimple(Item item) {

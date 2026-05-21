@@ -77,6 +77,8 @@ public class Lang_EN extends LangHelper {
         add(BlockRegistry.snow_cauldron.get(), "Snow Cauldron");
         add(BlockRegistry.ice_cauldron.get(), "Ice Cauldron");
 
+        add(BlockRegistry.humidity_tank.get(), "Humidity Tank");
+
         add("info.eclipticseasons.environment.temperature.under_freezing", "Under Freezing");
         add("info.eclipticseasons.environment.temperature.freezing", "Freezing");
         add("info.eclipticseasons.environment.temperature.cold", "Cold");

@@ -230,6 +230,17 @@ public final class ESRecipeProvider extends RecipeProvider {
                                 .save(c, EclipticSeasons.rl("seasons_chronicle"));
                     }).build(consumer, EclipticSeasons.rl("seasons_chronicle"));
         }
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, BlockRegistry.humidity_tank.get())
+                .pattern("SBS")
+                .pattern("BCB")
+                .pattern("SIS")
+                .define('S', ItemTags.WOODEN_SLABS)
+                .define('B', ItemTags.PLANKS)
+                .define('C', Items.WATER_BUCKET)
+                .define('I', Items.IRON_INGOT)
+                .unlockedBy("has_water_bucket", has(Items.WATER_BUCKET))
+                .save(consumer);
     }
 
 
