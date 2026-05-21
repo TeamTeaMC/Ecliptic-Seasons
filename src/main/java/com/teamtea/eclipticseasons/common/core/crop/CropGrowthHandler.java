@@ -28,6 +28,7 @@ import com.teamtea.eclipticseasons.api.util.backport.FakeBlockPredicate;
 import com.teamtea.eclipticseasons.api.util.backport.FakeStatePropertiesPredicate;
 import com.teamtea.eclipticseasons.api.util.fast.Enum2ObjectMap;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
+import com.teamtea.eclipticseasons.common.block.blockentity.GreenHouseCoreBlockEntity;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
 import com.teamtea.eclipticseasons.common.registry.AgroClimateRegistry;
@@ -703,6 +704,23 @@ public final class CropGrowthHandler {
                 SolarDataManager data = SolarHolders.getSaveData(serverLevel);
                 if (data != null) {
                     data.addSkipNextCheck(bonemealEvent.getPos(), bonemealEvent.getBlock());
+                }
+            }
+
+            BlockPos pos = event instanceof BonemealEvent bonemealEvent ? bonemealEvent.getPos() :
+                    event instanceof BlockEvent blockEvent ? blockEvent.getPos() : null;
+            BlockState state = event instanceof BonemealEvent bonemealEvent ? bonemealEvent.getBlock() :
+                    event instanceof BlockEvent blockEvent ? blockEvent.getState() : null;
+            Level level = event instanceof BonemealEvent bonemealEvent ? bonemealEvent.getLevel() :
+                    event instanceof BlockEvent blockEvent ? blockEvent.getLevel() instanceof Level level1 ? level1 : null : null;
+            if (state != null && level != null) {
+                List<Season> seasons = getLikeSeasonsInTemperate(state, getControlMap(state.getBlock()), getDefaultAgroClimaticZoneHolder(level));
+                if (!seasons.isEmpty()) {
+                    SolarDataManager saveData = SolarHolders.getSaveData(level);
+                    if (saveData != null
+                            && saveData.findNearGreenHouseConsumer(pos, seasons) instanceof GreenHouseCoreBlockEntity.Consumer consumer) {
+                        consumer.addEnergy(flag == GROW ? 2 : 1);
+                    }
                 }
             }
         } else {

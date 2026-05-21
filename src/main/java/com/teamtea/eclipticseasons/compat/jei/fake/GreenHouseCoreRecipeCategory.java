@@ -78,7 +78,7 @@ public class GreenHouseCoreRecipeCategory implements IRecipeCategory<GreenHouseC
         tooltip.add(Component.translatable("info.eclipticseasons.recipe_category.greenhouse_ritual.crop_bonus"));
         tooltip.add(Component.translatable("info.eclipticseasons.recipe_category.greenhouse_ritual.stage",3));
 
-        double daysFor3Stages = 3 * EclipticSeasonsApi.getInstance().getLastingDaysOfEachTerm(Minecraft.getInstance().level)
+        double daysFor3Stages = 3
                 * CommonConfig.Crop.seasonalPrayerRitualTimeCost.get();
         String display = String.format("%.1f", daysFor3Stages);
         tooltip.add(Component.translatable("info.eclipticseasons.recipe_category.greenhouse_ritual.time_cost",display));
