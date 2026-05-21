@@ -45,7 +45,8 @@ public class JEISeasonQuestCategory implements IRecipeCategory<SeasonQuest> {
 
     @Override
     public @NotNull RecipeType<SeasonQuest> getRecipeType() {
-        return ESJEIPlugin.SEASON_QUEST_TYPE;
+        // return ESJEIPlugin.SEASON_QUEST_TYPE;
+        return null;
     }
 
     @Override

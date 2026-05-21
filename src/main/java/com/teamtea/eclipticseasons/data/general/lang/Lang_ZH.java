@@ -476,7 +476,7 @@ public class Lang_ZH extends LangHelper {
         add("info.eclipticseasons.show.shift", "§o<..按住shift..>");
         add("info.eclipticseasons.greenhouse_essence.source", "完成%1$s季进度或者任务获取");
 
-        add("info.eclipticseasons.seasonal_prayer_scroll.use", "§7§o激活温室心室进行季节仪式，或者悬挂式告示牌为季节任务栏");
+        add("info.eclipticseasons.seasonal_prayer_scroll.use", "§7§o激活温室心室进行季节仪式");
 
         add("info.eclipticseasons.snow_cauldron.extraction", "§7§o使用锹可以获取雪球");
         add("info.eclipticseasons.ice_cauldron.extraction", "§7§o使用镐可以获取冰块");

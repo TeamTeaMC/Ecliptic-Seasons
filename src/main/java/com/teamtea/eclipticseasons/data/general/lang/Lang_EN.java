@@ -476,7 +476,7 @@ public class Lang_EN extends LangHelper {
         add("info.eclipticseasons.show.shift", "§o<..Hold shift..>");
         add("info.eclipticseasons.greenhouse_essence.source", "Obtained by completing %1$s advancements or quests");
 
-        add("info.eclipticseasons.seasonal_prayer_scroll.use", "Activate the Greenhouse Core to perform a seasonal ritual, or a hanging sign as a seasonal quest sign");
+        add("info.eclipticseasons.seasonal_prayer_scroll.use", "Activate the Container of Greenhouse Core to perform a seasonal ritual");
 
         add("info.eclipticseasons.snow_cauldron.extraction", "§7§oUse a shovel to obtain Snow Balls");
         add("info.eclipticseasons.ice_cauldron.extraction", "§7§oUse a pickaxe to obtain Ice");
