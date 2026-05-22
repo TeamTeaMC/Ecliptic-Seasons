@@ -50,6 +50,6 @@ public class ItemRegistry {
 
     public static final RegistryObject<RecordItem> snowless_hometown = ITEM_DEFERRED_REGISTER.register("snowless_hometown", () -> new RecordItem(14, () -> SoundEventsRegistry.snowless_hometown, new Item.Properties().stacksTo(1).rarity(Rarity.RARE), 103*20));
 
-    public static final RegistryObject<BlockItem> humidity_tank_item = ITEM_DEFERRED_REGISTER.register("humidity_tank",() -> new BlockItem(BlockRegistry.humidity_tank.get(), new Item.Properties()));
+    public static final RegistryObject<BlockItem> humidity_tank_item = ITEM_DEFERRED_REGISTER.register("humidity_tank",() -> new HumidityModifierBlockItem(BlockRegistry.humidity_tank.get(), new Item.Properties()));
 
 }

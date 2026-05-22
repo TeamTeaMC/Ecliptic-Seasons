@@ -29,7 +29,7 @@
   "info.eclipticseasons.environment.solar_term.hint6": "%s %sth",
   "info.eclipticseasons.calendar.model.sub_season": "sub season",
   "info.eclipticseasons.calendar.model.month": "month",
-  "special_days.eclipticseasons.flower_festival": "Flower Festival",
+  "info.eclipticseasons.humidity_tank.use": "Increases the ambient humidity inside a greenhouse by %2$d%% within a %1$s-block radius when placed",
   "special_days.eclipticseasons.spring_festival": "Spring Festival",
   "special_days.eclipticseasons.spring_outing": "Spring Outing",
   "special_days.eclipticseasons.easter": "Easter",
@@ -377,7 +377,6 @@
   "eclipticseasons.configuration.UseBoxDistance.tooltip": "Use Manhattan distance (square) instead of Euclidean (circle) for greenhouse range.",
   "eclipticseasons.configuration.RegisterCropDefaultValue.tooltip": "[Deprecated] Use default seasonal/humidity values for unregistered crops.",
   "eclipticseasons.configuration.ForceCompatMode.tooltip": "Force all plants to follow growth rules, even those without specific mod tags.",
-  "eclipticseasons.configuration.CropLeavesPatch.tooltip": "Apply patch withering code for crop leave blocks if tick failed.",
   "eclipticseasons.configuration.SaveChunkEnvironmentalHumidity.tooltip": "Saves local humidity data to chunk files for persistent tracking.",
   "eclipticseasons.configuration.SeasonalPrayerRitualCropBonusReduction.tooltip": "Adjusts the power of the Seasonal Prayer Ritual. Higher values result in lower bonuses.",
   "eclipticseasons.configuration.SeasonalPrayerRitualTimeCost.tooltip": "The duration required for the Prayer Ritual (relative to one Solar Term).",
@@ -434,5 +433,7 @@
   "eclipticseasons.configuration.GrowthDetectorClassicMode": "Classic Growth Detector Mode",
   "eclipticseasons.configuration.GrowthDetectorClassicMode.tooltip": "Use classic chat messages to display growth detector results instead of the new in-world UI.",
   "eclipticseasons.configuration.CropLeavesPatch": "Crop Leaf Withering Compatibility",
-  "eclipticseasons.configuration.CropLeavesPatch.tooltip": "In compatibility mode, withers leaf blocks that should decay when their crop growth tick check fails."
+  "eclipticseasons.configuration.CropLeavesPatch.tooltip": "In compatibility mode, withers leaf blocks that should decay when their crop growth tick check fails.",
+  "eclipticseasons.configuration.HumidityTankRange": "Humidity Tank Range",
+  "eclipticseasons.configuration.HumidityTankRange.tooltip": "The effective radius of the Humidity Tank. When activated, it increases the ambient humidity within its range."
 }

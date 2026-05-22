@@ -1,20 +1,20 @@
 package com.teamtea.eclipticseasons.common.block;
 
-import com.mojang.serialization.MapCodec;
 import com.teamtea.eclipticseasons.common.block.base.SimpleEntityBlock;
-import com.teamtea.eclipticseasons.common.block.blockentity.HumidityTankBlockEntity;
+import com.teamtea.eclipticseasons.common.block.base.SimpleHumidityProviderBlock;
+import com.teamtea.eclipticseasons.common.block.blockentity.HumidityModifierBlockEntity;
 import com.teamtea.eclipticseasons.common.registry.BlockEntityRegistry;
+import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class HumidityTankBlock extends SimpleEntityBlock {
+public class HumidityTankBlock extends SimpleEntityBlock implements SimpleHumidityProviderBlock {
 
     public HumidityTankBlock(Properties properties) {
         super(properties);
@@ -23,14 +23,14 @@ public class HumidityTankBlock extends SimpleEntityBlock {
 
     @Override
     public BlockEntity newBlockEntity(BlockPos worldPosition, BlockState blockState) {
-        return BlockEntityRegistry.humidity_tank.get().create(worldPosition, blockState);
+        return BlockEntityRegistry.humidity_modifier.get().create(worldPosition, blockState);
     }
 
     @org.jetbrains.annotations.Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level worldIn, BlockState state, BlockEntityType<T> blockEntityType) {
         return !worldIn.isClientSide() ?
-                SimpleEntityBlock.createTickerHelper(blockEntityType, BlockEntityRegistry.humidity_tank.get(), HumidityTankBlockEntity::tick) : null;
+                SimpleEntityBlock.createTickerHelper(blockEntityType, BlockEntityRegistry.humidity_modifier.get(), HumidityModifierBlockEntity::tick) : null;
     }
 
     @Override
@@ -49,5 +49,13 @@ public class HumidityTankBlock extends SimpleEntityBlock {
                     0.0D, 0.0D, 0.0D
             );
         }
+    }
+
+    public float getHumidityModifiedLevel() {
+        return 0.75f;
+    }
+
+    public float getHumidityModifiedRange() {
+        return CommonConfig.Crop.humidityTankRange.get().floatValue();
     }
 }

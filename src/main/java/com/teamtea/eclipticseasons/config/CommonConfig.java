@@ -207,6 +207,7 @@ public class CommonConfig {
         public static ForgeConfigSpec.DoubleValue seasonalPrayerRitualTimeCost;
 
         public static ForgeConfigSpec.BooleanValue growthDetectorClassicMode;
+        public static ForgeConfigSpec.DoubleValue humidityTankRange;
 
         private static void load(ForgeConfigSpec.Builder builder) {
             builder.push("Crop");
@@ -255,6 +256,9 @@ public class CommonConfig {
             growthDetectorClassicMode = builder
                     .comment("Uses the classic chat-message display for the growth detector instead of the new in-world UI.")
                     .define("GrowthDetectorClassicMode", false);
+
+            humidityTankRange = builder.comment("The effective radius of the 'Humid Tank' block.")
+                    .defineInRange("HumidityTankRange", 4.5d, 2d, 16d);
             builder.pop();
         }
     }
