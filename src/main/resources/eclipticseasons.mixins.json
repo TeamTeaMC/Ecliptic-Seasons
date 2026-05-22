@@ -7,7 +7,6 @@
     "common.block.MixinBeehiveBlockEntity",
     "common.block.MixinBlockState",
     "common.block.MixinBlockStateBase",
-    "common.block.MixinCopperGrateBlock",
     "common.block.MixinFallingBlock",
     "common.block.MixinLayeredCauldronBlock",
     "common.chunk.MixinAccessorLevelChunkSection",

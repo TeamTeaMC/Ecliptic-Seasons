@@ -45,7 +45,7 @@ public class GrowthDetectorItem extends Item {
     @Override
     public @NonNull InteractionResult useOn(UseOnContext context) {
         Player player = context.getPlayer();
-        if (player != null) {
+        if (player != null && CommonConfig.Crop.growthDetectorClassicMode.get()) {
             Level level = context.getLevel();
             BlockPos clickedPos = context.getClickedPos();
             BlockState state = level.getBlockState(clickedPos);
@@ -96,7 +96,8 @@ public class GrowthDetectorItem extends Item {
                         if (!seasons.isEmpty()) {
                             SolarDataManager saveData = SolarHolders.getSaveData(level);
                             if (saveData != null && saveData.findNearGreenHouseProvider(clickedPos, seasons) == null) {
-                                component.append(Component.translatable("item.eclipticseasons.growth_detector.hint.season_core"));
+                                if (!seasons.contains(EclipticSeasonsApi.getInstance().getSeasonSignal(level, clickedPos)))
+                                    component.append(Component.translatable("item.eclipticseasons.growth_detector.hint.season_core"));
                             }
                         }
                         List<Humidity> humidityList = CropGrowthHandler.getLikeHumidityInTemperate(state, controlMap, agent);
@@ -146,8 +147,7 @@ public class GrowthDetectorItem extends Item {
         if (growParameter != null && CommonConfig.Crop.enableCrop.get()) {
             result *= growParameter.grow_chance();
             if (result < 1) {
-                if (CommonConfig.Crop.simpleGreenHouse.get() ||
-                        roomStatus == CropGrowthHandler.RoomStatus.GREEN_HOUSE) {
+                if (roomStatus == CropGrowthHandler.RoomStatus.GREEN_HOUSE) {
                     if (CropGrowthHandler.getGreenHouseProvider(level, pos, blockState, controlMap, agentClimateTypeHolder) != null) {
                         result = 1;
                     }
@@ -158,6 +158,10 @@ public class GrowthDetectorItem extends Item {
         if (CommonConfig.Crop.enableCropHumidityControl.get()) {
             float env = EclipticUtil.getHumidityLevelAt(level, solarTerm, biomeHolder, pos, !level.isClientSide());
             result *= getHumidityGrowChance(level, growControl != null ? growControl : agentGrowControl, env, roomStatus, pos, blockState, season, false);
+        }
+
+        if (result < 1 && CommonConfig.Crop.simpleGreenHouse.get() && roomStatus == CropGrowthHandler.RoomStatus.GREEN_HOUSE) {
+            result = 1;
         }
 
         return result;

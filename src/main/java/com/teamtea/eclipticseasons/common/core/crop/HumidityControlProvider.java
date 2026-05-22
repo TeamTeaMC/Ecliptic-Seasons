@@ -6,7 +6,7 @@ import net.minecraft.nbt.CompoundTag;
 import org.jspecify.annotations.NonNull;
 import org.jetbrains.annotations.UnknownNullability;
 
-public final class HumidityControlProvider {
+public class HumidityControlProvider {
     private float range;
     private float level;
     private int remainTime;

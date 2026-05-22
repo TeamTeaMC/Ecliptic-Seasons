@@ -70,6 +70,8 @@ public class Lang_EN extends LangHelper {
         add(BlockRegistry.snow_cauldron.get(), "Snow Cauldron");
         add(BlockRegistry.ice_cauldron.get(), "Ice Cauldron");
 
+        add(BlockRegistry.humidity_tank.get(), "Humidity Tank");
+        add(BlockRegistry.dehumidifier.get(), "Greenhouse Dehumidifier");
 
         add(KeyMappingRegistry.DEBUG_KEY.getName(),"Debug Info HUD");
         add(KeyMappingRegistry.MAIN.id().toLanguageKey("key.category"), "Ecliptic Seasons");
@@ -471,7 +473,7 @@ public class Lang_EN extends LangHelper {
         add("info.eclipticseasons.show.shift", "§o<..Hold shift..>");
         add("info.eclipticseasons.greenhouse_essence.source", "Obtained by completing %1$s advancements or quests");
 
-        add("info.eclipticseasons.seasonal_prayer_scroll.use", "Activate the Greenhouse Core to perform a seasonal ritual, or a hanging sign as a seasonal quest sign");
+        add("info.eclipticseasons.seasonal_prayer_scroll.use", "Activate the Container of Greenhouse Core to perform a seasonal ritual");
 
         add("info.eclipticseasons.snow_cauldron.extraction", "§7§oUse a shovel to obtain Snow Balls");
         add("info.eclipticseasons.ice_cauldron.extraction", "§7§oUse a pickaxe to obtain Ice");

@@ -13,6 +13,7 @@ import com.teamtea.eclipticseasons.api.data.season.SeasonPhase;
 import com.teamtea.eclipticseasons.api.data.weather.CustomRain;
 import com.teamtea.eclipticseasons.api.data.weather.CustomSnowTerm;
 import com.teamtea.eclipticseasons.api.misc.IBiomeTagHolder;
+import com.teamtea.eclipticseasons.api.misc.IBiomeWeatherProvider;
 import com.teamtea.eclipticseasons.api.misc.RegistryFilter;
 import com.teamtea.eclipticseasons.api.util.SimpleUtil;
 import com.teamtea.eclipticseasons.api.util.fast.Enum2ObjectMap;
@@ -66,6 +67,12 @@ public class BiomeClimateManager {
         putTag(registryAccess, isServer);
         putColorTag(registryAccess, isServer);
         resetAgroTag(registryAccess, isServer);
+
+        for (Level level : WeatherManager.BIOME_WEATHER_LIST.keySet()) {
+            if (level instanceof IBiomeWeatherProvider ip) {
+                ip.es$reset();
+            }
+        }
     }
 
     public static void resetBiomeTemps(HolderLookup.Provider registryAccess, boolean isServer) {

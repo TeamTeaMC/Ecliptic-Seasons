@@ -3,7 +3,6 @@ package com.teamtea.eclipticseasons.common.registry;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.common.block.*;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
@@ -71,6 +70,28 @@ public class BlockRegistry {
     public static DeferredHolder<Block, Block> snowySlab = BLOCK_DEFERRED_REGISTER.registerBlock("snowy_slab", SlabBlock::new, () -> (BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_SLAB).dynamicShape().noOcclusion()));
     public static DeferredHolder<Block, Block> snowyVine = BLOCK_DEFERRED_REGISTER.registerBlock("snowy_vine", VineBlock::new, () -> (BlockBehaviour.Properties.ofFullCopy(Blocks.VINE).dynamicShape().noOcclusion()));
 
+    public static DeferredHolder<Block, Block> humidity_tank = BLOCK_DEFERRED_REGISTER.registerBlock(
+            "humidity_tank",
+            HumidityTankBlock::new,
+            p -> p
+                    .mapColor(MapColor.WOOD)
+                    .strength(2.0F, 3.0F)
+                    .sound(SoundType.WOOD)
+                    .randomTicks()
+                    .noOcclusion()
+    );
+
+    public static final DeferredHolder<Block, Block> dehumidifier =
+            BLOCK_DEFERRED_REGISTER.registerBlock(
+                    "dehumidifier",
+                    DehumidifierBlock::new,
+                    p->p
+                            .mapColor(MapColor.WOOD)
+                            .strength(2.0F, 3.0F)
+                            .sound(SoundType.WOOD)
+                            .noOcclusion()
+                            .randomTicks()
+            );
 
     private static Map<Block, Supplier<Block>> COPPER_GRATE_MAP;
 

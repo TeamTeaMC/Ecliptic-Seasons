@@ -42,11 +42,6 @@ public class BlockInCopperGrateBlock extends WeatheringCopperGrateBlock implemen
         return BlockRegistry.getOriginalCopperGrateBlock(this).asItem().getDefaultInstance();
     }
 
-    public static boolean validItemAndBlock(Level level, ItemStack stack, BlockState state) {
-        Pair<BlockItem, HumidityControl> match = BlockInCopperGrateBlock.getItemMatch(level, stack);
-        return match != null && BlockRegistry.getCopperGrateBlockChange(state.getBlock()) != null;
-    }
-
     public static Pair<BlockItem, HumidityControl> getItemMatch(Level level, ItemStack stack) {
         if (stack.getItem() instanceof BlockItem blockItem) {
             for (HumidityControl humidityControl : ESSortInfo.sorted2(level.registryAccess().lookupOrThrow(ESRegistries.HUMIDITY_CONTROL))) {
@@ -56,27 +51,6 @@ public class BlockInCopperGrateBlock extends WeatheringCopperGrateBlock implemen
             }
         }
         return null;
-    }
-
-    public static InteractionResult getInteractionResult(ItemStack stack, Level level, BlockPos pos, BlockState state) {
-        Pair<BlockItem, HumidityControl> itemMatch = getItemMatch(level, stack);
-        if (itemMatch != null) {
-            setNewBlock(level, pos, state, itemMatch.getFirst());
-            return InteractionResult.SUCCESS_SERVER;
-        }
-        return null;
-    }
-
-    public static void setNewBlock(Level level, BlockPos pos, BlockState state, BlockItem input) {
-        if (!level.isClientSide()) {
-            Block copperGrateBlockChange = BlockRegistry.getCopperGrateBlockChange(state.getBlock());
-            if (copperGrateBlockChange != Blocks.AIR) {
-                level.setBlockAndUpdate(pos, copperGrateBlockChange.withPropertiesOf(state));
-                if (level.getBlockEntity(pos) instanceof BlockInCopperGrateBlockEntity blockEntity) {
-                    blockEntity.setInnerBlock(input.getBlock());
-                }
-            }
-        }
     }
 
     public static @Nullable InteractionResult getInteractionResult(ItemStack stack, Level level, BlockPos pos) {
@@ -124,7 +98,6 @@ public class BlockInCopperGrateBlock extends WeatheringCopperGrateBlock implemen
                 SimpleEntityBlock.createTickerHelper(blockEntityType, BlockEntityRegistry.block_in_copper_grate_block_entity_type.get(), BlockInCopperGrateBlockEntity::tick) : null;
     }
 
-    // note 这里必须要手动处理，因为NeoForge的datamap在此时不可用
     @Override
     protected boolean isRandomlyTicking(@NonNull BlockState state) {
         return state.getBlock() != BlockRegistry.block_in_oxidized_copper_grate_block.get();
@@ -138,5 +111,4 @@ public class BlockInCopperGrateBlock extends WeatheringCopperGrateBlock implemen
         }
         return blockState;
     }
-
 }

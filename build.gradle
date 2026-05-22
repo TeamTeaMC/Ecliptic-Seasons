@@ -123,6 +123,7 @@ neoForge {
             server()
             programArgument '--nogui'
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+            gameDirectory = project.file('runs/server')
         }
 
         // This run config launches GameTestServer and runs all registered gametests, then exits.
@@ -286,10 +287,10 @@ dependencies {
     compileOnly "org.sinytra.forgified-fabric-api:fabric-renderer-api-v1:3.4.0+acb05a39d1"
     compileOnly "org.sinytra.forgified-fabric-api:fabric-renderer-indigo:1.7.0+acb05a39d1"
 
-    sodiumOuter "maven.modrinth:sodium:mc26.1.1-0.8.9-neoforge"
+    sodiumOuter "maven.modrinth:sodium:mc26.1.2-0.8.12-beta.1-neoforge"
     compileOnly fileTree(dir: sodiumJarJarDir, include: ['*.jar'])
 
-    implementation "maven.modrinth:sodium:mc26.1.1-0.8.9-neoforge"
+    implementation "maven.modrinth:sodium:mc26.1.2-0.8.12-beta.1-neoforge"
     compileOnly "maven.modrinth:iris:1.10.9+26.1-neoforge"
 
     compileOnly "maven.modrinth:voxy:0.2.14-alpha"

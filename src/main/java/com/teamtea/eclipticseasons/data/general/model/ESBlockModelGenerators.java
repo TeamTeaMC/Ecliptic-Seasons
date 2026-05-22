@@ -41,6 +41,13 @@ public class ESBlockModelGenerators {
         addSimple(BlockRegistry.paper_wind_chimes.get());
         addSimple(BlockRegistry.bamboo_wind_chimes.get());
 
+        addSimple(BlockRegistry.humidity_tank.get());
+        models.registerSimpleItemModel(BlockRegistry.humidity_tank.get(), EclipticSeasons.rl("block/humidity_tank"));
+
+
+        addSimple(BlockRegistry.dehumidifier.get());
+        models.registerSimpleItemModel(BlockRegistry.dehumidifier.get(), EclipticSeasons.rl("block/dehumidifier"));
+
         addCopperGrate(BlockRegistry.block_in_copper_grate_block.get());
         addCopperGrate(BlockRegistry.block_in_exposed_copper_grate_block.get());
         addCopperGrate(BlockRegistry.block_in_weathered_copper_grate_block.get());

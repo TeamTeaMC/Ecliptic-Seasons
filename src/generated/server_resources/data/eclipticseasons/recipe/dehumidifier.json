@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "H": "minecraft:hay_block",
+    "N": "#minecraft:wooden_slabs",
+    "P": "#minecraft:planks",
+    "S": "minecraft:iron_nugget"
+  },
+  "pattern": [
+    "PPP",
+    "PHN",
+    "SSS"
+  ],
+  "result": {
+    "id": "eclipticseasons:dehumidifier"
+  }
+}

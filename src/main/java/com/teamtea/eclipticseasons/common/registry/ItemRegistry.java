@@ -4,7 +4,6 @@ import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.common.block.GreenHouseCoreBlock;
 import com.teamtea.eclipticseasons.common.item.CalendarBlockItem;
 import com.teamtea.eclipticseasons.common.item.*;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Rarity;
@@ -52,5 +51,9 @@ public class ItemRegistry {
 
 
     public static final DeferredHolder<Item, Item> snowless_hometown = ITEM_DEFERRED_REGISTER.registerItem("snowless_hometown", Item::new, (p -> p.stacksTo(1).rarity(Rarity.RARE).jukeboxPlayable(SongRegistry.SNOWLESS_HOMETOWN)));
+
+    public static final DeferredHolder<Item, BlockItem> humidity_tank_item = ITEM_DEFERRED_REGISTER.registerItem("humidity_tank", p -> new HumidityModifierBlockItem(BlockRegistry.humidity_tank.get(), p.useBlockDescriptionPrefix()), Item.Properties::new);
+
+    public static final DeferredHolder<Item, BlockItem> dehumidifier_item = ITEM_DEFERRED_REGISTER.registerItem("dehumidifier", p -> new HumidityModifierBlockItem(BlockRegistry.dehumidifier.get(), p.useBlockDescriptionPrefix()), Item.Properties::new);
 
 }

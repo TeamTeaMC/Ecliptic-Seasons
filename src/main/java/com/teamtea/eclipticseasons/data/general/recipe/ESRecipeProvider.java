@@ -1,7 +1,6 @@
 package com.teamtea.eclipticseasons.data.general.recipe;
 
 
-import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.common.registry.BlockRegistry;
 import com.teamtea.eclipticseasons.common.registry.ItemRegistry;
 import net.minecraft.core.HolderLookup;
@@ -20,13 +19,11 @@ import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.alchemy.Potions;
+import net.minecraft.world.level.block.Blocks;
 import net.neoforged.fml.ModList;
 import net.neoforged.neoforge.common.Tags;
-import net.neoforged.neoforge.common.conditions.ICondition;
 import net.neoforged.neoforge.common.conditions.ModLoadedCondition;
-import net.neoforged.neoforge.common.crafting.ConditionalRecipeOutput;
 import net.neoforged.neoforge.common.crafting.DataComponentIngredient;
-import net.neoforged.neoforge.registries.NeoForgeRegistries;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -246,6 +243,28 @@ public class ESRecipeProvider extends VanillaRecipeProvider {
                     .unlockedBy("has_seeds", has(Tags.Items.SEEDS))
                     .save(conditionalRecipeOutput, "seasons_chronicle");
         }
+
+        ShapedRecipeBuilder.shaped(items, RecipeCategory.BUILDING_BLOCKS, BlockRegistry.humidity_tank.get())
+                .pattern("SBS")
+                .pattern("BCB")
+                .pattern("SIS")
+                .define('S', ItemTags.WOODEN_SLABS)
+                .define('B', ItemTags.PLANKS)
+                .define('C', Items.WATER_BUCKET)
+                .define('I', Items.IRON_INGOT)
+                .unlockedBy("has_water_bucket", has(Items.WATER_BUCKET))
+                .save(output);
+
+        ShapedRecipeBuilder.shaped(items,RecipeCategory.BUILDING_BLOCKS, BlockRegistry.dehumidifier.get())
+                .pattern("PPP")
+                .pattern("PHN")
+                .pattern("SSS")
+                .define('P', ItemTags.PLANKS)
+                .define('H', Blocks.HAY_BLOCK)
+                .define('N', ItemTags.WOODEN_SLABS)
+                .define('S', Items.IRON_NUGGET)
+                .unlockedBy("has_hay_block", has(Blocks.HAY_BLOCK))
+                .save(output);
     }
 
 }

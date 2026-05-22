@@ -24,6 +24,7 @@ import com.teamtea.eclipticseasons.api.event.CanPlantGrowEvent;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.api.util.SimpleUtil;
 import com.teamtea.eclipticseasons.api.util.fast.Enum2ObjectMap;
+import com.teamtea.eclipticseasons.common.block.blockentity.GreenHouseCoreBlockEntity;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
 import com.teamtea.eclipticseasons.common.registry.AgroClimateRegistry;
@@ -62,11 +63,13 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.bus.api.Event;
 import net.neoforged.neoforge.common.util.FakePlayer;
 import net.neoforged.neoforge.event.entity.player.BonemealEvent;
+import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.level.BlockGrowFeatureEvent;
 import net.neoforged.neoforge.event.level.block.CropGrowEvent;
 import org.jspecify.annotations.NonNull;
 
 import org.jspecify.annotations.Nullable;
+
 import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -684,6 +687,23 @@ public final class CropGrowthHandler {
                     && SolarHolders.getSaveData(serverLevel) instanceof SolarDataManager solarDataManager) {
                 solarDataManager.addSkipNextCheck(bonemealEvent.getPos(), bonemealEvent.getState());
             }
+
+            BlockPos pos = event instanceof BonemealEvent bonemealEvent ? bonemealEvent.getPos() :
+                    event instanceof BlockEvent blockEvent ? blockEvent.getPos() : null;
+            BlockState state = event instanceof BonemealEvent bonemealEvent ? bonemealEvent.getState() :
+                    event instanceof BlockEvent blockEvent ? blockEvent.getState() : null;
+            Level level = event instanceof BonemealEvent bonemealEvent ? bonemealEvent.getLevel() :
+                    event instanceof BlockEvent blockEvent ? blockEvent.getLevel() instanceof Level level1 ? level1 : null : null;
+            if (state != null && level != null) {
+                List<Season> seasons = getLikeSeasonsInTemperate(state, getControlMap(state.getBlock()), getDefaultAgroClimaticZoneHolder(level));
+                if (!seasons.isEmpty()) {
+                    SolarDataManager saveData = SolarHolders.getSaveData(level);
+                    if (saveData != null
+                            && saveData.findNearGreenHouseConsumer(pos, seasons) instanceof GreenHouseCoreBlockEntity.Consumer consumer) {
+                        consumer.addEnergy(flag == GROW ? 2 : 1);
+                    }
+                }
+            }
         } else {
             if (event instanceof BonemealEvent bonemealEvent) {
                 if (bonemealEvent.getPlayer() instanceof ServerPlayer player
@@ -805,7 +825,8 @@ public final class CropGrowthHandler {
             }
             ChunkAccess chunkAccess = levelAccessor instanceof ServerLevel serverLevel ?
                     serverLevel.getChunkSource().getChunkNow(x, z) : null;
-            ChunkAccess chunk1 = chunkAccess == null ? levelAccessor.getChunk(x, z) : chunkAccess;            int sectionIndex = chunk1.getSectionIndex(pos.getY());
+            ChunkAccess chunk1 = chunkAccess == null ? levelAccessor.getChunk(x, z) : chunkAccess;
+            int sectionIndex = chunk1.getSectionIndex(pos.getY());
             LevelChunkSection[] sections = chunk1.getSections();
             if (sectionIndex < 0 || sectionIndex >= sections.length)
                 return Blocks.AIR.defaultBlockState();

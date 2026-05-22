@@ -78,6 +78,8 @@ public class WeatherManager {
     }
 
     public static int getWeatherTickFactor(Level level) {
+        if (level instanceof IBiomeWeatherProvider ip)
+            return ip.es$getWeatherTickFactor();
         ArrayList<BiomeWeather> biomeList = getBiomeList(level);
         int size = biomeList == null ? 64 : biomeList.size();
         size = (int) (size * (Mth.clamp(7f / EclipticSeasonsApi.getInstance().getLastingDaysOfEachTerm(level), 0.8f, 3f)));
@@ -360,14 +362,6 @@ public class WeatherManager {
 
             if (level instanceof IBiomeWeatherProvider iBiomeWeatherProvider) {
                 iBiomeWeatherProvider.es$set(biomesWeathers);
-
-                iBiomeWeatherProvider.es$setCoreBiome(null);
-                for (WeatherDimension weatherDimension : ESSortInfo.sorted2(level.registryAccess().lookupOrThrow(ESRegistries.WEATHER_DIMENSION))) {
-                    if (weatherDimension.dimension().equals(level.dimension())) {
-                        iBiomeWeatherProvider.es$setCoreBiome(weatherDimension.core());
-                        break;
-                    }
-                }
             }
 
             // add copy
@@ -663,27 +657,22 @@ public class WeatherManager {
         //     return true;
         // }
 
-        int pos = NEXT_CHECK_BIOME_MAP.getOrDefault(level, -1);
+        if (!level.canHaveWeather()) return false;
 
+        IBiomeWeatherProvider ip = level instanceof IBiomeWeatherProvider ips ? ips : null;
+        if (ip == null) return false;
         var levelBiomeWeather = getBiomeList(level);
+        if (levelBiomeWeather == null) return false;
 
-        if (pos >= 0 && levelBiomeWeather != null && pos < levelBiomeWeather.size()) {
-            int size = getWeatherTickFactor(level);
-            var biomeWeather = levelBiomeWeather.get(pos);
+        int pos = ip.es$getTickBiome();
+        int size = getWeatherTickFactor(level);
+        var biomeWeather = levelBiomeWeather.get(pos);
 
-            runWeather(level, biomeWeather, random, size);
+        runWeather(level, biomeWeather, random, size);
 
-            pos++;
-        } else {
-            pos = 0;
-        }
-        // Ecliptic.logger(level.getGameTime(),level.getGameTime() & 100);
-        if (levelBiomeWeather != null && (level.getGameTime() % 100) == 0 && !level.players().isEmpty()) {
-            // EclipticSeasonsMod.logger(level.getGameTime());
+        if (level.getGameTime() % 100 == 0 && !level.players().isEmpty()) {
             sendBiomePacket(level, levelBiomeWeather, level.players());
         }
-
-        NEXT_CHECK_BIOME_MAP.put(level, pos);
         return true;
     }
 

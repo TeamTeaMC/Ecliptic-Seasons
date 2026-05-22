@@ -133,26 +133,26 @@ public class ModContents {
                         (blockEntity.getItemStackHandler())
         );
 
-        event.registerBlock(Capabilities.Item.BLOCK, (Level level, BlockPos pos, BlockState state, @Nullable BlockEntity blockEntity, Direction side) -> new ItemStacksResourceHandler(1) {
-
-            @Override
-            protected int getCapacity(int index, ItemResource resource) {
-                return 1;
-            }
-
-            @Override
-            public boolean isValid(int index, ItemResource resource) {
-                return BlockInCopperGrateBlock.validItemAndBlock(level, resource.toStack(), state);
-            }
-
-            @Override
-            protected void onContentsChanged(int index, ItemStack previousContents) {
-                if (index == 0 && getResource(0).getItem() instanceof BlockItem blockItem) {
-                    BlockInCopperGrateBlock.setNewBlock(level, pos, state, blockItem);
-                }
-            }
-
-        }, BlockRegistry.getAllGrateBlocks().toArray(Block[]::new));
+        // event.registerBlock(Capabilities.Item.BLOCK, (Level level, BlockPos pos, BlockState state, @Nullable BlockEntity blockEntity, Direction side) -> new ItemStacksResourceHandler(1) {
+        //
+        //     @Override
+        //     protected int getCapacity(int index, ItemResource resource) {
+        //         return 1;
+        //     }
+        //
+        //     @Override
+        //     public boolean isValid(int index, ItemResource resource) {
+        //         return BlockInCopperGrateBlock.validItemAndBlock(level, resource.toStack(), state);
+        //     }
+        //
+        //     @Override
+        //     protected void onContentsChanged(int index, ItemStack previousContents) {
+        //         if (index == 0 && getResource(0).getItem() instanceof BlockItem blockItem) {
+        //             BlockInCopperGrateBlock.setNewBlock(level, pos, state, blockItem);
+        //         }
+        //     }
+        //
+        // }, BlockRegistry.getAllGrateBlocks().toArray(Block[]::new));
     }
 
     @SubscribeEvent

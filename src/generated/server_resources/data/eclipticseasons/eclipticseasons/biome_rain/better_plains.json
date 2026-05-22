@@ -80,13 +80,13 @@
       },
       "fresh_green": {
         "rain": {
-          "min_inclusive": 24000,
-          "max_inclusive": 48000,
+          "min_inclusive": 18000,
+          "max_inclusive": 36000,
           "type": "minecraft:uniform"
         },
         "rain_delay": {
-          "min_inclusive": 1200,
-          "max_inclusive": 3600,
+          "min_inclusive": 6000,
+          "max_inclusive": 18000,
           "type": "minecraft:uniform"
         },
         "thunder": {
@@ -94,48 +94,80 @@
           "max_inclusive": 8000,
           "type": "minecraft:uniform"
         },
-        "rain_chance": 0.65,
-        "thunder_chance": 0.2,
+        "rain_chance": 0.68,
+        "thunder_chance": 0.15,
         "special_effect": "eclipticseasons:light_rain_snow"
       },
       "grain_rain": {
         "rain": {
-          "min_inclusive": 32000,
-          "max_inclusive": 60000,
+          "min_inclusive": 24000,
+          "max_inclusive": 52000,
           "type": "minecraft:uniform"
         },
         "rain_delay": {
-          "min_inclusive": 2400,
-          "max_inclusive": 4800,
+          "min_inclusive": 6000,
+          "max_inclusive": 16000,
           "type": "minecraft:uniform"
         },
-        "rain_chance": 0.75,
+        "thunder": {
+          "min_inclusive": 4000,
+          "max_inclusive": 8000,
+          "type": "minecraft:uniform"
+        },
+        "rain_chance": 0.78,
+        "thunder_chance": 0.05,
         "special_effect": "eclipticseasons:moderate_rain_snow"
       },
       "beginning_of_summer": {
         "rain": {
-          "min_inclusive": 32000,
-          "max_inclusive": 64000,
+          "min_inclusive": 22000,
+          "max_inclusive": 44000,
           "type": "minecraft:uniform"
         },
         "rain_delay": {
-          "min_inclusive": 12000,
+          "min_inclusive": 10000,
           "max_inclusive": 24000,
           "type": "minecraft:uniform"
         },
-        "rain_chance": 0.9,
+        "thunder": {
+          "min_inclusive": 4000,
+          "max_inclusive": 10000,
+          "type": "minecraft:uniform"
+        },
+        "rain_chance": 0.72,
+        "thunder_chance": 0.15,
         "special_effect": "eclipticseasons:moderate_rain_snow",
         "snow_melt_speed": 1.2
       },
       "lesser_fullness": {
         "rain": {
-          "min_inclusive": 24000,
-          "max_inclusive": 48000,
+          "min_inclusive": 20000,
+          "max_inclusive": 42000,
           "type": "minecraft:uniform"
         },
         "rain_delay": {
-          "min_inclusive": 16000,
-          "max_inclusive": 32000,
+          "min_inclusive": 12000,
+          "max_inclusive": 28000,
+          "type": "minecraft:uniform"
+        },
+        "thunder": {
+          "min_inclusive": 8000,
+          "max_inclusive": 18000,
+          "type": "minecraft:uniform"
+        },
+        "rain_chance": 0.72,
+        "thunder_chance": 0.35,
+        "snow_melt_speed": 1.2
+      },
+      "grain_in_ear": {
+        "rain": {
+          "min_inclusive": 18000,
+          "max_inclusive": 36000,
+          "type": "minecraft:uniform"
+        },
+        "rain_delay": {
+          "min_inclusive": 12000,
+          "max_inclusive": 30000,
           "type": "minecraft:uniform"
         },
         "thunder": {
@@ -143,48 +175,28 @@
           "max_inclusive": 24000,
           "type": "minecraft:uniform"
         },
-        "rain_chance": 0.7,
-        "thunder_chance": 0.4,
-        "snow_melt_speed": 1.2
-      },
-      "grain_in_ear": {
-        "rain": {
-          "min_inclusive": 16000,
-          "max_inclusive": 32000,
-          "type": "minecraft:uniform"
-        },
-        "rain_delay": {
-          "min_inclusive": 24000,
-          "max_inclusive": 48000,
-          "type": "minecraft:uniform"
-        },
-        "thunder": {
-          "min_inclusive": 16000,
-          "max_inclusive": 32000,
-          "type": "minecraft:uniform"
-        },
-        "rain_chance": 0.6,
-        "thunder_chance": 0.6,
+        "rain_chance": 0.68,
+        "thunder_chance": 0.55,
         "snow_melt_speed": 1.2
       },
       "summer_solstice": {
         "rain": {
           "min_inclusive": 12000,
-          "max_inclusive": 24000,
+          "max_inclusive": 28000,
           "type": "minecraft:uniform"
         },
         "rain_delay": {
-          "min_inclusive": 24000,
-          "max_inclusive": 48000,
+          "min_inclusive": 18000,
+          "max_inclusive": 42000,
           "type": "minecraft:uniform"
         },
         "thunder": {
-          "min_inclusive": 20000,
-          "max_inclusive": 40000,
+          "min_inclusive": 16000,
+          "max_inclusive": 32000,
           "type": "minecraft:uniform"
         },
         "rain_chance": 0.7,
-        "thunder_chance": 1.0,
+        "thunder_chance": 0.85,
         "snow_melt_speed": 1.2
       },
       "lesser_heat": {

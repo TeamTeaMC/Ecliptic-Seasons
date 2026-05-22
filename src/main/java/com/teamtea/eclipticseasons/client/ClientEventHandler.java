@@ -9,6 +9,8 @@ import com.teamtea.eclipticseasons.api.misc.client.IBiomeColorHolder;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.client.core.ClientWeatherChecker;
 import com.teamtea.eclipticseasons.client.gui.screen.ESModConfigScreen;
+import com.teamtea.eclipticseasons.client.render.worldui.GrowthInfoClientCache;
+import com.teamtea.eclipticseasons.client.render.worldui.GrowthWorldUiRenderer;
 import com.teamtea.eclipticseasons.client.render.chunk.IceKeeper;
 import com.teamtea.eclipticseasons.client.util.ClientRef;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
@@ -48,6 +50,7 @@ import net.minecraft.world.level.biome.Biome;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.client.event.*;
 import net.neoforged.neoforge.event.TagsUpdatedEvent;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
@@ -139,6 +142,7 @@ public final class ClientEventHandler {
             ClientWeatherChecker.unload(clientLevel);
             CompilerCollector.clearAll();
             IceKeeper.clearAll();
+            GrowthInfoClientCache.clear();
         }
     }
 
@@ -216,9 +220,29 @@ public final class ClientEventHandler {
 
     }
 
+
+    @SubscribeEvent
+    public static void onExtractLevelRenderState(ExtractLevelRenderStateEvent event) {
+        GrowthWorldUiRenderer.extractLevelRenderState(event);
+    }
+
+    @SubscribeEvent
+    public static void onRenderLevelStage(RenderLevelStageEvent.AfterTranslucentBlocks event) {
+        // if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS) {
+        //     return;
+        // }
+
+        GrowthWorldUiRenderer.renderLevelStage(event);
+    }
+
+
+    @SubscribeEvent
+    public static void onSubmitCustomGeometry(SubmitCustomGeometryEvent event) {
+    }
+
+
     @SubscribeEvent
     public static void onAddSectionGeometryEvent(AddSectionGeometryEvent event) {
-        if (true) return;
     }
 
     @SubscribeEvent

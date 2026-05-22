@@ -2,13 +2,17 @@ package com.teamtea.eclipticseasons.api.constant.solar;
 
 import com.mojang.datafixers.util.Pair;
 import com.teamtea.eclipticseasons.EclipticSeasons;
+import com.teamtea.eclipticseasons.api.constant.climate.BiomeRain;
+import com.teamtea.eclipticseasons.api.constant.climate.ISnowTerm;
 import com.teamtea.eclipticseasons.api.constant.solar.color.base.*;
 import com.teamtea.eclipticseasons.api.constant.solar.color.base.seasonal.ColdSolarTermColors;
 import com.teamtea.eclipticseasons.api.constant.solar.color.base.seasonal.HotSolarTermColors;
 import com.teamtea.eclipticseasons.api.constant.tag.ClimateTypeBiomeTags;
 import com.teamtea.eclipticseasons.api.misc.ITranslatableWithPlaceholder;
+import com.teamtea.eclipticseasons.api.util.SolarUtil;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.Identifier;
@@ -227,5 +231,15 @@ public enum SolarTerm implements ITranslatableWithPlaceholder, ISolarTerm {
     @Override
     public boolean isValid() {
         return this != NONE;
+    }
+
+    @Deprecated(forRemoval = true)
+    public static BiomeRain getBiomeRain(SolarTerm term, Holder<Biome> biomeHolder) {
+        return SolarUtil.getBiomeRain(term, biomeHolder);
+    }
+
+    @Deprecated(forRemoval = true)
+    public static ISnowTerm getSnowTerm(Biome biome, boolean isServer, float tempChange) {
+        return SolarUtil.getSnowTerm(biome, isServer, tempChange);
     }
 }

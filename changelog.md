@@ -1,7 +1,4 @@
-This update mainly contains minor adjustments and improvements.
-For more detailed information, please refer to the changelog for `0.13.0-rc` and `0.13.0-rc-2`.
-
-#### Improvements
-
-- Improved the naming and organization of configuration options.
-- Fixed several other known issues.
+- Removed the transformation and item interaction capabilities attached to copper grate blocks. The copper grate
+  regulator block is not removed for now.
+- Added two humidity-control blocks: Humidity Tank and Greenhouse Dehumidifier.
+- Adjusted rainfall frequency from late spring to early summer.

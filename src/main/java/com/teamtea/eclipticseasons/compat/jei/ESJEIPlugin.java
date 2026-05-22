@@ -4,7 +4,6 @@ import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.data.craft.HumidityControl;
 import com.teamtea.eclipticseasons.api.data.craft.WetterStructure;
 import com.teamtea.eclipticseasons.api.data.misc.ESSortInfo;
-import com.teamtea.eclipticseasons.api.data.quest.SeasonQuest;
 import com.teamtea.eclipticseasons.common.registry.BlockRegistry;
 import com.teamtea.eclipticseasons.common.registry.ESRegistries;
 import com.teamtea.eclipticseasons.common.registry.ItemRegistry;
@@ -14,7 +13,6 @@ import com.teamtea.eclipticseasons.compat.jei.fake.GreenHouseCoreRecipe;
 import com.teamtea.eclipticseasons.compat.jei.fake.GreenHouseCoreRecipeCategory;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
-import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.types.IRecipeType;
 import mezz.jei.api.registration.IRecipeCatalystRegistration;
 import mezz.jei.api.registration.IRecipeCategoryRegistration;
@@ -40,7 +38,7 @@ public class ESJEIPlugin implements IModPlugin {
    public static final IRecipeType<CauldronRecipe> CAULDRON_RECIPE_TYPE = getType(CAULDRON, CauldronRecipe.class);
    public static final IRecipeType<GreenHouseCoreRecipe> GREENHOUSE_CORE_TYPE = getType(GREENHOUSE_CORE, GreenHouseCoreRecipe.class);
    public static final IRecipeType<WetterStructure> WETTER_TYPE = getType(WETTER, WetterStructure.class);
-   public static final IRecipeType<SeasonQuest> SEASON_QUEST_TYPE = getType(SEASON_QUEST, SeasonQuest.class);
+   // public static final IRecipeType<SeasonQuest> SEASON_QUEST_TYPE = getType(SEASON_QUEST, SeasonQuest.class);
 
    public static <T> IRecipeType<T> getType(Identifier rs, Class<? extends T> recipeClass) {
        return IRecipeType.create(rs.getNamespace(), rs.getPath(), recipeClass);
@@ -57,7 +55,7 @@ public class ESJEIPlugin implements IModPlugin {
        registry.addRecipeCategories(new CauldronRecipeCategory(registry.getJeiHelpers().getGuiHelper()));
        registry.addRecipeCategories(new GreenHouseCoreRecipeCategory(registry.getJeiHelpers().getGuiHelper()));
        registry.addRecipeCategories(new JEIWetterCategory(registry.getJeiHelpers().getGuiHelper()));
-       registry.addRecipeCategories(new JEISeasonQuestCategory(registry.getJeiHelpers().getGuiHelper()));
+       // registry.addRecipeCategories(new JEISeasonQuestCategory(registry.getJeiHelpers().getGuiHelper()));
    }
 
    @Override
@@ -68,7 +66,7 @@ public class ESJEIPlugin implements IModPlugin {
        registration.addCraftingStation(CAULDRON_RECIPE_TYPE, Items.CAULDRON);
        registration.addCraftingStation(GREENHOUSE_CORE_TYPE, ItemRegistry.seasonal_prayer_scroll_item.get().getDefaultInstance(),
                ItemRegistry.greenhouse_core_container_item.get().getDefaultInstance());
-       registration.addCraftingStation(SEASON_QUEST_TYPE, ItemRegistry.seasonal_prayer_scroll_item.get());
+       // registration.addCraftingStation(SEASON_QUEST_TYPE, ItemRegistry.seasonal_prayer_scroll_item.get());
    }
 
    @Override
@@ -80,10 +78,10 @@ public class ESJEIPlugin implements IModPlugin {
                .ifPresent(controls -> registration.addRecipes(HUMIDITY_CONTROL_RECIPE_TYPE, ESSortInfo.sorted2(controls)));
        level.registryAccess().lookup(ESRegistries.WETTER)
                .ifPresent(controls -> registration.addRecipes(WETTER_TYPE, ESSortInfo.sorted2(controls)));
-       level.registryAccess().lookup(ESRegistries.SEASON_QUEST)
-               .ifPresent(controls -> registration.addRecipes(SEASON_QUEST_TYPE,
-                       ESSortInfo.sorted2(controls)
-               ));
+       // level.registryAccess().lookup(ESRegistries.SEASON_QUEST)
+       //         .ifPresent(controls -> registration.addRecipes(SEASON_QUEST_TYPE,
+       //                 ESSortInfo.sorted2(controls)
+       //         ));
 
        registration.addRecipes(CAULDRON_RECIPE_TYPE, CauldronRecipe.caldronRecipeList.get());
        registration.addRecipes(GREENHOUSE_CORE_TYPE, GreenHouseCoreRecipe.Recipes.get());

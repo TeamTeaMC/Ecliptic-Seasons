@@ -168,17 +168,16 @@ public class GreenHouseCoreBlockEntity extends SyncBlockEntity {
                     SolarDataManager manager = SolarHolders.getSaveData(level);
                     int extra = 0;
                     if (manager != null) {
-                        GreenHouseCoreProvider nearGreenHouseProvider = manager.queryGreenHouseProvider(blockPos);
-                        if (nearGreenHouseProvider != null) {
-                            if (nearGreenHouseProvider instanceof Consumer consumer)
-                                extra = consumer.getAndCostEnergy();
+                        if (manager.queryGreenHouseProvider(blockPos) instanceof Consumer consumer) {
+                            extra = consumer.getAndCostEnergy();
                         } else {
                             manager.addGreenHouseCoreProvider(blockPos, new Consumer(greenHouseCoreBlock.getSeason(), 0));
                         }
                     }
-                    if (level.getRandom().nextInt(CommonConfig.Crop.seasonalPrayerRitualCropBonusReduction.get()) < extra || level.getRandom().nextDouble() < 100.0 / (
-                            EclipticSeasonsApi.getInstance().getLastingDaysOfEachTerm(level) * CommonConfig.Crop.seasonalPrayerRitualTimeCost.get() * EclipticUtil.getDayLengthInMinecraft(level))) {
+                    if (level.getRandom().nextInt(CommonConfig.Crop.seasonalPrayerRitualCropBonusReduction.get() / 5 + 1) < extra || level.getRandom().nextDouble() < 100.0 / (
+                            CommonConfig.Crop.seasonalPrayerRitualTimeCost.get() * EclipticUtil.getDayLengthInMinecraft(level))) {
                         extra = extra > 0 ? extra - 1 : 0;
+
                         Pair<Season, Integer> currentSeason = getCurrentSeason(level, blockPos);
                         if (currentSeason.getFirst() == greenHouseCoreBlock.getSeason()
                                 && !level.getBlockState(blockPos.below()).isSolidRender()
@@ -209,7 +208,7 @@ public class GreenHouseCoreBlockEntity extends SyncBlockEntity {
 
         public int getAndCostEnergy() {
             int old = this.energy;
-            this.energy = 0;
+            this.energy = old > 0 ? old - 1 : 0;
             return old;
         }
     }

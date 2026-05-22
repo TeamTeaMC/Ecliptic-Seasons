@@ -5,6 +5,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.world.level.biome.Biome;
 
 import org.jspecify.annotations.Nullable;
+
 import java.util.ArrayList;
 
 public interface IBiomeWeatherProvider {
@@ -12,8 +13,12 @@ public interface IBiomeWeatherProvider {
 
     void es$set(ArrayList<WeatherManager.BiomeWeather> biomeWeathers);
 
+    int es$getWeatherTickFactor();
+
     @Nullable
     Holder<Biome> es$getCoreBiome();
 
-    void es$setCoreBiome(Holder<Biome> biomeHolder);
+    int es$getTickBiome();
+
+    void es$reset();
 }
