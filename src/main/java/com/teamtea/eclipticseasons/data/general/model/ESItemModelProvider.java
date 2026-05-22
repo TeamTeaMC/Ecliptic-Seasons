@@ -4,7 +4,6 @@ import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.constant.biome.Humidity;
 import com.teamtea.eclipticseasons.api.constant.biome.Rainfall;
 import com.teamtea.eclipticseasons.api.constant.biome.Temperature;
-import com.teamtea.eclipticseasons.common.registry.BlockRegistry;
 import com.teamtea.eclipticseasons.common.registry.ItemRegistry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
@@ -66,7 +65,8 @@ public class ESItemModelProvider extends ItemModelProvider {
 
         withExistingParent(resourceItem(ItemRegistry.humidity_tank_item.getId().getPath()).getPath(),
                 resourceBlock(ItemRegistry.humidity_tank_item.getId().getPath()));
-
+        withExistingParent(resourceItem(ItemRegistry.dehumidifier_item.getId().getPath()).getPath(),
+                resourceBlock(ItemRegistry.dehumidifier_item.getId().getPath()));
     }
 
     public void addSimple(Item item) {

@@ -1,6 +1,5 @@
 package com.teamtea.eclipticseasons.data.general.lang;
 
-import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.client.registry.KeyMappingRegistry;
 import com.teamtea.eclipticseasons.common.registry.*;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
@@ -77,6 +76,7 @@ public class Lang_EN extends LangHelper {
         add(BlockRegistry.ice_cauldron.get(), "Ice Cauldron");
 
         add(BlockRegistry.humidity_tank.get(), "Humidity Tank");
+        add(BlockRegistry.dehumidifier.get(), "Humidity Vent");
 
         add("info.eclipticseasons.environment.temperature.under_freezing", "Under Freezing");
         add("info.eclipticseasons.environment.temperature.freezing", "Freezing");

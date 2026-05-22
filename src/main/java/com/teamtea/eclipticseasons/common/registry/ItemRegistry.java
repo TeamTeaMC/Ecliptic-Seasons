@@ -54,4 +54,7 @@ public class ItemRegistry {
     public static final DeferredHolder<Item, Item> snowless_hometown = ITEM_DEFERRED_REGISTER.register("snowless_hometown", () -> new Item(new Item.Properties().stacksTo(1).rarity(Rarity.RARE).jukeboxPlayable(SongRegistry.SNOWLESS_HOMETOWN)));
 
     public static final DeferredHolder<Item, BlockItem> humidity_tank_item = ITEM_DEFERRED_REGISTER.register("humidity_tank",() -> new HumidityModifierBlockItem(BlockRegistry.humidity_tank.get(), new Item.Properties()));
+
+    public static final DeferredHolder<Item, BlockItem> dehumidifier_item = ITEM_DEFERRED_REGISTER.register("dehumidifier", () -> new HumidityModifierBlockItem(BlockRegistry.dehumidifier.get(), new Item.Properties()));
+
 }

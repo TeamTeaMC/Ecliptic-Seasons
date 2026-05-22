@@ -30,6 +30,7 @@
   "info.eclipticseasons.calendar.model.sub_season": "子季节",
   "info.eclipticseasons.calendar.model.month": "月份",
   "info.eclipticseasons.humidity_tank.use": "放置后，会在 %1$s 格半径范围内提高温室内 %2$d%% 的环境湿度",
+  "info.eclipticseasons.dehumidifier.use": "如果悬挂在空中，会在 %1$s 格半径范围内降低温室内 %2$d%% 的环境湿度",
   "special_days.eclipticseasons.flower_festival": "花朝",
   "special_days.eclipticseasons.spring_festival": "春节",
   "special_days.eclipticseasons.spring_outing": "清明",

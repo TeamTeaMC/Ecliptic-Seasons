@@ -16,6 +16,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.alchemy.Potions;
+import net.minecraft.world.level.block.Blocks;
 import net.neoforged.fml.ModList;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.conditions.ICondition;
@@ -231,7 +232,7 @@ public final class ESRecipeProvider extends RecipeProvider {
                     .save(conditionalRecipeOutput, EclipticSeasons.rl("seasons_chronicle"));
         }
 
-        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, BlockRegistry.humidity_tank.get())
+        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, BlockRegistry.humidity_tank.get())
                 .pattern("SBS")
                 .pattern("BCB")
                 .pattern("SIS")
@@ -240,6 +241,17 @@ public final class ESRecipeProvider extends RecipeProvider {
                 .define('C', Items.WATER_BUCKET)
                 .define('I', Items.IRON_INGOT)
                 .unlockedBy("has_water_bucket", has(Items.WATER_BUCKET))
+                .save(consumer);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, BlockRegistry.dehumidifier.get())
+                .pattern("PPP")
+                .pattern("PHN")
+                .pattern("SSS")
+                .define('P', ItemTags.PLANKS)
+                .define('H', Blocks.HAY_BLOCK)
+                .define('N', ItemTags.WOODEN_SLABS)
+                .define('S', Items.IRON_NUGGET)
+                .unlockedBy("has_hay_block", has(Blocks.HAY_BLOCK))
                 .save(consumer);
     }
 

@@ -1,3 +1,4 @@
-- Added an in-world UI for the Growth Detector to display information.
-- Planned adjustments to the Season Quest Board design. Existing placed quest board blocks will not be removed, but the JEI page has been hidden, and new season quest sign blocks can no longer be created using Seasonal Prayer Scrolls.
-- Improved the Season Prayer Ritual experience and greatly reduced the time required to nurture a Season Core.
+- Removed the transformation and item interaction capabilities attached to copper grate blocks. The copper grate
+  regulator block is not removed for now.
+- Added two humidity-control blocks: Humidity Tank and Greenhouse Dehumidifier.
+- Adjusted rainfall frequency from late spring to early summer.

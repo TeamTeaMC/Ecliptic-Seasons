@@ -81,6 +81,17 @@ public class BlockRegistry {
                     .noOcclusion())
     );
 
+    public static final DeferredHolder<Block, Block> dehumidifier =
+            BLOCK_DEFERRED_REGISTER.register(
+                    "dehumidifier",
+                    () -> new DehumidifierBlock((BlockBehaviour.Properties.of()
+                            .mapColor(MapColor.WOOD)
+                            .strength(2.0F, 3.0F)
+                            .sound(SoundType.WOOD)
+                            .noOcclusion()
+                            .randomTicks())
+                    ));
+
     private static Map<Block, Supplier<Block>> COPPER_GRATE_MAP;
 
     private static Map<Block, Supplier<Block>> REVERSE_COPPER_GRATE_MAP;

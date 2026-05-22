@@ -72,6 +72,7 @@ public class BlockStatesDataProvider extends BlockStateProvider {
         addSimple(BlockRegistry.block_in_wooden_grate_block.get());
 
         addSimple(BlockRegistry.humidity_tank.get());
+        addSimple(BlockRegistry.dehumidifier.get());
 
         // we need the rotate info
         for (Block block : List.of(BlockRegistry.greenhouse_core_container.get(),
