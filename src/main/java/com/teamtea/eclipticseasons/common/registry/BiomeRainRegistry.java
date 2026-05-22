@@ -79,47 +79,77 @@ public class BiomeRainRegistry {
         ));
 
         map.put(SolarTerm.FRESH_GREEN, List.of(
-                CustomRainBuilder.Weather.builder().rainChance(0.65F).thunderChance(0.2F).weight(10)
-                        .rain(Optional.of(UniformInt.of(24000, 48000)))
-                        .rainDelay(Optional.of(UniformInt.of(1200, 3600)))
+                CustomRainBuilder.Weather.builder()
+                        .rainChance(0.68F)
+                        .thunderChance(0.15F)
+                        .weight(10)
+                        .rain(Optional.of(UniformInt.of(18000, 36000)))
+                        .rainDelay(Optional.of(UniformInt.of(6000, 18000)))
                         .thunder(Optional.of(UniformInt.of(4000, 8000)))
-                        .specialEffect(Optional.of(holderGetter2.get(WeatherEffectRegistry.LIGHT_RAIN_SNOW).orElseThrow())).build()
+                        .specialEffect(Optional.of(holderGetter2.get(WeatherEffectRegistry.LIGHT_RAIN_SNOW).orElseThrow()))
+                        .build()
         ));
+
         map.put(SolarTerm.GRAIN_RAIN, List.of(
-                CustomRainBuilder.Weather.builder().rainChance(0.75F).thunderChance(0.0F).weight(10)
-                        .rain(Optional.of(UniformInt.of(32000, 60000)))
-                        .rainDelay(Optional.of(UniformInt.of(2400, 4800)))
-                        .specialEffect(Optional.of(holderGetter2.get(WeatherEffectRegistry.MODERATE_RAIN_SNOW).orElseThrow())).build()
+                CustomRainBuilder.Weather.builder()
+                        .rainChance(0.78F)
+                        .thunderChance(0.05F)
+                        .weight(10)
+                        .rain(Optional.of(UniformInt.of(24000, 52000)))
+                        .rainDelay(Optional.of(UniformInt.of(6000, 16000)))
+                        .thunder(Optional.of(UniformInt.of(4000, 8000)))
+                        .specialEffect(Optional.of(holderGetter2.get(WeatherEffectRegistry.MODERATE_RAIN_SNOW).orElseThrow()))
+                        .build()
         ));
 
         // Summer
         map.put(SolarTerm.BEGINNING_OF_SUMMER, List.of(
-                CustomRainBuilder.Weather.builder().rainChance(0.9F).thunderChance(0.0F).weight(10)
-                        .rain(Optional.of(UniformInt.of(32000, 64000)))
-                        .rainDelay(Optional.of(UniformInt.of(12000, 24000)))
-                        .snowMeltSpeed(1.2f)
-                        .specialEffect(Optional.of(holderGetter2.get(WeatherEffectRegistry.MODERATE_RAIN_SNOW).orElseThrow())).build()
+                CustomRainBuilder.Weather.builder()
+                        .rainChance(0.72F)
+                        .thunderChance(0.15F)
+                        .weight(10)
+                        .rain(Optional.of(UniformInt.of(22000, 44000)))
+                        .rainDelay(Optional.of(UniformInt.of(10000, 24000)))
+                        .snowMeltSpeed(1.2F)
+                        .thunder(Optional.of(UniformInt.of(4000, 10000)))
+                        .specialEffect(Optional.of(holderGetter2.get(WeatherEffectRegistry.MODERATE_RAIN_SNOW).orElseThrow()))
+                        .build()
         ));
+
         map.put(SolarTerm.LESSER_FULLNESS, List.of(
-                CustomRainBuilder.Weather.builder().rainChance(0.7F).thunderChance(0.4F).weight(10)
-                        .rain(Optional.of(UniformInt.of(24000, 48000)))
-                        .rainDelay(Optional.of(UniformInt.of(16000, 32000)))
-                        .snowMeltSpeed(1.2f)
-                        .thunder(Optional.of(UniformInt.of(12000, 24000))).build()
+                CustomRainBuilder.Weather.builder()
+                        .rainChance(0.72F)
+                        .thunderChance(0.35F)
+                        .weight(10)
+                        .rain(Optional.of(UniformInt.of(20000, 42000)))
+                        .rainDelay(Optional.of(UniformInt.of(12000, 28000)))
+                        .snowMeltSpeed(1.2F)
+                        .thunder(Optional.of(UniformInt.of(8000, 18000)))
+                        .build()
         ));
+
         map.put(SolarTerm.GRAIN_IN_EAR, List.of(
-                CustomRainBuilder.Weather.builder().rainChance(0.6F).thunderChance(0.6F).weight(10)
-                        .rain(Optional.of(UniformInt.of(16000, 32000)))
-                        .rainDelay(Optional.of(UniformInt.of(24000, 48000)))
-                        .snowMeltSpeed(1.2f)
-                        .thunder(Optional.of(UniformInt.of(16000, 32000))).build()
+                CustomRainBuilder.Weather.builder()
+                        .rainChance(0.68F)
+                        .thunderChance(0.55F)
+                        .weight(10)
+                        .rain(Optional.of(UniformInt.of(18000, 36000)))
+                        .rainDelay(Optional.of(UniformInt.of(12000, 30000)))
+                        .snowMeltSpeed(1.2F)
+                        .thunder(Optional.of(UniformInt.of(12000, 24000)))
+                        .build()
         ));
+
         map.put(SolarTerm.SUMMER_SOLSTICE, List.of(
-                CustomRainBuilder.Weather.builder().rainChance(0.7F).thunderChance(1F).weight(10)
-                        .rain(Optional.of(UniformInt.of(12000, 24000)))
-                        .rainDelay(Optional.of(UniformInt.of(24000, 48000)))
-                        .snowMeltSpeed(1.2f)
-                        .thunder(Optional.of(UniformInt.of(20000, 40000))).build()
+                CustomRainBuilder.Weather.builder()
+                        .rainChance(0.70F)
+                        .thunderChance(0.85F)
+                        .weight(10)
+                        .rain(Optional.of(UniformInt.of(12000, 28000)))
+                        .rainDelay(Optional.of(UniformInt.of(18000, 42000)))
+                        .snowMeltSpeed(1.2F)
+                        .thunder(Optional.of(UniformInt.of(16000, 32000)))
+                        .build()
         ));
         map.put(SolarTerm.LESSER_HEAT, List.of(
                 CustomRainBuilder.Weather.builder().rainChance(0.65F).thunderChance(0.8F).weight(10)

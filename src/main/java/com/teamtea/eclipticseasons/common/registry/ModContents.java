@@ -107,24 +107,24 @@ public class ModContents {
                 (blockEntity, direction) -> blockEntity.isRemoved() ? null :
                         (blockEntity.getItemStackHandler()));
 
-        event.registerBlock(Capabilities.ItemHandler.BLOCK, (Level level, BlockPos pos, BlockState state, @Nullable BlockEntity blockEntity, Direction side) -> new ItemStackHandler(1) {
-            @Override
-            public int getSlotLimit(int slot) {
-                return 1;
-            }
-
-            @Override
-            public boolean isItemValid(int slot, ItemStack stack) {
-                return BlockInCopperGrateBlock.validItemAndBlock(level, stack, state);
-            }
-
-            @Override
-            protected void onContentsChanged(int slot) {
-                if (slot == 0 && getStackInSlot(0).getItem() instanceof BlockItem blockItem) {
-                    BlockInCopperGrateBlock.setNewBlock(level, pos, state, blockItem);
-                }
-            }
-        }, BlockRegistry.getAllGrateBlocks().toArray(Block[]::new));
+        // event.registerBlock(Capabilities.ItemHandler.BLOCK, (Level level, BlockPos pos, BlockState state, @Nullable BlockEntity blockEntity, Direction side) -> new ItemStackHandler(1) {
+        //     @Override
+        //     public int getSlotLimit(int slot) {
+        //         return 1;
+        //     }
+        //
+        //     @Override
+        //     public boolean isItemValid(int slot, ItemStack stack) {
+        //         return BlockInCopperGrateBlock.validItemAndBlock(level, stack, state);
+        //     }
+        //
+        //     @Override
+        //     protected void onContentsChanged(int slot) {
+        //         if (slot == 0 && getStackInSlot(0).getItem() instanceof BlockItem blockItem) {
+        //             BlockInCopperGrateBlock.setNewBlock(level, pos, state, blockItem);
+        //         }
+        //     }
+        // }, BlockRegistry.getAllGrateBlocks().toArray(Block[]::new));
     }
 
     @SubscribeEvent
