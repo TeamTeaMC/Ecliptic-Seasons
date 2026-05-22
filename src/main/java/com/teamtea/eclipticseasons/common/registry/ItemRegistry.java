@@ -52,4 +52,6 @@ public class ItemRegistry {
 
     public static final RegistryObject<BlockItem> humidity_tank_item = ITEM_DEFERRED_REGISTER.register("humidity_tank",() -> new HumidityModifierBlockItem(BlockRegistry.humidity_tank.get(), new Item.Properties()));
 
+    public static final RegistryObject<BlockItem> dehumidifier_item = ITEM_DEFERRED_REGISTER.register("dehumidifier", () -> new HumidityModifierBlockItem(BlockRegistry.dehumidifier.get(), new Item.Properties()));
+
 }

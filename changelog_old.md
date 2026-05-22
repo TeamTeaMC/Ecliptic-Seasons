@@ -1,6 +1,13 @@
 > As the ecosystem for 1.20.1 begins to wind down with major mods like Create moving on, we are also transitioning into
 > the final maintenance phase for our mod on this version.
 
+## 0.13.2
+
+- Removed the transformation and item interaction capabilities attached to copper grate blocks. The copper grate
+  regulator block is not removed for now.
+- Added two humidity-control blocks: Humidity Tank and Greenhouse Dehumidifier.
+- Adjusted rainfall frequency from late spring to early summer.
+
 ## 0.13.1
 
 - Added an in-world UI for the Growth Detector to display information.

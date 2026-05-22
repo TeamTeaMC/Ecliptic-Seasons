@@ -17,6 +17,7 @@ import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.ShapelessRecipe;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.crafting.CompoundIngredient;
 import net.minecraftforge.common.crafting.ConditionalRecipe;
@@ -240,6 +241,18 @@ public final class ESRecipeProvider extends RecipeProvider {
                 .define('C', Items.WATER_BUCKET)
                 .define('I', Items.IRON_INGOT)
                 .unlockedBy("has_water_bucket", has(Items.WATER_BUCKET))
+                .save(consumer);
+
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, BlockRegistry.dehumidifier.get())
+                .pattern("PPP")
+                .pattern("PHN")
+                .pattern("SSS")
+                .define('P', ItemTags.PLANKS)
+                .define('H', Blocks.HAY_BLOCK)
+                .define('N', ItemTags.WOODEN_SLABS)
+                .define('S', Items.IRON_NUGGET)
+                .unlockedBy("has_hay_block", has(Blocks.HAY_BLOCK))
                 .save(consumer);
     }
 

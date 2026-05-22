@@ -80,6 +80,7 @@ public class Lang_ZH extends LangHelper {
         add(BlockRegistry.ice_cauldron.get(), "装有冰块的炼药锅");
 
         add(BlockRegistry.humidity_tank.get(), "恒湿水箱");
+        add(BlockRegistry.dehumidifier.get(), "温室除湿器");
 
         add("info.eclipticseasons.environment.temperature.under_freezing", "严寒");
         add("info.eclipticseasons.environment.temperature.freezing", "冰冻");

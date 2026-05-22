@@ -61,4 +61,15 @@ public class BlockRegistry {
                     .randomTicks()
                     .noOcclusion())
     );
+
+    public static final RegistryObject<Block> dehumidifier =
+            BLOCK_DEFERRED_REGISTER.register(
+                    "dehumidifier",
+                    () -> new DehumidifierBlock((BlockBehaviour.Properties.of()
+                            .mapColor(MapColor.WOOD)
+                            .strength(2.0F, 3.0F)
+                            .sound(SoundType.WOOD)
+                            .noOcclusion()
+                            .randomTicks())
+            ));
 }

@@ -36,7 +36,7 @@ public class ESJEIPlugin implements IModPlugin {
     public static final ResourceLocation CAULDRON = EclipticSeasons.rl("cauldron");
     public static final ResourceLocation GREENHOUSE_CORE = EclipticSeasons.rl("greenhouse_core");
     public static final ResourceLocation WETTER = EclipticSeasons.rl("wetter");
-    public static final ResourceLocation SEASON_QUEST = EclipticSeasons.rl("season_quest");
+    // public static final ResourceLocation SEASON_QUEST = EclipticSeasons.rl("season_quest");
 
     public static final RecipeType<HumidityControl> HUMIDITY_CONTROL_RECIPE_TYPE = getType(HUMIDITY_CONTROL, HumidityControl.class);
     public static final RecipeType<CauldronRecipe> CAULDRON_RECIPE_TYPE = getType(CAULDRON, CauldronRecipe.class);
