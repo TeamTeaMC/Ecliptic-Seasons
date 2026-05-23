@@ -61,9 +61,7 @@ public class ESJEIPlugin implements IModPlugin {
 
     @Override
     public void registerRecipeCatalysts(@NotNull IRecipeCatalystRegistration registration) {
-        for (Block block : BlockRegistry.getAllChangedGrateBlocks()) {
-            registration.addRecipeCatalyst(BlockRegistry.getOriginalCopperGrateBlock(block).asItem().getDefaultInstance(), HUMIDITY_CONTROL_RECIPE_TYPE);
-        }
+        registration.addRecipeCatalyst(BlockRegistry.block_in_wooden_grate_block.get().asItem().getDefaultInstance(), HUMIDITY_CONTROL_RECIPE_TYPE);
         registration.addRecipeCatalyst(Items.CAULDRON, CAULDRON_RECIPE_TYPE);
         registration.addRecipeCatalysts(GREENHOUSE_CORE_TYPE, ItemRegistry.seasonal_prayer_scroll_item.get().getDefaultInstance(),
                 ItemRegistry.greenhouse_core_container_item.get().getDefaultInstance());

@@ -5,6 +5,7 @@ import com.mojang.datafixers.util.Pair;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.data.misc.ESSortInfo;
+import com.teamtea.eclipticseasons.api.data.quest.SeasonQuest;
 import com.teamtea.eclipticseasons.api.event.CanPlantGrowEvent;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
@@ -54,6 +55,7 @@ import net.neoforged.neoforge.event.server.ServerAboutToStartEvent;
 import net.neoforged.neoforge.event.server.ServerStoppedEvent;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
+import net.neoforged.neoforge.event.village.WandererTradesEvent;
 
 import java.util.Map;
 
@@ -309,8 +311,8 @@ public class AllListener {
         if (true) return;
 
         long l = System.currentTimeMillis();
-        //boolean skip = true;
-        //for (Tag sections : event.getData().getList("sections", Tag.TAG_COMPOUND)) {
+        // boolean skip = true;
+        // for (Tag sections : event.getData().getList("sections", Tag.TAG_COMPOUND)) {
         //    CompoundTag section = (CompoundTag) sections;
         //    CompoundTag blockStates = section.getCompound("block_states");
         //    for (Tag tag : blockStates.getList("palette", Tag.TAG_COMPOUND)) {
@@ -324,16 +326,16 @@ public class AllListener {
         //}
 
         //
-        //if (skip) return;
+        // if (skip) return;
         BlockPos.MutableBlockPos worldPosition = chunk.getPos().getWorldPosition().mutable();
         WeatherStatusKeeper weatherStatusKeeper = SnowyMapChecker.getWeatherStatusKeeper(chunk);
-        //Map<Holder<Biome>, IntLongMutablePair> snowDepthRecord = weatherStatusKeeper.getSnowDepthRecord();
+        // Map<Holder<Biome>, IntLongMutablePair> snowDepthRecord = weatherStatusKeeper.getSnowDepthRecord();
         BiomeHolder biomeHolder = chunk.getData(AttachmentRegistry.BIOME_HOLDER);
         Pair<Map<Holder<Biome>, IntIntImmutablePair>, Map<Holder<Biome>, Long>> mapMapPair = weatherStatusKeeper.collectSnowyUpdate(level, biomeHolder, true);
         Map<Holder<Biome>, IntIntImmutablePair> first = mapMapPair.getFirst();
         if (first.isEmpty()) return;
 
-        //event.getChunk().getSection(0).getStates().data.palette().valueFor(0)
+        // event.getChunk().getSection(0).getStates().data.palette().valueFor(0)
         int x = worldPosition.getX();
         int z = worldPosition.getZ();
         for (int i = x; i < x + 16; i++) {
@@ -347,11 +349,11 @@ public class AllListener {
                 if (intLongMutablePair == null) continue;
 
                 boolean snow = intLongMutablePair.leftInt() > Math.abs(Mth.getSeed(worldPosition)) % 100;
-                //snow=true;
+                // snow=true;
                 if (!snow) {
                     BlockState blockState = chunk.getBlockState(worldPosition);
                     if (blockState.is(Blocks.SNOW)) {
-                        //chunk.setBlockState(worldPosition, Blocks.AIR.defaultBlockState(), false);
+                        // chunk.setBlockState(worldPosition, Blocks.AIR.defaultBlockState(), false);
                         level.setBlock(worldPosition, Blocks.AIR.defaultBlockState(), Block.UPDATE_CLIENTS | Block.UPDATE_KNOWN_SHAPE);
                         BlockState supportBlock = chunk.getBlockState(worldPosition.setY(surface_height - 1));
                         if ((supportBlock.getBlock() instanceof SnowyDirtBlock)) {
@@ -379,7 +381,7 @@ public class AllListener {
                     if (!blockState.is(Blocks.SNOW) && blockState.isAir()) {
                         BlockPos base = worldPosition.setY(solid_height).immutable();
                         BlockPos above = worldPosition.setY(above_height).immutable();
-                        //chunk.setBlockState(above, Blocks.SNOW.defaultBlockState(), false);
+                        // chunk.setBlockState(above, Blocks.SNOW.defaultBlockState(), false);
                         level.setBlock(above, Blocks.SNOW.defaultBlockState(), Block.UPDATE_CLIENTS | Block.UPDATE_KNOWN_SHAPE);
                         if ((supportBlock.getBlock() instanceof SnowyDirtBlock)) {
                             BlockState blockState2 = supportBlock.updateShape(Direction.UP,
@@ -471,4 +473,9 @@ public class AllListener {
     // public static void onLivingBreatheEvent(LivingBreatheEvent event) {
     // }
 
+    @SubscribeEvent
+    public static void onWandererTrades(WandererTradesEvent event) {
+        if (CommonConfig.Crop.wanderingTraderSellsGreenhouseEssence.getAsBoolean())
+            SeasonQuest.buildTrades(event.getRegistryAccess(), event.getRareTrades());
+    }
 }

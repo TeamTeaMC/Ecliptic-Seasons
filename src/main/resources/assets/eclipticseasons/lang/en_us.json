@@ -436,5 +436,7 @@
   "eclipticseasons.configuration.CropLeavesPatch": "Crop Leaf Withering Compatibility",
   "eclipticseasons.configuration.CropLeavesPatch.tooltip": "In compatibility mode, withers leaf blocks that should decay when their crop growth tick check fails.",
   "eclipticseasons.configuration.HumidityTankRange": "Humidity Tank Range",
-  "eclipticseasons.configuration.HumidityTankRange.tooltip": "The effective radius of the Humidity Tank. When activated, it increases the ambient humidity within its range."
+  "eclipticseasons.configuration.HumidityTankRange.tooltip": "The effective radius of the Humidity Tank. When activated, it increases the ambient humidity within its range.",
+  "eclipticseasons.configuration.WanderingTraderSellsGreenhouseEssence": "Wandering Trader Sells Greenhouse Essence",
+  "eclipticseasons.configuration.WanderingTraderSellsGreenhouseEssence.tooltip": "Whether Wandering Traders can sell Seasonal Greenhouse Essence."
 }

@@ -387,7 +387,7 @@
   "info.eclipticseasons.environment.temperature.warm": "Warm",
   "info.eclipticseasons.greenhouse_core.effect": "Boosts %2$s crops within %1$s blocks in a greenhouse",
   "info.eclipticseasons.greenhouse_core.prayer_progress": "Current prayer progress: %s%%",
-  "info.eclipticseasons.greenhouse_essence.source": "Obtained by completing %1$s advancements or quests",
+  "info.eclipticseasons.greenhouse_essence.use": "Transform a Greenhouse Core Container into a %1$s Season Greenhouse Core",
   "info.eclipticseasons.humidity_control": "Humidity Control",
   "info.eclipticseasons.humidity_control.below_need": "Needs %s below",
   "info.eclipticseasons.humidity_control.common_need": "Requires %s",

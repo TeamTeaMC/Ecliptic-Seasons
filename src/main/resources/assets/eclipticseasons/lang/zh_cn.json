@@ -434,5 +434,7 @@
   "eclipticseasons.configuration.CropLeavesPatch": "作物叶片枯萎兼容",
   "eclipticseasons.configuration.CropLeavesPatch.tooltip": "兼容模式下，当作物生长 tick 检定失败时，使应该凋零的叶片方块枯萎。",
   "eclipticseasons.configuration.HumidityTankRange": "恒湿水箱范围",
-  "eclipticseasons.configuration.HumidityTankRange.tooltip": "恒湿水箱的有效作用半径。激活时，会提高范围内的环境湿度。"
+  "eclipticseasons.configuration.HumidityTankRange.tooltip": "恒湿水箱的有效作用半径。激活时，会提高范围内的环境湿度。",
+  "eclipticseasons.configuration.WanderingTraderSellsGreenhouseEssence": "流浪商人出售温室心髓",
+  "eclipticseasons.configuration.WanderingTraderSellsGreenhouseEssence.tooltip": "是否允许流浪商人出售季节温室心髓。"
 }

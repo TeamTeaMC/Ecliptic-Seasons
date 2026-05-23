@@ -2,26 +2,38 @@ package com.teamtea.eclipticseasons.api.data.quest;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.data.climate.AgroClimaticZone;
+import com.teamtea.eclipticseasons.api.data.misc.ESSortInfo;
 import com.teamtea.eclipticseasons.api.util.codec.CodecUtil;
 import com.teamtea.eclipticseasons.api.util.codec.ESExtraCodec;
+import com.teamtea.eclipticseasons.common.loot.SeasonCondition;
 import com.teamtea.eclipticseasons.common.registry.ESRegistries;
 import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.advancements.critereon.MinMaxBounds;
+import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.tags.TagKey;
-import net.minecraft.util.StringRepresentable;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.npc.VillagerTrades;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.storage.loot.LootTable;
-import org.jetbrains.annotations.TestOnly;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.trading.ItemCost;
+import net.minecraft.world.item.trading.MerchantOffer;
+import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 public record SeasonQuest(
         Optional<SolarTerm> end,
@@ -54,6 +66,65 @@ public record SeasonQuest(
             Codec.INT.optionalFieldOf("color").forGetter(SeasonQuest::color)
     ).apply(ins, SeasonQuest::new));
 
+    public record SeasonTrade(SolarTerm start, SolarTerm end,
+                              MerchantOffer value) implements VillagerTrades.ItemListing {
+
+        @Override
+        public @Nullable MerchantOffer getOffer(Entity trader, @NotNull RandomSource random) {
+            SolarTerm solarTerm = EclipticSeasonsApi.getInstance().getSolarTerm(trader.level());
+            if (!solarTerm.isInTerms(start, end))
+                return null;
+            return value;
+        }
+    }
+
+    public static void buildTrades(RegistryAccess registryAccess, List<VillagerTrades.ItemListing> trades) {
+        for (SeasonQuest seasonQuest : ESSortInfo.sorted2(registryAccess.registryOrThrow(ESRegistries.SEASON_QUEST)).stream().toList()) {
+            MerchantOffer trade = seasonQuest.toTrade();
+            trades.add(new SeasonTrade(seasonQuest.start.orElse(SolarTerm.NONE),
+                    seasonQuest.end.orElse(SolarTerm.NONE),
+                    trade));
+        }
+    }
+
+    public MerchantOffer toTrade() {
+        // if (need.isEmpty() || need.size() > 2) {
+        //     throw new IllegalArgumentException("SeasonQuest trade conversion requires 1 or 2 cost items.");
+        // }
+
+        if (award.isEmpty()) {
+            throw new IllegalArgumentException("SeasonQuest trade conversion requires at least one award item.");
+        }
+
+        return new MerchantOffer(
+                toTradeCost(need.get(0)),
+                need.size() > 1 ? Optional.of(toTradeCost(need.get(1))) : Optional.empty(),
+                award.getFirst(),
+                max_count.orElse(1),
+                100,
+                0.0F
+        );
+    }
+
+    public ItemCost toTradeCost(ItemPredicate predicate) {
+        Holder<Item> item = predicate.items()
+                .map(HolderSet::stream)
+                .flatMap(Stream::findFirst)
+                .orElse(Items.EMERALD.builtInRegistryHolder());
+
+        int min = predicate.count()
+                .min()
+                .orElse(1);
+
+        int max = predicate.count()
+                .max()
+                .orElse(min);
+
+        return new ItemCost(
+                item.value(),
+                max
+        );
+    }
 
     public static Builder builder() {
         return new Builder();

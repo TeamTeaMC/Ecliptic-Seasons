@@ -1,3 +1,8 @@
+### 0.13.2.1
+
+- Seasonal Greenhouse Essence can now be obtained from Wandering Traders.
+- Optimized several other known display issues.
+
 ## 0.13.2
 
 - Removed the transformation and item interaction capabilities attached to copper grate blocks. The copper grate

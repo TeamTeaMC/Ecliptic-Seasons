@@ -154,7 +154,7 @@ public class DebugInfoRenderer {
                         .append(Component.translatable("debug_info.eclipticseasons.snow_term",
                                 start.getTranslation().withStyle(start.getColor()),
                                 end.getTranslation().withStyle(end.getColor()),
-                                !start.isValid() || start.ordinal() < end.ordinal() ? Component.empty() :
+                                !start.isValid() || start.ordinal() <= end.ordinal() ? Component.empty() :
                                         Component.translatable("debug_info.eclipticseasons.snow_term.second_year").withStyle(end.getColor()))));
                 infoLines.addKV("Snow Depth", biomeWeather.getSnowDepth(), "§f");
                 infoLines.addKV("Map Height", MapChecker.getHeight(level, pos), "");
