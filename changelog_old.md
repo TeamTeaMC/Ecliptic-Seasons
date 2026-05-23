@@ -1,3 +1,7 @@
+### 0.13.3.1
+
+- `BeforeCheckSnowStatusEvent` is no longer fired in order to improve weather simulation performance.
+
 ## 0.13.3
 
 - Enabled the Not Ignore River datapack by default and fixed its incorrect location.
