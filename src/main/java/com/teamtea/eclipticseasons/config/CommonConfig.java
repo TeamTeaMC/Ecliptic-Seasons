@@ -542,7 +542,7 @@ public class CommonConfig {
 
             NotIgnoreRiver = builder.comment("When enabled, rivers are no longer treated as ignored climate zones. This reduces performance overhead but may result in less natural weather transitions near riverbanks.")
                     .worldRestart()
-                    .define("NotIgnoreRiver", false);
+                    .define("IndependentRiverWeather", true);
 
             builder.pop();
         }

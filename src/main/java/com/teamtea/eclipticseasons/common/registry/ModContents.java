@@ -162,6 +162,6 @@ public class ModContents {
                 event, EclipticSeasonsApi.MODID + "/",
                 EclipticSeasonsApi.MODID, name, modFile,
                 Component.translatable(EclipticSeasons.rl(pack_id).toLanguageKey("pack")),
-                PackType.SERVER_DATA, PackSource.FEATURE, Pack.Position.BOTTOM, true);
+                PackType.SERVER_DATA, PackSource.FEATURE, pack_id.equals("not_ignore_river") ? Pack.Position.TOP : Pack.Position.BOTTOM, true);
     }
 }
