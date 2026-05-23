@@ -1,3 +1,11 @@
+## 0.13.3
+
+- Enabled the Not Ignore River datapack by default and fixed its incorrect location.
+- Improved chunk loading performance by disabling river weather merging during initial chunk loading.
+- River biomes are now treated as non-rainy while `IndependentRiverWeather` is enabled.
+- Existing worlds may optionally run `/ecliptic debug reset surface_biome_cache` to reset the biome weather cache.
+- To restore the old river weather behavior, disable `IndependentRiverWeather` in the config.
+
 ### 0.13.2.1
 
 - Seasonal Greenhouse Essence can now be obtained from Wandering Traders.
@@ -13,7 +21,8 @@
 ## 0.13.1
 
 - Added an in-world UI for the Growth Detector to display information.
-- Planned adjustments to the Season Quest Board design. Existing placed quest board blocks will not be removed, but the JEI page has been hidden, and new season quest sign blocks can no longer be created using Seasonal Prayer Scrolls.
+- Planned adjustments to the Season Quest Board design. Existing placed quest board blocks will not be removed, but the
+  JEI page has been hidden, and new season quest sign blocks can no longer be created using Seasonal Prayer Scrolls.
 - Improved the Season Prayer Ritual experience and greatly reduced the time required to nurture a Season Core.
 
 ## 0.13.0-rc-2
