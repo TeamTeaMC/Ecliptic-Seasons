@@ -477,9 +477,9 @@ public class Lang_ZH extends LangHelper {
         add("info.eclipticseasons.greenhouse_core.effect", "为温室中%1$s格范围内的%2$s季作物提供生长加成");
 
         add("info.eclipticseasons.show.shift", "§o<..按住shift..>");
-        add("info.eclipticseasons.greenhouse_essence.source", "完成%1$s季进度或者任务获取");
+        add("info.eclipticseasons.greenhouse_essence.use", "可以转化温室之心容器为%1$s季温室之心");
 
-        add("info.eclipticseasons.seasonal_prayer_scroll.use", "§7§o激活温室心室进行季节仪式");
+        add("info.eclipticseasons.seasonal_prayer_scroll.use", "§7§o激活温室之心容器进行季节仪式");
 
         add("info.eclipticseasons.snow_cauldron.extraction", "§7§o使用锹可以获取雪球");
         add("info.eclipticseasons.ice_cauldron.extraction", "§7§o使用镐可以获取冰块");
@@ -506,9 +506,9 @@ public class Lang_ZH extends LangHelper {
         add("advancement.eclipticseasons.green_house.desc", "建造一个封闭空间，锁住空气和热量");
 
         add("advancement.eclipticseasons.greenhouse_core_container", "反季节种植");
-        add("advancement.eclipticseasons.greenhouse_core_container.desc", "放置温室核心心室方块，准备完成季节温室建造");
+        add("advancement.eclipticseasons.greenhouse_core_container.desc", "放置温室之心容器方块，准备完成季节温室建造");
         add("advancement.eclipticseasons.greenhouse_core", "心髓能量");
-        add("advancement.eclipticseasons.greenhouse_core.desc", "将温室心髓放入心室方块，为温室注入季节能量");
+        add("advancement.eclipticseasons.greenhouse_core.desc", "将温室心髓放入温室之心容器，为温室注入季节能量");
 
         add("advancement.eclipticseasons.copper_grate", "制作格栅");
         add("advancement.eclipticseasons.copper_grate.desc", "也许格子里可以放些什么改变环境？");

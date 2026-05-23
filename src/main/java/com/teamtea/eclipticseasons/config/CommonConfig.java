@@ -207,6 +207,7 @@ public class CommonConfig {
         public static ForgeConfigSpec.DoubleValue seasonalPrayerRitualTimeCost;
 
         public static ForgeConfigSpec.BooleanValue growthDetectorClassicMode;
+        public static ForgeConfigSpec.BooleanValue wanderingTraderSellsGreenhouseEssence;
         public static ForgeConfigSpec.DoubleValue humidityTankRange;
 
         private static void load(ForgeConfigSpec.Builder builder) {
@@ -256,6 +257,9 @@ public class CommonConfig {
             growthDetectorClassicMode = builder
                     .comment("Uses the classic chat-message display for the growth detector instead of the new in-world UI.")
                     .define("GrowthDetectorClassicMode", false);
+            wanderingTraderSellsGreenhouseEssence = builder
+                    .comment("Whether Wandering Traders can sell Seasonal Greenhouse Essence.")
+                    .define("WanderingTraderSellsGreenhouseEssence", true);
 
             humidityTankRange = builder.comment("The effective radius of the 'Humid Tank' block.")
                     .defineInRange("HumidityTankRange", 4.5d, 2d, 16d);

@@ -7,6 +7,7 @@ import com.teamtea.eclipticseasons.api.data.climate.BiomesClimateSettings;
 import com.teamtea.eclipticseasons.api.data.craft.HumidityControl;
 import com.teamtea.eclipticseasons.api.data.crop.CropGrowControlBuilder;
 import com.teamtea.eclipticseasons.api.data.misc.ESSortInfo;
+import com.teamtea.eclipticseasons.api.data.quest.SeasonQuest;
 import com.teamtea.eclipticseasons.api.data.season.SeasonCycle;
 import com.teamtea.eclipticseasons.api.data.season.SnowDefinition;
 import com.teamtea.eclipticseasons.api.data.weather.CustomRainBuilder;
@@ -61,6 +62,7 @@ import net.minecraftforge.event.level.*;
 import net.minecraftforge.event.server.ServerAboutToStartEvent;
 import net.minecraftforge.event.server.ServerStoppedEvent;
 import net.minecraftforge.event.server.ServerStoppingEvent;
+import net.minecraftforge.event.village.WandererTradesEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -388,5 +390,12 @@ public class AllListener {
                 registryAccess.registryOrThrow(ESRegistries.CROP).entrySet(),
                 CropGrowControlBuilder.CODEC));
 
+    }
+
+    @SubscribeEvent
+    public static void onWandererTrades(WandererTradesEvent event) {
+        if (ServerLifecycleHooks.getCurrentServer() == null) return;
+        if (CommonConfig.Crop.wanderingTraderSellsGreenhouseEssence.get())
+            SeasonQuest.buildTrades(ServerLifecycleHooks.getCurrentServer().registryAccess(), event.getRareTrades());
     }
 }

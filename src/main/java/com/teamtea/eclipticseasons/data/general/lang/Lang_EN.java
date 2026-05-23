@@ -477,7 +477,7 @@ public class Lang_EN extends LangHelper {
         add("info.eclipticseasons.greenhouse_core.effect", "Boosts %2$s crops within %1$s blocks in a greenhouse");
 
         add("info.eclipticseasons.show.shift", "§o<..Hold shift..>");
-        add("info.eclipticseasons.greenhouse_essence.source", "Obtained by completing %1$s advancements or quests");
+        add("info.eclipticseasons.greenhouse_essence.use", "Transform a Greenhouse Core Container into a %1$s Season Greenhouse Core");
 
         add("info.eclipticseasons.seasonal_prayer_scroll.use", "Activate the Container of Greenhouse Core to perform a seasonal ritual");
 

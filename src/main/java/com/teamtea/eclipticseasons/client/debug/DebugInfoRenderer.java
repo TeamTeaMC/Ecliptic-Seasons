@@ -138,7 +138,12 @@ public class DebugInfoRenderer {
                 ISnowTerm snowTerm = SolarTerm.getSnowTerm(biomeWeather.biomeHolder.value(), false, EclipticUtil.getSnowTempChange(level));
                 SolarTerm start = snowTerm.getStart();
                 SolarTerm end = snowTerm.getEnd();
-                infoLines.addKV("Snow Term", "[%s → %s]".formatted(start.getTranslation().getString(), end.getTranslation().getString()), "§f");
+                infoLines.addComponent(Component.literal("Snow Term%s: ".formatted(e_cachedBiome == cachedBiome ? "" : " (Surface) "))
+                        .append(Component.translatable("debug_info.eclipticseasons.snow_term",
+                                start.getTranslation().withStyle(start.getColor()),
+                                end.getTranslation().withStyle(end.getColor()),
+                                !start.isValid() || start.ordinal() <= end.ordinal() ? Component.empty() :
+                                        Component.translatable("debug_info.eclipticseasons.snow_term.second_year").withStyle(end.getColor()))));
                 infoLines.addKV("Snow Depth", biomeWeather.getSnowDepth(), "§f");
                 infoLines.addKV("Map Height", MapChecker.getHeight(level, pos), "");
 
@@ -190,7 +195,8 @@ public class DebugInfoRenderer {
         int y = 6;
         int bgPadding = 2;
 
-        for (Object obj : lines) {
+        for (int i = 0; i < lines.size(); i++) {
+            Object obj = lines.get(i);
             if (obj instanceof String s && s.isEmpty()) {
                 y += 5;
                 continue;
@@ -202,7 +208,7 @@ public class DebugInfoRenderer {
             int textHeight = mc.font.lineHeight;
 
             guiGraphics.pose().pushPose();
-            if (!(obj instanceof Component)) {
+            if (!(obj instanceof Component) || i > 5) {
                 guiGraphics.fill(x - bgPadding, y - bgPadding + 1, x + textWidth + bgPadding, y + textHeight, 0x90000000);
             } else {
                 guiGraphics.pose().scale(0.9f, 0.9f, 0.9f);
