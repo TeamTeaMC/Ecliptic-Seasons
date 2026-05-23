@@ -17,6 +17,8 @@ import net.minecraft.world.level.biome.Biome;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Builder
+
+@Deprecated(since = "0.13.3")
 public class BeforeCheckSnowStatusEvent extends net.minecraftforge.eventbus.api.Event implements IESEvent{
     private final ServerLevel level;
     private final Biome biome;

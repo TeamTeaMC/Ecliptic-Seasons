@@ -14,6 +14,7 @@ import java.util.Map;
 /**
  * The event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}
  * **/
+@Deprecated
 public class RegisterAndModifyCropInfoEvent extends net.minecraftforge.eventbus.api.Event {
 
 

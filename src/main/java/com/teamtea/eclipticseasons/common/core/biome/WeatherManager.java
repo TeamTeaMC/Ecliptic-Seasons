@@ -688,9 +688,9 @@ public class WeatherManager {
     public static SnowRenderStatus getSnowStatus(ServerLevel level, Biome biome, BlockPos pos, boolean rain) {
         var status = SnowRenderStatus.NONE;
         if (!hasNonePrecipitation(biome)) {
-            BeforeCheckSnowStatusEvent result = ESEventHook.modifySnowStatus(level, biome, pos, rain);
-            if (result.getStatus() != null) return result.getStatus();
-            rain = result.isRain();
+            // BeforeCheckSnowStatusEvent result = ESEventHook.modifySnowStatus(level, biome, pos, rain);
+            // if (result.getStatus() != null) return result.getStatus();
+            // rain = result.isRain();
             Biome.Precipitation precipitation = getPrecipitationAt(level, biome, pos);
             if (precipitation == Biome.Precipitation.SNOW) {
                 if (rain) status = SnowRenderStatus.SNOW;
