@@ -273,7 +273,7 @@ public final class GrowthWorldUiRenderer {
         Matrix4f matrix = poseStack.last().pose();
         VertexConsumer consumer = buffer.getBuffer(RenderType.textBackground());
 
-        int light = LightTexture.FULL_BLOCK;
+        int light = LightTexture.FULL_BRIGHT;
         float z = 0.01F;
         int border = 2;
 
