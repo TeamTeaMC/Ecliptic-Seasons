@@ -1,0 +1,14 @@
+{
+  "values": [
+    "#forge:seeds",
+    "#forge:crops",
+    "minecraft:apple",
+    "minecraft:hay_block",
+    "minecraft:bamboo",
+    "minecraft:golden_carrot",
+    "minecraft:golden_apple",
+    "minecraft:sweet_berries",
+    "minecraft:glow_berries",
+    "minecraft:rotten_flesh"
+  ]
+}

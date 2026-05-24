@@ -12,6 +12,8 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.ItemTagsProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.common.Tags;
@@ -25,6 +27,8 @@ public final class ESItemTagProvider extends ItemTagsProvider {
         super(packOutput, providerCompletableFuture, tagLookupCompletableFuture);
     }
 
+    public static final TagKey<Item> ANIMAL_FOODS =
+            ItemTags.create(new ResourceLocation("forge", "animal_foods"));
 
     @Override
     public String getName() {
@@ -69,6 +73,23 @@ public final class ESItemTagProvider extends ItemTagsProvider {
         tag(ESItemTags.UNAFFECTED_BY_HUMIDITY);
 
         tag(ItemTags.MUSIC_DISCS).add(ItemRegistry.snowless_hometown.get());
+
+        tag(Tags.Items.SEEDS);
+        tag(Tags.Items.CROPS);
+        tag(ANIMAL_FOODS)
+                .addTags(
+                        Tags.Items.SEEDS,
+                        Tags.Items.CROPS
+                )
+                .add(Items.APPLE,
+                        Items.HAY_BLOCK,
+                        Items.BAMBOO,
+                        Items.GOLDEN_CARROT,
+                        Items.GOLDEN_APPLE,
+                        Items.SWEET_BERRIES,
+                        Items.GLOW_BERRIES,
+                        Items.ROTTEN_FLESH
+                );
     }
 
 

@@ -510,18 +510,18 @@ public class Lang_ZH extends LangHelper {
         add("advancement.eclipticseasons.greenhouse_core", "心髓能量");
         add("advancement.eclipticseasons.greenhouse_core.desc", "将温室心髓放入温室之心容器，为温室注入季节能量");
 
-        add("advancement.eclipticseasons.copper_grate", "制作格栅");
-        add("advancement.eclipticseasons.copper_grate.desc", "也许格子里可以放些什么改变环境？");
-        add("advancement.eclipticseasons.block_in_copper_grate", "调节湿度");
-        add("advancement.eclipticseasons.block_in_copper_grate.desc", "可以尝试放入一些改变湿度的玩意，注意他们也许会随着时间变化或是需要额外的热量蒸发~");
+        add("advancement.eclipticseasons.humidity_tank", "提高湿度");
+        add("advancement.eclipticseasons.humidity_tank.desc", "制作这个方块来提高温室湿度");
+        add("advancement.eclipticseasons.dehumidifier", "降低湿度");
+        add("advancement.eclipticseasons.dehumidifier.desc", "制作这个方块来降低温室湿度");
 
         add("advancement.eclipticseasons.seasonal_prayer_scroll", "祈年令");
         add("advancement.eclipticseasons.seasonal_prayer_scroll.desc", "制作祈年令来获取更多的温室心髓");
-        add("advancement.eclipticseasons.decorate_oak_hanging_sign", "无尽任务");
-        add("advancement.eclipticseasons.decorate_oak_hanging_sign.desc", "用祈年令装饰悬挂式告示，完成无尽任务，获取温室心髓");
+        add("advancement.eclipticseasons.seasonal_ritual", "季节仪式");
+        add("advancement.eclipticseasons.seasonal_ritual.desc", "用祈年令触发温室之心容器，等待一段时间就会孕育出当前季节的核心");
 
-        add("advancement.eclipticseasons.quest", "季节任务");
-        add("advancement.eclipticseasons.quest.desc", "完成季节任务，可以获得温室心髓奖励。");
+        add("advancement.eclipticseasons.quest", "季节进度");
+        add("advancement.eclipticseasons.quest.desc", "完成每项季节进度，均可获得一个对应的温室心髓");
 
         add("advancement.eclipticseasons.spring_start", "春季任务");
         add("advancement.eclipticseasons.spring_start.desc", "在万物生长时种植小麦");
