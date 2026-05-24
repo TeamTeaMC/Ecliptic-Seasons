@@ -114,21 +114,19 @@ public class ESAdvancementGenerator implements AdvancementProvider.AdvancementGe
                         )))
                         .save(consumer, getNameId("quests/greenhouse_core"));
 
-        AdvancementHolder copper_grate = buildAdvancementHolder(green_house, Items.COPPER_GRATE,
-                Component.translatable("advancement.eclipticseasons.copper_grate"),
-                Component.translatable("advancement.eclipticseasons.copper_grate.desc"),
+        AdvancementHolder humidity_tank = buildAdvancementHolder(green_house, BlockRegistry.humidity_tank.get(),
+                Component.translatable("advancement.eclipticseasons.humidity_tank"),
+                Component.translatable("advancement.eclipticseasons.humidity_tank.desc"),
                 "core_require", InventoryChangeTrigger.TriggerInstance.hasItems(ItemPredicate.Builder.item()
-                        .of(Blocks.COPPER_GRATE, BlockRegistry.block_in_wooden_grate_block.get())),
-                consumer, "main/copper_grate");
+                        .of(BlockRegistry.humidity_tank.get())),
+                consumer, "main/humidity_tank");
 
-        AdvancementHolder block_in_copper_grate = buildAdvancementHolder(copper_grate, Items.SPONGE,
-                Component.translatable("advancement.eclipticseasons.block_in_copper_grate"),
-                Component.translatable("advancement.eclipticseasons.block_in_copper_grate.desc"),
-                "core_require", ItemUsedOnLocationTrigger.TriggerInstance.itemUsedOnBlock(
-                        LocationPredicate.Builder.location().setBlock(BlockPredicate.Builder.block().of(BlockRegistry.getAllChangedGrateBlocks())),
-                        ItemPredicate.Builder.item()
-                ),
-                consumer, "main/block_in_copper_grate");
+        AdvancementHolder dehumidifier = buildAdvancementHolder(humidity_tank, BlockRegistry.dehumidifier.get(),
+                Component.translatable("advancement.eclipticseasons.dehumidifier"),
+                Component.translatable("advancement.eclipticseasons.dehumidifier.desc"),
+                "core_require", InventoryChangeTrigger.TriggerInstance.hasItems(ItemPredicate.Builder.item()
+                        .of(BlockRegistry.dehumidifier.get())),
+                consumer, "main/dehumidifier");
 
         AdvancementHolder seasonal_prayer_scroll =
                 Advancement.Builder.advancement().parent(seasons)
@@ -141,14 +139,14 @@ public class ESAdvancementGenerator implements AdvancementProvider.AdvancementGe
                         .requirements(AdvancementRequirements.Strategy.AND)
                         .save(consumer, getNameId("main/seasonal_prayer_scroll"));
 
-        AdvancementHolder decorate_oak_hanging_sign = buildAdvancementHolder(seasonal_prayer_scroll, Items.OAK_HANGING_SIGN,
-                Component.translatable("advancement.eclipticseasons.decorate_oak_hanging_sign"),
-                Component.translatable("advancement.eclipticseasons.decorate_oak_hanging_sign.desc"),
+        AdvancementHolder season_ritual = buildAdvancementHolder(seasonal_prayer_scroll, ItemRegistry.spring_greenhouse_core_item.get(),
+                Component.translatable("advancement.eclipticseasons.seasonal_ritual"),
+                Component.translatable("advancement.eclipticseasons.seasonal_ritual.desc"),
                 "core_require", ItemUsedOnLocationTrigger.TriggerInstance.itemUsedOnBlock(
-                        LocationPredicate.Builder.location().setBlock(BlockPredicate.Builder.block().of(BlockRegistry.season_quest_wall_hanging_sign.get(), BlockRegistry.season_quest_ceiling_hanging_sign.get())),
-                        ItemPredicate.Builder.item()
+                        LocationPredicate.Builder.location().setBlock(BlockPredicate.Builder.block().of(BlockRegistry.spring_greenhouse_core.get(), BlockRegistry.summer_greenhouse_core.get(), BlockRegistry.autumn_greenhouse_core.get(), BlockRegistry.winter_greenhouse_core.get())),
+                        ItemPredicate.Builder.item().of(ItemRegistry.seasonal_prayer_scroll_item.get())
                 ),
-                consumer, "main/decorate_oak_hanging_sign");
+                consumer, "main/seasonal_ritual");
 
         seasons = Advancement.Builder.advancement()
                 .parent(seasons)
@@ -191,20 +189,20 @@ public class ESAdvancementGenerator implements AdvancementProvider.AdvancementGe
                                 Component.translatable("advancement.eclipticseasons.spring_feed.desc"),
                                 null,
                                 AdvancementType.TASK, false, true, false)
-                        .addCriterion("core_require_sheep", PlayerInteractTrigger.TriggerInstance.itemUsedOnEntity(
-                                ItemPredicate.Builder.item().of(ItemTags.SHEEP_FOOD),
-                                Optional.of(EntityPredicate.wrap(EntityPredicate.Builder.entity().of(EntityType.SHEEP)))
-                        ))
-                        .addCriterion("core_require_cow", PlayerInteractTrigger.TriggerInstance.itemUsedOnEntity(
-                                ItemPredicate.Builder.item().of(ItemTags.COW_FOOD),
-                                Optional.of(EntityPredicate.wrap(EntityPredicate.Builder.entity().of(EntityType.COW)))
-                        ))
-                        .addCriterion("core_require_chicken", PlayerInteractTrigger.TriggerInstance.itemUsedOnEntity(
-                                ItemPredicate.Builder.item().of(ItemTags.CHICKEN_FOOD),
-                                Optional.of(EntityPredicate.wrap(EntityPredicate.Builder.entity().of(EntityType.CHICKEN)))
+                        // .addCriterion("core_require_sheep", PlayerInteractTrigger.TriggerInstance.itemUsedOnEntity(
+                        //         ItemPredicate.Builder.item().of(items, ItemTags.SHEEP_FOOD),
+                        //         Optional.of(EntityPredicate.wrap(EntityPredicate.Builder.entity().of(types, EntityType.SHEEP)))
+                        // ))
+                        // .addCriterion("core_require_cow", PlayerInteractTrigger.TriggerInstance.itemUsedOnEntity(
+                        //         ItemPredicate.Builder.item().of(items, ItemTags.COW_FOOD),
+                        //         Optional.of(EntityPredicate.wrap(EntityPredicate.Builder.entity().of(types, EntityType.COW)))
+                        // ))
+                        .addCriterion("core_require", PlayerInteractTrigger.TriggerInstance.itemUsedOnEntity(
+                                ItemPredicate.Builder.item().of(Tags.Items.ANIMAL_FOODS),
+                                Optional.empty()
                         ))
                         .addCriterion("parent", ParentNeedCriterion.TriggerInstance.simple(spring_harvest))
-                        .requirements(new AdvancementRequirements(List.of(List.of("core_require_sheep", "core_require_cow", "core_require_chicken"), List.of("parent"))))
+                        .requirements(new AdvancementRequirements(List.of(List.of("core_require"), List.of("parent"))))
                         .save(consumer, getNameId("quests/spring_feed"));
 
         AdvancementHolder spring_seed = buildAdvancementHolder(spring_feed, Items.WHEAT_SEEDS,

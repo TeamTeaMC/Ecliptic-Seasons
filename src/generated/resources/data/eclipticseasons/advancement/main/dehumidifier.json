@@ -1,14 +1,11 @@
 {
-  "parent": "eclipticseasons:main/green_house",
+  "parent": "eclipticseasons:main/humidity_tank",
   "criteria": {
     "core_require": {
       "conditions": {
         "items": [
           {
-            "items": [
-              "minecraft:copper_grate",
-              "eclipticseasons:block_in_wooden_grate_block"
-            ]
+            "items": "eclipticseasons:dehumidifier"
           }
         ]
       },
@@ -16,22 +13,22 @@
     },
     "parent_need": {
       "conditions": {
-        "parent": "eclipticseasons:main/green_house"
+        "parent": "eclipticseasons:main/humidity_tank"
       },
       "trigger": "eclipticseasons:parent"
     }
   },
   "display": {
     "description": {
-      "translate": "advancement.eclipticseasons.copper_grate.desc"
+      "translate": "advancement.eclipticseasons.dehumidifier.desc"
     },
     "icon": {
       "count": 1,
-      "id": "minecraft:copper_grate"
+      "id": "eclipticseasons:dehumidifier"
     },
     "show_toast": false,
     "title": {
-      "translate": "advancement.eclipticseasons.copper_grate"
+      "translate": "advancement.eclipticseasons.dehumidifier"
     }
   },
   "requirements": [

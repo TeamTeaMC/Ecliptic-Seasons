@@ -9,15 +9,19 @@
             "predicate": {
               "block": {
                 "blocks": [
-                  "eclipticseasons:season_quest_wall_hanging_sign",
-                  "eclipticseasons:season_quest_ceiling_hanging_sign"
+                  "eclipticseasons:spring_greenhouse_core",
+                  "eclipticseasons:summer_greenhouse_core",
+                  "eclipticseasons:autumn_greenhouse_core",
+                  "eclipticseasons:winter_greenhouse_core"
                 ]
               }
             }
           },
           {
             "condition": "minecraft:match_tool",
-            "predicate": {}
+            "predicate": {
+              "items": "eclipticseasons:seasonal_prayer_scroll"
+            }
           }
         ]
       },
@@ -32,15 +36,15 @@
   },
   "display": {
     "description": {
-      "translate": "advancement.eclipticseasons.decorate_oak_hanging_sign.desc"
+      "translate": "advancement.eclipticseasons.seasonal_ritual.desc"
     },
     "icon": {
       "count": 1,
-      "id": "minecraft:oak_hanging_sign"
+      "id": "eclipticseasons:spring_greenhouse_core"
     },
     "show_toast": false,
     "title": {
-      "translate": "advancement.eclipticseasons.decorate_oak_hanging_sign"
+      "translate": "advancement.eclipticseasons.seasonal_ritual"
     }
   },
   "requirements": [

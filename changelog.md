@@ -1,1 +1,2 @@
-- `BeforeCheckSnowStatusEvent` is no longer fired in order to improve weather simulation performance.
+- Fixed several advancement display issues.
+- Improved compatibility when detecting built-in advancements.

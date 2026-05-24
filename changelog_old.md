@@ -1,3 +1,8 @@
+### 0.13.3.2
+
+- Fixed several advancement display issues.
+- Improved compatibility when detecting built-in advancements.
+
 ### 0.13.3.1
 
 - `BeforeCheckSnowStatusEvent` is no longer fired in order to improve weather simulation performance.
