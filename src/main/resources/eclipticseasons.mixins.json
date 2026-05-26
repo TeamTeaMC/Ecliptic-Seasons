@@ -18,6 +18,7 @@
     "common.command.MixinWeatherCommand",
     "common.entity.MixinEntity",
     "common.entity.MixinLivingEntity",
+    "common.entity.MixinWanderingTrader",
     "common.item.MixinMapItem",
     "common.level.MixinAttributeTrackSampler",
     "common.level.MixinLevel",

@@ -1,3 +1,25 @@
+### 0.13.3.2
+
+- Fixed several advancement display issues.
+- Improved compatibility when detecting built-in advancements.
+
+### 0.13.3.1
+
+- `BeforeCheckSnowStatusEvent` is no longer fired in order to improve weather simulation performance.
+
+## 0.13.3
+
+- Enabled the Not Ignore River datapack by default and fixed its incorrect location.
+- Improved chunk loading performance by disabling river weather merging during initial chunk loading.
+- River biomes are now treated as non-rainy while `IndependentRiverWeather` is enabled.
+- Existing worlds may optionally run `/ecliptic debug reset surface_biome_cache` to reset the biome weather cache.
+- To restore the old river weather behavior, disable `IndependentRiverWeather` in the config.
+
+### 0.13.2.1
+
+- Seasonal Greenhouse Essence can now be obtained from Wandering Traders.
+- Optimized several other known display issues.
+
 ## 0.13.2
 
 - Removed the transformation and item interaction capabilities attached to copper grate blocks. The copper grate

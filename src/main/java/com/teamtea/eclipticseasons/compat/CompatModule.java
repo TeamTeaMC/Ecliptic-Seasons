@@ -63,7 +63,7 @@ public class CompatModule {
                 Class<?> iuiHandlerClass = Class.forName("com.teamtea.eclipticseasons.compat.modernui.MUIHandler");
                 gameBus.register(iuiHandlerClass.getField("INSTANCE").get(null));
             } catch (ClassNotFoundException | IllegalAccessException | NoSuchFieldException e) {
-                throw new RuntimeException(e);
+
             }
         }
         if (isVoxy() && FMLLoader.getCurrent().getDist() == Dist.CLIENT) {
@@ -71,7 +71,7 @@ public class CompatModule {
                 Class<?> handler = Class.forName("com.teamtea.eclipticseasons.compat.voxy.VoxyEsHandler");
                 gameBus.register(handler.getField("INSTANCE").get(null));
             } catch (ClassNotFoundException | IllegalAccessException | NoSuchFieldException e) {
-                throw new RuntimeException(e);
+
             }
         }
     }

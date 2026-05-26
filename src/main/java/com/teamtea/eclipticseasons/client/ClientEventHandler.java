@@ -232,12 +232,13 @@ public final class ClientEventHandler {
         //     return;
         // }
 
-        GrowthWorldUiRenderer.renderLevelStage(event);
+        // GrowthWorldUiRenderer.renderLevelStage(event);
     }
 
 
     @SubscribeEvent
     public static void onSubmitCustomGeometry(SubmitCustomGeometryEvent event) {
+        GrowthWorldUiRenderer.renderLevelStage(event);
     }
 
 

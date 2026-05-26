@@ -4,24 +4,36 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.data.climate.AgroClimaticZone;
+import com.teamtea.eclipticseasons.api.data.misc.ESSortInfo;
 import com.teamtea.eclipticseasons.api.util.codec.CodecUtil;
 import com.teamtea.eclipticseasons.api.util.codec.ESExtraCodec;
+import com.teamtea.eclipticseasons.common.loot.SeasonCondition;
 import com.teamtea.eclipticseasons.common.registry.ESRegistries;
 import net.minecraft.advancements.criterion.ItemPredicate;
 import net.minecraft.advancements.criterion.MinMaxBounds;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.HolderSet;
+import net.minecraft.core.component.DataComponentExactPredicate;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemStackTemplate;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.trading.TradeCost;
+import net.minecraft.world.item.trading.VillagerTrade;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.loot.predicates.AllOfCondition;
+import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
+import net.minecraft.world.level.storage.loot.predicates.LootItemRandomChanceCondition;
+import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
+import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 public record SeasonQuest(
         Optional<SolarTerm> end,
@@ -54,6 +66,72 @@ public record SeasonQuest(
             Codec.INT.optionalFieldOf("color").forGetter(SeasonQuest::color)
     ).apply(ins, SeasonQuest::new));
 
+
+    public static void buildTrades(Level level, List<Holder<VillagerTrade>> trades) {
+        for (SeasonQuest seasonQuest : ESSortInfo.sorted2(level.registryAccess().lookupOrThrow(ESRegistries.SEASON_QUEST)).stream().toList()) {
+            VillagerTrade trade = seasonQuest.toTrade();
+            trades.add(Holder.direct(trade));
+        }
+    }
+
+    public VillagerTrade toTrade() {
+        // if (need.isEmpty() || need.size() > 2) {
+        //     throw new IllegalArgumentException("SeasonQuest trade conversion requires 1 or 2 cost items.");
+        // }
+
+        if (award.isEmpty()) {
+            throw new IllegalArgumentException("SeasonQuest trade conversion requires at least one award item.");
+        }
+
+        return new VillagerTrade(
+                toTradeCost(need.get(0)),
+                need.size() > 1 ? Optional.of(toTradeCost(need.get(1))) : Optional.empty(),
+                award.getFirst(),
+                max_count.orElse(1),
+                100,
+                0.0F,
+                Optional.of(AllOfCondition.allOf(
+                        createSeasonCondition(),
+                        LootItemRandomChanceCondition.randomChance(0.28f)
+                ).build()),
+                List.of()
+        );
+    }
+
+    public TradeCost toTradeCost(ItemPredicate predicate) {
+        Holder<Item> item = predicate.items()
+                .map(HolderSet::stream)
+                .flatMap(Stream::findFirst)
+                .orElse(Items.EMERALD.builtInRegistryHolder());
+
+        int min = predicate.count()
+                .bounds()
+                .min()
+                .orElse(1);
+
+        int max = predicate.count()
+                .bounds()
+                .max()
+                .orElse(min);
+
+        return new TradeCost(
+                item,
+                new UniformGenerator(
+                        new ConstantValue(min),
+                        new ConstantValue(max)
+                ),
+                DataComponentExactPredicate.builder().build()
+        );
+    }
+
+    public SeasonCondition.Builder createSeasonCondition() {
+        return SeasonCondition.builder(
+                SeasonCondition.Slice.builder()
+                        .start(start.orElse(SolarTerm.NONE))
+                        .end(end.orElse(SolarTerm.NONE))
+                        .build()
+        );
+    }
 
     public static Builder builder() {
         return new Builder();

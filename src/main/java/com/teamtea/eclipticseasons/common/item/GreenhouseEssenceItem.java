@@ -34,7 +34,7 @@ public class GreenhouseEssenceItem extends Item {
                             this == ItemRegistry.autumn_greenhouse_essence_item.get() ? Season.AUTUMN :
                                     this == ItemRegistry.winter_greenhouse_essence_item.get() ? Season.WINTER :
                                             Season.NONE;
-            builder.accept(Component.translatable("info.eclipticseasons.greenhouse_essence.source", season.getTranslation().getString().toLowerCase(Locale.ROOT)).withStyle(ChatFormatting.GRAY));
+            builder.accept(Component.translatable("info.eclipticseasons.greenhouse_essence.use", season.getTranslation().getString().toLowerCase(Locale.ROOT)).withStyle(ChatFormatting.GRAY));
         }
     }
 

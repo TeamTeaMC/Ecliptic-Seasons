@@ -32,7 +32,7 @@ public class ESJEIPlugin implements IModPlugin {
    public static final Identifier CAULDRON = EclipticSeasons.rl("cauldron");
    public static final Identifier GREENHOUSE_CORE = EclipticSeasons.rl("greenhouse_core");
    public static final Identifier WETTER = EclipticSeasons.rl("wetter");
-   public static final Identifier SEASON_QUEST = EclipticSeasons.rl("season_quest");
+   // public static final Identifier SEASON_QUEST = EclipticSeasons.rl("season_quest");
 
    public static final IRecipeType<HumidityControl> HUMIDITY_CONTROL_RECIPE_TYPE = getType(HUMIDITY_CONTROL, HumidityControl.class);
    public static final IRecipeType<CauldronRecipe> CAULDRON_RECIPE_TYPE = getType(CAULDRON, CauldronRecipe.class);
@@ -60,9 +60,7 @@ public class ESJEIPlugin implements IModPlugin {
 
    @Override
    public void registerRecipeCatalysts(@NonNull IRecipeCatalystRegistration registration) {
-       for (Block block : BlockRegistry.getAllGrateBlocks()) {
-           registration.addCraftingStation(HUMIDITY_CONTROL_RECIPE_TYPE, block);
-       }
+       registration.addCraftingStation(HUMIDITY_CONTROL_RECIPE_TYPE, ItemRegistry.block_in_wooden_grate_block_item.get());
        registration.addCraftingStation(CAULDRON_RECIPE_TYPE, Items.CAULDRON);
        registration.addCraftingStation(GREENHOUSE_CORE_TYPE, ItemRegistry.seasonal_prayer_scroll_item.get().getDefaultInstance(),
                ItemRegistry.greenhouse_core_container_item.get().getDefaultInstance());

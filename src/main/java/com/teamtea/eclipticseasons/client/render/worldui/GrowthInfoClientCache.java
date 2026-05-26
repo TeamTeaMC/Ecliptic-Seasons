@@ -46,7 +46,7 @@ public class GrowthInfoClientCache {
     public static void clear() {
         lastPos = null;
         lastState = null;
-        lastResolveGameTime = Long.MIN_VALUE;
+        lastResolveGameTime = -1;
         lastInfo = null;
         hasCachedResult = false;
     }

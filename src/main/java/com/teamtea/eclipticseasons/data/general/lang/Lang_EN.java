@@ -471,7 +471,7 @@ public class Lang_EN extends LangHelper {
         add("info.eclipticseasons.greenhouse_core.effect", "Boosts %2$s crops within %1$s blocks in a greenhouse");
 
         add("info.eclipticseasons.show.shift", "§o<..Hold shift..>");
-        add("info.eclipticseasons.greenhouse_essence.source", "Obtained by completing %1$s advancements or quests");
+        add("info.eclipticseasons.greenhouse_essence.use", "Transform a Greenhouse Core Container into a %1$s Season Greenhouse Core");
 
         add("info.eclipticseasons.seasonal_prayer_scroll.use", "Activate the Container of Greenhouse Core to perform a seasonal ritual");
 
@@ -504,18 +504,18 @@ public class Lang_EN extends LangHelper {
         add("advancement.eclipticseasons.greenhouse_core", "Essence Igniter");
         add("advancement.eclipticseasons.greenhouse_core.desc", "Power up your greenhouse by placing a Greenhouse Essence into its heart");
 
-        add("advancement.eclipticseasons.copper_grate", "Craft a Copper Grate");
-        add("advancement.eclipticseasons.copper_grate.desc", "Maybe something can be placed in the grate to alter the environment?");
-        add("advancement.eclipticseasons.block_in_copper_grate", "Change Humidity");
-        add("advancement.eclipticseasons.block_in_copper_grate.desc", "Some blocks that affect humidity could be placed in the grate—beware, for they may transform with time or need warmth to fade into vapor~");
+        add("advancement.eclipticseasons.humidity_tank", "Increase Humidity");
+        add("advancement.eclipticseasons.humidity_tank.desc", "Craft this block to increase greenhouse humidity");
+        add("advancement.eclipticseasons.dehumidifier", "Decrease Humidity");
+        add("advancement.eclipticseasons.dehumidifier.desc", "Craft this block to decrease greenhouse humidity");
 
         add("advancement.eclipticseasons.seasonal_prayer_scroll", "Seasonal Prayer Scroll");
-        add("advancement.eclipticseasons.seasonal_prayer_scroll.desc", "Craft a Seasonal Prayer Scroll to obtain Greenhouse Essences");
-        add("advancement.eclipticseasons.decorate_oak_hanging_sign", "Endless Quest");
-        add("advancement.eclipticseasons.decorate_oak_hanging_sign.desc", "Right-click a Hanging Sign with the Seasonal Prayer Scroll to turn it into a Seasonal Quest Sign, and complete endless quests to earn Greenhouse Essences");
+        add("advancement.eclipticseasons.seasonal_prayer_scroll.desc", "Craft a Seasonal Prayer Scroll to obtain more Greenhouse Essences");
+        add("advancement.eclipticseasons.seasonal_ritual", "Seasonal Ritual");
+        add("advancement.eclipticseasons.seasonal_ritual.desc", "Use a Seasonal Prayer Scroll on a Greenhouse Heart Container, then wait for it to nurture the core of the current season");
 
-        add("advancement.eclipticseasons.quest", "Seasonal Quest");
-        add("advancement.eclipticseasons.quest.desc", "Complete seasonal quests to earn Greenhouse Essence rewards");
+        add("advancement.eclipticseasons.quest", "Seasonal Advancements");
+        add("advancement.eclipticseasons.quest.desc", "Each seasonal advancement line rewards a corresponding Greenhouse Essence");
 
         add("advancement.eclipticseasons.spring_start", "Spring Quest");
         add("advancement.eclipticseasons.spring_start.desc", "Plant wheat as all things grow");

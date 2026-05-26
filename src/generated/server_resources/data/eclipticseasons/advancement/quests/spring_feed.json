@@ -7,53 +7,10 @@
       },
       "trigger": "eclipticseasons:parent"
     },
-    "core_require_chicken": {
+    "core_require": {
       "conditions": {
-        "entity": [
-          {
-            "condition": "minecraft:entity_properties",
-            "entity": "this",
-            "predicate": {
-              "type": "minecraft:chicken"
-            }
-          }
-        ],
         "item": {
-          "items": "#minecraft:chicken_food"
-        }
-      },
-      "trigger": "minecraft:player_interacted_with_entity"
-    },
-    "core_require_cow": {
-      "conditions": {
-        "entity": [
-          {
-            "condition": "minecraft:entity_properties",
-            "entity": "this",
-            "predicate": {
-              "type": "minecraft:cow"
-            }
-          }
-        ],
-        "item": {
-          "items": "#minecraft:cow_food"
-        }
-      },
-      "trigger": "minecraft:player_interacted_with_entity"
-    },
-    "core_require_sheep": {
-      "conditions": {
-        "entity": [
-          {
-            "condition": "minecraft:entity_properties",
-            "entity": "this",
-            "predicate": {
-              "type": "minecraft:sheep"
-            }
-          }
-        ],
-        "item": {
-          "items": "#minecraft:sheep_food"
+          "items": "#c:animal_foods"
         }
       },
       "trigger": "minecraft:player_interacted_with_entity"
@@ -73,9 +30,7 @@
   },
   "requirements": [
     [
-      "core_require_sheep",
-      "core_require_cow",
-      "core_require_chicken"
+      "core_require"
     ],
     [
       "parent"

@@ -223,6 +223,7 @@ public class CommonConfig {
         public static ModConfigSpec.DoubleValue seasonalPrayerRitualTimeCost;
 
         public static ModConfigSpec.BooleanValue growthDetectorClassicMode;
+        public static ModConfigSpec.BooleanValue wanderingTraderSellsGreenhouseEssence;
         public static ModConfigSpec.DoubleValue humidityTankRange;
 
         private static void load(ModConfigSpec.Builder builder) {
@@ -272,7 +273,9 @@ public class CommonConfig {
             growthDetectorClassicMode = builder
                     .comment("Uses the classic chat-message display for the growth detector instead of the new in-world UI.")
                     .define("GrowthDetectorClassicMode", false);
-
+            wanderingTraderSellsGreenhouseEssence = builder
+                    .comment("Whether Wandering Traders can sell Seasonal Greenhouse Essence.")
+                    .define("WanderingTraderSellsGreenhouseEssence", true);
             humidityTankRange = builder.comment("The effective radius of the 'Humid Tank' block.")
                     .defineInRange("HumidityTankRange", 4.5d, 2d, 16d);
             builder.pop();
@@ -555,7 +558,7 @@ public class CommonConfig {
 
             NotIgnoreRiver = builder.comment("When enabled, rivers are no longer treated as ignored climate zones. This reduces performance overhead but may result in less natural weather transitions near riverbanks.")
                     .worldRestart()
-                    .define("NotIgnoreRiver", false);
+                    .define("IndependentRiverWeather", true);
 
             springGrass = builder.comment("Spring brings life to grass and flowers, while autumn marks the fading.")
                     .worldRestart()

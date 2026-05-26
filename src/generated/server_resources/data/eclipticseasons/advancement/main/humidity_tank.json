@@ -5,10 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "minecraft:copper_grate",
-              "eclipticseasons:block_in_wooden_grate_block"
-            ]
+            "items": "eclipticseasons:humidity_tank"
           }
         ]
       },
@@ -23,14 +20,14 @@
   },
   "display": {
     "description": {
-      "translate": "advancement.eclipticseasons.copper_grate.desc"
+      "translate": "advancement.eclipticseasons.humidity_tank.desc"
     },
     "icon": {
-      "id": "minecraft:copper_grate"
+      "id": "eclipticseasons:humidity_tank"
     },
     "show_toast": false,
     "title": {
-      "translate": "advancement.eclipticseasons.copper_grate"
+      "translate": "advancement.eclipticseasons.humidity_tank"
     }
   },
   "requirements": [

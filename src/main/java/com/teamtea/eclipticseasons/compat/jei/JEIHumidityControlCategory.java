@@ -239,9 +239,7 @@ public class JEIHumidityControlCategory implements IRecipeCategory<HumidityContr
 
        currentTimeMillis = (int) ((System.currentTimeMillis()) % Integer.MAX_VALUE) / 1200;
        guiGraphics.pose().translate(0, 0);
-       List<Block> allChangedGrateBlocks = BlockRegistry.getAllChangedGrateBlocks();
-       int index = currentTimeMillis % allChangedGrateBlocks.size();
-       guiGraphics.item(BlockRegistry.getOriginalCopperGrateBlock(allChangedGrateBlocks.get(index)).asItem().getDefaultInstance(), 0, 0);
+       guiGraphics.item(ItemRegistry.block_in_wooden_grate_block_item.get().getDefaultInstance(), 0, 0);
 
        guiGraphics.pose().popMatrix();
 
