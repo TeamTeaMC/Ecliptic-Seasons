@@ -196,7 +196,7 @@
   "eclipticseasons.configuration.SmootherSeasonalGrassColorChange": "Smooth Seasonal Foliage Color Transition",
   "eclipticseasons.configuration.Snow": "Snowscape",
   "eclipticseasons.configuration.SnowCoverUnderBlocks": "Snow Under Blocks",
-  "eclipticseasons.configuration.SnowInWorld": "Snow Interaction System",
+  "eclipticseasons.configuration.SnowInWorld": "Snowscape Interaction System",
   "eclipticseasons.configuration.SnowOverlayGlowingBlock": "Snow on Light Sources",
   "eclipticseasons.configuration.SnowStepMelt": "Snow Melts When Stepped On",
   "eclipticseasons.configuration.SnowTogether": "Unified Snowfall",
