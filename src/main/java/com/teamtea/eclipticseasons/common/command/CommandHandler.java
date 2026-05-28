@@ -1,5 +1,6 @@
 package com.teamtea.eclipticseasons.common.command;
 
+import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.FloatArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
@@ -106,48 +107,76 @@ public class CommandHandler {
                                     })
                             )
                             .then(Commands.literal("setTerm")
-                                    .then(Commands.argument("term", StringArgumentType.greedyString()).suggests((context, builder) -> {
-                                                String pre = "";
-                                                try {
-                                                    pre = context.getArgument("term", String.class);
-                                                } catch (IllegalArgumentException e) {
-                                                    // e.printStackTrace();
-                                                }
-                                                String finalPre = pre;
-                                                for (SolarTerm solarTerm : SolarTerm.collectValues()) {
-                                                    if (solarTerm != SolarTerm.NONE) {
-                                                        MutableComponent translation = solarTerm.getTranslation();
-                                                        String s = solarTerm.getName();
-                                                        if (s.contains(finalPre.toLowerCase(Locale.ROOT))) {
-                                                            //  if (FMLLoader.getDist() == Dist.DEDICATED_SERVER)
-                                                            //      builder.suggest(s, Component.translatable("%s%s%s",
-                                                            //              translation.withStyle(solarTerm.getSeason().getColor()),
-                                                            //              Component.literal(": ").withStyle(ChatFormatting.GRAY)
-                                                            //              ,solarTerm.getAlternationText()));
-                                                            // else builder.suggest(s, solarTerm.getAlternationText());
-                                                            builder.suggest(s, Component.translatable("%s%s%s%s",
-                                                                    Component.literal("[").withStyle(ChatFormatting.WHITE),
-                                                                    translation.withStyle(solarTerm.getSeason().getColor()).withStyle(ChatFormatting.WHITE),
-                                                                    Component.literal("] ").withStyle(ChatFormatting.WHITE)
-                                                                    , solarTerm.getAlternationText()));
+                                    .then(Commands.argument("term", StringArgumentType.word()).suggests((context, builder) -> {
+                                                        String pre = "";
+                                                        try {
+                                                            pre = context.getArgument("term", String.class);
+                                                        } catch (IllegalArgumentException e) {
+                                                            // e.printStackTrace();
                                                         }
-                                                    }
-                                                }
+                                                        String finalPre = pre;
+                                                        for (SolarTerm solarTerm : SolarTerm.collectValues()) {
+                                                            if (solarTerm != SolarTerm.NONE) {
+                                                                MutableComponent translation = solarTerm.getTranslation();
+                                                                String s = solarTerm.getName();
+                                                                if (s.contains(finalPre.toLowerCase(Locale.ROOT))) {
+                                                                    //  if (FMLLoader.getDist() == Dist.DEDICATED_SERVER)
+                                                                    //      builder.suggest(s, Component.translatable("%s%s%s",
+                                                                    //              translation.withStyle(solarTerm.getSeason().getColor()),
+                                                                    //              Component.literal(": ").withStyle(ChatFormatting.GRAY)
+                                                                    //              ,solarTerm.getAlternationText()));
+                                                                    // else builder.suggest(s, solarTerm.getAlternationText());
+                                                                    builder.suggest(s, Component.translatable("%s%s%s%s",
+                                                                            Component.literal("[").withStyle(ChatFormatting.WHITE),
+                                                                            translation.withStyle(solarTerm.getSeason().getColor()).withStyle(ChatFormatting.WHITE),
+                                                                            Component.literal("] ").withStyle(ChatFormatting.WHITE)
+                                                                            , solarTerm.getAlternationText()));
+                                                                }
+                                                            }
+                                                        }
 
-                                                return builder.buildFuture();
-                                            })
-                                            .executes(commandContext -> {
-                                                String s = StringArgumentType.getString(commandContext, "term");
-                                                SolarTerm ss = null;
-                                                for (SolarTerm solarTerm : SolarTerm.collectValues()) {
-                                                    if (solarTerm.getName().equals(s)) {
-                                                        ss = solarTerm;
-                                                        break;
-                                                    }
-                                                }
-                                                int day = ss.ordinal() * CommonConfig.Season.lastingDaysOfEachTerm.get();
-                                                return setDay(commandContext.getSource(), day);
-                                            })))
+                                                        return builder.buildFuture();
+                                                    })
+                                                    .executes(commandContext -> {
+                                                        String s = StringArgumentType.getString(commandContext, "term");
+                                                        SolarTerm ss = null;
+                                                        for (SolarTerm solarTerm : SolarTerm.collectValues()) {
+                                                            if (solarTerm.getName().equals(s)) {
+                                                                ss = solarTerm;
+                                                                break;
+                                                            }
+                                                        }
+                                                        int day = ss.ordinal() * CommonConfig.Season.lastingDaysOfEachTerm.get();
+                                                        return setDay(commandContext.getSource(), day);
+                                                    })
+                                                    .then(Commands.argument("find_next", BoolArgumentType.bool())
+                                                            .executes(commandContext -> {
+                                                                String s = StringArgumentType.getString(commandContext, "term");
+                                                                SolarTerm ss = null;
+                                                                for (SolarTerm solarTerm : SolarTerm.collectValues()) {
+                                                                    if (solarTerm.getName().equals(s)) {
+                                                                        ss = solarTerm;
+                                                                        break;
+                                                                    }
+                                                                }
+
+                                                                ServerLevel level = commandContext.getSource().getLevel();
+
+                                                                int currentYearIndex = EclipticSeasonsApi.getInstance().getSolarYear(level) - 1;
+                                                                int currentTermIndex = EclipticSeasonsApi.getInstance().getSolarTerm(level).ordinal();
+                                                                int targetTermIndex = ss.ordinal();
+
+                                                                boolean nextClosest = BoolArgumentType.getBool(commandContext, "find_next");
+                                                                int yearIndex = nextClosest ? currentYearIndex : 0;
+                                                                if (nextClosest && targetTermIndex < currentTermIndex) {
+                                                                    yearIndex++;
+                                                                }
+                                                                int day = (yearIndex * 24 + targetTermIndex)
+                                                                        * CommonConfig.Season.lastingDaysOfEachTerm.get();
+                                                                return setDay(commandContext.getSource(), day);
+                                                            })
+                                                    )
+                                    ))
                             .then(Commands.literal("getTerm")
                                     .executes(commandContext -> {
                                         var solar = EclipticUtil.getNowSolarTerm(commandContext.getSource().getLevel());
@@ -245,7 +274,7 @@ public class CommandHandler {
                 }
             }
             if (found) {
-                WeatherManager.sendBiomePacket(level,levelBiomeWeather, level.players());
+                WeatherManager.sendBiomePacket(level, levelBiomeWeather, level.players());
                 SnowyMapChecker.updateAllChunks(level);
                 SimpleNetworkHandler.send(level.players(), new EmptyMessage());
             }

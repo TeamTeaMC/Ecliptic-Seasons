@@ -43,13 +43,16 @@ public class ClientWeatherChecker {
     }
 
     public static float getAmount() {
-        return weatherEffectByEntity == null || !weatherEffectByEntity.shouldChangeAmount(true) ?
+        return weatherEffectByEntity == null
+                || !ClientConfig.Weather.tweakPrecipitationParticleTexture.get()
+                || !weatherEffectByEntity.shouldChangeAmount(true) ?
                 1 : weatherEffectByEntity.getModifiedAmount(1, true);
     }
 
 
     public static ResourceLocation modifyRainAmount3(ResourceLocation identifier, boolean rain) {
         if (weatherEffectByEntity == null
+                || !ClientConfig.Weather.tweakPrecipitationParticleTexture.get()
                 || !weatherEffectByEntity.shouldChangeTexture(rain)) return identifier;
         return weatherEffectByEntity.onTextureBinding(identifier, rain);
     }

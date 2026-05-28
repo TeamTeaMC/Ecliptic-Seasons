@@ -196,7 +196,7 @@
   "eclipticseasons.configuration.SmootherSeasonalGrassColorChange": "Smooth Seasonal Foliage Color Transition",
   "eclipticseasons.configuration.Snow": "Snowscape",
   "eclipticseasons.configuration.SnowCoverUnderBlocks": "Snow Under Blocks",
-  "eclipticseasons.configuration.SnowInWorld": "Snow Interaction System",
+  "eclipticseasons.configuration.SnowInWorld": "Snowscape Interaction System",
   "eclipticseasons.configuration.SnowOverlayGlowingBlock": "Snow on Light Sources",
   "eclipticseasons.configuration.SnowStepMelt": "Snow Melts When Stepped On",
   "eclipticseasons.configuration.SnowTogether": "Unified Snowfall",
@@ -438,5 +438,7 @@
   "eclipticseasons.configuration.HumidityTankRange": "Humidity Tank Range",
   "eclipticseasons.configuration.HumidityTankRange.tooltip": "The effective radius of the Humidity Tank. When activated, it increases the ambient humidity within its range.",
   "eclipticseasons.configuration.WanderingTraderSellsGreenhouseEssence": "Wandering Trader Sells Greenhouse Essence",
-  "eclipticseasons.configuration.WanderingTraderSellsGreenhouseEssence.tooltip": "Whether Wandering Traders can sell Seasonal Greenhouse Essence."
+  "eclipticseasons.configuration.WanderingTraderSellsGreenhouseEssence.tooltip": "Whether Wandering Traders can sell Seasonal Greenhouse Essence.",
+  "eclipticseasons.configuration.TweakPrecipitationParticleTexture": "Tweak Precipitation Particle Textures",
+  "eclipticseasons.configuration.TweakPrecipitationParticleTexture.tooltip": "When enabled, Ecliptic Seasons may adjust rain and snow particle textures when needed."
 }

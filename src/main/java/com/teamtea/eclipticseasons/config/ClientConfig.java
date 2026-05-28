@@ -239,7 +239,7 @@ public class ClientConfig {
     public static class Weather {
         // public static ForgeConfigSpec.IntValue weatherBufferDistance;
         // public static ForgeConfigSpec.DoubleValue weatherTransitionSpeed;
-        // public static ForgeConfigSpec.BooleanValue weatherFrontBias;
+        public static ForgeConfigSpec.BooleanValue tweakPrecipitationParticleTexture;
 
         private static void load(ForgeConfigSpec.Builder builder) {
             builder.push("Weather");
@@ -248,9 +248,8 @@ public class ClientConfig {
             // weatherTransitionSpeed = builder.comment(
             //                 "How quickly local weather conditions change. Higher values mean faster shifts.")
             //         .defineInRange("WeatherTransitionSpeed", 0.008d, 0.0008d, 0.08d);
-            // weatherFrontBias = builder.comment(
-            //                 "Prioritize weather sampling in the direction the player is currently facing.")
-            //         .define("WeatherFrontBias", true);
+            tweakPrecipitationParticleTexture = builder.comment("When enabled, Ecliptic Seasons may adjust rain and snow particle textures when needed.")
+                    .define("TweakPrecipitationParticleTexture", true);
             builder.pop();
         }
     }
