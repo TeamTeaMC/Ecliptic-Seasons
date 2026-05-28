@@ -12,12 +12,15 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.*;
 import net.minecraft.client.gui.layouts.GridLayout;
 import net.minecraft.client.gui.layouts.LayoutElement;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.ForgeConfigSpec;
 
@@ -38,6 +41,7 @@ public class SuggestedListStringEntry extends ConfigEntry.SpecEntry<List<? exten
     }
 
     public static <T> String getName(ResourceLocation key, ResourceKey<Registry<T>> rk) {
+        if (key == null) return "";
         String[] split = rk.location().getPath().split("/");
         return Component.translatable(Util.makeDescriptionId(split[split.length - 1].replace("dimension_type", "dimension"), key)).getString();
     }
@@ -50,8 +54,21 @@ public class SuggestedListStringEntry extends ConfigEntry.SpecEntry<List<? exten
             for (var identifier : Minecraft.getInstance().level.registryAccess().registryOrThrow(rk).keySet()) {
                 wks.add(new WK(identifier.toString(), getName(identifier, rk)));
             }
+        } else if (BuiltInRegistries.REGISTRY.containsKey((ResourceKey) rk)) {
+            Registry<T> registry = (Registry<T>) BuiltInRegistries.REGISTRY.get(rk.location());
+            for (var identifier : registry.keySet()) {
+                wks.add(new WK(identifier.toString(), getName(identifier, rk)));
+            }
         } else {
-            wks = null;
+            for (String s : spec.get()) {
+                wks.add(new WK(s, getName(ResourceLocation.tryParse(s), rk)));
+            }
+            if (Registries.DIMENSION_TYPE.equals(rk)) {
+                for (var idk : List.of(Level.OVERWORLD, Level.NETHER, Level.END)) {
+                    var identifier = idk.location();
+                    wks.add(new WK(identifier.toString(), getName(identifier, rk)));
+                }
+            }
         }
         return new SuggestedListStringEntry(spec, wks);
     }
@@ -124,6 +141,7 @@ public class SuggestedListStringEntry extends ConfigEntry.SpecEntry<List<? exten
     private void createNewBox(ESModConfigScreen screen, int width, String string, GridLayout.RowHelper helper, int index, List<String> strings) {
         EditBox editBox = new FocuseListnerEditBox(screen, width);
         editBox.setValue(string);
+        editBox.setMaxLength(Integer.MAX_VALUE);
         helper.addChild(editBox);
         SuggestWidget suggestWidget = screen.getGlobalSuggestWidget();
         editBox.setResponder(text -> {
@@ -139,7 +157,7 @@ public class SuggestedListStringEntry extends ConfigEntry.SpecEntry<List<? exten
                 var stringsCopy = new ArrayList<String>(List.copyOf(spec.get()));
                 if (index >= stringsCopy.size() && !text.isEmpty()) {
                     stringsCopy.add(text);
-                } else if (index >= stringsCopy.size()) {
+                } else {
                     stringsCopy.set(index, text);
                 }
                 spec.set(stringsCopy);
@@ -173,6 +191,15 @@ public class SuggestedListStringEntry extends ConfigEntry.SpecEntry<List<? exten
         public FocuseListnerEditBox(ESModConfigScreen screen, int width) {
             super(screen.getFont(), 0, 0, width * 2 / 3, 20, Component.empty());
             this.screen = new WeakReference<>(screen);
+        }
+
+        // es patch for 1.21: not update value as it not changes
+        @Override
+        public void moveCursorTo(int pPos) {
+            this.setCursorPosition(pPos);
+            if (!Screen.hasShiftDown()) {
+                this.setHighlightPos(this.getCursorPosition());
+            }
         }
 
         @Override
