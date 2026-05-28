@@ -74,7 +74,7 @@ public class SuggestedListStringEntry extends ConfigEntry.SpecEntry<List<? exten
 
     @Override
     public LayoutElement buildLayout(ESModConfigScreen screen, int x, int y, int width) {
-        GridLayout gridLayout = new GridLayout();
+        net.minecraft.client.gui.layouts.GridLayout gridLayout = new net.minecraft.client.gui.layouts.GridLayout();
         gridLayout.defaultCellSetting().paddingHorizontal(4).paddingBottom(3).alignHorizontallyCenter();
         GridLayout.RowHelper helper = gridLayout.createRowHelper(3);
         helper.addChild(new StringWidget(Component.empty().append(label).withStyle(ChatFormatting.ITALIC), screen.getFont()), 3);

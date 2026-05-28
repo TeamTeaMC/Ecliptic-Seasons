@@ -97,7 +97,7 @@ public class ESModFilePackResources extends AbstractPackResources {
     }
 
     @Override
-    public void listResources(PackType type, String namespace, String directory, ResourceOutput output) {
+    public void listResources(PackType type, String namespace, String directory, PackResources.ResourceOutput output) {
         FileUtil.decomposePath(directory).ifSuccess(parts -> {
             String namespaceRoot = type.getDirectory() + "/" + namespace + "/";
             int startIndex = packdir.length() + namespaceRoot.length();

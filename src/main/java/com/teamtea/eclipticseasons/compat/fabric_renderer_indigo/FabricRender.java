@@ -1,4 +1,4 @@
-package com.teamtea.eclipticseasons.compat.fabric_renderer_indigo;//package com.teamtea.eclipticseasons.compat.fabric_renderer_indigo;
+//package com.teamtea.eclipticseasons.compat.fabric_renderer_indigo;
 //
 //import com.mojang.blaze3d.vertex.PoseStack;
 //import net.fabricmc.fabric.impl.client.indigo.renderer.accessor.AccessChunkRendererRegion;

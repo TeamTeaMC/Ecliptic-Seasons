@@ -294,7 +294,8 @@ public class ESModConfigScreen extends Screen {
                 CommonConfig.Weather.rainChanceMultiplier,
                 CommonConfig.Weather.thunderChanceMultiplier,
                 CommonConfig.Weather.snowAccumulationSpeedMultiplier,
-                CommonConfig.Weather.snowMeltSpeedMultiplier
+                CommonConfig.Weather.snowMeltSpeedMultiplier,
+                ClientConfig.Weather.tweakPrecipitationParticleTexture
         );
 
         put(RENDER,
@@ -418,7 +419,7 @@ public class ESModConfigScreen extends Screen {
         subHeader.addChild(next);
 
 
-        GridLayout gridLayout = new GridLayout();
+        net.minecraft.client.gui.layouts.GridLayout gridLayout = new net.minecraft.client.gui.layouts.GridLayout();
         gridLayout.defaultCellSetting().paddingHorizontal(4).paddingBottom(4).alignHorizontallyCenter();
         GridLayout.RowHelper helper = gridLayout.createRowHelper(2);
 

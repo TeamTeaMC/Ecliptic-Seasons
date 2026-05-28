@@ -122,7 +122,7 @@ public final class CropInfoManager {
 
         }
 
-        if (CommonConfig.Crop.registerCropDefaultValue.getAsBoolean()) {
+        if (com.teamtea.eclipticseasons.config.CommonConfig.Crop.registerCropDefaultValue.getAsBoolean()) {
             BuiltInRegistries.BLOCK.forEach(block ->
             {
                 if (block instanceof CropBlock) {
