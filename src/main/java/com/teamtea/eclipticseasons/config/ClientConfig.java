@@ -241,6 +241,7 @@ public class ClientConfig {
         // public static ModConfigSpec.IntValue weatherBufferDistance;
         // public static ModConfigSpec.DoubleValue weatherTransitionSpeed;
         // public static ModConfigSpec.BooleanValue weatherFrontBias;
+        public static ModConfigSpec.BooleanValue tweakPrecipitationParticleTexture;
 
         private static void load(ModConfigSpec.Builder builder) {
             builder.push("Weather");
@@ -252,6 +253,8 @@ public class ClientConfig {
             // weatherFrontBias = builder.comment(
             //                 "Prioritize weather sampling in the direction the player is currently facing.")
             //         .define("WeatherFrontBias", true);
+            tweakPrecipitationParticleTexture = builder.comment("When enabled, Ecliptic Seasons may adjust rain and snow particle textures when needed.")
+                    .define("TweakPrecipitationParticleTexture", true);
             builder.pop();
         }
     }

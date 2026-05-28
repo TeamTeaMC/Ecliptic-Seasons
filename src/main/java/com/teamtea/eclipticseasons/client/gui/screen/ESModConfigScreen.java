@@ -297,7 +297,8 @@ public class ESModConfigScreen extends Screen {
                 CommonConfig.Weather.thunderChanceMultiplier,
                 CommonConfig.Weather.snowAccumulationSpeedMultiplier,
                 CommonConfig.Weather.snowMeltSpeedMultiplier,
-                ClientConfig.Debug.fogWeather
+                ClientConfig.Debug.fogWeather,
+                ClientConfig.Weather.tweakPrecipitationParticleTexture
         );
 
         put(RENDER,

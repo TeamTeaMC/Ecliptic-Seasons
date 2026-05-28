@@ -436,5 +436,7 @@
   "eclipticseasons.configuration.HumidityTankRange": "恒湿水箱范围",
   "eclipticseasons.configuration.HumidityTankRange.tooltip": "恒湿水箱的有效作用半径。激活时，会提高范围内的环境湿度。",
   "eclipticseasons.configuration.WanderingTraderSellsGreenhouseEssence": "流浪商人出售温室心髓",
-  "eclipticseasons.configuration.WanderingTraderSellsGreenhouseEssence.tooltip": "是否允许流浪商人出售季节温室心髓。"
+  "eclipticseasons.configuration.WanderingTraderSellsGreenhouseEssence.tooltip": "是否允许流浪商人出售季节温室心髓。",
+  "eclipticseasons.configuration.TweakPrecipitationParticleTexture": "调整雨雪粒子贴图",
+  "eclipticseasons.configuration.TweakPrecipitationParticleTexture.tooltip": "启用后，节气会在必要时调整雨雪粒子贴图。"
 }
