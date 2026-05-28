@@ -1,4 +1,4 @@
-//package com.teamtea.eclipticseasons.client.render;
+package com.teamtea.eclipticseasons.client.render;//package com.teamtea.eclipticseasons.client.render;
 //
 //import com.mojang.blaze3d.pipeline.RenderTarget;
 //import com.mojang.blaze3d.pipeline.TextureTarget;

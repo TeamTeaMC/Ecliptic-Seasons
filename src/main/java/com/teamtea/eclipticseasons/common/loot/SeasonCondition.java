@@ -71,7 +71,7 @@ public record SeasonCondition(Slice require) implements LootItemCondition {
     @lombok.Builder
     @Data
     public static class Slice {
-        public static final Codec<SeasonCondition.Slice> CODEC = RecordCodecBuilder.create(ins -> ins.group(
+        public static final Codec<Slice> CODEC = RecordCodecBuilder.create(ins -> ins.group(
                 ESExtraCodec.SOLAR_TERM.optionalFieldOf("start", SolarTerm.NONE).forGetter(o -> o.start),
                 ESExtraCodec.SOLAR_TERM.optionalFieldOf("end", SolarTerm.NONE).forGetter(o -> o.end),
                 ESExtraCodec.SOLAR_TERM.optionalFieldOf("solar_term", SolarTerm.NONE).forGetter(o -> o.solarTerm),
@@ -79,7 +79,7 @@ public record SeasonCondition(Slice require) implements LootItemCondition {
                 ESExtraCodec.SEASON.optionalFieldOf("start_season", Season.NONE).forGetter(o -> o.startSeason),
                 ESExtraCodec.SEASON.optionalFieldOf("end_season", Season.NONE).forGetter(o -> o.endSeason),
                 ESExtraCodec.SEASON.optionalFieldOf("season", Season.NONE).forGetter(o -> o.season)
-        ).apply(ins, SeasonCondition.Slice::new));
+        ).apply(ins, Slice::new));
 
         @lombok.Builder.Default
         private final SolarTerm start = SolarTerm.NONE;
@@ -97,8 +97,8 @@ public record SeasonCondition(Slice require) implements LootItemCondition {
         private final Season season = Season.NONE;
     }
 
-    public static SeasonCondition.Builder builder(final Slice require) {
-        return new SeasonCondition.Builder(require);
+    public static Builder builder(final Slice require) {
+        return new Builder(require);
     }
 
     public static class Builder implements LootItemCondition.Builder {

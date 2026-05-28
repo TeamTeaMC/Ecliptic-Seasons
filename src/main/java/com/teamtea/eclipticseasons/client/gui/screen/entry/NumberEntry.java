@@ -28,7 +28,7 @@ public abstract class NumberEntry<T extends Number> extends ConfigEntry.SpecEntr
     @Override
     public LayoutElement buildLayout(ESModConfigScreen screen, int x, int y, int width) {
         // LinearLayout linearLayout = new LinearLayout(x, y, LinearLayout.Orientation.HORIZONTAL);
-        net.minecraft.client.gui.layouts.GridLayout gridLayout = new net.minecraft.client.gui.layouts.GridLayout();
+        GridLayout gridLayout = new GridLayout();
         gridLayout.defaultCellSetting().paddingHorizontal(4).paddingBottom(4).alignHorizontallyCenter();
         GridLayout.RowHelper helper = gridLayout.createRowHelper(2);
         StringWidget s=new StringWidget(label,screen.getFont());

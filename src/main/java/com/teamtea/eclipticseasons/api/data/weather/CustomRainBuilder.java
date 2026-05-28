@@ -31,7 +31,7 @@ public record CustomRainBuilder(
 
     public static final Codec<CustomRainBuilder> CODEC = RecordCodecBuilder.create(ins -> ins.group(
             CodecUtil.holderSetCodec(Registries.BIOME).fieldOf("biomes").forGetter(CustomRainBuilder::biomes),
-            SolarTermValueMap.codec(CodecUtil.listFrom(CustomRainBuilder.Weather.CODEC)).fieldOf("weathers").forGetter(CustomRainBuilder::weathers)
+            SolarTermValueMap.codec(CodecUtil.listFrom(Weather.CODEC)).fieldOf("weathers").forGetter(CustomRainBuilder::weathers)
     ).apply(ins, CustomRainBuilder::new));
 
     public Map<SolarTerm, CustomRain> build(String name) {

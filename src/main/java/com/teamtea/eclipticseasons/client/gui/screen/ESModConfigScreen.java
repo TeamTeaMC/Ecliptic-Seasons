@@ -419,7 +419,7 @@ public class ESModConfigScreen extends Screen {
         subHeader.addChild(next);
 
 
-        net.minecraft.client.gui.layouts.GridLayout gridLayout = new net.minecraft.client.gui.layouts.GridLayout();
+        GridLayout gridLayout = new GridLayout();
         gridLayout.defaultCellSetting().paddingHorizontal(4).paddingBottom(4).alignHorizontallyCenter();
         GridLayout.RowHelper helper = gridLayout.createRowHelper(2);
 
