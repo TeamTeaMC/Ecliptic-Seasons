@@ -81,4 +81,12 @@ public interface RegistryFilter<T> {
                     .toList();
         }
     }
+
+
+    public record Empty<T>() implements RegistryFilter<T> {
+        @Override
+        public List<? extends Holder<T>> toHolders(Registry<T> registry) {
+            return List.of();
+        }
+    }
 }

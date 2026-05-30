@@ -413,7 +413,7 @@ public class CommonConfig {
             useSolarWeather = builder.comment("Enable localized weather patterns where rain or sun is determined per-biome.")
                     .define("UseSolarWeather", true);
             notRainInDesert = builder.comment("Disable rain/snow in biomes with no natural precipitation (e.g., Deserts).")
-                    .define("NotRainInDesert", true);
+                    .define("NoRainInDeserts", false);
             shouldInitWeather = builder.comment("Force initialize weather and snow states when the mod or world is first loaded.")
                     .define("ShouldInitWeather", false);
             shouldInitSnowForExtremeColdBiomes = builder.comment("Force initialize snow states for extreme cold biomes when the mod or world is first loaded.")
