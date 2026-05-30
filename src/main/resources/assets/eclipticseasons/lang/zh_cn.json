@@ -160,7 +160,7 @@
   "eclipticseasons.configuration.NoCostHumidifier": "加湿器无消耗",
   "eclipticseasons.configuration.NoSnowyUnderLight0": "光照0时无积雪",
   "eclipticseasons.configuration.NoneDayTimes": "默认日照时长",
-  "eclipticseasons.configuration.NoRainInDeserts": "沙漠不下雨",
+  "eclipticseasons.configuration.NoRainInDeserts": "强制沙漠不下雨",
   "eclipticseasons.configuration.NotSnowyNearGlowingBlock": "发光方块附近不覆雪",
   "eclipticseasons.configuration.NotSnowyNearGlowingBlockLevel": "不覆雪所需光照等级",
   "eclipticseasons.configuration.Particle": "粒子",
