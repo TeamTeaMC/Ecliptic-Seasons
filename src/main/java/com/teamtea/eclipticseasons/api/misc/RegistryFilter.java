@@ -1,6 +1,7 @@
 package com.teamtea.eclipticseasons.api.misc;
 
 import net.minecraft.core.Holder;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.TagKey;
@@ -79,6 +80,13 @@ public interface RegistryFilter<T> {
             return biomes.holders()
                     .filter(holder -> !excluded.contains(holder))
                     .toList();
+        }
+    }
+
+    public record Empty<T>() implements RegistryFilter<T> {
+        @Override
+        public List<? extends Holder<T>> toHolders(Registry<T> registry) {
+            return List.of();
         }
     }
 }

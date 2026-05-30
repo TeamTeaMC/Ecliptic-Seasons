@@ -14,7 +14,7 @@ import java.util.Map;
 public class ClimateTypeFilters {
 
     // agro
-    public static final RegistryFilter<Biome> WARM_REGION = new RegistryFilter.TagHolder<>(BiomeTags.IS_OVERWORLD);
+    public static final RegistryFilter<Biome> WARM_REGION = new RegistryFilter.Or<>(BiomeTags.IS_OVERWORLD, Tags.Biomes.IS_VOID);
     public static final RegistryFilter<Biome> HOT_REGION = new RegistryFilter.TagHolder<>(Tags.Biomes.IS_HOT_OVERWORLD);
     public static final RegistryFilter<Biome> COLD_REGION =
             new RegistryFilter.And<>(new RegistryFilter.Or<>(Tags.Biomes.IS_PEAK, Tags.Biomes.IS_SNOWY),
@@ -22,20 +22,20 @@ public class ClimateTypeFilters {
             );
 
     // biome rain
-    public static final RegistryFilter<Biome> SEASONAL = new RegistryFilter.TagHolder<>(BiomeTags.IS_OVERWORLD);
+    public static final RegistryFilter<Biome> SEASONAL = new RegistryFilter.Or<>(BiomeTags.IS_OVERWORLD, Tags.Biomes.IS_VOID);
     public static final RegistryFilter<Biome> SEASONAL_HOT = new RegistryFilter.TagHolder<>(Tags.Biomes.IS_HOT_OVERWORLD);
     public static final RegistryFilter<Biome> SEASONAL_COLD =
             new RegistryFilter.And<>(new RegistryFilter.Or<>(Tags.Biomes.IS_PEAK, Tags.Biomes.IS_SNOWY),
                     new RegistryFilter.Or<>(BiomeTags.IS_OVERWORLD)
             );
     public static final RegistryFilter<Biome> MONSOONAL = new RegistryFilter.TagHolder<>(BiomeTags.IS_SAVANNA);
-    public static final RegistryFilter<Biome> RAINLESS = new RegistryFilter.TagHolder<>(Tags.Biomes.IS_CAVE);
-    public static final RegistryFilter<Biome> ARID = new RegistryFilter.Or<>(BiomeTags.IS_BADLANDS, Tags.Biomes.IS_DESERT);
-    public static final RegistryFilter<Biome> DROUGHTY = biomes -> List.of();
+    public static final RegistryFilter<Biome> RAINLESS = new RegistryFilter.Or<>(BiomeTags.IS_BADLANDS, Tags.Biomes.IS_DESERT, Tags.Biomes.IS_CAVE, BiomeTags.IS_NETHER, BiomeTags.IS_END);
+    public static final RegistryFilter<Biome> ARID = new RegistryFilter.Empty<>();
+    public static final RegistryFilter<Biome> DROUGHTY = new RegistryFilter.Empty<>();
     public static final RegistryFilter<Biome> SOFT = new RegistryFilter.Or<>(BiomeTags.IS_BEACH, BiomeTags.IS_OCEAN);
     public static final RegistryFilter<Biome> RAINY = new RegistryFilter.DirectHolder<>(Biomes.JUNGLE);
 
-    public static final RegistryFilter<Biome> IS_SMALL = new RegistryFilter.TagHolder<>(BiomeTags.IS_RIVER);
+    public static final RegistryFilter<Biome> IS_SMALL = new RegistryFilter.Or<>(BiomeTags.IS_RIVER, Tags.Biomes.IS_CAVE);
 
     // biome color
     public static final RegistryFilter<Biome> SEASONAL_COLOR_CHANGE = SEASONAL;

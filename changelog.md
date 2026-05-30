@@ -1,1 +1,1 @@
-- Improved interaction behavior for several suggestion-enabled widgets in the configuration screen.
+- Default-disabled `NoRainInDeserts` option. The built-in biome tags no longer classify deserts and badlands as rare-rainfall biomes; they are now treated as no-rain biomes, matching vanilla Minecraft behavior.
