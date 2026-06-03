@@ -6,6 +6,7 @@ import com.teamtea.eclipticseasons.api.data.weather.special_effect.WeatherEffect
 import com.teamtea.eclipticseasons.api.event.SolarTermChangeEvent;
 import com.teamtea.eclipticseasons.api.misc.IChunkBiomeHolder;
 import com.teamtea.eclipticseasons.client.color.season.BiomeColorsHandler;
+import com.teamtea.eclipticseasons.client.render.worldui.GrowthInfoClientCache;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeRainDispatcher;
@@ -18,6 +19,7 @@ import com.teamtea.eclipticseasons.config.sync.ESConfigFilePayload;
 import com.teamtea.eclipticseasons.config.sync.ESConfigSync;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -222,6 +224,15 @@ public class NetworkUtil {
 
     public static boolean processConfigInGame(ESConfigFilePayload payload, Supplier<NetworkEvent.Context> contextSupplier) {
         ESConfigSync.INSTANCE.receiveSyncedConfig(payload, contextSupplier);
+        return true;
+    }
+
+    public static boolean handleGrowthInfoQuery(GrowthInfoMessage payload, Supplier<NetworkEvent.Context> context) {
+        context.get().enqueueWork(() -> {
+            if (getClient() != null) {
+                GrowthInfoClientCache.update(payload.info.orElse(null));
+            }
+        });
         return true;
     }
 }

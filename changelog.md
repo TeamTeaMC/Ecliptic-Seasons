@@ -1,1 +1,1 @@
-- Default-disabled `NoRainInDeserts` option. The built-in biome tags no longer classify deserts and badlands as rare-rainfall biomes; they are now treated as no-rain biomes, matching vanilla Minecraft behavior.
+- Optimized the Growth Detector's detection logic to correctly recognize Greenhouse Cores and humidity changes.

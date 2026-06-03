@@ -122,18 +122,18 @@ public final class GrowthInfoResolver {
 
         return new GrowthInfo(
                 pos,
-                state,
+                // state,
                 state.getBlock().getName(),
-                climateHolder,
-                greenhouse,
+                // climateHolder,
+                // greenhouse,
                 greenhouseLevel,
                 growChance,
-                growChanceLevel,
+                // growChanceLevel,
                 needsSeasonCore,
-                humidityMismatch,
-                humidity,
-                likedSeasons,
-                likedHumidity
+                humidityMismatch
+                // humidity,
+                // likedSeasons,
+                // likedHumidity
         );
     }
 

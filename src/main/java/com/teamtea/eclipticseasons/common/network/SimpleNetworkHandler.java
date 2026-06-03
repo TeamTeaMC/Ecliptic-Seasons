@@ -2,7 +2,10 @@ package com.teamtea.eclipticseasons.common.network;
 
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
+import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.core.snow.SnowyStatusHandler;
+import com.teamtea.eclipticseasons.common.item.info.GrowthInfoResolver;
+import com.teamtea.eclipticseasons.common.network.clientmesage.GrowthInfoQuery;
 import com.teamtea.eclipticseasons.common.network.message.*;
 import com.teamtea.eclipticseasons.config.sync.ESConfigFilePayload;
 import com.teamtea.eclipticseasons.config.sync.ESConfigSync;
@@ -10,6 +13,7 @@ import com.teamtea.eclipticseasons.config.sync.ESConfigToServerPayload;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
@@ -21,6 +25,7 @@ import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.network.simple.SimpleChannel;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.function.IntSupplier;
 
 public final class SimpleNetworkHandler {
@@ -105,6 +110,28 @@ public final class SimpleNetworkHandler {
         if (FMLLoader.getDist() == Dist.CLIENT)
             k.consumerNetworkThread(NetworkUtil::processConfigInGame);
         k.add();
+
+
+        var l = CHANNEL.messageBuilder(GrowthInfoMessage.class, id++)
+                .encoder(GrowthInfoMessage::toBytes)
+                .decoder(GrowthInfoMessage::new);
+        if (FMLLoader.getDist() == Dist.CLIENT)
+            l.consumerNetworkThread(NetworkUtil::handleGrowthInfoQuery);
+        l.add();
+
+        CHANNEL.messageBuilder(GrowthInfoQuery.class, id++)
+                .encoder(GrowthInfoQuery::toBytes)
+                .decoder(GrowthInfoQuery::new)
+                .consumerNetworkThread((payload, xy) -> {
+                    Player player = xy.get().getSender();
+                    if (player instanceof ServerPlayer serverPlayer
+                            && serverPlayer.level() instanceof ServerLevel level
+                            && MapChecker.isLoadedOnlyServer(level, payload.getPos()))
+                        send(serverPlayer, new GrowthInfoMessage(Optional.ofNullable(GrowthInfoResolver.resolve(
+                                level, payload.getPos(), level.getBlockState(payload.getPos())
+                        ))));
+                })
+                .add();
 
         CHANNEL.messageBuilder(ESConfigToServerPayload.class, id++)
                 .encoder(ESConfigToServerPayload::encode)
