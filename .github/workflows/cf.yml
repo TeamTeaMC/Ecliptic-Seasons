@@ -1,73 +1,73 @@
-#name: Publish on CurseForge
-#
-#on:
-#  workflow_dispatch:
-#
-#env:
-#  MINECRAFT_VERSION: 1.21.1
-#  CURSEFORGE_TOKEN: ${{ secrets.CURSEFORGE_APITOKEN }}
-#
-#permissions:
-#  contents: write
-#
-#jobs:
-#  build:
-#    runs-on: ubuntu-latest
-#    environment: curseforge_apiToken
-#    steps:
-#      - name: Check CURSEFORGE_APITOKEN Length
-#        run: |
-#          SECRET_LENGTH=$(echo -n "${{ secrets.CURSEFORGE_APITOKEN }}" | wc -m)
-#          echo "CURSEFORGE_APITOKEN length: $SECRET_LENGTH"
-#          if [ "$SECRET_LENGTH" -eq 0 ]; then
-#            echo "CURSEFORGE_APITOKEN is empty!"
-#            exit 1
-#          fi
-#
-#      - name: Check Environment Variables
-#        run: env
-#
-#      - name: Checkout Repository
-#        uses: actions/checkout@v3
-#        with:
-#          submodules: true
-#
-#      - name: Setup Java
-#        uses: actions/setup-java@v2
-#        with:
-#          distribution: "temurin"
-#          java-version: 21
-#
-#      - name: Make Gradle Wrapper Executable
-#        if: ${{ runner.os != 'Windows' }}
-#        run: chmod +x ./gradlew
-#
-#      - name: Build with Gradle
-#        uses: gradle/actions/setup-gradle@v4.3.1
-#
-#      - name: Build
-#        run: ./gradlew build
-#
-#      - name: Set Release Name Environment Variable
-#        id: set_release_name
-#        run: |
-#          RELEASE_NAME=$(basename $(ls build/libs/*.jar))
-#          echo "RELEASE_NAME=$RELEASE_NAME" >> $GITHUB_ENV
-#
-#      - name: Publish (CurseForge)
-#        uses: Kir-Antipov/mc-publish@v3.3
-#        with:
-#          modrinth-id: ecliptic-seasons
-#          modrinth-featured: true
-#          modrinth-unfeature-mode: subset
-#          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
-#          curseforge-id: 1118306
-#          curseforge-token: "${{ env.CURSEFORGE_TOKEN }}"
-#          version-type: beta
-#          changelog-file: changelog.md
-#          loaders: neoforge
-#          game-versions: "${{ env.MINECRAFT_VERSION }}"
-#          name: "${{env.RELEASE_NAME}}"
-#          dependencies: ""
-#          files: |
-#            build/libs/${{ env.RELEASE_NAME }}
+name: Publish on CurseForge
+
+on:
+  workflow_dispatch:
+
+env:
+  MINECRAFT_VERSION: 1.21.1
+  CURSEFORGE_TOKEN: ${{ secrets.CURSEFORGE_APITOKEN }}
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    environment: curseforge_apiToken
+    steps:
+      - name: Check CURSEFORGE_APITOKEN Length
+        run: |
+          SECRET_LENGTH=$(echo -n "${{ secrets.CURSEFORGE_APITOKEN }}" | wc -m)
+          echo "CURSEFORGE_APITOKEN length: $SECRET_LENGTH"
+          if [ "$SECRET_LENGTH" -eq 0 ]; then
+            echo "CURSEFORGE_APITOKEN is empty!"
+            exit 1
+          fi
+
+      - name: Check Environment Variables
+        run: env
+
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+        with:
+          submodules: true
+
+      - name: Setup Java
+        uses: actions/setup-java@v2
+        with:
+          distribution: "temurin"
+          java-version: 21
+
+      - name: Make Gradle Wrapper Executable
+        if: ${{ runner.os != 'Windows' }}
+        run: chmod +x ./gradlew
+
+      - name: Build with Gradle
+        uses: gradle/actions/setup-gradle@v4.3.1
+
+      - name: Build
+        run: ./gradlew build
+
+      - name: Set Release Name Environment Variable
+        id: set_release_name
+        run: |
+          RELEASE_NAME=$(basename $(ls build/libs/*.jar))
+          echo "RELEASE_NAME=$RELEASE_NAME" >> $GITHUB_ENV
+
+      - name: Publish (CurseForge)
+        uses: Kir-Antipov/mc-publish@v3.3
+        with:
+          modrinth-id: ecliptic-seasons
+          modrinth-featured: true
+          modrinth-unfeature-mode: subset
+          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+          curseforge-id: 1118306
+          curseforge-token: "${{ env.CURSEFORGE_TOKEN }}"
+          version-type: release
+          changelog-file: changelog.md
+          loaders: neoforge
+          game-versions: "${{ env.MINECRAFT_VERSION }}"
+          name: "${{env.RELEASE_NAME}}"
+          dependencies: ""
+          files: |
+            build/libs/${{ env.RELEASE_NAME }}
