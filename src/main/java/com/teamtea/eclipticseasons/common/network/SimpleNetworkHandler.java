@@ -3,12 +3,16 @@ package com.teamtea.eclipticseasons.common.network;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
+import com.teamtea.eclipticseasons.common.core.map.MapChecker;
+import com.teamtea.eclipticseasons.common.item.info.GrowthInfoResolver;
+import com.teamtea.eclipticseasons.common.network.clientmesage.GrowthInfoQuery;
 import com.teamtea.eclipticseasons.common.network.message.*;
 import com.teamtea.eclipticseasons.config.sync.ESConfigFilePayload;
 import com.teamtea.eclipticseasons.config.sync.ESConfigSync;
 import com.teamtea.eclipticseasons.config.sync.ESConfigTask;
 import com.teamtea.eclipticseasons.config.sync.ESConfigToServerPayload;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -19,6 +23,7 @@ import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
 import java.util.Collection;
+import java.util.Optional;
 
 @SuppressWarnings("removal")
 @EventBusSubscriber(modid = EclipticSeasonsApi.MODID, bus = EventBusSubscriber.Bus.MOD)
@@ -86,6 +91,26 @@ public final class SimpleNetworkHandler {
                     Player player = xy.player();
                     if (player instanceof ServerPlayer serverPlayer)
                         ESConfigSync.INSTANCE.syncToSever(x, serverPlayer);
+                }
+        );
+
+        registrar.playToClient(
+                GrowthInfoMessage.TYPE,
+                GrowthInfoMessage.STREAM_CODEC,
+                NetworkUtil::handleGrowthInfoQuery
+        );
+
+        registrar.playToServer(
+                GrowthInfoQuery.TYPE,
+                GrowthInfoQuery.STREAM_CODEC,
+                (payload, context) -> {
+                    Player player = context.player();
+                    if (player instanceof ServerPlayer serverPlayer
+                            && serverPlayer.level() instanceof ServerLevel level
+                            && MapChecker.isLoadedOnlyServer(level, payload.getPos()))
+                        send(serverPlayer, new GrowthInfoMessage(Optional.ofNullable(GrowthInfoResolver.resolve(
+                                level, payload.getPos(), level.getBlockState(payload.getPos())
+                        ))));
                 }
         );
     }

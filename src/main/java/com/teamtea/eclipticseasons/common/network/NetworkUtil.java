@@ -3,6 +3,7 @@ package com.teamtea.eclipticseasons.common.network;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.data.weather.special_effect.WeatherEffect;
 import com.teamtea.eclipticseasons.api.event.SolarTermChangeEvent;
+import com.teamtea.eclipticseasons.client.render.worldui.GrowthInfoClientCache;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeRainDispatcher;
 import com.teamtea.eclipticseasons.common.registry.AttachmentRegistry;
 import com.teamtea.eclipticseasons.client.color.season.BiomeColorsHandler;
@@ -183,5 +184,17 @@ public class NetworkUtil {
 
     public static void handle(IESConfigMessage payload, IPayloadContext context) {
         ESConfigSync.INSTANCE.receiveSyncedConfig(payload.contents(), payload.fileName());
+    }
+
+    public static void handleGrowthInfoQuery(GrowthInfoMessage payload, IPayloadContext context) {
+        context.enqueueWork(() -> {
+            if (context.player().level() instanceof Level level) {
+                GrowthInfoClientCache.update(payload.getInfo().orElse(null));
+            }
+        }).exceptionally(e -> {
+            // Handle exception
+            context.disconnect(Component.translatable("eclipticseasons.networking.failed", e.getMessage()));
+            return null;
+        });
     }
 }

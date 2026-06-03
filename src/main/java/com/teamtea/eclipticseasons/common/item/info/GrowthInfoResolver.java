@@ -15,7 +15,6 @@ import com.teamtea.eclipticseasons.common.item.GrowthDetectorItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -24,7 +23,7 @@ import java.util.Map;
 
 public final class GrowthInfoResolver {
 
-    public static GrowthInfo resolve(Level level, BlockPos pos, BlockState state) {
+    public static GrowthInfo resolve(ServerLevel level, BlockPos pos, BlockState state) {
         Map<Holder<AgroClimaticZone>, CropGrowControl> controlMap =
                 CropGrowthHandler.getControlMap(state.getBlock());
 
@@ -122,18 +121,18 @@ public final class GrowthInfoResolver {
 
         return new GrowthInfo(
                 pos,
-                state,
+                // state,
                 state.getBlock().getName(),
-                climateHolder,
-                greenhouse,
+                // climateHolder,
+                // greenhouse,
                 greenhouseLevel,
                 growChance,
-                growChanceLevel,
+                // growChanceLevel,
                 needsSeasonCore,
-                humidityMismatch,
-                humidity,
-                likedSeasons,
-                likedHumidity
+                humidityMismatch
+                // humidity,
+                // likedSeasons,
+                // likedHumidity
         );
     }
 

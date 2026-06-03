@@ -1,1 +1,1 @@
-- For #152 Compatibility Issues with "ShowMeYourSkin".
+- Optimized the Growth Detector's detection logic to correctly recognize Greenhouse Cores and humidity changes.

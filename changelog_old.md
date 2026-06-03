@@ -1,3 +1,7 @@
+### 0.13.5
+
+- Optimized the Growth Detector's detection logic to correctly recognize Greenhouse Cores and humidity changes.
+
 ### 0.13.3.3
 
 - Added an option to disable rain and snow particle texture adjustments.
