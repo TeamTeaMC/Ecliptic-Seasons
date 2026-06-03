@@ -354,7 +354,9 @@ public class WeatherManager {
                 // add copy
                 Map<Biome, BiomeWeather> biomeBiomeWeatherMap = new IdentityHashMap<>();
                 for (BiomeWeather biomesWeather : biomesWeathers) {
-                    biomeBiomeWeatherMap.put(biomesWeather.biomeHolder.value(), biomesWeather);
+                    // sometimes a fabric mod would make a dummy world without valid registry
+                    if (biomesWeather != null && biomesWeather.biomeHolder != null)
+                        biomeBiomeWeatherMap.put(biomesWeather.biomeHolder.value(), biomesWeather);
                 }
                 WeatherManager.BIOME_WEATHER_QUERY_LIST.put(level, biomeBiomeWeatherMap);
             }
