@@ -1,1 +1,1 @@
-- Renamed the Greenhouse Core's seasonal output property from POWER to SEASON_ON to better reflect its purpose and avoid confusion with energy-related indicators.
+* Improved JEI recipe lookup for Seasonal Prayer Rituals by adding the corresponding Greenhouse Essence as an invisible recipe output.
