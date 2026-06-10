@@ -1,1 +1,1 @@
-- Optimized the Growth Detector's detection logic to correctly recognize Greenhouse Cores and humidity changes.
+- Renamed the Greenhouse Core's seasonal output property from POWER to SEASON_ON to better reflect its purpose and avoid confusion with energy-related indicators.

@@ -5,7 +5,6 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.util.codec.ESExtraCodec;
-import com.teamtea.eclipticseasons.client.particle.FallenLeavesParticle;
 import com.teamtea.eclipticseasons.common.block.base.SimpleEntityBlock;
 import com.teamtea.eclipticseasons.common.block.blockentity.GreenHouseCoreBlockEntity;
 import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
@@ -14,17 +13,13 @@ import com.teamtea.eclipticseasons.common.registry.BlockRegistry;
 import com.teamtea.eclipticseasons.common.registry.ItemRegistry;
 import com.teamtea.eclipticseasons.common.registry.ParticleRegistry;
 import com.teamtea.eclipticseasons.config.ClientConfig;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ColorParticleOption;
-import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.FastColor;
-import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -48,7 +43,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Optional;
 
 public class GreenHouseCoreBlock extends SimpleEntityBlock {
-    public static final IntegerProperty POWER = BlockStateProperties.POWER;
+    public static final IntegerProperty SEASON_ON = IntegerProperty.create("season_on", 0, 15);
     public static final IntegerProperty AGE = BlockStateProperties.AGE_3;
     public static final int MAX_STAGE = 3;
     public static final MapCodec<GreenHouseCoreBlock> CODEC = RecordCodecBuilder.mapCodec(
@@ -62,13 +57,13 @@ public class GreenHouseCoreBlock extends SimpleEntityBlock {
 
     public GreenHouseCoreBlock(Season season, Properties properties) {
         super(properties);
-        registerDefaultState(defaultBlockState().setValue(POWER, 0).setValue(AGE, MAX_STAGE));
+        registerDefaultState(defaultBlockState().setValue(SEASON_ON, 0).setValue(AGE, MAX_STAGE));
         this.season = season;
     }
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        super.createBlockStateDefinition(builder.add(POWER, AGE));
+        super.createBlockStateDefinition(builder.add(SEASON_ON, AGE));
     }
 
     public static boolean isPowered(BlockState state) {
@@ -193,7 +188,7 @@ public class GreenHouseCoreBlock extends SimpleEntityBlock {
 
     @Override
     protected int getSignal(BlockState blockState, BlockGetter blockAccess, BlockPos pos, Direction side) {
-        return isPowered(blockState) ? blockState.getValue(POWER) : 0;
+        return isPowered(blockState) ? blockState.getValue(SEASON_ON) : 0;
     }
 
     @Override
