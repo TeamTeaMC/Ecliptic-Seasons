@@ -4,6 +4,7 @@ import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.util.SimpleUtil;
 import com.teamtea.eclipticseasons.client.render.ber.XYZ;
+import com.teamtea.eclipticseasons.common.block.GreenHouseCoreBlock;
 import com.teamtea.eclipticseasons.common.registry.BlockRegistry;
 import com.teamtea.eclipticseasons.common.registry.ItemRegistry;
 import com.teamtea.eclipticseasons.compat.jei.ESJEIPlugin;
@@ -25,6 +26,7 @@ import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.GameRules;
@@ -74,6 +76,22 @@ public class GreenHouseCoreRecipeCategory implements IRecipeCategory<GreenHouseC
 
         builder.addSlot(RecipeIngredientRole.INPUT,33+8,3)
                 .addIngredients(Ingredient.of(recipe.input()));
+
+
+        if (recipe.end() instanceof GreenHouseCoreBlock greenHouseCoreBlock) {
+            Item essenceItem = switch (greenHouseCoreBlock.getSeason()) {
+                case SPRING -> ItemRegistry.spring_greenhouse_essence_item.get();
+                case SUMMER -> ItemRegistry.summer_greenhouse_essence_item.get();
+                case AUTUMN -> ItemRegistry.autumn_greenhouse_essence_item.get();
+                case WINTER -> ItemRegistry.winter_greenhouse_essence_item.get();
+                default -> null;
+            };
+
+            if (essenceItem != null) {
+                builder.addInvisibleIngredients(RecipeIngredientRole.OUTPUT)
+                        .addItemLike(essenceItem);
+            }
+        }
     }
 
 
