@@ -1,7 +1,6 @@
 package com.teamtea.eclipticseasons.common.block.blockentity;
 
 import com.mojang.datafixers.util.Pair;
-import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.data.climate.AgroClimaticZone;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
@@ -95,8 +94,8 @@ public class GreenHouseCoreBlockEntity extends SyncBlockEntity {
                 if (!level.isClientSide() && level.getGameTime() % 100 == 0) {
                     Pair<Season, Integer> currentSeason = getCurrentSeason(level, blockPos);
                     if (currentSeason.getFirst() == greenHouseCoreBlock.getSeason()) {
-                        level.setBlockAndUpdate(blockPos, blockState.setValue(GreenHouseCoreBlock.POWER, currentSeason.getSecond()));
-                    } else level.setBlockAndUpdate(blockPos, blockState.setValue(GreenHouseCoreBlock.POWER, 0));
+                        level.setBlockAndUpdate(blockPos, blockState.setValue(GreenHouseCoreBlock.SEASON_ON, currentSeason.getSecond()));
+                    } else level.setBlockAndUpdate(blockPos, blockState.setValue(GreenHouseCoreBlock.SEASON_ON, 0));
                 }
 
             } else {

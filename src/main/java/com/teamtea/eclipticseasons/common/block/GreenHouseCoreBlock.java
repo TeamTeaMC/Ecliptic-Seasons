@@ -13,8 +13,6 @@ import com.teamtea.eclipticseasons.common.registry.ParticleRegistry;
 import com.teamtea.eclipticseasons.config.ClientConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -46,7 +44,7 @@ import org.joml.Vector3f;
 import java.util.Optional;
 
 public class GreenHouseCoreBlock extends SimpleEntityBlock {
-    public static final IntegerProperty POWER = BlockStateProperties.POWER;
+    public static final IntegerProperty SEASON_ON = IntegerProperty.create("season_on", 0, 15);
     public static final IntegerProperty AGE = BlockStateProperties.AGE_3;
     public static final int MAX_STAGE = 3;
 
@@ -54,13 +52,13 @@ public class GreenHouseCoreBlock extends SimpleEntityBlock {
 
     public GreenHouseCoreBlock(Season season, Properties properties) {
         super(properties);
-        registerDefaultState(defaultBlockState().setValue(POWER, 0).setValue(AGE, MAX_STAGE));
+        registerDefaultState(defaultBlockState().setValue(SEASON_ON, 0).setValue(AGE, MAX_STAGE));
         this.season = season;
     }
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        super.createBlockStateDefinition(builder.add(POWER, AGE));
+        super.createBlockStateDefinition(builder.add(SEASON_ON, AGE));
     }
 
     public static boolean isPowered(BlockState state) {
@@ -184,7 +182,7 @@ public class GreenHouseCoreBlock extends SimpleEntityBlock {
 
     @Override
     public int getSignal(BlockState blockState, BlockGetter blockAccess, BlockPos pos, Direction side) {
-        return isPowered(blockState) ? blockState.getValue(POWER) : 0;
+        return isPowered(blockState) ? blockState.getValue(SEASON_ON) : 0;
     }
 
     public @NotNull InteractionResult use(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, Player pPlayer, @NotNull InteractionHand hand, @NotNull BlockHitResult pHit) {

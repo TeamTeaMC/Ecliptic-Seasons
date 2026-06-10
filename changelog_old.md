@@ -1,6 +1,11 @@
 > As the ecosystem for 1.20.1 begins to wind down with major mods like Create moving on, we are also transitioning into
 > the final maintenance phase for our mod on this version.
 
+### 0.13.5.1
+
+- Renamed the Greenhouse Core's seasonal output property from POWER to SEASON_ON to better reflect its purpose and avoid
+  confusion with energy-related indicators.
+
 ### 0.13.5
 
 - Optimized the Growth Detector's detection logic to correctly recognize Greenhouse Cores and humidity changes.
