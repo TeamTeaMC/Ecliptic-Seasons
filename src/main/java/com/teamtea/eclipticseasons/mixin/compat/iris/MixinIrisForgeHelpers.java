@@ -56,8 +56,10 @@ public abstract class MixinIrisForgeHelpers {
                     if (CompatModule.ClientConfig.unifiedSnowyBlockSides.isFalse() && cullFace != Direction.UP)
                         return;
 
-                    if (ExtraModelManager.renderAsSnowInShader(state, level, pos)) {
-                        ((BlockSensitiveBufferBuilder) ((BlockRendererAccessor) r).getBuffers()).overrideBlock(WorldRenderingSettings.INSTANCE.getBlockStateIds().getInt(Blocks.SNOW_BLOCK.defaultBlockState()));
+                    // set to VertexEncoderInterface if not alpha
+                    if (ExtraModelManager.renderAsSnowInShader(state, level, pos)
+                            && ((BlockRendererAccessor) r).getBuffers() instanceof BlockSensitiveBufferBuilder bufferBuilder) {
+                        bufferBuilder.overrideBlock(WorldRenderingSettings.INSTANCE.getBlockStateIds().getInt(Blocks.SNOW_BLOCK.defaultBlockState()));
                     }
                 }
             }
