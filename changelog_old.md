@@ -1,6 +1,15 @@
 > As the ecosystem for 1.20.1 begins to wind down with major mods like Create moving on, we are also transitioning into
 > the final maintenance phase for our mod on this version.
 
+### 0.13.6
+
+- (Neoforge/Forge) Simplified Seasonal Prayer Ritual progression by removing random progress triggers.
+- Added configurable bone meal restrictions under unsuitable growing conditions (`RestrictBoneMealBySeason`). Enabled by
+  default through the built-in datapack.
+- Rebalanced rainfall and thunderstorm probabilities.
+- Added crop growth diagnostics for Jade and TOP, showing growth chances and environmental conditions when crops are
+  unable to grow normally.
+
 ### 0.13.5.1
 
 - Renamed the Greenhouse Core's seasonal output property from POWER to SEASON_ON to better reflect its purpose and avoid

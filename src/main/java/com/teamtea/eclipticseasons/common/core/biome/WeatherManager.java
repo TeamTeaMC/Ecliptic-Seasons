@@ -449,7 +449,8 @@ public class WeatherManager {
                 if (thunderTime <= 0) {
                     float weight = biomeRain.getThunderChance()
                             * ((CommonConfig.Weather.thunderChanceMultiplier.get() * 1f) / 100f)
-                            * size / 3000f;
+                            // * size / 3000f
+                            ;
                     if (level.getRandom().nextInt(1000) / 1000.f < weight) {
                         thunderTime = biomeRain.getThunderDuration(random) / size;
                         thundering = true;

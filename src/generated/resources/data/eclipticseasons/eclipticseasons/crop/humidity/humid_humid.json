@@ -14,13 +14,16 @@
       "fertile_chance": 0.8
     },
     "average": {
-      "grow_chance": 0.3
+      "grow_chance": 0.3,
+      "fertile_chance": 0.3
     },
     "moist": {
-      "grow_chance": 0.6
+      "grow_chance": 0.6,
+      "fertile_chance": 0.6
     },
     "humid": {
-      "grow_chance": 1.025
+      "grow_chance": 1.025,
+      "fertile_chance": 1.025
     }
   }
 }

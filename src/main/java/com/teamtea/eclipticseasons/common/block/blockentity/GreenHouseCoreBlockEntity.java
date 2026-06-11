@@ -37,6 +37,10 @@ public class GreenHouseCoreBlockEntity extends SyncBlockEntity {
     @Getter
     private int progress;
 
+    public static int getMaxProgressOnStage(Level level) {
+        return Mth.floor(CommonConfig.Crop.seasonalPrayerRitualTimeCost.get() * EclipticUtil.getDayLengthInMinecraft(level));
+    }
+
     @Override
     public void load(CompoundTag tag) {
         progress = tag.getInt("progress");
@@ -50,7 +54,7 @@ public class GreenHouseCoreBlockEntity extends SyncBlockEntity {
 
     public void updateProgress(int addition) {
         this.progress += addition;
-        this.progress = Mth.clamp(this.progress, 0, 100);
+        this.progress = Mth.clamp(this.progress, 0, getMaxProgressOnStage(level));
         inventoryChanged();
     }
 
@@ -59,7 +63,8 @@ public class GreenHouseCoreBlockEntity extends SyncBlockEntity {
             int progress = entity.getProgress();
             int stage = state.getValue(GreenHouseCoreBlock.AGE);
             if (stage != GreenHouseCoreBlock.MAX_STAGE) {
-                int a_progress = (stage * 100 + progress) / GreenHouseCoreBlock.MAX_STAGE;
+                int max = getMaxProgressOnStage(blockEntity.getLevel());
+                int a_progress = (stage * max + progress) * 100 / (GreenHouseCoreBlock.MAX_STAGE * max);
                 return Component.translatable("info.eclipticseasons.greenhouse_core.prayer_progress", a_progress);
             }
         }
@@ -111,21 +116,25 @@ public class GreenHouseCoreBlockEntity extends SyncBlockEntity {
                             manager.addGreenHouseCoreProvider(blockPos, new Consumer(greenHouseCoreBlock.getSeason(), 0));
                         }
                     }
-                    if (level.getRandom().nextInt(CommonConfig.Crop.seasonalPrayerRitualCropBonusReduction.get()/ 5 + 1) < extra || level.getRandom().nextDouble() < 100.0 / (
-                            CommonConfig.Crop.seasonalPrayerRitualTimeCost.get() * EclipticUtil.getDayLengthInMinecraft(level))) {
-                        extra = extra > 0 ? extra - 1 : 0;
-                        Pair<Season, Integer> currentSeason = getCurrentSeason(level, blockPos);
-                        if (currentSeason.getFirst() == greenHouseCoreBlock.getSeason()
-                                && !level.getBlockState(blockPos.below()).isSolidRender(level, blockPos)
-                                && !CropGrowthHandler.isInRoom(level, blockPos, blockState, Optional.empty())) {
-                            boolean nextStage = blockEntity.progress == 100;
-                            blockEntity.updateProgress(nextStage ? -100 : 1 + extra);
-                            if (nextStage) {
-                                level.setBlockAndUpdate(blockPos, blockState
-                                        .setValue(GreenHouseCoreBlock.AGE, blockState.getValue(GreenHouseCoreBlock.AGE) + 1));
-                            }
-                        }
 
+                    int max = getMaxProgressOnStage(level);
+                    Pair<Season, Integer> currentSeason = getCurrentSeason(level, blockPos);
+                    if (currentSeason.getFirst() == greenHouseCoreBlock.getSeason()
+                            && !level.getBlockState(blockPos.below()).isSolidRender(level,blockPos)
+                            && !CropGrowthHandler.isInRoom(level, blockPos, blockState, Optional.empty())) {
+
+                        boolean nextStage = blockEntity.progress >= max;
+
+                        int cropBonus = extra == 0 ? 0 :
+                                Mth.clamp(extra - level.getRandom().nextInt(CommonConfig.Crop.seasonalPrayerRitualCropBonusReduction.get() / 5 + 1), 0, extra);
+                        int progress = 1 + cropBonus;
+
+                        blockEntity.updateProgress(nextStage ? -max : progress);
+
+                        if (nextStage) {
+                            level.setBlockAndUpdate(blockPos, blockState
+                                    .setValue(GreenHouseCoreBlock.AGE, blockState.getValue(GreenHouseCoreBlock.AGE) + 1));
+                        }
                     }
                 }
             }

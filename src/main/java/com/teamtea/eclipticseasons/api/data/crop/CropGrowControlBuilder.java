@@ -69,21 +69,24 @@ public record CropGrowControlBuilder(
             CodecUtil.holderSetCodec(ESRegistries.CROP).fieldOf("parent").orElse(HolderSet.direct()).forGetter(CropGrowControlBuilder::parent),
             GrowParameter.CODEC.optionalFieldOf("season_default").forGetter(CropGrowControlBuilder::defaultSolarTermGrowParameter),
             FakeBlockPredicate.CODEC.fieldOf("apply_target").forGetter(CropGrowControlBuilder::applyTarget)
-    ).apply(ins, (defaultGrowParameter2, solarTermGrowParameterEnumMap,subMap, seasonGrowParameterEnumMap, humidityGrowParameterEnumMap, holders, notGreenHouse, holders2, defaultGrowParameter, blockPredicate) ->
-            new CropGrowControlBuilder(holders, blockPredicate, holders2, defaultGrowParameter, defaultGrowParameter2, toSolarTermList(solarTermGrowParameterEnumMap, subMap, holders),  seasonGrowParameterEnumMap, humidityGrowParameterEnumMap, notGreenHouse)
+    ).apply(ins, (defaultGrowParameter2, solarTermGrowParameterEnumMap, subMap, seasonGrowParameterEnumMap, humidityGrowParameterEnumMap, holders, notGreenHouse, holders2, defaultGrowParameter, blockPredicate) ->
+            new CropGrowControlBuilder(holders, blockPredicate, holders2, defaultGrowParameter, defaultGrowParameter2, toSolarTermList(solarTermGrowParameterEnumMap, subMap, holders), seasonGrowParameterEnumMap, humidityGrowParameterEnumMap, notGreenHouse)
     ));
 
     // Note 1.20: Tags are uninitialized during client-side datapack sync (unlike 1.21); calling HolderSet here causes a connection failure.
     // Note 1.20: HolderSet is unavailable during network sync due to the aforementioned design constraints.
-    public static final Codec<CropGrowControlBuilder> DIRECT_CODEC = RecordCodecBuilder.create(ins -> ins.group(
-            GrowParameter.CODEC.optionalFieldOf("humidity_default").forGetter(CropGrowControlBuilder::defaultHumidityGrowParameter),
-            SOLAR_TERM_ENUM_MAP_CODEC.optionalFieldOf("solar_terms", new Enum2ObjectMap<>(SolarTerm.class)).forGetter(CropGrowControlBuilder::solarTermList),
-            Season_ENUM_MAP_CODEC.optionalFieldOf("seasons", new Enum2ObjectMap<>(Season.class)).forGetter(CropGrowControlBuilder::seasonList),
-            HUMID_ENUM_MAP_CODEC.optionalFieldOf("humidity", new Enum2ObjectMap<>(Humidity.class)).forGetter(CropGrowControlBuilder::humidList),
-            GrowParameter.CODEC.optionalFieldOf("season_default").forGetter(CropGrowControlBuilder::defaultSolarTermGrowParameter)
-    ).apply(ins, (defaultGrowParameter2, solarTermGrowParameterEnumMap, seasonGrowParameterEnumMap, humidityGrowParameterEnumMap, defaultGrowParameter) ->
-            new CropGrowControlBuilder(HolderSet.direct(), new FakeBlockPredicate(Optional.empty(), Optional.empty()), HolderSet.direct(), defaultGrowParameter, defaultGrowParameter2, solarTermGrowParameterEnumMap, seasonGrowParameterEnumMap, humidityGrowParameterEnumMap, Optional.empty())
-    ));
+    public static final Codec<CropGrowControlBuilder> DIRECT_CODEC = RecordCodecBuilder.create(
+            in -> in.stable(new CropGrowControlBuilder(
+                    HolderSet.direct(),
+                    new FakeBlockPredicate(HolderSet.direct()),
+                    HolderSet.direct(),
+                    Optional.empty(),
+                    Optional.empty(),
+                    new Enum2ObjectMap<>(SolarTerm.class),
+                    new Enum2ObjectMap<>(Season.class),
+                    new Enum2ObjectMap<>(Humidity.class),
+                    Optional.empty())
+            ));
 
     private static Enum2ObjectMap<SolarTerm, GrowParameter> toSolarTermList(
             Enum2ObjectMap<SolarTerm, GrowParameter> solarTermList,

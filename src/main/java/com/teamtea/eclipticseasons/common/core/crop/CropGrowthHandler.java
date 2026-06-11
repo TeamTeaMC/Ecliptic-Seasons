@@ -52,6 +52,7 @@ import net.minecraft.world.level.*;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.BonemealableBlock;
 import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.*;
@@ -92,6 +93,7 @@ public final class CropGrowthHandler {
     }
 
     public static void beforeCropGrowUp(BonemealEvent event) {
+        if (!CommonConfig.Crop.restrictBoneMeal.get()) return;
         var block = event.getBlock();
         var world = event.getLevel();
         BlockPos pos = event.getPos();
@@ -674,7 +676,9 @@ public final class CropGrowthHandler {
                     blockGrowFeatureEvent.setResult(Event.Result.DENY);
                 } else if (event instanceof BonemealEvent bonemealEvent) {
                     // bonemealEvent.setCanceled(true);
-                    if (CommonConfig.Crop.boneMealConsumeOnFailure.get()) {
+                    if (CommonConfig.Crop.boneMealConsumeOnFailure.get()
+                            && (!(bonemealEvent.getBlock().getBlock() instanceof BonemealableBlock block)
+                            || block.isValidBonemealTarget(bonemealEvent.getLevel(), bonemealEvent.getPos(), bonemealEvent.getBlock(), bonemealEvent.getLevel().isClientSide()))) {
                         bonemealEvent.setResult(Event.Result.ALLOW);
                     } else {
                         bonemealEvent.setCanceled(true);
@@ -726,6 +730,8 @@ public final class CropGrowthHandler {
         } else {
             if (event instanceof BonemealEvent bonemealEvent) {
                 if (bonemealEvent.getEntity() instanceof ServerPlayer player
+                        && (!(bonemealEvent.getBlock().getBlock() instanceof BonemealableBlock block)
+                        || block.isValidBonemealTarget(bonemealEvent.getLevel(), bonemealEvent.getPos(), bonemealEvent.getBlock(), bonemealEvent.getLevel().isClientSide()))
                         && !(player instanceof FakePlayer)
                         && CommonConfig.Crop.boneMealFailureMessage.get()) {
                     if (growParameter != null && growParameter.fertile_chance() == 0) {
@@ -740,7 +746,7 @@ public final class CropGrowthHandler {
             if (flag == CANCEL
                     && event instanceof CanPlantGrowEvent canPlantGrowEvent
                     && CommonConfig.Crop.cropLeavesPatch.get()
-                    && canPlantGrowEvent.getLevel() instanceof ServerLevel level){
+                    && canPlantGrowEvent.getLevel() instanceof ServerLevel level) {
                 BlockState state = canPlantGrowEvent.getState();
                 if (state.getBlock() instanceof LeavesBlock
                         && !state.getValue(LeavesBlock.PERSISTENT)
@@ -814,7 +820,8 @@ public final class CropGrowthHandler {
             }
             ChunkAccess chunkAccess = levelAccessor instanceof ServerLevel serverLevel ?
                     serverLevel.getChunkSource().getChunkNow(x, z) : null;
-            ChunkAccess chunk1 = chunkAccess == null ? levelAccessor.getChunk(x, z) : chunkAccess;            int sectionIndex = chunk1.getSectionIndex(pos.getY());
+            ChunkAccess chunk1 = chunkAccess == null ? levelAccessor.getChunk(x, z) : chunkAccess;
+            int sectionIndex = chunk1.getSectionIndex(pos.getY());
             LevelChunkSection[] sections = chunk1.getSections();
             if (sectionIndex < 0 || sectionIndex >= sections.length)
                 return Blocks.AIR.defaultBlockState();

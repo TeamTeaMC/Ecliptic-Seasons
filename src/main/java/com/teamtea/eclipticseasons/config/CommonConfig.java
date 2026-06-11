@@ -199,6 +199,7 @@ public class CommonConfig {
         public static ForgeConfigSpec.BooleanValue noCostHumidifier;
         public static ForgeConfigSpec.BooleanValue useBoxDistance;
         public static ForgeConfigSpec.IntValue seasonCoreRange;
+        public static ForgeConfigSpec.BooleanValue restrictBoneMeal;
         public static ForgeConfigSpec.BooleanValue boneMealFailureMessage;
         public static ForgeConfigSpec.BooleanValue boneMealConsumeOnFailure;
 
@@ -218,6 +219,8 @@ public class CommonConfig {
                     .define("EnableCropHumidityControl", true);
             cropHumidityTransition = builder.comment("Smooths out humidity changes between different areas or time periods.")
                     .define("CropHumidityTransition", true);
+            restrictBoneMeal = builder.comment("Bone meal may fail under unsuitable growing conditions.")
+                    .define("RestrictBoneMeal", true);
             boneMealFailureMessage = builder.comment("Show a message if bone meal fails to work due to incorrect season or humidity.")
                     .define("BoneMealFailureMessage", true);
             boneMealConsumeOnFailure = builder.comment("Consume the bone meal item even if the growth attempt fails.")
@@ -252,7 +255,7 @@ public class CommonConfig {
                     .defineInRange("SeasonalPrayerRitualCropBonusReduction", 500, 5, Integer.MAX_VALUE);
             seasonalPrayerRitualTimeCost = builder
                     .comment("The duration required for the Prayer Ritual (relative to one Solar Term).")
-                    .defineInRange("SeasonalPrayerRitualTimeCost", 2, 0.00001d, 5000);
+                    .defineInRange("SeasonalRitualTimeCost", 0.15d, 0.00001d, 5000);
 
             growthDetectorClassicMode = builder
                     .comment("Uses the classic chat-message display for the growth detector instead of the new in-world UI.")
@@ -404,9 +407,9 @@ public class CommonConfig {
             shouldInitSnowForExtremeColdBiomes = builder.comment("Force initialize snow states for extreme cold biomes when the mod or world is first loaded.")
                     .define("ShouldInitSnowDepthForExtremeColdBiomes", true);
             rainChanceMultiplier = builder.comment("Adjust the overall frequency of rain.")
-                    .defineInRange("RainChancePercentMultiplier", 40, 0, 1000);
+                    .defineInRange("RainChanceMultiplier", 120, 0, 1000);
             thunderChanceMultiplier = builder.comment("Adjust the overall frequency of thunder.")
-                    .defineInRange("ThunderChancePercentMultiplier", 20, 0, 1000);
+                    .defineInRange("ThunderChanceMultiplier", 80, 0, 1000);
             snowAccumulationSpeedMultiplier = builder
                     .comment("Adjusts the spread rate of atmospheric snow overlays across the ground.")
                     .defineInRange("SnowAccumulationSpeedMultiplier", 1.0, 0.0, 20.0);
