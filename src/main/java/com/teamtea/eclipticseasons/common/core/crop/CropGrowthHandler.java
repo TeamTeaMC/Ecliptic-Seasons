@@ -95,6 +95,7 @@ public final class CropGrowthHandler {
 
     // note 确实会变成BlockGrowFeatureEvent再触发一次，很麻烦，那只能阻止一下了，a计划是弄一个缓存map
     public static void beforeCropGrowUp(BonemealEvent event) {
+        if (!CommonConfig.Crop.restrictBoneMeal.get()) return;
         // if(!event.isValidBonemealTarget())return;
         var block = event.getState();
         var world = event.getLevel();
@@ -653,8 +654,10 @@ public final class CropGrowthHandler {
             } else if (event instanceof BlockGrowFeatureEvent blockGrowFeatureEvent) {
                 blockGrowFeatureEvent.setCanceled(true);
             } else if (event instanceof BonemealEvent bonemealEvent) {
-                bonemealEvent.setSuccessful(CommonConfig.Crop.boneMealConsumeOnFailure.get());
-                bonemealEvent.setCanceled(true);
+                if (bonemealEvent.isValidBonemealTarget()) {
+                    bonemealEvent.setSuccessful(CommonConfig.Crop.boneMealConsumeOnFailure.get());
+                    bonemealEvent.setCanceled(true);
+                }
             }
         } else if (flag == PASS) {
             if (event instanceof CropGrowEvent.Pre cropGrowEvent) {
@@ -700,6 +703,7 @@ public final class CropGrowthHandler {
         } else {
             if (event instanceof BonemealEvent bonemealEvent) {
                 if (bonemealEvent.getPlayer() instanceof ServerPlayer player
+                        && bonemealEvent.isValidBonemealTarget()
                         && !(player instanceof FakePlayer)
                         && CommonConfig.Crop.boneMealFailureMessage.get()) {
                     if (growParameter != null && growParameter.fertile_chance() == 0) {
@@ -818,7 +822,8 @@ public final class CropGrowthHandler {
             }
             ChunkAccess chunkAccess = levelAccessor instanceof ServerLevel serverLevel ?
                     serverLevel.getChunkSource().getChunkNow(x, z) : null;
-            ChunkAccess chunk1 = chunkAccess == null ? levelAccessor.getChunk(x, z) : chunkAccess;            int sectionIndex = chunk1.getSectionIndex(pos.getY());
+            ChunkAccess chunk1 = chunkAccess == null ? levelAccessor.getChunk(x, z) : chunkAccess;
+            int sectionIndex = chunk1.getSectionIndex(pos.getY());
             LevelChunkSection[] sections = chunk1.getSections();
             if (sectionIndex < 0 || sectionIndex >= sections.length)
                 return Blocks.AIR.defaultBlockState();

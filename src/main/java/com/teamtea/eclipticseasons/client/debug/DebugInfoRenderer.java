@@ -185,10 +185,11 @@ public class DebugInfoRenderer {
                         infoLines.addKV("Rain Chance", String.format("%.2f%%", rainChance * 100), "§b");
 
                         if (level.isRaining()) {
-                            int size = WeatherManager.getWeatherTickFactor(level);
+                            // int size = WeatherManager.getWeatherTickFactor(level);
                             float thunderChance = weatherTarget.getBiomeRain().getThunderChance()
                                     * (CommonConfig.Weather.thunderChanceMultiplier.get() / 100f)
-                                    * size / 3000f;
+                                    // * size / 3000f
+                                    ;
                             infoLines.addKV("Thunder Chance", String.format("%.2f%%", thunderChance * 100), "§e");
                         } else {
                             infoLines.addKV("Thunder", "Waiting Rain", "");

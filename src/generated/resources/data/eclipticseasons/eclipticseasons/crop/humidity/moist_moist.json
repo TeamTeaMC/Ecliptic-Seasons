@@ -10,16 +10,20 @@
       "fertile_chance": 0.8
     },
     "dry": {
-      "grow_chance": 0.15
+      "grow_chance": 0.15,
+      "fertile_chance": 0.15
     },
     "average": {
-      "grow_chance": 0.45
+      "grow_chance": 0.45,
+      "fertile_chance": 0.45
     },
     "moist": {
-      "grow_chance": 1.025
+      "grow_chance": 1.025,
+      "fertile_chance": 1.025
     },
     "humid": {
-      "grow_chance": 0.5
+      "grow_chance": 0.5,
+      "fertile_chance": 0.5
     }
   }
 }

@@ -28,7 +28,7 @@ public class CompatModule {
     private static boolean distanthorizons = false;
 
     //@Getter
-    //private static boolean voxyTest = false;
+    // private static boolean voxyTest = false;
 
 
     /**
@@ -42,7 +42,7 @@ public class CompatModule {
         iris = Platform.isModLoaded("iris");
         modernui = Platform.isModLoaded("modernui");
         distanthorizons = Platform.isModLoaded("distanthorizons");
-        //if (isVoxy()) {
+        // if (isVoxy()) {
         //    CommentedFileConfig oldConfig = CommentedFileConfig.builder(FMLPaths.CONFIGDIR.get().resolve(EclipticSeasons.defaultConfigName(ModConfig.Type.COMMON, EclipticSeasons.MODID)))
         //            .preserveInsertionOrder().build();
         //    oldConfig.load();
@@ -87,6 +87,7 @@ public class CompatModule {
         public static ModConfigSpec.BooleanValue fixBiome;
         // public static ModConfigSpec.DoubleValue weatherVotePercent;
         public static ModConfigSpec.BooleanValue DistantHorizonsWinterLOD;
+        public static ModConfigSpec.BooleanValue showCropGrowthInfoInProbe;
 
         public static void load(ModConfigSpec.Builder builder) {
             builder.push("Compat");
@@ -108,6 +109,9 @@ public class CompatModule {
             );
             fixBiome = builder.comment("Intercepts raw biome precipitation queries to ensure small biomes (like rivers) do not disrupt large-scale weather logic.")
                     .define("FixBiomePrecipitation", true);
+            showCropGrowthInfoInProbe = builder
+                    .comment("Show crop growth diagnostics in Jade or TOP.")
+                    .define("ShowCropGrowthInfoInProbe", true);
             // weatherVotePercent = builder.comment("Determines global weather state based on player locations when external mods bypass our API.\n" +
             //                 "This represents the weighted threshold required to trigger a specific weather condition.")
             //         .defineInRange("WeatherVotePercent", 0.5f, 0, 1.0d);

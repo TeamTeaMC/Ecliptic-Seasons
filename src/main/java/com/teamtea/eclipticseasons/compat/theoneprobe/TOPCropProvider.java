@@ -2,8 +2,12 @@ package com.teamtea.eclipticseasons.compat.theoneprobe;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
+import com.teamtea.eclipticseasons.client.render.worldui.GrowthInfoClientCache;
+import com.teamtea.eclipticseasons.client.render.worldui.state.GrowthWorldUiState;
 import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
 import com.teamtea.eclipticseasons.common.core.crop.CropInfoManager;
+import com.teamtea.eclipticseasons.common.item.info.GrowthInfo;
+import com.teamtea.eclipticseasons.compat.CompatModule;
 import com.teamtea.eclipticseasons.config.ClientConfig;
 import mcjty.theoneprobe.api.*;
 import net.minecraft.ChatFormatting;
@@ -33,6 +37,14 @@ public class TOPCropProvider implements IProbeInfoProvider {
                 if (player == null
                         || player.isShiftKeyDown()) {
                     components.forEach(iProbeInfo::mcText);
+
+                    if (CompatModule.CommonConfig.showCropGrowthInfoInProbe.get()) {
+                        GrowthInfo info = GrowthInfoClientCache.get(level, iProbeHitData.getPos(), blockState);
+                        if (info != null && info.growChance() < 0.05) {
+                            GrowthWorldUiState from = GrowthWorldUiState.from(info);
+                            from.lines().forEach(iProbeInfo::mcText);
+                        }
+                    }
                 } else {
                     iProbeInfo.mcText(Component.translatable("hint.jade.plugin_eclipticseasons.crop.show", Minecraft.getInstance().options.keyShift.getKey().getDisplayName().getString()).withStyle(ChatFormatting.GRAY));
                 }

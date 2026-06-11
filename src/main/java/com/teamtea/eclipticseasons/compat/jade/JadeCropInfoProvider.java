@@ -3,8 +3,12 @@ package com.teamtea.eclipticseasons.compat.jade;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
+import com.teamtea.eclipticseasons.client.render.worldui.GrowthInfoClientCache;
+import com.teamtea.eclipticseasons.client.render.worldui.state.GrowthWorldUiState;
 import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
 import com.teamtea.eclipticseasons.common.core.crop.CropInfoManager;
+import com.teamtea.eclipticseasons.common.item.info.GrowthInfo;
+import com.teamtea.eclipticseasons.compat.CompatModule;
 import com.teamtea.eclipticseasons.config.ClientConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
@@ -35,6 +39,14 @@ public class JadeCropInfoProvider implements IBlockComponentProvider {
                 ) {
                     tooltip.addAll(components);
 
+
+                    if (CompatModule.CommonConfig.showCropGrowthInfoInProbe.get()) {
+                        GrowthInfo info = GrowthInfoClientCache.get(accessor.getLevel(), accessor.getPosition(), accessor.getBlockState());
+                        if (info != null && info.growChance() < 0.05) {
+                            GrowthWorldUiState from = GrowthWorldUiState.from(info);
+                            tooltip.addAll(from.lines());
+                        }
+                    }
                     // Style s1 = Style.EMPTY.withColor(TextColor.fromRgb(-1)).withFont(EclipticSeasons.rl("test"));
                     // Style aDefault = Style.EMPTY.withFont(ResourceLocation.withDefaultNamespace("default"));
                     // MutableComponent mutableComponent = Component.literal(" ").withStyle(aDefault);

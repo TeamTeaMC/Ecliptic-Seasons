@@ -272,6 +272,7 @@ public class ESModConfigScreen extends Screen {
         put(CROP,
                 CommonConfig.Crop.enableCrop,
                 CommonConfig.Crop.enableCropHumidityControl,
+                CommonConfig.Crop.restrictBoneMeal,
                 CommonConfig.Crop.greenHouseMaxDiameter,
                 CommonConfig.Crop.greenHouseMaxHeight,
                 CommonConfig.Crop.complexGreenHouseCheck,
