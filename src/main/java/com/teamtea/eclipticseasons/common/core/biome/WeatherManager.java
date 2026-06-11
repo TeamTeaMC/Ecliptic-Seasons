@@ -657,7 +657,7 @@ public class WeatherManager {
     }
 
     public static void sendBiomePacket(ServerLevel level, ArrayList<BiomeWeather> levelBiomeWeather, List<ServerPlayer> players) {
-        if (players.isEmpty()) return;
+        if (players.isEmpty() || levelBiomeWeather == null) return;
         Registry<WeatherEffect> weatherEffects = level.registryAccess().registryOrThrow(ESRegistries.WEATHER_EFFECT);
         byte[] snows = new byte[levelBiomeWeather.size()];
         int[] special = new int[levelBiomeWeather.size()];
