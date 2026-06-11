@@ -1,4 +1,1 @@
-- (Neoforge/Forge) Simplified Seasonal Prayer Ritual progression by removing random progress triggers.
-- Added configurable bone meal restrictions under unsuitable growing conditions (`RestrictBoneMealBySeason`). Enabled by default through the built-in datapack.
-- Rebalanced rainfall and thunderstorm probabilities.
-- Added crop growth diagnostics for Jade and TOP, showing growth chances and environmental conditions when crops are unable to grow normally.
+- #159 [Game crash while trying to access dreams with No Man's Land mod](https://github.com/TeamTeaMC/Ecliptic-Seasons/issues/159).
