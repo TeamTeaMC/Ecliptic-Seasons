@@ -3,14 +3,10 @@ package com.teamtea.eclipticseasons.common.core.biome;
 import com.mojang.serialization.Codec;
 import com.teamtea.eclipticseasons.api.constant.climate.FlatRain;
 import com.teamtea.eclipticseasons.api.constant.tag.ClimateTypeBiomeTags;
-import com.teamtea.eclipticseasons.api.data.misc.ESSortInfo;
-import com.teamtea.eclipticseasons.api.data.weather.WeatherDimension;
 import com.teamtea.eclipticseasons.api.data.weather.special_effect.WeatherEffect;
-import com.teamtea.eclipticseasons.api.event.BeforeCheckSnowStatusEvent;
 import com.teamtea.eclipticseasons.api.misc.ITranslatable;
 import com.teamtea.eclipticseasons.api.util.SolarUtil;
 import com.teamtea.eclipticseasons.common.core.snow.SnowyMapChecker;
-import com.teamtea.eclipticseasons.common.hook.ESEventHook;
 import com.teamtea.eclipticseasons.common.network.message.UpdateTempChangeMessage;
 import com.teamtea.eclipticseasons.common.registry.ESRegistries;
 import com.teamtea.eclipticseasons.common.registry.ModAdvancements;
@@ -48,7 +44,6 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.saveddata.WeatherData;
-import net.minecraft.world.level.storage.ServerLevelData;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.WeatherCheck;
@@ -64,7 +59,7 @@ public class WeatherManager {
     public static final Map<Level, Integer> NEXT_CHECK_BIOME_MAP = new IdentityHashMap<>();
     public static final Map<Level, Map<Biome, BiomeWeather>> BIOME_WEATHER_QUERY_LIST = new IdentityHashMap<>();
 
-    public static ArrayList<BiomeWeather> getBiomeList(Level level) {
+    public static @Nullable ArrayList<BiomeWeather> getBiomeList(Level level) {
         if (level == null) {
             for (ArrayList<BiomeWeather> value : BIOME_WEATHER_LIST.values()) {
                 return value;
@@ -367,13 +362,15 @@ public class WeatherManager {
             // add copy
             Map<Biome, BiomeWeather> biomeBiomeWeatherMap = new IdentityHashMap<>();
             for (BiomeWeather biomesWeather : biomesWeathers) {
-                biomeBiomeWeatherMap.put(biomesWeather.biomeHolder.value(), biomesWeather);
+                // sometimes a fabric mod would make a dummy world without valid registry
+                if (biomesWeather != null && biomesWeather.biomeHolder != null)
+                    biomeBiomeWeatherMap.put(biomesWeather.biomeHolder.value(), biomesWeather);
             }
             WeatherManager.BIOME_WEATHER_QUERY_LIST.put(level, biomeBiomeWeatherMap);
         }
     }
 
-    public static void informUpdateBiomes(HolderLookup.Provider registryAccess, boolean isServer) {
+    public static void informUpdateBiomes(RegistryAccess registryAccess, boolean isServer) {
         WeatherManager.BIOME_WEATHER_LIST.forEach((key, biomeWeathers) -> {
             if ((key instanceof ServerLevel) == isServer) {
                 key.registryAccess().lookup(Registries.BIOME)
@@ -457,7 +454,8 @@ public class WeatherManager {
                 if (thunderTime <= 0) {
                     float weight = biomeRain.getThunderChance()
                             * ((CommonConfig.Weather.thunderChanceMultiplier.get() * 1f) / 100f)
-                            * size / 3000f;
+                            // * size / 3000f
+                            ;
                     if (level.getRandom().nextInt(1000) / 1000.f < weight) {
                         thunderTime = biomeRain.getThunderDuration(random) / size;
                         thundering = true;
@@ -677,7 +675,7 @@ public class WeatherManager {
     }
 
     public static void sendBiomePacket(ServerLevel level, ArrayList<BiomeWeather> levelBiomeWeather, List<ServerPlayer> players) {
-        if (players.isEmpty()) return;
+        if (players.isEmpty() || levelBiomeWeather == null) return;
         Registry<WeatherEffect> weatherEffects = level.registryAccess().lookupOrThrow(ESRegistries.WEATHER_EFFECT);
         byte[] snows = new byte[levelBiomeWeather.size()];
         int[] special = new int[levelBiomeWeather.size()];

@@ -120,7 +120,7 @@ public record SeasonQuest(
                         new ConstantValue(min),
                         new ConstantValue(max)
                 ),
-                DataComponentExactPredicate.builder().build()
+                predicate.components().exact()
         );
     }
 

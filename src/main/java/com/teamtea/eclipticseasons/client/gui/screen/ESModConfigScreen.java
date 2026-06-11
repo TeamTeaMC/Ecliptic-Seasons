@@ -270,6 +270,7 @@ public class ESModConfigScreen extends Screen {
         put(CROP,
                 CommonConfig.Crop.enableCrop,
                 CommonConfig.Crop.enableCropHumidityControl,
+                CommonConfig.Crop.restrictBoneMeal,
                 CommonConfig.Crop.greenHouseMaxDiameter,
                 CommonConfig.Crop.greenHouseMaxHeight,
                 CommonConfig.Crop.complexGreenHouseCheck,
@@ -419,7 +420,7 @@ public class ESModConfigScreen extends Screen {
         subHeader.addChild(next);
 
 
-        GridLayout gridLayout = new GridLayout();
+        net.minecraft.client.gui.layouts.GridLayout gridLayout = new net.minecraft.client.gui.layouts.GridLayout();
         gridLayout.defaultCellSetting().paddingHorizontal(4).paddingBottom(4).alignHorizontallyCenter();
         GridLayout.RowHelper helper = gridLayout.createRowHelper(2);
 

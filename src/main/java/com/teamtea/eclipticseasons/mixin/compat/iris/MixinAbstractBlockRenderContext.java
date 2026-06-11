@@ -58,9 +58,10 @@ public abstract class MixinAbstractBlockRenderContext implements IrisAttachSnowy
                 if (WorldRenderingSettings.INSTANCE.getBlockStateIds() != null && cullFace != null) {
                     if (CompatModule.ClientConfig.unifiedSnowyBlockSides.isFalse() && cullFace != Direction.UP)
                         return;
-                    if (ExtraModelManager.renderAsSnowInShader(state, level, pos)) {
+                    if (ExtraModelManager.renderAsSnowInShader(state, level, pos)
+                            && r instanceof VertexEncoderInterface vertexEncoderInterface) {
                         // ((BlockSensitiveBufferBuilder) ((BlockRendererAccessor) r).getBuffers()).overrideBlock(WorldRenderingSettings.INSTANCE.getBlockStateIds().getInt(Blocks.SNOW_BLOCK.defaultBlockState()));
-                        ((VertexEncoderInterface) r).overrideBlock(WorldRenderingSettings.INSTANCE.getBlockStateIds().getInt(Blocks.SNOW_BLOCK.defaultBlockState()));
+                        vertexEncoderInterface.overrideBlock(WorldRenderingSettings.INSTANCE.getBlockStateIds().getInt(Blocks.SNOW_BLOCK.defaultBlockState()));
                     }
                 }
             }

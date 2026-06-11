@@ -13,6 +13,7 @@ import net.caffeinemc.mods.sodium.client.render.chunk.compile.tasks.ChunkBuilder
 import net.caffeinemc.mods.sodium.client.render.chunk.compile.tasks.ChunkBuilderTask;
 import net.caffeinemc.mods.sodium.client.util.task.CancellationToken;
 import net.irisshaders.iris.shaderpack.materialmap.WorldRenderingSettings;
+import net.irisshaders.iris.vertices.BlockSensitiveBufferBuilder;
 import net.irisshaders.iris.vertices.sodium.terrain.VertexEncoderInterface;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.Blocks;
@@ -50,8 +51,9 @@ public abstract class MixinBlockRenderTask extends ChunkBuilderTask<ChunkBuildOu
         if (!CompatModule.ClientConfig.unifiedFrozenWater.get() ||
                 IceKeeper.notFrozen(buildContext.cache.getWorldSlice(), blockPos, blockState, fluidState))
             return;
-        if (WorldRenderingSettings.INSTANCE.getBlockStateIds() != null) {
-            ((VertexEncoderInterface) blockRenderer).beginBlock(WorldRenderingSettings.INSTANCE.getBlockStateIds().getInt(Blocks.ICE.defaultBlockState()), (byte) 0, (byte) blockState.getLightEmission(), blockPos.getX(), blockPos.getY(), blockPos.getZ());
+        if (WorldRenderingSettings.INSTANCE.getBlockStateIds() != null
+                && buffers instanceof VertexEncoderInterface bufferBuilder) {
+            bufferBuilder.beginBlock(WorldRenderingSettings.INSTANCE.getBlockStateIds().getInt(Blocks.ICE.defaultBlockState()), (byte) 0, (byte) blockState.getLightEmission(), blockPos.getX(), blockPos.getY(), blockPos.getZ());
             //((BlockSensitiveBufferBuilder)buffers).beginBlock(WorldRenderingSettings.INSTANCE.getBlockStateIds().getInt(fluidState.createLegacyBlock()), (byte)1, (byte)blockState.getLightEmission(), blockPos.getX(), blockPos.getY(), blockPos.getZ());
         }
     }

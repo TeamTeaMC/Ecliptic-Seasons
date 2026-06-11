@@ -34,7 +34,7 @@ public record ESSortInfo(
 
     private static final int INTERNAL_PRIORITY_MUL = 1000;
 
-    public static void resetUpdate(HolderLookup.Provider registryAccess, boolean isServer) {
+    public static void resetUpdate(RegistryAccess registryAccess, boolean isServer) {
         if (hasUpdated) return;
         var registry1 = registryAccess.lookup(ESRegistries.EXTRA_INFO);
         if (registry1.isEmpty()) return;

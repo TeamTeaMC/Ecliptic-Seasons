@@ -72,8 +72,8 @@ public final class CropInfoManager {
         CROP_SEASON_INFO.clear();
         CROPS_WOULD_NOT_KILLED_BY_CLIMATE.clear();
 
-        var items = event.getLookupProvider().lookup(Registries.ITEM);
-        var blocks = event.getLookupProvider().lookup(Registries.BLOCK);
+        var items = event.getRegistries().lookup(Registries.ITEM);
+        var blocks = event.getRegistries().lookup(Registries.BLOCK);
 
         if (blocks.isPresent()) {
             blocks.get().get(EclipticBlockTags.NOT_KILLED_BY_CLIMATE).ifPresent(
@@ -122,7 +122,7 @@ public final class CropInfoManager {
 
         }
 
-        if (CommonConfig.Crop.registerCropDefaultValue.getAsBoolean()) {
+        if (com.teamtea.eclipticseasons.config.CommonConfig.Crop.registerCropDefaultValue.getAsBoolean()) {
             BuiltInRegistries.BLOCK.forEach(block ->
             {
                 if (block instanceof CropBlock) {

@@ -69,22 +69,30 @@ import java.util.Optional;
 public class AllListener {
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
-    public static void onTagsUpdatedEventEarly(TagsUpdatedEvent tagsUpdatedEvent) {
-        ESSortInfo.resetUpdate(tagsUpdatedEvent.getLookupProvider(), tagsUpdatedEvent.getUpdateCause() == TagsUpdatedEvent.UpdateCause.SERVER_DATA_LOAD);
-        BiomeClimateManager.resetBiomeTags(tagsUpdatedEvent.getLookupProvider(), tagsUpdatedEvent.getUpdateCause() == TagsUpdatedEvent.UpdateCause.SERVER_DATA_LOAD);
+    public static void onTagsUpdatedEventEarly_0(TagsUpdatedEvent.ServerDataLoad tagsUpdatedEvent) {
+        onTagsUpdatedEventEarly(tagsUpdatedEvent);
     }
 
     // TagsUpdatedEvent invoke before ServerAboutToStartEvent
     @SubscribeEvent
+    public static void onTagsUpdatedEvent_0(TagsUpdatedEvent.ServerDataLoad tagsUpdatedEvent) {
+        onTagsUpdatedEvent(tagsUpdatedEvent);
+    }
+
+    public static void onTagsUpdatedEventEarly(TagsUpdatedEvent tagsUpdatedEvent) {
+        ESSortInfo.resetUpdate(tagsUpdatedEvent.getRegistries(), tagsUpdatedEvent instanceof TagsUpdatedEvent.ServerDataLoad);
+        BiomeClimateManager.resetBiomeTags(tagsUpdatedEvent.getRegistries(), tagsUpdatedEvent instanceof TagsUpdatedEvent.ServerDataLoad);
+    }
+
     public static void onTagsUpdatedEvent(TagsUpdatedEvent tagsUpdatedEvent) {
-        NaturalPlantHandler.initCache(tagsUpdatedEvent.getLookupProvider(),tagsUpdatedEvent.getUpdateCause() == TagsUpdatedEvent.UpdateCause.SERVER_DATA_LOAD);
-        BiomeClimateManager.resetBiomeTemps(tagsUpdatedEvent.getLookupProvider(), tagsUpdatedEvent.getUpdateCause() == TagsUpdatedEvent.UpdateCause.SERVER_DATA_LOAD);
-        WeatherManager.informUpdateBiomes(tagsUpdatedEvent.getLookupProvider(), tagsUpdatedEvent.getUpdateCause() == TagsUpdatedEvent.UpdateCause.SERVER_DATA_LOAD);
+        NaturalPlantHandler.initCache(tagsUpdatedEvent.getRegistries(), tagsUpdatedEvent instanceof TagsUpdatedEvent.ServerDataLoad);
+        BiomeClimateManager.resetBiomeTemps(tagsUpdatedEvent.getRegistries(), tagsUpdatedEvent instanceof TagsUpdatedEvent.ServerDataLoad);
+        WeatherManager.informUpdateBiomes(tagsUpdatedEvent.getRegistries(), tagsUpdatedEvent instanceof TagsUpdatedEvent.ServerDataLoad);
         CropInfoManager.init(tagsUpdatedEvent);
-        CropGrowthHandler.resetUpdate(tagsUpdatedEvent.getLookupProvider(), tagsUpdatedEvent.getUpdateCause() == TagsUpdatedEvent.UpdateCause.SERVER_DATA_LOAD);
-        NaturalPlantHandler.resetUpdate(tagsUpdatedEvent.getLookupProvider(), tagsUpdatedEvent.getUpdateCause() == TagsUpdatedEvent.UpdateCause.SERVER_DATA_LOAD);
-        SnowChecker.resetUpdate(tagsUpdatedEvent.getLookupProvider(), tagsUpdatedEvent.getUpdateCause() == TagsUpdatedEvent.UpdateCause.SERVER_DATA_LOAD);
-        SpecialDaysManager.init(tagsUpdatedEvent.getLookupProvider(), tagsUpdatedEvent.getUpdateCause() == TagsUpdatedEvent.UpdateCause.SERVER_DATA_LOAD);
+        CropGrowthHandler.resetUpdate(tagsUpdatedEvent.getRegistries(), tagsUpdatedEvent instanceof TagsUpdatedEvent.ServerDataLoad);
+        NaturalPlantHandler.resetUpdate(tagsUpdatedEvent.getRegistries(), tagsUpdatedEvent instanceof TagsUpdatedEvent.ServerDataLoad);
+        SnowChecker.resetUpdate(tagsUpdatedEvent.getRegistries(), tagsUpdatedEvent instanceof TagsUpdatedEvent.ServerDataLoad);
+        SpecialDaysManager.init(tagsUpdatedEvent.getRegistries(), tagsUpdatedEvent instanceof TagsUpdatedEvent.ServerDataLoad);
     }
 
 

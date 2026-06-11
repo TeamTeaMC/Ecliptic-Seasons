@@ -37,7 +37,7 @@ import java.util.*;
 public class NaturalPlantHandler {
 
 
-    public static void initCache(HolderLookup.Provider lookupProvider, boolean isSever) {
+    public static void initCache(RegistryAccess lookupProvider, boolean isSever) {
         if (!isSever) return;
         HolderLookup.RegistryLookup<Block> blocks = lookupProvider.lookupOrThrow(Registries.BLOCK);
         initTag(blocks,EclipticBlockTags.NATURAL_PLANTS);
@@ -57,7 +57,7 @@ public class NaturalPlantHandler {
 
     public final static Map<Block, EnumMap<SolarTerm, List<Pair<BiomeHolderPredicate, ChangeMode>>>> SEASON_DEFINITIONS = new IdentityHashMap<>();
 
-    public static void resetUpdate(HolderLookup.Provider registryAccess, boolean isServer) {
+    public static void resetUpdate(RegistryAccess registryAccess, boolean isServer) {
         if (isServer) {
             SEASON_DEFINITIONS.clear();
             var registry = registryAccess.lookup(ESRegistries.SEASON_DEFINITION);

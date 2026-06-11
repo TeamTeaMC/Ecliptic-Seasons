@@ -1,4 +1,4 @@
-package com.teamtea.eclipticseasons.compat.theoneprobe;//package com.teamtea.eclipticseasons.compat.theoneprobe;
+//package com.teamtea.eclipticseasons.compat.theoneprobe;
 //
 //import com.teamtea.eclipticseasons.EclipticSeasons;
 //import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;

@@ -2,6 +2,9 @@ package com.teamtea.eclipticseasons.common.network;
 
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
+import com.teamtea.eclipticseasons.common.core.map.MapChecker;
+import com.teamtea.eclipticseasons.common.item.info.GrowthInfoResolver;
+import com.teamtea.eclipticseasons.common.network.clientmesage.GrowthInfoQuery;
 import com.teamtea.eclipticseasons.common.network.message.*;
 import com.teamtea.eclipticseasons.config.sync.*;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -16,6 +19,7 @@ import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
 import java.util.Collection;
+import java.util.Optional;
 
 @EventBusSubscriber
 public final class SimpleNetworkHandler {
@@ -82,6 +86,25 @@ public final class SimpleNetworkHandler {
                     Player player = context.player();
                     if (player instanceof ServerPlayer serverPlayer)
                         ESConfigSync.INSTANCE.syncToSever(payload, serverPlayer);
+                }
+        );
+
+        registrar.playToClient(
+                GrowthInfoMessage.TYPE,
+                GrowthInfoMessage.STREAM_CODEC,
+                NetworkUtil::handleGrowthInfoQuery
+        );
+
+        registrar.playToServer(
+                GrowthInfoQuery.TYPE,
+                GrowthInfoQuery.STREAM_CODEC,
+                (payload, context) -> {
+                    Player player = context.player();
+                    if (player instanceof ServerPlayer serverPlayer
+                            && MapChecker.isLoadedOnlyServer(serverPlayer.level(), payload.getPos()))
+                        send(serverPlayer, new GrowthInfoMessage(Optional.ofNullable(GrowthInfoResolver.resolve(
+                                serverPlayer.level(), payload.getPos(), serverPlayer.level().getBlockState(payload.getPos())
+                        ))));
                 }
         );
 

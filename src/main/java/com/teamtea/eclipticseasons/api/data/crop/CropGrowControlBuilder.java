@@ -39,7 +39,7 @@ public record CropGrowControlBuilder(
     public CropGrowControlBuilder(
             HolderSet<AgroClimaticZone> cropClimateType,
             BlockPredicate applyTarget,
-            HolderSet<CropGrowControlBuilder> parent,
+            HolderSet<com.teamtea.eclipticseasons.api.data.crop.CropGrowControlBuilder> parent,
             Optional<GrowParameter> defaultSolarTermGrowParameter,
             Optional<GrowParameter> defaultHumidityGrowParameter,
             Enum2ObjectMap<SolarTerm, GrowParameter> solarTermList,

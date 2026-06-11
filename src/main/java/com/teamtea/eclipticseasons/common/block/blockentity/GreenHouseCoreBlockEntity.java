@@ -2,7 +2,6 @@ package com.teamtea.eclipticseasons.common.block.blockentity;
 
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
-import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.data.climate.AgroClimaticZone;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
@@ -19,8 +18,6 @@ import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import lombok.Getter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
@@ -47,6 +44,10 @@ public class GreenHouseCoreBlockEntity extends SyncBlockEntity {
     private int progress;
 
 
+    public static int getMaxProgressOnStage(Level level) {
+        return Mth.floor(CommonConfig.Crop.seasonalPrayerRitualTimeCost.get() * EclipticUtil.getDayLengthInMinecraft(level));
+    }
+
     @Override
     protected void saveAdditional(ValueOutput output) {
         super.saveAdditional(output);
@@ -61,7 +62,7 @@ public class GreenHouseCoreBlockEntity extends SyncBlockEntity {
 
     public void updateProgress(int addition) {
         this.progress += addition;
-        this.progress = Mth.clamp(this.progress, 0, 100);
+        this.progress = Mth.clamp(this.progress, 0, getMaxProgressOnStage(level));
         inventoryChanged();
     }
 
@@ -70,7 +71,9 @@ public class GreenHouseCoreBlockEntity extends SyncBlockEntity {
             int progress = entity.getProgress();
             int stage = state.getValue(GreenHouseCoreBlock.AGE);
             if (stage != GreenHouseCoreBlock.MAX_STAGE) {
-                int a_progress = (stage * 100 + progress) / GreenHouseCoreBlock.MAX_STAGE;
+                // int a_progress = (stage * getMaxProgressOnStage(blockEntity.getLevel()) + progress) / GreenHouseCoreBlock.MAX_STAGE;
+                int max = getMaxProgressOnStage(blockEntity.getLevel());
+                int a_progress = (stage * max + progress) * 100 / (GreenHouseCoreBlock.MAX_STAGE * max);
                 return Component.translatable("info.eclipticseasons.greenhouse_core.prayer_progress", a_progress);
             }
         }
@@ -110,8 +113,8 @@ public class GreenHouseCoreBlockEntity extends SyncBlockEntity {
                 if (!level.isClientSide() && level.getGameTime() % 100 == 0) {
                     Pair<Season, Integer> currentSeason = getCurrentSeason(level, blockPos);
                     if (currentSeason.getFirst() == greenHouseCoreBlock.getSeason()) {
-                        level.setBlockAndUpdate(blockPos, blockState.setValue(GreenHouseCoreBlock.POWER, currentSeason.getSecond()));
-                    } else level.setBlockAndUpdate(blockPos, blockState.setValue(GreenHouseCoreBlock.POWER, 0));
+                        level.setBlockAndUpdate(blockPos, blockState.setValue(GreenHouseCoreBlock.SEASON_ON, currentSeason.getSecond()));
+                    } else level.setBlockAndUpdate(blockPos, blockState.setValue(GreenHouseCoreBlock.SEASON_ON, 0));
                 }
 
                 if (blockEntity.checkSleepTime <= 0) {
@@ -174,20 +177,25 @@ public class GreenHouseCoreBlockEntity extends SyncBlockEntity {
                             manager.addGreenHouseCoreProvider(blockPos, new Consumer(greenHouseCoreBlock.getSeason(), 0));
                         }
                     }
-                    if (level.getRandom().nextInt(CommonConfig.Crop.seasonalPrayerRitualCropBonusReduction.get() / 5 + 1) < extra || level.getRandom().nextDouble() < 100.0 / (
-                            CommonConfig.Crop.seasonalPrayerRitualTimeCost.get() * EclipticUtil.getDayLengthInMinecraft(level))) {
-                        extra = extra > 0 ? extra - 1 : 0;
 
-                        Pair<Season, Integer> currentSeason = getCurrentSeason(level, blockPos);
-                        if (currentSeason.getFirst() == greenHouseCoreBlock.getSeason()
-                                && !level.getBlockState(blockPos.below()).isSolidRender()
-                                && !CropGrowthHandler.isInRoom(level, blockPos, blockState, Optional.empty())) {
-                            boolean nextStage = blockEntity.progress == 100;
-                            blockEntity.updateProgress(nextStage ? -100 : 1 + extra);
-                            if (nextStage) {
-                                level.setBlockAndUpdate(blockPos, blockState
-                                        .setValue(GreenHouseCoreBlock.AGE, blockState.getValue(GreenHouseCoreBlock.AGE) + 1));
-                            }
+                    int max = getMaxProgressOnStage(level);
+
+                    Pair<Season, Integer> currentSeason = getCurrentSeason(level, blockPos);
+                    if (currentSeason.getFirst() == greenHouseCoreBlock.getSeason()
+                            && !level.getBlockState(blockPos.below()).isSolidRender()
+                            && !CropGrowthHandler.isInRoom(level, blockPos, blockState, Optional.empty())) {
+
+                        boolean nextStage = blockEntity.progress >= max;
+
+                        int cropBonus = extra == 0 ? 0 :
+                                Mth.clamp(extra - level.getRandom().nextInt(CommonConfig.Crop.seasonalPrayerRitualCropBonusReduction.get() / 5 + 1), 0, extra);
+                        int progress = 1 + cropBonus;
+
+                        blockEntity.updateProgress(nextStage ? -max : progress);
+
+                        if (nextStage) {
+                            level.setBlockAndUpdate(blockPos, blockState
+                                    .setValue(GreenHouseCoreBlock.AGE, blockState.getValue(GreenHouseCoreBlock.AGE) + 1));
                         }
                     }
                 }

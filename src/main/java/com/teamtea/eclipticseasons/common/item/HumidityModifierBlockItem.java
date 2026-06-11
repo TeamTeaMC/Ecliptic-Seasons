@@ -19,7 +19,7 @@ import net.neoforged.fml.loading.FMLLoader;
 import java.util.function.Consumer;
 
 public class HumidityModifierBlockItem extends BlockItem {
-    public HumidityModifierBlockItem(Block block, Properties properties) {
+    public HumidityModifierBlockItem(Block block, Item.Properties properties) {
         super(block, properties);
     }
 

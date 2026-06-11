@@ -101,7 +101,7 @@ public class CompatModule {
         public static ModConfigSpec.BooleanValue voxyTest;
         public static ModConfigSpec.BooleanValue voxyLODAutoReload;
         public static ModConfigSpec.BooleanValue voxyReloadWhenSeasonChanged;
-
+        public static ModConfigSpec.BooleanValue showCropGrowthInfoInProbe;
         public static void load(ModConfigSpec.Builder builder) {
             builder.push("Compat");
             sereneSeasons = builder.comment("Enables compatibility with mods that utilize Serene Seasons' CropTag system.")
@@ -122,6 +122,9 @@ public class CompatModule {
             );
             fixBiome = builder.comment("Intercepts raw biome precipitation queries to ensure small biomes (like rivers) do not disrupt large-scale weather logic.")
                     .define("FixBiomePrecipitation", true);
+            showCropGrowthInfoInProbe = builder
+                    .comment("Show crop growth diagnostics in Jade or TOP.")
+                    .define("ShowCropGrowthInfoInProbe", true);
             // weatherVotePercent = builder.comment("Determines global weather state based on player locations when external mods bypass our API.\n" +
             //                 "This represents the weighted threshold required to trigger a specific weather condition.")
             //         .defineInRange("WeatherVotePercent", 0.5f, 0, 1.0d);

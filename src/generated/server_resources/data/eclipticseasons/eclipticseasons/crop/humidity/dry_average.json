@@ -1,19 +1,24 @@
 {
   "humidity": {
     "arid": {
-      "grow_chance": 0.3
+      "grow_chance": 0.3,
+      "fertile_chance": 0.3
     },
     "dry": {
-      "grow_chance": 0.97
+      "grow_chance": 0.97,
+      "fertile_chance": 0.97
     },
     "average": {
-      "grow_chance": 0.97
+      "grow_chance": 0.97,
+      "fertile_chance": 0.97
     },
     "moist": {
-      "grow_chance": 0.4
+      "grow_chance": 0.4,
+      "fertile_chance": 0.4
     },
     "humid": {
-      "grow_chance": 0.1
+      "grow_chance": 0.1,
+      "fertile_chance": 0.1
     }
   },
   "climate": "#eclipticseasons:all",

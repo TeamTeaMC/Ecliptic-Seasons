@@ -63,7 +63,7 @@ public class BiomeClimateManager {
     public static final Map<Biome, Integer> SNOW_LINE_MAP = new IdentityHashMap<>();
     public static final Map<Biome, Integer> CLIENT_SNOW_LINE_MAP = new IdentityHashMap<>();
 
-    public static void resetBiomeTags(HolderLookup.Provider registryAccess, boolean isServer) {
+    public static void resetBiomeTags(RegistryAccess registryAccess, boolean isServer) {
         putTag(registryAccess, isServer);
         putColorTag(registryAccess, isServer);
         resetAgroTag(registryAccess, isServer);
@@ -75,7 +75,7 @@ public class BiomeClimateManager {
         }
     }
 
-    public static void resetBiomeTemps(HolderLookup.Provider registryAccess, boolean isServer) {
+    public static void resetBiomeTemps(RegistryAccess registryAccess, boolean isServer) {
         // resetBiomeClimateMap(registryAccess, isServer ? BIOME_CLIMATE_MAP : CLIENT_CLIMATE_MAP);
         // resetSeasonPhaseMap(registryAccess, isServer ? SEASON_PHASE_MAP : CLIENT_SEASON_PHASE_MAP);
 
@@ -119,7 +119,7 @@ public class BiomeClimateManager {
         setSnowLine(registryAccess, isServer ? SNOW_LINE_MAP : CLIENT_SNOW_LINE_MAP);
     }
 
-    public static void setSnowLine(HolderLookup.Provider registryAccess, Map<Biome, Integer> biomeIntegerMap) {
+    public static void setSnowLine(RegistryAccess registryAccess, Map<Biome, Integer> biomeIntegerMap) {
         var biomeRegistry = registryAccess.lookup(Registries.BIOME);
         if (biomeRegistry.isPresent()) {
             biomeIntegerMap.clear();
@@ -144,7 +144,7 @@ public class BiomeClimateManager {
         }
     }
 
-    public static <T, U, R, S> void resetSomeMap(HolderLookup.Provider registryAccess,
+    public static <T, U, R, S> void resetSomeMap(RegistryAccess registryAccess,
                                                  ResourceKey<Registry<T>> resourceKey,
                                                  Map<Biome, S> useMap,
                                                  Function<T, Pair<HolderSet<Biome>, U>> biomeTransfer,
@@ -155,7 +155,7 @@ public class BiomeClimateManager {
                 singleDeal, emptyInstance, mapSaver);
     }
 
-    public static <T, U, R, S> void resetSomeMap(HolderLookup.Provider registryAccess,
+    public static <T, U, R, S> void resetSomeMap(RegistryAccess registryAccess,
                                                  ResourceKey<Registry<T>> resourceKey,
                                                  Map<Biome, S> useMap,
                                                  BiFunction<ResourceKey<T>, T, Pair<HolderSet<Biome>, U>> biomeTransfer,
@@ -263,7 +263,7 @@ public class BiomeClimateManager {
     }
 
 
-    public static @Nullable Holder<Biome> getHolder(HolderLookup.Provider registryAccess, Biome biome) {
+    public static @Nullable Holder<Biome> getHolder(RegistryAccess registryAccess, Biome biome) {
         var biomes = registryAccess.get(Registries.BIOME).get().value();
         Optional<Holder.Reference<Biome>> holder = biomes.get(biomes.getKey(biome));
         return holder.orElse(null);
@@ -287,7 +287,7 @@ public class BiomeClimateManager {
         return BIOME_COLOR_TAG_KEY_MAP.getOrDefault(biome, ClimateTypeBiomeTags.NONE_COLOR_CHANGE);
     }
 
-    public static void resetAgroTag(HolderLookup.Provider registryAccess, boolean isServer) {
+    public static void resetAgroTag(RegistryAccess registryAccess, boolean isServer) {
         applyBiomeTags(
                 registryAccess,
                 new HashSet<>(ClimateTypeBiomeTags.OVERWORLD_AGRO_BIOME_TYPES),
@@ -295,7 +295,7 @@ public class BiomeClimateManager {
         );
     }
 
-    public static void putColorTag(HolderLookup.Provider registryAccess, boolean isServer) {
+    public static void putColorTag(RegistryAccess registryAccess, boolean isServer) {
         applyBiomeTags(
                 registryAccess,
                 isServer ? BIOME_COLOR_TAG_KEY_MAP : CLIENT_BIOME_COLOR_TAG_KEY_MAP,
@@ -306,7 +306,7 @@ public class BiomeClimateManager {
         );
     }
 
-    public static void putTag(HolderLookup.Provider registryAccess, boolean isServer) {
+    public static void putTag(RegistryAccess registryAccess, boolean isServer) {
         // set small
         for (Biome biome : SMALL_BIOME_MAP.entrySet().stream().filter(entry -> entry.getValue() == isServer).map(Map.Entry::getKey).toList()) {
             SMALL_BIOME_MAP.remove(biome);
@@ -354,7 +354,7 @@ public class BiomeClimateManager {
     }
 
     public static void applyBiomeTags(
-            HolderLookup.Provider registryAccess,
+            RegistryAccess registryAccess,
             Set<TagKey<Biome>> knownTags,
             Map<TagKey<Biome>, RegistryFilter<Biome>> filters
     ) {
@@ -370,7 +370,7 @@ public class BiomeClimateManager {
     }
 
     public static void applyBiomeTags(
-            HolderLookup.Provider registryAccess,
+            RegistryAccess registryAccess,
             Map<Biome, TagKey<Biome>> useMap,
             Set<TagKey<Biome>> knownTags,
             Map<TagKey<Biome>, RegistryFilter<Biome>> filters,
@@ -407,8 +407,8 @@ public class BiomeClimateManager {
 
         useMap.forEach(callback);
 
-        if ((biomeRegistry.get() instanceof HolderLookup.RegistryLookup.Delegate<Biome> delegate
-                && delegate.parent() instanceof MappedRegistry<Biome> br))
+        if ((biomeRegistry.get() instanceof HolderLookup.RegistryLookup.Delegate delegate
+                && delegate.parent() instanceof MappedRegistry br))
             updateTagInVanilla(knownTags, useMap, br);
         else if (biomeRegistry.get() instanceof MappedRegistry<Biome> br)
             updateTagInVanilla(knownTags, useMap, br);

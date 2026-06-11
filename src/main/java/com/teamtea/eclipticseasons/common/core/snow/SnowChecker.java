@@ -60,7 +60,7 @@ public class SnowChecker {
 
     // we don't care if we are in a server or client mode now, because block is not syncable
     // there keeps only one copy of block registry in the process
-    public static void resetUpdate(HolderLookup.Provider registryAccess, boolean isServer) {
+    public static void resetUpdate(RegistryAccess registryAccess, boolean isServer) {
         statemap.clear();
         var snowDefinitions = registryAccess.lookup(ESRegistries.SNOW_DEFINITIONS);
         if (snowDefinitions.isEmpty()) {

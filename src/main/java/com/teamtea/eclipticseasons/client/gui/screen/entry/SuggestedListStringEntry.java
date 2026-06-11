@@ -12,11 +12,13 @@ import net.minecraft.client.gui.layouts.GridLayout;
 import net.minecraft.client.gui.layouts.LayoutElement;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.Util;
+import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.common.ModConfigSpec;
 import org.jspecify.annotations.NonNull;
 
@@ -37,6 +39,7 @@ public class SuggestedListStringEntry extends ConfigEntry.SpecEntry<List<? exten
     }
 
     public static <T> String getName(Identifier key, ResourceKey<Registry<T>> rk) {
+        if (key == null) return "";
         String[] split = rk.identifier().getPath().split("/");
         return Component.translatable(Util.makeDescriptionId(split[split.length - 1].replace("dimension_type", "dimension"), key)).getString();
     }
@@ -49,8 +52,23 @@ public class SuggestedListStringEntry extends ConfigEntry.SpecEntry<List<? exten
             for (Identifier identifier : Minecraft.getInstance().level.registryAccess().lookupOrThrow(rk).keySet()) {
                 wks.add(new WK(identifier.toString(), getName(identifier, rk)));
             }
+        } else if (BuiltInRegistries.REGISTRY.containsKey((ResourceKey) rk)) {
+            if (BuiltInRegistries.REGISTRY.getOrThrow((ResourceKey) rk).value() instanceof Registry<?> registry) {
+                Registry<T> registry2 = (Registry<T>) registry;
+                for (var identifier : registry2.keySet()) {
+                    wks.add(new WK(identifier.toString(), getName(identifier, rk)));
+                }
+            }
         } else {
-            wks = null;
+            for (String s : spec.get()) {
+                wks.add(new WK(s, getName(Identifier.tryParse(s), rk)));
+            }
+            if (Registries.DIMENSION_TYPE.equals(rk)) {
+                for (var idk : List.of(Level.OVERWORLD,Level.NETHER, Level.END)) {
+                    var identifier = idk.identifier();
+                    wks.add(new WK(identifier.toString(), getName(identifier, rk)));
+                }
+            }
         }
         return new SuggestedListStringEntry(spec, wks);
     }
@@ -74,7 +92,7 @@ public class SuggestedListStringEntry extends ConfigEntry.SpecEntry<List<? exten
 
     @Override
     public LayoutElement buildLayout(ESModConfigScreen screen, int x, int y, int width) {
-        GridLayout gridLayout = new GridLayout();
+        net.minecraft.client.gui.layouts.GridLayout gridLayout = new net.minecraft.client.gui.layouts.GridLayout();
         gridLayout.defaultCellSetting().paddingHorizontal(4).paddingBottom(3).alignHorizontallyCenter();
         GridLayout.RowHelper helper = gridLayout.createRowHelper(3);
         helper.addChild(new StringWidget(Component.empty().append(label).withStyle(ChatFormatting.ITALIC), screen.getFont()), 3);
@@ -123,6 +141,7 @@ public class SuggestedListStringEntry extends ConfigEntry.SpecEntry<List<? exten
     private void createNewBox(ESModConfigScreen screen, int width, String string, GridLayout.RowHelper helper, int index, List<String> strings) {
         EditBox editBox = new FocuseListnerEditBox(screen, width);
         editBox.setValue(string);
+        editBox.setMaxLength(Integer.MAX_VALUE);
         helper.addChild(editBox);
         SuggestWidget suggestWidget = screen.getGlobalSuggestWidget();
         editBox.setResponder(text -> {

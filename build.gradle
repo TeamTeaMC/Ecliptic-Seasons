@@ -287,11 +287,11 @@ dependencies {
     compileOnly "org.sinytra.forgified-fabric-api:fabric-renderer-api-v1:3.4.0+acb05a39d1"
     compileOnly "org.sinytra.forgified-fabric-api:fabric-renderer-indigo:1.7.0+acb05a39d1"
 
-    sodiumOuter "maven.modrinth:sodium:mc26.1.2-0.8.12-beta.1-neoforge"
+    sodiumOuter "maven.modrinth:sodium:mc26.1.2-0.8.12-neoforge"
     compileOnly fileTree(dir: sodiumJarJarDir, include: ['*.jar'])
 
-    implementation "maven.modrinth:sodium:mc26.1.2-0.8.12-beta.1-neoforge"
-    compileOnly "maven.modrinth:iris:1.10.9+26.1-neoforge"
+    implementation "maven.modrinth:sodium:mc26.1.2-0.8.12-neoforge"
+    implementation "maven.modrinth:iris:1.10.9+26.1-neoforge"
 
     compileOnly "maven.modrinth:voxy:0.2.14-alpha"
 
@@ -305,7 +305,7 @@ dependencies {
     }
 
     println "---- [DEBUG] onlyMain----"
-    onlyMainRuntimeOnly "curse.maven:journeymap-32274:7812823"
+    onlyMainRuntimeOnly "curse.maven:journeymap-32274:8227986"
     onlyMainRuntimeOnly("curse.maven:spark-361579:7815877")
     println("----Scan onlyMainRuntimeOnly libs begin----")
     fileTree(dir: 'libs', include: ['*.jar']).each { File file ->

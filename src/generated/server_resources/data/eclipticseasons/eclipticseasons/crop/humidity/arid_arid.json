@@ -1,13 +1,16 @@
 {
   "humidity": {
     "arid": {
-      "grow_chance": 1.01
+      "grow_chance": 1.01,
+      "fertile_chance": 1.01
     },
     "dry": {
-      "grow_chance": 0.5
+      "grow_chance": 0.5,
+      "fertile_chance": 0.5
     },
     "average": {
-      "grow_chance": 0.15
+      "grow_chance": 0.15,
+      "fertile_chance": 0.15
     },
     "moist": {
       "grow_chance": 0.0,

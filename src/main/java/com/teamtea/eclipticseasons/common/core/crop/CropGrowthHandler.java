@@ -97,6 +97,7 @@ public final class CropGrowthHandler {
 
     // note 确实会变成BlockGrowFeatureEvent再触发一次，很麻烦，那只能阻止一下了，a计划是弄一个缓存map
     public static void beforeCropGrowUp(BonemealEvent event) {
+        if (!CommonConfig.Crop.restrictBoneMeal.get()) return;
         // if(!event.isValidBonemealTarget())return;
         var block = event.getState();
         var world = event.getLevel();
@@ -128,7 +129,7 @@ public final class CropGrowthHandler {
     private final static IdentityHashMap<Boolean, Holder<AgroClimaticZone>> DefaultCropClimateType = new IdentityHashMap<>();
 
 
-    public static void resetUpdate(HolderLookup.Provider registryAccess, boolean isServer) {
+    public static void resetUpdate(RegistryAccess registryAccess, boolean isServer) {
         if (isServer) {
 
             var structures = registryAccess.lookup(ESRegistries.WETTER);
@@ -660,8 +661,10 @@ public final class CropGrowthHandler {
             } else if (event instanceof BlockGrowFeatureEvent blockGrowFeatureEvent) {
                 blockGrowFeatureEvent.setCanceled(true);
             } else if (event instanceof BonemealEvent bonemealEvent) {
-                bonemealEvent.setSuccessful(CommonConfig.Crop.boneMealConsumeOnFailure.get());
-                bonemealEvent.setCanceled(true);
+                if (bonemealEvent.isValidBonemealTarget()) {
+                    bonemealEvent.setSuccessful(CommonConfig.Crop.boneMealConsumeOnFailure.get());
+                    bonemealEvent.setCanceled(true);
+                }
             }
         } else if (flag == PASS) {
             if (event instanceof CropGrowEvent.Pre cropGrowEvent) {
@@ -707,6 +710,7 @@ public final class CropGrowthHandler {
         } else {
             if (event instanceof BonemealEvent bonemealEvent) {
                 if (bonemealEvent.getPlayer() instanceof ServerPlayer player
+                        && bonemealEvent.isValidBonemealTarget()
                         && !(player instanceof FakePlayer)
                         && CommonConfig.Crop.boneMealFailureMessage.get()) {
                     if (growParameter != null && growParameter.fertile_chance() == 0) {

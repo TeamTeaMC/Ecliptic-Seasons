@@ -25,7 +25,7 @@ public record GrowthWorldUiState(
 
         lines.add(Component.translatable(
                 "ui.eclipticseasons.growth_chance",
-                String.format("%.0f%%", info.growChance())
+                String.format(info.growChance() > 1 ? "%.0f%%" : "%.1f%%", info.growChance())
         ));
 
         lines.add(Component.translatable(
@@ -35,9 +35,11 @@ public record GrowthWorldUiState(
         if (!CommonConfig.Crop.simpleGreenHouse.get()) {
             if (info.needsSeasonCore()) {
                 lines.add(Component.translatable("ui.eclipticseasons.issue.needs_season_core"));
-            } else if (info.humidityMismatch()) {
+            }
+            if (info.humidityMismatch()) {
                 lines.add(Component.translatable("ui.eclipticseasons.issue.humidity_mismatch"));
-            } else {
+            }
+            if (!info.humidityMismatch() && !info.needsSeasonCore()) {
                 lines.add(Component.translatable("ui.eclipticseasons.issue.all_conditions_met"));
             }
         }

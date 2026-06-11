@@ -8,6 +8,7 @@ import com.teamtea.eclipticseasons.common.registry.ESRegistries;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 
@@ -18,7 +19,7 @@ public class SpecialDaysManager {
     public static final Map<SolarTerm, List<Holder<SpecialDays>>> SPECIAL_DAYS = new EnumMap<>(SolarTerm.class);
     public static final Map<SolarTerm, List<Holder<SpecialDays>>> SPECIAL_DAYS_CLIENT = new EnumMap<>(SolarTerm.class);
 
-    public static void init(HolderLookup.Provider registryAccess, boolean isServer) {
+    public static void init(RegistryAccess registryAccess, boolean isServer) {
         HolderLookup.RegistryLookup<SpecialDays> specialDaysRegistryLookup = registryAccess.lookupOrThrow(ESRegistries.SPECIAL_DAYS);
         List<Holder.Reference<SpecialDays>> specialDays = ESSortInfo.sorted(specialDaysRegistryLookup.listElements().toList());
         Map<SolarTerm, List<Holder<SpecialDays>>> map = isServer ? SPECIAL_DAYS : SPECIAL_DAYS_CLIENT;

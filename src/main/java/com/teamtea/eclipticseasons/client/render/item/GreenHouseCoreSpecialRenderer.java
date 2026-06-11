@@ -93,10 +93,11 @@ public class GreenHouseCoreSpecialRenderer implements SpecialModelRenderer<Integ
         renderTicks = renderTicks * 3000 / 2000;
 
         // VertexConsumer vertexconsumer2 = getMaterialFromItem(stack).buffer(bufferIn, RenderType::itemEntityTranslucentCull);
-        MultiBufferSource.BufferSource bufferIn = Minecraft.getInstance().renderBuffers().bufferSource();
-        VertexConsumer vertexconsumer2 = bufferIn.getBuffer(RenderTypes.entityTranslucentCullItemTarget(texture));
+        // MultiBufferSource.BufferSource bufferIn = Minecraft.getInstance().renderBuffers().bufferSource();
+        // VertexConsumer vertexconsumer2 = bufferIn.getBuffer(RenderTypes.entityTranslucentCullItemTarget(texture));
         doAnimate(modelPart, renderTicks, displayContext);
-        modelPart.render(poseStack, vertexconsumer2, lightCoords, OverlayTexture.NO_OVERLAY);
+        collector.submitModelPart(modelPart,poseStack,RenderTypes.entityTranslucentCullItemTarget(texture),lightCoords, OverlayTexture.NO_OVERLAY,null);
+        // modelPart.render(poseStack, vertexconsumer2, lightCoords, OverlayTexture.NO_OVERLAY);
         poseStack.popPose();
     }
 

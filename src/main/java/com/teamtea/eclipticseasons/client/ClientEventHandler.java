@@ -13,6 +13,7 @@ import com.teamtea.eclipticseasons.client.render.worldui.GrowthInfoClientCache;
 import com.teamtea.eclipticseasons.client.render.worldui.GrowthWorldUiRenderer;
 import com.teamtea.eclipticseasons.client.render.chunk.IceKeeper;
 import com.teamtea.eclipticseasons.client.util.ClientRef;
+import com.teamtea.eclipticseasons.common.AllListener;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
 import com.teamtea.eclipticseasons.common.core.crop.NaturalPlantHandler;
@@ -48,6 +49,7 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.SpawnEggItem;
 import net.minecraft.world.level.biome.Biome;
 import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.loading.FMLEnvironment;
@@ -284,11 +286,21 @@ public final class ClientEventHandler {
         // ClientCon.ServerName=event.getPlayer().connection.getConnection().getRemoteAddress().toString();
     }
 
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public static void onTagsUpdatedEventEarly_0(TagsUpdatedEvent.ClientPacketReceived tagsUpdatedEvent) {
+        AllListener.onTagsUpdatedEventEarly(tagsUpdatedEvent);
+    }
+
+    // TagsUpdatedEvent invoke before ServerAboutToStartEvent
     @SubscribeEvent
-    public static void onTagsUpdatedEvent(TagsUpdatedEvent tagsUpdatedEvent) {
-        if (tagsUpdatedEvent.getUpdateCause() == TagsUpdatedEvent.UpdateCause.CLIENT_PACKET_RECEIVED) {
-            ClientRef.updateClientSide(tagsUpdatedEvent.getLookupProvider());
-        }
+    public static void onTagsUpdatedEvent_0(TagsUpdatedEvent.ClientPacketReceived tagsUpdatedEvent) {
+        AllListener.onTagsUpdatedEvent(tagsUpdatedEvent);
+        onTagsUpdatedEvent(tagsUpdatedEvent);
+    }
+
+    @SubscribeEvent
+    public static void onTagsUpdatedEvent( TagsUpdatedEvent.ClientPacketReceived tagsUpdatedEvent) {
+        ClientRef.updateClientSide(tagsUpdatedEvent.getRegistries());
     }
 
 

@@ -38,7 +38,6 @@ public class GreenHouseCoreRenderer implements BlockEntityRenderer<GreenHouseCor
     }
 
 
-
     @Override
     public GreenHouseCoreState createRenderState() {
         return new GreenHouseCoreState();
@@ -71,17 +70,21 @@ public class GreenHouseCoreRenderer implements BlockEntityRenderer<GreenHouseCor
         GreenHouseCoreBlock block = state.getBlock();
         int combinedLight = TryModel.getLightFromBlock(block, stage);
 
-        MultiBufferSource.BufferSource bufferIn = Minecraft.getInstance().renderBuffers().bufferSource();
+        // MultiBufferSource.BufferSource bufferIn = Minecraft.getInstance().renderBuffers().crumblingBufferSource();
         Identifier identifier = TryModel.getMaterialFromBlock(block, stage).sprite()
                 .withPrefix("textures/")
                 .withSuffix(".png");
-        VertexConsumer vertexconsumer2 = bufferIn.getBuffer(RenderTypes.itemTranslucent(identifier));
+        // VertexConsumer vertexconsumer2 = bufferIn.getBuffer(RenderTypes.itemTranslucent(identifier));
 
         TryKeyframe.animate(useModel, TryModel.animation, state.getRenderTicks(), size, ANIMATION_VECTOR_CACHE);
         poseStack.translate(0, 0.5, 0);
         useModel.x += 1;
-        useModel.render(poseStack, vertexconsumer2, combinedLight, OverlayTexture.NO_OVERLAY);
 
+
+        submitNodeCollector.submitModelPart(useModel, poseStack, RenderTypes.itemTranslucent(identifier), combinedLight, OverlayTexture.NO_OVERLAY, null);
+        // submitNodeCollector.submitCustomGeometry(poseStack, RenderTypes.itemTranslucent(identifier),
+        //         (pose, buffer) ->
+        //                 useModel.render(poseStack, buffer, combinedLight, OverlayTexture.NO_OVERLAY));
         // GreenHouseCoreModel greenHouseCoreModel = new GreenHouseCoreModel(useModel, identifier);
         // greenHouseCoreModel.setupAnim(state);
         // submitNodeCollector.submitModel(greenHouseCoreModel,state,poseStack,identifier, LightCoordsUtil.block(15),OverlayTexture.NO_OVERLAY,-1,null);

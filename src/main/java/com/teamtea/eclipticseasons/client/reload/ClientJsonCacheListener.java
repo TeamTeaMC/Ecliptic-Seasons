@@ -19,6 +19,7 @@ import com.teamtea.eclipticseasons.api.data.client.model.seasonal.SeasonalTextur
 import com.teamtea.eclipticseasons.api.data.client.ui.UIParser;
 import com.teamtea.eclipticseasons.api.data.season.SnowDefinition;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.FileToIdConverter;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.Resource;
@@ -186,7 +187,7 @@ public class ClientJsonCacheListener<T> extends SimplePreparableReloadListener<M
     }
 
 
-    public Map<Identifier, T> build(Codec<T> codec, HolderLookup.Provider registryAccess) {
+    public Map<Identifier, T> build(Codec<T> codec, RegistryAccess registryAccess) {
         return getIdentifierTMap(codec, registryAccess.createSerializationContext(JsonOps.INSTANCE));
     }
 

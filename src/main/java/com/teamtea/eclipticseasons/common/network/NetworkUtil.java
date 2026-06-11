@@ -3,6 +3,7 @@ package com.teamtea.eclipticseasons.common.network;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.data.weather.special_effect.WeatherEffect;
 import com.teamtea.eclipticseasons.api.event.SolarTermChangeEvent;
+import com.teamtea.eclipticseasons.client.render.worldui.GrowthInfoClientCache;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeRainDispatcher;
 import com.teamtea.eclipticseasons.common.registry.AttachmentRegistry;
 import com.teamtea.eclipticseasons.client.color.season.BiomeColorsHandler;
@@ -17,6 +18,7 @@ import com.teamtea.eclipticseasons.common.registry.ESRegistries;
 import com.teamtea.eclipticseasons.config.ClientConfig;
 import com.teamtea.eclipticseasons.config.sync.ESConfigFilePayload;
 import com.teamtea.eclipticseasons.config.sync.ESConfigSync;
+import com.teamtea.eclipticseasons.config.sync.ESConfigToClientPayload;
 import com.teamtea.eclipticseasons.config.sync.IESConfigMessage;
 import net.minecraft.core.Registry;
 import net.minecraft.core.SectionPos;
@@ -42,7 +44,7 @@ public class NetworkUtil {
                 data.setSolarTermsDay(solarTermsMessage.solarDay);
                 SolarTerm solarTerm = data.getSolarTerm();
                 if (solarTerm != old) {
-                    NeoForge.EVENT_BUS.post(new SolarTermChangeEvent(old, solarTerm, context.player().level(),solarTermsMessage.solarDay));
+                    NeoForge.EVENT_BUS.post(new SolarTermChangeEvent(old, solarTerm, context.player().level(), solarTermsMessage.solarDay));
                     ClientCon.getAgent().setTermChange(true);
                 }
                 // note 不再需要更新
@@ -194,4 +196,15 @@ public class NetworkUtil {
         ESConfigSync.INSTANCE.receiveSyncedConfig(payload.contents(), payload.fileName());
     }
 
+    public static void handleGrowthInfoQuery(GrowthInfoMessage payload, IPayloadContext context) {
+        context.enqueueWork(() -> {
+            if (context.player().level() instanceof Level level) {
+                GrowthInfoClientCache.update(payload.getInfo().orElse(null));
+            }
+        }).exceptionally(e -> {
+            // Handle exception
+            context.disconnect(Component.translatable("eclipticseasons.networking.failed", e.getMessage()));
+            return null;
+        });
+    }
 }
