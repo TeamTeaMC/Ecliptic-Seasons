@@ -1,0 +1,1 @@
+- Fixed several biome lookup compatibility issues.

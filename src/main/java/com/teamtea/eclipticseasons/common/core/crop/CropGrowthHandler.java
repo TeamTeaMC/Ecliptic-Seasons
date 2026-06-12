@@ -50,6 +50,7 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.*;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.BonemealableBlock;
@@ -115,7 +116,7 @@ public final class CropGrowthHandler {
 
     private final static Map<Block, List<WetterStructure>> wetterStructures = new IdentityHashMap<>();
 
-    private final static Map<Biome, Holder<AgroClimaticZone>> cropClimateTypeMap = new IdentityHashMap<>();
+    private final static Map<Holder<Biome>, Holder<AgroClimaticZone>> cropClimateTypeMap = new IdentityHashMap<>();
     private final static Map<ResourceLocation, CropGrowControlBuilder> builderCachMap = new HashMap<>();
     private final static Map<Block, Map<Holder<AgroClimaticZone>, CropGrowControl>> CROP_GROW_MAP = new IdentityHashMap<>();
 
@@ -177,7 +178,7 @@ public final class CropGrowthHandler {
             if (!agroClimaticZoneReference.isBound()) continue;
             HolderSet<Biome> biomes = agroClimaticZoneReference.value().biomes();
             for (int i = 0; i < biomes.size(); i++) {
-                cropClimateTypeMap.put(biomes.get(i).value(), agroClimaticZoneReference);
+                cropClimateTypeMap.put(biomes.get(i), agroClimaticZoneReference);
             }
         }
 
@@ -498,14 +499,24 @@ public final class CropGrowthHandler {
     }
 
     public static @Nullable Holder<AgroClimaticZone> getclimateTypeHolder(Holder<Biome> biomeHolder) {
-        return cropClimateTypeMap.getOrDefault(biomeHolder.value(), null);
+        return cropClimateTypeMap.getOrDefault(biomeHolder, null);
     }
 
     public static Holder<Biome> getCropBiome(LevelAccessor level, BlockPos pos) {
-        int i = QuartPos.fromBlock(pos.getX());
-        int j = QuartPos.fromBlock(pos.getY());
-        int k = QuartPos.fromBlock(pos.getZ());
-        return level.getNoiseBiome(i, j, k);
+        try {
+            int i = QuartPos.fromBlock(pos.getX());
+            int j = QuartPos.fromBlock(pos.getY());
+            int k = QuartPos.fromBlock(pos.getZ());
+            return level.getNoiseBiome(i, j, k);
+        } catch (NullPointerException | IllegalStateException e) {
+            EclipticSeasons.LOGGER.warn(
+                    "Failed to get biome at {} in level {}, fallback to plains biome.",
+                    pos,
+                    level,
+                    e
+            );
+            return level.registryAccess().registryOrThrow(Registries.BIOME).getHolderOrThrow(Biomes.PLAINS);
+        }
     }
 
     public static @Nullable Map<Holder<AgroClimaticZone>, CropGrowControl> getControlMap(Block block) {
