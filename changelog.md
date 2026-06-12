@@ -1,1 +1,1 @@
-- #159 [Game crash while trying to access dreams with No Man's Land mod](https://github.com/TeamTeaMC/Ecliptic-Seasons/issues/159).
+- [**Fancy Entity Renderer** Import] #? java.lang.IllegalStateException: Trying to access unbound value 'ResourceKey[minecraft:worldgen/biome / minecraft:plains]' from registry it.crystalnest.fancy_entity_renderer.api.entity.player.mock.FancyRegistryMock$1

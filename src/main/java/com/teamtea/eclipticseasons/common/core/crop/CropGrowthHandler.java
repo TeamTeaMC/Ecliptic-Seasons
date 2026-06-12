@@ -120,7 +120,7 @@ public final class CropGrowthHandler {
 
     // private final static List<WetterStructure> wetterStructures = new ArrayList<>();
     private final static Map<Block, List<WetterStructure>> wetterStructures = new IdentityHashMap<>();
-    private final static Map<Biome, Holder<AgroClimaticZone>> cropClimateTypeMap = new IdentityHashMap<>();
+    private final static Map<Holder<Biome>, Holder<AgroClimaticZone>> cropClimateTypeMap = new IdentityHashMap<>();
     private final static Map<ResourceLocation, CropGrowControlBuilder> CropGrowControlBuilder = new HashMap<>();
     private final static Map<Block, Map<Holder<AgroClimaticZone>, CropGrowControl>> CROP_GROW_MAP = new IdentityHashMap<>();
 
@@ -174,7 +174,7 @@ public final class CropGrowthHandler {
             if (!agroClimaticZoneReference.isBound()) continue;
             HolderSet<Biome> biomes = agroClimaticZoneReference.value().biomes();
             for (int i = 0; i < biomes.size(); i++) {
-                cropClimateTypeMap.put(biomes.get(i).value(), agroClimaticZoneReference);
+                cropClimateTypeMap.put(biomes.get(i), agroClimaticZoneReference);
             }
         }
 
@@ -477,7 +477,7 @@ public final class CropGrowthHandler {
     }
 
     public static @Nullable Holder<AgroClimaticZone> getclimateTypeHolder(Holder<Biome> biomeHolder) {
-        return cropClimateTypeMap.getOrDefault(biomeHolder.value(), null);
+        return cropClimateTypeMap.getOrDefault(biomeHolder, null);
     }
 
     public static Holder<Biome> getCropBiome(LevelAccessor level, BlockPos pos) {
