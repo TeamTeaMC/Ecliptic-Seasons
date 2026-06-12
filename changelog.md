@@ -1,1 +1,1 @@
-- [**Fancy Entity Renderer** Import] #? java.lang.IllegalStateException: Trying to access unbound value 'ResourceKey[minecraft:worldgen/biome / minecraft:plains]' from registry it.crystalnest.fancy_entity_renderer.api.entity.player.mock.FancyRegistryMock$1
+- Fixed several biome lookup compatibility issues.

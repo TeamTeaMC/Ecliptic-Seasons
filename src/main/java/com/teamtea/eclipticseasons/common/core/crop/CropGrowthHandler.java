@@ -48,6 +48,7 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.*;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkAccess;
@@ -481,10 +482,20 @@ public final class CropGrowthHandler {
     }
 
     public static Holder<Biome> getCropBiome(LevelAccessor level, BlockPos pos) {
-        int i = QuartPos.fromBlock(pos.getX());
-        int j = QuartPos.fromBlock(pos.getY());
-        int k = QuartPos.fromBlock(pos.getZ());
-        return level.getNoiseBiome(i, j, k);
+        try {
+            int i = QuartPos.fromBlock(pos.getX());
+            int j = QuartPos.fromBlock(pos.getY());
+            int k = QuartPos.fromBlock(pos.getZ());
+            return level.getNoiseBiome(i, j, k);
+        } catch (NullPointerException | IllegalStateException e) {
+            EclipticSeasons.LOGGER.warn(
+                    "Failed to get biome at {} in level {}, fallback to plains biome.",
+                    pos,
+                    level,
+                    e
+            );
+            return level.registryAccess().registryOrThrow(Registries.BIOME).getHolderOrThrow(Biomes.PLAINS);
+        }
     }
 
     public static @Nullable Map<Holder<AgroClimaticZone>, CropGrowControl> getControlMap(Block block) {
