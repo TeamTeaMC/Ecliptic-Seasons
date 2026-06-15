@@ -106,11 +106,13 @@ neoForge {
             // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
 
+            systemProperty "guideme.${mod_id}.guide.sources", file("src/main/resources/assets/${mod_id}/guides").absolutePath
+//            systemProperty('guideme.showOnStartup', "${mod_id}:seasons_chronicle") // Start at index.md
+
 //            https://docs.neoforged.net/toolchain/docs/plugins/mdg/#more-configuration
 //            // Changes which local mods are loaded in this run.
 //            // This defaults to all mods declared in this project (inside of mods { ... } ).
 //            loadedMods = [mods.<mod name 1>, mods.<mod name 2>]
-
             jvmArguments = [
 //                '-XX:TieredStopAtLevel=3',
 //                "-XX:+AllowEnhancedClassRedefinition",
@@ -298,7 +300,7 @@ dependencies {
     compileOnly "curse.maven:distant-horizons-508933:7948188"
 //    onlyMainRuntimeOnly "curse.maven:distant-horizons-508933:7948188"
 
-
+    implementation "curse.maven:guideme-1173950:8204880"
 //    'runClient -PincludeDebug=true'
     if (project.findProperty('includeDebug') == 'true') {
 

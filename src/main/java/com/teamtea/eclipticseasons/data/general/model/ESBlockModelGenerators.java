@@ -3,6 +3,7 @@ package com.teamtea.eclipticseasons.data.general.model;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.client.core.ExtraModelManager;
 import com.teamtea.eclipticseasons.common.block.HygrometerBlock;
+import com.teamtea.eclipticseasons.common.block.SeasonSensorBlock;
 import com.teamtea.eclipticseasons.common.registry.BlockRegistry;
 import lombok.Builder;
 import lombok.Data;
@@ -35,7 +36,6 @@ public class ESBlockModelGenerators {
     public static final ModelTemplate GRASS_FLOWER = ModelTemplates.create(EclipticSeasons.rl("grass_flower").toString(), TS_1);
     public static final ModelTemplate TINTED_GRASS_FLOWER = ModelTemplates.create(EclipticSeasons.rl("tinted_grass_flower").toString(), TS_1);
 
-
     public void run() {
         addSimple(BlockRegistry.wind_chimes.get());
         addSimple(BlockRegistry.paper_wind_chimes.get());
@@ -47,6 +47,9 @@ public class ESBlockModelGenerators {
 
         addSimple(BlockRegistry.dehumidifier.get());
         models.registerSimpleItemModel(BlockRegistry.dehumidifier.get(), EclipticSeasons.rl("block/dehumidifier"));
+
+        addSensorBlock(BlockRegistry.season_sensor.get());
+        models.registerSimpleItemModel(BlockRegistry.season_sensor.get(), EclipticSeasons.rl("block/season_sensor"));
 
         addCopperGrate(BlockRegistry.block_in_copper_grate_block.get());
         addCopperGrate(BlockRegistry.block_in_exposed_copper_grate_block.get());
@@ -123,6 +126,29 @@ public class ESBlockModelGenerators {
                                     return BlockModelGenerators.plainVariant(identifier);
                                 }
                         ))
+                .with(BlockModelGenerators.ROTATION_HORIZONTAL_FACING));
+    }
+
+    public void addSensorBlock(Block block) {
+        models.blockStateOutput.accept(MultiVariantGenerator
+                .dispatch(block)
+                .with(PropertyDispatch.initial(SeasonSensorBlock.SEASON, SeasonSensorBlock.ON_SIGNAL)
+                        .generate((season, signal) ->
+                                {
+                                    Identifier rl = EclipticSeasons.rl("block/" + block.builtInRegistryHolder().getKey().identifier().getPath() + "_" + season.getName())
+                                            .withSuffix(signal ? "" : "_full");
+                                    if (!signal) {
+                                        TextureMapping textureMapping = new TextureMapping().put(TS_1, new Material(EclipticSeasons.rl("block/season_sensor_light_full")));
+                                        try {
+                                            rl = ModelTemplates.create(EclipticSeasons.rl("season_sensor_"+season.getName()).toString(), TS_1)
+                                                    .create(rl, textureMapping, models.modelOutput);
+                                        } catch (Exception _) {
+                                        }
+                                    }
+                                    return BlockModelGenerators.plainVariant(rl);
+                                }
+                        )
+                )
                 .with(BlockModelGenerators.ROTATION_HORIZONTAL_FACING));
     }
 

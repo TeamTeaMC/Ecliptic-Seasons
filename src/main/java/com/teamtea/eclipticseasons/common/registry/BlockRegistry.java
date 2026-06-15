@@ -7,6 +7,7 @@ import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
+import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
@@ -85,9 +86,20 @@ public class BlockRegistry {
             BLOCK_DEFERRED_REGISTER.registerBlock(
                     "dehumidifier",
                     DehumidifierBlock::new,
-                    p->p
+                    p -> p
                             .mapColor(MapColor.WOOD)
                             .strength(2.0F, 3.0F)
+                            .sound(SoundType.WOOD)
+                            .noOcclusion()
+                            .randomTicks()
+            );
+
+    public static final DeferredBlock<SeasonSensorBlock> season_sensor =
+            BLOCK_DEFERRED_REGISTER.registerBlock(
+                    "season_sensor",
+                    SeasonSensorBlock::new,
+                    p -> p
+                            .strength(0.5F)
                             .sound(SoundType.WOOD)
                             .noOcclusion()
                             .randomTicks()

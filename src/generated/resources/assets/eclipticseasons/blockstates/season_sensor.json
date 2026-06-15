@@ -1,0 +1,124 @@
+{
+  "variants": {
+    "facing=east,on_signal=false,season=autumn": {
+      "model": "eclipticseasons:block/season_sensor_autumn_full",
+      "y": 90
+    },
+    "facing=east,on_signal=false,season=spring": {
+      "model": "eclipticseasons:block/season_sensor_spring_full",
+      "y": 90
+    },
+    "facing=east,on_signal=false,season=summer": {
+      "model": "eclipticseasons:block/season_sensor_summer_full",
+      "y": 90
+    },
+    "facing=east,on_signal=false,season=winter": {
+      "model": "eclipticseasons:block/season_sensor_winter_full",
+      "y": 90
+    },
+    "facing=east,on_signal=true,season=autumn": {
+      "model": "eclipticseasons:block/season_sensor_autumn",
+      "y": 90
+    },
+    "facing=east,on_signal=true,season=spring": {
+      "model": "eclipticseasons:block/season_sensor_spring",
+      "y": 90
+    },
+    "facing=east,on_signal=true,season=summer": {
+      "model": "eclipticseasons:block/season_sensor_summer",
+      "y": 90
+    },
+    "facing=east,on_signal=true,season=winter": {
+      "model": "eclipticseasons:block/season_sensor_winter",
+      "y": 90
+    },
+    "facing=north,on_signal=false,season=autumn": {
+      "model": "eclipticseasons:block/season_sensor_autumn_full"
+    },
+    "facing=north,on_signal=false,season=spring": {
+      "model": "eclipticseasons:block/season_sensor_spring_full"
+    },
+    "facing=north,on_signal=false,season=summer": {
+      "model": "eclipticseasons:block/season_sensor_summer_full"
+    },
+    "facing=north,on_signal=false,season=winter": {
+      "model": "eclipticseasons:block/season_sensor_winter_full"
+    },
+    "facing=north,on_signal=true,season=autumn": {
+      "model": "eclipticseasons:block/season_sensor_autumn"
+    },
+    "facing=north,on_signal=true,season=spring": {
+      "model": "eclipticseasons:block/season_sensor_spring"
+    },
+    "facing=north,on_signal=true,season=summer": {
+      "model": "eclipticseasons:block/season_sensor_summer"
+    },
+    "facing=north,on_signal=true,season=winter": {
+      "model": "eclipticseasons:block/season_sensor_winter"
+    },
+    "facing=south,on_signal=false,season=autumn": {
+      "model": "eclipticseasons:block/season_sensor_autumn_full",
+      "y": 180
+    },
+    "facing=south,on_signal=false,season=spring": {
+      "model": "eclipticseasons:block/season_sensor_spring_full",
+      "y": 180
+    },
+    "facing=south,on_signal=false,season=summer": {
+      "model": "eclipticseasons:block/season_sensor_summer_full",
+      "y": 180
+    },
+    "facing=south,on_signal=false,season=winter": {
+      "model": "eclipticseasons:block/season_sensor_winter_full",
+      "y": 180
+    },
+    "facing=south,on_signal=true,season=autumn": {
+      "model": "eclipticseasons:block/season_sensor_autumn",
+      "y": 180
+    },
+    "facing=south,on_signal=true,season=spring": {
+      "model": "eclipticseasons:block/season_sensor_spring",
+      "y": 180
+    },
+    "facing=south,on_signal=true,season=summer": {
+      "model": "eclipticseasons:block/season_sensor_summer",
+      "y": 180
+    },
+    "facing=south,on_signal=true,season=winter": {
+      "model": "eclipticseasons:block/season_sensor_winter",
+      "y": 180
+    },
+    "facing=west,on_signal=false,season=autumn": {
+      "model": "eclipticseasons:block/season_sensor_autumn_full",
+      "y": 270
+    },
+    "facing=west,on_signal=false,season=spring": {
+      "model": "eclipticseasons:block/season_sensor_spring_full",
+      "y": 270
+    },
+    "facing=west,on_signal=false,season=summer": {
+      "model": "eclipticseasons:block/season_sensor_summer_full",
+      "y": 270
+    },
+    "facing=west,on_signal=false,season=winter": {
+      "model": "eclipticseasons:block/season_sensor_winter_full",
+      "y": 270
+    },
+    "facing=west,on_signal=true,season=autumn": {
+      "model": "eclipticseasons:block/season_sensor_autumn",
+      "y": 270
+    },
+    "facing=west,on_signal=true,season=spring": {
+      "model": "eclipticseasons:block/season_sensor_spring",
+      "y": 270
+    },
+    "facing=west,on_signal=true,season=summer": {
+      "model": "eclipticseasons:block/season_sensor_summer",
+      "y": 270
+    },
+    "facing=west,on_signal=true,season=winter": {
+      "model": "eclipticseasons:block/season_sensor_winter",
+      "y": 270
+    }
+  }
+}

@@ -255,7 +255,7 @@ public class ESRecipeProvider extends VanillaRecipeProvider {
                 .unlockedBy("has_water_bucket", has(Items.WATER_BUCKET))
                 .save(output);
 
-        ShapedRecipeBuilder.shaped(items,RecipeCategory.BUILDING_BLOCKS, BlockRegistry.dehumidifier.get())
+        ShapedRecipeBuilder.shaped(items, RecipeCategory.BUILDING_BLOCKS, BlockRegistry.dehumidifier.get())
                 .pattern("PPP")
                 .pattern("PHN")
                 .pattern("SSS")
@@ -264,6 +264,18 @@ public class ESRecipeProvider extends VanillaRecipeProvider {
                 .define('N', ItemTags.WOODEN_SLABS)
                 .define('S', Items.IRON_NUGGET)
                 .unlockedBy("has_hay_block", has(Blocks.HAY_BLOCK))
+                .save(output);
+
+        ShapedRecipeBuilder.shaped(items, RecipeCategory.REDSTONE, BlockRegistry.season_sensor.get())
+                .pattern("GCG")
+                .pattern("SRS")
+                .pattern("WWW")
+                .define('G', Tags.Items.GLASS_BLOCKS)
+                .define('C', Items.COPPER_INGOT)
+                .define('S', Items.REDSTONE)
+                .define('R', Items.CLOCK)
+                .define('W', ItemTags.PLANKS)
+                .unlockedBy("has_redstone", has(Items.REDSTONE))
                 .save(output);
     }
 

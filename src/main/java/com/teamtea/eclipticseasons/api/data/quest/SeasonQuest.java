@@ -92,7 +92,7 @@ public record SeasonQuest(
                 0.0F,
                 Optional.of(AllOfCondition.allOf(
                         createSeasonCondition(),
-                        LootItemRandomChanceCondition.randomChance(0.28f)
+                        LootItemRandomChanceCondition.randomChance(0.56f)
                 ).build()),
                 List.of()
         );

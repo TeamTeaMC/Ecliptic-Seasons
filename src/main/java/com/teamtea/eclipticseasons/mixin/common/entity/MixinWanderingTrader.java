@@ -51,7 +51,7 @@ public abstract class MixinWanderingTrader extends Entity {
             MerchantOffers offers,
             ResourceKey<TradeSet> resourceKey, CallbackInfo ci,
             @Local LootContext lootContext) {
-        if (resourceKey.equals(TradeSets.WANDERING_TRADER_UNCOMMON) && CommonConfig.Crop.enableCropHumidityControl.getAsBoolean()) {
+        if (resourceKey.equals(TradeSets.WANDERING_TRADER_UNCOMMON) && CommonConfig.Crop.enableCrop.getAsBoolean()) {
             List<Holder<VillagerTrade>> trades = new ArrayList<>();
             SeasonQuest.buildTrades(level, trades);
             addOffersFromItemListingsWithoutDuplicates(lootContext, offers, HolderSet.direct(trades), 1);

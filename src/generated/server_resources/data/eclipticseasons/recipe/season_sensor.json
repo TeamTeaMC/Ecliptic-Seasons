@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "C": "minecraft:copper_ingot",
+    "G": "#c:glass_blocks",
+    "R": "minecraft:clock",
+    "S": "minecraft:redstone",
+    "W": "#minecraft:planks"
+  },
+  "pattern": [
+    "GCG",
+    "SRS",
+    "WWW"
+  ],
+  "result": {
+    "id": "eclipticseasons:season_sensor"
+  }
+}

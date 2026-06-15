@@ -162,7 +162,7 @@ public class FireflyParticle extends SingleQuadParticle {
                 // this.stoppedByCollision=false;
             }
             if (nextPos == null || nextPos.closerThan(nowPos, 1f) || nextPos.distanceTo(nowPos) > 100) {
-                this.nextPos = findNextPosition().getCenter();
+                this.nextPos = findNextPosition(2).getCenter();
                 var re = nextPos.subtract(nowPos).multiply(0.02d, 0.02d, 0.02d);
                 this.xd = re.x;
                 this.yd = re.y;
@@ -183,22 +183,28 @@ public class FireflyParticle extends SingleQuadParticle {
         }
     }
 
-    protected BlockPos findNextPosition() {
+    protected BlockPos findNextPosition(float yRange) {
+        BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos();
 
-        var blockpos$mutableblockpos = new BlockPos.MutableBlockPos(x, y, z);
+        for (int tries = 0; tries < 8; tries++) {
+            double i = this.x + this.random.nextGaussian() * 4.0D;
+            double j = this.y + this.random.nextGaussian() * yRange;
+            double k = this.z + this.random.nextGaussian() * 4.0D;
 
-        do {
-            // int b = random.nextGaussian()*7;
-            double i = x + random.nextGaussian() * 4;
-            double j = y + random.nextGaussian() * 2;
-            double k = z + random.nextGaussian() * 4;
-            blockpos$mutableblockpos.set(i, j, k);
-            // Ecliptic.logger(blockpos$mutableblockpos);
+            mutable.set(i, j, k);
+
+            if (NaturalSpawner.isValidEmptySpawnBlock(
+                    this.level,
+                    mutable,
+                    this.level.getBlockState(mutable),
+                    this.level.getFluidState(mutable),
+                    EntityType.BAT
+            )) {
+                return mutable.immutable();
+            }
         }
-        while (!NaturalSpawner.isValidEmptySpawnBlock(level, blockpos$mutableblockpos, level.getBlockState(blockpos$mutableblockpos), level.getFluidState(blockpos$mutableblockpos), EntityType.BAT));
 
-
-        return blockpos$mutableblockpos;
+        return BlockPos.containing(this.x, this.y + 0.5D, this.z);
     }
 
 }

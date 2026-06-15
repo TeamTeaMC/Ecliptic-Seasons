@@ -3,6 +3,7 @@ package com.teamtea.eclipticseasons.common.block;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.util.codec.ESExtraCodec;
 import com.teamtea.eclipticseasons.common.block.base.SimpleEntityBlock;
@@ -43,7 +44,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Optional;
 
 public class GreenHouseCoreBlock extends SimpleEntityBlock {
-    public static final IntegerProperty SEASON_ON = IntegerProperty.create("season_on", 0, 15);
+    public static final IntegerProperty SEASON_ON = BlockStateProperties.POWER;
     public static final IntegerProperty AGE = BlockStateProperties.AGE_3;
     public static final int MAX_STAGE = 3;
     public static final MapCodec<GreenHouseCoreBlock> CODEC = RecordCodecBuilder.mapCodec(
@@ -99,9 +100,7 @@ public class GreenHouseCoreBlock extends SimpleEntityBlock {
         if (!isPowered(state)) {
             Season current = getSeason();
 
-            Pair<Season, Integer> currentSeason = GreenHouseCoreBlockEntity.getCurrentSeason(level, pos);
-
-            boolean active = currentSeason.getFirst() == current
+            boolean active = EclipticSeasonsApi.getInstance().getSeasonSignal(level, pos) == current
                     && !level.getBlockState(pos.below()).isSolidRender()
                     && !CropGrowthHandler.isInRoom(level, pos, state, Optional.empty());
 

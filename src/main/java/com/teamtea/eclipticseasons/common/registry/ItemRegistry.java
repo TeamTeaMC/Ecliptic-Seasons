@@ -8,6 +8,7 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Rarity;
 import net.neoforged.neoforge.registries.DeferredHolder;
+import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 public class ItemRegistry {
@@ -56,4 +57,5 @@ public class ItemRegistry {
 
     public static final DeferredHolder<Item, BlockItem> dehumidifier_item = ITEM_DEFERRED_REGISTER.registerItem("dehumidifier", p -> new HumidityModifierBlockItem(BlockRegistry.dehumidifier.get(), p.useBlockDescriptionPrefix()), Item.Properties::new);
 
+    public static final DeferredItem<BlockItem> season_sensor_item = ITEM_DEFERRED_REGISTER.registerSimpleBlockItem(BlockRegistry.season_sensor);
 }

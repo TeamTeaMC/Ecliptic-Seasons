@@ -73,6 +73,7 @@ public class Lang_EN extends LangHelper {
 
         add(KeyMappingRegistry.DEBUG_KEY.getName(), "Debug Info HUD");
         add(KeyMappingRegistry.MAIN.id().toLanguageKey("key.category"), "Ecliptic Seasons");
+        add(BlockRegistry.season_sensor.get(), "Season Sensor");
 
 
         add("info.eclipticseasons.environment.temperature.under_freezing", "Under Freezing");

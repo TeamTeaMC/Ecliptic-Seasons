@@ -11,6 +11,7 @@
     "eclipticseasons:pinwheel_orange",
     "eclipticseasons:block_in_wooden_grate_block",
     "eclipticseasons:humidity_tank",
-    "eclipticseasons:dehumidifier"
+    "eclipticseasons:dehumidifier",
+    "eclipticseasons:season_sensor"
   ]
 }
