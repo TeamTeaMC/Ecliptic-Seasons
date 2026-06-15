@@ -1,6 +1,7 @@
 package com.teamtea.eclipticseasons.common.block.blockentity;
 
 import com.mojang.datafixers.util.Pair;
+import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.data.climate.AgroClimaticZone;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
@@ -97,10 +98,9 @@ public class GreenHouseCoreBlockEntity extends SyncBlockEntity {
 
                 // set redstone signal
                 if (!level.isClientSide() && level.getGameTime() % 100 == 0) {
-                    Pair<Season, Integer> currentSeason = getCurrentSeason(level, blockPos);
-                    if (currentSeason.getFirst() == greenHouseCoreBlock.getSeason()) {
-                        level.setBlockAndUpdate(blockPos, blockState.setValue(GreenHouseCoreBlock.SEASON_ON, currentSeason.getSecond()));
-                    } else level.setBlockAndUpdate(blockPos, blockState.setValue(GreenHouseCoreBlock.SEASON_ON, 0));
+                    BlockState newState = blockState.setValue(GreenHouseCoreBlock.SEASON_ON, GreenHouseCoreBlock.isPowered(blockState) ? 15 : 0);
+                    if (newState != blockState)
+                        level.setBlockAndUpdate(blockPos, newState);
                 }
 
             } else {
@@ -118,9 +118,9 @@ public class GreenHouseCoreBlockEntity extends SyncBlockEntity {
                     }
 
                     int max = getMaxProgressOnStage(level);
-                    Pair<Season, Integer> currentSeason = getCurrentSeason(level, blockPos);
-                    if (currentSeason.getFirst() == greenHouseCoreBlock.getSeason()
-                            && !level.getBlockState(blockPos.below()).isSolidRender(level,blockPos)
+                    Season currentSeason = EclipticSeasonsApi.getInstance().getSeasonSignal(level, blockPos);
+                    if (currentSeason == greenHouseCoreBlock.getSeason()
+                            && !level.getBlockState(blockPos.below()).isSolidRender(level, blockPos)
                             && !CropGrowthHandler.isInRoom(level, blockPos, blockState, Optional.empty())) {
 
                         boolean nextStage = blockEntity.progress >= max;
@@ -159,6 +159,7 @@ public class GreenHouseCoreBlockEntity extends SyncBlockEntity {
         }
     }
 
+    @Deprecated
     public static Pair<Season, Integer> getCurrentSeason(Level level, BlockPos blockPos) {
         Holder<Biome> cropBiome = CropGrowthHandler.getCropBiome(level, blockPos);
         Holder<AgroClimaticZone> agroClimaticZoneHolder = CropGrowthHandler.getclimateTypeHolder(cropBiome);
@@ -170,6 +171,7 @@ public class GreenHouseCoreBlockEntity extends SyncBlockEntity {
         return EMPTY_SEASON;
     }
 
+    @Deprecated
     public static Pair<Season, Integer> findCurrentSeason(List<Pair<Season, Integer>> localSeason, int index) {
         if (localSeason.isEmpty()) return EMPTY_SEASON;
         if (localSeason.size() == 1) return Pair.of(localSeason.get(0).getFirst(), 15);

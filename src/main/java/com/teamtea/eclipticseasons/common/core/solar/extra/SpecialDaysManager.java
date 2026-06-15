@@ -19,7 +19,9 @@ public class SpecialDaysManager {
     public static final Map<SolarTerm, List<Holder<SpecialDays>>> SPECIAL_DAYS_CLIENT = new EnumMap<>(SolarTerm.class);
 
     public static void init(HolderLookup.Provider registryAccess, boolean isServer) {
-        HolderLookup.RegistryLookup<SpecialDays> specialDaysRegistryLookup = registryAccess.lookupOrThrow(ESRegistries.SPECIAL_DAYS);
+        Optional<HolderLookup.RegistryLookup<SpecialDays>> lookup = registryAccess.lookup(ESRegistries.SPECIAL_DAYS);
+        if (lookup.isEmpty()) return;
+        HolderLookup.RegistryLookup<SpecialDays> specialDaysRegistryLookup = lookup.get();
         List<Holder.Reference<SpecialDays>> specialDays = ESSortInfo.sorted(specialDaysRegistryLookup.listElements().toList());
         Map<SolarTerm, List<Holder<SpecialDays>>> map = isServer ? SPECIAL_DAYS : SPECIAL_DAYS_CLIENT;
         map.clear();

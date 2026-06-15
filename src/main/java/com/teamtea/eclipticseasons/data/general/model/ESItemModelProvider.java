@@ -56,6 +56,10 @@ public class ESItemModelProvider extends ItemModelProvider {
 
         withExistingParent(resourceItem(ItemRegistry.dehumidifier_item.getId().getPath()).getPath(),
                 resourceBlock(ItemRegistry.dehumidifier_item.getId().getPath()));
+
+
+        withExistingParent(resourceItem(ItemRegistry.season_sensor_item.getId().getPath()).getPath(),
+                resourceBlock(ItemRegistry.season_sensor_item.getId().getPath()));
     }
 
     public void addSimple(Item item) {

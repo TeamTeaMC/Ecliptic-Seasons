@@ -1,7 +1,9 @@
 package com.teamtea.eclipticseasons.data.general.model;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
+import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.common.block.HygrometerBlock;
+import com.teamtea.eclipticseasons.common.block.SeasonSensorBlock;
 import com.teamtea.eclipticseasons.common.registry.BlockRegistry;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import net.minecraft.core.Direction;
@@ -13,6 +15,7 @@ import net.minecraft.world.level.block.LayeredCauldronBlock;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
+import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.common.data.ExistingFileHelper;
 
 import java.util.List;
@@ -83,6 +86,9 @@ public class BlockStatesDataProvider extends BlockStateProvider {
                     .texture("particle", new ResourceLocation("block/oak_planks"))
             );
         }
+
+        seasonSensorBlock(BlockRegistry.season_sensor.get());
+
     }
 
     public void addSimple(Block block) {
@@ -115,4 +121,37 @@ public class BlockStatesDataProvider extends BlockStateProvider {
         }
     }
 
+    private void seasonSensorBlock(Block block) {
+        String path = BuiltInRegistries.BLOCK.getKey(block).getPath();
+
+        getVariantBuilder(block)
+                .forAllStatesExcept(state -> {
+                            Season season = state.getValue(SeasonSensorBlock.SEASON);
+                            boolean signal = state.getValue(SeasonSensorBlock.ON_SIGNAL);
+                            Direction facing = state.getValue(BlockStateProperties.HORIZONTAL_FACING);
+
+                            ModelFile model;
+
+                            if (signal) {
+                                model = models().getExistingFile(
+                                        EclipticSeasons.rl("block/" + path + "_" + season.getName())
+                                );
+                            } else {
+                                model = models()
+                                        .withExistingParent(
+                                                path + "_" + season.getName() + "_full",
+                                                EclipticSeasons.rl("block/season_sensor_" + season.getName())
+                                        )
+                                        .texture("1", EclipticSeasons.rl("block/season_sensor_light_full"));
+                            }
+
+                            return ConfiguredModel.builder()
+                                    .modelFile(model)
+                                    .rotationY(getRotateYByFacing(facing))
+                                    .build();
+                        },
+                        SeasonSensorBlock.AUTO,
+                        SeasonSensorBlock.POWER
+                );
+    }
 }

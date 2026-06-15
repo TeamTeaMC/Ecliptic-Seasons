@@ -213,9 +213,9 @@ public class CommonConfig {
 
         private static void load(ForgeConfigSpec.Builder builder) {
             builder.push("Crop");
-            enableCrop = builder.comment("Restrict plant growth based on their compatible seasons or humidity.")
+            enableCrop = builder.comment("Restrict plant growth based on their compatible seasons.")
                     .define("EnableSeasonalCrop", true);
-            enableCropHumidityControl = builder.comment("Restrict plant growth based on local soil/environmental humidity.")
+            enableCropHumidityControl = builder.comment("Restrict plant growth based on local environmental humidity.")
                     .define("EnableCropHumidityControl", true);
             cropHumidityTransition = builder.comment("Smooths out humidity changes between different areas or time periods.")
                     .define("CropHumidityTransition", true);

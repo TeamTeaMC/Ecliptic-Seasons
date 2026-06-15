@@ -80,6 +80,8 @@ public class Lang_EN extends LangHelper {
         add(BlockRegistry.humidity_tank.get(), "Humidity Tank");
         add(BlockRegistry.dehumidifier.get(), "Greenhouse Dehumidifier");
 
+        add(BlockRegistry.season_sensor.get(), "Season Sensor");
+
         add("info.eclipticseasons.environment.temperature.under_freezing", "Under Freezing");
         add("info.eclipticseasons.environment.temperature.freezing", "Freezing");
         add("info.eclipticseasons.environment.temperature.cold", "Cold");

@@ -71,5 +71,15 @@ public class BlockRegistry {
                             .sound(SoundType.WOOD)
                             .noOcclusion()
                             .randomTicks())
-            ));
+                    ));
+
+    public static final RegistryObject<Block> season_sensor =
+            BLOCK_DEFERRED_REGISTER.register(
+                    "season_sensor",
+                    () -> new SeasonSensorBlock((BlockBehaviour.Properties.of()
+                            .strength(0.5F)
+                            .sound(SoundType.WOOD)
+                            .noOcclusion()
+                            .randomTicks()
+                    )));
 }

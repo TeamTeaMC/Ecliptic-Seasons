@@ -361,8 +361,8 @@
   "eclipticseasons.configuration.NoneDayTimes.tooltip": "无季节效果生效时的默认日照长度，单位为 Tick。",
   "eclipticseasons.configuration.DynamicSnowTerm.tooltip": "为每年的降雪日期引入随机变化，使其更不可预测。",
   "eclipticseasons.configuration.RealWorldSolarTerms.tooltip": "将游戏内季节与现实世界日期同步。\n警告：可能与其他模组的日期计数器或日历功能冲突。",
-  "eclipticseasons.configuration.EnableSeasonalCrop.tooltip": "根据作物适宜的季节或湿度限制植物生长。",
-  "eclipticseasons.configuration.EnableCropHumidityControl.tooltip": "根据本地土壤/环境湿度限制植物生长。",
+  "eclipticseasons.configuration.EnableSeasonalCrop.tooltip": "根据作物适宜的季节限制植物生长。",
+  "eclipticseasons.configuration.EnableCropHumidityControl.tooltip": "根据环境湿度限制植物生长。",
   "eclipticseasons.configuration.CropHumidityTransition.tooltip": "平滑不同区域或时间段之间的湿度变化。",
   "eclipticseasons.configuration.BoneMealFailureMessage.tooltip": "当骨粉因季节或湿度不合适而无法生效时显示消息。",
   "eclipticseasons.configuration.BoneMealConsumeOnFailure.tooltip": "即使催熟失败，也消耗骨粉物品。",
@@ -553,5 +553,12 @@
   "item.eclipticseasons.growth_detector.hint.grow_chance_3": "作物会正常生长",
   "item.eclipticseasons.growth_detector.hint.grow_chance_4": "作物会缓慢生长",
   "item.eclipticseasons.growth_detector.hint.grow_chance_5": "作物几乎不会生长",
-  "item.eclipticseasons.growth_detector.hint.grow_chance_6": "作物不会生长"
+  "item.eclipticseasons.growth_detector.hint.grow_chance_6": "作物不会生长",
+  "block.eclipticseasons.season_sensor.mode": "模式：%s / %s",
+  "block.eclipticseasons.season_sensor.mode.manual": "手动",
+  "block.eclipticseasons.season_sensor.mode.auto": "自动",
+  "block.eclipticseasons.season_sensor.source.natural": "自然季节",
+  "block.eclipticseasons.season_sensor.source.signal": "季节信号",
+  "block.eclipticseasons.season_sensor.detect": "检测：%s",
+  "block.eclipticseasons.season_sensor.auto_locked": "自动模式下无法手动选择季节。"
 }
