@@ -8,6 +8,7 @@ import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
+import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
@@ -91,6 +92,16 @@ public class BlockRegistry {
                             .noOcclusion()
                             .randomTicks())
                     ));
+
+    public static final DeferredHolder<Block, Block> season_sensor =
+            BLOCK_DEFERRED_REGISTER.register(
+                    "season_sensor",
+                    () -> new SeasonSensorBlock((BlockBehaviour.Properties.of()
+                            .strength(0.5F)
+                            .sound(SoundType.WOOD)
+                            .noOcclusion()
+                            .randomTicks()
+                    )));
 
     private static Map<Block, Supplier<Block>> COPPER_GRATE_MAP;
 
