@@ -1,3 +1,6 @@
+> 1.21.1 will now receive bug fixes and compatibility updates only.
+> New features will primarily target newer Minecraft versions.
+
 ### 0.13.8
 
 - Added the Salt Wand, allowing players to clear seasonal snow cover.
