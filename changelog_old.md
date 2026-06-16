@@ -1,6 +1,12 @@
 > As the ecosystem for 1.20.1 begins to wind down with major mods like Create moving on, we are also transitioning into
 > the final maintenance phase for our mod on this version.
 
+### 0.13.8
+
+- Added the Salt Wand, allowing players to clear seasonal snow cover.
+- Seasonal particles are now generated based on seasonal signals instead of the natural season.
+- Fixed compatibility issues between extra snow layers and snow cover removal.
+
 ### 0.13.7
 
 - Added the Season Sensor block.

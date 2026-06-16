@@ -15,6 +15,8 @@ import net.minecraftforge.registries.RegistryObject;
 public class ItemRegistry {
     public static final DeferredRegister<Item> ITEM_DEFERRED_REGISTER = DeferredRegister.create(Registries.ITEM, EclipticSeasonsApi.MODID);
 
+    public static final RegistryObject<Item> salt_wand = ITEM_DEFERRED_REGISTER.register("salt_wand", () -> new SaltWandItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE).durability(4096)));
+
     public static final RegistryObject<BlockItem> bamboo_wind_chimes_item = ITEM_DEFERRED_REGISTER.register("bamboo_wind_chimes", () -> new BlockItem(BlockRegistry.bamboo_wind_chimes.get(), (new Item.Properties())));
     public static final RegistryObject<BlockItem> paper_wind_chimes_item = ITEM_DEFERRED_REGISTER.register("paper_wind_chimes", () -> new BlockItem(BlockRegistry.paper_wind_chimes.get(), (new Item.Properties())));
     public static final RegistryObject<BlockItem> wind_chimes_item = ITEM_DEFERRED_REGISTER.register("wind_chimes", () -> new BlockItem(BlockRegistry.wind_chimes.get(), (new Item.Properties())));
@@ -48,9 +50,9 @@ public class ItemRegistry {
 
     public static final RegistryObject<Item> block_in_wooden_grate_block_item = ITEM_DEFERRED_REGISTER.register("block_in_wooden_grate_block", () -> new BlockItem(BlockRegistry.block_in_wooden_grate_block.get(), (new Item.Properties())));
 
-    public static final RegistryObject<RecordItem> snowless_hometown = ITEM_DEFERRED_REGISTER.register("snowless_hometown", () -> new RecordItem(14, () -> SoundEventsRegistry.snowless_hometown, new Item.Properties().stacksTo(1).rarity(Rarity.RARE), 103*20));
+    public static final RegistryObject<RecordItem> snowless_hometown = ITEM_DEFERRED_REGISTER.register("snowless_hometown", () -> new RecordItem(14, () -> SoundEventsRegistry.snowless_hometown, new Item.Properties().stacksTo(1).rarity(Rarity.RARE), 103 * 20));
 
-    public static final RegistryObject<BlockItem> humidity_tank_item = ITEM_DEFERRED_REGISTER.register("humidity_tank",() -> new HumidityModifierBlockItem(BlockRegistry.humidity_tank.get(), new Item.Properties()));
+    public static final RegistryObject<BlockItem> humidity_tank_item = ITEM_DEFERRED_REGISTER.register("humidity_tank", () -> new HumidityModifierBlockItem(BlockRegistry.humidity_tank.get(), new Item.Properties()));
 
     public static final RegistryObject<BlockItem> dehumidifier_item = ITEM_DEFERRED_REGISTER.register("dehumidifier", () -> new HumidityModifierBlockItem(BlockRegistry.dehumidifier.get(), new Item.Properties()));
 

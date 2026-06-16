@@ -49,6 +49,7 @@ public class Lang_ZH extends LangHelper {
         add(ItemRegistry.thermometer.get(), "温度计");
         add(ItemRegistry.hyetometer.get(), "雨量计");
         add(BlockRegistry.hygrometer.get(), "湿度计");
+        add(ItemRegistry.salt_wand.get(), "盐石法杖");
 
 
         add(BlockRegistry.greenhouse_core_container.get(), "温室之心容器");

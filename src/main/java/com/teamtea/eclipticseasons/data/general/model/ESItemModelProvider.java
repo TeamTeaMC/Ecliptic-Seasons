@@ -40,6 +40,7 @@ public class ESItemModelProvider extends ItemModelProvider {
 
         addSimple(ItemRegistry.seasonal_prayer_scroll_item.get());
         addSimple(ItemRegistry.growth_detector.get());
+        addSimple(ItemRegistry.salt_wand.get());
 
         addSimple(ItemRegistry.snowless_hometown.get());
 

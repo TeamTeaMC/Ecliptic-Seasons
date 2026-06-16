@@ -12,6 +12,7 @@ import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeRainDispatcher;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.core.map.BiomeHolder;
+import com.teamtea.eclipticseasons.common.core.map.NoneSnowArea;
 import com.teamtea.eclipticseasons.common.network.message.*;
 import com.teamtea.eclipticseasons.common.registry.ESRegistries;
 import com.teamtea.eclipticseasons.config.ClientConfig;
@@ -231,6 +232,17 @@ public class NetworkUtil {
         context.get().enqueueWork(() -> {
             if (getClient() != null) {
                 GrowthInfoClientCache.update(payload.info.orElse(null));
+            }
+        });
+        return true;
+    }
+
+    public static boolean handleNoneSnowAreaMessage(NoneSnowAreaMessage noneSnowAreaMessage, Supplier<NetworkEvent.Context> contextSupplier) {
+        contextSupplier.get().enqueueWork(() -> {
+            if (getClient() != null) {
+                LevelChunk chunk = getClient().getChunk(noneSnowAreaMessage.chunkPos.x, noneSnowAreaMessage.chunkPos.z);
+                NoneSnowArea noneSnowArea = chunk.getCapability(NoneSnowArea.NONE_SNOW_AREA_CAPABILITY).orElseGet(NoneSnowArea::empty);
+                noneSnowArea.copyFrom(noneSnowAreaMessage.value);
             }
         });
         return true;

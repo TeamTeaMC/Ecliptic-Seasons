@@ -7,6 +7,8 @@ import com.teamtea.eclipticseasons.api.data.client.LeafColor;
 import com.teamtea.eclipticseasons.client.util.ClientRef;
 import com.teamtea.eclipticseasons.client.util.ColorHelper;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
+import com.teamtea.eclipticseasons.common.core.map.NoneSnowArea;
+import com.teamtea.eclipticseasons.common.registry.ItemRegistry;
 import com.teamtea.eclipticseasons.common.registry.ParticleRegistry;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.tag.EclipticBlockTags;
@@ -24,11 +26,14 @@ import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.util.FastColor;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -82,7 +87,7 @@ public class ParticleUtil {
         boolean isLeaf = false;
         Block block = blockstate.getBlock();
         List<Pair<LeafColor.InstanceHolder, LeafColor.Instance>> pairs =
-                !blockstate.isAir() ?null: ClientRef.leaveColors.get(block);
+                !blockstate.isAir() ? null : ClientRef.leaveColors.get(block);
         if (pairs != null) {
             for (Pair<LeafColor.InstanceHolder, LeafColor.Instance> pair : pairs) {
                 if (pair.getFirst().matches(clientLevel, i, j, k, random, blockstate)) {
@@ -91,7 +96,7 @@ public class ParticleUtil {
                     Integer chanceW = null;
                     if (second.weights().contains(ClientCon.nowSolarTerm)) {
                         chanceW = second.weights().get(ClientCon.nowSolarTerm);
-                    } else switch (ClientCon.nowSolarTerm.getSeason()) {
+                    } else switch (ClientCon.nowSeason) {
                         case SPRING -> chanceW = 17;
                         case SUMMER -> chanceW = 27;
                         case AUTUMN -> chanceW = 9;
@@ -114,7 +119,7 @@ public class ParticleUtil {
         if (!isLeaf && ClientConfig.Particle.fallenLeaves.get()
                 && block instanceof LeavesBlock) {
             if (!blockstate.is(EclipticBlockTags.NONE_FALLEN_LEAVES)) {
-                var sd = ClientCon.nowSolarTerm.getSeason();
+                var sd = ClientCon.nowSeason;
                 if (sd != Season.NONE) {
                     int chanceW = 19;
                     switch (sd) {
@@ -132,7 +137,7 @@ public class ParticleUtil {
             }
         }
         if (ClientConfig.Particle.butterfly.get()
-                && ClientCon.nowSolarTerm.getSeason() == Season.SPRING
+                && ClientCon.nowSeason == Season.SPRING
                 && ClientCon.isDay
         ) {
             if (!blockstate.isAir()
@@ -145,7 +150,7 @@ public class ParticleUtil {
             }
         }
         if (ClientConfig.Particle.firefly.get()
-                && ClientCon.nowSolarTerm.getSeason() == Season.SUMMER
+                && ClientCon.nowSeason == Season.SUMMER
                 && ClientCon.isEvening
         ) {
             if (!blockstate.isAir()
@@ -159,7 +164,7 @@ public class ParticleUtil {
         }
 
         if (ClientConfig.Particle.wildGoose.get()
-                && ClientCon.nowSolarTerm.getSeason() == Season.AUTUMN
+                && ClientCon.nowSeason == Season.AUTUMN
                 && ClientCon.isNoon
                 && clientLevel.canSeeSky(blockpos$mutableblockpos)
                 && clientLevel.isEmptyBlock(blockpos$mutableblockpos)
@@ -169,6 +174,17 @@ public class ParticleUtil {
             clientLevel.addParticle(ParticleRegistry.WILD_GOOSE, false, x + random.nextInt(16, 16 * 2) * (random.nextBoolean() ? -1 : 1), y + random.nextInt(15, 16 * 2), z + random.nextInt(16, 16 * 2) * (random.nextBoolean() ? -1 : 1), 0.0D, 5.0E-4D, 0.0D);
         }
 
+
+        if (random.nextInt(b) == 0 &&
+                Minecraft.getInstance().player != null
+                && Minecraft.getInstance().player.getItemInHand(InteractionHand.MAIN_HAND).getItem() == ItemRegistry.salt_wand.get()) {
+            NoneSnowArea data = clientLevel.getChunkAt(blockpos$mutableblockpos).getCapability(NoneSnowArea.NONE_SNOW_AREA_CAPABILITY).orElseGet(NoneSnowArea::empty);
+            ParticleOptions indicatorParticleOptions = data.neverSnowyAt(blockpos$mutableblockpos) ? ParticleTypes.END_ROD : null;
+            if (indicatorParticleOptions != null) {
+                clientLevel.addParticle(indicatorParticleOptions,
+                        false, i + 0.5, j + 1 + 0.3, k + 0.5, 0.0D, -0.0001, 0.0D);
+            }
+        }
         return replace;
     }
 

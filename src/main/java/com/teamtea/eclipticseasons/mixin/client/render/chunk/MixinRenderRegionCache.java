@@ -7,6 +7,7 @@ import com.teamtea.eclipticseasons.api.misc.client.IMapSlice;
 import com.teamtea.eclipticseasons.common.core.map.BiomeHolder;
 import com.teamtea.eclipticseasons.common.core.map.ChunkInfoMap;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
+import com.teamtea.eclipticseasons.common.core.map.NoneSnowArea;
 import com.teamtea.eclipticseasons.common.core.snow.SnowyMapChecker;
 import com.teamtea.eclipticseasons.common.core.snow.SnowyStatusKeeper;
 import net.minecraft.client.renderer.chunk.RenderChunk;
@@ -44,6 +45,7 @@ public class MixinRenderRegionCache {
             int[][] SOLID_HEIGHT_MAP = null;
             int[][] BIOME_MAP = null;
             SnowyStatusKeeper[] SNOWY_STATUS_MAP = null;
+            NoneSnowArea[] NONE_SNOW_AREA_MAP = null;
             // if (MapChecker.isValidDimension(level))
             {
                 BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos();
@@ -59,6 +61,7 @@ public class MixinRenderRegionCache {
                 SOLID_HEIGHT_MAP = new int[SIZE_X * SIZE_Z][16 * 16];
                 BIOME_MAP = new int[SIZE_X * SIZE_Z][16 * 16];
                 SNOWY_STATUS_MAP = new SnowyStatusKeeper[SIZE_X * SIZE_Z];
+                NONE_SNOW_AREA_MAP = new NoneSnowArea[SIZE_X * SIZE_Z];
 
                 for (int sectionX = minChunkX; sectionX < minChunkX + SIZE_X; ++sectionX) {
                     for (int sectionZ = minChunkZ; sectionZ < minChunkZ + SIZE_Z; ++sectionZ) {
@@ -72,6 +75,7 @@ public class MixinRenderRegionCache {
                         int[] biomes = BIOME_MAP[localSectionIndex];
                         int[] solidHeights = SOLID_HEIGHT_MAP[localSectionIndex];
                         SNOWY_STATUS_MAP[localSectionIndex] = SnowyMapChecker.getSnowyStatusKeeperCopy(wrapped);
+                        NONE_SNOW_AREA_MAP[localSectionIndex] = wrapped.getCapability(NoneSnowArea.NONE_SNOW_AREA_CAPABILITY).orElseGet(NoneSnowArea::empty);
                         int startX = chunkPos.getMinBlockX();
                         int startZ = chunkPos.getMinBlockZ();
                         mutableBlockPos.setX(startX);
@@ -102,7 +106,7 @@ public class MixinRenderRegionCache {
                     }
                 }
             }
-            iMapSlice.forceMapSliceUpdate(HEIGHT_MAP, SOLID_HEIGHT_MAP, BIOME_MAP, SIZE_X, SIZE_Z,SNOWY_STATUS_MAP);
+            iMapSlice.forceMapSliceUpdate(HEIGHT_MAP, SOLID_HEIGHT_MAP, BIOME_MAP, SIZE_X, SIZE_Z,SNOWY_STATUS_MAP,NONE_SNOW_AREA_MAP);
         }
     }
 }

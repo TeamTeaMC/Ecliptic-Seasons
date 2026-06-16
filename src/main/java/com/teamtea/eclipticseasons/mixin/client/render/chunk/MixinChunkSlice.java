@@ -3,6 +3,8 @@ package com.teamtea.eclipticseasons.mixin.client.render.chunk;
 import com.teamtea.eclipticseasons.api.misc.client.IExtraRendererContextOwner;
 import com.teamtea.eclipticseasons.api.misc.client.IMapSlice;
 import com.teamtea.eclipticseasons.client.core.ExtraRendererContext;
+import com.teamtea.eclipticseasons.common.core.map.NoneSnowArea;
+import com.teamtea.eclipticseasons.common.core.map.SnowyRemover;
 import com.teamtea.eclipticseasons.common.core.snow.SnowyStatusKeeper;
 import net.minecraft.client.renderer.chunk.RenderChunkRegion;
 import net.minecraft.core.BlockPos;
@@ -41,14 +43,18 @@ public abstract class MixinChunkSlice implements IMapSlice, IExtraRendererContex
     @Unique
     private SnowyStatusKeeper[] SNOWY_STATUS_MAP;
 
+    @Unique
+    private NoneSnowArea[] NONE_SNOW_AREA_MAP;
+
     @Override
-    public void forceMapSliceUpdate(int[][] heights, int[][] solidHeights, int[][] biomes, int sizex, int sizez, SnowyStatusKeeper[] statusKeepers) {
+    public void forceMapSliceUpdate(int[][] heights, int[][] solidHeights, int[][] biomes, int sizex, int sizez, SnowyStatusKeeper[] statusKeepers, NoneSnowArea[] noneSnowAreaMap) {
         HEIGHT_MAP = heights;
         SOLID_HEIGHT_MAP = solidHeights;
         BIOME_MAP = biomes;
         SIZE_X = sizex;
         SIZE_Z = sizez;
         this.SNOWY_STATUS_MAP = statusKeepers;
+        this.NONE_SNOW_AREA_MAP = noneSnowAreaMap;
     }
 
     @Override
@@ -85,6 +91,23 @@ public abstract class MixinChunkSlice implements IMapSlice, IExtraRendererContex
         int localBlockX = pos.getX() & 15;
         int localBlockZ = pos.getZ() & 15;
         return lightArrays[localBlockX * 16 + localBlockZ];
+    }
+
+    @Override
+    public int getSnowyStatus(BlockPos pos) {
+        int relBlockX = SectionPos.blockToSectionCoord(pos.getX());
+        int relBlockZ = SectionPos.blockToSectionCoord(pos.getZ());
+
+        NoneSnowArea lightArrays0 = this.NONE_SNOW_AREA_MAP[
+                relBlockX + (relBlockZ) * SIZE_X];
+        if (lightArrays0 != null && lightArrays0.neverSnowyAt(pos))
+            return SnowyRemover.NONE_SNOWY;
+
+        // int[] lightArrays = this.SNOWY_MAP[index(minChunkX, minChunkZ, relBlockX, relBlockZ)];
+        // int localBlockX = pos.getX() & 15;
+        // int localBlockZ = pos.getZ() & 15;
+        // return lightArrays[localBlockX * 16 + localBlockZ];
+        return SnowyRemover.SNOWY;
     }
 
     @Override

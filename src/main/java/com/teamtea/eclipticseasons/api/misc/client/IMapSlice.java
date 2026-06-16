@@ -1,5 +1,7 @@
 package com.teamtea.eclipticseasons.api.misc.client;
 
+import com.teamtea.eclipticseasons.common.core.map.NoneSnowArea;
+import com.teamtea.eclipticseasons.common.core.map.SnowyRemover;
 import com.teamtea.eclipticseasons.common.core.snow.SnowyStatusKeeper;
 import com.teamtea.eclipticseasons.compat.vanilla.IExtendBlockView;
 import net.minecraft.client.resources.model.BakedModel;
@@ -7,7 +9,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockAndTintGetter;
 
 public interface IMapSlice extends IMapSliceProvider, BlockAndTintGetter, IExtendBlockView, IFakeSnowHolder {
-    default void forceMapSliceUpdate(int[][] heights, int[][] solidHeights, int[][] biomes, int SIZE_X, int SIZE_Z, SnowyStatusKeeper[] statusKeepers) {
+    default void forceMapSliceUpdate(int[][] heights, int[][] solidHeights, int[][] biomes, int SIZE_X, int SIZE_Z, SnowyStatusKeeper[] statusKeepers, NoneSnowArea[] noneSnowAreaMap) {
     }
 
     int getBlockHeight(BlockPos pos);
@@ -18,4 +20,7 @@ public interface IMapSlice extends IMapSliceProvider, BlockAndTintGetter, IExten
         return false;
     }
 
+    default int getSnowyStatus(BlockPos pos) {
+        return SnowyRemover.SNOWY;
+    }
 }

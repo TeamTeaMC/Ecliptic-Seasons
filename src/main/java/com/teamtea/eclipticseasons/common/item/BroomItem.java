@@ -212,7 +212,8 @@ public class BroomItem extends Item {
 
 
         if (!EclipticUtil.canSnowyBlockInteract()) {
-            tooltipComponents.add(Component.translatable("info.eclipticseasons.config.inactive")
+            tooltipComponents.add(Component.translatable("info.eclipticseasons.config.inactive",
+                    Component.translatable("eclipticseasons.configuration.SnowInWorld"))
             );
         }
     }

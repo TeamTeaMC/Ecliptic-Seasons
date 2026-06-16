@@ -18,6 +18,7 @@ import com.teamtea.eclipticseasons.client.reload.ClientJsonCacheListener;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.client.util.ClientRef;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
+import com.teamtea.eclipticseasons.common.core.map.SnowyRemover;
 import com.teamtea.eclipticseasons.common.core.snow.SnowChecker;
 import com.teamtea.eclipticseasons.common.registry.BlockRegistry;
 import com.teamtea.eclipticseasons.client.model.*;
@@ -554,9 +555,10 @@ public class ExtraModelManager {
 
     public static boolean maySnowyAt(Level level, IMapSlice mapSlice, BlockState state, BlockPos checkPos, RandomSource random, long seed) {
         if (mapSlice != null) {
-            // if (mapSlice.getSnowyStatus(checkPos) == SnowyRemover.SnowyFlag.SNOWY_ALWAYS.ordinal()) {
-            //     return true;
-            // }
+            int snowyStatus = mapSlice.getSnowyStatus(checkPos);
+            if (snowyStatus == SnowyRemover.NONE_SNOWY) {
+                return false;
+            }
             if (EclipticUtil.canSnowyBlockInteract() && MapChecker.notWater(state))
                 return mapSlice.isSnowyBlock(checkPos);
             return MapChecker.shouldSnowAt(level, checkPos, mapSlice.getSurfaceFaceBiomeId(checkPos), state, random, seed);
@@ -570,13 +572,14 @@ public class ExtraModelManager {
         boolean isSnowy = true;
         if (CommonConfig.Snow.notSnowyNearGlowingBlock.get()
                 && !EclipticUtil.canSnowyBlockInteract()) {
-            if (mapSlice != null) {
-
+            if (mapSlice != null
+                    && mapSlice.getSnowyStatus(checkPos) == SnowyRemover.SNOWY) {
                 if (blockAndTintGetter.getBrightness(LightLayer.BLOCK, checkPos) >=
                         CommonConfig.Snow.notSnowyNearGlowingBlockLevel.get()) {
                     isSnowy = false;
                 }
             }
+
             if (mapSlice == null) {
                 if (blockAndTintGetter.getBrightness(LightLayer.BLOCK, checkPos) >=
                         CommonConfig.Snow.notSnowyNearGlowingBlockLevel.get()) {
@@ -1019,7 +1022,7 @@ public class ExtraModelManager {
         if (checkPos == null) checkPos = posToMutable(pos);
         else checkPos.set(pos.getX(), pos.getY(), pos.getZ());
 
-        //checkPos.move(Direction.UP);
+        // checkPos.move(Direction.UP);
 
         if (state.isAir() || !state.getFluidState().isEmpty() || state.is(EclipticBlockTags.SNOW_LAYER_CANNOT_SURVIVE_IN))
             return 0;
@@ -1097,7 +1100,7 @@ public class ExtraModelManager {
 
     public static BlockState shouldBlockAsSnowyState(BlockState state, BlockAndTintGetter blockAndTintGetter, BlockPos.MutableBlockPos mutableBlockPos) {
         if (!ClientConfig.Renderer.snowInFence.get()) return state;
-        //if (!state.blocksMotion() || !state.getFluidState().isEmpty())
+        // if (!state.blocksMotion() || !state.getFluidState().isEmpty())
         //    return state;
         if (!(state.getBlock() instanceof SnowyDirtBlock)) return state;
         int y = mutableBlockPos.getY();
@@ -1118,7 +1121,7 @@ public class ExtraModelManager {
             return 0;
         if (mapSlice.getBlockHeight(pos) != pos.getY()
                 && mapSlice.getSolidBlockHeight(pos) != pos.getY()) return 0;
-        //if (mapSlice.getBlockHeight(pos) > pos.getY()) return 0;
+        // if (mapSlice.getBlockHeight(pos) > pos.getY()) return 0;
 
         int realY = pos.getY() + 1;
 
@@ -1128,6 +1131,7 @@ public class ExtraModelManager {
         mapSlice.setLevelForFakeSnow(pos.getX(), realY, pos.getZ(), 0);
 
         if (MapChecker.getDefaultBlockTypeFlag(state) <= MapChecker.FLAG_NONE) return 0;
+        if (mapSlice.getSnowyStatus(pos) == SnowyRemover.NONE_SNOWY) return 0;
         Level useLevel = ClientCon.getUseLevel();
         if (useLevel == null) return 0;
 

@@ -157,6 +157,13 @@ public final class SimpleNetworkHandler {
                 encoder(C2SAcknowledge::encode).
                 consumerNetworkThread(HandshakeHandler.indexFirst(NetworkUtil::handleClientAck)).
                 add();
+
+        var noneSnowAreaMessageMessageBuilder = CHANNEL.messageBuilder(NoneSnowAreaMessage.class, 199)
+                .encoder(NoneSnowAreaMessage::toBytes)
+                .decoder(NoneSnowAreaMessage::new);
+        if (FMLLoader.getDist() == Dist.CLIENT)
+            noneSnowAreaMessageMessageBuilder.consumerNetworkThread(NetworkUtil::handleNoneSnowAreaMessage);
+        noneSnowAreaMessageMessageBuilder.add();
     }
 
     public static <MSG> void send(ServerPlayer player, MSG msg) {

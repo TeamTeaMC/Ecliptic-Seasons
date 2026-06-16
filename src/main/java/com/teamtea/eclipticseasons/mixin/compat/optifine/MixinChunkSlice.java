@@ -45,7 +45,7 @@ public abstract class MixinChunkSlice implements IOFModelTaker, IExtraRendererCo
     }
 
     @Unique
-    private ExtraRendererContext eclipticseasons$rendererHolder =new ExtraRendererContext();
+    private ExtraRendererContext eclipticseasons$rendererHolder = new ExtraRendererContext();
 
     @Override
     public ExtraRendererContext eclipticseasons$getContext() {
@@ -82,6 +82,11 @@ public abstract class MixinChunkSlice implements IOFModelTaker, IExtraRendererCo
     @Override
     public int getSurfaceFaceBiomeId(BlockPos pos) {
         return ((IMapSlice) chunkCache).getSurfaceFaceBiomeId(pos);
+    }
+
+    @Override
+    public int getSnowyStatus(BlockPos pos) {
+        return ((IMapSlice) chunkCache).getSnowyStatus(pos);
     }
 
     @Override
