@@ -593,6 +593,7 @@ public class ExtraRenderDispatcher {
         mapSlice.setLevelForFakeSnow(pos.getX(), realY, pos.getZ(), 0);
 
         if (MapChecker.getDefaultBlockTypeFlag(state) <= MapChecker.FLAG_NONE) return 0;
+        if (mapSlice.getSnowyStatus(pos) == SnowyRemover.NONE_SNOWY) return 0;
         Level useLevel = ClientCon.getUseLevel();
         if (useLevel == null) return 0;
 

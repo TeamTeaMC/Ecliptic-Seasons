@@ -23,7 +23,7 @@ public record ESCommonSerializer<T extends SerializerHolder>
     @Override
     public boolean write(T attachment, ValueOutput output) {
         output.storeNullable(id, codec, attachment);
-        return false;
+        return true;
     }
 
     //@Override

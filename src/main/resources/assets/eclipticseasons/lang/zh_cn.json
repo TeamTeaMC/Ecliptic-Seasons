@@ -457,7 +457,7 @@
   "info.eclipticseasons.calendar.model.next": "下一节气",
   "info.eclipticseasons.calendar.model.day": "日期",
   "pack.eclipticseasons.extra_snow": "额外覆雪方块资源包",
-  "info.eclipticseasons.config.inactive": "§7当前配置下不起作用",
+  "info.eclipticseasons.config.inactive": "§7需要启用配置：%s",
   "info.eclipticseasons.greenhouse_core.effect": "为温室中%1$s格范围内的%2$s季作物提供生长加成",
   "info.eclipticseasons.show.shift": "§o<..按住shift..>",
   "info.eclipticseasons.greenhouse_essence.use": "可以转化温室之心容器为%1$s季温室之心",
@@ -560,5 +560,8 @@
   "block.eclipticseasons.season_sensor.source.natural": "自然季节",
   "block.eclipticseasons.season_sensor.source.signal": "季节信号",
   "block.eclipticseasons.season_sensor.detect": "检测：%s",
-  "block.eclipticseasons.season_sensor.auto_locked": "自动模式下无法手动选择季节。"
+  "block.eclipticseasons.season_sensor.auto_locked": "自动模式下无法手动选择季节。",
+  "tooltip.eclipticseasons.salt_wand.0": "§7右击移除覆雪",
+  "tooltip.eclipticseasons.salt_wand.1": "§7潜行右击恢复覆雪",
+  "tooltip.eclipticseasons.salt_wand.2": "§8§o据说盐能驱散严寒。"
 }

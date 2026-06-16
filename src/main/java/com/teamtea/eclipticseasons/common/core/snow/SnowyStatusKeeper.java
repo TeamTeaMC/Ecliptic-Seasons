@@ -248,7 +248,7 @@ public class SnowyStatusKeeper implements Cloneable {
         public boolean write(SnowyStatusKeeper attachment, ValueOutput output) {
             if (!EclipticUtil.canSnowyBlockInteract()) return false;
             output.storeNullable("snowy_status", CODEC, attachment);
-            return false;
+            return true;
         }
 
         //

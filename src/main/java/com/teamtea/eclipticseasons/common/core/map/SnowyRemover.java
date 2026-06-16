@@ -143,7 +143,7 @@ public class SnowyRemover {
         @Override
         public boolean write(SnowyRemover attachment, ValueOutput output) {
             output.storeNullable("snowy_remover", CODEC, attachment);
-            return false;
+            return true;
         }
 
         //@Override

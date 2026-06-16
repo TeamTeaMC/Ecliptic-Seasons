@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "Q": "#c:gems/quartz",
+    "S": "#c:ingots/gold",
+    "T": "minecraft:stick"
+  },
+  "pattern": [
+    " Q ",
+    " S ",
+    " T "
+  ],
+  "result": {
+    "id": "eclipticseasons:salt_wand"
+  }
+}

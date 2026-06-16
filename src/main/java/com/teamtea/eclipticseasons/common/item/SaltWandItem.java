@@ -8,6 +8,7 @@ import com.teamtea.eclipticseasons.common.network.SimpleNetworkHandler;
 import com.teamtea.eclipticseasons.common.network.message.EmptyMessage;
 import com.teamtea.eclipticseasons.common.registry.AttachmentRegistry;
 import com.teamtea.eclipticseasons.common.registry.DataComponentTypeRegistry;
+import com.teamtea.eclipticseasons.config.ClientConfig;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -19,14 +20,19 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.chunk.LevelChunk;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.fml.loading.FMLLoader;
 import org.jspecify.annotations.NonNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
+import java.util.function.Consumer;
 
 public class SaltWandItem extends Item {
     public SaltWandItem(Properties properties) {
@@ -48,7 +54,7 @@ public class SaltWandItem extends Item {
                 itemInHand.remove(DataComponentTypeRegistry.CLICK_POS);
                 doPos(serverLevel, last, clickedPos, itemInHand, player, shiftKeyDown, false);
             } else {
-                if (player != null) ((ServerPlayer)player).sendSystemMessage(
+                if (player != null) ((ServerPlayer) player).sendSystemMessage(
                         Component.translatable("info.eclipticseasons.item.sal_wand.select_first", clickedPos.getX(), clickedPos.getY(), clickedPos.getZ()), false
                 );
                 itemInHand.set(DataComponentTypeRegistry.CLICK_POS, new ClickPos(clickedPos));
@@ -68,7 +74,7 @@ public class SaltWandItem extends Item {
                 continue;
             }
 
-            ChunkPos chunkPos =  ChunkPos.containing(blockPos);
+            ChunkPos chunkPos = ChunkPos.containing(blockPos);
             long aLong = chunkPos.pack();
             NoneSnowArea noneSnowArea;
             if (map.containsKey(aLong)) noneSnowArea = map.get(aLong);
@@ -94,7 +100,7 @@ public class SaltWandItem extends Item {
         }
         chunkPosSet.clear();
         map.clear();
-        if (player != null && !silent) ((ServerPlayer)player).sendSystemMessage(
+        if (player != null && !silent) ((ServerPlayer) player).sendSystemMessage(
                 Component.translatable("info.eclipticseasons.item.sal_wand.apply", count), false
         );
         if (player == null || !player.isCreative())
@@ -102,13 +108,21 @@ public class SaltWandItem extends Item {
     }
 
 
-
     @Override
     public void inventoryTick(ItemStack itemStack, ServerLevel level, Entity owner, @org.jspecify.annotations.Nullable EquipmentSlot slot) {
-        super.inventoryTick(itemStack, level, owner, slot);
-        if (owner instanceof ServerPlayer serverPlayer
-                && level instanceof ServerLevel serverLevel) {
-            doPos(serverLevel, serverPlayer.getOnPos(), serverPlayer.getOnPos().above(2), itemStack, serverPlayer, serverPlayer.isShiftKeyDown(), true);
-        }
+        // super.inventoryTick(itemStack, level, owner, slot);
+        // if (owner instanceof ServerPlayer serverPlayer
+        //         && level instanceof ServerLevel serverLevel) {
+        //     doPos(serverLevel, serverPlayer.getOnPos(), serverPlayer.getOnPos().above(2), itemStack, serverPlayer, serverPlayer.isShiftKeyDown(), true);
+        // }
+    }
+
+    @Override
+    public void appendHoverText(ItemStack itemStack, TooltipContext context, TooltipDisplay display, Consumer<Component> builder, TooltipFlag tooltipFlag) {
+        super.appendHoverText(itemStack, context, display, builder, tooltipFlag);
+        if (FMLLoader.getCurrent().getDist() != Dist.CLIENT || !ClientConfig.GUI.itemInformation.get()) return;
+        builder.accept(Component.translatable("tooltip.eclipticseasons.salt_wand.0"));
+        builder.accept(Component.translatable("tooltip.eclipticseasons.salt_wand.1"));
+        builder.accept(Component.translatable("tooltip.eclipticseasons.salt_wand.2"));
     }
 }

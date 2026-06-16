@@ -203,7 +203,8 @@ public class BroomItem extends Item {
         if (FMLLoader.getCurrent().getDist() != Dist.CLIENT || !ClientConfig.GUI.itemInformation.get()) return;
 
         if (!EclipticUtil.canSnowyBlockInteract()) {
-            builder.accept(Component.translatable("info.eclipticseasons.config.inactive")
+            builder.accept(Component.translatable("info.eclipticseasons.config.inactive",
+                    Component.translatable("eclipticseasons.configuration.SnowInWorld"))
             );
         }
     }

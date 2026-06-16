@@ -1,3 +1,9 @@
+### 0.13.8
+
+- Added the Salt Wand, allowing players to clear seasonal snow cover.
+- Seasonal particles are now generated based on seasonal signals instead of the natural season.
+- Fixed compatibility issues between extra snow layers and snow cover removal.
+
 ### 0.13.7
 
 - Added the Season Sensor block.

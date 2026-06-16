@@ -200,7 +200,7 @@ public class WeatherStatusKeeper {
         public boolean write(WeatherStatusKeeper attachment, ValueOutput output) {
             if (!EclipticUtil.canSnowyBlockInteract()) return false;
             output.storeNullable("weather_status", CODEC, attachment);
-            return false;
+            return true;
         }
 
         //@Override

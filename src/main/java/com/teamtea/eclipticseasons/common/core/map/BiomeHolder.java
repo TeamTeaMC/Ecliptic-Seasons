@@ -152,7 +152,7 @@ public class BiomeHolder {
         @Override
         public boolean write(BiomeHolder attachment, ValueOutput output) {
             output.storeNullable("biome_holder", CODEC, attachment);
-            return false;
+            return true;
         }
 
         //

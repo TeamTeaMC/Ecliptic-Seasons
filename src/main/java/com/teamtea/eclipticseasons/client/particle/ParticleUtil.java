@@ -30,6 +30,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ColorParticleOption;
 import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.util.Mth;
@@ -106,7 +107,7 @@ public class ParticleUtil {
                     Integer chanceW = null;
                     if (second.weights().contains(ClientCon.nowSolarTerm)) {
                         chanceW = second.weights().get(ClientCon.nowSolarTerm);
-                    } else switch (ClientCon.nowSolarTerm.getSeason()) {
+                    } else switch (ClientCon.nowSeason) {
                         case SPRING -> chanceW = 17;
                         case SUMMER -> chanceW = 27;
                         case AUTUMN -> chanceW = 9;
@@ -130,7 +131,7 @@ public class ParticleUtil {
         if (!isLeaf && ClientConfig.Particle.fallenLeaves.get()
                 && block instanceof LeavesBlock) {
             if (!blockstate.is(EclipticBlockTags.NONE_FALLEN_LEAVES)) {
-                var sd = ClientCon.nowSolarTerm.getSeason();
+                var sd = ClientCon.nowSeason;
                 if (sd != Season.NONE) {
                     int chanceW = 19;
                     switch (sd) {
@@ -149,7 +150,7 @@ public class ParticleUtil {
         }
 
         if (ClientConfig.Particle.butterfly.get()
-                && ClientCon.nowSolarTerm.getSeason() == Season.SPRING
+                && ClientCon.nowSeason == Season.SPRING
                 && ClientCon.isDay
         ) {
             if (!blockstate.isAir()
@@ -162,7 +163,7 @@ public class ParticleUtil {
             }
         }
         if (ClientConfig.Particle.firefly.get()
-                && ClientCon.nowSolarTerm.getSeason() == Season.SUMMER
+                && ClientCon.nowSeason == Season.SUMMER
                 && ClientCon.isEvening
         ) {
             if (!blockstate.isAir()
@@ -176,7 +177,7 @@ public class ParticleUtil {
         }
 
         if (ClientConfig.Particle.wildGoose.get()
-                && ClientCon.nowSolarTerm.getSeason() == Season.AUTUMN
+                && ClientCon.nowSeason == Season.AUTUMN
                 && ClientCon.isNoon
                 && clientLevel.canSeeSky(blockpos$mutableblockpos)
                 && clientLevel.isEmptyBlock(blockpos$mutableblockpos)
@@ -202,6 +203,17 @@ public class ParticleUtil {
                 // clientLevel.addParticle(new BlockParticleOption(ParticleTypes.BLOCK_MARKER, Blocks.LIGHT.defaultBlockState().setValue(LightBlock.LEVEL,0)), (double) i + 0.5, (double) j + 0.5, (double) k + 0.5, 0.0, 0.0, 0.0);
                 // Minecraft.getInstance().particleEngine.add(new SnowCleaner(clientLevel,(double) i + 0.5, (double) j + 0.5, (double) k + 0.5, Items.SNOWBALL.getDefaultInstance()));
 
+            }
+        }
+
+        if (random.nextInt(b) == 0 &&
+                Minecraft.getInstance().player != null
+                && Minecraft.getInstance().player.getItemInHand(InteractionHand.MAIN_HAND).getItem() == ItemRegistry.salt_wand.get()) {
+            var data = clientLevel.getChunkAt(blockpos$mutableblockpos).getData(AttachmentRegistry.NONE_SNOW_AREA);
+            ParticleOptions indicatorParticleOptions = data.neverSnowyAt(blockpos$mutableblockpos) ? ParticleTypes.END_ROD : null;
+            if (indicatorParticleOptions != null) {
+                clientLevel.addParticle(indicatorParticleOptions, false,
+                        false, i + 0.5, j + 1 + 0.3, k + 0.5, 0.0D, -0.0001, 0.0D);
             }
         }
         return replace;
@@ -335,7 +347,7 @@ public class ParticleUtil {
             }
             BlockStateModel blockModel = mc.getModelManager().getBlockStateModelSet().get(state);
             ArrayList<BlockStateModelPart> parts = new ArrayList<>();
-            blockModel.collectParts(RandomSource.create(42L),parts);
+            blockModel.collectParts(RandomSource.create(42L), parts);
             int tintIndex = -1;
             for (BlockStateModelPart part : parts) {
                 for (Direction direction : new Direction[]{Direction.UP, Direction.DOWN, Direction.SOUTH, Direction.EAST, Direction.NORTH, Direction.WEST, null}) {

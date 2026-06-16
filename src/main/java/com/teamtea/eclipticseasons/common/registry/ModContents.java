@@ -18,6 +18,7 @@ import com.teamtea.eclipticseasons.api.data.weather.CustomRainBuilder;
 import com.teamtea.eclipticseasons.api.data.weather.CustomSnowTerm;
 import com.teamtea.eclipticseasons.api.data.weather.WeatherDimension;
 import com.teamtea.eclipticseasons.api.data.weather.special_effect.WeatherEffect;
+import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.common.block.BlockInCopperGrateBlock;
 import com.teamtea.eclipticseasons.common.block.IceOrSnowCauldronBlock;
 import com.teamtea.eclipticseasons.common.resource.FakeResourceManagerHelperUtil;
@@ -71,12 +72,13 @@ public class ModContents {
                                 .title(Component.translatable("itemGroup." + EclipticSeasonsApi.MODID + ".core"))
                                 .displayItems((params, output) -> {
                                     ItemRegistry.ITEM_DEFERRED_REGISTER.getEntries().forEach(
-                                            itemDeferredHolder ->
+                                            value ->
                                             {
-                                                Item value = itemDeferredHolder.get();
-                                                if (value != ItemRegistry.hyetometer.get()
-                                                        && value != ItemRegistry.thermometer.get()) {
-                                                    output.accept(value);
+                                                if (!EclipticUtil.canSnowyBlockInteract() && value == ItemRegistry.broom)
+                                                    return;
+                                                if (value != ItemRegistry.hyetometer
+                                                        && value != ItemRegistry.thermometer) {
+                                                    output.accept(value.get());
                                                 }
                                             }
                                     );
