@@ -265,6 +265,16 @@ public final class ESRecipeProvider extends RecipeProvider {
                 .define('W', ItemTags.PLANKS)
                 .unlockedBy("has_redstone", has(Items.REDSTONE))
                 .save(consumer);
+
+        ShapedRecipeBuilder.shaped( RecipeCategory.TOOLS, ItemRegistry.salt_wand.get())
+                .pattern(" Q ")
+                .pattern(" S ")
+                .pattern(" T ")
+                .define('Q', Tags.Items.GEMS_QUARTZ)
+                .define('S', Tags.Items.INGOTS_GOLD)
+                .define('T', Items.STICK)
+                .unlockedBy("has_quartz", has(Items.QUARTZ))
+                .save(consumer);
     }
 
 }

@@ -460,7 +460,7 @@
   "info.eclipticseasons.calendar.model.next": "next",
   "info.eclipticseasons.calendar.model.day": "day",
   "pack.eclipticseasons.extra_snow": "Extra Snow Resource Pack",
-  "info.eclipticseasons.config.inactive": "§7Disabled by the current configuration.",
+  "info.eclipticseasons.config.inactive": "§7Enable %s to use this feature.",
   "info.eclipticseasons.greenhouse_core.effect": "Boosts %2$s crops within %1$s blocks in a greenhouse",
   "info.eclipticseasons.show.shift": "§o<..Hold Shift..>",
   "info.eclipticseasons.greenhouse_essence.use": "Transforms a Greenhouse Core Container into a %1$s Greenhouse Core",
@@ -563,5 +563,8 @@
   "block.eclipticseasons.season_sensor.source.natural": "Natural Season",
   "block.eclipticseasons.season_sensor.source.signal": "Season Signal",
   "block.eclipticseasons.season_sensor.detect": "Detecting: %s",
-  "block.eclipticseasons.season_sensor.auto_locked": "Season selection is disabled in automatic mode."
+  "block.eclipticseasons.season_sensor.auto_locked": "Season selection is disabled in automatic mode.",
+  "tooltip.eclipticseasons.salt_wand.0": "§7Right-click to disable snow cover",
+  "tooltip.eclipticseasons.salt_wand.1": "§7Sneak + Right-click to restore snow cover",
+  "tooltip.eclipticseasons.salt_wand.2": "§8§oSalt is said to ward off the cold."
 }

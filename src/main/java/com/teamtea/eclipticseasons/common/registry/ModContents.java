@@ -67,6 +67,8 @@ public class ModContents {
                                     ItemRegistry.ITEM_DEFERRED_REGISTER.getEntries().forEach(
                                             itemDeferredHolder ->
                                             {
+                                                if (!CommonConfig.Snow.snowInWorld.get() && itemDeferredHolder == ItemRegistry.broom)
+                                                    return;
                                                 Item value = itemDeferredHolder.get();
                                                 if (value != ItemRegistry.hyetometer.get()
                                                         && value != ItemRegistry.thermometer.get()) {

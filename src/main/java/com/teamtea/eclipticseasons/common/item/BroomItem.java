@@ -203,7 +203,8 @@ public class BroomItem extends Item {
         // use |= CommonConfig.Map.delayedUpdates.get();
 
         if (!EclipticUtil.canSnowyBlockInteract()) {
-            tooltipComponents.add(Component.translatable("info.eclipticseasons.config.inactive")
+            tooltipComponents.add(Component.translatable("info.eclipticseasons.config.inactive",
+                    Component.translatable("eclipticseasons.configuration.SnowInWorld"))
             );
         }
     }
