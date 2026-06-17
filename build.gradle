@@ -323,7 +323,7 @@ dependencies {
 //    onlyMainRuntimeOnly "curse.maven:fusion-connected-textures-854949:7058347"
 
     compileOnly "curse.maven:patchouli-306770:6842247"
-    compileOnly "curse.maven:kubejs-238086:7143884"
+    compileOnly "curse.maven:kubejs-238086:8235730"
 //    implementation "curse.maven:rhino-416294:7104526"
 
 
