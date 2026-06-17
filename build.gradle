@@ -15,6 +15,8 @@ tasks.named('wrapper', Wrapper).configure {
     distributionType = Wrapper.DistributionType.BIN
 }
 
+def sodiumJarJarDir = layout.buildDirectory.dir("generated/sodium-jarjar")
+
 version = mod_version
 group = mod_group_id
 
@@ -41,6 +43,12 @@ repositories {
     }
     maven {
         url "https://maven.su5ed.dev/releases"
+    }
+
+
+
+    flatDir {
+        dir sodiumJarJarDir
     }
 }
 
@@ -224,6 +232,11 @@ tasks.named('processResources', Copy) {
 }
 
 
+configurations {
+    sodiumOuter
+    sodiumJarJar
+}
+
 dependencies {
     // Specify the version of Minecraft to use.
     // Depending on the plugin applied there are several options. We will assume you applied the userdev plugin as shown above.
@@ -242,11 +255,11 @@ dependencies {
     compileOnly "org.sinytra.forgified-fabric-api:fabric-renderer-api-v1:3.4.0+acb05a39d1"
     compileOnly "org.sinytra.forgified-fabric-api:fabric-renderer-indigo:1.7.0+acb05a39d1"
 
-    compileOnly "maven.modrinth:sodium:mc1.21.1-0.6.13-neoforge"
-    compileOnly("curse.maven:irisshaders-455508:6117625")
+    implementation "maven.modrinth:sodium:mc1.21.1-0.8.12-beta.1-neoforge"
+    sodiumOuter "maven.modrinth:sodium:mc1.21.1-0.8.12-beta.1-neoforge"
+    compileOnly fileTree(dir: sodiumJarJarDir, include: ['*.jar'])
 
-    runtimeOnly("curse.maven:irisshaders-455508:6213632")
-    runtimeOnly "maven.modrinth:sodium:mc1.21.1-0.6.13-neoforge"
+    compileOnly("maven.modrinth:iris:1.8.14-beta.1+1.21.1-neoforge")
 
 
     if (project.findProperty(' ') == 'true') {
@@ -289,6 +302,21 @@ dependencies {
 //    }
 }
 
+tasks.register("extractSodiumJarJar", Copy) {
+    from({
+        configurations.sodiumOuter.resolve().collect { zipTree(it) }
+    }) {
+        include "META-INF/jarjar/**/*.jar"
+        eachFile { details -> details.path = details.name }
+        includeEmptyDirs = false
+    }
+    into(sodiumJarJarDir)
+    inputs.files(configurations.sodiumOuter)
+}
+
+tasks.named("compileJava").configure {
+    dependsOn("extractSodiumJarJar")
+}
 // This block of code expands all declared replace properties in the specified resource targets.
 // A missing property will result in an error. Properties are expanded using ${} Groovy notation.
 // When "copyIdeResources" is enabled, this will also run before the game launches in IDE environments.

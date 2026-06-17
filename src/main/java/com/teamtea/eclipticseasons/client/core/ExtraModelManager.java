@@ -1357,6 +1357,10 @@ public class ExtraModelManager {
         boolean snowSelf = !selfState.is(Blocks.SNOW);
         if (snowSelf || notUp) {
 
+            // Snowscape may insert snow blocks into fences/vegetation.
+            // Returning the original shape avoids incorrect face culling of the snow model.
+            if (snowInFence && original.isSolid()) return original;
+
             int cacheLevel = mapSlice.getLevelForFakeSnow(otherPos);
             if (cacheLevel > IFakeSnowHolder.NONE_CHECK_FAKE_SNOW_LEVEL)
                 return cacheLevel == 0 ? original :
