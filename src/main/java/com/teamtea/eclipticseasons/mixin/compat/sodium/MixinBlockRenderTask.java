@@ -61,9 +61,9 @@ public abstract class MixinBlockRenderTask extends ChunkBuilderTask<ChunkBuildOu
         if (l > ClientConfig.Debug.minChunkCompileWarningTime.getAsInt())
             EclipticSeasons.logger("WARNING",
                     Thread.currentThread().toString(),
-                    render.getPosition(),
-                    render.getPosition().center(),
-                    render.getOriginX(), render.getOriginY(), render.getOriginZ(),
+                    section.getPosition(),
+                    section.getPosition().center(),
+                    section.getOriginX(), section.getOriginY(), section.getOriginZ(),
                     "Rebuild time: " + l,
                     "Model check count: " + eclipticseasons$countModel);
 

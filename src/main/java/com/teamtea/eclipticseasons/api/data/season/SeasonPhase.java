@@ -32,7 +32,7 @@ public record SeasonPhase(
     public static final Codec<SeasonPhase> CODEC = RecordCodecBuilder.create(ins -> ins.group(
             ESExtraCodec.SEASON.fieldOf("season").forGetter(SeasonPhase::season),
             Identifier.CODEC.fieldOf("name").forGetter(SeasonPhase::name),
-            Codec.STRING.fieldOf("color").forGetter(s->s.color.toString().toLowerCase(Locale.ROOT)),
+            Codec.STRING.fieldOf("color").forGetter(s->s.color.name().toLowerCase(Locale.ROOT)),
             Icon.CODEC.optionalFieldOf("icon").forGetter(SeasonPhase::icon),
             FontIcon.CODEC.fieldOf("font").forGetter(SeasonPhase::fontIcon)
     ).apply(ins, ( season1,  name1,  color1,  icon1,  fontIcon1) -> new SeasonPhase(season1, name1, ChatFormatting.valueOf(color1.toUpperCase(Locale.ROOT)), icon1, fontIcon1)));

@@ -1,6 +1,5 @@
 {
   "type": "minecraft:crafting_shaped",
-  "category": "misc",
   "group": "wind_chimes",
   "key": {
     "i": "minecraft:blue_dye",
