@@ -7,7 +7,6 @@ import com.teamtea.eclipticseasons.common.registry.ESRegistries;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
-import net.minecraft.data.tags.KeyTagProvider;
 import net.minecraft.data.tags.TagsProvider;
 
 import org.jetbrains.annotations.Nullable;
@@ -16,7 +15,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-public class CropClimateTagsDataProvider extends KeyTagProvider<AgroClimaticZone> {
+public class CropClimateTagsDataProvider extends TagsProvider<AgroClimaticZone> {
 
 
     public CropClimateTagsDataProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, String modId) {

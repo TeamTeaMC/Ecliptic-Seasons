@@ -10,6 +10,7 @@ import net.minecraft.util.ARGB;
 import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.level.NaturalSpawner;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Quaternionf;
@@ -152,7 +153,7 @@ public class FireflyParticle extends SingleQuadParticle {
 
             Vec3 vec3 = Entity.collideBoundingBox((Entity) null, new Vec3(xd, yd, zd), this.getBoundingBox(), this.level, List.of());
             if (this.nextPos != null &&
-                    (!NaturalSpawner.isValidEmptySpawnBlock(level, targetPosition, level.getBlockState(targetPosition), level.getFluidState(targetPosition), EntityType.BAT)
+                    (!NaturalSpawner.isValidEmptySpawnBlock(level, targetPosition, level.getBlockState(targetPosition), level.getFluidState(targetPosition), EntityTypes.BAT)
                             || targetPosition.getY() <= level.getMinY()
                             || Math.abs(vec3.y) < (double) 1.0E-5F
                             || this.onGround
@@ -162,7 +163,7 @@ public class FireflyParticle extends SingleQuadParticle {
                 // this.stoppedByCollision=false;
             }
             if (nextPos == null || nextPos.closerThan(nowPos, 1f) || nextPos.distanceTo(nowPos) > 100) {
-                this.nextPos = findNextPosition(2).getCenter();
+                this.nextPos = Vec3.atCenterOf(findNextPosition(2));
                 var re = nextPos.subtract(nowPos).multiply(0.02d, 0.02d, 0.02d);
                 this.xd = re.x;
                 this.yd = re.y;
@@ -175,7 +176,7 @@ public class FireflyParticle extends SingleQuadParticle {
             }
 
             var pos = BlockPos.containing(x, y - 0.1f, z);
-            if (!NaturalSpawner.isValidEmptySpawnBlock(level, pos, level.getBlockState(pos), level.getFluidState(pos), EntityType.BAT)) {
+            if (!NaturalSpawner.isValidEmptySpawnBlock(level, pos, level.getBlockState(pos), level.getFluidState(pos), EntityTypes.BAT)) {
                 this.yd = 0.05f;
             }
 
@@ -198,7 +199,7 @@ public class FireflyParticle extends SingleQuadParticle {
                     mutable,
                     this.level.getBlockState(mutable),
                     this.level.getFluidState(mutable),
-                    EntityType.BAT
+                    EntityTypes.BAT
             )) {
                 return mutable.immutable();
             }

@@ -113,7 +113,7 @@ public class GreenHouseFrameBlock extends SimpleEntityBlock {
                 double centerY = pos.getY() + 1.0;
                 double centerZ = pos.getZ() + 0.5;
 
-                Integer color = greenHouseCoreBlock.getSeason().getColor().getColor();
+                int color = greenHouseCoreBlock.getSeason().getTextColor().getValue();
                 float r = ARGB.red(color) / 255.0F;
                 float g = ARGB.green(color) / 255.0F;
                 float b = ARGB.blue(color) / 255.0F;

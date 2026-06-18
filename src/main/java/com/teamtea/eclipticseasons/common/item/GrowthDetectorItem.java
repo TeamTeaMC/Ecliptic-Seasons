@@ -15,7 +15,7 @@ import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
 import com.teamtea.eclipticseasons.common.core.crop.GreenHouseCoreProvider;
 import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
 import com.teamtea.eclipticseasons.config.CommonConfig;
-import net.minecraft.advancements.criterion.BlockPredicate;
+import net.minecraft.advancements.predicates.BlockPredicate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;

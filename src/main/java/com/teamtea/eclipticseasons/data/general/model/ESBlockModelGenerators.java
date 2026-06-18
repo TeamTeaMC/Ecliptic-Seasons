@@ -51,14 +51,14 @@ public class ESBlockModelGenerators {
         addSensorBlock(BlockRegistry.season_sensor.get());
         models.registerSimpleItemModel(BlockRegistry.season_sensor.get(), EclipticSeasons.rl("block/season_sensor"));
 
-        addCopperGrate(BlockRegistry.block_in_copper_grate_block.get());
-        addCopperGrate(BlockRegistry.block_in_exposed_copper_grate_block.get());
-        addCopperGrate(BlockRegistry.block_in_weathered_copper_grate_block.get());
-        addCopperGrate(BlockRegistry.block_in_oxidized_copper_grate_block.get());
-        addCopperGrate(BlockRegistry.block_in_waxed_copper_grate_block.get());
-        addCopperGrate(BlockRegistry.block_in_waxed_exposed_copper_grate_block.get());
-        addCopperGrate(BlockRegistry.block_in_waxed_weathered_copper_grate_block.get());
-        addCopperGrate(BlockRegistry.block_in_waxed_oxidized_copper_grate_block.get());
+        // addCopperGrate(BlockRegistry.block_in_copper_grate_block.get());
+        // addCopperGrate(BlockRegistry.block_in_exposed_copper_grate_block.get());
+        // addCopperGrate(BlockRegistry.block_in_weathered_copper_grate_block.get());
+        // addCopperGrate(BlockRegistry.block_in_oxidized_copper_grate_block.get());
+        // addCopperGrate(BlockRegistry.block_in_waxed_copper_grate_block.get());
+        // addCopperGrate(BlockRegistry.block_in_waxed_exposed_copper_grate_block.get());
+        // addCopperGrate(BlockRegistry.block_in_waxed_weathered_copper_grate_block.get());
+        // addCopperGrate(BlockRegistry.block_in_waxed_oxidized_copper_grate_block.get());
 
         simpleBlockItem(BlockRegistry.block_in_wooden_grate_block.get(), EclipticSeasons.rl("block/wooden_grate"), true);
 
@@ -81,10 +81,10 @@ public class ESBlockModelGenerators {
             simpleBlockItem(block, EclipticSeasons.rl("block/green_house_core_particle"), false);
         }
 
-        for (Block block : List.of(BlockRegistry.season_quest_ceiling_hanging_sign.get(),
-                BlockRegistry.season_quest_wall_hanging_sign.get())) {
-            simpleBlockItem(block, Identifier.parse("minecraft:block/oak_planks"), ModelTemplates.create("air", TextureSlot.PARTICLE), false);
-        }
+        // for (Block block : List.of(BlockRegistry.season_quest_ceiling_hanging_sign.get(),
+        //         BlockRegistry.season_quest_wall_hanging_sign.get())) {
+        //     simpleBlockItem(block, Identifier.parse("minecraft:block/oak_planks"), ModelTemplates.create("air", TextureSlot.PARTICLE), false);
+        // }
 
         generateFlowers();
     }
@@ -162,7 +162,7 @@ public class ESBlockModelGenerators {
 
 
     public void addCopperGrate(Block block) {
-        addSimple(block, BlockRegistry.getOriginalCopperGrateBlockNotWaxed(block));
+        // addSimple(block, BlockRegistry.getOriginalCopperGrateBlockNotWaxed(block));
     }
 
     public void addCauldron(Block block, Block content) {

@@ -92,7 +92,7 @@ public class GreenHouseCoreBlock extends SimpleEntityBlock {
         if (!ClientConfig.Particle.seasonGreenhouse.get()) return;
         int count = ClientConfig.Particle.SeasonGreenhouseParticleSpawnCount.get();
 
-        Integer color = getSeason().getColor().getColor();
+        int color = getSeason().getTextColor().getValue();
         float r = ARGB.red(color) / 255.0F;
         float g = ARGB.green(color) / 255.0F;
         float b = ARGB.blue(color) / 255.0F;

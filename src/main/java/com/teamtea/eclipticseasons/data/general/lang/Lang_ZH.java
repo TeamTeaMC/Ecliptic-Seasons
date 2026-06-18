@@ -51,17 +51,17 @@ public class Lang_ZH extends LangHelper {
 
         add(ItemRegistry.growth_detector.get(), "生长检测计");
 
-        add(BlockRegistry.season_quest_wall_hanging_sign.get(), "季节任务告示");
-        add(BlockRegistry.season_quest_ceiling_hanging_sign.get(), "季节任务告示");
-
-        add(BlockRegistry.block_in_copper_grate_block.get(), "湿度调节铜格栅");
-        add(BlockRegistry.block_in_exposed_copper_grate_block.get(), "斑驳的湿度调节铜格栅");
-        add(BlockRegistry.block_in_weathered_copper_grate_block.get(), "锈蚀的湿度调节铜格栅");
-        add(BlockRegistry.block_in_oxidized_copper_grate_block.get(), "氧化的湿度调节铜格栅");
-        add(BlockRegistry.block_in_waxed_copper_grate_block.get(), "打蜡的湿度调节铜格栅");
-        add(BlockRegistry.block_in_waxed_exposed_copper_grate_block.get(), "打蜡的斑驳湿度调节铜格栅");
-        add(BlockRegistry.block_in_waxed_weathered_copper_grate_block.get(), "打蜡的锈蚀湿度调节铜格栅");
-        add(BlockRegistry.block_in_waxed_oxidized_copper_grate_block.get(), "打蜡的氧化湿度调节铜格栅");
+        // add(BlockRegistry.season_quest_wall_hanging_sign.get(), "季节任务告示");
+        // add(BlockRegistry.season_quest_ceiling_hanging_sign.get(), "季节任务告示");
+        //
+        // add(BlockRegistry.block_in_copper_grate_block.get(), "湿度调节铜格栅");
+        // add(BlockRegistry.block_in_exposed_copper_grate_block.get(), "斑驳的湿度调节铜格栅");
+        // add(BlockRegistry.block_in_weathered_copper_grate_block.get(), "锈蚀的湿度调节铜格栅");
+        // add(BlockRegistry.block_in_oxidized_copper_grate_block.get(), "氧化的湿度调节铜格栅");
+        // add(BlockRegistry.block_in_waxed_copper_grate_block.get(), "打蜡的湿度调节铜格栅");
+        // add(BlockRegistry.block_in_waxed_exposed_copper_grate_block.get(), "打蜡的斑驳湿度调节铜格栅");
+        // add(BlockRegistry.block_in_waxed_weathered_copper_grate_block.get(), "打蜡的锈蚀湿度调节铜格栅");
+        // add(BlockRegistry.block_in_waxed_oxidized_copper_grate_block.get(), "打蜡的氧化湿度调节铜格栅");
 
         add(BlockRegistry.block_in_wooden_grate_block.get(), "湿度调节木格栅");
 

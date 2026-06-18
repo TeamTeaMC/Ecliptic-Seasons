@@ -141,20 +141,20 @@ public class WorldRenderer {
 
     public static void setSectionDirty(SectionPos sectionPos) {
         if (isSectionLoad(sectionPos)) {
-            Minecraft.getInstance().levelRenderer.setSectionDirty(sectionPos.x(), sectionPos.y(), sectionPos.z());
+            Minecraft.getInstance().levelExtractor.setSectionDirty(sectionPos.x(), sectionPos.y(), sectionPos.z());
         }
     }
 
     public static void setSectionDirtyWithNeighbors(SectionPos sectionPos) {
         if (isSectionLoad(sectionPos, 2)) {
-            Minecraft.getInstance().levelRenderer.setSectionDirtyWithNeighbors(sectionPos.x(), sectionPos.y(), sectionPos.z());
+            Minecraft.getInstance().levelExtractor.setSectionDirtyWithNeighbors(sectionPos.x(), sectionPos.y(), sectionPos.z());
         }
     }
 
     public static void setSectionDirtyRandomly(SectionPos sectionPos) {
         if (Minecraft.getInstance().level != null) {
             RandomSource random = Minecraft.getInstance().level.getRandom();
-            int lastViewDistance = (int) (Minecraft.getInstance().levelRenderer.getLastViewDistance() - 1);
+            int lastViewDistance = (int) (Minecraft.getInstance().levelExtractor.lastViewDistance() - 1);
             for (int i = 0; i < random.nextInt(8) + 4; i++) {
                 {
                     setSectionDirtyWithNeighbors(SectionPos.of(sectionPos.x() + 2 * (random.nextInt(lastViewDistance)) - lastViewDistance,
@@ -172,7 +172,7 @@ public class WorldRenderer {
         int pSectionX = centerPos.x();
         // int pSectionY = centerPos.y();
         int pSectionZ = centerPos.z();
-        int d = (int) Minecraft.getInstance().levelRenderer.getLastViewDistance();
+        int d = (int) Minecraft.getInstance().levelExtractor.lastViewDistance();
         for (int j = pSectionZ - d; j <= pSectionZ + d; j++) {
             for (int i = pSectionX - d; i <= pSectionX + d; i++) {
                 var chunk = MapChecker.getChunkView(level, i, j);

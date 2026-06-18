@@ -10,7 +10,6 @@ import com.teamtea.eclipticseasons.common.registry.ItemRegistry;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.core.BlockPos;
@@ -38,7 +37,7 @@ public final class GrowthWorldUiRenderer {
     public static void extractLevelRenderState(ExtractLevelRenderStateEvent event) {
         Minecraft mc = Minecraft.getInstance();
 
-        if (mc.level == null || mc.player == null || mc.options.hideGui) {
+        if (mc.level == null || mc.player == null || mc.gui.hud.isHidden()) {
             return;
         }
 
@@ -176,7 +175,7 @@ public final class GrowthWorldUiRenderer {
 
         Minecraft mc = Minecraft.getInstance();
 
-        if (mc.level == null || mc.player == null || mc.options.hideGui) {
+        if (mc.level == null || mc.player == null || mc.gui.hud.isHidden()) {
             return;
         }
 

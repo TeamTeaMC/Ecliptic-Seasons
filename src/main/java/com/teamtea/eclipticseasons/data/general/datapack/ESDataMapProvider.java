@@ -21,15 +21,15 @@ public class ESDataMapProvider extends DataMapProvider {
 
     @Override
     protected void gather(HolderLookup.@NonNull Provider provider) {
-        Builder<Waxable, Block> waxableBlockBuilder = builder(NeoForgeDataMaps.WAXABLES);
-        waxableBlockBuilder.add(BlockRegistry.block_in_copper_grate_block, new Waxable(BlockRegistry.block_in_waxed_copper_grate_block.get()), false);
-        waxableBlockBuilder.add(BlockRegistry.block_in_exposed_copper_grate_block, new Waxable(BlockRegistry.block_in_waxed_exposed_copper_grate_block.get()), false);
-        waxableBlockBuilder.add(BlockRegistry.block_in_weathered_copper_grate_block, new Waxable(BlockRegistry.block_in_waxed_weathered_copper_grate_block.get()), false);
-        waxableBlockBuilder.add(BlockRegistry.block_in_oxidized_copper_grate_block, new Waxable(BlockRegistry.block_in_waxed_oxidized_copper_grate_block.get()), false);
-
-        Builder<Oxidizable, Block> oxidizableBlockBuilder = builder(NeoForgeDataMaps.OXIDIZABLES);
-        oxidizableBlockBuilder.add(BlockRegistry.block_in_copper_grate_block,new Oxidizable(BlockRegistry.block_in_exposed_copper_grate_block.get()),false);
-        oxidizableBlockBuilder.add(BlockRegistry.block_in_exposed_copper_grate_block,new Oxidizable(BlockRegistry.block_in_weathered_copper_grate_block.get()),false);
-        oxidizableBlockBuilder.add(BlockRegistry.block_in_weathered_copper_grate_block,new Oxidizable(BlockRegistry.block_in_oxidized_copper_grate_block.get()),false);
+        // Builder<Waxable, Block> waxableBlockBuilder = builder(NeoForgeDataMaps.WAXABLES);
+        // waxableBlockBuilder.add(BlockRegistry.block_in_copper_grate_block, new Waxable(BlockRegistry.block_in_waxed_copper_grate_block.get()), false);
+        // waxableBlockBuilder.add(BlockRegistry.block_in_exposed_copper_grate_block, new Waxable(BlockRegistry.block_in_waxed_exposed_copper_grate_block.get()), false);
+        // waxableBlockBuilder.add(BlockRegistry.block_in_weathered_copper_grate_block, new Waxable(BlockRegistry.block_in_waxed_weathered_copper_grate_block.get()), false);
+        // waxableBlockBuilder.add(BlockRegistry.block_in_oxidized_copper_grate_block, new Waxable(BlockRegistry.block_in_waxed_oxidized_copper_grate_block.get()), false);
+        //
+        // Builder<Oxidizable, Block> oxidizableBlockBuilder = builder(NeoForgeDataMaps.OXIDIZABLES);
+        // oxidizableBlockBuilder.add(BlockRegistry.block_in_copper_grate_block,new Oxidizable(BlockRegistry.block_in_exposed_copper_grate_block.get()),false);
+        // oxidizableBlockBuilder.add(BlockRegistry.block_in_exposed_copper_grate_block,new Oxidizable(BlockRegistry.block_in_weathered_copper_grate_block.get()),false);
+        // oxidizableBlockBuilder.add(BlockRegistry.block_in_weathered_copper_grate_block,new Oxidizable(BlockRegistry.block_in_oxidized_copper_grate_block.get()),false);
     }
 }

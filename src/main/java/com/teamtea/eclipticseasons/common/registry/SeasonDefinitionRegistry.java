@@ -9,8 +9,8 @@ import com.teamtea.eclipticseasons.api.data.season.definition.condition.EmptyAbo
 import com.teamtea.eclipticseasons.api.data.season.definition.selector.BlockSelector;
 import com.teamtea.eclipticseasons.api.data.season.definition.selector.FeatureSelector;
 import com.teamtea.eclipticseasons.api.data.season.definition.selector.MultiBlockSelector;
-import net.minecraft.advancements.criterion.BlockPredicate;
-import net.minecraft.advancements.criterion.StatePropertiesPredicate;
+import net.minecraft.advancements.predicates.BlockPredicate;
+import net.minecraft.advancements.predicates.StatePropertiesPredicate;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.Vec3i;
 import net.minecraft.core.registries.Registries;

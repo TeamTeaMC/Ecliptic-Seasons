@@ -46,8 +46,6 @@
     "client.biome.MixinClientBiome",
     "client.block.MixinBlockColors",
     "client.block.MixinClientBlockState",
-    "client.block.sign.MixinHangingSignRenderer",
-    "client.block.sign.MixinHangingSignScreen",
     "client.chunk.MixinModelBlockRenderer",
     "client.chunk.MixinRenderChunkRegion_IMapSlice",
     "client.chunk.MixinSectionCompiler",

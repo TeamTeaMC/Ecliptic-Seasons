@@ -6,6 +6,7 @@ import com.teamtea.eclipticseasons.api.misc.ITranslatableWithPlaceholder;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TextColor;
 
 import java.util.Arrays;
 import java.util.Locale;
@@ -36,6 +37,10 @@ public enum Season implements ITranslatableWithPlaceholder {
 
     public ChatFormatting getColor() {
         return color;
+    }
+
+    public TextColor getTextColor(){
+        return TextColor.fromLegacyFormat(getColor());
     }
 
     @Override

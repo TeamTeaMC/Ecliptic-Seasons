@@ -31,8 +31,8 @@ import com.teamtea.eclipticseasons.common.registry.AgroClimateRegistry;
 import com.teamtea.eclipticseasons.common.registry.CropRegistry;
 import com.teamtea.eclipticseasons.common.registry.ESRegistries;
 import com.teamtea.eclipticseasons.config.CommonConfig;
-import net.minecraft.advancements.criterion.BlockPredicate;
-import net.minecraft.advancements.criterion.StatePropertiesPredicate;
+import net.minecraft.advancements.predicates.BlockPredicate;
+import net.minecraft.advancements.predicates.StatePropertiesPredicate;
 import net.minecraft.core.*;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -930,7 +930,7 @@ public final class CropGrowthHandler {
 
         int maxDistance = CommonConfig.Crop.greenHouseMaxDiameter.get();
         int y_maxDistance = CommonConfig.Crop.greenHouseMaxHeight.get();
-        Vec3 centerVec = pos.getCenter();
+        Vec3 centerVec = Vec3.atCenterOf(pos);
         Vec3[] vec3s = CommonConfig.Crop.complexGreenHouseCheck.get() ?
                 CHECK_DIRECTIONS : CHECK_DIRECTIONS_SIMPLE;
 

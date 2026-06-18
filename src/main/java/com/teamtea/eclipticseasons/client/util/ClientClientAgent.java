@@ -55,7 +55,7 @@ public class ClientClientAgent implements ClientAgent {
 
     @Override
     public void setAllRendererChanged() {
-        Minecraft.getInstance().levelRenderer.allChanged();
+        Minecraft.getInstance().levelExtractor.allChanged();
     }
 
     @Getter

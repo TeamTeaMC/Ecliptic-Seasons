@@ -7,7 +7,9 @@ import com.teamtea.eclipticseasons.common.registry.BlockRegistry;
 import com.teamtea.eclipticseasons.common.registry.ESLootTables;
 import com.teamtea.eclipticseasons.common.registry.ItemRegistry;
 import net.minecraft.advancements.*;
-import net.minecraft.advancements.criterion.*;
+import net.minecraft.advancements.predicates.*;
+import net.minecraft.advancements.predicates.entity.EntityPredicate;
+import net.minecraft.advancements.triggers.*;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.advancements.AdvancementSubProvider;
@@ -71,7 +73,7 @@ public class ESAdvancementGenerator implements AdvancementSubProvider {
                 .requirements(AdvancementRequirements.Strategy.AND)
                 .save(consumer, getNameId("main/heat_stroke"));
 
-        BlockRegistry.initCopperGrateMap();
+        // BlockRegistry.initCopperGrateMap();
         AdvancementHolder green_house = buildAdvancementHolder(seasons, ItemRegistry.growth_detector.get(),
                 Component.translatable("advancement.eclipticseasons.green_house"),
                 Component.translatable("advancement.eclipticseasons.green_house.desc"),
@@ -190,7 +192,7 @@ public class ESAdvancementGenerator implements AdvancementSubProvider {
         AdvancementHolder spring_feed =
                 Advancement.Builder.advancement()
                         .parent(spring_harvest)
-                        .display(Items.WHITE_WOOL,
+                        .display(Items.WOOL.white(),
                                 Component.translatable("advancement.eclipticseasons.spring_feed"),
                                 Component.translatable("advancement.eclipticseasons.spring_feed.desc"),
                                 null,
@@ -371,7 +373,7 @@ public class ESAdvancementGenerator implements AdvancementSubProvider {
                 ),
                 consumer, "quests/winter_milk");
 
-        AdvancementHolder winter_carpet = buildAdvancementHolder(winter_milk, Items.WHITE_CARPET,
+        AdvancementHolder winter_carpet = buildAdvancementHolder(winter_milk, Items.CARPET.white(),
                 Component.translatable("advancement.eclipticseasons.winter_carpet"),
                 Component.translatable("advancement.eclipticseasons.winter_carpet.desc"),
                 "core_require", InventoryChangeTrigger.TriggerInstance.hasItems(ItemPredicate.Builder.item().of(items, ItemTags.WOOL_CARPETS)),

@@ -4,7 +4,7 @@ import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.common.block.GreenHouseCoreBlock;
 import com.teamtea.eclipticseasons.common.registry.BlockRegistry;
 import com.teamtea.eclipticseasons.common.registry.ItemRegistry;
-import net.minecraft.advancements.criterion.StatePropertiesPredicate;
+import net.minecraft.advancements.predicates.StatePropertiesPredicate;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.loot.BlockLootSubProvider;
@@ -86,14 +86,14 @@ public class EclipticSeasonsBlockLootTables extends BlockLootSubProvider {
         createCoreDrop(BlockRegistry.autumn_greenhouse_core.get(), ItemRegistry.autumn_greenhouse_essence_item.get());
         createCoreDrop(BlockRegistry.winter_greenhouse_core.get(), ItemRegistry.winter_greenhouse_essence_item.get());
 
-        dropOther(BlockRegistry.block_in_copper_grate_block.get(), Blocks.COPPER_GRATE);
-        dropOther(BlockRegistry.block_in_exposed_copper_grate_block.get(), Blocks.EXPOSED_COPPER_GRATE);
-        dropOther(BlockRegistry.block_in_weathered_copper_grate_block.get(), Blocks.WEATHERED_COPPER_GRATE);
-        dropOther(BlockRegistry.block_in_oxidized_copper_grate_block.get(), Blocks.OXIDIZED_COPPER_GRATE);
-        dropOther(BlockRegistry.block_in_waxed_copper_grate_block.get(), Blocks.WAXED_COPPER_GRATE);
-        dropOther(BlockRegistry.block_in_waxed_exposed_copper_grate_block.get(), Blocks.WAXED_EXPOSED_COPPER_GRATE);
-        dropOther(BlockRegistry.block_in_waxed_weathered_copper_grate_block.get(), Blocks.WAXED_WEATHERED_COPPER_GRATE);
-        dropOther(BlockRegistry.block_in_waxed_oxidized_copper_grate_block.get(), Blocks.WAXED_OXIDIZED_COPPER_GRATE);
+        // dropOther(BlockRegistry.block_in_copper_grate_block.get(), Blocks.COPPER_GRATE);
+        // dropOther(BlockRegistry.block_in_exposed_copper_grate_block.get(), Blocks.EXPOSED_COPPER_GRATE);
+        // dropOther(BlockRegistry.block_in_weathered_copper_grate_block.get(), Blocks.WEATHERED_COPPER_GRATE);
+        // dropOther(BlockRegistry.block_in_oxidized_copper_grate_block.get(), Blocks.OXIDIZED_COPPER_GRATE);
+        // dropOther(BlockRegistry.block_in_waxed_copper_grate_block.get(), Blocks.WAXED_COPPER_GRATE);
+        // dropOther(BlockRegistry.block_in_waxed_exposed_copper_grate_block.get(), Blocks.WAXED_EXPOSED_COPPER_GRATE);
+        // dropOther(BlockRegistry.block_in_waxed_weathered_copper_grate_block.get(), Blocks.WAXED_WEATHERED_COPPER_GRATE);
+        // dropOther(BlockRegistry.block_in_waxed_oxidized_copper_grate_block.get(), Blocks.WAXED_OXIDIZED_COPPER_GRATE);
 
         dropOther(BlockRegistry.snow_cauldron.get(), Blocks.CAULDRON);
         dropOther(BlockRegistry.ice_cauldron.get(), Blocks.CAULDRON);

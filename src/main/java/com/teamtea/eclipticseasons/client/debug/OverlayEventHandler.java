@@ -25,7 +25,7 @@ public final class OverlayEventHandler {
         LocalPlayer player = mc.player;
         var level = mc.level;
 
-        if (player != null && level != null && !mc.options.hideGui) {
+        if (player != null && level != null && !mc.gui.hud.isHidden()) {
             if (KeyMappingRegistry.DEBUG_KEY.consumeClick()) {
                 ClientConfig.Debug.debugInfo.set(!ClientConfig.Debug.debugInfo.getAsBoolean());
             }

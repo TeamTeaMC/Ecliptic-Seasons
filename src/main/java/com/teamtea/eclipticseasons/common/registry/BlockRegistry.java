@@ -44,21 +44,21 @@ public class BlockRegistry {
     public static final DeferredHolder<Block, Block> greenhouse_core_container = BLOCK_DEFERRED_REGISTER.registerBlock("greenhouse_core_container", (p) -> new GreenHouseFrameBlock(p.strength(1.5f).sound(SoundType.AMETHYST).noOcclusion().pushReaction(PushReaction.DESTROY)));
 
     // season_quest_sign 季节任务
-    public static final DeferredHolder<Block, Block> season_quest_ceiling_hanging_sign = BLOCK_DEFERRED_REGISTER.registerBlock("season_quest_ceiling_hanging_sign", QuestCeilingHangingSignBlock::new, () -> (BlockBehaviour.Properties.of().strength(0.5f).sound(SoundType.WOOD).noOcclusion().pushReaction(PushReaction.DESTROY)));
-    public static final DeferredHolder<Block, Block> season_quest_wall_hanging_sign = BLOCK_DEFERRED_REGISTER.registerBlock("season_quest_wall_hanging_sign", QuestWallHangingSignBlock::new, () -> (BlockBehaviour.Properties.of().strength(0.5f).sound(SoundType.WOOD).noOcclusion().pushReaction(PushReaction.DESTROY)));
+    // public static final DeferredHolder<Block, Block> season_quest_ceiling_hanging_sign = BLOCK_DEFERRED_REGISTER.registerBlock("season_quest_ceiling_hanging_sign", QuestCeilingHangingSignBlock::new, () -> (BlockBehaviour.Properties.of().strength(0.5f).sound(SoundType.WOOD).noOcclusion().pushReaction(PushReaction.DESTROY)));
+    // public static final DeferredHolder<Block, Block> season_quest_wall_hanging_sign = BLOCK_DEFERRED_REGISTER.registerBlock("season_quest_wall_hanging_sign", QuestWallHangingSignBlock::new, () -> (BlockBehaviour.Properties.of().strength(0.5f).sound(SoundType.WOOD).noOcclusion().pushReaction(PushReaction.DESTROY)));
 
     // humidity_control 湿度调节
-    public static final DeferredHolder<Block, Block> block_in_copper_grate_block = BLOCK_DEFERRED_REGISTER.registerBlock("block_in_copper_grate_block", (p) -> new BlockInCopperGrateBlock((WeatheringCopperGrateBlock) Blocks.COPPER_GRATE, p), () -> BlockBehaviour.Properties.ofFullCopy(Blocks.COPPER_GRATE));
-    public static final DeferredHolder<Block, Block> block_in_exposed_copper_grate_block = BLOCK_DEFERRED_REGISTER.registerBlock("block_in_exposed_copper_grate_block", (p) -> new BlockInCopperGrateBlock((WeatheringCopperGrateBlock) Blocks.EXPOSED_COPPER_GRATE, p), () -> BlockBehaviour.Properties.ofFullCopy(Blocks.EXPOSED_COPPER_GRATE));
-    public static final DeferredHolder<Block, Block> block_in_weathered_copper_grate_block = BLOCK_DEFERRED_REGISTER.registerBlock("block_in_weathered_copper_grate_block", (p) -> new BlockInCopperGrateBlock((WeatheringCopperGrateBlock) Blocks.WEATHERED_COPPER_GRATE, p), () -> BlockBehaviour.Properties.ofFullCopy(Blocks.WEATHERED_COPPER_GRATE));
-    public static final DeferredHolder<Block, Block> block_in_oxidized_copper_grate_block = BLOCK_DEFERRED_REGISTER.registerBlock("block_in_oxidized_copper_grate_block", (p) -> new BlockInCopperGrateBlock((WeatheringCopperGrateBlock) Blocks.OXIDIZED_COPPER_GRATE, p), () -> BlockBehaviour.Properties.ofFullCopy(Blocks.OXIDIZED_COPPER_GRATE));
+    // public static final DeferredHolder<Block, Block> block_in_copper_grate_block = BLOCK_DEFERRED_REGISTER.registerBlock("block_in_copper_grate_block", (p) -> new BlockInCopperGrateBlock((WeatheringCopperGrateBlock) Blocks.COPPER_GRATE, p), () -> BlockBehaviour.Properties.ofFullCopy(Blocks.COPPER_GRATE));
+    // public static final DeferredHolder<Block, Block> block_in_exposed_copper_grate_block = BLOCK_DEFERRED_REGISTER.registerBlock("block_in_exposed_copper_grate_block", (p) -> new BlockInCopperGrateBlock((WeatheringCopperGrateBlock) Blocks.EXPOSED_COPPER_GRATE, p), () -> BlockBehaviour.Properties.ofFullCopy(Blocks.EXPOSED_COPPER_GRATE));
+    // public static final DeferredHolder<Block, Block> block_in_weathered_copper_grate_block = BLOCK_DEFERRED_REGISTER.registerBlock("block_in_weathered_copper_grate_block", (p) -> new BlockInCopperGrateBlock((WeatheringCopperGrateBlock) Blocks.WEATHERED_COPPER_GRATE, p), () -> BlockBehaviour.Properties.ofFullCopy(Blocks.WEATHERED_COPPER_GRATE));
+    // public static final DeferredHolder<Block, Block> block_in_oxidized_copper_grate_block = BLOCK_DEFERRED_REGISTER.registerBlock("block_in_oxidized_copper_grate_block", (p) -> new BlockInCopperGrateBlock((WeatheringCopperGrateBlock) Blocks.OXIDIZED_COPPER_GRATE, p), () -> BlockBehaviour.Properties.ofFullCopy(Blocks.OXIDIZED_COPPER_GRATE));
+    //
+    // public static final DeferredHolder<Block, Block> block_in_waxed_copper_grate_block = BLOCK_DEFERRED_REGISTER.registerBlock("waxed_block_in_copper_grate_block", BlockInWaxedCopperGrateBlock::new, () -> BlockBehaviour.Properties.ofFullCopy(Blocks.WAXED_COPPER_GRATE));
+    // public static final DeferredHolder<Block, Block> block_in_waxed_exposed_copper_grate_block = BLOCK_DEFERRED_REGISTER.registerBlock("waxed_block_in_exposed_copper_grate_block", BlockInWaxedCopperGrateBlock::new, () -> (BlockBehaviour.Properties.ofFullCopy(Blocks.WAXED_EXPOSED_COPPER_GRATE)));
+    // public static final DeferredHolder<Block, Block> block_in_waxed_weathered_copper_grate_block = BLOCK_DEFERRED_REGISTER.registerBlock("waxed_block_in_weathered_copper_grate_block", BlockInWaxedCopperGrateBlock::new, () -> (BlockBehaviour.Properties.ofFullCopy(Blocks.WAXED_WEATHERED_COPPER_GRATE)));
+    // public static final DeferredHolder<Block, Block> block_in_waxed_oxidized_copper_grate_block = BLOCK_DEFERRED_REGISTER.registerBlock("waxed_block_in_oxidized_copper_grate_block", BlockInWaxedCopperGrateBlock::new, () -> (BlockBehaviour.Properties.ofFullCopy(Blocks.WAXED_OXIDIZED_COPPER_GRATE)));
 
-    public static final DeferredHolder<Block, Block> block_in_waxed_copper_grate_block = BLOCK_DEFERRED_REGISTER.registerBlock("waxed_block_in_copper_grate_block", BlockInWaxedCopperGrateBlock::new, () -> BlockBehaviour.Properties.ofFullCopy(Blocks.WAXED_COPPER_GRATE));
-    public static final DeferredHolder<Block, Block> block_in_waxed_exposed_copper_grate_block = BLOCK_DEFERRED_REGISTER.registerBlock("waxed_block_in_exposed_copper_grate_block", BlockInWaxedCopperGrateBlock::new, () -> (BlockBehaviour.Properties.ofFullCopy(Blocks.WAXED_EXPOSED_COPPER_GRATE)));
-    public static final DeferredHolder<Block, Block> block_in_waxed_weathered_copper_grate_block = BLOCK_DEFERRED_REGISTER.registerBlock("waxed_block_in_weathered_copper_grate_block", BlockInWaxedCopperGrateBlock::new, () -> (BlockBehaviour.Properties.ofFullCopy(Blocks.WAXED_WEATHERED_COPPER_GRATE)));
-    public static final DeferredHolder<Block, Block> block_in_waxed_oxidized_copper_grate_block = BLOCK_DEFERRED_REGISTER.registerBlock("waxed_block_in_oxidized_copper_grate_block", BlockInWaxedCopperGrateBlock::new, () -> (BlockBehaviour.Properties.ofFullCopy(Blocks.WAXED_OXIDIZED_COPPER_GRATE)));
-
-    public static final DeferredHolder<Block, Block> block_in_wooden_grate_block = BLOCK_DEFERRED_REGISTER.registerBlock("block_in_wooden_grate_block", BlockInWaxedCopperGrateBlock::new, () -> (BlockBehaviour.Properties.ofFullCopy(Blocks.WAXED_COPPER_GRATE)
+    public static final DeferredHolder<Block, Block> block_in_wooden_grate_block = BLOCK_DEFERRED_REGISTER.registerBlock("block_in_wooden_grate_block", BlockInWaxedCopperGrateBlock::new, () -> (BlockBehaviour.Properties.ofFullCopy(Blocks.COPPER_GRATE.waxed().weathered())
             .sound(SoundType.BAMBOO_WOOD)
             .mapColor(MapColor.WOOD)));
 
@@ -105,63 +105,63 @@ public class BlockRegistry {
                             .randomTicks()
             );
 
-    private static Map<Block, Supplier<Block>> COPPER_GRATE_MAP;
-
-    private static Map<Block, Supplier<Block>> REVERSE_COPPER_GRATE_MAP;
-
-    public static void initCopperGrateMap() {
-        Map<Block, Supplier<Block>> map = new LinkedHashMap<>();
-        map.put(Blocks.COPPER_GRATE, block_in_copper_grate_block);
-        map.put(Blocks.EXPOSED_COPPER_GRATE, block_in_exposed_copper_grate_block);
-        map.put(Blocks.WEATHERED_COPPER_GRATE, block_in_weathered_copper_grate_block);
-        map.put(Blocks.OXIDIZED_COPPER_GRATE, block_in_oxidized_copper_grate_block);
-        map.put(Blocks.WAXED_COPPER_GRATE, block_in_waxed_copper_grate_block);
-        map.put(Blocks.WAXED_EXPOSED_COPPER_GRATE, block_in_waxed_exposed_copper_grate_block);
-        map.put(Blocks.WAXED_WEATHERED_COPPER_GRATE, block_in_waxed_weathered_copper_grate_block);
-        map.put(Blocks.WAXED_OXIDIZED_COPPER_GRATE, block_in_waxed_oxidized_copper_grate_block);
-        map.put(block_in_wooden_grate_block.get(), block_in_wooden_grate_block);
-
-        COPPER_GRATE_MAP = Map.copyOf(map);
-
-        REVERSE_COPPER_GRATE_MAP = map.entrySet().stream()
-                .collect(Collectors.toMap(
-                        e -> e.getValue().get(),
-                        e -> e::getKey,
-                        (a, b) -> a,
-                        LinkedHashMap::new
-                ));
-    }
-
-    public static Block getCopperGrateBlockChange(Block origin) {
-        if (COPPER_GRATE_MAP == null) initCopperGrateMap();
-        return COPPER_GRATE_MAP.getOrDefault(origin, () -> Blocks.AIR).get();
-    }
-
-    public static Block getOriginalCopperGrateBlock(Block transformed) {
-        if (REVERSE_COPPER_GRATE_MAP == null) initCopperGrateMap();
-        return REVERSE_COPPER_GRATE_MAP.getOrDefault(transformed, () -> Blocks.AIR).get();
-    }
-
-    public static Block getOriginalCopperGrateBlockNotWaxed(Block transformed) {
-        Block block = getOriginalCopperGrateBlock(transformed);
-        if (block == Blocks.WAXED_COPPER_GRATE)
-            block = Blocks.COPPER_GRATE;
-        else if (block == Blocks.WAXED_EXPOSED_COPPER_GRATE)
-            block = Blocks.EXPOSED_COPPER_GRATE;
-        else if (block == Blocks.WAXED_WEATHERED_COPPER_GRATE)
-            block = Blocks.WEATHERED_COPPER_GRATE;
-        else if (block == Blocks.WAXED_OXIDIZED_COPPER_GRATE)
-            block = Blocks.OXIDIZED_COPPER_GRATE;
-        return block;
-    }
-
-    public static List<Block> getAllChangedGrateBlocks() {
-        if (REVERSE_COPPER_GRATE_MAP == null) initCopperGrateMap();
-        return new ArrayList<>(REVERSE_COPPER_GRATE_MAP.keySet());
-    }
-
-    public static List<Block> getAllGrateBlocks() {
-        if (COPPER_GRATE_MAP == null) initCopperGrateMap();
-        return new ArrayList<>(COPPER_GRATE_MAP.keySet());
-    }
+    // private static Map<Block, Supplier<Block>> COPPER_GRATE_MAP;
+    //
+    // private static Map<Block, Supplier<Block>> REVERSE_COPPER_GRATE_MAP;
+    //
+    // public static void initCopperGrateMap() {
+    //     Map<Block, Supplier<Block>> map = new LinkedHashMap<>();
+    //     map.put(Blocks.COPPER_GRATE, block_in_copper_grate_block);
+    //     map.put(Blocks.EXPOSED_COPPER_GRATE, block_in_exposed_copper_grate_block);
+    //     map.put(Blocks.WEATHERED_COPPER_GRATE, block_in_weathered_copper_grate_block);
+    //     map.put(Blocks.OXIDIZED_COPPER_GRATE, block_in_oxidized_copper_grate_block);
+    //     map.put(Blocks.WAXED_COPPER_GRATE, block_in_waxed_copper_grate_block);
+    //     map.put(Blocks.WAXED_EXPOSED_COPPER_GRATE, block_in_waxed_exposed_copper_grate_block);
+    //     map.put(Blocks.WAXED_WEATHERED_COPPER_GRATE, block_in_waxed_weathered_copper_grate_block);
+    //     map.put(Blocks.WAXED_OXIDIZED_COPPER_GRATE, block_in_waxed_oxidized_copper_grate_block);
+    //     map.put(block_in_wooden_grate_block.get(), block_in_wooden_grate_block);
+    //
+    //     COPPER_GRATE_MAP = Map.copyOf(map);
+    //
+    //     REVERSE_COPPER_GRATE_MAP = map.entrySet().stream()
+    //             .collect(Collectors.toMap(
+    //                     e -> e.getValue().get(),
+    //                     e -> e::getKey,
+    //                     (a, b) -> a,
+    //                     LinkedHashMap::new
+    //             ));
+    // }
+    //
+    // public static Block getCopperGrateBlockChange(Block origin) {
+    //     if (COPPER_GRATE_MAP == null) initCopperGrateMap();
+    //     return COPPER_GRATE_MAP.getOrDefault(origin, () -> Blocks.AIR).get();
+    // }
+    //
+    // public static Block getOriginalCopperGrateBlock(Block transformed) {
+    //     if (REVERSE_COPPER_GRATE_MAP == null) initCopperGrateMap();
+    //     return REVERSE_COPPER_GRATE_MAP.getOrDefault(transformed, () -> Blocks.AIR).get();
+    // }
+    //
+    // public static Block getOriginalCopperGrateBlockNotWaxed(Block transformed) {
+    //     Block block = getOriginalCopperGrateBlock(transformed);
+    //     if (block == Blocks.WAXED_COPPER_GRATE)
+    //         block = Blocks.COPPER_GRATE;
+    //     else if (block == Blocks.WAXED_EXPOSED_COPPER_GRATE)
+    //         block = Blocks.EXPOSED_COPPER_GRATE;
+    //     else if (block == Blocks.WAXED_WEATHERED_COPPER_GRATE)
+    //         block = Blocks.WEATHERED_COPPER_GRATE;
+    //     else if (block == Blocks.WAXED_OXIDIZED_COPPER_GRATE)
+    //         block = Blocks.OXIDIZED_COPPER_GRATE;
+    //     return block;
+    // }
+    //
+    // public static List<Block> getAllChangedGrateBlocks() {
+    //     if (REVERSE_COPPER_GRATE_MAP == null) initCopperGrateMap();
+    //     return new ArrayList<>(REVERSE_COPPER_GRATE_MAP.keySet());
+    // }
+    //
+    // public static List<Block> getAllGrateBlocks() {
+    //     if (COPPER_GRATE_MAP == null) initCopperGrateMap();
+    //     return new ArrayList<>(COPPER_GRATE_MAP.keySet());
+    // }
 }

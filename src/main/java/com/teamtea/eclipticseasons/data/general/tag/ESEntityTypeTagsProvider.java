@@ -7,6 +7,8 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.EntityTypeTagsProvider;
 import net.minecraft.world.entity.EntityType;
 
+import net.minecraft.world.entity.EntityTypeIds;
+import net.minecraft.world.entity.EntityTypes;
 import org.jspecify.annotations.NonNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,59 +26,61 @@ public class ESEntityTypeTagsProvider extends EntityTypeTagsProvider {
             tag(value.getTag());
         }
         tag(BreedSeasonType.SPRING.getTag())
-                .add(EntityType.WOLF)
-                .add(EntityType.BEE)
+                .add(EntityTypeIds.WOLF)
+                .add(EntityTypeIds.BEE)
         ;
         tag(BreedSeasonType.SP_SU.getTag())
-                .add(EntityType.COW)
-                .add(EntityType.SHEEP)
-                .add(EntityType.PIG)
-                .add(EntityType.HORSE)
-                .add(EntityType.DONKEY)
-                .add(EntityType.PANDA)
-                .add(EntityType.TURTLE)
-                .add(EntityType.LLAMA)
-                .add(EntityType.FROG)
+                .add(EntityTypeIds.COW)
+                .add(EntityTypeIds.SHEEP)
+                .add(EntityTypeIds.PIG)
+                .add(EntityTypeIds.HORSE)
+                .add(EntityTypeIds.DONKEY)
+                .add(EntityTypeIds.PANDA)
+                .add(EntityTypeIds.TURTLE)
+                .add(EntityTypeIds.LLAMA)
+                .add(EntityTypeIds.FROG)
         ;
         tag(BreedSeasonType.SP_AU.getTag())
-                .add(EntityType.CAT)
-                .add(EntityType.OCELOT)
-                .add(EntityType.RABBIT)
+                .add(EntityTypeIds.CAT)
+                .add(EntityTypeIds.OCELOT)
+                .add(EntityTypeIds.RABBIT)
         ;
         tag(BreedSeasonType.SU_AU.getTag())
-                .add(EntityType.CAMEL)
+                .add(EntityTypeIds.CAMEL)
         ;
         tag(BreedSeasonType.WINTER.getTag())
-                .add(EntityType.FOX)
+                .add(EntityTypeIds.FOX)
         ;
         tag(BreedSeasonType.ALL.getTag())
-                .add(EntityType.STRIDER)
+                .add(EntityTypeIds.STRIDER)
         ;
 
         tag(AnimalBehaviorTag.DAY)
-                .add(EntityType.WOLF)
-                .add(EntityType.BEE)
-                .add(EntityType.COW)
-                .add(EntityType.SHEEP)
-                .add(EntityType.PIG)
-                .add(EntityType.HORSE)
-                .add(EntityType.DONKEY)
-                .add(EntityType.PANDA)
-                .add(EntityType.TURTLE)
-                .add(EntityType.LLAMA)
-                .add(EntityType.CAT)
-                .add(EntityType.OCELOT)
-                .add(EntityType.RABBIT)
-                .add(EntityType.CAMEL)
-                .add(EntityType.FOX)
+                .add(EntityTypeIds.WOLF)
+                .add(EntityTypeIds.BEE)
+                .add(EntityTypeIds.COW)
+                .add(EntityTypeIds.SHEEP)
+                .add(EntityTypeIds.PIG)
+                .add(EntityTypeIds.HORSE)
+                .add(EntityTypeIds.DONKEY)
+                .add(EntityTypeIds.PANDA)
+                .add(EntityTypeIds.TURTLE)
+                .add(EntityTypeIds.LLAMA)
+                .add(EntityTypeIds.CAT)
+                .add(EntityTypeIds.OCELOT)
+                .add(EntityTypeIds.RABBIT)
+                .add(EntityTypeIds.CAMEL)
+                .add(EntityTypeIds.FOX)
         ;
 
         tag(AnimalBehaviorTag.NIGHT)
-                .add(EntityType.FROG)
+                .add(EntityTypeIds.FROG)
         ;
 
         tag(AnimalBehaviorTag.ALL_TIME)
-                .add(EntityType.STRIDER)
+                .add(EntityTypeIds.STRIDER)
         ;
     }
+    
+    
 }

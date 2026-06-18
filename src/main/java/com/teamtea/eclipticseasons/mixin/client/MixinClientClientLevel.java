@@ -4,13 +4,23 @@ package com.teamtea.eclipticseasons.mixin.client;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
+import com.llamalad7.mixinextras.sugar.ref.LocalFloatRef;
+import com.teamtea.eclipticseasons.client.core.ClientWeatherChecker;
 import com.teamtea.eclipticseasons.client.particle.ParticleUtil;
+import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
+import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.environment.SolarTime;
+import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.server.level.ParticleStatus;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.attribute.EnvironmentAttributeSystem;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
@@ -63,5 +73,32 @@ public abstract class MixinClientClientLevel {
         if (!shouldcancel) {
             original.call(instance, pState, pLevel, pPos, pRandom);
         }
+    }
+
+
+    @WrapOperation(at = {@At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/ClientLevel;getBiome(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/core/Holder;")}, method = {"getPrecipitationAt"})
+    private Holder<Biome> eclipticseasons$getPrecipitationAt_biome(ClientLevel instance, BlockPos pos, Operation<Holder> original) {
+        return MapChecker.getSurfaceBiome(instance, pos);
+    }
+
+    @WrapOperation(at = {@At(value = "INVOKE", target = "Lnet/minecraft/world/level/biome/Biome;getPrecipitationAt(Lnet/minecraft/core/BlockPos;I)Lnet/minecraft/world/level/biome/Biome$Precipitation;")}, method = {"getPrecipitationAt"})
+    private Biome.Precipitation eclipticseasons$getPrecipitationAt_get(Biome instance, BlockPos pos, int seaLevel, Operation<Biome.Precipitation> original) {
+        return WeatherManager.getPrecipitationAt((Level) (Object) this, instance, pos);
+    }
+
+    @WrapOperation(
+            method = "tickWeatherEffects",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/ClientLevel;playLocalSound(Lnet/minecraft/core/BlockPos;Lnet/minecraft/sounds/SoundEvent;Lnet/minecraft/sounds/SoundSource;FFZ)V")
+    )
+    private void eclipticseasons$tickRain_modifySound(ClientLevel instance, BlockPos blockPos, SoundEvent soundEvent, SoundSource soundSource, float pVolume, float pPitch, boolean pDistanceDelay, Operation<Void> original) {
+        original.call(instance, blockPos, soundEvent, soundSource, ClientWeatherChecker.modifyVolume(soundEvent, pVolume, instance), ClientWeatherChecker.modifyPitch(soundEvent, pPitch, instance), pDistanceDelay);
+    }
+
+    @Inject(
+            method = {"tickWeatherEffects"},
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/core/BlockPos;containing(Lnet/minecraft/core/Position;)Lnet/minecraft/core/BlockPos;")
+    )
+    private void eclipticseasons$tickRain_modifyAmount(CallbackInfo ci, @Local(name = "rainLevel") LocalFloatRef floatRef) {
+        floatRef.set(ClientWeatherChecker.modifyRainAmount(floatRef.get(), (Level) (Object) this));
     }
 }

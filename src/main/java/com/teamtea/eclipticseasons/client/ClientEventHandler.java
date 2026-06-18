@@ -269,7 +269,7 @@ public final class ClientEventHandler {
                     .then(Commands.literal("config")
                             .executes(context -> {
                                 Minecraft.getInstance().execute(() -> {
-                                    Minecraft.getInstance().setScreen(new ESModConfigScreen(null));
+                                    Minecraft.getInstance().setScreenAndShow(new ESModConfigScreen(null));
                                 });
                                 return 0;
                             })

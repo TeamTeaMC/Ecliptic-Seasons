@@ -6,12 +6,19 @@ import com.teamtea.eclipticseasons.api.constant.crop.CropSeasonType;
 import com.teamtea.eclipticseasons.api.constant.tag.EclipticBlockTags;
 import com.teamtea.eclipticseasons.common.registry.BlockRegistry;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
+import net.minecraft.data.tags.TagAppender;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.TagEntry;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.data.BlockTagsProvider;
+import net.neoforged.neoforge.common.data.internal.NeoForgeBlockTagsProvider;
 
 
 import java.util.concurrent.CompletableFuture;
@@ -94,12 +101,12 @@ public final class ESBlockTagProvider extends BlockTagsProvider {
                 );
 
         // add mc
-        tag(BlockTags.CEILING_HANGING_SIGNS).add(BlockRegistry.season_quest_ceiling_hanging_sign.get());
-        tag(BlockTags.WALL_HANGING_SIGNS).add(BlockRegistry.season_quest_wall_hanging_sign.get());
+        // tag(BlockTags.CEILING_HANGING_SIGNS).add(BlockRegistry.season_quest_ceiling_hanging_sign.get());
+        // tag(BlockTags.WALL_HANGING_SIGNS).add(BlockRegistry.season_quest_wall_hanging_sign.get());
 
         tag(BlockTags.MINEABLE_WITH_AXE).add(BlockRegistry.calendar.get(),
-                BlockRegistry.season_quest_wall_hanging_sign.get(),
-                BlockRegistry.season_quest_ceiling_hanging_sign.get(),
+                // BlockRegistry.season_quest_wall_hanging_sign.get(),
+                // BlockRegistry.season_quest_ceiling_hanging_sign.get(),
                 BlockRegistry.wind_chimes.get(),
                 BlockRegistry.bamboo_wind_chimes.get(),
                 BlockRegistry.wind_chimes.get(),
@@ -117,14 +124,14 @@ public final class ESBlockTagProvider extends BlockTagsProvider {
                 BlockRegistry.autumn_greenhouse_core.get(),
                 BlockRegistry.winter_greenhouse_core.get(),
                 BlockRegistry.greenhouse_core_container.get(),
-                BlockRegistry.block_in_copper_grate_block.get(),
-                BlockRegistry.block_in_exposed_copper_grate_block.get(),
-                BlockRegistry.block_in_weathered_copper_grate_block.get(),
-                BlockRegistry.block_in_oxidized_copper_grate_block.get(),
-                BlockRegistry.block_in_waxed_copper_grate_block.get(),
-                BlockRegistry.block_in_waxed_exposed_copper_grate_block.get(),
-                BlockRegistry.block_in_waxed_weathered_copper_grate_block.get(),
-                BlockRegistry.block_in_waxed_oxidized_copper_grate_block.get(),
+                // BlockRegistry.block_in_copper_grate_block.get(),
+                // BlockRegistry.block_in_exposed_copper_grate_block.get(),
+                // BlockRegistry.block_in_weathered_copper_grate_block.get(),
+                // BlockRegistry.block_in_oxidized_copper_grate_block.get(),
+                // BlockRegistry.block_in_waxed_copper_grate_block.get(),
+                // BlockRegistry.block_in_waxed_exposed_copper_grate_block.get(),
+                // BlockRegistry.block_in_waxed_weathered_copper_grate_block.get(),
+                // BlockRegistry.block_in_waxed_oxidized_copper_grate_block.get(),
                 BlockRegistry.ice_cauldron.get(),
                 BlockRegistry.snow_cauldron.get());
 
@@ -141,5 +148,75 @@ public final class ESBlockTagProvider extends BlockTagsProvider {
 
     public Identifier fd_rl(String name) {
         return srl("farmersdelight", name);
+    }
+
+
+    protected record Appender(TagAppender<Block> app) implements TagAppender<Block> {
+        @Override
+        public Appender add(ResourceKey<Block> element) {
+            app.add(element);
+            return this;
+        }
+
+        @Override
+        public Appender addOptional(ResourceKey<Block> element) {
+            app.addOptional(element);
+            return this;
+        }
+
+        @Override
+        public Appender addTag(TagKey<Block> tag) {
+            app.addTag(tag);
+            return this;
+        }
+
+        @Override
+        public Appender addOptionalTag(TagKey<Block> tag) {
+            app.addOptionalTag(tag);
+            return this;
+        }
+
+        @Override
+        public Appender add(TagEntry entry) {
+            app.add(entry);
+            return this;
+        }
+
+        @Override
+        public Appender replace(boolean value) {
+            app.replace(value);
+            return this;
+        }
+
+        @Override
+        public Appender remove(ResourceKey<Block> element) {
+            app.remove(element);
+            return this;
+        }
+
+        @Override
+        public Appender remove(TagKey<Block> tag) {
+            app.remove(tag);
+            return this;
+        }
+
+        public Appender add(Block... blocks) {
+            for (Block block : blocks) {
+                add(BuiltInRegistries.BLOCK.wrapAsHolder(block).getKey());
+            }
+            return this;
+        }
+
+        public Appender addAll(Iterable<Block> blocks) {
+            for (Block block : blocks) {
+                add(block);
+            }
+            return this;
+        }
+    }
+
+    @Override
+    protected Appender tag(TagKey<Block> tag) {
+        return new Appender(super.tag(tag));
     }
 }

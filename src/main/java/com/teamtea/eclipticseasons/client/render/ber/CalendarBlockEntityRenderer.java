@@ -108,9 +108,9 @@ public class CalendarBlockEntityRenderer implements BlockEntityRenderer<Calendar
                     if (displayMode == CalendarBlock.DisplayMode.SUB_SEASON) {
                         Season.Sub subSeason = EclipticSeasonsApi.getInstance().getSubSeason(ClientCon.getUseLevel());
                         MutableComponent translatable = Component.translatable("info.eclipticseasons.environment.solar_term.hint5", subSeason.getTranslation());
-                        drawText(1, translatable.getString(), new Color(Optional.ofNullable(subSeason.getSeason().getColor().getColor()).orElse(-1)).getRGB(), matrixStackIn, multiBufferSource);
+                        drawText(1, translatable.getString(), new Color(subSeason.getSeason().getTextColor().getValue()).getRGB(), matrixStackIn, multiBufferSource);
                     } else {
-                        drawText(1, seasonPhaseUsed.getPatternTranslation().getString(), new Color(Optional.ofNullable(seasonPhaseUsed.getColor().getColor()).orElse(-1)).getRGB(), matrixStackIn, multiBufferSource);
+                        drawText(1, seasonPhaseUsed.getPatternTranslation().getString(), new Color(seasonPhaseUsed.getTextColor().getValue()).getRGB(), matrixStackIn, multiBufferSource);
                     }
 
                     if (st != SolarTerm.NONE) {

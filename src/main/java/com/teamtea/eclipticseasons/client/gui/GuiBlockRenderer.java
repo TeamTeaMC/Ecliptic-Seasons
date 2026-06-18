@@ -7,13 +7,19 @@ import com.mojang.math.Axis;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.block.BlockModelRenderState;
 import net.minecraft.client.renderer.block.BlockQuadOutput;
 import net.minecraft.client.renderer.block.ModelBlockRenderer;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
+import net.minecraft.client.renderer.block.model.BlockDisplayContext;
+import net.minecraft.client.renderer.block.model.BlockStateModelWrapper;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.cuboid.ItemTransform;
 import net.minecraft.client.resources.model.geometry.BakedQuad;
+import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.world.level.block.state.BlockState;
 import org.joml.Quaternionfc;
 import org.joml.Vector3f;
@@ -21,9 +27,9 @@ import org.jspecify.annotations.NonNull;
 
 public class GuiBlockRenderer extends PictureInPictureRenderer<GuiBlockRenderState> {
     protected final ModelBlockRenderer modelBlockRenderer;
+    public static final BlockDisplayContext BLOCK_DISPLAY_CONTEXT = BlockDisplayContext.create();
 
-    public GuiBlockRenderer(MultiBufferSource.BufferSource bufferSource) {
-        super(bufferSource);
+    public GuiBlockRenderer() {
         modelBlockRenderer = new ModelBlockRenderer(false, false, Minecraft.getInstance().getBlockColors());
     }
 
@@ -33,8 +39,10 @@ public class GuiBlockRenderer extends PictureInPictureRenderer<GuiBlockRenderSta
     );
     private static final Quaternionfc LIGHT_FIX_ROT = Axis.YP.rotationDegrees(285);
 
+
+    
     @Override
-    protected void renderToTexture(GuiBlockRenderState renderState, PoseStack poseStack) {
+    protected void renderToTexture(GuiBlockRenderState renderState, PoseStack poseStack, SubmitNodeCollector submitNodeCollector) {
         float scale = renderState.scale();
         BlockState state = renderState.state();
 
@@ -46,13 +54,21 @@ public class GuiBlockRenderer extends PictureInPictureRenderer<GuiBlockRenderSta
         // poseStack.last().normal().rotate(LIGHT_FIX_ROT);
         // poseStack.translate(-.5, -.5, -.5);
 
-        BlockQuadOutput output = (x, y, z, quad, instance) -> putBakedQuad(poseStack, bufferSource, x, y, z, quad, instance, quad.materialInfo().layer());
-        BlockQuadOutput solidOutput = (x, y, z, quad, instance) -> putBakedQuad(poseStack, bufferSource, x, y, z, quad, instance, ChunkSectionLayer.SOLID);
-        BlockQuadOutput blockQuadOutput = ModelBlockRenderer.forceOpaque(Minecraft.getInstance().options.cutoutLeaves().get(), state) ? output : solidOutput;
-        // BlockModel blockModel = Minecraft.getInstance().getModelManager().getBlockModelSet().get(state);
-        modelBlockRenderer.tesselateBlock(
-                blockQuadOutput,0,0,0,Minecraft.getInstance().level,Minecraft.getInstance().player.getOnPos(),
-                state,Minecraft.getInstance().getModelManager().getBlockStateModelSet().get(state),42L
+        // BlockQuadOutput output = (x, y, z, quad, instance) -> putBakedQuad(poseStack, bufferSource, x, y, z, quad, instance, quad.materialInfo().layer());
+        // BlockQuadOutput solidOutput = (x, y, z, quad, instance) -> putBakedQuad(poseStack, bufferSource, x, y, z, quad, instance, ChunkSectionLayer.SOLID);
+        // BlockQuadOutput blockQuadOutput = ModelBlockRenderer.forceOpaque(Minecraft.getInstance().options.cutoutLeaves().get(), state) ? output : solidOutput;
+        // // BlockModel blockModel = Minecraft.getInstance().getModelManager().getBlockModelSet().get(state);
+        // modelBlockRenderer.tesselateBlock(
+        //         blockQuadOutput,0,0,0,Minecraft.getInstance().level,Minecraft.getInstance().player.getOnPos(),
+        //         state,Minecraft.getInstance().getModelManager().getBlockStateModelSet().get(state),42L
+        // );
+
+        BlockModelRenderState blockModelRenderState = new BlockModelRenderState();
+        var blockModel = Minecraft.getInstance().getModelManager().getBlockModelSet().get(state);
+        blockModel.update(blockModelRenderState,state,BLOCK_DISPLAY_CONTEXT,42L);
+        blockModelRenderState
+                .submitMultiLayer(
+                poseStack,submitNodeCollector, LightCoordsUtil.FULL_SKY, OverlayTexture.NO_OVERLAY,-1
         );
         poseStack.popPose();
     }
@@ -73,25 +89,26 @@ public class GuiBlockRenderer extends PictureInPictureRenderer<GuiBlockRenderSta
     }
 
 
-    private static void putBakedQuad(
-            PoseStack poseStack,
-            MultiBufferSource.BufferSource bufferSource,
-            float x,
-            float y,
-            float z,
-            BakedQuad quad,
-            QuadInstance instance,
-            ChunkSectionLayer layer
-    ) {
-        poseStack.pushPose();
-        poseStack.translate(x, y, z);
 
-        VertexConsumer buffer = bufferSource.getBuffer(switch (layer) {
-            case SOLID -> RenderTypes.solidMovingBlock();
-            case CUTOUT -> RenderTypes.cutoutMovingBlock();
-            case TRANSLUCENT -> RenderTypes.translucentMovingBlock();
-        });
-        buffer.putBakedQuad(poseStack.last(), quad, instance);
-        poseStack.popPose();
-    }
+    // private static void putBakedQuad(
+    //         PoseStack poseStack,
+    //         MultiBufferSource.BufferSource bufferSource,
+    //         float x,
+    //         float y,
+    //         float z,
+    //         BakedQuad quad,
+    //         QuadInstance instance,
+    //         ChunkSectionLayer layer
+    // ) {
+    //     poseStack.pushPose();
+    //     poseStack.translate(x, y, z);
+    //
+    //     VertexConsumer buffer = bufferSource.getBuffer(switch (layer) {
+    //         case SOLID -> RenderTypes.solidMovingBlock();
+    //         case CUTOUT -> RenderTypes.cutoutMovingBlock();
+    //         case TRANSLUCENT -> RenderTypes.translucentMovingBlock();
+    //     });
+    //     buffer.putBakedQuad(poseStack.last(), quad, instance);
+    //     poseStack.popPose();
+    // }
 }

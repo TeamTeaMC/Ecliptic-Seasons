@@ -46,17 +46,17 @@ public class Lang_EN extends LangHelper {
 
         add(ItemRegistry.growth_detector.get(), "Growth Detector");
 
-        add(BlockRegistry.season_quest_wall_hanging_sign.get(), "Season Quest Sign");
-        add(BlockRegistry.season_quest_ceiling_hanging_sign.get(), "Season Quest Sign");
-
-        add(BlockRegistry.block_in_copper_grate_block.get(), "Copper Grate Humidifier");
-        add(BlockRegistry.block_in_exposed_copper_grate_block.get(), "Exposed Copper Grate Humidifier");
-        add(BlockRegistry.block_in_weathered_copper_grate_block.get(), "Weathered Copper Grate Humidifier");
-        add(BlockRegistry.block_in_oxidized_copper_grate_block.get(), "Oxidized Copper Grate Humidifier");
-        add(BlockRegistry.block_in_waxed_copper_grate_block.get(), "Waxed Copper Grate Humidifier");
-        add(BlockRegistry.block_in_waxed_exposed_copper_grate_block.get(), "Waxed Exposed Copper Grate Humidifier");
-        add(BlockRegistry.block_in_waxed_weathered_copper_grate_block.get(), "Waxed Weathered Copper Grate Humidifier");
-        add(BlockRegistry.block_in_waxed_oxidized_copper_grate_block.get(), "Waxed Oxidized Copper Grate Humidifier");
+        // add(BlockRegistry.season_quest_wall_hanging_sign.get(), "Season Quest Sign");
+        // add(BlockRegistry.season_quest_ceiling_hanging_sign.get(), "Season Quest Sign");
+        //
+        // add(BlockRegistry.block_in_copper_grate_block.get(), "Copper Grate Humidifier");
+        // add(BlockRegistry.block_in_exposed_copper_grate_block.get(), "Exposed Copper Grate Humidifier");
+        // add(BlockRegistry.block_in_weathered_copper_grate_block.get(), "Weathered Copper Grate Humidifier");
+        // add(BlockRegistry.block_in_oxidized_copper_grate_block.get(), "Oxidized Copper Grate Humidifier");
+        // add(BlockRegistry.block_in_waxed_copper_grate_block.get(), "Waxed Copper Grate Humidifier");
+        // add(BlockRegistry.block_in_waxed_exposed_copper_grate_block.get(), "Waxed Exposed Copper Grate Humidifier");
+        // add(BlockRegistry.block_in_waxed_weathered_copper_grate_block.get(), "Waxed Weathered Copper Grate Humidifier");
+        // add(BlockRegistry.block_in_waxed_oxidized_copper_grate_block.get(), "Waxed Oxidized Copper Grate Humidifier");
 
         add(BlockRegistry.block_in_wooden_grate_block.get(), "Wooden Grate Humidifier");
 

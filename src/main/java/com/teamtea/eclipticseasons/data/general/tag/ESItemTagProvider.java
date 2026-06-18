@@ -6,11 +6,18 @@ import com.teamtea.eclipticseasons.api.constant.crop.CropHumidityType;
 import com.teamtea.eclipticseasons.api.constant.crop.CropSeasonType;
 import com.teamtea.eclipticseasons.api.constant.tag.ESItemTags;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
+import net.minecraft.data.tags.TagAppender;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.tags.TagEntry;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.common.data.ItemTagsProvider;
+import net.neoforged.neoforge.common.data.internal.NeoForgeItemTagsProvider;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -71,5 +78,67 @@ public final class ESItemTagProvider extends ItemTagsProvider {
 
     public Identifier fd_rl(String name) {
         return srl("farmersdelight", name);
+    }
+
+    protected record Appender(TagAppender<Item> app) implements TagAppender<Item> {
+        @Override
+        public Appender add(ResourceKey<Item> element) {
+            app.add(element);
+            return this;
+        }
+
+        @Override
+        public Appender addOptional(ResourceKey<Item> element) {
+            app.addOptional(element);
+            return this;
+        }
+
+        @Override
+        public Appender addTag(TagKey<Item> tag) {
+            app.addTag(tag);
+            return this;
+        }
+
+        @Override
+        public Appender addOptionalTag(TagKey<Item> tag) {
+            app.addOptionalTag(tag);
+            return this;
+        }
+
+        @Override
+        public Appender add(TagEntry entry) {
+            app.add(entry);
+            return this;
+        }
+
+        @Override
+        public Appender replace(boolean value) {
+            app.replace(value);
+            return this;
+        }
+
+        @Override
+        public Appender remove(ResourceKey<Item> element) {
+            app.remove(element);
+            return this;
+        }
+
+        @Override
+        public Appender remove(TagKey<Item> tag) {
+            app.remove(tag);
+            return this;
+        }
+
+        public Appender add(Item... items) {
+            for (Item item : items) {
+                add(BuiltInRegistries.ITEM.wrapAsHolder(item).getKey());
+            }
+            return this;
+        }
+    }
+
+    @Override
+    protected Appender tag(TagKey<Item> tag) {
+        return new Appender(super.tag(tag));
     }
 }

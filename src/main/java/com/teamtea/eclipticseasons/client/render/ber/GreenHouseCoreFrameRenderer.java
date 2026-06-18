@@ -6,7 +6,7 @@ import com.teamtea.eclipticseasons.client.model.entity.TryModel;
 import com.teamtea.eclipticseasons.common.block.blockentity.GreenHouseCoreFrameBlockEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.ModelPart;
-import net.minecraft.client.renderer.MultiBufferSource;
+
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -37,11 +37,13 @@ public class GreenHouseCoreFrameRenderer implements BlockEntityRenderer<GreenHou
         useModel.getAllParts().forEach(ModelPart::resetPose);
 
         poseStack.pushPose();
-        MultiBufferSource.BufferSource bufferIn = Minecraft.getInstance().renderBuffers().bufferSource();
-        VertexConsumer vertexconsumer2 = bufferIn.getBuffer(RenderTypes.entityTranslucentCullItemTarget(TryModel.greenhouse_core_container.sprite()   .withPrefix("textures/").withSuffix(".png")));
+        // MultiBufferSource.BufferSource bufferIn = Minecraft.getInstance().renderBuffers().bufferSource();
+        // VertexConsumer vertexconsumer2 = bufferIn.getBuffer(RenderTypes.entityTranslucentCullItemTarget(TryModel.greenhouse_core_container.sprite().withPrefix("textures/").withSuffix(".png")));
+
         poseStack.translate(0, 0.5, 0);
         useModel.x += 1;
-        useModel.render(poseStack, vertexconsumer2, state.lightCoords, OverlayTexture.NO_OVERLAY);
+        submitNodeCollector.submitModelPart(useModel, poseStack, RenderTypes.entityTranslucentCullItemTarget(TryModel.greenhouse_core_container.sprite().withPrefix("textures/").withSuffix(".png")), state.lightCoords, OverlayTexture.NO_OVERLAY, null);
+        // useModel.render(poseStack, vertexconsumer2, state.lightCoords, OverlayTexture.NO_OVERLAY);
         poseStack.popPose();
     }
 

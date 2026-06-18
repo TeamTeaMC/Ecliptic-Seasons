@@ -356,7 +356,7 @@ public class SolarDataManager extends SavedData {
         //             levelWeakReference.get().getGameTime() : 0);
         // }
 
-        Vec3 center = blockPos.getCenter();
+        Vec3 center = Vec3.atCenterOf(blockPos);
 
         int localX = blockPos.getX() & 15;
         int localZ = blockPos.getZ() & 15;
@@ -377,7 +377,7 @@ public class SolarDataManager extends SavedData {
                         if (
                             // p.first().getY() > blockPos.getY()
                             // &&
-                                CropGrowthHandler.isWithinDistanceForGreenHouseWorker(center, p.first().getCenter(), p.second().getRange())
+                                CropGrowthHandler.isWithinDistanceForGreenHouseWorker(center,Vec3.atCenterOf(p.first()), p.second().getRange())
                             // p.first().getCenter().distanceToSqr(center) < (p.second().getRange() + 0.1)
                         ) {
                             result += p.second().getLevel();
@@ -424,7 +424,7 @@ public class SolarDataManager extends SavedData {
 
     public GreenHouseCoreProvider findNearGreenHouseProvider(BlockPos blockPos, List<Season> seasons) {
         ChunkPos chunkPos = ChunkPos.containing(blockPos);
-        Vec3 center = blockPos.getCenter();
+        Vec3 center = Vec3.atCenterOf(blockPos);
         int d = CommonConfig.Crop.seasonCoreRange.get() / 16 + 1;
 
         for (int r = 0; r <= d; r++) {
@@ -447,7 +447,7 @@ public class SolarDataManager extends SavedData {
 
     public GreenHouseCoreProvider findNearGreenHouseConsumer(BlockPos blockPos, List<Season> seasons) {
         ChunkPos chunkPos = ChunkPos.containing(blockPos);
-        Vec3 center = blockPos.getCenter();
+        Vec3 center = Vec3.atCenterOf(blockPos);
         int d = CommonConfig.Crop.seasonCoreRange.get() / 16 + 1;
 
         for (int r = 0; r <= d; r++) {
@@ -475,7 +475,7 @@ public class SolarDataManager extends SavedData {
             int seasonCoreRange = CommonConfig.Crop.seasonCoreRange.get();
             for (Pair<BlockPos, GreenHouseCoreProvider> p : lis) {
                 if (seasons.contains(p.second().getSeason()) &&
-                        CropGrowthHandler.isWithinDistanceForGreenHouseWorker(center, p.first().getCenter(), seasonCoreRange)) {
+                        CropGrowthHandler.isWithinDistanceForGreenHouseWorker(center, Vec3.atCenterOf(p.first()), seasonCoreRange)) {
                     greenHouseCoreProvider = p.second();
                     break;
                 }

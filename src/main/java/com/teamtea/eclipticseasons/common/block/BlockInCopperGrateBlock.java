@@ -32,15 +32,15 @@ public class BlockInCopperGrateBlock extends WeatheringCopperGrateBlock implemen
         super(weatherState.getAge(), properties);
     }
 
-    @Override
-    public Item asItem() {
-        return BlockRegistry.getOriginalCopperGrateBlock(this).asItem();
-    }
-
-    @Override
-    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state, boolean includeData, Player player) {
-        return BlockRegistry.getOriginalCopperGrateBlock(this).asItem().getDefaultInstance();
-    }
+    // @Override
+    // public Item asItem() {
+    //     return BlockRegistry.getOriginalCopperGrateBlock(this).asItem();
+    // }
+    //
+    // @Override
+    // public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state, boolean includeData, Player player) {
+    //     return BlockRegistry.getOriginalCopperGrateBlock(this).asItem().getDefaultInstance();
+    // }
 
     public static Pair<BlockItem, HumidityControl> getItemMatch(Level level, ItemStack stack) {
         if (stack.getItem() instanceof BlockItem blockItem) {
@@ -98,10 +98,10 @@ public class BlockInCopperGrateBlock extends WeatheringCopperGrateBlock implemen
                 SimpleEntityBlock.createTickerHelper(blockEntityType, BlockEntityRegistry.block_in_copper_grate_block_entity_type.get(), BlockInCopperGrateBlockEntity::tick) : null;
     }
 
-    @Override
-    protected boolean isRandomlyTicking(@NonNull BlockState state) {
-        return state.getBlock() != BlockRegistry.block_in_oxidized_copper_grate_block.get();
-    }
+    // @Override
+    // protected boolean isRandomlyTicking(@NonNull BlockState state) {
+    //     return state.getBlock() != BlockRegistry.block_in_oxidized_copper_grate_block.get();
+    // }
 
     @Override
     public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {

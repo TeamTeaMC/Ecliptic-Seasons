@@ -4,7 +4,6 @@ import com.teamtea.eclipticseasons.api.constant.tag.ClimateTypeBiomeTags;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
-import net.minecraft.data.tags.KeyTagProvider;
 import net.minecraft.data.tags.TagsProvider;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.biome.Biome;
@@ -14,7 +13,7 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.concurrent.CompletableFuture;
 
-public class TagsDataProvider extends KeyTagProvider<Biome> {
+public class TagsDataProvider extends TagsProvider<Biome> {
 
 
     public TagsDataProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, String modId) {

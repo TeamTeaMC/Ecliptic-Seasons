@@ -64,7 +64,7 @@ public class ESRecipeProvider extends VanillaRecipeProvider {
                 .save(output);
         ShapedRecipeBuilder.shaped(items, RecipeCategory.DECORATIONS, BlockRegistry.pinwheel_blue.value())
                 .define('x', Items.PAPER)
-                .define('y', Items.BLUE_DYE)
+                .define('y', Items.DYE.blue())
                 .define('z', Tags.Items.RODS_WOODEN)
                 .pattern("xy")
                 .pattern("z ")
@@ -73,7 +73,7 @@ public class ESRecipeProvider extends VanillaRecipeProvider {
                 .save(output);
         ShapedRecipeBuilder.shaped(items, RecipeCategory.DECORATIONS, BlockRegistry.pinwheel_lime.value())
                 .define('x', Items.PAPER)
-                .define('y', Items.LIME_DYE)
+                .define('y', Items.DYE.lime())
                 .define('z', Tags.Items.RODS_WOODEN)
                 .pattern("xy")
                 .pattern("z ")
@@ -82,7 +82,7 @@ public class ESRecipeProvider extends VanillaRecipeProvider {
                 .save(output);
         ShapedRecipeBuilder.shaped(items, RecipeCategory.DECORATIONS, BlockRegistry.pinwheel_orange.value())
                 .define('x', Items.PAPER)
-                .define('y', Items.ORANGE_DYE)
+                .define('y', Items.DYE.orange())
                 .define('z', Tags.Items.RODS_WOODEN)
                 .pattern("xy")
                 .pattern("z ")
@@ -111,8 +111,8 @@ public class ESRecipeProvider extends VanillaRecipeProvider {
         ShapedRecipeBuilder.shaped(items, RecipeCategory.DECORATIONS, BlockRegistry.paper_wind_chimes.value())
                 .define('x', Tags.Items.STRINGS)
                 .define('y', Items.PAPER)
-                .define('i', Items.BLUE_DYE)
-                .define('j', Items.YELLOW_DYE)
+                .define('i', Items.DYE.blue())
+                .define('j', Items.DYE.yellow())
                 .pattern("xyi")
                 .pattern(" yj")
                 .pattern(" y ")

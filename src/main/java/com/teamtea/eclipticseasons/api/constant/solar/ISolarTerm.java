@@ -4,6 +4,7 @@ import com.mojang.datafixers.util.Pair;
 import com.teamtea.eclipticseasons.common.misc.SimplePair;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.Identifier;
 
 public interface ISolarTerm {
@@ -20,4 +21,8 @@ public interface ISolarTerm {
     int getIconWidth();
     int getIconHeight();
     Season getSeason();
+
+    default TextColor getTextColor(){
+        return TextColor.fromLegacyFormat(getColor());
+    }
 }

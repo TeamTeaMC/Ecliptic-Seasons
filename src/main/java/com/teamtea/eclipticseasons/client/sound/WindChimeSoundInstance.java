@@ -41,7 +41,7 @@ public class WindChimeSoundInstance extends AbstractTickableSoundInstance {
             float f = windChimesBlockEntity.isShaking() ? 0.7f : 0.1f;
             if (isRelative() && ClientCon.agent.getCameraEntity() != null) {
                 Vec3 cameraPos = ClientCon.agent.getCameraEntity().getPosition(1);
-                Vec3 soundPos = windChimesBlockEntity.getBlockPos().getCenter();
+                Vec3 soundPos = Vec3.atCenterOf(windChimesBlockEntity.getBlockPos());
                 double distanceSq = cameraPos.distanceToSqr(soundPos);
                 double maxDistanceSq = 64 * 64 * f;
                 if (distanceSq > maxDistanceSq && maxDistanceSq > 0) {

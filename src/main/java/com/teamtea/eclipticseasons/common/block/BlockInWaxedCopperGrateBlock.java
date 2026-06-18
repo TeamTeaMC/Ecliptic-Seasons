@@ -28,17 +28,17 @@ public class BlockInWaxedCopperGrateBlock extends WaterloggedTransparentBlock im
         super(properties);
     }
 
-    @Override
-    public Item asItem() {
-        if(this==BlockRegistry.block_in_wooden_grate_block.get())
-            return ItemRegistry.block_in_wooden_grate_block_item.get();
-        return BlockRegistry.getOriginalCopperGrateBlock(this).asItem();
-    }
-
-    @Override
-    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state, boolean includeData, Player player) {
-        return BlockRegistry.getOriginalCopperGrateBlock(this).asItem().getDefaultInstance();
-    }
+    // @Override
+    // public Item asItem() {
+    //     if(this==BlockRegistry.block_in_wooden_grate_block.get())
+    //         return ItemRegistry.block_in_wooden_grate_block_item.get();
+    //     return BlockRegistry.getOriginalCopperGrateBlock(this).asItem();
+    // }
+    //
+    // @Override
+    // public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state, boolean includeData, Player player) {
+    //     return BlockRegistry.getOriginalCopperGrateBlock(this).asItem().getDefaultInstance();
+    // }
 
     @Override
     protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {

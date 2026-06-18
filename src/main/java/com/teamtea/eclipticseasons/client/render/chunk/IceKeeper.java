@@ -57,7 +57,7 @@ public class IceKeeper {
 
             int count = level.getRandom().nextInt(7, 12);
             Direction direction = Direction.UP;
-            Vec3 vec3 = above.getBottomCenter();
+            Vec3 vec3 = Vec3.atBottomCenterOf(above);
             BlockParticleOption blockParticleOption = new BlockParticleOption(ParticleTypes.BLOCK, Blocks.BLUE_ICE.defaultBlockState());
             for (int k = 0; k < count * 2; k++) {
                 level.addParticle(

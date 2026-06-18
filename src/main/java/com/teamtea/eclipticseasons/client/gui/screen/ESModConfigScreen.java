@@ -375,7 +375,7 @@ public class ESModConfigScreen extends Screen {
             }
             if (mod != null) {
                 ConfigurationScreen configurationScreen = new ConfigurationScreen(mod, ESModConfigScreen.this.parent);
-                Minecraft.getInstance().setScreen(configurationScreen);
+                Minecraft.getInstance().setScreenAndShow(configurationScreen);
             }
         }).width(TAB_BUTTON_WIDTH).build());
 
@@ -503,7 +503,7 @@ public class ESModConfigScreen extends Screen {
         super.onClose();
         if (!saveOnClose) {
             backupConfigCache();
-            Objects.requireNonNull(this.minecraft).setScreen(this.parent);
+            Objects.requireNonNull(this.minecraft).setScreenAndShow(this.parent);
             return;
         }
 
@@ -566,7 +566,7 @@ public class ESModConfigScreen extends Screen {
             var restartType = inGame && !needGameRestart ? ModConfigSpec.RestartType.WORLD : ModConfigSpec.RestartType.GAME;
             switch (restartType) {
                 case GAME -> {
-                    minecraft.setScreen(new TooltipConfirmScreen(b -> {
+                    minecraft.setScreenAndShow(new TooltipConfirmScreen(b -> {
                         if (b) {
                             minecraft.stop();
                         } else {
@@ -576,7 +576,7 @@ public class ESModConfigScreen extends Screen {
                 }
                 case WORLD -> {
                     if (minecraft.level != null) {
-                        minecraft.setScreen(new TooltipConfirmScreen(b -> {
+                        minecraft.setScreenAndShow(new TooltipConfirmScreen(b -> {
                             if (b) {
                                 TooltipConfirmScreen.onDisconnect();
                             } else {
@@ -586,7 +586,7 @@ public class ESModConfigScreen extends Screen {
                     }
                 }
             }
-        } else Objects.requireNonNull(this.minecraft).setScreen(this.parent);
+        } else Objects.requireNonNull(this.minecraft).setScreenAndShow(this.parent);
     }
 
     @Override
@@ -618,11 +618,11 @@ public class ESModConfigScreen extends Screen {
 
             TitleScreen titlescreen = new TitleScreen();
             if (flag) {
-                minecraft.setScreen(titlescreen);
+                minecraft.setScreenAndShow(titlescreen);
             } else if (serverdata != null && serverdata.isRealm()) {
-                minecraft.setScreen(new RealmsMainScreen(titlescreen));
+                minecraft.setScreenAndShow(new RealmsMainScreen(titlescreen));
             } else {
-                minecraft.setScreen(new JoinMultiplayerScreen(titlescreen));
+                minecraft.setScreenAndShow(new JoinMultiplayerScreen(titlescreen));
             }
         }
     }

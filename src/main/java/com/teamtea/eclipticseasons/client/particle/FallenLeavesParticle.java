@@ -124,7 +124,7 @@ public class FallenLeavesParticle extends SingleQuadParticle {
                     && pX * pX + pY * pY + pZ * pZ < MAXIMUM_COLLISION_VELOCITY_SQUARED
                 // && !(nextState.getBlock() instanceof LeavesBlock)
             ) {
-                Vec3 vec3 = Entity.collideBoundingBox(null, new Vec3(pX, pY, pZ), this.getBoundingBox(), this.level, List.of());
+                Vec3 vec3 = Entity.collideBoundingBox((Entity) null, new Vec3(pX, pY, pZ), this.getBoundingBox(), this.level, List.of());
                 pX = vec3.x;
                 pY = vec3.y;
                 pZ = vec3.z;

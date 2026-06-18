@@ -103,7 +103,7 @@ public class JEIHumidityControlCategory implements IRecipeCategory<HumidityContr
        builder.addSlot(RecipeIngredientRole.INPUT, 16, 8)
                .add(recipe.ingredient().ingredient());
 
-       for (Block allChangedGrateBlock : BlockRegistry.getAllChangedGrateBlocks()) {
+       for (Block allChangedGrateBlock : List.of(BlockRegistry.block_in_wooden_grate_block.get())) {
            builder.addInvisibleIngredients(RecipeIngredientRole.RENDER_ONLY)
                    .add(allChangedGrateBlock);
        }

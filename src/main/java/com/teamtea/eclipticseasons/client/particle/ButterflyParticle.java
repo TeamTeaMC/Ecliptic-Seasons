@@ -10,6 +10,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.level.NaturalSpawner;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Quaternionf;
@@ -186,7 +187,7 @@ public class ButterflyParticle extends FireflyParticle {
                         targetPosition,
                         this.level.getBlockState(targetPosition),
                         this.level.getFluidState(targetPosition),
-                        EntityType.BAT
+                        EntityTypes.BAT
                 )
                         || targetPosition.getY() <= this.level.getMinY()
                         // || Math.abs(vec3.y) < 1.0E-5D
@@ -205,7 +206,7 @@ public class ButterflyParticle extends FireflyParticle {
         if (this.nextPos == null
                 || this.nextPos.closerThan(nowPos, 0.45D)
                 || this.nextPos.distanceToSqr(nowPos) > 100.0D) {
-            this.nextPos = findNextPosition(3.0F).getCenter();
+            this.nextPos = Vec3.atCenterOf(findNextPosition(3.0F));
         }
 
         Vec3 toTarget = this.nextPos.subtract(nowPos);
@@ -232,7 +233,7 @@ public class ButterflyParticle extends FireflyParticle {
                 belowPos,
                 this.level.getBlockState(belowPos),
                 this.level.getFluidState(belowPos),
-                EntityType.BAT
+                EntityTypes.BAT
         )) {
             this.yd = Math.max(this.yd, 0.04D);
         }

@@ -35,7 +35,7 @@ public class SeasonQuestRegistry {
                 .setClimate(cropClimateTypeHolderGetter.getOrThrow(CropClimateTags.ALL))
                 .setWeight(10)
                 .setGlowing(true)
-                .setColor(Season.SPRING.getColor().getColor())
+                .setColor(Season.SPRING.getTextColor().getValue())
                 .build());
         context.register(SUMMER_CORE, SeasonQuest.builder()
                 .setTittle(Component.translatable(ESRegistries.createLangKey(SUMMER_CORE)))
@@ -46,7 +46,7 @@ public class SeasonQuestRegistry {
                 .setClimate(cropClimateTypeHolderGetter.getOrThrow(CropClimateTags.ALL))
                 .setWeight(10)
                 .setGlowing(true)
-                .setColor(Season.SUMMER.getColor().getColor())
+                .setColor(Season.SUMMER.getTextColor().getValue())
                 .build());
         context.register(AUTUMN_CORE, SeasonQuest.builder()
                 .setTittle(Component.translatable(ESRegistries.createLangKey(AUTUMN_CORE)))
@@ -59,7 +59,7 @@ public class SeasonQuestRegistry {
                 .setClimate(cropClimateTypeHolderGetter.getOrThrow(CropClimateTags.ALL))
                 .setWeight(10)
                 .setGlowing(true)
-                .setColor(Season.AUTUMN.getColor().getColor())
+                .setColor(Season.AUTUMN.getTextColor().getValue())
                 .build());
         context.register(WINTER_CORE, SeasonQuest.builder()
                 .setTittle(Component.translatable(ESRegistries.createLangKey(WINTER_CORE)))
@@ -70,7 +70,7 @@ public class SeasonQuestRegistry {
                 .setClimate(cropClimateTypeHolderGetter.getOrThrow(CropClimateTags.ALL))
                 .setWeight(10)
                 .setGlowing(true)
-                .setColor(Season.WINTER.getColor().getColor())
+                .setColor(Season.WINTER.getTextColor().getValue())
                 .build());
     }
 }
