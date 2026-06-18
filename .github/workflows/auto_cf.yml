@@ -111,7 +111,7 @@ jobs:
           changelog-file: changelog.md
           loaders: neoforge
           game-versions: |
-            [26.1.2,26.2)
+            [26.2,26.3)
           dependencies: ""
           name: "${{env.RELEASE_NAME}}"
           files: |
