@@ -399,8 +399,7 @@ public class BiomeColorsHandler {
     }
 
 
-
-    public static EnvironmentAttributeMap buildEnvironmentAttributeMap(EnvironmentAttributeMap attributeMap,Biome biome) {
+    public static EnvironmentAttributeMap buildEnvironmentAttributeMap(EnvironmentAttributeMap attributeMap, Biome biome) {
         Map<EnvironmentAttribute<Integer>, Integer> colorMap = new IdentityHashMap<>();
         for (EnvironmentAttribute<Integer> attribute : List.of(EnvironmentAttributes.SKY_COLOR,
                 EnvironmentAttributes.FOG_COLOR,
@@ -417,6 +416,11 @@ public class BiomeColorsHandler {
             return builder.build();
         }
         return null;
+        // EnvironmentAttributeMap.Builder builder = EnvironmentAttributeMap.builder().putAll(attributeMap);
+        // builder.set(EnvironmentAttributes.BLOCK_LIGHT_TINT, Color.ORANGE.getRGB());
+        // builder.set(EnvironmentAttributes.SKY_LIGHT_COLOR, Color.BLACK.getRGB());
+        // builder.set(EnvironmentAttributes.BLOCK_LIGHT_TINT, Color.BLACK.getRGB());
+        // return builder.build();
     }
 
     public static @NonNull Integer getOriginalColor(EnvironmentAttributeMap returnValue, EnvironmentAttribute<Integer> attribute) {
