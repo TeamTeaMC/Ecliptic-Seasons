@@ -95,8 +95,10 @@ public abstract class MixinChunkSlice implements IMapSlice, IExtraRendererContex
 
     @Override
     public int getSnowyStatus(BlockPos pos) {
-        int relBlockX = SectionPos.blockToSectionCoord(pos.getX());
-        int relBlockZ = SectionPos.blockToSectionCoord(pos.getZ());
+        if (NONE_SNOW_AREA_MAP == null || NONE_SNOW_AREA_MAP[0] == null)
+            return IMapSlice.super.getSnowyStatus(pos);
+        int relBlockX = SectionPos.blockToSectionCoord(pos.getX()) - centerX;
+        int relBlockZ = SectionPos.blockToSectionCoord(pos.getZ()) - centerZ;
 
         NoneSnowArea lightArrays0 = this.NONE_SNOW_AREA_MAP[
                 relBlockX + (relBlockZ) * SIZE_X];
