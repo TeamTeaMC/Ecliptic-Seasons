@@ -58,9 +58,14 @@ public class ClientClientAgent implements ClientAgent {
         Minecraft.getInstance().levelRenderer.allChanged();
     }
 
+
     @Getter
     @Setter
-    boolean change = false;
+    boolean snowChange = false;
+
+    @Getter
+    @Setter
+    boolean termChange = false;
 
 
     @Override
@@ -85,7 +90,7 @@ public class ClientClientAgent implements ClientAgent {
         //         BiomeColorsHandler.getFogColor(level.getBiome(BlockPos.containing(pos)).value(), baseValue));
         environmentAttributes.addPositionalLayer(EnvironmentAttributes.BACKGROUND_MUSIC, (baseValue, pos, biomeInterpolator) ->
         {
-           return SeasonalBackgroundMusicSelectManager.getMusic(baseValue,BlockPos.containing(pos));
+            return SeasonalBackgroundMusicSelectManager.getMusic(baseValue, BlockPos.containing(pos));
         });
     }
 }
