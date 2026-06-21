@@ -1,3 +1,1 @@
-- Added the Salt Wand, allowing players to clear seasonal snow cover.
-- Seasonal particles are now generated based on seasonal signals instead of the natural season.
-- Fixed compatibility issues between extra snow layers and snow cover removal.
+- Fixed some configuration entries missing from the configuration screen.
