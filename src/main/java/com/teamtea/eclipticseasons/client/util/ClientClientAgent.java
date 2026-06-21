@@ -58,10 +58,16 @@ public class ClientClientAgent implements ClientAgent {
         Minecraft.getInstance().levelExtractor.allChanged();
     }
 
+    // @Getter
+    // @Setter
+    // boolean change = false;
     @Getter
     @Setter
-    boolean change = false;
+    boolean snowChange = false;
 
+    @Getter
+    @Setter
+    boolean termChange = false;
 
     @Override
     public String getCurrentWorldName() {

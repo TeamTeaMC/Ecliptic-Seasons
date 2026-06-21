@@ -1,4 +1,2 @@
-- Added the Salt Wand, allowing players to clear seasonal snow cover.
-- Seasonal particles are now generated based on seasonal signals instead of the natural season.
-- Fixed compatibility issues between extra snow layers and snow cover removal.
-- Fixed improperly saved chunk attachment data that could cause additional lag (NeoForge 26.1 only).
+- Fixed some configuration entries missing from the configuration screen.
+- Fixed LOD update events not being triggered after season and snow changes when LOD auto-reload is enabled.
