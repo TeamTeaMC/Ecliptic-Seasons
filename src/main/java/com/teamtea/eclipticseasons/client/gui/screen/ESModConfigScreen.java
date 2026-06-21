@@ -178,20 +178,12 @@ public class ESModConfigScreen extends Screen {
                         .map(UnmodifiableConfig::entrySet)
                         .flatMap(Collection::stream)
                         .toList()) {
-            if (entry.getValue() instanceof com.electronwill.nightconfig.core.AbstractConfig simpleConfig) {
-                // List<ConfigEntry> entriesSelect = new ArrayList<>();
-                for (Config.Entry config : simpleConfig.entrySet()) {
-                    if (config.getValue() instanceof ForgeConfigSpec.ConfigValue<?> cv
-                    ) {
-                        Component tabKey = classify(cv);
-                        if (tabKey == null) continue;
-                        ConfigEntry.SpecEntry<?> parse = ConfigEntry.SpecEntry.parse(cv);
-                        if (parse == null) continue;
-                        addToTab(tabKey, tabKey == OTHERS ? Component.translatable("eclipticseasons.configuration." + entry.getKey()) : tabKey, parse);
-                    }
-                }
+            Object value = entry.getValue();
+            if (value instanceof com.electronwill.nightconfig.core.Config config) {
+                collectConfigValues(entry, config);
+            } else if (value instanceof ForgeConfigSpec.ConfigValue<?> cv) {
+                buildConfigValue(entry, cv);
             }
-
         }
 
         // Sorts
@@ -205,6 +197,30 @@ public class ESModConfigScreen extends Screen {
         }
 
         traverseConfig(EclipticSeasonsMixinPlugin.PreloadedConfig.getConfig(), "");
+    }
+
+
+    protected void collectConfigValues(
+            UnmodifiableConfig.Entry rootEntry,
+            com.electronwill.nightconfig.core.Config config
+    ) {
+        for (Config.Entry entry : config.entrySet()) {
+            Object value = entry.getValue();
+
+            if (value instanceof ForgeConfigSpec.ConfigValue<?> cv) {
+                buildConfigValue(rootEntry, cv);
+            } else if (value instanceof com.electronwill.nightconfig.core.Config childConfig) {
+                collectConfigValues(rootEntry, childConfig);
+            }
+        }
+    }
+
+    protected void buildConfigValue(UnmodifiableConfig.Entry entry, ForgeConfigSpec.ConfigValue<?> cv) {
+        Component tabKey = classify(cv);
+        if (tabKey == null) return;
+        ConfigEntry.SpecEntry<?> parse = ConfigEntry.SpecEntry.parse(cv);
+        if (parse == null) return;
+        addToTab(tabKey, tabKey == OTHERS ? Component.translatable("eclipticseasons.configuration." + entry.getKey()) : tabKey, parse);
     }
 
     protected void traverseConfig(Config config, String path) {

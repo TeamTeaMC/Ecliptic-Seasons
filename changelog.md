@@ -1,1 +1,1 @@
-- [#164](https://github.com/TeamTeaMC/Ecliptic-Seasons/issues/164) Fixed a crash when using vanilla chunk rendering on 1.20.1.
+- Fixed some configuration entries missing from the configuration screen.
