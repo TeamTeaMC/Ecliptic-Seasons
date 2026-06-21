@@ -12,6 +12,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeManager;
 import net.minecraft.world.level.chunk.ChunkAccess;
@@ -45,12 +46,15 @@ public abstract class MixinSurfaceSystem {
             CallbackInfo ci,
             @Share("biomeArrays") LocalRef<int[]> biomeHolderLocalRef,
             @Share("intCounter") LocalIntRef localIntRef,
-            @Share("signal") LocalIntRef signal
+            @Share("signal") LocalIntRef signal,
+            @Share("biomes") LocalRef<Registry<Biome>> biomesRef
     ) {
         // BiomeHolder biomeHolder1 = chunk.getData(AttachmentRegistry.BIOME_HOLDER);
         biomeHolderLocalRef.set(new int[256]);
         localIntRef.set(0);
         signal.set(BiomeHolder.FLAG_NEED_VERSION);
+        if (ServerLifecycleHooks.getCurrentServer() instanceof MinecraftServer currentServer)
+            biomesRef.set(currentServer.registryAccess().lookupOrThrow(Registries.BIOME));
     }
 
     @Inject(at = {@At(value = "INVOKE_ASSIGN",
@@ -71,9 +75,10 @@ public abstract class MixinSurfaceSystem {
             @Local(ordinal = 1) BlockPos.MutableBlockPos blockPos,
             @Share("biomeArrays") LocalRef<int[]> biomeHolderLocalRef,
             @Share("intCounter") LocalIntRef localIntRef,
-            @Share("signal") LocalIntRef signal) {
-
-        Registry<Biome> biomes = ServerLifecycleHooks.getCurrentServer().registryAccess().lookupOrThrow(Registries.BIOME);
+            @Share("signal") LocalIntRef signal,
+            @Share("biomes") LocalRef<Registry<Biome>> biomesRef) {
+        Registry<Biome> biomes = biomesRef.get();
+        if (biomes == null) return;
         int i = MapChecker.biomeToId(biomes, biomeHolder.value());
         if (i > -1 && i < biomes.size()) {
             biomeHolderLocalRef.get()[((blockPos.getX() & 15) * 16) + (blockPos.getZ() & 15)] = i;
