@@ -1,5 +1,6 @@
 package com.teamtea.eclipticseasons.client.color.season;
 
+import com.mojang.datafixers.util.Pair;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
@@ -398,16 +399,24 @@ public class BiomeColorsHandler {
         return false;
     }
 
+    @FunctionalInterface
+    public interface BiomeColorAttributeProvider {
+        int getColor(Biome biome, int originColor);
+    }
+
 
     public static EnvironmentAttributeMap buildEnvironmentAttributeMap(EnvironmentAttributeMap attributeMap, Biome biome) {
         Map<EnvironmentAttribute<Integer>, Integer> colorMap = new IdentityHashMap<>();
-        for (EnvironmentAttribute<Integer> attribute : List.of(EnvironmentAttributes.SKY_COLOR,
-                EnvironmentAttributes.FOG_COLOR,
-                EnvironmentAttributes.WATER_FOG_COLOR)) {
-            int originalColor = getOriginalColor(attributeMap, EnvironmentAttributes.SKY_COLOR);
-            int newColor = BiomeColorsHandler.getSkyColor(biome, originalColor);
+        List<Pair<EnvironmentAttribute<Integer>, BiomeColorAttributeProvider>> attributes = List.of(
+                Pair.of(EnvironmentAttributes.SKY_COLOR, BiomeColorsHandler::getSkyColor),
+                Pair.of(EnvironmentAttributes.FOG_COLOR, BiomeColorsHandler::getFogColor),
+                Pair.of(EnvironmentAttributes.WATER_FOG_COLOR, BiomeColorsHandler::getWaterFogColor)
+        );
+        for (Pair<EnvironmentAttribute<Integer>, BiomeColorAttributeProvider> attribute : attributes) {
+            int originalColor = getOriginalColor(attributeMap, attribute.getFirst());
+            int newColor = attribute.getSecond().getColor(biome, originalColor);
             if (originalColor != newColor) {
-                colorMap.put(attribute, newColor);
+                colorMap.put(attribute.getFirst(), newColor);
             }
         }
         if (!colorMap.isEmpty()) {

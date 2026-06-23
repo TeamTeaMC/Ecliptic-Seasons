@@ -281,7 +281,7 @@ dependencies {
 //    implementation "net.neoforged:neoforge:${neo_version}"
 
 
-    compileOnly "curse.maven:jei-238222:8108851"
+    compileOnly "maven.modrinth:jei:mrKKBvF8"
     implementation "maven.modrinth:jade:26.2.2+neoforge"
     compileOnly("curse.maven:the-one-probe-245211:6106998")
 

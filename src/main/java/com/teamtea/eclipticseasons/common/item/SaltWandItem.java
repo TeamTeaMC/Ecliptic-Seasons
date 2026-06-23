@@ -25,6 +25,8 @@ import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.loading.FMLLoader;
@@ -97,6 +99,13 @@ public class SaltWandItem extends Item {
                 players.addAll(level.getChunkSource().chunkMap.getPlayers(levelChunk.getPos(), false));
             }
             SimpleNetworkHandler.send(players, new EmptyMessage());
+
+            // For now, we can use this to push update
+            BlockState clickState = level.getBlockState(clickedPos);
+            level.markAndNotifyBlock(clickedPos,null,
+                    clickState,
+                    clickState,
+                    Block.UPDATE_CLIENTS,0);
         }
         chunkPosSet.clear();
         map.clear();
