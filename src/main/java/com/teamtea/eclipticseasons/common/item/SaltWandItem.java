@@ -8,6 +8,7 @@ import com.teamtea.eclipticseasons.common.network.SimpleNetworkHandler;
 import com.teamtea.eclipticseasons.common.network.message.EmptyMessage;
 import com.teamtea.eclipticseasons.common.registry.AttachmentRegistry;
 import com.teamtea.eclipticseasons.common.registry.DataComponentTypeRegistry;
+import com.teamtea.eclipticseasons.config.ClientConfig;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -18,14 +19,20 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.fml.loading.FMLLoader;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
+import java.util.List;
 
 public class SaltWandItem extends Item {
     public SaltWandItem(Properties properties) {
@@ -90,6 +97,13 @@ public class SaltWandItem extends Item {
                 players.addAll(level.getChunkSource().chunkMap.getPlayers(levelChunk.getPos(), false));
             }
             SimpleNetworkHandler.send(players, new EmptyMessage());
+
+            // For now, we can use this to push update
+            BlockState clickState = level.getBlockState(clickedPos);
+            level.markAndNotifyBlock(clickedPos,null,
+                    clickState,
+                    clickState,
+                    Block.UPDATE_CLIENTS,0);
         }
         chunkPosSet.clear();
         map.clear();
@@ -101,12 +115,22 @@ public class SaltWandItem extends Item {
     }
 
 
+    // @Override
+    // public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
+    //     super.inventoryTick(stack, level, entity, slotId, isSelected);
+    //     if (entity instanceof ServerPlayer serverPlayer
+    //             && level instanceof ServerLevel serverLevel) {
+    //         doPos(serverLevel, serverPlayer.getOnPos(), serverPlayer.getOnPos().above(2), stack, serverPlayer, serverPlayer.isShiftKeyDown(), true);
+    //     }
+    // }
+
+
     @Override
-    public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
-        super.inventoryTick(stack, level, entity, slotId, isSelected);
-        if (entity instanceof ServerPlayer serverPlayer
-                && level instanceof ServerLevel serverLevel) {
-            doPos(serverLevel, serverPlayer.getOnPos(), serverPlayer.getOnPos().above(2), stack, serverPlayer, serverPlayer.isShiftKeyDown(), true);
-        }
+    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> builder, TooltipFlag tooltipFlag) {
+        super.appendHoverText(stack, context, builder, tooltipFlag);
+        if (FMLLoader.getDist() != Dist.CLIENT || !ClientConfig.GUI.itemInformation.get()) return;
+        builder.add(Component.translatable("tooltip.eclipticseasons.salt_wand.0"));
+        builder.add(Component.translatable("tooltip.eclipticseasons.salt_wand.1"));
+        builder.add(Component.translatable("tooltip.eclipticseasons.salt_wand.2"));
     }
 }

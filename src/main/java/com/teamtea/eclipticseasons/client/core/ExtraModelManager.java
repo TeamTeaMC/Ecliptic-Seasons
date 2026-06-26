@@ -1289,6 +1289,7 @@ public class ExtraModelManager {
         mapSlice.setLevelForFakeSnow(pos.getX(), realY, pos.getZ(), 0);
 
         if (MapChecker.getDefaultBlockTypeFlag(state) <= MapChecker.FLAG_NONE) return 0;
+        if (mapSlice.getSnowyStatus(pos) == SnowyRemover.NONE_SNOWY) return 0;
         Level useLevel = ClientCon.getUseLevel();
         if (useLevel == null) return 0;
 
@@ -1355,6 +1356,10 @@ public class ExtraModelManager {
         boolean notUp = facing != Direction.UP;
         boolean snowSelf = !selfState.is(Blocks.SNOW);
         if (snowSelf || notUp) {
+
+            // Snowscape may insert snow blocks into fences/vegetation.
+            // Returning the original shape avoids incorrect face culling of the snow model.
+            if (snowInFence && original.getRenderShape() == RenderShape.MODEL) return original;
 
             int cacheLevel = mapSlice.getLevelForFakeSnow(otherPos);
             if (cacheLevel > IFakeSnowHolder.NONE_CHECK_FAKE_SNOW_LEVEL)

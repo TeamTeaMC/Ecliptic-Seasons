@@ -1,0 +1,6 @@
+{
+  "parent": "eclipticseasons:block/season_sensor_winter",
+  "textures": {
+    "1": "eclipticseasons:block/season_sensor_light_full"
+  }
+}

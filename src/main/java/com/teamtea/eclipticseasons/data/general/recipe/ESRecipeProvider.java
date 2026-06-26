@@ -253,6 +253,28 @@ public final class ESRecipeProvider extends RecipeProvider {
                 .define('S', Items.IRON_NUGGET)
                 .unlockedBy("has_hay_block", has(Blocks.HAY_BLOCK))
                 .save(consumer);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, BlockRegistry.season_sensor.get())
+                .pattern("GCG")
+                .pattern("SRS")
+                .pattern("WWW")
+                .define('G', Tags.Items.GLASS_BLOCKS)
+                .define('C', Items.COPPER_INGOT)
+                .define('S', Items.REDSTONE)
+                .define('R', Items.CLOCK)
+                .define('W', ItemTags.PLANKS)
+                .unlockedBy("has_redstone", has(Items.REDSTONE))
+                .save(consumer);
+
+        ShapedRecipeBuilder.shaped( RecipeCategory.TOOLS, ItemRegistry.salt_wand.get())
+                .pattern(" Q ")
+                .pattern(" S ")
+                .pattern(" T ")
+                .define('Q', Tags.Items.GEMS_QUARTZ)
+                .define('S', Tags.Items.INGOTS_GOLD)
+                .define('T', Items.STICK)
+                .unlockedBy("has_quartz", has(Items.QUARTZ))
+                .save(consumer);
     }
 
 }

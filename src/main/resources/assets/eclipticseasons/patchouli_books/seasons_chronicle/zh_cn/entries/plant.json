@@ -37,7 +37,7 @@
             "GGGGG",
             "GWWWG",
             "GWWWG",
-            "GWWQG",
+            "GWWWG",
             "GGRGG"
           ],
           [
@@ -70,7 +70,7 @@
     },
     {
       "type": "patchouli:text",
-      "text": "季节心髓的默认获取方式是完成进度或者季节任务，也可以用祈年令进行季节仪式。$(br)$(br)偶尔也会湿度不适宜，这时只能放置格栅方块，通过右键放入海绵或者湿海绵（需要软热源方块，如营火）来调节范围湿度，更多请查看JEI插件。$(br)$(br)使用生长检测器可以检查作物是否适合这个温室。"
+      "text": "季节心髓的默认获取方式是完成进度或者季节任务，也可以用祈年令进行季节仪式。$(br)$(br)偶尔也会湿度不适宜，这时只能放置湿度调节方块，可以通过JEI进行搜索。$(br)$(br)使用生长检测器可以检查作物是否适合这个温室。"
     },
     {
       "type": "patchouli:text",
@@ -95,11 +95,12 @@
     {
       "type": "patchouli:crafting",
       "recipe": "eclipticseasons:hygrometer",
-      "recipe2": "eclipticseasons:block_in_wooden_grate_block"
+      "recipe2": "eclipticseasons:humidity_tank"
     },
     {
       "type": "patchouli:crafting",
-      "recipe": "eclipticseasons:growth_detector"
+      "recipe": "eclipticseasons:dehumidifier",
+      "recipe2": "eclipticseasons:growth_detector"
     }
   ]
 }

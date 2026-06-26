@@ -79,6 +79,8 @@ public class Lang_ZH extends LangHelper {
         add(BlockRegistry.humidity_tank.get(), "恒湿水箱");
         add(BlockRegistry.dehumidifier.get(), "温室除湿器");
 
+        add(BlockRegistry.season_sensor.get(), "季节传感器");
+
         add("info.eclipticseasons.environment.temperature.under_freezing", "严寒");
         add("info.eclipticseasons.environment.temperature.freezing", "冰冻");
         add("info.eclipticseasons.environment.temperature.cold", "寒冷");

@@ -144,8 +144,8 @@ public abstract class MixinBlockRenderTask extends ChunkBuilderTask<ChunkBuildOu
                 buildContext.cache.getBlockRenderer().renderModel(ExtraModelManager.getSnowLayerModel(layer), Blocks.SNOW.defaultBlockState()
                         .setValue(SnowLayerBlock.LAYERS, layer), blockPos, modelOffset.offset(0, 1, 0));
                 modelOffset.offset(0, -1, 0);
-                blockPos.setY(y);
             }
+            blockPos.setY(y);
         }
     }
 

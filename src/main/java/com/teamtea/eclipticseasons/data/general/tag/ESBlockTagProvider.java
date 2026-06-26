@@ -108,7 +108,8 @@ public final class ESBlockTagProvider extends BlockTagsProvider {
                 BlockRegistry.pinwheel_orange.get(),
                 BlockRegistry.block_in_wooden_grate_block.get(),
                 BlockRegistry.humidity_tank.get(),
-                BlockRegistry.dehumidifier.get());
+                BlockRegistry.dehumidifier.get(),
+                BlockRegistry.season_sensor.get());
 
         tag(BlockTags.MINEABLE_WITH_PICKAXE).add(BlockRegistry.hygrometer.get(),
                 BlockRegistry.spring_greenhouse_core.get(),
