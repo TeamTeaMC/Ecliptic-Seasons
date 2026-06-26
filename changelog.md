@@ -1,1 +1,0 @@
-- Fixed some configuration entries missing from the configuration screen.

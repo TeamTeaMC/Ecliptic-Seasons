@@ -105,12 +105,14 @@ public final class SimpleNetworkHandler {
                 GrowthInfoQuery.STREAM_CODEC,
                 (payload, context) -> {
                     Player player = context.player();
-                    if (player instanceof ServerPlayer serverPlayer
-                            && serverPlayer.level() instanceof ServerLevel level
-                            && MapChecker.isLoadedOnlyServer(level, payload.getPos()))
-                        send(serverPlayer, new GrowthInfoMessage(Optional.ofNullable(GrowthInfoResolver.resolve(
-                                level, payload.getPos(), level.getBlockState(payload.getPos())
-                        ))));
+                    context.enqueueWork(() -> {
+                        if (player instanceof ServerPlayer serverPlayer
+                                && serverPlayer.level() instanceof ServerLevel level
+                                && MapChecker.isLoadedOnlyServer(level, payload.getPos()))
+                            send(serverPlayer, new GrowthInfoMessage(Optional.ofNullable(GrowthInfoResolver.resolve(
+                                    level, payload.getPos(), level.getBlockState(payload.getPos())
+                            ))));
+                    });
                 }
         );
     }
