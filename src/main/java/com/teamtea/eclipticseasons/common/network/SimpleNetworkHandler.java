@@ -124,12 +124,14 @@ public final class SimpleNetworkHandler {
                 .decoder(GrowthInfoQuery::new)
                 .consumerNetworkThread((payload, xy) -> {
                     Player player = xy.get().getSender();
-                    if (player instanceof ServerPlayer serverPlayer
-                            && serverPlayer.level() instanceof ServerLevel level
-                            && MapChecker.isLoadedOnlyServer(level, payload.getPos()))
-                        send(serverPlayer, new GrowthInfoMessage(Optional.ofNullable(GrowthInfoResolver.resolve(
-                                level, payload.getPos(), level.getBlockState(payload.getPos())
-                        ))));
+                    xy.get().enqueueWork(()->{
+                        if (player instanceof ServerPlayer serverPlayer
+                                && serverPlayer.level() instanceof ServerLevel level
+                                && MapChecker.isLoadedOnlyServer(level, payload.getPos()))
+                            send(serverPlayer, new GrowthInfoMessage(Optional.ofNullable(GrowthInfoResolver.resolve(
+                                    level, payload.getPos(), level.getBlockState(payload.getPos())
+                            ))));
+                    });
                 })
                 .add();
 
