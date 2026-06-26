@@ -9,6 +9,7 @@ import com.teamtea.eclipticseasons.common.network.message.*;
 import com.teamtea.eclipticseasons.config.sync.*;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.network.protocol.configuration.ServerConfigurationPacketListener;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -100,11 +101,14 @@ public final class SimpleNetworkHandler {
                 GrowthInfoQuery.STREAM_CODEC,
                 (payload, context) -> {
                     Player player = context.player();
-                    if (player instanceof ServerPlayer serverPlayer
-                            && MapChecker.isLoadedOnlyServer(serverPlayer.level(), payload.getPos()))
-                        send(serverPlayer, new GrowthInfoMessage(Optional.ofNullable(GrowthInfoResolver.resolve(
-                                serverPlayer.level(), payload.getPos(), serverPlayer.level().getBlockState(payload.getPos())
-                        ))));
+                    context.enqueueWork(() -> {
+                        if (player instanceof ServerPlayer serverPlayer
+                                && serverPlayer.level() instanceof ServerLevel level
+                                && MapChecker.isLoadedOnlyServer(level, payload.getPos()))
+                            send(serverPlayer, new GrowthInfoMessage(Optional.ofNullable(GrowthInfoResolver.resolve(
+                                    level, payload.getPos(), level.getBlockState(payload.getPos())
+                            ))));
+                    });
                 }
         );
 

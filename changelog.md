@@ -1,2 +1,1 @@
-- Fixed some configuration entries missing from the configuration screen.
-- Fixed LOD update events not being triggered after season and snow changes when LOD auto-reload is enabled.
+- #166
