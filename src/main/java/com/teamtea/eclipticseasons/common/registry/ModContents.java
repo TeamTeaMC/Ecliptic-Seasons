@@ -179,7 +179,7 @@ public class ModContents {
                         event,
                         EclipticSeasonsApi.MODID, "EclipticSeasonsLegacySnowyBlock", modFile,
                         Component.translatable(EclipticSeasons.rl("legacy_snowy_block").toLanguageKey("pack")),
-                        event.getPackType(), PackSource.BUILT_IN, new PackSelectionConfig(false, Pack.Position.TOP, false));
+                        event.getPackType(), PackSource.FEATURE, new PackSelectionConfig(false, Pack.Position.TOP, false));
                 if (CompatModule.isSodium()) {
                     FakeResourceManagerHelperUtil.registerBuiltinResourcePack(
                             event,
