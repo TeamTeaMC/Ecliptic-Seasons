@@ -297,7 +297,7 @@ dependencies {
 
     compileOnly "maven.modrinth:voxy:0.2.14-alpha"
 
-    implementation "maven.modrinth:distanthorizons:3.1.0-b-26.2"
+    compileOnly "maven.modrinth:distanthorizons:3.1.0-b-26.2"
 //    onlyMainRuntimeOnly "curse.maven:distant-horizons-508933:7948188"
 
     compileOnly "curse.maven:guideme-1173950:8204880"
