@@ -1,6 +1,5 @@
 {
-  "replace": true,
   "values": [
-    "#c:is_river"
+    "minecraft:river"
   ]
 }

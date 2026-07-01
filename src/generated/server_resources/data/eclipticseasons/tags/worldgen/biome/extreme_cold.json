@@ -2,6 +2,7 @@
   "values": [
     "#c:is_icy",
     "#c:is_snowy",
-    "#c:is_mountain/peak"
+    "#c:is_mountain/peak",
+    "#c:is_aquatic_icy"
   ]
 }

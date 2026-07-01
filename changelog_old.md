@@ -1,3 +1,9 @@
+### 0.13.9
+
+- Refactored network level access to avoid `UnsupportedOperationException` in non-player/client payload contexts.
+- Updated biome tags: added `c:is_aquatic_icy` to `extreme_cold`.
+- Updated rain/rainless resource pack biome rules to use `minecraft:river` instead of `#c:is_river`.
+
 ### 0.13.8
 
 - Added the Salt Wand, allowing players to clear seasonal snow cover.
