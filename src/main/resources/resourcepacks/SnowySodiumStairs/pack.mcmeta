@@ -1,6 +1,9 @@
 {
   "pack": {
     "pack_format": 15,
+    "supported_formats": { "min_inclusive": 15, "max_inclusive": 999 },
+    "min_format": [ 15,0 ],
+    "max_format": [ 999,0 ],
     "description": "Snowy Sodium Stairs."
   }
 }
