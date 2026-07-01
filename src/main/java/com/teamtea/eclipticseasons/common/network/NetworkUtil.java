@@ -16,9 +16,7 @@ import com.teamtea.eclipticseasons.common.core.map.SnowyRemover;
 import com.teamtea.eclipticseasons.common.network.message.*;
 import com.teamtea.eclipticseasons.common.registry.ESRegistries;
 import com.teamtea.eclipticseasons.config.ClientConfig;
-import com.teamtea.eclipticseasons.config.sync.ESConfigFilePayload;
 import com.teamtea.eclipticseasons.config.sync.ESConfigSync;
-import com.teamtea.eclipticseasons.config.sync.ESConfigToClientPayload;
 import com.teamtea.eclipticseasons.config.sync.IESConfigMessage;
 import net.minecraft.core.Registry;
 import net.minecraft.core.SectionPos;
@@ -30,27 +28,35 @@ import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.chunk.status.ChunkStatus;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
+import org.jspecify.annotations.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class NetworkUtil {
 
+    private static Level getUseLevel(IPayloadContext context) {
+        try {
+            return context.player().level();
+        } catch (UnsupportedOperationException ignored) {
+            return ClientCon.getUseLevel();
+        }
+    }
 
     public static void processSolarTermsMessage2(SolarTermsMessage solarTermsMessage, IPayloadContext context) {
         context.enqueueWork(() -> {
-            SolarHolders.getSaveDataLazy(context.player().level()).ifPresent(data -> {
+            SolarHolders.getSaveDataLazy(getUseLevel(context)).ifPresent(data -> {
                 SolarTerm old = data.getSolarTerm();
                 data.setSolarTermsDay(solarTermsMessage.solarDay);
                 SolarTerm solarTerm = data.getSolarTerm();
                 if (solarTerm != old) {
-                    NeoForge.EVENT_BUS.post(new SolarTermChangeEvent(old, solarTerm, context.player().level(), solarTermsMessage.solarDay));
+                    NeoForge.EVENT_BUS.post(new SolarTermChangeEvent(old, solarTerm, getUseLevel(context), solarTermsMessage.solarDay));
                     ClientCon.getAgent().setTermChange(true);
                 }
                 // note 不再需要更新
                 // BiomeClimateManager.updateTemperature(context.player().level(), data.getSolarTerm());
                 BiomeColorsHandler.needRefresh = true;
-                ClientCon.tick(context.player().level());
+                ClientCon.tick(getUseLevel(context));
                 BiomeColorsHandler.reloadColors();
                 if (solarTerm != old) {
                     ClientCon.getAgent().setAllChunkDirty();
@@ -79,9 +85,9 @@ public class NetworkUtil {
 
     public static void processBiomeWeatherMessage(BiomeWeatherMessage biomeWeatherMessage, IPayloadContext context) {
         context.enqueueWork(() -> {
-            var lists = WeatherManager.getBiomeList(context.player().level());
+            var lists = WeatherManager.getBiomeList(getUseLevel(context));
             if (lists != null) {
-                Level level = context.player().level();
+                Level level = getUseLevel(context);
                 Registry<WeatherEffect> weatherEffects = level.registryAccess().lookupOrThrow(ESRegistries.WEATHER_EFFECT);
 
                 boolean update = false;
@@ -121,7 +127,7 @@ public class NetworkUtil {
             }
         }
         context.enqueueWork(() -> {
-            if (context.player().level() instanceof Level level && level.isClientSide()) {
+            if (getUseLevel(context) instanceof Level level && level.isClientSide()) {
                 if (level.getChunk(chunkUpdateMessage.x, chunkUpdateMessage.z) instanceof LevelChunk levelChunk) {
                     var snow = new SnowyRemover(blocks);
                     levelChunk.setData(AttachmentRegistry.SNOWY_REMOVER, new SnowyRemover(blocks));
@@ -167,7 +173,7 @@ public class NetworkUtil {
 
     public static void processHumidModifyMessage(HumidModifyMessage message, IPayloadContext context) {
         context.enqueueWork(() -> {
-            if (context.player().level() instanceof Level level && level.isClientSide()) {
+            if (getUseLevel(context) instanceof Level level && level.isClientSide()) {
                 ClientCon.humidityModificationLevel = message.value;
             }
 
@@ -180,7 +186,7 @@ public class NetworkUtil {
 
     public static void processUpdateTempChangeMessage(UpdateTempChangeMessage emptyMessage, IPayloadContext context) {
         context.enqueueWork(() -> {
-            if (context.player().level() instanceof Level level) {
+            if (getUseLevel(context) instanceof Level level) {
                 SolarHolders.getSaveDataLazy(level).ifPresent(solarDataManager -> {
                     solarDataManager.setSolarTempChange(emptyMessage.change);
                 });
@@ -198,7 +204,7 @@ public class NetworkUtil {
 
     public static void handleGrowthInfoQuery(GrowthInfoMessage payload, IPayloadContext context) {
         context.enqueueWork(() -> {
-            if (context.player().level() instanceof Level level) {
+            if (getUseLevel(context) instanceof Level level) {
                 GrowthInfoClientCache.update(payload.getInfo().orElse(null));
             }
         }).exceptionally(e -> {
