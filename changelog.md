@@ -1,0 +1,4 @@
+* Added crafting recipe and advancement for Salt Wand.
+* Refactored network level access to avoid `UnsupportedOperationException` in non-player/client payload contexts.
+* Updated biome tags: added `c:is_aquatic_icy` to `extreme_cold`.
+* Updated rain/rainless resource pack biome rules to use `minecraft:river` instead of `#c:is_river`.
