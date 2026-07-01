@@ -290,6 +290,10 @@ dependencies {
     compileOnly "curse.maven:kubejs-238086:7143884"
     compileOnly "curse.maven:modern-ui-352491:6956436"
 
+    implementation "curse.maven:chipped-456956:5813117"
+    implementation "curse.maven:athena-841890:8061947"
+    implementation "curse.maven:resourceful-lib-570073:5973188"
+
     // others
     // https://mvnrepository.com/artifact/org.projectlombok/lombok
     compileOnly 'org.projectlombok:lombok:1.18.38'

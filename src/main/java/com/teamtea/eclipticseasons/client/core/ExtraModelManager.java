@@ -35,6 +35,7 @@ import net.minecraft.client.renderer.block.BlockModelShaper;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.renderer.texture.SpriteContents;
+import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelResourceLocation;
@@ -61,6 +62,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.BiConsumer;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -342,6 +344,29 @@ public class ExtraModelManager {
 
         if (bakedModel instanceof SnowyBakedModelWrapper<?> snowyBakedModelWrapper) {
 
+            // if (!original.isEmpty()) {
+            //     List<BakedQuad> snowQuads = new ArrayList<>();
+            //     for (BakedQuad quad : original) {
+            //         SnowQuadSplitter.split(snowQuads, quad, 2);
+            //     }
+            //     Function<ResourceLocation, TextureAtlasSprite> textureAtlas = Minecraft.getInstance()
+            //             .getTextureAtlas(TextureAtlas.LOCATION_BLOCKS);
+            //     List<TextureAtlasSprite> apply = List.of(textureAtlas
+            //             .apply(ResourceLocation.parse("minecraft:block/orange_terracotta")), textureAtlas
+            //             .apply(ResourceLocation.parse("minecraft:block/lime_terracotta")), textureAtlas
+            //             .apply(ResourceLocation.parse("minecraft:block/blue_terracotta")), textureAtlas
+            //             .apply(ResourceLocation.parse("minecraft:block/pink_terracotta")));
+            //
+            //     for (int i = 0; i < snowQuads.size(); i++) {
+            //         snowQuads.set(i, new BakedQuadRetextured(snowQuads.get(i),
+            //                 apply.get(i % apply.size())));
+            //     }
+            //     if (true) {
+            //         return snowQuads;
+            //     }
+            // } else {
+            //     return List.of();
+            // }
 
             int blockType = snowyBakedModelWrapper.getBindBlockType() > MapChecker.FLAG_IGNORE ?
                     snowyBakedModelWrapper.getBindBlockType() :
