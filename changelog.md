@@ -1,1 +1,1 @@
-- #167 Update de_de.json [M4ximum93]
+* Updated rain/rainless resource pack biome rules to use `minecraft:river` instead of `#c:is_river`.
