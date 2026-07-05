@@ -63,8 +63,8 @@ public class ESConfigSync {
 
     public void receiveSyncedConfig(final SimpleNetworkHandler.S2CConfigData msg,
                                     final Supplier<NetworkEvent.Context> contextSupplier) {
-        if (ServerLifecycleHooks.getCurrentServer() == null
-                || ServerLifecycleHooks.getCurrentServer().isSingleplayer()) {
+        MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
+        if (server != null && server.isSingleplayer()) {
             return;
         }
 
@@ -76,7 +76,7 @@ public class ESConfigSync {
         if (!CommonConfig.Debug.forceServerConfig.get()) {
             try {
                 byte[] bytes = Files.readAllBytes(FMLPaths.CONFIGDIR.get().resolve(modConfig.getFileName()));
-                LOCAL_CONFIG_BACKUP.computeIfAbsent(msg.getFileName(), k -> bytes);
+                LOCAL_CONFIG_BACKUP.putIfAbsent(msg.getFileName(), bytes);
             } catch (IOException e) {
                 EclipticSeasons.logger(e);
             }
@@ -99,8 +99,8 @@ public class ESConfigSync {
 
 
     public void onClientPlayerExit() {
-        if (ServerLifecycleHooks.getCurrentServer() == null
-                || ServerLifecycleHooks.getCurrentServer().isSingleplayer()) {
+        MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
+        if (server != null && server.isSingleplayer()) {
             LOCAL_CONFIG_BACKUP.clear();
             return;
         }

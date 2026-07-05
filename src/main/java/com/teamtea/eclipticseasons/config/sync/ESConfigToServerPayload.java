@@ -1,8 +1,6 @@
 package com.teamtea.eclipticseasons.config.sync;
 
-import com.teamtea.eclipticseasons.common.network.SimpleNetworkHandler;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 import net.minecraft.network.FriendlyByteBuf;
 
