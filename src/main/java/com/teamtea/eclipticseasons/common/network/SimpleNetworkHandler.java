@@ -7,10 +7,7 @@ import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.item.info.GrowthInfoResolver;
 import com.teamtea.eclipticseasons.common.network.clientmesage.GrowthInfoQuery;
 import com.teamtea.eclipticseasons.common.network.message.*;
-import com.teamtea.eclipticseasons.config.sync.ESConfigFilePayload;
-import com.teamtea.eclipticseasons.config.sync.ESConfigSync;
-import com.teamtea.eclipticseasons.config.sync.ESConfigTask;
-import com.teamtea.eclipticseasons.config.sync.ESConfigToServerPayload;
+import com.teamtea.eclipticseasons.config.sync.*;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -82,6 +79,11 @@ public final class SimpleNetworkHandler {
         registrar.configurationToClient(
                 ESConfigFilePayload.TYPE,
                 ESConfigFilePayload.STREAM_CODEC,
+                NetworkUtil::handle);
+
+        registrar.playToClient(
+                ESConfigToClientPayload.TYPE,
+                ESConfigToClientPayload.STREAM_CODEC,
                 NetworkUtil::handle);
 
         registrar.playToServer(
