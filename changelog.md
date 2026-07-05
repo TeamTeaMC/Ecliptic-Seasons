@@ -1,1 +1,1 @@
-* Improved server configuration synchronization.
+- [[#170](https://github.com/TeamTeaMC/Ecliptic-Seasons/issues/170)] Mixin conflict between Create: Cosmonautics (rocketnautics) and Ecliptic Seasons causes game crash on startup
