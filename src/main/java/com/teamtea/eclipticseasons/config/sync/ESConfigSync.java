@@ -58,8 +58,8 @@ public class ESConfigSync {
     private final Map<String, byte[]> LOCAL_CONFIG_BACKUP = new ConcurrentHashMap<>();
 
     public void receiveSyncedConfig(final byte[] contents, final String fileName) {
-        if (ServerLifecycleHooks.getCurrentServer() == null
-                || ServerLifecycleHooks.getCurrentServer().isSingleplayer()) {
+        MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
+        if (server != null && server.isSingleplayer()) {
             return;
         }
 
@@ -76,7 +76,7 @@ public class ESConfigSync {
         if (!CommonConfig.Debug.forceServerConfig.get()) {
             try {
                 byte[] bytes = Files.readAllBytes(FMLPaths.CONFIGDIR.get().resolve(modConfig.getFileName()));
-                LOCAL_CONFIG_BACKUP.computeIfAbsent(fileName, k -> bytes);
+                LOCAL_CONFIG_BACKUP.putIfAbsent(fileName, bytes);
             } catch (IOException e) {
                 EclipticSeasons.logger(e);
             }
@@ -93,8 +93,8 @@ public class ESConfigSync {
     }
 
     public void onClientPlayerExit() {
-        if (ServerLifecycleHooks.getCurrentServer() == null
-                || ServerLifecycleHooks.getCurrentServer().isSingleplayer()) {
+        MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
+        if (server != null && server.isSingleplayer()) {
             LOCAL_CONFIG_BACKUP.clear();
             return;
         }
@@ -139,7 +139,7 @@ public class ESConfigSync {
         if (currentServer != null) {
             for (ServerPlayer player : currentServer.getPlayerList().getPlayers()) {
                 if (player == serverPlayer) continue;
-                SimpleNetworkHandler.send(player, new ESConfigFilePayload(configFilePayload.fileName(), configFilePayload.contents()));
+                SimpleNetworkHandler.send(player, new ESConfigToClientPayload(configFilePayload.fileName(), configFilePayload.contents()));
             }
         }
     }

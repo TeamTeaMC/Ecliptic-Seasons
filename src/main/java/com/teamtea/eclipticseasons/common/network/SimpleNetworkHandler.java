@@ -73,6 +73,10 @@ public final class SimpleNetworkHandler {
                 UpdateTempChangeMessage.STREAM_CODEC,
                 NetworkUtil::processUpdateTempChangeMessage
         );
+        registrar.configurationToClient(
+                ESConfigFilePayload.TYPE,
+                ESConfigFilePayload.STREAM_CODEC,
+                NetworkUtil::handleConfig);
 
         registrar.playToClient(
                 ESConfigToClientPayload.TYPE,
