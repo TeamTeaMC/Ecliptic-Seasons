@@ -26,7 +26,7 @@ public class PlainsStubHolder extends Holder.Reference<Biome> {
      */
     public static final Holder.Reference<Biome> PLAINS = new PlainsStubHolder(
             Type.STAND_ALONE,
-            new DummyHolderOwner<>(), // Replace with your actual HolderOwner implementation if needed
+            new DummyHolderOwner<>(),
             Biomes.PLAINS,
             createPlainsBiomeBehavior().build()
     );
