@@ -18,6 +18,7 @@ import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Coerce;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
@@ -26,8 +27,8 @@ import java.util.List;
 @Mixin({Entity.class})
 public abstract class MixinEntity {
 
-    @Shadow
-    private Level level;
+    // @Shadow
+    // private Level level;
 
     @Shadow
     public abstract Level level();
@@ -36,7 +37,7 @@ public abstract class MixinEntity {
             target = "Lnet/minecraft/world/level/block/state/BlockState;playStepSound(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/entity/Entity;FF)V")},
             method = {"playStepSound"})
     public void eclipticseasons$playStepSound(BlockState instance, Level level, BlockPos blockPos, Entity entity, float volumeMultiplier, float pitchMultiplier, Operation<Void> original) {
-        if (EclipticSeasonsApi.getInstance().isSnowyBlock(this.level, instance, blockPos))
+        if (EclipticSeasonsApi.getInstance().isSnowyBlock(this.level(), instance, blockPos))
             instance = Blocks.SNOW.defaultBlockState();
         original.call(instance, level, blockPos, entity, volumeMultiplier, pitchMultiplier);
     }
@@ -45,7 +46,7 @@ public abstract class MixinEntity {
             target = "(Lnet/minecraft/core/particles/ParticleType;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/BlockPos;)Lnet/minecraft/core/particles/BlockParticleOption;")},
             method = {"spawnSprintParticle"})
     public BlockParticleOption eclipticseasons$spawnSprintParticle_snow(ParticleType<?> type, BlockState state, BlockPos pos, Operation<BlockParticleOption> original) {
-        if (EclipticSeasonsApi.getInstance().isSnowyBlock(level, state, pos)) {
+        if (EclipticSeasonsApi.getInstance().isSnowyBlock(this.level(), state, pos)) {
             state = Blocks.SNOW.defaultBlockState();
         }
         return original.call(type, state, pos);
@@ -54,10 +55,10 @@ public abstract class MixinEntity {
     @Inject(at = {@At(value = "INVOKE",
             target = "Lnet/minecraft/world/level/block/Block;stepOn(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/entity/Entity;)V")},
             method = "applyEffectsFromBlocks(Ljava/util/List;)V")
-    public void eclipticseasons$move_stepOn(List movements,
+    public void eclipticseasons$move_stepOn(@Coerce List<?> movements,
                                             CallbackInfo ci,
                                             @Local BlockPos pos,
                                             @Local BlockState blockstate) {
-        SnowyMapChecker.onEntityStepOn((Entity) (Object) this, level, pos, blockstate);
+        SnowyMapChecker.onEntityStepOn((Entity) (Object) this, this.level(), pos, blockstate);
     }
 }
