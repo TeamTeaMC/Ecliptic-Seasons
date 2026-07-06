@@ -18,6 +18,7 @@ import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Coerce;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
@@ -54,7 +55,7 @@ public abstract class MixinEntity {
     @Inject(at = {@At(value = "INVOKE",
             target = "Lnet/minecraft/world/level/block/Block;stepOn(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/entity/Entity;)V")},
             method = "applyEffectsFromBlocks(Ljava/util/List;)V")
-    public void eclipticseasons$move_stepOn(List movements,
+    public void eclipticseasons$move_stepOn(@Coerce List<?> movements,
                                             CallbackInfo ci,
                                             @Local BlockPos pos,
                                             @Local BlockState blockstate) {
