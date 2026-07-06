@@ -1062,7 +1062,7 @@ public class MapChecker {
 
     public static void sendChunkInfo(LevelChunk chunk, ChunkPos chunkPos, ServerPlayer
             player, List<Integer> section_y, List<BlockPos> clickedPos) {
-        byte[] bytes = new byte[256];
+        int[] bytes = new int[256];
         // var section_y = new HashSet<Integer>(chunk.getSectionsCount());
         // var section_y=new HashSet<Integer>();
 
@@ -1071,7 +1071,7 @@ public class MapChecker {
             BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos(chunkPos.getMinBlockX(), 64, chunkPos.getMinBlockZ());
             for (int i = 0; i < 16; i++) {
                 for (int j = 0; j < 16; j++) {
-                    bytes[i * 16 + j] = (byte) snowyRemover.blockWatcher()[i][j];
+                    bytes[i * 16 + j] = snowyRemover.blockWatcher()[i][j];
 
                     // if (forceChunkRender) {
                     //     mutableBlockPos.set(chunkPos.getMinBlockX() + i, 64, chunkPos.getMinBlockZ() + j);
