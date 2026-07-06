@@ -1,9 +1,7 @@
 package com.teamtea.eclipticseasons.common.network.message;
 
-import com.mojang.serialization.Codec;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -98,26 +96,23 @@ public class MessageCodec {
 
     public static final StreamCodec<ByteBuf, int[]> intArrayStreamCodec = new StreamCodec<>() {
         @Override
-        public void encode(ByteBuf pBuffer, int[] pValue) {
-            pBuffer.writeInt(pValue.length);
-            for (int i : pValue) {
-                ByteBufCodecs.VAR_INT.encode(pBuffer, i);
+        public void encode(ByteBuf buf, int[] values) {
+            // Write total array length as a VarInt
+            ByteBufCodecs.VAR_INT.encode(buf, values.length);
+            // Write each integer sequentially as a VarInt
+            for (int value : values) {
+                ByteBufCodecs.VAR_INT.encode(buf, value);
             }
         }
 
         @Override
-        public int @NonNull [] decode(ByteBuf pBuffer) {
-            int size = pBuffer.readInt();
-            int[] list = new int[size];
-            for (int i = 0; i < size; i++) {
-                // ByteBufCodecs.VAR_INT.apply(ByteBufCodecs.list())
-                list[i] = ByteBufCodecs.VAR_INT.decode(pBuffer);
+        public int[] decode(ByteBuf buf) {
+            int length = ByteBufCodecs.VAR_INT.decode(buf);
+            int[] values = new int[length];
+            for (int i = 0; i < length; i++) {
+                values[i] = ByteBufCodecs.VAR_INT.decode(buf);
             }
-            return list;
+            return values;
         }
     };
-
-    static {
-
-    }
 }

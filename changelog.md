@@ -1,1 +1,1 @@
-* Improved server configuration synchronization.
+* **Optimized Chunk Extra Data Syncing**: Significantly compressed the synchronization size for the two main chunk attachments (`chunk_snow` and `chunk_biome`), further streamlining network data transmission.
