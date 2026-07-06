@@ -236,7 +236,7 @@ public class MapChecker {
         return map;
     }
 
-    //public static @Nullable ChunkAccess getChunkView(Level level, BlockPos pos) {
+    // public static @Nullable ChunkAccess getChunkView(Level level, BlockPos pos) {
     //    return level.getChunk(SectionPos.blockToSectionCoord(pos.getX()),
     //            SectionPos.blockToSectionCoord(pos.getZ()), ChunkStatus.SURFACE, false);
     //}
@@ -728,8 +728,8 @@ public class MapChecker {
     // level.getHeight(Heightmap.Types.MOTION_BLOCKING, pos.getX(), pos.getZ()) 也会卡死，因为要full了
     // 继续优化缓存
     public static Holder<Biome> getSurfaceBiome(Level level, BlockPos pos) {
-        //int x = SectionPos.blockToSectionCoord(pos.getX());
-        //int z = SectionPos.blockToSectionCoord(pos.getZ());
+        // int x = SectionPos.blockToSectionCoord(pos.getX());
+        // int z = SectionPos.blockToSectionCoord(pos.getZ());
         ChunkAccess chunkAt = getChunkView(level, pos);
         if (chunkAt instanceof IChunkBiomeHolder iChunkBiomeHolder) {
             BiomeHolder biomeHolder = iChunkBiomeHolder.eclipticseasons$getBiomeHolder();
@@ -1062,7 +1062,7 @@ public class MapChecker {
 
     public static void sendChunkInfo(LevelChunk chunk, ChunkPos chunkPos, ServerPlayer
             player, List<Integer> section_y, List<BlockPos> clickedPos) {
-        byte[] bytes = new byte[256];
+        int[] bytes = new int[256];
         // var section_y = new HashSet<Integer>(chunk.getSectionsCount());
         // var section_y=new HashSet<Integer>();
 
@@ -1071,7 +1071,7 @@ public class MapChecker {
             BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos(chunkPos.getMinBlockX(), 64, chunkPos.getMinBlockZ());
             for (int i = 0; i < 16; i++) {
                 for (int j = 0; j < 16; j++) {
-                    bytes[i * 16 + j] = (byte) snowyRemover.blockWatcher()[i][j];
+                    bytes[i * 16 + j] = snowyRemover.blockWatcher()[i][j];
 
                     // if (forceChunkRender) {
                     //     mutableBlockPos.set(chunkPos.getMinBlockX() + i, 64, chunkPos.getMinBlockZ() + j);

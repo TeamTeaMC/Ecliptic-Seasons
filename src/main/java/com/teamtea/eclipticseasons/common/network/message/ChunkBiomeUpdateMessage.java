@@ -2,6 +2,7 @@ package com.teamtea.eclipticseasons.common.network.message;
 
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
+import com.teamtea.eclipticseasons.common.network.message.codec.PalettedIntArrayCodecs;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -27,7 +28,7 @@ public class ChunkBiomeUpdateMessage implements CustomPacketPayload {
     // 'age' will be encoded and decoded as an integer
     // The final parameter takes in the previous parameters in the order they are provided to construct the payload object
     public static final StreamCodec<ByteBuf, ChunkBiomeUpdateMessage> STREAM_CODEC = StreamCodec.composite(
-            MessageCodec.intArrayStreamCodec,
+            PalettedIntArrayCodecs.BIOME_256,
             chunkUpdateMessage -> chunkUpdateMessage.biomes,
             ByteBufCodecs.VAR_INT,
             chunkUpdateMessage -> chunkUpdateMessage.x,

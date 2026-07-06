@@ -1,1 +1,1 @@
-- [[#170](https://github.com/TeamTeaMC/Ecliptic-Seasons/issues/170)] Mixin conflict between Create: Cosmonautics (rocketnautics) and Ecliptic Seasons causes game crash on startup
+* **Optimized Chunk Extra Data Syncing**: Significantly compressed the synchronization size for the two main chunk attachments (`chunk_snow` and `chunk_biome`), further streamlining network data transmission.
