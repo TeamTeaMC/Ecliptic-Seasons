@@ -138,10 +138,12 @@ public class WeatherManager {
     }
 
     public static void onSetWeatherParameters(ServerLevel level, int pClearTime, int pWeatherTime, boolean pIsRaining, boolean pIsThundering) {
-        int weatherTickFactor = getWeatherTickFactor(level);
-        ((ServerLevelData) (level.getLevelData())).setClearWeatherTime(pClearTime / weatherTickFactor);
-        ((ServerLevelData) (level.getLevelData())).setRainTime(pWeatherTime / weatherTickFactor);
-        ((ServerLevelData) (level.getLevelData())).setThunderTime(pIsThundering ? pWeatherTime / weatherTickFactor : 0);
+        if (EclipticUtil.useSolarWeather()) {
+            int weatherTickFactor = getWeatherTickFactor(level);
+            ((ServerLevelData) (level.getLevelData())).setClearWeatherTime(pClearTime / weatherTickFactor);
+            ((ServerLevelData) (level.getLevelData())).setRainTime(pWeatherTime / weatherTickFactor);
+            ((ServerLevelData) (level.getLevelData())).setThunderTime(pIsThundering ? pWeatherTime / weatherTickFactor : 0);
+        }
         ArrayList<BiomeWeather> biomeList = getBiomeList(level);
         if (biomeList != null) {
             for (BiomeWeather biomeWeather : biomeList) {
@@ -427,6 +429,11 @@ public class WeatherManager {
         }
         if (hasNonePrecipitation(biomeWeather.biomeHolder.value()))
             return;
+
+        if (!EclipticUtil.useSolarWeather()) {
+            updateSnowOrMelt(level, biomeWeather, random, size, level.isRaining());
+            return;
+        }
 
         ServerLevelData weatherData = ((ServerLevelData) level.getLevelData());
 
