@@ -1,1 +1,2 @@
-* **Optimized Chunk Extra Data Syncing**: Significantly compressed the synchronization size for the two main chunk attachments (`chunk_snow` and `chunk_biome`), further streamlining network data transmission.
+- Support Sodium 1.11.2.
+- Support Distant Horizion 3.2.0-b.
