@@ -293,7 +293,7 @@ dependencies {
     compileOnly fileTree(dir: sodiumJarJarDir, include: ['*.jar'])
 
     implementation "maven.modrinth:sodium:mc26.1.2-0.9.1-neoforge"
-    implementation "maven.modrinth:iris:1.11.2+26.1-neoforge"
+    compileOnly "maven.modrinth:iris:1.11.2+26.1-neoforge"
 
     compileOnly "maven.modrinth:voxy:0.2.14-alpha"
 
