@@ -22,6 +22,7 @@ import net.caffeinemc.mods.sodium.client.util.task.CancellationToken;
 import net.caffeinemc.mods.sodium.client.world.cloned.ChunkRenderContext;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.SectionPos;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.SnowLayerBlock;
@@ -56,16 +57,23 @@ public abstract class MixinBlockRenderTask extends ChunkBuilderTask<ChunkBuildOu
             method = "execute(Lnet/caffeinemc/mods/sodium/client/render/chunk/compile/ChunkBuildContext;Lnet/caffeinemc/mods/sodium/client/util/task/CancellationToken;)Lnet/caffeinemc/mods/sodium/client/render/chunk/compile/ChunkBuildOutput;",
             at = @At(value = "RETURN")
     )
-    private void eclipticseasons$compile_checkb(ChunkBuildContext buildContext, CancellationToken cancellationToken, CallbackInfoReturnable<ChunkBuildOutput> cir) {
+    private void eclipticseasons$compile_checkb(ChunkBuildContext buildContext,
+                                                CancellationToken cancellationToken,
+                                                CallbackInfoReturnable<ChunkBuildOutput> cir,
+                                                @Local(name = "minX") int minX,
+                                                @Local(name = "minY") int minY,
+                                                @Local(name = "minZ") int minZ) {
         long l = System.currentTimeMillis() - eclipticseasons$time;
-        if (l > ClientConfig.Debug.minChunkCompileWarningTime.getAsInt())
+        if (l > ClientConfig.Debug.minChunkCompileWarningTime.getAsInt()) {
+            SectionPos sectionPos = SectionPos.of(new BlockPos(minX, minY, minZ));
             EclipticSeasons.logger("WARNING",
                     Thread.currentThread().toString(),
-                    section.getPosition(),
-                    section.getPosition().center(),
-                    section.getOriginX(), section.getOriginY(), section.getOriginZ(),
+                    sectionPos,
+                    sectionPos.center(),
+                    minX, minY, minZ,
                     "Rebuild time: " + l,
                     "Model check count: " + eclipticseasons$countModel);
+        }
 
         eclipticseasons$time = 0;
         eclipticseasons$countModel = 0;
