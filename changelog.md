@@ -1,1 +1,1 @@
-- Support Distant Horizion 3.2.0-b.
+- Improved snowy stair rendering.
