@@ -18,6 +18,7 @@ import com.teamtea.eclipticseasons.compat.CompatModule;
 import com.teamtea.eclipticseasons.config.ClientConfig;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import it.unimi.dsi.fastutil.longs.LongArrayList;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
@@ -43,7 +44,7 @@ public class DHTool {
                     && !blockStateWrapper.isAir()
                     && skyLight > 0
             ) {
-                var mcPos = McObjectConverter_neoforge.Convert(dhBlockPos);
+                var mcPos = convert(dhBlockPos);
                 var level = ClientCon.getUseLevel();
                 var blockState = blockStateWrapper.blockState;
                 // 当给的pos未加载时，读取的是虚空，这并不好。
@@ -156,13 +157,22 @@ public class DHTool {
                 } catch (IndexOutOfBoundsException ignored) {
                 }
             }
-            var mcPos = McObjectConverter_neoforge.Convert(dhBlockPosMutable);
+            var mcPos = convert(dhBlockPosMutable);
             Level level = instance.getLevel();
             if (MapChecker.shouldSnowAtBiome(level, biome, blockState, level.getRandom(), blockState.getSeed(mcPos), mcPos)) {
                 return BlockStateWrapper_neoforge.fromBlockState(Blocks.ICE.defaultBlockState(), instance);
             }
         }
         return null;
+    }
+
+    /**
+     * From {@link com.seibel.distanthorizons.common.wrappers.McObjectConverter#convert(DhBlockPos)}.
+     * As it changed its signature.
+     *
+     */
+    public static BlockPos convert(DhBlockPos wrappedPos) {
+        return new BlockPos(wrappedPos.getX(), wrappedPos.getY(), wrappedPos.getZ());
     }
 
 }
