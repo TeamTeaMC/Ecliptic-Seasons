@@ -1,2 +1,1 @@
-- Support Sodium 0.9.1.
-- Support Distant Horizion 3.2.0-b.
+- Improved compatibility with Sodium's optimized Top Type stair models for snow cover.

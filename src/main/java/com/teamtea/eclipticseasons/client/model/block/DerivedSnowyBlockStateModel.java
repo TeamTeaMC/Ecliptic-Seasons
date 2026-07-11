@@ -4,14 +4,17 @@ import com.teamtea.eclipticseasons.client.core.ExtraModelManager;
 import com.teamtea.eclipticseasons.client.model.block.part.SimpleBlockModelPart;
 import com.teamtea.eclipticseasons.client.model.block.quad.ReUVBakedQuad;
 import com.teamtea.eclipticseasons.client.model.block.quad.QuadFilter;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
+import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.geometry.BakedQuad;
 import net.minecraft.client.resources.model.sprite.Material;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
@@ -134,7 +137,8 @@ public class DerivedSnowyBlockStateModel implements BlockStateModel {
         float offset = 0.5f;
         boolean isSlabDown = false;
         List<BakedQuad> original = new ArrayList<>(quadsCTM.size());
-        for (BakedQuad bakedQuad : quadsCTM) {
+        for (int j = 0, quadsCTMSize = quadsCTM.size(); j < quadsCTMSize; j++) {
+            BakedQuad bakedQuad = quadsCTM.get(j);
             Direction bakedQuadDirection = bakedQuad.direction();
             if (bakedQuadDirection != Direction.DOWN) {
                 TextureAtlasSprite spriteUse;
@@ -156,6 +160,15 @@ public class DerivedSnowyBlockStateModel implements BlockStateModel {
                         spriteUse = QuadFilter.getMaxY(bakedQuad) - QuadFilter.getMinY(bakedQuad) > 0.4002f ? snow_overlay_sprite : snow_overlay_tiny_sprite;
 
                 }
+                //
+                // List<TextureAtlasSprite> apply = List.of(
+                //         ExtraModelManager.getSprite(Identifier.parse("minecraft:orange_terracotta")),
+                //         ExtraModelManager.getSprite(Identifier.parse("minecraft:lime_terracotta")),
+                //         ExtraModelManager.getSprite(Identifier.parse("minecraft:blue_terracotta")),
+                //         ExtraModelManager.getSprite(Identifier.parse("minecraft:pink_terracotta")));
+                //
+                // spriteUse = apply.get(j % apply.size());
+
                 original.add(
                         bqr.setQuad(bakedQuad)
                                 .setTexture(spriteUse)

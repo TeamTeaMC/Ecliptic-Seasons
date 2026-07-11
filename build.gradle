@@ -289,11 +289,11 @@ dependencies {
     compileOnly "org.sinytra.forgified-fabric-api:fabric-renderer-api-v1:3.4.0+acb05a39d1"
     compileOnly "org.sinytra.forgified-fabric-api:fabric-renderer-indigo:1.7.0+acb05a39d1"
 
-    sodiumOuter "maven.modrinth:sodium:mc26.2-0.9.0-neoforge"
+    sodiumOuter "maven.modrinth:sodium:mc26.2-0.9.1-neoforge"
     compileOnly fileTree(dir: sodiumJarJarDir, include: ['*.jar'])
 
-    implementation "maven.modrinth:sodium:mc26.2-0.9.0-neoforge"
-    compileOnly "maven.modrinth:iris:1.10.9+26.1-neoforge"
+    implementation "maven.modrinth:sodium:mc26.2-0.9.1-neoforge"
+    compileOnly "maven.modrinth:iris:1.11.2+26.2-neoforge"
 
     compileOnly "maven.modrinth:voxy:0.2.14-alpha"
 

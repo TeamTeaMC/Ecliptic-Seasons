@@ -91,21 +91,21 @@
 			"uvlock": true
 		},
 		"facing=east,half=top,shape=straight": {
-			"model": "eclipticseasons:block/stairs_top",
+			"model": "eclipticseasons:block/sodium_stairs_top",
 			"uvlock": true
 		},
 		"facing=west,half=top,shape=straight": {
-			"model": "eclipticseasons:block/stairs_top",
+			"model": "eclipticseasons:block/sodium_stairs_top",
 			"y": 180,
 			"uvlock": true
 		},
 		"facing=south,half=top,shape=straight": {
-			"model": "eclipticseasons:block/stairs_top",
+			"model": "eclipticseasons:block/sodium_stairs_top",
 			"y": 90,
 			"uvlock": true
 		},
 		"facing=north,half=top,shape=straight": {
-			"model": "eclipticseasons:block/stairs_top",
+			"model": "eclipticseasons:block/sodium_stairs_top",
 			"y": 270,
 			"uvlock": true
 		},
@@ -148,40 +148,40 @@
 			"uvlock": true
 		},
 		"facing=east,half=top,shape=inner_right": {
-			"model": "eclipticseasons:block/stairs_top",
+			"model": "eclipticseasons:block/sodium_stairs_inner_top",
 			"y": 90,
 			"uvlock": true
 		},
 		"facing=west,half=top,shape=inner_right": {
-			"model": "eclipticseasons:block/stairs_top",
+			"model": "eclipticseasons:block/sodium_stairs_inner_top",
 			"y": 270,
 			"uvlock": true
 		},
 		"facing=south,half=top,shape=inner_right": {
-			"model": "eclipticseasons:block/stairs_top",
+			"model": "eclipticseasons:block/sodium_stairs_inner_top",
 			"y": 180,
 			"uvlock": true
 		},
 		"facing=north,half=top,shape=inner_right": {
-			"model": "eclipticseasons:block/stairs_top",
+			"model": "eclipticseasons:block/sodium_stairs_inner_top",
 			"uvlock": true
 		},
 		"facing=east,half=top,shape=inner_left": {
-			"model": "eclipticseasons:block/stairs_top",
+			"model": "eclipticseasons:block/sodium_stairs_inner_top",
 			"uvlock": true
 		},
 		"facing=west,half=top,shape=inner_left": {
-			"model": "eclipticseasons:block/stairs_top",
+			"model": "eclipticseasons:block/sodium_stairs_inner_top",
 			"y": 180,
 			"uvlock": true
 		},
 		"facing=south,half=top,shape=inner_left": {
-			"model": "eclipticseasons:block/stairs_top",
+			"model": "eclipticseasons:block/sodium_stairs_inner_top",
 			"y": 90,
 			"uvlock": true
 		},
 		"facing=north,half=top,shape=inner_left": {
-			"model": "eclipticseasons:block/stairs_top",
+			"model": "eclipticseasons:block/sodium_stairs_inner_top",
 			"y": 270,
 			"uvlock": true
 		}

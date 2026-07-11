@@ -957,9 +957,10 @@ public class MapChecker {
                 if (blockName.toString().equals("xkdeco:dirt_path_slab"))
                     flag = FLAG_CUSTOM;
             } else if (onBlock instanceof StairBlock) {
-                if (state.getValue(StairBlock.HALF) == Half.TOP)
-                    flag = FLAG_STAIRS_TOP;
-                else flag = FLAG_STAIRS;
+                // if (state.getValue(StairBlock.HALF) == Half.TOP)
+                //     flag = FLAG_STAIRS_TOP;
+                // else
+                    flag = FLAG_STAIRS;
             }
         }
         return flag;
