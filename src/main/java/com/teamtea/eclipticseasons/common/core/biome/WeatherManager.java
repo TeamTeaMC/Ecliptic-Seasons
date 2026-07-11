@@ -124,10 +124,12 @@ public class WeatherManager {
     }
 
     public static void onSetWeatherParameters(ServerLevel firstLevel, int pClearTime, int pWeatherTime, boolean pIsRaining, boolean pIsThundering) {
-        int weatherTickFactor = getWeatherTickFactor(firstLevel);
-        firstLevel.getWeatherData().setClearWeatherTime(pClearTime / weatherTickFactor);
-        firstLevel.getWeatherData().setRainTime(pWeatherTime / weatherTickFactor);
-        firstLevel.getWeatherData().setThunderTime(pIsThundering ? pWeatherTime / weatherTickFactor : 0);
+        if (EclipticUtil.useSolarWeather()) {
+            int weatherTickFactor = getWeatherTickFactor(firstLevel);
+            firstLevel.getWeatherData().setClearWeatherTime(pClearTime / weatherTickFactor);
+            firstLevel.getWeatherData().setRainTime(pWeatherTime / weatherTickFactor);
+            firstLevel.getWeatherData().setThunderTime(pIsThundering ? pWeatherTime / weatherTickFactor : 0);
+        }
 
         BIOME_WEATHER_LIST.forEach((level, biomeWeathers) -> {
             if (level.canHaveWeather()) {
@@ -431,6 +433,11 @@ public class WeatherManager {
         }
         if (hasNonePrecipitation(biomeWeather.biomeHolder.value()))
             return;
+
+        if (!EclipticUtil.useSolarWeather()) {
+            updateSnowOrMelt(level, biomeWeather, random, size, level.isRaining());
+            return;
+        }
 
         WeatherData weatherData = level.getWeatherData();
 

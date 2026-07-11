@@ -1,1 +1,2 @@
-- Improved compatibility with Sodium's optimized Top Type stair models for snow cover.
+- Fixed an issue where weather durations set by commands were significantly shortened when Solar Weather was disabled.
+- Fixed an issue where the seasonal snow ambience would not appear when Solar Weather was disabled.
