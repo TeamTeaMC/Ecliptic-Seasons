@@ -3,13 +3,10 @@ package com.teamtea.eclipticseasons.client.render.worldui;
 import com.teamtea.eclipticseasons.common.item.info.GrowthInfo;
 import com.teamtea.eclipticseasons.common.item.info.GrowthInfoResolver;
 import com.teamtea.eclipticseasons.common.network.clientmesage.GrowthInfoQuery;
-import com.teamtea.eclipticseasons.config.sync.ESConfigToServerPayload;
-import com.teamtea.eclipticseasons.config.sync.SyncType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
-import org.jspecify.annotations.Nullable;
 
 public class GrowthInfoClientCache {
 
@@ -36,8 +33,9 @@ public class GrowthInfoClientCache {
             return null;
         }
 
+
         ClientPacketDistributor.sendToServer(new GrowthInfoQuery(pos));
-        lastInfo = null;
+        lastInfo = GrowthInfoResolver.resolveAffectedCrop(level, pos, state);
 
         GrowthInfo info = lastInfo;
         lastPos = pos.immutable();

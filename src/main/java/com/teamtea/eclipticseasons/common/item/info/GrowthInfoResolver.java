@@ -7,7 +7,6 @@ import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.data.climate.AgroClimaticZone;
 import com.teamtea.eclipticseasons.api.data.crop.CropGrowControl;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
-import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.client.util.ClientExtraUtil;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
@@ -19,11 +18,35 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
 
 public final class GrowthInfoResolver {
+
+    public static @Nullable CropGrowControl find(Level level, BlockPos pos, BlockState state) {
+        Map<Holder<AgroClimaticZone>, CropGrowControl> controlMap = CropGrowthHandler.getControlMap(state.getBlock());
+
+        if (controlMap == null) {
+            return null;
+        }
+
+        Holder<Biome> biomeHolder = CropGrowthHandler.getCropBiome(level, pos);
+        Holder<AgroClimaticZone> climateHolder = CropGrowthHandler.getclimateTypeHolder(biomeHolder);
+        Holder<AgroClimaticZone> fallback = CropGrowthHandler.getDefaultAgroClimaticZoneHolder(level);
+        CropGrowControl growControl = CropGrowthHandler.getCropGrowControl(controlMap, climateHolder);
+
+        if (growControl == null) {
+            growControl = CropGrowthHandler.getCropGrowControl(controlMap, fallback);
+        }
+        return growControl;
+    }
+
+    public static @Nullable GrowthInfo resolveAffectedCrop(Level level, BlockPos pos, BlockState state) {
+        CropGrowControl cropGrowControl = find(level, pos, state);
+        return cropGrowControl == null ? null : new GrowthInfo(state.getBlock().getName(), pos);
+    }
 
     public static GrowthInfo resolve(ServerLevel level, BlockPos pos, BlockState state) {
         Map<Holder<AgroClimaticZone>, CropGrowControl> controlMap =

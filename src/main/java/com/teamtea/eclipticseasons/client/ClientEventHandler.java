@@ -5,6 +5,7 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.teamtea.eclipticseasons.api.data.misc.ESSortInfo;
 import com.teamtea.eclipticseasons.api.event.SolarTermChangeEvent;
+import com.teamtea.eclipticseasons.api.event.stub.SeasonalLevelLoadEvent;
 import com.teamtea.eclipticseasons.api.misc.client.IBiomeColorHolder;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.client.core.ClientWeatherChecker;
@@ -165,7 +166,7 @@ public final class ClientEventHandler {
     }
 
     @SubscribeEvent
-    public static void onLevelEventLoad(LevelEvent.Load event) {
+    public static void onLevelEventLoad(SeasonalLevelLoadEvent event) {
         if (event.getLevel() instanceof ClientLevel level) {
             if (CommonConfig.Season.validDimensions.get().contains(level.dimension().identifier().toString()))
                 MapChecker.validDimension.add(level);

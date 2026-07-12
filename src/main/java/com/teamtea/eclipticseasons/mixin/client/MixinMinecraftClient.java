@@ -1,8 +1,14 @@
 package com.teamtea.eclipticseasons.mixin.client;
 
 import com.mojang.blaze3d.platform.Window;
+import com.teamtea.eclipticseasons.api.event.stub.SeasonalLevelLoadEvent;
+import com.teamtea.eclipticseasons.client.ClientEventHandler;
+import com.teamtea.eclipticseasons.common.hook.ESEventHook;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.level.LevelEvent;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -22,7 +28,16 @@ public class MixinMinecraftClient {
             at = @At("RETURN")
     )
     private void eclipticseasons$resize(CallbackInfo ci) {
-        //FogRenderer.INSTANCE.resize(window.getWidth(), window.getHeight());
+        // FogRenderer.INSTANCE.resize(window.getWidth(), window.getHeight());
     }
 
+    @Inject(
+            method = "setLevel",
+            at = @At(value = "HEAD")
+    )
+    private void eclipticseasons$setLevel(ClientLevel level, CallbackInfo ci) {
+        if (level != null) {
+            ESEventHook.onSeasonalLevelLoad(level);
+        }
+    }
 }

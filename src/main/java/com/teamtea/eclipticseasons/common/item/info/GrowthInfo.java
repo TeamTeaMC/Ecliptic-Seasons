@@ -1,57 +1,72 @@
 package com.teamtea.eclipticseasons.common.item.info;
 
-import com.teamtea.eclipticseasons.api.constant.biome.Humidity;
-import com.teamtea.eclipticseasons.api.constant.solar.Season;
-import com.teamtea.eclipticseasons.api.data.climate.AgroClimaticZone;
-import com.teamtea.eclipticseasons.common.network.message.GrowthInfoMessage;
-import io.netty.buffer.ByteBuf;
+import lombok.Builder;
+import lombok.Data;
+import lombok.experimental.Accessors;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Holder;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.world.level.block.state.BlockState;
-import org.jspecify.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
-import java.util.List;
+@Data
+@Accessors(fluent = true)
+public class GrowthInfo {
+    @NonNull
+    final BlockPos pos;
 
-public record GrowthInfo(
-        BlockPos pos,
-        // BlockState state,
-        Component cropName,
+    @NonNull
+    final Component cropName;
 
-        // @Nullable Holder<AgroClimaticZone> agroClimaticZone,
+    final int greenhouseLevel;
+    final float growChance;
+    final boolean needsSeasonCore;
+    final boolean humidityMismatch;
 
-        // boolean greenhouse,
-        int greenhouseLevel,
+    boolean waitingForServer = false;
 
-        float growChance,
-        // int growChanceLevel,
+    public GrowthInfo(
+            @NonNull Component cropName,
+            @NonNull BlockPos pos
+    ) {
+        this(pos, cropName, 0, 0.0F, false, false);
+        this.waitingForServer = true;
+    }
 
-        boolean needsSeasonCore,
-        boolean humidityMismatch
+    @Builder
+    public GrowthInfo(
+            @NonNull BlockPos pos,
+            @NonNull Component cropName,
+            int greenhouseLevel,
+            float growChance,
+            boolean needsSeasonCore,
+            boolean humidityMismatch
+    ) {
+        this.pos = pos;
+        this.cropName = cropName;
+        this.greenhouseLevel = greenhouseLevel;
+        this.growChance = growChance;
+        this.needsSeasonCore = needsSeasonCore;
+        this.humidityMismatch = humidityMismatch;
+        this.waitingForServer = false;
+    }
 
-        // float humidity,
-        // @Nullable List<Season> likedSeasons,
-        // @Nullable List<Humidity> likedHumidity
-) {
-
-
-    public static final StreamCodec<RegistryFriendlyByteBuf, GrowthInfo> STREAM_CODEC = StreamCodec.composite(
-            BlockPos.STREAM_CODEC,
-            GrowthInfo::pos,
-            ComponentSerialization.STREAM_CODEC,
-            GrowthInfo::cropName,
-            ByteBufCodecs.VAR_INT,
-            GrowthInfo::greenhouseLevel,
-            ByteBufCodecs.FLOAT,
-            GrowthInfo::growChance,
-            ByteBufCodecs.BOOL,
-            GrowthInfo::needsSeasonCore,
-            ByteBufCodecs.BOOL,
-            GrowthInfo::humidityMismatch,
-            GrowthInfo::new
-    );
+    public static final StreamCodec<RegistryFriendlyByteBuf, GrowthInfo> STREAM_CODEC =
+            StreamCodec.composite(
+                    BlockPos.STREAM_CODEC,
+                    GrowthInfo::pos,
+                    ComponentSerialization.STREAM_CODEC,
+                    GrowthInfo::cropName,
+                    ByteBufCodecs.VAR_INT,
+                    GrowthInfo::greenhouseLevel,
+                    ByteBufCodecs.FLOAT,
+                    GrowthInfo::growChance,
+                    ByteBufCodecs.BOOL,
+                    GrowthInfo::needsSeasonCore,
+                    ByteBufCodecs.BOOL,
+                    GrowthInfo::humidityMismatch,
+                    GrowthInfo::new
+            );
 }
