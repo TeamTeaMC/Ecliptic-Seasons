@@ -1,6 +1,7 @@
 package com.teamtea.eclipticseasons.common.hook;
 
 import com.teamtea.eclipticseasons.api.event.BeforeCheckSnowStatusEvent;
+import com.teamtea.eclipticseasons.api.event.stub.SeasonalLevelLoadEvent;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerLevel;
@@ -38,5 +39,9 @@ public class ESEventHook {
                 .status(null)
                 .build();
         return NeoForge.EVENT_BUS.post(ev);
+    }
+
+    public static void onSeasonalLevelLoad(Level level) {
+        NeoForge.EVENT_BUS.post(new SeasonalLevelLoadEvent(level));
     }
 }

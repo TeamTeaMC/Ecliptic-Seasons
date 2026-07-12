@@ -23,25 +23,29 @@ public record GrowthWorldUiState(
     public static GrowthWorldUiState from(GrowthInfo info) {
         List<Component> lines = new ArrayList<>();
 
-        lines.add(Component.translatable(
-                "ui.eclipticseasons.growth_chance",
-                String.format(info.growChance() > 1 ? "%.0f%%" : "%.1f%%", info.growChance())
-        ));
+        if (!info.waitingForServer()) {
+            lines.add(Component.translatable(
+                    "ui.eclipticseasons.growth_chance",
+                    String.format(info.growChance() > 1 ? "%.0f%%" : "%.1f%%", info.growChance())
+            ));
 
-        lines.add(Component.translatable(
-                "ui.eclipticseasons.greenhouse_" + info.greenhouseLevel()
-        ));
+            lines.add(Component.translatable(
+                    "ui.eclipticseasons.greenhouse_" + info.greenhouseLevel()
+            ));
 
-        if (!CommonConfig.Crop.simpleGreenHouse.get()) {
-            if (info.needsSeasonCore()) {
-                lines.add(Component.translatable("ui.eclipticseasons.issue.needs_season_core"));
+            if (!CommonConfig.Crop.simpleGreenHouse.get()) {
+                if (info.needsSeasonCore()) {
+                    lines.add(Component.translatable("ui.eclipticseasons.issue.needs_season_core"));
+                }
+                if (info.humidityMismatch()) {
+                    lines.add(Component.translatable("ui.eclipticseasons.issue.humidity_mismatch"));
+                }
+                if (!info.humidityMismatch() && !info.needsSeasonCore()) {
+                    lines.add(Component.translatable("ui.eclipticseasons.issue.all_conditions_met"));
+                }
             }
-            if (info.humidityMismatch()) {
-                lines.add(Component.translatable("ui.eclipticseasons.issue.humidity_mismatch"));
-            }
-            if (!info.humidityMismatch() && !info.needsSeasonCore()) {
-                lines.add(Component.translatable("ui.eclipticseasons.issue.all_conditions_met"));
-            }
+        }else {
+
         }
 
         return new GrowthWorldUiState(

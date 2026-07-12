@@ -37,7 +37,7 @@ public class GrowthInfoClientCache {
         }
 
         ClientPacketDistributor.sendToServer(new GrowthInfoQuery(pos));
-        lastInfo = null;
+        lastInfo = GrowthInfoResolver.resolveAffectedCrop(level, pos, state);
 
         GrowthInfo info = lastInfo;
         lastPos = pos.immutable();
