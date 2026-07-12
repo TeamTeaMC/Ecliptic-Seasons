@@ -1,37 +1,54 @@
 package com.teamtea.eclipticseasons.common.item.info;
 
-import com.teamtea.eclipticseasons.api.constant.biome.Humidity;
-import com.teamtea.eclipticseasons.api.constant.solar.Season;
-import com.teamtea.eclipticseasons.api.data.climate.AgroClimaticZone;
+import lombok.Builder;
+import lombok.Data;
+import lombok.experimental.Accessors;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Holder;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.level.block.state.BlockState;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
+@Data
+@Accessors(fluent = true)
+public class GrowthInfo {
+    @NotNull
+    final BlockPos pos;
 
-public record GrowthInfo(
-        BlockPos pos,
-        // BlockState state,
-        Component cropName,
+    @NotNull
+    final Component cropName;
 
-        // @Nullable Holder<AgroClimaticZone> agroClimaticZone,
+    final int greenhouseLevel;
+    final float growChance;
+    final boolean needsSeasonCore;
+    final boolean humidityMismatch;
 
-        // boolean greenhouse,
-        int greenhouseLevel,
+    boolean waitingForServer = false;
 
-        float growChance,
-        // int growChanceLevel,
+    public GrowthInfo(
+            @NotNull Component cropName,
+            @NotNull BlockPos pos
+    ) {
+        this(pos, cropName, 0, 0.0F, false, false);
+        this.waitingForServer = true;
+    }
 
-        boolean needsSeasonCore,
-        boolean humidityMismatch
-
-        // float humidity,
-        // @Nullable List<Season> likedSeasons,
-        // @Nullable List<Humidity> likedHumidity
-) {
+    @Builder
+    public GrowthInfo(
+            @NotNull BlockPos pos,
+            @NotNull Component cropName,
+            int greenhouseLevel,
+            float growChance,
+            boolean needsSeasonCore,
+            boolean humidityMismatch
+    ) {
+        this.pos = pos;
+        this.cropName = cropName;
+        this.greenhouseLevel = greenhouseLevel;
+        this.growChance = growChance;
+        this.needsSeasonCore = needsSeasonCore;
+        this.humidityMismatch = humidityMismatch;
+        this.waitingForServer = false;
+    }
 
     public void toBytes(FriendlyByteBuf buf) {
         buf.writeBlockPos(pos);
@@ -52,7 +69,7 @@ public record GrowthInfo(
 
         return new GrowthInfo(
                 pos,
-                cropName,
+                cropName == null ? Component.empty() : cropName,
                 greenhouseLevel,
                 growChance,
                 needsSeasonCore,

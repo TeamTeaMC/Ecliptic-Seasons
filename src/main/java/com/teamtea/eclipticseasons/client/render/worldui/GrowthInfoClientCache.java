@@ -1,6 +1,7 @@
 package com.teamtea.eclipticseasons.client.render.worldui;
 
 import com.teamtea.eclipticseasons.common.item.info.GrowthInfo;
+import com.teamtea.eclipticseasons.common.item.info.GrowthInfoResolver;
 import com.teamtea.eclipticseasons.common.network.SimpleNetworkHandler;
 import com.teamtea.eclipticseasons.common.network.clientmesage.GrowthInfoQuery;
 import net.minecraft.core.BlockPos;
@@ -35,7 +36,7 @@ public class GrowthInfoClientCache {
 
         SimpleNetworkHandler.CHANNEL.send(PacketDistributor.SERVER.noArg(), new GrowthInfoQuery(pos));
 
-        lastInfo = null;
+        lastInfo = GrowthInfoResolver.resolveAffectedCrop(level, pos, state);
 
         GrowthInfo info = lastInfo;
         lastPos = pos.immutable();

@@ -6,6 +6,7 @@ import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.data.misc.ESSortInfo;
 import com.teamtea.eclipticseasons.api.event.ESClientEntityTickEvent;
+import com.teamtea.eclipticseasons.api.event.stub.SeasonalLevelLoadEvent;
 import com.teamtea.eclipticseasons.api.misc.IChunkBiomeHolder;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.client.core.ClientWeatherChecker;
@@ -154,7 +155,7 @@ public final class ClientEventHandler {
     }
 
     @SubscribeEvent
-    public static void onLevelEventLoad(LevelEvent.Load event) {
+    public static void onLevelEventLoad(SeasonalLevelLoadEvent event) {
         if (event.getLevel() instanceof ClientLevel level) {
             if (CommonConfig.Season.validDimensions.get().contains(level.dimension().location().toString()))
                 MapChecker.validDimension.add(level);

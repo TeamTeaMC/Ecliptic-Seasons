@@ -71,7 +71,7 @@ public class WeatherManager {
 
     public static final Map<Level, ArrayList<BiomeWeather>> BIOME_WEATHER_LIST = new IdentityHashMap<>();
     public static final Map<Level, Integer> NEXT_CHECK_BIOME_MAP = new IdentityHashMap<>();
-    public static final Map<Level, Map<Biome, BiomeWeather>> BIOME_WEATHER_QUERY_LIST = new IdentityHashMap<>();
+    // public static final Map<Level, Map<Biome, BiomeWeather>> BIOME_WEATHER_QUERY_LIST = new IdentityHashMap<>();
 
     public static ArrayList<BiomeWeather> getBiomeList(Level level) {
         if (level == null) {
@@ -360,7 +360,7 @@ public class WeatherManager {
                     if (biomesWeather != null && biomesWeather.biomeHolder != null)
                         biomeBiomeWeatherMap.put(biomesWeather.biomeHolder.value(), biomesWeather);
                 }
-                WeatherManager.BIOME_WEATHER_QUERY_LIST.put(level, biomeBiomeWeatherMap);
+                // WeatherManager.BIOME_WEATHER_QUERY_LIST.put(level, biomeBiomeWeatherMap);
             }
         }
 
