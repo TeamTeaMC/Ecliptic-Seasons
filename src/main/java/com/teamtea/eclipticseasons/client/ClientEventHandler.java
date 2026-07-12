@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.*;
 import com.mojang.brigadier.CommandDispatcher;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.data.misc.ESSortInfo;
+import com.teamtea.eclipticseasons.api.event.stub.SeasonalLevelLoadEvent;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.client.gui.screen.ESModConfigScreen;
 import com.teamtea.eclipticseasons.client.render.chunk.IceKeeper;
@@ -196,7 +197,7 @@ public final class ClientEventHandler {
     }
 
     @SubscribeEvent
-    public static void onLevelEventLoad(LevelEvent.Load event) {
+    public static void onLevelEventLoad(SeasonalLevelLoadEvent event) {
         if (event.getLevel() instanceof ClientLevel level) {
             if (CommonConfig.Season.validDimensions.get().contains(level.dimension().location().toString()))
                 MapChecker.validDimension.add(level);

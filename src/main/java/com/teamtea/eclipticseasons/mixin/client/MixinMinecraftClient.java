@@ -7,7 +7,10 @@ import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.platform.Window;
 import com.teamtea.eclipticseasons.client.render.FogRenderer;
 import com.teamtea.eclipticseasons.client.sound.SeasonalBackgroundMusicSelectManager;
+import com.teamtea.eclipticseasons.common.hook.ESEventHook;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.ReceivingLevelScreen;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.Holder;
 import net.minecraft.sounds.Music;
@@ -41,6 +44,16 @@ public class MixinMinecraftClient {
     )
     private void eclipticseasons$resize(CallbackInfo ci) {
         FogRenderer.INSTANCE.resize(window.getWidth(), window.getHeight());
+    }
+
+    @Inject(
+            method = "setLevel",
+            at = @At(value = "HEAD")
+    )
+    private void eclipticseasons$setLevel(ClientLevel level, ReceivingLevelScreen.Reason reason, CallbackInfo ci) {
+        if (level != null) {
+            ESEventHook.onSeasonalLevelLoad(level);
+        }
     }
 
     @ModifyExpressionValue(

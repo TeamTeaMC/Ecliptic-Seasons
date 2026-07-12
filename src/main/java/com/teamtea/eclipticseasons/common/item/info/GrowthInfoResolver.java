@@ -15,13 +15,38 @@ import com.teamtea.eclipticseasons.common.item.GrowthDetectorItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
 
 public final class GrowthInfoResolver {
+
+    public static @Nullable CropGrowControl find(Level level, BlockPos pos, BlockState state) {
+        Map<Holder<AgroClimaticZone>, CropGrowControl> controlMap = CropGrowthHandler.getControlMap(state.getBlock());
+
+        if (controlMap == null) {
+            return null;
+        }
+
+        Holder<Biome> biomeHolder = CropGrowthHandler.getCropBiome(level, pos);
+        Holder<AgroClimaticZone> climateHolder = CropGrowthHandler.getclimateTypeHolder(biomeHolder);
+        Holder<AgroClimaticZone> fallback = CropGrowthHandler.getDefaultAgroClimaticZoneHolder(level);
+        CropGrowControl growControl = CropGrowthHandler.getCropGrowControl(controlMap, climateHolder);
+
+        if (growControl == null) {
+            growControl = CropGrowthHandler.getCropGrowControl(controlMap, fallback);
+        }
+        return growControl;
+    }
+
+    public static @Nullable GrowthInfo resolveAffectedCrop(Level level, BlockPos pos, BlockState state) {
+        CropGrowControl cropGrowControl = find(level, pos, state);
+        return cropGrowControl == null ? null : new GrowthInfo(state.getBlock().getName(), pos);
+    }
 
     public static GrowthInfo resolve(ServerLevel level, BlockPos pos, BlockState state) {
         Map<Holder<AgroClimaticZone>, CropGrowControl> controlMap =

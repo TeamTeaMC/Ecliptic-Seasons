@@ -84,7 +84,7 @@ public class AllListener {
     @SubscribeEvent
     public static void onServerAboutToStartEvent(ServerAboutToStartEvent event) {
         WeatherManager.BIOME_WEATHER_LIST.clear();
-        WeatherManager.BIOME_WEATHER_QUERY_LIST.clear();
+        // WeatherManager.BIOME_WEATHER_QUERY_LIST.clear();
         WeatherManager.NEXT_CHECK_BIOME_MAP.clear();
     }
 
@@ -127,7 +127,7 @@ public class AllListener {
         if (event.getLevel() instanceof Level level) {
             WeatherManager.BIOME_WEATHER_LIST.remove(level);
             WeatherManager.NEXT_CHECK_BIOME_MAP.remove(level);
-            WeatherManager.BIOME_WEATHER_QUERY_LIST.remove(level);
+            // WeatherManager.BIOME_WEATHER_QUERY_LIST.remove(level);
             SolarHolders.DATA_MANAGER_MAP.remove(level);
             MapChecker.unloadLevel(level);
             MapChecker.validDimension.removeIf(l -> l.equals(level));
