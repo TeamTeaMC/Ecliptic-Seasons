@@ -84,7 +84,8 @@
     "compat.voxy.MixinVoxelIngestService",
     "compat.voxy.MixinWorldConversionFactory",
     "compat.voxy.MixinWorldImporter",
-    "compat.voxy.MixinWorldUpdater"
+    "compat.voxy.MixinWorldUpdater",
+    "compat.continuity.MixinContinuityClientEvents"
   ],
   "injectors": {
     "defaultRequire": 1

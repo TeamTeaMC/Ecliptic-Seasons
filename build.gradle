@@ -326,7 +326,7 @@ dependencies {
     compileOnly "curse.maven:kubejs-238086:8235730"
 //    implementation "curse.maven:rhino-416294:7104526"
 
-
+    compileOnly "curse.maven:neocontinuity-1377279:8384810"
 //    compileOnly "curse.maven:modern-ui-352491:6956436"
 //    onlyMainRuntimeOnly "curse.maven:modern-ui-352491:6956436"
 //    onlyMainRuntimeOnly "curse.maven:simply-improved-terrain-472872:6112229"
