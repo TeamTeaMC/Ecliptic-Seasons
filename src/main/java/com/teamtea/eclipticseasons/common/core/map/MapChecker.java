@@ -10,6 +10,7 @@ import com.teamtea.eclipticseasons.api.misc.IChunkBiomeHolder;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
+import com.teamtea.eclipticseasons.common.core.map.river.RiverBiomeResolver;
 import com.teamtea.eclipticseasons.common.core.snow.SnowChecker;
 import com.teamtea.eclipticseasons.common.core.snow.SnowyMapChecker;
 import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
@@ -22,6 +23,7 @@ import com.teamtea.eclipticseasons.common.registry.AttachmentRegistry;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.core.*;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ChunkHolder;
 import net.minecraft.server.level.ServerChunkCache;
@@ -792,6 +794,13 @@ public class MapChecker {
 
         if (biome == null)
             biome = level.registryAccess().holderOrThrow(Biomes.PLAINS);
+
+        if (isSmallBiome(biome)
+                && level instanceof ServerLevel serverLevel) {
+            Climate.TargetPoint sample = RiverBiomeResolver.getClimateTargetPoint(serverLevel.getChunkSource().randomState(), pos.mutable());
+            ResourceKey<Biome> biomeResourceKey = RiverBiomeResolver.getClimateBiome(sample);
+            biome = level.registryAccess().holder(biomeResourceKey).map(bh -> (Holder) bh).orElse(biome);
+        }
 
         BlockPos.MutableBlockPos relative = null;
 

@@ -1,6 +1,10 @@
 > 1.21.1 will now receive bug fixes and compatibility updates only.
 > New features will primarily target newer Minecraft versions.
 
+### 0.14.0
+
+- Updated river biome cache generation to use climate-based evaluation, improving winter snow behavior.
+
 ### 0.13.10
 
 - Improved crop growth information under poor network conditions. If a crop is affected by the seasonal growth system,
