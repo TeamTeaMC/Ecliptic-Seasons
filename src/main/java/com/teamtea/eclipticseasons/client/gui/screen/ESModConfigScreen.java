@@ -305,6 +305,7 @@ public class ESModConfigScreen extends Screen {
         );
 
         put(WEATHER,
+                CommonConfig.Resource.NotIgnoreRiver,
                 CommonConfig.Weather.notRainInDesert,
                 CommonConfig.Weather.shouldInitSnowForExtremeColdBiomes,
                 CommonConfig.Weather.rainChanceMultiplier,
