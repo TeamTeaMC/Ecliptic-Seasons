@@ -561,7 +561,7 @@ public class CommonConfig {
 
             NotIgnoreRiver = builder.comment("When enabled, rivers are no longer treated as ignored climate zones. This reduces performance overhead but may result in less natural weather transitions near riverbanks.")
                     .worldRestart()
-                    .define("IndependentRiverWeather", true);
+                    .define("IndependentRiverWeather", false);
 
             springGrass = builder.comment("Spring brings life to grass and flowers, while autumn marks the fading.")
                     .worldRestart()
