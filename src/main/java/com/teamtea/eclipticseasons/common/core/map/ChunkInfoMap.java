@@ -5,12 +5,14 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
 import net.minecraft.world.level.ChunkPos;
 
+import java.util.Arrays;
+
 public class ChunkInfoMap {
     public static final int TYPE_BIOME = 1;
     public static final int TYPE_HEIGHT = 0;
 
-    private final short[][] matrix = new short[MapChecker.ChunkSize][MapChecker.ChunkSize];
-    private final short[][] biomes = new short[MapChecker.ChunkSize][MapChecker.ChunkSize];
+    private final short[] matrix = new short[MapChecker.ChunkSize * MapChecker.ChunkSize];
+    private final short[] biomes = new short[MapChecker.ChunkSize * MapChecker.ChunkSize];
     // private final Object[][] lockArray = new Object[MapChecker.ChunkSize][MapChecker.ChunkSize];
     final int x;
     final int z;
@@ -22,14 +24,17 @@ public class ChunkInfoMap {
         this.isClient = isClient;
         this.x = x;
         this.z = z;
-        EclipticSeasons.extraLogger(true,String.format("Create new Height Map with [%s, %s]", x, z));
-        for (int i = 0; i < MapChecker.ChunkSize; i++) {
-            for (int j = 0; j < MapChecker.ChunkSize; j++) {
-                biomes[i][j] = -1;
-                matrix[i][j] = this.minY;
-                // lockArray[i][j] = new Object();
-            }
-        }
+        // EclipticSeasons.extraLogger(true,String.format("Create new Height Map with [%s, %s]", x, z));
+        // for (int i = 0; i < MapChecker.ChunkSize; i++) {
+        //     for (int j = 0; j < MapChecker.ChunkSize; j++) {
+        //         int index = getIndex(i, j);
+        //         biomes[index] = -1;
+        //         matrix[index] = this.minY;
+        //         // lockArray[i][j] = new Object();
+        //     }
+        // }
+        Arrays.fill(biomes, (short) -1);
+        Arrays.fill(matrix, this.minY);
         EclipticSeasons.extraLogger(true,String.format("End create [%s, %s]", x, z));
     }
 
@@ -38,16 +43,20 @@ public class ChunkInfoMap {
         return i & (MapChecker.ChunkSizeLoc);
     }
 
+    private static int getIndex(int x, int z) {
+        return x * MapChecker.ChunkSize + z;
+    }
+
     public int getHeight(int x, int z) {
         x = getChunkValue(x);
         z = getChunkValue(z);
-        return matrix[x][z];
+        return matrix[getIndex(x, z)];
     }
 
     public int getBiome(int x, int z) {
         x = getChunkValue(x);
         z = getChunkValue(z);
-        return biomes[x][z];
+        return biomes[getIndex(x, z)];
     }
 
     public int getHeight(BlockPos pos) {
@@ -64,8 +73,9 @@ public class ChunkInfoMap {
         int old;
         // synchronized (lockArray[x][z])
         {
-            old = matrix[x][z];
-            matrix[x][z] = (short) y;
+            int index = getIndex(x, z);
+            old = matrix[index];
+            matrix[index] = (short) y;
         }
 
         return old;
@@ -77,8 +87,9 @@ public class ChunkInfoMap {
         int old;
         // synchronized (lockArray[x][z])
         {
-            old = biomes[x][z];
-            biomes[x][z] = (short) id;
+            int index = getIndex(x, z);
+            old = biomes[index];
+            biomes[index] = (short) id;
         }
         return old;
     }
