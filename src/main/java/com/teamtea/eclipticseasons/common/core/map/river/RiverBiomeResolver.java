@@ -6,6 +6,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.biome.Climate;
+import net.minecraft.world.level.levelgen.DensityFunction;
 import net.minecraft.world.level.levelgen.RandomState;
 import org.jetbrains.annotations.NotNull;
 
@@ -99,9 +100,19 @@ public class RiverBiomeResolver {
 
 
     public static Climate.@NotNull TargetPoint getClimateTargetPoint(RandomState randomState, BlockPos.MutableBlockPos blockPos) {
-        int qx = QuartPos.fromBlock(blockPos.getX());
-        int qy = QuartPos.fromBlock(blockPos.getY());
-        int qz = QuartPos.fromBlock(blockPos.getZ());
-        return randomState.sampler().sample(qx, qy, qz);
+        // int qx = QuartPos.fromBlock(blockPos.getX());
+        // int qy = QuartPos.fromBlock(blockPos.getY());
+        // int qz = QuartPos.fromBlock(blockPos.getZ());
+        Climate.Sampler sampler = randomState.sampler();
+        // return sampler.sample(qx, qy, qz);
+        DensityFunction.SinglePointContext densityfunction$singlepointcontext = new DensityFunction.SinglePointContext(blockPos.getX(), blockPos.getY(), blockPos.getZ());
+        return Climate.target(
+                (float) sampler.temperature().compute(densityfunction$singlepointcontext),
+                (float) sampler.humidity().compute(densityfunction$singlepointcontext),
+                (float) sampler.continentalness().compute(densityfunction$singlepointcontext),
+                (float) sampler.erosion().compute(densityfunction$singlepointcontext),
+                (float) sampler.depth().compute(densityfunction$singlepointcontext),
+                (float) sampler.weirdness().compute(densityfunction$singlepointcontext)
+        );
     }
 }
