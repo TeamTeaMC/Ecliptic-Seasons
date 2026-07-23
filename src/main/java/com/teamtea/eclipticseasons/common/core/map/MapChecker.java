@@ -137,10 +137,16 @@ public class MapChecker {
                     loopCheckMapIfEmpty:
                     for (int i = 0; i < mapChunkSize; i++) {
                         for (int j = 0; j < mapChunkSize; j++) {
-                            if ((level instanceof ServerLevel serverLevel && !(serverLevel.getChunkSource().hasChunk(i + x0, j + z0)))
-                                    || (level.isClientSide() && MapChecker.isLoaded(level, i + x0, j + z0))) {
-                                shouldRemove = false;
-                                break loopCheckMapIfEmpty;
+                            if (level instanceof ServerLevel serverLevel) {
+                                if (serverLevel.getChunkSource().hasChunk(i + x0, j + z0)) {
+                                    shouldRemove = false;
+                                    break loopCheckMapIfEmpty;
+                                }
+                            } else {
+                                if (MapChecker.isLoaded(level, i + x0, j + z0)) {
+                                    shouldRemove = false;
+                                    break loopCheckMapIfEmpty;
+                                }
                             }
                         }
                     }
