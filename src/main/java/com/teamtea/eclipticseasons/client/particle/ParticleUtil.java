@@ -370,9 +370,9 @@ public class ParticleUtil {
                 for (int i = 0; i < texture.contents().width(); i++) {
                     for (int j = 0; j < texture.contents().height(); j++) {
                         int color = 0xff000000 | texture.getPixelRGBA(0, i, j);
-                        int r = color & 0xff;
+                        int b = color & 0xff;
                         int g = (color >> 8) & 0xff;
-                        int b = (color >> 16) & 0xff;
+                        int r = (color >> 16) & 0xff;
 //                                int a = color >>> 24;
                         if (r * g * b > 0) {
                             rlist.add(r);
