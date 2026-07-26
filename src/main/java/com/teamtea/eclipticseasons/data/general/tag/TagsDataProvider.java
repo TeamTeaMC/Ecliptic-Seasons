@@ -41,7 +41,7 @@ public class TagsDataProvider extends TagsProvider<Biome> {
             tag(biomeType);
         }
 
-        tag(ClimateTypeBiomeTags.IS_SMALL).addTags(BiomeTags.IS_RIVER);
+        tag(ClimateTypeBiomeTags.IS_SMALL).add(Biomes.RIVER);
 
         tag(ClimateTypeBiomeTags.EXTREME_COLD).addTags(Tags.Biomes.IS_SNOWY, Tags.Biomes.IS_PEAK);
 

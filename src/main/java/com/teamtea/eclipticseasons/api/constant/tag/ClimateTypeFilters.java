@@ -35,7 +35,7 @@ public class ClimateTypeFilters {
     public static final RegistryFilter<Biome> SOFT = new RegistryFilter.Or<>(BiomeTags.IS_BEACH, BiomeTags.IS_OCEAN);
     public static final RegistryFilter<Biome> RAINY = new RegistryFilter.DirectHolder<>(Biomes.JUNGLE);
 
-    public static final RegistryFilter<Biome> IS_SMALL = new RegistryFilter.Or<>(BiomeTags.IS_RIVER, Tags.Biomes.IS_CAVE);
+    // public static final RegistryFilter<Biome> IS_SMALL = new RegistryFilter.Or<>(BiomeTags.IS_RIVER, Tags.Biomes.IS_CAVE);
 
     // biome color
     public static final RegistryFilter<Biome> SEASONAL_COLOR_CHANGE = SEASONAL;
@@ -79,11 +79,11 @@ public class ClimateTypeFilters {
     }};
 
 
-    @Deprecated(forRemoval = true)
-    public static final Map<TagKey<Biome>, RegistryFilter<Biome>> SMALL_BIOME_PRESENT =
-            new LinkedHashMap<>(Map.of(
-                    ClimateTypeBiomeTags.IS_SMALL, ClimateTypeFilters.IS_SMALL
-            ));
+    // @Deprecated(forRemoval = true)
+    // public static final Map<TagKey<Biome>, RegistryFilter<Biome>> SMALL_BIOME_PRESENT =
+    //         new LinkedHashMap<>(Map.of(
+    //                 ClimateTypeBiomeTags.IS_SMALL, ClimateTypeFilters.IS_SMALL
+    //         ));
 
     public static final Map<TagKey<Biome>, RegistryFilter<Biome>> COLOR_BIOME_PRESENT = new LinkedHashMap<>() {{
         put(ClimateTypeBiomeTags.NONE_COLOR_CHANGE, ClimateTypeFilters.NONE_COLOR_CHANGE);
