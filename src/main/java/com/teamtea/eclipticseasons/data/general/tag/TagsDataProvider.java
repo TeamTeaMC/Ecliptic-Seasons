@@ -9,6 +9,7 @@ import net.minecraft.data.tags.TagsProvider;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.biome.Biome;
 
+import net.minecraft.world.level.biome.Biomes;
 import net.neoforged.neoforge.common.Tags;
 import org.jspecify.annotations.NonNull;
 
@@ -39,7 +40,7 @@ public class TagsDataProvider extends KeyTagProvider<Biome> {
             tag(biomeType);
         }
 
-        tag(ClimateTypeBiomeTags.IS_SMALL).addTags(Tags.Biomes.IS_RIVER);
+        tag(ClimateTypeBiomeTags.IS_SMALL).add(Biomes.RIVER);
 
         tag(ClimateTypeBiomeTags.EXTREME_COLD).addTags(Tags.Biomes.IS_ICY, Tags.Biomes.IS_SNOWY, Tags.Biomes.IS_MOUNTAIN_PEAK, Tags.Biomes.IS_AQUATIC_ICY);
         // tag(ClimateTypeBiomeTags.SEASONAL).addTags(Tags.Biomes.IS_OVERWORLD, Tags.Biomes.IS_VOID);
