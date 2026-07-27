@@ -142,6 +142,8 @@ public class WorldRenderer {
     public static void setSectionDirty(SectionPos sectionPos) {
         if (isSectionLoad(sectionPos)) {
             Minecraft.getInstance().levelExtractor.setSectionDirty(sectionPos.x(), sectionPos.y(), sectionPos.z());
+            // assert Minecraft.getInstance().level != null;
+            // Minecraft.getInstance().level.tintCaches.forEach((resolver, cache) -> cache.invalidateForChunk(sectionPos.x(), sectionPos.z()));
         }
     }
 
@@ -169,6 +171,7 @@ public class WorldRenderer {
     public static void setAllDirty(SectionPos centerPos) {
         ClientLevel level = Minecraft.getInstance().level;
         if (level == null) return;
+        level.clearTintCaches();
         int pSectionX = centerPos.x();
         // int pSectionY = centerPos.y();
         int pSectionZ = centerPos.z();

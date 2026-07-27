@@ -17,6 +17,7 @@ import com.teamtea.eclipticseasons.api.misc.IBiomeTagHolder;
 import com.teamtea.eclipticseasons.api.misc.client.IBiomeColorHolder;
 import com.teamtea.eclipticseasons.api.misc.client.IMapSlice;
 import com.teamtea.eclipticseasons.api.util.fast.Enum2ObjectMap;
+import com.teamtea.eclipticseasons.client.core.ExtraRenderDispatcher;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.client.util.ColorHelper;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
@@ -256,6 +257,8 @@ public class BiomeColorsHandler {
 
     // 白桦在秋季通常会变色。它的叶子从绿色变成黄色或金色，有时甚至带有橙色的色调
     public static int getBirchColor(BlockState state, BlockAndTintGetter blockAndTintGetter, BlockPos pos) {
+        // if(blockAndTintGetter instanceof IMapSlice mapSlice){
+        // }
         return getLeavesColor(FoliageColor.FOLIAGE_BIRCH, BirchLeavesColor.collectValues(), pos);
     }
 
