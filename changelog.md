@@ -1,0 +1,1 @@
+- clean client level cache when solar term changes

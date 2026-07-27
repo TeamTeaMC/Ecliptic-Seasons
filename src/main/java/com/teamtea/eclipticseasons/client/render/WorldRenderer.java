@@ -169,6 +169,7 @@ public class WorldRenderer {
     public static void setAllDirty(SectionPos centerPos) {
         ClientLevel level = Minecraft.getInstance().level;
         if (level == null) return;
+        level.clearTintCaches();
         int pSectionX = centerPos.x();
         // int pSectionY = centerPos.y();
         int pSectionZ = centerPos.z();

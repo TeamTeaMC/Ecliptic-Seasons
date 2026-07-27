@@ -66,6 +66,8 @@
     "compat.iris.MixinAbstractBlockRenderContext",
     "compat.iris.MixinBiomeUniforms",
     "compat.iris.MixinBlockRenderTask",
+    "compat.sodium.Mixin_FoliageColorSource",
+    "compat.sodium.Mixin_ColorSource",
     "compat.sodium.MixinAbstractBlockRenderContext",
     "compat.sodium.MixinBlockRenderer",
     "compat.sodium.MixinBlockRenderTask",
