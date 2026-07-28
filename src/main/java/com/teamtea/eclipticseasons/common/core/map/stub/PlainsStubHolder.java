@@ -14,7 +14,7 @@ import java.util.stream.Stream;
 
 /**
  * A dummy {@link Reference} implementation used strictly as a compile-time or runtime
- * safety net (stub/fallback). This prevents NullPointerExceptions or game crashes when an abnormal 
+ * safety net (stub/fallback). This prevents NullPointerExceptions or game crashes when an abnormal
  * or uninitialized {@link net.minecraft.world.level.Level} context fails to provide a valid registry access.
  */
 public class PlainsStubHolder extends Holder.Reference<Biome> {
@@ -30,7 +30,7 @@ public class PlainsStubHolder extends Holder.Reference<Biome> {
     );
 
     /**
-     * Emergency fallback instance representing the Void (The Void) biome, 
+     * Emergency fallback instance representing the Void (The Void) biome,
      * typically used for empty dimensions or unconstructed world contexts.
      */
     public static final Reference<Biome> VOID = new PlainsStubHolder(
@@ -41,8 +41,8 @@ public class PlainsStubHolder extends Holder.Reference<Biome> {
     );
 
     private PlainsStubHolder(Type type, HolderOwner<Biome> owner,
-                                @Nullable ResourceKey<Biome> key,
-                                @Nullable Biome value) {
+                             @Nullable ResourceKey<Biome> key,
+                             @Nullable Biome value) {
         super(type, owner, key, value);
     }
 
@@ -70,7 +70,11 @@ public class PlainsStubHolder extends Holder.Reference<Biome> {
                 .temperature(temperature)
                 .downfall(0.5f)
                 // .setAttribute(EnvironmentAttributes.SKY_COLOR, OverworldBiomes.calculateSkyColor(temperature))
-                .specialEffects(new BiomeSpecialEffects.Builder().skyColor(8103167).waterColor(DEFAULT_WATER_COLOR).build())
+                .specialEffects(new BiomeSpecialEffects.Builder()
+                        .fogColor(12638463)
+                        .skyColor(8103167)
+                        .waterColor(DEFAULT_WATER_COLOR)
+                        .waterFogColor(329011).build())
                 .mobSpawnSettings(new MobSpawnSettings.Builder().build())
                 .generationSettings(new BiomeGenerationSettings(Map.of(), List.of()));
     }
@@ -84,7 +88,11 @@ public class PlainsStubHolder extends Holder.Reference<Biome> {
                 .temperature(0.5f)
                 .downfall(0.0f)
                 // .setAttribute(EnvironmentAttributes.SKY_COLOR, 8103167) // Standard sky color for the void
-                .specialEffects(new BiomeSpecialEffects.Builder().skyColor(8103167).waterColor(DEFAULT_WATER_COLOR).build())
+                .specialEffects(new BiomeSpecialEffects.Builder()
+                        .fogColor(12638463)
+                        .skyColor(8103167)
+                        .waterColor(DEFAULT_WATER_COLOR)
+                        .waterFogColor(329011).build())
                 .mobSpawnSettings(new MobSpawnSettings.Builder().build())
                 .generationSettings(new BiomeGenerationSettings(Map.of(), List.of()));
     }
