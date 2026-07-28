@@ -28,8 +28,9 @@ public abstract class Mixin_ColorSource implements SodiumBlenderColorProvider {
             cancellable = true)
     private void eclipticseasons$getColors_forESLeaves(
             LevelSlice slice, BlockPos pos, BlockPos.MutableBlockPos scratchPos, BlockState state, ModelQuadView quad, int[] output, boolean smooth, CallbackInfo ci) {
-        if (this.color[quad.getTintIndex()] instanceof SodiumBlenderColorProvider sodiumBlenderColorProvider)
+        if (this.color[quad.getTintIndex()] instanceof SodiumBlenderColorProvider sodiumBlenderColorProvider) {
             sodiumBlenderColorProvider.getColors(slice, pos, scratchPos, state, quad, output, smooth);
-        ci.cancel();
+            ci.cancel();
+        }
     }
 }

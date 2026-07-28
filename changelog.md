@@ -1,1 +1,1 @@
-- clean client level cache when solar term changes
+- #182 (https://github.com/TeamTeaMC/Ecliptic-Seasons/issues/182)
