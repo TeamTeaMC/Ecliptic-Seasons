@@ -26,6 +26,8 @@ import com.teamtea.eclipticseasons.api.util.SimpleUtil;
 import com.teamtea.eclipticseasons.api.util.fast.Enum2ObjectMap;
 import com.teamtea.eclipticseasons.common.block.blockentity.GreenHouseCoreBlockEntity;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
+import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
+import com.teamtea.eclipticseasons.common.core.map.stub.PlainsStubHolder;
 import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
 import com.teamtea.eclipticseasons.common.registry.AgroClimateRegistry;
 import com.teamtea.eclipticseasons.common.registry.CropRegistry;
@@ -53,8 +55,10 @@ import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkAccess;
+import net.minecraft.world.level.chunk.EmptyLevelChunk;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.chunk.LevelChunkSection;
+import net.minecraft.world.level.chunk.status.ChunkStatus;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -839,8 +843,8 @@ public final class CropGrowthHandler {
                 }
             }
             ChunkAccess chunkAccess = levelAccessor instanceof ServerLevel serverLevel ?
-                    serverLevel.getChunkSource().getChunkNow(x, z) : null;
-            ChunkAccess chunk1 = chunkAccess == null ? levelAccessor.getChunk(x, z) : chunkAccess;
+                    serverLevel.getChunkSource().getChunkNow(x, z) : levelAccessor.getChunk(x, z, ChunkStatus.FULL, false);
+            ChunkAccess chunk1 = chunkAccess == null ? new EmptyLevelChunk(levelAccessor instanceof Level level ? level : WeatherManager.getMainServerLevel(), new ChunkPos(x, z), PlainsStubHolder.PLAINS) : chunkAccess;
             int sectionIndex = chunk1.getSectionIndex(pos.getY());
             LevelChunkSection[] sections = chunk1.getSections();
             if (sectionIndex < 0 || sectionIndex >= sections.length)
