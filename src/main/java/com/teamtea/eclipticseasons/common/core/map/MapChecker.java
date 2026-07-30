@@ -12,6 +12,7 @@ import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
+import com.teamtea.eclipticseasons.common.core.map.stub.PlainsStubHolder;
 import com.teamtea.eclipticseasons.common.core.snow.SnowChecker;
 import com.teamtea.eclipticseasons.common.core.snow.SnowyMapChecker;
 import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
@@ -35,7 +36,6 @@ import net.minecraft.world.level.biome.*;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
-import net.minecraft.world.level.block.state.properties.Half;
 import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.ChunkStatus;
@@ -623,7 +623,7 @@ public class MapChecker {
         return ((IBiomeTagHolder) (Object) biomeHolder).eclipticseasons$isSmallBiome();
     }
 
-    public static Holder<Biome> idToBiome(Level level, int id) {
+    public static @NotNull Holder<Biome> idToBiome(Level level, int id) {
         var list = WeatherManager
                 .getBiomeList(level);
         if (list != null && id < list.size()) {
@@ -635,18 +635,21 @@ public class MapChecker {
         if (biomeRegistry.isPresent()) {
             Optional<Holder.Reference<Biome>> holder = biomeRegistry.get().getHolder(id);
             if (holder.isPresent()) return holder.get();
-            EclipticSeasons.extraLogger(true, "Unknown id with level", level, id);
-            return biomeRegistry.get().getHolder(Biomes.PLAINS).orElse(null);
+            EclipticSeasons.extraLogger(false, "Failed to resolve biome ID in level",
+                    id, level.dimension().location(), level.getClass().getName(), level);
+            return biomeRegistry.get().getHolder(Biomes.PLAINS).orElse(PlainsStubHolder.PLAINS);
         }
-        EclipticSeasons.extraLogger(true, "Unknown id with level", level, id);
-        return null;
+        EclipticSeasons.extraLogger(false, "Registry access for BIOME is missing in abnormal level context",
+                id, level.getClass().getName(), level);
+        return PlainsStubHolder.VOID;
     }
 
     public static Holder<Biome> idToBiome(Registry<Biome> biomes, int id) {
         Optional<Holder.Reference<Biome>> holder = biomes.getHolder(id);
         if (holder.isPresent()) return holder.get();
-        EclipticSeasons.extraLogger(true, "Unknown id for biome", id);
-        return biomes.getHolder(Biomes.PLAINS).orElse(null);
+        EclipticSeasons.extraLogger(false, "Unknown ID for biome within registry",
+                id, biomes.getClass().getName(), biomes);
+        return biomes.getHolder(Biomes.PLAINS).orElse(PlainsStubHolder.PLAINS);
     }
 
     public static int biomeToId(Level level, Biome b) {
