@@ -687,11 +687,11 @@ public class MapChecker {
             Optional<Holder.Reference<Biome>> holder = biomeRegistry.get().get(id);
             if (holder.isPresent()) return holder.get();
             EclipticSeasons.extraLogger(true, "Failed to resolve biome ID in level",
-                    id, level.dimension().identifier(), level.getClass().getSimpleName(), level);
+                    id, level.dimension().identifier(), level.getClass().getName(), level);
             return biomeRegistry.get().get(Biomes.PLAINS).orElse(PlainsStubHolder.PLAINS);
         }
         EclipticSeasons.extraLogger(true, "Registry access for BIOME is missing in abnormal level context",
-                id, level.getClass().getSimpleName(), level);
+                id, level.getClass().getName(), level);
         return PlainsStubHolder.VOID;
     }
 
@@ -699,7 +699,7 @@ public class MapChecker {
         Optional<Holder.Reference<Biome>> holder = biomes.get(id);
         if (holder.isPresent()) return holder.get();
         EclipticSeasons.extraLogger(true, "Unknown ID for biome within registry",
-                id, biomes.getClass().getSimpleName(), biomes);
+                id, biomes.getClass().getName(), biomes);
         return biomes.get(Biomes.PLAINS).orElse(PlainsStubHolder.PLAINS);
     }
 

@@ -1,1 +1,0 @@
-- #182 (https://github.com/TeamTeaMC/Ecliptic-Seasons/issues/182)
