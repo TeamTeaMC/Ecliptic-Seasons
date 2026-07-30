@@ -686,20 +686,20 @@ public class MapChecker {
         if (biomeRegistry.isPresent()) {
             Optional<Holder.Reference<Biome>> holder = biomeRegistry.get().get(id);
             if (holder.isPresent()) return holder.get();
-            EclipticSeasons.extraLogger(true, "Failed to resolve biome ID in level",
-                    id, level.dimension().identifier(), level.getClass().getSimpleName(), level);
+            EclipticSeasons.extraLogger(false, "Failed to resolve biome ID in level",
+                    id, level.dimension().identifier(), level.getClass().getName(), level);
             return biomeRegistry.get().get(Biomes.PLAINS).orElse(PlainsStubHolder.PLAINS);
         }
-        EclipticSeasons.extraLogger(true, "Registry access for BIOME is missing in abnormal level context",
-                id, level.getClass().getSimpleName(), level);
+        EclipticSeasons.extraLogger(false, "Registry access for BIOME is missing in abnormal level context",
+                id, level.getClass().getName(), level);
         return PlainsStubHolder.VOID;
     }
 
     public static Holder<Biome> idToBiome(Registry<Biome> biomes, int id) {
         Optional<Holder.Reference<Biome>> holder = biomes.get(id);
         if (holder.isPresent()) return holder.get();
-        EclipticSeasons.extraLogger(true, "Unknown ID for biome within registry",
-                id, biomes.getClass().getSimpleName(), biomes);
+        EclipticSeasons.extraLogger(false, "Unknown ID for biome within registry",
+                id, biomes.getClass().getName(), biomes);
         return biomes.get(Biomes.PLAINS).orElse(PlainsStubHolder.PLAINS);
     }
 
@@ -974,8 +974,8 @@ public class MapChecker {
             } else if (onBlock instanceof StairBlock) {
                 // if (state.getValue(StairBlock.HALF) == Half.TOP)
                 //     flag = FLAG_STAIRS_TOP;
-                // else flag = FLAG_STAIRS;
-                flag = FLAG_STAIRS;
+                // else
+                    flag = FLAG_STAIRS;
             }
         }
         return flag;
