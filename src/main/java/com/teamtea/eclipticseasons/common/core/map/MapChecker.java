@@ -1124,17 +1124,17 @@ public class MapChecker {
         BiomeHolder biomeHolder;
         if (!chunk.hasData(AttachmentRegistry.BIOME_HOLDER)) {
             biomeHolder = BiomeHolder
-                    .prepareBiomes(serverLevel, chunkPos, biomeDataVersion, false);
+                    .prepareBiomes(serverLevel, chunk, chunkPos, biomeDataVersion, false);
             chunk.setData(AttachmentRegistry.BIOME_HOLDER, biomeHolder);
         } else {
             biomeHolder = chunk.getData(AttachmentRegistry.BIOME_HOLDER);
             if (biomeHolder.hasUpdated() && biomeHolder.version() == BiomeHolder.FLAG_FILL_SMALL) {
                 biomeHolder = BiomeHolder
-                        .fillSmallBiomes(serverLevel, chunkPos, biomeHolder, biomeDataVersion);
+                        .fillSmallBiomes(serverLevel, chunk, biomeHolder, biomeDataVersion);
                 chunk.setData(AttachmentRegistry.BIOME_HOLDER, biomeHolder);
             } else if (!biomeHolder.hasUpdated() || biomeHolder.version() != biomeDataVersion) {
                 biomeHolder = BiomeHolder
-                        .prepareBiomes(serverLevel, chunkPos, biomeDataVersion, biomeHolder.version() != biomeDataVersion);
+                        .prepareBiomes(serverLevel, chunk, chunkPos, biomeDataVersion, biomeHolder.version() != biomeDataVersion);
                 chunk.setData(AttachmentRegistry.BIOME_HOLDER, biomeHolder);
             }
         }
@@ -1145,7 +1145,7 @@ public class MapChecker {
         int biomeDataVersion = EclipticUtil.getBiomeDataVersion(serverLevel);
         ChunkPos chunkPos = new ChunkPos(pos);
         var biomeHolder = BiomeHolder
-                .prepareBiomes(serverLevel, chunkPos, biomeDataVersion, true);
+                .prepareBiomes(serverLevel, serverLevel.getChunk(pos), chunkPos, biomeDataVersion, true);
         ChunkAccess chunk = serverLevel.getChunk(pos);
         chunk.setData(AttachmentRegistry.BIOME_HOLDER, biomeHolder);
         if (chunk instanceof IChunkBiomeHolder chunkBiomeHolder) {

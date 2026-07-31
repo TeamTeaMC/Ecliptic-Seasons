@@ -15,6 +15,8 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.chunk.ChunkAccess;
+import net.minecraft.world.level.levelgen.Heightmap;
 import net.neoforged.neoforge.attachment.IAttachmentHolder;
 import net.neoforged.neoforge.attachment.IAttachmentSerializer;
 import org.jetbrains.annotations.NotNull;
@@ -73,7 +75,7 @@ public class BiomeHolder {
             )
     );
 
-    public static BiomeHolder prepareBiomes(Level serverLevel, ChunkPos chunkPos, int biomeDataVersion, boolean registryUpdate) {
+    public static BiomeHolder prepareBiomes(Level serverLevel, ChunkAccess chunk, ChunkPos chunkPos, int biomeDataVersion, boolean registryUpdate) {
         int[] newBiomes = new int[256];
         boolean near = true;
         Registry<Biome> biomeRegistry = serverLevel.registryAccess().registryOrThrow(Registries.BIOME);
@@ -82,7 +84,7 @@ public class BiomeHolder {
             for (int j = 0; j < 16; j++) {
                 int xm = chunkPos.getBlockX(i);
                 int zm = chunkPos.getBlockZ(j);
-                mutableBlockPos.set(xm, 0, zm);
+                mutableBlockPos.set(xm, chunk.getHeight(Heightmap.Types.WORLD_SURFACE_WG, i, j) + 1, zm);
                 Holder<Biome> unCachedSurfaceBiome = MapChecker.getUnCachedSurfaceBiome(serverLevel, mutableBlockPos);
                 newBiomes[i * 16 + j] = registryUpdate ?
                         MapChecker.biomeToId(biomeRegistry, unCachedSurfaceBiome.value()) :
@@ -96,18 +98,19 @@ public class BiomeHolder {
         return new BiomeHolder(newBiomes, near, biomeDataVersion);
     }
 
-    public static BiomeHolder fillSmallBiomes(Level serverLevel, ChunkPos chunkPos, BiomeHolder oldHolder, int biomeDataVersion) {
+    public static BiomeHolder fillSmallBiomes(Level serverLevel, ChunkAccess chunk, BiomeHolder oldHolder, int biomeDataVersion) {
         int[] newBiomes = new int[256];
         boolean near = true;
         int[] oldBiomes = oldHolder.biomes;
         BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos();
+        ChunkPos chunkPos = chunk.getPos();
         for (int i = 0; i < 16; i++) {
             for (int j = 0; j < 16; j++) {
                 Holder<Biome> biomeHolder = MapChecker.idToBiome(serverLevel, oldBiomes[i * 16 + j]);
                 if (MapChecker.isSmallBiome(biomeHolder)) {
                     int xm = chunkPos.getBlockX(i);
                     int zm = chunkPos.getBlockZ(j);
-                    mutableBlockPos.set(xm, 0, zm);
+                    mutableBlockPos.set(xm, chunk.getHeight(Heightmap.Types.WORLD_SURFACE_WG, i, j) + 1, zm);
 
                     newBiomes[i * 16 + j] =
                             MapChecker.biomeToId(serverLevel, MapChecker.getUnCachedSurfaceBiome(serverLevel, mutableBlockPos).value());
