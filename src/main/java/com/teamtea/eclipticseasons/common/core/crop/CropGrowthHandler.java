@@ -753,39 +753,42 @@ public final class CropGrowthHandler {
     }
 
     public static final Vec3[] CHECK_DIRECTIONS = {
-            // 基本方向
-            new Vec3(0, 1, 0), // 向上
-            new Vec3(1, 0, 0), // 向前
-            new Vec3(-1, 0, 0), // 向后
-            new Vec3(0, 0, 1), // 向右
-            new Vec3(0, 0, -1), // 向左
+            // Basic directions
+            new Vec3(0, 1, 0), // Up
+            new Vec3(1, 0, 0), // Forward
+            new Vec3(-1, 0, 0), // Backward
+            new Vec3(0, 0, 1), // Right
+            new Vec3(0, 0, -1), // Left
 
-            // 组合方向
-            new Vec3(1, 1, 0), // 向前上
-            new Vec3(-1, 1, 0), // 向后上
-            new Vec3(0, 1, 1), // 向上右
-            new Vec3(0, 1, -1), // 向上左
+            // Combined directions
+            new Vec3(1, 1, 0), // Forward and up
+            new Vec3(-1, 1, 0), // Backward and up
+            new Vec3(0, 1, 1), // Right and up
+            new Vec3(0, 1, -1), // Left and up
 
-            new Vec3(1, 0, 1), // 向前右
-            new Vec3(1, 0, -1), // 向前左
-            new Vec3(-1, 0, 1), // 向后右
-            new Vec3(-1, 0, -1), // 向后左
+            new Vec3(1, 0, 1), // Forward and right
+            new Vec3(1, 0, -1), // Forward and left
+            new Vec3(-1, 0, 1), // Backward and right
+            new Vec3(-1, 0, -1), // Backward and left
 
-            // 三维组合方向
-            new Vec3(1, 1, 1), // 向前上右
-            new Vec3(1, 1, -1), // 向前上左
-            new Vec3(-1, 1, 1), // 向后上右
-            new Vec3(-1, 1, -1), // 向后上左
+            // Three-dimensional combined directions
+            new Vec3(1, 1, 1), // Forward, up and right
+            new Vec3(1, 1, -1), // Forward, up and left
+            new Vec3(-1, 1, 1), // Backward, up and right
+            new Vec3(-1, 1, -1), // Backward, up and left
     };
 
-    public static final Vec3[] CHECK_DIRECTIONS_SIMPLE = {
-            // 基本方向
-            new Vec3(0, 1, 0), // 向上
-            new Vec3(1, 0, 0), // 向前
-            new Vec3(-1, 0, 0), // 向后
-            new Vec3(0, 0, 1), // 向右
-            new Vec3(0, 0, -1), // 向左
+    public static final Vec3[] CHECK_DIRECTIONS_SIMPLE  = {
+            // Basic directions
+            new Vec3(0, 1, 0),  // Up
+            new Vec3(1, 0, 0),  // Forward
+            new Vec3(-1, 0, 0), // Backward
+            new Vec3(0, 0, 1),  // Right
+            new Vec3(0, 0, -1), // Left
+    };
 
+    public static final Vec3[] CHECK_DIRECTIONS_TOP_ONLY = {
+            new Vec3(0, 1, 0), // Up
     };
 
     public static class SClipContext extends ClipContext {
