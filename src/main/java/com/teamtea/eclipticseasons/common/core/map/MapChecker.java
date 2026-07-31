@@ -218,7 +218,7 @@ public class MapChecker {
         return map;
     }
 
-    //public static @Nullable ChunkAccess getChunkView(Level level, BlockPos pos) {
+    // public static @Nullable ChunkAccess getChunkView(Level level, BlockPos pos) {
     //    return level.getChunk(SectionPos.blockToSectionCoord(pos.getX()),
     //            SectionPos.blockToSectionCoord(pos.getZ()), ChunkStatus.SURFACE, false);
     //}
@@ -683,8 +683,8 @@ public class MapChecker {
 
 
     public static Holder<Biome> getSurfaceBiome(Level level, BlockPos pos) {
-        //int x = SectionPos.blockToSectionCoord(pos.getX());
-        //int z = SectionPos.blockToSectionCoord(pos.getZ());
+        // int x = SectionPos.blockToSectionCoord(pos.getX());
+        // int z = SectionPos.blockToSectionCoord(pos.getZ());
         ChunkAccess chunkAt = getChunkView(level, pos);
         if (chunkAt instanceof IChunkBiomeHolder iChunkBiomeHolder) {
             BiomeHolder biomeHolder = iChunkBiomeHolder.eclipticseasons$getBiomeHolder();
@@ -957,8 +957,8 @@ public class MapChecker {
                 (onBlock instanceof CampfireBlock && !state.getValue(CampfireBlock.LIT)) ||
                 onBlock == Blocks.IRON_BARS ||
                 onBlock instanceof LightningRodBlock
-                //||
-                //onBlock instanceof AzaleaBlock
+            //||
+            // onBlock instanceof AzaleaBlock
         ) {
             flag = FLAG_CUSTOM;
         } else {
@@ -1103,16 +1103,16 @@ public class MapChecker {
         BiomeHolder biomeHolder = chunk.eclipticseasons$getBiomeHolder();
         if (biomeHolder == null) {
             biomeHolder = BiomeHolder
-                    .prepareBiomes(serverLevel, chunkPos, biomeDataVersion, false);
+                    .prepareBiomes(serverLevel, (ChunkAccess) chunk, chunkPos, biomeDataVersion, false);
             chunk.eclipticseasons$setBiomeHolder(biomeHolder);
         } else {
             if (biomeHolder.hasUpdated() && biomeHolder.version() == BiomeHolder.FLAG_FILL_SMALL) {
                 biomeHolder = BiomeHolder
-                        .fillSmallBiomes(serverLevel, chunkPos, biomeHolder, biomeDataVersion);
+                        .fillSmallBiomes(serverLevel, (ChunkAccess) chunk, biomeHolder, biomeDataVersion);
                 chunk.eclipticseasons$setBiomeHolder(biomeHolder);
             } else if (!biomeHolder.hasUpdated() || biomeHolder.version() != biomeDataVersion) {
                 biomeHolder = BiomeHolder
-                        .prepareBiomes(serverLevel, chunkPos, biomeDataVersion, biomeHolder.version() != biomeDataVersion);
+                        .prepareBiomes(serverLevel, (ChunkAccess) chunk, chunkPos, biomeDataVersion, biomeHolder.version() != biomeDataVersion);
                 chunk.eclipticseasons$setBiomeHolder(biomeHolder);
             }
         }
@@ -1125,7 +1125,7 @@ public class MapChecker {
         if (chunk instanceof IChunkBiomeHolder chunkBiomeHolder) {
             ChunkPos chunkPos = new ChunkPos(pos);
             var biomeHolder = BiomeHolder
-                    .prepareBiomes(serverLevel, chunkPos, biomeDataVersion, true);
+                    .prepareBiomes(serverLevel, serverLevel.getChunk(pos), chunkPos, biomeDataVersion, true);
             chunkBiomeHolder.eclipticseasons$setBiomeHolder(biomeHolder);
 
             if (chunk instanceof LevelChunk levelChunk) {
