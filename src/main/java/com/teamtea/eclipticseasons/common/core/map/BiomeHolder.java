@@ -66,7 +66,7 @@ public class BiomeHolder {
             )
     );
 
-    public static BiomeHolder prepareBiomes(Level serverLevel, ChunkPos chunkPos, int biomeDataVersion, boolean registryUpdate) {
+    public static BiomeHolder prepareBiomes(Level serverLevel, ChunkAccess chunk, ChunkPos chunkPos, int biomeDataVersion, boolean registryUpdate) {
         int[] newBiomes = new int[256];
         boolean near = true;
         Registry<Biome> biomeRegistry = serverLevel.registryAccess().lookupOrThrow(Registries.BIOME);
@@ -75,7 +75,7 @@ public class BiomeHolder {
             for (int j = 0; j < 16; j++) {
                 int xm = chunkPos.getBlockX(i);
                 int zm = chunkPos.getBlockZ(j);
-                mutableBlockPos.set(xm, 0, zm);
+                mutableBlockPos.set(xm, chunk.getHeight(Heightmap.Types.WORLD_SURFACE_WG, i, j) + 1, zm);
                 Holder<Biome> unCachedSurfaceBiome = MapChecker.getUnCachedSurfaceBiome(serverLevel, mutableBlockPos);
                 newBiomes[i * 16 + j] = registryUpdate ?
                         MapChecker.biomeToId(biomeRegistry, unCachedSurfaceBiome.value()) :

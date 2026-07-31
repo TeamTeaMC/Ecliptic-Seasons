@@ -1,1 +1,2 @@
-- #182 (https://github.com/TeamTeaMC/Ecliptic-Seasons/issues/182)
+- Optimized surface biome cache recalculation for existing worlds after installing Ecliptic Seasons or clearing cached
+  data.

@@ -39,7 +39,6 @@ import net.minecraft.world.level.biome.*;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
-import net.minecraft.world.level.block.state.properties.Half;
 import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.LevelChunk;
@@ -975,7 +974,7 @@ public class MapChecker {
                 // if (state.getValue(StairBlock.HALF) == Half.TOP)
                 //     flag = FLAG_STAIRS_TOP;
                 // else
-                    flag = FLAG_STAIRS;
+                flag = FLAG_STAIRS;
             }
         }
         return flag;
@@ -1124,7 +1123,7 @@ public class MapChecker {
         BiomeHolder biomeHolder;
         if (!chunk.hasData(AttachmentRegistry.BIOME_HOLDER)) {
             biomeHolder = BiomeHolder
-                    .prepareBiomes(serverLevel, chunkPos, biomeDataVersion, false);
+                    .prepareBiomes(serverLevel, chunk, chunkPos, biomeDataVersion, false);
             chunk.setData(AttachmentRegistry.BIOME_HOLDER, biomeHolder);
         } else {
             biomeHolder = chunk.getData(AttachmentRegistry.BIOME_HOLDER);
@@ -1134,7 +1133,7 @@ public class MapChecker {
                 chunk.setData(AttachmentRegistry.BIOME_HOLDER, biomeHolder);
             } else if (!biomeHolder.hasUpdated() || biomeHolder.version() != biomeDataVersion) {
                 biomeHolder = BiomeHolder
-                        .prepareBiomes(serverLevel, chunkPos, biomeDataVersion, biomeHolder.version() != biomeDataVersion);
+                        .prepareBiomes(serverLevel, chunk, chunkPos, biomeDataVersion, biomeHolder.version() != biomeDataVersion);
                 chunk.setData(AttachmentRegistry.BIOME_HOLDER, biomeHolder);
             }
         }
@@ -1145,7 +1144,7 @@ public class MapChecker {
         int biomeDataVersion = EclipticUtil.getBiomeDataVersion(serverLevel);
         ChunkPos chunkPos = ChunkPos.containing(pos);
         var biomeHolder = BiomeHolder
-                .prepareBiomes(serverLevel, chunkPos, biomeDataVersion, true);
+                .prepareBiomes(serverLevel, serverLevel.getChunk(pos), chunkPos, biomeDataVersion, true);
         ChunkAccess chunk = serverLevel.getChunk(pos);
         chunk.setData(AttachmentRegistry.BIOME_HOLDER, biomeHolder);
         if (chunk instanceof IChunkBiomeHolder chunkBiomeHolder) {
