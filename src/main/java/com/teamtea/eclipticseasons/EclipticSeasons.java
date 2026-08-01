@@ -110,6 +110,7 @@ public class EclipticSeasons {
 
     @SuppressWarnings("removal")
     public EclipticSeasons() {
+        ConfigMigrator.init();
 
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);

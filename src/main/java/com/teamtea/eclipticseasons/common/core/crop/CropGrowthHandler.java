@@ -11,7 +11,6 @@ import com.teamtea.eclipticseasons.api.constant.crop.CropSeasonInfo;
 import com.teamtea.eclipticseasons.api.constant.crop.CropSeasonType;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
-import com.teamtea.eclipticseasons.api.constant.tag.ESItemTags;
 import com.teamtea.eclipticseasons.api.constant.tag.EclipticBlockTags;
 import com.teamtea.eclipticseasons.api.data.climate.AgroClimaticZone;
 import com.teamtea.eclipticseasons.api.data.craft.WetterStructure;
@@ -22,6 +21,7 @@ import com.teamtea.eclipticseasons.api.data.crop.GrowParameter;
 import com.teamtea.eclipticseasons.api.data.misc.ESSortInfo;
 import com.teamtea.eclipticseasons.api.data.misc.PosAndBlockStateCheck;
 import com.teamtea.eclipticseasons.api.event.CanPlantGrowEvent;
+import com.teamtea.eclipticseasons.api.misc.ITranslatable;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.api.util.SimpleUtil;
 import com.teamtea.eclipticseasons.api.util.backport.FakeBlockPredicate;
@@ -796,7 +796,7 @@ public final class CropGrowthHandler {
             new Vec3(-1, 1, -1), // Backward, up and left
     };
 
-    public static final Vec3[] CHECK_DIRECTIONS_SIMPLE  = {
+    public static final Vec3[] CHECK_DIRECTIONS_SIMPLE = {
             // Basic directions
             new Vec3(0, 1, 0),  // Up
             new Vec3(1, 0, 0),  // Forward
@@ -808,6 +808,18 @@ public final class CropGrowthHandler {
     public static final Vec3[] CHECK_DIRECTIONS_TOP_ONLY = {
             new Vec3(0, 1, 0), // Up
     };
+
+    public enum GreenHouseCheckMode implements ITranslatable {
+
+        FULL, BASIC, TOP_ONLY;
+
+        @Override
+        public Component getTranslation() {
+            return Component.translatable(
+                    "info.eclipticseasons.crop.greenhouse_check_mode." + name().toLowerCase()
+            );
+        }
+    }
 
     public static class SectionClipContext extends ClipContext {
         public final List<Pair<SectionPos, LevelChunkSection>> chunkAccessList = new ArrayList<>(1);
@@ -921,8 +933,11 @@ public final class CropGrowthHandler {
         int maxDistance = CommonConfig.Crop.greenHouseMaxDiameter.get();
         int y_maxDistance = CommonConfig.Crop.greenHouseMaxHeight.get();
         Vec3 centerVec = pos.getCenter();
-        Vec3[] vec3s = CommonConfig.Crop.complexGreenHouseCheck.get() ?
-                CHECK_DIRECTIONS : CHECK_DIRECTIONS_SIMPLE;
+        Vec3[] vec3s = switch (CommonConfig.Crop.greenHouseCheckMode.get()) {
+            case TOP_ONLY -> CHECK_DIRECTIONS_TOP_ONLY;
+            case BASIC -> CHECK_DIRECTIONS_SIMPLE;
+            case FULL -> CHECK_DIRECTIONS;
+        };
 
         float xr = (float) level.getRandom().nextGaussian() / 3f;
         float yr = (float) level.getRandom().nextGaussian() / 3f;

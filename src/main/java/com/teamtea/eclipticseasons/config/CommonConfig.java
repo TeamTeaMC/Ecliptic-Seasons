@@ -4,6 +4,7 @@ package com.teamtea.eclipticseasons.config;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
+import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
 import com.teamtea.eclipticseasons.compat.CompatModule;
 import lombok.Getter;
 import lombok.Setter;
@@ -191,7 +192,7 @@ public class CommonConfig {
         public static ForgeConfigSpec.IntValue greenHouseMaxDiameter;
         public static ForgeConfigSpec.IntValue greenHouseMaxHeight;
         public static ForgeConfigSpec.IntValue darkGreenhouseFailChance;
-        public static ForgeConfigSpec.BooleanValue complexGreenHouseCheck;
+        public static ForgeConfigSpec.EnumValue<CropGrowthHandler.GreenHouseCheckMode> greenHouseCheckMode;
         public static ForgeConfigSpec.BooleanValue registerCropDefaultValue;
         public static ForgeConfigSpec.BooleanValue forceCompatMode;
         public static ForgeConfigSpec.BooleanValue cropLeavesPatch;
@@ -237,8 +238,8 @@ public class CommonConfig {
                     .define("NoCostHumidifier", false);
             seasonCoreRange = builder.comment("The effective radius of the 'Season Core' block.")
                     .defineInRange("SeasonCoreRange", 15, 4, 31);
-            complexGreenHouseCheck = builder.comment("Enables more precise shape detection for greenhouse structures.")
-                    .define("ComplexGreenHouseCheck", true);
+            greenHouseCheckMode = builder.comment("Adjusts the greenhouse structure detection mode. Higher accuracy modes check more directions, while top-only mode only requires overhead coverage.")
+                    .defineEnum("GreenHouseCheckMode", CropGrowthHandler.GreenHouseCheckMode.FULL);
             useBoxDistance = builder.comment("Use Manhattan distance (square) instead of Euclidean (circle) for greenhouse range.")
                     .define("UseBoxDistance", true);
             registerCropDefaultValue = builder.comment("[Deprecated] Use default seasonal/humidity values for unregistered crops.")

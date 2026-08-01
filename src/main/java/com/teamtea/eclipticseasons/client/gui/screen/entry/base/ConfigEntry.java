@@ -2,14 +2,11 @@ package com.teamtea.eclipticseasons.client.gui.screen.entry.base;
 
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.client.gui.screen.ESModConfigScreen;
+import com.teamtea.eclipticseasons.client.gui.screen.entry.*;
+import com.teamtea.eclipticseasons.config.CommonConfig;
 import com.teamtea.eclipticseasons.config.sync.SyncType;
 import com.teamtea.eclipticseasons.config.util.RestartTypeUtil;
 import com.teamtea.eclipticseasons.config.util.SpecUtil;
-import com.teamtea.eclipticseasons.client.gui.screen.entry.BoolEntry;
-import com.teamtea.eclipticseasons.client.gui.screen.entry.FixedIntegerListEntry;
-import com.teamtea.eclipticseasons.client.gui.screen.entry.NumberEntry;
-import com.teamtea.eclipticseasons.client.gui.screen.entry.SuggestedListStringEntry;
-import com.teamtea.eclipticseasons.config.CommonConfig;
 import lombok.Getter;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -158,7 +155,9 @@ public abstract class ConfigEntry {
                 specEntry = (ConfigEntry.createNumber(bv));
             } else if (cv instanceof ForgeConfigSpec.DoubleValue bv) {
                 specEntry = (ConfigEntry.createNumber(bv));
-            } else if (cv == CommonConfig.Season.validDimensions) {
+            }  else if (cv instanceof ForgeConfigSpec.EnumValue<?> bv) {
+                specEntry = (new EnumEntry<>(bv));
+            }else if (cv == CommonConfig.Season.validDimensions) {
                 specEntry = (SuggestedListStringEntry.fromRegistry(CommonConfig.Season.validDimensions, Registries.DIMENSION_TYPE));
             } else if (cv == CommonConfig.Snow.blocksNotSnowy) {
                 specEntry = (SuggestedListStringEntry.fromRegistry(CommonConfig.Snow.blocksNotSnowy, Registries.BLOCK));
