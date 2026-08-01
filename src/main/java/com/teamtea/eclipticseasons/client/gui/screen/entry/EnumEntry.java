@@ -27,6 +27,7 @@ public class EnumEntry<T extends Enum<T>> extends ConfigEntry.SpecEntry<T> {
         );
 
         return builder
+                .withInitialValue(spec.get())
                 .withValues(values)
                 .create(x, y, width, 20, this.label,
                         (button, value) -> spec.set(value));
