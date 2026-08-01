@@ -5,7 +5,7 @@ import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.config.sync.SyncType;
 import lombok.Builder;
-import net.minecraft.util.Util;
+import net.minecraft.Util;
 import net.neoforged.fml.loading.FMLPaths;
 
 import java.nio.file.Path;

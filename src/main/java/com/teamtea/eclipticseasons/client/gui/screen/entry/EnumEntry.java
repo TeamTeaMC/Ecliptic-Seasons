@@ -23,21 +23,11 @@ public class EnumEntry<T extends Enum<T>> extends ConfigEntry.SpecEntry<T> {
                 value ->
                         value instanceof ITranslatable it ?
                                 it.getTranslation() :
-                                Component.literal(value.name()),
-                spec.get()
+                                Component.literal(value.name())
         );
 
-        if (syncType == SyncType.CLIENT) {
-            builder.withSprite(
-                    (cycleButton, value) ->
-                            CLIENT_SPRITES.get(
-                                    cycleButton.isActive(),
-                                    cycleButton.isHoveredOrFocused()
-                            )
-            );
-        }
-
         return builder
+                .withInitialValue(spec.get())
                 .withValues(values)
                 .create(x, y, width, 20, this.label,
                         (button, value) -> spec.set(value));
