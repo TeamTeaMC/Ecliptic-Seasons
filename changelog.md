@@ -1,2 +1,6 @@
-- Optimized surface biome cache recalculation for existing worlds after installing Ecliptic Seasons or clearing cached
-  data.
+- Added a configuration migration system to automatically update old configuration files.
+- Added a new greenhouse detection mode setting.
+- Replaced the previous greenhouse check option with three detection modes:
+    - Full: Complete structure detection.
+    - Basic: Basic directional detection.
+    - Top Only: Only checks overhead coverage for better compatibility and performance.

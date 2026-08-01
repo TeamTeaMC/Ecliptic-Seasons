@@ -10,6 +10,7 @@ import com.teamtea.eclipticseasons.compat.eclipticseasons_bundles.EclipticSeason
 import com.teamtea.eclipticseasons.config.ClientConfig;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import com.teamtea.eclipticseasons.config.StartConfig;
+import com.teamtea.eclipticseasons.config.update.ConfigMigrator;
 import com.teamtea.eclipticseasons.data.start;
 import net.minecraft.resources.ResourceLocation;
 
@@ -41,6 +42,8 @@ public class EclipticSeasons {
     public static final String NETWORK_VERSION = "1.0";
 
     public EclipticSeasons(IEventBus modEventBus, ModContainer modContainer) {
+        ConfigMigrator.init();
+
 
         modEventBus.addListener(CommonConfig::UpdateConfig);
         modEventBus.addListener(ClientConfig::UpdateConfig);

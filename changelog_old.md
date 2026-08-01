@@ -1,6 +1,11 @@
 > 1.21.1 will now receive bug fixes and compatibility updates only.
 > New features will primarily target newer Minecraft versions.
 
+### 0.14.4
+
+- Added configuration migration support.
+- Replaced ComplexGreenHouseCheck with GreenHouseCheckMode.
+
 ### 0.14.3
 
 - Optimized surface biome cache recalculation for existing worlds after installing Ecliptic Seasons or clearing cached
