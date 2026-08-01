@@ -288,7 +288,7 @@ public class ESModConfigScreen extends Screen {
                 CommonConfig.Crop.restrictBoneMeal,
                 CommonConfig.Crop.greenHouseMaxDiameter,
                 CommonConfig.Crop.greenHouseMaxHeight,
-                CommonConfig.Crop.complexGreenHouseCheck,
+                CommonConfig.Crop.greenHouseCheckMode,
                 CommonConfig.Crop.forceCompatMode,
                 CommonConfig.Crop.simpleGreenHouse,
                 CommonConfig.Crop.seasonalPrayerRitualTimeCost
