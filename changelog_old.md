@@ -1,3 +1,8 @@
+### 0.14.4
+
+- Added configuration migration support.
+- Replaced ComplexGreenHouseCheck with GreenHouseCheckMode.
+
 ### 0.14.3
 
 - Optimized surface biome cache recalculation for existing worlds after installing Ecliptic Seasons or clearing cached
