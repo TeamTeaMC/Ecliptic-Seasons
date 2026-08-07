@@ -3,36 +3,24 @@ package com.teamtea.eclipticseasons.mixin.compat.embeddium;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;
-import com.llamalad7.mixinextras.sugar.ref.LocalRef;
-import com.teamtea.eclipticseasons.api.constant.tag.EclipticBlockTags;
 import com.teamtea.eclipticseasons.api.misc.client.IExtraRendererContextOwner;
-import com.teamtea.eclipticseasons.api.misc.client.IMapSlice;
 import com.teamtea.eclipticseasons.client.core.ExtraRendererContext;
 import com.teamtea.eclipticseasons.client.core.ExtraModelManager;
-import com.teamtea.eclipticseasons.client.model.ISnowyReplaceModel;
 import com.teamtea.eclipticseasons.client.render.chunk.IceKeeper;
-import com.teamtea.eclipticseasons.client.util.ClientCon;
-import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
-import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.compat.iris.IIrisShaderAccesor;
 import com.teamtea.eclipticseasons.compat.vanilla.IExtendBlockView;
-import it.unimi.dsi.fastutil.HashCommon;
 import me.jellysquid.mods.sodium.client.render.chunk.compile.ChunkBuildBuffers;
 import me.jellysquid.mods.sodium.client.render.chunk.compile.ChunkBuildContext;
-import me.jellysquid.mods.sodium.client.render.chunk.compile.ChunkBuildOutput;
 import me.jellysquid.mods.sodium.client.render.chunk.compile.pipeline.BlockRenderCache;
 import me.jellysquid.mods.sodium.client.render.chunk.compile.pipeline.BlockRenderContext;
 import me.jellysquid.mods.sodium.client.render.chunk.compile.tasks.ChunkBuilderMeshingTask;
-import me.jellysquid.mods.sodium.client.util.task.CancellationToken;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.SnowLayerBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
@@ -41,8 +29,8 @@ import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
 @Mixin({ChunkBuilderMeshingTask.class})
 public abstract class MixinBlockRenderTask {
@@ -51,25 +39,21 @@ public abstract class MixinBlockRenderTask {
     @Final
     private RandomSource random;
 
-
-    @Inject(
+    @ModifyArg(
             // remap = false,
             method = "execute(Lme/jellysquid/mods/sodium/client/render/chunk/compile/ChunkBuildContext;Lme/jellysquid/mods/sodium/client/util/task/CancellationToken;)Lme/jellysquid/mods/sodium/client/render/chunk/compile/ChunkBuildOutput;",
+            index = 0,
             at = @At(value = "INVOKE",
                     // shift = At.Shift.AFTER,
                     ordinal = 1,
                     target = "Lnet/minecraft/util/RandomSource;setSeed(J)V")
     )
-    private void eclipticseasons$execute_findModel(
-            ChunkBuildContext buildContext, CancellationToken cancellationToken, CallbackInfoReturnable<ChunkBuildOutput> cir,
+    private long eclipticseasons$execute_findModel(
+            long seed,
             @Local BakedModel bakedModel,
             @Local BlockRenderContext ctx,
-            @Local ChunkBuildBuffers buffers,
-            @Local BlockRenderCache cache,
             @Local(ordinal = 0) BlockPos.MutableBlockPos mutableBlockPos,
-            @Local(ordinal = 1) BlockPos.MutableBlockPos mutableBlockPos2,
             @Local(ordinal = 0) BlockState state,
-            @Local long seed,
             @Local ModelData modelData
     ) {
         random.setSeed(seed);
@@ -82,6 +66,7 @@ public abstract class MixinBlockRenderTask {
                 .setExtraModel(model)
                 .setReplace(model != null
                         && ExtraModelManager.isModelReplaceable(state, ctx.world(), mutableBlockPos, model));
+        return seed;
     }
 
     @ModifyExpressionValue(
@@ -162,38 +147,31 @@ public abstract class MixinBlockRenderTask {
         return original;
     }
 
-
-    @Inject(
+    @ModifyVariable(
             remap = false,
+            ordinal = 0,
             method = "execute(Lme/jellysquid/mods/sodium/client/render/chunk/compile/ChunkBuildContext;Lme/jellysquid/mods/sodium/client/util/task/CancellationToken;)Lme/jellysquid/mods/sodium/client/render/chunk/compile/ChunkBuildOutput;",
             at = @At(value = "INVOKE",
                     // shift = At.Shift.AFTER,
                     target = "Lme/jellysquid/mods/sodium/client/render/chunk/compile/pipeline/BlockRenderCache;getBlockModels()Lnet/minecraft/client/renderer/block/BlockModelShaper;")
     )
-    private void eclipticseasons$renderSnowLayerIn_below(
-            ChunkBuildContext buildContext,
-            CancellationToken cancellationToken,
-            CallbackInfoReturnable<ChunkBuildOutput> cir,
+    private BlockState eclipticseasons$renderSnowLayerIn_below(
+            BlockState state,
             @Local BlockRenderContext ctx,
-            @Local(ordinal = 0) BlockPos.MutableBlockPos mutableBlockPos,
-            @Local LocalRef<BlockState> stateLocalRef
+            @Local(ordinal = 0) BlockPos.MutableBlockPos mutableBlockPos
     ) {
-        var state = ExtraModelManager.shouldBlockAsSnowyState(stateLocalRef.get(), ctx.localSlice(), mutableBlockPos);
-        if (state != stateLocalRef.get())
-            stateLocalRef.set(state);
+        return ExtraModelManager.shouldBlockAsSnowyState(state, ctx.localSlice(), mutableBlockPos);
     }
-
-    @Inject(
+    @ModifyArg(
             //remap = false,
+            index = 0,
             method = "execute(Lme/jellysquid/mods/sodium/client/render/chunk/compile/ChunkBuildContext;Lme/jellysquid/mods/sodium/client/util/task/CancellationToken;)Lme/jellysquid/mods/sodium/client/render/chunk/compile/ChunkBuildOutput;",
             at = @At(value = "INVOKE",
                     // shift = At.Shift.AFTER,
                     target = "Lnet/minecraft/world/level/block/state/BlockState;isSolidRender(Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;)Z")
     )
-    private void eclipticseasons$renderSnowLayerIn(
-            ChunkBuildContext buildContext,
-            CancellationToken cancellationToken,
-            CallbackInfoReturnable<ChunkBuildOutput> cir,
+    private BlockGetter eclipticseasons$renderSnowLayerIn(
+            BlockGetter blockGetter,
             @Local BlockRenderContext ctx,
             @Local ChunkBuildBuffers buffers,
             @Local BlockRenderCache cache,
@@ -215,25 +193,22 @@ public abstract class MixinBlockRenderTask {
                     RenderType.solid());
             cache.getBlockRenderer().renderModel(ctx, buffers);
         }
+        return blockGetter;
     }
-
-    @Inject(
+    @ModifyArg(
             method = "execute(Lme/jellysquid/mods/sodium/client/render/chunk/compile/ChunkBuildContext;Lme/jellysquid/mods/sodium/client/util/task/CancellationToken;)Lme/jellysquid/mods/sodium/client/render/chunk/compile/ChunkBuildOutput;",
             remap = false,
+            index = 1,
             at = @At(value = "INVOKE", target = "Lme/jellysquid/mods/sodium/client/render/chunk/compile/pipeline/FluidRenderer;render(Lme/jellysquid/mods/sodium/client/world/WorldSlice;Lnet/minecraft/world/level/material/FluidState;Lnet/minecraft/core/BlockPos;Lnet/minecraft/core/BlockPos;Lme/jellysquid/mods/sodium/client/render/chunk/compile/ChunkBuildBuffers;)V")
     )
-    private void eclipticseasons$renderFrozenWaterIce(ChunkBuildContext buildContext,
-                                                      CancellationToken cancellationToken,
-                                                      CallbackInfoReturnable<ChunkBuildOutput> cir,
-                                                      @Local BlockRenderContext ctx,
-                                                      @Local ChunkBuildBuffers buffers,
-                                                      @Local FluidState fluidState,
-                                                      @Local BlockState blockState,
-                                                      @Local(ordinal = 0) BlockPos.MutableBlockPos blockPos,
-                                                      @Local(ordinal = 1) BlockPos.MutableBlockPos modelOffset) {
-
-
-        if (IceKeeper.notFrozen(buildContext.cache.getWorldSlice(), blockPos, blockState, fluidState)) return;
+    private FluidState eclipticseasons$renderFrozenWaterIce(FluidState fluidState,
+                                                            @Local BlockRenderContext ctx,
+                                                            @Local ChunkBuildBuffers buffers,
+                                                            @Local BlockRenderCache cache,
+                                                            @Local(ordinal = 0) BlockState blockState,
+                                                            @Local(ordinal = 0) BlockPos.MutableBlockPos blockPos,
+                                                            @Local(ordinal = 1) BlockPos.MutableBlockPos modelOffset) {
+        if (IceKeeper.notFrozen(cache.getWorldSlice(), blockPos, blockState, fluidState)) return fluidState;
         BakedModel model = IceKeeper.getIceModel(blockState, fluidState);
         if (model != null) {
             BlockState fakeState = IceKeeper.getFakeState(blockState, fluidState);
@@ -244,8 +219,9 @@ public abstract class MixinBlockRenderTask {
                     blockState.getSeed(blockPos),
                     ModelData.EMPTY,
                     ExtraModelManager.getRenderType(fakeState));
-            buildContext.cache.getBlockRenderer().renderModel(ctx, buffers);
+            cache.getBlockRenderer().renderModel(ctx, buffers);
         }
+        return fluidState;
     }
 
 }
