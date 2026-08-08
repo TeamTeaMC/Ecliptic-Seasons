@@ -1,42 +1,31 @@
 package com.teamtea.eclipticseasons.mixin.client.biome;
 
-
-import com.teamtea.eclipticseasons.api.misc.IBiomeTagHolder;
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.teamtea.eclipticseasons.client.color.season.BiomeColorsHandler;
 import net.minecraft.world.level.biome.Biome;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin({Biome.class})
+@Mixin(Biome.class)
 public abstract class MixinClientBiome {
 
-    @Inject(at = {@At("RETURN")}, method = {"getSkyColor"}, cancellable = true)
-    public void eclipticseasons$getSkyColor(CallbackInfoReturnable<Integer> cir) {
-        int returnValue = cir.getReturnValue();
-        int skyColor = BiomeColorsHandler.getSkyColor((Biome) (Object) this, returnValue);
-        if (returnValue != skyColor) cir.setReturnValue(skyColor);
+    @ModifyReturnValue(method = "getSkyColor", at = @At("RETURN"))
+    private int eclipticseasons$getSkyColor(int original) {
+        return BiomeColorsHandler.getSkyColor((Biome) (Object) this, original);
     }
 
-    @Inject(at = {@At("RETURN")}, method = {"getWaterColor"}, cancellable = true)
-    public void eclipticseasons$getWaterColor(CallbackInfoReturnable<Integer> cir) {
-        int returnValue = cir.getReturnValue();
-        int waterColor = BiomeColorsHandler.getWaterColor((Biome) (Object) this, returnValue);
-        if (returnValue != waterColor) cir.setReturnValue(waterColor);
+    @ModifyReturnValue(method = "getWaterColor", at = @At("RETURN"))
+    private int eclipticseasons$getWaterColor(int original) {
+        return BiomeColorsHandler.getWaterColor((Biome) (Object) this, original);
     }
 
-    @Inject(at = {@At("RETURN")}, method = {"getWaterFogColor"}, cancellable = true)
-    public void eclipticseasons$getWaterFogColor(CallbackInfoReturnable<Integer> cir) {
-        int returnValue = cir.getReturnValue();
-        int waterFogColor = BiomeColorsHandler.getWaterFogColor((Biome) (Object) this, returnValue);
-        if (returnValue != waterFogColor) cir.setReturnValue(waterFogColor);
+    @ModifyReturnValue(method = "getWaterFogColor", at = @At("RETURN"))
+    private int eclipticseasons$getWaterFogColor(int original) {
+        return BiomeColorsHandler.getWaterFogColor((Biome) (Object) this, original);
     }
 
-    @Inject(at = {@At("RETURN")}, method = {"getFogColor"}, cancellable = true)
-    public void eclipticseasons$getFogColor(CallbackInfoReturnable<Integer> cir) {
-        int returnValue = cir.getReturnValue();
-        int fogColor = BiomeColorsHandler.getFogColor((Biome) (Object) this, returnValue);
-        if (returnValue != fogColor) cir.setReturnValue(fogColor);
+    @ModifyReturnValue(method = "getFogColor", at = @At("RETURN"))
+    private int eclipticseasons$getFogColor(int original) {
+        return BiomeColorsHandler.getFogColor((Biome) (Object) this, original);
     }
 }

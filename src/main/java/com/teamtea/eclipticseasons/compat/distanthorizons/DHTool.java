@@ -1,10 +1,9 @@
 package com.teamtea.eclipticseasons.compat.distanthorizons;
 
-import com.seibel.distanthorizons.common.wrappers.McObjectConverter_forge;
-import com.seibel.distanthorizons.common.wrappers.block.BiomeWrapper_forge;
 import com.seibel.distanthorizons.common.wrappers.block.BlockStateWrapper_forge;
 import com.seibel.distanthorizons.common.wrappers.world.ClientLevelWrapper_forge;
 import com.seibel.distanthorizons.core.dataObjects.fullData.FullDataPointIdMap;
+import com.seibel.distanthorizons.core.dataObjects.fullData.sources.FullDataSourceV2;
 import com.seibel.distanthorizons.core.pos.blockPos.DhBlockPos;
 import com.seibel.distanthorizons.core.pos.blockPos.DhBlockPosMutable;
 import com.seibel.distanthorizons.core.util.FullDataPointUtil;
@@ -21,9 +20,6 @@ import it.unimi.dsi.fastutil.longs.LongArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Blocks;
@@ -32,147 +28,185 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.material.MapColor;
 
-import java.util.HashSet;
-
 public class DHTool {
+    private static final ThreadLocal<BlockPos.MutableBlockPos> MUTABLE_BLOCK_POS = ThreadLocal.withInitial(BlockPos.MutableBlockPos::new);
 
-    public static MapColor computeBaseColor(IClientLevelWrapper instance, DhBlockPos dhBlockPos, IBiomeWrapper iBiomeWrapper, IBlockStateWrapper iBlockStateWrapper, FullDataPointIdMap fullDataMapping, LongArrayList fullColumnData, IWrapperFactory WRAPPER_FACTORY, int skyLight) {
-        if (!CompatModule.CommonConfig.DistantHorizonsWinterLOD.get()) return null;
+    public static MapColor computeBaseColor(IClientLevelWrapper instance, DhBlockPos dhBlockPos, IBiomeWrapper iBiomeWrapper, IBlockStateWrapper iBlockStateWrapper,  FullDataSourceV2 fullDataSource, LongArrayList fullColumnData,  IWrapperFactory WRAPPER_FACTORY) {
+        if (!CompatModule.CommonConfig.DistantHorizonsWinterLOD.get()
+                || !CommonConfig.isSnowyWinter()
+                || dhBlockPos.equals(DhBlockPos.ZERO)
+                || !(iBlockStateWrapper instanceof BlockStateWrapper_forge forgeBlockState)
+                || forgeBlockState.isAir()) {
+            return null;
+        }
 
-        if (CommonConfig.isSnowyWinter()) {
-            if (!dhBlockPos.equals(DhBlockPos.ZERO)
-                    && iBlockStateWrapper instanceof BlockStateWrapper_forge blockStateWrapper
-                    && !blockStateWrapper.isAir()
-                    && skyLight > 0
-            ) {
-                var mcPos = convert(dhBlockPos);
-                var level = ClientCon.getUseLevel();
-                var blockState = blockStateWrapper.blockState;
-                // 当给的pos未加载时，读取的是虚空，这并不好。
-                if (instance instanceof ClientLevelWrapper_forge clientLevelWrapper) {
-                    var holderKey = ResourceKey.create(Registries.BIOME, new ResourceLocation(iBiomeWrapper.getSerialString()));
-                    Holder.Reference<Biome> holder = clientLevelWrapper.getLevel().registryAccess().registryOrThrow(Registries.BIOME).getHolderOrThrow(holderKey);
-                    // if ((holderOrThrow
-                    //         instanceof Holder.Reference<Biome> holder))
-                    {
+        int targetDataIndex = findDataPointIndex(instance, dhBlockPos, fullColumnData);
 
-                        if (MapChecker.shouldSnowAtBiome(level, holder.value(), blockState, level.getRandom(), blockState.getSeed(mcPos), mcPos))
-                        //     return mapColor.col;
-                        {
-                            ObjectOpenHashSet<IBlockStateWrapper> blockStatesToIgnore = WRAPPER_FACTORY.getRendererIgnoredBlocks(instance);
-                            for (int i = 0; i < fullColumnData.size(); i++) {
-                                long fullData = fullColumnData.getLong(i);
-                                int id = FullDataPointUtil.getId(fullData);
-                                IBlockStateWrapper iBlockStateWrapper_NowQuery;
-                                try {
-                                    iBlockStateWrapper_NowQuery = fullDataMapping.getBlockStateWrapper(id);
-                                } catch (IndexOutOfBoundsException e) {
-                                    continue;
-                                }
-                                int bottomY = FullDataPointUtil.getBottomY(fullData);
-                                int blockHeight = FullDataPointUtil.getHeight(fullData);
-                                int topY = bottomY + blockHeight;
-                                if (CommonConfig.Debug.notLightAbove.get()
-                                        && iBlockStateWrapper_NowQuery instanceof BlockStateWrapper_forge blockStateWrapper_NowQuery) {
-                                    if (blockStateWrapper_NowQuery.blockState != null &&
-                                            blockStateWrapper_NowQuery.blockState.getBlock() instanceof LightBlock) {
-                                        if (blockStateWrapper_NowQuery.blockState.hasProperty(LightBlock.LEVEL)
-                                                && blockStateWrapper_NowQuery.blockState.getValue(LightBlock.LEVEL) == 0)
-                                            break;
-                                    }
-                                }
+        if (targetDataIndex < 0 || FullDataPointUtil.getSkyLight(fullColumnData.getLong(targetDataIndex)) <= 0) {
+            return null;
+        }
 
-                                if (iBlockStateWrapper_NowQuery instanceof BlockStateWrapper_forge blockStateWrapper_NowQuery
-                                        && !iBlockStateWrapper_NowQuery.isAir()
-                                        && !blockStatesToIgnore.contains(iBlockStateWrapper_NowQuery)
-                                ) {
+        Biome biome = unwrapBiome(iBiomeWrapper);
+        if (!(instance instanceof ClientLevelWrapper_forge) || biome == null) {
+            return null;
+        }
 
-                                    if (bottomY + instance.getMinHeight() == dhBlockPos.getY() &&
-                                            (MapChecker.getDefaultBlockTypeFlag(blockStateWrapper_NowQuery.blockState) != 0
-                                                    // || (blockStateWrapper1.blockState.is(BlockTags.FLOWERS))
-                                                    || (!blockStateWrapper_NowQuery.isSolid() && !blockStateWrapper_NowQuery.isLiquid())
-                                            )) {
-                                        // return Color.WHITE.getRGB();
-                                        return MapColor.SNOW;
-                                    } else {
-                                        if (!blockStateWrapper_NowQuery.isLiquid()
-                                                && !blockStateWrapper_NowQuery.blockState.blocksMotion()) {
-                                            // 如果colorBelowWithAvoidedBlocks时，这时会查看下面的方块，我们也进行一个染色
-                                            // 暂时不处理多层需要跳过的方块，实际上也许保留一点颜色会更好看
-                                            if (i + 1 < fullColumnData.size()) {
-                                                int belowBottomY = FullDataPointUtil.getBottomY(fullColumnData.getLong(i + 1));
-                                                if (belowBottomY + instance.getMinHeight() == dhBlockPos.getY())
-                                                    return MapColor.SNOW;
-                                            }
-                                            break;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
+        BlockPos.MutableBlockPos mcPos = mutableBlockPos(dhBlockPos);
+        Level level = ClientCon.getUseLevel();
+        BlockState blockState = forgeBlockState.blockState;
 
+        if (!MapChecker.shouldSnowAtBiome(
+                level,
+                biome,
+                blockState,
+                level.getRandom(),
+                blockState.getSeed(mcPos),
+                mcPos)) {
+            return null;
+        }
 
+        FullDataPointIdMap fullDataMapping = fullDataSource.mapping;
+        ObjectOpenHashSet<IBlockStateWrapper> blockStatesToIgnore = WRAPPER_FACTORY.getRendererIgnoredBlocks(instance);
+
+        for (int i = 0; i <= targetDataIndex; i++) {
+            long fullData = fullColumnData.getLong(i);
+            int id = FullDataPointUtil.getId(fullData);
+
+            IBlockStateWrapper queriedWrapper;
+            try {
+                queriedWrapper = fullDataMapping.getBlockStateWrapper(id);
+            } catch (IndexOutOfBoundsException ignored) {
+                continue;
+            }
+
+            if (CommonConfig.Debug.notLightAbove.get()
+                    && queriedWrapper
+                    instanceof BlockStateWrapper_forge queriedForgeState
+                    && queriedForgeState.blockState != null
+                    && queriedForgeState.blockState.getBlock()
+                    instanceof LightBlock
+                    && queriedForgeState.blockState.hasProperty(
+                    LightBlock.LEVEL
+            )
+                    && queriedForgeState.blockState.getValue(
+                    LightBlock.LEVEL
+            ) == 0) {
+                break;
+            }
+
+            if (!(queriedWrapper instanceof BlockStateWrapper_forge queriedForgeState)
+                    || queriedWrapper.isAir()
+                    || blockStatesToIgnore.contains(queriedWrapper)) {
+                continue;
+            }
+
+            if (i == targetDataIndex
+                    && (MapChecker.getDefaultBlockTypeFlag(
+                    queriedForgeState.blockState
+            ) != 0
+                    || (!queriedWrapper.isSolid()
+                    && !queriedWrapper.isLiquid()))) {
+                return MapColor.SNOW;
+            }
+
+            if (!queriedWrapper.isLiquid() && !queriedForgeState.blockState.blocksMotion()) {
+                if (i + 1 == targetDataIndex) {
+                    return MapColor.SNOW;
                 }
+
+                break;
             }
         }
+
         return null;
     }
 
-    public static Biome recoverBiomeObject(BiomeWrapper_forge biomeWrapper, IClientLevelWrapper iClientLevelWrapper) {
-        if (!CompatModule.CommonConfig.DistantHorizonsWinterLOD.get()) return null;
-        // if (iClientLevelWrapper instanceof ClientLevelWrapper clientLevelWrapper) {
-        //     var holderKey = ResourceKey.create(Registries.BIOME, ResourceLocation.parse(biomeWrapper.getSerialString()));
-        //     if ((clientLevelWrapper.getLevel().registryAccess().holder(holderKey).orElse(null)
-        //             instanceof Holder.Reference<Biome> holder)) {
-        //         // if (BiomeWrapper.getBiomeWrapper(holder, clientLevelWrapper) instanceof BiomeWrapper biomeWrapper1)
-        //         return holder.value();
-        //     }
-        // }
-        return null;
-    }
+    private static int findDataPointIndex(
+            IClientLevelWrapper instance,
+            DhBlockPos dhBlockPos,
+            LongArrayList fullColumnData) {
+        int targetBottomY =
+                dhBlockPos.getY() - instance.getMinHeight();
 
-    //public static void clearRenderCache() {
-    //    if (!CompatModule.CommonConfig.DistantHorizonsWinterLOD.get()) return;
-    //    IDhClientWorld clientWorld = SharedApi.getIDhClientWorld();
-    //    if (Minecraft.getInstance().level != null
-    //            && ClientLevelWrapper.getWrapper(Minecraft.getInstance().level) instanceof ClientLevelWrapper clientLevelWrapper
-    //            && clientWorld.getLevel(clientLevelWrapper) instanceof IDhClientLevel clientLevel) {
-    //        clientLevel.clearRenderCache();
-    //    }
-    //}
+        int low = 0;
+        int high = fullColumnData.size() - 1;
+
+        while (low <= high) {
+            int middle = (low + high) >>> 1;
+
+            int middleBottomY = FullDataPointUtil.getBottomY(
+                    fullColumnData.getLong(middle)
+            );
+
+            if (middleBottomY == targetBottomY) {
+                return middle;
+            }
+
+            if (middleBottomY > targetBottomY) {
+                low = middle + 1;
+            } else {
+                high = middle - 1;
+            }
+        }
+
+        return -1;
+    }
 
     public static IBlockStateWrapper shouldFrozen(ClientLevelWrapper_forge instance, IBiomeWrapper biomeWrapper, DhBlockPosMutable dhBlockPosMutable, BlockState blockState, FullDataPointIdMap fullDataMapping, LongArrayList fullColumnData, int index) {
-        if (!CompatModule.CommonConfig.DistantHorizonsWinterLOD.get()) return null;
+        if (!CompatModule.CommonConfig.DistantHorizonsWinterLOD.get()) {
+            return null;
+        }
+
+        Biome biome = unwrapBiome(biomeWrapper);
 
         if (ClientConfig.Debug.frozenWater.get()
-                && biomeWrapper.getWrappedMcObject() instanceof Holder<?> holder
-                && holder.value() instanceof Biome biome
+                && biome != null
                 && blockState.is(Blocks.WATER)
-                && blockState.getFluidState().isSourceOfType(Fluids.WATER)) {
+                && blockState.getFluidState()
+                .isSourceOfType(Fluids.WATER)) {
             if (index > 0 && index < fullColumnData.size() - 1) {
                 try {
-                    int id = FullDataPointUtil.getId(fullColumnData.getLong(index - 1));
-                    if (!fullDataMapping.getBlockStateWrapper(id).isAir())
+                    int id = FullDataPointUtil.getId(
+                            fullColumnData.getLong(index - 1)
+                    );
+
+                    if (!fullDataMapping
+                            .getBlockStateWrapper(id)
+                            .isAir()) {
                         return null;
+                    }
                 } catch (IndexOutOfBoundsException ignored) {
                 }
             }
-            var mcPos = convert(dhBlockPosMutable);
+
+            BlockPos.MutableBlockPos mcPos = mutableBlockPos(dhBlockPosMutable);
             Level level = instance.getLevel();
-            if (MapChecker.shouldSnowAtBiome(level, biome, blockState, level.getRandom(), blockState.getSeed(mcPos), mcPos)) {
-                return BlockStateWrapper_forge.fromBlockState(Blocks.ICE.defaultBlockState(), instance);
+
+            if (MapChecker.shouldSnowAtBiome(
+                    level,
+                    biome,
+                    blockState,
+                    level.getRandom(),
+                    blockState.getSeed(mcPos),
+                    mcPos)) {
+                return BlockStateWrapper_forge.fromBlockState(
+                        Blocks.ICE.defaultBlockState(),
+                        instance
+                );
             }
         }
         return null;
     }
 
-    /**
-     * From {@link com.seibel.distanthorizons.common.wrappers.McObjectConverter#convert(DhBlockPos)}.
-     * As it changed its signature.
-     *
-     */
-    public static BlockPos convert(DhBlockPos wrappedPos) {
-        return new BlockPos(wrappedPos.getX(), wrappedPos.getY(), wrappedPos.getZ());
+    private static Biome unwrapBiome(IBiomeWrapper biomeWrapper) {
+        Object wrappedBiome = biomeWrapper.getWrappedMcObject();
+        if (wrappedBiome instanceof Holder<?> holder && holder.value() instanceof Biome biome) {
+            return biome;
+        }
+        return wrappedBiome instanceof Biome biome ? biome : null;
+    }
+
+    private static BlockPos.MutableBlockPos mutableBlockPos(DhBlockPos wrappedPos) {
+        return MUTABLE_BLOCK_POS.get().set(wrappedPos.getX(), wrappedPos.getY(), wrappedPos.getZ());
     }
 }
