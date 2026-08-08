@@ -1,6 +1,5 @@
-- Added a configuration migration system to automatically update old configuration files.
-- Added a new greenhouse detection mode setting.
-- Replaced the previous greenhouse check option with three detection modes:
-    - Full: Complete structure detection.
-    - Basic: Basic directional detection.
-    - Top Only: Only checks overhead coverage for better compatibility and performance.
+* Optimized memory usage in Distant Horizons and Embeddium compatibility code, contributed by @zerastos (#185).
+
+  * Reduced temporary allocations during Distant Horizons winter LOD processing.
+  * Reduced callback and local-reference allocations during Embeddium chunk meshing.
+  * Updated biome color hooks to use primitive return-value modifiers, reducing callback and boxing overhead.

@@ -206,6 +206,11 @@ public class DHTool {
         return wrappedBiome instanceof Biome biome ? biome : null;
     }
 
+    /**
+     * From {@link com.seibel.distanthorizons.common.wrappers.McObjectConverter#convert(DhBlockPos)}.
+     * As it changed its signature.
+     *
+     */
     private static BlockPos.MutableBlockPos mutableBlockPos(DhBlockPos wrappedPos) {
         return MUTABLE_BLOCK_POS.get().set(wrappedPos.getX(), wrappedPos.getY(), wrappedPos.getZ());
     }
