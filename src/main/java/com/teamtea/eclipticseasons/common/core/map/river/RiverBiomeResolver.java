@@ -8,7 +8,6 @@ import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.biome.Climate;
 import net.minecraft.world.level.levelgen.DensityFunction;
 import net.minecraft.world.level.levelgen.RandomState;
-import org.jetbrains.annotations.NotNull;
 import org.jspecify.annotations.NonNull;
 
 public class RiverBiomeResolver {
@@ -100,20 +99,29 @@ public class RiverBiomeResolver {
     // }
 
 
-    public static Climate.@NotNull TargetPoint getClimateTargetPoint(RandomState randomState, BlockPos.MutableBlockPos blockPos) {
-        // int qx = QuartPos.fromBlock(blockPos.getX());
-        // int qy = QuartPos.fromBlock(blockPos.getY());
-        // int qz = QuartPos.fromBlock(blockPos.getZ());
+    /**
+     * <p>Use the vanilla Climate.Sampler sampling pipeline instead of directly
+     * evaluating DensityFunctions.
+     *
+     * <p>Climate.Sampler#sample is the entry point used by Minecraft for climate
+     * sampling and may be modified by world-generation or climate-related mods.
+     * Directly calling sampler.temperature().compute() and other DensityFunctions
+     * bypasses these modifications and can cause compatibility issues.
+     */
+    public static Climate.@NonNull TargetPoint getClimateTargetPoint(RandomState randomState, BlockPos.MutableBlockPos blockPos) {
+        int qx = QuartPos.fromBlock(blockPos.getX());
+        int qy = QuartPos.fromBlock(blockPos.getY());
+        int qz = QuartPos.fromBlock(blockPos.getZ());
         Climate.Sampler sampler = randomState.sampler();
-        // return sampler.sample(qx, qy, qz);
-        DensityFunction.SinglePointContext context = new DensityFunction.SinglePointContext(blockPos.getX(), blockPos.getY(), blockPos.getZ());
-        return Climate.target(
-                (float) sampler.temperature().compute(context),
-                (float) sampler.humidity().compute(context),
-                (float) sampler.continentalness().compute(context),
-                (float) sampler.erosion().compute(context),
-                (float) sampler.depth().compute(context),
-                (float) sampler.weirdness().compute(context)
-        );
+        return sampler.sample(qx, qy, qz);
+        // DensityFunction.SinglePointContext densityfunction$singlepointcontext = new DensityFunction.SinglePointContext(blockPos.getX(), blockPos.getY(), blockPos.getZ());
+        // return Climate.target(
+        //         (float) sampler.temperature().compute(densityfunction$singlepointcontext),
+        //         (float) sampler.humidity().compute(densityfunction$singlepointcontext),
+        //         (float) sampler.continentalness().compute(densityfunction$singlepointcontext),
+        //         (float) sampler.erosion().compute(densityfunction$singlepointcontext),
+        //         (float) sampler.depth().compute(densityfunction$singlepointcontext),
+        //         (float) sampler.weirdness().compute(densityfunction$singlepointcontext)
+        // );
     }
 }
