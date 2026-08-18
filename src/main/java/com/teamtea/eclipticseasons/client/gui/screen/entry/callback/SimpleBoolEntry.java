@@ -1,13 +1,13 @@
-package com.teamtea.eclipticseasons.client.gui.screen.entry.base;
+package com.teamtea.eclipticseasons.client.gui.screen.entry.callback;
 
 import com.teamtea.eclipticseasons.client.gui.screen.ESModConfigScreen;
+import com.teamtea.eclipticseasons.client.gui.screen.entry.base.ConfigEntry;
 import com.teamtea.eclipticseasons.config.sync.SyncType;
 import net.minecraft.client.gui.components.CycleButton;
 import net.minecraft.client.gui.layouts.LayoutElement;
 
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
-
 
 // for mixins options
 public class SimpleBoolEntry extends ConfigEntry {

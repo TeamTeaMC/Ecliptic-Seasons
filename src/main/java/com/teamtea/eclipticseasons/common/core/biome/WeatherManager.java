@@ -619,13 +619,18 @@ public class WeatherManager {
     }
 
     public static void onLoggedIn(ServerPlayer serverPlayer, boolean isLogged) {
+        onLoggedIn(serverPlayer, serverPlayer.level(), isLogged);
+    }
+
+    public static void onLoggedIn(ServerPlayer serverPlayer, ServerLevel serverLevel, boolean isLogged) {
         if ((serverPlayer instanceof FakePlayer)) return;
-        SolarHolders.getSaveDataLazy(serverPlayer.level()).ifPresent(t ->
+
+        SolarHolders.getSaveDataLazy(serverLevel).ifPresent(t ->
         {
             SimpleNetworkHandler.send(serverPlayer, new SolarTermsMessage(t.getSolarTermsDay()));
             if ((CommonConfig.Season.enableInform.get())
                     && isLogged
-                    && MapChecker.isValidDimension(serverPlayer.level())
+                    && MapChecker.isValidDimension(serverLevel)
                     && t.getSolarTermsDay() % CommonConfig.Season.lastingDaysOfEachTerm.get() == 0) {
                 SolarTerm solarTerm = t.getSolarTerm();
                 // if (solarTerm != SolarTerm.NONE)
@@ -633,8 +638,7 @@ public class WeatherManager {
             }
             SimpleNetworkHandler.send(serverPlayer, new UpdateTempChangeMessage(t.getSolarTempChange()));
         });
-        if (serverPlayer.level() instanceof ServerLevel serverLevel)
-            WeatherManager.sendBiomePacket(serverLevel, WeatherManager.getBiomeList(serverPlayer.level()), List.of(serverPlayer));
+        WeatherManager.sendBiomePacket(serverLevel, WeatherManager.getBiomeList(serverLevel), List.of(serverPlayer));
     }
 
     public static boolean testWeatherCheck(LootContext pContext, WeatherCheck weatherCheck) {

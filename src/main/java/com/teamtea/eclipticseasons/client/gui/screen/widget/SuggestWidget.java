@@ -1,4 +1,4 @@
-package com.teamtea.eclipticseasons.client.gui.screen;
+package com.teamtea.eclipticseasons.client.gui.screen.widget;
 
 import lombok.Setter;
 import net.minecraft.client.gui.Font;

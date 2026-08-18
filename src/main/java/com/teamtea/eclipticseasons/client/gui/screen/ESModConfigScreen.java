@@ -2,38 +2,34 @@ package com.teamtea.eclipticseasons.client.gui.screen;
 
 import com.electronwill.nightconfig.core.Config;
 import com.electronwill.nightconfig.core.UnmodifiableConfig;
-import com.mojang.realmsclient.RealmsMainScreen;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
-import com.teamtea.eclipticseasons.client.gui.screen.entry.base.CallbackEntry;
 import com.teamtea.eclipticseasons.client.gui.screen.entry.base.ConfigEntry;
-import com.teamtea.eclipticseasons.client.gui.screen.entry.base.SimpleBoolEntry;
+import com.teamtea.eclipticseasons.client.gui.screen.entry.base.SpecEntry;
 import com.teamtea.eclipticseasons.client.gui.screen.entry.base.TitleEntry;
+import com.teamtea.eclipticseasons.client.gui.screen.entry.callback.SimpleBoolEntry;
+import com.teamtea.eclipticseasons.client.gui.screen.config.ConfigCategory;
+import com.teamtea.eclipticseasons.client.gui.screen.config.ConfigRegistry;
 import com.teamtea.eclipticseasons.client.gui.screen.tab.Tab;
+import com.teamtea.eclipticseasons.client.gui.screen.widget.SuggestWidget;
 import com.teamtea.eclipticseasons.config.*;
-import com.teamtea.eclipticseasons.compat.CompatModule;
 import com.teamtea.eclipticseasons.config.sync.ESConfigSync;
 import com.teamtea.eclipticseasons.config.sync.ESConfigToServerPayload;
 import com.teamtea.eclipticseasons.config.sync.SyncType;
 import com.teamtea.eclipticseasons.mixin.EclipticSeasonsMixinPlugin;
-import it.unimi.dsi.fastutil.booleans.BooleanConsumer;
 import lombok.Getter;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.*;
 import net.minecraft.client.gui.layouts.*;
-import net.minecraft.client.gui.screens.ConfirmScreen;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.gui.screens.TitleScreen;
-import net.minecraft.client.gui.screens.multiplayer.JoinMultiplayerScreen;
 import net.minecraft.client.input.MouseButtonEvent;
-import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.multiplayer.ServerData;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextColor;
 import net.minecraft.server.permissions.Permissions;
-import net.minecraft.util.Mth;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.config.ConfigTracker;
@@ -58,31 +54,51 @@ public class ESModConfigScreen extends Screen {
     @Getter
     private SuggestWidget globalSuggestWidget;
     public boolean saveOnClose = true;
-    public final Map<Object, Component> configTabs = new IdentityHashMap<>();
+    public final Map<Object, ConfigCategory> configTabs = new IdentityHashMap<>();
 
-    public final Map<Component, Tab> tabs = new LinkedHashMap<>();
+    public final Map<ConfigCategory, Tab> tabs = new LinkedHashMap<>();
     public final HashSet<Object> configRegistered = new HashSet<>();
 
-    public static final Component HOT = Component.translatable("eclipticseasons.options.hot");
-    public static final Component SEASON = Component.translatable("eclipticseasons.options.season");
-    public static final Component SNOW = Component.translatable("eclipticseasons.options.snow_related");
-    public static final Component CROP = Component.translatable("eclipticseasons.options.crop");
-    public static final Component ANIMAL = Component.translatable("eclipticseasons.options.animal");
-    public static final Component WEATHER = Component.translatable("eclipticseasons.options.weather");
-    public static final Component RENDER = Component.translatable("eclipticseasons.options.renderer");
-    public static final Component DEBUG = Component.translatable("eclipticseasons.options.debug");
-    public static final Component COMPAT = Component.translatable("eclipticseasons.options.compat");
-    public static final Component OTHERS = Component.translatable("eclipticseasons.options.others");
-    public static final Component MIXINS = Component.translatable("eclipticseasons.options.mixins");
+    private static final Component ALL_SECTION = Component.translatable("eclipticseasons.options.all");
 
-    public void addToTab(Component tabName, Component subTabName, ConfigEntry entry) {
-        Tab tab = tabs.get(tabName);
+    private String allSearchQuery = "";
+    private EditBox allSearchBox;
+
+    public void addToTab(ConfigCategory category, Component subTabName, ConfigEntry entry) {
+        if (entry == null) return;
+        Tab tab = tabs.get(category);
+        if (tab == null) {
+            EclipticSeasons.LOGGER.warn("Unknown configuration category: {}", category);
+            return;
+        }
         tab.configShown().computeIfAbsent(subTabName, k -> new ArrayList<>()).add(entry);
     }
 
-    public ConfigEntry addToHotTab(ConfigEntry entry) {
-        addToTab(HOT, HOT, entry);
-        return entry;
+    public void put(ConfigCategory category, Component subTabName, ModConfigSpec.ConfigValue<?>... values) {
+        Tab tab = tabs.get(category);
+        if (tab == null) {
+            EclipticSeasons.LOGGER.warn("Unknown configuration category: {}", category);
+            return;
+        }
+        for (ModConfigSpec.ConfigValue<?> value : values) {
+            if (value == null) continue;
+            SpecEntry<?> parse = SpecEntry.parse(value);
+            if (parse == null) continue;
+
+            configTabs.put(value, category);
+            tab.configShown().computeIfAbsent(subTabName, k -> new ArrayList<>()).add(parse);
+        }
+    }
+
+    /**
+     * Marks a config value as classified without creating a new SpecEntry.
+     * Used for CallbackEntry items in the GENERAL recommended section so that
+     * automatic scanning does not report them as unclassified.
+     */
+    public void markClassified(ConfigCategory category, Object value) {
+        if (value != null) {
+            configTabs.put(value, category);
+        }
     }
 
     @SuppressWarnings({"raw_use"})
@@ -91,94 +107,11 @@ public class ESModConfigScreen extends Screen {
         initConfigCache();
         this.parent = parent;
 
-        tabs.put(HOT, new Tab(HOT, new LinkedHashMap<>()));
-        tabs.put(SEASON, new Tab(SEASON, new LinkedHashMap<>()));
-        tabs.put(SNOW, new Tab(SNOW, new LinkedHashMap<>()));
-        tabs.put(CROP, new Tab(CROP, new LinkedHashMap<>()));
-        tabs.put(ANIMAL, new Tab(ANIMAL, new LinkedHashMap<>()));
-        tabs.put(WEATHER, new Tab(WEATHER, new LinkedHashMap<>()));
-        tabs.put(RENDER, new Tab(RENDER, new LinkedHashMap<>()));
-        tabs.put(DEBUG, new Tab(DEBUG, new LinkedHashMap<>()));
-        tabs.put(COMPAT, new Tab(COMPAT, new LinkedHashMap<>()));
-        tabs.put(OTHERS, new Tab(OTHERS, new LinkedHashMap<>()));
-        tabs.put(MIXINS, new Tab(MIXINS, new LinkedHashMap<>()));
+        for (ConfigCategory category : ConfigCategory.values()) {
+            tabs.put(category, new Tab(category.title(), new LinkedHashMap<>()));
+        }
 
-        registerBuiltinConfigTabs();
-
-        // entries.add(new TitleEntry("Hot Selections"));
-        addToHotTab(new CallbackEntry(
-                "eclipticseasons.configuration.RenderedSnow",
-                "eclipticseasons.configuration.RenderedSnow.tooltip",
-                CommonConfig.Snow.snowyWinter,
-                (bt, b) -> {
-                    CommonConfig.Snow.snowyWinter.set(b);
-                }));
-
-        addToHotTab(new CallbackEntry(
-                "eclipticseasons.configuration.BlockSnow",
-                "eclipticseasons.configuration.BlockSnow.tooltip",
-                CommonConfig::isVanillaSnowAndIce,
-                (bt, b) -> {
-                    CommonConfig.Temperature.snowDown.set(b);
-                    CommonConfig.Temperature.iceMelt.set(b);
-                    CommonConfig.setVanillaSnowAndIce(
-                            CommonConfig.Temperature.snowDown.getAsBoolean()
-                                    && CommonConfig.Temperature.iceMelt.getAsBoolean());
-                }));
-
-        addToHotTab(new CallbackEntry(
-                "eclipticseasons.configuration.DebugInfo",
-                "eclipticseasons.configuration.DebugInfo.tooltip",
-                ClientConfig.Debug.debugInfo,
-                (bt, b) -> {
-                    ClientConfig.Debug.debugInfo.set(b);
-                }).setSyncType(SyncType.CLIENT));
-
-        addToHotTab(new CallbackEntry(
-                "eclipticseasons.configuration.NaturalSound",
-                "eclipticseasons.configuration.NaturalSound.tooltip",
-                ClientConfig.Sound.naturalSound,
-                (bt, b) -> {
-                    ClientConfig.Sound.naturalSound.set(b);
-                    ClientConfig.Sound.naturalSound.clearCache();
-                }).setRestartType(ModConfigSpec.RestartType.WORLD)
-                .setSyncType(SyncType.CLIENT));
-
-        addToHotTab(new CallbackEntry(
-                "eclipticseasons.configuration.ExtraSnowLayer",
-                "eclipticseasons.configuration.ExtraSnowLayer.tooltip",
-                ClientConfig.Renderer.extraSnowLayer,
-                (bt, b) -> {
-                    ClientConfig.Renderer.extraSnowLayer.set(b);
-                }).setSyncType(SyncType.CLIENT));
-
-        addToHotTab(new CallbackEntry(
-                "eclipticseasons.configuration.ExtraSnowDefinitions",
-                "eclipticseasons.configuration.ExtraSnowDefinitions.tooltip",
-                StartConfig.Resource.extraSnow,
-                (bt, b) -> {
-                    StartConfig.Resource.extraSnow.set(b);
-                    StartConfig.Resource.extraSnow.clearCache();
-                }).setRestartType(ModConfigSpec.RestartType.GAME)
-                .setSyncType(SyncType.STARTUP));
-
-        addToHotTab(new CallbackEntry(
-                "eclipticseasons.configuration.FrozenWater",
-                "eclipticseasons.configuration.FrozenWater.tooltip",
-                ClientConfig.Debug.frozenWater,
-                (bt, b) -> {
-                    ClientConfig.Debug.frozenWater.set(b);
-                })
-                .setSyncType(SyncType.CLIENT));
-
-        addToHotTab(new CallbackEntry(
-                "eclipticseasons.configuration.SpringGrass",
-                "eclipticseasons.configuration.SpringGrass.tooltip",
-                CommonConfig.Resource.springGrass,
-                (bt, b) -> {
-                    CommonConfig.Resource.springGrass.set(b);
-                    CommonConfig.Resource.springGrass.clearCache();
-                }).setRestartType(ModConfigSpec.RestartType.WORLD));
+        ConfigRegistry.register(this);
 
         for (UnmodifiableConfig.Entry entry :
                 Stream.of(CommonConfig.COMMON_CONFIG, ClientConfig.CLIENT_CONFIG, StartConfig.START_CONFIG)
@@ -188,15 +121,15 @@ public class ESModConfigScreen extends Screen {
                         .toList()) {
             Object value = entry.getValue();
             if (value instanceof com.electronwill.nightconfig.core.Config config) {
-                collectConfigValues(entry, config);
+                collectConfigValues(config);
             } else if (value instanceof ModConfigSpec.ConfigValue<?> cv) {
-                buildConfigValue(entry, cv);
+                buildConfigValue(cv);
             }
         }
 
         // Sorts
-        for (Component component : new ArrayList<>(tabs.keySet())) {
-            Tab tab = tabs.get(component);
+        for (ConfigCategory category : new ArrayList<>(tabs.keySet())) {
+            Tab tab = tabs.get(category);
             for (Component subT : new ArrayList<>(tab.configShown().keySet())) {
                 List<ConfigEntry> entriesSelect = new ArrayList<>(tab.configShown().get(subT));
                 entriesSelect.sort(Comparator.comparing(ConfigEntry::getPosition));
@@ -207,27 +140,29 @@ public class ESModConfigScreen extends Screen {
         traverseConfig(EclipticSeasonsMixinPlugin.PreloadedConfig.getConfig(), "");
     }
 
-    protected void collectConfigValues(
-            UnmodifiableConfig.Entry rootEntry,
-            com.electronwill.nightconfig.core.Config config
-    ) {
+    protected void collectConfigValues(com.electronwill.nightconfig.core.Config config) {
         for (Config.Entry entry : config.entrySet()) {
             Object value = entry.getValue();
 
             if (value instanceof ModConfigSpec.ConfigValue<?> cv) {
-                buildConfigValue(rootEntry, cv);
+                buildConfigValue(cv);
             } else if (value instanceof com.electronwill.nightconfig.core.Config childConfig) {
-                collectConfigValues(rootEntry, childConfig);
+                collectConfigValues(childConfig);
             }
         }
     }
 
-    protected void buildConfigValue(UnmodifiableConfig.Entry entry, ModConfigSpec.ConfigValue<?> cv) {
-        Component tabKey = classify(cv);
-        if (tabKey == null) return;
-        ConfigEntry.SpecEntry<?> parse = ConfigEntry.SpecEntry.parse(cv);
-        if (parse == null) return;
-        addToTab(tabKey, tabKey == OTHERS ? Component.translatable("eclipticseasons.configuration." + entry.getKey()) : tabKey, parse);
+    protected void buildConfigValue(ModConfigSpec.ConfigValue<?> cv) {
+        ConfigCategory category = classify(cv);
+        if (category == null) {
+            // EclipticSeasons.LOGGER.warn("Unclassified configuration: {}", cv.getPath());
+        }
+
+        // ALL tab shows every parseable value regardless of classification.
+        SpecEntry<?> parse = SpecEntry.parse(cv);
+        if (parse != null) {
+            addToTab(ConfigCategory.ALL, ALL_SECTION, parse);
+        }
     }
 
     protected void traverseConfig(Config config, String path) {
@@ -240,119 +175,57 @@ public class ESModConfigScreen extends Screen {
             if (value instanceof Config nested) {
                 traverseConfig(nested, fullPath);
             } else if (value instanceof Boolean bool) {
-                // System.out.println(fullPath + " = " + value);
-                addToTab(MIXINS, Component.literal(path), new SimpleBoolEntry(key, entry::getValue, b -> {
-                    config.set(key, b);
-                }));
+                addToTab(ConfigCategory.ADVANCED, mixinModule(fullPath),
+                        new SimpleBoolEntry(key, entry::getValue, b -> config.set(key, b)));
             }
         }
     }
 
-    private void registerBuiltinConfigTabs() {
-        put(SEASON,
-                CommonConfig.Season.enableInform,
-                CommonConfig.Season.validDimensions,
-                CommonConfig.Season.lastingDaysOfEachTerm,
-                CommonConfig.Season.initialSolarTermIndex,
-                CommonConfig.Season.monthOffset,
-                CommonConfig.Season.dayOffset,
-                ClientConfig.GUI.showGregorianYear,
-                CommonConfig.Season.daylightChange,
-                CommonConfig.Season.springDayTimes,
-                CommonConfig.Season.summerDayTimes,
-                CommonConfig.Season.autumnDayTimes,
-                CommonConfig.Season.winterDayTimes,
-                CommonConfig.Season.noneDayTimes,
-                CommonConfig.Season.dynamicSnowTerm,
-                CommonConfig.Season.realWorldSolarTerms,
-                CommonConfig.Resource.springGrass,
-                ClientConfig.Sound.naturalSound
-        );
+    private static Component mixinModule(String fullPath) {
+        String[] parts = fullPath.split("\\.");
+        String[] module = Arrays.copyOf(parts, Math.max(0, parts.length - 1));
 
-        put(SNOW,
-                CommonConfig.Temperature.heatStroke,
-                CommonConfig.Temperature.iceMelt,
-                CommonConfig.Temperature.snowDown,
-                CommonConfig.Snow.snowyWinter,
-                CommonConfig.Snow.blocksNotSnowy,
-                CommonConfig.Snow.snowInWorld,
-                CommonConfig.Resource.SnowTogether,
-                CommonConfig.Resource.RegionalSnowTime,
-                // CommonConfig.Map.changeMapColor,
-                StartConfig.Resource.extraSnow
-        );
-
-        put(CROP,
-                CommonConfig.Crop.enableCrop,
-                CommonConfig.Crop.enableCropHumidityControl,
-                CommonConfig.Crop.restrictBoneMeal,
-                CommonConfig.Crop.greenHouseMaxDiameter,
-                CommonConfig.Crop.greenHouseMaxHeight,
-                CommonConfig.Crop.greenHouseCheckMode,
-                CommonConfig.Crop.forceCompatMode,
-                CommonConfig.Crop.simpleGreenHouse,
-                CommonConfig.Crop.seasonalPrayerRitualTimeCost
-        );
-
-        put(ANIMAL,
-                CommonConfig.Animal.enableBreed,
-                CommonConfig.Animal.enableTimeBreed,
-                CommonConfig.Animal.enableBee,
-                CommonConfig.Animal.enableFishing,
-                CommonConfig.Animal.beePollinateSeasons,
-                CommonConfig.Animal.beeActiveSeasons,
-                CommonConfig.Animal.fishingSeasons
-        );
-
-        put(WEATHER,
-                CommonConfig.Resource.NotIgnoreRiver,
-                CommonConfig.Weather.notRainInDesert,
-                CommonConfig.Weather.shouldInitSnowForExtremeColdBiomes,
-                CommonConfig.Weather.rainChanceMultiplier,
-                CommonConfig.Weather.thunderChanceMultiplier,
-                CommonConfig.Weather.snowAccumulationSpeedMultiplier,
-                CommonConfig.Weather.snowMeltSpeedMultiplier,
-                ClientConfig.Weather.tweakPrecipitationParticleTexture
-        );
-
-        put(RENDER,
-                ClientConfig.Renderer.forceChunkRenderUpdate,
-                ClientConfig.Renderer.enhancementChunkRenderUpdate,
-                ClientConfig.Renderer.flowerOnGrass,
-                ClientConfig.Renderer.seasonalGrassColorChange,
-                ClientConfig.Renderer.seasonalColorChangeExtend,
-                ClientConfig.Renderer.smootherSeasonalGrassColorChange,
-                ClientConfig.Renderer.snowInFence,
-                ClientConfig.Renderer.extraSnowLayer,
-                ClientConfig.Particle.seasonParticle,
-                ClientConfig.Particle.snowLeafParticles,
-                ClientConfig.GUI.simpleSeasonHud
-        );
-
-        put(DEBUG,
-                ClientConfig.Debug.debugInfo,
-                ClientConfig.Debug.smoothSnowyEdges,
-                ClientConfig.Debug.frozenWater
-        );
-
-        put(COMPAT,
-                CompatModule.CommonConfig.sereneSeasons,
-                CompatModule.CommonConfig.DistantHorizonsWinterLOD,
-                CompatModule.ClientConfig.DistantHorizonsWinterLODForceUpdateAll,
-                CompatModule.CommonConfig.voxyTest
-        );
-    }
-
-    protected void put(Component tab, Object... values) {
-        for (Object value : values) {
-            if (value != null) {
-                configTabs.put(value, tab);
-            }
+        if (module.length == 0) {
+            return Component.literal("Mixin");
         }
+        if (module.length == 1) {
+            return Component.literal("Mixin - " + capitalize(module[0]));
+        }
+        if ("compat".equals(module[0])) {
+            return Component.literal("Mixin - Compat: " + compatModuleName(module[1]));
+        }
+        return Component.literal("Mixin - " + capitalize(module[0]) + ": " + capitalize(module[1]));
     }
 
-    protected Component classify(Object obj) {
-        return configTabs.getOrDefault(obj, OTHERS);
+    private static String compatModuleName(String moduleId) {
+        return switch (moduleId) {
+            case "neoforge" -> "NeoForge";
+            case "sodium" -> "Sodium";
+            case "iris" -> "Iris";
+            case "distanthorizons" -> "Distant Horizons";
+            case "fabric_renderer_indigo" -> "Fabric Renderer Indigo";
+            case "voxy" -> "Voxy";
+            default -> moduleId;
+        };
+    }
+
+    private static String capitalize(String value) {
+        if (value == null || value.isEmpty()) {
+            return "Mixin";
+        }
+        return Character.toUpperCase(value.charAt(0)) + value.substring(1);
+    }
+
+    private boolean matchesSearch(ConfigEntry entry) {
+        if (allSearchQuery == null || allSearchQuery.isBlank()) {
+            return true;
+        }
+        return entry.getSearchText().toLowerCase(Locale.ROOT)
+                .contains(allSearchQuery.toLowerCase(Locale.ROOT).trim());
+    }
+
+    protected ConfigCategory classify(Object obj) {
+        return configTabs.get(obj);
     }
 
     public ESModConfigScreen(final ModContainer mod, final Screen parent) {
@@ -360,31 +233,34 @@ public class ESModConfigScreen extends Screen {
         this.mod = mod;
     }
 
-    protected Component selectTab;
+    protected ConfigCategory selectTab;
 
-    private int tabOffset = 0;
-    private static final int TAB_BUTTON_WIDTH = 50;
     private static final int TAB_SPACING = 8;
-    private static final int TAB_NAV_WIDTH = 20;
+    private static final int SIDEBAR_WIDTH = 70;
 
     @Override
     protected void init() {
-        selectTab = selectTab == null ? HOT : selectTab;
+        selectTab = selectTab == null ? ConfigCategory.GENERAL : selectTab;
 
         this.globalSuggestWidget = new SuggestWidget(0, 0, 0, this.font, (_) -> {
         });
 
-        layout = new HeaderAndFooterLayout(this, 61, 33);
-        int buttonWidth = width / 2 - 36;
-        int startX = this.width / 2 - buttonWidth / 2;
+        layout = new HeaderAndFooterLayout(this, 30, 33);
+        layout.setHeaderHeight(40);
+        layout.setFooterHeight(40);
+
+        int contentWidth = Math.max(1, this.width - SIDEBAR_WIDTH - TAB_SPACING);
+        int entryWidth = contentWidth / 2 - 36;
+        int footerWidth = this.width / 2 - 36;
+        int startX = SIDEBAR_WIDTH + TAB_SPACING;
         int currentY = 40;
 
-        LinearLayout header = this.layout.addToHeader(LinearLayout.vertical().spacing(8));
-        header.addChild(new StringWidget(TITLE, this.font), LayoutSettings::alignHorizontallyCenter);
-
-        LinearLayout subHeader = header.addChild(LinearLayout.horizontal()).spacing(TAB_SPACING);
-
-        subHeader.addChild(Button.builder(Component.translatable("eclipticseasons.options.advance"), (button) -> {
+        LinearLayout headerLine = this.layout.addToHeader(LinearLayout.horizontal().spacing(TAB_SPACING), LayoutSettings::alignVerticallyTop);
+        headerLine.defaultCellSetting().alignVerticallyBottom().paddingTop(6);
+        StringWidget titleWidget = new StringWidget(this.width - 130 - TAB_SPACING - 40, 20, TITLE.copy().withStyle(ChatFormatting.BOLD), this.font);
+        // titleWidget.setAlign(0f);
+        headerLine.addChild(titleWidget, headerLine.newCellSettings().paddingLeft(20));
+        headerLine.addChild(Button.builder(Component.translatable("eclipticseasons.options.configure_in_classic_screen"), (button) -> {
             if (mod == null) {
                 mod = ModList.get().getModContainerById(EclipticSeasonsApi.MODID).orElse(null);
             }
@@ -392,85 +268,113 @@ public class ESModConfigScreen extends Screen {
                 ConfigurationScreen configurationScreen = new ConfigurationScreen(mod, ESModConfigScreen.this.parent);
                 Minecraft.getInstance().setScreenAndShow(configurationScreen);
             }
-        }).width(TAB_BUTTON_WIDTH).build());
+        }).width(120).size(120, 20).build());
 
-        List<Component> tabList = new ArrayList<>(tabs.keySet());
+        LinearLayout content = LinearLayout.horizontal().spacing(TAB_SPACING);
 
-        int availableWidth = this.width - 40;
-
-        availableWidth -= TAB_BUTTON_WIDTH + TAB_SPACING;
-        availableWidth -= (TAB_NAV_WIDTH + TAB_SPACING) * 2;
-        int maxVisibleTabs = Math.max(1, (availableWidth + TAB_SPACING) / (TAB_BUTTON_WIDTH + TAB_SPACING));
-
-        int maxOffset = Math.max(0, tabList.size() - maxVisibleTabs);
-        tabOffset = Mth.clamp(tabOffset, 0, maxOffset);
-
-        boolean canScrollLeft = tabOffset > 0;
-        Button prev = Button.builder(Component.literal("<"), button -> {
-            tabOffset = Math.max(0, tabOffset - 1);
-            ESModConfigScreen.this.init(width, height);
-        }).width(TAB_NAV_WIDTH).build();
-        prev.active = canScrollLeft;
-        subHeader.addChild(prev);
-
-        for (int i = tabOffset; i < Math.min(tabOffset + maxVisibleTabs, tabList.size()); i++) {
-            Component component = tabList.get(i);
-
-            Component label = Objects.equals(component, selectTab)
-                    ? component.copy().withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD)
-                    : component;
-
-            subHeader.addChild(Button.builder(label, button -> {
-                ESModConfigScreen.this.selectTab = component;
+        LinearLayout sidebar = LinearLayout.vertical().spacing(2);
+        for (ConfigCategory category : List.of(
+                ConfigCategory.GENERAL,
+                ConfigCategory.ENVIRONMENT,
+                ConfigCategory.GAMEPLAY,
+                ConfigCategory.VISUAL,
+                ConfigCategory.ADVANCED,
+                ConfigCategory.ALL)) {
+            Component title = category.title();
+            Component label = category == selectTab
+                    ? title.copy().withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD)
+                    : title;
+            Button build = Button.builder(label, button -> {
+                ESModConfigScreen.this.selectTab = category;
                 ESModConfigScreen.this.init(width, height);
-            }).width(TAB_BUTTON_WIDTH).build());
+            }).width(SIDEBAR_WIDTH).build();
+            build.setTooltip(Tooltip.create(category.getDescription()));
+            sidebar.addChild(build);
+        }
+        content.addChild(sidebar);
+
+        LinearLayout right = LinearLayout.vertical().spacing(TAB_SPACING);
+
+        int searchHeight = 0;
+        if (selectTab == ConfigCategory.ALL) {
+            EditBox searchBox = new EditBox(this.font, entryWidth, 20, Component.translatable("eclipticseasons.options.search"));
+            searchBox.setHint(Component.translatable("eclipticseasons.options.search"));
+            searchBox.setValue(allSearchQuery);
+            searchBox.setResponder(text -> {
+                allSearchQuery = text;
+                ESModConfigScreen.this.init(width, height);
+                if (allSearchBox != null) {
+                    ESModConfigScreen.this.setFocused(allSearchBox);
+                    allSearchBox.setFocused(true);
+                    allSearchBox.setCursorPosition(allSearchBox.getValue().length());
+                }
+            });
+            allSearchBox = searchBox;
+            // GridLayout gridLayout = new GridLayout();
+            // gridLayout.defaultCellSetting().paddingLeft(20).alignHorizontallyCenter();
+            // GridLayout.RowHelper helper = gridLayout.createRowHelper(2);
+            // // helper.addChild(new StringWidget(Component.translatable("xx"), this.font),1);
+            // helper.addChild(searchBox,2);
+            right.addChild(searchBox,
+                    right.newCellSettings()
+                            .paddingLeft(20)
+                            .paddingRight(20));
+            searchHeight = 20 + TAB_SPACING;
+        } else {
+            allSearchBox = null;
         }
 
-        boolean canScrollRight = tabOffset < maxOffset;
-        Button next = Button.builder(Component.literal(">"), button -> {
-            tabOffset = Math.min(maxOffset, tabOffset + 1);
-            ESModConfigScreen.this.init(width, height);
-        }).width(TAB_NAV_WIDTH).build();
-        next.active = canScrollRight;
-        subHeader.addChild(next);
-
-
-        net.minecraft.client.gui.layouts.GridLayout gridLayout = new net.minecraft.client.gui.layouts.GridLayout();
+        GridLayout gridLayout = new GridLayout();
         gridLayout.defaultCellSetting().paddingHorizontal(4).paddingBottom(4).alignHorizontallyCenter();
         GridLayout.RowHelper helper = gridLayout.createRowHelper(2);
 
         Tab tab = tabs.get(selectTab);
 
+        int entryChoseSize = 0;
         for (Map.Entry<Component, List<ConfigEntry>> pair : tab.configShown().entrySet()) {
             if (pair.getValue().isEmpty()) continue;
             if (tab.configShown().size() > 1) {
                 TitleEntry titleEntry = new TitleEntry(pair.getKey().getString());
-                helper.addChild(titleEntry.build(this, startX, currentY, buttonWidth), titleEntry.getColumn());
+                entryChoseSize++;
+                helper.addChild(titleEntry.build(this, startX, currentY, entryWidth), titleEntry.getColumn());
             }
             for (ConfigEntry entry : pair.getValue()) {
-                LayoutElement build = entry.build(this, startX, currentY, buttonWidth);
+                if (selectTab == ConfigCategory.ALL && !matchesSearch(entry)) {
+                    continue;
+                }
+                LayoutElement build = entry.build(this, startX, currentY, entryWidth);
                 int column = entry.getColumn();
                 if (build != null) {
+                    entryChoseSize++;
                     helper.addChild(build, column);
                 }
             }
         }
+        if (entryChoseSize == 0) {
+            helper.addChild((new StringWidget(entryWidth * 2 + 20, 30, Component.translatable("eclipticseasons.options.search.no_result")
+                    .withStyle(ChatFormatting.ITALIC)
+                    .withColor(TextColor.DARK_RED), font)), 2);
+        }
 
-        ScrollableLayout scrollableLayout = new ScrollableLayout(this.minecraft, gridLayout, this.layout.getContentHeight());
-        layout.addToContents(scrollableLayout);
-        LinearLayout footer = layout.addToFooter(LinearLayout.horizontal()).spacing(TAB_SPACING);
+        ScrollableLayout scrollableLayout = new ScrollableLayout(this.minecraft, gridLayout, this.layout.getContentHeight() - searchHeight);
+        right.addChild(scrollableLayout);
+        content.addChild(right);
+
+        layout.addToContents(content);
+
+        LinearLayout footer = layout.addToFooter(LinearLayout.horizontal(), LayoutSettings::alignVerticallyBottom).spacing(TAB_SPACING);
+        footer.defaultCellSetting().paddingBottom(8).paddingTop(4);
         footer.addChild(Button.builder(CommonComponents.GUI_BACK, (button) -> {
             ESModConfigScreen.this.saveOnClose = false;
             this.onClose();
-        }).width(buttonWidth).build());
-        footer.addChild(Button.builder(CommonComponents.GUI_DONE, (button) -> this.onClose()).width(buttonWidth).build());
+        }).width(footerWidth).build());
+        footer.addChild(Button.builder(CommonComponents.GUI_DONE, (button) -> this.onClose()).width(footerWidth).build());
+
         layout.visitWidgets(this::addRenderableWidget);
 
         this.addRenderableWidget(this.globalSuggestWidget);
 
         this.layout.arrangeElements();
-
-        // scrollableLayout.container. scrollAmount()
     }
 
     @Override
@@ -514,6 +418,42 @@ public class ESModConfigScreen extends Screen {
     }
 
     @Override
+    public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+        super.extractBackground(graphics, mouseX, mouseY, a);
+        renderDividers(graphics);
+    }
+
+    private void renderDividers(GuiGraphicsExtractor graphics) {
+        int l = 0, r = width, t = 36, b = height - 36;
+        int s = SIDEBAR_WIDTH + 22, m = (t + b) / 2;
+
+        if (!isInGameUi()) {
+            graphics.fillGradient(l, 0, r, t - 4, 0x66AFC9B0, 0x66C8BD9D);       // 顶栏
+            graphics.fillGradient(l, b + 4, r, height, 0x66C2AE98, 0x66A9C0CC); // 底栏
+
+            graphics.fillGradient(l, t, s, m, 0x776F8C76, 0x777E806B);           // 左栏上部
+            graphics.fillGradient(l, m, s, b, 0x777E806B, 0x776D8390);           // 左栏下部
+
+            graphics.fillGradient(s + 4, t, r - 6, m, 0x448CA891, 0x449E967A);       // 内容区上部
+            graphics.fillGradient(s + 4, m, r - 6, b, 0x449E967A, 0x448098A4);       // 内容区下部
+
+            graphics.fill(s - 1, t, s, b, 0x669DB7A5);
+        } else {
+            graphics.fill(l, 0, r, t - 4, 0x44787874);         // 暖灰顶栏
+            graphics.fill(l, b + 4, r, height - 5, 0x446D7378); // 冷灰底栏
+            graphics.fill(l, t, s, b, 0x66505050);              // 深灰左栏
+            graphics.fill(s + 4, t, r - 6, b, 0x335F6260);          // 浅灰内容区
+            graphics.fill(s - 1, t, s, b, 0x558E9491);          // 灰白分隔线
+        }
+
+        int q = width / 4;
+        graphics.fill(0, 0, q, 2, 0xCC78B86B); // 春
+        graphics.fill(q, 0, q * 2, 2, 0xCCD5B84A); // 夏
+        graphics.fill(q * 2, 0, q * 3, 2, 0xCCD8793D); // 秋
+        graphics.fill(q * 3, 0, width, 2, 0xCC79AFC4); // 冬
+    }
+
+    @Override
     public void onClose() {
         super.onClose();
         if (!saveOnClose) {
@@ -528,14 +468,14 @@ public class ESModConfigScreen extends Screen {
         boolean inGame = Minecraft.getInstance().level != null;
 
         Set<SyncType> syncTypes = new HashSet<>();
-        for (Map.Entry<Component, Tab> componentTabEntry : tabs.entrySet()) {
+        for (Map.Entry<ConfigCategory, Tab> componentTabEntry : tabs.entrySet()) {
             for (Map.Entry<Component, List<ConfigEntry>> componentListEntry : componentTabEntry.getValue().configShown().entrySet()) {
                 for (ConfigEntry configEntry : componentListEntry.getValue()) {
                     boolean valueChange = configEntry.isValueChanged();
                     isChanged |= valueChange;
                     needRestart |= valueChange && configEntry.shouldRestart(inGame);
                     needGameRestart |= valueChange && configEntry.shouldRestart(false);
-                    if (valueChange && configEntry instanceof ConfigEntry.SpecEntry<?> specEntry) {
+                    if (valueChange && configEntry instanceof SpecEntry<?> specEntry) {
                         specEntry.getSpec().clearCache();
                     }
                     if (valueChange) {
@@ -607,39 +547,6 @@ public class ESModConfigScreen extends Screen {
     @Override
     public @NonNull Font getFont() {
         return font;
-    }
-
-    public static class TooltipConfirmScreen extends ConfirmScreen {
-        private TooltipConfirmScreen(BooleanConsumer callback, Component title, Component message, Component yesButton, Component noButton) {
-            super(callback, title, message, yesButton, noButton);
-        }
-
-        @Override
-        protected void addButtons(@NonNull LinearLayout layout) {
-            super.addButtons(layout);
-            this.noButton.setTooltip(Tooltip.create(ConfigurationScreen.RESTART_NO_TOOLTIP));
-        }
-
-        public static void onDisconnect() {
-            Minecraft minecraft = Minecraft.getInstance();
-            boolean flag = minecraft.isLocalServer();
-            ServerData serverdata = minecraft.getCurrentServer();
-            minecraft.level.disconnect(ClientLevel.DEFAULT_QUIT_MESSAGE);
-            if (flag) {
-                minecraft.disconnectWithSavingScreen();
-            } else {
-                minecraft.disconnectWithProgressScreen();
-            }
-
-            TitleScreen titlescreen = new TitleScreen();
-            if (flag) {
-                minecraft.setScreenAndShow(titlescreen);
-            } else if (serverdata != null && serverdata.isRealm()) {
-                minecraft.setScreenAndShow(new RealmsMainScreen(titlescreen));
-            } else {
-                minecraft.setScreenAndShow(new JoinMultiplayerScreen(titlescreen));
-            }
-        }
     }
 
 }

@@ -103,7 +103,7 @@ public class RiverBiomeResolver {
      * <p>Use the vanilla Climate.Sampler sampling pipeline instead of directly
      * evaluating DensityFunctions.
      *
-     * <p>Climate.Sampler#sample is the entry point used by Minecraft for climate
+     * <p>{@link Climate.Sampler#sample(int, int, int)} is the entry point used by Minecraft for climate
      * sampling and may be modified by world-generation or climate-related mods.
      * Directly calling sampler.temperature().compute() and other DensityFunctions
      * bypasses these modifications and can cause compatibility issues.

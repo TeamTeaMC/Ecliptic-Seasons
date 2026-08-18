@@ -9,6 +9,10 @@ import java.util.Locale;
 public interface ITranslatable extends StringRepresentable {
     Component getTranslation();
 
+    default Component getDescription() {
+        return null;
+    }
+
     default String getName(){
         return this.toString().toLowerCase(Locale.ROOT);
     }

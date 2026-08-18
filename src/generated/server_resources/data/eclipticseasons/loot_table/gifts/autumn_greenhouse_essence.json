@@ -2,6 +2,12 @@
   "type": "minecraft:gift",
   "pools": [
     {
+      "conditions": [
+        {
+          "condition": "eclipticseasons:seasonal_simulation_level",
+          "level": "agriculture"
+        }
+      ],
       "entries": [
         {
           "type": "minecraft:item",

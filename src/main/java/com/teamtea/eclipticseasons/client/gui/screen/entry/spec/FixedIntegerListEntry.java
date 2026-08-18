@@ -1,9 +1,13 @@
-package com.teamtea.eclipticseasons.client.gui.screen.entry;
+package com.teamtea.eclipticseasons.client.gui.screen.entry.spec;
 
 import com.teamtea.eclipticseasons.client.gui.screen.ESModConfigScreen;
-import com.teamtea.eclipticseasons.client.gui.screen.entry.base.ConfigEntry;
+import com.teamtea.eclipticseasons.client.gui.screen.entry.base.SpecEntry;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.components.*;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.components.StringWidget;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.layouts.GridLayout;
 import net.minecraft.client.gui.layouts.LayoutElement;
 import net.minecraft.network.chat.Component;
@@ -12,7 +16,7 @@ import net.neoforged.neoforge.common.ModConfigSpec;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FixedIntegerListEntry extends ConfigEntry.SpecEntry<List<? extends Integer>> {
+public class FixedIntegerListEntry extends SpecEntry<List<? extends Integer>> {
     private final ModConfigSpec.Range<Integer> range;
 
     public FixedIntegerListEntry(ModConfigSpec.ConfigValue<List<? extends Integer>> spec, ModConfigSpec.Range<Integer> integerRange) {
@@ -40,7 +44,8 @@ public class FixedIntegerListEntry extends ConfigEntry.SpecEntry<List<? extends 
         for (int i = 0; i < integers.size(); i++) {
             int possibleValue = integers.get(i);
             final EditBox box = new EditBox(screen.getFont(), Button.DEFAULT_WIDTH, Button.DEFAULT_HEIGHT, Component.empty());
-            box.setWidth(width * 2 / 3);
+            int widthBox = width * 2 / 3 - 2;
+            box.setWidth(widthBox);
             box.setEditable(true);
             box.setValue(possibleValue + "");
             int finalI = i;
