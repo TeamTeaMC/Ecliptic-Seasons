@@ -1,4 +1,10 @@
 {
+  "neoforge:conditions": [
+    {
+      "type": "eclipticseasons:seasonal_simulation_level",
+      "level": "agriculture"
+    }
+  ],
   "parent": "eclipticseasons:main/greenhouse_core_container",
   "criteria": {
     "core_require_autumn": {

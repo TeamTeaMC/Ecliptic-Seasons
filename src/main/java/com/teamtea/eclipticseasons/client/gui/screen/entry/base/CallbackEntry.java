@@ -1,47 +1,58 @@
 package com.teamtea.eclipticseasons.client.gui.screen.entry.base;
 
-import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.client.gui.screen.ESModConfigScreen;
 import com.teamtea.eclipticseasons.config.sync.SyncType;
-import it.unimi.dsi.fastutil.booleans.BooleanConsumer;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.components.AbstractWidget;
-import net.minecraft.client.gui.components.CycleButton;
-import net.minecraft.client.gui.components.StringWidget;
 import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.layouts.LayoutElement;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
-import java.util.function.BooleanSupplier;
-import java.util.function.Function;
+import java.util.Objects;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
-public class CallbackEntry extends ConfigEntry {
-    CycleButton.OnValueChange<Boolean> consumer;
-    final BooleanSupplier base;
-    protected final Component hoveredInfo;
+/**
+ * An entry whose value is read and written through {@link Supplier} / {@link Consumer},
+ * rather than a {@link ModConfigSpec.ConfigValue}.
+ */
+public abstract class CallbackEntry<T> extends ConfigEntry {
+    protected final Supplier<T> getter;
+    protected final Consumer<T> setter;
+    protected T nowValue;
+
+    protected final String text;
+
     @Accessors(chain = true)
     @Setter
     protected ModConfigSpec.RestartType restartType = ModConfigSpec.RestartType.NONE;
+
     @Accessors(chain = true)
     @Setter
     @Getter
     protected SyncType syncType = SyncType.COMMON;
-    boolean nowValue;
 
-    public CallbackEntry(String text, String hoveredText, BooleanSupplier base, CycleButton.OnValueChange<Boolean> consumer) {
+    protected CallbackEntry(String text, Supplier<T> getter, Consumer<T> setter) {
         super(text);
-        this.consumer = consumer;
-        this.base = base;
-        this.hoveredInfo = Component.translatable(hoveredText);
-        this.nowValue = base.getAsBoolean();
+        this.text = text;
+        this.getter = getter;
+        this.setter = setter;
+        this.nowValue = getter.get();
+    }
+
+    @Override
+    public String getSearchText() {
+        return label.getString() + " " + text;
     }
 
     @Override
     public boolean isValueChanged() {
-        return base.getAsBoolean() != nowValue;
+        return !Objects.equals(getter.get(), nowValue);
     }
 
     @Override
@@ -54,19 +65,28 @@ public class CallbackEntry extends ConfigEntry {
     }
 
     @Override
-    public AbstractWidget build(ESModConfigScreen screen, int x, int y, int width) {
-        CycleButton.Builder<Boolean> booleanBuilder = CycleButton.onOffBuilder(nowValue);
-        if (syncType == SyncType.CLIENT) {
-            booleanBuilder.withSprite(
-                    (cycleButton, aBoolean) ->
-                            CLIENT_SPRITES.get(cycleButton.isActive(), cycleButton.isHoveredOrFocused()));
-        }
-        CycleButton<Boolean> booleanCycleButton = booleanBuilder
-                .create(x, y, width, 20, this.label, (b, v) -> {
-                    this.nowValue = v;
-                    consumer.onValueChange(b, v);
-                });
-        booleanCycleButton.setTooltip(Tooltip.create(label.copy().withStyle(ChatFormatting.BOLD).append("\n\n").append(hoveredInfo.copy().withStyle(style -> style.withBold(false)))));
-        return booleanCycleButton;
+    public int getColumn() {
+        return 2;
     }
+
+    @Override
+    public LayoutElement build(ESModConfigScreen screen, int x, int y, int width) {
+        LayoutElement layoutElement = buildLayout(screen, x, y, width);
+
+        MutableComponent comment = buildTooltipComment(text + ".tooltip", Component.empty());
+        applyTooltip(layoutElement, label, comment);
+        return layoutElement;
+    }
+
+    @Override
+    protected <E> Tooltip getTooltipSupplier(E value) {
+        return Tooltip.create(label.copy().withStyle(ChatFormatting.BOLD)
+                .append(buildTooltipComment(text + ".tooltip", Component.empty()).copy().withStyle(style -> style.withBold(false))));
+    }
+
+    public LayoutElement buildLayout(ESModConfigScreen screen, int x, int y, int width) {
+        return buildLabelAndControl(screen, label, buildModConfigSpec(screen, x, y, width), width);
+    }
+
+    public abstract AbstractWidget buildModConfigSpec(ESModConfigScreen screen, int x, int y, int width);
 }

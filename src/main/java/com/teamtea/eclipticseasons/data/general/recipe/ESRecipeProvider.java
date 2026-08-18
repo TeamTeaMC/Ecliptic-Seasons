@@ -3,6 +3,8 @@ package com.teamtea.eclipticseasons.data.general.recipe;
 
 import com.teamtea.eclipticseasons.common.registry.BlockRegistry;
 import com.teamtea.eclipticseasons.common.registry.ItemRegistry;
+import com.teamtea.eclipticseasons.api.constant.simulation.SeasonalSimulationLevel;
+import com.teamtea.eclipticseasons.common.resource.conditions.SeasonalSimulationLevelCondition;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.component.DataComponents;
@@ -52,6 +54,8 @@ public class ESRecipeProvider extends VanillaRecipeProvider {
     @Override
     protected void buildRecipes() {
         HolderLookup.RegistryLookup<Item> items = registries.lookupOrThrow(Registries.ITEM);
+        SeasonalSimulationLevelCondition condition = SeasonalSimulationLevelCondition.builder().level(SeasonalSimulationLevel.AGRICULTURE).build();
+        SeasonalSimulationLevelCondition surviveCondition = SeasonalSimulationLevelCondition.builder().level(SeasonalSimulationLevel.SURVIVAL).build();
 
         ShapedRecipeBuilder.shaped(items, RecipeCategory.DECORATIONS, ItemRegistry.calendar_item.value())
                 .define('x', Items.PAPER)
@@ -138,7 +142,7 @@ public class ESRecipeProvider extends VanillaRecipeProvider {
                 .group("hyetometer")
                 .unlockedBy("has_glass_bottle", has(Items.GLASS_BOTTLE))
                 .unlockedBy("self", has(ItemRegistry.hyetometer.get()))
-                .save(output);
+                .save(output.withConditions(surviveCondition));
 
 
         ShapedRecipeBuilder.shaped(items, RecipeCategory.TOOLS, ItemRegistry.thermometer.get())
@@ -149,7 +153,7 @@ public class ESRecipeProvider extends VanillaRecipeProvider {
                 .group("thermometer")
                 .unlockedBy("has_glass", has(Items.GLASS_BOTTLE))
                 .unlockedBy("self", has(ItemRegistry.thermometer.get()))
-                .save(output);
+                .save(output.withConditions(surviveCondition));
 
         ShapedRecipeBuilder.shaped(items, RecipeCategory.TOOLS, ItemRegistry.hygrometer.get())
                 .define('x', Tags.Items.GEMS_AMETHYST)
@@ -173,7 +177,7 @@ public class ESRecipeProvider extends VanillaRecipeProvider {
                 .pattern("z  ")
                 .group("growth_detector")
                 .unlockedBy("has_glass", has(Tags.Items.GLASS_BLOCKS))
-                .save(output);
+                .save(output.withConditions(condition));
 
         ShapedRecipeBuilder.shaped(items, RecipeCategory.TOOLS, ItemRegistry.seasonal_prayer_scroll_item.get())
                 .define('x', Tags.Items.SEEDS)
@@ -182,7 +186,7 @@ public class ESRecipeProvider extends VanillaRecipeProvider {
                 .pattern("xy")
                 .group("seasonal_prayer_scroll")
                 .unlockedBy("has_seeds", has(Tags.Items.SEEDS))
-                .save(output);
+                .save(output.withConditions(condition));
 
         ShapedRecipeBuilder.shaped(items, RecipeCategory.TOOLS, ItemRegistry.greenhouse_core_container_item.get())
                 .define('x', Tags.Items.GLASS_BLOCKS_TINTED)
@@ -192,7 +196,7 @@ public class ESRecipeProvider extends VanillaRecipeProvider {
                 .pattern("zxz")
                 .group("greenhouse_core_frame")
                 .unlockedBy("has_amethyst", has(Tags.Items.GEMS_AMETHYST))
-                .save(output);
+                .save(output.withConditions(condition));
 
         ShapedRecipeBuilder.shaped(items, RecipeCategory.TOOLS, ItemRegistry.block_in_wooden_grate_block_item.get(), 4)
                 .define('r', ItemTags.LOGS)
@@ -201,35 +205,35 @@ public class ESRecipeProvider extends VanillaRecipeProvider {
                 .pattern(" r ")
                 .group("block_in_wooden_grate_block")
                 .unlockedBy("has_logs", has(ItemTags.LOGS))
-                .save(output);
+                .save(output.withConditions(condition));
 
         ShapelessRecipeBuilder.shapeless(items, RecipeCategory.TOOLS, ItemRegistry.spring_greenhouse_core_item.get())
                 .requires(ItemRegistry.spring_greenhouse_essence_item.get())
                 .requires(ItemRegistry.greenhouse_core_container_item.get())
                 .group("spring_greenhouse_core")
                 .unlockedBy("has_amethyst", has(Tags.Items.GEMS_AMETHYST))
-                .save(output);
+                .save(output.withConditions(condition));
 
         ShapelessRecipeBuilder.shapeless(items, RecipeCategory.TOOLS, ItemRegistry.summer_greenhouse_core_item.get())
                 .requires(ItemRegistry.summer_greenhouse_essence_item.get())
                 .requires(ItemRegistry.greenhouse_core_container_item.get())
                 .group("summer_greenhouse_core")
                 .unlockedBy("has_amethyst", has(Tags.Items.GEMS_AMETHYST))
-                .save(output);
+                .save(output.withConditions(condition));
 
         ShapelessRecipeBuilder.shapeless(items, RecipeCategory.TOOLS, ItemRegistry.autumn_greenhouse_core_item.get())
                 .requires(ItemRegistry.autumn_greenhouse_essence_item.get())
                 .requires(ItemRegistry.greenhouse_core_container_item.get())
                 .group("autumn_greenhouse_core")
                 .unlockedBy("has_amethyst", has(Tags.Items.GEMS_AMETHYST))
-                .save(output);
+                .save(output.withConditions(condition));
 
         ShapelessRecipeBuilder.shapeless(items, RecipeCategory.TOOLS, ItemRegistry.winter_greenhouse_core_item.get())
                 .requires(ItemRegistry.winter_greenhouse_essence_item.get())
                 .requires(ItemRegistry.greenhouse_core_container_item.get())
                 .group("winter_greenhouse_core")
                 .unlockedBy("has_amethyst", has(Tags.Items.GEMS_AMETHYST))
-                .save(output);
+                .save(output.withConditions(condition));
 
 
         if (ModList.get().isLoaded("patchouli")) {
@@ -253,7 +257,7 @@ public class ESRecipeProvider extends VanillaRecipeProvider {
                 .define('C', Items.WATER_BUCKET)
                 .define('I', Items.IRON_INGOT)
                 .unlockedBy("has_water_bucket", has(Items.WATER_BUCKET))
-                .save(output);
+                .save(output.withConditions(condition));
 
         ShapedRecipeBuilder.shaped(items, RecipeCategory.BUILDING_BLOCKS, BlockRegistry.dehumidifier.get())
                 .pattern("PPP")
@@ -264,7 +268,7 @@ public class ESRecipeProvider extends VanillaRecipeProvider {
                 .define('N', ItemTags.WOODEN_SLABS)
                 .define('S', Items.IRON_NUGGET)
                 .unlockedBy("has_hay_block", has(Blocks.HAY_BLOCK))
-                .save(output);
+                .save(output.withConditions(condition));
 
         ShapedRecipeBuilder.shaped(items, RecipeCategory.REDSTONE, BlockRegistry.season_sensor.get())
                 .pattern("GCG")

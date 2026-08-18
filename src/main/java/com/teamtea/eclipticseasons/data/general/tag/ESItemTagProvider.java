@@ -5,11 +5,18 @@ import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.crop.CropHumidityType;
 import com.teamtea.eclipticseasons.api.constant.crop.CropSeasonType;
 import com.teamtea.eclipticseasons.api.constant.tag.ESItemTags;
+import com.teamtea.eclipticseasons.common.registry.ItemRegistry;
+import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
+import net.minecraft.data.tags.TagAppender;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.tags.TagEntry;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.common.data.ItemTagsProvider;
 
 import java.util.concurrent.CompletableFuture;
@@ -42,10 +49,10 @@ public final class ESItemTagProvider extends ItemTagsProvider {
         tag(CropHumidityType.DRY_AVERAGE.getTag()).add(Items.CACTUS);
         tag(CropHumidityType.DRY_MOIST.getTag()).add(Items.SWEET_BERRIES);
         tag(CropHumidityType.DRY_HUMID.getTag()).add(Items.MELON_SEEDS);
-        tag(CropHumidityType.AVERAGE_HUMID.getTag()).add(Items.GLOW_BERRIES,Items.SUGAR_CANE);
+        tag(CropHumidityType.AVERAGE_HUMID.getTag()).add(Items.GLOW_BERRIES, Items.SUGAR_CANE);
         tag(CropHumidityType.AVERAGE_MOIST.getTag()).add(Items.WHEAT_SEEDS, Items.CARROT, Items.BEETROOT_SEEDS, Items.POTATO, Items.PUMPKIN_SEEDS);
         tag(CropHumidityType.AVERAGE_MOIST.getTag()).add(Items.COCOA_BEANS, Items.KELP, Items.TORCHFLOWER_SEEDS);
-        tag(CropHumidityType.MOIST_HUMID.getTag()).add(Items.BAMBOO).add(Items.BROWN_MUSHROOM,Items.RED_MUSHROOM);
+        tag(CropHumidityType.MOIST_HUMID.getTag()).add(Items.BAMBOO).add(Items.BROWN_MUSHROOM, Items.RED_MUSHROOM);
 
         // others
         for (CropSeasonType cropSeasonType : CropSeasonType.collectValues()) {
@@ -55,13 +62,42 @@ public final class ESItemTagProvider extends ItemTagsProvider {
             tag(cropHumidityType.getTag());
         }
 
-        //tag(CropHumidityType.AVERAGE_MOIST.getTag()).addOptional(fd_rl("tomato_seeds")).addOptional(fd_rl("cabbage_seeds")).addOptional(fd_rl("onion"));
-        //tag(CropHumidityType.MOIST_HUMID.getTag()).addOptional(fd_rl("rice")).addOptional(fd_rl("brown_mushroom_colony")).addOptional(fd_rl("red_mushroom_colony"));
+        // tag(CropHumidityType.AVERAGE_MOIST.getTag()).addOptional(fd_rl("tomato_seeds")).addOptional(fd_rl("cabbage_seeds")).addOptional(fd_rl("onion"));
+        // tag(CropHumidityType.MOIST_HUMID.getTag()).addOptional(fd_rl("rice")).addOptional(fd_rl("brown_mushroom_colony")).addOptional(fd_rl("red_mushroom_colony"));
 
         tag(ESItemTags.COOLING_ITEMS).add(Items.SNOWBALL, Items.SNOW_BLOCK, Items.ICE, Items.BLUE_ICE, Items.PACKED_ICE);
         tag(ESItemTags.HEAT_PROTECTIVE_HELMETS);
         tag(ESItemTags.UNAFFECTED_BY_SEASONS);
         tag(ESItemTags.UNAFFECTED_BY_HUMIDITY);
+        tag(ESItemTags.AGRICULTURE_CONTENT).add(
+                ItemRegistry.growth_detector,
+                ItemRegistry.greenhouse_core_container_item,
+                ItemRegistry.spring_greenhouse_core_item,
+                ItemRegistry.summer_greenhouse_core_item,
+                ItemRegistry.autumn_greenhouse_core_item,
+                ItemRegistry.winter_greenhouse_core_item,
+                ItemRegistry.spring_greenhouse_essence_item,
+                ItemRegistry.summer_greenhouse_essence_item,
+                ItemRegistry.autumn_greenhouse_essence_item,
+                ItemRegistry.winter_greenhouse_essence_item,
+                ItemRegistry.seasonal_prayer_scroll_item,
+                ItemRegistry.block_in_wooden_grate_block_item,
+                ItemRegistry.humidity_tank_item,
+                ItemRegistry.dehumidifier_item
+                // ItemRegistry.calendar_item,
+                // ItemRegistry.season_sensor_item,
+                // ItemRegistry.broom,
+                // ItemRegistry.salt_wand,
+                // ItemRegistry.ice_wand,
+                // ItemRegistry.hygrometer,
+                // ItemRegistry.snowless_hometown,
+                // ItemRegistry.bamboo_wind_chimes_item,
+                // ItemRegistry.paper_wind_chimes_item,
+                // ItemRegistry.wind_chimes_item,
+                // ItemRegistry.pinwheel_orange_item,
+                // ItemRegistry.pinwheel_lime_item,
+                // ItemRegistry.pinwheel_blue_item
+        );
     }
 
 
@@ -71,5 +107,74 @@ public final class ESItemTagProvider extends ItemTagsProvider {
 
     public Identifier fd_rl(String name) {
         return srl("farmersdelight", name);
+    }
+
+    protected record Appender(TagAppender<Item> app) implements TagAppender<Item> {
+        @Override
+        public Appender add(ResourceKey<Item> element) {
+            app.add(element);
+            return this;
+        }
+
+        @Override
+        public Appender addOptional(ResourceKey<Item> element) {
+            app.addOptional(element);
+            return this;
+        }
+
+        @Override
+        public Appender addTag(TagKey<Item> tag) {
+            app.addTag(tag);
+            return this;
+        }
+
+        @Override
+        public Appender addOptionalTag(TagKey<Item> tag) {
+            app.addOptionalTag(tag);
+            return this;
+        }
+
+        @Override
+        public Appender add(TagEntry entry) {
+            app.add(entry);
+            return this;
+        }
+
+        @Override
+        public Appender replace(boolean value) {
+            app.replace(value);
+            return this;
+        }
+
+        @Override
+        public Appender remove(ResourceKey<Item> element) {
+            app.remove(element);
+            return this;
+        }
+
+        @Override
+        public Appender remove(TagKey<Item> tag) {
+            app.remove(tag);
+            return this;
+        }
+
+        public Appender add(Item... items) {
+            for (Item item : items) {
+                add(BuiltInRegistries.ITEM.wrapAsHolder(item).getKey());
+            }
+            return this;
+        }
+
+        public Appender add(Holder<Item>... items) {
+            for (Holder<Item> item : items) {
+                add(item.getKey());
+            }
+            return this;
+        }
+    }
+
+    @Override
+    protected Appender tag(TagKey<Item> tag) {
+        return new Appender(super.tag(tag));
     }
 }

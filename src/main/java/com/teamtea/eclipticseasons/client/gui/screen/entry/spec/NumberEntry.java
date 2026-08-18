@@ -1,16 +1,17 @@
-package com.teamtea.eclipticseasons.client.gui.screen.entry;
+package com.teamtea.eclipticseasons.client.gui.screen.entry.spec;
 
 import com.teamtea.eclipticseasons.client.gui.screen.ESModConfigScreen;
-import com.teamtea.eclipticseasons.client.gui.screen.entry.base.ConfigEntry;
+import com.teamtea.eclipticseasons.client.gui.screen.entry.base.SpecEntry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.OptionInstance;
-import net.minecraft.client.gui.components.*;
-import net.minecraft.client.gui.layouts.GridLayout;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.layouts.LayoutElement;
 import net.minecraft.network.chat.Component;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
-public abstract class NumberEntry<T extends Number> extends ConfigEntry.SpecEntry<T> {
+public abstract class NumberEntry<T extends Number> extends SpecEntry<T> {
     public NumberEntry(ModConfigSpec.ConfigValue<T> spec) {
         super(spec);
     }
@@ -27,21 +28,8 @@ public abstract class NumberEntry<T extends Number> extends ConfigEntry.SpecEntr
 
     @Override
     public LayoutElement buildLayout(ESModConfigScreen screen, int x, int y, int width) {
-        // LinearLayout linearLayout = new LinearLayout(x, y, LinearLayout.Orientation.HORIZONTAL);
-        net.minecraft.client.gui.layouts.GridLayout gridLayout = new net.minecraft.client.gui.layouts.GridLayout();
-        gridLayout.defaultCellSetting().paddingHorizontal(4).paddingBottom(4).alignHorizontallyCenter();
-        GridLayout.RowHelper helper = gridLayout.createRowHelper(2);
-        StringWidget s=new StringWidget(label,screen.getFont());
-        s.setWidth(width+4);
-        s.setHeight(20);
-        AbstractWidget abstractWidget = buildModConfigSpec(screen, x, y, width);
-        abstractWidget.setWidth(width);
-        helper.addChild(s);
-        helper.addChild(abstractWidget);
-
-        return gridLayout;
+        return buildLabelAndControl(screen, label, buildModConfigSpec(screen, x, y, width), width);
     }
-
 
     public static class TextNumberEntry<T extends Number> extends NumberEntry<T> {
         public TextNumberEntry(ModConfigSpec.ConfigValue<T> spec) {

@@ -1,13 +1,17 @@
-package com.teamtea.eclipticseasons.client.gui.screen.entry;
+package com.teamtea.eclipticseasons.client.gui.screen.entry.spec;
 
 import com.google.common.base.CaseFormat;
 import com.teamtea.eclipticseasons.api.misc.ITranslatable;
 import com.teamtea.eclipticseasons.client.gui.screen.ESModConfigScreen;
-import com.teamtea.eclipticseasons.client.gui.screen.SuggestWidget;
-import com.teamtea.eclipticseasons.client.gui.screen.entry.base.ConfigEntry;
+import com.teamtea.eclipticseasons.client.gui.screen.widget.SuggestWidget;
+import com.teamtea.eclipticseasons.client.gui.screen.entry.base.SpecEntry;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.components.*;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.CycleButton;
+import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.components.StringWidget;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.layouts.GridLayout;
 import net.minecraft.client.gui.layouts.LayoutElement;
 import net.minecraft.core.Registry;
@@ -23,12 +27,15 @@ import net.neoforged.neoforge.common.ModConfigSpec;
 import org.jspecify.annotations.NonNull;
 
 import java.lang.ref.WeakReference;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
-public class SuggestedListStringEntry extends ConfigEntry.SpecEntry<List<? extends String>> {
+public class SuggestedListStringEntry extends SpecEntry<List<? extends String>> {
 
     private final Set<WK> possibleValues;
-    // private @Nullable Predicate<String> validTest;
 
     public SuggestedListStringEntry(ModConfigSpec.ConfigValue<List<? extends String>> spec, Set<WK> possibleValues) {
         super(spec);
@@ -64,7 +71,7 @@ public class SuggestedListStringEntry extends ConfigEntry.SpecEntry<List<? exten
                 wks.add(new WK(s, getName(Identifier.tryParse(s), rk)));
             }
             if (Registries.DIMENSION_TYPE.equals(rk)) {
-                for (var idk : List.of(Level.OVERWORLD,Level.NETHER, Level.END)) {
+                for (var idk : List.of(Level.OVERWORLD, Level.NETHER, Level.END)) {
                     var identifier = idk.identifier();
                     wks.add(new WK(identifier.toString(), getName(identifier, rk)));
                 }
@@ -89,22 +96,22 @@ public class SuggestedListStringEntry extends ConfigEntry.SpecEntry<List<? exten
         return new SuggestedListStringEntry(spec, wks);
     }
 
-
     @Override
     public LayoutElement buildLayout(ESModConfigScreen screen, int x, int y, int width) {
-        net.minecraft.client.gui.layouts.GridLayout gridLayout = new net.minecraft.client.gui.layouts.GridLayout();
+        GridLayout gridLayout = new GridLayout();
         gridLayout.defaultCellSetting().paddingHorizontal(4).paddingBottom(3).alignHorizontallyCenter();
         GridLayout.RowHelper helper = gridLayout.createRowHelper(3);
         helper.addChild(new StringWidget(Component.empty().append(label).withStyle(ChatFormatting.ITALIC), screen.getFont()), 3);
         List<String> strings = new ArrayList<>(spec.get());
         if (possibleValues != null) {
+            int widthBox = width * 2 / 3 - 2;
             if (possibleValues.size() < 26) {
                 for (WK possibleValue : possibleValues) {
                     MutableComponent literal = Component.translatable(possibleValue.tipKey())
                             .withStyle(strings.contains(possibleValue.value()) ? ChatFormatting.WHITE : ChatFormatting.GRAY);
                     List<String> finalStrings = strings;
                     CycleButton<Boolean> cycleButton = CycleButton.onOffBuilder(strings.contains(possibleValue.value())).create(
-                            x, y, width * 2 / 3, 20, literal, (button, value) -> {
+                            x, y, widthBox, 20, literal, (button, value) -> {
                                 literal.withStyle(value ? ChatFormatting.WHITE : ChatFormatting.GRAY);
                                 if (value && !finalStrings.contains(possibleValue.value())) {
                                     finalStrings.add(possibleValue.value());
@@ -112,7 +119,6 @@ public class SuggestedListStringEntry extends ConfigEntry.SpecEntry<List<? exten
                                     finalStrings.remove(possibleValue.value());
                                 }
                                 spec.set(finalStrings);
-                                // spec.save();
                             }
                     );
                     cycleButton.setTooltip(Tooltip.create(Component.translatable(possibleValue.tipKey()).append(" (").append(possibleValue.value).append(")")));
@@ -121,7 +127,6 @@ public class SuggestedListStringEntry extends ConfigEntry.SpecEntry<List<? exten
             } else {
                 ArrayList<String> strings1 = new ArrayList<>(new LinkedHashSet<>(strings));
                 strings1.removeIf(String::isBlank);
-                // strings1.removeIf(String::isEmpty);
                 if (strings1.size() != strings.size()) {
                     strings = strings1;
                     spec.set(strings);
@@ -130,9 +135,8 @@ public class SuggestedListStringEntry extends ConfigEntry.SpecEntry<List<? exten
                 while (strings1.size() < 3);
                 for (int i = 0; i < strings1.size(); i++) {
                     String string = strings1.get(i);
-                    createNewBox(screen, width, string, helper, i, strings);
+                    createNewBox(screen, widthBox, string, helper, i, strings);
                 }
-
             }
         }
         return gridLayout;
@@ -146,7 +150,6 @@ public class SuggestedListStringEntry extends ConfigEntry.SpecEntry<List<? exten
         SuggestWidget suggestWidget = screen.getGlobalSuggestWidget();
         editBox.setResponder(text -> {
             List<String> matches = getSuggestions(text);
-            // suggestWidget.setPosition(editBox.getX(), editBox.getY() + editBox.getHeight());
             suggestWidget.setWidth(200);
             suggestWidget.setEditBox(editBox);
             suggestWidget.setSuggestions(matches);
@@ -165,7 +168,6 @@ public class SuggestedListStringEntry extends ConfigEntry.SpecEntry<List<? exten
         });
         editBox.setTooltip(Tooltip.create(Component.empty()));
     }
-
 
     private @NonNull List<String> getSuggestions(String text) {
         return possibleValues.stream()
@@ -189,7 +191,7 @@ public class SuggestedListStringEntry extends ConfigEntry.SpecEntry<List<? exten
         private final WeakReference<ESModConfigScreen> screen;
 
         public FocuseListnerEditBox(ESModConfigScreen screen, int width) {
-            super(screen.getFont(), width * 2 / 3, 20, Component.empty());
+            super(screen.getFont(), width, 20, Component.empty());
             this.screen = new WeakReference<>(screen);
         }
 

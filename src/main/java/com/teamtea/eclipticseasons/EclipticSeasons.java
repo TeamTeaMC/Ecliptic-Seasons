@@ -48,6 +48,8 @@ public class EclipticSeasons {
         modEventBus.addListener(this::gatherData);
         modEventBus.addListener(this::gatherData2);
         modEventBus.addListener(CompatModule::onInterModEnqueue);
+
+        ResourceConditionRegistry.CONDITION_DEFERRED_REGISTER.register(modEventBus);
         BlockRegistry.BLOCK_DEFERRED_REGISTER.register(modEventBus);
         ItemRegistry.ITEM_DEFERRED_REGISTER.register(modEventBus);
         BlockEntityRegistry.BLOCK_ENTITY_TYPE_DEFERRED_REGISTER.register(modEventBus);

@@ -10,6 +10,9 @@ public class ESItemTags {
     public static final TagKey<Item> HEAT_PROTECTIVE_HELMETS = create("heat_protective_helmets");
     public static final TagKey<Item> UNAFFECTED_BY_SEASONS = create(("crops/unaffected_by_seasons"));
     public static final TagKey<Item> UNAFFECTED_BY_HUMIDITY = create(("crops/unaffected_by_humidity"));
+
+    public static final TagKey<Item> AGRICULTURE_CONTENT = create("agriculture_content");
+
     public static TagKey<Item> create(String s) {
         return TagKey.create(Registries.ITEM, EclipticSeasons.rl(s));
     }

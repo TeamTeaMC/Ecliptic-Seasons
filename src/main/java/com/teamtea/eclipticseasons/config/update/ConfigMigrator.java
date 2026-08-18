@@ -3,6 +3,8 @@ package com.teamtea.eclipticseasons.config.update;
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
+import com.teamtea.eclipticseasons.api.constant.simulation.SeasonalSimulationLevel;
+import com.teamtea.eclipticseasons.config.CommonConfig;
 import com.teamtea.eclipticseasons.config.sync.SyncType;
 import lombok.Builder;
 import net.minecraft.util.Util;
@@ -11,6 +13,7 @@ import net.neoforged.fml.loading.FMLPaths;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -131,6 +134,19 @@ public class ConfigMigrator {
 
 
     public static void init() {
+        // SeasonalSimulationLevel level = SeasonalSimulationLevel.CUSTOM;
+        // try (CommentedFileConfig config = CommentedFileConfig.builder(FMLPaths.CONFIGDIR.get()
+        //                 .resolve(SyncType.COMMON.configName(EclipticSeasonsApi.MODID)))
+        //         .preserveInsertionOrder()
+        //         .build()) {
+        //     config.load();
+        //     Object o = config.get(CommonConfig.Season.seasonalSimulationLevel.getPath());
+        //     if (o != null)
+        //         level = SeasonalSimulationLevel.valueOf(o.toString().toUpperCase(Locale.ROOT));
+        // } catch (Exception _) {
+        // }
+        //
+        // SeasonalSimulationLevel finalLevel = level;
         CONFIG_MIGRATIONS.forEach((syncType, migrations) -> {
             Path fileName = FMLPaths.CONFIGDIR.get()
                     .resolve(syncType.configName(EclipticSeasonsApi.MODID));
@@ -150,6 +166,8 @@ public class ConfigMigrator {
                         EclipticSeasons.LOGGER.info("Applied config migration: {}", migration);
                     }
                 }
+
+                // changed |= SimulationUpdater.initialCheck(finalLevel, syncType, config);
 
                 if (changed) {
                     config.save();
