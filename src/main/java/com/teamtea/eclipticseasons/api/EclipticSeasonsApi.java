@@ -1,9 +1,10 @@
 package com.teamtea.eclipticseasons.api;
 
 import com.teamtea.eclipticseasons.api.constant.biome.Humidity;
+import com.teamtea.eclipticseasons.api.constant.simulation.SeasonalSimulationLevel;
+import com.teamtea.eclipticseasons.api.constant.solar.gregorian.GregorianMonth;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
-import com.teamtea.eclipticseasons.api.constant.solar.gregorian.GregorianMonth;
 import com.teamtea.eclipticseasons.api.data.season.SpecialDays;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import net.minecraft.core.BlockPos;
@@ -174,4 +175,6 @@ public interface EclipticSeasonsApi extends ESApiLegacy {
     Humidity getAdjustedHumidity(ServerLevel level, BlockPos pos);
 
     List<Holder<SpecialDays>> getSpecialDays(Level level, BlockPos pos);
+
+    SeasonalSimulationLevel getSeasonalSimulationLevel();
 }

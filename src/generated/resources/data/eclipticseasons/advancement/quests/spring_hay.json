@@ -1,4 +1,10 @@
 {
+  "neoforge:conditions": [
+    {
+      "type": "eclipticseasons:seasonal_simulation_level",
+      "level": "agriculture"
+    }
+  ],
   "parent": "eclipticseasons:quests/spring_bread",
   "criteria": {
     "core_require": {

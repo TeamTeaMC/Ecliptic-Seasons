@@ -2,6 +2,8 @@ package com.teamtea.eclipticseasons.common.registry;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
+import com.teamtea.eclipticseasons.api.constant.simulation.SeasonalSimulationLevel;
+import com.teamtea.eclipticseasons.api.constant.tag.ESItemTags;
 import com.teamtea.eclipticseasons.api.data.misc.ESSortInfo;
 import com.teamtea.eclipticseasons.api.data.season.SeasonCycle;
 import com.teamtea.eclipticseasons.api.data.season.SpecialDays;
@@ -16,28 +18,23 @@ import com.teamtea.eclipticseasons.api.data.crop.CropGrowControlBuilder;
 import com.teamtea.eclipticseasons.api.data.quest.SeasonQuest;
 import com.teamtea.eclipticseasons.api.data.weather.CustomRainBuilder;
 import com.teamtea.eclipticseasons.api.data.weather.CustomSnowTerm;
+// import com.teamtea.eclipticseasons.api.data.weather.WeatherDimension;
 import com.teamtea.eclipticseasons.api.data.weather.special_effect.WeatherEffect;
-import com.teamtea.eclipticseasons.common.block.BlockInCopperGrateBlock;
+import com.teamtea.eclipticseasons.api.util.EclipticUtil;
+import com.teamtea.eclipticseasons.common.block.IceOrSnowCauldronBlock;
 import com.teamtea.eclipticseasons.common.resource.FakeResourceManagerHelperUtil;
 import com.teamtea.eclipticseasons.compat.CompatModule;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import com.teamtea.eclipticseasons.config.StartConfig;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.packs.PackSelectionConfig;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.repository.Pack;
 import net.minecraft.server.packs.repository.PackSource;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.item.*;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.loading.FMLLoader;
@@ -46,14 +43,11 @@ import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.common.ModConfigSpec;
 import net.neoforged.neoforge.event.AddPackFindersEvent;
-import net.neoforged.neoforge.items.ItemStackHandler;
 import net.neoforged.neoforge.registries.*;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
-@SuppressWarnings("removal")
-@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber
 public class ModContents {
 
     @SubscribeEvent
@@ -65,14 +59,17 @@ public class ModContents {
                                 .title(Component.translatable("itemGroup." + EclipticSeasonsApi.MODID + ".core"))
                                 .displayItems((params, output) -> {
                                     ItemRegistry.ITEM_DEFERRED_REGISTER.getEntries().forEach(
-                                            itemDeferredHolder ->
+                                            value ->
                                             {
-                                                if (!CommonConfig.Snow.snowInWorld.get() && itemDeferredHolder == ItemRegistry.broom)
+                                                if (!EclipticUtil.canSnowyBlockInteract() && value == ItemRegistry.broom)
                                                     return;
-                                                Item value = itemDeferredHolder.get();
-                                                if (value != ItemRegistry.hyetometer.get()
-                                                        && value != ItemRegistry.thermometer.get()) {
-                                                    output.accept(value);
+                                                if (value != ItemRegistry.hyetometer
+                                                        && value != ItemRegistry.thermometer) {
+                                                    if (!EclipticSeasonsApi.getInstance().getSeasonalSimulationLevel().enable(SeasonalSimulationLevel.AGRICULTURE)
+                                                            && value.is(ESItemTags.AGRICULTURE_CONTENT)) {
+                                                        return;
+                                                    }
+                                                    output.accept(value.get());
                                                 }
                                             }
                                     );
@@ -81,6 +78,25 @@ public class ModContents {
                                 .build());
             });
     }
+
+    // @SubscribeEvent
+    // public static void onNewRegistryCauldronInteraction(RegisterCauldronInteractionEvent.Dispatcher event) {
+    //     event.register(IceOrSnowCauldronBlock.empty, IceOrSnowCauldronBlock.EMPTY);
+    // }
+    //
+    // @SubscribeEvent
+    // public static void onNewRegistryCauldronInteraction(RegisterCauldronInteractionEvent.Interaction event) {
+    //     event.register(Identifier.withDefaultNamespace("empty"),
+    //             Items.ICE, (state, level, pos, player, hand, stack) -> {
+    //                 IceOrSnowCauldronBlock.fillEmptyCauldron(level, pos, player, hand, stack, BlockRegistry.ice_cauldron.get().defaultBlockState(), SoundEvents.GLASS_PLACE);
+    //                 return InteractionResult.SUCCESS_SERVER;
+    //             });
+    //     event.register(Identifier.withDefaultNamespace("empty"),
+    //             Items.SNOW_BLOCK, (state, level, pos, player, hand, stack) -> {
+    //                 IceOrSnowCauldronBlock.fillEmptyCauldron(level, pos, player, hand, stack, BlockRegistry.snow_cauldron.get().defaultBlockState(), SoundEvents.SNOW_PLACE);
+    //                 return InteractionResult.SUCCESS_SERVER;
+    //             });
+    // }
 
     @SubscribeEvent
     public static void onNewRegistry(DataPackRegistryEvent.NewRegistry event) {
@@ -98,34 +114,36 @@ public class ModContents {
         event.dataPackRegistry(ESRegistries.EXTRA_INFO, ESSortInfo.CODEC, ESSortInfo.CODEC);
         event.dataPackRegistry(ESRegistries.WEATHER_EFFECT, WeatherEffect.CODEC, WeatherEffect.CODEC);
         event.dataPackRegistry(ESRegistries.BIOME_RAIN, CustomRainBuilder.CODEC, CustomRainBuilder.CODEC);
+        // event.dataPackRegistry(ESRegistries.WEATHER_DIMENSION, WeatherDimension.CODEC, WeatherDimension.CODEC);
         event.dataPackRegistry(ESRegistries.SPECIAL_DAYS, SpecialDays.CODEC, SpecialDays.CODEC);
     }
 
 
     @SubscribeEvent
     public static void onRegisterCapabilitiesEvent(RegisterCapabilitiesEvent event) {
-
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, BlockEntityRegistry.block_in_copper_grate_block_entity_type.get(),
                 (blockEntity, direction) -> blockEntity.isRemoved() ? null :
                         (blockEntity.getItemStackHandler()));
 
-        // event.registerBlock(Capabilities.ItemHandler.BLOCK, (Level level, BlockPos pos, BlockState state, @Nullable BlockEntity blockEntity, Direction side) -> new ItemStackHandler(1) {
+        // event.registerBlock(Capabilities.Item.BLOCK, (Level level, BlockPos pos, BlockState state, @Nullable BlockEntity blockEntity, Direction side) -> new ItemStacksResourceHandler(1) {
+        //
         //     @Override
-        //     public int getSlotLimit(int slot) {
+        //     protected int getCapacity(int index, ItemResource resource) {
         //         return 1;
         //     }
         //
         //     @Override
-        //     public boolean isItemValid(int slot, ItemStack stack) {
-        //         return BlockInCopperGrateBlock.validItemAndBlock(level, stack, state);
+        //     public boolean isValid(int index, ItemResource resource) {
+        //         return BlockInCopperGrateBlock.validItemAndBlock(level, resource.toStack(), state);
         //     }
         //
         //     @Override
-        //     protected void onContentsChanged(int slot) {
-        //         if (slot == 0 && getStackInSlot(0).getItem() instanceof BlockItem blockItem) {
+        //     protected void onContentsChanged(int index, ItemStack previousContents) {
+        //         if (index == 0 && getResource(0).getItem() instanceof BlockItem blockItem) {
         //             BlockInCopperGrateBlock.setNewBlock(level, pos, state, blockItem);
         //         }
         //     }
+        //
         // }, BlockRegistry.getAllGrateBlocks().toArray(Block[]::new));
     }
 
@@ -160,17 +178,20 @@ public class ModContents {
                             event.getPackType(), PackSource.BUILT_IN, new PackSelectionConfig(true, Pack.Position.TOP, false));
                 }
             }
+
             if (event.getPackType() == PackType.SERVER_DATA) {
                 addPackIfEnabled(event, modFile,
                         "Rain Together", "rain_together");
                 addPackIfEnabled(event, modFile,
-                        CommonConfig.Resource.SnowTogether, "Rain Together", "snow_together");
-                addPackIfEnabled(event, modFile,
                         CommonConfig.Resource.RegionalSnowTime, "Regional Snow Time", "regional_snow_time");
+                addPackIfEnabled(event, modFile,
+                        CommonConfig.Resource.SnowTogether, "Snow Together", "snow_together");
                 addPackIfEnabled(event, modFile,
                         CommonConfig.Resource.VanillaBiomeClimateSettings, "Vanilla Biome Climate Settings", "vanilla_biome_climate_settings");
                 addPackIfEnabled(event, modFile,
                         CommonConfig.Resource.NotIgnoreRiver, "Not Ignore River", "not_ignore_river");
+                // addPackIfEnabled(event, modFile,
+                //         CommonConfig.Resource.springGrass, "spring_grass", "spring_grass");
             }
         }
     }
@@ -180,12 +201,12 @@ public class ModContents {
             addPackIfEnabled(event, modFile, name, pack_id);
     }
 
-
     private static void addPackIfEnabled(AddPackFindersEvent event, ModFile modFile, String name, String pack_id) {
         FakeResourceManagerHelperUtil.registerBuiltinResourcePack(
                 event, EclipticSeasonsApi.MODID + "/",
                 EclipticSeasonsApi.MODID, name, modFile,
                 Component.translatable(EclipticSeasons.rl(pack_id).toLanguageKey("pack")),
-                PackType.SERVER_DATA, PackSource.FEATURE, new PackSelectionConfig(true, pack_id.equals("not_ignore_river") ? Pack.Position.TOP : Pack.Position.BOTTOM, false));
+                PackType.SERVER_DATA, PackSource.FEATURE, new PackSelectionConfig(true,
+                        pack_id.equals("not_ignore_river") ? Pack.Position.TOP : Pack.Position.BOTTOM, false));
     }
 }

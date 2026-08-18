@@ -1,14 +1,17 @@
 package com.teamtea.eclipticseasons.data.general.advancement;
 
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
+import com.teamtea.eclipticseasons.api.constant.simulation.SeasonalSimulationLevel;
 import com.teamtea.eclipticseasons.common.advancement.ParentNeedCriterion;
 import com.teamtea.eclipticseasons.common.advancement.SolarTermsCriterion;
 import com.teamtea.eclipticseasons.common.registry.BlockRegistry;
 import com.teamtea.eclipticseasons.common.registry.ESLootTables;
 import com.teamtea.eclipticseasons.common.registry.ItemRegistry;
+import com.teamtea.eclipticseasons.common.resource.conditions.SeasonalSimulationLevelCondition;
 import net.minecraft.advancements.*;
 import net.minecraft.advancements.critereon.*;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -19,18 +22,26 @@ import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.neoforged.neoforge.common.Tags;
-import net.neoforged.neoforge.common.data.AdvancementProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
+
 
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-public class ESAdvancementGenerator implements AdvancementProvider.AdvancementGenerator {
+public class ESAdvancementGenerator implements ConditionalAdvancementSubProvider {
     AdvancementHolder seasons;
 
     @Override
-    public void generate(HolderLookup.Provider registries, Consumer<AdvancementHolder> consumer, ExistingFileHelper existingFileHelper) {
+    public void generate(HolderLookup.Provider registries, Consumer<AdvancementHolder> output, ExistingFileHelper existingFileHelper) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void generate(HolderLookup.Provider registries, ConditionalAdvancementOutput consumer, ExistingFileHelper existingFileHelper) {
+        HolderLookup<EntityType<?>> types = registries.lookupOrThrow(Registries.ENTITY_TYPE);
+        SeasonalSimulationLevelCondition condition = SeasonalSimulationLevelCondition.builder().level(SeasonalSimulationLevel.AGRICULTURE).build();
+        SeasonalSimulationLevelCondition surviveCondition = SeasonalSimulationLevelCondition.builder().level(SeasonalSimulationLevel.SURVIVAL).build();
 
         seasons = Advancement.Builder.advancement()
                 .display(ItemRegistry.calendar_item.get(),
@@ -63,21 +74,21 @@ public class ESAdvancementGenerator implements AdvancementProvider.AdvancementGe
                         AdvancementType.TASK, true, false, true)
                 .addCriterion("heat_stroke", SolarTermsCriterion.TriggerInstance.simple2())
                 .requirements(AdvancementRequirements.Strategy.AND)
-                .save(consumer, getNameId("main/heat_stroke"));
+                .save(consumer.withConditions(surviveCondition), getNameId("main/heat_stroke"));
 
         BlockRegistry.initCopperGrateMap();
         AdvancementHolder green_house = buildAdvancementHolder(seasons, ItemRegistry.growth_detector.get(),
                 Component.translatable("advancement.eclipticseasons.green_house"),
                 Component.translatable("advancement.eclipticseasons.green_house.desc"),
                 "core_require", InventoryChangeTrigger.TriggerInstance.hasItems(ItemRegistry.growth_detector.get()),
-                consumer, "main/green_house");
+                consumer.withConditions(condition), "main/green_house");
 
         AdvancementHolder greenhouse_core_container = buildAdvancementHolder(green_house, ItemRegistry.greenhouse_core_container_item.get(),
                 Component.translatable("advancement.eclipticseasons.greenhouse_core_container"),
                 Component.translatable("advancement.eclipticseasons.greenhouse_core_container.desc"),
                 "core_require", InventoryChangeTrigger.TriggerInstance.hasItems(ItemPredicate.Builder.item()
                         .of(BlockRegistry.greenhouse_core_container.get())),
-                consumer, "main/greenhouse_core_container");
+                consumer.withConditions(condition), "main/greenhouse_core_container");
 
 
         AdvancementHolder greenhouse_core =
@@ -112,21 +123,21 @@ public class ESAdvancementGenerator implements AdvancementProvider.AdvancementGe
                                 List.of("core_require_spring", "core_require_summer", "core_require_autumn", "core_require_winter")
                                 // ,List.of("parent_spring", "parent_summer", "parent_autumn", "parent_winter")
                         )))
-                        .save(consumer, getNameId("quests/greenhouse_core"));
+                        .save(consumer.withConditions(condition), getNameId("quests/greenhouse_core"));
 
         AdvancementHolder humidity_tank = buildAdvancementHolder(green_house, BlockRegistry.humidity_tank.get(),
                 Component.translatable("advancement.eclipticseasons.humidity_tank"),
                 Component.translatable("advancement.eclipticseasons.humidity_tank.desc"),
                 "core_require", InventoryChangeTrigger.TriggerInstance.hasItems(ItemPredicate.Builder.item()
                         .of(BlockRegistry.humidity_tank.get())),
-                consumer, "main/humidity_tank");
+                consumer.withConditions(condition), "main/humidity_tank");
 
         AdvancementHolder dehumidifier = buildAdvancementHolder(humidity_tank, BlockRegistry.dehumidifier.get(),
                 Component.translatable("advancement.eclipticseasons.dehumidifier"),
                 Component.translatable("advancement.eclipticseasons.dehumidifier.desc"),
                 "core_require", InventoryChangeTrigger.TriggerInstance.hasItems(ItemPredicate.Builder.item()
                         .of(BlockRegistry.dehumidifier.get())),
-                consumer, "main/dehumidifier");
+                consumer.withConditions(condition), "main/dehumidifier");
 
         AdvancementHolder seasonal_prayer_scroll =
                 Advancement.Builder.advancement().parent(seasons)
@@ -137,7 +148,7 @@ public class ESAdvancementGenerator implements AdvancementProvider.AdvancementGe
                         .addCriterion("core_require", InventoryChangeTrigger.TriggerInstance.hasItems(ItemRegistry.spring_greenhouse_essence_item.get(),
                                 ItemRegistry.summer_greenhouse_essence_item.get(), ItemRegistry.autumn_greenhouse_essence_item.get(), ItemRegistry.winter_greenhouse_essence_item.get()))
                         .requirements(AdvancementRequirements.Strategy.AND)
-                        .save(consumer, getNameId("main/seasonal_prayer_scroll"));
+                        .save(consumer.withConditions(condition), getNameId("main/seasonal_prayer_scroll"));
 
         AdvancementHolder season_ritual = buildAdvancementHolder(seasonal_prayer_scroll, ItemRegistry.spring_greenhouse_core_item.get(),
                 Component.translatable("advancement.eclipticseasons.seasonal_ritual"),
@@ -146,7 +157,7 @@ public class ESAdvancementGenerator implements AdvancementProvider.AdvancementGe
                         LocationPredicate.Builder.location().setBlock(BlockPredicate.Builder.block().of(BlockRegistry.spring_greenhouse_core.get(), BlockRegistry.summer_greenhouse_core.get(), BlockRegistry.autumn_greenhouse_core.get(), BlockRegistry.winter_greenhouse_core.get())),
                         ItemPredicate.Builder.item().of(ItemRegistry.seasonal_prayer_scroll_item.get())
                 ),
-                consumer, "main/seasonal_ritual");
+                consumer.withConditions(condition), "main/seasonal_ritual");
 
         seasons = Advancement.Builder.advancement()
                 .parent(seasons)
@@ -157,12 +168,12 @@ public class ESAdvancementGenerator implements AdvancementProvider.AdvancementGe
                         AdvancementType.TASK, false, false, false)
                 .addCriterion("tick", PlayerTrigger.TriggerInstance.tick())
                 .requirements(AdvancementRequirements.Strategy.AND)
-                .save(consumer, getNameId("main/quest"));
+                .save(consumer.withConditions(condition), getNameId("main/quest"));
 
-        buildSpring(consumer);
-        buildSummer(consumer);
-        buildAutumn(consumer);
-        buildWinter(consumer);
+        buildSpring(consumer.withConditions(condition));
+        buildSummer(consumer.withConditions(condition));
+        buildAutumn(consumer.withConditions(condition));
+        buildWinter(consumer.withConditions(condition));
     }
 
     private void buildSpring(Consumer<AdvancementHolder> consumer) {
@@ -190,11 +201,11 @@ public class ESAdvancementGenerator implements AdvancementProvider.AdvancementGe
                                 null,
                                 AdvancementType.TASK, false, true, false)
                         // .addCriterion("core_require_sheep", PlayerInteractTrigger.TriggerInstance.itemUsedOnEntity(
-                        //         ItemPredicate.Builder.item().of(items, ItemTags.SHEEP_FOOD),
+                        //         ItemPredicate.Builder.item().of(ItemTags.SHEEP_FOOD),
                         //         Optional.of(EntityPredicate.wrap(EntityPredicate.Builder.entity().of(types, EntityType.SHEEP)))
                         // ))
                         // .addCriterion("core_require_cow", PlayerInteractTrigger.TriggerInstance.itemUsedOnEntity(
-                        //         ItemPredicate.Builder.item().of(items, ItemTags.COW_FOOD),
+                        //         ItemPredicate.Builder.item().of(ItemTags.COW_FOOD),
                         //         Optional.of(EntityPredicate.wrap(EntityPredicate.Builder.entity().of(types, EntityType.COW)))
                         // ))
                         .addCriterion("core_require", PlayerInteractTrigger.TriggerInstance.itemUsedOnEntity(
@@ -227,7 +238,7 @@ public class ESAdvancementGenerator implements AdvancementProvider.AdvancementGe
         //         Component.translatable("advancement.eclipticseasons.spring_end"),
         //         Component.translatable("advancement.eclipticseasons.spring_end.desc"),
         //         "core_require", ItemUsedOnLocationTrigger.TriggerInstance.itemUsedOnBlock(
-        //                 LocationPredicate.Builder.location().setBlock(BlockPredicate.Builder.block().of(BlockRegistry.spring_greenhouse_core.get())),
+        //                 LocationPredicate.Builder.location().setBlock(BlockPredicate.Builder.block().of(blocks,BlockRegistry.spring_greenhouse_core.get())),
         //                 ItemPredicate.Builder.item()
         //         ),
         //         consumer, "quests/spring_end", ESLootTables.spring_greenhouse_essence);
@@ -277,7 +288,7 @@ public class ESAdvancementGenerator implements AdvancementProvider.AdvancementGe
         //         Component.translatable("advancement.eclipticseasons.summer_end"),
         //         Component.translatable("advancement.eclipticseasons.summer_end.desc"),
         //         "core_require", ItemUsedOnLocationTrigger.TriggerInstance.itemUsedOnBlock(
-        //                 LocationPredicate.Builder.location().setBlock(BlockPredicate.Builder.block().of(BlockRegistry.summer_greenhouse_core.get())),
+        //                 LocationPredicate.Builder.location().setBlock(BlockPredicate.Builder.block().of(blocks,BlockRegistry.summer_greenhouse_core.get())),
         //                 ItemPredicate.Builder.item()
         //         ),
         //         consumer, "quests/summer_end", ESLootTables.summer_greenhouse_essence);
@@ -331,7 +342,7 @@ public class ESAdvancementGenerator implements AdvancementProvider.AdvancementGe
         //         Component.translatable("advancement.eclipticseasons.autumn_end"),
         //         Component.translatable("advancement.eclipticseasons.autumn_end.desc"),
         //         "core_require", ItemUsedOnLocationTrigger.TriggerInstance.itemUsedOnBlock(
-        //                 LocationPredicate.Builder.location().setBlock(BlockPredicate.Builder.block().of(BlockRegistry.autumn_greenhouse_core.get())),
+        //                 LocationPredicate.Builder.location().setBlock(BlockPredicate.Builder.block().of(blocks,BlockRegistry.autumn_greenhouse_core.get())),
         //                 ItemPredicate.Builder.item()
         //         ),
         //         consumer, "quests/autumn_end", ESLootTables.autumn_greenhouse_essence);
@@ -381,7 +392,7 @@ public class ESAdvancementGenerator implements AdvancementProvider.AdvancementGe
         //         Component.translatable("advancement.eclipticseasons.winter_end"),
         //         Component.translatable("advancement.eclipticseasons.winter_end.desc"),
         //         "core_require", ItemUsedOnLocationTrigger.TriggerInstance.itemUsedOnBlock(
-        //                 LocationPredicate.Builder.location().setBlock(BlockPredicate.Builder.block().of(BlockRegistry.winter_greenhouse_core.get())),
+        //                 LocationPredicate.Builder.location().setBlock(BlockPredicate.Builder.block().of(blocks,BlockRegistry.winter_greenhouse_core.get())),
         //                 ItemPredicate.Builder.item()
         //         ),
         //         consumer, "quests/winter_end", ESLootTables.winter_greenhouse_essence);
@@ -425,4 +436,6 @@ public class ESAdvancementGenerator implements AdvancementProvider.AdvancementGe
     private String getNameId(String id) {
         return EclipticSeasonsApi.MODID + ":" + id;
     }
+
+
 }
