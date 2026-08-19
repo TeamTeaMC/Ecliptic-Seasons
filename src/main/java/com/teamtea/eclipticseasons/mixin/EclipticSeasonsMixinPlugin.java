@@ -2,6 +2,7 @@ package com.teamtea.eclipticseasons.mixin;
 
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
+import com.teamtea.eclipticseasons.common.mixin.injector.DirectInjectBootstrap;
 import com.teamtea.eclipticseasons.compat.CompatModule;
 import com.teamtea.eclipticseasons.compat.Platform;
 import lombok.Getter;
@@ -24,6 +25,7 @@ public class EclipticSeasonsMixinPlugin implements IMixinConfigPlugin {
 
     @Override
     public void onLoad(String mixinPackage) {
+        DirectInjectBootstrap.init();
         CompatModule.init();
         PreloadedConfig.onLoad(mixinPackage);
     }
