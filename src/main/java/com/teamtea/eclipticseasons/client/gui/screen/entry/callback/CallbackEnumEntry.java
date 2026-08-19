@@ -19,13 +19,7 @@ public class CallbackEnumEntry<T extends Enum<T>> extends CallbackEntry<T> {
     private final List<T> values;
     private final Function<T, Component> valueDisplay;
 
-    public CallbackEnumEntry(
-            String text,
-            Supplier<T> getter,
-            Consumer<T> setter,
-            List<T> values,
-            Function<T, Component> valueDisplay
-    ) {
+    public CallbackEnumEntry(String text, Supplier<T> getter, Consumer<T> setter, List<T> values, Function<T, Component> valueDisplay) {
         super(text, getter, setter);
         this.values = values;
         this.valueDisplay = valueDisplay;
@@ -37,26 +31,7 @@ public class CallbackEnumEntry<T extends Enum<T>> extends CallbackEntry<T> {
     }
 
     @Override
-    public AbstractWidget buildModConfigSpec(ESModConfigScreen screen, int x, int y, int width) {
-        CycleButton.Builder<T> builder = CycleButton.builder(valueDisplay, nowValue)
-                .displayState(CycleButton.DisplayState.VALUE);
-
-        applyClientSprite(builder, syncType);
-
-        CycleButton<T> button = builder
-                .withValues(values)
-                .create(x, y, width, 20, Component.empty(), (cycleButton, value) -> {
-                    nowValue = value;
-                    setter.accept(value);
-                    applyValueTooltip(cycleButton);
-                });
-
-        applyValueTooltip(button);
-        return button;
-    }
-
-    private void applyValueTooltip(CycleButton<T> button) {
-        T value = button.getValue();
+    protected <E> Tooltip getTooltipSupplier(E value) {
         if (value instanceof ITranslatable it) {
             Component tooltip = it.getDescription();
             if (tooltip != null) {
@@ -64,18 +39,35 @@ public class CallbackEnumEntry<T extends Enum<T>> extends CallbackEntry<T> {
                         .withStyle(ChatFormatting.BOLD)
                         .append(Component.literal("\n\n").append(tooltip).withStyle(style -> style.withBold(false)));
                 message.append("\n\n");
-                var enumConstants = value.getClass().getEnumConstants();
+                Object[] enumConstants = value.getClass().getEnumConstants();
                 for (int i = 0, enumConstantsLength = enumConstants.length; i < enumConstantsLength; i++) {
-                    Enum<?> enumConstant = enumConstants[i];
+                    Object enumConstant = enumConstants[i];
                     MutableComponent append = message.append(((ITranslatable) enumConstant).getTranslation());
                     if (i < enumConstantsLength - 1)
                         append.append(" > ");
                 }
-                button.setTooltip(Tooltip.create(message
-                ));
+                return Tooltip.create(message);
             } else {
-                button.setTooltip(getTooltipSupplier(value));
+                return super.getTooltipSupplier(value);
             }
         }
+        return super.getTooltipSupplier(value);
     }
+
+    @Override
+    public AbstractWidget buildModConfigSpec(ESModConfigScreen screen, int x, int y, int width) {
+        CycleButton.Builder<T> builder = CycleButton.builder(valueDisplay, nowValue)
+                .displayState(CycleButton.DisplayState.VALUE);
+
+        applyClientSprite(builder, syncType);
+
+        return builder
+                .withValues(values)
+                .withTooltip(this::getTooltipSupplier)
+                .create(x, y, width, 20, Component.empty(), (cycleButton, value) -> {
+                    nowValue = value;
+                    setter.accept(value);
+                });
+    }
+
 }
