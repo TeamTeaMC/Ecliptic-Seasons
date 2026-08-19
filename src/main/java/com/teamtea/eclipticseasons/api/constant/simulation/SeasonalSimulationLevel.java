@@ -87,6 +87,8 @@ public enum SeasonalSimulationLevel implements ITranslatable {
 
         CommonConfig.Crop.enableCrop.set(
                 current.enable(AGRICULTURE));
+        CommonConfig.Crop.enableCropHumidityControl.set(
+                current.enable(AGRICULTURE));
 
         CommonConfig.Temperature.heatStroke.set(
                 current.enable(SURVIVAL));
