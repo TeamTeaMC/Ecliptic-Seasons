@@ -36,6 +36,20 @@ import java.util.*;
 
 public class DHTool {
 
+    public static int applySnowColor(
+            MapColor color
+            // ,
+            // IClientLevelWrapper instance,
+            // DhBlockPos dhBlockPos,
+            // IBiomeWrapper iBiomeWrapper,
+            // FullDataSourceV2 fullDataSourceV2,
+            // IBlockStateWrapper iBlockStateWrapper
+    ) {
+        return color == MapColor.SNOW
+                ? -1
+                : color.col;
+    }
+
     public static MapColor computeBaseColor(IClientLevelWrapper instance, DhBlockPos dhBlockPos, IBiomeWrapper iBiomeWrapper, IBlockStateWrapper iBlockStateWrapper, FullDataPointIdMap fullDataMapping, LongArrayList fullColumnData, IWrapperFactory WRAPPER_FACTORY, int skyLight) {
         if (!CompatModule.CommonConfig.DistantHorizonsWinterLOD.get()) return null;
 
@@ -132,7 +146,7 @@ public class DHTool {
         return null;
     }
 
-    //public static void clearRenderCache() {
+    // public static void clearRenderCache() {
     //    if (!CompatModule.CommonConfig.DistantHorizonsWinterLOD.get()) return;
     //    IDhClientWorld clientWorld = SharedApi.getIDhClientWorld();
     //    if (Minecraft.getInstance().level != null

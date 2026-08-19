@@ -1,6 +1,7 @@
 package com.teamtea.eclipticseasons.mixin.compat.sodium;
 
 import com.llamalad7.mixinextras.sugar.Local;
+import com.teamtea.eclipticseasons.common.mixin.injector.DirectInject;
 import com.teamtea.eclipticseasons.compat.sodium.SodiumBlenderColorProvider;
 import net.caffeinemc.mods.sodium.client.model.quad.ModelQuadView;
 import net.caffeinemc.mods.sodium.client.world.LevelSlice;
@@ -21,16 +22,29 @@ public abstract class Mixin_ColorSource implements SodiumBlenderColorProvider {
     @Final
     private BlockTintSource[] color;
 
-    @Inject(
+    @DirectInject(
             remap = false,
             method = "getColors(Lnet/caffeinemc/mods/sodium/client/world/LevelSlice;Lnet/minecraft/core/BlockPos;Lnet/minecraft/core/BlockPos$MutableBlockPos;Lnet/minecraft/world/level/block/state/BlockState;Lnet/caffeinemc/mods/sodium/client/model/quad/ModelQuadView;[IZ)V",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/color/block/BlockTintSource;colorInWorld(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/client/renderer/block/BlockAndTintGetter;Lnet/minecraft/core/BlockPos;)I"),
-            cancellable = true)
-    private void eclipticseasons$getColors_forESLeaves(
-            LevelSlice slice, BlockPos pos, BlockPos.MutableBlockPos scratchPos, BlockState state, ModelQuadView quad, int[] output, boolean smooth, CallbackInfo ci) {
-        if (this.color[quad.getTintIndex()] instanceof SodiumBlenderColorProvider sodiumBlenderColorProvider) {
-            sodiumBlenderColorProvider.getColors(slice, pos, scratchPos, state, quad, output, smooth);
-            ci.cancel();
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/caffeinemc/mods/sodium/client/model/quad/ModelQuadView;getTintIndex()I"
+            ),
+            mode = DirectInject.Mode.CANCEL_IF_TRUE
+    )
+    private boolean eclipticseasons$getColorsForESLeaves(
+            LevelSlice slice,
+            BlockPos pos,
+            BlockPos.MutableBlockPos scratchPos,
+            BlockState state,
+            ModelQuadView quad,
+            int[] output,
+            boolean smooth
+    ) {
+        if (this.color[quad.getTintIndex()] instanceof SodiumBlenderColorProvider provider) {
+            provider.getColors(slice, pos, scratchPos, state, quad, output, smooth);
+            return true;
         }
+
+        return false;
     }
 }

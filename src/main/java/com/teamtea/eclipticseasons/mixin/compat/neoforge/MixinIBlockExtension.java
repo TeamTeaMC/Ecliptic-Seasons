@@ -1,6 +1,7 @@
 package com.teamtea.eclipticseasons.mixin.compat.neoforge;
 
 
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.teamtea.eclipticseasons.common.misc.MapColorReplacer;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.core.BlockPos;
@@ -16,15 +17,22 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(IBlockExtension.class)
 public interface MixinIBlockExtension {
 
-
-    @Inject(at = {@At("HEAD")},
-            method = {"getMapColor"},
-            cancellable = true)
-    public default void eclipticseasons$getColor(BlockState state, BlockGetter level, BlockPos pos, MapColor defaultColor, CallbackInfoReturnable<MapColor> cir) {
+    @ModifyReturnValue(
+            method = "getMapColor",
+            at = @At("RETURN")
+    )
+    private MapColor eclipticseasons$getColor(
+            MapColor original,
+            BlockState state,
+            BlockGetter level,
+            BlockPos pos,
+            MapColor defaultColor
+    ) {
         if (CommonConfig.Map.changeMapColor.get()) {
             var ii = MapColorReplacer.getBlockIfSnowColorAndCareLoad(level, state, pos);
             if (ii != null)
-                cir.setReturnValue(ii);
+                original = ii;
         }
+        return original;
     }
 }
