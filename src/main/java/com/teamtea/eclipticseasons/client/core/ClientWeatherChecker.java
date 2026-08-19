@@ -53,7 +53,7 @@ public class ClientWeatherChecker {
     }
 
 
-    public static Identifier modifyRainAmount3(TextureManager instance, Identifier identifier, boolean rain) {
+    public static Identifier modifyRainAmount3(Identifier identifier, boolean rain) {
         if (weatherEffectByEntity == null
                 || !ClientConfig.Weather.tweakPrecipitationParticleTexture.get()
                 || !weatherEffectByEntity.shouldChangeTexture(rain)) return identifier;

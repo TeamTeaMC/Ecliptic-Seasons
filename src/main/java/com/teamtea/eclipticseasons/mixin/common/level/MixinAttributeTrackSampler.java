@@ -13,6 +13,7 @@ import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 
 @Mixin({AttributeTrackSampler.class})
 public abstract class MixinAttributeTrackSampler {
@@ -24,10 +25,20 @@ public abstract class MixinAttributeTrackSampler {
     @Final
     private ClockManager clockManager;
 
-    @WrapOperation(at = {@At(value = "INVOKE", target = "Lnet/minecraft/util/KeyframeTrackSampler;sample(J)Ljava/lang/Object;")}, method = {"applyTimeBased"})
-    public <T> T eclipticseasons$getTotalTicks(KeyframeTrackSampler<T> instance, long totalTicks, Operation<T> original) {
-        totalTicks = SolarTime.getTotalTicks(clock, totalTicks, instance.periodTicks.orElse(-1));
-        return original.call(instance, totalTicks);
+    @Shadow
+    @Final
+    private KeyframeTrackSampler<?> argumentSampler;
+
+    @ModifyArg(
+            method = "applyTimeBased",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/util/KeyframeTrackSampler;sample(J)Ljava/lang/Object;"
+            ),
+            index = 0
+    )
+    private long eclipticseasons$modifyTotalTicks(long totalTicks) {
+        return SolarTime.getTotalTicks(this.clock, totalTicks, this.argumentSampler.periodTicks.orElse(-1));
     }
 
 }

@@ -1,13 +1,16 @@
 package com.teamtea.eclipticseasons.mixin.common.biome;
 
 
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.llamalad7.mixinextras.sugar.Local;
 import com.teamtea.eclipticseasons.api.constant.tag.ClimateTypeBiomeTags;
 import com.teamtea.eclipticseasons.api.misc.IBiomeTagHolder;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
+import com.teamtea.eclipticseasons.common.mixin.injector.DirectInject;
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.biome.Biome;
@@ -19,15 +22,15 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin({Biome.class})
 public abstract class MixinBiome implements IBiomeTagHolder {
-    @Inject(at = {@At("HEAD")}, method = {"getPrecipitationAt"}, cancellable = true)
-    public void eclipticseasons$getPrecipitationAt(BlockPos pos, int seaLevel, CallbackInfoReturnable<Biome.Precipitation> cir) {
-        cir.setReturnValue(WeatherManager.getPrecipitationAt((Biome) (Object) this, pos));
-
+    @DirectInject(at = {@At("HEAD")}, method = {"getPrecipitationAt"},
+            mode = DirectInject.Mode.RETURN_WITH_CONTINUATION)
+    public Biome.Precipitation eclipticseasons$getPrecipitationAt(BlockPos pos, int seaLevel) {
+        return (WeatherManager.getPrecipitationAt((Biome) (Object) this, pos));
     }
 
-    @Inject(at = {@At("HEAD")}, method = {"hasPrecipitation"}, cancellable = true)
-    public void eclipticseasons$hasPrecipitation(CallbackInfoReturnable<Boolean> cir) {
-        cir.setReturnValue(BiomeClimateManager.agent$hasPrecipitation((Biome) (Object) this));
+    @ModifyReturnValue(at = {@At("RETURN")}, method = {"hasPrecipitation"})
+    public boolean eclipticseasons$hasPrecipitation(boolean original) {
+        return BiomeClimateManager.agent$hasPrecipitation(Biome.class.cast(this));
     }
 
 
