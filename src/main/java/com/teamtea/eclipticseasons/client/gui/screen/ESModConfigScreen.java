@@ -355,7 +355,7 @@ public class ESModConfigScreen extends Screen {
         if (entryChoseSize == 0) {
             helper.addChild((new StringWidget(entryWidth * 2 + 20, 30, Component.translatable("eclipticseasons.options.search.no_result")
                     .withStyle(ChatFormatting.ITALIC)
-                    .withColor(TextColor.DARK_RED), font)), 2);
+                    .withStyle(ChatFormatting.DARK_RED), font)), 2);
         }
 
         ScrollableLayout scrollableLayout = new ScrollableLayout(this.minecraft, gridLayout, this.layout.getContentHeight() - searchHeight);

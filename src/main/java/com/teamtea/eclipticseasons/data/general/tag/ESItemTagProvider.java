@@ -70,33 +70,33 @@ public final class ESItemTagProvider extends ItemTagsProvider {
         tag(ESItemTags.UNAFFECTED_BY_SEASONS);
         tag(ESItemTags.UNAFFECTED_BY_HUMIDITY);
         tag(ESItemTags.AGRICULTURE_CONTENT).add(
-                ItemRegistry.growth_detector,
-                ItemRegistry.greenhouse_core_container_item,
-                ItemRegistry.spring_greenhouse_core_item,
-                ItemRegistry.summer_greenhouse_core_item,
-                ItemRegistry.autumn_greenhouse_core_item,
-                ItemRegistry.winter_greenhouse_core_item,
-                ItemRegistry.spring_greenhouse_essence_item,
-                ItemRegistry.summer_greenhouse_essence_item,
-                ItemRegistry.autumn_greenhouse_essence_item,
-                ItemRegistry.winter_greenhouse_essence_item,
-                ItemRegistry.seasonal_prayer_scroll_item,
-                ItemRegistry.block_in_wooden_grate_block_item,
-                ItemRegistry.humidity_tank_item,
-                ItemRegistry.dehumidifier_item
-                // ItemRegistry.calendar_item,
-                // ItemRegistry.season_sensor_item,
-                // ItemRegistry.broom,
-                // ItemRegistry.salt_wand,
-                // ItemRegistry.ice_wand,
-                // ItemRegistry.hygrometer,
-                // ItemRegistry.snowless_hometown,
-                // ItemRegistry.bamboo_wind_chimes_item,
-                // ItemRegistry.paper_wind_chimes_item,
-                // ItemRegistry.wind_chimes_item,
-                // ItemRegistry.pinwheel_orange_item,
-                // ItemRegistry.pinwheel_lime_item,
-                // ItemRegistry.pinwheel_blue_item
+                ItemRegistry.growth_detector.get(),
+                ItemRegistry.greenhouse_core_container_item.get(),
+                ItemRegistry.spring_greenhouse_core_item.get(),
+                ItemRegistry.summer_greenhouse_core_item.get(),
+                ItemRegistry.autumn_greenhouse_core_item.get(),
+                ItemRegistry.winter_greenhouse_core_item.get(),
+                ItemRegistry.spring_greenhouse_essence_item.get(),
+                ItemRegistry.summer_greenhouse_essence_item.get(),
+                ItemRegistry.autumn_greenhouse_essence_item.get(),
+                ItemRegistry.winter_greenhouse_essence_item.get(),
+                ItemRegistry.seasonal_prayer_scroll_item.get(),
+                ItemRegistry.block_in_wooden_grate_block_item.get(),
+                ItemRegistry.humidity_tank_item.get(),
+                ItemRegistry.dehumidifier_item.get()
+                // ItemRegistry.calendar_item.get(),
+                // ItemRegistry.season_sensor_item.get(),
+                // ItemRegistry.broom.get(),
+                // ItemRegistry.salt_wand.get(),
+                // ItemRegistry.ice_wand.get(),
+                // ItemRegistry.hygrometer.get(),
+                // ItemRegistry.snowless_hometown.get(),
+                // ItemRegistry.bamboo_wind_chimes_item.get(),
+                // ItemRegistry.paper_wind_chimes_item.get(),
+                // ItemRegistry.wind_chimes_item.get(),
+                // ItemRegistry.pinwheel_orange_item.get(),
+                // ItemRegistry.pinwheel_lime_item.get(),
+                // ItemRegistry.pinwheel_blue_item.get()
         );
     }
 
@@ -109,72 +109,4 @@ public final class ESItemTagProvider extends ItemTagsProvider {
         return srl("farmersdelight", name);
     }
 
-    protected record Appender(TagAppender<Item> app) implements TagAppender<Item> {
-        @Override
-        public Appender add(ResourceKey<Item> element) {
-            app.add(element);
-            return this;
-        }
-
-        @Override
-        public Appender addOptional(ResourceKey<Item> element) {
-            app.addOptional(element);
-            return this;
-        }
-
-        @Override
-        public Appender addTag(TagKey<Item> tag) {
-            app.addTag(tag);
-            return this;
-        }
-
-        @Override
-        public Appender addOptionalTag(TagKey<Item> tag) {
-            app.addOptionalTag(tag);
-            return this;
-        }
-
-        @Override
-        public Appender add(TagEntry entry) {
-            app.add(entry);
-            return this;
-        }
-
-        @Override
-        public Appender replace(boolean value) {
-            app.replace(value);
-            return this;
-        }
-
-        @Override
-        public Appender remove(ResourceKey<Item> element) {
-            app.remove(element);
-            return this;
-        }
-
-        @Override
-        public Appender remove(TagKey<Item> tag) {
-            app.remove(tag);
-            return this;
-        }
-
-        public Appender add(Item... items) {
-            for (Item item : items) {
-                add(BuiltInRegistries.ITEM.wrapAsHolder(item).getKey());
-            }
-            return this;
-        }
-
-        public Appender add(Holder<Item>... items) {
-            for (Holder<Item> item : items) {
-                add(item.getKey());
-            }
-            return this;
-        }
-    }
-
-    @Override
-    protected Appender tag(TagKey<Item> tag) {
-        return new Appender(super.tag(tag));
-    }
 }
