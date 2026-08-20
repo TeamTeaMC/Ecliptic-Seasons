@@ -84,7 +84,7 @@ public class BiomeHolder {
             for (int j = 0; j < 16; j++) {
                 int xm = chunkPos.getBlockX(i);
                 int zm = chunkPos.getBlockZ(j);
-                mutableBlockPos.set(xm, chunk.getHeight(Heightmap.Types.WORLD_SURFACE_WG, i, j) + 1, zm);
+                mutableBlockPos.set(xm, chunk.getHeight(Heightmap.Types.WORLD_SURFACE, i, j) + 1, zm);
                 Holder<Biome> unCachedSurfaceBiome = MapChecker.getUnCachedSurfaceBiome(serverLevel, mutableBlockPos);
                 newBiomes[i * 16 + j] = registryUpdate ?
                         MapChecker.biomeToId(biomeRegistry, unCachedSurfaceBiome.value()) :
@@ -110,7 +110,7 @@ public class BiomeHolder {
                 if (MapChecker.isSmallBiome(biomeHolder)) {
                     int xm = chunkPos.getBlockX(i);
                     int zm = chunkPos.getBlockZ(j);
-                    mutableBlockPos.set(xm, chunk.getHeight(Heightmap.Types.WORLD_SURFACE_WG, i, j) + 1, zm);
+                    mutableBlockPos.set(xm, chunk.getHeight(Heightmap.Types.WORLD_SURFACE, i, j) + 1, zm);
 
                     newBiomes[i * 16 + j] =
                             MapChecker.biomeToId(serverLevel, MapChecker.getUnCachedSurfaceBiome(serverLevel, mutableBlockPos).value());
