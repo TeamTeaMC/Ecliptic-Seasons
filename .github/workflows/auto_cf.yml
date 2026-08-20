@@ -7,6 +7,7 @@ on:
 
 env:
   MINECRAFT_VERSION: 1.20.1
+  RELEASE_TYPE: beta
   CURSEFORGE_TOKEN: ${{ secrets.CURSEFORGE_APITOKEN }}
 
 permissions:
@@ -103,7 +104,7 @@ jobs:
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
           curseforge-id: 1118306
           curseforge-token: "${{ env.CURSEFORGE_TOKEN }}"
-          version-type: beta
+          version-type: "${{ env.RELEASE_TYPE }}"
           changelog-file: changelog.md
           loaders: forge
           game-versions: "${{ env.MINECRAFT_VERSION }}"
