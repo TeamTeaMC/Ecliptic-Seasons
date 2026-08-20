@@ -63,14 +63,19 @@ public abstract class MixinFullDataToRenderDataTransformer {
     @DirectExpression(
             remap = false,
             method = "setRenderColumnView",
-            at = @At(
+            at = {@At(
+                    ordinal = 1,
                     value = "INVOKE",
                     target = "Lcom/seibel/distanthorizons/core/wrapperInterfaces/world/IClientLevelWrapper;getBlockColor(Lcom/seibel/distanthorizons/core/pos/blockPos/DhBlockPos;Lcom/seibel/distanthorizons/core/wrapperInterfaces/world/IBiomeWrapper;Lcom/seibel/distanthorizons/core/dataObjects/fullData/sources/FullDataSourceV2;Lcom/seibel/distanthorizons/core/wrapperInterfaces/block/IBlockStateWrapper;)I"
-            ),
-            handler = "Lcom/teamtea/eclipticseasons/compat/distanthorizons/DHTool;applySnowColor(Lnet/minecraft/world/level/material/MapColor;)I",
+            ), @At(
+                    ordinal = 2,
+                    value = "INVOKE",
+                    target = "Lcom/seibel/distanthorizons/core/wrapperInterfaces/world/IClientLevelWrapper;getBlockColor(Lcom/seibel/distanthorizons/core/pos/blockPos/DhBlockPos;Lcom/seibel/distanthorizons/core/wrapperInterfaces/world/IBiomeWrapper;Lcom/seibel/distanthorizons/core/dataObjects/fullData/sources/FullDataSourceV2;Lcom/seibel/distanthorizons/core/wrapperInterfaces/block/IBlockStateWrapper;)I"
+            )},
+            handler = "Lcom/teamtea/eclipticseasons/compat/distanthorizons/DHTool;applySnowColor(Ljava/lang/Integer;)I",
             require = 0
     )
-    private static MapColor eclipticseasons$findSnowColor(
+    private static Integer setRenderColumnView_computeBaseColor(
             IClientLevelWrapper instance,
             DhBlockPos dhBlockPos,
             IBiomeWrapper iBiomeWrapper,
@@ -79,13 +84,37 @@ public abstract class MixinFullDataToRenderDataTransformer {
             // Operation<Integer> original,
             @Local FullDataPointIdMap fullDataMapping,
             @Local(argsOnly = true) LongArrayList fullColumnData,
-            @Local(name = "skyLight") int skyLight
+            @Local(name = "skyLight") int skyLight,
+            @Local(name = "fullDataIndex") int fullDataIndex,
+            @Local(name = "isSnowLayer") boolean isSnowLayer
     ) {
-        MapColor mapColor = DHTool.computeBaseColor(instance, dhBlockPos, iBiomeWrapper, iBlockStateWrapper, fullDataMapping, fullColumnData, WRAPPER_FACTORY, skyLight);
-        if (mapColor == MapColor.SNOW)
-            // 不知道为什么，不能用这个值
-            return mapColor;
-        return null;
+        return isSnowLayer ? null : DHTool.computeBaseColor(instance, dhBlockPos, iBiomeWrapper, iBlockStateWrapper, fullDataMapping, fullColumnData, WRAPPER_FACTORY, skyLight, fullDataSourceV2, fullDataIndex);
+    }
+
+    @DirectExpression(
+            remap = false,
+            method = "setRenderColumnView",
+            at = {@At(
+                    ordinal = 3,
+                    value = "INVOKE",
+                    target = "Lcom/seibel/distanthorizons/core/wrapperInterfaces/world/IClientLevelWrapper;getBlockColor(Lcom/seibel/distanthorizons/core/pos/blockPos/DhBlockPos;Lcom/seibel/distanthorizons/core/wrapperInterfaces/world/IBiomeWrapper;Lcom/seibel/distanthorizons/core/dataObjects/fullData/sources/FullDataSourceV2;Lcom/seibel/distanthorizons/core/wrapperInterfaces/block/IBlockStateWrapper;)I"
+            )},
+            handler = "Lcom/teamtea/eclipticseasons/compat/distanthorizons/DHTool;applySnowColor(Ljava/lang/Integer;)I",
+            require = 0
+    )
+    private static Integer setRenderColumnView_computeBaseColor_3(
+            IClientLevelWrapper instance,
+            DhBlockPos dhBlockPos,
+            IBiomeWrapper iBiomeWrapper,
+            FullDataSourceV2 fullDataSourceV2,
+            IBlockStateWrapper iBlockStateWrapper,
+            // Operation<Integer> original,
+            @Local FullDataPointIdMap fullDataMapping,
+            @Local(argsOnly = true) LongArrayList fullColumnData,
+            @Local(name = "skyLight") int skyLight,
+            @Local(name = "fullDataIndex") int fullDataIndex
+    ) {
+        return DHTool.computeBaseColor(instance, dhBlockPos, iBiomeWrapper, iBlockStateWrapper, fullDataMapping, fullColumnData, WRAPPER_FACTORY, skyLight, fullDataSourceV2, fullDataIndex);
     }
 
     // @Unique
