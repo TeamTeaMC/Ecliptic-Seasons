@@ -218,10 +218,7 @@ public class ClientSetup {
 
     @SubscribeEvent
     public static void onRegisterColorHandlersEvent_Block(RegisterColorHandlersEvent.Block event) {
-        event.register(BiomeColorsHandler::getSpruceColor, Blocks.SPRUCE_LEAVES);
-        event.register(BiomeColorsHandler::getBirchColor, Blocks.BIRCH_LEAVES);
-        event.register(BiomeColorsHandler::getMangroveColor, Blocks.MANGROVE_LEAVES);
-
+        event.register(new FoliageColorSource(), Blocks.SPRUCE_LEAVES, Blocks.BIRCH_LEAVES, Blocks.MANGROVE_LEAVES);
 
         try {
             for (String s : ClientConfig.Renderer.seasonalColorOverrides.get()) {

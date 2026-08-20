@@ -7,11 +7,14 @@ import com.seibel.distanthorizons.core.dataObjects.fullData.FullDataPointIdMap;
 import com.seibel.distanthorizons.core.dataObjects.fullData.sources.FullDataSourceV2;
 import com.seibel.distanthorizons.core.dataObjects.render.columnViews.ColumnRenderView;
 import com.seibel.distanthorizons.core.dataObjects.transformers.FullDataToRenderDataTransformer;
+import com.seibel.distanthorizons.core.pos.blockPos.DhBlockPos;
 import com.seibel.distanthorizons.core.pos.blockPos.DhBlockPosMutable;
 import com.seibel.distanthorizons.core.wrapperInterfaces.IWrapperFactory;
 import com.seibel.distanthorizons.core.wrapperInterfaces.block.IBlockStateWrapper;
 import com.seibel.distanthorizons.core.wrapperInterfaces.world.IBiomeWrapper;
 import com.seibel.distanthorizons.core.wrapperInterfaces.world.IClientLevelWrapper;
+import com.teamtea.eclipticseasons.common.mixin.condition.ConditionalMixin;
+import com.teamtea.eclipticseasons.common.mixin.expression.DirectExpression;
 import com.teamtea.eclipticseasons.compat.distanthorizons.DHTool;
 import it.unimi.dsi.fastutil.longs.LongArrayList;
 import net.minecraft.world.level.block.state.BlockState;
@@ -25,6 +28,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import java.awt.*;
 
 @Pseudo
+@ConditionalMixin(value = "distanthorizons", version = "3.0.0-b")
 @Mixin(FullDataToRenderDataTransformer.class)
 public abstract class MixinFullDataToRenderDataTransformer {
 
@@ -33,30 +37,34 @@ public abstract class MixinFullDataToRenderDataTransformer {
     @Final
     private static IWrapperFactory WRAPPER_FACTORY;
 
-    @ModifyExpressionValue(
+
+    @DirectExpression(
             remap = false,
-            require = 1,
-            expect = 4,
             method = "setRenderColumnView",
-            at = @At(value = "INVOKE", target = "Lcom/seibel/distanthorizons/core/wrapperInterfaces/world/IClientLevelWrapper;getBlockColor(Lcom/seibel/distanthorizons/core/pos/blockPos/DhBlockPos;Lcom/seibel/distanthorizons/core/wrapperInterfaces/world/IBiomeWrapper;Lcom/seibel/distanthorizons/core/dataObjects/fullData/sources/FullDataSourceV2;Lcom/seibel/distanthorizons/core/wrapperInterfaces/block/IBlockStateWrapper;)I")
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lcom/seibel/distanthorizons/core/wrapperInterfaces/world/IClientLevelWrapper;getBlockColor(Lcom/seibel/distanthorizons/core/pos/blockPos/DhBlockPos;Lcom/seibel/distanthorizons/core/wrapperInterfaces/world/IBiomeWrapper;Lcom/seibel/distanthorizons/core/dataObjects/fullData/sources/FullDataSourceV2;Lcom/seibel/distanthorizons/core/wrapperInterfaces/block/IBlockStateWrapper;)I"
+            ),
+            handler = "Lcom/teamtea/eclipticseasons/compat/distanthorizons/DHTool;applySnowColor(Lnet/minecraft/world/level/material/MapColor;)I",
+            require = 0
     )
-    private static int eclipticseasons$setRenderColumnView_computeBaseColor(int original,
-                                                                            IClientLevelWrapper enclosingLevelWrapper,
-                                                                            FullDataSourceV2 fullDataSourceV2,
-                                                                            int blockX,
-                                                                            int blockZ,
-                                                                            ColumnRenderView renderColumnData,
-                                                                            LongArrayList fullColumnData,
-                                                                            @Local(name = "mutableBlockPos") DhBlockPosMutable mutableBlockPos,
-                                                                            @Local(name = "biome") IBiomeWrapper iBiomeWrapper,
-                                                                            @Local(name = "block") IBlockStateWrapper iBlockStateWrapper) {
-        MapColor mapColor = DHTool.computeBaseColor(enclosingLevelWrapper, mutableBlockPos, iBiomeWrapper, iBlockStateWrapper, fullDataSourceV2, fullColumnData, WRAPPER_FACTORY);
+    private static MapColor eclipticseasons$findSnowColor(
+            IClientLevelWrapper instance,
+            DhBlockPos dhBlockPos,
+            IBiomeWrapper iBiomeWrapper,
+            FullDataSourceV2 fullDataSourceV2,
+            IBlockStateWrapper iBlockStateWrapper,
+            // Operation<Integer> original,
+            @Local FullDataPointIdMap fullDataMapping,
+            @Local(argsOnly = true) LongArrayList fullColumnData,
+            @Local(name = "skyLight") int skyLight
+    ) {
+        MapColor mapColor = DHTool.computeBaseColor(instance, dhBlockPos, iBiomeWrapper, iBlockStateWrapper, fullDataMapping, fullColumnData, WRAPPER_FACTORY, skyLight);
         if (mapColor == MapColor.SNOW)
             // 不知道为什么，不能用这个值
-            return Color.WHITE.getRGB();
-        return original;
+            return mapColor;
+        return null;
     }
-
 
     @ModifyExpressionValue(
             remap = false,

@@ -3,10 +3,11 @@ package com.teamtea.eclipticseasons.mixin;
 
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.teamtea.eclipticseasons.EclipticSeasons;
+import com.teamtea.eclipticseasons.common.mixin.DirectInjectBootstrap;
+import com.teamtea.eclipticseasons.common.mixin.condition.ConditionalMixinEvaluator;
 import com.teamtea.eclipticseasons.compat.CompatModule;
 import com.teamtea.eclipticseasons.compat.Platform;
 import lombok.Getter;
-import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.loading.FMLPaths;
 import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
@@ -27,6 +28,7 @@ public class EclipticSeasonsMixinPlugin implements IMixinConfigPlugin {
 
     @Override
     public void onLoad(String mixinPackage) {
+        DirectInjectBootstrap.init();
         CompatModule.init();
         PreloadedConfig.onLoad(mixinPackage);
     }
@@ -38,6 +40,8 @@ public class EclipticSeasonsMixinPlugin implements IMixinConfigPlugin {
 
     @Override
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
+        if (!ConditionalMixinEvaluator.shouldApply(mixinClassName)) return false;
+
         boolean shouldApply = true;
 
         if (isOptLoad == 0) {
@@ -57,10 +61,8 @@ public class EclipticSeasonsMixinPlugin implements IMixinConfigPlugin {
             if (strings.size() > 2) {
                 shouldApply = Platform.isModLoaded(strings.get(1)) && Platform.isModLoaded(strings.get(0));
             } else {
-                shouldApply = Objects.equals(modid, "distanthorizons") ?
-                        Platform.isVersionSatisfied(modid, "3.0.0-b") :
-                        Objects.equals(modid, "optifine") ? isOptLoad == 1 :
-                                Platform.isModLoaded(modid);
+                shouldApply = Objects.equals(modid, "optifine") ? isOptLoad == 1 :
+                        Platform.isModLoaded(modid);
             }
         }
 

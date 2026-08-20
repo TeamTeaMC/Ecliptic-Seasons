@@ -1,6 +1,7 @@
 package com.teamtea.eclipticseasons.mixin.common.block;
 
 
+import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import com.teamtea.eclipticseasons.api.constant.tag.EclipticBlockTags;
 import com.teamtea.eclipticseasons.api.data.craft.WetterStructure;
 import com.teamtea.eclipticseasons.api.misc.CustomRandomTick;
@@ -60,18 +61,25 @@ public abstract class MixinBlockStateBase implements CustomRandomTick {
 
     }
 
-    @Inject(
+    @WrapWithCondition(
             method = "randomTick",
-            at = @At(value = "HEAD"),
-            cancellable = true)
-    private void eclipticseasons$randomTick(ServerLevel level, BlockPos pos, RandomSource random, CallbackInfo ci) {
-        eclipticseasons$tick(asState(), level, pos);
-
-        if (this instanceof IBlockStateFlagger iBlockStateFlagger
-                && (iBlockStateFlagger.forceTickControl() || CommonConfig.isForceCropCompatMode())) {
-            boolean canCropGrow = ESEventHook.canExtraCropGrow(level, pos, iBlockStateFlagger.es$asState(), true);
-            if (!canCropGrow) ci.cancel();
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/world/level/block/Block;randomTick(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/core/BlockPos;Lnet/minecraft/util/RandomSource;)V"
+            )
+    )
+    private boolean eclipticseasons$allowRandomTick(Block instance, BlockState state, ServerLevel serverLevel, BlockPos pos, RandomSource randomSource) {
+        if (this instanceof IBlockStateFlagger flagger
+                && (flagger.forceTickControl()
+                || CommonConfig.isForceCropCompatMode())) {
+            return ESEventHook.canExtraCropGrow(
+                    serverLevel,
+                    pos,
+                    flagger.es$asState(),
+                    true
+            );
         }
+        return true;
     }
 
 

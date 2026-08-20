@@ -2,6 +2,7 @@ package com.teamtea.eclipticseasons.mixin.compat.distanthorizons;
 
 
 import com.teamtea.eclipticseasons.client.util.ClientCon;
+import com.teamtea.eclipticseasons.common.mixin.condition.ConditionalMixin;
 import com.teamtea.eclipticseasons.compat.distanthorizons.DHClientTool;
 import com.teamtea.eclipticseasons.compat.distanthorizons.DHTool;
 import com.teamtea.eclipticseasons.config.ClientConfig;
@@ -21,7 +22,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
-
+@ConditionalMixin(value = "distanthorizons", version = "3.0.0-b")
 @Mixin({ClientLevel.class})
 public abstract class MixinClientLevel extends Level {
     protected MixinClientLevel(WritableLevelData pLevelData, ResourceKey<Level> pDimension, RegistryAccess pRegistryAccess, Holder<DimensionType> pDimensionTypeRegistration, Supplier<ProfilerFiller> pProfiler, boolean pIsClientSide, boolean pIsDebug, long pBiomeZoomSeed, int pMaxChainedNeighborUpdates) {

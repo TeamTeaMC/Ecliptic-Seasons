@@ -360,6 +360,7 @@ dependencies {
 //    }
 
     compileOnly project(':sub')
+    annotationProcessor project(':sub')
 
     println("----Scan onlymain libs begin----")
     fileTree(dir: 'mods', include: ['*.jar']).each { File file ->

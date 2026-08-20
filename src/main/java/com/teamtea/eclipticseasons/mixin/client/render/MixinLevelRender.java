@@ -54,7 +54,7 @@ public abstract class MixinLevelRender {
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;getBiome(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/core/Holder;")
     )
     private Holder<Biome> eclipticseasons$tickRain_getBiome(Level instance, BlockPos blockPos, Operation<Holder<Biome>> original) {
-        return level != null  ?
+        return level != null ?
                 MapChecker.getSurfaceBiome(instance, blockPos) :
                 original.call(instance, blockPos);
     }
@@ -75,7 +75,7 @@ public abstract class MixinLevelRender {
             at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderSystem;depthMask(Z)V")
     )
     private void eclipticseasons$renderSnowAndRain_ModifySnowAmount(LightTexture pLightTexture, float pPartialTick, double pCamX, double pCamY, double pCamZ, CallbackInfo ci, @Local(ordinal = 3) LocalIntRef integerLocalRef) {
-            integerLocalRef.set(ClientWeatherChecker.ModifySnowAmount(integerLocalRef.get(), pPartialTick, level));
+        integerLocalRef.set(ClientWeatherChecker.ModifySnowAmount(integerLocalRef.get(), pPartialTick, level));
     }
 
     @WrapOperation(
@@ -95,12 +95,13 @@ public abstract class MixinLevelRender {
         return (int) ClientWeatherChecker.modifyRainAmount(originalNum, level);
     }
 
-    @WrapOperation(
+    @ModifyArg(
+            index = 1,
             method = {"renderSnowAndRain"},
             at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderSystem;setShaderTexture(ILnet/minecraft/resources/ResourceLocation;)V")
     )
-    private void eclipticseasons$renderSnowAndRain_rebindingTexture(
-            int shaderTexture, ResourceLocation textureId, Operation<Void> original) {
-        original.call(shaderTexture, ClientWeatherChecker.modifyRainAmount3(textureId, textureId == RAIN_LOCATION));
+    private ResourceLocation eclipticseasons$renderSnowAndRain_rebindingTexture(
+            ResourceLocation textureId) {
+        return ClientWeatherChecker.modifyRainAmount3(textureId, textureId == RAIN_LOCATION);
     }
 }

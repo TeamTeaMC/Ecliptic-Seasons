@@ -31,7 +31,21 @@ import net.minecraft.world.level.material.MapColor;
 public class DHTool {
     private static final ThreadLocal<BlockPos.MutableBlockPos> MUTABLE_BLOCK_POS = ThreadLocal.withInitial(BlockPos.MutableBlockPos::new);
 
-    public static MapColor computeBaseColor(IClientLevelWrapper instance, DhBlockPos dhBlockPos, IBiomeWrapper iBiomeWrapper, IBlockStateWrapper iBlockStateWrapper,  FullDataSourceV2 fullDataSource, LongArrayList fullColumnData,  IWrapperFactory WRAPPER_FACTORY) {
+    public static int applySnowColor(
+            MapColor color
+            // ,
+            // IClientLevelWrapper instance,
+            // DhBlockPos dhBlockPos,
+            // IBiomeWrapper iBiomeWrapper,
+            // FullDataSourceV2 fullDataSourceV2,
+            // IBlockStateWrapper iBlockStateWrapper
+    ) {
+        return color == MapColor.SNOW
+                ? -1
+                : color.col;
+    }
+
+    public static MapColor computeBaseColor(IClientLevelWrapper instance, DhBlockPos dhBlockPos, IBiomeWrapper iBiomeWrapper, IBlockStateWrapper iBlockStateWrapper,  FullDataPointIdMap fullDataMapping, LongArrayList fullColumnData,  IWrapperFactory WRAPPER_FACTORY,int skylight) {
         if (!CompatModule.CommonConfig.DistantHorizonsWinterLOD.get()
                 || !CommonConfig.isSnowyWinter()
                 || dhBlockPos.equals(DhBlockPos.ZERO)
@@ -65,7 +79,6 @@ public class DHTool {
             return null;
         }
 
-        FullDataPointIdMap fullDataMapping = fullDataSource.mapping;
         ObjectOpenHashSet<IBlockStateWrapper> blockStatesToIgnore = WRAPPER_FACTORY.getRendererIgnoredBlocks(instance);
 
         for (int i = 0; i <= targetDataIndex; i++) {
