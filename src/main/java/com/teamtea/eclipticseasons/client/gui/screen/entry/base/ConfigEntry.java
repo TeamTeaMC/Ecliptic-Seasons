@@ -40,7 +40,7 @@ public abstract class ConfigEntry {
     }
 
     public int getColumn() {
-        return 1;
+        return 2;
     }
 
     public SyncType getSyncType() {

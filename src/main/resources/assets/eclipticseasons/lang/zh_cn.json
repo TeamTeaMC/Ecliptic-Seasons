@@ -178,6 +178,7 @@
   "eclipticseasons.configuration.ResetRendererAfterSleep": "睡后重置渲染",
   "eclipticseasons.configuration.Resource": "资源",
   "eclipticseasons.configuration.SaveChunkEnvironmentalHumidity": "保存环境湿度",
+  "eclipticseasons.configuration.Core": "基础",
   "eclipticseasons.configuration.Season": "季节",
   "eclipticseasons.configuration.Season.button": "季节",
   "eclipticseasons.configuration.SeasonCoreAffectsAnimals": "季节影响动物",

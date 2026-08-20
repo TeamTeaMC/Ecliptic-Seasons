@@ -101,7 +101,7 @@ public class SuggestedListStringEntry extends SpecEntry<List<? extends String>> 
         GridLayout gridLayout = new GridLayout();
         gridLayout.defaultCellSetting().paddingHorizontal(4).paddingBottom(3).alignHorizontallyCenter();
         GridLayout.RowHelper helper = gridLayout.createRowHelper(3);
-        helper.addChild(new StringWidget(Component.empty().append(label).withStyle(ChatFormatting.ITALIC), screen.getFont()), 3);
+        helper.addChild(new StringWidget(Component.empty().append(getLabel(screen)).withStyle(ChatFormatting.ITALIC), screen.getFont()), 3);
         List<String> strings = new ArrayList<>(spec.get());
         if (possibleValues != null) {
             int widthBox = width * 2 / 3 - 2;
@@ -180,11 +180,6 @@ public class SuggestedListStringEntry extends SpecEntry<List<? extends String>> 
     @Override
     public AbstractWidget buildModConfigSpec(ESModConfigScreen screen, int x, int y, int width) {
         return new StringWidget(width, 20, Component.translatable(possibleValues.stream().findFirst().map(WK::tipKey).orElse("Invalid Option")), screen.getFont());
-    }
-
-    @Override
-    public int getColumn() {
-        return 2;
     }
 
     private class FocuseListnerEditBox extends EditBox {

@@ -1,9 +1,11 @@
 package com.teamtea.eclipticseasons.client.gui.screen.entry.spec;
 
 import com.teamtea.eclipticseasons.client.gui.screen.ESModConfigScreen;
+import com.teamtea.eclipticseasons.client.gui.screen.config.ConfigCategory;
 import com.teamtea.eclipticseasons.client.gui.screen.entry.base.SpecEntry;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.layouts.LayoutElement;
+import net.minecraft.network.chat.Component;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
 public class BooleanEntry extends SpecEntry<Boolean> {
@@ -12,13 +14,8 @@ public class BooleanEntry extends SpecEntry<Boolean> {
     }
 
     @Override
-    public int getColumn() {
-        return 2;
-    }
-
-    @Override
     public LayoutElement buildLayout(ESModConfigScreen screen, int x, int y, int width) {
-        return buildLabelAndControl(screen, label, buildModConfigSpec(screen, x, y, width), width);
+        return buildLabelAndControl(screen, getLabel(screen), buildModConfigSpec(screen, x, y, width), width);
     }
 
     @Override

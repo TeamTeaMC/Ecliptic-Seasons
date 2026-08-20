@@ -180,6 +180,7 @@
   "eclipticseasons.configuration.ResetRendererAfterSleep": "Reset Rendering After Sleep",
   "eclipticseasons.configuration.Resource": "Resources",
   "eclipticseasons.configuration.SaveChunkEnvironmentalHumidity": "Save Environmental Humidity",
+  "eclipticseasons.configuration.Core": "Basic",
   "eclipticseasons.configuration.Season": "Seasons",
   "eclipticseasons.configuration.Season.button": "Seasons",
   "eclipticseasons.configuration.SeasonCoreAffectsAnimals": "Seasons Affect Animals",

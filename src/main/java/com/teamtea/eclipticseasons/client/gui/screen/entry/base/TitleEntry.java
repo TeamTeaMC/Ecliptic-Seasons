@@ -29,11 +29,6 @@ public class TitleEntry extends ConfigEntry {
         return tittleStringWidget;
     }
 
-    @Override
-    public int getColumn() {
-        return 2;
-    }
-
 
     public static class TittleStringWidget extends StringWidget {
         public int textWidth;

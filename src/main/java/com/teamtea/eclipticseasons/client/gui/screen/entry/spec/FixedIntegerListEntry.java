@@ -39,7 +39,7 @@ public class FixedIntegerListEntry extends SpecEntry<List<? extends Integer>> {
         gridLayout.defaultCellSetting().paddingHorizontal(4).paddingBottom(3).alignHorizontallyCenter();
         int columnSize = spec.getDefault().size() == 6 ? 3 : 1;
         GridLayout.RowHelper helper = gridLayout.createRowHelper(columnSize);
-        helper.addChild(new StringWidget(Component.empty().append(label).withStyle(ChatFormatting.ITALIC), screen.getFont()), columnSize);
+        helper.addChild(new StringWidget(getLabel(screen).withStyle(ChatFormatting.ITALIC), screen.getFont()), columnSize);
         List<Integer> integers = new ArrayList<>(spec.get());
         for (int i = 0; i < integers.size(); i++) {
             int possibleValue = integers.get(i);
@@ -74,8 +74,4 @@ public class FixedIntegerListEntry extends SpecEntry<List<? extends Integer>> {
         return null;
     }
 
-    @Override
-    public int getColumn() {
-        return 2;
-    }
 }
