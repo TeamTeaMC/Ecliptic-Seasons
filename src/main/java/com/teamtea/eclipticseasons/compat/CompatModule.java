@@ -193,7 +193,7 @@ public class CompatModule {
                         .comment("""
                                 Force Distant Horizons to refresh all LODs timely.
                                 WARNING: Enabling this may cause a full LOD rebuild and significant lag spikes.""".strip()
-                        ).define("DistantHorizonsWinterLODForceUpdateAll", false);
+                        ).define("DistantHorizonsWinterLODForceUpdateAll", true);
                 builder.pop();
             }
             builder.pop();

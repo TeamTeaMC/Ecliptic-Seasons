@@ -1,4 +1,10 @@
 {
+  "neoforge:conditions": [
+    {
+      "type": "eclipticseasons:seasonal_simulation_level",
+      "level": "survival"
+    }
+  ],
   "parent": "minecraft:recipes/root",
   "criteria": {
     "has_glass_bottle": {

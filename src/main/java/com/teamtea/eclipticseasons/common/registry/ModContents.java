@@ -2,6 +2,8 @@ package com.teamtea.eclipticseasons.common.registry;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
+import com.teamtea.eclipticseasons.api.constant.simulation.SeasonalSimulationLevel;
+import com.teamtea.eclipticseasons.api.constant.tag.ESItemTags;
 import com.teamtea.eclipticseasons.api.data.misc.ESSortInfo;
 import com.teamtea.eclipticseasons.api.data.season.SeasonCycle;
 import com.teamtea.eclipticseasons.api.data.season.SpecialDays;
@@ -19,15 +21,11 @@ import com.teamtea.eclipticseasons.api.data.weather.CustomSnowTerm;
 import com.teamtea.eclipticseasons.api.data.weather.WeatherDimension;
 import com.teamtea.eclipticseasons.api.data.weather.special_effect.WeatherEffect;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
-import com.teamtea.eclipticseasons.common.block.BlockInCopperGrateBlock;
 import com.teamtea.eclipticseasons.common.block.IceOrSnowCauldronBlock;
 import com.teamtea.eclipticseasons.common.resource.FakeResourceManagerHelperUtil;
 import com.teamtea.eclipticseasons.compat.CompatModule;
-import com.teamtea.eclipticseasons.compat.Platform;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import com.teamtea.eclipticseasons.config.StartConfig;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -38,10 +36,6 @@ import net.minecraft.server.packs.repository.PackSource;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.*;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.loading.FMLLoader;
@@ -52,14 +46,9 @@ import net.neoforged.neoforge.common.ModConfigSpec;
 import net.neoforged.neoforge.event.AddPackFindersEvent;
 import net.neoforged.neoforge.event.RegisterCauldronInteractionEvent;
 import net.neoforged.neoforge.registries.*;
-import net.neoforged.neoforge.transfer.item.ItemResource;
-import net.neoforged.neoforge.transfer.item.ItemStacksResourceHandler;
-
-import org.jspecify.annotations.Nullable;
 
 import java.util.Optional;
 
-@SuppressWarnings("removal")
 @EventBusSubscriber
 public class ModContents {
 
@@ -78,6 +67,10 @@ public class ModContents {
                                                     return;
                                                 if (value != ItemRegistry.hyetometer
                                                         && value != ItemRegistry.thermometer) {
+                                                    if (!EclipticSeasonsApi.getInstance().getSeasonalSimulationLevel().enable(SeasonalSimulationLevel.AGRICULTURE)
+                                                            && value.is(ESItemTags.AGRICULTURE_CONTENT)) {
+                                                        return;
+                                                    }
                                                     output.accept(value.get());
                                                 }
                                             }

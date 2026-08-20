@@ -1,4 +1,10 @@
 {
+  "neoforge:conditions": [
+    {
+      "type": "eclipticseasons:seasonal_simulation_level",
+      "level": "agriculture"
+    }
+  ],
   "parent": "eclipticseasons:main/seasonal_prayer_scroll",
   "criteria": {
     "core_require": {

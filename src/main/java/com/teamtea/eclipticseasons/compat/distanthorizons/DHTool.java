@@ -3,11 +3,11 @@ package com.teamtea.eclipticseasons.compat.distanthorizons;
 import com.seibel.distanthorizons.api.DhApi;
 import com.seibel.distanthorizons.api.methods.events.abstractEvents.DhApiBlockColorOverrideEvent;
 import com.seibel.distanthorizons.api.methods.events.sharedParameterObjects.DhApiEventParam;
-import com.seibel.distanthorizons.api.methods.events.abstractEvents.DhApiBlockColorOverrideEvent.EventParam;
 import com.seibel.distanthorizons.common.wrappers.block.BlockStateWrapper;
 import com.seibel.distanthorizons.common.wrappers.block.BiomeWrapper;
 import com.seibel.distanthorizons.common.wrappers.world.ClientLevelWrapper;
 import com.seibel.distanthorizons.core.dataObjects.fullData.FullDataPointIdMap;
+import com.seibel.distanthorizons.core.dataObjects.fullData.sources.FullDataSourceV2;
 import com.seibel.distanthorizons.core.pos.blockPos.DhBlockPos;
 import com.seibel.distanthorizons.core.pos.blockPos.DhBlockPosMutable;
 import com.seibel.distanthorizons.core.util.FullDataPointUtil;
@@ -15,6 +15,7 @@ import com.seibel.distanthorizons.core.wrapperInterfaces.IWrapperFactory;
 import com.seibel.distanthorizons.core.wrapperInterfaces.block.IBlockStateWrapper;
 import com.seibel.distanthorizons.core.wrapperInterfaces.world.IBiomeWrapper;
 import com.seibel.distanthorizons.core.wrapperInterfaces.world.IClientLevelWrapper;
+import com.seibel.distanthorizons.coreapi.util.ColorUtil;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.compat.CompatModule;
@@ -22,8 +23,10 @@ import com.teamtea.eclipticseasons.config.ClientConfig;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import it.unimi.dsi.fastutil.longs.LongArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import lombok.Setter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Blocks;
@@ -34,6 +37,7 @@ import net.minecraft.world.level.material.MapColor;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.client.color.season.BiomeColorsHandler;
 import net.minecraft.world.level.block.LeavesBlock;
+import com.seibel.distanthorizons.api.methods.events.abstractEvents.DhApiBlockColorOverrideEvent.EventParam;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -41,6 +45,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.Map;
 
 public class DHTool {
+    private static final ThreadLocal<BlockPos.MutableBlockPos> MUTABLE_BLOCK_POS_THREAD_LOCAL = ThreadLocal.withInitial(BlockPos.MutableBlockPos::new);
+    private static final RandomSource RANDOM_SOURCE_THREAD_LOCAL = RandomSource.createThreadLocalInstance(42L);
+    @Setter
+    private static int snowColor = 0xFFF9FEFE;
 
     private static final Map<IBiomeWrapper, Biome> BIOME_CACHE = new ConcurrentHashMap<>();
 
@@ -205,7 +213,7 @@ public class DHTool {
         if (skyLight <= 0) return null;
 
         BlockState blockState = blockStateWrapper.blockState;
-        BlockPos mcPos = convert(dhBlockPos);
+        BlockPos.MutableBlockPos mcPos = convert(dhBlockPos);
 
         Biome biome = null;
         if (iBiomeWrapper instanceof BiomeWrapper bw) {
@@ -283,6 +291,7 @@ public class DHTool {
                 }
             }
         }
+
         return null;
     }
 
@@ -299,20 +308,43 @@ public class DHTool {
         Level level = instance.getLevel();
         if (level == null) return null;
 
+        Biome biome = null;
+        if (biomeWrapper instanceof BiomeWrapper bw) {
+            try {
+                Field biomeField = BiomeWrapper.class.getDeclaredField("biome");
+                biomeField.setAccessible(true);
+                Holder<Biome> holder = (Holder<Biome>) biomeField.get(bw);
+                if (holder != null) {
+                    biome = holder.value();
+                }
+            } catch (Exception e) {
+                Object obj = biomeWrapper.getWrappedMcObject();
+                if (obj instanceof Holder<?> holder && holder.value() instanceof Biome b) {
+                    biome = b;
+                }
+            }
+        } else {
+            Object obj = biomeWrapper.getWrappedMcObject();
+            if (obj instanceof Holder<?> holder && holder.value() instanceof Biome b) {
+                biome = b;
+            }
+        }
+
         if (ClientConfig.Debug.frozenWater.get()
-                && biomeWrapper.getWrappedMcObject() instanceof Holder<?> holder
-                && holder.value() instanceof Biome biome
+                && biome != null
                 && blockState.is(Blocks.WATER)
                 && blockState.getFluidState().isSourceOfType(Fluids.WATER)) {
             if (index > 0 && index < fullColumnData.size() - 1) {
                 try {
                     int id = FullDataPointUtil.getId(fullColumnData.getLong(index - 1));
-                    if (!fullDataMapping.getBlockStateWrapper(id).isAir())
+
+                    if (!fullDataMapping.getBlockStateWrapper(id).isAir()) {
                         return null;
+                    }
                 } catch (IndexOutOfBoundsException ignored) {
                 }
             }
-            var mcPos = convert(dhBlockPosMutable);
+            BlockPos.MutableBlockPos mcPos = convert(dhBlockPosMutable);
             if (MapChecker.shouldSnowAtBiome(level, biome, blockState, level.getRandom(), blockState.getSeed(mcPos), mcPos)) {
                 return BlockStateWrapper.fromBlockState(Blocks.ICE.defaultBlockState(), instance);
             }
@@ -320,11 +352,11 @@ public class DHTool {
         return null;
     }
 
-    public static BlockPos convert(DhBlockPos wrappedPos) {
-        return new BlockPos(wrappedPos.getX(), wrappedPos.getY(), wrappedPos.getZ());
+    private static BlockPos.MutableBlockPos convert(DhBlockPos wrappedPos) {
+        return MUTABLE_BLOCK_POS_THREAD_LOCAL.get().set(wrappedPos.getX(), wrappedPos.getY(), wrappedPos.getZ());
     }
 
-    public static BlockPos convert(DhBlockPosMutable wrappedPos) {
-        return new BlockPos(wrappedPos.getX(), wrappedPos.getY(), wrappedPos.getZ());
+    private static BlockPos.MutableBlockPos convert(DhBlockPosMutable wrappedPos) {
+        return MUTABLE_BLOCK_POS_THREAD_LOCAL.get().set(wrappedPos.getX(), wrappedPos.getY(), wrappedPos.getZ());
     }
 }

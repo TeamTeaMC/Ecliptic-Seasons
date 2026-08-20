@@ -1,4 +1,10 @@
 {
+  "neoforge:conditions": [
+    {
+      "type": "eclipticseasons:seasonal_simulation_level",
+      "level": "agriculture"
+    }
+  ],
   "parent": "eclipticseasons:quests/autumn_start",
   "criteria": {
     "core_require": {

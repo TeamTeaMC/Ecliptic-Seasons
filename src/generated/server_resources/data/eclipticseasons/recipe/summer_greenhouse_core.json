@@ -1,4 +1,10 @@
 {
+  "neoforge:conditions": [
+    {
+      "type": "eclipticseasons:seasonal_simulation_level",
+      "level": "agriculture"
+    }
+  ],
   "type": "minecraft:crafting_shapeless",
   "category": "equipment",
   "group": "summer_greenhouse_core",

@@ -5,11 +5,18 @@ import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.crop.CropHumidityType;
 import com.teamtea.eclipticseasons.api.constant.crop.CropSeasonType;
 import com.teamtea.eclipticseasons.api.constant.tag.ESItemTags;
+import com.teamtea.eclipticseasons.common.registry.ItemRegistry;
+import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
+import net.minecraft.data.tags.TagAppender;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.tags.TagEntry;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.common.data.ItemTagsProvider;
 
 import java.util.concurrent.CompletableFuture;
@@ -42,10 +49,10 @@ public final class ESItemTagProvider extends ItemTagsProvider {
         tag(CropHumidityType.DRY_AVERAGE.getTag()).add(Items.CACTUS);
         tag(CropHumidityType.DRY_MOIST.getTag()).add(Items.SWEET_BERRIES);
         tag(CropHumidityType.DRY_HUMID.getTag()).add(Items.MELON_SEEDS);
-        tag(CropHumidityType.AVERAGE_HUMID.getTag()).add(Items.GLOW_BERRIES,Items.SUGAR_CANE);
+        tag(CropHumidityType.AVERAGE_HUMID.getTag()).add(Items.GLOW_BERRIES, Items.SUGAR_CANE);
         tag(CropHumidityType.AVERAGE_MOIST.getTag()).add(Items.WHEAT_SEEDS, Items.CARROT, Items.BEETROOT_SEEDS, Items.POTATO, Items.PUMPKIN_SEEDS);
         tag(CropHumidityType.AVERAGE_MOIST.getTag()).add(Items.COCOA_BEANS, Items.KELP, Items.TORCHFLOWER_SEEDS);
-        tag(CropHumidityType.MOIST_HUMID.getTag()).add(Items.BAMBOO).add(Items.BROWN_MUSHROOM,Items.RED_MUSHROOM);
+        tag(CropHumidityType.MOIST_HUMID.getTag()).add(Items.BAMBOO).add(Items.BROWN_MUSHROOM, Items.RED_MUSHROOM);
 
         // others
         for (CropSeasonType cropSeasonType : CropSeasonType.collectValues()) {
@@ -55,13 +62,42 @@ public final class ESItemTagProvider extends ItemTagsProvider {
             tag(cropHumidityType.getTag());
         }
 
-        //tag(CropHumidityType.AVERAGE_MOIST.getTag()).addOptional(fd_rl("tomato_seeds")).addOptional(fd_rl("cabbage_seeds")).addOptional(fd_rl("onion"));
-        //tag(CropHumidityType.MOIST_HUMID.getTag()).addOptional(fd_rl("rice")).addOptional(fd_rl("brown_mushroom_colony")).addOptional(fd_rl("red_mushroom_colony"));
+        // tag(CropHumidityType.AVERAGE_MOIST.getTag()).addOptional(fd_rl("tomato_seeds")).addOptional(fd_rl("cabbage_seeds")).addOptional(fd_rl("onion"));
+        // tag(CropHumidityType.MOIST_HUMID.getTag()).addOptional(fd_rl("rice")).addOptional(fd_rl("brown_mushroom_colony")).addOptional(fd_rl("red_mushroom_colony"));
 
         tag(ESItemTags.COOLING_ITEMS).add(Items.SNOWBALL, Items.SNOW_BLOCK, Items.ICE, Items.BLUE_ICE, Items.PACKED_ICE);
         tag(ESItemTags.HEAT_PROTECTIVE_HELMETS);
         tag(ESItemTags.UNAFFECTED_BY_SEASONS);
         tag(ESItemTags.UNAFFECTED_BY_HUMIDITY);
+        tag(ESItemTags.AGRICULTURE_CONTENT).add(
+                ItemRegistry.growth_detector.get(),
+                ItemRegistry.greenhouse_core_container_item.get(),
+                ItemRegistry.spring_greenhouse_core_item.get(),
+                ItemRegistry.summer_greenhouse_core_item.get(),
+                ItemRegistry.autumn_greenhouse_core_item.get(),
+                ItemRegistry.winter_greenhouse_core_item.get(),
+                ItemRegistry.spring_greenhouse_essence_item.get(),
+                ItemRegistry.summer_greenhouse_essence_item.get(),
+                ItemRegistry.autumn_greenhouse_essence_item.get(),
+                ItemRegistry.winter_greenhouse_essence_item.get(),
+                ItemRegistry.seasonal_prayer_scroll_item.get(),
+                ItemRegistry.block_in_wooden_grate_block_item.get(),
+                ItemRegistry.humidity_tank_item.get(),
+                ItemRegistry.dehumidifier_item.get()
+                // ItemRegistry.calendar_item.get(),
+                // ItemRegistry.season_sensor_item.get(),
+                // ItemRegistry.broom.get(),
+                // ItemRegistry.salt_wand.get(),
+                // ItemRegistry.ice_wand.get(),
+                // ItemRegistry.hygrometer.get(),
+                // ItemRegistry.snowless_hometown.get(),
+                // ItemRegistry.bamboo_wind_chimes_item.get(),
+                // ItemRegistry.paper_wind_chimes_item.get(),
+                // ItemRegistry.wind_chimes_item.get(),
+                // ItemRegistry.pinwheel_orange_item.get(),
+                // ItemRegistry.pinwheel_lime_item.get(),
+                // ItemRegistry.pinwheel_blue_item.get()
+        );
     }
 
 
@@ -72,4 +108,5 @@ public final class ESItemTagProvider extends ItemTagsProvider {
     public Identifier fd_rl(String name) {
         return srl("farmersdelight", name);
     }
+
 }
