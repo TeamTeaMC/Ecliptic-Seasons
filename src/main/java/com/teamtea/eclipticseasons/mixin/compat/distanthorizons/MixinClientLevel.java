@@ -4,8 +4,6 @@ package com.teamtea.eclipticseasons.mixin.compat.distanthorizons;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.common.mixin.condition.ConditionalMixin;
 import com.teamtea.eclipticseasons.compat.distanthorizons.DHClientTool;
-import com.teamtea.eclipticseasons.compat.distanthorizons.DHTool;
-import com.teamtea.eclipticseasons.config.ClientConfig;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.Holder;
 import net.minecraft.core.RegistryAccess;
@@ -31,13 +29,6 @@ public abstract class MixinClientLevel extends Level {
 
     @Inject(at = {@At("HEAD")}, method = {"tick"})
     public void eclipticseasons$tick_refresh_dh(BooleanSupplier pHasTimeLeft, CallbackInfo ci) {
-        // if (ClientConfig.Renderer.forceChunkRenderUpdate.get() &&
-        //         ClientConfig.Renderer.enhancementChunkRenderUpdate.get()) {
-        //     if (getGameTime() % (20 * 15) == 0) {
-        //         DHClientTool.forceReloadAll();
-        //     }
-        // }
-
         if (ClientCon.getAgent().isChange()){
             DHClientTool.forceReloadAll();
         }

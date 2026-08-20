@@ -11,6 +11,7 @@ import com.seibel.distanthorizons.core.wrapperInterfaces.IWrapperFactory;
 import com.seibel.distanthorizons.core.wrapperInterfaces.block.IBlockStateWrapper;
 import com.seibel.distanthorizons.core.wrapperInterfaces.world.IBiomeWrapper;
 import com.seibel.distanthorizons.core.wrapperInterfaces.world.IClientLevelWrapper;
+import com.seibel.distanthorizons.coreapi.util.ColorUtil;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.compat.CompatModule;
@@ -18,8 +19,10 @@ import com.teamtea.eclipticseasons.config.ClientConfig;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import it.unimi.dsi.fastutil.longs.LongArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import lombok.Setter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Blocks;
@@ -28,11 +31,16 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.material.MapColor;
 
+import java.awt.*;
+
 public class DHTool {
-    private static final ThreadLocal<BlockPos.MutableBlockPos> MUTABLE_BLOCK_POS = ThreadLocal.withInitial(BlockPos.MutableBlockPos::new);
+    private static final ThreadLocal<BlockPos.MutableBlockPos> MUTABLE_BLOCK_POS_THREAD_LOCAL = ThreadLocal.withInitial(BlockPos.MutableBlockPos::new);
+    private static final RandomSource RANDOM_SOURCE_THREAD_LOCAL = RandomSource.createNewThreadLocalInstance();
+    @Setter
+    private static int snowColor = 0xFFF9FEFE;
 
     public static int applySnowColor(
-            MapColor color
+            Integer color
             // ,
             // IClientLevelWrapper instance,
             // DhBlockPos dhBlockPos,
@@ -40,23 +48,17 @@ public class DHTool {
             // FullDataSourceV2 fullDataSourceV2,
             // IBlockStateWrapper iBlockStateWrapper
     ) {
-        return color == MapColor.SNOW
-                ? -1
-                : color.col;
+        return color;
     }
 
-    public static MapColor computeBaseColor(IClientLevelWrapper instance, DhBlockPos dhBlockPos, IBiomeWrapper iBiomeWrapper, IBlockStateWrapper iBlockStateWrapper,  FullDataPointIdMap fullDataMapping, LongArrayList fullColumnData,  IWrapperFactory WRAPPER_FACTORY,int skylight) {
+
+    public static Integer computeBaseColor(IClientLevelWrapper instance, DhBlockPos dhBlockPos, IBiomeWrapper iBiomeWrapper, IBlockStateWrapper iBlockStateWrapper, FullDataPointIdMap fullDataMapping, LongArrayList fullColumnData, IWrapperFactory WRAPPER_FACTORY, int skylight, FullDataSourceV2 fullDataSourceV2, int targetDataIndex) {
         if (!CompatModule.CommonConfig.DistantHorizonsWinterLOD.get()
                 || !CommonConfig.isSnowyWinter()
                 || dhBlockPos.equals(DhBlockPos.ZERO)
-                || !(iBlockStateWrapper instanceof BlockStateWrapper_forge forgeBlockState)
-                || forgeBlockState.isAir()) {
-            return null;
-        }
-
-        int targetDataIndex = findDataPointIndex(instance, dhBlockPos, fullColumnData);
-
-        if (targetDataIndex < 0 || FullDataPointUtil.getSkyLight(fullColumnData.getLong(targetDataIndex)) <= 0) {
+                || !(iBlockStateWrapper instanceof BlockStateWrapper_forge blockStateWrapper)
+                || blockStateWrapper.isAir()
+                || skylight <= 0) {
             return null;
         }
 
@@ -65,17 +67,16 @@ public class DHTool {
             return null;
         }
 
-        BlockPos.MutableBlockPos mcPos = mutableBlockPos(dhBlockPos);
         Level level = ClientCon.getUseLevel();
-        BlockState blockState = forgeBlockState.blockState;
+        BlockState blockState = blockStateWrapper.blockState;
+        if (level == null || blockState == null) {
+            return null;
+        }
 
-        if (!MapChecker.shouldSnowAtBiome(
-                level,
-                biome,
-                blockState,
-                level.getRandom(),
-                blockState.getSeed(mcPos),
-                mcPos)) {
+        BlockPos.MutableBlockPos mcPos = convert(dhBlockPos);
+
+
+        if (!MapChecker.shouldSnowAtBiome(level, biome, blockState, RANDOM_SOURCE_THREAD_LOCAL, blockState.getSeed(mcPos), mcPos)) {
             return null;
         }
 
@@ -92,39 +93,31 @@ public class DHTool {
                 continue;
             }
 
-            if (CommonConfig.Debug.notLightAbove.get()
-                    && queriedWrapper
-                    instanceof BlockStateWrapper_forge queriedForgeState
-                    && queriedForgeState.blockState != null
-                    && queriedForgeState.blockState.getBlock()
-                    instanceof LightBlock
-                    && queriedForgeState.blockState.hasProperty(
-                    LightBlock.LEVEL
-            )
-                    && queriedForgeState.blockState.getValue(
-                    LightBlock.LEVEL
-            ) == 0) {
-                break;
-            }
-
-            if (!(queriedWrapper instanceof BlockStateWrapper_forge queriedForgeState)
+            if (!(queriedWrapper instanceof BlockStateWrapper_forge queriedState)
                     || queriedWrapper.isAir()
                     || blockStatesToIgnore.contains(queriedWrapper)) {
                 continue;
             }
 
-            if (i == targetDataIndex
-                    && (MapChecker.getDefaultBlockTypeFlag(
-                    queriedForgeState.blockState
-            ) != 0
-                    || (!queriedWrapper.isSolid()
-                    && !queriedWrapper.isLiquid()))) {
-                return MapColor.SNOW;
+            if (queriedWrapper.isLiquid()) break;
+
+            if (CommonConfig.Debug.notLightAbove.get()
+                    && queriedState.blockState != null
+                    && queriedState.blockState.getBlock() instanceof LightBlock
+                    && queriedState.blockState.hasProperty(LightBlock.LEVEL)
+                    && queriedState.blockState.getValue(LightBlock.LEVEL) == 0) {
+                break;
             }
 
-            if (!queriedWrapper.isLiquid() && !queriedForgeState.blockState.blocksMotion()) {
+            if (i == targetDataIndex
+                    && (MapChecker.getDefaultBlockTypeFlag(queriedState.blockState) != 0
+                    || (!queriedWrapper.isSolid() && !queriedWrapper.isLiquid()))) {
+                return snowColor;
+                // ColorUtil.setAlpha(instance.getBlockColor(dhBlockPos, iBiomeWrapper, fullDataSourceV2, BlockStateWrapper.fromBlockState(Blocks.SNOW.defaultBlockState(), instance)), 255)
+            }
+            if (!queriedWrapper.isLiquid() && !queriedState.blockState.blocksMotion()) {
                 if (i + 1 == targetDataIndex) {
-                    return MapColor.SNOW;
+                    return snowColor;
                 }
 
                 break;
@@ -132,37 +125,6 @@ public class DHTool {
         }
 
         return null;
-    }
-
-    private static int findDataPointIndex(
-            IClientLevelWrapper instance,
-            DhBlockPos dhBlockPos,
-            LongArrayList fullColumnData) {
-        int targetBottomY =
-                dhBlockPos.getY() - instance.getMinHeight();
-
-        int low = 0;
-        int high = fullColumnData.size() - 1;
-
-        while (low <= high) {
-            int middle = (low + high) >>> 1;
-
-            int middleBottomY = FullDataPointUtil.getBottomY(
-                    fullColumnData.getLong(middle)
-            );
-
-            if (middleBottomY == targetBottomY) {
-                return middle;
-            }
-
-            if (middleBottomY > targetBottomY) {
-                low = middle + 1;
-            } else {
-                high = middle - 1;
-            }
-        }
-
-        return -1;
     }
 
     public static IBlockStateWrapper shouldFrozen(ClientLevelWrapper_forge instance, IBiomeWrapper biomeWrapper, DhBlockPosMutable dhBlockPosMutable, BlockState blockState, FullDataPointIdMap fullDataMapping, LongArrayList fullColumnData, int index) {
@@ -175,37 +137,23 @@ public class DHTool {
         if (ClientConfig.Debug.frozenWater.get()
                 && biome != null
                 && blockState.is(Blocks.WATER)
-                && blockState.getFluidState()
-                .isSourceOfType(Fluids.WATER)) {
+                && blockState.getFluidState().isSourceOfType(Fluids.WATER)) {
             if (index > 0 && index < fullColumnData.size() - 1) {
                 try {
-                    int id = FullDataPointUtil.getId(
-                            fullColumnData.getLong(index - 1)
-                    );
+                    int id = FullDataPointUtil.getId(fullColumnData.getLong(index - 1));
 
-                    if (!fullDataMapping
-                            .getBlockStateWrapper(id)
-                            .isAir()) {
+                    if (!fullDataMapping.getBlockStateWrapper(id).isAir()) {
                         return null;
                     }
                 } catch (IndexOutOfBoundsException ignored) {
                 }
             }
 
-            BlockPos.MutableBlockPos mcPos = mutableBlockPos(dhBlockPosMutable);
+            BlockPos.MutableBlockPos mcPos = convert(dhBlockPosMutable);
             Level level = instance.getLevel();
 
-            if (MapChecker.shouldSnowAtBiome(
-                    level,
-                    biome,
-                    blockState,
-                    level.getRandom(),
-                    blockState.getSeed(mcPos),
-                    mcPos)) {
-                return BlockStateWrapper_forge.fromBlockState(
-                        Blocks.ICE.defaultBlockState(),
-                        instance
-                );
+            if (MapChecker.shouldSnowAtBiome(level, biome, blockState, RANDOM_SOURCE_THREAD_LOCAL, blockState.getSeed(mcPos), mcPos)) {
+                return BlockStateWrapper_forge.fromBlockState(Blocks.ICE.defaultBlockState(), instance);
             }
         }
         return null;
@@ -224,7 +172,7 @@ public class DHTool {
      * As it changed its signature.
      *
      */
-    private static BlockPos.MutableBlockPos mutableBlockPos(DhBlockPos wrappedPos) {
-        return MUTABLE_BLOCK_POS.get().set(wrappedPos.getX(), wrappedPos.getY(), wrappedPos.getZ());
+    private static BlockPos.MutableBlockPos convert(DhBlockPos wrappedPos) {
+        return MUTABLE_BLOCK_POS_THREAD_LOCAL.get().set(wrappedPos.getX(), wrappedPos.getY(), wrappedPos.getZ());
     }
 }
