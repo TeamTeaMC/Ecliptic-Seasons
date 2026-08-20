@@ -24,6 +24,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
@@ -96,13 +97,14 @@ public abstract class MixinLevelRender {
         return (int) ClientWeatherChecker.modifyRainAmount(originalNum, level);
     }
 
-    @WrapOperation(
+    @ModifyArg(
+            index = 1,
             method = {"renderSnowAndRain"},
             at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderSystem;setShaderTexture(ILnet/minecraft/resources/ResourceLocation;)V")
     )
-    private void eclipticseasons$renderSnowAndRain_rebindingTexture(
-            int shaderTexture, ResourceLocation textureId, Operation<Void> original) {
-        original.call(shaderTexture, ClientWeatherChecker.modifyRainAmount3(textureId, textureId == RAIN_LOCATION));
+    private ResourceLocation eclipticseasons$renderSnowAndRain_rebindingTexture(
+            ResourceLocation textureId) {
+        return ClientWeatherChecker.modifyRainAmount3(textureId, textureId == RAIN_LOCATION);
     }
 
     // @Inject(

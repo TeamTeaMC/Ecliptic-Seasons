@@ -31,6 +31,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin({ChunkBuilderMeshingTask.class})
@@ -102,23 +103,19 @@ public abstract class MixinBlockRenderTask extends ChunkBuilderTask<ChunkBuildOu
         }
     }
 
-    @Inject(
+    @ModifyVariable(
             remap = false,
             method = "execute(Lnet/caffeinemc/mods/sodium/client/render/chunk/compile/ChunkBuildContext;Lnet/caffeinemc/mods/sodium/client/util/task/CancellationToken;)Lnet/caffeinemc/mods/sodium/client/render/chunk/compile/ChunkBuildOutput;",
             at = @At(value = "INVOKE",
                     // shift = At.Shift.AFTER,
-                    target = "Lnet/caffeinemc/mods/sodium/client/render/chunk/compile/pipeline/BlockRenderCache;getBlockModels()Lnet/minecraft/client/renderer/block/BlockModelShaper;")
-    )
-    private void eclipticseasons$renderSnowLayerIn_below(
-            ChunkBuildContext buildContext,
-            CancellationToken cancellationToken,
-            CallbackInfoReturnable<ChunkBuildOutput> cir,
-            @Local(ordinal = 0) BlockPos.MutableBlockPos mutableBlockPos,
-            @Local LocalRef<BlockState> stateLocalRef
+                    target = "Lnet/minecraft/client/renderer/block/BlockModelShaper;getBlockModel(Lnet/minecraft/world/level/block/state/BlockState;)Lnet/minecraft/client/resources/model/BakedModel;"),
+            name = "blockState")
+    private BlockState eclipticseasons$renderSnowLayerIn_below(
+            BlockState state,
+            @Local(argsOnly = true) ChunkBuildContext buildContext,
+            @Local(name = "blockPos") BlockPos.MutableBlockPos mutableBlockPos
     ) {
-        var state = ExtraModelManager.shouldBlockAsSnowyState(stateLocalRef.get(), buildContext.cache.getWorldSlice(), mutableBlockPos);
-        if (state != stateLocalRef.get())
-            stateLocalRef.set(state);
+        return ExtraModelManager.shouldBlockAsSnowyState(state, buildContext.cache.getWorldSlice(), mutableBlockPos);
     }
 
     @Inject(

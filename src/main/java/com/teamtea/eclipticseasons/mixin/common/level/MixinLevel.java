@@ -4,6 +4,8 @@ package com.teamtea.eclipticseasons.mixin.common.level;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.misc.IBiomeWeatherProvider;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
+import com.teamtea.eclipticseasons.common.core.map.MapChecker;
+import com.teamtea.eclipticseasons.common.mixin.injector.DirectInject;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
@@ -22,11 +24,17 @@ import java.util.ArrayList;
 @Mixin(Level.class)
 public class MixinLevel implements IBiomeWeatherProvider {
 
-    @Inject(at = {@At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;getBiome(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/core/Holder;")}, method = {"isRainingAt"}, cancellable = true)
-    private void eclipticseasons$isRainingAt_endBiomeCheck(BlockPos p_46759_, CallbackInfoReturnable<Boolean> cir) {
-        if ((Object) this instanceof Level level) {
-            cir.setReturnValue(WeatherManager.isRainingUnderSky(level, p_46759_));
-        }
+    @DirectInject(
+            method = "isRainingAt",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/world/level/Level;getBiome(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/core/Holder;"
+            ),
+            mode = DirectInject.Mode.RETURN_WITH_CONTINUATION
+    )
+    private boolean eclipticseasons$precipitationAtEndBiomeCheck(BlockPos pos) {
+        Level level = (Level) (Object) this;
+        return WeatherManager.isRainingUnderSky(level, pos);
     }
 
 

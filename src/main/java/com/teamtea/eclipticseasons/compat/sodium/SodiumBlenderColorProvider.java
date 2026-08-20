@@ -1,5 +1,6 @@
 package com.teamtea.eclipticseasons.compat.sodium;
 
+import com.teamtea.eclipticseasons.common.util.ColorMixHelper;
 import net.caffeinemc.mods.sodium.api.util.ColorMixer;
 import net.caffeinemc.mods.sodium.client.model.color.ColorProvider;
 import net.caffeinemc.mods.sodium.client.model.quad.ModelQuadView;
@@ -43,7 +44,7 @@ public interface SodiumBlenderColorProvider extends ColorProvider<BlockState>, B
         int m01 = this.getColor(slice, state, scratchPos.set(blockX + 0, blockY, blockZ + 1));
         int m10 = this.getColor(slice, state, scratchPos.set(blockX + 1, blockY, blockZ + 0));
         int m11 = this.getColor(slice, state, scratchPos.set(blockX + 1, blockY, blockZ + 1));
-        return ColorMixer.mix2d(m00, m01, m10, m11, fracX, fracZ);
+        return ColorMixHelper.mix2d(m00, m01, m10, m11, fracX, fracZ);
     }
 
     private int getColor(LevelSlice slice, BlockState state, BlockPos set) {

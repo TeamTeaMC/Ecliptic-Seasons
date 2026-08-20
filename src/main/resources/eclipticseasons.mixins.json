@@ -72,6 +72,8 @@
     "compat.embeddium.MixinBlockRenderTask",
     "compat.embeddium.MixinChunkSlice",
     "compat.embeddium.MixinClonedChunkSection",
+    "compat.embeddium.Mixin_ColorSource",
+    "compat.embeddium.Mixin_FoliageColorSource",
     "compat.fabric_renderer_indigo.MixinAbstractBlockRenderer",
     "compat.fabric_renderer_indigo.MixinBlockRenderer",
     "compat.fabric_renderer_indigo.MixinFabricVanillaModelEncoder",

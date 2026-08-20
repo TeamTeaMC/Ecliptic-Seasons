@@ -1,11 +1,13 @@
 package com.teamtea.eclipticseasons.mixin.common.biome;
 
 
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.teamtea.eclipticseasons.api.constant.tag.ClimateTypeBiomeTags;
 import com.teamtea.eclipticseasons.api.misc.IBiomeTagHolder;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.common.core.biome.BiomeClimateManager;
 import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
+import com.teamtea.eclipticseasons.common.mixin.injector.DirectInject;
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.biome.Biome;
@@ -23,14 +25,15 @@ public abstract class MixinBiome implements IBiomeTagHolder {
     @Deprecated
     public abstract float getTemperature(BlockPos pos);
 
-    @Inject(at = {@At("HEAD")}, method = {"getPrecipitationAt"}, cancellable = true)
-    public void eclipticseasons$getPrecipitationAt(BlockPos pos, CallbackInfoReturnable<Biome.Precipitation> cir) {
-        cir.setReturnValue(WeatherManager.getPrecipitationAt((Biome) (Object) this, pos));
+    @DirectInject(at = {@At("HEAD")}, method = {"getPrecipitationAt"},
+            mode = DirectInject.Mode.RETURN_WITH_CONTINUATION)
+    public Biome.Precipitation eclipticseasons$getPrecipitationAt(BlockPos pos) {
+        return (WeatherManager.getPrecipitationAt((Biome) (Object) this, pos));
     }
 
-    @Inject(at = {@At("HEAD")}, method = {"hasPrecipitation"}, cancellable = true)
-    public void eclipticseasons$hasPrecipitation(CallbackInfoReturnable<Boolean> cir) {
-        cir.setReturnValue(BiomeClimateManager.agent$hasPrecipitation((Biome) (Object) this));
+    @ModifyReturnValue(at = {@At("RETURN")}, method = {"hasPrecipitation"})
+    public boolean eclipticseasons$hasPrecipitation(boolean original) {
+        return BiomeClimateManager.agent$hasPrecipitation(Biome.class.cast(this));
     }
 
     //
