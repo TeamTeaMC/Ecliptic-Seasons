@@ -1,6 +1,7 @@
 {
   "values": [
     "#minecraft:is_savanna",
+    "#c:is_savanna",
     "#c:is_cave",
     "#c:is_desert",
     "#c:is_badlands",

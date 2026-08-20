@@ -281,13 +281,12 @@ dependencies {
 //    implementation "net.neoforged:neoforge:${neo_version}"
 
 
-    implementation "curse.maven:jei-238222:8108851"
-    implementation "curse.maven:jade-324717:7817285"
-    compileOnly("curse.maven:the-one-probe-245211:6106998")
+ //   implementation "curse.maven:jei-238222:8108851"
+  //  implementation "curse.maven:jade-324717:7817285"
+  //  compileOnly("curse.maven:the-one-probe-245211:6106998")
 
-
-    compileOnly "org.sinytra.forgified-fabric-api:fabric-renderer-api-v1:3.4.0+acb05a39d1"
-    compileOnly "org.sinytra.forgified-fabric-api:fabric-renderer-indigo:1.7.0+acb05a39d1"
+   // compileOnly "org.sinytra.forgified-fabric-api:fabric-renderer-api-v1:3.4.0+acb05a39d1"
+   // compileOnly "org.sinytra.forgified-fabric-api:fabric-renderer-indigo:1.7.0+acb05a39d1"
 
     sodiumOuter "maven.modrinth:sodium:mc26.1.2-0.9.1-neoforge"
     compileOnly fileTree(dir: sodiumJarJarDir, include: ['*.jar'])
@@ -297,18 +296,18 @@ dependencies {
 
     compileOnly "maven.modrinth:voxy:0.2.14-alpha"
 
-    compileOnly "curse.maven:distant-horizons-508933:7948188"
+ //   compileOnly "curse.maven:DistantHorizons-3.2.0-b-26.1.2-fabric-neoforge.jar"
 //    onlyMainRuntimeOnly "curse.maven:distant-horizons-508933:7948188"
 
-    implementation "curse.maven:guideme-1173950:8204880"
+ //   implementation "curse.maven:guideme-1173950:8204880"
 //    'runClient -PincludeDebug=true'
     if (project.findProperty('includeDebug') == 'true') {
 
     }
 
     println "---- [DEBUG] onlyMain----"
-    onlyMainRuntimeOnly "curse.maven:journeymap-32274:8227986"
-    onlyMainRuntimeOnly("curse.maven:spark-361579:7815877")
+  //  onlyMainRuntimeOnly "curse.maven:journeymap-32274:8227986"
+  //  onlyMainRuntimeOnly("curse.maven:spark-361579:7815877")
     println("----Scan onlyMainRuntimeOnly libs begin----")
     fileTree(dir: 'libs', include: ['*.jar']).each { File file ->
         def fileName = file.name
@@ -322,11 +321,11 @@ dependencies {
 //    onlyMainRuntimeOnly "curse.maven:neocontinuity-1377279:7178602"
 //    onlyMainRuntimeOnly "curse.maven:fusion-connected-textures-854949:7058347"
 
-    compileOnly "curse.maven:patchouli-306770:6842247"
-    compileOnly "curse.maven:kubejs-238086:8235730"
+ //   compileOnly "curse.maven:patchouli-306770:6842247"
+ //   compileOnly "curse.maven:kubejs-238086:8235730"
 //    implementation "curse.maven:rhino-416294:7104526"
 
-    compileOnly "curse.maven:neocontinuity-1377279:8384810"
+  //  compileOnly "curse.maven:neocontinuity-1377279:8384810"
 //    compileOnly "curse.maven:modern-ui-352491:6956436"
 //    onlyMainRuntimeOnly "curse.maven:modern-ui-352491:6956436"
 //    onlyMainRuntimeOnly "curse.maven:simply-improved-terrain-472872:6112229"
@@ -337,6 +336,8 @@ dependencies {
 
     // https://mvnrepository.com/artifact/net.time4j/time4j-base
     compileOnly("net.time4j:time4j-base:5.9.4")
+
+    compileOnly fileTree(dir: 'libs', include: ['*.jar'])
 //    implementation(jarJar("net.time4j:time4j-base:5.9.4")) {
 //        jarJar.ranged(it, "[5.9.4,)")
 //    }

@@ -43,19 +43,27 @@ public abstract class MixinFullDataToRenderDataTransformer {
             method = "setRenderColumnView",
             at = @At(value = "INVOKE", target = "Lcom/seibel/distanthorizons/core/wrapperInterfaces/world/IClientLevelWrapper;getBlockColor(Lcom/seibel/distanthorizons/core/pos/blockPos/DhBlockPos;Lcom/seibel/distanthorizons/core/wrapperInterfaces/world/IBiomeWrapper;Lcom/seibel/distanthorizons/core/dataObjects/fullData/sources/FullDataSourceV2;Lcom/seibel/distanthorizons/core/wrapperInterfaces/block/IBlockStateWrapper;)I")
     )
-    private static int eclipticseasons$setRenderColumnView_computeBaseColor(IClientLevelWrapper instance,
-                                                                            DhBlockPos dhBlockPos,
-                                                                            IBiomeWrapper iBiomeWrapper,
-                                                                            FullDataSourceV2 fullDataSourceV2,
-                                                                            IBlockStateWrapper iBlockStateWrapper,
-                                                                            Operation<Integer> original,
-                                                                            @Local FullDataPointIdMap fullDataMapping,
-                                                                            @Local(argsOnly = true) LongArrayList fullColumnData,
-                                                                            @Local(name = "skyLight") LocalIntRef localIntRef) {
-        MapColor mapColor = DHTool.computeBaseColor(instance, dhBlockPos, iBiomeWrapper, iBlockStateWrapper, fullDataMapping, fullColumnData, WRAPPER_FACTORY,localIntRef.get());
-        if (mapColor == MapColor.SNOW)
-            // 不知道为什么，不能用这个值
+    private static int eclipticseasons$setRenderColumnView_computeBaseColor(
+            IClientLevelWrapper instance,
+            DhBlockPos dhBlockPos,
+            IBiomeWrapper iBiomeWrapper,
+            FullDataSourceV2 fullDataSourceV2,
+            IBlockStateWrapper iBlockStateWrapper,
+            Operation<Integer> original,
+            @Local FullDataPointIdMap fullDataMapping,
+            @Local(argsOnly = true) LongArrayList fullColumnData,
+            @Local(name = "skyLight") LocalIntRef localIntRef) {
+
+        MapColor mapColor = DHTool.computeBaseColor(instance, dhBlockPos, iBiomeWrapper, iBlockStateWrapper, fullDataMapping, fullColumnData, WRAPPER_FACTORY, localIntRef.get());
+        if (mapColor == MapColor.SNOW) {
             return Color.WHITE.getRGB();
+        }
+
+        int seasonalColor = DHTool.getSeasonalColor(instance, iBiomeWrapper, iBlockStateWrapper, dhBlockPos.getX(), dhBlockPos.getY(), dhBlockPos.getZ());
+        if (seasonalColor != -1) {
+            return seasonalColor;
+        }
+
         return original.call(instance, dhBlockPos, iBiomeWrapper, fullDataSourceV2, iBlockStateWrapper);
     }
 

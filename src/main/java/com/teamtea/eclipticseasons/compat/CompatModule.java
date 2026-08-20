@@ -8,6 +8,8 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.event.lifecycle.InterModEnqueueEvent;
 import net.neoforged.fml.loading.FMLLoader;
 import net.neoforged.neoforge.common.ModConfigSpec;
+import com.teamtea.eclipticseasons.compat.distanthorizons.LODReloadListener;
+import com.teamtea.eclipticseasons.compat.distanthorizons.DHTool;
 
 import java.util.List;
 
@@ -73,6 +75,10 @@ public class CompatModule {
             } catch (ClassNotFoundException | IllegalAccessException | NoSuchFieldException e) {
 
             }
+        }
+        if (isDistanthorizons() && FMLLoader.getCurrent().getDist() == Dist.CLIENT) {
+            gameBus.register(new LODReloadListener());
+            DHTool.registerColorOverride();
         }
     }
 
