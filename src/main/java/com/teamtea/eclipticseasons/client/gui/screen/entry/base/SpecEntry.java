@@ -2,6 +2,7 @@ package com.teamtea.eclipticseasons.client.gui.screen.entry.base;
 
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.client.gui.screen.ESModConfigScreen;
+import com.teamtea.eclipticseasons.client.gui.screen.config.ConfigCategory;
 import com.teamtea.eclipticseasons.client.gui.screen.entry.spec.BooleanEntry;
 import com.teamtea.eclipticseasons.client.gui.screen.entry.spec.EnumEntry;
 import com.teamtea.eclipticseasons.client.gui.screen.entry.spec.FixedIntegerListEntry;
@@ -42,7 +43,9 @@ public abstract class SpecEntry<T> extends ConfigEntry {
 
     @Override
     public String getSearchText() {
-        return label.getString() + " " + spec.getPath().getLast();
+        return label.getString() + " " + spec.getPath().getLast() + " "
+                + (spec.getPath().size() > 1 ?
+                Component.translatable("eclipticseasons.configuration." + spec.getPath().get(spec.getPath().size() - 2)).getString() : "");
     }
 
     public boolean isValueChanged() {
@@ -77,6 +80,11 @@ public abstract class SpecEntry<T> extends ConfigEntry {
         LinearLayout linearLayout = new LinearLayout(x, y, LinearLayout.Orientation.HORIZONTAL);
         linearLayout.addChild(buildModConfigSpec(screen, x, y, width));
         return linearLayout;
+    }
+
+    protected MutableComponent getLabel(ESModConfigScreen screen) {
+        return screen.getSelectTab() == ConfigCategory.ALL && spec.getPath().size() > 1 ?
+                Component.translatable("eclipticseasons.configuration." + spec.getPath().get(spec.getPath().size() - 2)).append(" > ").append(label) : label.copy();
     }
 
     public abstract AbstractWidget buildModConfigSpec(ESModConfigScreen screen, int x, int y, int width);

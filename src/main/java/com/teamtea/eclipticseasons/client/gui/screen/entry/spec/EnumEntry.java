@@ -2,6 +2,7 @@ package com.teamtea.eclipticseasons.client.gui.screen.entry.spec;
 
 import com.teamtea.eclipticseasons.api.misc.ITranslatable;
 import com.teamtea.eclipticseasons.client.gui.screen.ESModConfigScreen;
+import com.teamtea.eclipticseasons.client.gui.screen.config.ConfigCategory;
 import com.teamtea.eclipticseasons.client.gui.screen.entry.base.SpecEntry;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.CycleButton;
@@ -18,13 +19,8 @@ public class EnumEntry<T extends Enum<T>> extends SpecEntry<T> {
     }
 
     @Override
-    public int getColumn() {
-        return 2;
-    }
-
-    @Override
     public LayoutElement buildLayout(ESModConfigScreen screen, int x, int y, int width) {
-        return buildLabelAndControl(screen, label, buildModConfigSpec(screen, x, y, width), width);
+        return buildLabelAndControl(screen, getLabel(screen), buildModConfigSpec(screen, x, y, width), width);
     }
 
     @Override

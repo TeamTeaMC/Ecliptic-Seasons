@@ -65,11 +65,6 @@ public abstract class CallbackEntry<T> extends ConfigEntry {
     }
 
     @Override
-    public int getColumn() {
-        return 2;
-    }
-
-    @Override
     public LayoutElement build(ESModConfigScreen screen, int x, int y, int width) {
         LayoutElement layoutElement = buildLayout(screen, x, y, width);
 

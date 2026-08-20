@@ -17,18 +17,13 @@ public abstract class NumberEntry<T extends Number> extends SpecEntry<T> {
     }
 
     @Override
-    public int getColumn() {
-        return 2;
-    }
-
-    @Override
     public int getPosition() {
         return 5;
     }
 
     @Override
     public LayoutElement buildLayout(ESModConfigScreen screen, int x, int y, int width) {
-        return buildLabelAndControl(screen, label, buildModConfigSpec(screen, x, y, width), width);
+        return buildLabelAndControl(screen, getLabel(screen), buildModConfigSpec(screen, x, y, width), width);
     }
 
     public static class TextNumberEntry<T extends Number> extends NumberEntry<T> {

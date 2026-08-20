@@ -205,6 +205,7 @@ public class ESModConfigScreen extends Screen {
             case "distanthorizons" -> "Distant Horizons";
             case "fabric_renderer_indigo" -> "Fabric Renderer Indigo";
             case "voxy" -> "Voxy";
+            case "optfine" -> "Optfine";
             default -> moduleId;
         };
     }
@@ -233,6 +234,7 @@ public class ESModConfigScreen extends Screen {
         this.mod = mod;
     }
 
+    @Getter
     protected ConfigCategory selectTab;
 
     private static final int TAB_SPACING = 8;
@@ -396,34 +398,14 @@ public class ESModConfigScreen extends Screen {
         super.resize(width, height);
     }
 
-    protected Map<String, byte[]> configCache = new HashMap<>();
-
-    public void initConfigCache() {
-        for (ModConfig modConfig : ModConfigs.getModConfigs(EclipticSeasonsApi.MODID)) {
-            try {
-                configCache.put(modConfig.getFileName(), Files.readAllBytes(FMLPaths.CONFIGDIR.get().resolve(modConfig.getFileName())));
-            } catch (IOException e) {
-                EclipticSeasons.logger(e);
-            }
-        }
-    }
-
-    public void backupConfigCache() {
-        for (Map.Entry<String, byte[]> entry : configCache.entrySet()) {
-            ModConfig modConfig = ModConfigs.getFileMap().get(entry.getKey());
-            if (modConfig != null) {
-                ConfigTracker.INSTANCE.acceptSyncedConfig(modConfig, entry.getValue());
-            }
-        }
-    }
 
     @Override
     public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
         super.extractBackground(graphics, mouseX, mouseY, a);
-        renderDividers(graphics);
+        renderBackgroundPanels(graphics);
     }
 
-    private void renderDividers(GuiGraphicsExtractor graphics) {
+    protected void renderBackgroundPanels(GuiGraphicsExtractor graphics) {
         int l = 0, r = width, t = 36, b = height - 36;
         int s = SIDEBAR_WIDTH + 22, m = (t + b) / 2;
 
@@ -451,6 +433,27 @@ public class ESModConfigScreen extends Screen {
         graphics.fill(q, 0, q * 2, 2, 0xCCD5B84A); // 夏
         graphics.fill(q * 2, 0, q * 3, 2, 0xCCD8793D); // 秋
         graphics.fill(q * 3, 0, width, 2, 0xCC79AFC4); // 冬
+    }
+
+    protected Map<String, byte[]> configCache = new HashMap<>();
+
+    public void initConfigCache() {
+        for (ModConfig modConfig : ModConfigs.getModConfigs(EclipticSeasonsApi.MODID)) {
+            try {
+                configCache.put(modConfig.getFileName(), Files.readAllBytes(FMLPaths.CONFIGDIR.get().resolve(modConfig.getFileName())));
+            } catch (IOException e) {
+                EclipticSeasons.logger(e);
+            }
+        }
+    }
+
+    public void backupConfigCache() {
+        for (Map.Entry<String, byte[]> entry : configCache.entrySet()) {
+            ModConfig modConfig = ModConfigs.getFileMap().get(entry.getKey());
+            if (modConfig != null) {
+                ConfigTracker.INSTANCE.acceptSyncedConfig(modConfig, entry.getValue());
+            }
+        }
     }
 
     @Override
