@@ -26,19 +26,7 @@ public abstract class NumberEntry<T extends Number> extends SpecEntry<T> {
 
     @Override
     public LayoutElement buildLayout(ESModConfigScreen screen, int x, int y, int width) {
-        // LinearLayout linearLayout = new LinearLayout(x, y, LinearLayout.Orientation.HORIZONTAL);
-        GridLayout gridLayout = new GridLayout();
-        gridLayout.defaultCellSetting().paddingHorizontal(4).paddingBottom(4).alignHorizontallyCenter();
-        GridLayout.RowHelper helper = gridLayout.createRowHelper(2);
-        StringWidget s = new StringWidget(label, screen.getFont());
-        s.setWidth(width + 4);
-        s.setHeight(20);
-        AbstractWidget abstractWidget = buildModConfigSpec(screen, x, y, width);
-        abstractWidget.setWidth(width);
-        helper.addChild(s);
-        helper.addChild(abstractWidget);
-
-        return gridLayout;
+        return buildLabelAndControl(screen, getLabel(screen), buildModConfigSpec(screen, x, y, width), width);
     }
 
 
