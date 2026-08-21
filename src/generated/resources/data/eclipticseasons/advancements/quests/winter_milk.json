@@ -1,52 +1,64 @@
 {
-  "parent": "eclipticseasons:quests/winter_campfire",
-  "criteria": {
-    "core_require": {
-      "conditions": {
-        "item": {
-          "items": [
-            "minecraft:milk_bucket"
-          ]
-        },
-        "player": [
-          {
-            "condition": "minecraft:entity_properties",
-            "entity": "this",
-            "predicate": {}
+  "advancements": [
+    {
+      "advancement": {
+        "parent": "eclipticseasons:quests/winter_campfire",
+        "criteria": {
+          "core_require": {
+            "conditions": {
+              "item": {
+                "items": [
+                  "minecraft:milk_bucket"
+                ]
+              },
+              "player": [
+                {
+                  "condition": "minecraft:entity_properties",
+                  "entity": "this",
+                  "predicate": {}
+                }
+              ]
+            },
+            "trigger": "minecraft:using_item"
+          },
+          "parent_need": {
+            "conditions": {
+              "parent": "eclipticseasons:quests/winter_campfire"
+            },
+            "trigger": "eclipticseasons:parent"
           }
-        ]
+        },
+        "display": {
+          "announce_to_chat": true,
+          "description": {
+            "translate": "advancement.eclipticseasons.winter_milk.desc"
+          },
+          "frame": "task",
+          "hidden": false,
+          "icon": {
+            "item": "minecraft:milk_bucket"
+          },
+          "show_toast": false,
+          "title": {
+            "translate": "advancement.eclipticseasons.winter_milk"
+          }
+        },
+        "requirements": [
+          [
+            "parent_need"
+          ],
+          [
+            "core_require"
+          ]
+        ],
+        "sends_telemetry_event": true
       },
-      "trigger": "minecraft:using_item"
-    },
-    "parent_need": {
-      "conditions": {
-        "parent": "eclipticseasons:quests/winter_campfire"
-      },
-      "trigger": "eclipticseasons:parent"
+      "conditions": [
+        {
+          "type": "eclipticseasons:seasonal_simulation_level",
+          "level": "agriculture"
+        }
+      ]
     }
-  },
-  "display": {
-    "announce_to_chat": true,
-    "description": {
-      "translate": "advancement.eclipticseasons.winter_milk.desc"
-    },
-    "frame": "task",
-    "hidden": false,
-    "icon": {
-      "item": "minecraft:milk_bucket"
-    },
-    "show_toast": false,
-    "title": {
-      "translate": "advancement.eclipticseasons.winter_milk"
-    }
-  },
-  "requirements": [
-    [
-      "parent_need"
-    ],
-    [
-      "core_require"
-    ]
-  ],
-  "sends_telemetry_event": true
+  ]
 }

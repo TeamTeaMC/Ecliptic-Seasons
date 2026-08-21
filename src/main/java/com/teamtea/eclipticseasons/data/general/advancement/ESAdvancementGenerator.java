@@ -29,7 +29,7 @@ import java.util.function.Consumer;
 
 public class ESAdvancementGenerator implements ForgeAdvancementProvider.AdvancementGenerator {
 
-    private String getNameId(String id) {
+    static String getNameId(String id) {
         return EclipticSeasonsApi.MODID + ":" + id;
     }
 

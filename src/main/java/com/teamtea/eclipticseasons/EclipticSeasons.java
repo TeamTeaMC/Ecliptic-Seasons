@@ -122,6 +122,7 @@ public class EclipticSeasons {
         ItemRegistry.ITEM_DEFERRED_REGISTER.register(modEventBus);
         BlockEntityRegistry.BLOCK_ENTITY_TYPE_DEFERRED_REGISTER.register(modEventBus);
         LootItemConditionRegistry.LOOT_ITEM_CONDITION_TYPE_DEFERRED_REGISTER.register(modEventBus);
+        ResourceConditionRegistry.init();
 
         modEventBus.addListener(this::gatherData);
         modEventBus.addListener(this::FMLCommonSetup);

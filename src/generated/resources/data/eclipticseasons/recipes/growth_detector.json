@@ -1,25 +1,38 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "category": "equipment",
-  "group": "growth_detector",
-  "key": {
-    "x": {
-      "tag": "forge:glass_panes"
-    },
-    "y": {
-      "tag": "forge:glass"
-    },
-    "z": {
-      "tag": "forge:rods/wooden"
+  "type": "forge:conditional",
+  "recipes": [
+    {
+      "conditions": [
+        {
+          "type": "eclipticseasons:seasonal_simulation_level",
+          "level": "agriculture"
+        }
+      ],
+      "recipe": {
+        "type": "minecraft:crafting_shaped",
+        "category": "equipment",
+        "group": "growth_detector",
+        "key": {
+          "x": {
+            "tag": "forge:glass_panes"
+          },
+          "y": {
+            "tag": "forge:glass"
+          },
+          "z": {
+            "tag": "forge:rods/wooden"
+          }
+        },
+        "pattern": [
+          "  x",
+          " y ",
+          "z  "
+        ],
+        "result": {
+          "item": "eclipticseasons:growth_detector"
+        },
+        "show_notification": true
+      }
     }
-  },
-  "pattern": [
-    "  x",
-    " y ",
-    "z  "
-  ],
-  "result": {
-    "item": "eclipticseasons:growth_detector"
-  },
-  "show_notification": true
+  ]
 }

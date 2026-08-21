@@ -1,33 +1,45 @@
 {
-  "parent": "minecraft:recipes/root",
-  "criteria": {
-    "has_glass": {
-      "conditions": {
-        "items": [
-          {
-            "tag": "forge:glass"
+  "advancements": [
+    {
+      "advancement": {
+        "parent": "minecraft:recipes/root",
+        "criteria": {
+          "has_glass": {
+            "conditions": {
+              "items": [
+                {
+                  "tag": "forge:glass"
+                }
+              ]
+            },
+            "trigger": "minecraft:inventory_changed"
+          },
+          "has_the_recipe": {
+            "conditions": {
+              "recipe": "eclipticseasons:growth_detector"
+            },
+            "trigger": "minecraft:recipe_unlocked"
           }
-        ]
+        },
+        "requirements": [
+          [
+            "has_glass",
+            "has_the_recipe"
+          ]
+        ],
+        "rewards": {
+          "recipes": [
+            "eclipticseasons:growth_detector"
+          ]
+        },
+        "sends_telemetry_event": false
       },
-      "trigger": "minecraft:inventory_changed"
-    },
-    "has_the_recipe": {
-      "conditions": {
-        "recipe": "eclipticseasons:growth_detector"
-      },
-      "trigger": "minecraft:recipe_unlocked"
+      "conditions": [
+        {
+          "type": "eclipticseasons:seasonal_simulation_level",
+          "level": "agriculture"
+        }
+      ]
     }
-  },
-  "requirements": [
-    [
-      "has_glass",
-      "has_the_recipe"
-    ]
-  ],
-  "rewards": {
-    "recipes": [
-      "eclipticseasons:growth_detector"
-    ]
-  },
-  "sends_telemetry_event": false
+  ]
 }

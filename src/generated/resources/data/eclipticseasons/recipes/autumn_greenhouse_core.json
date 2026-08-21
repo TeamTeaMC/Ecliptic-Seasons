@@ -1,16 +1,29 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "equipment",
-  "group": "autumn_greenhouse_core",
-  "ingredients": [
+  "type": "forge:conditional",
+  "recipes": [
     {
-      "item": "eclipticseasons:autumn_greenhouse_essence"
-    },
-    {
-      "item": "eclipticseasons:greenhouse_core_container"
+      "conditions": [
+        {
+          "type": "eclipticseasons:seasonal_simulation_level",
+          "level": "agriculture"
+        }
+      ],
+      "recipe": {
+        "type": "minecraft:crafting_shapeless",
+        "category": "equipment",
+        "group": "autumn_greenhouse_core",
+        "ingredients": [
+          {
+            "item": "eclipticseasons:autumn_greenhouse_essence"
+          },
+          {
+            "item": "eclipticseasons:greenhouse_core_container"
+          }
+        ],
+        "result": {
+          "item": "eclipticseasons:autumn_greenhouse_core"
+        }
+      }
     }
-  ],
-  "result": {
-    "item": "eclipticseasons:autumn_greenhouse_core"
-  }
+  ]
 }

@@ -4,13 +4,11 @@
       "advancement": {
         "parent": "minecraft:recipes/root",
         "criteria": {
-          "has_hay_block": {
+          "has_seeds": {
             "conditions": {
               "items": [
                 {
-                  "items": [
-                    "minecraft:hay_block"
-                  ]
+                  "tag": "forge:seeds"
                 }
               ]
             },
@@ -18,28 +16,28 @@
           },
           "has_the_recipe": {
             "conditions": {
-              "recipe": "eclipticseasons:dehumidifier"
+              "recipe": "eclipticseasons:seasons_chronicle"
             },
             "trigger": "minecraft:recipe_unlocked"
           }
         },
         "requirements": [
           [
-            "has_hay_block",
+            "has_seeds",
             "has_the_recipe"
           ]
         ],
         "rewards": {
           "recipes": [
-            "eclipticseasons:dehumidifier"
+            "eclipticseasons:seasons_chronicle"
           ]
         },
         "sends_telemetry_event": false
       },
       "conditions": [
         {
-          "type": "eclipticseasons:seasonal_simulation_level",
-          "level": "agriculture"
+          "type": "forge:mod_loaded",
+          "modid": "patchouli"
         }
       ]
     }

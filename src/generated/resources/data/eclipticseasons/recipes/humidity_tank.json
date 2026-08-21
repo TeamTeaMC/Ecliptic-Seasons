@@ -1,27 +1,40 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "category": "misc",
-  "key": {
-    "B": {
-      "tag": "minecraft:planks"
-    },
-    "C": {
-      "item": "minecraft:water_bucket"
-    },
-    "I": {
-      "item": "minecraft:iron_ingot"
-    },
-    "S": {
-      "tag": "minecraft:wooden_slabs"
+  "type": "forge:conditional",
+  "recipes": [
+    {
+      "conditions": [
+        {
+          "type": "eclipticseasons:seasonal_simulation_level",
+          "level": "agriculture"
+        }
+      ],
+      "recipe": {
+        "type": "minecraft:crafting_shaped",
+        "category": "misc",
+        "key": {
+          "B": {
+            "tag": "minecraft:planks"
+          },
+          "C": {
+            "item": "minecraft:water_bucket"
+          },
+          "I": {
+            "item": "minecraft:iron_ingot"
+          },
+          "S": {
+            "tag": "minecraft:wooden_slabs"
+          }
+        },
+        "pattern": [
+          "SBS",
+          "BCB",
+          "SIS"
+        ],
+        "result": {
+          "item": "eclipticseasons:humidity_tank"
+        },
+        "show_notification": true
+      }
     }
-  },
-  "pattern": [
-    "SBS",
-    "BCB",
-    "SIS"
-  ],
-  "result": {
-    "item": "eclipticseasons:humidity_tank"
-  },
-  "show_notification": true
+  ]
 }

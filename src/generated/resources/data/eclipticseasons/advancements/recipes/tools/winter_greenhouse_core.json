@@ -1,33 +1,45 @@
 {
-  "parent": "minecraft:recipes/root",
-  "criteria": {
-    "has_amethyst": {
-      "conditions": {
-        "items": [
-          {
-            "tag": "forge:gems/amethyst"
+  "advancements": [
+    {
+      "advancement": {
+        "parent": "minecraft:recipes/root",
+        "criteria": {
+          "has_amethyst": {
+            "conditions": {
+              "items": [
+                {
+                  "tag": "forge:gems/amethyst"
+                }
+              ]
+            },
+            "trigger": "minecraft:inventory_changed"
+          },
+          "has_the_recipe": {
+            "conditions": {
+              "recipe": "eclipticseasons:winter_greenhouse_core"
+            },
+            "trigger": "minecraft:recipe_unlocked"
           }
-        ]
+        },
+        "requirements": [
+          [
+            "has_amethyst",
+            "has_the_recipe"
+          ]
+        ],
+        "rewards": {
+          "recipes": [
+            "eclipticseasons:winter_greenhouse_core"
+          ]
+        },
+        "sends_telemetry_event": false
       },
-      "trigger": "minecraft:inventory_changed"
-    },
-    "has_the_recipe": {
-      "conditions": {
-        "recipe": "eclipticseasons:winter_greenhouse_core"
-      },
-      "trigger": "minecraft:recipe_unlocked"
+      "conditions": [
+        {
+          "type": "eclipticseasons:seasonal_simulation_level",
+          "level": "agriculture"
+        }
+      ]
     }
-  },
-  "requirements": [
-    [
-      "has_amethyst",
-      "has_the_recipe"
-    ]
-  ],
-  "rewards": {
-    "recipes": [
-      "eclipticseasons:winter_greenhouse_core"
-    ]
-  },
-  "sends_telemetry_event": false
+  ]
 }

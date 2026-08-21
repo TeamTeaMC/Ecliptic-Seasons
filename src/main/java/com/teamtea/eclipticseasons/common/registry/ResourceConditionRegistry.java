@@ -7,10 +7,9 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 
 
-@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ResourceConditionRegistry {
-    @SubscribeEvent
-    public static void registerSerializers(FMLCommonSetupEvent event) {
+
+    public static void init() {
         CraftingHelper.register(SeasonalSimulationLevelCondition.Serializer.INSTANCE);
     }
 }

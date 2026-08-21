@@ -1,30 +1,42 @@
 {
-  "parent": "eclipticseasons:main/root",
-  "criteria": {
-    "tick": {
-      "conditions": {},
-      "trigger": "minecraft:tick"
+  "advancements": [
+    {
+      "advancement": {
+        "parent": "eclipticseasons:main/root",
+        "criteria": {
+          "tick": {
+            "conditions": {},
+            "trigger": "minecraft:tick"
+          }
+        },
+        "display": {
+          "announce_to_chat": false,
+          "description": {
+            "translate": "advancement.eclipticseasons.quest.desc"
+          },
+          "frame": "task",
+          "hidden": false,
+          "icon": {
+            "item": "eclipticseasons:pinwheel_lime"
+          },
+          "show_toast": false,
+          "title": {
+            "translate": "advancement.eclipticseasons.quest"
+          }
+        },
+        "requirements": [
+          [
+            "tick"
+          ]
+        ],
+        "sends_telemetry_event": true
+      },
+      "conditions": [
+        {
+          "type": "eclipticseasons:seasonal_simulation_level",
+          "level": "agriculture"
+        }
+      ]
     }
-  },
-  "display": {
-    "announce_to_chat": false,
-    "description": {
-      "translate": "advancement.eclipticseasons.quest.desc"
-    },
-    "frame": "task",
-    "hidden": false,
-    "icon": {
-      "item": "eclipticseasons:pinwheel_lime"
-    },
-    "show_toast": false,
-    "title": {
-      "translate": "advancement.eclipticseasons.quest"
-    }
-  },
-  "requirements": [
-    [
-      "tick"
-    ]
-  ],
-  "sends_telemetry_event": true
+  ]
 }

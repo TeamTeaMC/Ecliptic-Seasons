@@ -1,24 +1,37 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "category": "equipment",
-  "group": "hyetometer",
-  "key": {
-    "x": {
-      "tag": "forge:dusts/redstone"
-    },
-    "y": {
-      "item": "minecraft:glass_bottle"
-    },
-    "z": {
-      "tag": "forge:ingots/copper"
+  "type": "forge:conditional",
+  "recipes": [
+    {
+      "conditions": [
+        {
+          "type": "eclipticseasons:seasonal_simulation_level",
+          "level": "survival"
+        }
+      ],
+      "recipe": {
+        "type": "minecraft:crafting_shaped",
+        "category": "equipment",
+        "group": "hyetometer",
+        "key": {
+          "x": {
+            "tag": "forge:dusts/redstone"
+          },
+          "y": {
+            "item": "minecraft:glass_bottle"
+          },
+          "z": {
+            "tag": "forge:ingots/copper"
+          }
+        },
+        "pattern": [
+          "xz",
+          " y"
+        ],
+        "result": {
+          "item": "eclipticseasons:hyetometer"
+        },
+        "show_notification": true
+      }
     }
-  },
-  "pattern": [
-    "xz",
-    " y"
-  ],
-  "result": {
-    "item": "eclipticseasons:hyetometer"
-  },
-  "show_notification": true
+  ]
 }

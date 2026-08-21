@@ -1,47 +1,59 @@
 {
-  "parent": "eclipticseasons:main/green_house",
-  "criteria": {
-    "core_require": {
-      "conditions": {
-        "items": [
-          {
-            "items": [
-              "eclipticseasons:humidity_tank"
-            ]
+  "advancements": [
+    {
+      "advancement": {
+        "parent": "eclipticseasons:main/green_house",
+        "criteria": {
+          "core_require": {
+            "conditions": {
+              "items": [
+                {
+                  "items": [
+                    "eclipticseasons:humidity_tank"
+                  ]
+                }
+              ]
+            },
+            "trigger": "minecraft:inventory_changed"
+          },
+          "parent_need": {
+            "conditions": {
+              "parent": "eclipticseasons:main/green_house"
+            },
+            "trigger": "eclipticseasons:parent"
           }
-        ]
+        },
+        "display": {
+          "announce_to_chat": true,
+          "description": {
+            "translate": "advancement.eclipticseasons.humidity_tank.desc"
+          },
+          "frame": "task",
+          "hidden": false,
+          "icon": {
+            "item": "eclipticseasons:humidity_tank"
+          },
+          "show_toast": false,
+          "title": {
+            "translate": "advancement.eclipticseasons.humidity_tank"
+          }
+        },
+        "requirements": [
+          [
+            "parent_need"
+          ],
+          [
+            "core_require"
+          ]
+        ],
+        "sends_telemetry_event": true
       },
-      "trigger": "minecraft:inventory_changed"
-    },
-    "parent_need": {
-      "conditions": {
-        "parent": "eclipticseasons:main/green_house"
-      },
-      "trigger": "eclipticseasons:parent"
+      "conditions": [
+        {
+          "type": "eclipticseasons:seasonal_simulation_level",
+          "level": "agriculture"
+        }
+      ]
     }
-  },
-  "display": {
-    "announce_to_chat": true,
-    "description": {
-      "translate": "advancement.eclipticseasons.humidity_tank.desc"
-    },
-    "frame": "task",
-    "hidden": false,
-    "icon": {
-      "item": "eclipticseasons:humidity_tank"
-    },
-    "show_toast": false,
-    "title": {
-      "translate": "advancement.eclipticseasons.humidity_tank"
-    }
-  },
-  "requirements": [
-    [
-      "parent_need"
-    ],
-    [
-      "core_require"
-    ]
-  ],
-  "sends_telemetry_event": true
+  ]
 }

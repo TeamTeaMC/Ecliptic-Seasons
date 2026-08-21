@@ -1,6 +1,29 @@
 > As the ecosystem for 1.20.1 begins to wind down with major mods like Create moving on, we are also transitioning into
 > the final maintenance phase for our mod on this version.
 
+### 0.14.4
+
+- Added configuration migration support.
+- Replaced ComplexGreenHouseCheck with GreenHouseCheckMode.
+
+### 0.14.3
+
+- Optimized surface biome cache recalculation for existing worlds after installing Ecliptic Seasons or clearing cached
+  data.
+
+### 0.14.2
+
+- Clean client level cache when solar term changes
+
+### 0.14.1
+
+- Fixed an issue that assumes Frozen River as Warm Region.
+- Fixed a potential server-side memory leak caused by improperly retained chunk cache data.
+
+### 0.14.0
+
+- Updated river biome cache generation to use climate-based evaluation, improving winter snow behavior.
+
 ### 0.13.10
 
 - Improved crop growth information under poor network conditions. If a crop is affected by the seasonal growth system,

@@ -1,27 +1,40 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "category": "building",
-  "key": {
-    "H": {
-      "item": "minecraft:hay_block"
-    },
-    "N": {
-      "tag": "minecraft:wooden_slabs"
-    },
-    "P": {
-      "tag": "minecraft:planks"
-    },
-    "S": {
-      "item": "minecraft:iron_nugget"
+  "type": "forge:conditional",
+  "recipes": [
+    {
+      "conditions": [
+        {
+          "type": "eclipticseasons:seasonal_simulation_level",
+          "level": "agriculture"
+        }
+      ],
+      "recipe": {
+        "type": "minecraft:crafting_shaped",
+        "category": "building",
+        "key": {
+          "H": {
+            "item": "minecraft:hay_block"
+          },
+          "N": {
+            "tag": "minecraft:wooden_slabs"
+          },
+          "P": {
+            "tag": "minecraft:planks"
+          },
+          "S": {
+            "item": "minecraft:iron_nugget"
+          }
+        },
+        "pattern": [
+          "PPP",
+          "PHN",
+          "SSS"
+        ],
+        "result": {
+          "item": "eclipticseasons:dehumidifier"
+        },
+        "show_notification": true
+      }
     }
-  },
-  "pattern": [
-    "PPP",
-    "PHN",
-    "SSS"
-  ],
-  "result": {
-    "item": "eclipticseasons:dehumidifier"
-  },
-  "show_notification": true
+  ]
 }

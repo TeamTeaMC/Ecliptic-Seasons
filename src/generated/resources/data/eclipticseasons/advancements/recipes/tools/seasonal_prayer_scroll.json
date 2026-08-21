@@ -1,33 +1,45 @@
 {
-  "parent": "minecraft:recipes/root",
-  "criteria": {
-    "has_seeds": {
-      "conditions": {
-        "items": [
-          {
-            "tag": "forge:seeds"
+  "advancements": [
+    {
+      "advancement": {
+        "parent": "minecraft:recipes/root",
+        "criteria": {
+          "has_seeds": {
+            "conditions": {
+              "items": [
+                {
+                  "tag": "forge:seeds"
+                }
+              ]
+            },
+            "trigger": "minecraft:inventory_changed"
+          },
+          "has_the_recipe": {
+            "conditions": {
+              "recipe": "eclipticseasons:seasonal_prayer_scroll"
+            },
+            "trigger": "minecraft:recipe_unlocked"
           }
-        ]
+        },
+        "requirements": [
+          [
+            "has_seeds",
+            "has_the_recipe"
+          ]
+        ],
+        "rewards": {
+          "recipes": [
+            "eclipticseasons:seasonal_prayer_scroll"
+          ]
+        },
+        "sends_telemetry_event": false
       },
-      "trigger": "minecraft:inventory_changed"
-    },
-    "has_the_recipe": {
-      "conditions": {
-        "recipe": "eclipticseasons:seasonal_prayer_scroll"
-      },
-      "trigger": "minecraft:recipe_unlocked"
+      "conditions": [
+        {
+          "type": "eclipticseasons:seasonal_simulation_level",
+          "level": "agriculture"
+        }
+      ]
     }
-  },
-  "requirements": [
-    [
-      "has_seeds",
-      "has_the_recipe"
-    ]
-  ],
-  "rewards": {
-    "recipes": [
-      "eclipticseasons:seasonal_prayer_scroll"
-    ]
-  },
-  "sends_telemetry_event": false
+  ]
 }

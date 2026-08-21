@@ -1,35 +1,47 @@
 {
-  "parent": "minecraft:recipes/root",
-  "criteria": {
-    "has_the_recipe": {
-      "conditions": {
-        "recipe": "eclipticseasons:humidity_tank"
-      },
-      "trigger": "minecraft:recipe_unlocked"
-    },
-    "has_water_bucket": {
-      "conditions": {
-        "items": [
-          {
-            "items": [
-              "minecraft:water_bucket"
-            ]
+  "advancements": [
+    {
+      "advancement": {
+        "parent": "minecraft:recipes/root",
+        "criteria": {
+          "has_the_recipe": {
+            "conditions": {
+              "recipe": "eclipticseasons:humidity_tank"
+            },
+            "trigger": "minecraft:recipe_unlocked"
+          },
+          "has_water_bucket": {
+            "conditions": {
+              "items": [
+                {
+                  "items": [
+                    "minecraft:water_bucket"
+                  ]
+                }
+              ]
+            },
+            "trigger": "minecraft:inventory_changed"
           }
-        ]
+        },
+        "requirements": [
+          [
+            "has_water_bucket",
+            "has_the_recipe"
+          ]
+        ],
+        "rewards": {
+          "recipes": [
+            "eclipticseasons:humidity_tank"
+          ]
+        },
+        "sends_telemetry_event": false
       },
-      "trigger": "minecraft:inventory_changed"
+      "conditions": [
+        {
+          "type": "eclipticseasons:seasonal_simulation_level",
+          "level": "agriculture"
+        }
+      ]
     }
-  },
-  "requirements": [
-    [
-      "has_water_bucket",
-      "has_the_recipe"
-    ]
-  ],
-  "rewards": {
-    "recipes": [
-      "eclipticseasons:humidity_tank"
-    ]
-  },
-  "sends_telemetry_event": false
+  ]
 }

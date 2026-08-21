@@ -1,22 +1,35 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "category": "equipment",
-  "group": "greenhouse_core_frame",
-  "key": {
-    "x": {
-      "tag": "forge:glass/tinted"
-    },
-    "z": {
-      "tag": "forge:ingots/copper"
+  "type": "forge:conditional",
+  "recipes": [
+    {
+      "conditions": [
+        {
+          "type": "eclipticseasons:seasonal_simulation_level",
+          "level": "agriculture"
+        }
+      ],
+      "recipe": {
+        "type": "minecraft:crafting_shaped",
+        "category": "equipment",
+        "group": "greenhouse_core_container",
+        "key": {
+          "x": {
+            "tag": "forge:glass/tinted"
+          },
+          "z": {
+            "tag": "forge:ingots/copper"
+          }
+        },
+        "pattern": [
+          "zxz",
+          "x x",
+          "zxz"
+        ],
+        "result": {
+          "item": "eclipticseasons:greenhouse_core_container"
+        },
+        "show_notification": true
+      }
     }
-  },
-  "pattern": [
-    "zxz",
-    "x x",
-    "zxz"
-  ],
-  "result": {
-    "item": "eclipticseasons:greenhouse_core_container"
-  },
-  "show_notification": true
+  ]
 }

@@ -1,50 +1,62 @@
 {
-  "parent": "eclipticseasons:quests/spring_harvest",
-  "criteria": {
-    "parent": {
-      "conditions": {
-        "parent": "eclipticseasons:quests/spring_harvest"
-      },
-      "trigger": "eclipticseasons:parent"
-    },
-    "core_require": {
-      "conditions": {
-        "entity": [
-          {
-            "condition": "minecraft:entity_properties",
-            "entity": "this",
-            "predicate": {}
+  "advancements": [
+    {
+      "advancement": {
+        "parent": "eclipticseasons:quests/spring_harvest",
+        "criteria": {
+          "parent": {
+            "conditions": {
+              "parent": "eclipticseasons:quests/spring_harvest"
+            },
+            "trigger": "eclipticseasons:parent"
+          },
+          "core_require": {
+            "conditions": {
+              "entity": [
+                {
+                  "condition": "minecraft:entity_properties",
+                  "entity": "this",
+                  "predicate": {}
+                }
+              ],
+              "item": {
+                "tag": "forge:animal_foods"
+              }
+            },
+            "trigger": "minecraft:player_interacted_with_entity"
           }
+        },
+        "display": {
+          "announce_to_chat": true,
+          "description": {
+            "translate": "advancement.eclipticseasons.spring_feed.desc"
+          },
+          "frame": "task",
+          "hidden": false,
+          "icon": {
+            "item": "minecraft:white_wool"
+          },
+          "show_toast": false,
+          "title": {
+            "translate": "advancement.eclipticseasons.spring_feed"
+          }
+        },
+        "requirements": [
+          [
+            "core_require"
+          ],
+          [
+            "parent"
+          ]
         ],
-        "item": {
-          "tag": "forge:animal_foods"
-        }
+        "sends_telemetry_event": true
       },
-      "trigger": "minecraft:player_interacted_with_entity"
+      "conditions": [
+        {
+          "type": "eclipticseasons:seasonal_simulation_level",
+          "level": "agriculture"
+        }
+      ]
     }
-  },
-  "display": {
-    "announce_to_chat": true,
-    "description": {
-      "translate": "advancement.eclipticseasons.spring_feed.desc"
-    },
-    "frame": "task",
-    "hidden": false,
-    "icon": {
-      "item": "minecraft:white_wool"
-    },
-    "show_toast": false,
-    "title": {
-      "translate": "advancement.eclipticseasons.spring_feed"
-    }
-  },
-  "requirements": [
-    [
-      "core_require"
-    ],
-    [
-      "parent"
-    ]
-  ],
-  "sends_telemetry_event": true
+  ]
 }

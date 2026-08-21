@@ -1,23 +1,36 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "category": "equipment",
-  "group": "thermometer",
-  "key": {
-    "x": {
-      "tag": "forge:dusts/redstone"
-    },
-    "y": {
-      "type": "forge:partial_nbt",
-      "item": "minecraft:potion",
-      "nbt": "{Potion:\"minecraft:water\"}"
+  "type": "forge:conditional",
+  "recipes": [
+    {
+      "conditions": [
+        {
+          "type": "eclipticseasons:seasonal_simulation_level",
+          "level": "survival"
+        }
+      ],
+      "recipe": {
+        "type": "minecraft:crafting_shaped",
+        "category": "equipment",
+        "group": "thermometer",
+        "key": {
+          "x": {
+            "tag": "forge:dusts/redstone"
+          },
+          "y": {
+            "type": "forge:partial_nbt",
+            "item": "minecraft:potion",
+            "nbt": "{Potion:\"minecraft:water\"}"
+          }
+        },
+        "pattern": [
+          " x",
+          "y "
+        ],
+        "result": {
+          "item": "eclipticseasons:thermometer"
+        },
+        "show_notification": true
+      }
     }
-  },
-  "pattern": [
-    " x",
-    "y "
-  ],
-  "result": {
-    "item": "eclipticseasons:thermometer"
-  },
-  "show_notification": true
+  ]
 }
