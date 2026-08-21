@@ -6,6 +6,7 @@ import com.teamtea.eclipticseasons.api.constant.biome.Rainfall;
 import com.teamtea.eclipticseasons.api.constant.biome.Temperature;
 import com.teamtea.eclipticseasons.api.constant.climate.BiomeRain;
 import com.teamtea.eclipticseasons.api.constant.climate.ISnowTerm;
+import com.teamtea.eclipticseasons.api.constant.simulation.SeasonalSimulationLevel;
 import com.teamtea.eclipticseasons.api.constant.solar.gregorian.GregorianMonth;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
@@ -336,6 +337,11 @@ public class EclipticUtil {
             public List<Holder<SpecialDays>> getSpecialDays(Level level, BlockPos pos) {
                 SolarDataManager saveData = SolarHolders.getSaveData(level);
                 return saveData == null ? List.of() : saveData.getSpecialDays(level, pos);
+            }
+
+            @Override
+            public SeasonalSimulationLevel getSeasonalSimulationLevel() {
+                return CommonConfig.getSeasonalSimulationLevel();
             }
         };
     }

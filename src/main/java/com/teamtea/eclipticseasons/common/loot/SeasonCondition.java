@@ -126,21 +126,4 @@ public record SeasonCondition(Slice require) implements LootItemCondition {
         }
     }
 
-    public static class Serializer implements net.minecraft.world.level.storage.loot.Serializer<SeasonCondition> {
-        public static final Serializer INSTANCE = new Serializer();
-
-        public void serialize(@NotNull JsonObject jsonObject, @NotNull SeasonCondition value, @NotNull JsonSerializationContext context) {
-            JsonElement jsonelement = CONDITION_CODEC.encodeStart(JsonOps.INSTANCE, value).getOrThrow(false, EclipticSeasons::logger);
-            if (jsonelement.isJsonObject()) {
-                JsonObject obj = jsonelement.getAsJsonObject();
-                for (Map.Entry<String, JsonElement> entry : obj.entrySet()) {
-                    jsonObject.add(entry.getKey(), entry.getValue());
-                }
-            }
-        }
-
-        public @NotNull SeasonCondition deserialize(@NotNull JsonObject value, @NotNull JsonDeserializationContext context) {
-            return CONDITION_CODEC.decode(JsonOps.INSTANCE, value).getOrThrow(false, EclipticSeasons::logger).getFirst();
-        }
-    }
 }

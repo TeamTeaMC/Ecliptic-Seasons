@@ -90,6 +90,37 @@ public final class ESItemTagProvider extends ItemTagsProvider {
                         Items.GLOW_BERRIES,
                         Items.ROTTEN_FLESH
                 );
+
+
+        tag(ESItemTags.AGRICULTURE_CONTENT).add(
+                ItemRegistry.growth_detector.get(),
+                ItemRegistry.greenhouse_core_container_item.get(),
+                ItemRegistry.spring_greenhouse_core_item.get(),
+                ItemRegistry.summer_greenhouse_core_item.get(),
+                ItemRegistry.autumn_greenhouse_core_item.get(),
+                ItemRegistry.winter_greenhouse_core_item.get(),
+                ItemRegistry.spring_greenhouse_essence_item.get(),
+                ItemRegistry.summer_greenhouse_essence_item.get(),
+                ItemRegistry.autumn_greenhouse_essence_item.get(),
+                ItemRegistry.winter_greenhouse_essence_item.get(),
+                ItemRegistry.seasonal_prayer_scroll_item.get(),
+                ItemRegistry.block_in_wooden_grate_block_item.get(),
+                ItemRegistry.humidity_tank_item.get(),
+                ItemRegistry.dehumidifier_item.get()
+                // ItemRegistry.calendar_item.get(),
+                // ItemRegistry.season_sensor_item.get(),
+                // ItemRegistry.broom.get(),
+                // ItemRegistry.salt_wand.get(),
+                // ItemRegistry.ice_wand.get(),
+                // ItemRegistry.hygrometer.get(),
+                // ItemRegistry.snowless_hometown.get(),
+                // ItemRegistry.bamboo_wind_chimes_item.get(),
+                // ItemRegistry.paper_wind_chimes_item.get(),
+                // ItemRegistry.wind_chimes_item.get(),
+                // ItemRegistry.pinwheel_orange_item.get(),
+                // ItemRegistry.pinwheel_lime_item.get(),
+                // ItemRegistry.pinwheel_blue_item.get()
+        );
     }
 
 

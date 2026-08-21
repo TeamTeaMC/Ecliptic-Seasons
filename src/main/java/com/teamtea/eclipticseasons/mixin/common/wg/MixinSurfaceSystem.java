@@ -8,11 +8,14 @@ import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import com.teamtea.eclipticseasons.api.misc.IChunkBiomeHolder;
 import com.teamtea.eclipticseasons.common.core.map.BiomeHolder;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
+import com.teamtea.eclipticseasons.common.core.map.river.RiverBiomeResolver;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeManager;
+import net.minecraft.world.level.biome.Climate;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.levelgen.NoiseChunk;
 import net.minecraft.world.level.levelgen.RandomState;
@@ -74,7 +77,13 @@ public abstract class MixinSurfaceSystem {
             localIntRef.set(localIntRef.get() + 1);
 
             if (MapChecker.isSmallBiome(biomeHolder)) {
-                signal.set(BiomeHolder.FLAG_FILL_SMALL);
+                // signal.set(BiomeHolder.FLAG_FILL_SMALL);
+                Climate.TargetPoint sample = RiverBiomeResolver.getClimateTargetPoint(randomState, blockPos);
+                ResourceKey<Biome> biomeResourceKey = RiverBiomeResolver.getClimateBiome(sample);
+                int newBiomeID = MapChecker.biomeToId(biomes, biomes.get(biomeResourceKey));
+                if (newBiomeID > -1 && i < biomes.size()) {
+                    biomeHolderLocalRef.get()[((blockPos.getX() & 15) * 16) + (blockPos.getZ() & 15)] = newBiomeID;
+                }
             }
         }
     }

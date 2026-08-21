@@ -1,8 +1,8 @@
-package com.teamtea.eclipticseasons.client.gui.screen.entry;
+package com.teamtea.eclipticseasons.client.gui.screen.entry.spec;
 
 import com.teamtea.eclipticseasons.client.gui.screen.ESModConfigScreen;
+import com.teamtea.eclipticseasons.client.gui.screen.entry.base.SpecEntry;
 import com.teamtea.eclipticseasons.config.util.SpecUtil;
-import com.teamtea.eclipticseasons.client.gui.screen.entry.base.ConfigEntry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.OptionInstance;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -14,14 +14,9 @@ import net.minecraft.client.gui.layouts.LayoutElement;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.common.ForgeConfigSpec;
 
-public abstract class NumberEntry<T extends Number> extends ConfigEntry.SpecEntry<T> {
+public abstract class NumberEntry<T extends Number> extends SpecEntry<T> {
     public NumberEntry(ForgeConfigSpec.ConfigValue<T> spec) {
         super(spec);
-    }
-
-    @Override
-    public int getColumn() {
-        return 2;
     }
 
     @Override

@@ -5,6 +5,8 @@ import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
+import com.teamtea.eclipticseasons.api.constant.simulation.SeasonalSimulationLevel;
+import com.teamtea.eclipticseasons.api.constant.tag.ESItemTags;
 import com.teamtea.eclipticseasons.api.data.climate.AgroClimaticZone;
 import com.teamtea.eclipticseasons.api.data.climate.BiomesClimateSettings;
 import com.teamtea.eclipticseasons.api.data.craft.HumidityControl;
@@ -68,6 +70,10 @@ public class ModContents {
                                                 Item value = itemDeferredHolder.get();
                                                 if (value != ItemRegistry.hyetometer.get()
                                                         && value != ItemRegistry.thermometer.get()) {
+                                                    if (!EclipticSeasonsApi.getInstance().getSeasonalSimulationLevel().enable(SeasonalSimulationLevel.AGRICULTURE)
+                                                            && value.builtInRegistryHolder().is(ESItemTags.AGRICULTURE_CONTENT)) {
+                                                        return;
+                                                    }
                                                     output.accept(value);
                                                 }
                                             }

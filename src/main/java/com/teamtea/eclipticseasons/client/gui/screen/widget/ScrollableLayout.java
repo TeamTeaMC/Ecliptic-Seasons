@@ -1,15 +1,11 @@
-package com.teamtea.eclipticseasons.client.gui.screen;
+package com.teamtea.eclipticseasons.client.gui.screen.widget;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.AbstractSelectionList;
 import net.minecraft.client.gui.components.AbstractWidget;
-import net.minecraft.client.gui.components.Renderable;
-import net.minecraft.client.gui.components.events.AbstractContainerEventHandler;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.layouts.Layout;
 import net.minecraft.client.gui.layouts.LayoutElement;
-import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.util.Mth;

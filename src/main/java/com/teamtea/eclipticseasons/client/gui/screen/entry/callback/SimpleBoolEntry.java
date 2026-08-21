@@ -1,6 +1,7 @@
-package com.teamtea.eclipticseasons.client.gui.screen.entry.base;
+package com.teamtea.eclipticseasons.client.gui.screen.entry.callback;
 
 import com.teamtea.eclipticseasons.client.gui.screen.ESModConfigScreen;
+import com.teamtea.eclipticseasons.client.gui.screen.entry.base.ConfigEntry;
 import com.teamtea.eclipticseasons.config.sync.SyncType;
 import net.minecraft.client.gui.components.CycleButton;
 import net.minecraft.client.gui.layouts.LayoutElement;
@@ -8,6 +9,7 @@ import net.minecraft.client.gui.layouts.LayoutElement;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
+// for mixins options
 public class SimpleBoolEntry extends ConfigEntry {
     private BooleanSupplier value;
     private final Consumer<Boolean> setter;
@@ -21,6 +23,16 @@ public class SimpleBoolEntry extends ConfigEntry {
     }
 
     @Override
+    public int getColumn() {
+        return 1;
+    }
+
+    @Override
+    public SyncType getSyncType() {
+        return SyncType.MIXINS;
+    }
+
+    @Override
     public boolean isValueChanged() {
         return value.getAsBoolean() != oldValue;
     }
@@ -31,11 +43,6 @@ public class SimpleBoolEntry extends ConfigEntry {
     }
 
     @Override
-    public SyncType getSyncType() {
-        return SyncType.MIXINS;
-    }
-
-    @Override
     public int getPosition() {
         return 0;
     }
@@ -43,7 +50,7 @@ public class SimpleBoolEntry extends ConfigEntry {
     @Override
     public LayoutElement build(ESModConfigScreen screen, int x, int y, int width) {
         return CycleButton.onOffBuilder(value.getAsBoolean())
-                .create(0, 0, width, 20, this.label, (button, newValue) -> {
+                .create(x, y, width, 20, this.label, (button, newValue) -> {
                     this.value = () -> newValue;
                     this.setter.accept(newValue);
                 });

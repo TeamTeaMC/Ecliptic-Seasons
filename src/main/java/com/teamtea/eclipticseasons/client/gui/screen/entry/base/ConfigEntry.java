@@ -1,26 +1,16 @@
 package com.teamtea.eclipticseasons.client.gui.screen.entry.base;
 
-import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.client.gui.screen.ESModConfigScreen;
-import com.teamtea.eclipticseasons.client.gui.screen.entry.*;
-import com.teamtea.eclipticseasons.config.CommonConfig;
 import com.teamtea.eclipticseasons.config.sync.SyncType;
-import com.teamtea.eclipticseasons.config.util.RestartTypeUtil;
-import com.teamtea.eclipticseasons.config.util.SpecUtil;
-import lombok.Getter;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.components.AbstractWidget;
-import net.minecraft.client.gui.components.MultiLineTextWidget;
-import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.components.*;
+import net.minecraft.client.gui.layouts.GridLayout;
 import net.minecraft.client.gui.layouts.LayoutElement;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
-import net.minecraftforge.common.ForgeConfigSpec;
-
-import java.util.Set;
 
 public abstract class ConfigEntry {
     protected final Component label;
@@ -37,37 +27,23 @@ public abstract class ConfigEntry {
         return false;
     }
 
-    public SyncType getSyncType() {
-        return SyncType.NONE;
-    }
-
     public int getPosition() {
         return 10;
     }
 
     public int getColumn() {
-        return 1;
+        return 2;
+    }
+
+    public SyncType getSyncType() {
+        return SyncType.NONE;
+    }
+
+    public String getSearchText() {
+        return label.getString();
     }
 
     public abstract LayoutElement build(ESModConfigScreen screen, int x, int y, int width);
-
-    public static ConfigEntry createNumber(ForgeConfigSpec.ConfigValue<?> spec) {
-        if (spec.get() instanceof Number) {
-            final SpecUtil.Range<?> range = SpecUtil.getRange(SpecUtil.getSpec(spec));
-            if (range != null && (
-                    (range.getMax() instanceof Integer i && i > 100)
-                            || (range.getMax() instanceof Double d && d > 1))) {
-                return new NumberEntry.TextNumberEntry<>((ForgeConfigSpec.ConfigValue) spec);
-            }
-        }
-        if (spec instanceof ForgeConfigSpec.IntValue iv) {
-            return new NumberEntry.IntSliderEntry(iv);
-        }
-        if (spec instanceof ForgeConfigSpec.DoubleValue dv) {
-            return new NumberEntry.DoubleSliderEntry(dv);
-        }
-        throw new UnsupportedOperationException(spec.getPath().get(spec.getPath().size() - 1));
-    }
 
     public static MultiLineTextWidget getMultiLineTextWidget(Component label, ESModConfigScreen screen, int width) {
         Component label1 = label;
@@ -83,90 +59,75 @@ public abstract class ConfigEntry {
         return multiLineTextWidget;
     }
 
-    public abstract static class SpecEntry<T> extends ConfigEntry {
-        @Getter
-        protected final ForgeConfigSpec.ConfigValue<T> spec;
-        protected final long hashValueCache;
+    protected static LayoutElement buildLabelAndControl(ESModConfigScreen screen, Component label, AbstractWidget control, int width) {
+        GridLayout gridLayout = new GridLayout();
+        gridLayout.defaultCellSetting().paddingHorizontal(4).paddingBottom(4).alignHorizontallyCenter();
+        GridLayout.RowHelper helper = gridLayout.createRowHelper(2);
+        StringWidget labelWidget = new StringWidget(trimText(screen.getFont(), label, width - 10), screen.getFont());
+        labelWidget.alignLeft();
+        labelWidget.setWidth(width + 4);
+        labelWidget.setHeight(20);
+        control.setWidth(width);
+        helper.addChild(labelWidget);
+        helper.addChild(control);
+        return gridLayout;
+    }
 
-        @Getter
-        protected final SyncType syncType;
-
-        public SpecEntry(ForgeConfigSpec.ConfigValue<T> spec) {
-            super("eclipticseasons.configuration." + spec.getPath().get(spec.getPath().size() - 1));
-            this.spec = spec;
-            this.hashValueCache = spec.get().hashCode();
-            syncType = SyncType.getTypeFrom(spec);
+    protected static Component trimText(Font font, Component text, int maxWidth) {
+        if (font.width(text) <= maxWidth) {
+            return text;
         }
 
-        public boolean isValueChanged() {
-            spec.clearCache();
-            return spec.get().hashCode() != hashValueCache;
-        }
+        String ellipsis = "...";
+        int availableWidth = Math.max(0, maxWidth - font.width(ellipsis));
 
-        public boolean shouldRestart(boolean inGame) {
-            RestartTypeUtil.RestartType restartType = RestartTypeUtil.get(spec);
-            return switch (restartType) {
-                case WORLD -> inGame;
-                case GAME -> true;
-                default -> false;
-            };
-        }
+        return Component.literal(
+                font.plainSubstrByWidth(text.getString(), availableWidth) + ellipsis
+        ).withStyle(text.getStyle());
+    }
 
-        @Override
-        public LayoutElement build(ESModConfigScreen screen, int x, int y, int width) {
-            screen.configRegistered.add(spec);
-
-            LayoutElement layoutElement = buildLayout(screen, x, y, width);
-
-            MutableComponent title = Component.translatable("eclipticseasons.configuration." + spec.getPath().get(spec.getPath().size() - 1))
-                    .withStyle(ChatFormatting.BOLD);
-
-            String commentKey = "eclipticseasons.configuration." + spec.getPath().get(spec.getPath().size() - 1) + ".tooltip";
-            MutableComponent comment = Component.literal("\n\n")
-                    .withStyle(Style.EMPTY.withBold(false))
-                    .append(Language.getInstance().has(commentKey) ?
-                            Component.translatable(commentKey) :
-                            Component.literal(SpecUtil.getSpec(spec).getComment() + ""));
-
-            layoutElement.visitWidgets(aw -> {
-                if (aw.tooltip == null)
-                    aw.setTooltip(Tooltip.create(title.copy().withStyle(ChatFormatting.BOLD).append(comment.withStyle(style -> style.withBold(false)))));
-            });
-            // layoutElement.setTooltip(Tooltip.create(title.append(comment)));
-            return layoutElement;
-        }
-
-        public LayoutElement buildLayout(ESModConfigScreen screen, int x, int y, int width) {
-            // LinearLayout linearLayout = new LinearLayout(x, y, LinearLayout.Orientation.HORIZONTAL);
-            // linearLayout.addChild(buildModConfigSpec(screen, x, y, width));
-            return buildModConfigSpec(screen, x, y, width);
-        }
-
-        public abstract AbstractWidget buildModConfigSpec(ESModConfigScreen screen, int x, int y, int width);
-
-        public static final Set<Object> dayTimes = Set.of(CommonConfig.Season.springDayTimes, CommonConfig.Season.summerDayTimes, CommonConfig.Season.autumnDayTimes, CommonConfig.Season.winterDayTimes, CommonConfig.Season.noneDayTimes);
-        public static final Set<Object> activeSeasons = Set.of(CommonConfig.Animal.beeActiveSeasons, CommonConfig.Animal.beePollinateSeasons, CommonConfig.Animal.fishingSeasons);
-
-        public static <C> SpecEntry<C> parse(ForgeConfigSpec.ConfigValue<C> cv) {
-            ConfigEntry specEntry = null;
-            if (cv instanceof ForgeConfigSpec.BooleanValue bv) {
-                specEntry = (new BoolEntry(bv));
-            } else if (cv instanceof ForgeConfigSpec.IntValue bv) {
-                specEntry = (ConfigEntry.createNumber(bv));
-            } else if (cv instanceof ForgeConfigSpec.DoubleValue bv) {
-                specEntry = (ConfigEntry.createNumber(bv));
-            }  else if (cv instanceof ForgeConfigSpec.EnumValue<?> bv) {
-                specEntry = (new EnumEntry<>(bv));
-            }else if (cv == CommonConfig.Season.validDimensions) {
-                specEntry = (SuggestedListStringEntry.fromRegistry(CommonConfig.Season.validDimensions, Registries.DIMENSION_TYPE));
-            } else if (cv == CommonConfig.Snow.blocksNotSnowy) {
-                specEntry = (SuggestedListStringEntry.fromRegistry(CommonConfig.Snow.blocksNotSnowy, Registries.BLOCK));
-            } else if (activeSeasons.contains(cv)) {
-                specEntry = (SuggestedListStringEntry.fromEnum((ForgeConfigSpec.ConfigValue) cv, Season.class));
-            } else if (dayTimes.contains(cv)) {
-                specEntry = (new FixedIntegerListEntry((ForgeConfigSpec.ConfigValue) cv));
-            }
-            return (SpecEntry) specEntry;
+    protected static <T> void applyClientSprite(CycleButton.Builder<T> builder, SyncType syncType) {
+        if (syncType == SyncType.CLIENT) {
+            // builder.withSprite((cycleButton, value) ->
+            //         CLIENT_SPRITES.get(cycleButton.isActive(), cycleButton.isHoveredOrFocused()));
         }
     }
+
+    protected <E> Tooltip getTooltipSupplier(E value) {
+        return null;
+    }
+
+    protected CycleButton<Boolean> buildBooleanButton(
+            boolean value,
+            SyncType syncType,
+            int x,
+            int y,
+            int width,
+            CycleButton.OnValueChange<Boolean> onValueChange
+    ) {
+        CycleButton.Builder<Boolean> builder = CycleButton.onOffBuilder(value)
+                .displayOnlyValue()
+                // .displayState(CycleButton.DisplayState.VALUE)
+                .withTooltip(this::getTooltipSupplier);
+        applyClientSprite(builder, syncType);
+        return builder.create(x, y, width, 20, Component.empty(), onValueChange);
+    }
+
+    protected static void applyTooltip(LayoutElement layoutElement, Component title, Component comment) {
+        layoutElement.visitWidgets(aw -> {
+            if (aw.tooltip == null) {
+                aw.setTooltip(Tooltip.create(title.copy().withStyle(ChatFormatting.BOLD)
+                        .append(comment.copy().withStyle(style -> style.withBold(false)))));
+            }
+        });
+    }
+
+    protected static MutableComponent buildTooltipComment(String commentKey, Component fallback) {
+        return Component.literal("\n\n")
+                .withStyle(Style.EMPTY.withBold(false))
+                .append(Language.getInstance().has(commentKey)
+                        ? Component.translatable(commentKey)
+                        : fallback);
+    }
+
 }

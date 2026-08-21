@@ -1,8 +1,8 @@
-package com.teamtea.eclipticseasons.client.gui.screen.entry;
+package com.teamtea.eclipticseasons.client.gui.screen.entry.spec;
 
 import com.teamtea.eclipticseasons.client.gui.screen.ESModConfigScreen;
+import com.teamtea.eclipticseasons.client.gui.screen.entry.base.SpecEntry;
 import com.teamtea.eclipticseasons.config.util.SpecUtil;
-import com.teamtea.eclipticseasons.client.gui.screen.entry.base.ConfigEntry;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.components.*;
 import net.minecraft.client.gui.layouts.GridLayout;
@@ -13,7 +13,7 @@ import net.minecraftforge.common.ForgeConfigSpec;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FixedIntegerListEntry extends ConfigEntry.SpecEntry<List<? extends Integer>> {
+public class FixedIntegerListEntry extends SpecEntry<List<? extends Integer>> {
     private final SpecUtil.Range<Integer> range;
 
     public FixedIntegerListEntry(ForgeConfigSpec.ConfigValue<List<? extends Integer>> spec, SpecUtil.Range<Integer> integerRange) {
@@ -40,8 +40,9 @@ public class FixedIntegerListEntry extends ConfigEntry.SpecEntry<List<? extends 
         List<Integer> integers = new ArrayList<>(spec.get());
         for (int i = 0; i < integers.size(); i++) {
             int possibleValue = integers.get(i);
-            final EditBox box = new EditBox(screen.getFont(),0,0, Button.DEFAULT_WIDTH, Button.DEFAULT_HEIGHT, Component.empty());
-            box.setWidth(width * 2 / 3);
+            final EditBox box = new EditBox(screen.getFont(), 0, 0, Button.DEFAULT_WIDTH, Button.DEFAULT_HEIGHT, Component.empty());
+            int widthBox = width * 2 / 3 - 2;
+            box.setWidth(widthBox);
             box.setEditable(true);
             box.setValue(possibleValue + "");
             int finalI = i;
@@ -68,11 +69,6 @@ public class FixedIntegerListEntry extends ConfigEntry.SpecEntry<List<? extends 
     @Override
     public AbstractWidget buildModConfigSpec(ESModConfigScreen screen, int x, int y, int width) {
         return null;
-    }
-
-    @Override
-    public int getColumn() {
-        return 2;
     }
 
 }

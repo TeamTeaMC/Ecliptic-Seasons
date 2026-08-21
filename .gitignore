@@ -22,6 +22,7 @@ build
 eclipse
 run
 runs
+.vscode
 
 
 # Files from Forge MDK

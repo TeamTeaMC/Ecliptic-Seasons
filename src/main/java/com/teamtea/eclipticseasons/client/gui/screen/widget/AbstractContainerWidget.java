@@ -1,4 +1,4 @@
-package com.teamtea.eclipticseasons.client.gui.screen;
+package com.teamtea.eclipticseasons.client.gui.screen.widget;
 
 import javax.annotation.Nullable;
 import net.minecraft.client.gui.ComponentPath;

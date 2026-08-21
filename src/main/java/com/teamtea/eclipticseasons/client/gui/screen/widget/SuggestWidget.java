@@ -1,12 +1,10 @@
-package com.teamtea.eclipticseasons.client.gui.screen;
+package com.teamtea.eclipticseasons.client.gui.screen.widget;
 
 import lombok.Setter;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.EditBox;
-import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -18,7 +16,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.function.Consumer;
 
 public class SuggestWidget extends AbstractWidget {

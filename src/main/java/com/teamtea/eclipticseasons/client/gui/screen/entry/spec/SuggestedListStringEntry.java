@@ -1,14 +1,13 @@
-package com.teamtea.eclipticseasons.client.gui.screen.entry;
+package com.teamtea.eclipticseasons.client.gui.screen.entry.spec;
 
 import com.google.common.base.CaseFormat;
 import com.teamtea.eclipticseasons.api.misc.ITranslatable;
 import com.teamtea.eclipticseasons.client.gui.screen.ESModConfigScreen;
-import com.teamtea.eclipticseasons.client.gui.screen.SuggestWidget;
-import com.teamtea.eclipticseasons.client.gui.screen.entry.base.ConfigEntry;
+import com.teamtea.eclipticseasons.client.gui.screen.entry.base.SpecEntry;
+import com.teamtea.eclipticseasons.client.gui.screen.widget.SuggestWidget;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.*;
 import net.minecraft.client.gui.layouts.GridLayout;
 import net.minecraft.client.gui.layouts.LayoutElement;
@@ -27,7 +26,7 @@ import net.minecraftforge.common.ForgeConfigSpec;
 import java.lang.ref.WeakReference;
 import java.util.*;
 
-public class SuggestedListStringEntry extends ConfigEntry.SpecEntry<List<? extends String>> {
+public class SuggestedListStringEntry extends SpecEntry<List<? extends String>> {
 
     private final Set<WK> possibleValues;
     // private @Nullable Predicate<String> validTest;
@@ -98,13 +97,14 @@ public class SuggestedListStringEntry extends ConfigEntry.SpecEntry<List<? exten
         helper.addChild(new StringWidget(Component.empty().append(label).withStyle(ChatFormatting.ITALIC), screen.getFont()), 3);
         List<String> strings = new ArrayList<>(spec.get());
         if (possibleValues != null) {
+            int widthBox = width * 2 / 3 - 2;
             if (possibleValues.size() < 26) {
                 for (WK possibleValue : possibleValues) {
                     MutableComponent literal = Component.translatable(possibleValue.tipKey())
                             .withStyle(strings.contains(possibleValue.value()) ? ChatFormatting.WHITE : ChatFormatting.GRAY);
                     List<String> finalStrings = strings;
                     CycleButton<Boolean> cycleButton = CycleButton.onOffBuilder(strings.contains(possibleValue.value())).create(
-                            0, 0, width * 2 / 3, 20, literal, (button, value) -> {
+                            0, 0, widthBox, 20, literal, (button, value) -> {
                                 literal.withStyle(value ? ChatFormatting.WHITE : ChatFormatting.GRAY);
                                 if (value && !finalStrings.contains(possibleValue.value())) {
                                     finalStrings.add(possibleValue.value());
@@ -130,7 +130,7 @@ public class SuggestedListStringEntry extends ConfigEntry.SpecEntry<List<? exten
                 while (strings1.size() < 3);
                 for (int i = 0; i < strings1.size(); i++) {
                     String string = strings1.get(i);
-                    createNewBox(screen, width, string, helper, i, strings);
+                    createNewBox(screen, widthBox, string, helper, i, strings);
                 }
 
             }
@@ -180,16 +180,11 @@ public class SuggestedListStringEntry extends ConfigEntry.SpecEntry<List<? exten
         return new StringWidget(width, 20, Component.translatable(possibleValues.stream().findFirst().map(WK::tipKey).orElse("Invalid Option")), screen.getFont());
     }
 
-    @Override
-    public int getColumn() {
-        return 2;
-    }
-
     private class FocuseListnerEditBox extends EditBox {
         private final WeakReference<ESModConfigScreen> screen;
 
         public FocuseListnerEditBox(ESModConfigScreen screen, int width) {
-            super(screen.getFont(), 0, 0, width * 2 / 3, 20, Component.empty());
+            super(screen.getFont(), 0, 0, width, 20, Component.empty());
             this.screen = new WeakReference<>(screen);
         }
 
