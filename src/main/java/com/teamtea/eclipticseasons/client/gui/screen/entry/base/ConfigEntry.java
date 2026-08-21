@@ -72,6 +72,7 @@ public abstract class ConfigEntry {
         gridLayout.defaultCellSetting().paddingHorizontal(4).paddingBottom(4).alignHorizontallyCenter();
         GridLayout.RowHelper helper = gridLayout.createRowHelper(2);
         StringWidget labelWidget = new StringWidget(label, screen.getFont());
+        labelWidget.alignLeft();
         labelWidget.setWidth(width + 4);
         labelWidget.setHeight(20);
         control.setWidth(width);
