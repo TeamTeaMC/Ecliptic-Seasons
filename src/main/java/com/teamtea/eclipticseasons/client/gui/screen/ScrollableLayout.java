@@ -58,7 +58,7 @@ public class ScrollableLayout implements Layout {
         int contentHeight = Math.max(1, this.content.getHeight());
 
         boolean needScrollbar = contentHeight > this.maxHeight;
-        int scrollbarReserve = needScrollbar ? SCROLLBAR_WIDTH + SCROLLBAR_SPACING : 0;
+        int scrollbarReserve = needScrollbar || true ? SCROLLBAR_WIDTH + SCROLLBAR_SPACING : 0;
 
         int width = Math.max(contentWidth + scrollbarReserve, this.minWidth);
 

@@ -351,14 +351,14 @@ public class ESModConfigScreen extends Screen {
             }
         }
         if (entryChoseSize == 0) {
-            helper.addChild((new StringWidget(entryWidth * 2 + 30, 30, Component.translatable("eclipticseasons.options.search.no_result")
+            helper.addChild((new StringWidget(entryWidth * 2 + 20, 30, Component.translatable("eclipticseasons.options.search.no_result")
                     .withStyle(ChatFormatting.ITALIC)
                     .withStyle(ChatFormatting.DARK_RED), font)), 2);
         }
 
         ScrollableLayout scrollableLayout = new ScrollableLayout(this.minecraft, gridLayout, this.layout.getContentHeight() - searchHeight);
         right.addChild(scrollableLayout);
-        content.addChild(right);
+        content.addChild(right,content.newCellSettings().paddingLeft(10));
 
         layout.addToContents(content);
 
@@ -374,6 +374,8 @@ public class ESModConfigScreen extends Screen {
         this.addRenderableWidget(this.globalSuggestWidget);
 
         this.layout.arrangeElements();
+        this.layout.visitWidgets(this::addRenderableWidget);
+        this.addRenderableWidget(this.globalSuggestWidget);
     }
 
     @Override
