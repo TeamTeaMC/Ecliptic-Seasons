@@ -1,56 +1,38 @@
 package com.teamtea.eclipticseasons.mixin.compat.voxy;
 
-import me.cortex.voxy.common.voxelization.VoxelizedSection;
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import com.llamalad7.mixinextras.sugar.Local;
+import com.teamtea.eclipticseasons.common.mixin.condition.ConditionalMixin;
+import com.teamtea.eclipticseasons.compat.voxy.VoxyTool;
+import me.cortex.voxy.client.core.rendering.building.RenderDataFactory;
 import me.cortex.voxy.common.world.WorldEngine;
-import me.cortex.voxy.common.world.WorldUpdater;
+import me.cortex.voxy.common.world.WorldSection;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin({WorldUpdater.class})
-public class MixinWorldUpdater {
-    @Inject(
+/**
+ * Applies seasonal state to a temporary copy immediately before mesh generation.
+ * This class keeps its old name because it is already registered in the mixin json.
+ */
+@Mixin(RenderDataFactory.class)
+@ConditionalMixin(value = "voxy", version = "0.2.14-alpha")
+public abstract class MixinWorldUpdater {
+
+    @Shadow
+    @Final
+    private WorldEngine world;
+
+    @ModifyExpressionValue(
             remap = false,
-            method = "insertUpdate",
-            at = @At(value = "HEAD")
+            method = "generateMesh",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lme/cortex/voxy/common/world/WorldSection;_unsafeGetRawDataArray()[J"
+            )
     )
-    private static void eclipticseasons$insertUpdate(WorldEngine into, VoxelizedSection section, CallbackInfo ci) {
-        //if (into.isLive()) {
-        //    if(!MapChecker.isLoaded(ClientCon.getUseLevel(),section.x
-        //    ,section.z)){
-        //        int y=0;
-        //    }
-        //}
+    private long[] eclipticseasons$applySeasonalRenderData(long[] original, @Local(argsOnly = true) WorldSection section) {
+        return VoxyTool.createSeasonalRenderData(world, section, original);
     }
-
-
-    @Unique
-    public long eclipticSeasons$get(VoxelizedSection voxelizedSection, int lvl, int x, int y, int z) {
-        int offset = lvl == 1 ? 4096 : 0;
-        offset |= lvl == 2 ? 4608 : 0;
-        offset |= lvl == 3 ? 4672 : 0;
-        offset |= lvl == 4 ? 4680 : 0;
-        return voxelizedSection.section[eclipticSeasons$getIdx(x, y, z, 0, 4 - lvl) + offset];
-    }
-
-    @Unique
-    public void eclipticSeasons$set(VoxelizedSection voxelizedSection, int lvl, int x, int y, int z, long value) {
-        int offset = lvl == 1 ? 4096 : 0;
-        offset |= lvl == 2 ? 4608 : 0;
-        offset |= lvl == 3 ? 4672 : 0;
-        offset |= lvl == 4 ? 4680 : 0;
-        voxelizedSection.section[eclipticSeasons$getIdx(x, y, z, 0, 4 - lvl) + offset] = value;
-    }
-
-    @Unique
-    private static int eclipticSeasons$getIdx(int x, int y, int z, int shiftBy, int size) {
-        int M = (1 << size) - 1;
-        x = x >> shiftBy & M;
-        y = y >> shiftBy & M;
-        z = z >> shiftBy & M;
-        return y << (size << 1) | z << size | x;
-    }
-
 }

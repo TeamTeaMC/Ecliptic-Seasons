@@ -70,6 +70,7 @@ public class BlockRegistry {
     public static DeferredHolder<Block, Block> snowyStairs = BLOCK_DEFERRED_REGISTER.registerBlock("snowy_stairs", (p) -> new StairBlock(Blocks.OAK_PLANKS.defaultBlockState(), p), () -> (BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_STAIRS).dynamicShape().noOcclusion()));
     public static DeferredHolder<Block, Block> snowySlab = BLOCK_DEFERRED_REGISTER.registerBlock("snowy_slab", SlabBlock::new, () -> (BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_SLAB).dynamicShape().noOcclusion()));
     public static DeferredHolder<Block, Block> snowyVine = BLOCK_DEFERRED_REGISTER.registerBlock("snowy_vine", VineBlock::new, () -> (BlockBehaviour.Properties.ofFullCopy(Blocks.VINE).dynamicShape().noOcclusion()));
+    public static DeferredHolder<Block, Block> thinIce = BLOCK_DEFERRED_REGISTER.registerBlock("thin_ice", ThinIceBlock::new, () -> (BlockBehaviour.Properties.ofFullCopy(Blocks.ICE).noOcclusion()));
 
     public static DeferredHolder<Block, Block> humidity_tank = BLOCK_DEFERRED_REGISTER.registerBlock(
             "humidity_tank",

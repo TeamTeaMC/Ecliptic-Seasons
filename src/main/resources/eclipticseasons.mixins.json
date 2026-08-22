@@ -76,15 +76,14 @@
     "compat.voxy.MixinAccessorModelFactory",
     "compat.voxy.MixinAccessorVoxyRenderSystem",
     "compat.voxy.MixinClientLevel",
-    "compat.voxy.MixinIngestSection",
+    "compat.voxy.MixinGeometryCache",
     "compat.voxy.MixinMapping",
     "compat.voxy.MixinModelBakerySubsystem",
     "compat.voxy.MixinModelFactory",
     "compat.voxy.MixinModelTextureBakery",
-    "compat.voxy.MixinVoxelIngestService",
-    "compat.voxy.MixinWorldConversionFactory",
-    "compat.voxy.MixinWorldImporter",
-    "compat.voxy.MixinWorldUpdater"
+    "compat.voxy.MixinWorldUpdater",
+    "compat.voxy.ModelStoreAccessor",
+    "compat.voxy.ModelFactoryInvoker"
   ],
   "injectors": {
     "defaultRequire": 1

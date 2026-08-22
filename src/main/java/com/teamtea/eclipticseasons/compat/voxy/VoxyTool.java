@@ -1,211 +1,153 @@
 package com.teamtea.eclipticseasons.compat.voxy;
 
-import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.compat.CompatModule;
-import com.teamtea.eclipticseasons.compat.voxy.helper.IVoxyAboveLightingSupplier;
-import com.teamtea.eclipticseasons.compat.voxy.helper.IVoxyLevelProvider;
-import com.teamtea.eclipticseasons.compat.voxy.helper.VoxyESImportManager;
+import com.teamtea.eclipticseasons.config.ClientConfig;
 import com.teamtea.eclipticseasons.config.CommonConfig;
-import me.cortex.voxy.common.voxelization.ILightingSupplier;
-import me.cortex.voxy.common.voxelization.VoxelizedSection;
 import me.cortex.voxy.common.world.WorldEngine;
 import me.cortex.voxy.common.world.WorldSection;
 import me.cortex.voxy.common.world.other.Mapper;
-import me.cortex.voxy.commonImpl.ImportManager;
-import me.cortex.voxy.commonImpl.VoxyInstance;
-import me.cortex.voxy.commonImpl.WorldIdentifier;
-import me.cortex.voxy.commonImpl.importers.WorldImporter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
-import net.minecraft.core.SectionPos;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.level.material.Fluids;
 import org.jspecify.annotations.Nullable;
 
-import java.io.File;
-import java.lang.reflect.Method;
-import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.function.IntConsumer;
 
-public class VoxyTool {
+public final class VoxyTool {
+    public static final int MAX_VOXY_BLOCK_ID = 0xFFFFF;
+    public static final int VIRTUAL_ICE_BLOCK_ID = MAX_VOXY_BLOCK_ID;
+    private static final RandomSource RANDOM_SOURCE_THREAD_LOCAL = RandomSource.createThreadLocalInstance(42L);
+
+    private VoxyTool() {
+    }
+
     public static boolean isVoxyTest() {
         return CompatModule.CommonConfig.voxyTest.get();
     }
 
+    /** Creates a render-only seasonal view without mutating Voxy sections or Mapper storage. */
+    public static long[] createSeasonalRenderData(WorldEngine world, WorldSection section, long[] source) {
+        if (!isVoxyTest()) return source;
+        Mapper mapper = world.getMapper();
+        long[] output = Arrays.copyOf(source, source.length);
+        int scale = 1 << section.lvl;
+        int centerOffset = section.lvl == 0 ? 0 : scale >> 1;
 
-    public static int changeBlockId(int blockId, Mapper stateMapper, int i, VoxelizedSection section, ILightingSupplier lightSupplier, int biomeId) {
-        if (!isVoxyTest()) return blockId;
-        int maxBlockId = 0xFFFFF;
-        BlockState state = stateMapper.getBlockStateFromBlockId(blockId);
-        if (MapChecker.getDefaultBlockTypeFlag(state)
-                > MapChecker.FLAG_NONE) {
-            BlockPos offset = SectionPos.of(section.x, section.y, section.z).origin()
-                    .offset(i & 15, (i >> 8 & 15), i >> 4 & 15);
+        for (int index = 0; index < source.length; index++) {
+            long mappingId = source[index];
+            if (Mapper.isAir(mappingId)) continue;
+            int localX = index & 31;
+            int localZ = index >> 5 & 31;
+            int localY = index >> 10 & 31;
+            int storedBlockId = Mapper.getBlockId(mappingId);
+            int originalBlockId = fixId(mapper, storedBlockId);
+            BlockState state = mapper.getBlockStateFromBlockId(originalBlockId);
+            Long aboveMappingId = getAboveMapping(world, section, source, localX, localY, localZ);
+            int renderBlockId = originalBlockId;
 
-            Level level = ClientCon.getUseLevel();
-            if (section instanceof IVoxyLevelProvider iVoxyLevelProvider) {
-                Level levelBind = iVoxyLevelProvider.getLevelBind();
-                if (levelBind != null) level = levelBind;
+            if (aboveMappingId != null) {
+                BlockPos pos = new BlockPos((((section.x << 5) + localX) << section.lvl) + centerOffset,
+                        (((section.y << 5) + localY) << section.lvl) + centerOffset,
+                        (((section.z << 5) + localZ) << section.lvl) + centerOffset);
+                renderBlockId = getSeasonalRenderBlockId(mapper, mappingId, aboveMappingId, originalBlockId, state, pos);
             }
-            if (level != null) {
-                if (MapChecker.isLoaded(level, section.x, section.z)) {
-                    if (EclipticSeasonsApi.getInstance().isSnowyBlock(level,
-                            state, offset)) {
-                        blockId = maxBlockId - blockId;
-                    }
-                } else if (lightSupplier instanceof IVoxyAboveLightingSupplier supplier) {
-                    byte supply = supplier.supply(i & 15, (i >> 8 & 15) + 1, i >> 4 & 15);
-                    int skyLight = (supply & 0xFF) & 0x0F;
-                    if (skyLight > 9 &&
-                            (!CommonConfig.Snow.notSnowyNearGlowingBlock.get() ||
-                                    (((supply & 0xFF) >> 4) & 0x0F) < CommonConfig.Snow.notSnowyNearGlowingBlockLevel.getAsInt())) {
-                        BlockState aboveState = supplier.getBlockState(i & 15, (i >> 8 & 15) + 1, i >> 4 & 15);
-                        boolean isLight = true;
-                        int flag = MapChecker.getDefaultBlockTypeFlag(state);
-                        if (MapChecker.leaveLike(flag)) {
-
-                            boolean specialLeaves = aboveState.is(state.getBlock())
-                                    && (Heightmap.Types.MOTION_BLOCKING_NO_LEAVES.isOpaque().test(aboveState) ||
-                                    MapChecker.extraSnowPassable(aboveState));
-                            if (specialLeaves) {
-                                isLight = CommonConfig.Snow.snowyTree.get();
-                            }
-                        } else {
-                            if (MapChecker.extraSnowPassable(state)) {
-                                isLight = !MapChecker.extraSnowPassable(aboveState);
-                            }
-                        }
-                        if (isLight) {
-                            String biome = stateMapper.getBiomeEntries()[biomeId].biome;
-                            var holderKey = ResourceKey.create(Registries.BIOME, Identifier.parse(biome));
-                            Holder<Biome> holder = level.registryAccess().lookupOrThrow(Registries.BIOME).getOrThrow(holderKey);
-                            if (MapChecker.shouldSnowAtBiome(level, holder.value(), state, level.getRandom(), state.getSeed(offset), offset)) {
-                                blockId = maxBlockId - blockId;
-                            }
-                        }
-                    }
-                }
+            if (renderBlockId != storedBlockId) {
+                output[index] = Mapper.withBlockBiome(mappingId, renderBlockId, Mapper.getBiomeId(mappingId));
             }
         }
-        return blockId;
+        return output;
     }
 
-    private static final int maxBlockId = 0xFFFFF;
+    private static @Nullable Long getAboveMapping(WorldEngine world, WorldSection section, long[] currentData, int localX, int localY, int localZ) {
+        if (localY < 31) return currentData[WorldSection.getIndex(localX, localY + 1, localZ)];
+        WorldSection above = world.acquireIfExists(section.lvl, section.x, section.y + 1, section.z);
+        if (above == null) return null;
+        try {
+            return above._unsafeGetRawDataArray()[WorldSection.getIndex(localX, 0, localZ)];
+        } finally {
+            above.release(WorldSection.RELEASE_HINT_POSSIBLE_REUSE);
+        }
+    }
+
+    private static int getSeasonalRenderBlockId(Mapper mapper, long mappingId, long aboveMappingId, int originalBlockId, BlockState state, BlockPos pos) {
+        Level level = ClientCon.getUseLevel();
+        if (level == null) return originalBlockId;
+        int aboveBlockId = fixId(mapper, Mapper.getBlockId(aboveMappingId));
+        BlockState stateAbove = mapper.getBlockStateFromBlockId(aboveBlockId);
+        int light = Mapper.getLightId(aboveMappingId);
+        int skyLight = light & 0x0F;
+        int blockLight = light >> 4 & 0x0F;
+        if (skyLight <= 9) return originalBlockId;
+        if (CommonConfig.Snow.notSnowyNearGlowingBlock.get()
+                && blockLight >= CommonConfig.Snow.notSnowyNearGlowingBlockLevel.getAsInt()) return originalBlockId;
+        Biome biome = getBiome(level, mapper, Mapper.getBiomeId(mappingId));
+        if (biome == null) return originalBlockId;
+        if (isFreezableWater(state)) {
+            return shouldFreeze(level, biome, state, stateAbove, pos) ? VIRTUAL_ICE_BLOCK_ID : originalBlockId;
+        }
+        int flag = MapChecker.getDefaultBlockTypeFlag(state);
+        if (flag <= MapChecker.FLAG_NONE || !canRenderSnow(state, stateAbove, flag)) return originalBlockId;
+        return MapChecker.shouldSnowAtBiome(level, biome, state, RANDOM_SOURCE_THREAD_LOCAL, state.getSeed(pos), pos)
+                ? MAX_VOXY_BLOCK_ID - originalBlockId : originalBlockId;
+    }
+
+    private static boolean canRenderSnow(BlockState state, BlockState stateAbove, int flag) {
+        if (MapChecker.leaveLike(flag)) {
+            boolean specialLeaves = stateAbove.is(state.getBlock())
+                    && (Heightmap.Types.MOTION_BLOCKING_NO_LEAVES.isOpaque().test(stateAbove)
+                    || MapChecker.extraSnowPassable(stateAbove));
+            return !specialLeaves || CommonConfig.Snow.snowyTree.get();
+        }
+        return !MapChecker.extraSnowPassable(state) || !MapChecker.extraSnowPassable(stateAbove);
+    }
+
+    private static boolean shouldFreeze(Level level, Biome biome, BlockState water, BlockState stateAbove, BlockPos pos) {
+        return ClientConfig.Debug.frozenWater.get() && stateAbove.isAir()
+                && MapChecker.shouldSnowAtBiome(level, biome, water, RANDOM_SOURCE_THREAD_LOCAL, water.getSeed(pos), pos);
+    }
+
+    private static @Nullable Biome getBiome(Level level, Mapper mapper, int biomeId) {
+        if (biomeId < 0 || biomeId >= mapper.getBiomeEntries().length) return null;
+        ResourceKey<Biome> key = ResourceKey.create(Registries.BIOME,
+                Identifier.parse(mapper.getBiomeEntries()[biomeId].biome));
+        return level.registryAccess().lookupOrThrow(Registries.BIOME).get(key)
+                .map(Holder.Reference::value).orElse(null);
+    }
+
+    public static boolean isFreezableWater(BlockState state) {
+        return state.is(Blocks.WATER) && state.getFluidState().isSourceOfType(Fluids.WATER);
+    }
+
+    public static boolean isVirtualIceId(int blockId) {
+        return blockId == VIRTUAL_ICE_BLOCK_ID;
+    }
 
     public static int fixId(Mapper mapper, int blockId) {
-        return fixId(mapper, blockId, VoxyTool::emptyConsumer);
-    }
-
-    private static void emptyConsumer(int i) {
-    }
-
-    public static int fixId(Mapper mapper, int blockId, IntConsumer consumer) {
-        int blockStateCount = mapper.getBlockStateCount();
-        if (blockId < blockStateCount) return blockId;
-        blockId = maxBlockId - blockId;
-        if (blockId < blockStateCount) {
-            consumer.accept(blockId);
-            return blockId;
-        }
-        return maxBlockId - blockId;
-    }
-
-
-    public static WorldEngine getWorld(Level level) {
-        return getVoxyInstance().getNullable(WorldIdentifier.of(level));
-    }
-
-    public static Mapper getMapper(Level level) {
-        WorldEngine world = getWorld(level);
-        return world == null ? null : world.getMapper();
-    }
-
-    public static int getSkyLightFromBlockId(long blockId) {
-        // return (Mapper.getLightId(blockId) & 0xFF) & 0x0F;
-        return (Mapper.getLightId(blockId) % 16);
-    }
-
-    public static WorldSection getWorldSection(WorldEngine into, SectionPos section) {
-        int lvl = 0;
-        return into.acquireIfExists(lvl, section.x() >> lvl + 1, section.y() >> lvl + 1, section.z() >> lvl + 1);
-    }
-
-    public static WorldSection getWorldSection(Level level, SectionPos section) {
-        WorldEngine world = getWorld(level);
-        return world == null ? null : getWorldSection(world, section);
-    }
-
-
-    public static ImportManager esImporter;
-
-    public static void releaseImporter() {
-        VoxyTool.esImporter = null;
-    }
-
-    public static void tryUpdate() {
-        if (!isVoxyTest()) return;
-        if (!CompatModule.CommonConfig.voxyLODAutoReload.get()) return;
-
-        Level level = ClientCon.getUseLevel();
-        if (level == null || level.getGameTime() % (20 * 15) == 0
-                || !ClientCon.getAgent().isSnowChange()
-                // || !MapChecker.isValidDimension(level)
-                || esImporter != null)
-            return;
-
-        // if (!(VoxyCommon.getInstance() instanceof VoxyClientInstance instance)) {
-        //    return;
-        //}
-        // VoxyInstance instance = VoxyCommon.getInstance();
-        VoxyInstance instance = getVoxyInstance();
-
-        if (instance == null) return;
-
-        var engine = WorldIdentifier.ofEngine(level);
-        if (engine == null) return;
-
-        ClientCon.agent.setSnowChange(false);
-
-        esImporter = new VoxyESImportManager();
-
-        // MixinAccessorModelFactory factory = (MixinAccessorModelFactory) ((MixinAccessorVoxyRenderSystem) ((IGetVoxyRenderSystem)
-        //        Minecraft.getInstance().levelRenderer)
-        //        .getVoxyRenderSystem()).getModelBakerySubsystem()
-        //        .factory;
-        //
-        // Arrays.fill(factory.getIdMappings(), -1);
-        // factory.getModelTexture2id().clear();
-
-
-        VoxyInstance finalInstance = instance;
-        esImporter.makeAndRunIfNone(engine, () -> {
-            var importer = new WorldImporter(engine, level, finalInstance.getServiceManager(), finalInstance.savingServiceRateLimiter);
-            String worldName = ClientCon.getAgent().getCurrentWorldName();
-            Path file = (new File("saves")).toPath().resolve(worldName);
-            if (!worldName.endsWith("region")) {
-                file = file.resolve("region");
-            }
-            importer.importRegionDirectoryAsync(file.toFile());
-            return importer;
+        return fixId(mapper, blockId, ignored -> {
         });
     }
 
-    private static @Nullable VoxyInstance getVoxyInstance() {
-        VoxyInstance instance = null;
-
-        try {
-            Class<?> clazz = Class.forName("me.cortex.voxy.commonImpl.VoxyCommon");
-            Method method = clazz.getDeclaredMethod("getInstance");
-            instance = (VoxyInstance) method.invoke(null);
-        } catch (Exception _) {
+    public static int fixId(Mapper mapper, int blockId, IntConsumer snowyStateConsumer) {
+        if (isVirtualIceId(blockId)) return blockId;
+        int blockStateCount = mapper.getBlockStateCount();
+        if (blockId < blockStateCount) return blockId;
+        int decoded = MAX_VOXY_BLOCK_ID - blockId;
+        if (decoded < blockStateCount) {
+            snowyStateConsumer.accept(decoded);
+            return decoded;
         }
-        return instance;
+        return blockId;
     }
 }
