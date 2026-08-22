@@ -295,7 +295,7 @@ dependencies {
     implementation "maven.modrinth:sodium:mc26.2-0.9.1-neoforge"
     compileOnly "maven.modrinth:iris:1.11.2+26.2-neoforge"
 
-    compileOnly "maven.modrinth:voxy:0.2.14-alpha"
+    compileOnly "maven.modrinth:voxy:0.2.18-beta"
 
     compileOnly "maven.modrinth:distanthorizons:3.1.0-b-26.2"
 //    onlyMainRuntimeOnly "maven.modrinth:distanthorizons:3.1.0-b-26.2"
