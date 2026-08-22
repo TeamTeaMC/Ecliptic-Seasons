@@ -1,22 +1,51 @@
 package com.teamtea.eclipticseasons.mixin.compat.voxy;
 
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-import me.cortex.voxy.client.core.model.ModelFactory;
+import com.teamtea.eclipticseasons.common.mixin.condition.ConditionalMixin;
+import com.teamtea.eclipticseasons.compat.voxy.client.IVoxySectionUpdateRouter;
+import it.unimi.dsi.fastutil.longs.Long2ByteMap;
+import it.unimi.dsi.fastutil.longs.Long2ByteOpenHashMap;
+import it.unimi.dsi.fastutil.longs.LongArrayList;
+import me.cortex.voxy.client.core.rendering.SectionUpdateRouter;
+import me.cortex.voxy.common.world.WorldEngine;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.gen.Accessor;
+import org.spongepowered.asm.mixin.Shadow;
 
-import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.locks.StampedLock;
 
-@Mixin(ModelFactory.class)
-public interface MixinAccessorModelFactory {
+/**
+ * Reuses an already registered mixin filename so no mixin-json edit is needed.
+ */
+@Mixin(SectionUpdateRouter.class)
+@ConditionalMixin(value = "voxy", version = "0.2.14-alpha")
+public abstract class MixinAccessorModelFactory implements IVoxySectionUpdateRouter {
 
-    @Accessor("idMappings")
-    int[] getIdMappings();
+    @Shadow
+    @Final
+    private Long2ByteOpenHashMap[] slices;
 
-    @Accessor("modelTexture2id")
-    Object2IntOpenHashMap<Object> getModelTexture2id();
+    @Shadow
+    @Final
+    private StampedLock[] locks;
 
+    @Override
+    public LongArrayList eclipticseasons$getWatchedSections() {
+        LongArrayList result = new LongArrayList();
 
-    @Accessor("blockStatesInFlightLock")
-    ReentrantLock getBlockStatesInFlightLock();
+        for (int i = 0; i < slices.length; i++) {
+            long stamp = locks[i].readLock();
+
+            try {
+                for (Long2ByteMap.Entry entry : slices[i].long2ByteEntrySet()) {
+                    if ((entry.getByteValue() & WorldEngine.UPDATE_TYPE_BLOCK_BIT) != 0) {
+                        result.add(entry.getLongKey());
+                    }
+                }
+            } finally {
+                locks[i].unlockRead(stamp);
+            }
+        }
+
+        return result;
+    }
 }

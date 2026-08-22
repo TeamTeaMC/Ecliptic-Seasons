@@ -1,8 +1,7 @@
 package com.teamtea.eclipticseasons.mixin.compat.voxy;
 
-import com.llamalad7.mixinextras.sugar.Share;
-import com.llamalad7.mixinextras.sugar.ref.LocalRef;
-import com.teamtea.eclipticseasons.compat.voxy.VoxyClientTool;
+import com.teamtea.eclipticseasons.common.mixin.condition.ConditionalMixin;
+import com.teamtea.eclipticseasons.compat.voxy.client.VoxyClientTool;
 import com.teamtea.eclipticseasons.compat.voxy.helper.IVoxyModelController;
 import me.cortex.voxy.client.core.model.bakery.ReuseVertexConsumer;
 import me.cortex.voxy.client.core.model.bakery.SoftwareModelTextureBakery;
@@ -16,6 +15,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin({SoftwareModelTextureBakery.class})
+@ConditionalMixin(value = "voxy", version = "0.2.14-alpha")
 public abstract class MixinModelTextureBakery implements IVoxyModelController {
 
     @Shadow

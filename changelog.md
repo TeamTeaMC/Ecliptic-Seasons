@@ -1,6 +1,10 @@
-- Added a new Seasonal Simulation Level option, allowing players to adjust the scope of seasonal gameplay changes with a
-  single setting.
-- Data packs can now load recipes, advancements, and other content based on the selected simulation level.
-- Loot tables can provide different rewards based on the selected simulation level.
-- Redesigned the configuration screen with clearer categories and layout.
-- Added configuration search for easier navigation.
+### Voxy Compatibility
+
+* Added seasonal snow and frozen-water rendering for Voxy LODs.
+* Seasonal effects are applied during mesh generation without modifying Voxy’s stored world data.
+* LODs now update automatically when solar terms or snow density change.
+* Prioritized nearby sections when rebuilding LOD geometry.
+* Improved cache invalidation and retry handling to reduce missed updates.
+* Added dynamic seasonal biome-color updates without restarting the renderer.
+* Added refresh progress messages when debug mode is enabled.
+* Removed the legacy region reimport and database-rebuild approach.

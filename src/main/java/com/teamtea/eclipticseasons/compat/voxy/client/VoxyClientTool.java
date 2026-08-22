@@ -1,9 +1,14 @@
-package com.teamtea.eclipticseasons.compat.voxy;
+package com.teamtea.eclipticseasons.compat.voxy.client;
 
 import com.teamtea.eclipticseasons.client.core.ExtraModelManager;
 import com.teamtea.eclipticseasons.client.core.context.ExtraRendererContext;
+import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
+import com.teamtea.eclipticseasons.compat.CompatModule;
+import com.teamtea.eclipticseasons.compat.voxy.VoxyTool;
 import me.cortex.voxy.client.core.model.bakery.ReuseVertexConsumer;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
@@ -19,6 +24,20 @@ import java.util.List;
 
 public class VoxyClientTool {
 
+    public static void forceReloadAll() {
+        if (!VoxyTool.isVoxyTest()
+                || !ClientCon.getAgent().isChange()
+                || !CompatModule.CommonConfig.voxyLODAutoReload.get()) return;
+
+        ClientLevel level = Minecraft.getInstance().level;
+        if (level == null || level.getGameTime() % (20 * 15) != 0) return;
+
+        if( ClientCon.getAgent().isSnowChange()){
+            ClientCon.getAgent().setSnowChange(false);
+            VoxyGeometryRefreshManager.refreshAll();
+        }
+    }
+
     public static void renderToStream(BlockState state, ReuseVertexConsumer translucentVC, ReuseVertexConsumer opaqueVC) {
         if (!VoxyTool.isVoxyTest()) return;
 
@@ -30,7 +49,7 @@ public class VoxyClientTool {
             }
             ExtraRendererContext context = new ExtraRendererContext();
             context.setReplace(ExtraModelManager.isModelReplaceable(model, defaultBlockTypeFlag))
-                    .add(model)
+                    // .setExtraModel(model)
                     .setOriginalModel(ExtraModelManager.models.getBlockStateModel(state))
             ;
 
