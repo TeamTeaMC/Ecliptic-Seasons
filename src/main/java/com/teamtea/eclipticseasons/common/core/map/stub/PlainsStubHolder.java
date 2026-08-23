@@ -68,7 +68,7 @@ public class PlainsStubHolder {
                 .temperature(temperature)
                 .downfall(0.5f)
                 // .setAttribute(EnvironmentAttributes.SKY_COLOR, OverworldBiomes.calculateSkyColor(temperature))
-                .specialEffects(new BiomeSpecialEffects.Builder().skyColor(8103167).waterColor(DEFAULT_WATER_COLOR).build())
+                .specialEffects(new BiomeSpecialEffects.Builder().skyColor(8103167).waterColor(DEFAULT_WATER_COLOR).waterFogColor(12638463).fogColor(12638463).build())
                 .mobSpawnSettings(new MobSpawnSettings.Builder().build())
                 .generationSettings(BiomeGenerationSettings.EMPTY);
     }
@@ -82,7 +82,7 @@ public class PlainsStubHolder {
                 .temperature(0.5f)
                 .downfall(0.0f)
                 // .setAttribute(EnvironmentAttributes.SKY_COLOR, 8103167) // Standard sky color for the void
-                .specialEffects(new BiomeSpecialEffects.Builder().skyColor(8103167).waterColor(DEFAULT_WATER_COLOR).build())
+                .specialEffects(new BiomeSpecialEffects.Builder().skyColor(8103167).waterColor(DEFAULT_WATER_COLOR).waterFogColor(12638463).fogColor(12638463).build())
                 .mobSpawnSettings(new MobSpawnSettings.Builder().build())
                 .generationSettings(BiomeGenerationSettings.EMPTY);
     }
