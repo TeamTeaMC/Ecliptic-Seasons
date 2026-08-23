@@ -32,9 +32,9 @@ public class VoxyClientTool {
         ClientLevel level = Minecraft.getInstance().level;
         if (level == null || level.getGameTime() % (20 * 15) != 0) return;
 
-        if( ClientCon.getAgent().isSnowChange()){
+        if (ClientCon.getAgent().isSnowChange()
+                && VoxyGeometryRefreshManager.refreshAll()) {
             ClientCon.getAgent().setSnowChange(false);
-            VoxyGeometryRefreshManager.refreshAll();
         }
     }
 

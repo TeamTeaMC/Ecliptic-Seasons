@@ -32,6 +32,7 @@ public final class VoxyTool {
     public static final int MAX_VOXY_BLOCK_ID = 0xFFFFF;
     public static final int VIRTUAL_ICE_BLOCK_ID = MAX_VOXY_BLOCK_ID;
     private static final RandomSource RANDOM_SOURCE_THREAD_LOCAL = RandomSource.createThreadLocalInstance(42L);
+    private static final ThreadLocal<BlockPos.MutableBlockPos> MUTABLE_BLOCK_POS_THREAD_LOCAL = ThreadLocal.withInitial(BlockPos.MutableBlockPos::new);
 
     private VoxyTool() {
     }
@@ -41,48 +42,107 @@ public final class VoxyTool {
     }
 
     /**
-     * Creates a render-only seasonal view without mutating Voxy sections or Mapper storage.
+     * Creates a render-only seasonal view without mutating
+     * Voxy sections or Mapper storage.
      */
     public static long[] createSeasonalRenderData(WorldEngine world, WorldSection section, long[] source) {
         if (!isVoxyTest()) return source;
+
         Mapper mapper = world.getMapper();
-        long[] output = Arrays.copyOf(source, source.length);
+        long[] output = source;
+
         int scale = 1 << section.lvl;
         int centerOffset = section.lvl == 0 ? 0 : scale >> 1;
+        int sectionBaseX = ((section.x << 5) << section.lvl) + centerOffset;
+        int sectionBaseY = ((section.y << 5) << section.lvl) + centerOffset;
+        int sectionBaseZ = ((section.z << 5) << section.lvl) + centerOffset;
 
-        for (int index = 0; index < source.length; index++) {
-            long mappingId = source[index];
-            if (Mapper.isAir(mappingId)) continue;
-            int localX = index & 31;
-            int localZ = index >> 5 & 31;
-            int localY = index >> 10 & 31;
-            int storedBlockId = Mapper.getBlockId(mappingId);
-            int originalBlockId = fixId(mapper, storedBlockId);
-            BlockState state = mapper.getBlockStateFromBlockId(originalBlockId);
-            Long aboveMappingId = getAboveMapping(world, section, source, localX, localY, localZ);
-            int renderBlockId = originalBlockId;
+        BlockPos.MutableBlockPos pos = MUTABLE_BLOCK_POS_THREAD_LOCAL.get();
 
-            if (aboveMappingId != null) {
-                BlockPos pos = new BlockPos((((section.x << 5) + localX) << section.lvl) + centerOffset,
-                        (((section.y << 5) + localY) << section.lvl) + centerOffset,
-                        (((section.z << 5) + localZ) << section.lvl) + centerOffset);
-                renderBlockId = getSeasonalRenderBlockId(mapper, mappingId, aboveMappingId, originalBlockId, state, pos);
-            }
-            if (renderBlockId != storedBlockId) {
-                output[index] = Mapper.withBlockBiome(mappingId, renderBlockId, Mapper.getBiomeId(mappingId));
-            }
-        }
-        return output;
-    }
+        WorldSection aboveSection = null;
+        long[] aboveData = null;
+        boolean aboveSectionChecked = false;
 
-    private static @Nullable Long getAboveMapping(WorldEngine world, WorldSection section, long[] currentData, int localX, int localY, int localZ) {
-        if (localY < 31) return currentData[WorldSection.getIndex(localX, localY + 1, localZ)];
-        WorldSection above = world.acquireIfExists(section.lvl, section.x, section.y + 1, section.z);
-        if (above == null) return null;
         try {
-            return above._unsafeGetRawDataArray()[WorldSection.getIndex(localX, 0, localZ)];
+            for (int index = 0; index < source.length; index++) {
+                long mappingId = source[index];
+                if (Mapper.isAir(mappingId)) continue;
+
+                int storedBlockId = Mapper.getBlockId(mappingId);
+                int originalBlockId = fixId(mapper, storedBlockId);
+                BlockState state = mapper.getBlockStateFromBlockId(originalBlockId);
+
+                // 先排除不支持积雪且不是可冻结水源的方块。
+                boolean freezableWater = isFreezableWater(state);
+                int blockFlag = MapChecker.getDefaultBlockTypeFlag(state);
+                if (!freezableWater && blockFlag <= MapChecker.FLAG_NONE) continue;
+
+                int localX = index & 31;
+                int localZ = index >> 5 & 31;
+                int localY = index >> 10 & 31;
+
+                long aboveMappingId;
+
+                if (localY < 31) {
+                    // 上方方块仍然位于当前 section。
+                    aboveMappingId = source[index + 1024];
+                } else {
+                    // 只有 localY == 31 时，上方方块才跨 section。
+                    if (!aboveSectionChecked) {
+                        aboveSectionChecked = true;
+                        aboveSection = world.acquireIfExists(
+                                section.lvl,
+                                section.x,
+                                section.y + 1,
+                                section.z
+                        );
+
+                        if (aboveSection != null) {
+                            aboveData = aboveSection._unsafeGetRawDataArray();
+                        }
+                    }
+
+                    if (aboveData == null) continue;
+
+                    // 读取上方 section 的 localY == 0 平面。
+                    aboveMappingId = aboveData[index & 0x3FF];
+                }
+
+                pos.set(
+                        sectionBaseX + localX * scale,
+                        sectionBaseY + localY * scale,
+                        sectionBaseZ + localZ * scale
+                );
+
+                int renderBlockId = getSeasonalRenderBlockId(
+                        mapper,
+                        mappingId,
+                        aboveMappingId,
+                        originalBlockId,
+                        state,
+                        pos
+                );
+
+                if (renderBlockId == storedBlockId) continue;
+
+                if (output == source) {
+                    output = Arrays.copyOf(source, source.length);
+                }
+
+                output[index] = Mapper.withBlockBiome(
+                        mappingId,
+                        renderBlockId,
+                        Mapper.getBiomeId(mappingId)
+                );
+            }
+
+            return output;
         } finally {
-            above.release(WorldSection.RELEASE_HINT_POSSIBLE_REUSE);
+            if (aboveSection != null) {
+                aboveSection.release(
+                        WorldSection.RELEASE_HINT_POSSIBLE_REUSE
+                );
+            }
         }
     }
 
@@ -126,11 +186,12 @@ public final class VoxyTool {
     public static Int2ObjectLinkedOpenHashMap<WeakReference<Holder<Biome>>> BIOME_ID_MAP = new Int2ObjectLinkedOpenHashMap<>();
 
     private static @Nullable Holder<Biome> getBiome(Level level, Mapper mapper, int biomeId) {
-        if (biomeId < 0 || biomeId >= mapper.getBiomeEntries().length) return null;
         WeakReference<Holder<Biome>> weakReference = BIOME_ID_MAP.get(biomeId);
         Holder<Biome> biomeHolder = weakReference == null ? null : weakReference.get();
         if (biomeHolder != null) return biomeHolder;
-        ResourceKey<Biome> key = ResourceKey.create(Registries.BIOME, Identifier.parse(mapper.getBiomeEntries()[biomeId].biome));
+        Mapper.BiomeEntry biomeEntry = ((IVoxyMapper) mapper).eclipticseasons$getBiomeEntry(biomeId);
+        if (biomeEntry == null) return null;
+        ResourceKey<Biome> key = ResourceKey.create(Registries.BIOME, Identifier.parse(biomeEntry.biome));
         biomeHolder = level.registryAccess().lookupOrThrow(Registries.BIOME).get(key).orElse(PlainsStubHolder.PLAINS);
         BIOME_ID_MAP.put(biomeId, new WeakReference<>(biomeHolder));
         return biomeHolder;
@@ -145,17 +206,17 @@ public final class VoxyTool {
     }
 
     public static int fixId(Mapper mapper, int blockId) {
-        return fixId(mapper, blockId, ignored -> {
-        });
+        return fixId(mapper, blockId, null);
     }
 
-    public static int fixId(Mapper mapper, int blockId, IntConsumer snowyStateConsumer) {
+    public static int fixId(Mapper mapper, int blockId, @Nullable IntConsumer snowyStateConsumer) {
         if (isVirtualIceId(blockId)) return blockId;
         int blockStateCount = mapper.getBlockStateCount();
         if (blockId < blockStateCount) return blockId;
         int decoded = MAX_VOXY_BLOCK_ID - blockId;
         if (decoded < blockStateCount) {
-            snowyStateConsumer.accept(decoded);
+            if (snowyStateConsumer != null)
+                snowyStateConsumer.accept(decoded);
             return decoded;
         }
         return blockId;
