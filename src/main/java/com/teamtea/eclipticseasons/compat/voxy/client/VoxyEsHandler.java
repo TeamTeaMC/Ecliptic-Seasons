@@ -23,7 +23,7 @@ public class VoxyEsHandler {
     }
 
     @SubscribeEvent
-    public void onLoggingIn(ClientPlayerNetworkEvent.LoggingIn event) {
+    public void onLoggingOut(ClientPlayerNetworkEvent.LoggingOut event) {
         VoxyTool.BIOME_ID_MAP.clear();
     }
 }
