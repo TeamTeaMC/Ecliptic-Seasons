@@ -18,9 +18,20 @@ public final class VoxyGeometryRefreshManager {
         INSTANCES.remove(instance);
     }
 
-    public static void refreshAll() {
+
+    public static boolean refreshAll() {
+        if (INSTANCES.isEmpty()) return true;
+
+        for (IVoxyAsyncNodeManager instance : INSTANCES) {
+            if (!instance.eclipticseasons$canRefreshGeometry()) {
+                return false;
+            }
+        }
+
         for (IVoxyAsyncNodeManager instance : INSTANCES) {
             instance.eclipticseasons$refreshAllGeometry();
         }
+
+        return true;
     }
 }

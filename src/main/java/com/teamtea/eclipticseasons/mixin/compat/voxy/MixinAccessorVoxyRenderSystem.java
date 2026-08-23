@@ -95,6 +95,13 @@ public abstract class MixinAccessorVoxyRenderSystem implements IVoxyAsyncNodeMan
                 + eclipticseasons$lastSectionCount + " sections queued.");
     }
 
+    @Override
+    public boolean eclipticseasons$canRefreshGeometry() {
+        return eclipticseasons$renderService != null
+                && !eclipticseasons$seasonalRefreshPending
+                && eclipticseasons$renderService.getTaskCount() < 100;
+    }
+
     @Unique
     private int eclipticseasons$queueCurrentSections() {
         LongArrayList positions = ((IVoxySectionUpdateRouter) router).eclipticseasons$getWatchedSections();

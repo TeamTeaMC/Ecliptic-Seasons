@@ -53,11 +53,7 @@ public abstract class MixinModelFactory implements IVoxyModelFactory {
             at = @At(value = "INVOKE", target = "Lme/cortex/voxy/common/world/other/Mapper;getBlockStateFromBlockId(I)Lnet/minecraft/world/level/block/state/BlockState;")
     )
     private BlockState eclipticseasons$addEntry_setBS(Mapper instance, int blockId, Operation<BlockState> original) {
-        return original.call(instance, VoxyTool.fixId(instance, blockId, (i) -> {
-            // if (bakery2 instanceof IVoxyModelController modelController) {
-            //     modelController.setSnowyBlock(true);
-            // }
-        }));
+        return original.call(instance, VoxyTool.fixId(instance, blockId, null));
     }
 
     @Inject(
