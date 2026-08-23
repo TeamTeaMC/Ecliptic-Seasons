@@ -21,6 +21,8 @@ public @interface ConditionalMixin {
     /** Minimum version used with {@link #value()}; empty only checks loading. */
     String version() default "";
 
+    String name() default "";
+
     ModCondition[] allOf() default {};
 
     ModCondition[] anyOf() default {};

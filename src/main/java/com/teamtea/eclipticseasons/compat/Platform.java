@@ -20,6 +20,10 @@ public class Platform {
         return FMLLoader.getLoadingModList().getModFileById(id) != null;
     }
 
+    public static String getModName(String id, int index) {
+        return FMLLoader.getLoadingModList().getModFileById(id).getMods().get(index).getDisplayName();
+    }
+
     public static boolean isModsLoaded(List<String> ids) {
         return ids.stream().allMatch(Platform::isModLoaded);
     }
@@ -44,10 +48,10 @@ public class Platform {
 
     public static boolean isVersionSatisfied(String modId, String require) {
         return Optional.of(FMLLoader.getLoadingModList())
-                .map(c->c.getModFileById(modId))
+                .map(c -> c.getModFileById(modId))
                 .map(ModFileInfo::getMods)
-                .filter(modInfoList->!modInfoList.isEmpty())
-                .map(modInfo->modInfo.get(0))
+                .filter(modInfoList -> !modInfoList.isEmpty())
+                .map(modInfo -> modInfo.get(0))
                 .map(IModInfo::getVersion)
                 .map(currentVersion -> {
                     ArtifactVersion required = new DefaultArtifactVersion(require);
