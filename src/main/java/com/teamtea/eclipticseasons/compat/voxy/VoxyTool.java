@@ -110,7 +110,7 @@ public final class VoxyTool {
                     || MapChecker.extraSnowPassable(stateAbove));
             return !specialLeaves || CommonConfig.Snow.snowyTree.get();
         }
-        return !MapChecker.extraSnowPassable(state) || !MapChecker.extraSnowPassable(stateAbove);
+        return !MapChecker.solidTest(stateAbove);
     }
 
     private static boolean shouldFreeze(Level level, Biome biome, BlockState water, BlockState stateAbove, BlockPos pos) {
