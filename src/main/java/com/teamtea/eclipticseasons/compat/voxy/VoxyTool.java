@@ -2,9 +2,11 @@ package com.teamtea.eclipticseasons.compat.voxy;
 
 import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
+import com.teamtea.eclipticseasons.common.core.map.stub.PlainsStubHolder;
 import com.teamtea.eclipticseasons.compat.CompatModule;
 import com.teamtea.eclipticseasons.config.ClientConfig;
 import com.teamtea.eclipticseasons.config.CommonConfig;
+import it.unimi.dsi.fastutil.ints.Int2ObjectLinkedOpenHashMap;
 import me.cortex.voxy.common.world.WorldEngine;
 import me.cortex.voxy.common.world.WorldSection;
 import me.cortex.voxy.common.world.other.Mapper;
@@ -22,6 +24,7 @@ import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.material.Fluids;
 import org.jspecify.annotations.Nullable;
 
+import java.lang.ref.WeakReference;
 import java.util.Arrays;
 import java.util.function.IntConsumer;
 
@@ -37,7 +40,9 @@ public final class VoxyTool {
         return CompatModule.CommonConfig.voxyTest.get();
     }
 
-    /** Creates a render-only seasonal view without mutating Voxy sections or Mapper storage. */
+    /**
+     * Creates a render-only seasonal view without mutating Voxy sections or Mapper storage.
+     */
     public static long[] createSeasonalRenderData(WorldEngine world, WorldSection section, long[] source) {
         if (!isVoxyTest()) return source;
         Mapper mapper = world.getMapper();
@@ -92,14 +97,14 @@ public final class VoxyTool {
         if (skyLight <= 9) return originalBlockId;
         if (CommonConfig.Snow.notSnowyNearGlowingBlock.get()
                 && blockLight >= CommonConfig.Snow.notSnowyNearGlowingBlockLevel.getAsInt()) return originalBlockId;
-        Biome biome = getBiome(level, mapper, Mapper.getBiomeId(mappingId));
+        Holder<Biome> biome = getBiome(level, mapper, Mapper.getBiomeId(mappingId));
         if (biome == null) return originalBlockId;
         if (isFreezableWater(state)) {
-            return shouldFreeze(level, biome, state, stateAbove, pos) ? VIRTUAL_ICE_BLOCK_ID : originalBlockId;
+            return shouldFreeze(level, biome.value(), state, stateAbove, pos) ? VIRTUAL_ICE_BLOCK_ID : originalBlockId;
         }
         int flag = MapChecker.getDefaultBlockTypeFlag(state);
         if (flag <= MapChecker.FLAG_NONE || !canRenderSnow(state, stateAbove, flag)) return originalBlockId;
-        return MapChecker.shouldSnowAtBiome(level, biome, state, RANDOM_SOURCE_THREAD_LOCAL, state.getSeed(pos), pos)
+        return MapChecker.shouldSnowAtBiome(level, biome.value(), state, RANDOM_SOURCE_THREAD_LOCAL, state.getSeed(pos), pos)
                 ? MAX_VOXY_BLOCK_ID - originalBlockId : originalBlockId;
     }
 
@@ -118,12 +123,17 @@ public final class VoxyTool {
                 && MapChecker.shouldSnowAtBiome(level, biome, water, RANDOM_SOURCE_THREAD_LOCAL, water.getSeed(pos), pos);
     }
 
-    private static @Nullable Biome getBiome(Level level, Mapper mapper, int biomeId) {
+    public static Int2ObjectLinkedOpenHashMap<WeakReference<Holder<Biome>>> BIOME_ID_MAP = new Int2ObjectLinkedOpenHashMap<>();
+
+    private static @Nullable Holder<Biome> getBiome(Level level, Mapper mapper, int biomeId) {
         if (biomeId < 0 || biomeId >= mapper.getBiomeEntries().length) return null;
-        ResourceKey<Biome> key = ResourceKey.create(Registries.BIOME,
-                Identifier.parse(mapper.getBiomeEntries()[biomeId].biome));
-        return level.registryAccess().lookupOrThrow(Registries.BIOME).get(key)
-                .map(Holder.Reference::value).orElse(null);
+        WeakReference<Holder<Biome>> weakReference = BIOME_ID_MAP.get(biomeId);
+        Holder<Biome> biomeHolder = weakReference == null ? null : weakReference.get();
+        if (biomeHolder != null) return biomeHolder;
+        ResourceKey<Biome> key = ResourceKey.create(Registries.BIOME, Identifier.parse(mapper.getBiomeEntries()[biomeId].biome));
+        biomeHolder = level.registryAccess().lookupOrThrow(Registries.BIOME).get(key).orElse(PlainsStubHolder.PLAINS);
+        BIOME_ID_MAP.put(biomeId, new WeakReference<>(biomeHolder));
+        return biomeHolder;
     }
 
     public static boolean isFreezableWater(BlockState state) {
