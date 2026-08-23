@@ -14,4 +14,6 @@ public @interface ModCondition {
 
     /** Minimum accepted version, compared by Platform.isVersionSatisfied. */
     String version() default "";
+
+    String name() default "";
 }
