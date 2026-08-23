@@ -21,8 +21,14 @@ public class Platform {
         return FMLLoader.getLoadingModList().getModFileById(id) != null;
     }
 
-    public static String getModName(String id, int index) {
-        return FMLLoader.getLoadingModList().getModFileById(id).getMods().get(index).getDisplayName();
+    public static String getModName(String id, final int index) {
+        return Optional.of(FMLLoader.getLoadingModList())
+                .map(c -> c.getModFileById(id))
+                .map(ModFileInfo::getMods)
+                .filter(list -> index >= 0 && index < list.size())
+                .map(list -> list.get(index))
+                .map(IModInfo::getDisplayName)
+                .orElse("");
     }
 
     public static boolean isModsLoaded(List<String> ids) {
