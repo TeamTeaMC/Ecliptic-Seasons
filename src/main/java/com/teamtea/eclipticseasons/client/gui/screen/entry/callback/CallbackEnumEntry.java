@@ -7,6 +7,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.CycleButton;
 import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.layouts.LayoutElement;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 
@@ -19,15 +20,18 @@ public class CallbackEnumEntry<T extends Enum<T>> extends CallbackEntry<T> {
     private final List<T> values;
     private final Function<T, Component> valueDisplay;
 
-    public CallbackEnumEntry(String text, Supplier<T> getter, Consumer<T> setter, List<T> values, Function<T, Component> valueDisplay) {
-        super(text, getter, setter);
+    public CallbackEnumEntry(String text, Supplier<T> getter, Consumer<T> setter, Supplier<T> defaultGetter,
+                             List<T> values, Function<T, Component> valueDisplay) {
+        super(text, getter, setter, defaultGetter);
         this.values = values;
         this.valueDisplay = valueDisplay;
     }
 
-    public CallbackEnumEntry(String text, Supplier<T> getter, Consumer<T> setter, List<T> values) {
-        this(text, getter, setter, values,
-                value -> value instanceof ITranslatable it ? it.getTranslation() : Component.literal(value.name()));
+    public CallbackEnumEntry(String text, Supplier<T> getter, Consumer<T> setter, Supplier<T> defaultGetter,
+                             List<T> values) {
+        this(text, getter, setter, defaultGetter, values,
+                value -> value instanceof ITranslatable it
+                        ? it.getTranslation() : Component.literal(value.name()));
     }
 
     @Override
@@ -55,19 +59,15 @@ public class CallbackEnumEntry<T extends Enum<T>> extends CallbackEntry<T> {
     }
 
     @Override
-    public AbstractWidget buildModConfigSpec(ESModConfigScreen screen, int x, int y, int width) {
+    public LayoutElement buildModConfigSpec(ESModConfigScreen screen, int x, int y, int width) {
+        T value = getter.get();
         CycleButton.Builder<T> builder = CycleButton.builder(valueDisplay, nowValue)
                 .displayState(CycleButton.DisplayState.VALUE);
-
         applyClientSprite(builder, syncType);
 
-        return builder
-                .withValues(values)
-                .withTooltip(this::getTooltipSupplier)
-                .create(x, y, width, 20, Component.empty(), (cycleButton, value) -> {
-                    nowValue = value;
-                    setter.accept(value);
-                });
+        return buildResettableCycle(width, value, defaultGetter.get(), setter,
+                onValueChange -> builder.withValues(values).withTooltip(this::getTooltipSupplier)
+                        .create(x, y, width - 30, 20, Component.empty(), onValueChange));
     }
 
 }
