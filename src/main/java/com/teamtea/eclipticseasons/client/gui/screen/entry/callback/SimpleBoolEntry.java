@@ -23,6 +23,11 @@ public class SimpleBoolEntry extends ConfigEntry {
     }
 
     @Override
+    public int getColumn() {
+        return 1;
+    }
+
+    @Override
     public SyncType getSyncType() {
         return SyncType.MIXINS;
     }
