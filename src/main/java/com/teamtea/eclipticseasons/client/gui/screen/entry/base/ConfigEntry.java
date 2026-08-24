@@ -2,6 +2,7 @@ package com.teamtea.eclipticseasons.client.gui.screen.entry.base;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.client.gui.screen.ESModConfigScreen;
+import com.teamtea.eclipticseasons.client.gui.screen.widget.ColorStringWidget;
 import com.teamtea.eclipticseasons.config.sync.SyncType;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.Font;
@@ -68,11 +69,14 @@ public abstract class ConfigEntry {
         return multiLineTextWidget;
     }
 
-    protected static LayoutElement buildLabelAndControl(ESModConfigScreen screen, Component label, LayoutElement control, int width) {
+    protected LayoutElement buildLabelAndControl(ESModConfigScreen screen, Component label, LayoutElement control, int width) {
         GridLayout gridLayout = new GridLayout();
         gridLayout.defaultCellSetting().paddingHorizontal(4).paddingBottom(4).alignHorizontallyCenter();
         GridLayout.RowHelper helper = gridLayout.createRowHelper(2);
-        StringWidget labelWidget = new StringWidget(trimText(screen.getFont(), label, width - 10), screen.getFont());
+        StringWidget labelWidget = new ColorStringWidget(trimText(screen.getFont(), label, width - 10), screen.getFont(),
+                this instanceof SpecEntry<?> specEntry ? specEntry.getSyncType() :
+                        this instanceof CallbackEntry<?> callbackEntry ? callbackEntry.getSyncType() :
+                                SyncType.NONE);
         // labelWidget.alignLeft();
         labelWidget.setWidth(width + 4);
         labelWidget.setHeight(20);
