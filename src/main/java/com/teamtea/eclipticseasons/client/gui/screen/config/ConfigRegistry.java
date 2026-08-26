@@ -62,6 +62,7 @@ public class ConfigRegistry {
                 "eclipticseasons.configuration.SeasonalSimulationLevel",
                 () -> EclipticSeasonsApi.getInstance().getSeasonalSimulationLevel(),
                 SeasonalSimulationLevel::onSeasonalSimulationLevelChange,
+                () -> SeasonalSimulationLevel.AGRICULTURE,
                 List.of(SeasonalSimulationLevel.values())
         ));
 
@@ -69,6 +70,7 @@ public class ConfigRegistry {
                 "eclipticseasons.configuration.SnowMode",
                 SnowBehavior::getSnowBehavior,
                 SnowBehavior::setSnowBehavior,
+                () -> SnowBehavior.RENDER,
                 List.of(SnowBehavior.values())
         ));
 
@@ -78,26 +80,30 @@ public class ConfigRegistry {
                 (b) -> {
                     CommonConfig.Crop.simpleGreenHouse.set(b);
                     CommonConfig.Crop.greenHouseCheckMode.set(b ? CropGrowthHandler.GreenHouseCheckMode.TOP_ONLY : CropGrowthHandler.GreenHouseCheckMode.FULL);
-                }));
+                },
+                () -> false));
 
         screen.addToTab(ConfigCategory.GENERAL, RECOMMENDED, new CallbackBooleanEntry(
                 "eclipticseasons.configuration.DebugInfo",
-                ClientConfig.Debug.debugInfo,
-                b -> ClientConfig.Debug.debugInfo.set(b)).setSyncType(SyncType.CLIENT));
+                () -> ClientConfig.Debug.debugInfo.get(),
+                b -> ClientConfig.Debug.debugInfo.set(b),
+                () -> false).setSyncType(SyncType.CLIENT));
 
         screen.addToTab(ConfigCategory.GENERAL, RECOMMENDED, new CallbackBooleanEntry(
                 "eclipticseasons.configuration.NaturalSound",
-                ClientConfig.Sound.naturalSound,
+                () -> ClientConfig.Sound.naturalSound.get(),
                 b -> {
                     ClientConfig.Sound.naturalSound.set(b);
                     ClientConfig.Sound.naturalSound.clearCache();
-                }).setRestartType(ModConfigSpec.RestartType.WORLD)
+                },
+                () -> true).setRestartType(ModConfigSpec.RestartType.WORLD)
                 .setSyncType(SyncType.CLIENT));
 
         screen.addToTab(ConfigCategory.GENERAL, RECOMMENDED, new CallbackBooleanEntry(
                 "eclipticseasons.configuration.ExtraSnowLayer",
-                ClientConfig.Renderer.extraSnowLayer,
-                b -> ClientConfig.Renderer.extraSnowLayer.set(b)).setSyncType(SyncType.CLIENT));
+                () -> ClientConfig.Renderer.extraSnowLayer.get(),
+                b -> ClientConfig.Renderer.extraSnowLayer.set(b),
+                () -> false).setSyncType(SyncType.CLIENT));
 
         // screen.addToTab(ConfigCategory.GENERAL, RECOMMENDED, new CallbackBooleanEntry(
         //         "eclipticseasons.configuration.ExtraSnowDefinitions",
@@ -110,8 +116,9 @@ public class ConfigRegistry {
 
         screen.addToTab(ConfigCategory.GENERAL, RECOMMENDED, new CallbackBooleanEntry(
                 "eclipticseasons.configuration.FrozenWater",
-                ClientConfig.Debug.frozenWater,
-                b -> ClientConfig.Debug.frozenWater.set(b))
+                () -> ClientConfig.Debug.frozenWater.get(),
+                b -> ClientConfig.Debug.frozenWater.set(b),
+                () -> false)
                 .setSyncType(SyncType.CLIENT));
 
         // screen.addToTab(ConfigCategory.GENERAL, RECOMMENDED, new CallbackBooleanEntry(

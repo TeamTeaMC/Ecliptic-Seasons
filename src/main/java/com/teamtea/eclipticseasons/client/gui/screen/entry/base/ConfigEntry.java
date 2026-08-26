@@ -2,20 +2,23 @@ package com.teamtea.eclipticseasons.client.gui.screen.entry.base;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.client.gui.screen.ESModConfigScreen;
+import com.teamtea.eclipticseasons.client.gui.screen.widget.ColorStringWidget;
 import com.teamtea.eclipticseasons.config.sync.SyncType;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.components.AbstractWidget;
-import net.minecraft.client.gui.components.CycleButton;
-import net.minecraft.client.gui.components.MultiLineTextWidget;
-import net.minecraft.client.gui.components.StringWidget;
-import net.minecraft.client.gui.components.Tooltip;
-import net.minecraft.client.gui.components.WidgetSprites;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.components.*;
 import net.minecraft.client.gui.layouts.GridLayout;
 import net.minecraft.client.gui.layouts.LayoutElement;
+import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
+
+import java.util.Objects;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 public abstract class ConfigEntry {
     protected static final WidgetSprites CLIENT_SPRITES = new WidgetSprites(EclipticSeasons.rl("widget/es_button"), EclipticSeasons.rl("widget/es_button_disabled"), EclipticSeasons.rl("widget/es_button_highlighted"));
@@ -52,8 +55,7 @@ public abstract class ConfigEntry {
 
     public abstract LayoutElement build(ESModConfigScreen screen, int x, int y, int width);
 
-    public
-    static MultiLineTextWidget getMultiLineTextWidget(Component label, ESModConfigScreen screen, int width) {
+    public static MultiLineTextWidget getMultiLineTextWidget(Component label, ESModConfigScreen screen, int width) {
         Component label1 = label;
         int width1 = screen.getFont().width(label1.getString());
         if (width1 > width - 20) {
@@ -67,18 +69,60 @@ public abstract class ConfigEntry {
         return multiLineTextWidget;
     }
 
-    protected static LayoutElement buildLabelAndControl(ESModConfigScreen screen, Component label, AbstractWidget control, int width) {
+    protected LayoutElement buildLabelAndControl(ESModConfigScreen screen, Component label, LayoutElement control, int width) {
         GridLayout gridLayout = new GridLayout();
         gridLayout.defaultCellSetting().paddingHorizontal(4).paddingBottom(4).alignHorizontallyCenter();
         GridLayout.RowHelper helper = gridLayout.createRowHelper(2);
-        StringWidget labelWidget = new StringWidget(label, screen.getFont());
-        labelWidget.alignLeft();
+        StringWidget labelWidget = new ColorStringWidget(trimText(screen.getFont(), label, width - 10), screen.getFont(),
+                this instanceof SpecEntry<?> specEntry ? specEntry.getSyncType() :
+                        this instanceof CallbackEntry<?> callbackEntry ? callbackEntry.getSyncType() :
+                                SyncType.NONE);
+        // labelWidget.alignLeft();
         labelWidget.setWidth(width + 4);
         labelWidget.setHeight(20);
-        control.setWidth(width);
+        if (control instanceof AbstractWidget abstractWidget)
+            abstractWidget.setWidth(width);
         helper.addChild(labelWidget);
         helper.addChild(control);
         return gridLayout;
+    }
+
+    @SuppressWarnings("unchecked")
+    protected static <T> LayoutElement buildResettableCycle(int width, T value, T defaultValue, Consumer<T> setter,
+                                                            Function<CycleButton.OnValueChange<T>, CycleButton<T>> factory) {
+        LinearLayout layout = new LinearLayout(width, 20, LinearLayout.Orientation.HORIZONTAL);
+
+        Button resetButton = Button.builder(Component.literal("⟳").withStyle(ChatFormatting.BOLD), button -> {
+            setter.accept(defaultValue);
+            button.active = false;
+            layout.visitWidgets(widget -> {
+                if (widget instanceof CycleButton<?> cycleButton)
+                    ((CycleButton<T>) cycleButton).setValue(defaultValue);
+            });
+        }).size(30, 20).build();
+        resetButton.active = !Objects.equals(value, defaultValue);
+
+        CycleButton<T> cycleButton = factory.apply((button, newValue) -> {
+            setter.accept(newValue);
+            resetButton.active = !Objects.equals(newValue, defaultValue);
+        });
+
+        layout.addChild(cycleButton);
+        layout.addChild(resetButton);
+        return layout;
+    }
+
+    protected static Component trimText(Font font, Component text, int maxWidth) {
+        if (font.width(text) <= maxWidth) {
+            return text;
+        }
+
+        String ellipsis = "...";
+        int availableWidth = Math.max(0, maxWidth - font.width(ellipsis));
+
+        return Component.literal(
+                font.plainSubstrByWidth(text.getString(), availableWidth) + ellipsis
+        ).withStyle(text.getStyle());
     }
 
     protected static <T> void applyClientSprite(CycleButton.Builder<T> builder, SyncType syncType) {
@@ -110,7 +154,7 @@ public abstract class ConfigEntry {
 
     protected static void applyTooltip(LayoutElement layoutElement, Component title, Component comment) {
         layoutElement.visitWidgets(aw -> {
-            if (aw.tooltip.get() == null) {
+            if (aw.tooltip == null) {
                 aw.setTooltip(Tooltip.create(title.copy().withStyle(ChatFormatting.BOLD)
                         .append(comment.copy().withStyle(style -> style.withBold(false)))));
             }
@@ -124,4 +168,5 @@ public abstract class ConfigEntry {
                         ? Component.translatable(commentKey)
                         : fallback);
     }
+
 }
