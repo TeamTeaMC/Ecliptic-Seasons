@@ -2,10 +2,17 @@ package com.teamtea.eclipticseasons.client.gui.screen.entry.spec;
 
 import com.teamtea.eclipticseasons.client.gui.screen.ESModConfigScreen;
 import com.teamtea.eclipticseasons.client.gui.screen.entry.base.SpecEntry;
-import net.minecraft.client.gui.components.AbstractWidget;
-import net.minecraft.client.gui.components.CycleButton;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.components.*;
+import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.layouts.LayoutElement;
+import net.minecraft.client.gui.layouts.LinearLayout;
+import net.minecraft.network.chat.Component;
 import net.minecraftforge.common.ForgeConfigSpec;
+
+import java.awt.*;
+import java.util.Objects;
 
 public class BooleanEntry extends SpecEntry<Boolean> {
     public BooleanEntry(ForgeConfigSpec.BooleanValue spec) {
@@ -18,13 +25,10 @@ public class BooleanEntry extends SpecEntry<Boolean> {
     }
 
     @Override
-    public AbstractWidget buildModConfigSpec(ESModConfigScreen screen, int x, int y, int width) {
-
-        CycleButton<Boolean> booleanCycleButton = CycleButton.onOffBuilder(spec.get())
-                .displayOnlyValue()
-                .create(0, 0, width, 20, this.label, (button, value) -> spec.set(value));
-        // booleanCycleButton.setTooltip(Tooltip.create(Component.translatable("eclipticseasons.configuration." + spec.getPath().get(spec.getPath().size()-1)).withStyle(ChatFormatting.BOLD).append(Component.translatable("\n\n" + SpecUtil.getSpec(spec).getComment() + "")).withStyle(ChatFormatting.RESET)));
-        return booleanCycleButton;
+    public LayoutElement buildModConfigSpec(ESModConfigScreen screen, int x, int y, int width) {
+        return buildResettableCycle(width, spec.get(), spec.getDefault(), spec::set,
+                onValueChange -> CycleButton.onOffBuilder(spec.get()).displayOnlyValue()
+                        .create(0, 0, width - 30, 20, label, onValueChange));
     }
 
     @Override

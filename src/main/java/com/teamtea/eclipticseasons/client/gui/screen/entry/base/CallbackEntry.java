@@ -24,6 +24,7 @@ import java.util.function.Supplier;
 public abstract class CallbackEntry<T> extends ConfigEntry {
     protected final Supplier<T> getter;
     protected final Consumer<T> setter;
+    protected final Supplier<T> defaultGetter;
     protected T nowValue;
 
     protected final String text;
@@ -37,11 +38,12 @@ public abstract class CallbackEntry<T> extends ConfigEntry {
     @Getter
     protected SyncType syncType = SyncType.COMMON;
 
-    protected CallbackEntry(String text, Supplier<T> getter, Consumer<T> setter) {
+    protected CallbackEntry(String text, Supplier<T> getter, Consumer<T> setter, Supplier<T> defaultGetter) {
         super(text);
         this.text = text;
         this.getter = getter;
         this.setter = setter;
+        this.defaultGetter = defaultGetter;
         this.nowValue = getter.get();
     }
 
@@ -83,5 +85,5 @@ public abstract class CallbackEntry<T> extends ConfigEntry {
         return buildLabelAndControl(screen, label, buildModConfigSpec(screen, x, y, width), width);
     }
 
-    public abstract AbstractWidget buildModConfigSpec(ESModConfigScreen screen, int x, int y, int width);
+    public abstract LayoutElement buildModConfigSpec(ESModConfigScreen screen, int x, int y, int width);
 }
