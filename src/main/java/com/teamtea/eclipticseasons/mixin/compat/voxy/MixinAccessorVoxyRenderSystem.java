@@ -133,7 +133,7 @@ public abstract class MixinAccessorVoxyRenderSystem implements IVoxyAsyncNodeMan
         return deltaX * deltaX + deltaZ * deltaZ;
     }
 
-    @Inject(method = "tick", at = @At("TAIL"))
+    @Inject(method = "tick", at = @At("RETURN"))
     private void eclipticseasons$trackSeasonalRefresh(GlBuffer nodeBuffer, NodeCleaner cleaner, CallbackInfo ci) {
         if (!eclipticseasons$seasonalRefreshPending || eclipticseasons$renderService == null) return;
 
