@@ -24,6 +24,8 @@ import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.material.Fluids;
 import org.jspecify.annotations.Nullable;
 
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.VarHandle;
 import java.lang.ref.WeakReference;
 import java.util.Arrays;
 import java.util.function.IntConsumer;
@@ -183,18 +185,41 @@ public final class VoxyTool {
                 && MapChecker.shouldSnowAtBiome(level, biome, water, RANDOM_SOURCE_THREAD_LOCAL, water.getSeed(pos), pos);
     }
 
-    public static Int2ObjectLinkedOpenHashMap<WeakReference<Holder<Biome>>> BIOME_ID_MAP = new Int2ObjectLinkedOpenHashMap<>();
+    private static final Object BIOME_CACHE_LOCK = new Object();
+    private static final VarHandle BIOME_ARRAY_HANDLE = MethodHandles.arrayElementVarHandle(Holder[].class);
+    private static volatile Holder<Biome>[] BIOME_ID_CACHE = new Holder[512];
 
     private static @Nullable Holder<Biome> getBiome(Level level, Mapper mapper, int biomeId) {
-        WeakReference<Holder<Biome>> weakReference = BIOME_ID_MAP.get(biomeId);
-        Holder<Biome> biomeHolder = weakReference == null ? null : weakReference.get();
-        if (biomeHolder != null) return biomeHolder;
-        Mapper.BiomeEntry biomeEntry = ((IVoxyMapper) mapper).eclipticseasons$getBiomeEntry(biomeId);
-        if (biomeEntry == null) return null;
-        ResourceKey<Biome> key = ResourceKey.create(Registries.BIOME, Identifier.parse(biomeEntry.biome));
-        biomeHolder = level.registryAccess().lookupOrThrow(Registries.BIOME).get(key).orElse(PlainsStubHolder.PLAINS);
-        BIOME_ID_MAP.put(biomeId, new WeakReference<>(biomeHolder));
-        return biomeHolder;
+        if (biomeId < 0) return null;
+        Holder<Biome>[] cache = BIOME_ID_CACHE;
+        if (biomeId < cache.length) {
+            Holder<Biome> biome = (Holder<Biome>) BIOME_ARRAY_HANDLE.getAcquire(cache, biomeId);
+            if (biome != null) return biome;
+        }
+
+        Mapper.BiomeEntry entry = ((IVoxyMapper) mapper).eclipticseasons$getBiomeEntry(biomeId);
+        if (entry == null) return null;
+        ResourceKey<Biome> key = ResourceKey.create(Registries.BIOME, Identifier.parse(entry.biome));
+        Holder<Biome> resolved = level.registryAccess().lookupOrThrow(Registries.BIOME).get(key).orElse(PlainsStubHolder.PLAINS);
+
+        synchronized (BIOME_CACHE_LOCK) {
+            cache = BIOME_ID_CACHE;
+            if (biomeId < cache.length) {
+                Holder<Biome> cached = (Holder<Biome>) BIOME_ARRAY_HANDLE.getAcquire(cache, biomeId);
+                if (cached != null) return cached;
+            } else {
+                cache = Arrays.copyOf(cache, Math.max(biomeId + 1, cache.length << 1));
+                BIOME_ID_CACHE = cache;
+            }
+            BIOME_ARRAY_HANDLE.setRelease(cache, biomeId, resolved);
+            return resolved;
+        }
+    }
+
+    public static void clearBiomeCache() {
+        synchronized (BIOME_CACHE_LOCK) {
+            BIOME_ID_CACHE = new Holder[256];
+        }
     }
 
     public static boolean isFreezableWater(BlockState state) {

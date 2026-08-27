@@ -55,7 +55,7 @@ public abstract class MixinMapping implements IVoxyMapper {
 
     @Inject(method = "close", at = @At("HEAD"))
     private void eclipticseasons$close(CallbackInfo ci) {
-        VoxyTool.BIOME_ID_MAP.clear();
+        VoxyTool.clearBiomeCache();
     }
 
     @Override
