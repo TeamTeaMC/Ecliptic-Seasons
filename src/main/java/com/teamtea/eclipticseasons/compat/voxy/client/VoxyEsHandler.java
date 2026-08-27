@@ -24,6 +24,6 @@ public class VoxyEsHandler {
 
     @SubscribeEvent
     public void onLoggingOut(ClientPlayerNetworkEvent.LoggingOut event) {
-        VoxyTool.BIOME_ID_MAP.clear();
+        VoxyTool.clearBiomeCache();
     }
 }
