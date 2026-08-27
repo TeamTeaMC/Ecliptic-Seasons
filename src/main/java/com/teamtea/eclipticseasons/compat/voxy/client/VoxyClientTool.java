@@ -27,7 +27,7 @@ public class VoxyClientTool {
     public static void forceReloadAll() {
         if (!VoxyTool.isVoxyTest()
                 || !ClientCon.getAgent().isChange()
-                || !CompatModule.CommonConfig.voxyLODAutoReload.get()) return;
+                || !CompatModule.CommonConfig.voxyAutoRefresh.get()) return;
 
         ClientLevel level = Minecraft.getInstance().level;
         if (level == null || level.getGameTime() % (20 * 15) != 0) return;

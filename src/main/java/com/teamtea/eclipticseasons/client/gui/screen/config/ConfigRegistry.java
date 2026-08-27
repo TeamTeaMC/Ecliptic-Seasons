@@ -228,7 +228,7 @@ public class ConfigRegistry {
                 CompatModule.CommonConfig.sereneSeasons,
                 CompatModule.CommonConfig.DistantHorizonsWinterLOD,
                 CompatModule.ClientConfig.DistantHorizonsWinterLODForceUpdateAll,
-                CompatModule.CommonConfig.voxyTest
+                CompatModule.CommonConfig.voxyCompatibility
         );
 
         screen.put(ConfigCategory.ADVANCED, DEBUG,

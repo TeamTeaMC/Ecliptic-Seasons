@@ -18,7 +18,7 @@ public class VoxyEsHandler {
         // Auto reload consumes termChange/snowChange together every 15 seconds.
         // if (CompatModule.CommonConfig.voxyLODAutoReload.get())
         //     VoxyGeometryRefreshManager.refreshAll();
-        if (CompatModule.CommonConfig.voxyReloadWhenSeasonChanged.get())
+        if (CompatModule.CommonConfig.voxyRefreshOnSolarTermChange.get())
             VoxyTintManager.refreshAll();
     }
 
