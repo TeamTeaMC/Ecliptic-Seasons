@@ -38,7 +38,7 @@ public final class VoxyTool {
     }
 
     public static boolean isVoxyTest() {
-        return CompatModule.CommonConfig.voxyTest.get();
+        return CompatModule.CommonConfig.voxyCompatibility.get();
     }
 
     /**
