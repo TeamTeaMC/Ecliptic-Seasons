@@ -738,7 +738,7 @@ public final class CropGrowthHandler {
             }
             if (flag == CANCEL
                     && event instanceof CanPlantGrowEvent canPlantGrowEvent
-                    && CommonConfig.Crop.cropLeavesPatch.get()
+                    && CommonConfig.Crop.forceCompatCropLeafWithering.get()
                     && canPlantGrowEvent.getLevel() instanceof ServerLevel level) {
                 BlockState state = canPlantGrowEvent.getState();
                 if (state.getBlock() instanceof LeavesBlock
@@ -943,7 +943,7 @@ public final class CropGrowthHandler {
         // }
         boolean isConnected = true;
 
-        int maxDistance = CommonConfig.Crop.greenHouseMaxDiameter.get();
+        int maxDistance = CommonConfig.Crop.greenHouseMaxRadius.get();
         int y_maxDistance = CommonConfig.Crop.greenHouseMaxHeight.get();
         Vec3 centerVec = pos.getCenter();
         Vec3[] vec3s = switch (CommonConfig.Crop.greenHouseCheckMode.get()) {
@@ -965,7 +965,7 @@ public final class CropGrowthHandler {
             // direction=direction.normalize();
 
             Vec3 endVec =
-                    CommonConfig.Crop.useBoxDistance.get() ?
+                    CommonConfig.Crop.useSquareGreenHouseRange.get() ?
                             getClampedEndPoint(centerVec, direction, maxDistance, y_maxDistance) :
                             centerVec.add(direction.scale(direction.y == 0 ? maxDistance : y_maxDistance));
 
@@ -1115,7 +1115,7 @@ public final class CropGrowthHandler {
 
 
     public static boolean isWithinDistanceForGreenHouseWorker(Vec3 from, Vec3 to, float limit) {
-        if (CommonConfig.Crop.useBoxDistance.get()) {
+        if (CommonConfig.Crop.useSquareGreenHouseRange.get()) {
             return Math.abs(from.x - to.x) < limit + 0.1
                     && Math.abs(from.z - to.z) < limit + 0.1
                     && Math.abs(from.y - to.y) < limit + 0.1;
