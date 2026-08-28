@@ -276,6 +276,8 @@
   "eclipticseasons.configuration.MonthOffset.tooltip": "调整显示的月份编号。正数向后偏移。不会影响节气计算逻辑。",
   "eclipticseasons.configuration.DayOffset": "日历日期偏移",
   "eclipticseasons.configuration.DayOffset.tooltip": "调整节气与日历日期的对应关系。用于将节气第0天（如立春）对齐到实际日期。",
+  "eclipticseasons.configuration.FallenLeavesGroundFade": "落叶渐隐",
+  "eclipticseasons.configuration.FallenLeavesGroundFade.tooltip": "地面上的落叶会逐渐缩小并淡出，而非瞬间消失。",
   "eclipticseasons.options.configure_in_classic_screen": "在经典布局设置",
   "eclipticseasons.options.general": "常用",
   "eclipticseasons.options.season": "节气设定",

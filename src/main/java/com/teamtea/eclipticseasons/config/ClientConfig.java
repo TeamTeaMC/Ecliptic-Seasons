@@ -6,6 +6,7 @@ import com.teamtea.eclipticseasons.compat.CompatModule;
 import lombok.Getter;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
+import net.neoforged.neoforge.common.ModConfigSpec;
 
 import java.util.List;
 
@@ -189,6 +190,7 @@ public class ClientConfig {
         public static ForgeConfigSpec.IntValue butterflySpawnWeight;
         public static ForgeConfigSpec.BooleanValue fallenLeaves;
         public static ForgeConfigSpec.IntValue fallenLeavesDropWeight;
+        public static ForgeConfigSpec.BooleanValue fallenLeavesGroundFade;
         public static ForgeConfigSpec.BooleanValue firefly;
         public static ForgeConfigSpec.IntValue fireflySpawnWeight;
         public static ForgeConfigSpec.BooleanValue wildGoose;
@@ -212,6 +214,8 @@ public class ClientConfig {
                     .define("FallenLeaves", true);
             fallenLeavesDropWeight = builder.comment("Density between leaf particles. Higher values result in fewer leaves falling.")
                     .defineInRange("FallenLeavesDropDelay", 10, 1, 10000);
+            fallenLeavesGroundFade = builder.comment("Fallen leaves on the ground will gradually shrink instead of disappearing instantly.")
+                    .define("FallenLeavesGroundFade", true);
 
             firefly = builder.comment("Spawns fireflies near flowers during Summer evenings.")
                     .define("Firefly", true);
