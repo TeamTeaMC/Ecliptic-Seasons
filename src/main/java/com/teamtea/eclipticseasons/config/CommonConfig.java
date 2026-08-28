@@ -108,7 +108,7 @@ public class CommonConfig {
 
         public static ForgeConfigSpec.BooleanValue enableInform;
         public static ForgeConfigSpec.BooleanValue enableInformIcon;
-        public static ForgeConfigSpec.BooleanValue enableLocalInfoCalendar;
+        public static ForgeConfigSpec.BooleanValue biomeBasedLocalCalendar;
         public static ForgeConfigSpec.BooleanValue calendarItemHint;
 
         public static ForgeConfigSpec.IntValue lastingDaysOfEachTerm;
@@ -150,8 +150,8 @@ public class CommonConfig {
                     .define("EnableInform", true);
             enableInformIcon = builder.comment("Include a custom icon in the change notification for better visibility.")
                     .define("EnableInformIcon", true);
-            enableLocalInfoCalendar = builder.comment("Synchronize the in-game calendar and seasonal data with the server/client local time.")
-                    .define("EnableLocalInfoAndCalendar", false);
+            biomeBasedLocalCalendar = builder.comment("Displays local seasonal and calendar information based on the agricultural climate zone of the current biome. Different regions may show different seasonal progress.")
+                    .define("BiomeBasedLocalCalendar", false);
             calendarItemHint = builder.comment("Show a tooltip or message if a calendar item cannot be placed in the current location.")
                     .define("CalendarItemHint", false);
 
@@ -199,16 +199,16 @@ public class CommonConfig {
         public static ForgeConfigSpec.BooleanValue enableCropHumidityControl;
         public static ForgeConfigSpec.BooleanValue cropHumidityTransition;
 
-        public static ForgeConfigSpec.IntValue greenHouseMaxDiameter;
+        public static ForgeConfigSpec.IntValue greenHouseMaxRadius;
         public static ForgeConfigSpec.IntValue greenHouseMaxHeight;
         public static ForgeConfigSpec.IntValue darkGreenhouseFailChance;
         public static ForgeConfigSpec.EnumValue<CropGrowthHandler.GreenHouseCheckMode> greenHouseCheckMode;
         public static ForgeConfigSpec.BooleanValue registerCropDefaultValue;
         public static ForgeConfigSpec.BooleanValue forceCompatMode;
-        public static ForgeConfigSpec.BooleanValue cropLeavesPatch;
+        public static ForgeConfigSpec.BooleanValue forceCompatCropLeafWithering;
         public static ForgeConfigSpec.BooleanValue simpleGreenHouse;
         public static ForgeConfigSpec.BooleanValue noCostHumidifier;
-        public static ForgeConfigSpec.BooleanValue useBoxDistance;
+        public static ForgeConfigSpec.BooleanValue useSquareGreenHouseRange;
         public static ForgeConfigSpec.IntValue seasonCoreRange;
         public static ForgeConfigSpec.BooleanValue restrictBoneMeal;
         public static ForgeConfigSpec.BooleanValue boneMealFailureMessage;
@@ -236,8 +236,8 @@ public class CommonConfig {
                     .define("BoneMealFailureMessage", true);
             boneMealConsumeOnFailure = builder.comment("Consume the bone meal item even if the growth attempt fails.")
                     .define("BoneMealConsumeOnFailure", true);
-            greenHouseMaxDiameter = builder.comment("The horizontal detection radius for the Greenhouse.")
-                    .defineInRange("GreenHouseMaxDiameter", 32, 5, 256);
+            greenHouseMaxRadius = builder.comment("The horizontal detection radius for the Greenhouse.")
+                    .defineInRange("GreenHouseMaxRadius", 32, 5, 256);
             greenHouseMaxHeight = builder.comment("The vertical detection height for the Greenhouse.")
                     .defineInRange("GreenHouseMaxHeight", 10, 3, 128);
             darkGreenhouseFailChance = builder.comment("Probability (per tick) that greenhouse crops fail to grow due to low light levels.")
@@ -250,14 +250,14 @@ public class CommonConfig {
                     .defineInRange("SeasonCoreRange", 15, 4, 31);
             greenHouseCheckMode = builder.comment("Adjusts the greenhouse structure detection mode. Higher accuracy modes check more directions, while top-only mode only requires overhead coverage.")
                     .defineEnum("GreenHouseCheckMode", CropGrowthHandler.GreenHouseCheckMode.FULL);
-            useBoxDistance = builder.comment("Use Manhattan distance (square) instead of Euclidean (circle) for greenhouse range.")
-                    .define("UseBoxDistance", true);
+            useSquareGreenHouseRange = builder.comment("Use Manhattan distance (square) instead of Euclidean (circle) for greenhouse range.")
+                    .define("UseSquareGreenHouseRange", true);
             registerCropDefaultValue = builder.comment("[Deprecated] Use default seasonal/humidity values for unregistered crops.")
                     .define("RegisterCropDefaultValue", false);
             forceCompatMode = builder.comment("Force all plants to follow growth rules, even those without specific mod tags.")
                     .define("ForceCompatMode", true);
-            cropLeavesPatch = builder.comment("Apply patch withering code for crop leave blocks if tick failed.")
-                    .define("CropLeavesPatch", true);
+            forceCompatCropLeafWithering = builder.comment("Apply patch withering code for crop leave blocks if tick failed.")
+                    .define("ForceCompatCropLeafWithering", true);
 
             saveChunkEnvironmentalHumidity = builder.comment("Saves local humidity data to chunk files for persistent tracking.")
                     .define("SaveChunkEnvironmentalHumidity", true);
@@ -526,9 +526,9 @@ public class CommonConfig {
     public static class Resource {
         public static ForgeConfigSpec.BooleanValue extraSnow;
 
-        public static ForgeConfigSpec.BooleanValue SnowTogether;
+        public static ForgeConfigSpec.BooleanValue synchronizedBiomeSnowfall;
         // public static ForgeConfigSpec.BooleanValue RainTogether;
-        public static ForgeConfigSpec.BooleanValue RegionalSnowTime;
+        public static ForgeConfigSpec.BooleanValue climateZoneSnowfallTiming;
         public static ForgeConfigSpec.BooleanValue VanillaBiomeClimateSettings;
         public static ForgeConfigSpec.BooleanValue NotIgnoreRiver;
 
@@ -542,13 +542,13 @@ public class CommonConfig {
             // RainTogether = builder.comment("Synchronizes weather states across all Overworld biomes, ensuring global rainfall.")
             //         .define("RainTogether", true);
 
-            SnowTogether = builder.comment("Synchronizes the snowfall schedule for all Overworld biomes.")
+            synchronizedBiomeSnowfall = builder.comment("Synchronizes the snowfall schedule for all Overworld biomes.")
                     .worldRestart()
-                    .define("SnowTogether", false);
+                    .define("SynchronizedBiomeSnowfall", false);
 
-            RegionalSnowTime = builder.comment("Aligns snowfall schedules based on three broad climate zones (Warm, Temperate, and Cold) instead of per-biome.")
+            climateZoneSnowfallTiming = builder.comment("Aligns snowfall schedules based on three broad climate zones (Warm, Temperate, and Cold) instead of per-biome.")
                     .worldRestart()
-                    .define("RegionalSnowTime", true);
+                    .define("ClimateZoneSnowfallTiming", true);
 
             VanillaBiomeClimateSettings = builder.comment("Enforces original Vanilla temperature and precipitation settings to prevent other mods from creating extreme environmental values.")
                     .worldRestart()

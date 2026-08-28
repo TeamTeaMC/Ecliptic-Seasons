@@ -6,7 +6,6 @@ import com.teamtea.eclipticseasons.compat.CompatModule;
 import lombok.Getter;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
-import net.neoforged.neoforge.common.ModConfigSpec;
 
 import java.util.List;
 
@@ -229,7 +228,7 @@ public class ClientConfig {
 
 
             seasonGreenhouse = builder.comment("Emits soft ambient particles when the Season Core or Greenhouse is active.")
-                    .define("SeasonGreenhouse", true);
+                    .define("GreenHouseParticles", true);
             SeasonGreenhouseParticleSpawnCount = builder.comment("Density of particles emitted by the Greenhouse effect.")
                     .defineInRange("SeasonGreenhouseParticleSpawnCount", 30, 0, 160);
 
