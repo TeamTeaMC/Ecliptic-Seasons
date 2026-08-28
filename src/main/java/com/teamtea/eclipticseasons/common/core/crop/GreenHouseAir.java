@@ -52,7 +52,7 @@ public class GreenHouseAir {
      * 从温室核心位置开始进行气体扩展，返回所有被覆盖位置的映射。
      */
     public static GreenHouseScanResult startBFS(LevelChunkSectionProvider levelChunkSectionProvider, BlockPos corePos, BlockState coreState, BlockEntity coreEntity) {
-        int MAX_XZ = CommonConfig.Crop.greenHouseMaxDiameter.get() * 2;
+        int MAX_XZ = CommonConfig.Crop.greenHouseMaxRadius.get() * 2;
         int MAX_Y = CommonConfig.Crop.greenHouseMaxHeight.get() * 2;
         int MAX_DISTANCE = MAX_XZ * 2
                 + MAX_Y;
@@ -334,7 +334,7 @@ public class GreenHouseAir {
     }
 
     public static void scanAsync(Level level, BlockPos origin, BlockEntity coreEntity, Consumer<GreenHouseScanResult> callback) {
-        int maxR = CommonConfig.Crop.greenHouseMaxDiameter.get();
+        int maxR = CommonConfig.Crop.greenHouseMaxRadius.get();
         int maxH = CommonConfig.Crop.greenHouseMaxHeight.get();
 
         Long2ObjectOpenHashMap<PalettedContainer<BlockState>> secMap = new Long2ObjectOpenHashMap<>();
