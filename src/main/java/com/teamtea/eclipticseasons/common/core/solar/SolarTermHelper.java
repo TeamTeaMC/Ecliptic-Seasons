@@ -47,7 +47,7 @@ public class SolarTermHelper {
     }
 
     public static @NonNull ISolarTerm get(Map<SolarTerm, Holder<SeasonPhase>> solarTermHolderMap, SolarTerm nowSolarTerm) {
-        return CommonConfig.Season.enableLocalInfoCalendar.get() && solarTermHolderMap != null && solarTermHolderMap.containsKey(nowSolarTerm) ?
+        return CommonConfig.Season.biomeBasedLocalCalendar.get() && solarTermHolderMap != null && solarTermHolderMap.containsKey(nowSolarTerm) ?
                 solarTermHolderMap.get(nowSolarTerm).value() :
                 nowSolarTerm;
     }

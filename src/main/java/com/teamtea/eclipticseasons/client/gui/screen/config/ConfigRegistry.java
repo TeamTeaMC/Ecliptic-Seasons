@@ -165,8 +165,8 @@ public class ConfigRegistry {
                 CommonConfig.Snow.snowyWinter,
                 CommonConfig.Snow.blocksNotSnowy,
                 CommonConfig.Snow.snowInWorld,
-                CommonConfig.Resource.SnowTogether,
-                CommonConfig.Resource.RegionalSnowTime,
+                CommonConfig.Resource.synchronizedBiomeSnowfall,
+                CommonConfig.Resource.climateZoneSnowfallTiming,
                 CommonConfig.Weather.snowAccumulationSpeedMultiplier,
                 CommonConfig.Weather.snowMeltSpeedMultiplier
         );
@@ -177,7 +177,7 @@ public class ConfigRegistry {
                 CommonConfig.Crop.enableCrop,
                 CommonConfig.Crop.enableCropHumidityControl,
                 CommonConfig.Crop.restrictBoneMeal,
-                CommonConfig.Crop.greenHouseMaxDiameter,
+                CommonConfig.Crop.greenHouseMaxRadius,
                 CommonConfig.Crop.greenHouseMaxHeight,
                 CommonConfig.Crop.greenHouseCheckMode,
                 CommonConfig.Crop.forceCompatMode,

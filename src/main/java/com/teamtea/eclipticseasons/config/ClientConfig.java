@@ -231,7 +231,7 @@ public class ClientConfig {
 
 
             seasonGreenhouse = builder.comment("Emits soft ambient particles when the Season Core or Greenhouse is active.")
-                    .define("SeasonGreenhouse", true);
+                    .define("GreenHouseParticles", true);
             SeasonGreenhouseParticleSpawnCount = builder.comment("Density of particles emitted by the Greenhouse effect.")
                     .defineInRange("SeasonGreenhouseParticleSpawnCount", 30, 0, 160);
 
