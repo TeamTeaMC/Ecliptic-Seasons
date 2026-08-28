@@ -1,5 +1,6 @@
 package com.teamtea.eclipticseasons.client.particle;
 
+import com.teamtea.eclipticseasons.config.ClientConfig;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.ParticleRenderType;
 import net.minecraft.client.particle.SpriteSet;
@@ -22,7 +23,7 @@ public class FallenLeavesParticle extends TextureSheetParticle {
     private float rotSpeed;
     private final float particleRandom;
     private final float spinAcceleration;
-
+    protected boolean wasOnGround;
 
     public FallenLeavesParticle(ClientLevel clientLevel, double pX, double pY, double pZ, double pXSpeed, double pYSpeed, double pZSpeed, ColorParticleOption colorParticleOption, SpriteSet spriteSet) {
         super(clientLevel, pX, pY, pZ, pXSpeed, pYSpeed, pZSpeed);
@@ -78,9 +79,17 @@ public class FallenLeavesParticle extends TextureSheetParticle {
             this.remove();
         }
 
-        if (this.onGround ) {
-            this.remove();
-            // this.lifetime -= 5;
+        if (this.onGround) {
+            if (!ClientConfig.Particle.fallenLeavesGroundFade.get()) {
+                this.remove();
+            } else {
+                if (!this.wasOnGround) {
+                    this.lifetime = Math.min(this.lifetime, this.age + 40);
+                }
+                this.setColor(this.rCol * 0.99F, this.gCol * 0.99F, this.bCol * 0.99F);
+                this.setAlpha(this.alpha * 0.94F);
+            }
+            this.wasOnGround = this.onGround;
         } else if (!this.removed) {
             float f = (float) (300 - this.lifetime);
             float f1 = Math.min(f / 300.0F, 1.0F);
@@ -121,7 +130,7 @@ public class FallenLeavesParticle extends TextureSheetParticle {
             if (this.hasPhysics
                     && (pX != 0.0 || pY != 0.0 || pZ != 0.0)
                     && pX * pX + pY * pY + pZ * pZ < MAXIMUM_COLLISION_VELOCITY_SQUARED
-                    // && !(nextState.getBlock() instanceof LeavesBlock)
+                // && !(nextState.getBlock() instanceof LeavesBlock)
             ) {
                 Vec3 vec3 = Entity.collideBoundingBox(null, new Vec3(pX, pY, pZ), this.getBoundingBox(), this.level, List.of());
                 pX = vec3.x;

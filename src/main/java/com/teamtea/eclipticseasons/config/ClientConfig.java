@@ -190,6 +190,7 @@ public class ClientConfig {
         public static ModConfigSpec.IntValue butterflySpawnWeight;
         public static ModConfigSpec.BooleanValue fallenLeaves;
         public static ModConfigSpec.IntValue fallenLeavesDropWeight;
+        public static ModConfigSpec.BooleanValue fallenLeavesGroundFade;
         public static ModConfigSpec.BooleanValue firefly;
         public static ModConfigSpec.IntValue fireflySpawnWeight;
         public static ModConfigSpec.BooleanValue wildGoose;
@@ -213,6 +214,8 @@ public class ClientConfig {
                     .define("FallenLeaves", true);
             fallenLeavesDropWeight = builder.comment("Density between leaf particles. Higher values result in fewer leaves falling.")
                     .defineInRange("FallenLeavesDropDelay", 10, 1, 10000);
+            fallenLeavesGroundFade = builder.comment("Fallen leaves on the ground will gradually shrink instead of disappearing instantly.")
+                    .define("FallenLeavesGroundFade", true);
 
             firefly = builder.comment("Spawns fireflies near flowers during Summer evenings.")
                     .define("Firefly", true);
