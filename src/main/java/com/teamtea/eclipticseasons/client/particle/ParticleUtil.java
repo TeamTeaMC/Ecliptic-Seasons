@@ -140,7 +140,7 @@ public class ParticleUtil {
                         case AUTUMN -> chanceW = 9;
                         case WINTER -> chanceW = 15;
                     }
-                    chanceW *= (int) (ClientConfig.Particle.fallenLeavesDropWeight.get() * 0.4f);
+                    chanceW = Math.max(1, (int) Math.ceil(chanceW * ClientConfig.Particle.fallenLeavesDropWeight.get() * 0.4f));
                     // chanceW*=4;
                     if (random.nextInt(chanceW) == 0) {
                         fallenLeaves(clientLevel, blockpos$mutableblockpos, random, blockstate, null);
