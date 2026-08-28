@@ -283,6 +283,8 @@
   "eclipticseasons.configuration.VoxyAutoRefresh.tooltip": "Automatically updates visible Voxy LODs when snow coverage changes.",
   "eclipticseasons.configuration.VoxyRefreshOnSolarTermChange": "Update Distant Colors on Solar Term Change",
   "eclipticseasons.configuration.VoxyRefreshOnSolarTermChange.tooltip": "Automatically updates distant grass and foliage colors when the solar term changes.",
+  "eclipticseasons.configuration.FallenLeavesGroundFade": "Gradual Fallen Leaf Fading",
+  "eclipticseasons.configuration.FallenLeavesGroundFade.tooltip": "Fallen leaves on the ground gradually shrink and fade out instead of disappearing instantly.",
   "eclipticseasons.options.general": "General",
   "eclipticseasons.options.season": "Season",
   "eclipticseasons.options.snow_related": "Snow",
