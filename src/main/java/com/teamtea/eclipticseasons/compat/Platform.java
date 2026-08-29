@@ -9,6 +9,8 @@ import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.forgespi.locating.IModFile;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
+import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
+import org.apache.maven.artifact.versioning.VersionRange;
 
 
 import java.util.List;
@@ -60,8 +62,14 @@ public class Platform {
                 .map(modInfo -> modInfo.get(0))
                 .map(IModInfo::getVersion)
                 .map(currentVersion -> {
-                    ArtifactVersion required = new DefaultArtifactVersion(require);
-                    return currentVersion.compareTo(required) >= 0;
+                    if (!require.startsWith("[") && !require.startsWith("(")) {
+                        return currentVersion.compareTo(new DefaultArtifactVersion(require)) >= 0;
+                    }
+                    try {
+                        return VersionRange.createFromVersionSpec(require).containsVersion(currentVersion);
+                    } catch (InvalidVersionSpecificationException exception) {
+                        throw new IllegalArgumentException("Invalid version requirement: " + require, exception);
+                    }
                 })
                 .orElse(false);
     }
