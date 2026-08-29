@@ -58,12 +58,8 @@ public class EclipticSeasonsMixinPlugin implements IMixinConfigPlugin {
             String sub = Arrays.stream(mixinClassName.split(MIXIN_COMPAT_PACKAGE)).toList().get(1);
             List<String> strings = Arrays.stream(sub.split("\\.")).toList();
             String modid = strings.get(0);
-            if (strings.size() > 2) {
-                shouldApply = Platform.isModLoaded(strings.get(1)) && Platform.isModLoaded(strings.get(0));
-            } else {
-                shouldApply = Objects.equals(modid, "optifine") ? isOptLoad == 1 :
+            shouldApply = Objects.equals(modid, "optifine") ? isOptLoad == 1 :
                         Platform.isModLoaded(modid);
-            }
         }
 
         if (
