@@ -9,6 +9,8 @@ import net.neoforged.neoforgespi.language.IModInfo;
 import net.neoforged.neoforgespi.locating.IModFile;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
+import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
+import org.apache.maven.artifact.versioning.VersionRange;
 
 import java.util.List;
 import java.util.Optional;
@@ -64,8 +66,14 @@ public class Platform {
                 .map(List::getFirst)
                 .map(IModInfo::getVersion)
                 .map(currentVersion -> {
-                    ArtifactVersion required = new DefaultArtifactVersion(require);
-                    return currentVersion.compareTo(required) >= 0;
+                    if (!require.startsWith("[") && !require.startsWith("(")) {
+                        return currentVersion.compareTo(new DefaultArtifactVersion(require)) >= 0;
+                    }
+                    try {
+                        return VersionRange.createFromVersionSpec(require).containsVersion(currentVersion);
+                    } catch (InvalidVersionSpecificationException exception) {
+                        throw new IllegalArgumentException("Invalid version requirement: " + require, exception);
+                    }
                 })
                 .orElse(false);
     }
