@@ -45,15 +45,8 @@ public class EclipticSeasonsMixinPlugin implements IMixinConfigPlugin {
         if (st > -1) {
             String sub = Arrays.stream(mixinClassName.split(MIXIN_COMPAT_PACKAGE)).toList().get(1);
             List<String> strings = Arrays.stream(sub.split("\\.")).toList();
-            String modid = strings.get(0);
-            if (strings.size() > 2) {
-                shouldApply = Platform.isModLoaded(strings.get(1)) && Platform.isModLoaded(strings.get(0));
-            } else {
-                // shouldApply = Objects.equals(modid, "distanthorizons") ?
-                //         Platform.isVersionSatisfied(modid, "3.0.0-b") :
-                //         Platform.isModLoaded(modid);
-                shouldApply = Platform.isModLoaded(modid);
-            }
+            String modid = strings.getFirst();
+            shouldApply = Platform.isModLoaded(modid);
         }
         if (shouldApply && !PreloadedConfig.shouldApply(mixinClassName))
             shouldApply = false;
