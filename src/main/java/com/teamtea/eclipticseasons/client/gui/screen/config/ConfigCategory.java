@@ -4,31 +4,66 @@ import com.teamtea.eclipticseasons.api.misc.ITranslatable;
 import net.minecraft.network.chat.Component;
 
 import java.util.Locale;
+import java.util.Objects;
 
-/**
- * The top-level categories shown in the configuration screen.
- */
-public final class ConfigCategory implements ITranslatable {
+/** A top-level category represented by one sidebar button. */
+public class ConfigCategory implements ITranslatable {
+    public static final ConfigCategory GENERAL = create("eclipticseasons", "GENERAL", 0);
+    public static final ConfigCategory ENVIRONMENT = create("eclipticseasons", "ENVIRONMENT", 1);
+    public static final ConfigCategory GAMEPLAY = create("eclipticseasons", "GAMEPLAY", 2);
+    public static final ConfigCategory VISUAL = create("eclipticseasons", "VISUAL", 3);
+    public static final ConfigCategory ADVANCED = create("eclipticseasons", "ADVANCED", 4);
+    public static final ConfigCategory ALL = create("eclipticseasons", "ALL", 5);
 
-    public static final ConfigCategory GENERAL = new ConfigCategory("GENERAL", 0);
-    public static final ConfigCategory ENVIRONMENT = new ConfigCategory("ENVIRONMENT", 1);
-    public static final ConfigCategory GAMEPLAY = new ConfigCategory("GAMEPLAY", 2);
-    public static final ConfigCategory VISUAL = new ConfigCategory("VISUAL", 3);
-    public static final ConfigCategory ADVANCED = new ConfigCategory("ADVANCED", 4);
-    public static final ConfigCategory ALL = new ConfigCategory("ALL", 5);
+    private static final ConfigCategory[] DEFAULTS = {
+            GENERAL, ENVIRONMENT, GAMEPLAY, VISUAL, ADVANCED, ALL
+    };
 
-    private static final ConfigCategory[] VALUES = {GENERAL, ENVIRONMENT, GAMEPLAY, VISUAL, ADVANCED, ALL};
+    protected String namespace;
+    protected String name;
+    protected int order;
+    protected Component title;
+    protected Component description;
 
-    private final String name;
-    private final int ordinal;
-
-    private ConfigCategory(String name, int ordinal) {
-        this.name = name;
-        this.ordinal = ordinal;
+    protected ConfigCategory(
+            String namespace,
+            String name,
+            int order,
+            Component title,
+            Component description
+    ) {
+        this.namespace = namespace;
+        this.name = name.toUpperCase(Locale.ROOT);
+        this.order = order;
+        this.title = title;
+        this.description = description;
     }
 
+    public static ConfigCategory create(String namespace, String name, int order) {
+        String path = name.toLowerCase(Locale.ROOT);
+        String key = namespace + ".options." + path;
+        return create(namespace, name, order,
+                Component.translatable(key),
+                Component.translatable(key + ".tooltip"));
+    }
+
+    public static ConfigCategory create(
+            String namespace,
+            String name,
+            int order,
+            Component title,
+            Component description
+    ) {
+        return new ConfigCategory(namespace, name, order, title, description);
+    }
+
+    /** Returns the built-in categories. Custom categories live in ConfigScreenContext. */
     public static ConfigCategory[] values() {
-        return VALUES;
+        return DEFAULTS;
+    }
+
+    public String namespace() {
+        return namespace;
     }
 
     public String name() {
@@ -37,29 +72,42 @@ public final class ConfigCategory implements ITranslatable {
 
     @Override
     public int ordinal() {
-        return ordinal;
+        return order;
+    }
+
+    public int order() {
+        return order;
     }
 
     public Component title() {
-        return Component.translatable(
-                "eclipticseasons.options."
-                        + name.toLowerCase(Locale.ROOT)
-        );
+        return title;
     }
 
     @Override
     public Component getTranslation() {
-        return Component.translatable("eclipticseasons.options." + getName());
+        return title();
     }
 
     @Override
     public Component getDescription() {
-        return Component.translatable("eclipticseasons.options." + getName() + ".tooltip");
+        return description;
     }
 
     @Override
     public String getName() {
         return name.toLowerCase(Locale.ROOT);
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        return this == object || object instanceof ConfigCategory other
+                && namespace.equals(other.namespace)
+                && name.equals(other.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(namespace, name);
     }
 
     @Override

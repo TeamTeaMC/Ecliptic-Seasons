@@ -3,7 +3,7 @@ package com.teamtea.eclipticseasons.client.gui.screen.config;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.simulation.SeasonalSimulationLevel;
 import com.teamtea.eclipticseasons.api.constant.simulation.SnowBehavior;
-import com.teamtea.eclipticseasons.client.gui.screen.ESModConfigScreen;
+import com.teamtea.eclipticseasons.client.gui.screen.ConfigScreenContext;
 import com.teamtea.eclipticseasons.client.gui.screen.entry.callback.CallbackBooleanEntry;
 import com.teamtea.eclipticseasons.client.gui.screen.entry.callback.CallbackEnumEntry;
 import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
@@ -12,84 +12,91 @@ import com.teamtea.eclipticseasons.config.ClientConfig;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import com.teamtea.eclipticseasons.config.sync.SyncType;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
- * Registry that assigns every configuration value into one of the five
- * {@link ConfigCategory} categories, using each tab's internal
- * {@code Map<Component, List<ConfigEntry>>} for the second-level sections.
+ * Registers ES's built-in entries and optional plugins that extend the
+ * default ES configuration screen.
  */
 public class ConfigRegistry {
+    protected Map<Identifier, ConfigScreenPlugin> plugins = new LinkedHashMap<>();
 
     // ---------------------------------------------------------------------
     // Second-level section titles
     // ---------------------------------------------------------------------
-    private static final Component RECOMMENDED = Component.translatable("eclipticseasons.options.general.recommended");
+    protected Component recommended = Component.translatable("eclipticseasons.options.general.recommended");
 
-    private static final Component SEASON = Component.translatable("eclipticseasons.options.season");
-    private static final Component WEATHER = Component.translatable("eclipticseasons.options.weather");
-    private static final Component SNOW = Component.translatable("eclipticseasons.options.snow_related");
+    protected Component season = Component.translatable("eclipticseasons.options.season");
+    protected Component weather = Component.translatable("eclipticseasons.options.weather");
+    protected Component snow = Component.translatable("eclipticseasons.options.snow_related");
 
-    private static final Component CROP = Component.translatable("eclipticseasons.options.crop");
-    private static final Component ANIMAL = Component.translatable("eclipticseasons.options.animal");
-    private static final Component SURVIVAL = Component.translatable("eclipticseasons.options.survival");
+    protected Component crop = Component.translatable("eclipticseasons.options.crop");
+    protected Component animal = Component.translatable("eclipticseasons.options.animal");
+    protected Component survival = Component.translatable("eclipticseasons.options.survival");
 
-    private static final Component RENDER = Component.translatable("eclipticseasons.options.renderer");
-    private static final Component PARTICLE = Component.translatable("eclipticseasons.options.particle");
-    private static final Component GUI = Component.translatable("eclipticseasons.options.gui");
+    protected Component render = Component.translatable("eclipticseasons.options.renderer");
+    protected Component particle = Component.translatable("eclipticseasons.options.particle");
+    protected Component gui = Component.translatable("eclipticseasons.options.gui");
 
-    private static final Component COMPAT = Component.translatable("eclipticseasons.options.compat");
-    private static final Component DEBUG = Component.translatable("eclipticseasons.options.debug");
+    protected Component compat = Component.translatable("eclipticseasons.options.compat");
+    protected Component debug = Component.translatable("eclipticseasons.options.debug");
 
-    public static void register(ESModConfigScreen screen) {
-        registerGeneral(screen);
-        registerEnvironment(screen);
-        registerGamePlay(screen);
-        registerVisual(screen);
-        registerAdvanced(screen);
+    public void registerPlugin(Identifier id, ConfigScreenPlugin plugin) {
+        plugins.put(id, plugin);
     }
 
-    private static void registerGeneral(ESModConfigScreen screen) {
-        // These CallbackEntry instances carry special callbacks and must keep their behavior.
-        screen.markClassified(ConfigCategory.GENERAL, ClientConfig.Sound.naturalSound);
-        // screen.markClassified(ConfigCategory.GENERAL, StartConfig.Resource.extraSnow);
-        screen.markClassified(ConfigCategory.GENERAL, CommonConfig.Resource.springGrass);
-        screen.markClassified(ConfigCategory.GENERAL, CommonConfig.Season.seasonalSimulationLevel);
+    public void apply(ConfigScreenContext context) {
+        registerBuiltIn(context);
+        plugins.values().forEach(plugin -> plugin.register(context));
+    }
 
-        screen.addToTab(ConfigCategory.GENERAL, RECOMMENDED, new CallbackEnumEntry<>(
+    protected void registerBuiltIn(ConfigScreenContext context) {
+        registerGeneral(context);
+        registerEnvironment(context);
+        registerGamePlay(context);
+        registerVisual(context);
+        registerAdvanced(context);
+    }
+
+    protected void registerGeneral(ConfigScreenContext context) {
+        // These CallbackEntry instances carry special callbacks and must keep their behavior.
+        context.add(ConfigCategory.GENERAL, recommended, new CallbackEnumEntry<>(
                 "eclipticseasons.configuration.SeasonalSimulationLevel",
                 () -> EclipticSeasonsApi.getInstance().getSeasonalSimulationLevel(),
                 SeasonalSimulationLevel::onSeasonalSimulationLevelChange,
                 () -> SeasonalSimulationLevel.AGRICULTURE,
                 List.of(SeasonalSimulationLevel.values())
-        ));
+        ), context.ownerOf(CommonConfig.COMMON_CONFIG));
 
-        screen.addToTab(ConfigCategory.GENERAL, RECOMMENDED, new CallbackEnumEntry<>(
+        context.add(ConfigCategory.GENERAL, recommended, new CallbackEnumEntry<>(
                 "eclipticseasons.configuration.SnowMode",
                 SnowBehavior::getSnowBehavior,
                 SnowBehavior::setSnowBehavior,
                 () -> SnowBehavior.RENDER,
                 List.of(SnowBehavior.values())
-        ));
+        ), context.ownerOf(CommonConfig.COMMON_CONFIG));
 
-        screen.addToTab(ConfigCategory.GENERAL, RECOMMENDED, new CallbackBooleanEntry(
+        context.add(ConfigCategory.GENERAL, recommended, new CallbackBooleanEntry(
                 "eclipticseasons.configuration.LegacyGreenhouseMode",
                 () -> CommonConfig.Crop.simpleGreenHouse.get() && CommonConfig.Crop.greenHouseCheckMode.get() == CropGrowthHandler.GreenHouseCheckMode.TOP_ONLY,
                 (b) -> {
                     CommonConfig.Crop.simpleGreenHouse.set(b);
                     CommonConfig.Crop.greenHouseCheckMode.set(b ? CropGrowthHandler.GreenHouseCheckMode.TOP_ONLY : CropGrowthHandler.GreenHouseCheckMode.FULL);
                 },
-                () -> false));
+                () -> false), context.ownerOf(CommonConfig.COMMON_CONFIG));
 
-        screen.addToTab(ConfigCategory.GENERAL, RECOMMENDED, new CallbackBooleanEntry(
+        context.add(ConfigCategory.GENERAL, recommended, new CallbackBooleanEntry(
                 "eclipticseasons.configuration.DebugInfo",
                 () -> ClientConfig.Debug.debugInfo.get(),
                 b -> ClientConfig.Debug.debugInfo.set(b),
-                () -> false).setSyncType(SyncType.CLIENT));
+                () -> false).setSyncType(SyncType.CLIENT), context.ownerOf(ClientConfig.CLIENT_CONFIG));
 
-        screen.addToTab(ConfigCategory.GENERAL, RECOMMENDED, new CallbackBooleanEntry(
+        context.add(ConfigCategory.GENERAL, recommended, new CallbackBooleanEntry(
                 "eclipticseasons.configuration.NaturalSound",
                 () -> ClientConfig.Sound.naturalSound.get(),
                 b -> {
@@ -97,15 +104,15 @@ public class ConfigRegistry {
                     ClientConfig.Sound.naturalSound.clearCache();
                 },
                 () -> true).setRestartType(ModConfigSpec.RestartType.WORLD)
-                .setSyncType(SyncType.CLIENT));
+                .setSyncType(SyncType.CLIENT), context.ownerOf(ClientConfig.CLIENT_CONFIG));
 
-        screen.addToTab(ConfigCategory.GENERAL, RECOMMENDED, new CallbackBooleanEntry(
+        context.add(ConfigCategory.GENERAL, recommended, new CallbackBooleanEntry(
                 "eclipticseasons.configuration.ExtraSnowLayer",
                 () -> ClientConfig.Renderer.extraSnowLayer.get(),
                 b -> ClientConfig.Renderer.extraSnowLayer.set(b),
-                () -> false).setSyncType(SyncType.CLIENT));
+                () -> false).setSyncType(SyncType.CLIENT), context.ownerOf(ClientConfig.CLIENT_CONFIG));
 
-        // screen.addToTab(ConfigCategory.GENERAL, RECOMMENDED, new CallbackBooleanEntry(
+        // context.add(ConfigCategory.GENERAL, recommended, new CallbackBooleanEntry(
         //         "eclipticseasons.configuration.ExtraSnowDefinitions",
         //         StartConfig.Resource.extraSnow,
         //         b -> {
@@ -114,25 +121,26 @@ public class ConfigRegistry {
         //         }).setRestartType(ModConfigSpec.RestartType.GAME)
         //         .setSyncType(SyncType.STARTUP));
 
-        screen.addToTab(ConfigCategory.GENERAL, RECOMMENDED, new CallbackBooleanEntry(
+        context.add(ConfigCategory.GENERAL, recommended, new CallbackBooleanEntry(
                 "eclipticseasons.configuration.FrozenWater",
                 () -> ClientConfig.Debug.frozenWater.get(),
                 b -> ClientConfig.Debug.frozenWater.set(b),
                 () -> false)
-                .setSyncType(SyncType.CLIENT));
+                .setSyncType(SyncType.CLIENT), context.ownerOf(ClientConfig.CLIENT_CONFIG));
 
-        screen.addToTab(ConfigCategory.GENERAL, RECOMMENDED, new CallbackBooleanEntry(
+        context.add(ConfigCategory.GENERAL, recommended, new CallbackBooleanEntry(
                 "eclipticseasons.configuration.SpringGrass",
                 CommonConfig.Resource.springGrass,
                 b -> {
                     CommonConfig.Resource.springGrass.set(b);
                     CommonConfig.Resource.springGrass.clearCache();
                 },
-                () -> false).setRestartType(ModConfigSpec.RestartType.WORLD));
+                () -> false).setRestartType(ModConfigSpec.RestartType.WORLD),
+                context.ownerOf(CommonConfig.COMMON_CONFIG));
     }
 
-    private static void registerEnvironment(ESModConfigScreen screen) {
-        screen.put(ConfigCategory.ENVIRONMENT, SEASON,
+    protected void registerEnvironment(ConfigScreenContext context) {
+        context.put(ConfigCategory.ENVIRONMENT, season,
                 // CommonConfig.Season.seasonalSimulationLevel,
                 CommonConfig.Season.enableInform,
                 CommonConfig.Season.validDimensions,
@@ -150,7 +158,7 @@ public class ConfigRegistry {
                 CommonConfig.Season.realWorldSolarTerms
         );
 
-        screen.put(ConfigCategory.ENVIRONMENT, WEATHER,
+        context.put(ConfigCategory.ENVIRONMENT, weather,
                 // CommonConfig.Resource.NotIgnoreRiver,
                 // CommonConfig.Weather.notRainInDesert,
                 CommonConfig.Weather.shouldInitSnowForExtremeColdBiomes,
@@ -159,7 +167,7 @@ public class ConfigRegistry {
                 ClientConfig.Weather.tweakPrecipitationParticleTexture
         );
 
-        screen.put(ConfigCategory.ENVIRONMENT, SNOW,
+        context.put(ConfigCategory.ENVIRONMENT, snow,
                 CommonConfig.Temperature.iceMelt,
                 CommonConfig.Temperature.snowDown,
                 CommonConfig.Snow.snowyWinter,
@@ -172,8 +180,8 @@ public class ConfigRegistry {
         );
     }
 
-    private static void registerGamePlay(ESModConfigScreen screen) {
-        screen.put(ConfigCategory.GAMEPLAY, CROP,
+    protected void registerGamePlay(ConfigScreenContext context) {
+        context.put(ConfigCategory.GAMEPLAY, crop,
                 CommonConfig.Crop.enableCrop,
                 CommonConfig.Crop.enableCropHumidityControl,
                 CommonConfig.Crop.restrictBoneMeal,
@@ -185,7 +193,7 @@ public class ConfigRegistry {
                 CommonConfig.Crop.seasonalPrayerRitualTimeCost
         );
 
-        screen.put(ConfigCategory.GAMEPLAY, ANIMAL,
+        context.put(ConfigCategory.GAMEPLAY, animal,
                 CommonConfig.Animal.enableBreed,
                 CommonConfig.Animal.enableTimeBreed,
                 CommonConfig.Animal.enableBee,
@@ -195,13 +203,13 @@ public class ConfigRegistry {
                 CommonConfig.Animal.fishingSeasons
         );
 
-        screen.put(ConfigCategory.GAMEPLAY, SURVIVAL,
+        context.put(ConfigCategory.GAMEPLAY, survival,
                 CommonConfig.Temperature.heatStroke
         );
     }
 
-    private static void registerVisual(ESModConfigScreen screen) {
-        screen.put(ConfigCategory.VISUAL, RENDER,
+    protected void registerVisual(ConfigScreenContext context) {
+        context.put(ConfigCategory.VISUAL, render,
                 ClientConfig.Renderer.forceChunkRenderUpdate,
                 ClientConfig.Renderer.enhancementChunkRenderUpdate,
                 ClientConfig.Renderer.flowerOnGrass,
@@ -212,26 +220,26 @@ public class ConfigRegistry {
                 ClientConfig.Renderer.extraSnowLayer
         );
 
-        screen.put(ConfigCategory.VISUAL, PARTICLE,
+        context.put(ConfigCategory.VISUAL, particle,
                 ClientConfig.Particle.seasonParticle,
                 ClientConfig.Particle.snowLeafParticles
         );
 
-        screen.put(ConfigCategory.VISUAL, GUI,
+        context.put(ConfigCategory.VISUAL, gui,
                 ClientConfig.GUI.simpleSeasonHud,
                 ClientConfig.GUI.showGregorianYear
         );
     }
 
-    private static void registerAdvanced(ESModConfigScreen screen) {
-        screen.put(ConfigCategory.ADVANCED, COMPAT,
+    protected void registerAdvanced(ConfigScreenContext context) {
+        context.put(ConfigCategory.ADVANCED, compat,
                 CompatModule.CommonConfig.sereneSeasons,
                 CompatModule.CommonConfig.DistantHorizonsWinterLOD,
                 CompatModule.ClientConfig.DistantHorizonsWinterLODForceUpdateAll,
                 CompatModule.CommonConfig.voxyCompatibility
         );
 
-        screen.put(ConfigCategory.ADVANCED, DEBUG,
+        context.put(ConfigCategory.ADVANCED, debug,
                 ClientConfig.Debug.debugInfo,
                 ClientConfig.Debug.smoothSnowyEdges,
                 ClientConfig.Debug.frozenWater
