@@ -101,6 +101,7 @@ public class CompatModule {
         public static ModConfigSpec.BooleanValue voxyCompatibility;
         public static ModConfigSpec.BooleanValue voxyAutoRefresh;
         public static ModConfigSpec.BooleanValue voxyRefreshOnSolarTermChange;
+        public static ModConfigSpec.BooleanValue voxyRefreshSeasonalModels;
         public static ModConfigSpec.BooleanValue showCropGrowthInfoInProbe;
         public static void load(ModConfigSpec.Builder builder) {
             builder.push("Compat");
@@ -145,6 +146,10 @@ public class CompatModule {
                 voxyRefreshOnSolarTermChange = builder
                         .comment("Updates seasonal LODs when the solar term changes.")
                         .define("VoxyRefreshOnSolarTermChange", true);
+
+                voxyRefreshSeasonalModels = builder
+                        .comment("Rebuilds visible Voxy LOD geometry when seasonal block models may change.")
+                        .define("VoxyRefreshSeasonalModels", true);
             }
             builder.pop();
         }

@@ -51,6 +51,7 @@ import net.minecraft.world.level.block.state.properties.SlabType;
 import net.neoforged.neoforge.client.model.standalone.StandaloneModelKey;
 import net.neoforged.neoforge.client.model.standalone.UnbakedStandaloneModel;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.BiConsumer;
@@ -326,6 +327,12 @@ public class ExtraModelManager {
         return textureAtlasSprite.contents().name().toString().contains("snow");
     }
 
+    @Nullable
+    public static ModelTester getSeasonalModel(BlockState state, Identifier identifier) {
+        ModelResolver resolver = extraSnowModelBuilds.get(identifier);
+        return resolver == null ? null : resolver.tryFind(state);
+    }
+
     public record ModelIDHolder(Identifier id) implements ModelDebugName {
         @Override
         public @NonNull String debugName() {
@@ -494,6 +501,10 @@ public class ExtraModelManager {
         return ChunkSectionLayer.CUTOUT;
     }
 
+
+    public static @Nullable BlockStateModel getExtraModel(StandaloneModelKey<BlockStateModel> index) {
+        return models.standaloneModels().get(index);
+    }
 
     public static BlockStateModel getSnowLayerModel(int layers) {
         int clampedLayers = Mth.clamp(layers, 1, 8);
