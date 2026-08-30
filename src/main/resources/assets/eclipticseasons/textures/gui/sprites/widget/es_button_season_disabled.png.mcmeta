@@ -5,9 +5,9 @@
             "width": 200,
             "height": 20,
             "border": {
-                "left": 12,
+                "left": 30,
                 "top": 0,
-                "right": 12,
+                "right": 30,
                 "bottom": 0
             }
         }
