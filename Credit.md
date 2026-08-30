@@ -26,5 +26,6 @@ bamboo_wind_chimes_2.wav by jppi_Stu -- https://freesound.org/s/17091/ -- Licens
 
 CHIMES_Wooden Hollow Chimes Bamboo Chimes (SFX).wav by GuntherDorksen -- https://freesound.org/s/328059/ -- License: Attribution 3.0
 
+Seasonal UI Background GrafxKid https://grafxkid.itch.io/seasonal-tilesets
 特别致谢蓝叔。
 
