@@ -1090,6 +1090,9 @@ public class ExtraModelManager {
         return 0;
     }
 
+    public static BakedModel getExtraModel(ResourceLocation key) {
+        return models.get(key);
+    }
 
     public static BakedModel getSnowLayerModel(int layers) {
         int clampedLayers = Mth.clamp(layers, 1, 8);
@@ -1382,5 +1385,11 @@ public class ExtraModelManager {
             return SolarBlockModel.of(returnValue).setSeasonalTexture(seasonalTexture);
         }
         return null;
+    }
+
+    @Nullable
+    public static ModelTester getSeasonalModel(BlockState state, ResourceLocation identifier) {
+        ModelResolver resolver = extraSnowModelBuilds.get(identifier);
+        return resolver == null ? null : resolver.tryFind(state);
     }
 }

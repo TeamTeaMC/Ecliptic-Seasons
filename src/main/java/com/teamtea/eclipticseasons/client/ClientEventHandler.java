@@ -6,11 +6,13 @@ import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.data.misc.ESSortInfo;
 import com.teamtea.eclipticseasons.api.event.ESClientEntityTickEvent;
+import com.teamtea.eclipticseasons.api.event.SolarTermChangeEvent;
 import com.teamtea.eclipticseasons.api.event.stub.SeasonalLevelLoadEvent;
 import com.teamtea.eclipticseasons.api.misc.IChunkBiomeHolder;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.client.core.ClientWeatherChecker;
 import com.teamtea.eclipticseasons.client.gui.screen.ESModConfigScreen;
+import com.teamtea.eclipticseasons.client.lod.color.SeasonalBlockColorCache;
 import com.teamtea.eclipticseasons.client.render.WorldRenderer;
 import com.teamtea.eclipticseasons.client.render.chunk.IceKeeper;
 import com.teamtea.eclipticseasons.client.render.worldui.GrowthInfoClientCache;
@@ -64,13 +66,23 @@ public final class ClientEventHandler {
     public static void onRenderTick(TickEvent.RenderTickEvent event) {
 
         if (event.phase == TickEvent.Phase.END && Minecraft.getInstance().player != null) {
-            //Holder.Reference<SoundEvent> holderOrThrow = ClientCon.getUseLevel().registryAccess().registryOrThrow(Registries.SOUND_EVENT).getHolderOrThrow(ResourceKey.create(Registries.SOUND_EVENT, SoundEventsRegistry.snowless_hometown.getLocation()));
-            //Music music = new Music(
+            // Holder.Reference<SoundEvent> holderOrThrow = ClientCon.getUseLevel().registryAccess().registryOrThrow(Registries.SOUND_EVENT).getHolderOrThrow(ResourceKey.create(Registries.SOUND_EVENT, SoundEventsRegistry.snowless_hometown.getLocation()));
+            // Music music = new Music(
             //        holderOrThrow, 12000, 24000, false);
-            //if (!Minecraft.getInstance().getMusicManager().isPlayingMusic(music))
+            // if (!Minecraft.getInstance().getMusicManager().isPlayingMusic(music))
             //    Minecraft.getInstance().getMusicManager().startPlaying(new Music(
             //            holderOrThrow, 12000, 24000, false));
             WorldRenderer.applyEffect(Minecraft.getInstance().gameRenderer, Minecraft.getInstance().player);
+        }
+    }
+
+    @SubscribeEvent
+    public static void onSolarTermChangeEvent(SolarTermChangeEvent event) {
+        if (event.getLevel().isClientSide()) {
+            // for (Biome biome : event.getLevel().registryAccess().lookupOrThrow(Registries.BIOME).listElements().toList()) {
+            //     if (((Object) biome) instanceof IBiomeColorHolder colorHolder) colorHolder.setSeasonChanged();
+            // }
+            SeasonalBlockColorCache.clear();
         }
     }
 
