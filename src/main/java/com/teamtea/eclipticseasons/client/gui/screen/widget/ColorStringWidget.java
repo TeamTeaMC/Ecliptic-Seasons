@@ -24,7 +24,7 @@ public class ColorStringWidget extends StringWidget {
         renderTypeMarker(graphics, markerX, markerY);
         PoseStack pose = graphics.pose();
         pose.pushPose();
-        pose.translate(10, 0, 0);
+        pose.translate(12, 1, 0);
         super.renderWidget(graphics, mouseX, mouseY, partialTick);
         pose.popPose();
     }

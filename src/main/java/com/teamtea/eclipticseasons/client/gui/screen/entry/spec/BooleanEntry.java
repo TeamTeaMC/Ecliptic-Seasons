@@ -27,8 +27,12 @@ public class BooleanEntry extends SpecEntry<Boolean> {
     @Override
     public LayoutElement buildModConfigSpec(ESModConfigScreen screen, int x, int y, int width) {
         return buildResettableCycle(width, spec.get(), spec.getDefault(), spec::set,
-                onValueChange -> CycleButton.onOffBuilder(spec.get()).displayOnlyValue()
-                        .create(0, 0, width - 30, 20, label, onValueChange));
+                onValueChange -> {
+                    CycleButton.Builder<Boolean> booleanBuilder = CycleButton.onOffBuilder(spec.get()).displayOnlyValue();
+                    applyClientSprite(booleanBuilder, getSyncType());
+                    return booleanBuilder
+                            .create(0, 0, width - 30, 20, label, onValueChange);
+                });
     }
 
     @Override

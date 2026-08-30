@@ -9,6 +9,7 @@ import com.teamtea.eclipticseasons.config.sync.SyncType;
 import com.teamtea.eclipticseasons.config.util.RestartTypeUtil;
 import com.teamtea.eclipticseasons.config.util.SpecUtil;
 import lombok.Getter;
+import lombok.Setter;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Tooltip;
@@ -27,7 +28,8 @@ public abstract class SpecEntry<T> extends ConfigEntry {
     protected final long hashValueCache;
 
     @Getter
-    protected final SyncType syncType;
+    @Setter
+    protected SyncType syncType;
 
     public SpecEntry(ForgeConfigSpec.ConfigValue<T> spec) {
         super("eclipticseasons.configuration." + spec.getPath().get(spec.getPath().size() - 1));
@@ -77,7 +79,7 @@ public abstract class SpecEntry<T> extends ConfigEntry {
 
     @Override
     public LayoutElement build(ESModConfigScreen screen, int x, int y, int width) {
-        screen.configRegistered.add(spec);
+        // screen.configRegistered.add(spec);
 
         LayoutElement layoutElement = buildLayout(screen, x, y, width);
 

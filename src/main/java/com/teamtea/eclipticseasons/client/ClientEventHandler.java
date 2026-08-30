@@ -154,6 +154,7 @@ public final class ClientEventHandler {
             ClientRef.onClientPlayerExit();
             SnowChecker.clearOnClientExitOrServerClose();
             ESSortInfo.clearOnClientExitOrServerClose();
+            ClientCon.tick(null);
         }
 
         ESConfigSync.INSTANCE.onClientPlayerExit();

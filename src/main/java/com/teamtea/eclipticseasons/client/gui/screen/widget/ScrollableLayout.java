@@ -1,5 +1,6 @@
 package com.teamtea.eclipticseasons.client.gui.screen.widget;
 
+import com.teamtea.eclipticseasons.EclipticSeasons;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -8,6 +9,7 @@ import net.minecraft.client.gui.layouts.Layout;
 import net.minecraft.client.gui.layouts.LayoutElement;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.CommonComponents;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.Nullable;
 
@@ -20,6 +22,9 @@ public class ScrollableLayout implements Layout {
     private static final int SCROLLBAR_WIDTH = 6;
     private static final int SCROLLBAR_SPACING = 4;
     private static final int SCROLLBAR_MIN_HEIGHT = 32;
+
+    protected final ResourceLocation scrollbarSprite = WidgetSprites.textureLocation(EclipticSeasons.rl("widget/es_scroller"));
+    protected final ResourceLocation scrollbarBackgroundSprite = WidgetSprites.textureLocation(EclipticSeasons.rl("widget/es_scroller_background"));
 
     private final Layout content;
     private final Container container;
@@ -49,6 +54,14 @@ public class ScrollableLayout implements Layout {
         this.arrangeElements();
     }
 
+    public double scrollAmount() {
+        return container.scrollAmount;
+    }
+
+    public void setScrollAmount(double amount) {
+        container.setScrollAmount((int) amount);
+    }
+
     @Override
     public void arrangeElements() {
         this.content.arrangeElements();
@@ -58,7 +71,6 @@ public class ScrollableLayout implements Layout {
 
         int scrollbarReserve = SCROLLBAR_WIDTH + SCROLLBAR_SPACING;
         int width = Math.max(contentWidth + scrollbarReserve, this.minWidth);
-
 
 
         // int height = Math.max(
@@ -213,7 +225,6 @@ public class ScrollableLayout implements Layout {
         }
 
 
-
         @Override
         protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
             graphics.enableScissor(
@@ -235,29 +246,99 @@ public class ScrollableLayout implements Layout {
         }
 
 
-
         private boolean isWidgetVisible(AbstractWidget widget) {
             return widget.getY() + widget.getHeight() > this.getY()
                     && widget.getY() < this.getY() + this.height;
         }
 
-        private void renderScrollbar(GuiGraphics graphics) {
-            if (!this.scrollable()) {
+        protected void renderScrollbar(GuiGraphics graphics) {
+            if (!scrollable()) {
                 return;
             }
 
-            int x0 = this.scrollbarX();
-            int x1 = x0 + SCROLLBAR_WIDTH;
-            int y0 = this.getY();
-            int y1 = this.getY() + this.height;
+            int x = scrollbarX();
+            int barY = scrollbarY();
+            int barHeight = scrollbarHeight();
 
-            int barY = this.scrollbarY();
-            int barH = this.scrollbarHeight();
+            renderVerticalThreeSlice(
+                    graphics,
+                    scrollbarBackgroundSprite,
+                    x,
+                    getY(),
+                    SCROLLBAR_WIDTH,
+                    height
+            );
 
-            graphics.fill(x0, y0, x1, y1, 0x44000000);
-            graphics.fill(x0, barY, x1, barY + barH, 0xAAFFFFFF);
+            renderVerticalThreeSlice(
+                    graphics,
+                    scrollbarSprite,
+                    x,
+                    barY,
+                    SCROLLBAR_WIDTH,
+                    barHeight
+            );
         }
 
+        protected void renderVerticalThreeSlice(
+                GuiGraphics graphics,
+                ResourceLocation texture,
+                int x,
+                int y,
+                int width,
+                int height
+        ) {
+            int textureWidth = 6;
+            int textureHeight = 32;
+            int border = 1;
+
+            int topHeight = Math.min(border, height / 2);
+            int bottomHeight = Math.min(border, height - topHeight);
+            int centerHeight = Math.max(0, height - topHeight - bottomHeight);
+
+            graphics.blit(
+                    texture,
+                    x,
+                    y,
+                    width,
+                    topHeight,
+                    0.0F,
+                    0.0F,
+                    textureWidth,
+                    border,
+                    textureWidth,
+                    textureHeight
+            );
+
+            if (centerHeight > 0) {
+                graphics.blit(
+                        texture,
+                        x,
+                        y + topHeight,
+                        width,
+                        centerHeight,
+                        0.0F,
+                        border,
+                        textureWidth,
+                        textureHeight - border * 2,
+                        textureWidth,
+                        textureHeight
+                );
+            }
+
+            graphics.blit(
+                    texture,
+                    x,
+                    y + height - bottomHeight,
+                    width,
+                    bottomHeight,
+                    0.0F,
+                    textureHeight - border,
+                    textureWidth,
+                    border,
+                    textureWidth,
+                    textureHeight
+            );
+        }
         @Override
         public boolean mouseScrolled(double pMouseX, double pMouseY, double pDelta) {
             if (!this.visible || !this.isMouseOver(pMouseX, pMouseY)) {
