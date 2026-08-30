@@ -45,7 +45,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.neoforged.neoforge.client.model.quad.MutableQuad;
-import net.neoforged.neoforge.client.model.standalone.StandaloneModelKey;
 import org.jspecify.annotations.NonNull;
 
 import org.jspecify.annotations.Nullable;
@@ -56,7 +55,6 @@ import java.util.List;
 import java.util.Map;
 
 import static com.teamtea.eclipticseasons.client.core.ExtraModelManager.isModelReplaceable;
-import static com.teamtea.eclipticseasons.client.core.ExtraModelManager.models;
 
 
 public class ExtraRenderDispatcher {
@@ -330,7 +328,7 @@ public class ExtraRenderDispatcher {
                 }
                 if (index > -1) {
                     index = indexs[index];
-                    first = getModel(ExtraModelManager.snow_edge_overlays.get(index));
+                    first = ExtraModelManager.getExtraModel(ExtraModelManager.snow_edge_overlays.get(index));
                     isSnowy = true;
                 }
             }
@@ -359,7 +357,7 @@ public class ExtraRenderDispatcher {
                                     if (smr != null) {
                                         var mmrl = smr.tryFind(state);
                                         if (mmrl != null) {
-                                            var seasonModel = getModel(mmrl.modelIdentifier());
+                                            var seasonModel = ExtraModelManager.getExtraModel(mmrl.modelIdentifier());
                                             if (seasonModel != null) {
                                                 if (first != null) {
                                                     var tps = first;
@@ -440,10 +438,6 @@ public class ExtraRenderDispatcher {
         context.add(second);
         if (isSnowy) context.setSnowyModel(second == null ? first : second);
         return context;
-    }
-
-    private static @Nullable BlockStateModel getModel(StandaloneModelKey<BlockStateModel> index) {
-        return models.standaloneModels().get(index);
     }
 
     private static final Direction[] SNOW_LAYER_DIRECTIONS_TO_CHECK = {

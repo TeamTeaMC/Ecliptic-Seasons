@@ -1,12 +1,16 @@
 package com.teamtea.eclipticseasons.compat.voxy;
 
+import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
+import com.teamtea.eclipticseasons.api.data.client.model.seasonal.SeasonBlockDefinition;
+import com.teamtea.eclipticseasons.client.lod.SeasonalModelEntry;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
+import com.teamtea.eclipticseasons.client.util.ClientRef;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import com.teamtea.eclipticseasons.common.core.map.stub.PlainsStubHolder;
 import com.teamtea.eclipticseasons.compat.CompatModule;
+import com.teamtea.eclipticseasons.compat.voxy.helper.VoxySeasonalModelRegistry;
 import com.teamtea.eclipticseasons.config.ClientConfig;
 import com.teamtea.eclipticseasons.config.CommonConfig;
-import it.unimi.dsi.fastutil.ints.Int2ObjectLinkedOpenHashMap;
 import me.cortex.voxy.common.world.WorldEngine;
 import me.cortex.voxy.common.world.WorldSection;
 import me.cortex.voxy.common.world.other.Mapper;
@@ -15,6 +19,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
@@ -26,8 +31,9 @@ import org.jspecify.annotations.Nullable;
 
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
-import java.lang.ref.WeakReference;
 import java.util.Arrays;
+import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.IntConsumer;
 
 public final class VoxyTool {
@@ -35,9 +41,6 @@ public final class VoxyTool {
     public static final int VIRTUAL_ICE_BLOCK_ID = MAX_VOXY_BLOCK_ID;
     private static final RandomSource RANDOM_SOURCE_THREAD_LOCAL = RandomSource.createThreadLocalInstance(42L);
     private static final ThreadLocal<BlockPos.MutableBlockPos> MUTABLE_BLOCK_POS_THREAD_LOCAL = ThreadLocal.withInitial(BlockPos.MutableBlockPos::new);
-
-    private VoxyTool() {
-    }
 
     public static boolean isVoxyTest() {
         return CompatModule.CommonConfig.voxyCompatibility.get();
@@ -75,9 +78,10 @@ public final class VoxyTool {
                 BlockState state = mapper.getBlockStateFromBlockId(originalBlockId);
 
                 // 先排除不支持积雪且不是可冻结水源的方块。
+                boolean seasonalModelRelated = ClientRef.seasonDef.containsKey(state.getBlock());
                 boolean freezableWater = isFreezableWater(state);
                 int blockFlag = MapChecker.getDefaultBlockTypeFlag(state);
-                if (!freezableWater && blockFlag <= MapChecker.FLAG_NONE) continue;
+                if (!seasonalModelRelated && !freezableWater && blockFlag <= MapChecker.FLAG_NONE) continue;
 
                 int localX = index & 31;
                 int localZ = index >> 5 & 31;
@@ -122,7 +126,10 @@ public final class VoxyTool {
                         aboveMappingId,
                         originalBlockId,
                         state,
-                        pos
+                        pos,
+                        seasonalModelRelated,
+                        freezableWater,
+                        blockFlag
                 );
 
                 if (renderBlockId == storedBlockId) continue;
@@ -148,26 +155,92 @@ public final class VoxyTool {
         }
     }
 
-    private static int getSeasonalRenderBlockId(Mapper mapper, long mappingId, long aboveMappingId, int originalBlockId, BlockState state, BlockPos pos) {
+    private static int getSeasonalRenderBlockId(Mapper mapper, long mappingId, long aboveMappingId,
+                                                int originalBlockId, BlockState state, BlockPos pos,
+                                                boolean seasonalModelRelated, boolean freezableWater,
+                                                int blockFlag) {
         Level level = ClientCon.getUseLevel();
         if (level == null) return originalBlockId;
-        int aboveBlockId = fixId(mapper, Mapper.getBlockId(aboveMappingId));
-        BlockState stateAbove = mapper.getBlockStateFromBlockId(aboveBlockId);
+
         int light = Mapper.getLightId(aboveMappingId);
-        int skyLight = light & 0x0F;
-        int blockLight = light >> 4 & 0x0F;
-        if (skyLight <= 9) return originalBlockId;
-        if (CommonConfig.Snow.notSnowyNearGlowingBlock.get()
-                && blockLight >= CommonConfig.Snow.notSnowyNearGlowingBlockLevel.getAsInt()) return originalBlockId;
+        boolean canSnow = (light & 0xF) > 9
+                && (!CommonConfig.Snow.notSnowyNearGlowingBlock.get()
+                || (light >> 4 & 0xF) < CommonConfig.Snow.notSnowyNearGlowingBlockLevel.getAsInt());
+        boolean freezable = canSnow && freezableWater;
+        int flag = canSnow ? blockFlag : MapChecker.FLAG_NONE;
+        if (!seasonalModelRelated && !freezable && flag <= MapChecker.FLAG_NONE) return originalBlockId;
+
+        BlockState above = mapper.getBlockStateFromBlockId(fixId(mapper, Mapper.getBlockId(aboveMappingId)));
+        boolean snowRenderable = flag > MapChecker.FLAG_NONE && canRenderSnow(state, above, flag);
+        if (!seasonalModelRelated && !freezable && !snowRenderable) return originalBlockId;
+
         Holder<Biome> biome = getBiome(level, mapper, Mapper.getBiomeId(mappingId));
         if (biome == null) return originalBlockId;
-        if (isFreezableWater(state)) {
-            return shouldFreeze(level, biome.value(), state, stateAbove, pos) ? VIRTUAL_ICE_BLOCK_ID : originalBlockId;
+        if (freezable && shouldFreeze(level, biome.value(), state, above, pos)) return VIRTUAL_ICE_BLOCK_ID;
+
+        long seed = state.getSeed(pos);
+        boolean snowy = snowRenderable && MapChecker.shouldSnowAtBiome(
+                level, biome.value(), state, RANDOM_SOURCE_THREAD_LOCAL, seed, pos);
+
+        int model = seasonalModelRelated
+                ? findSeasonalModel(mapper, originalBlockId, ClientCon.nowSolarTerm,
+                biome, state, above.isAir(), pos, seed, snowy)
+                : originalBlockId;
+        return model != originalBlockId ? model
+                : snowy ? MAX_VOXY_BLOCK_ID - originalBlockId : originalBlockId;
+    }
+
+    public static int findSeasonalModel(
+            Mapper mapper,
+            int originalBlockId,
+            SolarTerm solarTerm,
+            Holder<Biome> biome,
+            BlockState state,
+            boolean airAbove,
+            BlockPos pos,
+            long seed,
+            boolean snowy
+    ) {
+        List<SeasonBlockDefinition> seasonDefCache = ClientRef.seasonDef.get(state.getBlock());
+        if (seasonDefCache == null) return originalBlockId;
+
+        for (int i = 0, seasonDefCacheSize = seasonDefCache.size(); i < seasonDefCacheSize; i++) {
+            SeasonBlockDefinition localSeasonStatus = seasonDefCache.get(i);
+            List<SeasonBlockDefinition.FlatSliceHolder> flatSliceHolders =
+                    localSeasonStatus.getFlatSliceEnumMap().get(solarTerm);
+            if (flatSliceHolders == null || flatSliceHolders.isEmpty()) continue;
+            if (localSeasonStatus.getBiomes().size() > 0 && !localSeasonStatus.getBiomes().contains(biome)) continue;
+
+            for (int j = 0, flatSliceHoldersSize = flatSliceHolders.size(); j < flatSliceHoldersSize; j++) {
+                SeasonBlockDefinition.FlatSliceHolder flatSliceHolder = flatSliceHolders.get(j);
+                SeasonBlockDefinition.FlatSlice flatSlice = flatSliceHolder.flatSlice();
+                if (flatSlice.emptyAbove() && !airAbove) continue;
+
+                Identifier cinfo = flatSlice.transitionModels() == null
+                        ? flatSlice.mid()
+                        : Mth.abs((int) (seed + pos.getX())) % 100 > ClientCon.progress
+                        ? flatSlice.transitionModels().getFirst()
+                        : flatSlice.transitionModels().getSecond();
+
+                if (cinfo == null) continue;
+
+                int seasonalBlockId = VoxySeasonalModelRegistry.getOrCreate(
+                        mapper,
+                        originalBlockId,
+                        cinfo,
+                        snowy
+                );
+
+                if (seasonalBlockId == originalBlockId) return originalBlockId;
+
+                SeasonalModelEntry entry = VoxySeasonalModelRegistry.get(seasonalBlockId);
+                if (entry == null) return originalBlockId;
+
+                return seasonalBlockId;
+            }
         }
-        int flag = MapChecker.getDefaultBlockTypeFlag(state);
-        if (flag <= MapChecker.FLAG_NONE || !canRenderSnow(state, stateAbove, flag)) return originalBlockId;
-        return MapChecker.shouldSnowAtBiome(level, biome.value(), state, RANDOM_SOURCE_THREAD_LOCAL, state.getSeed(pos), pos)
-                ? MAX_VOXY_BLOCK_ID - originalBlockId : originalBlockId;
+
+        return originalBlockId;
     }
 
     private static boolean canRenderSnow(BlockState state, BlockState stateAbove, int flag) {
@@ -231,13 +304,19 @@ public final class VoxyTool {
     }
 
     public static int fixId(Mapper mapper, int blockId) {
-        return fixId(mapper, blockId, null);
+        return fixId(mapper, blockId, null, null);
     }
 
-    public static int fixId(Mapper mapper, int blockId, @Nullable IntConsumer snowyStateConsumer) {
+    public static int fixId(Mapper mapper, int blockId, @Nullable IntConsumer snowyStateConsumer, @Nullable Consumer<SeasonalModelEntry> seasonalStateConsumer) {
         if (isVirtualIceId(blockId)) return blockId;
         int blockStateCount = mapper.getBlockStateCount();
         if (blockId < blockStateCount) return blockId;
+        SeasonalModelEntry seasonal = VoxySeasonalModelRegistry.get(blockId);
+        if (seasonal != null) {
+            if (seasonalStateConsumer != null)
+                seasonalStateConsumer.accept(seasonal);
+            return seasonal.originalBlockId();
+        }
         int decoded = MAX_VOXY_BLOCK_ID - blockId;
         if (decoded < blockStateCount) {
             if (snowyStateConsumer != null)
