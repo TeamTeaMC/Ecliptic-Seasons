@@ -110,7 +110,9 @@ public class SuggestedListStringEntry extends SpecEntry<List<? extends String>> 
                     MutableComponent literal = Component.translatable(possibleValue.tipKey())
                             .withStyle(strings.contains(possibleValue.value()) ? ChatFormatting.WHITE : ChatFormatting.GRAY);
                     List<String> finalStrings = strings;
-                    CycleButton<Boolean> cycleButton = CycleButton.onOffBuilder(strings.contains(possibleValue.value())).create(
+                    CycleButton.Builder<Boolean> booleanBuilder = CycleButton.onOffBuilder(strings.contains(possibleValue.value()));
+                    applyClientSprite(booleanBuilder, getSyncType());
+                    CycleButton<Boolean> cycleButton = booleanBuilder.create(
                             x, y, widthBox, 20, literal, (button, value) -> {
                                 literal.withStyle(value ? ChatFormatting.WHITE : ChatFormatting.GRAY);
                                 if (value && !finalStrings.contains(possibleValue.value())) {

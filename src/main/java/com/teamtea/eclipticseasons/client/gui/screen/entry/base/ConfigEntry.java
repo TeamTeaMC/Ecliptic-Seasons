@@ -3,6 +3,7 @@ package com.teamtea.eclipticseasons.client.gui.screen.entry.base;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.client.gui.screen.ESModConfigScreen;
 import com.teamtea.eclipticseasons.client.gui.screen.widget.ColorStringWidget;
+import com.teamtea.eclipticseasons.client.gui.screen.widget.WoodenButtonWidget;
 import com.teamtea.eclipticseasons.config.sync.SyncType;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.Font;
@@ -16,12 +17,12 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 
 import java.util.Objects;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
 public abstract class ConfigEntry {
-    protected static final WidgetSprites CLIENT_SPRITES = new WidgetSprites(EclipticSeasons.rl("widget/es_button"), EclipticSeasons.rl("widget/es_button_disabled"), EclipticSeasons.rl("widget/es_button_highlighted"));
+    public static final WidgetSprites CLIENT_SPRITES = new WidgetSprites(EclipticSeasons.rl("widget/es_button"), EclipticSeasons.rl("widget/es_button_disabled"), EclipticSeasons.rl("widget/es_button_highlighted"));
+    public static final WidgetSprites CLIENT_SPRITES_SEASONAL = new WidgetSprites(EclipticSeasons.rl("widget/es_button_season"), EclipticSeasons.rl("widget/es_button_season_disabled"), EclipticSeasons.rl("widget/es_button_season_highlighted"));
 
     protected final Component label;
 
@@ -92,14 +93,14 @@ public abstract class ConfigEntry {
                                                             Function<CycleButton.OnValueChange<T>, CycleButton<T>> factory) {
         LinearLayout layout = new LinearLayout(width, 20, LinearLayout.Orientation.HORIZONTAL);
 
-        Button resetButton = Button.builder(Component.literal("⟳").withStyle(ChatFormatting.BOLD), button -> {
+        Button resetButton = WoodenButtonWidget.simple(30, Component.literal("⟳").withStyle(ChatFormatting.BOLD), button -> {
             setter.accept(defaultValue);
             button.active = false;
             layout.visitWidgets(widget -> {
                 if (widget instanceof CycleButton<?> cycleButton)
                     ((CycleButton<T>) cycleButton).setValue(defaultValue);
             });
-        }).size(30, 20).build();
+        });
         resetButton.active = !Objects.equals(value, defaultValue);
 
         CycleButton<T> cycleButton = factory.apply((button, newValue) -> {
@@ -126,9 +127,10 @@ public abstract class ConfigEntry {
     }
 
     protected static <T> void applyClientSprite(CycleButton.Builder<T> builder, SyncType syncType) {
-        if (syncType == SyncType.CLIENT) {
-            // builder.withSprite((cycleButton, value) ->
-            //         CLIENT_SPRITES.get(cycleButton.isActive(), cycleButton.isHoveredOrFocused()));
+        // if (syncType == SyncType.CLIENT)
+        {
+            builder.withSprite((cycleButton, value) ->
+                    CLIENT_SPRITES.get(cycleButton.isActive(), cycleButton.isHoveredOrFocused()));
         }
     }
 
@@ -154,7 +156,7 @@ public abstract class ConfigEntry {
 
     protected static void applyTooltip(LayoutElement layoutElement, Component title, Component comment) {
         layoutElement.visitWidgets(aw -> {
-            if (aw.tooltip == null) {
+            if (aw.tooltip.get() == null) {
                 aw.setTooltip(Tooltip.create(title.copy().withStyle(ChatFormatting.BOLD)
                         .append(comment.copy().withStyle(style -> style.withBold(false)))));
             }
