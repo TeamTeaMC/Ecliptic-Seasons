@@ -61,7 +61,7 @@ public class CallbackEnumEntry<T extends Enum<T>> extends CallbackEntry<T> {
     @Override
     public LayoutElement buildModConfigSpec(ESModConfigScreen screen, int x, int y, int width) {
         T value = getter.get();
-        CycleButton.Builder<T> builder = CycleButton.builder(valueDisplay).displayOnlyValue();
+        CycleButton.Builder<T> builder = CycleButton.builder(valueDisplay).withInitialValue(value).displayOnlyValue();
         applyClientSprite(builder, syncType);
 
         return buildResettableCycle(width, value, defaultGetter.get(), setter,

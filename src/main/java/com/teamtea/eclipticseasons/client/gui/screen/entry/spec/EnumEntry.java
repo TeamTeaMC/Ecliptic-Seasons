@@ -31,7 +31,7 @@ public class EnumEntry<T extends Enum<T>> extends SpecEntry<T> {
     @Override
     public LayoutElement buildModConfigSpec(ESModConfigScreen screen, int x, int y, int width) {
         CycleButton.Builder<T> builder = CycleButton.<T>builder(value -> value instanceof ITranslatable it
-                ? it.getTranslation() : Component.literal(value.name())).displayOnlyValue();
+                ? it.getTranslation() : Component.literal(value.name())).withInitialValue(getSpec().get()).displayOnlyValue();
         applyClientSprite(builder, syncType);
 
         return buildResettableCycle(width, spec.get(), spec.getDefault(), spec::set,
