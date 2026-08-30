@@ -12,6 +12,7 @@ import com.teamtea.eclipticseasons.api.misc.client.IBiomeColorHolder;
 import com.teamtea.eclipticseasons.api.misc.util.HolderMappable;
 import com.teamtea.eclipticseasons.api.misc.util.Mergable;
 import com.teamtea.eclipticseasons.api.util.SimpleUtil;
+import com.teamtea.eclipticseasons.client.lod.color.SeasonalBlockColorCache;
 import com.teamtea.eclipticseasons.client.reload.ClientJsonCacheListener;
 import com.teamtea.eclipticseasons.config.ClientConfig;
 import net.minecraft.core.*;
@@ -53,6 +54,7 @@ public class ClientRef {
         buildOverrideSnowModels(registryAccess);
         buildUIParsers(registryAccess);
         buildSeasonalMusics(registryAccess);
+        SeasonalBlockColorCache.clear();
     }
 
     private static void buildSeasonalMusics(RegistryAccess registryAccess) {

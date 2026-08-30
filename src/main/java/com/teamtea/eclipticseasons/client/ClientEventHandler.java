@@ -5,9 +5,12 @@ import com.mojang.blaze3d.vertex.*;
 import com.mojang.brigadier.CommandDispatcher;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.data.misc.ESSortInfo;
+import com.teamtea.eclipticseasons.api.event.SolarTermChangeEvent;
 import com.teamtea.eclipticseasons.api.event.stub.SeasonalLevelLoadEvent;
+import com.teamtea.eclipticseasons.api.misc.client.IBiomeColorHolder;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.client.gui.screen.ESModConfigScreen;
+import com.teamtea.eclipticseasons.client.lod.color.SeasonalBlockColorCache;
 import com.teamtea.eclipticseasons.client.render.chunk.IceKeeper;
 import com.teamtea.eclipticseasons.client.render.worldui.GrowthInfoClientCache;
 import com.teamtea.eclipticseasons.client.render.worldui.GrowthWorldUiRenderer;
@@ -50,6 +53,7 @@ import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.InventoryMenu;
@@ -57,6 +61,7 @@ import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.SpawnEggItem;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.Vec3;
@@ -87,6 +92,16 @@ public final class ClientEventHandler {
             BiomeColorsHandler.reloadColors();
         }
 
+    }
+
+    @SubscribeEvent
+    public static void onSolarTermChangeEvent(SolarTermChangeEvent event) {
+        if (event.getLevel().isClientSide()) {
+            // for (Biome biome : event.getLevel().registryAccess().lookupOrThrow(Registries.BIOME).listElements().toList()) {
+            //     if (((Object) biome) instanceof IBiomeColorHolder colorHolder) colorHolder.setSeasonChanged();
+            // }
+            SeasonalBlockColorCache.clear();
+        }
     }
 
     @SubscribeEvent

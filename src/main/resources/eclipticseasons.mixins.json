@@ -65,6 +65,7 @@
     "client.sound.MixinMusicManager",
     "compat.distanthorizons.MixinAbstractDhTintGetter",
     "compat.distanthorizons.MixinClientLevel",
+    "compat.distanthorizons.MixinClientLevelWrapper",
     "compat.distanthorizons.MixinFullDataToRenderDataTransformer",
     "compat.distanthorizons.MixinQuadTree",
     "compat.embeddium.MixinBlockOcclusionCache",
