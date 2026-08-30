@@ -275,7 +275,7 @@ public class ESModConfigScreen extends Screen {
         if (shownEntries == 0) {
             helper.addChild((new StringWidget(entryWidth * 2 + 20, 30, screenText.noResult()
                     .copy().withStyle(ChatFormatting.ITALIC)
-                    .withColor(TextColor.DARK_RED), font)), 2);
+                    .withStyle(ChatFormatting.DARK_RED), font)), 2);
         }
         return grid;
     }
