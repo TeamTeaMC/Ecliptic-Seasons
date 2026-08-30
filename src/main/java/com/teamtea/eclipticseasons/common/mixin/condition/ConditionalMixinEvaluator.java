@@ -19,12 +19,9 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Reads ConditionalMixin annotations without loading Mixin classes.
  */
-public final class ConditionalMixinEvaluator {
+public class ConditionalMixinEvaluator {
     private static final String ANNOTATION_DESCRIPTOR = Type.getDescriptor(ConditionalMixin.class);
     private static final Map<String, Optional<ConditionSpec>> CACHE = new ConcurrentHashMap<>();
-
-    private ConditionalMixinEvaluator() {
-    }
 
     public static boolean shouldApply(String mixinClassName) {
         Optional<ConditionSpec> condition = CACHE.computeIfAbsent(
@@ -144,13 +141,13 @@ public final class ConditionalMixinEvaluator {
         }
     }
 
-    private static final class ConditionSpec {
-        private final ModSpec direct = new ModSpec();
-        private final List<ModSpec> allOf = new ArrayList<>();
-        private final List<ModSpec> anyOf = new ArrayList<>();
-        private final List<ModSpec> noneOf = new ArrayList<>();
+    public static class ConditionSpec {
+        public final ModSpec direct = new ModSpec();
+        public final List<ModSpec> allOf = new ArrayList<>();
+        public final List<ModSpec> anyOf = new ArrayList<>();
+        public final List<ModSpec> noneOf = new ArrayList<>();
 
-        private boolean matches() {
+        public boolean matches() {
             return (this.direct.id == null || this.direct.id.isEmpty() || this.direct.matches())
                     && this.allOf.stream().allMatch(ModSpec::matches)
                     && (this.anyOf.isEmpty() || this.anyOf.stream().anyMatch(ModSpec::matches))
@@ -158,12 +155,21 @@ public final class ConditionalMixinEvaluator {
         }
     }
 
-    private static final class ModSpec {
-        private String id;
-        private String version = "";
-        private String name;
+    public static class ModSpec {
+        public String id;
+        public String version = "";
+        public String name;
 
-        private boolean matches() {
+        public ModSpec(String id, String name, String version) {
+            this.id = id;
+            this.name = name;
+            this.version = version;
+        }
+
+        public ModSpec() {
+        }
+
+        public boolean matches() {
             if (this.id == null || this.id.isEmpty()) {
                 return false;
             }
