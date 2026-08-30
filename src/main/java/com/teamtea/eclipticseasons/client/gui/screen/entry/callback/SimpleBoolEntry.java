@@ -49,7 +49,9 @@ public class SimpleBoolEntry extends ConfigEntry {
 
     @Override
     public LayoutElement build(ESModConfigScreen screen, int x, int y, int width) {
-        return CycleButton.onOffBuilder(value.getAsBoolean())
+        CycleButton.Builder<Boolean> booleanBuilder = CycleButton.onOffBuilder(value.getAsBoolean());
+        applyClientSprite(booleanBuilder, getSyncType());
+        return booleanBuilder
                 .create(x, y, width, 20, this.label, (button, newValue) -> {
                     this.value = () -> newValue;
                     this.setter.accept(newValue);

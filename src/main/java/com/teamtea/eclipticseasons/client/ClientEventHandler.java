@@ -206,6 +206,7 @@ public final class ClientEventHandler {
             ClientRef.onClientPlayerExit();
             ClientCon.onClientPlayerExit();
             ESSortInfo.clearOnClientExitOrServerClose();
+            ClientCon.tick(null);
         }
 
         ESConfigSync.INSTANCE.onClientPlayerExit();

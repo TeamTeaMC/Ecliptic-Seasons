@@ -1,5 +1,6 @@
-package com.teamtea.eclipticseasons.client.gui.screen;
+package com.teamtea.eclipticseasons.client.gui.screen.widget;
 
+import com.teamtea.eclipticseasons.EclipticSeasons;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractContainerWidget;
@@ -9,6 +10,7 @@ import net.minecraft.client.gui.layouts.Layout;
 import net.minecraft.client.gui.layouts.LayoutElement;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.CommonComponents;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.Nullable;
 
@@ -21,6 +23,9 @@ public class ScrollableLayout implements Layout {
     private static final int SCROLLBAR_WIDTH = 6;
     private static final int SCROLLBAR_SPACING = 4;
     private static final int SCROLLBAR_MIN_HEIGHT = 32;
+
+    protected final ResourceLocation scrollbarSprite = EclipticSeasons.rl("widget/es_scroller");
+    protected final ResourceLocation scrollbarBackgroundSprite = EclipticSeasons.rl("widget/es_scroller_background");
 
     private final Layout content;
     private final Container container;
@@ -48,6 +53,14 @@ public class ScrollableLayout implements Layout {
     public void setMaxHeight(int maxHeight) {
         this.maxHeight = Math.max(1, maxHeight);
         this.arrangeElements();
+    }
+
+    public double scrollAmount() {
+        return container.scrollAmount;
+    }
+
+    public void setScrollAmount(double amount) {
+        container.setScrollAmount((int) amount);
     }
 
     @Override
@@ -240,21 +253,30 @@ public class ScrollableLayout implements Layout {
                     && widget.getY() < this.getY() + this.height;
         }
 
-        private void renderScrollbar(GuiGraphics graphics) {
-            if (!this.scrollable()) {
+        protected void renderScrollbar(GuiGraphics graphics) {
+            if (!scrollable()) {
                 return;
             }
 
-            int x0 = this.scrollbarX();
-            int x1 = x0 + SCROLLBAR_WIDTH;
-            int y0 = this.getY();
-            int y1 = this.getY() + this.height;
+            int x = scrollbarX();
+            int barY = scrollbarY();
+            int barHeight = scrollbarHeight();
 
-            int barY = this.scrollbarY();
-            int barH = this.scrollbarHeight();
+            graphics.blitSprite(
+                    scrollbarBackgroundSprite,
+                    x,
+                    getY(),
+                    SCROLLBAR_WIDTH,
+                    height
+            );
 
-            graphics.fill(x0, y0, x1, y1, 0x44000000);
-            graphics.fill(x0, barY, x1, barY + barH, 0xAAFFFFFF);
+            graphics.blitSprite(
+                    scrollbarSprite,
+                    x,
+                    barY,
+                    SCROLLBAR_WIDTH,
+                    barHeight
+            );
         }
 
         @Override

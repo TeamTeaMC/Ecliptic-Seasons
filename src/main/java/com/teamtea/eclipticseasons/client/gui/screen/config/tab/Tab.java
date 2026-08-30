@@ -1,4 +1,4 @@
-package com.teamtea.eclipticseasons.client.gui.screen.tab;
+package com.teamtea.eclipticseasons.client.gui.screen.config.tab;
 
 import com.teamtea.eclipticseasons.client.gui.screen.entry.base.ConfigEntry;
 import net.minecraft.network.chat.Component;
