@@ -3,9 +3,11 @@ package com.teamtea.eclipticseasons.compat.voxy.client;
 import com.teamtea.eclipticseasons.api.event.SolarTermChangeEvent;
 import com.teamtea.eclipticseasons.compat.CompatModule;
 import com.teamtea.eclipticseasons.compat.voxy.VoxyTool;
+import com.teamtea.eclipticseasons.compat.voxy.helper.VoxySeasonalModelRegistry;
 import net.minecraft.client.Minecraft;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
+import net.neoforged.neoforge.client.event.ModelEvent;
 
 public class VoxyEsHandler {
 
@@ -26,4 +28,10 @@ public class VoxyEsHandler {
     public void onLoggingOut(ClientPlayerNetworkEvent.LoggingOut event) {
         VoxyTool.clearBiomeCache();
     }
+
+    @SubscribeEvent
+    public void onModelBaked(ModelEvent.ModifyBakingResult event) {
+        VoxySeasonalModelRegistry.clear();
+    }
+
 }
