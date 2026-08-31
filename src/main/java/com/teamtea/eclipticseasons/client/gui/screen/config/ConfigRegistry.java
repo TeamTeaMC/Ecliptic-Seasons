@@ -82,13 +82,20 @@ public class ConfigRegistry {
         ), context.ownerOf(CommonConfig.COMMON_CONFIG));
 
         context.add(ConfigCategory.GENERAL, recommended, new CallbackBooleanEntry(
-                "eclipticseasons.configuration.LegacyGreenhouseMode",
-                () -> CommonConfig.Crop.simpleGreenHouse.get() && CommonConfig.Crop.greenHouseCheckMode.get() == CropGrowthHandler.GreenHouseCheckMode.TOP_ONLY,
-                (b) -> {
-                    CommonConfig.Crop.simpleGreenHouse.set(b);
-                    CommonConfig.Crop.greenHouseCheckMode.set(b ? CropGrowthHandler.GreenHouseCheckMode.TOP_ONLY : CropGrowthHandler.GreenHouseCheckMode.FULL);
+                "eclipticseasons.configuration.SimpleSeasonalAgriculture",
+                () -> !CommonConfig.Crop.enableCropHumidityControl.get()
+                        && CommonConfig.Crop.simpleGreenHouse.get()
+                        && CommonConfig.Crop.greenHouseCheckMode.get()
+                        == CropGrowthHandler.GreenHouseCheckMode.TOP_ONLY,
+                enabled -> {
+                    CommonConfig.Crop.enableCropHumidityControl.set(!enabled);
+                    CommonConfig.Crop.simpleGreenHouse.set(enabled);
+                    CommonConfig.Crop.greenHouseCheckMode.set(enabled
+                            ? CropGrowthHandler.GreenHouseCheckMode.TOP_ONLY
+                            : CropGrowthHandler.GreenHouseCheckMode.FULL);
                 },
-                () -> false), context.ownerOf(CommonConfig.COMMON_CONFIG));
+                () -> false
+        ), context.ownerOf(CommonConfig.COMMON_CONFIG));
 
         context.add(ConfigCategory.GENERAL, recommended, new CallbackBooleanEntry(
                 "eclipticseasons.configuration.DebugInfo",
