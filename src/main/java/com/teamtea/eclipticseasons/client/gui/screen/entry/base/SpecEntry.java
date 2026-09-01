@@ -1,5 +1,6 @@
 package com.teamtea.eclipticseasons.client.gui.screen.entry.base;
 
+import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.client.gui.screen.ESModConfigScreen;
 import com.teamtea.eclipticseasons.client.gui.screen.config.ConfigCategory;
@@ -19,6 +20,8 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraftforge.common.ForgeConfigSpec;
+import net.minecraftforge.fml.config.ConfigTracker;
+import net.minecraftforge.fml.config.ModConfig;
 
 import java.util.Set;
 
@@ -31,11 +34,43 @@ public abstract class SpecEntry<T> extends ConfigEntry {
     @Setter
     protected SyncType syncType;
 
+    protected final String translationNamespace;
+
     public SpecEntry(ForgeConfigSpec.ConfigValue<T> spec) {
-        super("eclipticseasons.configuration." + spec.getPath().get(spec.getPath().size() - 1));
+        this(spec, findTranslationNamespace(spec));
+    }
+
+    protected SpecEntry(ForgeConfigSpec.ConfigValue<T> spec, String translationNamespace) {
+        super(translationKey(spec, translationNamespace));
         this.spec = spec;
+        this.translationNamespace = translationNamespace;
         this.hashValueCache = spec.get().hashCode();
-        syncType = SyncType.getTypeFrom(spec);
+        this.syncType = SyncType.getTypeFrom(spec);
+    }
+
+    protected static String findTranslationNamespace(ForgeConfigSpec.ConfigValue<?> value) {
+        ForgeConfigSpec.ValueSpec valueSpec = SpecUtil.getSpec(value);
+
+        for (ModConfig config : ConfigTracker.INSTANCE.fileMap().values()) {
+            if (config.getSpec() instanceof ForgeConfigSpec configSpec
+                    && configSpec.getSpec().get(value.getPath()) == valueSpec) {
+                return config.getModId();
+            }
+        }
+
+        return EclipticSeasonsApi.MODID;
+    }
+
+    protected static String translationKey(ForgeConfigSpec.ConfigValue<?> spec, String namespace) {
+        return namespace + ".configuration." + spec.getPath().get(spec.getPath().size() - 1);
+    }
+
+    protected String translationKey() {
+        return translationNamespace + ".configuration." + spec.getPath().get(spec.getPath().size() - 1);
+    }
+
+    protected String translationTypeKey() {
+        return translationNamespace + ".configuration." + spec.getPath().get(spec.getPath().size() - 2);
     }
 
     public static ConfigEntry createNumber(ForgeConfigSpec.ConfigValue<?> spec) {
@@ -74,7 +109,7 @@ public abstract class SpecEntry<T> extends ConfigEntry {
     public String getSearchText() {
         return label.getString() + " " + spec.getPath().get(spec.getPath().size() - 1) + " "
                 + (spec.getPath().size() > 1 ?
-                Component.translatable("eclipticseasons.configuration." + spec.getPath().get(spec.getPath().size() - 2)).getString() : "");
+                Component.translatable(translationTypeKey()).getString() : "");
     }
 
     @Override
@@ -83,8 +118,8 @@ public abstract class SpecEntry<T> extends ConfigEntry {
 
         LayoutElement layoutElement = buildLayout(screen, x, y, width);
 
-        Component title = Component.translatable("eclipticseasons.configuration." + spec.getPath().get(spec.getPath().size() - 1));
-        String commentKey = "eclipticseasons.configuration." + spec.getPath().get(spec.getPath().size() - 1) + ".tooltip";
+        Component title = Component.translatable(translationKey());
+        String commentKey = translationKey() + ".tooltip";
         MutableComponent comment = buildTooltipComment(commentKey, Component.literal(SpecUtil.getSpec(spec).getComment() + ""));
 
         applyTooltip(layoutElement, title, comment);
@@ -99,15 +134,15 @@ public abstract class SpecEntry<T> extends ConfigEntry {
 
     protected MutableComponent getLabel(ESModConfigScreen screen) {
         return screen.getSelectTab() == ConfigCategory.ALL && spec.getPath().size() > 1 ?
-                Component.translatable("eclipticseasons.configuration." + spec.getPath().get(spec.getPath().size() - 2)).append(" > ").append(label) : label.copy();
+                Component.translatable(translationTypeKey()).append(" > ").append(label) : label.copy();
     }
 
     public abstract LayoutElement buildModConfigSpec(ESModConfigScreen screen, int x, int y, int width);
 
     @Override
     protected <E> Tooltip getTooltipSupplier(E value) {
-        Component title = Component.translatable("eclipticseasons.configuration." + spec.getPath().get(spec.getPath().size() - 1));
-        String commentKey = "eclipticseasons.configuration." + spec.getPath().get(spec.getPath().size() - 1) + ".tooltip";
+        Component title = Component.translatable(translationKey());
+        String commentKey = translationKey() + ".tooltip";
         MutableComponent comment = buildTooltipComment(commentKey, Component.literal(SpecUtil.getSpec(spec).getComment() + ""));
         return Tooltip.create(title.copy().withStyle(ChatFormatting.BOLD)
                 .append(comment.copy().withStyle(style -> style.withBold(false))));
