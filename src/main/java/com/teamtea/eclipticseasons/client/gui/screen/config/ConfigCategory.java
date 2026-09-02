@@ -6,14 +6,16 @@ import net.minecraft.network.chat.Component;
 import java.util.Locale;
 import java.util.Objects;
 
-/** A top-level category represented by one sidebar button. */
+/**
+ * A top-level category represented by one sidebar button.
+ */
 public class ConfigCategory implements ITranslatable {
     public static final ConfigCategory GENERAL = create("eclipticseasons", "GENERAL", 0);
     public static final ConfigCategory ENVIRONMENT = create("eclipticseasons", "ENVIRONMENT", 1);
     public static final ConfigCategory GAMEPLAY = create("eclipticseasons", "GAMEPLAY", 2);
     public static final ConfigCategory VISUAL = create("eclipticseasons", "VISUAL", 3);
     public static final ConfigCategory ADVANCED = create("eclipticseasons", "ADVANCED", 4);
-    public static final ConfigCategory ALL = create("eclipticseasons", "ALL", 5);
+    public static final ConfigCategory ALL = create("eclipticseasons", "ALL", 5, true);
 
     private static final ConfigCategory[] DEFAULTS = {
             GENERAL, ENVIRONMENT, GAMEPLAY, VISUAL, ADVANCED, ALL
@@ -24,27 +26,44 @@ public class ConfigCategory implements ITranslatable {
     protected int order;
     protected Component title;
     protected Component description;
+    protected boolean fullPathLabel;
 
     protected ConfigCategory(
             String namespace,
             String name,
             int order,
             Component title,
-            Component description
+            Component description,
+            boolean fullPathLabel
     ) {
         this.namespace = namespace;
         this.name = name.toUpperCase(Locale.ROOT);
         this.order = order;
         this.title = title;
         this.description = description;
+        this.fullPathLabel = fullPathLabel;
     }
 
     public static ConfigCategory create(String namespace, String name, int order) {
+        return create(namespace, name, order, false);
+    }
+
+    public static ConfigCategory create(
+            String namespace,
+            String name,
+            int order,
+            boolean fullPathLabel
+    ) {
         String path = name.toLowerCase(Locale.ROOT);
         String key = namespace + ".options." + path;
-        return create(namespace, name, order,
+        return create(
+                namespace,
+                name,
+                order,
                 Component.translatable(key),
-                Component.translatable(key + ".tooltip"));
+                Component.translatable(key + ".tooltip"),
+                fullPathLabel
+        );
     }
 
     public static ConfigCategory create(
@@ -54,10 +73,30 @@ public class ConfigCategory implements ITranslatable {
             Component title,
             Component description
     ) {
-        return new ConfigCategory(namespace, name, order, title, description);
+        return create(namespace, name, order, title, description, false);
     }
 
-    /** Returns the built-in categories. Custom categories live in ConfigScreenContext. */
+    public static ConfigCategory create(
+            String namespace,
+            String name,
+            int order,
+            Component title,
+            Component description,
+            boolean fullPathLabel
+    ) {
+        return new ConfigCategory(
+                namespace,
+                name,
+                order,
+                title,
+                description,
+                fullPathLabel
+        );
+    }
+
+    /**
+     * Returns the built-in categories. Custom categories live in ConfigScreenContext.
+     */
     public static ConfigCategory[] values() {
         return DEFAULTS;
     }
@@ -96,6 +135,11 @@ public class ConfigCategory implements ITranslatable {
     @Override
     public String getName() {
         return name.toLowerCase(Locale.ROOT);
+    }
+
+
+    public boolean usesFullPathLabel() {
+        return fullPathLabel;
     }
 
     @Override
