@@ -24,7 +24,18 @@ public class ColorStringWidget extends StringWidget {
         renderTypeMarker(graphics, markerX, markerY);
         Matrix3x2fStack pose = graphics.pose();
         pose.pushMatrix();
-        pose.translate(10, 0);
+        pose.translate(12, 0);
+		int color = getMainColor() & 0xFFFFFF;
+        graphics.fillGradient(
+                getX() - 8, getY() - 1,
+                getX() + width - 8, getY() + height - 1,
+                0x38505E66, 0x10505E66
+        );
+        graphics.fillGradient(
+                getX() - 8, getY() - 1,
+                getX() + width - 8, getY() + height - 1,
+                0x28000000 | color, color
+        );
         super.extractWidgetRenderState(graphics, mouseX, mouseY, a);
         pose.popMatrix();
     }

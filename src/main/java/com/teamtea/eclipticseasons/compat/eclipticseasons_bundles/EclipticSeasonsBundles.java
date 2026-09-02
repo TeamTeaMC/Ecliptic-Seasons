@@ -2,14 +2,13 @@ package com.teamtea.eclipticseasons.compat.eclipticseasons_bundles;
 
 
 import com.teamtea.eclipticseasons.compat.Platform;
+import com.teamtea.eclipticseasons.compat.eclipticseasons_bundles.client.BundlesScreenDefinition;
 import com.teamtea.eclipticseasons.config.sync.ESConfigSync;
-import net.minecraft.resources.Identifier;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.loading.FMLLoader;
-import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 
 import java.util.Optional;
@@ -26,13 +25,9 @@ public class EclipticSeasonsBundles {
                 && General.COMMON_CONFIG != null) {
             modContainer.registerConfig(ModConfig.Type.COMMON, General.COMMON_CONFIG);
             ESConfigSync.specShouldSync.add(General.COMMON_CONFIG);
-            if (FMLLoader.getCurrent().getDist() == Dist.CLIENT)
-                modContainer.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
+            if (FMLLoader.getCurrentOrNull().getDist() == Dist.CLIENT)
+                modContainer.registerExtensionPoint(IConfigScreenFactory.class, BundlesScreenDefinition.INSTANCE::create);
             LangUtil.tryLoadLang(MODID, true);
         }
-    }
-
-    public static Identifier rl(String id) {
-        return Identifier.fromNamespaceAndPath(MODID, id);
     }
 }

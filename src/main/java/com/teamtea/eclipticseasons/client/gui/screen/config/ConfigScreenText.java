@@ -8,4 +8,11 @@ public record ConfigScreenText(
         Component noResult,
         Component classicScreen
 ) {
+    public ConfigScreenText(Component title) {
+        this(title,
+                Component.translatable("eclipticseasons.options.search"),
+                Component.translatable("eclipticseasons.options.search.no_result"),
+                Component.translatable("eclipticseasons.options.configure_in_classic_screen")
+        );
+    }
 }
