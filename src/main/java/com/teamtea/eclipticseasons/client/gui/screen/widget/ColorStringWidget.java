@@ -2,6 +2,7 @@ package com.teamtea.eclipticseasons.client.gui.screen.widget;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.teamtea.eclipticseasons.config.sync.SyncType;
+import icyllis.arc3d.core.Color;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.StringWidget;
@@ -25,6 +26,18 @@ public class ColorStringWidget extends StringWidget {
         PoseStack pose = graphics.pose();
         pose.pushPose();
         pose.translate(12, 1, 0);
+
+        int color = getMainColor() & 0xFFFFFF;
+        graphics.fillGradient(
+                getX() - 8, getY() - 1,
+                getX() + width - 8, getY() + height - 1,
+                0x38505E66, 0x10505E66
+        );
+        graphics.fillGradient(
+                getX() - 8, getY() - 1,
+                getX() + width - 8, getY() + height - 1,
+                0x28000000 | color, color
+        );
         super.renderWidget(graphics, mouseX, mouseY, partialTick);
         pose.popPose();
     }
