@@ -1,11 +1,16 @@
 ### 0.15.0
 
-- Added a new Seasonal Simulation Level option, allowing players to adjust the scope of seasonal gameplay changes with a
-  single setting.
-- Data packs can now load recipes, advancements, and other content based on the selected simulation level.
-- Loot tables can provide different rewards based on the selected simulation level.
-- Redesigned the configuration screen with clearer categories and layout.
-- Added configuration search for easier navigation.
+- Added a new Seasonal Simulation Level option for adjusting the scope of seasonal gameplay with a single setting.
+- Data packs can now load recipes, advancements, loot tables, and other content based on the selected simulation level.
+- Redesigned the configuration screen with clearer categories, improved navigation, seasonal visuals, and configuration
+  search.
+- Added reusable configuration-screen support for Ecliptic Seasons addons.
+- Reworked Voxy compatibility with seasonal vegetation, snow, frozen water, faster LOD updates, and improved
+  reliability.
+- Added seasonal model support and improved snow, ice, and color rendering for Distant Horizons.
+- Fallen leaves can now remain on the ground briefly and fade out gradually.
+- Fixed stuttering caused by incorrect heightmap access while chunks were loading.
+- Seasonal UI backgrounds adapted from Seasonal Tilesets by GrafxKid.
 
 ### 0.14.5
 
