@@ -1,5 +1,22 @@
 > 1.21.1 will now receive bug fixes and compatibility updates only.
 > New features will primarily target newer Minecraft versions.
+### 0.15.0
+
+- Added a new Seasonal Simulation Level option for adjusting the scope of seasonal gameplay with a single setting.
+- Data packs can now load recipes, advancements, loot tables, and other content based on the selected simulation level.
+- Redesigned the configuration screen with clearer categories, improved navigation, seasonal visuals, and configuration
+  search.
+- Added reusable configuration-screen support for Ecliptic Seasons addons.
+- Reworked Voxy compatibility with seasonal vegetation, snow, frozen water, faster LOD updates, and improved
+  reliability.
+- Added seasonal model support and improved snow, ice, and color rendering for Distant Horizons.
+- Fallen leaves can now remain on the ground briefly and fade out gradually.
+- Fixed stuttering caused by incorrect heightmap access while chunks were loading.
+- Seasonal UI backgrounds adapted from Seasonal Tilesets by GrafxKid.
+
+### 0.14.5
+
+- Fixed incorrect river climate evaluation with mods that modify vanilla climate sampling.
 
 ### 0.14.4
 
@@ -127,6 +144,7 @@
 * Added a seasonal background music system
 * Expanded the calendar system with sub-seasons, months, and day tracking
 * Added seasonal color support for single-tint block models
+* New season definitions datapack `Spring Grass`
 * Removed biome-based local weather; replaced with dimension-level weather (API remains backward-compatible)
 * Reworked the weather system to be fully data-driven via datapacks
     * Seasonal variation in rain (frequency, duration, intensity)
@@ -138,19 +156,6 @@
 * General performance and compatibility optimizations (e.g., Platform class loading)
 * Moved Voxy support (1.20.1 / 1.21.1) to a separate compatibility mod
 * Relaxed version requirements for Distant Horizons
-
-### 0.12.18.13
-
-- For distant-horizons 3.0.1-b.
-
-### 0.12.18.12
-
-- Because season-definitions data pack tend to grow too quickly when using the fixed_seed parameter, a built-in rate
-  limit has been added.
-
-### 0.12.18.11
-
-- Fixed a bug that forced the requirement of LOD mods as a dependency.
 
 ### 0.12.18.10
 
