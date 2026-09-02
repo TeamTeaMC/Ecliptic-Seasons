@@ -7,7 +7,6 @@ import com.teamtea.eclipticseasons.common.block.GreenHouseCoreBlock;
 import com.teamtea.eclipticseasons.common.registry.ItemRegistry;
 import com.teamtea.eclipticseasons.compat.jei.ESJEIPlugin;
 import com.teamtea.eclipticseasons.config.CommonConfig;
-import icyllis.arc3d.core.Color;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.builder.ITooltipBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
@@ -25,6 +24,8 @@ import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.Ingredient;
 import org.jetbrains.annotations.NotNull;
+
+import java.awt.*;
 
 
 @SuppressWarnings("removal")
@@ -122,6 +123,6 @@ public class GreenHouseCoreRecipeCategory implements IRecipeCategory<GreenHouseC
 
         FormattedCharSequence visualOrderText = SimpleUtil.addSolarIconBefore(SolarTerm.collectValidValues()[recipe.season().ordinal()*6+3], recipe.season().getTranslation()).getVisualOrderText();
         guiGraphics.drawString(Minecraft.getInstance().font, visualOrderText,
-                34,32, Color.WHITE);
+                34,32, Color.WHITE.getRGB());
     }
 }

@@ -2,7 +2,6 @@ package com.teamtea.eclipticseasons.client.gui.screen.widget;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.teamtea.eclipticseasons.config.sync.SyncType;
-import icyllis.arc3d.core.Color;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.StringWidget;

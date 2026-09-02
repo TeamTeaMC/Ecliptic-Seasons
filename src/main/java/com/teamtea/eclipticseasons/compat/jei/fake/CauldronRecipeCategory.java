@@ -6,7 +6,6 @@ import com.teamtea.eclipticseasons.client.render.ber.XYZ;
 import com.teamtea.eclipticseasons.client.util.BlockGuiRenderUtil;
 import com.teamtea.eclipticseasons.compat.jei.ESJEIPlugin;
 import com.teamtea.eclipticseasons.compat.jei.elements.ScaleDrawableResource;
-import icyllis.arc3d.core.Color;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.builder.ITooltipBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
@@ -24,6 +23,8 @@ import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import org.jetbrains.annotations.NotNull;
+
+import java.awt.*;
 
 
 @SuppressWarnings("removal")
@@ -99,7 +100,7 @@ public class CauldronRecipeCategory implements IRecipeCategory<CauldronRecipe> {
 
         FormattedCharSequence visualOrderText = SimpleUtil.addSolarIconBefore(SolarTerm.BEGINNING_OF_WINTER, Component.empty()).getVisualOrderText();
         guiGraphics.drawString(Minecraft.getInstance().font, visualOrderText,
-                34, 8, Color.WHITE);
+                34, 8, Color.WHITE.getRGB());
 
 
         guiGraphics.pose().pushPose();
