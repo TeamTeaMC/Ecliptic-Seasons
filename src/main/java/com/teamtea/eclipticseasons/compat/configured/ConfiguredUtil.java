@@ -17,14 +17,29 @@ import net.minecraftforge.fml.ModList;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public class ConfiguredUtil {
 
-    public static Screen getSafe(Screen p) {
-        Function<Screen, Screen> screenConsumer = ConfiguredUtil::get;
-        return CompatModule.isConfigured() ?
-                screenConsumer.apply(p) : null;
+    public static Screen getSafe(Screen parent) {
+        return getSafe(EclipticSeasonsApi.MODID, parent);
+    }
+
+    public static Screen getSafe(String modId, Screen parent) {
+        BiFunction<String, Screen, Screen> screenFactory =
+                ConfiguredUtil::get;
+
+        return CompatModule.isConfigured()
+                ? screenFactory.apply(modId, parent)
+                : null;
+    }
+
+    public static Screen get(String modId, Screen parent) {
+        return ModList.get()
+                .getModContainerById(modId)
+                .map(container -> newConfigScreen(parent, container))
+                .orElse(null);
     }
 
     public static Screen get(Screen p) {

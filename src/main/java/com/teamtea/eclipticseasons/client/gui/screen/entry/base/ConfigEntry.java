@@ -17,6 +17,7 @@ import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 import java.util.function.Consumer;
@@ -163,12 +164,31 @@ public abstract class ConfigEntry {
         });
     }
 
-    protected static MutableComponent buildTooltipComment(String commentKey, Component fallback) {
+    protected static MutableComponent buildTooltipComment(String commentKey) {
+        return buildTooltipComment(commentKey, null, null);
+    }
+
+    protected static MutableComponent buildTooltipComment(
+            String commentKey,
+            @Nullable String fallback,
+            @Nullable String fullPathKey
+    ) {
+        Language language = Language.getInstance();
+        Component comment;
+
+        if (fullPathKey != null && language.has(fullPathKey)) {
+            comment = Component.translatable(fullPathKey);
+        } else if (commentKey != null && language.has(commentKey)) {
+            comment = Component.translatable(commentKey);
+        } else if (fallback != null) {
+            comment = Component.literal(fallback);
+        } else {
+            return Component.empty();
+        }
+
         return Component.literal("\n\n")
                 .withStyle(Style.EMPTY.withBold(false))
-                .append(Language.getInstance().has(commentKey)
-                        ? Component.translatable(commentKey)
-                        : fallback);
+                .append(comment);
     }
 
 }

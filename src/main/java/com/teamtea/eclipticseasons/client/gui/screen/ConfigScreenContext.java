@@ -2,6 +2,7 @@ package com.teamtea.eclipticseasons.client.gui.screen;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.client.gui.screen.config.ConfigCategory;
+import com.teamtea.eclipticseasons.client.gui.screen.config.builtin.ESConfigScreenDefinition;
 import com.teamtea.eclipticseasons.client.gui.screen.config.session.ConfigChangeSet;
 import com.teamtea.eclipticseasons.client.gui.screen.config.source.ConfigEntrySource;
 import com.teamtea.eclipticseasons.client.gui.screen.config.tab.Tab;
@@ -11,6 +12,7 @@ import com.teamtea.eclipticseasons.config.sync.SyncType;
 import com.teamtea.eclipticseasons.config.util.SpecUtil;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.common.ForgeConfigSpec;
+import net.minecraftforge.fml.config.ConfigTracker;
 import net.minecraftforge.fml.config.IConfigSpec;
 import net.minecraftforge.fml.config.ModConfig;
 
@@ -67,6 +69,10 @@ public class ConfigScreenContext {
             this.configs.add(config);
             configsBySpec.put(config.getSpec(), config);
         }
+    }
+
+    public void registerConfigs(String modId) {
+        registerConfigs(ESConfigScreenDefinition.getModConfigs(modId));
     }
 
     public Collection<ModConfig> configs() {

@@ -23,6 +23,9 @@ import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.config.ConfigTracker;
 import net.minecraftforge.fml.config.ModConfig;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 public abstract class SpecEntry<T> extends ConfigEntry {
@@ -119,8 +122,7 @@ public abstract class SpecEntry<T> extends ConfigEntry {
         LayoutElement layoutElement = buildLayout(screen, x, y, width);
 
         Component title = Component.translatable(translationKey());
-        String commentKey = translationKey() + ".tooltip";
-        MutableComponent comment = buildTooltipComment(commentKey, Component.literal(SpecUtil.getSpec(spec).getComment() + ""));
+        MutableComponent comment = getComment();
 
         applyTooltip(layoutElement, title, comment);
         return layoutElement;
@@ -133,7 +135,7 @@ public abstract class SpecEntry<T> extends ConfigEntry {
     }
 
     protected MutableComponent getLabel(ESModConfigScreen screen) {
-        return screen.getSelectTab() == ConfigCategory.ALL && spec.getPath().size() > 1 ?
+        return screen.getSelectTab() != null && screen.getSelectTab().usesFullPathLabel() && spec.getPath().size() > 1 ?
                 Component.translatable(translationTypeKey()).append(" > ").append(label) : label.copy();
     }
 
@@ -142,10 +144,22 @@ public abstract class SpecEntry<T> extends ConfigEntry {
     @Override
     protected <E> Tooltip getTooltipSupplier(E value) {
         Component title = Component.translatable(translationKey());
-        String commentKey = translationKey() + ".tooltip";
-        MutableComponent comment = buildTooltipComment(commentKey, Component.literal(SpecUtil.getSpec(spec).getComment() + ""));
+        MutableComponent comment = getComment();
         return Tooltip.create(title.copy().withStyle(ChatFormatting.BOLD)
                 .append(comment.copy().withStyle(style -> style.withBold(false))));
+    }
+
+    protected String fullPathTranslationKey() {
+        List<String> path = new ArrayList<>(spec.getPath());
+        Collections.reverse(path);
+        String reversedPath = String.join(".", path);
+        return translationNamespace + ".configuration." + reversedPath;
+    }
+
+    protected MutableComponent getComment() {
+        String commentKey = translationKey() + ".tooltip";
+        String fullPathCommentKey = fullPathTranslationKey() + ".tooltip";
+        return buildTooltipComment(commentKey, SpecUtil.getSpec(spec).getComment(), fullPathCommentKey);
     }
 
     public static final Set<Object> dayTimes = Set.of(CommonConfig.Season.springDayTimes, CommonConfig.Season.summerDayTimes, CommonConfig.Season.autumnDayTimes, CommonConfig.Season.winterDayTimes, CommonConfig.Season.noneDayTimes);

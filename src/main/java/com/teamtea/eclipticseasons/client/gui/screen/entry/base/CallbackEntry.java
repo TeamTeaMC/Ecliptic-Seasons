@@ -7,10 +7,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.layouts.LayoutElement;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 
 import java.util.Objects;
@@ -70,7 +68,7 @@ public abstract class CallbackEntry<T> extends ConfigEntry {
     public LayoutElement build(ESModConfigScreen screen, int x, int y, int width) {
         LayoutElement layoutElement = buildLayout(screen, x, y, width);
 
-        MutableComponent comment = buildTooltipComment(text + ".tooltip", Component.empty());
+        MutableComponent comment = buildTooltipComment(text + ".tooltip");
         applyTooltip(layoutElement, label, comment);
         return layoutElement;
     }
@@ -78,7 +76,7 @@ public abstract class CallbackEntry<T> extends ConfigEntry {
     @Override
     protected <E> Tooltip getTooltipSupplier(E value) {
         return Tooltip.create(label.copy().withStyle(ChatFormatting.BOLD)
-                .append(buildTooltipComment(text + ".tooltip", Component.empty()).copy().withStyle(style -> style.withBold(false))));
+                .append(buildTooltipComment(text + ".tooltip").copy().withStyle(style -> style.withBold(false))));
     }
 
     public LayoutElement buildLayout(ESModConfigScreen screen, int x, int y, int width) {

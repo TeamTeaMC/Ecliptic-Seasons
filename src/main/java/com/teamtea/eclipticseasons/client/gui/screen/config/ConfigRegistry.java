@@ -52,7 +52,11 @@ public class ConfigRegistry {
 
     public void apply(ConfigScreenContext context) {
         registerBuiltIn(context);
-        plugins.values().forEach(plugin -> plugin.register(context));
+        plugins.forEach((id, plugin) -> {
+            if (plugin.autoRegisterConfigs())
+                context.registerConfigs(id.getNamespace());
+            plugin.register(context);
+        });
     }
 
     protected void registerBuiltIn(ConfigScreenContext context) {

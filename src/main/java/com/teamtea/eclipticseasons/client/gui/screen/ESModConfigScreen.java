@@ -35,6 +35,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.Music;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraftforge.fml.ModContainer;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
@@ -57,6 +58,10 @@ public class ESModConfigScreen extends Screen {
     public boolean saveOnClose = true;
     protected String allSearchQuery = "";
     protected EditBox allSearchBox;
+
+    public ESModConfigScreen(Minecraft minecraft, Screen parent, ConfigScreenDefinition definition) {
+        this(parent, definition);
+    }
 
     public ConfigScreenContext getConfigContext() {
         return configContext;
@@ -163,7 +168,7 @@ public class ESModConfigScreen extends Screen {
 
     protected void fixContentAlignment() {
         try {
-            Field contentsFrameField = layout.getClass().getDeclaredField("contentsFrame");
+            Field contentsFrameField = layout.getClass().getDeclaredField(FMLEnvironment.production ? "f_268466_" : "contentsFrame");
             contentsFrameField.setAccessible(true);
             FrameLayout contentsFrame = (FrameLayout) contentsFrameField.get(layout);
             contentsFrame.defaultChildLayoutSetting().align(0.5F, 0.0F).paddingTop(0);
@@ -176,7 +181,7 @@ public class ESModConfigScreen extends Screen {
     protected void buildHeader(int entryWidth) {
         int horizontalPadding = 20;
         int classicButtonWidth = 120;
-        int titleWidth = Math.max(80, font.width(getTitle()) + 8);
+        int titleWidth = Math.min(100, Math.max(80, font.width(getTitle()) + 8));
         int spacerWidth = Math.max(0, width
                 - horizontalPadding * 2
                 - titleWidth
@@ -233,7 +238,10 @@ public class ESModConfigScreen extends Screen {
     protected WoodenButtonWidget createClassicScreenButton() {
         return WoodenButtonWidget.simple(120,
                 screenText.classicScreen(), button -> {
-                    Screen configurationScreen = ConfiguredUtil.getSafe(parent);
+                    Screen configurationScreen = ConfiguredUtil.getSafe(
+                            configModId,
+                            parent
+                    );
                     if (configurationScreen != null) {
                         Minecraft.getInstance().setScreen(configurationScreen);
                     }
@@ -308,29 +316,47 @@ public class ESModConfigScreen extends Screen {
         GridLayout.RowHelper helper = grid.createRowHelper(2);
         Tab tab = configContext.tab(selectTab);
         int shownEntries = 0;
+        boolean twoColumnWidth = false;
         int startX = sidebarWidth + tabSpacing;
         int currentY = 40;
 
         for (Map.Entry<Component, List<ConfigEntry>> pair : tab.configShown().entrySet()) {
-            if (pair.getValue().isEmpty()) continue;
-            if (tab.configShown().size() > 1) {
+            List<ConfigEntry> matchedEntries = pair.getValue().stream()
+                    .filter(this::matchesSearch)
+                    .toList();
+
+            boolean showTitle = tab.configShown().size() > 1 && !matchedEntries.isEmpty();
+
+            if (showTitle) {
                 TitleEntry titleEntry = new TitleEntry(pair.getKey().getString());
-                shownEntries++;
-                helper.addChild(titleEntry.build(this, startX, currentY, entryWidth * 2 + 20), titleEntry.getColumn());
+                LayoutElement title = titleEntry.build(
+                        this, startX, currentY, entryWidth * 2 + 20
+                );
+
+                if (title != null) {
+                    shownEntries++;
+                    helper.addChild(title, titleEntry.getColumn());
+                }
             }
-            for (ConfigEntry entry : pair.getValue()) {
-                if (!matchesSearch(entry)) continue;
+
+            for (ConfigEntry entry : matchedEntries) {
                 LayoutElement build = entry.build(this, startX, currentY, entryWidth);
                 if (build != null) {
                     shownEntries++;
+                    twoColumnWidth |= entry.getColumn() > 1;
                     helper.addChild(build, entry.getColumn());
                 }
             }
         }
 
         if (shownEntries == 0) {
-            helper.addChild((new StringWidget(entryWidth * 2 + 20, 30, screenText.noResult()
-                    .copy().withStyle(ChatFormatting.ITALIC, ChatFormatting.DARK_RED), font)), 2);
+            StringWidget stringWidget = new StringWidget(entryWidth * 2 + 20, 30, screenText.noResult()
+                    .copy().withStyle(ChatFormatting.ITALIC, ChatFormatting.DARK_RED), font);
+            stringWidget.alignLeft();
+            helper.addChild(stringWidget, 2);
+        } else if (!twoColumnWidth) {
+            helper.addChild((new StringWidget(entryWidth * 2 + 20, 1, Component.empty()
+                    , font)), 2);
         }
         return grid;
     }

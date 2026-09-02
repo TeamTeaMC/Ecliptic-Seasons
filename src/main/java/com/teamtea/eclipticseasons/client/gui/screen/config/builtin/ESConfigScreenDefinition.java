@@ -35,11 +35,7 @@ public class ESConfigScreenDefinition implements ConfigScreenDefinition {
 
     @Override
     public ConfigScreenText text() {
-        return new ConfigScreenText(
-                Component.translatable("eclipticseasons.options.title"),
-                Component.translatable("eclipticseasons.options.search"),
-                Component.translatable("eclipticseasons.options.search.no_result"),
-                Component.translatable("eclipticseasons.options.configure_in_classic_screen"));
+        return new ConfigScreenText(Component.translatable("eclipticseasons.options.title"));
     }
 
     // patch 1.20.1 forge
