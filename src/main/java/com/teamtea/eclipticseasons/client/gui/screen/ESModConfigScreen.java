@@ -13,6 +13,7 @@ import com.teamtea.eclipticseasons.client.gui.screen.config.session.ConfigSaveRe
 import com.teamtea.eclipticseasons.client.gui.screen.config.session.ConfigScreenSession;
 import com.teamtea.eclipticseasons.client.gui.screen.config.tab.Tab;
 import com.teamtea.eclipticseasons.client.gui.screen.widget.ScrollableLayout;
+import com.teamtea.eclipticseasons.client.gui.screen.widget.SpritesConstant;
 import com.teamtea.eclipticseasons.client.gui.screen.widget.SuggestWidget;
 import com.teamtea.eclipticseasons.client.gui.screen.widget.WoodenButtonWidget;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
@@ -73,6 +74,7 @@ public class ESModConfigScreen extends Screen {
         this.season = ClientCon.nowSeason.isValid()
                 ? ClientCon.nowSeason
                 : new FixedSolarDataManagerLocal(null).getSolarTerm().getSeason();
+        SpritesConstant.setSeason(this.season);
         backgroundEffects = new SeasonalBackgroundEffects(season);
         configContext = new ConfigScreenContext();
         definition.initialize(configContext);
@@ -153,7 +155,7 @@ public class ESModConfigScreen extends Screen {
     protected void buildHeader(int entryWidth) {
         int horizontalPadding = 20;
         int classicButtonWidth = 120;
-        int titleWidth = Math.min(100,Math.max(80, font.width(getTitle()) + 8));
+        int titleWidth = Math.min(100, Math.max(80, font.width(getTitle()) + 8));
         int spacerWidth = width
                 - horizontalPadding * 2
                 - titleWidth
@@ -207,14 +209,14 @@ public class ESModConfigScreen extends Screen {
     protected WoodenButtonWidget createClassicScreenButton() {
         return WoodenButtonWidget.simple(120,
                 screenText.classicScreen(), button -> {
-            if (mod == null) {
-                mod = ModList.get().getModContainerById(configModId).orElse(null);
-            }
-            if (mod != null) {
-                ConfigurationScreen configurationScreen = new ConfigurationScreen(mod, ESModConfigScreen.this.parent);
-                Minecraft.getInstance().setScreen(configurationScreen);
-            }
-        });
+                    if (mod == null) {
+                        mod = ModList.get().getModContainerById(configModId).orElse(null);
+                    }
+                    if (mod != null) {
+                        ConfigurationScreen configurationScreen = new ConfigurationScreen(mod, ESModConfigScreen.this.parent);
+                        Minecraft.getInstance().setScreen(configurationScreen);
+                    }
+                });
     }
 
     protected void buildContent(int entryWidth) {
@@ -237,7 +239,7 @@ public class ESModConfigScreen extends Screen {
             });
             build.setSelect(category == selectTab);
             if (category == ConfigCategory.GENERAL)
-                build.setOverrideSprites(ConfigEntry.CLIENT_SPRITES_SEASONAL);
+                build.setOverrideSprites(SpritesConstant.getClientSpritesSeasonal());
             build.setTooltip(Tooltip.create(category.getDescription()));
             sidebar.addChild(build);
         }

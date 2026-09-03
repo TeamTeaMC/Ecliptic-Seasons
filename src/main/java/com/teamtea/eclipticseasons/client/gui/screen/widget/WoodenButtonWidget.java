@@ -57,7 +57,7 @@ public class WoodenButtonWidget extends Button {
     ) {
         WidgetSprites sprites = overrideSprites != null
                 ? overrideSprites
-                : ConfigEntry.CLIENT_SPRITES;
+                : SpritesConstant.getClientSprites();
 
         graphics.setColor(1.0F, 1.0F, 1.0F, alpha);
         graphics.blitSprite(
