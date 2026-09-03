@@ -1,11 +1,7 @@
 package com.teamtea.eclipticseasons.client.gui.screen.entry.base;
 
-import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.client.gui.screen.ESModConfigScreen;
-import com.teamtea.eclipticseasons.client.gui.screen.widget.ColorStringWidget;
-import com.teamtea.eclipticseasons.client.gui.screen.widget.CycleButtonBuilderSprites;
-import com.teamtea.eclipticseasons.client.gui.screen.widget.WidgetSprites;
-import com.teamtea.eclipticseasons.client.gui.screen.widget.WoodenButtonWidget;
+import com.teamtea.eclipticseasons.client.gui.screen.widget.*;
 import com.teamtea.eclipticseasons.config.sync.SyncType;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.Font;
@@ -24,9 +20,6 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 public abstract class ConfigEntry {
-    public static final WidgetSprites CLIENT_SPRITES = new WidgetSprites(EclipticSeasons.rl("widget/es_button"), EclipticSeasons.rl("widget/es_button_disabled"), EclipticSeasons.rl("widget/es_button_highlighted"));
-    public static final WidgetSprites CLIENT_SPRITES_SEASONAL = new WidgetSprites(EclipticSeasons.rl("widget/es_button_season"), EclipticSeasons.rl("widget/es_button_season_disabled"), EclipticSeasons.rl("widget/es_button_season_highlighted"));
-
     protected final Component label;
 
     public ConfigEntry(String translationKey) {
@@ -132,7 +125,7 @@ public abstract class ConfigEntry {
     protected static <T> void applyClientSprite(CycleButton.Builder<T> builder, SyncType syncType) {
         // if (syncType == SyncType.CLIENT)
         ((CycleButtonBuilderSprites) builder)
-                .eclipticseasons$setSprites(CLIENT_SPRITES);
+                .eclipticseasons$setSprites(SpritesConstant.getClientSprites());
     }
 
     protected <E> Tooltip getTooltipSupplier(E value) {

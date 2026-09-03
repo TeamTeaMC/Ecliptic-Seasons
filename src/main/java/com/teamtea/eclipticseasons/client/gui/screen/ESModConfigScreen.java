@@ -13,6 +13,7 @@ import com.teamtea.eclipticseasons.client.gui.screen.config.session.ConfigSaveRe
 import com.teamtea.eclipticseasons.client.gui.screen.config.session.ConfigScreenSession;
 import com.teamtea.eclipticseasons.client.gui.screen.config.tab.Tab;
 import com.teamtea.eclipticseasons.client.gui.screen.widget.ScrollableLayout;
+import com.teamtea.eclipticseasons.client.gui.screen.widget.SpritesConstant;
 import com.teamtea.eclipticseasons.client.gui.screen.widget.SuggestWidget;
 import com.teamtea.eclipticseasons.client.gui.screen.widget.WoodenButtonWidget;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
@@ -88,6 +89,7 @@ public class ESModConfigScreen extends Screen {
         this.season = ClientCon.nowSeason.isValid()
                 ? ClientCon.nowSeason
                 : new FixedSolarDataManagerLocal(null).getSolarTerm().getSeason();
+        SpritesConstant.setSeason(this.season);
         backgroundEffects = new SeasonalBackgroundEffects(season);
         configContext = new ConfigScreenContext();
         definition.initialize(configContext);
@@ -287,7 +289,7 @@ public class ESModConfigScreen extends Screen {
             });
             build.setSelect(category == selectTab);
             if (category == ConfigCategory.GENERAL)
-                build.setOverrideSprites(ConfigEntry.CLIENT_SPRITES_SEASONAL);
+                build.setOverrideSprites(SpritesConstant.getClientSpritesSeasonal());
             build.setTooltip(Tooltip.create(category.getDescription()));
             sidebar.addChild(
                     build,

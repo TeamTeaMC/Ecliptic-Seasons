@@ -59,7 +59,7 @@ public class WoodenButtonWidget extends Button {
     ) {
         WidgetSprites sprites = overrideSprites != null
                 ? overrideSprites
-                : ConfigEntry.CLIENT_SPRITES;
+                : SpritesConstant.getClientSprites();
 
         ResourceLocation texture = sprites.get(
                 active,
