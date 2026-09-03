@@ -1,6 +1,5 @@
 package com.teamtea.eclipticseasons.client.gui.screen.widget;
 
-import com.teamtea.eclipticseasons.client.gui.screen.entry.base.ConfigEntry;
 import lombok.Setter;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
@@ -30,7 +29,7 @@ public class WoodenButtonWidget extends Button.Plain {
 
     @Override
     protected void extractContents(@NonNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
-        WidgetSprites clientSprites = overrideSprites != null ? overrideSprites : ConfigEntry.CLIENT_SPRITES;
+        WidgetSprites clientSprites = overrideSprites != null ? overrideSprites : SpritesConstant.getClientSprites();
         graphics.blitSprite(RenderPipelines.GUI_TEXTURED,clientSprites.get(this.active, this.isHoveredOrFocused() || this.select), this.getX(), this.getY(), this.getWidth(), this.getHeight(), ARGB.white(this.alpha));
         this.extractDefaultLabel(graphics.textRendererForWidget(this, GuiGraphicsExtractor.HoveredTextEffects.NONE));
     }

@@ -13,6 +13,7 @@ import com.teamtea.eclipticseasons.client.gui.screen.config.session.ConfigSaveRe
 import com.teamtea.eclipticseasons.client.gui.screen.config.session.ConfigScreenSession;
 import com.teamtea.eclipticseasons.client.gui.screen.config.tab.Tab;
 import com.teamtea.eclipticseasons.client.gui.screen.widget.ScrollUtil;
+import com.teamtea.eclipticseasons.client.gui.screen.widget.SpritesConstant;
 import com.teamtea.eclipticseasons.client.gui.screen.widget.SuggestWidget;
 import com.teamtea.eclipticseasons.client.gui.screen.widget.WoodenButtonWidget;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
@@ -29,7 +30,6 @@ import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.Music;
 import net.minecraft.sounds.SoundEvents;
@@ -77,6 +77,7 @@ public class ESModConfigScreen extends Screen {
         this.season = ClientCon.nowSeason.isValid() ? ClientCon.nowSeason :
                 // Season.collectValidValues()[RandomSource.create(System.currentTimeMillis()).nextInt(4)]
                 new FixedSolarDataManagerLocal(null).getSolarTerm().getSeason();
+        SpritesConstant.setSeason(this.season);
         backgroundEffects = new SeasonalBackgroundEffects(season);
         configContext = new ConfigScreenContext();
         definition.initialize(configContext);
@@ -229,7 +230,7 @@ public class ESModConfigScreen extends Screen {
             });
             build.setSelect(category == selectTab);
             if (category == ConfigCategory.GENERAL)
-                build.setOverrideSprites(ConfigEntry.CLIENT_SPRITES_SEASONAL);
+                build.setOverrideSprites(SpritesConstant.getClientSpritesSeasonal());
             build.setTooltip(Tooltip.create(category.getDescription()));
             sidebar.addChild(build);
         }

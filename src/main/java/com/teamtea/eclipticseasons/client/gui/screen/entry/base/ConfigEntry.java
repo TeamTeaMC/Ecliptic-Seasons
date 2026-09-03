@@ -1,8 +1,8 @@
 package com.teamtea.eclipticseasons.client.gui.screen.entry.base;
 
-import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.client.gui.screen.ESModConfigScreen;
 import com.teamtea.eclipticseasons.client.gui.screen.widget.ColorStringWidget;
+import com.teamtea.eclipticseasons.client.gui.screen.widget.SpritesConstant;
 import com.teamtea.eclipticseasons.client.gui.screen.widget.WoodenButtonWidget;
 import com.teamtea.eclipticseasons.config.sync.SyncType;
 import net.minecraft.ChatFormatting;
@@ -22,8 +22,6 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 public abstract class ConfigEntry {
-    public static final WidgetSprites CLIENT_SPRITES = new WidgetSprites(EclipticSeasons.rl("widget/es_button"), EclipticSeasons.rl("widget/es_button_disabled"), EclipticSeasons.rl("widget/es_button_highlighted"));
-    public static final WidgetSprites CLIENT_SPRITES_SEASONAL = new WidgetSprites(EclipticSeasons.rl("widget/es_button_season"), EclipticSeasons.rl("widget/es_button_season_disabled"), EclipticSeasons.rl("widget/es_button_season_highlighted"));
 
     protected final Component label;
 
@@ -131,7 +129,7 @@ public abstract class ConfigEntry {
         // if (syncType == SyncType.CLIENT)
         {
             builder.withSprite((cycleButton, value) ->
-                    CLIENT_SPRITES.get(cycleButton.isActive(), cycleButton.isHoveredOrFocused()));
+                    SpritesConstant.getClientSprites().get(cycleButton.isActive(), cycleButton.isHoveredOrFocused()));
         }
     }
 
