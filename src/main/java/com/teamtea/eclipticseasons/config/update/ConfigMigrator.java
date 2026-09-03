@@ -7,6 +7,7 @@ import com.teamtea.eclipticseasons.config.update.worker.ConfigMigration;
 import com.teamtea.eclipticseasons.mixin.EclipticSeasonsMixinPlugin;
 import net.neoforged.fml.loading.FMLPaths;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class ConfigMigrator {
@@ -39,6 +40,7 @@ public class ConfigMigrator {
         ConfigMigrationsHolder.CONFIG_MIGRATIONS.forEach((syncType, migrations) -> {
             Path fileName = FMLPaths.CONFIGDIR.get()
                     .resolve(syncType.configName(EclipticSeasonsApi.MODID));
+            if (!Files.isRegularFile(fileName)) return;
 
             try (CommentedFileConfig config = CommentedFileConfig.builder(fileName)
                     .preserveInsertionOrder()
