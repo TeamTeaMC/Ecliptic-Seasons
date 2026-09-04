@@ -55,8 +55,13 @@
     "client.model.MixinModelBakery",
     "client.model.MixinModelManager",
     "client.model.MixinTextureAtlasSprite",
+    "client.model.material.MixinBakedMaterial",
+    "client.model.material.MixinMaterialBaker",
+    "client.model.material.MixinBakedQuad_MaterialInfo",
+    "client.model.material.MixinTextureSlots",
     "client.particle.MixinFallingDustParticleProvider",
     "client.sound.MixinMusicManager",
+    "compat.continuity.MixinContinuityClientEvents",
     "compat.distanthorizons.MixinAbstractDhTintGetter",
     "compat.distanthorizons.MixinClientLevel",
     "compat.distanthorizons.MixinClientLevelWrapper",
@@ -87,8 +92,7 @@
     "compat.voxy.MixinModelTextureBakery",
     "compat.voxy.MixinWorldUpdater",
     "compat.voxy.ModelFactoryInvoker",
-    "compat.voxy.ModelStoreAccessor",
-    "compat.continuity.MixinContinuityClientEvents"
+    "compat.voxy.ModelStoreAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -1,14 +1,13 @@
 {
 	"credit": "Made by Joe Vettek",
 	"textures": {
-		"2": {
-      "force_translucent": true,
-      "sprite": "eclipticseasons:block/snow_overlay_half_left"    },
-		"3": {
-      "force_translucent": true,
-      "sprite": "eclipticseasons:block/snow_overlay_half_right"    },
+		"2": "eclipticseasons:block/snow_overlay_half_left"    ,
+		"3": "eclipticseasons:block/snow_overlay_half_right",
 		"particle": "minecraft:block/snow",
-		"top": "minecraft:block/snow",
+		"top": {
+			"eclipticseasons:force_cutout": true,
+			"sprite": "minecraft:block/snow"
+		},
 		"side": "eclipticseasons:block/snow_overlay"},
 	"elements": [
 		{

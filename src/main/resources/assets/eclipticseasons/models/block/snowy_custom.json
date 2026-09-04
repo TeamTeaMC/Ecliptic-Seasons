@@ -3,9 +3,9 @@
 	"textures": {
 		"0": "eclipticseasons:block/snow_overlay",
 		"1": {
-      "force_translucent": true,
-      "sprite": "minecraft:block/snow"
-    },
+			"eclipticseasons:force_cutout": true,
+			"sprite": "minecraft:block/snow"
+		},
 		"particle": "eclipticseasons:block/snow_overlay"},
 	"elements": [
 		{

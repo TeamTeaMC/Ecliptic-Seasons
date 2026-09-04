@@ -37,6 +37,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.ArrayList;
@@ -192,20 +193,47 @@ public abstract class MixinBlockRenderer extends AbstractBlockRenderContext impl
         }
     }
 
-    @Inject(
+    // @WrapOperation(
+    //         method = "processQuad",
+    //         at = @At(
+    //                 value = "INVOKE",
+    //                 target = "Lnet/caffeinemc/mods/sodium/client/render/chunk/terrain/material/DefaultMaterials;forChunkLayer(Lnet/minecraft/client/renderer/chunk/ChunkSectionLayer;)Lnet/caffeinemc/mods/sodium/client/render/chunk/terrain/material/Material;"
+    //         )
+    // )
+    // private Material eclipticseasons$forceSnowyCutout(
+    //         ChunkSectionLayer layer,
+    //         Operation<Material> original,
+    //         @Local(argsOnly = true) MutableQuadViewImpl quad
+    // ) {
+    //     if (eclipticseasons$cancelDowngradedPass) {
+    //         // TextureAtlasSprite cachedSprite = quad.cachedSprite();
+    //         // TextureAtlasSprite sprite = cachedSprite != null ? cachedSprite
+    //         //         : quad.sprite(SpriteFinderCache.forBlockAtlas());
+    //         //
+    //         // if (sprite instanceof ISpriteChecker checker
+    //         //         && checker.isSnowyTexture()) {
+    //         //     layer = ChunkSectionLayer.CUTOUT;
+    //         // }
+    //     }
+    //
+    //     return original.call(layer);
+    // }
+
+    @ModifyVariable(
             method = "bufferQuad",
-            at = @At(value = "INVOKE", target = "Lnet/caffeinemc/mods/sodium/client/render/chunk/terrain/TerrainRenderPass;isTranslucent()Z")
+            at = @At(value = "INVOKE", shift = At.Shift.BEFORE, target = "Lnet/caffeinemc/mods/sodium/client/render/chunk/terrain/TerrainRenderPass;isTranslucent()Z"),
+            name = "pass"
     )
-    private void eclipticseasons$bufferQuad_cancelAttemptPassDowngrade(
-            MutableQuadViewImpl quad, float[] brightnesses, Material material, CallbackInfo ci,
-            @Local(name = "pass") LocalRef<TerrainRenderPass> terrainRenderPassLocalRef,
-            @Local(name = "atlasSprite") TextureAtlasSprite atlasSprite) {
+    private TerrainRenderPass eclipticseasons$bufferQuad_cancelAttemptPassDowngrade(
+            TerrainRenderPass value, @Local(name = "atlasSprite") TextureAtlasSprite atlasSprite) {
         if (eclipticseasons$cancelDowngradedPass
                 && atlasSprite instanceof ISpriteChecker spriteChecker
                 && spriteChecker.isSnowyTexture()
+                && !value.isTranslucent()
         ) {
-            terrainRenderPassLocalRef.set(DefaultTerrainRenderPasses.CUTOUT);
+            value = (DefaultTerrainRenderPasses.CUTOUT);
         }
+        return value;
     }
 
     @Inject(
