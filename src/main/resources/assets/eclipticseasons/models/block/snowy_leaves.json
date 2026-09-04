@@ -3,7 +3,7 @@
     "textures": {
 		"0": "eclipticseasons:block/snow_overlay_leaves",
 		"1": {
-			"force_translucent": true,
+			"eclipticseasons:force_cutout": true,
 			"sprite": "minecraft:block/snow"
 		},
 		"particle": "eclipticseasons:block/snow_overlay_leaves"
