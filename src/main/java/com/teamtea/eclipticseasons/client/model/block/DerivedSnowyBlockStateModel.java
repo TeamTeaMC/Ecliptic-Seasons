@@ -72,11 +72,12 @@ public class DerivedSnowyBlockStateModel implements BlockStateModel {
 
     @Override
     public void collectParts(BlockAndTintGetter level, BlockPos pos, BlockState state, RandomSource random, List<BlockStateModelPart> parts) {
-        if (parts.isEmpty()) {
+        // if (parts.isEmpty())
+        {
             BlockStateModel blockStateModel = ExtraModelManager.models.blockStateModels().get(state);
-            if (blockStateModel != null) {
-                blockStateModel.collectParts(level, pos, state, random, parts);
-            }
+            // if (blockStateModel != null) {
+            //     blockStateModel.collectParts(level, pos, state, random, parts);
+            // }
             changeSprite(blockStateModel, state, parts);
         }
     }
