@@ -12,6 +12,7 @@ import mezz.jei.api.gui.drawable.IDrawableStatic;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.ingredients.IIngredientRenderer;
+import mezz.jei.api.ingredients.ITypedIngredient;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.category.IRecipeCategory;
@@ -19,6 +20,7 @@ import mezz.jei.api.recipe.types.IRecipeType;
 import mezz.jei.api.runtime.IIngredientManager;
 import mezz.jei.api.runtime.IJeiRuntime;
 import mezz.jei.common.Internal;
+import mezz.jei.common.ingredients.itemStacks.TypedItemStack;
 import mezz.jei.library.gui.ingredients.TagContentTooltipComponent;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -37,6 +39,7 @@ import net.minecraft.world.level.material.FluidState;
 import org.jspecify.annotations.NonNull;
 
 import java.awt.*;
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -143,11 +146,20 @@ public class JEIWetterCategory implements IRecipeCategory<WetterStructure> {
                     IIngredientManager ingredientManager = jeiRuntime.getIngredientManager();
                     IIngredientRenderer<ItemStack> renderer = ingredientManager.getIngredientRenderer(blockHolder.value().asItem().getDefaultInstance());
 
-                    List<ItemStack> stacks = new ArrayList<>();
+                    List<ITypedIngredient<?>> stacks = new ArrayList<>();
                     for (Holder<Block> holder : check.block().blocks().get()) {
-                        stacks.add(holder.value().asItem().getDefaultInstance());
+                        stacks.add(TypedItemStack.create(holder.value().asItem().getDefaultInstance()));
                     }
-                    tooltip.add(new TagContentTooltipComponent<>(renderer, stacks));
+                    try {
+                        Constructor<TagContentTooltipComponent> constructor =
+                                TagContentTooltipComponent.class.getConstructor(
+                                        IIngredientManager.class,
+                                        List.class
+                                );
+
+                        tooltip.add(constructor.newInstance(ingredientManager, stacks));
+                    } catch (ReflectiveOperationException | LinkageError ignored) {
+                    }
                 }
             }
 
