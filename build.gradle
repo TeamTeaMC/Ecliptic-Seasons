@@ -286,8 +286,8 @@ dependencies {
     compileOnly("curse.maven:the-one-probe-245211:6106998")
 
 
-    compileOnly "org.sinytra.forgified-fabric-api:fabric-renderer-api-v1:3.4.0+acb05a39d1"
-    compileOnly "org.sinytra.forgified-fabric-api:fabric-renderer-indigo:1.7.0+acb05a39d1"
+    compileOnly "org.sinytra.forgified-fabric-api:fabric-renderer-api-v1:13.0.8+2ef06a054c"
+    compileOnly "org.sinytra.forgified-fabric-api:fabric-renderer-indigo:8.1.5+360400df4c"
 
     sodiumOuter "maven.modrinth:sodium:mc26.2-0.9.1-neoforge"
     compileOnly fileTree(dir: sodiumJarJarDir, include: ['*.jar'])
