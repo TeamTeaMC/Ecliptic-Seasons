@@ -10,6 +10,8 @@ import com.teamtea.eclipticseasons.compat.sodium.SodiumStatus;
 import net.caffeinemc.mods.sodium.client.render.chunk.compile.pipeline.BlockRenderer;
 import net.caffeinemc.mods.sodium.client.render.model.AbstractBlockRenderContext;
 import net.caffeinemc.mods.sodium.client.render.model.MutableQuadViewImpl;
+import net.caffeinemc.mods.sodium.client.services.DefaultModelEmitter;
+import net.caffeinemc.mods.sodium.client.services.PlatformModelEmitter;
 import net.irisshaders.iris.shaderpack.materialmap.WorldRenderingSettings;
 import net.irisshaders.iris.vertices.sodium.terrain.VertexEncoderInterface;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
@@ -69,6 +71,34 @@ public abstract class MixinAbstractBlockRenderContext implements IrisAttachSnowy
 
     }
 
+
+    @Inject(
+            method = {"renderQuad"},
+            at = {@At(
+                    value = "INVOKE",
+                    target = "Lnet/caffeinemc/mods/sodium/client/render/model/AbstractBlockRenderContext;processQuad(Lnet/caffeinemc/mods/sodium/client/render/model/MutableQuadViewImpl;)V"
+            )}
+    )
+    private void eclipticseasons$renderQuad_overrideSnowyBlockId(
+            MutableQuadViewImpl quad, CallbackInfo ci) {
+        if ((Object) this instanceof BlockRenderer r && !(PlatformModelEmitter.getInstance() instanceof DefaultModelEmitter)) {
+            if (this instanceof SodiumStatus sodiumStatus
+                    && sodiumStatus.getSnowModel() != null
+                    && CompatModule.ClientConfig.unifiedSnowyBlockShading.isTrue()) {
+                Direction cullFace = quad.getCullFace();
+                if (WorldRenderingSettings.INSTANCE.getBlockStateIds() != null && cullFace != null) {
+                    if (CompatModule.ClientConfig.unifiedSnowyBlockSides.isFalse() && cullFace != Direction.UP)
+                        return;
+                    if (ExtraModelManager.renderAsSnowInShader(state, level, pos)
+                            && r instanceof VertexEncoderInterface vertexEncoderInterface) {
+                        // ((BlockSensitiveBufferBuilder) ((BlockRendererAccessor) r).getBuffers()).overrideBlock(WorldRenderingSettings.INSTANCE.getBlockStateIds().getInt(Blocks.SNOW_BLOCK.defaultBlockState()));
+                        vertexEncoderInterface.overrideBlock(WorldRenderingSettings.INSTANCE.getBlockStateIds().getInt(Blocks.SNOW_BLOCK.defaultBlockState()));
+                    }
+                }
+            }
+        }
+
+    }
 
     @Override
     public void es$setSnowyBlockState(BlockState state) {

@@ -52,7 +52,7 @@ public abstract class MixinBlockRenderTask extends ChunkBuilderTask<ChunkBuildOu
                 IceKeeper.notFrozen(buildContext.cache.getWorldSlice(), blockPos, blockState, fluidState))
             return;
         if (WorldRenderingSettings.INSTANCE.getBlockStateIds() != null
-                && buffers instanceof VertexEncoderInterface bufferBuilder) {
+                && blockRenderer instanceof VertexEncoderInterface bufferBuilder) {
             bufferBuilder.beginBlock(WorldRenderingSettings.INSTANCE.getBlockStateIds().getInt(Blocks.ICE.defaultBlockState()), (byte) 0, (byte) blockState.getLightEmission(), blockPos.getX(), blockPos.getY(), blockPos.getZ());
             //((BlockSensitiveBufferBuilder)buffers).beginBlock(WorldRenderingSettings.INSTANCE.getBlockStateIds().getInt(fluidState.createLegacyBlock()), (byte)1, (byte)blockState.getLightEmission(), blockPos.getX(), blockPos.getY(), blockPos.getZ());
         }
