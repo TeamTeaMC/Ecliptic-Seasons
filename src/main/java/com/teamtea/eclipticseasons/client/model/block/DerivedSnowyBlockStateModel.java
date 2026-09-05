@@ -23,14 +23,16 @@ import java.util.ArrayList;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class DerivedSnowyBlockStateModel implements BlockStateModel {
     // public static final DerivedSnowyBlockStateModel INSTANCE = new DerivedSnowyBlockStateModel();
     // public static final DerivedSnowyBlockStateModel CUSTOM = new DerivedSnowyBlockStateModel();
     // public static final DerivedSnowyBlockStateModel CUSTOM_AO = new DerivedSnowyBlockStateModel();
 
-    public static final Map<BlockStateModel, SimpleBlockModelPart> PART_CACHE_MAP = new IdentityHashMap<>();
-    public static final Map<BlockStateModel, DerivedSnowyBlockStateModel> SHARED_MODELS = new IdentityHashMap<>();
+    protected static final Map<BlockStateModel, SimpleBlockModelPart> PART_CACHE_MAP = new ConcurrentHashMap<>();
+    protected static final Map<BlockStateModel, DerivedSnowyBlockStateModel> SHARED_MODELS = new ConcurrentHashMap<>();
+    protected static final Map<BlockStateModel, Boolean> CACHEABLE_MODELS = new ConcurrentHashMap<>();
 
     public static DerivedSnowyBlockStateModel createCustom(BlockState state) {
         return create(state, MapChecker.FLAG_CUSTOM);
@@ -68,6 +70,7 @@ public class DerivedSnowyBlockStateModel implements BlockStateModel {
     public static void clearCache() {
         PART_CACHE_MAP.clear();
         SHARED_MODELS.clear();
+        CACHEABLE_MODELS.clear();
     }
 
     @Override
@@ -75,9 +78,15 @@ public class DerivedSnowyBlockStateModel implements BlockStateModel {
         // if (parts.isEmpty())
         BlockStateModel blockStateModel = ExtraModelManager.models.blockStateModels().get(state);
         if (blockStateModel == null) return;
-        if (queryCachedPart(blockStateModel, parts)) return;
+        if (isCacheableModel(blockStateModel, state) && queryCachedPart(blockStateModel, parts)) return;
         blockStateModel.collectParts(level, pos, state, random, parts);
         changeSprite(blockStateModel, state, parts);
+    }
+
+    protected static boolean isCacheableModel(BlockStateModel model, BlockState state) {
+        return CACHEABLE_MODELS.computeIfAbsent(model, value ->
+                value.createGeometryKey(BlockAndTintGetter.EMPTY, BlockPos.ZERO, state, RandomSource.create(42L)) != null
+        );
     }
 
     protected static boolean queryCachedPart(BlockStateModel blockStateModel, List<BlockStateModelPart> parts) {
