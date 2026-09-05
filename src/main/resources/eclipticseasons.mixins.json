@@ -61,7 +61,6 @@
     "client.model.material.MixinTextureSlots",
     "client.particle.MixinFallingDustParticleProvider",
     "client.sound.MixinMusicManager",
-    "compat.continuity.MixinContinuityClientEvents",
     "compat.distanthorizons.MixinAbstractDhTintGetter",
     "compat.distanthorizons.MixinClientLevel",
     "compat.distanthorizons.MixinClientLevelWrapper",
