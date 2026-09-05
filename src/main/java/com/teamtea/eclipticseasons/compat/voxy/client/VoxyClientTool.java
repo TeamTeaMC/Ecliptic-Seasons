@@ -76,6 +76,6 @@ public class VoxyClientTool {
                     || source instanceof FoliageColorSource.Impl)
                 return true;
         }
-        return false;
+        return !tintSources.isEmpty() && state.is(BlockTags.LEAVES);
     }
 }
