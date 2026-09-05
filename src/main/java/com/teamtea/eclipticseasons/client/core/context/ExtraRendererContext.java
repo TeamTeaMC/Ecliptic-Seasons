@@ -68,6 +68,10 @@ public class ExtraRendererContext {
         return this;
     }
 
+    public Iterable<BlockStateModel> cycle() {
+        return this.extraModels;
+    }
+
     public static final ExtraRendererContext EMPTY = new ExtraRendererContext();
 
 

@@ -135,8 +135,8 @@ public abstract class MixinBlockRenderer extends AbstractBlockRenderContext impl
         extraRendererContext
                 .setModelData(ModelData.EMPTY)
                 .setOriginalModel(model)
-                // .setExtraModels(eclipticseasons$snowModel)
-                // .setReplace(eclipticseasons$shouldReplaceOriginalGrassModel)
+        // .setExtraModels(eclipticseasons$snowModel)
+        // .setReplace(eclipticseasons$shouldReplaceOriginalGrassModel)
         ;
 
         if (eclipticseasons$chunkBuilderMeshingTask != null)
@@ -225,9 +225,14 @@ public abstract class MixinBlockRenderer extends AbstractBlockRenderContext impl
         if (eclipticseasons$cancelDowngradedPass
                 && atlasSprite instanceof ISpriteChecker spriteChecker
                 && spriteChecker.isSnowyTexture()
+                && !value.supportsFragmentDiscard()
                 && !value.isTranslucent()
         ) {
-            value = (DefaultTerrainRenderPasses.CUTOUT);
+            // Only upgrading to CUTOUT is safe here, as forcing a translucent pass
+            // would interfere with Sodium's mesh reconstruction.
+            // Prefer specifying "eclipticseasons:force_cutout": true in the model instead.
+            // SOLID may be handled selectively in the future if necessary.
+            value = DefaultTerrainRenderPasses.CUTOUT;
         }
         return value;
     }
