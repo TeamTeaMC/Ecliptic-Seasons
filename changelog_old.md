@@ -1,3 +1,11 @@
+### 0.15.0-rc-4
+
+- The configuration screen now changes its button style based on the current season.
+- Reworked the construction and caching of runtime snow-covered models, improving support for custom and
+  connected-texture models.
+- Added the `"eclipticseasons:force_cutout"` model material property, allowing specified model faces to use the Cutout
+  render pass and preserve the correct overlay order.
+
 ### 0.15.0
 
 - Added a new Seasonal Simulation Level option for adjusting the scope of seasonal gameplay with a single setting.
