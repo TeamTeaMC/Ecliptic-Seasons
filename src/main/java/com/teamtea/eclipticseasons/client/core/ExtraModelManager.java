@@ -7,6 +7,7 @@ import com.teamtea.eclipticseasons.api.data.client.model.ModelResolver;
 import com.teamtea.eclipticseasons.api.data.client.model.ModelTester;
 import com.teamtea.eclipticseasons.api.data.client.model.seasonal.SeasonalTexture;
 import com.teamtea.eclipticseasons.api.data.season.SnowDefinition;
+import com.teamtea.eclipticseasons.api.misc.IBlockStateFlagger;
 import com.teamtea.eclipticseasons.api.misc.client.ISnowyBlockState;
 import com.teamtea.eclipticseasons.client.model.MyResolver;
 import com.teamtea.eclipticseasons.client.model.block.DerivedSnowyBlockStateModel;
@@ -83,11 +84,23 @@ public class ExtraModelManager {
         return orDefault != null && orDefault.matches(blockState);
     }
 
+    public static int updateStateFlaggerIfCTM(BlockState state) {
+        if (state instanceof IBlockStateFlagger flagger) {
+            flagger.setBlockTypeFlag(MapChecker.FLAG_CUSTOM);
+        }
+        if (state instanceof ISnowyBlockState snowyBlockState) {
+            snowyBlockState.setSnowyModel(null, ExtraModelManager.loadVersion);
+            snowyBlockState.setSnowyModel2(null, ExtraModelManager.loadVersion);
+        }
+        return MapChecker.FLAG_CUSTOM;
+    }
+
     public static boolean isSpecialCTMSprite(TextureAtlasSprite sprite) {
         if (ctmTiles.isEmpty()) return false;
         try {
             SpriteContents spriteContents = sprite.contents();
-            return ctmTiles.containsKey(spriteContents.name());
+            Identifier name = spriteContents.name();
+            return ctmTiles.containsKey(name) || name.getPath().startsWith("continuity");
         } catch (Exception exception) {
             EclipticSeasons.logger(exception);
         }
@@ -390,6 +403,12 @@ public class ExtraModelManager {
                             break;
                         }
                     }
+                }
+            }
+
+            if (flag < MapChecker.FLAG_GRASS) {
+                if (isSpecialCTMBlock(state)) {
+                    flag = updateStateFlaggerIfCTM(state);
                 }
             }
             // **************************

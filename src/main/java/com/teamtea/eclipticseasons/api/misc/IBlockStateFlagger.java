@@ -8,7 +8,7 @@ import org.jetbrains.annotations.ApiStatus;
 
 
 /**
- * Not use the class, use the {@link MapChecker#getBlockTypeFlag(BlockAndTintGetter, BlockPos, BlockState)}
+ * Not use the class, use the {@link MapChecker#getDefaultBlockTypeFlag(BlockState)}
  * **/
 @ApiStatus.Internal
 public interface IBlockStateFlagger {
