@@ -478,6 +478,8 @@
   "eclipticseasons.configuration.VoxyAutoRefresh.tooltip": "下雪状态发生变化后，自动更新当前可见范围内的 Voxy LOD。",
   "eclipticseasons.configuration.VoxyRefreshOnSolarTermChange": "节气变化时更新远景颜色",
   "eclipticseasons.configuration.VoxyRefreshOnSolarTermChange.tooltip": "节气变化后，自动更新 Voxy 远景中的草地和树叶颜色。",
+  "eclipticseasons.configuration.VoxyRefreshSeasonalModels": "刷新 Voxy 季节模型",
+  "eclipticseasons.configuration.VoxyRefreshSeasonalModels.tooltip": "当季节方块模型可能发生变化时，重新构建视野内的 Voxy LOD 几何体。",
   "patchouli_books.eclipticseasons.seasons_chronicle.name": "岁时记",
   "patchouli_books.eclipticseasons.seasons_chronicle.landing_text": "每个季节都会留下印记——《岁时记》记录了这一切。",
   "info.eclipticseasons.humidity_control": "湿度调节",
