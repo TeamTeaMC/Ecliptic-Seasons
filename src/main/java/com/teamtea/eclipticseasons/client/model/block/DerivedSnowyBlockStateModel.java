@@ -73,20 +73,27 @@ public class DerivedSnowyBlockStateModel implements BlockStateModel {
     @Override
     public void collectParts(BlockAndTintGetter level, BlockPos pos, BlockState state, RandomSource random, List<BlockStateModelPart> parts) {
         // if (parts.isEmpty())
-        {
-            BlockStateModel blockStateModel = ExtraModelManager.models.blockStateModels().get(state);
-            // if (blockStateModel != null) {
-            //     blockStateModel.collectParts(level, pos, state, random, parts);
-            // }
-            changeSprite(blockStateModel, state, parts);
+        BlockStateModel blockStateModel = ExtraModelManager.models.blockStateModels().get(state);
+        if (blockStateModel == null) return;
+        if (queryCachedPart(blockStateModel, parts)) return;
+        blockStateModel.collectParts(level, pos, state, random, parts);
+        changeSprite(blockStateModel, state, parts);
+    }
+
+    protected static boolean queryCachedPart(BlockStateModel blockStateModel, List<BlockStateModelPart> parts) {
+        SimpleBlockModelPart simpleBlockModelPart = PART_CACHE_MAP.get(blockStateModel);
+        if (simpleBlockModelPart != null) {
+            parts.add(simpleBlockModelPart);
+            return true;
         }
+        return false;
     }
 
     @Override
     public void collectParts(@NonNull RandomSource random, @NonNull List<BlockStateModelPart> parts) {
-        if (original != null) {
-            original.collectParts(random, parts);
-        }
+        if (original == null) return;
+        if (queryCachedPart(original, parts)) return;
+        original.collectParts(random, parts);
         changeSprite(original, defaultState, parts);
     }
 
@@ -105,11 +112,6 @@ public class DerivedSnowyBlockStateModel implements BlockStateModel {
 
     public static void changeSprite(BlockStateModel original, BlockState state, List<BlockStateModelPart> parts) {
         if (parts.isEmpty()) return;
-        SimpleBlockModelPart simpleBlockModelPart = PART_CACHE_MAP.get(original);
-        if (simpleBlockModelPart != null) {
-            parts.add(simpleBlockModelPart);
-            return;
-        }
 
         Map<Direction, List<BakedQuad>> map = new IdentityHashMap<>();
         // QuadCollection.Builder quadCollection = new QuadCollection.Builder();
