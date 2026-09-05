@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
 @Mixin(MaterialBaker.class)
-public interface MixinMaterialBaker {
+public abstract class MixinMaterialBaker {
     @ModifyReturnValue(
             method = "resolveSlot",
             at = @At(value = "RETURN"))
