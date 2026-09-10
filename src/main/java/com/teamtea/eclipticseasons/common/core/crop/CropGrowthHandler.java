@@ -95,6 +95,7 @@ public final class CropGrowthHandler {
 
     public static void beforeCropGrowUp(BonemealEvent event) {
         if (!CommonConfig.Crop.restrictBoneMeal.get()) return;
+        if (event.getEntity() != null && event.getEntity().isCreative()) return;
         var block = event.getBlock();
         var world = event.getLevel();
         BlockPos pos = event.getPos();
