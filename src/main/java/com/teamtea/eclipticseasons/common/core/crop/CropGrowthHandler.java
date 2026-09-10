@@ -98,6 +98,7 @@ public final class CropGrowthHandler {
     // note 确实会变成BlockGrowFeatureEvent再触发一次，很麻烦，那只能阻止一下了，a计划是弄一个缓存map
     public static void beforeCropGrowUp(BonemealEvent event) {
         if (!CommonConfig.Crop.restrictBoneMeal.get()) return;
+        if (event.getPlayer() != null && event.getPlayer().isCreative()) return;
         // if(!event.isValidBonemealTarget())return;
         var block = event.getState();
         var world = event.getLevel();
@@ -783,6 +784,7 @@ public final class CropGrowthHandler {
 
     public enum GreenHouseCheckMode implements ITranslatable {
         FULL, BASIC, TOP_ONLY;
+
         @Override
         public Component getTranslation() {
             return Component.translatable("info.eclipticseasons.crop.greenhouse_check_mode." + getName());
