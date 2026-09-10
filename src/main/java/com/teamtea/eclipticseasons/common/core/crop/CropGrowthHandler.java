@@ -953,8 +953,10 @@ public final class CropGrowthHandler {
             case FULL -> CHECK_DIRECTIONS;
         };
 
-        float xr = (float) level.getRandom().nextGaussian() / 3f;
-        float yr = (float) level.getRandom().nextGaussian() / 3f;
+        // float xr = (float) level.getRandom().nextGaussian() / 3f;
+        // float yr = (float) level.getRandom().nextGaussian() / 3f;
+        float xr = 0f;
+        float yr = 0f;
 
         for (int i = 0, vec3sLength = vec3s.length; i < vec3sLength; i++) {
             Vec3 direction = vec3s[i];

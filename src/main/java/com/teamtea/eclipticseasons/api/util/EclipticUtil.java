@@ -171,7 +171,7 @@ public class EclipticUtil {
 
             @Override
             public GregorianMonth getGregorianMonth(Level level) {
-                return GregorianMonth.of(getSolarDays(level), getLastingDaysOfEachTerm(level),CommonConfig.Season.dayOffset.get(),CommonConfig.Season.monthOffset.get());
+                return GregorianMonth.of(getSolarDays(level), getLastingDaysOfEachTerm(level), CommonConfig.Season.dayOffset.get(), CommonConfig.Season.monthOffset.get());
             }
 
             @Override
@@ -371,15 +371,15 @@ public class EclipticUtil {
     public static float getHumidityAfterCheck(ServerLevel level, BlockPos checkPos, float env) {
         SolarDataManager data = SolarHolders.getSaveData(level);
         if (data != null) {
-            float chance = 0;
-            for (int i = 0; i < 20; i++) {
-                chance += CropGrowthHandler.isInRoom(level, checkPos, level.getBlockState(checkPos), Optional.empty()) ? 1 : 0;
-            }
-            if (chance > 8) {
+            // float chance = 0;
+            // for (int i = 0; i < 20; i++) {
+            //     chance += CropGrowthHandler.isInRoom(level, checkPos, level.getBlockState(checkPos), Optional.empty()) ? 1 : 0;
+            // }
+            if (CropGrowthHandler.isInRoom(level, checkPos, level.getBlockState(checkPos), Optional.empty())) {
                 env += ((data.calculateHumidityModification(checkPos, false)));
-            } else if (chance == 0) {
+            } else {
                 if (level.isRainingAt(checkPos)) {
-                    env += (1);
+                    env += (.5f);
                 }
             }
         }

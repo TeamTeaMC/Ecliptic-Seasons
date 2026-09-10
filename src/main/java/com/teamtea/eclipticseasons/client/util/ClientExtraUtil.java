@@ -15,11 +15,11 @@ public class ClientExtraUtil {
             long aLong = pos.asLong();
             LongBooleanImmutablePair orDefault = ClientCon.roomCache.getOrDefault(aLong, null);
             if (orDefault == null) {
-                float chance = 0;
-                for (int i = 0; i < 20; i++) {
-                    chance += CropGrowthHandler.isInRoom(level, pos, level.getBlockState(pos), Optional.empty()) ? 1 : 0;
-                }
-                orDefault = LongBooleanImmutablePair.of(level.getGameTime(), chance > 8);
+                // float chance = 0;
+                // for (int i = 0; i < 20; i++) {
+                //     chance += CropGrowthHandler.isInRoom(level, pos, level.getBlockState(pos), Optional.empty()) ? 1 : 0;
+                // }
+                orDefault = LongBooleanImmutablePair.of(level.getGameTime(), CropGrowthHandler.isInRoom(level, pos, level.getBlockState(pos), Optional.empty()));
                 ClientCon.roomCache.put(aLong, orDefault);
             }
             if (orDefault.rightBoolean())

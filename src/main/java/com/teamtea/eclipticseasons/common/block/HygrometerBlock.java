@@ -111,13 +111,14 @@ public class HygrometerBlock extends WallPlacedBlock {
         SolarDataManager data = SolarHolders.getSaveData(level);
         if (data != null) {
             BlockPos checkPos = pos.relative(state.getValue(FACING));
-            float chance = 0;
-            for (int i = 0; i < 20; i++) {
-                chance += CropGrowthHandler.isInRoom(level, checkPos, level.getBlockState(checkPos), Optional.of(BlockPredicate.Builder.block().of(
-                        level.registryAccess().lookupOrThrow(Registries.BLOCK),state.getBlock()).build())) ? 1 : 0;
-            }
+            // float chance = 0;
+            // for (int i = 0; i < 20; i++) {
+            //     chance += CropGrowthHandler.isInRoom(level, checkPos, level.getBlockState(checkPos), Optional.of(BlockPredicate.Builder.block().of(
+            //             level.registryAccess().lookupOrThrow(Registries.BLOCK),state.getBlock()).build())) ? 1 : 0;
+            // }
             float humidityAt = EclipticUtil.getHumidityLevelAt(level, data.getSolarTerm(), CropGrowthHandler.getCropBiome(level, pos), pos, !level.isClientSide());
-            if (chance > 8) {
+            if (CropGrowthHandler.isInRoom(level, checkPos, level.getBlockState(checkPos), Optional.of(BlockPredicate.Builder.block().of(
+                    level.registryAccess().lookupOrThrow(Registries.BLOCK),state.getBlock()).build()))) {
                 humidityAt += (
                         level.isClientSide() ? ClientCon.humidityModificationLevel :
                                 (data.calculateHumidityModification(checkPos)));

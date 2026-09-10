@@ -75,15 +75,20 @@ public final class GrowthInfoResolver {
             return null;
         }
 
-        float greenhouseChance = 0;
-        for (int i = 0; i < 100; i++) {
-            greenhouseChance += CropGrowthHandler.isInRoom(
-                    level,
-                    pos,
-                    state,
-                    growControl.notGreenHouse()
-            ) ? 1 : 0;
-        }
+        float greenhouseChance = CropGrowthHandler.isInRoom(
+                level,
+                pos,
+                state,
+                growControl.notGreenHouse()
+        ) ? 100 : 0;
+        // for (int i = 0; i < 100; i++) {
+        //     greenhouseChance += CropGrowthHandler.isInRoom(
+        //             level,
+        //             pos,
+        //             state,
+        //             growControl.notGreenHouse()
+        //     ) ? 1 : 0;
+        // }
 
         int greenhouseLevel = greenhouseChance > 50 ? 1 : greenhouseChance > 10 ? 2 : 3;
         boolean greenhouse = greenhouseLevel == 1;
