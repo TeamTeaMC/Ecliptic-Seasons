@@ -1,9 +1,11 @@
 package com.teamtea.eclipticseasons.config.update;
 
+import com.teamtea.eclipticseasons.api.constant.simulation.SeasonalSimulationLevel;
 import com.teamtea.eclipticseasons.config.sync.SyncType;
 import com.teamtea.eclipticseasons.config.update.worker.ConfigMigration;
 import com.teamtea.eclipticseasons.config.update.worker.ConfigPathRenamer;
 import com.teamtea.eclipticseasons.config.update.worker.ConfigValueMover;
+import com.teamtea.eclipticseasons.config.update.worker.SimulationLevelConfigMigration;
 import lombok.Builder;
 import lombok.Singular;
 import net.minecraft.util.Util;
@@ -56,6 +58,12 @@ public record ConfigMigrationsHolder(int minVersion, @Singular List<ConfigMigrat
                                 .configMigration(ConfigPathRenamer.builder()
                                         .oldPath("Resource.RegionalSnowTime")
                                         .newPath("Resource.ClimateZoneSnowfallTiming")
+                                        .build())
+                                .build(),
+                        builder().minVersion(3)
+                                .configMigration(SimulationLevelConfigMigration.builder()
+                                        .path("Crop.EnableCropHumidityControl")
+                                        .requiredLevel(SeasonalSimulationLevel.SURVIVAL)
                                         .build())
                                 .build()
                 ));
