@@ -240,7 +240,7 @@ public class CommonConfig {
             enableCrop = builder.comment("Restrict plant growth based on their compatible seasons.")
                     .define("EnableSeasonalCrop", true);
             enableCropHumidityControl = builder.comment("Restrict plant growth based on local environmental humidity.")
-                    .define("EnableCropHumidityControl", true);
+                    .define("EnableCropHumidityControl", false);
             cropHumidityTransition = builder.comment("Smooths out humidity changes between different areas or time periods.")
                     .define("CropHumidityTransition", true);
             restrictBoneMeal = builder.comment("Bone meal may fail under unsuitable growing conditions.")
