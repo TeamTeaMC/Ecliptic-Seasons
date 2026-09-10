@@ -141,25 +141,32 @@ public final class CropInfoManager {
         if (blocks.isPresent() && items.isPresent()) {
             // Block → Item
             blocks.get().getTag(EclipticBlockTags.UNAFFECTED_BY_SEASONS).ifPresent(tag ->
-                    tag.forEach(holder -> clearCropInfo(holder.value(), holder.value().asItem())));
+                    tag.forEach(holder -> clearSeasonInfo(holder.value(), holder.value().asItem())));
             blocks.get().getTag(EclipticBlockTags.UNAFFECTED_BY_HUMIDITY).ifPresent(tag ->
-                    tag.forEach(holder -> clearCropInfo(holder.value(), holder.value().asItem())));
+                    tag.forEach(holder -> clearHumidityInfo(holder.value(), holder.value().asItem())));
 
             // Item → Block
             items.get().getTag(ESItemTags.UNAFFECTED_BY_SEASONS).ifPresent(tag ->
-                    tag.forEach(holder -> clearCropInfo(Block.byItem(holder.value()), holder.value())));
+                    tag.forEach(holder -> clearSeasonInfo(Block.byItem(holder.value()), holder.value())));
             items.get().getTag(ESItemTags.UNAFFECTED_BY_HUMIDITY).ifPresent(tag ->
-                    tag.forEach(holder -> clearCropInfo(Block.byItem(holder.value()), holder.value())));
+                    tag.forEach(holder -> clearHumidityInfo(Block.byItem(holder.value()), holder.value())));
         }
     }
 
-    private static void clearCropInfo(Block block, Item item) {
+    private static void clearSeasonInfo(Block block, Item item) {
         if (block != Blocks.AIR) {
             CROP_SEASON_INFO.remove(block);
-            CROP_HUMIDITY_INFO.remove(block);
         }
         if (item != Items.AIR) {
             ITEM_CROP_SEASON_INFO.remove(item);
+        }
+    }
+
+    private static void clearHumidityInfo(Block block, Item item) {
+        if (block != Blocks.AIR) {
+            CROP_HUMIDITY_INFO.remove(block);
+        }
+        if (item != Items.AIR) {
             ITEM_CROP_HUMIDITY_INFO.remove(item);
         }
     }
