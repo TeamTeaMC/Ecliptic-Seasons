@@ -11,7 +11,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class ConfigMigrator {
-    public static final int CURRENT_CONFIG_VERSION = 2;
+    public static final int CURRENT_CONFIG_VERSION = 3;
 
     public static void init() {
         CommentedFileConfig mixinRecord = EclipticSeasonsMixinPlugin.PreloadedConfig.getConfig();
